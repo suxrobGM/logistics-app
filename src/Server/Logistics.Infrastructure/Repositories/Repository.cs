@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using Logistics.Domain.Common;
+using Logistics.Domain;
 using Logistics.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 

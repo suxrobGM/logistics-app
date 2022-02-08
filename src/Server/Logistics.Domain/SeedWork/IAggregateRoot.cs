@@ -1,4 +1,4 @@
-﻿namespace Logistics.Domain.Common;
+﻿namespace Logistics.Domain;
 
 /// <summary>
 /// Aggregate root

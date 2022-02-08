@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Logistics.Domain.Common;
+namespace Logistics.Domain;
 
 /// <summary>
 /// Generic repository.

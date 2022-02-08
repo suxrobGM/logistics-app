@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Common;
+﻿using Logistics.Domain;
 using Logistics.Domain.TruckAggregate;
 using Logistics.Infrastructure.Data;
 

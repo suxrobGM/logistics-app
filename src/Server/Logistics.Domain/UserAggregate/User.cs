@@ -1,5 +1,4 @@
-﻿using Logistics.Domain.Common;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.Domain.UserAggregate;
 

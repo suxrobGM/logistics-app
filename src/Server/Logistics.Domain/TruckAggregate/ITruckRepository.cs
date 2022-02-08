@@ -1,6 +1,4 @@
-﻿using Logistics.Domain.Common;
-
-namespace Logistics.Domain.TruckAggregate;
+﻿namespace Logistics.Domain.TruckAggregate;
 
 public interface ITruckRepository : IRepository<Truck>
 {

@@ -1,5 +1,4 @@
-﻿using Logistics.Domain.Common;
-using Logistics.Domain.UserAggregate;
+﻿using Logistics.Domain.UserAggregate;
 
 namespace Logistics.Domain.TruckAggregate;
 
