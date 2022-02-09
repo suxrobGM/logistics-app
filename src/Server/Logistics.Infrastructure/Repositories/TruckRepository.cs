@@ -1,10 +1,6 @@
-﻿using Logistics.Domain;
-using Logistics.Domain.TruckAggregate;
-using Logistics.Infrastructure.Data;
+﻿namespace Logistics.Infrastructure.Repositories;
 
-namespace Logistics.Infrastructure.Repositories;
-
-public class TruckRepository : Repository<Truck>
+public class TruckRepository : Repository<Truck>, ITruckRepository
 {
     protected TruckRepository(DatabaseContext context, IUnitOfWork unitOfWork) 
         : base(context, unitOfWork)

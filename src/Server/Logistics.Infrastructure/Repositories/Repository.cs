@@ -1,6 +1,4 @@
 ﻿using System.Linq.Expressions;
-using Logistics.Domain;
-using Logistics.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Infrastructure.Repositories;
@@ -10,11 +8,12 @@ public class Repository<TEntity> : IRepository<TEntity>
 {
     private readonly DatabaseContext _context;
 
-    protected Repository(DatabaseContext context,
+    protected Repository(
+        DatabaseContext context,
         IUnitOfWork unitOfWork)
     {
-        UnitOfWork = unitOfWork;
         _context = context;
+        UnitOfWork = unitOfWork;
     }
     
     public IUnitOfWork UnitOfWork { get; }
