@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.DriverApp", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application", "src\Core\Logistics.Application\Logistics.Application.csproj", "{53B069CE-0FEB-4191-B82D-BCE01159AE90}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.EntityFramework", "src\Core\Logistics.EntityFramework\Logistics.EntityFramework.csproj", "{0646E83A-CB9F-458A-BD84-8F2AE768CB91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.EntityFramework", "src\Core\Logistics.EntityFrameworkCore\Logistics.EntityFramework.csproj", "{0646E83A-CB9F-458A-BD84-8F2AE768CB91}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.EntityFramework.DbMigrations", "src\Core\Logistics.EntityFramework.DbMigrations\Logistics.EntityFramework.DbMigrations.csproj", "{D1AE20C1-9935-4E21-8F37-9C42507BCC4E}"
 EndProject
