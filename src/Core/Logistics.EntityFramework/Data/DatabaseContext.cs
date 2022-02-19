@@ -1,24 +1,25 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Options;
 using IdentityServer4.EntityFramework.Entities;
 using IdentityServer4.EntityFramework.Interfaces;
-using IdentityServer4.EntityFramework.Options;
 using Logistics.Domain.Entities;
 
 namespace Logistics.EntityFramework.Data;
 
 public class DatabaseContext : IdentityDbContext<User, UserRole, string>, IPersistedGrantDbContext
 {
-    private readonly IOptions<OperationalStoreOptions> _operationalStoreOptions;
+    private string connectionString;
 
-    public DatabaseContext(
-        DbContextOptions options,
-        IOptions<OperationalStoreOptions> operationalStoreOptions)
+    public DatabaseContext(string connectionString)
+    {
+        this.connectionString = connectionString;
+    }
+
+    public DatabaseContext(DbContextOptions options)
         : base(options)
     {
-        _operationalStoreOptions = operationalStoreOptions;
+        connectionString = "Server=localhost; Database=LogisticsDB; Trusted_Connection=True";
     }
     
     public DbSet<PersistedGrant>? PersistedGrants { get; set; }
@@ -30,7 +31,7 @@ public class DatabaseContext : IdentityDbContext<User, UserRole, string>, IPersi
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseSqlServer("Server=localhost; Initial Catalog=LogisticsDB; Trusted_Connection=True")
+            optionsBuilder.UseSqlServer(connectionString)
                 .UseLazyLoadingProxies();
         }
     }
@@ -46,9 +47,9 @@ public class DatabaseContextFactory : IDesignTimeDbContextFactory<DatabaseContex
     public DatabaseContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
-        optionsBuilder.UseSqlServer("Server=localhost; Initial Catalog=LogisticsDB; Trusted_Connection=True")
+        optionsBuilder.UseSqlServer("Server=localhost; Database=LogisticsDB; Trusted_Connection=True")
             .UseLazyLoadingProxies();
 
-        return new DatabaseContext(optionsBuilder.Options, new OptionsWrapper<OperationalStoreOptions>(new OperationalStoreOptions()));
+        return new DatabaseContext(optionsBuilder.Options);
     }
 }
