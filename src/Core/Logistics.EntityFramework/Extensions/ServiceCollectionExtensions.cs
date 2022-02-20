@@ -1,9 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Repositories;
 using Logistics.EntityFramework.Data;
 using Logistics.EntityFramework.Repositories;
+using Logistics.EntityFramework.Helpers;
 
 namespace Logistics.EntityFramework;
 
@@ -15,14 +18,14 @@ public static class ServiceCollectionExtensions
     {
         var connectionString = configuration.GetConnectionString("Local");
 
-        services.AddDbContext<DatabaseContext>(options =>
-        {
-            options.UseSqlServer(connectionString)
-                .UseLazyLoadingProxies();
-        });
-        services.AddScoped<ICargoRepository, CargoRepository>();
-        services.AddScoped<ITruckRepository, TruckRepository>();
-        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddDbContext<DatabaseContext>(
+            o => DbContextHelpers.ConfigureMySql(connectionString, o));
+
+        services.AddIdentity<User, UserRole>()
+            .AddEntityFrameworkStores<DatabaseContext>()
+            .AddDefaultTokenProviders();
+
+        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         return services;
     }
 }

@@ -3,5 +3,8 @@
 public class Truck : Entity
 {
     public int? TruckNumber { get; set; }
-    public User? Driver { get; set; }
+    public string? DriverId { get; set; }
+
+    public virtual User? Driver { get; set; }
+    public virtual IList<Cargo> Cargoes { get; set; } = new List<Cargo>();
 }

@@ -11,6 +11,8 @@ public class Cargo : Entity
     public bool IsCompleted { get; set; }
     public DateTime? PickUpDate { get; set; }
     public CargoStatus Status { get; set; }
-    public User? Driver { get; set; }
-    public User? Dispatcher { get; set; }
+    public string? AssignedDispatcherId { get; set; }
+
+    public virtual Truck? AssignedTruck { get; set; }
+    public virtual User? AssignedDispatcher { get; set; }
 }

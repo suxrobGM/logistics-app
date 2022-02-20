@@ -8,6 +8,4 @@ public class User : IdentityUser<string>, IAggregateRoot
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public DateTime JoinedDate { get; set; } = DateTime.Now;
-    public Truck? Truck { get; set; }
-    public IList<Cargo> Cargoes { get; set; } = new List<Cargo>();
 }

@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using IdentityServer4.EntityFramework.Entities;
-using IdentityServer4.EntityFramework.Interfaces;
 using Logistics.Domain.Entities;
+using Logistics.EntityFramework.Helpers;
 
 namespace Logistics.EntityFramework.Data;
 
-public class DatabaseContext : IdentityDbContext<User, UserRole, string>, IPersistedGrantDbContext
+public class DatabaseContext : IdentityDbContext<User, UserRole, string>
 {
     private string connectionString;
 
@@ -19,26 +18,38 @@ public class DatabaseContext : IdentityDbContext<User, UserRole, string>, IPersi
     public DatabaseContext(DbContextOptions options)
         : base(options)
     {
-        connectionString = "Server=localhost; Database=LogisticsDB; Trusted_Connection=True";
+        connectionString = DefualtConnection.ConnectionString;
     }
-    
-    public DbSet<PersistedGrant>? PersistedGrants { get; set; }
-    public DbSet<DeviceFlowCodes>? DeviceFlowCodes { get; set; }
-    
-    Task<int> IPersistedGrantDbContext.SaveChangesAsync() => base.SaveChangesAsync();
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        if (!optionsBuilder.IsConfigured)
+        if (!options.IsConfigured)
         {
-            optionsBuilder.UseSqlServer(connectionString)
-                .UseLazyLoadingProxies();
+            DbContextHelpers.ConfigureMySql(connectionString, options);
         }
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<Truck>(entity =>
+        {
+            entity.HasOne(m => m.Driver)
+            .WithOne()
+            .HasForeignKey<Truck>(m => m.DriverId);
+
+            entity.HasMany(m => m.Cargoes)
+            .WithOne(m => m.AssignedTruck)
+            .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        builder.Entity<Cargo>(entity =>
+        {
+            entity.HasOne(m => m.AssignedDispatcher)
+            .WithOne()
+            .HasForeignKey<Cargo>(m => m.AssignedDispatcherId);
+        });
     }
 }
 
@@ -46,10 +57,6 @@ public class DatabaseContextFactory : IDesignTimeDbContextFactory<DatabaseContex
 {
     public DatabaseContext CreateDbContext(string[] args)
     {
-        var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
-        optionsBuilder.UseSqlServer("Server=localhost; Database=LogisticsDB; Trusted_Connection=True")
-            .UseLazyLoadingProxies();
-
-        return new DatabaseContext(optionsBuilder.Options);
+        return new DatabaseContext(DefualtConnection.ConnectionString);
     }
 }
