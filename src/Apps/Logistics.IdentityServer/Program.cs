@@ -6,7 +6,6 @@ Log.Logger = new LoggerConfiguration()
     .CreateBootstrapLogger();
 
 Log.Information("Starting up");
-Log.Information(Environment.GetEnvironmentVariable("BASE_DIR"));
 
 try
 {

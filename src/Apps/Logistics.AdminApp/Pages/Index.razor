@@ -7,3 +7,16 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+<AuthorizeView>
+    <Authorized>
+        @{
+            var userClaims = context.User.Claims;
+        }
+        @foreach(var claim in userClaims)
+        {
+            <p><b>@claim.Type &nbsp;:&nbsp;</b> @claim.Value</p>
+        }
+        
+    </Authorized>
+</AuthorizeView>

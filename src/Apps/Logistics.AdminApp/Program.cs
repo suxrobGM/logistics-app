@@ -1,45 +1,33 @@
-using Logistics.AdminApp.Data;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.Identity.Web;
-using Microsoft.Identity.Web.UI;
+using Serilog;
+using Logistics.AdminApp;
 
-var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
-builder.Services.AddControllersWithViews()
-    .AddMicrosoftIdentityUI();
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-builder.Services.AddAuthorization(options =>
+Log.Information("Starting up");
+
+try
 {
-    // By default, all incoming requests will be authorized according to the default policy
-    options.FallbackPolicy = options.DefaultPolicy;
-});
+    var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor()
-    .AddMicrosoftIdentityConsentHandler();
-builder.Services.AddSingleton<WeatherForecastService>();
+    builder.Host.UseSerilog((ctx, lc) => lc
+        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}")
+        .Enrich.FromLogContext()
+        .ReadFrom.Configuration(ctx.Configuration));
 
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
-    app.UseHsts();
+    var app = builder
+        .ConfigureServices()
+        .ConfigurePipeline();
+    app.Run();
 }
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseRouting();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllers();
-app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
-
-app.Run();
+catch (Exception ex) when (ex.GetType().Name is not "StopTheHostException") // https://github.com/dotnet/runtime/issues/60600
+{
+    Log.Fatal(ex, "Unhandled exception");
+}
+finally
+{
+    Log.Information("Shut down complete");
+    Log.CloseAndFlush();
+}

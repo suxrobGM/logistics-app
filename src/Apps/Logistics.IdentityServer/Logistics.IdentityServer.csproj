@@ -6,13 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="ºSE_DIR%25\**" />
-    <Content Remove="ºSE_DIR%25\**" />
-    <EmbeddedResource Remove="ºSE_DIR%25\**" />
-    <None Remove="ºSE_DIR%25\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="6.0.4" />
 
 	<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.2" />

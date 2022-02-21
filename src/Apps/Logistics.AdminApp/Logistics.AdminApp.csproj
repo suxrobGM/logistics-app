@@ -13,6 +13,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.2" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.Identity.Web" Version="1.16.0" />
     <PackageReference Include="Microsoft.Identity.Web.UI" Version="1.16.0" />
+	<PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
   </ItemGroup>
 
 </Project>

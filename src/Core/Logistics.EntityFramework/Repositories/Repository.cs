@@ -32,13 +32,13 @@ public class Repository<TEntity> : IRepository<TEntity>
         return context.Set<TEntity>().FirstOrDefaultAsync(predicate);
     }
 
-    public async Task<IList<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate = null)
+    public async Task<IList<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate = default!)
     {
         return predicate == null ? await context.Set<TEntity>().ToListAsync()
             : await context.Set<TEntity>().Where(predicate).ToListAsync();
     }
 
-    public IQueryable<TEntity> GetQuery(Expression<Func<TEntity, bool>> predicate = null)
+    public IQueryable<TEntity> GetQuery(Expression<Func<TEntity, bool>> predicate = default!)
     {
         return predicate != null ? context.Set<TEntity>().Where(predicate)
             : context.Set<TEntity>();
