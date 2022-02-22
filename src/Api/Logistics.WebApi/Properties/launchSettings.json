@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "Logistics.HttpApi": {
+    "SelfHost": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

@@ -12,9 +12,10 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddEntityFrameworkLayer(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        string connectionStringName = "Local")
     {
-        var connectionString = configuration.GetConnectionString("Local");
+        var connectionString = configuration.GetConnectionString(connectionStringName);
 
         services.AddDbContext<DatabaseContext>(
             o => DbContextHelpers.ConfigureMySql(connectionString, o));
