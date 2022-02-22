@@ -4,18 +4,26 @@ namespace Logistics.Application.Contracts.Models;
 
 public class UserDto
 {
-    [Required]
-    public string? ExternalId { get; init; }
+    private string? _userName;
+    public string? UserName
+    { 
+        get => string.IsNullOrEmpty(_userName) ? 
+            $"{FirstName} {LastName}" : _userName;
+        set => _userName = value; 
+    }
 
     [Required]
-    public string? FirstName { get; init; }
+    public string? ExternalId { get; set; }
 
     [Required]
-    public string? LastName { get; init; }
+    public string? FirstName { get; set; }
+
+    [Required]
+    public string? LastName { get; set; }
 
     [Required, EmailAddress]
-    public string? Email { get; init; }
+    public string? Email { get; set; }
 
-    [Required, Phone]
-    public string? PhoneNumber { get; init; }
+    [Phone]
+    public string? PhoneNumber { get; set; }
 }
