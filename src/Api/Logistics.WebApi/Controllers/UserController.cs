@@ -1,24 +1,38 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MediatR;
-using Logistics.Application.Contracts.Commands;
-
-namespace Logistics.WebApi.Controllers;
+﻿namespace Logistics.WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 public class UserController : ControllerBase
 {
+    private readonly IMapper mapper;
     private readonly IMediator mediator;
 
-    public UserController(IMediator mediator)
+    public UserController(
+        IMapper mapper,
+        IMediator mediator)
     {
+        this.mapper = mapper;
         this.mediator = mediator;
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateUserCommand request)
+    public async Task<IActionResult> Create([FromBody] UserDto user)
     {
-        var result = await mediator.Send(request);
+        var result = await mediator.Send(mapper.Map<CreateUserCommand>(user));
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result.Error);
+    }
+
+    [HttpGet("exists")]
+    public async Task<IActionResult> UserExists(string externalId)
+    {
+        var result = await mediator.Send(new UserExistsQuery
+        {
+            ExternalId = externalId
+        });
 
         if (result.Success)
             return Ok(result);

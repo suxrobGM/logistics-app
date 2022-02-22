@@ -1,7 +1,8 @@
 ﻿using Logistics.DbMigrator;
+using Logistics.EntityFramework;
 using Logistics.EntityFramework.Data;
 
-var connectionString = "Server=20.74.27.42; Database=rate-pic; Uid=frostpixel; Pwd=DO8N6BvdEQwMIKHN; Connect Timeout=10";
+var connectionString = DefualtConnection.ConnectionString;
 
 Console.WriteLine("Connection string: " + connectionString);
 Console.WriteLine("Initializing database...");

@@ -14,8 +14,5 @@ public class DataResult<T> : DataResult
 {
     public T? Value { get; set; }
 
-    public static DataResult<T> CreateSuccess(T result) => new()
-    {
-        Value = result
-    };
+    public static DataResult<T> CreateSuccess(T result) => new() { Value = result };
 }

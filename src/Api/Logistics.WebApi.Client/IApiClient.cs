@@ -1,8 +1,8 @@
-﻿using Logistics.Application.Contracts.Commands;
-
-namespace Logistics.WebApi.Client;
+﻿namespace Logistics.WebApi.Client;
 
 public interface IApiClient
 {
-    Task CreateUser(CreateUserCommand request);
+    Task CreateUserAsync(UserDto userDto);
+    Task<bool> TryCreateUserAsync(UserDto userDto);
+    Task<bool> UserExistsAsync(string externalId);
 }

@@ -1,11 +1,4 @@
-﻿using AutoMapper;
-using Logistics.Application.Contracts;
-using Logistics.Application.Contracts.Commands;
-using Logistics.Domain.Entities;
-using Logistics.Domain.Repositories;
-using MediatR;
-
-namespace Logistics.Application.Handlers.Commands;
+﻿namespace Logistics.Application.Handlers.Commands;
 
 internal sealed class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, DataResult>
 {

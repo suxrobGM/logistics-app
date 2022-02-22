@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
+using MagicMvvm;
 using Logistics.AdminApp.Data;
 using Logistics.Application;
 using Logistics.EntityFramework;
@@ -15,6 +16,8 @@ internal static class HostingExtensions
         builder.Services.AddApplicationLayer();
         builder.Services.AddEntityFrameworkLayer(builder.Configuration);
         builder.Services.AddWebApiClient(builder.Configuration);
+
+        builder.Services.AddMvvmBlazor();
 
         builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
             .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));

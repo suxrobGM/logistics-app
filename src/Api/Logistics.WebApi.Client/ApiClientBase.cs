@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using System.Text.Json;
-using Logistics.WebApi.Client.Exceptions;
 
 namespace Logistics.WebApi.Client;
 
@@ -40,7 +39,7 @@ internal abstract class ApiClientBase
         where TResponse : new()
     {
         var content = await GetRequestAsync(endpoint, queries);
-        var deserializedObj = Deserialize<TResponse>(content) ?? default(TResponse);
+        var deserializedObj = Deserialize<TResponse>(content) ?? default;
 
         if (deserializedObj is null)
         {
