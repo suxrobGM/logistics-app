@@ -1,8 +1,4 @@
 ﻿using System.Linq.Expressions;
-using Logistics.Domain;
-using Logistics.Domain.Repositories;
-using Logistics.EntityFramework.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.EntityFramework.Repositories;
 

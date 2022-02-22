@@ -1,8 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Logistics.Domain.Repositories;
-using Logistics.EntityFramework.Data;
 using Logistics.EntityFramework.Repositories;
 using Logistics.EntityFramework.Helpers;
 
@@ -21,6 +18,7 @@ public static class ServiceCollectionExtensions
             o => DbContextHelpers.ConfigureMySql(connectionString, o));
 
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         return services;
     }
 }

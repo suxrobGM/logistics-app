@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Logistics.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore.Design;
 using Logistics.EntityFramework.Helpers;
 
 namespace Logistics.EntityFramework.Data;
