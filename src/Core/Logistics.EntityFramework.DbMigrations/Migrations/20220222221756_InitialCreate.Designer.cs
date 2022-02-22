@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.EntityFramework.DbMigrations.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20220222155025_InitialCreate")]
+    [Migration("20220222221756_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -60,7 +60,7 @@ namespace Logistics.EntityFramework.DbMigrations.Migrations
 
                     b.HasIndex("AssignedTruckId");
 
-                    b.ToTable("Cargo");
+                    b.ToTable("cargoes", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
@@ -79,7 +79,7 @@ namespace Logistics.EntityFramework.DbMigrations.Migrations
                     b.HasIndex("DriverId")
                         .IsUnique();
 
-                    b.ToTable("Truck");
+                    b.ToTable("trucks", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.User", b =>
@@ -108,9 +108,12 @@ namespace Logistics.EntityFramework.DbMigrations.Migrations
                     b.Property<int>("RoleType")
                         .HasColumnType("int");
 
+                    b.Property<string>("UserName")
+                        .HasColumnType("longtext");
+
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Cargo", b =>

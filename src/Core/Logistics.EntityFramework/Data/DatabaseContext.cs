@@ -30,8 +30,15 @@ public class DatabaseContext : DbContext
     {
         base.OnModelCreating(builder);
 
+        builder.Entity<User>(entity =>
+        {
+            entity.ToTable("users");
+        });
+
         builder.Entity<Truck>(entity =>
         {
+            entity.ToTable("trucks");
+
             entity.HasOne(m => m.Driver)
             .WithOne()
             .HasForeignKey<Truck>(m => m.DriverId);
@@ -43,6 +50,7 @@ public class DatabaseContext : DbContext
 
         builder.Entity<Cargo>(entity =>
         {
+            entity.ToTable("cargoes");
             entity.HasOne(m => m.AssignedDispatcher)
             .WithOne()
             .HasForeignKey<Cargo>(m => m.AssignedDispatcherId);

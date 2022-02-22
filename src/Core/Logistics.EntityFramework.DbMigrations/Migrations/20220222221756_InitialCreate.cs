@@ -13,12 +13,14 @@ namespace Logistics.EntityFramework.DbMigrations.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "User",
+                name: "users",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ExternalId = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    UserName = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     FirstName = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -33,12 +35,12 @@ namespace Logistics.EntityFramework.DbMigrations.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.Id);
+                    table.PrimaryKey("PK_users", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Truck",
+                name: "trucks",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
@@ -49,17 +51,17 @@ namespace Logistics.EntityFramework.DbMigrations.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Truck", x => x.Id);
+                    table.PrimaryKey("PK_trucks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Truck_User_DriverId",
+                        name: "FK_trucks_users_DriverId",
                         column: x => x.DriverId,
-                        principalTable: "User",
+                        principalTable: "users",
                         principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Cargo",
+                name: "cargoes",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
@@ -80,35 +82,35 @@ namespace Logistics.EntityFramework.DbMigrations.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Cargo", x => x.Id);
+                    table.PrimaryKey("PK_cargoes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Cargo_Truck_AssignedTruckId",
+                        name: "FK_cargoes_trucks_AssignedTruckId",
                         column: x => x.AssignedTruckId,
-                        principalTable: "Truck",
+                        principalTable: "trucks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
-                        name: "FK_Cargo_User_AssignedDispatcherId",
+                        name: "FK_cargoes_users_AssignedDispatcherId",
                         column: x => x.AssignedDispatcherId,
-                        principalTable: "User",
+                        principalTable: "users",
                         principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cargo_AssignedDispatcherId",
-                table: "Cargo",
+                name: "IX_cargoes_AssignedDispatcherId",
+                table: "cargoes",
                 column: "AssignedDispatcherId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cargo_AssignedTruckId",
-                table: "Cargo",
+                name: "IX_cargoes_AssignedTruckId",
+                table: "cargoes",
                 column: "AssignedTruckId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Truck_DriverId",
-                table: "Truck",
+                name: "IX_trucks_DriverId",
+                table: "trucks",
                 column: "DriverId",
                 unique: true);
         }
@@ -116,13 +118,13 @@ namespace Logistics.EntityFramework.DbMigrations.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Cargo");
+                name: "cargoes");
 
             migrationBuilder.DropTable(
-                name: "Truck");
+                name: "trucks");
 
             migrationBuilder.DropTable(
-                name: "User");
+                name: "users");
         }
     }
 }

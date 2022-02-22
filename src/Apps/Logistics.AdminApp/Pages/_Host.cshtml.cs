@@ -1,6 +1,6 @@
-﻿using Logistics.WebApi.Client;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Logistics.WebApi.Client;
 
 namespace Logistics.AdminApp.Pages;
 
@@ -13,15 +13,9 @@ public class HostModel : PageModel
         this.apiClient = apiClient;
     }
 
-    public void OnGet()
+    public async Task<IActionResult> OnGetAsync()
     {
-
+        await apiClient.TryCreateUserAsync(User.Claims.ToUser());
+        return Page();
     }
-
-    //public async Task<IActionResult> OnGetAsync()
-    //{
-    //    await apiClient.TryCreateUserAsync(User.Claims.ToUser());
-
-    //    return Page();
-    //}
 }

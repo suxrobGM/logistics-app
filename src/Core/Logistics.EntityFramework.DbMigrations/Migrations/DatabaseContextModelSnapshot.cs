@@ -58,7 +58,7 @@ namespace Logistics.EntityFramework.DbMigrations.Migrations
 
                     b.HasIndex("AssignedTruckId");
 
-                    b.ToTable("Cargo");
+                    b.ToTable("cargoes", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
@@ -77,7 +77,7 @@ namespace Logistics.EntityFramework.DbMigrations.Migrations
                     b.HasIndex("DriverId")
                         .IsUnique();
 
-                    b.ToTable("Truck");
+                    b.ToTable("trucks", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.User", b =>
@@ -111,7 +111,7 @@ namespace Logistics.EntityFramework.DbMigrations.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Cargo", b =>

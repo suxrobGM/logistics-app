@@ -1,10 +1,10 @@
 ﻿namespace Logistics.Application.Mappers;
 
-internal sealed class UserProfile : Profile
+public class UserProfile : Profile
 {
     public UserProfile()
     {
-        CreateMap<User, CreateUserCommand>();
+        CreateMap<User, CreateUserCommand>().ReverseMap();
         CreateMap<UserDto, CreateUserCommand>();
     }
 }
