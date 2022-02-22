@@ -7,11 +7,17 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Logistics.Application.Contracts\Logistics.Application.Contracts.csproj" />
+      <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Handlers\Queries\" />
     </ItemGroup>
 
 </Project>

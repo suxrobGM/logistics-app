@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Logistics.HttpApi.Controllers
+namespace Logistics.WebApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]

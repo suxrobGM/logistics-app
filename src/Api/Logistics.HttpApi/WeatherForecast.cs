@@ -1,4 +1,4 @@
-namespace Logistics.HttpApi
+namespace Logistics.WebApi
 {
     public class WeatherForecast
     {

@@ -33,11 +33,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DriverApp", "DriverApp", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{F47DBB17-4146-4B24-9E95-5CE0DF59BF35}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.HttpApi.Client", "src\Api\Logistics.HttpApi.Client\Logistics.HttpApi.Client.csproj", "{A2272F96-50F5-40EA-88E7-15EA8EEE1022}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.WebApi.Client", "src\Api\Logistics.HttpApi.Client\Logistics.WebApi.Client.csproj", "{A2272F96-50F5-40EA-88E7-15EA8EEE1022}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.AdminApp", "src\Apps\Logistics.AdminApp\Logistics.AdminApp.csproj", "{DF51C0A1-7800-4C9B-A72B-A9A8A492C0FF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.HttpApi", "src\Api\Logistics.HttpApi\Logistics.HttpApi.csproj", "{48AA06BC-140B-49B8-AD72-95B5FC6A2D4B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.WebApi", "src\Api\Logistics.HttpApi\Logistics.WebApi.csproj", "{48AA06BC-140B-49B8-AD72-95B5FC6A2D4B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
