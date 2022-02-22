@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Logistics.Domain.Entities;
 using Logistics.EntityFramework.Helpers;
 
 namespace Logistics.EntityFramework.Data;
 
-public class DatabaseContext : IdentityDbContext<User, UserRole, string>
+public class DatabaseContext : DbContext
 {
     private string connectionString;
 

@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Logistics.Domain.Entities;
 using Logistics.Domain.Repositories;
 using Logistics.EntityFramework.Data;
 using Logistics.EntityFramework.Repositories;
@@ -20,10 +18,6 @@ public static class ServiceCollectionExtensions
 
         services.AddDbContext<DatabaseContext>(
             o => DbContextHelpers.ConfigureMySql(connectionString, o));
-
-        services.AddIdentity<User, UserRole>()
-            .AddEntityFrameworkStores<DatabaseContext>()
-            .AddDefaultTokenProviders();
 
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         return services;
