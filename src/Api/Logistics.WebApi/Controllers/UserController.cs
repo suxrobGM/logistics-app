@@ -6,11 +6,11 @@ namespace Logistics.WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class UsersController : ControllerBase
+public class UserController : ControllerBase
 {
     private readonly IMediator mediator;
 
-    public UsersController(IMediator mediator)
+    public UserController(IMediator mediator)
     {
         this.mediator = mediator;
     }

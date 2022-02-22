@@ -1,6 +1,6 @@
-﻿using Logistics.WebApi.Client.Exceptions;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
+using Logistics.WebApi.Client.Exceptions;
 
 namespace Logistics.WebApi.Client;
 
@@ -14,6 +14,11 @@ internal abstract class ApiClientBase
         if (string.IsNullOrEmpty(host))
             throw new ArgumentNullException(host);
 
+        serializerOptions = new JsonSerializerOptions 
+        { 
+            PropertyNameCaseInsensitive = true 
+        };
+
         try
         {
             var handler = new HttpClientHandler
@@ -21,8 +26,6 @@ internal abstract class ApiClientBase
                 // Disable SSL validation
                 ServerCertificateCustomValidationCallback = (_, _, _, _) => true
             };
-
-            serializerOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
             httpClient = new HttpClient(handler) { BaseAddress = new Uri(host) };
         }
@@ -103,24 +106,23 @@ internal abstract class ApiClientBase
 
         if (!response.IsSuccessStatusCode)
         {
-            var errorResult = Deserialize<Error>(content) ?? new Error(content, (int)response.StatusCode);
-            throw new ApiException(errorResult.Message, (int)response.StatusCode);
+            throw new ApiException(content);
         }
 
         return content;
     }
 
-    private static HttpContent GetJsonContent<T>(T data)
+    private HttpContent GetJsonContent<T>(T data)
     {
-        var jsonData = JsonSerializer.Serialize(data);
+        var jsonData = JsonSerializer.Serialize(data, serializerOptions);
         return new StringContent(jsonData, Encoding.UTF8, "application/json");
     }
 
-    private static T? Deserialize<T>(string json)
+    private T? Deserialize<T>(string json)
     {
         try
         {
-            return JsonSerializer.Deserialize<T>(json);
+            return JsonSerializer.Deserialize<T>(json, serializerOptions);
         }
         catch (JsonException)
         {
