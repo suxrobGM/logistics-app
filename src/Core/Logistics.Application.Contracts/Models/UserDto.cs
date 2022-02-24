@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Logistics.Application.Contracts.Models;
+﻿namespace Logistics.Application.Contracts.Models;
 
 public class UserDto
 {

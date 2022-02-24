@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.Identity.Web.Resource;
-
-namespace Logistics.WebApi.Controllers;
+﻿namespace Logistics.WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
