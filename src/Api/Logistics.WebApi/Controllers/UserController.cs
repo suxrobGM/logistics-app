@@ -1,4 +1,7 @@
-﻿namespace Logistics.WebApi.Controllers;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.Identity.Web.Resource;
+
+namespace Logistics.WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -16,6 +19,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
+    //[RequiredScope("admin.write")]
     public async Task<IActionResult> Create([FromBody] UserDto user)
     {
         var result = await mediator.Send(mapper.Map<CreateUserCommand>(user));
@@ -27,6 +31,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("exists")]
+    //[RequiredScope("admin.read")]
     public async Task<IActionResult> UserExists(string externalId)
     {
         var result = await mediator.Send(new UserExistsQuery

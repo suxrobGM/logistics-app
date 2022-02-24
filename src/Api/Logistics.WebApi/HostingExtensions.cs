@@ -1,8 +1,11 @@
 ﻿//using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 //using Microsoft.Identity.Web;
-//using Microsoft.Identity.Web.UI;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.Web;
 using Logistics.Application;
 using Logistics.EntityFramework;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace Logistics.WebApi;
 
@@ -13,18 +16,17 @@ internal static class HostingExtensions
         builder.Services.AddApplicationLayer();
         builder.Services.AddEntityFrameworkLayer(builder.Configuration);
 
-        //builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-        //    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
-        //builder.Services.AddControllersWithViews()
-        //    .AddMicrosoftIdentityUI();
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
-        //builder.Services.AddAuthorization(options =>
-        //{
-        //    // By default, all incoming requests will be authorized according to the default policy
-        //    options.FallbackPolicy = options.DefaultPolicy;
-        //});
+        builder.Services.AddControllers(configure =>
+        {
+            //var policy = new AuthorizationPolicyBuilder()
+            //                .RequireAuthenticatedUser()
+            //                .Build();
 
-        builder.Services.AddControllers();
+            //configure.Filters.Add(new AuthorizeFilter(policy));
+        });
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         return builder.Build();
@@ -38,8 +40,17 @@ internal static class HostingExtensions
             app.UseSwaggerUI();
         }
 
+        app.UseCors(builder =>
+        {
+            builder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+        });
+
         app.UseHttpsRedirection();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllers();

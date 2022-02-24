@@ -2,7 +2,6 @@
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using MagicMvvm;
-using Logistics.AdminApp.Data;
 using Logistics.Application;
 using Logistics.EntityFramework;
 using Logistics.WebApi.Client;
@@ -26,14 +25,12 @@ internal static class HostingExtensions
 
         builder.Services.AddAuthorization(options =>
         {
-            // By default, all incoming requests will be authorized according to the default policy
             options.FallbackPolicy = options.DefaultPolicy;
         });
 
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor()
             .AddMicrosoftIdentityConsentHandler();
-        builder.Services.AddSingleton<WeatherForecastService>();
         return builder.Build();
     }
 

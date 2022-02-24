@@ -1,22 +1,42 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Logisitics</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
-
-<SurveyPrompt Title="How is Blazor working for you?" />
-
-<AuthorizeView>
-    <Authorized>
-        @{
-            var userClaims = context.User.Claims;
-        }
-        @foreach(var claim in userClaims)
-        {
-            <p><b>@claim.Type &nbsp;:&nbsp;</b> @claim.Value</p>
-        }
-        
-    </Authorized>
-</AuthorizeView>
+<h1>Site Administration</h1>
+<table class="table">
+    <thead>
+        <tr class="row">
+            <th class="col-6 col-sm-7 col-md-8 col-lg-9">Catalog</th>
+            <th class="col-6 col-sm-5 col-md-4 col-lg-3">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row">
+            <td class="col-6 col-sm-7 col-md-8 col-lg-9">
+                <span class="fw-bold">Users</span>
+            </td>
+            <td class="col-6 col-sm-5 col-md-4 col-lg-3">
+                <NavLink class="btn btn-primary" href="#">Add</NavLink>
+                <NavLink class="btn btn-info" href="#">List</NavLink>
+            </td>
+        </tr>
+        <tr class="row">
+            <td class="col-6 col-sm-7 col-md-8 col-lg-9">
+                <span class="fw-bold">Trucks</span>
+            </td>
+            <td class="col-6 col-sm-5 col-md-4 col-lg-3">
+                <NavLink class="btn btn-primary" href="#">Add</NavLink>
+                <NavLink class="btn btn-info" href="#">List</NavLink>
+            </td> 
+        </tr>
+        <tr class="row">
+            <td class="col-6 col-sm-7 col-md-8 col-lg-9">
+                <span class="fw-bold">Cargoes</span>
+            </td>
+            <td class="col-6 col-sm-5 col-md-4 col-lg-3">
+                <NavLink class="btn btn-primary" href="#">Add</NavLink>
+                <NavLink class="btn btn-info" href="#">List</NavLink>
+            </td>
+        </tr>
+    </tbody>
+</table>
