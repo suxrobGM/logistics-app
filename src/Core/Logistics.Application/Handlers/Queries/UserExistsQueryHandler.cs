@@ -13,7 +13,7 @@ internal sealed class UserExistsQueryHandler : IRequestHandler<UserExistsQuery, 
     {
         if (string.IsNullOrEmpty(request.ExternalId))
         {
-            return new() { Error = "ExternalId is null or empty" };
+            return DataResult<bool>.CreateError("ExternalId is null or empty");
         }
 
         var user = await userRepository.GetAsync(i => i.ExternalId == request.ExternalId);

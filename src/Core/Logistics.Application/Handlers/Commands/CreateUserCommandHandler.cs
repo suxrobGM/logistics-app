@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Handlers.Commands;
 
-internal sealed class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, DataResult>
+internal sealed class CreateUserCommandHandler : RequestHandlerBase<CreateUserCommand, DataResult>
 {
     private readonly IMapper mapper;
     private readonly IRepository<User> userRepository;
@@ -13,10 +13,42 @@ internal sealed class CreateUserCommandHandler : IRequestHandler<CreateUserComma
         this.userRepository = userRepository;
     }
 
-    public async Task<DataResult> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    protected override async Task<DataResult> HandleValidated(
+        CreateUserCommand request, CancellationToken cancellationToken)
     {
+        
         await userRepository.AddAsync(mapper.Map<User>(request));
         await userRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
+    }
+
+    protected override bool Validate(CreateUserCommand request, out string errorDescription)
+    {
+        if (string.IsNullOrEmpty(request.ExternalId))
+        {
+            errorDescription = "External Id is a empty string";
+            return false;
+        }
+
+        if (string.IsNullOrEmpty(request.FirstName))
+        {
+            errorDescription = "First name is a empty string";
+            return false;
+        }
+
+        if (string.IsNullOrEmpty(request.LastName))
+        {
+            errorDescription = "Last name is a empty string";
+            return false;
+        }
+
+        if (string.IsNullOrEmpty(request.Email))
+        {
+            errorDescription = "Email is a empty string";
+            return false;
+        }
+
+        errorDescription = string.Empty;
+        return true;
     }
 }

@@ -8,6 +8,7 @@ public class DataResult
     public bool Success => string.IsNullOrEmpty(Error);
 
     public static DataResult CreateSuccess() => success;
+    public static DataResult CreateError(string error) => new() { Error = error };
 }
     
 public class DataResult<T> : DataResult
@@ -15,4 +16,5 @@ public class DataResult<T> : DataResult
     public T? Value { get; set; }
 
     public static DataResult<T> CreateSuccess(T result) => new() { Value = result };
+    public new static DataResult<T> CreateError(string error) => new() { Error = error };
 }

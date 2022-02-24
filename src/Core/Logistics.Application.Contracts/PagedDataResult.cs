@@ -2,6 +2,10 @@
 
 public class PagedDataResult<T> : DataResult<T>
 {
+    public PagedDataResult() : this(Array.Empty<T>(), 0, 0)
+    {
+    }
+
     public PagedDataResult(T[] items, int totalItems, int totalPages)
     {
         Items = items;
