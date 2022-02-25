@@ -1,12 +1,18 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Logistics.Application.Contracts.Services;
 using Logistics.Application.Mappers;
+using Logistics.Application.Options;
+using Logistics.Application.Services;
 
 namespace Logistics.Application;
 
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddApplicationLayer(
-        this IServiceCollection services)
+        this IServiceCollection services,
+        IConfiguration configuration,
+        string emailConfigSection = "EmailConfig")
     {
         services.AddAutoMapper(o =>
         {
@@ -14,6 +20,8 @@ public static class ServiceCollectionExtensions
         });
 
         services.AddMediatR(typeof(ServiceCollectionExtensions).Assembly);
+        services.AddSingleton(configuration.GetSection(emailConfigSection).Get<EmailSenderOptions>());
+        services.AddTransient<IEmailSender, EmailSender>();
         return services;
     }
 }
