@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
 <PageTitle>Logistics Management</PageTitle>
+<Toast @ref="toastRef" ToastPosition="Toast.Position.BottomRight"></Toast>
 
 <div class="page">
     <div class="sidebar">
@@ -9,7 +10,13 @@
 
     <main>
         <article class="content px-4">
-            @Body
+            <CascadingValue Value="toastRef">
+                @Body
+            </CascadingValue>
         </article>
     </main>
 </div>
+
+@code {
+    private Toast? toastRef;
+}

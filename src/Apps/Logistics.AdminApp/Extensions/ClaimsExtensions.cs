@@ -34,4 +34,9 @@ public static class ClaimsExtensions
 
         return user;
     }
+
+    public static string? GetId(this ClaimsPrincipal user)
+    {
+        return user?.Claims?.FirstOrDefault(i => i.Type == ClaimTypes.NameIdentifier)?.Value;
+    }
 }

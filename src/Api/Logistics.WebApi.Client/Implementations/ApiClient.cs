@@ -86,6 +86,12 @@ internal class ApiClient : ApiClientBase, IApiClient
         return GetRequestAsync<UserDto>($"api/user/{id}");
     }
 
+    public async Task<UserDto> GetUserByExternalIdAsync(string externalId)
+    {
+        var result = await GetRequestAsync<DataResult<UserDto>>($"api/user/get-by-extid/{externalId}");
+        return result.Value!;
+    }
+
     public async Task<PagedDataResult<UserDto>> GetUsersAsync(int page = 1, int pageSize = 10)
     {
         var query = new Dictionary<string, string>
@@ -99,12 +105,15 @@ internal class ApiClient : ApiClientBase, IApiClient
 
     public async Task<bool> UserExistsAsync(string externalId)
     {
-        var query = new Dictionary<string, string>
+        try
         {
-            {"externalId", externalId }
-        };
-        var result = await GetRequestAsync<DataResult<bool>>("api/user/exists", query);
-        return result.Value;
+            var result = await GetUserByExternalIdAsync(externalId);
+            return result != null;
+        }
+        catch (ApiException)
+        {
+            return false;
+        }
     }
 
     public Task CreateUserAsync(UserDto user)

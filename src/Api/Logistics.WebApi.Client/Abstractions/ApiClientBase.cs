@@ -54,7 +54,7 @@ internal abstract class ApiClientBase
         IDictionary<string, string> queries = default!)
     {
         var requestEndpoint = endpoint;
-        if (queries.Count > 0)
+        if (queries != null && queries.Count > 0)
             requestEndpoint = QueryUtils.BuildQueryParameters(endpoint, queries);
 
         try

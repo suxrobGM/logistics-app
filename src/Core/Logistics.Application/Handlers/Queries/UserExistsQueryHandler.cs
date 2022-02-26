@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Handlers.Queries;
 
-internal sealed class UserExistsQueryHandler : RequestHandlerBase<UserExistsQuery, DataResult<bool>>
+internal sealed class UserExistsQueryHandler : RequestHandlerBase<UserExistsQuery, DataResult<UserDto>>
 {
     private readonly IRepository<User> userRepository;
 
@@ -9,16 +9,26 @@ internal sealed class UserExistsQueryHandler : RequestHandlerBase<UserExistsQuer
         this.userRepository = userRepository;
     }
 
-    protected override async Task<DataResult<bool>> HandleValidated(UserExistsQuery request, CancellationToken cancellationToken)
+    protected override async Task<DataResult<UserDto>> HandleValidated(UserExistsQuery request, CancellationToken cancellationToken)
     {
-        var user = await userRepository.GetAsync(i => i.ExternalId == request.ExternalId);
+        var userEntity = await userRepository.GetAsync(i => i.ExternalId == request.ExternalId);
 
-        if (user != null)
+        if (userEntity == null)
         {
-            return DataResult<bool>.CreateSuccess(true);
+            return DataResult<UserDto>.CreateError("User not found");
         }
 
-        return DataResult<bool>.CreateSuccess(false);
+        var user = new UserDto
+        {
+            Id = userEntity.Id,
+            ExternalId = userEntity.ExternalId,
+            FirstName = userEntity.FirstName,
+            LastName = userEntity.LastName,
+            UserName = userEntity.UserName,
+            Email = userEntity.Email,
+            PhoneNumber = userEntity.PhoneNumber,
+        };
+        return DataResult<UserDto>.CreateSuccess(user);
     }
 
     protected override bool Validate(UserExistsQuery request, out string errorDescription)

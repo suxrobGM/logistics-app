@@ -11,13 +11,15 @@ public class CargoDto
     public string? Destination { get; set; }
 
     [Required]
+    [Range(0.1, 1000)]
     public decimal PricePerMile { get; set; }
 
     [Required]
+    [Range(0.1, 50000)]
     public double TotalTripMiles { get; set; }
 
     public bool IsCompleted { get; set; }
-    public DateTime? PickUpDate { get; set; }
+    public DateTime PickUpDate { get; set; } = DateTime.Now;
     public string? Status { get; set; }
 
     [Required]

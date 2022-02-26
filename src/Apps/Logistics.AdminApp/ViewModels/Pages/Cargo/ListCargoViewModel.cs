@@ -2,15 +2,17 @@
 
 public class ListCargoViewModel : PageViewModelBase
 {
-
     public ListCargoViewModel(IApiClient apiClient)
         : base(apiClient)
     {
         _cargoes = new List<CargoDto>();
     }
 
+
+    #region Binding properties
+
     private IList<CargoDto> _cargoes;
-    public IList<CargoDto> Cargoes 
+    public IList<CargoDto> Cargoes
     {
         get => _cargoes;
         set => SetProperty(ref _cargoes, value);
@@ -22,6 +24,9 @@ public class ListCargoViewModel : PageViewModelBase
         get => _totalRecords;
         set => SetProperty(ref _totalRecords, value);
     }
+
+    #endregion
+
 
     public override async Task OnInitializedAsync()
     {

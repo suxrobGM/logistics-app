@@ -46,9 +46,9 @@ public class UserController : ControllerBase
         return BadRequest(result.Error);
     }
 
-    [HttpGet("exists")]
+    [HttpGet("get-by-extid/{externalId}")]
     //[RequiredScope("admin.read")]
-    public async Task<IActionResult> UserExists(string externalId)
+    public async Task<IActionResult> GetByExternalId(string externalId)
     {
         var result = await mediator.Send(new UserExistsQuery
         {

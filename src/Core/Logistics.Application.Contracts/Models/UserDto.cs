@@ -7,11 +7,11 @@ public class UserDto
     private string? _userName;
     public string? UserName
     { 
-        get => string.IsNullOrEmpty(_userName) ? 
-            $"{FirstName} {LastName}" : _userName;
+        get => string.IsNullOrEmpty(_userName) ?
+            GetFullName() : _userName;
 
         set => _userName = string.IsNullOrEmpty(_userName) ?
-            $"{FirstName} {LastName}" : value;
+            GetFullName() : value;
     }
 
     [Required]
@@ -28,4 +28,6 @@ public class UserDto
 
     [Phone]
     public string? PhoneNumber { get; set; }
+
+    public string GetFullName() => $"{FirstName} {LastName}";
 }

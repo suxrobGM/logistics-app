@@ -1,13 +1,23 @@
 ﻿@page "/edit-cargo/{id?}"
 @inherits ViewBase<EditCargoViewModel>
 
-<h2>Edit Cargo</h2>
+@{
+    var headText = Model.EditMode ? "Edit" : "Add a new";
+    var submitBtnText = Model.EditMode ? "Save" : "Submit";
+}
+<h2>@headText Cargo</h2>
 <hr />
 <div class="row">
-    <div class="col-12 col-sm-10 col-md-8 col-lg-7">
+    <div class="col-12 col-md-10 col-lg-8 col-xl-6">
         <div class="card">
             <div class="card-body">
-                <EditForm Model="cargo">
+                <Spinner IsBusy="Model.IsBusy"
+                         Label="Loading Data"
+                         LabelAlign="Spinner.Align.Left"
+                         Size="2">
+                </Spinner>
+
+                <EditForm Model="cargo" OnValidSubmit="() => Model.UpdateCargoAsync()">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
 
@@ -20,24 +30,44 @@
                         <InputText id="destination" class="form-control" @bind-Value="cargo.Destination" />
                     </div>
                     <div class="mb-3">
-                        <label for="source" class="form-label">Source Address</label>
-                        <InputText id="source" class="form-control" @bind-Value="cargo.Source" />
-                    </div>
-                    <div class="mb-3">
                         <label for="pickupDate" class="form-label">Pick Up Date</label>
                         <InputDate id="pickupDate" class="form-control" @bind-Value="cargo.PickUpDate" />
                     </div>
                     <div class="mb-3">
                         <label for="price" class="form-label">Price Per Mile</label>
-                        <InputNumber id="price" class="form-control" @bind-Value="cargo.PricePerMile" />
+                        <div class="input-group">
+                            <span class="input-group-text">$$</span>
+                            <InputNumber id="price" class="form-control" @bind-Value="cargo.PricePerMile" min="0.1" max="1000" />
+                        </div>
+                        
                     </div>
                     <div class="mb-3">
                         <label for="totalTrip" class="form-label">Total Trip Miles</label>
-                        <InputNumber id="totalTrip" class="form-control" @bind-Value="cargo.TotalTripMiles" />
+                        <div class="input-group">
+                            <span class="input-group-text">mi</span>
+                            <InputNumber id="totalTrip" class="form-control" @bind-Value="cargo.TotalTripMiles" min="1" max="50000" />
+                        </div>
+                    </div>
+                    @if (Model.EditMode)
+                    {
+                        <div class="mb-3">
+                            <label for="completed" class="form-check-label">Is Completed</label>
+                            <InputCheckbox id="completed" class="form-check-input mt-0 ms-1" @bind-Value="cargo.IsCompleted" />
+                        </div>
+                    }
+                    <div class="mb-3">
+                        <label for="dispatcher" class="form-label">Assigned Dispatcher</label>
+                        <input id="dispatcher" class="form-control" type="text" value="@cargo.AssignedDispatcherName" readonly />
                     </div>
                     <div class="mb-3">
-                        <label for="completed" class="form-check-label">Is Completed</label>
-                        <InputCheckbox id="completed" class="form-check-input mt-0 ms-1" @bind-Value="cargo.IsCompleted" />
+                        <label for="driver" class="form-label">Assigned Driver</label>
+                        @*<InputSelect id="driver" class="form-control" @bind-Value="cargo.AssignedTruckDriverName">
+                            @foreach (var truck in )
+                            <option value="OffDuty">Off Duty</option>
+
+                            <option value="Loaded">Loaded</option>
+                            <option value="Ready">Ready</option>
+                            </InputSelect>*@
                     </div>
                     <div class="mb-3">
                         <label for="status" class="form-label">Status</label>
@@ -49,6 +79,14 @@
                     </div>
                 </EditForm>
             </div>
+            <div class="card-footer">
+                <button class="btn btn-primary" type="submit">
+                    <i class="bi bi-pencil-square"></i> @submitBtnText
+                </button>
+                <NavLink class="btn btn-primary" href="/list-cargo">
+                    <i class="bi bi-arrow-left-square"></i> Back
+                </NavLink>
+            </div>
         </div>
     </div>
 </div>
@@ -58,6 +96,9 @@
 
     [Parameter]
     public string? Id { get; set; }
+
+    [CascadingParameter]
+    public Toast? Toast { get; set; }
 
     protected override void OnInitialized()
     {
