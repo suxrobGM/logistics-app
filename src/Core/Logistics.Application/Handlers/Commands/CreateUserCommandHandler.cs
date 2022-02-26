@@ -16,7 +16,6 @@ internal sealed class CreateUserCommandHandler : RequestHandlerBase<CreateUserCo
     protected override async Task<DataResult> HandleValidated(
         CreateUserCommand request, CancellationToken cancellationToken)
     {
-        
         await userRepository.AddAsync(mapper.Map<User>(request));
         await userRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
@@ -28,19 +27,19 @@ internal sealed class CreateUserCommandHandler : RequestHandlerBase<CreateUserCo
 
         if (string.IsNullOrEmpty(request.ExternalId))
         {
-            errorDescription = "External Id is a empty string";
+            errorDescription = "External Id is an empty string";
         }
         else if (string.IsNullOrEmpty(request.FirstName))
         {
-            errorDescription = "First name is a empty string";
+            errorDescription = "First name is an empty string";
         }
         else if (string.IsNullOrEmpty(request.LastName))
         {
-            errorDescription = "Last name is a empty string";
+            errorDescription = "Last name is an empty string";
         }
         else if (string.IsNullOrEmpty(request.Email))
         {
-            errorDescription = "Email is a empty string";
+            errorDescription = "Email is an empty string";
         }
 
         return string.IsNullOrEmpty(errorDescription);

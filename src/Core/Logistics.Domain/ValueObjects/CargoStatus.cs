@@ -2,7 +2,7 @@
 
 public enum CargoStatus
 {
-    OffDuty,
+    Ready,
     Loaded,
-    Ready
+    OffDuty
 }

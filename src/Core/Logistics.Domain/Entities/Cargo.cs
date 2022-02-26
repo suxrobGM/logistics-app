@@ -15,4 +15,16 @@ public class Cargo : Entity
 
     public virtual Truck? AssignedTruck { get; set; }
     public virtual User? AssignedDispatcher { get; set; }
+
+    public static CargoStatus GetCargoStatus(string value)
+    {
+        value = value.Trim().ToLower();
+        return value switch
+        {
+            "ready" => CargoStatus.Ready,
+            "loaded" => CargoStatus.Loaded,
+            "offduty" => CargoStatus.OffDuty,
+            _ => CargoStatus.Ready,
+        };
+    }
 }

@@ -42,7 +42,7 @@ internal sealed class CreateCargoCommandHandler : RequestHandlerBase<CreateCargo
         var cargoEntity = new Cargo
         {
             Source = request.Source,
-            Status = CargoStatus.OffDuty,
+            Status = CargoStatus.Ready,
             Destination = request.Destination,
             TotalTripMiles = request.TotalTripMiles,
             PricePerMile = request.PricePerMile,
@@ -65,19 +65,15 @@ internal sealed class CreateCargoCommandHandler : RequestHandlerBase<CreateCargo
 
         if (string.IsNullOrEmpty(request.AssignedDispatcherId))
         {
-            errorDescription = "Dispatcher Id is a empty string";
+            errorDescription = "Dispatcher Id is an empty string";
         }
         else if (string.IsNullOrEmpty(request.Source))
         {
-            errorDescription = "Source address is a empty string";
+            errorDescription = "Source address is an empty string";
         }
         else if (string.IsNullOrEmpty(request.Destination))
         {
-            errorDescription = "Destination address is a empty string";
-        }
-        else if (string.IsNullOrEmpty(request.AssignedDispatcherId))
-        {
-            errorDescription = "AssignedDispatcherId is a empty string";
+            errorDescription = "Destination address is an empty string";
         }
         else if (request.PricePerMile < 0)
         {
