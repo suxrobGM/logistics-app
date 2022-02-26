@@ -15,6 +15,21 @@ public class TruckController : ControllerBase
         this.mediator = mediator;
     }
 
+    [HttpGet("{id}")]
+    //[RequiredScope("admin.read")]
+    public async Task<IActionResult> GetById(string id)
+    {
+        var result = await mediator.Send(new GetTruckByIdQuery
+        {
+            Id = id
+        });
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result.Error);
+    }
+
     [HttpGet("list")]
     //[RequiredScope("admin.read")]
     public async Task<IActionResult> GetList(int page = 1, int pageSize = 10)

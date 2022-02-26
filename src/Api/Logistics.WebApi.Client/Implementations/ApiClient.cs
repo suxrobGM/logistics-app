@@ -9,6 +9,11 @@ internal class ApiClient : ApiClientBase, IApiClient
 
     #region Cargo API
 
+    public Task<CargoDto> GetCargoAsync(string id)
+    {
+        return GetRequestAsync<CargoDto>($"api/cargo/{id}");
+    }
+
     public Task CreateCargoAsync(CargoDto cargo)
     {
         return PostRequestAsync("api/cargo/create", cargo);
@@ -35,6 +40,11 @@ internal class ApiClient : ApiClientBase, IApiClient
 
     #region Truck API
 
+    public Task<TruckDto> GetTruckAsync(string id)
+    {
+        return GetRequestAsync<TruckDto>($"api/truck/{id}");
+    }
+
     public Task CreateTruckAsync(TruckDto truck)
     {
         return PostRequestAsync("api/truck/create", truck);
@@ -60,6 +70,11 @@ internal class ApiClient : ApiClientBase, IApiClient
 
 
     #region User API
+
+    public Task<UserDto> GetUserAsync(string id)
+    {
+        return GetRequestAsync<UserDto>($"api/user/{id}");
+    }
 
     public async Task<PagedDataResult<UserDto>> GetUsersAsync(int page = 1, int pageSize = 10)
     {
