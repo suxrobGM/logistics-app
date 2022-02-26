@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Contracts.Commands;
 
-public class CreateCargoCommand : RequestBase<DataResult>
+public sealed class CreateCargoCommand : RequestBase<DataResult>
 {
     public string? Source { get; set; }
     public string? Destination { get; set; }

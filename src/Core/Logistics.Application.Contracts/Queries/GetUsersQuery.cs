@@ -1,5 +1,5 @@
 ﻿namespace Logistics.Application.Contracts.Queries;
 
-public class GetUsersQuery : PagedQueryBase<UserDto>
+public sealed class GetUsersQuery : PagedQueryBase<UserDto>
 {
 }

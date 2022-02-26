@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Contracts.Commands;
 
-public class CreateUserCommand : RequestBase<DataResult>
+public sealed class CreateUserCommand : RequestBase<DataResult>
 {
     public string? ExternalId { get; init; }
     public string? FirstName { get; init; }

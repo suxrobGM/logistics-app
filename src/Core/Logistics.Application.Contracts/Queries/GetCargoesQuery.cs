@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Contracts.Queries;
 
-public class GetCargoesQuery : PagedQueryBase<CargoDto>
+public sealed class GetCargoesQuery : PagedQueryBase<CargoDto>
 {
 
 }

@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Contracts.Commands;
 
-public class UpdateCargoCommand : RequestBase<DataResult>
+public sealed class UpdateCargoCommand : RequestBase<DataResult>
 {
     public string? Id { get; set; }
     public string? Source { get; set; }

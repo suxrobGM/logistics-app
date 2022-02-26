@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Contracts.Commands;
 
-public class UpdateUserCommand : RequestBase<DataResult>
+public sealed class UpdateUserCommand : RequestBase<DataResult>
 {
     public string? Id { get; set; }
     public string? FirstName { get; init; }
