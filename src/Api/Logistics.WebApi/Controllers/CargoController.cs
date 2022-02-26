@@ -43,7 +43,7 @@ public class CargoController : ControllerBase
         return BadRequest(result.Error);
     }
 
-    [HttpPut("update")]
+    [HttpPut("update/{id}")]
     //[RequiredScope("admin.write")]
     public async Task<IActionResult> Update(string id, [FromBody] CargoDto request)
     {

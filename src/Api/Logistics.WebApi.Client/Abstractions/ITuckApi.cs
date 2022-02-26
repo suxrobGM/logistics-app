@@ -3,5 +3,6 @@
 public interface ITruckApi
 {
     Task CreateTruckAsync(TruckDto truck);
+    Task UpdateTruckAsync(TruckDto truck);
     Task<PagedDataResult<TruckDto>> GetTrucksAsync(int page = 1, int pageSize = 10);
 }

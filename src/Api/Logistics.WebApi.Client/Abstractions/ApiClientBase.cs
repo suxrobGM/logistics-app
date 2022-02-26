@@ -99,6 +99,36 @@ internal abstract class ApiClientBase
         }
     }
 
+    protected async Task<TResponse> PutRequestAsync<TResponse, TRequest>(string endpoint, TRequest body)
+        where TResponse : new()
+        where TRequest : new()
+    {
+        var content = await PutRequestAsync(endpoint, body);
+        var deserializedObj = Deserialize<TResponse>(content) ?? default(TResponse);
+
+        if (deserializedObj is null)
+        {
+            throw new ApiException(
+                $"Serialization error, failed to deserialize object from response content:\n{content}");
+        }
+
+        return deserializedObj;
+    }
+
+    protected async Task<string> PutRequestAsync<TRequest>(string endpoint, TRequest body)
+    {
+        try
+        {
+            using var response = await httpClient.PutAsync(endpoint, GetJsonContent(body));
+            var content = await ReadContentAsync(response);
+            return content;
+        }
+        catch (HttpRequestException e)
+        {
+            throw new ApiException(e.Message);
+        }
+    }
+
     private async Task<string> ReadContentAsync(HttpResponseMessage response)
     {
         var content = await response.Content.ReadAsStringAsync();

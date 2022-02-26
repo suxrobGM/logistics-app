@@ -43,7 +43,7 @@ public class TruckController : ControllerBase
         return BadRequest(result.Error);
     }
 
-    [HttpPut("update")]
+    [HttpPut("update/{id}")]
     //[RequiredScope("admin.write")]
     public async Task<IActionResult> Update(string id, [FromBody] TruckDto request)
     {

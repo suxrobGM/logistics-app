@@ -25,6 +25,11 @@ internal class ApiClient : ApiClientBase, IApiClient
         return result;
     }
 
+    public Task UpdateCargoAsync(CargoDto cargo)
+    {
+        return PutRequestAsync($"api/cargo/update/{cargo.Id}", cargo);
+    }
+
     #endregion
 
 
@@ -44,6 +49,11 @@ internal class ApiClient : ApiClientBase, IApiClient
         };
         var result = await GetRequestAsync<PagedDataResult<TruckDto>>("api/truck/list", query);
         return result;
+    }
+
+    public Task UpdateTruckAsync(TruckDto truck)
+    {
+        return PutRequestAsync($"api/truck/update/{truck.Id}", truck);
     }
 
     #endregion
@@ -93,6 +103,11 @@ internal class ApiClient : ApiClientBase, IApiClient
         };
         var result = await GetRequestAsync<DataResult<bool>>("api/user/exists", query);
         return result.Value;
+    }
+
+    public Task UpdateUserAsync(UserDto user)
+    {
+        return PutRequestAsync($"api/user/update/{user.Id}", user);
     }
 
     #endregion
