@@ -12,4 +12,6 @@ public class User : Entity
     public string? PhoneNumber { get; set; }
     public DateTime JoinedDate { get; set; } = DateTime.Now;
     public UserRoleType RoleType { get; set; } = UserRoleType.Guest;
+
+    public string GetFullName() => $"{FirstName} {LastName}";
 }

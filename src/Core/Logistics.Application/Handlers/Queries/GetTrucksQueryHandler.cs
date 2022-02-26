@@ -2,14 +2,11 @@
 
 internal sealed class GetTrucksQueryHandler : RequestHandlerBase<GetTrucksQuery, PagedDataResult<TruckDto>>
 {
-    private readonly IRepository<Cargo> cargoRepository;
     private readonly IRepository<Truck> truckRepository;
 
     public GetTrucksQueryHandler(
-        IRepository<Cargo> cargoRepository,
         IRepository<Truck> truckRepository)
     {
-        this.cargoRepository = cargoRepository;
         this.truckRepository = truckRepository;
     }
 
@@ -17,7 +14,11 @@ internal sealed class GetTrucksQueryHandler : RequestHandlerBase<GetTrucksQuery,
         GetTrucksQuery request, 
         CancellationToken cancellationToken)
     {
-        var cargoesIdsList = cargoRepository.GetQuery().Select(i => i.Id).ToList();
+        var cargoesIdsList = truckRepository.GetQuery()
+            .SelectMany(i => i.Cargoes)
+            .Select(i => i.Id)
+            .ToList();
+
         var totalItems = truckRepository.GetQuery().Count();
 
         var items = truckRepository.GetQuery()

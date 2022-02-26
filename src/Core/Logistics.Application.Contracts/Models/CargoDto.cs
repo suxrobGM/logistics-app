@@ -22,13 +22,8 @@ public class CargoDto
 
     [Required]
     public string? AssignedDispatcherId { get; set; }
+    public string? AssignedDispatcherName { get; set; }
 
     public string? AssignedTruckId { get; set; }
+    public string? AssignedTruckDriverName { get; set; }
 }
-
-//public enum CargoStatus
-//{
-//    OffDuty,
-//    Loaded,
-//    Ready
-//}
