@@ -2,6 +2,8 @@
 
 public class TruckDto
 {
+    public string? Id { get; set; }
+
     [Required]
     public int? TruckNumber { get; set; }
     public string? DriverId { get; set; }

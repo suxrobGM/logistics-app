@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Handlers.Queries;
 
-internal sealed class GetTrucksQueryHandler : GetPagedQueryHandlerBase<GetTrucksQuery, TruckDto>
+internal sealed class GetTrucksQueryHandler : RequestHandlerBase<GetTrucksQuery, PagedDataResult<TruckDto>>
 {
     private readonly IRepository<Cargo> cargoRepository;
     private readonly IRepository<Truck> truckRepository;
@@ -14,7 +14,7 @@ internal sealed class GetTrucksQueryHandler : GetPagedQueryHandlerBase<GetTrucks
     }
 
     protected override Task<PagedDataResult<TruckDto>> HandleValidated(
-        GetPagedQueryBase<TruckDto> request, 
+        GetTrucksQuery request, 
         CancellationToken cancellationToken)
     {
         var cargoesIdsList = cargoRepository.GetQuery().Select(i => i.Id).ToList();
@@ -25,6 +25,7 @@ internal sealed class GetTrucksQueryHandler : GetPagedQueryHandlerBase<GetTrucks
             .Take(request.PageSize)
             .Select(i => new TruckDto
             {
+                Id = i.Id,
                 TruckNumber = i.TruckNumber,
                 DriverId = i.DriverId,
                 CargoesIds = cargoesIdsList
@@ -33,5 +34,21 @@ internal sealed class GetTrucksQueryHandler : GetPagedQueryHandlerBase<GetTrucks
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
         return Task.FromResult(new PagedDataResult<TruckDto>(items, totalItems, totalPages));
+    }
+
+    protected override bool Validate(GetTrucksQuery request, out string errorDescription)
+    {
+        errorDescription = string.Empty;
+
+        if (request.Page <= 0)
+        {
+            errorDescription = "Page number should be non-negative";
+        }
+        else if (request.PageSize <= 1)
+        {
+            errorDescription = "Page size should be greater than one";
+        }
+
+        return string.IsNullOrEmpty(errorDescription);
     }
 }

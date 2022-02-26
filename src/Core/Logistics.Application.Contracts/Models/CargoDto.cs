@@ -2,6 +2,8 @@
 
 public class CargoDto
 {
+    public string? Id { get; set; }
+
     [Required]
     public string? Source { get; set; }
 

@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Contracts.Queries;
 
-public class GetTrucksQuery : GetPagedQueryBase<TruckDto>
+public class GetTrucksQuery : PagedQueryBase<TruckDto>
 {
 
 }
