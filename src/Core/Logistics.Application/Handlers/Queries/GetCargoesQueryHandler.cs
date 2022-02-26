@@ -19,6 +19,7 @@ internal sealed class GetCargoesQueryHandler : RequestHandlerBase<GetCargoesQuer
         var items = cargoRepository.GetQuery()
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
+            .OrderBy(i => i.Id)
             .Select(i => new CargoDto
             {
                 Id = i.Id,

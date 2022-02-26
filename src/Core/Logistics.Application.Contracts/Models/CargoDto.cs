@@ -1,4 +1,6 @@
-﻿namespace Logistics.Application.Contracts.Models;
+﻿using Logistics.Domain.Shared;
+
+namespace Logistics.Application.Contracts.Models;
 
 public class CargoDto
 {
@@ -11,11 +13,11 @@ public class CargoDto
     public string? Destination { get; set; }
 
     [Required]
-    [Range(0.1, 1000)]
+    [Range(CargoConsts.MinPricePerMile, CargoConsts.MaxPricePerMile)]
     public decimal PricePerMile { get; set; }
 
     [Required]
-    [Range(0.1, 50000)]
+    [Range(CargoConsts.MinTripMiles, CargoConsts.MaxTripMiles)]
     public double TotalTripMiles { get; set; }
 
     public bool IsCompleted { get; set; }

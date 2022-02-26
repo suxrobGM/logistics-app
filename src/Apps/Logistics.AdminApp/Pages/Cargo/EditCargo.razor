@@ -37,7 +37,9 @@
                         <label for="price" class="form-label">Price Per Mile</label>
                         <div class="input-group">
                             <span class="input-group-text">$$</span>
-                            <InputNumber id="price" class="form-control" @bind-Value="cargo.PricePerMile" min="0.1" max="1000" />
+                            <InputNumber id="price" class="form-control" @bind-Value="cargo.PricePerMile" 
+                                min="@CargoConsts.MinPricePerMile" 
+                                max="@CargoConsts.MaxPricePerMile" />
                         </div>
                         
                     </div>
@@ -45,7 +47,9 @@
                         <label for="totalTrip" class="form-label">Total Trip Miles</label>
                         <div class="input-group">
                             <span class="input-group-text">mi</span>
-                            <InputNumber id="totalTrip" class="form-control" @bind-Value="cargo.TotalTripMiles" min="1" max="50000" />
+                            <InputNumber id="totalTrip" class="form-control" @bind-Value="cargo.TotalTripMiles" 
+                                min="@CargoConsts.MinTripMiles" 
+                                max="@CargoConsts.MaxTripMiles" />
                         </div>
                     </div>
                     @if (Model.EditMode)
