@@ -13,4 +13,19 @@ public class EditCargoViewModel : PageViewModelBase
 
     [Parameter]
     public string? Id { get; set; }
+
+    public CargoDto? Cargo { get; set; }
+
+    public override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+
+    //private Task<CargoDto> FetchCargo()
+    //{
+    //    return Task.Run(async () =>
+    //    {
+    //        await apiClient.
+    //    })
+    //}
 }

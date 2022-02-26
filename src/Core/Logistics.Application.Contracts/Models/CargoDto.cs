@@ -25,3 +25,10 @@ public class CargoDto
 
     public string? AssignedTruckId { get; set; }
 }
+
+//public enum CargoStatus
+//{
+//    OffDuty,
+//    Loaded,
+//    Ready
+//}
