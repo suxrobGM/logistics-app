@@ -10,7 +10,7 @@ public class UserDto
         get => string.IsNullOrEmpty(_userName) ?
             GetFullName() : _userName;
 
-        set => _userName = string.IsNullOrEmpty(_userName) ?
+        set => _userName = string.IsNullOrEmpty(value) ?
             GetFullName() : value;
     }
 

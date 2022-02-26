@@ -21,6 +21,7 @@ internal sealed class UpdateUserCommandHandler : RequestHandlerBase<UpdateUserCo
 
         userEntity.FirstName = request.FirstName;
         userEntity.LastName = request.LastName;
+        userEntity.UserName = request.UserName;
         userEntity.Email = request.Email;
         userEntity.PhoneNumber = request.PhoneNumber;
 

@@ -12,7 +12,8 @@ internal sealed class GetUserByIdQueryHandler : RequestHandlerBase<GetUserByIdQu
 
     protected override async Task<DataResult<UserDto>> HandleValidated(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-        var userEntity = await userRepository.GetAsync(request.Id!);
+        var userEntity = await userRepository.GetAsync(request.Id!) ??
+                        await userRepository.GetAsync(i => i.ExternalId == request.Id);
 
         if (userEntity == null)
         {

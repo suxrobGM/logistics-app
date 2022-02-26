@@ -14,7 +14,8 @@ public class HostModel : PageModel
 
     public async Task<IActionResult> OnGetAsync()
     {
-        await apiClient.TryCreateUserAsync(User.Claims.ToUser());
+        var user = User.Claims.ToUser();
+        await apiClient.TryCreateUserAsync(user);
         return Page();
     }
 }

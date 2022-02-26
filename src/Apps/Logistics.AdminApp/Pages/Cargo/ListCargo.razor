@@ -63,7 +63,7 @@
                         <Template>
                             @{
                                 var entity = context as CargoDto;
-                                var editPageLink = $"/edit-cargo/{entity.Id}";
+                                var editPageLink = $"/edit-cargo/{entity?.Id}";
                             }
 
                             <div class="d-flex justify-content-center">

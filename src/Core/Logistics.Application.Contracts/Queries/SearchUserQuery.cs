@@ -1,6 +1,7 @@
 ﻿namespace Logistics.Application.Contracts.Queries;
 
-public sealed class UserExistsQuery : RequestBase<DataResult<UserDto>>
+public class SearchUserQuery
 {
     public string? ExternalId { get; set; }
+    public string? UserName { get; set; }
 }

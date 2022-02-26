@@ -50,21 +50,6 @@ public class UserController : ControllerBase
         return BadRequest(result);
     }
 
-    [HttpGet("get-by-extid/{externalId}")]
-    //[RequiredScope("admin.read")]
-    public async Task<IActionResult> GetByExternalId(string externalId)
-    {
-        var result = await mediator.Send(new UserExistsQuery
-        {
-            ExternalId = externalId
-        });
-
-        if (result.Success)
-            return Ok(result);
-
-        return BadRequest(result);
-    }
-
     [HttpPost("create")]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
