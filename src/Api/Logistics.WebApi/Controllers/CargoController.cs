@@ -16,6 +16,8 @@ public class CargoController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(DataResult<CargoDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     //[RequiredScope("admin.read")]
     public async Task<IActionResult> GetById(string id)
     {
@@ -27,10 +29,12 @@ public class CargoController : ControllerBase
         if (result.Success)
             return Ok(result);
 
-        return BadRequest(result.Error);
+        return BadRequest(result);
     }
 
     [HttpGet("list")]
+    [ProducesResponseType(typeof(PagedDataResult<CargoDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     //[RequiredScope("admin.read")]
     public async Task<IActionResult> GetList(int page = 1, int pageSize = 10)
     {
@@ -43,10 +47,12 @@ public class CargoController : ControllerBase
         if (result.Success)
             return Ok(result);
 
-        return BadRequest(result.Error);
+        return BadRequest(result);
     }
 
     [HttpPost("create")]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     //[RequiredScope("admin.write")]
     public async Task<IActionResult> Create([FromBody] CargoDto request)
     {
@@ -55,10 +61,12 @@ public class CargoController : ControllerBase
         if (result.Success)
             return Ok(result);
 
-        return BadRequest(result.Error);
+        return BadRequest(result);
     }
 
     [HttpPut("update/{id}")]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     //[RequiredScope("admin.write")]
     public async Task<IActionResult> Update(string id, [FromBody] CargoDto request)
     {
@@ -69,10 +77,12 @@ public class CargoController : ControllerBase
         if (result.Success)
             return Ok(result);
 
-        return BadRequest(result.Error);
+        return BadRequest(result);
     }
 
     [HttpDelete("{id}")]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     //[RequiredScope("admin.write")]
     public async Task<IActionResult> Delete(string id)
     {
@@ -84,6 +94,6 @@ public class CargoController : ControllerBase
         if (result.Success)
             return Ok(result);
 
-        return BadRequest(result.Error);
+        return BadRequest(result);
     }
 }

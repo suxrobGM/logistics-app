@@ -16,6 +16,8 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(DataResult<UserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     //[RequiredScope("admin.read")]
     public async Task<IActionResult> GetById(string id)
     {
@@ -31,6 +33,8 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("list")]
+    [ProducesResponseType(typeof(PagedDataResult<UserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     //[RequiredScope("admin.read")]
     public async Task<IActionResult> GetList(int page = 1, int pageSize = 10)
     {
@@ -43,7 +47,7 @@ public class UserController : ControllerBase
         if (result.Success)
             return Ok(result);
 
-        return BadRequest(result.Error);
+        return BadRequest(result);
     }
 
     [HttpGet("get-by-extid/{externalId}")]
@@ -58,10 +62,12 @@ public class UserController : ControllerBase
         if (result.Success)
             return Ok(result);
 
-        return BadRequest(result.Error);
+        return BadRequest(result);
     }
 
     [HttpPost("create")]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     //[RequiredScope("admin.write")]
     public async Task<IActionResult> Create([FromBody] UserDto user)
     {
@@ -70,10 +76,12 @@ public class UserController : ControllerBase
         if (result.Success)
             return Ok(result);
 
-        return BadRequest(result.Error);
+        return BadRequest(result);
     }
 
     [HttpPut("update/{id}")]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     //[RequiredScope("admin.write")]
     public async Task<IActionResult> Update(string id, [FromBody] UserDto request)
     {
@@ -84,6 +92,6 @@ public class UserController : ControllerBase
         if (result.Success)
             return Ok(result);
 
-        return BadRequest(result.Error);
+        return BadRequest(result);
     }
 }

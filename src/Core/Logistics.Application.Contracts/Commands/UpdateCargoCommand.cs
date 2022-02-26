@@ -10,5 +10,5 @@ public sealed class UpdateCargoCommand : RequestBase<DataResult>
     public string? AssignedTruckId { get; set; }
     public string? Status { get; set; }
     public bool IsCompleted { get; set; }
-    public DateTime? PickUpDate { get; set; }
+    public DateTime PickUpDate { get; set; }
 }

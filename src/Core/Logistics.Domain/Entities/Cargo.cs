@@ -9,7 +9,7 @@ public class Cargo : Entity
     public decimal PricePerMile { get; set; }
     public double TotalTripMiles { get; set; }
     public bool IsCompleted { get; set; }
-    public DateTime? PickUpDate { get; set; }
+    public DateTime PickUpDate { get; set; } = DateTime.Now;
     public CargoStatus Status { get; set; }
     public string? AssignedDispatcherId { get; set; }
 
