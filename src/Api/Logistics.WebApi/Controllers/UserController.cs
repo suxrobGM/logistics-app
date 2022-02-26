@@ -16,6 +16,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("list")]
+    //[RequiredScope("admin.read")]
     public async Task<IActionResult> GetList(int page = 1, int pageSize = 10)
     {
         var result = await mediator.Send(new GetUsersQuery 
@@ -50,6 +51,20 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Create([FromBody] UserDto user)
     {
         var result = await mediator.Send(mapper.Map<CreateUserCommand>(user));
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result.Error);
+    }
+
+    [HttpPut("update")]
+    //[RequiredScope("admin.write")]
+    public async Task<IActionResult> Update(string id, [FromBody] UserDto request)
+    {
+        var updateRequest = mapper.Map<UpdateUserCommand>(request);
+        updateRequest.Id = id;
+        var result = await mediator.Send(updateRequest);
 
         if (result.Success)
             return Ok(result);

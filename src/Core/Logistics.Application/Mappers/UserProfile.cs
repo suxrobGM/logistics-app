@@ -1,11 +1,12 @@
 ﻿namespace Logistics.Application.Mappers;
 
-public class UserProfile : Profile
+internal class UserProfile : Profile
 {
     public UserProfile()
     {
         CreateMap<User, CreateUserCommand>().ReverseMap();
         CreateMap<User, UpdateUserCommand>().ReverseMap();
-        CreateMap<UserDto, CreateUserCommand>();
+        CreateMap<UserDto, CreateUserCommand>().ReverseMap();
+        CreateMap<UserDto, UpdateUserCommand>().ReverseMap();
     }
 }

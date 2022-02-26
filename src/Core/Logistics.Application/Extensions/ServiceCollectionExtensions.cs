@@ -16,6 +16,8 @@ public static class ServiceCollectionExtensions
     {
         services.AddAutoMapper(o =>
         {
+            o.AddProfile<CargoProfile>();
+            o.AddProfile<TruckProfile>();
             o.AddProfile<UserProfile>();
         });
 
