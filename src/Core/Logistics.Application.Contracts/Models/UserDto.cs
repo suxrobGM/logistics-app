@@ -7,7 +7,9 @@ public class UserDto
     { 
         get => string.IsNullOrEmpty(_userName) ? 
             $"{FirstName} {LastName}" : _userName;
-        set => _userName = value; 
+
+        set => _userName = string.IsNullOrEmpty(_userName) ?
+            $"{FirstName} {LastName}" : value;
     }
 
     [Required]

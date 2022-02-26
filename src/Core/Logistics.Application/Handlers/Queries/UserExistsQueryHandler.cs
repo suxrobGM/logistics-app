@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Handlers.Queries;
 
-internal sealed class UserExistsQueryHandler : IRequestHandler<UserExistsQuery, DataResult<bool>>
+internal sealed class UserExistsQueryHandler : RequestHandlerBase<UserExistsQuery, DataResult<bool>>
 {
     private readonly IRepository<User> userRepository;
 
@@ -9,13 +9,8 @@ internal sealed class UserExistsQueryHandler : IRequestHandler<UserExistsQuery, 
         this.userRepository = userRepository;
     }
 
-    public async Task<DataResult<bool>> Handle(UserExistsQuery request, CancellationToken cancellationToken)
+    protected override async Task<DataResult<bool>> HandleValidated(UserExistsQuery request, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrEmpty(request.ExternalId))
-        {
-            return DataResult<bool>.CreateError("ExternalId is null or empty");
-        }
-
         var user = await userRepository.GetAsync(i => i.ExternalId == request.ExternalId);
 
         if (user != null)
@@ -24,5 +19,17 @@ internal sealed class UserExistsQueryHandler : IRequestHandler<UserExistsQuery, 
         }
 
         return DataResult<bool>.CreateSuccess(false);
+    }
+
+    protected override bool Validate(UserExistsQuery request, out string errorDescription)
+    {
+        if (string.IsNullOrEmpty(request.ExternalId))
+        {
+            errorDescription = "ExternalId is null or empty";
+            return false;
+        }
+
+        errorDescription = string.Empty;
+        return true;
     }
 }

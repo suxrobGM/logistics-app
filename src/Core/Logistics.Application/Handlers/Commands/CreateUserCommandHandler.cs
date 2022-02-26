@@ -24,31 +24,25 @@ internal sealed class CreateUserCommandHandler : RequestHandlerBase<CreateUserCo
 
     protected override bool Validate(CreateUserCommand request, out string errorDescription)
     {
+        errorDescription = string.Empty;
+
         if (string.IsNullOrEmpty(request.ExternalId))
         {
             errorDescription = "External Id is a empty string";
-            return false;
         }
-
-        if (string.IsNullOrEmpty(request.FirstName))
+        else if (string.IsNullOrEmpty(request.FirstName))
         {
             errorDescription = "First name is a empty string";
-            return false;
         }
-
-        if (string.IsNullOrEmpty(request.LastName))
+        else if (string.IsNullOrEmpty(request.LastName))
         {
             errorDescription = "Last name is a empty string";
-            return false;
         }
-
-        if (string.IsNullOrEmpty(request.Email))
+        else if (string.IsNullOrEmpty(request.Email))
         {
             errorDescription = "Email is a empty string";
-            return false;
         }
 
-        errorDescription = string.Empty;
-        return true;
+        return string.IsNullOrEmpty(errorDescription);
     }
 }

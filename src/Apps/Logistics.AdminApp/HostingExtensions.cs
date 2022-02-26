@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
-using MagicMvvm;
 using Syncfusion.Blazor;
 using Syncfusion.Licensing;
-using Logistics.WebApi.Client;
 
 namespace Logistics.AdminApp;
 

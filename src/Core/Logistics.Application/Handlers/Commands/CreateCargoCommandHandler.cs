@@ -61,43 +61,33 @@ internal sealed class CreateCargoCommandHandler : RequestHandlerBase<CreateCargo
 
     protected override bool Validate(CreateCargoCommand request, out string errorDescription)
     {
+        errorDescription = string.Empty;
+
         if (string.IsNullOrEmpty(request.AssignedDispatcherId))
         {
             errorDescription = "Dispatcher Id is a empty string";
-            return false;
         }
-
-        if (string.IsNullOrEmpty(request.Source))
+        else if (string.IsNullOrEmpty(request.Source))
         {
             errorDescription = "Source address is a empty string";
-            return false;
         }
-
-        if (string.IsNullOrEmpty(request.Destination))
+        else if (string.IsNullOrEmpty(request.Destination))
         {
             errorDescription = "Destination address is a empty string";
-            return false;
         }
-
-        if (string.IsNullOrEmpty(request.AssignedDispatcherId))
+        else if (string.IsNullOrEmpty(request.AssignedDispatcherId))
         {
             errorDescription = "AssignedDispatcherId is a empty string";
-            return false;
         }
-
-        if (request.PricePerMile < 0)
+        else if (request.PricePerMile < 0)
         {
             errorDescription = "Price per mile should be non-negative value";
-            return false;
         }
-
-        if (request.TotalTripMiles < 0)
+        else if (request.TotalTripMiles < 0)
         {
             errorDescription = "Total trip miles should be non-negative value";
-            return false;
         }
 
-        errorDescription = string.Empty;
-        return true;
+        return string.IsNullOrEmpty(errorDescription);
     }
 }

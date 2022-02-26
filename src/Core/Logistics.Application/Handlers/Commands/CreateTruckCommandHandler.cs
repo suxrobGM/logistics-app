@@ -44,19 +44,17 @@ internal sealed class CreateTruckCommandHandler : RequestHandlerBase<CreateTruck
 
     protected override bool Validate(CreateTruckCommand request, out string errorDescription)
     {
+        errorDescription = string.Empty;
+
         if (request.TruckNumber is null)
         {
             errorDescription = "Truck number is not specified";
-            return false;
         }
-
-        if (request.TruckNumber < 0)
+        else if (request.TruckNumber < 0)
         {
             errorDescription = "Truck number should be non-negative";
-            return false;
         }
-
-        errorDescription = string.Empty;
-        return true;
+        
+        return string.IsNullOrEmpty(errorDescription);
     }
 }
