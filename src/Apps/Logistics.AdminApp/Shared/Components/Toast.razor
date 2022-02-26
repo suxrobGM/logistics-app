@@ -1,0 +1,71 @@
+﻿@{
+    var showClass = IsVisible ? "d-block" : "d-none";
+}
+
+<div class="toast-container p-3 @GetPosition(ToastPosition) @showClass"
+    data-bs-autohide="true"
+    data-bs-delay="@Timeout">
+    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">@HeaderText</strong>
+            <button type="button" class="btn-close" aria-label="Close" @onclick="Close"></button>
+        </div>
+
+        <div class="toast-body">
+            @BodyText
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public bool IsVisible { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> IsVisibleChanged { get; set; }
+
+    [Parameter]
+    public string? HeaderText { get; set; }
+
+    [Parameter]
+    public string? BodyText { get; set; }
+
+    [Parameter]
+    public Position ToastPosition { get; set; }
+
+    [Parameter]
+    public int Timeout { get; set; } = 10000;
+
+    public enum Position
+    {
+        CenterOverlay,
+        BottomRight
+    }
+
+    public void Show(string bodyText, string headerText = "")
+    {
+        HeaderText = headerText;
+        BodyText = bodyText;
+        IsVisible = true;
+        StateHasChanged();
+    }
+
+    private void Close()
+    {
+        HeaderText = string.Empty;
+        BodyText = string.Empty;
+        IsVisible = false;
+        StateHasChanged();
+    }
+
+    private string GetPosition(Position position)
+    {
+        switch (position)
+        {
+            case Position.CenterOverlay: return "toast-center-overlay";
+            case Position.BottomRight: return "toast-bottom-right";
+            default: return "toast-center-overlay";
+        }
+    }
+}

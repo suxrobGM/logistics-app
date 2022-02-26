@@ -1,0 +1,98 @@
+﻿@{
+    var showClass = IsBusy ? Overlay ? "d-flex" : "d-block" : "d-none";
+    var overlayClass = Overlay ? $"spinner-overlay" : "";
+    var size = $"{Size}rem";
+    var flexTypeClass = LabelAlign == Align.Top || LabelAlign == Align.Bottom ?
+                        "flex-column" : "flex-row";
+    var labelMargin = LabelAlign == Align.Left || LabelAlign == Align.Right ?
+                        "mx-2" : "my-2";
+}
+
+<div class="@overlayClass @showClass">
+    <div class="d-flex align-items-center @flexTypeClass">
+        @if (!string.IsNullOrEmpty(Label) && 
+            (LabelAlign == Align.Left || LabelAlign == Align.Top))
+        {
+            <span class="@labelMargin @GetColor(LabelColor)" style="line-height: @size">@Label</span>
+        }
+
+        <span class="spinner-border text-success @CssClass"
+             role="status"
+             style="height: @size; width: @size;">
+            <span class="visually-hidden">Loading...</span>
+        </span>
+
+        @if (!string.IsNullOrEmpty(Label) &&
+            (LabelAlign == Align.Right || LabelAlign == Align.Bottom))
+        {
+            <span class="@labelMargin @GetColor(LabelColor)" style="line-height: @size">@Label</span>
+        }
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public bool IsBusy { get; set; }
+
+    [Parameter]
+    public bool Overlay { get; set; }
+
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    [Parameter]
+    public string? Label { get; set; }
+
+    [Parameter]
+    public Align LabelAlign { get; set; }
+
+    [Parameter]
+    public Color LabelColor { get; set; }
+
+    [Parameter]
+    public double Size { get; set; } = 3;
+
+    [Parameter]
+    public EventCallback<bool> IsBusyChanged { get; set; }
+
+    public enum Align
+    {
+        Left,
+        Right,
+        Top,
+        Bottom
+    }
+
+    public enum Color
+    {
+        Inherit,
+        White,
+        Black
+    }
+
+    public async Task ShowAsync()
+    {
+        IsBusy = true;
+        await IsBusyChanged.InvokeAsync(true);
+        StateHasChanged();
+    }
+
+    public async Task HideAsync()
+    {
+        IsBusy = false;
+        await IsBusyChanged.InvokeAsync(false);
+        StateHasChanged();
+    }
+
+    private string GetColor(Color color)
+    {
+        switch (color)
+        {
+            case Color.Inherit: return "";
+            case Color.White: return "text-white";
+            case Color.Black: return "text-black";
+            default: return "";
+        }
+    }
+}
