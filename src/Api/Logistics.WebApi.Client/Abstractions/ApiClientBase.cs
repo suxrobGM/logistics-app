@@ -129,6 +129,41 @@ internal abstract class ApiClientBase
         }
     }
 
+    protected async Task<TResponse> DeleteRequestAsync<TResponse>(string endpoint,
+        IDictionary<string, string> queries = default!)
+        where TResponse : new()
+    {
+        var content = await DeleteRequestAsync(endpoint, queries);
+        var deserializedObj = Deserialize<TResponse>(content) ?? default;
+
+        if (deserializedObj is null)
+        {
+            throw new ApiException(
+                $"Serialization error, failed to deserialize object from response content:\n{content}");
+        }
+
+        return deserializedObj;
+    }
+
+    protected async Task<string> DeleteRequestAsync(string endpoint,
+        IDictionary<string, string> queries = default!)
+    {
+        var requestEndpoint = endpoint;
+        if (queries.Count > 0)
+            requestEndpoint = QueryUtils.BuildQueryParameters(endpoint, queries);
+
+        try
+        {
+            using var response = await httpClient.DeleteAsync(requestEndpoint);
+            var content = await ReadContentAsync(response);
+            return content;
+        }
+        catch (HttpRequestException e)
+        {
+            throw new ApiException(e.Message);
+        }
+    }
+
     private async Task<string> ReadContentAsync(HttpResponseMessage response)
     {
         var content = await response.Content.ReadAsStringAsync();

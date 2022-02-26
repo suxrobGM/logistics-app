@@ -14,11 +14,6 @@ internal class ApiClient : ApiClientBase, IApiClient
         return GetRequestAsync<CargoDto>($"api/cargo/{id}");
     }
 
-    public Task CreateCargoAsync(CargoDto cargo)
-    {
-        return PostRequestAsync("api/cargo/create", cargo);
-    }
-
     public async Task<PagedDataResult<CargoDto>> GetCargoesAsync(int page = 1, int pageSize = 10)
     {
         var query = new Dictionary<string, string>
@@ -30,9 +25,19 @@ internal class ApiClient : ApiClientBase, IApiClient
         return result;
     }
 
+    public Task CreateCargoAsync(CargoDto cargo)
+    {
+        return PostRequestAsync("api/cargo/create", cargo);
+    }
+    
     public Task UpdateCargoAsync(CargoDto cargo)
     {
         return PutRequestAsync($"api/cargo/update/{cargo.Id}", cargo);
+    }
+
+    public Task DeleteCargoAsync(string id)
+    {
+        return DeleteRequestAsync($"api/cargo/{id}");
     }
 
     #endregion
@@ -43,11 +48,6 @@ internal class ApiClient : ApiClientBase, IApiClient
     public Task<TruckDto> GetTruckAsync(string id)
     {
         return GetRequestAsync<TruckDto>($"api/truck/{id}");
-    }
-
-    public Task CreateTruckAsync(TruckDto truck)
-    {
-        return PostRequestAsync("api/truck/create", truck);
     }
 
     public async Task<PagedDataResult<TruckDto>> GetTrucksAsync(int page = 1, int pageSize = 10)
@@ -61,9 +61,19 @@ internal class ApiClient : ApiClientBase, IApiClient
         return result;
     }
 
+    public Task CreateTruckAsync(TruckDto truck)
+    {
+        return PostRequestAsync("api/truck/create", truck);
+    }
+
     public Task UpdateTruckAsync(TruckDto truck)
     {
         return PutRequestAsync($"api/truck/update/{truck.Id}", truck);
+    }
+
+    public Task DeleteTruckAsync(string id)
+    {
+        return DeleteRequestAsync($"api/truck/{id}");
     }
 
     #endregion
@@ -87,6 +97,16 @@ internal class ApiClient : ApiClientBase, IApiClient
         return result;
     }
 
+    public async Task<bool> UserExistsAsync(string externalId)
+    {
+        var query = new Dictionary<string, string>
+        {
+            {"externalId", externalId }
+        };
+        var result = await GetRequestAsync<DataResult<bool>>("api/user/exists", query);
+        return result.Value;
+    }
+
     public Task CreateUserAsync(UserDto user)
     {
         return PostRequestAsync("api/user/create", user);
@@ -108,16 +128,6 @@ internal class ApiClient : ApiClientBase, IApiClient
         }
 
         return false;
-    }
-
-    public async Task<bool> UserExistsAsync(string externalId)
-    {
-        var query = new Dictionary<string, string>
-        {
-            {"externalId", externalId }
-        };
-        var result = await GetRequestAsync<DataResult<bool>>("api/user/exists", query);
-        return result.Value;
     }
 
     public Task UpdateUserAsync(UserDto user)

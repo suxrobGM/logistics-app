@@ -71,4 +71,19 @@ public class CargoController : ControllerBase
 
         return BadRequest(result.Error);
     }
+
+    [HttpDelete("{id}")]
+    //[RequiredScope("admin.write")]
+    public async Task<IActionResult> Delete(string id)
+    {
+        var result = await mediator.Send(new DeleteCargoCommand
+        {
+            Id = id
+        });
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result.Error);
+    }
 }
