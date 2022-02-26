@@ -2,13 +2,13 @@
 
 namespace Logistics.AdminApp.ViewModels.Pages.User;
 
-public class EditUserViewModel : ViewModelBase
+public class EditUserViewModel : PageViewModelBase
 {
-    private readonly IApiClient apiClient;
 
     public EditUserViewModel(IApiClient apiClient)
+        : base(apiClient)
     {
-        this.apiClient = apiClient;
+        
     }
 
     [Parameter]

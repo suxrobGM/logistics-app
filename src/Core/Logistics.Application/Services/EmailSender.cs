@@ -19,11 +19,11 @@ internal sealed class EmailSender : IEmailSender
         this.options = options ?? throw new ArgumentNullException(nameof(options));
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-        if (string.IsNullOrEmpty(options.SenderDisplayName))
-            throw new ArgumentException("SenderDisplayName is a empty string");
+        if (string.IsNullOrEmpty(options.SenderName))
+            throw new ArgumentException("SenderName is a empty string");
 
-        if (string.IsNullOrEmpty(options.SenderAddress))
-            throw new ArgumentException("SenderAddress is a empty string");
+        if (string.IsNullOrEmpty(options.SenderMail))
+            throw new ArgumentException("SenderMail is a empty string");
 
         if (string.IsNullOrEmpty(options.Host))
             throw new ArgumentException("Host is a empty string");
@@ -48,7 +48,7 @@ internal sealed class EmailSender : IEmailSender
 
         try
         {
-            var from = new MailAddress(options.SenderAddress!, options.SenderDisplayName);
+            var from = new MailAddress(options.SenderMail!, options.SenderName);
             using var mailMessage = new MailMessage(from, new MailAddress(receiverMail))
             {
                 Subject = subject,

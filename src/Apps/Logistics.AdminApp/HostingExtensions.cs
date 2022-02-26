@@ -4,8 +4,6 @@ using Microsoft.Identity.Web.UI;
 using MagicMvvm;
 using Syncfusion.Blazor;
 using Syncfusion.Licensing;
-using Logistics.Application;
-using Logistics.EntityFramework;
 using Logistics.WebApi.Client;
 
 namespace Logistics.AdminApp;
@@ -15,11 +13,7 @@ internal static class HostingExtensions
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         SyncfusionLicenseProvider.RegisterLicense(builder.Configuration["SyncfusionKey"]);
-
-        builder.Services.AddApplicationLayer(builder.Configuration);
-        builder.Services.AddEntityFrameworkLayer(builder.Configuration);
         builder.Services.AddWebApiClient(builder.Configuration);
-
         builder.Services.AddMvvmBlazor();
 
         builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)

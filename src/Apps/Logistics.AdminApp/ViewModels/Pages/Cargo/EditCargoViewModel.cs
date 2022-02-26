@@ -2,13 +2,13 @@
 
 namespace Logistics.AdminApp.ViewModels.Pages.Cargo;
 
-public class EditCargoViewModel : ViewModelBase
+public class EditCargoViewModel : PageViewModelBase
 {
-    private readonly IApiClient apiClient;
 
     public EditCargoViewModel(IApiClient apiClient)
+        : base(apiClient)
     {
-        this.apiClient = apiClient;
+        
     }
 
     [Parameter]

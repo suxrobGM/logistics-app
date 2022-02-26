@@ -2,13 +2,12 @@
 
 namespace Logistics.AdminApp.ViewModels.Pages.Truck;
 
-public class EditTruckViewModel : ViewModelBase
+public class EditTruckViewModel : PageViewModelBase
 {
-    private readonly IApiClient apiClient;
 
     public EditTruckViewModel(IApiClient apiClient)
+        : base(apiClient)
     {
-        this.apiClient = apiClient;
     }
 
     [Parameter]

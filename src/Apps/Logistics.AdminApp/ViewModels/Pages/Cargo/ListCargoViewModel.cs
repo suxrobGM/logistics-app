@@ -1,11 +1,10 @@
 ﻿namespace Logistics.AdminApp.ViewModels.Pages.Cargo;
 
-public class ListCargoViewModel : ViewModelBase
+public class ListCargoViewModel : PageViewModelBase
 {
-    private readonly IApiClient apiClient;
 
     public ListCargoViewModel(IApiClient apiClient)
+        : base(apiClient)
     {
-        this.apiClient = apiClient;
     }
 }

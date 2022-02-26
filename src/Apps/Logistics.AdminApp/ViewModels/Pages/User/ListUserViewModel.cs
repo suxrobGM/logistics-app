@@ -1,11 +1,9 @@
 ﻿namespace Logistics.AdminApp.ViewModels.Pages.User;
 
-public class ListUserViewModel : ViewModelBase
+public class ListUserViewModel : PageViewModelBase
 {
-    private readonly IApiClient apiClient;
-
     public ListUserViewModel(IApiClient apiClient)
+        : base(apiClient)
     {
-        this.apiClient = apiClient;
     }
 }

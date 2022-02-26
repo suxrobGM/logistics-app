@@ -2,10 +2,10 @@
 
 public class EmailSenderOptions
 {
-    public string? SenderAddress { get; set; }
-    public string? SenderDisplayName { get; set; }
+    public string? SenderMail { get; set; }
+    public string? SenderName { get; set; }
     public string? UserName { get; set; }
     public string? Password { get; set; }
     public string? Host { get; set; }
-    public int Port { get; set; } = 537;
+    public int Port { get; set; } = 587;
 }

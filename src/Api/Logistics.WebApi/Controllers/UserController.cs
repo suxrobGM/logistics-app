@@ -15,11 +15,14 @@ public class UserController : ControllerBase
         this.mediator = mediator;
     }
 
-    [HttpPost]
-    //[RequiredScope("admin.write")]
-    public async Task<IActionResult> Create([FromBody] UserDto user)
+    [HttpGet("list")]
+    public async Task<IActionResult> GetList(int page = 1, int pageSize = 10)
     {
-        var result = await mediator.Send(mapper.Map<CreateUserCommand>(user));
+        var result = await mediator.Send(new GetUsersQuery 
+        {
+            Page = page,
+            PageSize = pageSize
+        });
 
         if (result.Success)
             return Ok(result);
@@ -35,6 +38,18 @@ public class UserController : ControllerBase
         {
             ExternalId = externalId
         });
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result.Error);
+    }
+
+    [HttpPost("create")]
+    //[RequiredScope("admin.write")]
+    public async Task<IActionResult> Create([FromBody] UserDto user)
+    {
+        var result = await mediator.Send(mapper.Map<CreateUserCommand>(user));
 
         if (result.Success)
             return Ok(result);
