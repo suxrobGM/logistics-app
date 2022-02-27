@@ -12,32 +12,32 @@
         <div class="card">
             <div class="card-body">
                 <Spinner IsBusy="Model.IsBusy"
-                         Label="Loading Data"
+                         Label="@Model.BusyText"
                          LabelAlign="Spinner.Align.Left"
                          Size="2">
                 </Spinner>
 
-                <EditForm Model="cargo" OnValidSubmit="() => Model.UpdateCargoAsync()">
+                <EditForm Model="cargo" OnValidSubmit="() => Model.UpdateAsync()">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
 
                     <div class="mb-3">
                         <label for="source" class="form-label">Source Address</label>
-                        <InputText id="source" class="form-control" @bind-Value="cargo.Source" />
+                        <InputText id="source" class="form-control" @bind-Value="Model.Cargo.Source" />
                     </div>
                     <div class="mb-3">
                         <label for="destination" class="form-label">Destination Address</label>
-                        <InputText id="destination" class="form-control" @bind-Value="cargo.Destination" />
+                        <InputText id="destination" class="form-control" @bind-Value="Model.Cargo.Destination" />
                     </div>
                     <div class="mb-3">
                         <label for="pickupDate" class="form-label">Pick Up Date</label>
-                        <InputDate id="pickupDate" class="form-control" @bind-Value="cargo.PickUpDate" />
+                        <InputDate id="pickupDate" class="form-control" @bind-Value="Model.Cargo.PickUpDate" />
                     </div>
                     <div class="mb-3">
                         <label for="price" class="form-label">Price Per Mile</label>
                         <div class="input-group">
                             <span class="input-group-text">$$</span>
-                            <InputNumber id="price" class="form-control" @bind-Value="cargo.PricePerMile" 
+                            <InputNumber id="price" class="form-control" @bind-Value="Model.Cargo.PricePerMile" 
                                 min="@CargoConsts.MinPricePerMile" 
                                 max="@CargoConsts.MaxPricePerMile" />
                         </div>
@@ -47,7 +47,7 @@
                         <label for="totalTrip" class="form-label">Total Trip Miles</label>
                         <div class="input-group">
                             <span class="input-group-text">mi</span>
-                            <InputNumber id="totalTrip" class="form-control" @bind-Value="cargo.TotalTripMiles" 
+                            <InputNumber id="totalTrip" class="form-control" @bind-Value="Model.Cargo.TotalTripMiles" 
                                 min="@CargoConsts.MinTripMiles" 
                                 max="@CargoConsts.MaxTripMiles" />
                         </div>
@@ -56,16 +56,16 @@
                     {
                         <div class="mb-3">
                             <label for="completed" class="form-check-label">Is Completed</label>
-                            <InputCheckbox id="completed" class="form-check-input mt-0 ms-1" @bind-Value="cargo.IsCompleted" />
+                            <InputCheckbox id="completed" class="form-check-input mt-0 ms-1" @bind-Value="Model.Cargo.IsCompleted" />
                         </div>
                     }
                     <div class="mb-3">
                         <label for="dispatcher" class="form-label">Assigned Dispatcher</label>
-                        <input id="dispatcher" class="form-control" type="text" value="@cargo.AssignedDispatcherName" readonly />
+                        <input id="dispatcher" class="form-control" type="text" value="@Model.Cargo.AssignedDispatcherName" readonly />
                     </div>
                     <div class="mb-3">
                         <label for="driver" class="form-label">Assigned Driver</label>
-                        @*<InputSelect id="driver" class="form-control" @bind-Value="cargo.AssignedTruckDriverName">
+                        @*<InputSelect id="driver" class="form-control" @bind-Value="Model.Cargo.AssignedTruckDriverName">
                             @foreach (var truck in )
                             <option value="OffDuty">Off Duty</option>
 
@@ -75,7 +75,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="status" class="form-label">Status</label>
-                        <InputSelect id="status" class="form-control" @bind-Value="cargo.Status">
+                        <InputSelect id="status" class="form-control" @bind-Value="Model.Cargo.Status">
                             <option value="OffDuty">Off Duty</option>
                             <option value="Loaded">Loaded</option>
                             <option value="Ready">Ready</option>

@@ -1,9 +1,61 @@
 ﻿@page "/edit-truck/{id?}"
 @inherits ViewBase<EditTruckViewModel>
 
-<h3>Edit Truck</h3>
+@{
+    var headText = Model.EditMode ? "Edit" : "Add a new";
+    var submitBtnText = Model.EditMode ? "Save" : "Submit";
+}
+<h2>@headText Truck</h2>
+<hr />
+<div class="row">
+    <div class="col-12 col-md-10 col-lg-8 col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <Spinner IsBusy="Model.IsBusy"
+                         Label="@Model.BusyText"
+                         LabelAlign="Spinner.Align.Left"
+                         Size="2">
+                </Spinner>
+
+                <EditForm Model="truck" OnValidSubmit="() => Model.UpdateAsync()">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="mb-3">
+                        <label for="truckNumber" class="form-label">Truck Number</label>
+                        <InputNumber id="truckNumber" class="form-control" @bind-Value="Model.Truck.TruckNumber"
+                                     min="1" max="9999" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="destination" class="form-label">Truck Driver</label>
+                        <InputText id="destination" class="form-control" @bind-Value="Model.Truck.DriverName" />
+                    </div>
+                </EditForm>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-primary" type="submit">
+                    <i class="bi bi-pencil-square"></i> @submitBtnText
+                </button>
+                <NavLink class="btn btn-primary" href="/list-cargo">
+                    <i class="bi bi-arrow-left-square"></i> Back
+                </NavLink>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
+    private TruckDto truck = new();
+
     [Parameter]
     public string? Id { get; set; }
+
+    [CascadingParameter]
+    public Toast? Toast { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Model.Truck = truck;
+    }
 }

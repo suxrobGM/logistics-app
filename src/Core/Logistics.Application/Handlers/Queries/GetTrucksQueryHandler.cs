@@ -22,16 +22,17 @@ internal sealed class GetTrucksQueryHandler : RequestHandlerBase<GetTrucksQuery,
         var totalItems = truckRepository.GetQuery().Count();
 
         var items = truckRepository.GetQuery()
-            .Skip((request.Page - 1) * request.PageSize)
-            .Take(request.PageSize)
-            .Select(i => new TruckDto
-            {
-                Id = i.Id,
-                TruckNumber = i.TruckNumber,
-                DriverId = i.DriverId,
-                CargoesIds = cargoesIdsList
-            })
-            .ToArray();
+                .Skip((request.Page - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .OrderBy(i => i.TruckNumber)
+                .Select(i => new TruckDto
+                {
+                    Id = i.Id,
+                    TruckNumber = i.TruckNumber,
+                    DriverId = i.DriverId,
+                    CargoesIds = cargoesIdsList
+                })
+                .ToArray();
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
         return Task.FromResult(new PagedDataResult<TruckDto>(items, totalItems, totalPages));

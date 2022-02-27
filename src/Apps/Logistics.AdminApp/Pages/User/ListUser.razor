@@ -1,8 +1,67 @@
 ﻿@page "/list-user"
 @inherits ViewBase<ListUserViewModel>
 
-<h3>Users List</h3>
+<h2>Users List</h2>
+<hr />
 
-@code {
+<Spinner IsBusy="Model.IsBusy"
+         Label="@Model.BusyText"
+         LabelAlign="Spinner.Align.Left"
+         Size="2">
+</Spinner>
 
+@if (!Model.IsBusy)
+{
+    <div class="row">
+        <div class="col-12 col-sm-10 col-md-5 col-xl-4">
+            <p>Total records: @Model.TotalRecords</p>
+
+            <div class="input-group mb-3">
+                <input class="form-control" type="text" placeholder="Search...">
+                <button class="input-group-text" id="search-btn">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <SfGrid DataSource="Model.Users" AllowSorting="true" AllowResizing="true">
+                <GridColumns>
+                    <GridColumn Field="@nameof(UserDto.UserName)"
+                            HeaderText="User Name">
+                    </GridColumn>
+                    <GridColumn Field="@nameof(UserDto.FirstName)"
+                            HeaderText="First Name">
+                    </GridColumn>
+                    <GridColumn Field="@nameof(UserDto.LastName)"
+                            HeaderText="Last Name">
+                    </GridColumn>
+                    <GridColumn Field="@nameof(UserDto.Email)"
+                            HeaderText="Email">
+                    </GridColumn>
+                    <GridColumn Field="@nameof(UserDto.PhoneNumber)"
+                            HeaderText="Phone Number">
+                    </GridColumn>
+                    <GridColumn HeaderText="Actions"
+                            HeaderTextAlign="TextAlign.Center"
+                            Width="180">
+                        <Template>
+                            @{
+                                var entity = context as UserDto;
+                                var editPageLink = $"/edit-user/{entity?.Id}";
+                            }
+
+                            <div class="d-flex justify-content-center">
+                                <NavLink class="btn btn-primary"
+                                     href="@editPageLink">
+                                    Edit
+                                </NavLink>
+                            </div>
+                        </Template>
+                    </GridColumn>
+                </GridColumns>
+            </SfGrid>
+        </div>
+    </div>
 }

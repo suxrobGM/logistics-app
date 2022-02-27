@@ -1,8 +1,71 @@
 ﻿@page "/list-truck"
 @inherits ViewBase<ListTruckViewModel>
 
-<h3>Trucks List</h3>
+<h2>Trucks List</h2>
+<hr />
 
-@code {
+<Spinner IsBusy="Model.IsBusy"
+         Label="@Model.BusyText"
+         LabelAlign="Spinner.Align.Left"
+         Size="2">
+</Spinner>
 
+@if (!Model.IsBusy)
+{
+    <div class="row">
+        <div class="col-12 col-sm-10 col-md-5 col-xl-4">
+            <p>Total records: @Model.TotalRecords</p>
+
+            <div class="input-group mb-3">
+                <input class="form-control" type="text" placeholder="Search...">
+                <button class="input-group-text" id="search-btn">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <SfGrid DataSource="Model.Trucks" AllowSorting="true" AllowResizing="true">
+                <GridColumns>
+                    <GridColumn Field="@nameof(TruckDto.TruckNumber)"
+                            HeaderText="Truck Number">
+                    </GridColumn>
+                    <GridColumn Field="@nameof(TruckDto.DriverName)"
+                            HeaderText="Driver">
+                    </GridColumn>
+                    <GridColumn
+                            HeaderText="Total Cargoes"
+                            TextAlign="TextAlign.Center">
+                            <Template>
+                                @{
+                                    var truck = context as TruckDto;
+                                }
+                                <span>@(truck?.CargoesIds?.Count ?? 0)</span>
+                            </Template>
+                    </GridColumn>
+                    <GridColumn HeaderText="Actions"
+                            HeaderTextAlign="TextAlign.Center"
+                            Width="180">
+                        <Template>
+                            @{
+                                var entity = context as TruckDto;
+                                var editPageLink = $"/edit-truck/{entity?.Id}";
+                            }
+
+                            <div class="d-flex justify-content-center">
+                                <NavLink class="btn btn-primary"
+                                     href="@editPageLink">
+                                    Edit
+                                </NavLink>
+                                <button class="btn btn-danger ms-2">
+                                    Delete
+                                </button>
+                            </div>
+                        </Template>
+                    </GridColumn>
+                </GridColumns>
+            </SfGrid>
+        </div>
+    </div>
 }

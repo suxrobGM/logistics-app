@@ -2,6 +2,6 @@
 
 public abstract class BaseFilter
 {
-    public bool ContainsMode = true;
-    public bool IgnoreCaseSensitive = true;
+    public bool ContainsMode { get; set; } = true;
+    public bool IgnoreCaseSensitive { get; set; } = true;
 }

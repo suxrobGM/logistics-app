@@ -5,7 +5,7 @@
 <hr />
 
 <Spinner IsBusy="Model.IsBusy"
-         Label="Loading Data"
+         Label="@Model.BusyText"
          LabelAlign="Spinner.Align.Left"
          Size="2">
 </Spinner>
@@ -26,7 +26,7 @@
     </div>
     <div class="row">
         <div class="col-12">
-            <SfGrid TValue="CargoDto" DataSource="Model.Cargoes" AllowSorting="true" AllowResizing="true">
+            <SfGrid DataSource="Model.Cargoes" AllowSorting="true" AllowResizing="true">
                 <GridColumns>
                     <GridColumn Field="@nameof(CargoDto.Source)"
                             HeaderText="Source Address"
@@ -34,6 +34,14 @@
                     </GridColumn>
                     <GridColumn Field="@nameof(CargoDto.Destination)"
                             HeaderText="Destination Address"
+                            Width="200">
+                    </GridColumn>
+                    <GridColumn Field="@nameof(CargoDto.AssignedTruckDriverName)"
+                            HeaderText="Assigned Driver"
+                            Width="200">
+                    </GridColumn>
+                    <GridColumn Field="@nameof(CargoDto.AssignedDispatcherName)"
+                            HeaderText="Assigned Dispatcher"
                             Width="200">
                     </GridColumn>
                     <GridColumn Field="@nameof(CargoDto.PricePerMile)"

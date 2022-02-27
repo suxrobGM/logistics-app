@@ -15,6 +15,7 @@ public class EditCargoViewModel : PageViewModelBase
     {
         this.authStateProvider = authStateProvider;
         Trucks = new List<TruckDto>();
+        Cargo = new CargoDto();
     }
 
     [Parameter]
@@ -26,7 +27,7 @@ public class EditCargoViewModel : PageViewModelBase
 
     #region Binding properties
 
-    public CargoDto? Cargo { get; set; }
+    public CargoDto Cargo { get; set; }
     public IEnumerable<TruckDto> Trucks { get; set; }
     public bool EditMode => !string.IsNullOrEmpty(Id);
 
@@ -38,7 +39,11 @@ public class EditCargoViewModel : PageViewModelBase
         if (EditMode)
         {
             IsBusy = true;
-            Cargo = await FetchCargoAsync(Id!);
+            var cargo = await FetchCargoAsync(Id!);
+
+            if (cargo != null)
+                Cargo = cargo;
+
             IsBusy = false;
         }  
     }
@@ -54,7 +59,7 @@ public class EditCargoViewModel : PageViewModelBase
         }
     }
 
-    public async Task UpdateCargoAsync()
+    public async Task UpdateAsync()
     {
         IsBusy = true;
         if (EditMode)
@@ -84,7 +89,7 @@ public class EditCargoViewModel : PageViewModelBase
         }
     }
 
-    private Task<CargoDto> FetchCargoAsync(string id)
+    private Task<CargoDto?> FetchCargoAsync(string id)
     {
         return Task.Run(async () =>
         {

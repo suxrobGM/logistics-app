@@ -9,9 +9,10 @@ internal class ApiClient : ApiClientBase, IApiClient
 
     #region Cargo API
 
-    public Task<CargoDto> GetCargoAsync(string id)
+    public async Task<CargoDto?> GetCargoAsync(string id)
     {
-        return GetRequestAsync<CargoDto>($"api/cargo/{id}");
+        var result = await GetRequestAsync<DataResult<CargoDto>>($"api/cargo/{id}");
+        return result.Value;
     }
 
     public async Task<PagedDataResult<CargoDto>> GetCargoesAsync(int page = 1, int pageSize = 10)
@@ -45,9 +46,10 @@ internal class ApiClient : ApiClientBase, IApiClient
 
     #region Truck API
 
-    public Task<TruckDto> GetTruckAsync(string id)
+    public async Task<TruckDto?> GetTruckAsync(string id)
     {
-        return GetRequestAsync<TruckDto>($"api/truck/{id}");
+        var result = await GetRequestAsync<DataResult<TruckDto>>($"api/truck/{id}");
+        return result.Value;
     }
 
     public async Task<PagedDataResult<TruckDto>> GetTrucksAsync(int page = 1, int pageSize = 10)
@@ -81,9 +83,10 @@ internal class ApiClient : ApiClientBase, IApiClient
 
     #region User API
 
-    public Task<UserDto> GetUserAsync(string id)
+    public async Task<UserDto?> GetUserAsync(string id)
     {
-        return GetRequestAsync<UserDto>($"api/user/{id}");
+        var result = await GetRequestAsync<DataResult<UserDto>>($"api/user/{id}");
+        return result.Value;
     }
 
     public async Task<PagedDataResult<UserDto>> GetUsersAsync(int page = 1, int pageSize = 10)

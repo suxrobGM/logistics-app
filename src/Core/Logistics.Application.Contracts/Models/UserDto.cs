@@ -29,5 +29,5 @@ public class UserDto
     [Phone]
     public string? PhoneNumber { get; set; }
 
-    public string GetFullName() => $"{FirstName} {LastName}";
+    public string GetFullName() => $"{FirstName} {LastName}"; 
 }
