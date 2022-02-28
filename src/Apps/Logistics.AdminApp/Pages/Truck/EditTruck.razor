@@ -27,8 +27,14 @@
                                      min="1" max="9999" />
                     </div>
                     <div class="mb-3">
-                        <label for="destination" class="form-label">Truck Driver</label>
-                        <InputText id="destination" class="form-control" @bind-Value="Model.Truck.DriverName" />
+                        <label for="driver" class="form-label">Truck Driver</label>
+                        <InputSelect id="driver" class="form-select" searchable="Search driver name" @bind-Value="Model.Truck.DriverId">
+                            <option value=""></option>
+                            @foreach (var driver in Model.Drivers)
+                            {
+                                <option value="@driver.Id">@driver.GetFullName()</option>
+                            }
+                        </InputSelect>
                     </div>
                 </EditForm>
             </div>
@@ -36,7 +42,7 @@
                 <button class="btn btn-primary" type="submit">
                     <i class="bi bi-pencil-square"></i> @submitBtnText
                 </button>
-                <NavLink class="btn btn-primary" href="/list-cargo">
+                <NavLink class="btn btn-primary" href="/list-truck">
                     <i class="bi bi-arrow-left-square"></i> Back
                 </NavLink>
             </div>

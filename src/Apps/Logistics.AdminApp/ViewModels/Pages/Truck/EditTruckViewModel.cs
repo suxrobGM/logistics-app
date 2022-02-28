@@ -10,6 +10,7 @@ public class EditTruckViewModel : PageViewModelBase
         : base(apiClient)
     {
         Truck = new TruckDto();
+        _drivers = new List<UserDto>();
     }
 
     [Parameter]
@@ -22,6 +23,14 @@ public class EditTruckViewModel : PageViewModelBase
     #region Binding properties
 
     public TruckDto Truck { get; set; }
+
+    private IEnumerable<UserDto> _drivers;
+    public IEnumerable<UserDto> Drivers 
+    {
+        get => _drivers;
+        set => SetProperty(ref _drivers, value);
+    }
+
     public bool EditMode => !string.IsNullOrEmpty(Id);
 
     #endregion
@@ -38,6 +47,18 @@ public class EditTruckViewModel : PageViewModelBase
                 Truck = truck;
 
             IsBusy = false;
+        }
+    }
+
+    public override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        var pagedResult = await FetchDriversAsync();
+        if (pagedResult.Items != null)
+        {
+            Drivers = pagedResult.Items;
         }
     }
 
@@ -62,6 +83,14 @@ public class EditTruckViewModel : PageViewModelBase
         return Task.Run(async () =>
         {
             return await apiClient.GetTruckAsync(id);
+        });
+    }
+
+    private Task<PagedDataResult<UserDto>> FetchDriversAsync()
+    {
+        return Task.Run(async () =>
+        {
+            return await apiClient.GetUsersAsync();
         });
     }
 }
