@@ -1,69 +1,68 @@
-﻿@if (TotalPages > 1)
-{
-    var hasPrevious = CurrentPage > 1 && TotalPages > 1;
-    var hasNext = CurrentPage < TotalPages;
-
-    <div class="pagination">
-        @if (hasPrevious)
-        {
-            <div class="page-item">
-                <a class="page-link" @onclick="() => PagerButtonClicked(CurrentPage - 1)">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </div>
-        }
-        else
-        {
-            <div class="page-item disabled">
-                <a class="page-link">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </div>
-        }
-
-        @{
-            var start = TotalPages <= 4 ? 1 :
-                Math.Max(Math.Min(CurrentPage - 2, TotalPages - 3), 1);
-
-            var finish = TotalPages <= 4 ? TotalPages :
-                Math.Min(Math.Max(CurrentPage + 1, 4), TotalPages);
-        }
-
-        @for (var i = start; i <= finish; i++)
-        {
-            var currentIndex = i;
-            if (i == CurrentPage)
-            {
-                <div class="page-item active">
-                    <a class="page-link">@i</a>
-                </div>
-            }
-            else
-            {
-                <div class="page-item">
-                    <a class="page-link" @onclick="() => PagerButtonClicked(currentIndex)">@i</a>
-                </div>
-            }
-        }
-
-        @if (hasNext)
-        {
-            <div class="page-item">
-                <a class="page-link" @onclick="() => PagerButtonClicked(CurrentPage + 1)">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </div>
-        }
-        else
-        {
-            <div class="page-item disabled">
-                <a class="page-link">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </div>
-        }
-    </div>
+﻿@{
+    var hasPrevious = CurrentPage > 1 && PagesCount > 1;
+    var hasNext = CurrentPage < PagesCount;
 }
+
+<div class="pagination">
+    @if (hasPrevious)
+    {
+        <div class="page-item">
+            <a class="page-link" @onclick="() => PagerButtonClicked(CurrentPage - 1)">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="page-item disabled">
+            <a class="page-link">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </div>
+    }
+
+    @{
+        var start = PagesCount <= 4 ? 1 :
+        Math.Max(Math.Min(CurrentPage - 2, PagesCount - 3), 1);
+
+        var finish = PagesCount <= 4 ? PagesCount :
+        Math.Min(Math.Max(CurrentPage + 1, 4), PagesCount);
+    }
+
+    @for (var i = start; i <= finish; i++)
+    {
+        var currentIndex = i;
+        if (i == CurrentPage)
+        {
+            <div class="page-item active">
+                <a class="page-link">@i</a>
+            </div>
+        }
+        else
+        {
+            <div class="page-item">
+                <a class="page-link" @onclick="() => PagerButtonClicked(currentIndex)">@i</a>
+            </div>
+        }
+    }
+
+    @if (hasNext)
+    {
+        <div class="page-item">
+            <a class="page-link" @onclick="() => PagerButtonClicked(CurrentPage + 1)">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="page-item disabled">
+            <a class="page-link">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </div>
+    }
+</div>
 
 @code {
 
@@ -71,7 +70,7 @@
     public int CurrentPage { get; set; } = 1;
 
     [Parameter]
-    public int TotalPages { get; set; } = 2;
+    public int PagesCount { get; set; } = 2;
 
     [Parameter]
     public Func<int, Task>? OnPageChanged { get; set; }

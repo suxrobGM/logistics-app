@@ -64,4 +64,25 @@
             </SfGrid>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-12">
+            <Grid DataSource="Model.Users">
+                <Columns>
+                    <Column TData="UserDto" Caption="UserName" Field="i => i.UserName"></Column>
+                    <Column TData="UserDto" Caption="First Name" Field="i => i.FirstName"></Column>
+                    <Column TData="UserDto" Caption="Last Name" Field="i => i.LastName"></Column>
+                    <Column TData="UserDto" Caption="Email" Field="i => i.Email"></Column>
+                    <Column TData="UserDto" Caption="Total Cargoes">
+                        <Template>
+                            @{
+                                var user = context as UserDto;
+                            }
+                            <span>@(user?.UserName)</span>
+                        </Template>
+                    </Column>
+                </Columns>
+            </Grid>
+        </div>
+    </div>
 }

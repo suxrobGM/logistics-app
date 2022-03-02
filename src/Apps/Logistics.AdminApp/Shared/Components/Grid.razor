@@ -1,0 +1,55 @@
+﻿@typeparam TData
+
+<CascadingValue IsFixed="true" Value="this">@Columns</CascadingValue>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr class="bg-light">
+            @foreach (var column in columns)
+            {
+                @column.HeaderTemplate
+            }
+        </tr>
+    </thead>
+    
+    <tbody>
+        @{
+            if (DataSource != null)
+            {
+                foreach (var item in DataSource)
+                {
+                    @* Use @key to help the diff algorithm when updating the collection *@
+                    <tr @key="item.GetHashCode()">
+                        @foreach (var column in columns)
+                        {
+                            @column.CellTemplate(item)
+                        }
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    private readonly List<Column<TData>> columns = new List<Column<TData>>();
+
+    [Parameter]
+    public IEnumerable<TData>? DataSource { get; set; }
+
+    [Parameter]
+    public RenderFragment? Columns { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        StateHasChanged();
+    }
+
+    internal void AddColumn(Column<TData> column)
+    {
+        columns.Add(column);
+    }
+}
