@@ -2,7 +2,7 @@
     font-size: 14px;
 }
 
-.grid .grid-head-cell {
+.grid .grid-header-row {
     white-space: nowrap;
     cursor: pointer;
     -moz-user-select: none;
@@ -11,6 +11,10 @@
     user-select: none;
 }
 
-.grid .grid-body-cell {
+.grid .grid-body-row {
     vertical-align: middle;
+}
+
+.border-right-none  {
+    border-right: hidden !important;
 }

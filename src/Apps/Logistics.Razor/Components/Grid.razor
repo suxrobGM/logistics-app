@@ -4,9 +4,10 @@
 
 <table class="grid table table-bordered table-hover">
     <thead>
-        <tr class="grid-head-cell bg-light">
-            @foreach (var column in columns)
+        <tr class="grid-header-row bg-light">
+            @for (var i = 0; i < columns.Count; i++)
             {
+                var column = columns[i];
                 var columnWidth = column.Width != null ? $"min-width: {column.Width}px; wdith: {column.Width}px" : "";
 
                 <th style="@columnWidth">
@@ -21,11 +22,14 @@
         {
             foreach (var item in DataSource)
             {
-                @* Use @key to help the diff algorithm when updating the collection *@
-                <tr @key="item.GetHashCode()" class="grid-body-cell">
-                    @foreach (var column in columns)
+                <tr @key="item.GetHashCode()" class="grid-body-row">
+                    @for (var i = 0; i < columns.Count; i++)
                     {
-                        <td>
+                        var column = columns[i];
+                        var borderCls = UseBorderlessCells && i != columns.Count - 1 ? 
+                                        "border-right-none" : "";
+
+                        <td class="@borderCls">
                             @column.CellTemplate(item)
                         </td>
                     }
@@ -51,6 +55,9 @@
 
     [Parameter]
     public RenderFragment? Columns { get; set; }
+
+    [Parameter]
+    public bool UseBorderlessCells { get; set; } = true;
 
     protected override void OnAfterRender(bool firstRender)
     {
