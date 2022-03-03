@@ -14,8 +14,19 @@
 
                 if (AllowSorting)
                 {
-                    <th style="@columnWidth" @onclick="() => Sort(column.Field, SortDirection.Ascending)">
-                        @column.HeaderTemplate
+                    <th style="@columnWidth" @onclick="() => Sort(column)">
+                        <span>
+                            @column.HeaderTemplate
+                            @if (column.SortDirection == SortDirection.Ascending)
+                            {
+                                <i class="bi bi-arrow-up"></i>
+                            }
+                            else if (column.SortDirection == SortDirection.Descending)
+                            {
+                                <i class="bi bi-arrow-down"></i>
+                            }
+                        </span>
+
                     </th>
                 }
                 else
@@ -29,10 +40,22 @@
     </thead>
 
     <tbody>
-        @if (DataSource != null)
+        @if (DataSource == null || !DataSource.Any())
+        {
+            <tr>
+                <td colspan="@columns.Count">
+                    <span>No records to display</span>
+                </td>
+            </tr>
+        }
+        else
         {
             foreach (var item in DataSource)
             {
+                if (item == null)
+                {
+                    continue;
+                }
                 <tr @key="item.GetHashCode()" class="grid-body-row">
                     @for (var i = 0; i < columns.Count; i++)
                     {
@@ -47,62 +70,5 @@
                 </tr>
             }
         }
-        else
-        {
-            <tr>
-                <td colspan="@columns.Count">
-                    <span>No records to display</span>
-                </td>
-            </tr>
-        }
     </tbody>
 </table>
-
-@code {
-    private readonly List<Column> columns = new List<Column>();
-
-    [Parameter]
-    public IEnumerable<TData>? DataSource { get; set; }
-
-    [Parameter]
-    public RenderFragment? Columns { get; set; }
-
-    [Parameter]
-    public bool UseBorderlessCells { get; set; } = true;
-
-    [Parameter]
-    public bool AllowSorting { get; set; }
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (!firstRender)
-            return;
-
-        StateHasChanged();
-    }
-
-    internal void AddColumn(Column column)
-    {
-        columns.Add(column);
-    }
-
-    public void Sort(string? columnName, SortDirection direction)
-    {
-        if (DataSource == null || string.IsNullOrEmpty(columnName))
-            return;
-
-        var prop = TypeDescriptor.GetProperties(typeof(TData)).Find(columnName, false);
-
-        if (prop == null)
-            return;
-
-        if (direction == SortDirection.Ascending)
-        {
-            DataSource = DataSource.OrderBy(i => prop.GetValue(i));
-        }
-        else
-        {
-            DataSource = DataSource.OrderByDescending(i => prop.GetValue(i));
-        }
-    }
-}

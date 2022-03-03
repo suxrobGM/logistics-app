@@ -1,8 +1,10 @@
-﻿@using System.Reflection
-@using Microsoft.AspNetCore.Components.Rendering
-@namespace Logistics.Blazor.Grids
+﻿using System.Reflection;
+using Microsoft.AspNetCore.Components.Rendering;
 
-@code {
+namespace Logistics.Blazor.Grids;
+
+public partial class Column : ComponentBase
+{
     private RenderFragment? headerTemplate;
     private RenderFragment<object>? cellTemplate;
 
@@ -21,6 +23,8 @@
     [Parameter]
     public string? Field { get; set; }
 
+    public SortDirection? SortDirection { get; set; }
+
     [Parameter]
     public RenderFragment<object>? Template { get; set; }
 
@@ -31,7 +35,7 @@
     protected override void OnInitialized()
     {
         var flags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
-        OwnerGrid?.GetType().GetMethod("AddColumn", flags)?.Invoke(OwnerGrid, new[] {this});
+        OwnerGrid?.GetType().GetMethod("AddColumn", flags)?.Invoke(OwnerGrid, new[] { this });
     }
 
     private void RenderHeader(RenderTreeBuilder builder)
