@@ -1,4 +1,6 @@
-﻿@typeparam TData
+﻿@using System.ComponentModel
+@namespace Logistics.Blazor.Grids
+@typeparam TData
 
 <CascadingValue IsFixed="true" Value="this">@Columns</CascadingValue>
 
@@ -10,13 +12,22 @@
                 var column = columns[i];
                 var columnWidth = column.Width != null ? $"min-width: {column.Width}px; wdith: {column.Width}px" : "";
 
-                <th style="@columnWidth">
-                    @column.HeaderTemplate
-                </th> 
+                if (AllowSorting)
+                {
+                    <th style="@columnWidth" @onclick="() => Sort(column.Field, SortDirection.Ascending)">
+                        @column.HeaderTemplate
+                    </th>
+                }
+                else
+                {
+                    <th style="@columnWidth">
+                        @column.HeaderTemplate
+                    </th>
+                }
             }
         </tr>
     </thead>
-    
+
     <tbody>
         @if (DataSource != null)
         {
@@ -26,8 +37,8 @@
                     @for (var i = 0; i < columns.Count; i++)
                     {
                         var column = columns[i];
-                        var borderCls = UseBorderlessCells && i != columns.Count - 1 ? 
-                                        "border-right-none" : "";
+                        var borderCls = UseBorderlessCells && i != columns.Count - 1 ?
+                        "border-right-none" : "";
 
                         <td class="@borderCls">
                             @column.CellTemplate(item)
@@ -59,6 +70,9 @@
     [Parameter]
     public bool UseBorderlessCells { get; set; } = true;
 
+    [Parameter]
+    public bool AllowSorting { get; set; }
+
     protected override void OnAfterRender(bool firstRender)
     {
         if (!firstRender)
@@ -70,5 +84,25 @@
     internal void AddColumn(Column column)
     {
         columns.Add(column);
+    }
+
+    public void Sort(string? columnName, SortDirection direction)
+    {
+        if (DataSource == null || string.IsNullOrEmpty(columnName))
+            return;
+
+        var prop = TypeDescriptor.GetProperties(typeof(TData)).Find(columnName, false);
+
+        if (prop == null)
+            return;
+
+        if (direction == SortDirection.Ascending)
+        {
+            DataSource = DataSource.OrderBy(i => prop.GetValue(i));
+        }
+        else
+        {
+            DataSource = DataSource.OrderByDescending(i => prop.GetValue(i));
+        }
     }
 }

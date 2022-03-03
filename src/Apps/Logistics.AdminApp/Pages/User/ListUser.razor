@@ -67,7 +67,7 @@
 
     <div class="row mt-3">
         <div class="col-12">
-            <Grid DataSource="Model.Users">
+            <Grid DataSource="users">
                 <Columns>
                     <Column Caption="User Name" Field="UserName"></Column>
                     <Column Caption="First Name" Field="FirstName"></Column>
@@ -93,4 +93,24 @@
             </Grid>
         </div>
     </div>
+}
+
+@code {
+    private List<UserDto> users = new();
+
+    protected override void OnInitialized()
+    {
+        var rand = new Random();
+        for (var i = 1; i <= 20; i++)
+        {
+            users.Add(new()
+            {
+                UserName = $"User{i}",
+                FirstName = $"First Name {i}",
+                LastName = $"Last Name {i}",
+                Email = $"Email_{i}@gmail.com",
+                PhoneNumber = rand.NextInt64(1_111_111, 9_999_999).ToString()
+            });
+        }
+    }
 }

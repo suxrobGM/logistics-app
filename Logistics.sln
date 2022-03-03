@@ -39,7 +39,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.WebApi", "src\Api
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Domain.Shared", "src\Core\Logistics.Domain.Shared\Logistics.Domain.Shared.csproj", "{EF791BC5-B321-47DA-BDFF-29FA15547ACC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.Razor", "src\Apps\Logistics.Razor\Logistics.Razor.csproj", "{6FA09C6F-13C7-483F-8CEA-0FA1987A38C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Blazor", "src\Apps\Logistics.Blazor\Logistics.Blazor.csproj", "{6FA09C6F-13C7-483F-8CEA-0FA1987A38C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
