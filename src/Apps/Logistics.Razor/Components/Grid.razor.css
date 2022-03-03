@@ -1,0 +1,16 @@
+﻿.grid {
+    font-size: 14px;
+}
+
+.grid .grid-head-cell {
+    white-space: nowrap;
+    cursor: pointer;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.grid .grid-body-cell {
+    vertical-align: middle;
+}

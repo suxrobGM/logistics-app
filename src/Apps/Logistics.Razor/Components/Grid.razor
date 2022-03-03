@@ -2,9 +2,9 @@
 
 <CascadingValue IsFixed="true" Value="this">@Columns</CascadingValue>
 
-<table class="table table-bordered table-hover">
+<table class="grid table table-bordered table-hover">
     <thead>
-        <tr class="bg-light" style="white-space: nowrap">
+        <tr class="grid-head-cell bg-light">
             @foreach (var column in columns)
             {
                 var columnWidth = column.Width != null ? $"min-width: {column.Width}px; wdith: {column.Width}px" : "";
@@ -22,7 +22,7 @@
             foreach (var item in DataSource)
             {
                 @* Use @key to help the diff algorithm when updating the collection *@
-                <tr @key="item.GetHashCode()" style="vertical-align: middle">
+                <tr @key="item.GetHashCode()" class="grid-body-cell">
                     @foreach (var column in columns)
                     {
                         <td>
