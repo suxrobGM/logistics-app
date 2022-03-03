@@ -1,5 +1,4 @@
-﻿using Logistics.AdminApp.Shared.Components;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Logistics.AdminApp.ViewModels.Pages.Cargo;
