@@ -65,20 +65,28 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row mt-3">
         <div class="col-12">
             <Grid DataSource="Model.Users">
                 <Columns>
-                    <Column TData="UserDto" Caption="UserName" Field="i => i.UserName"></Column>
-                    <Column TData="UserDto" Caption="First Name" Field="i => i.FirstName"></Column>
-                    <Column TData="UserDto" Caption="Last Name" Field="i => i.LastName"></Column>
-                    <Column TData="UserDto" Caption="Email" Field="i => i.Email"></Column>
-                    <Column TData="UserDto" Caption="Total Cargoes">
+                    <Column Caption="User Name" Field="UserName"></Column>
+                    <Column Caption="First Name" Field="FirstName"></Column>
+                    <Column Caption="Last Name" Field="LastName"></Column>
+                    <Column Caption="Email" Field="Email"></Column>
+                    <Column Caption="Phone Number" Field="PhoneNumber"></Column>
+                    <Column Caption="Actions" Width="180">
                         <Template>
                             @{
-                                var user = context as UserDto;
+                                var entity = context as UserDto;
+                                var editPageLink = $"/edit-user/{entity?.Id}";
                             }
-                            <span>@(user?.UserName)</span>
+
+                            <div class="d-flex justify-content-center">
+                                <NavLink class="btn btn-primary"
+                                     href="@editPageLink">
+                                    Edit
+                                </NavLink>
+                            </div>
                         </Template>
                     </Column>
                 </Columns>

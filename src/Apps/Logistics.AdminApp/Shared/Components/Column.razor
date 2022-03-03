@@ -1,12 +1,9 @@
-﻿@using System.Linq.Expressions
-@typeparam TData
-
+﻿@using System.Reflection
+@using Microsoft.AspNetCore.Components.Rendering
 
 @code {
-    private Func<TData, object>? compiledExpression;
-    private Expression? lastCompiledExpression;
     private RenderFragment? headerTemplate;
-    private RenderFragment<TData>? cellTemplate;
+    private RenderFragment<object>? cellTemplate;
 
     [Parameter]
     public string? Caption { get; set; }
@@ -14,84 +11,53 @@
     [Parameter]
     public string? Format { get; set; }
 
+    [Parameter]
+    public int? Width { get; set; }
+
     [CascadingParameter]
-    private Grid<TData>? OwnerGrid { get; set; }
+    private object? OwnerGrid { get; set; }
 
     [Parameter]
-    public Expression<Func<TData, object>>? Field { get; set; }
+    public string? Field { get; set; }
 
     [Parameter]
-    public RenderFragment<TData>? Template { get; set; }
+    public RenderFragment<object>? Template { get; set; }
 
-    
-    // Add the column to the parent Grid component.
-    // OnInitialized is called only once in the component lifecycle
+    internal RenderFragment HeaderTemplate => headerTemplate ??= RenderHeader;
+
+    internal RenderFragment<object> CellTemplate => cellTemplate ??= RenderCell;
+
     protected override void OnInitialized()
     {
-        OwnerGrid?.AddColumn(this);
+        var flags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
+        OwnerGrid?.GetType().GetMethod("AddColumn", flags)?.Invoke(OwnerGrid, new[] {this});
     }
 
-    protected override void OnParametersSet()
+    private void RenderHeader(RenderTreeBuilder builder)
     {
-        if (lastCompiledExpression != Field)
+        var caption = Caption;
+        if (string.IsNullOrEmpty(caption) && !string.IsNullOrEmpty(Field))
         {
-            compiledExpression = Field?.Compile();
-            lastCompiledExpression = Field;
+            caption = Field;
         }
+
+        builder.AddContent(0, caption);
     }
 
-    internal RenderFragment HeaderTemplate
+    private RenderFragment RenderCell(object item)
     {
-        get
+        return builder =>
         {
-            return headerTemplate ??= (builder =>
+            if (!string.IsNullOrEmpty(Field))
             {
-                // Use the provided caption or infer it from the expression
-                var caption = Caption;
-                if (string.IsNullOrEmpty(caption) && Field != null)
-                {
-                    caption = GetMemberName(Field);
-                }
-
-                builder.OpenElement(0, "th");
-                builder.AddContent(1, caption);
-                builder.CloseElement();
-            });
-        }
-    }
-
-    internal RenderFragment<TData> CellTemplate
-    {
-        get
-        {
-            return cellTemplate ??= (rowData => builder =>
+                var value = item.GetType().GetProperty(Field)?.GetValue(item);
+                var formattedValue = string.IsNullOrEmpty(Format) ? value?.ToString() : string.Format("{0:" + Format + "}", value);
+                builder.AddContent(0, formattedValue);
+            }
+            else
             {
-                builder.OpenElement(0, "td");
-                if (compiledExpression != null)
-                {
-                    var value = compiledExpression(rowData);
-                    var formattedValue = string.IsNullOrEmpty(Format) ? value?.ToString() : string.Format("{0:" + Format + "}", value);
-                    builder.AddContent(1, formattedValue);
-                }
-                else
-                {
-                    builder.AddContent(2, Template, rowData);
-                }
-
-                builder.CloseElement();
-            });
-        }
-    }
-
-    // Get the Member name from an expression.
-    // (customer => customer.Name) returns "Name"
-    private static string GetMemberName<T>(Expression<T> expression)
-    {
-        return expression.Body switch
-        {
-            MemberExpression m => m.Member.Name,
-            UnaryExpression u when u.Operand is MemberExpression m => m.Member.Name,
-            _ => throw new NotSupportedException("Expression of type '" + expression.GetType().ToString() + "' is not supported")
+                builder.AddContent(1, Template, item);
+            }
         };
     }
 }

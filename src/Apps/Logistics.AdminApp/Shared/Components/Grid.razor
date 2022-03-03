@@ -4,35 +4,47 @@
 
 <table class="table table-bordered table-hover">
     <thead>
-        <tr class="bg-light">
+        <tr class="bg-light" style="white-space: nowrap">
             @foreach (var column in columns)
             {
-                @column.HeaderTemplate
+                var columnWidth = column.Width != null ? $"min-width: {column.Width}px; wdith: {column.Width}px" : "";
+
+                <th style="@columnWidth">
+                    @column.HeaderTemplate
+                </th> 
             }
         </tr>
     </thead>
     
     <tbody>
-        @{
-            if (DataSource != null)
+        @if (DataSource != null)
+        {
+            foreach (var item in DataSource)
             {
-                foreach (var item in DataSource)
-                {
-                    @* Use @key to help the diff algorithm when updating the collection *@
-                    <tr @key="item.GetHashCode()">
-                        @foreach (var column in columns)
-                        {
+                @* Use @key to help the diff algorithm when updating the collection *@
+                <tr @key="item.GetHashCode()" style="vertical-align: middle">
+                    @foreach (var column in columns)
+                    {
+                        <td>
                             @column.CellTemplate(item)
-                        }
-                    </tr>
-                }
+                        </td>
+                    }
+                </tr>
             }
+        }
+        else
+        {
+            <tr>
+                <td colspan="@columns.Count">
+                    <span>No records to display</span>
+                </td>
+            </tr>
         }
     </tbody>
 </table>
 
 @code {
-    private readonly List<Column<TData>> columns = new List<Column<TData>>();
+    private readonly List<Column> columns = new List<Column>();
 
     [Parameter]
     public IEnumerable<TData>? DataSource { get; set; }
@@ -48,7 +60,7 @@
         StateHasChanged();
     }
 
-    internal void AddColumn(Column<TData> column)
+    internal void AddColumn(Column column)
     {
         columns.Add(column);
     }
