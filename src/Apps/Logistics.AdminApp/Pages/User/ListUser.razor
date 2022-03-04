@@ -44,7 +44,7 @@
                             HeaderText="Phone Number">
                     </GridColumn>
                     <GridColumn HeaderText="Actions"
-                            HeaderTextAlign="TextAlign.Center"
+                            HeaderTextAlign="Syncfusion.Blazor.Grids.TextAlign.Center"
                             Width="180">
                         <Template>
                             @{
@@ -69,12 +69,12 @@
         <div class="col-12">
             <Grid DataSource="users" AllowSorting="true">
                 <Columns>
-                    <Column Caption="User Name" Field="UserName"></Column>
-                    <Column Caption="First Name" Field="FirstName"></Column>
-                    <Column Caption="Last Name" Field="LastName"></Column>
-                    <Column Caption="Email" Field="Email"></Column>
-                    <Column Caption="Phone Number" Field="PhoneNumber"></Column>
-                    <Column Caption="Actions" Width="180">
+                    <Column HeaderText="User Name" Field="UserName"></Column>
+                    <Column HeaderText="First Name" Field="FirstName"></Column>
+                    <Column HeaderText="Last Name" Field="LastName"></Column>
+                    <Column HeaderText="Email" Field="Email" HeaderTextAlign="Logistics.Blazor.Grids.TextAlign.Center"></Column>
+                    <Column HeaderText="Phone Number" Field="PhoneNumber" TextAlign="Logistics.Blazor.Grids.TextAlign.Center"></Column>
+                    <Column HeaderText="Actions" Width="180">
                         <Template>
                             @{
                                 var entity = context as UserDto;
@@ -101,6 +101,7 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
+
         var rand = new Random();
         for (var i = 1; i <= 20; i++)
         {

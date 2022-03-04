@@ -11,12 +11,14 @@
             {
                 var column = columns[i];
                 var columnWidth = column.Width != null ? $"min-width: {column.Width}px; wdith: {column.Width}px" : "";
+                var textAlign = column.HeaderTextAlign.HasValue ? 
+                    $"text-align: {GetTextAlign(column.HeaderTextAlign.Value)}" : $"text-align: {GetTextAlign(column.TextAlign)}";
 
                 if (AllowSorting)
                 {
-                    <th style="@columnWidth" @onclick="() => Sort(column)">
+                    <th style="@columnWidth @textAlign" @onclick="() => Sort(column)">
                         <span>
-                            @column.HeaderTemplate
+                            @column.HeaderCellTemplate
                             @if (column.SortDirection == SortDirection.Ascending)
                             {
                                 <i class="bi bi-arrow-up"></i>
@@ -31,8 +33,8 @@
                 }
                 else
                 {
-                    <th style="@columnWidth">
-                        @column.HeaderTemplate
+                    <th style="@columnWidth @textAlign">
+                        @column.HeaderCellTemplate
                     </th>
                 }
             }
@@ -60,11 +62,11 @@
                     @for (var i = 0; i < columns.Count; i++)
                     {
                         var column = columns[i];
-                        var borderCls = UseBorderlessCells && i != columns.Count - 1 ?
-                        "border-right-none" : "";
+                        var borderCls = UseBorderlessCells && i != columns.Count - 1 ? "border-right-none" : "";
+                        var textAlign = $"text-align: {GetTextAlign(column.TextAlign)}";
 
-                        <td class="@borderCls">
-                            @column.CellTemplate(item)
+                        <td class="@borderCls" style="@textAlign">
+                            @column.BodyCellTemplate(item)
                         </td>
                     }
                 </tr>

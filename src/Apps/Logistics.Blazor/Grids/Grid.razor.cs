@@ -18,14 +18,6 @@ public partial class Grid<TData> : ComponentBase
     [Parameter]
     public bool AllowSorting { get; set; }
 
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (!firstRender)
-            return;
-
-        StateHasChanged();
-    }
-
     internal void AddColumn(Column column)
     {
         columns.Add(column);
@@ -73,20 +65,32 @@ public partial class Grid<TData> : ComponentBase
             DataSource = DataSource.OrderByDescending(i => prop.GetValue(i));
         }
 
-        ResetSortFlagsExceptColumn(columnName);
+        ResetSortFlags(columnName);
     }
 
-    private void ResetSortFlagsExceptColumn(string? columnName)
+    private void ResetSortFlags(string? excludeColumnName)
     {
-        if (string.IsNullOrEmpty(columnName))
+        if (string.IsNullOrEmpty(excludeColumnName))
             return;
 
         foreach (var column in columns)
         {
-            if (column.Field == columnName)
+            if (column.Field == excludeColumnName)
                 continue;
 
             column.SortDirection = null;
         }
+    }
+
+    private string GetTextAlign(TextAlign textAlign)
+    {
+        return textAlign switch
+        {
+            TextAlign.Left => "left",
+            TextAlign.Right => "right",
+            TextAlign.Center => "center",
+            TextAlign.Justify => "justify",
+            _ => "left",
+        };
     }
 }

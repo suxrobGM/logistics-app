@@ -5,11 +5,11 @@ namespace Logistics.Blazor.Grids;
 
 public partial class Column : ComponentBase
 {
-    private RenderFragment? headerTemplate;
-    private RenderFragment<object>? cellTemplate;
+    private RenderFragment? headerCellTemplate;
+    private RenderFragment<object>? bodyCellTemplate;
 
     [Parameter]
-    public string? Caption { get; set; }
+    public string? HeaderText { get; set; }
 
     [Parameter]
     public string? Format { get; set; }
@@ -17,20 +17,29 @@ public partial class Column : ComponentBase
     [Parameter]
     public int? Width { get; set; }
 
-    [CascadingParameter]
-    private object? OwnerGrid { get; set; }
-
     [Parameter]
     public string? Field { get; set; }
 
-    public SortDirection? SortDirection { get; set; }
+    [Parameter]
+    public RenderFragment? HeaderTemplate { get; set; }
 
     [Parameter]
     public RenderFragment<object>? Template { get; set; }
 
-    internal RenderFragment HeaderTemplate => headerTemplate ??= RenderHeader;
+    [Parameter]
+    public TextAlign? HeaderTextAlign { get; set; }
 
-    internal RenderFragment<object> CellTemplate => cellTemplate ??= RenderCell;
+    [Parameter]
+    public TextAlign TextAlign { get; set; }
+
+    [CascadingParameter]
+    private object? OwnerGrid { get; set; }
+
+    public SortDirection? SortDirection { get; set; }
+
+    internal RenderFragment HeaderCellTemplate => headerCellTemplate ??= RenderHeader;
+
+    internal RenderFragment<object> BodyCellTemplate => bodyCellTemplate ??= RenderCell;
 
     protected override void OnInitialized()
     {
@@ -40,13 +49,14 @@ public partial class Column : ComponentBase
 
     private void RenderHeader(RenderTreeBuilder builder)
     {
-        var caption = Caption;
-        if (string.IsNullOrEmpty(caption) && !string.IsNullOrEmpty(Field))
+        if (HeaderTemplate != null)
         {
-            caption = Field;
+            builder.AddContent(0, HeaderTemplate);
+            return;
         }
 
-        builder.AddContent(0, caption);
+        var headerText = HeaderText ?? Field;
+        builder.AddContent(0, headerText);
     }
 
     private RenderFragment RenderCell(object item)
