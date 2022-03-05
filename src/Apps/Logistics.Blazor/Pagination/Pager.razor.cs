@@ -9,11 +9,12 @@ public partial class Pager : ComponentBase
     public int PagesCount { get; set; } = 2;
 
     [Parameter]
-    public Func<int, Task>? OnPageChanged { get; set; }
+    public EventCallback<PageEventArgs> OnPageChanged { get; set; }
 
-    private void PagerButtonClicked(int page)
+    private async Task PagerButtonClicked(int page)
     {
         CurrentPage = page;
-        OnPageChanged?.Invoke(page);
+        var args = new PageEventArgs { CurrentPage = this.CurrentPage };
+        await OnPageChanged.InvokeAsync(args);
     }
 }

@@ -16,7 +16,7 @@
 
                 if (AllowSorting)
                 {
-                    <th style="@columnWidth @textAlign" @onclick="() => Sort(column)">
+                    <th style="@columnWidth @textAlign" @onclick="() => SortAsync(column)">
                         <span>
                             @column.HeaderCellTemplate
                             @if (column.SortDirection == SortDirection.Ascending)
@@ -42,6 +42,14 @@
     </thead>
 
     <tbody>
+        <tr>
+            <td class="grid-spinner-container" colspan="@columns.Count">
+                <div class="grid-spinner">
+                    <Spinner @ref="spinnerRef" Size="2"></Spinner>
+                </div>
+            </td>
+        </tr>
+        
         @if (DataSource == null || !DataSource.Any())
         {
             <tr>
@@ -73,4 +81,19 @@
             }
         }
     </tbody>
+
+    @if (AllowPaging)
+    {
+        <tfoot>
+            <tr>
+                <td colspan="@columns.Count">
+                    <div class="d-flex justify-content-center">
+                        <Pager PagesCount="PageSettings.PagesCount" 
+                               OnPageChanged="PageChangedHandler" >
+                        </Pager>
+                    </div>
+                </td>
+            </tr>
+        </tfoot>
+    }
 </table>

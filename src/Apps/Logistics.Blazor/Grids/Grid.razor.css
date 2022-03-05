@@ -18,3 +18,15 @@
 .border-right-none  {
     border-right: hidden !important;
 }
+
+.grid-spinner-container {
+    position: relative;
+    width: 100%;
+    padding: 0;
+}
+
+.grid-spinner-container .grid-spinner {
+    position: absolute;
+    left: 50%;
+    top: 15px;
+}

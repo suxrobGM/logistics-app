@@ -67,7 +67,9 @@
 
     <div class="row mt-3">
         <div class="col-12">
-            <Grid DataSource="users" AllowSorting="true">
+            <Grid DataSource="users" AllowSorting="true" AllowPaging="true"
+                PageSettings="new() { PagesCount = }">
+                
                 <Columns>
                     <Column HeaderText="User Name" Field="UserName"></Column>
                     <Column HeaderText="First Name" Field="FirstName"></Column>
@@ -97,6 +99,7 @@
 
 @code {
     private List<UserDto> users = new();
+    private PagedList<UserDto> usersPaged;
 
     protected override void OnInitialized()
     {

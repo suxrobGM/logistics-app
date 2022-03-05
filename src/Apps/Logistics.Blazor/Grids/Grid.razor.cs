@@ -4,6 +4,10 @@ namespace Logistics.Blazor.Grids;
 
 public partial class Grid<TData> : ComponentBase
 {
+#pragma warning disable CS8618
+    private Spinner spinnerRef;
+#pragma warning restore CS8618
+
     private readonly List<Column> columns = new();
 
     [Parameter]
@@ -18,18 +22,24 @@ public partial class Grid<TData> : ComponentBase
     [Parameter]
     public bool AllowSorting { get; set; }
 
+    [Parameter]
+    public bool AllowPaging { get; set; }
+
+    [Parameter]
+    public PageSettings PageSettings { get; set; } = new();
+
     internal void AddColumn(Column column)
     {
         columns.Add(column);
     }
 
-    private void Sort(Column? column)
+    private async Task SortAsync(Column? column)
     {
         if (column == null || string.IsNullOrEmpty(column.Field))
         {
             return;
-        }  
-
+        }
+        
         if (column.SortDirection == null)
         {
             column.SortDirection = SortDirection.Ascending;
@@ -43,10 +53,10 @@ public partial class Grid<TData> : ComponentBase
             column.SortDirection = SortDirection.Ascending;
         }
 
-        Sort(column.Field, column.SortDirection.Value);
+        await SortAsync(column.Field, column.SortDirection.Value);
     }
 
-    public void Sort(string? columnName, SortDirection direction)
+    public async Task SortAsync(string? columnName, SortDirection direction)
     {
         if (DataSource == null || string.IsNullOrEmpty(columnName))
             return;
@@ -56,6 +66,7 @@ public partial class Grid<TData> : ComponentBase
         if (prop == null)
             return;
 
+        await spinnerRef.ShowAsync();
         if (direction == SortDirection.Ascending)
         {
             DataSource = DataSource.OrderBy(i => prop.GetValue(i));
@@ -66,6 +77,7 @@ public partial class Grid<TData> : ComponentBase
         }
 
         ResetSortFlags(columnName);
+        await spinnerRef.HideAsync();
     }
 
     private void ResetSortFlags(string? excludeColumnName)
@@ -80,6 +92,13 @@ public partial class Grid<TData> : ComponentBase
 
             column.SortDirection = null;
         }
+    }
+
+    private async Task PageChangedHandler(PageEventArgs e)
+    {
+        await spinnerRef.ShowAsync();
+        await PageSettings.OnPageChanged.InvokeAsync(e);
+        await spinnerRef.HideAsync();
     }
 
     private string GetTextAlign(TextAlign textAlign)
