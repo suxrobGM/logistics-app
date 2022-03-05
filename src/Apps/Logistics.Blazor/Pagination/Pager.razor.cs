@@ -14,7 +14,7 @@ public partial class Pager : ComponentBase
     private async Task PagerButtonClicked(int page)
     {
         CurrentPage = page;
-        var args = new PageEventArgs { CurrentPage = this.CurrentPage };
+        var args = new PageEventArgs { Page = this.CurrentPage };
         await OnPageChanged.InvokeAsync(args);
     }
 }

@@ -26,7 +26,7 @@
     </div>
     <div class="row">
         <div class="col-12">
-            <SfGrid DataSource="Model.Users" AllowSorting="true" AllowResizing="true">
+            <SfGrid DataSource="Model.Users" AllowSorting="true" AllowResizing="true" AllowPaging="true">
                 <GridColumns>
                     <GridColumn Field="@nameof(UserDto.UserName)"
                             HeaderText="User Name">
@@ -67,9 +67,8 @@
 
     <div class="row mt-3">
         <div class="col-12">
-            <Grid DataSource="users" AllowSorting="true" AllowPaging="true"
-                PageSettings="new() { PagesCount = }">
-                
+            <Grid DataSource="usersSource" AllowSorting="true" AllowPaging="true"
+                PageSettings="new() { PagesCount = usersPagedList.PagesCount, OnPageChanged = LoadPage }">  
                 <Columns>
                     <Column HeaderText="User Name" Field="UserName"></Column>
                     <Column HeaderText="First Name" Field="FirstName"></Column>
@@ -98,8 +97,8 @@
 }
 
 @code {
-    private List<UserDto> users = new();
-    private PagedList<UserDto> usersPaged;
+    private IEnumerable<UserDto> usersSource = new List<UserDto>();
+    private PagedList<UserDto> usersPagedList = new(20, 5, true, i => i.Id!);
 
     protected override void OnInitialized()
     {
@@ -108,14 +107,25 @@
         var rand = new Random();
         for (var i = 1; i <= 20; i++)
         {
-            users.Add(new()
+            var user = new UserDto()
             {
+                Id = i.ToString(),
                 UserName = $"User{i}",
                 FirstName = $"First Name {i}",
                 LastName = $"Last Name {i}",
                 Email = $"Email_{i}@gmail.com",
                 PhoneNumber = rand.NextInt64(1_111_111, 9_999_999).ToString()
-            });
+            };
+
+            usersPagedList.Add(user);
+            usersSource = usersPagedList.GetPage(1);
         }
+    }
+
+    private Task LoadPage(PageEventArgs e)
+    {
+        usersSource = usersPagedList.GetPage(e.Page);
+        StateHasChanged();
+        return Task.CompletedTask;
     }
 }

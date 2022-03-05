@@ -2,5 +2,5 @@
 
 public class PageEventArgs
 {
-    public int CurrentPage { get; set; }
+    public int Page { get; set; }
 }

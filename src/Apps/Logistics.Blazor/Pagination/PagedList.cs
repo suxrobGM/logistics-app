@@ -1,13 +1,47 @@
-﻿namespace Logistics.Blazor.Pagination;
+﻿using System.Linq.Expressions;
+
+namespace Logistics.Blazor.Pagination;
 
 public class PagedList<T> : List<T>
 {
+    private readonly Dictionary<string, bool> cachedItems;
+    private readonly Func<T, string> keySelector;
+    private readonly bool allowCaching;
+
     public PagedList()
         : this(Array.Empty<T>(), 0)
     {
     }
 
-    public PagedList(IEnumerable<T> items, int totalItems, int currentPage = 1, int pageSize = 10)
+    public PagedList(int totalItems)
+        : this(Array.Empty<T>(), totalItems)
+    {
+    }
+
+    public PagedList(
+        int totalItems,
+        bool allowCaching = false,
+        Expression<Func<T, string>> keySelectorExp = null!)
+        : this(Array.Empty<T>(), totalItems, 1, 10, allowCaching, keySelectorExp)
+    {
+    }
+
+    public PagedList(
+        int totalItems,
+        int pageSize = 10,
+        bool allowCaching = false,
+        Expression<Func<T, string>> keySelectorExp = null!)
+        : this(Array.Empty<T>(), totalItems, 1, 10, allowCaching, keySelectorExp)
+    {
+    }
+
+    public PagedList(
+        IEnumerable<T> items, 
+        int totalItems, 
+        int currentPage = 1, 
+        int pageSize = 10, 
+        bool allowCaching = false, 
+        Expression<Func<T, string>> keySelectorExp = null!)
     {
         if (currentPage <= 0)
             throw new ArgumentException("Current page should be positive integer number");
@@ -18,6 +52,21 @@ public class PagedList<T> : List<T>
         if (pageSize <= 0)
             throw new ArgumentException("Page size should be positive integer number");
 
+        if (allowCaching && keySelectorExp != null)
+        {
+            keySelector = keySelectorExp.Compile();
+        }
+        else if (allowCaching && keySelectorExp == null)
+        {
+            throw new ArgumentException("Should be specified key selector when using cache mode");
+        }
+        else
+        {
+            keySelector = null!;
+        }
+        
+        this.allowCaching = allowCaching;
+        cachedItems = new Dictionary<string, bool>();
         CurrentPage = currentPage;
         PageSize = pageSize;
         TotalItems = totalItems;
@@ -27,9 +76,93 @@ public class PagedList<T> : List<T>
     public int CurrentPage { get; private set; }
     public int PageSize { get; set; }
     public int TotalItems { get; set; }
-    public int TotalPages => (int)Math.Ceiling(TotalItems / (double)PageSize);
-    public bool HasPreviousPage => CurrentPage > 1 && TotalPages > 1;
-    public bool HasNextPage => CurrentPage < TotalPages;
+    public int PagesCount => (int)Math.Ceiling(TotalItems / (double)PageSize);
+    public bool HasPreviousPage => CurrentPage > 1 && PagesCount > 1;
+    public bool HasNextPage => CurrentPage < PagesCount;
+
+    public new void Add(T item)
+    {
+        if (HasInCache(item))
+        {
+            return;
+        }
+        else if (allowCaching)
+        {
+            AddToCache(item);
+        }
+
+        base.Add(item);
+    }
+
+    public new void AddRange(IEnumerable<T> items)
+    {
+        foreach (var item in items)
+        {
+            Add(item);
+        }
+    }
+
+    public new void Insert(int index, T item)
+    {
+        if (HasInCache(item))
+        {
+            return;
+        }
+        else if (allowCaching)
+        {
+            AddToCache(item);
+        }
+
+        base.Insert(index, item);
+    }
+
+    public new void InsertRange(int index, IEnumerable<T> items)
+    {
+        var itemsList = items.ToList();
+
+        for (int i = index; i < itemsList.Count; i++)
+        {
+            Insert(i, itemsList[i]);
+        }
+    }
+
+    public new bool Remove(T item)
+    {
+        RemoveFromCache(item);
+        var removed = base.Remove(item);
+        return removed;
+    }
+
+    public new void RemoveAt(int index)
+    {
+        T removedItem = this[index];
+        RemoveFromCache(removedItem);
+        base.RemoveAt(index);
+    }
+
+    public new void RemoveRange(int index, int count)
+    {
+        for (int i = index; i < count; i++)
+        {
+            RemoveAt(i);
+        }
+    }
+
+    public new void RemoveAll(Predicate<T> match)
+    {
+        var removedItems = FindAll(match);
+        foreach (var item in removedItems)
+        {
+            RemoveFromCache(item);
+        }
+        base.RemoveAll(match);
+    }
+
+    public new void Clear()
+    {
+        cachedItems.Clear();
+        base.Clear();
+    }
 
     public IEnumerable<T> NextPage()
     {
@@ -56,6 +189,43 @@ public class PagedList<T> : List<T>
 
         CurrentPage = pageNumber;
         return this.Skip((pageNumber - 1) * PageSize).Take(PageSize);
+    }
+
+    private void AddToCache(T item)
+    {
+        if (!allowCaching)
+            return;
+
+        var key = keySelector(item);
+        cachedItems.Add(key, true);
+    }
+
+    private void RemoveFromCache(T item)
+    {
+        var key = keySelector(item);
+        cachedItems.Remove(key);
+    }
+
+    /// <summary>
+    /// Checks whether item contains in the cache
+    /// </summary>
+    /// <param name="item">instance of item</param>
+    /// <returns>True if item is in the cache, otherwise false</returns>
+    private bool HasInCache(T item)
+    {
+        if (!allowCaching)
+            return false;
+   
+        try
+        {
+            var key = keySelector(item);
+            var _ = cachedItems[key];
+            return true;
+        }
+        catch (KeyNotFoundException)
+        {
+            return false;
+        }
     }
 
 

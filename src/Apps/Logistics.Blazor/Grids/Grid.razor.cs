@@ -97,7 +97,7 @@ public partial class Grid<TData> : ComponentBase
     private async Task PageChangedHandler(PageEventArgs e)
     {
         await spinnerRef.ShowAsync();
-        await PageSettings.OnPageChanged.InvokeAsync(e);
+        await PageSettings.OnPageChanged.Invoke(e);
         await spinnerRef.HideAsync();
     }
 
