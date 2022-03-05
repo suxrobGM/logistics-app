@@ -8,7 +8,7 @@ public class PagedListTest
     [Test]
     public void AddItem()
     {
-        var pagedList = new PagedList<string>(5, true, i => i);
+        var pagedList = new PagedList<string>(5, 10, true, i => i);
         pagedList.Add("1");
         pagedList.Add("2");
         pagedList.Add("3");
@@ -24,7 +24,7 @@ public class PagedListTest
     [Test]
     public void AddRange()
     {
-        var pagedList = new PagedList<string>(5, true, i => i);
+        var pagedList = new PagedList<string>(5, 10, true, i => i);
         var nums = new[] { "1", "2", "3", "3", "4" };
         pagedList.AddRange(nums);
 
@@ -37,7 +37,7 @@ public class PagedListTest
     [Test]
     public void Insert()
     {
-        var pagedList = new PagedList<string>(5, true, i => i);
+        var pagedList = new PagedList<string>(5, 10, true, i => i);
         pagedList.Add("1");
         pagedList.Add("2");
         pagedList.Add("3");
@@ -59,7 +59,7 @@ public class PagedListTest
     [Test]
     public void InsertRange()
     {
-        var pagedList = new PagedList<string>(5, true, i => i);
+        var pagedList = new PagedList<string>(5, 10, true, i => i);
         var nums1 = new[] { "1", "2", "3" };
         var nums2 = new[] { "4", "4", "5", "6" };
         pagedList.AddRange(nums1);
@@ -74,7 +74,7 @@ public class PagedListTest
     [Test]
     public void Remove()
     {
-        var pagedList = new PagedList<string>(5, true, i => i);
+        var pagedList = new PagedList<string>(5, 10, true, i => i);
         pagedList.Add("1");
         pagedList.Add("2");
         pagedList.Add("3");

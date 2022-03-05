@@ -13,25 +13,12 @@ public class PagedList<T> : List<T>
     {
     }
 
-    public PagedList(int totalItems)
-        : this(Array.Empty<T>(), totalItems)
-    {
-    }
-
-    public PagedList(
-        int totalItems,
-        bool allowCaching = false,
-        Expression<Func<T, string>> keySelectorExp = null!)
-        : this(Array.Empty<T>(), totalItems, 1, 10, allowCaching, keySelectorExp)
-    {
-    }
-
     public PagedList(
         int totalItems,
         int pageSize = 10,
         bool allowCaching = false,
         Expression<Func<T, string>> keySelectorExp = null!)
-        : this(Array.Empty<T>(), totalItems, 1, 10, allowCaching, keySelectorExp)
+        : this(Array.Empty<T>(), totalItems, 1, pageSize, allowCaching, keySelectorExp)
     {
     }
 
