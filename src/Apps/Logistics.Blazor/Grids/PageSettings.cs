@@ -7,6 +7,6 @@ public class PageSettings
         OnPageChanged = (e) => Task.CompletedTask;
     }
 
-    public int PagesCount { get; set; } = 2;
+    public int PagesCount { get; set; } = 1;
     public Func<PageEventArgs, Task> OnPageChanged { get; set; }
 }

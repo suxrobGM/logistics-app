@@ -5,18 +5,15 @@ public class ListUserViewModel : PageViewModelBase
     public ListUserViewModel(IApiClient apiClient)
         : base(apiClient)
     {
-        _users = new List<UserDto>();
+        Users = Array.Empty<UserDto>();
+        UsersList = new PagedList<UserDto>(20, true, i => i.Id!);
     }
 
 
     #region Binding properties
 
-    private IList<UserDto> _users;
-    public IList<UserDto> Users
-    {
-        get => _users;
-        set => SetProperty(ref _users, value);
-    }
+    public PagedList<UserDto> UsersList { get; set; }
+    public IEnumerable<UserDto> Users { get; set; }
 
     private int _totalRecords;
     public int TotalRecords
@@ -32,22 +29,28 @@ public class ListUserViewModel : PageViewModelBase
     public override async Task OnInitializedAsync()
     {
         IsBusy = true;
-        var pagedList = await FetchUsersAsync();
+        await LoadPage(new() { Page = 1 });
+        IsBusy = false;
+    }
+
+    public async Task LoadPage(PageEventArgs e)
+    {
+        var pagedList = await FetchUsersAsync(e.Page);
 
         if (pagedList != null && pagedList.Items != null)
         {
-            Users = pagedList.Items;
+            UsersList.AddRange(pagedList.Items);
+            UsersList.TotalItems = pagedList.TotalItems;
             TotalRecords = pagedList.TotalItems;
+            Users = UsersList.GetPage(e.Page);
         }
-
-        IsBusy = false;
     }
 
     private Task<PagedDataResult<UserDto>> FetchUsersAsync(int page = 1)
     {
         return Task.Run(async () =>
         {
-            return await apiClient.GetUsersAsync(page);
+            return await apiClient.GetUsersAsync(page, 20);
         });
     }
 }

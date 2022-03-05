@@ -8,8 +8,12 @@ public class PagedList<T> : List<T>
     private readonly Func<T, string> keySelector;
     private readonly bool allowCaching;
 
-    public PagedList()
-        : this(Array.Empty<T>(), 0)
+    public PagedList(
+        int pageSize = 10,
+        bool allowCaching = false,
+        Expression<Func<T, string>> keySelectorExp = null!
+        )
+        : this(Array.Empty<T>(), 0, 1, pageSize, allowCaching, keySelectorExp)
     {
     }
 
@@ -17,7 +21,8 @@ public class PagedList<T> : List<T>
         int totalItems,
         int pageSize = 10,
         bool allowCaching = false,
-        Expression<Func<T, string>> keySelectorExp = null!)
+        Expression<Func<T, string>> keySelectorExp = null!
+        )
         : this(Array.Empty<T>(), totalItems, 1, pageSize, allowCaching, keySelectorExp)
     {
     }

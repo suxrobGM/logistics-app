@@ -26,56 +26,15 @@
     </div>
     <div class="row">
         <div class="col-12">
-            <SfGrid DataSource="Model.Users" AllowSorting="true" AllowResizing="true" AllowPaging="true">
-                <GridColumns>
-                    <GridColumn Field="@nameof(UserDto.UserName)"
-                            HeaderText="User Name">
-                    </GridColumn>
-                    <GridColumn Field="@nameof(UserDto.FirstName)"
-                            HeaderText="First Name">
-                    </GridColumn>
-                    <GridColumn Field="@nameof(UserDto.LastName)"
-                            HeaderText="Last Name">
-                    </GridColumn>
-                    <GridColumn Field="@nameof(UserDto.Email)"
-                            HeaderText="Email">
-                    </GridColumn>
-                    <GridColumn Field="@nameof(UserDto.PhoneNumber)"
-                            HeaderText="Phone Number">
-                    </GridColumn>
-                    <GridColumn HeaderText="Actions"
-                            HeaderTextAlign="Syncfusion.Blazor.Grids.TextAlign.Center"
-                            Width="180">
-                        <Template>
-                            @{
-                                var entity = context as UserDto;
-                                var editPageLink = $"/edit-user/{entity?.Id}";
-                            }
-
-                            <div class="d-flex justify-content-center">
-                                <NavLink class="btn btn-primary"
-                                     href="@editPageLink">
-                                    Edit
-                                </NavLink>
-                            </div>
-                        </Template>
-                    </GridColumn>
-                </GridColumns>
-            </SfGrid>
-        </div>
-    </div>
-
-    <div class="row mt-3">
-        <div class="col-12">
-            <Grid DataSource="usersSource" AllowSorting="true" AllowPaging="true"
-                PageSettings="new() { PagesCount = usersPagedList.PagesCount, OnPageChanged = LoadPage }">  
+            <Grid DataSource="Model.Users" AllowSorting="true" AllowPaging="true"
+                PageSettings="new() { PagesCount = Model.UsersList.PagesCount, OnPageChanged = Model.LoadPage }">  
                 <Columns>
                     <Column HeaderText="User Name" Field="UserName"></Column>
                     <Column HeaderText="First Name" Field="FirstName"></Column>
                     <Column HeaderText="Last Name" Field="LastName"></Column>
                     <Column HeaderText="Email" Field="Email" HeaderTextAlign="Logistics.Blazor.Grids.TextAlign.Center"></Column>
                     <Column HeaderText="Phone Number" Field="PhoneNumber" TextAlign="Logistics.Blazor.Grids.TextAlign.Center"></Column>
-                    <Column HeaderText="Actions" Width="180">
+                    <Column HeaderText="Actions" Width="180" HeaderTextAlign="Logistics.Blazor.Grids.TextAlign.Center">
                         <Template>
                             @{
                                 var entity = context as UserDto;
@@ -97,35 +56,35 @@
 }
 
 @code {
-    private IEnumerable<UserDto> usersSource = new List<UserDto>();
-    private PagedList<UserDto> usersPagedList = new(20, 5, true, i => i.Id!);
+    //private IEnumerable<UserDto> usersSource = new List<UserDto>();
+    //private PagedList<UserDto> usersPagedList = new(20, 5, true, i => i.Id!);
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
 
-        var rand = new Random();
-        for (var i = 1; i <= 20; i++)
-        {
-            var user = new UserDto()
-            {
-                Id = i.ToString(),
-                UserName = $"User{i}",
-                FirstName = $"First Name {i}",
-                LastName = $"Last Name {i}",
-                Email = $"Email_{i}@gmail.com",
-                PhoneNumber = rand.NextInt64(1_111_111, 9_999_999).ToString()
-            };
+        //var rand = new Random();
+        //for (var i = 1; i <= 20; i++)
+        //{
+        //    var user = new UserDto()
+        //    {
+        //        Id = i.ToString(),
+        //        UserName = $"User{i}",
+        //        FirstName = $"First Name {i}",
+        //        LastName = $"Last Name {i}",
+        //        Email = $"Email_{i}@gmail.com",
+        //        PhoneNumber = rand.NextInt64(1_111_111, 9_999_999).ToString()
+        //    };
 
-            usersPagedList.Add(user);
-            usersSource = usersPagedList.GetPage(1);
-        }
+        //    usersPagedList.Add(user);
+        //    usersSource = usersPagedList.GetPage(1);
+        //}
     }
 
-    private Task LoadPage(PageEventArgs e)
-    {
-        usersSource = usersPagedList.GetPage(e.Page);
-        StateHasChanged();
-        return Task.CompletedTask;
-    }
+    //private Task LoadPage(PageEventArgs e)
+    //{
+    //    usersSource = usersPagedList.GetPage(e.Page);
+    //    StateHasChanged();
+    //    return Task.CompletedTask;
+    //}
 }
