@@ -8,13 +8,13 @@ public partial class Grid<TData> : ComponentBase
     private Spinner spinnerRef;
 #pragma warning restore CS8618
 
-    private readonly List<Column> columns = new();
+    private readonly List<GridColumn> columns = new();
 
     [Parameter]
     public IEnumerable<TData>? DataSource { get; set; }
 
     [Parameter]
-    public RenderFragment? Columns { get; set; }
+    public RenderFragment? GridColumns { get; set; }
 
     [Parameter]
     public bool UseBorderlessCells { get; set; } = true;
@@ -28,12 +28,12 @@ public partial class Grid<TData> : ComponentBase
     [Parameter]
     public PageSettings PageSettings { get; set; } = new();
 
-    internal void AddColumn(Column column)
+    internal void AddColumn(GridColumn column)
     {
         columns.Add(column);
     }
 
-    private async Task SortAsync(Column? column)
+    private async Task SortAsync(GridColumn? column)
     {
         if (column == null || string.IsNullOrEmpty(column.Field))
         {

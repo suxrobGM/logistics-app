@@ -26,7 +26,7 @@
     </div>
     <div class="row">
         <div class="col-12">
-            <SfGrid DataSource="Model.Trucks" AllowSorting="true" AllowResizing="true">
+            <Grid DataSource="Model.Trucks" AllowSorting="true">
                 <GridColumns>
                     <GridColumn Field="@nameof(TruckDto.TruckNumber)"
                             HeaderText="Truck Number">
@@ -36,7 +36,7 @@
                     </GridColumn>
                     <GridColumn
                             HeaderText="Total Cargoes"
-                            TextAlign="Syncfusion.Blazor.Grids.TextAlign.Center">
+                            TextAlign="TextAlign.Center">
                             <Template>
                                 @{
                                     var truck = context as TruckDto;
@@ -45,7 +45,7 @@
                             </Template>
                     </GridColumn>
                     <GridColumn HeaderText="Actions"
-                            HeaderTextAlign="Syncfusion.Blazor.Grids.TextAlign.Center"
+                            HeaderTextAlign="TextAlign.Center"
                             Width="180">
                         <Template>
                             @{
@@ -65,7 +65,7 @@
                         </Template>
                     </GridColumn>
                 </GridColumns>
-            </SfGrid>
+            </Grid>
         </div>
     </div>
 }

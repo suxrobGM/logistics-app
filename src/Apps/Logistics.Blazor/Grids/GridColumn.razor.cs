@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 
 namespace Logistics.Blazor.Grids;
 
-public partial class Column : ComponentBase
+public partial class GridColumn : ComponentBase
 {
     private RenderFragment? headerCellTemplate;
     private RenderFragment<object>? bodyCellTemplate;

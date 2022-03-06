@@ -12,7 +12,6 @@
     <PackageReference Include="MagicMvvm.Blazor" Version="2.0.3" />
     <PackageReference Include="Microsoft.Identity.Web.UI" Version="1.23.0" />
 	<PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
-	<PackageReference Include="Syncfusion.Blazor.Grid" Version="19.4.0.53" />
   </ItemGroup>
 
   <ItemGroup>

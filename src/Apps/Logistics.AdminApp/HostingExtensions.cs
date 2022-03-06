@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
-using Syncfusion.Blazor;
-using Syncfusion.Licensing;
 
 namespace Logistics.AdminApp;
 
@@ -10,7 +8,6 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
-        SyncfusionLicenseProvider.RegisterLicense(builder.Configuration["SyncfusionKey"]);
         builder.Services.AddWebApiClient(builder.Configuration);
         builder.Services.AddMvvmBlazor();
 
@@ -25,7 +22,6 @@ internal static class HostingExtensions
         });
 
         builder.Services.AddRazorPages();
-        builder.Services.AddSyncfusionBlazor(o => o.IgnoreScriptIsolation = true);
         builder.Services.AddServerSideBlazor()
             .AddMicrosoftIdentityConsentHandler();
         return builder.Build();
