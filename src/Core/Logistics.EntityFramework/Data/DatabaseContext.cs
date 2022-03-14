@@ -15,7 +15,7 @@ public class DatabaseContext : DbContext
     public DatabaseContext(DbContextOptions options)
         : base(options)
     {
-        connectionString = DefualtConnection.ConnectionString;
+        connectionString = ConnectionStrings.Local;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
@@ -62,6 +62,6 @@ public class DatabaseContextFactory : IDesignTimeDbContextFactory<DatabaseContex
 {
     public DatabaseContext CreateDbContext(string[] args)
     {
-        return new DatabaseContext(DefualtConnection.ConnectionString);
+        return new DatabaseContext(ConnectionStrings.Local);
     }
 }

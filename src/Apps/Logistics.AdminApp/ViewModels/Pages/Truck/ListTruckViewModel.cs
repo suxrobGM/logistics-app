@@ -2,7 +2,6 @@
 
 public class ListTruckViewModel : PageViewModelBase
 {
-
     public ListTruckViewModel(IApiClient apiClient)
         : base(apiClient)
     {

@@ -2,7 +2,7 @@
 using Logistics.EntityFramework;
 using Logistics.EntityFramework.Data;
 
-var connectionString = DefualtConnection.ConnectionString;
+var connectionString = ConnectionStrings.Local;
 
 Console.WriteLine("Connection string: " + connectionString);
 Console.WriteLine("Initializing database...");
