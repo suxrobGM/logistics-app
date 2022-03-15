@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using Logistics.Domain.Specifications;
+using System.Linq.Expressions;
 
 namespace Logistics.EntityFramework.Repositories;
 
@@ -28,16 +29,31 @@ public class Repository<TEntity> : IRepository<TEntity>
         return context.Set<TEntity>().FirstOrDefaultAsync(predicate);
     }
 
+    public Task<TEntity?> GetAsync(ISpecification<TEntity> specification)
+    {
+        return GetAsync(specification.Criteria);
+    }
+
     public async Task<IList<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate = default!)
     {
         return predicate == null ? await context.Set<TEntity>().ToListAsync()
             : await context.Set<TEntity>().Where(predicate).ToListAsync();
     }
 
+    public Task<IList<TEntity>> GetListAsync(ISpecification<TEntity> specification)
+    {
+        return GetListAsync(specification.Criteria);
+    }
+
     public IQueryable<TEntity> GetQuery(Expression<Func<TEntity, bool>> predicate = default!)
     {
         return predicate != null ? context.Set<TEntity>().Where(predicate)
             : context.Set<TEntity>();
+    }
+
+    public IQueryable<TEntity> GetQuery(ISpecification<TEntity> specification)
+    {
+        return GetQuery(specification.Criteria);
     }
 
     public async Task AddAsync(TEntity entity)

@@ -15,10 +15,11 @@ internal class ApiClient : ApiClientBase, IApiClient
         return result.Value;
     }
 
-    public async Task<PagedDataResult<CargoDto>> GetCargoesAsync(int page = 1, int pageSize = 10)
+    public async Task<PagedDataResult<CargoDto>> GetCargoesAsync(string searchInput = "", int page = 1, int pageSize = 10)
     {
         var query = new Dictionary<string, string>
         {
+            {"search", searchInput},
             {"page", page.ToString() },
             {"pageSize", pageSize.ToString() }
         };
@@ -52,10 +53,11 @@ internal class ApiClient : ApiClientBase, IApiClient
         return result.Value;
     }
 
-    public async Task<PagedDataResult<TruckDto>> GetTrucksAsync(int page = 1, int pageSize = 10)
+    public async Task<PagedDataResult<TruckDto>> GetTrucksAsync(string searchInput = "", int page = 1, int pageSize = 10)
     {
         var query = new Dictionary<string, string>
         {
+            {"search", searchInput},
             {"page", page.ToString() },
             {"pageSize", pageSize.ToString() }
         };
@@ -89,10 +91,11 @@ internal class ApiClient : ApiClientBase, IApiClient
         return result.Value;
     }
 
-    public async Task<PagedDataResult<UserDto>> GetUsersAsync(int page = 1, int pageSize = 10)
+    public async Task<PagedDataResult<UserDto>> GetUsersAsync(string searchInput = "", int page = 1, int pageSize = 10)
     {
         var query = new Dictionary<string, string>
         {
+            {"search", searchInput},
             {"page", page.ToString() },
             {"pageSize", pageSize.ToString() }
         };

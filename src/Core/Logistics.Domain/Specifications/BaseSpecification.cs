@@ -5,12 +5,6 @@ namespace Logistics.Domain.Specifications;
 public class BaseSpecification<T> : ISpecification<T>
 {
 #pragma warning disable CS8618
-    public BaseSpecification()
-#pragma warning restore CS8618
-    {
-    }
-
-#pragma warning disable CS8618
     public BaseSpecification(Expression<Func<T, bool>> criteria)
 #pragma warning restore CS8618
     {

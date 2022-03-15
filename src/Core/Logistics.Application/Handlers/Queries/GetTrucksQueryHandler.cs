@@ -20,8 +20,14 @@ internal sealed class GetTrucksQueryHandler : RequestHandlerBase<GetTrucksQuery,
             .ToList();
 
         var totalItems = truckRepository.GetQuery().Count();
+        var itemsQuery = truckRepository.GetQuery();
 
-        var items = truckRepository.GetQuery()
+        if (!string.IsNullOrEmpty(request.SearchInput))
+        {
+            itemsQuery = truckRepository.GetQuery(new TrucksSpecification(request.SearchInput));
+        }
+
+        var items = itemsQuery
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .OrderBy(i => i.TruckNumber)

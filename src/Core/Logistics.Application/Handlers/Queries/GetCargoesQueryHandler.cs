@@ -14,9 +14,14 @@ internal sealed class GetCargoesQueryHandler : RequestHandlerBase<GetCargoesQuer
         CancellationToken cancellationToken)
     {
         var totalItems = cargoRepository.GetQuery().Count();
+        var itemsQuery = cargoRepository.GetQuery();
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-        var items = cargoRepository.GetQuery()
+        if (!string.IsNullOrEmpty(request.SearchInput))
+        {
+            itemsQuery = cargoRepository.GetQuery(new CargoesSpecification(request.SearchInput));
+        }
+
+        var items = itemsQuery
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
             .OrderBy(i => i.Id)
@@ -30,11 +35,10 @@ internal sealed class GetCargoesQueryHandler : RequestHandlerBase<GetCargoesQuer
                 PickUpDate = i.PickUpDate,
                 IsCompleted = i.IsCompleted,
                 AssignedDispatcherId = i.AssignedDispatcherId,
-                AssignedTruckId = i.AssignedTruck.Id,
+                AssignedTruckId = i.AssignedTruck != null ? i.AssignedTruck.Id : null,
                 Status = i.Status.ToString()
             })
             .ToArray();
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
         return Task.FromResult(new PagedDataResult<CargoDto>(items, totalItems, totalPages));

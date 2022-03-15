@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using Logistics.Domain.Specifications;
+using System.Linq.Expressions;
 
 namespace Logistics.Domain.Repositories;
 
@@ -28,6 +29,13 @@ public interface IRepository<TEntity> where TEntity : class, IAggregateRoot
     Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate);
 
     /// <summary>
+    /// Get entity object by specification.
+    /// </summary>
+    /// <param name="specification">Specification</param>
+    /// <returns>Entity object</returns>
+    Task<TEntity?> GetAsync(ISpecification<TEntity> specification);
+
+    /// <summary>
     /// Get list of entity objects
     /// </summary>
     /// <param name="predicate">Predicate to filter query</param>
@@ -35,11 +43,25 @@ public interface IRepository<TEntity> where TEntity : class, IAggregateRoot
     Task<IList<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate = null!);
 
     /// <summary>
+    /// Get list of entity objects by specification
+    /// </summary>
+    /// <param name="specification">Specification</param>
+    /// <returns>List of entity objects</returns>
+    Task<IList<TEntity>> GetListAsync(ISpecification<TEntity> specification);
+
+    /// <summary>
     /// Get IQueryable entity objects.
     /// </summary>
     /// <param name="predicate">Predicate to filter query</param>
     /// <returns>IQueryable of entity objects</returns>
     IQueryable<TEntity> GetQuery(Expression<Func<TEntity, bool>> predicate = null!);
+
+    /// <summary>
+    /// Get IQueryable entity objects.
+    /// </summary>
+    /// <param name="specification">Specification</param>
+    /// <returns>IQueryable of entity objects</returns>
+    IQueryable<TEntity> GetQuery(ISpecification<TEntity> specification);
 
     /// <summary>
     /// Add new entry to database.
