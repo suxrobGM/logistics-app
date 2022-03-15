@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Domain.Shared", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Blazor", "src\Apps\Logistics.Blazor\Logistics.Blazor.csproj", "{6FA09C6F-13C7-483F-8CEA-0FA1987A38C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.Blazor.Tests", "tests\Logistics.Blazor.Tests\Logistics.Blazor.Tests.csproj", "{C4ADD85D-28AD-4EF0-B93D-548516CE3A20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Blazor.Tests", "tests\Logistics.Blazor.Tests\Logistics.Blazor.Tests.csproj", "{C4ADD85D-28AD-4EF0-B93D-548516CE3A20}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

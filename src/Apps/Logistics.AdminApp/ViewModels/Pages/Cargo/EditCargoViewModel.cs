@@ -88,6 +88,11 @@ public class EditCargoViewModel : PageViewModelBase
         }
     }
 
+    public IEnumerable<string> SearchDriverName(string value)
+    {
+        return new List<string>();
+    }
+
     private Task<CargoDto?> FetchCargoAsync(string id)
     {
         return Task.Run(async () =>

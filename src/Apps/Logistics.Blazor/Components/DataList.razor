@@ -1,0 +1,54 @@
+﻿@namespace Logistics.Blazor
+
+@{
+    var id = string.IsNullOrEmpty(Id) ? GetId() : Id;
+    var optionsId = $"{id}_options";
+}
+
+<input id="@GetId()" class="form-control" list="@optionsId" value="@Value" @attributes="AdditionalAttributes" @onchange="OnInputChangedHandler" />
+<datalist id="@optionsId">
+    @foreach (var item in Items)
+    {
+       <option value="@item"></option>
+    }
+</datalist>
+
+@code {
+
+    [Parameter]
+    public Func<string, IEnumerable<string>>? OnInputChanged { get; set; }
+
+    [Parameter]
+    public string? Id { get; set; }
+
+    [Parameter]
+    public string? Value { get; set; }
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    public IEnumerable<string> Items { get; set; } = new List<string>();
+
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string GetId()
+    {
+        return this.GetHashCode().ToString();
+    }
+
+    private void OnInputChangedHandler(ChangeEventArgs e)
+    {
+        if (e == null || e.Value == null)
+            return;
+
+        var items = OnInputChanged?.Invoke(e.Value.ToString()!);
+
+        if (items != null)
+        {
+            Items = items.Take(10);
+            StateHasChanged();
+        }
+    }
+}

@@ -65,16 +65,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="driver" class="form-label">Assigned Driver</label>
-                        @*<InputSelect id="driver" class="form-control" @bind-Value="Model.Cargo.AssignedTruckDriverName">
-                            @foreach (var truck in Model.Trucks)
-                            {
-                                <option value="OffDuty">Off Duty</option>
-                            }
-                            
-
-                            <option value="Loaded">Loaded</option>
-                            <option value="Ready">Ready</option>
-                        </InputSelect>*@
+                        <DataList Id="driver" @bind-Value="Model.Cargo.AssignedTruckDriverName" OnInputChanged="Model.SearchDriverName"></DataList>
                     </div>
                     <div class="mb-3">
                         <label for="status" class="form-label">Status</label>
