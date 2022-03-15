@@ -36,10 +36,11 @@ public class TruckController : ControllerBase
     [ProducesResponseType(typeof(PagedDataResult<TruckDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     //[RequiredScope("admin.read")]
-    public async Task<IActionResult> GetList(int page = 1, int pageSize = 10)
+    public async Task<IActionResult> GetList(string searchInput = "", int page = 1, int pageSize = 10)
     {
         var result = await mediator.Send(new GetTrucksQuery
         {
+            SearchInput = searchInput,
             Page = page,
             PageSize = pageSize
         });

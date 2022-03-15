@@ -1,6 +1,5 @@
 ﻿namespace Logistics.Application.Contracts.Queries;
 
-public sealed class GetTrucksQuery : PagedQueryBase<TruckDto>
+public sealed class GetTrucksQuery : SearchableQueryBase<TruckDto>
 {
-    public FilterTruck? Filter { get; set; }
 }
