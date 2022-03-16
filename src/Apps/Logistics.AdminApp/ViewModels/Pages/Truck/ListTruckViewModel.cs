@@ -45,7 +45,7 @@ public class ListTruckViewModel : PageViewModelBase
     {
         return Task.Run(async () =>
         {
-            return await apiClient.GetTrucksAsync(page);
+            return await apiClient.GetTrucksAsync(page: page);
         });
     }
 }

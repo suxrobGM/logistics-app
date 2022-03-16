@@ -19,7 +19,7 @@ public class PagedList<T> : List<T>
 
     public PagedList(
         int totalItems,
-        int pageSize = 10,
+        int pageSize,
         bool allowCaching = false,
         Expression<Func<T, string>> keySelectorExp = null!
         )

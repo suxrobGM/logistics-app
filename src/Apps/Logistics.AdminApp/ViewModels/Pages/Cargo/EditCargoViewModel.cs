@@ -101,7 +101,7 @@ public class EditCargoViewModel : PageViewModelBase
         });
     }
 
-    private Task<PagedDataResult<TruckDto>> FetchTrucksAsync()
+    private Task<PagedDataResult<TruckDto>> FetchDriversAsync()
     {
         return Task.Run(async () =>
         {

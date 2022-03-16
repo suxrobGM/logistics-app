@@ -46,7 +46,7 @@ public class ListCargoViewModel : PageViewModelBase
     {
         return Task.Run(async () =>
         {
-            return await apiClient.GetCargoesAsync(page);
+            return await apiClient.GetCargoesAsync(page: page);
         });
     }
 }

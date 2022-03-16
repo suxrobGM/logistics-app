@@ -50,7 +50,7 @@ public class ListUserViewModel : PageViewModelBase
     {
         return Task.Run(async () =>
         {
-            return await apiClient.GetUsersAsync(page, 20);
+            return await apiClient.GetUsersAsync(page: page, pageSize: 20);
         });
     }
 }
