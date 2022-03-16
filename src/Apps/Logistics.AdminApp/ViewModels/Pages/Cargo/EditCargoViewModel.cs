@@ -82,8 +82,8 @@ public class EditCargoViewModel : PageViewModelBase
         if (!string.IsNullOrEmpty(externalId) && Cargo != null)
         {
             var user = await Task.Run(async () => await apiClient.GetUserAsync(externalId));
-            Cargo.AssignedDispatcherId = user.Id;
-            Cargo.AssignedDispatcherName = user.GetFullName();
+            Cargo.AssignedDispatcherId = user?.Id;
+            Cargo.AssignedDispatcherName = user?.GetFullName();
             StateHasChanged();
         }
     }

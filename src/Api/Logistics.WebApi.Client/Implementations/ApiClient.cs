@@ -1,4 +1,4 @@
-﻿namespace Logistics.WebApi.Client;
+﻿namespace Logistics.WebApi.Client.Implementations;
 
 internal class ApiClient : ApiClientBase, IApiClient
 {
