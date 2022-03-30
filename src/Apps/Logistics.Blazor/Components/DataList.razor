@@ -16,7 +16,7 @@
 @code {
 
     [Parameter]
-    public Func<string, IEnumerable<string>>? OnInputChanged { get; set; }
+    public Func<string, Task<IEnumerable<string>>>? OnInputChanged { get; set; }
 
     [Parameter]
     public string? Id { get; set; }
@@ -38,12 +38,14 @@
         return this.GetHashCode().ToString();
     }
 
-    private void OnInputChangedHandler(ChangeEventArgs e)
+    private async void OnInputChangedHandler(ChangeEventArgs e)
     {
-        if (e == null || e.Value == null)
+        if (e == null || e.Value == null || OnInputChanged == null)
+        {
             return;
+        }
 
-        var items = OnInputChanged?.Invoke(e.Value.ToString()!);
+        var items = await OnInputChanged.Invoke(e.Value.ToString()!);
 
         if (items != null)
         {

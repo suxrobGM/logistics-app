@@ -3,59 +3,34 @@
 public class CargoesSpecification : BaseSpecification<Cargo>
 {
     public CargoesSpecification(string searchInput) 
-        : base(i => SearchCriteria(searchInput, i))
-    {
+        : base(i => 
+            (i.AssignedDispatcher != null &&
+            !string.IsNullOrEmpty(i.AssignedDispatcher.FirstName) &&
+            !i.AssignedDispatcher.FirstName.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase)) ||
+
+            (i.AssignedDispatcher != null &&
+            !string.IsNullOrEmpty(i.AssignedDispatcher.LastName) &&
+            !i.AssignedDispatcher.LastName.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase)) ||
         
-    }
+            (i.AssignedDispatcher != null &&
+            !string.IsNullOrEmpty(i.AssignedDispatcher.UserName) &&
+            !i.AssignedDispatcher.UserName.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase)) ||
 
-    private static bool SearchCriteria(string searchInput, Cargo cargo)
+            (i.AssignedTruck != null &&
+            i.AssignedTruck.Driver != null &&
+            !string.IsNullOrEmpty(i.AssignedTruck.Driver.FirstName) &&
+            !i.AssignedTruck.Driver.FirstName.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase)) ||
+
+            (i.AssignedTruck != null &&
+            i.AssignedTruck.Driver != null &&
+            !string.IsNullOrEmpty(i.AssignedTruck.Driver.LastName) &&
+            !i.AssignedTruck.Driver.LastName.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase)) ||
+
+            (i.AssignedTruck != null &&
+            i.AssignedTruck.Driver != null &&
+            !string.IsNullOrEmpty(i.AssignedTruck.Driver.UserName) &&
+            !i.AssignedTruck.Driver.UserName.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase))
+        )
     {
-        var dispatcherFirstName = false;
-        var dispatcherLastName = false;
-        var dispatcherUserName = false;
-        var driverFirstName = false;
-        var driverLastName = false;
-        var driverUserName = false;
-
-        if (cargo.AssignedDispatcher != null && 
-            !string.IsNullOrEmpty(cargo.AssignedDispatcher.FirstName))
-        {
-            dispatcherFirstName = cargo.AssignedDispatcher.FirstName.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        if (cargo.AssignedDispatcher != null &&
-            !string.IsNullOrEmpty(cargo.AssignedDispatcher.LastName))
-        {
-            dispatcherLastName = cargo.AssignedDispatcher.LastName.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        if (cargo.AssignedDispatcher != null &&
-            !string.IsNullOrEmpty(cargo.AssignedDispatcher.UserName))
-        {
-            dispatcherUserName = cargo.AssignedDispatcher.UserName.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        if (cargo.AssignedTruck != null &&
-            cargo.AssignedTruck.Driver != null &&
-            !string.IsNullOrEmpty(cargo.AssignedTruck.Driver.FirstName))
-        {
-            driverFirstName = cargo.AssignedTruck.Driver.FirstName.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        if (cargo.AssignedTruck != null &&
-            cargo.AssignedTruck.Driver != null &&
-            !string.IsNullOrEmpty(cargo.AssignedTruck.Driver.LastName))
-        {
-            driverLastName = cargo.AssignedTruck.Driver.LastName.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        if (cargo.AssignedTruck != null &&
-            cargo.AssignedTruck.Driver != null &&
-            !string.IsNullOrEmpty(cargo.AssignedTruck.Driver.UserName))
-        {
-            driverUserName = cargo.AssignedTruck.Driver.UserName.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        return dispatcherFirstName || dispatcherLastName || dispatcherUserName || driverFirstName || driverLastName || driverUserName;
     }
 }

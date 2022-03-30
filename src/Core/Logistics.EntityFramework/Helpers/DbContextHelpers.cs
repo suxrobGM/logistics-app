@@ -12,6 +12,7 @@ internal static class DbContextHelpers
                 {
                     o.MigrationsAssembly("Logistics.EntityFramework.DbMigrations");
                     o.EnableRetryOnFailure(8, TimeSpan.FromSeconds(15), null);
+                    o.EnableStringComparisonTranslations(true);
                 })
             .UseLazyLoadingProxies();
     }

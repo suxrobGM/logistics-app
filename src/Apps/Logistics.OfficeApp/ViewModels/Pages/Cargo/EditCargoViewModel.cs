@@ -88,9 +88,15 @@ public class EditCargoViewModel : PageViewModelBase
         }
     }
 
-    public IEnumerable<string> SearchDriverName(string value)
+    public async Task<IEnumerable<string>> SearchDriverName(string value)
     {
-        return new List<string>();
+        var usersList = await apiClient.GetUsersAsync(value);
+        if (usersList.Items == null)
+        {
+            return new List<string>();
+        }
+
+        return usersList.Items.Select(i => i.GetFullName());
     }
 
     private Task<CargoDto?> FetchCargoAsync(string id)
