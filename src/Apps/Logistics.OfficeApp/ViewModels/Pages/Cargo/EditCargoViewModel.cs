@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace Logistics.AdminApp.ViewModels.Pages.Cargo;
+namespace Logistics.OfficeApp.ViewModels.Pages.Cargo;
 
 public class EditCargoViewModel : PageViewModelBase
 {

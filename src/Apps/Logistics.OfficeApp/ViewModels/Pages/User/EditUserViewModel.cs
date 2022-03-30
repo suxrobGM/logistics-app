@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 
-namespace Logistics.AdminApp.ViewModels.Pages.User;
+namespace Logistics.OfficeApp.ViewModels.Pages.User;
 
 public class EditUserViewModel : PageViewModelBase
 {

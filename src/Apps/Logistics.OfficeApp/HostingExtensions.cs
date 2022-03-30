@@ -2,7 +2,7 @@
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 
-namespace Logistics.AdminApp;
+namespace Logistics.OfficeApp;
 
 internal static class HostingExtensions
 {

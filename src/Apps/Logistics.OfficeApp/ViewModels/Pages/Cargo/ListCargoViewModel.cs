@@ -1,4 +1,4 @@
-﻿namespace Logistics.AdminApp.ViewModels.Pages.Cargo;
+﻿namespace Logistics.OfficeApp.ViewModels.Pages.Cargo;
 
 public class ListCargoViewModel : PageViewModelBase
 {

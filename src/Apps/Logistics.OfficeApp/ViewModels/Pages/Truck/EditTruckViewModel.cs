@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 
-namespace Logistics.AdminApp.ViewModels.Pages.Truck;
+namespace Logistics.OfficeApp.ViewModels.Pages.Truck;
 
 public class EditTruckViewModel : PageViewModelBase
 {

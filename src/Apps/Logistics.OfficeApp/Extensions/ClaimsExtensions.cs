@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace Logistics.AdminApp;
+namespace Logistics.OfficeApp;
 
 public static class ClaimsExtensions
 {

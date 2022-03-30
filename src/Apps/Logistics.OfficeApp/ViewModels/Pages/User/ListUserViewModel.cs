@@ -1,4 +1,4 @@
-﻿namespace Logistics.AdminApp.ViewModels.Pages.User;
+﻿namespace Logistics.OfficeApp.ViewModels.Pages.User;
 
 public class ListUserViewModel : PageViewModelBase
 {

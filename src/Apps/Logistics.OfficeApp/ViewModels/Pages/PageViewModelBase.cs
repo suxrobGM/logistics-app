@@ -1,4 +1,4 @@
-﻿namespace Logistics.AdminApp.ViewModels.Pages;
+﻿namespace Logistics.OfficeApp.ViewModels.Pages;
 
 public class PageViewModelBase : ViewModelBase
 {

@@ -1,5 +1,5 @@
 using Serilog;
-using Logistics.AdminApp;
+using Logistics.OfficeApp;
 
 
 Log.Logger = new LoggerConfiguration()
