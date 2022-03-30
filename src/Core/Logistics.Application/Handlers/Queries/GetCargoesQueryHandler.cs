@@ -16,9 +16,9 @@ internal sealed class GetCargoesQueryHandler : RequestHandlerBase<GetCargoesQuer
         var totalItems = cargoRepository.GetQuery().Count();
         var itemsQuery = cargoRepository.GetQuery();
 
-        if (!string.IsNullOrEmpty(request.SearchInput))
+        if (!string.IsNullOrEmpty(request.Search))
         {
-            itemsQuery = cargoRepository.GetQuery(new CargoesSpecification(request.SearchInput));
+            itemsQuery = cargoRepository.GetQuery(new CargoesSpecification(request.Search));
         }
 
         var items = itemsQuery

@@ -36,14 +36,9 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(PagedDataResult<UserDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     //[RequiredScope("admin.read")]
-    public async Task<IActionResult> GetList(string search = "", int page = 1, int pageSize = 10)
+    public async Task<IActionResult> GetList([FromQuery] GetUsersQuery request)
     {
-        var result = await mediator.Send(new GetUsersQuery 
-        {
-            SearchInput = search,
-            Page = page,
-            PageSize = pageSize
-        });
+        var result = await mediator.Send(request);
 
         if (result.Success)
             return Ok(result);

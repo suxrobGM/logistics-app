@@ -22,9 +22,9 @@ internal sealed class GetTrucksQueryHandler : RequestHandlerBase<GetTrucksQuery,
         var totalItems = truckRepository.GetQuery().Count();
         var itemsQuery = truckRepository.GetQuery();
 
-        if (!string.IsNullOrEmpty(request.SearchInput))
+        if (!string.IsNullOrEmpty(request.Search))
         {
-            itemsQuery = truckRepository.GetQuery(new TrucksSpecification(request.SearchInput));
+            itemsQuery = truckRepository.GetQuery(new TrucksSpecification(request.Search));
         }
 
         var items = itemsQuery

@@ -16,9 +16,9 @@ internal sealed class GetUsersQueryHandler : RequestHandlerBase<GetUsersQuery, P
         var totalItems = userRepository.GetQuery().Count();
         var itemsQuery = userRepository.GetQuery();
 
-        if (!string.IsNullOrEmpty(request.SearchInput))
+        if (!string.IsNullOrEmpty(request.Search))
         {
-            itemsQuery = userRepository.GetQuery(new UsersSpecification(request.SearchInput));
+            itemsQuery = userRepository.GetQuery(new UsersSpecification(request.Search));
         }
 
         var items = itemsQuery

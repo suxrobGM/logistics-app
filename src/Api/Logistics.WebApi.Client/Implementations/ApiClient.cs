@@ -19,10 +19,14 @@ internal class ApiClient : ApiClientBase, IApiClient
     {
         var query = new Dictionary<string, string>
         {
-            {"search", searchInput},
             {"page", page.ToString() },
             {"pageSize", pageSize.ToString() }
         };
+
+        if (!string.IsNullOrEmpty(searchInput))
+        {
+            query.Add("search", searchInput);
+        }
         var result = await GetRequestAsync<PagedDataResult<CargoDto>>("api/cargo/list", query);
         return result;
     }
@@ -57,10 +61,14 @@ internal class ApiClient : ApiClientBase, IApiClient
     {
         var query = new Dictionary<string, string>
         {
-            {"search", searchInput},
             {"page", page.ToString() },
             {"pageSize", pageSize.ToString() }
         };
+
+        if (!string.IsNullOrEmpty(searchInput))
+        {
+            query.Add("search", searchInput);
+        }
         var result = await GetRequestAsync<PagedDataResult<TruckDto>>("api/truck/list", query);
         return result;
     }
@@ -95,10 +103,14 @@ internal class ApiClient : ApiClientBase, IApiClient
     {
         var query = new Dictionary<string, string>
         {
-            {"search", searchInput},
             {"page", page.ToString() },
             {"pageSize", pageSize.ToString() }
         };
+
+        if (!string.IsNullOrEmpty(searchInput))
+        {
+            query.Add("search", searchInput);
+        }
         var result = await GetRequestAsync<PagedDataResult<UserDto>>("api/user/list", query);
         return result;
     }
