@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Logistics.WebApi.Client.Exceptions;
 
 namespace Logistics.OfficeApp.ViewModels.Pages.User;
 
 public class EditUserViewModel : PageViewModelBase
 {
-
     public EditUserViewModel(IApiClient apiClient)
         : base(apiClient)
     {
@@ -22,12 +21,15 @@ public class EditUserViewModel : PageViewModelBase
 
     public UserDto User { get; set; }
     public bool EditMode => !string.IsNullOrEmpty(Id);
+    public string Error { get; set; } = string.Empty;
 
     #endregion
 
 
     public override async Task OnInitializedAsync()
     {
+        Error = string.Empty;
+
         if (EditMode)
         {
             IsBusy = true;
@@ -43,12 +45,23 @@ public class EditUserViewModel : PageViewModelBase
     public async Task UpdateAsync()
     {
         IsBusy = true;
-        if (EditMode)
+        Error = string.Empty;
+
+        try
         {
-            await Task.Run(async () => await apiClient.UpdateUserAsync(User!));
-            Toast?.Show("User has been saved successfully.", "Notification");
+            if (EditMode)
+            {
+                await apiClient.UpdateUserAsync(User!);
+                Toast?.Show("User has been saved successfully.", "Notification");
+            }
+            IsBusy = false;
         }
-        IsBusy = false;
+        catch (ApiException ex)
+        {
+            Error = ex.Message;
+            IsBusy = false;
+        }
+        
     }
 
     private Task<UserDto?> FetchUserAsync(string id)

@@ -21,22 +21,17 @@ internal sealed class CreateCargoCommandHandler : RequestHandlerBase<CreateCargo
     protected override async Task<DataResult> HandleValidated(
         CreateCargoCommand request, CancellationToken cancellationToken)
     {
-        Truck? truck = null;
         var dispatcher = await userRepository.GetAsync(request.AssignedDispatcherId!);
 
         if (dispatcher == null)
         {
-            return DataResult.CreateError("Could not found the dispatcher");
+            return DataResult.CreateError("Could not find the specified dispatcher");
         }
 
-        if (!string.IsNullOrEmpty(request.AssignedTruckId))
+        var truck = await truckRepository.GetAsync(request.AssignedTruckId!);
+        if (truck == null)
         {
-            truck = await truckRepository.GetAsync(request.AssignedTruckId);
-
-            if (truck == null)
-            {
-                return DataResult.CreateError("Could not found the specified truck");
-            }
+            return DataResult.CreateError("Could not find the specified truck driver");
         }
 
         var cargoEntity = new Cargo
@@ -46,13 +41,9 @@ internal sealed class CreateCargoCommandHandler : RequestHandlerBase<CreateCargo
             Destination = request.Destination,
             TotalTripMiles = request.TotalTripMiles,
             PricePerMile = request.PricePerMile,
-            AssignedDispatcherId = dispatcher.Id
+            AssignedDispatcherId = dispatcher.Id,
+            AssignedTruckId = truck.Id,
         };
-
-        if (truck != null)
-        {
-            cargoEntity.AssignedTruck = truck;
-        }
 
         await cargoRepository.AddAsync(cargoEntity);
         await cargoRepository.UnitOfWork.CommitAsync();
@@ -65,7 +56,11 @@ internal sealed class CreateCargoCommandHandler : RequestHandlerBase<CreateCargo
 
         if (string.IsNullOrEmpty(request.AssignedDispatcherId))
         {
-            errorDescription = "Dispatcher Id is an empty string";
+            errorDescription = "AssignedDispatcherId is an empty string";
+        }
+        else if (string.IsNullOrEmpty(request.AssignedTruckId))
+        {
+            errorDescription = "AssignedTruckId is an empty string";
         }
         else if (string.IsNullOrEmpty(request.Source))
         {

@@ -53,8 +53,7 @@ namespace Logistics.EntityFramework.DbMigrations.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AssignedDispatcherId")
-                        .IsUnique();
+                    b.HasIndex("AssignedDispatcherId");
 
                     b.HasIndex("AssignedTruckId");
 
@@ -117,8 +116,9 @@ namespace Logistics.EntityFramework.DbMigrations.Migrations
             modelBuilder.Entity("Logistics.Domain.Entities.Cargo", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.User", "AssignedDispatcher")
-                        .WithOne()
-                        .HasForeignKey("Logistics.Domain.Entities.Cargo", "AssignedDispatcherId");
+                        .WithMany("DispatcherCargoes")
+                        .HasForeignKey("AssignedDispatcherId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Logistics.Domain.Entities.Truck", "AssignedTruck")
                         .WithMany("Cargoes")
@@ -142,6 +142,11 @@ namespace Logistics.EntityFramework.DbMigrations.Migrations
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
                 {
                     b.Navigation("Cargoes");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.User", b =>
+                {
+                    b.Navigation("DispatcherCargoes");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,6 +1,5 @@
-﻿using Logistics.WebApi.Client.Exceptions;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
+﻿using Microsoft.AspNetCore.Components.Authorization;
+using Logistics.WebApi.Client.Exceptions;
 
 namespace Logistics.OfficeApp.ViewModels.Pages.Cargo;
 
@@ -30,13 +29,15 @@ public class EditCargoViewModel : PageViewModelBase
     public CargoDto Cargo { get; set; }
     public IEnumerable<TruckDto> Trucks { get; set; }
     public bool EditMode => !string.IsNullOrEmpty(Id);
-    public string? Error { get; set; }
+    public string Error { get; set; } = string.Empty;
 
     #endregion
 
 
     public override async Task OnInitializedAsync()
     {
+        Error = string.Empty;
+
         if (EditMode)
         {
             IsBusy = true;
@@ -75,6 +76,7 @@ public class EditCargoViewModel : PageViewModelBase
             {
                 await apiClient.CreateCargoAsync(Cargo!);
                 Toast?.Show("A new cargo has been created successfully.", "Notification");
+                ResetData();
             }
             IsBusy = false;
         }
@@ -83,6 +85,15 @@ public class EditCargoViewModel : PageViewModelBase
             Error = ex.Message;
             IsBusy = false;
         }
+    }
+
+    private void ResetData()
+    {
+        Cargo.AssignedTruckId = null;
+        Cargo.PricePerMile = 0;
+        Cargo.TotalTripMiles = 0;
+        Cargo.Source = string.Empty;
+        Cargo.Destination = string.Empty;
     }
 
     private async Task LoadCurrentDispatcherAsync()

@@ -93,15 +93,15 @@ namespace Logistics.EntityFramework.DbMigrations.Migrations
                         name: "FK_cargoes_users_AssignedDispatcherId",
                         column: x => x.AssignedDispatcherId,
                         principalTable: "users",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
                 name: "IX_cargoes_AssignedDispatcherId",
                 table: "cargoes",
-                column: "AssignedDispatcherId",
-                unique: true);
+                column: "AssignedDispatcherId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_cargoes_AssignedTruckId",

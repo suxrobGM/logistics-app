@@ -1,4 +1,5 @@
-﻿global using MagicMvvm;
+﻿global using Microsoft.AspNetCore.Components;
+global using MagicMvvm;
 
 global using Logistics.Blazor;
 global using Logistics.Blazor.Buttons;

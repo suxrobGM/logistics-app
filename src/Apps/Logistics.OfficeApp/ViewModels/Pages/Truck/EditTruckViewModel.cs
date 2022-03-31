@@ -1,11 +1,9 @@
 ﻿using Logistics.WebApi.Client.Exceptions;
-using Microsoft.AspNetCore.Components;
 
 namespace Logistics.OfficeApp.ViewModels.Pages.Truck;
 
 public class EditTruckViewModel : PageViewModelBase
 {
-
     public EditTruckViewModel(IApiClient apiClient)
         : base(apiClient)
     {
@@ -32,14 +30,15 @@ public class EditTruckViewModel : PageViewModelBase
     }
 
     public bool EditMode => !string.IsNullOrEmpty(Id);
-
-    public string? Error { get; set; }
+    public string Error { get; set; } = string.Empty;
 
     #endregion
 
 
     public override async Task OnInitializedAsync()
     {
+        Error = string.Empty;
+
         if (EditMode)
         {
             IsBusy = true;

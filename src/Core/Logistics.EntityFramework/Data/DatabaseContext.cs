@@ -33,6 +33,10 @@ public class DatabaseContext : DbContext
         builder.Entity<User>(entity =>
         {
             entity.ToTable("users");
+            entity.HasMany(m => m.DispatcherCargoes)
+                .WithOne(m => m.AssignedDispatcher)
+                .HasForeignKey(m => m.AssignedDispatcherId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         builder.Entity<Truck>(entity =>
@@ -52,9 +56,6 @@ public class DatabaseContext : DbContext
         builder.Entity<Cargo>(entity =>
         {
             entity.ToTable("cargoes");
-            entity.HasOne(m => m.AssignedDispatcher)
-                .WithOne()
-                .HasForeignKey<Cargo>(m => m.AssignedDispatcherId);
         });
     }
 }

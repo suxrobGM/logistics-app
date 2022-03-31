@@ -14,4 +14,5 @@ public class User : Entity
     public UserRoleType RoleType { get; set; } = UserRoleType.Guest;
 
     public string GetFullName() => $"{FirstName} {LastName}";
+    public virtual IList<Cargo> DispatcherCargoes { get; set; } = new List<Cargo>();
 }

@@ -69,7 +69,7 @@
                         <input id="dispatcher" class="form-control" type="text" value="@Model.Cargo.AssignedDispatcherName" readonly />
                     </div>
                     <div class="mb-3">
-                        <label for="driver" class="form-label">Assigned Driver</label>
+                        <label for="driver" class="form-label">Assigned Truck</label>
                         <DataList Id="driver" @bind-Value="Model.Cargo.AssignedTruckId" OnInputChanged="Model.SearchTruck" Placeholder="Type the driver name"></DataList>
                     </div>
                     <div class="mb-3">
