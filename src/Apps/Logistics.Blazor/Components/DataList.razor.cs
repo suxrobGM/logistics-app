@@ -34,6 +34,7 @@ public partial class DataList : ComponentBase
             return;
         }
 
+        await Task.Delay(500);
         var items = await OnInputChanged.Invoke((string)e.Value);
 
         if (items != null)

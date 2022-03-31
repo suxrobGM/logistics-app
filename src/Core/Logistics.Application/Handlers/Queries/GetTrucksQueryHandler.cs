@@ -14,10 +14,14 @@ internal sealed class GetTrucksQueryHandler : RequestHandlerBase<GetTrucksQuery,
         GetTrucksQuery request, 
         CancellationToken cancellationToken)
     {
-        var cargoesIdsList = truckRepository.GetQuery()
-            .SelectMany(i => i.Cargoes)
-            .Select(i => i.Id)
-            .ToList();
+        var cargoesIdsList = new List<string>();
+        if (request.IncludeCargoIds)
+        {
+            cargoesIdsList = truckRepository.GetQuery()
+                        .SelectMany(i => i.Cargoes)
+                        .Select(i => i.Id)
+                        .ToList();
+        }
 
         var totalItems = truckRepository.GetQuery().Count();
         var itemsQuery = truckRepository.GetQuery();
@@ -36,6 +40,7 @@ internal sealed class GetTrucksQueryHandler : RequestHandlerBase<GetTrucksQuery,
                     Id = i.Id,
                     TruckNumber = i.TruckNumber,
                     DriverId = i.DriverId,
+                    DriverName = i.Driver != null ? i.Driver.GetFullName() : null,
                     CargoesIds = cargoesIdsList
                 })
                 .ToArray();

@@ -63,12 +63,13 @@ internal class ApiClient : ApiClientBase, IApiClient
         return result.Value;
     }
 
-    public async Task<PagedDataResult<TruckDto>> GetTrucksAsync(string searchInput = "", int page = 1, int pageSize = 10)
+    public async Task<PagedDataResult<TruckDto>> GetTrucksAsync(string searchInput = "", int page = 1, int pageSize = 10, bool includeCargoIds = false)
     {
         var query = new Dictionary<string, string>
         {
             {"page", page.ToString() },
-            {"pageSize", pageSize.ToString() }
+            {"pageSize", pageSize.ToString() },
+            {"includeCargoIds", includeCargoIds.ToString() }
         };
 
         if (!string.IsNullOrEmpty(searchInput))
