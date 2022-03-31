@@ -14,7 +14,7 @@ internal static class HostingExtensions
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddApplicationLayer(builder.Configuration);
-        builder.Services.AddEntityFrameworkLayer(builder.Configuration, "Local");
+        builder.Services.AddInfrastructureLayer(builder.Configuration, "Local");
 
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));

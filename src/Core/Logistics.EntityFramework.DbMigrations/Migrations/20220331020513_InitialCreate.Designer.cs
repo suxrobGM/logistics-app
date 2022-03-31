@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.EntityFramework.DbMigrations.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20220222221756_InitialCreate")]
+    [Migration("20220331020513_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,7 +38,7 @@ namespace Logistics.EntityFramework.DbMigrations.Migrations
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<DateTime?>("PickUpDate")
+                    b.Property<DateTime>("PickUpDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<decimal>("PricePerMile")

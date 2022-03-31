@@ -40,20 +40,21 @@ public class DatabaseContext : DbContext
             entity.ToTable("trucks");
 
             entity.HasOne(m => m.Driver)
-            .WithOne()
-            .HasForeignKey<Truck>(m => m.DriverId);
+                .WithOne()
+                .HasForeignKey<Truck>(m => m.DriverId);
 
             entity.HasMany(m => m.Cargoes)
-            .WithOne(m => m.AssignedTruck)
-            .OnDelete(DeleteBehavior.SetNull);
+                .WithOne(m => m.AssignedTruck)
+                .HasForeignKey(m => m.AssignedTruckId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         builder.Entity<Cargo>(entity =>
         {
             entity.ToTable("cargoes");
             entity.HasOne(m => m.AssignedDispatcher)
-            .WithOne()
-            .HasForeignKey<Cargo>(m => m.AssignedDispatcherId);
+                .WithOne()
+                .HasForeignKey<Cargo>(m => m.AssignedDispatcherId);
         });
     }
 }

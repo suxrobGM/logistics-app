@@ -12,6 +12,7 @@ public class Cargo : Entity
     public DateTime PickUpDate { get; set; } = DateTime.Now;
     public CargoStatus Status { get; set; }
     public string? AssignedDispatcherId { get; set; }
+    public string? AssignedTruckId { get; set; }
 
     public virtual Truck? AssignedTruck { get; set; }
     public virtual User? AssignedDispatcher { get; set; }

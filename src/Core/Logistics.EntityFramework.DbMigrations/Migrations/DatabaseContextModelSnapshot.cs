@@ -36,7 +36,7 @@ namespace Logistics.EntityFramework.DbMigrations.Migrations
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<DateTime?>("PickUpDate")
+                    b.Property<DateTime>("PickUpDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<decimal>("PricePerMile")

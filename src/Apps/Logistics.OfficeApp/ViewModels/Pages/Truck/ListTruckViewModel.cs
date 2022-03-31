@@ -28,7 +28,6 @@ public class ListTruckViewModel : PageViewModelBase
     #endregion
 
 
-
     public override async Task OnInitializedAsync()
     {
         IsBusy = true;
@@ -45,7 +44,7 @@ public class ListTruckViewModel : PageViewModelBase
     {
         return Task.Run(async () =>
         {
-            return await apiClient.GetTrucksAsync(page: page);
+            return await apiClient.GetTrucksAsync(page: page, includeCargoIds: true);
         });
     }
 }

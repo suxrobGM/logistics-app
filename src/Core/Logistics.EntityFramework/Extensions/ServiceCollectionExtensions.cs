@@ -7,7 +7,7 @@ namespace Logistics.EntityFramework;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddEntityFrameworkLayer(
+    public static IServiceCollection AddInfrastructureLayer(
         this IServiceCollection services,
         IConfiguration configuration,
         string connectionStringName = "Local")

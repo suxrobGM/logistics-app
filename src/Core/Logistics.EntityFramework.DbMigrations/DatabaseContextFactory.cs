@@ -6,7 +6,7 @@ public class DatabaseContextFactory : IDesignTimeDbContextFactory<DatabaseContex
 {
     public DatabaseContext CreateDbContext(string[] args)
     {
-        var connectionString = "Server=localhost; Database=LogisticsDB; Uid=root; Pwd=Suxrobbek0729; Connect Timeout=10";
+        var connectionString = ConnectionStrings.Local;
         return new DatabaseContext(connectionString);
     }
 }
