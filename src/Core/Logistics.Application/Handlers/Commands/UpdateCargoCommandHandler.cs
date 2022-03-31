@@ -20,14 +20,14 @@ internal sealed class UpdateCargoCommandHandler : RequestHandlerBase<UpdateCargo
 
         if (truck == null)
         {
-            return DataResult.CreateError("Could not found the specified truck");
+            return DataResult.CreateError("Could not find the specified truck");
         }
 
         var cargoEntity = await cargoRepository.GetAsync(request.Id!);
 
         if (cargoEntity == null)
         {
-            return DataResult.CreateError("Could not found the specified cargo");
+            return DataResult.CreateError("Could not find the specified cargo");
         }
 
         cargoEntity.Source = request.Source;

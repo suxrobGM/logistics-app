@@ -1,9 +1,12 @@
+using System.Text.Json.Serialization;
+
 namespace Logistics.Application.Contracts;
 
 public class DataResult
 {
     private static readonly DataResult success = new();
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? Error { get; init; }
     public bool Success => string.IsNullOrEmpty(Error);
 
@@ -13,6 +16,7 @@ public class DataResult
     
 public class DataResult<T> : DataResult
 {
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public T? Value { get; set; }
 
     public static DataResult<T> CreateSuccess(T result) => new() { Value = result };

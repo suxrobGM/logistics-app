@@ -25,7 +25,6 @@ public class ListUserViewModel : PageViewModelBase
     #endregion
 
 
-
     public override async Task OnInitializedAsync()
     {
         IsBusy = true;
