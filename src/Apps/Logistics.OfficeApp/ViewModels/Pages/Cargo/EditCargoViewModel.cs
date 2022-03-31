@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Logistics.WebApi.Client.Exceptions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Logistics.OfficeApp.ViewModels.Pages.Cargo;
@@ -23,12 +24,13 @@ public class EditCargoViewModel : PageViewModelBase
     [CascadingParameter]
     public Toast? Toast { get; set; }
 
-
+    
     #region Binding properties
 
     public CargoDto Cargo { get; set; }
     public IEnumerable<TruckDto> Trucks { get; set; }
     public bool EditMode => !string.IsNullOrEmpty(Id);
+    public string? Error { get; set; }
 
     #endregion
 
@@ -61,17 +63,26 @@ public class EditCargoViewModel : PageViewModelBase
     public async Task UpdateAsync()
     {
         IsBusy = true;
-        if (EditMode)
+        Error = string.Empty;
+        try
         {
-            await Task.Run(async () => await apiClient.UpdateCargoAsync(Cargo!));
-            Toast?.Show("Cargo has been saved successfully.", "Notification");
+            if (EditMode)
+            {
+                await apiClient.UpdateCargoAsync(Cargo!);
+                Toast?.Show("Cargo has been saved successfully.", "Notification");
+            }
+            else
+            {
+                await apiClient.CreateCargoAsync(Cargo!);
+                Toast?.Show("A new cargo has been created successfully.", "Notification");
+            }
+            IsBusy = false;
         }
-        else
+        catch (ApiException ex)
         {
-            await Task.Run(async () => await apiClient.CreateCargoAsync(Cargo!));
-            Toast?.Show("A new cargo has been created successfully.", "Notification");
+            Error = ex.Message;
+            IsBusy = false;
         }
-        IsBusy = false;
     }
 
     private async Task LoadCurrentDispatcherAsync()
@@ -88,15 +99,20 @@ public class EditCargoViewModel : PageViewModelBase
         }
     }
 
-    public async Task<IEnumerable<string>> SearchDriverName(string value)
+    public async Task<IEnumerable<DataListItem>> SearchTruck(string value)
     {
-        var usersList = await apiClient.GetUsersAsync(value);
-        if (usersList.Items == null)
+        var pagedList = await apiClient.GetTrucksAsync(value);
+        var dataListItems = new List<DataListItem>();
+
+        if (pagedList.Items != null)
         {
-            return new List<string>();
+            foreach (var item in pagedList.Items)
+            {
+                dataListItems.Add(new DataListItem(item.Id!, item.DriverName!));
+            }
         }
 
-        return usersList.Items.Select(i => i.GetFullName());
+        return dataListItems;
     }
 
     private Task<CargoDto?> FetchCargoAsync(string id)
@@ -104,14 +120,6 @@ public class EditCargoViewModel : PageViewModelBase
         return Task.Run(async () =>
         {
             return await apiClient.GetCargoAsync(id);
-        });
-    }
-
-    private Task<PagedDataResult<TruckDto>> FetchDriversAsync()
-    {
-        return Task.Run(async () =>
-        {
-            return await apiClient.GetTrucksAsync();
         });
     }
 }

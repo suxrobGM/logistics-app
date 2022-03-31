@@ -57,6 +57,12 @@ internal class ApiClient : ApiClientBase, IApiClient
         return result.Value;
     }
 
+    public async Task<TruckDto?> GetTruckByDriverAsync(string driverId)
+    {
+        var result = await GetRequestAsync<DataResult<TruckDto>>($"api/truck/driver/{driverId}");
+        return result.Value;
+    }
+
     public async Task<PagedDataResult<TruckDto>> GetTrucksAsync(string searchInput = "", int page = 1, int pageSize = 10)
     {
         var query = new Dictionary<string, string>

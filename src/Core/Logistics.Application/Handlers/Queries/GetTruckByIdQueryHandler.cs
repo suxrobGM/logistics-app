@@ -4,8 +4,7 @@ internal sealed class GetTruckByIdQueryHandler : RequestHandlerBase<GetTruckById
 {
     private readonly IRepository<Truck> truckRepository;
 
-    public GetTruckByIdQueryHandler(
-        IRepository<Truck> truckRepository)
+    public GetTruckByIdQueryHandler(IRepository<Truck> truckRepository)
     {
         this.truckRepository = truckRepository;
     }

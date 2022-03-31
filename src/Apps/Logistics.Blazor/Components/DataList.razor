@@ -5,52 +5,19 @@
     var optionsId = $"{id}_options";
 }
 
-<input id="@GetId()" class="form-control" list="@optionsId" value="@Value" @attributes="AdditionalAttributes" @onchange="OnInputChangedHandler" />
+<input id="@id"
+    class="form-control" 
+    list="@optionsId" 
+    value="@Value"
+    placeholder="@Placeholder"
+    autocomplete="off"
+    @attributes="AdditionalAttributes" 
+    @oninput="OnInputChangedHandler"
+    @onchange="(e) => OnClickOption(e.Value?.ToString())"/>
+
 <datalist id="@optionsId">
-    @foreach (var item in Items)
+    @foreach (var item in _items)
     {
-       <option value="@item"></option>
+       <option value="@item.DisplayName"></option>
     }
 </datalist>
-
-@code {
-
-    [Parameter]
-    public Func<string, Task<IEnumerable<string>>>? OnInputChanged { get; set; }
-
-    [Parameter]
-    public string? Id { get; set; }
-
-    [Parameter]
-    public string? Value { get; set; }
-
-    [Parameter]
-    public EventCallback<string> ValueChanged { get; set; }
-
-    public IEnumerable<string> Items { get; set; } = new List<string>();
-
-
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
-
-    private string GetId()
-    {
-        return this.GetHashCode().ToString();
-    }
-
-    private async void OnInputChangedHandler(ChangeEventArgs e)
-    {
-        if (e == null || e.Value == null || OnInputChanged == null)
-        {
-            return;
-        }
-
-        var items = await OnInputChanged.Invoke(e.Value.ToString()!);
-
-        if (items != null)
-        {
-            Items = items.Take(10);
-            StateHasChanged();
-        }
-    }
-}

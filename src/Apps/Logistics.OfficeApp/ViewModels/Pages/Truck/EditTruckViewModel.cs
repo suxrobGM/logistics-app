@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Logistics.WebApi.Client.Exceptions;
+using Microsoft.AspNetCore.Components;
 
 namespace Logistics.OfficeApp.ViewModels.Pages.Truck;
 
@@ -32,6 +33,8 @@ public class EditTruckViewModel : PageViewModelBase
 
     public bool EditMode => !string.IsNullOrEmpty(Id);
 
+    public string? Error { get; set; }
+
     #endregion
 
 
@@ -64,17 +67,51 @@ public class EditTruckViewModel : PageViewModelBase
     public async Task UpdateAsync()
     {
         IsBusy = true;
-        if (EditMode)
+        Error = string.Empty;
+
+        try
         {
-            await Task.Run(async () => await apiClient.UpdateTruckAsync(Truck!));
-            Toast?.Show("Truck has been saved successfully.", "Notification");
+            if (EditMode)
+            {
+                await apiClient.UpdateTruckAsync(Truck!);
+                Toast?.Show("Truck has been saved successfully.", "Notification");
+            }
+            else
+            {
+                await apiClient.CreateTruckAsync(Truck!);
+                Toast?.Show("A new truck has been created successfully.", "Notification");
+                ResetData();
+            }
+
+            IsBusy = false;
         }
-        else
+        catch (ApiException ex)
         {
-            await Task.Run(async () => await apiClient.CreateTruckAsync(Truck!));
-            Toast?.Show("A new truck has been created successfully.", "Notification");
+            Error = ex.Message;
+            IsBusy = false;
         }
-        IsBusy = false;
+    }
+
+    private void ResetData()
+    {
+        Truck.TruckNumber = null;
+        Truck.DriverId = null;
+    }
+
+    public async Task<IEnumerable<DataListItem>> SearchUser(string value)
+    {
+        var pagedList = await apiClient.GetUsersAsync(value);
+        var dataListItems = new List<DataListItem>();
+
+        if (pagedList.Items != null)
+        {
+            foreach (var item in pagedList.Items)
+            {
+                dataListItems.Add(new DataListItem(item.Id!, item.GetFullName()));
+            }
+        }
+
+        return dataListItems;
     }
 
     private Task<TruckDto?> FetchTruckAsync(string id)

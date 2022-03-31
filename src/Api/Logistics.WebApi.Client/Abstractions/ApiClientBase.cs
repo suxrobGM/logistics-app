@@ -170,7 +170,15 @@ internal abstract class ApiClientBase
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new ApiException(content);
+            var errorMessage = content;
+            var errorData = Deserialize<ErrorData>(content);
+
+            if (errorData != null && !string.IsNullOrEmpty(errorData.Error))
+            {
+                errorMessage = errorData.Error;
+            }
+
+            throw new ApiException(errorMessage);
         }
 
         return content;
