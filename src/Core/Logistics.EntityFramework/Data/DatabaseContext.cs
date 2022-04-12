@@ -5,7 +5,7 @@ namespace Logistics.EntityFramework.Data;
 
 public class DatabaseContext : DbContext
 {
-    private string connectionString;
+    private readonly string connectionString;
 
     public DatabaseContext(string connectionString)
     {

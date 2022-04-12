@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Options;
 
-public class EmailSenderOptions
+public class EmailSettings
 {
     public string? SenderMail { get; set; }
     public string? SenderName { get; set; }

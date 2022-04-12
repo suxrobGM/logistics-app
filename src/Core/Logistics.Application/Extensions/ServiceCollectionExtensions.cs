@@ -21,7 +21,7 @@ public static class ServiceCollectionExtensions
             o.AddProfile<UserProfile>();
         });
 
-        var emailSenderOptions = configuration.GetSection(emailConfigSection).Get<EmailSenderOptions>();
+        var emailSenderOptions = configuration.GetSection(emailConfigSection).Get<EmailSettings>();
 
         services.AddMediatR(typeof(ServiceCollectionExtensions).Assembly);
         services.AddSingleton(emailSenderOptions);

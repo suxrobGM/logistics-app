@@ -8,12 +8,12 @@ namespace Logistics.Application.Services;
 
 internal sealed class EmailSender : IEmailSender
 {
-    private readonly EmailSenderOptions options;
+    private readonly EmailSettings options;
     
     private readonly ILogger<EmailSender> logger;
 
     public EmailSender(
-        EmailSenderOptions options,
+        EmailSettings options,
         ILogger<EmailSender> logger)
     {
         this.options = options ?? throw new ArgumentNullException(nameof(options));
