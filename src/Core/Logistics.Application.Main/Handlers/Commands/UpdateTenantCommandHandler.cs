@@ -9,7 +9,14 @@ internal sealed class UpdateTenantCommandHandler : RequestHandlerBase<UpdateTena
 
     protected override bool Validate(UpdateTenantCommand request, out string errorDescription)
     {
-        throw new NotImplementedException();
+        errorDescription = string.Empty;
+
+        if (string.IsNullOrEmpty(request.Id))
+        {
+            errorDescription = "Id is an empty string";
+        }
+
+        return string.IsNullOrEmpty(errorDescription);
     }
 }
 
