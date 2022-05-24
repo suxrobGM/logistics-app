@@ -7,4 +7,9 @@
     <RootNamespace>Logistics.Application</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Logistics.Application.Main.Contracts\Logistics.Application.Main.Contracts.csproj" />
+    <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

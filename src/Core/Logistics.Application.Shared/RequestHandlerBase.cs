@@ -1,4 +1,6 @@
-﻿namespace Logistics.Application.Handlers;
+﻿using MediatR;
+
+namespace Logistics.Application.Shared;
 
 public abstract class RequestHandlerBase<TRequest, TResponse> : IRequestHandler<TRequest, TResponse>
     where TRequest : IRequest<TResponse>

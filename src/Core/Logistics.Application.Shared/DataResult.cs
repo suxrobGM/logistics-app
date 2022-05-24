@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Logistics.Application.Contracts;
+namespace Logistics.Application.Shared;
 
 public class DataResult
 {

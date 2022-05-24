@@ -4,15 +4,15 @@
 [ApiController]
 public class CargoController : ControllerBase
 {
-    private readonly IMapper mapper;
-    private readonly IMediator mediator;
+    private readonly IMapper _mapper;
+    private readonly IMediator _mediator;
 
     public CargoController(
         IMapper mapper,
         IMediator mediator)
     {
-        this.mapper = mapper;
-        this.mediator = mediator;
+        _mapper = mapper;
+        _mediator = mediator;
     }
 
     [HttpGet("{id}")]
@@ -21,7 +21,7 @@ public class CargoController : ControllerBase
     //[RequiredScope("admin.read")]
     public async Task<IActionResult> GetById(string id)
     {
-        var result = await mediator.Send(new GetCargoByIdQuery
+        var result = await _mediator.Send(new GetCargoByIdQuery
         {
             Id = id
         });
@@ -38,7 +38,7 @@ public class CargoController : ControllerBase
     //[RequiredScope("admin.read")]
     public async Task<IActionResult> GetList([FromQuery] GetCargoesQuery request)
     {
-        var result = await mediator.Send(request);
+        var result = await _mediator.Send(request);
 
         if (result.Success)
             return Ok(result);
@@ -52,7 +52,7 @@ public class CargoController : ControllerBase
     //[RequiredScope("admin.write")]
     public async Task<IActionResult> Create([FromBody] CargoDto request)
     {
-        var result = await mediator.Send(mapper.Map<CreateCargoCommand>(request));
+        var result = await _mediator.Send(_mapper.Map<CreateCargoCommand>(request));
 
         if (result.Success)
             return Ok(result);
@@ -66,9 +66,9 @@ public class CargoController : ControllerBase
     //[RequiredScope("admin.write")]
     public async Task<IActionResult> Update(string id, [FromBody] CargoDto request)
     {
-        var updateRequest = mapper.Map<UpdateCargoCommand>(request);
+        var updateRequest = _mapper.Map<UpdateCargoCommand>(request);
         updateRequest.Id = id;
-        var result = await mediator.Send(updateRequest);
+        var result = await _mediator.Send(updateRequest);
 
         if (result.Success)
             return Ok(result);
@@ -82,7 +82,7 @@ public class CargoController : ControllerBase
     //[RequiredScope("admin.write")]
     public async Task<IActionResult> Delete(string id)
     {
-        var result = await mediator.Send(new DeleteCargoCommand
+        var result = await _mediator.Send(new DeleteCargoCommand
         {
             Id = id
         });

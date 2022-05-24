@@ -4,15 +4,15 @@
 [ApiController]
 public class UserController : ControllerBase
 {
-    private readonly IMapper mapper;
-    private readonly IMediator mediator;
+    private readonly IMapper _mapper;
+    private readonly IMediator _mediator;
 
     public UserController(
         IMapper mapper,
         IMediator mediator)
     {
-        this.mapper = mapper;
-        this.mediator = mediator;
+        _mapper = mapper;
+        _mediator = mediator;
     }
 
     [HttpGet("{id}")]
@@ -21,7 +21,7 @@ public class UserController : ControllerBase
     //[RequiredScope("admin.read")]
     public async Task<IActionResult> GetById(string id)
     {
-        var result = await mediator.Send(new GetUserByIdQuery
+        var result = await _mediator.Send(new GetUserByIdQuery
         {
             Id = id
         });
@@ -38,7 +38,7 @@ public class UserController : ControllerBase
     //[RequiredScope("admin.read")]
     public async Task<IActionResult> GetList([FromQuery] GetUsersQuery request)
     {
-        var result = await mediator.Send(request);
+        var result = await _mediator.Send(request);
 
         if (result.Success)
             return Ok(result);
@@ -52,7 +52,7 @@ public class UserController : ControllerBase
     //[RequiredScope("admin.write")]
     public async Task<IActionResult> Create([FromBody] UserDto user)
     {
-        var result = await mediator.Send(mapper.Map<CreateUserCommand>(user));
+        var result = await _mediator.Send(_mapper.Map<CreateUserCommand>(user));
 
         if (result.Success)
             return Ok(result);
@@ -66,9 +66,9 @@ public class UserController : ControllerBase
     //[RequiredScope("admin.write")]
     public async Task<IActionResult> Update(string id, [FromBody] UserDto request)
     {
-        var updateRequest = mapper.Map<UpdateUserCommand>(request);
+        var updateRequest = _mapper.Map<UpdateUserCommand>(request);
         updateRequest.Id = id;
-        var result = await mediator.Send(updateRequest);
+        var result = await _mediator.Send(updateRequest);
 
         if (result.Success)
             return Ok(result);

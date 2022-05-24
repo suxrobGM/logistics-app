@@ -4,15 +4,15 @@
 [ApiController]
 public class TruckController : ControllerBase
 {
-    private readonly IMapper mapper;
-    private readonly IMediator mediator;
+    private readonly IMapper _mapper;
+    private readonly IMediator _mediator;
 
     public TruckController(
         IMapper mapper,
         IMediator mediator)
     {
-        this.mapper = mapper;
-        this.mediator = mediator;
+        _mapper = mapper;
+        _mediator = mediator;
     }
 
     [HttpGet("{id}")]
@@ -21,7 +21,7 @@ public class TruckController : ControllerBase
     //[RequiredScope("admin.read")]
     public async Task<IActionResult> GetById(string id)
     {
-        var result = await mediator.Send(new GetTruckByIdQuery
+        var result = await _mediator.Send(new GetTruckByIdQuery
         {
             Id = id
         });
@@ -38,7 +38,7 @@ public class TruckController : ControllerBase
     //[RequiredScope("admin.read")]
     public async Task<IActionResult> GetList([FromQuery] GetTrucksQuery request)
     {
-        var result = await mediator.Send(request);
+        var result = await _mediator.Send(request);
 
         if (result.Success)
             return Ok(result);
@@ -52,7 +52,7 @@ public class TruckController : ControllerBase
     //[RequiredScope("admin.write")]
     public async Task<IActionResult> Create([FromBody] TruckDto request)
     {
-        var result = await mediator.Send(mapper.Map<CreateTruckCommand>(request));
+        var result = await _mediator.Send(_mapper.Map<CreateTruckCommand>(request));
 
         if (result.Success)
             return Ok(result);
@@ -66,9 +66,9 @@ public class TruckController : ControllerBase
     //[RequiredScope("admin.write")]
     public async Task<IActionResult> Update(string id, [FromBody] TruckDto request)
     {
-        var updateRequest = mapper.Map<UpdateTruckCommand>(request);
+        var updateRequest = _mapper.Map<UpdateTruckCommand>(request);
         updateRequest.Id = id;
-        var result = await mediator.Send(updateRequest);
+        var result = await _mediator.Send(updateRequest);
 
         if (result.Success)
             return Ok(result);
@@ -82,7 +82,7 @@ public class TruckController : ControllerBase
     //[RequiredScope("admin.write")]
     public async Task<IActionResult> Delete(string id)
     {
-        var result = await mediator.Send(new DeleteTruckCommand
+        var result = await _mediator.Send(new DeleteTruckCommand
         {
             Id = id
         });

@@ -1,4 +1,4 @@
-﻿namespace Logistics.Application.Contracts;
+﻿namespace Logistics.Application.Shared;
 
 public class PagedDataResult<T> : DataResult<T>
 {

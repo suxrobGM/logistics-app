@@ -1,4 +1,4 @@
-﻿namespace Logistics.Application.Contracts.Queries;
+﻿namespace Logistics.Application.Shared;
 
 public abstract class PagedQueryBase<T> : RequestBase<PagedDataResult<T>>
 {
