@@ -2,7 +2,7 @@
 
 namespace Logistics.Domain.Repositories;
 
-public static class RepositoryExtensions
+public static class MainRepositoryExtensions
 {
     public static Task<TEntity?> GetAsync<TEntity>(
         this IMainRepository<TEntity> repository,

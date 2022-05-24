@@ -4,6 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+		<RootNamespace>Logistics.Application</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -15,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Logistics.Application.Contracts\Logistics.Application.Contracts.csproj" />
+      <ProjectReference Include="..\Logistics.Application.Tenant.Contracts\Logistics.Application.Tenant.Contracts.csproj" />
       <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />
     </ItemGroup>
 

@@ -2,15 +2,15 @@
 
 internal class TenantUnitOfWork : ITenantUnitOfWork
 {
-    private readonly TenantDbContext context;
+    private readonly TenantDbContext _context;
 
     public TenantUnitOfWork(TenantDbContext context)
     {
-        this.context = context;
+        _context = context;
     }
 
     public Task<int> CommitAsync()
     {
-        return context.SaveChangesAsync();
+        return _context.SaveChangesAsync();
     }
 }

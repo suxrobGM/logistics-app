@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Api\Logistics.WebApi.Client\Logistics.WebApi.Client.csproj" />
-    <ProjectReference Include="..\..\Core\Logistics.Application.Contracts\Logistics.Application.Contracts.csproj" />
+    <ProjectReference Include="..\..\Core\Logistics.Application.Tenant.Contracts\Logistics.Application.Tenant.Contracts.csproj" />
     <ProjectReference Include="..\Logistics.Blazor\Logistics.Blazor.csproj" />
   </ItemGroup>
 

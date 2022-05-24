@@ -2,15 +2,15 @@
 
 internal class MainUnitOfWork : IMainUnitOfWork
 {
-    private readonly MainDbContext context;
+    private readonly MainDbContext _context;
 
     public MainUnitOfWork(MainDbContext context)
     {
-        this.context = context;
+        _context = context;
     }
 
     public Task<int> CommitAsync()
     {
-        return context.SaveChangesAsync();
+        return _context.SaveChangesAsync();
     }
 }

@@ -5,13 +5,13 @@ namespace Logistics.EntityFramework.Repositories;
 internal class MainRepository<TEntity> : IMainRepository<TEntity>
     where TEntity : class, IAggregateRoot
 {
-    private readonly MainDbContext context;
+    private readonly MainDbContext _context;
 
     public MainRepository(
         MainDbContext context,
         IMainUnitOfWork unitOfWork)
     {
-        this.context = context;
+        _context = context;
         UnitOfWork = unitOfWork;
     }
 
@@ -19,36 +19,36 @@ internal class MainRepository<TEntity> : IMainRepository<TEntity>
 
     public async Task<TEntity?> GetAsync(object id)
     {
-        var entity = await context.Set<TEntity>().FindAsync(id);
+        var entity = await _context.Set<TEntity>().FindAsync(id);
         return entity;
     }
 
     public Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate)
     {
-        return context.Set<TEntity>().FirstOrDefaultAsync(predicate);
+        return _context.Set<TEntity>().FirstOrDefaultAsync(predicate);
     }
 
     public async Task<IList<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate = default!)
     {
-        return predicate == null ? await context.Set<TEntity>().ToListAsync()
-            : await context.Set<TEntity>().Where(predicate).ToListAsync();
+        return predicate == null ? await _context.Set<TEntity>().ToListAsync()
+            : await _context.Set<TEntity>().Where(predicate).ToListAsync();
     }
 
     public IQueryable<TEntity> GetQuery(Expression<Func<TEntity, bool>> predicate = default!)
     {
-        return predicate != null ? context.Set<TEntity>().Where(predicate)
-            : context.Set<TEntity>();
+        return predicate != null ? _context.Set<TEntity>().Where(predicate)
+            : _context.Set<TEntity>();
     }
 
     public async Task AddAsync(TEntity entity)
     {
-        await context.Set<TEntity>().AddAsync(entity);
+        await _context.Set<TEntity>().AddAsync(entity);
     }
 
     public void Update(TEntity entity)
     {
-        context.Set<TEntity>().Attach(entity);
-        context.Entry(entity).State = EntityState.Modified;
+        _context.Set<TEntity>().Attach(entity);
+        _context.Entry(entity).State = EntityState.Modified;
     }
 
     public void Delete(object id)
@@ -56,7 +56,7 @@ internal class MainRepository<TEntity> : IMainRepository<TEntity>
         if (id is null)
             return;
 
-        var entity = context.Set<TEntity>().Find(id);
+        var entity = _context.Set<TEntity>().Find(id);
         Delete(entity);
     }
 
@@ -65,6 +65,6 @@ internal class MainRepository<TEntity> : IMainRepository<TEntity>
         if (entity == null)
             return;
 
-        context.Set<TEntity>().Remove(entity);
+        _context.Set<TEntity>().Remove(entity);
     }
 }
