@@ -2,9 +2,9 @@
 
 internal sealed class GetCargoesQueryHandler : RequestHandlerBase<GetCargoesQuery, PagedDataResult<CargoDto>>
 {
-    private readonly IRepository<Cargo> cargoRepository;
+    private readonly ITenantRepository<Cargo> cargoRepository;
 
-    public GetCargoesQueryHandler(IRepository<Cargo> cargoRepository)
+    public GetCargoesQueryHandler(ITenantRepository<Cargo> cargoRepository)
     {
         this.cargoRepository = cargoRepository;
     }

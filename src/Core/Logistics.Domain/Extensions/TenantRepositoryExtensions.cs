@@ -2,28 +2,28 @@
 
 namespace Logistics.Domain.Repositories;
 
-public static class RepositoryExtensions
+public static class TenantRepositoryExtensions
 {
     public static Task<TEntity?> GetAsync<TEntity>(
-        this IMainRepository<TEntity> repository,
+        this ITenantRepository<TEntity> repository,
         ISpecification<TEntity> specification)
-        where TEntity : class, IAggregateRoot
+        where TEntity : class, IAggregateRoot, ITenantEntity
     {
         return repository.GetAsync(specification.Criteria);
     }
 
     public static Task<IList<TEntity>> GetListAsync<TEntity>(
-        this IMainRepository<TEntity> repository, 
+        this ITenantRepository<TEntity> repository, 
         ISpecification<TEntity> specification)
-        where TEntity : class, IAggregateRoot
+        where TEntity : class, IAggregateRoot, ITenantEntity
     {
         return repository.GetListAsync(specification.Criteria);
     }
 
     public static IQueryable<TEntity> GetQuery<TEntity>(
-        this IMainRepository<TEntity> repository,
+        this ITenantRepository<TEntity> repository,
         ISpecification<TEntity> specification)
-        where TEntity : class, IAggregateRoot
+        where TEntity : class, IAggregateRoot, ITenantEntity
     {
         return repository.GetQuery(specification.Criteria);
     }

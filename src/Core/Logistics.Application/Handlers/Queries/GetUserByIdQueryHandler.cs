@@ -2,10 +2,10 @@
 
 internal sealed class GetUserByIdQueryHandler : RequestHandlerBase<GetUserByIdQuery, DataResult<UserDto>>
 {
-    private readonly IRepository<User> userRepository;
+    private readonly ITenantRepository<User> userRepository;
 
     public GetUserByIdQueryHandler(
-        IRepository<User> userRepository)
+        ITenantRepository<User> userRepository)
     {
         this.userRepository = userRepository;
     }

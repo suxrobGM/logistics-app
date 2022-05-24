@@ -3,11 +3,11 @@
 internal sealed class CreateUserCommandHandler : RequestHandlerBase<CreateUserCommand, DataResult>
 {
     private readonly IMapper mapper;
-    private readonly IRepository<User> userRepository;
+    private readonly ITenantRepository<User> userRepository;
 
     public CreateUserCommandHandler(
         IMapper mapper,
-        IRepository<User> userRepository)
+        ITenantRepository<User> userRepository)
     {
         this.mapper = mapper;
         this.userRepository = userRepository;

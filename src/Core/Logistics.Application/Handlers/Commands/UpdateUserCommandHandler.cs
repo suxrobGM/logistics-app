@@ -2,10 +2,10 @@
 
 internal sealed class UpdateUserCommandHandler : RequestHandlerBase<UpdateUserCommand, DataResult>
 {
-    private readonly IRepository<User> userRepository;
+    private readonly ITenantRepository<User> userRepository;
 
     public UpdateUserCommandHandler(
-        IRepository<User> userRepository)
+        ITenantRepository<User> userRepository)
     {
         this.userRepository = userRepository;
     }

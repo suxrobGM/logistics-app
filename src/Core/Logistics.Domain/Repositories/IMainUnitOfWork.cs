@@ -1,9 +1,9 @@
 ﻿namespace Logistics.Domain.Repositories;
 
 /// <summary>
-/// Unit of Work pattern
+/// Apllication's UOW
 /// </summary>
-public interface IUnitOfWork
+public interface IMainUnitOfWork
 {
     /// <summary>
     /// Save changes to database

@@ -2,7 +2,7 @@
 
 namespace Logistics.Domain.Entities;
 
-public class Cargo : Entity
+public class Cargo : Entity, ITenantEntity
 {
     public string? Source { get; set; }
     public string? Destination { get; set; }

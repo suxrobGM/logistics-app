@@ -2,7 +2,7 @@
 
 namespace Logistics.Domain.Entities;
 
-public class User : Entity
+public class User : Entity, ITenantEntity
 {
     public string? ExternalId { get; set; }
     public string? UserName { get; set; }

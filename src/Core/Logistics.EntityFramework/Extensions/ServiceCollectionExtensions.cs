@@ -14,11 +14,13 @@ public static class ServiceCollectionExtensions
     {
         var connectionString = configuration.GetConnectionString(connectionStringName);
 
-        services.AddDbContext<DatabaseContext>(
-            o => DbContextHelpers.ConfigureMySql(connectionString, o));
+        services.AddDbContext<TenantDbContext>();
+        services.AddDbContext<MainDbContext>(o => DbContextHelpers.ConfigureMySql(connectionString, o));
 
-        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped(typeof(IMainRepository<>), typeof(MainRepository<>));
+        services.AddScoped(typeof(ITenantRepository<>), typeof(TenantRepository<>));
+        services.AddScoped(typeof(IMainUnitOfWork), typeof(MainUnitOfWork));
+        services.AddScoped(typeof(ITenantUnitOfWork), typeof(TenantUnitOfWork));
         return services;
     }
 }

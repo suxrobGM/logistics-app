@@ -2,9 +2,9 @@
 
 internal sealed class DeleteCargoCommandHandler : RequestHandlerBase<DeleteCargoCommand, DataResult>
 {
-    private readonly IRepository<Cargo> cargoRepository;
+    private readonly ITenantRepository<Cargo> cargoRepository;
 
-    public DeleteCargoCommandHandler(IRepository<Cargo> cargoRepository)
+    public DeleteCargoCommandHandler(ITenantRepository<Cargo> cargoRepository)
     {
         this.cargoRepository = cargoRepository;
     }

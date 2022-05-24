@@ -2,12 +2,12 @@
 
 internal sealed class UpdateCargoCommandHandler : RequestHandlerBase<UpdateCargoCommand, DataResult>
 {
-    private readonly IRepository<Cargo> cargoRepository;
-    private readonly IRepository<Truck> truckRepository;
+    private readonly ITenantRepository<Cargo> cargoRepository;
+    private readonly ITenantRepository<Truck> truckRepository;
 
     public UpdateCargoCommandHandler(
-        IRepository<Cargo> cargoRepository,
-        IRepository<Truck> truckRepository)
+        ITenantRepository<Cargo> cargoRepository,
+        ITenantRepository<Truck> truckRepository)
     {
         this.cargoRepository = cargoRepository;
         this.truckRepository = truckRepository;

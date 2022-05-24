@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Logistics.EntityFramework.DbMigrations.Migrations
+namespace Logistics.EntityFramework.DbMigrations.Migrations.Tenant
 {
     public partial class InitialCreate : Migration
     {

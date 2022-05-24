@@ -2,9 +2,9 @@
 
 internal sealed class GetUsersQueryHandler : RequestHandlerBase<GetUsersQuery, PagedDataResult<UserDto>>
 {
-    private readonly IRepository<User> userRepository;
+    private readonly ITenantRepository<User> userRepository;
 
-    public GetUsersQueryHandler(IRepository<User> userRepository)
+    public GetUsersQueryHandler(ITenantRepository<User> userRepository)
     {
         this.userRepository = userRepository;
     }

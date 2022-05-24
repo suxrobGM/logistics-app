@@ -2,12 +2,12 @@
 
 internal sealed class CreateTruckCommandHandler : RequestHandlerBase<CreateTruckCommand, DataResult>
 {
-    private readonly IRepository<Truck> truckRepository;
-    private readonly IRepository<User> userRepository;
+    private readonly ITenantRepository<Truck> truckRepository;
+    private readonly ITenantRepository<User> userRepository;
 
     public CreateTruckCommandHandler(
-        IRepository<Truck> truckRepository,
-        IRepository<User> userRepository)
+        ITenantRepository<Truck> truckRepository,
+        ITenantRepository<User> userRepository)
     {
         this.truckRepository = truckRepository;
         this.userRepository = userRepository;

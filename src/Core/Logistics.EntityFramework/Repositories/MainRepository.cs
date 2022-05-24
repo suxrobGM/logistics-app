@@ -2,20 +2,20 @@
 
 namespace Logistics.EntityFramework.Repositories;
 
-public class Repository<TEntity> : IRepository<TEntity>
+internal class MainRepository<TEntity> : IMainRepository<TEntity>
     where TEntity : class, IAggregateRoot
 {
-    private readonly DatabaseContext context;
+    private readonly MainDbContext context;
 
-    public Repository(
-        DatabaseContext context,
-        IUnitOfWork unitOfWork)
+    public MainRepository(
+        MainDbContext context,
+        IMainUnitOfWork unitOfWork)
     {
         this.context = context;
         UnitOfWork = unitOfWork;
     }
 
-    public IUnitOfWork UnitOfWork { get; }
+    public IMainUnitOfWork UnitOfWork { get; }
 
     public async Task<TEntity?> GetAsync(object id)
     {

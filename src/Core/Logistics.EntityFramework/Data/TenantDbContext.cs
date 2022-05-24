@@ -1,28 +1,41 @@
-﻿using Microsoft.EntityFrameworkCore.Design;
-using Logistics.EntityFramework.Helpers;
+﻿using Logistics.EntityFramework.Helpers;
+using Logistics.Domain.Services;
 
 namespace Logistics.EntityFramework.Data;
 
-public class DatabaseContext : DbContext
+public class TenantDbContext : DbContext
 {
-    private readonly string connectionString;
+    private readonly ITenantService _tenantService;
+    private readonly string _connectionString;
 
-    public DatabaseContext(string connectionString)
+    public TenantDbContext(string connectionString)
     {
-        this.connectionString = connectionString;
+        _connectionString = connectionString;
+        _tenantService = null!;
     }
 
-    public DatabaseContext(DbContextOptions options)
+    public TenantDbContext(
+        DbContextOptions options, 
+        ITenantService tenantService)
         : base(options)
     {
-        connectionString = ConnectionStrings.Local;
+        _tenantService = tenantService;
+        _connectionString = string.Empty;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
+
         if (!options.IsConfigured)
         {
-            DbContextHelpers.ConfigureMySql(connectionString, options);
+            if (!string.IsNullOrEmpty(_connectionString))
+            {
+                DbContextHelpers.ConfigureMySql(_connectionString, options);
+            }
+            else
+            {
+                DbContextHelpers.ConfigureMySql(_tenantService.GetConnectionString(), options);
+            }  
         }
     }
 
@@ -57,13 +70,5 @@ public class DatabaseContext : DbContext
         {
             entity.ToTable("cargoes");
         });
-    }
-}
-
-public class DatabaseContextFactory : IDesignTimeDbContextFactory<DatabaseContext>
-{
-    public DatabaseContext CreateDbContext(string[] args)
-    {
-        return new DatabaseContext(ConnectionStrings.Local);
     }
 }

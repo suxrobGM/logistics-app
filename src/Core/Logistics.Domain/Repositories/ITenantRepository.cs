@@ -3,15 +3,15 @@
 namespace Logistics.Domain.Repositories;
 
 /// <summary>
-/// Generic repository.
+/// Tenant's repository.
 /// </summary>
 /// <typeparam name="TEntity">Class that implements IAggregateRoot interface</typeparam>
-public interface IRepository<TEntity> where TEntity : class, IAggregateRoot
+public interface ITenantRepository<TEntity> where TEntity : class, IAggregateRoot, ITenantEntity
 {
     /// <summary>
     /// Unit of work
     /// </summary>
-    IUnitOfWork UnitOfWork { get; }
+    ITenantUnitOfWork UnitOfWork { get; }
 
     /// <summary>
     /// Get entity object by its ID.

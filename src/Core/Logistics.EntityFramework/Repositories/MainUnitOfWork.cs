@@ -1,10 +1,10 @@
 ﻿namespace Logistics.EntityFramework.Repositories;
 
-internal class UnitOfWork : IUnitOfWork
+internal class MainUnitOfWork : IMainUnitOfWork
 {
-    private readonly DatabaseContext context;
+    private readonly MainDbContext context;
 
-    public UnitOfWork(DatabaseContext context)
+    public MainUnitOfWork(MainDbContext context)
     {
         this.context = context;
     }

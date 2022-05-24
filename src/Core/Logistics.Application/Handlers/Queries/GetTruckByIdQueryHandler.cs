@@ -2,9 +2,9 @@
 
 internal sealed class GetTruckByIdQueryHandler : RequestHandlerBase<GetTruckByIdQuery, DataResult<TruckDto>>
 {
-    private readonly IRepository<Truck> truckRepository;
+    private readonly ITenantRepository<Truck> truckRepository;
 
-    public GetTruckByIdQueryHandler(IRepository<Truck> truckRepository)
+    public GetTruckByIdQueryHandler(ITenantRepository<Truck> truckRepository)
     {
         this.truckRepository = truckRepository;
     }

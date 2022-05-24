@@ -2,12 +2,17 @@
 using Logistics.EntityFramework;
 using Logistics.EntityFramework.Data;
 
-var connectionString = ConnectionStrings.Local;
+var mainDatabaseConnection = ConnectionStrings.LocalMain;
+var defaultTenantConnection = ConnectionStrings.LocalDefaultTenant;
 
-Console.WriteLine("Connection string: " + connectionString);
-Console.WriteLine("Initializing database...");
+Console.WriteLine("Main database connection string: " + mainDatabaseConnection);
+Console.WriteLine("Initializing application database...");
+await SeedData.InitializeAsync(new MainDbContext(mainDatabaseConnection));
+Console.WriteLine();
 
-await SeedData.InitializeAsync(new DatabaseContext(connectionString));
+Console.WriteLine("Default tenant's connection string: " + defaultTenantConnection);
+Console.WriteLine("Initializing test tenant's database...");
+await SeedData.InitializeAsync(new TenantDbContext(defaultTenantConnection));
 
 Console.WriteLine("Finished!");
 Console.ReadLine();

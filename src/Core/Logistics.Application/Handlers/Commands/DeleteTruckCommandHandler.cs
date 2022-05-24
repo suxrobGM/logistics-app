@@ -2,9 +2,9 @@
 
 internal sealed class DeleteTruckCommandHandler : RequestHandlerBase<DeleteTruckCommand, DataResult>
 {
-    private readonly IRepository<Truck> truckRepository;
+    private readonly ITenantRepository<Truck> truckRepository;
 
-    public DeleteTruckCommandHandler(IRepository<Truck> truckRepository)
+    public DeleteTruckCommandHandler(ITenantRepository<Truck> truckRepository)
     {
         this.truckRepository = truckRepository;
     }
