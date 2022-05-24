@@ -3,6 +3,6 @@
 /// <summary>
 /// Tenant's UOW
 /// </summary>
-public interface ITenantUnitOfWork : IMainUnitOfWork
+public interface ITenantUnitOfWork : IUnitOfWork
 {
 }
