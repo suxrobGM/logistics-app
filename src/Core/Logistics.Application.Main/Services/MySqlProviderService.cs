@@ -1,15 +1,22 @@
 ﻿using System.Data.Common;
+using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 using Logistics.Application.Options;
+using Logistics.EntityFramework.Data;
 
 namespace Logistics.Application.Services;
 
 public class MySqlProviderService : IDatabaseProviderService
 {
     private readonly TenantsSettings _settings;
+    private readonly ILogger<MySqlProviderService> _logger;
 
-    public MySqlProviderService(TenantsSettings settings)
+    public MySqlProviderService(
+        TenantsSettings settings,
+        ILogger<MySqlProviderService> logger)
     {
+        _logger = logger;
         _settings = settings;
     }
 
@@ -18,6 +25,21 @@ public class MySqlProviderService : IDatabaseProviderService
         var database = $"{databaseName}_logistics";
         var password = GeneratePassword();
         return $"Server={_settings.DatabaseHost}; Database={database}; Uid={_settings.DatabaseUserId}; Pwd={password}; Connect Timeout=10";
+    }
+
+    public async Task<bool> CreateDatabaseAsync(string connectionString)
+    {
+        try
+        {
+            using var databaseContext = new TenantDbContext(connectionString);
+            await databaseContext.Database.MigrateAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Thrown exception in MySqlProviderService.CreateDatabaseAsync(): {Exception}", ex);
+            return false;
+        }
     }
 
     public async Task<bool> DeleteDatabaseAsync(string connectionString)
@@ -35,8 +57,9 @@ public class MySqlProviderService : IDatabaseProviderService
             await mySqlCommand.ExecuteScalarAsync();
             return true;
         }
-        catch (DbException)
+        catch (DbException ex)
         {
+            _logger.LogError("Thrown exception in MySqlProviderService.DeleteDatabaseAsync(): {Exception}", ex);
             return false;
         }
     }

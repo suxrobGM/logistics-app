@@ -4,10 +4,18 @@ namespace Logistics.DbMigrator;
 
 public static class SeedData
 {
-    public static async Task InitializeAsync<T>(T databaseContext)
+    public static async Task<bool> InitializeAsync<T>(T databaseContext)
         where T : DbContext
     {
-        await MigrateDatabaseAsync<T>(databaseContext);
+        try
+        {
+            await MigrateDatabaseAsync(databaseContext);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 
     private static async Task MigrateDatabaseAsync<T>(T databaseContext)
@@ -20,6 +28,7 @@ public static class SeedData
         catch (Exception ex)
         {
             Console.WriteLine("Thrown exception in SeedData.MigrateDatabaseAsync(): " + ex);
+            throw;
         }
     }
 }
