@@ -19,11 +19,12 @@ public class TenantController : ControllerBase
     [ProducesResponseType(typeof(DataResult<TenantDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     //[RequiredScope("admin.read")]
-    public async Task<IActionResult> GetById(string id)
+    public async Task<IActionResult> GetById(string? identifier)
     {
-        var result = await _mediator.Send(new GetTenatByIdQuery
+        var result = await _mediator.Send(new GetTenantQuery
         {
-            Id = id
+            Id = identifier,
+            Name = identifier
         });
 
         if (result.Success)

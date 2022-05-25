@@ -6,7 +6,7 @@ internal sealed class GetUsersQueryHandler : RequestHandlerBase<GetUsersQuery, P
 
     public GetUsersQueryHandler(ITenantRepository<User> userRepository)
     {
-        this._userRepository = userRepository;
+        _userRepository = userRepository;
     }
 
     protected override Task<PagedDataResult<UserDto>> HandleValidated(

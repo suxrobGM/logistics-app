@@ -1,0 +1,62 @@
+﻿@page "/list-tenant"
+@inherits ViewBase<ListTenantViewModel>
+
+<h2>Tenants List</h2>
+<hr />
+
+<Spinner IsBusy="Model.IsBusy"
+         Label="@Model.BusyText"
+         LabelAlign="Spinner.Align.Left"
+         Size="2">
+</Spinner>
+
+@if (!Model.IsBusy)
+{
+    <div class="row">
+        <div class="col-12 col-sm-10 col-md-5 col-xl-4">
+            <p>Total records: @Model.TotalRecords</p>
+
+            <div class="input-group mb-3">
+                <input class="form-control" type="text" placeholder="Search...">
+                <button class="input-group-text" id="search-btn">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <Grid DataSource="Model.Tenants" AllowSorting="true" AllowPaging="true"
+                PageSettings="new() { PagesCount = Model.UsersList.PagesCount, OnPageChanged = Model.LoadPage }">  
+                <GridColumns>
+                    <GridColumn Field="Name" 
+                            HeaderText="Name">
+                    </GridColumn>
+                    <GridColumn Field="DisplayName" 
+                            HeaderText="Display Name">
+                    </GridColumn>
+                    <GridColumn Field="ConnectionString"
+                            HeaderText="Connection">
+                    </GridColumn>
+                    <GridColumn HeaderText="Actions" 
+                            Width="180" 
+                            HeaderTextAlign="TextAlign.Center">
+                        <Template>
+                            @{
+                                var entity = context as TenantDto;
+                                var editPageLink = $"/edit-tenant/{entity?.Id}";
+                            }
+
+                            <div class="d-flex justify-content-center">
+                                <NavLink class="btn btn-primary"
+                                     href="@editPageLink">
+                                    Edit
+                                </NavLink>
+                            </div>
+                        </Template>
+                    </GridColumn>
+                </GridColumns>
+            </Grid>
+        </div>
+    </div>
+}
