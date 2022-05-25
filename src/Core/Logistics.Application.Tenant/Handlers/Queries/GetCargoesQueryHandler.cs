@@ -2,23 +2,23 @@
 
 internal sealed class GetCargoesQueryHandler : RequestHandlerBase<GetCargoesQuery, PagedDataResult<CargoDto>>
 {
-    private readonly ITenantRepository<Cargo> cargoRepository;
+    private readonly ITenantRepository<Cargo> _cargoRepository;
 
     public GetCargoesQueryHandler(ITenantRepository<Cargo> cargoRepository)
     {
-        this.cargoRepository = cargoRepository;
+        _cargoRepository = cargoRepository;
     }
 
     protected override Task<PagedDataResult<CargoDto>> HandleValidated(
         GetCargoesQuery request, 
         CancellationToken cancellationToken)
     {
-        var totalItems = cargoRepository.GetQuery().Count();
-        var itemsQuery = cargoRepository.GetQuery();
+        var totalItems = _cargoRepository.GetQuery().Count();
+        var itemsQuery = _cargoRepository.GetQuery();
 
         if (!string.IsNullOrEmpty(request.Search))
         {
-            itemsQuery = cargoRepository.GetQuery(new CargoesSpecification(request.Search));
+            itemsQuery = _cargoRepository.GetQuery(new CargoesSpecification(request.Search));
         }
 
         var items = itemsQuery

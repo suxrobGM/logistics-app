@@ -2,18 +2,18 @@
 
 internal sealed class GetUserByIdQueryHandler : RequestHandlerBase<GetUserByIdQuery, DataResult<UserDto>>
 {
-    private readonly ITenantRepository<User> userRepository;
+    private readonly ITenantRepository<User> _userRepository;
 
     public GetUserByIdQueryHandler(
         ITenantRepository<User> userRepository)
     {
-        this.userRepository = userRepository;
+        this._userRepository = userRepository;
     }
 
     protected override async Task<DataResult<UserDto>> HandleValidated(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-        var userEntity = await userRepository.GetAsync(request.Id!) ??
-                        await userRepository.GetAsync(i => i.ExternalId == request.Id);
+        var userEntity = await _userRepository.GetAsync(request.Id!) ??
+                        await _userRepository.GetAsync(i => i.ExternalId == request.Id);
 
         if (userEntity == null)
         {

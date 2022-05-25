@@ -1,95 +1,95 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿namespace Logistics.WebApi.Controllers;
 
-namespace Logistics.WebApi.Controllers
+[Route("api/[controller]")]
+[ApiController]
+public class TenantController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class TenantController : ControllerBase
+    private readonly IMapper _mapper;
+    private readonly IMediator _mediator;
+
+    public TenantController(
+        IMapper mapper,
+        IMediator mediator)
     {
-        private readonly IMediator _mediator;
+        _mapper = mapper;
+        _mediator = mediator;
+    }
 
-        public TenantController(IMediator mediator)
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(DataResult<TenantDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    //[RequiredScope("admin.read")]
+    public async Task<IActionResult> GetById(string id)
+    {
+        var result = await _mediator.Send(new GetTenatByIdQuery
         {
-            _mediator = mediator;
-        }
+            Id = id
+        });
 
-        [HttpGet("{id}")]
-        [ProducesResponseType(typeof(DataResult<CargoDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-        //[RequiredScope("admin.read")]
-        public async Task<IActionResult> GetById(string id)
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result);
+    }
+
+    [HttpGet("list")]
+    [ProducesResponseType(typeof(PagedDataResult<CargoDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    //[RequiredScope("admin.read")]
+    public async Task<IActionResult> GetList([FromQuery] GetTenantsQuery request)
+    {
+        var result = await _mediator.Send(request);
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result);
+    }
+
+    [HttpPost("create")]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    //[RequiredScope("admin.write")]
+    public async Task<IActionResult> Create([FromBody] TenantDto request)
+    {
+        var result = await _mediator.Send(_mapper.Map<CreateTenantCommand>(request));
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result);
+    }
+
+    [HttpPut("update/{id}")]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    //[RequiredScope("admin.write")]
+    public async Task<IActionResult> Update(string id, [FromBody] TenantDto request)
+    {
+        var updateRequest = _mapper.Map<UpdateTenantCommand>(request);
+        updateRequest.Id = id;
+        var result = await _mediator.Send(updateRequest);
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result);
+    }
+
+    [HttpDelete("{id}")]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    //[RequiredScope("admin.write")]
+    public async Task<IActionResult> Delete(string id)
+    {
+        var result = await _mediator.Send(new DeleteTenantCommand
         {
-            var result = await _mediator.Send(new GetCargoByIdQuery
-            {
-                Id = id
-            });
+            Id = id
+        });
 
-            if (result.Success)
-                return Ok(result);
+        if (result.Success)
+            return Ok(result);
 
-            return BadRequest(result);
-        }
-
-        [HttpGet("list")]
-        [ProducesResponseType(typeof(PagedDataResult<CargoDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-        //[RequiredScope("admin.read")]
-        public async Task<IActionResult> GetList([FromQuery] GetCargoesQuery request)
-        {
-            var result = await _mediator.Send(request);
-
-            if (result.Success)
-                return Ok(result);
-
-            return BadRequest(result);
-        }
-
-        [HttpPost("create")]
-        [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-        //[RequiredScope("admin.write")]
-        public async Task<IActionResult> Create([FromBody] CargoDto request)
-        {
-            var result = await _mediator.Send(_mapper.Map<CreateCargoCommand>(request));
-
-            if (result.Success)
-                return Ok(result);
-
-            return BadRequest(result);
-        }
-
-        [HttpPut("update/{id}")]
-        [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-        //[RequiredScope("admin.write")]
-        public async Task<IActionResult> Update(string id, [FromBody] CargoDto request)
-        {
-            var updateRequest = _mapper.Map<UpdateCargoCommand>(request);
-            updateRequest.Id = id;
-            var result = await _mediator.Send(updateRequest);
-
-            if (result.Success)
-                return Ok(result);
-
-            return BadRequest(result);
-        }
-
-        [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-        //[RequiredScope("admin.write")]
-        public async Task<IActionResult> Delete(string id)
-        {
-            var result = await _mediator.Send(new DeleteCargoCommand
-            {
-                Id = id
-            });
-
-            if (result.Success)
-                return Ok(result);
-
-            return BadRequest(result);
-        }
+        return BadRequest(result);
     }
 }

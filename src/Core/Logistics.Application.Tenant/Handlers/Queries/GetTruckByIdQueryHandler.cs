@@ -2,18 +2,18 @@
 
 internal sealed class GetTruckByIdQueryHandler : RequestHandlerBase<GetTruckByIdQuery, DataResult<TruckDto>>
 {
-    private readonly ITenantRepository<Truck> truckRepository;
+    private readonly ITenantRepository<Truck> _truckRepository;
 
     public GetTruckByIdQueryHandler(ITenantRepository<Truck> truckRepository)
     {
-        this.truckRepository = truckRepository;
+        _truckRepository = truckRepository;
     }
 
     protected override async Task<DataResult<TruckDto>> HandleValidated(GetTruckByIdQuery request, CancellationToken cancellationToken)
     {
-        var truckEntity = await truckRepository.GetAsync(request.Id!);
+        var truckEntity = await _truckRepository.GetAsync(request.Id!);
 
-        var cargoesIdsList = truckRepository.GetQuery()
+        var cargoesIdsList = _truckRepository.GetQuery()
             .SelectMany(i => i.Cargoes)
             .Select(i => i.Id)
             .ToList();

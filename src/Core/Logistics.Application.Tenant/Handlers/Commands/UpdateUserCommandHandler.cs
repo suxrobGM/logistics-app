@@ -2,17 +2,17 @@
 
 internal sealed class UpdateUserCommandHandler : RequestHandlerBase<UpdateUserCommand, DataResult>
 {
-    private readonly ITenantRepository<User> userRepository;
+    private readonly ITenantRepository<User> _userRepository;
 
     public UpdateUserCommandHandler(
         ITenantRepository<User> userRepository)
     {
-        this.userRepository = userRepository;
+        _userRepository = userRepository;
     }
 
     protected override async Task<DataResult> HandleValidated(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        var userEntity = await userRepository.GetAsync(request.Id!);
+        var userEntity = await _userRepository.GetAsync(request.Id!);
 
         if (userEntity == null)
         {
@@ -25,8 +25,8 @@ internal sealed class UpdateUserCommandHandler : RequestHandlerBase<UpdateUserCo
         userEntity.Email = request.Email;
         userEntity.PhoneNumber = request.PhoneNumber;
 
-        userRepository.Update(userEntity);
-        await userRepository.UnitOfWork.CommitAsync();
+        _userRepository.Update(userEntity);
+        await _userRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
 

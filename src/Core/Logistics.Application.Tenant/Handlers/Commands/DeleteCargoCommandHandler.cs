@@ -2,17 +2,17 @@
 
 internal sealed class DeleteCargoCommandHandler : RequestHandlerBase<DeleteCargoCommand, DataResult>
 {
-    private readonly ITenantRepository<Cargo> cargoRepository;
+    private readonly ITenantRepository<Cargo> _cargoRepository;
 
     public DeleteCargoCommandHandler(ITenantRepository<Cargo> cargoRepository)
     {
-        this.cargoRepository = cargoRepository;
+        _cargoRepository = cargoRepository;
     }
 
     protected override async Task<DataResult> HandleValidated(DeleteCargoCommand request, CancellationToken cancellationToken)
     {
-        cargoRepository.Delete(request.Id!);
-        await cargoRepository.UnitOfWork.CommitAsync();
+        _cargoRepository.Delete(request.Id!);
+        await _cargoRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
 

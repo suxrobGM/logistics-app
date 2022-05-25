@@ -2,28 +2,28 @@
 
 internal sealed class UpdateCargoCommandHandler : RequestHandlerBase<UpdateCargoCommand, DataResult>
 {
-    private readonly ITenantRepository<Cargo> cargoRepository;
-    private readonly ITenantRepository<Truck> truckRepository;
+    private readonly ITenantRepository<Cargo> _cargoRepository;
+    private readonly ITenantRepository<Truck> _truckRepository;
 
     public UpdateCargoCommandHandler(
         ITenantRepository<Cargo> cargoRepository,
         ITenantRepository<Truck> truckRepository)
     {
-        this.cargoRepository = cargoRepository;
-        this.truckRepository = truckRepository;
+        _cargoRepository = cargoRepository;
+        _truckRepository = truckRepository;
     }
 
     protected override async Task<DataResult> HandleValidated(
         UpdateCargoCommand request, CancellationToken cancellationToken)
     {
-        var truck = await truckRepository.GetAsync(request.AssignedTruckId!);
+        var truck = await _truckRepository.GetAsync(request.AssignedTruckId!);
 
         if (truck == null)
         {
             return DataResult.CreateError("Could not find the specified truck");
         }
 
-        var cargoEntity = await cargoRepository.GetAsync(request.Id!);
+        var cargoEntity = await _cargoRepository.GetAsync(request.Id!);
 
         if (cargoEntity == null)
         {
@@ -39,8 +39,8 @@ internal sealed class UpdateCargoCommandHandler : RequestHandlerBase<UpdateCargo
         cargoEntity.Status = Cargo.GetCargoStatus(request.Status!);
         cargoEntity.AssignedTruck = truck;
 
-        cargoRepository.Update(cargoEntity);
-        await cargoRepository.UnitOfWork.CommitAsync();
+        _cargoRepository.Update(cargoEntity);
+        await _cargoRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
 

@@ -4,31 +4,31 @@ namespace Logistics.Application.Handlers.Commands;
 
 internal sealed class CreateCargoCommandHandler : RequestHandlerBase<CreateCargoCommand, DataResult>
 {
-    private readonly ITenantRepository<Cargo> cargoRepository;
-    private readonly ITenantRepository<Truck> truckRepository;
-    private readonly ITenantRepository<User> userRepository;
+    private readonly ITenantRepository<Cargo> _cargoRepository;
+    private readonly ITenantRepository<Truck> _truckRepository;
+    private readonly ITenantRepository<User> _userRepository;
 
     public CreateCargoCommandHandler(
         ITenantRepository<Cargo> cargoRepository,
         ITenantRepository<Truck> truckRepository,
         ITenantRepository<User> userRepository)
     {
-        this.cargoRepository = cargoRepository;
-        this.truckRepository = truckRepository;
-        this.userRepository = userRepository;
+        _cargoRepository = cargoRepository;
+        _truckRepository = truckRepository;
+        _userRepository = userRepository;
     }
 
     protected override async Task<DataResult> HandleValidated(
         CreateCargoCommand request, CancellationToken cancellationToken)
     {
-        var dispatcher = await userRepository.GetAsync(request.AssignedDispatcherId!);
+        var dispatcher = await _userRepository.GetAsync(request.AssignedDispatcherId!);
 
         if (dispatcher == null)
         {
             return DataResult.CreateError("Could not find the specified dispatcher");
         }
 
-        var truck = await truckRepository.GetAsync(request.AssignedTruckId!);
+        var truck = await _truckRepository.GetAsync(request.AssignedTruckId!);
         if (truck == null)
         {
             return DataResult.CreateError("Could not find the specified truck driver");
@@ -45,8 +45,8 @@ internal sealed class CreateCargoCommandHandler : RequestHandlerBase<CreateCargo
             AssignedTruckId = truck.Id,
         };
 
-        await cargoRepository.AddAsync(cargoEntity);
-        await cargoRepository.UnitOfWork.CommitAsync();
+        await _cargoRepository.AddAsync(cargoEntity);
+        await _cargoRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
 

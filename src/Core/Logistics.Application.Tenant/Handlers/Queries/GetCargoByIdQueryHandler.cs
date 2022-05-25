@@ -2,16 +2,16 @@
 
 internal sealed class GetCargoByIdQueryHandler : RequestHandlerBase<GetCargoByIdQuery, DataResult<CargoDto>>
 {
-    private readonly ITenantRepository<Cargo> cargoRepository;
+    private readonly ITenantRepository<Cargo> _cargoRepository;
 
     public GetCargoByIdQueryHandler(ITenantRepository<Cargo> cargoRepository)
     {
-        this.cargoRepository = cargoRepository;
+        _cargoRepository = cargoRepository;
     }
 
     protected override async Task<DataResult<CargoDto>> HandleValidated(GetCargoByIdQuery request, CancellationToken cancellationToken)
     {
-        var cargoEntity = await cargoRepository.GetAsync(request.Id!);
+        var cargoEntity = await _cargoRepository.GetAsync(request.Id!);
 
         if (cargoEntity == null)
         {

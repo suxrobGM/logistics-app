@@ -2,22 +2,22 @@
 
 internal sealed class CreateUserCommandHandler : RequestHandlerBase<CreateUserCommand, DataResult>
 {
-    private readonly IMapper mapper;
-    private readonly ITenantRepository<User> userRepository;
+    private readonly IMapper _mapper;
+    private readonly ITenantRepository<User> _userRepository;
 
     public CreateUserCommandHandler(
         IMapper mapper,
         ITenantRepository<User> userRepository)
     {
-        this.mapper = mapper;
-        this.userRepository = userRepository;
+        _mapper = mapper;
+        _userRepository = userRepository;
     }
 
     protected override async Task<DataResult> HandleValidated(
         CreateUserCommand request, CancellationToken cancellationToken)
     {
-        await userRepository.AddAsync(mapper.Map<User>(request));
-        await userRepository.UnitOfWork.CommitAsync();
+        await _userRepository.AddAsync(_mapper.Map<User>(request));
+        await _userRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
 

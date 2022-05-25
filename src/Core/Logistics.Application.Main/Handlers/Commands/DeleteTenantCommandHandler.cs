@@ -2,9 +2,36 @@
 
 internal sealed class DeleteTenantCommandHandler : RequestHandlerBase<DeleteTenantCommand, DataResult>
 {
-    protected override Task<DataResult> HandleValidated(DeleteTenantCommand request, CancellationToken cancellationToken)
+    private readonly IDatabaseProviderService _databaseProvider;
+    private readonly IMainRepository<Tenant> _repository;
+
+    public DeleteTenantCommandHandler(
+        IDatabaseProviderService databaseProvider,
+        IMainRepository<Tenant> repository)
     {
-        throw new NotImplementedException();
+        _databaseProvider = databaseProvider;
+        _repository = repository;
+    }
+
+    protected override async Task<DataResult> HandleValidated(DeleteTenantCommand request, CancellationToken cancellationToken)
+    {
+        var tenant = await _repository.GetAsync(request.Id!);
+
+        if (tenant == null)
+        {
+            return DataResult.CreateError("Could not find the tenant");
+        }
+
+        var deleted = await _databaseProvider.DeleteDatabaseAsync(tenant.ConnectionString!);
+
+        if (!deleted)
+        {
+            return DataResult.CreateError("Could not delete the tenant's database");
+        }
+
+        _repository.Delete(tenant.Id!);
+        await _repository.UnitOfWork.CommitAsync();
+        return DataResult.CreateSuccess();
     }
 
     protected override bool Validate(DeleteTenantCommand request, out string errorDescription)

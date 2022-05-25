@@ -9,7 +9,7 @@ namespace Logistics.Application;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddApplicationLayer(
+    public static IServiceCollection AddTenantApplicationLayer(
         this IServiceCollection services,
         IConfiguration configuration,
         string emailConfigSection = "EmailConfig")

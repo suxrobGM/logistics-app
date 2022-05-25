@@ -2,29 +2,29 @@
 
 internal sealed class CreateTruckCommandHandler : RequestHandlerBase<CreateTruckCommand, DataResult>
 {
-    private readonly ITenantRepository<Truck> truckRepository;
-    private readonly ITenantRepository<User> userRepository;
+    private readonly ITenantRepository<Truck> _truckRepository;
+    private readonly ITenantRepository<User> _userRepository;
 
     public CreateTruckCommandHandler(
         ITenantRepository<Truck> truckRepository,
         ITenantRepository<User> userRepository)
     {
-        this.truckRepository = truckRepository;
-        this.userRepository = userRepository;
+        _truckRepository = truckRepository;
+        _userRepository = userRepository;
     }
 
     protected override async Task<DataResult> HandleValidated(
         CreateTruckCommand request, CancellationToken cancellationToken)
     {
-        var driver = await userRepository.GetAsync(request.DriverId!);
+        var driver = await _userRepository.GetAsync(request.DriverId!);
 
         if (driver == null)
         {
             return DataResult.CreateError("Could not find the specified driver");
         }
 
-        var truckWithThisDriver = await truckRepository.GetAsync(i => i.DriverId == request.DriverId);
-        var truckWithThisNumber = await truckRepository.GetAsync(i => i.TruckNumber == request.TruckNumber);
+        var truckWithThisDriver = await _truckRepository.GetAsync(i => i.DriverId == request.DriverId);
+        var truckWithThisNumber = await _truckRepository.GetAsync(i => i.TruckNumber == request.TruckNumber);
 
         if (truckWithThisDriver != null)
         {
@@ -41,8 +41,8 @@ internal sealed class CreateTruckCommandHandler : RequestHandlerBase<CreateTruck
             Driver = driver,
         };
         
-        await truckRepository.AddAsync(truckEntity);
-        await truckRepository.UnitOfWork.CommitAsync();
+        await _truckRepository.AddAsync(truckEntity);
+        await _truckRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
 

@@ -2,28 +2,28 @@
 
 internal sealed class UpdateTruckCommandHandler : RequestHandlerBase<UpdateTruckCommand, DataResult>
 {
-    private readonly ITenantRepository<Truck> truckRepository;
-    private readonly ITenantRepository<User> userRepository;
+    private readonly ITenantRepository<Truck> _truckRepository;
+    private readonly ITenantRepository<User> _userRepository;
 
     public UpdateTruckCommandHandler(
         ITenantRepository<Truck> truckRepository,
         ITenantRepository<User> userRepository)
     {
-        this.truckRepository = truckRepository;
-        this.userRepository = userRepository;
+        _truckRepository = truckRepository;
+        _userRepository = userRepository;
     }
 
     protected override async Task<DataResult> HandleValidated(
         UpdateTruckCommand request, CancellationToken cancellationToken)
     {
-        var driver = await userRepository.GetAsync(request.DriverId!);
+        var driver = await _userRepository.GetAsync(request.DriverId!);
 
         if (driver == null)
         {
             return DataResult.CreateError("Could not find the specified driver");
         }
 
-        var truckEntity = await truckRepository.GetAsync(request.Id!);
+        var truckEntity = await _truckRepository.GetAsync(request.Id!);
 
         if (truckEntity == null)
         {
@@ -31,8 +31,8 @@ internal sealed class UpdateTruckCommandHandler : RequestHandlerBase<UpdateTruck
         }
 
         truckEntity.Driver = driver;
-        truckRepository.Update(truckEntity);
-        await truckRepository.UnitOfWork.CommitAsync();
+        _truckRepository.Update(truckEntity);
+        await _truckRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
 

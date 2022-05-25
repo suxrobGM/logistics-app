@@ -2,23 +2,23 @@
 
 internal sealed class GetUsersQueryHandler : RequestHandlerBase<GetUsersQuery, PagedDataResult<UserDto>>
 {
-    private readonly ITenantRepository<User> userRepository;
+    private readonly ITenantRepository<User> _userRepository;
 
     public GetUsersQueryHandler(ITenantRepository<User> userRepository)
     {
-        this.userRepository = userRepository;
+        this._userRepository = userRepository;
     }
 
     protected override Task<PagedDataResult<UserDto>> HandleValidated(
         GetUsersQuery request, 
         CancellationToken cancellationToken)
     {
-        var totalItems = userRepository.GetQuery().Count();
-        var itemsQuery = userRepository.GetQuery();
+        var totalItems = _userRepository.GetQuery().Count();
+        var itemsQuery = _userRepository.GetQuery();
 
         if (!string.IsNullOrEmpty(request.Search))
         {
-            itemsQuery = userRepository.GetQuery(new UsersSpecification(request.Search));
+            itemsQuery = _userRepository.GetQuery(new UsersSpecification(request.Search));
         }
 
         var items = itemsQuery

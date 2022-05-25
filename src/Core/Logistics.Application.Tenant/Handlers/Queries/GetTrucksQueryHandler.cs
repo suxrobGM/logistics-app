@@ -2,12 +2,12 @@
 
 internal sealed class GetTrucksQueryHandler : RequestHandlerBase<GetTrucksQuery, PagedDataResult<TruckDto>>
 {
-    private readonly ITenantRepository<Truck> truckRepository;
+    private readonly ITenantRepository<Truck> _truckRepository;
 
     public GetTrucksQueryHandler(
         ITenantRepository<Truck> truckRepository)
     {
-        this.truckRepository = truckRepository;
+        _truckRepository = truckRepository;
     }
 
     protected override Task<PagedDataResult<TruckDto>> HandleValidated(
@@ -17,18 +17,18 @@ internal sealed class GetTrucksQueryHandler : RequestHandlerBase<GetTrucksQuery,
         var cargoesIdsList = new List<string>();
         if (request.IncludeCargoIds)
         {
-            cargoesIdsList = truckRepository.GetQuery()
+            cargoesIdsList = _truckRepository.GetQuery()
                         .SelectMany(i => i.Cargoes)
                         .Select(i => i.Id)
                         .ToList();
         }
 
-        var totalItems = truckRepository.GetQuery().Count();
-        var itemsQuery = truckRepository.GetQuery();
+        var totalItems = _truckRepository.GetQuery().Count();
+        var itemsQuery = _truckRepository.GetQuery();
 
         if (!string.IsNullOrEmpty(request.Search))
         {
-            itemsQuery = truckRepository.GetQuery(new TrucksSpecification(request.Search));
+            itemsQuery = _truckRepository.GetQuery(new TrucksSpecification(request.Search));
         }
 
         var items = itemsQuery
