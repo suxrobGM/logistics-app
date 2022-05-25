@@ -164,4 +164,46 @@ internal class ApiClient : ApiClientBase, IApiClient
     }
 
     #endregion
+
+
+    #region Tenant API
+
+    public async Task<TenantDto?> GetTenantAsync(string id)
+    {
+        var result = await GetRequestAsync<DataResult<TenantDto>>($"api/tenant/{id}");
+        return result.Value;
+    }
+
+    public async Task<PagedDataResult<TenantDto>> GetTenantsAsync(string searchInput = "", int page = 1, int pageSize = 10)
+    {
+        var query = new Dictionary<string, string>
+        {
+            {"page", page.ToString() },
+            {"pageSize", pageSize.ToString() }
+        };
+
+        if (!string.IsNullOrEmpty(searchInput))
+        {
+            query.Add("search", searchInput);
+        }
+        var result = await GetRequestAsync<PagedDataResult<TenantDto>>("api/tenant/list", query);
+        return result;
+    }
+
+    public Task CreateTenantAsync(TenantDto tenant)
+    {
+        return PostRequestAsync("api/tenant/create", tenant);
+    }
+
+    public Task UpdateTenantAsync(TenantDto tenant)
+    {
+        return PutRequestAsync($"api/tenant/update/{tenant.Id}", tenant);
+    }
+
+    public Task DeleteTenantAsync(string id)
+    {
+        return DeleteRequestAsync($"api/tenant/{id}");
+    }
+
+    #endregion
 }

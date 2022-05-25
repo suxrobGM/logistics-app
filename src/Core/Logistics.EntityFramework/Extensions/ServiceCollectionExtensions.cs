@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Logistics.Domain.Services;
 using Logistics.EntityFramework.Repositories;
 using Logistics.EntityFramework.Helpers;
+using Logistics.EntityFramework.Services;
 
 namespace Logistics.EntityFramework;
 
@@ -17,6 +19,7 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<TenantDbContext>();
         services.AddDbContext<MainDbContext>(o => DbContextHelpers.ConfigureMySql(connectionString, o));
 
+        services.AddScoped(typeof(ITenantService), typeof(TenantService));
         services.AddScoped(typeof(IMainRepository<>), typeof(MainRepository<>));
         services.AddScoped(typeof(ITenantRepository<>), typeof(TenantRepository<>));
         services.AddScoped(typeof(IMainUnitOfWork), typeof(MainUnitOfWork));
