@@ -11,12 +11,17 @@ internal class TenantService : ITenantService
 
     public TenantService(IMainRepository<Tenant> repository, IHttpContextAccessor contextAccessor)
     {
-        _httpContext = contextAccessor.HttpContext;
+        _httpContext = contextAccessor.HttpContext ?? throw new ArgumentNullException(nameof(contextAccessor));
         _repository = repository;
+        var subDomain = GetSubDomain(_httpContext.Request.Host);
 
-        if (_httpContext != null && _httpContext.Request.Headers.TryGetValue("tenant", out var tenantId))
+        if (_httpContext.Request.Headers.TryGetValue("tenant", out var tenantId))
         {
             _currentTenant = GetCurrentTenant(tenantId);
+        }
+        else if (!string.IsNullOrEmpty(subDomain))
+        {
+            _currentTenant = GetCurrentTenant(subDomain);
         }
         else
         {
@@ -26,7 +31,7 @@ internal class TenantService : ITenantService
 
     private Tenant GetCurrentTenant(string tenantId)
     {
-        var tenant = _repository.GetQuery().FirstOrDefault(i => i.Id == tenantId);
+        var tenant = _repository.GetQuery().FirstOrDefault(i => i.Id == tenantId || i.Name == tenantId);
         if (tenant == null) 
             throw new InvalidOperationException("Invalid Tenant!");
 
@@ -46,5 +51,17 @@ internal class TenantService : ITenantService
     public Tenant GetTenant()
     {
         return _currentTenant;
+    }
+
+    private string GetSubDomain(HostString hostString)
+    {
+        var subDomain = string.Empty;
+        var domains = hostString.Host.Split('.');
+
+        if (domains.Length <= 2)
+            return subDomain;
+
+        subDomain = domains[0];
+        return subDomain;
     }
 }

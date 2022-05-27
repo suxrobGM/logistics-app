@@ -1,16 +1,8 @@
 ﻿namespace Logistics.EntityFramework.Repositories;
 
-internal class TenantUnitOfWork : ITenantUnitOfWork
+internal class TenantUnitOfWork : GenericUnitOfWork<TenantDbContext>, ITenantUnitOfWork
 {
-    private readonly TenantDbContext _context;
-
-    public TenantUnitOfWork(TenantDbContext context)
+    public TenantUnitOfWork(TenantDbContext context) : base(context)
     {
-        _context = context;
-    }
-
-    public Task<int> CommitAsync()
-    {
-        return _context.SaveChangesAsync();
     }
 }

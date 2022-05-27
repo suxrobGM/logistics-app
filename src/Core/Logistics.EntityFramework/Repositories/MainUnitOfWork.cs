@@ -1,16 +1,8 @@
 ﻿namespace Logistics.EntityFramework.Repositories;
 
-internal class MainUnitOfWork : IMainUnitOfWork
+internal class MainUnitOfWork : GenericUnitOfWork<MainDbContext>, IMainUnitOfWork
 {
-    private readonly MainDbContext _context;
-
-    public MainUnitOfWork(MainDbContext context)
+    public MainUnitOfWork(MainDbContext context) : base(context)
     {
-        _context = context;
-    }
-
-    public Task<int> CommitAsync()
-    {
-        return _context.SaveChangesAsync();
     }
 }
