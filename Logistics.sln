@@ -21,8 +21,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Tenan
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.EntityFramework", "src\Core\Logistics.EntityFramework\Logistics.EntityFramework.csproj", "{0646E83A-CB9F-458A-BD84-8F2AE768CB91}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.EntityFramework.DbMigrations", "src\Core\Logistics.EntityFramework.DbMigrations\Logistics.EntityFramework.DbMigrations.csproj", "{D1AE20C1-9935-4E21-8F37-9C42507BCC4E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.DbMigrator", "src\Core\Logistics.DbMigrator\Logistics.DbMigrator.csproj", "{8DD2261D-CE7C-4857-9982-C0F3A51C6BFB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Tenant.Contracts", "src\Core\Logistics.Application.Tenant.Contracts\Logistics.Application.Tenant.Contracts.csproj", "{9B2E6306-3DEC-4062-95B4-2DAFFF5F9493}"
@@ -47,9 +45,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Main"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Main.Contracts", "src\Core\Logistics.Application.Main.Contracts\Logistics.Application.Main.Contracts.csproj", "{0E9C714C-7FEA-41B0-867F-9A235FA67A3A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.AdminApp", "src\Apps\Logistics.AdminApp\Logistics.AdminApp.csproj", "{C7AE8EC6-562A-4907-9A12-E2FF7CFA8397}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.AdminApp", "src\Apps\Logistics.AdminApp\Logistics.AdminApp.csproj", "{C7AE8EC6-562A-4907-9A12-E2FF7CFA8397}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.Application.Shared", "src\Core\Logistics.Application.Shared\Logistics.Application.Shared.csproj", "{77D09657-5BE2-4462-AE24-39612759625A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Shared", "src\Core\Logistics.Application.Shared\Logistics.Application.Shared.csproj", "{77D09657-5BE2-4462-AE24-39612759625A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -139,18 +137,6 @@ Global
 		{0646E83A-CB9F-458A-BD84-8F2AE768CB91}.Release|iPhone.Build.0 = Release|Any CPU
 		{0646E83A-CB9F-458A-BD84-8F2AE768CB91}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{0646E83A-CB9F-458A-BD84-8F2AE768CB91}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
-		{D1AE20C1-9935-4E21-8F37-9C42507BCC4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D1AE20C1-9935-4E21-8F37-9C42507BCC4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D1AE20C1-9935-4E21-8F37-9C42507BCC4E}.Debug|iPhone.ActiveCfg = Debug|Any CPU
-		{D1AE20C1-9935-4E21-8F37-9C42507BCC4E}.Debug|iPhone.Build.0 = Debug|Any CPU
-		{D1AE20C1-9935-4E21-8F37-9C42507BCC4E}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{D1AE20C1-9935-4E21-8F37-9C42507BCC4E}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
-		{D1AE20C1-9935-4E21-8F37-9C42507BCC4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D1AE20C1-9935-4E21-8F37-9C42507BCC4E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D1AE20C1-9935-4E21-8F37-9C42507BCC4E}.Release|iPhone.ActiveCfg = Release|Any CPU
-		{D1AE20C1-9935-4E21-8F37-9C42507BCC4E}.Release|iPhone.Build.0 = Release|Any CPU
-		{D1AE20C1-9935-4E21-8F37-9C42507BCC4E}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{D1AE20C1-9935-4E21-8F37-9C42507BCC4E}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{8DD2261D-CE7C-4857-9982-C0F3A51C6BFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8DD2261D-CE7C-4857-9982-C0F3A51C6BFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DD2261D-CE7C-4857-9982-C0F3A51C6BFB}.Debug|iPhone.ActiveCfg = Debug|Any CPU
@@ -306,7 +292,6 @@ Global
 		{C17B470A-02A7-4B34-A3D1-4047F5ACADA1} = {4AB23A25-E5F7-4BA0-BF97-048B579B0659}
 		{53B069CE-0FEB-4191-B82D-BCE01159AE90} = {45FFBEC0-FFF0-4964-A506-F326A76702CC}
 		{0646E83A-CB9F-458A-BD84-8F2AE768CB91} = {45FFBEC0-FFF0-4964-A506-F326A76702CC}
-		{D1AE20C1-9935-4E21-8F37-9C42507BCC4E} = {45FFBEC0-FFF0-4964-A506-F326A76702CC}
 		{8DD2261D-CE7C-4857-9982-C0F3A51C6BFB} = {45FFBEC0-FFF0-4964-A506-F326A76702CC}
 		{9B2E6306-3DEC-4062-95B4-2DAFFF5F9493} = {45FFBEC0-FFF0-4964-A506-F326A76702CC}
 		{4AB23A25-E5F7-4BA0-BF97-048B579B0659} = {61325513-BB52-47A8-AFDD-755454AD71F8}

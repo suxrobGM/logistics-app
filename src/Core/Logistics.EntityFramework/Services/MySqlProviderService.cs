@@ -1,11 +1,10 @@
 ﻿using System.Data.Common;
 using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
-using Logistics.Application.Options;
-using Logistics.EntityFramework.Data;
+using Logistics.Domain.Options;
+using Logistics.Domain.Services;
 
-namespace Logistics.Application.Services;
+namespace Logistics.EntityFramework.Services;
 
 public class MySqlProviderService : IDatabaseProviderService
 {
@@ -23,8 +22,7 @@ public class MySqlProviderService : IDatabaseProviderService
     public string GenerateConnectionString(string databaseName)
     {
         var database = $"{databaseName}_logistics";
-        var password = GeneratePassword();
-        return $"Server={_settings.DatabaseHost}; Database={database}; Uid={_settings.DatabaseUserId}; Pwd={password}; Connect Timeout=10";
+        return $"Server={_settings.DatabaseHost}; Database={database}; Uid={_settings.DatabaseUserId}; Pwd={_settings.DatabasePassword}";
     }
 
     public async Task<bool> CreateDatabaseAsync(string connectionString)
@@ -62,10 +60,5 @@ public class MySqlProviderService : IDatabaseProviderService
             _logger.LogError("Thrown exception in MySqlProviderService.DeleteDatabaseAsync(): {Exception}", ex);
             return false;
         }
-    }
-
-    private string GeneratePassword()
-    {
-        return Guid.NewGuid().ToString().ToLower().Replace("-", "")[..16];
     }
 }

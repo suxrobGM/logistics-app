@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
 <PageTitle>Logistics.AdminApp</PageTitle>
+<Toast @ref="toastRef" ToastPosition="Toast.Position.BottomRight"></Toast>
 
 <div class="page">
     <div class="sidebar">
@@ -17,3 +18,7 @@
         </article>
     </main>
 </div>
+
+@code {
+    private Toast? toastRef;
+}

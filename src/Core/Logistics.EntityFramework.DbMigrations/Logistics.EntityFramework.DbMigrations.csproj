@@ -14,7 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Logistics.EntityFramework\Logistics.EntityFramework.csproj" />
+	  <ProjectReference Include="..\Logistics.EntityFramework\Logistics.EntityFramework.csproj" />
 	</ItemGroup>
 
 </Project>

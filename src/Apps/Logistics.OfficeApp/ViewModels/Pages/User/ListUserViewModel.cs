@@ -36,7 +36,7 @@ public class ListUserViewModel : PageViewModelBase
     {
         var pagedList = await FetchUsersAsync(e.Page);
 
-        if (pagedList != null && pagedList.Items != null)
+        if (pagedList.Items != null)
         {
             UsersList.AddRange(pagedList.Items);
             UsersList.TotalItems = pagedList.TotalItems;

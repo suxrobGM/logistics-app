@@ -24,7 +24,7 @@ internal sealed class CreateTenantCommandHandler : RequestHandlerBase<CreateTena
         tenant.Name = tenant.Name?.ToLower();
         tenant.ConnectionString = _databaseProvider.GenerateConnectionString(tenant.Name!);
 
-        var existingTenant = _repository.GetAsync(i => i.Name == tenant.Name);
+        var existingTenant = await _repository.GetAsync(i => i.Name == tenant.Name);
         if (existingTenant != null)
         {
             return DataResult.CreateError($"Tenant name '{tenant.Name}' is already taken, please chose another name");

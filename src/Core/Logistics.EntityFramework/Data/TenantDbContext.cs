@@ -1,5 +1,6 @@
 ﻿using Logistics.EntityFramework.Helpers;
 using Logistics.Domain.Services;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace Logistics.EntityFramework.Data;
 

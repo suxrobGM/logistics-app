@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Logistics.EntityFramework.DbMigrations\Logistics.EntityFramework.DbMigrations.csproj" />
+    <ProjectReference Include="..\Logistics.EntityFramework\Logistics.EntityFramework.csproj" />
   </ItemGroup>
 
 </Project>

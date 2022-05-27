@@ -9,13 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="ViewModels\Shared\**" />
-    <Content Remove="ViewModels\Shared\**" />
-    <EmbeddedResource Remove="ViewModels\Shared\**" />
-    <None Remove="ViewModels\Shared\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="MagicMvvm.Blazor" Version="2.0.3" />
     <PackageReference Include="Microsoft.Identity.Web.UI" Version="1.24.1" />
 	<PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />

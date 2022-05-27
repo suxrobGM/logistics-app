@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "Logistics.AdminApp": {
+    "SelfHost": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

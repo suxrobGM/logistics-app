@@ -33,7 +33,7 @@ public class ListCargoViewModel : PageViewModelBase
         IsBusy = true;
         var pagedList = await FetchCargoes();
 
-        if (pagedList != null && pagedList.Items != null)
+        if (pagedList.Items != null)
         {
             Cargoes = pagedList.Items;
             TotalRecords = pagedList.TotalItems;

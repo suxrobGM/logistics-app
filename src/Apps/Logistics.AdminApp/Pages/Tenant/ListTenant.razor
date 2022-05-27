@@ -17,8 +17,8 @@
             <p>Total records: @Model.TotalRecords</p>
 
             <div class="input-group mb-3">
-                <input class="form-control" type="text" placeholder="Search...">
-                <button class="input-group-text" id="search-btn">
+                <input class="form-control" type="text" placeholder="Search..." @bind="Model.SearchInput">
+                <button class="input-group-text" id="search-btn" @onclick="Model.SearchAsync">
                     <i class="bi bi-search"></i>
                 </button>
             </div>
@@ -27,7 +27,7 @@
     <div class="row">
         <div class="col-12">
             <Grid DataSource="Model.Tenants" AllowSorting="true" AllowPaging="true"
-                PageSettings="new() { PagesCount = Model.UsersList.PagesCount, OnPageChanged = Model.LoadPage }">  
+                PageSettings="new() { PagesCount = Model.TenantsList.PagesCount, OnPageChanged = (e) => Model.LoadPage(e) }">  
                 <GridColumns>
                     <GridColumn Field="Name" 
                             HeaderText="Name">

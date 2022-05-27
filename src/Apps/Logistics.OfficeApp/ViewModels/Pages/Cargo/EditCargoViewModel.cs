@@ -5,14 +5,14 @@ namespace Logistics.OfficeApp.ViewModels.Pages.Cargo;
 
 public class EditCargoViewModel : PageViewModelBase
 {
-    private readonly AuthenticationStateProvider authStateProvider;
+    private readonly AuthenticationStateProvider _authStateProvider;
 
     public EditCargoViewModel(
         AuthenticationStateProvider authStateProvider,
         IApiClient apiClient)
         : base(apiClient)
     {
-        this.authStateProvider = authStateProvider;
+        _authStateProvider = authStateProvider;
         Trucks = new List<TruckDto>();
         Cargo = new CargoDto();
     }
@@ -98,7 +98,7 @@ public class EditCargoViewModel : PageViewModelBase
 
     private async Task LoadCurrentDispatcherAsync()
     {
-        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var authState = await _authStateProvider.GetAuthenticationStateAsync();
         var externalId = authState.User.GetId();
 
         if (!string.IsNullOrEmpty(externalId) && Cargo != null)

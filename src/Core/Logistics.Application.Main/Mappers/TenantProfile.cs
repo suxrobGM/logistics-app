@@ -4,9 +4,9 @@ internal class TenantProfile : Profile
 {
     public TenantProfile()
     {
-        CreateMap<Tenant, CreateTenantCommand>();
-        CreateMap<Tenant, UpdateTenantCommand>();
-        CreateMap<TenantDto, CreateTenantCommand>();
-        CreateMap<TenantDto, UpdateTenantCommand>();
+        CreateMap<Tenant, CreateTenantCommand>().ReverseMap();
+        CreateMap<Tenant, UpdateTenantCommand>().ReverseMap();
+        CreateMap<TenantDto, CreateTenantCommand>().ReverseMap();
+        CreateMap<TenantDto, UpdateTenantCommand>().ReverseMap();
     }
 }

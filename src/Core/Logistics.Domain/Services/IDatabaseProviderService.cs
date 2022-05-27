@@ -1,4 +1,4 @@
-﻿namespace Logistics.Application.Contracts.Services;
+﻿namespace Logistics.Domain.Services;
 
 public interface IDatabaseProviderService
 {

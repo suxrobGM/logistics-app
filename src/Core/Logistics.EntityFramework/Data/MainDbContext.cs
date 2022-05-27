@@ -1,4 +1,5 @@
 ﻿using Logistics.EntityFramework.Helpers;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace Logistics.EntityFramework.Data;
 

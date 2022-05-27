@@ -8,7 +8,7 @@ public class TenantsSpecification : BaseSpecification<Tenant>
             i.Name.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase)) ||
 
             (!string.IsNullOrEmpty(i.DisplayName) &&
-            i.DisplayName.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase)) ||
+            i.DisplayName.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase))
         )
     {
     }

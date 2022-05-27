@@ -19,7 +19,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Logistics.Application.Main.Contracts\Logistics.Application.Main.Contracts.csproj" />
     <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />
-    <ProjectReference Include="..\Logistics.EntityFramework\Logistics.EntityFramework.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

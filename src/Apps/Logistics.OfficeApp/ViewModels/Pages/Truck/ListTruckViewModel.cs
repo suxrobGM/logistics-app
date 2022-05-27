@@ -32,7 +32,7 @@ public class ListTruckViewModel : PageViewModelBase
     {
         IsBusy = true;
         var pagedList = await FetchTrucksAsync();
-        if (pagedList != null && pagedList.Items != null)
+        if (pagedList.Items != null)
         {
             Trucks = pagedList.Items;
             TotalRecords = pagedList.TotalItems;

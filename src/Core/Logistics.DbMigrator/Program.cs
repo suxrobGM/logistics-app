@@ -6,12 +6,12 @@ var mainDatabaseConnection = ConnectionStrings.LocalMain;
 var defaultTenantConnection = ConnectionStrings.LocalDefaultTenant;
 
 Console.WriteLine("Main database connection string: " + mainDatabaseConnection);
-Console.WriteLine("Initializing application database...");
+Console.WriteLine("Initializing main database...");
 await SeedData.InitializeAsync(new MainDbContext(mainDatabaseConnection));
 Console.WriteLine();
 
 Console.WriteLine("Default tenant's connection string: " + defaultTenantConnection);
-Console.WriteLine("Initializing test tenant's database...");
+Console.WriteLine("Initializing default tenant's database...");
 await SeedData.InitializeAsync(new TenantDbContext(defaultTenantConnection));
 
 Console.WriteLine("Finished!");
