@@ -6,6 +6,7 @@ using Logistics.Application;
 using Logistics.EntityFramework;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Logistics.WebApi.Middlewares;
 
 namespace Logistics.WebApi;
 
@@ -50,6 +51,7 @@ internal static class HostingExtensions
         });
 
         app.UseHttpsRedirection();
+        app.UseMultitenancy();
 
         app.UseAuthentication();
         app.UseAuthorization();

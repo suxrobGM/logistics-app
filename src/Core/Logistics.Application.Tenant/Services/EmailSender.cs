@@ -20,19 +20,19 @@ internal sealed class EmailSender : IEmailSender
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         if (string.IsNullOrEmpty(options.SenderName))
-            throw new ArgumentException("SenderName is a empty string");
+            throw new ArgumentException("SenderName is an empty string");
 
         if (string.IsNullOrEmpty(options.SenderMail))
-            throw new ArgumentException("SenderMail is a empty string");
+            throw new ArgumentException("SenderMail is an empty string");
 
         if (string.IsNullOrEmpty(options.Host))
-            throw new ArgumentException("Host is a empty string");
+            throw new ArgumentException("Host is an empty string");
 
         if (string.IsNullOrEmpty(options.UserName))
-            throw new ArgumentException("UserName is a empty string");
+            throw new ArgumentException("UserName is an empty string");
 
         if (string.IsNullOrEmpty(options.Password))
-            throw new ArgumentException("Password is a empty string");
+            throw new ArgumentException("Password is an empty string");
     }
     
     public async Task<bool> SendMailAsync(string receiverMail, string subject, string htmlBody)

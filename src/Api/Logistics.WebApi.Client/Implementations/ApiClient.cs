@@ -4,8 +4,16 @@ internal class ApiClient : ApiClientBase, IApiClient
 {
     public ApiClient(ApiClientOptions options) : base(options.Host!)
     {
+        SetTenantId(options.TenantId);
     }
 
+    public string? TenantId { get; private set; }
+
+    public void SetTenantId(string? tenantId)
+    {
+        TenantId = tenantId;
+        SetRequestHeader("X-TenantId", tenantId);
+    }
 
     #region Cargo API
 

@@ -1,6 +1,5 @@
 ﻿using Logistics.EntityFramework.Helpers;
 using Logistics.Domain.Services;
-using Microsoft.EntityFrameworkCore.Design;
 
 namespace Logistics.EntityFramework.Data;
 
@@ -16,7 +15,7 @@ public class TenantDbContext : DbContext
     }
 
     public TenantDbContext(
-        DbContextOptions options, 
+        DbContextOptions<TenantDbContext> options, 
         ITenantService tenantService)
         : base(options)
     {
@@ -26,17 +25,16 @@ public class TenantDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
+        if (options.IsConfigured)
+            return;      
 
-        if (!options.IsConfigured)
+        if (!string.IsNullOrEmpty(_connectionString))
         {
-            if (!string.IsNullOrEmpty(_connectionString))
-            {
-                DbContextHelpers.ConfigureMySql(_connectionString, options);
-            }
-            else
-            {
-                DbContextHelpers.ConfigureMySql(_tenantService.GetConnectionString(), options);
-            }  
+            DbContextHelpers.ConfigureMySql(_connectionString, options);
+        }
+        else
+        {
+            DbContextHelpers.ConfigureMySql(_tenantService.GetConnectionString(), options);
         }
     }
 

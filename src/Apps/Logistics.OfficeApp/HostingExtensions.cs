@@ -13,6 +13,7 @@ internal static class HostingExtensions
 
         builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
             .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+
         builder.Services.AddControllersWithViews()
             .AddMicrosoftIdentityUI();
 

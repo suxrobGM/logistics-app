@@ -5,17 +5,19 @@ namespace Logistics.OfficeApp.Pages;
 
 public class HostModel : PageModel
 {
-    private readonly IApiClient apiClient;
+    private readonly IApiClient _apiClient;
 
     public HostModel(IApiClient apiClient)
     {
-        this.apiClient = apiClient;
+        _apiClient = apiClient;
     }
 
     public async Task<IActionResult> OnGetAsync()
     {
+        var a = _apiClient.TenantId;
+        Console.WriteLine("TenantId: " + a);
         var user = User.Claims.ToUser();
-        await apiClient.TryCreateUserAsync(user);
+        await _apiClient.TryCreateUserAsync(user);
         return Page();
     }
 }

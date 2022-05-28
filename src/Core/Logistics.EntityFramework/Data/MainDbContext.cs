@@ -1,5 +1,4 @@
 ﻿using Logistics.EntityFramework.Helpers;
-using Microsoft.EntityFrameworkCore.Design;
 
 namespace Logistics.EntityFramework.Data;
 
@@ -12,7 +11,7 @@ public class MainDbContext : DbContext
         _connectionString = connectionString;
     }
 
-    public MainDbContext(DbContextOptions options)
+    public MainDbContext(DbContextOptions<MainDbContext> options)
         : base(options)
     {
         _connectionString = ConnectionStrings.LocalDefaultTenant;

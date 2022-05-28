@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Logistics.Domain.Shared.Exceptions;
 
 namespace Logistics.Application.Shared;
 
@@ -8,12 +9,19 @@ public abstract class RequestHandlerBase<TRequest, TResponse> : IRequestHandler<
 {
     public Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken)
     {
-        if (!Validate(request, out var error))
+        try
         {
-            return Task.FromResult<TResponse>(new() { Error = error });
-        }
+            if (!Validate(request, out var error))
+            {
+                return Task.FromResult<TResponse>(new() { Error = error });
+            }
 
-        return HandleValidated(request, cancellationToken);
+            return HandleValidated(request, cancellationToken);
+        }
+        catch (InvalidTenantException ex)
+        {
+            return Task.FromResult<TResponse>(new() { Error = ex.Message });
+        }
     }
 
     protected abstract Task<TResponse> HandleValidated(TRequest request, CancellationToken cancellationToken);

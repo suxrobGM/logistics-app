@@ -5,15 +5,15 @@ namespace Logistics.WebApi.Client;
 
 internal abstract class ApiClientBase
 {
-    private readonly HttpClient httpClient;
-    private readonly JsonSerializerOptions serializerOptions;
+    private readonly HttpClient _httpClient;
+    private readonly JsonSerializerOptions _serializerOptions;
 
     protected ApiClientBase(string host)
     {
         if (string.IsNullOrEmpty(host))
             throw new ArgumentNullException(host);
 
-        serializerOptions = new JsonSerializerOptions 
+        _serializerOptions = new JsonSerializerOptions 
         { 
             PropertyNameCaseInsensitive = true 
         };
@@ -26,12 +26,21 @@ internal abstract class ApiClientBase
                 ServerCertificateCustomValidationCallback = (_, _, _, _) => true
             };
 
-            httpClient = new HttpClient(handler) { BaseAddress = new Uri(host) };
+            _httpClient = new HttpClient(handler) { BaseAddress = new Uri(host) };
         }
         catch (PlatformNotSupportedException)
         {
-            httpClient = new HttpClient { BaseAddress = new Uri(host) };
+            _httpClient = new HttpClient { BaseAddress = new Uri(host) };
         }
+    }
+
+    protected void SetRequestHeader(string key, string? value)
+    {
+        if (_httpClient.DefaultRequestHeaders.Contains(key))
+        {
+            _httpClient.DefaultRequestHeaders.Remove(key);
+        }
+        _httpClient.DefaultRequestHeaders.Add(key, value);
     }
 
     protected async Task<TResponse> GetRequestAsync<TResponse>(string endpoint,
@@ -59,7 +68,7 @@ internal abstract class ApiClientBase
 
         try
         {
-            using var response = await httpClient.GetAsync(requestEndpoint);
+            using var response = await _httpClient.GetAsync(requestEndpoint);
             var content = await ReadContentAsync(response);
             return content;
         }
@@ -89,7 +98,7 @@ internal abstract class ApiClientBase
     {
         try
         {
-            using var response = await httpClient.PostAsync(endpoint, GetJsonContent(body));
+            using var response = await _httpClient.PostAsync(endpoint, GetJsonContent(body));
             var content = await ReadContentAsync(response);
             return content;
         }
@@ -119,7 +128,7 @@ internal abstract class ApiClientBase
     {
         try
         {
-            using var response = await httpClient.PutAsync(endpoint, GetJsonContent(body));
+            using var response = await _httpClient.PutAsync(endpoint, GetJsonContent(body));
             var content = await ReadContentAsync(response);
             return content;
         }
@@ -154,7 +163,7 @@ internal abstract class ApiClientBase
 
         try
         {
-            using var response = await httpClient.DeleteAsync(requestEndpoint);
+            using var response = await _httpClient.DeleteAsync(requestEndpoint);
             var content = await ReadContentAsync(response);
             return content;
         }
@@ -186,7 +195,7 @@ internal abstract class ApiClientBase
 
     private HttpContent GetJsonContent<T>(T data)
     {
-        var jsonData = JsonSerializer.Serialize(data, serializerOptions);
+        var jsonData = JsonSerializer.Serialize(data, _serializerOptions);
         return new StringContent(jsonData, Encoding.UTF8, "application/json");
     }
 
@@ -194,7 +203,7 @@ internal abstract class ApiClientBase
     {
         try
         {
-            return JsonSerializer.Deserialize<T>(json, serializerOptions);
+            return JsonSerializer.Deserialize<T>(json, _serializerOptions);
         }
         catch (JsonException)
         {
