@@ -15,13 +15,31 @@ public class TenantController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{identifier}")]
     [ProducesResponseType(typeof(DataResult<TenantDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     //[RequiredScope("admin.read")]
     public async Task<IActionResult> GetById(string? identifier)
     {
         var result = await _mediator.Send(new GetTenantQuery
+        {
+            Id = identifier,
+            Name = identifier
+        });
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result);
+    }
+
+    [HttpGet("displayName/{identifier}")]
+    [ProducesResponseType(typeof(DataResult<TenantDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    //[RequiredScope("admin.read")]
+    public async Task<IActionResult> GetDisplayName(string? identifier)
+    {
+        var result = await _mediator.Send(new GetTenantDisplayNameQuery
         {
             Id = identifier,
             Name = identifier

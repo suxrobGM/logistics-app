@@ -2,6 +2,6 @@
 
 public interface IApiClient : ICargoApi, ITruckApi, IUserApi, ITenantApi
 {
-    void SetTenantId(string? tenantId);
-    string? TenantId { get; }
+    void SetCurrentTenantId(string? tenantId);
+    string? CurrentTenantId { get; }
 }

@@ -29,7 +29,7 @@ public static class ServiceCollectionExtensions
         ApiClientOptions options)
     {
         services.AddSingleton(options);
-        services.AddSingleton<IApiClient, ApiClient>();
+        services.AddScoped<IApiClient, ApiClient>();
         return services;
     }
 }

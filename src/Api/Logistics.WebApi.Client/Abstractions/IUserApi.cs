@@ -2,7 +2,7 @@
 
 public interface IUserApi
 {
-    Task<UserDto?> GetUserAsync(string id);
+    Task<UserDto> GetUserAsync(string id);
     Task<PagedDataResult<UserDto>> GetUsersAsync(string searchInput = "", int page = 1, int pageSize = 10);
     Task<bool> UserExistsAsync(string id);
     Task CreateUserAsync(UserDto user);

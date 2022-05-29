@@ -26,7 +26,7 @@ internal class TenantService : ITenantService
 
         var subDomain = GetSubDomain(_httpContext.Request.Host);
 
-        if (_httpContext.Request.Headers.TryGetValue("X-TenantId", out var tenantId))
+        if (_httpContext.Request.Headers.TryGetValue("X-Tenant", out var tenantId))
         {
             _currentTenant = GetCurrentTenant(tenantId);
         }
@@ -36,7 +36,7 @@ internal class TenantService : ITenantService
         }
         else
         {
-            throw new InvalidTenantException("Specify tenant ID in request header with the key 'X-TenantId'");
+            throw new InvalidTenantException("Specify tenant ID in request header with the key 'X-Tenant'");
         }
         return _currentTenant;
     }
@@ -45,9 +45,10 @@ internal class TenantService : ITenantService
     {
         if (string.IsNullOrEmpty(tenantId))
         {
-            throw new InvalidTenantException("Tenant ID is a null, specify tenant ID in request header with the key 'X-TenantId'");
+            throw new InvalidTenantException("Tenant ID is a null, specify tenant ID in request header with the key 'X-Tenant'");
         }
 
+        tenantId = tenantId.Trim().ToLower();
         var tenant = _repository.GetQuery().FirstOrDefault(i => i.Id == tenantId || i.Name == tenantId) ??
             throw new InvalidTenantException($"Could not found tenant with ID '{tenantId}'");
             

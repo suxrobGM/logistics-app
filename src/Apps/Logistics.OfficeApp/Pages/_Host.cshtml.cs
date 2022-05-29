@@ -14,8 +14,6 @@ public class HostModel : PageModel
 
     public async Task<IActionResult> OnGetAsync()
     {
-        var a = _apiClient.TenantId;
-        Console.WriteLine("TenantId: " + a);
         var user = User.Claims.ToUser();
         await _apiClient.TryCreateUserAsync(user);
         return Page();

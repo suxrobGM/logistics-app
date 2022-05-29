@@ -4,23 +4,26 @@ internal class ApiClient : ApiClientBase, IApiClient
 {
     public ApiClient(ApiClientOptions options) : base(options.Host!)
     {
-        SetTenantId(options.TenantId);
+        SetCurrentTenantId(options.TenantId);
     }
 
-    public string? TenantId { get; private set; }
+    public string? CurrentTenantId { get; private set; }
 
-    public void SetTenantId(string? tenantId)
+    public void SetCurrentTenantId(string? tenantId)
     {
-        TenantId = tenantId;
-        SetRequestHeader("X-TenantId", tenantId);
+        if (CurrentTenantId == tenantId)
+            return;
+        
+        CurrentTenantId = tenantId;
+        SetRequestHeader("X-Tenant", tenantId);
     }
 
     #region Cargo API
 
-    public async Task<CargoDto?> GetCargoAsync(string id)
+    public async Task<CargoDto> GetCargoAsync(string id)
     {
         var result = await GetRequestAsync<DataResult<CargoDto>>($"api/cargo/{id}");
-        return result.Value;
+        return result.Value!;
     }
 
     public async Task<PagedDataResult<CargoDto>> GetCargoesAsync(string searchInput = "", int page = 1, int pageSize = 10)
@@ -59,16 +62,16 @@ internal class ApiClient : ApiClientBase, IApiClient
 
     #region Truck API
 
-    public async Task<TruckDto?> GetTruckAsync(string id)
+    public async Task<TruckDto> GetTruckAsync(string id)
     {
         var result = await GetRequestAsync<DataResult<TruckDto>>($"api/truck/{id}");
-        return result.Value;
+        return result.Value!;
     }
 
-    public async Task<TruckDto?> GetTruckByDriverAsync(string driverId)
+    public async Task<TruckDto> GetTruckByDriverAsync(string driverId)
     {
         var result = await GetRequestAsync<DataResult<TruckDto>>($"api/truck/driver/{driverId}");
-        return result.Value;
+        return result.Value!;
     }
 
     public async Task<PagedDataResult<TruckDto>> GetTrucksAsync(string searchInput = "", int page = 1, int pageSize = 10, bool includeCargoIds = false)
@@ -108,10 +111,10 @@ internal class ApiClient : ApiClientBase, IApiClient
 
     #region User API
 
-    public async Task<UserDto?> GetUserAsync(string id)
+    public async Task<UserDto> GetUserAsync(string id)
     {
         var result = await GetRequestAsync<DataResult<UserDto>>($"api/user/{id}");
-        return result.Value;
+        return result.Value!;
     }
 
     public async Task<PagedDataResult<UserDto>> GetUsersAsync(string searchInput = "", int page = 1, int pageSize = 10)
@@ -176,10 +179,16 @@ internal class ApiClient : ApiClientBase, IApiClient
 
     #region Tenant API
 
-    public async Task<TenantDto?> GetTenantAsync(string id)
+    public async Task<string> GetTenantDisplayNameAsync(string identifier)
     {
-        var result = await GetRequestAsync<DataResult<TenantDto>>($"api/tenant/{id}");
-        return result.Value;
+        var result = await GetRequestAsync<DataResult<string>>($"api/tenant/displayName/{identifier}");
+        return result.Value!;
+    }
+
+    public async Task<TenantDto> GetTenantAsync(string identifier)
+    {
+        var result = await GetRequestAsync<DataResult<TenantDto>>($"api/tenant/{identifier}");
+        return result.Value!;
     }
 
     public async Task<PagedDataResult<TenantDto>> GetTenantsAsync(string searchInput = "", int page = 1, int pageSize = 10)

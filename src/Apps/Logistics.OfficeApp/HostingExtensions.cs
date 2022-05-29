@@ -10,6 +10,7 @@ internal static class HostingExtensions
     {
         builder.Services.AddWebApiClient(builder.Configuration);
         builder.Services.AddMvvmBlazor();
+        builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
             .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
@@ -37,8 +38,9 @@ internal static class HostingExtensions
         }
 
         app.UseHttpsRedirection();
+        app.UseMultitenancy();
         app.UseStaticFiles();
-        app.UseRouting();
+        app.UseRouting();    
 
         app.UseAuthentication();
         app.UseAuthorization();

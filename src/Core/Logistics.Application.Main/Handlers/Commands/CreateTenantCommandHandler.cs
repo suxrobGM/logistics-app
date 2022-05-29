@@ -21,8 +21,13 @@ internal sealed class CreateTenantCommandHandler : RequestHandlerBase<CreateTena
     protected override async Task<DataResult> HandleValidated(CreateTenantCommand request, CancellationToken cancellationToken)
     {
         var tenant = _mapper.Map<Tenant>(request);
-        tenant.Name = tenant.Name?.ToLower();
+        tenant.Name = tenant.Name?.Trim()?.ToLower();
         tenant.ConnectionString = _databaseProvider.GenerateConnectionString(tenant.Name!);
+
+        if (string.IsNullOrEmpty(tenant.DisplayName))
+        {
+            tenant.DisplayName = tenant.Name;
+        }
 
         var existingTenant = await _repository.GetAsync(i => i.Name == tenant.Name);
         if (existingTenant != null)

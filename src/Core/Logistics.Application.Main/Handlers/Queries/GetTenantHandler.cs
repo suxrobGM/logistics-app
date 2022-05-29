@@ -11,8 +11,7 @@ internal sealed class GetTenantHandler : RequestHandlerBase<GetTenantQuery, Data
 
     protected override async Task<DataResult<TenantDto>> HandleValidated(GetTenantQuery request, CancellationToken cancellationToken)
     {
-        var tenantEntity = await _repository.GetAsync(request.Id!) ??
-                        await _repository.GetAsync(i => i.Name == request.Name);
+        var tenantEntity = await _repository.GetAsync(i => i.Id == request.Id || i.Name == request.Name);
 
         if (tenantEntity == null)
         {
@@ -36,7 +35,7 @@ internal sealed class GetTenantHandler : RequestHandlerBase<GetTenantQuery, Data
 
         if (string.IsNullOrEmpty(request.Id) && string.IsNullOrEmpty(request.Name))
         {
-            errorDescription = "Both ID or tenant's name is an empty string, specify at least either ID or tenant's name";
+            errorDescription = "Both tenant's ID and tenant's name are an empty string, specify at least either ID or tenant's name";
         }
 
         return string.IsNullOrEmpty(errorDescription);

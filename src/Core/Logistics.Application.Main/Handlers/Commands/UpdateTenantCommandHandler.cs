@@ -20,8 +20,17 @@ internal sealed class UpdateTenantCommandHandler : RequestHandlerBase<UpdateTena
             return DataResult.CreateError("Could not find the tenant");
         }
 
-        tenant.Name = request.Name;
-        tenant.DisplayName = request.DisplayName;
+        tenant.Name = request.Name?.Trim()?.ToLower();
+
+        if (string.IsNullOrEmpty(request.DisplayName))
+        {
+            tenant.DisplayName = tenant.Name;
+        }
+        else
+        {
+            tenant.DisplayName = request.DisplayName?.Trim();
+        }
+        
         _repository.Update(tenant);
         await _repository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
