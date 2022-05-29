@@ -13,6 +13,7 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
+        AddSecretsJson(builder.Configuration);
         builder.Services.AddMainApplicationLayer();
         builder.Services.AddTenantApplicationLayer(builder.Configuration);
         builder.Services.AddInfrastructureLayer(builder.Configuration, "LocalMainDatabase");
@@ -56,5 +57,11 @@ internal static class HostingExtensions
 
         app.MapControllers();
         return app;
+    }
+
+    private static void AddSecretsJson(ConfigurationManager configuration)
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, "appsettings.secrets.json");
+        configuration.AddJsonFile(path, true);
     }
 }

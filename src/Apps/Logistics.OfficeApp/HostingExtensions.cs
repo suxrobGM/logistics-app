@@ -8,6 +8,7 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
+        AddSecretsJson(builder.Configuration);
         builder.Services.AddWebApiClient(builder.Configuration);
         builder.Services.AddMvvmBlazor();
         builder.Services.AddHttpContextAccessor();
@@ -49,5 +50,11 @@ internal static class HostingExtensions
         app.MapBlazorHub();
         app.MapFallbackToPage("/_Host");
         return app;
+    }
+
+    private static void AddSecretsJson(ConfigurationManager configuration)
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, "appsettings.secrets.json");
+        configuration.AddJsonFile(path, true);
     }
 }
