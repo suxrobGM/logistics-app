@@ -22,7 +22,7 @@ internal class ApiClient : ApiClientBase, IApiClient
 
     public async Task<CargoDto> GetCargoAsync(string id)
     {
-        var result = await GetRequestAsync<DataResult<CargoDto>>($"api/cargo/{id}");
+        var result = await GetRequestAsync<DataResult<CargoDto>>($"cargo/{id}");
         return result.Value!;
     }
 
@@ -38,23 +38,23 @@ internal class ApiClient : ApiClientBase, IApiClient
         {
             query.Add("search", searchInput);
         }
-        var result = await GetRequestAsync<PagedDataResult<CargoDto>>("api/cargo/list", query);
+        var result = await GetRequestAsync<PagedDataResult<CargoDto>>("cargo/list", query);
         return result;
     }
 
     public Task CreateCargoAsync(CargoDto cargo)
     {
-        return PostRequestAsync("api/cargo/create", cargo);
+        return PostRequestAsync("cargo/create", cargo);
     }
     
     public Task UpdateCargoAsync(CargoDto cargo)
     {
-        return PutRequestAsync($"api/cargo/update/{cargo.Id}", cargo);
+        return PutRequestAsync($"cargo/update/{cargo.Id}", cargo);
     }
 
     public Task DeleteCargoAsync(string id)
     {
-        return DeleteRequestAsync($"api/cargo/{id}");
+        return DeleteRequestAsync($"cargo/{id}");
     }
 
     #endregion
@@ -64,13 +64,13 @@ internal class ApiClient : ApiClientBase, IApiClient
 
     public async Task<TruckDto> GetTruckAsync(string id)
     {
-        var result = await GetRequestAsync<DataResult<TruckDto>>($"api/truck/{id}");
+        var result = await GetRequestAsync<DataResult<TruckDto>>($"truck/{id}");
         return result.Value!;
     }
 
     public async Task<TruckDto> GetTruckByDriverAsync(string driverId)
     {
-        var result = await GetRequestAsync<DataResult<TruckDto>>($"api/truck/driver/{driverId}");
+        var result = await GetRequestAsync<DataResult<TruckDto>>($"truck/driver/{driverId}");
         return result.Value!;
     }
 
@@ -87,23 +87,23 @@ internal class ApiClient : ApiClientBase, IApiClient
         {
             query.Add("search", searchInput);
         }
-        var result = await GetRequestAsync<PagedDataResult<TruckDto>>("api/truck/list", query);
+        var result = await GetRequestAsync<PagedDataResult<TruckDto>>("truck/list", query);
         return result;
     }
 
     public Task CreateTruckAsync(TruckDto truck)
     {
-        return PostRequestAsync("api/truck/create", truck);
+        return PostRequestAsync("truck/create", truck);
     }
 
     public Task UpdateTruckAsync(TruckDto truck)
     {
-        return PutRequestAsync($"api/truck/update/{truck.Id}", truck);
+        return PutRequestAsync($"truck/update/{truck.Id}", truck);
     }
 
     public Task DeleteTruckAsync(string id)
     {
-        return DeleteRequestAsync($"api/truck/{id}");
+        return DeleteRequestAsync($"truck/{id}");
     }
 
     #endregion
@@ -113,7 +113,7 @@ internal class ApiClient : ApiClientBase, IApiClient
 
     public async Task<UserDto> GetUserAsync(string id)
     {
-        var result = await GetRequestAsync<DataResult<UserDto>>($"api/user/{id}");
+        var result = await GetRequestAsync<DataResult<UserDto>>($"user/{id}");
         return result.Value!;
     }
 
@@ -129,7 +129,7 @@ internal class ApiClient : ApiClientBase, IApiClient
         {
             query.Add("search", searchInput);
         }
-        var result = await GetRequestAsync<PagedDataResult<UserDto>>("api/user/list", query);
+        var result = await GetRequestAsync<PagedDataResult<UserDto>>("user/list", query);
         return result;
     }
 
@@ -148,7 +148,7 @@ internal class ApiClient : ApiClientBase, IApiClient
 
     public Task CreateUserAsync(UserDto user)
     {
-        return PostRequestAsync("api/user/create", user);
+        return PostRequestAsync("user/create", user);
     }
 
     public async Task<bool> TryCreateUserAsync(UserDto user)
@@ -171,7 +171,7 @@ internal class ApiClient : ApiClientBase, IApiClient
 
     public Task UpdateUserAsync(UserDto user)
     {
-        return PutRequestAsync($"api/user/update/{user.Id}", user);
+        return PutRequestAsync($"user/update/{user.Id}", user);
     }
 
     #endregion
@@ -181,13 +181,13 @@ internal class ApiClient : ApiClientBase, IApiClient
 
     public async Task<string> GetTenantDisplayNameAsync(string identifier)
     {
-        var result = await GetRequestAsync<DataResult<string>>($"api/tenant/displayName/{identifier}");
+        var result = await GetRequestAsync<DataResult<string>>($"tenant/displayName/{identifier}");
         return result.Value!;
     }
 
     public async Task<TenantDto> GetTenantAsync(string identifier)
     {
-        var result = await GetRequestAsync<DataResult<TenantDto>>($"api/tenant/{identifier}");
+        var result = await GetRequestAsync<DataResult<TenantDto>>($"tenant/{identifier}");
         return result.Value!;
     }
 
@@ -203,23 +203,23 @@ internal class ApiClient : ApiClientBase, IApiClient
         {
             query.Add("search", searchInput);
         }
-        var result = await GetRequestAsync<PagedDataResult<TenantDto>>("api/tenant/list", query);
+        var result = await GetRequestAsync<PagedDataResult<TenantDto>>("tenant/list", query);
         return result;
     }
 
     public Task CreateTenantAsync(TenantDto tenant)
     {
-        return PostRequestAsync("api/tenant/create", tenant);
+        return PostRequestAsync("tenant/create", tenant);
     }
 
     public Task UpdateTenantAsync(TenantDto tenant)
     {
-        return PutRequestAsync($"api/tenant/update/{tenant.Id}", tenant);
+        return PutRequestAsync($"tenant/update/{tenant.Id}", tenant);
     }
 
     public Task DeleteTenantAsync(string id)
     {
-        return DeleteRequestAsync($"api/tenant/{id}");
+        return DeleteRequestAsync($"tenant/{id}");
     }
 
     #endregion

@@ -1,6 +1,6 @@
 ﻿namespace Logistics.WebApi.Controllers;
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 public class TruckController : ControllerBase
 {

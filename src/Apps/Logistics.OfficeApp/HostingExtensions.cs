@@ -57,4 +57,11 @@ internal static class HostingExtensions
         var path = Path.Combine(AppContext.BaseDirectory, "appsettings.secrets.json");
         configuration.AddJsonFile(path, true);
     }
+
+    //private static Task RedirectToIdentityProvider(RedirectContext context)
+    //{
+    //    var tenant = context.HttpContext?.Request?.Cookies["X-Tenant"];
+    //    context.ProtocolMessage.State = tenant;
+    //    return Task.CompletedTask;
+    //}
 }

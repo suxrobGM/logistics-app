@@ -5,5 +5,7 @@ public enum UserRoleType
     Guest,
     Driver,
     Dispatcher,
+    Manager,
+    Owner,
     Admin
 }
