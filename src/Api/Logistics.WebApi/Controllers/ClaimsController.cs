@@ -4,21 +4,23 @@
 [ApiController]
 public class ClaimsController : ControllerBase
 {
+    private readonly IConfiguration _configuration;
     private readonly IMediator _mediator;
 
-    public ClaimsController(IMediator mediator)
+    public ClaimsController(
+        IConfiguration configuration,
+        IMediator mediator)
     {
+        _configuration = configuration;
         _mediator = mediator;
     }
 
     [HttpPost]
     public async Task<IActionResult> Post(AzureConnectorRequest request)
     {
-        var result = await _mediator.Send(new AddUserRoleClaimsCommand
-        {
-            ConnectorRequest = request,
-            AuthorizationHeader = Request.Headers.Authorization
-        });
+        var clientId = _configuration["AzureAd:ClientId"];
+        var authHeader = Request.Headers.Authorization;
+        var result = await _mediator.Send(new AddUserRoleClaimsCommand(request, authHeader, clientId));
 
         if (result.Success)
             return Ok(result);
