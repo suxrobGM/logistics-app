@@ -12,7 +12,7 @@
 
 .idea/
 .config/
-appsettings.secrets*.json
+secrets.json
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

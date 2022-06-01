@@ -51,7 +51,7 @@ internal static class HostingExtensions
 
     private static void AddSecretsJson(ConfigurationManager configuration)
     {
-        var path = Path.Combine(AppContext.BaseDirectory, "appsettings.secrets.json");
+        var path = Path.Combine(AppContext.BaseDirectory, "secrets.json");
         configuration.AddJsonFile(path, true);
     }
 }

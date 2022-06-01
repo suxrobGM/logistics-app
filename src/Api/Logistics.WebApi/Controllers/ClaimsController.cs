@@ -18,13 +18,13 @@ public class ClaimsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post(AzureConnectorRequest request)
     {
-        var clientId = _configuration["AzureAd:ClientId"];
+        var clientId = _configuration["AzureAd:OfficeAppId"];
         var authHeader = Request.Headers.Authorization;
         var result = await _mediator.Send(new AddUserRoleClaimsCommand(request, authHeader, clientId));
 
         if (result.Success)
-            return Ok(result);
+            return Ok(result.Value);
 
-        return BadRequest(result);
+        return BadRequest(new AzureConnectorResponse("ValidationError", result.Error!));
     }
 }
