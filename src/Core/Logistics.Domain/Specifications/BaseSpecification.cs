@@ -26,7 +26,7 @@ public class BaseSpecification<TEntity> : ISpecification<TEntity> where TEntity 
 
     protected void ApplyOrderBy(Expression<Func<TEntity, object>> orderBy)
     {
-        OrderBy = orderBy;
+        OrderBy = orderBy; 
     }
 
     protected void ApplyOrderByDescending(Expression<Func<TEntity, object>> orderByDesc)
