@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
+using System.Security.Claims;
 
 namespace Logistics.OfficeApp;
 
@@ -69,16 +70,13 @@ internal static class HostingExtensions
             var a = c.Properties.Items;
             var b = c.ProtocolMessage.Parameters;
             var d = c.Properties.Parameters;
-            return Task.CompletedTask;
-        };
-
-        options.Events.OnTicketReceived = c =>
-        {
-            foreach (var claim in c.Principal.Claims)
-            {
-                Console.WriteLine(claim.Value);
-            }
-
+            var e = c.HttpContext?.User;
+            c.HttpContext?.User?.AddIdentity(new ClaimsIdentity(
+                new[]
+                {
+                    new Claim("extension_TenantId", tenant!)
+                })
+            );
             return Task.CompletedTask;
         };
     }

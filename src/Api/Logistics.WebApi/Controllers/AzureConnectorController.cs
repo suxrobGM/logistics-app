@@ -2,12 +2,12 @@
 
 [Route("[controller]")]
 [ApiController]
-public class ClaimsController : ControllerBase
+public class AzureConnectorController : ControllerBase
 {
     private readonly IConfiguration _configuration;
     private readonly IMediator _mediator;
 
-    public ClaimsController(
+    public AzureConnectorController(
         IConfiguration configuration,
         IMediator mediator)
     {
