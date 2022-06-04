@@ -51,8 +51,8 @@ internal class AddUserRoleClaimsCommandHandler :
 
         if (!auth.StartsWith("Basic "))
         {
-            _logger.LogWarning("Azure Api Connector handler: HTTP basic authentication header must start with 'Basic '.");
-            errorDescription = "Azure Api Connector handler: HTTP basic authentication header must start with 'Basic '.";
+            _logger.LogWarning("Azure Api Connector handler: HTTP basic authentication header must start with 'Basic'");
+            errorDescription = "Azure Api Connector handler: HTTP basic authentication header must start with 'Basic'";
             return false;
         }
 
