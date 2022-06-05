@@ -1,0 +1,9 @@
+﻿@page "/logout"
+@inherits ViewBase<LogoutViewModel>
+
+<div class="row mt-1 mt-md-5">
+    <div class="col-12">
+        <span>Do you want to log out ?</span>
+        <button class="btn btn-primary" @onclick="Model.SignOut">Yes</button>
+    </div>
+</div>

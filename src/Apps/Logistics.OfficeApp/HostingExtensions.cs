@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
+using Logistics.OfficeApp.Services;
 
 namespace Logistics.OfficeApp;
 
@@ -24,6 +25,7 @@ internal static class HostingExtensions
             options.FallbackPolicy = options.DefaultPolicy;
         });
 
+        builder.Services.AddScoped<AuthenticationStateService>();
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor()
             .AddMicrosoftIdentityConsentHandler();

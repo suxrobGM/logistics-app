@@ -1,4 +1,5 @@
 ﻿@page "/list-user"
+@attribute [Authorize(Roles = "guest")]
 @inherits ViewBase<ListUserViewModel>
 
 <h2>Users List</h2>

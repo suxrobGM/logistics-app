@@ -1,33 +1,18 @@
-﻿namespace Logistics.OfficeApp.ViewModels.Components;
+﻿using Logistics.OfficeApp.Services;
+
+namespace Logistics.OfficeApp.ViewModels.Components;
 
 public class MainLayoutViewModel : ViewModelBase
 {
-    private readonly IHttpContextAccessor _context;
-    private readonly IApiClient _apiClient;
+    private readonly AuthenticationStateService _authStateService;
 
-    public MainLayoutViewModel(
-        IApiClient apiClient, 
-        IHttpContextAccessor context)
+    public MainLayoutViewModel(AuthenticationStateService authStateService)
     {
-        _apiClient = apiClient;
-        _context = context;
-        
+        _authStateService = authStateService;
     }
 
-    public override Task OnInitializedAsync()
+    public override async Task OnInitializedAsync()
     {
-        SetTenant();
-        return base.OnInitializedAsync();
+        await _authStateService.ReevaluateAuthenticationStateAsync();
     }
-
-    private void SetTenant()
-    {
-        var tenantCookie = _context?.HttpContext?.Request?.Cookies["X-Tenant"];
-        _apiClient.SetCurrentTenantId(tenantCookie);
-    }
-
-    //private Task GetUserRoles()
-    //{
-        
-    //}
 }

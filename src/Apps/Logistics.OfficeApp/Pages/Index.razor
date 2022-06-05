@@ -1,5 +1,5 @@
 ﻿@page "/"
-
+@attribute [Authorize(Roles = "admin,owner,manager,dispatcher")]
 <PageTitle>Logisitics</PageTitle>
 
 <h1>Site Administration</h1>
