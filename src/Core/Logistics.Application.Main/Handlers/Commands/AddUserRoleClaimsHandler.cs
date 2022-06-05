@@ -4,28 +4,28 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Handlers.Commands;
 
-internal class AddUserRoleClaimsCommandHandler : 
+internal class AddUserRoleClaimsHandler : 
     RequestHandlerBase<AddUserRoleClaimsCommand, DataResult<AzureConnectorResponse>>
 {
     private readonly ITenantRepository<User> _repository;
-    private readonly ILogger<AddUserRoleClaimsCommandHandler> _logger;
+    private readonly ILogger<AddUserRoleClaimsHandler> _logger;
 
-    public AddUserRoleClaimsCommandHandler(
+    public AddUserRoleClaimsHandler(
         ITenantRepository<User> repository,
-        ILogger<AddUserRoleClaimsCommandHandler> logger)
+        ILogger<AddUserRoleClaimsHandler> logger)
     {
         _repository = repository;
         _logger = logger;
     }
 
-    protected override async Task<DataResult<AzureConnectorResponse>> 
+    protected override Task<DataResult<AzureConnectorResponse>> 
         HandleValidated(AddUserRoleClaimsCommand request, CancellationToken cancellationToken)
     {
         var clientId = request.AzureAdClientId;
         if (!clientId.Equals(request.ConnectorRequest.ClientId))
         {
             _logger.LogWarning("AzureAd ClientId is not authorized");
-            return DataResult<AzureConnectorResponse>.CreateError("AzureAd ClientId is not authorized");
+            return Task.FromResult(DataResult<AzureConnectorResponse>.CreateError("AzureAd ClientId is not authorized"));
         }
 
         //// If email claim not found, show block page. Email is required and sent by default.
@@ -36,10 +36,10 @@ internal class AddUserRoleClaimsCommandHandler :
 
         var result = new AzureConnectorResponse
         {
-            UserRole = "everything awesome"
+            UserRole = "user role"
         };
 
-        return DataResult<AzureConnectorResponse>.CreateSuccess(result);
+        return Task.FromResult(DataResult<AzureConnectorResponse>.CreateSuccess(result));
     }
 
     protected override bool Validate(AddUserRoleClaimsCommand request, out string errorDescription)

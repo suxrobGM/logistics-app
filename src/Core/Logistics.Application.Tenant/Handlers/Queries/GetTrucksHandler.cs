@@ -1,10 +1,10 @@
 ﻿namespace Logistics.Application.Handlers.Queries;
 
-internal sealed class GetTrucksQueryHandler : RequestHandlerBase<GetTrucksQuery, PagedDataResult<TruckDto>>
+internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, PagedDataResult<TruckDto>>
 {
     private readonly ITenantRepository<Truck> _truckRepository;
 
-    public GetTrucksQueryHandler(
+    public GetTrucksHandler(
         ITenantRepository<Truck> truckRepository)
     {
         _truckRepository = truckRepository;

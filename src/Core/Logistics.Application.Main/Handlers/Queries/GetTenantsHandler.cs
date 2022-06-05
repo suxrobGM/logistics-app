@@ -1,10 +1,10 @@
 ﻿namespace Logistics.Application.Handlers.Queries;
 
-internal sealed class GetTenantsQueryHandler : RequestHandlerBase<GetTenantsQuery, PagedDataResult<TenantDto>>
+internal sealed class GetTenantsHandler : RequestHandlerBase<GetTenantsQuery, PagedDataResult<TenantDto>>
 {
     private readonly IMainRepository<Tenant> _repository;
 
-    public GetTenantsQueryHandler(IMainRepository<Tenant> repository)
+    public GetTenantsHandler(IMainRepository<Tenant> repository)
     {
         _repository = repository;
     }

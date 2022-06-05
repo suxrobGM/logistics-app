@@ -7,3 +7,4 @@ global using Logistics.Application.Shared;
 global using Logistics.Domain.Entities;
 global using Logistics.Domain.Repositories;
 global using Logistics.Domain.Specifications;
+global using Logistics.Domain.ValueObjects;

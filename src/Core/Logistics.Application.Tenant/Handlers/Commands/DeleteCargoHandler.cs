@@ -1,10 +1,10 @@
 ﻿namespace Logistics.Application.Handlers.Commands;
 
-internal sealed class DeleteCargoCommandHandler : RequestHandlerBase<DeleteCargoCommand, DataResult>
+internal sealed class DeleteCargoHandler : RequestHandlerBase<DeleteCargoCommand, DataResult>
 {
     private readonly ITenantRepository<Cargo> _cargoRepository;
 
-    public DeleteCargoCommandHandler(ITenantRepository<Cargo> cargoRepository)
+    public DeleteCargoHandler(ITenantRepository<Cargo> cargoRepository)
     {
         _cargoRepository = cargoRepository;
     }

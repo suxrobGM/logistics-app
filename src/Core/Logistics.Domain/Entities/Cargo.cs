@@ -10,22 +10,10 @@ public class Cargo : Entity, ITenantEntity
     public double TotalTripMiles { get; set; }
     public bool IsCompleted { get; set; }
     public DateTime PickUpDate { get; set; } = DateTime.Now;
-    public CargoStatus Status { get; set; }
+    public CargoStatus Status { get; set; } = CargoStatus.Ready;
     public string? AssignedDispatcherId { get; set; }
     public string? AssignedTruckId { get; set; }
 
     public virtual Truck? AssignedTruck { get; set; }
     public virtual User? AssignedDispatcher { get; set; }
-
-    public static CargoStatus GetCargoStatus(string value)
-    {
-        value = value.Trim().ToLower();
-        return value switch
-        {
-            "ready" => CargoStatus.Ready,
-            "loaded" => CargoStatus.Loaded,
-            "offduty" => CargoStatus.OffDuty,
-            _ => CargoStatus.Ready,
-        };
-    }
 }

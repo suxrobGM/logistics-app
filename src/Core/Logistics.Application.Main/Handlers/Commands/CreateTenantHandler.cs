@@ -2,13 +2,13 @@
 
 namespace Logistics.Application.Handlers.Commands;
 
-internal sealed class CreateTenantCommandHandler : RequestHandlerBase<CreateTenantCommand, DataResult>
+internal sealed class CreateTenantHandler : RequestHandlerBase<CreateTenantCommand, DataResult>
 {
     private readonly IDatabaseProviderService _databaseProvider;
     private readonly IMapper _mapper;
     private readonly IMainRepository<Tenant> _repository;
 
-    public CreateTenantCommandHandler(
+    public CreateTenantHandler(
         IDatabaseProviderService databaseProvider,
         IMapper mapper,
         IMainRepository<Tenant> repository)

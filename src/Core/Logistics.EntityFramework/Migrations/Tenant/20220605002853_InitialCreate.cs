@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Logistics.EntityFramework.Data.Migrations.Tenant
+namespace Logistics.EntityFramework.Migrations.Tenant
 {
     public partial class InitialCreate : Migration
     {
@@ -31,7 +31,9 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     PhoneNumber = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     JoinedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    RoleType = table.Column<int>(type: "int", nullable: false)
+                    Role_Name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Role_Id = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -74,7 +76,9 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     TotalTripMiles = table.Column<double>(type: "double", nullable: false),
                     IsCompleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     PickUpDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
+                    Status_Name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Status_Id = table.Column<int>(type: "int", nullable: false),
                     AssignedDispatcherId = table.Column<string>(type: "varchar(255)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     AssignedTruckId = table.Column<string>(type: "varchar(255)", nullable: true)

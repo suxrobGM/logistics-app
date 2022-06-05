@@ -1,10 +1,10 @@
 ﻿namespace Logistics.Application.Handlers.Queries;
 
-internal sealed class GetUsersQueryHandler : RequestHandlerBase<GetUsersQuery, PagedDataResult<UserDto>>
+internal sealed class GetUsersHandler : RequestHandlerBase<GetUsersQuery, PagedDataResult<UserDto>>
 {
     private readonly ITenantRepository<User> _userRepository;
 
-    public GetUsersQueryHandler(ITenantRepository<User> userRepository)
+    public GetUsersHandler(ITenantRepository<User> userRepository)
     {
         _userRepository = userRepository;
     }

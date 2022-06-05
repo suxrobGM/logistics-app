@@ -32,6 +32,23 @@ public class UserController : ControllerBase
         return BadRequest(result.Error);
     }
 
+    [HttpGet("role/{userId}")]
+    [ProducesResponseType(typeof(DataResult<UserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    //[RequiredScope("admin.read")]
+    public async Task<IActionResult> GetUserRole(string userId)
+    {
+        var result = await _mediator.Send(new GetUserRoleQuery
+        {
+            UserId = userId
+        });
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result.Error);
+    }
+
     [HttpGet("list")]
     [ProducesResponseType(typeof(PagedDataResult<UserDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]

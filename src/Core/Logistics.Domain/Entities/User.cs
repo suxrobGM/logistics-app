@@ -11,7 +11,7 @@ public class User : Entity, ITenantEntity
     public string? Email { get; set; }
     public string? PhoneNumber { get; set; }
     public DateTime JoinedDate { get; set; } = DateTime.Now;
-    public UserRoleType RoleType { get; set; } = UserRoleType.Guest;
+    public UserRoleType Role { get; set; } = UserRoleType.Guest;
 
     public string GetFullName() => $"{FirstName} {LastName}";
     public virtual IList<Cargo> DispatcherCargoes { get; set; } = new List<Cargo>();

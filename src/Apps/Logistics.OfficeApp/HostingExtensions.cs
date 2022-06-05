@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
-using System.Security.Claims;
 
 namespace Logistics.OfficeApp;
 
@@ -15,8 +14,7 @@ internal static class HostingExtensions
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-            //.AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
-            .AddMicrosoftIdentityWebApp(c => ConfigureIdentity(builder.Configuration, c));
+            .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
 
         builder.Services.AddControllersWithViews()
             .AddMicrosoftIdentityUI();
@@ -58,26 +56,5 @@ internal static class HostingExtensions
     {
         var path = Path.Combine(AppContext.BaseDirectory, "secrets.json");
         configuration.AddJsonFile(path, true);
-    }
-
-    private static void ConfigureIdentity(IConfiguration configuration, MicrosoftIdentityOptions options)
-    {
-        configuration.Bind("AzureAd", options);
-        options.Events.OnRedirectToIdentityProvider = c =>
-        {
-            var tenant = c.HttpContext?.Request?.Cookies["X-Tenant"];
-            c.ProtocolMessage.State = tenant;
-            var a = c.Properties.Items;
-            var b = c.ProtocolMessage.Parameters;
-            var d = c.Properties.Parameters;
-            var e = c.HttpContext?.User;
-            c.HttpContext?.User?.AddIdentity(new ClaimsIdentity(
-                new[]
-                {
-                    new Claim("extension_TenantId", tenant!)
-                })
-            );
-            return Task.CompletedTask;
-        };
     }
 }

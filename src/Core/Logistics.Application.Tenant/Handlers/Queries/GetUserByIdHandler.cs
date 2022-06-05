@@ -1,10 +1,10 @@
 ﻿namespace Logistics.Application.Handlers.Queries;
 
-internal sealed class GetUserByIdQueryHandler : RequestHandlerBase<GetUserByIdQuery, DataResult<UserDto>>
+internal sealed class GetUserByIdHandler : RequestHandlerBase<GetUserByIdQuery, DataResult<UserDto>>
 {
     private readonly ITenantRepository<User> _userRepository;
 
-    public GetUserByIdQueryHandler(
+    public GetUserByIdHandler(
         ITenantRepository<User> userRepository)
     {
         this._userRepository = userRepository;

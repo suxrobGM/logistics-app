@@ -1,10 +1,10 @@
 ﻿namespace Logistics.Application.Handlers.Queries;
 
-internal sealed class GetCargoByIdQueryHandler : RequestHandlerBase<GetCargoByIdQuery, DataResult<CargoDto>>
+internal sealed class GetCargoByIdHandler : RequestHandlerBase<GetCargoByIdQuery, DataResult<CargoDto>>
 {
     private readonly ITenantRepository<Cargo> _cargoRepository;
 
-    public GetCargoByIdQueryHandler(ITenantRepository<Cargo> cargoRepository)
+    public GetCargoByIdHandler(ITenantRepository<Cargo> cargoRepository)
     {
         _cargoRepository = cargoRepository;
     }

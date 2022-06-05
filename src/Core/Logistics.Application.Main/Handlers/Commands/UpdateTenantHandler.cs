@@ -2,11 +2,11 @@
 
 namespace Logistics.Application.Handlers.Commands;
 
-internal sealed class UpdateTenantCommandHandler : RequestHandlerBase<UpdateTenantCommand, DataResult>
+internal sealed class UpdateTenantHandler : RequestHandlerBase<UpdateTenantCommand, DataResult>
 {
     private readonly IMainRepository<Tenant> _repository;
 
-    public UpdateTenantCommandHandler(IMainRepository<Tenant> repository)
+    public UpdateTenantHandler(IMainRepository<Tenant> repository)
     {
         _repository = repository;
     }

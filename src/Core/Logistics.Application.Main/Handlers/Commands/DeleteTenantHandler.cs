@@ -1,11 +1,11 @@
 ﻿namespace Logistics.Application.Handlers.Commands;
 
-internal sealed class DeleteTenantCommandHandler : RequestHandlerBase<DeleteTenantCommand, DataResult>
+internal sealed class DeleteTenantHandler : RequestHandlerBase<DeleteTenantCommand, DataResult>
 {
     private readonly IDatabaseProviderService _databaseProvider;
     private readonly IMainRepository<Tenant> _repository;
 
-    public DeleteTenantCommandHandler(
+    public DeleteTenantHandler(
         IDatabaseProviderService databaseProvider,
         IMainRepository<Tenant> repository)
     {

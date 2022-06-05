@@ -1,11 +1,11 @@
 ﻿namespace Logistics.Application.Handlers.Commands;
 
-internal sealed class CreateUserCommandHandler : RequestHandlerBase<CreateUserCommand, DataResult>
+internal sealed class CreateUserHandler : RequestHandlerBase<CreateUserCommand, DataResult>
 {
     private readonly IMapper _mapper;
     private readonly ITenantRepository<User> _userRepository;
 
-    public CreateUserCommandHandler(
+    public CreateUserHandler(
         IMapper mapper,
         ITenantRepository<User> userRepository)
     {

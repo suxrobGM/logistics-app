@@ -11,7 +11,13 @@ public class MainLayoutViewModel : ViewModelBase
     {
         _apiClient = apiClient;
         _context = context;
+        
+    }
+
+    public override Task OnInitializedAsync()
+    {
         SetTenant();
+        return base.OnInitializedAsync();
     }
 
     private void SetTenant()
@@ -19,4 +25,9 @@ public class MainLayoutViewModel : ViewModelBase
         var tenantCookie = _context?.HttpContext?.Request?.Cookies["X-Tenant"];
         _apiClient.SetCurrentTenantId(tenantCookie);
     }
+
+    //private Task GetUserRoles()
+    //{
+        
+    //}
 }

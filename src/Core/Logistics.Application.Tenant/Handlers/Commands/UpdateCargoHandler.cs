@@ -1,11 +1,11 @@
 ﻿namespace Logistics.Application.Handlers.Commands;
 
-internal sealed class UpdateCargoCommandHandler : RequestHandlerBase<UpdateCargoCommand, DataResult>
+internal sealed class UpdateCargoHandler : RequestHandlerBase<UpdateCargoCommand, DataResult>
 {
     private readonly ITenantRepository<Cargo> _cargoRepository;
     private readonly ITenantRepository<Truck> _truckRepository;
 
-    public UpdateCargoCommandHandler(
+    public UpdateCargoHandler(
         ITenantRepository<Cargo> cargoRepository,
         ITenantRepository<Truck> truckRepository)
     {
@@ -36,7 +36,7 @@ internal sealed class UpdateCargoCommandHandler : RequestHandlerBase<UpdateCargo
         cargoEntity.PricePerMile = request.PricePerMile;
         cargoEntity.IsCompleted = request.IsCompleted;
         cargoEntity.PickUpDate = request.PickUpDate;
-        cargoEntity.Status = Cargo.GetCargoStatus(request.Status!);
+        cargoEntity.Status = CargoStatus.Get(request.Status!);
         cargoEntity.AssignedTruck = truck;
 
         _cargoRepository.Update(cargoEntity);

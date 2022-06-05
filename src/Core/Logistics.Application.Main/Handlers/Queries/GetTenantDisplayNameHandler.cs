@@ -1,10 +1,10 @@
 ﻿namespace Logistics.Application.Handlers.Queries;
 
-internal class GetTenantDisplayNameQueryHandler : RequestHandlerBase<GetTenantDisplayNameQuery, DataResult<string>>
+internal class GetTenantDisplayNameHandler : RequestHandlerBase<GetTenantDisplayNameQuery, DataResult<string>>
 {
     private readonly IMainRepository<Tenant> _repository;
 
-    public GetTenantDisplayNameQueryHandler(IMainRepository<Tenant> repository)
+    public GetTenantDisplayNameHandler(IMainRepository<Tenant> repository)
     {
         _repository = repository;
     }

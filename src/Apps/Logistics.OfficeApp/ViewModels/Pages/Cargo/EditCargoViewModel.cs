@@ -126,7 +126,7 @@ public class EditCargoViewModel : PageViewModelBase
         return dataListItems;
     }
 
-    private Task<CargoDto?> FetchCargoAsync(string id)
+    private Task<CargoDto> FetchCargoAsync(string id)
     {
         return Task.Run(async () =>
         {

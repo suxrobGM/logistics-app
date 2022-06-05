@@ -64,7 +64,7 @@ public class EditUserViewModel : PageViewModelBase
         
     }
 
-    private Task<UserDto?> FetchUserAsync(string id)
+    private Task<UserDto> FetchUserAsync(string id)
     {
         return Task.Run(async () =>
         {

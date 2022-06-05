@@ -49,6 +49,8 @@ public class TenantDbContext : DbContext
                 .WithOne(m => m.AssignedDispatcher)
                 .HasForeignKey(m => m.AssignedDispatcherId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            entity.OwnsOne(m => m.Role);
         });
 
         builder.Entity<Truck>(entity =>
@@ -68,6 +70,7 @@ public class TenantDbContext : DbContext
         builder.Entity<Cargo>(entity =>
         {
             entity.ToTable("cargoes");
+            entity.OwnsOne(m => m.Status);
         });
     }
 }

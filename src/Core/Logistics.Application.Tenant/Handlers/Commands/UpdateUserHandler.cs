@@ -1,10 +1,10 @@
 ﻿namespace Logistics.Application.Handlers.Commands;
 
-internal sealed class UpdateUserCommandHandler : RequestHandlerBase<UpdateUserCommand, DataResult>
+internal sealed class UpdateUserHandler : RequestHandlerBase<UpdateUserCommand, DataResult>
 {
     private readonly ITenantRepository<User> _userRepository;
 
-    public UpdateUserCommandHandler(
+    public UpdateUserHandler(
         ITenantRepository<User> userRepository)
     {
         _userRepository = userRepository;

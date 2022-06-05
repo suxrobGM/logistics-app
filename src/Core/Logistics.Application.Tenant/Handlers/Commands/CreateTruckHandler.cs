@@ -1,11 +1,11 @@
 ﻿namespace Logistics.Application.Handlers.Commands;
 
-internal sealed class CreateTruckCommandHandler : RequestHandlerBase<CreateTruckCommand, DataResult>
+internal sealed class CreateTruckHandler : RequestHandlerBase<CreateTruckCommand, DataResult>
 {
     private readonly ITenantRepository<Truck> _truckRepository;
     private readonly ITenantRepository<User> _userRepository;
 
-    public CreateTruckCommandHandler(
+    public CreateTruckHandler(
         ITenantRepository<Truck> truckRepository,
         ITenantRepository<User> userRepository)
     {

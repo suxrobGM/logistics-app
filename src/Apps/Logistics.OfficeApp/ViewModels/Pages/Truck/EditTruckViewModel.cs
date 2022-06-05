@@ -113,7 +113,7 @@ public class EditTruckViewModel : PageViewModelBase
         return dataListItems;
     }
 
-    private Task<TruckDto?> FetchTruckAsync(string id)
+    private Task<TruckDto> FetchTruckAsync(string id)
     {
         return Task.Run(async () =>
         {

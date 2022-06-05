@@ -3,18 +3,16 @@ using System;
 using Logistics.EntityFramework.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Logistics.EntityFramework.Data.Migrations.Tenant
+namespace Logistics.EntityFramework.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20220527000750_InitialCreate")]
-    partial class InitialCreate
+    partial class TenantDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,9 +44,6 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
 
                     b.Property<string>("Source")
                         .HasColumnType("longtext");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
 
                     b.Property<double>("TotalTripMiles")
                         .HasColumnType("double");
@@ -104,9 +99,6 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("RoleType")
-                        .HasColumnType("int");
-
                     b.Property<string>("UserName")
                         .HasColumnType("longtext");
 
@@ -127,9 +119,32 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                         .HasForeignKey("AssignedTruckId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.OwnsOne("Logistics.Domain.ValueObjects.CargoStatus", "Status", b1 =>
+                        {
+                            b1.Property<string>("CargoId")
+                                .HasColumnType("varchar(255)");
+
+                            b1.Property<int>("Id")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Name")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.HasKey("CargoId");
+
+                            b1.ToTable("cargoes");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CargoId");
+                        });
+
                     b.Navigation("AssignedDispatcher");
 
                     b.Navigation("AssignedTruck");
+
+                    b.Navigation("Status")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
@@ -139,6 +154,32 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                         .HasForeignKey("Logistics.Domain.Entities.Truck", "DriverId");
 
                     b.Navigation("Driver");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.User", b =>
+                {
+                    b.OwnsOne("Logistics.Domain.ValueObjects.UserRoleType", "Role", b1 =>
+                        {
+                            b1.Property<string>("UserId")
+                                .HasColumnType("varchar(255)");
+
+                            b1.Property<int>("Id")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Name")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.Navigation("Role")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
