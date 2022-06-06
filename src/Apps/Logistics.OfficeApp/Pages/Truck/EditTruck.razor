@@ -1,4 +1,5 @@
 ﻿@page "/edit-truck/{id?}"
+@attribute [Authorize(Roles = "admin,owner,manager,dispatcher")]
 @inherits ViewBase<EditTruckViewModel>
 
 @{

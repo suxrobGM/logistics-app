@@ -1,4 +1,5 @@
 ﻿@page "/edit-tenant/{id?}"
+@attribute [Authorize(Roles = "admin")]
 @inherits ViewBase<EditTenantViewModel>
 
 @{

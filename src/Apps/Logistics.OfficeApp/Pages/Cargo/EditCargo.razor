@@ -1,4 +1,5 @@
 ﻿@page "/edit-cargo/{id?}"
+@attribute [Authorize(Roles = "admin,owner,manager,dispatcher")]
 @inherits ViewBase<EditCargoViewModel>
 
 @{

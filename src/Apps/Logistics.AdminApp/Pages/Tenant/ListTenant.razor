@@ -1,4 +1,5 @@
 ﻿@page "/list-tenant"
+@attribute [Authorize(Roles = "admin")]
 @inherits ViewBase<ListTenantViewModel>
 
 <h2>Tenants List</h2>
