@@ -2,6 +2,7 @@
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Logistics.OfficeApp.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Logistics.OfficeApp;
 
@@ -14,8 +15,20 @@ internal static class HostingExtensions
         builder.Services.AddMvvmBlazor();
         builder.Services.AddHttpContextAccessor();
 
-        builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-            .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+        builder.Services.AddAuthentication(options =>
+        {
+            // the application's main authentication scheme will be cookies
+            options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
+            // the authentication challenge will be handled by the OIDC middleware, and ultimately IdentityServer  
+            options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+        })
+        .AddOpenIdConnect(options =>
+        {
+            options.Authority = "https://localhost:5001";
+            options.ClientId = "logistics.officeapp";
+        });
+        //.AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
 
         builder.Services.AddControllersWithViews()
             .AddMicrosoftIdentityUI();
