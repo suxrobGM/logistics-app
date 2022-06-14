@@ -2,7 +2,6 @@ using Duende.IdentityServer;
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Services;
 using IdentityModel;
-using Logistics.IdentityServer.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -16,8 +15,8 @@ namespace Logistics.IdentityServer.Pages.ExternalLogin
     [SecurityHeaders]
     public class Callback : PageModel
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly ILogger<Callback> _logger;
         private readonly IEventService _events;
@@ -26,8 +25,8 @@ namespace Logistics.IdentityServer.Pages.ExternalLogin
             IIdentityServerInteractionService interaction,
             IEventService events,
             ILogger<Callback> logger,
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            UserManager<User> userManager,
+            SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -107,11 +106,11 @@ namespace Logistics.IdentityServer.Pages.ExternalLogin
             return Redirect(returnUrl);
         }
 
-        private async Task<ApplicationUser> AutoProvisionUserAsync(string provider, string providerUserId, IEnumerable<Claim> claims)
+        private async Task<User> AutoProvisionUserAsync(string provider, string providerUserId, IEnumerable<Claim> claims)
         {
             var sub = Guid.NewGuid().ToString();
 
-            var user = new ApplicationUser
+            var user = new User
             {
                 Id = sub,
                 UserName = sub, // don't need a username, since the user will be using an external provider to login

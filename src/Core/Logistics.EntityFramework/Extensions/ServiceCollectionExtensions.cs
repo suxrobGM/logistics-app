@@ -27,9 +27,6 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<TenantDbContext>();
         services.AddDbContext<MainDbContext>(o => DbContextHelpers.ConfigureMySql(connectionString, o));
 
-        services.AddIdentityCore<User>()
-            .AddEntityFrameworkStores<MainDbContext>();
-
         services.AddSingleton(tenantsSettings);
         services.AddScoped(typeof(ITenantService), typeof(TenantService));
         services.AddScoped(typeof(IMainRepository<>), typeof(MainRepository<>));

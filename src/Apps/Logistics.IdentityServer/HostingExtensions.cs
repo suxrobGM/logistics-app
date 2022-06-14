@@ -1,8 +1,7 @@
 using Duende.IdentityServer;
-using Logistics.IdentityServer.Data;
-using Logistics.IdentityServer.Models;
+using Logistics.EntityFramework;
+using Logistics.EntityFramework.Data;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 namespace Logistics.IdentityServer;
@@ -12,12 +11,10 @@ internal static class HostingExtensions
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddRazorPages();
+        builder.Services.AddInfrastructureLayer(builder.Configuration, "LocalMainDatabase");
 
-        builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-        builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-            .AddEntityFrameworkStores<ApplicationDbContext>()
+        builder.Services.AddIdentity<User, IdentityRole>()
+            .AddEntityFrameworkStores<MainDbContext>()
             .AddDefaultTokenProviders();
 
         builder.Services
@@ -34,7 +31,7 @@ internal static class HostingExtensions
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryClients(Config.Clients)
-            .AddAspNetIdentity<ApplicationUser>();
+            .AddAspNetIdentity<User>();
 
         builder.Services.AddAuthentication()
             .AddGoogle(options =>
