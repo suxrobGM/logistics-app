@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Contracts.Queries;
 
-public class GetUserRoleQuery : RequestBase<DataResult<UserRoleDto>>
+public class GetEmployeeRoleQuery : RequestBase<DataResult<EmployeeRoleDto>>
 {
     public string? UserId { get; set; }
 }

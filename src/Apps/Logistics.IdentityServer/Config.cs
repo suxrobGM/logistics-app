@@ -51,7 +51,8 @@ public static class Config
             new Client
             {
                 ClientId = "logistics.officeapp",
-
+                RequireClientSecret = true,
+                ClientSecrets = { new Secret("589270E9-2155-4A4F-84E5-CA641695CED2".Sha256()) },
                 AllowedGrantTypes = GrantTypes.Code,
 
                 RedirectUris = { "https://localhost:7015/signin-oidc" },

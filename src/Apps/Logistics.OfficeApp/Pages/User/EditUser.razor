@@ -39,14 +39,14 @@
                         <label for="lastname" class="form-label">Last Name</label>
                         <InputText id="lastname" class="form-control" @bind-Value="Model.User.LastName" />
                     </div>
-                    <div class="mb-3">
+                    @*<div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <input id="email" type="email" class="form-control" @bind="Model.User.Email" />
                     </div>
                     <div class="mb-3">
                         <label for="phonenumber" class="form-label">Phone Number</label>
                         <InputText id="phonenumber" class="form-control" @bind-Value="Model.User.PhoneNumber" />
-                    </div>
+                    </div>*@
                     <div class="mt-3">
                         <button class="btn btn-primary" type="submit">
                             <i class="bi bi-pencil-square"></i> @submitBtnText
@@ -62,7 +62,7 @@
 </div>
 
 @code {
-    private UserDto user = new();
+    private EmployeeDto user = new();
 
     [Parameter]
     public string? Id { get; set; }

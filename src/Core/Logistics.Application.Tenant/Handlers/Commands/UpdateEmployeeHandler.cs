@@ -1,16 +1,16 @@
 ﻿namespace Logistics.Application.Handlers.Commands;
 
-internal sealed class UpdateUserHandler : RequestHandlerBase<UpdateUserCommand, DataResult>
+internal sealed class UpdateEmployeeHandler : RequestHandlerBase<UpdateEmployeeCommand, DataResult>
 {
-    private readonly ITenantRepository<User> _userRepository;
+    private readonly ITenantRepository<Employee> _userRepository;
 
-    public UpdateUserHandler(
-        ITenantRepository<User> userRepository)
+    public UpdateEmployeeHandler(
+        ITenantRepository<Employee> userRepository)
     {
         _userRepository = userRepository;
     }
 
-    protected override async Task<DataResult> HandleValidated(UpdateUserCommand request, CancellationToken cancellationToken)
+    protected override async Task<DataResult> HandleValidated(UpdateEmployeeCommand request, CancellationToken cancellationToken)
     {
         var userEntity = await _userRepository.GetAsync(request.Id!);
 
@@ -22,15 +22,13 @@ internal sealed class UpdateUserHandler : RequestHandlerBase<UpdateUserCommand, 
         userEntity.FirstName = request.FirstName;
         userEntity.LastName = request.LastName;
         userEntity.UserName = request.UserName;
-        userEntity.Email = request.Email;
-        userEntity.PhoneNumber = request.PhoneNumber;
 
         _userRepository.Update(userEntity);
         await _userRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
 
-    protected override bool Validate(UpdateUserCommand request, out string errorDescription)
+    protected override bool Validate(UpdateEmployeeCommand request, out string errorDescription)
     {
         errorDescription = string.Empty;
 

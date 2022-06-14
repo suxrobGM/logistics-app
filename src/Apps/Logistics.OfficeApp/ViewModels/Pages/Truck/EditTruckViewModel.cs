@@ -8,7 +8,7 @@ public class EditTruckViewModel : PageViewModelBase
         : base(apiClient)
     {
         Truck = new TruckDto();
-        _drivers = new List<UserDto>();
+        _drivers = new List<EmployeeDto>();
     }
 
     [Parameter]
@@ -22,8 +22,8 @@ public class EditTruckViewModel : PageViewModelBase
 
     public TruckDto Truck { get; set; }
 
-    private IEnumerable<UserDto> _drivers;
-    public IEnumerable<UserDto> Drivers 
+    private IEnumerable<EmployeeDto> _drivers;
+    public IEnumerable<EmployeeDto> Drivers 
     {
         get => _drivers;
         set => SetProperty(ref _drivers, value);
@@ -99,7 +99,7 @@ public class EditTruckViewModel : PageViewModelBase
 
     public async Task<IEnumerable<DataListItem>> SearchUser(string value)
     {
-        var pagedList = await apiClient.GetUsersAsync(value);
+        var pagedList = await apiClient.GetEmployeesAsync(value);
         var dataListItems = new List<DataListItem>();
 
         if (pagedList.Items != null)
@@ -121,11 +121,11 @@ public class EditTruckViewModel : PageViewModelBase
         });
     }
 
-    private Task<PagedDataResult<UserDto>> FetchDriversAsync()
+    private Task<PagedDataResult<EmployeeDto>> FetchDriversAsync()
     {
         return Task.Run(async () =>
         {
-            return await apiClient.GetUsersAsync();
+            return await apiClient.GetEmployeesAsync();
         });
     }
 }

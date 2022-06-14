@@ -15,5 +15,5 @@ public class Cargo : Entity, ITenantEntity
     public string? AssignedTruckId { get; set; }
 
     public virtual Truck? AssignedTruck { get; set; }
-    public virtual User? AssignedDispatcher { get; set; }
+    public virtual Employee? AssignedDispatcher { get; set; }
 }

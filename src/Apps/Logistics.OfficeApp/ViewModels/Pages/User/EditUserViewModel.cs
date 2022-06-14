@@ -7,7 +7,7 @@ public class EditUserViewModel : PageViewModelBase
     public EditUserViewModel(IApiClient apiClient)
         : base(apiClient)
     {
-        User = new UserDto();
+        User = new EmployeeDto();
     }
 
     [Parameter]
@@ -19,7 +19,7 @@ public class EditUserViewModel : PageViewModelBase
 
     #region Binding properties
 
-    public UserDto User { get; set; }
+    public EmployeeDto User { get; set; }
     public bool EditMode => !string.IsNullOrEmpty(Id);
     public string Error { get; set; } = string.Empty;
 
@@ -51,7 +51,7 @@ public class EditUserViewModel : PageViewModelBase
         {
             if (EditMode)
             {
-                await apiClient.UpdateUserAsync(User!);
+                await apiClient.UpdateEmployeeAsync(User!);
                 Toast?.Show("User has been saved successfully.", "Notification");
             }
             IsBusy = false;
@@ -64,11 +64,11 @@ public class EditUserViewModel : PageViewModelBase
         
     }
 
-    private Task<UserDto> FetchUserAsync(string id)
+    private Task<EmployeeDto> FetchUserAsync(string id)
     {
         return Task.Run(async () =>
         {
-            return await apiClient.GetUserAsync(id);
+            return await apiClient.GetEmployeeAsync(id);
         });
     }
 }

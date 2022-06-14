@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Logistics.EntityFramework.Migrations.Tenant
+namespace Logistics.EntityFramework.Data.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
     partial class TenantDbContextModelSnapshot : ModelSnapshot
@@ -57,6 +57,31 @@ namespace Logistics.EntityFramework.Migrations.Tenant
                     b.ToTable("cargoes", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ExternalId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("JoinedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("employees", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
                 {
                     b.Property<string>("Id")
@@ -76,40 +101,9 @@ namespace Logistics.EntityFramework.Migrations.Tenant
                     b.ToTable("trucks", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.User", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("ExternalId")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("JoinedDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("users", (string)null);
-                });
-
             modelBuilder.Entity("Logistics.Domain.Entities.Cargo", b =>
                 {
-                    b.HasOne("Logistics.Domain.Entities.User", "AssignedDispatcher")
+                    b.HasOne("Logistics.Domain.Entities.Employee", "AssignedDispatcher")
                         .WithMany("DispatcherCargoes")
                         .HasForeignKey("AssignedDispatcherId")
                         .OnDelete(DeleteBehavior.SetNull);
@@ -147,20 +141,11 @@ namespace Logistics.EntityFramework.Migrations.Tenant
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
                 {
-                    b.HasOne("Logistics.Domain.Entities.User", "Driver")
-                        .WithOne()
-                        .HasForeignKey("Logistics.Domain.Entities.Truck", "DriverId");
-
-                    b.Navigation("Driver");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.User", b =>
-                {
-                    b.OwnsOne("Logistics.Domain.ValueObjects.UserRoleType", "Role", b1 =>
+                    b.OwnsOne("Logistics.Domain.ValueObjects.EmployeeRole", "Role", b1 =>
                         {
-                            b1.Property<string>("UserId")
+                            b1.Property<string>("EmployeeId")
                                 .HasColumnType("varchar(255)");
 
                             b1.Property<int>("Id")
@@ -170,12 +155,12 @@ namespace Logistics.EntityFramework.Migrations.Tenant
                                 .IsRequired()
                                 .HasColumnType("longtext");
 
-                            b1.HasKey("UserId");
+                            b1.HasKey("EmployeeId");
 
-                            b1.ToTable("users");
+                            b1.ToTable("employees");
 
                             b1.WithOwner()
-                                .HasForeignKey("UserId");
+                                .HasForeignKey("EmployeeId");
                         });
 
                     b.Navigation("Role")
@@ -184,12 +169,21 @@ namespace Logistics.EntityFramework.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
                 {
-                    b.Navigation("Cargoes");
+                    b.HasOne("Logistics.Domain.Entities.Employee", "Driver")
+                        .WithOne()
+                        .HasForeignKey("Logistics.Domain.Entities.Truck", "DriverId");
+
+                    b.Navigation("Driver");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.User", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
                 {
                     b.Navigation("DispatcherCargoes");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
+                {
+                    b.Navigation("Cargoes");
                 });
 #pragma warning restore 612, 618
         }

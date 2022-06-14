@@ -6,12 +6,12 @@ internal sealed class CreateCargoHandler : RequestHandlerBase<CreateCargoCommand
 {
     private readonly ITenantRepository<Cargo> _cargoRepository;
     private readonly ITenantRepository<Truck> _truckRepository;
-    private readonly ITenantRepository<User> _userRepository;
+    private readonly ITenantRepository<Employee> _userRepository;
 
     public CreateCargoHandler(
         ITenantRepository<Cargo> cargoRepository,
         ITenantRepository<Truck> truckRepository,
-        ITenantRepository<User> userRepository)
+        ITenantRepository<Employee> userRepository)
     {
         _cargoRepository = cargoRepository;
         _truckRepository = truckRepository;

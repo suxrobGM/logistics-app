@@ -1,18 +1,39 @@
-﻿using Logistics.DbMigrator;
-using Logistics.EntityFramework;
+using Microsoft.EntityFrameworkCore;
+using Logistics.DbMigrator;
+using Logistics.Domain.Entities;
 using Logistics.EntityFramework.Data;
 
-var mainDatabaseConnection = ConnectionStrings.LocalMain;
-var defaultTenantConnection = ConnectionStrings.LocalDefaultTenant;
+IHost host = Host.CreateDefaultBuilder(args)
+    .ConfigureAppConfiguration(configuration =>
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, "secrets.json");
+        configuration.AddJsonFile(path, true);
+    })
+    .ConfigureServices((ctx, services) =>
+    {
+        var mainDbConntection = ctx.Configuration.GetConnectionString("LocalMainDatabase");
+        var tenantDbConntection = ctx.Configuration.GetConnectionString("LocalDefaultTenantDatabase");
 
-Console.WriteLine("Main database connection string: " + mainDatabaseConnection);
-Console.WriteLine("Initializing main database...");
-await SeedData.InitializeAsync(new MainDbContext(mainDatabaseConnection));
-Console.WriteLine();
+        services.AddDbContext<MainDbContext>(o => ConfigureMySql(mainDbConntection, o));
+        services.AddDbContext<TenantDbContext>(o => ConfigureMySql(tenantDbConntection, o));
 
-Console.WriteLine("Default tenant's connection string: " + defaultTenantConnection);
-Console.WriteLine("Initializing default tenant's database...");
-await SeedData.InitializeAsync(new TenantDbContext(defaultTenantConnection));
+        services.AddIdentityCore<User>()
+            .AddEntityFrameworkStores<MainDbContext>();
+        services.AddHostedService<SeedDataService>();
+    })
+    .Build();
 
-Console.WriteLine("Finished!");
-Console.ReadLine();
+await host.RunAsync();
+
+
+void ConfigureMySql(string connectionString, DbContextOptionsBuilder options)
+{
+    options.UseMySql(connectionString,
+            ServerVersion.AutoDetect(connectionString),
+            o =>
+            {
+                o.EnableRetryOnFailure(8, TimeSpan.FromSeconds(15), null);
+                o.EnableStringComparisonTranslations(true);
+            })
+        .UseLazyLoadingProxies();
+}

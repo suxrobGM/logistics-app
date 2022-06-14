@@ -16,7 +16,7 @@ public class TenantDbContext : DbContext
 
     public TenantDbContext(
         DbContextOptions<TenantDbContext> options, 
-        ITenantService tenantService)
+        ITenantService tenantService = null!)
         : base(options)
     {
         _tenantService = tenantService;
@@ -32,9 +32,13 @@ public class TenantDbContext : DbContext
         {
             DbContextHelpers.ConfigureMySql(_connectionString, options);
         }
-        else
+        else if (_tenantService != null)
         {
             DbContextHelpers.ConfigureMySql(_tenantService.GetConnectionString(), options);
+        }
+        else
+        {
+            throw new InvalidOperationException("Could not configure the tenant database");
         }
     }
 
@@ -42,9 +46,9 @@ public class TenantDbContext : DbContext
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<User>(entity =>
+        builder.Entity<Employee>(entity =>
         {
-            entity.ToTable("users");
+            entity.ToTable("employees");
             entity.HasMany(m => m.DispatcherCargoes)
                 .WithOne(m => m.AssignedDispatcher)
                 .HasForeignKey(m => m.AssignedDispatcherId)

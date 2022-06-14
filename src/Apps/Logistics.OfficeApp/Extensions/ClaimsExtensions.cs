@@ -4,9 +4,9 @@ namespace Logistics.OfficeApp;
 
 public static class ClaimsExtensions
 {
-    public static UserDto ToUser(this IEnumerable<Claim> claims)
+    public static EmployeeDto ToUser(this IEnumerable<Claim> claims)
     {
-        var user = new UserDto();
+        var user = new EmployeeDto();
 
         foreach (var claim in claims)
         {
@@ -21,10 +21,6 @@ public static class ClaimsExtensions
             else if (claim.Type == ClaimTypes.Surname)
             {
                 user.LastName = claim.Value;
-            }
-            else if (claim.Type == "emails")
-            {
-                user.Email = claim.Value;
             }
             else if (claim.Type == "name")
             {

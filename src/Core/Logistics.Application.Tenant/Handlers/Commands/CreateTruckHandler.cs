@@ -3,11 +3,11 @@
 internal sealed class CreateTruckHandler : RequestHandlerBase<CreateTruckCommand, DataResult>
 {
     private readonly ITenantRepository<Truck> _truckRepository;
-    private readonly ITenantRepository<User> _userRepository;
+    private readonly ITenantRepository<Employee> _userRepository;
 
     public CreateTruckHandler(
         ITenantRepository<Truck> truckRepository,
-        ITenantRepository<User> userRepository)
+        ITenantRepository<Employee> userRepository)
     {
         _truckRepository = truckRepository;
         _userRepository = userRepository;

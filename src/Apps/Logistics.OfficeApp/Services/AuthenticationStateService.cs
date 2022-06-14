@@ -24,7 +24,7 @@ public class AuthenticationStateService
         SetTenant();
         var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
         var userExternalId = authState.User.GetId();
-        var userRole = await _apiClient.GetUserRoleAsync(userExternalId!);
+        var userRole = await _apiClient.GetEmployeeRoleAsync(userExternalId!);
 
         var identity = new ClaimsIdentity();
         identity.AddClaim(new Claim(ClaimTypes.Role, userRole.Role));

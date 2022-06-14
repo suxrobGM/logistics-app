@@ -109,21 +109,21 @@ internal class ApiClient : ApiClientBase, IApiClient
     #endregion
 
 
-    #region User API
+    #region Employee API
 
-    public async Task<UserDto> GetUserAsync(string id)
+    public async Task<EmployeeDto> GetEmployeeAsync(string id)
     {
-        var result = await GetRequestAsync<DataResult<UserDto>>($"user/{id}");
+        var result = await GetRequestAsync<DataResult<EmployeeDto>>($"employee/{id}");
         return result.Value!;
     }
 
-    public async Task<UserRoleDto> GetUserRoleAsync(string userId)
+    public async Task<EmployeeRoleDto> GetEmployeeRoleAsync(string userId)
     {
-        var result = await GetRequestAsync<DataResult<UserRoleDto>>($"user/role/{userId}");
+        var result = await GetRequestAsync<DataResult<EmployeeRoleDto>>($"employee/role/{userId}");
         return result.Value!;
     }
 
-    public async Task<PagedDataResult<UserDto>> GetUsersAsync(string searchInput = "", int page = 1, int pageSize = 10)
+    public async Task<PagedDataResult<EmployeeDto>> GetEmployeesAsync(string searchInput = "", int page = 1, int pageSize = 10)
     {
         var query = new Dictionary<string, string>
         {
@@ -135,15 +135,15 @@ internal class ApiClient : ApiClientBase, IApiClient
         {
             query.Add("search", searchInput);
         }
-        var result = await GetRequestAsync<PagedDataResult<UserDto>>("user/list", query);
+        var result = await GetRequestAsync<PagedDataResult<EmployeeDto>>("employee/list", query);
         return result;
     }
 
-    public async Task<bool> UserExistsAsync(string externalId)
+    public async Task<bool> EmployeeExistsAsync(string externalId)
     {
         try
         {
-            var result = await GetUserAsync(externalId);
+            var result = await GetEmployeeAsync(externalId);
             return result != null;
         }
         catch (ApiException)
@@ -152,32 +152,32 @@ internal class ApiClient : ApiClientBase, IApiClient
         }
     }
 
-    public Task CreateUserAsync(UserDto user)
+    public Task CreateEmployeeAsync(EmployeeDto user)
     {
-        return PostRequestAsync("user/create", user);
+        return PostRequestAsync("employee/create", user);
     }
 
-    public async Task<bool> TryCreateUserAsync(UserDto user)
+    public async Task<bool> TryCreateEmployeeAsync(EmployeeDto user)
     {
         if (string.IsNullOrEmpty(user.ExternalId))
         {
             throw new ApiException("ExternalId is null or empty");
         }
 
-        var userExists = await UserExistsAsync(user.ExternalId);
+        var userExists = await EmployeeExistsAsync(user.ExternalId);
 
         if (!userExists)
         {
-            await CreateUserAsync(user);
+            await CreateEmployeeAsync(user);
             return true;
         }
 
         return false;
     }
 
-    public Task UpdateUserAsync(UserDto user)
+    public Task UpdateEmployeeAsync(EmployeeDto user)
     {
-        return PutRequestAsync($"user/update/{user.Id}", user);
+        return PutRequestAsync($"employee/update/{user.Id}", user);
     }
 
     #endregion

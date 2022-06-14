@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using System.Text.Json;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Handlers.Commands;
@@ -7,11 +6,11 @@ namespace Logistics.Application.Handlers.Commands;
 internal class AddUserRoleClaimsHandler : 
     RequestHandlerBase<AddUserRoleClaimsCommand, DataResult<AzureConnectorResponse>>
 {
-    private readonly ITenantRepository<User> _repository;
+    private readonly ITenantRepository<Employee> _repository;
     private readonly ILogger<AddUserRoleClaimsHandler> _logger;
 
     public AddUserRoleClaimsHandler(
-        ITenantRepository<User> repository,
+        ITenantRepository<Employee> repository,
         ILogger<AddUserRoleClaimsHandler> logger)
     {
         _repository = repository;

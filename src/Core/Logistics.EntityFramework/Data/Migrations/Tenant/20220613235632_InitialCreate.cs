@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Logistics.EntityFramework.Migrations.Tenant
+namespace Logistics.EntityFramework.Data.Migrations.Tenant
 {
     public partial class InitialCreate : Migration
     {
@@ -13,22 +13,18 @@ namespace Logistics.EntityFramework.Migrations.Tenant
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "users",
+                name: "employees",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ExternalId = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    UserName = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
                     FirstName = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     LastName = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Email = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    PhoneNumber = table.Column<string>(type: "longtext", nullable: true)
+                    UserName = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     JoinedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Role_Name = table.Column<string>(type: "longtext", nullable: false)
@@ -37,7 +33,7 @@ namespace Logistics.EntityFramework.Migrations.Tenant
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_users", x => x.Id);
+                    table.PrimaryKey("PK_employees", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -55,9 +51,9 @@ namespace Logistics.EntityFramework.Migrations.Tenant
                 {
                     table.PrimaryKey("PK_trucks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_trucks_users_DriverId",
+                        name: "FK_trucks_employees_DriverId",
                         column: x => x.DriverId,
-                        principalTable: "users",
+                        principalTable: "employees",
                         principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -88,15 +84,15 @@ namespace Logistics.EntityFramework.Migrations.Tenant
                 {
                     table.PrimaryKey("PK_cargoes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_cargoes_trucks_AssignedTruckId",
-                        column: x => x.AssignedTruckId,
-                        principalTable: "trucks",
+                        name: "FK_cargoes_employees_AssignedDispatcherId",
+                        column: x => x.AssignedDispatcherId,
+                        principalTable: "employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
-                        name: "FK_cargoes_users_AssignedDispatcherId",
-                        column: x => x.AssignedDispatcherId,
-                        principalTable: "users",
+                        name: "FK_cargoes_trucks_AssignedTruckId",
+                        column: x => x.AssignedTruckId,
+                        principalTable: "trucks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
                 })
@@ -128,7 +124,7 @@ namespace Logistics.EntityFramework.Migrations.Tenant
                 name: "trucks");
 
             migrationBuilder.DropTable(
-                name: "users");
+                name: "employees");
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Contracts.Models;
 
-public class UserDto
+public class EmployeeDto
 {
     public string? Id { get; set; }
 
@@ -23,11 +23,5 @@ public class UserDto
     [Required]
     public string? LastName { get; set; }
 
-    [Required, EmailAddress]
-    public string? Email { get; set; }
-
-    [Phone]
-    public string? PhoneNumber { get; set; }
-
-    public string GetFullName() => $"{FirstName} {LastName}"; 
+    public string GetFullName() => string.Join(" ", new[] { FirstName, LastName });
 }

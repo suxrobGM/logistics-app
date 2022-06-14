@@ -1,8 +1,8 @@
 ﻿namespace Logistics.Application.Contracts.Models;
 
-public class UserRoleDto
+public class EmployeeRoleDto
 {
-    public UserRoleDto(string userId, string role)
+    public EmployeeRoleDto(string userId, string role)
     {
         UserId = userId;
         Role = role;

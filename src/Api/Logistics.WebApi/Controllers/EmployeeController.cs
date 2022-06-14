@@ -2,12 +2,12 @@
 
 [Route("[controller]")]
 [ApiController]
-public class UserController : ControllerBase
+public class EmployeeController : ControllerBase
 {
     private readonly IMapper _mapper;
     private readonly IMediator _mediator;
 
-    public UserController(
+    public EmployeeController(
         IMapper mapper,
         IMediator mediator)
     {
@@ -16,12 +16,12 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(DataResult<UserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult<EmployeeDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     //[RequiredScope("admin.read")]
     public async Task<IActionResult> GetById(string id)
     {
-        var result = await _mediator.Send(new GetUserByIdQuery
+        var result = await _mediator.Send(new GetEmployeeByIdQuery
         {
             Id = id
         });
@@ -33,12 +33,12 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("role/{userId}")]
-    [ProducesResponseType(typeof(DataResult<UserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult<EmployeeDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     //[RequiredScope("admin.read")]
     public async Task<IActionResult> GetUserRole(string userId)
     {
-        var result = await _mediator.Send(new GetUserRoleQuery
+        var result = await _mediator.Send(new GetEmployeeRoleQuery
         {
             UserId = userId
         });
@@ -50,10 +50,10 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("list")]
-    [ProducesResponseType(typeof(PagedDataResult<UserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PagedDataResult<EmployeeDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     //[RequiredScope("admin.read")]
-    public async Task<IActionResult> GetList([FromQuery] GetUsersQuery request)
+    public async Task<IActionResult> GetList([FromQuery] GetEmployeesQuery request)
     {
         var result = await _mediator.Send(request);
 
@@ -67,9 +67,9 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     //[RequiredScope("admin.write")]
-    public async Task<IActionResult> Create([FromBody] UserDto user)
+    public async Task<IActionResult> Create([FromBody] EmployeeDto user)
     {
-        var result = await _mediator.Send(_mapper.Map<CreateUserCommand>(user));
+        var result = await _mediator.Send(_mapper.Map<CreateEmployeeCommand>(user));
 
         if (result.Success)
             return Ok(result);
@@ -81,9 +81,9 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     //[RequiredScope("admin.write")]
-    public async Task<IActionResult> Update(string id, [FromBody] UserDto request)
+    public async Task<IActionResult> Update(string id, [FromBody] EmployeeDto request)
     {
-        var updateRequest = _mapper.Map<UpdateUserCommand>(request);
+        var updateRequest = _mapper.Map<UpdateEmployeeCommand>(request);
         updateRequest.Id = id;
         var result = await _mediator.Send(updateRequest);
 

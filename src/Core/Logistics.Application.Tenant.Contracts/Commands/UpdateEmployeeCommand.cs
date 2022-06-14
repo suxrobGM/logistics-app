@@ -1,8 +1,8 @@
 ﻿namespace Logistics.Application.Contracts.Commands;
 
-public sealed class CreateUserCommand : RequestBase<DataResult>
+public sealed class UpdateEmployeeCommand : RequestBase<DataResult>
 {
-    public string? ExternalId { get; init; }
+    public string? Id { get; set; }
     public string? FirstName { get; init; }
     public string? LastName { get; init; }
     public string? UserName { get; init; }

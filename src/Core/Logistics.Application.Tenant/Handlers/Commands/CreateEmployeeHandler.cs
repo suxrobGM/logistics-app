@@ -1,27 +1,27 @@
 ﻿namespace Logistics.Application.Handlers.Commands;
 
-internal sealed class CreateUserHandler : RequestHandlerBase<CreateUserCommand, DataResult>
+internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeCommand, DataResult>
 {
     private readonly IMapper _mapper;
-    private readonly ITenantRepository<User> _userRepository;
+    private readonly ITenantRepository<Employee> _userRepository;
 
-    public CreateUserHandler(
+    public CreateEmployeeHandler(
         IMapper mapper,
-        ITenantRepository<User> userRepository)
+        ITenantRepository<Employee> userRepository)
     {
         _mapper = mapper;
         _userRepository = userRepository;
     }
 
     protected override async Task<DataResult> HandleValidated(
-        CreateUserCommand request, CancellationToken cancellationToken)
+        CreateEmployeeCommand request, CancellationToken cancellationToken)
     {
-        await _userRepository.AddAsync(_mapper.Map<User>(request));
+        await _userRepository.AddAsync(_mapper.Map<Employee>(request));
         await _userRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
 
-    protected override bool Validate(CreateUserCommand request, out string errorDescription)
+    protected override bool Validate(CreateEmployeeCommand request, out string errorDescription)
     {
         errorDescription = string.Empty;
 

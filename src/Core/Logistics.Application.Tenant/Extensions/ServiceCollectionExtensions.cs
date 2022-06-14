@@ -18,7 +18,7 @@ public static class ServiceCollectionExtensions
         {
             o.AddProfile<CargoProfile>();
             o.AddProfile<TruckProfile>();
-            o.AddProfile<UserProfile>();
+            o.AddProfile<EmployeeProfile>();
         });
 
         var emailSenderOptions = configuration.GetSection(emailConfigSection).Get<EmailSettings>();

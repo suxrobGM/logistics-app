@@ -17,21 +17,21 @@ internal static class HostingExtensions
 
         builder.Services.AddAuthentication(options =>
         {
-            // the application's main authentication scheme will be cookies
             options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-
-            // the authentication challenge will be handled by the OIDC middleware, and ultimately IdentityServer  
             options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
         })
+        .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
         .AddOpenIdConnect(options =>
         {
             options.Authority = "https://localhost:5001";
             options.ClientId = "logistics.officeapp";
+            options.ClientSecret = "589270E9-2155-4A4F-84E5-CA641695CED2";
+            options.ResponseType = "code";
         });
         //.AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
 
-        builder.Services.AddControllersWithViews()
-            .AddMicrosoftIdentityUI();
+        //builder.Services.AddControllersWithViews()
+        //    .AddMicrosoftIdentityUI();
 
         builder.Services.AddAuthorization(options =>
         {
@@ -40,8 +40,8 @@ internal static class HostingExtensions
 
         builder.Services.AddScoped<AuthenticationStateService>();
         builder.Services.AddRazorPages();
-        builder.Services.AddServerSideBlazor()
-            .AddMicrosoftIdentityConsentHandler();
+        builder.Services.AddServerSideBlazor();
+            //.AddMicrosoftIdentityConsentHandler();
         return builder.Build();
     }
 

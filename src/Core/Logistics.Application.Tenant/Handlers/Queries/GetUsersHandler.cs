@@ -1,16 +1,16 @@
 ﻿namespace Logistics.Application.Handlers.Queries;
 
-internal sealed class GetUsersHandler : RequestHandlerBase<GetUsersQuery, PagedDataResult<UserDto>>
+internal sealed class GetUsersHandler : RequestHandlerBase<GetEmployeesQuery, PagedDataResult<EmployeeDto>>
 {
-    private readonly ITenantRepository<User> _userRepository;
+    private readonly ITenantRepository<Employee> _userRepository;
 
-    public GetUsersHandler(ITenantRepository<User> userRepository)
+    public GetUsersHandler(ITenantRepository<Employee> userRepository)
     {
         _userRepository = userRepository;
     }
 
-    protected override Task<PagedDataResult<UserDto>> HandleValidated(
-        GetUsersQuery request, 
+    protected override Task<PagedDataResult<EmployeeDto>> HandleValidated(
+        GetEmployeesQuery request, 
         CancellationToken cancellationToken)
     {
         var totalItems = _userRepository.GetQuery().Count();
@@ -18,29 +18,27 @@ internal sealed class GetUsersHandler : RequestHandlerBase<GetUsersQuery, PagedD
 
         if (!string.IsNullOrEmpty(request.Search))
         {
-            itemsQuery = _userRepository.GetQuery(new UsersSpecification(request.Search));
+            itemsQuery = _userRepository.GetQuery(new EmployeeSpecification(request.Search));
         }
 
         var items = itemsQuery
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
-            .Select(i => new UserDto
+            .Select(i => new EmployeeDto
             {
                 Id = i.Id,
-                Email = i.Email,
                 ExternalId = i.ExternalId,
                 FirstName = i.FirstName,
                 LastName = i.LastName,
-                PhoneNumber = i.PhoneNumber,
-                UserName = i.UserName,
+                UserName = i.UserName
             })
             .ToArray();
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
-        return Task.FromResult(new PagedDataResult<UserDto>(items, totalItems, totalPages));
+        return Task.FromResult(new PagedDataResult<EmployeeDto>(items, totalItems, totalPages));
     }
 
-    protected override bool Validate(GetUsersQuery request, out string errorDescription)
+    protected override bool Validate(GetEmployeesQuery request, out string errorDescription)
     {
         errorDescription = string.Empty;
 

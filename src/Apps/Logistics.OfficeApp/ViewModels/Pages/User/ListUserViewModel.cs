@@ -5,15 +5,15 @@ public class ListUserViewModel : PageViewModelBase
     public ListUserViewModel(IApiClient apiClient)
         : base(apiClient)
     {
-        Users = Array.Empty<UserDto>();
-        UsersList = new PagedList<UserDto>(20, true, i => i.Id!);
+        Users = Array.Empty<EmployeeDto>();
+        UsersList = new PagedList<EmployeeDto>(20, true, i => i.Id!);
     }
 
 
     #region Binding properties
 
-    public PagedList<UserDto> UsersList { get; set; }
-    public IEnumerable<UserDto> Users { get; set; }
+    public PagedList<EmployeeDto> UsersList { get; set; }
+    public IEnumerable<EmployeeDto> Users { get; set; }
 
     private int _totalRecords;
     public int TotalRecords
@@ -45,11 +45,11 @@ public class ListUserViewModel : PageViewModelBase
         }
     }
 
-    private Task<PagedDataResult<UserDto>> FetchUsersAsync(int page = 1)
+    private Task<PagedDataResult<EmployeeDto>> FetchUsersAsync(int page = 1)
     {
         return Task.Run(async () =>
         {
-            return await apiClient.GetUsersAsync(page: page, pageSize: 20);
+            return await apiClient.GetEmployeesAsync(page: page, pageSize: 20);
         });
     }
 }
