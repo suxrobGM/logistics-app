@@ -26,20 +26,11 @@ public class TenantDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
         if (options.IsConfigured)
-            return;      
+            return;
 
-        if (!string.IsNullOrEmpty(_connectionString))
-        {
-            DbContextHelpers.ConfigureMySql(_connectionString, options);
-        }
-        else if (_tenantService != null)
-        {
-            DbContextHelpers.ConfigureMySql(_tenantService.GetConnectionString(), options);
-        }
-        else
-        {
-            throw new InvalidOperationException("Could not configure the tenant database");
-        }
+        DbContextHelpers.ConfigureMySql(
+            !string.IsNullOrEmpty(_connectionString) ? _connectionString : _tenantService.GetConnectionString(),
+            options);
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

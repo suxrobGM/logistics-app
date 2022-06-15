@@ -24,14 +24,12 @@ namespace Logistics.DbMigrator
             using var scope = _serviceScopeFactory.CreateScope();
             var mainDbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
             var tenantDbContext = scope.ServiceProvider.GetRequiredService<TenantDbContext>();
-            //var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
 
             _logger.LogInformation("Initializing main database");
             await MigrateDatabaseAsync(mainDbContext);
             _logger.LogInformation("Successfully initialized the main database");
 
             _logger.LogInformation("Initializing tenant database");
-            //var tenantContext = new TenantDbContext(configuration.GetConnectionString("LocalDefaultTenantDatabase"));
             await MigrateDatabaseAsync(tenantDbContext);
             _logger.LogInformation("Successfully initialized the tenant database");
 

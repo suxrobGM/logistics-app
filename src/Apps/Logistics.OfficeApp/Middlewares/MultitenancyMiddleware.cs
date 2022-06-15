@@ -38,7 +38,7 @@ public class MultitenancyMiddleware
         await _next(context);
     }
 
-    private string GetSubDomain(HostString hostString)
+    private static string GetSubDomain(HostString hostString)
     {
         var subDomain = string.Empty;
         var domains = hostString.Host.Split('.');
@@ -50,7 +50,7 @@ public class MultitenancyMiddleware
         return subDomain;
     }
 
-    private void SetTenantCookie(HttpContext context, string tenantId)
+    private static void SetTenantCookie(HttpContext context, string tenantId)
     {
         var cookieOptions = new CookieOptions
         {

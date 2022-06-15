@@ -1,8 +1,8 @@
+using Microsoft.AspNetCore.Identity;
 using Duende.IdentityServer;
+using Serilog;
 using Logistics.EntityFramework;
 using Logistics.EntityFramework.Data;
-using Microsoft.AspNetCore.Identity;
-using Serilog;
 
 namespace Logistics.IdentityServer;
 
@@ -10,6 +10,7 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
+        AddSecretsJson(builder.Configuration);
         builder.Services.AddRazorPages();
         builder.Services.AddInfrastructureLayer(builder.Configuration, "LocalMainDatabase");
 
@@ -28,9 +29,9 @@ internal static class HostingExtensions
                 // see https://docs.duendesoftware.com/identityserver/v6/fundamentals/resources/
                 options.EmitStaticAudienceClaim = true;
             })
-            .AddInMemoryIdentityResources(Config.IdentityResources)
-            .AddInMemoryApiScopes(Config.ApiScopes)
-            .AddInMemoryClients(Config.Clients)
+            .AddInMemoryIdentityResources(Config.IdentityResources())
+            .AddInMemoryApiScopes(Config.ApiScopes())
+            .AddInMemoryClients(Config.Clients(builder.Configuration))
             .AddAspNetIdentity<User>();
 
         builder.Services.AddAuthentication()
@@ -66,5 +67,11 @@ internal static class HostingExtensions
             .RequireAuthorization();
 
         return app;
+    }
+    
+    private static void AddSecretsJson(IConfigurationBuilder configuration)
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, "secrets.json");
+        configuration.AddJsonFile(path, true);
     }
 }

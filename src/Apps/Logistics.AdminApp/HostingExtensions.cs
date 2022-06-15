@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.Identity.Web;
-using Microsoft.Identity.Web.UI;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Logistics.AdminApp.Services;
 
 namespace Logistics.AdminApp;
@@ -13,11 +12,13 @@ internal static class HostingExtensions
         builder.Services.AddWebApiClient(builder.Configuration);
         builder.Services.AddMvvmBlazor();
 
-        builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-           .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
-
-        builder.Services.AddControllersWithViews()
-            .AddMicrosoftIdentityUI();
+        builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            })
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddOpenIdConnect(o => builder.Configuration.Bind("IdentityServer", o));
 
         builder.Services.AddAuthorization(options =>
         {
@@ -51,7 +52,7 @@ internal static class HostingExtensions
         return app;
     }
 
-    private static void AddSecretsJson(ConfigurationManager configuration)
+    private static void AddSecretsJson(IConfigurationBuilder configuration)
     {
         var path = Path.Combine(AppContext.BaseDirectory, "secrets.json");
         configuration.AddJsonFile(path, true);

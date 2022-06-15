@@ -1,11 +1,7 @@
-﻿//using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-//using Microsoft.Identity.Web;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Identity.Web;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Logistics.Application;
 using Logistics.EntityFramework;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace Logistics.WebApi;
 
@@ -14,20 +10,24 @@ internal static class HostingExtensions
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         AddSecretsJson(builder.Configuration);
+        builder.Services.AddHttpContextAccessor();
         builder.Services.AddMainApplicationLayer();
         builder.Services.AddTenantApplicationLayer(builder.Configuration);
         builder.Services.AddInfrastructureLayer(builder.Configuration, "LocalMainDatabase");
 
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+            {
+                builder.Configuration.Bind("IdentityServer", options);
+            });
 
         builder.Services.AddControllers(configure =>
         {
-            //var policy = new AuthorizationPolicyBuilder()
-            //                .RequireAuthenticatedUser()
-            //                .Build();
+            var policy = new AuthorizationPolicyBuilder()
+                            .RequireAuthenticatedUser()
+                            .Build();
 
-            //configure.Filters.Add(new AuthorizeFilter(policy));
+            configure.Filters.Add(new AuthorizeFilter(policy));
         });
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
@@ -59,7 +59,7 @@ internal static class HostingExtensions
         return app;
     }
 
-    private static void AddSecretsJson(ConfigurationManager configuration)
+    private static void AddSecretsJson(IConfigurationBuilder configuration)
     {
         var path = Path.Combine(AppContext.BaseDirectory, "secrets.json");
         configuration.AddJsonFile(path, true);
