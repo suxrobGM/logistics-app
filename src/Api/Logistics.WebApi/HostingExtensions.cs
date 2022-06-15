@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Logistics.Application;
 using Logistics.EntityFramework;
@@ -19,6 +20,7 @@ internal static class HostingExtensions
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
                 builder.Configuration.Bind("IdentityServer", options);
+                options.TokenValidationParameters.ValidateAudience = false;
             });
 
         builder.Services.AddControllers(configure =>

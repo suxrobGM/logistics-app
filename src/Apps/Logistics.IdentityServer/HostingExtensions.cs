@@ -3,6 +3,7 @@ using Duende.IdentityServer;
 using Serilog;
 using Logistics.EntityFramework;
 using Logistics.EntityFramework.Data;
+using Logistics.IdentityServer.Services;
 
 namespace Logistics.IdentityServer;
 
@@ -30,9 +31,11 @@ internal static class HostingExtensions
                 options.EmitStaticAudienceClaim = true;
             })
             .AddInMemoryIdentityResources(Config.IdentityResources())
-            .AddInMemoryApiScopes(Config.ApiScopes())
+            .AddInMemoryApiScopes(Config.ApiScopes(builder.Configuration))
+            .AddInMemoryApiResources(Config.ApiResources(builder.Configuration))
             .AddInMemoryClients(Config.Clients(builder.Configuration))
             .AddAspNetIdentity<User>();
+            //.AddProfileService<UserProfileService>();
 
         builder.Services.AddAuthentication()
             .AddGoogle(options =>

@@ -12,20 +12,19 @@ public static class Config
             new IdentityResources.Profile(),
         };
     }
-
-    public static IEnumerable<ApiScope> ApiScopes()
+    
+    public static IEnumerable<ApiScope> ApiScopes(IConfiguration configuration)
     {
-        return new[]
-        {
-            new ApiScope("admin.read"),
-            new ApiScope("admin.write"),
-            new ApiScope("tenant.read"),
-            new ApiScope("tenant.write")
-        };
+        return configuration.GetSection("IdentityServer:ApiScopes").Get<ApiScope[]>();
+    }
+
+    public static IEnumerable<ApiResource> ApiResources(IConfiguration configuration)
+    {
+        return configuration.GetSection("IdentityServer:ApiResources").Get<ApiResource[]>();
     }
 
     public static IEnumerable<Client> Clients(IConfiguration configuration)
     {
-        return configuration.GetSection("IdentityServer:Clients").Get<Client[]>();;
+        return configuration.GetSection("IdentityServer:Clients").Get<Client[]>();
     }
 }

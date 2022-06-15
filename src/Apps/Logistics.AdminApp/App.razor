@@ -1,9 +1,12 @@
-﻿<CascadingAuthenticationState>
+﻿@inject NavigationManager NavigationManager
+
+<CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
-                    <h1 class="text-danger">Access Denied</h1>
+                    <p>Not authorized</p>
+                    <RedirectToLogin />
                 </NotAuthorized>
                 <Authorizing>
                     <h1 class="text-warning">Authorization in progress</h1>

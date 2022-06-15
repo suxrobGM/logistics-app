@@ -11,8 +11,8 @@ public class MainLayoutViewModel : ViewModelBase
         _authStateService = authStateService;
     }
 
-    public override async Task OnInitializedAsync()
-    {
-        await _authStateService.ReevaluateAuthenticationStateAsync();
-    }
+    // public override async Task OnInitializedAsync()
+    // {
+    //     await _authStateService.ReevaluateAuthenticationStateAsync();
+    // }
 }

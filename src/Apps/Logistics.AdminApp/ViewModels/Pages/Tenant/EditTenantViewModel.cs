@@ -109,7 +109,7 @@ public class EditTenantViewModel : PageViewModelBase
         return dataListItems;
     }
 
-    private Task<TenantDto?> FetchTenantsAsync(string id)
+    private Task<TenantDto> FetchTenantsAsync(string id)
     {
         return Task.Run(async () =>
         {

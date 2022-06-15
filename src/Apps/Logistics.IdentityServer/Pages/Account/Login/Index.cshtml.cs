@@ -171,14 +171,14 @@ namespace Logistics.IdentityServer.Pages.Login
                     AuthenticationScheme = x.Name
                 }).ToList();
 
-            var dyanmicSchemes = (await _identityProviderStore.GetAllSchemeNamesAsync())
+            var dynamicSchemes = (await _identityProviderStore.GetAllSchemeNamesAsync())
                 .Where(x => x.Enabled)
                 .Select(x => new ViewModel.ExternalProvider
                 {
                     AuthenticationScheme = x.Scheme,
                     DisplayName = x.DisplayName
                 });
-            providers.AddRange(dyanmicSchemes);
+            providers.AddRange(dynamicSchemes);
 
 
             var allowLocal = true;

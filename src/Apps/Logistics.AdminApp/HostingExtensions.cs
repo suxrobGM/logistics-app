@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Logistics.AdminApp.Services;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Logistics.AdminApp;
 
@@ -11,14 +14,26 @@ internal static class HostingExtensions
         AddSecretsJson(builder.Configuration);
         builder.Services.AddWebApiClient(builder.Configuration);
         builder.Services.AddMvvmBlazor();
+        JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
         builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-            })
-            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddOpenIdConnect(o => builder.Configuration.Bind("IdentityServer", o));
+        {
+            options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+        })
+        .AddCookie()
+        .AddOpenIdConnect(options =>
+        {
+            builder.Configuration.Bind("IdentityServer", options);
+            options.TokenValidationParameters.NameClaimType = "name";
+            options.TokenValidationParameters.RoleClaimType = "role";
+            
+            options.MapInboundClaims = false;
+            options.GetClaimsFromUserInfoEndpoint = true;
+            options.SaveTokens = true;
+            options.CallbackPath = "/signin-oidc";
+        });
 
         builder.Services.AddAuthorization(options =>
         {
