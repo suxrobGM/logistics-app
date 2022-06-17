@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+	<PackageReference Include="Duende.BFF" Version="1.2.2" />
 	<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.5" NoWarn="NU1605" />
 	<PackageReference Include="MagicMvvm.Blazor" Version="2.0.3" />
 	<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.6" />

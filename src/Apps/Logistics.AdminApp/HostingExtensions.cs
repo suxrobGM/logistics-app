@@ -18,21 +18,22 @@ internal static class HostingExtensions
 
         builder.Services.AddAuthentication(options =>
         {
-            options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            options.DefaultAuthenticateScheme = "Cookies";
+            options.DefaultSignInScheme = "Cookies";
+            options.DefaultChallengeScheme = "oidc";
         })
-        .AddCookie()
-        .AddOpenIdConnect(options =>
+        .AddCookie("Cookies")
+        .AddOpenIdConnect("oidc", options =>
         {
             builder.Configuration.Bind("IdentityServer", options);
             options.TokenValidationParameters.NameClaimType = "name";
             options.TokenValidationParameters.RoleClaimType = "role";
-            
+            options.ResponseType = "code";
+
             options.MapInboundClaims = false;
             options.GetClaimsFromUserInfoEndpoint = true;
             options.SaveTokens = true;
-            options.CallbackPath = "/signin-oidc";
+            //options.CallbackPath = "/account/signin-oidc";
         });
 
         builder.Services.AddAuthorization(options =>

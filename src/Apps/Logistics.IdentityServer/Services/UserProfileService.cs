@@ -26,7 +26,7 @@ public class UserProfileService : IProfileService
         var claims = principal.Claims.ToList();
         claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList();
 
-        claims.Add(new Claim(ClaimTypes.Name, user.UserName));
+        claims.Add(new Claim("role", user.Role.Name));
         context.IssuedClaims = claims;
     }
 

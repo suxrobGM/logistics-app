@@ -15,6 +15,8 @@ public class HostModel : PageModel
     public async Task<IActionResult> OnGetAsync()
     {
         var user = User.Claims.ToUser();
+        var tenantId = HttpContext.Request.Cookies["X-Tenant"];
+        _apiClient.SetCurrentTenantId(tenantId);
         await _apiClient.TryCreateEmployeeAsync(user);
         return Page();
     }

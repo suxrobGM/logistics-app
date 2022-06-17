@@ -5,8 +5,20 @@
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
-                    <p>Not authorized</p>
-                    <RedirectToLogin />
+                    @if (context.User.Identity is {IsAuthenticated: false })
+                    {
+                        <RedirectToLogin LoginPageUrl="/Login" />
+                    }
+                    else
+                    {
+                        <h1 class="text-danger">Access Denied</h1>
+                        <p class="text-danger">You do not have access to this resource.</p>
+                        <p>Claims count @context.User.Claims.Count()</p>
+                        foreach (var claim in context.User.Claims)
+                        {
+                            <p>@claim.Type - @claim.Value</p>
+                        }
+                    }
                 </NotAuthorized>
                 <Authorizing>
                     <h1 class="text-warning">Authorization in progress</h1>

@@ -15,18 +15,30 @@ internal static class HostingExtensions
 
         builder.Services.AddAuthentication(options =>
         {
-            options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            options.DefaultAuthenticateScheme = "Cookies";
+            options.DefaultSignInScheme = "Cookies";
+            options.DefaultChallengeScheme = "oidc";
         })
-        .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-        .AddOpenIdConnect(o => builder.Configuration.Bind("IdentityServer", o));
+        .AddCookie("Cookies")
+        .AddOpenIdConnect("oidc", options =>
+        {
+            builder.Configuration.Bind("IdentityServer", options);
+            options.TokenValidationParameters.NameClaimType = "name";
+            options.TokenValidationParameters.RoleClaimType = "role";
+            options.ResponseType = "code";
+
+            options.MapInboundClaims = false;
+            options.GetClaimsFromUserInfoEndpoint = true;
+            options.SaveTokens = true;
+            //options.CallbackPath = "/account/signin-oidc";
+        });
 
         builder.Services.AddAuthorization(options =>
         {
             options.FallbackPolicy = options.DefaultPolicy;
         });
 
-        builder.Services.AddScoped<AuthenticationStateService>();
+        //builder.Services.AddScoped<AuthenticationStateService>();
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor();
         return builder.Build();

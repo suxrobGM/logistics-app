@@ -34,8 +34,8 @@ internal static class HostingExtensions
             .AddInMemoryApiScopes(Config.ApiScopes(builder.Configuration))
             .AddInMemoryApiResources(Config.ApiResources(builder.Configuration))
             .AddInMemoryClients(Config.Clients(builder.Configuration))
-            .AddAspNetIdentity<User>();
-            //.AddProfileService<UserProfileService>();
+            .AddAspNetIdentity<User>()
+            .AddProfileService<UserProfileService>();
 
         builder.Services.AddAuthentication()
             .AddGoogle(options =>

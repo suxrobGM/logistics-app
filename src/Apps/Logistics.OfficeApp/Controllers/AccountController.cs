@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Logistics.AdminApp.Controllers;
+namespace Logistics.OfficeApp.Controllers;
 
 [Microsoft.AspNetCore.Mvc.Route("[controller]")]
 [ApiController]
@@ -30,7 +30,6 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> SignInOidcHandler()
     {
         var accessToken = await HttpContext.GetTokenAsync("access_token");
-        Console.WriteLine($"Access Toke: {accessToken}");
         return RedirectToPage("/");
     }
 }

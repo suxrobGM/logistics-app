@@ -26,6 +26,10 @@ public static class ClaimsExtensions
             {
                 user.UserName = claim.Value;
             }
+            else if (claim.Type == "sub")
+            {
+                user.ExternalId = claim.Value;
+            }
         }
 
         return user;
