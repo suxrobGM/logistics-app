@@ -1,4 +1,5 @@
 ﻿using Duende.IdentityServer.Models;
+using IdentityModel;
 
 namespace Logistics.IdentityServer;
 
@@ -10,6 +11,12 @@ public static class Config
         {
             new IdentityResources.OpenId(),
             new IdentityResources.Profile(),
+            new()
+            {
+                Name = "roles",
+                DisplayName = "Identity roles",
+                UserClaims = { JwtClaimTypes.Role }
+            }
         };
     }
     

@@ -1,9 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Logistics.AdminApp.Services;
-using Microsoft.IdentityModel.Tokens;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 
 namespace Logistics.AdminApp;
 
@@ -14,7 +10,6 @@ internal static class HostingExtensions
         AddSecretsJson(builder.Configuration);
         builder.Services.AddWebApiClient(builder.Configuration);
         builder.Services.AddMvvmBlazor();
-        JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
         builder.Services.AddAuthentication(options =>
         {
@@ -26,13 +21,13 @@ internal static class HostingExtensions
         .AddOpenIdConnect("oidc", options =>
         {
             builder.Configuration.Bind("IdentityServer", options);
-            options.TokenValidationParameters.NameClaimType = "name";
-            options.TokenValidationParameters.RoleClaimType = "role";
             options.ResponseType = "code";
 
             options.MapInboundClaims = false;
             options.GetClaimsFromUserInfoEndpoint = true;
             options.SaveTokens = true;
+            options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Role, ClaimValueTypes.String, "role"));
+            options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Name, ClaimValueTypes.String, "name"));
             //options.CallbackPath = "/account/signin-oidc";
         });
 
@@ -40,8 +35,7 @@ internal static class HostingExtensions
         {
             options.FallbackPolicy = options.DefaultPolicy;
         });
-
-        builder.Services.AddScoped<AuthenticationStateService>();
+        
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor();
         return builder.Build();
