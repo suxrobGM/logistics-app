@@ -33,10 +33,6 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
         {
             errorDescription = "UserName is an empty string";
         }
-        else if (string.IsNullOrEmpty(request.Email))
-        {
-            errorDescription = "Email is an empty string";
-        }
 
         return string.IsNullOrEmpty(errorDescription);
     }

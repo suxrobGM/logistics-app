@@ -4,6 +4,7 @@ using Serilog;
 using Logistics.EntityFramework;
 using Logistics.EntityFramework.Data;
 using Logistics.IdentityServer.Services;
+using Microsoft.IdentityModel.Logging;
 
 namespace Logistics.IdentityServer;
 
@@ -11,6 +12,7 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
+        IdentityModelEventSource.ShowPII = true;
         AddSecretsJson(builder.Configuration);
         builder.Services.AddRazorPages();
         builder.Services.AddInfrastructureLayer(builder.Configuration, "LocalMainDatabase");

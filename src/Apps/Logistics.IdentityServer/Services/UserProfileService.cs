@@ -31,6 +31,17 @@ public class UserProfileService : IProfileService
 
         claims.Add(new Claim("role", user.Role.Name));
 
+        if (!string.IsNullOrEmpty(user.FirstName))
+        {
+            claims.Add(new Claim("firstName", user.FirstName));
+        }
+        
+        if (!string.IsNullOrEmpty(user.LastName))
+        {
+            claims.Add(new Claim("lastName", user.LastName));
+        }
+        
+        var a = context.ValidatedRequest?.Raw?.AllKeys;
         var b = context.ValidatedRequest?.Raw?.Get("acr_values");
         context.IssuedClaims = claims;
     }

@@ -2,6 +2,7 @@
 using Logistics.Application;
 using Logistics.EntityFramework;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Logging;
 
 namespace Logistics.WebApi;
 
@@ -9,6 +10,7 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
+        IdentityModelEventSource.ShowPII = true;
         AddSecretsJson(builder.Configuration);
         builder.Services.AddMainApplicationLayer();
         builder.Services.AddTenantApplicationLayer(builder.Configuration);

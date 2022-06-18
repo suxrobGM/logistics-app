@@ -29,6 +29,8 @@ internal static class HostingExtensions
             options.SaveTokens = true;
             options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Role, ClaimValueTypes.String, "role"));
             options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Name, ClaimValueTypes.String, "name"));
+            options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.GivenName, ClaimValueTypes.String, "firstName"));
+            options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Surname, ClaimValueTypes.String, "lastName"));
 
             options.Events.OnRedirectToIdentityProvider = c =>
             {

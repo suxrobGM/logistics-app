@@ -6,7 +6,6 @@ public class EmployeeDto
     {
         UserName = string.Empty;
         ExternalId = string.Empty;
-        Email = string.Empty;
     }
 
     public string? Id { get; set; }
@@ -21,7 +20,6 @@ public class EmployeeDto
     
     public string? LastName { get; set; }
     
-    public string Email { get; set; }
 
     public string GetFullName()
     {

@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.OAuth.Claims;
+using Microsoft.IdentityModel.Logging;
 
 namespace Logistics.AdminApp;
 
@@ -7,6 +8,7 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
+        IdentityModelEventSource.ShowPII = true;
         AddSecretsJson(builder.Configuration);
         builder.Services.AddWebApiClient(builder.Configuration);
         builder.Services.AddMvvmBlazor();
@@ -29,6 +31,8 @@ internal static class HostingExtensions
             options.SaveTokens = true;
             options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Role, ClaimValueTypes.String, "role"));
             options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Name, ClaimValueTypes.String, "name"));
+            options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.GivenName, ClaimValueTypes.String, "firstName"));
+            options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Surname, ClaimValueTypes.String, "lastName"));
         });
 
         builder.Services.AddAuthorization(options =>
