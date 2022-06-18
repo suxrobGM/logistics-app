@@ -39,6 +39,10 @@ public class MainDbContext : IdentityDbContext<User>
         {
             entity.ToTable("users");
             entity.OwnsOne(m => m.Role);
+            entity.Property(i => i.JoinedTenants)
+                .HasConversion(i => string.Join(",", i),
+                    i => i.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
+                );
         });
     }
 }
