@@ -28,9 +28,7 @@ public class EditTenantViewModel : PageViewModelBase
             IsBusy = true;
             var tenant = await FetchTenantsAsync(Id!);
 
-            if (tenant != null)
-                Tenant = tenant;
-
+            Tenant = tenant;
             IsBusy = false;
         }
     }
@@ -111,9 +109,6 @@ public class EditTenantViewModel : PageViewModelBase
 
     private Task<TenantDto> FetchTenantsAsync(string id)
     {
-        return Task.Run(async () =>
-        {
-            return await apiClient.GetTenantAsync(id);
-        });
+        return Task.Run(async () => await apiClient.GetTenantAsync(id));
     }
 }

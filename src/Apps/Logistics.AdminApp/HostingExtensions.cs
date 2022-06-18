@@ -10,6 +10,7 @@ internal static class HostingExtensions
         AddSecretsJson(builder.Configuration);
         builder.Services.AddWebApiClient(builder.Configuration);
         builder.Services.AddMvvmBlazor();
+        builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddAuthentication(options =>
         {
@@ -28,7 +29,6 @@ internal static class HostingExtensions
             options.SaveTokens = true;
             options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Role, ClaimValueTypes.String, "role"));
             options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Name, ClaimValueTypes.String, "name"));
-            //options.CallbackPath = "/account/signin-oidc";
         });
 
         builder.Services.AddAuthorization(options =>

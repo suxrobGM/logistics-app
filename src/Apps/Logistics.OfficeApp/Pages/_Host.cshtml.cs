@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Logistics.OfficeApp.Pages;
@@ -15,8 +16,8 @@ public class HostModel : PageModel
     public async Task<IActionResult> OnGetAsync()
     {
         var user = User.Claims.ToUser();
-        var tenantId = HttpContext.Request.Cookies["X-Tenant"];
-        _apiClient.SetCurrentTenantId(tenantId);
+        var accessToken = await HttpContext.GetTokenAsync("access_token");
+        _apiClient.AccessToken = accessToken;
         await _apiClient.TryCreateEmployeeAsync(user);
         return Page();
     }

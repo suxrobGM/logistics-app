@@ -25,11 +25,4 @@ public class AccountController : ControllerBase
         await HttpContext.SignOutAsync("Cookies");
         await HttpContext.SignOutAsync("oidc");
     }
-
-    [HttpGet("SignIn-Oidc")]
-    public async Task<IActionResult> SignInOidcHandler()
-    {
-        var accessToken = await HttpContext.GetTokenAsync("access_token");
-        return RedirectToPage("/");
-    }
 }

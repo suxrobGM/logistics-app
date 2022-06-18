@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 
 namespace Logistics.WebApi.Client;
@@ -34,6 +36,11 @@ internal abstract class ApiClientBase
         }
     }
 
+    protected void SetAuthorizationHeader(string scheme, string? value)
+    {
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme, value);
+    }
+
     protected void SetRequestHeader(string key, string? value)
     {
         if (_httpClient.DefaultRequestHeaders.Contains(key))
@@ -63,7 +70,7 @@ internal abstract class ApiClientBase
         IDictionary<string, string> queries = default!)
     {
         var requestEndpoint = endpoint;
-        if (queries != null && queries.Count > 0)
+        if (queries is { Count: > 0 })
             requestEndpoint = QueryUtils.BuildQueryParameters(endpoint, queries);
 
         try
@@ -176,6 +183,11 @@ internal abstract class ApiClientBase
     private async Task<string> ReadContentAsync(HttpResponseMessage response)
     {
         var content = await response.Content.ReadAsStringAsync();
+
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            throw new ApiException("Unauthorized request, please check request's access token");
+        }
 
         if (!response.IsSuccessStatusCode)
         {

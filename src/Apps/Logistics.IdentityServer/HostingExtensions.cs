@@ -14,6 +14,7 @@ internal static class HostingExtensions
         AddSecretsJson(builder.Configuration);
         builder.Services.AddRazorPages();
         builder.Services.AddInfrastructureLayer(builder.Configuration, "LocalMainDatabase");
+        builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddIdentity<User, IdentityRole>()
             .AddEntityFrameworkStores<MainDbContext>()

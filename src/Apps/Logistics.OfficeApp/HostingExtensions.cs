@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Logistics.OfficeApp.Services;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 
 namespace Logistics.OfficeApp;
 
@@ -23,22 +22,20 @@ internal static class HostingExtensions
         .AddOpenIdConnect("oidc", options =>
         {
             builder.Configuration.Bind("IdentityServer", options);
-            options.TokenValidationParameters.NameClaimType = "name";
-            options.TokenValidationParameters.RoleClaimType = "role";
             options.ResponseType = "code";
 
             options.MapInboundClaims = false;
             options.GetClaimsFromUserInfoEndpoint = true;
             options.SaveTokens = true;
-            //options.CallbackPath = "/account/signin-oidc";
+            options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Role, ClaimValueTypes.String, "role"));
+            options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Name, ClaimValueTypes.String, "name"));
         });
 
         builder.Services.AddAuthorization(options =>
         {
             options.FallbackPolicy = options.DefaultPolicy;
         });
-
-        //builder.Services.AddScoped<AuthenticationStateService>();
+        
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor();
         return builder.Build();

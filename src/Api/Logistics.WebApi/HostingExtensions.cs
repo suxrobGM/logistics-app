@@ -1,8 +1,7 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Mvc.Authorization;
+﻿using Microsoft.AspNetCore.Mvc.Authorization;
 using Logistics.Application;
 using Logistics.EntityFramework;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Logistics.WebApi;
 
@@ -11,16 +10,16 @@ internal static class HostingExtensions
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         AddSecretsJson(builder.Configuration);
-        builder.Services.AddHttpContextAccessor();
         builder.Services.AddMainApplicationLayer();
         builder.Services.AddTenantApplicationLayer(builder.Configuration);
         builder.Services.AddInfrastructureLayer(builder.Configuration, "LocalMainDatabase");
+        builder.Services.AddHttpContextAccessor();
 
-        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+        builder.Services.AddAuthentication("Bearer")
+            .AddJwtBearer("Bearer", options =>
             {
                 builder.Configuration.Bind("IdentityServer", options);
-                options.TokenValidationParameters.ValidateAudience = false;
+                options.TokenValidationParameters.ValidateAudience = true;
             });
 
         builder.Services.AddControllers(configure =>

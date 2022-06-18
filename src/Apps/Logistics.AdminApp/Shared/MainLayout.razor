@@ -10,7 +10,9 @@
 
     <main>
         <article class="content px-4">
-            @Body
+            <CascadingValue Value="toastRef">
+                @Body
+            </CascadingValue>
         </article>
     </main>
 </div>

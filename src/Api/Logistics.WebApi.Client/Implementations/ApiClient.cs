@@ -1,20 +1,47 @@
-﻿namespace Logistics.WebApi.Client.Implementations;
+﻿using System.IdentityModel.Tokens.Jwt;
+
+namespace Logistics.WebApi.Client.Implementations;
 
 internal class ApiClient : ApiClientBase, IApiClient
 {
+    private string? _accessToken;
+    private string? _currentTenant;
+    
     public ApiClient(ApiClientOptions options) : base(options.Host!)
     {
-        SetCurrentTenantId(options.TenantId);
+        AccessToken = options.AccessToken;
     }
 
-    public string? CurrentTenantId { get; private set; }
-
-    public void SetCurrentTenantId(string? tenantId)
+    public string? AccessToken
     {
-        if (CurrentTenantId == tenantId)
+        get => _accessToken;
+        set
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return;
+            }
+            SetAuthorizationHeader("Bearer", value);
+            SetCurrentTenantId(value);
+            _accessToken = value;
+        }
+    }
+    
+    private void SetCurrentTenantId(string? accessToken)
+    {
+        if (string.IsNullOrEmpty(accessToken))
+        {
+            return;
+        }
+        
+        var handler = new JwtSecurityTokenHandler();
+        var token = handler.ReadJwtToken(accessToken);
+        var tenantId = token?.Claims?.FirstOrDefault(i => i.Type == "tenantId")?.Value;
+        
+        if (_currentTenant == tenantId)
             return;
         
-        CurrentTenantId = tenantId;
+        _currentTenant = tenantId;
         SetRequestHeader("X-Tenant", tenantId);
     }
 
@@ -143,8 +170,8 @@ internal class ApiClient : ApiClientBase, IApiClient
     {
         try
         {
-            var result = await GetEmployeeAsync(externalId);
-            return result != null;
+            await GetEmployeeAsync(externalId);
+            return true;
         }
         catch (ApiException)
         {
@@ -229,4 +256,5 @@ internal class ApiClient : ApiClientBase, IApiClient
     }
 
     #endregion
+
 }
