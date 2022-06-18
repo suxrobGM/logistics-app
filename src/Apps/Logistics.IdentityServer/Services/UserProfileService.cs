@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Collections.Specialized;
+using System.Security.Claims;
 using Duende.IdentityServer.Extensions;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
@@ -11,7 +12,9 @@ public class UserProfileService : IProfileService
     private readonly UserManager<User> _userManager;
     private readonly IUserClaimsPrincipalFactory<User> _claimsFactory;
     
-    public UserProfileService(UserManager<User> userManager,
+    
+    public UserProfileService(
+        UserManager<User> userManager,
         IUserClaimsPrincipalFactory<User> claimsFactory)
     {
         _userManager = userManager;
@@ -27,6 +30,8 @@ public class UserProfileService : IProfileService
         claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList();
 
         claims.Add(new Claim("role", user.Role.Name));
+
+        var b = context.ValidatedRequest?.Raw?.Get("acr_values");
         context.IssuedClaims = claims;
     }
 
@@ -35,5 +40,10 @@ public class UserProfileService : IProfileService
         var sub = context.Subject.GetSubjectId();
         var user = await _userManager.FindByIdAsync(sub);
         context.IsActive = user != null;
+    }
+    
+    public static IDictionary<string,string> ToDictionary(NameValueCollection col)
+    {
+        return col.AllKeys.ToDictionary(x => x, x => col[x]);
     }
 }

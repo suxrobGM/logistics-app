@@ -7,7 +7,7 @@ internal sealed class GetEmployeeByIdHandler : RequestHandlerBase<GetEmployeeByI
     public GetEmployeeByIdHandler(
         ITenantRepository<Employee> userRepository)
     {
-        this._userRepository = userRepository;
+        _userRepository = userRepository;
     }
 
     protected override async Task<DataResult<EmployeeDto>> HandleValidated(GetEmployeeByIdQuery request, CancellationToken cancellationToken)
@@ -23,8 +23,8 @@ internal sealed class GetEmployeeByIdHandler : RequestHandlerBase<GetEmployeeByI
         var user = new EmployeeDto
         {
             Id = userEntity.Id,
-            ExternalId = userEntity.ExternalId,
-            UserName = userEntity.UserName,
+            ExternalId = userEntity.ExternalId!,
+            UserName = userEntity.UserName!,
             FirstName = userEntity.FirstName,
             LastName = userEntity.LastName
         };

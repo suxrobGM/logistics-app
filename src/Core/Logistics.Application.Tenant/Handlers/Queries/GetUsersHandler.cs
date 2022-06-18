@@ -27,10 +27,10 @@ internal sealed class GetUsersHandler : RequestHandlerBase<GetEmployeesQuery, Pa
             .Select(i => new EmployeeDto
             {
                 Id = i.Id,
-                ExternalId = i.ExternalId,
+                ExternalId = i.ExternalId!,
+                UserName = i.UserName!,
                 FirstName = i.FirstName,
                 LastName = i.LastName,
-                UserName = i.UserName
             })
             .ToArray();
 

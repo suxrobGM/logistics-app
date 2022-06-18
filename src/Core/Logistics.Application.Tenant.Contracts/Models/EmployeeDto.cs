@@ -2,26 +2,33 @@
 
 public class EmployeeDto
 {
-    public string? Id { get; set; }
-
-    private string? _userName;
-    public string? UserName
-    { 
-        get => string.IsNullOrEmpty(_userName) ?
-            GetFullName() : _userName;
-
-        set => _userName = string.IsNullOrEmpty(value) ?
-            GetFullName() : value;
+    public EmployeeDto()
+    {
+        UserName = string.Empty;
+        ExternalId = string.Empty;
+        Email = string.Empty;
     }
 
-    [Required]
-    public string? ExternalId { get; set; }
+    public string? Id { get; set; }
 
     [Required]
+    public string UserName { get; set; }
+
+    [Required]
+    public string ExternalId { get; set; }
+    
     public string? FirstName { get; set; }
-
-    [Required]
+    
     public string? LastName { get; set; }
+    
+    public string Email { get; set; }
 
-    public string GetFullName() => string.Join(" ", new[] { FirstName, LastName });
+    public string GetFullName()
+    {
+        if (string.IsNullOrEmpty(FirstName) && string.IsNullOrEmpty(LastName))
+        {
+            return UserName;
+        }
+        return string.Join(" ", FirstName, LastName);
+    }
 }

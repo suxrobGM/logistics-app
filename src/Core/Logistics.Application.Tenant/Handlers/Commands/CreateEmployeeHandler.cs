@@ -29,13 +29,9 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
         {
             errorDescription = "External Id is an empty string";
         }
-        else if (string.IsNullOrEmpty(request.FirstName))
+        else if (string.IsNullOrEmpty(request.UserName))
         {
-            errorDescription = "First name is an empty string";
-        }
-        else if (string.IsNullOrEmpty(request.LastName))
-        {
-            errorDescription = "Last name is an empty string";
+            errorDescription = "UserName is an empty string";
         }
         else if (string.IsNullOrEmpty(request.Email))
         {

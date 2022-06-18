@@ -10,5 +10,12 @@ public class User : IdentityUser, IAggregateRoot
     public DateTime JoinedDate { get; set; } = DateTime.Now;
     public UserRole Role { get; set; } = UserRole.Guest;
 
-    public string GetFullName() => string.Join(" ", new[] { FirstName, LastName });
+    public string GetFullName()
+    {
+        if (string.IsNullOrEmpty(FirstName) && string.IsNullOrEmpty(LastName))
+        {
+            return UserName;
+        }
+        return string.Join(" ", FirstName, LastName);
+    }
 }

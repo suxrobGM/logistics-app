@@ -10,25 +10,20 @@ public static class ClaimsExtensions
 
         foreach (var claim in claims)
         {
-            if (claim.Type == ClaimTypes.NameIdentifier)
+            switch (claim.Type)
             {
-                user.ExternalId = claim.Value;
-            }
-            else if (claim.Type == ClaimTypes.GivenName)
-            {
-                user.FirstName = claim.Value;
-            }
-            else if (claim.Type == ClaimTypes.Surname)
-            {
-                user.LastName = claim.Value;
-            }
-            else if (claim.Type == "name")
-            {
-                user.UserName = claim.Value;
-            }
-            else if (claim.Type == "sub")
-            {
-                user.ExternalId = claim.Value;
+                case ClaimTypes.GivenName:
+                    user.FirstName = claim.Value;
+                    break;
+                case ClaimTypes.Surname:
+                    user.LastName = claim.Value;
+                    break;
+                case ClaimTypes.Name:
+                    user.UserName = claim.Value;
+                    break;
+                case "sub":
+                    user.ExternalId = claim.Value;
+                    break;
             }
         }
 
@@ -37,6 +32,6 @@ public static class ClaimsExtensions
 
     public static string? GetId(this ClaimsPrincipal user)
     {
-        return user?.Claims?.FirstOrDefault(i => i.Type == ClaimTypes.NameIdentifier)?.Value;
+        return user.Claims.FirstOrDefault(i => i.Type == ClaimTypes.NameIdentifier)?.Value;
     }
 }

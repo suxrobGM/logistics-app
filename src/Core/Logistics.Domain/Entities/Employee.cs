@@ -8,6 +8,7 @@ public class Employee : Entity, ITenantEntity
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? UserName { get; set; }
+    public string? Email { get; set; }
     public DateTime JoinedDate { get; set; } = DateTime.Now;
     public EmployeeRole Role { get; set; } = EmployeeRole.Guest;
 

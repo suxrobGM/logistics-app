@@ -22,12 +22,40 @@ public static class Config
     
     public static IEnumerable<ApiScope> ApiScopes(IConfiguration configuration)
     {
-        return configuration.GetSection("IdentityServer:ApiScopes").Get<ApiScope[]>();
+        return new ApiScope[]
+        {
+            new("logistics.api.admin", "Logistics Admin API")
+            {
+                UserClaims = {
+                    "role",
+                }
+            },
+            new("logistics.api.tenant", "Logistics Tenant API")
+            {
+                UserClaims = {
+                    "role",
+                    "tenantId"
+                }
+            }
+        };
     }
 
     public static IEnumerable<ApiResource> ApiResources(IConfiguration configuration)
     {
-        return configuration.GetSection("IdentityServer:ApiResources").Get<ApiResource[]>();
+        return new ApiResource[]
+        {
+            new("logistics.api", "Logistics API")
+            {
+                Scopes = {
+                    "logistics.api.admin",
+                    "logistics.api.tenant"
+                },
+                UserClaims = {
+                    "role",
+                    "tenantId"
+                }
+            }
+        };
     }
 
     public static IEnumerable<Client> Clients(IConfiguration configuration)
