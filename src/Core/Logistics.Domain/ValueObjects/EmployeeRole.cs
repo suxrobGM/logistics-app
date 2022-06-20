@@ -6,11 +6,11 @@ public class EmployeeRole : Enumeration
     {
     }
 
-    public static EmployeeRole Guest = new(1, "guest");
-    public static EmployeeRole Driver = new(2, "driver");
-    public static EmployeeRole Dispatcher = new(3, "dispatcher");
-    public static EmployeeRole Manager = new(4, "manager");
-    public static EmployeeRole Owner = new(5, "owner");
+    public static readonly EmployeeRole Guest = new(1, "guest");
+    public static readonly EmployeeRole Driver = new(2, "driver");
+    public static readonly EmployeeRole Dispatcher = new(3, "dispatcher");
+    public static readonly EmployeeRole Manager = new(4, "manager");
+    public static readonly EmployeeRole Owner = new(5, "owner");
 
     public static EmployeeRole Get(string name)
     {

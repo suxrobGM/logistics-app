@@ -6,9 +6,9 @@ public class UserRole : Enumeration
     {
     }
 
-    public static UserRole Guest = new(1, "guest");
-    public static UserRole Manager = new(2, "manager");
-    public static UserRole Admin = new(3, "admin");
+    public static readonly UserRole Guest = new(1, "guest");
+    public static readonly UserRole Manager = new(2, "manager");
+    public static readonly UserRole Admin = new(3, "admin");
 
     public static UserRole Get(string name)
     {

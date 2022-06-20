@@ -76,9 +76,10 @@
                     <div class="mb-3">
                         <label for="status" class="form-label">Status</label>
                         <InputSelect id="status" class="form-control" @bind-Value="Model.Cargo.Status">
-                            <option value="OffDuty">Off Duty</option>
-                            <option value="Loaded">Loaded</option>
-                            <option value="Ready">Ready</option>
+                            @foreach (var enumType in CargoStatuses.GetValues())
+                            {
+                                <option value="@enumType.Value">@enumType.DisplayName</option>
+                            }
                         </InputSelect>
                     </div>
                     <div class="mt-3">

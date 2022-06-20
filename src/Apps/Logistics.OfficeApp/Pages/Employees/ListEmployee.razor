@@ -1,4 +1,4 @@
-﻿@page "/list-user"
+﻿@page "/list-employee"
 @attribute [Authorize(Roles = "admin,owner,manager")]
 @inherits ViewBase<ListUserViewModel>
 
@@ -39,13 +39,8 @@
                     <GridColumn Field="LastName"
                             HeaderText="Last Name">
                     </GridColumn>
-                    <GridColumn Field="Email" 
-                            HeaderText="Email" 
-                            HeaderTextAlign="TextAlign.Center">
-                    </GridColumn>
-                    <GridColumn Field="PhoneNumber" 
-                            HeaderText="Phone Number" 
-                            TextAlign="TextAlign.Center">
+                    <GridColumn Field="Role"
+                            HeaderText="Role">
                     </GridColumn>
                     <GridColumn HeaderText="Actions" 
                             Width="180" 
@@ -53,7 +48,7 @@
                         <Template>
                             @{
                                 var entity = context as EmployeeDto;
-                                var editPageLink = $"/edit-user/{entity?.Id}";
+                                var editPageLink = $"/edit-employee/{entity?.Id}";
                             }
 
                             <div class="d-flex justify-content-center">

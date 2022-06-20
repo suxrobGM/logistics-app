@@ -6,9 +6,9 @@ public class CargoStatus : Enumeration
     {
     }
 
-    public static CargoStatus Ready = new(1, "ready");
-    public static CargoStatus Loaded = new(2, "loaded");
-    public static CargoStatus OffDuty = new(3, "offduty");
+    public static readonly CargoStatus Ready = new(1, "ready");
+    public static readonly CargoStatus Loaded = new(2, "loaded");
+    public static readonly CargoStatus OffDuty = new(3, "offduty");
 
     public static CargoStatus Get(string name)
     {

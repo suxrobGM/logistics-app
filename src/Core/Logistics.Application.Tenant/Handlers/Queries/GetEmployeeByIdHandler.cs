@@ -26,7 +26,8 @@ internal sealed class GetEmployeeByIdHandler : RequestHandlerBase<GetEmployeeByI
             ExternalId = userEntity.ExternalId!,
             UserName = userEntity.UserName!,
             FirstName = userEntity.FirstName,
-            LastName = userEntity.LastName
+            LastName = userEntity.LastName,
+            Role = userEntity.Role.Name
         };
 
         return DataResult<EmployeeDto>.CreateSuccess(user);

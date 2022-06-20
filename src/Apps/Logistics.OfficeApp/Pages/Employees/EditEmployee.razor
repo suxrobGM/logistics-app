@@ -1,4 +1,4 @@
-﻿@page "/edit-user/{id?}"
+﻿@page "/edit-employee/{id?}"
 @attribute [Authorize(Roles = "admin,owner,manager")]
 @inherits ViewBase<EditUserViewModel>
 
@@ -39,19 +39,20 @@
                         <label for="lastname" class="form-label">Last Name</label>
                         <InputText id="lastname" class="form-control" @bind-Value="Model.User.LastName" />
                     </div>
-                    @*<div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input id="email" type="email" class="form-control" @bind="Model.User.Email" />
-                    </div>
                     <div class="mb-3">
-                        <label for="phonenumber" class="form-label">Phone Number</label>
-                        <InputText id="phonenumber" class="form-control" @bind-Value="Model.User.PhoneNumber" />
-                    </div>*@
+                        <label for="role" class="form-label">Role</label>
+                        <InputSelect id="role" class="form-control" @bind-Value="Model.User.Role">
+                            @foreach (var enumType in EmployeeRoles.GetValues())
+                            {
+                                <option value="@enumType.Value">@enumType.DisplayName</option>
+                            }
+                        </InputSelect>
+                    </div>
                     <div class="mt-3">
                         <button class="btn btn-primary" type="submit">
                             <i class="bi bi-pencil-square"></i> @submitBtnText
                         </button>
-                        <NavLink class="btn btn-primary" href="/list-user">
+                        <NavLink class="btn btn-primary" href="/list-employee">
                             <i class="bi bi-arrow-left-square"></i> Back
                         </NavLink>
                     </div>
