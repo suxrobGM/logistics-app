@@ -6,7 +6,7 @@ using Logistics.Domain.Services;
 
 namespace Logistics.EntityFramework.Services;
 
-public class MySqlProviderService : IDatabaseProviderService
+internal class MySqlProviderService : IDatabaseProviderService
 {
     private readonly TenantsSettings _settings;
     private readonly ILogger<MySqlProviderService> _logger;

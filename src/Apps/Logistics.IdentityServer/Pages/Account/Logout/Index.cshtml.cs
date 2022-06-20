@@ -34,7 +34,7 @@ namespace Logistics.IdentityServer.Pages.Logout
 
             var showLogoutPrompt = LogoutOptions.ShowLogoutPrompt;
 
-            if (User?.Identity.IsAuthenticated != true)
+            if (User?.Identity?.IsAuthenticated != true)
             {
                 // if the user is not authenticated, then just show logged out page
                 showLogoutPrompt = false;
@@ -61,7 +61,7 @@ namespace Logistics.IdentityServer.Pages.Logout
 
         public async Task<IActionResult> OnPost()
         {
-            if (User?.Identity.IsAuthenticated == true)
+            if (User?.Identity?.IsAuthenticated == true)
             {
                 // if there's no current logout context, we need to create one
                 // this captures necessary info from the current logged in user

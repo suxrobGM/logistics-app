@@ -36,7 +36,7 @@ internal class ApiClient : ApiClientBase, IApiClient
         
         var handler = new JwtSecurityTokenHandler();
         var token = handler.ReadJwtToken(accessToken);
-        var tenantId = token?.Claims?.FirstOrDefault(i => i.Type == "tenantId")?.Value;
+        var tenantId = token?.Claims?.FirstOrDefault(i => i.Type == "tenant")?.Value;
         
         if (_currentTenant == tenantId)
             return;

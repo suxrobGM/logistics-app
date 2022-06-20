@@ -1,48 +1,63 @@
-﻿using System.Collections.Specialized;
+﻿#nullable enable
+using System.Collections.Specialized;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 using Duende.IdentityServer.Extensions;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
-using Microsoft.AspNetCore.Identity;
+using Logistics.Domain.Services;
 
 namespace Logistics.IdentityServer.Services;
 
-public class UserProfileService : IProfileService
+// ReSharper disable once ClassNeverInstantiated.Global
+internal class UserProfileService : IProfileService
 {
     private readonly UserManager<User> _userManager;
     private readonly IUserClaimsPrincipalFactory<User> _claimsFactory;
-    
-    
+    private readonly ITenantManager _tenantManager;
+
     public UserProfileService(
         UserManager<User> userManager,
-        IUserClaimsPrincipalFactory<User> claimsFactory)
+        IUserClaimsPrincipalFactory<User> claimsFactory,
+        ITenantManager tenantManager)
     {
         _userManager = userManager;
         _claimsFactory = claimsFactory;
+        _tenantManager = tenantManager;
     }
     
     public async Task GetProfileDataAsync(ProfileDataRequestContext context)
     {
         var user = await _userManager.FindByIdAsync(context.Subject.GetSubjectId());
         var principal = await _claimsFactory.CreateAsync(user);
-
+        var tenantId = GetTenantValue(context.ValidatedRequest?.Raw);
         var claims = principal.Claims.ToList();
         claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList();
+        
+        if (!string.IsNullOrEmpty(tenantId))
+        {
+            var tenantUser = await _tenantManager.GetEmployeeAsync(tenantId, i => i.ExternalId == user.Id);
+            claims.Add(new Claim("tenant", tenantId));
 
-        claims.Add(new Claim("role", user.Role.Name));
-
+            if (tenantUser != null)
+            {
+                claims.Add(new Claim("role", tenantUser.Role.Name));
+            }
+        }
+        else
+        {
+            claims.Add(new Claim("role", user.Role.Name));
+        }
+        
         if (!string.IsNullOrEmpty(user.FirstName))
         {
-            claims.Add(new Claim("firstName", user.FirstName));
+            claims.Add(new Claim("first_name", user.FirstName));
         }
         
         if (!string.IsNullOrEmpty(user.LastName))
         {
-            claims.Add(new Claim("lastName", user.LastName));
+            claims.Add(new Claim("last_name", user.LastName));
         }
-        
-        var a = context.ValidatedRequest?.Raw?.AllKeys;
-        var b = context.ValidatedRequest?.Raw?.Get("acr_values");
         context.IssuedClaims = claims;
     }
 
@@ -52,9 +67,11 @@ public class UserProfileService : IProfileService
         var user = await _userManager.FindByIdAsync(sub);
         context.IsActive = user != null;
     }
-    
-    public static IDictionary<string,string> ToDictionary(NameValueCollection col)
+
+    private static string? GetTenantValue(NameValueCollection? collection)
     {
-        return col.AllKeys.ToDictionary(x => x, x => col[x]);
+        var acrValues = collection?.Get("acr_values")?.Split(" ");
+        var tenantValue = acrValues?.FirstOrDefault(i => i.StartsWith("tenant", StringComparison.InvariantCultureIgnoreCase));
+        return tenantValue?.Split(":")[1];
     }
 }

@@ -29,14 +29,14 @@ internal static class HostingExtensions
             options.SaveTokens = true;
             options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Role, ClaimValueTypes.String, "role"));
             options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Name, ClaimValueTypes.String, "name"));
-            options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.GivenName, ClaimValueTypes.String, "firstName"));
-            options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Surname, ClaimValueTypes.String, "lastName"));
+            options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.GivenName, ClaimValueTypes.String, "first_name"));
+            options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Surname, ClaimValueTypes.String, "last_name"));
 
-            options.Events.OnRedirectToIdentityProvider = c =>
+            options.Events.OnAuthorizationCodeReceived = c =>
             {
                 var tenantId = c.HttpContext.GetTenantId();
-                c.ProtocolMessage.AcrValues = $"tenant:{tenantId}";
-                Console.WriteLine($"TenantID: {tenantId}");
+                if (c.TokenEndpointRequest != null) 
+                    c.TokenEndpointRequest.AcrValues = $"tenant:{tenantId}";
                 return Task.CompletedTask;
             };
         });

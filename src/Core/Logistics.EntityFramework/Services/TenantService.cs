@@ -8,13 +8,12 @@ internal class TenantService : ITenantService
 {
     private readonly IMainRepository<Tenant> _repository;
     private readonly HttpContext _httpContext;
-    private Tenant _currentTenant;
+    private Tenant? _currentTenant;
 
     public TenantService(IMainRepository<Tenant> repository, IHttpContextAccessor contextAccessor)
     {
         _httpContext = contextAccessor.HttpContext ?? throw new ArgumentNullException(nameof(contextAccessor));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-        _currentTenant = null!;
     }
 
     public Tenant GetTenant()
