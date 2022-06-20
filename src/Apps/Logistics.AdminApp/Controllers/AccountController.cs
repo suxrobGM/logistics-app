@@ -37,4 +37,11 @@ public class AccountController : ControllerBase
         }
         return Content(strBuilder.ToString());
     }
+    
+    [HttpGet("Token")]
+    public async Task<IActionResult> GetAccessToken()
+    {
+        var token = await HttpContext.GetTokenAsync("access_token");
+        return Content(token ?? "Access token not found");
+    }
 }

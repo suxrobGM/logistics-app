@@ -49,7 +49,7 @@ internal class UserProfileService : IProfileService
                 SetRequestHeader("X-Tenant", tenantId);
                 var tenantUser = await _tenantRepository.GetAsync(i => i.ExternalId == user.Id);
 
-                claims.TryAdd("role", tenantUser?.Role.Name);
+                claims.TryAdd("role", user.Role.Name == "admin" ? "admin" : tenantUser?.Role.Name);
                 claims.TryAdd("tenant", tenantId);
                 break;
             }

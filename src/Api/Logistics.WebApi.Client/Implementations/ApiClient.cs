@@ -24,7 +24,6 @@ internal class ApiClient : ApiClientBase, IApiClient
             SetAuthorizationHeader("Bearer", value);
             SetCurrentTenantId(value);
             _accessToken = value;
-            Console.WriteLine($"Access Token: {value}");
         }
     }
     
