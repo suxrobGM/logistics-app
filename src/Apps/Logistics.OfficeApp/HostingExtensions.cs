@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 
 namespace Logistics.OfficeApp;
@@ -23,20 +24,18 @@ internal static class HostingExtensions
         {
             builder.Configuration.Bind("IdentityServer", options);
             options.ResponseType = "code";
-
-            options.MapInboundClaims = false;
+            
             options.GetClaimsFromUserInfoEndpoint = true;
             options.SaveTokens = true;
             options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Role, ClaimValueTypes.String, "role"));
             options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Name, ClaimValueTypes.String, "name"));
-            options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.GivenName, ClaimValueTypes.String, "first_name"));
-            options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Surname, ClaimValueTypes.String, "last_name"));
 
             options.Events.OnAuthorizationCodeReceived = c =>
             {
                 var tenantId = c.HttpContext.GetTenantId();
                 if (c.TokenEndpointRequest != null) 
                     c.TokenEndpointRequest.AcrValues = $"tenant:{tenantId}";
+                
                 return Task.CompletedTask;
             };
         });

@@ -1,11 +1,9 @@
 ﻿#nullable enable
-using System.Collections.Specialized;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Duende.IdentityServer.Extensions;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
-using Logistics.Domain.Services;
+using Logistics.Domain.Repositories;
 
 namespace Logistics.IdentityServer.Services;
 
@@ -13,51 +11,53 @@ namespace Logistics.IdentityServer.Services;
 internal class UserProfileService : IProfileService
 {
     private readonly UserManager<User> _userManager;
+    private readonly HttpContext? _httpContext;
     private readonly IUserClaimsPrincipalFactory<User> _claimsFactory;
-    private readonly ITenantManager _tenantManager;
+    private readonly ITenantRepository<Employee> _tenantRepository;
 
     public UserProfileService(
         UserManager<User> userManager,
+        IHttpContextAccessor httpContextAccessor,
         IUserClaimsPrincipalFactory<User> claimsFactory,
-        ITenantManager tenantManager)
+        ITenantRepository<Employee> tenantRepository)
     {
         _userManager = userManager;
+        _httpContext = httpContextAccessor.HttpContext;
         _claimsFactory = claimsFactory;
-        _tenantManager = tenantManager;
+        _tenantRepository = tenantRepository;
     }
     
     public async Task GetProfileDataAsync(ProfileDataRequestContext context)
     {
         var user = await _userManager.FindByIdAsync(context.Subject.GetSubjectId());
         var principal = await _claimsFactory.CreateAsync(user);
-        var tenantId = GetTenantValue(context.ValidatedRequest?.Raw);
+        var tenantId = GetTenantValue(context);
         var claims = principal.Claims.ToList();
         claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList();
         
-        if (!string.IsNullOrEmpty(tenantId))
+        switch (context.Caller)
         {
-            var tenantUser = await _tenantManager.GetEmployeeAsync(tenantId, i => i.ExternalId == user.Id);
-            claims.Add(new Claim("tenant", tenantId));
-
-            if (tenantUser != null)
+            case "UserInfoEndpoint" when !string.IsNullOrEmpty(tenantId):
             {
-                claims.Add(new Claim("role", tenantUser.Role.Name));
+                var role = context.Subject.GetRole();
+                claims.TryAdd("role", role);
+                claims.TryAdd("tenant", tenantId);
+                break;
             }
+            case "ClaimsProviderAccessToken" when !string.IsNullOrEmpty(tenantId):
+            {
+                SetRequestHeader("X-Tenant", tenantId);
+                var tenantUser = await _tenantRepository.GetAsync(i => i.ExternalId == user.Id);
+
+                claims.TryAdd("role", tenantUser?.Role.Name);
+                claims.TryAdd("tenant", tenantId);
+                break;
+            }
+            default:
+                claims.TryAdd("role", user.Role.Name);
+                break;
         }
-        else
-        {
-            claims.Add(new Claim("role", user.Role.Name));
-        }
-        
-        if (!string.IsNullOrEmpty(user.FirstName))
-        {
-            claims.Add(new Claim("first_name", user.FirstName));
-        }
-        
-        if (!string.IsNullOrEmpty(user.LastName))
-        {
-            claims.Add(new Claim("last_name", user.LastName));
-        }
+
         context.IssuedClaims = claims;
     }
 
@@ -68,10 +68,29 @@ internal class UserProfileService : IProfileService
         context.IsActive = user != null;
     }
 
-    private static string? GetTenantValue(NameValueCollection? collection)
+    private static string? GetTenantValue(ProfileDataRequestContext context)
     {
-        var acrValues = collection?.Get("acr_values")?.Split(" ");
-        var tenantValue = acrValues?.FirstOrDefault(i => i.StartsWith("tenant", StringComparison.InvariantCultureIgnoreCase));
-        return tenantValue?.Split(":")[1];
+        var tenant = context.Subject.GetTenant();
+
+        if (!string.IsNullOrEmpty(tenant))
+        {
+            return tenant;
+        }
+        
+        var acrValues = context.ValidatedRequest?.Raw?.Get("acr_values")?.Split(" ");
+        var tenantAcrValue = acrValues?.FirstOrDefault(i => i.StartsWith("tenant", StringComparison.InvariantCultureIgnoreCase));
+        tenant = tenantAcrValue?.Split(":")[1];
+        return tenant;
+    }
+    
+    private void SetRequestHeader(string key, string? value)
+    {
+        var hasKey = _httpContext?.Request.Headers.ContainsKey(key);
+        
+        if (hasKey.HasValue)
+        {
+            _httpContext?.Request.Headers.Remove(key);
+        }
+        _httpContext?.Request.Headers.Add(key, value);
     }
 }

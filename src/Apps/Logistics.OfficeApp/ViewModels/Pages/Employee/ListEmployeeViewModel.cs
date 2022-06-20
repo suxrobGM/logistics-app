@@ -1,4 +1,4 @@
-﻿namespace Logistics.OfficeApp.ViewModels.Pages.User;
+﻿namespace Logistics.OfficeApp.ViewModels.Pages.Employee;
 
 public class ListUserViewModel : PageViewModelBase
 {
@@ -28,7 +28,7 @@ public class ListUserViewModel : PageViewModelBase
     public override async Task OnInitializedAsync()
     {
         IsBusy = true;
-        await LoadPage(new() { Page = 1 });
+        await LoadPage(new PageEventArgs { Page = 1 });
         IsBusy = false;
     }
 
@@ -47,9 +47,6 @@ public class ListUserViewModel : PageViewModelBase
 
     private Task<PagedDataResult<EmployeeDto>> FetchUsersAsync(int page = 1)
     {
-        return Task.Run(async () =>
-        {
-            return await apiClient.GetEmployeesAsync(page: page, pageSize: 20);
-        });
+        return Task.Run(async () => await apiClient.GetEmployeesAsync(page: page, pageSize: 20));
     }
 }

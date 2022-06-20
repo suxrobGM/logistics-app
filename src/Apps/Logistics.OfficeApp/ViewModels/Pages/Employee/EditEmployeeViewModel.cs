@@ -1,6 +1,6 @@
 ﻿using Logistics.WebApi.Client.Exceptions;
 
-namespace Logistics.OfficeApp.ViewModels.Pages.User;
+namespace Logistics.OfficeApp.ViewModels.Pages.Employee;
 
 public class EditUserViewModel : PageViewModelBase
 {
@@ -35,9 +35,7 @@ public class EditUserViewModel : PageViewModelBase
             IsBusy = true;
             var user = await FetchUserAsync(Id!);
 
-            if (user != null)
-                User = user;
-            
+            User = user;
             IsBusy = false;
         }
     }
@@ -51,7 +49,7 @@ public class EditUserViewModel : PageViewModelBase
         {
             if (EditMode)
             {
-                await apiClient.UpdateEmployeeAsync(User!);
+                await apiClient.UpdateEmployeeAsync(User);
                 Toast?.Show("User has been saved successfully.", "Notification");
             }
             IsBusy = false;
@@ -61,14 +59,10 @@ public class EditUserViewModel : PageViewModelBase
             Error = ex.Message;
             IsBusy = false;
         }
-        
     }
 
     private Task<EmployeeDto> FetchUserAsync(string id)
     {
-        return Task.Run(async () =>
-        {
-            return await apiClient.GetEmployeeAsync(id);
-        });
+        return Task.Run(async () => await apiClient.GetEmployeeAsync(id));
     }
 }

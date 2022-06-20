@@ -13,4 +13,6 @@ public interface ITenantRepository<TEntity> : IRepository<TEntity>
     /// Tenant's UOW
     /// </summary>
     ITenantUnitOfWork UnitOfWork { get; }
+    
+    Tenant? CurrentTenant { get; }
 }

@@ -34,7 +34,7 @@ public static class Config
             {
                 UserClaims = {
                     "role",
-                    "tenantId"
+                    "tenant"
                 }
             }
         };
@@ -52,7 +52,7 @@ public static class Config
                 },
                 UserClaims = {
                     "role",
-                    "tenantId"
+                    "tenant"
                 }
             }
         };

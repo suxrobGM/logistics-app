@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Logging;
 using Duende.IdentityServer;
 using Serilog;
 using Logistics.EntityFramework;
 using Logistics.EntityFramework.Data;
 using Logistics.IdentityServer.Services;
-using Microsoft.IdentityModel.Logging;
 
 namespace Logistics.IdentityServer;
 

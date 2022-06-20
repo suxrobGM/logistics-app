@@ -29,7 +29,6 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton(tenantsSettings);
         services.AddScoped(typeof(ITenantService), typeof(TenantService));
-        services.AddScoped(typeof(ITenantManager), typeof(TenantManager));
         services.AddScoped(typeof(IMainRepository<>), typeof(MainRepository<>));
         services.AddScoped(typeof(ITenantRepository<>), typeof(TenantRepository<>));
         services.AddScoped(typeof(IMainUnitOfWork), typeof(MainUnitOfWork));

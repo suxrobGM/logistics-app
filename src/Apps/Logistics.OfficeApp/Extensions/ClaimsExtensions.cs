@@ -21,6 +21,9 @@ public static class ClaimsExtensions
                 case ClaimTypes.Name:
                     user.UserName = claim.Value;
                     break;
+                case ClaimTypes.NameIdentifier:
+                    user.ExternalId = claim.Value;
+                    break;
                 case "sub":
                     user.ExternalId = claim.Value;
                     break;

@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,5 +25,16 @@ public class AccountController : ControllerBase
     {
         await HttpContext.SignOutAsync("Cookies");
         await HttpContext.SignOutAsync("oidc");
+    }
+
+    [HttpGet("Claims")]
+    public IActionResult GetClaims()
+    {
+        var strBuilder = new StringBuilder();
+        foreach (var claim in User.Claims)
+        {
+            strBuilder.AppendLine($"{claim.Type} - {claim.Value}");
+        }
+        return Content(strBuilder.ToString());
     }
 }

@@ -5,13 +5,13 @@ namespace Logistics.EntityFramework.Data;
 
 public class TenantDbContext : DbContext
 {
-    private readonly ITenantService _tenantService;
+    private readonly ITenantService? _tenantService;
     private readonly string _connectionString;
 
     public TenantDbContext(string connectionString)
     {
         _connectionString = connectionString;
-        _tenantService = null!;
+        _tenantService = null;
     }
 
     public TenantDbContext(
@@ -23,14 +23,19 @@ public class TenantDbContext : DbContext
         _connectionString = string.Empty;
     }
 
+    public Tenant? CurrentTenant => _tenantService?.GetTenant();
+
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
         if (options.IsConfigured)
             return;
 
-        DbContextHelpers.ConfigureMySql(
-            !string.IsNullOrEmpty(_connectionString) ? _connectionString : _tenantService.GetConnectionString(),
-            options);
+        var connectionString = !string.IsNullOrEmpty(_connectionString)
+            ? _connectionString
+            : _tenantService?.GetConnectionString() ??
+              throw new InvalidOperationException("Connection string is a null in TenantDbContext");
+        
+        DbContextHelpers.ConfigureMySql(connectionString, options);
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
