@@ -10,6 +10,7 @@ internal static class HostingExtensions
     {
         IdentityModelEventSource.ShowPII = true;
         AddSecretsJson(builder.Configuration);
+        builder.Services.AddSharedApplicationLayer(builder.Configuration);
         builder.Services.AddWebApiClient(builder.Configuration);
         builder.Services.AddMvvmBlazor();
         builder.Services.AddHttpContextAccessor();

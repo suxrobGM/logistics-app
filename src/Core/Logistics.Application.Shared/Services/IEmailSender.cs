@@ -1,4 +1,4 @@
-﻿namespace Logistics.Application.Contracts.Services;
+﻿namespace Logistics.Application.Shared.Services;
 
 /// <summary>
 /// Email service

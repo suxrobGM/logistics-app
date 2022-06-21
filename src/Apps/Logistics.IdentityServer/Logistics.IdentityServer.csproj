@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\Logistics.Application.Shared\Logistics.Application.Shared.csproj" />
     <ProjectReference Include="..\..\Core\Logistics.EntityFramework\Logistics.EntityFramework.csproj" />
   </ItemGroup>
 </Project>

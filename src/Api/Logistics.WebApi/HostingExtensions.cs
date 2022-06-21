@@ -13,7 +13,8 @@ internal static class HostingExtensions
         IdentityModelEventSource.ShowPII = true;
         AddSecretsJson(builder.Configuration);
         builder.Services.AddMainApplicationLayer();
-        builder.Services.AddTenantApplicationLayer(builder.Configuration);
+        builder.Services.AddTenantApplicationLayer();
+        builder.Services.AddSharedApplicationLayer(builder.Configuration);
         builder.Services.AddInfrastructureLayer(builder.Configuration, "LocalMainDatabase");
         builder.Services.AddHttpContextAccessor();
 

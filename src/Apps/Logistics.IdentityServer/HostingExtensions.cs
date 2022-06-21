@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Logging;
 using Duende.IdentityServer;
 using Serilog;
+using Logistics.Application.Shared;
 using Logistics.EntityFramework;
 using Logistics.EntityFramework.Data;
 using Logistics.IdentityServer.Services;
@@ -15,12 +16,20 @@ internal static class HostingExtensions
         IdentityModelEventSource.ShowPII = true;
         AddSecretsJson(builder.Configuration);
         builder.Services.AddRazorPages();
+        builder.Services.AddSharedApplicationLayer(builder.Configuration, "EmailConfig", "GoogleRecaptcha");
         builder.Services.AddInfrastructureLayer(builder.Configuration, "LocalMainDatabase");
         builder.Services.AddHttpContextAccessor();
 
-        builder.Services.AddIdentity<User, IdentityRole>()
-            .AddEntityFrameworkStores<MainDbContext>()
-            .AddDefaultTokenProviders();
+        builder.Services.AddIdentity<User, IdentityRole>(options =>
+        {
+            options.Password.RequiredLength = 8;
+            options.Password.RequireUppercase = false;
+            options.Password.RequireNonAlphanumeric = false;
+            options.User.AllowedUserNameCharacters = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789_.";
+            options.User.RequireUniqueEmail = true;
+        })
+        .AddEntityFrameworkStores<MainDbContext>()
+        .AddDefaultTokenProviders();
 
         builder.Services
             .AddIdentityServer(options =>
