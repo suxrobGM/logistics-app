@@ -16,7 +16,8 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
     protected override async Task<DataResult> HandleValidated(
         CreateEmployeeCommand request, CancellationToken cancellationToken)
     {
-        await _userRepository.AddAsync(_mapper.Map<Employee>(request));
+        var employee = _mapper.Map<Employee>(request);
+        await _userRepository.AddAsync(employee);
         await _userRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }

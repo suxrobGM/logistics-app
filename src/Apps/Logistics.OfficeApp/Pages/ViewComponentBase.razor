@@ -1,0 +1,7 @@
+﻿@typeparam TViewModel where TViewModel : ViewModelBase
+@inherits ViewBase<TViewModel> 
+
+@code {
+    [CascadingParameter]
+    public Toast? Toast { get; set; }
+}

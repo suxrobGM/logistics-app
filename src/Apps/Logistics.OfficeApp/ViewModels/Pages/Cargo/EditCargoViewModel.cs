@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
-using Logistics.WebApi.Client.Exceptions;
 
 namespace Logistics.OfficeApp.ViewModels.Pages.Cargo;
 
@@ -13,41 +12,44 @@ public class EditCargoViewModel : PageViewModelBase
         : base(apiClient)
     {
         _authStateProvider = authStateProvider;
-        Trucks = new List<TruckDto>();
         Cargo = new CargoDto();
     }
 
     [Parameter]
     public string? Id { get; set; }
 
-    [CascadingParameter]
-    public Toast? Toast { get; set; }
 
-    
     #region Binding properties
 
     public CargoDto Cargo { get; set; }
-    public IEnumerable<TruckDto> Trucks { get; set; }
     public bool EditMode => !string.IsNullOrEmpty(Id);
-    public string Error { get; set; } = string.Empty;
+    
 
     #endregion
-
-
+    
     public override async Task OnInitializedAsync()
     {
-        Error = string.Empty;
+        await base.OnInitializedAsync();
 
-        if (EditMode)
+        try
         {
-            IsBusy = true;
-            var cargo = await FetchCargoAsync(Id!);
+            if (EditMode)
+            {
+                IsBusy = true;
+                var cargo = await apiClient.GetCargoAsync(Id!);
 
-            if (cargo != null)
                 Cargo = cargo;
-
+                IsBusy = false;
+            }
+        }
+        catch (ApiException e)
+        {
+            Error = e.Message;
+        }
+        finally
+        {
             IsBusy = false;
-        }  
+        } 
     }
 
     public override async Task OnAfterRenderAsync(bool firstRender)
@@ -78,11 +80,13 @@ public class EditCargoViewModel : PageViewModelBase
                 Toast?.Show("A new cargo has been created successfully.", "Notification");
                 ResetData();
             }
-            IsBusy = false;
         }
         catch (ApiException ex)
         {
             Error = ex.Message;
+        }
+        finally
+        {
             IsBusy = false;
         }
     }
@@ -101,11 +105,11 @@ public class EditCargoViewModel : PageViewModelBase
         var authState = await _authStateProvider.GetAuthenticationStateAsync();
         var externalId = authState.User.GetId();
 
-        if (!string.IsNullOrEmpty(externalId) && Cargo != null)
+        if (!string.IsNullOrEmpty(externalId))
         {
-            var user = await Task.Run(async () => await apiClient.GetEmployeeAsync(externalId));
-            Cargo.AssignedDispatcherId = user?.Id;
-            Cargo.AssignedDispatcherName = user?.GetFullName();
+            var user = await apiClient.GetEmployeeAsync(externalId);
+            Cargo.AssignedDispatcherId = user.Id;
+            Cargo.AssignedDispatcherName = user.GetFullName();
             StateHasChanged();
         }
     }
@@ -124,13 +128,5 @@ public class EditCargoViewModel : PageViewModelBase
         }
 
         return dataListItems;
-    }
-
-    private Task<CargoDto> FetchCargoAsync(string id)
-    {
-        return Task.Run(async () =>
-        {
-            return await apiClient.GetCargoAsync(id);
-        });
     }
 }

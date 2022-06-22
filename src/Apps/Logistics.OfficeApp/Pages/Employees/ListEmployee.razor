@@ -1,6 +1,6 @@
 ﻿@page "/list-employee"
 @attribute [Authorize(Roles = "admin,owner,manager")]
-@inherits ViewBase<ListUserViewModel>
+@inherits ViewComponentBase<ListUserViewModel>
 
 <h2>Users List</h2>
 <hr />

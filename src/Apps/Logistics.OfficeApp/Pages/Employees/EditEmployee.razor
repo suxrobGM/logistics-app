@@ -1,6 +1,6 @@
 ﻿@page "/edit-employee/{id?}"
 @attribute [Authorize(Roles = "admin,owner,manager")]
-@inherits ViewBase<EditUserViewModel>
+@inherits ViewComponentBase<EditUserViewModel>
 
 @{
     var headText = Model.EditMode ? "Edit" : "Add a new";
@@ -23,25 +23,25 @@
                          Size="2">
                 </Spinner>
 
-                <EditForm Model="user" OnValidSubmit="() => Model.UpdateAsync()">
+                <EditForm Model="Model.Employee" OnValidSubmit="() => Model.UpdateAsync()">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
 
                     <div class="mb-3">
                         <label for="username" class="form-label">User Name</label>
-                        <InputText id="username" class="form-control" @bind-Value="Model.User.UserName" />
+                        <InputText id="username" class="form-control" @bind-Value="Model.Employee.UserName" />
                     </div>
                     <div class="mb-3">
                         <label for="firstname" class="form-label">First Name</label>
-                        <InputText id="firstname" class="form-control" @bind-Value="Model.User.FirstName" />
+                        <InputText id="firstname" class="form-control" @bind-Value="Model.Employee.FirstName" />
                     </div>
                     <div class="mb-3">
                         <label for="lastname" class="form-label">Last Name</label>
-                        <InputText id="lastname" class="form-control" @bind-Value="Model.User.LastName" />
+                        <InputText id="lastname" class="form-control" @bind-Value="Model.Employee.LastName" />
                     </div>
                     <div class="mb-3">
                         <label for="role" class="form-label">Role</label>
-                        <InputSelect id="role" class="form-control" @bind-Value="Model.User.Role">
+                        <InputSelect id="role" class="form-control" @bind-Value="Model.Employee.Role">
                             @foreach (var enumType in EmployeeRoles.GetValues())
                             {
                                 <option value="@enumType.Value">@enumType.DisplayName</option>
@@ -63,17 +63,6 @@
 </div>
 
 @code {
-    private EmployeeDto user = new();
-
     [Parameter]
     public string? Id { get; set; }
-
-    [CascadingParameter]
-    public Toast? Toast { get; set; }
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        Model.User = user;
-    }
 }

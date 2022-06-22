@@ -12,12 +12,8 @@ public class EditTenantViewModel : PageViewModelBase
     [Parameter]
     public string? Id { get; set; }
 
-    [CascadingParameter]
-    public Toast? Toast { get; set; }
-
     public TenantDto Tenant { get; set; }
     public bool EditMode => !string.IsNullOrEmpty(Id);
-    public string Error { get; set; } = string.Empty;
 
     public override async Task OnInitializedAsync()
     {

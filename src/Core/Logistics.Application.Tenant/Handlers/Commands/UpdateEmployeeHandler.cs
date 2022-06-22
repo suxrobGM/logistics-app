@@ -36,18 +36,6 @@ internal sealed class UpdateEmployeeHandler : RequestHandlerBase<UpdateEmployeeC
         {
             errorDescription = "Id is an empty string";
         }
-        else if (string.IsNullOrEmpty(request.FirstName))
-        {
-            errorDescription = "First name is an empty string";
-        }
-        else if (string.IsNullOrEmpty(request.LastName))
-        {
-            errorDescription = "Last name is an empty string";
-        }
-        else if (string.IsNullOrEmpty(request.Email))
-        {
-            errorDescription = "Email is an empty string";
-        }
 
         return string.IsNullOrEmpty(errorDescription);
     }

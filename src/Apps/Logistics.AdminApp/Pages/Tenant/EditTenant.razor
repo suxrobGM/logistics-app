@@ -1,6 +1,6 @@
 ﻿@page "/edit-tenant/{id?}"
 @attribute [Authorize(Roles = "admin")]
-@inherits ViewBase<EditTenantViewModel>
+@inherits ViewComponentBase<EditTenantViewModel>
 
 @{
     var headText = Model.EditMode ? "Edit" : "Add a new";
@@ -52,8 +52,4 @@
 @code {
     [Parameter]
     public string? Id { get; set; }
-
-    [CascadingParameter]
-    public Toast? Toast { get; set; }
-    
 }

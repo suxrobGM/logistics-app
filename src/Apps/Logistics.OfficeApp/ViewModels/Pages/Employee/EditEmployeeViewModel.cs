@@ -1,41 +1,48 @@
-﻿using Logistics.WebApi.Client.Exceptions;
-
-namespace Logistics.OfficeApp.ViewModels.Pages.Employee;
+﻿namespace Logistics.OfficeApp.ViewModels.Pages.Employee;
 
 public class EditUserViewModel : PageViewModelBase
 {
     public EditUserViewModel(IApiClient apiClient)
         : base(apiClient)
     {
-        User = new EmployeeDto();
+        Employee = new EmployeeDto();
     }
 
     [Parameter]
     public string? Id { get; set; }
 
-    [CascadingParameter]
-    public Toast? Toast { get; set; }
+    
 
 
     #region Binding properties
 
-    public EmployeeDto User { get; set; }
+    public EmployeeDto Employee { get; set; }
     public bool EditMode => !string.IsNullOrEmpty(Id);
-    public string Error { get; set; } = string.Empty;
 
     #endregion
 
 
     public override async Task OnInitializedAsync()
     {
-        Error = string.Empty;
-
-        if (EditMode)
+        await base.OnInitializedAsync();
+        
+        try
         {
-            IsBusy = true;
-            var user = await FetchUserAsync(Id!);
+            if (EditMode)
+            {
+                IsBusy = true;
+                var user = await apiClient.GetEmployeeAsync(Id!);
 
-            User = user;
+                Employee = user;
+                IsBusy = false;
+            }
+        }
+        catch (ApiException e)
+        {
+            Error = e.Message;
+        }
+        finally
+        {
             IsBusy = false;
         }
     }
@@ -49,20 +56,17 @@ public class EditUserViewModel : PageViewModelBase
         {
             if (EditMode)
             {
-                await apiClient.UpdateEmployeeAsync(User);
+                await apiClient.UpdateEmployeeAsync(Employee);
                 Toast?.Show("User has been saved successfully.", "Notification");
             }
-            IsBusy = false;
         }
         catch (ApiException ex)
         {
             Error = ex.Message;
+        }
+        finally
+        {
             IsBusy = false;
         }
-    }
-
-    private Task<EmployeeDto> FetchUserAsync(string id)
-    {
-        return Task.Run(async () => await apiClient.GetEmployeeAsync(id));
     }
 }

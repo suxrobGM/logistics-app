@@ -38,7 +38,7 @@ internal sealed class GetCargoesHandler : RequestHandlerBase<GetCargoesQuery, Pa
                 AssignedDispatcherName = i.AssignedDispatcher != null ? i.AssignedDispatcher.GetFullName() : null,
                 AssignedTruckId = i.AssignedTruck != null ? i.AssignedTruck.Id : null,
                 AssignedTruckDriverName = i.AssignedTruck != null && i.AssignedTruck.Driver != null ? i.AssignedTruck.Driver.GetFullName() : null,
-                Status = i.Status.ToString()
+                Status = i.Status.Name
             })
             .ToArray();
 

@@ -1,7 +1,7 @@
 ﻿@inherits LayoutViewBase<MainLayoutViewModel>
 
 <PageTitle>Logistics Admin</PageTitle>
-<Toast @ref="toastRef" ToastPosition="Toast.Position.BottomRight"></Toast>
+<Toast @ref="_toastRef" ToastPosition="Toast.Position.BottomRight"></Toast>
 
 <div class="page">
     <div class="sidebar">
@@ -10,7 +10,7 @@
 
     <main>
         <article class="content px-4">
-            <CascadingValue Value="toastRef">
+            <CascadingValue Value="_toastRef">
                 @Body
             </CascadingValue>
         </article>
@@ -18,5 +18,5 @@
 </div>
 
 @code {
-    private Toast? toastRef;
+    private Toast? _toastRef;
 }
