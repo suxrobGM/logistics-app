@@ -29,7 +29,7 @@ internal class MySqlProviderService : IDatabaseProviderService
     {
         try
         {
-            using var databaseContext = new TenantDbContext(connectionString);
+            await using var databaseContext = new TenantDbContext(connectionString);
             await databaseContext.Database.MigrateAsync();
             return true;
         }
@@ -51,7 +51,7 @@ internal class MySqlProviderService : IDatabaseProviderService
 
             var database = connection["Initial Catalog"];
             var dropQuery = $"DROP DATABASE '{database}'";
-            using var mySqlCommand = new MySqlCommand(dropQuery);
+            await using var mySqlCommand = new MySqlCommand(dropQuery);
             await mySqlCommand.ExecuteScalarAsync();
             return true;
         }
