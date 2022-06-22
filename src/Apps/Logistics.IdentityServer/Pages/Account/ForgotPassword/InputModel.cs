@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Logistics.IdentityServer.Pages.Account.ForgotPassword
+namespace Logistics.IdentityServer.Pages.Account.ForgotPassword;
+
+public class InputModel
 {
-    public class InputModel
-    {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
-    }
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; }
 }

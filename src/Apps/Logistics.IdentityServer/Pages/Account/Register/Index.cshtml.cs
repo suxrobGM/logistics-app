@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace Logistics.IdentityServer.Pages.Register;
+namespace Logistics.IdentityServer.Pages.Account.Register;
 
 [AllowAnonymous]
 public class Index : PageModel

@@ -1,13 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Logistics.IdentityServer.Pages.Account.ResendEmailConfirmation
+namespace Logistics.IdentityServer.Pages.Account.ResendEmailConfirmation;
+
+public class InputModel
 {
-
-    public class InputModel
-    {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
-    }
-
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; }
 }

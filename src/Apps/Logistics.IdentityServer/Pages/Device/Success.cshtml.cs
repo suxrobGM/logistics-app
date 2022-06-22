@@ -1,14 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Logistics.IdentityServer.Pages.Device
+namespace Logistics.IdentityServer.Pages.Device;
+
+[SecurityHeaders]
+[Authorize]
+public class SuccessModel : PageModel
 {
-    [SecurityHeaders]
-    [Authorize]
-    public class SuccessModel : PageModel
+    public void OnGet()
     {
-        public void OnGet()
-        {
-        }
     }
 }

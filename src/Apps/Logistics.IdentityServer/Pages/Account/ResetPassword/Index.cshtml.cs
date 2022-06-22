@@ -8,63 +8,62 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Xml.Linq;
 
-namespace Logistics.IdentityServer.Pages.Account.ResetPassword
+namespace Logistics.IdentityServer.Pages.Account.ResetPassword;
+
+[AllowAnonymous]
+public class ResetPasswordModel : PageModel
 {
-    [AllowAnonymous]
-    public class ResetPasswordModel : PageModel
+    private readonly UserManager<User> _userManager;
+
+    public ResetPasswordModel(UserManager<User> userManager)
     {
-        private readonly UserManager<User> _userManager;
+        _userManager = userManager;
+    }
 
-        public ResetPasswordModel(UserManager<User> userManager)
+    [BindProperty]
+    public InputModel Input { get; set; }
+
+   
+    public IActionResult OnGet(string code = null)
+    {
+        if (code == null)
         {
-            _userManager = userManager;
+            return BadRequest("A code must be supplied for password reset.");
         }
-
-        [BindProperty]
-        public InputModel Input { get; set; }
-
-       
-        public IActionResult OnGet(string code = null)
+        else
         {
-            if (code == null)
+            Input = new InputModel
             {
-                return BadRequest("A code must be supplied for password reset.");
-            }
-            else
-            {
-                Input = new InputModel
-                {
-                    Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code))
-                };
-                return Page();
-            }
-        }
-
-        public async Task<IActionResult> OnPostAsync()
-        {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
-            var user = await _userManager.FindByEmailAsync(Input.Email);
-            if (user == null)
-            {
-                // Don't reveal that the user does not exist
-                return RedirectToPage("./ResetPasswordConfirmation");
-            }
-
-            var result = await _userManager.ResetPasswordAsync(user, Input.Code, Input.Password);
-            if (result.Succeeded)
-            {
-                return RedirectToPage("./ResetPasswordConfirmation");
-            }
-
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
+                Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code))
+            };
             return Page();
         }
+    }
+
+    public async Task<IActionResult> OnPostAsync()
+    {
+        if (!ModelState.IsValid)
+        {
+            return Page();
+        }
+
+        var user = await _userManager.FindByEmailAsync(Input.Email);
+        if (user == null)
+        {
+            // Don't reveal that the user does not exist
+            return RedirectToPage("./ResetPasswordConfirmation");
+        }
+
+        var result = await _userManager.ResetPasswordAsync(user, Input.Code, Input.Password);
+        if (result.Succeeded)
+        {
+            return RedirectToPage("./ResetPasswordConfirmation");
+        }
+
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError(string.Empty, error.Description);
+        }
+        return Page();
     }
 }
