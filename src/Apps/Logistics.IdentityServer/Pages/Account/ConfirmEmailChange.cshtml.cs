@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
 
-namespace Logistics.IdentityServer.Pages.Account.ConfirmEmailChange
+namespace Logistics.IdentityServer.Pages.Account
 {
     [AllowAnonymous]
 

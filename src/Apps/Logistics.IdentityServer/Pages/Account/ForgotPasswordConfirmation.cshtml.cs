@@ -2,14 +2,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Logistics.IdentityServer.Pages.Account.ResetPasswordConfirmation
+namespace Logistics.IdentityServer.Pages.Account
 {
     [AllowAnonymous]
-    public class ResetPasswordConfirmationModel : PageModel
+    public class ForgotPasswordConfirmation : PageModel
     {
         public void OnGet()
         {
-
         }
     }
 }

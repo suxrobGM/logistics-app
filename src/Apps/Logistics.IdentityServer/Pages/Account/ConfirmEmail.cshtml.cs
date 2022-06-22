@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
 
-namespace Logistics.IdentityServer.Pages.Account.ConfirmEmail
+namespace Logistics.IdentityServer.Pages.Account
 {
     [AllowAnonymous]
     public class ConfirmEmail : PageModel

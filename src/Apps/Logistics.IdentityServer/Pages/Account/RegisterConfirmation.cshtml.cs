@@ -5,15 +5,15 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
 
-namespace Logistics.IdentityServer.Pages.Account.RegisterConfirmation
+namespace Logistics.IdentityServer.Pages.Account
 {
     [AllowAnonymous]
-    public class RegisterConfirmationModel : PageModel
+    public class RegisterConfirmation : PageModel
     {
         private readonly UserManager<User> _userManager;
         private readonly IEmailSender _senderService;
 
-        public RegisterConfirmationModel(UserManager<User> userManager, IEmailSender senderService)
+        public RegisterConfirmation(UserManager<User> userManager, IEmailSender senderService)
         {
             _userManager = userManager;
             _senderService = senderService;
