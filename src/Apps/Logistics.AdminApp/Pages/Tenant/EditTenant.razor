@@ -23,7 +23,7 @@
                          Size="2">
                 </Spinner>
 
-                <EditForm Model="tenant" OnValidSubmit="() => Model.UpdateAsync()">
+                <EditForm Model="Model.Tenant" OnValidSubmit="() => Model.UpdateAsync()">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
 
@@ -50,17 +50,10 @@
 </div>
 
 @code {
-    private TenantDto tenant = new();
-
     [Parameter]
     public string? Id { get; set; }
 
     [CascadingParameter]
     public Toast? Toast { get; set; }
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        Model.Tenant = tenant;
-    }
+    
 }

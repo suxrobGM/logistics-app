@@ -14,6 +14,6 @@ public class LogoutViewModel : PageViewModelBase
 
     public void SignOut()
     {
-        _navigationManager.NavigateTo("/MicrosoftIdentity/Account/SignOut", true);
+        _navigationManager.NavigateTo("/Account/Logout", true);
     }
 }
