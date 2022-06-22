@@ -4,11 +4,10 @@ namespace Logistics.Domain;
 
 public abstract class Enumeration : IComparable
 {
-    public string Name { get; private set; }
-
-    public int Id { get; }
-
     protected Enumeration(int id, string name) => (Id, Name) = (id, name);
+    
+    public string Name { get; private set; }
+    public int Id { get; private set; }
 
     public override string ToString() => Name;
 
@@ -41,11 +40,6 @@ public abstract class Enumeration : IComparable
 
     public static bool operator ==(Enumeration left, Enumeration right)
     {
-        if (left is null)
-        {
-            return right is null;
-        }
-
         return left.Equals(right);
     }
 
@@ -56,21 +50,21 @@ public abstract class Enumeration : IComparable
 
     public static bool operator <(Enumeration left, Enumeration right)
     {
-        return left is null ? right is not null : left.CompareTo(right) < 0;
+        return left.CompareTo(right) < 0;
     }
 
     public static bool operator <=(Enumeration left, Enumeration right)
     {
-        return left is null || left.CompareTo(right) <= 0;
+        return left.CompareTo(right) <= 0;
     }
 
     public static bool operator >(Enumeration left, Enumeration right)
     {
-        return left is not null && left.CompareTo(right) > 0;
+        return left.CompareTo(right) > 0;
     }
 
     public static bool operator >=(Enumeration left, Enumeration right)
     {
-        return left is null ? right is null : left.CompareTo(right) >= 0;
+        return left.CompareTo(right) >= 0;
     }
 }
