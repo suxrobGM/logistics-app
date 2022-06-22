@@ -22,14 +22,7 @@ internal sealed class UpdateTenantHandler : RequestHandlerBase<UpdateTenantComma
 
         tenant.Name = request.Name?.Trim()?.ToLower();
 
-        if (string.IsNullOrEmpty(request.DisplayName))
-        {
-            tenant.DisplayName = tenant.Name;
-        }
-        else
-        {
-            tenant.DisplayName = request.DisplayName?.Trim();
-        }
+        tenant.DisplayName = string.IsNullOrEmpty(request.DisplayName) ? tenant.Name : request.DisplayName?.Trim();
         
         _repository.Update(tenant);
         await _repository.UnitOfWork.CommitAsync();

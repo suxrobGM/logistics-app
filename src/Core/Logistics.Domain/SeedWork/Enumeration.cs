@@ -6,7 +6,7 @@ public abstract class Enumeration : IComparable
 {
     public string Name { get; private set; }
 
-    public int Id { get; private set; }
+    public int Id { get; }
 
     protected Enumeration(int id, string name) => (Id, Name) = (id, name);
 
@@ -19,7 +19,7 @@ public abstract class Enumeration : IComparable
             return false;
         }
 
-        var typeMatches = GetType().Equals(obj.GetType());
+        var typeMatches = GetType() == obj.GetType();
         var valueMatches = Id.Equals(otherValue.Id);
 
         return typeMatches && valueMatches;

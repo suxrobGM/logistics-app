@@ -28,7 +28,7 @@
     <div class="row">
         <div class="col-12">
             <Grid DataSource="Model.Tenants" AllowSorting="true" AllowPaging="true"
-                PageSettings="new() { PagesCount = Model.TenantsList.PagesCount, OnPageChanged = (e) => Model.LoadPage(e) }">  
+                PageSettings="new PageSettings { PagesCount = Model.TenantsList.PagesCount, OnPageChanged = e => Model.LoadPage(e) }">  
                 <GridColumns>
                     <GridColumn Field="Name" 
                             HeaderText="Name">

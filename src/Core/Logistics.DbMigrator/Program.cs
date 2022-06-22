@@ -11,11 +11,11 @@ IHost host = Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices((ctx, services) =>
     {
-        var mainDbConntection = ctx.Configuration.GetConnectionString("LocalMainDatabase");
-        var tenantDbConntection = ctx.Configuration.GetConnectionString("LocalDefaultTenantDatabase");
+        var mainDbConnection = ctx.Configuration.GetConnectionString("LocalMainDatabase");
+        var tenantDbConnection = ctx.Configuration.GetConnectionString("LocalDefaultTenantDatabase");
 
-        services.AddDbContext<MainDbContext>(o => ConfigureMySql(mainDbConntection, o));
-        services.AddDbContext<TenantDbContext>(o => ConfigureMySql(tenantDbConntection, o));
+        services.AddDbContext<MainDbContext>(o => ConfigureMySql(mainDbConnection, o));
+        services.AddDbContext<TenantDbContext>(o => ConfigureMySql(tenantDbConnection, o));
 
         services.AddIdentityCore<User>()
             .AddEntityFrameworkStores<MainDbContext>();

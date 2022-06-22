@@ -10,6 +10,16 @@ namespace Logistics.IdentityServer.Pages.Register
         
         [Required, EmailAddress]
         public string Email { get; init; }
+        
+        [Required]
+        [Display(Name = "First name")]
+        [StringLength(32, MinimumLength = 1)]
+        public string FirstName { get; set; }
+        
+        [Required]
+        [Display(Name = "Last name")]
+        [StringLength(32, MinimumLength = 1)]
+        public string LastName { get; set; }
 
         [Required, DataType(DataType.Password)]
         [Display(Name = "Password")]

@@ -17,10 +17,17 @@ public static class ServiceCollectionExtensions
         var emailSenderOptions = configuration.GetSection(emailConfigSection).Get<EmailSenderOptions>();
         var googleRecaptchaOptions = configuration.GetSection(captchaConfigSection).Get<GoogleRecaptchaOptions>();
 
-        services.AddSingleton(emailSenderOptions);
-        services.AddSingleton(googleRecaptchaOptions);
-        services.AddTransient<IEmailSender, EmailSender>();
-        services.AddScoped<ICaptchaService, GoogleRecaptchaService>();
+        if (emailSenderOptions != null)
+        {
+            services.AddSingleton(emailSenderOptions);
+            services.AddTransient<IEmailSender, EmailSender>();
+        }
+
+        if (googleRecaptchaOptions != null)
+        {
+            services.AddSingleton(googleRecaptchaOptions);
+            services.AddScoped<ICaptchaService, GoogleRecaptchaService>();
+        }
         return services;
     }
 }

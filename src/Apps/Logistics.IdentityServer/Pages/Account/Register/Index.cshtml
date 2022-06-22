@@ -8,7 +8,7 @@
 
 <div class="row">
     <div class="col-12 col-md-9 col-lg-7 col-xl-6">
-        <form asp-page="Account/SignUp" asp-route-returnUrl="@Model.ReturnUrl">
+        <form asp-page="/Account/Register/Index" asp-route-returnUrl="@Model.ReturnUrl">
             <h4>Create a new account.</h4>
             <hr />
             <div asp-validation-summary="All" class="text-danger"></div>
@@ -21,6 +21,16 @@
                 <label asp-for="Input.Email" class="form-label"></label>
                 <input asp-for="Input.Email" class="form-control" />
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Input.FirstName" class="form-label"></label>
+                <input asp-for="Input.FirstName" class="form-control" />
+                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Input.LastName" class="form-label"></label>
+                <input asp-for="Input.LastName" class="form-control" />
+                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label asp-for="Input.Password" class="form-label"></label>
