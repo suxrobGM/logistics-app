@@ -9,6 +9,7 @@ public abstract class Enumeration : IComparable
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Local
     public string Name { get; private set; }
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Local
+    // ReSharper disable once MemberCanBePrivate.Global
     public int Id { get; private set; }
 
     public override string ToString() => Name;
