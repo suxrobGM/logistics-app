@@ -33,7 +33,7 @@ void ConfigureMySql(string connectionString, DbContextOptionsBuilder options)
             o =>
             {
                 o.EnableRetryOnFailure(8, TimeSpan.FromSeconds(15), null);
-                o.EnableStringComparisonTranslations(true);
+                o.EnableStringComparisonTranslations();
             })
         .UseLazyLoadingProxies();
 }
