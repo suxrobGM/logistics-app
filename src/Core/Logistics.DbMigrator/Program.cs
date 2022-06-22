@@ -3,7 +3,7 @@ using Logistics.DbMigrator;
 using Logistics.Domain.Entities;
 using Logistics.EntityFramework.Data;
 
-IHost host = Host.CreateDefaultBuilder(args)
+var host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration(configuration =>
     {
         var path = Path.Combine(AppContext.BaseDirectory, "secrets.json");

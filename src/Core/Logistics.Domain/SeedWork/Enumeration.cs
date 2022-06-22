@@ -6,7 +6,9 @@ public abstract class Enumeration : IComparable
 {
     protected Enumeration(int id, string name) => (Id, Name) = (id, name);
     
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Local
     public string Name { get; private set; }
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Local
     public int Id { get; private set; }
 
     public override string ToString() => Name;
