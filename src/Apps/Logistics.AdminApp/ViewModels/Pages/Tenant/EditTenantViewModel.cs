@@ -84,10 +84,10 @@ public class EditTenantViewModel : PageViewModelBase
             return;
         }
 
-        var tenant = await Task.Run(async () => await apiClient.GetTenantAsync(Id));
-        Tenant.Name = tenant?.Name;
-        Tenant.DisplayName = tenant?.DisplayName;
-        Tenant.ConnectionString = tenant?.ConnectionString;
+        var tenant = await apiClient.GetTenantAsync(Id);
+        Tenant.Name = tenant.Name;
+        Tenant.DisplayName = tenant.DisplayName;
+        Tenant.ConnectionString = tenant.ConnectionString;
         StateHasChanged();
     }
 
