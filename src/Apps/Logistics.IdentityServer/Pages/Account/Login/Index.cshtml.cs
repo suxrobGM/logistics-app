@@ -57,20 +57,27 @@ namespace Logistics.IdentityServer.Pages.Login
 
         public async Task<IActionResult> OnPost()
         {
+            Input.ReturnUrl ??= Url.Content("/");
+            
             // check if we are in the context of an authorization request
             var context = await _interaction.GetAuthorizationContextAsync(Input.ReturnUrl);
 
             // the user clicked the "cancel" button
-            if (Input.Button != "login" && context != null)
+            if (Input.Button != "login")
             {
                 // if the user cancels, send a result back into IdentityServer as if they 
                 // denied the consent (even if this client does not require consent).
                 // this will send back an access denied OIDC error response to the client.
                 await _interaction.DenyAuthorizationAsync(context, AuthorizationError.AccessDenied);
-                return context.IsNativeClient() ? this.LoadingPage(Input.ReturnUrl) : Redirect(Input.ReturnUrl);
+
+                if (context != null)
+                {
+                    return context.IsNativeClient() ? this.LoadingPage(Input.ReturnUrl) : Redirect(Input.ReturnUrl);
+                }
+                return Redirect(Input.ReturnUrl);
             }
 
-            if (ModelState.IsValid && context != null)
+            if (ModelState.IsValid)
             {
                 var result = await _signInManager.PasswordSignInAsync(Input.Username, Input.Password, Input.RememberLogin, lockoutOnFailure: true);
                 if (result.Succeeded)
@@ -78,7 +85,11 @@ namespace Logistics.IdentityServer.Pages.Login
                     var user = await _userManager.FindByNameAsync(Input.Username);
                     await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
 
-                    return context.IsNativeClient() ? this.LoadingPage(Input.ReturnUrl) : Redirect(Input.ReturnUrl);
+                    if (context != null)
+                    {
+                        return context.IsNativeClient() ? this.LoadingPage(Input.ReturnUrl) : Redirect(Input.ReturnUrl);
+                    }
+                    return Redirect(Input.ReturnUrl);
                 }
 
                 await _events.RaiseAsync(new UserLoginFailureEvent(Input.Username, "invalid credentials", clientId: context?.Client.ClientId));

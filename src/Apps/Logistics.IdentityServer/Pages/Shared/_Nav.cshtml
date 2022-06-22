@@ -12,20 +12,22 @@
         <div class="container">
             <a href="~/" class="navbar-brand">
                 <img src="~/duende-logo.svg" class="icon-banner" alt="logo">
-                Jfleets ID
+                JFleets ID
             </a>
 
             @if (!string.IsNullOrWhiteSpace(name))
             {
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                             @name <b class="caret"></b>
                         </a>
 
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" asp-page="/Account/Logout/Index">Logout</a>
-                        </div>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" asp-page="/Account/Logout/Index">Logout</a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             }
