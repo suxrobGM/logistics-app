@@ -49,7 +49,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Share
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.IdentityServer", "src\Apps\Logistics.IdentityServer\Logistics.IdentityServer.csproj", "{CCDB0C07-4270-4253-B91A-9EB9FCDC8A05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.DbMigrator", "src\Core\Logistics.DbMigrator\Logistics.DbMigrator.csproj", "{F40A53FD-29ED-4D8A-A2CE-E7D08FFFA54F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.DbMigrator", "src\Core\Logistics.DbMigrator\Logistics.DbMigrator.csproj", "{F40A53FD-29ED-4D8A-A2CE-E7D08FFFA54F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
