@@ -1,6 +1,4 @@
-﻿using Logistics.WebApi.Client.Exceptions;
-
-namespace Logistics.OfficeApp.ViewModels.Pages.Truck;
+﻿namespace Logistics.OfficeApp.ViewModels.Pages.Truck;
 
 public class EditTruckViewModel : PageViewModelBase
 {
@@ -13,9 +11,6 @@ public class EditTruckViewModel : PageViewModelBase
 
     [Parameter]
     public string? Id { get; set; }
-
-    [CascadingParameter]
-    public Toast? Toast { get; set; }
 
 
     #region Binding properties
@@ -30,23 +25,28 @@ public class EditTruckViewModel : PageViewModelBase
     }
 
     public bool EditMode => !string.IsNullOrEmpty(Id);
-    public string Error { get; set; } = string.Empty;
 
     #endregion
 
 
     public override async Task OnInitializedAsync()
     {
-        Error = string.Empty;
-
-        if (EditMode)
+        await base.OnInitializedAsync();
+        
+        try
         {
-            IsBusy = true;
-            var truck = await FetchTruckAsync(Id!);
-
-            if (truck != null)
-                Truck = truck;
-
+            if (EditMode)
+            {
+                IsBusy = true;
+                Truck = await apiClient.GetTruckAsync(Id!);
+            }
+        }
+        catch (ApiException e)
+        {
+            Error = e.Message;
+        }
+        finally
+        {
             IsBusy = false;
         }
     }
@@ -56,10 +56,17 @@ public class EditTruckViewModel : PageViewModelBase
         if (!firstRender)
             return;
 
-        var pagedResult = await FetchDriversAsync();
-        if (pagedResult.Items != null)
+        try
         {
-            Drivers = pagedResult.Items;
+            var pagedResult = await apiClient.GetEmployeesAsync();
+            if (pagedResult.Items != null)
+            {
+                Drivers = pagedResult.Items;
+            }
+        }
+        catch (ApiException e)
+        {
+            Error = e.Message;
         }
     }
 
@@ -81,12 +88,13 @@ public class EditTruckViewModel : PageViewModelBase
                 Toast?.Show("A new truck has been created successfully.", "Notification");
                 ResetData();
             }
-
-            IsBusy = false;
         }
         catch (ApiException ex)
         {
             Error = ex.Message;
+        }
+        finally
+        {
             IsBusy = false;
         }
     }
@@ -111,21 +119,5 @@ public class EditTruckViewModel : PageViewModelBase
         }
 
         return dataListItems;
-    }
-
-    private Task<TruckDto> FetchTruckAsync(string id)
-    {
-        return Task.Run(async () =>
-        {
-            return await apiClient.GetTruckAsync(id);
-        });
-    }
-
-    private Task<PagedDataResult<EmployeeDto>> FetchDriversAsync()
-    {
-        return Task.Run(async () =>
-        {
-            return await apiClient.GetEmployeesAsync();
-        });
     }
 }

@@ -4,11 +4,18 @@ public class PageViewModelBase : ViewModelBase
 {
     protected readonly IApiClient apiClient;
 
-    public PageViewModelBase(IApiClient apiClient)
+    protected PageViewModelBase(IApiClient apiClient)
     {
         this.apiClient = apiClient;
-        _busyText = "Loading Data";
+        _busyText = string.Empty;
+        _error = string.Empty;
     }
+    
+    [CascadingParameter]
+    public Toast? Toast { get; set; }
+
+    
+    #region Bindable properties
 
     private bool _isBusy;
     public bool IsBusy
@@ -22,5 +29,26 @@ public class PageViewModelBase : ViewModelBase
     {
         get => _busyText;
         set => SetProperty(ref _busyText, value );
+    }
+
+    private string _error;
+    public string Error
+    {
+        get => _error;
+        set => SetProperty(ref _error, value);
+    }
+
+    #endregion
+    
+
+    public override void OnInitialized()
+    {
+        Error = string.Empty;
+    }
+
+    public override Task OnInitializedAsync()
+    {
+        OnInitialized();
+        return Task.CompletedTask;
     }
 }

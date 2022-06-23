@@ -1,6 +1,6 @@
 ﻿@page "/edit-cargo/{id?}"
 @attribute [Authorize(Roles = "admin,owner,manager,dispatcher")]
-@inherits ViewBase<EditCargoViewModel>
+@inherits ViewComponentBase<EditCargoViewModel>
 
 @{
     var headText = Model.EditMode ? "Edit" : "Add a new";
@@ -23,7 +23,7 @@
                          Size="2">
                 </Spinner>
 
-                <EditForm Model="cargo" OnValidSubmit="() => Model.UpdateAsync()">
+                <EditForm Model="Model.Cargo" OnValidSubmit="() => Model.UpdateAsync()">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
 
@@ -97,17 +97,6 @@
 </div>
 
 @code {
-    private CargoDto cargo = new();
-
     [Parameter]
     public string? Id { get; set; }
-
-    [CascadingParameter]
-    public Toast? Toast { get; set; }
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        Model.Cargo = cargo;
-    }
 }

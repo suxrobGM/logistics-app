@@ -27,24 +27,28 @@ public class ListTruckViewModel : PageViewModelBase
 
     #endregion
 
-
+    
     public override async Task OnInitializedAsync()
     {
-        IsBusy = true;
-        var pagedList = await FetchTrucksAsync();
-        if (pagedList.Items != null)
+        await base.OnInitializedAsync();
+        
+        try
         {
-            Trucks = pagedList.Items;
-            TotalRecords = pagedList.TotalItems;
+            IsBusy = true;
+            var pagedList = await apiClient.GetTrucksAsync(page: 1, includeCargoIds: true);
+            if (pagedList.Items != null)
+            {
+                Trucks = pagedList.Items;
+                TotalRecords = pagedList.TotalItems;
+            }
         }
-        IsBusy = false;
-    }
-
-    private Task<PagedDataResult<TruckDto>> FetchTrucksAsync(int page = 1)
-    {
-        return Task.Run(async () =>
+        catch (ApiException e)
         {
-            return await apiClient.GetTrucksAsync(page: page, includeCargoIds: true);
-        });
+            Error = e.Message;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 }

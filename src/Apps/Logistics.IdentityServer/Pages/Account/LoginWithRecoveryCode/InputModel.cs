@@ -2,14 +2,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
-namespace Logistics.IdentityServer.Pages.Account.LoginWithRecoveryCode
+namespace Logistics.IdentityServer.Pages.Account.LoginWithRecoveryCode;
+
+public class InputModel
 {
-    public class InputModel
-{
-        [BindProperty]
-        [Required]
-        [DataType(DataType.Text)]
-        [Display(Name = "Recovery Code")]
-        public string RecoveryCode { get; set; }
-    }
+    [BindProperty]
+    [Required]
+    [DataType(DataType.Text)]
+    [Display(Name = "Recovery Code")]
+    public string RecoveryCode { get; set; }
 }

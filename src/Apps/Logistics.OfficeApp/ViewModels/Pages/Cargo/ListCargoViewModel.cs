@@ -30,23 +30,29 @@ public class ListCargoViewModel : PageViewModelBase
 
     public override async Task OnInitializedAsync()
     {
-        IsBusy = true;
-        var pagedList = await FetchCargoes();
-
-        if (pagedList.Items != null)
+        await base.OnInitializedAsync();
+        
+        try
         {
-            Cargoes = pagedList.Items;
-            TotalRecords = pagedList.TotalItems;
+            IsBusy = true;
+            var pagedList = await apiClient.GetCargoesAsync(page: 1);
+
+            if (pagedList.Items != null)
+            {
+                Cargoes = pagedList.Items;
+                TotalRecords = pagedList.TotalItems;
+            }
+
+            IsBusy = false;
         }
-
-        IsBusy = false;
-    }
-
-    private Task<PagedDataResult<CargoDto>> FetchCargoes(int page = 1)
-    {
-        return Task.Run(async () =>
+        catch (ApiException e)
         {
-            return await apiClient.GetCargoesAsync(page: page);
-        });
+            Console.WriteLine(e);
+            throw;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 }

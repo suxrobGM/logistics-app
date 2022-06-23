@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace Logistics.IdentityServer.Pages.Register;
+namespace Logistics.IdentityServer.Pages.Account.Register;
 
 [AllowAnonymous]
 public class Index : PageModel
@@ -33,7 +33,7 @@ public class Index : PageModel
         _logger = logger;
         CaptchaSiteKey = recaptchaOptions.SiteKey;
     }
-    
+
     [BindProperty]
     public InputModel Input { get; set; }
     public string ReturnUrl { get; set; }
@@ -45,53 +45,53 @@ public class Index : PageModel
         ReturnUrl = returnUrl;
         ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
     }
-    
+
     public async Task<IActionResult> OnPostAsync(string returnUrl = null)
-        {
-            returnUrl ??= Url.Content("~/");
-            var captchaValue = HttpContext.Request.Form["g-recaptcha-response"].ToString();
-            var validCaptcha = await _captchaService.VerifyCaptchaAsync(captchaValue);
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+    {
+        returnUrl ??= Url.Content("~/");
+        var captchaValue = HttpContext.Request.Form["g-recaptcha-response"].ToString();
+        var validCaptcha = await _captchaService.VerifyCaptchaAsync(captchaValue);
+        ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            if (!validCaptcha)
-                ModelState.AddModelError("captcha", "Invalid captcha verification");
+        if (!validCaptcha)
+            ModelState.AddModelError("captcha", "Invalid captcha verification");
 
-            if (!ModelState.IsValid) 
-                return Page();
-
-            var user = new User
-            {
-                UserName = Input.UserName, 
-                Email = Input.Email,
-                FirstName = Input.FirstName,
-                LastName = Input.LastName
-            };
-                
-            var result = await _userManager.CreateAsync(user, Input.Password);
-            if (result.Succeeded)
-            {
-                _logger.LogInformation("User created a new account with password");
-
-                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                var callbackUrl = Url.Page("/Account/ConfirmEmail", null, new { userId = user.Id, code, returnUrl }, Request.Scheme);
-
-                await _emailSender.SendMailAsync(Input.Email, "Confirm your email",
-                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl!)}'>clicking here</a>.");
-
-                if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                {
-                    return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl });
-                }
-
-                await _signInManager.SignInAsync(user, false);
-                return LocalRedirect(returnUrl);
-            }
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-
+        if (!ModelState.IsValid)
             return Page();
+
+        var user = new User
+        {
+            UserName = Input.UserName,
+            Email = Input.Email,
+            FirstName = Input.FirstName,
+            LastName = Input.LastName
+        };
+
+        var result = await _userManager.CreateAsync(user, Input.Password);
+        if (result.Succeeded)
+        {
+            _logger.LogInformation("User created a new account with password");
+
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            var callbackUrl = Url.Page("/Account/ConfirmEmail", null, new { userId = user.Id, code, returnUrl }, Request.Scheme);
+
+            await _emailSender.SendMailAsync(Input.Email, "Confirm your email",
+                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl!)}'>clicking here</a>.");
+
+            if (_userManager.Options.SignIn.RequireConfirmedAccount)
+            {
+                return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl });
+            }
+
+            await _signInManager.SignInAsync(user, false);
+            return LocalRedirect(returnUrl);
         }
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError(string.Empty, error.Description);
+        }
+
+        return Page();
+    }
 }

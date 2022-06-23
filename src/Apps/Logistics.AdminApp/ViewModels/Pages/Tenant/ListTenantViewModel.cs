@@ -1,4 +1,6 @@
-﻿namespace Logistics.AdminApp.ViewModels.Pages.Tenant;
+﻿using Logistics.WebApi.Client.Exceptions;
+
+namespace Logistics.AdminApp.ViewModels.Pages.Tenant;
 
 public class ListTenantViewModel : PageViewModelBase
 {
@@ -23,18 +25,30 @@ public class ListTenantViewModel : PageViewModelBase
     public override async Task OnInitializedAsync()
     {
         IsBusy = true;
-        await LoadPage(new() { Page = 1 });
+        await base.OnInitializedAsync();
+        await LoadPage(new PageEventArgs { Page = 1 });
         IsBusy = false;
     }
 
     public async Task SearchAsync()
     {
-        await LoadPage(new() { Page = 1 }, SearchInput);
+        try
+        {
+            await LoadPage(new PageEventArgs { Page = 1 }, SearchInput);
+        }
+        catch (ApiException e)
+        {
+            Error = e.Message;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     public async Task LoadPage(PageEventArgs e, string searchInput = "")
     {
-        var pagedList = await FetchTenants(searchInput, e.Page);
+        var pagedList = await apiClient.GetTenantsAsync(searchInput, e.Page);
 
         if (pagedList.Items != null)
         {
@@ -43,13 +57,5 @@ public class ListTenantViewModel : PageViewModelBase
             TotalRecords = pagedList.TotalItems;
             Tenants = TenantsList.GetPage(e.Page);
         }
-    }
-
-    private Task<PagedDataResult<TenantDto>> FetchTenants(string searchInput = "", int page = 1)
-    {
-        return Task.Run(async () =>
-        {
-            return await apiClient.GetTenantsAsync(searchInput, page);
-        });
     }
 }

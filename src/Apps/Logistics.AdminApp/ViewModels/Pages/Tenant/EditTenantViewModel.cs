@@ -12,12 +12,8 @@ public class EditTenantViewModel : PageViewModelBase
     [Parameter]
     public string? Id { get; set; }
 
-    [CascadingParameter]
-    public Toast? Toast { get; set; }
-
     public TenantDto Tenant { get; set; }
     public bool EditMode => !string.IsNullOrEmpty(Id);
-    public string Error { get; set; } = string.Empty;
 
     public override async Task OnInitializedAsync()
     {
@@ -26,7 +22,7 @@ public class EditTenantViewModel : PageViewModelBase
         if (EditMode)
         {
             IsBusy = true;
-            var tenant = await FetchTenantsAsync(Id!);
+            var tenant = await apiClient.GetTenantAsync(Id!);
 
             Tenant = tenant;
             IsBusy = false;
@@ -52,12 +48,12 @@ public class EditTenantViewModel : PageViewModelBase
         {
             if (EditMode)
             {
-                await apiClient.UpdateTenantAsync(Tenant!);
+                await apiClient.UpdateTenantAsync(Tenant);
                 Toast?.Show("Tenant has been saved successfully.", "Notification");
             }
             else
             {
-                await apiClient.CreateTenantAsync(Tenant!);
+                await apiClient.CreateTenantAsync(Tenant);
                 Toast?.Show("A new tenant has been created successfully.", "Notification");
                 ResetData();
             }
@@ -89,26 +85,5 @@ public class EditTenantViewModel : PageViewModelBase
         Tenant.DisplayName = tenant.DisplayName;
         Tenant.ConnectionString = tenant.ConnectionString;
         StateHasChanged();
-    }
-
-    public async Task<IEnumerable<DataListItem>> SearchTenant(string value)
-    {
-        var pagedList = await apiClient.GetTenantsAsync(value);
-        var dataListItems = new List<DataListItem>();
-
-        if (pagedList.Items != null)
-        {
-            foreach (var item in pagedList.Items)
-            {
-                dataListItems.Add(new DataListItem(item.Id!, item.Name!));
-            }
-        }
-
-        return dataListItems;
-    }
-
-    private Task<TenantDto> FetchTenantsAsync(string id)
-    {
-        return Task.Run(async () => await apiClient.GetTenantAsync(id));
     }
 }

@@ -27,14 +27,26 @@ public class ListUserViewModel : PageViewModelBase
 
     public override async Task OnInitializedAsync()
     {
-        IsBusy = true;
-        await LoadPage(new PageEventArgs { Page = 1 });
-        IsBusy = false;
+        await base.OnInitializedAsync();
+        
+        try
+        {
+            IsBusy = true;
+            await LoadPage(new PageEventArgs { Page = 1 });
+        }
+        catch (ApiException e)
+        {
+            Error = e.Message;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     public async Task LoadPage(PageEventArgs e)
     {
-        var pagedList = await FetchUsersAsync(e.Page);
+        var pagedList = await apiClient.GetEmployeesAsync(page: e.Page, pageSize: 20);
 
         if (pagedList.Items != null)
         {
@@ -43,10 +55,5 @@ public class ListUserViewModel : PageViewModelBase
             TotalRecords = pagedList.TotalItems;
             Users = UsersList.GetPage(e.Page);
         }
-    }
-
-    private Task<PagedDataResult<EmployeeDto>> FetchUsersAsync(int page = 1)
-    {
-        return Task.Run(async () => await apiClient.GetEmployeesAsync(page: page, pageSize: 20));
     }
 }
