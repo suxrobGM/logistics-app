@@ -18,7 +18,7 @@ public class CargoController : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(DataResult<CargoDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    //[RequiredScope("admin.read")]
+    [Authorize(Policy = Policies.Cargo.CanRead)]
     public async Task<IActionResult> GetById(string id)
     {
         var result = await _mediator.Send(new GetCargoByIdQuery
@@ -35,7 +35,7 @@ public class CargoController : ControllerBase
     [HttpGet("list")]
     [ProducesResponseType(typeof(PagedDataResult<CargoDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    //[RequiredScope("admin.read")]
+    [Authorize(Policy = Policies.Cargo.CanRead)]
     public async Task<IActionResult> GetList([FromQuery] GetCargoesQuery request)
     {
         var result = await _mediator.Send(request);
@@ -49,7 +49,7 @@ public class CargoController : ControllerBase
     [HttpPost("create")]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    //[RequiredScope("admin.write")]
+    [Authorize(Policy = Policies.Cargo.CanWrite)]
     public async Task<IActionResult> Create([FromBody] CargoDto request)
     {
         var result = await _mediator.Send(_mapper.Map<CreateCargoCommand>(request));
@@ -63,7 +63,7 @@ public class CargoController : ControllerBase
     [HttpPut("update/{id}")]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    //[RequiredScope("admin.write")]
+    [Authorize(Policy = Policies.Cargo.CanWrite)]
     public async Task<IActionResult> Update(string id, [FromBody] CargoDto request)
     {
         var updateRequest = _mapper.Map<UpdateCargoCommand>(request);
@@ -79,7 +79,7 @@ public class CargoController : ControllerBase
     [HttpDelete("{id}")]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    //[RequiredScope("admin.write")]
+    [Authorize(Policy = Policies.Cargo.CanWrite)]
     public async Task<IActionResult> Delete(string id)
     {
         var result = await _mediator.Send(new DeleteCargoCommand

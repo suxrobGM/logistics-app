@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc.Authorization;
 using Logistics.Application;
 using Logistics.EntityFramework;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Logging;
+using Logistics.WebApi.Authorization.Handlers;
+using Logistics.WebApi.Authorization.Requirements;
 
 namespace Logistics.WebApi;
 
@@ -10,7 +10,6 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
-        IdentityModelEventSource.ShowPII = true;
         AddSecretsJson(builder.Configuration);
         builder.Services.AddMainApplicationLayer();
         builder.Services.AddTenantApplicationLayer();
@@ -33,6 +32,52 @@ internal static class HostingExtensions
 
             configure.Filters.Add(new AuthorizeFilter(policy));
         });
+
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy(Policies.Cargo.CanRead, policy =>
+            {
+                policy.Requirements.Add(new CargoCanReadRequirement());
+            });
+            options.AddPolicy(Policies.Cargo.CanWrite, policy =>
+            {
+                policy.Requirements.Add(new CargoCanWriteRequirement());
+            });
+            options.AddPolicy(Policies.Employee.CanRead, policy =>
+            {
+                policy.Requirements.Add(new EmployeeCanReadRequirement());
+            });
+            options.AddPolicy(Policies.Employee.CanWrite, policy =>
+            {
+                policy.Requirements.Add(new EmployeeCanWriteRequirement());
+            });
+            options.AddPolicy(Policies.Truck.CanRead, policy =>
+            {
+                policy.Requirements.Add(new TruckCanReadRequirement());
+            });
+            options.AddPolicy(Policies.Truck.CanWrite, policy =>
+            {
+                policy.Requirements.Add(new TruckCanWriteRequirement());
+            });
+            options.AddPolicy(Policies.Tenant.CanRead, policy =>
+            {
+                policy.Requirements.Add(new TenantCanReadRequirement());
+            });
+            options.AddPolicy(Policies.Tenant.CanWrite, policy =>
+            {
+                policy.Requirements.Add(new TenantCanWriteRequirement());
+            });
+        });
+
+        builder.Services.AddSingleton<IAuthorizationHandler, CargoCanReadHandler>();
+        builder.Services.AddSingleton<IAuthorizationHandler, CargoCanWriteHandler>();
+        builder.Services.AddSingleton<IAuthorizationHandler, EmployeeCanReadHandler>();
+        builder.Services.AddSingleton<IAuthorizationHandler, EmployeeCanWriteHandler>();
+        builder.Services.AddSingleton<IAuthorizationHandler, TruckCanReadHandler>();
+        builder.Services.AddSingleton<IAuthorizationHandler, TruckCanWriteHandler>();
+        builder.Services.AddSingleton<IAuthorizationHandler, TenantCanReadHandler>();
+        builder.Services.AddSingleton<IAuthorizationHandler, TenantCanWriteHandler>();
+        
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         return builder.Build();

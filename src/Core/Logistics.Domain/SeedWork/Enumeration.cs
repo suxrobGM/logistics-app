@@ -31,6 +31,8 @@ public abstract class Enumeration : IComparable
 
     public int CompareTo(object? other) => Id.CompareTo((other as Enumeration)?.Id);
 
+    public static implicit operator string(Enumeration enumeration) => enumeration.Name;
+
     public static IEnumerable<T> GetAll<T>() where T : Enumeration
     {
         return typeof(T)

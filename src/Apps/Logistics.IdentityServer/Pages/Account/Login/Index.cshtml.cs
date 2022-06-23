@@ -78,36 +78,40 @@ public class Index : PageModel
             return Redirect(Input.ReturnUrl);
         }
 
-        if (ModelState.IsValid)
+        User user = null;
+        if (Input.Username.IndexOf('@') > -1)
         {
-            User user = new();
-            if (Input.Username.IndexOf('@') > -1)
+            // validate email format
+            const string emailPattern = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}" +
+                                      @"\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\" +
+                                      @".)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
+            var re = new Regex(emailPattern);
+            if (!re.IsMatch(Input.Username))
             {
-                //Validate email format
-                const string emailRegex = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}" +
-                                          @"\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\" +
-                                          @".)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
-                var re = new Regex(emailRegex);
-                if (!re.IsMatch(Input.Username))
-                {
-                    await _events.RaiseAsync(new UserLoginFailureEvent(Input.Username, "invalid credentials", clientId: context?.Client.ClientId));
-                    ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
-                }
-                user = await _userManager.FindByEmailAsync(Input.Username);
+                ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
             }
             else
             {
-                //validate Username format
-                const string UsernameRegex = @"^[a-zA-Z0-9]*$";
-                var re = new Regex(UsernameRegex);
-                if (!re.IsMatch(Input.Username))
-                {
-                    await _events.RaiseAsync(new UserLoginFailureEvent(Input.Username, "invalid credentials", clientId: context?.Client.ClientId));
-                    ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
-                }
+                user = await _userManager.FindByEmailAsync(Input.Username);
+            }
+        }
+        else
+        {
+            // validate Username format
+            const string usernamePattern = @"^[a-zA-Z0-9]*$";
+            var re = new Regex(usernamePattern);
+            if (!re.IsMatch(Input.Username))
+            {
+                ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
+            }
+            else
+            {
                 user = await _userManager.FindByNameAsync(Input.Username);
             }
-
+        }
+        
+        if (ModelState.IsValid && user != null)
+        {
             var result = await _signInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberLogin, lockoutOnFailure: true);
             if (result.Succeeded)
             {

@@ -18,7 +18,7 @@ public class EmployeeController : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(DataResult<EmployeeDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    //[RequiredScope("admin.read")]
+    [Authorize(Policy = Policies.Employee.CanRead)]
     public async Task<IActionResult> GetById(string id)
     {
         var result = await _mediator.Send(new GetEmployeeByIdQuery
@@ -35,8 +35,8 @@ public class EmployeeController : ControllerBase
     [HttpGet("role/{userId}")]
     [ProducesResponseType(typeof(DataResult<EmployeeDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    //[RequiredScope("admin.read")]
-    public async Task<IActionResult> GetUserRole(string userId)
+    [Authorize(Policy = Policies.Employee.CanRead)]
+    public async Task<IActionResult> GetEmployeeRole(string userId)
     {
         var result = await _mediator.Send(new GetEmployeeRoleQuery
         {
@@ -52,7 +52,7 @@ public class EmployeeController : ControllerBase
     [HttpGet("list")]
     [ProducesResponseType(typeof(PagedDataResult<EmployeeDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    //[RequiredScope("admin.read")]
+    [Authorize(Policy = Policies.Employee.CanRead)]
     public async Task<IActionResult> GetList([FromQuery] GetEmployeesQuery request)
     {
         var result = await _mediator.Send(request);
@@ -66,7 +66,7 @@ public class EmployeeController : ControllerBase
     [HttpPost("create")]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    //[RequiredScope("admin.write")]
+    [Authorize(Policy = Policies.Employee.CanWrite)]
     public async Task<IActionResult> Create([FromBody] EmployeeDto user)
     {
         var result = await _mediator.Send(_mapper.Map<CreateEmployeeCommand>(user));
@@ -80,7 +80,7 @@ public class EmployeeController : ControllerBase
     [HttpPut("update/{id}")]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    //[RequiredScope("admin.write")]
+    [Authorize(Policy = Policies.Employee.CanWrite)]
     public async Task<IActionResult> Update(string id, [FromBody] EmployeeDto request)
     {
         var updateRequest = _mapper.Map<UpdateEmployeeCommand>(request);

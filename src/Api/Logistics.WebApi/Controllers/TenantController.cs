@@ -18,7 +18,7 @@ public class TenantController : ControllerBase
     [HttpGet("{identifier}")]
     [ProducesResponseType(typeof(DataResult<TenantDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    //[RequiredScope("admin.read")]
+    [Authorize(Policy = Policies.Tenant.CanRead)]
     public async Task<IActionResult> GetById(string? identifier)
     {
         var result = await _mediator.Send(new GetTenantQuery
@@ -36,7 +36,7 @@ public class TenantController : ControllerBase
     [HttpGet("displayName/{identifier}")]
     [ProducesResponseType(typeof(DataResult<TenantDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    //[RequiredScope("admin.read")]
+    [Authorize(Policy = Policies.Tenant.CanRead)]
     public async Task<IActionResult> GetDisplayName(string? identifier)
     {
         var result = await _mediator.Send(new GetTenantDisplayNameQuery
@@ -54,7 +54,7 @@ public class TenantController : ControllerBase
     [HttpGet("list")]
     [ProducesResponseType(typeof(PagedDataResult<CargoDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    //[RequiredScope("admin.read")]
+    [Authorize(Policy = Policies.Tenant.CanRead)]
     public async Task<IActionResult> GetList([FromQuery] GetTenantsQuery request)
     {
         var result = await _mediator.Send(request);
@@ -68,7 +68,7 @@ public class TenantController : ControllerBase
     [HttpPost("create")]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    //[RequiredScope("admin.write")]
+    [Authorize(Policy = Policies.Tenant.CanWrite)]
     public async Task<IActionResult> Create([FromBody] TenantDto request)
     {
         var result = await _mediator.Send(_mapper.Map<CreateTenantCommand>(request));
@@ -82,7 +82,7 @@ public class TenantController : ControllerBase
     [HttpPut("update/{id}")]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    //[RequiredScope("admin.write")]
+    [Authorize(Policy = Policies.Tenant.CanWrite)]
     public async Task<IActionResult> Update(string id, [FromBody] TenantDto request)
     {
         var updateRequest = _mapper.Map<UpdateTenantCommand>(request);
@@ -98,7 +98,7 @@ public class TenantController : ControllerBase
     [HttpDelete("{id}")]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    //[RequiredScope("admin.write")]
+    [Authorize(Policy = Policies.Tenant.CanWrite)]
     public async Task<IActionResult> Delete(string id)
     {
         var result = await _mediator.Send(new DeleteTenantCommand
