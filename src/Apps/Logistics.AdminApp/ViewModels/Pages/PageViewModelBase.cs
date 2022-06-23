@@ -1,6 +1,6 @@
 ﻿namespace Logistics.AdminApp.ViewModels.Pages;
 
-public class PageViewModelBase : ViewModelBase
+public abstract class PageViewModelBase : ViewModelBase
 {
     protected readonly IApiClient apiClient;
 
