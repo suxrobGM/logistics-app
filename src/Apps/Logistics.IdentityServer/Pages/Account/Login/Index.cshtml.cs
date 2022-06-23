@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Text.RegularExpressions;
 
 namespace Logistics.IdentityServer.Pages.Account.Login;
 
@@ -79,10 +80,37 @@ public class Index : PageModel
 
         if (ModelState.IsValid)
         {
-            var result = await _signInManager.PasswordSignInAsync(Input.Username, Input.Password, Input.RememberLogin, lockoutOnFailure: true);
+            User user = new();
+            if (Input.Username.IndexOf('@') > -1)
+            {
+                //Validate email format
+                const string emailRegex = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}" +
+                                          @"\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\" +
+                                          @".)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
+                var re = new Regex(emailRegex);
+                if (!re.IsMatch(Input.Username))
+                {
+                    await _events.RaiseAsync(new UserLoginFailureEvent(Input.Username, "invalid credentials", clientId: context?.Client.ClientId));
+                    ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
+                }
+                user = await _userManager.FindByEmailAsync(Input.Username);
+            }
+            else
+            {
+                //validate Username format
+                const string UsernameRegex = @"^[a-zA-Z0-9]*$";
+                var re = new Regex(UsernameRegex);
+                if (!re.IsMatch(Input.Username))
+                {
+                    await _events.RaiseAsync(new UserLoginFailureEvent(Input.Username, "invalid credentials", clientId: context?.Client.ClientId));
+                    ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
+                }
+                user = await _userManager.FindByNameAsync(Input.Username);
+            }
+
+            var result = await _signInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberLogin, lockoutOnFailure: true);
             if (result.Succeeded)
             {
-                var user = await _userManager.FindByNameAsync(Input.Username);
                 await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
 
                 if (context != null)
