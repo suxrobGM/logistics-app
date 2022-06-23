@@ -1,4 +1,5 @@
-﻿@inject SignInManager<User> SignInManager
+﻿@using Logistics.IdentityServer.Pages.Account.Manage
+@inject SignInManager<User> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }
