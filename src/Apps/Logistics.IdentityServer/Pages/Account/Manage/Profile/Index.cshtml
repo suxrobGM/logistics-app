@@ -1,6 +1,6 @@
 ﻿@page
 @using Logistics.IdentityServer.Pages.Account.Manage
-@model Logistics.IdentityServer.Pages.Account.Manage.Index.IndexModel
+@model Logistics.IdentityServer.Pages.Account.Manage.Profile.ProfileModel
 @{
     ViewData["Title"] = "Profile";
     ViewData["ActivePage"] = ManageNavPages.Index;
@@ -15,6 +15,16 @@
             <div class="mb-3">
                 <label asp-for="Username"></label>
                 <input asp-for="Username" class="form-control" disabled />
+            </div>
+             <div class="mb-3">
+                <label asp-for="Input.FirstName"></label>
+                <input asp-for="Input.FirstName" class="form-control" />
+                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+            </div>
+             <div class="mb-3">
+                <label asp-for="Input.LastName"></label>
+                <input asp-for="Input.LastName" class="form-control" />
+                <span asp-validation-for="Input.LastName" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label asp-for="Input.PhoneNumber"></label>
