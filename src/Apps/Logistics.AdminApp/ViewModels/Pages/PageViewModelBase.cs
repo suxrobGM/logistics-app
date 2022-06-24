@@ -1,18 +1,23 @@
-﻿namespace Logistics.AdminApp.ViewModels.Pages;
+﻿using Logistics.WebApi.Client.Exceptions;
+
+namespace Logistics.AdminApp.ViewModels.Pages;
 
 public abstract class PageViewModelBase : ViewModelBase
 {
-    protected readonly IApiClient apiClient;
+    private readonly IApiClient _apiClient;
 
     protected PageViewModelBase(IApiClient apiClient)
     {
-        this.apiClient = apiClient;
+        _apiClient = apiClient;
         _busyText = string.Empty;
         _error = string.Empty;
     }
     
     [CascadingParameter]
     public Toast? Toast { get; set; }
+    
+    [CascadingParameter]
+    public Alert? Alert { get; set; }
 
     
     #region Bindable properties
@@ -35,7 +40,14 @@ public abstract class PageViewModelBase : ViewModelBase
     public string Error
     {
         get => _error;
-        set => SetProperty(ref _error, value);
+        set
+        {
+            _error = value;
+            if (!string.IsNullOrEmpty(value))
+            {
+                Alert?.Show(value, Alert.AlertType.Error);
+            }
+        }
     }
 
     #endregion
@@ -51,4 +63,35 @@ public abstract class PageViewModelBase : ViewModelBase
         OnInitialized();
         return Task.CompletedTask;
     }
+    
+    protected async Task<Result<T>> CallApi<T>(Func<IApiClient, Task<T>> action, bool showBusyIndicator = true) where T : class
+    {
+        try
+        {
+            IsBusy = showBusyIndicator;
+            var actionResult = await action(_apiClient);
+            return new Result<T>(actionResult, true);
+        }
+        catch (ApiException e)
+        {
+            Error = e.Message;
+            return new Result<T>(null, false);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+    
+    protected async Task<Result> CallApi(Func<IApiClient, Task> action, bool showBusyIndicator = true)
+    {
+        return await CallApi(async i =>
+        {
+            await action(i);
+            return string.Empty;
+        }, showBusyIndicator);
+    }
 }
+
+public record Result(bool Success);
+public record Result<T>(T? Value, bool Success) : Result(Success) where T : class;

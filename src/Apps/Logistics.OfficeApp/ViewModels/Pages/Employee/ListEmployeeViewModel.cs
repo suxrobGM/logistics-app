@@ -28,27 +28,19 @@ public class ListUserViewModel : PageViewModelBase
     public override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        
-        try
-        {
-            IsBusy = true;
-            await LoadPage(new PageEventArgs { Page = 1 });
-        }
-        catch (ApiException e)
-        {
-            Error = e.Message;
-        }
-        finally
-        {
-            IsBusy = false;
-        }
+        await LoadPage(new PageEventArgs { Page = 1 });
     }
 
     public async Task LoadPage(PageEventArgs e)
     {
-        var pagedList = await apiClient.GetEmployeesAsync(page: e.Page, pageSize: 20);
+        var result = await CallApi(i => i.GetEmployeesAsync(page: e.Page, pageSize: 20));
 
-        if (pagedList.Items != null)
+        if (!result.Success)
+            return;
+        
+        var pagedList = result.Value;
+
+        if (pagedList?.Items != null)
         {
             UsersList.AddRange(pagedList.Items);
             UsersList.TotalItems = pagedList.TotalItems;

@@ -33,21 +33,14 @@ public class EditTruckViewModel : PageViewModelBase
     {
         await base.OnInitializedAsync();
         
-        try
+        if (EditMode)
         {
-            if (EditMode)
-            {
-                IsBusy = true;
-                Truck = await apiClient.GetTruckAsync(Id!);
-            }
-        }
-        catch (ApiException e)
-        {
-            Error = e.Message;
-        }
-        finally
-        {
-            IsBusy = false;
+            var result = await CallApi(i => i.GetTruckAsync(Id!));
+
+            if (!result.Success)
+                return;
+            
+            Truck = result.Value!;
         }
     }
 
@@ -56,46 +49,40 @@ public class EditTruckViewModel : PageViewModelBase
         if (!firstRender)
             return;
 
-        try
+        var result = await CallApi(i => i.GetEmployeesAsync());
+
+        if (!result.Success)
+            return;
+
+        var pagedResult = result.Value;
+        if (pagedResult?.Items != null)
         {
-            var pagedResult = await apiClient.GetEmployeesAsync();
-            if (pagedResult.Items != null)
-            {
-                Drivers = pagedResult.Items;
-            }
-        }
-        catch (ApiException e)
-        {
-            Error = e.Message;
+            Drivers = pagedResult.Items;
         }
     }
 
     public async Task UpdateAsync()
     {
-        IsBusy = true;
         Error = string.Empty;
 
-        try
+        if (EditMode)
         {
-            if (EditMode)
-            {
-                await apiClient.UpdateTruckAsync(Truck!);
-                Toast?.Show("Truck has been saved successfully.", "Notification");
-            }
-            else
-            {
-                await apiClient.CreateTruckAsync(Truck!);
-                Toast?.Show("A new truck has been created successfully.", "Notification");
-                ResetData();
-            }
+            var result = await CallApi(i => i.UpdateTruckAsync(Truck));
+
+            if (!result.Success)
+                return;
+            
+            Toast?.Show("Truck has been saved successfully.", "Notification");
         }
-        catch (ApiException ex)
+        else
         {
-            Error = ex.Message;
-        }
-        finally
-        {
-            IsBusy = false;
+            var result = await CallApi(i => i.CreateTruckAsync(Truck));
+
+            if (!result.Success)
+                return;
+            
+            Toast?.Show("A new truck has been created successfully.", "Notification");
+            ResetData();
         }
     }
 
@@ -105,12 +92,13 @@ public class EditTruckViewModel : PageViewModelBase
         Truck.DriverId = null;
     }
 
-    public async Task<IEnumerable<DataListItem>> SearchUser(string value)
+    public async Task<IEnumerable<DataListItem>> SearchUser(string searchInput)
     {
-        var pagedList = await apiClient.GetEmployeesAsync(value);
+        var result = await CallApi(i => i.GetEmployeesAsync(searchInput));
+        var pagedList = result.Value;
         var dataListItems = new List<DataListItem>();
 
-        if (pagedList.Items != null)
+        if (pagedList?.Items != null)
         {
             foreach (var item in pagedList.Items)
             {

@@ -1,6 +1,4 @@
-﻿using Logistics.WebApi.Client.Exceptions;
-
-namespace Logistics.AdminApp.ViewModels.Pages.Tenant;
+﻿namespace Logistics.AdminApp.ViewModels.Pages.Tenant;
 
 public class ListTenantViewModel : PageViewModelBase
 {
@@ -24,33 +22,21 @@ public class ListTenantViewModel : PageViewModelBase
 
     public override async Task OnInitializedAsync()
     {
-        IsBusy = true;
         await base.OnInitializedAsync();
         await LoadPage(new PageEventArgs { Page = 1 });
-        IsBusy = false;
     }
 
     public async Task SearchAsync()
     {
-        try
-        {
-            await LoadPage(new PageEventArgs { Page = 1 }, SearchInput);
-        }
-        catch (ApiException e)
-        {
-            Error = e.Message;
-        }
-        finally
-        {
-            IsBusy = false;
-        }
+        await LoadPage(new PageEventArgs { Page = 1 }, SearchInput);
     }
 
     public async Task LoadPage(PageEventArgs e, string searchInput = "")
     {
-        var pagedList = await apiClient.GetTenantsAsync(searchInput, e.Page);
-
-        if (pagedList.Items != null)
+        var pagedListResult = await CallApi(i => i.GetTenantsAsync(searchInput, e.Page));
+        var pagedList = pagedListResult.Value;
+        
+        if (pagedListResult.Success && pagedList?.Items != null)
         {
             TenantsList.AddRange(pagedList.Items);
             TenantsList.TotalItems = pagedList.TotalItems;

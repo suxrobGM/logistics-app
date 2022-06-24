@@ -32,23 +32,16 @@ public class ListTruckViewModel : PageViewModelBase
     {
         await base.OnInitializedAsync();
         
-        try
+        var result = await CallApi(i => i.GetTrucksAsync(page: 1, includeCargoIds: true));
+
+        if (!result.Success)
+            return;
+
+        var pagedList = result.Value;
+        if (pagedList?.Items != null)
         {
-            IsBusy = true;
-            var pagedList = await apiClient.GetTrucksAsync(page: 1, includeCargoIds: true);
-            if (pagedList.Items != null)
-            {
-                Trucks = pagedList.Items;
-                TotalRecords = pagedList.TotalItems;
-            }
-        }
-        catch (ApiException e)
-        {
-            Error = e.Message;
-        }
-        finally
-        {
-            IsBusy = false;
+            Trucks = pagedList.Items;
+            TotalRecords = pagedList.TotalItems;
         }
     }
 }

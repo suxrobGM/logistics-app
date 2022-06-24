@@ -29,7 +29,7 @@ public partial class ModalDialog : ComponentBase
         VerticallyCenter
     }
 
-    private string GetAlign(Align align)
+    private static string GetAlign(Align align)
     {
         return align switch
         {

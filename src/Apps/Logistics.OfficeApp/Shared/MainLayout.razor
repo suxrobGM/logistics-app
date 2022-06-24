@@ -10,8 +10,11 @@
 
     <main>
         <article class="content px-4">
+            <Alert @ref="_alertRef" />
             <CascadingValue Value="_toastRef">
-                @Body
+                <CascadingValue Value="_alertRef">
+                    @Body
+                </CascadingValue>
             </CascadingValue>
         </article>
     </main>
@@ -19,4 +22,5 @@
 
 @code {
     private Toast? _toastRef;
+    private Alert? _alertRef;
 }

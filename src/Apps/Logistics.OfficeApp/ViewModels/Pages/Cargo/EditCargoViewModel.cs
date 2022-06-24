@@ -31,25 +31,15 @@ public class EditCargoViewModel : PageViewModelBase
     {
         await base.OnInitializedAsync();
 
-        try
+        if (EditMode)
         {
-            if (EditMode)
-            {
-                IsBusy = true;
-                var cargo = await apiClient.GetCargoAsync(Id!);
+            var result = await CallApi(i => i.GetCargoAsync(Id!));
 
-                Cargo = cargo;
-                IsBusy = false;
-            }
+            if (!result.Success)
+                return;
+                
+            Cargo = result.Value!;
         }
-        catch (ApiException e)
-        {
-            Error = e.Message;
-        }
-        finally
-        {
-            IsBusy = false;
-        } 
     }
 
     public override async Task OnAfterRenderAsync(bool firstRender)
@@ -65,29 +55,26 @@ public class EditCargoViewModel : PageViewModelBase
 
     public async Task UpdateAsync()
     {
-        IsBusy = true;
         Error = string.Empty;
-        try
+        
+        if (EditMode)
         {
-            if (EditMode)
-            {
-                await apiClient.UpdateCargoAsync(Cargo!);
-                Toast?.Show("Cargo has been saved successfully.", "Notification");
-            }
-            else
-            {
-                await apiClient.CreateCargoAsync(Cargo!);
-                Toast?.Show("A new cargo has been created successfully.", "Notification");
-                ResetData();
-            }
+            var result = await CallApi(i => i.UpdateCargoAsync(Cargo));
+
+            if (!result.Success)
+                return;
+                
+            Toast?.Show("Cargo has been saved successfully.", "Notification");
         }
-        catch (ApiException ex)
+        else
         {
-            Error = ex.Message;
-        }
-        finally
-        {
-            IsBusy = false;
+            var result = await CallApi(i => i.CreateCargoAsync(Cargo));
+
+            if (!result.Success)
+                return;
+                
+            Toast?.Show("A new cargo has been created successfully.", "Notification");
+            ResetData();
         }
     }
 
@@ -105,21 +92,27 @@ public class EditCargoViewModel : PageViewModelBase
         var authState = await _authStateProvider.GetAuthenticationStateAsync();
         var externalId = authState.User.GetId();
 
-        if (!string.IsNullOrEmpty(externalId))
-        {
-            var user = await apiClient.GetEmployeeAsync(externalId);
-            Cargo.AssignedDispatcherId = user.Id;
-            Cargo.AssignedDispatcherName = user.GetFullName();
-            StateHasChanged();
-        }
+        if (string.IsNullOrEmpty(externalId))
+            return;
+        
+        var result = await CallApi(i => i.GetEmployeeAsync(externalId));
+
+        if (!result.Success)
+            return;
+
+        var employee = result.Value!;
+        Cargo.AssignedDispatcherId = employee.Id;
+        Cargo.AssignedDispatcherName = employee.GetFullName();
+        StateHasChanged();
     }
 
-    public async Task<IEnumerable<DataListItem>> SearchTruck(string value)
+    public async Task<IEnumerable<DataListItem>> SearchTruck(string searchInput)
     {
-        var pagedList = await apiClient.GetTrucksAsync(value);
+        var result = await CallApi(i => i.GetTrucksAsync(searchInput));
+        var pagedList = result.Value;
         var dataListItems = new List<DataListItem>();
 
-        if (pagedList.Items != null)
+        if (pagedList?.Items != null)
         {
             foreach (var item in pagedList.Items)
             {

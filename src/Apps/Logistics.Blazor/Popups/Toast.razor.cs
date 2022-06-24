@@ -42,7 +42,7 @@ public partial class Toast : ComponentBase
         StateHasChanged();
     }
 
-    private string GetPosition(Position position)
+    private static string GetPosition(Position position)
     {
         return position switch
         {

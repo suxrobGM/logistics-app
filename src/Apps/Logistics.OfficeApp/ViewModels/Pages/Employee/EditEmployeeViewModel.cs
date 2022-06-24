@@ -11,8 +11,6 @@ public class EditUserViewModel : PageViewModelBase
     [Parameter]
     public string? Id { get; set; }
 
-    
-
 
     #region Binding properties
 
@@ -26,47 +24,29 @@ public class EditUserViewModel : PageViewModelBase
     {
         await base.OnInitializedAsync();
         
-        try
+        if (EditMode)
         {
-            if (EditMode)
-            {
-                IsBusy = true;
-                var user = await apiClient.GetEmployeeAsync(Id!);
+            var result = await CallApi(i => i.GetEmployeeAsync(Id!));
 
-                Employee = user;
-                IsBusy = false;
-            }
-        }
-        catch (ApiException e)
-        {
-            Error = e.Message;
-        }
-        finally
-        {
-            IsBusy = false;
+            if (!result.Success)
+                return;
+            
+            Employee = result.Value!;
         }
     }
 
     public async Task UpdateAsync()
     {
-        IsBusy = true;
         Error = string.Empty;
 
-        try
+        if (EditMode)
         {
-            if (EditMode)
-            {
-                await apiClient.UpdateEmployeeAsync(Employee);
-                Toast?.Show("User has been saved successfully.", "Notification");
-            }
-        }
-        catch (ApiException ex)
-        {
-            Error = ex.Message;
-        }
-        finally
-        {
-            IsBusy = false;
+            var result = await CallApi(i => i.UpdateEmployeeAsync(Employee));
+
+            if (!result.Success)
+                return;
+
+            Toast?.Show("User has been saved successfully.", "Notification");
         }
     }
 }

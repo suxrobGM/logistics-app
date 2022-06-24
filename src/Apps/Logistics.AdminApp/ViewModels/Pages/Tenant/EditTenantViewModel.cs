@@ -1,6 +1,4 @@
-﻿using Logistics.WebApi.Client.Exceptions;
-
-namespace Logistics.AdminApp.ViewModels.Pages.Tenant;
+﻿namespace Logistics.AdminApp.ViewModels.Pages.Tenant;
 
 public class EditTenantViewModel : PageViewModelBase
 {
@@ -17,15 +15,16 @@ public class EditTenantViewModel : PageViewModelBase
 
     public override async Task OnInitializedAsync()
     {
-        Error = string.Empty;
+        await base.OnInitializedAsync();
 
         if (EditMode)
         {
-            IsBusy = true;
-            var tenant = await apiClient.GetTenantAsync(Id!);
+            var result = await CallApi(i => i.GetTenantAsync(Id!));
 
-            Tenant = tenant;
-            IsBusy = false;
+            if (!result.Success)
+                return;
+
+            Tenant = result.Value!;
         }
     }
 
@@ -42,27 +41,26 @@ public class EditTenantViewModel : PageViewModelBase
 
     public async Task UpdateAsync()
     {
-        IsBusy = true;
         Error = string.Empty;
-        try
+        
+        if (EditMode)
         {
-            if (EditMode)
-            {
-                await apiClient.UpdateTenantAsync(Tenant);
-                Toast?.Show("Tenant has been saved successfully.", "Notification");
-            }
-            else
-            {
-                await apiClient.CreateTenantAsync(Tenant);
-                Toast?.Show("A new tenant has been created successfully.", "Notification");
-                ResetData();
-            }
-            IsBusy = false;
+            var result = await CallApi(i => i.UpdateTenantAsync(Tenant));
+
+            if (!result.Success)
+                return;
+            
+            Toast?.Show("Tenant has been saved successfully.", "Notification");
         }
-        catch (ApiException ex)
+        else
         {
-            Error = ex.Message;
-            IsBusy = false;
+            var result = await CallApi(i => i.CreateTenantAsync(Tenant));
+            
+            if (!result.Success)
+                return;
+            
+            Toast?.Show("A new tenant has been created successfully.", "Notification");
+            ResetData();
         }
     }
 
@@ -76,11 +74,14 @@ public class EditTenantViewModel : PageViewModelBase
     private async Task LoadCurrentTenantAsync()
     {
         if (string.IsNullOrEmpty(Id))
-        {
             return;
-        }
 
-        var tenant = await apiClient.GetTenantAsync(Id);
+        var result = await CallApi(i => i.GetTenantAsync(Id));
+
+        if (!result.Success)
+            return;
+        
+        var tenant = result.Value!;
         Tenant.Name = tenant.Name;
         Tenant.DisplayName = tenant.DisplayName;
         Tenant.ConnectionString = tenant.ConnectionString;

@@ -32,27 +32,16 @@ public class ListCargoViewModel : PageViewModelBase
     {
         await base.OnInitializedAsync();
         
-        try
-        {
-            IsBusy = true;
-            var pagedList = await apiClient.GetCargoesAsync(page: 1);
+        var result = await CallApi(i => i.GetCargoesAsync(page: 1));
 
-            if (pagedList.Items != null)
-            {
-                Cargoes = pagedList.Items;
-                TotalRecords = pagedList.TotalItems;
-            }
+        if (!result.Success)
+            return;
 
-            IsBusy = false;
-        }
-        catch (ApiException e)
+        var pagedList = result.Value;
+        if (pagedList?.Items != null)
         {
-            Console.WriteLine(e);
-            throw;
-        }
-        finally
-        {
-            IsBusy = false;
+            Cargoes = pagedList.Items;
+            TotalRecords = pagedList.TotalItems;
         }
     }
 }

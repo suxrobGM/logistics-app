@@ -3,6 +3,7 @@
 <PageTitle>Logistics Admin</PageTitle>
 <Toast @ref="_toastRef" ToastPosition="Toast.Position.BottomRight"></Toast>
 
+
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -10,8 +11,11 @@
 
     <main>
         <article class="content px-4">
+            <Alert @ref="_alertRef" />
             <CascadingValue Value="_toastRef">
-                @Body
+                <CascadingValue Value="_alertRef">
+                    @Body
+                </CascadingValue>
             </CascadingValue>
         </article>
     </main>
@@ -19,4 +23,5 @@
 
 @code {
     private Toast? _toastRef;
+    private Alert? _alertRef;
 }
