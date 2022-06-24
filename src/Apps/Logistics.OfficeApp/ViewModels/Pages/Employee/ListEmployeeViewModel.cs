@@ -1,8 +1,8 @@
 ﻿namespace Logistics.OfficeApp.ViewModels.Pages.Employee;
 
-public class ListUserViewModel : PageViewModelBase
+public class ListEmployeeViewModel : PageViewModelBase
 {
-    public ListUserViewModel(IApiClient apiClient)
+    public ListEmployeeViewModel(IApiClient apiClient)
         : base(apiClient)
     {
         Users = Array.Empty<EmployeeDto>();

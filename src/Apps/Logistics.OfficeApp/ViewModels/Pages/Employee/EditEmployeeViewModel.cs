@@ -1,8 +1,8 @@
 ﻿namespace Logistics.OfficeApp.ViewModels.Pages.Employee;
 
-public class EditUserViewModel : PageViewModelBase
+public class EditEmployeeViewModel : PageViewModelBase
 {
-    public EditUserViewModel(IApiClient apiClient)
+    public EditEmployeeViewModel(IApiClient apiClient)
         : base(apiClient)
     {
         Employee = new EmployeeDto();

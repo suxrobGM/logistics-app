@@ -1,6 +1,6 @@
 ﻿@page "/edit-employee/{id?}"
 @attribute [Authorize(Roles = "admin,owner,manager")]
-@inherits ViewComponentBase<EditUserViewModel>
+@inherits ViewComponentBase<EditEmployeeViewModel>
 
 @{
     var headText = Model.EditMode ? "Edit" : "Add a new";

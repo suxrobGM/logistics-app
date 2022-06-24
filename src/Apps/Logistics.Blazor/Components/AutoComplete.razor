@@ -1,0 +1,32 @@
+﻿@namespace Logistics.Blazor
+
+@{
+    var id = string.IsNullOrEmpty(Id) ? GetId() : Id;
+    var dropdownMenuId = $"{id}_items";
+}
+
+<div>
+    <input id="@id"
+           class="form-control"
+           value="@_currentInputValue"
+           placeholder="@Placeholder"
+           autocomplete="off"
+           @attributes="AdditionalAttributes" 
+           @oninput="OnInputChangedHandler"
+           @onfocusout="OnInputFocusOutHandler"
+           @onchange="OnInputChangeHandler"
+           data-bs-toggle="dropdown" 
+           data-bs-auto-close="true" />
+    
+    <input type="hidden" value="@Value" />
+    
+    <ul id="@dropdownMenuId" class="dropdown-menu w-auto">
+        @foreach (var dataItem in _dataItems)
+        {
+            <li>
+                <div class="dropdown-item" @onclick="() => OnClickDropdownItem(dataItem.Value)">@dataItem.Label</div>
+            </li>
+        }
+    </ul>
+</div>
+

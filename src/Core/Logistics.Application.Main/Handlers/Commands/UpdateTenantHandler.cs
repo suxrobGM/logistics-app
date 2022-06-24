@@ -20,7 +20,7 @@ internal sealed class UpdateTenantHandler : RequestHandlerBase<UpdateTenantComma
             return DataResult.CreateError("Could not find the tenant");
         }
 
-        tenant.Name = request.Name?.Trim()?.ToLower();
+        tenant.Name = request.Name?.Trim().ToLower();
 
         tenant.DisplayName = string.IsNullOrEmpty(request.DisplayName) ? tenant.Name : request.DisplayName?.Trim();
         

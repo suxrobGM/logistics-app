@@ -34,7 +34,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="driver" class="form-label">Truck Driver</label>
-                        <DataList Id="driver" @bind-Value="Model.Truck.DriverId" OnInputChanged="Model.SearchUser" Placeholder="Type the user name"></DataList>
+                        <AutoComplete Id="driver" @bind-Value="Model.Truck.DriverId" OnInputChanged="Model.SearchUser" Placeholder="Type the user name"></AutoComplete>
                     </div>
                     <div class="mt-3">
                         <button class="btn btn-primary" type="submit">

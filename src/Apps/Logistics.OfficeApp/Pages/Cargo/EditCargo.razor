@@ -71,7 +71,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="driver" class="form-label">Assigned Truck</label>
-                        <DataList Id="driver" @bind-Value="Model.Cargo.AssignedTruckId" OnInputChanged="Model.SearchTruck" Placeholder="Type the driver name"></DataList>
+                        <AutoComplete Id="driver" @bind-Value="Model.Cargo.AssignedTruckId" OnInputChanged="Model.SearchTruck" Placeholder="Type the driver name"></AutoComplete>
                     </div>
                     <div class="mb-3">
                         <label for="status" class="form-label">Status</label>

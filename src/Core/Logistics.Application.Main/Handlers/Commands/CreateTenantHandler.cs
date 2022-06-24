@@ -21,7 +21,7 @@ internal sealed class CreateTenantHandler : RequestHandlerBase<CreateTenantComma
     protected override async Task<DataResult> HandleValidated(CreateTenantCommand request, CancellationToken cancellationToken)
     {
         var tenant = _mapper.Map<Tenant>(request);
-        tenant.Name = tenant.Name?.Trim()?.ToLower();
+        tenant.Name = tenant.Name?.Trim().ToLower();
         tenant.ConnectionString = _databaseProvider.GenerateConnectionString(tenant.Name!);
 
         if (string.IsNullOrEmpty(tenant.DisplayName))

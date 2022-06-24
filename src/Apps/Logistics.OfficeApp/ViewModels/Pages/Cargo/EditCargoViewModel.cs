@@ -106,17 +106,17 @@ public class EditCargoViewModel : PageViewModelBase
         StateHasChanged();
     }
 
-    public async Task<IEnumerable<DataListItem>> SearchTruck(string searchInput)
+    public async Task<IEnumerable<DropdownItem>> SearchTruck(string searchInput)
     {
         var result = await CallApi(i => i.GetTrucksAsync(searchInput));
         var pagedList = result.Value;
-        var dataListItems = new List<DataListItem>();
+        var dataListItems = new List<DropdownItem>();
 
         if (pagedList?.Items != null)
         {
             foreach (var item in pagedList.Items)
             {
-                dataListItems.Add(new DataListItem(item.Id!, item.DriverName!));
+                dataListItems.Add(new DropdownItem(item.Id!, item.DriverName!));
             }
         }
 

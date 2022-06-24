@@ -1,6 +1,5 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.OAuth.Claims;
-using Microsoft.IdentityModel.Logging;
 
 namespace Logistics.AdminApp;
 
@@ -8,7 +7,6 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
-        IdentityModelEventSource.ShowPII = true;
         AddSecretsJson(builder.Configuration);
         builder.Services.AddSharedApplicationLayer(builder.Configuration);
         builder.Services.AddWebApiClient(builder.Configuration);

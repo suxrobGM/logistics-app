@@ -29,7 +29,7 @@ internal sealed class DeleteTenantHandler : RequestHandlerBase<DeleteTenantComma
             return DataResult.CreateError("Could not delete the tenant's database");
         }
 
-        _repository.Delete(tenant.Id!);
+        _repository.Delete(tenant.Id);
         await _repository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
