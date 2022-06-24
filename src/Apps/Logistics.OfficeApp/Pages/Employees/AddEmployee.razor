@@ -1,0 +1,6 @@
+﻿@page "/add-employee"
+@attribute [Authorize(Roles = "admin,owner,manager")]
+@inherits ViewComponentBase<AddEmployeeViewModel>
+
+<h2>Add employee</h2>
+<hr />
