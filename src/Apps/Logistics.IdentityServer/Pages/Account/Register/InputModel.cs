@@ -14,11 +14,13 @@ public class InputModel
     [Required]
     [Display(Name = "First name")]
     [StringLength(32, MinimumLength = 1)]
+    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Only English letters are allowed, no numbers or other symbols")]
     public string FirstName { get; set; }
         
     [Required]
     [Display(Name = "Last name")]
     [StringLength(32, MinimumLength = 1)]
+    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Only English letters are allowed, no numbers or other symbols")]
     public string LastName { get; set; }
 
     [Required, DataType(DataType.Password)]
