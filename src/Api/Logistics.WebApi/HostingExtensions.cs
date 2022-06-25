@@ -67,6 +67,14 @@ internal static class HostingExtensions
             {
                 policy.Requirements.Add(new TenantCanWriteRequirement());
             });
+            options.AddPolicy(Policies.User.CanRead, policy =>
+            {
+                policy.Requirements.Add(new UserCanReadRequirement());
+            });
+            options.AddPolicy(Policies.User.CanWrite, policy =>
+            {
+                policy.Requirements.Add(new UserCanWriteRequirement());
+            });
         });
 
         builder.Services.AddSingleton<IAuthorizationHandler, CargoCanReadHandler>();
@@ -77,6 +85,8 @@ internal static class HostingExtensions
         builder.Services.AddSingleton<IAuthorizationHandler, TruckCanWriteHandler>();
         builder.Services.AddSingleton<IAuthorizationHandler, TenantCanReadHandler>();
         builder.Services.AddSingleton<IAuthorizationHandler, TenantCanWriteHandler>();
+        builder.Services.AddSingleton<IAuthorizationHandler, UserCanReadHandler>();
+        builder.Services.AddSingleton<IAuthorizationHandler, UserCanWriteHandler>();
         
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();

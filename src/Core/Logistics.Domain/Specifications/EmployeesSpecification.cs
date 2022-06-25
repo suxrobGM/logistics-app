@@ -1,8 +1,8 @@
 ﻿namespace Logistics.Domain.Specifications;
 
-public class EmployeeSpecification : BaseSpecification<Employee>
+public class EmployeesSpecification : BaseSpecification<Employee>
 {
-    public EmployeeSpecification(string searchInput)
+    public EmployeesSpecification(string searchInput)
         : base(i =>
             (!string.IsNullOrEmpty(i.FirstName) &&
             i.FirstName.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase)) ||
