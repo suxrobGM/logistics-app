@@ -60,6 +60,8 @@ public static class Config
 
     public static IEnumerable<Client> Clients(IConfiguration configuration)
     {
+        //var a = "Super secret key 1".Sha256();
+        //var b = "Super secret key 2".Sha256();
         return configuration.GetSection("IdentityServer:Clients").Get<Client[]>();
     }
 }

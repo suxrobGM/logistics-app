@@ -1,7 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Logistics.DbMigrator;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Options;
+using Logistics.Domain.Services;
 using Logistics.EntityFramework.Data;
+using Logistics.EntityFramework.Services;
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration(configuration =>
@@ -13,6 +16,13 @@ var host = Host.CreateDefaultBuilder(args)
     {
         var mainDbConnection = ctx.Configuration.GetConnectionString("LocalMainDatabase");
         var tenantDbConnection = ctx.Configuration.GetConnectionString("LocalDefaultTenantDatabase");
+        var tenantsSettings = ctx.Configuration.GetSection("TenantsConfig").Get<TenantsSettings>();
+        
+        if (tenantsSettings is { DatabaseProvider: "mysql" })
+        {
+            services.AddScoped<IDatabaseProviderService, MySqlProviderService>();
+            services.AddSingleton(tenantsSettings);
+        }
 
         services.AddDbContext<MainDbContext>(o => ConfigureMySql(mainDbConnection, o));
         services.AddDbContext<TenantDbContext>(o => ConfigureMySql(tenantDbConnection, o));

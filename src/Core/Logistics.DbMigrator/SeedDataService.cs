@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Services;
 using Logistics.Domain.ValueObjects;
 using Logistics.EntityFramework.Data;
 
@@ -34,6 +35,7 @@ namespace Logistics.DbMigrator
             _logger.LogInformation("Successfully initialized the tenant database");
 
             await AddDefaultAdminAsync(scope.ServiceProvider);
+            await AddDefaultTenantAsync(scope.ServiceProvider);
             _logger.LogInformation("Successfully seeded databases");
         }
 
@@ -46,7 +48,6 @@ namespace Logistics.DbMigrator
             catch (Exception ex)
             {
                 _logger.LogError("Thrown exception in SeedData.MigrateDatabaseAsync(): {Exception}", ex);
-                throw;
             }
         }
 
@@ -84,14 +85,42 @@ namespace Logistics.DbMigrator
                 {
                     admin.Role = UserRole.Admin;
                     await userManager.UpdateAsync(admin);
-
                     _logger.LogInformation("Added 'admin' role to the default admin");
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError("Thrown exception in SeedDataService.AddDefaultAdminAsync(): {Exception}", ex);
-                throw;
+            }
+        }
+
+        private async Task AddDefaultTenantAsync(IServiceProvider serviceProvider)
+        {
+            try
+            {
+                var mainDbContext = serviceProvider.GetRequiredService<MainDbContext>();
+                var databaseProvider = serviceProvider.GetRequiredService<IDatabaseProviderService>();
+
+                var defaultTenant = new Tenant
+                {
+                    Name = "default",
+                    DisplayName = "Default Tenant",
+                    ConnectionString = databaseProvider.GenerateConnectionString("default")
+                };
+
+                var existingTenant = mainDbContext.Set<Tenant>().FirstOrDefault(i => i.Name == defaultTenant.Name);
+                
+                if (existingTenant is null)
+                {
+                    mainDbContext.Add(defaultTenant);
+                    await mainDbContext.SaveChangesAsync();
+                    await databaseProvider.CreateDatabaseAsync(defaultTenant.ConnectionString);
+                    _logger.LogInformation("Added default tenant");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Thrown exception in SeedDataService.AddDefaultTenantAsync(): {Exception}", ex);
             }
         }
     }

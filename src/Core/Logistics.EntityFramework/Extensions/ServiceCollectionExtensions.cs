@@ -19,16 +19,12 @@ public static class ServiceCollectionExtensions
         var connectionString = configuration.GetConnectionString(connectionStringName);
         var tenantsSettings = configuration.GetSection(tenantsConfigSection).Get<TenantsSettings>();
 
-        if (tenantsSettings != null)
+        if (tenantsSettings is { DatabaseProvider: "mysql" })
         {
-            if (tenantsSettings.DatabaseProvider == "mysql")
-            {
-                services.AddScoped<IDatabaseProviderService, MySqlProviderService>();
-                services.AddSingleton(tenantsSettings);
-            }
+            services.AddScoped<IDatabaseProviderService, MySqlProviderService>();
+            services.AddSingleton(tenantsSettings);
         }
         
-
         services.AddDbContext<TenantDbContext>();
         services.AddDbContext<MainDbContext>(o => DbContextHelpers.ConfigureMySql(connectionString, o));
         

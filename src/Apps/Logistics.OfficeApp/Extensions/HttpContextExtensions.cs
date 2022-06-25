@@ -7,7 +7,7 @@ public static class HttpContextExtensions
         var tenantSubDomain = GetSubDomain(context.Request.Host);
         var tenantQuery = context.Request.Query["tenant"].ToString();
         var tenantCookie = context.Request.Cookies["X-Tenant"];
-        var tenantId = string.Empty;
+        string tenantId;
 
         if (!string.IsNullOrEmpty(tenantSubDomain))
         {
@@ -20,6 +20,10 @@ public static class HttpContextExtensions
         else if (!string.IsNullOrEmpty(tenantCookie))
         {
             tenantId = tenantCookie.ToLower();
+        }
+        else
+        {
+            tenantId = "default";
         }
         
         return tenantId;
