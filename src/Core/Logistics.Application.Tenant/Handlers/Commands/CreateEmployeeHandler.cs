@@ -3,13 +3,16 @@
 internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeCommand, DataResult>
 {
     private readonly IMapper _mapper;
-    private readonly ITenantRepository<Employee> _userRepository;
+    private readonly ITenantRepository<Employee> _employeeRepository;
+    private readonly IMainRepository<User> _userRepository;
 
     public CreateEmployeeHandler(
         IMapper mapper,
-        ITenantRepository<Employee> userRepository)
+        ITenantRepository<Employee> employeeRepository,
+        IMainRepository<User> userRepository)
     {
         _mapper = mapper;
+        _employeeRepository = employeeRepository;
         _userRepository = userRepository;
     }
 
@@ -17,8 +20,19 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
         CreateEmployeeCommand request, CancellationToken cancellationToken)
     {
         var employee = _mapper.Map<Employee>(request);
-        await _userRepository.AddAsync(employee);
-        await _userRepository.UnitOfWork.CommitAsync();
+        var user = await _userRepository.GetAsync(i => i.Id == employee.ExternalId);
+
+        if (user == null)
+        {
+            return DataResult.CreateError("Could not find the specified user");
+        }
+        
+        //user.JoinedTenants.Add();
+        
+        await _employeeRepository.AddAsync(employee);
+        //await _userRepository.Update(user);
+        //await _userRepository.UnitOfWork.CommitAsync();
+        await _employeeRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
 

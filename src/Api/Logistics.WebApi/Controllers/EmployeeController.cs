@@ -69,7 +69,8 @@ public class EmployeeController : ControllerBase
     [Authorize(Policy = Policies.Employee.CanWrite)]
     public async Task<IActionResult> Create([FromBody] EmployeeDto user)
     {
-        var result = await _mediator.Send(_mapper.Map<CreateEmployeeCommand>(user));
+        var command = _mapper.Map<CreateEmployeeCommand>(user);
+        var result = await _mediator.Send(command);
 
         if (result.Success)
             return Ok(result);

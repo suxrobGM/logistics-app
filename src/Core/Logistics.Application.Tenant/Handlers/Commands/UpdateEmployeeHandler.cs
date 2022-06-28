@@ -22,6 +22,7 @@ internal sealed class UpdateEmployeeHandler : RequestHandlerBase<UpdateEmployeeC
         userEntity.FirstName = request.FirstName;
         userEntity.LastName = request.LastName;
         userEntity.UserName = request.UserName;
+        userEntity.Role = EmployeeRole.Get(request.Role!);
 
         _userRepository.Update(userEntity);
         await _userRepository.UnitOfWork.CommitAsync();
