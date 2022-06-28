@@ -5,15 +5,18 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
     private readonly IMapper _mapper;
     private readonly ITenantRepository<Employee> _employeeRepository;
     private readonly IMainRepository<User> _userRepository;
+    private readonly IMainRepository<Tenant> _tenantRepository;
 
     public CreateEmployeeHandler(
         IMapper mapper,
         ITenantRepository<Employee> employeeRepository,
-        IMainRepository<User> userRepository)
+        IMainRepository<User> userRepository,
+        IMainRepository<Tenant> tenantRepository)
     {
         _mapper = mapper;
         _employeeRepository = employeeRepository;
         _userRepository = userRepository;
+        _tenantRepository = tenantRepository;
     }
 
     protected override async Task<DataResult> HandleValidated(
@@ -21,17 +24,22 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
     {
         var employee = _mapper.Map<Employee>(request);
         var user = await _userRepository.GetAsync(i => i.Id == employee.ExternalId);
+        var tenant = await _tenantRepository.GetAsync(i => i.Name == request.TenantId || i.Id == request.TenantId);
+        
+        if (tenant == null)
+        {
+            return DataResult.CreateError($"Could not find the specified tenant '{request.TenantId}'");
+        }
 
         if (user == null)
         {
             return DataResult.CreateError("Could not find the specified user");
         }
         
-        //user.JoinedTenants.Add();
-        
+        user.JoinedTenants.Add(tenant.Id);
         await _employeeRepository.AddAsync(employee);
-        //await _userRepository.Update(user);
-        //await _userRepository.UnitOfWork.CommitAsync();
+        _userRepository.Update(user);
+        await _userRepository.UnitOfWork.CommitAsync();
         await _employeeRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
@@ -47,6 +55,10 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
         else if (string.IsNullOrEmpty(request.UserName))
         {
             errorDescription = "UserName is an empty string";
+        }
+        else if (string.IsNullOrEmpty(request.TenantId))
+        {
+            errorDescription = "TenantId is an empty string";
         }
 
         return string.IsNullOrEmpty(errorDescription);

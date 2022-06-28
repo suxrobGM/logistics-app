@@ -69,7 +69,9 @@ public class EmployeeController : ControllerBase
     [Authorize(Policy = Policies.Employee.CanWrite)]
     public async Task<IActionResult> Create([FromBody] EmployeeDto user)
     {
+        var tenantId = HttpContext.Request.Headers["X-Tenant"];
         var command = _mapper.Map<CreateEmployeeCommand>(user);
+        command.TenantId = tenantId;
         var result = await _mediator.Send(command);
 
         if (result.Success)
