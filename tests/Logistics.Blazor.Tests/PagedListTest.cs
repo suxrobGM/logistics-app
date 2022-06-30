@@ -8,12 +8,10 @@ public class PagedListTest
     [Test]
     public void AddItem()
     {
-        var pagedList = new PagedList<string>(5, 10, true, i => i);
-        pagedList.Add("1");
-        pagedList.Add("2");
-        pagedList.Add("3");
-        pagedList.Add("3");
-        pagedList.Add("4");
+        var pagedList = new PagedList<string>(5, 10, true, i => i)
+        {
+            "1", "2", "3", "3", "4"
+        };
 
         Assert.AreEqual(4, pagedList.Count);
         Assert.AreEqual(5, pagedList.TotalItems);
@@ -37,12 +35,10 @@ public class PagedListTest
     [Test]
     public void Insert()
     {
-        var pagedList = new PagedList<string>(5, 10, true, i => i);
-        pagedList.Add("1");
-        pagedList.Add("2");
-        pagedList.Add("3");
-        pagedList.Add("4");
-        pagedList.Add("5");
+        var pagedList = new PagedList<string>(5, 10, true, i => i)
+        {
+            "1", "2", "3", "4", "5"
+        };
 
         pagedList.Insert(0, "11");
         pagedList.Insert(1, "12");
@@ -74,12 +70,10 @@ public class PagedListTest
     [Test]
     public void Remove()
     {
-        var pagedList = new PagedList<string>(5, 10, true, i => i);
-        pagedList.Add("1");
-        pagedList.Add("2");
-        pagedList.Add("3");
-        pagedList.Add("4");
-        pagedList.Add("5");
+        var pagedList = new PagedList<string>(5, 10, true, i => i)
+        {
+            "1", "2", "3", "4", "5"
+        };
         pagedList.Remove("2");
 
         Assert.AreEqual(4, pagedList.Count);
@@ -92,12 +86,10 @@ public class PagedListTest
     [Test]
     public void Clear()
     {
-        var pagedList = new PagedList<string>(5);
-        pagedList.Add("1");
-        pagedList.Add("2");
-        pagedList.Add("3");
-        pagedList.Add("4");
-        pagedList.Add("5");
+        var pagedList = new PagedList<string>(5)
+        {
+            "1", "2", "3", "4", "5"
+        };
         pagedList.Clear();
 
         Assert.AreEqual(0, pagedList.Count);
