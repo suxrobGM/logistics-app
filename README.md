@@ -8,11 +8,11 @@ LogisticsApp is a system for managing drivers and dispatchers in a logistics com
 1. [Download](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) and install the .NET 6 SDK. 
 2. Clone this repository:
 ```
-$ git clone https://github.com/suxrobGM/LogisticsApp.git
+$ git clone https://github.com/suxrobGM/logistics-app.git
 ```
 3. Run the Web API project:
 ```
-$ cd LogisticsApp/src
+$ cd logistics-app/src
 $ dotnet run --project Api/Logistics.WebApi
 ```
 
