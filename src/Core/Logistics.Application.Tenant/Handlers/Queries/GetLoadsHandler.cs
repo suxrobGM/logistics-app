@@ -29,8 +29,8 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
             {
                 Id = i.Id,
                 Name = i.Name,
-                Source = i.Source,
-                Destination = i.Destination,
+                SourceAddress = i.SourceAddress,
+                DestinationAddress = i.DestinationAddress,
                 PricePerMile = i.PricePerMile,
                 TotalTripMiles = i.TotalTripMiles,
                 PickUpDate = i.PickUpDate,

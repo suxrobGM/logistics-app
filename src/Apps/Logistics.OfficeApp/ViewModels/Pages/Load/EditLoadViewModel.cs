@@ -83,8 +83,8 @@ public class EditLoadViewModel : PageViewModelBase
         Load.AssignedTruckId = null;
         Load.PricePerMile = 0;
         Load.TotalTripMiles = 0;
-        Load.Source = string.Empty;
-        Load.Destination = string.Empty;
+        Load.SourceAddress = string.Empty;
+        Load.DestinationAddress = string.Empty;
     }
 
     private async Task LoadCurrentDispatcherAsync()

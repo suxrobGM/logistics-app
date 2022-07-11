@@ -11,53 +11,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.EntityFramework.Data.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20220618192312_InitialCreate")]
+    [Migration("20220711233857_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.5")
+                .HasAnnotation("ProductVersion", "6.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
-
-            modelBuilder.Entity("Logistics.Domain.Entities.Cargo", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("AssignedDispatcherId")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("AssignedTruckId")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("Destination")
-                        .HasColumnType("longtext");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<DateTime>("PickUpDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<decimal>("PricePerMile")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<string>("Source")
-                        .HasColumnType("longtext");
-
-                    b.Property<double>("TotalTripMiles")
-                        .HasColumnType("double");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AssignedDispatcherId");
-
-                    b.HasIndex("AssignedTruckId");
-
-                    b.ToTable("cargoes", (string)null);
-                });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
                 {
@@ -84,6 +46,47 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.ToTable("employees", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.Load", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("AssignedDispatcherId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("AssignedTruckId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("DestinationAddress")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("PickUpDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<decimal>("PricePerMile")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<string>("SourceAddress")
+                        .HasColumnType("longtext");
+
+                    b.Property<double>("TotalTripMiles")
+                        .HasColumnType("double");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignedDispatcherId");
+
+                    b.HasIndex("AssignedTruckId");
+
+                    b.ToTable("loads", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
                 {
                     b.Property<string>("Id")
@@ -101,46 +104,6 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                         .IsUnique();
 
                     b.ToTable("trucks", (string)null);
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.Cargo", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.Employee", "AssignedDispatcher")
-                        .WithMany("DispatcherCargoes")
-                        .HasForeignKey("AssignedDispatcherId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Logistics.Domain.Entities.Truck", "AssignedTruck")
-                        .WithMany("Cargoes")
-                        .HasForeignKey("AssignedTruckId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.OwnsOne("Logistics.Domain.ValueObjects.CargoStatus", "Status", b1 =>
-                        {
-                            b1.Property<string>("CargoId")
-                                .HasColumnType("varchar(255)");
-
-                            b1.Property<int>("Id")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasColumnType("longtext");
-
-                            b1.HasKey("CargoId");
-
-                            b1.ToTable("cargoes");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CargoId");
-                        });
-
-                    b.Navigation("AssignedDispatcher");
-
-                    b.Navigation("AssignedTruck");
-
-                    b.Navigation("Status")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
@@ -166,6 +129,46 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                         });
 
                     b.Navigation("Role")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.Load", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Employee", "AssignedDispatcher")
+                        .WithMany("DispatcherCargoes")
+                        .HasForeignKey("AssignedDispatcherId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Logistics.Domain.Entities.Truck", "AssignedTruck")
+                        .WithMany("Cargoes")
+                        .HasForeignKey("AssignedTruckId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.OwnsOne("Logistics.Domain.ValueObjects.LoadStatus", "Status", b1 =>
+                        {
+                            b1.Property<string>("LoadId")
+                                .HasColumnType("varchar(255)");
+
+                            b1.Property<int>("Id")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Name")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.HasKey("LoadId");
+
+                            b1.ToTable("loads");
+
+                            b1.WithOwner()
+                                .HasForeignKey("LoadId");
+                        });
+
+                    b.Navigation("AssignedDispatcher");
+
+                    b.Navigation("AssignedTruck");
+
+                    b.Navigation("Status")
                         .IsRequired();
                 });
 

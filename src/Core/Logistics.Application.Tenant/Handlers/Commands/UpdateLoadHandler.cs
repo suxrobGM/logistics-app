@@ -31,8 +31,8 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
         }
 
         cargoEntity.Name = request.Name;
-        cargoEntity.Source = request.Source;
-        cargoEntity.Destination = request.Destination;
+        cargoEntity.SourceAddress = request.SourceAddress;
+        cargoEntity.DestinationAddress = request.DestinationAddress;
         cargoEntity.TotalTripMiles = request.TotalTripMiles;
         cargoEntity.PricePerMile = request.PricePerMile;
         cargoEntity.IsCompleted = request.IsCompleted;
@@ -53,11 +53,11 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
         {
             errorDescription = "Id is an empty string";
         }
-        else if (string.IsNullOrEmpty(request.Source))
+        else if (string.IsNullOrEmpty(request.SourceAddress))
         {
             errorDescription = "Source address is an empty string";
         }
-        else if (string.IsNullOrEmpty(request.Destination))
+        else if (string.IsNullOrEmpty(request.DestinationAddress))
         {
             errorDescription = "Destination address is an empty string";
         }

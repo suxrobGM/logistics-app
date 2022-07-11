@@ -69,7 +69,7 @@ public class TenantDbContext : DbContext
 
         builder.Entity<Load>(entity =>
         {
-            entity.ToTable("cargoes");
+            entity.ToTable("loads");
             //entity.OwnsOne(m => m.SourceAddress);
             //entity.OwnsOne(m => m.DestinationAddress);
             entity.OwnsOne(m => m.Status);

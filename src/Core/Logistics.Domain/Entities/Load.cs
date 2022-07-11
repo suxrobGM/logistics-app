@@ -5,8 +5,8 @@ namespace Logistics.Domain.Entities;
 public class Load : Entity, ITenantEntity
 {
     public string? Name { get; set; }
-    public string? Source { get; set; }
-    public string? Destination { get; set; }
+    public string? SourceAddress { get; set; }
+    public string? DestinationAddress { get; set; }
     public decimal PricePerMile { get; set; }
     public double TotalTripMiles { get; set; }
     public bool IsCompleted { get; set; }

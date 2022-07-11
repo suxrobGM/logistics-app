@@ -9,10 +9,10 @@ public class LoadDto
     public string? Name { get; set; }
     
     [Required]
-    public string? Source { get; set; }
+    public string? SourceAddress { get; set; }
 
     [Required]
-    public string? Destination { get; set; }
+    public string? DestinationAddress { get; set; }
 
     [Required]
     [Range(CargoConsts.MinPricePerMile, CargoConsts.MaxPricePerMile)]
