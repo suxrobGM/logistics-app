@@ -1,4 +1,4 @@
-﻿@page "/list-cargo"
+﻿@page "/list-load"
 @attribute [Authorize(Roles = "admin,owner,manager,dispatcher")]
 @inherits ViewComponentBase<ListLoadViewModel>
 
@@ -29,56 +29,60 @@
         <div class="col-12">
             <Grid DataSource="Model.Cargoes" AllowSorting="true">
                 <GridColumns>
-                    <GridColumn Field="@nameof(LoadDto.SourceAddress)"
-                            HeaderText="Source Address"
+                    <GridColumn Field="@nameof(LoadDto.Name)"
+                            HeaderText="Name"
                             Width="200">
+                    </GridColumn>
+                    <GridColumn Field="@nameof(LoadDto.SourceAddress)"
+                                HeaderText="Source Address"
+                                Width="200">
                     </GridColumn>
                     <GridColumn Field="@nameof(LoadDto.DestinationAddress)"
-                            HeaderText="Destination Address"
-                            Width="200">
+                                HeaderText="Destination Address"
+                                Width="200">
                     </GridColumn>
                     <GridColumn Field="@nameof(LoadDto.AssignedTruckDriverName)"
-                            HeaderText="Assigned Driver"
-                            Width="200">
+                                HeaderText="Assigned Driver"
+                                Width="200">
                     </GridColumn>
                     <GridColumn Field="@nameof(LoadDto.AssignedDispatcherName)"
-                            HeaderText="Assigned Dispatcher"
-                            Width="200">
+                                HeaderText="Assigned Dispatcher"
+                                Width="200">
                     </GridColumn>
                     <GridColumn Field="@nameof(LoadDto.PricePerMile)"
-                            HeaderText="Price Per Mile"
-                            Format="N2"
-                            Width="200">
+                                HeaderText="Price Per Mile"
+                                Format="N2"
+                                Width="200">
                     </GridColumn>
                     <GridColumn Field="@nameof(LoadDto.TotalTripMiles)"
-                            HeaderText="Total Trip Miles"
-                            Format="N2"
-                            Width="200">
+                                HeaderText="Total Trip Miles"
+                                Format="N2"
+                                Width="200">
                     </GridColumn>
                     <GridColumn Field="@nameof(LoadDto.PickUpDate)"
-                            HeaderText="Pick Date"
-                            Width="200">
+                                HeaderText="Pick Date"
+                                Width="200">
                     </GridColumn>
                     <GridColumn Field="@nameof(LoadDto.Status)"
-                            HeaderText="Status"
-                            Width="200">
+                                HeaderText="Status"
+                                Width="200">
                     </GridColumn>
                     <GridColumn Field="@nameof(LoadDto.IsCompleted)"
-                            HeaderText="Is Completed"
-                            Width="200">
+                                HeaderText="Is Completed"
+                                Width="200">
                     </GridColumn>
                     <GridColumn HeaderText="Actions"
-                            HeaderTextAlign="TextAlign.Center"
-                            Width="180">
+                                HeaderTextAlign="TextAlign.Center"
+                                Width="180">
                         <Template>
                             @{
                                 var entity = context as LoadDto;
-                                var editPageLink = $"/edit-cargo/{entity?.Id}";
+                                var editPageLink = $"/edit-load/{entity?.Id}";
                             }
 
                             <div class="d-flex justify-content-center">
                                 <NavLink class="btn btn-primary"
-                                     href="@editPageLink">
+                                         href="@editPageLink">
                                     Edit
                                 </NavLink>
                                 <button class="btn btn-danger ms-2">

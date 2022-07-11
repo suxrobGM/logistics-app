@@ -10,8 +10,8 @@ public static class Policies
     
     public static class Load
     {
-        public const string CanRead = "Permissions.Cargo.CanRead";
-        public const string CanWrite = "Permissions.Cargo.CanWrite";
+        public const string CanRead = "Permissions.Load.CanRead";
+        public const string CanWrite = "Permissions.Load.CanWrite";
     }
     
     public static class Truck

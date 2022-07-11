@@ -1,4 +1,4 @@
-﻿@page "/edit-cargo/{id?}"
+﻿@page "/edit-load/{id?}"
 @attribute [Authorize(Roles = "admin,owner,manager,dispatcher")]
 @inherits ViewComponentBase<EditLoadViewModel>
 
@@ -27,6 +27,11 @@
                     <DataAnnotationsValidator />
                     <ValidationSummary />
 
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <InputText id="name" class="form-control" @bind-Value="Model.Load.Name" />
+                    </div>
+                    
                     <div class="mb-3">
                         <label for="source" class="form-label">Source Address</label>
                         <InputText id="source" class="form-control" @bind-Value="Model.Load.SourceAddress" />
@@ -86,7 +91,7 @@
                         <button class="btn btn-primary" type="submit">
                             <i class="bi bi-pencil-square"></i> @submitBtnText
                         </button>
-                        <NavLink class="btn btn-primary" href="/list-cargo">
+                        <NavLink class="btn btn-primary" href="/list-load">
                             <i class="bi bi-arrow-left-square"></i> Back
                         </NavLink>
                     </div>
