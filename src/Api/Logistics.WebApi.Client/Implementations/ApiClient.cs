@@ -45,15 +45,15 @@ internal class ApiClient : ApiClientBase, IApiClient
         SetRequestHeader("X-Tenant", tenantId);
     }
 
-    #region Cargo API
+    #region Load API
 
-    public async Task<CargoDto> GetCargoAsync(string id)
+    public async Task<LoadDto> GetLoadAsync(string id)
     {
-        var result = await GetRequestAsync<DataResult<CargoDto>>($"cargo/{id}");
+        var result = await GetRequestAsync<DataResult<LoadDto>>($"load/{id}");
         return result.Value!;
     }
 
-    public async Task<PagedDataResult<CargoDto>> GetCargoesAsync(string searchInput = "", int page = 1, int pageSize = 10)
+    public async Task<PagedDataResult<LoadDto>> GetLoadsAsync(string searchInput = "", int page = 1, int pageSize = 10)
     {
         var query = new Dictionary<string, string>
         {
@@ -65,23 +65,23 @@ internal class ApiClient : ApiClientBase, IApiClient
         {
             query.Add("search", searchInput);
         }
-        var result = await GetRequestAsync<PagedDataResult<CargoDto>>("cargo/list", query);
+        var result = await GetRequestAsync<PagedDataResult<LoadDto>>("load/list", query);
         return result;
     }
 
-    public Task CreateCargoAsync(CargoDto cargo)
+    public Task CreateLoadAsync(LoadDto load)
     {
-        return PostRequestAsync("cargo/create", cargo);
+        return PostRequestAsync("load/create", load);
     }
     
-    public Task UpdateCargoAsync(CargoDto cargo)
+    public Task UpdateLoadAsync(LoadDto load)
     {
-        return PutRequestAsync($"cargo/update/{cargo.Id}", cargo);
+        return PutRequestAsync($"load/update/{load.Id}", load);
     }
 
-    public Task DeleteCargoAsync(string id)
+    public Task DeleteLoadAsync(string id)
     {
-        return DeleteRequestAsync($"cargo/{id}");
+        return DeleteRequestAsync($"load/{id}");
     }
 
     #endregion

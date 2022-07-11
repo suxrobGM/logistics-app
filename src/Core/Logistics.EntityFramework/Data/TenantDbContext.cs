@@ -67,7 +67,7 @@ public class TenantDbContext : DbContext
                 .OnDelete(DeleteBehavior.SetNull);
         });
 
-        builder.Entity<Cargo>(entity =>
+        builder.Entity<Load>(entity =>
         {
             entity.ToTable("cargoes");
             //entity.OwnsOne(m => m.SourceAddress);

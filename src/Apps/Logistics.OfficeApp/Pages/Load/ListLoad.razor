@@ -1,0 +1,94 @@
+﻿@page "/list-cargo"
+@attribute [Authorize(Roles = "admin,owner,manager,dispatcher")]
+@inherits ViewComponentBase<ListLoadViewModel>
+
+<h2>Cargoes List</h2>
+<hr />
+
+<Spinner IsBusy="Model.IsBusy"
+         Label="@Model.BusyText"
+         LabelAlign="Spinner.Align.Left"
+         Size="2">
+</Spinner>
+
+@if (!Model.IsBusy)
+{
+    <div class="row">
+        <div class="col-12 col-sm-10 col-md-5 col-xl-4">
+            <p>Total records: @Model.TotalRecords</p>
+
+            <div class="input-group mb-3">
+                <input class="form-control" type="text" placeholder="Search...">
+                <button class="input-group-text" id="search-btn">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <Grid DataSource="Model.Cargoes" AllowSorting="true">
+                <GridColumns>
+                    <GridColumn Field="@nameof(LoadDto.Source)"
+                            HeaderText="Source Address"
+                            Width="200">
+                    </GridColumn>
+                    <GridColumn Field="@nameof(LoadDto.Destination)"
+                            HeaderText="Destination Address"
+                            Width="200">
+                    </GridColumn>
+                    <GridColumn Field="@nameof(LoadDto.AssignedTruckDriverName)"
+                            HeaderText="Assigned Driver"
+                            Width="200">
+                    </GridColumn>
+                    <GridColumn Field="@nameof(LoadDto.AssignedDispatcherName)"
+                            HeaderText="Assigned Dispatcher"
+                            Width="200">
+                    </GridColumn>
+                    <GridColumn Field="@nameof(LoadDto.PricePerMile)"
+                            HeaderText="Price Per Mile"
+                            Format="N2"
+                            Width="200">
+                    </GridColumn>
+                    <GridColumn Field="@nameof(LoadDto.TotalTripMiles)"
+                            HeaderText="Total Trip Miles"
+                            Format="N2"
+                            Width="200">
+                    </GridColumn>
+                    <GridColumn Field="@nameof(LoadDto.PickUpDate)"
+                            HeaderText="Pick Date"
+                            Width="200">
+                    </GridColumn>
+                    <GridColumn Field="@nameof(LoadDto.Status)"
+                            HeaderText="Status"
+                            Width="200">
+                    </GridColumn>
+                    <GridColumn Field="@nameof(LoadDto.IsCompleted)"
+                            HeaderText="Is Completed"
+                            Width="200">
+                    </GridColumn>
+                    <GridColumn HeaderText="Actions"
+                            HeaderTextAlign="TextAlign.Center"
+                            Width="180">
+                        <Template>
+                            @{
+                                var entity = context as LoadDto;
+                                var editPageLink = $"/edit-cargo/{entity?.Id}";
+                            }
+
+                            <div class="d-flex justify-content-center">
+                                <NavLink class="btn btn-primary"
+                                     href="@editPageLink">
+                                    Edit
+                                </NavLink>
+                                <button class="btn btn-danger ms-2">
+                                    Delete
+                                </button>
+                            </div>
+                        </Template>
+                    </GridColumn>
+                </GridColumns>
+            </Grid>
+        </div>
+    </div>
+}

@@ -9,7 +9,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddAutoMapper(o =>
         {
-            o.AddProfile<CargoProfile>();
+            o.AddProfile<LoadProfile>();
             o.AddProfile<TruckProfile>();
             o.AddProfile<EmployeeProfile>();
         });

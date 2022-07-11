@@ -28,7 +28,7 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
 
         if (!string.IsNullOrEmpty(request.Search))
         {
-            itemsQuery = _truckRepository.GetQuery(new TrucksSpecification(request.Search));
+            itemsQuery = _truckRepository.GetQuery(new SearchTrucksSpecification(request.Search));
         }
 
         var items = itemsQuery

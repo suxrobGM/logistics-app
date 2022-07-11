@@ -35,13 +35,13 @@ internal static class HostingExtensions
 
         builder.Services.AddAuthorization(options =>
         {
-            options.AddPolicy(Policies.Cargo.CanRead, policy =>
+            options.AddPolicy(Policies.Load.CanRead, policy =>
             {
-                policy.Requirements.Add(new CargoCanReadRequirement());
+                policy.Requirements.Add(new LoadCanReadRequirement());
             });
-            options.AddPolicy(Policies.Cargo.CanWrite, policy =>
+            options.AddPolicy(Policies.Load.CanWrite, policy =>
             {
-                policy.Requirements.Add(new CargoCanWriteRequirement());
+                policy.Requirements.Add(new LoadCanWriteRequirement());
             });
             options.AddPolicy(Policies.Employee.CanRead, policy =>
             {
@@ -77,8 +77,8 @@ internal static class HostingExtensions
             });
         });
 
-        builder.Services.AddSingleton<IAuthorizationHandler, CargoCanReadHandler>();
-        builder.Services.AddSingleton<IAuthorizationHandler, CargoCanWriteHandler>();
+        builder.Services.AddSingleton<IAuthorizationHandler, LoadCanReadHandler>();
+        builder.Services.AddSingleton<IAuthorizationHandler, LoadCanWriteHandler>();
         builder.Services.AddSingleton<IAuthorizationHandler, EmployeeCanReadHandler>();
         builder.Services.AddSingleton<IAuthorizationHandler, EmployeeCanWriteHandler>();
         builder.Services.AddSingleton<IAuthorizationHandler, TruckCanReadHandler>();

@@ -18,7 +18,7 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery
 
         if (!string.IsNullOrEmpty(request.Search))
         {
-            itemsQuery = _userRepository.GetQuery(new EmployeesSpecification(request.Search));
+            itemsQuery = _userRepository.GetQuery(new SearchEmployeesSpecification(request.Search));
         }
 
         var items = itemsQuery

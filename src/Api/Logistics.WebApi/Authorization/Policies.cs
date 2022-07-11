@@ -8,7 +8,7 @@ public static class Policies
         public const string CanWrite = "Permissions.Employee.CanWrite";
     }
     
-    public static class Cargo
+    public static class Load
     {
         public const string CanRead = "Permissions.Cargo.CanRead";
         public const string CanWrite = "Permissions.Cargo.CanWrite";
