@@ -11,7 +11,7 @@ public class Employee : Entity, ITenantEntity
     public DateTime JoinedDate { get; set; } = DateTime.Now;
     public EmployeeRole Role { get; set; } = EmployeeRole.Guest;
 
-    public virtual IList<Load> DispatcherCargoes { get; set; } = new List<Load>();
+    public virtual IList<Load> DispatchedLoads { get; set; } = new List<Load>();
     
     public string GetFullName()
     {

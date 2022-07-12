@@ -38,7 +38,7 @@ internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, 
         {
             Name = request.Name,
             SourceAddress = request.SourceAddress,
-            Status = LoadStatus.Ready,
+            Status = LoadStatus.Dispatched,
             DestinationAddress = request.DestinationAddress,
             TotalTripMiles = request.TotalTripMiles,
             PricePerMile = request.PricePerMile,

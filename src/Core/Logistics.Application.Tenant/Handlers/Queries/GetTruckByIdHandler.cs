@@ -14,7 +14,7 @@ internal sealed class GetTruckByIdHandler : RequestHandlerBase<GetTruckByIdQuery
         var truckEntity = await _truckRepository.GetAsync(request.Id!);
 
         var cargoesIdsList = _truckRepository.GetQuery()
-            .SelectMany(i => i.Cargoes)
+            .SelectMany(i => i.Loads)
             .Select(i => i.Id)
             .ToList();
 
@@ -30,7 +30,7 @@ internal sealed class GetTruckByIdHandler : RequestHandlerBase<GetTruckByIdQuery
             TruckNumber = truckEntity.TruckNumber,
             DriverId = truckEntity.DriverId,
             DriverName = truckEntity.Driver.GetFullName(),
-            CargoesIds = cargoesIdsList
+            LoadIds = cargoesIdsList
         };
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 

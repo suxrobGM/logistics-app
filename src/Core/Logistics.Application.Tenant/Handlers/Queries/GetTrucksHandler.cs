@@ -18,7 +18,7 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
         if (request.IncludeCargoIds)
         {
             cargoesIdsList = _truckRepository.GetQuery()
-                        .SelectMany(i => i.Cargoes)
+                        .SelectMany(i => i.Loads)
                         .Select(i => i.Id)
                         .ToList();
         }
@@ -41,7 +41,7 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
                     TruckNumber = i.TruckNumber,
                     DriverId = i.DriverId,
                     DriverName = i.Driver != null ? i.Driver.GetFullName() : null,
-                    CargoesIds = cargoesIdsList
+                    LoadIds = cargoesIdsList
                 })
                 .ToArray();
 

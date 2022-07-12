@@ -45,7 +45,7 @@ public class TenantDbContext : DbContext
         builder.Entity<Employee>(entity =>
         {
             entity.ToTable("employees");
-            entity.HasMany(m => m.DispatcherCargoes)
+            entity.HasMany(m => m.DispatchedLoads)
                 .WithOne(m => m.AssignedDispatcher)
                 .HasForeignKey(m => m.AssignedDispatcherId)
                 .OnDelete(DeleteBehavior.SetNull);
@@ -61,7 +61,7 @@ public class TenantDbContext : DbContext
                 .WithOne()
                 .HasForeignKey<Truck>(m => m.DriverId);
 
-            entity.HasMany(m => m.Cargoes)
+            entity.HasMany(m => m.Loads)
                 .WithOne(m => m.AssignedTruck)
                 .HasForeignKey(m => m.AssignedTruckId)
                 .OnDelete(DeleteBehavior.SetNull);

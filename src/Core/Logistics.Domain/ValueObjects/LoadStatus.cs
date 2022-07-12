@@ -6,18 +6,18 @@ public class LoadStatus : Enumeration
     {
     }
 
-    public static readonly LoadStatus Ready = new(1, "ready");
-    public static readonly LoadStatus Loaded = new(2, "loaded");
-    public static readonly LoadStatus OffDuty = new(3, "offduty");
+    public static readonly LoadStatus Dispatched = new(1, "dispatched");
+    public static readonly LoadStatus PickedUp = new(2, "pickedup");
+    public static readonly LoadStatus Delivered = new(3, "delivered");
 
     public static LoadStatus Get(string name)
     {
         name = name.Trim().ToLower();
         return name switch
         {
-            "ready" => Ready,
-            "loaded" => Loaded,
-            "offduty" => OffDuty,
+            "ready" => Dispatched,
+            "loaded" => PickedUp,
+            "offduty" => Delivered,
             _ => throw new InvalidOperationException($"Could not found the corresponding enum type for the '{name}'"),
         };
     }

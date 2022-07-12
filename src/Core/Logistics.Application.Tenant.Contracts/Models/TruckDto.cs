@@ -10,5 +10,5 @@ public class TruckDto
     [Required]
     public string? DriverId { get; set; }
     public string? DriverName { get; set; }
-    public IList<string> CargoesIds { get; set; } = new List<string>();
+    public IList<string> LoadIds { get; set; } = new List<string>();
 }

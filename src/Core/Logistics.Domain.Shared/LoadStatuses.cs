@@ -4,8 +4,8 @@ public static class LoadStatuses
 {
     public static IEnumerable<EnumType> GetValues()
     {
-        yield return new EnumType("ready", "Ready");
-        yield return new EnumType("loaded", "Loaded");
-        yield return new EnumType("offduty", "Off duty");
+        yield return new EnumType("dispatched", "Dispatched");
+        yield return new EnumType("pickedup", "Picked Up");
+        yield return new EnumType("delivered", "Delivered");
     }
 }
