@@ -1,17 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Error404PageComponent } from './error404-page.component';
 
-describe('Error404PageComponent', () => {
-  let component: Error404PageComponent;
-  let fixture: ComponentFixture<Error404PageComponent>;
+import { UnauthorizedComponent } from './unauthorized.component';
+
+describe('UnauthorizedComponent', () => {
+  let component: UnauthorizedComponent;
+  let fixture: ComponentFixture<UnauthorizedComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ Error404PageComponent ]
+      declarations: [ UnauthorizedComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Error404PageComponent);
+    fixture = TestBed.createComponent(UnauthorizedComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

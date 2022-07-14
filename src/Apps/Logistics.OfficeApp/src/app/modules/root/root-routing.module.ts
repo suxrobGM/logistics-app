@@ -2,16 +2,16 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AutoLoginAllRoutesGuard } from 'angular-auth-oidc-client';
 import { AuthGuard } from '../auth/auth.guard';
-import { Error404PageComponent } from './pages/error404-page/error404-page.component';
-import { ForbiddenPageComponent } from './pages/forbidden-page/forbidden-page.component';
-import { UnauthorizedPageComponent } from './pages/unauthorized-page/unauthorized-page.component';
+import { Error404Component } from './pages/error404/error404.component';
+import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
+import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.component';
 
 const rootRoutes: Routes = [
-  { path: '404', component: Error404PageComponent },
-  { path: 'unauthorized', component: UnauthorizedPageComponent },
+  { path: '404', component: Error404Component },
+  { path: 'unauthorized', component: UnauthorizedComponent },
   { 
     path: 'forbidden', 
-    component: ForbiddenPageComponent, 
+    component: ForbiddenComponent, 
     canActivate: [AuthGuard],
     data: {
       roles: ['admin', 'owner', 'dispatcher']

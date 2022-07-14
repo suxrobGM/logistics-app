@@ -1,0 +1,30 @@
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from '../auth/auth.guard';
+import { EditLoadComponent } from './pages/edit-load/edit-load.component';
+import { ListLoadComponent } from './pages/list-load/list-load.component';
+
+const rootRoutes: Routes = [
+  { 
+    path: 'edit-load', 
+    component: EditLoadComponent, 
+    canActivate: [AuthGuard],
+    data: {
+      roles: ['admin', 'owner', 'dispatcher']
+    }
+  },
+  { 
+    path: 'list-load', 
+    component: ListLoadComponent, 
+    canActivate: [AuthGuard],
+    data: {
+      roles: ['admin', 'owner', 'dispatcher']
+    }
+  },
+];
+
+@NgModule({
+  imports: [RouterModule.forChild(rootRoutes)],
+  exports: [RouterModule],
+})
+export class LoadRoutingModule {}
