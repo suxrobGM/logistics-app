@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { UserData } from '@app/shared/models/userData';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 
 @Component({
@@ -8,12 +9,16 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 })
 export class TopbarComponent implements OnInit {
   isAuthenticated = false;
+  user?: UserData;
 
-  constructor(public oidcSecurityService: OidcSecurityService) {
-  }
+  constructor(public oidcSecurityService: OidcSecurityService) {}
   
   ngOnInit(): void {
-    this.oidcSecurityService.isAuthenticated().subscribe(isAuthenticated => {
+    this.oidcSecurityService.userData$.subscribe(({userData}) => {
+      this.user = userData;
+    });
+
+    this.oidcSecurityService.isAuthenticated$.subscribe(({isAuthenticated}) => {
       this.isAuthenticated = isAuthenticated;
     });
   }

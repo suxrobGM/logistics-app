@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 
 @Component({
@@ -6,24 +6,23 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'Logistics.OfficeApp';
   isAuthenticated: boolean;
 
   constructor(public oidcSecurityService: OidcSecurityService) {
     this.isAuthenticated = false;
+  }
 
-    // if (!this.isAuthenticated) {
-    //   this.login();
-    // }
-
-    oidcSecurityService.isAuthenticated().subscribe(isAuthenticated => {
+  ngOnInit(): void {
+    this.oidcSecurityService.checkAuth().subscribe(({ isAuthenticated, userData, accessToken}) => {
       this.isAuthenticated = isAuthenticated;
+      //console.log(`Current access token is '${accessToken}'`);
+      //console.log(userData);
     });
-
-    oidcSecurityService.checkAuth().subscribe(({ isAuthenticated, userData, accessToken}) => {
-      console.log(`Is authenticated '${isAuthenticated}'`);
-      console.log(`Current access token is '${accessToken}'`);
+    
+    this.oidcSecurityService.isAuthenticated$.subscribe(({isAuthenticated}) => {
+      this.isAuthenticated = isAuthenticated;
     });
   }
 }

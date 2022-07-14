@@ -13,7 +13,7 @@
                 <li class="nav-item" >
                     <a class="nav-link text-dark" *ngIf="isAuthenticated; else loginTemplate" href="#">
                         <i class="bi bi-person-circle"></i>
-                        <span class="ms-1">Username </span>
+                        <span class="ms-1">{{user?.name}} </span>
                     </a>
                     <ng-template #loginTemplate>
                         <a class="nav-link text-dark" href="#" (click)="login()">

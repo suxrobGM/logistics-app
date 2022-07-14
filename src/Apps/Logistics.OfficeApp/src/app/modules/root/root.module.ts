@@ -4,11 +4,13 @@ import { Error404PageComponent } from './pages/error404-page/error404-page.compo
 import { RootRoutingModule } from './root-routing.module';
 import { SharedModule } from '@app/shared/shared.module';
 import { UnauthorizedPageComponent } from './pages/unauthorized-page/unauthorized-page.component';
+import { ForbiddenPageComponent } from './pages/forbidden-page/forbidden-page.component';
 
 @NgModule({
   declarations: [
     Error404PageComponent,
-    UnauthorizedPageComponent
+    UnauthorizedPageComponent,
+    ForbiddenPageComponent
   ],
   imports: [
     CommonModule,

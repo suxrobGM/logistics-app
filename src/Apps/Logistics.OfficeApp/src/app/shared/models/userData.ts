@@ -1,4 +1,4 @@
-export interface User {
+export interface UserData {
     sub: string;
     name: string;
     role: string;

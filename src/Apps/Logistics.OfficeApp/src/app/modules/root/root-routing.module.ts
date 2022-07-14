@@ -1,15 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AutoLoginAllRoutesGuard } from 'angular-auth-oidc-client';
+import { AuthGuard } from '../auth/auth.guard';
 import { Error404PageComponent } from './pages/error404-page/error404-page.component';
-import { RoutesConfig } from '@app/configs/routes.config';
+import { ForbiddenPageComponent } from './pages/forbidden-page/forbidden-page.component';
 import { UnauthorizedPageComponent } from './pages/unauthorized-page/unauthorized-page.component';
 
-const routesNames = RoutesConfig.routesNames;
-
 const rootRoutes: Routes = [
-  { path: routesNames.error404, component: Error404PageComponent },
-  { path: routesNames.unauthorized, component: UnauthorizedPageComponent },
-  { path: '**', redirectTo: RoutesConfig.routes.error404 },
+  { path: '404', component: Error404PageComponent },
+  { path: 'unauthorized', component: UnauthorizedPageComponent },
+  { path: 'forbidden', component: ForbiddenPageComponent, canActivate: [AuthGuard] },
+  { path: '**', redirectTo: '404' },
 ];
 
 @NgModule({
