@@ -70,6 +70,7 @@ internal static class HostingExtensions
 
         if (app.Environment.IsDevelopment())
         {
+            app.UseCors(cors => cors.AllowAnyOrigin());
             app.UseDeveloperExceptionPage();
         }
 

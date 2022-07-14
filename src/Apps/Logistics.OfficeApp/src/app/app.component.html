@@ -1,7 +1,12 @@
 <app-topbar></app-topbar>
 
 <div class="container-fluid mt-4">
-    <router-outlet></router-outlet>
+    <div *ngIf="isAuthenticated; else unauthorized">
+        <router-outlet></router-outlet>
+    </div>
+    <ng-template #unauthorized>
+        <h1 class="text-danger">Access denied</h1>
+    </ng-template>
 </div>
 
 <app-nav-dock></app-nav-dock>

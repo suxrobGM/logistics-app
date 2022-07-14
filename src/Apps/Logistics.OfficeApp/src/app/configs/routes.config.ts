@@ -4,7 +4,8 @@ export const ROUTES_CONFIG = new InjectionToken('routes.config');
 
 const routesNames = {
   dashboard: 'dashboard',
-  error404: '404'
+  error404: '404',
+  unauthorized: 'unauthorized'
 };
 
 export const RoutesConfig: any = {
@@ -12,5 +13,6 @@ export const RoutesConfig: any = {
   routes: {
     dashboard: `/${routesNames.dashboard}`,
     error404: `/${routesNames.error404}`,
+    unauthorized: `/${routesNames.unauthorized}`,
   },
 }
