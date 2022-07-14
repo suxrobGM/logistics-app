@@ -9,7 +9,14 @@ import { UnauthorizedPageComponent } from './pages/unauthorized-page/unauthorize
 const rootRoutes: Routes = [
   { path: '404', component: Error404PageComponent },
   { path: 'unauthorized', component: UnauthorizedPageComponent },
-  { path: 'forbidden', component: ForbiddenPageComponent, canActivate: [AuthGuard] },
+  { 
+    path: 'forbidden', 
+    component: ForbiddenPageComponent, 
+    canActivate: [AuthGuard],
+    data: {
+      roles: ['admin', 'owner', 'dispatcher']
+    }
+  },
   { path: '**', redirectTo: '404' },
 ];
 

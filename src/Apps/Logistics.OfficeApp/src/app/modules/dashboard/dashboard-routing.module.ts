@@ -5,7 +5,14 @@ import { AuthGuard } from '../auth/auth.guard';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
 
 const rootRoutes: Routes = [
-  { path: 'dashboard', component: DashboardPageComponent, canActivate: [AuthGuard] },
+  { 
+    path: 'dashboard', 
+    component: DashboardPageComponent, 
+    canActivate: [AuthGuard], 
+    data: {
+      roles: ['admin', 'owner', 'dispatcher']
+    } 
+  },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full'}
 ];
 

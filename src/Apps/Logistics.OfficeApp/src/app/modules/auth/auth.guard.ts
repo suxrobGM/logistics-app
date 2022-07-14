@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { UserData } from '@app/shared/models/userData';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { map, Observable } from 'rxjs';
 
@@ -13,13 +14,17 @@ export class AuthGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree 
   {
+    let user: UserData;
+    this.oidcSecurityService.userData$.subscribe(({userData}) => user = userData);
+
     return this.oidcSecurityService.isAuthenticated$.pipe(
       map(({ isAuthenticated }) => {
-        if (isAuthenticated) {
+        const roles = route.data['roles'];
+        
+        if (isAuthenticated && roles && roles.indexOf(user.role) !== -1) {
           return true;
         }
 
-        // redirect if not authenticated
         return this.router.parseUrl('/unauthorized');
       })
     );;
