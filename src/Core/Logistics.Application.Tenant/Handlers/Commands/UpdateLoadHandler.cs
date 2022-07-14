@@ -34,8 +34,7 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
         cargoEntity.SourceAddress = request.SourceAddress;
         cargoEntity.DestinationAddress = request.DestinationAddress;
         cargoEntity.TotalTripMiles = request.TotalTripMiles;
-        cargoEntity.PricePerMile = request.PricePerMile;
-        cargoEntity.IsCompleted = request.IsCompleted;
+        cargoEntity.DeliveryCost = request.DeliveryCost;
         cargoEntity.PickUpDate = request.PickUpDate;
         cargoEntity.Status = LoadStatus.Get(request.Status!);
         cargoEntity.AssignedTruck = truck;
@@ -69,7 +68,7 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
         {
             errorDescription = "AssignedTruckId is an empty string";
         }
-        else if (request.PricePerMile < 0)
+        else if (request.DeliveryCost < 0)
         {
             errorDescription = "Price per mile should be non-negative value";
         }

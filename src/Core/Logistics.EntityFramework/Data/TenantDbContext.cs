@@ -73,6 +73,7 @@ public class TenantDbContext : DbContext
             //entity.OwnsOne(m => m.SourceAddress);
             //entity.OwnsOne(m => m.DestinationAddress);
             entity.OwnsOne(m => m.Status);
+            entity.HasIndex(m => m.ReferenceId).IsUnique();
         });
     }
 }

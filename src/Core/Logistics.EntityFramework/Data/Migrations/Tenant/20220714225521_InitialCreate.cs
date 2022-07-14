@@ -64,15 +64,15 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    ReferenceId = table.Column<ulong>(type: "bigint unsigned", nullable: false),
                     Name = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     SourceAddress = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DestinationAddress = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    PricePerMile = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    DeliveryCost = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
                     TotalTripMiles = table.Column<double>(type: "double", nullable: false),
-                    IsCompleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     PickUpDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Status_Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -109,6 +109,12 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                 name: "IX_loads_AssignedTruckId",
                 table: "loads",
                 column: "AssignedTruckId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_loads_ReferenceId",
+                table: "loads",
+                column: "ReferenceId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_trucks_DriverId",

@@ -1,19 +1,17 @@
-﻿using Logistics.Domain.ValueObjects;
-
-namespace Logistics.Application.Handlers.Commands;
+﻿namespace Logistics.Application.Handlers.Commands;
 
 internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, DataResult>
 {
-    private readonly ITenantRepository<Load> _cargoRepository;
+    private readonly ITenantRepository<Load> _loadRepository;
     private readonly ITenantRepository<Truck> _truckRepository;
     private readonly ITenantRepository<Employee> _userRepository;
 
     public CreateLoadHandler(
-        ITenantRepository<Load> cargoRepository,
+        ITenantRepository<Load> loadRepository,
         ITenantRepository<Truck> truckRepository,
         ITenantRepository<Employee> userRepository)
     {
-        _cargoRepository = cargoRepository;
+        _loadRepository = loadRepository;
         _truckRepository = truckRepository;
         _userRepository = userRepository;
     }
@@ -34,20 +32,23 @@ internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, 
             return DataResult.CreateError("Could not find the specified truck driver");
         }
 
-        var cargoEntity = new Load
+        var latestLoad = _loadRepository.GetQuery().LastOrDefault();
+        
+        var loadEntity = new Load
         {
+            ReferenceId = latestLoad?.ReferenceId ?? 100_000,
             Name = request.Name,
             SourceAddress = request.SourceAddress,
             Status = LoadStatus.Dispatched,
             DestinationAddress = request.DestinationAddress,
             TotalTripMiles = request.TotalTripMiles,
-            PricePerMile = request.PricePerMile,
+            DeliveryCost = request.DeliveryCost,
             AssignedDispatcherId = dispatcher.Id,
-            AssignedTruckId = truck.Id,
+            AssignedTruckId = truck.Id
         };
 
-        await _cargoRepository.AddAsync(cargoEntity);
-        await _cargoRepository.UnitOfWork.CommitAsync();
+        await _loadRepository.AddAsync(loadEntity);
+        await _loadRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
 
@@ -71,7 +72,7 @@ internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, 
         {
             errorDescription = "Destination address is an empty string";
         }
-        else if (request.PricePerMile < 0)
+        else if (request.DeliveryCost < 0)
         {
             errorDescription = "Price per mile should be non-negative value";
         }

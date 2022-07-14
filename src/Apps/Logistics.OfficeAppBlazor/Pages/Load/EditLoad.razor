@@ -48,9 +48,9 @@
                         <label for="price" class="form-label">Price Per Mile</label>
                         <div class="input-group">
                             <span class="input-group-text">$$</span>
-                            <InputNumber id="price" class="form-control" @bind-Value="Model.Load.PricePerMile"
-                                         min="@CargoConsts.MinPricePerMile"
-                                         max="@CargoConsts.MaxPricePerMile" />
+                            <InputNumber id="price" class="form-control" @bind-Value="Model.Load.DeliveryCost"
+                                         min="@LoadConsts.MinDeliveryCost"
+                                         max="@LoadConsts.MaxDeliveryCost" />
                         </div>
 
                     </div>
@@ -59,17 +59,10 @@
                         <div class="input-group">
                             <span class="input-group-text">mi</span>
                             <InputNumber id="totalTrip" class="form-control" @bind-Value="Model.Load.TotalTripMiles"
-                                         min="@CargoConsts.MinTripMiles"
-                                         max="@CargoConsts.MaxTripMiles" />
+                                         min="@LoadConsts.MinTripMiles"
+                                         max="@LoadConsts.MaxTripMiles" />
                         </div>
                     </div>
-                    @if (Model.EditMode)
-                    {
-                        <div class="mb-3">
-                            <label for="completed" class="form-check-label">Is Completed</label>
-                            <InputCheckbox id="completed" class="form-check-input mt-0 ms-1" @bind-Value="Model.Load.IsCompleted" />
-                        </div>
-                    }
                     <div class="mb-3">
                         <label for="dispatcher" class="form-label">Assigned Dispatcher</label>
                         <input id="dispatcher" class="form-control" type="text" value="@Model.Load.AssignedDispatcherName" readonly />

@@ -81,7 +81,7 @@ public class EditLoadViewModel : PageViewModelBase
     private void ResetData()
     {
         Load.AssignedTruckId = null;
-        Load.PricePerMile = 0;
+        Load.DeliveryCost = 0;
         Load.TotalTripMiles = 0;
         Load.SourceAddress = string.Empty;
         Load.DestinationAddress = string.Empty;

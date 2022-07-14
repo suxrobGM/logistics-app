@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.EntityFramework.Data.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20220711233857_InitialCreate")]
+    [Migration("20220714225521_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -57,11 +57,11 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.Property<string>("AssignedTruckId")
                         .HasColumnType("varchar(255)");
 
+                    b.Property<decimal>("DeliveryCost")
+                        .HasColumnType("decimal(65,30)");
+
                     b.Property<string>("DestinationAddress")
                         .HasColumnType("longtext");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
@@ -69,8 +69,8 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.Property<DateTime>("PickUpDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<decimal>("PricePerMile")
-                        .HasColumnType("decimal(65,30)");
+                    b.Property<ulong>("ReferenceId")
+                        .HasColumnType("bigint unsigned");
 
                     b.Property<string>("SourceAddress")
                         .HasColumnType("longtext");
@@ -83,6 +83,9 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.HasIndex("AssignedDispatcherId");
 
                     b.HasIndex("AssignedTruckId");
+
+                    b.HasIndex("ReferenceId")
+                        .IsUnique();
 
                     b.ToTable("loads", (string)null);
                 });
@@ -135,12 +138,12 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
             modelBuilder.Entity("Logistics.Domain.Entities.Load", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Employee", "AssignedDispatcher")
-                        .WithMany("DispatcherCargoes")
+                        .WithMany("DispatchedLoads")
                         .HasForeignKey("AssignedDispatcherId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Logistics.Domain.Entities.Truck", "AssignedTruck")
-                        .WithMany("Cargoes")
+                        .WithMany("Loads")
                         .HasForeignKey("AssignedTruckId")
                         .OnDelete(DeleteBehavior.SetNull);
 
@@ -183,12 +186,12 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
                 {
-                    b.Navigation("DispatcherCargoes");
+                    b.Navigation("DispatchedLoads");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
                 {
-                    b.Navigation("Cargoes");
+                    b.Navigation("Loads");
                 });
 #pragma warning restore 612, 618
         }

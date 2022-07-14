@@ -11,33 +11,33 @@ internal sealed class GetLoadByIdHandler : RequestHandlerBase<GetLoadByIdQuery, 
 
     protected override async Task<DataResult<LoadDto>> HandleValidated(GetLoadByIdQuery request, CancellationToken cancellationToken)
     {
-        var cargoEntity = await _cargoRepository.GetAsync(request.Id!);
+        var loadEntity = await _cargoRepository.GetAsync(request.Id!);
 
-        if (cargoEntity == null)
+        if (loadEntity == null)
         {
             return DataResult<LoadDto>.CreateError("Could not find the specified cargo");
         }
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-        var cargo = new LoadDto
+        var load = new LoadDto
         {
-            Id = cargoEntity.Id,
-            Name = cargoEntity.Name,
-            SourceAddress = cargoEntity.SourceAddress,
-            DestinationAddress = cargoEntity.DestinationAddress,
-            PickUpDate = cargoEntity.PickUpDate,
-            PricePerMile = cargoEntity.PricePerMile,
-            TotalTripMiles = cargoEntity.TotalTripMiles,
-            IsCompleted = cargoEntity.IsCompleted,
-            Status = cargoEntity.Status.ToString(),
-            AssignedDispatcherId = cargoEntity.AssignedDispatcherId,
-            AssignedDispatcherName = cargoEntity.AssignedDispatcher.GetFullName(),
-            AssignedTruckId = cargoEntity.AssignedTruck.Id,
-            AssignedTruckDriverName = cargoEntity.AssignedTruck.Driver.GetFullName()
+            Id = loadEntity.Id,
+            ReferenceId = loadEntity.ReferenceId,
+            Name = loadEntity.Name,
+            SourceAddress = loadEntity.SourceAddress,
+            DestinationAddress = loadEntity.DestinationAddress,
+            PickUpDate = loadEntity.PickUpDate,
+            DeliveryCost = loadEntity.DeliveryCost,
+            TotalTripMiles = loadEntity.TotalTripMiles,
+            Status = loadEntity.Status.ToString(),
+            AssignedDispatcherId = loadEntity.AssignedDispatcherId,
+            AssignedDispatcherName = loadEntity.AssignedDispatcher.GetFullName(),
+            AssignedTruckId = loadEntity.AssignedTruck.Id,
+            AssignedTruckDriverName = loadEntity.AssignedTruck.Driver.GetFullName()
         };
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
-        return DataResult<LoadDto>.CreateSuccess(cargo);
+        return DataResult<LoadDto>.CreateSuccess(load);
     }
 
     protected override bool Validate(GetLoadByIdQuery request, out string errorDescription)

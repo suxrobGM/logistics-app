@@ -5,6 +5,7 @@ namespace Logistics.Application.Contracts.Models;
 public class LoadDto
 {
     public string? Id { get; set; }
+    public ulong ReferenceId { get; set; } = 100_000;
 
     public string? Name { get; set; }
     
@@ -15,14 +16,13 @@ public class LoadDto
     public string? DestinationAddress { get; set; }
 
     [Required]
-    [Range(CargoConsts.MinPricePerMile, CargoConsts.MaxPricePerMile)]
-    public decimal PricePerMile { get; set; }
+    [Range(LoadConsts.MinDeliveryCost, LoadConsts.MinDeliveryCost)]
+    public decimal DeliveryCost { get; set; }
 
     [Required]
-    [Range(CargoConsts.MinTripMiles, CargoConsts.MaxTripMiles)]
+    [Range(LoadConsts.MinTripMiles, LoadConsts.MaxTripMiles)]
     public double TotalTripMiles { get; set; }
-
-    public bool IsCompleted { get; set; }
+    
     public DateTime PickUpDate { get; set; } = DateTime.Now;
     public string? Status { get; set; }
 

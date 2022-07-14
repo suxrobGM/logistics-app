@@ -6,7 +6,7 @@ import { AuthModule } from 'angular-auth-oidc-client';
         config: {
             authority: 'https://localhost:7001',
             postLoginRoute: '/dashboard',
-            forbiddenRoute: '/unauthorized',
+            forbiddenRoute: '/forbidden',
             unauthorizedRoute: '/unauthorized',
             redirectUrl: window.location.origin,
             postLogoutRedirectUri: window.location.origin,

@@ -28,13 +28,13 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
             .Select(i => new LoadDto
             {
                 Id = i.Id,
+                ReferenceId = i.ReferenceId,
                 Name = i.Name,
                 SourceAddress = i.SourceAddress,
                 DestinationAddress = i.DestinationAddress,
-                PricePerMile = i.PricePerMile,
+                DeliveryCost = i.DeliveryCost,
                 TotalTripMiles = i.TotalTripMiles,
                 PickUpDate = i.PickUpDate,
-                IsCompleted = i.IsCompleted,
                 AssignedDispatcherId = i.AssignedDispatcherId,
                 AssignedDispatcherName = i.AssignedDispatcher != null ? i.AssignedDispatcher.GetFullName() : null,
                 AssignedTruckId = i.AssignedTruck != null ? i.AssignedTruck.Id : null,
