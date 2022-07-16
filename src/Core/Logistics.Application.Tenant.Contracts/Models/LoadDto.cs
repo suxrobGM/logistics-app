@@ -23,7 +23,9 @@ public class LoadDto
     [Range(LoadConsts.MinDistance, LoadConsts.MaxDistance)]
     public double Distance { get; set; }
     
-    public DateTime PickUpDate { get; set; } = DateTime.Now;
+    public DateTime DispatchedDate { get; set; } = DateTime.Now;
+    public DateTime? PickUpDate { get; set; }
+    public DateTime? DeliveryDate { get; set; }
     public string? Status { get; set; }
 
     [Required]

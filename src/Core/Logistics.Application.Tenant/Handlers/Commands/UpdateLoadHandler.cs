@@ -23,23 +23,24 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
             return DataResult.CreateError("Could not find the specified truck");
         }
 
-        var cargoEntity = await _cargoRepository.GetAsync(request.Id!);
+        var loadEntity = await _cargoRepository.GetAsync(request.Id!);
 
-        if (cargoEntity == null)
+        if (loadEntity == null)
         {
             return DataResult.CreateError("Could not find the specified cargo");
         }
 
-        cargoEntity.Name = request.Name;
-        cargoEntity.SourceAddress = request.SourceAddress;
-        cargoEntity.DestinationAddress = request.DestinationAddress;
-        cargoEntity.Distance = request.Distance;
-        cargoEntity.DeliveryCost = request.DeliveryCost;
-        cargoEntity.PickUpDate = request.PickUpDate;
-        cargoEntity.Status = LoadStatus.Get(request.Status!);
-        cargoEntity.AssignedTruck = truck;
+        loadEntity.Name = request.Name;
+        loadEntity.SourceAddress = request.SourceAddress;
+        loadEntity.DestinationAddress = request.DestinationAddress;
+        loadEntity.Distance = request.Distance;
+        loadEntity.DeliveryCost = request.DeliveryCost;
+        loadEntity.PickUpDate = request.PickUpDate;
+        loadEntity.DeliveryDate = request.DeliveryDate;
+        loadEntity.Status = LoadStatus.Get(request.Status!);
+        loadEntity.AssignedTruck = truck;
 
-        _cargoRepository.Update(cargoEntity);
+        _cargoRepository.Update(loadEntity);
         await _cargoRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }

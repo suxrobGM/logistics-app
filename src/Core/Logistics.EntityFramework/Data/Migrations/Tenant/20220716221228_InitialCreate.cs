@@ -73,7 +73,9 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DeliveryCost = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
                     Distance = table.Column<double>(type: "double", nullable: false),
-                    PickUpDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    DispatchedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    PickUpDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    DeliveryDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     Status_Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Status_Id = table.Column<int>(type: "int", nullable: false),

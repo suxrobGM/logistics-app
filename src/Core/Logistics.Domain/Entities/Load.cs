@@ -4,14 +4,35 @@ namespace Logistics.Domain.Entities;
 
 public class Load : Entity, ITenantEntity
 {
+    private LoadStatus _status = LoadStatus.Dispatched;
+    
     public ulong ReferenceId { get; set; } = 100_000;
     public string? Name { get; set; }
     public string? SourceAddress { get; set; }
     public string? DestinationAddress { get; set; }
     public decimal DeliveryCost { get; set; }
     public double Distance { get; set; }
-    public DateTime PickUpDate { get; set; } = DateTime.Now;
-    public LoadStatus Status { get; set; } = LoadStatus.Dispatched;
+    public DateTime DispatchedDate { get; set; } = DateTime.Now;
+    public DateTime? PickUpDate { get; set; }
+    public DateTime? DeliveryDate { get; set; }
+    
+    public LoadStatus Status
+    {
+        get => _status;
+        set
+        {
+            _status = value;
+            if (_status == LoadStatus.PickedUp)
+            {
+                PickUpDate = DateTime.Now;
+            }
+            else if (_status == LoadStatus.Delivered)
+            {
+                DeliveryDate = DateTime.Now;
+            }
+        }
+    }
+    
     public string? AssignedDispatcherId { get; set; }
     public string? AssignedTruckId { get; set; }
 
