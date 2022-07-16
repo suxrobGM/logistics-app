@@ -41,7 +41,7 @@ internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, 
             SourceAddress = request.SourceAddress,
             Status = LoadStatus.Dispatched,
             DestinationAddress = request.DestinationAddress,
-            TotalTripMiles = request.TotalTripMiles,
+            Distance = request.Distance,
             DeliveryCost = request.DeliveryCost,
             AssignedDispatcherId = dispatcher.Id,
             AssignedTruckId = truck.Id
@@ -76,7 +76,7 @@ internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, 
         {
             errorDescription = "Price per mile should be non-negative value";
         }
-        else if (request.TotalTripMiles < 0)
+        else if (request.Distance < 0)
         {
             errorDescription = "Total trip miles should be non-negative value";
         }

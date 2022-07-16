@@ -61,6 +61,9 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.Property<string>("DestinationAddress")
                         .HasColumnType("longtext");
 
+                    b.Property<double>("Distance")
+                        .HasColumnType("double");
+
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
@@ -72,9 +75,6 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
 
                     b.Property<string>("SourceAddress")
                         .HasColumnType("longtext");
-
-                    b.Property<double>("TotalTripMiles")
-                        .HasColumnType("double");
 
                     b.HasKey("Id");
 

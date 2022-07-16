@@ -9,7 +9,7 @@ public class Load : Entity, ITenantEntity
     public string? SourceAddress { get; set; }
     public string? DestinationAddress { get; set; }
     public decimal DeliveryCost { get; set; }
-    public double TotalTripMiles { get; set; }
+    public double Distance { get; set; }
     public DateTime PickUpDate { get; set; } = DateTime.Now;
     public LoadStatus Status { get; set; } = LoadStatus.Dispatched;
     public string? AssignedDispatcherId { get; set; }

@@ -20,8 +20,8 @@ public class LoadDto
     public decimal DeliveryCost { get; set; }
 
     [Required]
-    [Range(LoadConsts.MinTripMiles, LoadConsts.MaxTripMiles)]
-    public double TotalTripMiles { get; set; }
+    [Range(LoadConsts.MinDistance, LoadConsts.MaxDistance)]
+    public double Distance { get; set; }
     
     public DateTime PickUpDate { get; set; } = DateTime.Now;
     public string? Status { get; set; }

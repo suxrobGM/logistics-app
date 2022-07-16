@@ -33,7 +33,7 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
                 SourceAddress = i.SourceAddress,
                 DestinationAddress = i.DestinationAddress,
                 DeliveryCost = i.DeliveryCost,
-                TotalTripMiles = i.TotalTripMiles,
+                Distance = i.Distance,
                 PickUpDate = i.PickUpDate,
                 AssignedDispatcherId = i.AssignedDispatcherId,
                 AssignedDispatcherName = i.AssignedDispatcher != null ? i.AssignedDispatcher.GetFullName() : null,

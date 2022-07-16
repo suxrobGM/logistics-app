@@ -72,7 +72,7 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     DestinationAddress = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DeliveryCost = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    TotalTripMiles = table.Column<double>(type: "double", nullable: false),
+                    Distance = table.Column<double>(type: "double", nullable: false),
                     PickUpDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Status_Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),

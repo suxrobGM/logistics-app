@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.EntityFramework.Data.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20220714225521_InitialCreate")]
+    [Migration("20220716003039_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,6 +63,9 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.Property<string>("DestinationAddress")
                         .HasColumnType("longtext");
 
+                    b.Property<double>("Distance")
+                        .HasColumnType("double");
+
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
@@ -74,9 +77,6 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
 
                     b.Property<string>("SourceAddress")
                         .HasColumnType("longtext");
-
-                    b.Property<double>("TotalTripMiles")
-                        .HasColumnType("double");
 
                     b.HasKey("Id");
 

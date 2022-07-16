@@ -82,7 +82,7 @@ public class EditLoadViewModel : PageViewModelBase
     {
         Load.AssignedTruckId = null;
         Load.DeliveryCost = 0;
-        Load.TotalTripMiles = 0;
+        Load.Distance = 0;
         Load.SourceAddress = string.Empty;
         Load.DestinationAddress = string.Empty;
     }

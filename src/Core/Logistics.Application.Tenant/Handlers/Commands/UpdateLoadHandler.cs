@@ -33,7 +33,7 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
         cargoEntity.Name = request.Name;
         cargoEntity.SourceAddress = request.SourceAddress;
         cargoEntity.DestinationAddress = request.DestinationAddress;
-        cargoEntity.TotalTripMiles = request.TotalTripMiles;
+        cargoEntity.Distance = request.Distance;
         cargoEntity.DeliveryCost = request.DeliveryCost;
         cargoEntity.PickUpDate = request.PickUpDate;
         cargoEntity.Status = LoadStatus.Get(request.Status!);
@@ -72,7 +72,7 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
         {
             errorDescription = "Price per mile should be non-negative value";
         }
-        else if (request.TotalTripMiles < 0)
+        else if (request.Distance < 0)
         {
             errorDescription = "Total trip miles should be non-negative value";
         }

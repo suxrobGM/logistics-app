@@ -6,7 +6,7 @@ public sealed class CreateLoadCommand : RequestBase<DataResult>
     public string? SourceAddress { get; set; }
     public string? DestinationAddress { get; set; }
     public decimal DeliveryCost { get; set; }
-    public double TotalTripMiles { get; set; }
+    public double Distance { get; set; }
     public string? AssignedDispatcherId { get; set; }
     public string? AssignedTruckId { get; set; }
 }
