@@ -1,14 +1,17 @@
 import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { SharedModule } from './shared/shared.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { RootModule } from './modules/root/root.module';
-import { SharedModule } from './shared/shared.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { LoadModule } from './modules/load/load.module';
-import { LoadRoutingModule } from './modules/load/load-routing.module';
+import { CoreModule } from './modules/core/core.module';
+import { AppConfig, APP_CONFIG } from './configs/app.config';
+
 
 @NgModule({
   declarations: [
@@ -17,14 +20,18 @@ import { LoadRoutingModule } from './modules/load/load-routing.module';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    HttpClientModule,
     AppRoutingModule,
+    CoreModule,
     DashboardModule,
     AuthModule,
     LoadModule,
     RootModule,
     SharedModule,
   ],
-  providers: [],
+  providers: [
+    { provide: APP_CONFIG, useValue: AppConfig }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -6,6 +6,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { InputTextModule } from 'primeng/inputtext'
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { DropdownModule } from 'primeng/dropdown';
+import { TableModule } from 'primeng/table';
 
 @NgModule({
   declarations: [],
@@ -16,7 +17,8 @@ import { DropdownModule } from 'primeng/dropdown';
     InputTextModule,
     ProgressSpinnerModule,
     AutoCompleteModule,
-    DropdownModule
+    DropdownModule,
+    TableModule
   ],
   exports: [
     CardModule,
@@ -24,7 +26,8 @@ import { DropdownModule } from 'primeng/dropdown';
     InputTextModule,
     ProgressSpinnerModule,
     AutoCompleteModule,
-    DropdownModule
+    DropdownModule,
+    TableModule
   ]
 })
 export class PrimengModule { }
