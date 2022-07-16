@@ -206,6 +206,11 @@ internal class ApiClient : ApiClientBase, IApiClient
     {
         return PutRequestAsync($"employee/update/{user.Id}", user);
     }
+    
+    public Task DeleteEmployeeAsync(string id)
+    {
+        return DeleteRequestAsync($"employee/delete/{id}");
+    }
 
     #endregion
 

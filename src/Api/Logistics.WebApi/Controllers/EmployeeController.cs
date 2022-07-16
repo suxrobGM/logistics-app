@@ -95,4 +95,21 @@ public class EmployeeController : ControllerBase
 
         return BadRequest(result);
     }
+    
+    [HttpDelete("delete/{id}")]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Policies.Truck.CanWrite)]
+    public async Task<IActionResult> Delete(string id)
+    {
+        var result = await _mediator.Send(new DeleteEmployeeCommand
+        {
+            Id = id
+        });
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result);
+    }
 }

@@ -9,4 +9,5 @@ public interface IEmployeeApi
     Task CreateEmployeeAsync(EmployeeDto employee);
     Task UpdateEmployeeAsync(EmployeeDto employee);
     Task<bool> TryCreateEmployeeAsync(EmployeeDto employee);
+    Task DeleteEmployeeAsync(string id);
 }
