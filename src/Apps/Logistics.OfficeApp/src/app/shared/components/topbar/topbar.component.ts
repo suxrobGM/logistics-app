@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { UserData } from '@app/shared/models/userData';
+import { UserData } from '@app/shared/models/user-data';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 
 @Component({

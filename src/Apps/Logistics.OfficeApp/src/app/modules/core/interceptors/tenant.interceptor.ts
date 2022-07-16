@@ -6,7 +6,7 @@ import {
   HttpInterceptor
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { TenantService } from '../services/tenant.service';
+import { TenantService } from '@shared/services/tenant.service';
 
 @Injectable()
 export class TenantInterceptor implements HttpInterceptor {

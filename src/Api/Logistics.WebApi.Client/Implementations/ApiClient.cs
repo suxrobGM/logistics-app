@@ -81,7 +81,7 @@ internal class ApiClient : ApiClientBase, IApiClient
 
     public Task DeleteLoadAsync(string id)
     {
-        return DeleteRequestAsync($"load/{id}");
+        return DeleteRequestAsync($"load/delete/{id}");
     }
 
     #endregion
@@ -130,7 +130,7 @@ internal class ApiClient : ApiClientBase, IApiClient
 
     public Task DeleteTruckAsync(string id)
     {
-        return DeleteRequestAsync($"truck/{id}");
+        return DeleteRequestAsync($"truck/delete/{id}");
     }
 
     #endregion
@@ -252,7 +252,7 @@ internal class ApiClient : ApiClientBase, IApiClient
 
     public Task DeleteTenantAsync(string id)
     {
-        return DeleteRequestAsync($"tenant/{id}");
+        return DeleteRequestAsync($"tenant/delete/{id}");
     }
 
     #endregion
