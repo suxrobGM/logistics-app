@@ -2,7 +2,10 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DockModule } from 'primeng/dock';
 import { CardModule } from 'primeng/card';
-import { GMap, GMapModule } from 'primeng/gmap';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { InputTextModule } from 'primeng/inputtext'
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { DropdownModule } from 'primeng/dropdown';
 
 @NgModule({
   declarations: [],
@@ -10,12 +13,18 @@ import { GMap, GMapModule } from 'primeng/gmap';
     CommonModule,
     CardModule,
     DockModule,
-    GMapModule
+    InputTextModule,
+    ProgressSpinnerModule,
+    AutoCompleteModule,
+    DropdownModule
   ],
   exports: [
     CardModule,
     DockModule,
-    GMapModule
+    InputTextModule,
+    ProgressSpinnerModule,
+    AutoCompleteModule,
+    DropdownModule
   ]
 })
 export class PrimengModule { }

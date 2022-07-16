@@ -7,6 +7,8 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { RootModule } from './modules/root/root.module';
 import { SharedModule } from './shared/shared.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { LoadModule } from './modules/load/load.module';
+import { LoadRoutingModule } from './modules/load/load-routing.module';
 
 @NgModule({
   declarations: [
@@ -17,9 +19,10 @@ import { AuthModule } from './modules/auth/auth.module';
     BrowserAnimationsModule,
     AppRoutingModule,
     DashboardModule,
+    AuthModule,
+    LoadModule,
     RootModule,
     SharedModule,
-    AuthModule
   ],
   providers: [],
   bootstrap: [AppComponent]

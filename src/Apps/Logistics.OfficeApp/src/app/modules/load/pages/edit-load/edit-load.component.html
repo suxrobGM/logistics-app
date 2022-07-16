@@ -1,1 +1,67 @@
-<p>edit-load works!</p>
+<h1>{{headerText}}</h1>
+<hr class="w-100">
+<p-card>
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <p-progressSpinner *ngIf="isBusy"></p-progressSpinner>
+            <form>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input id="name" type="text" class="form-control" placeholder="Load name" /> 
+                </div>
+                <div class="mb-3">
+                    <label for="srcAddress" class="form-label">Source Address</label>
+                    <div id="srcAddress"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="dstAddress" class="form-label">Destination Address</label>
+                    <div id="dstAddress"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="pickupDate" class="form-label">Pick Up Date</label>
+                    <input id="pickupDate" type="text" class="form-control" disabled /> 
+                </div>
+                <div class="mb-3">
+                    <label for="cost" class="form-label">Delivery Cost</label>
+                    <div class="input-group">
+                        <span class="input-group-text">$$</span>
+                        <input id="cost" type="number" class="form-control" />
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="distance" class="form-label">Estimated Distance</label>
+                    <div class="input-group">
+                        <span class="input-group-text">mi</span>
+                        <input id="distance" type="number" class="form-control" [value]="distance" disabled /> 
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="dispatcher" class="form-label">Assigned Dispatcher</label>
+                    <input id="dispatcher" type="text" class="form-control" disabled />
+                </div>
+                <div class="mb-3">
+                    <label for="driver" class="form-label">Assigned Driver</label>
+                    <p-autoComplete formControlName="driver" 
+                        styleClass="w-100" 
+                        inputStyleClass="form-control" 
+                        placeholder="Type driver name"></p-autoComplete>
+                </div>
+                <div class="mb-3">
+                    <label for="status" class="form-label">Status</label>
+                    <p-dropdown optionLabel="status" styleClass="w-100"></p-dropdown> 
+                </div>
+                <div class="mt-3">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="bi bi-pencil-square"></i> Save
+                    </button>
+                    <a class="btn btn-primary ms-2" [routerLink]="['/list-load']">
+                        <i class="bi bi-arrow-left-square"></i> Back
+                    </a>
+                </div>
+            </form>
+        </div>
+        <div class="col-12 col-md-6">
+            <div id="map"></div>
+        </div>
+    </div>
+</p-card>
