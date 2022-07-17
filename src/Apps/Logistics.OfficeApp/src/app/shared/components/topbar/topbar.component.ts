@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UserData } from '@app/shared/models/user-data';
 import { ApiClientService } from '@app/shared/services/api-client.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { Observable, of, scheduled, switchMap, map } from 'rxjs';
+import { of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-topbar',

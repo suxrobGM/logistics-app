@@ -11,6 +11,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { LoadModule } from './modules/load/load.module';
 import { CoreModule } from './modules/core/core.module';
 import { AppConfig, APP_CONFIG } from './configs/app.config';
+import { EmployeeModule } from './modules/employee/employee.module';
+import { TruckModule } from './modules/truck/truck.module';
 
 
 @NgModule({
@@ -25,7 +27,9 @@ import { AppConfig, APP_CONFIG } from './configs/app.config';
     CoreModule,
     DashboardModule,
     AuthModule,
-    LoadModule,
+    LoadModule, // TODO: make lazy-loading this module
+    EmployeeModule, // TODO: make lazy-loading this module
+    TruckModule, // TODO: make lazy-loading this module
     RootModule,
     SharedModule,
   ],
