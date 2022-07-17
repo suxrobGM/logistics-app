@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Load } from '@app/shared/models/load';
-import { LoadService } from '../../shared/load.service';
+import { ApiClientService } from '@shared/services/api-client.service';
 
 @Component({
   selector: 'app-list-load',
@@ -9,10 +9,10 @@ import { LoadService } from '../../shared/load.service';
 })
 export class ListLoadComponent implements AfterViewInit {
   loads!: Load[]
-  constructor(private loadService: LoadService) { }
+  constructor(private apiService: ApiClientService) { }
 
   ngAfterViewInit(): void {
-    this.loadService.getLoads().subscribe(i => console.log(i));
+    this.apiService.getLoads().subscribe(i => console.log(i));
   }
 
 }

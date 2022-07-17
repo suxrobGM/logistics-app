@@ -36,7 +36,7 @@ public class TenantController : ControllerBase
     [HttpGet("displayName/{identifier}")]
     [ProducesResponseType(typeof(DataResult<TenantDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Policies.Tenant.CanRead)]
+    [Authorize(Policy = Policies.Tenant.CanReadDisplayNameOnly)]
     public async Task<IActionResult> GetDisplayName(string? identifier)
     {
         var result = await _mediator.Send(new GetTenantDisplayNameQuery

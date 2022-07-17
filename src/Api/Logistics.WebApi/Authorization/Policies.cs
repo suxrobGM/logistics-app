@@ -23,6 +23,7 @@ public static class Policies
     public static class Tenant
     {
         public const string CanRead = "Permissions.Tenant.CanRead";
+        public const string CanReadDisplayNameOnly = "Permissions.Tenant.CanReadDisplayNameOnly";
         public const string CanWrite = "Permissions.Tenant.CanWrite";
     }
     

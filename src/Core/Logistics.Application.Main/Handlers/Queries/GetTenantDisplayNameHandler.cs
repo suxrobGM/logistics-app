@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Handlers.Queries;
 
-internal class GetTenantDisplayNameHandler : RequestHandlerBase<GetTenantDisplayNameQuery, DataResult<string>>
+internal class GetTenantDisplayNameHandler : RequestHandlerBase<GetTenantDisplayNameQuery, DataResult<TenantDto>>
 {
     private readonly IMainRepository<Tenant> _repository;
 
@@ -9,16 +9,22 @@ internal class GetTenantDisplayNameHandler : RequestHandlerBase<GetTenantDisplay
         _repository = repository;
     }
 
-    protected override async Task<DataResult<string>> HandleValidated(GetTenantDisplayNameQuery request, CancellationToken cancellationToken)
+    protected override async Task<DataResult<TenantDto>> HandleValidated(GetTenantDisplayNameQuery request, CancellationToken cancellationToken)
     {
         var tenantEntity = await _repository.GetAsync(i => i.Id == request.Id || i.Name == request.Name);
 
         if (tenantEntity == null)
         {
-            return DataResult<string>.CreateError("Could not find the specified tenant");
+            return DataResult<TenantDto>.CreateError("Could not find the specified tenant");
         }
 
-        return DataResult<string>.CreateSuccess(tenantEntity.DisplayName!);
+        var tenant = new TenantDto
+        {
+            Id = tenantEntity.Id,
+            Name = tenantEntity.Name,
+            DisplayName = tenantEntity.DisplayName
+        };
+        return DataResult<TenantDto>.CreateSuccess(tenant);
     }
 
     protected override bool Validate(GetTenantDisplayNameQuery request, out string errorDescription)

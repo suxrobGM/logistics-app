@@ -63,6 +63,10 @@ internal static class HostingExtensions
             {
                 policy.Requirements.Add(new TenantCanReadRequirement());
             });
+            options.AddPolicy(Policies.Tenant.CanReadDisplayNameOnly, policy =>
+            {
+                policy.Requirements.Add(new TenantCanReadDisplayNameOnlyRequirement());
+            });
             options.AddPolicy(Policies.Tenant.CanWrite, policy =>
             {
                 policy.Requirements.Add(new TenantCanWriteRequirement());
@@ -84,6 +88,7 @@ internal static class HostingExtensions
         builder.Services.AddSingleton<IAuthorizationHandler, TruckCanReadHandler>();
         builder.Services.AddSingleton<IAuthorizationHandler, TruckCanWriteHandler>();
         builder.Services.AddSingleton<IAuthorizationHandler, TenantCanReadHandler>();
+        builder.Services.AddSingleton<IAuthorizationHandler, TenantCanReadDisplayNameOnlyHandler>();
         builder.Services.AddSingleton<IAuthorizationHandler, TenantCanWriteHandler>();
         builder.Services.AddSingleton<IAuthorizationHandler, UserCanReadHandler>();
         builder.Services.AddSingleton<IAuthorizationHandler, UserCanWriteHandler>();

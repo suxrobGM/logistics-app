@@ -1,4 +1,6 @@
-﻿namespace Logistics.Application.Contracts.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Logistics.Application.Contracts.Models;
 
 public class TenantDto
 {
@@ -9,5 +11,7 @@ public class TenantDto
 
     [StringLength(TenantConsts.DisplayNameLength)]
     public string? DisplayName { get; set; }
+    
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? ConnectionString { get; set; }
 }

@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
       this.isAuthenticated = isAuthenticated;
     });
 
-    this.printpath('', this.router.config);
+    //this.printpath('', this.router.config);
   }
 
   printpath(parent: String, config: Route[]) {

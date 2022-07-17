@@ -15,6 +15,7 @@ import { TenantService } from './tenant.service';
 })
 export class ApiClientService {
   private host = AppConfig.apiHost;
+  private retryCount = 1;
 
   constructor(
     private httpClient: HttpClient,
@@ -29,7 +30,7 @@ export class ApiClientService {
     const url = `${this.host}/tenant/displayName/${tenantId}`;
     return this.httpClient
       .get<DataResult<any>>(url)
-      .pipe(retry(3));
+      .pipe(retry(1));
   }
 
   //#endregion
@@ -40,14 +41,14 @@ export class ApiClientService {
     const url = `${this.host}/load/${id}`;
     return this.httpClient
       .get<DataResult<Load>>(url)
-      .pipe(retry(3));
+      .pipe(retry(this.retryCount));
   }
 
   getLoads(searchQuery = '', page = 1, pageSize = 10): Observable<PagedDataResult<Load>> {  
     const url = `${this.host}/load/list?search=${searchQuery}page=${page}&pageSize=${pageSize}`;
     return this.httpClient
       .get<PagedDataResult<Load>>(url)
-      .pipe(retry(3));
+      .pipe(retry(this.retryCount));
   }
 
   createLoad(load: Load): Observable<DataResult<any>> {  
@@ -57,7 +58,7 @@ export class ApiClientService {
 
     return this.httpClient
       .post<DataResult<any>>(url, body, { headers: headers })
-      .pipe(retry(3));
+      .pipe(retry(this.retryCount));
   }
 
   updateLoad(load: Load): Observable<DataResult<any>> {  
@@ -67,7 +68,7 @@ export class ApiClientService {
 
     return this.httpClient
       .put<DataResult<any>>(url, body, { headers: headers })
-      .pipe(retry(3));
+      .pipe(retry(this.retryCount));
   }
 
   deleteLoad(loadId: string): Observable<DataResult<any>> {  
@@ -75,7 +76,7 @@ export class ApiClientService {
 
     return this.httpClient
       .delete<DataResult<any>>(url)
-      .pipe(retry(3));
+      .pipe(retry(this.retryCount));
   }
 
   //#endregion
@@ -87,14 +88,14 @@ export class ApiClientService {
     const url = `${this.host}/truck/${id}`;
     return this.httpClient
       .get<DataResult<Truck>>(url)
-      .pipe(retry(3));
+      .pipe(retry(this.retryCount));
   }
 
   getTrucks(searchQuery = '', page = 1, pageSize = 10): Observable<PagedDataResult<Truck>> {  
     const url = `${this.host}/truck/list?search=${searchQuery}page=${page}&pageSize=${pageSize}`;
     return this.httpClient
       .get<PagedDataResult<Truck>>(url)
-      .pipe(retry(3));
+      .pipe(retry(this.retryCount));
   }
 
   createTruck(truck: Truck): Observable<DataResult<any>> {  
@@ -104,7 +105,7 @@ export class ApiClientService {
 
     return this.httpClient
       .post<DataResult<any>>(url, body, { headers: headers })
-      .pipe(retry(3));
+      .pipe(retry(this.retryCount));
   }
 
   updateTruck(truck: Truck): Observable<DataResult<any>> {  
@@ -114,7 +115,7 @@ export class ApiClientService {
 
     return this.httpClient
       .put<DataResult<any>>(url, body, { headers: headers })
-      .pipe(retry(3));
+      .pipe(retry(this.retryCount));
   }
 
   deleteTruck(truckId: string): Observable<DataResult<any>> {  
@@ -122,7 +123,7 @@ export class ApiClientService {
 
     return this.httpClient
       .delete<DataResult<any>>(url)
-      .pipe(retry(3));
+      .pipe(retry(this.retryCount));
   }
 
   //#endregion
@@ -134,14 +135,14 @@ export class ApiClientService {
     const url = `${this.host}/employee/${id}`;
     return this.httpClient
       .get<DataResult<Employee>>(url)
-      .pipe(retry(3));
+      .pipe(retry(this.retryCount));
   }
 
   getEmployees(searchQuery = '', page = 1, pageSize = 10): Observable<PagedDataResult<Employee>> {  
     const url = `${this.host}/employee/list?search=${searchQuery}page=${page}&pageSize=${pageSize}`;
     return this.httpClient
       .get<PagedDataResult<Employee>>(url)
-      .pipe(retry(3));
+      .pipe(retry(this.retryCount));
   }
 
   createEmployee(employee: Employee): Observable<DataResult<any>> {  
@@ -151,7 +152,7 @@ export class ApiClientService {
 
     return this.httpClient
       .post<DataResult<any>>(url, body, { headers: headers })
-      .pipe(retry(3));
+      .pipe(retry(this.retryCount));
   }
 
   updateEmployee(employee: Employee): Observable<DataResult<any>> {  
@@ -161,7 +162,7 @@ export class ApiClientService {
 
     return this.httpClient
       .put<DataResult<any>>(url, body, { headers: headers })
-      .pipe(retry(3));
+      .pipe(retry(this.retryCount));
   }
 
   deleteEmployee(employeeId: string): Observable<DataResult<any>> {  
@@ -169,7 +170,7 @@ export class ApiClientService {
 
     return this.httpClient
       .delete<DataResult<any>>(url)
-      .pipe(retry(3));
+      .pipe(retry(this.retryCount));
   }
 
   //#endregion
