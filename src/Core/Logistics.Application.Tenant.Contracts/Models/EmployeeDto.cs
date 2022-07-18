@@ -17,10 +17,13 @@ public class EmployeeDto
     public string ExternalId { get; set; }
     
     public string? FirstName { get; set; }
-    
     public string? LastName { get; set; }
     
+    public string? Email { get; set; }
+    
+    public string? PhoneNumber { get; set; }
     public string? Role { get; set; }
+    public DateTime JoinedDate { get; set; }
 
     public string GetFullName()
     {

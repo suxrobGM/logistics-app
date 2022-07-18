@@ -2,26 +2,30 @@
 
 internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery, PagedDataResult<EmployeeDto>>
 {
-    private readonly ITenantRepository<Employee> _userRepository;
+    private readonly IMainRepository<User> _userRepository;
+    private readonly ITenantRepository<Employee> _employeeRepository;
 
-    public GetEmployeesHandler(ITenantRepository<Employee> userRepository)
+    public GetEmployeesHandler(
+        IMainRepository<User> userRepository,
+        ITenantRepository<Employee> employeeRepository)
     {
         _userRepository = userRepository;
+        _employeeRepository = employeeRepository;
     }
 
     protected override Task<PagedDataResult<EmployeeDto>> HandleValidated(
         GetEmployeesQuery request, 
         CancellationToken cancellationToken)
     {
-        var totalItems = _userRepository.GetQuery().Count();
-        var itemsQuery = _userRepository.GetQuery();
+        var totalItems = _employeeRepository.GetQuery().Count();
+        var itemsQuery = _employeeRepository.GetQuery();
 
         if (!string.IsNullOrEmpty(request.Search))
         {
-            itemsQuery = _userRepository.GetQuery(new SearchEmployeesSpecification(request.Search));
+            itemsQuery = _employeeRepository.GetQuery(new SearchEmployeesSpecification(request.Search));
         }
 
-        var items = itemsQuery
+        var employeesDict = itemsQuery
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
             .Select(i => new EmployeeDto
@@ -31,12 +35,25 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery
                 UserName = i.UserName!,
                 FirstName = i.FirstName,
                 LastName = i.LastName,
-                Role = i.Role.Name
+                Role = i.Role.Name,
+                JoinedDate = i.JoinedDate
             })
+            .ToDictionary(employee => employee.ExternalId);
+
+        var employees = employeesDict.Values.ToArray();
+        var users = _userRepository.GetQuery(user => 
+                employees.Select(emp => emp.ExternalId).Contains(user.Id))
             .ToArray();
+        
+        foreach (var user in users)
+        {
+            var employee = employeesDict[user.Id];
+            employee.Email = user.Email;
+            employee.PhoneNumber = user.PhoneNumber;
+        }
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
-        return Task.FromResult(new PagedDataResult<EmployeeDto>(items, totalItems, totalPages));
+        return Task.FromResult(new PagedDataResult<EmployeeDto>(employees, totalItems, totalPages));
     }
 
     protected override bool Validate(GetEmployeesQuery request, out string errorDescription)

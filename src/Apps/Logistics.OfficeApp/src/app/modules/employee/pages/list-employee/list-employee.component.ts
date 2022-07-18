@@ -1,15 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Employee } from '@app/shared/models/employee';
+import { ApiClientService } from '@app/shared/services/api-client.service';
 
 @Component({
   selector: 'app-list-employee',
   templateUrl: './list-employee.component.html',
   styleUrls: ['./list-employee.component.scss']
 })
-export class ListEmployeeComponent implements OnInit {
+export class ListEmployeeComponent implements AfterViewInit {
+  public employees: Employee[];
+  public isBusy = false;
 
-  constructor() { }
-
-  ngOnInit(): void {
+  constructor(private apiService: ApiClientService) {
+    this.employees = [];
   }
 
+  ngAfterViewInit(): void {
+    this.apiService.getEmployees().subscribe(result => {
+      if (result.success && result.items) {
+        this.employees = result.items;
+      }
+    });
+  }
 }

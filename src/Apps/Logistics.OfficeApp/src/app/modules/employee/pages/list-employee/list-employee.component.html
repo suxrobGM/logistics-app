@@ -1,1 +1,32 @@
-<p>list-employee works!</p>
+<h1>List Employees</h1>
+<hr class="w-100">
+
+<p-card>
+    <div class="row">
+        <div class="col-12">
+            <p-progressSpinner *ngIf="isBusy"></p-progressSpinner>
+            <p-table [value]="employees">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Username</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Joined Date</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-employee>
+                    <tr>
+                        <td>{{employee.userName}}</td>
+                        <td>{{employee.firstName}}</td>
+                        <td>{{employee.lastName}}</td>
+                        <td>{{employee.email}}</td>
+                        <td>{{employee.phoneNumber}}</td>
+                        <td>{{employee.joinedDate}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</p-card>

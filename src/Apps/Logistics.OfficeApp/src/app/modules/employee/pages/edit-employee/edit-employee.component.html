@@ -1,13 +1,14 @@
 <h1 class="text-center">Edit Employee</h1>
 <hr class="w-100">
+
 <div class="row justify-content-center">
     <div class="col-12 col-md-6">
         <p-card>
             <p-progressSpinner *ngIf="isBusy"></p-progressSpinner>
-            <form>
+            <form [formGroup]="form">
                 <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input id="username" type="text" class="form-control" disabled /> 
+                    <label for="userName" class="form-label">Username</label>
+                    <input id="userName" type="text" class="form-control" disabled /> 
                 </div>
                 <div class="mb-3">
                     <label for="firstName" class="form-label">First name</label>
@@ -19,7 +20,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="role" class="form-label">Role</label>
-                    <p-dropdown optionLabel="role" styleClass="w-100"></p-dropdown> 
+                    <p-dropdown formControlName="role" [options]="roles" styleClass="w-100"></p-dropdown> 
                 </div>
                 <div class="mt-3">
                     <button class="btn btn-primary" type="submit">

@@ -2,24 +2,23 @@
 
 internal sealed class GetEmployeeRoleHandler : RequestHandlerBase<GetEmployeeRoleQuery, DataResult<EmployeeRoleDto>>
 {
-    private readonly ITenantRepository<Employee> _repository;
+    private readonly ITenantRepository<Employee> _employeeRepository;
 
-    public GetEmployeeRoleHandler(ITenantRepository<Employee> repository)
+    public GetEmployeeRoleHandler(ITenantRepository<Employee> employeeRepository)
     {
-        _repository = repository;
+        _employeeRepository = employeeRepository;
     }
 
     protected override async Task<DataResult<EmployeeRoleDto>> HandleValidated(GetEmployeeRoleQuery request, CancellationToken cancellationToken)
     {
-        var user = await _repository.GetAsync(i => i.Id == request.UserId || i.ExternalId == request.UserId);
+        var employee = await _employeeRepository.GetAsync(i => i.Id == request.UserId || i.ExternalId == request.UserId);
 
-        if (user == null)
-        {
+        if (employee == null)
             return DataResult<EmployeeRoleDto>.CreateError("Could not find the user");
-        }
+        
 
-        var userRole = new EmployeeRoleDto(user.Id, user.Role.Name);
-        return DataResult<EmployeeRoleDto>.CreateSuccess(userRole);
+        var employeeRole = new EmployeeRoleDto(employee.Id, employee.Role.Name);
+        return DataResult<EmployeeRoleDto>.CreateSuccess(employeeRole);
     }
 
     protected override bool Validate(GetEmployeeRoleQuery request, out string errorDescription)

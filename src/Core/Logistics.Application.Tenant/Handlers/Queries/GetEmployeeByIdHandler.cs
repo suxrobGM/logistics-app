@@ -2,35 +2,40 @@
 
 internal sealed class GetEmployeeByIdHandler : RequestHandlerBase<GetEmployeeByIdQuery, DataResult<EmployeeDto>>
 {
-    private readonly ITenantRepository<Employee> _userRepository;
+    private readonly IMainRepository<User> _userRepository;
+    private readonly ITenantRepository<Employee> _employeeRepository;
 
     public GetEmployeeByIdHandler(
-        ITenantRepository<Employee> userRepository)
+        IMainRepository<User> userRepository,
+        ITenantRepository<Employee> employeeRepository)
     {
         _userRepository = userRepository;
+        _employeeRepository = employeeRepository;
     }
 
     protected override async Task<DataResult<EmployeeDto>> HandleValidated(GetEmployeeByIdQuery request, CancellationToken cancellationToken)
     {
-        var userEntity = await _userRepository.GetAsync(request.Id!) ??
-                        await _userRepository.GetAsync(i => i.ExternalId == request.Id);
+        var employeeEntity = await _employeeRepository.GetAsync(i => i.Id == request.Id || i.ExternalId == request.Id);
+        
+        if (employeeEntity == null)
+            return DataResult<EmployeeDto>.CreateError("Could not find the specified employee");
 
-        if (userEntity == null)
-        {
-            return DataResult<EmployeeDto>.CreateError("Could not find the specified user");
-        }
+        var userEntity = await _userRepository.GetAsync(i => i.Id == employeeEntity.ExternalId);
 
-        var user = new EmployeeDto
+        var employee = new EmployeeDto
         {
-            Id = userEntity.Id,
-            ExternalId = userEntity.ExternalId!,
-            UserName = userEntity.UserName!,
-            FirstName = userEntity.FirstName,
-            LastName = userEntity.LastName,
-            Role = userEntity.Role.Name
+            Id = employeeEntity.Id,
+            ExternalId = employeeEntity.ExternalId!,
+            UserName = employeeEntity.UserName!,
+            FirstName = employeeEntity.FirstName,
+            LastName = employeeEntity.LastName,
+            Email = userEntity?.Email,
+            PhoneNumber = userEntity?.PhoneNumber,
+            Role = employeeEntity.Role.Name,
+            JoinedDate = employeeEntity.JoinedDate
         };
 
-        return DataResult<EmployeeDto>.CreateSuccess(user);
+        return DataResult<EmployeeDto>.CreateSuccess(employee);
     }
 
     protected override bool Validate(GetEmployeeByIdQuery request, out string errorDescription)
