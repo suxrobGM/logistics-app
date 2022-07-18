@@ -67,10 +67,10 @@ public class EmployeeController : ControllerBase
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Policies.Employee.CanWrite)]
-    public async Task<IActionResult> Create([FromBody] EmployeeDto user)
+    public async Task<IActionResult> Create([FromBody] EmployeeDto request)
     {
         var tenantId = HttpContext.Request.Headers["X-Tenant"];
-        var command = _mapper.Map<CreateEmployeeCommand>(user);
+        var command = _mapper.Map<CreateEmployeeCommand>(request);
         command.TenantId = tenantId;
         var result = await _mediator.Send(command);
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UserData } from '@app/shared/models/user-data';
+import { User } from '@app/shared/models/user';
 import { ApiClientService } from '@app/shared/services/api-client.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { of, switchMap } from 'rxjs';
@@ -11,7 +11,7 @@ import { of, switchMap } from 'rxjs';
 })
 export class TopbarComponent implements OnInit {
   isAuthenticated = false;
-  user?: UserData;
+  user?: User;
   tenantName = 'Company name';
 
   constructor(

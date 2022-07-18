@@ -1,1 +1,23 @@
-<p>list-truck works!</p>
+<h1>List Trucks</h1>
+<hr class="w-100">
+
+<p-card>
+    <div class="row">
+        <div class="col-12">
+            <p-table [value]="trucks">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Number</th>
+                        <th>Driver</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-truck>
+                    <tr>
+                        <td>{{truck.number}}</td>
+                        <td>{{truck.driverName}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</p-card>

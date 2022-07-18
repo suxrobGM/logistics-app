@@ -28,7 +28,7 @@ export class TenantService {
   }
 
   public addTenantToHeaders(headers: HttpHeaders, tenantId: string): HttpHeaders {
-    return headers.append("X-Tenant", tenantId);
+    return headers.append('X-Tenant', tenantId);
   }
 
   public setTenant(tenantId: string) {

@@ -6,7 +6,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./edit-employee.component.scss']
 })
 export class EditEmployeeComponent implements OnInit {
-
+  public isBusy = false;
+  
   constructor() { }
 
   ngOnInit(): void {

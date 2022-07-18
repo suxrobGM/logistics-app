@@ -23,18 +23,18 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
         CreateEmployeeCommand request, CancellationToken cancellationToken)
     {
         var employee = _mapper.Map<Employee>(request);
+        var existingEmployee = await _employeeRepository.GetAsync(i => i.ExternalId == request.ExternalId || i.UserName == request.UserName);
         var user = await _userRepository.GetAsync(i => i.Id == employee.ExternalId);
         var tenant = await _tenantRepository.GetAsync(i => i.Name == request.TenantId || i.Id == request.TenantId);
         
         if (tenant == null)
-        {
             return DataResult.CreateError($"Could not find the specified tenant '{request.TenantId}'");
-        }
-
+        
         if (user == null)
-        {
             return DataResult.CreateError("Could not find the specified user");
-        }
+        
+        if (existingEmployee != null)
+            return DataResult.CreateError("Employee already exists");
         
         user.JoinedTenants.Add(tenant.Id);
         await _employeeRepository.AddAsync(employee);

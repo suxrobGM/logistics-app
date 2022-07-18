@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.Authorization;
+﻿using System.Text;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Logistics.Application;
 using Logistics.EntityFramework;
 using Logistics.WebApi.Authorization.Handlers;
@@ -31,6 +33,11 @@ internal static class HostingExtensions
                             .Build();
 
             configure.Filters.Add(new AuthorizeFilter(policy));
+        })
+        .ConfigureApiBehaviorOptions(options =>
+        {
+            options.InvalidModelStateResponseFactory = context =>
+                new BadRequestObjectResult(DataResult.CreateError(GetModelStateErrors(context.ModelState)));
         });
 
         builder.Services.AddAuthorization(options =>
@@ -127,5 +134,16 @@ internal static class HostingExtensions
     {
         var path = Path.Combine(AppContext.BaseDirectory, "secrets.json");
         configuration.AddJsonFile(path, true);
+    }
+
+    private static string GetModelStateErrors(ModelStateDictionary modelState)
+    {
+        var errors = new StringBuilder();
+        foreach (var error in modelState.Values.SelectMany(modelStateValue => modelStateValue.Errors))
+        {
+            errors.Append($"{error.ErrorMessage} ");
+        }
+
+        return errors.ToString();
     }
 }

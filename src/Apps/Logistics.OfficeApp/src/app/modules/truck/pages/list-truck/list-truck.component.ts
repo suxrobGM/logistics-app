@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Truck } from '@app/shared/models/truck';
 
 @Component({
   selector: 'app-list-truck',
@@ -6,6 +7,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./list-truck.component.scss']
 })
 export class ListTruckComponent implements OnInit {
+  public trucks!: Truck[];
 
   constructor() { }
 

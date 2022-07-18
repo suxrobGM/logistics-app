@@ -1,3 +1,43 @@
 <h1>List loads</h1>
 <hr class="w-100">
 
+<p-card>
+    <div class="row">
+        <div class="col-12">
+            <p-table [value]="loads">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Source Address</th>
+                        <th>Destination Address</th>
+                        <th>Dispatched Date</th>
+                        <th>Pick Up Date</th>
+                        <th>Delivery Date</th>
+                        <th>Status</th>
+                        <th>Distance</th>
+                        <th>Delivery Cost</th>
+                        <th>Assigned Dispatcher</th>
+                        <th>Assigned Driver</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-load>
+                    <tr>
+                        <td>{{load.referenceId}}</td>
+                        <td>{{load.name}}</td>
+                        <td>{{load.sourceAddress}}</td>
+                        <td>{{load.destinationAddress}}</td>
+                        <td>{{load.dispatchedDate}}</td>
+                        <td>{{load.pickUpDate}}</td>
+                        <td>{{load.deliveryDate}}</td>
+                        <td>{{load.status}}</td>
+                        <td>{{load.distance}}</td>
+                        <td>{{load.deliveryCost}}</td>
+                        <td>{{load.assignedDispatcherName}}</td>
+                        <td>{{load.assignedTruckDriverName}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</p-card>

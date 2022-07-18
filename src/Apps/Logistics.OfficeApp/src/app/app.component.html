@@ -1,6 +1,7 @@
 <app-topbar></app-topbar>
 
 <div class="container-fluid content">
+    <p-toast key="notification" position="top-right"></p-toast>
     <div *ngIf="isAuthenticated; else unauthorized">
         <router-outlet></router-outlet>
     </div>

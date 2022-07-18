@@ -7,6 +7,10 @@ import { InputTextModule } from 'primeng/inputtext'
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { DropdownModule } from 'primeng/dropdown';
 import { TableModule } from 'primeng/table';
+import { MessagesModule } from 'primeng/messages';
+import { MessageModule } from 'primeng/message';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @NgModule({
   declarations: [],
@@ -18,7 +22,10 @@ import { TableModule } from 'primeng/table';
     ProgressSpinnerModule,
     AutoCompleteModule,
     DropdownModule,
-    TableModule
+    TableModule,
+    MessagesModule,
+    MessageModule,
+    ToastModule
   ],
   exports: [
     CardModule,
@@ -27,7 +34,13 @@ import { TableModule } from 'primeng/table';
     ProgressSpinnerModule,
     AutoCompleteModule,
     DropdownModule,
-    TableModule
+    TableModule,
+    MessagesModule,
+    MessageModule,
+    ToastModule
+  ],
+  providers: [
+    MessageService
   ]
 })
 export class PrimengModule { }

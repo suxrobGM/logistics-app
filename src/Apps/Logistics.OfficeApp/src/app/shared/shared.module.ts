@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { PrimengModule } from './modules/primeng.module';
 import { NavDockComponent } from './components/nav-dock/nav-dock.component';
 import { TopbarComponent } from './components/topbar/topbar.component';
+import { MessageService } from 'primeng/api';
 
 @NgModule({
   declarations: [
