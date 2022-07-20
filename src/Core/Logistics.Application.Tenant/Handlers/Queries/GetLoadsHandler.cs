@@ -2,29 +2,36 @@
 
 internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedDataResult<LoadDto>>
 {
-    private readonly ITenantRepository<Load> _cargoRepository;
+    private readonly IMainRepository<User> _userRepository;
+    private readonly ITenantRepository<Load> _loadRepository;
+    private readonly ITenantRepository<Truck> _truckRepository;
 
-    public GetLoadsHandler(ITenantRepository<Load> cargoRepository)
+    public GetLoadsHandler(
+        IMainRepository<User> userRepository,
+        ITenantRepository<Load> loadRepository,
+        ITenantRepository<Truck> truckRepository)
     {
-        _cargoRepository = cargoRepository;
+        _userRepository = userRepository;
+        _loadRepository = loadRepository;
+        _truckRepository = truckRepository;
     }
 
-    protected override Task<PagedDataResult<LoadDto>> HandleValidated(
+    protected override async Task<PagedDataResult<LoadDto>> HandleValidated(
         GetLoadsQuery request, 
         CancellationToken cancellationToken)
     {
-        var totalItems = _cargoRepository.GetQuery().Count();
-        var itemsQuery = _cargoRepository.GetQuery();
+        var totalItems = _loadRepository.GetQuery().Count();
+        var loadsQuery = _loadRepository.GetQuery();
 
         if (!string.IsNullOrEmpty(request.Search))
         {
-            itemsQuery = _cargoRepository.GetQuery(new LoadsSpecification(request.Search));
+            loadsQuery = _loadRepository.GetQuery(new LoadsSpecification(request.Search));
         }
 
-        var items = itemsQuery
+        var loads = loadsQuery
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
-            .OrderBy(i => i.Id)
+            //.OrderBy(i => i.Id)
             .Select(i => new LoadDto
             {
                 Id = i.Id,
@@ -38,15 +45,27 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
                 PickUpDate = i.PickUpDate,
                 DeliveryDate = i.DeliveryDate,
                 AssignedDispatcherId = i.AssignedDispatcherId,
-                AssignedDispatcherName = i.AssignedDispatcher != null ? i.AssignedDispatcher.GetFullName() : null,
                 AssignedTruckId = i.AssignedTruck != null ? i.AssignedTruck.Id : null,
-                AssignedTruckDriverName = i.AssignedTruck != null && i.AssignedTruck.Driver != null ? i.AssignedTruck.Driver.GetFullName() : null,
                 Status = i.Status.Name
             })
             .ToArray();
 
+        // TODO: need to optimize query
+        foreach (var load in loads)
+        {
+            var assignedDispatcher = await _userRepository.GetAsync(load.AssignedDispatcherId!);
+            var assignedTruck = await _truckRepository.GetAsync(load.AssignedTruckId!);
+            if (assignedTruck != null)
+            {
+                var assignedTruckDriver = await _userRepository.GetAsync(assignedTruck.Driver?.Id!);
+                load.AssignedTruckDriverName = assignedTruckDriver?.GetFullName();
+            }
+            
+            load.AssignedDispatcherName = assignedDispatcher?.GetFullName();
+        }
+
         var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
-        return Task.FromResult(new PagedDataResult<LoadDto>(items, totalItems, totalPages));
+        return new PagedDataResult<LoadDto>(loads, totalItems, totalPages);
     }
 
     protected override bool Validate(GetLoadsQuery request, out string errorDescription)

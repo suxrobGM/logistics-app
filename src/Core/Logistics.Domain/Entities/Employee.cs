@@ -13,12 +13,12 @@ public class Employee : Entity, ITenantEntity
 
     public virtual IList<Load> DispatchedLoads { get; set; } = new List<Load>();
     
-    public string GetFullName()
-    {
-        if (string.IsNullOrEmpty(FirstName) && string.IsNullOrEmpty(LastName))
-        {
-            return UserName!;
-        }
-        return string.Join(" ", FirstName, LastName);
-    }
+    // public string GetFullName()
+    // {
+    //     if (string.IsNullOrEmpty(FirstName) && string.IsNullOrEmpty(LastName))
+    //     {
+    //         return UserName!;
+    //     }
+    //     return string.Join(" ", FirstName, LastName);
+    // }
 }

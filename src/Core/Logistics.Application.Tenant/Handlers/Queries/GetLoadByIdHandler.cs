@@ -2,21 +2,26 @@
 
 internal sealed class GetLoadByIdHandler : RequestHandlerBase<GetLoadByIdQuery, DataResult<LoadDto>>
 {
-    private readonly ITenantRepository<Load> _cargoRepository;
+    private readonly IMainRepository<User> _userRepository;
+    private readonly ITenantRepository<Load> _loadRepository;
 
-    public GetLoadByIdHandler(ITenantRepository<Load> cargoRepository)
+    public GetLoadByIdHandler(
+        IMainRepository<User> userRepository,
+        ITenantRepository<Load> loadRepository)
     {
-        _cargoRepository = cargoRepository;
+        _userRepository = userRepository;
+        _loadRepository = loadRepository;
     }
 
     protected override async Task<DataResult<LoadDto>> HandleValidated(GetLoadByIdQuery request, CancellationToken cancellationToken)
     {
-        var loadEntity = await _cargoRepository.GetAsync(request.Id!);
+        var loadEntity = await _loadRepository.GetAsync(request.Id!);
 
         if (loadEntity == null)
-        {
             return DataResult<LoadDto>.CreateError("Could not find the specified cargo");
-        }
+
+        var assignedDispatcher = await _userRepository.GetAsync(i => i.Id == loadEntity.AssignedDispatcherId);
+        var assignedDriver = await _userRepository.GetAsync(i => loadEntity.AssignedTruck != null && i.Id == loadEntity.AssignedTruck.DriverId);
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
         var load = new LoadDto
@@ -33,9 +38,9 @@ internal sealed class GetLoadByIdHandler : RequestHandlerBase<GetLoadByIdQuery, 
             Distance = loadEntity.Distance,
             Status = loadEntity.Status.ToString(),
             AssignedDispatcherId = loadEntity.AssignedDispatcherId,
-            AssignedDispatcherName = loadEntity.AssignedDispatcher.GetFullName(),
+            AssignedDispatcherName = assignedDispatcher?.GetFullName(),
             AssignedTruckId = loadEntity.AssignedTruck.Id,
-            AssignedTruckDriverName = loadEntity.AssignedTruck.Driver.GetFullName()
+            AssignedTruckDriverName = assignedDriver?.GetFullName()
         };
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 

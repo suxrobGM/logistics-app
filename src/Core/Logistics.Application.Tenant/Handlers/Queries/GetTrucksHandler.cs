@@ -2,11 +2,14 @@
 
 internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, PagedDataResult<TruckDto>>
 {
+    private readonly IMainRepository<User> _userRepository;
     private readonly ITenantRepository<Truck> _truckRepository;
 
     public GetTrucksHandler(
+        IMainRepository<User> userRepository,
         ITenantRepository<Truck> truckRepository)
     {
+        _userRepository = userRepository;
         _truckRepository = truckRepository;
     }
 
@@ -14,10 +17,10 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
         GetTrucksQuery request, 
         CancellationToken cancellationToken)
     {
-        var cargoesIdsList = new List<string>();
-        if (request.IncludeCargoIds)
+        var loadIds = new List<string>();
+        if (request.IncludeLoadIds)
         {
-            cargoesIdsList = _truckRepository.GetQuery()
+            loadIds = _truckRepository.GetQuery()
                         .SelectMany(i => i.Loads)
                         .Select(i => i.Id)
                         .ToList();
@@ -31,7 +34,7 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
             itemsQuery = _truckRepository.GetQuery(new SearchTrucksSpecification(request.Search));
         }
 
-        var items = itemsQuery
+        var trucks = itemsQuery
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .OrderBy(i => i.TruckNumber)
@@ -40,13 +43,24 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
                     Id = i.Id,
                     TruckNumber = i.TruckNumber,
                     DriverId = i.DriverId,
-                    DriverName = i.Driver != null ? i.Driver.GetFullName() : null,
-                    LoadIds = cargoesIdsList
+                    LoadIds = loadIds
                 })
                 .ToArray();
+        
+        var users = _userRepository.GetQuery(user => 
+                trucks.Where(i => !string.IsNullOrEmpty(i.DriverId))
+                    .Select(i => i.DriverId)
+                    .Contains(user.Id))
+            .ToArray();
+        
+        foreach (var user in users)
+        {
+            var truck = trucks.First(i => i.DriverId == user.Id);
+            truck.DriverName = user.GetFullName();
+        }
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
-        return Task.FromResult(new PagedDataResult<TruckDto>(items, totalItems, totalPages));
+        return Task.FromResult(new PagedDataResult<TruckDto>(trucks, totalItems, totalPages));
     }
 
     protected override bool Validate(GetTrucksQuery request, out string errorDescription)

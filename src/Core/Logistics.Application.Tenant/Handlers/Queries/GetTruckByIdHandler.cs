@@ -2,10 +2,14 @@
 
 internal sealed class GetTruckByIdHandler : RequestHandlerBase<GetTruckByIdQuery, DataResult<TruckDto>>
 {
+    private readonly IMainRepository<User> _userRepository;
     private readonly ITenantRepository<Truck> _truckRepository;
 
-    public GetTruckByIdHandler(ITenantRepository<Truck> truckRepository)
+    public GetTruckByIdHandler(
+        IMainRepository<User> userRepository,
+        ITenantRepository<Truck> truckRepository)
     {
+        _userRepository = userRepository;
         _truckRepository = truckRepository;
     }
 
@@ -13,24 +17,24 @@ internal sealed class GetTruckByIdHandler : RequestHandlerBase<GetTruckByIdQuery
     {
         var truckEntity = await _truckRepository.GetAsync(request.Id!);
 
-        var cargoesIdsList = _truckRepository.GetQuery()
+        var loadsIds = _truckRepository.GetQuery()
             .SelectMany(i => i.Loads)
             .Select(i => i.Id)
             .ToList();
 
         if (truckEntity == null)
-        {
             return DataResult<TruckDto>.CreateError("Could not find the specified truck");
-        }
 
+        var truckDriver = await _userRepository.GetAsync(i => i.Id == truckEntity.DriverId);
+        
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
         var cargo = new TruckDto
         {
             Id = truckEntity.Id,
             TruckNumber = truckEntity.TruckNumber,
             DriverId = truckEntity.DriverId,
-            DriverName = truckEntity.Driver.GetFullName(),
-            LoadIds = cargoesIdsList
+            DriverName = truckDriver?.GetFullName(),
+            LoadIds = loadsIds
         };
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
