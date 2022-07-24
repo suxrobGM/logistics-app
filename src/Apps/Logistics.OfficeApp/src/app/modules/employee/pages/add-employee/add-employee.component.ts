@@ -5,7 +5,7 @@ import { EmployeeRole } from '@app/shared/models/employee-role';
 import { User } from '@shared/models/user';
 import { ApiClientService } from '@shared/services/api-client.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { Message, MessageService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-add-employee',
@@ -95,6 +95,7 @@ export class AddEmployeeComponent implements OnInit {
     this.apiService.createEmployee(newEmployee).subscribe(result => {
       if (result.success) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'New employee has been added successfully'});
+        this.form.reset();
       }
     });
   }

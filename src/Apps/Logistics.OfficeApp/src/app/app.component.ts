@@ -33,6 +33,7 @@ export class AppComponent implements OnInit {
     for (let i = 0; i < config.length; i++) {
       const route = config[i];
       console.log(parent + '/' + route.path);
+      
       if (route.children) {
         const currentPath = route.path ? parent + '/' + route.path : parent;
         this.printpath(currentPath, route.children);

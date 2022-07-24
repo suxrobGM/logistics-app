@@ -7,7 +7,15 @@ import { ListEmployeeComponent } from './pages/list-employee/list-employee.compo
 
 const rootRoutes: Routes = [
   { 
-    path: 'add-employee', 
+    path: '', 
+    component: ListEmployeeComponent, 
+    canActivate: [AuthGuard],
+    data: {
+      roles: ['admin', 'owner', 'dispatcher']
+    }
+  },
+  { 
+    path: 'employees/add', 
     component: AddEmployeeComponent, 
     canActivate: [AuthGuard],
     data: {
@@ -15,16 +23,8 @@ const rootRoutes: Routes = [
     }
   },
   { 
-    path: 'edit-employee', 
+    path: 'employees/edit', 
     component: EditEmployeeComponent, 
-    canActivate: [AuthGuard],
-    data: {
-      roles: ['admin', 'owner', 'dispatcher']
-    }
-  },
-  { 
-    path: 'list-employee', 
-    component: ListEmployeeComponent, 
     canActivate: [AuthGuard],
     data: {
       roles: ['admin', 'owner', 'dispatcher']

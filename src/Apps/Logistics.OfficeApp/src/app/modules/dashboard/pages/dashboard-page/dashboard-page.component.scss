@@ -1,4 +1,8 @@
 #map {
     width: 100%;
-    height: 500px;
+    height: 700px;
+}
+
+::ng-deep .p-card .p-card-body {
+    padding: 0.5rem;
 }

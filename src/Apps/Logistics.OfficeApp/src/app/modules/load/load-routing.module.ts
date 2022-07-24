@@ -6,21 +6,21 @@ import { ListLoadComponent } from './pages/list-load/list-load.component';
 
 const rootRoutes: Routes = [
   { 
-    path: 'edit-load', 
-    component: EditLoadComponent, 
-    canActivate: [AuthGuard],
-    data: {
-      roles: ['admin', 'owner', 'dispatcher']
-    }
-  },
-  { 
-    path: 'list-load', 
+    path: '', 
     component: ListLoadComponent, 
     canActivate: [AuthGuard],
     data: {
       roles: ['admin', 'owner', 'dispatcher']
     }
   },
+  { 
+    path: 'loads/edit', 
+    component: EditLoadComponent, 
+    canActivate: [AuthGuard],
+    data: {
+      roles: ['admin', 'owner', 'dispatcher']
+    }
+  }
 ];
 
 @NgModule({

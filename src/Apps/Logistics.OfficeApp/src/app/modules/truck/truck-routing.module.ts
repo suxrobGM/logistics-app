@@ -6,16 +6,16 @@ import { ListTruckComponent } from './pages/list-truck/list-truck.component';
 
 const rootRoutes: Routes = [
   { 
-    path: 'edit-truck', 
-    component: EditTruckComponent, 
+    path: '', 
+    component: ListTruckComponent, 
     canActivate: [AuthGuard],
     data: {
       roles: ['admin', 'owner', 'dispatcher']
     }
   },
   { 
-    path: 'list-truck', 
-    component: ListTruckComponent, 
+    path: 'trucks/edit', 
+    component: EditTruckComponent, 
     canActivate: [AuthGuard],
     data: {
       roles: ['admin', 'owner', 'dispatcher']

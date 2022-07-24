@@ -1,3 +1,8 @@
 ::ng-deep .p-dock .p-dock-list {
     background: #c2d1dd;
 }
+
+::ng-deep .p-dock .p-dock-action {
+    width: 2.5rem;
+    height: 2.5rem
+}

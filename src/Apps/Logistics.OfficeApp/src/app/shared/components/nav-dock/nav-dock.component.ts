@@ -20,17 +20,17 @@ export class NavDockComponent implements OnInit {
       {
         label: 'Loads',
         icon: 'assets/icons/delivery-container.svg',
-        link: 'list-load',
+        link: 'loads',
       },
       {
         label: 'Drivers',
         icon: 'assets/icons/delivery-truck.svg',
-        link: 'list-truck',
+        link: 'trucks',
       },
       {
         label: 'Employees',
         icon: 'assets/icons/users.svg',
-        link: 'list-employee',
+        link: 'employees',
       }
     ];
 

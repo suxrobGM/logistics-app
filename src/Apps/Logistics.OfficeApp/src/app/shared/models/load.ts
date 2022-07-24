@@ -13,5 +13,5 @@ export interface Load {
     assignedDispatcherId?: string;
     assignedDispatcherName?: string;
     assignedTruckId?: string;
-    assignedTruckDriverName?: string;
+    assignedDriverName?: string;
 }

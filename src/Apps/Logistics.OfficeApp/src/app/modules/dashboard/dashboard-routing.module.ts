@@ -11,8 +11,7 @@ const rootRoutes: Routes = [
     data: {
       roles: ['admin', 'owner', 'dispatcher']
     } 
-  },
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full'}
+  }
 ];
 
 @NgModule({
