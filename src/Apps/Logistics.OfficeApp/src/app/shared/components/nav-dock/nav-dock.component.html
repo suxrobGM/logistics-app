@@ -1,5 +1,7 @@
 <p-dock [model]="dockItems" position="bottom" styleClass="position-fixed">
     <ng-template pTemplate="item" let-item>
-        <img [src]="item.icon" [alt]="item.label" width="100%">
+        <a [routerLink]="[item.link]" [pTooltip]="item.label" tooltipPosition="top">
+            <img [src]="item.icon" [alt]="item.label" width="100%">
+        </a>
     </ng-template>
 </p-dock>

@@ -16,7 +16,7 @@ namespace Logistics.EntityFramework.Data.Migrations.Main
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.5")
+                .HasAnnotation("ProductVersion", "6.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Logistics.Domain.Entities.Tenant", b =>
@@ -66,7 +66,7 @@ namespace Logistics.EntityFramework.Data.Migrations.Main
                     b.Property<DateTime>("JoinedDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("JoinedTenants")
+                    b.Property<string>("JoinedTenantIds")
                         .IsRequired()
                         .HasColumnType("longtext");
 

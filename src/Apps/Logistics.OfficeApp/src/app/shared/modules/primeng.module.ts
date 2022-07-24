@@ -11,6 +11,7 @@ import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { TooltipModule } from 'primeng/tooltip';
 
 @NgModule({
   declarations: [],
@@ -25,7 +26,8 @@ import { MessageService } from 'primeng/api';
     TableModule,
     MessagesModule,
     MessageModule,
-    ToastModule
+    ToastModule,
+    TooltipModule
   ],
   exports: [
     CardModule,
@@ -37,7 +39,8 @@ import { MessageService } from 'primeng/api';
     TableModule,
     MessagesModule,
     MessageModule,
-    ToastModule
+    ToastModule,
+    TooltipModule
   ],
   providers: [
     MessageService

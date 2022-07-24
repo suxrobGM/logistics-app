@@ -13,20 +13,24 @@ export class NavDockComponent implements OnInit {
   ngOnInit() {
     this.dockItems = [
       {
-        label: 'Finder',
-        icon: 'assets/icons/finder.svg'
+        label: 'Dashboard',
+        icon: 'assets/icons/home.svg',
+        link: 'dashboard',
       },
       {
-        label: 'App Store',
-        icon: 'assets/icons/appstore.svg'
+        label: 'Loads',
+        icon: 'assets/icons/delivery-container.svg',
+        link: 'list-load',
       },
       {
-        label: 'Safari',
-        icon: 'assets/icons/safari.svg'
+        label: 'Drivers',
+        icon: 'assets/icons/delivery-truck.svg',
+        link: 'list-truck',
       },
       {
-        label: 'Terminal',
-        icon: 'assets/icons/terminal.svg'
+        label: 'Employees',
+        icon: 'assets/icons/users.svg',
+        link: 'list-employee',
       }
     ];
 
@@ -37,4 +41,5 @@ export class NavDockComponent implements OnInit {
 type MenuItem = {
   label: string;
   icon: string;
+  link: string;
 }

@@ -8,9 +8,21 @@ public class User : IdentityUser, IAggregateRoot
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
 
-    public List<string> JoinedTenants { get; set; } = new();
+    public string JoinedTenantIds { get; set; } = "";
     public DateTime JoinedDate { get; set; } = DateTime.Now;
     public UserRole Role { get; set; } = UserRole.Guest;
+
+    public void JoinTenant(string tenantId)
+    {
+        JoinedTenantIds = string.IsNullOrEmpty(JoinedTenantIds) ? 
+            string.Join(',', tenantId) : string.Join(',', JoinedTenantIds, tenantId);
+    }
+    
+    public void RemoveTenant(string tenantId)
+    {
+        JoinedTenantIds = JoinedTenantIds.Replace($",{tenantId}", "")
+            .Replace(tenantId, "");
+    }
 
     public string GetFullName()
     {

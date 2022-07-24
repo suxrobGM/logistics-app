@@ -4,7 +4,7 @@ public class SearchUsersByTenantIdSpecification : BaseSpecification<User>
 {
     public SearchUsersByTenantIdSpecification(string search, string tenantId)
         : base(i =>
-            i.JoinedTenants.Contains(tenantId) && 
+            i.JoinedTenantIds.Contains(tenantId) && 
             (
                 (!string.IsNullOrEmpty(i.FirstName) &&
                  i.FirstName.Contains(search, StringComparison.InvariantCultureIgnoreCase)) ||

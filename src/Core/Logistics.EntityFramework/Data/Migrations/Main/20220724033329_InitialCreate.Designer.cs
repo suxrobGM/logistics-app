@@ -11,14 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.EntityFramework.Data.Migrations.Main
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20220622155613_InitialCreate")]
+    [Migration("20220724033329_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.5")
+                .HasAnnotation("ProductVersion", "6.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Logistics.Domain.Entities.Tenant", b =>
@@ -68,7 +68,7 @@ namespace Logistics.EntityFramework.Data.Migrations.Main
                     b.Property<DateTime>("JoinedDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("JoinedTenants")
+                    b.Property<string>("JoinedTenantIds")
                         .IsRequired()
                         .HasColumnType("longtext");
 

@@ -36,7 +36,7 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
         if (existingEmployee != null)
             return DataResult.CreateError("Employee already exists");
         
-        user.JoinedTenants.Add(tenant.Id);
+        user.JoinTenant(tenant.Id);
         await _employeeRepository.AddAsync(employee);
         _userRepository.Update(user);
         await _userRepository.UnitOfWork.CommitAsync();
