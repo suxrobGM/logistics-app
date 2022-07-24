@@ -2,14 +2,14 @@
 
 internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, DataResult>
 {
-    private readonly ITenantRepository<Load> _cargoRepository;
+    private readonly ITenantRepository<Load> _loadRepository;
     private readonly ITenantRepository<Truck> _truckRepository;
 
     public UpdateLoadHandler(
-        ITenantRepository<Load> cargoRepository,
+        ITenantRepository<Load> loadRepository,
         ITenantRepository<Truck> truckRepository)
     {
-        _cargoRepository = cargoRepository;
+        _loadRepository = loadRepository;
         _truckRepository = truckRepository;
     }
 
@@ -23,7 +23,7 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
             return DataResult.CreateError("Could not find the specified truck");
         }
 
-        var loadEntity = await _cargoRepository.GetAsync(request.Id!);
+        var loadEntity = await _loadRepository.GetAsync(request.Id!);
 
         if (loadEntity == null)
         {
@@ -40,8 +40,8 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
         loadEntity.Status = LoadStatus.Get(request.Status!);
         loadEntity.AssignedTruck = truck;
 
-        _cargoRepository.Update(loadEntity);
-        await _cargoRepository.UnitOfWork.CommitAsync();
+        _loadRepository.Update(loadEntity);
+        await _loadRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
 
@@ -71,11 +71,11 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
         }
         else if (request.DeliveryCost < 0)
         {
-            errorDescription = "Price per mile should be non-negative value";
+            errorDescription = "Delivery cost should be non-negative value";
         }
         else if (request.Distance < 0)
         {
-            errorDescription = "Total trip miles should be non-negative value";
+            errorDescription = "Distance miles should be non-negative value";
         }
 
         return string.IsNullOrEmpty(errorDescription);

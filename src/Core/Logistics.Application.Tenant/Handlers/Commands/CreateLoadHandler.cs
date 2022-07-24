@@ -25,11 +25,18 @@ internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, 
         {
             return DataResult.CreateError("Could not find the specified dispatcher");
         }
+        
+        var driver = await _userRepository.GetAsync(request.AssignedDriverId!);
+
+        if (driver == null)
+        {
+            return DataResult.CreateError("Could not find the specified driver");
+        }
 
         var truck = await _truckRepository.GetAsync(request.AssignedTruckId!);
         if (truck == null)
         {
-            return DataResult.CreateError("Could not find the specified truck driver");
+            return DataResult.CreateError("Could not find the specified truck");
         }
 
         var latestLoad = _loadRepository.GetQuery().LastOrDefault();
@@ -44,6 +51,7 @@ internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, 
             Distance = request.Distance,
             DeliveryCost = request.DeliveryCost,
             AssignedDispatcherId = dispatcher.Id,
+            AssignedDriverId = driver.Id,
             AssignedTruckId = truck.Id
         };
 
@@ -60,6 +68,10 @@ internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, 
         {
             errorDescription = "AssignedDispatcherId is an empty string";
         }
+        else if (string.IsNullOrEmpty(request.AssignedDriverId))
+        {
+            errorDescription = "AssignedDriverId is an empty string";
+        }
         else if (string.IsNullOrEmpty(request.AssignedTruckId))
         {
             errorDescription = "AssignedTruckId is an empty string";
@@ -74,11 +86,11 @@ internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, 
         }
         else if (request.DeliveryCost < 0)
         {
-            errorDescription = "Price per mile should be non-negative value";
+            errorDescription = "Delivery cost should be non-negative value";
         }
         else if (request.Distance < 0)
         {
-            errorDescription = "Total trip miles should be non-negative value";
+            errorDescription = "Distance should be non-negative value";
         }
 
         return string.IsNullOrEmpty(errorDescription);

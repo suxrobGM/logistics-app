@@ -11,14 +11,13 @@ public class Employee : Entity, ITenantEntity
     public DateTime JoinedDate { get; set; } = DateTime.Now;
     public EmployeeRole Role { get; set; } = EmployeeRole.Guest;
 
+    /// <summary>
+    /// Dispatched loads by dispatchers
+    /// </summary>
     public virtual IList<Load> DispatchedLoads { get; set; } = new List<Load>();
     
-    // public string GetFullName()
-    // {
-    //     if (string.IsNullOrEmpty(FirstName) && string.IsNullOrEmpty(LastName))
-    //     {
-    //         return UserName!;
-    //     }
-    //     return string.Join(" ", FirstName, LastName);
-    // }
+    /// <summary>
+    /// Delivered loads by drivers
+    /// </summary>
+    public virtual IList<Load> DeliveredLoads { get; set; } = new List<Load>();
 }

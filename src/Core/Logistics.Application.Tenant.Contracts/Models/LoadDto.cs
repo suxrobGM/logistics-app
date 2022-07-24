@@ -31,8 +31,11 @@ public class LoadDto
     [Required]
     public string? AssignedDispatcherId { get; set; }
     public string? AssignedDispatcherName { get; set; }
+    
+    [Required]
+    public string? AssignedDriverId { get; set; }
+    public string? AssignedDriverName { get; set; }
 
     [Required]
     public string? AssignedTruckId { get; set; }
-    public string? AssignedTruckDriverName { get; set; }
 }

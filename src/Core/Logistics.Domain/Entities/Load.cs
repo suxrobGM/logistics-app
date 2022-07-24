@@ -34,8 +34,10 @@ public class Load : Entity, ITenantEntity
     }
     
     public string? AssignedDispatcherId { get; set; }
+    public string? AssignedDriverId { get; set; }
     public string? AssignedTruckId { get; set; }
 
     public virtual Truck? AssignedTruck { get; set; }
     public virtual Employee? AssignedDispatcher { get; set; }
+    public virtual Employee? AssignedDriver { get; set; }
 }

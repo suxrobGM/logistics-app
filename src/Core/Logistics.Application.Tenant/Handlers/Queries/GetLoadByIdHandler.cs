@@ -22,8 +22,7 @@ internal sealed class GetLoadByIdHandler : RequestHandlerBase<GetLoadByIdQuery, 
 
         var assignedDispatcher = await _userRepository.GetAsync(i => i.Id == loadEntity.AssignedDispatcherId);
         var assignedDriver = await _userRepository.GetAsync(i => loadEntity.AssignedTruck != null && i.Id == loadEntity.AssignedTruck.DriverId);
-
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+        
         var load = new LoadDto
         {
             Id = loadEntity.Id,
@@ -39,11 +38,10 @@ internal sealed class GetLoadByIdHandler : RequestHandlerBase<GetLoadByIdQuery, 
             Status = loadEntity.Status.ToString(),
             AssignedDispatcherId = loadEntity.AssignedDispatcherId,
             AssignedDispatcherName = assignedDispatcher?.GetFullName(),
-            AssignedTruckId = loadEntity.AssignedTruck.Id,
-            AssignedTruckDriverName = assignedDriver?.GetFullName()
+            AssignedDriverId = assignedDispatcher?.Id,
+            AssignedDriverName = assignedDriver?.GetFullName(),
+            AssignedTruckId = loadEntity.AssignedTruckId
         };
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-
         return DataResult<LoadDto>.CreateSuccess(load);
     }
 

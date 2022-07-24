@@ -81,6 +81,8 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     Status_Id = table.Column<int>(type: "int", nullable: false),
                     AssignedDispatcherId = table.Column<string>(type: "varchar(255)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    AssignedDriverId = table.Column<string>(type: "varchar(255)", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     AssignedTruckId = table.Column<string>(type: "varchar(255)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
@@ -90,6 +92,12 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     table.ForeignKey(
                         name: "FK_loads_employees_AssignedDispatcherId",
                         column: x => x.AssignedDispatcherId,
+                        principalTable: "employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_loads_employees_AssignedDriverId",
+                        column: x => x.AssignedDriverId,
                         principalTable: "employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
@@ -106,6 +114,11 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                 name: "IX_loads_AssignedDispatcherId",
                 table: "loads",
                 column: "AssignedDispatcherId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_loads_AssignedDriverId",
+                table: "loads",
+                column: "AssignedDriverId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_loads_AssignedTruckId",

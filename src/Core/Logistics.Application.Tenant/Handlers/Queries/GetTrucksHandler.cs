@@ -35,32 +35,38 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
         }
 
         var trucks = itemsQuery
+                .OrderBy(i => i.Id)
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
-                .OrderBy(i => i.TruckNumber)
-                .Select(i => new TruckDto
-                {
-                    Id = i.Id,
-                    TruckNumber = i.TruckNumber,
-                    DriverId = i.DriverId,
-                    LoadIds = loadIds
-                })
                 .ToArray();
         
-        var users = _userRepository.GetQuery(user => 
-                trucks.Where(i => !string.IsNullOrEmpty(i.DriverId))
-                    .Select(i => i.DriverId)
-                    .Contains(user.Id))
-            .ToArray();
-        
-        foreach (var user in users)
+        var driverIds = trucks.Where(i => !string.IsNullOrEmpty(i.DriverId))
+            .Select(i => i.DriverId);
+
+        var drivers = _userRepository.GetQuery()
+            .Where(user => driverIds.Contains(user.Id))
+            .ToDictionary(i => i.Id);
+
+        var trucksDto = trucks.Select(i => new TruckDto
         {
-            var truck = trucks.First(i => i.DriverId == user.Id);
-            truck.DriverName = user.GetFullName();
+            Id = i.Id,
+            TruckNumber = i.TruckNumber,
+            DriverId = i.DriverId,
+            LoadIds = loadIds
+        }).ToArray();
+        
+        foreach (var truck in trucksDto)
+        {
+            var driverId = truck.DriverId;
+
+            if (!string.IsNullOrEmpty(driverId))
+            {
+                truck.DriverName = drivers[driverId].GetFullName();
+            }
         }
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
-        return Task.FromResult(new PagedDataResult<TruckDto>(trucks, totalItems, totalPages));
+        return Task.FromResult(new PagedDataResult<TruckDto>(trucksDto, totalItems, totalPages));
     }
 
     protected override bool Validate(GetTrucksQuery request, out string errorDescription)

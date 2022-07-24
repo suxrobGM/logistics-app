@@ -45,11 +45,6 @@ public class TenantDbContext : DbContext
         builder.Entity<Employee>(entity =>
         {
             entity.ToTable("employees");
-            entity.HasMany(m => m.DispatchedLoads)
-                .WithOne(m => m.AssignedDispatcher)
-                .HasForeignKey(m => m.AssignedDispatcherId)
-                .OnDelete(DeleteBehavior.SetNull);
-
             entity.OwnsOne(m => m.Role);
         });
 
@@ -74,6 +69,16 @@ public class TenantDbContext : DbContext
             //entity.OwnsOne(m => m.DestinationAddress);
             entity.OwnsOne(m => m.Status);
             entity.HasIndex(m => m.ReferenceId).IsUnique();
+
+            entity.HasOne(m => m.AssignedDispatcher)
+                .WithMany(m => m.DispatchedLoads)
+                .HasForeignKey(m => m.AssignedDispatcherId)
+                .OnDelete(DeleteBehavior.SetNull);
+            
+            entity.HasOne(m => m.AssignedDriver)
+                .WithMany(m => m.DeliveredLoads)
+                .HasForeignKey(m => m.AssignedDriverId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
     }
 }

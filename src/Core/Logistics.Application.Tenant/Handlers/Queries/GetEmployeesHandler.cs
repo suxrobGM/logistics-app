@@ -25,7 +25,8 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery
             itemsQuery = _employeeRepository.GetQuery(new SearchEmployeesSpecification(request.Search));
         }
 
-        var employeesDict = itemsQuery
+        var employeesDto = itemsQuery
+            .OrderBy(i => i.Id)
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
             .Select(i => new EmployeeDto
@@ -38,22 +39,23 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery
                 Role = i.Role.Name,
                 JoinedDate = i.JoinedDate
             })
-            .ToDictionary(employee => employee.ExternalId);
-
-        var employees = employeesDict.Values.ToArray();
-        var users = _userRepository.GetQuery(user => 
-                employees.Select(emp => emp.ExternalId).Contains(user.Id))
             .ToArray();
+
+        var employeeExtIds = employeesDto.Select(i => i.ExternalId);
         
-        foreach (var user in users)
+        var users = _userRepository.GetQuery()
+            .Where(user => employeeExtIds.Contains(user.Id))
+            .ToDictionary(i => i.Id);
+
+        foreach (var employee in employeesDto)
         {
-            var employee = employeesDict[user.Id];
+            var user = users[employee.ExternalId!];
             employee.Email = user.Email;
             employee.PhoneNumber = user.PhoneNumber;
         }
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
-        return Task.FromResult(new PagedDataResult<EmployeeDto>(employees, totalItems, totalPages));
+        return Task.FromResult(new PagedDataResult<EmployeeDto>(employeesDto, totalItems, totalPages));
     }
 
     protected override bool Validate(GetEmployeesQuery request, out string errorDescription)

@@ -52,6 +52,9 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.Property<string>("AssignedDispatcherId")
                         .HasColumnType("varchar(255)");
 
+                    b.Property<string>("AssignedDriverId")
+                        .HasColumnType("varchar(255)");
+
                     b.Property<string>("AssignedTruckId")
                         .HasColumnType("varchar(255)");
 
@@ -85,6 +88,8 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.HasKey("Id");
 
                     b.HasIndex("AssignedDispatcherId");
+
+                    b.HasIndex("AssignedDriverId");
 
                     b.HasIndex("AssignedTruckId");
 
@@ -146,6 +151,11 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                         .HasForeignKey("AssignedDispatcherId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("Logistics.Domain.Entities.Employee", "AssignedDriver")
+                        .WithMany("DeliveredLoads")
+                        .HasForeignKey("AssignedDriverId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Logistics.Domain.Entities.Truck", "AssignedTruck")
                         .WithMany("Loads")
                         .HasForeignKey("AssignedTruckId")
@@ -173,6 +183,8 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
 
                     b.Navigation("AssignedDispatcher");
 
+                    b.Navigation("AssignedDriver");
+
                     b.Navigation("AssignedTruck");
 
                     b.Navigation("Status")
@@ -190,6 +202,8 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
                 {
+                    b.Navigation("DeliveredLoads");
+
                     b.Navigation("DispatchedLoads");
                 });
 

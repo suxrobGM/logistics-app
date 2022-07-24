@@ -27,7 +27,6 @@ internal sealed class GetTruckByIdHandler : RequestHandlerBase<GetTruckByIdQuery
 
         var truckDriver = await _userRepository.GetAsync(i => i.Id == truckEntity.DriverId);
         
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
         var cargo = new TruckDto
         {
             Id = truckEntity.Id,
@@ -36,7 +35,6 @@ internal sealed class GetTruckByIdHandler : RequestHandlerBase<GetTruckByIdQuery
             DriverName = truckDriver?.GetFullName(),
             LoadIds = loadsIds
         };
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
         return DataResult<TruckDto>.CreateSuccess(cargo);
     }

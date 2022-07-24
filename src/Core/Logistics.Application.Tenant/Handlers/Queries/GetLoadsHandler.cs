@@ -16,7 +16,7 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
         _truckRepository = truckRepository;
     }
 
-    protected override async Task<PagedDataResult<LoadDto>> HandleValidated(
+    protected override Task<PagedDataResult<LoadDto>> HandleValidated(
         GetLoadsQuery request, 
         CancellationToken cancellationToken)
     {
@@ -29,43 +29,61 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
         }
 
         var loads = loadsQuery
+            .OrderBy(i => i.Id)
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
-            //.OrderBy(i => i.Id)
-            .Select(i => new LoadDto
-            {
-                Id = i.Id,
-                ReferenceId = i.ReferenceId,
-                Name = i.Name,
-                SourceAddress = i.SourceAddress,
-                DestinationAddress = i.DestinationAddress,
-                DeliveryCost = i.DeliveryCost,
-                Distance = i.Distance,
-                DispatchedDate = i.DispatchedDate,
-                PickUpDate = i.PickUpDate,
-                DeliveryDate = i.DeliveryDate,
-                AssignedDispatcherId = i.AssignedDispatcherId,
-                AssignedTruckId = i.AssignedTruck != null ? i.AssignedTruck.Id : null,
-                Status = i.Status.Name
-            })
             .ToArray();
 
-        // TODO: need to optimize query
-        foreach (var load in loads)
+        var driverIds = loads.Where(i => !string.IsNullOrEmpty(i.AssignedDriverId))
+            .Select(i => i.AssignedDriverId);
+        
+        var dispatcherIds = loads.Where(i => !string.IsNullOrEmpty(i.AssignedDispatcherId))
+            .Select(i => i.AssignedDispatcherId);
+
+        var drivers = _userRepository.GetQuery()
+            .Where(user => driverIds.Contains(user.Id))
+            .ToDictionary(i => i.Id);
+        
+        var dispatchers = _userRepository.GetQuery()
+            .Where(user => dispatcherIds.Contains(user.Id))
+            .ToDictionary(i => i.Id);
+
+        var loadsDto = loads.Select(i => new LoadDto
         {
-            var assignedDispatcher = await _userRepository.GetAsync(load.AssignedDispatcherId!);
-            var assignedTruck = await _truckRepository.GetAsync(load.AssignedTruckId!);
-            if (assignedTruck != null)
+            Id = i.Id,
+            ReferenceId = i.ReferenceId,
+            Name = i.Name,
+            SourceAddress = i.SourceAddress,
+            DestinationAddress = i.DestinationAddress,
+            DeliveryCost = i.DeliveryCost,
+            Distance = i.Distance,
+            DispatchedDate = i.DispatchedDate,
+            PickUpDate = i.PickUpDate,
+            DeliveryDate = i.DeliveryDate,
+            AssignedDispatcherId = i.AssignedDispatcherId,
+            AssignedDriverId = i.AssignedDriverId,
+            AssignedTruckId = i.AssignedTruckId,
+            Status = i.Status.Name
+        }).ToArray();
+        
+        foreach (var loadDto in loadsDto)
+        {
+            var dispatcherId = loadDto.AssignedDispatcherId;
+            var driverId = loadDto.AssignedDriverId;
+            
+            if (!string.IsNullOrWhiteSpace(dispatcherId))
             {
-                var assignedTruckDriver = await _userRepository.GetAsync(assignedTruck.Driver?.Id!);
-                load.AssignedTruckDriverName = assignedTruckDriver?.GetFullName();
+                loadDto.AssignedDispatcherName = dispatchers[dispatcherId].GetFullName();
             }
             
-            load.AssignedDispatcherName = assignedDispatcher?.GetFullName();
+            if (!string.IsNullOrWhiteSpace(driverId))
+            {
+                loadDto.AssignedDispatcherName = drivers[driverId].GetFullName();
+            }
         }
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
-        return new PagedDataResult<LoadDto>(loads, totalItems, totalPages);
+        return Task.FromResult(new PagedDataResult<LoadDto>(loadsDto, totalItems, totalPages));
     }
 
     protected override bool Validate(GetLoadsQuery request, out string errorDescription)
