@@ -1,8 +1,8 @@
 ﻿namespace Logistics.Domain.Specifications;
 
-public class SearchTrucksSpecification : BaseSpecification<Truck>
+public class SearchTrucks : BaseSpecification<Truck>
 {
-    public SearchTrucksSpecification(string search, string[] userIds, string[] userNames, string?[] userFirstNames, string?[] userLastNames)
+    public SearchTrucks(string search, string[] userIds, string[] userNames, string?[] userFirstNames, string?[] userLastNames)
         : base(i =>
             !string.IsNullOrEmpty(i.DriverId) && 
             userIds.Contains(i.DriverId) &&

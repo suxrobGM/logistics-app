@@ -20,7 +20,7 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
         var tenantId = _loadRepository.CurrentTenant!.Id;
         var totalItems = _loadRepository.GetQuery().Count();
         var loadsQuery = _loadRepository.GetQuery();
-        var filteredUsers = _userRepository.GetQuery(new FilterUsersByTenantIdSpecification(tenantId)).ToArray();
+        var filteredUsers = _userRepository.GetQuery(new FilterUsersByTenantId(tenantId)).ToArray();
         var userIds = filteredUsers.Select(i => i.Id).ToArray();
         var userNames = filteredUsers.Select(i => i.UserName).ToArray();
         var userFirstNames = filteredUsers.Select(i => i.FirstName).ToArray();
@@ -28,7 +28,7 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
 
         if (!string.IsNullOrEmpty(request.Search))
         {
-            loadsQuery = _loadRepository.GetQuery(new SearchLoadsSpecification(request.Search, userIds, userNames, userFirstNames, userLastNames));
+            loadsQuery = _loadRepository.GetQuery(new SearchLoads(request.Search, userIds, userNames, userFirstNames, userLastNames));
         }
 
         var loads = loadsQuery
@@ -75,14 +75,10 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
             var driverId = loadDto.AssignedDriverId;
             
             if (!string.IsNullOrWhiteSpace(dispatcherId))
-            {
                 loadDto.AssignedDispatcherName = dispatchers[dispatcherId].GetFullName();
-            }
             
             if (!string.IsNullOrWhiteSpace(driverId))
-            {
-                loadDto.AssignedDispatcherName = drivers[driverId].GetFullName();
-            }
+                loadDto.AssignedDriverName = drivers[driverId].GetFullName();
         }
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);

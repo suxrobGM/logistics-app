@@ -29,7 +29,7 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
         var tenantId = _truckRepository.CurrentTenant!.Id;
         var totalItems = _truckRepository.GetQuery().Count();
         var trucksQuery = _truckRepository.GetQuery();
-        var filteredUsers = _userRepository.GetQuery(new FilterUsersByTenantIdSpecification(tenantId)).ToArray();
+        var filteredUsers = _userRepository.GetQuery(new FilterUsersByTenantId(tenantId)).ToArray();
         var userIds = filteredUsers.Select(i => i.Id).ToArray();
         var userNames = filteredUsers.Select(i => i.UserName).ToArray();
         var userFirstNames = filteredUsers.Select(i => i.FirstName).ToArray();
@@ -38,7 +38,7 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
         if (!string.IsNullOrEmpty(request.Search))
         {
             trucksQuery = _truckRepository.GetQuery(
-                new SearchTrucksSpecification(request.Search, userIds, userNames, userFirstNames, userLastNames));
+                new SearchTrucks(request.Search, userIds, userNames, userFirstNames, userLastNames));
         }
 
         var trucks = trucksQuery

@@ -18,7 +18,7 @@ internal sealed class GetUsersHandler : RequestHandlerBase<GetUsersQuery, PagedD
 
         if (!string.IsNullOrEmpty(request.Search))
         {
-            itemsQuery = _userRepository.GetQuery(new SearchUsersSpecification(request.Search));
+            itemsQuery = _userRepository.GetQuery(new SearchUsers(request.Search));
         }
 
         var items = itemsQuery

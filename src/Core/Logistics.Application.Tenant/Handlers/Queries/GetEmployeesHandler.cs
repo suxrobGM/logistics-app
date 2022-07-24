@@ -23,7 +23,7 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery
         
         if (!string.IsNullOrEmpty(request.Search))
         {
-            usersQuery = _userRepository.GetQuery(new SearchUsersByTenantIdSpecification(request.Search, tenantId));
+            usersQuery = _userRepository.GetQuery(new SearchUsersByTenantId(request.Search, tenantId));
         }
 
         var filteredUsers = usersQuery

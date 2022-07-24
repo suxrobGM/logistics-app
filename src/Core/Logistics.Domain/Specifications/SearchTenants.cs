@@ -1,8 +1,8 @@
 ﻿namespace Logistics.Domain.Specifications;
 
-public class SearchTenantsSpecification : BaseSpecification<Tenant>
+public class SearchTenants : BaseSpecification<Tenant>
 {
-    public SearchTenantsSpecification(string search)
+    public SearchTenants(string search)
         : base(i =>
             (!string.IsNullOrEmpty(i.Name) &&
             i.Name.Contains(search, StringComparison.InvariantCultureIgnoreCase)) ||

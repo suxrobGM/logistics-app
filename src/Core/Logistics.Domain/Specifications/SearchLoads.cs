@@ -1,8 +1,8 @@
 ﻿namespace Logistics.Domain.Specifications;
 
-public class SearchLoadsSpecification : BaseSpecification<Load>
+public class SearchLoads : BaseSpecification<Load>
 {
-    public SearchLoadsSpecification(string search, string[] userIds, string[] userNames, string?[] userFirstNames, string?[] userLastNames)
+    public SearchLoads(string search, string[] userIds, string[] userNames, string?[] userFirstNames, string?[] userLastNames)
         : base(i =>
             (!string.IsNullOrEmpty(i.Name) &&
              i.Name.Contains(search, StringComparison.InvariantCultureIgnoreCase)) ||

@@ -1,8 +1,8 @@
 ﻿namespace Logistics.Domain.Specifications;
 
-public class SearchUsersByTenantIdSpecification : BaseSpecification<User>
+public class SearchUsersByTenantId : BaseSpecification<User>
 {
-    public SearchUsersByTenantIdSpecification(string search, string tenantId)
+    public SearchUsersByTenantId(string search, string tenantId)
         : base(i =>
             i.JoinedTenantIds.Contains(tenantId) && 
             (

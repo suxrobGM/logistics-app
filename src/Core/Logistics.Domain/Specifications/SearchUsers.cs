@@ -1,8 +1,8 @@
 ﻿namespace Logistics.Domain.Specifications;
 
-public class SearchUsersSpecification : BaseSpecification<User>
+public class SearchUsers : BaseSpecification<User>
 {
-    public SearchUsersSpecification(string search)
+    public SearchUsers(string search)
         : base(i =>
             (!string.IsNullOrEmpty(i.FirstName) &&
             i.FirstName.Contains(search, StringComparison.InvariantCultureIgnoreCase)) ||
