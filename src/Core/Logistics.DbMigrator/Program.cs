@@ -5,6 +5,7 @@ using Logistics.Domain.Options;
 using Logistics.Domain.Services;
 using Logistics.EntityFramework.Data;
 using Logistics.EntityFramework.Services;
+using Microsoft.AspNetCore.Identity;
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration(configuration =>
@@ -28,6 +29,7 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddDbContext<TenantDbContext>(o => ConfigureMySql(tenantDbConnection, o));
 
         services.AddIdentityCore<User>()
+            .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<MainDbContext>();
         services.AddHostedService<SeedDataService>();
     })

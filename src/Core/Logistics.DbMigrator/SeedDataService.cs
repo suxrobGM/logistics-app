@@ -5,22 +5,27 @@ using Logistics.Domain.Services;
 using Logistics.Domain.ValueObjects;
 using Logistics.EntityFramework.Data;
 
-namespace Logistics.DbMigrator
+namespace Logistics.DbMigrator;
+
+public class SeedDataService : BackgroundService
 {
-    public class SeedDataService : BackgroundService
+    private readonly IHostEnvironment _env;
+    private readonly ILogger<SeedDataService> _logger;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
+
+    public SeedDataService(
+        IHostEnvironment env,
+        ILogger<SeedDataService> logger,
+        IServiceScopeFactory serviceScopeFactory)
     {
-        private readonly ILogger<SeedDataService> _logger;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
+        _env = env;
+        _logger = logger;
+        _serviceScopeFactory = serviceScopeFactory;
+    }
 
-        public SeedDataService(
-            ILogger<SeedDataService> logger,
-            IServiceScopeFactory serviceScopeFactory)
-        {
-            _logger = logger;
-            _serviceScopeFactory = serviceScopeFactory;
-        }
-
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        try
         {
             using var scope = _serviceScopeFactory.CreateScope();
             var mainDbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
@@ -36,92 +41,117 @@ namespace Logistics.DbMigrator
 
             await AddDefaultAdminAsync(scope.ServiceProvider);
             await AddDefaultTenantAsync(scope.ServiceProvider);
+
+            if (_env.IsDevelopment())
+                await AddTestUsersAsync(scope.ServiceProvider);
+        
             _logger.LogInformation("Successfully seeded databases");
         }
-
-        private async Task MigrateDatabaseAsync(DbContext databaseContext)
+        catch (Exception ex)
         {
-            try
-            {
-                await databaseContext.Database.MigrateAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Thrown exception in SeedData.MigrateDatabaseAsync(): {Exception}", ex);
-            }
+            _logger.LogError("Thrown exception in SeedDataService.ExecuteAsync(): {Exception}", ex);
         }
+    }
 
-        private async Task AddDefaultAdminAsync(IServiceProvider serviceProvider)
+    private async Task MigrateDatabaseAsync(DbContext databaseContext)
+    {
+        await databaseContext.Database.MigrateAsync();
+    }
+
+    private async Task AddDefaultAdminAsync(IServiceProvider serviceProvider)
+    {
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
+        var adminDto = configuration.GetSection("DefaultAdmin").Get<UserDto>();
+        var admin = await userManager.FindByEmailAsync(adminDto.Email);
+
+        if (admin is null)
         {
-            try
+            admin = new User
             {
-                var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-                var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
+                UserName = adminDto.UserName,
+                Email = adminDto.Email,
+                EmailConfirmed = true,
+                Role = UserRole.Admin
+            };
 
-                var adminUserName = configuration["DefaultAdmin:UserName"];
-                var adminEmail = configuration["DefaultAdmin:Email"];
-                var adminPassword = configuration["DefaultAdmin:Password"];
-                var admin = await userManager.FindByEmailAsync(adminEmail);
-
-                if (admin is null)
-                {
-                    admin = new User
-                    {
-                        UserName = adminUserName,
-                        Email = adminEmail,
-                        EmailConfirmed = true,
-                        Role = UserRole.Admin
-                    };
-
-                    var result = await userManager.CreateAsync(admin, adminPassword);
-                    if (!result.Succeeded)
-                    {
-                        throw new Exception(result.Errors.First().Description);
-                    }
-
-                    _logger.LogInformation("Created the default admin");
-                }
-                else if (admin.Role != UserRole.Admin)
-                {
-                    admin.Role = UserRole.Admin;
-                    await userManager.UpdateAsync(admin);
-                    _logger.LogInformation("Added 'admin' role to the default admin");
-                }
-            }
-            catch (Exception ex)
+            var result = await userManager.CreateAsync(admin, adminDto.Password);
+            if (!result.Succeeded)
             {
-                _logger.LogError("Thrown exception in SeedDataService.AddDefaultAdminAsync(): {Exception}", ex);
+                throw new Exception(result.Errors.First().Description);
             }
+
+            _logger.LogInformation("Created the default admin");
         }
-
-        private async Task AddDefaultTenantAsync(IServiceProvider serviceProvider)
+        else if (admin.Role != UserRole.Admin)
         {
+            admin.Role = UserRole.Admin;
+            await userManager.UpdateAsync(admin);
+            _logger.LogInformation("Added 'admin' role to the default admin");
+        }
+    }
+
+    private async Task AddDefaultTenantAsync(IServiceProvider serviceProvider)
+    {
+        var mainDbContext = serviceProvider.GetRequiredService<MainDbContext>();
+        var databaseProvider = serviceProvider.GetRequiredService<IDatabaseProviderService>();
+
+        var defaultTenant = new Tenant
+        {
+            Name = "default",
+            DisplayName = "Default Tenant",
+            ConnectionString = databaseProvider.GenerateConnectionString("default")
+        };
+
+        var existingTenant = mainDbContext.Set<Tenant>().FirstOrDefault(i => i.Name == defaultTenant.Name);
+
+        if (existingTenant is null)
+        {
+            mainDbContext.Add(defaultTenant);
+            await mainDbContext.SaveChangesAsync();
+            await databaseProvider.CreateDatabaseAsync(defaultTenant.ConnectionString);
+            _logger.LogInformation("Added default tenant");
+        }
+    }
+
+    private async Task AddTestUsersAsync(IServiceProvider serviceProvider)
+    {
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
+        var testUsers = configuration.GetSection("TestUsers").Get<UserDto[]>();
+
+        foreach (var testUser in testUsers)
+        {
+            var user = await userManager.FindByNameAsync(testUser.UserName);
+
+            if (user != null)
+                continue;
+            
+            user = new User
+            {
+                UserName = testUser.UserName,
+                Email = testUser.Email,
+                EmailConfirmed = true,
+                Role = UserRole.Guest,
+            };
+
             try
             {
-                var mainDbContext = serviceProvider.GetRequiredService<MainDbContext>();
-                var databaseProvider = serviceProvider.GetRequiredService<IDatabaseProviderService>();
-
-                var defaultTenant = new Tenant
-                {
-                    Name = "default",
-                    DisplayName = "Default Tenant",
-                    ConnectionString = databaseProvider.GenerateConnectionString("default")
-                };
-
-                var existingTenant = mainDbContext.Set<Tenant>().FirstOrDefault(i => i.Name == defaultTenant.Name);
-                
-                if (existingTenant is null)
-                {
-                    mainDbContext.Add(defaultTenant);
-                    await mainDbContext.SaveChangesAsync();
-                    await databaseProvider.CreateDatabaseAsync(defaultTenant.ConnectionString);
-                    _logger.LogInformation("Added default tenant");
-                }
+                var result = await userManager.CreateAsync(user, testUser.Password);
+                if (!result.Succeeded)
+                    throw new Exception(result.Errors.First().Description);
             }
-            catch (Exception ex)
+            finally
             {
-                _logger.LogError("Thrown exception in SeedDataService.AddDefaultTenantAsync(): {Exception}", ex);
+                _logger.LogInformation("Created the test user {UserName}", testUser.UserName);
             }
         }
     }
+}
+
+internal record UserDto
+{
+    public string? UserName { get; init; }
+    public string? Email { get; init; }
+    public string? Password { get; init; }
 }
