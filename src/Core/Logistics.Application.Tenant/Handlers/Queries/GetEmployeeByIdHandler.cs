@@ -22,15 +22,18 @@ internal sealed class GetEmployeeByIdHandler : RequestHandlerBase<GetEmployeeByI
 
         var userEntity = await _userRepository.GetAsync(i => i.Id == employeeEntity.ExternalId);
 
+        if (userEntity == null)
+            return DataResult<EmployeeDto>.CreateError("Could not find the specified employee, the external ID is incorrect");
+
         var employee = new EmployeeDto
         {
             Id = employeeEntity.Id,
             ExternalId = employeeEntity.ExternalId!,
-            UserName = employeeEntity.UserName!,
-            FirstName = employeeEntity.FirstName,
-            LastName = employeeEntity.LastName,
-            Email = userEntity?.Email,
-            PhoneNumber = userEntity?.PhoneNumber,
+            UserName = userEntity.UserName,
+            FirstName = userEntity.FirstName,
+            LastName = userEntity.LastName,
+            Email = userEntity.Email,
+            PhoneNumber = userEntity.PhoneNumber,
             Role = employeeEntity.Role.Name,
             JoinedDate = employeeEntity.JoinedDate
         };

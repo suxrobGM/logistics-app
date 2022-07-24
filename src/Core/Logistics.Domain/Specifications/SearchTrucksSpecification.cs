@@ -2,18 +2,14 @@
 
 public class SearchTrucksSpecification : BaseSpecification<Truck>
 {
-    public SearchTrucksSpecification(string searchInput) 
+    public SearchTrucksSpecification(string search, string[] userIds, string[] userNames, string?[] userFirstNames, string?[] userLastNames)
         : base(i =>
-            (i.Driver != null && 
-            !string.IsNullOrEmpty(i.Driver.FirstName) && 
-            i.Driver.FirstName.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase)) ||
+            !string.IsNullOrEmpty(i.DriverId) && 
+            userIds.Contains(i.DriverId) &&
+            (userNames.Contains(search) || userFirstNames.Contains(search) || userLastNames.Contains(search)) ||
             
-            (i.Driver != null &&
-            !string.IsNullOrEmpty(i.Driver.LastName) &&
-            i.Driver.LastName.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase)) ||
-
             (i.TruckNumber.HasValue &&
-            i.TruckNumber.Value.ToString().Contains(searchInput, StringComparison.InvariantCultureIgnoreCase))
+             i.TruckNumber.Value.ToString().Contains(search, StringComparison.InvariantCultureIgnoreCase))
         )
     {
     }

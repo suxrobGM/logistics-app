@@ -17,39 +17,40 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery
         GetEmployeesQuery request, 
         CancellationToken cancellationToken)
     {
+        var tenantId = _employeeRepository.CurrentTenant!.Id;
         var totalItems = _employeeRepository.GetQuery().Count();
-        var itemsQuery = _employeeRepository.GetQuery();
-
+        var usersQuery = _userRepository.GetQuery();
+        
         if (!string.IsNullOrEmpty(request.Search))
         {
-            itemsQuery = _employeeRepository.GetQuery(new SearchEmployeesSpecification(request.Search));
+            usersQuery = _userRepository.GetQuery(new SearchUsersByTenantIdSpecification(request.Search, tenantId));
         }
 
-        var employeesDto = itemsQuery
+        var filteredUsers = usersQuery
             .OrderBy(i => i.Id)
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
+            .ToDictionary(user => user.Id);
+
+        var userIds = filteredUsers.Keys.ToArray();
+        
+        var employeesDto = _employeeRepository.GetQuery()
+            .Where(i => userIds.Contains(i.ExternalId))
             .Select(i => new EmployeeDto
             {
                 Id = i.Id,
                 ExternalId = i.ExternalId!,
-                UserName = i.UserName!,
-                FirstName = i.FirstName,
-                LastName = i.LastName,
                 Role = i.Role.Name,
                 JoinedDate = i.JoinedDate
             })
             .ToArray();
 
-        var employeeExtIds = employeesDto.Select(i => i.ExternalId);
-        
-        var users = _userRepository.GetQuery()
-            .Where(user => employeeExtIds.Contains(user.Id))
-            .ToDictionary(i => i.Id);
-
         foreach (var employee in employeesDto)
         {
-            var user = users[employee.ExternalId!];
+            var user = filteredUsers[employee.ExternalId];
+            employee.UserName = user.UserName;
+            employee.FirstName = user.FirstName;
+            employee.LastName = user.LastName;
             employee.Email = user.Email;
             employee.PhoneNumber = user.PhoneNumber;
         }
@@ -62,7 +63,11 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery
     {
         errorDescription = string.Empty;
 
-        if (request.Page <= 0)
+        if (string.IsNullOrEmpty(_employeeRepository.CurrentTenant?.Id))
+        {
+            errorDescription = "Could not evaluate current tenant's ID";
+        }
+        else if (request.Page <= 0)
         {
             errorDescription = "Page number should be non-negative";
         }

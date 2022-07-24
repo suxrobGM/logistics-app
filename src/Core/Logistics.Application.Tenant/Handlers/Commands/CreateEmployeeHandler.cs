@@ -23,7 +23,7 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
         CreateEmployeeCommand request, CancellationToken cancellationToken)
     {
         var employee = _mapper.Map<Employee>(request);
-        var existingEmployee = await _employeeRepository.GetAsync(i => i.ExternalId == request.ExternalId || i.UserName == request.UserName);
+        var existingEmployee = await _employeeRepository.GetAsync(i => i.ExternalId == request.ExternalId);
         var user = await _userRepository.GetAsync(i => i.Id == employee.ExternalId);
         var tenant = await _tenantRepository.GetAsync(i => i.Name == request.TenantId || i.Id == request.TenantId);
         

@@ -4,28 +4,31 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
 {
     private readonly IMainRepository<User> _userRepository;
     private readonly ITenantRepository<Load> _loadRepository;
-    private readonly ITenantRepository<Truck> _truckRepository;
 
     public GetLoadsHandler(
         IMainRepository<User> userRepository,
-        ITenantRepository<Load> loadRepository,
-        ITenantRepository<Truck> truckRepository)
+        ITenantRepository<Load> loadRepository)
     {
         _userRepository = userRepository;
         _loadRepository = loadRepository;
-        _truckRepository = truckRepository;
     }
 
     protected override Task<PagedDataResult<LoadDto>> HandleValidated(
         GetLoadsQuery request, 
         CancellationToken cancellationToken)
     {
+        var tenantId = _loadRepository.CurrentTenant!.Id;
         var totalItems = _loadRepository.GetQuery().Count();
         var loadsQuery = _loadRepository.GetQuery();
+        var filteredUsers = _userRepository.GetQuery(new FilterUsersByTenantIdSpecification(tenantId)).ToArray();
+        var userIds = filteredUsers.Select(i => i.Id).ToArray();
+        var userNames = filteredUsers.Select(i => i.UserName).ToArray();
+        var userFirstNames = filteredUsers.Select(i => i.FirstName).ToArray();
+        var userLastNames = filteredUsers.Select(i => i.LastName).ToArray();
 
         if (!string.IsNullOrEmpty(request.Search))
         {
-            loadsQuery = _loadRepository.GetQuery(new LoadsSpecification(request.Search));
+            loadsQuery = _loadRepository.GetQuery(new SearchLoadsSpecification(request.Search, userIds, userNames, userFirstNames, userLastNames));
         }
 
         var loads = loadsQuery
@@ -90,7 +93,11 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
     {
         errorDescription = string.Empty;
 
-        if (request.Page <= 0)
+        if (string.IsNullOrEmpty(_loadRepository.CurrentTenant?.Id))
+        {
+            errorDescription = "Could not evaluate current tenant's ID";
+        }
+        else if (request.Page <= 0)
         {
             errorDescription = "Page number should be non-negative";
         }

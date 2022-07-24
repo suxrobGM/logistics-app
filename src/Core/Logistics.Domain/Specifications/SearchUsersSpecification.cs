@@ -2,19 +2,19 @@
 
 public class SearchUsersSpecification : BaseSpecification<User>
 {
-    public SearchUsersSpecification(string searchInput)
+    public SearchUsersSpecification(string search)
         : base(i =>
             (!string.IsNullOrEmpty(i.FirstName) &&
-            i.FirstName.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase)) ||
+            i.FirstName.Contains(search, StringComparison.InvariantCultureIgnoreCase)) ||
 
             (!string.IsNullOrEmpty(i.LastName) &&
-            i.LastName.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase)) ||
+            i.LastName.Contains(search, StringComparison.InvariantCultureIgnoreCase)) ||
 
             (!string.IsNullOrEmpty(i.UserName) &&
-            i.UserName.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase)) ||
+            i.UserName.Contains(search, StringComparison.InvariantCultureIgnoreCase)) ||
             
             (!string.IsNullOrEmpty(i.Email) &&
-             i.Email.Contains(searchInput, StringComparison.InvariantCultureIgnoreCase))
+             i.Email.Contains(search, StringComparison.InvariantCultureIgnoreCase))
         )
     {
     }

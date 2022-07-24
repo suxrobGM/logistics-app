@@ -26,15 +26,22 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
                         .ToList();
         }
 
+        var tenantId = _truckRepository.CurrentTenant!.Id;
         var totalItems = _truckRepository.GetQuery().Count();
-        var itemsQuery = _truckRepository.GetQuery();
+        var trucksQuery = _truckRepository.GetQuery();
+        var filteredUsers = _userRepository.GetQuery(new FilterUsersByTenantIdSpecification(tenantId)).ToArray();
+        var userIds = filteredUsers.Select(i => i.Id).ToArray();
+        var userNames = filteredUsers.Select(i => i.UserName).ToArray();
+        var userFirstNames = filteredUsers.Select(i => i.FirstName).ToArray();
+        var userLastNames = filteredUsers.Select(i => i.LastName).ToArray();
 
         if (!string.IsNullOrEmpty(request.Search))
         {
-            itemsQuery = _truckRepository.GetQuery(new SearchTrucksSpecification(request.Search));
+            trucksQuery = _truckRepository.GetQuery(
+                new SearchTrucksSpecification(request.Search, userIds, userNames, userFirstNames, userLastNames));
         }
 
-        var trucks = itemsQuery
+        var trucks = trucksQuery
                 .OrderBy(i => i.Id)
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
@@ -73,7 +80,11 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
     {
         errorDescription = string.Empty;
 
-        if (request.Page <= 0)
+        if (string.IsNullOrEmpty(_truckRepository.CurrentTenant?.Id))
+        {
+            errorDescription = "Could not evaluate current tenant's ID";
+        }
+        else if (request.Page <= 0)
         {
             errorDescription = "Page number should be non-negative";
         }

@@ -19,9 +19,9 @@ internal sealed class UpdateEmployeeHandler : RequestHandlerBase<UpdateEmployeeC
             return DataResult.CreateError("Could not find the specified user");
         }
 
-        userEntity.FirstName = request.FirstName;
-        userEntity.LastName = request.LastName;
-        userEntity.UserName = request.UserName;
+        //userEntity.FirstName = request.FirstName;
+        //userEntity.LastName = request.LastName;
+        //userEntity.UserName = request.UserName;
         userEntity.Role = EmployeeRole.Get(request.Role!);
 
         _userRepository.Update(userEntity);

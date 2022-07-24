@@ -27,17 +27,8 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.Property<string>("ExternalId")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("FirstName")
-                        .HasColumnType("longtext");
-
                     b.Property<DateTime>("JoinedDate")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 

@@ -20,12 +20,6 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ExternalId = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    FirstName = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    LastName = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    UserName = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
                     JoinedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Role_Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
