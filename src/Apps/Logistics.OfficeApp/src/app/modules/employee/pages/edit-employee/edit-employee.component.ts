@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Employee } from '@shared/models/employee';
 import { EmployeeRole } from '@shared/models/employee-role';
+import { User } from '@shared/models/user';
 import { ApiClientService } from '@shared/services/api-client.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { MessageService } from 'primeng/api';
@@ -29,6 +29,18 @@ export class EditEmployeeComponent implements OnInit {
       'lastName': new FormControl({value: '', disabled: true}),
       'role': new FormControl(EmployeeRole.Guest, Validators.required),
     });
+
+    let currentUserRole = EmployeeRole.Owner as string;
+    oidcSecurityService.getUserData().subscribe((userData: User) => currentUserRole = userData.role!);
+
+    for (const role in EmployeeRole) {
+      if (currentUserRole !== 'admin' && role === EmployeeRole.Owner) {
+        continue;
+      }
+      else {
+        this.roles.push(role);
+      }
+    }
   }
 
   ngOnInit(): void {

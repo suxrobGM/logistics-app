@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-12">
             <p-progressSpinner *ngIf="isBusy"></p-progressSpinner>
-            <p-table [value]="employees">
+            <p-table [value]="employees" responsiveLayout="scroll">
                 <ng-template pTemplate="header">
                     <tr>
                         <th>Username</th>
@@ -13,6 +13,7 @@
                         <th>Last Name</th>
                         <th>Email</th>
                         <th>Phone Number</th>
+                        <th>Role</th>
                         <th>Joined Date</th>
                         <th>Action</th>
                     </tr>
@@ -24,7 +25,8 @@
                         <td>{{employee.lastName}}</td>
                         <td>{{employee.email}}</td>
                         <td>{{employee.phoneNumber}}</td>
-                        <td>{{employee.joinedDate}}</td>
+                        <td>{{employee.role}}</td>
+                        <td>{{employee.joinedDate | date:'mediumDate'}}</td>
                         <td>
                             <a class="btn btn-primary" [routerLink]="['/employees/edit']" [state]="{id: employee.id}">Edit</a>
                         </td>
