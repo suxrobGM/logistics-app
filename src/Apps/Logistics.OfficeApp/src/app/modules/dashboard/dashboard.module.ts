@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SharedModule } from '@shared/shared.module';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
 import { DashboardRoutingModule } from './dashboard-routing.module';
-import { SharedModule } from '@app/shared/shared.module';
 
 
 @NgModule({

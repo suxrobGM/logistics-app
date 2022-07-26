@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Employee } from '@app/shared/models/employee';
-import { EmployeeRole } from '@app/shared/models/employee-role';
+import { Employee } from '@shared/models/employee';
+import { EmployeeRole } from '@shared/models/employee-role';
 import { User } from '@shared/models/user';
 import { ApiClientService } from '@shared/services/api-client.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
@@ -71,7 +71,6 @@ export class AddEmployeeComponent implements OnInit {
       }
     });
   }
-
 
   public onSelectUser(value: string) {
     const userName = value.substring(0, value.indexOf(' '));

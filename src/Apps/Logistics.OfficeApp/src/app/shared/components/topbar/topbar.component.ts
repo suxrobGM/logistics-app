@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from '@app/shared/models/user';
-import { ApiClientService } from '@app/shared/services/api-client.service';
+import { User } from '@shared/models/user';
+import { ApiClientService } from '@shared/services/api-client.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { of, switchMap } from 'rxjs';
 

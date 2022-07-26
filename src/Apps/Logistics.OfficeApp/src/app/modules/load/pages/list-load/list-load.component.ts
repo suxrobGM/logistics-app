@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { Load } from '@app/shared/models/load';
+import { Load } from '@shared/models/load';
 import { ApiClientService } from '@shared/services/api-client.service';
 
 @Component({

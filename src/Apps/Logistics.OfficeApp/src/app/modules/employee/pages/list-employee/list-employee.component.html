@@ -14,6 +14,7 @@
                         <th>Email</th>
                         <th>Phone Number</th>
                         <th>Joined Date</th>
+                        <th>Action</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-employee>
@@ -24,6 +25,9 @@
                         <td>{{employee.email}}</td>
                         <td>{{employee.phoneNumber}}</td>
                         <td>{{employee.joinedDate}}</td>
+                        <td>
+                            <a class="btn btn-primary" [routerLink]="['/employees/edit']" [state]="{id: employee.id}">Edit</a>
+                        </td>
                     </tr>
                 </ng-template>
             </p-table>

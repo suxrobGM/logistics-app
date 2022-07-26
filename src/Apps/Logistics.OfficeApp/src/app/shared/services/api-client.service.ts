@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppConfig } from '@app/configs/app.config';
+import { AppConfig } from '../../configs/app.config';
 import { MessageService } from 'primeng/api';
 import { catchError, Observable, retry, throwError } from 'rxjs';
 import { DataResult } from '../models/data-result';
