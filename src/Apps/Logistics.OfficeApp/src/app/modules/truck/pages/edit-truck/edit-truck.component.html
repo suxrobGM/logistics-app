@@ -4,10 +4,10 @@
     <div class="col-12 col-md-6">
         <p-card>
             <p-progressSpinner *ngIf="isBusy"></p-progressSpinner>
-            <form>
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
                 <div class="mb-3">
-                    <label for="number" class="form-label">Number</label>
-                    <input id="number" type="number" class="form-control" /> 
+                    <label for="truckNumber" class="form-label">Truck Number</label>
+                    <input id="truckNumber" type="number" class="form-control" /> 
                 </div>
                 <div class="mb-3">
                     <label for="driver" class="form-label">Driver</label>

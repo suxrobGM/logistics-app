@@ -4,6 +4,7 @@ import { SharedModule } from '@shared/shared.module';
 import { EditTruckComponent } from './pages/edit-truck/edit-truck.component';
 import { ListTruckComponent } from './pages/list-truck/list-truck.component';
 import { TruckRoutingModule } from './truck-routing.module';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -14,7 +15,8 @@ import { TruckRoutingModule } from './truck-routing.module';
   imports: [
     CommonModule,
     TruckRoutingModule,
-    SharedModule
+    SharedModule,
+    ReactiveFormsModule
   ]
 })
 export class TruckModule { }

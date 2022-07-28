@@ -1,6 +1,6 @@
 export interface Truck {
     id?: string;
-    number: number;
+    truckNumber: number;
     driverId: string;
     driverName?: string;
     loadIds?: string[];
