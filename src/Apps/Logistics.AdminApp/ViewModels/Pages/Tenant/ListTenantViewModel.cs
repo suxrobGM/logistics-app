@@ -39,8 +39,8 @@ public class ListTenantViewModel : PageViewModelBase
         if (pagedListResult.Success && pagedList?.Items != null)
         {
             TenantsList.AddRange(pagedList.Items);
-            TenantsList.TotalItems = pagedList.TotalItems;
-            TotalRecords = pagedList.TotalItems;
+            TenantsList.TotalItems = pagedList.ItemsCount;
+            TotalRecords = pagedList.ItemsCount;
             Tenants = TenantsList.GetPage(e.Page);
         }
     }

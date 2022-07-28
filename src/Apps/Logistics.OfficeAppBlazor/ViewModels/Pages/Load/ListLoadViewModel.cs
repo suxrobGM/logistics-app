@@ -41,7 +41,7 @@ public class ListLoadViewModel : PageViewModelBase
         if (pagedList?.Items != null)
         {
             Cargoes = pagedList.Items;
-            TotalRecords = pagedList.TotalItems;
+            TotalRecords = pagedList.ItemsCount;
         }
     }
 }

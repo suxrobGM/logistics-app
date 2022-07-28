@@ -4,8 +4,8 @@
 <p-card>
     <div class="row">
         <div class="col-12">
-            <p-progressSpinner *ngIf="isBusy"></p-progressSpinner>
-            <p-table [value]="employees" responsiveLayout="scroll">
+            <p-table [value]="employees" [lazy]="true" [paginator]="true" [rows]="10" [showCurrentPageReport]="true" responsiveLayout="scroll"
+                (onLazyLoad)="loadEmployees($event)" [(first)]="page" [totalRecords]="totalRecords" [loading]="isBusy">
                 <ng-template pTemplate="header">
                     <tr>
                         <th>Username</th>

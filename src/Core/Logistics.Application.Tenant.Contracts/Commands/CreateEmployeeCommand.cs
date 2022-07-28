@@ -7,4 +7,5 @@ public sealed class CreateEmployeeCommand : RequestBase<DataResult>
     public string? LastName { get; init; }
     public string? UserName { get; init; }
     public string? TenantId { get; set; }
+    public string? Role { get; set; }
 }

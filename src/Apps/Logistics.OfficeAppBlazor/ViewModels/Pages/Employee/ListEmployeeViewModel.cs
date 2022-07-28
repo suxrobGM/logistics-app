@@ -43,8 +43,8 @@ public class ListEmployeeViewModel : PageViewModelBase
         if (pagedList?.Items != null)
         {
             UsersList.AddRange(pagedList.Items);
-            UsersList.TotalItems = pagedList.TotalItems;
-            TotalRecords = pagedList.TotalItems;
+            UsersList.TotalItems = pagedList.ItemsCount;
+            TotalRecords = pagedList.ItemsCount;
             Users = UsersList.GetPage(e.Page);
         }
     }

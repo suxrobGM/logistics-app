@@ -41,7 +41,7 @@ public class ListTruckViewModel : PageViewModelBase
         if (pagedList?.Items != null)
         {
             Trucks = pagedList.Items;
-            TotalRecords = pagedList.TotalItems;
+            TotalRecords = pagedList.ItemsCount;
         }
     }
 }

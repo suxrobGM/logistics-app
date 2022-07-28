@@ -6,14 +6,14 @@ public class PagedDataResult<T> : DataResult<T>
     {
     }
 
-    public PagedDataResult(T[] items, int totalItems, int totalPages)
+    public PagedDataResult(T[] items, int itemsCount, int pagesCount)
     {
         Items = items;
-        TotalItems = totalItems;
-        TotalPages = totalPages;
+        ItemsCount = itemsCount;
+        PagesCount = pagesCount;
     }
 
     public T[]? Items { get; set; }
-    public int TotalItems { get; set; }
-    public int TotalPages { get; set; }
+    public int ItemsCount { get; set; }
+    public int PagesCount { get; set; }
 }

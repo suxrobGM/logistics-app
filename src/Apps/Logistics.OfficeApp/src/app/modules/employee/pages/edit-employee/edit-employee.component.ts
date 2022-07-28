@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Employee } from '@shared/models/employee';
 import { EmployeeRole } from '@shared/models/employee-role';
 import { User } from '@shared/models/user';
 import { ApiClientService } from '@shared/services/api-client.service';
@@ -12,10 +13,11 @@ import { MessageService } from 'primeng/api';
   styleUrls: ['./edit-employee.component.scss']
 })
 export class EditEmployeeComponent implements OnInit {
-  public isBusy = false;
-  public form: FormGroup;
-  public roles: string[];
-  public id?: string;
+  isBusy = false;
+  form: FormGroup;
+  roles: string[];
+  id?: string;
+  employee?: Employee;
   
   constructor(
     private apiService: ApiClientService,
@@ -51,21 +53,38 @@ export class EditEmployeeComponent implements OnInit {
       return;
     }
 
+    this.isBusy = true;
     this.apiService.getEmployee(this.id).subscribe(result => {
       if (result.success && result.value) {
-        const employee = result.value;
-
+        this.employee = result.value;
+        
         this.form.patchValue({
-          userName: employee.userName,
-          firstName: employee.firstName,
-          lastName: employee.lastName,
-          role: employee.role
+          userName: this.employee.userName,
+          firstName: this.employee.firstName,
+          lastName: this.employee.lastName,
+          role: this.employee.role
         });
       }
+
+      this.isBusy = false;
     });
   }
 
   onSubmit() {
+    const employee: Employee = {
+      id: this.employee?.id,
+      externalId: this.employee?.externalId,
+      userName: this.employee?.userName,
+      role: this.form.value.role
+    }
     
+    this.isBusy = true;
+    this.apiService.updateEmployee(employee).subscribe(result => {
+      if (result.success) {
+        this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'User has been updated successfully'});
+      }
+
+      this.isBusy = false;
+    });
   }
 }
