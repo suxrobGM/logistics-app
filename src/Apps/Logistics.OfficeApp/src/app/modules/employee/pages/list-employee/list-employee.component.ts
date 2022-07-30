@@ -9,10 +9,10 @@ import { LazyLoadEvent } from 'primeng/api';
   styleUrls: ['./list-employee.component.scss']
 })
 export class ListEmployeeComponent implements OnInit {
-  employees: Employee[];
-  isBusy: boolean;
-  totalRecords: number;
-  page: number;
+  public employees: Employee[];
+  public isBusy: boolean;
+  public totalRecords: number;
+  public page: number;
 
   constructor(private apiService: ApiClientService) {
     this.employees = [];
@@ -21,11 +21,11 @@ export class ListEmployeeComponent implements OnInit {
     this.page = 1;
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.loadEmployees();
   }
 
-  loadEmployees(event?: LazyLoadEvent) {
+  public loadEmployees(event?: LazyLoadEvent) {
     if (this.page < 1) {
       this.page = 1;
     }

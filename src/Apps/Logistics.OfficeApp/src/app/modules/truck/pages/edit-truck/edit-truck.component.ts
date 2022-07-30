@@ -10,10 +10,10 @@ import { MessageService } from 'primeng/api';
   styleUrls: ['./edit-truck.component.scss']
 })
 export class EditTruckComponent implements OnInit {
-  isBusy = false;
-  form: FormGroup;
-  id?: string;
-  truck?: Truck;
+  private truck?: Truck;
+  public isBusy = false;
+  public form: FormGroup;
+  public id?: string; 
   
   constructor(
     private apiService: ApiClientService,
@@ -26,7 +26,7 @@ export class EditTruckComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.id = history.state.id;
     
     if (!this.id) {
@@ -49,7 +49,7 @@ export class EditTruckComponent implements OnInit {
     });
   }
 
-  onSubmit() {
+  public onSubmit() {
     const truck: Truck = {
       id: this.truck?.id,
       truckNumber: this.form.value.truckNumber,
@@ -66,5 +66,4 @@ export class EditTruckComponent implements OnInit {
       this.isBusy = false;
     });
   }
-
 }

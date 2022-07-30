@@ -13,11 +13,12 @@ import { MessageService } from 'primeng/api';
   styleUrls: ['./edit-employee.component.scss']
 })
 export class EditEmployeeComponent implements OnInit {
-  isBusy = false;
-  form: FormGroup;
-  roles: string[];
-  id?: string;
-  employee?: Employee;
+  private employee?: Employee;
+
+  public isBusy = false;
+  public form: FormGroup;
+  public roles: string[];
+  public id?: string;
   
   constructor(
     private apiService: ApiClientService,
@@ -45,7 +46,7 @@ export class EditEmployeeComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.id = history.state.id;
     
     if (!this.id) {
@@ -70,7 +71,7 @@ export class EditEmployeeComponent implements OnInit {
     });
   }
 
-  onSubmit() {
+  public onSubmit() {
     const employee: Employee = {
       id: this.employee?.id,
       externalId: this.employee?.externalId,
