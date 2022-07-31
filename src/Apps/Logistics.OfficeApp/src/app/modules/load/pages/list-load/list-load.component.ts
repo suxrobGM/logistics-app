@@ -14,5 +14,4 @@ export class ListLoadComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.apiService.getLoads().subscribe(i => console.log(i));
   }
-
 }
