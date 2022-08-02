@@ -5,7 +5,7 @@ import { EmployeeRole } from '@shared/models/employee-role';
 import { User } from '@shared/models/user';
 import { ApiClientService } from '@shared/services/api-client.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { MessageService, SelectItem } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-edit-employee',

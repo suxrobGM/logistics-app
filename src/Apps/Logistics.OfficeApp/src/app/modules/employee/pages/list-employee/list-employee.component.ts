@@ -12,30 +12,26 @@ export class ListEmployeeComponent implements OnInit {
   public employees: Employee[];
   public isBusy: boolean;
   public totalRecords: number;
-  public page: number;
+  public first: number
 
   constructor(private apiService: ApiClientService) {
     this.employees = [];
     this.isBusy = false;
     this.totalRecords = 0;
-    this.page = 1;
+    this.first = 0;
   }
 
   public ngOnInit(): void {
-    this.loadEmployees();
+    this.isBusy = true;
   }
 
   public loadEmployees(event?: LazyLoadEvent) {
-    if (this.page < 1) {
-      this.page = 1;
-    }
-
     this.isBusy = true;
-
-    this.apiService.getEmployees(undefined, this.page, 2).subscribe(result => {
+    
+    this.apiService.getEmployees(undefined, this.first + 1, 2).subscribe(result => {
       if (result.success && result.items) {
         this.employees = result.items;
-        this.totalRecords = result.ItemsCount!;
+        this.totalRecords = result.itemsCount!;  
       }
 
       this.isBusy = false;
