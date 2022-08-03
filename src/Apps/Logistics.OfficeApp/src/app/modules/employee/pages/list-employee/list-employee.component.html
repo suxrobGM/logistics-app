@@ -4,8 +4,8 @@
 <p-card>
     <div class="row">
         <div class="col-12">
-            <p-table #dt [value]="employees" [lazy]="true" [paginator]="true" [rows]="10" [showCurrentPageReport]="true" responsiveLayout="scroll"
-                (onLazyLoad)="loadEmployees($event)" [(first)]="first" [totalRecords]="totalRecords" [loading]="isBusy">
+            <p-table [value]="employees" responsiveLayout="scroll" [lazy]="true" [paginator]="true" [showCurrentPageReport]="true" 
+                (onLazyLoad)="load($event)" [rows]="10" [(first)]="first" [totalRecords]="totalRecords" [loading]="isBusy">
                 <ng-template pTemplate="caption">
                     <div class="d-flex">
                         <span class="p-input-icon-left">

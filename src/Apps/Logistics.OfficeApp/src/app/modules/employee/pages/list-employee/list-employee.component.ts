@@ -12,7 +12,7 @@ export class ListEmployeeComponent implements OnInit {
   public employees: Employee[];
   public isBusy: boolean;
   public totalRecords: number;
-  public first: number
+  public first: number;
 
   constructor(private apiService: ApiClientService) {
     this.employees = [];
@@ -39,7 +39,7 @@ export class ListEmployeeComponent implements OnInit {
     });
   }
 
-  public loadEmployees(event: LazyLoadEvent) {
+  public load(event: LazyLoadEvent) {
     this.isBusy = true;
     const page = event.first! / event.rows! + 1;
     

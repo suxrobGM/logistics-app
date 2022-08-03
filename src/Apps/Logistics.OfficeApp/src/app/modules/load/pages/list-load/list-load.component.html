@@ -4,7 +4,16 @@
 <p-card>
     <div class="row">
         <div class="col-12">
-            <p-table [value]="loads" responsiveLayout="scroll">
+            <p-table [value]="loads" responsiveLayout="scroll" [lazy]="true" [paginator]="true" [showCurrentPageReport]="true" 
+                (onLazyLoad)="load($event)" [rows]="10" [(first)]="first" [totalRecords]="totalRecords" [loading]="isBusy">
+                <ng-template pTemplate="caption">
+                    <div class="d-flex">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" placeholder="Search" (input)="search($event)" />
+                        </span>
+                    </div>
+                </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
                         <th>ID</th>
@@ -19,6 +28,7 @@
                         <th>Delivery Cost</th>
                         <th>Assigned Dispatcher</th>
                         <th>Assigned Driver</th>
+                        <th>Action</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-load>
@@ -35,6 +45,9 @@
                         <td>{{load.deliveryCost}}</td>
                         <td>{{load.assignedDispatcherName}}</td>
                         <td>{{load.assignedTruckDriverName}}</td>
+                        <td>
+                            <a class="btn btn-primary" [routerLink]="['/loads/edit']" [state]="{id: load.id}">Edit</a>
+                        </td>
                     </tr>
                 </ng-template>
             </p-table>
