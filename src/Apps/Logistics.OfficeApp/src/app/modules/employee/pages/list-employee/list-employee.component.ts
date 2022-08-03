@@ -25,13 +25,14 @@ export class ListEmployeeComponent implements OnInit {
     this.isBusy = true;
   }
 
-  public loadEmployees(event?: LazyLoadEvent) {
+  public loadEmployees(event: LazyLoadEvent) {
     this.isBusy = true;
+    const page = event.first! / event.rows! + 1;
     
-    this.apiService.getEmployees(undefined, this.first + 1, 2).subscribe(result => {
+    this.apiService.getEmployees(undefined, page).subscribe(result => {
       if (result.success && result.items) {
         this.employees = result.items;
-        this.totalRecords = result.itemsCount!;  
+        this.totalRecords = result.itemsCount!;
       }
 
       this.isBusy = false;

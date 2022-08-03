@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-12">
             <p-table [value]="employees" [lazy]="true" [paginator]="true" [rows]="10" [showCurrentPageReport]="true" responsiveLayout="scroll"
-                (onLazyLoad)="loadEmployees($event)" [(first)]="first" [totalRecords]="totalRecords" [loading]="isBusy" [rows]="1">
+                (onLazyLoad)="loadEmployees($event)" [(first)]="first" [totalRecords]="totalRecords" [loading]="isBusy">
                 <ng-template pTemplate="header">
                     <tr>
                         <th>Username</th>
