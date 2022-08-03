@@ -4,8 +4,16 @@
 <p-card>
     <div class="row">
         <div class="col-12">
-            <p-table [value]="employees" [lazy]="true" [paginator]="true" [rows]="10" [showCurrentPageReport]="true" responsiveLayout="scroll"
+            <p-table #dt [value]="employees" [lazy]="true" [paginator]="true" [rows]="10" [showCurrentPageReport]="true" responsiveLayout="scroll"
                 (onLazyLoad)="loadEmployees($event)" [(first)]="first" [totalRecords]="totalRecords" [loading]="isBusy">
+                <ng-template pTemplate="caption">
+                    <div class="d-flex">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" placeholder="Search" (input)="search($event)" />
+                        </span>
+                    </div>
+                </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
                         <th>Username</th>

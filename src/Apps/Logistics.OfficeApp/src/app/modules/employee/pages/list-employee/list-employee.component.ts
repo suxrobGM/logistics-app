@@ -25,6 +25,20 @@ export class ListEmployeeComponent implements OnInit {
     this.isBusy = true;
   }
 
+  public search(event: any) {
+    const query = event.target.value;
+    //this.isBusy = true;
+    
+    this.apiService.getEmployees(query, 1).subscribe(result => {
+      if (result.success && result.items) {
+        this.employees = result.items;
+        this.totalRecords = result.itemsCount!;
+      }
+
+      //this.isBusy = false;
+    });
+  }
+
   public loadEmployees(event: LazyLoadEvent) {
     this.isBusy = true;
     const page = event.first! / event.rows! + 1;
