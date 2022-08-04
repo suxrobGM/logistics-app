@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-12 col-md-6">
             <p-progressSpinner *ngIf="isBusy"></p-progressSpinner>
-            <form>
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
                 <div class="mb-3">
                     <label for="name" class="form-label">Name</label>
                     <input id="name" type="text" class="form-control" placeholder="Load name" /> 
@@ -23,10 +23,10 @@
                     <input id="dispatchedDate" type="text" class="form-control" disabled /> 
                 </div>
                 <div class="mb-3">
-                    <label for="cost" class="form-label">Delivery Cost</label>
+                    <label for="deliveryCost" class="form-label">Delivery Cost</label>
                     <div class="input-group">
                         <span class="input-group-text">$$</span>
-                        <input id="cost" type="number" class="form-control" />
+                        <input id="deliveryCost" type="number" class="form-control" />
                     </div>
                 </div>
                 <div class="mb-3">
@@ -50,7 +50,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="status" class="form-label">Status</label>
-                    <p-dropdown optionLabel="status" styleClass="w-100"></p-dropdown> 
+                    <p-dropdown formControlName="status" styleClass="w-100"></p-dropdown> 
                 </div>
                 <div class="mt-3">
                     <button class="btn btn-primary" type="submit">

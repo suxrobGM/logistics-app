@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Truck } from '@shared/models/truck';
-import { ApiClientService } from '@shared/services/api-client.service';
+import { ApiService } from '@shared/services';
 import { MessageService } from 'primeng/api';
 
 @Component({
@@ -16,7 +16,7 @@ export class EditTruckComponent implements OnInit {
   public id?: string; 
   
   constructor(
-    private apiService: ApiClientService,
+    private apiService: ApiService,
     private messageService: MessageService,
   ) 
   { 

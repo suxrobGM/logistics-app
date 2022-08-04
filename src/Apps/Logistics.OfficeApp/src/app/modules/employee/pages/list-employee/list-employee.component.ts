@@ -1,6 +1,6 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Employee } from '@shared/models/employee';
-import { ApiClientService } from '@shared/services/api-client.service';
+import { ApiService } from '@shared/services';
 import { LazyLoadEvent } from 'primeng/api';
 
 @Component({
@@ -14,7 +14,7 @@ export class ListEmployeeComponent implements OnInit {
   public totalRecords: number;
   public first: number;
 
-  constructor(private apiService: ApiClientService) {
+  constructor(private apiService: ApiService) {
     this.employees = [];
     this.isBusy = false;
     this.totalRecords = 0;

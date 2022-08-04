@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Load } from '@shared/models/load';
-import { ApiClientService } from '@shared/services/api-client.service';
+import { ApiService } from '@shared/services';
 import { LazyLoadEvent } from 'primeng/api';
 
 @Component({
@@ -14,7 +14,7 @@ export class ListLoadComponent implements OnInit {
   public totalRecords: number;
   public first: number;
 
-  constructor(private apiService: ApiClientService) {
+  constructor(private apiService: ApiService) {
     this.loads = [];
     this.isBusy = false;
     this.totalRecords = 0;

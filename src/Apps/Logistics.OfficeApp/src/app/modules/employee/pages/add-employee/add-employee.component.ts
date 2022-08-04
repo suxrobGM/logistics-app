@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Employee } from '@shared/models/employee';
 import { EmployeeRole } from '@shared/models/employee-role';
 import { User } from '@shared/models/user';
-import { ApiClientService } from '@shared/services/api-client.service';
+import { ApiService } from '@shared/services';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { MessageService } from 'primeng/api';
 
@@ -21,7 +21,7 @@ export class AddEmployeeComponent implements OnInit {
   public roles: string[];
 
   constructor(
-    private apiService: ApiClientService,
+    private apiService: ApiService,
     private messageService: MessageService,
     private oidcSecurityService: OidcSecurityService) 
   {

@@ -1,27 +1,54 @@
-import { AfterViewInit, ChangeDetectorRef, Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import * as MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
 import * as mapboxgl from 'mapbox-gl';
+import { MessageService } from 'primeng/api';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { Load } from '@shared/models/load';
+import { ApiService } from '@shared/services';
 
 @Component({
   selector: 'app-edit-load',
   templateUrl: './edit-load.component.html',
   styleUrls: ['./edit-load.component.scss']
 })
-export class EditLoadComponent implements AfterViewInit {
+export class EditLoadComponent implements OnInit {
   private accessToken = 'pk.eyJ1Ijoic3V4cm9iZ20iLCJhIjoiY2w0dmsyMGd1MDEzZDNjcXcwZGRtY255MSJ9.XwGTNZx_httMhW0Fu34udQ' // TODO: load access token from config file
   private map!: mapboxgl.Map;
   private directions!: any;
-  public isBusy = false;
-  public headerText = 'Edit load';
-  public distance = 0;
+  private load?: Load;
+
+  public id?: string;
+  public form: FormGroup;
+  public isBusy: boolean;
+  public headerText: string;
+  public distance: number;
+  
   //public hideDestAddressInput = false;
 
-  constructor(private ref: ChangeDetectorRef) {}
+  constructor(
+    private apiService: ApiService,
+    private messageService: MessageService,
+    private oidcSecurityService: OidcSecurityService) 
+  {
+    this.isBusy = false;
+    this.headerText = 'Edit a Load';
+    this.distance = 0;
 
-  ngAfterViewInit(): void {
+    this.form = new FormGroup({
+      'name': new FormControl('')
+    });
+  }
+
+  public ngOnInit(): void {
+    this.id = history.state.id;
     this.initMapbox();
     this.initGeocoderInputs();
+  }
+
+  public onSubmit() {
+
   }
 
   private initMapbox() {

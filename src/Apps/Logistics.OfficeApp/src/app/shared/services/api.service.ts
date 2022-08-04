@@ -15,7 +15,7 @@ import { TenantService } from './tenant.service';
 @Injectable({
   providedIn: 'root'
 })
-export class ApiClientService {
+export class ApiService {
   private host = AppConfig.apiHost;
   private retryCount = 1;
 

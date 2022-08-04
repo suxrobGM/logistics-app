@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from '@shared/models/user';
-import { ApiClientService } from '@shared/services/api-client.service';
+import { ApiService } from '@shared/services';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { of, switchMap } from 'rxjs';
 
@@ -16,7 +16,7 @@ export class TopbarComponent implements OnInit {
 
   constructor(
     private oidcSecurityService: OidcSecurityService,
-    private apiService: ApiClientService) 
+    private apiService: ApiService) 
   {
   }
   

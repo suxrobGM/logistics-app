@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Truck } from '@shared/models/truck';
-import { ApiClientService } from '@shared/services/api-client.service';
+import { ApiService } from '@shared/services';
 import { LazyLoadEvent } from 'primeng/api';
 
 @Component({
@@ -14,7 +14,7 @@ export class ListTruckComponent implements OnInit {
   public totalRecords: number;
   public first: number;
 
-  constructor(private apiService: ApiClientService) {
+  constructor(private apiService: ApiService) {
     this.trucks = [];
     this.isBusy = false;
     this.totalRecords = 0;

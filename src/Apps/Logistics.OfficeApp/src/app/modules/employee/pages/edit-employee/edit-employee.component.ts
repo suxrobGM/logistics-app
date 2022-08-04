@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Employee } from '@shared/models/employee';
 import { EmployeeRole } from '@shared/models/employee-role';
 import { User } from '@shared/models/user';
-import { ApiClientService } from '@shared/services/api-client.service';
+import { ApiService } from '@shared/services';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { MessageService } from 'primeng/api';
 
@@ -21,16 +21,16 @@ export class EditEmployeeComponent implements OnInit {
   public id?: string;
   
   constructor(
-    private apiService: ApiClientService,
+    private apiService: ApiService,
     private messageService: MessageService,
     private oidcSecurityService: OidcSecurityService) 
   {
     this.roles = [];
     this.form = new FormGroup({
-      'userName': new FormControl({value: '', disabled: true}, Validators.required),
-      'firstName': new FormControl({value: '', disabled: true}),
-      'lastName': new FormControl({value: '', disabled: true}),
-      'role': new FormControl('guest', Validators.required),
+      userName: new FormControl({value: '', disabled: true}, Validators.required),
+      firstName: new FormControl({value: '', disabled: true}),
+      lastName: new FormControl({value: '', disabled: true}),
+      role: new FormControl('guest', Validators.required),
     });
 
     let currentUserRole = EmployeeRole.Owner as string;
