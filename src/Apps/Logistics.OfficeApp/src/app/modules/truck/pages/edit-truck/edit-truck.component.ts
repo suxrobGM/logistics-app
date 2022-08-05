@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Truck } from '@shared/models/truck';
+import { Truck } from '@shared/models';
 import { ApiService } from '@shared/services';
 import { MessageService } from 'primeng/api';
 

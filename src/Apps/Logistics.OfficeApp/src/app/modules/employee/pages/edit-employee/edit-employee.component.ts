@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Employee } from '@shared/models/employee';
-import { EmployeeRole } from '@shared/models/employee-role';
-import { User } from '@shared/models/user';
-import { ApiService } from '@shared/services';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { MessageService } from 'primeng/api';
+import { Employee, EmployeeRole, User } from '@shared/models';
+import { ApiService } from '@shared/services';
 
 @Component({
   selector: 'app-edit-employee',

@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { Load } from '@shared/models/load';
+import { Component, OnInit } from '@angular/core';
+import { Load } from '@shared/models';
 import { ApiService } from '@shared/services';
 import { LazyLoadEvent } from 'primeng/api';
 

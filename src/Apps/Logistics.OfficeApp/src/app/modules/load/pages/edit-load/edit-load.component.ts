@@ -5,7 +5,7 @@ import * as MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-d
 import * as mapboxgl from 'mapbox-gl';
 import { MessageService } from 'primeng/api';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { Load } from '@shared/models/load';
+import { Load } from '@shared/models';
 import { ApiService } from '@shared/services';
 
 @Component({

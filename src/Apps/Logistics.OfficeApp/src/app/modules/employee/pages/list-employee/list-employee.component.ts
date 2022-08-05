@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Employee } from '@shared/models/employee';
+import { Employee } from '@shared/models';
 import { ApiService } from '@shared/services';
 import { LazyLoadEvent } from 'primeng/api';
 

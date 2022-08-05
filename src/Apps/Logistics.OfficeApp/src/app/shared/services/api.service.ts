@@ -1,16 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppConfig } from '../../configs/app.config';
 import { MessageService } from 'primeng/api';
 import { catchError, Observable, retry, throwError } from 'rxjs';
-import { DataResult } from '../models/data-result';
-import { Employee } from '../models/employee';
-import { Load } from '../models/load';
-import { PagedDataResult } from '../models/paged-data-result';
-import { Tenant } from '../models/tenant';
-import { Truck } from '../models/truck';
-import { User } from '../models/user';
-import { TenantService } from './tenant.service';
+import { AppConfig } from '../../configs/app.config';
+import { TenantService  } from './tenant.service';
+import { DataResult, Employee, PagedDataResult, Tenant, Truck, User, Load } from '../models';
 
 @Injectable({
   providedIn: 'root'
