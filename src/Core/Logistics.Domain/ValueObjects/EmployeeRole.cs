@@ -12,8 +12,11 @@ public class EmployeeRole : Enumeration
     public static readonly EmployeeRole Manager = new(4, "manager");
     public static readonly EmployeeRole Owner = new(5, "owner");
 
-    public static EmployeeRole Get(string name)
+    public static EmployeeRole? Get(string? name)
     {
+        if (string.IsNullOrEmpty(name))
+            return null;
+        
         name = name.Trim().ToLower();
         return name switch
         {
@@ -22,7 +25,7 @@ public class EmployeeRole : Enumeration
             "dispatcher" => Dispatcher,
             "manager" => Manager,
             "owner" => Owner,
-            _ => throw new InvalidOperationException($"Could not found the corresponding enum type for the '{name}'"),
+            _ => null,
         };
     }
 }

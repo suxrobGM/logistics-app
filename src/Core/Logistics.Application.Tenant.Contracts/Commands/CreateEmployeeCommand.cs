@@ -2,10 +2,7 @@
 
 public sealed class CreateEmployeeCommand : RequestBase<DataResult>
 {
-    public string? ExternalId { get; init; }
-    public string? FirstName { get; init; }
-    public string? LastName { get; init; }
-    public string? UserName { get; init; }
+    public string? Id { get; set; }
     public string? TenantId { get; set; }
     public string? Role { get; set; }
 }

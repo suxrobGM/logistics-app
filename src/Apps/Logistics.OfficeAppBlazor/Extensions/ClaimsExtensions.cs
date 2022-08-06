@@ -6,31 +6,31 @@ public static class ClaimsExtensions
 {
     public static EmployeeDto ToUser(this IEnumerable<Claim> claims)
     {
-        var user = new EmployeeDto();
+        var employee = new EmployeeDto();
 
         foreach (var claim in claims)
         {
             switch (claim.Type)
             {
                 case ClaimTypes.GivenName:
-                    user.FirstName = claim.Value;
+                    employee.FirstName = claim.Value;
                     break;
                 case ClaimTypes.Surname:
-                    user.LastName = claim.Value;
+                    employee.LastName = claim.Value;
                     break;
                 case ClaimTypes.Name:
-                    user.UserName = claim.Value;
+                    employee.UserName = claim.Value;
                     break;
                 case ClaimTypes.NameIdentifier:
-                    user.ExternalId = claim.Value;
+                    employee.Id = claim.Value;
                     break;
                 case "sub":
-                    user.ExternalId = claim.Value;
+                    employee.Id = claim.Value;
                     break;
             }
         }
 
-        return user;
+        return employee;
     }
 
     public static string? GetId(this ClaimsPrincipal user)

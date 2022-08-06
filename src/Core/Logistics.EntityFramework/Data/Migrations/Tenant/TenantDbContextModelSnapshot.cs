@@ -24,9 +24,6 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("ExternalId")
-                        .HasColumnType("longtext");
-
                     b.Property<DateTime>("JoinedDate")
                         .HasColumnType("datetime(6)");
 

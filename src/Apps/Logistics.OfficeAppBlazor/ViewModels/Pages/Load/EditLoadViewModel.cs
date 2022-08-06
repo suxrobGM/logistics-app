@@ -90,12 +90,12 @@ public class EditLoadViewModel : PageViewModelBase
     private async Task LoadCurrentDispatcherAsync()
     {
         var authState = await _authStateProvider.GetAuthenticationStateAsync();
-        var externalId = authState.User.GetId();
+        var userId = authState.User.GetId();
 
-        if (string.IsNullOrEmpty(externalId))
+        if (string.IsNullOrEmpty(userId))
             return;
         
-        var result = await CallApi(i => i.GetEmployeeAsync(externalId));
+        var result = await CallApi(i => i.GetEmployeeAsync(userId));
 
         if (!result.Success)
             return;

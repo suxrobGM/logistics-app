@@ -22,6 +22,7 @@ internal sealed class GetUsersHandler : RequestHandlerBase<GetUsersQuery, PagedD
         }
 
         var items = itemsQuery
+            .OrderBy(i => i.Id)
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
             .Select(i => new UserDto

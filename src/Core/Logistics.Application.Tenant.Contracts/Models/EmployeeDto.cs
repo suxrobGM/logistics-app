@@ -5,22 +5,16 @@ public class EmployeeDto
     public EmployeeDto()
     {
         UserName = string.Empty;
-        ExternalId = string.Empty;
+        Id = string.Empty;
     }
-
-    public string? Id { get; set; }
-
-    [Required]
-    public string UserName { get; set; }
-
-    [Required]
-    public string ExternalId { get; set; }
     
+    [Required]
+    public string Id { get; set; }
+    
+    public string UserName { get; set; }
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
-    
     public string? Email { get; set; }
-    
     public string? PhoneNumber { get; set; }
     public string? Role { get; set; }
     public DateTime JoinedDate { get; set; }

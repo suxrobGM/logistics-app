@@ -61,10 +61,7 @@ export class AddEmployeeComponent implements OnInit {
     }
 
     const newEmployee: Employee = {
-      userName: user.userName,
-      externalId: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      id: user.id,
       role: this.form.value.role
     };
 

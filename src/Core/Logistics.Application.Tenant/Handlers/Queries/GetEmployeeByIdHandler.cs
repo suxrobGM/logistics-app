@@ -15,12 +15,12 @@ internal sealed class GetEmployeeByIdHandler : RequestHandlerBase<GetEmployeeByI
 
     protected override async Task<DataResult<EmployeeDto>> HandleValidated(GetEmployeeByIdQuery request, CancellationToken cancellationToken)
     {
-        var employeeEntity = await _employeeRepository.GetAsync(i => i.Id == request.Id || i.ExternalId == request.Id);
+        var employeeEntity = await _employeeRepository.GetAsync(i => i.Id == request.Id);
         
         if (employeeEntity == null)
             return DataResult<EmployeeDto>.CreateError("Could not find the specified employee");
 
-        var userEntity = await _userRepository.GetAsync(i => i.Id == employeeEntity.ExternalId);
+        var userEntity = await _userRepository.GetAsync(i => i.Id == employeeEntity.Id);
 
         if (userEntity == null)
             return DataResult<EmployeeDto>.CreateError("Could not find the specified employee, the external ID is incorrect");
@@ -28,7 +28,6 @@ internal sealed class GetEmployeeByIdHandler : RequestHandlerBase<GetEmployeeByI
         var employee = new EmployeeDto
         {
             Id = employeeEntity.Id,
-            ExternalId = employeeEntity.ExternalId!,
             UserName = userEntity.UserName,
             FirstName = userEntity.FirstName,
             LastName = userEntity.LastName,

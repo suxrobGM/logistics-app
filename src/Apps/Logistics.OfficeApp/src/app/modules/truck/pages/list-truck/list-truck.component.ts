@@ -44,8 +44,6 @@ export class ListTruckComponent implements OnInit {
       if (result.success && result.items) {
         this.trucks = result.items;
         this.totalRecords = result.itemsCount!;
-        console.log(this.trucks);
-        
       }
 
       this.isBusy = false;

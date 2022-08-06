@@ -160,11 +160,11 @@ internal class ApiClient : ApiClientBase, IApiClient
         return result;
     }
 
-    public async Task<bool> EmployeeExistsAsync(string externalId)
+    public async Task<bool> EmployeeExistsAsync(string id)
     {
         try
         {
-            await GetEmployeeAsync(externalId);
+            await GetEmployeeAsync(id);
             return true;
         }
         catch (ApiException)
@@ -180,12 +180,10 @@ internal class ApiClient : ApiClientBase, IApiClient
 
     public async Task<bool> TryCreateEmployeeAsync(EmployeeDto user)
     {
-        if (string.IsNullOrEmpty(user.ExternalId))
-        {
-            throw new ApiException("ExternalId is null or empty");
-        }
+        if (string.IsNullOrEmpty(user.Id))
+            throw new ApiException("Id is an empty");
 
-        var userExists = await EmployeeExistsAsync(user.ExternalId);
+        var userExists = await EmployeeExistsAsync(user.Id);
 
         if (!userExists)
         {

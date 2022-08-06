@@ -37,6 +37,10 @@ internal sealed class UpdateEmployeeHandler : RequestHandlerBase<UpdateEmployeeC
         {
             errorDescription = "Id is an empty string";
         }
+        else if (EmployeeRole.Get(request.Role)! == null!)
+        {
+            errorDescription = "Invalid role name";
+        }
 
         return string.IsNullOrEmpty(errorDescription);
     }

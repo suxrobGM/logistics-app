@@ -70,8 +70,6 @@ export class EditEmployeeComponent implements OnInit {
   public onSubmit() {
     const employee: Employee = {
       id: this.employee?.id,
-      externalId: this.employee?.externalId,
-      userName: this.employee?.userName,
       role: this.form.value.role.toLowerCase()
     }
     

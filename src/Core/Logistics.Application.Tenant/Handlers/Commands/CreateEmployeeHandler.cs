@@ -2,18 +2,15 @@
 
 internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeCommand, DataResult>
 {
-    private readonly IMapper _mapper;
     private readonly ITenantRepository<Employee> _employeeRepository;
     private readonly IMainRepository<User> _userRepository;
     private readonly IMainRepository<Tenant> _tenantRepository;
 
     public CreateEmployeeHandler(
-        IMapper mapper,
         ITenantRepository<Employee> employeeRepository,
         IMainRepository<User> userRepository,
         IMainRepository<Tenant> tenantRepository)
     {
-        _mapper = mapper;
         _employeeRepository = employeeRepository;
         _userRepository = userRepository;
         _tenantRepository = tenantRepository;
@@ -22,9 +19,8 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
     protected override async Task<DataResult> HandleValidated(
         CreateEmployeeCommand request, CancellationToken cancellationToken)
     {
-        var employee = _mapper.Map<Employee>(request);
-        var existingEmployee = await _employeeRepository.GetAsync(i => i.ExternalId == request.ExternalId);
-        var user = await _userRepository.GetAsync(i => i.Id == employee.ExternalId);
+        var existingEmployee = await _employeeRepository.GetAsync(i => i.Id == request.Id);
+        var user = await _userRepository.GetAsync(i => i.Id == request.Id);
         var tenant = await _tenantRepository.GetAsync(i => i.Name == request.TenantId || i.Id == request.TenantId);
         
         if (tenant == null)
@@ -37,10 +33,15 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
             return DataResult.CreateError("Employee already exists");
         
         user.JoinTenant(tenant.Id);
-        
-        employee.Role = EmployeeRole.Get(request.Role!);
+
+        var employee = new Employee()
+        {
+            Id = request.Id!,
+            Role = EmployeeRole.Get(request.Role)!
+        };
         await _employeeRepository.AddAsync(employee);
         _userRepository.Update(user);
+        
         await _userRepository.UnitOfWork.CommitAsync();
         await _employeeRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
@@ -50,17 +51,17 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
     {
         errorDescription = string.Empty;
 
-        if (string.IsNullOrEmpty(request.ExternalId))
+        if (string.IsNullOrEmpty(request.Id))
         {
-            errorDescription = "External Id is an empty string";
-        }
-        else if (string.IsNullOrEmpty(request.UserName))
-        {
-            errorDescription = "UserName is an empty string";
+            errorDescription = "User Id is an empty string";
         }
         else if (string.IsNullOrEmpty(request.TenantId))
         {
             errorDescription = "TenantId is an empty string";
+        }
+        else if (EmployeeRole.Get(request.Role)! == null!)
+        {
+            errorDescription = "Invalid role name";
         }
 
         return string.IsNullOrEmpty(errorDescription);

@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Employee, Truck } from '@shared/models';
 import { ApiService } from '@shared/services';
 import { MessageService } from 'primeng/api';
+import { of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-edit-truck',
@@ -63,7 +64,7 @@ export class EditTruckComponent implements OnInit {
     const truck: Truck = {
       id: this.id,
       truckNumber: this.form.value.truckNumber,
-      driverId: driver.externalId!
+      driverId: driver.id!
     }
 
     if (this.editMode) {
@@ -85,14 +86,22 @@ export class EditTruckComponent implements OnInit {
   }
 
   private fetchTruck(id: string) {
-    this.apiService.getTruck(id).subscribe(result => {
+ 
+    this.apiService.getTruck(id).pipe(
+      switchMap(result => {
+        if (result.success && result.value) {
+          const truck = result.value;
+          this.form.patchValue({truckNumber: truck.truckNumber});
+          
+          return this.apiService.getEmployee(truck.driverId);
+        }
+
+        return of({success: false, value: null});
+      })
+    ).subscribe(result => {
       if (result.success && result.value) {
-        const truck = result.value;
-        
-        this.form.patchValue({
-          truckNumber: truck?.truckNumber,
-          driver: truck?.driverName,
-        });
+        const driver = result.value;
+        this.form.patchValue({driver: driver});
       }
     });
   }

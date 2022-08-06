@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.EntityFramework.Data.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20220724033314_InitialCreate")]
+    [Migration("20220806203605_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,9 +25,6 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
-
-                    b.Property<string>("ExternalId")
-                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("JoinedDate")
                         .HasColumnType("datetime(6)");

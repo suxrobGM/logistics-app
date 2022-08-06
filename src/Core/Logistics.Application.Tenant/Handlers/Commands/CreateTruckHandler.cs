@@ -16,7 +16,7 @@ internal sealed class CreateTruckHandler : RequestHandlerBase<CreateTruckCommand
     protected override async Task<DataResult> HandleValidated(
         CreateTruckCommand request, CancellationToken cancellationToken)
     {
-        var driver = await _employeeRepository.GetAsync(i => i.Id == request.DriverId || i.ExternalId == request.DriverId);
+        var driver = await _employeeRepository.GetAsync(i => i.Id == request.DriverId);
 
         if (driver == null)
             return DataResult.CreateError("Could not find the specified driver");
@@ -33,8 +33,7 @@ internal sealed class CreateTruckHandler : RequestHandlerBase<CreateTruckCommand
         var truckEntity = new Truck()
         {
             TruckNumber = request.TruckNumber,
-            Driver = driver,
-            DriverId = driver.ExternalId
+            Driver = driver
         };
         
         await _truckRepository.AddAsync(truckEntity);

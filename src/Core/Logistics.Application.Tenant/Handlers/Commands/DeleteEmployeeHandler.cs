@@ -21,7 +21,7 @@ internal sealed class DeleteEmployeeHandler : RequestHandlerBase<DeleteEmployeeC
         if (employee == null)
             return DataResult.CreateError($"Could not find employee with ID {request.Id}");
 
-        var user = await _userRepository.GetAsync(i => i.Id == employee.ExternalId);
+        var user = await _userRepository.GetAsync(i => i.Id == employee.Id);
         user?.RemoveTenant(tenantId);
         
         _employeeRepository.Delete(request.Id!);

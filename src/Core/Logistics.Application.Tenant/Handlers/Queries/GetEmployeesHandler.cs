@@ -35,11 +35,10 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery
         var userIds = filteredUsers.Keys.ToArray();
         
         var employeesDto = _employeeRepository.GetQuery()
-            .Where(i => userIds.Contains(i.ExternalId))
+            .Where(i => userIds.Contains(i.Id))
             .Select(i => new EmployeeDto
             {
                 Id = i.Id,
-                ExternalId = i.ExternalId!,
                 Role = i.Role.Name,
                 JoinedDate = i.JoinedDate
             })
@@ -47,7 +46,7 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery
 
         foreach (var employee in employeesDto)
         {
-            if (!filteredUsers.TryGetValue(employee.ExternalId, out var user)) 
+            if (!filteredUsers.TryGetValue(employee.Id, out var user)) 
                 continue;
             
             employee.UserName = user.UserName;

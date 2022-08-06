@@ -47,7 +47,7 @@ internal class UserProfileService : IProfileService
             case "ClaimsProviderAccessToken" when !string.IsNullOrEmpty(tenantId):
             {
                 SetRequestHeader("X-Tenant", tenantId);
-                var tenantUser = await _tenantRepository.GetAsync(i => i.ExternalId == user.Id);
+                var tenantUser = await _tenantRepository.GetAsync(i => i.Id == user.Id);
 
                 claims.TryAdd("role", user.Role.Name == "admin" ? "admin" : tenantUser?.Role.Name);
                 claims.TryAdd("tenant", tenantId);

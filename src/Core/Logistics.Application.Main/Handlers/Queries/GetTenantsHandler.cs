@@ -16,12 +16,11 @@ internal sealed class GetTenantsHandler : RequestHandlerBase<GetTenantsQuery, Pa
 
         if (!string.IsNullOrEmpty(request.Search))
         {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            itemsQuery = _repository.GetQuery(i => i.Name.Contains(request.Search) || i.DisplayName.Contains(request.Search));
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            itemsQuery = _repository.GetQuery(i => i.Name!.Contains(request.Search) || i.DisplayName!.Contains(request.Search));
         }
 
         var items = itemsQuery
+            .OrderBy(i => i.Id)
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
             .Select(i => new TenantDto

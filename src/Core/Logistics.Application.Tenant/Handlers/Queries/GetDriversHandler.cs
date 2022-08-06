@@ -33,11 +33,10 @@ public class GetDriversHandler : RequestHandlerBase<GetDriversQuery, PagedDataRe
         var userIds = filteredUsers.Keys.ToArray();
         
         var employeesDto = _employeeRepository.GetQuery()
-            .Where(i => userIds.Contains(i.ExternalId) && i.Role.Name == EmployeeRole.Driver)
+            .Where(i => userIds.Contains(i.Id) && i.Role.Name == EmployeeRole.Driver)
             .Select(i => new EmployeeDto
             {
                 Id = i.Id,
-                ExternalId = i.ExternalId!,
                 Role = i.Role.Name,
                 JoinedDate = i.JoinedDate
             })
@@ -45,7 +44,9 @@ public class GetDriversHandler : RequestHandlerBase<GetDriversQuery, PagedDataRe
 
         foreach (var employee in employeesDto)
         {
-            var user = filteredUsers[employee.ExternalId];
+            if (!filteredUsers.TryGetValue(employee.Id!, out var user))
+                continue;
+            
             employee.UserName = user.UserName;
             employee.FirstName = user.FirstName;
             employee.LastName = user.LastName;
