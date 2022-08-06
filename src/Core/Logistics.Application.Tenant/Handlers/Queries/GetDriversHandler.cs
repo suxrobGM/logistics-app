@@ -1,26 +1,24 @@
 ﻿namespace Logistics.Application.Handlers.Queries;
 
-internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery, PagedDataResult<EmployeeDto>>
+public class GetDriversHandler : RequestHandlerBase<GetDriversQuery, PagedDataResult<EmployeeDto>>
 {
     private readonly IMainRepository<User> _userRepository;
     private readonly ITenantRepository<Employee> _employeeRepository;
-
-    public GetEmployeesHandler(
+    
+    public GetDriversHandler(
         IMainRepository<User> userRepository,
         ITenantRepository<Employee> employeeRepository)
     {
         _userRepository = userRepository;
         _employeeRepository = employeeRepository;
     }
-
-    protected override Task<PagedDataResult<EmployeeDto>> HandleValidated(
-        GetEmployeesQuery request, 
-        CancellationToken cancellationToken)
+    
+    protected override Task<PagedDataResult<EmployeeDto>> HandleValidated(GetDriversQuery request, CancellationToken cancellationToken)
     {
         var tenantId = _employeeRepository.CurrentTenant!.Id;
         var totalItems = _employeeRepository.GetQuery().Count();
         var usersQuery = _userRepository.GetQuery();
-        
+
         if (!string.IsNullOrEmpty(request.Search))
         {
             usersQuery = _userRepository.GetQuery(new SearchUsersByTenantId(request.Search, tenantId));
@@ -35,7 +33,7 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery
         var userIds = filteredUsers.Keys.ToArray();
         
         var employeesDto = _employeeRepository.GetQuery()
-            .Where(i => userIds.Contains(i.ExternalId))
+            .Where(i => userIds.Contains(i.ExternalId) && i.Role.Name == EmployeeRole.Driver)
             .Select(i => new EmployeeDto
             {
                 Id = i.Id,
@@ -47,9 +45,7 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery
 
         foreach (var employee in employeesDto)
         {
-            if (!filteredUsers.TryGetValue(employee.ExternalId, out var user)) 
-                continue;
-            
+            var user = filteredUsers[employee.ExternalId];
             employee.UserName = user.UserName;
             employee.FirstName = user.FirstName;
             employee.LastName = user.LastName;
@@ -61,7 +57,7 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery
         return Task.FromResult(new PagedDataResult<EmployeeDto>(employeesDto, totalItems, totalPages));
     }
 
-    protected override bool Validate(GetEmployeesQuery request, out string errorDescription)
+    protected override bool Validate(GetDriversQuery request, out string errorDescription)
     {
         errorDescription = string.Empty;
 

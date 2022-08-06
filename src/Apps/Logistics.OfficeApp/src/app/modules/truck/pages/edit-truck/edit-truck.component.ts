@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Truck } from '@shared/models';
+import { Employee, Truck } from '@shared/models';
 import { ApiService } from '@shared/services';
 import { MessageService } from 'primeng/api';
 
@@ -10,24 +10,25 @@ import { MessageService } from 'primeng/api';
   styleUrls: ['./edit-truck.component.scss']
 })
 export class EditTruckComponent implements OnInit {
-  private truck?: Truck;
+  public id?: string; 
   public isBusy: boolean;
   public editMode: boolean;
   public form: FormGroup;
-  public id?: string; 
   public headerText: string;
+  public suggestedDrivers: Employee[];
   
   constructor(
     private apiService: ApiService,
     private messageService: MessageService,
   ) 
-  { 
+  {
+    this.suggestedDrivers = [];
     this.headerText = 'Edit a truck';
     this.isBusy = false;
     this.editMode = true;
     this.form = new FormGroup({
       'truckNumber': new FormControl(0, Validators.required),
-      'driver': new FormControl(''),
+      'driver': new FormControl('', Validators.required),
     });
   }
 
@@ -43,23 +44,33 @@ export class EditTruckComponent implements OnInit {
     this.fetchTruck(this.id);
   }
 
+  public searchDriver(event: any) {
+    this.apiService.getDrivers(event.query).subscribe(result => {
+      if (result.success && result.items) {
+        this.suggestedDrivers = result.items;
+      }
+    });
+  }
+
   public onSubmit() {
-    const truck: Truck = {
-      id: this.truck?.id,
-      truckNumber: this.form.value.truckNumber,
-      driverId: this.form.value.driver,
-      driverName: this.form.value.driver,
+    const driver = this.form.value.driver as Employee;
+
+    if (!driver) {
+      this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Select driver'});
+      return;
     }
     
-    this.isBusy = true;
+    const truck: Truck = {
+      id: this.id,
+      truckNumber: this.form.value.truckNumber,
+      driverId: driver.externalId!
+    }
 
     if (this.editMode) {
       this.apiService.updateTruck(truck).subscribe(result => {
         if (result.success) {
           this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Truck has been updated successfully'});
         }
-  
-        this.isBusy = false;
       });
     }
     else {
@@ -67,25 +78,22 @@ export class EditTruckComponent implements OnInit {
         if (result.success) {
           this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Truck has been created successfully'});
         }
-  
-        this.isBusy = false;
+
+        this.form.reset();
       });
     }
   }
 
   private fetchTruck(id: string) {
-    this.isBusy = true;
     this.apiService.getTruck(id).subscribe(result => {
       if (result.success && result.value) {
-        this.truck = result.value;
+        const truck = result.value;
         
         this.form.patchValue({
-          truckNumber: this.truck?.truckNumber,
-          driver: this.truck?.driverName,
+          truckNumber: truck?.truckNumber,
+          driver: truck?.driverName,
         });
       }
-
-      this.isBusy = false;
     });
   }
 }

@@ -1,5 +1,5 @@
 ﻿namespace Logistics.Application.Contracts.Queries;
 
-public sealed class GetEmployeesQuery : SearchableQueryBase<EmployeeDto>
+public sealed class GetEmployeesQuery : SearchableQuery<EmployeeDto>
 {
 }

@@ -5,18 +5,13 @@ import { MessageService } from 'primeng/api';
 import { Employee, EmployeeRole, User } from '@shared/models';
 import { ApiService } from '@shared/services';
 
-
-
 @Component({
   selector: 'app-add-employee',
   templateUrl: './add-employee.component.html',
   styleUrls: ['./add-employee.component.scss']
 })
 export class AddEmployeeComponent implements OnInit {
-  private users: User[];
-  private selectedUser?: User;
-
-  public suggestedUsers: string[];
+  public suggestedUsers: User[];
   public form: FormGroup;
   public roles: string[];
 
@@ -25,12 +20,11 @@ export class AddEmployeeComponent implements OnInit {
     private messageService: MessageService,
     private oidcSecurityService: OidcSecurityService) 
   {
-    this.users = [];
     this.suggestedUsers = [];
     this.roles = [];
 
     this.form = new FormGroup({
-      'name': new FormControl('', Validators.required),
+      'user': new FormControl('', Validators.required),
       'role': new FormControl(EmployeeRole.Guest, Validators.required),
     });
 
@@ -53,41 +47,24 @@ export class AddEmployeeComponent implements OnInit {
   public searchUser(event: any) {
     this.apiService.getUsers(event.query).subscribe(result => {
       if (result.success && result.items) {
-        this.users = result.items;
-        this.suggestedUsers = [];
-
-        result.items.forEach(user => {
-          let username = `${user.userName} `;
-
-          if (user.firstName) {
-            username = `${user.userName} - ${user.firstName}`;
-          }
-          if (user.lastName) {
-            username = `${user.userName} - ${user.firstName} ${user.lastName}`;
-          }
-
-          this.suggestedUsers.push(username!);
-        });
+        this.suggestedUsers = result.items;
       }
     });
   }
 
-  public onSelectUser(value: string) {
-    const userName = value.substring(0, value.indexOf(' '));
-    this.selectedUser = this.users.find(i => userName === i.userName);
-  }
-
   public onSubmit() {
-    if (!this.selectedUser) {
-      this.messageService.add({key: 'errorMsg', severity: 'error', summary: 'Error', detail: 'Select user from the list'});
+    const user = this.form.value.user as User;
+
+    if (!user) {
+      this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Select user'});
       return;
     }
-    
+
     const newEmployee: Employee = {
-      userName: this.selectedUser?.userName!,
-      externalId: this.selectedUser?.id!,
-      firstName: this.selectedUser?.firstName,
-      lastName: this.selectedUser?.lastName,
+      userName: user.userName,
+      externalId: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
       role: this.form.value.role
     };
 

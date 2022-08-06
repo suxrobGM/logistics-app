@@ -1,5 +1,5 @@
 ﻿namespace Logistics.Application.Contracts.Queries;
 
-public sealed class GetTenantsQuery : SearchableQueryBase<TenantDto>
+public sealed class GetTenantsQuery : SearchableQuery<TenantDto>
 {
 }

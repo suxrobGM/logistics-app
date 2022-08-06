@@ -73,12 +73,18 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
         {
             var dispatcherId = loadDto.AssignedDispatcherId;
             var driverId = loadDto.AssignedDriverId;
+
+            if (!string.IsNullOrWhiteSpace(dispatcherId) &&
+                dispatchers.TryGetValue(dispatcherId, out var dispatcher))
+            {
+                loadDto.AssignedDispatcherName = dispatcher.GetFullName();
+            }
             
-            if (!string.IsNullOrWhiteSpace(dispatcherId))
-                loadDto.AssignedDispatcherName = dispatchers[dispatcherId].GetFullName();
-            
-            if (!string.IsNullOrWhiteSpace(driverId))
-                loadDto.AssignedDriverName = drivers[driverId].GetFullName();
+            if (!string.IsNullOrWhiteSpace(driverId) && 
+                drivers.TryGetValue(driverId, out var driver))
+            {
+                loadDto.AssignedDriverName = driver.GetFullName();
+            }
         }
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);

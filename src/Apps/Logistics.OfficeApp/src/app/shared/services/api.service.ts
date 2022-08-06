@@ -11,7 +11,7 @@ import { DataResult, Employee, PagedDataResult, Tenant, Truck, User, Load } from
 })
 export class ApiService {
   private host = AppConfig.apiHost;
-  private retryCount = 1;
+  private retryCount = 0;
 
   constructor(
     private httpClient: HttpClient,
@@ -150,6 +150,13 @@ export class ApiService {
 
   getEmployees(searchQuery = '', page = 1, pageSize = 10): Observable<PagedDataResult<Employee>> {  
     const url = `${this.host}/employee/list?search=${searchQuery}&page=${page}&pageSize=${pageSize}`;
+    return this.httpClient
+      .get<PagedDataResult<Employee>>(url)
+      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+  }
+
+  getDrivers(searchQuery = '', page = 1, pageSize = 10): Observable<PagedDataResult<Employee>> {  
+    const url = `${this.host}/employee/drivers?search=${searchQuery}&page=${page}&pageSize=${pageSize}`;
     return this.httpClient
       .get<PagedDataResult<Employee>>(url)
       .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));

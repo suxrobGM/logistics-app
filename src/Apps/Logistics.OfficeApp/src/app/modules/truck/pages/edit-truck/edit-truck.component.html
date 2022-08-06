@@ -7,14 +7,19 @@
             <form [formGroup]="form" (ngSubmit)="onSubmit()">
                 <div class="mb-3">
                     <label for="truckNumber" class="form-label">Truck Number</label>
-                    <input id="truckNumber" type="number" class="form-control" /> 
+                    <input formControlName="truckNumber" id="truckNumber" type="number" class="form-control" /> 
                 </div>
                 <div class="mb-3">
                     <label for="driver" class="form-label">Driver</label>
-                    <p-autoComplete formControlName="driver" 
-                        styleClass="w-100" 
+                    <p-autoComplete formControlName="driver"
+                        styleClass="w-100"
                         inputStyleClass="form-control" 
-                        placeholder="Type driver name"></p-autoComplete>
+                        placeholder="Type driver name"
+                        field="userName"
+                        [minLength]="3"
+                        [suggestions]="suggestedDrivers"
+                        (completeMethod)="searchDriver($event)">
+                    </p-autoComplete>
                 </div>
                 <div class="mt-3">
                     <button class="btn btn-primary" type="submit">

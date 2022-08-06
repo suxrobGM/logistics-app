@@ -7,14 +7,15 @@
             <p-messages key="errorMsg"></p-messages>
             <form [formGroup]="form" (ngSubmit)="onSubmit()">
                 <div class="mb-3">
-                    <label for="name" class="form-label">Name</label>
-                    <p-autoComplete formControlName="name" 
+                    <label for="name" class="form-label">User Name</label>
+                    <p-autoComplete formControlName="user" 
                         styleClass="w-100" 
                         inputStyleClass="form-control" 
                         placeholder="Type user name"
+                        field="userName"
+                        [minLength]="3"
                         [suggestions]="suggestedUsers"
-                        (completeMethod)="searchUser($event)"
-                        (onSelect)="onSelectUser($event)">
+                        (completeMethod)="searchUser($event)">
                     </p-autoComplete> 
                 </div>
                 <div class="mb-3">

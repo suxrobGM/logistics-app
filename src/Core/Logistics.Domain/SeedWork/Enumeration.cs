@@ -22,12 +22,12 @@ public abstract class Enumeration : IComparable
         }
 
         var typeMatches = GetType() == obj.GetType();
-        var valueMatches = Id.Equals(otherValue.Id);
+        var valueMatches = Id.Equals(otherValue.Id) && Name.Equals(otherValue.Name);
 
         return typeMatches && valueMatches;
     }
 
-    public override int GetHashCode() => Id.GetHashCode();
+    public override int GetHashCode() => Id.GetHashCode()!;
 
     public int CompareTo(object? other) => Id.CompareTo((other as Enumeration)?.Id);
 

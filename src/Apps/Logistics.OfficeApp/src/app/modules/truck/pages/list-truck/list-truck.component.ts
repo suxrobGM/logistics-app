@@ -27,15 +27,12 @@ export class ListTruckComponent implements OnInit {
 
   public search(event: any) {
     const query = event.target.value;
-    //this.isBusy = true;
     
     this.apiService.getTrucks(query, 1).subscribe(result => {
       if (result.success && result.items) {
         this.trucks = result.items;
         this.totalRecords = result.itemsCount!;
       }
-
-      //this.isBusy = false;
     });
   }
 
@@ -47,6 +44,8 @@ export class ListTruckComponent implements OnInit {
       if (result.success && result.items) {
         this.trucks = result.items;
         this.totalRecords = result.itemsCount!;
+        console.log(this.trucks);
+        
       }
 
       this.isBusy = false;

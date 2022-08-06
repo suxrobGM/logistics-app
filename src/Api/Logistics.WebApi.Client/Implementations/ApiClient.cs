@@ -144,12 +144,6 @@ internal class ApiClient : ApiClientBase, IApiClient
         return result.Value!;
     }
 
-    public async Task<EmployeeRoleDto> GetEmployeeRoleAsync(string userId)
-    {
-        var result = await GetRequestAsync<DataResult<EmployeeRoleDto>>($"employee/role/{userId}");
-        return result.Value!;
-    }
-
     public async Task<PagedDataResult<EmployeeDto>> GetEmployeesAsync(string searchInput = "", int page = 1, int pageSize = 10)
     {
         var query = new Dictionary<string, string>

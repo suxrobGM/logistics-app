@@ -27,15 +27,12 @@ export class ListEmployeeComponent implements OnInit {
 
   public search(event: any) {
     const query = event.target.value;
-    //this.isBusy = true;
     
     this.apiService.getEmployees(query, 1).subscribe(result => {
       if (result.success && result.items) {
         this.employees = result.items;
         this.totalRecords = result.itemsCount!;
       }
-
-      //this.isBusy = false;
     });
   }
 

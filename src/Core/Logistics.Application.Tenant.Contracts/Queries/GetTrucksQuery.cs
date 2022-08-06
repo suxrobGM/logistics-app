@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Contracts.Queries;
 
-public sealed class GetTrucksQuery : SearchableQueryBase<TruckDto>
+public sealed class GetTrucksQuery : SearchableQuery<TruckDto>
 {
     public bool IncludeLoadIds { get; set; }
 }

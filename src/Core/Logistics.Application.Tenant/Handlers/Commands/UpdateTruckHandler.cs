@@ -29,8 +29,8 @@ internal sealed class UpdateTruckHandler : RequestHandlerBase<UpdateTruckCommand
         {
             return DataResult.CreateError("Could not find the specified truck");
         }
-
-        truckEntity.Driver = driver;
+        
+        truckEntity.DriverId = driver.ExternalId;
         _truckRepository.Update(truckEntity);
         await _truckRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();

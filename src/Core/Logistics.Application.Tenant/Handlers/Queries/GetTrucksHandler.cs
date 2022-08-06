@@ -66,9 +66,9 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
         {
             var driverId = truck.DriverId;
 
-            if (!string.IsNullOrEmpty(driverId))
+            if (!string.IsNullOrEmpty(driverId) && drivers.TryGetValue(driverId, out var user))
             {
-                truck.DriverName = drivers[driverId].GetFullName();
+                truck.DriverName = user.GetFullName();
             }
         }
 

@@ -13,7 +13,7 @@ import { ApiService } from '@shared/services';
 export class EditEmployeeComponent implements OnInit {
   private employee?: Employee;
 
-  public isBusy = false;
+  public isBusy: boolean;
   public form: FormGroup;
   public roles: string[];
   public id?: string;
@@ -24,6 +24,7 @@ export class EditEmployeeComponent implements OnInit {
     private oidcSecurityService: OidcSecurityService) 
   {
     this.roles = [];
+    this.isBusy = false;
     this.form = new FormGroup({
       userName: new FormControl({value: '', disabled: true}, Validators.required),
       firstName: new FormControl({value: '', disabled: true}),
@@ -52,7 +53,6 @@ export class EditEmployeeComponent implements OnInit {
       return;
     }
 
-    this.isBusy = true;
     this.apiService.getEmployee(this.id).subscribe(result => {
       if (result.success && result.value) {
         this.employee = result.value;
@@ -64,8 +64,6 @@ export class EditEmployeeComponent implements OnInit {
           role: this.capitalize(this.employee.role)
         });
       }
-
-      this.isBusy = false;
     });
   }
 
@@ -77,13 +75,10 @@ export class EditEmployeeComponent implements OnInit {
       role: this.form.value.role.toLowerCase()
     }
     
-    this.isBusy = true;
     this.apiService.updateEmployee(employee).subscribe(result => {
       if (result.success) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'User has been updated successfully'});
       }
-
-      this.isBusy = false;
     });
   }
 

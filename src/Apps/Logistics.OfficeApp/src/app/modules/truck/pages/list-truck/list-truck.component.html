@@ -23,7 +23,7 @@
                 </ng-template>
                 <ng-template pTemplate="body" let-truck>
                     <tr>
-                        <td>{{truck.number}}</td>
+                        <td>{{truck.truckNumber}}</td>
                         <td>{{truck.driverName}}</td>
                         <td>
                             <a class="btn btn-primary" [routerLink]="['/trucks/edit']" [state]="{id: truck.id}">Edit</a>
