@@ -11,15 +11,20 @@ import { MessageService } from 'primeng/api';
 })
 export class EditTruckComponent implements OnInit {
   private truck?: Truck;
-  public isBusy = false;
+  public isBusy: boolean;
+  public editMode: boolean;
   public form: FormGroup;
   public id?: string; 
+  public headerText: string;
   
   constructor(
     private apiService: ApiService,
     private messageService: MessageService,
   ) 
   { 
+    this.headerText = 'Edit a truck';
+    this.isBusy = false;
+    this.editMode = true;
     this.form = new FormGroup({
       'truckNumber': new FormControl(0, Validators.required),
       'driver': new FormControl(''),
@@ -30,23 +35,12 @@ export class EditTruckComponent implements OnInit {
     this.id = history.state.id;
     
     if (!this.id) {
-      this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'ID is an empty'});
+      this.editMode = false;
+      this.headerText = 'Add a new truck'
       return;
     }
 
-    this.isBusy = true;
-    this.apiService.getTruck(this.id).subscribe(result => {
-      if (result.success && result.value) {
-        this.truck = result.value;
-        
-        this.form.patchValue({
-          truckNumber: this.truck?.truckNumber,
-          driver: this.truck?.driverName,
-        });
-      }
-
-      this.isBusy = false;
-    });
+    this.fetchTruck(this.id);
   }
 
   public onSubmit() {
@@ -58,9 +52,37 @@ export class EditTruckComponent implements OnInit {
     }
     
     this.isBusy = true;
-    this.apiService.updateTruck(truck).subscribe(result => {
-      if (result.success) {
-        this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'User has been updated successfully'});
+
+    if (this.editMode) {
+      this.apiService.updateTruck(truck).subscribe(result => {
+        if (result.success) {
+          this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Truck has been updated successfully'});
+        }
+  
+        this.isBusy = false;
+      });
+    }
+    else {
+      this.apiService.createTruck(truck).subscribe(result => {
+        if (result.success) {
+          this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Truck has been created successfully'});
+        }
+  
+        this.isBusy = false;
+      });
+    }
+  }
+
+  private fetchTruck(id: string) {
+    this.isBusy = true;
+    this.apiService.getTruck(id).subscribe(result => {
+      if (result.success && result.value) {
+        this.truck = result.value;
+        
+        this.form.patchValue({
+          truckNumber: this.truck?.truckNumber,
+          driver: this.truck?.driverName,
+        });
       }
 
       this.isBusy = false;
