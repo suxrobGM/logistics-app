@@ -37,14 +37,14 @@
                         <td>{{load.name}}</td>
                         <td>{{load.sourceAddress}}</td>
                         <td>{{load.destinationAddress}}</td>
-                        <td>{{load.dispatchedDate}}</td>
-                        <td>{{load.pickUpDate}}</td>
-                        <td>{{load.deliveryDate}}</td>
+                        <td>{{load.dispatchedDate} | date:'mediumDate'}</td>
+                        <td>{{load.pickUpDate} | date:'mediumDate'}</td>
+                        <td>{{load.deliveryDate} | date:'mediumDate'}</td>
                         <td>{{load.status}}</td>
                         <td>{{load.distance}}</td>
                         <td>{{load.deliveryCost}}</td>
                         <td>{{load.assignedDispatcherName}}</td>
-                        <td>{{load.assignedTruckDriverName}}</td>
+                        <td>{{load.assignedDriverName}}</td>
                         <td>
                             <a class="btn btn-primary" [routerLink]="['/loads/edit']" [state]="{id: load.id}">Edit</a>
                         </td>

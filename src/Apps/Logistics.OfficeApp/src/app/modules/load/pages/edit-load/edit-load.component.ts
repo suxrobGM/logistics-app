@@ -5,7 +5,7 @@ import * as MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-d
 import * as mapboxgl from 'mapbox-gl';
 import { MessageService } from 'primeng/api';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { Load } from '@shared/models';
+import { Employee, Load, LoadStatus, UserIdentity } from '@shared/models';
 import { ApiService } from '@shared/services';
 
 @Component({
@@ -17,13 +17,14 @@ export class EditLoadComponent implements OnInit {
   private accessToken = 'pk.eyJ1Ijoic3V4cm9iZ20iLCJhIjoiY2w0dmsyMGd1MDEzZDNjcXcwZGRtY255MSJ9.XwGTNZx_httMhW0Fu34udQ' // TODO: load access token from config file
   private map!: mapboxgl.Map;
   private directions!: any;
-  private load?: Load;
 
   public id?: string;
-  public form: FormGroup;
-  public isBusy: boolean;
   public headerText: string;
-  public distance: number;
+  public isBusy: boolean;
+  public editMode: boolean;
+  public form: FormGroup;
+  public suggestedDrivers: Employee[];
+  public loadStatuses: string[]
   
   //public hideDestAddressInput = false;
 
@@ -33,11 +34,22 @@ export class EditLoadComponent implements OnInit {
     private oidcSecurityService: OidcSecurityService) 
   {
     this.isBusy = false;
-    this.headerText = 'Edit a Load';
-    this.distance = 0;
+    this.editMode = true;
+    this.headerText = 'Edit a load';
+    this.suggestedDrivers = [];
+    this.loadStatuses = [];
 
     this.form = new FormGroup({
-      'name': new FormControl('')
+      'name': new FormControl(''),
+      'srcAddress': new FormControl('', Validators.required),
+      'dstAddress': new FormControl('', Validators.required),
+      'dispatchedDate': new FormControl(new Date().toDateString(), Validators.required),
+      'deliveryCost': new FormControl(0, Validators.required),
+      'distance': new FormControl(0, Validators.required),
+      'dispatcherName': new FormControl('', Validators.required),
+      'dispatcherId': new FormControl('', Validators.required),
+      'driver': new FormControl('', Validators.required),
+      'status': new FormControl(LoadStatus.Dispatched, Validators.required)
     });
   }
 
@@ -45,10 +57,40 @@ export class EditLoadComponent implements OnInit {
     this.id = history.state.id;
     this.initMapbox();
     this.initGeocoderInputs();
+
+    if (!this.id) {
+      this.editMode = false;
+      this.headerText = 'Add a new load';
+    }
+
+    for (const loadStatus in LoadStatus) {
+      this.loadStatuses.push(loadStatus);
+    }
+
+    this.oidcSecurityService.getUserData().subscribe((user: UserIdentity) => {
+      this.form.patchValue({
+        dispatcherName: user.name,
+        dispatcherId: user.sub
+      });
+    });
+  }
+
+  public searchDriver(event: any) {
+    this.apiService.getDrivers(event.query).subscribe(result => {
+      if (result.success && result.items) {
+        this.suggestedDrivers = result.items;
+      }
+    });
   }
 
   public onSubmit() {
+    console.log(this.form.value);
+    const driver = this.form.value.driver as Employee;
 
+    if (!driver) {
+      this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Select a driver'});
+      return;
+    }
   }
 
   private initMapbox() {
@@ -73,7 +115,9 @@ export class EditLoadComponent implements OnInit {
     });
 
     this.directions.on('route', (data: any) => {
-      this.distance = this.convertToMiles(data.route[0].distance);
+      const distanceMeters = data.route[0].distance;
+      const distanceMiles = this.convertToMiles(distanceMeters);
+      this.form.patchValue({distance: distanceMiles});
     });
 
     this.map.addControl(this.directions, 'top-left');
@@ -94,9 +138,10 @@ export class EditLoadComponent implements OnInit {
     destGeocoder.addTo('#dstAddress');
 
     srcGeocoder.on('result', (data: any) => {
-      console.log('Source address: ' + data.result.place_name);
+      const address = data.result.place_name;
       //this.hideDestAddressInput = false;
       this.directions.setOrigin(data.result.center);
+      this.form.patchValue({srcAddress: address});
       //this.ref.markForCheck();
     });
 
@@ -105,8 +150,9 @@ export class EditLoadComponent implements OnInit {
     // });
 
     destGeocoder.on('result', (data: any) => {
-      console.log('Destination address ' + data.result.place_name);
+      const address = data.result.place_name;
       this.directions.setDestination(data.result.center);
+      this.form.patchValue({dstAddress: address});
     });
   }
 

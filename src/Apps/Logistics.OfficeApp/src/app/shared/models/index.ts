@@ -7,6 +7,7 @@ import { PagedDataResult } from './paged-data-result';
 import { Tenant } from './tenant';
 import { Truck } from './truck';
 import { User } from './user';
+import { UserIdentity } from './user-identity';
 
 export {
   DataResult,
@@ -17,5 +18,6 @@ export {
   PagedDataResult,
   Tenant,
   Truck,
-  User
+  User,
+  UserIdentity
 }

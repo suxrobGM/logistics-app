@@ -11,11 +11,11 @@ import { of, switchMap } from 'rxjs';
   styleUrls: ['./edit-truck.component.scss']
 })
 export class EditTruckComponent implements OnInit {
-  public id?: string; 
+  public id?: string;
+  public headerText: string;
   public isBusy: boolean;
   public editMode: boolean;
   public form: FormGroup;
-  public headerText: string;
   public suggestedDrivers: Employee[];
   
   constructor(
@@ -29,7 +29,7 @@ export class EditTruckComponent implements OnInit {
     this.editMode = true;
     this.form = new FormGroup({
       'truckNumber': new FormControl(0, Validators.required),
-      'driver': new FormControl('', Validators.required),
+      'driver': new FormControl({}, Validators.required),
     });
   }
 
@@ -38,7 +38,7 @@ export class EditTruckComponent implements OnInit {
     
     if (!this.id) {
       this.editMode = false;
-      this.headerText = 'Add a new truck'
+      this.headerText = 'Add a new truck';
       return;
     }
 
@@ -57,7 +57,7 @@ export class EditTruckComponent implements OnInit {
     const driver = this.form.value.driver as Employee;
 
     if (!driver) {
-      this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Select driver'});
+      this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Select a driver'});
       return;
     }
     
