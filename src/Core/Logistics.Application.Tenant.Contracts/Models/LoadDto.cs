@@ -16,7 +16,7 @@ public class LoadDto
     public string? DestinationAddress { get; set; }
 
     [Required]
-    [Range(LoadConsts.MinDeliveryCost, LoadConsts.MinDeliveryCost)]
+    [Range(LoadConsts.MinDeliveryCost, LoadConsts.MaxDeliveryCost)]
     public decimal DeliveryCost { get; set; }
 
     [Required]
@@ -35,7 +35,5 @@ public class LoadDto
     [Required]
     public string? AssignedDriverId { get; set; }
     public string? AssignedDriverName { get; set; }
-
-    [Required]
     public string? AssignedTruckId { get; set; }
 }

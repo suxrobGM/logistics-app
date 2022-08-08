@@ -4,42 +4,37 @@ internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, 
 {
     private readonly ITenantRepository<Load> _loadRepository;
     private readonly ITenantRepository<Truck> _truckRepository;
-    private readonly ITenantRepository<Employee> _userRepository;
+    private readonly ITenantRepository<Employee> _employeeRepository;
 
     public CreateLoadHandler(
         ITenantRepository<Load> loadRepository,
         ITenantRepository<Truck> truckRepository,
-        ITenantRepository<Employee> userRepository)
+        ITenantRepository<Employee> employeeRepository)
     {
         _loadRepository = loadRepository;
         _truckRepository = truckRepository;
-        _userRepository = userRepository;
+        _employeeRepository = employeeRepository;
     }
 
     protected override async Task<DataResult> HandleValidated(
         CreateLoadCommand request, CancellationToken cancellationToken)
     {
-        var dispatcher = await _userRepository.GetAsync(request.AssignedDispatcherId!);
+        var dispatcher = await _employeeRepository.GetAsync(request.AssignedDispatcherId!);
 
         if (dispatcher == null)
-        {
             return DataResult.CreateError("Could not find the specified dispatcher");
-        }
         
-        var driver = await _userRepository.GetAsync(request.AssignedDriverId!);
+        var driver = await _employeeRepository.GetAsync(request.AssignedDriverId!);
 
         if (driver == null)
-        {
             return DataResult.CreateError("Could not find the specified driver");
-        }
 
-        var truck = await _truckRepository.GetAsync(request.AssignedTruckId!);
+        var truck = await _truckRepository.GetAsync(i => i.DriverId == driver.Id);
+
         if (truck == null)
-        {
-            return DataResult.CreateError("Could not find the specified truck");
-        }
-
-        var latestLoad = _loadRepository.GetQuery().LastOrDefault();
+            return DataResult.CreateError($"Could not find the truck whose driver ID is '{driver.Id}'");
+        
+        var latestLoad = _loadRepository.GetQuery().OrderBy(i => i.ReferenceId).LastOrDefault();
         
         var loadEntity = new Load
         {
@@ -50,9 +45,9 @@ internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, 
             DestinationAddress = request.DestinationAddress,
             Distance = request.Distance,
             DeliveryCost = request.DeliveryCost,
-            AssignedDispatcherId = dispatcher.Id,
-            AssignedDriverId = driver.Id,
-            AssignedTruckId = truck.Id
+            AssignedDispatcher = dispatcher,
+            AssignedDriver = driver,
+            AssignedTruck = truck
         };
 
         await _loadRepository.AddAsync(loadEntity);
@@ -71,10 +66,6 @@ internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, 
         else if (string.IsNullOrEmpty(request.AssignedDriverId))
         {
             errorDescription = "AssignedDriverId is an empty string";
-        }
-        else if (string.IsNullOrEmpty(request.AssignedTruckId))
-        {
-            errorDescription = "AssignedTruckId is an empty string";
         }
         else if (string.IsNullOrEmpty(request.SourceAddress))
         {

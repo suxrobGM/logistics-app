@@ -2,30 +2,25 @@
 
 internal sealed class UpdateEmployeeHandler : RequestHandlerBase<UpdateEmployeeCommand, DataResult>
 {
-    private readonly ITenantRepository<Employee> _userRepository;
+    private readonly ITenantRepository<Employee> _employeeRepository;
 
     public UpdateEmployeeHandler(
-        ITenantRepository<Employee> userRepository)
+        ITenantRepository<Employee> employeeRepository)
     {
-        _userRepository = userRepository;
+        _employeeRepository = employeeRepository;
     }
 
     protected override async Task<DataResult> HandleValidated(UpdateEmployeeCommand request, CancellationToken cancellationToken)
     {
-        var userEntity = await _userRepository.GetAsync(request.Id!);
+        var employeeEntity = await _employeeRepository.GetAsync(request.Id!);
 
-        if (userEntity == null)
-        {
+        if (employeeEntity == null)
             return DataResult.CreateError("Could not find the specified user");
-        }
+        
+        employeeEntity.Role = EmployeeRole.Get(request.Role)!;
 
-        //userEntity.FirstName = request.FirstName;
-        //userEntity.LastName = request.LastName;
-        //userEntity.UserName = request.UserName;
-        userEntity.Role = EmployeeRole.Get(request.Role!);
-
-        _userRepository.Update(userEntity);
-        await _userRepository.UnitOfWork.CommitAsync();
+        _employeeRepository.Update(employeeEntity);
+        await _employeeRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
 

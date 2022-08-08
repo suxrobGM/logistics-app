@@ -7,6 +7,7 @@ import { MessageService } from 'primeng/api';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { Employee, Load, LoadStatus, UserIdentity } from '@shared/models';
 import { ApiService } from '@shared/services';
+import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-edit-load',
@@ -40,16 +41,16 @@ export class EditLoadComponent implements OnInit {
     this.loadStatuses = [];
 
     this.form = new FormGroup({
-      'name': new FormControl(''),
-      'srcAddress': new FormControl('', Validators.required),
-      'dstAddress': new FormControl('', Validators.required),
-      'dispatchedDate': new FormControl(new Date().toDateString(), Validators.required),
-      'deliveryCost': new FormControl(0, Validators.required),
-      'distance': new FormControl(0, Validators.required),
-      'dispatcherName': new FormControl('', Validators.required),
-      'dispatcherId': new FormControl('', Validators.required),
-      'driver': new FormControl('', Validators.required),
-      'status': new FormControl(LoadStatus.Dispatched, Validators.required)
+      name: new FormControl(''),
+      srcAddress: new FormControl('', Validators.required),
+      dstAddress: new FormControl('', Validators.required),
+      dispatchedDate: new FormControl(new Date().toLocaleDateString(), Validators.required),
+      deliveryCost: new FormControl(0, Validators.required),
+      distance: new FormControl(0, Validators.required),
+      dispatcherName: new FormControl('', Validators.required),
+      dispatcherId: new FormControl('', Validators.required),
+      driver: new FormControl('', Validators.required),
+      status: new FormControl(LoadStatus.Dispatched, Validators.required)
     });
   }
 
@@ -57,11 +58,6 @@ export class EditLoadComponent implements OnInit {
     this.id = history.state.id;
     this.initMapbox();
     this.initGeocoderInputs();
-
-    if (!this.id) {
-      this.editMode = false;
-      this.headerText = 'Add a new load';
-    }
 
     for (const loadStatus in LoadStatus) {
       this.loadStatuses.push(loadStatus);
@@ -73,6 +69,17 @@ export class EditLoadComponent implements OnInit {
         dispatcherId: user.sub
       });
     });
+
+    this.form.reset();
+
+    if (!this.id) {
+      this.editMode = false;
+      this.headerText = 'Add a new load';
+    }
+    else {
+      this.fetchLoad(this.id);
+      this.headerText = 'Edit a load';
+    }
   }
 
   public searchDriver(event: any) {
@@ -90,6 +97,39 @@ export class EditLoadComponent implements OnInit {
     if (!driver) {
       this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Select a driver'});
       return;
+    }
+
+    const load: Load = {
+      name: this.form.value.name,
+      sourceAddress: this.form.value.srcAddress,
+      destinationAddress: this.form.value.dstAddress,
+      dispatchedDate: new Date(),
+      deliveryCost: this.form.value.deliveryCost,
+      distance: this.form.value.distance,
+      assignedDispatcherId: this.form.value.dispatcherId,
+      assignedDriverId: driver.id,
+      status: this.form.status
+    }
+
+    this.isBusy = true;
+    if (this.editMode) {
+      this.apiService.updateLoad(load).subscribe(result => {
+        if (result.success) {
+          this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Load has been updated successfully'});
+        }
+
+        this.isBusy = false;
+      });
+    }
+    else {
+      this.apiService.createLoad(load).subscribe(result => {
+        if (result.success) {
+          this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A new load has been created successfully'});
+        }
+
+        this.form.reset();
+        this.isBusy = false;
+      });
     }
   }
 
@@ -154,6 +194,38 @@ export class EditLoadComponent implements OnInit {
       this.directions.setDestination(data.result.center);
       this.form.patchValue({dstAddress: address});
     });
+  }
+
+  private fetchLoad(id: string) {
+    this.apiService.getLoad(id).subscribe(result => {
+      if (result.success && result.value) {
+        const load = result.value;
+        console.log(load);
+        
+
+        this.form.patchValue({
+          name: load.name,
+          srcAddress: load.sourceAddress,
+          dstAddress: load.destinationAddress,
+          dispatchedDate: this.getLocaleDate(load.dispatchedDate),
+          deliveryCost: load.deliveryCost,
+          dispatcherName: load.assignedDispatcherName,
+          dispatcherId: load.assignedDispatcherId,
+          status: load.status,
+          driver: {
+            id: load.assignedDriverId,
+            userName: load.assignedDriverName
+          }
+        });
+      }
+    });
+  }
+
+  private getLocaleDate(dateStr?: string | Date): string {
+    if (dateStr) {
+      return new Date(dateStr).toLocaleDateString();
+    }
+    return '';
   }
 
   private convertToMiles(meters: number): number {

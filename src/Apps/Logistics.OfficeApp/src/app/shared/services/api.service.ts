@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MessageService } from 'primeng/api';
-import { catchError, Observable, retry, throwError } from 'rxjs';
+import { catchError, Observable, of, retry, throwError } from 'rxjs';
 import { AppConfig } from '../../configs/app.config';
 import { TenantService  } from './tenant.service';
 import { DataResult, Employee, PagedDataResult, Tenant, Truck, User, Load } from '../models';
@@ -197,8 +197,7 @@ export class ApiService {
     
     this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: errorMessage});
     this.messageService.add({key: 'errorMsg', severity: 'error', summary: 'Error', detail: errorMessage});
-    return throwError(() => {
-      return errorMessage;
-    });
+    console.error(errorMessage);
+    return of({error: errorMessage, success: false});
   }
 }

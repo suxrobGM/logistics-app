@@ -10,15 +10,18 @@ public class LoadStatus : Enumeration
     public static readonly LoadStatus PickedUp = new(2, "pickedup");
     public static readonly LoadStatus Delivered = new(3, "delivered");
 
-    public static LoadStatus Get(string name)
+    public static LoadStatus? Get(string? name)
     {
+        if (string.IsNullOrEmpty(name))
+            return null;
+        
         name = name.Trim().ToLower();
         return name switch
         {
             "ready" => Dispatched,
             "loaded" => PickedUp,
             "offduty" => Delivered,
-            _ => throw new InvalidOperationException($"Could not found the corresponding enum type for the '{name}'"),
+            _ => null,
         };
     }
 }

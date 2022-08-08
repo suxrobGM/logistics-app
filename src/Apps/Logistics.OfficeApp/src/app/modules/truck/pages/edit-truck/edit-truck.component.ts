@@ -77,7 +77,7 @@ export class EditTruckComponent implements OnInit {
     else {
       this.apiService.createTruck(truck).subscribe(result => {
         if (result.success) {
-          this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Truck has been created successfully'});
+          this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A new truck has been created successfully'});
         }
 
         this.form.reset();
@@ -86,7 +86,6 @@ export class EditTruckComponent implements OnInit {
   }
 
   private fetchTruck(id: string) {
- 
     this.apiService.getTruck(id).pipe(
       switchMap(result => {
         if (result.success && result.value) {

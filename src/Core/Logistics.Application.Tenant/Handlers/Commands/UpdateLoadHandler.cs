@@ -2,13 +2,16 @@
 
 internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, DataResult>
 {
+    private readonly ITenantRepository<Employee> _employeeRepository;
     private readonly ITenantRepository<Load> _loadRepository;
     private readonly ITenantRepository<Truck> _truckRepository;
 
     public UpdateLoadHandler(
+        ITenantRepository<Employee> employeeRepository,
         ITenantRepository<Load> loadRepository,
         ITenantRepository<Truck> truckRepository)
     {
+        _employeeRepository = employeeRepository;
         _loadRepository = loadRepository;
         _truckRepository = truckRepository;
     }
@@ -16,20 +19,21 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
     protected override async Task<DataResult> HandleValidated(
         UpdateLoadCommand request, CancellationToken cancellationToken)
     {
-        var truck = await _truckRepository.GetAsync(request.AssignedTruckId!);
+        var driver = await _employeeRepository.GetAsync(request.AssignedDriverId!);
+
+        if (driver == null)
+            return DataResult.CreateError("Could not find the specified driver");
+        
+        var truck = await _truckRepository.GetAsync(i => i.DriverId == driver.Id);
 
         if (truck == null)
-        {
-            return DataResult.CreateError("Could not find the specified truck");
-        }
+            return DataResult.CreateError($"Could not find the truck whose driver ID is '{driver.Id}'");
 
         var loadEntity = await _loadRepository.GetAsync(request.Id!);
 
         if (loadEntity == null)
-        {
-            return DataResult.CreateError("Could not find the specified cargo");
-        }
-
+            return DataResult.CreateError("Could not find the specified load");
+        
         loadEntity.Name = request.Name;
         loadEntity.SourceAddress = request.SourceAddress;
         loadEntity.DestinationAddress = request.DestinationAddress;
@@ -37,7 +41,8 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
         loadEntity.DeliveryCost = request.DeliveryCost;
         loadEntity.PickUpDate = request.PickUpDate;
         loadEntity.DeliveryDate = request.DeliveryDate;
-        loadEntity.Status = LoadStatus.Get(request.Status!);
+        loadEntity.Status = LoadStatus.Get(request.Status)!;
+        loadEntity.AssignedDriver = driver;
         loadEntity.AssignedTruck = truck;
 
         _loadRepository.Update(loadEntity);
@@ -61,13 +66,13 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
         {
             errorDescription = "Destination address is an empty string";
         }
-        else if (string.IsNullOrEmpty(request.Status))
+        else if (LoadStatus.Get(request.Status)! == null!)
         {
-            errorDescription = "Cargo status is not specified";
+            errorDescription = "Invalid load status name";
         }
-        else if (string.IsNullOrEmpty(request.AssignedTruckId))
+        else if (string.IsNullOrEmpty(request.AssignedDriverId))
         {
-            errorDescription = "AssignedTruckId is an empty string";
+            errorDescription = "AssignedDriverId is an empty string";
         }
         else if (request.DeliveryCost < 0)
         {

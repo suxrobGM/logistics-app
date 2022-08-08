@@ -10,7 +10,6 @@ public sealed class UpdateLoadCommand : RequestBase<DataResult>
     public double Distance { get; set; }
     public string? AssignedDispatcherId { get; set; }
     public string? AssignedDriverId { get; set; }
-    public string? AssignedTruckId { get; set; }
     public string? Status { get; set; }
     public DateTime? PickUpDate { get; set; }
     public DateTime? DeliveryDate { get; set; }

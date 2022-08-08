@@ -9,5 +9,4 @@ public sealed class CreateLoadCommand : RequestBase<DataResult>
     public double Distance { get; set; }
     public string? AssignedDispatcherId { get; set; }
     public string? AssignedDriverId { get; set; }
-    public string? AssignedTruckId { get; set; }
 }
