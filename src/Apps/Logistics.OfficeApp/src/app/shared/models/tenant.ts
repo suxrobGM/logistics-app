@@ -1,4 +1,4 @@
 export interface Tenant {
-  name: string;
+  name?: string;
   displayName?: string;
 }
