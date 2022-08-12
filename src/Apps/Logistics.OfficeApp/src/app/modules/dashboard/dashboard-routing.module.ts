@@ -9,7 +9,7 @@ const rootRoutes: Routes = [
     component: DashboardPageComponent, 
     canActivate: [AuthGuard], 
     data: {
-      roles: ['admin', 'owner', 'dispatcher']
+      roles: ['main.admin', 'tenant.owner', 'tenant.dispatcher']
     } 
   }
 ];

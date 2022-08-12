@@ -11,7 +11,7 @@ const rootRoutes: Routes = [
     component: ListEmployeeComponent, 
     canActivate: [AuthGuard],
     data: {
-      roles: ['admin', 'owner', 'dispatcher']
+      roles: ['main.admin', 'tenant.owner', 'tenant.dispatcher']
     }
   },
   { 
@@ -19,7 +19,7 @@ const rootRoutes: Routes = [
     component: AddEmployeeComponent, 
     canActivate: [AuthGuard],
     data: {
-      roles: ['admin', 'owner']
+      roles: ['main.admin', 'tenant.owner']
     }
   },
   { 
@@ -27,7 +27,7 @@ const rootRoutes: Routes = [
     component: EditEmployeeComponent, 
     canActivate: [AuthGuard],
     data: {
-      roles: ['admin', 'owner', 'dispatcher']
+      roles: ['main.admin', 'tenant.owner', 'tenant.dispatcher']
     }
   },
 ];

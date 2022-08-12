@@ -7,10 +7,10 @@ public class EmployeeRole : Enumeration
     }
 
     public static readonly EmployeeRole Guest = new(1, "guest");
-    public static readonly EmployeeRole Driver = new(2, "driver");
-    public static readonly EmployeeRole Dispatcher = new(3, "dispatcher");
-    public static readonly EmployeeRole Manager = new(4, "manager");
-    public static readonly EmployeeRole Owner = new(5, "owner");
+    public static readonly EmployeeRole Driver = new(2, "tenant.driver");
+    public static readonly EmployeeRole Dispatcher = new(3, "tenant.dispatcher");
+    public static readonly EmployeeRole Manager = new(4, "tenant.manager");
+    public static readonly EmployeeRole Owner = new(5, "tenant.owner");
 
     public static EmployeeRole? Get(string? name)
     {
@@ -21,10 +21,10 @@ public class EmployeeRole : Enumeration
         return name switch
         {
             "guest" => Guest,
-            "driver" => Driver,
-            "dispatcher" => Dispatcher,
-            "manager" => Manager,
-            "owner" => Owner,
+            "tenant.driver" => Driver,
+            "tenant.dispatcher" => Dispatcher,
+            "tenant.manager" => Manager,
+            "tenant.owner" => Owner,
             _ => null,
         };
     }

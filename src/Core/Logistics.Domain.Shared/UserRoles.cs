@@ -6,6 +6,6 @@ public static class UserRoles
     {
         yield return new EnumType("guest", "Guest");
         yield return new EnumType("main.manager", "Manager");
-        yield return new EnumType("admin", "Admin");
+        yield return new EnumType("main.admin", "Admin");
     }
 }
