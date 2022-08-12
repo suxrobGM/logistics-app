@@ -21,7 +21,7 @@ public class LoadStatus : Enumeration
             "ready" => Dispatched,
             "loaded" => PickedUp,
             "offduty" => Delivered,
-            _ => null,
+            _ => null
         };
     }
 }

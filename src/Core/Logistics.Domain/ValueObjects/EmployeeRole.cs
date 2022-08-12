@@ -25,7 +25,7 @@ public class EmployeeRole : Enumeration
             "tenant.dispatcher" => Dispatcher,
             "tenant.manager" => Manager,
             "tenant.owner" => Owner,
-            _ => null,
+            _ => null
         };
     }
 }
