@@ -7,7 +7,6 @@ import { MessageService } from 'primeng/api';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { Employee, Load, LoadStatus, UserIdentity } from '@shared/models';
 import { ApiService } from '@shared/services';
-import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-edit-load',
@@ -18,6 +17,8 @@ export class EditLoadComponent implements OnInit {
   private accessToken = 'pk.eyJ1Ijoic3V4cm9iZ20iLCJhIjoiY2w0dmsyMGd1MDEzZDNjcXcwZGRtY255MSJ9.XwGTNZx_httMhW0Fu34udQ' // TODO: load access token from config file
   private map!: mapboxgl.Map;
   private directions!: any;
+  private destGeocoder!: MapboxGeocoder;
+  private srcGeocoder!: MapboxGeocoder;
 
   public id?: string;
   public headerText: string;
@@ -164,20 +165,20 @@ export class EditLoadComponent implements OnInit {
   }
 
   private initGeocoderInputs() {
-    const srcGeocoder = new MapboxGeocoder({
+    this.srcGeocoder = new MapboxGeocoder({
       accessToken: this.accessToken,
       countries: 'us'
     });
 
-    const destGeocoder = new MapboxGeocoder({
+    this.destGeocoder = new MapboxGeocoder({
       accessToken: this.accessToken,
       countries: 'us',
     });
 
-    srcGeocoder.addTo('#srcAddress');
-    destGeocoder.addTo('#dstAddress');
+    this.srcGeocoder.addTo('#srcAddress');
+    this.destGeocoder.addTo('#dstAddress');
 
-    srcGeocoder.on('result', (data: any) => {
+    this.srcGeocoder.on('result', (data: any) => {
       const address = data.result.place_name;
       //this.hideDestAddressInput = false;
       this.directions.setOrigin(data.result.center);
@@ -189,7 +190,7 @@ export class EditLoadComponent implements OnInit {
     //   this.hideDestAddressInput = true;
     // });
 
-    destGeocoder.on('result', (data: any) => {
+    this.destGeocoder.on('result', (data: any) => {
       const address = data.result.place_name;
       this.directions.setDestination(data.result.center);
       this.form.patchValue({dstAddress: address});
@@ -201,7 +202,6 @@ export class EditLoadComponent implements OnInit {
       if (result.success && result.value) {
         const load = result.value;
         console.log(load);
-        
 
         this.form.patchValue({
           name: load.name,
@@ -217,6 +217,9 @@ export class EditLoadComponent implements OnInit {
             userName: load.assignedDriverName
           }
         });
+
+        this.srcGeocoder.setInput(load.sourceAddress!);
+        this.destGeocoder.setInput(load.destinationAddress!);
       }
     });
   }

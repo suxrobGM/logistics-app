@@ -92,7 +92,7 @@ export class EditTruckComponent implements OnInit {
           const truck = result.value;
           this.form.patchValue({truckNumber: truck.truckNumber});
           
-          return this.apiService.getEmployee(truck.driverId);
+          return this.apiService.getEmployee(truck.driverId!);
         }
 
         return of({success: false, value: null});
