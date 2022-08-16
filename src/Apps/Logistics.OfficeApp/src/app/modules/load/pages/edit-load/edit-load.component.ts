@@ -220,6 +220,8 @@ export class EditLoadComponent implements OnInit {
 
         this.srcGeocoder.setInput(load.sourceAddress!);
         this.destGeocoder.setInput(load.destinationAddress!);
+        this.directions.setOrigin(load.sourceAddress!);
+        this.directions.setDestination(load.destinationAddress!);
       }
     });
   }
