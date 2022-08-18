@@ -32,7 +32,7 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
         }
 
         var loads = loadsQuery
-            .OrderBy(i => i.Id)
+            .OrderBy(i => i.DispatchedDate)
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
             .ToArray();
