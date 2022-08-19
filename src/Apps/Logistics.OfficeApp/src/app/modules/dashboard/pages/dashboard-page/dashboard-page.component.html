@@ -22,18 +22,18 @@
             <p-table [value]="loads" responsiveLayout="scroll">
                 <ng-template pTemplate="header">
                     <tr>
-                        <th>ID</th>
-                        <th>Source</th>
-                        <th>Destination</th>
-                        <th>Driver</th>
+                        <th style="width: 100px">ID</th>
+                        <th style="width: 100px">Source</th>
+                        <th style="width: 100px">Destination</th>
+                        <th style="width: 100px">Driver</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-load>
                     <tr>
-                        <td>{{load.referenceId}}</td>
-                        <td>{{load.sourceAddress}}</td>
-                        <td>{{load.destinationAddress}}</td>
-                        <td>{{load.assignedDriverName}}</td>
+                        <td style="width: 100px">{{load.referenceId}}</td>
+                        <td style="width: 100px">{{load.sourceAddress}}</td>
+                        <td style="width: 100px">{{load.destinationAddress}}</td>
+                        <td style="width: 100px">{{load.assignedDriverName}}</td>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="footer">
