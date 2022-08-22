@@ -4,7 +4,7 @@ namespace Logistics.Domain.Entities;
 
 public class Employee : Entity, ITenantEntity
 {
-    public DateTime JoinedDate { get; set; } = DateTime.Now;
+    public DateTime JoinedDate { get; set; } = DateTime.UtcNow;
     public EmployeeRole Role { get; set; } = EmployeeRole.Guest;
 
     /// <summary>

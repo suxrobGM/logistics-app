@@ -9,7 +9,7 @@ public class User : IdentityUser, IAggregateRoot
     public string? LastName { get; set; }
 
     public string JoinedTenantIds { get; set; } = "";
-    public DateTime JoinedDate { get; set; } = DateTime.Now;
+    public DateTime JoinedDate { get; set; } = DateTime.UtcNow;
     public UserRole Role { get; set; } = UserRole.Guest;
 
     public void JoinTenant(string tenantId)

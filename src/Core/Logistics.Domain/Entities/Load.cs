@@ -12,7 +12,7 @@ public class Load : Entity, ITenantEntity
     public string? DestinationAddress { get; set; }
     public decimal DeliveryCost { get; set; }
     public double Distance { get; set; }
-    public DateTime DispatchedDate { get; set; } = DateTime.Now;
+    public DateTime DispatchedDate { get; set; } = DateTime.UtcNow;
     public DateTime? PickUpDate { get; set; }
     public DateTime? DeliveryDate { get; set; }
     
@@ -24,11 +24,11 @@ public class Load : Entity, ITenantEntity
             _status = value;
             if (_status == LoadStatus.PickedUp)
             {
-                PickUpDate = DateTime.Now;
+                PickUpDate = DateTime.UtcNow;
             }
             else if (_status == LoadStatus.Delivered)
             {
-                DeliveryDate = DateTime.Now;
+                DeliveryDate = DateTime.UtcNow;
             }
         }
     }
