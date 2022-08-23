@@ -7,7 +7,7 @@
             <p-progressSpinner *ngIf="isBusy"></p-progressSpinner>
             <form [formGroup]="form" (ngSubmit)="onSubmit()">
                 <div class="mb-3">
-                    <label for="name" class="form-label">Name</label>
+                    <label #name for="name" class="form-label">Name</label>
                     <input id="name" formControlName="name" type="text" class="form-control" placeholder="Load name" /> 
                 </div>
                 <div class="mb-3">

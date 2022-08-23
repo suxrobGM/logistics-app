@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import * as MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
@@ -7,6 +7,7 @@ import { MessageService } from 'primeng/api';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { Employee, Load, LoadStatus, UserIdentity } from '@shared/models';
 import { ApiService } from '@shared/services';
+import { AppConfig } from '@configs/index';
 
 @Component({
   selector: 'app-edit-load',
@@ -14,7 +15,7 @@ import { ApiService } from '@shared/services';
   styleUrls: ['./edit-load.component.scss']
 })
 export class EditLoadComponent implements OnInit {
-  private accessToken = 'pk.eyJ1Ijoic3V4cm9iZ20iLCJhIjoiY2w0dmsyMGd1MDEzZDNjcXcwZGRtY255MSJ9.XwGTNZx_httMhW0Fu34udQ' // TODO: load access token from config file
+  private accessToken = AppConfig.mapboxToken;
   private map!: mapboxgl.Map;
   private directions!: any;
   private destGeocoder!: MapboxGeocoder;
@@ -201,7 +202,6 @@ export class EditLoadComponent implements OnInit {
     this.apiService.getLoad(id).subscribe(result => {
       if (result.success && result.value) {
         const load = result.value;
-        console.log(load);
 
         this.form.patchValue({
           name: load.name,
@@ -218,10 +218,15 @@ export class EditLoadComponent implements OnInit {
           }
         });
 
-        this.srcGeocoder.setInput(load.sourceAddress!);
-        this.destGeocoder.setInput(load.destinationAddress!);
-        this.directions.setOrigin(load.sourceAddress!);
-        this.directions.setDestination(load.destinationAddress!);
+        
+        this.map.on('load', () => {
+          this.srcGeocoder.query(load.sourceAddress!);
+          this.destGeocoder.query(load.destinationAddress!);
+          console.log('test');
+          
+          this.directions.setOrigin(load.sourceAddress!);
+          this.directions.setDestination(load.destinationAddress!);
+        });
       }
     });
   }
