@@ -2,36 +2,36 @@
 <hr class="w-100">
 
 <div class="row justify-content-center">
-    <div class="col-12 col-md-6">
-        <p-card>
-            <p-progressSpinner *ngIf="isBusy"></p-progressSpinner>
-            <form [formGroup]="form" (ngSubmit)="onSubmit()">
-                <div class="mb-3">
-                    <label for="userName" class="form-label">Username</label>
-                    <input id="userName" type="text" class="form-control" formControlName="userName" /> 
-                </div>
-                <div class="mb-3">
-                    <label for="firstName" class="form-label">First name</label>
-                    <input id="firstName" type="text" class="form-control" formControlName="firstName" /> 
-                </div>
-                <div class="mb-3">
-                    <label for="lastName" class="form-label">Last name</label>
-                    <input id="lastName" type="text" class="form-control" formControlName="firstName" /> 
-                </div>
-                <div class="mb-3">
-                    <label for="role" class="form-label">Role</label>
-                    <p-dropdown formControlName="role" [options]="roles" styleClass="w-100"></p-dropdown> 
-                </div>
-                <div class="mt-3">
-                    <button class="btn btn-primary" type="submit">
-                        <i class="bi bi-pencil-square"></i> Save
-                    </button>
-                    <a class="btn btn-primary ms-2" routerLink="/employees">
-                        <i class="bi bi-arrow-left-square"></i> Back to list
-                    </a>
-                </div>
-            </form>
-        </p-card>
-        
-    </div>
+  <div class="col-12 col-md-6">
+    <p-card>
+      <p-progressSpinner *ngIf="isBusy"></p-progressSpinner>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label for="userName" class="form-label">Username</label>
+          <input id="userName" type="text" class="form-control" formControlName="userName" />
+        </div>
+        <div class="mb-3">
+          <label for="firstName" class="form-label">First name</label>
+          <input id="firstName" type="text" class="form-control" formControlName="firstName" />
+        </div>
+        <div class="mb-3">
+          <label for="lastName" class="form-label">Last name</label>
+          <input id="lastName" type="text" class="form-control" formControlName="firstName" />
+        </div>
+        <div class="mb-3">
+          <label for="role" class="form-label">Role</label>
+          <p-dropdown formControlName="role" [options]="roles" styleClass="w-100"></p-dropdown>
+        </div>
+        <div class="mt-3">
+          <button class="btn btn-primary" type="submit">
+            <i class="bi bi-pencil-square"></i> Save
+          </button>
+          <a class="btn btn-primary ms-2" routerLink="/employees">
+            <i class="bi bi-arrow-left-square"></i> Back to list
+          </a>
+        </div>
+      </form>
+    </p-card>
+
+  </div>
 </div>

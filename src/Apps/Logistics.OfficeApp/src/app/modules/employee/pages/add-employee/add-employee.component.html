@@ -2,35 +2,30 @@
 <hr class="w-100">
 
 <div class="row justify-content-center">
-    <div class="col-12 col-md-6">
-        <p-card>
-            <p-messages key="errorMsg"></p-messages>
-            <form [formGroup]="form" (ngSubmit)="onSubmit()">
-                <div class="mb-3">
-                    <label for="name" class="form-label">User Name</label>
-                    <p-autoComplete formControlName="user" 
-                        styleClass="w-100" 
-                        inputStyleClass="form-control" 
-                        placeholder="Type user name"
-                        field="userName"
-                        [minLength]="3"
-                        [suggestions]="suggestedUsers"
-                        (completeMethod)="searchUser($event)">
-                    </p-autoComplete> 
-                </div>
-                <div class="mb-3">
-                    <label for="role" class="form-label">Role</label>
-                    <p-dropdown formControlName="role" [options]="roles" styleClass="w-100"></p-dropdown> 
-                </div>
-                <div class="mt-3">
-                    <button class="btn btn-primary" type="submit">
-                        <i class="bi bi-pencil-square"></i> Add
-                    </button>
-                    <a class="btn btn-primary ms-2" routerLink="/employees">
-                        <i class="bi bi-pencil-square"></i> Back to list
-                    </a>
-                </div>
-            </form>
-        </p-card>
-    </div>
+  <div class="col-12 col-md-6">
+    <p-card>
+      <p-messages key="errorMsg"></p-messages>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label for="name" class="form-label">User Name</label>
+          <p-autoComplete formControlName="user" styleClass="w-100" inputStyleClass="form-control"
+            placeholder="Type user name" field="userName" [minLength]="3" [suggestions]="suggestedUsers"
+            (completeMethod)="searchUser($event)">
+          </p-autoComplete>
+        </div>
+        <div class="mb-3">
+          <label for="role" class="form-label">Role</label>
+          <p-dropdown formControlName="role" [options]="roles" styleClass="w-100"></p-dropdown>
+        </div>
+        <div class="mt-3">
+          <button class="btn btn-primary" type="submit">
+            <i class="bi bi-pencil-square"></i> Add
+          </button>
+          <a class="btn btn-primary ms-2" routerLink="/employees">
+            <i class="bi bi-pencil-square"></i> Back to list
+          </a>
+        </div>
+      </form>
+    </p-card>
+  </div>
 </div>

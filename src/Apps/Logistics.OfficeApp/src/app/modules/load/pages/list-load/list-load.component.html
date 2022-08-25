@@ -2,55 +2,55 @@
 <hr class="w-100">
 
 <p-card>
-    <div class="row">
-        <div class="col-12">
-            <p-table [value]="loads" responsiveLayout="scroll" [lazy]="true" [paginator]="true" [showCurrentPageReport]="true" 
-                (onLazyLoad)="load($event)" [rows]="10" [(first)]="first" [totalRecords]="totalRecords" [loading]="isBusy">
-                <ng-template pTemplate="caption">
-                    <div class="d-flex">
-                        <span class="p-input-icon-left">
-                            <i class="pi pi-search"></i>
-                            <input pInputText type="text" placeholder="Search" (input)="search($event)" />
-                        </span>
-                    </div>
-                </ng-template>
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Source Address</th>
-                        <th>Destination Address</th>
-                        <th>Dispatched Date</th>
-                        <th>Pick Up Date</th>
-                        <th>Delivery Date</th>
-                        <th>Status</th>
-                        <th>Distance</th>
-                        <th>Delivery Cost</th>
-                        <th>Assigned Dispatcher</th>
-                        <th>Assigned Driver</th>
-                        <th>Action</th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-load>
-                    <tr>
-                        <td>{{load.referenceId}}</td>
-                        <td>{{load.name}}</td>
-                        <td>{{load.sourceAddress}}</td>
-                        <td>{{load.destinationAddress}}</td>
-                        <td>{{load.dispatchedDate | date:'mediumDate'}}</td>
-                        <td>{{load.pickUpDate | date:'mediumDate'}}</td>
-                        <td>{{load.deliveryDate | date:'mediumDate'}}</td>
-                        <td>{{load.status}}</td>
-                        <td>{{load.distance}}</td>
-                        <td>{{load.deliveryCost}}</td>
-                        <td>{{load.assignedDispatcherName}}</td>
-                        <td>{{load.assignedDriverName}}</td>
-                        <td>
-                            <a class="btn btn-primary" [routerLink]="['/loads/edit']" [state]="{id: load.id}">Edit</a>
-                        </td>
-                    </tr>
-                </ng-template>
-            </p-table>
-        </div>
+  <div class="row">
+    <div class="col-12">
+      <p-table [value]="loads" responsiveLayout="scroll" [lazy]="true" [paginator]="true" [showCurrentPageReport]="true"
+        (onLazyLoad)="load($event)" [rows]="10" [(first)]="first" [totalRecords]="totalRecords" [loading]="isBusy">
+        <ng-template pTemplate="caption">
+          <div class="d-flex">
+            <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" placeholder="Search" (input)="search($event)" />
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Source Address</th>
+            <th>Destination Address</th>
+            <th>Dispatched Date</th>
+            <th>Pick Up Date</th>
+            <th>Delivery Date</th>
+            <th>Status</th>
+            <th>Distance</th>
+            <th>Delivery Cost</th>
+            <th>Assigned Dispatcher</th>
+            <th>Assigned Driver</th>
+            <th>Action</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-load>
+          <tr>
+            <td>{{load.referenceId}}</td>
+            <td>{{load.name}}</td>
+            <td>{{load.sourceAddress}}</td>
+            <td>{{load.destinationAddress}}</td>
+            <td>{{load.dispatchedDate | date:'mediumDate'}}</td>
+            <td>{{load.pickUpDate | date:'mediumDate'}}</td>
+            <td>{{load.deliveryDate | date:'mediumDate'}}</td>
+            <td>{{load.status}}</td>
+            <td>{{load.distance}}</td>
+            <td>{{load.deliveryCost}}</td>
+            <td>{{load.assignedDispatcherName}}</td>
+            <td>{{load.assignedDriverName}}</td>
+            <td>
+              <a class="btn btn-primary" [routerLink]="['/loads/edit']" [state]="{id: load.id}">Edit</a>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
     </div>
+  </div>
 </p-card>

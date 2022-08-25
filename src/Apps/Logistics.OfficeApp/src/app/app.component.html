@@ -1,13 +1,13 @@
 <app-topbar></app-topbar>
 
 <div class="container-fluid content">
-    <p-toast key="notification" position="top-right"></p-toast>
-    <div *ngIf="isAuthenticated; else unauthorized">
-        <router-outlet></router-outlet>
-    </div>
-    <ng-template #unauthorized>
-        <h1 class="text-danger">Access denied</h1>
-    </ng-template>
+  <p-toast key="notification" position="top-right"></p-toast>
+  <div *ngIf="isAuthenticated; else unauthorized">
+    <router-outlet></router-outlet>
+  </div>
+  <ng-template #unauthorized>
+    <h1 class="text-danger">Access denied</h1>
+  </ng-template>
 </div>
 
 <app-nav-dock *ngIf="isAuthenticated"></app-nav-dock>

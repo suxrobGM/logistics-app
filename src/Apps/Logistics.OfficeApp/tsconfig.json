@@ -23,7 +23,7 @@
       "dom"
     ],
     "paths": {
-      "@configs/*": ["src/app/configs/*"],
+      "@configs": ["src/app/configs/index"],
       "@shared/*": ["src/app/shared/*"],
       "@modules/*": ["src/app/modules/*"]
     }

@@ -2,35 +2,36 @@
 <hr class="w-100">
 
 <p-card>
-    <div class="row">
-        <div class="col-12">
-            <p-table [value]="trucks" responsiveLayout="scroll" [lazy]="true" [paginator]="true" [showCurrentPageReport]="true" 
-                (onLazyLoad)="load($event)" [rows]="10" [(first)]="first" [totalRecords]="totalRecords" [loading]="isBusy">
-                <ng-template pTemplate="caption">
-                    <div class="d-flex">
-                        <span class="p-input-icon-left">
-                            <i class="pi pi-search"></i>
-                            <input pInputText type="text" placeholder="Search" (input)="search($event)" />
-                        </span>
-                    </div>
-                </ng-template>
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th>Number</th>
-                        <th>Driver</th>
-                        <th>Action</th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-truck>
-                    <tr>
-                        <td>{{truck.truckNumber}}</td>
-                        <td>{{truck.driverName}}</td>
-                        <td>
-                            <a class="btn btn-primary" [routerLink]="['/trucks/edit']" [state]="{id: truck.id}">Edit</a>
-                        </td>
-                    </tr>
-                </ng-template>
-            </p-table>
-        </div>
+  <div class="row">
+    <div class="col-12">
+      <p-table [value]="trucks" responsiveLayout="scroll" [lazy]="true" [paginator]="true"
+        [showCurrentPageReport]="true" (onLazyLoad)="load($event)" [rows]="10" [(first)]="first"
+        [totalRecords]="totalRecords" [loading]="isBusy">
+        <ng-template pTemplate="caption">
+          <div class="d-flex">
+            <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" placeholder="Search" (input)="search($event)" />
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Number</th>
+            <th>Driver</th>
+            <th>Action</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-truck>
+          <tr>
+            <td>{{truck.truckNumber}}</td>
+            <td>{{truck.driverName}}</td>
+            <td>
+              <a class="btn btn-primary" [routerLink]="['/trucks/edit']" [state]="{id: truck.id}">Edit</a>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
     </div>
+  </div>
 </p-card>

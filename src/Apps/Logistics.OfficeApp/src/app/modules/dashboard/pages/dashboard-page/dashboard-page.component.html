@@ -2,105 +2,105 @@
 <hr class="w-100">
 
 <div class="row">
-    <div class="col-12 col-xl-7">
-        <p-card>
-            <ng-template pTemplate="header">
-                <div class="ms-3 py-2 fw-bold">Active drivers</div>
-                <hr class="w-100 m-0" />
-            </ng-template>
-            <div id="map"></div>
-        </p-card>
-    </div>
+  <div class="col-12 col-xl-7">
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="ms-3 py-2 fw-bold">Active drivers</div>
+        <hr class="w-100 m-0" />
+      </ng-template>
+      <div id="map"></div>
+    </p-card>
+  </div>
 
-    <div class="col-12 col-xl-5 mt-3 mt-xl-0">
-        <p-card styleClass="h-100">
-            <ng-template pTemplate="header">
-                <div class="ms-3 py-2 fw-bold">Recent loads</div>
-                <hr class="w-100 m-0" />
-            </ng-template>
+  <div class="col-12 col-xl-5 mt-3 mt-xl-0">
+    <p-card styleClass="h-100">
+      <ng-template pTemplate="header">
+        <div class="ms-3 py-2 fw-bold">Recent loads</div>
+        <hr class="w-100 m-0" />
+      </ng-template>
 
-            <p-table [value]="loads" responsiveLayout="scroll">
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th style="width: 100px">ID</th>
-                        <th style="width: 100px">Source</th>
-                        <th style="width: 100px">Destination</th>
-                        <th style="width: 100px">Driver</th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-load>
-                    <tr>
-                        <td style="width: 100px">{{load.referenceId}}</td>
-                        <td style="width: 100px">{{load.sourceAddress}}</td>
-                        <td style="width: 100px">{{load.destinationAddress}}</td>
-                        <td style="width: 100px">{{load.assignedDriverName}}</td>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="footer">
-                    <tr>
-                        <td colspan="4">
-                            <a class="btn btn-primary" routerLink="/loads/edit">Add new load</a>
-                            <a class="btn btn-primary ms-2" routerLink="/loads">View all loads</a>
-                        </td>
-                    </tr>
-                </ng-template>
-            </p-table>
-        </p-card>
-    </div>
+      <p-table [value]="loads" responsiveLayout="scroll">
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 100px">ID</th>
+            <th style="width: 100px">Source</th>
+            <th style="width: 100px">Destination</th>
+            <th style="width: 100px">Driver</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-load>
+          <tr>
+            <td style="width: 100px">{{load.referenceId}}</td>
+            <td style="width: 100px">{{load.sourceAddress}}</td>
+            <td style="width: 100px">{{load.destinationAddress}}</td>
+            <td style="width: 100px">{{load.assignedDriverName}}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <tr>
+            <td colspan="4">
+              <a class="btn btn-primary" routerLink="/loads/edit">Add new load</a>
+              <a class="btn btn-primary ms-2" routerLink="/loads">View all loads</a>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
 </div>
 
 <div class="row">
-    <div class="col-12 col-xl-7">
-        <p-card styleClass="mt-3">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col" class="col-7 col-sm-8">Pages</th>
-                        <th scope="col" class="col-5 col-sm-4">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <span class="fw-bold">Employees</span>
-                        </td>
-                        <td>
-                            <a class="btn btn-primary" routerLink="/employees/add">
-                                <i class="bi bi-pencil"></i> Add
-                            </a>
-                            <a class="btn btn-primary ms-2" routerLink="/employees">
-                                <i class="bi bi-list"></i> List
-                            </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span class="fw-bold">Trucks</span>
-                        </td>
-                        <td>
-                            <a class="btn btn-primary" routerLink="/trucks/edit">
-                                <i class="bi bi-pencil"></i> Add
-                            </a>
-                            <a class="btn btn-primary ms-2" routerLink="/trucks">
-                                <i class="bi bi-list"></i> List
-                            </a>
-                        </td> 
-                    </tr>
-                    <tr>
-                        <td>
-                            <span class="fw-bold">Loads</span>
-                        </td>
-                        <td>
-                            <a class="btn btn-primary" routerLink="/loads/edit">
-                                <i class="bi bi-pencil"></i> Add
-                            </a>
-                            <a class="btn btn-primary ms-2" routerLink="/loads">
-                                <i class="bi bi-list"></i> List
-                            </a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </p-card>
-    </div>
+  <div class="col-12 col-xl-7">
+    <p-card styleClass="mt-3">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col" class="col-7 col-sm-8">Pages</th>
+            <th scope="col" class="col-5 col-sm-4">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <span class="fw-bold">Employees</span>
+            </td>
+            <td>
+              <a class="btn btn-primary" routerLink="/employees/add">
+                <i class="bi bi-pencil"></i> Add
+              </a>
+              <a class="btn btn-primary ms-2" routerLink="/employees">
+                <i class="bi bi-list"></i> List
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="fw-bold">Trucks</span>
+            </td>
+            <td>
+              <a class="btn btn-primary" routerLink="/trucks/edit">
+                <i class="bi bi-pencil"></i> Add
+              </a>
+              <a class="btn btn-primary ms-2" routerLink="/trucks">
+                <i class="bi bi-list"></i> List
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="fw-bold">Loads</span>
+            </td>
+            <td>
+              <a class="btn btn-primary" routerLink="/loads/edit">
+                <i class="bi bi-pencil"></i> Add
+              </a>
+              <a class="btn btn-primary ms-2" routerLink="/loads">
+                <i class="bi bi-list"></i> List
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p-card>
+  </div>
 </div>

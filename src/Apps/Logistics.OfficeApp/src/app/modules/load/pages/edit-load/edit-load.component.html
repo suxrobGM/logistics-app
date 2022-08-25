@@ -2,73 +2,68 @@
 <hr class="w-100">
 
 <p-card>
-    <div class="row">
-        <div class="col-12 col-md-6">
-            <p-progressSpinner *ngIf="isBusy"></p-progressSpinner>
-            <form [formGroup]="form" (ngSubmit)="onSubmit()">
-                <div class="mb-3">
-                    <label #name for="name" class="form-label">Name</label>
-                    <input id="name" formControlName="name" type="text" class="form-control" placeholder="Load name" /> 
-                </div>
-                <div class="mb-3">
-                    <label for="srcAddress" class="form-label">Source Address</label>
-                    <div id="srcAddress"></div>
-                </div>
-                <div class="mb-3">
-                    <label for="dstAddress" class="form-label">Destination Address</label>
-                    <div id="dstAddress"></div>
-                </div>
-                <div class="mb-3">
-                    <label for="dispatchedDate" class="form-label">Dispatched Date</label>
-                    <input id="dispatchedDate" formControlName="dispatchedDate" type="text" class="form-control" readonly /> 
-                </div>
-                <div class="mb-3">
-                    <label for="deliveryCost" class="form-label">Delivery Cost</label>
-                    <div class="input-group">
-                        <span class="input-group-text">$$</span>
-                        <input id="deliveryCost" formControlName="deliveryCost" type="number" class="form-control" min="0" />
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label for="distance" class="form-label">Estimated Distance</label>
-                    <div class="input-group">
-                        <span class="input-group-text">mi</span>
-                        <input id="distance" formControlName="distance" type="number" class="form-control" min="0" /> 
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label for="dispatcherName" class="form-label">Assigned Dispatcher</label>
-                    <input id="dispatcherName" formControlName="dispatcherName" type="text" class="form-control" readonly />
-                </div>
-                <div class="mb-3">
-                    <label for="driver" class="form-label">Assigned Driver</label>
-                    <p-autoComplete 
-                        formControlName="driver" 
-                        styleClass="w-100" 
-                        inputStyleClass="form-control" 
-                        placeholder="Type a driver name"
-                        field="userName"
-                        [minLength]="3"
-                        [suggestions]="suggestedDrivers"
-                        (completeMethod)="searchDriver($event)">
-                    </p-autoComplete>
-                </div>
-                <div class="mb-3">
-                    <label for="status" class="form-label">Status</label>
-                    <p-dropdown formControlName="status" styleClass="w-100" [options]="loadStatuses" [readonly]="!editMode"></p-dropdown> 
-                </div>
-                <div class="mt-3">
-                    <button class="btn btn-primary" type="submit">
-                        <i class="bi bi-pencil-square"></i> Save
-                    </button>
-                    <a class="btn btn-primary ms-2" routerLink="/loads">
-                        <i class="bi bi-arrow-left-square"></i> Back to list
-                    </a>
-                </div>
-            </form>
+  <div class="row">
+    <div class="col-12 col-md-6">
+      <p-progressSpinner *ngIf="isBusy"></p-progressSpinner>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label #name for="name" class="form-label">Name</label>
+          <input id="name" formControlName="name" type="text" class="form-control" placeholder="Load name" />
         </div>
-        <div class="col-12 col-md-6">
-            <div id="map"></div>
+        <div class="mb-3">
+          <label for="srcAddress" class="form-label">Source Address</label>
+          <div id="srcAddress"></div>
         </div>
+        <div class="mb-3">
+          <label for="dstAddress" class="form-label">Destination Address</label>
+          <div id="dstAddress"></div>
+        </div>
+        <div class="mb-3">
+          <label for="dispatchedDate" class="form-label">Dispatched Date</label>
+          <input id="dispatchedDate" formControlName="dispatchedDate" type="text" class="form-control" readonly />
+        </div>
+        <div class="mb-3">
+          <label for="deliveryCost" class="form-label">Delivery Cost</label>
+          <div class="input-group">
+            <span class="input-group-text">$$</span>
+            <input id="deliveryCost" formControlName="deliveryCost" type="number" class="form-control" min="0" />
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="distance" class="form-label">Estimated Distance</label>
+          <div class="input-group">
+            <span class="input-group-text">mi</span>
+            <input id="distance" formControlName="distance" type="number" class="form-control" min="0" />
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="dispatcherName" class="form-label">Assigned Dispatcher</label>
+          <input id="dispatcherName" formControlName="dispatcherName" type="text" class="form-control" readonly />
+        </div>
+        <div class="mb-3">
+          <label for="driver" class="form-label">Assigned Driver</label>
+          <p-autoComplete formControlName="driver" styleClass="w-100" inputStyleClass="form-control"
+            placeholder="Type a driver name" field="userName" [minLength]="3" [suggestions]="suggestedDrivers"
+            (completeMethod)="searchDriver($event)">
+          </p-autoComplete>
+        </div>
+        <div class="mb-3">
+          <label for="status" class="form-label">Status</label>
+          <p-dropdown formControlName="status" styleClass="w-100" [options]="loadStatuses" [readonly]="!editMode">
+          </p-dropdown>
+        </div>
+        <div class="mt-3">
+          <button class="btn btn-primary" type="submit">
+            <i class="bi bi-pencil-square"></i> Save
+          </button>
+          <a class="btn btn-primary ms-2" routerLink="/loads">
+            <i class="bi bi-arrow-left-square"></i> Back to list
+          </a>
+        </div>
+      </form>
     </div>
+    <div class="col-12 col-md-6">
+      <div id="routeMap"></div>
+    </div>
+  </div>
 </p-card>

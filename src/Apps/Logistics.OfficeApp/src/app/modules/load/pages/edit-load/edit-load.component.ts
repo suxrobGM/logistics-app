@@ -7,7 +7,7 @@ import { MessageService } from 'primeng/api';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { Employee, Load, LoadStatus, UserIdentity } from '@shared/models';
 import { ApiService } from '@shared/services';
-import { AppConfig } from '@configs/index';
+import { AppConfig } from '@configs';
 
 @Component({
   selector: 'app-edit-load',
@@ -137,7 +137,7 @@ export class EditLoadComponent implements OnInit {
 
   private initMapbox() {
     this.map = new mapboxgl.Map({
-      container: 'map',
+      container: 'routeMap',
       accessToken: this.accessToken,
       style: 'mapbox://styles/mapbox/streets-v11',
       center: [-74.5, 40],
