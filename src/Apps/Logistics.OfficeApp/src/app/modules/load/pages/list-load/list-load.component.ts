@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Load } from '@shared/models';
 import { ApiService } from '@shared/services';
 import { LazyLoadEvent } from 'primeng/api';
@@ -6,7 +6,8 @@ import { LazyLoadEvent } from 'primeng/api';
 @Component({
   selector: 'app-list-load',
   templateUrl: './list-load.component.html',
-  styleUrls: ['./list-load.component.scss']
+  styleUrls: ['./list-load.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ListLoadComponent implements OnInit {
   public loads: Load[];

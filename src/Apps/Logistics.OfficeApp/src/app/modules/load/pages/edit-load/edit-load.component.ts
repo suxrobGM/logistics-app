@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import * as MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
@@ -12,7 +12,8 @@ import { AppConfig } from '@configs/index';
 @Component({
   selector: 'app-edit-load',
   templateUrl: './edit-load.component.html',
-  styleUrls: ['./edit-load.component.scss']
+  styleUrls: ['./edit-load.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class EditLoadComponent implements OnInit {
   private accessToken = AppConfig.mapboxToken;
@@ -93,7 +94,6 @@ export class EditLoadComponent implements OnInit {
   }
 
   public onSubmit() {
-    console.log(this.form.value);
     const driver = this.form.value.driver as Employee;
 
     if (!driver) {
@@ -222,7 +222,6 @@ export class EditLoadComponent implements OnInit {
         this.map.on('load', () => {
           this.srcGeocoder.query(load.sourceAddress!);
           this.destGeocoder.query(load.destinationAddress!);
-          console.log('test');
           
           this.directions.setOrigin(load.sourceAddress!);
           this.directions.setDestination(load.destinationAddress!);

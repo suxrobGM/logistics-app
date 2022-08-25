@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Load } from '@shared/models';
 import { ApiService } from '@shared/services';
 import * as mapboxgl from 'mapbox-gl';
@@ -6,7 +6,8 @@ import * as mapboxgl from 'mapbox-gl';
 @Component({
   selector: 'app-dashboard-page',
   templateUrl: './dashboard-page.component.html',
-  styleUrls: ['./dashboard-page.component.scss']
+  styleUrls: ['./dashboard-page.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class DashboardPageComponent implements OnInit {
   private map!: mapboxgl.Map;
