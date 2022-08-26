@@ -11,7 +11,7 @@ const rootRoutes: Routes = [
     component: ForbiddenComponent, 
     canActivate: [AuthGuard],
     data: {
-      roles: ['admin', 'owner', 'dispatcher']
+      roles: ['app.admin', 'tenant.owner', 'tenant.dispatcher']
     }
   },
   { path: 'unauthorized', component: UnauthorizedComponent },

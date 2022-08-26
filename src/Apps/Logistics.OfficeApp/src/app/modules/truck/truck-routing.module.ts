@@ -10,7 +10,7 @@ const rootRoutes: Routes = [
     component: ListTruckComponent, 
     canActivate: [AuthGuard],
     data: {
-      roles: ['main.admin', 'tenant.owner', 'tenant.dispatcher']
+      roles: ['app.admin', 'tenant.owner', 'tenant.dispatcher']
     }
   },
   { 
@@ -18,7 +18,7 @@ const rootRoutes: Routes = [
     component: EditTruckComponent, 
     canActivate: [AuthGuard],
     data: {
-      roles: ['main.admin', 'tenant.owner', 'tenant.dispatcher']
+      roles: ['app.admin', 'tenant.owner', 'tenant.dispatcher']
     }
   },
 ];

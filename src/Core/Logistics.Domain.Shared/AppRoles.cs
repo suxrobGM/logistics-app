@@ -3,8 +3,8 @@
 public static class AppRoles
 {
     public const string Guest = "app.guest";
-    public const string Manager = "app.driver";
-    public const string Admin = "app.dispatcher";
+    public const string Manager = "app.manager";
+    public const string Admin = "app.admin";
 
     public static IEnumerable<EnumType> GetValues()
     {
