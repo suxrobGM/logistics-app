@@ -3,6 +3,10 @@ app-edit-load .p-progress-spinner {
   height: 50px !important;
 }
 
+app-edit-load .mapboxgl-ctrl-geocoder .suggestions {
+  position: inherit;
+}
+
 #routeMap {
   width: 100%;
   height: 100%;

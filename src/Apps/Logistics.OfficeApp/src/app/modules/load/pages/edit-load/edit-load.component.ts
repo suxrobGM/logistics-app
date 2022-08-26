@@ -29,8 +29,6 @@ export class EditLoadComponent implements OnInit {
   public form: FormGroup;
   public suggestedDrivers: Employee[];
   public loadStatuses: string[]
-  
-  //public hideDestAddressInput = false;
 
   constructor(
     private apiService: ApiService,
@@ -181,15 +179,9 @@ export class EditLoadComponent implements OnInit {
 
     this.srcGeocoder.on('result', (data: any) => {
       const address = data.result.place_name;
-      //this.hideDestAddressInput = false;
       this.directions.setOrigin(data.result.center);
       this.form.patchValue({srcAddress: address});
-      //this.ref.markForCheck();
     });
-
-    // srcGeocoder.on('loading', () => {
-    //   this.hideDestAddressInput = true;
-    // });
 
     this.destGeocoder.on('result', (data: any) => {
       const address = data.result.place_name;
@@ -223,7 +215,7 @@ export class EditLoadComponent implements OnInit {
           this.srcGeocoder.query(load.sourceAddress!);
           this.destGeocoder.query(load.destinationAddress!);
           
-          this.directions.setOrigin(load.sourceAddress!);
+          console.log(this.directions.setOrigin(load.sourceAddress!));
           this.directions.setDestination(load.destinationAddress!);
         });
       }
