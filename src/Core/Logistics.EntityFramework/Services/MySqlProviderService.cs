@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using MySqlConnector;
 using Logistics.Domain.Options;
 using Logistics.Domain.Services;
+using Logistics.Domain.Shared;
 
 namespace Logistics.EntityFramework.Services;
 
@@ -31,6 +32,7 @@ public class MySqlProviderService : IDatabaseProviderService
         {
             await using var databaseContext = new TenantDbContext(connectionString);
             await databaseContext.Database.MigrateAsync();
+            await AddTenantRoles(databaseContext);
             return true;
         }
         catch (Exception ex)
@@ -57,8 +59,19 @@ public class MySqlProviderService : IDatabaseProviderService
         }
         catch (DbException ex)
         {
-            _logger.LogError("Thrown exception in MySqlProviderService.DeleteDatabaseAsync(): {Exception}", ex);
+            _logger.LogError("Thrown exception in MySqlProviderService.DeleteDatabaseAsync(): {@Exception}", ex);
             return false;
         }
+    }
+
+    private async Task AddTenantRoles(DbContext context)
+    {
+        foreach (var tenantRole in TenantRoles.GetValues())
+        {
+            context.Set<TenantRole>()
+                .Add(new TenantRole(tenantRole.Value));
+        }
+
+        await context.SaveChangesAsync();
     }
 }

@@ -30,8 +30,9 @@ internal class UserProfileService : IProfileService
     public async Task GetProfileDataAsync(ProfileDataRequestContext context)
     {
         var user = await _userManager.FindByIdAsync(context.Subject.GetSubjectId());
+        var userAppRoles = await _userManager.GetRolesAsync(user);
         var principal = await _claimsFactory.CreateAsync(user);
-        var tenantId = GetTenantValue(context);
+        var tenantId = GetTenantId(context);
         var claims = principal.Claims.ToList();
         claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList();
         
@@ -48,13 +49,14 @@ internal class UserProfileService : IProfileService
             {
                 SetRequestHeader("X-Tenant", tenantId);
                 var tenantUser = await _tenantRepository.GetAsync(i => i.Id == user.Id);
+                var tenantRoles = GetTenantRoles(tenantUser);
 
-                claims.TryAdd("role", user.Role.Name == "admin" ? "admin" : tenantUser?.Role.Name);
+                claims.TryAdd("role", string.Join(',', userAppRoles, tenantRoles));
                 claims.TryAdd("tenant", tenantId);
                 break;
             }
             default:
-                claims.TryAdd("role", user.Role.Name);
+                claims.TryAdd("role", string.Join(',', userAppRoles));
                 break;
         }
 
@@ -68,7 +70,7 @@ internal class UserProfileService : IProfileService
         context.IsActive = user != null;
     }
 
-    private static string? GetTenantValue(ProfileDataRequestContext context)
+    private static string? GetTenantId(ProfileDataRequestContext context)
     {
         var tenant = context.Subject.GetTenant();
 
@@ -88,9 +90,17 @@ internal class UserProfileService : IProfileService
         var hasKey = _httpContext?.Request.Headers.ContainsKey(key);
         
         if (hasKey.HasValue)
-        {
             _httpContext?.Request.Headers.Remove(key);
-        }
+        
         _httpContext?.Request.Headers.Add(key, value);
+    }
+
+    private string GetTenantRoles(Employee? employee)
+    {
+        if (employee == null)
+            return string.Empty;
+        
+        var roleNames = employee.Roles.Select(i => i.Name);
+        return string.Join(',', roleNames);
     }
 }

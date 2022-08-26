@@ -1,23 +1,32 @@
-﻿namespace Logistics.Application.Handlers.Queries;
+﻿using Logistics.Domain.Shared;
+
+namespace Logistics.Application.Handlers.Queries;
 
 public class GetDriversHandler : RequestHandlerBase<GetDriversQuery, PagedDataResult<EmployeeDto>>
 {
     private readonly IMainRepository<User> _userRepository;
     private readonly ITenantRepository<Employee> _employeeRepository;
+    private readonly ITenantRepository<TenantRole> _roleRepository;
     
     public GetDriversHandler(
         IMainRepository<User> userRepository,
-        ITenantRepository<Employee> employeeRepository)
+        ITenantRepository<Employee> employeeRepository,
+        ITenantRepository<TenantRole> roleRepository)
     {
         _userRepository = userRepository;
         _employeeRepository = employeeRepository;
+        _roleRepository = roleRepository;
     }
     
-    protected override Task<PagedDataResult<EmployeeDto>> HandleValidated(GetDriversQuery request, CancellationToken cancellationToken)
+    protected override async Task<PagedDataResult<EmployeeDto>> HandleValidated(GetDriversQuery request, CancellationToken cancellationToken)
     {
         var tenantId = _employeeRepository.CurrentTenant!.Id;
         var totalItems = _employeeRepository.GetQuery().Count();
         var usersQuery = _userRepository.GetQuery();
+        var driverRole = await _roleRepository.GetAsync(i => i.Name == TenantRoles.Driver);
+
+        if (driverRole == null)
+            return PagedDataResult<EmployeeDto>.CreateError("Could not found the driver role");
 
         if (!string.IsNullOrEmpty(request.Search))
         {
@@ -33,11 +42,10 @@ public class GetDriversHandler : RequestHandlerBase<GetDriversQuery, PagedDataRe
         var userIds = filteredUsers.Keys.ToArray();
         
         var employeesDto = _employeeRepository.GetQuery()
-            .Where(i => userIds.Contains(i.Id) && i.Role.Name == EmployeeRole.Driver)
+            .Where(i => userIds.Contains(i.Id) && i.Roles.Contains(driverRole))
             .Select(i => new EmployeeDto
             {
                 Id = i.Id,
-                Role = i.Role.Name,
                 JoinedDate = i.JoinedDate
             })
             .ToArray();
@@ -55,7 +63,7 @@ public class GetDriversHandler : RequestHandlerBase<GetDriversQuery, PagedDataRe
         }
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
-        return Task.FromResult(new PagedDataResult<EmployeeDto>(employeesDto, totalItems, totalPages));
+        return new PagedDataResult<EmployeeDto>(employeesDto, totalItems, totalPages);
     }
 
     protected override bool Validate(GetDriversQuery request, out string errorDescription)

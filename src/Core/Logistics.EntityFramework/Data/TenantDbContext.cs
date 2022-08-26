@@ -42,10 +42,17 @@ public class TenantDbContext : DbContext
     {
         base.OnModelCreating(builder);
 
+        builder.Entity<TenantRole>(entity =>
+        {
+            entity.ToTable("roles");
+        });
+
         builder.Entity<Employee>(entity =>
         {
             entity.ToTable("employees");
-            entity.OwnsOne(m => m.Role);
+            entity.HasMany(i => i.Roles)
+                .WithMany(i => i.Employees)
+                .UsingEntity("employee_roles");
         });
 
         builder.Entity<Truck>(entity =>

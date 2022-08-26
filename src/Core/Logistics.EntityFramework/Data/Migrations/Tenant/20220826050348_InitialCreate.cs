@@ -18,14 +18,26 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    JoinedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    Role_Name = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Role_Id = table.Column<int>(type: "int", nullable: false)
+                    JoinedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_employees", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "roles",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Name = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_roles", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -47,6 +59,33 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                         column: x => x.DriverId,
                         principalTable: "employees",
                         principalColumn: "Id");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "employee_roles",
+                columns: table => new
+                {
+                    EmployeesId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    RolesId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_employee_roles", x => new { x.EmployeesId, x.RolesId });
+                    table.ForeignKey(
+                        name: "FK_employee_roles_employees_EmployeesId",
+                        column: x => x.EmployeesId,
+                        principalTable: "employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_employee_roles_roles_RolesId",
+                        column: x => x.RolesId,
+                        principalTable: "roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -103,6 +142,11 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
+                name: "IX_employee_roles_RolesId",
+                table: "employee_roles",
+                column: "RolesId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_loads_AssignedDispatcherId",
                 table: "loads",
                 column: "AssignedDispatcherId");
@@ -133,7 +177,13 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "employee_roles");
+
+            migrationBuilder.DropTable(
                 name: "loads");
+
+            migrationBuilder.DropTable(
+                name: "roles");
 
             migrationBuilder.DropTable(
                 name: "trucks");

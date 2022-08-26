@@ -39,7 +39,7 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery
             .Select(i => new EmployeeDto
             {
                 Id = i.Id,
-                Role = i.Role.Name,
+                //Role = i.Role2.Name,
                 JoinedDate = i.JoinedDate
             })
             .ToArray();

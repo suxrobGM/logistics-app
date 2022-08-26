@@ -2,18 +2,21 @@
 
 internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeCommand, DataResult>
 {
-    private readonly ITenantRepository<Employee> _employeeRepository;
     private readonly IMainRepository<User> _userRepository;
     private readonly IMainRepository<Tenant> _tenantRepository;
+    private readonly ITenantRepository<Employee> _employeeRepository;
+    private readonly ITenantRepository<TenantRole> _roleRepository;
 
     public CreateEmployeeHandler(
-        ITenantRepository<Employee> employeeRepository,
         IMainRepository<User> userRepository,
-        IMainRepository<Tenant> tenantRepository)
+        IMainRepository<Tenant> tenantRepository,
+        ITenantRepository<Employee> employeeRepository,
+            ITenantRepository<TenantRole> roleRepository)
     {
         _employeeRepository = employeeRepository;
         _userRepository = userRepository;
         _tenantRepository = tenantRepository;
+        _roleRepository = roleRepository;
     }
 
     protected override async Task<DataResult> HandleValidated(
@@ -22,9 +25,13 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
         var existingEmployee = await _employeeRepository.GetAsync(i => i.Id == request.Id);
         var user = await _userRepository.GetAsync(i => i.Id == request.Id);
         var tenant = await _tenantRepository.GetAsync(i => i.Name == request.TenantId || i.Id == request.TenantId);
+        var tenantRole = await _roleRepository.GetAsync(i => i.Name == request.Role);
         
         if (tenant == null)
             return DataResult.CreateError($"Could not find the specified tenant '{request.TenantId}'");
+        
+        if (tenantRole == null)
+            return DataResult.CreateError("Invalid role name");
         
         if (user == null)
             return DataResult.CreateError("Could not find the specified user");
@@ -36,9 +43,10 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
 
         var employee = new Employee()
         {
-            Id = request.Id!,
-            Role = EmployeeRole.Get(request.Role)!
+            Id = request.Id!
         };
+
+        employee.Roles.Add(tenantRole);
         await _employeeRepository.AddAsync(employee);
         _userRepository.Update(user);
         
@@ -58,10 +66,6 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
         else if (string.IsNullOrEmpty(request.TenantId))
         {
             errorDescription = "TenantId is an empty string";
-        }
-        else if (EmployeeRole.Get(request.Role)! == null!)
-        {
-            errorDescription = "Invalid role name";
         }
 
         return string.IsNullOrEmpty(errorDescription);

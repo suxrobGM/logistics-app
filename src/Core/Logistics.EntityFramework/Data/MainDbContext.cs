@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Logistics.EntityFramework.Helpers;
+using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.EntityFramework.Data;
 
-public class MainDbContext : IdentityDbContext<User>
+public class MainDbContext : IdentityDbContext<User, AppRole, string>
 {
     private readonly string _connectionString;
 
@@ -38,7 +39,16 @@ public class MainDbContext : IdentityDbContext<User>
         builder.Entity<User>(entity =>
         {
             entity.ToTable("users");
-            entity.OwnsOne(m => m.Role);
+        });
+        
+        builder.Entity<AppRole>(entity =>
+        {
+            entity.ToTable("roles");
+        });
+        
+        builder.Entity<IdentityUserRole<string>>(entity =>
+        {
+            entity.ToTable("user_roles");
         });
     }
 }

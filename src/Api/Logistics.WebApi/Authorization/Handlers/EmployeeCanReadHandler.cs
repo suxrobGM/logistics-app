@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.ValueObjects;
+﻿using Logistics.Domain.Shared;
 using Logistics.WebApi.Authorization.Requirements;
 
 namespace Logistics.WebApi.Authorization.Handlers;
@@ -7,10 +7,10 @@ public class EmployeeCanReadHandler : AuthorizationHandler<EmployeeCanReadRequir
 {
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, EmployeeCanReadRequirement requirement)
     {
-        if (context.User.IsInRole(UserRole.Admin) ||
-            context.User.IsInRole(EmployeeRole.Owner) ||
-            context.User.IsInRole(EmployeeRole.Manager) ||
-            context.User.IsInRole(EmployeeRole.Dispatcher))
+        if (context.User.IsInRole(AppRoles.Admin) ||
+            context.User.IsInRole(TenantRoles.Owner) ||
+            context.User.IsInRole(TenantRoles.Manager) ||
+            context.User.IsInRole(TenantRoles.Dispatcher))
         {
             context.Succeed(requirement);
         }

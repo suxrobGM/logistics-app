@@ -1,11 +1,17 @@
-﻿namespace Logistics.Application.Handlers.Queries;
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace Logistics.Application.Handlers.Queries;
 
 internal sealed class GetUserByIdHandler : RequestHandlerBase<GetUserByIdQuery, DataResult<UserDto>>
 {
     private readonly IMainRepository<User> _userRepository;
+    private readonly UserManager<User> _userManager;
 
-    public GetUserByIdHandler(IMainRepository<User> userRepository)
+    public GetUserByIdHandler(
+        IMainRepository<User> userRepository,
+        UserManager<User> userManager)
     {
+        _userManager = userManager;
         _userRepository = userRepository;
     }
 
@@ -14,17 +20,17 @@ internal sealed class GetUserByIdHandler : RequestHandlerBase<GetUserByIdQuery, 
         var userEntity = await _userRepository.GetAsync(request.Id!);
 
         if (userEntity == null)
-        {
             return DataResult<UserDto>.CreateError("Could not find the specified user");
-        }
 
+        var userRoles = await _userManager.GetRolesAsync(userEntity);
+        
         var user = new UserDto
         {
             Id = userEntity.Id,
             UserName = userEntity.UserName!,
             FirstName = userEntity.FirstName,
             LastName = userEntity.LastName,
-            Role = userEntity.Role.Name,
+            Roles = userRoles,
             Email = userEntity.Email,
             PhoneNumber = userEntity.PhoneNumber
         };

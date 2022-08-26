@@ -33,7 +33,7 @@ internal sealed class GetEmployeeByIdHandler : RequestHandlerBase<GetEmployeeByI
             LastName = userEntity.LastName,
             Email = userEntity.Email,
             PhoneNumber = userEntity.PhoneNumber,
-            Role = employeeEntity.Role.Name,
+            //Role = employeeEntity.Role2.Name,
             JoinedDate = employeeEntity.JoinedDate
         };
 

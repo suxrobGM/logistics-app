@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.EntityFramework.Data.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20220806203605_InitialCreate")]
+    [Migration("20220826050348_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,6 +20,21 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
             modelBuilder
                 .HasAnnotation("ProductVersion", "6.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            modelBuilder.Entity("employee_roles", b =>
+                {
+                    b.Property<string>("EmployeesId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("RolesId")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("EmployeesId", "RolesId");
+
+                    b.HasIndex("RolesId");
+
+                    b.ToTable("employee_roles");
+                });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
                 {
@@ -89,6 +104,19 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.ToTable("loads", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.TenantRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("roles", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
                 {
                     b.Property<string>("Id")
@@ -108,29 +136,18 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.ToTable("trucks", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
+            modelBuilder.Entity("employee_roles", b =>
                 {
-                    b.OwnsOne("Logistics.Domain.ValueObjects.EmployeeRole", "Role", b1 =>
-                        {
-                            b1.Property<string>("EmployeeId")
-                                .HasColumnType("varchar(255)");
+                    b.HasOne("Logistics.Domain.Entities.Employee", null)
+                        .WithMany()
+                        .HasForeignKey("EmployeesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                            b1.Property<int>("Id")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasColumnType("longtext");
-
-                            b1.HasKey("EmployeeId");
-
-                            b1.ToTable("employees");
-
-                            b1.WithOwner()
-                                .HasForeignKey("EmployeeId");
-                        });
-
-                    b.Navigation("Role")
+                    b.HasOne("Logistics.Domain.Entities.TenantRole", null)
+                        .WithMany()
+                        .HasForeignKey("RolesId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

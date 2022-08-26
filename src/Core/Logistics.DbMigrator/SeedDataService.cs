@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Services;
-using Logistics.Domain.ValueObjects;
+using Logistics.Domain.Shared;
 using Logistics.EntityFramework.Data;
 
 namespace Logistics.DbMigrator;
@@ -39,6 +39,7 @@ public class SeedDataService : BackgroundService
             await MigrateDatabaseAsync(tenantDbContext);
             _logger.LogInformation("Successfully initialized the tenant database");
 
+            await AddAppRolesAsync(scope.ServiceProvider);
             await AddDefaultAdminAsync(scope.ServiceProvider);
             await AddDefaultTenantAsync(scope.ServiceProvider);
 
@@ -58,35 +59,49 @@ public class SeedDataService : BackgroundService
         await databaseContext.Database.MigrateAsync();
     }
 
+    private async Task AddAppRolesAsync(IServiceProvider serviceProvider)
+    {
+        var roleManager = serviceProvider.GetRequiredService<RoleManager<AppRole>>();
+        var appRoles = AppRoles.GetValues();
+
+        foreach (var appRole in appRoles)
+        {
+            var result = await roleManager.CreateAsync(new AppRole(appRole.Value));
+
+            if (result.Succeeded)
+                _logger.LogInformation("Added the '{RoleName}' role", appRole.Value);
+        }
+    }
+
     private async Task AddDefaultAdminAsync(IServiceProvider serviceProvider)
     {
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
         var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
+
         var adminDto = configuration.GetSection("DefaultAdmin").Get<UserDto>();
         var admin = await userManager.FindByEmailAsync(adminDto.Email);
-
+        
         if (admin is null)
         {
             admin = new User
             {
                 UserName = adminDto.UserName,
                 Email = adminDto.Email,
-                EmailConfirmed = true,
-                Role = UserRole.Admin
+                EmailConfirmed = true
             };
 
             var result = await userManager.CreateAsync(admin, adminDto.Password);
             if (!result.Succeeded)
-            {
                 throw new Exception(result.Errors.First().Description);
-            }
 
             _logger.LogInformation("Created the default admin");
         }
-        else if (admin.Role != UserRole.Admin)
+
+        var hasAdminRole = await userManager.IsInRoleAsync(admin, AppRoles.Admin);
+        
+        if (!hasAdminRole)
         {
-            admin.Role = UserRole.Admin;
-            await userManager.UpdateAsync(admin);
+            await userManager.AddToRoleAsync(admin, AppRoles.Admin);
             _logger.LogInformation("Added 'admin' role to the default admin");
         }
     }
@@ -131,15 +146,16 @@ public class SeedDataService : BackgroundService
             {
                 UserName = testUser.UserName,
                 Email = testUser.Email,
-                EmailConfirmed = true,
-                Role = UserRole.Guest,
+                EmailConfirmed = true
             };
-
+            
             try
             {
                 var result = await userManager.CreateAsync(user, testUser.Password);
                 if (!result.Succeeded)
                     throw new Exception(result.Errors.First().Description);
+                
+                await userManager.AddToRoleAsync(user, AppRoles.Guest);
             }
             finally
             {

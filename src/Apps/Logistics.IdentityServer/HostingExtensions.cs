@@ -20,7 +20,7 @@ internal static class HostingExtensions
         builder.Services.AddInfrastructureLayer(builder.Configuration, "LocalMainDatabase");
         builder.Services.AddHttpContextAccessor();
 
-        builder.Services.AddIdentity<User, IdentityRole>(options =>
+        builder.Services.AddIdentity<User, AppRole>(options =>
         {
             options.Password.RequiredLength = 8;
             options.Password.RequireUppercase = false;

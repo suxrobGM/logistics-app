@@ -16,4 +16,6 @@ public class PagedDataResult<T> : DataResult<T>
     public T[]? Items { get; set; }
     public int ItemsCount { get; set; }
     public int PagesCount { get; set; }
+    
+    public new static PagedDataResult<T> CreateError(string error) => new() { Error = error };
 }

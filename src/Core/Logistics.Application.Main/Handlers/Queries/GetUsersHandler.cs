@@ -4,7 +4,8 @@ internal sealed class GetUsersHandler : RequestHandlerBase<GetUsersQuery, PagedD
 {
     private readonly IMainRepository<User> _userRepository;
 
-    public GetUsersHandler(IMainRepository<User> userRepository)
+    public GetUsersHandler(
+        IMainRepository<User> userRepository)
     {
         _userRepository = userRepository;
     }
@@ -21,7 +22,7 @@ internal sealed class GetUsersHandler : RequestHandlerBase<GetUsersQuery, PagedD
             itemsQuery = _userRepository.GetQuery(new SearchUsers(request.Search));
         }
 
-        var items = itemsQuery
+        var users = itemsQuery
             .OrderBy(i => i.Id)
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
@@ -31,14 +32,13 @@ internal sealed class GetUsersHandler : RequestHandlerBase<GetUsersQuery, PagedD
                 UserName = i.UserName!,
                 FirstName = i.FirstName,
                 LastName = i.LastName,
-                Role = i.Role.Name,
                 Email = i.Email,
                 PhoneNumber = i.PhoneNumber
             })
             .ToArray();
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
-        return Task.FromResult(new PagedDataResult<UserDto>(items, totalItems, totalPages));
+        return Task.FromResult(new PagedDataResult<UserDto>(users, totalItems, totalPages));
     }
 
     protected override bool Validate(GetUsersQuery request, out string errorDescription)

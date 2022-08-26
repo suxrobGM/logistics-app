@@ -8,5 +8,5 @@ public interface IAggregateRoot
     /// <summary>
     /// Primary key
     /// </summary>
-    public string Id { get; set; }
+    string Id { get; set; }
 }
