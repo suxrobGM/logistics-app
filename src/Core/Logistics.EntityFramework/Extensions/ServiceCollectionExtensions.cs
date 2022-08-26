@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Logistics.Domain.Options;
 using Logistics.Domain.Services;
-using Logistics.Domain.Shared;
 using Logistics.EntityFramework.Repositories;
 using Logistics.EntityFramework.Helpers;
 using Logistics.EntityFramework.Services;
@@ -31,9 +31,9 @@ public static class ServiceCollectionExtensions
         return services;
     }
     
-    public static IServiceCollection AddIdentity(this IServiceCollection services)
+    public static IdentityBuilder AddIdentity(this IServiceCollection services)
     {
-        services.AddIdentityCore<User>(options =>
+        var builder = services.AddIdentityCore<User>(options =>
         {
             options.Password.RequiredLength = 8;
             options.Password.RequireUppercase = false;
@@ -44,7 +44,7 @@ public static class ServiceCollectionExtensions
         })
         .AddRoles<AppRole>()
         .AddEntityFrameworkStores<MainDbContext>();
-        return services;
+        return builder;
     }
     
     public static IServiceCollection AddInfrastructureLayer(
@@ -54,7 +54,7 @@ public static class ServiceCollectionExtensions
         string tenantsConfigSection = "TenantsConfig")
     {
         var connectionString = configuration.GetConnectionString(connectionStringName);
-
+        
         services.AddIdentity();
         services.AddDatabases(configuration,
             o => DbContextHelpers.ConfigureMySql(connectionString, o),

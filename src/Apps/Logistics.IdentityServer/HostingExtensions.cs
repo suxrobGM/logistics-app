@@ -1,10 +1,9 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Logging;
 using Duende.IdentityServer;
 using Serilog;
 using Logistics.Application.Shared;
 using Logistics.EntityFramework;
-using Logistics.EntityFramework.Data;
 using Logistics.IdentityServer.Services;
 
 namespace Logistics.IdentityServer;
@@ -13,23 +12,17 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
-        IdentityModelEventSource.ShowPII = true;
         AddSecretsJson(builder.Configuration);
         builder.Services.AddRazorPages();
         builder.Services.AddSharedApplicationLayer(builder.Configuration, "EmailConfig", "GoogleRecaptcha");
         builder.Services.AddInfrastructureLayer(builder.Configuration, "LocalMainDatabase");
         builder.Services.AddHttpContextAccessor();
-
-        builder.Services.AddIdentity<User, AppRole>(options =>
-        {
-            options.Password.RequiredLength = 8;
-            options.Password.RequireUppercase = false;
-            options.Password.RequireNonAlphanumeric = false;
-            options.User.AllowedUserNameCharacters = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789_.";
-            options.User.RequireUniqueEmail = true;
-        })
-        .AddEntityFrameworkStores<MainDbContext>()
-        .AddDefaultTokenProviders();
+        
+        builder.Services.AddIdentity()
+            .AddSignInManager()
+            .AddDefaultTokenProviders();
+        
+        AddAuthSchemes(builder.Services);
 
         builder.Services
             .AddIdentityServer(options =>
@@ -92,5 +85,41 @@ internal static class HostingExtensions
     {
         var path = Path.Combine(AppContext.BaseDirectory, "secrets.json");
         configuration.AddJsonFile(path, true);
+    }
+
+    private static void AddAuthSchemes(IServiceCollection services)
+    {
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+            options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+            options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+        })
+        .AddCookie(IdentityConstants.ApplicationScheme, o =>
+        {
+            o.LoginPath = new PathString("/Account/Login");
+            o.Events = new CookieAuthenticationEvents()
+            {
+                OnValidatePrincipal = SecurityStampValidator.ValidatePrincipalAsync
+            };
+        })
+        .AddCookie(IdentityConstants.ExternalScheme, o =>
+        {
+            o.Cookie.Name = IdentityConstants.ExternalScheme;
+            o.ExpireTimeSpan = TimeSpan.FromMinutes(5.0);
+        })
+        .AddCookie(IdentityConstants.TwoFactorRememberMeScheme, o =>
+        {
+            o.Cookie.Name = IdentityConstants.TwoFactorRememberMeScheme;
+            o.Events = new CookieAuthenticationEvents()
+            {
+                OnValidatePrincipal = SecurityStampValidator.ValidateAsync<ITwoFactorSecurityStampValidator>
+            };
+        })
+        .AddCookie(IdentityConstants.TwoFactorUserIdScheme, o =>
+        {
+            o.Cookie.Name = IdentityConstants.TwoFactorUserIdScheme;
+            o.ExpireTimeSpan = TimeSpan.FromMinutes(5.0);
+        });
     }
 }
