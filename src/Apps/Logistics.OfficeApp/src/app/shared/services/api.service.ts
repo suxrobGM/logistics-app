@@ -213,6 +213,21 @@ export class ApiService {
 
   //#endregion
   
+  public parseSortProperty(sortField?: string, sortOrder?: number) {
+    if (!sortOrder) {
+      sortOrder = 1;
+    }
+
+    if (!sortField) {
+      sortField = '';
+    }
+
+    if (sortOrder <= -1) {
+      return `-${sortField}`;
+    } else {
+      return sortField;
+    }
+  }
 
   private handleError(responseData: any): Observable<any> {
     const errorMessage = responseData.error.error;

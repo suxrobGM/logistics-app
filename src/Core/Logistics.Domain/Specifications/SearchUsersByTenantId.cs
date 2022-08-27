@@ -2,9 +2,11 @@
 
 public class SearchUsersByTenantId : BaseSpecification<User>
 {
-    public SearchUsersByTenantId(string? search, string tenantId, string? orderBy = "JoinedDate")
+    public SearchUsersByTenantId(string? search, string tenantId, string? orderBy = "JoinedDate", bool descending = false)
     {
-        OrderBy = i => orderBy == "UserName" ? i.UserName : i.JoinedDate;
+        orderBy = orderBy?.ToLower();
+        Descending = descending;
+        OrderBy = i => orderBy == "username" ? i.UserName : i.JoinedDate;
         
         if (string.IsNullOrEmpty(search))
             return;

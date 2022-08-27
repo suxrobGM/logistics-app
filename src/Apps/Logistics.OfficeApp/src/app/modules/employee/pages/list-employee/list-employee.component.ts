@@ -47,22 +47,19 @@ export class ListEmployeeComponent implements OnInit {
   }
 
   public load(event: LazyLoadEvent) {
-    console.log(event);
-    
     this.isBusy = true;
     const page = event.first! / event.rows! + 1;
-    const sortField = event.sortField ?? '';
+    const sortField = this.apiService.parseSortProperty(event.sortField, event.sortOrder);
     
     this.apiService.getEmployees('', sortField, page).subscribe(result => {
-      if (result.success && result.items) {
-        //console.log(page);
-        //console.log(result.items);
-        
-        this.employees = result.items.sort();
+      if (result.success && result.items) {        
+        this.employees = result.items;
         this.totalRecords = result.itemsCount!;
       }
 
       this.isBusy = false;
     });
   }
+
+  
 }

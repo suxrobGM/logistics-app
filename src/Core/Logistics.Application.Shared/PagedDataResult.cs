@@ -8,14 +8,14 @@ public class PagedDataResult<T> : IDataResult
     {
     }
 
-    public PagedDataResult(T[] items, int itemsCount, int pagesCount)
+    public PagedDataResult(IEnumerable<T> items, int itemsCount, int pagesCount)
     {
         Items = items;
         ItemsCount = itemsCount;
         PagesCount = pagesCount;
     }
 
-    public T[] Items { get; set; } = Array.Empty<T>();
+    public IEnumerable<T> Items { get; set; } = new List<T>();
     public int ItemsCount { get; set; }
     public int PagesCount { get; set; }
 
