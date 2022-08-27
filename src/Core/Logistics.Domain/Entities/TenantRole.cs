@@ -2,16 +2,19 @@
 
 public class TenantRole : Entity, ITenantEntity
 {
-    public TenantRole()
-    {
-    }
-    
     public TenantRole(string name)
     {
+        if (!name.StartsWith("tenant."))
+            name = $"tenant.{name}";
+        
         Name = name;
+        DisplayName = name;
+        NormalizedName = name.ToUpper();
     }
     
     public string? Name { get; set; }
+    public string? DisplayName { get; set; }
+    public string? NormalizedName { get; set; }
     public virtual IList<Employee> Employees { get; set; } = new List<Employee>();
 }
 

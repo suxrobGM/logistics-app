@@ -2,7 +2,6 @@
 
 public static class TenantRoles
 {
-    public const string Guest = AppRoles.Guest;
     public const string Driver = "tenant.driver";
     public const string Dispatcher = "tenant.dispatcher";
     public const string Manager = "tenant.manager";
@@ -10,7 +9,6 @@ public static class TenantRoles
     
     public static IEnumerable<EnumType> GetValues()
     {
-        yield return new EnumType(Guest, "Guest");
         yield return new EnumType(Driver, "Driver");
         yield return new EnumType(Dispatcher, "Dispatcher");
         yield return new EnumType(Manager, "Manager");

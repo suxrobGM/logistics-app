@@ -68,8 +68,12 @@ public class MySqlProviderService : IDatabaseProviderService
     {
         foreach (var tenantRole in TenantRoles.GetValues())
         {
-            context.Set<TenantRole>()
-                .Add(new TenantRole(tenantRole.Value));
+            var role = new TenantRole(tenantRole.Value)
+            {
+                DisplayName = tenantRole.DisplayName
+            };
+            
+            context.Set<TenantRole>().Add(role);
         }
 
         await context.SaveChangesAsync();

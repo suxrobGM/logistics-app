@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { MessageService } from 'primeng/api';
-import { Employee, EmployeeRole, User } from '@shared/models';
+import { Employee, EmployeeRole, Role, User } from '@shared/models';
 import { ApiService } from '@shared/services';
 
 @Component({
@@ -13,7 +13,7 @@ import { ApiService } from '@shared/services';
 export class AddEmployeeComponent implements OnInit {
   public suggestedUsers: User[];
   public form: FormGroup;
-  public roles: string[];
+  public roles: Role[];
 
   constructor(
     private apiService: ApiService,
@@ -25,23 +25,15 @@ export class AddEmployeeComponent implements OnInit {
 
     this.form = new FormGroup({
       'user': new FormControl('', Validators.required),
-      'role': new FormControl(EmployeeRole.Guest, Validators.required),
+      'role': new FormControl('', Validators.required),
     });
 
-    let currentUserRole = EmployeeRole.Owner as string;
-    oidcSecurityService.getUserData().subscribe((userData: User) => currentUserRole = userData.role!);
-
-    for (const role in EmployeeRole) {
-      if (currentUserRole !== 'admin' && role === EmployeeRole.Owner) {
-        continue;
-      }
-      else {
-        this.roles.push(role);
-      }
-    }
+    // let currentUserRole = EmployeeRole.Owner as string;
+    // oidcSecurityService.getUserData().subscribe((userData: User) => currentUserRole = userData.role!);
   }
 
   public ngOnInit(): void {
+    this.fetchRoles();
   }
 
   public searchUser(event: any) {
@@ -71,5 +63,13 @@ export class AddEmployeeComponent implements OnInit {
         this.form.reset();
       }
     });
+  }
+
+  private fetchRoles() {
+    this.apiService.getRoles().subscribe(result => {
+      if (result.success && result.items) {
+        this.roles.push(...result.items);
+      }
+    })
   }
 }

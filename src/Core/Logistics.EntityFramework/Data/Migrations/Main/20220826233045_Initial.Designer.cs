@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.EntityFramework.Data.Migrations.Main
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20220826050405_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20220826233045_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,6 +28,9 @@ namespace Logistics.EntityFramework.Data.Migrations.Main
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("DisplayName")
                         .HasColumnType("longtext");
 
                     b.Property<string>("Name")

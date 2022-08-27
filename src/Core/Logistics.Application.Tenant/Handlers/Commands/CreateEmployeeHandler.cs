@@ -11,7 +11,7 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
         IMainRepository<User> userRepository,
         IMainRepository<Tenant> tenantRepository,
         ITenantRepository<Employee> employeeRepository,
-            ITenantRepository<TenantRole> roleRepository)
+        ITenantRepository<TenantRole> roleRepository)
     {
         _employeeRepository = employeeRepository;
         _userRepository = userRepository;
@@ -29,10 +29,7 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
         
         if (tenant == null)
             return DataResult.CreateError($"Could not find the specified tenant '{request.TenantId}'");
-        
-        if (tenantRole == null)
-            return DataResult.CreateError("Invalid role name");
-        
+
         if (user == null)
             return DataResult.CreateError("Could not find the specified user");
         
@@ -46,7 +43,11 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
             Id = request.Id!
         };
 
-        employee.Roles.Add(tenantRole);
+        if (tenantRole != null)
+        {
+            employee.Roles.Add(tenantRole);
+        }
+        
         await _employeeRepository.AddAsync(employee);
         _userRepository.Update(user);
         

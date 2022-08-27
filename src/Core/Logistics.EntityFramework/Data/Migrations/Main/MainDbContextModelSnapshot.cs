@@ -28,6 +28,9 @@ namespace Logistics.EntityFramework.Data.Migrations.Main
                         .IsConcurrencyToken()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Name")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");

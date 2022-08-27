@@ -17,14 +17,15 @@ internal sealed class UpdateEmployeeHandler : RequestHandlerBase<UpdateEmployeeC
     {
         var employeeEntity = await _employeeRepository.GetAsync(request.Id!);
         var tenantRole = await _roleRepository.GetAsync(i => i.Name == request.Role);
-        
-        if (tenantRole == null)
-            return DataResult.CreateError("Invalid role name");
 
         if (employeeEntity == null)
             return DataResult.CreateError("Could not find the specified user");
+
+        if (tenantRole != null)
+        {
+            employeeEntity.Roles.Add(tenantRole);
+        }
         
-        employeeEntity.Roles.Add(tenantRole);
         _employeeRepository.Update(employeeEntity);
         await _employeeRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();

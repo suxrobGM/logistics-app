@@ -1,10 +1,19 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MessageService } from 'primeng/api';
-import { catchError, Observable, of, retry, throwError } from 'rxjs';
+import { catchError, Observable, of, retry } from 'rxjs';
 import { AppConfig } from '../../configs/app.config';
 import { TenantService  } from './tenant.service';
-import { DataResult, Employee, PagedDataResult, Tenant, Truck, User, Load } from '../models';
+import { 
+  DataResult, 
+  Employee, 
+  PagedDataResult, 
+  Tenant, 
+  Truck, 
+  User, 
+  Load, 
+  Role 
+} from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -191,6 +200,19 @@ export class ApiService {
   }
 
   //#endregion
+
+
+  //#region Tenant Role API
+
+  getRoles(searchQuery = '', page = 1, pageSize = 10): Observable<PagedDataResult<Role>> {  
+    const url = `${this.host}/tenantRole/list?search=${searchQuery}&page=${page}&pageSize=${pageSize}`;
+    return this.httpClient
+      .get<PagedDataResult<Role>>(url)
+      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+  }
+
+  //#endregion
+  
 
   private handleError(responseData: any): Observable<any> {
     const errorMessage = responseData.error.error;

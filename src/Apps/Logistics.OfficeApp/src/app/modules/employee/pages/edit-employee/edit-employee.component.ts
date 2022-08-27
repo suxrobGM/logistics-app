@@ -29,7 +29,7 @@ export class EditEmployeeComponent implements OnInit {
       userName: new FormControl({value: '', disabled: true}, Validators.required),
       firstName: new FormControl({value: '', disabled: true}),
       lastName: new FormControl({value: '', disabled: true}),
-      role: new FormControl('guest', Validators.required),
+      role: new FormControl('', Validators.required),
     });
 
     let currentUserRole = EmployeeRole.Owner as string;

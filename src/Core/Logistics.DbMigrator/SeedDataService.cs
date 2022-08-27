@@ -66,7 +66,11 @@ public class SeedDataService : BackgroundService
 
         foreach (var appRole in appRoles)
         {
-            var result = await roleManager.CreateAsync(new AppRole(appRole.Value));
+            var role = new AppRole(appRole.Value)
+            {
+                DisplayName = appRole.DisplayName
+            };
+            var result = await roleManager.CreateAsync(role);
 
             if (result.Succeeded)
                 _logger.LogInformation("Added the '{RoleName}' role", appRole.Value);
@@ -154,8 +158,6 @@ public class SeedDataService : BackgroundService
                 var result = await userManager.CreateAsync(user, testUser.Password);
                 if (!result.Succeeded)
                     throw new Exception(result.Errors.First().Description);
-                
-                await userManager.AddToRoleAsync(user, AppRoles.Guest);
             }
             finally
             {

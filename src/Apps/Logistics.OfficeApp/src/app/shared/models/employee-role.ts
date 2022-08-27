@@ -1,6 +1,5 @@
 export enum EmployeeRole {
-  Guest = 'guest',
-  Driver = 'driver',
-  Dispatcher = 'dispatcher',
-  Owner = 'owner'
+  Driver = 'tenant.driver',
+  Dispatcher = 'tenant.dispatcher',
+  Owner = 'tenant.owner'
 }

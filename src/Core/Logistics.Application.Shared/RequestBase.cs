@@ -2,6 +2,6 @@
 
 namespace Logistics.Application.Shared;
 
-public abstract class RequestBase<T> : IRequest<T> where T : DataResult
+public abstract class RequestBase<T> : IRequest<T> where T : IDataResult
 {
 }

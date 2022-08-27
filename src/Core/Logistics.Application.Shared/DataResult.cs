@@ -2,15 +2,13 @@ using System.Text.Json.Serialization;
 
 namespace Logistics.Application.Shared;
 
-public class DataResult
+public class DataResult : IDataResult
 {
-    private static readonly DataResult _success = new();
-
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? Error { get; init; }
     public bool Success => string.IsNullOrEmpty(Error);
 
-    public static DataResult CreateSuccess() => _success;
+    public static DataResult CreateSuccess() => new();
     public static DataResult CreateError(string error) => new() { Error = error };
 }
     

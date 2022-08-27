@@ -107,7 +107,13 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
 
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("NormalizedName")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");

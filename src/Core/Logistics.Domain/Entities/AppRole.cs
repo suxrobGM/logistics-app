@@ -4,13 +4,15 @@ namespace Logistics.Domain.Entities;
 
 public class AppRole : IdentityRole, IAggregateRoot
 {
-    public AppRole()
-    {
-    }
-    
     public AppRole(string name): base(name)
     {
+        if (!name.StartsWith("app."))
+            Name = $"app.{name}";
+        
+        DisplayName = Name;
     }
+    
+    public string? DisplayName { get; set; }
 }
 
 internal class AppRoleComparer : IEqualityComparer<AppRole>

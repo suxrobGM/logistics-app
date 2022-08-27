@@ -2,9 +2,11 @@
 
 public class Employee : Entity, ITenantEntity
 {
+    /// <summary>
+    /// When employee joined to this tenant
+    /// </summary>
     public DateTime JoinedDate { get; set; } = DateTime.UtcNow;
-    //public EmployeeRole Role2 { get; set; } = EmployeeRole.Guest;
-    
+
     /// <summary>
     /// Dispatched loads by dispatchers
     /// </summary>

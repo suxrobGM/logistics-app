@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.EntityFramework.Data.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20220826050348_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20220826233009_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -109,7 +109,13 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
 
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("NormalizedName")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");

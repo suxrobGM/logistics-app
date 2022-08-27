@@ -1,6 +1,8 @@
-﻿namespace Logistics.Application.Shared;
+﻿using System.Text.Json.Serialization;
 
-public class PagedDataResult<T> : DataResult<T>
+namespace Logistics.Application.Shared;
+
+public class PagedDataResult<T> : IDataResult
 {
     public PagedDataResult()
     {
@@ -13,9 +15,14 @@ public class PagedDataResult<T> : DataResult<T>
         PagesCount = pagesCount;
     }
 
-    public T[]? Items { get; set; }
+    public T[] Items { get; set; } = Array.Empty<T>();
     public int ItemsCount { get; set; }
     public int PagesCount { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string? Error { get; init; }
     
-    public new static PagedDataResult<T> CreateError(string error) => new() { Error = error };
+    public bool Success => string.IsNullOrEmpty(Error);
+    
+    public static PagedDataResult<T> CreateError(string error) => new() { Error = error };
 }
