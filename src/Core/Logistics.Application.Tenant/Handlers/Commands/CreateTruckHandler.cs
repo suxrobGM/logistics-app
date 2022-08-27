@@ -32,7 +32,7 @@ internal sealed class CreateTruckHandler : RequestHandlerBase<CreateTruckCommand
 
         var truckEntity = new Truck()
         {
-            TruckNumber = request.TruckNumber,
+            TruckNumber = request.TruckNumber ?? 100,
             Driver = driver
         };
         

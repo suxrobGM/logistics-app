@@ -14,39 +14,33 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
     }
 
     protected override Task<PagedDataResult<TruckDto>> HandleValidated(
-        GetTrucksQuery request, 
+        GetTrucksQuery request,
         CancellationToken cancellationToken)
     {
         var loadIds = new List<string>();
         if (request.IncludeLoadIds)
         {
             loadIds = _truckRepository.GetQuery()
-                        .SelectMany(i => i.Loads)
-                        .Select(i => i.Id)
-                        .ToList();
+                .SelectMany(i => i.Loads)
+                .Select(i => i.Id)
+                .ToList();
         }
 
         var tenantId = _truckRepository.CurrentTenant!.Id;
         var totalItems = _truckRepository.GetQuery().Count();
-        var trucksQuery = _truckRepository.GetQuery();
-        var filteredUsers = _userRepository.GetQuery(new FilterUsersByTenantId(tenantId)).ToArray();
+        var filteredUsers = _userRepository.ApplySpecification(new FilterUsersByTenantId(tenantId)).ToArray();
         var userIds = filteredUsers.Select(i => i.Id).ToArray();
         var userNames = filteredUsers.Select(i => i.UserName).ToArray();
         var userFirstNames = filteredUsers.Select(i => i.FirstName).ToArray();
         var userLastNames = filteredUsers.Select(i => i.LastName).ToArray();
 
-        if (!string.IsNullOrEmpty(request.Search))
-        {
-            trucksQuery = _truckRepository.GetQuery(
-                new SearchTrucks(request.Search, userIds, userNames, userFirstNames, userLastNames));
-        }
+        var trucks = _truckRepository
+            .ApplySpecification(new SearchTrucks(request.Search, userIds, userNames, userFirstNames, userLastNames))
+            .OrderBy(i => i.TruckNumber)
+            .Skip((request.Page - 1) * request.PageSize)
+            .Take(request.PageSize)
+            .ToArray();
 
-        var trucks = trucksQuery
-                .OrderBy(i => i.TruckNumber)
-                .Skip((request.Page - 1) * request.PageSize)
-                .Take(request.PageSize)
-                .ToArray();
-        
         var driverIds = trucks.Where(i => !string.IsNullOrEmpty(i.DriverId))
             .Select(i => i.DriverId);
 
@@ -61,7 +55,7 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
             DriverId = i.DriverId,
             LoadIds = loadIds
         }).ToArray();
-        
+
         foreach (var truck in trucksDto)
         {
             var driverId = truck.DriverId;

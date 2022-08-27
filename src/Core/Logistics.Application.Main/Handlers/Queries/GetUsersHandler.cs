@@ -15,15 +15,9 @@ internal sealed class GetUsersHandler : RequestHandlerBase<GetUsersQuery, PagedD
         CancellationToken cancellationToken)
     {
         var totalItems = _userRepository.GetQuery().Count();
-        var itemsQuery = _userRepository.GetQuery();
 
-        if (!string.IsNullOrEmpty(request.Search))
-        {
-            itemsQuery = _userRepository.GetQuery(new SearchUsers(request.Search));
-        }
-
-        var users = itemsQuery
-            .OrderBy(i => i.Id)
+        var users = _userRepository
+            .ApplySpecification(new SearchUsers(request.Search))
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
             .Select(i => new UserDto

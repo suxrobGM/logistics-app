@@ -19,19 +19,14 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
     {
         var tenantId = _loadRepository.CurrentTenant!.Id;
         var totalItems = _loadRepository.GetQuery().Count();
-        var loadsQuery = _loadRepository.GetQuery();
-        var filteredUsers = _userRepository.GetQuery(new FilterUsersByTenantId(tenantId)).ToArray();
+        var filteredUsers = _userRepository.ApplySpecification(new FilterUsersByTenantId(tenantId)).ToArray();
         var userIds = filteredUsers.Select(i => i.Id).ToArray();
         var userNames = filteredUsers.Select(i => i.UserName).ToArray();
         var userFirstNames = filteredUsers.Select(i => i.FirstName).ToArray();
         var userLastNames = filteredUsers.Select(i => i.LastName).ToArray();
 
-        if (!string.IsNullOrEmpty(request.Search))
-        {
-            loadsQuery = _loadRepository.GetQuery(new SearchLoads(request.Search, userIds, userNames, userFirstNames, userLastNames));
-        }
-
-        var loads = loadsQuery
+        var loads = _loadRepository
+            .ApplySpecification(new SearchLoads(request.Search, userIds, userNames, userFirstNames, userLastNames))
             .OrderBy(i => i.DispatchedDate)
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)

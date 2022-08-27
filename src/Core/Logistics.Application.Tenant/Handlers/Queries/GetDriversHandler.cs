@@ -22,19 +22,13 @@ public class GetDriversHandler : RequestHandlerBase<GetDriversQuery, PagedDataRe
     {
         var tenantId = _employeeRepository.CurrentTenant!.Id;
         var totalItems = _employeeRepository.GetQuery().Count();
-        var usersQuery = _userRepository.GetQuery();
         var driverRole = await _roleRepository.GetAsync(i => i.Name == TenantRoles.Driver);
 
         if (driverRole == null)
             return PagedDataResult<EmployeeDto>.CreateError("Could not found the driver role");
 
-        if (!string.IsNullOrEmpty(request.Search))
-        {
-            usersQuery = _userRepository.GetQuery(new SearchUsersByTenantId(request.Search, tenantId));
-        }
-
-        var filteredUsers = usersQuery
-            .OrderBy(i => i.Id)
+        var filteredUsers = _userRepository
+            .ApplySpecification(new SearchUsersByTenantId(request.Search, tenantId))
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
             .ToDictionary(user => user.Id);
@@ -52,7 +46,7 @@ public class GetDriversHandler : RequestHandlerBase<GetDriversQuery, PagedDataRe
 
         foreach (var employee in employeesDto)
         {
-            if (!filteredUsers.TryGetValue(employee.Id!, out var user))
+            if (!filteredUsers.TryGetValue(employee.Id, out var user))
                 continue;
             
             employee.UserName = user.UserName;

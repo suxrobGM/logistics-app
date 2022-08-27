@@ -2,8 +2,11 @@
 
 public class SearchTenantRoles : BaseSpecification<TenantRole>
 {
-    public SearchTenantRoles(string search)
+    public SearchTenantRoles(string? search)
     {
+        if (string.IsNullOrEmpty(search))
+            return;
+        
         Criteria = i =>
             (!string.IsNullOrEmpty(i.Name) &&
              i.Name.Contains(search, StringComparison.InvariantCultureIgnoreCase)) ||

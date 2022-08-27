@@ -51,7 +51,7 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    TruckNumber = table.Column<int>(type: "int", nullable: true),
+                    TruckNumber = table.Column<int>(type: "int", nullable: false),
                     DriverId = table.Column<string>(type: "varchar(255)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },

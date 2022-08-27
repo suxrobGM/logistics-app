@@ -26,7 +26,11 @@ internal sealed class UpdateTruckHandler : RequestHandlerBase<UpdateTruckCommand
         if (truckEntity == null)
             return DataResult.CreateError("Could not find the specified truck");
 
-        truckEntity.TruckNumber = request.TruckNumber;
+        if (request.TruckNumber.HasValue)
+        {
+            truckEntity.TruckNumber = request.TruckNumber.Value;
+        }
+        
         truckEntity.Driver = driver;
         _truckRepository.Update(truckEntity);
         await _truckRepository.UnitOfWork.CommitAsync();

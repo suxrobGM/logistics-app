@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.EntityFramework.Data.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20220826233009_Initial")]
+    [Migration("20220827211549_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -131,7 +131,7 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.Property<string>("DriverId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<int?>("TruckNumber")
+                    b.Property<int>("TruckNumber")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

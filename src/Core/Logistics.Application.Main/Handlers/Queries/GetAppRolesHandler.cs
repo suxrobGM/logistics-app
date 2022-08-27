@@ -11,16 +11,10 @@ public class GetAppRolesHandler : RequestHandlerBase<GetAppRolesQuery, PagedData
 
     protected override Task<PagedDataResult<AppRoleDto>> HandleValidated(GetAppRolesQuery request, CancellationToken cancellationToken)
     {
-        var rolesQuery = _rolesRepository.GetQuery();
         var totalItems = _rolesRepository.GetQuery().Count();
-        
-        if (!string.IsNullOrEmpty(request.Search))
-        {
-            rolesQuery = _rolesRepository.GetQuery(new SearchAppRoles(request.Search));
-        }
 
-        var rolesDto = rolesQuery
-            .OrderBy(i => i.Id)
+        var rolesDto = _rolesRepository
+            .ApplySpecification(new SearchAppRoles(request.Search))
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
             .Select(i => new AppRoleDto()

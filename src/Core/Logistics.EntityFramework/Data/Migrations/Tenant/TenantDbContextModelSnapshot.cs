@@ -129,7 +129,7 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.Property<string>("DriverId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<int?>("TruckNumber")
+                    b.Property<int>("TruckNumber")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

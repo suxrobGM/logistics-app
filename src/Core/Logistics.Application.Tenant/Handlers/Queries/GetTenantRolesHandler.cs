@@ -11,16 +11,10 @@ public class GetTenantRolesHandler : RequestHandlerBase<GetTenantRolesQuery, Pag
 
     protected override Task<PagedDataResult<TenantRoleDto>> HandleValidated(GetTenantRolesQuery request, CancellationToken cancellationToken)
     {
-        var rolesQuery = _rolesRepository.GetQuery();
         var totalItems = _rolesRepository.GetQuery().Count();
-        
-        if (!string.IsNullOrEmpty(request.Search))
-        {
-            rolesQuery = _rolesRepository.GetQuery(new SearchTenantRoles(request.Search));
-        }
 
-        var rolesDto = rolesQuery
-            .OrderBy(i => i.Id)
+        var rolesDto = _rolesRepository
+            .ApplySpecification(new SearchTenantRoles(request.Search))
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
             .Select(i => new TenantRoleDto()
