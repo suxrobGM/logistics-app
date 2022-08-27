@@ -20,8 +20,14 @@
         </ng-template>
         <ng-template pTemplate="header">
           <tr>
-            <th>Number</th>
-            <th>Driver</th>
+            <th pSortableColumn="truckNumber">
+              Number
+              <p-sortIcon field="truckNumber"></p-sortIcon>
+            </th>
+            <th pSortableColumn="driverName">
+              Driver
+              <p-sortIcon field="driverName"></p-sortIcon>
+            </th>
             <th>Action</th>
           </tr>
         </ng-template>

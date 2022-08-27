@@ -14,18 +14,8 @@ export class ListEmployeeComponent implements OnInit {
   public totalRecords: number;
   public first: number;
 
-  public columns: string[];
-
   constructor(private apiService: ApiService) {
     this.employees = [];
-    this.columns = [
-      'userName',
-      'firstName',
-      'lastName',
-      'email',
-      'roles',
-      'joinedDate'
-    ];
     this.isBusy = false;
     this.totalRecords = 0;
     this.first = 0;

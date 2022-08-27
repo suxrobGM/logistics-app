@@ -19,18 +19,54 @@
         </ng-template>
         <ng-template pTemplate="header">
           <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Source Address</th>
-            <th>Destination Address</th>
-            <th>Dispatched Date</th>
-            <th>Pick Up Date</th>
-            <th>Delivery Date</th>
-            <th>Status</th>
-            <th>Distance</th>
-            <th>Delivery Cost</th>
-            <th>Assigned Dispatcher</th>
-            <th>Assigned Driver</th>
+            <th pSortableColumn="id">
+              ID
+              <p-sortIcon field="id"></p-sortIcon>
+            </th>
+            <th pSortableColumn="name">
+              Name
+              <p-sortIcon field="name"></p-sortIcon>
+            </th>
+            <th pSortableColumn="sourceAddress">
+              Source
+              <p-sortIcon field="sourceAddress" hidden="true"></p-sortIcon>
+            </th>
+            <th pSortableColumn="destinationAddress">
+              Destination
+              <p-sortIcon field="destinationAddress"></p-sortIcon>
+            </th>
+            <th pSortableColumn="dispatchedDate">
+              Dispatched
+              <p-sortIcon field="dispatchedDate"></p-sortIcon>
+            </th>
+            <th pSortableColumn="pickUpDate">
+              Pick Up
+              <p-sortIcon field="pickUpDate"></p-sortIcon>
+            </th>
+            <th pSortableColumn="deliveryDate">
+              Delivery
+              <p-sortIcon field="deliveryDate"></p-sortIcon>
+            </th>
+            <th pSortableColumn="status">
+              Status
+              <p-sortIcon field="status"></p-sortIcon>
+            </th>
+            <th pSortableColumn="distance">
+              Distance
+              <p-sortIcon field="distance"></p-sortIcon>
+            </th>
+            <th pSortableColumn="deliveryCost">
+              Cost
+              <p-sortIcon field="deliveryCost"></p-sortIcon>
+            </th>
+            <th pSortableColumn="assignedDispatcherName">
+              Dispatcher
+              <p-sortIcon field="assignedDispatcherName"></p-sortIcon>
+            </th>
+            <th pSortableColumn="assignedDriverName">
+              Driver
+              <p-sortIcon field="assignedDriverName"></p-sortIcon>
+            </th>
             <th>Action</th>
           </tr>
         </ng-template>
