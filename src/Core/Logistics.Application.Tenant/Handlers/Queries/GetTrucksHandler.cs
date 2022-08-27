@@ -42,7 +42,7 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
         }
 
         var trucks = trucksQuery
-                .OrderBy(i => i.Id)
+                .OrderBy(i => i.TruckNumber)
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .ToArray();

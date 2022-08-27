@@ -33,10 +33,16 @@ internal sealed class GetEmployeeByIdHandler : RequestHandlerBase<GetEmployeeByI
             LastName = userEntity.LastName,
             Email = userEntity.Email,
             PhoneNumber = userEntity.PhoneNumber,
-            //Role = employeeEntity.Role2.Name,
             JoinedDate = employeeEntity.JoinedDate
         };
 
+        var tenantRoles = employeeEntity.Roles.Select(i => new TenantRoleDto
+        {
+            Name = i.Name,
+            DisplayName = i.DisplayName
+        });
+
+        employee.Roles.AddRange(tenantRoles);
         return DataResult<EmployeeDto>.CreateSuccess(employee);
     }
 

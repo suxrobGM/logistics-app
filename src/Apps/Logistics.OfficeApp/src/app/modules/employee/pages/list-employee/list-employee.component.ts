@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Employee } from '@shared/models';
 import { ApiService } from '@shared/services';
-import { LazyLoadEvent } from 'primeng/api';
+import { LazyLoadEvent, SortEvent } from 'primeng/api';
 
 @Component({
   selector: 'app-list-employee',
@@ -14,8 +14,18 @@ export class ListEmployeeComponent implements OnInit {
   public totalRecords: number;
   public first: number;
 
+  public columns: string[];
+
   constructor(private apiService: ApiService) {
     this.employees = [];
+    this.columns = [
+      'userName',
+      'firstName',
+      'lastName',
+      'email',
+      'roles',
+      'joinedDate'
+    ];
     this.isBusy = false;
     this.totalRecords = 0;
     this.first = 0;
@@ -28,7 +38,7 @@ export class ListEmployeeComponent implements OnInit {
   public search(event: any) {
     const query = event.target.value;
     
-    this.apiService.getEmployees(query, 1).subscribe(result => {
+    this.apiService.getEmployees(query, '', 1).subscribe(result => {
       if (result.success && result.items) {
         this.employees = result.items;
         this.totalRecords = result.itemsCount!;
@@ -37,12 +47,18 @@ export class ListEmployeeComponent implements OnInit {
   }
 
   public load(event: LazyLoadEvent) {
+    console.log(event);
+    
     this.isBusy = true;
     const page = event.first! / event.rows! + 1;
+    const sortField = event.sortField ?? '';
     
-    this.apiService.getEmployees(undefined, page).subscribe(result => {
+    this.apiService.getEmployees('', sortField, page).subscribe(result => {
       if (result.success && result.items) {
-        this.employees = result.items;
+        //console.log(page);
+        //console.log(result.items);
+        
+        this.employees = result.items.sort();
         this.totalRecords = result.itemsCount!;
       }
 

@@ -1,5 +1,4 @@
 import { DataResult } from './data';
-import { EmployeeRole } from './employee-role';
 import { Employee } from './employee';
 import { LoadStatus } from './load-status';
 import { Load } from './load';
@@ -12,7 +11,6 @@ import { Role } from './role';
 
 export {
   DataResult,
-  EmployeeRole,
   Employee,
   LoadStatus,
   Load,

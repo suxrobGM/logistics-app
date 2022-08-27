@@ -21,13 +21,34 @@
         </ng-template>
         <ng-template pTemplate="header">
           <tr>
-            <th>Username</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-            <th>Phone Number</th>
-            <th>Role</th>
-            <th>Joined Date</th>
+            <th pSortableColumn="userName">
+              Username
+              <p-sortIcon field="userName"></p-sortIcon>
+            </th>
+            <th pSortableColumn="firstName">
+              First Name
+              <p-sortIcon field="firstName"></p-sortIcon>
+            </th>
+            <th pSortableColumn="lastName">
+              Last Name
+              <p-sortIcon field="lastName"></p-sortIcon>
+            </th>
+            <th pSortableColumn="email">
+              Email
+              <p-sortIcon field="email"></p-sortIcon>
+            </th>
+            <th pSortableColumn="phoneNumber">
+              Phone Number
+              <p-sortIcon field="phoneNumber"></p-sortIcon>
+            </th>
+            <th pSortableColumn="roles">
+              Role
+              <p-sortIcon field="roles"></p-sortIcon>
+            </th>
+            <th pSortableColumn="joinedDate">
+              Joined Date
+              <p-sortIcon field="joinedDate"></p-sortIcon>
+            </th>
             <th>Action</th>
           </tr>
         </ng-template>
@@ -38,7 +59,7 @@
             <td>{{employee.lastName}}</td>
             <td>{{employee.email}}</td>
             <td>{{employee.phoneNumber}}</td>
-            <td>{{employee.role}}</td>
+            <td>{{employee.roles}}</td>
             <td>{{employee.joinedDate | date:'mediumDate'}}</td>
             <td>
               <a class="btn btn-primary" [routerLink]="['/employees/edit']" [state]="{id: employee.id}">Edit</a>

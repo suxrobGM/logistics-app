@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { MessageService } from 'primeng/api';
-import { Employee, EmployeeRole, Role, User } from '@shared/models';
+import { Employee, Role, User } from '@shared/models';
 import { ApiService } from '@shared/services';
 
 @Component({
@@ -46,16 +46,20 @@ export class AddEmployeeComponent implements OnInit {
 
   public onSubmit() {
     const user = this.form.value.user as User;
-
+    const role = this.form.value.role as string;
+    
     if (!user) {
       this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Select user'});
       return;
     }
 
     const newEmployee: Employee = {
-      id: user.id,
-      role: this.form.value.role
+      id: user.id
     };
+
+    if (role) {
+      this.roles.push({name: role});
+    }
 
     this.apiService.createEmployee(newEmployee).subscribe(result => {
       if (result.success) {

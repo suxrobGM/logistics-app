@@ -11,6 +11,7 @@ internal static class DbContextHelpers
                     o.EnableRetryOnFailure(8, TimeSpan.FromSeconds(15), null);
                     o.EnableStringComparisonTranslations();
                 })
-            .UseLazyLoadingProxies();
+            .UseLazyLoadingProxies()
+            .EnableSensitiveDataLogging();
     }
 }

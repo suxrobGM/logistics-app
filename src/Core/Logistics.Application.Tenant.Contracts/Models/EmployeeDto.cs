@@ -8,6 +8,24 @@ public class EmployeeDto
         Id = string.Empty;
     }
     
+    public EmployeeDto(
+        string id, 
+        string userName, 
+        string? firstName, 
+        string? lastName, 
+        string email, 
+        string? phoneNumber, 
+        DateTime joinedDate)
+    {
+        Id = id;
+        UserName = userName;
+        FirstName = firstName;
+        LastName = lastName;
+        Email = email;
+        PhoneNumber = phoneNumber;
+        JoinedDate = joinedDate;
+    }
+    
     [Required]
     public string Id { get; set; }
     
@@ -16,8 +34,8 @@ public class EmployeeDto
     public string? LastName { get; set; }
     public string? Email { get; set; }
     public string? PhoneNumber { get; set; }
-    public string[] Roles { get; set; } = Array.Empty<string>();
-    public DateTime JoinedDate { get; set; }
+    public DateTime JoinedDate { get; set; } = DateTime.UtcNow;
+    public List<TenantRoleDto> Roles { get; set; } = new();
 
     public string GetFullName()
     {

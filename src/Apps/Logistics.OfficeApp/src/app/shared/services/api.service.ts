@@ -157,8 +157,8 @@ export class ApiService {
       .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
   }
 
-  getEmployees(searchQuery = '', page = 1, pageSize = 10): Observable<PagedDataResult<Employee>> {  
-    const url = `${this.host}/employee/list?search=${searchQuery}&page=${page}&pageSize=${pageSize}`;
+  getEmployees(searchQuery = '', orderBy = '', page = 1, pageSize = 10): Observable<PagedDataResult<Employee>> {  
+    const url = `${this.host}/employee/list?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
     return this.httpClient
       .get<PagedDataResult<Employee>>(url)
       .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));

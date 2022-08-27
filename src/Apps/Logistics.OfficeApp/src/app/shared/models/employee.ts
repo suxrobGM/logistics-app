@@ -1,3 +1,5 @@
+import { Role } from "./role";
+
 export interface Employee {
   id?: string;
   userName?: string;
@@ -5,6 +7,6 @@ export interface Employee {
   lastName?: string;
   email?: string;
   phoneNumber?: string;
-  role?: string;
+  roles?: Role[];
   joinedDate?: Date;
 }

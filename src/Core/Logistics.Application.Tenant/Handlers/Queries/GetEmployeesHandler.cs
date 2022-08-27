@@ -19,50 +19,53 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery
     {
         var tenantId = _employeeRepository.CurrentTenant!.Id;
         var totalItems = _employeeRepository.GetQuery().Count();
-        var usersQuery = _userRepository.GetQuery();
-        
-        if (!string.IsNullOrEmpty(request.Search))
-        {
-            usersQuery = _userRepository.GetQuery(new SearchUsersByTenantId(request.Search, tenantId));
-        }
 
-        var filteredUsers = usersQuery
-            .OrderBy(i => i.Id)
+        var filteredUsers = _userRepository
+            .ApplySpecification(new SearchUsersByTenantId(request.Search, tenantId, request.OrderBy))
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
             .ToDictionary(user => user.Id);
 
         var userIds = filteredUsers.Keys.ToArray();
         
-        var employeesDto = _employeeRepository.GetQuery()
+        var employeesEntity = _employeeRepository.GetQuery()
             .Where(i => userIds.Contains(i.Id))
-            .Select(i => new EmployeeDto
-            {
-                Id = i.Id,
-                //Role = i.Role2.Name,
-                JoinedDate = i.JoinedDate
-            })
             .ToArray();
 
-        foreach (var employee in employeesDto)
+        var employeesDtoArray = new EmployeeDto[employeesEntity.Length];
+
+        for (var i = 0; i < employeesEntity.Length; i++)
         {
+            var employee = employeesEntity[i];
             if (!filteredUsers.TryGetValue(employee.Id, out var user)) 
                 continue;
-            
-            employee.UserName = user.UserName;
-            employee.FirstName = user.FirstName;
-            employee.LastName = user.LastName;
-            employee.Email = user.Email;
-            employee.PhoneNumber = user.PhoneNumber;
-        }
 
+            var employeeDto = new EmployeeDto(
+                user.Id, 
+                user.UserName, 
+                user.FirstName, 
+                user.LastName, 
+                user.Email, 
+                user.PhoneNumber, 
+                employee.JoinedDate);
+            
+            var tenantRoles = employee.Roles.Select(role => new TenantRoleDto
+            {
+                Name = role.Name,
+                DisplayName = role.DisplayName
+            });
+            employeeDto.Roles.AddRange(tenantRoles);
+            employeesDtoArray[i] = employeeDto;
+        }
+        
         var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
-        return Task.FromResult(new PagedDataResult<EmployeeDto>(employeesDto, totalItems, totalPages));
+        return Task.FromResult(new PagedDataResult<EmployeeDto>(employeesDtoArray, totalItems, totalPages));
     }
 
     protected override bool Validate(GetEmployeesQuery request, out string errorDescription)
     {
         errorDescription = string.Empty;
+        var orderBy = request.OrderBy;
 
         if (string.IsNullOrEmpty(_employeeRepository.CurrentTenant?.Id))
         {
@@ -75,6 +78,10 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery
         else if (request.PageSize <= 1)
         {
             errorDescription = "Page size should be greater than one";
+        }
+        else if (!string.IsNullOrEmpty(orderBy) && !typeof(User).HasProperty(orderBy))
+        {
+            errorDescription = $"The specified '{orderBy}' is an invalid sort field name";
         }
 
         return string.IsNullOrEmpty(errorDescription);
