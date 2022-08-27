@@ -46,7 +46,6 @@ export class AddEmployeeComponent implements OnInit {
 
   public onSubmit() {
     const user = this.form.value.user as User;
-    const role = this.form.value.role as string;
     
     if (!user) {
       this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Select user'});
@@ -54,12 +53,9 @@ export class AddEmployeeComponent implements OnInit {
     }
 
     const newEmployee: Employee = {
-      id: user.id
+      id: user.id,
+      role: this.form.value.role
     };
-
-    if (role) {
-      this.roles.push({name: role});
-    }
 
     this.apiService.createEmployee(newEmployee).subscribe(result => {
       if (result.success) {

@@ -64,12 +64,11 @@ public class EmployeeController : ControllerBase
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Policies.Employee.CanWrite)]
-    public async Task<IActionResult> Create([FromBody] EmployeeDto request)
+    public async Task<IActionResult> Create([FromBody] CreateEmployeeCommand request)
     {
         var tenantId = HttpContext.Request.Headers["X-Tenant"];
-        var command = _mapper.Map<CreateEmployeeCommand>(request);
-        command.TenantId = tenantId;
-        var result = await _mediator.Send(command);
+        request.TenantId = tenantId;
+        var result = await _mediator.Send(request);
 
         if (result.Success)
             return Ok(result);
@@ -81,11 +80,10 @@ public class EmployeeController : ControllerBase
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Policies.Employee.CanWrite)]
-    public async Task<IActionResult> Update(string id, [FromBody] EmployeeDto request)
+    public async Task<IActionResult> Update(string id, [FromBody] UpdateEmployeeCommand request)
     {
-        var updateRequest = _mapper.Map<UpdateEmployeeCommand>(request);
-        updateRequest.Id = id;
-        var result = await _mediator.Send(updateRequest);
+        request.Id = id;
+        var result = await _mediator.Send(request);
 
         if (result.Success)
             return Ok(result);

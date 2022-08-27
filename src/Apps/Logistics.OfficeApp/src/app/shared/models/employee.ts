@@ -8,5 +8,6 @@ export interface Employee {
   email?: string;
   phoneNumber?: string;
   roles?: Role[];
+  role?: string;
   joinedDate?: Date;
 }

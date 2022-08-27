@@ -60,7 +60,7 @@ export class EditEmployeeComponent implements OnInit {
   public onSubmit() {
     const employee: Employee = {
       id: this.employee?.id,
-      roles: [this.form.value.role]
+      role: this.form.value.role
     }
 
     this.apiService.updateEmployee(employee).subscribe(result => {
@@ -93,6 +93,8 @@ export class EditEmployeeComponent implements OnInit {
   private fetchRoles() {
     this.apiService.getRoles().subscribe(result => {
       if (result.success && result.items) {
+        console.log(result.items);
+        
         this.roles.push(...result.items);
       }
     })

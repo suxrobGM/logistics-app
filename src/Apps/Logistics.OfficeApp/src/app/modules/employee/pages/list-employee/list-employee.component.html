@@ -59,7 +59,7 @@
             <td>{{employee.lastName}}</td>
             <td>{{employee.email}}</td>
             <td>{{employee.phoneNumber}}</td>
-            <td>{{employee.roles}}</td>
+            <td>{{employee.roles[0]?.displayName}}</td>
             <td>{{employee.joinedDate | date:'mediumDate'}}</td>
             <td>
               <a class="btn btn-primary" [routerLink]="['/employees/edit']" [state]="{id: employee.id}">Edit</a>
