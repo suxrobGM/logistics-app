@@ -74,8 +74,12 @@
           <tr>
             <td>{{load.referenceId}}</td>
             <td>{{load.name}}</td>
-            <td>{{load.sourceAddress}}</td>
-            <td>{{load.destinationAddress}}</td>
+            <td [pTooltip]="load.sourceAddress" [showDelay]="1000" tooltipPosition="bottom">
+              {{load.sourceAddress}}
+            </td>
+            <td [pTooltip]="load.sourceAddress" [showDelay]="1000" tooltipPosition="bottom">
+              {{load.destinationAddress}}
+            </td>
             <td>{{load.dispatchedDate | date:'mediumDate'}}</td>
             <td>{{load.pickUpDate | date:'mediumDate'}}</td>
             <td>{{load.deliveryDate | date:'mediumDate'}}</td>
