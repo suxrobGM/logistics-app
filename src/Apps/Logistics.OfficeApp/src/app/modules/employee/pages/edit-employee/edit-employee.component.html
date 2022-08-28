@@ -5,7 +5,7 @@
   <div class="col-12 col-md-6">
     <p-card>
       <p-progressSpinner *ngIf="isBusy"></p-progressSpinner>
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <form [formGroup]="form" (ngSubmit)="submit()">
         <div class="mb-3">
           <label for="userName" class="form-label">Username</label>
           <input id="userName" type="text" class="form-control" formControlName="userName" />

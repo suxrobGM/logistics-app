@@ -53,7 +53,7 @@ export class EditTruckComponent implements OnInit {
     });
   }
 
-  public onSubmit() {
+  public submit() {
     const driver = this.form.value.driver as Employee;
 
     if (!driver) {

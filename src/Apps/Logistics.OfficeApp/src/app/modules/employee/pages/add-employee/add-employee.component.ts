@@ -44,7 +44,7 @@ export class AddEmployeeComponent implements OnInit {
     });
   }
 
-  public onSubmit() {
+  public submit() {
     const user = this.form.value.user as User;
     
     if (!user) {

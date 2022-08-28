@@ -5,7 +5,7 @@
   <div class="row">
     <div class="col-12 col-md-6">
       <p-progressSpinner *ngIf="isBusy"></p-progressSpinner>
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <form [formGroup]="form" (ngSubmit)="submit()">
         <div class="mb-3">
           <label #name for="name" class="form-label">Name</label>
           <input id="name" formControlName="name" type="text" class="form-control" placeholder="Load name" />
@@ -33,7 +33,7 @@
           <label for="distance" class="form-label">Estimated Distance</label>
           <div class="input-group">
             <span class="input-group-text">mi</span>
-            <input id="distance" formControlName="distance" type="number" class="form-control" min="0" />
+            <input id="distance" formControlName="distance" type="number" class="form-control" min="0" readonly />
           </div>
         </div>
         <div class="mb-3">

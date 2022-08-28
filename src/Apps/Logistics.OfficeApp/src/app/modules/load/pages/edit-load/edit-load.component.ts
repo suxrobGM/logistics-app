@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import * as MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
@@ -71,8 +71,6 @@ export class EditLoadComponent implements OnInit {
       });
     });
 
-    this.form.reset();
-
     if (!this.id) {
       this.editMode = false;
       this.headerText = 'Add a new load';
@@ -91,7 +89,7 @@ export class EditLoadComponent implements OnInit {
     });
   }
 
-  public onSubmit() {
+  public submit() {
     const driver = this.form.value.driver as Employee;
 
     if (!driver) {
@@ -125,9 +123,9 @@ export class EditLoadComponent implements OnInit {
       this.apiService.createLoad(load).subscribe(result => {
         if (result.success) {
           this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A new load has been created successfully'});
+          this.resetForm();
         }
 
-        this.form.reset();
         this.isBusy = false;
       });
     }
@@ -220,6 +218,16 @@ export class EditLoadComponent implements OnInit {
         });
       }
     });
+  }
+
+  private resetForm() {
+    this.form.reset();
+
+    this.form.patchValue({
+      dispatchedDate: new Date().toLocaleDateString(),
+      deliveryCost: 0,
+      distance: 0
+    })
   }
 
   private getLocaleDate(dateStr?: string | Date): string {

@@ -5,7 +5,7 @@
   <div class="col-12 col-md-6">
     <p-card>
       <p-messages key="errorMsg"></p-messages>
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <form [formGroup]="form" (ngSubmit)="submit()">
         <div class="mb-3">
           <label for="name" class="form-label">User Name</label>
           <p-autoComplete formControlName="user" styleClass="w-100" inputStyleClass="form-control"

@@ -57,7 +57,7 @@ export class EditEmployeeComponent implements OnInit {
     this.fetchEmployee();
   }
 
-  public onSubmit() {
+  public submit() {
     const employee: Employee = {
       id: this.employee?.id,
       role: this.form.value.role
