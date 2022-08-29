@@ -2,15 +2,18 @@
 
 internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, DataResult>
 {
+    private readonly IMainRepository<User> _userRepository;
     private readonly ITenantRepository<Load> _loadRepository;
     private readonly ITenantRepository<Truck> _truckRepository;
     private readonly ITenantRepository<Employee> _employeeRepository;
 
     public CreateLoadHandler(
+        IMainRepository<User> userRepository,
         ITenantRepository<Load> loadRepository,
         ITenantRepository<Truck> truckRepository,
         ITenantRepository<Employee> employeeRepository)
     {
+        _userRepository = userRepository;
         _loadRepository = loadRepository;
         _truckRepository = truckRepository;
         _employeeRepository = employeeRepository;
@@ -19,20 +22,21 @@ internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, 
     protected override async Task<DataResult> HandleValidated(
         CreateLoadCommand request, CancellationToken cancellationToken)
     {
-        var dispatcher = await _employeeRepository.GetAsync(request.AssignedDispatcherId!);
+        var dispatcher = await _employeeRepository.GetAsync(request.AssignedDispatcherId);
 
         if (dispatcher == null)
             return DataResult.CreateError("Could not find the specified dispatcher");
         
-        var driver = await _employeeRepository.GetAsync(request.AssignedDriverId!);
+        var driverEmp = await _employeeRepository.GetAsync(request.AssignedDriverId);
+        var driverUser = await _userRepository.GetAsync(request.AssignedDriverId);
 
-        if (driver == null)
+        if (driverEmp == null)
             return DataResult.CreateError("Could not find the specified driver");
 
-        var truck = await _truckRepository.GetAsync(i => i.DriverId == driver.Id);
+        var truck = await _truckRepository.GetAsync(i => i.DriverId == driverEmp.Id);
 
         if (truck == null)
-            return DataResult.CreateError($"Could not find the truck whose driver ID is '{driver.Id}'");
+            return DataResult.CreateError($"Could not find the truck whose driver ID is '{driverUser?.UserName}'");
         
         var latestLoad = _loadRepository.GetQuery().OrderBy(i => i.ReferenceId).LastOrDefault();
         ulong refId = 100_000;
@@ -51,7 +55,7 @@ internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, 
             Distance = request.Distance,
             DeliveryCost = request.DeliveryCost,
             AssignedDispatcher = dispatcher,
-            AssignedDriver = driver,
+            AssignedDriver = driverEmp,
             AssignedTruck = truck
         };
 

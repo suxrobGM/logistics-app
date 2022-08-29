@@ -2,15 +2,18 @@
 
 internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, DataResult>
 {
+    private readonly IMainRepository<User> _userRepository;
     private readonly ITenantRepository<Employee> _employeeRepository;
     private readonly ITenantRepository<Load> _loadRepository;
     private readonly ITenantRepository<Truck> _truckRepository;
 
     public UpdateLoadHandler(
+        IMainRepository<User> userRepository,
         ITenantRepository<Employee> employeeRepository,
         ITenantRepository<Load> loadRepository,
         ITenantRepository<Truck> truckRepository)
     {
+        _userRepository = userRepository;
         _employeeRepository = employeeRepository;
         _loadRepository = loadRepository;
         _truckRepository = truckRepository;
@@ -19,15 +22,16 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
     protected override async Task<DataResult> HandleValidated(
         UpdateLoadCommand request, CancellationToken cancellationToken)
     {
-        var driver = await _employeeRepository.GetAsync(request.AssignedDriverId!);
+        var driverEmp = await _employeeRepository.GetAsync(request.AssignedDriverId);
+        var driverUser = await _userRepository.GetAsync(request.AssignedDriverId);
 
-        if (driver == null)
+        if (driverEmp == null)
             return DataResult.CreateError("Could not find the specified driver");
         
-        var truck = await _truckRepository.GetAsync(i => i.DriverId == driver.Id);
+        var truck = await _truckRepository.GetAsync(i => i.DriverId == driverEmp.Id);
 
         if (truck == null)
-            return DataResult.CreateError($"Could not find the truck whose driver ID is '{driver.Id}'");
+            return DataResult.CreateError($"Could not find the truck whose driver is '{driverUser?.UserName}'");
 
         var loadEntity = await _loadRepository.GetAsync(request.Id!);
 
@@ -40,7 +44,7 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
         loadEntity.Distance = request.Distance;
         loadEntity.DeliveryCost = request.DeliveryCost;
         loadEntity.Status = LoadStatus.Get(request.Status)!;
-        loadEntity.AssignedDriver = driver;
+        loadEntity.AssignedDriver = driverEmp;
         loadEntity.AssignedTruck = truck;
 
         _loadRepository.Update(loadEntity);

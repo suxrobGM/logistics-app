@@ -13,7 +13,7 @@ public interface IRepository<TEntity> where TEntity : class, IAggregateRoot
     /// </summary>
     /// <param name="id">Entity primary key</param>
     /// <returns>Entity object</returns>
-    Task<TEntity?> GetAsync(object id);
+    Task<TEntity?> GetAsync(object? id);
 
     /// <summary>
     /// Get entity object by predicate.

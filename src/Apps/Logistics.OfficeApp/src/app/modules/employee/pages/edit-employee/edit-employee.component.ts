@@ -81,12 +81,9 @@ export class EditEmployeeComponent implements OnInit {
           lastName: this.employee.lastName,
         });
         
-        if (this.employee.roles && this.employee.roles.length > 0) {
-          console.log(this.roles);
-          console.log(this.employee.roles[0]);
-          
+        if (this.employee.roles && this.employee.roles.length > 0) {          
           this.form.patchValue({
-            role: this.employee.roles[0]
+            role: this.employee.roles[0].name
           });
         }
       }

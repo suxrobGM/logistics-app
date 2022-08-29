@@ -13,7 +13,7 @@ internal class GenericRepository<TEntity, TContext> : IRepository<TEntity>
         _context = context;
     }
 
-    public async Task<TEntity?> GetAsync(object id)
+    public async Task<TEntity?> GetAsync(object? id)
     {
         var entity = await _context.Set<TEntity>().FindAsync(id);
         return entity;
