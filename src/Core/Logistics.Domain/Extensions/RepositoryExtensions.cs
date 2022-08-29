@@ -9,7 +9,7 @@ public static class RepositoryExtensions
         ISpecification<TEntity> specification)
         where TEntity : class, IAggregateRoot
     {
-        var query = repository.GetQuery(specification.Criteria);
+        var query = repository.Query(specification.Criteria);
         
         return specification.Descending ? 
             query.OrderByDescending(specification.OrderBy)

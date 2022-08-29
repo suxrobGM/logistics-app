@@ -2,11 +2,14 @@
 
 public class SearchUsersByTenantId : BaseSpecification<User>
 {
-    public SearchUsersByTenantId(string? search, string tenantId, string? orderBy = "JoinedDate", bool descending = false)
+    public SearchUsersByTenantId(
+        string? search, 
+        string tenantId, 
+        string? orderBy = "JoinedDate", 
+        bool descending = false)
     {
-        orderBy = orderBy?.ToLower();
         Descending = descending;
-        OrderBy = i => orderBy == "username" ? i.UserName : i.JoinedDate;
+        OrderBy = InitOrderBy(orderBy);
         
         if (string.IsNullOrEmpty(search))
             return;
@@ -26,5 +29,19 @@ public class SearchUsersByTenantId : BaseSpecification<User>
                 (!string.IsNullOrEmpty(i.Email) &&
                  i.Email.Contains(search, StringComparison.InvariantCultureIgnoreCase))
             );
+    }
+
+    private static Expression<Func<User, object>> InitOrderBy(string? propertyName)
+    {
+        propertyName = propertyName?.ToLower() ?? "joineddate";
+        return propertyName switch
+        {
+            "username" => i => i.UserName!,
+            "firstname" => i => i.FirstName!,
+            "lastname" => i => i.LastName!,
+            "email" => i => i.Email,
+            "phonenumber" => i => i.PhoneNumber,
+            _ => i => i.JoinedDate
+        };
     }
 }

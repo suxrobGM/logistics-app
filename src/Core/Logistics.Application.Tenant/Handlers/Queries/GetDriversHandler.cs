@@ -19,21 +19,21 @@ public class GetDriversHandler : RequestHandlerBase<GetDriversQuery, PagedDataRe
         GetDriversQuery request, CancellationToken cancellationToken)
     {
         var tenantId = _tenantRepository.CurrentTenant!.Id;
-        var totalItems = _tenantRepository.GetQuery<Employee>().Count();
+        var totalItems = _tenantRepository.Query<Employee>().Count();
         var driverRole = await _tenantRepository.GetAsync<TenantRole>(i => i.Name == TenantRoles.Driver);
 
         if (driverRole == null)
             return PagedDataResult<EmployeeDto>.CreateError("Could not found the driver role");
 
         var filteredUsers = _mainRepository
-            .ApplySpecification(new SearchUsersByTenantId(request.Search, tenantId))
+            .ApplySpecification(new SearchUsersByTenantId(request.Search, tenantId, "Name"))
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
             .ToDictionary(user => user.Id);
 
         var userIds = filteredUsers.Keys.ToArray();
         
-        var employeesDto = _tenantRepository.GetQuery<Employee>()
+        var employeesDto = _tenantRepository.Query<Employee>()
             .Where(i => userIds.Contains(i.Id) && i.Roles.Contains(driverRole))
             .Select(i => new EmployeeDto
             {

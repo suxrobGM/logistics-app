@@ -2,9 +2,18 @@
 
 public class SearchLoads : BaseSpecification<Load>
 {
-    public SearchLoads(string? search, string[] userIds, string[] userNames, string?[] userFirstNames,
-        string?[] userLastNames)
+    public SearchLoads(
+        string? search, 
+        string[] userIds, 
+        string[] userNames, 
+        string?[] userFirstNames,
+        string?[] userLastNames,
+        string? orderBy = "ReferenceId", 
+        bool descending = false)
     {
+        Descending = descending;
+        OrderBy = InitOrderBy(orderBy);
+
         if (string.IsNullOrEmpty(search))
             return;
 
@@ -20,5 +29,23 @@ public class SearchLoads : BaseSpecification<Load>
             (!string.IsNullOrEmpty(i.AssignedDispatcherId) &&
              userIds.Contains(i.AssignedDispatcherId) &&
              (userNames.Contains(search) || userFirstNames.Contains(search) || userLastNames.Contains(search)));
+    }
+
+    private static Expression<Func<Load, object>> InitOrderBy(string? propertyName)
+    {
+        propertyName = propertyName?.ToLower() ?? "referenceid";
+        return propertyName switch
+        {
+            "name" => i => i.Name!,
+            "sourceaddress" => i => i.SourceAddress!,
+            "destinationaddress" => i => i.DestinationAddress!,
+            "deliverycost" => i => i.DeliveryCost,
+            "distance" => i => i.Distance,
+            "dispatcheddate" => i => i.DispatchedDate,
+            "pickupdate" => i => i.PickUpDate!,
+            "deliverydate" => i => i.DeliveryDate!,
+            "status" => i => i.Status.Name,
+            _ => i => i.ReferenceId
+        };
     }
 }

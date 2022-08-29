@@ -12,7 +12,7 @@ public class GetTenantRolesHandler : RequestHandlerBase<GetTenantRolesQuery, Pag
     protected override Task<PagedDataResult<TenantRoleDto>> HandleValidated(
         GetTenantRolesQuery request, CancellationToken cancellationToken)
     {
-        var totalItems = _tenantRepository.GetQuery<TenantRole>().Count();
+        var totalItems = _tenantRepository.Query<TenantRole>().Count();
 
         var rolesDto = _tenantRepository
             .ApplySpecification(new SearchTenantRoles(request.Search))

@@ -20,9 +20,4 @@
       <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Options" />
-      <Folder Include="Services" />
-    </ItemGroup>
-
 </Project>

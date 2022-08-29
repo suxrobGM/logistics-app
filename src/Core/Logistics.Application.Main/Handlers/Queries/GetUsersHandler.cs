@@ -14,7 +14,7 @@ internal sealed class GetUsersHandler : RequestHandlerBase<GetUsersQuery, PagedD
         GetUsersQuery request, 
         CancellationToken cancellationToken)
     {
-        var totalItems = _repository.GetQuery<User>().Count();
+        var totalItems = _repository.Query<User>().Count();
 
         var users = _repository
             .ApplySpecification(new SearchUsers(request.Search))

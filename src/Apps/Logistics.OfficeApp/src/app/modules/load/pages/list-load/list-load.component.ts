@@ -29,7 +29,7 @@ export class ListLoadComponent implements OnInit {
   public search(event: any) {
     const query = event.target.value;
     
-    this.apiService.getLoads(query, 1).subscribe(result => {
+    this.apiService.getLoads(query, '', 1).subscribe(result => {
       if (result.success && result.items) {
         this.loads = result.items;
         this.totalRecords = result.itemsCount!;
@@ -40,8 +40,9 @@ export class ListLoadComponent implements OnInit {
   public load(event: LazyLoadEvent) {
     this.isBusy = true;
     const page = event.first! / event.rows! + 1;
+    const sortField = this.apiService.parseSortProperty(event.sortField, event.sortOrder);
     
-    this.apiService.getLoads(undefined, page).subscribe(result => {
+    this.apiService.getLoads('', sortField, page).subscribe(result => {
       if (result.success && result.items) {
         this.loads = result.items;
         this.totalRecords = result.itemsCount!;

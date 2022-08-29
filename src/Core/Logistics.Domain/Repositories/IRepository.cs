@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-
-namespace Logistics.Domain.Repositories;
+﻿namespace Logistics.Domain.Repositories;
 
 /// <summary>
 /// Generic repository.
@@ -46,7 +44,7 @@ public interface IRepository
     /// <param name="predicate">Predicate to filter query</param>
     /// <typeparam name="TEntity">Class that implements the <see cref="IAggregateRoot"/> interface</typeparam>
     /// <returns>IQueryable of entity objects</returns>
-    IQueryable<TEntity> GetQuery<TEntity>(Expression<Func<TEntity, bool>>? predicate = default)
+    IQueryable<TEntity> Query<TEntity>(Expression<Func<TEntity, bool>>? predicate = default)
         where TEntity: class, IAggregateRoot;
 
     /// <summary>

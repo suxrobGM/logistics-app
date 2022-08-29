@@ -14,22 +14,22 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
     }
 
     protected override Task<PagedDataResult<LoadDto>> HandleValidated(
-        GetLoadsQuery request, 
+        GetLoadsQuery req, 
         CancellationToken cancellationToken)
     {
         var tenantId = _tenantRepository.CurrentTenant!.Id;
-        var totalItems = _tenantRepository.GetQuery<Load>().Count();
+        var totalItems = _tenantRepository.Query<Load>().Count();
         var filteredUsers = _mainRepository.ApplySpecification(new FilterUsersByTenantId(tenantId)).ToArray();
         var userIds = filteredUsers.Select(i => i.Id).ToArray();
         var userNames = filteredUsers.Select(i => i.UserName).ToArray();
         var userFirstNames = filteredUsers.Select(i => i.FirstName).ToArray();
         var userLastNames = filteredUsers.Select(i => i.LastName).ToArray();
+        var spec = new SearchLoads(req.Search, userIds, userNames, userFirstNames, userLastNames, req.OrderBy, req.Descending);
 
         var loads = _tenantRepository
-            .ApplySpecification(new SearchLoads(request.Search, userIds, userNames, userFirstNames, userLastNames))
-            .OrderBy(i => i.DispatchedDate)
-            .Skip((request.Page - 1) * request.PageSize)
-            .Take(request.PageSize)
+            .ApplySpecification(spec)
+            .Skip((req.Page - 1) * req.PageSize)
+            .Take(req.PageSize)
             .ToArray();
 
         var driverIds = loads.Where(i => !string.IsNullOrEmpty(i.AssignedDriverId))
@@ -38,11 +38,11 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
         var dispatcherIds = loads.Where(i => !string.IsNullOrEmpty(i.AssignedDispatcherId))
             .Select(i => i.AssignedDispatcherId);
 
-        var drivers = _mainRepository.GetQuery<User>()
+        var drivers = _mainRepository.Query<User>()
             .Where(user => driverIds.Contains(user.Id))
             .ToDictionary(i => i.Id);
         
-        var dispatchers = _mainRepository.GetQuery<User>()
+        var dispatchers = _mainRepository.Query<User>()
             .Where(user => dispatcherIds.Contains(user.Id))
             .ToDictionary(i => i.Id);
 
@@ -82,7 +82,7 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
             }
         }
 
-        var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
+        var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
         return Task.FromResult(new PagedDataResult<LoadDto>(loadsDto, totalItems, totalPages));
     }
 

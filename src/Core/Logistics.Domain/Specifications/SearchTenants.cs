@@ -2,8 +2,14 @@
 
 public class SearchTenants : BaseSpecification<Tenant>
 {
-    public SearchTenants(string? search)
+    public SearchTenants(
+        string? search, 
+        string? orderBy = "Name", 
+        bool descending = false)
     {
+        Descending = descending;
+        OrderBy = InitOrderBy(orderBy);
+
         if (string.IsNullOrEmpty(search))
             return;
         
@@ -13,5 +19,15 @@ public class SearchTenants : BaseSpecification<Tenant>
 
             (!string.IsNullOrEmpty(i.DisplayName) &&
              i.DisplayName.Contains(search, StringComparison.InvariantCultureIgnoreCase));
+    }
+    
+    private static Expression<Func<Tenant, object>> InitOrderBy(string? propertyName)
+    {
+        propertyName = propertyName?.ToLower() ?? "name";
+        return propertyName switch
+        {
+            "displayname" => i => i.DisplayName!,
+            _ => i => i.Name!
+        };
     }
 }

@@ -27,7 +27,7 @@ export class DashboardPageComponent implements OnInit {
       zoom: 6
     });
 
-    this.apiService.getLoads().subscribe(result => {
+    this.apiService.getLoads('', '-dispatchedDate').subscribe(result => {
       if (result.success && result.items) {
         this.loads = result.items;
       }

@@ -1,8 +1,7 @@
-﻿using System.Linq.Expressions;
+﻿namespace Logistics.Domain.Specifications;
 
-namespace Logistics.Domain.Specifications;
-
-public abstract class BaseSpecification<TEntity> : ISpecification<TEntity> where TEntity : class, IAggregateRoot
+public abstract class BaseSpecification<TEntity> : 
+    ISpecification<TEntity> where TEntity : class, IAggregateRoot
 {
     protected BaseSpecification()
     {

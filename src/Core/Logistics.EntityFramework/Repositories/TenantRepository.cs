@@ -35,7 +35,7 @@ internal class TenantRepository : GenericRepository<TenantDbContext>, ITenantRep
             : await Context.Set<TEntity>().Where(predicate).ToListAsync();
     }
 
-    IQueryable<TEntity> ITenantRepository.GetQuery<TEntity>(Expression<Func<TEntity, bool>>? predicate)
+    IQueryable<TEntity> ITenantRepository.Query<TEntity>(Expression<Func<TEntity, bool>>? predicate)
         where TEntity : class
     {
         return predicate == default

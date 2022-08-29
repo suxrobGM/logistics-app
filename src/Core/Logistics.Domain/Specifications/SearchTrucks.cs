@@ -2,9 +2,16 @@
 
 public class SearchTrucks : BaseSpecification<Truck>
 {
-    public SearchTrucks(string? search, string[] userIds, string[] userNames, string?[] userFirstNames, string?[] userLastNames)
+    public SearchTrucks(
+        string? search, 
+        string[] userIds, 
+        string[] userNames, 
+        string?[] userFirstNames, 
+        string?[] userLastNames,
+        bool descending = false)
     {
         OrderBy = i => i.TruckNumber;
+        Descending = descending;
 
         if (string.IsNullOrEmpty(search))
             return;
@@ -14,6 +21,6 @@ public class SearchTrucks : BaseSpecification<Truck>
             userIds.Contains(i.DriverId) &&
             (userNames.Contains(search) || userFirstNames.Contains(search) || userLastNames.Contains(search)) ||
 
-            (i.TruckNumber.ToString().Contains(search, StringComparison.InvariantCultureIgnoreCase));
+            i.TruckNumber.ToString().Contains(search, StringComparison.InvariantCultureIgnoreCase);
     }
 }

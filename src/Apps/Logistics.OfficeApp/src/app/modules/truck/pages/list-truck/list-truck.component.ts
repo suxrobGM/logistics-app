@@ -28,7 +28,7 @@ export class ListTruckComponent implements OnInit {
   public search(event: any) {
     const query = event.target.value;
     
-    this.apiService.getTrucks(query, 1).subscribe(result => {
+    this.apiService.getTrucks(query, '', 1).subscribe(result => {
       if (result.success && result.items) {
         this.trucks = result.items;
         this.totalRecords = result.itemsCount!;
@@ -39,8 +39,9 @@ export class ListTruckComponent implements OnInit {
   public load(event: LazyLoadEvent) {
     this.isBusy = true;
     const page = event.first! / event.rows! + 1;
+    const sortField = this.apiService.parseSortProperty(event.sortField, event.sortOrder);
     
-    this.apiService.getTrucks(undefined, page).subscribe(result => {
+    this.apiService.getTrucks('', sortField, page).subscribe(result => {
       if (result.success && result.items) {
         this.trucks = result.items;
         this.totalRecords = result.itemsCount!;

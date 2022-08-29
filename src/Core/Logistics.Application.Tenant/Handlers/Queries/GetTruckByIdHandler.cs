@@ -18,7 +18,7 @@ internal sealed class GetTruckByIdHandler : RequestHandlerBase<GetTruckByIdQuery
     {
         var truckEntity = await _tenantRepository.GetAsync<Truck>(request.Id);
 
-        var loadsIds = _tenantRepository.GetQuery<Truck>()
+        var loadsIds = _tenantRepository.Query<Truck>()
             .SelectMany(i => i.Loads)
             .Select(i => i.Id)
             .ToList();

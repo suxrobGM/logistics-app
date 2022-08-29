@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-
-namespace Logistics.Domain.Repositories;
+﻿namespace Logistics.Domain.Repositories;
 
 /// <summary>
 /// Tenant's repository.
@@ -53,7 +51,7 @@ public interface ITenantRepository : IRepository
     /// Class that implements <see cref="IAggregateRoot"/> and <see cref="ITenantEntity"/> interfaces
     /// </typeparam>
     /// <returns>IQueryable of entity objects</returns>
-    new IQueryable<TEntity> GetQuery<TEntity>(Expression<Func<TEntity, bool>> predicate = null!)
+    new IQueryable<TEntity> Query<TEntity>(Expression<Func<TEntity, bool>> predicate = null!)
         where TEntity: class, IAggregateRoot, ITenantEntity;
 
     /// <summary>

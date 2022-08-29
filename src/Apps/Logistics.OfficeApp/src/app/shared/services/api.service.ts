@@ -44,8 +44,16 @@ export class ApiService {
 
   //#region User API
 
-    getUsers(searchQuery = '', page = 1, pageSize = 10): Observable<PagedDataResult<User>> {  
-      const url = `${this.host}/user/list?search=${searchQuery}&page=${page}&pageSize=${pageSize}`;
+    getUsers(searchQuery = '', orderBy = '', page = 1, pageSize = 10): Observable<PagedDataResult<User>> { 
+      if (!searchQuery) {
+        searchQuery = ''
+      }
+
+      if (!orderBy) {
+        orderBy = ''
+      }
+      
+      const url = `${this.host}/user/list?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
       return this.httpClient
         .get<PagedDataResult<User>>(url)
         .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
@@ -63,8 +71,16 @@ export class ApiService {
       .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
   }
 
-  getLoads(searchQuery = '', page = 1, pageSize = 10): Observable<PagedDataResult<Load>> {  
-    const url = `${this.host}/load/list?search=${searchQuery}&page=${page}&pageSize=${pageSize}`;
+  getLoads(searchQuery = '', orderBy = '', page = 1, pageSize = 10): Observable<PagedDataResult<Load>> { 
+    if (!searchQuery) {
+      searchQuery = ''
+    }
+
+    if (!orderBy) {
+      orderBy = ''
+    }
+    
+    const url = `${this.host}/load/list?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
     return this.httpClient
       .get<PagedDataResult<Load>>(url)
       .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
@@ -110,8 +126,16 @@ export class ApiService {
       .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
   }
 
-  getTrucks(searchQuery = '', page = 1, pageSize = 10): Observable<PagedDataResult<Truck>> {  
-    const url = `${this.host}/truck/list?search=${searchQuery}&page=${page}&pageSize=${pageSize}`;
+  getTrucks(searchQuery = '', orderBy = '', page = 1, pageSize = 10): Observable<PagedDataResult<Truck>> {  
+    if (!searchQuery) {
+      searchQuery = ''
+    }
+
+    if (!orderBy) {
+      orderBy = ''
+    }
+
+    const url = `${this.host}/truck/list?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
     return this.httpClient
       .get<PagedDataResult<Truck>>(url)
       .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
@@ -157,7 +181,15 @@ export class ApiService {
       .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
   }
 
-  getEmployees(searchQuery = '', orderBy = '', page = 1, pageSize = 10): Observable<PagedDataResult<Employee>> {  
+  getEmployees(searchQuery = '', orderBy = '', page = 1, pageSize = 10): Observable<PagedDataResult<Employee>> {
+    if (!searchQuery) {
+      searchQuery = ''
+    }
+
+    if (!orderBy) {
+      orderBy = ''
+    }
+
     const url = `${this.host}/employee/list?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
     return this.httpClient
       .get<PagedDataResult<Employee>>(url)
@@ -165,6 +197,10 @@ export class ApiService {
   }
 
   getDrivers(searchQuery = '', page = 1, pageSize = 10): Observable<PagedDataResult<Employee>> {  
+    if (!searchQuery) {
+      searchQuery = ''
+    }
+
     const url = `${this.host}/employee/drivers?search=${searchQuery}&page=${page}&pageSize=${pageSize}`;
     return this.httpClient
       .get<PagedDataResult<Employee>>(url)
@@ -204,7 +240,11 @@ export class ApiService {
 
   //#region Tenant Role API
 
-  getRoles(searchQuery = '', page = 1, pageSize = 10): Observable<PagedDataResult<Role>> {  
+  getRoles(searchQuery = '', page = 1, pageSize = 10): Observable<PagedDataResult<Role>> {
+    if (!searchQuery) {
+      searchQuery = ''
+    }
+    
     const url = `${this.host}/tenantRole/list?search=${searchQuery}&page=${page}&pageSize=${pageSize}`;
     return this.httpClient
       .get<PagedDataResult<Role>>(url)
@@ -234,7 +274,7 @@ export class ApiService {
     
     this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: errorMessage});
     this.messageService.add({key: 'errorMsg', severity: 'error', summary: 'Error', detail: errorMessage});
-    console.error(errorMessage);
+    console.error(errorMessage ?? responseData);
     return of({error: errorMessage, success: false});
   }
 }

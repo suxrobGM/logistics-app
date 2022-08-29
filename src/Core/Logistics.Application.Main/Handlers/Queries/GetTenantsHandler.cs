@@ -11,16 +11,11 @@ internal sealed class GetTenantsHandler : RequestHandlerBase<GetTenantsQuery, Pa
 
     protected override Task<PagedDataResult<TenantDto>> HandleValidated(GetTenantsQuery request, CancellationToken cancellationToken)
     {
-        var totalItems = _repository.GetQuery<Tenant>().Count();
-        var itemsQuery = _repository.GetQuery<Tenant>();
+        var totalItems = _repository.Query<Tenant>().Count();
+        var spec = new SearchTenants(request.Search, request.OrderBy, request.Descending);
 
-        if (!string.IsNullOrEmpty(request.Search))
-        {
-            itemsQuery = _repository.GetQuery<Tenant>(i => i.Name!.Contains(request.Search) || i.DisplayName!.Contains(request.Search));
-        }
-
-        var items = itemsQuery
-            .OrderBy(i => i.Id)
+        var items = _repository
+            .ApplySpecification(spec)
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
             .Select(i => new TenantDto

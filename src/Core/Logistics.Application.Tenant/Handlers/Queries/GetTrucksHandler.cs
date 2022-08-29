@@ -14,37 +14,37 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
     }
 
     protected override Task<PagedDataResult<TruckDto>> HandleValidated(
-        GetTrucksQuery request,
+        GetTrucksQuery req,
         CancellationToken cancellationToken)
     {
         var loadIds = new List<string>();
-        if (request.IncludeLoadIds)
+        if (req.IncludeLoadIds)
         {
-            loadIds = _tenantRepository.GetQuery<Truck>()
+            loadIds = _tenantRepository.Query<Truck>()
                 .SelectMany(i => i.Loads)
                 .Select(i => i.Id)
                 .ToList();
         }
 
         var tenantId = _tenantRepository.CurrentTenant!.Id;
-        var totalItems = _tenantRepository.GetQuery<Truck>().Count();
+        var totalItems = _tenantRepository.Query<Truck>().Count();
         var filteredUsers = _mainRepository.ApplySpecification(new FilterUsersByTenantId(tenantId)).ToArray();
         var userIds = filteredUsers.Select(i => i.Id).ToArray();
         var userNames = filteredUsers.Select(i => i.UserName).ToArray();
         var userFirstNames = filteredUsers.Select(i => i.FirstName).ToArray();
         var userLastNames = filteredUsers.Select(i => i.LastName).ToArray();
+        var spec = new SearchTrucks(req.Search, userIds, userNames, userFirstNames, userLastNames, req.Descending);
 
         var trucks = _tenantRepository
-            .ApplySpecification(new SearchTrucks(request.Search, userIds, userNames, userFirstNames, userLastNames))
-            .OrderBy(i => i.TruckNumber)
-            .Skip((request.Page - 1) * request.PageSize)
-            .Take(request.PageSize)
+            .ApplySpecification(spec)
+            .Skip((req.Page - 1) * req.PageSize)
+            .Take(req.PageSize)
             .ToArray();
 
         var driverIds = trucks.Where(i => !string.IsNullOrEmpty(i.DriverId))
             .Select(i => i.DriverId);
 
-        var drivers = _mainRepository.GetQuery<User>()
+        var drivers = _mainRepository.Query<User>()
             .Where(user => driverIds.Contains(user.Id))
             .ToDictionary(i => i.Id);
 
@@ -66,7 +66,7 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
             }
         }
 
-        var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
+        var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
         return Task.FromResult(new PagedDataResult<TruckDto>(trucksDto, totalItems, totalPages));
     }
 

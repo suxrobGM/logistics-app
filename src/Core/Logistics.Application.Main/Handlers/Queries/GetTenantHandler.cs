@@ -14,10 +14,8 @@ internal sealed class GetTenantHandler : RequestHandlerBase<GetTenantQuery, Data
         var tenantEntity = await _repository.GetAsync<Tenant>(i => i.Id == request.Id || i.Name == request.Name);
 
         if (tenantEntity == null)
-        {
             return DataResult<TenantDto>.CreateError("Could not find the specified tenant");
-        }
-
+        
         var tenant = new TenantDto
         {
             Id = tenantEntity.Id,

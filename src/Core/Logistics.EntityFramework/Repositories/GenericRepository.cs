@@ -37,7 +37,7 @@ internal class GenericRepository<TContext> : IRepository
             : await Context.Set<TEntity>().Where(predicate).ToListAsync();
     }
 
-    public IQueryable<TEntity> GetQuery<TEntity>(Expression<Func<TEntity, bool>>? predicate = default)
+    public IQueryable<TEntity> Query<TEntity>(Expression<Func<TEntity, bool>>? predicate = default)
         where TEntity : class, IAggregateRoot
     {
         return predicate == default

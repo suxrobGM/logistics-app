@@ -18,7 +18,7 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery
         CancellationToken cancellationToken)
     {
         var tenantId = _tenantRepository.CurrentTenant!.Id;
-        var totalItems = _tenantRepository.GetQuery<Employee>().Count();
+        var totalItems = _tenantRepository.Query<Employee>().Count();
         var spec = new SearchUsersByTenantId(request.Search, tenantId, request.OrderBy, request.Descending);
 
         var filteredUsers = _mainRepository
@@ -29,7 +29,7 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery
 
         var userIds = filteredUsers.Select(i => i.Id).ToArray();
         
-        var employeesDict = _tenantRepository.GetQuery<Employee>()
+        var employeesDict = _tenantRepository.Query<Employee>()
             .Where(i => userIds.Contains(i.Id))
             .ToDictionary(i => i.Id);
 

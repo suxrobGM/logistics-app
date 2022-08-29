@@ -56,7 +56,7 @@ internal class TenantService : ITenantService
         }
 
         tenantId = tenantId.Trim().ToLower();
-        var tenant = _mainRepository.GetQuery<Tenant>().FirstOrDefault(i => i.Id == tenantId || i.Name == tenantId) ??
+        var tenant = _mainRepository.Query<Tenant>().FirstOrDefault(i => i.Id == tenantId || i.Name == tenantId) ??
             throw new InvalidTenantException($"Could not found tenant with ID '{tenantId}'");
             
         return tenant;

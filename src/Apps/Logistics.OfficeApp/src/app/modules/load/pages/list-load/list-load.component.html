@@ -19,9 +19,9 @@
         </ng-template>
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="id">
+            <th pSortableColumn="referenceId">
               ID
-              <p-sortIcon field="id"></p-sortIcon>
+              <p-sortIcon field="referenceId"></p-sortIcon>
             </th>
             <th pSortableColumn="name">
               Name
@@ -29,7 +29,7 @@
             </th>
             <th pSortableColumn="sourceAddress">
               Source
-              <p-sortIcon field="sourceAddress" hidden="true"></p-sortIcon>
+              <p-sortIcon field="sourceAddress"></p-sortIcon>
             </th>
             <th pSortableColumn="destinationAddress">
               Destination
@@ -59,13 +59,11 @@
               Cost
               <p-sortIcon field="deliveryCost"></p-sortIcon>
             </th>
-            <th pSortableColumn="assignedDispatcherName">
+            <th>
               Dispatcher
-              <p-sortIcon field="assignedDispatcherName"></p-sortIcon>
             </th>
-            <th pSortableColumn="assignedDriverName">
+            <th>
               Driver
-              <p-sortIcon field="assignedDriverName"></p-sortIcon>
             </th>
             <th>Action</th>
           </tr>

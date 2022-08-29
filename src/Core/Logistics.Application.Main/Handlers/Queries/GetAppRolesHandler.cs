@@ -9,9 +9,10 @@ internal sealed class GetAppRolesHandler : RequestHandlerBase<GetAppRolesQuery, 
         _repository = repository;
     }
 
-    protected override Task<PagedDataResult<AppRoleDto>> HandleValidated(GetAppRolesQuery request, CancellationToken cancellationToken)
+    protected override Task<PagedDataResult<AppRoleDto>> HandleValidated(
+        GetAppRolesQuery request, CancellationToken cancellationToken)
     {
-        var totalItems = _repository.GetQuery<AppRole>().Count();
+        var totalItems = _repository.Query<AppRole>().Count();
 
         var rolesDto = _repository
             .ApplySpecification(new SearchAppRoles(request.Search))

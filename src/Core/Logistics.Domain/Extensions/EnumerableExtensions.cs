@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-
-namespace Logistics.Domain.Extensions;
+﻿namespace Logistics.Domain.Extensions;
 
 public static class EnumerableExtensions
 {
