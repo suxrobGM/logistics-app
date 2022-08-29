@@ -39,8 +39,6 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
         loadEntity.DestinationAddress = request.DestinationAddress;
         loadEntity.Distance = request.Distance;
         loadEntity.DeliveryCost = request.DeliveryCost;
-        loadEntity.PickUpDate = request.PickUpDate;
-        loadEntity.DeliveryDate = request.DeliveryDate;
         loadEntity.Status = LoadStatus.Get(request.Status)!;
         loadEntity.AssignedDriver = driver;
         loadEntity.AssignedTruck = truck;
@@ -66,9 +64,9 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
         {
             errorDescription = "Destination address is an empty string";
         }
-        else if (LoadStatus.Get(request.Status)! == null!)
+        else if (LoadStatus.Get(request.Status) == null)
         {
-            errorDescription = "Invalid load status name";
+            errorDescription = $"The'{request.Status}' is an invalid value of the status property";
         }
         else if (string.IsNullOrEmpty(request.AssignedDriverId))
         {

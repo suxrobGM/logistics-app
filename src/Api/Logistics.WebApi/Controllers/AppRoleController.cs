@@ -4,14 +4,10 @@
 [ApiController]
 public class AppRoleController : ControllerBase
 {
-    private readonly IMapper _mapper;
     private readonly IMediator _mediator;
 
-    public AppRoleController(
-        IMapper mapper,
-        IMediator mediator)
+    public AppRoleController(IMediator mediator)
     {
-        _mapper = mapper;
         _mediator = mediator;
     }
 

@@ -4,14 +4,10 @@
 [ApiController]
 public class TenantRoleController : ControllerBase
 {
-    private readonly IMapper _mapper;
     private readonly IMediator _mediator;
 
-    public TenantRoleController(
-        IMapper mapper,
-        IMediator mediator)
+    public TenantRoleController(IMediator mediator)
     {
-        _mapper = mapper;
         _mediator = mediator;
     }
 

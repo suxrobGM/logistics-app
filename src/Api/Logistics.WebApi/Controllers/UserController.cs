@@ -4,14 +4,10 @@
 [ApiController]
 public class UserController : ControllerBase
 {
-    private readonly IMapper _mapper;
     private readonly IMediator _mediator;
 
-    public UserController(
-        IMapper mapper,
-        IMediator mediator)
+    public UserController(IMediator mediator)
     {
-        _mapper = mapper;
         _mediator = mediator;
     }
 

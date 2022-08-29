@@ -5,7 +5,7 @@ import * as MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-d
 import * as mapboxgl from 'mapbox-gl';
 import { MessageService } from 'primeng/api';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { Employee, Load, LoadStatus, UserIdentity } from '@shared/models';
+import { Employee, EnumType, Load, LoadStatuses, UserIdentity } from '@shared/models';
 import { ApiService } from '@shared/services';
 import { AppConfig } from '@configs';
 
@@ -28,7 +28,7 @@ export class EditLoadComponent implements OnInit {
   public editMode: boolean;
   public form: FormGroup;
   public suggestedDrivers: Employee[];
-  public loadStatuses: string[]
+  public loadStatuses: EnumType[]
 
   constructor(
     private apiService: ApiService,
@@ -39,7 +39,7 @@ export class EditLoadComponent implements OnInit {
     this.editMode = true;
     this.headerText = 'Edit a load';
     this.suggestedDrivers = [];
-    this.loadStatuses = [];
+    this.loadStatuses = LoadStatuses;
 
     this.form = new FormGroup({
       name: new FormControl(''),
@@ -51,7 +51,7 @@ export class EditLoadComponent implements OnInit {
       dispatcherName: new FormControl('', Validators.required),
       dispatcherId: new FormControl('', Validators.required),
       driver: new FormControl('', Validators.required),
-      status: new FormControl(LoadStatus.Dispatched, Validators.required)
+      status: new FormControl(LoadStatuses[0], Validators.required)
     });
   }
 
@@ -59,10 +59,6 @@ export class EditLoadComponent implements OnInit {
     this.id = history.state.id;
     this.initMapbox();
     this.initGeocoderInputs();
-
-    for (const loadStatus in LoadStatus) {
-      this.loadStatuses.push(loadStatus);
-    }
 
     this.oidcSecurityService.getUserData().subscribe((user: UserIdentity) => {
       this.form.patchValue({
@@ -96,6 +92,7 @@ export class EditLoadComponent implements OnInit {
       this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Select a driver'});
       return;
     }
+    
 
     const load: Load = {
       name: this.form.value.name,
@@ -106,7 +103,11 @@ export class EditLoadComponent implements OnInit {
       distance: this.form.value.distance,
       assignedDispatcherId: this.form.value.dispatcherId,
       assignedDriverId: driver.id,
-      status: this.form.status
+      status: this.form.value.status
+    }
+
+    if (this.id) {
+      load.id = this.id;
     }
 
     this.isBusy = true;
@@ -213,8 +214,9 @@ export class EditLoadComponent implements OnInit {
           this.srcGeocoder.query(load.sourceAddress!);
           this.destGeocoder.query(load.destinationAddress!);
           
-          console.log(this.directions.setOrigin(load.sourceAddress!));
+          this.directions.setOrigin(load.sourceAddress!);
           this.directions.setDestination(load.destinationAddress!);
+          this.destGeocoder.setFlyTo(true);
         });
       }
     });

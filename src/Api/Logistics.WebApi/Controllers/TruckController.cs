@@ -4,14 +4,10 @@
 [ApiController]
 public class TruckController : ControllerBase
 {
-    private readonly IMapper _mapper;
     private readonly IMediator _mediator;
 
-    public TruckController(
-        IMapper mapper,
-        IMediator mediator)
+    public TruckController(IMediator mediator)
     {
-        _mapper = mapper;
         _mediator = mediator;
     }
 
@@ -50,9 +46,9 @@ public class TruckController : ControllerBase
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Policies.Truck.CanWrite)]
-    public async Task<IActionResult> Create([FromBody] TruckDto request)
+    public async Task<IActionResult> Create([FromBody] CreateTruckCommand request)
     {
-        var result = await _mediator.Send(_mapper.Map<CreateTruckCommand>(request));
+        var result = await _mediator.Send(request);
 
         if (result.Success)
             return Ok(result);
@@ -64,11 +60,10 @@ public class TruckController : ControllerBase
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Policies.Truck.CanWrite)]
-    public async Task<IActionResult> Update(string id, [FromBody] TruckDto request)
+    public async Task<IActionResult> Update(string id, [FromBody] UpdateTruckCommand request)
     {
-        var updateRequest = _mapper.Map<UpdateTruckCommand>(request);
-        updateRequest.Id = id;
-        var result = await _mediator.Send(updateRequest);
+        request.Id = id;
+        var result = await _mediator.Send(request);
 
         if (result.Success)
             return Ok(result);

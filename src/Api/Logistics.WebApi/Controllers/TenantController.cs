@@ -4,14 +4,10 @@
 [ApiController]
 public class TenantController : ControllerBase
 {
-    private readonly IMapper _mapper;
     private readonly IMediator _mediator;
 
-    public TenantController(
-        IMapper mapper,
-        IMediator mediator)
+    public TenantController(IMediator mediator)
     {
-        _mapper = mapper;
         _mediator = mediator;
     }
 
@@ -69,9 +65,9 @@ public class TenantController : ControllerBase
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Policies.Tenant.CanWrite)]
-    public async Task<IActionResult> Create([FromBody] TenantDto request)
+    public async Task<IActionResult> Create([FromBody] CreateTenantCommand request)
     {
-        var result = await _mediator.Send(_mapper.Map<CreateTenantCommand>(request));
+        var result = await _mediator.Send(request);
 
         if (result.Success)
             return Ok(result);
@@ -83,11 +79,10 @@ public class TenantController : ControllerBase
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Policies.Tenant.CanWrite)]
-    public async Task<IActionResult> Update(string id, [FromBody] TenantDto request)
+    public async Task<IActionResult> Update(string id, [FromBody] UpdateTenantCommand request)
     {
-        var updateRequest = _mapper.Map<UpdateTenantCommand>(request);
-        updateRequest.Id = id;
-        var result = await _mediator.Send(updateRequest);
+        request.Id = id;
+        var result = await _mediator.Send(request);
 
         if (result.Success)
             return Ok(result);

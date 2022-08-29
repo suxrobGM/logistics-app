@@ -27,7 +27,7 @@ public abstract class Enumeration : IComparable
         return typeMatches && valueMatches;
     }
 
-    public override int GetHashCode() => Id.GetHashCode()!;
+    public override int GetHashCode() => Id.GetHashCode();
 
     public int CompareTo(object? other) => Id.CompareTo((other as Enumeration)?.Id);
 
@@ -43,29 +43,29 @@ public abstract class Enumeration : IComparable
                 .Cast<T>();
     }
 
-    public static bool operator ==(Enumeration left, Enumeration right)
+    public static bool operator ==(Enumeration? left, Enumeration? right)
     {
-        return left.Equals(right);
+        return left?.Equals(right) ?? false;
     }
 
-    public static bool operator !=(Enumeration left, Enumeration right)
+    public static bool operator !=(Enumeration? left, Enumeration? right)
     {
         return !(left == right);
     }
 
-    public static bool operator <(Enumeration left, Enumeration right)
+    public static bool operator <(Enumeration? left, Enumeration? right)
     {
-        return left.CompareTo(right) < 0;
+        return left?.CompareTo(right) < 0;
     }
 
-    public static bool operator <=(Enumeration left, Enumeration right)
+    public static bool operator <=(Enumeration? left, Enumeration? right)
     {
-        return left.CompareTo(right) <= 0;
+        return left?.CompareTo(right) <= 0;
     }
 
-    public static bool operator >(Enumeration left, Enumeration right)
+    public static bool operator >(Enumeration? left, Enumeration? right)
     {
-        return left.CompareTo(right) > 0;
+        return left?.CompareTo(right) > 0;
     }
 
     public static bool operator >=(Enumeration left, Enumeration right)

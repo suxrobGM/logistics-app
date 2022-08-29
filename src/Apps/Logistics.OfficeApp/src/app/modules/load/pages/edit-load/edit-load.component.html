@@ -49,7 +49,8 @@
         </div>
         <div class="mb-3">
           <label for="status" class="form-label">Status</label>
-          <p-dropdown formControlName="status" styleClass="w-100" [options]="loadStatuses" [readonly]="!editMode">
+          <p-dropdown formControlName="status" styleClass="w-100" [options]="loadStatuses" optionValue="name"
+            optionLabel="displayName" [readonly]="!editMode">
           </p-dropdown>
         </div>
         <div class="mt-3">

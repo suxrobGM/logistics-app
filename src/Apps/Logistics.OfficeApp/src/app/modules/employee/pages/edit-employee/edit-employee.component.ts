@@ -80,11 +80,14 @@ export class EditEmployeeComponent implements OnInit {
           firstName: this.employee.firstName,
           lastName: this.employee.lastName,
         });
-
+        
         if (this.employee.roles && this.employee.roles.length > 0) {
+          console.log(this.roles);
+          console.log(this.employee.roles[0]);
+          
           this.form.patchValue({
             role: this.employee.roles[0]
-          })
+          });
         }
       }
     });
@@ -93,8 +96,6 @@ export class EditEmployeeComponent implements OnInit {
   private fetchRoles() {
     this.apiService.getRoles().subscribe(result => {
       if (result.success && result.items) {
-        console.log(result.items);
-        
         this.roles.push(...result.items);
       }
     })

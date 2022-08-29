@@ -4,14 +4,10 @@
 [ApiController]
 public class LoadController : ControllerBase
 {
-    private readonly IMapper _mapper;
     private readonly IMediator _mediator;
 
-    public LoadController(
-        IMapper mapper,
-        IMediator mediator)
+    public LoadController(IMediator mediator)
     {
-        _mapper = mapper;
         _mediator = mediator;
     }
 
@@ -50,9 +46,9 @@ public class LoadController : ControllerBase
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Policies.Load.CanWrite)]
-    public async Task<IActionResult> Create([FromBody] LoadDto request)
+    public async Task<IActionResult> Create([FromBody] CreateLoadCommand request)
     {
-        var result = await _mediator.Send(_mapper.Map<CreateLoadCommand>(request));
+        var result = await _mediator.Send(request);
 
         if (result.Success)
             return Ok(result);
@@ -64,11 +60,10 @@ public class LoadController : ControllerBase
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Policies.Load.CanWrite)]
-    public async Task<IActionResult> Update(string id, [FromBody] LoadDto request)
+    public async Task<IActionResult> Update(string id, [FromBody] UpdateLoadCommand request)
     {
-        var updateRequest = _mapper.Map<UpdateLoadCommand>(request);
-        updateRequest.Id = id;
-        var result = await _mediator.Send(updateRequest);
+        request.Id = id;
+        var result = await _mediator.Send(request);
 
         if (result.Success)
             return Ok(result);

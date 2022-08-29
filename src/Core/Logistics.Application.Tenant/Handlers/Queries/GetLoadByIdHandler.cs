@@ -38,7 +38,7 @@ internal sealed class GetLoadByIdHandler : RequestHandlerBase<GetLoadByIdQuery, 
             Status = loadEntity.Status.ToString(),
             AssignedDispatcherId = loadEntity.AssignedDispatcherId,
             AssignedDispatcherName = assignedDispatcher?.GetFullName(),
-            AssignedDriverId = assignedDispatcher?.Id,
+            AssignedDriverId = assignedDriver?.Id,
             AssignedDriverName = assignedDriver?.GetFullName(),
             AssignedTruckId = loadEntity.AssignedTruckId
         };

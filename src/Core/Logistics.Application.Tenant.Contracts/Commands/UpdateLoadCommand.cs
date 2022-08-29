@@ -11,6 +11,4 @@ public sealed class UpdateLoadCommand : RequestBase<DataResult>
     public string? AssignedDispatcherId { get; set; }
     public string? AssignedDriverId { get; set; }
     public string? Status { get; set; }
-    public DateTime? PickUpDate { get; set; }
-    public DateTime? DeliveryDate { get; set; }
 }

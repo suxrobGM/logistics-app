@@ -18,9 +18,9 @@ public class LoadStatus : Enumeration
         name = name.Trim().ToLower();
         return name switch
         {
-            "ready" => Dispatched,
-            "loaded" => PickedUp,
-            "offduty" => Delivered,
+            "dispatched" => Dispatched,
+            "pickedup" => PickedUp,
+            "delivered" => Delivered,
             _ => null
         };
     }

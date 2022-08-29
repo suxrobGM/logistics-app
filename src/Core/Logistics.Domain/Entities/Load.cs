@@ -25,10 +25,16 @@ public class Load : Entity, ITenantEntity
             if (_status == LoadStatus.PickedUp)
             {
                 PickUpDate = DateTime.UtcNow;
+                DeliveryDate = null;
             }
             else if (_status == LoadStatus.Delivered)
             {
                 DeliveryDate = DateTime.UtcNow;
+            }
+            else if (_status == LoadStatus.Dispatched)
+            {
+                PickUpDate = null;
+                DeliveryDate = null;
             }
         }
     }
