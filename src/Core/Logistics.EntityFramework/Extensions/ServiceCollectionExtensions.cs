@@ -61,11 +61,11 @@ public static class ServiceCollectionExtensions
             null,
             tenantsConfigSection);
 
-        services.AddScoped(typeof(ITenantService), typeof(TenantService));
-        services.AddScoped(typeof(IMainRepository<>), typeof(MainRepository<>));
-        services.AddScoped(typeof(ITenantRepository<>), typeof(TenantRepository<>));
-        services.AddScoped(typeof(IMainUnitOfWork), typeof(MainUnitOfWork));
-        services.AddScoped(typeof(ITenantUnitOfWork), typeof(TenantUnitOfWork));
+        services.AddScoped<ITenantService, TenantService>();
+        services.AddScoped<IMainRepository, MainRepository>();
+        services.AddScoped<ITenantRepository, TenantRepository>();
+        services.AddScoped<UnitOfWork<MainDbContext>>();
+        services.AddScoped<UnitOfWork<TenantDbContext>>();
         return services;
     }
 }

@@ -2,25 +2,26 @@
 
 internal sealed class GetEmployeeByIdHandler : RequestHandlerBase<GetEmployeeByIdQuery, DataResult<EmployeeDto>>
 {
-    private readonly IMainRepository<User> _userRepository;
-    private readonly ITenantRepository<Employee> _employeeRepository;
+    private readonly IMainRepository _mainRepository;
+    private readonly ITenantRepository _tenantRepository;
 
     public GetEmployeeByIdHandler(
-        IMainRepository<User> userRepository,
-        ITenantRepository<Employee> employeeRepository)
+        IMainRepository mainRepository,
+        ITenantRepository tenantRepository)
     {
-        _userRepository = userRepository;
-        _employeeRepository = employeeRepository;
+        _mainRepository = mainRepository;
+        _tenantRepository = tenantRepository;
     }
 
-    protected override async Task<DataResult<EmployeeDto>> HandleValidated(GetEmployeeByIdQuery request, CancellationToken cancellationToken)
+    protected override async Task<DataResult<EmployeeDto>> HandleValidated(
+        GetEmployeeByIdQuery request, CancellationToken cancellationToken)
     {
-        var employeeEntity = await _employeeRepository.GetAsync(i => i.Id == request.Id);
+        var employeeEntity = await _tenantRepository.GetAsync<Employee>(request.Id);
         
         if (employeeEntity == null)
             return DataResult<EmployeeDto>.CreateError("Could not find the specified employee");
 
-        var userEntity = await _userRepository.GetAsync(i => i.Id == employeeEntity.Id);
+        var userEntity = await _mainRepository.GetAsync<User>(employeeEntity.Id);
 
         if (userEntity == null)
             return DataResult<EmployeeDto>.CreateError("Could not find the specified employee, the external ID is incorrect");

@@ -1,19 +1,19 @@
 ﻿namespace Logistics.Application.Handlers.Queries;
 
-public class GetAppRolesHandler : RequestHandlerBase<GetAppRolesQuery, PagedDataResult<AppRoleDto>>
+internal sealed class GetAppRolesHandler : RequestHandlerBase<GetAppRolesQuery, PagedDataResult<AppRoleDto>>
 {
-    private readonly IMainRepository<AppRole> _rolesRepository;
+    private readonly IMainRepository _repository;
 
-    public GetAppRolesHandler(IMainRepository<AppRole> rolesRepository)
+    public GetAppRolesHandler(IMainRepository repository)
     {
-        _rolesRepository = rolesRepository;
+        _repository = repository;
     }
 
     protected override Task<PagedDataResult<AppRoleDto>> HandleValidated(GetAppRolesQuery request, CancellationToken cancellationToken)
     {
-        var totalItems = _rolesRepository.GetQuery().Count();
+        var totalItems = _repository.GetQuery<AppRole>().Count();
 
-        var rolesDto = _rolesRepository
+        var rolesDto = _repository
             .ApplySpecification(new SearchAppRoles(request.Search))
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)

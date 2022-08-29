@@ -13,13 +13,13 @@ internal class UserProfileService : IProfileService
     private readonly UserManager<User> _userManager;
     private readonly HttpContext? _httpContext;
     private readonly IUserClaimsPrincipalFactory<User> _claimsFactory;
-    private readonly ITenantRepository<Employee> _tenantRepository;
+    private readonly ITenantRepository _tenantRepository;
 
     public UserProfileService(
         UserManager<User> userManager,
         IHttpContextAccessor httpContextAccessor,
         IUserClaimsPrincipalFactory<User> claimsFactory,
-        ITenantRepository<Employee> tenantRepository)
+        ITenantRepository tenantRepository)
     {
         _userManager = userManager;
         _httpContext = httpContextAccessor.HttpContext;
@@ -48,8 +48,8 @@ internal class UserProfileService : IProfileService
             case "ClaimsProviderAccessToken" when !string.IsNullOrEmpty(tenantId):
             {
                 SetRequestHeader("X-Tenant", tenantId);
-                var tenantUser = await _tenantRepository.GetAsync(i => i.Id == user.Id);
-                var tenantRoles = GetTenantRoles(tenantUser);
+                var tenantEmployee = await _tenantRepository.GetAsync<Employee>(i => i.Id == user.Id);
+                var tenantRoles = GetTenantRoles(tenantEmployee);
 
                 claims.TryAdd("role", string.Join(',', userAppRoles, tenantRoles));
                 claims.TryAdd("tenant", tenantId);

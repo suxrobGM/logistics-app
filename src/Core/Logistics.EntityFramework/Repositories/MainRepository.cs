@@ -1,14 +1,10 @@
 ﻿namespace Logistics.EntityFramework.Repositories;
 
-internal class MainRepository<TEntity> : GenericRepository<TEntity, MainDbContext>, IMainRepository<TEntity>
-    where TEntity : class, IAggregateRoot
+internal class MainRepository: GenericRepository<MainDbContext>, IMainRepository
 {
     public MainRepository(
         MainDbContext context,
-        IMainUnitOfWork unitOfWork) : base(context)
+        UnitOfWork<MainDbContext> unitOfWork) : base(context, unitOfWork)
     {
-        UnitOfWork = unitOfWork;
     }
-
-    public IMainUnitOfWork UnitOfWork { get; }
 }

@@ -3,11 +3,11 @@
 internal sealed class DeleteTenantHandler : RequestHandlerBase<DeleteTenantCommand, DataResult>
 {
     private readonly IDatabaseProviderService _databaseProvider;
-    private readonly IMainRepository<Tenant> _repository;
+    private readonly IMainRepository _repository;
 
     public DeleteTenantHandler(
         IDatabaseProviderService databaseProvider,
-        IMainRepository<Tenant> repository)
+        IMainRepository repository)
     {
         _databaseProvider = databaseProvider;
         _repository = repository;
@@ -15,21 +15,17 @@ internal sealed class DeleteTenantHandler : RequestHandlerBase<DeleteTenantComma
 
     protected override async Task<DataResult> HandleValidated(DeleteTenantCommand request, CancellationToken cancellationToken)
     {
-        var tenant = await _repository.GetAsync(request.Id!);
+        var tenant = await _repository.GetAsync<Tenant>(request.Id!);
 
         if (tenant == null)
-        {
             return DataResult.CreateError("Could not find the tenant");
-        }
 
         var deleted = await _databaseProvider.DeleteDatabaseAsync(tenant.ConnectionString!);
 
         if (!deleted)
-        {
             return DataResult.CreateError("Could not delete the tenant's database");
-        }
 
-        _repository.Delete(tenant.Id);
+        _repository.Delete(tenant);
         await _repository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }

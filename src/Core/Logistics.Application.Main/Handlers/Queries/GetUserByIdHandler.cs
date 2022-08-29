@@ -4,20 +4,17 @@ namespace Logistics.Application.Handlers.Queries;
 
 internal sealed class GetUserByIdHandler : RequestHandlerBase<GetUserByIdQuery, DataResult<UserDto>>
 {
-    private readonly IMainRepository<User> _userRepository;
     private readonly UserManager<User> _userManager;
 
-    public GetUserByIdHandler(
-        IMainRepository<User> userRepository,
-        UserManager<User> userManager)
+    public GetUserByIdHandler(UserManager<User> userManager)
     {
         _userManager = userManager;
-        _userRepository = userRepository;
     }
 
-    protected override async Task<DataResult<UserDto>> HandleValidated(GetUserByIdQuery request, CancellationToken cancellationToken)
+    protected override async Task<DataResult<UserDto>> HandleValidated(
+        GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-        var userEntity = await _userRepository.GetAsync(request.Id!);
+        var userEntity = await _userManager.FindByIdAsync(request.Id!);
 
         if (userEntity == null)
             return DataResult<UserDto>.CreateError("Could not find the specified user");

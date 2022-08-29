@@ -1,10 +1,10 @@
 ﻿namespace Logistics.EntityFramework.Repositories;
 
-internal class GenericUnitOfWork<TContext> : IUnitOfWork where TContext : DbContext
+internal class UnitOfWork<TContext> : IUnitOfWork where TContext : DbContext
 {
     private readonly TContext _context;
 
-    public GenericUnitOfWork(TContext context)
+    public UnitOfWork(TContext context)
     {
         _context = context;
     }

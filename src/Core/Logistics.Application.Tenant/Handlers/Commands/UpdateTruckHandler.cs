@@ -2,29 +2,34 @@
 
 internal sealed class UpdateTruckHandler : RequestHandlerBase<UpdateTruckCommand, DataResult>
 {
-    private readonly ITenantRepository<Truck> _truckRepository;
-    private readonly ITenantRepository<Employee> _userRepository;
+    private readonly ITenantRepository _tenantRepository;
 
-    public UpdateTruckHandler(
-        ITenantRepository<Truck> truckRepository,
-        ITenantRepository<Employee> userRepository)
+    public UpdateTruckHandler(ITenantRepository tenantRepository)
     {
-        _truckRepository = truckRepository;
-        _userRepository = userRepository;
+        _tenantRepository = tenantRepository;
     }
 
     protected override async Task<DataResult> HandleValidated(
         UpdateTruckCommand request, CancellationToken cancellationToken)
     {
-        var driver = await _userRepository.GetAsync(request.DriverId!);
+        var driver = await _tenantRepository.GetAsync<Employee>(request.DriverId!);
 
         if (driver == null)
             return DataResult.CreateError("Could not find the specified driver");
         
-        var truckEntity = await _truckRepository.GetAsync(request.Id!);
+        var truckEntity = await _tenantRepository.GetAsync<Truck>(request.Id!);
 
         if (truckEntity == null)
             return DataResult.CreateError("Could not find the specified truck");
+        
+        var truckWithThisDriver = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == request.DriverId);
+        var truckWithThisNumber = await _tenantRepository.GetAsync<Truck>(i => i.TruckNumber == request.TruckNumber);
+
+        if (truckWithThisDriver != null)
+            return DataResult.CreateError("Already exists truck with this driver");
+
+        if (truckWithThisNumber != null)
+            return DataResult.CreateError("Already exists truck with this number");
 
         if (request.TruckNumber.HasValue)
         {
@@ -32,8 +37,8 @@ internal sealed class UpdateTruckHandler : RequestHandlerBase<UpdateTruckCommand
         }
         
         truckEntity.Driver = driver;
-        _truckRepository.Update(truckEntity);
-        await _truckRepository.UnitOfWork.CommitAsync();
+        _tenantRepository.Update(truckEntity);
+        await _tenantRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
 

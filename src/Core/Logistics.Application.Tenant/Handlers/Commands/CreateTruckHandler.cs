@@ -2,27 +2,23 @@
 
 internal sealed class CreateTruckHandler : RequestHandlerBase<CreateTruckCommand, DataResult>
 {
-    private readonly ITenantRepository<Truck> _truckRepository;
-    private readonly ITenantRepository<Employee> _employeeRepository;
+    private readonly ITenantRepository _tenantRepository;
 
-    public CreateTruckHandler(
-        ITenantRepository<Truck> truckRepository,
-        ITenantRepository<Employee> employeeRepository)
+    public CreateTruckHandler(ITenantRepository tenantRepository)
     {
-        _truckRepository = truckRepository;
-        _employeeRepository = employeeRepository;
+        _tenantRepository = tenantRepository;
     }
 
     protected override async Task<DataResult> HandleValidated(
         CreateTruckCommand request, CancellationToken cancellationToken)
     {
-        var driver = await _employeeRepository.GetAsync(i => i.Id == request.DriverId);
+        var driver = await _tenantRepository.GetAsync<Employee>(request.DriverId);
 
         if (driver == null)
             return DataResult.CreateError("Could not find the specified driver");
 
-        var truckWithThisDriver = await _truckRepository.GetAsync(i => i.DriverId == request.DriverId);
-        var truckWithThisNumber = await _truckRepository.GetAsync(i => i.TruckNumber == request.TruckNumber);
+        var truckWithThisDriver = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == request.DriverId);
+        var truckWithThisNumber = await _tenantRepository.GetAsync<Truck>(i => i.TruckNumber == request.TruckNumber);
 
         if (truckWithThisDriver != null)
             return DataResult.CreateError("Already exists truck with this driver");
@@ -36,8 +32,8 @@ internal sealed class CreateTruckHandler : RequestHandlerBase<CreateTruckCommand
             Driver = driver
         };
         
-        await _truckRepository.AddAsync(truckEntity);
-        await _truckRepository.UnitOfWork.CommitAsync();
+        await _tenantRepository.AddAsync(truckEntity);
+        await _tenantRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
 

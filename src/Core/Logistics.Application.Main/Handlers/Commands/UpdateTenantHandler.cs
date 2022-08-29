@@ -4,24 +4,21 @@ namespace Logistics.Application.Handlers.Commands;
 
 internal sealed class UpdateTenantHandler : RequestHandlerBase<UpdateTenantCommand, DataResult>
 {
-    private readonly IMainRepository<Tenant> _repository;
+    private readonly IMainRepository _repository;
 
-    public UpdateTenantHandler(IMainRepository<Tenant> repository)
+    public UpdateTenantHandler(IMainRepository repository)
     {
         _repository = repository;
     }
 
     protected override async Task<DataResult> HandleValidated(UpdateTenantCommand request, CancellationToken cancellationToken)
     {
-        var tenant = await _repository.GetAsync(request.Id!);
+        var tenant = await _repository.GetAsync<Tenant>(request.Id!);
 
         if (tenant == null)
-        {
             return DataResult.CreateError("Could not find the tenant");
-        }
 
         tenant.Name = request.Name?.Trim().ToLower();
-
         tenant.DisplayName = string.IsNullOrEmpty(request.DisplayName) ? tenant.Name : request.DisplayName?.Trim();
         
         _repository.Update(tenant);

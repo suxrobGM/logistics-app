@@ -2,15 +2,15 @@
 
 internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, PagedDataResult<TruckDto>>
 {
-    private readonly IMainRepository<User> _userRepository;
-    private readonly ITenantRepository<Truck> _truckRepository;
+    private readonly IMainRepository _mainRepository;
+    private readonly ITenantRepository _tenantRepository;
 
     public GetTrucksHandler(
-        IMainRepository<User> userRepository,
-        ITenantRepository<Truck> truckRepository)
+        IMainRepository mainRepository,
+        ITenantRepository tenantRepository)
     {
-        _userRepository = userRepository;
-        _truckRepository = truckRepository;
+        _mainRepository = mainRepository;
+        _tenantRepository = tenantRepository;
     }
 
     protected override Task<PagedDataResult<TruckDto>> HandleValidated(
@@ -20,21 +20,21 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
         var loadIds = new List<string>();
         if (request.IncludeLoadIds)
         {
-            loadIds = _truckRepository.GetQuery()
+            loadIds = _tenantRepository.GetQuery<Truck>()
                 .SelectMany(i => i.Loads)
                 .Select(i => i.Id)
                 .ToList();
         }
 
-        var tenantId = _truckRepository.CurrentTenant!.Id;
-        var totalItems = _truckRepository.GetQuery().Count();
-        var filteredUsers = _userRepository.ApplySpecification(new FilterUsersByTenantId(tenantId)).ToArray();
+        var tenantId = _tenantRepository.CurrentTenant!.Id;
+        var totalItems = _tenantRepository.GetQuery<Truck>().Count();
+        var filteredUsers = _mainRepository.ApplySpecification(new FilterUsersByTenantId(tenantId)).ToArray();
         var userIds = filteredUsers.Select(i => i.Id).ToArray();
         var userNames = filteredUsers.Select(i => i.UserName).ToArray();
         var userFirstNames = filteredUsers.Select(i => i.FirstName).ToArray();
         var userLastNames = filteredUsers.Select(i => i.LastName).ToArray();
 
-        var trucks = _truckRepository
+        var trucks = _tenantRepository
             .ApplySpecification(new SearchTrucks(request.Search, userIds, userNames, userFirstNames, userLastNames))
             .OrderBy(i => i.TruckNumber)
             .Skip((request.Page - 1) * request.PageSize)
@@ -44,7 +44,7 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
         var driverIds = trucks.Where(i => !string.IsNullOrEmpty(i.DriverId))
             .Select(i => i.DriverId);
 
-        var drivers = _userRepository.GetQuery()
+        var drivers = _mainRepository.GetQuery<User>()
             .Where(user => driverIds.Contains(user.Id))
             .ToDictionary(i => i.Id);
 
@@ -74,7 +74,7 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
     {
         errorDescription = string.Empty;
 
-        if (string.IsNullOrEmpty(_truckRepository.CurrentTenant?.Id))
+        if (string.IsNullOrEmpty(_tenantRepository.CurrentTenant?.Id))
         {
             errorDescription = "Could not evaluate current tenant's ID";
         }

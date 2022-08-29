@@ -2,17 +2,19 @@
 
 internal sealed class DeleteTruckHandler : RequestHandlerBase<DeleteTruckCommand, DataResult>
 {
-    private readonly ITenantRepository<Truck> _truckRepository;
+    private readonly ITenantRepository _tenantRepository;
 
-    public DeleteTruckHandler(ITenantRepository<Truck> truckRepository)
+    public DeleteTruckHandler(ITenantRepository tenantRepository)
     {
-        _truckRepository = truckRepository;
+        _tenantRepository = tenantRepository;
     }
 
-    protected override async Task<DataResult> HandleValidated(DeleteTruckCommand request, CancellationToken cancellationToken)
+    protected override async Task<DataResult> HandleValidated(
+        DeleteTruckCommand request, CancellationToken cancellationToken)
     {
-        _truckRepository.Delete(request.Id!);
-        await _truckRepository.UnitOfWork.CommitAsync();
+        var truck = await _tenantRepository.GetAsync<Truck>(request.Id);
+        _tenantRepository.Delete(truck);
+        await _tenantRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
 

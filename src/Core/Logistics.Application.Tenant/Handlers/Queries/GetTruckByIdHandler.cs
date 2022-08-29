@@ -2,22 +2,23 @@
 
 internal sealed class GetTruckByIdHandler : RequestHandlerBase<GetTruckByIdQuery, DataResult<TruckDto>>
 {
-    private readonly IMainRepository<User> _userRepository;
-    private readonly ITenantRepository<Truck> _truckRepository;
+    private readonly IMainRepository _mainRepository;
+    private readonly ITenantRepository _tenantRepository;
 
     public GetTruckByIdHandler(
-        IMainRepository<User> userRepository,
-        ITenantRepository<Truck> truckRepository)
+        IMainRepository mainRepository,
+        ITenantRepository tenantRepository)
     {
-        _userRepository = userRepository;
-        _truckRepository = truckRepository;
+        _mainRepository = mainRepository;
+        _tenantRepository = tenantRepository;
     }
 
-    protected override async Task<DataResult<TruckDto>> HandleValidated(GetTruckByIdQuery request, CancellationToken cancellationToken)
+    protected override async Task<DataResult<TruckDto>> HandleValidated(
+        GetTruckByIdQuery request, CancellationToken cancellationToken)
     {
-        var truckEntity = await _truckRepository.GetAsync(request.Id!);
+        var truckEntity = await _tenantRepository.GetAsync<Truck>(request.Id);
 
-        var loadsIds = _truckRepository.GetQuery()
+        var loadsIds = _tenantRepository.GetQuery<Truck>()
             .SelectMany(i => i.Loads)
             .Select(i => i.Id)
             .ToList();
@@ -25,9 +26,9 @@ internal sealed class GetTruckByIdHandler : RequestHandlerBase<GetTruckByIdQuery
         if (truckEntity == null)
             return DataResult<TruckDto>.CreateError("Could not find the specified truck");
 
-        var truckDriver = await _userRepository.GetAsync(i => i.Id == truckEntity.DriverId);
+        var truckDriver = await _mainRepository.GetAsync<User>(i => i.Id == truckEntity.DriverId);
         
-        var cargo = new TruckDto
+        var truck = new TruckDto
         {
             Id = truckEntity.Id,
             TruckNumber = truckEntity.TruckNumber,
@@ -36,7 +37,7 @@ internal sealed class GetTruckByIdHandler : RequestHandlerBase<GetTruckByIdQuery
             LoadIds = loadsIds
         };
 
-        return DataResult<TruckDto>.CreateSuccess(cargo);
+        return DataResult<TruckDto>.CreateSuccess(truck);
     }
 
     protected override bool Validate(GetTruckByIdQuery request, out string errorDescription)

@@ -6,12 +6,12 @@ internal sealed class CreateTenantHandler : RequestHandlerBase<CreateTenantComma
 {
     private readonly IDatabaseProviderService _databaseProvider;
     private readonly IMapper _mapper;
-    private readonly IMainRepository<Tenant> _repository;
+    private readonly IMainRepository _repository;
 
     public CreateTenantHandler(
         IDatabaseProviderService databaseProvider,
         IMapper mapper,
-        IMainRepository<Tenant> repository)
+        IMainRepository repository)
     {
         _databaseProvider = databaseProvider;
         _mapper = mapper;
@@ -29,7 +29,7 @@ internal sealed class CreateTenantHandler : RequestHandlerBase<CreateTenantComma
             tenant.DisplayName = tenant.Name;
         }
 
-        var existingTenant = await _repository.GetAsync(i => i.Name == tenant.Name);
+        var existingTenant = await _repository.GetAsync<Tenant>(i => i.Name == tenant.Name);
         if (existingTenant != null)
         {
             return DataResult.CreateError($"Tenant name '{tenant.Name}' is already taken, please chose another name");

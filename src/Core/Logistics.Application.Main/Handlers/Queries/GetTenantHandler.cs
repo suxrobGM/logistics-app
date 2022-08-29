@@ -2,16 +2,16 @@
 
 internal sealed class GetTenantHandler : RequestHandlerBase<GetTenantQuery, DataResult<TenantDto>>
 {
-    private readonly IMainRepository<Tenant> _repository;
+    private readonly IMainRepository _repository;
 
-    public GetTenantHandler(IMainRepository<Tenant> repository)
+    public GetTenantHandler(IMainRepository repository)
     {
         _repository = repository;
     }
 
     protected override async Task<DataResult<TenantDto>> HandleValidated(GetTenantQuery request, CancellationToken cancellationToken)
     {
-        var tenantEntity = await _repository.GetAsync(i => i.Id == request.Id || i.Name == request.Name);
+        var tenantEntity = await _repository.GetAsync<Tenant>(i => i.Id == request.Id || i.Name == request.Name);
 
         if (tenantEntity == null)
         {

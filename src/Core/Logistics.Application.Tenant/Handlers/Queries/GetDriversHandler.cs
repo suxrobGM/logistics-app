@@ -4,30 +4,28 @@ namespace Logistics.Application.Handlers.Queries;
 
 public class GetDriversHandler : RequestHandlerBase<GetDriversQuery, PagedDataResult<EmployeeDto>>
 {
-    private readonly IMainRepository<User> _userRepository;
-    private readonly ITenantRepository<Employee> _employeeRepository;
-    private readonly ITenantRepository<TenantRole> _roleRepository;
-    
+    private readonly IMainRepository _mainRepository;
+    private readonly ITenantRepository _tenantRepository;
+
     public GetDriversHandler(
-        IMainRepository<User> userRepository,
-        ITenantRepository<Employee> employeeRepository,
-        ITenantRepository<TenantRole> roleRepository)
+        IMainRepository mainRepository,
+        ITenantRepository tenantRepository)
     {
-        _userRepository = userRepository;
-        _employeeRepository = employeeRepository;
-        _roleRepository = roleRepository;
+        _mainRepository = mainRepository;
+        _tenantRepository = tenantRepository;
     }
     
-    protected override async Task<PagedDataResult<EmployeeDto>> HandleValidated(GetDriversQuery request, CancellationToken cancellationToken)
+    protected override async Task<PagedDataResult<EmployeeDto>> HandleValidated(
+        GetDriversQuery request, CancellationToken cancellationToken)
     {
-        var tenantId = _employeeRepository.CurrentTenant!.Id;
-        var totalItems = _employeeRepository.GetQuery().Count();
-        var driverRole = await _roleRepository.GetAsync(i => i.Name == TenantRoles.Driver);
+        var tenantId = _tenantRepository.CurrentTenant!.Id;
+        var totalItems = _tenantRepository.GetQuery<Employee>().Count();
+        var driverRole = await _tenantRepository.GetAsync<TenantRole>(i => i.Name == TenantRoles.Driver);
 
         if (driverRole == null)
             return PagedDataResult<EmployeeDto>.CreateError("Could not found the driver role");
 
-        var filteredUsers = _userRepository
+        var filteredUsers = _mainRepository
             .ApplySpecification(new SearchUsersByTenantId(request.Search, tenantId))
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
@@ -35,7 +33,7 @@ public class GetDriversHandler : RequestHandlerBase<GetDriversQuery, PagedDataRe
 
         var userIds = filteredUsers.Keys.ToArray();
         
-        var employeesDto = _employeeRepository.GetQuery()
+        var employeesDto = _tenantRepository.GetQuery<Employee>()
             .Where(i => userIds.Contains(i.Id) && i.Roles.Contains(driverRole))
             .Select(i => new EmployeeDto
             {
@@ -64,7 +62,7 @@ public class GetDriversHandler : RequestHandlerBase<GetDriversQuery, PagedDataRe
     {
         errorDescription = string.Empty;
 
-        if (string.IsNullOrEmpty(_employeeRepository.CurrentTenant?.Id))
+        if (string.IsNullOrEmpty(_tenantRepository.CurrentTenant?.Id))
         {
             errorDescription = "Could not evaluate current tenant's ID";
         }

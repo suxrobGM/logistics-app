@@ -2,17 +2,19 @@
 
 internal sealed class DeleteLoadHandler : RequestHandlerBase<DeleteLoadCommand, DataResult>
 {
-    private readonly ITenantRepository<Load> _cargoRepository;
+    private readonly ITenantRepository _tenantRepository;
 
-    public DeleteLoadHandler(ITenantRepository<Load> cargoRepository)
+    public DeleteLoadHandler(ITenantRepository tenantRepository)
     {
-        _cargoRepository = cargoRepository;
+        _tenantRepository = tenantRepository;
     }
 
-    protected override async Task<DataResult> HandleValidated(DeleteLoadCommand request, CancellationToken cancellationToken)
+    protected override async Task<DataResult> HandleValidated(
+        DeleteLoadCommand request, CancellationToken cancellationToken)
     {
-        _cargoRepository.Delete(request.Id!);
-        await _cargoRepository.UnitOfWork.CommitAsync();
+        var load = await _tenantRepository.GetAsync<Load>(request.Id);
+        _tenantRepository.Delete(load);
+        await _tenantRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
 

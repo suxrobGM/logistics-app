@@ -2,21 +2,21 @@
 
 internal sealed class GetTenantsHandler : RequestHandlerBase<GetTenantsQuery, PagedDataResult<TenantDto>>
 {
-    private readonly IMainRepository<Tenant> _repository;
+    private readonly IMainRepository _repository;
 
-    public GetTenantsHandler(IMainRepository<Tenant> repository)
+    public GetTenantsHandler(IMainRepository repository)
     {
         _repository = repository;
     }
 
     protected override Task<PagedDataResult<TenantDto>> HandleValidated(GetTenantsQuery request, CancellationToken cancellationToken)
     {
-        var totalItems = _repository.GetQuery().Count();
-        var itemsQuery = _repository.GetQuery();
+        var totalItems = _repository.GetQuery<Tenant>().Count();
+        var itemsQuery = _repository.GetQuery<Tenant>();
 
         if (!string.IsNullOrEmpty(request.Search))
         {
-            itemsQuery = _repository.GetQuery(i => i.Name!.Contains(request.Search) || i.DisplayName!.Contains(request.Search));
+            itemsQuery = _repository.GetQuery<Tenant>(i => i.Name!.Contains(request.Search) || i.DisplayName!.Contains(request.Search));
         }
 
         var items = itemsQuery

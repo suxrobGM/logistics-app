@@ -2,30 +2,24 @@
 
 internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeCommand, DataResult>
 {
-    private readonly IMainRepository<User> _userRepository;
-    private readonly IMainRepository<Tenant> _tenantRepository;
-    private readonly ITenantRepository<Employee> _employeeRepository;
-    private readonly ITenantRepository<TenantRole> _roleRepository;
+    private readonly IMainRepository _mainRepository;
+    private readonly ITenantRepository _tenantRepository;
 
     public CreateEmployeeHandler(
-        IMainRepository<User> userRepository,
-        IMainRepository<Tenant> tenantRepository,
-        ITenantRepository<Employee> employeeRepository,
-        ITenantRepository<TenantRole> roleRepository)
+        IMainRepository mainRepository,
+        ITenantRepository tenantRepository)
     {
-        _employeeRepository = employeeRepository;
-        _userRepository = userRepository;
+        _mainRepository = mainRepository;
         _tenantRepository = tenantRepository;
-        _roleRepository = roleRepository;
     }
 
     protected override async Task<DataResult> HandleValidated(
         CreateEmployeeCommand request, CancellationToken cancellationToken)
     {
-        var existingEmployee = await _employeeRepository.GetAsync(i => i.Id == request.Id);
-        var user = await _userRepository.GetAsync(i => i.Id == request.Id);
-        var tenant = await _tenantRepository.GetAsync(i => i.Name == request.TenantId || i.Id == request.TenantId);
-        var tenantRole = await _roleRepository.GetAsync(i => i.Name == request.Role);
+        var existingEmployee = await _tenantRepository.GetAsync<Employee>(i => i.Id == request.Id);
+        var user = await _mainRepository.GetAsync<User>(i => i.Id == request.Id);
+        var tenant = await _mainRepository.GetAsync<Tenant>(i => i.Name == request.TenantId || i.Id == request.TenantId);
+        var tenantRole = await _tenantRepository.GetAsync<TenantRole>(i => i.Name == request.Role);
         
         if (tenant == null)
             return DataResult.CreateError($"Could not find the specified tenant '{request.TenantId}'");
@@ -48,11 +42,11 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
             employee.Roles.Add(tenantRole);
         }
         
-        await _employeeRepository.AddAsync(employee);
-        _userRepository.Update(user);
+        await _tenantRepository.AddAsync(employee);
+        _mainRepository.Update(user);
         
-        await _userRepository.UnitOfWork.CommitAsync();
-        await _employeeRepository.UnitOfWork.CommitAsync();
+        await _mainRepository.UnitOfWork.CommitAsync();
+        await _tenantRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
 

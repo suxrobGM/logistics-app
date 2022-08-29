@@ -5,7 +5,7 @@ namespace Logistics.Domain.Repositories;
 public static class RepositoryExtensions
 {
     public static IQueryable<TEntity> ApplySpecification<TEntity>(
-        this IRepository<TEntity> repository,
+        this IRepository repository,
         ISpecification<TEntity> specification)
         where TEntity : class, IAggregateRoot
     {

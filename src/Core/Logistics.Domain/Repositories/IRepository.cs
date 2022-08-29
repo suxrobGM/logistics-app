@@ -5,58 +5,71 @@ namespace Logistics.Domain.Repositories;
 /// <summary>
 /// Generic repository.
 /// </summary>
-/// <typeparam name="TEntity">Class that implements IAggregateRoot interface</typeparam>
-public interface IRepository<TEntity> where TEntity : class, IAggregateRoot
+
+public interface IRepository
 {
+    /// <summary>
+    /// Unit of work
+    /// </summary>
+    IUnitOfWork UnitOfWork { get; }
+    
     /// <summary>
     /// Get entity object by its ID.
     /// </summary>
     /// <param name="id">Entity primary key</param>
+    /// <typeparam name="TEntity">Class that implements the <see cref="IAggregateRoot"/> interface</typeparam>
     /// <returns>Entity object</returns>
-    Task<TEntity?> GetAsync(object? id);
+    Task<TEntity?> GetAsync<TEntity>(object? id) 
+        where TEntity: class, IAggregateRoot;
 
     /// <summary>
     /// Get entity object by predicate.
     /// </summary>
     /// <param name="predicate">Predicate to filter query</param>
+    /// <typeparam name="TEntity">Class that implements the <see cref="IAggregateRoot"/> interface</typeparam>
     /// <returns>Entity object</returns>
-    Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate);
+    Task<TEntity?> GetAsync<TEntity>(Expression<Func<TEntity, bool>> predicate) 
+        where TEntity: class, IAggregateRoot;
 
     /// <summary>
     /// Get list of entity objects
     /// </summary>
     /// <param name="predicate">Predicate to filter query</param>
+    /// <typeparam name="TEntity">Class that implements the <see cref="IAggregateRoot"/> interface</typeparam>
     /// <returns>List of entity objects</returns>
-    Task<IList<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate = null!);
+    Task<IList<TEntity>> GetListAsync<TEntity>(Expression<Func<TEntity, bool>>? predicate = default)
+        where TEntity: class, IAggregateRoot;
 
     /// <summary>
     /// Get IQueryable entity objects.
     /// </summary>
     /// <param name="predicate">Predicate to filter query</param>
+    /// <typeparam name="TEntity">Class that implements the <see cref="IAggregateRoot"/> interface</typeparam>
     /// <returns>IQueryable of entity objects</returns>
-    IQueryable<TEntity> GetQuery(Expression<Func<TEntity, bool>> predicate = null!);
+    IQueryable<TEntity> GetQuery<TEntity>(Expression<Func<TEntity, bool>>? predicate = default)
+        where TEntity: class, IAggregateRoot;
 
     /// <summary>
     /// Add new entry to database.
     /// </summary>
     /// <param name="entity">Entity object</param>
-    Task AddAsync(TEntity entity);
+    /// <typeparam name="TEntity">Class that implements the <see cref="IAggregateRoot"/> interface</typeparam>
+    Task AddAsync<TEntity>(TEntity entity)
+        where TEntity: class, IAggregateRoot;
 
     /// <summary>
     /// Update existing entry.
     /// </summary>
     /// <param name="entity">Entity object</param>
-    void Update(TEntity entity);
-
-    /// <summary>
-    /// Delete entry from database using its ID as a primary key.
-    /// </summary>
-    /// <param name="id">Primary key of entity</param>
-    void Delete(object id);
+    /// <typeparam name="TEntity">Class that implements the <see cref="IAggregateRoot"/> interface</typeparam>
+    void Update<TEntity>(TEntity entity)
+        where TEntity: class, IAggregateRoot;
 
     /// <summary>
     /// Delete entity object from database.
     /// </summary>
     /// <param name="entity">Entity object</param>
-    void Delete(TEntity? entity);
+    /// <typeparam name="TEntity">Class that implements the <see cref="IAggregateRoot"/> interface</typeparam>
+    void Delete<TEntity>(TEntity? entity)
+        where TEntity: class, IAggregateRoot;
 }

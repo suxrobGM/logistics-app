@@ -2,26 +2,26 @@
 
 internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery, PagedDataResult<EmployeeDto>>
 {
-    private readonly IMainRepository<User> _userRepository;
-    private readonly ITenantRepository<Employee> _employeeRepository;
+    private readonly IMainRepository _mainRepository;
+    private readonly ITenantRepository _tenantRepository;
 
     public GetEmployeesHandler(
-        IMainRepository<User> userRepository,
-        ITenantRepository<Employee> employeeRepository)
+        IMainRepository mainRepository,
+        ITenantRepository tenantRepository)
     {
-        _userRepository = userRepository;
-        _employeeRepository = employeeRepository;
+        _mainRepository = mainRepository;
+        _tenantRepository = tenantRepository;
     }
 
     protected override Task<PagedDataResult<EmployeeDto>> HandleValidated(
         GetEmployeesQuery request, 
         CancellationToken cancellationToken)
     {
-        var tenantId = _employeeRepository.CurrentTenant!.Id;
-        var totalItems = _employeeRepository.GetQuery().Count();
+        var tenantId = _tenantRepository.CurrentTenant!.Id;
+        var totalItems = _tenantRepository.GetQuery<Employee>().Count();
         var spec = new SearchUsersByTenantId(request.Search, tenantId, request.OrderBy, request.Descending);
 
-        var filteredUsers = _userRepository
+        var filteredUsers = _mainRepository
             .ApplySpecification(spec)
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
@@ -29,7 +29,7 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery
 
         var userIds = filteredUsers.Select(i => i.Id).ToArray();
         
-        var employeesDict = _employeeRepository.GetQuery()
+        var employeesDict = _tenantRepository.GetQuery<Employee>()
             .Where(i => userIds.Contains(i.Id))
             .ToDictionary(i => i.Id);
 
@@ -65,7 +65,7 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery
     {
         errorDescription = string.Empty;
 
-        if (string.IsNullOrEmpty(_employeeRepository.CurrentTenant?.Id))
+        if (string.IsNullOrEmpty(_tenantRepository.CurrentTenant?.Id))
         {
             errorDescription = "Could not evaluate current tenant's ID";
         }

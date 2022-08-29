@@ -2,30 +2,30 @@
 
 internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedDataResult<LoadDto>>
 {
-    private readonly IMainRepository<User> _userRepository;
-    private readonly ITenantRepository<Load> _loadRepository;
+    private readonly IMainRepository _mainRepository;
+    private readonly ITenantRepository _tenantRepository;
 
     public GetLoadsHandler(
-        IMainRepository<User> userRepository,
-        ITenantRepository<Load> loadRepository)
+        IMainRepository mainRepository,
+        ITenantRepository tenantRepository)
     {
-        _userRepository = userRepository;
-        _loadRepository = loadRepository;
+        _mainRepository = mainRepository;
+        _tenantRepository = tenantRepository;
     }
 
     protected override Task<PagedDataResult<LoadDto>> HandleValidated(
         GetLoadsQuery request, 
         CancellationToken cancellationToken)
     {
-        var tenantId = _loadRepository.CurrentTenant!.Id;
-        var totalItems = _loadRepository.GetQuery().Count();
-        var filteredUsers = _userRepository.ApplySpecification(new FilterUsersByTenantId(tenantId)).ToArray();
+        var tenantId = _tenantRepository.CurrentTenant!.Id;
+        var totalItems = _tenantRepository.GetQuery<Load>().Count();
+        var filteredUsers = _mainRepository.ApplySpecification(new FilterUsersByTenantId(tenantId)).ToArray();
         var userIds = filteredUsers.Select(i => i.Id).ToArray();
         var userNames = filteredUsers.Select(i => i.UserName).ToArray();
         var userFirstNames = filteredUsers.Select(i => i.FirstName).ToArray();
         var userLastNames = filteredUsers.Select(i => i.LastName).ToArray();
 
-        var loads = _loadRepository
+        var loads = _tenantRepository
             .ApplySpecification(new SearchLoads(request.Search, userIds, userNames, userFirstNames, userLastNames))
             .OrderBy(i => i.DispatchedDate)
             .Skip((request.Page - 1) * request.PageSize)
@@ -38,11 +38,11 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
         var dispatcherIds = loads.Where(i => !string.IsNullOrEmpty(i.AssignedDispatcherId))
             .Select(i => i.AssignedDispatcherId);
 
-        var drivers = _userRepository.GetQuery()
+        var drivers = _mainRepository.GetQuery<User>()
             .Where(user => driverIds.Contains(user.Id))
             .ToDictionary(i => i.Id);
         
-        var dispatchers = _userRepository.GetQuery()
+        var dispatchers = _mainRepository.GetQuery<User>()
             .Where(user => dispatcherIds.Contains(user.Id))
             .ToDictionary(i => i.Id);
 
@@ -90,7 +90,7 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
     {
         errorDescription = string.Empty;
 
-        if (string.IsNullOrEmpty(_loadRepository.CurrentTenant?.Id))
+        if (string.IsNullOrEmpty(_tenantRepository.CurrentTenant?.Id))
         {
             errorDescription = "Could not evaluate current tenant's ID";
         }

@@ -2,31 +2,32 @@
 
 internal sealed class DeleteEmployeeHandler : RequestHandlerBase<DeleteEmployeeCommand, DataResult>
 {
-    private readonly IMainRepository<User> _userRepository;
-    private readonly ITenantRepository<Employee> _employeeRepository;
+    private readonly IMainRepository _mainRepository;
+    private readonly ITenantRepository _tenantRepository;
 
     public DeleteEmployeeHandler(
-        IMainRepository<User> userRepository,
-        ITenantRepository<Employee> employeeRepository)
+        IMainRepository mainRepository,
+        ITenantRepository tenantRepository)
     {
-        _userRepository = userRepository;
-        _employeeRepository = employeeRepository;
+        _mainRepository = mainRepository;
+        _tenantRepository = tenantRepository;
     }
 
-    protected override async Task<DataResult> HandleValidated(DeleteEmployeeCommand request, CancellationToken cancellationToken)
+    protected override async Task<DataResult> HandleValidated(
+        DeleteEmployeeCommand request, CancellationToken cancellationToken)
     {
-        var tenantId = _employeeRepository.CurrentTenant!.Id;
-        var employee = await _employeeRepository.GetAsync(request.Id!);
+        var tenantId = _tenantRepository.CurrentTenant!.Id;
+        var employee = await _tenantRepository.GetAsync<Employee>(request.Id!);
 
         if (employee == null)
             return DataResult.CreateError($"Could not find employee with ID {request.Id}");
 
-        var user = await _userRepository.GetAsync(i => i.Id == employee.Id);
+        var user = await _mainRepository.GetAsync<User>(employee.Id);
         user?.RemoveTenant(tenantId);
         
-        _employeeRepository.Delete(request.Id!);
-        await _employeeRepository.UnitOfWork.CommitAsync();
-        await _userRepository.UnitOfWork.CommitAsync();
+        _tenantRepository.Delete(employee);
+        await _tenantRepository.UnitOfWork.CommitAsync();
+        await _mainRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
 
@@ -34,7 +35,7 @@ internal sealed class DeleteEmployeeHandler : RequestHandlerBase<DeleteEmployeeC
     {
         errorDescription = string.Empty;
 
-        if (string.IsNullOrEmpty(_employeeRepository.CurrentTenant?.Id))
+        if (string.IsNullOrEmpty(_tenantRepository.CurrentTenant?.Id))
         {
             errorDescription = "Could not evaluate current tenant's ID";
         }

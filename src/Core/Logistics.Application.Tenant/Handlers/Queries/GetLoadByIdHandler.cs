@@ -2,26 +2,27 @@
 
 internal sealed class GetLoadByIdHandler : RequestHandlerBase<GetLoadByIdQuery, DataResult<LoadDto>>
 {
-    private readonly IMainRepository<User> _userRepository;
-    private readonly ITenantRepository<Load> _loadRepository;
+    private readonly IMainRepository _mainRepository;
+    private readonly ITenantRepository _tenantRepository;
 
     public GetLoadByIdHandler(
-        IMainRepository<User> userRepository,
-        ITenantRepository<Load> loadRepository)
+        IMainRepository mainRepository,
+        ITenantRepository tenantRepository)
     {
-        _userRepository = userRepository;
-        _loadRepository = loadRepository;
+        _mainRepository = mainRepository;
+        _tenantRepository = tenantRepository;
     }
 
-    protected override async Task<DataResult<LoadDto>> HandleValidated(GetLoadByIdQuery request, CancellationToken cancellationToken)
+    protected override async Task<DataResult<LoadDto>> HandleValidated(
+        GetLoadByIdQuery request, CancellationToken cancellationToken)
     {
-        var loadEntity = await _loadRepository.GetAsync(request.Id!);
+        var loadEntity = await _tenantRepository.GetAsync<Load>(request.Id);
 
         if (loadEntity == null)
             return DataResult<LoadDto>.CreateError("Could not find the specified cargo");
 
-        var assignedDispatcher = await _userRepository.GetAsync(i => i.Id == loadEntity.AssignedDispatcherId);
-        var assignedDriver = await _userRepository.GetAsync(i => loadEntity.AssignedTruck != null && i.Id == loadEntity.AssignedTruck.DriverId);
+        var assignedDispatcher = await _mainRepository.GetAsync<User>(loadEntity.AssignedDispatcherId);
+        var assignedDriver = await _mainRepository.GetAsync<User>(i => loadEntity.AssignedTruck != null && i.Id == loadEntity.AssignedTruck.DriverId);
         
         var load = new LoadDto
         {

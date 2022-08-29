@@ -2,21 +2,21 @@
 
 internal sealed class GetUsersHandler : RequestHandlerBase<GetUsersQuery, PagedDataResult<UserDto>>
 {
-    private readonly IMainRepository<User> _userRepository;
+    private readonly IMainRepository _repository;
 
     public GetUsersHandler(
-        IMainRepository<User> userRepository)
+        IMainRepository repository)
     {
-        _userRepository = userRepository;
+        _repository = repository;
     }
 
     protected override Task<PagedDataResult<UserDto>> HandleValidated(
         GetUsersQuery request, 
         CancellationToken cancellationToken)
     {
-        var totalItems = _userRepository.GetQuery().Count();
+        var totalItems = _repository.GetQuery<User>().Count();
 
-        var users = _userRepository
+        var users = _repository
             .ApplySpecification(new SearchUsers(request.Search))
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)

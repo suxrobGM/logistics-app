@@ -6,14 +6,16 @@ namespace Logistics.EntityFramework.Services;
 
 internal class TenantService : ITenantService
 {
-    private readonly IMainRepository<Tenant> _repository;
+    private readonly IMainRepository _mainRepository;
     private readonly HttpContext _httpContext;
     private Tenant? _currentTenant;
 
-    public TenantService(IMainRepository<Tenant> repository, IHttpContextAccessor contextAccessor)
+    public TenantService(
+        IMainRepository repository, 
+        IHttpContextAccessor contextAccessor)
     {
         _httpContext = contextAccessor.HttpContext ?? throw new ArgumentNullException(nameof(contextAccessor));
-        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _mainRepository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
     public Tenant GetTenant()
@@ -54,7 +56,7 @@ internal class TenantService : ITenantService
         }
 
         tenantId = tenantId.Trim().ToLower();
-        var tenant = _repository.GetQuery().FirstOrDefault(i => i.Id == tenantId || i.Name == tenantId) ??
+        var tenant = _mainRepository.GetQuery<Tenant>().FirstOrDefault(i => i.Id == tenantId || i.Name == tenantId) ??
             throw new InvalidTenantException($"Could not found tenant with ID '{tenantId}'");
             
         return tenant;

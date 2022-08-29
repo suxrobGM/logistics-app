@@ -2,38 +2,32 @@
 
 internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, DataResult>
 {
-    private readonly IMainRepository<User> _userRepository;
-    private readonly ITenantRepository<Employee> _employeeRepository;
-    private readonly ITenantRepository<Load> _loadRepository;
-    private readonly ITenantRepository<Truck> _truckRepository;
+    private readonly IMainRepository _mainRepository;
+    private readonly ITenantRepository _tenantRepository;
 
     public UpdateLoadHandler(
-        IMainRepository<User> userRepository,
-        ITenantRepository<Employee> employeeRepository,
-        ITenantRepository<Load> loadRepository,
-        ITenantRepository<Truck> truckRepository)
+        IMainRepository mainRepository,
+        ITenantRepository tenantRepository)
     {
-        _userRepository = userRepository;
-        _employeeRepository = employeeRepository;
-        _loadRepository = loadRepository;
-        _truckRepository = truckRepository;
+        _mainRepository = mainRepository;
+        _tenantRepository = tenantRepository;
     }
 
     protected override async Task<DataResult> HandleValidated(
         UpdateLoadCommand request, CancellationToken cancellationToken)
     {
-        var driverEmp = await _employeeRepository.GetAsync(request.AssignedDriverId);
-        var driverUser = await _userRepository.GetAsync(request.AssignedDriverId);
+        var driverEmp = await _tenantRepository.GetAsync<Employee>(request.AssignedDriverId);
+        var driverUser = await _mainRepository.GetAsync<User>(request.AssignedDriverId);
 
         if (driverEmp == null)
             return DataResult.CreateError("Could not find the specified driver");
         
-        var truck = await _truckRepository.GetAsync(i => i.DriverId == driverEmp.Id);
+        var truck = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == driverEmp.Id);
 
         if (truck == null)
             return DataResult.CreateError($"Could not find the truck whose driver is '{driverUser?.UserName}'");
 
-        var loadEntity = await _loadRepository.GetAsync(request.Id!);
+        var loadEntity = await _tenantRepository.GetAsync<Load>(request.Id);
 
         if (loadEntity == null)
             return DataResult.CreateError("Could not find the specified load");
@@ -47,8 +41,8 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
         loadEntity.AssignedDriver = driverEmp;
         loadEntity.AssignedTruck = truck;
 
-        _loadRepository.Update(loadEntity);
-        await _loadRepository.UnitOfWork.CommitAsync();
+        _tenantRepository.Update(loadEntity);
+        await _tenantRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
     }
 

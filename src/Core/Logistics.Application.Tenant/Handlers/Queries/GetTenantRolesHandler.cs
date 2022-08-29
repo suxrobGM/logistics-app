@@ -2,18 +2,19 @@
 
 public class GetTenantRolesHandler : RequestHandlerBase<GetTenantRolesQuery, PagedDataResult<TenantRoleDto>>
 {
-    private readonly ITenantRepository<TenantRole> _rolesRepository;
+    private readonly ITenantRepository _tenantRepository;
 
-    public GetTenantRolesHandler(ITenantRepository<TenantRole> rolesRepository)
+    public GetTenantRolesHandler(ITenantRepository tenantRepository)
     {
-        _rolesRepository = rolesRepository;
+        _tenantRepository = tenantRepository;
     }
 
-    protected override Task<PagedDataResult<TenantRoleDto>> HandleValidated(GetTenantRolesQuery request, CancellationToken cancellationToken)
+    protected override Task<PagedDataResult<TenantRoleDto>> HandleValidated(
+        GetTenantRolesQuery request, CancellationToken cancellationToken)
     {
-        var totalItems = _rolesRepository.GetQuery().Count();
+        var totalItems = _tenantRepository.GetQuery<TenantRole>().Count();
 
-        var rolesDto = _rolesRepository
+        var rolesDto = _tenantRepository
             .ApplySpecification(new SearchTenantRoles(request.Search))
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
