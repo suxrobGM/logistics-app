@@ -27,16 +27,16 @@
             <th>
               Driver
             </th>
-            <th>Action</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-truck>
           <tr>
-            <td>{{truck.truckNumber}}</td>
-            <td>{{truck.driverName}}</td>
             <td>
-              <a class="btn btn-primary" [routerLink]="['/trucks/edit']" [state]="{id: truck.id}">Edit</a>
+              <a [routerLink]="['/trucks/edit']" [state]="{id: truck.id}">
+                {{truck.truckNumber}}
+              </a>
             </td>
+            <td>{{truck.driverName}}</td>
           </tr>
         </ng-template>
       </p-table>

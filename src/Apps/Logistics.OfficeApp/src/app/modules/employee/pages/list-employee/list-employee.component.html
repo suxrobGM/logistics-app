@@ -48,21 +48,21 @@
               Joined Date
               <p-sortIcon field="joinedDate"></p-sortIcon>
             </th>
-            <th>Action</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-employee>
           <tr>
-            <td>{{employee.userName}}</td>
+            <td>
+              <a [routerLink]="['/employees/edit']" [state]="{id: employee.id}">
+                {{employee.userName}}
+              </a>
+            </td>
             <td>{{employee.firstName}}</td>
             <td>{{employee.lastName}}</td>
             <td>{{employee.email}}</td>
             <td>{{employee.phoneNumber}}</td>
             <td>{{employee.roles[0]?.displayName}}</td>
             <td>{{employee.joinedDate | date:'mediumDate'}}</td>
-            <td>
-              <a class="btn btn-primary" [routerLink]="['/employees/edit']" [state]="{id: employee.id}">Edit</a>
-            </td>
           </tr>
         </ng-template>
       </p-table>
