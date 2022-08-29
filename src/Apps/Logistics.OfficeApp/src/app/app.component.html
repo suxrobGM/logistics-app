@@ -2,6 +2,8 @@
 
 <div class="container-fluid content">
   <p-toast key="notification" position="top-right"></p-toast>
+  <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
   <div *ngIf="isAuthenticated; else unauthorized">
     <router-outlet></router-outlet>
   </div>

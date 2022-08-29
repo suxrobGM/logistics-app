@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { Employee, Role } from '@shared/models';
 import { ApiService } from '@shared/services';
 
@@ -20,6 +20,7 @@ export class EditEmployeeComponent implements OnInit {
   
   constructor(
     private apiService: ApiService,
+    private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private oidcSecurityService: OidcSecurityService) 
   {
@@ -67,6 +68,13 @@ export class EditEmployeeComponent implements OnInit {
       if (result.success) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'User has been updated successfully'});
       }
+    });
+  }
+
+  public confirmToDelete() {
+    this.confirmationService.confirm({
+      message: 'Are you sure that you want to delete this employee from the company?',
+      //accept: () => this.deleteLoad()
     });
   }
 

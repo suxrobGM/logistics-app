@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Employee, Truck } from '@shared/models';
 import { ApiService } from '@shared/services';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { of, switchMap } from 'rxjs';
 
 @Component({
@@ -20,6 +20,7 @@ export class EditTruckComponent implements OnInit {
   
   constructor(
     private apiService: ApiService,
+    private confirmationService: ConfirmationService,
     private messageService: MessageService,
   ) 
   {
@@ -28,8 +29,8 @@ export class EditTruckComponent implements OnInit {
     this.isBusy = false;
     this.editMode = true;
     this.form = new FormGroup({
-      'truckNumber': new FormControl(0, Validators.required),
-      'driver': new FormControl({}, Validators.required),
+      truckNumber: new FormControl(0, Validators.required),
+      driver: new FormControl({}, Validators.required),
     });
   }
 
@@ -83,6 +84,13 @@ export class EditTruckComponent implements OnInit {
         this.form.reset();
       });
     }
+  }
+
+  public confirmToDelete() {
+    this.confirmationService.confirm({
+      message: 'Are you sure that you want to delete this truck?',
+      //accept: () => this.deleteLoad()
+    });
   }
 
   private fetchTruck(id: string) {

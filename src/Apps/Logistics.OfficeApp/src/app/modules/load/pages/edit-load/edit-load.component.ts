@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import * as MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
 import * as mapboxgl from 'mapbox-gl';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { Employee, EnumType, Load, LoadStatuses, UserIdentity } from '@shared/models';
 import { ApiService } from '@shared/services';
@@ -32,6 +32,7 @@ export class EditLoadComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
+    private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private oidcSecurityService: OidcSecurityService) 
   {
@@ -124,6 +125,29 @@ export class EditLoadComponent implements OnInit {
         this.isBusy = false;
       });
     }
+  }
+
+  public confirmToDelete() {
+    this.confirmationService.confirm({
+      message: 'Are you sure that you want to delete this load?',
+      accept: () => this.deleteLoad()
+    });
+  }
+
+  private deleteLoad() {
+    if (!this.id) {
+      return;
+    }
+
+    this.isBusy = true;
+    this.apiService.deleteLoad(this.id).subscribe(result => {
+      if (result.success) {
+        this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A load has been deleted successfully'});
+        this.resetForm();
+
+        this.isBusy = false;
+      }
+    });
   }
 
   private initMapbox() {
@@ -237,6 +261,9 @@ export class EditLoadComponent implements OnInit {
     this.srcGeocoder.clear();
     this.destGeocoder.clear();
     this.directions.removeRoutes();
+    this.editMode = false;
+    this.headerText = 'Add a new load';
+    this.id = undefined;
     this.fetchCurrentDispatcher();
   }
 

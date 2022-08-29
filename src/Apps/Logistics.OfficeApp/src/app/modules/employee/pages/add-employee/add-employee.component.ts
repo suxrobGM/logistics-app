@@ -24,8 +24,8 @@ export class AddEmployeeComponent implements OnInit {
     this.roles = [];
 
     this.form = new FormGroup({
-      'user': new FormControl('', Validators.required),
-      'role': new FormControl('', Validators.required),
+      user: new FormControl('', Validators.required),
+      role: new FormControl('', Validators.required),
     });
 
     // let currentUserRole = EmployeeRole.Owner as string;

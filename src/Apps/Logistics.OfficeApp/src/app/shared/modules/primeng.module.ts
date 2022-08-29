@@ -10,8 +10,9 @@ import { TableModule } from 'primeng/table';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { TooltipModule } from 'primeng/tooltip';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @NgModule({
   declarations: [],
@@ -27,7 +28,8 @@ import { TooltipModule } from 'primeng/tooltip';
     MessagesModule,
     MessageModule,
     ToastModule,
-    TooltipModule
+    TooltipModule,
+    ConfirmDialogModule,
   ],
   exports: [
     CardModule,
@@ -40,10 +42,12 @@ import { TooltipModule } from 'primeng/tooltip';
     MessagesModule,
     MessageModule,
     ToastModule,
-    TooltipModule
+    TooltipModule,
+    ConfirmDialogModule
   ],
   providers: [
-    MessageService
+    MessageService,
+    ConfirmationService
   ]
 })
 export class PrimengModule { }
