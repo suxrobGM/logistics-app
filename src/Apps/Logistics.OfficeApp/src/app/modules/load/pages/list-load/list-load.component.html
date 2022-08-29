@@ -19,9 +19,9 @@
         </ng-template>
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="referenceId">
+            <th pSortableColumn="refId">
               ID
-              <p-sortIcon field="referenceId"></p-sortIcon>
+              <p-sortIcon field="refId"></p-sortIcon>
             </th>
             <th pSortableColumn="name">
               Name
@@ -70,8 +70,10 @@
         </ng-template>
         <ng-template pTemplate="body" let-load>
           <tr>
-            <td>{{load.referenceId}}</td>
-            <td>{{load.name}}</td>
+            <td>{{load.refId}}</td>
+            <td [pTooltip]="load.sourceAddress" [showDelay]="500" tooltipPosition="bottom">
+              {{load.name}}
+            </td>
             <td [pTooltip]="load.sourceAddress" [showDelay]="500" tooltipPosition="bottom">
               {{load.sourceAddress}}
             </td>

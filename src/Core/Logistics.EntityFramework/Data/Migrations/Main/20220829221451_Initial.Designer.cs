@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.EntityFramework.Data.Migrations.Main
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20220827211608_Initial")]
+    [Migration("20220829221451_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -94,9 +94,6 @@ namespace Logistics.EntityFramework.Data.Migrations.Main
                     b.Property<string>("FirstName")
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime>("JoinedDate")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<string>("JoinedTenantIds")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -126,6 +123,9 @@ namespace Logistics.EntityFramework.Data.Migrations.Main
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime>("RegistrationDate")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("longtext");

@@ -8,7 +8,7 @@ public class SearchLoads : BaseSpecification<Load>
         string[] userNames, 
         string?[] userFirstNames,
         string?[] userLastNames,
-        string? orderBy = "ReferenceId", 
+        string? orderBy = "RefId", 
         bool descending = false)
     {
         Descending = descending;
@@ -33,7 +33,7 @@ public class SearchLoads : BaseSpecification<Load>
 
     private static Expression<Func<Load, object>> InitOrderBy(string? propertyName)
     {
-        propertyName = propertyName?.ToLower() ?? "referenceid";
+        propertyName = propertyName?.ToLower() ?? "refid";
         return propertyName switch
         {
             "name" => i => i.Name!,
@@ -45,7 +45,7 @@ public class SearchLoads : BaseSpecification<Load>
             "pickupdate" => i => i.PickUpDate!,
             "deliverydate" => i => i.DeliveryDate!,
             "status" => i => i.Status.Name,
-            _ => i => i.ReferenceId
+            _ => i => i.RefId
         };
     }
 }

@@ -1,5 +1,5 @@
 export interface UserIdentity {
-    sub?: string;
-    name?: string;
-    role?: string;
+  sub?: string;
+  name?: string;
+  role?: string;
 }

@@ -92,9 +92,6 @@ namespace Logistics.EntityFramework.Data.Migrations.Main
                     b.Property<string>("FirstName")
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime>("JoinedDate")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<string>("JoinedTenantIds")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -124,6 +121,9 @@ namespace Logistics.EntityFramework.Data.Migrations.Main
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime>("RegistrationDate")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("longtext");

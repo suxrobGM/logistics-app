@@ -3,7 +3,7 @@
 public class LoadDto
 {
     public string? Id { get; set; }
-    public ulong ReferenceId { get; set; } = 100_000;
+    public ulong RefId { get; set; } = 100_000;
     public string? Name { get; set; }
     public string? SourceAddress { get; set; }
     public string? DestinationAddress { get; set; }

@@ -59,13 +59,7 @@ export class EditLoadComponent implements OnInit {
     this.id = history.state.id;
     this.initMapbox();
     this.initGeocoderInputs();
-
-    this.oidcSecurityService.getUserData().subscribe((user: UserIdentity) => {
-      this.form.patchValue({
-        dispatcherName: user.name,
-        dispatcherId: user.sub
-      });
-    });
+    this.fetchCurrentDispatcher();
 
     if (!this.id) {
       this.editMode = false;
@@ -189,6 +183,15 @@ export class EditLoadComponent implements OnInit {
     });
   }
 
+  private fetchCurrentDispatcher() {
+    this.oidcSecurityService.getUserData().subscribe((user: UserIdentity) => {
+      this.form.patchValue({
+        dispatcherName: user.name,
+        dispatcherId: user.sub
+      });
+    });
+  }
+
   private fetchLoad(id: string) {
     this.apiService.getLoad(id).subscribe(result => {
       if (result.success && result.value) {
@@ -229,7 +232,12 @@ export class EditLoadComponent implements OnInit {
       dispatchedDate: new Date().toLocaleDateString(),
       deliveryCost: 0,
       distance: 0
-    })
+    });
+
+    this.srcGeocoder.clear();
+    this.destGeocoder.clear();
+    this.directions.removeRoutes();
+    this.fetchCurrentDispatcher();
   }
 
   private getLocaleDate(dateStr?: string | Date): string {

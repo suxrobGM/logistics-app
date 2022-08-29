@@ -1,6 +1,6 @@
 export interface Load {
   id?: string;
-  referenceId?: number;
+  refId?: number;
   name?: string;
   sourceAddress?: string;
   destinationAddress?: string;

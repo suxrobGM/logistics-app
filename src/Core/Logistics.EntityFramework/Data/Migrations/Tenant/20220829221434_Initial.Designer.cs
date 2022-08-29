@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.EntityFramework.Data.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20220827211549_Initial")]
+    [Migration("20220829221434_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -84,7 +84,7 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.Property<DateTime?>("PickUpDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<ulong>("ReferenceId")
+                    b.Property<ulong>("RefId")
                         .HasColumnType("bigint unsigned");
 
                     b.Property<string>("SourceAddress")
@@ -98,7 +98,7 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
 
                     b.HasIndex("AssignedTruckId");
 
-                    b.HasIndex("ReferenceId")
+                    b.HasIndex("RefId")
                         .IsUnique();
 
                     b.ToTable("loads", (string)null);

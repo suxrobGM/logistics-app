@@ -82,7 +82,7 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.Property<DateTime?>("PickUpDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<ulong>("ReferenceId")
+                    b.Property<ulong>("RefId")
                         .HasColumnType("bigint unsigned");
 
                     b.Property<string>("SourceAddress")
@@ -96,7 +96,7 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
 
                     b.HasIndex("AssignedTruckId");
 
-                    b.HasIndex("ReferenceId")
+                    b.HasIndex("RefId")
                         .IsUnique();
 
                     b.ToTable("loads", (string)null);

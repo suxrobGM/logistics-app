@@ -49,7 +49,7 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
         var loadsDto = loads.Select(i => new LoadDto
         {
             Id = i.Id,
-            ReferenceId = i.ReferenceId,
+            RefId = i.RefId,
             Name = i.Name,
             SourceAddress = i.SourceAddress,
             DestinationAddress = i.DestinationAddress,

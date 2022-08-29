@@ -5,7 +5,7 @@ public class SearchUsersByTenantId : BaseSpecification<User>
     public SearchUsersByTenantId(
         string? search, 
         string tenantId, 
-        string? orderBy = "JoinedDate", 
+        string? orderBy = "RegistrationDate", 
         bool descending = false)
     {
         Descending = descending;
@@ -33,7 +33,7 @@ public class SearchUsersByTenantId : BaseSpecification<User>
 
     private static Expression<Func<User, object>> InitOrderBy(string? propertyName)
     {
-        propertyName = propertyName?.ToLower() ?? "joineddate";
+        propertyName = propertyName?.ToLower() ?? "registrationdate";
         return propertyName switch
         {
             "username" => i => i.UserName!,
@@ -41,7 +41,7 @@ public class SearchUsersByTenantId : BaseSpecification<User>
             "lastname" => i => i.LastName!,
             "email" => i => i.Email,
             "phonenumber" => i => i.PhoneNumber,
-            _ => i => i.JoinedDate
+            _ => i => i.RegistrationDate
         };
     }
 }

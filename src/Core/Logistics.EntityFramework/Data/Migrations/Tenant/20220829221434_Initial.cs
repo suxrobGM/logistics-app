@@ -99,7 +99,7 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    ReferenceId = table.Column<ulong>(type: "bigint unsigned", nullable: false),
+                    RefId = table.Column<ulong>(type: "bigint unsigned", nullable: false),
                     Name = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     SourceAddress = table.Column<string>(type: "longtext", nullable: true)
@@ -166,9 +166,9 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                 column: "AssignedTruckId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_loads_ReferenceId",
+                name: "IX_loads_RefId",
                 table: "loads",
-                column: "ReferenceId",
+                column: "RefId",
                 unique: true);
 
             migrationBuilder.CreateIndex(

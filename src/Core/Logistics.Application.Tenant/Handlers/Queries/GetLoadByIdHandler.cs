@@ -27,7 +27,7 @@ internal sealed class GetLoadByIdHandler : RequestHandlerBase<GetLoadByIdQuery, 
         var load = new LoadDto
         {
             Id = loadEntity.Id,
-            ReferenceId = loadEntity.ReferenceId,
+            RefId = loadEntity.RefId,
             Name = loadEntity.Name,
             SourceAddress = loadEntity.SourceAddress,
             DestinationAddress = loadEntity.DestinationAddress,

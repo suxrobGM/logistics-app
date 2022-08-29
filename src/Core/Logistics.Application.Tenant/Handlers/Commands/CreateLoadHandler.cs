@@ -32,15 +32,15 @@ internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, 
         if (truck == null)
             return DataResult.CreateError($"Could not find the truck whose driver ID is '{driverUser?.UserName}'");
         
-        var latestLoad = _tenantRepository.Query<Load>().OrderBy(i => i.ReferenceId).LastOrDefault();
+        var latestLoad = _tenantRepository.Query<Load>().OrderBy(i => i.RefId).LastOrDefault();
         ulong refId = 100_000;
 
         if (latestLoad != null)
-            refId = latestLoad.ReferenceId + 1;
+            refId = latestLoad.RefId + 1;
 
         var loadEntity = new Load
         {
-            ReferenceId = refId,
+            RefId = refId,
             Name = request.Name,
             SourceAddress = request.SourceAddress,
             Status = LoadStatus.Dispatched,

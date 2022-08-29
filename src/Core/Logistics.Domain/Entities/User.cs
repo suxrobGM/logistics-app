@@ -1,5 +1,4 @@
-﻿using Logistics.Domain.ValueObjects;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.Domain.Entities;
 
@@ -9,8 +8,7 @@ public class User : IdentityUser, IAggregateRoot
     public string? LastName { get; set; }
 
     public string JoinedTenantIds { get; set; } = "";
-    public DateTime JoinedDate { get; set; } = DateTime.UtcNow;
-    //public ValueObjects.AppRoles Roles { get; set; } = ValueObjects.AppRoles.Guest;
+    public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;
 
     public void JoinTenant(string tenantId)
     {
