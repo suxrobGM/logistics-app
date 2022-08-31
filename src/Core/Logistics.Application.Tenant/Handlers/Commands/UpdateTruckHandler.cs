@@ -10,20 +10,21 @@ internal sealed class UpdateTruckHandler : RequestHandlerBase<UpdateTruckCommand
     }
 
     protected override async Task<DataResult> HandleValidated(
-        UpdateTruckCommand request, CancellationToken cancellationToken)
+        UpdateTruckCommand req, CancellationToken cancellationToken)
     {
-        var driver = await _tenantRepository.GetAsync<Employee>(request.DriverId!);
+        var driver = await _tenantRepository.GetAsync<Employee>(req.DriverId!);
 
         if (driver == null)
             return DataResult.CreateError("Could not find the specified driver");
         
-        var truckEntity = await _tenantRepository.GetAsync<Truck>(request.Id!);
+        var truckEntity = await _tenantRepository.GetAsync<Truck>(req.Id!);
 
         if (truckEntity == null)
             return DataResult.CreateError("Could not find the specified truck");
         
-        var truckWithThisDriver = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == request.DriverId);
-        var truckWithThisNumber = await _tenantRepository.GetAsync<Truck>(i => i.TruckNumber == request.TruckNumber);
+        var truckWithThisDriver = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == req.DriverId);
+        var truckWithThisNumber = await _tenantRepository.GetAsync<Truck>(i => i.TruckNumber == req.TruckNumber && 
+                                                                               i.TruckNumber != truckEntity.TruckNumber);
 
         if (truckWithThisDriver != null)
             return DataResult.CreateError("Already exists truck with this driver");
@@ -31,9 +32,9 @@ internal sealed class UpdateTruckHandler : RequestHandlerBase<UpdateTruckCommand
         if (truckWithThisNumber != null)
             return DataResult.CreateError("Already exists truck with this number");
 
-        if (request.TruckNumber.HasValue)
+        if (req.TruckNumber.HasValue)
         {
-            truckEntity.TruckNumber = request.TruckNumber.Value;
+            truckEntity.TruckNumber = req.TruckNumber.Value;
         }
         
         truckEntity.Driver = driver;

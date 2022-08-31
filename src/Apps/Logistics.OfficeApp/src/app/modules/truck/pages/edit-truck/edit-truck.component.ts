@@ -69,20 +69,24 @@ export class EditTruckComponent implements OnInit {
       driverId: driver.id!
     }
 
+    this.isBusy = true;
     if (this.editMode) {
       this.apiService.updateTruck(truck).subscribe(result => {
         if (result.success) {
           this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Truck has been updated successfully'});
         }
+
+        this.isBusy = false;
       });
     }
     else {
       this.apiService.createTruck(truck).subscribe(result => {
         if (result.success) {
           this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A new truck has been created successfully'});
+          this.resetForm();
         }
 
-        this.form.reset();
+        this.isBusy = false;
       });
     }
   }
@@ -90,8 +94,30 @@ export class EditTruckComponent implements OnInit {
   public confirmToDelete() {
     this.confirmationService.confirm({
       message: 'Are you sure that you want to delete this truck?',
-      //accept: () => this.deleteLoad()
+      accept: () => this.deleteTruck()
     });
+  }
+
+  private deleteTruck() {
+    if (!this.id) {
+      return;
+    }
+
+    this.isBusy = true;
+    this.apiService.deleteTruck(this.id).subscribe(result => {
+      if (result.success) {
+        this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A truck has been deleted successfully'});
+        this.resetForm();
+
+        this.isBusy = false;
+      }
+    });
+  }
+
+  private resetForm() {
+    this.editMode = false;
+    this.headerText = 'Add a new truck';
+    this.id = undefined;
   }
 
   private fetchTruck(id: string) {

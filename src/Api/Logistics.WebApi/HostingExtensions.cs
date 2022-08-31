@@ -108,9 +108,8 @@ internal static class HostingExtensions
             {
                 cors.WithOrigins(
                         "https://jfleets.org",
-                        "https://admin.jfleets.org",
-                        "https://api.jfleets.org",
-                        "https://default.jfleets.org")
+                        "https://*.jfleets.org")
+                    .SetIsOriginAllowedToAllowWildcardSubdomains()
                     .AllowAnyHeader()
                     .AllowAnyMethod();
             });
