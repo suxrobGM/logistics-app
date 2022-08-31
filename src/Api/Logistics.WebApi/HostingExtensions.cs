@@ -16,7 +16,7 @@ internal static class HostingExtensions
         builder.Services.AddMainApplicationLayer();
         builder.Services.AddTenantApplicationLayer();
         builder.Services.AddSharedApplicationLayer(builder.Configuration, "EmailConfig");
-        builder.Services.AddInfrastructureLayer(builder.Configuration, "LocalMainDatabase");
+        builder.Services.AddInfrastructureLayer(builder.Configuration);
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddAuthentication("Bearer")
@@ -102,6 +102,26 @@ internal static class HostingExtensions
         
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("DefaultCors", cors =>
+            {
+                cors.WithOrigins(
+                        "https://jfleets.org",
+                        "https://admin.jfleets.org",
+                        "https://api.jfleets.org",
+                        "https://default.jfleets.org")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+            
+            options.AddPolicy("AnyCors", cors =>
+            {
+                cors.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
         return builder.Build();
     }
 
@@ -113,15 +133,9 @@ internal static class HostingExtensions
             app.UseSwaggerUI();
         }
 
-        app.UseCors(builder =>
-        {
-            builder
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
-        });
-
         app.UseHttpsRedirection();
+
+        app.UseCors(app.Environment.IsDevelopment() ? "AnyCors" : "DefaultCors");
 
         app.UseAuthentication();
         app.UseAuthorization();

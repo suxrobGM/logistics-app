@@ -50,10 +50,10 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddInfrastructureLayer(
         this IServiceCollection services,
         IConfiguration configuration,
-        string connectionStringName = "Local",
+        string mainDbConnectionSection = "MainDatabase",
         string tenantsConfigSection = "TenantsConfig")
     {
-        var connectionString = configuration.GetConnectionString(connectionStringName);
+        var connectionString = configuration.GetConnectionString(mainDbConnectionSection);
         
         services.AddIdentity();
         services.AddDatabases(configuration,

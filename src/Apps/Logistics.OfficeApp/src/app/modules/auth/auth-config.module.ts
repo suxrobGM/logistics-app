@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
+import { AppConfig } from '@configs';
 import { AuthModule } from 'angular-auth-oidc-client';
 
 @NgModule({
   imports: [
     AuthModule.forRoot({
       config: {
-        authority: 'https://localhost:7001',
+        authority: AppConfig.idHost,
         postLoginRoute: '/dashboard',
         forbiddenRoute: '/forbidden',
         unauthorizedRoute: '/unauthorized',

@@ -22,8 +22,7 @@ public class MySqlProviderService : IDatabaseProviderService
 
     public string GenerateConnectionString(string databaseName)
     {
-        var database = $"{databaseName}_logistics";
-        return $"Server={_settings.DatabaseHost}; Database={database}; Uid={_settings.DatabaseUserId}; Pwd={_settings.DatabasePassword}";
+        return $"Server={_settings.DatabaseHost}; Database={databaseName}; Uid={_settings.DatabaseUserId}; Pwd={_settings.DatabasePassword}";
     }
 
     public async Task<bool> CreateDatabaseAsync(string connectionString)
@@ -72,7 +71,11 @@ public class MySqlProviderService : IDatabaseProviderService
             {
                 DisplayName = tenantRole.DisplayName
             };
-            
+
+            var existingRole = await context.Set<TenantRole>().FirstOrDefaultAsync(i => i.Name == role.Name);
+            if (existingRole != null)
+                continue;
+
             context.Set<TenantRole>().Add(role);
         }
 

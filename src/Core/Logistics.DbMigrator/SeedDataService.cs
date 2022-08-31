@@ -70,6 +70,11 @@ public class SeedDataService : BackgroundService
             {
                 DisplayName = appRole.DisplayName
             };
+
+            var roleExists = await roleManager.RoleExistsAsync(role.Name);
+            if (roleExists)
+                continue;
+            
             var result = await roleManager.CreateAsync(role);
 
             if (result.Succeeded)
@@ -119,7 +124,7 @@ public class SeedDataService : BackgroundService
         {
             Name = "default",
             DisplayName = "Default Tenant",
-            ConnectionString = databaseProvider.GenerateConnectionString("default")
+            ConnectionString = databaseProvider.GenerateConnectionString("u1002275_default_logistics") // TODO: remove prefix u1002275_ later 
         };
 
         var existingTenant = mainDbContext.Set<Tenant>().FirstOrDefault(i => i.Name == defaultTenant.Name);

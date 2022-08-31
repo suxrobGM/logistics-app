@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -8,7 +8,8 @@ import { ApiService } from '@shared/services';
 @Component({
   selector: 'app-edit-employee',
   templateUrl: './edit-employee.component.html',
-  styleUrls: ['./edit-employee.component.scss']
+  styleUrls: ['./edit-employee.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class EditEmployeeComponent implements OnInit {
   private employee?: Employee;
@@ -64,10 +65,13 @@ export class EditEmployeeComponent implements OnInit {
       role: this.form.value.role
     }
 
+    this.isBusy = true;
     this.apiService.updateEmployee(employee).subscribe(result => {
       if (result.success) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'User has been updated successfully'});
       }
+
+      this.isBusy = false;
     });
   }
 
@@ -79,6 +83,8 @@ export class EditEmployeeComponent implements OnInit {
   }
 
   private fetchEmployee() {
+    this.isBusy = true;
+
     this.apiService.getEmployee(this.id!).subscribe(result => {
       if (result.success && result.value) {
         this.employee = result.value;
@@ -95,14 +101,20 @@ export class EditEmployeeComponent implements OnInit {
           });
         }
       }
+
+      this.isBusy = false;
     });
   }
 
   private fetchRoles() {
+    this.isBusy = true;
+
     this.apiService.getRoles().subscribe(result => {
       if (result.success && result.items) {
         this.roles.push(...result.items);
       }
-    })
+
+      this.isBusy = false;
+    });
   }
 }

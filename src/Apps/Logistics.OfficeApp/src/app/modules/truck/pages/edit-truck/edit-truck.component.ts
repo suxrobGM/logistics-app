@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Employee, Truck } from '@shared/models';
 import { ApiService } from '@shared/services';
@@ -8,7 +8,8 @@ import { of, switchMap } from 'rxjs';
 @Component({
   selector: 'app-edit-truck',
   templateUrl: './edit-truck.component.html',
-  styleUrls: ['./edit-truck.component.scss']
+  styleUrls: ['./edit-truck.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class EditTruckComponent implements OnInit {
   public id?: string;

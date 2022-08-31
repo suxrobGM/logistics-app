@@ -15,7 +15,7 @@ internal static class HostingExtensions
         AddSecretsJson(builder.Configuration);
         builder.Services.AddRazorPages();
         builder.Services.AddSharedApplicationLayer(builder.Configuration, "EmailConfig", "GoogleRecaptcha");
-        builder.Services.AddInfrastructureLayer(builder.Configuration, "LocalMainDatabase");
+        builder.Services.AddInfrastructureLayer(builder.Configuration);
         builder.Services.AddHttpContextAccessor();
         
         builder.Services.AddIdentity()
@@ -53,6 +53,27 @@ internal static class HostingExtensions
                 options.ClientId = "copy client ID from Google here";
                 options.ClientSecret = "copy client secret from Google here";
             });
+        
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("DefaultCors", cors =>
+            {
+                cors.WithOrigins(
+                        "https://jfleets.org",
+                        "https://admin.jfleets.org",
+                        "https://api.jfleets.org",
+                        "https://default.jfleets.org")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+            
+            options.AddPolicy("AnyCors", cors =>
+            {
+                cors.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
 
         return builder.Build();
     }
@@ -63,18 +84,13 @@ internal static class HostingExtensions
 
         if (app.Environment.IsDevelopment())
         {
-            app.UseCors(cors =>
-            {
-                cors.AllowAnyOrigin()
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
-               
             app.UseDeveloperExceptionPage();
         }
 
         app.UseStaticFiles();
         app.UseRouting();
+        app.UseCors(app.Environment.IsDevelopment() ? "AnyCors" : "DefaultCors");
+        
         app.UseIdentityServer();
         app.UseAuthorization();
         app.MapRazorPages().RequireAuthorization();

@@ -30,6 +30,7 @@ export class TopbarComponent implements OnInit {
         this.isAuthenticated = isAuthenticated;
         
         if (isAuthenticated) {
+          //this.oidcSecurityService.getAccessToken().subscribe(i => console.log(i));
           return this.apiService.getTenant();
         }
 

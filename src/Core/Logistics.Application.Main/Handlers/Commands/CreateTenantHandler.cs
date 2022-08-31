@@ -22,7 +22,7 @@ internal sealed class CreateTenantHandler : RequestHandlerBase<CreateTenantComma
     {
         var tenant = _mapper.Map<Tenant>(request);
         tenant.Name = tenant.Name?.Trim().ToLower();
-        tenant.ConnectionString = _databaseProvider.GenerateConnectionString(tenant.Name!);
+        tenant.ConnectionString = _databaseProvider.GenerateConnectionString($"u1002275_{tenant.Name}_logistics"); // TODO: remove prefix u1002275_ later 
 
         if (string.IsNullOrEmpty(tenant.DisplayName))
         {

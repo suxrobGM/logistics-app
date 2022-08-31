@@ -33,7 +33,7 @@ public class TenantDbContext : DbContext
         var connectionString = !string.IsNullOrEmpty(_connectionString)
             ? _connectionString
             : _tenantService?.GetConnectionString() ??
-              throw new InvalidOperationException("Connection string is a null in TenantDbContext");
+              throw new InvalidOperationException("Connection string is a null in the TenantDbContext");
         
         DbContextHelpers.ConfigureMySql(connectionString, options);
     }

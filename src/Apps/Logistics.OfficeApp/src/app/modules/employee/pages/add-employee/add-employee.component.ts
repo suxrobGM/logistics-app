@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { MessageService } from 'primeng/api';
@@ -8,12 +8,14 @@ import { ApiService } from '@shared/services';
 @Component({
   selector: 'app-add-employee',
   templateUrl: './add-employee.component.html',
-  styleUrls: ['./add-employee.component.scss']
+  styleUrls: ['./add-employee.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class AddEmployeeComponent implements OnInit {
   public suggestedUsers: User[];
   public form: FormGroup;
   public roles: Role[];
+  public isBusy: boolean;
 
   constructor(
     private apiService: ApiService,
@@ -22,6 +24,7 @@ export class AddEmployeeComponent implements OnInit {
   {
     this.suggestedUsers = [];
     this.roles = [];
+    this.isBusy = false;
 
     this.form = new FormGroup({
       user: new FormControl('', Validators.required),
@@ -57,11 +60,14 @@ export class AddEmployeeComponent implements OnInit {
       role: this.form.value.role
     };
 
+    this.isBusy = true;
     this.apiService.createEmployee(newEmployee).subscribe(result => {
       if (result.success) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'New employee has been added successfully'});
         this.form.reset();
       }
+
+      this.isBusy = false;
     });
   }
 

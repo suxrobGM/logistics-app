@@ -10,8 +10,8 @@ var host = Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices((ctx, services) =>
     {
-        var mainDbConnection = ctx.Configuration.GetConnectionString("LocalMainDatabase");
-        var tenantDbConnection = ctx.Configuration.GetConnectionString("LocalDefaultTenantDatabase");
+        var mainDbConnection = ctx.Configuration.GetConnectionString("MainDatabase");
+        var tenantDbConnection = ctx.Configuration.GetConnectionString("DefaultTenantDatabase");
 
         services.AddDatabases(ctx.Configuration,
             o => ConfigureMySql(mainDbConnection, o),
