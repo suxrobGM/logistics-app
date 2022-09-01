@@ -1,4 +1,4 @@
-import { EnumType } from './enum-type';
+import { EnumType } from './enumType';
 
 export const LoadStatuses: EnumType[] = [
   {

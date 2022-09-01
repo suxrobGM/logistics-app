@@ -9,7 +9,7 @@ public class LoadDto
     public string? DestinationAddress { get; set; }
     public decimal DeliveryCost { get; set; }
     public double Distance { get; set; }
-    public DateTime DispatchedDate { get; set; } = DateTime.UtcNow;
+    public DateTime DispatchedDate { get; set; }
     public DateTime? PickUpDate { get; set; }
     public DateTime? DeliveryDate { get; set; }
     public string? Status { get; set; }

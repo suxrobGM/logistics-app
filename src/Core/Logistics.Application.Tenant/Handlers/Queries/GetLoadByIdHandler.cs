@@ -22,7 +22,7 @@ internal sealed class GetLoadByIdHandler : RequestHandlerBase<GetLoadByIdQuery, 
             return DataResult<LoadDto>.CreateError("Could not find the specified cargo");
 
         var assignedDispatcher = await _mainRepository.GetAsync<User>(loadEntity.AssignedDispatcherId);
-        var assignedDriver = await _mainRepository.GetAsync<User>(i => loadEntity.AssignedTruck != null && i.Id == loadEntity.AssignedTruck.DriverId);
+        var assignedDriver = await _mainRepository.GetAsync<User>(i => loadEntity.AssignedDriver != null && i.Id == loadEntity.AssignedDriver.Id);
         
         var load = new LoadDto
         {
@@ -31,9 +31,9 @@ internal sealed class GetLoadByIdHandler : RequestHandlerBase<GetLoadByIdQuery, 
             Name = loadEntity.Name,
             SourceAddress = loadEntity.SourceAddress,
             DestinationAddress = loadEntity.DestinationAddress,
-            DispatchedDate = loadEntity.DispatchedDate,
-            PickUpDate = loadEntity.PickUpDate,
-            DeliveryDate = loadEntity.DeliveryDate,
+            DispatchedDate = loadEntity.DispatchedDate.ToDateTime(),
+            PickUpDate = loadEntity.PickUpDate.ToDateTime() ,
+            DeliveryDate = loadEntity.DeliveryDate.ToDateTime() ,
             DeliveryCost = loadEntity.DeliveryCost,
             Distance = loadEntity.Distance,
             Status = loadEntity.Status.ToString(),
@@ -57,4 +57,6 @@ internal sealed class GetLoadByIdHandler : RequestHandlerBase<GetLoadByIdQuery, 
 
         return string.IsNullOrEmpty(errorDescription);
     }
+
+    
 }

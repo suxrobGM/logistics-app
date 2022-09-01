@@ -25,6 +25,4 @@ public sealed class CreateLoadCommand : RequestBase<DataResult>
     
     [Required]
     public string? AssignedDriverId { get; set; }
-    
-    public DateTime DispatchedDate { get; set; } = DateTime.UtcNow;
 }

@@ -88,12 +88,10 @@ export class EditLoadComponent implements OnInit {
       return;
     }
     
-
     const load: Load = {
       name: this.form.value.name,
       sourceAddress: this.form.value.srcAddress,
       destinationAddress: this.form.value.dstAddress,
-      dispatchedDate: new Date(),
       deliveryCost: this.form.value.deliveryCost,
       distance: this.form.value.distance,
       assignedDispatcherId: this.form.value.dispatcherId,
@@ -107,22 +105,24 @@ export class EditLoadComponent implements OnInit {
 
     this.isBusy = true;
     if (this.editMode) {
-      this.apiService.updateLoad(load).subscribe(result => {
-        if (result.success) {
-          this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Load has been updated successfully'});
-        }
+      this.apiService.updateLoad(load)
+        .subscribe(result => {
+          if (result.success) {
+            this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Load has been updated successfully'});
+          }
 
-        this.isBusy = false;
+          this.isBusy = false;
       });
     }
     else {
-      this.apiService.createLoad(load).subscribe(result => {
-        if (result.success) {
-          this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A new load has been created successfully'});
-          this.resetForm();
-        }
+      this.apiService.createLoad(load)
+        .subscribe(result => {
+          if (result.success) {
+            this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A new load has been created successfully'});
+            this.resetForm();
+          }
 
-        this.isBusy = false;
+          this.isBusy = false;
       });
     }
   }
@@ -227,6 +227,7 @@ export class EditLoadComponent implements OnInit {
           dstAddress: load.destinationAddress,
           dispatchedDate: this.getLocaleDate(load.dispatchedDate),
           deliveryCost: load.deliveryCost,
+          distance: load.distance,
           dispatcherName: load.assignedDispatcherName,
           dispatcherId: load.assignedDispatcherId,
           status: load.status,
@@ -243,7 +244,6 @@ export class EditLoadComponent implements OnInit {
           
           this.directions.setOrigin(load.sourceAddress!);
           this.directions.setDestination(load.destinationAddress!);
-          this.destGeocoder.setFlyTo(true);
         });
       }
     });

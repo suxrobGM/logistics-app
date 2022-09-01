@@ -12,7 +12,8 @@ import {
   Truck, 
   User, 
   Load, 
-  Role 
+  Role, 
+  GrossesPerDay
 } from '../models';
 
 @Injectable({
@@ -252,8 +253,22 @@ export class ApiService {
   }
 
   //#endregion
+
+  //#region Gross API
+
+  getGrossesForPeriod(startPeriod: Date, endPeriod?: Date): Observable<DataResult<GrossesPerDay>> {
+    const url = endPeriod ?
+      `${this.host}/gross/getForPeriod?startPeriod=${startPeriod.toJSON()}&endPeriod=${endPeriod.toJSON()}` :
+      `${this.host}/gross/getForPeriod?startPeriod=${startPeriod.toJSON()}`;
+
+    return this.httpClient
+      .get<DataResult<GrossesPerDay>>(url)
+      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+  }
+
+  //#endregion
   
-  public parseSortProperty(sortField?: string, sortOrder?: number) {
+  parseSortProperty(sortField?: string, sortOrder?: number) {
     if (!sortOrder) {
       sortOrder = 1;
     }

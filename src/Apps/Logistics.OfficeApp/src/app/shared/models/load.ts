@@ -7,9 +7,9 @@ export interface Load {
   deliveryCost?: number;
   distance?: number;
   status?: string;
-  dispatchedDate?: Date;
-  pickUpDate?: Date;
-  deliveryDate?: Date;
+  dispatchedDate?: string;
+  pickUpDate?: string;
+  deliveryDate?: string;
   assignedDispatcherId?: string;
   assignedDispatcherName?: string;
   assignedTruckId?: string;

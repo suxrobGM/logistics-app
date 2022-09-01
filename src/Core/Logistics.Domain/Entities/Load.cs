@@ -12,9 +12,9 @@ public class Load : Entity, ITenantEntity
     public string? DestinationAddress { get; set; }
     public decimal DeliveryCost { get; set; }
     public double Distance { get; set; }
-    public DateTime DispatchedDate { get; set; } = DateTime.UtcNow;
-    public DateTime? PickUpDate { get; set; }
-    public DateTime? DeliveryDate { get; set; }
+    public DateOnly DispatchedDate { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
+    public DateOnly? PickUpDate { get; set; }
+    public DateOnly? DeliveryDate { get; set; }
     
     public LoadStatus Status
     {
@@ -24,12 +24,13 @@ public class Load : Entity, ITenantEntity
             _status = value;
             if (_status == LoadStatus.PickedUp)
             {
-                PickUpDate = DateTime.UtcNow;
+                PickUpDate = DateOnly.FromDateTime(DateTime.UtcNow);
                 DeliveryDate = null;
             }
             else if (_status == LoadStatus.Delivered)
             {
-                DeliveryDate = DateTime.UtcNow;
+                PickUpDate = DateOnly.FromDateTime(DateTime.UtcNow);
+                DeliveryDate = DateOnly.FromDateTime(DateTime.UtcNow);
             }
             else if (_status == LoadStatus.Dispatched)
             {

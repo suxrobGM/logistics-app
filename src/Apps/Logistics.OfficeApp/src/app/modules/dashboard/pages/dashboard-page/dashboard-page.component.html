@@ -19,7 +19,7 @@
         <hr class="w-100 m-0" />
       </ng-template>
 
-      <p-table [value]="loads" responsiveLayout="scroll">
+      <p-table [value]="loads" responsiveLayout="scroll" [loading]="loadingLoads">
         <ng-template pTemplate="header">
           <tr>
             <th>ID</th>
@@ -47,7 +47,7 @@
         <ng-template pTemplate="footer">
           <tr>
             <td colspan="4">
-              <a class="btn btn-primary" routerLink="/loads/edit">Add new load</a>
+              <a class="btn btn-primary" routerLink="/loads/edit">Add</a>
               <a class="btn btn-primary ms-2" routerLink="/loads">View all loads</a>
             </td>
           </tr>
@@ -57,9 +57,23 @@
   </div>
 </div>
 
-<div class="row">
+<div class="row mt-3">
   <div class="col-12 col-xl-7">
-    <p-card styleClass="mt-3">
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="ms-3 py-2 fw-bold">Daily Gross</div>
+        <hr class="w-100 m-0" />
+      </ng-template>
+      <div class="d-flex">
+        <div>
+          <span class="fw-bold">{{todayGross}}</span>
+        </div>
+        <p-chart type="line" [data]="chartData" [options]="chartOptions"></p-chart>
+      </div>
+    </p-card>
+  </div>
+  <div class="col-12 col-xl-5">
+    <p-card>
       <table class="table">
         <thead>
           <tr>

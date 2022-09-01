@@ -1,14 +1,15 @@
 import { DataResult } from './data';
 import { Employee } from './employee';
-import { LoadStatuses } from './load-statuses';
+import { LoadStatuses } from './loadStatuses';
 import { Load } from './load';
-import { PagedDataResult } from './paged-data';
+import { PagedDataResult } from './pagedData';
 import { Tenant } from './tenant';
 import { Truck } from './truck';
 import { User } from './user';
-import { UserIdentity } from './user-identity';
+import { UserIdentity } from './userIdentity';
 import { Role } from './role';
-import { EnumType } from './enum-type';
+import { EnumType } from './enumType';
+import { DailyGross, GrossesPerDay } from './grossesPerDay';
 
 export {
   DataResult,
@@ -21,5 +22,7 @@ export {
   Truck,
   User,
   UserIdentity,
-  Role
+  Role,
+  GrossesPerDay,
+  DailyGross
 }
