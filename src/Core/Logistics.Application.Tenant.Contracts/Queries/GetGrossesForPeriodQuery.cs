@@ -2,7 +2,12 @@
 
 public sealed class GetGrossesForPeriodQuery : RequestBase<DataResult<GrossesPerDayDto>>
 {
-    [Required]
-    public DateTime? StartPeriod { get; set; }
-    public DateTime EndPeriod { get; set; } = DateTime.UtcNow;
+    public GetGrossesForPeriodQuery()
+    {
+        StartPeriod = DateTime.UtcNow;
+        EndPeriod = DateTime.UtcNow;
+    }
+    
+    public DateTime StartPeriod { get; set; }
+    public DateTime EndPeriod { get; set; }
 }

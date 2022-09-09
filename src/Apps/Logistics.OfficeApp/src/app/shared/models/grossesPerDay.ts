@@ -4,6 +4,6 @@ export interface GrossesPerDay {
 }
 
 export interface DailyGross {
-  day: string;
+  date: string;
   gross: number;
 }

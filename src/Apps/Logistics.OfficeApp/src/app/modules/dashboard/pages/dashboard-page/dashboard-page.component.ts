@@ -38,7 +38,11 @@ export class DashboardPageComponent implements OnInit {
     },
 
     this.chartOptions = {
-      display: false
+      plugins: {
+        legend: {
+          display: false
+        }
+      }
     }
   }
 
@@ -88,9 +92,11 @@ export class DashboardPageComponent implements OnInit {
   private drawChart(grosses: GrossesPerDay) {
     const labels = new Array<string>();
     const data = new Array<number>();
+    console.log(grosses);
+    
     
     grosses.days.forEach(i => {
-      labels.push(this.toLocaleDate(i.day));
+      labels.push(this.toLocaleDate(i.date));
       data.push(i.gross);
     });
 
@@ -114,7 +120,7 @@ export class DashboardPageComponent implements OnInit {
     let totalGross = 0;
 
     grosses.days
-      .filter(i => this.getDay(i.day) === today.getDay())
+      .filter(i => this.getDay(i.date) === today.getDay())
       .forEach(i => totalGross += i.gross);
 
     this.todayGross = this.currencyPipe.transform(totalGross, 'USD')!;

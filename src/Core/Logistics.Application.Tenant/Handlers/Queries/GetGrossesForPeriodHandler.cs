@@ -1,4 +1,5 @@
-﻿namespace Logistics.Application.Handlers.Queries;
+﻿//using System.Collections.Generic;
+namespace Logistics.Application.Handlers.Queries;
 
 internal sealed class GetGrossesForPeriodHandler : RequestHandlerBase<GetGrossesForPeriodQuery, DataResult<GrossesPerDayDto>>
 {
@@ -12,19 +13,34 @@ internal sealed class GetGrossesForPeriodHandler : RequestHandlerBase<GetGrosses
     protected override Task<DataResult<GrossesPerDayDto>> HandleValidated(
         GetGrossesForPeriodQuery req, CancellationToken cancellationToken)
     {
-        var startPeriod = req.StartPeriod!.Value.ToDateOnly();
+        var startPeriod = req.StartPeriod.ToDateOnly();
         var endPeriod = req.EndPeriod.ToDateOnly();
         var spec = new FilterLoadsForPeriod(startPeriod, endPeriod);
-        var loads = _tenantRepository.ApplySpecification(spec).ToArray();
-
-        var dailyGrosses = loads
-            .Where(i => i.DeliveryDate.HasValue)
-            .Select(i => new DailyGross(i.DeliveryDate!.Value.ToDateTime(), i.DeliveryCost))
-            .ToList();
         
+        var dailyGrossesDict = new Dictionary<string, DailyGross>();
+        var interval = req.EndPeriod.Subtract(req.StartPeriod).Days;
+        
+        var filteredLoads = _tenantRepository.ApplySpecification(spec).ToArray();
+
+        for (var i = 1; i <= interval; i++)
+        {
+            var date = req.StartPeriod.AddDays(i);
+            dailyGrossesDict.Add(date.ToShortDateString(), new DailyGross(date));
+        }
+
+        foreach (var load in filteredLoads)
+        {
+            var date = load.DeliveryDate?.ToShortDateString() ?? "";
+
+            if (dailyGrossesDict.ContainsKey(date))
+            {
+                dailyGrossesDict[date].Gross += load.DeliveryCost;
+            }
+        }
+
         var grossesPerDay = new GrossesPerDayDto
         {
-            Days = dailyGrosses
+            Days = dailyGrossesDict.Values
         };
 
         return Task.FromResult(DataResult<GrossesPerDayDto>.CreateSuccess(grossesPerDay));
@@ -33,14 +49,10 @@ internal sealed class GetGrossesForPeriodHandler : RequestHandlerBase<GetGrosses
     protected override bool Validate(GetGrossesForPeriodQuery request, out string errorDescription)
     {
         errorDescription = string.Empty;
-
-        if (request.StartPeriod == null)
+        
+        if (request.StartPeriod >= request.EndPeriod)
         {
-            errorDescription = "Specify the start period of the gross";
-        }
-        else if (request.StartPeriod > request.EndPeriod)
-        {
-            errorDescription = "The starting period must be less than end period of the gross";
+            errorDescription = "The `StartPeriod` must be less or equal than `EndPeriod`";
         }
 
         return string.IsNullOrEmpty(errorDescription);

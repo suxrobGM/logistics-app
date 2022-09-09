@@ -34,7 +34,7 @@ export class EditLoadComponent implements OnInit {
     private apiService: ApiService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private oidcSecurityService: OidcSecurityService) 
+    private oidcSecurityService: OidcSecurityService)
   {
     this.isBusy = false;
     this.editMode = true;
@@ -87,7 +87,7 @@ export class EditLoadComponent implements OnInit {
       this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Select a driver'});
       return;
     }
-    
+
     const load: Load = {
       name: this.form.value.name,
       sourceAddress: this.form.value.srcAddress,
@@ -237,11 +237,11 @@ export class EditLoadComponent implements OnInit {
           }
         });
 
-        
+
         this.map.on('load', () => {
           this.srcGeocoder.query(load.sourceAddress!);
           this.destGeocoder.query(load.destinationAddress!);
-          
+
           this.directions.setOrigin(load.sourceAddress!);
           this.directions.setDestination(load.destinationAddress!);
         });

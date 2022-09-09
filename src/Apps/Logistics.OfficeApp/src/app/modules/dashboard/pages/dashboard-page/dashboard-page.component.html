@@ -64,11 +64,14 @@
         <div class="ms-3 py-2 fw-bold">Daily Gross</div>
         <hr class="w-100 m-0" />
       </ng-template>
-      <div class="d-flex">
-        <div>
-          <span class="fw-bold">{{todayGross}}</span>
+      <div class="row">
+        <div class="col-12 col-md-3">
+          <span class="fw-bold">Today Gross:</span><br/>
+          <span class="fw-bold fs-3">{{todayGross}}</span>
         </div>
-        <p-chart type="line" [data]="chartData" [options]="chartOptions"></p-chart>
+        <div class="col-12 col-md-9 ms-3">
+          <p-chart type="line" [data]="chartData" [options]="chartOptions" width="40vw" height="20vh"></p-chart>
+        </div>
       </div>
     </p-card>
   </div>

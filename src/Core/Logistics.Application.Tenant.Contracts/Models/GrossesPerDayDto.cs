@@ -17,4 +17,7 @@ public class GrossesPerDayDto
     public decimal TotalGross { get; private set; }
 }
 
-public record DailyGross(DateTime Day, decimal Gross);
+public record DailyGross(DateTime Date)
+{
+    public decimal Gross { get; set; }
+}
