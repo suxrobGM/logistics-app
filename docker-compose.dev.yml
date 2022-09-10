@@ -1,0 +1,55 @@
+version: "3.9"
+services:
+  api:
+    container_name: logistics-api
+    build:
+      context: ./
+      dockerfile: src/Api/Logistics.WebApi/Dockerfile
+      
+    ports:
+      - 7000:443
+    
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=Test12345
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+  
+  identity-server:
+    container_name: logistics-identity
+    build:
+      context: ./
+      dockerfile: src/Apps/Logistics.IdentityServer/Dockerfile
+      
+    ports:
+      - 7001:443
+    
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=Test12345
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      
+  admin-app:
+    container_name: logistics-admin
+    build:
+      context: ./
+      dockerfile: src/Apps/Logistics.AdminApp/Dockerfile
+      
+    ports:
+      - 7002:443
+    
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=Test12345
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      
+  office-app:
+    container_name: logistics-office
+    build:
+      context: ./
+      dockerfile: src/Apps/Logistics.OfficeApp/Dockerfile
+      
+    ports:
+      - 7003:80
