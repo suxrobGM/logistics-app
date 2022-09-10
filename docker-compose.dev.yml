@@ -7,13 +7,17 @@ services:
       dockerfile: src/Api/Logistics.WebApi/Dockerfile
       
     ports:
-      - 7000:443
+      - "7000:443"
     
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443
       - ASPNETCORE_Kestrel__Certificates__Default__Password=Test12345
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      
+    volumes:
+      - ~/.vsdbg:/remote_debugger:rw
+      - ~/.aspnet/https:/https:ro
   
   identity-server:
     container_name: logistics-identity
@@ -22,13 +26,17 @@ services:
       dockerfile: src/Apps/Logistics.IdentityServer/Dockerfile
       
     ports:
-      - 7001:443
+      - "7001:443"
     
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443
       - ASPNETCORE_Kestrel__Certificates__Default__Password=Test12345
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      
+    volumes:
+      - ~/.vsdbg:/remote_debugger:rw
+      - ~/.aspnet/https:/https:ro
       
   admin-app:
     container_name: logistics-admin
@@ -37,13 +45,17 @@ services:
       dockerfile: src/Apps/Logistics.AdminApp/Dockerfile
       
     ports:
-      - 7002:443
+      - "7002:443"
     
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443
       - ASPNETCORE_Kestrel__Certificates__Default__Password=Test12345
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      
+    volumes:
+      - ~/.vsdbg:/remote_debugger:rw
+      - ~/.aspnet/https:/https:ro
       
   office-app:
     container_name: logistics-office
@@ -52,4 +64,8 @@ services:
       dockerfile: src/Apps/Logistics.OfficeApp/Dockerfile
       
     ports:
-      - 7003:80
+      - "7003:7003"
+      
+    volumes:
+      - ./src/Apps/Logistics.OfficeApp/src:/app/src
+      - ./src/Apps/Logistics.OfficeApp/node_modules:/app/node_modules

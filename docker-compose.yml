@@ -7,7 +7,7 @@ services:
       dockerfile: src/Api/Logistics.WebApi/Dockerfile
       
     ports:
-      - 7000:443
+      - "7000:443"
     
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
@@ -20,7 +20,7 @@ services:
       dockerfile: src/Apps/Logistics.IdentityServer/Dockerfile
       
     ports:
-      - 7001:443
+      - "7001:443"
     
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
@@ -33,7 +33,7 @@ services:
       dockerfile: src/Apps/Logistics.AdminApp/Dockerfile
       
     ports:
-      - 7002:443
+      - "7002:443"
     
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
