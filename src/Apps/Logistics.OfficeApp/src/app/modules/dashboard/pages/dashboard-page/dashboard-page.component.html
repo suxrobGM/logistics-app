@@ -47,8 +47,16 @@
         <ng-template pTemplate="footer">
           <tr>
             <td colspan="4">
-              <a class="btn btn-primary" routerLink="/loads/edit">Add</a>
-              <a class="btn btn-primary ms-2" routerLink="/loads">View all loads</a>
+              <button pButton 
+                class="p-button-raised" 
+                routerLink="/loads/edit"
+                label="Add">
+              </button>
+              <button pButton 
+                class="p-button-raised ms-2" 
+                routerLink="/loads"
+                label="View all loads">
+              </button>
             </td>
           </tr>
         </ng-template>
@@ -57,8 +65,8 @@
   </div>
 </div>
 
-<div class="row mt-3">
-  <div class="col-12 col-xl-7">
+<div class="row">
+  <div class="col-12 col-xl-7 mt-3">
     <p-card>
       <ng-template pTemplate="header">
         <div class="ms-3 py-2 fw-bold">Daily Gross</div>
@@ -69,19 +77,23 @@
           <span class="fw-bold">Today Gross:</span><br/>
           <span class="fw-bold fs-3">{{todayGross}}</span>
         </div>
-        <div class="col-12 col-md-9 ms-3">
+        <div class="col-12 col-md-9">
           <p-chart type="line" [data]="chartData" [options]="chartOptions" width="40vw" height="20vh"></p-chart>
         </div>
       </div>
     </p-card>
   </div>
-  <div class="col-12 col-xl-5">
+  <div class="col-12 col-xl-5 mt-3">
     <p-card>
+      <ng-template pTemplate="header">
+        <div class="ms-3 py-2 fw-bold">Pages</div>
+        <hr class="w-100 m-0" />
+      </ng-template>
       <table class="table">
         <thead>
           <tr>
-            <th scope="col" class="col-7 col-sm-8">Pages</th>
-            <th scope="col" class="col-5 col-sm-4">Action</th>
+            <th scope="col" class="col-5 col-xl-7"></th>
+            <th scope="col" class="col-7 col-xl-5"></th>
           </tr>
         </thead>
         <tbody>
@@ -90,12 +102,18 @@
               <span class="fw-bold">Employees</span>
             </td>
             <td>
-              <a class="btn btn-primary" routerLink="/employees/add">
-                <i class="bi bi-pencil"></i> Add
-              </a>
-              <a class="btn btn-primary ms-2" routerLink="/employees">
-                <i class="bi bi-list"></i> List
-              </a>
+              <button pButton 
+                class="p-button-raised ms-2"
+                icon="bi bi-pencil"
+                routerLink="/employees/add"
+                label="Add">
+              </button>
+              <button pButton 
+                class="p-button-raised ms-2"
+                icon="bi bi-list"
+                routerLink="/employees"
+                label="List">
+              </button>
             </td>
           </tr>
           <tr>
@@ -103,12 +121,18 @@
               <span class="fw-bold">Trucks</span>
             </td>
             <td>
-              <a class="btn btn-primary" routerLink="/trucks/edit">
-                <i class="bi bi-pencil"></i> Add
-              </a>
-              <a class="btn btn-primary ms-2" routerLink="/trucks">
-                <i class="bi bi-list"></i> List
-              </a>
+              <button pButton 
+                class="p-button-raised ms-2"
+                icon="bi bi-pencil"
+                routerLink="/trucks/edit"
+                label="Add">
+              </button>
+              <button pButton 
+                class="p-button-raised ms-2"
+                icon="bi bi-list"
+                routerLink="/trucks"
+                label="List">
+              </button>
             </td>
           </tr>
           <tr>
@@ -116,12 +140,18 @@
               <span class="fw-bold">Loads</span>
             </td>
             <td>
-              <a class="btn btn-primary" routerLink="/loads/edit">
-                <i class="bi bi-pencil"></i> Add
-              </a>
-              <a class="btn btn-primary ms-2" routerLink="/loads">
-                <i class="bi bi-list"></i> List
-              </a>
+              <button pButton 
+                class="p-button-raised ms-2"
+                icon="bi bi-pencil"
+                routerLink="/loads/edit"
+                label="Add">
+              </button>
+              <button pButton 
+                class="p-button-raised ms-2"
+                icon="bi bi-list"
+                routerLink="/loads"
+                label="List">
+              </button>
             </td>
           </tr>
         </tbody>

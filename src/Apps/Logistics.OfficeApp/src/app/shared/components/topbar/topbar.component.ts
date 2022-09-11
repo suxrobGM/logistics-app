@@ -10,14 +10,18 @@ import { of, switchMap } from 'rxjs';
   styleUrls: ['./topbar.component.scss']
 })
 export class TopbarComponent implements OnInit {
-  isAuthenticated = false;
+  isAuthenticated: boolean;
+  isBusy: boolean;
   user?: User;
-  tenantName = 'Company name';
+  tenantName: string;
 
   constructor(
     private oidcSecurityService: OidcSecurityService,
     private apiService: ApiService) 
   {
+    this.isAuthenticated = false;
+    this.isBusy = false;
+    this.tenantName = 'Company name';
   }
   
   ngOnInit(): void {
@@ -40,14 +44,21 @@ export class TopbarComponent implements OnInit {
       if (result.success && result.value?.displayName) {
         this.tenantName = result.value?.displayName;
       }
+
+      this.isBusy = false;
     });
   }
 
   login() {
+    this.isBusy = true;
     this.oidcSecurityService.authorize();
   }
 
   logout() {
     this.oidcSecurityService.logoff();
+  }
+
+  openAccountUrl() {
+    window.open('https://id.jfleets.org/account/manage/profile', '_blank');
   }
 }

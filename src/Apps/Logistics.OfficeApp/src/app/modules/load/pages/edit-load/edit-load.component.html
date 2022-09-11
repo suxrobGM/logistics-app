@@ -54,15 +54,28 @@
           </p-dropdown>
         </div>
         <div class="mt-3">
-          <button class="btn btn-primary" type="submit" [disabled]="isBusy">
-            <i class="bi bi-pencil-square"></i> Save
+          <button pButton 
+            type="submit"
+            class="p-button-raised"
+            icon="bi bi-pencil-square"
+            label="Save"
+            [disabled]="isBusy">
           </button>
-          <button *ngIf="editMode" class="btn btn-danger ms-2"  type="button" (click)="confirmToDelete()" [disabled]="isBusy">
-            <i class="bi bi-trash"></i> Delete
+          <button pButton 
+            type="submit"
+            class="p-button-raised p-button-danger ms-2"
+            icon="bi bi bi-trash"
+            label="Delete"
+            [disabled]="isBusy"
+            (click)="confirmToDelete()">
           </button>
-          <a class="btn btn-primary ms-2" routerLink="/loads">
-            <i class="bi bi-arrow-left-square"></i> Back to list
-          </a>
+          <button pButton 
+            type="button"
+            class="p-button-raised ms-2"
+            icon="bi bi-arrow-left-square"
+            routerLink="/loads"
+            label="Back to list">
+          </button>
         </div>
       </form>
     </div>

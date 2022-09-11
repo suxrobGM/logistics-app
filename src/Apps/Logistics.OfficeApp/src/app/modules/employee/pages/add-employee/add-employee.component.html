@@ -19,12 +19,20 @@
           <p-dropdown formControlName="role" styleClass="w-100" [options]="roles" optionValue="name" optionLabel="displayName" [showClear]="true"></p-dropdown>
         </div>
         <div class="mt-3">
-          <button class="btn btn-primary" type="submit" [disabled]="isBusy">
-            <i class="bi bi-pencil-square"></i> Add
+          <button pButton 
+            type="submit"
+            class="p-button-raised"
+            icon="bi bi-pencil-square"
+            [disabled]="isBusy"
+            label="Add">
           </button>
-          <a class="btn btn-primary ms-2" routerLink="/employees">
-            <i class="bi bi-pencil-square"></i> Back to list
-          </a>
+          <button pButton 
+            type="button"
+            class="p-button-raised ms-2"
+            icon="bi bi-arrow-left-square"
+            routerLink="/employees"
+            label="Back to list">
+          </button>
         </div>
       </form>
     </p-card>

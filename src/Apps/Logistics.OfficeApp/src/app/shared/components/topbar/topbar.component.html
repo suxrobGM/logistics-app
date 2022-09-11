@@ -11,23 +11,32 @@
     <div id="navbar" class="collapse navbar-collapse">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link text-dark" *ngIf="isAuthenticated; else loginTemplate" href="https://id.jfleets.org/account/manage/profile">
-            <i class="bi bi-person-circle"></i>
-            <span class="ms-1">{{user?.name}} </span>
-          </a>
+          <button pButton
+            *ngIf="isAuthenticated; else loginTemplate"
+            class="p-button-lg p-button-text text-dark"  
+            [label]="user?.name!" 
+            icon="bi bi-person-circle" 
+            (click)="openAccountUrl()">
+          </button>
+
           <ng-template #loginTemplate>
-            <button class="btn nav-link text-dark" (click)="login()">
-              <i class="bi bi-box-arrow-in-right"></i>
-              <span class="ms-1">Login </span>
+            <button pButton
+              class="p-button-lg p-button-text text-dark"  
+              label="Login" 
+              icon="bi bi-box-arrow-in-right" 
+              [loading]="isBusy" 
+              (click)="login()">
             </button>
           </ng-template>
         </li>
 
         <li class="nav-item" *ngIf="isAuthenticated">
-          <button class="btn nav-link text-dark" (click)="logout()">
-            <i class="bi bi-box-arrow-in-left"></i>
-            <span class="ms-1">Logout </span>
-          </button>
+          <button pButton
+              class="p-button-lg p-button-text text-dark"  
+              label="Logout" 
+              icon="bi bi-box-arrow-in-left" 
+              (click)="logout()">
+            </button>
         </li>
       </ul>
     </div>

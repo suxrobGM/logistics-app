@@ -1,6 +1,11 @@
-<div class="d-flex">
+<div class="d-flex align-items-center">
   <h1>List Employees</h1>
-  <a class="add-btn" [routerLink]="['/employees/add']" pTooltip="Add a new employee"><i class="bi bi-plus-square-fill fs-2"></i></a>
+  <button pButton pRipple
+    class="p-button-lg p-button-rounded p-button-text text-black ms-2"
+    icon="bi bi-plus-square-fill"
+    pTooltip="Add a new employee"
+    routerLink="/employees/add">
+  </button>
 </div>
 
 <hr class="w-100">
