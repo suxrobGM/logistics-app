@@ -14,6 +14,8 @@ import * as mapboxgl from 'mapbox-gl';
 export class DashboardPageComponent implements OnInit {
   private map!: mapboxgl.Map;
   public todayGross: string;
+  public weeklyGross: string;
+  public rpm: string;
   public loadingLoads: boolean;
   public loads: Load[];
   public chartData: any;
@@ -26,6 +28,8 @@ export class DashboardPageComponent implements OnInit {
     this.loads = [];
     this.loadingLoads = false;
     this.todayGross = '$0';
+    this.weeklyGross = '$0';
+    this.rpm = '$0';
 
     this.chartData = {
       labels: [],
@@ -77,12 +81,14 @@ export class DashboardPageComponent implements OnInit {
 
   private fetchLastTenDaysGross() {
     const today = new Date();
-    const tenDaysAgo = new Date(today.setDate(today.getDate() - 10));
+    const weekAgo = new Date(today.setDate(today.getDate() - 7));
 
-    this.apiService.getGrossesForPeriod(tenDaysAgo)
+    this.apiService.getGrossesForPeriod(weekAgo)
       .subscribe(result => {
         if (result.success && result.value) {
           const grosses = result.value;
+          
+          this.weeklyGross = this.currencyPipe.transform(grosses.totalGross, 'USD')!;
           this.drawChart(grosses);
           this.calcTodayGross(grosses);
         }
@@ -92,8 +98,6 @@ export class DashboardPageComponent implements OnInit {
   private drawChart(grosses: GrossesPerDay) {
     const labels = new Array<string>();
     const data = new Array<number>();
-    console.log(grosses);
-    
     
     grosses.days.forEach(i => {
       labels.push(this.toLocaleDate(i.date));
