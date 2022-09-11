@@ -1,5 +1,4 @@
-﻿//using System.Collections.Generic;
-namespace Logistics.Application.Handlers.Queries;
+﻿namespace Logistics.Application.Handlers.Queries;
 
 internal sealed class GetGrossesForPeriodHandler : RequestHandlerBase<GetGrossesForPeriodQuery, DataResult<GrossesPerDayDto>>
 {
@@ -32,10 +31,11 @@ internal sealed class GetGrossesForPeriodHandler : RequestHandlerBase<GetGrosses
         {
             var date = load.DeliveryDate?.ToShortDateString() ?? "";
 
-            if (dailyGrossesDict.ContainsKey(date))
-            {
-                dailyGrossesDict[date].Gross += load.DeliveryCost;
-            }
+            if (!dailyGrossesDict.ContainsKey(date)) 
+                continue;
+            
+            dailyGrossesDict[date].Gross += load.DeliveryCost;
+            dailyGrossesDict[date].Distance += load.Distance;
         }
 
         var grossesPerDay = new GrossesPerDayDto
@@ -52,7 +52,7 @@ internal sealed class GetGrossesForPeriodHandler : RequestHandlerBase<GetGrosses
         
         if (request.StartPeriod >= request.EndPeriod)
         {
-            errorDescription = "The `StartPeriod` must be less or equal than `EndPeriod`";
+            errorDescription = "The `StartPeriod` must be less than or equal to `EndPeriod`";
         }
 
         return string.IsNullOrEmpty(errorDescription);

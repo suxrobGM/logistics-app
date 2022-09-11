@@ -13,9 +13,10 @@ import * as mapboxgl from 'mapbox-gl';
 })
 export class DashboardPageComponent implements OnInit {
   private map!: mapboxgl.Map;
-  public todayGross: string;
-  public weeklyGross: string;
-  public rpm: string;
+  public todayGross: number;
+  public weeklyGross: number;
+  public weeklyDistance: number;
+  public rpm: number;
   public loadingLoads: boolean;
   public loads: Load[];
   public chartData: any;
@@ -27,9 +28,10 @@ export class DashboardPageComponent implements OnInit {
   {
     this.loads = [];
     this.loadingLoads = false;
-    this.todayGross = '$0';
-    this.weeklyGross = '$0';
-    this.rpm = '$0';
+    this.todayGross = 0;
+    this.weeklyGross = 0;
+    this.weeklyDistance = 0;
+    this.rpm = 0;
 
     this.chartData = {
       labels: [],
@@ -88,7 +90,9 @@ export class DashboardPageComponent implements OnInit {
         if (result.success && result.value) {
           const grosses = result.value;
           
-          this.weeklyGross = this.currencyPipe.transform(grosses.totalGross, 'USD')!;
+          this.weeklyGross = grosses.totalGross;
+          this.weeklyDistance = grosses.totalDistance;
+          this.rpm = this.weeklyGross / this.weeklyDistance;
           this.drawChart(grosses);
           this.calcTodayGross(grosses);
         }
@@ -127,7 +131,7 @@ export class DashboardPageComponent implements OnInit {
       .filter(i => this.getDay(i.date) === today.getDay())
       .forEach(i => totalGross += i.gross);
 
-    this.todayGross = this.currencyPipe.transform(totalGross, 'USD')!;
+    this.todayGross = totalGross;
   }
 
   private getDay(dateStr: string): number {

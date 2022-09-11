@@ -75,15 +75,15 @@
       <div class="d-flex justify-content-between">
         <div class="px-2">
           <span class="text-secondary text-uppercase">Total Gross:</span><br/>
-          <span class="fw-bold fs-3">{{weeklyGross}}</span>
+          <span class="fw-bold fs-3">{{weeklyGross | currency}}</span>
         </div>
         <div class="px-2">
           <span class="text-secondary text-uppercase">Billed Miles:</span><br/>
-          <span class="fw-bold fs-3">1000</span>
+          <span class="fw-bold fs-3">{{weeklyDistance}}</span>
         </div>
         <div class="px-2">
-          <span class="text-secondary text-uppercase">Rate Per Miles:</span><br/>
-          <span class="fw-bold fs-3">$2.5</span>
+          <span class="text-secondary text-uppercase">Rate Per Mile:</span><br/>
+          <span class="fw-bold fs-3">{{rpm | currency}}</span>
         </div>
       </div>
     </p-card>
@@ -100,7 +100,7 @@
       <div class="row">
         <div class="col-12 col-md-3 mb-2">
           <span class="fw-bold">Today Gross:</span><br/>
-          <span class="fw-bold fs-3">{{todayGross}}</span>
+          <span class="fw-bold fs-3">{{todayGross | currency}}</span>
         </div>
         <div class="col-12 col-md-9">
           <p-chart type="line" [data]="chartData" [options]="chartOptions" width="40vw" height="20vh"></p-chart>

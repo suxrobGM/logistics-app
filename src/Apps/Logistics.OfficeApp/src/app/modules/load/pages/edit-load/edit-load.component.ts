@@ -21,6 +21,7 @@ export class EditLoadComponent implements OnInit {
   private directions!: any;
   private destGeocoder!: MapboxGeocoder;
   private srcGeocoder!: MapboxGeocoder;
+  private distanceMeters: number;
 
   public id?: string;
   public headerText: string;
@@ -41,6 +42,7 @@ export class EditLoadComponent implements OnInit {
     this.headerText = 'Edit a load';
     this.suggestedDrivers = [];
     this.loadStatuses = LoadStatuses;
+    this.distanceMeters = 0;
 
     this.form = new FormGroup({
       name: new FormControl(''),
@@ -93,7 +95,7 @@ export class EditLoadComponent implements OnInit {
       sourceAddress: this.form.value.srcAddress,
       destinationAddress: this.form.value.dstAddress,
       deliveryCost: this.form.value.deliveryCost,
-      distance: this.form.value.distance,
+      distance: this.distanceMeters,
       assignedDispatcherId: this.form.value.dispatcherId,
       assignedDriverId: driver.id,
       status: this.form.value.status
@@ -172,8 +174,8 @@ export class EditLoadComponent implements OnInit {
     });
 
     this.directions.on('route', (data: any) => {
-      const distanceMeters = data.route[0].distance;
-      const distanceMiles = this.convertToMiles(distanceMeters);
+      this.distanceMeters = data.route[0].distance;
+      const distanceMiles = this.getMiles(this.distanceMeters);
       this.form.patchValue({distance: distanceMiles});
     });
 
@@ -227,7 +229,7 @@ export class EditLoadComponent implements OnInit {
           dstAddress: load.destinationAddress,
           dispatchedDate: this.getLocaleDate(load.dispatchedDate),
           deliveryCost: load.deliveryCost,
-          distance: load.distance,
+          distance: this.getMiles(load.distance),
           dispatcherName: load.assignedDispatcherName,
           dispatcherId: load.assignedDispatcherId,
           status: load.status,
@@ -274,8 +276,12 @@ export class EditLoadComponent implements OnInit {
     return '';
   }
 
-  private convertToMiles(meters: number): number {
-    const miles = meters*0.000621371;
-    return Number.parseFloat(miles.toFixed(2));
+  private getMiles(meters?: number): number {
+    if (meters) {
+      const miles = meters*0.000621371;
+      return Number.parseFloat(miles.toFixed(2));
+    }
+
+    return 0;
   }
 }
