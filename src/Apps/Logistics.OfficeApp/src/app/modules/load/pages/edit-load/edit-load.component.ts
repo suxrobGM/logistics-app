@@ -238,15 +238,11 @@ export class EditLoadComponent implements OnInit {
             userName: load.assignedDriverName
           }
         });
-
-
-        this.map.on('load', () => {
-          this.srcGeocoder.query(load.sourceAddress!);
-          this.destGeocoder.query(load.destinationAddress!);
-
-          this.directions.setOrigin(load.sourceAddress!);
-          this.directions.setDestination(load.destinationAddress!);
-        });
+        
+        this.srcGeocoder.query(load.sourceAddress!);
+        this.destGeocoder.query(load.destinationAddress!);
+        this.directions.setOrigin(load.sourceAddress!);
+        this.directions.setDestination(load.destinationAddress!);
       }
     });
   }
