@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { PrimengModule } from './modules/primeng.module';
 import { NavDockComponent } from './components/nav-dock/nav-dock.component';
 import { TopbarComponent } from './components/topbar/topbar.component';
-import { MessageService } from 'primeng/api';
+import { DistanceUnitPipe } from './pipes';
 
 @NgModule({
   declarations: [
     NavDockComponent,
-    TopbarComponent
+    TopbarComponent,
+    DistanceUnitPipe,
   ],
   imports: [
     CommonModule,
@@ -18,6 +19,7 @@ import { MessageService } from 'primeng/api';
     NavDockComponent,
     TopbarComponent,
     PrimengModule,
+    DistanceUnitPipe,
   ]
 })
 export class SharedModule { }
