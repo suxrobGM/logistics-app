@@ -20,6 +20,9 @@ import { DistanceUnitPipe } from './pipes';
     TopbarComponent,
     PrimengModule,
     DistanceUnitPipe,
+  ],
+  providers: [
+    DistanceUnitPipe
   ]
 })
 export class SharedModule { }

@@ -8,6 +8,7 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { Employee, EnumType, Load, LoadStatuses, UserIdentity } from '@shared/models';
 import { ApiService } from '@shared/services';
 import { AppConfig } from '@configs';
+import { DistanceUnitPipe } from '@shared/pipes';
 
 @Component({
   selector: 'app-edit-load',
@@ -35,7 +36,8 @@ export class EditLoadComponent implements OnInit {
     private apiService: ApiService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private oidcSecurityService: OidcSecurityService)
+    private oidcSecurityService: OidcSecurityService,
+    private distanceUnit: DistanceUnitPipe)
   {
     this.isBusy = false;
     this.editMode = true;
@@ -272,12 +274,7 @@ export class EditLoadComponent implements OnInit {
     return '';
   }
 
-  private getMiles(meters?: number): number {
-    if (meters) {
-      const miles = meters*0.000621371;
-      return Number.parseFloat(miles.toFixed(2));
-    }
-
-    return 0;
+  private getMiles(value?: number): number {
+    return this.distanceUnit.transform(value, 'mi');
   }
 }

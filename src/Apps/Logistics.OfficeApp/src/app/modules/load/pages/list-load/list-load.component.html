@@ -92,7 +92,7 @@
             <td>{{load.pickUpDate | date:'mediumDate'}}</td>
             <td>{{load.deliveryDate | date:'mediumDate'}}</td>
             <td>{{load.status}}</td>
-            <td>{{load.distance}}</td>
+            <td>{{load.distance | distanceUnit:'mi'}}</td>
             <td>{{load.deliveryCost}}</td>
             <td>{{load.assignedDispatcherName}}</td>
             <td>{{load.assignedDriverName}}</td>
