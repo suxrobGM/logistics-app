@@ -9,10 +9,10 @@ import { LazyLoadEvent } from 'primeng/api';
   styleUrls: ['./list-truck.component.scss']
 })
 export class ListTruckComponent implements OnInit {
-  public trucks: Truck[];
-  public isBusy: boolean;
-  public totalRecords: number;
-  public first: number;
+  trucks: Truck[];
+  isBusy: boolean;
+  totalRecords: number;
+  first: number;
 
   constructor(private apiService: ApiService) {
     this.trucks = [];
@@ -21,11 +21,11 @@ export class ListTruckComponent implements OnInit {
     this.first = 0;
   }
 
-  public ngOnInit(): void {
+  ngOnInit(): void {
     this.isBusy = true;
   }
 
-  public search(event: any) {
+  search(event: any) {
     const query = event.target.value;
     
     this.apiService.getTrucks(query, '', 1).subscribe(result => {
@@ -36,7 +36,7 @@ export class ListTruckComponent implements OnInit {
     });
   }
 
-  public load(event: LazyLoadEvent) {
+  load(event: LazyLoadEvent) {
     this.isBusy = true;
     const page = event.first! / event.rows! + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField, event.sortOrder);

@@ -6,6 +6,7 @@ import { ListEmployeeComponent } from './pages/list-employee/list-employee.compo
 import { EditEmployeeComponent } from './pages/edit-employee/edit-employee.component';
 import { EmployeeRoutingModule } from './employee-routing.module';
 import { AddEmployeeComponent } from './pages/add-employee/add-employee.component';
+import { PrimengModule } from './primeng.module';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { AddEmployeeComponent } from './pages/add-employee/add-employee.componen
     CommonModule,
     EmployeeRoutingModule,
     SharedModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    PrimengModule
   ]
 })
 export class EmployeeModule { }

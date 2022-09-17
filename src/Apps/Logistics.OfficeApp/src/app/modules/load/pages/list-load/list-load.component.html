@@ -4,7 +4,7 @@
     class="p-button-lg p-button-rounded p-button-text text-black ms-2"
     icon="bi bi-plus-square-fill"
     pTooltip="Add a new load"
-    routerLink="/loads/edit">
+    routerLink="/loads/add">
   </button>
 </div>
 <hr class="w-100">
@@ -75,7 +75,7 @@
         <ng-template pTemplate="body" let-load>
           <tr>
             <td>
-              <a [routerLink]="['/loads/edit']" [state]="{id: load.id}">
+              <a [routerLink]="['/loads/edit', load.id]">
                 {{load.refId}}
               </a>
             </td>

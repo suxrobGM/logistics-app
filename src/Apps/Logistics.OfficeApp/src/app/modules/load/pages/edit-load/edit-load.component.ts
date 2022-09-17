@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import * as MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
 import * as mapboxgl from 'mapbox-gl';
@@ -37,7 +38,8 @@ export class EditLoadComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private oidcSecurityService: OidcSecurityService,
-    private distanceUnit: DistanceUnitPipe)
+    private distanceUnit: DistanceUnitPipe,
+    private route: ActivatedRoute)
   {
     this.isBusy = false;
     this.editMode = true;
@@ -61,7 +63,10 @@ export class EditLoadComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.id = history.state.id;
+    this.route.params.subscribe(params => {
+      this.id = params['id'];
+    });
+
     this.initMapbox();
     this.initGeocoderInputs();
     this.fetchCurrentDispatcher();

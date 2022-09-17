@@ -6,16 +6,21 @@ import { EditEmployeeComponent } from './pages/edit-employee/edit-employee.compo
 import { ListEmployeeComponent } from './pages/list-employee/list-employee.component';
 
 const rootRoutes: Routes = [
+  {
+    path: '',
+    redirectTo: 'list',
+    pathMatch: 'full'
+  },
   { 
-    path: '', 
-    component: ListEmployeeComponent, 
+    path: 'list',
+    component: ListEmployeeComponent,
     canActivate: [AuthGuard],
     data: {
       roles: ['app.admin', 'tenant.owner', 'tenant.manager', 'tenant.dispatcher']
     }
   },
   { 
-    path: 'employees/add', 
+    path: 'add', 
     component: AddEmployeeComponent, 
     canActivate: [AuthGuard],
     data: {
@@ -23,7 +28,7 @@ const rootRoutes: Routes = [
     }
   },
   { 
-    path: 'employees/edit', 
+    path: 'edit/:id', 
     component: EditEmployeeComponent, 
     canActivate: [AuthGuard],
     data: {

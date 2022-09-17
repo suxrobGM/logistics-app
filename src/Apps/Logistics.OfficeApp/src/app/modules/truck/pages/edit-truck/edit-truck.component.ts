@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Employee, Truck } from '@shared/models';
 import { ApiService } from '@shared/services';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -23,7 +24,7 @@ export class EditTruckComponent implements OnInit {
     private apiService: ApiService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-  ) 
+    private route: ActivatedRoute) 
   {
     this.suggestedDrivers = [];
     this.headerText = 'Edit a truck';
@@ -36,7 +37,9 @@ export class EditTruckComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.id = history.state.id;
+    this.route.params.subscribe(params => {
+      this.id = params['id'];
+    });
     
     if (!this.id) {
       this.editMode = false;

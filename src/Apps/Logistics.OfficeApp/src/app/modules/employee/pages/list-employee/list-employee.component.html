@@ -58,7 +58,7 @@
         <ng-template pTemplate="body" let-employee>
           <tr>
             <td>
-              <a [routerLink]="['/employees/edit']" [state]="{id: employee.id}">
+              <a [routerLink]="['/employees/edit', employee.id]">
                 {{employee.userName}}
               </a>
             </td>

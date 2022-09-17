@@ -25,15 +25,15 @@ internal class TenantService : ITenantService
             return _currentTenant;
         }
 
+        var tenantHeader = _httpContext.Request.Headers["X-Tenant"];
         var tenantSubDomain = GetSubDomain(_httpContext.Request.Host);
         var tenantClaim = _httpContext.User.Claims.FirstOrDefault(i => i.Type == "tenant")?.Value;
-        var tenantHeader = _httpContext.Request.Headers["X-Tenant"];
 
         if (!string.IsNullOrEmpty(tenantHeader))
         {
             _currentTenant = GetCurrentTenant(tenantHeader);
         }
-        else if (!string.IsNullOrEmpty(tenantSubDomain))
+        else if (!string.IsNullOrEmpty(tenantSubDomain) && tenantSubDomain != "office")
         {
             _currentTenant = GetCurrentTenant(tenantSubDomain);
         }
@@ -81,6 +81,6 @@ internal class TenantService : ITenantService
             return subDomain;
 
         subDomain = domains[0];
-        return subDomain;
+        return subDomain.ToLower();
     }
 }

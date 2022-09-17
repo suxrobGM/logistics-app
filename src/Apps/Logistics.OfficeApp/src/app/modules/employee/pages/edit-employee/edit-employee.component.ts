@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Employee, Role } from '@shared/models';
@@ -23,7 +24,8 @@ export class EditEmployeeComponent implements OnInit {
     private apiService: ApiService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private oidcSecurityService: OidcSecurityService) 
+    private oidcSecurityService: OidcSecurityService,
+    private route: ActivatedRoute) 
   {
     this.roles = [];
     this.isBusy = false;
@@ -48,7 +50,9 @@ export class EditEmployeeComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.id = history.state.id;
+    this.route.params.subscribe(params => {
+      this.id = params['id'];
+    });
     
     if (!this.id) {
       this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'ID is an empty'});

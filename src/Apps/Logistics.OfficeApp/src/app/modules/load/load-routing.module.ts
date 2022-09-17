@@ -5,8 +5,13 @@ import { EditLoadComponent } from './pages/edit-load/edit-load.component';
 import { ListLoadComponent } from './pages/list-load/list-load.component';
 
 const rootRoutes: Routes = [
-  { 
-    path: '', 
+  {
+    path: '',
+    redirectTo: 'list',
+    pathMatch: 'full'
+  },
+  {
+    path: 'list', 
     component: ListLoadComponent, 
     canActivate: [AuthGuard],
     data: {
@@ -14,7 +19,15 @@ const rootRoutes: Routes = [
     }
   },
   { 
-    path: 'loads/edit', 
+    path: 'add', 
+    component: EditLoadComponent, 
+    canActivate: [AuthGuard],
+    data: {
+      roles: ['app.admin', 'tenant.owner', 'tenant.dispatcher']
+    }
+  },
+  { 
+    path: 'edit/:id', 
     component: EditLoadComponent, 
     canActivate: [AuthGuard],
     data: {
