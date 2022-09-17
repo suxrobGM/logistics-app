@@ -11,11 +11,25 @@ public class GrossController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet("getForPeriod")]
-    [ProducesResponseType(typeof(DataResult<GrossesPerDayDto>), StatusCodes.Status200OK)]
+    [HttpGet("getForInterval")]
+    [ProducesResponseType(typeof(DataResult<GrossesForIntervalDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Policies.Employee.CanRead)]
-    public async Task<IActionResult> GetGrossesForPeriod([FromQuery] GetGrossesForPeriodQuery request)
+    public async Task<IActionResult> GetGrossesForInterval([FromQuery] GetGrossesForIntervalQuery request)
+    {
+        var result = await _mediator.Send(request);
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result.Error);
+    }
+    
+    [HttpGet("getForTruck")]
+    [ProducesResponseType(typeof(DataResult<TruckGrossesDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Policies.Employee.CanRead)]
+    public async Task<IActionResult> GetGrossesForTruck([FromQuery] GetTruckGrossesForIntervalQuery request)
     {
         var result = await _mediator.Send(request);
 

@@ -1,10 +1,10 @@
 ﻿namespace Logistics.Application.Contracts.Models;
 
-public class GrossesPerDayDto
+public class GrossesForIntervalDto
 {
-    private IEnumerable<DailyGross> _days = new List<DailyGross>();
+    private IEnumerable<DailyGrossDto> _days = new List<DailyGrossDto>();
 
-    public IEnumerable<DailyGross> Days
+    public IEnumerable<DailyGrossDto> Days
     {
         get => _days;
         set
@@ -21,10 +21,4 @@ public class GrossesPerDayDto
     
     public decimal TotalGross { get; private set; }
     public double TotalDistance { get; private set; }
-}
-
-public record DailyGross(DateTime Date)
-{
-    public decimal Gross { get; set; }
-    public double Distance { get; set; }
 }

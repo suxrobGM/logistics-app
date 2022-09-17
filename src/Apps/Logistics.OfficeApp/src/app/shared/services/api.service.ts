@@ -256,10 +256,10 @@ export class ApiService {
 
   //#region Gross API
 
-  getGrossesForPeriod(startPeriod: Date, endPeriod?: Date): Observable<DataResult<GrossesPerDay>> {
-    const url = endPeriod ?
-      `${this.host}/gross/getForPeriod?startPeriod=${startPeriod.toJSON()}&endPeriod=${endPeriod.toJSON()}` :
-      `${this.host}/gross/getForPeriod?startPeriod=${startPeriod.toJSON()}`;
+  getGrossesForInterval(startDate: Date, endDate?: Date): Observable<DataResult<GrossesPerDay>> {
+    const url = endDate ?
+      `${this.host}/gross/getForInterval?startDate=${startDate.toJSON()}&endDate=${endDate.toJSON()}` :
+      `${this.host}/gross/getForInterval?startDate=${startDate.toJSON()}`;
 
     return this.httpClient
       .get<DataResult<GrossesPerDay>>(url)

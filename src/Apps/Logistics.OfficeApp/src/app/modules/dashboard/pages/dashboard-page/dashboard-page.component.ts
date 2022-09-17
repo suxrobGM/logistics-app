@@ -85,7 +85,7 @@ export class DashboardPageComponent implements OnInit {
     const today = new Date();
     const weekAgo = new Date(today.setDate(today.getDate() - 7));
 
-    this.apiService.getGrossesForPeriod(weekAgo)
+    this.apiService.getGrossesForInterval(weekAgo)
       .subscribe(result => {
         if (result.success && result.value) {
           const grosses = result.value;
