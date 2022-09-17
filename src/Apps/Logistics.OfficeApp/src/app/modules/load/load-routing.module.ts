@@ -10,7 +10,7 @@ const rootRoutes: Routes = [
     component: ListLoadComponent, 
     canActivate: [AuthGuard],
     data: {
-      roles: ['app.admin', 'tenant.owner', 'tenant.dispatcher']
+      roles: ['app.admin', 'tenant.owner', 'tenant.manager', 'tenant.dispatcher']
     }
   },
   { 
