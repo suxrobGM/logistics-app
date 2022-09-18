@@ -15,7 +15,7 @@ public class TruckController : ControllerBase
     [ProducesResponseType(typeof(DataResult<TruckDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Policies.Truck.CanRead)]
-    public async Task<IActionResult> GetById(string id)
+    public async Task<IActionResult> GetById(string id, bool includeLoadIds = false)
     {
         var result = await _mediator.Send(new GetTruckByIdQuery
         {

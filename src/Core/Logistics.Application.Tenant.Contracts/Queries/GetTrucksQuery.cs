@@ -2,5 +2,5 @@
 
 public sealed class GetTrucksQuery : SearchableQuery<TruckDto>
 {
-    public bool IncludeLoadIds { get; set; }
+    public bool IncludeLoadIds { get; set; } = false;
 }

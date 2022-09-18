@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
@@ -31,7 +31,7 @@ export class EditLoadComponent implements OnInit {
   public editMode: boolean;
   public form: FormGroup;
   public suggestedDrivers: Employee[];
-  public loadStatuses: EnumType[]
+  public loadStatuses: EnumType[];
 
   constructor(
     private apiService: ApiService,
@@ -182,7 +182,7 @@ export class EditLoadComponent implements OnInit {
 
     this.directions.on('route', (data: any) => {
       this.distanceMeters = data.route[0].distance;
-      const distanceMiles = this.getMiles(this.distanceMeters);
+      const distanceMiles = this.toMi(this.distanceMeters);
       this.form.patchValue({distance: distanceMiles});
     });
 
@@ -236,7 +236,7 @@ export class EditLoadComponent implements OnInit {
           dstAddress: load.destinationAddress,
           dispatchedDate: this.getLocaleDate(load.dispatchedDate),
           deliveryCost: load.deliveryCost,
-          distance: this.getMiles(load.distance),
+          distance: this.toMi(load.distance),
           dispatcherName: load.assignedDispatcherName,
           dispatcherId: load.assignedDispatcherId,
           status: load.status,
@@ -279,7 +279,7 @@ export class EditLoadComponent implements OnInit {
     return '';
   }
 
-  private getMiles(value?: number): number {
+  private toMi(value?: number): number {
     return this.distanceUnit.transform(value, 'mi');
   }
 }

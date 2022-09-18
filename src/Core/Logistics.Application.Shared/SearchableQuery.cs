@@ -1,4 +1,6 @@
-﻿namespace Logistics.Application.Shared;
+﻿using System.Text.Json.Serialization;
+
+namespace Logistics.Application.Shared;
 
 public abstract class SearchableQuery<T> : PagedQuery<T>
 {
@@ -20,6 +22,7 @@ public abstract class SearchableQuery<T> : PagedQuery<T>
         }
     }
     
+    [JsonIgnore]
     public bool Descending { get; private set; }
     public string? Search { get; set; }
 }

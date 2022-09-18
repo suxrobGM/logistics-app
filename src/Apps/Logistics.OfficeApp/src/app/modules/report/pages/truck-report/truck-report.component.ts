@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GrossesForInterval, Truck, TruckGrosses } from '@shared/models';
+import { DistanceUnitPipe } from '@shared/pipes';
 import { ApiService } from '@shared/services';
 import { DateUtils } from '@shared/utils';
 
@@ -14,15 +15,20 @@ export class TruckReportComponent implements OnInit {
   public isBusy: boolean;
   public truck!: Truck;
   public truckGrosses!: TruckGrosses;
+  public rpmLastMonth: number;
+  public rpmAllTime: number;
   public chartData: any;
   public chartOptions: any;
 
   constructor(
     private apiService: ApiService,
     private route: ActivatedRoute,
-    private dateUtils: DateUtils) 
+    private dateUtils: DateUtils,
+    private distanceUnit: DistanceUnitPipe) 
   {
     this.isBusy = false;
+    this.rpmLastMonth = 0;
+    this.rpmAllTime = 0;
 
     this.chartData = {
       labels: [],
@@ -53,6 +59,34 @@ export class TruckReportComponent implements OnInit {
     this.fetchTruckGrosses();
   }
 
+  private fetchTruck() {
+    this.apiService.getTruck(this.id).subscribe(result => {
+      if (result.success && result.value) {
+        this.truck = result.value;
+      }
+    });
+  }
+
+  private fetchTruckGrosses() {
+    const oneMonthAgo = this.dateUtils.daysAgo(30);
+
+    this.apiService.getTruckGrossesForInterval(this.id, oneMonthAgo).subscribe(result => {
+      if (result.success && result.value) {
+        const truckGross = result.value;
+        this.truckGrosses = result.value;
+        this.rpmAllTime = truckGross.totalGrossAllTime / this.toMi(truckGross.totalDistanceAllTime);
+
+        if (truckGross.grosses) {
+          this.rpmLastMonth = truckGross.grosses.totalGross / this.toMi(truckGross.grosses.totalDistance);
+        }
+        
+        this.drawChart(truckGross.grosses!);
+      }
+
+      this.isBusy = false;
+    });
+  }
+
   private drawChart(grosses: GrossesForInterval) {
     const labels = new Array<string>();
     const data = new Array<number>();
@@ -77,27 +111,7 @@ export class TruckReportComponent implements OnInit {
     }
   }
 
-  private fetchTruck() {
-    this.apiService.getTruck(this.id).subscribe(result => {
-      if (result.success && result.value) {
-        this.truck = result.value;
-      }
-    });
-  }
-
-  private fetchTruckGrosses() {
-    this.isBusy = true;
-    const oneMonthAgo = this.dateUtils.daysAgo(30);
-
-    this.apiService.getTruckGrossesForInterval(this.id, oneMonthAgo).subscribe(result => {
-      if (result.success && result.value) {
-        this.truckGrosses = result.value;
-        console.log(this.truckGrosses);
-        
-        this.drawChart(this.truckGrosses.grosses!)
-      }
-
-      this.isBusy = false;
-    });
+  private toMi(value?: number): number {
+    return this.distanceUnit.transform(value, 'mi');
   }
 }

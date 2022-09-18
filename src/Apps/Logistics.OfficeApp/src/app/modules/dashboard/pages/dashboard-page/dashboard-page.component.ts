@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { AppConfig } from '@configs';
 import { GrossesForInterval, Load } from '@shared/models';
+import { DistanceUnitPipe } from '@shared/pipes';
 import { ApiService } from '@shared/services';
 import { DateUtils } from '@shared/utils';
 import * as mapboxgl from 'mapbox-gl';
@@ -24,7 +25,8 @@ export class DashboardPageComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private dateUtils: DateUtils) 
+    private dateUtils: DateUtils,
+    private distanceUnit: DistanceUnitPipe) 
   {
     this.loads = [];
     this.loadingLoads = false;
@@ -91,7 +93,7 @@ export class DashboardPageComponent implements OnInit {
           
           this.weeklyGross = grosses.totalGross;
           this.weeklyDistance = grosses.totalDistance;
-          this.rpm = this.weeklyGross / this.weeklyDistance;
+          this.rpm = this.weeklyGross / this.toMi(this.weeklyDistance);
           this.drawChart(grosses);
           this.calcTodayGross(grosses);
         }
@@ -131,5 +133,9 @@ export class DashboardPageComponent implements OnInit {
       .forEach(i => totalGross += i.gross);
 
     this.todayGross = totalGross;
+  }
+
+  private toMi(value?: number): number {
+    return this.distanceUnit.transform(value, 'mi');
   }
 }

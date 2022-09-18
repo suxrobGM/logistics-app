@@ -17,11 +17,15 @@ internal sealed class GetTruckByIdHandler : RequestHandlerBase<GetTruckByIdQuery
         GetTruckByIdQuery request, CancellationToken cancellationToken)
     {
         var truckEntity = await _tenantRepository.GetAsync<Truck>(request.Id);
+        var loadIds = new List<string>();
 
-        var loadsIds = _tenantRepository.Query<Truck>()
-            .SelectMany(i => i.Loads)
-            .Select(i => i.Id)
-            .ToList();
+        if (request.IncludeLoadIds)
+        {
+            loadIds = _tenantRepository.Query<Truck>()
+                .SelectMany(i => i.Loads)
+                .Select(i => i.Id)
+                .ToList();
+        }
 
         if (truckEntity == null)
             return DataResult<TruckDto>.CreateError("Could not find the specified truck");
@@ -34,7 +38,7 @@ internal sealed class GetTruckByIdHandler : RequestHandlerBase<GetTruckByIdQuery
             TruckNumber = truckEntity.TruckNumber,
             DriverId = truckEntity.DriverId,
             DriverName = truckDriver?.GetFullName(),
-            LoadIds = loadsIds
+            LoadIds = loadIds
         };
 
         return DataResult<TruckDto>.CreateSuccess(truck);
