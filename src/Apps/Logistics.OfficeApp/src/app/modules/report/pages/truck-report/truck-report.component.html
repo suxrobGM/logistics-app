@@ -17,11 +17,11 @@
       <ng-template #actualContent>
         <div class="mb-3">
           <span class="fw-bold">Driver: </span>
-          <a [routerLink]="['employees/edit', truck.driverId]">{{truck.driverName}}</a>
+          <a [routerLink]="['/employees/edit', truck.driverId]">{{truck.driverName}}</a>
         </div>
         <div class="mb-3">
           <span class="fw-bold">Number: </span>
-          <a [routerLink]="['trucks/edit', truck.id]">{{truck.truckNumber}}</a>
+          <a [routerLink]="['/trucks/edit', truck.id]">{{truck.truckNumber}}</a>
         </div>
         <div class="mb-3">
           <span class="fw-bold">Total Gross For All Time: </span>

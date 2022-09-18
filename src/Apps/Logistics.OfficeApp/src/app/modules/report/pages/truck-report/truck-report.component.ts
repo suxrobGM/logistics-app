@@ -28,7 +28,7 @@ export class TruckReportComponent implements OnInit {
       labels: [],
       datasets: [
         {
-          label: 'Daily Grosses',
+          label: 'Daily Gross',
           data: []
         }
       ]
@@ -66,7 +66,7 @@ export class TruckReportComponent implements OnInit {
       labels: labels,
       datasets: [
         {
-          label: 'Daily Grosses',
+          label: 'Daily Gross',
           data: data,
           fill: true,
           borderColor: '#FFA726',

@@ -37,7 +37,7 @@ export class DashboardPageComponent implements OnInit {
       labels: [],
       datasets: [
         {
-          label: 'Daily Grosses',
+          label: 'Daily Gross',
           data: []
         }
       ]
