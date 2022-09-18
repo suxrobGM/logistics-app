@@ -48,6 +48,8 @@ export class TruckStatsComponent implements OnInit {
     this.apiService.getTruckGrossesForInterval(this.id, oneMonthAgo).subscribe(result => {
       if (result.success) {
         this.truckGrosses = result.value;
+        console.log(this.truckGrosses);
+        
       }
 
       this.isBusy = false;

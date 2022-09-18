@@ -49,21 +49,21 @@ internal sealed class GetTruckGrossesForIntervalHandler : RequestHandlerBase<Get
         };
 
         var sum = truck.Loads
-            .Where(i => i.Status == LoadStatus.Delivered)
-            .GroupBy(i => 1)
+            .Where(i => i.DeliveryDate.HasValue)
+            .GroupBy(_ => 1)
             .Select(i => new
             {
                 TotalDistance = i.Sum(m => m.Distance),
                 TotalGross = i.Sum(m => m.DeliveryCost)
             })
-            .First();
+            .FirstOrDefault();
 
         var truckGrosses = new TruckGrossesDto
         {
             TruckId = truck.Id,
             Grosses = grossesForInterval,
-            TotalDistanceAllTime = sum.TotalDistance,
-            TotalGrossAllTime = sum.TotalGross
+            TotalDistanceAllTime = sum?.TotalDistance ?? 0,
+            TotalGrossAllTime = sum?.TotalGross ?? 0
         };
 
         return DataResult<TruckGrossesDto>.CreateSuccess(truckGrosses);
