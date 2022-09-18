@@ -4,6 +4,7 @@ import { PrimengModule } from './primeng.module';
 import { NavDockComponent } from './components/nav-dock/nav-dock.component';
 import { TopbarComponent } from './components/topbar/topbar.component';
 import { DistanceUnitPipe } from './pipes';
+import { DateUtils } from './utils';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { DistanceUnitPipe } from './pipes';
     DistanceUnitPipe,
   ],
   providers: [
-    DistanceUnitPipe
+    DistanceUnitPipe,
+    DateUtils
   ]
 })
 export class SharedModule { }

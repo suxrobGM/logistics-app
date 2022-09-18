@@ -1,15 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TruckComponent } from './pages/truck/truck.component';
+import { TruckStatsComponent } from './pages/truck-stats/truck-stats.component';
 import { StatsRoutingModule } from './stats-routing.module';
+import { PrimengModule } from './primeng.module';
 
 @NgModule({
   declarations: [
-    TruckComponent
+    TruckStatsComponent
   ],
   imports: [
     CommonModule,
-    StatsRoutingModule
+    StatsRoutingModule,
+    PrimengModule
   ]
 })
 export class StatsModule { }

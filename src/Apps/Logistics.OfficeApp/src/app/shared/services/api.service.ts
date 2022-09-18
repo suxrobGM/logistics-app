@@ -13,7 +13,8 @@ import {
   User, 
   Load, 
   Role, 
-  GrossesPerDay
+  GrossesForInterval,
+  TruckGrosses
 } from '../models';
 
 @Injectable({
@@ -256,13 +257,27 @@ export class ApiService {
 
   //#region Gross API
 
-  getGrossesForInterval(startDate: Date, endDate?: Date): Observable<DataResult<GrossesPerDay>> {
-    const url = endDate ?
-      `${this.host}/gross/getForInterval?startDate=${startDate.toJSON()}&endDate=${endDate.toJSON()}` :
-      `${this.host}/gross/getForInterval?startDate=${startDate.toJSON()}`;
+  getGrossesForInterval(startDate: Date, endDate?: Date): Observable<DataResult<GrossesForInterval>> {
+    let url = `${this.host}/gross/getForInterval?startDate=${startDate.toJSON()}`;
+
+    if (endDate) {
+      url += `&endDate=${endDate.toJSON()}`;
+    }
 
     return this.httpClient
-      .get<DataResult<GrossesPerDay>>(url)
+      .get<DataResult<GrossesForInterval>>(url)
+      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+  }
+
+  getTruckGrossesForInterval(truckId: string, startDate: Date, endDate?: Date): Observable<DataResult<TruckGrosses>> {
+    let url = `${this.host}/gross/getForTruck?truckId=${truckId}&startDate=${startDate.toJSON()}`;
+
+    if (endDate) {
+      url += `&endDate=${endDate.toJSON()}`;
+    }
+
+    return this.httpClient
+      .get<DataResult<GrossesForInterval>>(url)
       .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
   }
 

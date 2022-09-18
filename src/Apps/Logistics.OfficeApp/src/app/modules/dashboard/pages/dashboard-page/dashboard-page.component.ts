@@ -1,8 +1,8 @@
-import { CurrencyPipe } from '@angular/common';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { AppConfig } from '@configs';
-import { GrossesPerDay, Load } from '@shared/models';
+import { GrossesForInterval, Load } from '@shared/models';
 import { ApiService } from '@shared/services';
+import { DateUtils } from '@shared/utils';
 import * as mapboxgl from 'mapbox-gl';
 
 @Component({
@@ -24,7 +24,7 @@ export class DashboardPageComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private currencyPipe: CurrencyPipe) 
+    private dateUtils: DateUtils) 
   {
     this.loads = [];
     this.loadingLoads = false;
@@ -82,10 +82,9 @@ export class DashboardPageComponent implements OnInit {
   }
 
   private fetchLastTenDaysGross() {
-    const today = new Date();
-    const weekAgo = new Date(today.setDate(today.getDate() - 7));
+    const oneWeekAgo = this.dateUtils.daysAgo(7);
 
-    this.apiService.getGrossesForInterval(weekAgo)
+    this.apiService.getGrossesForInterval(oneWeekAgo)
       .subscribe(result => {
         if (result.success && result.value) {
           const grosses = result.value;
@@ -99,12 +98,12 @@ export class DashboardPageComponent implements OnInit {
       });
   }
 
-  private drawChart(grosses: GrossesPerDay) {
+  private drawChart(grosses: GrossesForInterval) {
     const labels = new Array<string>();
     const data = new Array<number>();
     
     grosses.days.forEach(i => {
-      labels.push(this.toLocaleDate(i.date));
+      labels.push(this.dateUtils.toLocaleDate(i.date));
       data.push(i.gross);
     });
 
@@ -123,22 +122,14 @@ export class DashboardPageComponent implements OnInit {
     }
   }
 
-  private calcTodayGross(grosses: GrossesPerDay) {
+  private calcTodayGross(grosses: GrossesForInterval) {
     const today = new Date();
     let totalGross = 0;
 
     grosses.days
-      .filter(i => this.getDay(i.date) === today.getDay())
+      .filter(i => this.dateUtils.getDay(i.date) === today.getDay())
       .forEach(i => totalGross += i.gross);
 
     this.todayGross = totalGross;
-  }
-
-  private getDay(dateStr: string): number {
-    return new Date(dateStr).getDay();
-  }
-
-  private toLocaleDate(dateStr: string): string {
-    return new Date(dateStr).toLocaleDateString();
   }
 }

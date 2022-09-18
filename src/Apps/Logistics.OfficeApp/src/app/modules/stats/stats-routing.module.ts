@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '../auth/auth.guard';
-import { TruckComponent } from './pages/truck/truck.component';
+import { TruckStatsComponent } from './pages/truck-stats/truck-stats.component';
 
 const rootRoutes: Routes = [
   { 
-    path: '', 
-    component: TruckComponent, 
+    path: 'truck/:id', 
+    component: TruckStatsComponent, 
     canActivate: [AuthGuard],
     data: {
       roles: ['app.admin', 'tenant.owner', 'tenant.manager']

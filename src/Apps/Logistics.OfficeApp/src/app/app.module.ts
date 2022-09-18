@@ -5,16 +5,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
-import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { RootModule } from './modules/root/root.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { LoadModule } from './modules/load/load.module';
 import { CoreModule } from './modules/core/core.module';
 import { AppConfig, APP_CONFIG } from './configs/app.config';
-import { EmployeeModule } from './modules/employee/employee.module';
-import { TruckModule } from './modules/truck/truck.module';
-import { StatsModule } from '@modules/stats/stats.module';
-
 
 @NgModule({
   declarations: [
@@ -26,7 +20,6 @@ import { StatsModule } from '@modules/stats/stats.module';
     HttpClientModule,
     AppRoutingModule,
     CoreModule,
-    DashboardModule,
     AuthModule,
     RootModule,
     SharedModule,

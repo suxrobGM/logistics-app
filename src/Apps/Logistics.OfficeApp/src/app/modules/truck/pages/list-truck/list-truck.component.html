@@ -32,6 +32,8 @@
             <th>
               Driver
             </th>
+            <th>
+            </th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-truck>
@@ -41,7 +43,16 @@
                 {{truck.truckNumber}}
               </a>
             </td>
-            <td>{{truck.driverName}}</td>
+            <td>
+              {{truck.driverName}}
+            </td>
+            <td>
+              <button pButton 
+                class="p-button-raised"
+                label="View stats"
+                [routerLink]="['/stats/truck', truck.id]">
+              </button>
+            </td>
           </tr>
         </ng-template>
       </p-table>

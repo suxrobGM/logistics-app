@@ -4,12 +4,9 @@
   <p-toast key="notification" position="top-right"></p-toast>
   <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
 
-  <div *ngIf="isAuthenticated; else unauthorized">
+  <div>
     <router-outlet></router-outlet>
   </div>
-  <ng-template #unauthorized>
-    <h1 class="text-danger">Access denied</h1>
-  </ng-template>
 </div>
 
 <app-nav-dock *ngIf="isAuthenticated"></app-nav-dock>

@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { AppConfig } from '@configs';
 import { User } from '@shared/models/user';
 import { ApiService } from '@shared/services';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { MessageService } from 'primeng/api';
 import { of, switchMap } from 'rxjs';
 
 @Component({
@@ -16,8 +18,9 @@ export class TopbarComponent implements OnInit {
   tenantName: string;
 
   constructor(
-    private oidcSecurityService: OidcSecurityService,
-    private apiService: ApiService) 
+    private apiService: ApiService,
+    private messageService: MessageService,
+    private oidcSecurityService: OidcSecurityService) 
   {
     this.isAuthenticated = false;
     this.isBusy = false;
@@ -59,6 +62,6 @@ export class TopbarComponent implements OnInit {
   }
 
   openAccountUrl() {
-    window.open('https://id.jfleets.org/account/manage/profile', '_blank');
+    window.open(`${AppConfig.idHost}/account/manage/profile`, '_blank');
   }
 }

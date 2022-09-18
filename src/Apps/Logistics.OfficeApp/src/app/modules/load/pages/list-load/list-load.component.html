@@ -57,7 +57,7 @@
               <p-sortIcon field="status"></p-sortIcon>
             </th>
             <th pSortableColumn="distance">
-              Distance
+              Distance (mi)
               <p-sortIcon field="distance"></p-sortIcon>
             </th>
             <th pSortableColumn="deliveryCost">
@@ -93,7 +93,7 @@
             <td>{{load.deliveryDate | date:'mediumDate'}}</td>
             <td>{{load.status}}</td>
             <td>{{load.distance | distanceUnit:'mi'}}</td>
-            <td>{{load.deliveryCost}}</td>
+            <td>{{load.deliveryCost | currency}}</td>
             <td>{{load.assignedDispatcherName}}</td>
             <td>{{load.assignedDriverName}}</td>
           </tr>

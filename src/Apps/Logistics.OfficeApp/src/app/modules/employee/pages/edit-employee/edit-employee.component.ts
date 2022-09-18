@@ -18,7 +18,7 @@ export class EditEmployeeComponent implements OnInit {
   public isBusy: boolean;
   public form: FormGroup;
   public roles: Role[];
-  public id?: string;
+  public id!: string;
   
   constructor(
     private apiService: ApiService,
@@ -53,11 +53,6 @@ export class EditEmployeeComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.id = params['id'];
     });
-    
-    if (!this.id) {
-      this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'ID is an empty'});
-      return;
-    }
 
     this.fetchRoles();
     this.fetchEmployee();

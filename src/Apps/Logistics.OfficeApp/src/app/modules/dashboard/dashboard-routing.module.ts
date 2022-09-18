@@ -5,7 +5,7 @@ import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.co
 
 const rootRoutes: Routes = [
   { 
-    path: 'dashboard', 
+    path: '', 
     component: DashboardPageComponent, 
     canActivate: [AuthGuard], 
     data: {
