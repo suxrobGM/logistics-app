@@ -31,7 +31,7 @@
         <ng-template pTemplate="body" let-load>
           <tr>
             <td>
-              <a [routerLink]="['/loads/edit']" [state]="{id: load.id}">
+              <a [routerLink]="['/loads/edit', load.id]">
                 {{load.refId}}
               </a>
             </td>

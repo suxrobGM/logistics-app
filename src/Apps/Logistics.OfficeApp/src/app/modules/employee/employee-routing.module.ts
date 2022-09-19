@@ -16,6 +16,7 @@ const rootRoutes: Routes = [
     component: ListEmployeeComponent,
     canActivate: [AuthGuard],
     data: {
+      breadcrumb: 'List',
       roles: ['app.admin', 'tenant.owner', 'tenant.manager', 'tenant.dispatcher']
     }
   },
@@ -24,6 +25,7 @@ const rootRoutes: Routes = [
     component: AddEmployeeComponent, 
     canActivate: [AuthGuard],
     data: {
+      breadcrumb: 'Add',
       roles: ['app.admin', 'tenant.owner', 'tenant.manager']
     }
   },
@@ -32,6 +34,7 @@ const rootRoutes: Routes = [
     component: EditEmployeeComponent, 
     canActivate: [AuthGuard],
     data: {
+      breadcrumb: 'Edit',
       roles: ['app.admin', 'tenant.owner', 'tenant.manager']
     }
   },

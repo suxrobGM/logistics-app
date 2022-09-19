@@ -11,7 +11,10 @@ export class AppComponent implements OnInit {
   title = 'Logistics.OfficeApp';
   isAuthenticated: boolean;
 
-  constructor(private oidcSecurityService: OidcSecurityService, private router: Router) {
+  constructor(
+    private oidcSecurityService: OidcSecurityService, 
+    private router: Router) 
+  {
     this.isAuthenticated = false;
   }
 

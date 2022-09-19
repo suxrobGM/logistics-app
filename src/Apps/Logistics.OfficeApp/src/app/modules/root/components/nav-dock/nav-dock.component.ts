@@ -31,6 +31,11 @@ export class NavDockComponent implements OnInit {
         label: 'Employees',
         icon: 'assets/icons/users.svg',
         link: 'employees',
+      },
+      {
+        label: 'Report',
+        icon: 'assets/icons/report.svg',
+        link: 'report',
       }
     ];
 

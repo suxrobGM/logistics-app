@@ -15,6 +15,7 @@ const rootRoutes: Routes = [
     component: ListLoadComponent, 
     canActivate: [AuthGuard],
     data: {
+      breadcrumb: 'List',
       roles: ['app.admin', 'tenant.owner', 'tenant.manager', 'tenant.dispatcher']
     }
   },
@@ -23,6 +24,7 @@ const rootRoutes: Routes = [
     component: EditLoadComponent, 
     canActivate: [AuthGuard],
     data: {
+      breadcrumb: 'Add',
       roles: ['app.admin', 'tenant.owner', 'tenant.dispatcher']
     }
   },
@@ -31,6 +33,7 @@ const rootRoutes: Routes = [
     component: EditLoadComponent, 
     canActivate: [AuthGuard],
     data: {
+      breadcrumb: 'Edit',
       roles: ['app.admin', 'tenant.owner', 'tenant.dispatcher']
     }
   }

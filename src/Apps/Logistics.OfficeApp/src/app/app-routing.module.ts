@@ -8,19 +8,31 @@ const routes: Routes = [
   },
   {
     path: 'employees', 
-    loadChildren: () => import('./modules/employee/employee.module').then(m => m.EmployeeModule)
+    loadChildren: () => import('./modules/employee/employee.module').then(m => m.EmployeeModule),
+    data: {
+      breadcrumb: 'Employees',
+    }
   },
   {
     path: 'loads', 
-    loadChildren: () => import('./modules/load/load.module').then(m => m.LoadModule)
+    loadChildren: () => import('./modules/load/load.module').then(m => m.LoadModule),
+    data: {
+      breadcrumb: 'Loads',
+    }
   },
   {
     path: 'trucks', 
-    loadChildren: () => import('./modules/truck/truck.module').then(m => m.TruckModule)
+    loadChildren: () => import('./modules/truck/truck.module').then(m => m.TruckModule),
+    data: {
+      breadcrumb: 'Trucks',
+    }
   },
   {
     path: 'report', 
-    loadChildren: () => import('./modules/report/report.module').then(m => m.ReportModule)
+    loadChildren: () => import('./modules/report/report.module').then(m => m.ReportModule),
+    data: {
+      breadcrumb: 'Report',
+    }
   }
 ];
 
