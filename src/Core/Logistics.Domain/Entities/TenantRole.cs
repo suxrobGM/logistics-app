@@ -12,10 +12,16 @@ public class TenantRole : Entity, ITenantEntity
         NormalizedName = name.ToUpper();
     }
     
+    [StringLength(RoleConsts.NameLength)]
     public string? Name { get; set; }
+    
+    [StringLength(RoleConsts.DisplayNameLength)]
     public string? DisplayName { get; set; }
+    
+    [StringLength(RoleConsts.NameLength)]
     public string? NormalizedName { get; set; }
-    public virtual IList<Employee> Employees { get; set; } = new List<Employee>();
+    
+    public virtual IList<Employee> Employees { get; } = new List<Employee>();
 }
 
 internal class TenantRoleComparer : IEqualityComparer<TenantRole>

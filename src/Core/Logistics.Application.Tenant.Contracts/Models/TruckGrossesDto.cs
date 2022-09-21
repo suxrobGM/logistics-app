@@ -9,6 +9,6 @@ public class TruckGrossesDto
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public GrossesForIntervalDto? Grosses { get; set; }
 
-    public decimal TotalGrossAllTime { get; set; }
+    public double TotalGrossAllTime { get; set; }
     public double TotalDistanceAllTime { get; set; }
 }

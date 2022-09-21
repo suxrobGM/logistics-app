@@ -2,7 +2,7 @@
 
 namespace Logistics.Domain.Entities;
 
-public class AppRole : IdentityRole, IAggregateRoot
+public sealed class AppRole : IdentityRole, IAggregateRoot
 {
     public AppRole(string name): base(name)
     {
@@ -12,6 +12,7 @@ public class AppRole : IdentityRole, IAggregateRoot
         DisplayName = Name;
     }
     
+    [StringLength(RoleConsts.DisplayNameLength)]
     public string? DisplayName { get; set; }
 }
 

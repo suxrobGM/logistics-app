@@ -4,11 +4,14 @@ namespace Logistics.Domain.Entities;
 
 public class User : IdentityUser, IAggregateRoot
 {
+    [StringLength(UserConsts.NameLength)]
     public string? FirstName { get; set; }
+    
+    [StringLength(UserConsts.NameLength)]
     public string? LastName { get; set; }
 
     public string JoinedTenantIds { get; set; } = "";
-    public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;
+    public DateTime RegistrationDate { get; } = DateTime.UtcNow;
 
     public void JoinTenant(string tenantId)
     {

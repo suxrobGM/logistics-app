@@ -14,7 +14,7 @@ public sealed class CreateLoadCommand : RequestBase<DataResult>
     
     [Required]
     [Range(LoadConsts.MinDeliveryCost, LoadConsts.MaxDeliveryCost)]
-    public decimal DeliveryCost { get; set; }
+    public double DeliveryCost { get; set; }
     
     [Required]
     [Range(LoadConsts.MinDistance, LoadConsts.MaxDistance)]

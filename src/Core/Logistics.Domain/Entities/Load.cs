@@ -7,11 +7,22 @@ public class Load : Entity, ITenantEntity
     private LoadStatus _status = LoadStatus.Dispatched;
     
     public ulong RefId { get; set; } = 100_000;
+    
+    [StringLength(LoadConsts.NameLength)]
     public string? Name { get; set; }
+    
+    [StringLength(LoadConsts.AddressLength)]
     public string? SourceAddress { get; set; }
+    
+    [StringLength(LoadConsts.AddressLength)]
     public string? DestinationAddress { get; set; }
-    public decimal DeliveryCost { get; set; }
+    
+    [Range(LoadConsts.MinDeliveryCost, LoadConsts.MaxDeliveryCost)]
+    public double DeliveryCost { get; set; }
+    
+    [Range(LoadConsts.MinDistance, LoadConsts.MaxDistance)]
     public double Distance { get; set; }
+    
     public DateOnly DispatchedDate { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
     public DateOnly? PickUpDate { get; set; }
     public DateOnly? DeliveryDate { get; set; }

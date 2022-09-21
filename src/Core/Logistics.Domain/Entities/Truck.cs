@@ -6,5 +6,5 @@ public class Truck : Entity, ITenantEntity
     public string? DriverId { get; set; }
 
     public virtual Employee? Driver { get; set; }
-    public virtual IList<Load> Loads { get; set; } = new List<Load>();
+    public virtual IList<Load> Loads { get; } = new List<Load>();
 }
