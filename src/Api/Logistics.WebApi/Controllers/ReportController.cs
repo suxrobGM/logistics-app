@@ -11,11 +11,11 @@ public class ReportController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet("getForInterval")]
-    [ProducesResponseType(typeof(DataResult<GrossesForIntervalDto>), StatusCodes.Status200OK)]
+    [HttpGet("getDailyGrosses")]
+    [ProducesResponseType(typeof(DataResult<DailyGrossesDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Policies.Employee.CanRead)]
-    public async Task<IActionResult> GetGrossesForInterval([FromQuery] GetGrossesForIntervalQuery request)
+    public async Task<IActionResult> GetGrossesForInterval([FromQuery] GetDailyGrossesQuery request)
     {
         var result = await _mediator.Send(request);
 
@@ -25,11 +25,11 @@ public class ReportController : ControllerBase
         return BadRequest(result.Error);
     }
     
-    [HttpGet("getForTruck")]
+    [HttpGet("getTruckGrosses")]
     [ProducesResponseType(typeof(DataResult<TruckGrossesDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Policies.Employee.CanRead)]
-    public async Task<IActionResult> GetGrossesForTruck([FromQuery] GetTruckGrossesForIntervalQuery request)
+    public async Task<IActionResult> GetGrossesForTruck([FromQuery] GetTruckGrossesQuery request)
     {
         var result = await _mediator.Send(request);
 

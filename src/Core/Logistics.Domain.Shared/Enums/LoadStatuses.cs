@@ -1,4 +1,4 @@
-﻿namespace Logistics.Domain.Shared;
+﻿namespace Logistics.Domain.Shared.Enums;
 
 public static class LoadStatuses
 {

@@ -1,16 +1,16 @@
 ﻿namespace Logistics.Application.Handlers.Queries;
 
-internal sealed class GetGrossesForIntervalHandler : RequestHandlerBase<GetGrossesForIntervalQuery, DataResult<GrossesForIntervalDto>>
+internal sealed class GetDailyGrossesHandler : RequestHandlerBase<GetDailyGrossesQuery, DataResult<DailyGrossesDto>>
 {
     private readonly ITenantRepository _tenantRepository;
 
-    public GetGrossesForIntervalHandler(ITenantRepository tenantRepository)
+    public GetDailyGrossesHandler(ITenantRepository tenantRepository)
     {
         _tenantRepository = tenantRepository;
     }
     
-    protected override Task<DataResult<GrossesForIntervalDto>> HandleValidated(
-        GetGrossesForIntervalQuery req, CancellationToken cancellationToken)
+    protected override Task<DataResult<DailyGrossesDto>> HandleValidated(
+        GetDailyGrossesQuery req, CancellationToken cancellationToken)
     {
         var startDate = req.StartDate.ToDateOnly();
         var endDate = req.EndDate.ToDateOnly();
@@ -38,15 +38,15 @@ internal sealed class GetGrossesForIntervalHandler : RequestHandlerBase<GetGross
             dailyGrossesDict[date].Distance += load.Distance;
         }
 
-        var grossesForInterval = new GrossesForIntervalDto
+        var grossesForInterval = new DailyGrossesDto
         {
             Days = dailyGrossesDict.Values
         };
 
-        return Task.FromResult(DataResult<GrossesForIntervalDto>.CreateSuccess(grossesForInterval));
+        return Task.FromResult(DataResult<DailyGrossesDto>.CreateSuccess(grossesForInterval));
     }
 
-    protected override bool Validate(GetGrossesForIntervalQuery request, out string errorDescription)
+    protected override bool Validate(GetDailyGrossesQuery request, out string errorDescription)
     {
         errorDescription = string.Empty;
         

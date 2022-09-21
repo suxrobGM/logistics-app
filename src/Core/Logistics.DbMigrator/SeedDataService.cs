@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Services;
-using Logistics.Domain.Shared;
+using Logistics.Domain.Shared.Enums;
 using Logistics.EntityFramework.Data;
 
 namespace Logistics.DbMigrator;

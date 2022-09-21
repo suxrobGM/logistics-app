@@ -1,16 +1,16 @@
 ﻿namespace Logistics.Application.Handlers.Queries;
 
-internal sealed class GetTruckGrossesForIntervalHandler : RequestHandlerBase<GetTruckGrossesForIntervalQuery, DataResult<TruckGrossesDto>>
+internal sealed class GetTruckGrossesHandler : RequestHandlerBase<GetTruckGrossesQuery, DataResult<TruckGrossesDto>>
 {
     private readonly ITenantRepository _tenantRepository;
 
-    public GetTruckGrossesForIntervalHandler(ITenantRepository tenantRepository)
+    public GetTruckGrossesHandler(ITenantRepository tenantRepository)
     {
         _tenantRepository = tenantRepository;
     }
     
     protected override async Task<DataResult<TruckGrossesDto>> HandleValidated(
-        GetTruckGrossesForIntervalQuery req, CancellationToken cancellationToken)
+        GetTruckGrossesQuery req, CancellationToken cancellationToken)
     {
         var truck = await _tenantRepository.GetAsync<Truck>(req.TruckId);
 
@@ -43,7 +43,7 @@ internal sealed class GetTruckGrossesForIntervalHandler : RequestHandlerBase<Get
             dailyGrossesDict[date].Distance += load.Distance;
         }
 
-        var grossesForInterval = new GrossesForIntervalDto
+        var grossesForInterval = new DailyGrossesDto
         {
             Days = dailyGrossesDict.Values
         };
@@ -69,7 +69,7 @@ internal sealed class GetTruckGrossesForIntervalHandler : RequestHandlerBase<Get
         return DataResult<TruckGrossesDto>.CreateSuccess(truckGrosses);
     }
 
-    protected override bool Validate(GetTruckGrossesForIntervalQuery request, out string errorDescription)
+    protected override bool Validate(GetTruckGrossesQuery request, out string errorDescription)
     {
         errorDescription = string.Empty;
         

@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Contracts.Models;
 
-public class GrossesForIntervalDto
+public class DailyGrossesDto
 {
     private IEnumerable<DailyGrossDto> _days = new List<DailyGrossDto>();
 

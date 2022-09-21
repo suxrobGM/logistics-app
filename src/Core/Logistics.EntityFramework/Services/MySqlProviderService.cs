@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using MySqlConnector;
 using Logistics.Domain.Options;
 using Logistics.Domain.Services;
-using Logistics.Domain.Shared;
 
 namespace Logistics.EntityFramework.Services;
 
