@@ -1,5 +1,4 @@
 using Logistics.DbMigrator.Services;
-using Microsoft.AspNetCore.Http;
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration(configuration =>
@@ -25,8 +24,7 @@ var host = Host.CreateDefaultBuilder(args)
                 options.UseTenantService = false;
             });
 
-        services.AddHostedService<SeedData>();
-        //services.AddHostedService<PopulateData>();
+        services.AddHostedService<SeedDataService>();
     })
     .Build();
 

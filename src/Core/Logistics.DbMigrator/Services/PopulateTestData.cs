@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.DbMigrator.Services;
 
-public class PopulateData
+internal class PopulateTestData
 {
     private readonly ILogger _logger;
     private readonly IServiceProvider _serviceProvider;
     
-    public PopulateData(
+    public PopulateTestData(
         ILogger logger,
         IServiceProvider serviceProvider)
     {
@@ -21,9 +21,9 @@ public class PopulateData
         try
         {
             var configuration = _serviceProvider.GetRequiredService<IConfiguration>();
-            var populateData = configuration.GetValue<bool>("PopulateData");
+            var populate = configuration.GetValue<bool>("PopulateTestData");
 
-            if (!populateData)
+            if (!populate)
                 return;
 
             _logger.LogInformation("Populating databases with test data");
@@ -130,4 +130,11 @@ public class PopulateData
         _logger.LogInformation("Added an employee {Name} with role {Role}", user.UserName, role.Name);
         return employee;
     }
+}
+
+internal record UserDto
+{
+    public string? UserName { get; init; }
+    public string? Email { get; init; }
+    public string? Password { get; init; }
 }

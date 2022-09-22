@@ -2,13 +2,13 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.DbMigrator.Services;
 
-public class SeedData : BackgroundService
+internal class SeedDataService : BackgroundService
 {
-    private readonly ILogger<SeedData> _logger;
+    private readonly ILogger<SeedDataService> _logger;
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public SeedData(
-        ILogger<SeedData> logger,
+    public SeedDataService(
+        ILogger<SeedDataService> logger,
         IServiceScopeFactory serviceScopeFactory)
     {
         _logger = logger;
@@ -36,8 +36,8 @@ public class SeedData : BackgroundService
             await AddDefaultTenantAsync(scope.ServiceProvider);
             _logger.LogInformation("Successfully seeded databases");
 
-            var populateData = new PopulateData(_logger, scope.ServiceProvider);
-            await populateData.ExecuteAsync();
+            var populateTestData = new PopulateTestData(_logger, scope.ServiceProvider);
+            await populateTestData.ExecuteAsync();
         }
         catch (Exception ex)
         {
@@ -128,11 +128,4 @@ public class SeedData : BackgroundService
             _logger.LogInformation("Added default tenant");
         }
     }
-}
-
-internal record UserDto
-{
-    public string? UserName { get; init; }
-    public string? Email { get; init; }
-    public string? Password { get; init; }
 }
