@@ -6,7 +6,6 @@ public class TenantDbContextFactory : IDesignTimeDbContextFactory<TenantDbContex
 {
     public TenantDbContext CreateDbContext(string[] args)
     {
-        var connectionString = ConnectionStrings.LocalDefaultTenant;
-        return new TenantDbContext(connectionString);
+        return new TenantDbContext(new TenantDbContextOptions(), null);
     }
 }

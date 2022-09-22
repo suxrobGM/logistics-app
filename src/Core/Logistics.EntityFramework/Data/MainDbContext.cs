@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Logistics.EntityFramework.Helpers;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Logistics.EntityFramework.Data;
 
@@ -8,23 +7,17 @@ public class MainDbContext : IdentityDbContext<User, AppRole, string>
 {
     private readonly string _connectionString;
 
-    public MainDbContext(string connectionString)
+    public MainDbContext(MainDbContextOptions options)
     {
-        _connectionString = connectionString;
-    }
-
-    public MainDbContext(DbContextOptions<MainDbContext> options)
-        : base(options)
-    {
-        _connectionString = ConnectionStrings.LocalDefaultTenant;
+        _connectionString = options.ConnectionString ?? ConnectionStrings.LocalMain;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        if (!options.IsConfigured)
-        {
-            DbContextHelpers.ConfigureMySql(_connectionString, options);
-        }
+        if (options.IsConfigured)
+            return;
+        
+        DbContextHelpers.ConfigureMySql(_connectionString, options);
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

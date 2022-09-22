@@ -32,11 +32,11 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Name = table.Column<string>(type: "longtext", nullable: true)
+                    Name = table.Column<string>(type: "varchar(32)", maxLength: 32, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    DisplayName = table.Column<string>(type: "longtext", nullable: true)
+                    DisplayName = table.Column<string>(type: "varchar(64)", maxLength: 64, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    NormalizedName = table.Column<string>(type: "longtext", nullable: true)
+                    NormalizedName = table.Column<string>(type: "varchar(32)", maxLength: 32, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -100,13 +100,13 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     RefId = table.Column<ulong>(type: "bigint unsigned", nullable: false),
-                    Name = table.Column<string>(type: "longtext", nullable: true)
+                    Name = table.Column<string>(type: "varchar(64)", maxLength: 64, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    SourceAddress = table.Column<string>(type: "longtext", nullable: true)
+                    SourceAddress = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    DestinationAddress = table.Column<string>(type: "longtext", nullable: true)
+                    DestinationAddress = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    DeliveryCost = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    DeliveryCost = table.Column<double>(type: "double", nullable: false),
                     Distance = table.Column<double>(type: "double", nullable: false),
                     DispatchedDate = table.Column<DateOnly>(type: "date", nullable: false),
                     PickUpDate = table.Column<DateOnly>(type: "date", nullable: true),

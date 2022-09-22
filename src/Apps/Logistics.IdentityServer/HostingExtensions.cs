@@ -14,13 +14,16 @@ internal static class HostingExtensions
     {
         AddSecretsJson(builder.Configuration);
         builder.Services.AddRazorPages();
+        //builder.Services.AddHttpContextAccessor();
         builder.Services.AddSharedApplicationLayer(builder.Configuration, "EmailConfig", "GoogleRecaptcha");
-        builder.Services.AddInfrastructureLayer(builder.Configuration);
-        builder.Services.AddHttpContextAccessor();
-        
-        builder.Services.AddIdentity()
-            .AddSignInManager()
-            .AddDefaultTokenProviders();
+
+        builder.Services.AddInfrastructureLayer(builder.Configuration)
+            .ConfigureIdentity(identityBuilder =>
+            {
+                identityBuilder
+                    .AddSignInManager()
+                    .AddDefaultTokenProviders();
+            });
         
         AddAuthSchemes(builder.Services);
 

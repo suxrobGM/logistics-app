@@ -1,24 +1,37 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Logistics.Domain.Options;
-using Logistics.Domain.Services;
+using Logistics.EntityFramework.Builder;
 using Logistics.EntityFramework.Repositories;
-using Logistics.EntityFramework.Helpers;
 using Logistics.EntityFramework.Services;
 
 namespace Logistics.EntityFramework;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddDatabases(
-        this IServiceCollection services,
+    private static void AddMainDatabase(
+        IServiceCollection services,
         IConfiguration configuration,
-        Action<DbContextOptionsBuilder>? mainDbOptions = null!,
-        Action<DbContextOptionsBuilder>? tenantDbOptions = null!,
-        string tenantsConfigSection = "TenantsConfig")
+        string connectionSection)
+    {
+        var connectionString = configuration.GetConnectionString(connectionSection);
+        var options = new MainDbContextOptions
+        {
+            ConnectionString = connectionString
+        };
+        
+        services.AddSingleton(options);
+        services.AddDbContext<MainDbContext>();
+    }
+    
+    private static void AddTenantDatabase(
+        IServiceCollection services,
+        IConfiguration configuration,
+        string connectionSection,
+        string tenantsConfigSection)
     {
         var tenantsSettings = configuration.GetSection(tenantsConfigSection).Get<TenantsSettings>();
+        var connectionString = configuration.GetConnectionString(connectionSection);
 
         if (tenantsSettings is { DatabaseProvider: "mysql" })
         {
@@ -26,14 +39,19 @@ public static class ServiceCollectionExtensions
             services.AddSingleton(tenantsSettings);
         }
         
-        services.AddDbContext<TenantDbContext>(tenantDbOptions);
-        services.AddDbContext<MainDbContext>(mainDbOptions);
-        return services;
+        var options = new TenantDbContextOptions
+        {
+            ConnectionString = connectionString,
+            UseTenantService = true
+        };
+        
+        services.AddSingleton(options);
+        services.AddDbContext<TenantDbContext>();
     }
     
-    public static IdentityBuilder AddIdentity(this IServiceCollection services)
+    private static IdentityBuilder AddIdentity(IServiceCollection services)
     {
-        var builder = services.AddIdentityCore<User>(options =>
+        var identityBuilder = services.AddIdentityCore<User>(options =>
         {
             options.Password.RequiredLength = 8;
             options.Password.RequireUppercase = false;
@@ -44,28 +62,26 @@ public static class ServiceCollectionExtensions
         })
         .AddRoles<AppRole>()
         .AddEntityFrameworkStores<MainDbContext>();
-        return builder;
+
+        return identityBuilder;
     }
     
-    public static IServiceCollection AddInfrastructureLayer(
+    public static IInfrastructureBuilder AddInfrastructureLayer(
         this IServiceCollection services,
         IConfiguration configuration,
+        string defaultTenantDbConnectionSection = "DefaultTenantDatabase",
         string mainDbConnectionSection = "MainDatabase",
         string tenantsConfigSection = "TenantsConfig")
     {
-        var connectionString = configuration.GetConnectionString(mainDbConnectionSection);
+        var identityBuilder = AddIdentity(services);
+        AddMainDatabase(services, configuration, mainDbConnectionSection);
+        AddTenantDatabase(services, configuration, defaultTenantDbConnectionSection, tenantsConfigSection);
         
-        services.AddIdentity();
-        services.AddDatabases(configuration,
-            o => DbContextHelpers.ConfigureMySql(connectionString, o),
-            null,
-            tenantsConfigSection);
-
         services.AddScoped<ITenantService, TenantService>();
         services.AddScoped<IMainRepository, MainRepository>();
         services.AddScoped<ITenantRepository, TenantRepository>();
         services.AddScoped<UnitOfWork<MainDbContext>>();
         services.AddScoped<UnitOfWork<TenantDbContext>>();
-        return services;
+        return new InfrastructureBuilder(identityBuilder);
     }
 }

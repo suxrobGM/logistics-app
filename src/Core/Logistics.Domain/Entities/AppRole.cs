@@ -2,14 +2,14 @@
 
 namespace Logistics.Domain.Entities;
 
-public sealed class AppRole : IdentityRole, IAggregateRoot
+public class AppRole : IdentityRole, IAggregateRoot
 {
     public AppRole(string name): base(name)
     {
         if (!name.StartsWith("app."))
-            Name = $"app.{name}";
+            base.Name = $"app.{name}";
         
-        DisplayName = Name;
+        DisplayName = base.Name;
     }
     
     [StringLength(RoleConsts.DisplayNameLength)]

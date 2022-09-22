@@ -1,20 +1,21 @@
 ﻿using System.Data.Common;
 using Microsoft.Extensions.Logging;
 using MySqlConnector;
-using Logistics.Domain.Options;
-using Logistics.Domain.Services;
 
 namespace Logistics.EntityFramework.Services;
 
 public class MySqlProviderService : IDatabaseProviderService
 {
+    private readonly TenantDbContext _context;
     private readonly TenantsSettings _settings;
     private readonly ILogger<MySqlProviderService> _logger;
 
     public MySqlProviderService(
+        TenantDbContext context,
         TenantsSettings settings,
         ILogger<MySqlProviderService> logger)
     {
+        _context = context;
         _logger = logger;
         _settings = settings;
     }
@@ -28,9 +29,8 @@ public class MySqlProviderService : IDatabaseProviderService
     {
         try
         {
-            await using var databaseContext = new TenantDbContext(connectionString);
-            await databaseContext.Database.MigrateAsync();
-            await AddTenantRoles(databaseContext);
+            await _context.Database.MigrateAsync();
+            await AddTenantRoles();
             return true;
         }
         catch (Exception ex)
@@ -62,7 +62,7 @@ public class MySqlProviderService : IDatabaseProviderService
         }
     }
 
-    private async Task AddTenantRoles(DbContext context)
+    private async Task AddTenantRoles()
     {
         foreach (var tenantRole in TenantRoles.GetValues())
         {
@@ -71,13 +71,13 @@ public class MySqlProviderService : IDatabaseProviderService
                 DisplayName = tenantRole.DisplayName
             };
 
-            var existingRole = await context.Set<TenantRole>().FirstOrDefaultAsync(i => i.Name == role.Name);
+            var existingRole = await _context.Set<TenantRole>().FirstOrDefaultAsync(i => i.Name == role.Name);
             if (existingRole != null)
                 continue;
 
-            context.Set<TenantRole>().Add(role);
+            _context.Set<TenantRole>().Add(role);
         }
 
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 }

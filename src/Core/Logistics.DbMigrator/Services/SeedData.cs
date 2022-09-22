@@ -1,24 +1,16 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Logistics.Domain.Entities;
-using Logistics.Domain.Services;
-using Logistics.Domain.Shared.Enums;
-using Logistics.EntityFramework.Data;
 
-namespace Logistics.DbMigrator;
+namespace Logistics.DbMigrator.Services;
 
-public class SeedDataService : BackgroundService
+public class SeedData : BackgroundService
 {
-    private readonly IHostEnvironment _env;
-    private readonly ILogger<SeedDataService> _logger;
+    private readonly ILogger<SeedData> _logger;
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public SeedDataService(
-        IHostEnvironment env,
-        ILogger<SeedDataService> logger,
+    public SeedData(
+        ILogger<SeedData> logger,
         IServiceScopeFactory serviceScopeFactory)
     {
-        _env = env;
         _logger = logger;
         _serviceScopeFactory = serviceScopeFactory;
     }
@@ -42,15 +34,14 @@ public class SeedDataService : BackgroundService
             await AddAppRolesAsync(scope.ServiceProvider);
             await AddDefaultAdminAsync(scope.ServiceProvider);
             await AddDefaultTenantAsync(scope.ServiceProvider);
-
-            if (_env.IsDevelopment())
-                await AddTestUsersAsync(scope.ServiceProvider);
-        
             _logger.LogInformation("Successfully seeded databases");
+
+            var populateData = new PopulateData(_logger, scope.ServiceProvider);
+            await populateData.ExecuteAsync();
         }
         catch (Exception ex)
         {
-            _logger.LogError("Thrown exception in SeedDataService.ExecuteAsync(): {Exception}", ex);
+            _logger.LogError("Thrown exception in SeedData.ExecuteAsync(): {Exception}", ex);
         }
     }
 
@@ -135,39 +126,6 @@ public class SeedDataService : BackgroundService
             await mainDbContext.SaveChangesAsync();
             await databaseProvider.CreateDatabaseAsync(defaultTenant.ConnectionString);
             _logger.LogInformation("Added default tenant");
-        }
-    }
-
-    private async Task AddTestUsersAsync(IServiceProvider serviceProvider)
-    {
-        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-        var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
-        var testUsers = configuration.GetSection("TestUsers").Get<UserDto[]>();
-
-        foreach (var testUser in testUsers)
-        {
-            var user = await userManager.FindByNameAsync(testUser.UserName);
-
-            if (user != null)
-                continue;
-            
-            user = new User
-            {
-                UserName = testUser.UserName,
-                Email = testUser.Email,
-                EmailConfirmed = true
-            };
-            
-            try
-            {
-                var result = await userManager.CreateAsync(user, testUser.Password);
-                if (!result.Succeeded)
-                    throw new Exception(result.Errors.First().Description);
-            }
-            finally
-            {
-                _logger.LogInformation("Created the test user {UserName}", testUser.UserName);
-            }
         }
     }
 }

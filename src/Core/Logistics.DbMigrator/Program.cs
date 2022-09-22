@@ -1,24 +1,32 @@
-using Microsoft.EntityFrameworkCore;
-using Logistics.EntityFramework;
-using Logistics.DbMigrator;
+using Logistics.DbMigrator.Services;
+using Microsoft.AspNetCore.Http;
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration(configuration =>
     {
-        var path = Path.Combine(AppContext.BaseDirectory, "secrets.json");
-        configuration.AddJsonFile(path, true);
+        var secretsFile = Path.Combine(AppContext.BaseDirectory, "secrets.json");
+        var testDataFile = Path.Combine(AppContext.BaseDirectory, "testData.json");
+        configuration.AddJsonFile(secretsFile, true);
+        configuration.AddJsonFile(testDataFile, true);
     })
     .ConfigureServices((ctx, services) =>
     {
         var mainDbConnection = ctx.Configuration.GetConnectionString("MainDatabase");
         var tenantDbConnection = ctx.Configuration.GetConnectionString("DefaultTenantDatabase");
 
-        services.AddDatabases(ctx.Configuration,
-            o => ConfigureMySql(mainDbConnection, o),
-            o => ConfigureMySql(tenantDbConnection, o));
-        services.AddIdentity();
-        
-        services.AddHostedService<SeedDataService>();
+        services.AddInfrastructureLayer(ctx.Configuration)
+            .ConfigureMainDatabase(options =>
+            {
+                options.ConnectionString = mainDbConnection;
+            })
+            .ConfigureTenantDatabase(options =>
+            {
+                options.ConnectionString = tenantDbConnection;
+                options.UseTenantService = false;
+            });
+
+        services.AddHostedService<SeedData>();
+        //services.AddHostedService<PopulateData>();
     })
     .Build();
 

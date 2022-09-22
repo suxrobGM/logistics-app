@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.EntityFramework.Data.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20220901005603_Initial")]
+    [Migration("20220922021216_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,14 +63,15 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.Property<string>("AssignedTruckId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<decimal>("DeliveryCost")
-                        .HasColumnType("decimal(65,30)");
+                    b.Property<double>("DeliveryCost")
+                        .HasColumnType("double");
 
                     b.Property<DateOnly?>("DeliveryDate")
                         .HasColumnType("date");
 
                     b.Property<string>("DestinationAddress")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
 
                     b.Property<DateOnly>("DispatchedDate")
                         .HasColumnType("date");
@@ -79,7 +80,8 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                         .HasColumnType("double");
 
                     b.Property<string>("Name")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)");
 
                     b.Property<DateOnly?>("PickUpDate")
                         .HasColumnType("date");
@@ -88,7 +90,8 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                         .HasColumnType("bigint unsigned");
 
                     b.Property<string>("SourceAddress")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
 
                     b.HasKey("Id");
 
@@ -110,13 +113,16 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("DisplayName")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(32)
+                        .HasColumnType("varchar(32)");
 
                     b.Property<string>("NormalizedName")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(32)
+                        .HasColumnType("varchar(32)");
 
                     b.HasKey("Id");
 

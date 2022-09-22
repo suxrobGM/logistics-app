@@ -5,7 +5,7 @@ public class Employee : Entity, ITenantEntity
     /// <summary>
     /// When employee joined to this tenant
     /// </summary>
-    public DateTime JoinedDate { get; } = DateTime.UtcNow;
+    public DateTime JoinedDate { get; set; } = DateTime.UtcNow;
 
     /// <summary>
     /// Dispatched loads by dispatchers

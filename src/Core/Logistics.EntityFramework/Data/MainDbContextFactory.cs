@@ -6,7 +6,6 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<MainDbCon
 {
     public MainDbContext CreateDbContext(string[] args)
     {
-        var connectionString = ConnectionStrings.LocalMain;
-        return new MainDbContext(connectionString);
+        return new MainDbContext(new MainDbContextOptions());
     }
 }

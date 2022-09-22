@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Logistics.Domain.Services;
 using Logistics.Domain.Shared.Exceptions;
 
 namespace Logistics.EntityFramework.Services;
@@ -7,24 +6,36 @@ namespace Logistics.EntityFramework.Services;
 internal class TenantService : ITenantService
 {
     private readonly IMainRepository _mainRepository;
-    private readonly HttpContext _httpContext;
+    private readonly TenantDbContextOptions _dbOptions;
+    private readonly HttpContext? _httpContext;
     private Tenant? _currentTenant;
 
     public TenantService(
+        TenantDbContextOptions contextOptions,
         IMainRepository repository, 
-        IHttpContextAccessor contextAccessor)
+        IHttpContextAccessor? contextAccessor = null)
     {
-        _httpContext = contextAccessor.HttpContext ?? throw new ArgumentNullException(nameof(contextAccessor));
+        _httpContext = contextAccessor?.HttpContext;
+        _dbOptions = contextOptions ?? throw new ArgumentNullException(nameof(contextOptions));
         _mainRepository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
     public Tenant GetTenant()
     {
-        if (_currentTenant != null)
+        if (_httpContext == null)
         {
+            _currentTenant = new Tenant
+            {
+                ConnectionString = _dbOptions.ConnectionString,
+                Name = "default"
+            };
+
             return _currentTenant;
         }
 
+        if (_currentTenant != null)
+            return _currentTenant;
+        
         var tenantHeader = _httpContext.Request.Headers["X-Tenant"];
         var tenantSubDomain = GetSubDomain(_httpContext.Request.Host);
         var tenantClaim = _httpContext.User.Claims.FirstOrDefault(i => i.Type == "tenant")?.Value;

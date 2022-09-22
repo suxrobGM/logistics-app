@@ -11,7 +11,7 @@ public class User : IdentityUser, IAggregateRoot
     public string? LastName { get; set; }
 
     public string JoinedTenantIds { get; set; } = "";
-    public DateTime RegistrationDate { get; } = DateTime.UtcNow;
+    public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;
 
     public void JoinTenant(string tenantId)
     {

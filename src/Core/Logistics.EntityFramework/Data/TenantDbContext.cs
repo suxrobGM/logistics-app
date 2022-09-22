@@ -1,26 +1,16 @@
-﻿using Logistics.EntityFramework.Helpers;
-using Logistics.Domain.Services;
-
-namespace Logistics.EntityFramework.Data;
+﻿namespace Logistics.EntityFramework.Data;
 
 public class TenantDbContext : DbContext
 {
     private readonly ITenantService? _tenantService;
     private readonly string _connectionString;
 
-    public TenantDbContext(string connectionString)
-    {
-        _connectionString = connectionString;
-        _tenantService = null;
-    }
-
     public TenantDbContext(
-        DbContextOptions<TenantDbContext> options, 
-        ITenantService tenantService = null!)
-        : base(options)
+        TenantDbContextOptions options, 
+        ITenantService? tenantService)
     {
+        _connectionString = options.ConnectionString ?? ConnectionStrings.LocalDefaultTenant;
         _tenantService = tenantService;
-        _connectionString = string.Empty;
     }
 
     public Tenant? CurrentTenant => _tenantService?.GetTenant();
@@ -30,11 +20,7 @@ public class TenantDbContext : DbContext
         if (options.IsConfigured)
             return;
 
-        var connectionString = !string.IsNullOrEmpty(_connectionString)
-            ? _connectionString
-            : _tenantService?.GetConnectionString() ??
-              throw new InvalidOperationException("Connection string is a null in the TenantDbContext");
-        
+        var connectionString = _tenantService?.GetConnectionString() ?? _connectionString;
         DbContextHelpers.ConfigureMySql(connectionString, options);
     }
 
