@@ -1,6 +1,4 @@
-﻿using Logistics.Domain.Shared;
-
-namespace Logistics.Application.Handlers.Queries;
+﻿namespace Logistics.Application.Handlers.Queries;
 
 public class GetDriversHandler : RequestHandlerBase<GetDriversQuery, PagedDataResult<EmployeeDto>>
 {

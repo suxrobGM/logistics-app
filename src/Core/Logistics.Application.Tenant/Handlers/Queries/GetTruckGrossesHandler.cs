@@ -16,11 +16,8 @@ internal sealed class GetTruckGrossesHandler : RequestHandlerBase<GetTruckGrosse
 
         if (truck == null)
             return DataResult<TruckGrossesDto>.CreateError("Could not find the specified truck");
-
-        var startDate = req.StartDate.ToDateOnly();
-        var endDate = req.EndDate.ToDateOnly();
-        var spec = new FilterLoadsByIntervalAndTruck(truck.Id, startDate, endDate);
         
+        var spec = new FilterLoadsByIntervalAndTruck(truck.Id, req.StartDate, req.EndDate);
         var dailyGrossesDict = new Dictionary<string, DailyGrossDto>();
         var days = req.EndDate.Subtract(req.StartDate).Days;
         

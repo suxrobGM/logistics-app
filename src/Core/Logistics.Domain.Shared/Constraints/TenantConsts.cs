@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Domain.Shared.Constraints;
 
-public class TenantConsts
+public static class TenantConsts
 {
     public const int NameLength = 16;
     public const int DisplayNameLength = 64;

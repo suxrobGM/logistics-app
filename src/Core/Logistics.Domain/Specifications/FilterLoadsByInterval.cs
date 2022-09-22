@@ -2,7 +2,7 @@
 
 public class FilterLoadsByInterval : BaseSpecification<Load>
 {
-    public FilterLoadsByInterval(DateOnly startPeriod, DateOnly endPeriod)
+    public FilterLoadsByInterval(DateTime startPeriod, DateTime endPeriod)
     {
         Criteria = i =>
             i.DeliveryDate.HasValue && i.DeliveryDate >= startPeriod && i.DeliveryDate <= endPeriod;

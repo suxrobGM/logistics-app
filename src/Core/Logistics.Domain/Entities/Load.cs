@@ -4,6 +4,11 @@ namespace Logistics.Domain.Entities;
 
 public class Load : Entity, ITenantEntity
 {
+    public Load()
+    {
+        Status = LoadStatus.Dispatched;
+    }
+    
     private LoadStatus _status = LoadStatus.Dispatched;
     
     public ulong RefId { get; set; } = 100_000;
@@ -23,9 +28,9 @@ public class Load : Entity, ITenantEntity
     [Range(LoadConsts.MinDistance, LoadConsts.MaxDistance)]
     public double Distance { get; set; }
     
-    public DateOnly DispatchedDate { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
-    public DateOnly? PickUpDate { get; set; }
-    public DateOnly? DeliveryDate { get; set; }
+    public DateTime DispatchedDate { get; set; }
+    public DateTime? PickUpDate { get; set; }
+    public DateTime? DeliveryDate { get; set; }
     
     public LoadStatus Status
     {
@@ -33,20 +38,21 @@ public class Load : Entity, ITenantEntity
         set
         {
             _status = value;
-            if (_status == LoadStatus.PickedUp)
+            
+            if (_status == LoadStatus.Dispatched)
             {
-                PickUpDate = DateOnly.FromDateTime(DateTime.UtcNow);
+                DispatchedDate = DateTime.UtcNow;
+                PickUpDate = null;
+                DeliveryDate = null;
+            }
+            else if (_status == LoadStatus.PickedUp)
+            {
+                PickUpDate = DateTime.UtcNow;
                 DeliveryDate = null;
             }
             else if (_status == LoadStatus.Delivered)
             {
-                PickUpDate = DateOnly.FromDateTime(DateTime.UtcNow);
-                DeliveryDate = DateOnly.FromDateTime(DateTime.UtcNow);
-            }
-            else if (_status == LoadStatus.Dispatched)
-            {
-                PickUpDate = null;
-                DeliveryDate = null;
+                DeliveryDate = DateTime.UtcNow;
             }
         }
     }

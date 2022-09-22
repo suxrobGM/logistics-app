@@ -2,7 +2,7 @@
 
 public class FilterLoadsByIntervalAndTruck : BaseSpecification<Load>
 {
-    public FilterLoadsByIntervalAndTruck(string truckId, DateOnly startPeriod, DateOnly endPeriod)
+    public FilterLoadsByIntervalAndTruck(string truckId, DateTime startPeriod, DateTime endPeriod)
     {
         Criteria = i =>
             i.AssignedTruckId == truckId &&

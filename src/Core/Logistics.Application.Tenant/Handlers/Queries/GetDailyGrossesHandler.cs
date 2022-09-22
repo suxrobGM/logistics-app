@@ -12,10 +12,7 @@ internal sealed class GetDailyGrossesHandler : RequestHandlerBase<GetDailyGrosse
     protected override Task<DataResult<DailyGrossesDto>> HandleValidated(
         GetDailyGrossesQuery req, CancellationToken cancellationToken)
     {
-        var startDate = req.StartDate.ToDateOnly();
-        var endDate = req.EndDate.ToDateOnly();
-        var spec = new FilterLoadsByInterval(startDate, endDate);
-        
+        var spec = new FilterLoadsByInterval(req.StartDate, req.EndDate);
         var dailyGrossesDict = new Dictionary<string, DailyGrossDto>();
         var days = req.EndDate.Subtract(req.StartDate).Days;
         

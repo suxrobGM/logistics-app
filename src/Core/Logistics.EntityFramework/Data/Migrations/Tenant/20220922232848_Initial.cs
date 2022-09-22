@@ -108,9 +108,9 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DeliveryCost = table.Column<double>(type: "double", nullable: false),
                     Distance = table.Column<double>(type: "double", nullable: false),
-                    DispatchedDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    PickUpDate = table.Column<DateOnly>(type: "date", nullable: true),
-                    DeliveryDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    DispatchedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    PickUpDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    DeliveryDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     Status_Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Status_Id = table.Column<int>(type: "int", nullable: false),

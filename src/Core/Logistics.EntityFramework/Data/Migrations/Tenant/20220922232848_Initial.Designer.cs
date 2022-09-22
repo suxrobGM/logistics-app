@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.EntityFramework.Data.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20220922021216_Initial")]
+    [Migration("20220922232848_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -66,15 +66,15 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.Property<double>("DeliveryCost")
                         .HasColumnType("double");
 
-                    b.Property<DateOnly?>("DeliveryDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime?>("DeliveryDate")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("DestinationAddress")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
-                    b.Property<DateOnly>("DispatchedDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("DispatchedDate")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<double>("Distance")
                         .HasColumnType("double");
@@ -83,8 +83,8 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                         .HasMaxLength(64)
                         .HasColumnType("varchar(64)");
 
-                    b.Property<DateOnly?>("PickUpDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime?>("PickUpDate")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<ulong>("RefId")
                         .HasColumnType("bigint unsigned");

@@ -10,11 +10,16 @@ public class User : IdentityUser, IAggregateRoot
     [StringLength(UserConsts.NameLength)]
     public string? LastName { get; set; }
 
-    public string JoinedTenantIds { get; set; } = "";
+    public string JoinedTenantIds { get; set; } = string.Empty;
     public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;
 
     public void JoinTenant(string tenantId)
     {
+        var tenantIds = JoinedTenantIds.Split(',');
+
+        if (tenantIds.Contains(tenantId))
+            return;
+        
         JoinedTenantIds = string.IsNullOrEmpty(JoinedTenantIds) ? 
             string.Join(',', tenantId) : string.Join(',', JoinedTenantIds, tenantId);
     }
