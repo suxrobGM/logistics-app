@@ -37,7 +37,7 @@ internal class TenantService : ITenantService
             return _currentTenant;
         
         var tenantHeader = _httpContext.Request.Headers["X-Tenant"];
-        var tenantSubDomain = GetSubDomain(_httpContext.Request.Host);
+        var tenantSubDomain = ParseSubDomain(_httpContext.Request.Host);
         var tenantClaim = _httpContext.User.Claims.FirstOrDefault(i => i.Type == "tenant")?.Value;
 
         if (!string.IsNullOrEmpty(tenantHeader))
@@ -69,7 +69,7 @@ internal class TenantService : ITenantService
         tenantId = tenantId.Trim().ToLower();
         var tenant = _mainRepository.Query<Tenant>().FirstOrDefault(i => i.Id == tenantId || i.Name == tenantId) ??
             throw new InvalidTenantException($"Could not found tenant with ID '{tenantId}'");
-            
+        
         return tenant;
     }
 
@@ -83,7 +83,7 @@ internal class TenantService : ITenantService
         return connectionString;
     }
 
-    private static string GetSubDomain(HostString hostString)
+    private static string ParseSubDomain(HostString hostString)
     {
         var subDomain = string.Empty;
         var domains = hostString.Host.Split('.');

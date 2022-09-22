@@ -3,5 +3,4 @@
 public class TenantDbContextOptions
 {
     public string? ConnectionString { get; set; }
-    public bool UseTenantService { get; set; }
 }

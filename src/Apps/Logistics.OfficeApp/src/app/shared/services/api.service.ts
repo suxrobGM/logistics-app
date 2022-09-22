@@ -4,16 +4,16 @@ import { MessageService } from 'primeng/api';
 import { catchError, Observable, of, retry } from 'rxjs';
 import { AppConfig } from '../../configs/app.config';
 import { TenantService  } from './tenant.service';
-import { 
-  DataResult, 
-  Employee, 
-  PagedDataResult, 
-  Tenant, 
-  Truck, 
-  User, 
-  Load, 
-  Role, 
-  GrossesForInterval,
+import {
+  DataResult,
+  Employee,
+  PagedDataResult,
+  Tenant,
+  Truck,
+  User,
+  Load,
+  Role,
+  DailyGrosses,
   TruckGrosses
 } from '../models';
 
@@ -255,29 +255,29 @@ export class ApiService {
 
   //#endregion
 
-  //#region Gross API
+  //#region Report API
 
-  getGrossesForInterval(startDate: Date, endDate?: Date): Observable<DataResult<GrossesForInterval>> {
-    let url = `${this.host}/gross/getForInterval?startDate=${startDate.toJSON()}`;
+  getDailyGrosses(startDate: Date, endDate?: Date): Observable<DataResult<DailyGrosses>> {
+    let url = `${this.host}/report/getDailyGrosses?startDate=${startDate.toJSON()}`;
 
     if (endDate) {
       url += `&endDate=${endDate.toJSON()}`;
     }
 
     return this.httpClient
-      .get<DataResult<GrossesForInterval>>(url)
+      .get<DataResult<DailyGrosses>>(url)
       .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
   }
 
-  getTruckGrossesForInterval(truckId: string, startDate: Date, endDate?: Date): Observable<DataResult<TruckGrosses>> {
-    let url = `${this.host}/gross/getForTruck?truckId=${truckId}&startDate=${startDate.toJSON()}`;
+  getTruckGrosses(truckId: string, startDate: Date, endDate?: Date): Observable<DataResult<TruckGrosses>> {
+    let url = `${this.host}/report/getTruckGrosses?truckId=${truckId}&startDate=${startDate.toJSON()}`;
 
     if (endDate) {
       url += `&endDate=${endDate.toJSON()}`;
     }
 
     return this.httpClient
-      .get<DataResult<GrossesForInterval>>(url)
+      .get<DataResult<DailyGrosses>>(url)
       .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
   }
 
@@ -300,7 +300,7 @@ export class ApiService {
   }
 
   private handleError(responseData: any): Observable<any> {
-    const errorMessage = responseData.error.error;
+    const errorMessage = responseData.error?.error;
     
     this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: errorMessage});
     this.messageService.add({key: 'errorMsg', severity: 'error', summary: 'Error', detail: errorMessage});

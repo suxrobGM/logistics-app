@@ -10,35 +10,9 @@ var host = Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices((ctx, services) =>
     {
-        var mainDbConnection = ctx.Configuration.GetConnectionString("MainDatabase");
-        var tenantDbConnection = ctx.Configuration.GetConnectionString("DefaultTenantDatabase");
-
-        services.AddInfrastructureLayer(ctx.Configuration)
-            .ConfigureMainDatabase(options =>
-            {
-                options.ConnectionString = mainDbConnection;
-            })
-            .ConfigureTenantDatabase(options =>
-            {
-                options.ConnectionString = tenantDbConnection;
-                options.UseTenantService = false;
-            });
-
+        services.AddInfrastructureLayer(ctx.Configuration);
         services.AddHostedService<SeedDataService>();
     })
     .Build();
 
 await host.RunAsync();
-
-
-void ConfigureMySql(string connectionString, DbContextOptionsBuilder options)
-{
-    options.UseMySql(connectionString,
-            ServerVersion.AutoDetect(connectionString),
-            o =>
-            {
-                o.EnableRetryOnFailure(8, TimeSpan.FromSeconds(15), null);
-                o.EnableStringComparisonTranslations();
-            })
-        .UseLazyLoadingProxies();
-}

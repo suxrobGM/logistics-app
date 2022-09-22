@@ -9,7 +9,7 @@ import { User } from './user';
 import { UserIdentity } from './userIdentity';
 import { Role } from './role';
 import { EnumType } from './enumType';
-import { GrossesForInterval } from './grossesForInterval';
+import { DailyGrosses } from './dailyGrosses';
 import { DailyGross } from './dailyGross';
 import { TruckGrosses } from './truckGrosses';
 
@@ -25,7 +25,7 @@ export {
   User,
   UserIdentity,
   Role,
-  GrossesForInterval,
+  DailyGrosses,
   DailyGross,
   TruckGrosses
 }

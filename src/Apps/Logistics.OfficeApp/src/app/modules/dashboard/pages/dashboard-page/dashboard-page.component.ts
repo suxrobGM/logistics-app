@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { AppConfig } from '@configs';
-import { GrossesForInterval, Load } from '@shared/models';
+import { DailyGrosses, Load } from '@shared/models';
 import { DistanceUnitPipe } from '@shared/pipes';
 import { ApiService } from '@shared/services';
 import { DateUtils } from '@shared/utils';
@@ -86,7 +86,7 @@ export class DashboardPageComponent implements OnInit {
   private fetchLastTenDaysGross() {
     const oneWeekAgo = this.dateUtils.daysAgo(7);
 
-    this.apiService.getGrossesForInterval(oneWeekAgo)
+    this.apiService.getDailyGrosses(oneWeekAgo)
       .subscribe(result => {
         if (result.success && result.value) {
           const grosses = result.value;
@@ -100,7 +100,7 @@ export class DashboardPageComponent implements OnInit {
       });
   }
 
-  private drawChart(grosses: GrossesForInterval) {
+  private drawChart(grosses: DailyGrosses) {
     const labels = new Array<string>();
     const data = new Array<number>();
     
@@ -124,7 +124,7 @@ export class DashboardPageComponent implements OnInit {
     }
   }
 
-  private calcTodayGross(grosses: GrossesForInterval) {
+  private calcTodayGross(grosses: DailyGrosses) {
     const today = new Date();
     let totalGross = 0;
 

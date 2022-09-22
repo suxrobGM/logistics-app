@@ -1,8 +1,8 @@
-import { GrossesForInterval } from "./grossesForInterval";
+import { DailyGrosses } from "./dailyGrosses";
 
 export interface TruckGrosses {
   truckId: string;
-  grosses?: GrossesForInterval;
+  grosses?: DailyGrosses;
   totalGrossAllTime: number;
   totalDistanceAllTime: number;
 }

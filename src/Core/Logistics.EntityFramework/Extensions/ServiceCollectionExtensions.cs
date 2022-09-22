@@ -41,8 +41,7 @@ public static class ServiceCollectionExtensions
         
         var options = new TenantDbContextOptions
         {
-            ConnectionString = connectionString,
-            UseTenantService = true
+            ConnectionString = connectionString
         };
         
         services.AddSingleton(options);

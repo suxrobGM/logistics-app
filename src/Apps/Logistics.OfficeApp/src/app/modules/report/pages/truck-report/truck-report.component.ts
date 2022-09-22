@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { GrossesForInterval, Truck, TruckGrosses } from '@shared/models';
+import { DailyGrosses, Truck, TruckGrosses } from '@shared/models';
 import { DistanceUnitPipe } from '@shared/pipes';
 import { ApiService } from '@shared/services';
 import { DateUtils } from '@shared/utils';
@@ -70,7 +70,7 @@ export class TruckReportComponent implements OnInit {
   private fetchTruckGrosses() {
     const oneMonthAgo = this.dateUtils.daysAgo(30);
 
-    this.apiService.getTruckGrossesForInterval(this.id, oneMonthAgo).subscribe(result => {
+    this.apiService.getTruckGrosses(this.id, oneMonthAgo).subscribe(result => {
       if (result.success && result.value) {
         const truckGross = result.value;
         this.truckGrosses = result.value;
@@ -87,7 +87,7 @@ export class TruckReportComponent implements OnInit {
     });
   }
 
-  private drawChart(grosses: GrossesForInterval) {
+  private drawChart(grosses: DailyGrosses) {
     const labels = new Array<string>();
     const data = new Array<number>();
     
