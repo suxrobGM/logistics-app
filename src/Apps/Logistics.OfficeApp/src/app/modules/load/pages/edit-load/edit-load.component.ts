@@ -6,7 +6,7 @@ import * as MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-d
 import * as mapboxgl from 'mapbox-gl';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { Employee, EnumType, Load, LoadStatuses, UserIdentity } from '@shared/models';
+import { Employee, EnumType, Load, LoadStatus, LoadStatuses, UserIdentity } from '@shared/models';
 import { ApiService } from '@shared/services';
 import { AppConfig } from '@configs';
 import { DistanceUnitPipe } from '@shared/pipes';
@@ -58,7 +58,7 @@ export class EditLoadComponent implements OnInit {
       dispatcherName: new FormControl('', Validators.required),
       dispatcherId: new FormControl('', Validators.required),
       driver: new FormControl('', Validators.required),
-      status: new FormControl(LoadStatuses[0], Validators.required)
+      status: new FormControl(LoadStatus.Dispatched, Validators.required)
     });
   }
 

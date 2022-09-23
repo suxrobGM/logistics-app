@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { Load } from '@shared/models';
+import { EnumType, Load, LoadStatus, LoadStatuses } from '@shared/models';
 import { ApiService } from '@shared/services';
 import { LazyLoadEvent } from 'primeng/api';
 
@@ -50,5 +50,9 @@ export class ListLoadComponent implements OnInit {
 
       this.isBusy = false;
     });
+  }
+
+  getLoadStatusName(status: LoadStatus): string {
+    return LoadStatuses[status - 1].displayName
   }
 }

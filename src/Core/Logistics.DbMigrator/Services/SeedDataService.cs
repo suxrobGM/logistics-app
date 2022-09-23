@@ -94,7 +94,7 @@ internal class SeedDataService : BackgroundService
             if (!result.Succeeded)
                 throw new Exception(result.Errors.First().Description);
 
-            _logger.LogInformation("Created the default admin");
+            _logger.LogInformation("Created the default admin '{Admin}'", admin.UserName);
         }
 
         var hasAdminRole = await userManager.IsInRoleAsync(admin, AppRoles.Admin);
@@ -102,7 +102,7 @@ internal class SeedDataService : BackgroundService
         if (!hasAdminRole)
         {
             await userManager.AddToRoleAsync(admin, AppRoles.Admin);
-            _logger.LogInformation("Added 'admin' role to the default admin");
+            _logger.LogInformation("Added 'app.admin' role to the default admin '{Admin}'", admin.UserName);
         }
     }
 

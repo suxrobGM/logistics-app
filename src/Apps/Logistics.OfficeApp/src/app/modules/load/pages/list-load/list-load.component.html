@@ -91,7 +91,7 @@
             <td>{{load.dispatchedDate | date:'mediumDate'}}</td>
             <td>{{load.pickUpDate | date:'mediumDate'}}</td>
             <td>{{load.deliveryDate | date:'mediumDate'}}</td>
-            <td>{{load.status}}</td>
+            <td>{{getLoadStatusName(load.status)}}</td>
             <td>{{load.distance | distanceUnit:'mi'}}</td>
             <td>{{load.deliveryCost | currency}}</td>
             <td>{{load.assignedDispatcherName}}</td>

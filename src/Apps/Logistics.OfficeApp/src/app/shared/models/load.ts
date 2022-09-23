@@ -1,3 +1,5 @@
+import { LoadStatus } from './loadStatus';
+
 export interface Load {
   id?: string;
   refId?: number;
@@ -6,7 +8,7 @@ export interface Load {
   destinationAddress?: string;
   deliveryCost?: number;
   distance?: number;
-  status?: string;
+  status?: LoadStatus;
   dispatchedDate?: string;
   pickUpDate?: string;
   deliveryDate?: string;

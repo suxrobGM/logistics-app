@@ -12,12 +12,14 @@ import { EnumType } from './enumType';
 import { DailyGrosses } from './dailyGrosses';
 import { DailyGross } from './dailyGross';
 import { TruckGrosses } from './truckGrosses';
+import { LoadStatus } from './loadStatus';
 
 export {
   DataResult,
   Employee,
   EnumType,
   LoadStatuses,
+  LoadStatus,
   Load,
   PagedDataResult,
   Tenant,

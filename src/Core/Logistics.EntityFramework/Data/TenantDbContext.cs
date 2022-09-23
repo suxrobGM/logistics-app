@@ -60,7 +60,6 @@ public class TenantDbContext : DbContext
             entity.ToTable("loads");
             //entity.OwnsOne(m => m.SourceAddress);
             //entity.OwnsOne(m => m.DestinationAddress);
-            entity.OwnsOne(m => m.Status);
             entity.HasIndex(m => m.RefId).IsUnique();
 
             entity.HasOne(m => m.AssignedDispatcher)

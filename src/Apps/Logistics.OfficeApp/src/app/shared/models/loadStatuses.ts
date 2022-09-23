@@ -2,16 +2,15 @@ import { EnumType } from './enumType';
 
 export const LoadStatuses: EnumType[] = [
   {
-    name: 'dispatched',
+    value: 1,
     displayName: 'Dispatched' 
   },
   {
-    name: 'pickedup',
+    value: 2,
     displayName: 'Picked Up' 
   },
   {
-    name: 'delivered',
+    value: 3,
     displayName: 'Delivered' 
   }
 ]
-

@@ -1,14 +1,7 @@
-﻿using Logistics.Domain.ValueObjects;
-
-namespace Logistics.Domain.Entities;
+﻿namespace Logistics.Domain.Entities;
 
 public class Load : Entity, ITenantEntity
 {
-    public Load()
-    {
-        Status = LoadStatus.Dispatched;
-    }
-    
     private LoadStatus _status = LoadStatus.Dispatched;
     
     public ulong RefId { get; set; } = 100_000;
@@ -38,21 +31,21 @@ public class Load : Entity, ITenantEntity
         set
         {
             _status = value;
-            
-            if (_status == LoadStatus.Dispatched)
+
+            switch (_status)
             {
-                DispatchedDate = DateTime.UtcNow;
-                PickUpDate = null;
-                DeliveryDate = null;
-            }
-            else if (_status == LoadStatus.PickedUp)
-            {
-                PickUpDate = DateTime.UtcNow;
-                DeliveryDate = null;
-            }
-            else if (_status == LoadStatus.Delivered)
-            {
-                DeliveryDate = DateTime.UtcNow;
+                case LoadStatus.Dispatched:
+                    DispatchedDate = DateTime.UtcNow;
+                    PickUpDate = null;
+                    DeliveryDate = null;
+                    break;
+                case LoadStatus.PickedUp:
+                    PickUpDate = DateTime.UtcNow;
+                    DeliveryDate = null;
+                    break;
+                case LoadStatus.Delivered:
+                    DeliveryDate = DateTime.UtcNow;
+                    break;
             }
         }
     }

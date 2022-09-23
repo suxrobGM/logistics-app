@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.EntityFramework.Data.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20220922232848_Initial")]
+    [Migration("20220923170522_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -92,6 +92,9 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.Property<string>("SourceAddress")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -180,34 +183,11 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                         .HasForeignKey("AssignedTruckId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.OwnsOne("Logistics.Domain.ValueObjects.LoadStatus", "Status", b1 =>
-                        {
-                            b1.Property<string>("LoadId")
-                                .HasColumnType("varchar(255)");
-
-                            b1.Property<int>("Id")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasColumnType("longtext");
-
-                            b1.HasKey("LoadId");
-
-                            b1.ToTable("loads");
-
-                            b1.WithOwner()
-                                .HasForeignKey("LoadId");
-                        });
-
                     b.Navigation("AssignedDispatcher");
 
                     b.Navigation("AssignedDriver");
 
                     b.Navigation("AssignedTruck");
-
-                    b.Navigation("Status")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>

@@ -58,10 +58,10 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
             DispatchedDate = i.DispatchedDate,
             PickUpDate = i.PickUpDate,
             DeliveryDate = i.DeliveryDate,
+            Status = i.Status,
             AssignedDispatcherId = i.AssignedDispatcherId,
             AssignedDriverId = i.AssignedDriverId,
-            AssignedTruckId = i.AssignedTruckId,
-            Status = i.Status.Name
+            AssignedTruckId = i.AssignedTruckId
         }).ToArray();
         
         foreach (var loadDto in loadsDto)

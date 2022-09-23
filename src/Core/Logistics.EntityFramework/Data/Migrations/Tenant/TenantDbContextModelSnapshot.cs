@@ -91,6 +91,9 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AssignedDispatcherId");
@@ -178,34 +181,11 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                         .HasForeignKey("AssignedTruckId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.OwnsOne("Logistics.Domain.ValueObjects.LoadStatus", "Status", b1 =>
-                        {
-                            b1.Property<string>("LoadId")
-                                .HasColumnType("varchar(255)");
-
-                            b1.Property<int>("Id")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasColumnType("longtext");
-
-                            b1.HasKey("LoadId");
-
-                            b1.ToTable("loads");
-
-                            b1.WithOwner()
-                                .HasForeignKey("LoadId");
-                        });
-
                     b.Navigation("AssignedDispatcher");
 
                     b.Navigation("AssignedDriver");
 
                     b.Navigation("AssignedTruck");
-
-                    b.Navigation("Status")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>

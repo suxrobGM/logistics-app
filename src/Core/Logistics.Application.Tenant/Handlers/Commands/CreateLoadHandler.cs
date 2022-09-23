@@ -17,20 +17,21 @@ internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, 
         CreateLoadCommand request, CancellationToken cancellationToken)
     {
         var dispatcher = await _tenantRepository.GetAsync<Employee>(request.AssignedDispatcherId);
+        var driver = await _tenantRepository.GetAsync<Employee>(request.AssignedDriverId);
 
         if (dispatcher == null)
             return DataResult.CreateError("Could not find the specified dispatcher");
-        
-        var driverEmp = await _tenantRepository.GetAsync<Employee>(request.AssignedDriverId);
-        var driverUser = await _mainRepository.GetAsync<User>(request.AssignedDriverId);
 
-        if (driverEmp == null)
+        if (driver == null)
             return DataResult.CreateError("Could not find the specified driver");
 
-        var truck = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == driverEmp.Id);
+        var truck = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == driver.Id);
 
         if (truck == null)
-            return DataResult.CreateError($"Could not find the truck whose driver ID is '{driverUser?.UserName}'");
+        {
+            var user = await _mainRepository.GetAsync<User>(request.AssignedDriverId);
+            return DataResult.CreateError($"Could not find the truck whose driver ID is '{user?.UserName}'");
+        }
         
         var latestLoad = _tenantRepository.Query<Load>().OrderBy(i => i.RefId).LastOrDefault();
         ulong refId = 100_000;
@@ -48,7 +49,7 @@ internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, 
             Distance = request.Distance,
             DeliveryCost = request.DeliveryCost,
             AssignedDispatcher = dispatcher,
-            AssignedDriver = driverEmp,
+            AssignedDriver = driver,
             AssignedTruck = truck
         };
 

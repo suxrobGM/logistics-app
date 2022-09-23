@@ -16,31 +16,54 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
     protected override async Task<DataResult> HandleValidated(
         UpdateLoadCommand request, CancellationToken cancellationToken)
     {
-        var driverEmp = await _tenantRepository.GetAsync<Employee>(request.AssignedDriverId);
-        var driverUser = await _mainRepository.GetAsync<User>(request.AssignedDriverId);
-
-        if (driverEmp == null)
-            return DataResult.CreateError("Could not find the specified driver");
+        Employee? driver = null;
+        Truck? truck = null;
         
-        var truck = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == driverEmp.Id);
+        if (request.AssignedDriverId != null)
+        {
+            driver = await _tenantRepository.GetAsync<Employee>(request.AssignedDriverId);
 
-        if (truck == null)
-            return DataResult.CreateError($"Could not find the truck whose driver is '{driverUser?.UserName}'");
+            if (driver == null)
+                return DataResult.CreateError("Could not find the specified driver");
+            
+            truck = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == driver.Id);
+
+            if (truck == null)
+            {
+                var user = await _mainRepository.GetAsync<User>(request.AssignedDriverId);
+                return DataResult.CreateError($"Could not find the truck whose driver is '{user?.UserName}'");
+            }
+        }
 
         var loadEntity = await _tenantRepository.GetAsync<Load>(request.Id);
 
         if (loadEntity == null)
             return DataResult.CreateError("Could not find the specified load");
         
-        loadEntity.Name = request.Name;
-        loadEntity.SourceAddress = request.SourceAddress;
-        loadEntity.DestinationAddress = request.DestinationAddress;
-        loadEntity.Distance = request.Distance;
-        loadEntity.DeliveryCost = request.DeliveryCost;
-        loadEntity.Status = LoadStatus.Get(request.Status)!;
-        loadEntity.AssignedDriver = driverEmp;
-        loadEntity.AssignedTruck = truck;
+        if (driver != null && truck != null)
+        {
+            loadEntity.AssignedTruck = truck;
+            loadEntity.AssignedDriver = driver;
+        }
 
+        if (request.Name != null)
+            loadEntity.Name = request.Name;
+        
+        if (request.SourceAddress != null)
+            loadEntity.SourceAddress = request.SourceAddress;
+        
+        if (request.DestinationAddress != null)
+            loadEntity.DestinationAddress = request.DestinationAddress;
+        
+        if (request.DeliveryCost.HasValue)
+            loadEntity.DeliveryCost = request.DeliveryCost.Value;
+        
+        if (request.Distance.HasValue)
+            loadEntity.Distance = request.Distance.Value;
+
+        if (request.Status.HasValue)
+            loadEntity.Status = request.Status.Value;  
+        
         _tenantRepository.Update(loadEntity);
         await _tenantRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
@@ -54,29 +77,13 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
         {
             errorDescription = "Id is an empty string";
         }
-        else if (string.IsNullOrEmpty(request.SourceAddress))
-        {
-            errorDescription = "Source address is an empty string";
-        }
-        else if (string.IsNullOrEmpty(request.DestinationAddress))
-        {
-            errorDescription = "Destination address is an empty string";
-        }
-        else if (LoadStatus.Get(request.Status) == null)
-        {
-            errorDescription = $"The'{request.Status}' is an invalid value of the status property";
-        }
-        else if (string.IsNullOrEmpty(request.AssignedDriverId))
-        {
-            errorDescription = "AssignedDriverId is an empty string";
-        }
-        else if (request.DeliveryCost < 0)
+        else if (request.DeliveryCost is < 0)
         {
             errorDescription = "Delivery cost should be non-negative value";
         }
-        else if (request.Distance < 0)
+        else if (request.Distance is < 0)
         {
-            errorDescription = "Distance miles should be non-negative value";
+            errorDescription = "Distance should be non-negative value";
         }
 
         return string.IsNullOrEmpty(errorDescription);

@@ -14,7 +14,7 @@ internal sealed class UpdateTruckHandler : RequestHandlerBase<UpdateTruckCommand
     {
         var driver = await _tenantRepository.GetAsync<Employee>(req.DriverId!);
 
-        if (driver == null)
+        if (req.DriverId != null && driver == null)
             return DataResult.CreateError("Could not find the specified driver");
         
         var truckEntity = await _tenantRepository.GetAsync<Truck>(req.Id!);
@@ -24,7 +24,7 @@ internal sealed class UpdateTruckHandler : RequestHandlerBase<UpdateTruckCommand
         
         var truckWithThisDriver = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == req.DriverId);
         var truckWithThisNumber = await _tenantRepository.GetAsync<Truck>(i => i.TruckNumber == req.TruckNumber && 
-                                                                               i.TruckNumber != truckEntity.TruckNumber);
+                                                                               i.Id != truckEntity.Id);
 
         if (truckWithThisDriver != null)
             return DataResult.CreateError("Already exists truck with this driver");
@@ -33,11 +33,11 @@ internal sealed class UpdateTruckHandler : RequestHandlerBase<UpdateTruckCommand
             return DataResult.CreateError("Already exists truck with this number");
 
         if (req.TruckNumber.HasValue)
-        {
             truckEntity.TruckNumber = req.TruckNumber.Value;
-        }
-        
-        truckEntity.Driver = driver;
+
+        if (driver != null)
+            truckEntity.Driver = driver;
+
         _tenantRepository.Update(truckEntity);
         await _tenantRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();
@@ -51,11 +51,7 @@ internal sealed class UpdateTruckHandler : RequestHandlerBase<UpdateTruckCommand
         {
             errorDescription = "Id is an empty string";
         }
-        else if (string.IsNullOrEmpty(request.DriverId))
-        {
-            errorDescription = "Truck driver id is an empty string";
-        }
-        
+
         return string.IsNullOrEmpty(errorDescription);
     }
 }

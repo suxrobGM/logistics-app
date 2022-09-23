@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Logistics.Domain.Repositories;
-using Logistics.Domain.ValueObjects;
 
 namespace Logistics.DbMigrator.Services;
 
@@ -8,6 +7,7 @@ internal class PopulateTestData
 {
     private readonly ILogger _logger;
     private readonly IServiceProvider _serviceProvider;
+    private readonly Random _random;
     
     public PopulateTestData(
         ILogger logger,
@@ -15,6 +15,7 @@ internal class PopulateTestData
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
+        _random = new Random();
     }
     
     public async Task ExecuteAsync()
@@ -116,7 +117,7 @@ internal class PopulateTestData
         foreach (var driver in drivers)
         {
             var driverEmployee = await TryAddEmployeeAsync(tenantRepository, tenant.Id, driver, driverRole);
-            employeesDto.Dispatchers.Add(driverEmployee);
+            employeesDto.Drivers.Add(driverEmployee);
         }
 
         await tenantRepository.UnitOfWork.CommitAsync();
@@ -155,7 +156,10 @@ internal class PopulateTestData
             var truck = trucksDb.FirstOrDefault(i => i.DriverId == driver.Id);
 
             if (truck != null)
+            {
+                trucksList.Add(truck);
                 continue;
+            }
 
             truck = new Truck
             {
@@ -174,47 +178,57 @@ internal class PopulateTestData
 
     private async Task AddLoadsAsync(EmployeesDto employees, IList<Truck> trucks)
     {
+        if (!trucks.Any())
+            throw new InvalidOperationException("Empty list of trucks");
+        
         var tenantRepository = _serviceProvider.GetRequiredService<ITenantRepository>();
         var loadsDb = await tenantRepository.GetListAsync<Load>();
 
-        for (var i = 1; i <= 30; i++)
+        for (ulong i = 1; i <= 30; i++)
         {
-            var loadName = $"Test cargo {i}";
-            var load = loadsDb.FirstOrDefault(m => m.Name == loadName);
+            var refId = 100_000 + i;
+            var load = loadsDb.FirstOrDefault(m => m.RefId == refId);
 
             if (load != null)
                 continue;
 
             var truck = PickRandom(trucks);
             var dispatcher = PickRandom(employees.Dispatchers);
-            //var pickupDate = RandomDate(DateTime.Today., )
+            var pickupDate = RandomDate(DateTime.Today.AddDays(-10), DateTime.Today.AddDays(-1));
 
             load = new Load
             {
-                Name = loadName,
+                Name = $"Test cargo {i}",
+                RefId = refId,
                 AssignedTruck = truck,
                 AssignedDriver = truck.Driver,
                 AssignedDispatcher = dispatcher,
-                Status = LoadStatus.Delivered
+                Status = LoadStatus.Delivered,
+                PickUpDate = pickupDate,
+                DispatchedDate = pickupDate,
+                DeliveryDate = pickupDate.AddDays(1),
+                SourceAddress = "40 Crescent Ave, Boston, United States",
+                DestinationAddress = "73 Tremont St, Boston, United States",
+                Distance = _random.Next(16093, 321869),
+                DeliveryCost = _random.Next(1000, 3000)
             };
 
             await tenantRepository.AddAsync(load);
+            _logger.LogInformation("Added a load {Name}", load.Name);
         }
 
         await tenantRepository.UnitOfWork.CommitAsync();
     }
 
-    private static T PickRandom<T>(IList<T> list)
+    private T PickRandom<T>(IList<T> list)
     {
-        var rnd = new Random();
-        var rndIndex = rnd.Next(0, list.Count);
+        var rndIndex = _random.Next(list.Count);
         return list[rndIndex];
     }
 
-    private static DateTime RandomDate(DateTime minDate, DateTime maxDate)
+    private DateTime RandomDate(DateTime minDate, DateTime maxDate)
     {
-        var rnd = new Random();
-        var ticks = rnd.NextInt64(minDate.Ticks, maxDate.Ticks);
+        var ticks = _random.NextInt64(minDate.Ticks, maxDate.Ticks);
         return new DateTime(ticks);
     }
 }
