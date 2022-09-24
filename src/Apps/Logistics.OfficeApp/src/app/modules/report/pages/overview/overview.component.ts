@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { MonthlyGrosses } from '@shared/models';
+import { DistanceUnitPipe } from '@shared/pipes';
 import { ApiService } from '@shared/services';
 import { DateUtils } from '@shared/utils';
 
@@ -8,15 +10,41 @@ import { DateUtils } from '@shared/utils';
   styleUrls: ['./overview.component.scss']
 })
 export class ReportPageComponent implements OnInit {
+  public isBusy: boolean;
+  public rpm: number;
+  public chartData: any;
+  public chartOptions: any;
 
   constructor(
     private apiService: ApiService,
     private dateUtils: DateUtils,
+    private distanceUnit: DistanceUnitPipe
   )
   {
+    this.isBusy = false;
+    this.rpm = 0;
+
+    this.chartData = {
+      labels: [],
+      datasets: [
+        {
+          label: 'Monthly Gross',
+          data: [] 
+        }
+      ]
+    },
+
+    this.chartOptions = {
+      plugins: {
+        legend: {
+          display: false
+        }
+      }
+    }
   }
 
   public ngOnInit(): void {
+    this.isBusy = true;
     this.fetchMonthlyGrosses();
   }
 
@@ -24,7 +52,40 @@ export class ReportPageComponent implements OnInit {
     const thisYear = this.dateUtils.thisYear();
     this.apiService.getMonthlyGrosses(thisYear)
       .subscribe(result => {
-        console.log(result.value);
+        if (result.success && result.value) {
+          const monthlyGrosses = result.value;
+          this.drawChart(monthlyGrosses);
+        }
+
+        this.isBusy = false;
       });
+  }
+
+  private drawChart(grosses: MonthlyGrosses) {
+    const labels = new Array<string>();
+    const data = new Array<number>();
+
+    grosses.months.forEach(i => {
+      labels.push(this.dateUtils.getMonthName(i.month));
+      data.push(i.income);
+    });
+
+    this.chartData = {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Monthly Gross',
+          data: data,
+          fill: true,
+          borderColor: '#EC407A',
+          tension: 0.4,
+          backgroundColor: '#EC407A'
+        }
+      ]
+    }
+  }
+
+  private toMi(value?: number): number {
+    return this.distanceUnit.transform(value, 'mi');
   }
 }

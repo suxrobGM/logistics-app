@@ -34,26 +34,26 @@ internal sealed class GetTruckGrossesHandler : RequestHandlerBase<GetTruckGrosse
             if (!dict.ContainsKey(key)) 
                 continue;
             
-            dict[key].Gross += load.DeliveryCost;
+            dict[key].Income += load.DeliveryCost;
             dict[key].Distance += load.Distance;
         }
 
         dailyGrosses.Days = dict.Values;
         var totalDistanceAllTime = 0d;
-        var totalGrossAllTime = 0d;
+        var totalIncomeAllTime = 0d;
 
         foreach (var load in truck.Loads.Where(i => i.DeliveryDate.HasValue))
         {
             totalDistanceAllTime += load.Distance;
-            totalGrossAllTime += load.DeliveryCost;
+            totalIncomeAllTime += load.DeliveryCost;
         }
 
         var truckGrosses = new TruckGrossesDto
         {
             TruckId = truck.Id,
             Grosses = dailyGrosses,
-            TotalDistanceAllTime = totalDistanceAllTime,
-            TotalGrossAllTime = totalGrossAllTime
+            DistanceAllTime = totalDistanceAllTime,
+            IncomeAllTime = totalIncomeAllTime
         };
 
         return DataResult<TruckGrossesDto>.CreateSuccess(truckGrosses);

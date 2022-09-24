@@ -2,6 +2,6 @@ import { MonthlyGross } from './monthlyGross';
 
 export interface MonthlyGrosses {
   months: MonthlyGross[];
-  totalGross: number;
+  totalIncome: number;
   totalDistance: number;
 }

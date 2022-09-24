@@ -93,7 +93,7 @@ export class DashboardPageComponent implements OnInit {
         if (result.success && result.value) {
           const grosses = result.value;
           
-          this.weeklyGross = grosses.totalGross;
+          this.weeklyGross = grosses.totalIncome;
           this.weeklyDistance = grosses.totalDistance;
           this.rpm = this.weeklyGross / this.toMi(this.weeklyDistance);
           this.drawChart(grosses);
@@ -108,7 +108,7 @@ export class DashboardPageComponent implements OnInit {
     
     grosses.days.forEach(i => {
       labels.push(this.dateUtils.toLocaleDate(i.day));
-      data.push(i.gross);
+      data.push(i.income);
     });
 
     this.chartData = {
@@ -132,7 +132,7 @@ export class DashboardPageComponent implements OnInit {
 
     grosses.days
       .filter(i => this.dateUtils.getDay(i.day) === today.getDay())
-      .forEach(i => totalGross += i.gross);
+      .forEach(i => totalGross += i.income);
 
     this.todayGross = totalGross;
   }

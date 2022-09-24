@@ -9,6 +9,6 @@ public class TruckGrossesDto
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public DailyGrossesDto? Grosses { get; set; }
 
-    public double TotalGrossAllTime { get; set; }
-    public double TotalDistanceAllTime { get; set; }
+    public double IncomeAllTime { get; set; }
+    public double DistanceAllTime { get; set; }
 }

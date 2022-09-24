@@ -1,6 +1,6 @@
 export interface MonthlyGross {
   year: number;
   month: number;
-  gross: number;
+  income: number;
   distance: number;
 }

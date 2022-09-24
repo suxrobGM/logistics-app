@@ -29,7 +29,7 @@ internal sealed class GetDailyGrossesHandler : RequestHandlerBase<GetDailyGrosse
             if (!dict.ContainsKey(key)) 
                 continue;
             
-            dict[key].Gross += load.DeliveryCost;
+            dict[key].Income += load.DeliveryCost;
             dict[key].Distance += load.Distance;
         }
 

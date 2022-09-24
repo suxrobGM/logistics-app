@@ -13,12 +13,12 @@ public class MonthlyGrossesDto
 
             foreach (var month in _months)
             {
-                TotalGross += month.Gross;
+                TotalIncome += month.Income;
                 TotalDistance += month.Distance;
             }
         }
     }
     
-    public double TotalGross { get; private set; }
+    public double TotalIncome { get; private set; }
     public double TotalDistance { get; private set; }
 }

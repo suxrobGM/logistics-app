@@ -13,6 +13,6 @@ public record DailyGrossDto
     }
     
     public DateTime Day { get; set; }
-    public double Gross { get; set; }
+    public double Income { get; set; }
     public double Distance { get; set; }
 }

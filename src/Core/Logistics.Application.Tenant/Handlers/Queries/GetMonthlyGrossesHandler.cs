@@ -30,7 +30,7 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandlerBase<GetMonthlyGr
                 continue;
             
             dict[key].Distance += load.Distance;
-            dict[key].Gross += load.DeliveryCost;
+            dict[key].Income += load.DeliveryCost;
         }
 
         monthlyGrosses.Months = dict.Values;

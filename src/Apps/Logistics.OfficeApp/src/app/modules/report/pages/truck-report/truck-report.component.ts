@@ -15,7 +15,7 @@ export class TruckReportComponent implements OnInit {
   public isBusy: boolean;
   public truck!: Truck;
   public truckGrosses!: TruckGrosses;
-  public rpmLastMonth: number;
+  public rpmCurrent: number;
   public rpmAllTime: number;
   public chartData: any;
   public chartOptions: any;
@@ -27,7 +27,7 @@ export class TruckReportComponent implements OnInit {
     private distanceUnit: DistanceUnitPipe) 
   {
     this.isBusy = false;
-    this.rpmLastMonth = 0;
+    this.rpmCurrent = 0;
     this.rpmAllTime = 0;
 
     this.chartData = {
@@ -72,15 +72,15 @@ export class TruckReportComponent implements OnInit {
 
     this.apiService.getTruckGrosses(this.id, oneMonthAgo).subscribe(result => {
       if (result.success && result.value) {
-        const truckGross = result.value;
+        const truckGrosses = result.value;
         this.truckGrosses = result.value;
-        this.rpmAllTime = truckGross.totalGrossAllTime / this.toMi(truckGross.totalDistanceAllTime);
+        this.rpmAllTime = truckGrosses.incomeAllTime / this.toMi(truckGrosses.distanceAllTime);
 
-        if (truckGross.grosses) {
-          this.rpmLastMonth = truckGross.grosses.totalGross / this.toMi(truckGross.grosses.totalDistance);
+        if (truckGrosses.grosses) {
+          this.rpmCurrent = truckGrosses.grosses.totalIncome / this.toMi(truckGrosses.grosses.totalDistance);
         }
         
-        this.drawChart(truckGross.grosses!);
+        this.drawChart(truckGrosses.grosses!);
       }
 
       this.isBusy = false;
@@ -93,7 +93,7 @@ export class TruckReportComponent implements OnInit {
     
     grosses.days.forEach(i => {
       labels.push(this.dateUtils.toLocaleDate(i.day));
-      data.push(i.gross);
+      data.push(i.income);
     });
 
     this.chartData = {

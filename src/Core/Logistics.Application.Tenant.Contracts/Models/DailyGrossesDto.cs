@@ -13,12 +13,12 @@ public class DailyGrossesDto
 
             foreach (var day in _days)
             {
-                TotalGross += day.Gross;
+                TotalIncome += day.Income;
                 TotalDistance += day.Distance;
             }
         }
     }
     
-    public double TotalGross { get; private set; }
+    public double TotalIncome { get; private set; }
     public double TotalDistance { get; private set; }
 }

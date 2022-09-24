@@ -1,5 +1,5 @@
 export interface DailyGross {
   day: string;
-  gross: number;
+  income: number;
   distance: number;
 }
