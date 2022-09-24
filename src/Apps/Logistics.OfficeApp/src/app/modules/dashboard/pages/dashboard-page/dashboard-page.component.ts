@@ -18,7 +18,9 @@ export class DashboardPageComponent implements OnInit {
   public weeklyGross: number;
   public weeklyDistance: number;
   public rpm: number;
-  public loadingLoads: boolean;
+  public isLoadingLoads: boolean;
+  public isLoadingMap: boolean;
+  public isLoadingChartData: boolean;
   public loads: Load[];
   public chartData: any;
   public chartOptions: any;
@@ -29,7 +31,9 @@ export class DashboardPageComponent implements OnInit {
     private distanceUnit: DistanceUnitPipe) 
   {
     this.loads = [];
-    this.loadingLoads = false;
+    this.isLoadingLoads = false;
+    this.isLoadingMap = false;
+    this.isLoadingChartData = false;
     this.todayGross = 0;
     this.weeklyGross = 0;
     this.weeklyDistance = 0;
@@ -61,6 +65,8 @@ export class DashboardPageComponent implements OnInit {
   }
 
   private initMapbox() {
+    this.isLoadingMap = true;
+
     this.map = new mapboxgl.Map({
       container: 'map',
       accessToken: AppConfig.mapboxToken,
@@ -69,37 +75,38 @@ export class DashboardPageComponent implements OnInit {
       zoom: 6
     });
 
-    //this.map.on('load', ())
+    this.map.on('load', () => this.isLoadingMap = false);
   }
 
   private fetchLatestLoads() {
-    this.loadingLoads = true;
+    this.isLoadingLoads = true;
 
-    this.apiService.getLoads('', '-dispatchedDate')
-      .subscribe(result => {
-        if (result.success && result.items) {
-          this.loads = result.items;
-        }
+    this.apiService.getLoads('', '-dispatchedDate').subscribe(result => {
+      if (result.success && result.items) {
+        this.loads = result.items;
+      }
 
-        this.loadingLoads = false;
+      this.isLoadingLoads = false;
     });
   }
 
   private fetchLastTenDaysGross() {
+    this.isLoadingChartData = true;
     const oneWeekAgo = this.dateUtils.daysAgo(7);
 
-    this.apiService.getDailyGrosses(oneWeekAgo)
-      .subscribe(result => {
-        if (result.success && result.value) {
-          const grosses = result.value;
-          
-          this.weeklyGross = grosses.totalIncome;
-          this.weeklyDistance = grosses.totalDistance;
-          this.rpm = this.weeklyGross / this.toMi(this.weeklyDistance);
-          this.drawChart(grosses);
-          this.calcTodayGross(grosses);
-        }
-      });
+    this.apiService.getDailyGrosses(oneWeekAgo).subscribe(result => {
+      if (result.success && result.value) {
+        const grosses = result.value;
+        
+        this.weeklyGross = grosses.totalIncome;
+        this.weeklyDistance = grosses.totalDistance;
+        this.rpm = this.weeklyGross / this.toMi(this.weeklyDistance);
+        this.drawChart(grosses);
+        this.calcTodayGross(grosses);
+      }
+
+      this.isLoadingChartData = false;
+    });
   }
 
   private drawChart(grosses: DailyGrosses) {

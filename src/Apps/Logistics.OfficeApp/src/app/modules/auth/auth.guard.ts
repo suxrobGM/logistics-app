@@ -8,20 +8,25 @@ import { map, Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-  constructor(private oidcSecurityService: OidcSecurityService, private router: Router) {}
+  constructor(
+    private oidcService: OidcSecurityService, 
+    private router: Router)
+  {
+  }
 
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree 
   {
-    let user: User;
-    this.oidcSecurityService.userData$.subscribe(({userData}) => user = userData);
+    let user: User | null;
+    this.oidcService.userData$.subscribe(({userData}) => user = userData);
 
-    return this.oidcSecurityService.isAuthenticated$.pipe(
+    return this.oidcService.isAuthenticated$.pipe(
       map(({ isAuthenticated }) => {
         const roles = route.data['roles'];
+        const hasRole = roles && roles.indexOf(user?.role) !== -1
         
-        if (isAuthenticated && roles && roles.indexOf(user.role) !== -1) {
+        if (isAuthenticated && hasRole) {
           return true;
         }
 

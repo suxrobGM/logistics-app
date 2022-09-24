@@ -8,24 +8,23 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  title = 'Logistics.OfficeApp';
   isAuthenticated: boolean;
 
   constructor(
-    private oidcSecurityService: OidcSecurityService, 
+    private oidcService: OidcSecurityService, 
     private router: Router) 
   {
     this.isAuthenticated = false;
   }
 
   ngOnInit(): void {
-    this.oidcSecurityService.checkAuth().subscribe(({ isAuthenticated, userData, accessToken}) => {
+    this.oidcService.checkAuth().subscribe(({ isAuthenticated, userData, accessToken}) => {
       this.isAuthenticated = isAuthenticated;
       //console.log(`Current access token is '${accessToken}'`);
       //console.log(userData);
     });
     
-    this.oidcSecurityService.isAuthenticated$.subscribe(({isAuthenticated}) => {
+    this.oidcService.isAuthenticated$.subscribe(({isAuthenticated}) => {
       this.isAuthenticated = isAuthenticated;
     });
 

@@ -8,6 +8,10 @@
         <div class="ms-3 py-2 fw-bold">Active drivers</div>
         <hr class="w-100 m-0" />
       </ng-template>
+      <div *ngIf="isLoadingMap">
+        <p-skeleton height="700px"></p-skeleton>
+      </div>
+
       <div id="map"></div>
     </p-card>
   </div>
@@ -19,7 +23,7 @@
         <hr class="w-100 m-0" />
       </ng-template>
 
-      <p-table [value]="loads" responsiveLayout="scroll" [loading]="loadingLoads">
+      <p-table [value]="loads" responsiveLayout="scroll" [loading]="isLoadingLoads">
         <ng-template pTemplate="header">
           <tr>
             <th>ID</th>
@@ -72,20 +76,35 @@
         <div class="ms-3 py-2 fw-bold">Weekly Report</div>
         <hr class="w-100 m-0" />
       </ng-template>
-      <div class="d-flex justify-content-between">
-        <div class="px-2">
-          <span class="text-secondary text-uppercase">Total Gross:</span><br/>
-          <span class="fw-bold fs-3">{{weeklyGross | currency}}</span>
+
+      <div class="row" *ngIf="isLoadingChartData; else data">
+        <div class="col-12 col-md-4">
+          <p-skeleton height="3rem"></p-skeleton>
         </div>
-        <div class="px-2">
-          <span class="text-secondary text-uppercase">Billed Miles:</span><br/>
-          <span class="fw-bold fs-3">{{weeklyDistance | distanceUnit:'mi'}}</span>
+        <div class="col-12 col-md-4">
+          <p-skeleton height="3rem"></p-skeleton>
         </div>
-        <div class="px-2">
-          <span class="text-secondary text-uppercase">Rate Per Mile:</span><br/>
-          <span class="fw-bold fs-3">{{rpm | currency}}</span>
+        <div class="col-12 col-md-4">
+          <p-skeleton height="3rem"></p-skeleton>
         </div>
       </div>
+
+      <ng-template #data>
+        <div class="row">
+          <div class="col-12 col-md-4 px-3">
+            <span class="text-secondary text-uppercase">Total Gross:</span><br/>
+            <span class="fw-bold fs-3">{{weeklyGross | currency}}</span>
+          </div>
+          <div class="col-12 col-md-4 px-3">
+            <span class="text-secondary text-uppercase">Billed Miles:</span><br/>
+            <span class="fw-bold fs-3">{{weeklyDistance | distanceUnit:'mi'}}</span>
+          </div>
+          <div class="col-12 col-md-4 px-3">
+            <span class="text-secondary text-uppercase">Rate Per Mile:</span><br/>
+            <span class="fw-bold fs-3">{{rpm | currency}}</span>
+          </div>
+        </div>
+      </ng-template>
     </p-card>
   </div>
 </div>
@@ -97,15 +116,24 @@
         <div class="ms-3 py-2 fw-bold">Daily Gross</div>
         <hr class="w-100 m-0" />
       </ng-template>
-      <div class="row">
-        <div class="col-12 col-md-3 mb-2">
-          <span class="fw-bold">Today Gross:</span><br/>
-          <span class="fw-bold fs-3">{{todayGross | currency}}</span>
-        </div>
-        <div class="col-12 col-md-9">
-          <p-chart type="line" [data]="chartData" [options]="chartOptions" width="40vw" height="20vh"></p-chart>
+
+      <div class="row" *ngIf="isLoadingChartData; else chart">
+        <div class="col-12">
+          <p-skeleton height="20vh"></p-skeleton>
         </div>
       </div>
+
+      <ng-template #chart>
+        <div class="row">
+          <div class="col-12 col-md-3 mb-2">
+            <span class="fw-bold">Today Gross:</span><br/>
+            <span class="fw-bold fs-3">{{todayGross | currency}}</span>
+          </div>
+          <div class="col-12 col-md-9">
+            <p-chart type="line" [data]="chartData" [options]="chartOptions" width="40vw" height="20vh"></p-chart>
+          </div>
+        </div>
+      </ng-template>
     </p-card>
   </div>
   <div class="col-12 col-xl-5 mt-3">

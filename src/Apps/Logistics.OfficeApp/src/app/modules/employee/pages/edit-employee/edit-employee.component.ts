@@ -24,7 +24,7 @@ export class EditEmployeeComponent implements OnInit {
     private apiService: ApiService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private oidcSecurityService: OidcSecurityService,
+    private oidcService: OidcSecurityService,
     private route: ActivatedRoute) 
   {
     this.roles = [];

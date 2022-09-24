@@ -37,7 +37,7 @@ export class EditLoadComponent implements OnInit {
     private apiService: ApiService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private oidcSecurityService: OidcSecurityService,
+    private oidcService: OidcSecurityService,
     private distanceUnit: DistanceUnitPipe,
     private route: ActivatedRoute)
   {
@@ -217,7 +217,7 @@ export class EditLoadComponent implements OnInit {
   }
 
   private fetchCurrentDispatcher() {
-    this.oidcSecurityService.getUserData().subscribe((user: UserIdentity) => {
+    this.oidcService.getUserData().subscribe((user: UserIdentity) => {
       this.form.patchValue({
         dispatcherName: user.name,
         dispatcherId: user.sub

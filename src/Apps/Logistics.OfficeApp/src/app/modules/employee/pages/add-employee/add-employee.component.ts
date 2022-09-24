@@ -20,7 +20,7 @@ export class AddEmployeeComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private messageService: MessageService,
-    private oidcSecurityService: OidcSecurityService) 
+    private oidcService: OidcSecurityService) 
   {
     this.suggestedUsers = [];
     this.roles = [];

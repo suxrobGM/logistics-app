@@ -9,7 +9,7 @@ import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.compone
 const rootRoutes: Routes = [
   {
     path: '', 
-    component: HomeComponent,
+    component: HomeComponent
   },
   {
     path: 'forbidden',

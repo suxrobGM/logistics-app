@@ -11,7 +11,7 @@ import { filter } from 'rxjs';
 })
 export class BreadcrumbComponent implements OnInit {
   public readonly home: MenuItem;
-  public readonly menuItems: MenuItem[];
+  public menuItems: MenuItem[];
 
   constructor(
     private route: ActivatedRoute,
@@ -28,14 +28,13 @@ export class BreadcrumbComponent implements OnInit {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
-        this.menuItems.splice(0);
-        this.createBreadcrumbs(this.route.root);
+        this.menuItems = this.createBreadcrumbs(this.route.root);
       });
   }
 
-  private createBreadcrumbs(route: ActivatedRoute, url = '') {
+  private createBreadcrumbs(route: ActivatedRoute, url = '', items: MenuItem[] = []): MenuItem[] {
     if (!route) {
-      return;
+      return items;
     }
 
     for (const child of route.children) {
@@ -47,10 +46,12 @@ export class BreadcrumbComponent implements OnInit {
       const label = child.snapshot.data['breadcrumb'] as string;
       
       if (label) {
-        this.menuItems.push({label, routerLink: url});
+        items.push({label, routerLink: url});
       }
 
-      this.createBreadcrumbs(child, url);
+      this.createBreadcrumbs(child, url, items);
     }
+
+    return items;
   }
 }

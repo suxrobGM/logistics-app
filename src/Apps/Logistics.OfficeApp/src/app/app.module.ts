@@ -8,7 +8,6 @@ import { SharedModule } from './shared/shared.module';
 import { RootModule } from './modules/root/root.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CoreModule } from './modules/core/core.module';
-import { AppConfig, APP_CONFIG } from './configs/app.config';
 
 @NgModule({
   declarations: [
@@ -23,9 +22,6 @@ import { AppConfig, APP_CONFIG } from './configs/app.config';
     AuthModule,
     RootModule,
     SharedModule,
-  ],
-  providers: [
-    { provide: APP_CONFIG, useValue: AppConfig }
   ],
   bootstrap: [AppComponent]
 })
