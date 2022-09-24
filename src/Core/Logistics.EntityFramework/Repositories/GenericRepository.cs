@@ -16,6 +16,19 @@ internal class GenericRepository<TContext> : IRepository
     }
 
     public IUnitOfWork UnitOfWork { get; }
+    
+    public Task<int> CountAsync<TEntity>(Expression<Func<TEntity, bool>>? predicate = default)
+        where TEntity: class, IAggregateRoot
+    {
+        return predicate == default ? Context.Set<TEntity>().CountAsync()
+            : Context.Set<TEntity>().CountAsync(predicate);
+    }
+
+    public Task<double> SumAsync<TEntity>(Expression<Func<TEntity, double>> selector)
+        where TEntity : class, IAggregateRoot
+    {
+        return Context.Set<TEntity>().SumAsync(selector);
+    }
 
     public async Task<TEntity?> GetAsync<TEntity>(object? id)
         where TEntity : class, IAggregateRoot
@@ -30,11 +43,21 @@ internal class GenericRepository<TContext> : IRepository
         return Context.Set<TEntity>().FirstOrDefaultAsync(predicate);
     }
 
-    public async Task<IList<TEntity>> GetListAsync<TEntity>(Expression<Func<TEntity, bool>>? predicate = default)
+    public Task<List<TEntity>> GetListAsync<TEntity>(Expression<Func<TEntity, bool>>? predicate = default)
         where TEntity : class, IAggregateRoot
     {
-        return predicate == default ? await Context.Set<TEntity>().ToListAsync()
-            : await Context.Set<TEntity>().Where(predicate).ToListAsync();
+        return predicate == default ? Context.Set<TEntity>().ToListAsync()
+            : Context.Set<TEntity>().Where(predicate).ToListAsync();
+    }
+
+    public Task<Dictionary<TKey, TEntity>> GetDictionaryAsync<TKey, TEntity>(
+        Func<TEntity, TKey> keySelector, 
+        Expression<Func<TEntity, bool>>? predicate = default) 
+        where TEntity : class, IAggregateRoot 
+        where TKey : notnull
+    {
+        return predicate == default ? Context.Set<TEntity>().ToDictionaryAsync(keySelector)
+            : Context.Set<TEntity>().Where(predicate).ToDictionaryAsync(keySelector);
     }
 
     public IQueryable<TEntity> Query<TEntity>(Expression<Func<TEntity, bool>>? predicate = default)

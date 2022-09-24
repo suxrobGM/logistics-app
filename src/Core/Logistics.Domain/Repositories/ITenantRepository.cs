@@ -11,7 +11,7 @@ public interface ITenantRepository : IRepository
     Tenant? CurrentTenant { get; }
     
     /// <summary>
-    /// Get entity object by its ID.
+    /// Gets an entity object by its ID.
     /// </summary>
     /// <param name="id">Entity primary key</param>
     /// <typeparam name="TEntity">
@@ -22,7 +22,7 @@ public interface ITenantRepository : IRepository
         where TEntity: class, IAggregateRoot, ITenantEntity;
 
     /// <summary>
-    /// Get entity object by predicate.
+    /// Gets an entity object by predicate.
     /// </summary>
     /// <param name="predicate">Predicate to filter query</param>
     /// <typeparam name="TEntity">
@@ -33,29 +33,42 @@ public interface ITenantRepository : IRepository
         where TEntity: class, IAggregateRoot, ITenantEntity;
 
     /// <summary>
-    /// Get list of entity objects
+    /// Gets list of entity objects
     /// </summary>
     /// <param name="predicate">Predicate to filter query</param>
     /// <typeparam name="TEntity">
     /// Class that implements <see cref="IAggregateRoot"/> and <see cref="ITenantEntity"/> interfaces
     /// </typeparam>
     /// <returns>List of entity objects</returns>
-    new Task<IList<TEntity>> GetListAsync<TEntity>(Expression<Func<TEntity, bool>> predicate = null!)
+    new Task<List<TEntity>> GetListAsync<TEntity>(Expression<Func<TEntity, bool>>? predicate = default)
         where TEntity: class, IAggregateRoot, ITenantEntity;
+    
+    /// <summary>
+    /// Gets a dictionary of the entities and specified keys.
+    /// </summary>
+    /// <param name="keySelector">Key selector</param>
+    /// <param name="predicate">Predicate to filter query</param>
+    /// <typeparam name="TEntity">Class that implements the <see cref="IAggregateRoot"/> interface</typeparam>
+    /// <typeparam name="TKey">Key</typeparam>
+    new Task<Dictionary<TKey, TEntity>> GetDictionaryAsync<TKey, TEntity>(
+        Func<TEntity, TKey> keySelector,
+        Expression<Func<TEntity, bool>>? predicate = default)
+        where TEntity : class, IAggregateRoot, ITenantEntity
+        where TKey : notnull;
 
     /// <summary>
-    /// Get IQueryable entity objects.
+    /// Gets IQueryable entity objects.
     /// </summary>
     /// <param name="predicate">Predicate to filter query</param>
     /// <typeparam name="TEntity">
     /// Class that implements <see cref="IAggregateRoot"/> and <see cref="ITenantEntity"/> interfaces
     /// </typeparam>
     /// <returns>IQueryable of entity objects</returns>
-    new IQueryable<TEntity> Query<TEntity>(Expression<Func<TEntity, bool>> predicate = null!)
+    new IQueryable<TEntity> Query<TEntity>(Expression<Func<TEntity, bool>>? predicate = default)
         where TEntity: class, IAggregateRoot, ITenantEntity;
 
     /// <summary>
-    /// Add new entry to database.
+    /// Adds new entry to database.
     /// </summary>
     /// <param name="entity">Entity object</param>
     /// <typeparam name="TEntity">
@@ -65,7 +78,7 @@ public interface ITenantRepository : IRepository
         where TEntity: class, IAggregateRoot, ITenantEntity;
 
     /// <summary>
-    /// Update existing entry.
+    /// Updates existing entry.
     /// </summary>
     /// <param name="entity">Entity object</param>
     /// <typeparam name="TEntity">
@@ -75,7 +88,7 @@ public interface ITenantRepository : IRepository
         where TEntity: class, IAggregateRoot, ITenantEntity;
 
     /// <summary>
-    /// Delete entity object from database.
+    /// Deletes entity object from database.
     /// </summary>
     /// <param name="entity">Entity object</param>
     /// <typeparam name="TEntity">

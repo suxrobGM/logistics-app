@@ -28,14 +28,23 @@ internal class TenantRepository : GenericRepository<TenantDbContext>, ITenantRep
         return Context.Set<TEntity>().FirstOrDefaultAsync(predicate);
     }
 
-    async Task<IList<TEntity>> ITenantRepository.GetListAsync<TEntity>(Expression<Func<TEntity, bool>>? predicate)
+   Task<List<TEntity>> ITenantRepository.GetListAsync<TEntity>(Expression<Func<TEntity, bool>>? predicate)
         where TEntity : class
     {
-        return predicate == default ? await Context.Set<TEntity>().ToListAsync()
-            : await Context.Set<TEntity>().Where(predicate).ToListAsync();
+        return predicate == default ? Context.Set<TEntity>().ToListAsync()
+            : Context.Set<TEntity>().Where(predicate).ToListAsync();
     }
 
-    IQueryable<TEntity> ITenantRepository.Query<TEntity>(Expression<Func<TEntity, bool>>? predicate)
+   Task<Dictionary<TKey, TEntity>> ITenantRepository.GetDictionaryAsync<TKey, TEntity>(
+       Func<TEntity, TKey> keySelector, 
+       Expression<Func<TEntity, bool>>? predicate)
+       where TEntity : class
+   {
+       return predicate == default ? Context.Set<TEntity>().ToDictionaryAsync(keySelector)
+           : Context.Set<TEntity>().Where(predicate).ToDictionaryAsync(keySelector);
+   }
+
+   IQueryable<TEntity> ITenantRepository.Query<TEntity>(Expression<Func<TEntity, bool>>? predicate)
         where TEntity : class
     {
         return predicate == default

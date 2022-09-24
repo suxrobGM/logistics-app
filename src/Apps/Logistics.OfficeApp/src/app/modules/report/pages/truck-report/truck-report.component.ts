@@ -12,9 +12,10 @@ import { DateUtils } from '@shared/utils';
 })
 export class TruckReportComponent implements OnInit {
   public id!: string;
-  public isBusy: boolean;
-  public truck!: Truck;
-  public truckGrosses!: TruckGrosses;
+  public isLoadingData: boolean;
+  public isLoadingChartData: boolean;
+  public truck?: Truck;
+  public truckGrosses?: TruckGrosses;
   public rpmCurrent: number;
   public rpmAllTime: number;
   public chartData: any;
@@ -26,7 +27,8 @@ export class TruckReportComponent implements OnInit {
     private dateUtils: DateUtils,
     private distanceUnit: DistanceUnitPipe) 
   {
-    this.isBusy = false;
+    this.isLoadingData = false;
+    this.isLoadingChartData = false;
     this.rpmCurrent = 0;
     this.rpmAllTime = 0;
 
@@ -54,20 +56,24 @@ export class TruckReportComponent implements OnInit {
       this.id = params['id'];
     });
 
-    this.isBusy = true;
     this.fetchTruck();
     this.fetchTruckGrosses();
   }
 
   private fetchTruck() {
+    this.isLoadingData = true;
+
     this.apiService.getTruck(this.id).subscribe(result => {
       if (result.success && result.value) {
         this.truck = result.value;
       }
+
+      this.isLoadingData = false;
     });
   }
 
   private fetchTruckGrosses() {
+    this.isLoadingChartData = true;
     const oneMonthAgo = this.dateUtils.daysAgo(30);
 
     this.apiService.getTruckGrosses(this.id, oneMonthAgo).subscribe(result => {
@@ -83,7 +89,7 @@ export class TruckReportComponent implements OnInit {
         this.drawChart(truckGrosses.grosses!);
       }
 
-      this.isBusy = false;
+      this.isLoadingChartData = false;
     });
   }
 

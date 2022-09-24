@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MonthlyGrosses } from '@shared/models';
+import { MonthlyGrosses, OverallStats } from '@shared/models';
 import { DistanceUnitPipe } from '@shared/pipes';
 import { ApiService } from '@shared/services';
 import { DateUtils } from '@shared/utils';
@@ -10,8 +10,10 @@ import { DateUtils } from '@shared/utils';
   styleUrls: ['./overview.component.scss']
 })
 export class ReportPageComponent implements OnInit {
-  public isBusy: boolean;
+  public isLoadingData: boolean;
+  public isLoadingChartData: boolean;
   public rpm: number;
+  public overallStats?: OverallStats;
   public chartData: any;
   public chartOptions: any;
 
@@ -21,7 +23,8 @@ export class ReportPageComponent implements OnInit {
     private distanceUnit: DistanceUnitPipe
   )
   {
-    this.isBusy = false;
+    this.isLoadingData = false;
+    this.isLoadingChartData = false;
     this.rpm = 0;
 
     this.chartData = {
@@ -44,21 +47,36 @@ export class ReportPageComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.isBusy = true;
+    this.fetchOverallStats();
     this.fetchMonthlyGrosses();
   }
 
-  private fetchMonthlyGrosses() {
-    const thisYear = this.dateUtils.thisYear();
-    this.apiService.getMonthlyGrosses(thisYear)
-      .subscribe(result => {
-        if (result.success && result.value) {
-          const monthlyGrosses = result.value;
-          this.drawChart(monthlyGrosses);
-        }
+  private fetchOverallStats() {
+    this.isLoadingData = true;
 
-        this.isBusy = false;
-      });
+    this.apiService.getOverallStats().subscribe(result => {
+      if (result.success && result.value) {
+        const stats = result.value;
+        this.overallStats = result.value;
+        this.rpm = stats.incomeAllTime / this.toMi(stats.distanceAllTime);
+      }
+
+      this.isLoadingData = false;
+    });
+  }
+
+  private fetchMonthlyGrosses() {
+    this.isLoadingChartData = true;
+    const thisYear = this.dateUtils.thisYear();
+
+    this.apiService.getMonthlyGrosses(thisYear).subscribe(result => {
+      if (result.success && result.value) {
+        const monthlyGrosses = result.value;
+        this.drawChart(monthlyGrosses);
+      }
+
+      this.isLoadingChartData = false;
+    });
   }
 
   private drawChart(grosses: MonthlyGrosses) {

@@ -12,7 +12,25 @@ public interface IRepository
     IUnitOfWork UnitOfWork { get; }
     
     /// <summary>
-    /// Get entity object by its ID.
+    /// Asynchronously counts number of entities.
+    /// </summary>
+    /// <param name="predicate">Predicate to filter query</param>
+    /// <typeparam name="TEntity">Class that implements the <see cref="IAggregateRoot"/> interface</typeparam>
+    /// <returns>Number of elements that satisfies the specified condition</returns>
+    Task<int> CountAsync<TEntity>(Expression<Func<TEntity, bool>>? predicate = default)
+        where TEntity: class, IAggregateRoot;
+    
+    /// <summary>
+    /// Asynchronously computes the sum of a sequence of values
+    /// </summary>
+    /// <param name="selector">A projection function to apply to each element</param>
+    /// <typeparam name="TEntity">Class that implements the <see cref="IAggregateRoot"/> interface</typeparam>
+    /// <returns>The sum of the projected values</returns>
+    Task<double> SumAsync<TEntity>(Expression<Func<TEntity, double>> selector)
+        where TEntity: class, IAggregateRoot;
+    
+    /// <summary>
+    /// Gets an entity object by ID.
     /// </summary>
     /// <param name="id">Entity primary key</param>
     /// <typeparam name="TEntity">Class that implements the <see cref="IAggregateRoot"/> interface</typeparam>
@@ -21,7 +39,7 @@ public interface IRepository
         where TEntity: class, IAggregateRoot;
 
     /// <summary>
-    /// Get entity object by predicate.
+    /// Gets an entity object filtered by predicate.
     /// </summary>
     /// <param name="predicate">Predicate to filter query</param>
     /// <typeparam name="TEntity">Class that implements the <see cref="IAggregateRoot"/> interface</typeparam>
@@ -30,16 +48,29 @@ public interface IRepository
         where TEntity: class, IAggregateRoot;
 
     /// <summary>
-    /// Get list of entity objects
+    /// Gets a list of the entity objects
     /// </summary>
     /// <param name="predicate">Predicate to filter query</param>
     /// <typeparam name="TEntity">Class that implements the <see cref="IAggregateRoot"/> interface</typeparam>
     /// <returns>List of entity objects</returns>
-    Task<IList<TEntity>> GetListAsync<TEntity>(Expression<Func<TEntity, bool>>? predicate = default)
+    Task<List<TEntity>> GetListAsync<TEntity>(Expression<Func<TEntity, bool>>? predicate = default)
         where TEntity: class, IAggregateRoot;
+    
+    /// <summary>
+    /// Gets a dictionary of the entities and specified keys.
+    /// </summary>
+    /// <param name="keySelector">Key selector</param>
+    /// <param name="predicate">Predicate to filter query</param>
+    /// <typeparam name="TEntity">Class that implements the <see cref="IAggregateRoot"/> interface</typeparam>
+    /// <typeparam name="TKey">Key</typeparam>
+    Task<Dictionary<TKey, TEntity>> GetDictionaryAsync<TKey, TEntity>(
+        Func<TEntity, TKey> keySelector,
+        Expression<Func<TEntity, bool>>? predicate = default)
+        where TEntity : class, IAggregateRoot
+        where TKey : notnull;
 
     /// <summary>
-    /// Get IQueryable entity objects.
+    /// Gets IQueryable entity objects.
     /// </summary>
     /// <param name="predicate">Predicate to filter query</param>
     /// <typeparam name="TEntity">Class that implements the <see cref="IAggregateRoot"/> interface</typeparam>
@@ -48,7 +79,7 @@ public interface IRepository
         where TEntity: class, IAggregateRoot;
 
     /// <summary>
-    /// Add new entry to database.
+    /// Adds new entry to database.
     /// </summary>
     /// <param name="entity">Entity object</param>
     /// <typeparam name="TEntity">Class that implements the <see cref="IAggregateRoot"/> interface</typeparam>
@@ -56,7 +87,7 @@ public interface IRepository
         where TEntity: class, IAggregateRoot;
 
     /// <summary>
-    /// Update existing entry.
+    /// Updates existing entry.
     /// </summary>
     /// <param name="entity">Entity object</param>
     /// <typeparam name="TEntity">Class that implements the <see cref="IAggregateRoot"/> interface</typeparam>
@@ -64,7 +95,7 @@ public interface IRepository
         where TEntity: class, IAggregateRoot;
 
     /// <summary>
-    /// Delete entity object from database.
+    /// Deletes entity object from database.
     /// </summary>
     /// <param name="entity">Entity object</param>
     /// <typeparam name="TEntity">Class that implements the <see cref="IAggregateRoot"/> interface</typeparam>

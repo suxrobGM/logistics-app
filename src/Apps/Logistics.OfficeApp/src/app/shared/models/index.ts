@@ -15,6 +15,7 @@ import { TruckGrosses } from './truckGrosses';
 import { LoadStatus } from './loadStatus';
 import { MonthlyGrosses } from './monthlyGrosses';
 import { MonthlyGross } from './monthlyGross';
+import { OverallStats } from './overallStats';
 
 export {
   DataResult,
@@ -33,5 +34,6 @@ export {
   DailyGrosses,
   MonthlyGross,
   MonthlyGrosses,
-  TruckGrosses
+  TruckGrosses,
+  OverallStats
 }
