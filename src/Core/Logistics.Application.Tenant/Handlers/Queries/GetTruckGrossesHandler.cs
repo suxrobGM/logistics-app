@@ -38,7 +38,7 @@ internal sealed class GetTruckGrossesHandler : RequestHandlerBase<GetTruckGrosse
             dict[key].Distance += load.Distance;
         }
 
-        dailyGrosses.Days = dict.Values;
+        dailyGrosses.Dates = dict.Values;
         var totalDistanceAllTime = 0d;
         var totalIncomeAllTime = 0d;
 

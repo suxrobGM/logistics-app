@@ -41,7 +41,7 @@ export class ListEmployeeComponent implements OnInit {
     const page = event.first! / event.rows! + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField, event.sortOrder);
     
-    this.apiService.getEmployees('', sortField, page).subscribe(result => {
+    this.apiService.getEmployees('', sortField, page, event.rows).subscribe(result => {
       if (result.success && result.items) {        
         this.employees = result.items;
         this.totalRecords = result.itemsCount!;

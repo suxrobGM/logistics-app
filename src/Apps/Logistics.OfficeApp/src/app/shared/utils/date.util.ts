@@ -20,11 +20,11 @@ export class DateUtils {
   }
 
   /**
-   * Gets a day of the specified date.
+   * Gets the day-of-the-month.
    * @param dateStr Date value in string format
    */
-  getDay(dateStr: string | Date): number {
-    return new Date(dateStr).getDay();
+  getDate(dateStr: string | Date): number {
+    return new Date(dateStr).getDate();
   }
 
   getMonthName(month: number | Date): string {

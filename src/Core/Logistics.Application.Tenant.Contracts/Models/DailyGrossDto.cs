@@ -2,17 +2,17 @@
 
 public record DailyGrossDto
 {
-    public DailyGrossDto(DateTime day)
+    public DailyGrossDto(DateTime date)
     {
-        Day = day;
+        Date = date;
     }
     
     public DailyGrossDto(int year, int month, int day)
     {
-        Day = new DateTime(year, month, day);
+        Date = new DateTime(year, month, day);
     }
     
-    public DateTime Day { get; set; }
+    public DateTime Date { get; set; }
     public double Income { get; set; }
     public double Distance { get; set; }
 }

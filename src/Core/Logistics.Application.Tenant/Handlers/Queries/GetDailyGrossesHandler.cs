@@ -33,7 +33,7 @@ internal sealed class GetDailyGrossesHandler : RequestHandlerBase<GetDailyGrosse
             dict[key].Distance += load.Distance;
         }
 
-        dailyGrosses.Days = dict.Values;
+        dailyGrosses.Dates = dict.Values;
         return Task.FromResult(DataResult<DailyGrossesDto>.CreateSuccess(dailyGrosses));
     }
 

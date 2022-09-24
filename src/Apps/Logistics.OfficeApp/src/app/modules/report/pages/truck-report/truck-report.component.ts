@@ -97,8 +97,8 @@ export class TruckReportComponent implements OnInit {
     const labels = new Array<string>();
     const data = new Array<number>();
     
-    grosses.days.forEach(i => {
-      labels.push(this.dateUtils.toLocaleDate(i.day));
+    grosses.dates.forEach(i => {
+      labels.push(this.dateUtils.toLocaleDate(i.date));
       data.push(i.income);
     });
 

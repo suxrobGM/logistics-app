@@ -106,8 +106,8 @@ export class DashboardPageComponent implements OnInit {
     const labels = new Array<string>();
     const data = new Array<number>();
     
-    grosses.days.forEach(i => {
-      labels.push(this.dateUtils.toLocaleDate(i.day));
+    grosses.dates.forEach(i => {
+      labels.push(this.dateUtils.toLocaleDate(i.date));
       data.push(i.income);
     });
 
@@ -130,8 +130,8 @@ export class DashboardPageComponent implements OnInit {
     const today = new Date();
     let totalGross = 0;
 
-    grosses.days
-      .filter(i => this.dateUtils.getDay(i.day) === today.getDay())
+    grosses.dates
+      .filter(i => this.dateUtils.getDate(i.date) === today.getDate())
       .forEach(i => totalGross += i.income);
 
     this.todayGross = totalGross;

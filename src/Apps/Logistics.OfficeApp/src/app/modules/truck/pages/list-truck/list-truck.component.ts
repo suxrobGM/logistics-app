@@ -41,7 +41,7 @@ export class ListTruckComponent implements OnInit {
     const page = event.first! / event.rows! + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField, event.sortOrder);
     
-    this.apiService.getTrucks('', sortField, page).subscribe(result => {
+    this.apiService.getTrucks('', sortField, page, event.rows).subscribe(result => {
       if (result.success && result.items) {
         this.trucks = result.items;
         this.totalRecords = result.itemsCount!;

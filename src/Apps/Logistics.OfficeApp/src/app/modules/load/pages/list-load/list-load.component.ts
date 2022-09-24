@@ -14,14 +14,12 @@ export class ListLoadComponent implements OnInit {
   isBusy: boolean;
   totalRecords: number;
   first: number;
-  pageSize: number;
 
   constructor(private apiService: ApiService) {
     this.loads = [];
     this.isBusy = false;
     this.totalRecords = 0;
     this.first = 0;
-    this.pageSize = 20;
   }
 
   ngOnInit(): void {
@@ -42,10 +40,9 @@ export class ListLoadComponent implements OnInit {
   load(event: LazyLoadEvent) {
     this.isBusy = true;
     const page = event.first! / event.rows! + 1;
-    const pageSize = this.pageSize;
     const sortField = this.apiService.parseSortProperty(event.sortField, event.sortOrder);
     
-    this.apiService.getLoads('', sortField, page, pageSize).subscribe(result => {
+    this.apiService.getLoads('', sortField, page, event.rows).subscribe(result => {
       if (result.success && result.items) {
         this.loads = result.items;
         this.totalRecords = result.itemsCount!;
