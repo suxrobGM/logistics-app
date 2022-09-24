@@ -32,5 +32,11 @@ export class HomeComponent implements OnInit {
     this.oidcService.isAuthenticated$.subscribe(({isAuthenticated}) => {
       this.isAuthenticated = isAuthenticated;
     });
+
+    this.oidcService.isAuthenticated().subscribe(isAuthenticated => {
+      if (isAuthenticated) {
+        this.router.navigateByUrl('/dashboard');
+      }
+    });
   }
 }
