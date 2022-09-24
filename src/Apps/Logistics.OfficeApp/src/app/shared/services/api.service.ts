@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MessageService } from 'primeng/api';
-import { catchError, Observable, of, retry } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 import { AppConfig } from '../../configs/app.config';
 import { TenantService  } from './tenant.service';
 import {
@@ -24,7 +24,6 @@ import {
 })
 export class ApiService {
   private host = AppConfig.apiHost;
-  private retryCount = 0;
 
   constructor(
     private httpClient: HttpClient,
@@ -40,7 +39,7 @@ export class ApiService {
     const url = `${this.host}/tenant/displayName/${tenantId}`;
     return this.httpClient
       .get<DataResult<any>>(url)
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   //#endregion
@@ -60,7 +59,7 @@ export class ApiService {
       const url = `${this.host}/user/list?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
       return this.httpClient
         .get<PagedDataResult<User>>(url)
-        .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+        .pipe(catchError((err) => this.handleError(err)));
     }
 
   //#endregion
@@ -72,7 +71,7 @@ export class ApiService {
     const url = `${this.host}/load/${id}`;
     return this.httpClient
       .get<DataResult<Load>>(url)
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   getLoads(searchQuery = '', orderBy = '', page = 1, pageSize = 10): Observable<PagedDataResult<Load>> { 
@@ -87,7 +86,7 @@ export class ApiService {
     const url = `${this.host}/load/list?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
     return this.httpClient
       .get<PagedDataResult<Load>>(url)
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   createLoad(load: Load): Observable<DataResult<any>> {  
@@ -97,7 +96,7 @@ export class ApiService {
 
     return this.httpClient
       .post<DataResult<any>>(url, body, { headers: headers })
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   updateLoad(load: Load): Observable<DataResult<any>> {  
@@ -107,7 +106,7 @@ export class ApiService {
 
     return this.httpClient
       .put<DataResult<any>>(url, body, { headers: headers })
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   deleteLoad(loadId: string): Observable<DataResult<any>> {  
@@ -115,7 +114,7 @@ export class ApiService {
 
     return this.httpClient
       .delete<DataResult<any>>(url)
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   //#endregion
@@ -127,7 +126,7 @@ export class ApiService {
     const url = `${this.host}/truck/${id}`;
     return this.httpClient
       .get<DataResult<Truck>>(url)
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   getTrucks(searchQuery = '', orderBy = '', page = 1, pageSize = 10): Observable<PagedDataResult<Truck>> {  
@@ -142,7 +141,7 @@ export class ApiService {
     const url = `${this.host}/truck/list?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
     return this.httpClient
       .get<PagedDataResult<Truck>>(url)
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   createTruck(truck: Truck): Observable<DataResult<any>> {  
@@ -152,7 +151,7 @@ export class ApiService {
 
     return this.httpClient
       .post<DataResult<any>>(url, body, { headers: headers })
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   updateTruck(truck: Truck): Observable<DataResult<any>> {  
@@ -162,7 +161,7 @@ export class ApiService {
 
     return this.httpClient
       .put<DataResult<any>>(url, body, { headers: headers })
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   deleteTruck(truckId: string): Observable<DataResult<any>> {  
@@ -170,7 +169,7 @@ export class ApiService {
 
     return this.httpClient
       .delete<DataResult<any>>(url)
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   //#endregion
@@ -182,7 +181,7 @@ export class ApiService {
     const url = `${this.host}/employee/${id}`;
     return this.httpClient
       .get<DataResult<Employee>>(url)
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   getEmployees(searchQuery = '', orderBy = '', page = 1, pageSize = 10): Observable<PagedDataResult<Employee>> {
@@ -197,7 +196,7 @@ export class ApiService {
     const url = `${this.host}/employee/list?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
     return this.httpClient
       .get<PagedDataResult<Employee>>(url)
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   getDrivers(searchQuery = '', page = 1, pageSize = 10): Observable<PagedDataResult<Employee>> {  
@@ -208,7 +207,7 @@ export class ApiService {
     const url = `${this.host}/employee/drivers?search=${searchQuery}&page=${page}&pageSize=${pageSize}`;
     return this.httpClient
       .get<PagedDataResult<Employee>>(url)
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   createEmployee(employee: Employee): Observable<DataResult<any>> {  
@@ -218,7 +217,7 @@ export class ApiService {
 
     return this.httpClient
       .post<DataResult<any>>(url, body, { headers: headers })
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   updateEmployee(employee: Employee): Observable<DataResult<any>> {  
@@ -228,7 +227,7 @@ export class ApiService {
 
     return this.httpClient
       .put<DataResult<any>>(url, body, { headers: headers })
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   deleteEmployee(employeeId: string): Observable<DataResult<any>> {  
@@ -236,7 +235,7 @@ export class ApiService {
 
     return this.httpClient
       .delete<DataResult<any>>(url)
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   //#endregion
@@ -252,7 +251,7 @@ export class ApiService {
     const url = `${this.host}/tenantRole/list?search=${searchQuery}&page=${page}&pageSize=${pageSize}`;
     return this.httpClient
       .get<PagedDataResult<Role>>(url)
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   //#endregion
@@ -264,7 +263,7 @@ export class ApiService {
 
     return this.httpClient
       .get<DataResult<OverallStats>>(url)
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   getDailyGrosses(startDate: Date, endDate?: Date): Observable<DataResult<DailyGrosses>> {
@@ -276,7 +275,7 @@ export class ApiService {
 
     return this.httpClient
       .get<DataResult<DailyGrosses>>(url)
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   getMonthlyGrosses(startDate: Date, endDate?: Date): Observable<DataResult<MonthlyGrosses>> {
@@ -288,7 +287,7 @@ export class ApiService {
 
     return this.httpClient
       .get<DataResult<MonthlyGrosses>>(url)
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   getTruckGrosses(truckId: string, startDate: Date, endDate?: Date): Observable<DataResult<TruckGrosses>> {
@@ -300,7 +299,7 @@ export class ApiService {
 
     return this.httpClient
       .get<DataResult<DailyGrosses>>(url)
-      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   //#endregion

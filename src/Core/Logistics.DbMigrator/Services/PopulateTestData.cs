@@ -184,7 +184,7 @@ internal class PopulateTestData
         var tenantRepository = _serviceProvider.GetRequiredService<ITenantRepository>();
         var loadsDb = await tenantRepository.GetListAsync<Load>();
 
-        for (ulong i = 1; i <= 30; i++)
+        for (ulong i = 1; i <= 100; i++)
         {
             var refId = 100_000 + i;
             var load = loadsDb.FirstOrDefault(m => m.RefId == refId);
@@ -194,7 +194,7 @@ internal class PopulateTestData
 
             var truck = PickRandom(trucks);
             var dispatcher = PickRandom(employees.Dispatchers);
-            var pickupDate = RandomDate(DateTime.Today.AddDays(-10), DateTime.Today.AddDays(-1));
+            var pickupDate = RandomDate(DateTime.Today.AddMonths(-6), DateTime.Today.AddDays(-1));
 
             load = new Load
             {

@@ -13,7 +13,7 @@
   <div class="row">
     <div class="col-12">
       <p-table [value]="loads" responsiveLayout="scroll" [lazy]="true" [paginator]="true" [showCurrentPageReport]="true"
-        (onLazyLoad)="load($event)" [rows]="10" [(first)]="first" [totalRecords]="totalRecords" [loading]="isBusy">
+        (onLazyLoad)="load($event)" [rows]="pageSize" [(first)]="first" [totalRecords]="totalRecords" [loading]="isBusy">
         <ng-template pTemplate="caption">
           <div class="d-flex">
             <span class="p-input-icon-left">
