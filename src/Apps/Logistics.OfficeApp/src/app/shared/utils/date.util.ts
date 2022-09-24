@@ -4,10 +4,19 @@
 export class DateUtils {
   /**
    * Gets a today's date value.
-   * @returns 
    */
   today(): Date {
     return new Date();
+  }
+
+  /**
+   * Gets this year with the specified month.
+   * @param month Month from 0 to 11
+   */
+  thisYear(month = 0): Date {
+    const today = this.today();
+    const year = today.getFullYear();
+    return new Date(year, month);
   }
 
   /**

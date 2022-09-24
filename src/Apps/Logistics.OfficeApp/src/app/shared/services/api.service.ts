@@ -14,7 +14,8 @@ import {
   Load,
   Role,
   DailyGrosses,
-  TruckGrosses
+  TruckGrosses,
+  MonthlyGrosses
 } from '../models';
 
 @Injectable({
@@ -266,6 +267,18 @@ export class ApiService {
 
     return this.httpClient
       .get<DataResult<DailyGrosses>>(url)
+      .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
+  }
+
+  getMonthlyGrosses(startDate: Date, endDate?: Date): Observable<DataResult<MonthlyGrosses>> {
+    let url = `${this.host}/report/getMonthlyGrosses?startDate=${startDate.toJSON()}`;
+
+    if (endDate) {
+      url += `&endDate=${endDate.toJSON()}`;
+    }
+
+    return this.httpClient
+      .get<DataResult<MonthlyGrosses>>(url)
       .pipe(retry(this.retryCount), catchError((err) => this.handleError(err)));
   }
 

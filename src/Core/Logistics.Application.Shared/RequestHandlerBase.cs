@@ -13,14 +13,14 @@ public abstract class RequestHandlerBase<TRequest, TResponse> : IRequestHandler<
         {
             if (!Validate(request, out var error))
             {
-                return Task.FromResult<TResponse>(new() { Error = error });
+                return Task.FromResult<TResponse>(new TResponse { Error = error });
             }
 
             return HandleValidated(request, cancellationToken);
         }
         catch (InvalidTenantException ex)
         {
-            return Task.FromResult<TResponse>(new() { Error = ex.Message });
+            return Task.FromResult<TResponse>(new TResponse { Error = ex.Message });
         }
     }
 

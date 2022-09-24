@@ -2,16 +2,53 @@
 
 public static class DateTimeExtensions
 {
-    public static DateOnly? ToDateOnly(this DateTime? dateTime)
+    public static IEnumerable<(int Year, int Month)> MonthsBetween(
+        this DateTime startDate,
+        DateTime endDate)
     {
-        if (dateTime.HasValue)
-            return DateOnly.FromDateTime(dateTime.Value);
+        DateTime iterator;
+        DateTime limit;
 
-        return null;
+        if (endDate > startDate)
+        {
+            iterator = new DateTime(startDate.Year, startDate.Month, 1);
+            limit = endDate;
+        }
+        else
+        {
+            iterator = new DateTime(endDate.Year, endDate.Month, 1);
+            limit = startDate;
+        }
+        
+        while (iterator <= limit)
+        {
+            yield return (iterator.Year, iterator.Month);
+            iterator = iterator.AddMonths(1);
+        }
     }
-
-    public static DateOnly ToDateOnly(this DateTime dateTime)
+    
+    public static IEnumerable<(int Year, int Month, int Day)> DaysBetween(
+        this DateTime startDate,
+        DateTime endDate)
     {
-        return DateOnly.FromDateTime(dateTime);
+        DateTime iterator;
+        DateTime limit;
+
+        if (endDate > startDate)
+        {
+            iterator = startDate;
+            limit = endDate;
+        }
+        else
+        {
+            iterator = endDate;
+            limit = startDate;
+        }
+        
+        while (iterator <= limit)
+        {
+            yield return (iterator.Year, iterator.Month, iterator.Day);
+            iterator = iterator.AddDays(1);
+        }
     }
 }

@@ -4,7 +4,7 @@ import { PrimengModule } from './primeng.module';
 import { SharedModule } from '@shared/shared.module';
 import { ReportRoutingModule } from './report-routing.module';
 import { TruckReportComponent } from './pages/truck-report/truck-report.component';
-import { ReportPageComponent } from './pages/overview/overviewcomponent';
+import { ReportPageComponent } from './pages/overview/overview.component';
 
 @NgModule({
   declarations: [

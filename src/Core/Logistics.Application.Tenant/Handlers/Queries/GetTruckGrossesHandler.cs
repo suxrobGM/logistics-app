@@ -18,49 +18,42 @@ internal sealed class GetTruckGrossesHandler : RequestHandlerBase<GetTruckGrosse
             return DataResult<TruckGrossesDto>.CreateError("Could not find the specified truck");
         
         var spec = new FilterLoadsByIntervalAndTruck(truck.Id, req.StartDate, req.EndDate);
-        var dailyGrossesDict = new Dictionary<string, DailyGrossDto>();
-        var days = req.EndDate.Subtract(req.StartDate).Days;
+        var dailyGrosses = new DailyGrossesDto();
+        var days = req.StartDate.DaysBetween(req.EndDate);
+        var dict = days.ToDictionary(
+            k => (k.Year, k.Month, k.Day), 
+            m => new DailyGrossDto(m.Year, m.Month, m.Day));
         
         var filteredLoads = _tenantRepository.ApplySpecification(spec).ToArray();
 
-        for (var i = 1; i <= days; i++)
-        {
-            var date = req.StartDate.AddDays(i);
-            dailyGrossesDict.Add(date.ToShortDateString(), new DailyGrossDto(date));
-        }
-
         foreach (var load in filteredLoads)
         {
-            var date = load.DeliveryDate?.ToShortDateString() ?? "";
+            var date = load.DeliveryDate!.Value;
+            var key = (date.Year, date.Month, date.Day);
 
-            if (!dailyGrossesDict.ContainsKey(date)) 
+            if (!dict.ContainsKey(key)) 
                 continue;
             
-            dailyGrossesDict[date].Gross += load.DeliveryCost;
-            dailyGrossesDict[date].Distance += load.Distance;
+            dict[key].Gross += load.DeliveryCost;
+            dict[key].Distance += load.Distance;
         }
 
-        var grossesForInterval = new DailyGrossesDto
-        {
-            Days = dailyGrossesDict.Values
-        };
+        dailyGrosses.Days = dict.Values;
+        var totalDistanceAllTime = 0d;
+        var totalGrossAllTime = 0d;
 
-        var sum = truck.Loads
-            .Where(i => i.DeliveryDate.HasValue)
-            .GroupBy(_ => 1)
-            .Select(i => new
-            {
-                TotalDistance = i.Sum(m => m.Distance),
-                TotalGross = i.Sum(m => m.DeliveryCost)
-            })
-            .FirstOrDefault();
+        foreach (var load in truck.Loads.Where(i => i.DeliveryDate.HasValue))
+        {
+            totalDistanceAllTime += load.Distance;
+            totalGrossAllTime += load.DeliveryCost;
+        }
 
         var truckGrosses = new TruckGrossesDto
         {
             TruckId = truck.Id,
-            Grosses = grossesForInterval,
-            TotalDistanceAllTime = sum?.TotalDistance ?? 0,
-            TotalGrossAllTime = sum?.TotalGross ?? 0
+            Grosses = dailyGrosses,
+            TotalDistanceAllTime = totalDistanceAllTime,
+            TotalGrossAllTime = totalGrossAllTime
         };
 
         return DataResult<TruckGrossesDto>.CreateSuccess(truckGrosses);

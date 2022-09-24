@@ -19,6 +19,7 @@ Change tenants' databases configuration in the [Web API appsettings.json](./src/
 ### 4. Seed databases 
 
 First, you need to update the `DbMigrator` project configurations in the [appsettings.json](./src/Core/Logistics.DbMigrator/appsettings.json). Modify the `ConnectionStrings` and `TenantsConfig` sections. For testing purposes, you can populate databases with test data, so change the `PopulateTestData` to `true`.
+
 Then run the following script to initialize and populate databases.
 ```
 $ ./scripts/seed-databases.bat

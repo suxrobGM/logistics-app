@@ -68,6 +68,8 @@ export class DashboardPageComponent implements OnInit {
       center: [-74.5, 40],
       zoom: 6
     });
+
+    //this.map.on('load', ())
   }
 
   private fetchLatestLoads() {
@@ -105,7 +107,7 @@ export class DashboardPageComponent implements OnInit {
     const data = new Array<number>();
     
     grosses.days.forEach(i => {
-      labels.push(this.dateUtils.toLocaleDate(i.date));
+      labels.push(this.dateUtils.toLocaleDate(i.day));
       data.push(i.gross);
     });
 
@@ -129,7 +131,7 @@ export class DashboardPageComponent implements OnInit {
     let totalGross = 0;
 
     grosses.days
-      .filter(i => this.dateUtils.getDay(i.date) === today.getDay())
+      .filter(i => this.dateUtils.getDay(i.day) === today.getDay())
       .forEach(i => totalGross += i.gross);
 
     this.todayGross = totalGross;

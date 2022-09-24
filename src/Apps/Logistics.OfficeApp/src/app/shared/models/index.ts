@@ -13,6 +13,8 @@ import { DailyGrosses } from './dailyGrosses';
 import { DailyGross } from './dailyGross';
 import { TruckGrosses } from './truckGrosses';
 import { LoadStatus } from './loadStatus';
+import { MonthlyGrosses } from './monthlyGrosses';
+import { MonthlyGross } from './monthlyGross';
 
 export {
   DataResult,
@@ -27,7 +29,9 @@ export {
   User,
   UserIdentity,
   Role,
-  DailyGrosses,
   DailyGross,
+  DailyGrosses,
+  MonthlyGross,
+  MonthlyGrosses,
   TruckGrosses
 }

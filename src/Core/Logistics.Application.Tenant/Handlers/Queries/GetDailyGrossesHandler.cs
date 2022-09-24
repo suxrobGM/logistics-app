@@ -13,34 +13,28 @@ internal sealed class GetDailyGrossesHandler : RequestHandlerBase<GetDailyGrosse
         GetDailyGrossesQuery req, CancellationToken cancellationToken)
     {
         var spec = new FilterLoadsByInterval(req.StartDate, req.EndDate);
-        var dailyGrossesDict = new Dictionary<string, DailyGrossDto>();
-        var days = req.EndDate.Subtract(req.StartDate).Days;
+        var dailyGrosses = new DailyGrossesDto();
+        var days = req.StartDate.DaysBetween(req.EndDate);
+        var dict = days.ToDictionary(
+            k => (k.Year, k.Month, k.Day), 
+            m => new DailyGrossDto(m.Year, m.Month, m.Day));
         
         var filteredLoads = _tenantRepository.ApplySpecification(spec).ToArray();
 
-        for (var i = 1; i <= days; i++)
-        {
-            var date = req.StartDate.AddDays(i);
-            dailyGrossesDict.Add(date.ToShortDateString(), new DailyGrossDto(date));
-        }
-
         foreach (var load in filteredLoads)
         {
-            var date = load.DeliveryDate?.ToShortDateString() ?? "";
+            var date = load.DeliveryDate!.Value;
+            var key = (date.Year, date.Month, date.Day);
 
-            if (!dailyGrossesDict.ContainsKey(date)) 
+            if (!dict.ContainsKey(key)) 
                 continue;
             
-            dailyGrossesDict[date].Gross += load.DeliveryCost;
-            dailyGrossesDict[date].Distance += load.Distance;
+            dict[key].Gross += load.DeliveryCost;
+            dict[key].Distance += load.Distance;
         }
 
-        var grossesForInterval = new DailyGrossesDto
-        {
-            Days = dailyGrossesDict.Values
-        };
-
-        return Task.FromResult(DataResult<DailyGrossesDto>.CreateSuccess(grossesForInterval));
+        dailyGrosses.Days = dict.Values;
+        return Task.FromResult(DataResult<DailyGrossesDto>.CreateSuccess(dailyGrosses));
     }
 
     protected override bool Validate(GetDailyGrossesQuery request, out string errorDescription)
