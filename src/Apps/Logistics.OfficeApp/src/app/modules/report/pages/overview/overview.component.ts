@@ -95,9 +95,8 @@ export class ReportPageComponent implements OnInit {
           label: 'Monthly Gross',
           data: data,
           fill: true,
-          borderColor: '#EC407A',
           tension: 0.4,
-          backgroundColor: '#EC407A'
+          backgroundColor: '#88a5d3'
         }
       ]
     }

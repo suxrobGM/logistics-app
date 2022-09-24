@@ -109,9 +109,9 @@ export class TruckReportComponent implements OnInit {
           label: 'Daily Gross',
           data: data,
           fill: true,
-          borderColor: '#FFA726',
           tension: 0.4,
-          backgroundColor: '#F8E6CA'
+          borderColor: '#405a83',
+          backgroundColor: '#88a5d3'
         }
       ]
     }
