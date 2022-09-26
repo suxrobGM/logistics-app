@@ -5,22 +5,23 @@ namespace Logistics.Application.Handlers.Commands;
 internal sealed class CreateTenantHandler : RequestHandlerBase<CreateTenantCommand, DataResult>
 {
     private readonly IDatabaseProviderService _databaseProvider;
-    private readonly IMapper _mapper;
     private readonly IMainRepository _repository;
 
     public CreateTenantHandler(
         IDatabaseProviderService databaseProvider,
-        IMapper mapper,
         IMainRepository repository)
     {
         _databaseProvider = databaseProvider;
-        _mapper = mapper;
         _repository = repository;
     }
 
-    protected override async Task<DataResult> HandleValidated(CreateTenantCommand request, CancellationToken cancellationToken)
+    protected override async Task<DataResult> HandleValidated(CreateTenantCommand req, CancellationToken cancellationToken)
     {
-        var tenant = _mapper.Map<Tenant>(request);
+        var tenant = new Tenant
+        {
+            Name = req.Name?.Trim().ToLower(),
+            DisplayName = req.DisplayName
+        };
         tenant.Name = tenant.Name?.Trim().ToLower();
         tenant.ConnectionString = _databaseProvider.GenerateConnectionString($"u1002275_{tenant.Name}_logistics"); // TODO: remove prefix u1002275_ later 
 

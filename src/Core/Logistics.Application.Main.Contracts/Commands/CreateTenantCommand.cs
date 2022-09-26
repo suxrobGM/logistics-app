@@ -7,7 +7,4 @@ public sealed class CreateTenantCommand : RequestBase<DataResult>
     
     [StringLength(TenantConsts.DisplayNameLength)]
     public string? DisplayName { get; set; }
-    
-    [Required]
-    public string? ConnectionString { get; set; }
 }
