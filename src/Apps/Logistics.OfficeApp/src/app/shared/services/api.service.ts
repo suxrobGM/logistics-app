@@ -14,7 +14,6 @@ import {
   Load,
   Role,
   DailyGrosses,
-  TruckGrosses,
   MonthlyGrosses,
   OverallStats
 } from '../models';
@@ -266,39 +265,33 @@ export class ApiService {
       .pipe(catchError((err) => this.handleError(err)));
   }
 
-  getDailyGrosses(startDate: Date, endDate?: Date): Observable<DataResult<DailyGrosses>> {
+  getDailyGrosses(startDate: Date, endDate?: Date, truckId?: string): Observable<DataResult<DailyGrosses>> {
     let url = `${this.host}/report/getDailyGrosses?startDate=${startDate.toJSON()}`;
 
     if (endDate) {
       url += `&endDate=${endDate.toJSON()}`;
     }
+    if (truckId) {
+      url += `&truckId=${truckId}`;
+    }
 
     return this.httpClient
       .get<DataResult<DailyGrosses>>(url)
       .pipe(catchError((err) => this.handleError(err)));
   }
 
-  getMonthlyGrosses(startDate: Date, endDate?: Date): Observable<DataResult<MonthlyGrosses>> {
+  getMonthlyGrosses(startDate: Date, endDate?: Date, truckId?: string): Observable<DataResult<MonthlyGrosses>> {
     let url = `${this.host}/report/getMonthlyGrosses?startDate=${startDate.toJSON()}`;
 
     if (endDate) {
       url += `&endDate=${endDate.toJSON()}`;
     }
-
-    return this.httpClient
-      .get<DataResult<MonthlyGrosses>>(url)
-      .pipe(catchError((err) => this.handleError(err)));
-  }
-
-  getTruckGrosses(truckId: string, startDate: Date, endDate?: Date): Observable<DataResult<TruckGrosses>> {
-    let url = `${this.host}/report/getTruckGrosses?truckId=${truckId}&startDate=${startDate.toJSON()}`;
-
-    if (endDate) {
-      url += `&endDate=${endDate.toJSON()}`;
+    if (truckId) {
+      url += `&truckId=${truckId}`;
     }
 
     return this.httpClient
-      .get<DataResult<DailyGrosses>>(url)
+      .get<DataResult<MonthlyGrosses>>(url)
       .pipe(catchError((err) => this.handleError(err)));
   }
 

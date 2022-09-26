@@ -18,9 +18,9 @@ export class DashboardPageComponent implements OnInit {
   public weeklyGross: number;
   public weeklyDistance: number;
   public rpm: number;
-  public isLoadingLoads: boolean;
-  public isLoadingMap: boolean;
-  public isLoadingChartData: boolean;
+  public loadingLoads: boolean;
+  public loadingMap: boolean;
+  public loadingChart: boolean;
   public loads: Load[];
   public chartData: any;
   public chartOptions: any;
@@ -31,9 +31,9 @@ export class DashboardPageComponent implements OnInit {
     private distanceUnit: DistanceUnitPipe) 
   {
     this.loads = [];
-    this.isLoadingLoads = false;
-    this.isLoadingMap = false;
-    this.isLoadingChartData = false;
+    this.loadingLoads = false;
+    this.loadingMap = false;
+    this.loadingChart = false;
     this.todayGross = 0;
     this.weeklyGross = 0;
     this.weeklyDistance = 0;
@@ -65,7 +65,7 @@ export class DashboardPageComponent implements OnInit {
   }
 
   private initMapbox() {
-    this.isLoadingMap = true;
+    this.loadingMap = true;
 
     this.map = new mapboxgl.Map({
       container: 'map',
@@ -75,23 +75,23 @@ export class DashboardPageComponent implements OnInit {
       zoom: 6
     });
 
-    this.map.on('load', () => this.isLoadingMap = false);
+    this.map.on('load', () => this.loadingMap = false);
   }
 
   private fetchLatestLoads() {
-    this.isLoadingLoads = true;
+    this.loadingLoads = true;
 
     this.apiService.getLoads('', '-dispatchedDate').subscribe(result => {
       if (result.success && result.items) {
         this.loads = result.items;
       }
 
-      this.isLoadingLoads = false;
+      this.loadingLoads = false;
     });
   }
 
   private fetchLastTenDaysGross() {
-    this.isLoadingChartData = true;
+    this.loadingChart = true;
     const oneWeekAgo = this.dateUtils.daysAgo(7);
 
     this.apiService.getDailyGrosses(oneWeekAgo).subscribe(result => {
@@ -105,7 +105,7 @@ export class DashboardPageComponent implements OnInit {
         this.calcTodayGross(grosses);
       }
 
-      this.isLoadingChartData = false;
+      this.loadingChart = false;
     });
   }
 

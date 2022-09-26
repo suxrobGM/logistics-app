@@ -10,19 +10,19 @@ import { LazyLoadEvent, SortEvent } from 'primeng/api';
 })
 export class ListEmployeeComponent implements OnInit {
   employees: Employee[];
-  isBusy: boolean;
+  loading: boolean;
   totalRecords: number;
   first: number;
 
   constructor(private apiService: ApiService) {
     this.employees = [];
-    this.isBusy = false;
+    this.loading = false;
     this.totalRecords = 0;
     this.first = 0;
   }
 
   ngOnInit(): void {
-    this.isBusy = true;
+    this.loading = true;
   }
 
   search(event: any) {
@@ -37,7 +37,7 @@ export class ListEmployeeComponent implements OnInit {
   }
 
   load(event: LazyLoadEvent) {
-    this.isBusy = true;
+    this.loading = true;
     const page = event.first! / event.rows! + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField, event.sortOrder);
     
@@ -47,7 +47,7 @@ export class ListEmployeeComponent implements OnInit {
         this.totalRecords = result.itemsCount!;
       }
 
-      this.isBusy = false;
+      this.loading = false;
     });
   }
 }

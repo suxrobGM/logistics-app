@@ -15,7 +15,7 @@ export class AddEmployeeComponent implements OnInit {
   public suggestedUsers: User[];
   public form: FormGroup;
   public roles: Role[];
-  public isBusy: boolean;
+  public loading: boolean;
 
   constructor(
     private apiService: ApiService,
@@ -24,7 +24,7 @@ export class AddEmployeeComponent implements OnInit {
   {
     this.suggestedUsers = [];
     this.roles = [];
-    this.isBusy = false;
+    this.loading = false;
 
     this.form = new FormGroup({
       user: new FormControl('', Validators.required),
@@ -60,14 +60,14 @@ export class AddEmployeeComponent implements OnInit {
       role: this.form.value.role
     };
 
-    this.isBusy = true;
+    this.loading = true;
     this.apiService.createEmployee(newEmployee).subscribe(result => {
       if (result.success) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'New employee has been added successfully'});
         this.form.reset();
       }
 
-      this.isBusy = false;
+      this.loading = false;
     });
   }
 

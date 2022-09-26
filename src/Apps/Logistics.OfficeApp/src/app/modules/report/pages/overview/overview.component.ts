@@ -10,8 +10,8 @@ import { DateUtils } from '@shared/utils';
   styleUrls: ['./overview.component.scss']
 })
 export class ReportPageComponent implements OnInit {
-  public isLoadingData: boolean;
-  public isLoadingChartData: boolean;
+  public loadingData: boolean;
+  public loadingChart: boolean;
   public rpm: number;
   public overallStats?: OverallStats;
   public chartData: any;
@@ -23,8 +23,8 @@ export class ReportPageComponent implements OnInit {
     private distanceUnit: DistanceUnitPipe
   )
   {
-    this.isLoadingData = false;
-    this.isLoadingChartData = false;
+    this.loadingData = false;
+    this.loadingChart = false;
     this.rpm = 0;
 
     this.chartData = {
@@ -35,7 +35,7 @@ export class ReportPageComponent implements OnInit {
           data: [] 
         }
       ]
-    },
+    }
 
     this.chartOptions = {
       plugins: {
@@ -52,7 +52,7 @@ export class ReportPageComponent implements OnInit {
   }
 
   private fetchOverallStats() {
-    this.isLoadingData = true;
+    this.loadingData = true;
 
     this.apiService.getOverallStats().subscribe(result => {
       if (result.success && result.value) {
@@ -61,12 +61,12 @@ export class ReportPageComponent implements OnInit {
         this.rpm = stats.incomeAllTime / this.toMi(stats.distanceAllTime);
       }
 
-      this.isLoadingData = false;
+      this.loadingData = false;
     });
   }
 
   private fetchMonthlyGrosses() {
-    this.isLoadingChartData = true;
+    this.loadingChart = true;
     const thisYear = this.dateUtils.thisYear();
 
     this.apiService.getMonthlyGrosses(thisYear).subscribe(result => {
@@ -75,7 +75,7 @@ export class ReportPageComponent implements OnInit {
         this.drawChart(monthlyGrosses);
       }
 
-      this.isLoadingChartData = false;
+      this.loadingChart = false;
     });
   }
 

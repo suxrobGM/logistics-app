@@ -3,7 +3,7 @@
 <div class="row justify-content-center">
   <div class="col-12 col-md-6">
     <p-card>
-      <p-progressSpinner *ngIf="isBusy"></p-progressSpinner>
+      <p-progressSpinner *ngIf="loading"></p-progressSpinner>
       <form [formGroup]="form" (ngSubmit)="submit()">
         <div class="mb-3">
           <label for="truckNumber" class="form-label">Truck Number</label>
@@ -22,14 +22,14 @@
             class="p-button-raised"
             icon="bi bi-pencil-square"
             label="Save"
-            [disabled]="isBusy">
+            [disabled]="loading">
           </button>
           <button pButton 
             type="submit"
             class="p-button-raised p-button-danger ms-2"
             icon="bi bi bi-trash"
             label="Delete"
-            [disabled]="isBusy"
+            [disabled]="loading"
             (click)="confirmToDelete()">
           </button>
           <button pButton 

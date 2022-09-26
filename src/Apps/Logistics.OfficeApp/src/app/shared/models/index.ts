@@ -11,7 +11,6 @@ import { Role } from './role';
 import { EnumType } from './enumType';
 import { DailyGrosses } from './dailyGrosses';
 import { DailyGross } from './dailyGross';
-import { TruckGrosses } from './truckGrosses';
 import { LoadStatus } from './loadStatus';
 import { MonthlyGrosses } from './monthlyGrosses';
 import { MonthlyGross } from './monthlyGross';
@@ -34,6 +33,5 @@ export {
   DailyGrosses,
   MonthlyGross,
   MonthlyGrosses,
-  TruckGrosses,
   OverallStats
 }

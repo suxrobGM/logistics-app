@@ -15,7 +15,7 @@ import { ApiService } from '@shared/services';
 export class EditEmployeeComponent implements OnInit {
   private employee?: Employee;
 
-  public isBusy: boolean;
+  public loading: boolean;
   public form: FormGroup;
   public roles: Role[];
   public id!: string;
@@ -28,7 +28,7 @@ export class EditEmployeeComponent implements OnInit {
     private route: ActivatedRoute) 
   {
     this.roles = [];
-    this.isBusy = false;
+    this.loading = false;
     this.form = new FormGroup({
       userName: new FormControl({value: '', disabled: true}, Validators.required),
       firstName: new FormControl({value: '', disabled: true}),
@@ -64,13 +64,13 @@ export class EditEmployeeComponent implements OnInit {
       role: this.form.value.role
     }
 
-    this.isBusy = true;
+    this.loading = true;
     this.apiService.updateEmployee(employee).subscribe(result => {
       if (result.success) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'User has been updated successfully'});
       }
 
-      this.isBusy = false;
+      this.loading = false;
     });
   }
 
@@ -82,7 +82,7 @@ export class EditEmployeeComponent implements OnInit {
   }
 
   private fetchEmployee() {
-    this.isBusy = true;
+    this.loading = true;
 
     this.apiService.getEmployee(this.id!).subscribe(result => {
       if (result.success && result.value) {
@@ -101,19 +101,19 @@ export class EditEmployeeComponent implements OnInit {
         }
       }
 
-      this.isBusy = false;
+      this.loading = false;
     });
   }
 
   private fetchRoles() {
-    this.isBusy = true;
+    this.loading = true;
 
     this.apiService.getRoles().subscribe(result => {
       if (result.success && result.items) {
         this.roles.push(...result.items);
       }
 
-      this.isBusy = false;
+      this.loading = false;
     });
   }
 }

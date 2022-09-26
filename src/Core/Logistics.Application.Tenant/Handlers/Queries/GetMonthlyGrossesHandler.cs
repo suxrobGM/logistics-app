@@ -12,7 +12,7 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandlerBase<GetMonthlyGr
     protected override Task<DataResult<MonthlyGrossesDto>> HandleValidated(
         GetMonthlyGrossesQuery req, CancellationToken cancellationToken)
     {
-        var spec = new FilterLoadsByInterval(req.StartDate, req.EndDate);
+        var spec = new FilterLoadsByInterval(req.TruckId, req.StartDate, req.EndDate);
         var monthlyGrosses = new MonthlyGrossesDto();
         var months = req.StartDate.MonthsBetween(req.EndDate);
         var filteredLoads = _tenantRepository.ApplySpecification(spec).ToArray();

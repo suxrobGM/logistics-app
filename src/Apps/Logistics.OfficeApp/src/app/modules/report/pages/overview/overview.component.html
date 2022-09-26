@@ -4,7 +4,7 @@
 <div class="row">
   <div class="col-12">
     <p-card>
-      <div *ngIf="isLoadingData; else actualData">
+      <div *ngIf="loadingData; else actualData">
         <div class="row mb-3">
           <div class="col-12 col-md-6 mb-2 mb-md-0">
             <p-skeleton styleClass="my-2" height="3rem"></p-skeleton>
@@ -97,7 +97,7 @@
         <hr class="w-100 m-0" />
       </ng-template>
 
-      <div *ngIf="isLoadingChartData; else actualChart">
+      <div *ngIf="loadingChart; else actualChart">
         <p-skeleton styleClass="my-2" height="40rem" width="100%"></p-skeleton>
       </div>
 
