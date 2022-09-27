@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';;
+import { RouterModule, Routes } from '@angular/router';
+import { UserRole } from '@shared/types';
 import { AuthGuard } from '../auth/auth.guard';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
 
@@ -10,7 +11,7 @@ const rootRoutes: Routes = [
     canActivate: [AuthGuard], 
     data: {
       breadcrumb: 'Dashboard',
-      roles: ['app.admin', 'tenant.owner', 'tenant.manager', 'tenant.dispatcher']
+      roles: [UserRole.AppAdmin, UserRole.Owner, UserRole.Manager, UserRole.Dispatcher]
     } 
   }
 ];

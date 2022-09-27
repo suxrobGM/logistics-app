@@ -1,5 +1,4 @@
 ﻿using Duende.IdentityServer.Models;
-using IdentityModel;
 
 namespace Logistics.IdentityServer;
 
@@ -15,7 +14,7 @@ public static class Config
             {
                 Name = "roles",
                 DisplayName = "Identity roles",
-                UserClaims = { JwtClaimTypes.Role }
+                UserClaims = { "role" }
             }
         };
     }
@@ -24,18 +23,17 @@ public static class Config
     {
         return new ApiScope[]
         {
-            new("logistics.api.admin", "Logistics Admin API")
+            new()
             {
-                UserClaims = {
-                    "role",
-                }
+                Name = "logistics.api.admin",
+                DisplayName = "Logistics Admin API",
+                UserClaims = { "role" }
             },
-            new("logistics.api.tenant", "Logistics Tenant API")
+            new()
             {
-                UserClaims = {
-                    "role",
-                    "tenant"
-                }
+                Name = "logistics.api.tenant",
+                DisplayName = "Logistics Tenant API",
+                UserClaims = { "role", "tenant" }
             }
         };
     }
@@ -44,8 +42,10 @@ public static class Config
     {
         return new ApiResource[]
         {
-            new("logistics.api", "Logistics API")
+            new()
             {
+                Name = "logistics.api",
+                DisplayName = "Logistics API",
                 Scopes = {
                     "logistics.api.admin",
                     "logistics.api.tenant"

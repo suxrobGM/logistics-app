@@ -3,7 +3,6 @@ import { AppConfig } from '@configs';
 import { User } from '@shared/models/user';
 import { ApiService } from '@shared/services';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { MessageService } from 'primeng/api';
 import { of, switchMap } from 'rxjs';
 
 @Component({
@@ -19,7 +18,6 @@ export class TopbarComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private messageService: MessageService,
     private oidcSecurityService: OidcSecurityService) 
   {
     this.isAuthenticated = false;
@@ -37,7 +35,6 @@ export class TopbarComponent implements OnInit {
         this.isAuthenticated = isAuthenticated;
         
         if (isAuthenticated) {
-          //this.oidcSecurityService.getAccessToken().subscribe(i => console.log(i));
           return this.apiService.getTenant();
         }
 

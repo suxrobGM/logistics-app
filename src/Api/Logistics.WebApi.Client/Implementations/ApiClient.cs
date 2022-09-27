@@ -209,9 +209,9 @@ internal class ApiClient : ApiClientBase, IApiClient
 
     #region Tenant API
 
-    public async Task<string> GetTenantDisplayNameAsync(string identifier)
+    public async Task<string> GetTenantDisplayNameAsync(string id)
     {
-        var result = await GetRequestAsync<DataResult<string>>($"tenant/displayName/{identifier}");
+        var result = await GetRequestAsync<DataResult<string>>($"tenant/getDisplayName?id={id}");
         return result.Value!;
     }
 

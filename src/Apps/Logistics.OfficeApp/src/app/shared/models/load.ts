@@ -1,4 +1,4 @@
-import { LoadStatus } from './loadStatus';
+import { LoadStatus } from "@shared/types";
 
 export interface Load {
   id?: string;

@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { EnumType, Load, LoadStatus, LoadStatuses } from '@shared/models';
-import { ApiService } from '@shared/services';
 import { LazyLoadEvent } from 'primeng/api';
+import { Load } from '@shared/models';
+import { ApiService } from '@shared/services';
+import { LoadStatus, LoadStatuses } from '@shared/types';
 
 @Component({
   selector: 'app-list-load',

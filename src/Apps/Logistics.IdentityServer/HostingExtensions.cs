@@ -14,7 +14,6 @@ internal static class HostingExtensions
     {
         AddSecretsJson(builder.Configuration);
         builder.Services.AddRazorPages();
-        //builder.Services.AddHttpContextAccessor();
         builder.Services.AddSharedApplicationLayer(builder.Configuration, "EmailConfig", "GoogleRecaptcha");
 
         builder.Services.AddInfrastructureLayer(builder.Configuration)
@@ -22,6 +21,7 @@ internal static class HostingExtensions
             {
                 identityBuilder
                     .AddSignInManager()
+                    .AddClaimsPrincipalFactory<UserCustomClaimsFactory>()
                     .AddDefaultTokenProviders();
             });
         
@@ -42,8 +42,7 @@ internal static class HostingExtensions
             .AddInMemoryApiScopes(Config.ApiScopes(builder.Configuration))
             .AddInMemoryApiResources(Config.ApiResources(builder.Configuration))
             .AddInMemoryClients(Config.Clients(builder.Configuration))
-            .AddAspNetIdentity<User>()
-            .AddProfileService<UserProfileService>();
+            .AddAspNetIdentity<User>();
 
         builder.Services.AddAuthentication()
             .AddGoogle(options =>

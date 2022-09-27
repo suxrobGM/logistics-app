@@ -13,9 +13,9 @@ export class TenantInterceptor implements HttpInterceptor {
   constructor(private tenantService: TenantService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    const tenantId = this.tenantService.getTenant();
-    this.tenantService.setTenant(tenantId);
-    const headers = this.tenantService.addTenantToHeaders(request.headers, tenantId);
+    const tenantId = this.tenantService.getTenantId();
+    this.tenantService.setTenantId(tenantId);
+    const headers = this.tenantService.createTenantHeaders(request.headers, tenantId);
 
     request = request.clone({
       headers: headers

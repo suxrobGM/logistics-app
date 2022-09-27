@@ -9,7 +9,7 @@ export class TenantService {
 
   constructor(private cookieService: CookieService) { }
 
-  public getTenant(): string {
+  public getTenantId(): string {
     const urlParams = new URLSearchParams(window.location.search);
     const tenantSubDomain = this.getSubDomain(location.host);
     const tenantQuery = urlParams.get('tenant');
@@ -27,16 +27,17 @@ export class TenantService {
     return tenantId;
   }
 
-  public addTenantToHeaders(headers: HttpHeaders, tenantId: string): HttpHeaders {
+  public createTenantHeaders(headers: HttpHeaders, tenantId: string): HttpHeaders {
     return headers.append('X-Tenant', tenantId);
   }
 
-  public setTenant(tenantId: string) {
+  public setTenantId(tenantId: string) {
     if (!tenantId) {
       return;
     }
 
-    const currentTenant = this.cookieService.getCookie('X-Tenant'); 
+    const currentTenant = this.cookieService.getCookie('X-Tenant');
+    
     if (tenantId === currentTenant) {
       return;
     }

@@ -34,8 +34,8 @@ export class ApiService {
   //#region Tenant API
 
   getTenant(): Observable<DataResult<Tenant>> {
-    const tenantId = this.tenantService.getTenant();
-    const url = `${this.host}/tenant/displayName/${tenantId}`;
+    const tenantId = this.tenantService.getTenantId();
+    const url = `${this.host}/tenant/getDisplayName?id=${tenantId}`;
     return this.httpClient
       .get<DataResult<any>>(url)
       .pipe(catchError((err) => this.handleError(err)));

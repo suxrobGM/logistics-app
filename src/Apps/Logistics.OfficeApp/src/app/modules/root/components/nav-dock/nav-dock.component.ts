@@ -1,4 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { UserRole } from '@shared/types';
 
 @Component({
   selector: 'app-nav-dock',
@@ -7,41 +9,60 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
   encapsulation: ViewEncapsulation.None
 })
 export class NavDockComponent implements OnInit {
-  dockItems!: MenuItem[];
+  public dockItems: MenuItem[];
 
-  constructor() { }
+  constructor(private oidcService: OidcSecurityService) {
+    this.dockItems = this.createMenuItems();
+  }
 
-  ngOnInit() {
-    this.dockItems = [
+  public ngOnInit() {
+    this.oidcService.userData$.subscribe(({userData}) => {
+      if (!userData?.role) {
+        return;
+      }
+
+      const userRole = userData.role;
+      const hasEnoughRole = userRole?.includes(UserRole.AppAdmin) || 
+        userRole?.includes(UserRole.Owner) || 
+        userRole?.includes(UserRole.Manager)
+
+      if (hasEnoughRole) {
+        this.dockItems = this.createMenuItems([{
+          label: 'Report',
+          icon: 'assets/icons/report.svg',
+          link: 'report'
+        }]);
+      }
+    });
+  }
+
+  private createMenuItems(additionalMenuItems?: MenuItem[]): MenuItem[] {
+    const menuItems: MenuItem[] = [
       {
         label: 'Dashboard',
         icon: 'assets/icons/home.svg',
-        link: 'dashboard',
+        link: 'dashboard'
       },
       {
         label: 'Loads',
         icon: 'assets/icons/delivery-container.svg',
-        link: 'loads',
+        link: 'loads'
       },
       {
         label: 'Trucks',
         icon: 'assets/icons/delivery-truck.svg',
-        link: 'trucks',
+        link: 'trucks'
       },
       {
         label: 'Employees',
         icon: 'assets/icons/users.svg',
-        link: 'employees',
-      },
-      {
-        label: 'Report',
-        icon: 'assets/icons/report.svg',
-        link: 'report',
+        link: 'employees'
       }
     ];
 
+    additionalMenuItems?.forEach(i => menuItems.push(i));
+    return menuItems;
   }
-
 }
 
 type MenuItem = {
