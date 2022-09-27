@@ -7,6 +7,6 @@ public class OverallStatsDto
     public int ManagersCount { get; set; }
     public int DispatchersCount { get; set; }
     public int DriversCount { get; set; }
-    public double IncomeAllTime { get; set; }
-    public double DistanceAllTime { get; set; }
+    public double TotalIncome { get; set; }
+    public double TotalDistance { get; set; }
 }

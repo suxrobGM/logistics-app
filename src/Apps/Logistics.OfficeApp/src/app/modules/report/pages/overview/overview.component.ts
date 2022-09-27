@@ -58,7 +58,7 @@ export class ReportPageComponent implements OnInit {
       if (result.success && result.value) {
         const stats = result.value;
         this.overallStats = result.value;
-        this.rpm = stats.incomeAllTime / this.toMi(stats.distanceAllTime);
+        this.rpm = stats.totalIncome / this.toMi(stats.totalDistance);
       }
 
       this.loadingData = false;

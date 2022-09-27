@@ -20,7 +20,7 @@ export class AuthGuard implements CanActivate {
   {
   }
 
-  canActivate(
+  public canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree 
   {
@@ -29,16 +29,8 @@ export class AuthGuard implements CanActivate {
 
     return this.oidcService.isAuthenticated$.pipe(
       map(({ isAuthenticated }) => {
-        let hasAccess = false;
-        const roles = route.data['roles'] as string[];
-
-        for (const role of roles) {
-          hasAccess = user?.role?.includes(role) ?? false;
-
-          if (hasAccess) {
-            break;
-          }
-        }
+        const allowedRoles = route.data['roles'] as string[];
+        const hasAccess = this.checkRole(allowedRoles, user?.role);
         
         if (isAuthenticated && hasAccess) {
           return true;
@@ -47,5 +39,19 @@ export class AuthGuard implements CanActivate {
         return this.router.parseUrl('/unauthorized');
       })
     );
+  }
+
+  private checkRole(allowedRoles: string[], userRoles?: string | string[]): boolean {
+    let hasRole = false;
+
+    for (const role of allowedRoles) {
+      hasRole = userRoles?.includes(role) ?? false;
+
+      if (hasRole) {
+        break;
+      }
+    }
+
+    return hasRole;
   }
 }

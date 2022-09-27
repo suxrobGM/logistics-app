@@ -52,8 +52,8 @@ internal sealed class GetOverallStatsHandler : RequestHandlerBase<GetOverallStat
         overallStatsDto.ManagersCount = managersCount;
         overallStatsDto.DispatchersCount = dispatchersCount;
         overallStatsDto.DriversCount = driversCount;
-        overallStatsDto.DistanceAllTime = sum?.TotalDistance ?? 0;
-        overallStatsDto.IncomeAllTime = sum?.TotalGross ?? 0;
+        overallStatsDto.TotalDistance = sum?.TotalDistance ?? 0;
+        overallStatsDto.TotalIncome = sum?.TotalGross ?? 0;
         return DataResult<OverallStatsDto>.CreateSuccess(overallStatsDto);
     }
 

@@ -4,6 +4,6 @@ export interface OverallStats {
   managersCount: number;
   dispatchersCount: number;
   driversCount: number;
-  incomeAllTime: number;
-  distanceAllTime: number;
+  totalIncome: number;
+  totalDistance: number;
 }

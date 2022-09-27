@@ -72,7 +72,7 @@
           </div>
           <div class="col-12 col-md-6 mb-2 mb-md-0">
             <span class="fw-bold">Total Gross For All Time: </span><br />
-            <span>{{overallStats?.incomeAllTime | currency}}</span>
+            <span>{{overallStats?.totalIncome | currency}}</span>
           </div>
         </div>
 
@@ -83,7 +83,7 @@
           </div>
           <div class="col-12 col-md-6 mb-2 mb-md-0">
             <span class="fw-bold">Total Distance For All Time: </span><br />
-            <span>{{overallStats?.distanceAllTime | distanceUnit:'mi'}} mi</span>
+            <span>{{overallStats?.totalDistance | distanceUnit:'mi'}} mi</span>
           </div>
         </div>
       </ng-template>
