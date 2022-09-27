@@ -314,7 +314,7 @@ export class ApiService {
   }
 
   private handleError(responseData: any): Observable<any> {
-    const errorMessage = responseData.error?.error;
+    const errorMessage = responseData.error?.error ?? responseData.error;
     
     this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: errorMessage});
     this.messageService.add({key: 'errorMsg', severity: 'error', summary: 'Error', detail: errorMessage});

@@ -1,5 +1,9 @@
+<p-toast key="notification" position="top-right"></p-toast>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
 <h1 class="text-center">{{headerText}}</h1>
 <hr class="w-100">
+
 <div class="row justify-content-center">
   <div class="col-12 col-md-6">
     <p-card>
@@ -24,7 +28,8 @@
             label="Save"
             [disabled]="loading">
           </button>
-          <button pButton 
+          <button pButton
+            *ngIf="editMode"
             type="submit"
             class="p-button-raised p-button-danger ms-2"
             icon="bi bi bi-trash"

@@ -1,13 +1,10 @@
 <app-topbar></app-topbar>
 <app-breadcrumb *ngIf="isAuthenticated"></app-breadcrumb>
 
-<div class="container-fluid content">
-  <p-toast key="notification" position="top-right"></p-toast>
-  <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+<p-toast key="notification" position="top-right"></p-toast>
 
-  <div>
-    <router-outlet></router-outlet>
-  </div>
+<div class="container-fluid content">
+  <router-outlet></router-outlet>
 </div>
 
 <app-nav-dock *ngIf="isAuthenticated"></app-nav-dock>

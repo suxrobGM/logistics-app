@@ -32,7 +32,7 @@ export class AddEmployeeComponent implements OnInit {
     });
 
     // let currentUserRole = EmployeeRole.Owner as string;
-    // oidcSecurityService.getUserData().subscribe((userData: User) => currentUserRole = userData.role!);
+    // oidcService.getUserData().subscribe((userData: User) => currentUserRole = userData.role!);
   }
 
   public ngOnInit(): void {
@@ -76,6 +76,6 @@ export class AddEmployeeComponent implements OnInit {
       if (result.success && result.items) {
         this.roles.push(...result.items);
       }
-    })
+    });
   }
 }

@@ -29,10 +29,18 @@ export class AuthGuard implements CanActivate {
 
     return this.oidcService.isAuthenticated$.pipe(
       map(({ isAuthenticated }) => {
-        const roles = route.data['roles'];
-        const hasRole = roles && roles.indexOf(user?.role) !== -1
+        let hasAccess = false;
+        const roles = route.data['roles'] as string[];
+
+        for (const role of roles) {
+          hasAccess = user?.role?.includes(role) ?? false;
+
+          if (hasAccess) {
+            break;
+          }
+        }
         
-        if (isAuthenticated && hasRole) {
+        if (isAuthenticated && hasAccess) {
           return true;
         }
 
