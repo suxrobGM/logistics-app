@@ -3,12 +3,15 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Logistics.Domain.Repositories;
+using ClaimTypes = Logistics.Domain.Shared.ClaimTypes;
 
 namespace Logistics.IdentityServer.Services;
 
 public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
 {
     private readonly HttpContext _httpContext;
+    private readonly RoleManager<AppRole> _roleManager;
+    private readonly UserManager<User> _userManager;
     private readonly ITenantRepository _tenantRepository;
 
     public UserCustomClaimsFactory(
@@ -20,6 +23,8 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
         : base(userManager, roleManager, options)
     {
         _httpContext = httpContextAccessor.HttpContext!;
+        _roleManager = roleManager;
+        _userManager = userManager;
         _tenantRepository = tenantRepository;
     }
 
@@ -27,25 +32,60 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
     {
         var claimsIdentity = await base.GenerateClaimsAsync(user);
         var tenantId = _httpContext.GetTenantId();
+        
+        await AddAppRoleClaims(claimsIdentity, user);
 
         if (string.IsNullOrEmpty(tenantId)) 
             return claimsIdentity;
         
-        var tenantRoles = await GetTenantRolesAsync(user.Id);
+        var employee = await _tenantRepository.GetAsync<Employee>(user.Id);
 
-        foreach (var role in tenantRoles)
-        {
-            claimsIdentity.AddClaim(new Claim("role", role));
-        }
+        AddTenantRoles(claimsIdentity, employee);
+        await AddTenantRoleClaims(claimsIdentity, employee);
         
-        claimsIdentity.AddClaim(new Claim("tenant", tenantId));
+        claimsIdentity.AddClaim(new Claim(ClaimTypes.Tenant, tenantId));
         return claimsIdentity;
     }
 
-    private async Task<IEnumerable<string>> GetTenantRolesAsync(string userId)
+    private async Task AddAppRoleClaims(ClaimsIdentity claimsIdentity, User user)
     {
-        var employee = await _tenantRepository.GetAsync<Employee>(userId);
-        var roleNames = employee?.Roles.Select(i => i.Name!);
-        return roleNames ?? new []{""};
+        var appRoles = await _userManager.GetRolesAsync(user);
+        
+        if (appRoles == null)
+            return;
+
+        foreach (var roleName in appRoles)
+        {
+            var role = await _roleManager.FindByNameAsync(roleName);
+            var claims = await _roleManager.GetClaimsAsync(role);
+
+            if (claims == null) 
+                continue;
+
+            claimsIdentity.AddClaims(claims);
+        }
+    }
+
+    private async Task AddTenantRoleClaims(ClaimsIdentity claimsIdentity, Employee? employee)
+    {
+        if (employee == null)
+            return;
+
+        foreach (var tenantRole in employee.Roles)
+        {
+            var roleClaims = await _tenantRepository.GetListAsync<TenantRoleClaim>(i => i.RoleId == tenantRole.Id);
+            claimsIdentity.AddClaims(roleClaims.Select(i => i.ToClaim()));
+        }
+    }
+
+    private void AddTenantRoles(ClaimsIdentity claimsIdentity, Employee? employee)
+    {
+        if (employee == null)
+            return;
+        
+        foreach (var role in employee.Roles)
+        {
+            claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.Name));
+        }
     }
 }

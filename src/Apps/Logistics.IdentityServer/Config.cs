@@ -14,7 +14,10 @@ public static class Config
             {
                 Name = "roles",
                 DisplayName = "Identity roles",
-                UserClaims = { "role" }
+                UserClaims = {
+                    ClaimTypes.Role, 
+                    ClaimTypes.Permission
+                }
             }
         };
     }
@@ -27,13 +30,20 @@ public static class Config
             {
                 Name = "logistics.api.admin",
                 DisplayName = "Logistics Admin API",
-                UserClaims = { "role" }
+                UserClaims = {
+                    ClaimTypes.Role, 
+                    ClaimTypes.Permission
+                }
             },
             new()
             {
                 Name = "logistics.api.tenant",
                 DisplayName = "Logistics Tenant API",
-                UserClaims = { "role", "tenant" }
+                UserClaims = {
+                    ClaimTypes.Role, 
+                    ClaimTypes.Permission, 
+                    ClaimTypes.Tenant
+                }
             }
         };
     }
@@ -51,8 +61,9 @@ public static class Config
                     "logistics.api.tenant"
                 },
                 UserClaims = {
-                    "role",
-                    "tenant"
+                    ClaimTypes.Role, 
+                    ClaimTypes.Permission, 
+                    ClaimTypes.Tenant
                 }
             }
         };

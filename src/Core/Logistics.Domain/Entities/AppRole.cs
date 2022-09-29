@@ -2,7 +2,7 @@
 
 namespace Logistics.Domain.Entities;
 
-public class AppRole : IdentityRole, IAggregateRoot
+public class AppRole : IdentityRole<string>, IAggregateRoot
 {
     public AppRole(string name): base(name)
     {
@@ -11,24 +11,9 @@ public class AppRole : IdentityRole, IAggregateRoot
         
         DisplayName = base.Name;
     }
-    
+
+    public override string Id { get; set; } = Generator.NewGuid();
+
     [StringLength(RoleConsts.DisplayNameLength)]
     public string? DisplayName { get; set; }
-}
-
-internal class AppRoleComparer : IEqualityComparer<AppRole>
-{
-    public bool Equals(AppRole? x, AppRole? y)
-    {
-        if (ReferenceEquals(x, y)) return true;
-        if (ReferenceEquals(x, null)) return false;
-        if (ReferenceEquals(y, null)) return false;
-        if (x.GetType() != y.GetType()) return false;
-        return x.Name == y.Name;
-    }
-
-    public int GetHashCode(AppRole obj)
-    {
-        return obj.Name != null ? obj.Name.GetHashCode() : 0;
-    }
 }

@@ -4,6 +4,7 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { MessageService } from 'primeng/api';
 import { Employee, Role, User } from '@shared/models';
 import { ApiService } from '@shared/services';
+import { UserRole } from '@shared/types';
 
 @Component({
   selector: 'app-add-employee',
@@ -12,6 +13,8 @@ import { ApiService } from '@shared/services';
   encapsulation: ViewEncapsulation.None
 })
 export class AddEmployeeComponent implements OnInit {
+  private userRoles: string | string[];
+
   public suggestedUsers: User[];
   public form: FormGroup;
   public roles: Role[];
@@ -24,19 +27,18 @@ export class AddEmployeeComponent implements OnInit {
   {
     this.suggestedUsers = [];
     this.roles = [];
+    this.userRoles = [];
     this.loading = false;
 
     this.form = new FormGroup({
       user: new FormControl('', Validators.required),
       role: new FormControl('', Validators.required),
     });
-
-    // let currentUserRole = EmployeeRole.Owner as string;
-    // oidcService.getUserData().subscribe((userData: User) => currentUserRole = userData.role!);
   }
 
   public ngOnInit(): void {
     this.fetchRoles();
+    this.oidcService.getUserData().subscribe((userData: User) => this.userRoles = userData.role!);
   }
 
   public searchUser(event: any) {
@@ -72,10 +74,25 @@ export class AddEmployeeComponent implements OnInit {
   }
 
   private fetchRoles() {
+    this.loading = true;
+
     this.apiService.getRoles().subscribe(result => {
       if (result.success && result.items) {
-        this.roles.push(...result.items);
+        const roles = result.items;
+        const roleNames = result.items.map(i => i.name);
+        
+        if (this.userRoles.includes(UserRole.Owner)) {
+          roles.splice(roleNames.indexOf(UserRole.Owner));
+        }
+        else if (this.userRoles.includes(UserRole.Manager)) {
+          roles.splice(roleNames.indexOf(UserRole.Owner));
+          roles.splice(roleNames.indexOf(UserRole.Manager))
+        }
+        
+        this.roles.push(...roles);
       }
+
+      this.loading = false;
     });
   }
 }

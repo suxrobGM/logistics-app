@@ -8,6 +8,8 @@
   <div class="col-12 col-md-6">
     <p-card>
       <p-progressSpinner *ngIf="loading"></p-progressSpinner>
+      <p-messages key="errorMsg"></p-messages>
+
       <form [formGroup]="form" (ngSubmit)="submit()">
         <div class="mb-3">
           <label for="userName" class="form-label">Username</label>

@@ -3,8 +3,9 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Employee, Role } from '@shared/models';
+import { Employee, Role, User } from '@shared/models';
 import { ApiService } from '@shared/services';
+import { UserRole } from '@shared/types';
 
 @Component({
   selector: 'app-edit-employee',
@@ -13,12 +14,12 @@ import { ApiService } from '@shared/services';
   encapsulation: ViewEncapsulation.None
 })
 export class EditEmployeeComponent implements OnInit {
-  private employee?: Employee;
+  private userRoles: string | string[];
 
-  public loading: boolean;
+  public id!: string;
   public form: FormGroup;
   public roles: Role[];
-  public id!: string;
+  public loading: boolean;
   
   constructor(
     private apiService: ApiService,
@@ -28,25 +29,15 @@ export class EditEmployeeComponent implements OnInit {
     private route: ActivatedRoute) 
   {
     this.roles = [];
+    this.userRoles = [];
     this.loading = false;
+
     this.form = new FormGroup({
       userName: new FormControl({value: '', disabled: true}, Validators.required),
       firstName: new FormControl({value: '', disabled: true}),
       lastName: new FormControl({value: '', disabled: true}),
-      role: new FormControl('', Validators.required),
+      role: new FormControl({value: '', disabled: true}),
     });
-
-    //let currentUserRole = EmployeeRole.Owner as string;
-    //oidcSecurityService.getUserData().subscribe((userData: User) => currentUserRole = userData.role!);
-
-    // for (const role in EmployeeRole) {
-    //   if (currentUserRole !== 'admin' && role === EmployeeRole.Owner) {
-    //     continue;
-    //   }
-    //   else {
-    //     this.roles.push(role);
-    //   }
-    // }
   }
 
   public ngOnInit(): void {
@@ -54,13 +45,13 @@ export class EditEmployeeComponent implements OnInit {
       this.id = params['id'];
     });
 
-    this.fetchRoles();
     this.fetchEmployee();
+    this.oidcService.getUserData().subscribe((userData: User) => this.userRoles = userData.role!);
   }
 
   public submit() {
     const employee: Employee = {
-      id: this.employee?.id,
+      id: this.id,
       role: this.form.value.role
     }
 
@@ -86,18 +77,24 @@ export class EditEmployeeComponent implements OnInit {
 
     this.apiService.getEmployee(this.id!).subscribe(result => {
       if (result.success && result.value) {
-        this.employee = result.value;
+        const employee = result.value;
         
         this.form.patchValue({
-          userName: this.employee.userName,
-          firstName: this.employee.firstName,
-          lastName: this.employee.lastName,
+          userName: employee.userName,
+          firstName: employee.firstName,
+          lastName: employee.lastName
         });
         
-        if (this.employee.roles && this.employee.roles.length > 0) {          
+        if (employee.roles && employee.roles.length > 0) {      
+          const employeeRole = employee.roles[0].name;
+          const canChangeRole = !this.userRoles.includes(employeeRole);
+
           this.form.patchValue({
-            role: this.employee.roles[0].name
+            role: {value: employeeRole, disabled: true}
           });
+
+          
+          this.fetchRoles(employeeRole);
         }
       }
 
@@ -105,15 +102,14 @@ export class EditEmployeeComponent implements OnInit {
     });
   }
 
-  private fetchRoles() {
-    this.loading = true;
-
+  private fetchRoles(employeeRole: string) {
     this.apiService.getRoles().subscribe(result => {
       if (result.success && result.items) {
-        this.roles.push(...result.items);
+        const roles = result.items;
+        const roleNames = result.items.map(i => i.name);
+        
+        this.roles.push(...roles);
       }
-
-      this.loading = false;
     });
   }
 }

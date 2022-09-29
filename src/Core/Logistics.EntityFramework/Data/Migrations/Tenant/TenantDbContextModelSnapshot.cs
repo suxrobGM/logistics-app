@@ -16,7 +16,7 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.6")
+                .HasAnnotation("ProductVersion", "6.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("employee_roles", b =>
@@ -114,20 +114,46 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("DisplayName")
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("varchar(64)");
 
-                    b.Property<string>("Name")
-                        .HasMaxLength(32)
-                        .HasColumnType("varchar(32)");
-
                     b.Property<string>("NormalizedName")
-                        .HasMaxLength(32)
-                        .HasColumnType("varchar(32)");
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)");
 
                     b.HasKey("Id");
 
                     b.ToTable("roles", (string)null);
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.TenantRoleClaim", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ClaimType")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
+                    b.Property<string>("ClaimValue")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("role_claims", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
@@ -188,6 +214,16 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.Navigation("AssignedTruck");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.TenantRoleClaim", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.TenantRole", "Role")
+                        .WithMany("Claims")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Employee", "Driver")
@@ -202,6 +238,11 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     b.Navigation("DeliveredLoads");
 
                     b.Navigation("DispatchedLoads");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.TenantRole", b =>
+                {
+                    b.Navigation("Claims");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>

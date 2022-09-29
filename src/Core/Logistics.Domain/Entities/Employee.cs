@@ -16,7 +16,7 @@ public class Employee : Entity, ITenantEntity
     /// Delivered loads by drivers
     /// </summary>
     public virtual IList<Load> DeliveredLoads { get; } = new List<Load>();
-    
+
     /// <summary>
     /// User tenant roles
     /// </summary>

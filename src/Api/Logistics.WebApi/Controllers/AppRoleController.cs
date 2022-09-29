@@ -14,7 +14,7 @@ public class AppRoleController : ControllerBase
     [HttpGet("list")]
     [ProducesResponseType(typeof(PagedDataResult<AppRoleDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Policies.Employee.CanRead)]
+    [Authorize(Policy = Permissions.AppRole.View)]
     public async Task<IActionResult> GetList([FromQuery] GetAppRolesQuery request)
     {
         var result = await _mediator.Send(request);

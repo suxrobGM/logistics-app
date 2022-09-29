@@ -14,7 +14,7 @@ public class TruckController : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(DataResult<TruckDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Policies.Truck.CanRead)]
+    [Authorize(Policy = Permissions.Truck.View)]
     public async Task<IActionResult> GetById(string id, bool includeLoadIds = false)
     {
         var result = await _mediator.Send(new GetTruckByIdQuery
@@ -31,7 +31,7 @@ public class TruckController : ControllerBase
     [HttpGet("list")]
     [ProducesResponseType(typeof(PagedDataResult<TruckDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Policies.Truck.CanRead)]
+    [Authorize(Policy = Permissions.Truck.View)]
     public async Task<IActionResult> GetList([FromQuery] GetTrucksQuery request)
     {
         var result = await _mediator.Send(request);
@@ -45,7 +45,7 @@ public class TruckController : ControllerBase
     [HttpPost("create")]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Policies.Truck.CanWrite)]
+    [Authorize(Policy = Permissions.Truck.Create)]
     public async Task<IActionResult> Create([FromBody] CreateTruckCommand request)
     {
         var result = await _mediator.Send(request);
@@ -59,7 +59,7 @@ public class TruckController : ControllerBase
     [HttpPut("update/{id}")]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Policies.Truck.CanWrite)]
+    [Authorize(Policy = Permissions.Truck.Edit)]
     public async Task<IActionResult> Update(string id, [FromBody] UpdateTruckCommand request)
     {
         request.Id = id;
@@ -74,7 +74,7 @@ public class TruckController : ControllerBase
     [HttpDelete("delete/{id}")]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Policies.Truck.CanWrite)]
+    [Authorize(Policy = Permissions.Truck.Delete)]
     public async Task<IActionResult> Delete(string id)
     {
         var result = await _mediator.Send(new DeleteTruckCommand

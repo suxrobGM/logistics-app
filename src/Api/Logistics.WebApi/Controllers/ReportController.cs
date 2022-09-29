@@ -14,7 +14,7 @@ public class ReportController : ControllerBase
     [HttpGet("getDailyGrosses")]
     [ProducesResponseType(typeof(DataResult<DailyGrossesDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Policies.Employee.CanRead)]
+    [Authorize(Policy = Permissions.Employee.View)]
     public async Task<IActionResult> GetDailyGrosses([FromQuery] GetDailyGrossesQuery request)
     {
         var result = await _mediator.Send(request);
@@ -28,7 +28,7 @@ public class ReportController : ControllerBase
     [HttpGet("getMonthlyGrosses")]
     [ProducesResponseType(typeof(DataResult<MonthlyGrossesDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Policies.Employee.CanRead)]
+    [Authorize(Policy = Permissions.Employee.View)]
     public async Task<IActionResult> GetMonthlyGrosses([FromQuery] GetMonthlyGrossesQuery request)
     {
         var result = await _mediator.Send(request);
@@ -42,7 +42,7 @@ public class ReportController : ControllerBase
     [HttpGet("getOverallStats")]
     [ProducesResponseType(typeof(DataResult<OverallStatsDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Policies.Employee.CanRead)]
+    [Authorize(Policy = Permissions.Employee.View)]
     public async Task<IActionResult> GetOverallStats([FromQuery] GetOverallStatsQuery request)
     {
         var result = await _mediator.Send(request);

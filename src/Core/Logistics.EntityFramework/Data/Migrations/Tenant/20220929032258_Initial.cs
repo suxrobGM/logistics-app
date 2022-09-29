@@ -32,11 +32,11 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Name = table.Column<string>(type: "varchar(32)", maxLength: 32, nullable: true)
+                    Name = table.Column<string>(type: "varchar(64)", maxLength: 64, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    DisplayName = table.Column<string>(type: "varchar(64)", maxLength: 64, nullable: true)
+                    DisplayName = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    NormalizedName = table.Column<string>(type: "varchar(32)", maxLength: 32, nullable: true)
+                    NormalizedName = table.Column<string>(type: "varchar(64)", maxLength: 64, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -87,6 +87,31 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                     table.ForeignKey(
                         name: "FK_employee_roles_roles_RolesId",
                         column: x => x.RolesId,
+                        principalTable: "roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "role_claims",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ClaimType = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ClaimValue = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    RoleId = table.Column<string>(type: "varchar(255)", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_role_claims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_role_claims_roles_RoleId",
+                        column: x => x.RoleId,
                         principalTable: "roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -170,6 +195,11 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_role_claims_RoleId",
+                table: "role_claims",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_trucks_DriverId",
                 table: "trucks",
                 column: "DriverId",
@@ -185,10 +215,13 @@ namespace Logistics.EntityFramework.Data.Migrations.Tenant
                 name: "loads");
 
             migrationBuilder.DropTable(
-                name: "roles");
+                name: "role_claims");
 
             migrationBuilder.DropTable(
                 name: "trucks");
+
+            migrationBuilder.DropTable(
+                name: "roles");
 
             migrationBuilder.DropTable(
                 name: "employees");

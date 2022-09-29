@@ -13,7 +13,7 @@ public class TenantRole : Entity, ITenantEntity
     }
     
     [StringLength(RoleConsts.NameLength)]
-    public string? Name { get; set; }
+    public string Name { get; set; }
     
     [StringLength(RoleConsts.DisplayNameLength)]
     public string? DisplayName { get; set; }
@@ -22,6 +22,7 @@ public class TenantRole : Entity, ITenantEntity
     public string? NormalizedName { get; set; }
     
     public virtual IList<Employee> Employees { get; } = new List<Employee>();
+    public virtual ISet<TenantRoleClaim> Claims { get; } = new HashSet<TenantRoleClaim>(new TenantRoleClaimComparer());
 }
 
 internal class TenantRoleComparer : IEqualityComparer<TenantRole>

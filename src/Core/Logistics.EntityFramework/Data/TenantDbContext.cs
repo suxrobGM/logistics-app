@@ -28,9 +28,15 @@ public class TenantDbContext : DbContext
     {
         base.OnModelCreating(builder);
 
+        builder.Entity<TenantRoleClaim>().ToTable("role_claims");
+
         builder.Entity<TenantRole>(entity =>
         {
             entity.ToTable("roles");
+            entity.HasMany(m => m.Claims)
+                .WithOne(m => m.Role)
+                .HasForeignKey(m => m.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.Entity<Employee>(entity =>

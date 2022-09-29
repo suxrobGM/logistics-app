@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Logistics.Application;
 using Logistics.EntityFramework;
-using Logistics.WebApi.Authorization.Handlers;
-using Logistics.WebApi.Authorization.Requirements;
 
 namespace Logistics.WebApi;
 
@@ -39,67 +37,23 @@ internal static class HostingExtensions
             options.InvalidModelStateResponseFactory = context =>
                 new BadRequestObjectResult(DataResult.CreateError(GetModelStateErrors(context.ModelState)));
         });
+        
+        //builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+        builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 
         builder.Services.AddAuthorization(options =>
         {
-            options.AddPolicy(Policies.Load.CanRead, policy =>
+            var permissions = Permissions.GetAll();
+
+            foreach (var permission in permissions)
             {
-                policy.Requirements.Add(new LoadCanReadRequirement());
-            });
-            options.AddPolicy(Policies.Load.CanWrite, policy =>
-            {
-                policy.Requirements.Add(new LoadCanWriteRequirement());
-            });
-            options.AddPolicy(Policies.Employee.CanRead, policy =>
-            {
-                policy.Requirements.Add(new EmployeeCanReadRequirement());
-            });
-            options.AddPolicy(Policies.Employee.CanWrite, policy =>
-            {
-                policy.Requirements.Add(new EmployeeCanWriteRequirement());
-            });
-            options.AddPolicy(Policies.Truck.CanRead, policy =>
-            {
-                policy.Requirements.Add(new TruckCanReadRequirement());
-            });
-            options.AddPolicy(Policies.Truck.CanWrite, policy =>
-            {
-                policy.Requirements.Add(new TruckCanWriteRequirement());
-            });
-            options.AddPolicy(Policies.Tenant.CanRead, policy =>
-            {
-                policy.Requirements.Add(new TenantCanReadRequirement());
-            });
-            options.AddPolicy(Policies.Tenant.CanReadDisplayNameOnly, policy =>
-            {
-                policy.Requirements.Add(new TenantCanReadDisplayNameOnlyRequirement());
-            });
-            options.AddPolicy(Policies.Tenant.CanWrite, policy =>
-            {
-                policy.Requirements.Add(new TenantCanWriteRequirement());
-            });
-            options.AddPolicy(Policies.User.CanRead, policy =>
-            {
-                policy.Requirements.Add(new UserCanReadRequirement());
-            });
-            options.AddPolicy(Policies.User.CanWrite, policy =>
-            {
-                policy.Requirements.Add(new UserCanWriteRequirement());
-            });
+                options.AddPolicy(permission, policy =>
+                {
+                    policy.Requirements.Add(new PermissionRequirement(permission));
+                });
+            }
         });
 
-        builder.Services.AddSingleton<IAuthorizationHandler, LoadCanReadHandler>();
-        builder.Services.AddSingleton<IAuthorizationHandler, LoadCanWriteHandler>();
-        builder.Services.AddSingleton<IAuthorizationHandler, EmployeeCanReadHandler>();
-        builder.Services.AddSingleton<IAuthorizationHandler, EmployeeCanWriteHandler>();
-        builder.Services.AddSingleton<IAuthorizationHandler, TruckCanReadHandler>();
-        builder.Services.AddSingleton<IAuthorizationHandler, TruckCanWriteHandler>();
-        builder.Services.AddSingleton<IAuthorizationHandler, TenantCanReadHandler>();
-        builder.Services.AddSingleton<IAuthorizationHandler, TenantCanReadDisplayNameOnlyHandler>();
-        builder.Services.AddSingleton<IAuthorizationHandler, TenantCanWriteHandler>();
-        builder.Services.AddSingleton<IAuthorizationHandler, UserCanReadHandler>();
-        builder.Services.AddSingleton<IAuthorizationHandler, UserCanWriteHandler>();
-        
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddCors(options =>

@@ -4,6 +4,7 @@ global using Logistics.Domain.Entities;
 global using Logistics.Domain.Options;
 global using Logistics.Domain.Services;
 global using Logistics.Domain.Repositories;
+global using Logistics.Domain.Shared;
 global using Logistics.Domain.Shared.Enums;
 global using Logistics.EntityFramework.Data;
 global using Logistics.EntityFramework.Options;

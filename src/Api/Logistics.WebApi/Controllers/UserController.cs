@@ -14,7 +14,7 @@ public class UserController : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(DataResult<UserDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Policies.User.CanRead)]
+    [Authorize(Policy = Permissions.User.View)]
     public async Task<IActionResult> GetById(string id)
     {
         var result = await _mediator.Send(new GetUserByIdQuery
@@ -31,7 +31,7 @@ public class UserController : ControllerBase
     [HttpGet("list")]
     [ProducesResponseType(typeof(PagedDataResult<UserDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Policies.User.CanRead)]
+    [Authorize(Policy = Permissions.User.View)]
     public async Task<IActionResult> GetList([FromQuery] GetUsersQuery request)
     {
         var result = await _mediator.Send(request);
