@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { UserRole } from '@shared/types';
+import { Permissions, UserRole } from '@shared/types';
+import { UserIdentity } from '@shared/models';
 
 @Component({
   selector: 'app-nav-dock',
@@ -17,16 +18,15 @@ export class NavDockComponent implements OnInit {
 
   public ngOnInit() {
     this.oidcService.userData$.subscribe(({userData}) => {
-      if (!userData?.role) {
+      const user = userData as UserIdentity;
+
+      if (!user?.permission) {
         return;
       }
 
-      const userRole = userData.role;
-      const hasEnoughRole = userRole?.includes(UserRole.AppAdmin) || 
-        userRole?.includes(UserRole.Owner) || 
-        userRole?.includes(UserRole.Manager)
+      const hasPermission = user?.permission.includes(Permissions.Report.View);
 
-      if (hasEnoughRole) {
+      if (hasPermission) {
         this.dockItems = this.createMenuItems([{
           label: 'Report',
           icon: 'assets/icons/report.svg',

@@ -26,14 +26,15 @@ internal class SeedDataService : BackgroundService
             var mainDbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
             var tenantDbContext = scope.ServiceProvider.GetRequiredService<TenantDbContext>();
 
-            _logger.LogInformation("Initializing main database");
+            _logger.LogInformation("Initializing main database...");
             await MigrateDatabaseAsync(mainDbContext);
             _logger.LogInformation("Successfully initialized the main database");
 
-            _logger.LogInformation("Initializing tenant database");
+            _logger.LogInformation("Initializing tenant database...");
             await MigrateDatabaseAsync(tenantDbContext);
             _logger.LogInformation("Successfully initialized the tenant database");
-
+            
+            _logger.LogInformation("Seeding data...");
             await AddAppRolesAsync(scope.ServiceProvider);
             await AddSuperAdminAsync(scope.ServiceProvider);
             await AddDefaultTenantAsync(scope.ServiceProvider);
@@ -41,6 +42,7 @@ internal class SeedDataService : BackgroundService
 
             var populateTestData = new PopulateTestData(_logger, scope.ServiceProvider);
             await populateTestData.ExecuteAsync();
+            _logger.LogInformation("Finished all operations!");
         }
         catch (Exception ex)
         {
@@ -70,27 +72,18 @@ internal class SeedDataService : BackgroundService
                 continue;
             
             var result = await roleManager.CreateAsync(role);
-
-            await AddBasicPermissions(roleManager, role);
+            await AddPermissions(roleManager, role, AppRolePermissions.GetBasicPermissions());
 
             switch (role.Name)
             {
                 case AppRoles.SuperAdmin:
-                    await AddAllPermissions(roleManager, role);
+                    await AddPermissions(roleManager, role, AppRolePermissions.SuperAdmin);
                     break;
                 case AppRoles.Admin:
-                    await AddPermissions(roleManager, role, "AppRole");
-                    await AddPermissions(roleManager, role, "Employee");
-                    await AddPermissions(roleManager, role, "Load");
-                    await AddPermissions(roleManager, role, "Truck");
-                    await AddPermissions(roleManager, role, "TenantRole");
-                    await AddPermission(roleManager, role, Permissions.Report.View);
-                    await AddPermission(roleManager, role, Permissions.Tenant.Create);
-                    await AddPermission(roleManager, role, Permissions.Tenant.Edit);
-                    await AddPermission(roleManager, role, Permissions.Tenant.View);
+                    await AddPermissions(roleManager, role, AppRolePermissions.Admin);
                     break;
                 case AppRoles.Manager:
-                    await AddPermission(roleManager, role, Permissions.Tenant.View);
+                    await AddPermissions(roleManager, role, AppRolePermissions.Manager);
                     break;
             }
 
@@ -154,19 +147,9 @@ internal class SeedDataService : BackgroundService
             _logger.LogInformation("Added default tenant");
         }
     }
-    
-    private async Task AddAllPermissions(RoleManager<AppRole> roleManager, AppRole role)
+
+    private async Task AddPermissions(RoleManager<AppRole> roleManager, AppRole role, IEnumerable<string> permissions)
     {
-        var permissions = Permissions.GetAll();
-        foreach (var permission in permissions)
-        {
-            await AddPermission(roleManager, role, permission);
-        }
-    }
-    
-    private async Task AddPermissions(RoleManager<AppRole> roleManager, AppRole role, string module)
-    {
-        var permissions = Permissions.GeneratePermissions(module);
         foreach (var permission in permissions)
         {
             await AddPermission(roleManager, role, permission);
@@ -183,15 +166,7 @@ internal class SeedDataService : BackgroundService
             var result = await roleManager.AddClaimAsync(role, claim);
 
             if (result.Succeeded)
-                _logger.LogInformation("Added claim '{ClaimType}' - '{ClaimValue}' to the role '{Role}'", claim.Value, claim.Type, role.Name);
+                _logger.LogInformation("Added claim '{ClaimType}' - '{ClaimValue}' to the role '{Role}'", claim.Type, claim.Value, role.Name);
         }
-    }
-
-    private async Task AddBasicPermissions(RoleManager<AppRole> roleManager, AppRole role)
-    {
-        await AddPermission(roleManager, role, Permissions.AppRole.View);
-        await AddPermission(roleManager, role, Permissions.TenantRole.View);
-        await AddPermission(roleManager, role, Permissions.User.View);
-        await AddPermission(roleManager, role, Permissions.Employee.View);
     }
 }

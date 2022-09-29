@@ -79,27 +79,21 @@ public class MySqlProviderService : IDatabaseProviderService
             if (existingRole != null)
                 continue;
             
-            AddBasicPermissions(role);
+            AddPermissions(role, TenantRolePermissions.GetBasicPermissions());
             
             switch (role.Name)
             {
                 case TenantRoles.Owner:
-                    AddPermissions(role, "Employee");
-                    AddPermissions(role, "Load");
-                    AddPermissions(role, "Truck");
-                    AddPermissions(role, "TenantRole");
-                    AddPermission(role, Permissions.Report.View);
+                    AddPermissions(role, TenantRolePermissions.Owner);
                     break;
                 case TenantRoles.Manager:
-                    AddPermissions(role, "Load");
-                    AddPermissions(role, "Truck");
-                    AddPermission(role, Permissions.Employee.Create);
-                    AddPermission(role, Permissions.Employee.Edit);
-                    AddPermission(role, Permissions.Report.View);
+                    AddPermissions(role, TenantRolePermissions.Manager);
                     break;
                 case TenantRoles.Dispatcher:
-                    AddPermissions(role, "Load");
-                    AddPermission(role, Permissions.Truck.View);
+                    AddPermissions(role, TenantRolePermissions.Dispatcher);
+                    break;
+                case TenantRoles.Driver:
+                    AddPermissions(role, TenantRolePermissions.Driver);
                     break;
             }
 
@@ -109,28 +103,14 @@ public class MySqlProviderService : IDatabaseProviderService
 
         await _context.SaveChangesAsync();
     }
-    
-    private void AddBasicPermissions(TenantRole role)
+
+    private void AddPermissions(TenantRole role, IEnumerable<string> permissions)
     {
-        AddPermission(role, Permissions.AppRole.View);
-        AddPermission(role, Permissions.TenantRole.View);
-        AddPermission(role, Permissions.User.View);
-        AddPermission(role, Permissions.Employee.View);
-    }
-    
-    private void AddPermissions(TenantRole role, string module)
-    {
-        var permissions = Permissions.GeneratePermissions(module);
         foreach (var permission in permissions)
         {
-            AddPermission(role, permission);
+            var claim = new Claim(ClaimTypes.Permission, permission);
+            role.Claims.Add(TenantRoleClaim.FromClaim(claim));
+            _logger.LogInformation("Added claim '{ClaimType}' - '{ClaimValue}' to the tenant role '{Role}'", claim.Type, claim.Value, role.Name);
         }
-    }
-    
-    private void AddPermission(TenantRole role, string permission)
-    {
-        var claim = new Claim(ClaimTypes.Permission, permission);
-        role.Claims.Add(TenantRoleClaim.FromClaim(claim));
-        _logger.LogInformation("Added claim '{ClaimType}' - '{ClaimValue}' to the tenant role '{Role}'", claim.Value, claim.Type, role.Name);
     }
 }

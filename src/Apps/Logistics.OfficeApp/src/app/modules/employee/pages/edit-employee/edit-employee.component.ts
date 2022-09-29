@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Employee, Role, User } from '@shared/models';
+import { Employee, Role, UserIdentity } from '@shared/models';
 import { ApiService } from '@shared/services';
 import { UserRole } from '@shared/types';
 
@@ -46,7 +46,7 @@ export class EditEmployeeComponent implements OnInit {
     });
 
     this.fetchEmployee();
-    this.oidcService.getUserData().subscribe((userData: User) => this.userRoles = userData.role!);
+    this.oidcService.getUserData().subscribe((userData: UserIdentity) => this.userRoles = userData.role!);
   }
 
   public submit() {

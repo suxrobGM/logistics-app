@@ -2,7 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { MessageService } from 'primeng/api';
-import { Employee, Role, User } from '@shared/models';
+import { Employee, Role, User, UserIdentity } from '@shared/models';
 import { ApiService } from '@shared/services';
 import { UserRole } from '@shared/types';
 
@@ -38,7 +38,7 @@ export class AddEmployeeComponent implements OnInit {
 
   public ngOnInit(): void {
     this.fetchRoles();
-    this.oidcService.getUserData().subscribe((userData: User) => this.userRoles = userData.role!);
+    this.oidcService.getUserData().subscribe((userData: UserIdentity) => this.userRoles = userData.role!);
   }
 
   public searchUser(event: any) {

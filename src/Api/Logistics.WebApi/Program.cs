@@ -1,7 +1,6 @@
 using Serilog;
 using Logistics.WebApi;
 
-
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateBootstrapLogger();

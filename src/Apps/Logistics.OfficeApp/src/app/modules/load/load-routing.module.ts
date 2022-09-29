@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { UserRole } from '@shared/types';
+import { Permissions } from '@shared/types';
 import { AuthGuard } from '../auth/auth.guard';
 import { EditLoadComponent } from './pages/edit-load/edit-load.component';
 import { ListLoadComponent } from './pages/list-load/list-load.component';
@@ -17,7 +17,7 @@ const rootRoutes: Routes = [
     canActivate: [AuthGuard],
     data: {
       breadcrumb: 'List',
-      roles: [UserRole.AppAdmin, UserRole.Owner, UserRole.Manager, UserRole.Dispatcher]
+      permission: Permissions.Load.View
     }
   },
   { 
@@ -26,7 +26,7 @@ const rootRoutes: Routes = [
     canActivate: [AuthGuard],
     data: {
       breadcrumb: 'Add',
-      roles: [UserRole.AppAdmin, UserRole.Owner, UserRole.Manager, UserRole.Dispatcher]
+      permission: Permissions.Load.Create
     }
   },
   { 
@@ -35,7 +35,7 @@ const rootRoutes: Routes = [
     canActivate: [AuthGuard],
     data: {
       breadcrumb: 'Edit',
-      roles: [UserRole.AppAdmin, UserRole.Owner, UserRole.Manager, UserRole.Dispatcher]
+      permission: Permissions.Load.Edit
     }
   }
 ];
