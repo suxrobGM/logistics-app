@@ -7,12 +7,14 @@ import { EditEmployeeComponent } from './pages/edit-employee/edit-employee.compo
 import { EmployeeRoutingModule } from './employee-routing.module';
 import { AddEmployeeComponent } from './pages/add-employee/add-employee.component';
 import { PrimengModule } from './primeng.module';
+import { ChangeRoleDialogComponent } from './components/change-role-dialog/change-role-dialog.component';
 
 @NgModule({
   declarations: [
     ListEmployeeComponent,
     EditEmployeeComponent,
-    AddEmployeeComponent
+    AddEmployeeComponent,
+    ChangeRoleDialogComponent
   ],
   imports: [
     CommonModule,

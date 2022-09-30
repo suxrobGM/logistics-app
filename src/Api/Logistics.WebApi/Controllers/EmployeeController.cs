@@ -62,8 +62,20 @@ public class EmployeeController : ControllerBase
     [Authorize(Policy = Permissions.Employee.Create)]
     public async Task<IActionResult> Create([FromBody] CreateEmployeeCommand request)
     {
-        var tenantId = HttpContext.Request.Headers["X-Tenant"];
-        request.TenantId = tenantId;
+        var result = await _mediator.Send(request);
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result);
+    }
+    
+    [HttpPost("removeRole")]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Employee.Edit)]
+    public async Task<IActionResult> RemoveRole([FromBody] RemoveEmployeeRoleCommand request)
+    {
         var result = await _mediator.Send(request);
 
         if (result.Success)

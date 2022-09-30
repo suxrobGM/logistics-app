@@ -34,13 +34,4 @@ public class EmployeeDto
     public string? PhoneNumber { get; set; }
     public DateTime JoinedDate { get; set; } = DateTime.UtcNow;
     public List<TenantRoleDto> Roles { get; set; } = new();
-
-    public string GetFullName()
-    {
-        if (string.IsNullOrEmpty(FirstName) && string.IsNullOrEmpty(LastName))
-        {
-            return UserName;
-        }
-        return string.Join(" ", FirstName, LastName);
-    }
 }

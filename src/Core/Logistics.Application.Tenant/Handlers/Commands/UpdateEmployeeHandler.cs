@@ -19,8 +19,11 @@ internal sealed class UpdateEmployeeHandler : RequestHandlerBase<UpdateEmployeeC
             return DataResult.CreateError("Could not find the specified user");
 
         if (tenantRole != null)
+        {
+            employeeEntity.Roles.Clear();
             employeeEntity.Roles.Add(tenantRole);
-
+        }
+        
         _tenantRepository.Update(employeeEntity);
         await _tenantRepository.UnitOfWork.CommitAsync();
         return DataResult.CreateSuccess();

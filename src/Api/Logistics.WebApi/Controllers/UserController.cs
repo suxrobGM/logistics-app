@@ -41,4 +41,18 @@ public class UserController : ControllerBase
 
         return BadRequest(result);
     }
+    
+    [HttpPost("removeRole")]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.User.Edit)]
+    public async Task<IActionResult> RemoveRole([FromBody] RemoveUserRoleCommand request)
+    {
+        var result = await _mediator.Send(request);
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result);
+    }
 }

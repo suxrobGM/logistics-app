@@ -18,11 +18,11 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
     {
         var existingEmployee = await _tenantRepository.GetAsync<Employee>(i => i.Id == request.Id);
         var user = await _mainRepository.GetAsync<User>(i => i.Id == request.Id);
-        var tenant = await _mainRepository.GetAsync<Tenant>(i => i.Name == request.TenantId || i.Id == request.TenantId);
         var tenantRole = await _tenantRepository.GetAsync<TenantRole>(i => i.Name == request.Role);
+        var tenant = _tenantRepository.CurrentTenant;
         
         if (tenant == null)
-            return DataResult.CreateError($"Could not find the specified tenant '{request.TenantId}'");
+            return DataResult.CreateError($"Could not find the tenant");
 
         if (user == null)
             return DataResult.CreateError("Could not find the specified user");
@@ -57,10 +57,6 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
         if (string.IsNullOrEmpty(request.Id))
         {
             errorDescription = "User Id is an empty string";
-        }
-        else if (string.IsNullOrEmpty(request.TenantId))
-        {
-            errorDescription = "TenantId is an empty string";
         }
 
         return string.IsNullOrEmpty(errorDescription);

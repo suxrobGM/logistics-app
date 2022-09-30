@@ -15,7 +15,10 @@ import {
   Role,
   DailyGrosses,
   MonthlyGrosses,
-  OverallStats
+  OverallStats,
+  UpdateEmployee,
+  CreateEmployee,
+  RemoveEmployeeRole
 } from '../models';
 
 @Injectable({
@@ -36,8 +39,9 @@ export class ApiService {
   getTenant(): Observable<DataResult<Tenant>> {
     const tenantId = this.tenantService.getTenantId();
     const url = `${this.host}/tenant/getDisplayName?id=${tenantId}`;
+
     return this.httpClient
-      .get<DataResult<any>>(url)
+      .get<DataResult<Tenant>>(url)
       .pipe(catchError((err) => this.handleError(err)));
   }
 
@@ -88,31 +92,31 @@ export class ApiService {
       .pipe(catchError((err) => this.handleError(err)));
   }
 
-  createLoad(load: Load): Observable<DataResult<any>> {  
+  createLoad(load: Load): Observable<DataResult> {  
     const url = `${this.host}/load/create`;
-    const headers = { 'content-type': 'application/json'}  
+    const headers = {'content-type': 'application/json'}  
     const body = JSON.stringify(load);
 
     return this.httpClient
-      .post<DataResult<any>>(url, body, { headers: headers })
+      .post<DataResult>(url, body, { headers: headers })
       .pipe(catchError((err) => this.handleError(err)));
   }
 
-  updateLoad(load: Load): Observable<DataResult<any>> {  
+  updateLoad(load: Load): Observable<DataResult> {  
     const url = `${this.host}/load/update/${load.id}`;
-    const headers = { 'content-type': 'application/json'}  
+    const headers = {'content-type': 'application/json'}  
     const body = JSON.stringify(load);
 
     return this.httpClient
-      .put<DataResult<any>>(url, body, { headers: headers })
+      .put<DataResult>(url, body, { headers: headers })
       .pipe(catchError((err) => this.handleError(err)));
   }
 
-  deleteLoad(loadId: string): Observable<DataResult<any>> {  
+  deleteLoad(loadId: string): Observable<DataResult> {  
     const url = `${this.host}/load/delete/${loadId}`; 
 
     return this.httpClient
-      .delete<DataResult<any>>(url)
+      .delete<DataResult>(url)
       .pipe(catchError((err) => this.handleError(err)));
   }
 
@@ -143,31 +147,31 @@ export class ApiService {
       .pipe(catchError((err) => this.handleError(err)));
   }
 
-  createTruck(truck: Truck): Observable<DataResult<any>> {  
+  createTruck(truck: Truck): Observable<DataResult> {  
     const url = `${this.host}/truck/create`;
-    const headers = { 'content-type': 'application/json'}  
+    const headers = {'content-type': 'application/json'}  
     const body = JSON.stringify(truck);
 
     return this.httpClient
-      .post<DataResult<any>>(url, body, { headers: headers })
+      .post<DataResult>(url, body, { headers: headers })
       .pipe(catchError((err) => this.handleError(err)));
   }
 
-  updateTruck(truck: Truck): Observable<DataResult<any>> {  
+  updateTruck(truck: Truck): Observable<DataResult> {  
     const url = `${this.host}/truck/update/${truck.id}`;
-    const headers = { 'content-type': 'application/json'}  
+    const headers = {'content-type': 'application/json'}  
     const body = JSON.stringify(truck);
 
     return this.httpClient
-      .put<DataResult<any>>(url, body, { headers: headers })
+      .put<DataResult>(url, body, { headers: headers })
       .pipe(catchError((err) => this.handleError(err)));
   }
 
-  deleteTruck(truckId: string): Observable<DataResult<any>> {  
+  deleteTruck(truckId: string): Observable<DataResult> {  
     const url = `${this.host}/truck/delete/${truckId}`; 
 
     return this.httpClient
-      .delete<DataResult<any>>(url)
+      .delete<DataResult>(url)
       .pipe(catchError((err) => this.handleError(err)));
   }
 
@@ -209,31 +213,41 @@ export class ApiService {
       .pipe(catchError((err) => this.handleError(err)));
   }
 
-  createEmployee(employee: Employee): Observable<DataResult<any>> {  
+  createEmployee(employee: CreateEmployee): Observable<DataResult> {  
     const url = `${this.host}/employee/create`;
-    const headers = { 'content-type': 'application/json'}  
+    const headers = {'content-type': 'application/json'}  
     const body = JSON.stringify(employee);
 
     return this.httpClient
-      .post<DataResult<any>>(url, body, { headers: headers })
+      .post<DataResult>(url, body, { headers: headers })
       .pipe(catchError((err) => this.handleError(err)));
   }
 
-  updateEmployee(employee: Employee): Observable<DataResult<any>> {  
+  removeRoleFromEmployee(employee: RemoveEmployeeRole): Observable<DataResult> {  
+    const url = `${this.host}/employee/removeRole`;
+    const headers = {'content-type': 'application/json'}  
+    const body = JSON.stringify(employee);
+
+    return this.httpClient
+      .post<DataResult>(url, body, { headers: headers })
+      .pipe(catchError((err) => this.handleError(err)));
+  }
+
+  updateEmployee(employee: UpdateEmployee): Observable<DataResult> {  
     const url = `${this.host}/employee/update/${employee.id}`;
-    const headers = { 'content-type': 'application/json'}  
+    const headers = {'content-type': 'application/json'}  
     const body = JSON.stringify(employee);
 
     return this.httpClient
-      .put<DataResult<any>>(url, body, { headers: headers })
+      .put<DataResult>(url, body, { headers: headers })
       .pipe(catchError((err) => this.handleError(err)));
   }
 
-  deleteEmployee(employeeId: string): Observable<DataResult<any>> {  
+  deleteEmployee(employeeId: string): Observable<DataResult> {  
     const url = `${this.host}/employee/delete/${employeeId}`; 
 
     return this.httpClient
-      .delete<DataResult<any>>(url)
+      .delete<DataResult>(url)
       .pipe(catchError((err) => this.handleError(err)));
   }
 

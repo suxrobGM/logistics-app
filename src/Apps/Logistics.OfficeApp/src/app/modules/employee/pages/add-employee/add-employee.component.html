@@ -20,7 +20,9 @@
         </div>
         <div class="mb-3">
           <label for="role" class="form-label">Role</label>
-          <p-dropdown formControlName="role" styleClass="w-100" [options]="roles" optionValue="name" optionLabel="displayName" [showClear]="true"></p-dropdown>
+          <p-dropdown formControlName="role" styleClass="w-100" [options]="roles" 
+            optionValue="name" optionLabel="displayName" [showClear]="true" (onClear)="clearSelctedRole()">
+          </p-dropdown>
         </div>
         <div class="mt-3">
           <button pButton 

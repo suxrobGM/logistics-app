@@ -5,6 +5,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { TableModule } from 'primeng/table';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
+import { DialogModule } from 'primeng/dialog';
 
 @NgModule({
   exports: [
@@ -13,7 +14,8 @@ import { InputTextModule } from 'primeng/inputtext';
     DropdownModule,
     ProgressSpinnerModule,
     InputTextModule,
-    TableModule
+    TableModule,
+    DialogModule
   ]
 })
 export class PrimengModule { }

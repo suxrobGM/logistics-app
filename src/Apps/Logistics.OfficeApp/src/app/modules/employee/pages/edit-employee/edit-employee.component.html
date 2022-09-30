@@ -1,5 +1,6 @@
 <p-toast key="notification" position="top-right"></p-toast>
 <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+<change-role-dialog [(visible)]="showUpdateDialog" [userId]="id" [currentRoles]="employee?.roles"></change-role-dialog>
 
 <h1 class="text-center">Edit Employee</h1>
 <hr class="w-100">
@@ -10,49 +11,42 @@
       <p-progressSpinner *ngIf="loading"></p-progressSpinner>
       <p-messages key="errorMsg"></p-messages>
 
-      <form [formGroup]="form" (ngSubmit)="submit()">
-        <div class="mb-3">
-          <label for="userName" class="form-label">Username</label>
-          <input id="userName" type="text" class="form-control" formControlName="userName" />
+      <div class="mb-3">
+        <label for="userName" class="form-label">Username</label>
+        <input id="userName" type="text" class="form-control" [disabled]="true" [value]="employee?.userName" />
+      </div>
+      <div class="mb-3">
+        <label for="firstName" class="form-label">First name</label>
+        <input id="firstName" type="text" class="form-control" [disabled]="true" [value]="employee?.firstName" />
+      </div>
+      <div class="mb-3">
+        <label for="lastName" class="form-label">Last name</label>
+        <input id="lastName" type="text" class="form-control" [disabled]="true" [value]="employee?.lastName" />
+      </div>
+      <div class="mb-3">
+        <label for="roleName" class="form-label">Role</label>
+        <div class="input-group">
+          <input id="roleName" type="text" class="form-control" [disabled]="true" [value]="getEmployeeRoleNames()" />
+          <button pButton class="p-button-raised" label="Change" type="button" (click)="openUpdateDialog()" [disabled]="canChangeRole"></button>
         </div>
-        <div class="mb-3">
-          <label for="firstName" class="form-label">First name</label>
-          <input id="firstName" type="text" class="form-control" formControlName="firstName" />
-        </div>
-        <div class="mb-3">
-          <label for="lastName" class="form-label">Last name</label>
-          <input id="lastName" type="text" class="form-control" formControlName="firstName" />
-        </div>
-        <div class="mb-3">
-          <label for="role" class="form-label">Role</label>
-          <p-dropdown formControlName="role" styleClass="w-100" [options]="roles" optionValue="name"
-            optionLabel="displayName" [showClear]="true"></p-dropdown>
-        </div>
-        <div class="mt-3">
-          <button pButton 
-            type="submit"
-            class="p-button-raised"
-            icon="bi bi-pencil-square"
-            label="Save"
-            [disabled]="loading">
-          </button>
-          <button pButton 
-            type="submit"
-            class="p-button-raised p-button-danger ms-2"
-            icon="bi bi bi-trash"
-            label="Delete"
-            [disabled]="loading"
-            (click)="confirmToDelete()">
-          </button>
-          <button pButton 
-            type="button"
-            class="p-button-raised ms-2"
-            icon="bi bi-arrow-left-square"
-            routerLink="/employees"
-            label="Back to list">
-          </button>
-        </div>
-      </form>
+      </div>
+      <div class="mt-3">
+        <button pButton 
+          type="submit"
+          class="p-button-raised p-button-danger"
+          icon="bi bi bi-trash"
+          label="Delete"
+          [disabled]="loading"
+          (click)="confirmToDelete()">
+        </button>
+        <button pButton 
+          type="button"
+          class="p-button-raised ms-2"
+          icon="bi bi-arrow-left-square"
+          routerLink="/employees"
+          label="Back to list">
+        </button>
+      </div>
     </p-card>
 
   </div>

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { MessageService } from 'primeng/api';
-import { Employee, Role, User, UserIdentity } from '@shared/models';
+import { CreateEmployee, Role, User, UserIdentity } from '@shared/models';
 import { ApiService } from '@shared/services';
 import { UserRole } from '@shared/types';
 
@@ -49,6 +49,12 @@ export class AddEmployeeComponent implements OnInit {
     });
   }
 
+  public clearSelctedRole() {
+    this.form.patchValue({
+      role: {name: '', displayName: ' '}
+    });
+  }
+
   public submit() {
     const user = this.form.value.user as User;
     
@@ -57,8 +63,8 @@ export class AddEmployeeComponent implements OnInit {
       return;
     }
 
-    const newEmployee: Employee = {
-      id: user.id,
+    const newEmployee: CreateEmployee = {
+      id: user.id!,
       role: this.form.value.role
     };
 
@@ -79,16 +85,17 @@ export class AddEmployeeComponent implements OnInit {
     this.apiService.getRoles().subscribe(result => {
       if (result.success && result.items) {
         const roles = result.items;
-        const roleNames = result.items.map(i => i.name);
+        const roleNames = roles.map(i => i.name);
         
         if (this.userRoles.includes(UserRole.Owner)) {
-          roles.splice(roleNames.indexOf(UserRole.Owner));
+          roles.splice(roleNames.indexOf(UserRole.Owner), 1);
         }
         else if (this.userRoles.includes(UserRole.Manager)) {
-          roles.splice(roleNames.indexOf(UserRole.Owner));
-          roles.splice(roleNames.indexOf(UserRole.Manager))
+          roles.splice(roleNames.indexOf(UserRole.Owner), 1);
+          roles.splice(roleNames.indexOf(UserRole.Manager), 1);
         }
         
+        this.roles.push({name: '', displayName: ' '});
         this.roles.push(...roles);
       }
 
