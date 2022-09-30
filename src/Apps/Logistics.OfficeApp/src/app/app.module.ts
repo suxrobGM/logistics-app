@@ -4,10 +4,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { SharedModule } from './shared/shared.module';
-import { RootModule } from './modules/root/root.module';
-import { AuthModule } from './modules/auth/auth.module';
-import { CoreModule } from './modules/core/core.module';
+import { SharedModule } from './shared';
+import { RootModule } from './modules/root';
+import { AuthModule } from './modules/auth';
+import { CoreModule } from './modules/core';
 
 @NgModule({
   declarations: [
@@ -21,7 +21,7 @@ import { CoreModule } from './modules/core/core.module';
     CoreModule,
     AuthModule,
     RootModule,
-    SharedModule,
+    SharedModule
   ],
   bootstrap: [AppComponent]
 })

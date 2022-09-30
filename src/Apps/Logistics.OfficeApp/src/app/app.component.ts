@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Route, Router } from '@angular/router';
-import { StorageService } from '@shared/services';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { AppConfig } from './configs';
+import { AppConfig } from '@configs';
+import { StorageService } from '@shared/services';
 
 @Component({
   selector: 'app-root',

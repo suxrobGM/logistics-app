@@ -1,9 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { Permissions } from '@shared/types';
-import { AuthGuard } from '../auth/auth.guard';
-import { ReportPageComponent } from './pages/overview/overview.component';
-import { TruckReportComponent } from './pages/truck-report/truck-report.component';
+import { AuthGuard } from '../auth';
+import { OverviewComponent, TruckReportComponent  } from './pages';
 
 const rootRoutes: Routes = [
   {
@@ -13,7 +12,7 @@ const rootRoutes: Routes = [
   },
   { 
     path: 'overview', 
-    component: ReportPageComponent, 
+    component: OverviewComponent, 
     canActivate: [AuthGuard],
     data: {
       breadcrumb: 'Overview',

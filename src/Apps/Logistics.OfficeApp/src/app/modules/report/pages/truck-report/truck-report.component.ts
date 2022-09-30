@@ -97,7 +97,6 @@ export class TruckReportComponent implements OnInit {
         const dailyGrosses = result.value;
         this.dailyGrosses = result.value;
         this.rpmCurrent = dailyGrosses.totalIncome / this.toMi(dailyGrosses.totalDistance);
-        //this.rpmAllTime = dailyGrosses.incomeAllTime / this.toMi(dailyGrosses.distanceAllTime);
         
         this.drawLineChart(dailyGrosses);
       }

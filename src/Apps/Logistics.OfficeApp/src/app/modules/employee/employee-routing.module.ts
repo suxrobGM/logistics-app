@@ -1,10 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { Permissions } from '@shared/types';
-import { AuthGuard } from '../auth/auth.guard';
-import { AddEmployeeComponent } from './pages/add-employee/add-employee.component';
-import { EditEmployeeComponent } from './pages/edit-employee/edit-employee.component';
-import { ListEmployeeComponent } from './pages/list-employee/list-employee.component';
+import { AuthGuard } from '../auth';
+import { AddEmployeeComponent, EditEmployeeComponent, ListEmployeeComponent } from './pages';
 
 const rootRoutes: Routes = [
   {

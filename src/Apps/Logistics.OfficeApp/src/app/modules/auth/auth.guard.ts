@@ -10,9 +10,7 @@ import { UserIdentity } from '@shared/models';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { map, Observable } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private oidcService: OidcSecurityService, 

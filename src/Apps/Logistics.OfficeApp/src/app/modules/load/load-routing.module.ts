@@ -1,9 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { Permissions } from '@shared/types';
-import { AuthGuard } from '../auth/auth.guard';
-import { EditLoadComponent } from './pages/edit-load/edit-load.component';
-import { ListLoadComponent } from './pages/list-load/list-load.component';
+import { AuthGuard } from '../auth';
+import { EditLoadComponent, ListLoadComponent } from './pages';
 
 const rootRoutes: Routes = [
   {

@@ -9,7 +9,7 @@ import { DateUtils } from '@shared/utils';
   templateUrl: './overview.component.html',
   styleUrls: ['./overview.component.scss']
 })
-export class ReportPageComponent implements OnInit {
+export class OverviewComponent implements OnInit {
   public loadingData: boolean;
   public loadingChart: boolean;
   public rpm: number;

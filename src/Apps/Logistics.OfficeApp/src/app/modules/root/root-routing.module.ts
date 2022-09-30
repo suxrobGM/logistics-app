@@ -1,10 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from '../auth/auth.guard';
-import { Error404Component } from './pages/error404/error404.component';
-import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
-import { HomeComponent } from './pages/home/home.component';
-import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.component';
+import { AuthGuard } from '../auth';
+import {
+  Error404Component,
+  UnauthorizedComponent,
+  ForbiddenComponent,
+  HomeComponent
+} from './pages';
 
 const rootRoutes: Routes = [
   {
