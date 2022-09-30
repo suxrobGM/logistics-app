@@ -1,11 +1,10 @@
 using Logistics.Blazor.Pagination;
-using NUnit.Framework;
 
 namespace Logistics.Blazor.Tests;
 
 public class PagedListTest
 {
-    [Test]
+    [Fact]
     public void AddItem()
     {
         var pagedList = new PagedList<string>(5, 10, true, i => i)
@@ -13,26 +12,26 @@ public class PagedListTest
             "1", "2", "3", "3", "4"
         };
 
-        Assert.AreEqual(4, pagedList.Count);
-        Assert.AreEqual(5, pagedList.TotalItems);
-        Assert.AreEqual(1, pagedList.PagesCount);
-        Assert.AreEqual("4", pagedList[3]);
+        Assert.Equal(4, pagedList.Count);
+        Assert.Equal(5, pagedList.TotalItems);
+        Assert.Equal(1, pagedList.PagesCount);
+        Assert.Equal("4", pagedList[3]);
     }
 
-    [Test]
+    [Fact]
     public void AddRange()
     {
         var pagedList = new PagedList<string>(5, 10, true, i => i);
         var nums = new[] { "1", "2", "3", "3", "4" };
         pagedList.AddRange(nums);
 
-        Assert.AreEqual(4, pagedList.Count);
-        Assert.AreEqual(5, pagedList.TotalItems);
-        Assert.AreEqual(1, pagedList.PagesCount);
-        Assert.AreEqual("4", pagedList[3]);
+        Assert.Equal(4, pagedList.Count);
+        Assert.Equal(5, pagedList.TotalItems);
+        Assert.Equal(1, pagedList.PagesCount);
+        Assert.Equal("4", pagedList[3]);
     }
 
-    [Test]
+    [Fact]
     public void Insert()
     {
         var pagedList = new PagedList<string>(5, 10, true, i => i)
@@ -46,13 +45,13 @@ public class PagedListTest
         pagedList.Insert(3, "13");
         pagedList.Insert(4, "14");
 
-        Assert.AreEqual(9, pagedList.Count);
-        Assert.AreEqual(5, pagedList.TotalItems);
-        Assert.AreEqual(1, pagedList.PagesCount);
-        Assert.AreEqual("14", pagedList[4]);
+        Assert.Equal(9, pagedList.Count);
+        Assert.Equal(5, pagedList.TotalItems);
+        Assert.Equal(1, pagedList.PagesCount);
+        Assert.Equal("14", pagedList[4]);
     }
 
-    [Test]
+    [Fact]
     public void InsertRange()
     {
         var pagedList = new PagedList<string>(5, 10, true, i => i);
@@ -61,13 +60,13 @@ public class PagedListTest
         pagedList.AddRange(nums1);
         pagedList.InsertRange(0, nums2);
 
-        Assert.AreEqual(6, pagedList.Count);
-        Assert.AreEqual(5, pagedList.TotalItems);
-        Assert.AreEqual(1, pagedList.PagesCount);
-        Assert.AreEqual("5", pagedList[2]);
+        Assert.Equal(6, pagedList.Count);
+        Assert.Equal(5, pagedList.TotalItems);
+        Assert.Equal(1, pagedList.PagesCount);
+        Assert.Equal("5", pagedList[2]);
     }
 
-    [Test]
+    [Fact]
     public void Remove()
     {
         var pagedList = new PagedList<string>(5, 10, true, i => i)
@@ -76,23 +75,23 @@ public class PagedListTest
         };
         pagedList.Remove("2");
 
-        Assert.AreEqual(4, pagedList.Count);
-        Assert.AreEqual(5, pagedList.TotalItems);
-        Assert.AreEqual(1, pagedList.PagesCount);
-        Assert.AreEqual("1", pagedList[0]);
-        Assert.False(pagedList.Contains("2"));
+        Assert.Equal(4, pagedList.Count);
+        Assert.Equal(5, pagedList.TotalItems);
+        Assert.Equal(1, pagedList.PagesCount);
+        Assert.Equal("1", pagedList[0]);
+        Assert.DoesNotContain("2", pagedList);
     }
 
-    [Test]
+    [Fact]
     public void Clear()
     {
-        var pagedList = new PagedList<string>(5)
+        var pagedList = new PagedList<string>(5, 10)
         {
             "1", "2", "3", "4", "5"
         };
         pagedList.Clear();
 
-        Assert.AreEqual(0, pagedList.Count);
-        Assert.AreEqual(5, pagedList.TotalItems);
+        Assert.Empty(pagedList);
+        Assert.Equal(5, pagedList.TotalItems);
     }
 }

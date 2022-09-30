@@ -4,14 +4,14 @@ namespace Logistics.Blazor.Pagination;
 
 public class PagedList<T> : List<T>
 {
-    private readonly Dictionary<string, bool> cachedItems;
-    private readonly Func<T, string> keySelector;
-    private readonly bool allowCaching;
+    private readonly Dictionary<string, bool> _cachedItems;
+    private readonly Func<T, string> _keySelector;
+    private readonly bool _allowCaching;
 
     public PagedList(
         int pageSize = 10,
         bool allowCaching = false,
-        Expression<Func<T, string>> keySelectorExp = null!
+        Expression<Func<T, string>>? keySelectorExp = null
         )
         : this(Array.Empty<T>(), 0, 1, pageSize, allowCaching, keySelectorExp)
     {
@@ -21,7 +21,7 @@ public class PagedList<T> : List<T>
         int totalItems,
         int pageSize,
         bool allowCaching = false,
-        Expression<Func<T, string>> keySelectorExp = null!
+        Expression<Func<T, string>>? keySelectorExp = null!
         )
         : this(Array.Empty<T>(), totalItems, 1, pageSize, allowCaching, keySelectorExp)
     {
@@ -33,7 +33,7 @@ public class PagedList<T> : List<T>
         int currentPage = 1, 
         int pageSize = 10, 
         bool allowCaching = false, 
-        Expression<Func<T, string>> keySelectorExp = null!)
+        Expression<Func<T, string>>? keySelectorExp = null)
     {
         if (currentPage <= 0)
             throw new ArgumentException("Current page should be positive integer number");
@@ -44,21 +44,16 @@ public class PagedList<T> : List<T>
         if (pageSize <= 0)
             throw new ArgumentException("Page size should be positive integer number");
 
-        if (allowCaching && keySelectorExp != null)
+        _keySelector = allowCaching switch
         {
-            keySelector = keySelectorExp.Compile();
-        }
-        else if (allowCaching && keySelectorExp == null)
-        {
-            throw new ArgumentException("Should be specified key selector when using cache mode");
-        }
-        else
-        {
-            keySelector = null!;
-        }
-        
-        this.allowCaching = allowCaching;
-        cachedItems = new Dictionary<string, bool>();
+            true when keySelectorExp != null => keySelectorExp.Compile(),
+            true when keySelectorExp == null => throw new ArgumentException(
+                "Should be specified key selector when using cache mode"),
+            _ => null!
+        };
+
+        _allowCaching = allowCaching;
+        _cachedItems = new Dictionary<string, bool>();
         CurrentPage = currentPage;
         PageSize = pageSize;
         TotalItems = totalItems;
@@ -78,7 +73,7 @@ public class PagedList<T> : List<T>
         {
             return;
         }
-        else if (allowCaching)
+        else if (_allowCaching)
         {
             AddToCache(item);
         }
@@ -100,7 +95,7 @@ public class PagedList<T> : List<T>
         {
             return;
         }
-        else if (allowCaching)
+        else if (_allowCaching)
         {
             AddToCache(item);
         }
@@ -152,7 +147,7 @@ public class PagedList<T> : List<T>
 
     public new void Clear()
     {
-        cachedItems.Clear();
+        _cachedItems.Clear();
         base.Clear();
     }
 
@@ -177,7 +172,7 @@ public class PagedList<T> : List<T>
     public IEnumerable<T> GetPage(int pageNumber)
     {
         if (pageNumber <= 0)
-            Array.Empty<T>();
+            return Array.Empty<T>();
 
         CurrentPage = pageNumber;
         return this.Skip((pageNumber - 1) * PageSize).Take(PageSize);
@@ -185,17 +180,17 @@ public class PagedList<T> : List<T>
 
     private void AddToCache(T item)
     {
-        if (!allowCaching)
+        if (!_allowCaching)
             return;
 
-        var key = keySelector(item);
-        cachedItems.Add(key, true);
+        var key = _keySelector(item);
+        _cachedItems.Add(key, true);
     }
 
     private void RemoveFromCache(T item)
     {
-        var key = keySelector(item);
-        cachedItems.Remove(key);
+        var key = _keySelector(item);
+        _cachedItems.Remove(key);
     }
 
     /// <summary>
@@ -205,13 +200,13 @@ public class PagedList<T> : List<T>
     /// <returns>True if item is in the cache, otherwise false</returns>
     private bool HasInCache(T item)
     {
-        if (!allowCaching)
+        if (!_allowCaching)
             return false;
    
         try
         {
-            var key = keySelector(item);
-            var _ = cachedItems[key];
+            var key = _keySelector(item);
+            var _ = _cachedItems[key];
             return true;
         }
         catch (KeyNotFoundException)
