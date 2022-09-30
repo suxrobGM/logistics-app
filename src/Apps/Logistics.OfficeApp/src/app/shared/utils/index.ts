@@ -1,5 +1,7 @@
-import { DateUtils } from './date.util';
+import { ArrayUtils } from './arrayUtils';
+import { DateUtils } from './dateUtils';
 
 export {
+  ArrayUtils,
   DateUtils
 }

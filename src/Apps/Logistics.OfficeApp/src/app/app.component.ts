@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Route, Router } from '@angular/router';
+import { StorageService } from '@shared/services';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { AppConfig } from './configs';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +14,8 @@ export class AppComponent implements OnInit {
 
   constructor(
     private oidcService: OidcSecurityService, 
-    private router: Router) 
+    private router: Router,
+    private storage: StorageService) 
   {
     this.isAuthenticated = false;
   }
@@ -22,6 +25,7 @@ export class AppComponent implements OnInit {
       this.isAuthenticated = isAuthenticated;
       //console.log(`Current access token is '${accessToken}'`);
       console.log(userData);
+      this.storage.set(AppConfig.storage.keys.userRoles, userData?.role);
     });
     
     this.oidcService.isAuthenticated$.subscribe(({isAuthenticated}) => {

@@ -2,9 +2,7 @@ import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CookieService } from './cookie.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class TenantService {
 
   constructor(private cookieService: CookieService) { }

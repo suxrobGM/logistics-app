@@ -1,10 +1,9 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { Employee, Role, UserIdentity } from '@shared/models';
-import { ApiService } from '@shared/services';
+import { ConfirmationService } from 'primeng/api';
+import { AppConfig } from '@configs';
+import { Employee, Role } from '@shared/models';
+import { ApiService, StorageService } from '@shared/services';
 import { UserRole } from '@shared/types';
 
 @Component({
@@ -14,7 +13,7 @@ import { UserRole } from '@shared/types';
   encapsulation: ViewEncapsulation.None
 })
 export class EditEmployeeComponent implements OnInit {
-  private userRoles: string | string[];
+  private userRoles?: string[];
 
   public id!: string;
   public roles: Role[];
@@ -26,14 +25,15 @@ export class EditEmployeeComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private confirmationService: ConfirmationService,
-    private oidcService: OidcSecurityService,
-    private route: ActivatedRoute) 
+    private route: ActivatedRoute,
+    storage: StorageService) 
   {
     this.roles = [];
-    this.userRoles = [];
     this.loading = false;
     this.showUpdateDialog = false;
     this.canChangeRole = false;
+
+    this.userRoles = storage.get<Role[]>(AppConfig.storage.keys.userRoles)?.map(i => i.name);
   }
 
   public ngOnInit(): void {
@@ -42,7 +42,6 @@ export class EditEmployeeComponent implements OnInit {
     });
 
     this.fetchEmployee();
-    this.oidcService.getUserData().subscribe((userData: UserIdentity) => this.userRoles = userData.role!);
   }
 
   public confirmToDelete() {
@@ -69,7 +68,7 @@ export class EditEmployeeComponent implements OnInit {
         const employee = result.value;
         this.employee = employee;
         
-        if (employee.roles && employee.roles.length > 0) {      
+        if (this.userRoles && employee.roles && employee.roles.length > 0) {      
           const employeeRole = employee.roles[0].name;
           this.canChangeRole = !this.userRoles.includes(employeeRole) || this.userRoles.includes(UserRole.AppAdmin);
         }

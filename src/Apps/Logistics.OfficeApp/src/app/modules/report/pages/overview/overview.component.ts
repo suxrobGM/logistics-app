@@ -19,7 +19,6 @@ export class ReportPageComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private dateUtils: DateUtils,
     private distanceUnit: DistanceUnitPipe
   )
   {
@@ -67,7 +66,7 @@ export class ReportPageComponent implements OnInit {
 
   private fetchMonthlyGrosses() {
     this.loadingChart = true;
-    const thisYear = this.dateUtils.thisYear();
+    const thisYear = DateUtils.thisYear();
 
     this.apiService.getMonthlyGrosses(thisYear).subscribe(result => {
       if (result.success && result.value) {
@@ -84,7 +83,7 @@ export class ReportPageComponent implements OnInit {
     const data = new Array<number>();
 
     grosses.months.forEach(i => {
-      labels.push(this.dateUtils.getMonthName(i.month));
+      labels.push(DateUtils.getMonthName(i.month));
       data.push(i.income);
     });
 

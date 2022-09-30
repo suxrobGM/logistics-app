@@ -27,7 +27,6 @@ export class DashboardPageComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private dateUtils: DateUtils,
     private distanceUnit: DistanceUnitPipe) 
   {
     this.loads = [];
@@ -92,7 +91,7 @@ export class DashboardPageComponent implements OnInit {
 
   private fetchLastTenDaysGross() {
     this.loadingChart = true;
-    const oneWeekAgo = this.dateUtils.daysAgo(7);
+    const oneWeekAgo = DateUtils.daysAgo(7);
 
     this.apiService.getDailyGrosses(oneWeekAgo).subscribe(result => {
       if (result.success && result.value) {
@@ -114,7 +113,7 @@ export class DashboardPageComponent implements OnInit {
     const data = new Array<number>();
     
     grosses.dates.forEach(i => {
-      labels.push(this.dateUtils.toLocaleDate(i.date));
+      labels.push(DateUtils.toLocaleDate(i.date));
       data.push(i.income);
     });
 
@@ -138,7 +137,7 @@ export class DashboardPageComponent implements OnInit {
     let totalGross = 0;
 
     grosses.dates
-      .filter(i => this.dateUtils.getDate(i.date) === today.getDate())
+      .filter(i => DateUtils.getDate(i.date) === today.getDate())
       .forEach(i => totalGross += i.income);
 
     this.todayGross = totalGross;

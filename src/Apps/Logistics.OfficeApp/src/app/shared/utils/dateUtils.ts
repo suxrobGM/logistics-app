@@ -5,7 +5,7 @@ export class DateUtils {
   /**
    * Gets a today's date value.
    */
-  today(): Date {
+  static today(): Date {
     return new Date();
   }
 
@@ -13,7 +13,7 @@ export class DateUtils {
    * Gets this year with the specified month.
    * @param month Month from 0 to 11
    */
-  thisYear(month = 0): Date {
+  static thisYear(month = 0): Date {
     const today = this.today();
     const year = today.getFullYear();
     return new Date(year, month);
@@ -23,11 +23,11 @@ export class DateUtils {
    * Gets the day-of-the-month.
    * @param dateStr Date value in string format
    */
-  getDate(dateStr: string | Date): number {
+  static getDate(dateStr: string | Date): number {
     return new Date(dateStr).getDate();
   }
 
-  getMonthName(month: number | Date): string {
+  static getMonthName(month: number | Date): string {
     let monthValue = month;
 
     if (month instanceof Date) {
@@ -75,7 +75,7 @@ export class DateUtils {
    * Converts a date string to a string by using the current locale.
    * @param date Specify date value either in string or the `Date` object.
    */
-  toLocaleDate(date: string | Date): string {
+  static toLocaleDate(date: string | Date): string {
     if (date instanceof Date) {
       return date.toLocaleDateString();
     }
@@ -88,7 +88,7 @@ export class DateUtils {
    * @param days A desired number of days to get past date.
    * @returns A new `Date` object of the past date.
    */
-  daysAgo(days: number): Date {
+  static daysAgo(days: number): Date {
     const today = new Date();
     const daysAgo = new Date(today.setDate(today.getDate() - days));
     return daysAgo;

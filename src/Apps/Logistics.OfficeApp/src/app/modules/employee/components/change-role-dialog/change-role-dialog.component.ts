@@ -1,10 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { MessageService } from 'primeng/api';
-import { RemoveEmployeeRole, Role, UpdateEmployee, UserIdentity } from '@shared/models';
+import { RemoveEmployeeRole, Role, UpdateEmployee } from '@shared/models';
 import { ApiService } from '@shared/services';
-import { UserRole } from '@shared/types';
+import { UserService } from '../../shared';
 
 @Component({
   selector: 'change-role-dialog',
@@ -12,7 +11,6 @@ import { UserRole } from '@shared/types';
   styleUrls: ['./change-role-dialog.component.scss']
 })
 export class ChangeRoleDialogComponent implements OnInit {
-  private userRoles: string | string[];
   public roles: Role[];
   public form: FormGroup;
   public loading: boolean;
@@ -24,12 +22,11 @@ export class ChangeRoleDialogComponent implements OnInit {
   
   constructor(
     private apiService: ApiService,
-    private messageService: MessageService,
-    private oidcService: OidcSecurityService) 
+    private userService: UserService,
+    private messageService: MessageService) 
   {
     this.currentRoles = [];
     this.roles = [];
-    this.userRoles = [];
     this.visible = false;
     this.loading = false;
     this.userId = '';
@@ -42,7 +39,6 @@ export class ChangeRoleDialogComponent implements OnInit {
 
   public ngOnInit(): void {
     this.fetchRoles();
-    this.oidcService.getUserData().subscribe((userData: UserIdentity) => this.userRoles = userData.role!);
   }
 
   public submit() {
@@ -83,7 +79,7 @@ export class ChangeRoleDialogComponent implements OnInit {
   public removeRoles() {
     this.currentRoles?.forEach(role => {
       this.removeRole(role.name);
-    })
+    });
   }
 
   private removeRole(roleName: string) {
@@ -103,21 +99,9 @@ export class ChangeRoleDialogComponent implements OnInit {
   }
 
   private fetchRoles() {
-    this.apiService.getRoles().subscribe(result => {
-      if (result.success && result.items) {
-        const roles = result.items;
-        const roleNames = roles.map(i => i.name);
-        
-        if (this.userRoles.includes(UserRole.Owner)) {
-          roles.splice(roleNames.indexOf(UserRole.Owner), 1);
-        }
-        else if (this.userRoles.includes(UserRole.Manager)) {
-          roles.splice(roleNames.indexOf(UserRole.Owner), 1);
-          roles.splice(roleNames.indexOf(UserRole.Manager), 1);
-        }
-        
-        this.roles.push({name: '', displayName: ' '});
-        this.roles.push(...roles);
+    this.userService.fetchRoles().subscribe(roles => {
+      if (roles) {
+        this.roles = roles;
       }
     });
   }

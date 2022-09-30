@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PrimengModule } from './primeng.module';
 import { DistanceUnitPipe } from './pipes';
-import { DateUtils } from './utils';
+import { ApiService, CookieService, StorageService, TenantService } from './services';
 
 @NgModule({
   declarations: [
@@ -14,11 +14,14 @@ import { DateUtils } from './utils';
   ],
   exports: [
     PrimengModule,
-    DistanceUnitPipe,
+    DistanceUnitPipe
   ],
   providers: [
+    ApiService,
+    CookieService,
     DistanceUnitPipe,
-    DateUtils
+    StorageService,
+    TenantService
   ]
 })
 export class SharedModule { }

@@ -8,6 +8,7 @@ import { EmployeeRoutingModule } from './employee-routing.module';
 import { AddEmployeeComponent } from './pages/add-employee/add-employee.component';
 import { PrimengModule } from './primeng.module';
 import { ChangeRoleDialogComponent } from './components/change-role-dialog/change-role-dialog.component';
+import { UserService } from './shared/user.service';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,9 @@ import { ChangeRoleDialogComponent } from './components/change-role-dialog/chang
     SharedModule,
     ReactiveFormsModule,
     PrimengModule
+  ],
+  providers: [
+    UserService
   ]
 })
 export class EmployeeModule { }

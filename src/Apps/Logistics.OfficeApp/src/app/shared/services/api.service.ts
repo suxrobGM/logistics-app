@@ -21,9 +21,7 @@ import {
   RemoveEmployeeRole
 } from '../models';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class ApiService {
   private host = AppConfig.apiHost;
 

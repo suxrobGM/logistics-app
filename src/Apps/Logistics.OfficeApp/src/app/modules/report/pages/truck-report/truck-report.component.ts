@@ -90,7 +90,7 @@ export class TruckReportComponent implements OnInit {
 
   private fetchDailyGrosses() {
     this.loadingLineChart = true;
-    const oneMonthAgo = this.dateUtils.daysAgo(30);
+    const oneMonthAgo = DateUtils.daysAgo(30);
 
     this.apiService.getDailyGrosses(oneMonthAgo, undefined, this.id).subscribe(result => {
       if (result.success && result.value) {
@@ -108,7 +108,7 @@ export class TruckReportComponent implements OnInit {
 
   private fetchMonthlyGrosses() {
     this.loadingBarChart = true;
-    const thisYear = this.dateUtils.thisYear();
+    const thisYear = DateUtils.thisYear();
 
     this.apiService.getMonthlyGrosses(thisYear, undefined, this.id).subscribe(result => {
       if (result.success && result.value) {
@@ -128,7 +128,7 @@ export class TruckReportComponent implements OnInit {
     const data = new Array<number>();
     
     grosses.dates.forEach(i => {
-      labels.push(this.dateUtils.toLocaleDate(i.date));
+      labels.push(DateUtils.toLocaleDate(i.date));
       data.push(i.income);
     });
 
@@ -152,7 +152,7 @@ export class TruckReportComponent implements OnInit {
     const data = new Array<number>();
     
     grosses.months.forEach(i => {
-      labels.push(this.dateUtils.getMonthName(i.month));
+      labels.push(DateUtils.getMonthName(i.month));
       data.push(i.income);
     });
 

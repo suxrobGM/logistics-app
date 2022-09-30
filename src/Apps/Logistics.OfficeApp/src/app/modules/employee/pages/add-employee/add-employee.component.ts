@@ -1,10 +1,9 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { MessageService } from 'primeng/api';
-import { CreateEmployee, Role, User, UserIdentity } from '@shared/models';
+import { CreateEmployee, Role, User } from '@shared/models';
 import { ApiService } from '@shared/services';
-import { UserRole } from '@shared/types';
+import { UserService } from '../../shared';
 
 @Component({
   selector: 'app-add-employee',
@@ -13,8 +12,6 @@ import { UserRole } from '@shared/types';
   encapsulation: ViewEncapsulation.None
 })
 export class AddEmployeeComponent implements OnInit {
-  private userRoles: string | string[];
-
   public suggestedUsers: User[];
   public form: FormGroup;
   public roles: Role[];
@@ -23,11 +20,10 @@ export class AddEmployeeComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private messageService: MessageService,
-    private oidcService: OidcSecurityService) 
+    private userService: UserService) 
   {
     this.suggestedUsers = [];
     this.roles = [];
-    this.userRoles = [];
     this.loading = false;
 
     this.form = new FormGroup({
@@ -38,13 +34,12 @@ export class AddEmployeeComponent implements OnInit {
 
   public ngOnInit(): void {
     this.fetchRoles();
-    this.oidcService.getUserData().subscribe((userData: UserIdentity) => this.userRoles = userData.role!);
   }
 
   public searchUser(event: any) {
-    this.apiService.getUsers(event.query).subscribe(result => {
-      if (result.success && result.items) {
-        this.suggestedUsers = result.items;
+    this.userService.searchUser(event.query).subscribe(users => {
+      if (users) {
+        this.suggestedUsers = users;
       }
     });
   }
@@ -82,21 +77,9 @@ export class AddEmployeeComponent implements OnInit {
   private fetchRoles() {
     this.loading = true;
 
-    this.apiService.getRoles().subscribe(result => {
-      if (result.success && result.items) {
-        const roles = result.items;
-        const roleNames = roles.map(i => i.name);
-        
-        if (this.userRoles.includes(UserRole.Owner)) {
-          roles.splice(roleNames.indexOf(UserRole.Owner), 1);
-        }
-        else if (this.userRoles.includes(UserRole.Manager)) {
-          roles.splice(roleNames.indexOf(UserRole.Owner), 1);
-          roles.splice(roleNames.indexOf(UserRole.Manager), 1);
-        }
-        
-        this.roles.push({name: '', displayName: ' '});
-        this.roles.push(...roles);
+    this.userService.fetchRoles().subscribe(roles => {
+      if (roles) {
+        this.roles = roles;
       }
 
       this.loading = false;
