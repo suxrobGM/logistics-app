@@ -28,13 +28,13 @@ jobs:
       run: dotnet test --no-build --verbosity normal
 
   deploy-office-app:
-    name: Build Angular
+    name: Deploy Office App
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
         
-    - name: Use Node.js 16.x
+    - name: Setup Node.js 16.x
       uses: actions/setup-node@v3
       with:
         node-version: 16.x
@@ -55,7 +55,6 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ${{ env.OFFICE_APP_PATH }}/${{ env.OFFICE_APP_OUTPUT_PATH }}/
         server-dir: office.jfleets.org/
-        dangerous-clean-slate: true
 
   deploy-web-api:
     name: Deploy Web API
@@ -81,7 +80,6 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: Release/
         server-dir: api.jfleets.org/
-        dangerous-clean-slate: true
 
   deploy-identity-server:
     name: Deploy Identity Server
@@ -107,7 +105,6 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: Release/
         server-dir: id.jfleets.org/
-        dangerous-clean-slate: true
 
   deploy-admin-app:
     name: Deploy Admin App
@@ -133,4 +130,3 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: Release/
         server-dir: admin.jfleets.org/
-        dangerous-clean-slate: true
