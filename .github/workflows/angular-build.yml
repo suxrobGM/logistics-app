@@ -20,5 +20,5 @@ jobs:
         cache: 'npm'
         cache-dependency-path: ./src/Apps/Logistics.OfficeApp/package-lock.json
         
-    - run: npm ci --prefix ./src/Apps/Logistics.OfficeApp
+    - run: npm ci --prefix ./src/Apps/Logistics.OfficeApp --force
     - run: npm run build --prefix ./src/Apps/Logistics.OfficeApp
