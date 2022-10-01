@@ -21,14 +21,12 @@ export class TruckReportComponent implements OnInit {
   public rpmCurrent: number;
   public rpmAllTime: number;
   public barChartData: any;
-  public barChartOptions: any;
   public lineChartData: any;
   public chartOptions: any;
   
   constructor(
     private apiService: ApiService,
     private route: ActivatedRoute,
-    private dateUtils: DateUtils,
     private distanceUnit: DistanceUnitPipe) 
   {
     this.loadingData = false;
