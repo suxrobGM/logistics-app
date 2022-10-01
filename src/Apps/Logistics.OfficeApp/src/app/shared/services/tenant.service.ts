@@ -4,7 +4,6 @@ import { CookieService } from './cookie.service';
 
 @Injectable()
 export class TenantService {
-
   constructor(private cookieService: CookieService) { }
 
   public getTenantId(): string {
@@ -14,7 +13,7 @@ export class TenantService {
     const tenantCookie = this.cookieService.getCookie('X-Tenant');
     let tenantId = 'default';
 
-    if (tenantSubDomain) {
+    if (tenantSubDomain && tenantSubDomain !== 'office') {
       tenantId = tenantSubDomain;
     } else if (tenantQuery) {
       tenantId = tenantQuery;

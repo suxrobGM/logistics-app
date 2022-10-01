@@ -133,7 +133,7 @@ internal class SeedDataService : BackgroundService
         var defaultTenant = new Tenant
         {
             Name = "default",
-            DisplayName = "Default Tenant",
+            DisplayName = "Test Company",
             ConnectionString = databaseProvider.GenerateConnectionString("u1002275_default_logistics") // TODO: remove prefix u1002275_ later 
         };
 
