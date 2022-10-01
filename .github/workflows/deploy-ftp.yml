@@ -1,0 +1,110 @@
+name: Deploy FTP
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-dotnet:
+    name: Build .NET
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore
+
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+
+    - name: Publish Web API 
+      run: dotnet publish ./src/Api/Logistics.WebApi/Logistics.WebApi.csproj -c Release -r win-x86 -p:PublishSingleFile=true --self-contained true --output ./Release/Logistics.WebApi
+
+    - name: Publish Web Identity Server 
+      run: dotnet publish ./src/Apps/Logistics.IdentityServer/Logistics.IdentityServer.csproj -c Release -r win-x86 -p:PublishSingleFile=true --self-contained true --output ./Release/Logistics.IdentityServer
+
+    - name: Publish Web Admin App 
+      run: dotnet publish ./src/Apps/Logistics.AdminApp/Logistics.AdminApp.csproj -c Release -r win-x86 -p:PublishSingleFile=true --self-contained true --output ./Release/Logistics.AdminApp
+
+  build-angular:
+    name: Build Angular
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+        
+    - name: Use Node.js 16.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+        cache: 'npm'
+        cache-dependency-path: ./src/Apps/Logistics.OfficeApp/package-lock.json
+        
+    - name: Install dependencies
+      run: npm ci --prefix ./src/Apps/Logistics.OfficeApp --force
+
+    - name: Build
+      run: npm run build --prefix ./src/Apps/Logistics.OfficeApp
+
+  deploy-web-api:
+    name: Deploy Web API
+    runs-on: ubuntu-latest
+    needs: [build-dotnet]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Deploy to host
+      uses: SamKirkland/FTP-Deploy-Action@4.3.2
+      with:
+        server: suxrobgm.net
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./Release/Logistics.WebApi
+        server-dir: ./api.jfleets.org
+        dangerous-clean-slate: true
+
+  deploy-identity-server:
+    name: Deploy Identity Server
+    runs-on: ubuntu-latest
+    needs: [build-dotnet]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Deploy to host
+      uses: SamKirkland/FTP-Deploy-Action@4.3.2
+      with:
+        server: suxrobgm.net
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./Release/Logistics.IdentityServer
+        server-dir: ./id.jfleets.org
+        dangerous-clean-slate: true
+
+  deploy-admin-app:
+    name: Deploy Admin App
+    runs-on: ubuntu-latest
+    needs: [build-dotnet]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Deploy to host
+      uses: SamKirkland/FTP-Deploy-Action@4.3.2
+      with:
+        server: suxrobgm.net
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./Release/Logistics.AdminApp
+        server-dir: ./admin.jfleets.org
+        dangerous-clean-slate: true
