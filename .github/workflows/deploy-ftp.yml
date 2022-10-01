@@ -4,38 +4,30 @@ on:
   push:
     branches: [ "main" ]
 
+env:
+  WEB_API_PROJECT: src/Api/Logistics.WebApi/Logistics.WebApi.csproj
+  IDENTITY_SERVER_PROJECT: src/Apps/Logistics.IdentityServer/Logistics.IdentityServer.csproj
+  ADMIN_APP_PROJECT: src/Apps/Logistics.AdminApp/Logistics.AdminApp.csproj
+  OFFICE_APP_PATH: src/Apps/Logistics.OfficeApp
+  OFFICE_APP_OUTPUT_PATH: dist/logistics.office-app
+
 jobs:
-  build-dotnet:
-    name: Build .NET
+  test-dotnet:
+    name: .NET Test
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
-
+      
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 6.0.x
-
-    - name: Restore dependencies
-      run: dotnet restore
-
-    - name: Build
-      run: dotnet build --no-restore
-
+      
     - name: Test
       run: dotnet test --no-build --verbosity normal
 
-    - name: Publish Web API 
-      run: dotnet publish ./src/Api/Logistics.WebApi/Logistics.WebApi.csproj -c Release -r win-x86 -p:PublishSingleFile=true --self-contained true --output ./Release/Logistics.WebApi
-
-    - name: Publish Web Identity Server 
-      run: dotnet publish ./src/Apps/Logistics.IdentityServer/Logistics.IdentityServer.csproj -c Release -r win-x86 -p:PublishSingleFile=true --self-contained true --output ./Release/Logistics.IdentityServer
-
-    - name: Publish Web Admin App 
-      run: dotnet publish ./src/Apps/Logistics.AdminApp/Logistics.AdminApp.csproj -c Release -r win-x86 -p:PublishSingleFile=true --self-contained true --output ./Release/Logistics.AdminApp
-
-  build-angular:
+  deploy-office-app:
     name: Build Angular
     runs-on: ubuntu-latest
 
@@ -47,64 +39,98 @@ jobs:
       with:
         node-version: 16.x
         cache: 'npm'
-        cache-dependency-path: ./src/Apps/Logistics.OfficeApp/package-lock.json
+        cache-dependency-path: ${{ env.OFFICE_APP_PATH }}/package-lock.json
         
     - name: Install dependencies
-      run: npm ci --prefix ./src/Apps/Logistics.OfficeApp --force
+      run: npm ci --prefix ${{ env.OFFICE_APP_PATH }} --force
 
     - name: Build
-      run: npm run build --prefix ./src/Apps/Logistics.OfficeApp
+      run: npm run build --prefix ${{ env.OFFICE_APP_PATH }}
+
+    - name: Deploy to host
+      uses: SamKirkland/FTP-Deploy-Action@4.3.2
+      with:
+        server: ${{ secrets.FTP_HOST }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ${{ env.OFFICE_APP_PATH }}/${{ env.OFFICE_APP_OUTPUT_PATH }}/
+        server-dir: office.jfleets.org/
+        dangerous-clean-slate: true
 
   deploy-web-api:
     name: Deploy Web API
-    runs-on: ubuntu-latest
-    needs: [build-dotnet]
+    runs-on: windows-latest
+    needs: [test-dotnet]
     
     steps:
     - uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Publish Web API 
+      run: dotnet publish ${{ env.WEB_API_PROJECT }} -c Release -r win-x86 -p:PublishSingleFile=true --self-contained true --output ./Release
     
     - name: Deploy to host
       uses: SamKirkland/FTP-Deploy-Action@4.3.2
       with:
-        server: suxrobgm.net
+        server: ${{ secrets.FTP_HOST }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./Release/Logistics.WebApi
-        server-dir: ./api.jfleets.org
+        local-dir: Release/
+        server-dir: api.jfleets.org/
         dangerous-clean-slate: true
 
   deploy-identity-server:
     name: Deploy Identity Server
-    runs-on: ubuntu-latest
-    needs: [build-dotnet]
+    runs-on: windows-latest
+    needs: [test-dotnet]
     
     steps:
     - uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Publish Web API 
+      run: dotnet publish ${{ env.IDENTITY_SERVER_PROJECT }} -c Release -r win-x86 -p:PublishSingleFile=true --self-contained true --output ./Release
     
     - name: Deploy to host
       uses: SamKirkland/FTP-Deploy-Action@4.3.2
       with:
-        server: suxrobgm.net
+        server: ${{ secrets.FTP_HOST }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./Release/Logistics.IdentityServer
-        server-dir: ./id.jfleets.org
+        local-dir: Release/
+        server-dir: id.jfleets.org/
         dangerous-clean-slate: true
 
   deploy-admin-app:
     name: Deploy Admin App
-    runs-on: ubuntu-latest
-    needs: [build-dotnet]
+    runs-on: windows-latest
+    needs: [test-dotnet]
     
     steps:
     - uses: actions/checkout@v3
     
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Publish Web API
+      run: dotnet publish ${{ env.ADMIN_APP_PROJECT }} -c Release -r win-x86 -p:PublishSingleFile=true --self-contained true --output ./Release
+    
     - name: Deploy to host
       uses: SamKirkland/FTP-Deploy-Action@4.3.2
       with:
-        server: suxrobgm.net
+        server: ${{ secrets.FTP_HOST }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./Release/Logistics.AdminApp
-        server-dir: ./admin.jfleets.org
+        local-dir: Release/
+        server-dir: admin.jfleets.org/
         dangerous-clean-slate: true
