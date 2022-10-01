@@ -1,4 +1,5 @@
 [![BuildShield](https://github.com/suxrobgm/logistics-app/actions/workflows/dotnet-build.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/dotnet-build.yml)
+[![BuildShield](https://github.com/suxrobgm/logistics-app/actions/workflows/angular-build.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/angular-build.yml)
 
 # Logistics TMS
 Automate your entire transportation logistics operations with the transportation management system (TMS).
