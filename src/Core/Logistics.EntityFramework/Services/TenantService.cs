@@ -42,15 +42,15 @@ internal class TenantService : ITenantService
 
         if (!string.IsNullOrEmpty(tenantHeader))
         {
-            _currentTenant = GetCurrentTenant(tenantHeader);
+            _currentTenant = FetchCurrentTenant(tenantHeader);
         }
-        else if (!string.IsNullOrEmpty(tenantSubDomain) && tenantSubDomain != "office")
+        else if (!string.IsNullOrEmpty(tenantSubDomain))
         {
-            _currentTenant = GetCurrentTenant(tenantSubDomain);
+            _currentTenant = FetchCurrentTenant(tenantSubDomain);
         }
         else if (!string.IsNullOrEmpty(tenantClaim))
         {
-            _currentTenant = GetCurrentTenant(tenantClaim);
+            _currentTenant = FetchCurrentTenant(tenantClaim);
         }
         else
         {
@@ -58,21 +58,7 @@ internal class TenantService : ITenantService
         }
         return _currentTenant;
     }
-
-    private Tenant GetCurrentTenant(string? tenantId)
-    {
-        if (string.IsNullOrEmpty(tenantId))
-        {
-            throw new InvalidTenantException("Tenant ID is a null, specify tenant ID in request header with the key 'X-Tenant'");
-        }
-
-        tenantId = tenantId.Trim().ToLower();
-        var tenant = _mainRepository.Query<Tenant>().FirstOrDefault(i => i.Id == tenantId || i.Name == tenantId) ??
-            throw new InvalidTenantException($"Could not found tenant with ID '{tenantId}'");
-        
-        return tenant;
-    }
-
+    
     public string GetConnectionString()
     {
         var connectionString = GetTenant().ConnectionString;
@@ -81,6 +67,20 @@ internal class TenantService : ITenantService
             throw new InvalidTenantException("Invalid tenant's connection string");
 
         return connectionString;
+    }
+
+    private Tenant FetchCurrentTenant(string? tenantId)
+    {
+        if (string.IsNullOrEmpty(tenantId))
+        {
+            throw new InvalidTenantException("Tenant ID is a null, specify tenant ID in request header with the key 'X-Tenant'");
+        }
+
+        tenantId = tenantId.Trim().ToLower();
+        var tenant = _mainRepository.Query<Tenant>().FirstOrDefault(i => i.Id == tenantId || i.Name == tenantId) ??
+            throw new InvalidTenantException($"Could not find tenant with ID '{tenantId}'");
+        
+        return tenant;
     }
 
     private static string ParseSubDomain(HostString hostString)

@@ -13,12 +13,16 @@ export class TenantService {
     const tenantCookie = this.cookieService.getCookie('X-Tenant');
     let tenantId = 'default';
 
-    if (tenantSubDomain && tenantSubDomain !== 'office') {
+    if (tenantSubDomain) {
       tenantId = tenantSubDomain;
     } else if (tenantQuery) {
       tenantId = tenantQuery;
     } else if (tenantCookie) {
       tenantId = tenantCookie;
+    }
+    
+    if (tenantId === 'office') {
+      tenantId = 'default';
     }
 
     return tenantId;
