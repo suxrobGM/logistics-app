@@ -15,6 +15,7 @@ import { MonthlyGrosses } from './monthlyGrosses';
 import { MonthlyGross } from './monthlyGross';
 import { OverallStats } from './overallStats';
 import { RemoveEmployeeRole } from './removeEmployeeRole';
+import { UserData } from './userData';
 
 export {
   DataResult,
@@ -27,6 +28,7 @@ export {
   Tenant,
   Truck,
   User,
+  UserData,
   UserIdentity,
   Role,
   DailyGross,

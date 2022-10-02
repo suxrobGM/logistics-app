@@ -7,7 +7,7 @@
 <div class="row justify-content-center">
   <div class="col-12 col-md-6">
     <p-card>
-      <p-progressSpinner *ngIf="loading"></p-progressSpinner>
+      <p-progressSpinner *ngIf="isBusy"></p-progressSpinner>
       <p-messages key="errorMsg"></p-messages>
       
       <form [formGroup]="form" (ngSubmit)="submit()">
@@ -24,17 +24,18 @@
             optionValue="name" optionLabel="displayName" [showClear]="true" (onClear)="clearSelctedRole()">
           </p-dropdown>
         </div>
-        <div class="mt-3">
+        
+        <div>
           <button pButton 
             type="submit"
-            class="p-button-raised"
+            class="p-button-raised mt-3"
             icon="bi bi-pencil-square"
-            [disabled]="loading"
+            [disabled]="isBusy"
             label="Add">
           </button>
           <button pButton 
             type="button"
-            class="p-button-raised ms-2"
+            class="p-button-raised mt-3 ms-2"
             icon="bi bi-arrow-left-square"
             routerLink="/employees"
             label="Back to list">

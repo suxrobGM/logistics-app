@@ -1,9 +1,8 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ConfirmationService } from 'primeng/api';
-import { AppConfig } from '@configs';
 import { Employee, Role } from '@shared/models';
-import { ApiService, StorageService } from '@shared/services';
+import { ApiService, UserDataService } from '@shared/services';
 import { UserRole } from '@shared/types';
 
 @Component({
@@ -13,27 +12,21 @@ import { UserRole } from '@shared/types';
   encapsulation: ViewEncapsulation.None
 })
 export class EditEmployeeComponent implements OnInit {
-  private userRoles?: string[];
-
   public id!: string;
-  public roles: Role[];
-  public loading: boolean;
+  public isBusy: boolean;
   public showUpdateDialog: boolean;
-  public employee?: Employee;
   public canChangeRole: boolean;
+  public employee?: Employee;
   
   constructor(
     private apiService: ApiService,
     private confirmationService: ConfirmationService,
     private route: ActivatedRoute,
-    storage: StorageService) 
+    private userDataService: UserDataService) 
   {
-    this.roles = [];
-    this.loading = false;
+    this.isBusy = false;
     this.showUpdateDialog = false;
     this.canChangeRole = false;
-
-    this.userRoles = storage.get<Role[]>(AppConfig.storage.keys.userRoles)?.map(i => i.name);
   }
 
   public ngOnInit(): void {
@@ -61,20 +54,42 @@ export class EditEmployeeComponent implements OnInit {
   }
 
   private fetchEmployee() {
-    this.loading = true;
-
+    this.isBusy = true;
+    
     this.apiService.getEmployee(this.id!).subscribe(result => {
       if (result.success && result.value) {
-        const employee = result.value;
-        this.employee = employee;
-        
-        if (this.userRoles && employee.roles && employee.roles.length > 0) {      
-          const employeeRole = employee.roles[0].name;
-          this.canChangeRole = !this.userRoles.includes(employeeRole) || this.userRoles.includes(UserRole.AppAdmin);
-        }
+        this.employee = result.value;
+        const employeeRoles = this.employee.roles?.map(i => i.name);
+        const user = this.userDataService.getUser();
+
+        this.evaluateCanChangeRole(user?.roles, employeeRoles);
       }
 
-      this.loading = false;
+      this.isBusy = false;
     });
+  }
+
+  private evaluateCanChangeRole(userRoles?: string[], employeeRoles?: string[]) {
+    if (!userRoles) {
+      this.canChangeRole = false;
+      return;
+    }
+
+    if (!employeeRoles || employeeRoles.length < 1) {
+      this.canChangeRole = true;
+      return;
+    }
+
+    const employeeRole = employeeRoles[0];
+
+    if (userRoles.includes(UserRole.AppSuperAdmin) || userRoles.includes(UserRole.AppAdmin)) {
+      this.canChangeRole = true;
+    }
+    else if (userRoles.includes(UserRole.Owner) && employeeRole !== UserRole.Owner) {
+      this.canChangeRole = true;
+    }
+    else if (userRoles.includes(UserRole.Manager) && employeeRole !== UserRole.Owner && employeeRole !== UserRole.Manager) {
+      this.canChangeRole = true;
+    }
   }
 }

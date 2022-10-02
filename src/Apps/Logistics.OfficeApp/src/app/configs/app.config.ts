@@ -6,7 +6,7 @@ export const AppConfig = {
   mapboxToken: environment.mapboxToken,
   storage: {
     keys: {
-      userRoles: 'UserRoles'
+      user: 'User'
     }
   }
 }

@@ -15,7 +15,7 @@ import { of, switchMap } from 'rxjs';
 export class EditTruckComponent implements OnInit {
   public id?: string;
   public headerText: string;
-  public loading: boolean;
+  public isBusy: boolean;
   public editMode: boolean;
   public form: FormGroup;
   public suggestedDrivers: Employee[];
@@ -28,7 +28,7 @@ export class EditTruckComponent implements OnInit {
   {
     this.suggestedDrivers = [];
     this.headerText = 'Edit a truck';
-    this.loading = false;
+    this.isBusy = false;
     this.editMode = true;
     this.form = new FormGroup({
       truckNumber: new FormControl(0, Validators.required),
@@ -72,14 +72,14 @@ export class EditTruckComponent implements OnInit {
       driverId: driver.id!
     }
 
-    this.loading = true;
+    this.isBusy = true;
     if (this.editMode) {
       this.apiService.updateTruck(truck).subscribe(result => {
         if (result.success) {
           this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Truck has been updated successfully'});
         }
 
-        this.loading = false;
+        this.isBusy = false;
       });
     }
     else {
@@ -89,7 +89,7 @@ export class EditTruckComponent implements OnInit {
           this.resetForm();
         }
 
-        this.loading = false;
+        this.isBusy = false;
       });
     }
   }
@@ -106,13 +106,13 @@ export class EditTruckComponent implements OnInit {
       return;
     }
 
-    this.loading = true;
+    this.isBusy = true;
     this.apiService.deleteTruck(this.id).subscribe(result => {
       if (result.success) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A truck has been deleted successfully'});
         this.resetForm();
 
-        this.loading = false;
+        this.isBusy = false;
       }
     });
   }

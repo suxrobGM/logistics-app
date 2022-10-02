@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { AppConfig } from '@configs';
-import { Role, User } from '@shared/models';
-import { ApiService, StorageService } from '@shared/services';
+import { Role, User, UserIdentity } from '@shared/models';
+import { ApiService, UserDataService } from '@shared/services';
 import { UserRole } from '@shared/types';
 
 @Injectable()
@@ -11,8 +10,10 @@ export class UserService {
 
   constructor(
     private apiService: ApiService,
-    storage: StorageService) {
-    this.userRoles = storage.get<Role[]>(AppConfig.storage.keys.userRoles)?.map(i => i.name);
+    userDataService: UserDataService) 
+  {
+    const user = userDataService.getUser();
+    this.userRoles = user?.roles;
   }
 
   public searchUser(searchQuery: string): Observable<User[] | undefined> {

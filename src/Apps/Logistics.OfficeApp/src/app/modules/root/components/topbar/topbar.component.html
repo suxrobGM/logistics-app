@@ -13,15 +13,25 @@
     <div id="navbar" class="collapse navbar-collapse">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <button pButton
-            *ngIf="isAuthenticated; else loginTemplate"
-            class="p-button-lg p-button-text text-dark"  
-            [label]="user?.name!" 
-            icon="bi bi-person-circle" 
-            (click)="openAccountUrl()">
-          </button>
-
-          <ng-template #loginTemplate>
+          <div *ngIf="isAuthenticated; else loginButton">
+            <p-button
+              styleClass="p-button-lg p-button-text text-dark"  
+              (click)="openAccountUrl()">
+              <ng-template pTemplate="content">
+                <div class="me-2">
+                  <i class="bi bi-person-circle"></i>
+                </div>
+                <div>
+                  <span>{{user?.name}}</span>
+                  <span *ngIf="userRole">
+                    <p-badge styleClass="ms-1" severity="success" size="large" [value]="userRole!"></p-badge>
+                  </span>
+                </div>
+              </ng-template>
+            </p-button>
+          </div>
+          
+          <ng-template #loginButton>
             <button pButton
               class="p-button-lg p-button-text text-dark"  
               label="Login" 

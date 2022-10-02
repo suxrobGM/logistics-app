@@ -12,19 +12,19 @@ import { LoadStatus, LoadStatuses } from '@shared/types';
 })
 export class ListLoadComponent implements OnInit {
   loads: Load[];
-  loading: boolean;
+  isBusy: boolean;
   totalRecords: number;
   first: number;
 
   constructor(private apiService: ApiService) {
     this.loads = [];
-    this.loading = false;
+    this.isBusy = false;
     this.totalRecords = 0;
     this.first = 0;
   }
 
   ngOnInit(): void {
-    this.loading = true;
+    this.isBusy = true;
   }
 
   search(event: any) {
@@ -39,7 +39,7 @@ export class ListLoadComponent implements OnInit {
   }
 
   load(event: LazyLoadEvent) {
-    this.loading = true;
+    this.isBusy = true;
     const page = event.first! / event.rows! + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField, event.sortOrder);
     
@@ -49,7 +49,7 @@ export class ListLoadComponent implements OnInit {
         this.totalRecords = result.itemsCount!;
       }
 
-      this.loading = false;
+      this.isBusy = false;
     });
   }
 

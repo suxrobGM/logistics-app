@@ -2,7 +2,13 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PrimengModule } from './primeng.module';
 import { DistanceUnitPipe } from './pipes';
-import { ApiService, CookieService, StorageService, TenantService } from './services';
+import { 
+  ApiService, 
+  CookieService, 
+  StorageService, 
+  TenantService, 
+  UserDataService 
+} from './services';
 
 @NgModule({
   declarations: [

@@ -1,7 +1,7 @@
 import { EnumType } from './enumType';
 import { LoadStatus } from './loadStatus';
 import { LoadStatuses } from './loadStatuses';
-import { UserRole } from './userRole';
+import { getRoleName, UserRole } from './userRole';
 import { Permissions } from './permissions';
 
 export {
@@ -9,5 +9,6 @@ export {
   LoadStatus,
   LoadStatuses,
   UserRole,
-  Permissions
+  Permissions,
+  getRoleName
 }

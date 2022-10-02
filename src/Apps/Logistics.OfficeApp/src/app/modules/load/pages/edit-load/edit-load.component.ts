@@ -28,7 +28,7 @@ export class EditLoadComponent implements OnInit {
 
   public id?: string;
   public headerText: string;
-  public loading: boolean;
+  public isBusy: boolean;
   public editMode: boolean;
   public form: FormGroup;
   public suggestedDrivers: Employee[];
@@ -42,7 +42,7 @@ export class EditLoadComponent implements OnInit {
     private distanceUnit: DistanceUnitPipe,
     private route: ActivatedRoute)
   {
-    this.loading = false;
+    this.isBusy = false;
     this.editMode = true;
     this.headerText = 'Edit a load';
     this.suggestedDrivers = [];
@@ -113,7 +113,7 @@ export class EditLoadComponent implements OnInit {
       load.id = this.id;
     }
 
-    this.loading = true;
+    this.isBusy = true;
     if (this.editMode) {
       this.apiService.updateLoad(load)
         .subscribe(result => {
@@ -121,7 +121,7 @@ export class EditLoadComponent implements OnInit {
             this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Load has been updated successfully'});
           }
 
-          this.loading = false;
+          this.isBusy = false;
       });
     }
     else {
@@ -132,7 +132,7 @@ export class EditLoadComponent implements OnInit {
             this.resetForm();
           }
 
-          this.loading = false;
+          this.isBusy = false;
       });
     }
   }
@@ -149,13 +149,13 @@ export class EditLoadComponent implements OnInit {
       return;
     }
 
-    this.loading = true;
+    this.isBusy = true;
     this.apiService.deleteLoad(this.id).subscribe(result => {
       if (result.success) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A load has been deleted successfully'});
         this.resetForm();
 
-        this.loading = false;
+        this.isBusy = false;
       }
     });
   }

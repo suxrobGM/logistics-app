@@ -8,7 +8,7 @@
 <div class="row justify-content-center">
   <div class="col-12 col-md-6">
     <p-card>
-      <p-progressSpinner *ngIf="loading"></p-progressSpinner>
+      <p-progressSpinner *ngIf="isBusy"></p-progressSpinner>
       <p-messages key="errorMsg"></p-messages>
 
       <div class="mb-3">
@@ -27,21 +27,22 @@
         <label for="roleName" class="form-label">Role</label>
         <div class="input-group">
           <input id="roleName" type="text" class="form-control" [disabled]="true" [value]="getEmployeeRoleNames()" />
-          <button pButton class="p-button-raised" label="Change" type="button" (click)="openUpdateDialog()" [disabled]="canChangeRole"></button>
+          <button pButton class="p-button-raised" label="Change" type="button" (click)="openUpdateDialog()" [disabled]="!canChangeRole"></button>
         </div>
       </div>
-      <div class="mt-3">
+
+      <div>
         <button pButton 
-          type="submit"
-          class="p-button-raised p-button-danger"
+          type="button"
+          class="p-button-raised p-button-danger mt-3"
           icon="bi bi bi-trash"
           label="Delete"
-          [disabled]="loading"
+          [disabled]="isBusy"
           (click)="confirmToDelete()">
         </button>
         <button pButton 
           type="button"
-          class="p-button-raised ms-2"
+          class="p-button-raised mt-3 ms-2"
           icon="bi bi-arrow-left-square"
           routerLink="/employees"
           label="Back to list">
