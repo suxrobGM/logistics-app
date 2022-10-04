@@ -43,7 +43,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.DbMigrator", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Main.Tests", "tests\Logistics.Application.Main.Tests\Logistics.Application.Main.Tests.csproj", "{566AE1D3-A3AE-40CC-A781-95B342E6CD88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.DriverApp", "src\Apps\Logistics.DriverApp\Logistics.DriverApp.csproj", "{920DFC2D-23C4-4662-BE89-1784DB7DC72F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.DriverApp", "src\Apps\Logistics.DriverApp\Logistics.DriverApp.csproj", "{920DFC2D-23C4-4662-BE89-1784DB7DC72F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

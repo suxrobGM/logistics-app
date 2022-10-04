@@ -1,4 +1,4 @@
-﻿namespace Logistics.DriverApp;
+﻿namespace Logistics.DriverApp.Views;
 
 public partial class MainPage : ContentPage
 {
