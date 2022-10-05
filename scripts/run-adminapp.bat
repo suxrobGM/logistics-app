@@ -1,1 +1,2 @@
-start "Admin App" /d "." dotnet run --project ../src/Apps/Logistics.AdminApp
+title Admin App
+dotnet run --project ../src/Client/Logistics.AdminApp

@@ -1,4 +1,6 @@
-﻿namespace Logistics.Application.Contracts.Commands;
+﻿using Logistics.Application.Shared.Abstractions;
+
+namespace Logistics.Application.Contracts.Commands;
 
 public sealed class DeleteTenantCommand : RequestBase<DataResult>
 {

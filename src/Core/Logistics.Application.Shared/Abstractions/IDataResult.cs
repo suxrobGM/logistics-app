@@ -1,4 +1,4 @@
-﻿namespace Logistics.Application.Shared;
+﻿namespace Logistics.Application.Shared.Abstractions;
 
 public interface IDataResult
 {

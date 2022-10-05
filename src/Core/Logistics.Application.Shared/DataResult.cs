@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Logistics.Application.Shared.Abstractions;
 
 namespace Logistics.Application.Shared;
 

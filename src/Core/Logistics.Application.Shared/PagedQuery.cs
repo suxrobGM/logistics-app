@@ -1,4 +1,6 @@
-﻿namespace Logistics.Application.Shared;
+﻿using Logistics.Application.Shared.Abstractions;
+
+namespace Logistics.Application.Shared;
 
 public abstract class PagedQuery<T> : RequestBase<PagedDataResult<T>>
 {

@@ -1,6 +1,4 @@
-﻿using Logistics.Domain.Shared;
-
-namespace Logistics.Application.Contracts.Commands;
+﻿namespace Logistics.Application.Contracts.Commands;
 
 public sealed class CreateLoadCommand : RequestBase<DataResult>
 {

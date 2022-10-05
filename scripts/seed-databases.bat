@@ -1,3 +1,4 @@
-start "Seed Databases" /d "." dotnet run --project ../src/Core/Logistics.DbMigrator
+title Seed Databases
+dotnet run --project ../src/Core/Logistics.DbMigrator
 
 

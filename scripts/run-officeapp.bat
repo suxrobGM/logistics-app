@@ -1,3 +1,4 @@
-cd ../src/Apps/Logistics.OfficeApp
-start "Office App" /d "." npm run start
+title Office App
+cd ../src/Client/Logistics.OfficeApp
+npm run start
 

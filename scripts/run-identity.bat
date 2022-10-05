@@ -1,1 +1,2 @@
-start "Identity Server" /d "." dotnet run --project ../src/Apps/Logistics.IdentityServer
+title Identity Server
+dotnet run --project ../src/Server/Logistics.IdentityServer
