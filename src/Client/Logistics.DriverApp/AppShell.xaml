@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="Logistics.DriverApp.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:Logistics.DriverApp.Views"
+    Shell.FlyoutBehavior="Flyout">
+
+    <TabBar>
+        <ShellContent
+            Title="Login"
+            ContentTemplate="{DataTemplate views:LoginPage}"
+            Route="LoginPage" />
+    </TabBar>
+    <FlyoutItem Title="Home">
+        <ShellContent ContentTemplate="{DataTemplate views:MainPage}" Route="MainPage" />
+    </FlyoutItem>
+    <FlyoutItem Title="Account">
+        <ShellContent ContentTemplate="{DataTemplate views:AccountPage}" Route="MainPage" />
+    </FlyoutItem>
+    <FlyoutItem Title="Settings">
+        <ShellContent ContentTemplate="{DataTemplate views:SettingsPage}" Route="MainPage" />
+    </FlyoutItem>
+
+
+</Shell>

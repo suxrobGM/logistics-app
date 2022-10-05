@@ -18,10 +18,10 @@ jobs:
       with:
         node-version: 16.x
         cache: 'npm'
-        cache-dependency-path: ./src/Apps/Logistics.OfficeApp/package-lock.json
+        cache-dependency-path: ./src/Client/Logistics.OfficeApp/package-lock.json
         
     - name: Install dependencies
-      run: npm ci --prefix ./src/Apps/Logistics.OfficeApp --force
+      run: npm ci --prefix ./src/Client/Logistics.OfficeApp --force
 
     - name: Build
-      run: npm run build --prefix ./src/Apps/Logistics.OfficeApp
+      run: npm run build --prefix ./src/Client/Logistics.OfficeApp

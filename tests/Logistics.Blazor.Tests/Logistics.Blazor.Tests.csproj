@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Apps\Logistics.Blazor\Logistics.Blazor.csproj" />
+    <ProjectReference Include="..\..\src\Client\Logistics.Blazor\Logistics.Blazor.csproj" />
   </ItemGroup>
 
 </Project>

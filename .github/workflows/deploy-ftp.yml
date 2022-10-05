@@ -5,10 +5,10 @@ on:
     branches: [ "main" ]
 
 env:
-  WEB_API_PROJECT: src/Api/Logistics.WebApi/Logistics.WebApi.csproj
-  IDENTITY_SERVER_PROJECT: src/Apps/Logistics.IdentityServer/Logistics.IdentityServer.csproj
-  ADMIN_APP_PROJECT: src/Apps/Logistics.AdminApp/Logistics.AdminApp.csproj
-  OFFICE_APP_PATH: src/Apps/Logistics.OfficeApp
+  WEB_API_PROJECT: src/Server/Logistics.WebApi/Logistics.WebApi.csproj
+  IDENTITY_SERVER_PROJECT: src/Server/Logistics.IdentityServer/Logistics.IdentityServer.csproj
+  ADMIN_APP_PROJECT: src/Client/Logistics.AdminApp/Logistics.AdminApp.csproj
+  OFFICE_APP_PATH: src/Client/Logistics.OfficeApp
   OFFICE_APP_OUTPUT_PATH: dist/logistics.office-app
 
 jobs:
