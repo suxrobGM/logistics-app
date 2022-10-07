@@ -99,7 +99,7 @@ internal static class HostingExtensions
 
     private static void AddSecretsJson(IConfigurationBuilder configuration)
     {
-        var path = Path.Combine(AppContext.BaseDirectory, "secrets.json");
+        var path = Path.Combine(AppContext.BaseDirectory, "appsettings.secrets.json");
         configuration.AddJsonFile(path, true);
     }
 

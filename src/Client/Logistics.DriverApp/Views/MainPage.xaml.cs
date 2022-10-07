@@ -7,6 +7,7 @@ public partial class MainPage : ContentPage
     public MainPage()
     {
         InitializeComponent();
+        BindingContext = App.Current.Services.GetService<MainPageViewModel>();
     }
 
     private void OnCounterClicked(object sender, EventArgs e)

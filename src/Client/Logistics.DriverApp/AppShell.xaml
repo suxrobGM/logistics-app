@@ -6,9 +6,8 @@
     xmlns:views="clr-namespace:Logistics.DriverApp.Views"
     Shell.FlyoutBehavior="Flyout">
 
-    <TabBar>
+    <TabBar Title="">
         <ShellContent
-            Title="Login"
             ContentTemplate="{DataTemplate views:LoginPage}"
             Route="LoginPage" />
     </TabBar>
@@ -16,11 +15,12 @@
         <ShellContent ContentTemplate="{DataTemplate views:MainPage}" Route="MainPage" />
     </FlyoutItem>
     <FlyoutItem Title="Account">
-        <ShellContent ContentTemplate="{DataTemplate views:AccountPage}" Route="MainPage" />
+        <ShellContent ContentTemplate="{DataTemplate views:AccountPage}" Route="AccountPage" />
     </FlyoutItem>
     <FlyoutItem Title="Settings">
-        <ShellContent ContentTemplate="{DataTemplate views:SettingsPage}" Route="MainPage" />
+        <ShellContent ContentTemplate="{DataTemplate views:SettingsPage}" Route="SettingsPage" />
     </FlyoutItem>
-
-
+    <FlyoutItem Title="About">
+        <ShellContent ContentTemplate="{DataTemplate views:AboutPage}" Route="AboutPage" />
+    </FlyoutItem>
 </Shell>

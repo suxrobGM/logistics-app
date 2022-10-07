@@ -1,4 +1,6 @@
-﻿namespace Logistics.DriverApp;
+﻿using Microsoft.Extensions.Configuration;
+
+namespace Logistics.DriverApp;
 
 public static class MauiProgram
 {
