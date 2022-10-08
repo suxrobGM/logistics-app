@@ -18,7 +18,6 @@ public class Load : Entity, ITenantEntity
     [Range(LoadConsts.MinDeliveryCost, LoadConsts.MaxDeliveryCost)]
     public double DeliveryCost { get; set; }
     
-    [Range(LoadConsts.MinDistance, LoadConsts.MaxDistance)]
     public double Distance { get; set; }
     
     public DateTime DispatchedDate { get; set; }
