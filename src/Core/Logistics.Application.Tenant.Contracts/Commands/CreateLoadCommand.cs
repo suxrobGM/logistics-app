@@ -15,7 +15,6 @@ public sealed class CreateLoadCommand : RequestBase<DataResult>
     public double DeliveryCost { get; set; }
     
     [Required]
-    [Range(LoadConsts.MinDistance, LoadConsts.MaxDistance)]
     public double Distance { get; set; }
     
     [Required]
