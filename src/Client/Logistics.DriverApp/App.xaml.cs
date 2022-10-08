@@ -31,18 +31,13 @@ public partial class App : Application
     private static IConfiguration BuildConfiguration()
     {
         var builder = new ConfigurationBuilder();
-        var appsettings = typeof(MauiProgram).Assembly
-            .GetManifestResourceStream("Logistics.DriverApp.appsettings.json");
 
-        var secrets = typeof(MauiProgram).Assembly
-            .GetManifestResourceStream("Logistics.DriverApp.appsettings.secrets.json");
-
-        builder.AddJsonStream(appsettings);
-        builder.AddJsonStream(secrets);
+        TryAddConfig(builder, "appsettings.json");
+        TryAddConfig(builder, "appsettings.secrets.json");
         return builder.Build();
     }
 
-    private void TryAddConfig(this IConfigurationBuilder builder, string configFile)
+    private static void TryAddConfig(IConfigurationBuilder builder, string configFile)
     {
         try
         {
