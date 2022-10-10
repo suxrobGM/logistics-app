@@ -1,4 +1,4 @@
-name: Angular Build
+name: Office App Angular Build
 
 on:
   push:
