@@ -1,4 +1,4 @@
-name: Admin App Blazor Build
+name: .NET Build
 
 on:
   push:
@@ -18,5 +18,11 @@ jobs:
       with:
         dotnet-version: 6.0.x
       
-    - name: Build
+    - name: Build Web API
+      run: dotnet build ./src/Server/Logistics.WebApi/Logistics.WebApi.csproj
+      
+    - name: Build Identity Server
+      run: dotnet build ./src/Server/Logistics.IdentityServer/Logistics.IdentityServer.csproj
+      
+    - name: Build Admin App
       run: dotnet build ./src/Client/Logistics.AdminApp/Logistics.AdminApp.csproj

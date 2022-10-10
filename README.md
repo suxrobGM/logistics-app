@@ -1,10 +1,8 @@
+[![BuildShield](https://github.com/suxrobgm/logistics-app/actions/workflows/dotnet-build.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/dotnet-build.yml)
 [![BuildShield](https://github.com/suxrobgm/logistics-app/actions/workflows/dotnet-test.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/dotnet-test.yml)
 [![BuildShield](https://github.com/suxrobgm/logistics-app/actions/workflows/deploy-ftp.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/deploy-ftp.yml)
 [![BuildShield](https://github.com/suxrobgm/logistics-app/actions/workflows/officeapp-build.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/officeapp-build.yml)
-[![BuildShield](https://github.com/suxrobgm/logistics-app/actions/workflows/adminapp-build.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/adminapp-build.yml)
 [![BuildShield](https://github.com/suxrobgm/logistics-app/actions/workflows/driverapp-build.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/driverapp-build.yml)
-[![BuildShield](https://github.com/suxrobgm/logistics-app/actions/workflows/identityserver-build.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/identityserver-build.yml)
-[![BuildShield](https://github.com/suxrobgm/logistics-app/actions/workflows/webapi-build.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/webapi-build.yml)
 
 # Logistics TMS
 Automate your entire transportation logistics operations with the transportation management system (TMS).
