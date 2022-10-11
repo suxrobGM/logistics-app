@@ -27,7 +27,7 @@ jobs:
         dotnet workload install ios
         dotnet workload install maui
         
-    - name: Create an empty appsettings.secrets file
+    - name: Create an empty appsettings.secrets.json file
       uses: DamianReeves/write-file-action@master
       with:
         path: ${{ env.PROJECT_DIR }}/appsettings.secrets.json

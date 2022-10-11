@@ -1,5 +1,6 @@
 ﻿using IdentityModel.OidcClient;
 using Microsoft.Extensions.Configuration;
+using Logistics.DriverApp.Authentication;
 
 namespace Logistics.DriverApp;
 
@@ -10,7 +11,7 @@ public partial class App : Application
         InitializeComponent();
 
         Configuration = BuildConfiguration();
-        Services = ConfigureServices();
+        Services = ConfigureServices(Configuration);
         MainPage = new AppShell();
     }
 
@@ -18,13 +19,16 @@ public partial class App : Application
     public IServiceProvider Services { get; }
     public IConfiguration Configuration { get; }
 
-    private static IServiceProvider ConfigureServices()
+    private static IServiceProvider ConfigureServices(IConfiguration configuration)
     {
         var services = new ServiceCollection();
+        var oidcOptions = configuration.GetSection("OidcClient").Get<OidcClientOptions>();
 
         services.AddTransient<MainPageViewModel>();
         services.AddTransient<LoginPageViewModel>();
-        services.AddSingleton<OidcClientOptions>();
+        services.AddSingleton(oidcOptions);
+        services.AddScoped<IdentityModel.OidcClient.Browser.IBrowser, WebBrowserAuthenticator>();
+        services.AddScoped<IAuthService, AuthService>();
         return services.BuildServiceProvider();
     }
 

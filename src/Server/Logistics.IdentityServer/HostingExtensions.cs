@@ -26,6 +26,7 @@ internal static class HostingExtensions
             });
         
         AddAuthSchemes(builder.Services);
+        var a = Config.Clients(builder.Configuration);
 
         builder.Services
             .AddIdentityServer(options =>

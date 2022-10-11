@@ -1,16 +1,21 @@
-﻿namespace Logistics.DriverApp.ViewModels;
+﻿using Logistics.DriverApp.Authentication;
+
+namespace Logistics.DriverApp.ViewModels;
 
 public class LoginPageViewModel : ViewModelBase
 {
-    public LoginPageViewModel()
+    private readonly IAuthService _authService;
+
+    public LoginPageViewModel(IAuthService authService)
     {
+        _authService = authService;
         SignInCommand = new AsyncRelayCommand(LoginAsync);
     }
 
     public IAsyncRelayCommand SignInCommand { get; }
 
-    public Task LoginAsync()
+    public async Task LoginAsync()
     {
-        return Task.CompletedTask;
+        await _authService.LoginAsync();
     }
 }
