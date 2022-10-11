@@ -2,7 +2,17 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Logistics.DriverApp.Views.LoginPage">
-    <VerticalStackLayout>
-        <Button Text="Login" Margin="10" Command="{Binding SignInCommand}"></Button>
+    <VerticalStackLayout Margin="10">
+        <HorizontalStackLayout IsVisible="{Binding IsBusy}">
+            <ActivityIndicator IsRunning="True" Color="#512BD4" VerticalOptions="Start" />
+            <Label Text="Authenticating" VerticalOptions="Center" Margin="10,0" FontSize="Medium" />
+        </HorizontalStackLayout>
+
+        <VerticalStackLayout Margin="0,10">
+            <Label Text="Click the login button to sign in and get access." FontSize="Medium" />
+            <Label Text="Do not have an account? Click the create an account button." FontSize="Medium" />
+            <Button Text="Login" Margin="0,10" Command="{Binding SignInCommand}" BackgroundColor="#512BD4" TextColor="White" />
+            <Button Text="Create an account" Margin="0,10" Command="{Binding OpenSignUpCommand}" BackgroundColor="#512BD4" TextColor="White" />
+        </VerticalStackLayout>
     </VerticalStackLayout>
 </ContentPage>

@@ -1,4 +1,6 @@
 ﻿using IdentityModel.OidcClient;
+using System.Security.Claims;
+using IBrowser = IdentityModel.OidcClient.Browser.IBrowser;
 
 namespace Logistics.DriverApp.Authentication;
 
@@ -6,23 +8,70 @@ public class AuthService : IAuthService
 {
     private readonly OidcClient _oidcClient;
 
-    public AuthService(OidcClientOptions options, IdentityModel.OidcClient.Browser.IBrowser browser)
+    public AuthService(OidcClientOptions options, IBrowser browser)
     {
-
         _oidcClient = new OidcClient(options);
         _oidcClient.Options.Browser = browser;
         Browser = browser;
+        Options = options;
     }
 
-    public IdentityModel.OidcClient.Browser.IBrowser Browser { get; }
+    public string? AccessToken { get; private set; }
+    public IBrowser Browser { get; }
+    public UserIdentity? User { get; private set; }
 
-    public Task<LoginResult> LoginAsync()
+    public OidcClientOptions Options { get; }
+
+    public async Task<LoginResult> LoginAsync()
     {
-        return _oidcClient.LoginAsync();
+        var result = await _oidcClient.LoginAsync();
+
+        if (!result.IsError)
+        {
+            AccessToken = result.AccessToken;
+            User = ParseUserIdentity(result.User);
+        }
+        
+        return result;
     }
 
-    public Task<LogoutResult> LogoutAsync()
+    public async Task<LogoutResult> LogoutAsync()
     {
-        return _oidcClient.LogoutAsync();
+        var result = await _oidcClient.LogoutAsync();
+
+        if (!result.IsError)
+        {
+            AccessToken = null;
+            User = null;
+        }
+
+        return result;
+    }
+
+    private static UserIdentity ParseUserIdentity(ClaimsPrincipal claimsPrincipal)
+    {
+        var userIdentity = new UserIdentity();
+        foreach (var claim in claimsPrincipal.Claims)
+        {
+            switch (claim.Type)
+            {
+                case "name":
+                    userIdentity.UserName = claim.Value; 
+                    break;
+
+                case "sub":
+                    userIdentity.Id = claim.Value;
+                    break;
+
+                case "role":
+                    userIdentity.Roles.Add(claim.Value);
+                    break;
+
+                case "permission":
+                    userIdentity.Roles.Add(claim.Value);
+                    break;
+            }
+        }
+        return userIdentity;
     }
 }
