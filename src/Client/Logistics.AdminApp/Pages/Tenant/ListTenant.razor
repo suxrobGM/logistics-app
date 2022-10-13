@@ -45,7 +45,7 @@
                             HeaderTextAlign="TextAlign.Center">
                         <Template>
                             @{
-                                var entity = context as TenantDto;
+                                var entity = context as Tenant;
                                 var editPageLink = $"/edit-tenant/{entity?.Id}";
                             }
 

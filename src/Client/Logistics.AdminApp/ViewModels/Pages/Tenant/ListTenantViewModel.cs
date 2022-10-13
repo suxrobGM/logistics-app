@@ -1,4 +1,6 @@
-﻿namespace Logistics.AdminApp.ViewModels.Pages.Tenant;
+﻿using Logistics.Shared;
+
+namespace Logistics.AdminApp.ViewModels.Pages;
 
 public class ListTenantViewModel : PageViewModelBase
 {
@@ -7,13 +9,13 @@ public class ListTenantViewModel : PageViewModelBase
     public ListTenantViewModel(IApiClient apiClient)
     {
         _apiClient = apiClient;
-        Tenants = Array.Empty<TenantDto>();
-        TenantsList = new PagedList<TenantDto>(20, true, i => i.Id!);
+        Tenants = Array.Empty<Tenant>();
+        TenantsList = new PagedList<Tenant>(20, true, i => i.Id!);
         SearchInput = string.Empty;
     }
 
-    public PagedList<TenantDto> TenantsList { get; set; }
-    public IEnumerable<TenantDto> Tenants { get; set; }
+    public PagedList<Tenant> TenantsList { get; set; }
+    public IEnumerable<Tenant> Tenants { get; set; }
     public string SearchInput { get; set; }
 
     private int _totalRecords;
@@ -36,7 +38,7 @@ public class ListTenantViewModel : PageViewModelBase
 
     public async Task LoadPage(PageEventArgs e, string searchInput = "")
     {
-        var result = await _apiClient.GetTenantsAsync(searchInput, e.Page);
+        var result = await _apiClient.GetTenantsAsync(new SearchableQuery(searchInput, e.Page));
         var pagedList = result.Items;
         
         if (result.Success && pagedList != null)

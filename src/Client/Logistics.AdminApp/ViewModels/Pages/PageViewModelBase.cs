@@ -1,6 +1,4 @@
-﻿using Logistics.Sdk.Exceptions;
-
-namespace Logistics.AdminApp.ViewModels.Pages;
+﻿namespace Logistics.AdminApp.ViewModels.Pages;
 
 public abstract class PageViewModelBase : ViewModelBase
 {

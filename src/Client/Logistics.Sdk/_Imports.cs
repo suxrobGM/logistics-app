@@ -1,6 +1,3 @@
-﻿
-global using Logistics.Application.Admin.Models;
-global using Logistics.Application.Tenant.Models;
-global using Logistics.Application.Shared;
-global using Logistics.Sdk.Exceptions;
+﻿global using Logistics.Sdk.Exceptions;
+global using Logistics.Sdk.Models;
 global using Logistics.Shared;

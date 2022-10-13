@@ -1,10 +1,10 @@
-﻿namespace Logistics.Sdk;
+﻿namespace Logistics.Sdk.Abstractions;
 
 public interface ILoadApi
 {
-    Task<ResponseResult<LoadDto>> GetLoadAsync(string id);
-    Task<PagedResponseResult<LoadDto>> GetLoadsAsync(string searchInput = "", int page = 1, int pageSize = 10);
-    Task<ResponseResult> CreateLoadAsync(LoadDto load);
-    Task<ResponseResult> UpdateLoadAsync(LoadDto load);
+    Task<ResponseResult<Load>> GetLoadAsync(string id);
+    Task<PagedResponseResult<Load>> GetLoadsAsync(SearchableQuery query);
+    Task<ResponseResult> CreateLoadAsync(CreateLoad load);
+    Task<ResponseResult> UpdateLoadAsync(UpdateLoad load);
     Task<ResponseResult> DeleteLoadAsync(string id);
 }

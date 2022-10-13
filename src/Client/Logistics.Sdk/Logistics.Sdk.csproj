@@ -13,8 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Logistics.Application.Admin.Contracts\Logistics.Application.Admin.Contracts.csproj" />
-    <ProjectReference Include="..\..\Core\Logistics.Application.Tenant.Contracts\Logistics.Application.Tenant.Contracts.csproj" />
+    <ProjectReference Include="..\..\Shared\Logistics.Shared\Logistics.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Constraints" />
   </ItemGroup>
 
 </Project>

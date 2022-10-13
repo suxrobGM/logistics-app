@@ -126,35 +126,24 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Load API
 
-    public Task<ResponseResult<LoadDto>> GetLoadAsync(string id)
+    public Task<ResponseResult<Load>> GetLoadAsync(string id)
     {
-        return MakeGetRequestAsync<ResponseResult<LoadDto>>($"load/{id}");
+        return MakeGetRequestAsync<ResponseResult<Load>>($"load/{id}");
     }
 
-    public Task<PagedResponseResult<LoadDto>> GetLoadsAsync(string searchInput = "", int page = 1, int pageSize = 10)
+    public Task<PagedResponseResult<Load>> GetLoadsAsync(SearchableQuery query)
     {
-        var query = new Dictionary<string, string>
-        {
-            {"page", page.ToString() },
-            {"pageSize", pageSize.ToString() }
-        };
-
-        if (!string.IsNullOrEmpty(searchInput))
-        {
-            query.Add("search", searchInput);
-        }
-
-        return MakeGetRequestAsync<PagedResponseResult<LoadDto>>("load/list", query);
+        return MakeGetRequestAsync<PagedResponseResult<Load>>("load/list", query.ToDictionary());
     }
 
-    public Task<ResponseResult> CreateLoadAsync(LoadDto load)
+    public Task<ResponseResult> CreateLoadAsync(CreateLoad load)
     {
-        return MakePostRequestAsync<ResponseResult, LoadDto>("load/create", load);
+        return MakePostRequestAsync<ResponseResult, CreateLoad>("load/create", load);
     }
     
-    public Task<ResponseResult> UpdateLoadAsync(LoadDto load)
+    public Task<ResponseResult> UpdateLoadAsync(UpdateLoad load)
     {
-        return MakePutRequestAsync<ResponseResult, LoadDto>($"load/update/{load.Id}", load);
+        return MakePutRequestAsync<ResponseResult, UpdateLoad>($"load/update/{load.Id}", load);
     }
 
     public Task<ResponseResult> DeleteLoadAsync(string id)
@@ -167,41 +156,31 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Truck API
 
-    public Task<ResponseResult<TruckDto>> GetTruckAsync(string id)
+    public Task<ResponseResult<Truck>> GetTruckAsync(string id)
     {
-        return MakeGetRequestAsync<ResponseResult<TruckDto>>($"truck/{id}");
+        return MakeGetRequestAsync<ResponseResult<Truck>>($"truck/{id}");
     }
 
-    public Task<ResponseResult<TruckDto>> GetTruckByDriverAsync(string driverId)
+    public Task<ResponseResult<Truck>> GetTruckByDriverAsync(string driverId)
     {
-        return MakeGetRequestAsync<ResponseResult<TruckDto>>($"truck/driver/{driverId}");  
+        return MakeGetRequestAsync<ResponseResult<Truck>>($"truck/driver/{driverId}");  
     }
 
-    public Task<PagedResponseResult<TruckDto>> GetTrucksAsync(string searchInput = "", int page = 1, int pageSize = 10, bool includeCargoIds = false)
+    public Task<PagedResponseResult<Truck>> GetTrucksAsync(SearchableQuery query, bool includeCargoIds = false)
     {
-        var query = new Dictionary<string, string>
-        {
-            {"page", page.ToString() },
-            {"pageSize", pageSize.ToString() },
-            {"includeCargoIds", includeCargoIds.ToString() }
-        };
-
-        if (!string.IsNullOrEmpty(searchInput))
-        {
-            query.Add("search", searchInput);
-        }
-
-        return MakeGetRequestAsync<PagedResponseResult<TruckDto>>("truck/list", query);
+        var queryDict = query.ToDictionary();
+        queryDict.Add("includeCargoIds", includeCargoIds.ToString());
+        return MakeGetRequestAsync<PagedResponseResult<Truck>>("truck/list", queryDict);
     }
 
-    public Task<ResponseResult> CreateTruckAsync(TruckDto truck)
+    public Task<ResponseResult> CreateTruckAsync(CreateTruck truck)
     {
-        return MakePostRequestAsync<ResponseResult, TruckDto>("truck/create", truck);
+        return MakePostRequestAsync<ResponseResult, CreateTruck>("truck/create", truck);
     }
 
-    public Task<ResponseResult> UpdateTruckAsync(TruckDto truck)
+    public Task<ResponseResult> UpdateTruckAsync(UpdateTruck truck)
     {
-        return MakePutRequestAsync<ResponseResult, TruckDto>($"truck/update/{truck.Id}", truck);
+        return MakePutRequestAsync<ResponseResult, UpdateTruck>($"truck/update/{truck.Id}", truck);
     }
 
     public Task<ResponseResult> DeleteTruckAsync(string id)
@@ -214,35 +193,24 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Employee API
 
-    public Task<ResponseResult<EmployeeDto>> GetEmployeeAsync(string id)
+    public Task<ResponseResult<Employee>> GetEmployeeAsync(string id)
     {
-        return MakeGetRequestAsync<ResponseResult<EmployeeDto>>($"employee/{id}");
+        return MakeGetRequestAsync<ResponseResult<Employee>>($"employee/{id}");
     }
 
-    public Task<PagedResponseResult<EmployeeDto>> GetEmployeesAsync(string searchInput = "", int page = 1, int pageSize = 10)
+    public Task<PagedResponseResult<Employee>> GetEmployeesAsync(SearchableQuery query)
     {
-        var query = new Dictionary<string, string>
-        {
-            {"page", page.ToString() },
-            {"pageSize", pageSize.ToString() }
-        };
-
-        if (!string.IsNullOrEmpty(searchInput))
-        {
-            query.Add("search", searchInput);
-        }
-
-        return MakeGetRequestAsync<PagedResponseResult<EmployeeDto>>("employee/list", query);
+        return MakeGetRequestAsync<PagedResponseResult<Employee>>("employee/list", query.ToDictionary());
     }
 
-    public Task<ResponseResult> CreateEmployeeAsync(EmployeeDto user)
+    public Task<ResponseResult> CreateEmployeeAsync(CreateEmployee employee)
     {
-        return MakePostRequestAsync<ResponseResult, EmployeeDto>("employee/create", user);
+        return MakePostRequestAsync<ResponseResult, CreateEmployee>("employee/create", employee);
     }
 
-    public Task<ResponseResult> UpdateEmployeeAsync(EmployeeDto user)
+    public Task<ResponseResult> UpdateEmployeeAsync(UpdateEmployee employee)
     {
-        return MakePutRequestAsync<ResponseResult, EmployeeDto>($"employee/update/{user.Id}", user);
+        return MakePutRequestAsync<ResponseResult, UpdateEmployee>($"employee/update/{employee.UserId}", employee);
     }
     
     public Task<ResponseResult> DeleteEmployeeAsync(string id)
@@ -260,35 +228,24 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakeGetRequestAsync<ResponseResult<string>>($"tenant/getDisplayName?id={id}");
     }
 
-    public Task<ResponseResult<TenantDto>> GetTenantAsync(string identifier)
+    public Task<ResponseResult<Tenant>> GetTenantAsync(string identifier)
     {
-        return MakeGetRequestAsync<ResponseResult<TenantDto>>($"tenant/{identifier}");
+        return MakeGetRequestAsync<ResponseResult<Tenant>>($"tenant/{identifier}");
     }
 
-    public Task<PagedResponseResult<TenantDto>> GetTenantsAsync(string searchInput = "", int page = 1, int pageSize = 10)
+    public Task<PagedResponseResult<Tenant>> GetTenantsAsync(SearchableQuery query)
     {
-        var query = new Dictionary<string, string>
-        {
-            {"page", page.ToString() },
-            {"pageSize", pageSize.ToString() }
-        };
-
-        if (!string.IsNullOrEmpty(searchInput))
-        {
-            query.Add("search", searchInput);
-        }
-
-        return MakeGetRequestAsync<PagedResponseResult<TenantDto>>("tenant/list", query);
+        return MakeGetRequestAsync<PagedResponseResult<Tenant>>("tenant/list", query.ToDictionary());
     }
 
-    public Task<ResponseResult> CreateTenantAsync(TenantDto tenant)
+    public Task<ResponseResult> CreateTenantAsync(CreateTenant tenant)
     {
-        return MakePostRequestAsync<ResponseResult, TenantDto>("tenant/create", tenant);
+        return MakePostRequestAsync<ResponseResult, CreateTenant>("tenant/create", tenant);
     }
 
-    public Task<ResponseResult> UpdateTenantAsync(TenantDto tenant)
+    public Task<ResponseResult> UpdateTenantAsync(UpdateTenant tenant)
     {
-        return MakePutRequestAsync<ResponseResult, TenantDto>($"tenant/update/{tenant.Id}", tenant);
+        return MakePutRequestAsync<ResponseResult, UpdateTenant>($"tenant/update/{tenant.Id}", tenant);
     }
 
     public Task<ResponseResult> DeleteTenantAsync(string id)

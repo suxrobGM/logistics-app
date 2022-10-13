@@ -63,10 +63,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Models\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\Logistics.Sdk\Logistics.Sdk.csproj" />
 	</ItemGroup>
 

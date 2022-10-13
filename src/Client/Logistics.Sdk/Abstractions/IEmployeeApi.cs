@@ -1,10 +1,10 @@
-﻿namespace Logistics.Sdk;
+﻿namespace Logistics.Sdk.Abstractions;
 
 public interface IEmployeeApi
 {
-    Task<ResponseResult<EmployeeDto>> GetEmployeeAsync(string id);
-    Task<PagedResponseResult<EmployeeDto>> GetEmployeesAsync(string searchInput = "", int page = 1, int pageSize = 10);
-    Task<ResponseResult> CreateEmployeeAsync(EmployeeDto employee);
-    Task<ResponseResult> UpdateEmployeeAsync(EmployeeDto employee);
+    Task<ResponseResult<Employee>> GetEmployeeAsync(string id);
+    Task<PagedResponseResult<Employee>> GetEmployeesAsync(SearchableQuery query);
+    Task<ResponseResult> CreateEmployeeAsync(CreateEmployee employee);
+    Task<ResponseResult> UpdateEmployeeAsync(UpdateEmployee employee);
     Task<ResponseResult> DeleteEmployeeAsync(string id);
 }

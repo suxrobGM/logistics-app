@@ -1,4 +1,4 @@
-﻿namespace Logistics.AdminApp.ViewModels.Pages.Tenant;
+﻿namespace Logistics.AdminApp.ViewModels.Pages;
 
 public class EditTenantViewModel : PageViewModelBase
 {
@@ -7,13 +7,13 @@ public class EditTenantViewModel : PageViewModelBase
     public EditTenantViewModel(IApiClient apiClient)
     {
         _apiClient = apiClient;
-        Tenant = new TenantDto();
+        Tenant = new Tenant();
     }
 
     [Parameter]
     public string? Id { get; set; }
 
-    public TenantDto Tenant { get; set; }
+    public Tenant Tenant { get; set; }
     public bool EditMode => !string.IsNullOrEmpty(Id);
 
     public override async Task OnInitializedAsync()
@@ -51,7 +51,11 @@ public class EditTenantViewModel : PageViewModelBase
         
         if (EditMode)
         {
-            var result = await _apiClient.UpdateTenantAsync(Tenant);
+            var result = await _apiClient.UpdateTenantAsync(new UpdateTenant()
+            {
+                Id = Tenant.Id,
+                DisplayName = Tenant.DisplayName
+            });
 
             if (!result.Success)
                 return;
@@ -60,7 +64,11 @@ public class EditTenantViewModel : PageViewModelBase
         }
         else
         {
-            var result = await _apiClient.CreateTenantAsync(Tenant);
+            var result = await _apiClient.CreateTenantAsync(new CreateTenant()
+            {
+                Name = Tenant.Name,
+                DisplayName = Tenant.DisplayName
+            });
             
             if (!result.Success)
                 return;
