@@ -4,11 +4,8 @@ namespace Logistics.AdminApp.ViewModels.Pages;
 
 public abstract class PageViewModelBase : ViewModelBase
 {
-    private readonly IApiClient _apiClient;
-
-    protected PageViewModelBase(IApiClient apiClient)
+    protected PageViewModelBase()
     {
-        _apiClient = apiClient;
         _busyText = string.Empty;
         _error = string.Empty;
     }
@@ -63,35 +60,4 @@ public abstract class PageViewModelBase : ViewModelBase
         OnInitialized();
         return Task.CompletedTask;
     }
-    
-    protected async Task<Result<T>> CallApi<T>(Func<IApiClient, Task<T>> action, bool showBusyIndicator = true) where T : class
-    {
-        try
-        {
-            IsBusy = showBusyIndicator;
-            var actionResult = await action(_apiClient);
-            return new Result<T>(actionResult, true);
-        }
-        catch (ApiException e)
-        {
-            Error = e.Message;
-            return new Result<T>(null, false);
-        }
-        finally
-        {
-            IsBusy = false;
-        }
-    }
-    
-    protected async Task<Result> CallApi(Func<IApiClient, Task> action, bool showBusyIndicator = true)
-    {
-        return await CallApi(async i =>
-        {
-            await action(i);
-            return string.Empty;
-        }, showBusyIndicator);
-    }
 }
-
-public record Result(bool Success);
-public record Result<T>(T? Value, bool Success) : Result(Success) where T : class;

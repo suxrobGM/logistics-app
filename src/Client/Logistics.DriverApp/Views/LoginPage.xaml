@@ -4,15 +4,14 @@
              x:Class="Logistics.DriverApp.Views.LoginPage">
     <VerticalStackLayout Margin="10">
         <HorizontalStackLayout IsVisible="{Binding IsBusy}">
-            <ActivityIndicator IsRunning="True" Color="#512BD4" VerticalOptions="Start" />
+            <ActivityIndicator IsRunning="True" VerticalOptions="Start" />
             <Label Text="Authenticating" VerticalOptions="Center" Margin="10,0" FontSize="Medium" />
         </HorizontalStackLayout>
 
         <VerticalStackLayout Margin="0,10">
-            <Label Text="Click the login button to sign in and get access." FontSize="Medium" />
-            <Label Text="Do not have an account? Click the create an account button." FontSize="Medium" />
-            <Button Text="Login" Margin="0,10" Command="{Binding SignInCommand}" BackgroundColor="#512BD4" TextColor="White" />
-            <Button Text="Create an account" Margin="0,10" Command="{Binding OpenSignUpCommand}" BackgroundColor="#512BD4" TextColor="White" />
+            <Label Text="Click the login button to sign in and get access. If you do not have an account then click the create an account button." FontSize="Medium" />
+            <Button Text="Login" Margin="0,10" Command="{Binding SignInCommand}" />
+            <Button Text="Create an account" Margin="0,10" Command="{Binding OpenSignUpCommand}" />
         </VerticalStackLayout>
     </VerticalStackLayout>
 </ContentPage>

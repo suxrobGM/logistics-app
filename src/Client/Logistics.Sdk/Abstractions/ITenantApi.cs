@@ -2,10 +2,10 @@
 
 public interface ITenantApi
 {
-    Task<string> GetTenantDisplayNameAsync(string id);
-    Task<TenantDto> GetTenantAsync(string identifier);
+    Task<DataResult<string>> GetTenantDisplayNameAsync(string id);
+    Task<DataResult<TenantDto>> GetTenantAsync(string identifier);
     Task<PagedDataResult<TenantDto>> GetTenantsAsync(string searchInput = "", int page = 1, int pageSize = 10);
-    Task CreateTenantAsync(TenantDto tenant);
-    Task UpdateTenantAsync(TenantDto tenant);
-    Task DeleteTenantAsync(string id);
+    Task<DataResult> CreateTenantAsync(TenantDto tenant);
+    Task<DataResult> UpdateTenantAsync(TenantDto tenant);
+    Task<DataResult> DeleteTenantAsync(string id);
 }

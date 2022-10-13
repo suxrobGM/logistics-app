@@ -2,8 +2,11 @@
 
 public class EditTenantViewModel : PageViewModelBase
 {
-    public EditTenantViewModel(IApiClient apiClient) : base(apiClient)
+    private readonly IApiClient _apiClient;
+
+    public EditTenantViewModel(IApiClient apiClient)
     {
+        _apiClient = apiClient;
         Tenant = new TenantDto();
     }
 
@@ -17,15 +20,17 @@ public class EditTenantViewModel : PageViewModelBase
     {
         await base.OnInitializedAsync();
 
-        if (EditMode)
-        {
-            var result = await CallApi(i => i.GetTenantAsync(Id!));
+        if (!EditMode)
+            return;
 
-            if (!result.Success)
-                return;
+        IsBusy = true;
+        var result = await _apiClient.GetTenantAsync(Id!);
 
-            Tenant = result.Value!;
-        }
+        if (!result.Success)
+            return;
+
+        Tenant = result.Value!;
+        IsBusy = false;
     }
 
     public override async Task OnAfterRenderAsync(bool firstRender)
@@ -42,10 +47,11 @@ public class EditTenantViewModel : PageViewModelBase
     public async Task UpdateAsync()
     {
         Error = string.Empty;
+        IsBusy = true;
         
         if (EditMode)
         {
-            var result = await CallApi(i => i.UpdateTenantAsync(Tenant));
+            var result = await _apiClient.UpdateTenantAsync(Tenant);
 
             if (!result.Success)
                 return;
@@ -54,7 +60,7 @@ public class EditTenantViewModel : PageViewModelBase
         }
         else
         {
-            var result = await CallApi(i => i.CreateTenantAsync(Tenant));
+            var result = await _apiClient.CreateTenantAsync(Tenant);
             
             if (!result.Success)
                 return;
@@ -62,6 +68,8 @@ public class EditTenantViewModel : PageViewModelBase
             Toast?.Show("A new tenant has been created successfully.", "Notification");
             ResetData();
         }
+
+        IsBusy = false;
     }
 
     private void ResetData()
@@ -76,7 +84,8 @@ public class EditTenantViewModel : PageViewModelBase
         if (string.IsNullOrEmpty(Id))
             return;
 
-        var result = await CallApi(i => i.GetTenantAsync(Id));
+        IsBusy = true;
+        var result = await _apiClient.GetTenantAsync(Id);
 
         if (!result.Success)
             return;
@@ -85,6 +94,6 @@ public class EditTenantViewModel : PageViewModelBase
         Tenant.Name = tenant.Name;
         Tenant.DisplayName = tenant.DisplayName;
         Tenant.ConnectionString = tenant.ConnectionString;
-        StateHasChanged();
+        IsBusy = false;
     }
 }

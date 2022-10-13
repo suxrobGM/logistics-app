@@ -4,10 +4,7 @@ public class LogoutViewModel : PageViewModelBase
 {
     private readonly NavigationManager _navigationManager;
 
-    public LogoutViewModel(
-        NavigationManager navigationManager, 
-        IApiClient apiClient) 
-        : base(apiClient)
+    public LogoutViewModel(NavigationManager navigationManager)
     {
         _navigationManager = navigationManager;
     } 

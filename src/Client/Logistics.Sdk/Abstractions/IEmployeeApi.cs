@@ -2,11 +2,9 @@
 
 public interface IEmployeeApi
 {
-    Task<EmployeeDto> GetEmployeeAsync(string id);
+    Task<DataResult<EmployeeDto>> GetEmployeeAsync(string id);
     Task<PagedDataResult<EmployeeDto>> GetEmployeesAsync(string searchInput = "", int page = 1, int pageSize = 10);
-    Task<bool> EmployeeExistsAsync(string id);
-    Task CreateEmployeeAsync(EmployeeDto employee);
-    Task UpdateEmployeeAsync(EmployeeDto employee);
-    Task<bool> TryCreateEmployeeAsync(EmployeeDto employee);
-    Task DeleteEmployeeAsync(string id);
+    Task<DataResult> CreateEmployeeAsync(EmployeeDto employee);
+    Task<DataResult> UpdateEmployeeAsync(EmployeeDto employee);
+    Task<DataResult> DeleteEmployeeAsync(string id);
 }

@@ -2,8 +2,11 @@
 
 public class ListTenantViewModel : PageViewModelBase
 {
-    public ListTenantViewModel(IApiClient apiClient) : base(apiClient)
+    private readonly IApiClient _apiClient;
+
+    public ListTenantViewModel(IApiClient apiClient)
     {
+        _apiClient = apiClient;
         Tenants = Array.Empty<TenantDto>();
         TenantsList = new PagedList<TenantDto>(20, true, i => i.Id!);
         SearchInput = string.Empty;
@@ -33,14 +36,14 @@ public class ListTenantViewModel : PageViewModelBase
 
     public async Task LoadPage(PageEventArgs e, string searchInput = "")
     {
-        var pagedListResult = await CallApi(i => i.GetTenantsAsync(searchInput, e.Page));
-        var pagedList = pagedListResult.Value;
+        var result = await _apiClient.GetTenantsAsync(searchInput, e.Page);
+        var pagedList = result.Items;
         
-        if (pagedListResult.Success && pagedList?.Items != null)
+        if (result.Success && pagedList != null)
         {
-            TenantsList.AddRange(pagedList.Items);
-            TenantsList.TotalItems = pagedList.ItemsCount;
-            TotalRecords = pagedList.ItemsCount;
+            TenantsList.AddRange(pagedList);
+            TenantsList.TotalItems = result.ItemsCount;
+            TotalRecords = result.ItemsCount;
             Tenants = TenantsList.GetPage(e.Page);
         }
     }

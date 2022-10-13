@@ -4,21 +4,21 @@ using System.Text;
 using System.Text.Json;
 using Logistics.Sdk.Utils;
 
-namespace Logistics.Sdk;
+namespace Logistics.Sdk.Implementations;
 
-internal abstract class ApiClientBase
+internal class GenericApiClient
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _serializerOptions;
 
-    protected ApiClientBase(string host)
+    public GenericApiClient(string host)
     {
         if (string.IsNullOrEmpty(host))
             throw new ArgumentNullException(host);
 
-        _serializerOptions = new JsonSerializerOptions 
-        { 
-            PropertyNameCaseInsensitive = true 
+        _serializerOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
         };
 
         try
@@ -37,12 +37,12 @@ internal abstract class ApiClientBase
         }
     }
 
-    protected void SetAuthorizationHeader(string scheme, string? value)
+    public void SetAuthorizationHeader(string scheme, string? value)
     {
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme, value);
     }
 
-    protected void SetRequestHeader(string key, string? value)
+    public void SetRequestHeader(string key, string? value)
     {
         if (_httpClient.DefaultRequestHeaders.Contains(key))
         {
@@ -51,8 +51,8 @@ internal abstract class ApiClientBase
         _httpClient.DefaultRequestHeaders.Add(key, value);
     }
 
-    protected async Task<TResponse> GetRequestAsync<TResponse>(string endpoint,
-        IDictionary<string, string> queries = default!)
+    public async Task<TResponse> GetRequestAsync<TResponse>(string endpoint,
+        IDictionary<string, string>? queries = null)
         where TResponse : new()
     {
         var content = await GetRequestAsync(endpoint, queries);
@@ -67,8 +67,8 @@ internal abstract class ApiClientBase
         return deserializedObj;
     }
 
-    protected async Task<string> GetRequestAsync(string endpoint,
-        IDictionary<string, string> queries = default!)
+    public async Task<string> GetRequestAsync(string endpoint,
+        IDictionary<string, string>? queries = null)
     {
         var requestEndpoint = endpoint;
         if (queries is { Count: > 0 })
@@ -86,12 +86,12 @@ internal abstract class ApiClientBase
         }
     }
 
-    protected async Task<TResponse> PostRequestAsync<TResponse, TRequest>(string endpoint, TRequest body)
+    public async Task<TResponse> PostRequestAsync<TResponse, TRequest>(string endpoint, TRequest body)
         where TResponse : new()
         where TRequest : new()
     {
         var content = await PostRequestAsync(endpoint, body);
-        var deserializedObj = Deserialize<TResponse>(content) ?? default(TResponse);
+        var deserializedObj = Deserialize<TResponse>(content) ?? default;
 
         if (deserializedObj is null)
         {
@@ -102,7 +102,7 @@ internal abstract class ApiClientBase
         return deserializedObj;
     }
 
-    protected async Task<string> PostRequestAsync<TRequest>(string endpoint, TRequest body)
+    public async Task<string> PostRequestAsync<TRequest>(string endpoint, TRequest body)
     {
         try
         {
@@ -116,12 +116,12 @@ internal abstract class ApiClientBase
         }
     }
 
-    protected async Task<TResponse> PutRequestAsync<TResponse, TRequest>(string endpoint, TRequest body)
+    public async Task<TResponse> PutRequestAsync<TResponse, TRequest>(string endpoint, TRequest body)
         where TResponse : new()
         where TRequest : new()
     {
         var content = await PutRequestAsync(endpoint, body);
-        var deserializedObj = Deserialize<TResponse>(content) ?? default(TResponse);
+        var deserializedObj = Deserialize<TResponse>(content) ?? default;
 
         if (deserializedObj is null)
         {
@@ -132,7 +132,7 @@ internal abstract class ApiClientBase
         return deserializedObj;
     }
 
-    protected async Task<string> PutRequestAsync<TRequest>(string endpoint, TRequest body)
+    public async Task<string> PutRequestAsync<TRequest>(string endpoint, TRequest body)
     {
         try
         {
@@ -146,7 +146,7 @@ internal abstract class ApiClientBase
         }
     }
 
-    protected async Task<TResponse> DeleteRequestAsync<TResponse>(string endpoint,
+    public async Task<TResponse> DeleteRequestAsync<TResponse>(string endpoint,
         IDictionary<string, string> queries = default!)
         where TResponse : new()
     {
@@ -162,7 +162,7 @@ internal abstract class ApiClientBase
         return deserializedObj;
     }
 
-    protected async Task<string> DeleteRequestAsync(string endpoint,
+    public async Task<string> DeleteRequestAsync(string endpoint,
         IDictionary<string, string> queries = default!)
     {
         var requestEndpoint = endpoint;

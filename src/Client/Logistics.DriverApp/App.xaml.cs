@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Logistics.DriverApp;
 
-public partial class App : Application
+public partial class App : Microsoft.Maui.Controls.Application
 {
     public App()
     {
@@ -14,7 +14,7 @@ public partial class App : Application
         MainPage = new AppShell();
     }
 
-    public new static App Current => (App)Application.Current!;
+    public new static App Current => (App)Microsoft.Maui.Controls.Application.Current!;
     public IServiceProvider Services { get; }
     public IConfiguration Configuration { get; }
 
@@ -24,11 +24,12 @@ public partial class App : Application
         var oidcOptions = configuration.GetSection("OidcClient").Get<OidcClientOptions>();
 
         services.AddTransient<AppShellViewModel>();
-        services.AddTransient<MainPageViewModel>();
+        services.AddTransient<DashboardPageViewModel>();
         services.AddTransient<LoginPageViewModel>();
         services.AddSingleton(oidcOptions);
         services.AddScoped<IdentityModel.OidcClient.Browser.IBrowser, WebBrowserAuthenticator>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddWebApiClient(configuration);
         return services.BuildServiceProvider();
     }
 

@@ -10,13 +10,13 @@
             ContentTemplate="{DataTemplate views:LoginPage}"
             Route="LoginPage" />
     </TabBar>
-    <ShellContent Title="Home" ContentTemplate="{DataTemplate views:MainPage}" Route="MainPage" />
+    <ShellContent Title="Dashboard" ContentTemplate="{DataTemplate views:DashboardPage}" Route="DashboardPage" />
     <ShellContent Title="Account" ContentTemplate="{DataTemplate views:AccountPage}" Route="AccountPage" />
     <ShellContent Title="Settings" ContentTemplate="{DataTemplate views:SettingsPage}" Route="SettingsPage" />
     <ShellContent Title="About" ContentTemplate="{DataTemplate views:AboutPage}" Route="AboutPage" />
     <Shell.FlyoutFooter>
         <StackLayout Padding="20">
-            <Button Text="Sign Out" Command="{Binding SignOutCommand}" />
+            <Button Text="Sign Out" Command="{Binding SignOutCommand}"></Button>
         </StackLayout>
     </Shell.FlyoutFooter>
 </Shell>
