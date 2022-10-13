@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Queries;
+﻿namespace Logistics.Application.Tenant.Handlers.Queries;
 
-internal sealed class GetOverallStatsHandler : RequestHandlerBase<GetOverallStatsQuery, DataResult<OverallStatsDto>>
+internal sealed class GetOverallStatsHandler : RequestHandlerBase<GetOverallStatsQuery, ResponseResult<OverallStatsDto>>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;
@@ -13,7 +13,7 @@ internal sealed class GetOverallStatsHandler : RequestHandlerBase<GetOverallStat
         _tenantRepository = tenantRepository;
     }
     
-    protected override async Task<DataResult<OverallStatsDto>> HandleValidated(
+    protected override async Task<ResponseResult<OverallStatsDto>> HandleValidated(
         GetOverallStatsQuery req, CancellationToken cancellationToken)
     {
         var overallStatsDto = new OverallStatsDto();
@@ -54,7 +54,7 @@ internal sealed class GetOverallStatsHandler : RequestHandlerBase<GetOverallStat
         overallStatsDto.DriversCount = driversCount;
         overallStatsDto.TotalDistance = sum?.TotalDistance ?? 0;
         overallStatsDto.TotalIncome = sum?.TotalGross ?? 0;
-        return DataResult<OverallStatsDto>.CreateSuccess(overallStatsDto);
+        return ResponseResult<OverallStatsDto>.CreateSuccess(overallStatsDto);
     }
 
     protected override bool Validate(GetOverallStatsQuery request, out string errorDescription)

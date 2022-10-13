@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Contracts.Commands;
+﻿namespace Logistics.Application.Tenant.Commands;
 
-public sealed class CreateLoadCommand : RequestBase<DataResult>
+public sealed class CreateLoadCommand : RequestBase<ResponseResult>
 {
     public string? Name { get; set; }
     

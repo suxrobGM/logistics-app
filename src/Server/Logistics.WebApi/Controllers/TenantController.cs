@@ -1,4 +1,4 @@
-﻿namespace Logistics.Sdk.Controllers;
+﻿namespace Logistics.WebApi.Controllers;
 
 [Route("[controller]")]
 [ApiController]
@@ -12,8 +12,8 @@ public class TenantController : ControllerBase
     }
 
     [HttpGet("{identifier}")]
-    [ProducesResponseType(typeof(DataResult<TenantDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseResult<TenantDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Tenant.View)]
     public async Task<IActionResult> GetById(string? identifier)
     {
@@ -30,8 +30,8 @@ public class TenantController : ControllerBase
     }
 
     [HttpGet("getDisplayName")]
-    [ProducesResponseType(typeof(DataResult<TenantDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseResult<TenantDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize]
     public async Task<IActionResult> GetDisplayName(string? id)
     {
@@ -48,10 +48,10 @@ public class TenantController : ControllerBase
     }
 
     [HttpGet("list")]
-    [ProducesResponseType(typeof(PagedDataResult<LoadDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(PagedResponseResult<LoadDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Tenant.View)]
-    public async Task<IActionResult> GetList([FromQuery] GetTenantsQuery request)
+    public async Task<IActionResult> GetList([FromQuery] GetTenantsRequest request)
     {
         var result = await _mediator.Send(request);
 
@@ -62,8 +62,8 @@ public class TenantController : ControllerBase
     }
 
     [HttpPost("create")]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Tenant.Create)]
     public async Task<IActionResult> Create([FromBody] CreateTenantCommand request)
     {
@@ -76,8 +76,8 @@ public class TenantController : ControllerBase
     }
 
     [HttpPut("update/{id}")]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Tenant.Edit)]
     public async Task<IActionResult> Update(string id, [FromBody] UpdateTenantCommand request)
     {
@@ -91,8 +91,8 @@ public class TenantController : ControllerBase
     }
 
     [HttpDelete("delete/{id}")]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Tenant.Delete)]
     public async Task<IActionResult> Delete(string id)
     {

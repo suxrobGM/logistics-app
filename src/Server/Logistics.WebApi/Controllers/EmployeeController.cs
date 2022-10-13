@@ -1,4 +1,4 @@
-﻿namespace Logistics.Sdk.Controllers;
+﻿namespace Logistics.WebApi.Controllers;
 
 [Route("[controller]")]
 [ApiController]
@@ -12,8 +12,8 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(DataResult<EmployeeDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseResult<EmployeeDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.View)]
     public async Task<IActionResult> GetById(string id)
     {
@@ -29,10 +29,10 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet("drivers")]
-    [ProducesResponseType(typeof(PagedDataResult<EmployeeDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(PagedResponseResult<EmployeeDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.View)]
-    public async Task<IActionResult> GetDrivers([FromQuery] GetDriversQuery request)
+    public async Task<IActionResult> GetDrivers([FromQuery] GetDriversRequest request)
     {
         var result = await _mediator.Send(request);
 
@@ -43,10 +43,10 @@ public class EmployeeController : ControllerBase
     } 
 
     [HttpGet("list")]
-    [ProducesResponseType(typeof(PagedDataResult<EmployeeDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(PagedResponseResult<EmployeeDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.View)]
-    public async Task<IActionResult> GetList([FromQuery] GetEmployeesQuery request)
+    public async Task<IActionResult> GetList([FromQuery] GetEmployeesRequest request)
     {
         var result = await _mediator.Send(request);
 
@@ -57,8 +57,8 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPost("create")]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.Create)]
     public async Task<IActionResult> Create([FromBody] CreateEmployeeCommand request)
     {
@@ -71,8 +71,8 @@ public class EmployeeController : ControllerBase
     }
     
     [HttpPost("removeRole")]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.Edit)]
     public async Task<IActionResult> RemoveRole([FromBody] RemoveEmployeeRoleCommand request)
     {
@@ -85,8 +85,8 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPut("update/{id}")]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.Edit)]
     public async Task<IActionResult> Update(string id, [FromBody] UpdateEmployeeCommand request)
     {
@@ -100,8 +100,8 @@ public class EmployeeController : ControllerBase
     }
     
     [HttpDelete("delete/{id}")]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.Delete)]
     public async Task<IActionResult> Delete(string id)
     {

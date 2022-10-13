@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Contracts.Queries;
+﻿namespace Logistics.Application.Main.Queries;
 
-public sealed class GetUserByIdQuery : RequestBase<DataResult<UserDto>>
+public sealed class GetUserByIdQuery : RequestBase<ResponseResult<UserDto>>
 {
     public string? Id { get; set; }
 }

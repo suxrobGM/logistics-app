@@ -19,6 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Logistics.Application.Shared.Contracts\Logistics.Application.Shared.Contracts.csproj" />
 		<ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />
 	</ItemGroup>
 </Project>

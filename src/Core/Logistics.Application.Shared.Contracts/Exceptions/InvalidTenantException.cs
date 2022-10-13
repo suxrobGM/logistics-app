@@ -1,4 +1,4 @@
-﻿namespace Logistics.Domain.Shared.Exceptions;
+﻿namespace Logistics.Application.Shared.Exceptions;
 
 [Serializable]
 public class InvalidTenantException : Exception

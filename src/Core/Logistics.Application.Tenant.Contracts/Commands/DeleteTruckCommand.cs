@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Contracts.Commands;
+﻿namespace Logistics.Application.Tenant.Commands;
 
-public sealed class DeleteTruckCommand : RequestBase<DataResult>
+public sealed class DeleteTruckCommand : RequestBase<ResponseResult>
 {
     public string? Id { get; set; }
 }

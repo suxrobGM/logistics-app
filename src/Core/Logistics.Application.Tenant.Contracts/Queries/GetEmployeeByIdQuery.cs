@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Contracts.Queries;
+﻿namespace Logistics.Application.Tenant.Queries;
 
-public sealed class GetEmployeeByIdQuery : RequestBase<DataResult<EmployeeDto>>
+public sealed class GetEmployeeByIdQuery : RequestBase<ResponseResult<EmployeeDto>>
 {
     public string? Id { get; set; }
 }

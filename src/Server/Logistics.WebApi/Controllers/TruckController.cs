@@ -1,4 +1,4 @@
-﻿namespace Logistics.Sdk.Controllers;
+﻿namespace Logistics.WebApi.Controllers;
 
 [Route("[controller]")]
 [ApiController]
@@ -12,8 +12,8 @@ public class TruckController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(DataResult<TruckDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseResult<TruckDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Truck.View)]
     public async Task<IActionResult> GetById(string id, bool includeLoadIds = false)
     {
@@ -29,10 +29,10 @@ public class TruckController : ControllerBase
     }
 
     [HttpGet("list")]
-    [ProducesResponseType(typeof(PagedDataResult<TruckDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(PagedResponseResult<TruckDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Truck.View)]
-    public async Task<IActionResult> GetList([FromQuery] GetTrucksQuery request)
+    public async Task<IActionResult> GetList([FromQuery] GetTrucksRequest request)
     {
         var result = await _mediator.Send(request);
 
@@ -43,8 +43,8 @@ public class TruckController : ControllerBase
     }
 
     [HttpPost("create")]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Truck.Create)]
     public async Task<IActionResult> Create([FromBody] CreateTruckCommand request)
     {
@@ -57,8 +57,8 @@ public class TruckController : ControllerBase
     }
 
     [HttpPut("update/{id}")]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Truck.Edit)]
     public async Task<IActionResult> Update(string id, [FromBody] UpdateTruckCommand request)
     {
@@ -72,8 +72,8 @@ public class TruckController : ControllerBase
     }
 
     [HttpDelete("delete/{id}")]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Truck.Delete)]
     public async Task<IActionResult> Delete(string id)
     {

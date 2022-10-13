@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Logistics.Application;
 using Logistics.EntityFramework;
 
-namespace Logistics.Sdk;
+namespace Logistics.WebApi;
 
 internal static class HostingExtensions
 {
@@ -35,7 +35,7 @@ internal static class HostingExtensions
         .ConfigureApiBehaviorOptions(options =>
         {
             options.InvalidModelStateResponseFactory = context =>
-                new BadRequestObjectResult(DataResult.CreateError(GetModelStateErrors(context.ModelState)));
+                new BadRequestObjectResult(ResponseResult.CreateError(GetModelStateErrors(context.ModelState)));
         });
         
         //builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();

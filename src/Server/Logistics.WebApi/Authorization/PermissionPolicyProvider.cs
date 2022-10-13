@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 
-namespace Logistics.Sdk.Authorization;
+namespace Logistics.WebApi.Authorization;
 
 public class PermissionPolicyProvider : IAuthorizationPolicyProvider
 {

@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Commands;
+﻿namespace Logistics.Application.Tenant.Handlers.Commands;
 
-internal sealed class UpdateEmployeeHandler : RequestHandlerBase<UpdateEmployeeCommand, DataResult>
+internal sealed class UpdateEmployeeHandler : RequestHandlerBase<UpdateEmployeeCommand, ResponseResult>
 {
     private readonly ITenantRepository _tenantRepository;
 
@@ -9,14 +9,14 @@ internal sealed class UpdateEmployeeHandler : RequestHandlerBase<UpdateEmployeeC
         _tenantRepository = tenantRepository;
     }
 
-    protected override async Task<DataResult> HandleValidated(
+    protected override async Task<ResponseResult> HandleValidated(
         UpdateEmployeeCommand request, CancellationToken cancellationToken)
     {
         var employeeEntity = await _tenantRepository.GetAsync<Employee>(request.Id);
         var tenantRole = await _tenantRepository.GetAsync<TenantRole>(i => i.Name == request.Role);
 
         if (employeeEntity == null)
-            return DataResult.CreateError("Could not find the specified user");
+            return ResponseResult.CreateError("Could not find the specified user");
 
         if (tenantRole != null)
         {
@@ -26,7 +26,7 @@ internal sealed class UpdateEmployeeHandler : RequestHandlerBase<UpdateEmployeeC
         
         _tenantRepository.Update(employeeEntity);
         await _tenantRepository.UnitOfWork.CommitAsync();
-        return DataResult.CreateSuccess();
+        return ResponseResult.CreateSuccess();
     }
 
     protected override bool Validate(UpdateEmployeeCommand request, out string errorDescription)

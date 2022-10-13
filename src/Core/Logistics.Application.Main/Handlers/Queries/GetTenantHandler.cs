@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Queries;
+﻿namespace Logistics.Application.Main.Handlers.Queries;
 
-internal sealed class GetTenantHandler : RequestHandlerBase<GetTenantQuery, DataResult<TenantDto>>
+internal sealed class GetTenantHandler : RequestHandlerBase<GetTenantQuery, ResponseResult<TenantDto>>
 {
     private readonly IMainRepository _repository;
 
@@ -9,12 +9,12 @@ internal sealed class GetTenantHandler : RequestHandlerBase<GetTenantQuery, Data
         _repository = repository;
     }
 
-    protected override async Task<DataResult<TenantDto>> HandleValidated(GetTenantQuery request, CancellationToken cancellationToken)
+    protected override async Task<ResponseResult<TenantDto>> HandleValidated(GetTenantQuery request, CancellationToken cancellationToken)
     {
         var tenantEntity = await _repository.GetAsync<Tenant>(i => i.Id == request.Id || i.Name == request.Name);
 
         if (tenantEntity == null)
-            return DataResult<TenantDto>.CreateError("Could not find the specified tenant");
+            return ResponseResult<TenantDto>.CreateError("Could not find the specified tenant");
         
         var tenant = new TenantDto
         {
@@ -24,7 +24,7 @@ internal sealed class GetTenantHandler : RequestHandlerBase<GetTenantQuery, Data
             ConnectionString = tenantEntity.ConnectionString
         };
 
-        return DataResult<TenantDto>.CreateSuccess(tenant);
+        return ResponseResult<TenantDto>.CreateSuccess(tenant);
     }
 
     protected override bool Validate(GetTenantQuery request, out string errorDescription)

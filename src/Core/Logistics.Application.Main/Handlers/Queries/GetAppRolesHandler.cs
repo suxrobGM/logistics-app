@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Queries;
+﻿namespace Logistics.Application.Main.Handlers.Queries;
 
-internal sealed class GetAppRolesHandler : RequestHandlerBase<GetAppRolesQuery, PagedDataResult<AppRoleDto>>
+internal sealed class GetAppRolesHandler : RequestHandlerBase<GetAppRolesRequest, PagedResponseResult<AppRoleDto>>
 {
     private readonly IMainRepository _repository;
 
@@ -9,8 +9,8 @@ internal sealed class GetAppRolesHandler : RequestHandlerBase<GetAppRolesQuery, 
         _repository = repository;
     }
 
-    protected override Task<PagedDataResult<AppRoleDto>> HandleValidated(
-        GetAppRolesQuery request, CancellationToken cancellationToken)
+    protected override Task<PagedResponseResult<AppRoleDto>> HandleValidated(
+        GetAppRolesRequest request, CancellationToken cancellationToken)
     {
         var totalItems = _repository.Query<AppRole>().Count();
 
@@ -26,10 +26,10 @@ internal sealed class GetAppRolesHandler : RequestHandlerBase<GetAppRolesQuery, 
             .ToArray();
         
         var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
-        return Task.FromResult(new PagedDataResult<AppRoleDto>(rolesDto, totalItems, totalPages));
+        return Task.FromResult(new PagedResponseResult<AppRoleDto>(rolesDto, totalItems, totalPages));
     }
 
-    protected override bool Validate(GetAppRolesQuery request, out string errorDescription)
+    protected override bool Validate(GetAppRolesRequest request, out string errorDescription)
     {
         errorDescription = string.Empty;
 

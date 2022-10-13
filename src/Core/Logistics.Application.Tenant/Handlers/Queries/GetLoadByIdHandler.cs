@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Queries;
+﻿namespace Logistics.Application.Tenant.Handlers.Queries;
 
-internal sealed class GetLoadByIdHandler : RequestHandlerBase<GetLoadByIdQuery, DataResult<LoadDto>>
+internal sealed class GetLoadByIdHandler : RequestHandlerBase<GetLoadByIdQuery, ResponseResult<LoadDto>>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;
@@ -13,13 +13,13 @@ internal sealed class GetLoadByIdHandler : RequestHandlerBase<GetLoadByIdQuery, 
         _tenantRepository = tenantRepository;
     }
 
-    protected override async Task<DataResult<LoadDto>> HandleValidated(
+    protected override async Task<ResponseResult<LoadDto>> HandleValidated(
         GetLoadByIdQuery request, CancellationToken cancellationToken)
     {
         var loadEntity = await _tenantRepository.GetAsync<Load>(request.Id);
 
         if (loadEntity == null)
-            return DataResult<LoadDto>.CreateError("Could not find the specified cargo");
+            return ResponseResult<LoadDto>.CreateError("Could not find the specified cargo");
 
         var assignedDispatcher = await _mainRepository.GetAsync<User>(loadEntity.AssignedDispatcherId);
         var assignedDriver = await _mainRepository.GetAsync<User>(i => loadEntity.AssignedDriver != null && i.Id == loadEntity.AssignedDriver.Id);
@@ -43,7 +43,7 @@ internal sealed class GetLoadByIdHandler : RequestHandlerBase<GetLoadByIdQuery, 
             AssignedDriverName = assignedDriver?.GetFullName(),
             AssignedTruckId = loadEntity.AssignedTruckId
         };
-        return DataResult<LoadDto>.CreateSuccess(load);
+        return ResponseResult<LoadDto>.CreateSuccess(load);
     }
 
     protected override bool Validate(GetLoadByIdQuery request, out string errorDescription)

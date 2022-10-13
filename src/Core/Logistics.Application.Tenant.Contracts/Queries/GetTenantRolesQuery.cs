@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Contracts.Queries;
+﻿namespace Logistics.Application.Tenant.Queries;
 
-public class GetTenantRolesQuery : SearchableQuery<TenantRoleDto>
+public class GetTenantRolesQuery : SearchableRequest<TenantRoleDto>
 {
     
 }

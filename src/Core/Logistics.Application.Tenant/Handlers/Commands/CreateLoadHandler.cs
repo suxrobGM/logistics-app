@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Commands;
+﻿namespace Logistics.Application.Tenant.Handlers.Commands;
 
-internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, DataResult>
+internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, ResponseResult>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;
@@ -13,24 +13,24 @@ internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, 
         _tenantRepository = tenantRepository;
     }
 
-    protected override async Task<DataResult> HandleValidated(
+    protected override async Task<ResponseResult> HandleValidated(
         CreateLoadCommand request, CancellationToken cancellationToken)
     {
         var dispatcher = await _tenantRepository.GetAsync<Employee>(request.AssignedDispatcherId);
         var driver = await _tenantRepository.GetAsync<Employee>(request.AssignedDriverId);
 
         if (dispatcher == null)
-            return DataResult.CreateError("Could not find the specified dispatcher");
+            return ResponseResult.CreateError("Could not find the specified dispatcher");
 
         if (driver == null)
-            return DataResult.CreateError("Could not find the specified driver");
+            return ResponseResult.CreateError("Could not find the specified driver");
 
         var truck = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == driver.Id);
 
         if (truck == null)
         {
             var user = await _mainRepository.GetAsync<User>(request.AssignedDriverId);
-            return DataResult.CreateError($"Could not find the truck whose driver ID is '{user?.UserName}'");
+            return ResponseResult.CreateError($"Could not find the truck whose driver ID is '{user?.UserName}'");
         }
         
         var latestLoad = _tenantRepository.Query<Load>().OrderBy(i => i.RefId).LastOrDefault();
@@ -55,7 +55,7 @@ internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, 
 
         await _tenantRepository.AddAsync(loadEntity);
         await _tenantRepository.UnitOfWork.CommitAsync();
-        return DataResult.CreateSuccess();
+        return ResponseResult.CreateSuccess();
     }
 
     protected override bool Validate(CreateLoadCommand request, out string errorDescription)

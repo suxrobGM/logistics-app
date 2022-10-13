@@ -1,4 +1,4 @@
-﻿namespace Logistics.Sdk.Controllers;
+﻿namespace Logistics.WebApi.Controllers;
 
 [Route("[controller]")]
 [ApiController]
@@ -12,8 +12,8 @@ public class ReportController : ControllerBase
     }
 
     [HttpGet("getDailyGrosses")]
-    [ProducesResponseType(typeof(DataResult<DailyGrossesDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseResult<DailyGrossesDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.View)]
     public async Task<IActionResult> GetDailyGrosses([FromQuery] GetDailyGrossesQuery request)
     {
@@ -26,8 +26,8 @@ public class ReportController : ControllerBase
     }
     
     [HttpGet("getMonthlyGrosses")]
-    [ProducesResponseType(typeof(DataResult<MonthlyGrossesDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseResult<MonthlyGrossesDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.View)]
     public async Task<IActionResult> GetMonthlyGrosses([FromQuery] GetMonthlyGrossesQuery request)
     {
@@ -40,8 +40,8 @@ public class ReportController : ControllerBase
     }
 
     [HttpGet("getOverallStats")]
-    [ProducesResponseType(typeof(DataResult<OverallStatsDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseResult<OverallStatsDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.View)]
     public async Task<IActionResult> GetOverallStats([FromQuery] GetOverallStatsQuery request)
     {

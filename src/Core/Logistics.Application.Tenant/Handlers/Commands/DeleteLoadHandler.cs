@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Commands;
+﻿namespace Logistics.Application.Tenant.Handlers.Commands;
 
-internal sealed class DeleteLoadHandler : RequestHandlerBase<DeleteLoadCommand, DataResult>
+internal sealed class DeleteLoadHandler : RequestHandlerBase<DeleteLoadCommand, ResponseResult>
 {
     private readonly ITenantRepository _tenantRepository;
 
@@ -9,13 +9,13 @@ internal sealed class DeleteLoadHandler : RequestHandlerBase<DeleteLoadCommand, 
         _tenantRepository = tenantRepository;
     }
 
-    protected override async Task<DataResult> HandleValidated(
+    protected override async Task<ResponseResult> HandleValidated(
         DeleteLoadCommand request, CancellationToken cancellationToken)
     {
         var load = await _tenantRepository.GetAsync<Load>(request.Id);
         _tenantRepository.Delete(load);
         await _tenantRepository.UnitOfWork.CommitAsync();
-        return DataResult.CreateSuccess();
+        return ResponseResult.CreateSuccess();
     }
 
     protected override bool Validate(DeleteLoadCommand request, out string errorDescription)

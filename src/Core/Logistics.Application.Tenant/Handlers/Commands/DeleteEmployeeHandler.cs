@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Commands;
+﻿namespace Logistics.Application.Tenant.Handlers.Commands;
 
-internal sealed class DeleteEmployeeHandler : RequestHandlerBase<DeleteEmployeeCommand, DataResult>
+internal sealed class DeleteEmployeeHandler : RequestHandlerBase<DeleteEmployeeCommand, ResponseResult>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;
@@ -13,14 +13,14 @@ internal sealed class DeleteEmployeeHandler : RequestHandlerBase<DeleteEmployeeC
         _tenantRepository = tenantRepository;
     }
 
-    protected override async Task<DataResult> HandleValidated(
+    protected override async Task<ResponseResult> HandleValidated(
         DeleteEmployeeCommand request, CancellationToken cancellationToken)
     {
         var tenantId = _tenantRepository.CurrentTenant!.Id;
         var employee = await _tenantRepository.GetAsync<Employee>(request.Id!);
 
         if (employee == null)
-            return DataResult.CreateError($"Could not find employee with ID {request.Id}");
+            return ResponseResult.CreateError($"Could not find employee with ID {request.Id}");
 
         var user = await _mainRepository.GetAsync<User>(employee.Id);
         user?.RemoveTenant(tenantId);
@@ -28,7 +28,7 @@ internal sealed class DeleteEmployeeHandler : RequestHandlerBase<DeleteEmployeeC
         _tenantRepository.Delete(employee);
         await _tenantRepository.UnitOfWork.CommitAsync();
         await _mainRepository.UnitOfWork.CommitAsync();
-        return DataResult.CreateSuccess();
+        return ResponseResult.CreateSuccess();
     }
 
     protected override bool Validate(DeleteEmployeeCommand request, out string errorDescription)

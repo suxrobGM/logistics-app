@@ -1,4 +1,4 @@
-﻿namespace Logistics.Application.Contracts.Models;
+﻿namespace Logistics.Application.Main.Models;
 
 public class UserDto
 {

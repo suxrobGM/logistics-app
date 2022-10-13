@@ -2,9 +2,9 @@
 
 public interface ILoadApi
 {
-    Task<DataResult<LoadDto>> GetLoadAsync(string id);
-    Task<PagedDataResult<LoadDto>> GetLoadsAsync(string searchInput = "", int page = 1, int pageSize = 10);
-    Task<DataResult> CreateLoadAsync(LoadDto load);
-    Task<DataResult> UpdateLoadAsync(LoadDto load);
-    Task<DataResult> DeleteLoadAsync(string id);
+    Task<ResponseResult<LoadDto>> GetLoadAsync(string id);
+    Task<PagedResponseResult<LoadDto>> GetLoadsAsync(string searchInput = "", int page = 1, int pageSize = 10);
+    Task<ResponseResult> CreateLoadAsync(LoadDto load);
+    Task<ResponseResult> UpdateLoadAsync(LoadDto load);
+    Task<ResponseResult> DeleteLoadAsync(string id);
 }

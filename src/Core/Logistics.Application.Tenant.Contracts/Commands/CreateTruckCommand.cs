@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Contracts.Commands;
+﻿namespace Logistics.Application.Tenant.Commands;
 
-public sealed class CreateTruckCommand : RequestBase<DataResult>
+public sealed class CreateTruckCommand : RequestBase<ResponseResult>
 {
     [Required]
     public int? TruckNumber { get; set; }

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Logistics.Application.Handlers.Commands;
+namespace Logistics.Application.Main.Handlers.Commands;
 
-public class RemoveUserRoleHandler : RequestHandlerBase<RemoveUserRoleCommand, DataResult>
+public class RemoveUserRoleHandler : RequestHandlerBase<RemoveUserRoleCommand, ResponseResult>
 {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<AppRole> _roleManager;
@@ -15,22 +15,22 @@ public class RemoveUserRoleHandler : RequestHandlerBase<RemoveUserRoleCommand, D
         _roleManager = roleManager;
     }
     
-    protected override async Task<DataResult> HandleValidated(
+    protected override async Task<ResponseResult> HandleValidated(
         RemoveUserRoleCommand request, CancellationToken cancellationToken)
     {
         request.Role = request.Role?.ToLower();
         var user = await _userManager.FindByIdAsync(request.UserId);
 
         if (user == null)
-            return DataResult.CreateError("Could not find the specified user");
+            return ResponseResult.CreateError("Could not find the specified user");
 
         var appRole = await _roleManager.FindByNameAsync(request.Role);
         
         if (appRole == null)
-            return DataResult.CreateError("Could not find the specified role name");
+            return ResponseResult.CreateError("Could not find the specified role name");
 
         await _userManager.RemoveFromRoleAsync(user, appRole.Name);
-        return DataResult.CreateSuccess();
+        return ResponseResult.CreateSuccess();
     }
 
     protected override bool Validate(

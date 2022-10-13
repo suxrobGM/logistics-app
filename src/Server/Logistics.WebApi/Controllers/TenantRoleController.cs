@@ -1,4 +1,4 @@
-﻿namespace Logistics.Sdk.Controllers;
+﻿namespace Logistics.WebApi.Controllers;
 
 [Route("[controller]")]
 [ApiController]
@@ -12,12 +12,12 @@ public class TenantRoleController : ControllerBase
     }
 
     [HttpGet("list")]
-    [ProducesResponseType(typeof(PagedDataResult<TenantRoleDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(PagedResponseResult<TenantRoleDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.TenantRole.View)]
-    public async Task<IActionResult> GetList([FromQuery] GetTenantRolesQuery request)
+    public async Task<IActionResult> GetList([FromQuery] GetTenantRolesQuery query)
     {
-        var result = await _mediator.Send(request);
+        var result = await _mediator.Send(query);
 
         if (result.Success)
             return Ok(result);

@@ -1,4 +1,4 @@
-﻿namespace Logistics.Sdk.Authorization;
+﻿namespace Logistics.WebApi.Authorization;
 
 internal class PermissionRequirement : IAuthorizationRequirement
 {

@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Queries;
+﻿namespace Logistics.Application.Tenant.Handlers.Queries;
 
-internal sealed class GetEmployeeByIdHandler : RequestHandlerBase<GetEmployeeByIdQuery, DataResult<EmployeeDto>>
+internal sealed class GetEmployeeByIdHandler : RequestHandlerBase<GetEmployeeByIdQuery, ResponseResult<EmployeeDto>>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;
@@ -13,18 +13,18 @@ internal sealed class GetEmployeeByIdHandler : RequestHandlerBase<GetEmployeeByI
         _tenantRepository = tenantRepository;
     }
 
-    protected override async Task<DataResult<EmployeeDto>> HandleValidated(
+    protected override async Task<ResponseResult<EmployeeDto>> HandleValidated(
         GetEmployeeByIdQuery request, CancellationToken cancellationToken)
     {
         var employeeEntity = await _tenantRepository.GetAsync<Employee>(request.Id);
         
         if (employeeEntity == null)
-            return DataResult<EmployeeDto>.CreateError("Could not find the specified employee");
+            return ResponseResult<EmployeeDto>.CreateError("Could not find the specified employee");
 
         var userEntity = await _mainRepository.GetAsync<User>(employeeEntity.Id);
 
         if (userEntity == null)
-            return DataResult<EmployeeDto>.CreateError("Could not find the specified employee, the external ID is incorrect");
+            return ResponseResult<EmployeeDto>.CreateError("Could not find the specified employee, the external ID is incorrect");
 
         var employee = new EmployeeDto
         {
@@ -44,7 +44,7 @@ internal sealed class GetEmployeeByIdHandler : RequestHandlerBase<GetEmployeeByI
         });
 
         employee.Roles.AddRange(tenantRoles);
-        return DataResult<EmployeeDto>.CreateSuccess(employee);
+        return ResponseResult<EmployeeDto>.CreateSuccess(employee);
     }
 
     protected override bool Validate(GetEmployeeByIdQuery request, out string errorDescription)

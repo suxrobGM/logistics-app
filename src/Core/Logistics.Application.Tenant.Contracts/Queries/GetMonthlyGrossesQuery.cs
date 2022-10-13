@@ -1,4 +1,4 @@
-﻿namespace Logistics.Application.Contracts.Queries;
+﻿namespace Logistics.Application.Tenant.Queries;
 
 public sealed class GetMonthlyGrossesQuery : IntervalQuery<MonthlyGrossesDto>
 {

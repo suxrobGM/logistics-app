@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Commands;
+﻿namespace Logistics.Application.Tenant.Handlers.Commands;
 
-internal sealed class DeleteTruckHandler : RequestHandlerBase<DeleteTruckCommand, DataResult>
+internal sealed class DeleteTruckHandler : RequestHandlerBase<DeleteTruckCommand, ResponseResult>
 {
     private readonly ITenantRepository _tenantRepository;
 
@@ -9,13 +9,13 @@ internal sealed class DeleteTruckHandler : RequestHandlerBase<DeleteTruckCommand
         _tenantRepository = tenantRepository;
     }
 
-    protected override async Task<DataResult> HandleValidated(
+    protected override async Task<ResponseResult> HandleValidated(
         DeleteTruckCommand request, CancellationToken cancellationToken)
     {
         var truck = await _tenantRepository.GetAsync<Truck>(request.Id);
         _tenantRepository.Delete(truck);
         await _tenantRepository.UnitOfWork.CommitAsync();
-        return DataResult.CreateSuccess();
+        return ResponseResult.CreateSuccess();
     }
 
     protected override bool Validate(DeleteTruckCommand request, out string errorDescription)

@@ -1,5 +1,5 @@
-﻿namespace Logistics.Application.Contracts.Queries;
+﻿namespace Logistics.Application.Tenant.Queries;
 
-public sealed class GetOverallStatsQuery : RequestBase<DataResult<OverallStatsDto>>
+public sealed class GetOverallStatsQuery : RequestBase<ResponseResult<OverallStatsDto>>
 {
 }

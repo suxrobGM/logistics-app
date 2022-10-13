@@ -1,10 +1,10 @@
 ﻿global using MediatR;
-global using Logistics.Application.Contracts.Commands;
-global using Logistics.Application.Contracts.Models;
-global using Logistics.Application.Contracts.Queries;
+global using Logistics.Application.Main.Commands;
+global using Logistics.Application.Main.Models;
+global using Logistics.Application.Main.Queries;
 global using Logistics.Application.Shared;
-global using Logistics.Application.Shared.Abstractions;
 global using Logistics.Domain.Entities;
 global using Logistics.Domain.Repositories;
 global using Logistics.Domain.Specifications;
 global using Logistics.Domain.Services;
+global using Logistics.Shared;

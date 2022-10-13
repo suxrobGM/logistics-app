@@ -1,5 +1,4 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using Logistics.Application.Shared.Abstractions;
 using Logistics.Sdk.Options;
 
 namespace Logistics.Sdk.Implementations;
@@ -47,7 +46,7 @@ internal class ApiClient : GenericApiClient, IApiClient
     }
 
     private async Task<TRes> MakeGetRequestAsync<TRes>(string endpoint, IDictionary<string, string>? query = null)
-        where TRes : class, IDataResult, new()
+        where TRes : class, IResponseResult, new()
     {
         try
         {
@@ -66,7 +65,7 @@ internal class ApiClient : GenericApiClient, IApiClient
     }
 
     private async Task<TRes> MakePostRequestAsync<TRes, TData>(string endpoint, TData data)
-        where TRes : class, IDataResult, new()
+        where TRes : class, IResponseResult, new()
         where TData : class, new()
     {
         try
@@ -86,7 +85,7 @@ internal class ApiClient : GenericApiClient, IApiClient
     }
 
     private async Task<TRes> MakePutRequestAsync<TRes, TData>(string endpoint, TData data)
-        where TRes : class, IDataResult, new()
+        where TRes : class, IResponseResult, new()
         where TData : class, new()
     {
         try
@@ -106,7 +105,7 @@ internal class ApiClient : GenericApiClient, IApiClient
     }
 
     private async Task<TRes> MakeDeleteRequestAsync<TRes>(string endpoint)
-        where TRes : class, IDataResult, new()
+        where TRes : class, IResponseResult, new()
     {
         try
         {
@@ -127,12 +126,12 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Load API
 
-    public Task<DataResult<LoadDto>> GetLoadAsync(string id)
+    public Task<ResponseResult<LoadDto>> GetLoadAsync(string id)
     {
-        return MakeGetRequestAsync<DataResult<LoadDto>>($"load/{id}");
+        return MakeGetRequestAsync<ResponseResult<LoadDto>>($"load/{id}");
     }
 
-    public Task<PagedDataResult<LoadDto>> GetLoadsAsync(string searchInput = "", int page = 1, int pageSize = 10)
+    public Task<PagedResponseResult<LoadDto>> GetLoadsAsync(string searchInput = "", int page = 1, int pageSize = 10)
     {
         var query = new Dictionary<string, string>
         {
@@ -145,22 +144,22 @@ internal class ApiClient : GenericApiClient, IApiClient
             query.Add("search", searchInput);
         }
 
-        return MakeGetRequestAsync<PagedDataResult<LoadDto>>("load/list", query);
+        return MakeGetRequestAsync<PagedResponseResult<LoadDto>>("load/list", query);
     }
 
-    public Task<DataResult> CreateLoadAsync(LoadDto load)
+    public Task<ResponseResult> CreateLoadAsync(LoadDto load)
     {
-        return MakePostRequestAsync<DataResult, LoadDto>("load/create", load);
+        return MakePostRequestAsync<ResponseResult, LoadDto>("load/create", load);
     }
     
-    public Task<DataResult> UpdateLoadAsync(LoadDto load)
+    public Task<ResponseResult> UpdateLoadAsync(LoadDto load)
     {
-        return MakePutRequestAsync<DataResult, LoadDto>($"load/update/{load.Id}", load);
+        return MakePutRequestAsync<ResponseResult, LoadDto>($"load/update/{load.Id}", load);
     }
 
-    public Task<DataResult> DeleteLoadAsync(string id)
+    public Task<ResponseResult> DeleteLoadAsync(string id)
     {
-        return MakeDeleteRequestAsync<DataResult>($"load/delete/{id}");
+        return MakeDeleteRequestAsync<ResponseResult>($"load/delete/{id}");
     }
 
     #endregion
@@ -168,17 +167,17 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Truck API
 
-    public Task<DataResult<TruckDto>> GetTruckAsync(string id)
+    public Task<ResponseResult<TruckDto>> GetTruckAsync(string id)
     {
-        return MakeGetRequestAsync<DataResult<TruckDto>>($"truck/{id}");
+        return MakeGetRequestAsync<ResponseResult<TruckDto>>($"truck/{id}");
     }
 
-    public Task<DataResult<TruckDto>> GetTruckByDriverAsync(string driverId)
+    public Task<ResponseResult<TruckDto>> GetTruckByDriverAsync(string driverId)
     {
-        return MakeGetRequestAsync<DataResult<TruckDto>>($"truck/driver/{driverId}");  
+        return MakeGetRequestAsync<ResponseResult<TruckDto>>($"truck/driver/{driverId}");  
     }
 
-    public Task<PagedDataResult<TruckDto>> GetTrucksAsync(string searchInput = "", int page = 1, int pageSize = 10, bool includeCargoIds = false)
+    public Task<PagedResponseResult<TruckDto>> GetTrucksAsync(string searchInput = "", int page = 1, int pageSize = 10, bool includeCargoIds = false)
     {
         var query = new Dictionary<string, string>
         {
@@ -192,22 +191,22 @@ internal class ApiClient : GenericApiClient, IApiClient
             query.Add("search", searchInput);
         }
 
-        return MakeGetRequestAsync<PagedDataResult<TruckDto>>("truck/list", query);
+        return MakeGetRequestAsync<PagedResponseResult<TruckDto>>("truck/list", query);
     }
 
-    public Task<DataResult> CreateTruckAsync(TruckDto truck)
+    public Task<ResponseResult> CreateTruckAsync(TruckDto truck)
     {
-        return MakePostRequestAsync<DataResult, TruckDto>("truck/create", truck);
+        return MakePostRequestAsync<ResponseResult, TruckDto>("truck/create", truck);
     }
 
-    public Task<DataResult> UpdateTruckAsync(TruckDto truck)
+    public Task<ResponseResult> UpdateTruckAsync(TruckDto truck)
     {
-        return MakePutRequestAsync<DataResult, TruckDto>($"truck/update/{truck.Id}", truck);
+        return MakePutRequestAsync<ResponseResult, TruckDto>($"truck/update/{truck.Id}", truck);
     }
 
-    public Task<DataResult> DeleteTruckAsync(string id)
+    public Task<ResponseResult> DeleteTruckAsync(string id)
     {
-        return MakeDeleteRequestAsync<DataResult>($"truck/delete/{id}");
+        return MakeDeleteRequestAsync<ResponseResult>($"truck/delete/{id}");
     }
 
     #endregion
@@ -215,12 +214,12 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Employee API
 
-    public Task<DataResult<EmployeeDto>> GetEmployeeAsync(string id)
+    public Task<ResponseResult<EmployeeDto>> GetEmployeeAsync(string id)
     {
-        return MakeGetRequestAsync<DataResult<EmployeeDto>>($"employee/{id}");
+        return MakeGetRequestAsync<ResponseResult<EmployeeDto>>($"employee/{id}");
     }
 
-    public Task<PagedDataResult<EmployeeDto>> GetEmployeesAsync(string searchInput = "", int page = 1, int pageSize = 10)
+    public Task<PagedResponseResult<EmployeeDto>> GetEmployeesAsync(string searchInput = "", int page = 1, int pageSize = 10)
     {
         var query = new Dictionary<string, string>
         {
@@ -233,22 +232,22 @@ internal class ApiClient : GenericApiClient, IApiClient
             query.Add("search", searchInput);
         }
 
-        return MakeGetRequestAsync<PagedDataResult<EmployeeDto>>("employee/list", query);
+        return MakeGetRequestAsync<PagedResponseResult<EmployeeDto>>("employee/list", query);
     }
 
-    public Task<DataResult> CreateEmployeeAsync(EmployeeDto user)
+    public Task<ResponseResult> CreateEmployeeAsync(EmployeeDto user)
     {
-        return MakePostRequestAsync<DataResult, EmployeeDto>("employee/create", user);
+        return MakePostRequestAsync<ResponseResult, EmployeeDto>("employee/create", user);
     }
 
-    public Task<DataResult> UpdateEmployeeAsync(EmployeeDto user)
+    public Task<ResponseResult> UpdateEmployeeAsync(EmployeeDto user)
     {
-        return MakePutRequestAsync<DataResult, EmployeeDto>($"employee/update/{user.Id}", user);
+        return MakePutRequestAsync<ResponseResult, EmployeeDto>($"employee/update/{user.Id}", user);
     }
     
-    public Task<DataResult> DeleteEmployeeAsync(string id)
+    public Task<ResponseResult> DeleteEmployeeAsync(string id)
     {
-        return MakeDeleteRequestAsync<DataResult>($"employee/delete/{id}");
+        return MakeDeleteRequestAsync<ResponseResult>($"employee/delete/{id}");
     }
 
     #endregion
@@ -256,17 +255,17 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Tenant API
 
-    public Task<DataResult<string>> GetTenantDisplayNameAsync(string id)
+    public Task<ResponseResult<string>> GetTenantDisplayNameAsync(string id)
     {
-        return MakeGetRequestAsync<DataResult<string>>($"tenant/getDisplayName?id={id}");
+        return MakeGetRequestAsync<ResponseResult<string>>($"tenant/getDisplayName?id={id}");
     }
 
-    public Task<DataResult<TenantDto>> GetTenantAsync(string identifier)
+    public Task<ResponseResult<TenantDto>> GetTenantAsync(string identifier)
     {
-        return MakeGetRequestAsync<DataResult<TenantDto>>($"tenant/{identifier}");
+        return MakeGetRequestAsync<ResponseResult<TenantDto>>($"tenant/{identifier}");
     }
 
-    public Task<PagedDataResult<TenantDto>> GetTenantsAsync(string searchInput = "", int page = 1, int pageSize = 10)
+    public Task<PagedResponseResult<TenantDto>> GetTenantsAsync(string searchInput = "", int page = 1, int pageSize = 10)
     {
         var query = new Dictionary<string, string>
         {
@@ -279,22 +278,22 @@ internal class ApiClient : GenericApiClient, IApiClient
             query.Add("search", searchInput);
         }
 
-        return MakeGetRequestAsync<PagedDataResult<TenantDto>>("tenant/list", query);
+        return MakeGetRequestAsync<PagedResponseResult<TenantDto>>("tenant/list", query);
     }
 
-    public Task<DataResult> CreateTenantAsync(TenantDto tenant)
+    public Task<ResponseResult> CreateTenantAsync(TenantDto tenant)
     {
-        return MakePostRequestAsync<DataResult, TenantDto>("tenant/create", tenant);
+        return MakePostRequestAsync<ResponseResult, TenantDto>("tenant/create", tenant);
     }
 
-    public Task<DataResult> UpdateTenantAsync(TenantDto tenant)
+    public Task<ResponseResult> UpdateTenantAsync(TenantDto tenant)
     {
-        return MakePutRequestAsync<DataResult, TenantDto>($"tenant/update/{tenant.Id}", tenant);
+        return MakePutRequestAsync<ResponseResult, TenantDto>($"tenant/update/{tenant.Id}", tenant);
     }
 
-    public Task<DataResult> DeleteTenantAsync(string id)
+    public Task<ResponseResult> DeleteTenantAsync(string id)
     {
-        return MakeDeleteRequestAsync<DataResult>($"tenant/delete/{id}");
+        return MakeDeleteRequestAsync<ResponseResult>($"tenant/delete/{id}");
     }
 
     #endregion

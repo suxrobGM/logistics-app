@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Queries;
+﻿namespace Logistics.Application.Main.Handlers.Queries;
 
-internal sealed class GetUsersHandler : RequestHandlerBase<GetUsersQuery, PagedDataResult<UserDto>>
+internal sealed class GetUsersHandler : RequestHandlerBase<GetUsersRequest, PagedResponseResult<UserDto>>
 {
     private readonly IMainRepository _repository;
 
@@ -10,8 +10,8 @@ internal sealed class GetUsersHandler : RequestHandlerBase<GetUsersQuery, PagedD
         _repository = repository;
     }
 
-    protected override Task<PagedDataResult<UserDto>> HandleValidated(
-        GetUsersQuery request, 
+    protected override Task<PagedResponseResult<UserDto>> HandleValidated(
+        GetUsersRequest request, 
         CancellationToken cancellationToken)
     {
         var totalItems = _repository.Query<User>().Count();
@@ -32,10 +32,10 @@ internal sealed class GetUsersHandler : RequestHandlerBase<GetUsersQuery, PagedD
             .ToArray();
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
-        return Task.FromResult(new PagedDataResult<UserDto>(users, totalItems, totalPages));
+        return Task.FromResult(new PagedResponseResult<UserDto>(users, totalItems, totalPages));
     }
 
-    protected override bool Validate(GetUsersQuery request, out string errorDescription)
+    protected override bool Validate(GetUsersRequest request, out string errorDescription)
     {
         errorDescription = string.Empty;
 

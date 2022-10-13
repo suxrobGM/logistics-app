@@ -1,8 +1,8 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Logistics.Application.Handlers.Commands;
+namespace Logistics.Application.Main.Handlers.Commands;
 
-internal sealed class CreateTenantHandler : RequestHandlerBase<CreateTenantCommand, DataResult>
+internal sealed class CreateTenantHandler : RequestHandlerBase<CreateTenantCommand, ResponseResult>
 {
     private readonly IDatabaseProviderService _databaseProvider;
     private readonly IMainRepository _repository;
@@ -15,7 +15,7 @@ internal sealed class CreateTenantHandler : RequestHandlerBase<CreateTenantComma
         _repository = repository;
     }
 
-    protected override async Task<DataResult> HandleValidated(CreateTenantCommand req, CancellationToken cancellationToken)
+    protected override async Task<ResponseResult> HandleValidated(CreateTenantCommand req, CancellationToken cancellationToken)
     {
         var tenant = new Tenant
         {
@@ -33,18 +33,18 @@ internal sealed class CreateTenantHandler : RequestHandlerBase<CreateTenantComma
         var existingTenant = await _repository.GetAsync<Tenant>(i => i.Name == tenant.Name);
         if (existingTenant != null)
         {
-            return DataResult.CreateError($"Tenant name '{tenant.Name}' is already taken, please chose another name");
+            return ResponseResult.CreateError($"Tenant name '{tenant.Name}' is already taken, please chose another name");
         }
 
         var created = await _databaseProvider.CreateDatabaseAsync(tenant.ConnectionString);
         if (!created)
         {
-            return DataResult.CreateError("Could not create the tenant's database");
+            return ResponseResult.CreateError("Could not create the tenant's database");
         }
 
         await _repository.AddAsync(tenant);
         await _repository.UnitOfWork.CommitAsync();
-        return DataResult.CreateSuccess();
+        return ResponseResult.CreateSuccess();
     }
 
     protected override bool Validate(CreateTenantCommand request, out string errorDescription)

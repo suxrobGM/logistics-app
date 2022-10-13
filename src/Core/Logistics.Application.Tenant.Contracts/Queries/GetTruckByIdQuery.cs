@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Contracts.Queries;
+﻿namespace Logistics.Application.Tenant.Queries;
 
-public sealed class GetTruckByIdQuery : RequestBase<DataResult<TruckDto>>
+public sealed class GetTruckByIdQuery : RequestBase<ResponseResult<TruckDto>>
 {
     public string? Id { get; set; }
     public bool IncludeLoadIds { get; set; } = false;

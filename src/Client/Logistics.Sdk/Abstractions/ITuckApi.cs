@@ -2,10 +2,10 @@
 
 public interface ITruckApi
 {
-    Task<DataResult<TruckDto>> GetTruckAsync(string id);
-    Task<DataResult<TruckDto>> GetTruckByDriverAsync(string driverId);
-    Task<PagedDataResult<TruckDto>> GetTrucksAsync(string searchInput = "", int page = 1, int pageSize = 10, bool includeCargoIds = false);
-    Task<DataResult> CreateTruckAsync(TruckDto truck);
-    Task<DataResult> UpdateTruckAsync(TruckDto truck);
-    Task<DataResult> DeleteTruckAsync(string id);
+    Task<ResponseResult<TruckDto>> GetTruckAsync(string id);
+    Task<ResponseResult<TruckDto>> GetTruckByDriverAsync(string driverId);
+    Task<PagedResponseResult<TruckDto>> GetTrucksAsync(string searchInput = "", int page = 1, int pageSize = 10, bool includeCargoIds = false);
+    Task<ResponseResult> CreateTruckAsync(TruckDto truck);
+    Task<ResponseResult> UpdateTruckAsync(TruckDto truck);
+    Task<ResponseResult> DeleteTruckAsync(string id);
 }

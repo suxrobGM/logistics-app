@@ -1,8 +1,6 @@
-﻿using Logistics.Application.Shared.Abstractions;
+﻿namespace Logistics.Application.Main.Commands;
 
-namespace Logistics.Application.Contracts.Commands;
-
-public class RemoveUserRoleCommand : RequestBase<DataResult>
+public class RemoveUserRoleCommand : RequestBase<ResponseResult>
 {
     public string? UserId { get; set; }
     public string? Role { get; set; }

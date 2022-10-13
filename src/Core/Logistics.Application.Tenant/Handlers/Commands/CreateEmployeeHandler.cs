@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Commands;
+﻿namespace Logistics.Application.Tenant.Handlers.Commands;
 
-internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeCommand, DataResult>
+internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeCommand, ResponseResult>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;
@@ -13,7 +13,7 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
         _tenantRepository = tenantRepository;
     }
 
-    protected override async Task<DataResult> HandleValidated(
+    protected override async Task<ResponseResult> HandleValidated(
         CreateEmployeeCommand request, CancellationToken cancellationToken)
     {
         var existingEmployee = await _tenantRepository.GetAsync<Employee>(i => i.Id == request.Id);
@@ -22,13 +22,13 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
         var tenant = _tenantRepository.CurrentTenant;
         
         if (tenant == null)
-            return DataResult.CreateError($"Could not find the tenant");
+            return ResponseResult.CreateError($"Could not find the tenant");
 
         if (user == null)
-            return DataResult.CreateError("Could not find the specified user");
+            return ResponseResult.CreateError("Could not find the specified user");
         
         if (existingEmployee != null)
-            return DataResult.CreateError("Employee already exists");
+            return ResponseResult.CreateError("Employee already exists");
         
         user.JoinTenant(tenant.Id);
 
@@ -47,7 +47,7 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
         
         await _mainRepository.UnitOfWork.CommitAsync();
         await _tenantRepository.UnitOfWork.CommitAsync();
-        return DataResult.CreateSuccess();
+        return ResponseResult.CreateSuccess();
     }
 
     protected override bool Validate(CreateEmployeeCommand request, out string errorDescription)

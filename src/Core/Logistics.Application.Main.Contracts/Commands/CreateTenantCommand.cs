@@ -1,8 +1,6 @@
-﻿using Logistics.Application.Shared.Abstractions;
+﻿namespace Logistics.Application.Main.Commands;
 
-namespace Logistics.Application.Contracts.Commands;
-
-public sealed class CreateTenantCommand : RequestBase<DataResult>
+public sealed class CreateTenantCommand : RequestBase<ResponseResult>
 {
     [Required, StringLength(TenantConsts.NameLength)]
     public string? Name { get; set; }

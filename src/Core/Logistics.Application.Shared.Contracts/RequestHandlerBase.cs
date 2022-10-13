@@ -1,11 +1,11 @@
 ﻿using MediatR;
-using Logistics.Domain.Shared.Exceptions;
+using Logistics.Application.Shared.Exceptions;
 
-namespace Logistics.Application.Shared.Abstractions;
+namespace Logistics.Application.Shared;
 
 public abstract class RequestHandlerBase<TRequest, TResponse> : IRequestHandler<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
-    where TResponse : IDataResult, new()
+    where TResponse : IResponseResult, new()
 {
     public Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken)
     {

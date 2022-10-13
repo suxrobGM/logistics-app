@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Logistics.Application;
+namespace Logistics.Application.Tenant;
 
 public static class Registrar
 {

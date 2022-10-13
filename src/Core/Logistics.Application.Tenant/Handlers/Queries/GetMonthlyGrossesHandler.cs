@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Queries;
+﻿namespace Logistics.Application.Tenant.Handlers.Queries;
 
-internal sealed class GetMonthlyGrossesHandler : RequestHandlerBase<GetMonthlyGrossesQuery, DataResult<MonthlyGrossesDto>>
+internal sealed class GetMonthlyGrossesHandler : RequestHandlerBase<GetMonthlyGrossesQuery, ResponseResult<MonthlyGrossesDto>>
 {
     private readonly ITenantRepository _tenantRepository;
 
@@ -9,7 +9,7 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandlerBase<GetMonthlyGr
         _tenantRepository = tenantRepository;
     }
 
-    protected override Task<DataResult<MonthlyGrossesDto>> HandleValidated(
+    protected override Task<ResponseResult<MonthlyGrossesDto>> HandleValidated(
         GetMonthlyGrossesQuery req, CancellationToken cancellationToken)
     {
         var spec = new FilterLoadsByInterval(req.TruckId, req.StartDate, req.EndDate);
@@ -34,7 +34,7 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandlerBase<GetMonthlyGr
         }
 
         monthlyGrosses.Months = dict.Values;
-        return Task.FromResult(DataResult<MonthlyGrossesDto>.CreateSuccess(monthlyGrosses));
+        return Task.FromResult(ResponseResult<MonthlyGrossesDto>.CreateSuccess(monthlyGrosses));
     }
 
     protected override bool Validate(GetMonthlyGrossesQuery request, out string errorDescription)

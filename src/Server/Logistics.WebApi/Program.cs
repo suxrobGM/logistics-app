@@ -1,5 +1,5 @@
 using Serilog;
-using Logistics.Sdk;
+using Logistics.WebApi;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()

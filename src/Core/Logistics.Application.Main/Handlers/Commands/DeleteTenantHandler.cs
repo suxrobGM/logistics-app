@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Commands;
+﻿namespace Logistics.Application.Main.Handlers.Commands;
 
-internal sealed class DeleteTenantHandler : RequestHandlerBase<DeleteTenantCommand, DataResult>
+internal sealed class DeleteTenantHandler : RequestHandlerBase<DeleteTenantCommand, ResponseResult>
 {
     private readonly IDatabaseProviderService _databaseProvider;
     private readonly IMainRepository _repository;
@@ -13,21 +13,21 @@ internal sealed class DeleteTenantHandler : RequestHandlerBase<DeleteTenantComma
         _repository = repository;
     }
 
-    protected override async Task<DataResult> HandleValidated(DeleteTenantCommand request, CancellationToken cancellationToken)
+    protected override async Task<ResponseResult> HandleValidated(DeleteTenantCommand request, CancellationToken cancellationToken)
     {
         var tenant = await _repository.GetAsync<Tenant>(request.Id!);
 
         if (tenant == null)
-            return DataResult.CreateError("Could not find the tenant");
+            return ResponseResult.CreateError("Could not find the tenant");
 
         var deleted = await _databaseProvider.DeleteDatabaseAsync(tenant.ConnectionString!);
 
         if (!deleted)
-            return DataResult.CreateError("Could not delete the tenant's database");
+            return ResponseResult.CreateError("Could not delete the tenant's database");
 
         _repository.Delete(tenant);
         await _repository.UnitOfWork.CommitAsync();
-        return DataResult.CreateSuccess();
+        return ResponseResult.CreateSuccess();
     }
 
     protected override bool Validate(DeleteTenantCommand request, out string errorDescription)

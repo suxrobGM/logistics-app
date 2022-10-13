@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Queries;
+﻿namespace Logistics.Application.Tenant.Handlers.Queries;
 
-internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedDataResult<LoadDto>>
+internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsRequest, PagedResponseResult<LoadDto>>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;
@@ -13,8 +13,8 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
         _tenantRepository = tenantRepository;
     }
 
-    protected override Task<PagedDataResult<LoadDto>> HandleValidated(
-        GetLoadsQuery req, 
+    protected override Task<PagedResponseResult<LoadDto>> HandleValidated(
+        GetLoadsRequest req, 
         CancellationToken cancellationToken)
     {
         var tenantId = _tenantRepository.CurrentTenant!.Id;
@@ -83,10 +83,10 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsQuery, PagedD
         }
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return Task.FromResult(new PagedDataResult<LoadDto>(loadsDto, totalItems, totalPages));
+        return Task.FromResult(new PagedResponseResult<LoadDto>(loadsDto, totalItems, totalPages));
     }
 
-    protected override bool Validate(GetLoadsQuery request, out string errorDescription)
+    protected override bool Validate(GetLoadsRequest request, out string errorDescription)
     {
         errorDescription = string.Empty;
 

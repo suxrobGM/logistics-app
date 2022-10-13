@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Queries;
+﻿namespace Logistics.Application.Tenant.Handlers.Queries;
 
-internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, PagedDataResult<TruckDto>>
+internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksRequest, PagedResponseResult<TruckDto>>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;
@@ -13,8 +13,8 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
         _tenantRepository = tenantRepository;
     }
 
-    protected override Task<PagedDataResult<TruckDto>> HandleValidated(
-        GetTrucksQuery req,
+    protected override Task<PagedResponseResult<TruckDto>> HandleValidated(
+        GetTrucksRequest req,
         CancellationToken cancellationToken)
     {
         var loadIds = new List<string>();
@@ -67,10 +67,10 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksQuery, Page
         }
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return Task.FromResult(new PagedDataResult<TruckDto>(trucksDto, totalItems, totalPages));
+        return Task.FromResult(new PagedResponseResult<TruckDto>(trucksDto, totalItems, totalPages));
     }
 
-    protected override bool Validate(GetTrucksQuery request, out string errorDescription)
+    protected override bool Validate(GetTrucksRequest request, out string errorDescription)
     {
         errorDescription = string.Empty;
 

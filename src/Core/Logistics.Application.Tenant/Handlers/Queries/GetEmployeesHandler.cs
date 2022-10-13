@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Queries;
+﻿namespace Logistics.Application.Tenant.Handlers.Queries;
 
-internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery, PagedDataResult<EmployeeDto>>
+internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesRequest, PagedResponseResult<EmployeeDto>>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;
@@ -13,8 +13,8 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery
         _tenantRepository = tenantRepository;
     }
 
-    protected override Task<PagedDataResult<EmployeeDto>> HandleValidated(
-        GetEmployeesQuery request, 
+    protected override Task<PagedResponseResult<EmployeeDto>> HandleValidated(
+        GetEmployeesRequest request, 
         CancellationToken cancellationToken)
     {
         var tenantId = _tenantRepository.CurrentTenant!.Id;
@@ -58,10 +58,10 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesQuery
         }
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
-        return Task.FromResult(new PagedDataResult<EmployeeDto>(employeesDtoList, totalItems, totalPages));
+        return Task.FromResult(new PagedResponseResult<EmployeeDto>(employeesDtoList, totalItems, totalPages));
     }
 
-    protected override bool Validate(GetEmployeesQuery request, out string errorDescription)
+    protected override bool Validate(GetEmployeesRequest request, out string errorDescription)
     {
         errorDescription = string.Empty;
 

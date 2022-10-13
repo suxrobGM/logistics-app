@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Queries;
+﻿namespace Logistics.Application.Tenant.Handlers.Queries;
 
-public class GetDriversHandler : RequestHandlerBase<GetDriversQuery, PagedDataResult<EmployeeDto>>
+public class GetDriversHandler : RequestHandlerBase<GetDriversRequest, PagedResponseResult<EmployeeDto>>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;
@@ -13,15 +13,15 @@ public class GetDriversHandler : RequestHandlerBase<GetDriversQuery, PagedDataRe
         _tenantRepository = tenantRepository;
     }
     
-    protected override async Task<PagedDataResult<EmployeeDto>> HandleValidated(
-        GetDriversQuery request, CancellationToken cancellationToken)
+    protected override async Task<PagedResponseResult<EmployeeDto>> HandleValidated(
+        GetDriversRequest request, CancellationToken cancellationToken)
     {
         var tenantId = _tenantRepository.CurrentTenant!.Id;
         var totalItems = _tenantRepository.Query<Employee>().Count();
         var driverRole = await _tenantRepository.GetAsync<TenantRole>(i => i.Name == TenantRoles.Driver);
 
         if (driverRole == null)
-            return PagedDataResult<EmployeeDto>.CreateError("Could not found the driver role");
+            return PagedResponseResult<EmployeeDto>.CreateError("Could not found the driver role");
 
         var filteredUsers = _mainRepository
             .ApplySpecification(new SearchUsersByTenantId(request.Search, tenantId, "Name"))
@@ -53,10 +53,10 @@ public class GetDriversHandler : RequestHandlerBase<GetDriversQuery, PagedDataRe
         }
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
-        return new PagedDataResult<EmployeeDto>(employeesDto, totalItems, totalPages);
+        return new PagedResponseResult<EmployeeDto>(employeesDto, totalItems, totalPages);
     }
 
-    protected override bool Validate(GetDriversQuery request, out string errorDescription)
+    protected override bool Validate(GetDriversRequest request, out string errorDescription)
     {
         errorDescription = string.Empty;
 

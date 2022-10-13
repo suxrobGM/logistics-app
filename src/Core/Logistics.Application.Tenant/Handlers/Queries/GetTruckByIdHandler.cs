@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Queries;
+﻿namespace Logistics.Application.Tenant.Handlers.Queries;
 
-internal sealed class GetTruckByIdHandler : RequestHandlerBase<GetTruckByIdQuery, DataResult<TruckDto>>
+internal sealed class GetTruckByIdHandler : RequestHandlerBase<GetTruckByIdQuery, ResponseResult<TruckDto>>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;
@@ -13,7 +13,7 @@ internal sealed class GetTruckByIdHandler : RequestHandlerBase<GetTruckByIdQuery
         _tenantRepository = tenantRepository;
     }
 
-    protected override async Task<DataResult<TruckDto>> HandleValidated(
+    protected override async Task<ResponseResult<TruckDto>> HandleValidated(
         GetTruckByIdQuery request, CancellationToken cancellationToken)
     {
         var truckEntity = await _tenantRepository.GetAsync<Truck>(request.Id);
@@ -28,7 +28,7 @@ internal sealed class GetTruckByIdHandler : RequestHandlerBase<GetTruckByIdQuery
         }
 
         if (truckEntity == null)
-            return DataResult<TruckDto>.CreateError("Could not find the specified truck");
+            return ResponseResult<TruckDto>.CreateError("Could not find the specified truck");
 
         var truckDriver = await _mainRepository.GetAsync<User>(i => i.Id == truckEntity.DriverId);
         
@@ -41,7 +41,7 @@ internal sealed class GetTruckByIdHandler : RequestHandlerBase<GetTruckByIdQuery
             LoadIds = loadIds
         };
 
-        return DataResult<TruckDto>.CreateSuccess(truck);
+        return ResponseResult<TruckDto>.CreateSuccess(truck);
     }
 
     protected override bool Validate(GetTruckByIdQuery request, out string errorDescription)

@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Commands;
+﻿namespace Logistics.Application.Tenant.Handlers.Commands;
 
-internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, DataResult>
+internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, ResponseResult>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;
@@ -13,7 +13,7 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
         _tenantRepository = tenantRepository;
     }
 
-    protected override async Task<DataResult> HandleValidated(
+    protected override async Task<ResponseResult> HandleValidated(
         UpdateLoadCommand request, CancellationToken cancellationToken)
     {
         Employee? driver = null;
@@ -24,21 +24,21 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
             driver = await _tenantRepository.GetAsync<Employee>(request.AssignedDriverId);
 
             if (driver == null)
-                return DataResult.CreateError("Could not find the specified driver");
+                return ResponseResult.CreateError("Could not find the specified driver");
             
             truck = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == driver.Id);
 
             if (truck == null)
             {
                 var user = await _mainRepository.GetAsync<User>(request.AssignedDriverId);
-                return DataResult.CreateError($"Could not find the truck whose driver is '{user?.UserName}'");
+                return ResponseResult.CreateError($"Could not find the truck whose driver is '{user?.UserName}'");
             }
         }
 
         var loadEntity = await _tenantRepository.GetAsync<Load>(request.Id);
 
         if (loadEntity == null)
-            return DataResult.CreateError("Could not find the specified load");
+            return ResponseResult.CreateError("Could not find the specified load");
         
         if (driver != null && truck != null)
         {
@@ -66,7 +66,7 @@ internal sealed class UpdateLoadHandler : RequestHandlerBase<UpdateLoadCommand, 
         
         _tenantRepository.Update(loadEntity);
         await _tenantRepository.UnitOfWork.CommitAsync();
-        return DataResult.CreateSuccess();
+        return ResponseResult.CreateSuccess();
     }
 
     protected override bool Validate(UpdateLoadCommand request, out string errorDescription)

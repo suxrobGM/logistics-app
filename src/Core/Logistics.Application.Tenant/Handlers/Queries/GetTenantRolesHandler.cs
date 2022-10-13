@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Queries;
+﻿namespace Logistics.Application.Tenant.Handlers.Queries;
 
-public class GetTenantRolesHandler : RequestHandlerBase<GetTenantRolesQuery, PagedDataResult<TenantRoleDto>>
+public class GetTenantRolesHandler : RequestHandlerBase<GetTenantRolesQuery, PagedResponseResult<TenantRoleDto>>
 {
     private readonly ITenantRepository _tenantRepository;
 
@@ -9,15 +9,15 @@ public class GetTenantRolesHandler : RequestHandlerBase<GetTenantRolesQuery, Pag
         _tenantRepository = tenantRepository;
     }
 
-    protected override Task<PagedDataResult<TenantRoleDto>> HandleValidated(
-        GetTenantRolesQuery request, CancellationToken cancellationToken)
+    protected override Task<PagedResponseResult<TenantRoleDto>> HandleValidated(
+        GetTenantRolesQuery query, CancellationToken cancellationToken)
     {
         var totalItems = _tenantRepository.Query<TenantRole>().Count();
 
         var rolesDto = _tenantRepository
-            .ApplySpecification(new SearchTenantRoles(request.Search))
-            .Skip((request.Page - 1) * request.PageSize)
-            .Take(request.PageSize)
+            .ApplySpecification(new SearchTenantRoles(query.Search))
+            .Skip((query.Page - 1) * query.PageSize)
+            .Take(query.PageSize)
             .Select(i => new TenantRoleDto()
             {
                 Name = i.Name,
@@ -25,19 +25,19 @@ public class GetTenantRolesHandler : RequestHandlerBase<GetTenantRolesQuery, Pag
             })
             .ToArray();
         
-        var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
-        return Task.FromResult(new PagedDataResult<TenantRoleDto>(rolesDto, totalItems, totalPages));
+        var totalPages = (int)Math.Ceiling(totalItems / (double)query.PageSize);
+        return Task.FromResult(new PagedResponseResult<TenantRoleDto>(rolesDto, totalItems, totalPages));
     }
 
-    protected override bool Validate(GetTenantRolesQuery request, out string errorDescription)
+    protected override bool Validate(GetTenantRolesQuery query, out string errorDescription)
     {
         errorDescription = string.Empty;
 
-        if (request.Page <= 0)
+        if (query.Page <= 0)
         {
             errorDescription = "Page number should be non-negative";
         }
-        else if (request.PageSize <= 1)
+        else if (query.PageSize <= 1)
         {
             errorDescription = "Page size should be greater than one";
         }

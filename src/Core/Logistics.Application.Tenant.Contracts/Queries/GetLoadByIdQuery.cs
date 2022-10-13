@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Contracts.Queries;
+﻿namespace Logistics.Application.Tenant.Queries;
 
-public sealed class GetLoadByIdQuery : RequestBase<DataResult<LoadDto>>
+public sealed class GetLoadByIdQuery : RequestBase<ResponseResult<LoadDto>>
 {
     public string? Id { get; set; }
 }

@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Contracts.Commands;
+﻿namespace Logistics.Application.Tenant.Commands;
 
-public sealed class UpdateEmployeeCommand : RequestBase<DataResult>
+public sealed class UpdateEmployeeCommand : RequestBase<ResponseResult>
 {
     public string? Id { get; set; }
     public string? Role { get; set; }

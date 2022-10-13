@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Contracts.Queries;
+﻿namespace Logistics.Application.Tenant.Queries;
 
-public abstract class IntervalQuery<T> : RequestBase<DataResult<T>>
+public abstract class IntervalQuery<T> : RequestBase<ResponseResult<T>>
 {
     protected IntervalQuery()
     {

@@ -1,8 +1,8 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Logistics.Application.Handlers.Commands;
+namespace Logistics.Application.Main.Handlers.Commands;
 
-internal sealed class UpdateTenantHandler : RequestHandlerBase<UpdateTenantCommand, DataResult>
+internal sealed class UpdateTenantHandler : RequestHandlerBase<UpdateTenantCommand, ResponseResult>
 {
     private readonly IMainRepository _repository;
 
@@ -11,19 +11,19 @@ internal sealed class UpdateTenantHandler : RequestHandlerBase<UpdateTenantComma
         _repository = repository;
     }
 
-    protected override async Task<DataResult> HandleValidated(UpdateTenantCommand request, CancellationToken cancellationToken)
+    protected override async Task<ResponseResult> HandleValidated(UpdateTenantCommand request, CancellationToken cancellationToken)
     {
         var tenant = await _repository.GetAsync<Tenant>(request.Id!);
 
         if (tenant == null)
-            return DataResult.CreateError("Could not find the tenant");
+            return ResponseResult.CreateError("Could not find the tenant");
 
         tenant.Name = request.Name?.Trim().ToLower();
         tenant.DisplayName = string.IsNullOrEmpty(request.DisplayName) ? tenant.Name : request.DisplayName?.Trim();
         
         _repository.Update(tenant);
         await _repository.UnitOfWork.CommitAsync();
-        return DataResult.CreateSuccess();
+        return ResponseResult.CreateSuccess();
     }
 
     protected override bool Validate(UpdateTenantCommand request, out string errorDescription)

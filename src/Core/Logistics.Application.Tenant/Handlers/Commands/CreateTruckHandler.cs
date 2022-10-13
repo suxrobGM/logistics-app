@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Commands;
+﻿namespace Logistics.Application.Tenant.Handlers.Commands;
 
-internal sealed class CreateTruckHandler : RequestHandlerBase<CreateTruckCommand, DataResult>
+internal sealed class CreateTruckHandler : RequestHandlerBase<CreateTruckCommand, ResponseResult>
 {
     private readonly ITenantRepository _tenantRepository;
 
@@ -9,22 +9,22 @@ internal sealed class CreateTruckHandler : RequestHandlerBase<CreateTruckCommand
         _tenantRepository = tenantRepository;
     }
 
-    protected override async Task<DataResult> HandleValidated(
+    protected override async Task<ResponseResult> HandleValidated(
         CreateTruckCommand request, CancellationToken cancellationToken)
     {
         var driver = await _tenantRepository.GetAsync<Employee>(request.DriverId);
 
         if (driver == null)
-            return DataResult.CreateError("Could not find the specified driver");
+            return ResponseResult.CreateError("Could not find the specified driver");
 
         var truckWithThisDriver = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == request.DriverId);
         var truckWithThisNumber = await _tenantRepository.GetAsync<Truck>(i => i.TruckNumber == request.TruckNumber);
 
         if (truckWithThisDriver != null)
-            return DataResult.CreateError("Already exists truck with this driver");
+            return ResponseResult.CreateError("Already exists truck with this driver");
 
         if (truckWithThisNumber != null)
-            return DataResult.CreateError("Already exists truck with this number");
+            return ResponseResult.CreateError("Already exists truck with this number");
 
         var truckEntity = new Truck()
         {
@@ -34,7 +34,7 @@ internal sealed class CreateTruckHandler : RequestHandlerBase<CreateTruckCommand
         
         await _tenantRepository.AddAsync(truckEntity);
         await _tenantRepository.UnitOfWork.CommitAsync();
-        return DataResult.CreateSuccess();
+        return ResponseResult.CreateSuccess();
     }
 
     protected override bool Validate(CreateTruckCommand request, out string errorDescription)

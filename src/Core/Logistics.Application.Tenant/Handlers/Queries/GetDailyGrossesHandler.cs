@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Handlers.Queries;
+﻿namespace Logistics.Application.Tenant.Handlers.Queries;
 
-internal sealed class GetDailyGrossesHandler : RequestHandlerBase<GetDailyGrossesQuery, DataResult<DailyGrossesDto>>
+internal sealed class GetDailyGrossesHandler : RequestHandlerBase<GetDailyGrossesQuery, ResponseResult<DailyGrossesDto>>
 {
     private readonly ITenantRepository _tenantRepository;
 
@@ -9,7 +9,7 @@ internal sealed class GetDailyGrossesHandler : RequestHandlerBase<GetDailyGrosse
         _tenantRepository = tenantRepository;
     }
     
-    protected override Task<DataResult<DailyGrossesDto>> HandleValidated(
+    protected override Task<ResponseResult<DailyGrossesDto>> HandleValidated(
         GetDailyGrossesQuery req, CancellationToken cancellationToken)
     {
         var spec = new FilterLoadsByInterval(req.TruckId, req.StartDate, req.EndDate);
@@ -34,7 +34,7 @@ internal sealed class GetDailyGrossesHandler : RequestHandlerBase<GetDailyGrosse
         }
 
         dailyGrosses.Dates = dict.Values;
-        return Task.FromResult(DataResult<DailyGrossesDto>.CreateSuccess(dailyGrosses));
+        return Task.FromResult(ResponseResult<DailyGrossesDto>.CreateSuccess(dailyGrosses));
     }
 
     protected override bool Validate(GetDailyGrossesQuery request, out string errorDescription)

@@ -1,4 +1,4 @@
-﻿namespace Logistics.Sdk.Controllers;
+﻿namespace Logistics.WebApi.Controllers;
 
 [Route("[controller]")]
 [ApiController]
@@ -12,8 +12,8 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(DataResult<UserDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseResult<UserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.User.View)]
     public async Task<IActionResult> GetById(string id)
     {
@@ -29,10 +29,10 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("list")]
-    [ProducesResponseType(typeof(PagedDataResult<UserDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(PagedResponseResult<UserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.User.View)]
-    public async Task<IActionResult> GetList([FromQuery] GetUsersQuery request)
+    public async Task<IActionResult> GetList([FromQuery] GetUsersRequest request)
     {
         var result = await _mediator.Send(request);
 
@@ -43,8 +43,8 @@ public class UserController : ControllerBase
     }
     
     [HttpPost("removeRole")]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DataResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.User.Edit)]
     public async Task<IActionResult> RemoveRole([FromBody] RemoveUserRoleCommand request)
     {

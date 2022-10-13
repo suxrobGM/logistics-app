@@ -1,8 +1,6 @@
-﻿using Logistics.Application.Shared.Abstractions;
+﻿namespace Logistics.Application.Main.Commands;
 
-namespace Logistics.Application.Contracts.Commands;
-
-public sealed class UpdateTenantCommand : RequestBase<DataResult>
+public sealed class UpdateTenantCommand : RequestBase<ResponseResult>
 {
     public string? Id { get; set; }
     public string? Name { get; set; }

@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Logistics.Domain.Shared.Exceptions;
+﻿using Logistics.Application.Shared.Exceptions;
+using Microsoft.AspNetCore.Http;
 
 namespace Logistics.EntityFramework.Services;
 
