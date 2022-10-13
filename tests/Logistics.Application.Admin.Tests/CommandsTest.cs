@@ -1,4 +1,4 @@
-namespace Logistics.Application.Main.Tests;
+namespace Logistics.Application.Admin.Tests;
 
 public class CommandsTest
 {
