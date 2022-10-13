@@ -29,9 +29,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Blazor", "src\Cli
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Blazor.Tests", "tests\Logistics.Blazor.Tests\Logistics.Blazor.Tests.csproj", "{C4ADD85D-28AD-4EF0-B93D-548516CE3A20}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Main", "src\Core\Logistics.Application.Main\Logistics.Application.Main.csproj", "{CEE34293-FC12-4E35-999C-EEDE063F8B25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Admin", "src\Core\Logistics.Application.Admin\Logistics.Application.Admin.csproj", "{CEE34293-FC12-4E35-999C-EEDE063F8B25}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Main.Contracts", "src\Core\Logistics.Application.Main.Contracts\Logistics.Application.Main.Contracts.csproj", "{0E9C714C-7FEA-41B0-867F-9A235FA67A3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Admin.Contracts", "src\Core\Logistics.Application.Admin.Contracts\Logistics.Application.Admin.Contracts.csproj", "{0E9C714C-7FEA-41B0-867F-9A235FA67A3A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.AdminApp", "src\Client\Logistics.AdminApp\Logistics.AdminApp.csproj", "{C7AE8EC6-562A-4907-9A12-E2FF7CFA8397}"
 EndProject

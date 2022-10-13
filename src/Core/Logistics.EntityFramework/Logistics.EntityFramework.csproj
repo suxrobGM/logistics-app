@@ -18,8 +18,7 @@
 		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.2" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\Logistics.Application.Shared.Contracts\Logistics.Application.Shared.Contracts.csproj" />
-		<ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />
+  </ItemGroup>
 </Project>

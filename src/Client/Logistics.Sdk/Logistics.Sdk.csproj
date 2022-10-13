@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Logistics.Application.Main.Contracts\Logistics.Application.Main.Contracts.csproj" />
+    <ProjectReference Include="..\..\Core\Logistics.Application.Admin.Contracts\Logistics.Application.Admin.Contracts.csproj" />
     <ProjectReference Include="..\..\Core\Logistics.Application.Tenant.Contracts\Logistics.Application.Tenant.Contracts.csproj" />
   </ItemGroup>
 

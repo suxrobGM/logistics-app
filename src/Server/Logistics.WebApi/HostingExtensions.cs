@@ -1,8 +1,8 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Logistics.Application;
 using Logistics.EntityFramework;
+using Logistics.WebApi.Authorization;
 
 namespace Logistics.WebApi;
 
@@ -11,7 +11,7 @@ internal static class HostingExtensions
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         AddSecretsJson(builder.Configuration);
-        builder.Services.AddMainApplicationLayer();
+        builder.Services.AddAdminApplicationLayer();
         builder.Services.AddTenantApplicationLayer();
         builder.Services.AddSharedApplicationLayer(builder.Configuration, "EmailConfig");
         builder.Services.AddInfrastructureLayer(builder.Configuration);
