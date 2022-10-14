@@ -41,7 +41,21 @@ public class UserController : ControllerBase
 
         return BadRequest(result);
     }
-    
+
+    [HttpPut("update/{id}")]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.User.View)]
+    public async Task<IActionResult> Update([FromQuery] UpdateUserCommand request)
+    {
+        var result = await _mediator.Send(request);
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result);
+    }
+
     [HttpPost("removeRole")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]

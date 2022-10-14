@@ -19,7 +19,26 @@ public class TruckController : ControllerBase
     {
         var result = await _mediator.Send(new GetTruckByIdQuery
         {
+            IncludeLoadIds = includeLoadIds,
             Id = id
+        });
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result);
+    }
+
+    [HttpGet("getByDriver")]
+    [ProducesResponseType(typeof(ResponseResult<TruckDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Truck.View)]
+    public async Task<IActionResult> GetByDriverId(string driverId, bool includeLoadIds = false)
+    {
+        var result = await _mediator.Send(new GetTruckByDriverQuery
+        {
+            IncludeLoadIds = includeLoadIds,
+            DriverId = driverId
         });
 
         if (result.Success)

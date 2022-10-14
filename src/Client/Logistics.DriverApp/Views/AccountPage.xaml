@@ -3,10 +3,27 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Logistics.DriverApp.Views.AccountPage"
              Title="Account">
-    <VerticalStackLayout>
-        <Label 
-            Text="Account Page"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+    <VerticalStackLayout Padding="10">
+        <HorizontalStackLayout>
+            <Label Text="User name: " />
+            <Editor Text="{Binding AccountForm.UserName}" IsReadOnly="True" />
+        </HorizontalStackLayout>
+        <HorizontalStackLayout Margin="0,10">
+            <Label Text="First name: " />
+            <Editor Text="{Binding AccountForm.FirstName}" />
+        </HorizontalStackLayout>
+        <HorizontalStackLayout Margin="0,10">
+            <Label Text="Last name: " />
+            <Editor Text="{Binding AccountForm.LastName}" />
+        </HorizontalStackLayout>
+        <HorizontalStackLayout Margin="0,10">
+            <Label Text="Email: " />
+            <Editor Text="{Binding AccountForm.Email}" IsReadOnly="True" />
+        </HorizontalStackLayout>
+        <HorizontalStackLayout Margin="0,10">
+            <Label Text="Phone number: " />
+            <Editor Text="{Binding AccountForm.PhoneNumber}" />
+        </HorizontalStackLayout>
+        <Button Margin="0,10" Text="Update" Command="{Binding UpdateCommand}" />
     </VerticalStackLayout>
 </ContentPage>

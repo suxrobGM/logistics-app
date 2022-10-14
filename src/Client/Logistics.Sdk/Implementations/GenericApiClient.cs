@@ -51,12 +51,12 @@ internal class GenericApiClient
         _httpClient.DefaultRequestHeaders.Add(key, value);
     }
 
-    public async Task<TResponse> GetRequestAsync<TResponse>(string endpoint,
+    public async Task<TRes> GetRequestAsync<TRes>(string endpoint,
         IDictionary<string, string>? queries = null)
-        where TResponse : new()
+        where TRes : new()
     {
         var content = await GetRequestAsync(endpoint, queries);
-        var deserializedObj = Deserialize<TResponse>(content) ?? default;
+        var deserializedObj = Deserialize<TRes>(content) ?? default;
 
         if (deserializedObj is null)
         {
@@ -86,12 +86,12 @@ internal class GenericApiClient
         }
     }
 
-    public async Task<TResponse> PostRequestAsync<TResponse, TRequest>(string endpoint, TRequest body)
-        where TResponse : new()
-        where TRequest : new()
+    public async Task<TRes> PostRequestAsync<TRes, TBody>(string endpoint, TBody body)
+        where TRes : new()
+        where TBody : new()
     {
         var content = await PostRequestAsync(endpoint, body);
-        var deserializedObj = Deserialize<TResponse>(content) ?? default;
+        var deserializedObj = Deserialize<TRes>(content) ?? default;
 
         if (deserializedObj is null)
         {
@@ -116,12 +116,12 @@ internal class GenericApiClient
         }
     }
 
-    public async Task<TResponse> PutRequestAsync<TResponse, TRequest>(string endpoint, TRequest body)
-        where TResponse : new()
-        where TRequest : new()
+    public async Task<TRes> PutRequestAsync<TRes, TBody>(string endpoint, TBody body)
+        where TRes : new()
+        where TBody : new()
     {
         var content = await PutRequestAsync(endpoint, body);
-        var deserializedObj = Deserialize<TResponse>(content) ?? default;
+        var deserializedObj = Deserialize<TRes>(content) ?? default;
 
         if (deserializedObj is null)
         {
@@ -132,7 +132,7 @@ internal class GenericApiClient
         return deserializedObj;
     }
 
-    public async Task<string> PutRequestAsync<TRequest>(string endpoint, TRequest body)
+    public async Task<string> PutRequestAsync<TBody>(string endpoint, TBody body)
     {
         try
         {
@@ -146,12 +146,12 @@ internal class GenericApiClient
         }
     }
 
-    public async Task<TResponse> DeleteRequestAsync<TResponse>(string endpoint,
+    public async Task<TRes> DeleteRequestAsync<TRes>(string endpoint,
         IDictionary<string, string> queries = default!)
-        where TResponse : new()
+        where TRes : new()
     {
         var content = await DeleteRequestAsync(endpoint, queries);
-        var deserializedObj = Deserialize<TResponse>(content) ?? default;
+        var deserializedObj = Deserialize<TRes>(content) ?? default;
 
         if (deserializedObj is null)
         {

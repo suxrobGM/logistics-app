@@ -15,6 +15,7 @@ public class AccountPageViewModel : ViewModelBase
         _apiClient = apiClient;
         _accountForm = new AccountEditForm();
         UpdateCommand = new AsyncRelayCommand(UpdateAccountAsync);
+        Task.Run(async () => await FetchUserAsync());
     }
 
     public IAsyncRelayCommand UpdateCommand { get; }
@@ -33,7 +34,16 @@ public class AccountPageViewModel : ViewModelBase
         if (string.IsNullOrEmpty(userId))
             return;
 
-        
+        var result = await _apiClient.GetUserAsync(userId);
+        if (result.Success)
+        {
+            var user = result.Value!;
+            AccountForm.UserName = user.UserName;
+            AccountForm.FirstName = user.FirstName;
+            AccountForm.LastName = user.LastName;
+            AccountForm.Email = user.Email;
+            AccountForm.PhoneNumber = user.PhoneNumber;
+        }
     }
 
     private Task UpdateAccountAsync()

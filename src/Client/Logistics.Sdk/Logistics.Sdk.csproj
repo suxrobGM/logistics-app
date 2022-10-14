@@ -16,8 +16,4 @@
     <ProjectReference Include="..\..\Shared\Logistics.Shared\Logistics.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Constraints" />
-  </ItemGroup>
-
 </Project>
