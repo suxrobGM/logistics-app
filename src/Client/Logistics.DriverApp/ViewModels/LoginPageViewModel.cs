@@ -1,14 +1,16 @@
-﻿using Logistics.DriverApp.Authentication;
-
-namespace Logistics.DriverApp.ViewModels;
+﻿namespace Logistics.DriverApp.ViewModels;
 
 public class LoginPageViewModel : ViewModelBase
 {
     private readonly IAuthService _authService;
+    private readonly IApiClient _apiClient;
 
-    public LoginPageViewModel(IAuthService authService)
+    public LoginPageViewModel(
+        IAuthService authService, 
+        IApiClient apiClient)
     {
         _authService = authService;
+        _apiClient = apiClient;
         SignInCommand = new AsyncRelayCommand(LoginAsync, () => !IsBusy);
         OpenSignUpCommand = new AsyncRelayCommand(OpenSignUpUrl, () => !IsBusy);
         IsBusyChanged += (s, e) => SignInCommand.NotifyCanExecuteChanged();
@@ -20,13 +22,24 @@ public class LoginPageViewModel : ViewModelBase
     public async Task LoginAsync()
     {
         IsBusy = true;
-        var result = await _authService.LoginAsync();
-
-        if (!result.IsError)
+        try
         {
-            await Shell.Current.GoToAsync("//MainPage", true);
+            var result = await _authService.LoginAsync();
+
+            if (!result.IsError)
+            {
+                _apiClient.AccessToken = result.AccessToken;
+                await Shell.Current.GoToAsync("//DashboardPage", true);
+            }
         }
-        IsBusy = false;
+        catch (Exception ex)
+        {
+            await PopupHelpers.ShowError(ex.Message);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     public async Task OpenSignUpUrl()

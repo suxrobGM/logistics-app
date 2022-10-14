@@ -6,6 +6,7 @@ public class AccountPageViewModel : ViewModelBase
 {
     private readonly IAuthService _authService;
     private readonly IApiClient _apiClient;
+    private AccountEditForm _accountForm;
 
     public AccountPageViewModel(
         IAuthService authService, 
@@ -14,19 +15,21 @@ public class AccountPageViewModel : ViewModelBase
         _authService = authService;
         _apiClient = apiClient;
         _accountForm = new AccountEditForm();
+        AccountCenterUrl = $"{_authService.Options.Authority}/account/manage";
         UpdateCommand = new AsyncRelayCommand(UpdateAccountAsync);
+
         Task.Run(async () => await FetchUserAsync());
     }
 
     public IAsyncRelayCommand UpdateCommand { get; }
-
-    private AccountEditForm _accountForm;
+    public string AccountCenterUrl { get; }
+    
     public AccountEditForm AccountForm 
     {
         get => _accountForm;
         set => SetProperty(ref _accountForm, value);
     }
-
+    
     private async Task FetchUserAsync()
     {
         var userId = _authService.User?.Id;
@@ -35,6 +38,7 @@ public class AccountPageViewModel : ViewModelBase
             return;
 
         var result = await _apiClient.GetUserAsync(userId);
+
         if (result.Success)
         {
             var user = result.Value!;
@@ -46,8 +50,29 @@ public class AccountPageViewModel : ViewModelBase
         }
     }
 
-    private Task UpdateAccountAsync()
+    private async Task UpdateAccountAsync()
     {
-        return Task.CompletedTask;
+        var userId = _authService.User?.Id;
+        AccountForm.Validate();
+
+        if (AccountForm.HasErrors)
+        {
+            var errors = string.Join('\n', AccountForm.GetErrors().Select(i => i.ErrorMessage));
+            await PopupHelpers.ShowError(errors);
+            return;
+        }
+
+        var result = await _apiClient.UpdateUserAsync(new UpdateUser()
+        {
+            Id = userId,
+            FirstName = AccountForm.FirstName,
+            LastName = AccountForm.LastName,
+            PhoneNumber = AccountForm.PhoneNumber,
+        });
+
+        if (result.Success)
+        {
+            await PopupHelpers.ShowSuccess("Account details updated successfully");
+        }
     }
 }

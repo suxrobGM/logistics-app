@@ -5,10 +5,7 @@
              Title="Dashboard">
 
     <ScrollView>
-        <VerticalStackLayout
-            Spacing="25"
-            Padding="30,0"
-            VerticalOptions="Center">
+        <VerticalStackLayout Spacing="10" Padding="10">
             <HorizontalStackLayout>
                 <Label Text="Truck: " />
                 <Label Text="{Binding TruckNumber}"/>

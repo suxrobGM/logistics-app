@@ -56,7 +56,7 @@ internal class GenericApiClient
         where TRes : new()
     {
         var content = await GetRequestAsync(endpoint, queries);
-        var deserializedObj = Deserialize<TRes>(content) ?? default;
+        var deserializedObj = Deserialize<TRes>(content);
 
         if (deserializedObj is null)
         {

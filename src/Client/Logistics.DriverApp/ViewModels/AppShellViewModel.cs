@@ -23,8 +23,8 @@ public class AppShellViewModel : ViewModelBase
         IsBusy = false;
     }
 
-    private Task HandleApiErrors(string error)
+    private static Task HandleApiErrors(string error)
     {
-        return Shell.Current.DisplayAlert("Error", error, "OK");
+        return MainThread.InvokeOnMainThreadAsync(() => PopupHelpers.ShowError(error));
     }
 }
