@@ -16,7 +16,8 @@ public class AccountPageViewModel : ViewModelBase
         _apiClient = apiClient;
         _accountForm = new AccountEditForm();
         AccountCenterUrl = $"{_authService.Options.Authority}/account/manage";
-        UpdateCommand = new AsyncRelayCommand(UpdateAccountAsync);
+        UpdateCommand = new AsyncRelayCommand(UpdateAccountAsync, () => !IsBusy);
+        IsBusyChanged += (s, e) => UpdateCommand.NotifyCanExecuteChanged();
 
         Task.Run(async () => await FetchUserAsync());
     }
@@ -37,6 +38,7 @@ public class AccountPageViewModel : ViewModelBase
         if (string.IsNullOrEmpty(userId))
             return;
 
+        IsBusy = true;
         var result = await _apiClient.GetUserAsync(userId);
 
         if (result.Success)
@@ -48,6 +50,8 @@ public class AccountPageViewModel : ViewModelBase
             AccountForm.Email = user.Email;
             AccountForm.PhoneNumber = user.PhoneNumber;
         }
+
+        IsBusy = false;
     }
 
     private async Task UpdateAccountAsync()
@@ -62,6 +66,7 @@ public class AccountPageViewModel : ViewModelBase
             return;
         }
 
+        IsBusy = true;
         var result = await _apiClient.UpdateUserAsync(new UpdateUser()
         {
             Id = userId,
@@ -74,5 +79,7 @@ public class AccountPageViewModel : ViewModelBase
         {
             await PopupHelpers.ShowSuccess("Account details updated successfully");
         }
+
+        IsBusy = false;
     }
 }
