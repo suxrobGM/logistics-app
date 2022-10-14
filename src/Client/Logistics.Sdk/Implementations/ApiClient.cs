@@ -263,7 +263,7 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakeGetRequestAsync<ResponseResult<User>>($"user/{id}");
     }
 
-    public Task<ResponseResult> UpdateUser(UpdateUser user)
+    public Task<ResponseResult> UpdateUserAsync(UpdateUser user)
     {
         return MakePutRequestAsync<ResponseResult, UpdateUser>($"user/{user.Id}", user);
     }

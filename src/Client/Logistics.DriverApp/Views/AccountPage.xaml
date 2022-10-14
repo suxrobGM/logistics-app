@@ -2,28 +2,20 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Logistics.DriverApp.Views.AccountPage"
+             xmlns:controls="clr-namespace:Logistics.DriverApp.Controls"
              Title="Account">
     <VerticalStackLayout Padding="10">
-        <HorizontalStackLayout>
-            <Label Text="User name: " />
-            <Editor Text="{Binding AccountForm.UserName}" IsReadOnly="True" />
-        </HorizontalStackLayout>
-        <HorizontalStackLayout Margin="0,10">
-            <Label Text="First name: " />
-            <Editor Text="{Binding AccountForm.FirstName}" />
-        </HorizontalStackLayout>
-        <HorizontalStackLayout Margin="0,10">
-            <Label Text="Last name: " />
-            <Editor Text="{Binding AccountForm.LastName}" />
-        </HorizontalStackLayout>
-        <HorizontalStackLayout Margin="0,10">
-            <Label Text="Email: " />
-            <Editor Text="{Binding AccountForm.Email}" IsReadOnly="True" />
-        </HorizontalStackLayout>
-        <HorizontalStackLayout Margin="0,10">
-            <Label Text="Phone number: " />
-            <Editor Text="{Binding AccountForm.PhoneNumber}" />
-        </HorizontalStackLayout>
+        <TableView Intent="Form">
+            <TableRoot>
+                <TableSection>
+                    <EntryCell Label="Username: " Text="{Binding AccountForm.UserName}" IsEnabled="False" />
+                    <EntryCell Label="Email: " Text="{Binding AccountForm.Email}" IsEnabled="False" />
+                    <EntryCell Label="First name: " Text="{Binding AccountForm.FirstName}" />
+                    <EntryCell Label="Last name: " Text="{Binding AccountForm.LastName}" />
+                    <EntryCell Label="Phone number: " Text="{Binding AccountForm.PhoneNumber}" />
+                </TableSection>
+            </TableRoot>
+        </TableView>
         <Button Margin="0,10" Text="Update" Command="{Binding UpdateCommand}" />
     </VerticalStackLayout>
 </ContentPage>

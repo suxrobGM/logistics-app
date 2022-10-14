@@ -2,7 +2,7 @@
 
 namespace Logistics.DriverApp.Models;
 
-public class AccountEditForm : ObservableObject
+public class AccountEditForm : ObservableValidator
 {
     private string? _userName;
     private string? _email;
@@ -40,5 +40,10 @@ public class AccountEditForm : ObservableObject
     {
         get => _phoneNumber;
         set => SetProperty(ref _phoneNumber, value);
+    }
+
+    public void Validate()
+    {
+        ValidateAllProperties();
     }
 }
