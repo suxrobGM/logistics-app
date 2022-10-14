@@ -64,13 +64,13 @@ internal class ApiClient : GenericApiClient, IApiClient
         }
     }
 
-    private async Task<TRes> MakePostRequestAsync<TRes, TData>(string endpoint, TData data)
+    private async Task<TRes> MakePostRequestAsync<TRes, TBody>(string endpoint, TBody body)
         where TRes : class, IResponseResult, new()
-        where TData : class, new()
+        where TBody : class, new()
     {
         try
         {
-            var result = await PostRequestAsync<TRes, TData>(endpoint, data);
+            var result = await PostRequestAsync<TRes, TBody>(endpoint, body);
 
             if (!result.Success)
                 OnErrorResponse?.Invoke(this, result.Error!);
@@ -84,13 +84,13 @@ internal class ApiClient : GenericApiClient, IApiClient
         }
     }
 
-    private async Task<TRes> MakePutRequestAsync<TRes, TData>(string endpoint, TData data)
+    private async Task<TRes> MakePutRequestAsync<TRes, TBody>(string endpoint, TBody body)
         where TRes : class, IResponseResult, new()
-        where TData : class, new()
+        where TBody : class, new()
     {
         try
         {
-            var result = await PutRequestAsync<TRes, TData>(endpoint, data);
+            var result = await PutRequestAsync<TRes, TBody>(endpoint, body);
 
             if (!result.Success)
                 OnErrorResponse?.Invoke(this, result.Error!);
@@ -163,7 +163,7 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     public Task<ResponseResult<Truck>> GetTruckByDriverAsync(string driverId)
     {
-        return MakeGetRequestAsync<ResponseResult<Truck>>($"truck/driver/{driverId}");  
+        return MakeGetRequestAsync<ResponseResult<Truck>>($"truck/getByDriver?driverId={driverId}");  
     }
 
     public Task<PagedResponseResult<Truck>> GetTrucksAsync(SearchableQuery query, bool includeCargoIds = false)
@@ -251,6 +251,21 @@ internal class ApiClient : GenericApiClient, IApiClient
     public Task<ResponseResult> DeleteTenantAsync(string id)
     {
         return MakeDeleteRequestAsync<ResponseResult>($"tenant/delete/{id}");
+    }
+
+    #endregion
+
+
+    #region User API
+
+    public Task<ResponseResult<User>> GetUserAsync(string id)
+    {
+        return MakeGetRequestAsync<ResponseResult<User>>($"user/{id}");
+    }
+
+    public Task<ResponseResult> UpdateUser(UpdateUser user)
+    {
+        return MakePutRequestAsync<ResponseResult, UpdateUser>($"user/{user.Id}", user);
     }
 
     #endregion

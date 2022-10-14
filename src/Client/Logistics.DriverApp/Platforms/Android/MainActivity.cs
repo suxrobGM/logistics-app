@@ -12,8 +12,7 @@ namespace Logistics.DriverApp;
         ConfigChanges.ScreenLayout | 
         ConfigChanges.SmallestScreenSize | 
         ConfigChanges.Density
-
-    )]
+)]
 public class MainActivity : MauiAppCompatActivity
 {
 }

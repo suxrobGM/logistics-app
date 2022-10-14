@@ -33,7 +33,7 @@ public class TenantController : ControllerBase
     [ProducesResponseType(typeof(ResponseResult<TenantDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize]
-    public async Task<IActionResult> GetDisplayName(string? id)
+    public async Task<IActionResult> GetDisplayName(string id)
     {
         var result = await _mediator.Send(new GetTenantDisplayNameQuery
         {
