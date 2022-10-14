@@ -1,7 +1,7 @@
-import { DataResult } from './data';
+import { ResponseResult } from './responseResult';
 import { Employee } from './employee';
 import { Load } from './load';
-import { PagedDataResult } from './pagedData';
+import { PagedResponseResult } from './pagedResponseResult';
 import { Tenant } from './tenant';
 import { Truck } from './truck';
 import { User } from './user';
@@ -18,13 +18,13 @@ import { RemoveEmployeeRole } from './removeEmployeeRole';
 import { UserData } from './userData';
 
 export {
-  DataResult,
+  ResponseResult,
   Employee,
   CreateEmployee,
   UpdateEmployee,
   RemoveEmployeeRole,
   Load,
-  PagedDataResult,
+  PagedResponseResult,
   Tenant,
   Truck,
   User,

@@ -91,7 +91,7 @@ internal class GenericApiClient
         where TBody : new()
     {
         var content = await PostRequestAsync(endpoint, body);
-        var deserializedObj = Deserialize<TRes>(content) ?? default;
+        var deserializedObj = Deserialize<TRes>(content);
 
         if (deserializedObj is null)
         {
@@ -121,7 +121,7 @@ internal class GenericApiClient
         where TBody : new()
     {
         var content = await PutRequestAsync(endpoint, body);
-        var deserializedObj = Deserialize<TRes>(content) ?? default;
+        var deserializedObj = Deserialize<TRes>(content);
 
         if (deserializedObj is null)
         {
@@ -151,7 +151,7 @@ internal class GenericApiClient
         where TRes : new()
     {
         var content = await DeleteRequestAsync(endpoint, queries);
-        var deserializedObj = Deserialize<TRes>(content) ?? default;
+        var deserializedObj = Deserialize<TRes>(content);
 
         if (deserializedObj is null)
         {

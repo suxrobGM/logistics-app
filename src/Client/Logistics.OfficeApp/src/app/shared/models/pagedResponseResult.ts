@@ -1,4 +1,4 @@
-export interface PagedDataResult<T> {
+export interface PagedResponseResult<T> {
   success: boolean;
   items?: T[];
   error?: string;
