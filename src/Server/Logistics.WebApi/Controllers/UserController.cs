@@ -46,8 +46,9 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.User.View)]
-    public async Task<IActionResult> Update([FromQuery] UpdateUserCommand request)
+    public async Task<IActionResult> Update(string id, [FromQuery] UpdateUserCommand request)
     {
+        request.Id = id;
         var result = await _mediator.Send(request);
 
         if (result.Success)

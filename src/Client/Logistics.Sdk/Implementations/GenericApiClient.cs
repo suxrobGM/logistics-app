@@ -195,9 +195,14 @@ internal class GenericApiClient
             var errorMessage = content;
             var errorData = Deserialize<ErrorData>(content);
 
-            if (errorData != null && !string.IsNullOrEmpty(errorData.Error))
+            if (!string.IsNullOrEmpty(errorData?.Error))
             {
                 errorMessage = errorData.Error;
+            }
+
+            if (string.IsNullOrEmpty(errorMessage))
+            {
+                errorMessage = $"Something went wrong, response status code: {(int)response.StatusCode}";
             }
 
             throw new ApiException(errorMessage);
