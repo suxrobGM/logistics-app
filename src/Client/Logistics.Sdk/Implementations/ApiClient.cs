@@ -25,11 +25,11 @@ internal class ApiClient : GenericApiClient, IApiClient
 
             _accessToken = value;
             SetAuthorizationHeader("Bearer", _accessToken);
-            SetCurrentTenantId(_accessToken);
+            SetTenantId(_accessToken);
         }
     }
     
-    private void SetCurrentTenantId(string? accessToken)
+    private void SetTenantId(string? accessToken)
     {
         if (string.IsNullOrEmpty(accessToken))
             return;
@@ -265,7 +265,7 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     public Task<ResponseResult> UpdateUserAsync(UpdateUser user)
     {
-        return MakePutRequestAsync<ResponseResult, UpdateUser>($"user/{user.Id}", user);
+        return MakePutRequestAsync<ResponseResult, UpdateUser>($"user/update/{user.Id}", user);
     }
 
     #endregion

@@ -19,7 +19,7 @@ public class AccountPageViewModel : ViewModelBase
         UpdateCommand = new AsyncRelayCommand(UpdateAccountAsync, () => !IsBusy);
         IsBusyChanged += (s, e) => UpdateCommand.NotifyCanExecuteChanged();
 
-        Task.Run(async () => await FetchUserAsync());
+        Task.Run(FetchUserAsync);
     }
 
     public IAsyncRelayCommand UpdateCommand { get; }

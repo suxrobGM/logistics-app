@@ -6,20 +6,20 @@ public class LoginPageViewModel : ViewModelBase
     private readonly IApiClient _apiClient;
 
     public LoginPageViewModel(
-        IAuthService authService, 
+        IAuthService authService,
         IApiClient apiClient)
     {
         _authService = authService;
         _apiClient = apiClient;
         SignInCommand = new AsyncRelayCommand(LoginAsync, () => !IsBusy);
         OpenSignUpCommand = new AsyncRelayCommand(OpenSignUpUrl, () => !IsBusy);
-        IsBusyChanged += (s, e) => SignInCommand.NotifyCanExecuteChanged();
+        IsBusyChanged += HandleIsBusyChanged;
     }
 
     public IAsyncRelayCommand SignInCommand { get; }
     public IAsyncRelayCommand OpenSignUpCommand { get; }
 
-    public async Task LoginAsync()
+    private async Task LoginAsync()
     {
         IsBusy = true;
         try
@@ -42,9 +42,15 @@ public class LoginPageViewModel : ViewModelBase
         }
     }
 
-    public async Task OpenSignUpUrl()
+    private async Task OpenSignUpUrl()
     {
         var url = $"{_authService.Options.Authority}/account/register";
         await Launcher.OpenAsync(url);
+    }
+
+    private void HandleIsBusyChanged(object? sender, bool value)
+    {
+        OpenSignUpCommand.NotifyCanExecuteChanged();
+        SignInCommand.NotifyCanExecuteChanged();
     }
 }

@@ -10,25 +10,28 @@ public class AccountEditForm : ObservableValidator
     private string? _lastName;
     private string? _phoneNumber;
 
+    [Required]
     public string? UserName
     {
         get => _userName; 
         set => SetProperty(ref _userName, value);
     }
 
-    [EmailAddress]
+    [Required, EmailAddress]
     public string? Email
     {
         get => _email;
         set => SetProperty(ref _email, value);
     }
 
+    [Required, StringLength(64)]
     public string? FirstName
     {
         get => _firstName; 
         set => SetProperty(ref _firstName, value);
     }
-    
+
+    [Required, StringLength(64)]
     public string? LastName
     {
         get => _lastName;

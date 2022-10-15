@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="Logistics.DriverApp.Views.AccountPage"
              xmlns:controls="clr-namespace:Logistics.DriverApp.Controls"
              Title="Account">
@@ -12,7 +13,17 @@
                     <EntryCell Label="Email: " Text="{Binding AccountForm.Email}" IsEnabled="False" />
                     <EntryCell Label="First name: " Text="{Binding AccountForm.FirstName}" />
                     <EntryCell Label="Last name: " Text="{Binding AccountForm.LastName}" />
-                    <EntryCell Label="Phone number: " Text="{Binding AccountForm.PhoneNumber}" />
+                    <EntryCell Keyboard="Numeric" Label="Phone number: " Text="{Binding AccountForm.PhoneNumber}" />
+                    <ViewCell>
+                        <HorizontalStackLayout>
+                            <Label Text="Test Phone" />
+                            <Entry Keyboard="Numeric" Text="Test1">
+                                <Entry.Behaviors>
+                                    <toolkit:MaskedBehavior Mask="+1 XXX XXX XXXX" />
+                                </Entry.Behaviors>
+                            </Entry>
+                        </HorizontalStackLayout>
+                    </ViewCell>
                 </TableSection>
             </TableRoot>
         </TableView>

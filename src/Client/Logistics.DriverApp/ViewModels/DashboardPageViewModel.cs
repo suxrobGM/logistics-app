@@ -12,6 +12,7 @@ public class DashboardPageViewModel : ViewModelBase
         _apiClient = apiClient;
         _authService = authService;
         DriverName = _authService.User?.UserName;
+        Task.Run(FetchTruckAsync);
     }
 
     public int? _truckNumber;
@@ -28,7 +29,7 @@ public class DashboardPageViewModel : ViewModelBase
         set => SetProperty(ref _driverName, value);
     }
 
-    private async Task FetchTruck()
+    private async Task FetchTruckAsync()
     {
         var driverId = _authService.User?.Id;
         var result = await _apiClient.GetTruckByDriverAsync(driverId!);
