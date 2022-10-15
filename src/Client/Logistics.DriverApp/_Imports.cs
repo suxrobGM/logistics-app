@@ -6,3 +6,4 @@ global using Logistics.DriverApp.Views;
 global using Logistics.DriverApp.ViewModels;
 global using Logistics.Sdk;
 global using Logistics.Sdk.Models;
+global using Logistics.Shared;

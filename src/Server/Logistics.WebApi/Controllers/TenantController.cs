@@ -1,4 +1,6 @@
-﻿namespace Logistics.WebApi.Controllers;
+﻿using Logistics.Domain.Shared.Enums;
+
+namespace Logistics.WebApi.Controllers;
 
 [Route("[controller]")]
 [ApiController]
@@ -53,6 +55,11 @@ public class TenantController : ControllerBase
     [Authorize(Policy = Permissions.Tenant.View)]
     public async Task<IActionResult> GetList([FromQuery] GetTenantsRequest request)
     {
+        if (User.HasOneTheseRoles(new[] {AppRoles.SuperAdmin, AppRoles.Admin}))
+        {
+            request.IncludeConnectionStrings = true;
+        }
+
         var result = await _mediator.Send(request);
 
         if (result.Success)

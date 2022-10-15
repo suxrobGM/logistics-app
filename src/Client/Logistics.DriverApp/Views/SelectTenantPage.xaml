@@ -2,10 +2,14 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Logistics.DriverApp.Views.SelectTenantPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+    <VerticalStackLayout Padding="10">
+        <HorizontalStackLayout>
+            <Label Text="Current Company: " />
+            <Label Text="{Binding CurrentCompany}" />
+        </HorizontalStackLayout>
+
+        <Label Text="Select your company" />
+        <SearchBar Placeholder="Type your company name" SearchCommand="{Binding PerformSearchCommand}" />
+        <ListView ItemsSource="{Binding SearchResults}" SelectedItem="{Binding SelectedCompany}" />
     </VerticalStackLayout>
 </ContentPage>

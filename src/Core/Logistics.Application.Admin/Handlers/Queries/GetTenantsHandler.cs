@@ -23,7 +23,7 @@ internal sealed class GetTenantsHandler : RequestHandlerBase<GetTenantsRequest, 
                 Id = i.Id,
                 Name = i.Name,
                 DisplayName = i.DisplayName,
-                ConnectionString = i.ConnectionString
+                ConnectionString = request.IncludeConnectionStrings ? i.ConnectionString : null,
             })
             .ToArray();
 

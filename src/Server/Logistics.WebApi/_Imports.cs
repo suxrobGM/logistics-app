@@ -13,3 +13,4 @@ global using Logistics.Application.Tenant.Queries;
 global using Logistics.Application.Shared;
 global using Logistics.Domain.Shared;
 global using Logistics.Shared;
+global using Logistics.WebApi.Extensions;
