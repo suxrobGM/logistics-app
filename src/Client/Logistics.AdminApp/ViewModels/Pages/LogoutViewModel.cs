@@ -1,6 +1,6 @@
 ﻿namespace Logistics.AdminApp.ViewModels.Pages;
 
-public class LogoutViewModel : PageViewModelBase
+public class LogoutViewModel : PageBaseViewModel
 {
     private readonly NavigationManager _navigationManager;
 

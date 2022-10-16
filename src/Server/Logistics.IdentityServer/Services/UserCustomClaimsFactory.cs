@@ -3,7 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Logistics.Domain.Repositories;
-using ClaimTypes = Logistics.Domain.Shared.ClaimTypes;
+using CustomClaimTypes = Logistics.Shared.Claims.CustomClaimTypes;
 
 namespace Logistics.IdentityServer.Services;
 
@@ -43,7 +43,7 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
         AddTenantRoles(claimsIdentity, employee);
         await AddTenantRoleClaims(claimsIdentity, employee);
         
-        claimsIdentity.AddClaim(new Claim(ClaimTypes.Tenant, tenantId));
+        claimsIdentity.AddClaim(new Claim(CustomClaimTypes.Tenant, tenantId));
         return claimsIdentity;
     }
 
@@ -85,7 +85,7 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
         
         foreach (var role in employee.Roles)
         {
-            claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.Name));
+            claimsIdentity.AddClaim(new Claim(CustomClaimTypes.Role, role.Name));
         }
     }
 }

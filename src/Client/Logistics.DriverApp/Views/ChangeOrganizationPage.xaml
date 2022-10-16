@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Logistics.DriverApp.Views.ChangeOrganizationPage">
+    <VerticalStackLayout Padding="10">
+        <HorizontalStackLayout>
+            <Label Text="Current organization: " />
+            <Label Text="{Binding CurrentOrganization}" />
+        </HorizontalStackLayout>
+
+        <Label Text="Select organization: " />
+        <SearchBar x:Name="searchBar" 
+                   Placeholder="Type your organization name"
+                   SearchCommand="{Binding PerformSearchCommand}" 
+                   SearchCommandParameter="{Binding Text, Source={x:Reference searchBar}}" />
+        <ListView ItemsSource="{Binding SearchResults}" 
+                  SelectedItem="{Binding SelectedOrganization}" />
+    </VerticalStackLayout>
+</ContentPage>

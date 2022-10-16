@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
-using Logistics.Domain.Shared;
-using ClaimTypes = Logistics.Domain.Shared.ClaimTypes;
+using Logistics.Shared.Policies;
+using CustomClaimTypes = Logistics.Shared.Claims.CustomClaimTypes;
 
 namespace Logistics.DbMigrator.Services;
 
@@ -159,9 +159,9 @@ internal class SeedDataService : BackgroundService
     private async Task AddPermission(RoleManager<AppRole> roleManager, AppRole role, string permission)
     {
         var allClaims = await roleManager.GetClaimsAsync(role);
-        var claim = new Claim(ClaimTypes.Permission, permission);
+        var claim = new Claim(CustomClaimTypes.Permission, permission);
         
-        if (!allClaims.Any(i => i.Type == ClaimTypes.Permission && i.Value == permission))
+        if (!allClaims.Any(i => i.Type == CustomClaimTypes.Permission && i.Value == permission))
         {
             var result = await roleManager.AddClaimAsync(role, claim);
 

@@ -1,4 +1,4 @@
-﻿using Logistics.Sdk.Constants;
+﻿using Logistics.Sdk.Enums;
 
 namespace Logistics.Sdk.Models;
 

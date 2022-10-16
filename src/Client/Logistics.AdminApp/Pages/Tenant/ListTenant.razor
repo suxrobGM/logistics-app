@@ -1,7 +1,6 @@
 ﻿@page "/list-tenant"
-@attribute [Authorize(Roles = AppRoles.Admin)]
-
-@inherits ViewComponentBase<ListTenantViewModel>
+@attribute [Authorize(Policy = Permissions.Tenant.View)]
+@inherits ViewBaseComponent<ListTenantViewModel>
 
 <h2>Tenants List</h2>
 <hr />

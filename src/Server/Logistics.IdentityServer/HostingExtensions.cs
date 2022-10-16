@@ -40,8 +40,8 @@ internal static class HostingExtensions
                 options.EmitStaticAudienceClaim = true;
             })
             .AddInMemoryIdentityResources(Config.IdentityResources())
-            .AddInMemoryApiScopes(Config.ApiScopes(builder.Configuration))
-            .AddInMemoryApiResources(Config.ApiResources(builder.Configuration))
+            .AddInMemoryApiScopes(Config.ApiScopes())
+            .AddInMemoryApiResources(Config.ApiResources())
             .AddInMemoryClients(Config.Clients(builder.Configuration))
             .AddAspNetIdentity<User>();
 

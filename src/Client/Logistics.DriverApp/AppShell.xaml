@@ -12,6 +12,7 @@
     </TabBar>
     <ShellContent Title="Dashboard" ContentTemplate="{DataTemplate views:DashboardPage}" Route="DashboardPage" />
     <ShellContent Title="Account" ContentTemplate="{DataTemplate views:AccountPage}" Route="AccountPage" />
+    <ShellContent Title="Change Organization" ContentTemplate="{DataTemplate views:ChangeOrganizationPage}" Route="ChangeOrganizationPage" />
     <ShellContent Title="Settings" ContentTemplate="{DataTemplate views:SettingsPage}" Route="SettingsPage" />
     <ShellContent Title="About" ContentTemplate="{DataTemplate views:AboutPage}" Route="AboutPage" />
     <Shell.FlyoutFooter>

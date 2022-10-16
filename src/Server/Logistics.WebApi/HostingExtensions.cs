@@ -38,21 +38,9 @@ internal static class HostingExtensions
                 new BadRequestObjectResult(ResponseResult.CreateError(GetModelStateErrors(context.ModelState)));
         });
         
-        //builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+        builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
         builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
-
-        builder.Services.AddAuthorization(options =>
-        {
-            var permissions = Permissions.GetAll();
-
-            foreach (var permission in permissions)
-            {
-                options.AddPolicy(permission, policy =>
-                {
-                    policy.Requirements.Add(new PermissionRequirement(permission));
-                });
-            }
-        });
+        builder.Services.AddAuthorization();
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();

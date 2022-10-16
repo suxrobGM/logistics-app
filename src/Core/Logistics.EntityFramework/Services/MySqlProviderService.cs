@@ -2,7 +2,8 @@
 using System.Security.Claims;
 using Microsoft.Extensions.Logging;
 using MySqlConnector;
-using ClaimTypes = Logistics.Domain.Shared.ClaimTypes;
+using Logistics.Shared.Policies;
+using CustomClaimTypes = Logistics.Shared.Claims.CustomClaimTypes;
 
 namespace Logistics.EntityFramework.Services;
 
@@ -108,7 +109,7 @@ public class MySqlProviderService : IDatabaseProviderService
     {
         foreach (var permission in permissions)
         {
-            var claim = new Claim(ClaimTypes.Permission, permission);
+            var claim = new Claim(CustomClaimTypes.Permission, permission);
             role.Claims.Add(TenantRoleClaim.FromClaim(claim));
             _logger.LogInformation("Added claim '{ClaimType}' - '{ClaimValue}' to the tenant role '{Role}'", claim.Type, claim.Value, role.Name);
         }

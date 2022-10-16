@@ -1,4 +1,4 @@
-﻿namespace Logistics.Sdk.Constants;
+﻿namespace Logistics.Sdk.Enums;
 
 public enum LoadStatus
 {

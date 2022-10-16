@@ -2,7 +2,7 @@
 
 namespace Logistics.AdminApp.ViewModels.Pages;
 
-public class ListTenantViewModel : PageViewModelBase
+public class ListTenantViewModel : PageBaseViewModel
 {
     private readonly IApiClient _apiClient;
 

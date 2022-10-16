@@ -1,4 +1,5 @@
-﻿using IdentityModel.OidcClient;
+﻿using CommunityToolkit.Maui;
+using IdentityModel.OidcClient;
 using Microsoft.Extensions.Configuration;
 
 namespace Logistics.DriverApp;
@@ -27,6 +28,7 @@ public partial class App : Application
         services.AddTransient<DashboardPageViewModel>();
         services.AddTransient<AccountPageViewModel>();
         services.AddTransient<LoginPageViewModel>();
+        services.AddTransient<ChangeOrganizationPageVideModel>();
         services.AddScoped<IdentityModel.OidcClient.Browser.IBrowser, WebBrowserAuthenticator>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddWebApiClient(configuration);

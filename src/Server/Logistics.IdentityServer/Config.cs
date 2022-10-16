@@ -1,4 +1,5 @@
 ﻿using Duende.IdentityServer.Models;
+using Logistics.Shared.Claims;
 
 namespace Logistics.IdentityServer;
 
@@ -15,14 +16,14 @@ public static class Config
                 Name = "roles",
                 DisplayName = "Identity roles",
                 UserClaims = {
-                    ClaimTypes.Role, 
-                    ClaimTypes.Permission
+                    CustomClaimTypes.Role, 
+                    CustomClaimTypes.Permission
                 }
             }
         };
     }
     
-    public static IEnumerable<ApiScope> ApiScopes(IConfiguration configuration)
+    public static IEnumerable<ApiScope> ApiScopes()
     {
         return new ApiScope[]
         {
@@ -31,8 +32,8 @@ public static class Config
                 Name = "logistics.api.admin",
                 DisplayName = "Logistics Admin API",
                 UserClaims = {
-                    ClaimTypes.Role, 
-                    ClaimTypes.Permission
+                    CustomClaimTypes.Role, 
+                    CustomClaimTypes.Permission
                 }
             },
             new()
@@ -40,15 +41,15 @@ public static class Config
                 Name = "logistics.api.tenant",
                 DisplayName = "Logistics Tenant API",
                 UserClaims = {
-                    ClaimTypes.Role, 
-                    ClaimTypes.Permission, 
-                    ClaimTypes.Tenant
+                    CustomClaimTypes.Role, 
+                    CustomClaimTypes.Permission, 
+                    CustomClaimTypes.Tenant
                 }
             }
         };
     }
 
-    public static IEnumerable<ApiResource> ApiResources(IConfiguration configuration)
+    public static IEnumerable<ApiResource> ApiResources()
     {
         return new ApiResource[]
         {
@@ -61,9 +62,9 @@ public static class Config
                     "logistics.api.tenant"
                 },
                 UserClaims = {
-                    ClaimTypes.Role, 
-                    ClaimTypes.Permission, 
-                    ClaimTypes.Tenant
+                    CustomClaimTypes.Role, 
+                    CustomClaimTypes.Permission, 
+                    CustomClaimTypes.Tenant
                 }
             }
         };

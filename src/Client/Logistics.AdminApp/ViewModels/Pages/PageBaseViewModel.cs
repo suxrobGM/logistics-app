@@ -1,8 +1,8 @@
 ﻿namespace Logistics.AdminApp.ViewModels.Pages;
 
-public abstract class PageViewModelBase : ViewModelBase
+public abstract class PageBaseViewModel : ViewModelBase
 {
-    protected PageViewModelBase()
+    protected PageBaseViewModel()
     {
         _busyText = string.Empty;
         _error = string.Empty;

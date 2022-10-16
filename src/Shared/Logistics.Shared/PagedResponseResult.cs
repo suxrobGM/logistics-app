@@ -16,9 +16,9 @@ public record PagedResponseResult<T> : IResponseResult
         PagesCount = pagesCount;
     }
 
-    public IEnumerable<T>? Items { get; }
-    public int ItemsCount { get; }
-    public int PagesCount { get; }
+    public IEnumerable<T>? Items { get; init; }
+    public int ItemsCount { get; init; }
+    public int PagesCount { get; init; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? Error { get; init; }

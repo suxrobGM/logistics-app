@@ -1,5 +1,8 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.OAuth.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Logistics.Shared.Claims;
+using Logistics.WebApi.Authorization;
 
 namespace Logistics.AdminApp;
 
@@ -21,20 +24,20 @@ internal static class HostingExtensions
         .AddCookie("Cookies")
         .AddOpenIdConnect("oidc", options =>
         {
-            builder.Configuration.Bind("IdentityServer", options);
+            builder.Configuration.Bind("OidcClient", options);
             options.ResponseType = "code";
 
-            options.MapInboundClaims = false;
             options.GetClaimsFromUserInfoEndpoint = true;
+            options.MapInboundClaims = false;
             options.SaveTokens = true;
+            options.ClaimActions.Add(new JsonKeyClaimAction(CustomClaimTypes.Permission, ClaimValueTypes.String, "permission"));
             options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Role, ClaimValueTypes.String, "role"));
             options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Name, ClaimValueTypes.String, "name"));
         });
 
-        builder.Services.AddAuthorization(options =>
-        {
-            options.FallbackPolicy = options.DefaultPolicy;
-        });
+        builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
+        builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+        builder.Services.AddAuthorization();
         
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor();

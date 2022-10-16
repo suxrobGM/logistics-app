@@ -25,11 +25,21 @@ public class LoginPageViewModel : ViewModelBase
         try
         {
             var result = await _authService.LoginAsync();
+            
+            if (result.IsError)
+                return;
 
-            if (!result.IsError)
+            _apiClient.AccessToken = result.AccessToken;
+            string? tenantId = await SecureStorage.Default.GetAsync(StorageKeys.TenantId);
+
+            if (!string.IsNullOrEmpty(tenantId))
             {
-                _apiClient.AccessToken = result.AccessToken;
-                await Shell.Current.GoToAsync("//DashboardPage", true);
+                _apiClient.TenantId = tenantId;
+                await Shell.Current.GoToAsync("//DashboardPage");
+            }
+            else
+            {
+                await Shell.Current.GoToAsync("//ChangeOrganizationPage");
             }
         }
         catch (Exception ex)

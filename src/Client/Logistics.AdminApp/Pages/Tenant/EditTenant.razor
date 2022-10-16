@@ -1,6 +1,6 @@
 ﻿@page "/edit-tenant/{id?}"
-@attribute [Authorize(Roles = AppRoles.Admin)]
-@inherits ViewComponentBase<EditTenantViewModel>
+@attribute [Authorize(Policy = Permissions.Tenant.Edit)]
+@inherits ViewBaseComponent<EditTenantViewModel>
 
 @{
     var headText = Model.EditMode ? "Edit" : "Add a new";

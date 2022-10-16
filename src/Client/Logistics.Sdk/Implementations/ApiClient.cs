@@ -6,7 +6,7 @@ namespace Logistics.Sdk.Implementations;
 internal class ApiClient : GenericApiClient, IApiClient
 {
     private string? _accessToken;
-    private string? _currentTenant;
+    private string? _tenantId;
     
     public ApiClient(ApiClientOptions options) : base(options.Host!)
     {
@@ -25,11 +25,21 @@ internal class ApiClient : GenericApiClient, IApiClient
 
             _accessToken = value;
             SetAuthorizationHeader("Bearer", _accessToken);
-            SetTenantId(_accessToken);
+            SetTenantIdFromAccessToken(_accessToken);
+        }
+    }
+
+    public string? TenantId 
+    {
+        get => _tenantId;
+        set
+        {
+            _tenantId = value;
+            SetRequestHeader("X-Tenant", _tenantId);
         }
     }
     
-    private void SetTenantId(string? accessToken)
+    private void SetTenantIdFromAccessToken(string? accessToken)
     {
         if (string.IsNullOrEmpty(accessToken))
             return;
@@ -38,10 +48,12 @@ internal class ApiClient : GenericApiClient, IApiClient
         var token = handler.ReadJwtToken(accessToken);
         var tenantId = token?.Claims?.FirstOrDefault(i => i.Type == "tenant")?.Value;
         
-        if (_currentTenant == tenantId)
+        if (string.IsNullOrEmpty(tenantId) || TenantId == tenantId)
+        {
             return;
-        
-        _currentTenant = tenantId;
+        } 
+
+        TenantId = tenantId;
         SetRequestHeader("X-Tenant", tenantId);
     }
 

@@ -6,7 +6,6 @@ global using Logistics.Blazor.Buttons;
 global using Logistics.Blazor.Grids;
 global using Logistics.Blazor.Pagination;
 global using Logistics.Blazor.Popups;
-
+global using Logistics.Shared.Policies;
 global using Logistics.Sdk;
-global using Logistics.Sdk.Constants;
 global using Logistics.Sdk.Models;

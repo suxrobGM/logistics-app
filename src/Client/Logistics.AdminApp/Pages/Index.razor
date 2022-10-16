@@ -1,5 +1,5 @@
 ﻿@page "/"
-@attribute [Authorize(Roles = AppRoles.Admin)]
+@attribute [Authorize(Policy = Permissions.Tenant.View)]
 
 <PageTitle>Logistics Admin</PageTitle>
 

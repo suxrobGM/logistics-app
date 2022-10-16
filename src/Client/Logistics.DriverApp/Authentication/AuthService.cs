@@ -29,9 +29,9 @@ public class AuthService : IAuthService
         if (!result.IsError)
         {
             AccessToken = result.AccessToken;
-            User = ParseUserIdentity(result.User);
+            User = ParseUserIdentity(result.User.Claims);
         }
-        
+
         return result;
     }
 
@@ -48,15 +48,15 @@ public class AuthService : IAuthService
         return result;
     }
 
-    private static UserIdentity ParseUserIdentity(ClaimsPrincipal claimsPrincipal)
+    private static UserIdentity ParseUserIdentity(IEnumerable<Claim> claims)
     {
         var userIdentity = new UserIdentity();
-        foreach (var claim in claimsPrincipal.Claims)
+        foreach (var claim in claims)
         {
             switch (claim.Type)
             {
                 case "name":
-                    userIdentity.UserName = claim.Value; 
+                    userIdentity.UserName = claim.Value;
                     break;
 
                 case "sub":
