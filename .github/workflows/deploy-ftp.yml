@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
 
 env:
-  WEB_API_PROJECT: src/Server/Logistics.WebApi/Logistics.WebApi.csproj
+  WEB_API_PROJECT: src/Server/Logistics.API/Logistics.API.csproj
   IDENTITY_SERVER_PROJECT: src/Server/Logistics.IdentityServer/Logistics.IdentityServer.csproj
   ADMIN_APP_PROJECT: src/Client/Logistics.AdminApp/Logistics.AdminApp.csproj
   OFFICE_APP_PATH: src/Client/Logistics.OfficeApp

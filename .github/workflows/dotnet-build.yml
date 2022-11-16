@@ -19,7 +19,7 @@ jobs:
         dotnet-version: 6.0.x
       
     - name: Build Web API
-      run: dotnet build ./src/Server/Logistics.WebApi/Logistics.WebApi.csproj
+      run: dotnet build ./src/Server/Logistics.API/Logistics.API.csproj
       
     - name: Build Identity Server
       run: dotnet build ./src/Server/Logistics.IdentityServer/Logistics.IdentityServer.csproj
