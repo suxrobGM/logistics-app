@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using Logistics.Domain.Repositories;
+using Logistics.Domain.Persistence;
 using CustomClaimTypes = Logistics.Shared.Claims.CustomClaimTypes;
 
 namespace Logistics.IdentityServer.Services;

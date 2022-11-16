@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Duende.IdentityServer;
 using Serilog;
 using Logistics.Application.Shared;
-using Logistics.EntityFramework;
+using Logistics.Infrastructure.EF;
 using Logistics.IdentityServer.Services;
 
 namespace Logistics.IdentityServer;

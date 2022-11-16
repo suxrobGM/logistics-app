@@ -1,6 +1,4 @@
-﻿using Logistics.Domain.SeedWork;
-
-namespace Logistics.Domain.ValueObjects;
+﻿namespace Logistics.Domain.ValueObjects;
 
 public class Address : ValueObject
 {

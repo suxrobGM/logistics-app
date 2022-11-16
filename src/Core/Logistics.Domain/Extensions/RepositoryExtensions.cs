@@ -1,6 +1,6 @@
 ﻿using Logistics.Domain.Specifications;
 
-namespace Logistics.Domain.Repositories;
+namespace Logistics.Domain.Persistence;
 
 public static class RepositoryExtensions
 {

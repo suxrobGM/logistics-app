@@ -12,7 +12,7 @@ public class AppRole : IdentityRole<string>, IAggregateRoot
         DisplayName = base.Name;
     }
 
-    public override string Id { get; set; } = Generator.NewGuid();
+    public override string Id { get; set; } = Guid.NewGuid().ToString();
 
     [StringLength(RoleConsts.DisplayNameLength)]
     public string? DisplayName { get; set; }

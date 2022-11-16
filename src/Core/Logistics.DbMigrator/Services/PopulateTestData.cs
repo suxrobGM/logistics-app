@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Logistics.Domain.Repositories;
+using Logistics.Domain.Persistence;
 
 namespace Logistics.DbMigrator.Services;
 

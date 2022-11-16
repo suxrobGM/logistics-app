@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Domain", "src\Cor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Tenant", "src\Core\Logistics.Application.Tenant\Logistics.Application.Tenant.csproj", "{53B069CE-0FEB-4191-B82D-BCE01159AE90}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.EntityFramework", "src\Core\Logistics.EntityFramework\Logistics.EntityFramework.csproj", "{0646E83A-CB9F-458A-BD84-8F2AE768CB91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Infrastructure.EF", "src\Core\Logistics.Infrastructure.EF\Logistics.Infrastructure.EF.csproj", "{0646E83A-CB9F-458A-BD84-8F2AE768CB91}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Tenant.Contracts", "src\Core\Logistics.Application.Tenant.Contracts\Logistics.Application.Tenant.Contracts.csproj", "{9B2E6306-3DEC-4062-95B4-2DAFFF5F9493}"
 EndProject
@@ -21,7 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{F47DBB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Sdk", "src\Client\Logistics.Sdk\Logistics.Sdk.csproj", "{A2272F96-50F5-40EA-88E7-15EA8EEE1022}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.WebApi", "src\Server\Logistics.WebApi\Logistics.WebApi.csproj", "{48AA06BC-140B-49B8-AD72-95B5FC6A2D4B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.API", "src\Server\Logistics.API\Logistics.API.csproj", "{48AA06BC-140B-49B8-AD72-95B5FC6A2D4B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Domain.Shared", "src\Core\Logistics.Domain.Shared\Logistics.Domain.Shared.csproj", "{EF791BC5-B321-47DA-BDFF-29FA15547ACC}"
 EndProject
