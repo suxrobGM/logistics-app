@@ -67,7 +67,7 @@ internal class SeedDataService : BackgroundService
                 DisplayName = appRole.DisplayName
             };
 
-            var roleExists = await roleManager.RoleExistsAsync(role.Name);
+            var roleExists = await roleManager.RoleExistsAsync(role.Name!);
             if (roleExists)
                 continue;
             
@@ -98,7 +98,11 @@ internal class SeedDataService : BackgroundService
         var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
 
         var userData = configuration.GetSection("SuperAdmin").Get<UserDto>();
-        var superAdmin = await userManager.FindByEmailAsync(userData.Email);
+
+        if (userData == null)
+            return;
+        
+        var superAdmin = await userManager.FindByEmailAsync(userData.Email!);
         
         if (superAdmin is null)
         {
@@ -109,7 +113,7 @@ internal class SeedDataService : BackgroundService
                 EmailConfirmed = true
             };
 
-            var result = await userManager.CreateAsync(superAdmin, userData.Password);
+            var result = await userManager.CreateAsync(superAdmin, userData.Password!);
             if (!result.Succeeded)
                 throw new Exception(result.Errors.First().Description);
 

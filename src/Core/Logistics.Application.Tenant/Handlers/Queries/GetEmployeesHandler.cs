@@ -41,10 +41,10 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesReque
 
             var employeeDto = new EmployeeDto(
                 user.Id, 
-                user.UserName, 
+                user.UserName!, 
                 user.FirstName, 
                 user.LastName, 
-                user.Email, 
+                user.Email!, 
                 user.PhoneNumber, 
                 employee.JoinedDate);
             

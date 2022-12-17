@@ -21,7 +21,8 @@ public partial class App : Application
     private static IServiceProvider ConfigureServices(IConfiguration configuration)
     {
         var services = new ServiceCollection();
-        var oidcOptions = configuration.GetSection("OidcClient").Get<OidcClientOptions>();
+        var oidcOptions = configuration.GetSection("OidcClient").Get<OidcClientOptions>() 
+                          ?? throw new NullReferenceException("Could not get OidcClient form appsettings file");
         services.AddSingleton(oidcOptions);
 
         services.AddTransient<AppShellViewModel>();
@@ -49,10 +50,15 @@ public partial class App : Application
         try
         {
             var config = typeof(App).Assembly.GetManifestResourceStream($"Logistics.DriverApp.{configFile}");
+
+            if (config == null)
+                return;
+            
             builder.AddJsonStream(config);
         }
         catch (Exception)
         {
+            // ignored
         }
     }
 }

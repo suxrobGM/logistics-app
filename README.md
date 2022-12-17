@@ -8,7 +8,7 @@
 Automate your entire transportation logistics operations with the transportation management system (TMS).
 
 ## How to run?
-### 1. [Download](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) and install the .NET 6 SDK. 
+### 1. [Download](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) and install the .NET 7 SDK. 
 ### 2. Clone this repository:
 ```
 $ git clone https://github.com/suxrobGM/logistics-app.git

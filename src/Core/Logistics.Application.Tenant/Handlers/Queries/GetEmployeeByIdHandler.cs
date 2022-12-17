@@ -29,7 +29,7 @@ internal sealed class GetEmployeeByIdHandler : RequestHandlerBase<GetEmployeeByI
         var employee = new EmployeeDto
         {
             Id = employeeEntity.Id,
-            UserName = userEntity.UserName,
+            UserName = userEntity.UserName!,
             FirstName = userEntity.FirstName,
             LastName = userEntity.LastName,
             Email = userEntity.Email,

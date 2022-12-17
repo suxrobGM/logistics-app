@@ -50,18 +50,15 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
     private async Task AddAppRoleClaims(ClaimsIdentity claimsIdentity, User user)
     {
         var appRoles = await _userManager.GetRolesAsync(user);
-        
-        if (appRoles == null)
-            return;
 
         foreach (var roleName in appRoles)
         {
             var role = await _roleManager.FindByNameAsync(roleName);
-            var claims = await _roleManager.GetClaimsAsync(role);
 
-            if (claims == null) 
+            if (role == null)
                 continue;
-
+            
+            var claims = await _roleManager.GetClaimsAsync(role);
             claimsIdentity.AddClaims(claims);
         }
     }

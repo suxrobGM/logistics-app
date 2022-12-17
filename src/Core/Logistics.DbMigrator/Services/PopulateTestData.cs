@@ -47,9 +47,12 @@ internal class PopulateTestData
         var testUsers = configuration.GetSection("Users").Get<UserDto[]>();
         var usersList = new List<User>();
 
+        if (testUsers == null)
+            return usersList;
+        
         foreach (var testUser in testUsers)
         {
-            var user = await userManager.FindByNameAsync(testUser.UserName);
+            var user = await userManager.FindByNameAsync(testUser.UserName!);
 
             if (user != null)
             {
@@ -66,7 +69,7 @@ internal class PopulateTestData
             
             try
             {
-                var result = await userManager.CreateAsync(user, testUser.Password);
+                var result = await userManager.CreateAsync(user, testUser.Password!);
                 if (!result.Succeeded)
                     throw new Exception(result.Errors.First().Description);
                 

@@ -19,17 +19,17 @@ public class RemoveUserRoleHandler : RequestHandlerBase<RemoveUserRoleCommand, R
         RemoveUserRoleCommand request, CancellationToken cancellationToken)
     {
         request.Role = request.Role?.ToLower();
-        var user = await _userManager.FindByIdAsync(request.UserId);
+        var user = await _userManager.FindByIdAsync(request.UserId!);
 
         if (user == null)
             return ResponseResult.CreateError("Could not find the specified user");
 
-        var appRole = await _roleManager.FindByNameAsync(request.Role);
+        var appRole = await _roleManager.FindByNameAsync(request.Role!);
         
         if (appRole == null)
             return ResponseResult.CreateError("Could not find the specified role name");
 
-        await _userManager.RemoveFromRoleAsync(user, appRole.Name);
+        await _userManager.RemoveFromRoleAsync(user, appRole.Name!);
         return ResponseResult.CreateSuccess();
     }
 

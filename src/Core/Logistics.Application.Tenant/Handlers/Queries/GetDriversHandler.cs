@@ -45,7 +45,7 @@ public class GetDriversHandler : RequestHandlerBase<GetDriversRequest, PagedResp
             if (!filteredUsers.TryGetValue(employee.Id, out var user))
                 continue;
             
-            employee.UserName = user.UserName;
+            employee.UserName = user.UserName!;
             employee.FirstName = user.FirstName;
             employee.LastName = user.LastName;
             employee.Email = user.Email;

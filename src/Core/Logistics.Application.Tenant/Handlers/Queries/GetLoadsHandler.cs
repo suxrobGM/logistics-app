@@ -24,7 +24,7 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsRequest, Page
         var userNames = filteredUsers.Select(i => i.UserName).ToArray();
         var userFirstNames = filteredUsers.Select(i => i.FirstName).ToArray();
         var userLastNames = filteredUsers.Select(i => i.LastName).ToArray();
-        var spec = new SearchLoads(req.Search, userIds, userNames, userFirstNames, userLastNames, req.OrderBy, req.Descending);
+        var spec = new SearchLoads(req.Search, userIds, userNames!, userFirstNames, userLastNames, req.OrderBy, req.Descending);
 
         var loads = _tenantRepository
             .ApplySpecification(spec)

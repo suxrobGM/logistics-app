@@ -33,7 +33,7 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksRequest, Pa
         var userNames = filteredUsers.Select(i => i.UserName).ToArray();
         var userFirstNames = filteredUsers.Select(i => i.FirstName).ToArray();
         var userLastNames = filteredUsers.Select(i => i.LastName).ToArray();
-        var spec = new SearchTrucks(req.Search, userIds, userNames, userFirstNames, userLastNames, req.Descending);
+        var spec = new SearchTrucks(req.Search, userIds, userNames!, userFirstNames, userLastNames, req.Descending);
 
         var trucks = _tenantRepository
             .ApplySpecification(spec)

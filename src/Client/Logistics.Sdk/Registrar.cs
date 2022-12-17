@@ -13,7 +13,12 @@ public static class Registrar
         string sectionName = "ApiClient")
     {
         var options = configuration.GetSection(sectionName).Get<ApiClientOptions>();
-        return services.AddWebApiClient(options);
+        if (options != null)
+        {
+            services.AddWebApiClient(options);
+        }
+
+        return services;
     }
 
     public static IServiceCollection AddWebApiClient(

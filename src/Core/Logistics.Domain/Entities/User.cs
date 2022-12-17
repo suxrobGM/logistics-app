@@ -34,7 +34,7 @@ public class User : IdentityUser, IAggregateRoot
     {
         if (string.IsNullOrEmpty(FirstName) && string.IsNullOrEmpty(LastName))
         {
-            return UserName;
+            return UserName!;
         }
         return string.Join(" ", FirstName, LastName);
     }

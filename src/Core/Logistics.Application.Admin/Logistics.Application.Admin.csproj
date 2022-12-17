@@ -1,15 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Logistics.Application.Admin</RootNamespace>
+    <LangVersion>11</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
-	<PackageReference Include="MySqlConnector" Version="2.1.10" />
+	<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+	<PackageReference Include="MySqlConnector" Version="2.2.2" />
   </ItemGroup>
 
   <ItemGroup>
