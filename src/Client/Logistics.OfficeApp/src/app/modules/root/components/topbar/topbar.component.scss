@@ -10,3 +10,16 @@
 .navbar-collapse {
     flex-grow: 0;
 }
+
+.badge {
+    background-color: #28a745;
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    height: 2.25rem;
+    line-height: 2.25rem;
+    border-radius: 10px;
+    text-align: center;
+    padding: 0 0.5rem;
+    margin-left: 0.25rem;
+}

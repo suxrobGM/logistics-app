@@ -24,7 +24,7 @@ jobs:
         cache-dependency-path: ${{ env.PROJECT_DIR }}/package-lock.json
         
     - name: Install dependencies
-      run: npm ci --prefix ${{ env.PROJECT_DIR }} --force
+      run: npm install --prefix ${{ env.PROJECT_DIR }} --force
 
     - name: Build
       run: npm run build --prefix ${{ env.PROJECT_DIR }}

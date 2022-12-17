@@ -42,7 +42,7 @@ jobs:
         cache-dependency-path: ${{ env.OFFICE_APP_PATH }}/package-lock.json
         
     - name: Install dependencies
-      run: npm ci --prefix ${{ env.OFFICE_APP_PATH }} --force
+      run: npm install --prefix ${{ env.OFFICE_APP_PATH }} --force
 
     - name: Build
       run: npm run build --prefix ${{ env.OFFICE_APP_PATH }}

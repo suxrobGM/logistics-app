@@ -24,7 +24,7 @@
                 <div>
                   <span>{{user?.name}}</span>
                   <span *ngIf="userRole">
-                    <p-badge styleClass="ms-1" severity="success" size="large" [value]="userRole!"></p-badge>
+                    <span class="badge">{{userRole}}</span>
                   </span>
                 </div>
               </ng-template>
