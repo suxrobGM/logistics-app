@@ -1,54 +1,64 @@
 {
   "Users": [
     {
-      "UserName": "Test1",
       "Email": "Test1@gmail.com",
-      "Password": "Test12345#"
+      "Password": "Test12345#",
+      "FirstName": "Gloria",
+      "LastName": "Kaufman"
     },
     {
-      "UserName": "Test2",
       "Email": "Test2@gmail.com",
-      "Password": "Test12345#"
+      "Password": "Test12345#",
+      "FirstName": "Ivory",
+      "LastName": "Collins"
     },
     {
-      "UserName": "Test3",
       "Email": "Test3@gmail.com",
-      "Password": "Test12345#"
+      "Password": "Test12345#",
+      "FirstName": "Rosalyn",
+      "LastName": "Callahan"
     },
     {
-      "UserName": "Test4",
       "Email": "Test4@gmail.com",
-      "Password": "Test12345#"
+      "Password": "Test12345#",
+      "FirstName": "Zane",
+      "LastName": "Salinas"
     },
     {
-      "UserName": "Test5",
       "Email": "Test5@gmail.com",
-      "Password": "Test12345#"
+      "Password": "Test12345#",
+      "FirstName": "Justine",
+      "LastName": "Blevins"
     },
     {
-      "UserName": "Test6",
       "Email": "Test6@gmail.com",
-      "Password": "Test12345#"
+      "Password": "Test12345#",
+      "FirstName": "John",
+      "LastName": "Ortiz"
     },
     {
-      "UserName": "Test7",
       "Email": "Test7@gmail.com",
-      "Password": "Test12345#"
+      "Password": "Test12345#",
+      "FirstName": "Anne",
+      "LastName": "Shields"
     },
     {
-      "UserName": "Test8",
       "Email": "Test8@gmail.com",
-      "Password": "Test12345#"
+      "Password": "Test12345#",
+      "FirstName": "Tate",
+      "LastName": "Taylor"
     },
     {
-      "UserName": "Test9",
       "Email": "Test9@gmail.com",
-      "Password": "Test12345#"
+      "Password": "Test12345#",
+      "FirstName": "Ronan",
+      "LastName": "Hudson"
     },
     {
-      "UserName": "Test10",
       "Email": "Test10@gmail.com",
-      "Password": "Test12345#"
+      "Password": "Test12345#",
+      "FirstName": "Clarke",
+      "LastName": "Bonner"
     }
   ]
 }

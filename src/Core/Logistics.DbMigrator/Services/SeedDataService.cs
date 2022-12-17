@@ -40,7 +40,7 @@ internal class SeedDataService : BackgroundService
             await AddDefaultTenantAsync(scope.ServiceProvider);
             _logger.LogInformation("Successfully seeded databases");
 
-            var populateTestData = new PopulateTestData(_logger, scope.ServiceProvider);
+            var populateTestData = new FakeDataService(_logger, scope.ServiceProvider);
             await populateTestData.ExecuteAsync();
             _logger.LogInformation("Finished all operations!");
         }
@@ -97,23 +97,25 @@ internal class SeedDataService : BackgroundService
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
         var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
 
-        var userData = configuration.GetSection("SuperAdmin").Get<UserDto>();
+        var adminData = configuration.GetSection("SuperAdmin").Get<UserDto>();
 
-        if (userData == null)
+        if (adminData == null)
             return;
         
-        var superAdmin = await userManager.FindByEmailAsync(userData.Email!);
+        var superAdmin = await userManager.FindByEmailAsync(adminData.Email!);
         
         if (superAdmin is null)
         {
             superAdmin = new User
             {
-                UserName = userData.UserName,
-                Email = userData.Email,
+                UserName = adminData.Email,
+                FirstName = adminData.FirstName,
+                LastName = adminData.LastName,
+                Email = adminData.Email,
                 EmailConfirmed = true
             };
 
-            var result = await userManager.CreateAsync(superAdmin, userData.Password!);
+            var result = await userManager.CreateAsync(superAdmin, adminData.Password!);
             if (!result.Succeeded)
                 throw new Exception(result.Errors.First().Description);
 

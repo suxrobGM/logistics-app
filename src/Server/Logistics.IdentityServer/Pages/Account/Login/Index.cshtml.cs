@@ -79,40 +79,22 @@ public class Index : PageModel
         }
 
         User user = null;
-        if (Input.Username.IndexOf('@') > -1)
+        const string emailPattern = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}" +
+                                    @"\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\" +
+                                    @".)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
+        var regex = new Regex(emailPattern);
+        if (!regex.IsMatch(Input.Email))
         {
-            // validate email format
-            const string emailPattern = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}" +
-                                      @"\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\" +
-                                      @".)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
-            var re = new Regex(emailPattern);
-            if (!re.IsMatch(Input.Username))
-            {
-                ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
-            }
-            else
-            {
-                user = await _userManager.FindByEmailAsync(Input.Username);
-            }
+            ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
         }
         else
         {
-            // validate Username format
-            const string usernamePattern = @"^[a-zA-Z0-9]*$";
-            var re = new Regex(usernamePattern);
-            if (!re.IsMatch(Input.Username))
-            {
-                ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
-            }
-            else
-            {
-                user = await _userManager.FindByNameAsync(Input.Username);
-            }
+            user = await _userManager.FindByEmailAsync(Input.Email);
         }
-        
+
         if (ModelState.IsValid && user != null)
         {
-            var result = await _signInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberLogin, lockoutOnFailure: true);
+            var result = await _signInManager.PasswordSignInAsync(user.UserName!, Input.Password, Input.RememberLogin, lockoutOnFailure: true);
             if (result.Succeeded)
             {
                 await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
@@ -124,7 +106,7 @@ public class Index : PageModel
                 return Redirect(Input.ReturnUrl);
             }
 
-            await _events.RaiseAsync(new UserLoginFailureEvent(Input.Username, "invalid credentials", clientId: context?.Client.ClientId));
+            await _events.RaiseAsync(new UserLoginFailureEvent(Input.Email, "invalid credentials", clientId: context?.Client.ClientId));
             ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
         }
 
@@ -151,7 +133,7 @@ public class Index : PageModel
                 EnableLocalLogin = local,
             };
 
-            Input.Username = context.LoginHint;
+            Input.Email = context.LoginHint;
 
             if (!local)
             {

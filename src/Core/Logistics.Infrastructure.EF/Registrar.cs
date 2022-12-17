@@ -58,7 +58,7 @@ public static class Registrar
             options.Password.RequireUppercase = false;
             options.Password.RequireNonAlphanumeric = false;
             options.User.AllowedUserNameCharacters =
-                "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789_.";
+                "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789_.@";
             options.User.RequireUniqueEmail = true;
         })
         .AddRoles<AppRole>()

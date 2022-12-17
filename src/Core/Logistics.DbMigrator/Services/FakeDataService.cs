@@ -3,13 +3,13 @@ using Logistics.Domain.Persistence;
 
 namespace Logistics.DbMigrator.Services;
 
-internal class PopulateTestData
+internal class FakeDataService
 {
     private readonly ILogger _logger;
     private readonly IServiceProvider _serviceProvider;
     private readonly Random _random;
     
-    public PopulateTestData(
+    public FakeDataService(
         ILogger logger,
         IServiceProvider serviceProvider)
     {
@@ -23,12 +23,12 @@ internal class PopulateTestData
         try
         {
             var configuration = _serviceProvider.GetRequiredService<IConfiguration>();
-            var populate = configuration.GetValue<bool>("PopulateTestData");
+            var populate = configuration.GetValue<bool>("PopulateFakeData");
 
             if (!populate)
                 return;
 
-            _logger.LogInformation("Populating databases with test data");
+            _logger.LogInformation("Populating databases with fake data");
             var users = await AddUsersAsync(configuration);
             var employees = await AddEmployeesAsync(users);
             var trucks = await AddTrucksAsync(employees.Drivers);
@@ -50,9 +50,9 @@ internal class PopulateTestData
         if (testUsers == null)
             return usersList;
         
-        foreach (var testUser in testUsers)
+        foreach (var fakeUser in testUsers)
         {
-            var user = await userManager.FindByNameAsync(testUser.UserName!);
+            var user = await userManager.FindByNameAsync(fakeUser.Email!);
 
             if (user != null)
             {
@@ -62,14 +62,16 @@ internal class PopulateTestData
             
             user = new User
             {
-                UserName = testUser.UserName,
-                Email = testUser.Email,
+                UserName = fakeUser.Email,
+                FirstName = fakeUser.FirstName,
+                LastName = fakeUser.LastName,
+                Email = fakeUser.Email,
                 EmailConfirmed = true
             };
             
             try
             {
-                var result = await userManager.CreateAsync(user, testUser.Password!);
+                var result = await userManager.CreateAsync(user, fakeUser.Password!);
                 if (!result.Succeeded)
                     throw new Exception(result.Errors.First().Description);
                 
@@ -77,7 +79,7 @@ internal class PopulateTestData
             }
             finally
             {
-                _logger.LogInformation("Created an user {UserName}", testUser.UserName);
+                _logger.LogInformation("Created an user {FirstName} {LastName}", fakeUser.FirstName, fakeUser.LastName);
             }
         }
         
@@ -244,7 +246,8 @@ internal record EmployeesDto(Employee Owner, Employee Manager)
 
 internal record UserDto
 {
-    public string? UserName { get; init; }
     public string? Email { get; init; }
     public string? Password { get; init; }
+    public string? FirstName { get; init; }
+    public string? LastName { get; init; }
 }

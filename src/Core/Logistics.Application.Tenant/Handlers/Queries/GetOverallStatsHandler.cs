@@ -30,7 +30,7 @@ internal sealed class GetOverallStatsHandler : RequestHandlerBase<GetOverallStat
         if (ownerEmployee != null)
         {
             var owner = await _mainRepository.GetAsync<User>(ownerEmployee.Id);
-            overallStatsDto.OwnerName = owner?.UserName;
+            overallStatsDto.OwnerName = owner?.GetFullName();
         }
 
         var employeesCount = employees.Count;

@@ -4,10 +4,6 @@ namespace Logistics.IdentityServer.Pages.Account.Register;
 
 public class InputModel
 {
-    [Required]
-    [Display(Name = "Username")]
-    public string UserName { get; init; }
-        
     [Required, EmailAddress]
     public string Email { get; init; }
         

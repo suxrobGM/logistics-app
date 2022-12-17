@@ -61,7 +61,7 @@ public class Index : PageModel
 
         var user = new User
         {
-            UserName = Input.UserName,
+            UserName = Input.Email,
             Email = Input.Email,
             FirstName = Input.FirstName,
             LastName = Input.LastName

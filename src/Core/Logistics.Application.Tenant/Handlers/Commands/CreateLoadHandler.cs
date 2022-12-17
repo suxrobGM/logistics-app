@@ -30,7 +30,7 @@ internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, 
         if (truck == null)
         {
             var user = await _mainRepository.GetAsync<User>(request.AssignedDriverId);
-            return ResponseResult.CreateError($"Could not find the truck whose driver ID is '{user?.UserName}'");
+            return ResponseResult.CreateError($"Could not find the truck whose driver is '{user?.GetFullName()}'");
         }
         
         var latestLoad = _tenantRepository.Query<Load>().OrderBy(i => i.RefId).LastOrDefault();
