@@ -55,3 +55,5 @@ Project local URLs:
 ![Office App](./docs/office_app_3.jpg?raw=true)
 ![Office App](./docs/office_app_4.jpg?raw=true)
 ![Office App](./docs/office_app_5.jpg?raw=true)
+![Office App](./docs/office_app_6.jpg?raw=true)
+![Office App](./docs/office_app_7.jpg?raw=true)

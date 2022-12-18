@@ -11,7 +11,7 @@ var host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration(configuration =>
     {
         var secretsFile = Path.Combine(AppContext.BaseDirectory, "appsettings.secrets.json");
-        var testDataFile = Path.Combine(AppContext.BaseDirectory, "testData.json");
+        var testDataFile = Path.Combine(AppContext.BaseDirectory, "fakeDataset.json");
         configuration.AddJsonFile(secretsFile, true);
         configuration.AddJsonFile(testDataFile, true);
     })
