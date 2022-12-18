@@ -6,7 +6,7 @@
 
 # Logistics TMS
 Automate your entire transportation logistics operations with the transportation management system (TMS).
-Project “Logistics” is aimed to automate transportation management systems (TMS). TMS is a software application designed to manage and optimize inbound and/or outbound transportation operations. The client part of the project consists of an administrator web application, a management web application, and a driver mobile application. The backend consists of REST API and Identity Server applications. The project was designed as multi-tenant architecture. There are two types of databases: main and per-tenant databases. The main database stores user credentials, and tenant data (company name, subdomain name, database connection string, and billing periods). Each tenant (company or organization) has its own database.
+Project **Logistics** is aimed to automate transportation management systems (TMS). TMS is a software application designed to manage and optimize inbound and/or outbound transportation operations. The client part of the project consists of an administrator web application, a management web application, and a driver mobile application. The backend consists of REST API and Identity Server applications. The project was designed as multi-tenant architecture. There are two types of databases: main and per-tenant databases. The main database stores user credentials, and tenant data (company name, subdomain name, database connection string, and billing periods). Each tenant (company or organization) has its own database.
 
 ## How to run?
 ### 1. [Download](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) and install the .NET 7 SDK. 
