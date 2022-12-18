@@ -47,9 +47,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.DriverApp", "src\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{D5694866-E7F1-4837-90DA-06CC062C35D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.Shared", "src\Shared\Logistics.Shared\Logistics.Shared.csproj", "{1DBE287E-B5F8-4213-BF68-B7932AE641F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Shared", "src\Shared\Logistics.Shared\Logistics.Shared.csproj", "{1DBE287E-B5F8-4213-BF68-B7932AE641F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.Application.Shared.Contracts", "src\Core\Logistics.Application.Shared.Contracts\Logistics.Application.Shared.Contracts.csproj", "{AF35D5FF-B5A9-445C-AD0A-F2CA9776D96F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Shared.Contracts", "src\Core\Logistics.Application.Shared.Contracts\Logistics.Application.Shared.Contracts.csproj", "{AF35D5FF-B5A9-445C-AD0A-F2CA9776D96F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
