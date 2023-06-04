@@ -9,10 +9,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Logistics.Application.Tenant.Contracts\Logistics.Application.Tenant.Contracts.csproj" />
       <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />
     </ItemGroup>
