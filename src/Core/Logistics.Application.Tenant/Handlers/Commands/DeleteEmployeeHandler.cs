@@ -23,7 +23,7 @@ internal sealed class DeleteEmployeeHandler : RequestHandlerBase<DeleteEmployeeC
             return ResponseResult.CreateError($"Could not find employee with ID {request.Id}");
 
         var user = await _mainRepository.GetAsync<User>(employee.Id);
-        user?.JoinedTenantIds.Remove(tenantId);
+        user?.RemoveTenant(tenantId);
         var employeeLoads = _tenantRepository.ApplySpecification(new GetEmployeeLoads(employee.Id));
 
         foreach (var load in employeeLoads)

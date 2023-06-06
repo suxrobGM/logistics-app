@@ -16,29 +16,29 @@ export class HomeComponent implements OnInit {
   constructor(
     private oidcService: OidcSecurityService,
     private eventService: PublicEventsService,
-    private router: Router) 
-  {
+    private router: Router) {
     this.isAuthenticated = false;
     this.isLoading = false;
   }
 
   ngOnInit(): void {
-    // this.oidcService.isLoading$.subscribe((isLoading) => {
-    //   this.isLoading = isLoading;
-
-    //   if (this.isAuthenticated && !this.isLoading) {
-    //     this.router.navigateByUrl('/dashboard');
-    //   }
-    // });
-
     this.eventService.registerForEvents()
       .pipe(filter((notifaction) => notifaction.type === EventTypes.CheckingAuth))
       .subscribe((value) => {
-        console.log('Loading auth', value);
-        
-      })
+        this.isLoading = true;
+      });
 
-    this.oidcService.isAuthenticated$.subscribe(({isAuthenticated}) => {
+    this.eventService.registerForEvents()
+      .pipe(filter((notifaction) => notifaction.type === EventTypes.CheckingAuthFinished))
+      .subscribe((value) => {
+        this.isLoading = false;
+
+        if (this.isAuthenticated) {
+          this.router.navigateByUrl('/dashboard');
+        }
+      });
+
+    this.oidcService.isAuthenticated$.subscribe(({ isAuthenticated }) => {
       this.isAuthenticated = isAuthenticated;
     });
 

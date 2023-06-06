@@ -30,12 +30,8 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
         if (existingEmployee != null)
             return ResponseResult.CreateError("Employee already exists");
         
-        user.JoinedTenantIds.Add(tenant.Id);
-
-        var employee = new Employee()
-        {
-            Id = request.Id!
-        };
+        user.JoinTenant(tenant.Id);
+        var employee = new Employee { Id = request.Id! };
 
         if (tenantRole != null)
         {

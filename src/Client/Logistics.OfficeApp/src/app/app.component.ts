@@ -11,8 +11,8 @@ export class AppComponent implements OnInit {
   isAuthenticated: boolean;
 
   constructor(
-    private oidcService: OidcSecurityService, 
-    private router: Router) 
+    private oidcService: OidcSecurityService,
+    private router: Router)
   {
     this.isAuthenticated = false;
   }
@@ -20,10 +20,10 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.oidcService.checkAuth().subscribe(({isAuthenticated, userData, accessToken}) => {
       this.isAuthenticated = isAuthenticated;
-      //console.log(`Current access token is '${accessToken}'`);
+      // console.log(`Current access token is '${accessToken}'`);
       console.log(userData);
     });
-    
+
     this.oidcService.isAuthenticated$.subscribe(({isAuthenticated}) => {
       this.isAuthenticated = isAuthenticated;
     });
@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
     for (let i = 0; i < config.length; i++) {
       const route = config[i];
       console.log(parent + '/' + route.path);
-      
+
       if (route.children) {
         const currentPath = route.path ? parent + '/' + route.path : parent;
         this.printpath(currentPath, route.children);
