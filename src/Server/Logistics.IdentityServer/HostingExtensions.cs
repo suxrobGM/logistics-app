@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Duende.IdentityServer;
 using Serilog;
-using Logistics.Application.Shared;
+using Logistics.Application.Common;
 using Logistics.Infrastructure.EF;
 using Logistics.IdentityServer.Services;
 

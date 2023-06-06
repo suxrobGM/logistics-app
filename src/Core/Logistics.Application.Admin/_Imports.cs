@@ -2,7 +2,7 @@
 global using Logistics.Application.Admin.Commands;
 global using Logistics.Application.Admin.Models;
 global using Logistics.Application.Admin.Queries;
-global using Logistics.Application.Shared;
+global using Logistics.Application.Common;
 global using Logistics.Domain.Common;
 global using Logistics.Domain.Entities;
 global using Logistics.Domain.Persistence;

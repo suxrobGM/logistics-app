@@ -16,7 +16,8 @@ export class HomeComponent implements OnInit {
   constructor(
     private oidcService: OidcSecurityService,
     private eventService: PublicEventsService,
-    private router: Router) {
+    private router: Router)
+  {
     this.isAuthenticated = false;
     this.isLoading = false;
   }

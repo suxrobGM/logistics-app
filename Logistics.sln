@@ -35,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Admin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.AdminApp", "src\Client\Logistics.AdminApp\Logistics.AdminApp.csproj", "{C7AE8EC6-562A-4907-9A12-E2FF7CFA8397}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Shared", "src\Core\Logistics.Application.Shared\Logistics.Application.Shared.csproj", "{77D09657-5BE2-4462-AE24-39612759625A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Common", "src\Core\Logistics.Application.Common\Logistics.Application.Common.csproj", "{77D09657-5BE2-4462-AE24-39612759625A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.IdentityServer", "src\Server\Logistics.IdentityServer\Logistics.IdentityServer.csproj", "{CCDB0C07-4270-4253-B91A-9EB9FCDC8A05}"
 EndProject
@@ -49,7 +49,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{D56948
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Shared", "src\Shared\Logistics.Shared\Logistics.Shared.csproj", "{1DBE287E-B5F8-4213-BF68-B7932AE641F6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Shared.Contracts", "src\Core\Logistics.Application.Shared.Contracts\Logistics.Application.Shared.Contracts.csproj", "{AF35D5FF-B5A9-445C-AD0A-F2CA9776D96F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Common.Contracts", "src\Core\Logistics.Application.Common.Contracts\Logistics.Application.Common.Contracts.csproj", "{AF35D5FF-B5A9-445C-AD0A-F2CA9776D96F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
