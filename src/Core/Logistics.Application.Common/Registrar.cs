@@ -1,5 +1,9 @@
-﻿using Logistics.Application.Common.Options;
+﻿using System.Reflection;
+using FluentValidation;
+using Logistics.Application.Common.Behaviours;
+using Logistics.Application.Common.Options;
 using Logistics.Application.Common.Services;
+using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -28,6 +32,10 @@ public static class Registrar
             services.AddSingleton(googleRecaptchaOptions);
             services.AddScoped<ICaptchaService, GoogleRecaptchaService>();
         }
+        
+        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
         return services;
     }
 }
