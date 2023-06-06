@@ -2,8 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Logistics.Infrastructure.EF.Builder;
-using Logistics.Infrastructure.EF.Data;
-using Logistics.Infrastructure.EF.Options;
 using Logistics.Infrastructure.EF.Persistence;
 using Logistics.Infrastructure.EF.Services;
 
@@ -35,9 +33,9 @@ public static class Registrar
         var tenantsSettings = configuration.GetSection(tenantsConfigSection).Get<TenantsSettings>();
         var connectionString = configuration.GetConnectionString(connectionSection);
 
-        if (tenantsSettings is { DatabaseProvider: "mysql" })
+        if (tenantsSettings != null)
         {
-            services.AddScoped<IDatabaseProviderService, MySqlProviderService>();
+            services.AddScoped<ITenantDatabaseService, TenantDatabaseService>();
             services.AddSingleton(tenantsSettings);
         }
         

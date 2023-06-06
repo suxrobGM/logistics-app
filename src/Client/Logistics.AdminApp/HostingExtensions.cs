@@ -10,7 +10,7 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
-        AddSecretsJson(builder.Configuration);
+        // AddSecretsJson(builder.Configuration);
         builder.Services.AddWebApiClient(builder.Configuration);
         builder.Services.AddMvvmBlazor();
         builder.Services.AddHttpContextAccessor();

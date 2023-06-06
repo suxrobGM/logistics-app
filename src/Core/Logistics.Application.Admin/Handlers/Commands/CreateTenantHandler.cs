@@ -4,14 +4,14 @@ namespace Logistics.Application.Admin.Handlers.Commands;
 
 internal sealed class CreateTenantHandler : RequestHandlerBase<CreateTenantCommand, ResponseResult>
 {
-    private readonly IDatabaseProviderService _databaseProvider;
+    private readonly ITenantDatabaseService _tenantDatabase;
     private readonly IMainRepository _repository;
 
     public CreateTenantHandler(
-        IDatabaseProviderService databaseProvider,
+        ITenantDatabaseService tenantDatabase,
         IMainRepository repository)
     {
-        _databaseProvider = databaseProvider;
+        _tenantDatabase = tenantDatabase;
         _repository = repository;
     }
 
@@ -23,7 +23,7 @@ internal sealed class CreateTenantHandler : RequestHandlerBase<CreateTenantComma
             DisplayName = req.DisplayName
         };
         tenant.Name = tenant.Name?.Trim().ToLower();
-        tenant.ConnectionString = _databaseProvider.GenerateConnectionString($"u1002275_{tenant.Name}_logistics"); // TODO: remove prefix u1002275_ later 
+        tenant.ConnectionString = _tenantDatabase.GenerateConnectionString($"u1002275_{tenant.Name}_logistics"); // TODO: remove prefix u1002275_ later 
 
         if (string.IsNullOrEmpty(tenant.DisplayName))
         {
@@ -36,7 +36,7 @@ internal sealed class CreateTenantHandler : RequestHandlerBase<CreateTenantComma
             return ResponseResult.CreateError($"Tenant name '{tenant.Name}' is already taken, please chose another name");
         }
 
-        var created = await _databaseProvider.CreateDatabaseAsync(tenant.ConnectionString);
+        var created = await _tenantDatabase.CreateDatabaseAsync(tenant.ConnectionString);
         if (!created)
         {
             return ResponseResult.CreateError("Could not create the tenant's database");

@@ -1,6 +1,4 @@
-﻿using Logistics.Infrastructure.EF.Helpers;
-using Logistics.Infrastructure.EF.Options;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Logistics.Infrastructure.EF.Data;
@@ -19,20 +17,20 @@ public class MainDbContext : IdentityDbContext<User, AppRole, string>
         if (options.IsConfigured)
             return;
         
-        DbContextHelpers.ConfigureMySql(_connectionString, options);
+        DbContextHelpers.ConfigureSqlServer(_connectionString, options);
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
         
-        builder.Entity<AppRole>().ToTable("roles");
-        builder.Entity<IdentityRoleClaim<string>>().ToTable("role_claims");
-        builder.Entity<IdentityUserRole<string>>().ToTable("user_roles");
-        builder.Entity<IdentityUserLogin<string>>().ToTable("user_logins");
-        builder.Entity<IdentityUserClaim<string>>().ToTable("user_claims");
-        builder.Entity<IdentityUserToken<string>>().ToTable("user_tokens");
-        builder.Entity<Tenant>().ToTable("tenants");
-        builder.Entity<User>().ToTable("users");
+        builder.Entity<AppRole>().ToTable("Roles");
+        builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
+        builder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
+        builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
+        builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
+        builder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
+        builder.Entity<Tenant>().ToTable("Tenants");
+        builder.Entity<User>().ToTable("Users");
     }
 }

@@ -12,7 +12,7 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
-        AddSecretsJson(builder.Configuration);
+        // AddSecretsJson(builder.Configuration);
         builder.Services.AddRazorPages();
         builder.Services.AddSharedApplicationLayer(builder.Configuration, "EmailConfig", "GoogleRecaptcha");
 

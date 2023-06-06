@@ -11,16 +11,20 @@
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.5" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.5" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.5" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.5">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
-		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
 	</ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Logistics.Shared\Logistics.Shared.csproj" />
     <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\Migrations\" />
   </ItemGroup>
 </Project>

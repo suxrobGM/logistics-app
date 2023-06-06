@@ -1,7 +1,4 @@
-﻿using Logistics.Infrastructure.EF.Helpers;
-using Logistics.Infrastructure.EF.Options;
-
-namespace Logistics.Infrastructure.EF.Data;
+﻿namespace Logistics.Infrastructure.EF.Data;
 
 public class TenantDbContext : DbContext
 {
@@ -24,18 +21,18 @@ public class TenantDbContext : DbContext
             return;
 
         var connectionString = _tenantService?.GetConnectionString() ?? _connectionString;
-        DbContextHelpers.ConfigureMySql(connectionString, options);
+        DbContextHelpers.ConfigureSqlServer(connectionString, options);
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<TenantRoleClaim>().ToTable("role_claims");
+        builder.Entity<TenantRoleClaim>().ToTable("RoleClaims");
 
         builder.Entity<TenantRole>(entity =>
         {
-            entity.ToTable("roles");
+            entity.ToTable("Roles");
             entity.HasMany(m => m.Claims)
                 .WithOne(m => m.Role)
                 .HasForeignKey(m => m.RoleId)
@@ -44,15 +41,15 @@ public class TenantDbContext : DbContext
 
         builder.Entity<Employee>(entity =>
         {
-            entity.ToTable("employees");
+            entity.ToTable("Employees");
             entity.HasMany(i => i.Roles)
                 .WithMany(i => i.Employees)
-                .UsingEntity("employee_roles");
+                .UsingEntity("EmployeeRoles");
         });
 
         builder.Entity<Truck>(entity =>
         {
-            entity.ToTable("trucks");
+            entity.ToTable("Trucks");
 
             entity.HasOne(m => m.Driver)
                 .WithOne()
@@ -66,7 +63,7 @@ public class TenantDbContext : DbContext
 
         builder.Entity<Load>(entity =>
         {
-            entity.ToTable("loads");
+            entity.ToTable("Loads");
             //entity.OwnsOne(m => m.SourceAddress);
             //entity.OwnsOne(m => m.DestinationAddress);
             entity.HasIndex(m => m.RefId).IsUnique();

@@ -2,6 +2,6 @@
 
 internal static class ConnectionStrings
 {
-    public const string LocalDefaultTenant = "Server=localhost; Database=default_logistics; Uid=root; Pwd=Test12345; Connect Timeout=10";
-    public const string LocalMain = "Server=localhost; Database=main_logistics; Uid=root; Pwd=Test12345; Connect Timeout=10";
+    public const string LocalDefaultTenant = "Server=.\\SQLEXPRESS; Database=default_logistics; Uid=LogisticsUser; Pwd=Test12345";
+    public const string LocalMain = "Server=.\\SQLEXPRESS; Database=main_logistics; Uid=LogisticsUser; Pwd=Test12345";
 }

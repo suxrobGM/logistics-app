@@ -1,23 +1,22 @@
 ﻿using System.Data.Common;
 using System.Security.Claims;
-using Logistics.Infrastructure.EF.Data;
 using Microsoft.Extensions.Logging;
-using MySqlConnector;
 using Logistics.Shared.Policies;
+using Microsoft.Data.SqlClient;
 using CustomClaimTypes = Logistics.Shared.Claims.CustomClaimTypes;
 
 namespace Logistics.Infrastructure.EF.Services;
 
-public class MySqlProviderService : IDatabaseProviderService
+public class TenantDatabaseService : ITenantDatabaseService
 {
     private readonly TenantDbContext _context;
     private readonly TenantsSettings _settings;
-    private readonly ILogger<MySqlProviderService> _logger;
+    private readonly ILogger<TenantDatabaseService> _logger;
 
-    public MySqlProviderService(
+    public TenantDatabaseService(
         TenantDbContext context,
         TenantsSettings settings,
-        ILogger<MySqlProviderService> logger)
+        ILogger<TenantDatabaseService> logger)
     {
         _context = context;
         _logger = logger;
@@ -39,7 +38,7 @@ public class MySqlProviderService : IDatabaseProviderService
         }
         catch (Exception ex)
         {
-            _logger.LogError("Thrown exception in MySqlProviderService.CreateDatabaseAsync(): {Exception}", ex);
+            _logger.LogError("Thrown exception in TenantDatabaseService.CreateDatabaseAsync(): {Exception}", ex);
             return false;
         }
     }
@@ -55,13 +54,13 @@ public class MySqlProviderService : IDatabaseProviderService
 
             var database = connection["Initial Catalog"];
             var dropQuery = $"DROP DATABASE '{database}'";
-            await using var mySqlCommand = new MySqlCommand(dropQuery);
-            await mySqlCommand.ExecuteScalarAsync();
+            await using var sqlCommand = new SqlCommand(dropQuery);
+            await sqlCommand.ExecuteScalarAsync();
             return true;
         }
         catch (DbException ex)
         {
-            _logger.LogError("Thrown exception in MySqlProviderService.DeleteDatabaseAsync(): {@Exception}", ex);
+            _logger.LogError("Thrown exception in TenantDatabaseService.DeleteDatabaseAsync(): {@Exception}", ex);
             return false;
         }
     }

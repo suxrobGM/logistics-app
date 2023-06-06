@@ -134,7 +134,7 @@ internal class SeedDataService : BackgroundService
     private async Task AddDefaultTenantAsync(IServiceProvider serviceProvider)
     {
         var mainDbContext = serviceProvider.GetRequiredService<MainDbContext>();
-        var databaseProvider = serviceProvider.GetRequiredService<IDatabaseProviderService>();
+        var databaseProvider = serviceProvider.GetRequiredService<ITenantDatabaseService>();
 
         var defaultTenant = new Tenant
         {

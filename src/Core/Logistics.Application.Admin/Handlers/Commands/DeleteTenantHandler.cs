@@ -2,14 +2,14 @@
 
 internal sealed class DeleteTenantHandler : RequestHandlerBase<DeleteTenantCommand, ResponseResult>
 {
-    private readonly IDatabaseProviderService _databaseProvider;
+    private readonly ITenantDatabaseService _tenantDatabase;
     private readonly IMainRepository _repository;
 
     public DeleteTenantHandler(
-        IDatabaseProviderService databaseProvider,
+        ITenantDatabaseService tenantDatabase,
         IMainRepository repository)
     {
-        _databaseProvider = databaseProvider;
+        _tenantDatabase = tenantDatabase;
         _repository = repository;
     }
 
@@ -20,7 +20,7 @@ internal sealed class DeleteTenantHandler : RequestHandlerBase<DeleteTenantComma
         if (tenant == null)
             return ResponseResult.CreateError("Could not find the tenant");
 
-        var deleted = await _databaseProvider.DeleteDatabaseAsync(tenant.ConnectionString!);
+        var deleted = await _tenantDatabase.DeleteDatabaseAsync(tenant.ConnectionString!);
 
         if (!deleted)
             return ResponseResult.CreateError("Could not delete the tenant's database");

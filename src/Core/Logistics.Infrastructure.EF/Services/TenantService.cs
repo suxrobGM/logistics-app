@@ -1,5 +1,4 @@
 ﻿using Logistics.Infrastructure.EF.Exceptions;
-using Logistics.Infrastructure.EF.Options;
 using Microsoft.AspNetCore.Http;
 
 namespace Logistics.Infrastructure.EF.Services;

@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Domain.Services;
 
-public interface IDatabaseProviderService
+public interface ITenantDatabaseService
 {
     string GenerateConnectionString(string databaseName);
     Task<bool> CreateDatabaseAsync(string connectionString);
