@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 
-namespace Logistics.WebApi.Authorization;
+namespace Logistics.AdminApp.Authorization;
 
 public class PermissionPolicyProvider : IAuthorizationPolicyProvider
 {

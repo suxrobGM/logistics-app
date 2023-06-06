@@ -1,4 +1,4 @@
-﻿namespace Logistics.AdminApp.ViewModels.Pages;
+﻿namespace Logistics.AdminApp.ViewModels.Pages.Tenant;
 
 public class EditTenantViewModel : PageBaseViewModel
 {
@@ -7,13 +7,13 @@ public class EditTenantViewModel : PageBaseViewModel
     public EditTenantViewModel(IApiClient apiClient)
     {
         _apiClient = apiClient;
-        Tenant = new Tenant();
+        Tenant = new Client.Models.Tenant();
     }
 
     [Parameter]
     public string? Id { get; set; }
 
-    public Tenant Tenant { get; set; }
+    public Client.Models.Tenant Tenant { get; set; }
     public bool EditMode => !string.IsNullOrEmpty(Id);
 
     public override async Task OnInitializedAsync()

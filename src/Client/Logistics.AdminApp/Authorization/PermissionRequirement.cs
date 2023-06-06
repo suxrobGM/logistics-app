@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace Logistics.WebApi.Authorization;
+namespace Logistics.AdminApp.Authorization;
 
 internal class PermissionRequirement : IAuthorizationRequirement
 {

@@ -1,6 +1,6 @@
 ﻿using Logistics.Shared;
 
-namespace Logistics.AdminApp.ViewModels.Pages;
+namespace Logistics.AdminApp.ViewModels.Pages.Tenant;
 
 public class ListTenantViewModel : PageBaseViewModel
 {
@@ -9,13 +9,13 @@ public class ListTenantViewModel : PageBaseViewModel
     public ListTenantViewModel(IApiClient apiClient)
     {
         _apiClient = apiClient;
-        Tenants = Array.Empty<Tenant>();
-        TenantsList = new PagedList<Tenant>(20, true, i => i.Id!);
+        Tenants = Array.Empty<Client.Models.Tenant>();
+        TenantsList = new PagedList<Client.Models.Tenant>(20, true, i => i.Id!);
         SearchInput = string.Empty;
     }
 
-    public PagedList<Tenant> TenantsList { get; set; }
-    public IEnumerable<Tenant> Tenants { get; set; }
+    public PagedList<Client.Models.Tenant> TenantsList { get; set; }
+    public IEnumerable<Client.Models.Tenant> Tenants { get; set; }
     public string SearchInput { get; set; }
 
     private int _totalRecords;

@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
+using Logistics.AdminApp.Authorization;
 using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Logistics.Shared.Claims;
-using Logistics.WebApi.Authorization;
 
 namespace Logistics.AdminApp;
 
