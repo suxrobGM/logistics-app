@@ -22,7 +22,7 @@ internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeC
         var tenant = _tenantRepository.CurrentTenant;
         
         if (tenant == null)
-            return ResponseResult.CreateError($"Could not find the tenant");
+            return ResponseResult.CreateError("Could not find the tenant");
 
         if (user == null)
             return ResponseResult.CreateError("Could not find the specified user");

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.Infrastructure.EF.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20230606012034_Version_0001")]
+    [Migration("20230606025935_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
