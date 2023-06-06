@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Tenan
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{F47DBB17-4146-4B24-9E95-5CE0DF59BF35}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Sdk", "src\Client\Logistics.Sdk\Logistics.Sdk.csproj", "{A2272F96-50F5-40EA-88E7-15EA8EEE1022}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Client", "src\Client\Logistics.Client\Logistics.Client.csproj", "{A2272F96-50F5-40EA-88E7-15EA8EEE1022}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.API", "src\Server\Logistics.API\Logistics.API.csproj", "{48AA06BC-140B-49B8-AD72-95B5FC6A2D4B}"
 EndProject

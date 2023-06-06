@@ -65,7 +65,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Logistics.Sdk\Logistics.Sdk.csproj" />
+	  <ProjectReference Include="..\Logistics.Client\Logistics.Client.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -5,6 +5,6 @@ global using Logistics.DriverApp.Constants;
 global using Logistics.DriverApp.Helpers;
 global using Logistics.DriverApp.Views;
 global using Logistics.DriverApp.ViewModels;
-global using Logistics.Sdk;
-global using Logistics.Sdk.Models;
+global using Logistics.Client;
+global using Logistics.Client.Models;
 global using Logistics.Shared;
