@@ -1,6 +1,4 @@
-﻿using System.Text.RegularExpressions;
-
-namespace Logistics.Application.Admin.Commands;
+﻿namespace Logistics.Application.Admin.Commands;
 
 internal sealed class CreateTenantHandler : RequestHandlerBase<CreateTenantCommand, ResponseResult>
 {
@@ -45,26 +43,5 @@ internal sealed class CreateTenantHandler : RequestHandlerBase<CreateTenantComma
         await _repository.AddAsync(tenant);
         await _repository.UnitOfWork.CommitAsync();
         return ResponseResult.CreateSuccess();
-    }
-
-    protected override bool Validate(CreateTenantCommand request, out string errorDescription)
-    {
-        errorDescription = string.Empty;
-        var regex = new Regex(@"^[a-z]+\d*", RegexOptions.IgnoreCase);
-
-        if (string.IsNullOrEmpty(request.Name))
-        {
-            errorDescription = "Tenant name is not specified";
-        }
-        else if (request.Name.Length < 4)
-        {
-            errorDescription = "The length of the tenant name must have at least 4 characters";
-        }
-        else if (!regex.IsMatch(request.Name))
-        {
-            errorDescription = "The format of the tenant name must start with English letters and may end with numbers";
-        }
-
-        return string.IsNullOrEmpty(errorDescription);
     }
 }

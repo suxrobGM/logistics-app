@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using FluentValidation;
-using Logistics.Application.Common.Behaviours;
+﻿using Logistics.Application.Common.Behaviours;
 using Logistics.Application.Common.Options;
 using Logistics.Application.Common.Services;
 using MediatR;
@@ -11,7 +9,7 @@ namespace Logistics.Application.Common;
 
 public static class Registrar
 {
-    public static IServiceCollection AddSharedApplicationLayer(
+    public static IServiceCollection AddApplicationLayer(
         this IServiceCollection services,
         IConfiguration configuration,
         string emailConfigSection = "Email",
@@ -33,8 +31,7 @@ public static class Registrar
             services.AddScoped<ICaptchaService, GoogleRecaptchaService>();
         }
         
-        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
+        // services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
         return services;
     }

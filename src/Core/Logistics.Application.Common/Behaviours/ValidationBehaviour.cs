@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using Logistics.Shared;
 using MediatR;
-using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
 namespace Logistics.Application.Common.Behaviours;
 
@@ -28,8 +27,8 @@ public sealed class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior
         var validationResults = await Task.WhenAll(_validators.Select(v => v.ValidateAsync(context, cancellationToken)));
         var failures = validationResults.SelectMany(r => r.Errors).Where(f => f != null).ToList();
 
-        if (failures.Count != 0)
-            throw new ValidationException(string.Join('\n', failures));
+        if (failures.Any())
+            throw new ValidationException(failures);
         
         return await next();
     }

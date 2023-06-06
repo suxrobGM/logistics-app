@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+	<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.2" />
 	<PackageReference Include="MySqlConnector" Version="2.2.6" />
   </ItemGroup>
 

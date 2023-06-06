@@ -13,4 +13,8 @@
       <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.2" />
+    </ItemGroup>
+
 </Project>

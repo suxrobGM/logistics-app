@@ -14,7 +14,7 @@ internal static class HostingExtensions
     {
         // AddSecretsJson(builder.Configuration);
         builder.Services.AddRazorPages();
-        builder.Services.AddSharedApplicationLayer(builder.Configuration, "EmailConfig", "GoogleRecaptcha");
+        builder.Services.AddApplicationLayer(builder.Configuration, "EmailConfig", "GoogleRecaptcha");
 
         builder.Services.AddInfrastructureLayer(builder.Configuration)
             .ConfigureIdentity(identityBuilder =>

@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Logistics.API.Authorization;
+using Logistics.API.Middlewares;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Logistics.Infrastructure.EF;
@@ -11,11 +12,12 @@ internal static class HostingExtensions
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         // AddSecretsJson(builder.Configuration);
+        builder.Services.AddApplicationLayer(builder.Configuration, "EmailConfig");
         builder.Services.AddAdminApplicationLayer();
         builder.Services.AddTenantApplicationLayer();
-        builder.Services.AddSharedApplicationLayer(builder.Configuration, "EmailConfig");
         builder.Services.AddInfrastructureLayer(builder.Configuration);
         builder.Services.AddHttpContextAccessor();
+        builder.Services.AddScoped<ExceptionHandlingMiddleware>();
 
         builder.Services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
@@ -81,6 +83,7 @@ internal static class HostingExtensions
         app.UseAuthentication();
         app.UseAuthorization();
 
+        app.UseCustomExceptionHandler();
         app.MapControllers();
         return app;
     }
