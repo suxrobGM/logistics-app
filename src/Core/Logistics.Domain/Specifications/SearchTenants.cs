@@ -15,10 +15,10 @@ public class SearchTenants : BaseSpecification<Tenant>
         
         Criteria = i =>
             (!string.IsNullOrEmpty(i.Name) &&
-             i.Name.Contains(search, StringComparison.InvariantCultureIgnoreCase)) ||
+             i.Name.Contains(search)) ||
 
             (!string.IsNullOrEmpty(i.DisplayName) &&
-             i.DisplayName.Contains(search, StringComparison.InvariantCultureIgnoreCase));
+             i.DisplayName.Contains(search));
     }
     
     private static Expression<Func<Tenant, object>> InitOrderBy(string? propertyName)

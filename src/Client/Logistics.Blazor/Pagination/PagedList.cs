@@ -21,8 +21,7 @@ public class PagedList<T> : List<T>
         int totalItems,
         int pageSize,
         bool allowCaching = false,
-        Expression<Func<T, string>>? keySelectorExp = null!
-        )
+        Expression<Func<T, string>>? keySelectorExp = null!)
         : this(Array.Empty<T>(), totalItems, 1, pageSize, allowCaching, keySelectorExp)
     {
     }
@@ -70,10 +69,9 @@ public class PagedList<T> : List<T>
     public new void Add(T item)
     {
         if (HasInCache(item))
-        {
             return;
-        }
-        else if (_allowCaching)
+
+        if (_allowCaching)
         {
             AddToCache(item);
         }
@@ -122,14 +120,14 @@ public class PagedList<T> : List<T>
 
     public new void RemoveAt(int index)
     {
-        T removedItem = this[index];
+        var removedItem = this[index];
         RemoveFromCache(removedItem);
         base.RemoveAt(index);
     }
 
     public new void RemoveRange(int index, int count)
     {
-        for (int i = index; i < count; i++)
+        for (var i = index; i < count; i++)
         {
             RemoveAt(i);
         }

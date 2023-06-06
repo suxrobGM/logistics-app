@@ -19,7 +19,7 @@ public class SearchLoads : BaseSpecification<Load>
 
         Criteria = i =>
             (!string.IsNullOrEmpty(i.Name) &&
-             i.Name.Contains(search, StringComparison.InvariantCultureIgnoreCase)) ||
+             i.Name.Contains(search)) ||
             (!string.IsNullOrEmpty(i.AssignedDispatcherId) &&
              userIds.Contains(i.AssignedDispatcherId) &&
              (userNames.Contains(search) || userFirstNames.Contains(search) || userLastNames.Contains(search))) ||

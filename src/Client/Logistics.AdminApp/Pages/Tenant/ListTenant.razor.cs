@@ -18,20 +18,18 @@ public partial class ListTenant : PageBase
 
     private Task SearchAsync()
     {
-        Console.WriteLine("Search");
         return LoadPage(new PageEventArgs { Page = 1 }, _searchInput);
     }
 
     private async Task LoadPage(PageEventArgs e, string searchInput = "")
     {
-        var result = await ApiClient.GetTenantsAsync(new SearchableQuery(searchInput, e.Page));
-        var pagedList = result.Items;
-        
-        if (result.Success && pagedList != null)
+        var pagedData = await CallApiAsync(api => api.GetTenantsAsync(new SearchableQuery(searchInput, e.Page)));
+
+        if (pagedData != null)
         {
-            _tenantsPagedList.AddRange(pagedList);
-            _tenantsPagedList.TotalItems = result.ItemsCount;
-            _totalRecords = result.ItemsCount;
+            _tenantsPagedList.AddRange(pagedData.Items);
+            _tenantsPagedList.TotalItems = pagedData.ItemsCount;
+            _totalRecords = pagedData.ItemsCount;
             _tenants = _tenantsPagedList.GetPage(e.Page);
             StateHasChanged();
         }

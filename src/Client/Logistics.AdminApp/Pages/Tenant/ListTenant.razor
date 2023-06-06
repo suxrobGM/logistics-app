@@ -4,13 +4,13 @@
 <h2>Tenants List</h2>
 <hr />
 
-<Spinner IsBusy="IsBusy"
-         Label="@BusyText"
+<Spinner IsBusy="IsLoading"
+         Label="@SpinnerText"
          LabelAlign="Spinner.Align.Left"
          Size="2">
 </Spinner>
 
-@if (!IsBusy)
+@if (!IsLoading)
 {
     <div class="row">
         <div class="col-12 col-sm-10 col-md-5 col-xl-4">

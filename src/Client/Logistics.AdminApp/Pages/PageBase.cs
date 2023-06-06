@@ -1,11 +1,13 @@
-﻿namespace Logistics.AdminApp.Pages;
+﻿using Logistics.Shared;
+
+namespace Logistics.AdminApp.Pages;
 
 public abstract class PageBase : ComponentBase
 {
     #region Injectable services
 
     [Inject]
-    protected IApiClient ApiClient { get; set; } = default!;
+    private IApiClient ApiClient { get; set; } = default!;
 
     #endregion
     
@@ -23,19 +25,19 @@ public abstract class PageBase : ComponentBase
 
     #region Bindable properties
 
-    private bool _isBusy;
+    private bool _isLoading;
 
-    protected bool IsBusy
+    protected bool IsLoading
     {
-        get => _isBusy;
-        set => SetValue(ref _isBusy, value);
+        get => _isLoading;
+        set => SetValue(ref _isLoading, value);
     }
 
-    private string _busyText = string.Empty;
-    protected string BusyText
+    private string _spinnerText = string.Empty;
+    protected string SpinnerText
     {
-        get => _busyText;
-        set => SetValue(ref _busyText, value );
+        get => _spinnerText;
+        set => SetValue(ref _spinnerText, value );
     }
 
     private string _error = string.Empty;
@@ -62,4 +64,50 @@ public abstract class PageBase : ComponentBase
         storage = value;
         StateHasChanged();
     }
+    
+    protected async Task<bool> CallApiAsync(Func<IApiClient, Task<ResponseResult>> apiFunction)
+    {
+        Error = string.Empty;
+        IsLoading = true;
+        
+        var apiResult = await apiFunction(ApiClient);
+        IsLoading = false;
+        return HandleError(apiResult);
+    }
+
+    protected async Task<T?> CallApiAsync<T>(Func<IApiClient, Task<ResponseResult<T>>> apiFunction)
+    {
+        Error = string.Empty;
+        IsLoading = true;
+        
+        var apiResult = await apiFunction(ApiClient);
+        HandleError(apiResult);
+        IsLoading = false;
+        return apiResult.Value;
+    }
+    
+    protected async Task<PagedData<T>?> CallApiAsync<T>(Func<IApiClient, Task<PagedResponseResult<T>>> apiFunction)
+    {
+        Error = string.Empty;
+        IsLoading = true;
+        
+        var apiResult = await apiFunction(ApiClient);
+        HandleError(apiResult);
+        IsLoading = false;
+        return apiResult.Items != null
+            ? new PagedData<T>(apiResult.Items, apiResult.ItemsCount, apiResult.PagesCount) : default;
+    }
+
+    private bool HandleError(IResponseResult apiResult)
+    {
+        if (!apiResult.Success && !string.IsNullOrEmpty(apiResult.Error))
+        {
+            Error = apiResult.Error;
+            return false;
+        }
+
+        return true;
+    }
 }
+
+public record PagedData<T>(IEnumerable<T> Items, int ItemsCount, int PageSize);

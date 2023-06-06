@@ -20,15 +20,13 @@ public partial class EditTenant : PageBase
     {
         if (!EditMode)
             return;
+        
+        var tenant = await CallApiAsync(api => api.GetTenantAsync(Id!));
 
-        IsBusy = true;
-        var result = await ApiClient.GetTenantAsync(Id!);
-
-        if (!result.Success)
-            return;
-
-        Tenant = result.Value!;
-        IsBusy = false;
+        if (tenant != null)
+        {
+            Tenant = tenant;
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -44,39 +42,35 @@ public partial class EditTenant : PageBase
 
     private async Task UpdateAsync()
     {
-        Error = string.Empty;
-        IsBusy = true;
-        
         if (EditMode)
         {
-            var result = await ApiClient.UpdateTenantAsync(new UpdateTenant()
+            var success = await CallApiAsync(api => api.UpdateTenantAsync(new UpdateTenant()
             {
                 Id = Tenant.Id,
                 DisplayName = Tenant.DisplayName
-            });
-
-            if (!result.Success)
-                return;
+            }));
             
+            if (!success)
+                return;
             
             Toast?.Show("Tenant has been saved successfully.", "Notification");
         }
         else
         {
-            var result = await ApiClient.CreateTenantAsync(new CreateTenant()
+            var success = await CallApiAsync(api => api.CreateTenantAsync(new CreateTenant()
             {
                 Name = Tenant.Name,
                 DisplayName = Tenant.DisplayName
-            });
+            }));
             
-            if (!result.Success)
+            if (!success)
                 return;
             
             Toast?.Show("A new tenant has been created successfully.", "Notification");
             ResetData();
         }
 
-        IsBusy = false;
+        IsLoading = false;
     }
 
     private void ResetData()
@@ -90,17 +84,14 @@ public partial class EditTenant : PageBase
     {
         if (string.IsNullOrEmpty(Id))
             return;
+        
+        var tenant = await CallApiAsync(api => api.GetTenantAsync(Id));
 
-        IsBusy = true;
-        var result = await ApiClient.GetTenantAsync(Id);
-
-        if (!result.Success)
+        if (tenant == null)
             return;
         
-        var tenant = result.Value!;
         Tenant.Name = tenant.Name;
         Tenant.DisplayName = tenant.DisplayName;
         Tenant.ConnectionString = tenant.ConnectionString;
-        IsBusy = false;
     }
 }

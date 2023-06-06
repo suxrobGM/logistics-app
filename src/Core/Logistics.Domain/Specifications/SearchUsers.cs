@@ -9,12 +9,12 @@ public class SearchUsers : BaseSpecification<User>
 
         Criteria = i =>
             (!string.IsNullOrEmpty(i.FirstName) &&
-             i.FirstName.Contains(search, StringComparison.InvariantCultureIgnoreCase)) ||
+             i.FirstName.Contains(search)) ||
             (!string.IsNullOrEmpty(i.LastName) &&
-             i.LastName.Contains(search, StringComparison.InvariantCultureIgnoreCase)) ||
+             i.LastName.Contains(search)) ||
             (!string.IsNullOrEmpty(i.UserName) &&
-             i.UserName.Contains(search, StringComparison.InvariantCultureIgnoreCase)) ||
+             i.UserName.Contains(search)) ||
             (!string.IsNullOrEmpty(i.Email) &&
-             i.Email.Contains(search, StringComparison.InvariantCultureIgnoreCase));
+             i.Email.Contains(search));
     }
 }
