@@ -23,7 +23,20 @@ internal sealed class DeleteEmployeeHandler : RequestHandlerBase<DeleteEmployeeC
             return ResponseResult.CreateError($"Could not find employee with ID {request.Id}");
 
         var user = await _mainRepository.GetAsync<User>(employee.Id);
-        user?.RemoveTenant(tenantId);
+        user?.JoinedTenantIds.Remove(tenantId);
+        var employeeLoads = _tenantRepository.ApplySpecification(new GetEmployeeLoads(employee.Id));
+
+        foreach (var load in employeeLoads)
+        {
+            if (load.AssignedDispatcherId == employee.Id)
+            {
+                load.AssignedDispatcher = null;
+            }
+            if (load.AssignedDriverId == employee.Id)
+            {
+                load.AssignedDriver = null;
+            }
+        }
         
         _tenantRepository.Delete(employee);
         await _tenantRepository.UnitOfWork.CommitAsync();

@@ -70,13 +70,13 @@ public class TenantDbContext : DbContext
 
             entity.HasOne(m => m.AssignedDispatcher)
                 .WithMany(m => m.DispatchedLoads)
-                .HasForeignKey(m => m.AssignedDispatcherId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .HasForeignKey(m => m.AssignedDispatcherId);
+                //.OnDelete(DeleteBehavior.SetNull);
             
             entity.HasOne(m => m.AssignedDriver)
                 .WithMany(m => m.DeliveredLoads)
-                .HasForeignKey(m => m.AssignedDriverId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .HasForeignKey(m => m.AssignedDriverId);
+                //.OnDelete(DeleteBehavior.SetNull);
         });
     }
 }

@@ -25,7 +25,7 @@ public class TenantDatabaseService : ITenantDatabaseService
 
     public string GenerateConnectionString(string databaseName)
     {
-        return $"Server={_settings.DatabaseHost}; Database={databaseName}; Uid={_settings.DatabaseUserId}; Pwd={_settings.DatabasePassword}";
+        return $"Server={_settings.DatabaseHost}; Database={databaseName}; Uid={_settings.DatabaseUserId}; Pwd={_settings.DatabasePassword}; TrustServerCertificate=true";
     }
 
     public async Task<bool> CreateDatabaseAsync(string connectionString)

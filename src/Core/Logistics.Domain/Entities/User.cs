@@ -10,25 +10,8 @@ public class User : IdentityUser, IAggregateRoot
     [StringLength(UserConsts.NameLength)]
     public string? LastName { get; set; }
 
-    public string JoinedTenantIds { get; set; } = string.Empty;
+    public ISet<string> JoinedTenantIds { get; set; } = new HashSet<string>();
     public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;
-
-    public void JoinTenant(string tenantId)
-    {
-        var tenantIds = JoinedTenantIds.Split(',');
-
-        if (tenantIds.Contains(tenantId))
-            return;
-        
-        JoinedTenantIds = string.IsNullOrEmpty(JoinedTenantIds) ? 
-            string.Join(',', tenantId) : string.Join(',', JoinedTenantIds, tenantId);
-    }
-    
-    public void RemoveTenant(string tenantId)
-    {
-        JoinedTenantIds = JoinedTenantIds.Replace($",{tenantId}", "")
-            .Replace(tenantId, "");
-    }
 
     public string GetFullName()
     {
