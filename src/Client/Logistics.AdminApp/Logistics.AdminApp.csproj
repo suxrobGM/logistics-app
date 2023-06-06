@@ -12,7 +12,6 @@
   <ItemGroup>
 	<PackageReference Include="Duende.BFF" Version="2.0.0" />
 	<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="7.0.5" NoWarn="NU1605" />
-	<PackageReference Include="MagicMvvm.Blazor" Version="2.0.3" />
 	<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.6" />
 	<PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
   </ItemGroup>
@@ -20,6 +19,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Logistics.Client\Logistics.Client.csproj" />
     <ProjectReference Include="..\Logistics.Blazor\Logistics.Blazor.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\ViewBaseComponent.razor" />
   </ItemGroup>
 
 </Project>

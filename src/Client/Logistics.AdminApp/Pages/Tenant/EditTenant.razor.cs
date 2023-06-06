@@ -1,30 +1,28 @@
-﻿namespace Logistics.AdminApp.ViewModels.Pages.Tenant;
+﻿using Microsoft.AspNetCore.Authorization;
 
-public class EditTenantViewModel : PageBaseViewModel
+namespace Logistics.AdminApp.Pages.Tenant;
+
+[Authorize(Policy = Permissions.Tenant.Edit)]
+public partial class EditTenant : PageBase
 {
-    private readonly IApiClient _apiClient;
-
-    public EditTenantViewModel(IApiClient apiClient)
-    {
-        _apiClient = apiClient;
-        Tenant = new Client.Models.Tenant();
-    }
+    #region Parameters
 
     [Parameter]
     public string? Id { get; set; }
 
-    public Client.Models.Tenant Tenant { get; set; }
-    public bool EditMode => !string.IsNullOrEmpty(Id);
+    #endregion
 
-    public override async Task OnInitializedAsync()
+
+    private Client.Models.Tenant Tenant { get; set; } = new();
+    private bool EditMode => !string.IsNullOrEmpty(Id);
+
+    protected override async Task OnInitializedAsync()
     {
-        await base.OnInitializedAsync();
-
         if (!EditMode)
             return;
 
         IsBusy = true;
-        var result = await _apiClient.GetTenantAsync(Id!);
+        var result = await ApiClient.GetTenantAsync(Id!);
 
         if (!result.Success)
             return;
@@ -33,7 +31,7 @@ public class EditTenantViewModel : PageBaseViewModel
         IsBusy = false;
     }
 
-    public override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender)
             return;
@@ -44,14 +42,14 @@ public class EditTenantViewModel : PageBaseViewModel
         }
     }
 
-    public async Task UpdateAsync()
+    private async Task UpdateAsync()
     {
         Error = string.Empty;
         IsBusy = true;
         
         if (EditMode)
         {
-            var result = await _apiClient.UpdateTenantAsync(new UpdateTenant()
+            var result = await ApiClient.UpdateTenantAsync(new UpdateTenant()
             {
                 Id = Tenant.Id,
                 DisplayName = Tenant.DisplayName
@@ -60,11 +58,12 @@ public class EditTenantViewModel : PageBaseViewModel
             if (!result.Success)
                 return;
             
+            
             Toast?.Show("Tenant has been saved successfully.", "Notification");
         }
         else
         {
-            var result = await _apiClient.CreateTenantAsync(new CreateTenant()
+            var result = await ApiClient.CreateTenantAsync(new CreateTenant()
             {
                 Name = Tenant.Name,
                 DisplayName = Tenant.DisplayName
@@ -93,7 +92,7 @@ public class EditTenantViewModel : PageBaseViewModel
             return;
 
         IsBusy = true;
-        var result = await _apiClient.GetTenantAsync(Id);
+        var result = await ApiClient.GetTenantAsync(Id);
 
         if (!result.Success)
             return;

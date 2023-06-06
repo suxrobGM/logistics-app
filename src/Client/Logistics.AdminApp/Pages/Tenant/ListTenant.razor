@@ -1,25 +1,24 @@
 ﻿@page "/list-tenant"
-@attribute [Authorize(Policy = Permissions.Tenant.View)]
-@inherits ViewBaseComponent<Logistics.AdminApp.ViewModels.Pages.Tenant.ListTenantViewModel>
+@inherits PageBase
 
 <h2>Tenants List</h2>
 <hr />
 
-<Spinner IsBusy="Model.IsBusy"
-         Label="@Model.BusyText"
+<Spinner IsBusy="IsBusy"
+         Label="@BusyText"
          LabelAlign="Spinner.Align.Left"
          Size="2">
 </Spinner>
 
-@if (!Model.IsBusy)
+@if (!IsBusy)
 {
     <div class="row">
         <div class="col-12 col-sm-10 col-md-5 col-xl-4">
-            <p>Total records: @Model.TotalRecords</p>
+            <p>Total records: @_totalRecords</p>
 
             <div class="input-group mb-3">
-                <input class="form-control" type="text" placeholder="Search..." @bind="Model.SearchInput">
-                <button class="input-group-text" id="search-btn" @onclick="Model.SearchAsync">
+                <InputText class="form-control" type="text" placeholder="Search..." @bind-Value="_searchInput" />
+                <button class="input-group-text" id="search-btn" @onclick="SearchAsync">
                     <i class="bi bi-search"></i>
                 </button>
             </div>
@@ -27,8 +26,8 @@
     </div>
     <div class="row">
         <div class="col-12">
-            <Grid DataSource="Model.Tenants" AllowSorting="true" AllowPaging="true"
-                PageSettings="new PageSettings { PagesCount = Model.TenantsList.PagesCount, OnPageChanged = e => Model.LoadPage(e) }">  
+            <Grid DataSource="_tenants" AllowSorting="true" AllowPaging="true"
+                PageSettings="new PageSettings { PagesCount = _tenantsPagedList.PagesCount, OnPageChanged = e => LoadPage(e) }">  
                 <GridColumns>
                     <GridColumn Field="Name" 
                             HeaderText="Name">

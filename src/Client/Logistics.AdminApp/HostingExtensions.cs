@@ -12,7 +12,6 @@ internal static class HostingExtensions
     {
         // AddSecretsJson(builder.Configuration);
         builder.Services.AddWebApiClient(builder.Configuration);
-        builder.Services.AddMvvmBlazor();
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddAuthentication(options =>
