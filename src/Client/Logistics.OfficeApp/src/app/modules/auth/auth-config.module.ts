@@ -1,12 +1,12 @@
-import { NgModule } from '@angular/core';
-import { AuthConfig } from '@configs';
-import { AuthModule } from 'angular-auth-oidc-client';
+import {NgModule} from '@angular/core';
+import {AuthConfig} from '@configs';
+import {AuthModule} from 'angular-auth-oidc-client';
 
 @NgModule({
   imports: [
     AuthModule.forRoot({
-      config: AuthConfig
-    })
+      config: AuthConfig,
+    }),
   ],
   exports: [AuthModule],
 })

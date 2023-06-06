@@ -1,4 +1,4 @@
-import { DailyGross } from './dailyGross';
+import {DailyGross} from './dailyGross';
 
 export interface DailyGrosses {
   dates: DailyGross[];

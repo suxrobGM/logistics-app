@@ -1,15 +1,15 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MessageService } from 'primeng/api';
-import { CreateEmployee, Role, User } from '@shared/models';
-import { ApiService } from '@shared/services';
-import { UserService } from '../../shared';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {MessageService} from 'primeng/api';
+import {CreateEmployee, Role, User} from '@shared/models';
+import {ApiService} from '@shared/services';
+import {UserService} from '../../shared';
 
 @Component({
   selector: 'app-add-employee',
   templateUrl: './add-employee.component.html',
   styleUrls: ['./add-employee.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class AddEmployeeComponent implements OnInit {
   public suggestedUsers: User[];
@@ -20,7 +20,7 @@ export class AddEmployeeComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private messageService: MessageService,
-    private userService: UserService) 
+    private userService: UserService)
   {
     this.suggestedUsers = [];
     this.roles = [];
@@ -37,7 +37,7 @@ export class AddEmployeeComponent implements OnInit {
   }
 
   public searchUser(event: any) {
-    this.userService.searchUser(event.query).subscribe(users => {
+    this.userService.searchUser(event.query).subscribe((users) => {
       if (users) {
         this.suggestedUsers = users;
       }
@@ -46,13 +46,13 @@ export class AddEmployeeComponent implements OnInit {
 
   public clearSelctedRole() {
     this.form.patchValue({
-      role: {name: '', displayName: ' '}
+      role: {name: '', displayName: ' '},
     });
   }
 
   public submit() {
     const user = this.form.value.user as User;
-    
+
     if (!user) {
       this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Select user'});
       return;
@@ -60,11 +60,11 @@ export class AddEmployeeComponent implements OnInit {
 
     const newEmployee: CreateEmployee = {
       id: user.id!,
-      role: this.form.value.role
+      role: this.form.value.role,
     };
 
     this.isBusy = true;
-    this.apiService.createEmployee(newEmployee).subscribe(result => {
+    this.apiService.createEmployee(newEmployee).subscribe((result) => {
       if (result.success) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'New employee has been added successfully'});
         this.form.reset();
@@ -77,7 +77,7 @@ export class AddEmployeeComponent implements OnInit {
   private fetchRoles() {
     this.isBusy = true;
 
-    this.userService.fetchRoles().subscribe(roles => {
+    this.userService.fetchRoles().subscribe((roles) => {
       if (roles) {
         this.roles = roles;
       }

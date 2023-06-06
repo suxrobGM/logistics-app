@@ -1,5 +1,5 @@
-import { DashboardModule } from './dashboard.module';
+import {DashboardModule} from './dashboard.module';
 
 export {
-  DashboardModule
-}
+  DashboardModule,
+};

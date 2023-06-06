@@ -1,5 +1,5 @@
-import { CoreModule } from './core.module';
+import {CoreModule} from './core.module';
 
 export {
-  CoreModule
-}
+  CoreModule,
+};

@@ -1,20 +1,20 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { SharedModule } from '@shared/index';
-import { PrimengModule } from './primeng.module';
-import { ReportRoutingModule } from './report-routing.module';
-import { OverviewComponent, TruckReportComponent } from './pages';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {SharedModule} from '@shared/index';
+import {PrimengModule} from './primeng.module';
+import {ReportRoutingModule} from './report-routing.module';
+import {OverviewComponent, TruckReportComponent} from './pages';
 
 @NgModule({
   declarations: [
     TruckReportComponent,
-    OverviewComponent
+    OverviewComponent,
   ],
   imports: [
     CommonModule,
     ReportRoutingModule,
     PrimengModule,
-    SharedModule
-  ]
+    SharedModule,
+  ],
 })
 export class ReportModule { }

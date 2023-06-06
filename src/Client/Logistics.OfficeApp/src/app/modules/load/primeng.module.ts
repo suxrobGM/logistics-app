@@ -1,12 +1,12 @@
-import { NgModule } from '@angular/core';
-import { CardModule } from 'primeng/card';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { AutoCompleteModule } from 'primeng/autocomplete';
-import { TableModule } from 'primeng/table';
-import { DropdownModule } from 'primeng/dropdown';
-import { InputTextModule } from 'primeng/inputtext';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
+import {NgModule} from '@angular/core';
+import {CardModule} from 'primeng/card';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import {AutoCompleteModule} from 'primeng/autocomplete';
+import {TableModule} from 'primeng/table';
+import {DropdownModule} from 'primeng/dropdown';
+import {InputTextModule} from 'primeng/inputtext';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {ConfirmationService} from 'primeng/api';
 
 @NgModule({
   exports: [
@@ -16,10 +16,10 @@ import { ConfirmationService } from 'primeng/api';
     ProgressSpinnerModule,
     InputTextModule,
     TableModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
   ],
   providers: [
-    ConfirmationService
-  ]
+    ConfirmationService,
+  ],
 })
 export class PrimengModule { }

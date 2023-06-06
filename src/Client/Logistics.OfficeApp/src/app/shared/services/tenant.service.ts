@@ -1,6 +1,6 @@
-import { HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { CookieService } from './cookie.service';
+import {HttpHeaders} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {CookieService} from './cookie.service';
 
 @Injectable()
 export class TenantService {
@@ -20,7 +20,7 @@ export class TenantService {
     } else if (tenantCookie) {
       tenantId = tenantCookie;
     }
-    
+
     if (tenantId === 'office') {
       tenantId = 'default';
     }
@@ -38,7 +38,7 @@ export class TenantService {
     }
 
     const currentTenant = this.cookieService.getCookie('X-Tenant');
-    
+
     if (tenantId === currentTenant) {
       return;
     }
@@ -46,7 +46,7 @@ export class TenantService {
     this.cookieService.setCookie({
       name: 'X-Tenant',
       value: tenantId,
-      session: true
+      session: true,
     });
   }
 
@@ -55,7 +55,7 @@ export class TenantService {
     const domains = host.split('.');
 
     if (domains.length <= 2)
-      return subDomain;
+    {return subDomain;}
 
     subDomain = domains[0];
     return subDomain;

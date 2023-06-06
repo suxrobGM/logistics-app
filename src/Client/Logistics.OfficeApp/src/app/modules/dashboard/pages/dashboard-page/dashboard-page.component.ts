@@ -1,16 +1,16 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { AppConfig } from '@configs';
-import { DailyGrosses, Load } from '@shared/models';
-import { DistanceUnitPipe } from '@shared/pipes';
-import { ApiService } from '@shared/services';
-import { DateUtils } from '@shared/utils';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {AppConfig} from '@configs';
+import {DailyGrosses, Load} from '@shared/models';
+import {DistanceUnitPipe} from '@shared/pipes';
+import {ApiService} from '@shared/services';
+import {DateUtils} from '@shared/utils';
 import * as mapboxgl from 'mapbox-gl';
 
 @Component({
   selector: 'app-dashboard-page',
   templateUrl: './dashboard-page.component.html',
   styleUrls: ['./dashboard-page.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class DashboardPageComponent implements OnInit {
   private map!: mapboxgl.Map;
@@ -27,7 +27,7 @@ export class DashboardPageComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private distanceUnit: DistanceUnitPipe) 
+    private distanceUnit: DistanceUnitPipe)
   {
     this.loads = [];
     this.loadingLoads = false;
@@ -43,18 +43,18 @@ export class DashboardPageComponent implements OnInit {
       datasets: [
         {
           label: 'Daily Gross',
-          data: []
-        }
-      ]
+          data: [],
+        },
+      ],
     },
 
     this.chartOptions = {
       plugins: {
         legend: {
-          display: false
-        }
-      }
-    }
+          display: false,
+        },
+      },
+    };
   }
 
   public ngOnInit() {
@@ -71,7 +71,7 @@ export class DashboardPageComponent implements OnInit {
       accessToken: AppConfig.mapboxToken,
       style: 'mapbox://styles/mapbox/streets-v11',
       center: [-74.5, 40],
-      zoom: 6
+      zoom: 6,
     });
 
     this.map.on('load', () => this.loadingMap = false);
@@ -80,7 +80,7 @@ export class DashboardPageComponent implements OnInit {
   private fetchLatestLoads() {
     this.loadingLoads = true;
 
-    this.apiService.getLoads('', '-dispatchedDate').subscribe(result => {
+    this.apiService.getLoads('', '-dispatchedDate').subscribe((result) => {
       if (result.success && result.items) {
         this.loads = result.items;
       }
@@ -93,10 +93,10 @@ export class DashboardPageComponent implements OnInit {
     this.loadingChart = true;
     const oneWeekAgo = DateUtils.daysAgo(7);
 
-    this.apiService.getDailyGrosses(oneWeekAgo).subscribe(result => {
+    this.apiService.getDailyGrosses(oneWeekAgo).subscribe((result) => {
       if (result.success && result.value) {
         const grosses = result.value;
-        
+
         this.weeklyGross = grosses.totalIncome;
         this.weeklyDistance = grosses.totalDistance;
         this.rpm = this.weeklyGross / this.toMi(this.weeklyDistance);
@@ -109,10 +109,10 @@ export class DashboardPageComponent implements OnInit {
   }
 
   private drawChart(grosses: DailyGrosses) {
-    const labels = new Array<string>();
-    const data = new Array<number>();
-    
-    grosses.dates.forEach(i => {
+    const labels: Array<string> = [];
+    const data: Array<number> = [];
+
+    grosses.dates.forEach((i) => {
       labels.push(DateUtils.toLocaleDate(i.date));
       data.push(i.income);
     });
@@ -126,10 +126,10 @@ export class DashboardPageComponent implements OnInit {
           fill: true,
           tension: 0.4,
           borderColor: '#405a83',
-          backgroundColor: '#88a5d3'
-        }
-      ]
-    }
+          backgroundColor: '#88a5d3',
+        },
+      ],
+    };
   }
 
   private calcTodayGross(grosses: DailyGrosses) {
@@ -137,8 +137,8 @@ export class DashboardPageComponent implements OnInit {
     let totalGross = 0;
 
     grosses.dates
-      .filter(i => DateUtils.getDate(i.date) === today.getDate())
-      .forEach(i => totalGross += i.income);
+        .filter((i) => DateUtils.getDate(i.date) === today.getDate())
+        .forEach((i) => totalGross += i.income);
 
     this.todayGross = totalGross;
   }

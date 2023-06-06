@@ -1,5 +1,5 @@
-import { DistanceUnitPipe } from './distance-unit.pipe';
+import {DistanceUnitPipe} from './distance-unit.pipe';
 
 export {
-  DistanceUnitPipe
-}
+  DistanceUnitPipe,
+};

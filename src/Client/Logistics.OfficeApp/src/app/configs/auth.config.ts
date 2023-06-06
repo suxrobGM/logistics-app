@@ -1,5 +1,5 @@
-import { OpenIdConfiguration } from 'angular-auth-oidc-client';
-import { AppConfig } from './app.config';
+import {OpenIdConfiguration} from 'angular-auth-oidc-client';
+import {AppConfig} from './app.config';
 
 export const AuthConfig: OpenIdConfiguration = {
   authority: AppConfig.idHost,
@@ -13,5 +13,5 @@ export const AuthConfig: OpenIdConfiguration = {
   responseType: 'code',
   silentRenew: true,
   useRefreshToken: true,
-  renewTimeBeforeTokenExpiresInSeconds: 30
-}
+  renewTimeBeforeTokenExpiresInSeconds: 30,
+};

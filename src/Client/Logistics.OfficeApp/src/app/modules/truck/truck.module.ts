@@ -1,22 +1,22 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
-import { SharedModule } from '@shared/index';
-import { TruckRoutingModule } from './truck-routing.module';
-import { PrimengModule } from './primeng.module';
-import { EditTruckComponent, ListTruckComponent } from './pages';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {ReactiveFormsModule} from '@angular/forms';
+import {SharedModule} from '@shared/index';
+import {TruckRoutingModule} from './truck-routing.module';
+import {PrimengModule} from './primeng.module';
+import {EditTruckComponent, ListTruckComponent} from './pages';
 
 @NgModule({
   declarations: [
     EditTruckComponent,
-    ListTruckComponent
+    ListTruckComponent,
   ],
   imports: [
     CommonModule,
     TruckRoutingModule,
     SharedModule,
     ReactiveFormsModule,
-    PrimengModule
-  ]
+    PrimengModule,
+  ],
 })
 export class TruckModule { }

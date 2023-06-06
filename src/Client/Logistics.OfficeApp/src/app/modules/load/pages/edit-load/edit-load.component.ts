@@ -1,22 +1,22 @@
-import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import {Component, ElementRef, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {ActivatedRoute} from '@angular/router';
 import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import * as MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
 import * as mapboxgl from 'mapbox-gl';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { AppConfig } from '@configs';
-import { Employee, Load, UserIdentity } from '@shared/models';
-import { ApiService } from '@shared/services';
-import { DistanceUnitPipe } from '@shared/pipes';
-import { EnumType, LoadStatus, LoadStatuses } from '@shared/types';
+import {ConfirmationService, MessageService} from 'primeng/api';
+import {OidcSecurityService} from 'angular-auth-oidc-client';
+import {AppConfig} from '@configs';
+import {Employee, Load, UserIdentity} from '@shared/models';
+import {ApiService} from '@shared/services';
+import {DistanceUnitPipe} from '@shared/pipes';
+import {EnumType, LoadStatus, LoadStatuses} from '@shared/types';
 
 @Component({
   selector: 'app-edit-load',
   templateUrl: './edit-load.component.html',
   styleUrls: ['./edit-load.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class EditLoadComponent implements OnInit {
   private accessToken = AppConfig.mapboxToken;
@@ -59,12 +59,12 @@ export class EditLoadComponent implements OnInit {
       dispatcherName: new FormControl('', Validators.required),
       dispatcherId: new FormControl('', Validators.required),
       driver: new FormControl('', Validators.required),
-      status: new FormControl(LoadStatus.Dispatched, Validators.required)
+      status: new FormControl(LoadStatus.Dispatched, Validators.required),
     });
   }
 
   public ngOnInit(): void {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       this.id = params['id'];
     });
 
@@ -83,7 +83,7 @@ export class EditLoadComponent implements OnInit {
   }
 
   public searchDriver(event: any) {
-    this.apiService.getDrivers(event.query).subscribe(result => {
+    this.apiService.getDrivers(event.query).subscribe((result) => {
       if (result.success && result.items) {
         this.suggestedDrivers = result.items;
       }
@@ -106,8 +106,8 @@ export class EditLoadComponent implements OnInit {
       distance: this.distanceMeters,
       assignedDispatcherId: this.form.value.dispatcherId,
       assignedDriverId: driver.id,
-      status: this.form.value.status
-    }
+      status: this.form.value.status,
+    };
 
     if (this.id) {
       load.id = this.id;
@@ -116,31 +116,31 @@ export class EditLoadComponent implements OnInit {
     this.isBusy = true;
     if (this.editMode) {
       this.apiService.updateLoad(load)
-        .subscribe(result => {
-          if (result.success) {
-            this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Load has been updated successfully'});
-          }
+          .subscribe((result) => {
+            if (result.success) {
+              this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Load has been updated successfully'});
+            }
 
-          this.isBusy = false;
-      });
+            this.isBusy = false;
+          });
     }
     else {
       this.apiService.createLoad(load)
-        .subscribe(result => {
-          if (result.success) {
-            this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A new load has been created successfully'});
-            this.resetForm();
-          }
+          .subscribe((result) => {
+            if (result.success) {
+              this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A new load has been created successfully'});
+              this.resetForm();
+            }
 
-          this.isBusy = false;
-      });
+            this.isBusy = false;
+          });
     }
   }
 
   public confirmToDelete() {
     this.confirmationService.confirm({
       message: 'Are you sure that you want to delete this load?',
-      accept: () => this.deleteLoad()
+      accept: () => this.deleteLoad(),
     });
   }
 
@@ -150,7 +150,7 @@ export class EditLoadComponent implements OnInit {
     }
 
     this.isBusy = true;
-    this.apiService.deleteLoad(this.id).subscribe(result => {
+    this.apiService.deleteLoad(this.id).subscribe((result) => {
       if (result.success) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A load has been deleted successfully'});
         this.resetForm();
@@ -166,7 +166,7 @@ export class EditLoadComponent implements OnInit {
       accessToken: this.accessToken,
       style: 'mapbox://styles/mapbox/streets-v11',
       center: [-74.5, 40],
-      zoom: 6
+      zoom: 6,
     });
 
     this.directions = new MapboxDirections({
@@ -177,8 +177,8 @@ export class EditLoadComponent implements OnInit {
       controls: {
         profileSwitcher: false,
         instructions: false,
-        inputs: false
-      }
+        inputs: false,
+      },
     });
 
     this.directions.on('route', (data: any) => {
@@ -193,7 +193,7 @@ export class EditLoadComponent implements OnInit {
   private initGeocoderInputs() {
     this.srcGeocoder = new MapboxGeocoder({
       accessToken: this.accessToken,
-      countries: 'us'
+      countries: 'us',
     });
 
     this.destGeocoder = new MapboxGeocoder({
@@ -221,13 +221,13 @@ export class EditLoadComponent implements OnInit {
     this.oidcService.getUserData().subscribe((user: UserIdentity) => {
       this.form.patchValue({
         dispatcherName: user.name,
-        dispatcherId: user.sub
+        dispatcherId: user.sub,
       });
     });
   }
 
   private fetchLoad(id: string) {
-    this.apiService.getLoad(id).subscribe(result => {
+    this.apiService.getLoad(id).subscribe((result) => {
       if (result.success && result.value) {
         const load = result.value;
 
@@ -243,10 +243,10 @@ export class EditLoadComponent implements OnInit {
           status: load.status,
           driver: {
             id: load.assignedDriverId,
-            userName: load.assignedDriverName
-          }
+            userName: load.assignedDriverName,
+          },
         });
-        
+
         this.srcGeocoder.query(load.sourceAddress!);
         this.destGeocoder.query(load.destinationAddress!);
         this.directions.setOrigin(load.sourceAddress!);
@@ -261,7 +261,7 @@ export class EditLoadComponent implements OnInit {
     this.form.patchValue({
       dispatchedDate: new Date().toLocaleDateString(),
       deliveryCost: 0,
-      distance: 0
+      distance: 0,
     });
 
     this.srcGeocoder.clear();

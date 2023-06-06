@@ -1,13 +1,13 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { PrimengModule } from './primeng.module';
-import { DistanceUnitPipe } from './pipes';
-import { 
-  ApiService, 
-  CookieService, 
-  StorageService, 
-  TenantService, 
-  UserDataService 
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {PrimengModule} from './primeng.module';
+import {DistanceUnitPipe} from './pipes';
+import {
+  ApiService,
+  CookieService,
+  StorageService,
+  TenantService,
+  UserDataService,
 } from './services';
 
 @NgModule({
@@ -16,18 +16,19 @@ import {
   ],
   imports: [
     CommonModule,
-    PrimengModule
+    PrimengModule,
   ],
   exports: [
     PrimengModule,
-    DistanceUnitPipe
+    DistanceUnitPipe,
   ],
   providers: [
     ApiService,
     CookieService,
     DistanceUnitPipe,
     StorageService,
-    TenantService
-  ]
+    TenantService,
+    UserDataService,
+  ],
 })
 export class SharedModule { }

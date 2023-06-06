@@ -1,14 +1,14 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { LazyLoadEvent } from 'primeng/api';
-import { Load } from '@shared/models';
-import { ApiService } from '@shared/services';
-import { LoadStatus, LoadStatuses } from '@shared/types';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {LazyLoadEvent} from 'primeng/api';
+import {Load} from '@shared/models';
+import {ApiService} from '@shared/services';
+import {LoadStatus, LoadStatuses} from '@shared/types';
 
 @Component({
   selector: 'app-list-load',
   templateUrl: './list-load.component.html',
   styleUrls: ['./list-load.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class ListLoadComponent implements OnInit {
   loads: Load[];
@@ -29,8 +29,8 @@ export class ListLoadComponent implements OnInit {
 
   search(event: any) {
     const query = event.target.value;
-    
-    this.apiService.getLoads(query, '', 1).subscribe(result => {
+
+    this.apiService.getLoads(query, '', 1).subscribe((result) => {
       if (result.success && result.items) {
         this.loads = result.items;
         this.totalRecords = result.itemsCount!;
@@ -42,8 +42,8 @@ export class ListLoadComponent implements OnInit {
     this.isBusy = true;
     const page = event.first! / event.rows! + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField, event.sortOrder);
-    
-    this.apiService.getLoads('', sortField, page, event.rows).subscribe(result => {
+
+    this.apiService.getLoads('', sortField, page, event.rows).subscribe((result) => {
       if (result.success && result.items) {
         this.loads = result.items;
         this.totalRecords = result.itemsCount!;
@@ -54,6 +54,6 @@ export class ListLoadComponent implements OnInit {
   }
 
   getLoadStatusName(status: LoadStatus): string {
-    return LoadStatuses[status - 1].displayName
+    return LoadStatuses[status - 1].displayName;
   }
 }

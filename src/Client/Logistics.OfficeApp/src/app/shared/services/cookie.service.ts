@@ -1,13 +1,12 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 
 @Injectable()
 export class CookieService {
-
   constructor() { }
 
   public getCookie(name: string): string {
-    let cookies: Array<string> = document.cookie.split(';');
-    let cookieName = `${name}=`;
+    const cookies: Array<string> = document.cookie.split(';');
+    const cookieName = `${name}=`;
     let cookie: string;
 
     for (let i: number = 0; i < cookies.length; i += 1) {
@@ -20,7 +19,7 @@ export class CookieService {
   }
 
   public deleteCookie(cookieName: string) {
-    this.setCookie({ name: cookieName, value: '', expireDays: -1 });
+    this.setCookie({name: cookieName, value: '', expireDays: -1});
   }
 
   /**
@@ -34,7 +33,7 @@ export class CookieService {
    * {service instance}.setCookie({name:'niceCar', value:'red', expireDays:10 }); <- For all this examples if path is not provided default will be root
    */
   public setCookie(cookie: Cookie) {
-    let date: Date = new Date();
+    const date: Date = new Date();
     date.setTime(date.getTime() + (cookie.expireDays ? cookie.expireDays : 1) * 24 * 60 * 60 * 1000);
     const path = cookie.path && cookie.path.length > 0 ? cookie.path : '/';
     const expires = cookie.session && cookie.session == true ? '' : `expires=${date.toUTCString()};`;

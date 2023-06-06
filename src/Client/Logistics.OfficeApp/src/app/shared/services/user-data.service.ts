@@ -1,9 +1,7 @@
-import { Injectable } from '@angular/core';
-import { UserData, UserIdentity } from '@shared/models';
+import {Injectable} from '@angular/core';
+import {UserData, UserIdentity} from '@shared/models';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class UserDataService {
   private _userData: UserData | null;
 

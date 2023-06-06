@@ -1,4 +1,4 @@
-import { UserIdentity } from "./userIdentity";
+import {UserIdentity} from './userIdentity';
 
 export class UserData {
   private readonly _id: string;
@@ -32,7 +32,7 @@ export class UserData {
     return this._roles;
   }
 
-  private tryToAddArray(arr: string[], data?: string | string[],) {
+  private tryToAddArray(arr: string[], data?: string | string[]) {
     if (!data) {
       return;
     }

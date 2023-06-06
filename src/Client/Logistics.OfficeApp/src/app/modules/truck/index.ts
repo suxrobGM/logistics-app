@@ -1,5 +1,5 @@
-import { TruckModule } from './truck.module';
+import {TruckModule} from './truck.module';
 
 export {
-  TruckModule
-}
+  TruckModule,
+};

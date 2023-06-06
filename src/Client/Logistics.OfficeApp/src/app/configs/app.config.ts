@@ -1,4 +1,4 @@
-import { environment } from 'src/environments/environment';
+import {environment} from 'src/environments/environment';
 
 export const AppConfig = {
   apiHost: environment.apiHost,
@@ -6,7 +6,7 @@ export const AppConfig = {
   mapboxToken: environment.mapboxToken,
   storage: {
     keys: {
-      user: 'User'
-    }
-  }
-}
+      user: 'User',
+    },
+  },
+};

@@ -1,5 +1,5 @@
-import { EmployeeModule } from './employee.module';
+import {EmployeeModule} from './employee.module';
 
 export {
-  EmployeeModule
-}
+  EmployeeModule,
+};

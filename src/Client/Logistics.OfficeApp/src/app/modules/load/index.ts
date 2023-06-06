@@ -1,5 +1,5 @@
-import { LoadModule } from './load.module';
+import {LoadModule} from './load.module';
 
 export {
-  LoadModule
-}
+  LoadModule,
+};

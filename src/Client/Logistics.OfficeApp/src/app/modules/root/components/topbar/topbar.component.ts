@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { AppConfig } from '@configs';
-import { UserData, UserIdentity } from '@shared/models';
-import { ApiService, UserDataService } from '@shared/services';
-import { getRoleName } from '@shared/types';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { of, switchMap } from 'rxjs';
+import {Component, OnInit} from '@angular/core';
+import {AppConfig} from '@configs';
+import {UserData, UserIdentity} from '@shared/models';
+import {ApiService, UserDataService} from '@shared/services';
+import {getRoleName} from '@shared/types';
+import {OidcSecurityService} from 'angular-auth-oidc-client';
+import {of, switchMap} from 'rxjs';
 
 @Component({
   selector: 'app-topbar',
   templateUrl: './topbar.component.html',
-  styleUrls: ['./topbar.component.scss']
+  styleUrls: ['./topbar.component.scss'],
 })
 export class TopbarComponent implements OnInit {
   isAuthenticated: boolean;
@@ -21,14 +21,14 @@ export class TopbarComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private oidcService: OidcSecurityService,
-    private userDataService: UserDataService) 
+    private userDataService: UserDataService)
   {
     this.isAuthenticated = false;
     this.isBusy = false;
     this.tenantName = '';
     this.user = null;
   }
-  
+
   ngOnInit(): void {
     this.oidcService.userData$.subscribe(({userData}) => {
       this.userDataService.setUser(userData);
@@ -37,16 +37,16 @@ export class TopbarComponent implements OnInit {
     });
 
     this.oidcService.isAuthenticated$.pipe(
-      switchMap(({isAuthenticated}) => {
-        this.isAuthenticated = isAuthenticated;
-        
-        if (isAuthenticated) {
-          return this.apiService.getTenant();
-        }
+        switchMap(({isAuthenticated}) => {
+          this.isAuthenticated = isAuthenticated;
 
-        return of({success: false, value: null});
-      })
-    ).subscribe(result => {
+          if (isAuthenticated) {
+            return this.apiService.getTenant();
+          }
+
+          return of({success: false, value: null});
+        }),
+    ).subscribe((result) => {
       if (result.success && result.value?.displayName) {
         this.tenantName = result.value?.displayName;
       }

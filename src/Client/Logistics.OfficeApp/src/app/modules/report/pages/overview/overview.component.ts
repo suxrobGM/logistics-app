@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { MonthlyGrosses, OverallStats } from '@shared/models';
-import { DistanceUnitPipe } from '@shared/pipes';
-import { ApiService } from '@shared/services';
-import { DateUtils } from '@shared/utils';
+import {Component, OnInit} from '@angular/core';
+import {MonthlyGrosses, OverallStats} from '@shared/models';
+import {DistanceUnitPipe} from '@shared/pipes';
+import {ApiService} from '@shared/services';
+import {DateUtils} from '@shared/utils';
 
 @Component({
   selector: 'app-overview',
   templateUrl: './overview.component.html',
-  styleUrls: ['./overview.component.scss']
+  styleUrls: ['./overview.component.scss'],
 })
 export class OverviewComponent implements OnInit {
   public loadingData: boolean;
@@ -19,7 +19,7 @@ export class OverviewComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private distanceUnit: DistanceUnitPipe
+    private distanceUnit: DistanceUnitPipe,
   )
   {
     this.loadingData = false;
@@ -31,18 +31,18 @@ export class OverviewComponent implements OnInit {
       datasets: [
         {
           label: 'Monthly Gross',
-          data: [] 
-        }
-      ]
-    }
+          data: [],
+        },
+      ],
+    };
 
     this.chartOptions = {
       plugins: {
         legend: {
-          display: false
-        }
-      }
-    }
+          display: false,
+        },
+      },
+    };
   }
 
   public ngOnInit(): void {
@@ -53,7 +53,7 @@ export class OverviewComponent implements OnInit {
   private fetchOverallStats() {
     this.loadingData = true;
 
-    this.apiService.getOverallStats().subscribe(result => {
+    this.apiService.getOverallStats().subscribe((result) => {
       if (result.success && result.value) {
         const stats = result.value;
         this.overallStats = result.value;
@@ -68,7 +68,7 @@ export class OverviewComponent implements OnInit {
     this.loadingChart = true;
     const thisYear = DateUtils.thisYear();
 
-    this.apiService.getMonthlyGrosses(thisYear).subscribe(result => {
+    this.apiService.getMonthlyGrosses(thisYear).subscribe((result) => {
       if (result.success && result.value) {
         const monthlyGrosses = result.value;
         this.drawChart(monthlyGrosses);
@@ -79,10 +79,10 @@ export class OverviewComponent implements OnInit {
   }
 
   private drawChart(grosses: MonthlyGrosses) {
-    const labels = new Array<string>();
-    const data = new Array<number>();
+    const labels: Array<string> = [];
+    const data: Array<number> = [];
 
-    grosses.months.forEach(i => {
+    grosses.months.forEach((i) => {
       labels.push(DateUtils.getMonthName(i.month));
       data.push(i.income);
     });
@@ -95,10 +95,10 @@ export class OverviewComponent implements OnInit {
           data: data,
           fill: true,
           tension: 0.4,
-          backgroundColor: '#88a5d3'
-        }
-      ]
-    }
+          backgroundColor: '#88a5d3',
+        },
+      ],
+    };
   }
 
   private toMi(value?: number): number {

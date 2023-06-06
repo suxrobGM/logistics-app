@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { NavDockComponent } from './nav-dock.component';
+import {NavDockComponent} from './nav-dock.component';
 
 describe('NavDockComponent', () => {
   let component: NavDockComponent;
@@ -8,9 +8,9 @@ describe('NavDockComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ NavDockComponent ]
+      declarations: [NavDockComponent],
     })
-    .compileComponents();
+        .compileComponents();
 
     fixture = TestBed.createComponent(NavDockComponent);
     component = fixture.componentInstance;

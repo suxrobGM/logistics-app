@@ -1,5 +1,5 @@
-import { RootModule } from './root.module';
+import {RootModule} from './root.module';
 
 export {
-  RootModule
-}
+  RootModule,
+};

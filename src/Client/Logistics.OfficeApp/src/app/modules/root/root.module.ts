@@ -1,18 +1,18 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { SharedModule } from '@shared/index';
-import { RootRoutingModule } from './root-routing.module';
-import { PrimengModule } from './primeng.module';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {SharedModule} from '@shared/index';
+import {RootRoutingModule} from './root-routing.module';
+import {PrimengModule} from './primeng.module';
 import {
   Error404Component,
   UnauthorizedComponent,
   ForbiddenComponent,
-  HomeComponent
+  HomeComponent,
 } from './pages';
-import { 
+import {
   NavDockComponent,
   TopbarComponent,
-  BreadcrumbComponent
+  BreadcrumbComponent,
 } from './components';
 
 @NgModule({
@@ -23,18 +23,18 @@ import {
     HomeComponent,
     NavDockComponent,
     TopbarComponent,
-    BreadcrumbComponent
+    BreadcrumbComponent,
   ],
   imports: [
     CommonModule,
     RootRoutingModule,
     SharedModule,
-    PrimengModule
+    PrimengModule,
   ],
   exports: [
     NavDockComponent,
     TopbarComponent,
-    BreadcrumbComponent
-  ]
+    BreadcrumbComponent,
+  ],
 })
 export class RootModule { }

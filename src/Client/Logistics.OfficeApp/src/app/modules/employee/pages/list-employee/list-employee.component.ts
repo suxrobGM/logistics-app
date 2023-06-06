@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { Employee } from '@shared/models';
-import { ApiService } from '@shared/services';
-import { LazyLoadEvent } from 'primeng/api';
+import {Component, OnInit} from '@angular/core';
+import {Employee} from '@shared/models';
+import {ApiService} from '@shared/services';
+import {LazyLoadEvent} from 'primeng/api';
 
 @Component({
   selector: 'app-list-employee',
   templateUrl: './list-employee.component.html',
-  styleUrls: ['./list-employee.component.scss']
+  styleUrls: ['./list-employee.component.scss'],
 })
 export class ListEmployeeComponent implements OnInit {
   employees: Employee[];
@@ -27,8 +27,8 @@ export class ListEmployeeComponent implements OnInit {
 
   search(event: any) {
     const query = event.target.value;
-    
-    this.apiService.getEmployees(query, '', 1).subscribe(result => {
+
+    this.apiService.getEmployees(query, '', 1).subscribe((result) => {
       if (result.success && result.items) {
         this.employees = result.items;
         this.totalRecords = result.itemsCount!;
@@ -40,9 +40,9 @@ export class ListEmployeeComponent implements OnInit {
     this.isBusy = true;
     const page = event.first! / event.rows! + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField, event.sortOrder);
-    
-    this.apiService.getEmployees('', sortField, page, event.rows).subscribe(result => {
-      if (result.success && result.items) {        
+
+    this.apiService.getEmployees('', sortField, page, event.rows).subscribe((result) => {
+      if (result.success && result.items) {
         this.employees = result.items;
         this.totalRecords = result.itemsCount!;
       }

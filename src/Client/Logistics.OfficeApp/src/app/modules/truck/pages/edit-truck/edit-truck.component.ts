@@ -1,16 +1,16 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { Employee, Truck } from '@shared/models';
-import { ApiService } from '@shared/services';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { of, switchMap } from 'rxjs';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {ActivatedRoute} from '@angular/router';
+import {Employee, Truck} from '@shared/models';
+import {ApiService} from '@shared/services';
+import {ConfirmationService, MessageService} from 'primeng/api';
+import {of, switchMap} from 'rxjs';
 
 @Component({
   selector: 'app-edit-truck',
   templateUrl: './edit-truck.component.html',
   styleUrls: ['./edit-truck.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class EditTruckComponent implements OnInit {
   public id?: string;
@@ -19,12 +19,12 @@ export class EditTruckComponent implements OnInit {
   public editMode: boolean;
   public form: FormGroup;
   public suggestedDrivers: Employee[];
-  
+
   constructor(
     private apiService: ApiService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private route: ActivatedRoute) 
+    private route: ActivatedRoute)
   {
     this.suggestedDrivers = [];
     this.headerText = 'Edit a truck';
@@ -37,10 +37,10 @@ export class EditTruckComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       this.id = params['id'];
     });
-    
+
     if (!this.id) {
       this.editMode = false;
       this.headerText = 'Add a new truck';
@@ -51,7 +51,7 @@ export class EditTruckComponent implements OnInit {
   }
 
   public searchDriver(event: any) {
-    this.apiService.getDrivers(event.query).subscribe(result => {
+    this.apiService.getDrivers(event.query).subscribe((result) => {
       if (result.success && result.items) {
         this.suggestedDrivers = result.items;
       }
@@ -65,16 +65,16 @@ export class EditTruckComponent implements OnInit {
       this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Select a driver'});
       return;
     }
-    
+
     const truck: Truck = {
       id: this.id,
       truckNumber: this.form.value.truckNumber,
-      driverId: driver.id!
-    }
+      driverId: driver.id!,
+    };
 
     this.isBusy = true;
     if (this.editMode) {
-      this.apiService.updateTruck(truck).subscribe(result => {
+      this.apiService.updateTruck(truck).subscribe((result) => {
         if (result.success) {
           this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Truck has been updated successfully'});
         }
@@ -83,7 +83,7 @@ export class EditTruckComponent implements OnInit {
       });
     }
     else {
-      this.apiService.createTruck(truck).subscribe(result => {
+      this.apiService.createTruck(truck).subscribe((result) => {
         if (result.success) {
           this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A new truck has been created successfully'});
           this.resetForm();
@@ -97,7 +97,7 @@ export class EditTruckComponent implements OnInit {
   public confirmToDelete() {
     this.confirmationService.confirm({
       message: 'Are you sure that you want to delete this truck?',
-      accept: () => this.deleteTruck()
+      accept: () => this.deleteTruck(),
     });
   }
 
@@ -107,7 +107,7 @@ export class EditTruckComponent implements OnInit {
     }
 
     this.isBusy = true;
-    this.apiService.deleteTruck(this.id).subscribe(result => {
+    this.apiService.deleteTruck(this.id).subscribe((result) => {
       if (result.success) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A truck has been deleted successfully'});
         this.resetForm();
@@ -125,17 +125,17 @@ export class EditTruckComponent implements OnInit {
 
   private fetchTruck(id: string) {
     this.apiService.getTruck(id).pipe(
-      switchMap(result => {
-        if (result.success && result.value) {
-          const truck = result.value;
-          this.form.patchValue({truckNumber: truck.truckNumber});
-          
-          return this.apiService.getEmployee(truck.driverId!);
-        }
+        switchMap((result) => {
+          if (result.success && result.value) {
+            const truck = result.value;
+            this.form.patchValue({truckNumber: truck.truckNumber});
 
-        return of({success: false, value: null});
-      })
-    ).subscribe(result => {
+            return this.apiService.getEmployee(truck.driverId!);
+          }
+
+          return of({success: false, value: null});
+        }),
+    ).subscribe((result) => {
       if (result.success && result.value) {
         const driver = result.value;
         this.form.patchValue({driver: driver});

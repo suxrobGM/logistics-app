@@ -1,14 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { DailyGrosses, MonthlyGrosses, Truck } from '@shared/models';
-import { DistanceUnitPipe } from '@shared/pipes';
-import { ApiService } from '@shared/services';
-import { DateUtils } from '@shared/utils';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {DailyGrosses, MonthlyGrosses, Truck} from '@shared/models';
+import {DistanceUnitPipe} from '@shared/pipes';
+import {ApiService} from '@shared/services';
+import {DateUtils} from '@shared/utils';
 
 @Component({
   selector: 'app-truck-report',
   templateUrl: './truck-report.component.html',
-  styleUrls: ['./truck-report.component.scss']
+  styleUrls: ['./truck-report.component.scss'],
 })
 export class TruckReportComponent implements OnInit {
   public id!: string;
@@ -23,11 +23,11 @@ export class TruckReportComponent implements OnInit {
   public barChartData: any;
   public lineChartData: any;
   public chartOptions: any;
-  
+
   constructor(
     private apiService: ApiService,
     private route: ActivatedRoute,
-    private distanceUnit: DistanceUnitPipe) 
+    private distanceUnit: DistanceUnitPipe)
   {
     this.loadingData = false;
     this.loadingLineChart = false;
@@ -38,34 +38,34 @@ export class TruckReportComponent implements OnInit {
     this.chartOptions = {
       plugins: {
         legend: {
-          display: false
-        }
-      }
-    }
+          display: false,
+        },
+      },
+    };
 
     this.barChartData = {
       labels: [],
       datasets: [
         {
           label: 'Monthly Gross',
-          data: []
-        }
-      ]
-    }
+          data: [],
+        },
+      ],
+    };
 
     this.lineChartData = {
       labels: [],
       datasets: [
         {
           label: 'Daily Gross',
-          data: []
-        }
-      ]
-    }
+          data: [],
+        },
+      ],
+    };
   }
 
   public ngOnInit(): void {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       this.id = params['id'];
     });
 
@@ -77,7 +77,7 @@ export class TruckReportComponent implements OnInit {
   private fetchTruck() {
     this.loadingData = true;
 
-    this.apiService.getTruck(this.id).subscribe(result => {
+    this.apiService.getTruck(this.id).subscribe((result) => {
       if (result.success && result.value) {
         this.truck = result.value;
       }
@@ -90,12 +90,12 @@ export class TruckReportComponent implements OnInit {
     this.loadingLineChart = true;
     const oneMonthAgo = DateUtils.daysAgo(30);
 
-    this.apiService.getDailyGrosses(oneMonthAgo, undefined, this.id).subscribe(result => {
+    this.apiService.getDailyGrosses(oneMonthAgo, undefined, this.id).subscribe((result) => {
       if (result.success && result.value) {
         const dailyGrosses = result.value;
         this.dailyGrosses = result.value;
         this.rpmCurrent = dailyGrosses.totalIncome / this.toMi(dailyGrosses.totalDistance);
-        
+
         this.drawLineChart(dailyGrosses);
       }
 
@@ -107,12 +107,12 @@ export class TruckReportComponent implements OnInit {
     this.loadingBarChart = true;
     const thisYear = DateUtils.thisYear();
 
-    this.apiService.getMonthlyGrosses(thisYear, undefined, this.id).subscribe(result => {
+    this.apiService.getMonthlyGrosses(thisYear, undefined, this.id).subscribe((result) => {
       if (result.success && result.value) {
         const monthlyGrosses = result.value;
         this.monthlyGrosses = result.value;
         this.rpmAllTime = monthlyGrosses.totalIncome / this.toMi(monthlyGrosses.totalDistance);
-        
+
         this.drawBarChart(monthlyGrosses);
       }
 
@@ -121,10 +121,10 @@ export class TruckReportComponent implements OnInit {
   }
 
   private drawLineChart(grosses: DailyGrosses) {
-    const labels = new Array<string>();
-    const data = new Array<number>();
-    
-    grosses.dates.forEach(i => {
+    const labels: Array<string> = [];
+    const data: Array<number> = [];
+
+    grosses.dates.forEach((i) => {
       labels.push(DateUtils.toLocaleDate(i.date));
       data.push(i.income);
     });
@@ -138,17 +138,17 @@ export class TruckReportComponent implements OnInit {
           fill: true,
           tension: 0.4,
           borderColor: '#405a83',
-          backgroundColor: '#88a5d3'
-        }
-      ]
-    }
+          backgroundColor: '#88a5d3',
+        },
+      ],
+    };
   }
 
   private drawBarChart(grosses: MonthlyGrosses) {
-    const labels = new Array<string>();
-    const data = new Array<number>();
-    
-    grosses.months.forEach(i => {
+    const labels: Array<string> = [];
+    const data: Array<number> = [];
+
+    grosses.months.forEach((i) => {
       labels.push(DateUtils.getMonthName(i.month));
       data.push(i.income);
     });
@@ -161,10 +161,10 @@ export class TruckReportComponent implements OnInit {
           data: data,
           fill: true,
           tension: 0.4,
-          backgroundColor: '#EC407A'
-        }
-      ]
-    }
+          backgroundColor: '#EC407A',
+        },
+      ],
+    };
   }
 
   private toMi(value?: number): number {

@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { Route, Router } from '@angular/router';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
+import {Component, OnInit} from '@angular/core';
+import {Route, Router} from '@angular/router';
+import {OidcSecurityService} from 'angular-auth-oidc-client';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
   isAuthenticated: boolean;
@@ -28,7 +28,7 @@ export class AppComponent implements OnInit {
       this.isAuthenticated = isAuthenticated;
     });
 
-    //this.printpath('', this.router.config);
+    // this.printpath('', this.router.config);
   }
 
   printpath(parent: String, config: Route[]) {

@@ -11,7 +11,7 @@ export function getRoleName(role?: string): string | undefined {
   switch (role) {
     case UserRole.AppSuperAdmin:
       return 'Super Admin';
-  
+
     case UserRole.AppAdmin:
       return 'Admin';
 

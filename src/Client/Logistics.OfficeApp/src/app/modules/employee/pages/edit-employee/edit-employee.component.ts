@@ -1,15 +1,15 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { ConfirmationService } from 'primeng/api';
-import { Employee, Role } from '@shared/models';
-import { ApiService, UserDataService } from '@shared/services';
-import { UserRole } from '@shared/types';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {ConfirmationService} from 'primeng/api';
+import {Employee, Role} from '@shared/models';
+import {ApiService, UserDataService} from '@shared/services';
+import {UserRole} from '@shared/types';
 
 @Component({
   selector: 'app-edit-employee',
   templateUrl: './edit-employee.component.html',
   styleUrls: ['./edit-employee.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class EditEmployeeComponent implements OnInit {
   public id!: string;
@@ -17,12 +17,12 @@ export class EditEmployeeComponent implements OnInit {
   public showUpdateDialog: boolean;
   public canChangeRole: boolean;
   public employee?: Employee;
-  
+
   constructor(
     private apiService: ApiService,
     private confirmationService: ConfirmationService,
     private route: ActivatedRoute,
-    private userDataService: UserDataService) 
+    private userDataService: UserDataService)
   {
     this.isBusy = false;
     this.showUpdateDialog = false;
@@ -30,7 +30,7 @@ export class EditEmployeeComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       this.id = params['id'];
     });
 
@@ -40,12 +40,12 @@ export class EditEmployeeComponent implements OnInit {
   public confirmToDelete() {
     this.confirmationService.confirm({
       message: 'Are you sure that you want to delete this employee from the company?',
-      //accept: () => this.deleteLoad()
+      // accept: () => this.deleteLoad()
     });
   }
 
   public getEmployeeRoleNames(): string {
-    const roleNames = this.employee?.roles?.map(i => i.displayName).join(',');
+    const roleNames = this.employee?.roles?.map((i) => i.displayName).join(',');
     return roleNames ? roleNames : '';
   }
 
@@ -55,11 +55,11 @@ export class EditEmployeeComponent implements OnInit {
 
   private fetchEmployee() {
     this.isBusy = true;
-    
-    this.apiService.getEmployee(this.id!).subscribe(result => {
+
+    this.apiService.getEmployee(this.id!).subscribe((result) => {
       if (result.success && result.value) {
         this.employee = result.value;
-        const employeeRoles = this.employee.roles?.map(i => i.name);
+        const employeeRoles = this.employee.roles?.map((i) => i.name);
         const user = this.userDataService.getUser();
 
         this.evaluateCanChangeRole(user?.roles, employeeRoles);

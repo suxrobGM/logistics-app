@@ -1,4 +1,4 @@
-import { MonthlyGross } from './monthlyGross';
+import {MonthlyGross} from './monthlyGross';
 
 export interface MonthlyGrosses {
   months: MonthlyGross[];

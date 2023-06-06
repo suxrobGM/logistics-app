@@ -1,38 +1,38 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from '../auth';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
+import {AuthGuard} from '../auth';
 import {
   Error404Component,
   UnauthorizedComponent,
   ForbiddenComponent,
-  HomeComponent
+  HomeComponent,
 } from './pages';
 
 const rootRoutes: Routes = [
   {
-    path: '', 
-    component: HomeComponent
+    path: '',
+    component: HomeComponent,
   },
   {
     path: 'forbidden',
     component: ForbiddenComponent,
     canActivate: [AuthGuard],
     data: {
-      roles: ['app.admin', 'tenant.owner', 'tenant.manager', 'tenant.dispatcher']
-    }
+      roles: ['app.admin', 'tenant.owner', 'tenant.manager', 'tenant.dispatcher'],
+    },
   },
   {
     path: 'unauthorized',
-    component: UnauthorizedComponent
+    component: UnauthorizedComponent,
   },
   {
     path: '404',
-    component: Error404Component
+    component: Error404Component,
   },
   {
     path: '**',
-    redirectTo: '404'
-  }
+    redirectTo: '404',
+  },
 ];
 
 @NgModule({
