@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { EventTypes, OidcSecurityService, PublicEventsService } from 'angular-auth-oidc-client';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -14,6 +15,7 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private oidcService: OidcSecurityService,
+    private eventService: PublicEventsService,
     private router: Router) 
   {
     this.isAuthenticated = false;
@@ -21,13 +23,20 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.oidcService.isLoading$.subscribe((isLoading) => {
-      this.isLoading = isLoading;
+    // this.oidcService.isLoading$.subscribe((isLoading) => {
+    //   this.isLoading = isLoading;
 
-      if (this.isAuthenticated && !this.isLoading) {
-        this.router.navigateByUrl('/dashboard');
-      }
-    });
+    //   if (this.isAuthenticated && !this.isLoading) {
+    //     this.router.navigateByUrl('/dashboard');
+    //   }
+    // });
+
+    this.eventService.registerForEvents()
+      .pipe(filter((notifaction) => notifaction.type === EventTypes.CheckingAuth))
+      .subscribe((value) => {
+        console.log('Loading auth', value);
+        
+      })
 
     this.oidcService.isAuthenticated$.subscribe(({isAuthenticated}) => {
       this.isAuthenticated = isAuthenticated;
