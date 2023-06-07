@@ -9,7 +9,8 @@ public partial class MainLayout : LayoutComponentBase
     [Inject] 
     private IApiClient ApiClient { get; set; } = default!;
 
-    [Inject] private IHttpContextAccessor HttpContextAccessor { get; set; } = default!;
+    [Inject] 
+    private IHttpContextAccessor HttpContextAccessor { get; set; } = default!;
 
     #endregion
     

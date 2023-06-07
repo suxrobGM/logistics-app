@@ -20,7 +20,6 @@ internal sealed class CreateTenantHandler : RequestHandlerBase<CreateTenantComma
             Name = req.Name?.Trim().ToLower(),
             DisplayName = req.DisplayName
         };
-        tenant.Name = tenant.Name?.Trim().ToLower();
         tenant.ConnectionString = _tenantDatabase.GenerateConnectionString($"{tenant.Name}_logistics"); 
 
         if (string.IsNullOrEmpty(tenant.DisplayName))

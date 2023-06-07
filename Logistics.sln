@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{45FFBEC0-F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{61325513-BB52-47A8-AFDD-755454AD71F8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7B06ED10-5DDF-4EFB-9CD7-37B9415EDD3D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{7B06ED10-5DDF-4EFB-9CD7-37B9415EDD3D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Domain", "src\Core\Logistics.Domain\Logistics.Domain.csproj", "{E92A6E55-158F-48CE-9774-6E81DB77F81C}"
 EndProject
@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Domain.Shared", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Blazor", "src\Client\Logistics.Blazor\Logistics.Blazor.csproj", "{6FA09C6F-13C7-483F-8CEA-0FA1987A38C1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Blazor.Tests", "tests\Logistics.Blazor.Tests\Logistics.Blazor.Tests.csproj", "{C4ADD85D-28AD-4EF0-B93D-548516CE3A20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Blazor.Tests", "test\Logistics.Blazor.Tests\Logistics.Blazor.Tests.csproj", "{C4ADD85D-28AD-4EF0-B93D-548516CE3A20}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Admin", "src\Core\Logistics.Application.Admin\Logistics.Application.Admin.csproj", "{CEE34293-FC12-4E35-999C-EEDE063F8B25}"
 EndProject
@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.IdentityServer", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.DbMigrator", "src\Core\Logistics.DbMigrator\Logistics.DbMigrator.csproj", "{F40A53FD-29ED-4D8A-A2CE-E7D08FFFA54F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Admin.Tests", "tests\Logistics.Application.Admin.Tests\Logistics.Application.Admin.Tests.csproj", "{566AE1D3-A3AE-40CC-A781-95B342E6CD88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Admin.Tests", "test\Logistics.Application.Admin.Tests\Logistics.Application.Admin.Tests.csproj", "{566AE1D3-A3AE-40CC-A781-95B342E6CD88}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.DriverApp", "src\Client\Logistics.DriverApp\Logistics.DriverApp.csproj", "{920DFC2D-23C4-4662-BE89-1784DB7DC72F}"
 EndProject
