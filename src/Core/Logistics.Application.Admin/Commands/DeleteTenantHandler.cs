@@ -29,16 +29,4 @@ internal sealed class DeleteTenantHandler : RequestHandlerBase<DeleteTenantComma
         await _repository.UnitOfWork.CommitAsync();
         return ResponseResult.CreateSuccess();
     }
-
-    protected override bool Validate(DeleteTenantCommand request, out string errorDescription)
-    {
-        errorDescription = string.Empty;
-
-        if (string.IsNullOrEmpty(request.Id))
-        {
-            errorDescription = "Id is an empty string";
-        }
-
-        return string.IsNullOrEmpty(errorDescription);
-    }
 }

@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Admin.Commands;
 
-public class CreateTenantValidator : AbstractValidator<CreateTenantCommand>
+internal class CreateTenantValidator : AbstractValidator<CreateTenantCommand>
 {
     public CreateTenantValidator()
     {

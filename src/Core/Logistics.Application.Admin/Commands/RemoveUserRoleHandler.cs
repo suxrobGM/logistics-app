@@ -32,21 +32,4 @@ public class RemoveUserRoleHandler : RequestHandlerBase<RemoveUserRoleCommand, R
         await _userManager.RemoveFromRoleAsync(user, appRole.Name!);
         return ResponseResult.CreateSuccess();
     }
-
-    protected override bool Validate(
-        RemoveUserRoleCommand request, out string errorDescription)
-    {
-        errorDescription = string.Empty;
-
-        if (string.IsNullOrEmpty(request.UserId))
-        {
-            errorDescription = "UserId is an empty string";
-        }
-        else if (string.IsNullOrEmpty(request.Role))
-        {
-            errorDescription = "Role name is an empty string";
-        }
-
-        return string.IsNullOrEmpty(errorDescription);
-    }
 }

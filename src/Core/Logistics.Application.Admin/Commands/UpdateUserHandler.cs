@@ -30,16 +30,4 @@ internal sealed class UpdateUserHandler : RequestHandlerBase<UpdateUserCommand, 
         await _mainRepository.UnitOfWork.CommitAsync();
         return ResponseResult.CreateSuccess();
     }
-
-    protected override bool Validate(UpdateUserCommand request, out string errorDescription)
-    {
-        errorDescription = string.Empty;
-
-        if (string.IsNullOrEmpty(request.Id))
-        {
-            errorDescription = "User ID is an empty string";
-        }
-
-        return string.IsNullOrEmpty(errorDescription);
-    }
 }

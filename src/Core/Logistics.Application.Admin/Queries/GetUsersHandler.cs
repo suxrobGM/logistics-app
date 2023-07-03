@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Admin.Queries;
 
-internal sealed class GetUsersHandler : RequestHandlerBase<GetUsersRequest, PagedResponseResult<UserDto>>
+internal sealed class GetUsersHandler : RequestHandlerBase<GetUsersQuery, PagedResponseResult<UserDto>>
 {
     private readonly IMainRepository _repository;
 
@@ -11,15 +11,15 @@ internal sealed class GetUsersHandler : RequestHandlerBase<GetUsersRequest, Page
     }
 
     protected override Task<PagedResponseResult<UserDto>> HandleValidated(
-        GetUsersRequest request, 
+        GetUsersQuery query, 
         CancellationToken cancellationToken)
     {
         var totalItems = _repository.Query<User>().Count();
 
         var users = _repository
-            .ApplySpecification(new SearchUsers(request.Search))
-            .Skip((request.Page - 1) * request.PageSize)
-            .Take(request.PageSize)
+            .ApplySpecification(new SearchUsers(query.Search))
+            .Skip((query.Page - 1) * query.PageSize)
+            .Take(query.PageSize)
             .Select(i => new UserDto
             {
                 Id = i.Id,
@@ -31,23 +31,7 @@ internal sealed class GetUsersHandler : RequestHandlerBase<GetUsersRequest, Page
             })
             .ToArray();
 
-        var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
+        var totalPages = (int)Math.Ceiling(totalItems / (double)query.PageSize);
         return Task.FromResult(new PagedResponseResult<UserDto>(users, totalItems, totalPages));
-    }
-
-    protected override bool Validate(GetUsersRequest request, out string errorDescription)
-    {
-        errorDescription = string.Empty;
-
-        if (request.Page <= 0)
-        {
-            errorDescription = "Page number should be non-negative";
-        }
-        else if (request.PageSize <= 1)
-        {
-            errorDescription = "Page size should be greater than one";
-        }
-
-        return string.IsNullOrEmpty(errorDescription);
     }
 }

@@ -15,9 +15,9 @@ public class AppRoleController : ControllerBase
     [ProducesResponseType(typeof(PagedResponseResult<AppRoleDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.AppRole.View)]
-    public async Task<IActionResult> GetList([FromQuery] GetAppRolesRequest request)
+    public async Task<IActionResult> GetList([FromQuery] GetAppRolesQuery query)
     {
-        var result = await _mediator.Send(request);
+        var result = await _mediator.Send(query);
 
         if (result.Success)
             return Ok(result);

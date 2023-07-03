@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Admin.Queries;
 
-internal sealed class GetAppRolesHandler : RequestHandlerBase<GetAppRolesRequest, PagedResponseResult<AppRoleDto>>
+internal sealed class GetAppRolesHandler : RequestHandlerBase<GetAppRolesQuery, PagedResponseResult<AppRoleDto>>
 {
     private readonly IMainRepository _repository;
 
@@ -10,14 +10,14 @@ internal sealed class GetAppRolesHandler : RequestHandlerBase<GetAppRolesRequest
     }
 
     protected override Task<PagedResponseResult<AppRoleDto>> HandleValidated(
-        GetAppRolesRequest request, CancellationToken cancellationToken)
+        GetAppRolesQuery query, CancellationToken cancellationToken)
     {
         var totalItems = _repository.Query<AppRole>().Count();
 
         var rolesDto = _repository
-            .ApplySpecification(new SearchAppRoles(request.Search))
-            .Skip((request.Page - 1) * request.PageSize)
-            .Take(request.PageSize)
+            .ApplySpecification(new SearchAppRoles(query.Search))
+            .Skip((query.Page - 1) * query.PageSize)
+            .Take(query.PageSize)
             .Select(i => new AppRoleDto()
             {
                 Name = i.Name,
@@ -25,22 +25,7 @@ internal sealed class GetAppRolesHandler : RequestHandlerBase<GetAppRolesRequest
             })
             .ToArray();
         
-        var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
+        var totalPages = (int)Math.Ceiling(totalItems / (double)query.PageSize);
         return Task.FromResult(new PagedResponseResult<AppRoleDto>(rolesDto, totalItems, totalPages));
-    }
-
-    protected override bool Validate(GetAppRolesRequest request, out string errorDescription)
-    {
-        errorDescription = string.Empty;
-
-        if (request.Page <= 0)
-        {
-            errorDescription = "Page number should be non-negative";
-        }
-        else if (request.PageSize <= 1)
-        {
-            errorDescription = "Page size should be greater than one";
-        }
-        return true;
     }
 }

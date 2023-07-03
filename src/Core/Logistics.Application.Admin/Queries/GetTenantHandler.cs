@@ -26,16 +26,4 @@ internal sealed class GetTenantHandler : RequestHandlerBase<GetTenantQuery, Resp
 
         return ResponseResult<TenantDto>.CreateSuccess(tenant);
     }
-
-    protected override bool Validate(GetTenantQuery request, out string errorDescription)
-    {
-        errorDescription = string.Empty;
-
-        if (string.IsNullOrEmpty(request.Id) && string.IsNullOrEmpty(request.Name))
-        {
-            errorDescription = "Both tenant's ID and tenant's name are an empty string, specify at least either ID or tenant's name";
-        }
-
-        return string.IsNullOrEmpty(errorDescription);
-    }
 }

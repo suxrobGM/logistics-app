@@ -25,29 +25,4 @@ internal sealed class UpdateTenantHandler : RequestHandlerBase<UpdateTenantComma
         await _repository.UnitOfWork.CommitAsync();
         return ResponseResult.CreateSuccess();
     }
-
-    protected override bool Validate(UpdateTenantCommand request, out string errorDescription)
-    {
-        errorDescription = string.Empty;
-        var regex = new Regex(@"^[a-z]+\d*", RegexOptions.IgnoreCase);
-
-        if (string.IsNullOrEmpty(request.Id))
-        {
-            errorDescription = "Id is an empty string";
-        }
-        else if (string.IsNullOrEmpty(request.Name))
-        {
-            errorDescription = "Tenant name is not specified";
-        }
-        else if (request.Name.Length < 4)
-        {
-            errorDescription = "The length of the tenant name must have at least 4 characters";
-        }
-        else if (!regex.IsMatch(request.Name))
-        {
-            errorDescription = "The format of the tenant name must start with English letters and may end with numbers";
-        }
-
-        return string.IsNullOrEmpty(errorDescription);
-    }
 }

@@ -34,16 +34,4 @@ internal sealed class GetUserByIdHandler : RequestHandlerBase<GetUserByIdQuery, 
 
         return ResponseResult<UserDto>.CreateSuccess(user);
     }
-
-    protected override bool Validate(GetUserByIdQuery request, out string errorDescription)
-    {
-        errorDescription = string.Empty;
-
-        if (string.IsNullOrEmpty(request.Id))
-        {
-            errorDescription = "Id is an empty string";
-        }
-
-        return string.IsNullOrEmpty(errorDescription);
-    }
 }
