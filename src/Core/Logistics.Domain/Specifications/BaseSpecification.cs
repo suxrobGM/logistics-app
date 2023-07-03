@@ -1,7 +1,7 @@
 ﻿namespace Logistics.Domain.Specifications;
 
 public abstract class BaseSpecification<TEntity> : 
-    ISpecification<TEntity> where TEntity : class, IAggregateRoot
+    ISpecification<TEntity> where TEntity : class, IEntity<string>
 {
     protected BaseSpecification()
     {

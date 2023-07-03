@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Domain.Entities;
 
-public class Tenant : Entity
+public class Tenant : AuditableEntity
 {
     [StringLength(TenantConsts.NameLength)]
     public string? Name { get; set; }

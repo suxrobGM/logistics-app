@@ -16,7 +16,11 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    JoinedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    JoinedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -30,7 +34,11 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     DisplayName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
-                    NormalizedName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true)
+                    NormalizedName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -43,7 +51,11 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     TruckNumber = table.Column<int>(type: "int", nullable: false),
-                    DriverId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    DriverId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -86,7 +98,11 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     ClaimValue = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -116,7 +132,11 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     Status = table.Column<int>(type: "int", nullable: false),
                     AssignedDispatcherId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     AssignedDriverId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    AssignedTruckId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    AssignedTruckId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

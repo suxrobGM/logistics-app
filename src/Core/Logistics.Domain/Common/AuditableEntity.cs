@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Domain.Common;
 
-public abstract class AuditableEntity : Entity
+public abstract class AuditableEntity : Entity, IAuditableEntity
 {
     public DateTime Created { get; set; } = DateTime.UtcNow;
     public string? CreatedBy { get; set; }

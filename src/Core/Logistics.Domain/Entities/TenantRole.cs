@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Domain.Entities;
 
-public class TenantRole : Entity, ITenantEntity
+public class TenantRole : AuditableEntity, ITenantEntity
 {
     public TenantRole(string name)
     {

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Logistics.Infrastructure.EF.Builder;
+using Logistics.Infrastructure.EF.Interceptors;
 using Logistics.Infrastructure.EF.Persistence;
 using Logistics.Infrastructure.EF.Services;
 
@@ -76,6 +77,7 @@ public static class Registrar
         AddMainDatabase(services, configuration, mainDbConnectionSection);
         AddTenantDatabase(services, configuration, defaultTenantDbConnectionSection, tenantsConfigSection);
         
+        services.AddScoped<AuditableEntitySaveChangesInterceptor>();
         services.AddScoped<ITenantService, TenantService>();
         services.AddScoped<IMainRepository, MainRepository>();
         services.AddScoped<ITenantRepository, TenantRepository>();

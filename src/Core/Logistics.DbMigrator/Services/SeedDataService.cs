@@ -109,8 +109,8 @@ internal class SeedDataService : BackgroundService
             superAdmin = new User
             {
                 UserName = adminData.Email,
-                FirstName = adminData.FirstName,
-                LastName = adminData.LastName,
+                FirstName = adminData.FirstName ?? "Admin",
+                LastName = adminData.LastName ?? "Admin",
                 Email = adminData.Email,
                 EmailConfirmed = true
             };

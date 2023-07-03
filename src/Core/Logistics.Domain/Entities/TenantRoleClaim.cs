@@ -2,7 +2,7 @@
 
 namespace Logistics.Domain.Entities;
 
-public class TenantRoleClaim : Entity, ITenantEntity
+public class TenantRoleClaim : AuditableEntity, ITenantEntity
 {
     public TenantRoleClaim(string claimType, string claimValue)
     {

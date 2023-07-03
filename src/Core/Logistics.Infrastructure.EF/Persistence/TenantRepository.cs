@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using Logistics.Infrastructure.EF.Data;
 
 namespace Logistics.Infrastructure.EF.Persistence;
 

@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Domain.Entities;
 
-public class Employee : Entity, ITenantEntity
+public class Employee : AuditableEntity, ITenantEntity
 {
     /// <summary>
     /// When employee joined to this tenant

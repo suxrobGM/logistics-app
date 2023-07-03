@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Domain.Entities;
 
-public class Load : Entity, ITenantEntity
+public class Load : AuditableEntity, ITenantEntity
 {
     private LoadStatus _status = LoadStatus.Dispatched;
     

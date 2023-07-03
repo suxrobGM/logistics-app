@@ -1,5 +1,5 @@
 ﻿namespace Logistics.Domain.Common;
 
-public interface ITenantEntity
+public interface ITenantEntity : IEntity<string>
 {
 }

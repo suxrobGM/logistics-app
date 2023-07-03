@@ -7,7 +7,7 @@ public static class RepositoryExtensions
     public static IQueryable<TEntity> ApplySpecification<TEntity>(
         this IRepository repository,
         ISpecification<TEntity> specification)
-        where TEntity : class, IAggregateRoot
+        where TEntity : class, IEntity<string>
     {
         var query = repository.Query(specification.Criteria);
         

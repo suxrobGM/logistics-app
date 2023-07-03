@@ -2,7 +2,7 @@
 
 namespace Logistics.Domain.Entities;
 
-public class AppRole : IdentityRole<string>, IAggregateRoot
+public class AppRole : IdentityRole<string>, IEntity<string>, IAuditableEntity
 {
     public AppRole(string name): base(name)
     {
@@ -16,4 +16,9 @@ public class AppRole : IdentityRole<string>, IAggregateRoot
 
     [StringLength(RoleConsts.DisplayNameLength)]
     public string? DisplayName { get; set; }
+
+    public DateTime Created { get; set; } = DateTime.UtcNow;
+    public string? CreatedBy { get; set; }
+    public DateTime? LastModified { get; set; }
+    public string? LastModifiedBy { get; set; }
 }

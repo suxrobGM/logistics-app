@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Domain.Entities;
 
-public class Truck : Entity, ITenantEntity
+public class Truck : AuditableEntity, ITenantEntity
 {
     public int TruckNumber { get; set; } = 100;
     public string? DriverId { get; set; }

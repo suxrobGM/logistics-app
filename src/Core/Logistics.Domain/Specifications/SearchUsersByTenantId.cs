@@ -41,7 +41,7 @@ public class SearchUsersByTenantId : BaseSpecification<User>
             "lastname" => i => i.LastName!,
             "email" => i => i.Email!,
             "phonenumber" => i => i.PhoneNumber!,
-            _ => i => i.RegistrationDate
+            _ => i => i.Created
         };
     }
 }

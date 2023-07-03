@@ -7,7 +7,7 @@ internal class GenericRepository<TContext> : IRepository
 {
     protected readonly TContext Context;
 
-    public GenericRepository(
+    protected GenericRepository(
         TContext context,
         IUnitOfWork unitOfWork)
     {
@@ -18,33 +18,33 @@ internal class GenericRepository<TContext> : IRepository
     public IUnitOfWork UnitOfWork { get; }
     
     public Task<int> CountAsync<TEntity>(Expression<Func<TEntity, bool>>? predicate = default)
-        where TEntity: class, IAggregateRoot
+        where TEntity: class, IEntity<string>
     {
         return predicate == default ? Context.Set<TEntity>().CountAsync()
             : Context.Set<TEntity>().CountAsync(predicate);
     }
 
     public Task<double> SumAsync<TEntity>(Expression<Func<TEntity, double>> selector)
-        where TEntity : class, IAggregateRoot
+        where TEntity : class, IEntity<string>
     {
         return Context.Set<TEntity>().SumAsync(selector);
     }
 
     public async Task<TEntity?> GetAsync<TEntity>(object? id)
-        where TEntity : class, IAggregateRoot
+        where TEntity : class, IEntity<string>
     {
         var entity = await Context.Set<TEntity>().FindAsync(id);
         return entity;
     }
 
     public Task<TEntity?> GetAsync<TEntity>(Expression<Func<TEntity, bool>> predicate)
-        where TEntity : class, IAggregateRoot
+        where TEntity : class, IEntity<string>
     {
         return Context.Set<TEntity>().FirstOrDefaultAsync(predicate);
     }
 
     public Task<List<TEntity>> GetListAsync<TEntity>(Expression<Func<TEntity, bool>>? predicate = default)
-        where TEntity : class, IAggregateRoot
+        where TEntity : class, IEntity<string>
     {
         return predicate == default ? Context.Set<TEntity>().ToListAsync()
             : Context.Set<TEntity>().Where(predicate).ToListAsync();
@@ -53,7 +53,7 @@ internal class GenericRepository<TContext> : IRepository
     public Task<Dictionary<TKey, TEntity>> GetDictionaryAsync<TKey, TEntity>(
         Func<TEntity, TKey> keySelector, 
         Expression<Func<TEntity, bool>>? predicate = default) 
-        where TEntity : class, IAggregateRoot 
+        where TEntity : class, IEntity<string> 
         where TKey : notnull
     {
         return predicate == default ? Context.Set<TEntity>().ToDictionaryAsync(keySelector)
@@ -61,7 +61,7 @@ internal class GenericRepository<TContext> : IRepository
     }
 
     public IQueryable<TEntity> Query<TEntity>(Expression<Func<TEntity, bool>>? predicate = default)
-        where TEntity : class, IAggregateRoot
+        where TEntity : class, IEntity<string>
     {
         return predicate == default
             ? Context.Set<TEntity>()
@@ -69,20 +69,20 @@ internal class GenericRepository<TContext> : IRepository
     }
 
     public async Task AddAsync<TEntity>(TEntity entity)
-        where TEntity : class, IAggregateRoot
+        where TEntity : class, IEntity<string>
     {
         await Context.Set<TEntity>().AddAsync(entity);
     }
 
     public void Update<TEntity>(TEntity entity)
-        where TEntity : class, IAggregateRoot
+        where TEntity : class, IEntity<string>
     {
         Context.Set<TEntity>().Attach(entity);
         Context.Entry(entity).State = EntityState.Modified;
     }
 
     public void Delete<TEntity>(TEntity? entity)
-        where TEntity : class, IAggregateRoot
+        where TEntity : class, IEntity<string>
     {
         if (entity == null)
             return;
