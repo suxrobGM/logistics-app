@@ -24,7 +24,7 @@ public class Index : PageModel
 
     public ViewModel View { get; set; }
 
-    [BindProperty]
+    [BindProperty] 
     public InputModel Input { get; set; }
 
     public Index(
@@ -78,7 +78,7 @@ public class Index : PageModel
             return Redirect(Input.ReturnUrl);
         }
 
-        User user = null;
+        User? user = null;
         const string emailPattern = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}" +
                                     @"\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\" +
                                     @".)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
@@ -92,7 +92,13 @@ public class Index : PageModel
             user = await _userManager.FindByEmailAsync(Input.Email);
         }
 
-        if (ModelState.IsValid && user != null)
+        if (user == null)
+        {
+            await _events.RaiseAsync(new UserLoginFailureEvent(Input.Email, "invalid credentials", clientId: context?.Client.ClientId));
+            ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
+        }
+
+        if (ModelState.IsValid)
         {
             var result = await _signInManager.PasswordSignInAsync(user.UserName!, Input.Password, Input.RememberLogin, lockoutOnFailure: true);
             if (result.Succeeded)

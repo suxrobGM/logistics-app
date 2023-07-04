@@ -7,7 +7,7 @@ internal class GetUsersValidator : AbstractValidator<GetUsersQuery>
     public GetUsersValidator()
     {
         RuleFor(i => i.Page)
-            .GreaterThanOrEqualTo(0);
+            .GreaterThanOrEqualTo(1);
         
         RuleFor(i => i.PageSize)
             .GreaterThanOrEqualTo(1);
