@@ -18,7 +18,9 @@ Operating on a multi-tenant architecture, Logistics TMS features a primary datab
 
 Follow these steps to get the project up and running:
 
-1. [Download](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) and install the .NET 7 SDK. 
+1. Install SDKs 
+   - [Download](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) and install the .NET 7 SDK. 
+   - [Download](https://nodejs.org) and install the Node.js runtime.
 
 2. Clone this repository: 
     ```
@@ -26,16 +28,22 @@ Follow these steps to get the project up and running:
     $ cd logistics-app
     ```
 
-3. Update database connection strings: 
+3. Install Angular app NPM packages:
+   ```
+   cd src\Client\Logistics.OfficeApp
+   npm install
+   ```
+
+4. Update database connection strings: 
    Modify local or remote `MS SQL` database connection strings in the [Web API appsettings.json](./src/Api/Logistics.WebApi/appsettings.json) and the [IdentityServer appsettings.json](./src/Apps/Logistics.IdentityServer/appsettings.json) under the `ConnectionStrings:MainDatabase` section. Update tenant databases configuration in the [Web API appsettings.json](./src/Api/Logistics.WebApi/appsettings.json) under the `TenantsConfig` section.
 
-4. Seed databases:
+5. Seed databases:
    To initialize and populate the databases, run the `seed-databases.bat` script provided in the repository.
 
-5. Run applications:
+6. Run applications:
    Launch all the applications in the suite using the respective `.bat` scripts in the repository.
 
-6. Access the applications:
+7. Access the applications:
    Use the following local URLs to access the apps:
     - Web API: https://127.0.0.1:7000
     - Identity Server: https://127.0.0.1:7001
