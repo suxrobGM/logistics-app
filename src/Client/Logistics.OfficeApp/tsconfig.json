@@ -23,8 +23,8 @@
       "dom"
     ],
     "paths": {
-      "@configs": [
-        "src/app/configs/index"
+      "@core": [
+        "src/app/core/index"
       ],
       "@shared/*": [
         "src/app/shared/*"

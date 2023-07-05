@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {AppConfig} from '@configs';
+import {AppConfig} from '@core';
 import {DailyGrosses, Load} from '@shared/models';
 import {DistanceUnitPipe} from '@shared/pipes';
 import {ApiService} from '@shared/services';

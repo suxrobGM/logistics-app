@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {AppConfig} from '@configs';
-import {UserData, UserIdentity} from '@shared/models';
+import {AppConfig} from '@core';
+import {UserData} from '@shared/models';
 import {ApiService, UserDataService} from '@shared/services';
 import {getRoleName} from '@shared/types';
 import {OidcSecurityService} from 'angular-auth-oidc-client';

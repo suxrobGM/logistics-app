@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {Permissions} from '@shared/types';
-import {AuthGuard} from '../auth';
+import {AuthGuard} from '@core';
 import {EditLoadComponent, ListLoadComponent} from './pages';
 
 const rootRoutes: Routes = [

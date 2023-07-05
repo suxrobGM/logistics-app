@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {AuthGuard} from '../auth';
+import {AuthGuard} from '@core';
 import {
   Error404Component,
   UnauthorizedComponent,

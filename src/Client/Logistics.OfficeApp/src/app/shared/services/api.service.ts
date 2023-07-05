@@ -2,8 +2,7 @@ import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {MessageService} from 'primeng/api';
 import {catchError, Observable, of} from 'rxjs';
-import {AppConfig} from '@configs';
-import {TenantService} from '@modules/core';
+import {TenantService, AppConfig} from '@core';
 import {
   ResponseResult,
   Employee,
