@@ -1,6 +1,6 @@
 import {HttpHeaders} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {CookieService} from './cookie.service';
+import {CookieService} from '../../../shared/services/cookie.service';
 
 @Injectable()
 export class TenantService {

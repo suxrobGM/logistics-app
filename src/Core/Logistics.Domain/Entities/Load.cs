@@ -1,9 +1,11 @@
-﻿namespace Logistics.Domain.Entities;
+﻿using Logistics.Domain.Events;
+
+namespace Logistics.Domain.Entities;
 
 public class Load : AuditableEntity, ITenantEntity
 {
     private LoadStatus _status = LoadStatus.Dispatched;
-    
+
     public ulong RefId { get; set; } = 100_000;
     
     [StringLength(LoadConsts.NameLength)]
@@ -56,4 +58,23 @@ public class Load : AuditableEntity, ITenantEntity
     public virtual Truck? AssignedTruck { get; set; }
     public virtual Employee? AssignedDispatcher { get; set; }
     public virtual Employee? AssignedDriver { get; set; }
+
+    public static Load CreateLoad(
+        ulong refId, string sourceAddress, string destinationAddress,
+        Truck assignedTruck, Employee assignedDispatcher)
+    {
+        var load = new Load
+        {
+            RefId = refId,
+            SourceAddress = sourceAddress,
+            DestinationAddress = destinationAddress,
+            AssignedTruck = assignedTruck,
+            AssignedDriver = assignedTruck.Driver,
+            AssignedDispatcher = assignedDispatcher,
+            Status = LoadStatus.Dispatched
+        };
+        
+        load.DomainEvents.Add(new NewLoadCreatedEvent(refId));
+        return load;
+    }
 }

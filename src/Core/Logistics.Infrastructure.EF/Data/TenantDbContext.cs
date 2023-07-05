@@ -1,27 +1,44 @@
-﻿namespace Logistics.Infrastructure.EF.Data;
+﻿using Logistics.Infrastructure.EF.Interceptors;
+
+namespace Logistics.Infrastructure.EF.Data;
 
 public class TenantDbContext : DbContext
 {
+    private readonly AuditableEntitySaveChangesInterceptor? _auditableEntitySaveChangesInterceptor;
+    private readonly DispatchDomainEventsInterceptor? _dispatchDomainEventsInterceptor;
     private readonly ITenantService? _tenantService;
     private readonly string _connectionString;
 
     public TenantDbContext(
         TenantDbContextOptions options, 
-        ITenantService? tenantService)
+        ITenantService? tenantService,
+        AuditableEntitySaveChangesInterceptor? auditableEntitySaveChangesInterceptor,
+        DispatchDomainEventsInterceptor? dispatchDomainEventsInterceptor)
     {
-        _connectionString = options.ConnectionString ?? ConnectionStrings.LocalDefaultTenant;
+        _auditableEntitySaveChangesInterceptor = auditableEntitySaveChangesInterceptor;
+        _dispatchDomainEventsInterceptor = dispatchDomainEventsInterceptor;
         _tenantService = tenantService;
+        _connectionString = options.ConnectionString ?? ConnectionStrings.LocalDefaultTenant;
     }
 
     public Tenant? CurrentTenant => _tenantService?.GetTenant();
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        if (options.IsConfigured)
-            return;
+        if (_auditableEntitySaveChangesInterceptor is not null)
+        {
+            options.AddInterceptors(_auditableEntitySaveChangesInterceptor);
+        }
+        if (_dispatchDomainEventsInterceptor is not null)
+        {
+            options.AddInterceptors(_dispatchDomainEventsInterceptor);
+        }
 
-        var connectionString = _tenantService?.GetConnectionString() ?? _connectionString;
-        DbContextHelpers.ConfigureSqlServer(connectionString, options);
+        if (!options.IsConfigured)
+        {
+            var connectionString = _tenantService?.GetConnectionString() ?? _connectionString;
+            DbContextHelpers.ConfigureSqlServer(connectionString, options);
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

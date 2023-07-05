@@ -6,7 +6,7 @@ import {
   HttpInterceptor,
 } from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {TenantService} from '@shared/services';
+import {TenantService} from '../services/tenant.service';
 
 @Injectable()
 export class TenantInterceptor implements HttpInterceptor {
@@ -14,8 +14,8 @@ export class TenantInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const tenantId = this.tenantService.getTenantId();
-    this.tenantService.setTenantId(tenantId);
     const headers = this.tenantService.createTenantHeaders(request.headers, tenantId);
+    this.tenantService.setTenantId(tenantId);
 
     request = request.clone({
       headers: headers,

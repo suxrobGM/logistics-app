@@ -19,6 +19,6 @@ internal static class DbContextHelpers
         options.UseSqlServer(connectionString, o =>
         {
             o.EnableRetryOnFailure(8, TimeSpan.FromSeconds(15), null);
-        });
+        }).UseLazyLoadingProxies();
     }
 }

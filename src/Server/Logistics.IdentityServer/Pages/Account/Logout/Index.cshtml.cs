@@ -61,7 +61,7 @@ public class Index : PageModel
 
     public async Task<IActionResult> OnPost()
     {
-        if (User?.Identity?.IsAuthenticated == true)
+        if (User.Identity?.IsAuthenticated == true)
         {
             // if there's no current logout context, we need to create one
             // this captures necessary info from the current logged in user

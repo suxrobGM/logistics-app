@@ -6,7 +6,6 @@ import {
   ApiService,
   CookieService,
   StorageService,
-  TenantService,
   UserDataService,
 } from './services';
 
@@ -27,7 +26,6 @@ import {
     CookieService,
     DistanceUnitPipe,
     StorageService,
-    TenantService,
     UserDataService,
   ],
 })

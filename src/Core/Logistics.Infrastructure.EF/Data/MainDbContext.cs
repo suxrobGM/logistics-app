@@ -1,23 +1,40 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Logistics.Infrastructure.EF.Interceptors;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Logistics.Infrastructure.EF.Data;
 
 public class MainDbContext : IdentityDbContext<User, AppRole, string>
 {
+    private readonly AuditableEntitySaveChangesInterceptor? _auditableEntitySaveChangesInterceptor;
+    private readonly DispatchDomainEventsInterceptor? _dispatchDomainEventsInterceptor;
     private readonly string _connectionString;
 
-    public MainDbContext(MainDbContextOptions options)
+    public MainDbContext(
+        MainDbContextOptions options,
+        AuditableEntitySaveChangesInterceptor? auditableEntitySaveChangesInterceptor,
+        DispatchDomainEventsInterceptor? dispatchDomainEventsInterceptor)
     {
+        _auditableEntitySaveChangesInterceptor = auditableEntitySaveChangesInterceptor;
+        _dispatchDomainEventsInterceptor = dispatchDomainEventsInterceptor;
         _connectionString = options.ConnectionString ?? ConnectionStrings.LocalMain;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        if (options.IsConfigured)
-            return;
-        
-        DbContextHelpers.ConfigureSqlServer(_connectionString, options);
+        if (_auditableEntitySaveChangesInterceptor is not null)
+        {
+            options.AddInterceptors(_auditableEntitySaveChangesInterceptor);
+        }
+        if (_dispatchDomainEventsInterceptor is not null)
+        {
+            options.AddInterceptors(_dispatchDomainEventsInterceptor);
+        }
+
+        if (!options.IsConfigured)
+        {
+            DbContextHelpers.ConfigureSqlServer(_connectionString, options);
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

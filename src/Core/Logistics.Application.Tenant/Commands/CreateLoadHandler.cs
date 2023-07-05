@@ -38,20 +38,11 @@ internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, 
 
         if (latestLoad != null)
             refId = latestLoad.RefId + 1;
-
-        var loadEntity = new Load
-        {
-            RefId = refId,
-            Name = request.Name,
-            SourceAddress = request.SourceAddress,
-            Status = LoadStatus.Dispatched,
-            DestinationAddress = request.DestinationAddress,
-            Distance = request.Distance,
-            DeliveryCost = request.DeliveryCost,
-            AssignedDispatcher = dispatcher,
-            AssignedDriver = driver,
-            AssignedTruck = truck
-        };
+        
+        var loadEntity = Load.CreateLoad(refId, request.SourceAddress!, request.DestinationAddress!, truck, dispatcher);
+        loadEntity.Name = request.Name;
+        loadEntity.Distance = request.Distance;
+        loadEntity.DeliveryCost = request.DeliveryCost;
 
         await _tenantRepository.AddAsync(loadEntity);
         await _tenantRepository.UnitOfWork.CommitAsync();

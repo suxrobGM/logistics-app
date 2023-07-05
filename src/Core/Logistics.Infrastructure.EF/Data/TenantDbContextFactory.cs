@@ -7,6 +7,6 @@ public class TenantDbContextFactory : IDesignTimeDbContextFactory<TenantDbContex
 {
     public TenantDbContext CreateDbContext(string[] args)
     {
-        return new TenantDbContext(new TenantDbContextOptions(), null);
+        return new TenantDbContext(new TenantDbContextOptions(), null, null, null);
     }
 }

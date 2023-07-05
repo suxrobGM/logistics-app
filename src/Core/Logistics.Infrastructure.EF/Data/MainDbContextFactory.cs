@@ -7,6 +7,6 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<MainDbCon
 {
     public MainDbContext CreateDbContext(string[] args)
     {
-        return new MainDbContext(new MainDbContextOptions());
+        return new MainDbContext(new MainDbContextOptions(), null, null);
     }
 }

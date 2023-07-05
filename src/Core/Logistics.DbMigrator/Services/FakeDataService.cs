@@ -192,31 +192,25 @@ internal class FakeDataService
         for (ulong i = 1; i <= 100; i++)
         {
             var refId = 100_000 + i;
-            var load = loadsDb.FirstOrDefault(m => m.RefId == refId);
+            var existingLoad = loadsDb.FirstOrDefault(m => m.RefId == refId);
 
-            if (load != null)
+            if (existingLoad != null)
                 continue;
 
             var truck = PickRandom(trucks);
             var dispatcher = PickRandom(employees.Dispatchers);
             var pickupDate = RandomDate(DateTime.Today.AddMonths(-6), DateTime.Today.AddDays(-1));
-
-            load = new Load
-            {
-                Name = $"Test cargo {i}",
-                RefId = refId,
-                AssignedTruck = truck,
-                AssignedDriver = truck.Driver,
-                AssignedDispatcher = dispatcher,
-                Status = LoadStatus.Delivered,
-                PickUpDate = pickupDate,
-                DispatchedDate = pickupDate,
-                DeliveryDate = pickupDate.AddDays(1),
-                SourceAddress = "40 Crescent Ave, Boston, United States",
-                DestinationAddress = "73 Tremont St, Boston, United States",
-                Distance = _random.Next(16093, 321869),
-                DeliveryCost = _random.Next(1000, 3000)
-            };
+            const string sourceAddress = "40 Crescent Ave, Boston, United States";
+            const string destAddress = "73 Tremont St, Boston, United States";
+            
+            var load = Load.CreateLoad(refId, sourceAddress, destAddress, truck, dispatcher);
+            load.Name = $"Test cargo {i}";
+            load.Status = LoadStatus.Delivered;
+            load.PickUpDate = pickupDate;
+            load.DispatchedDate = pickupDate;
+            load.DeliveryDate = pickupDate.AddDays(1);
+            load.Distance = _random.Next(16093, 321869);
+            load.DeliveryCost = _random.Next(1000, 3000);
 
             await tenantRepository.AddAsync(load);
             _logger.LogInformation("Added a load {Name}", load.Name);

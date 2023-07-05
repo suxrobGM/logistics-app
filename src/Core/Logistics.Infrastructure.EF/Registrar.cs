@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Logistics.Domain;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Logistics.Infrastructure.EF.Builder;
@@ -76,8 +77,10 @@ public static class Registrar
         var identityBuilder = AddIdentity(services);
         AddMainDatabase(services, configuration, mainDbConnectionSection);
         AddTenantDatabase(services, configuration, defaultTenantDbConnectionSection, tenantsConfigSection);
-        
+
+        services.AddDomainLayer();
         services.AddScoped<AuditableEntitySaveChangesInterceptor>();
+        services.AddScoped<DispatchDomainEventsInterceptor>();
         services.AddScoped<ITenantService, TenantService>();
         services.AddScoped<IMainRepository, MainRepository>();
         services.AddScoped<ITenantRepository, TenantRepository>();

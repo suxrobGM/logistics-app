@@ -61,7 +61,7 @@ export class TopbarComponent implements OnInit {
   }
 
   logout() {
-    this.oidcService.logoff();
+    this.oidcService.logoff().subscribe((result) => result);
   }
 
   openAccountUrl() {
