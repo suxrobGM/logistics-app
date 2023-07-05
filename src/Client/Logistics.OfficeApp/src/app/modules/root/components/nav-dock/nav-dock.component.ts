@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {OidcSecurityService} from 'angular-auth-oidc-client';
-import {Permissions, UserRole} from '@shared/types';
+import {Permissions} from '@shared/types';
 import {UserIdentity} from '@shared/models';
 
 @Component({
@@ -28,9 +28,9 @@ export class NavDockComponent implements OnInit {
 
       if (hasPermission) {
         this.dockItems = this.createMenuItems([{
-          label: 'Report',
+          label: 'Dashboard',
           icon: 'assets/icons/report.svg',
-          link: 'report',
+          link: 'dashboard',
         }]);
       }
     });
@@ -39,9 +39,9 @@ export class NavDockComponent implements OnInit {
   private createMenuItems(additionalMenuItems?: MenuItem[]): MenuItem[] {
     const menuItems: MenuItem[] = [
       {
-        label: 'Dashboard',
+        label: 'Home',
         icon: 'assets/icons/home.svg',
-        link: 'dashboard',
+        link: 'home',
       },
       {
         label: 'Loads',

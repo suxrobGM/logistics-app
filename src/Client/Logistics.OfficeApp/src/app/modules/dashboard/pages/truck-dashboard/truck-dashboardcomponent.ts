@@ -6,11 +6,11 @@ import {ApiService} from '@shared/services';
 import {DateUtils} from '@shared/utils';
 
 @Component({
-  selector: 'app-truck-report',
-  templateUrl: './truck-report.component.html',
-  styleUrls: ['./truck-report.component.scss'],
+  selector: 'app-truck-dashboard',
+  templateUrl: './truck-dashboard.component.html',
+  styleUrls: ['./truck-dashboard.component.scss'],
 })
-export class TruckReportComponent implements OnInit {
+export class TruckDashboardComponent implements OnInit {
   public id!: string;
   public loadingData: boolean;
   public loadingBarChart: boolean;

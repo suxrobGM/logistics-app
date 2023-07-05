@@ -23,13 +23,16 @@ import {
 
 @Injectable()
 export class ApiService {
-  private host = AppConfig.apiHost;
+  private host: string;
+  private headers: Record<string, string>;
 
   constructor(
     private httpClient: HttpClient,
     private tenantService: TenantService,
     private messageService: MessageService)
   {
+    this.host = AppConfig.apiHost;
+    this.headers = {'content-type': 'application/json'};
   }
 
   // #region Tenant API
@@ -92,21 +95,19 @@ export class ApiService {
 
   createLoad(load: Load): Observable<ResponseResult> {
     const url = `${this.host}/load/create`;
-    const headers = {'content-type': 'application/json'};
     const body = JSON.stringify(load);
 
     return this.httpClient
-        .post<ResponseResult>(url, body, {headers: headers})
+        .post<ResponseResult>(url, body, {headers: this.headers})
         .pipe(catchError((err) => this.handleError(err)));
   }
 
   updateLoad(load: Load): Observable<ResponseResult> {
     const url = `${this.host}/load/update/${load.id}`;
-    const headers = {'content-type': 'application/json'};
     const body = JSON.stringify(load);
 
     return this.httpClient
-        .put<ResponseResult>(url, body, {headers: headers})
+        .put<ResponseResult>(url, body, {headers: this.headers})
         .pipe(catchError((err) => this.handleError(err)));
   }
 
@@ -147,21 +148,19 @@ export class ApiService {
 
   createTruck(truck: Truck): Observable<ResponseResult> {
     const url = `${this.host}/truck/create`;
-    const headers = {'content-type': 'application/json'};
     const body = JSON.stringify(truck);
 
     return this.httpClient
-        .post<ResponseResult>(url, body, {headers: headers})
+        .post<ResponseResult>(url, body, {headers: this.headers})
         .pipe(catchError((err) => this.handleError(err)));
   }
 
   updateTruck(truck: Truck): Observable<ResponseResult> {
     const url = `${this.host}/truck/update/${truck.id}`;
-    const headers = {'content-type': 'application/json'};
     const body = JSON.stringify(truck);
 
     return this.httpClient
-        .put<ResponseResult>(url, body, {headers: headers})
+        .put<ResponseResult>(url, body, {headers: this.headers})
         .pipe(catchError((err) => this.handleError(err)));
   }
 
@@ -213,31 +212,28 @@ export class ApiService {
 
   createEmployee(employee: CreateEmployee): Observable<ResponseResult> {
     const url = `${this.host}/employee/create`;
-    const headers = {'content-type': 'application/json'};
     const body = JSON.stringify(employee);
 
     return this.httpClient
-        .post<ResponseResult>(url, body, {headers: headers})
+        .post<ResponseResult>(url, body, {headers: this.headers})
         .pipe(catchError((err) => this.handleError(err)));
   }
 
   removeRoleFromEmployee(employee: RemoveEmployeeRole): Observable<ResponseResult> {
     const url = `${this.host}/employee/removeRole`;
-    const headers = {'content-type': 'application/json'};
     const body = JSON.stringify(employee);
 
     return this.httpClient
-        .post<ResponseResult>(url, body, {headers: headers})
+        .post<ResponseResult>(url, body, {headers: this.headers})
         .pipe(catchError((err) => this.handleError(err)));
   }
 
   updateEmployee(employee: UpdateEmployee): Observable<ResponseResult> {
     const url = `${this.host}/employee/update/${employee.id}`;
-    const headers = {'content-type': 'application/json'};
     const body = JSON.stringify(employee);
 
     return this.httpClient
-        .put<ResponseResult>(url, body, {headers: headers})
+        .put<ResponseResult>(url, body, {headers: this.headers})
         .pipe(catchError((err) => this.handleError(err)));
   }
 
@@ -267,10 +263,10 @@ export class ApiService {
 
   // #endregion
 
-  // #region Report API
+  // #region Dashboard API
 
   getOverallStats(): Observable<ResponseResult<OverallStats>> {
-    const url = `${this.host}/report/getOverallStats`;
+    const url = `${this.host}/dashboard/getOverallStats`;
 
     return this.httpClient
         .get<ResponseResult<OverallStats>>(url)
@@ -278,7 +274,7 @@ export class ApiService {
   }
 
   getDailyGrosses(startDate: Date, endDate?: Date, truckId?: string): Observable<ResponseResult<DailyGrosses>> {
-    let url = `${this.host}/report/getDailyGrosses?startDate=${startDate.toJSON()}`;
+    let url = `${this.host}/dashboard/getDailyGrosses?startDate=${startDate.toJSON()}`;
 
     if (endDate) {
       url += `&endDate=${endDate.toJSON()}`;
@@ -293,7 +289,7 @@ export class ApiService {
   }
 
   getMonthlyGrosses(startDate: Date, endDate?: Date, truckId?: string): Observable<ResponseResult<MonthlyGrosses>> {
-    let url = `${this.host}/report/getMonthlyGrosses?startDate=${startDate.toJSON()}`;
+    let url = `${this.host}/dashboard/getMonthlyGrosses?startDate=${startDate.toJSON()}`;
 
     if (endDate) {
       url += `&endDate=${endDate.toJSON()}`;

@@ -1,13 +1,13 @@
 import {NgModule} from '@angular/core';
 import {CardModule} from 'primeng/card';
 import {ChartModule} from 'primeng/chart';
-import {TableModule} from 'primeng/table';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {SkeletonModule} from 'primeng/skeleton';
 
 @NgModule({
   exports: [
     CardModule,
-    TableModule,
+    ProgressSpinnerModule,
     ChartModule,
     SkeletonModule,
   ],

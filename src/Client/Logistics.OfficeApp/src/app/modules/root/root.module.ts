@@ -7,7 +7,7 @@ import {
   Error404Component,
   UnauthorizedComponent,
   ForbiddenComponent,
-  HomeComponent,
+  LoginComponent,
 } from './pages';
 import {
   NavDockComponent,
@@ -20,7 +20,7 @@ import {
     Error404Component,
     UnauthorizedComponent,
     ForbiddenComponent,
-    HomeComponent,
+    LoginComponent,
     NavDockComponent,
     TopbarComponent,
     BreadcrumbComponent,

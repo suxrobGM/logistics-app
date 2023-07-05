@@ -3,8 +3,8 @@ import {RouterModule, Routes} from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'dashboard',
-    loadChildren: () => import('./modules/dashboard/dashboard.module').then((m) => m.DashboardModule),
+    path: 'home',
+    loadChildren: () => import('./modules/home/home.module').then((m) => m.HomeModule),
   },
   {
     path: 'employees',
@@ -28,10 +28,10 @@ const routes: Routes = [
     },
   },
   {
-    path: 'report',
-    loadChildren: () => import('./modules/report/report.module').then((m) => m.ReportModule),
+    path: 'dashboard',
+    loadChildren: () => import('./modules/dashboard/dashboard.module').then((m) => m.DashboardModule),
     data: {
-      breadcrumb: 'Report',
+      breadcrumb: 'Dashboard',
     },
   },
 ];

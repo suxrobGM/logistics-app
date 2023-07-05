@@ -4,12 +4,12 @@ import {EventTypes, OidcSecurityService, PublicEventsService} from 'angular-auth
 import {filter} from 'rxjs';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class HomeComponent implements OnInit {
+export class LoginComponent implements OnInit {
   isAuthenticated: boolean;
   isLoading: boolean;
 
@@ -35,7 +35,7 @@ export class HomeComponent implements OnInit {
           this.isLoading = false;
 
           if (this.isAuthenticated) {
-            this.router.navigateByUrl('/dashboard');
+            this.router.navigateByUrl('/home');
           }
         });
 
@@ -45,7 +45,7 @@ export class HomeComponent implements OnInit {
 
     this.oidcService.isAuthenticated().subscribe((isAuthenticated) => {
       if (isAuthenticated) {
-        this.router.navigateByUrl('/dashboard');
+        this.router.navigateByUrl('/home');
       }
     });
   }

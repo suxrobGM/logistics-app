@@ -7,12 +7,12 @@ import {DateUtils} from '@shared/utils';
 import * as mapboxgl from 'mapbox-gl';
 
 @Component({
-  selector: 'app-dashboard-page',
-  templateUrl: './dashboard-page.component.html',
-  styleUrls: ['./dashboard-page.component.scss'],
+  selector: 'app-overview',
+  templateUrl: './overview.component.html',
+  styleUrls: ['./overview.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class DashboardPageComponent implements OnInit {
+export class OverviewComponent implements OnInit {
   private map!: mapboxgl.Map;
   public todayGross: number;
   public weeklyGross: number;

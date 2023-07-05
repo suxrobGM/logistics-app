@@ -5,11 +5,11 @@ import {ApiService} from '@shared/services';
 import {DateUtils} from '@shared/utils';
 
 @Component({
-  selector: 'app-overview',
-  templateUrl: './overview.component.html',
-  styleUrls: ['./overview.component.scss'],
+  selector: 'app-main-dashboard',
+  templateUrl: './main-dashboard.component.html',
+  styleUrls: ['./main-dashboard.component.scss'],
 })
-export class OverviewComponent implements OnInit {
+export class MainDashboardComponent implements OnInit {
   public loadingData: boolean;
   public loadingChart: boolean;
   public rpm: number;

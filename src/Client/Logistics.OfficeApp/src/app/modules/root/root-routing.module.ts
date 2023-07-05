@@ -5,13 +5,13 @@ import {
   Error404Component,
   UnauthorizedComponent,
   ForbiddenComponent,
-  HomeComponent,
+  LoginComponent,
 } from './pages';
 
 const rootRoutes: Routes = [
   {
     path: '',
-    component: HomeComponent,
+    component: LoginComponent,
   },
   {
     path: 'forbidden',

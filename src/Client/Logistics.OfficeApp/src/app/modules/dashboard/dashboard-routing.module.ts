@@ -2,16 +2,31 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {Permissions} from '@shared/types';
 import {AuthGuard} from '../auth';
-import {DashboardPageComponent} from './pages';
+import {TruckDashboardComponent} from './pages/truck-dashboard/truck-dashboardcomponent';
+import {MainDashboardComponent} from './pages/main-dashboard/main-dashboardcomponent';
 
 const rootRoutes: Routes = [
   {
     path: '',
-    component: DashboardPageComponent,
+    redirectTo: 'main',
+    pathMatch: 'full',
+  },
+  {
+    path: 'main',
+    component: MainDashboardComponent,
     canActivate: [AuthGuard],
     data: {
-      breadcrumb: 'Dashboard',
-      permission: Permissions.Load.View,
+      breadcrumb: 'Main',
+      permission: Permissions.Report.View,
+    },
+  },
+  {
+    path: 'truck/:id',
+    component: TruckDashboardComponent,
+    canActivate: [AuthGuard],
+    data: {
+      breadcrumb: 'Truck',
+      permission: Permissions.Report.View,
     },
   },
 ];
