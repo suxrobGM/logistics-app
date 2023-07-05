@@ -66,6 +66,8 @@ Follow these steps to get the project up and running:
 - PrimeNG
 - Blazor
 - MAUI
+- Docker
+- CI/CD
 
 ### Design Patterns
 - Domain-Driven Design
