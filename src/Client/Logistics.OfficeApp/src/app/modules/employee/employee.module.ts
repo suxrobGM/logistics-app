@@ -6,7 +6,8 @@ import {EmployeeRoutingModule} from './employee-routing.module';
 import {PrimengModule} from './primeng.module';
 import {AddEmployeeComponent, EditEmployeeComponent, ListEmployeeComponent} from './pages';
 import {ChangeRoleDialogComponent} from './components';
-import {UserService} from './shared';
+import {UserService} from './shared/user.service';
+
 
 @NgModule({
   declarations: [

@@ -3,7 +3,8 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MessageService} from 'primeng/api';
 import {RemoveEmployeeRole, Role, UpdateEmployee} from '@shared/models';
 import {ApiService} from '@shared/services';
-import {UserService} from '../../shared';
+import {UserService} from '@modules/employee/shared/user.service';
+
 
 @Component({
   selector: 'change-role-dialog',
