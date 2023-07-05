@@ -2,11 +2,11 @@
 
 [Route("[controller]")]
 [ApiController]
-public class ReportController : ControllerBase
+public class DashboardController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public ReportController(IMediator mediator)
+    public DashboardController(IMediator mediator)
     {
         _mediator = mediator;
     }
