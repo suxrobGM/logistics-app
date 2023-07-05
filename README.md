@@ -52,6 +52,31 @@ Follow these steps to get the project up and running:
 
 ## Architectural Overview
 
+### Technical Stack
+- .NET 7
+- ASP.NET Core
+- Entity Framework Core
+- Identity Server
+- FluentValidator
+- MediatR
+- MS SQL
+- xUnit
+- Moq
+- Angular 16
+- PrimeNG
+- Blazor
+- MAUI
+
+### Design Patterns
+- Domain-Driven Design
+- CQRS
+- Domain Events
+- Event Sourcing
+- Unit Of Work
+- Repository & Generic Repository
+- Inversion of Control / Dependency injection
+- Specification Pattern
+
 For a deeper understanding of the project structure, refer to the architecture diagram:
 ![Project architecture diagram](./docs/project_architecture.jpg?raw=true)
 
