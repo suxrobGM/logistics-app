@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.Infrastructure.EF.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20230703220600_Version_0001")]
+    [Migration("20230706210453_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -21,6 +21,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.5")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);

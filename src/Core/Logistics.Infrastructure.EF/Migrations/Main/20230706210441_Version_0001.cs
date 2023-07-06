@@ -37,7 +37,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Main
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(16)", maxLength: 16, nullable: true),
                     DisplayName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
-                    ConnectionString = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    ConnectionString = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.Infrastructure.EF.Migrations.Main
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20230703220549_Version_0001")]
+    [Migration("20230706210441_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -21,6 +21,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Main
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.5")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -74,8 +77,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Main
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ConnectionString")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
