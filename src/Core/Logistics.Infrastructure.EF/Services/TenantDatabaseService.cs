@@ -1,5 +1,6 @@
 ﻿using System.Data.Common;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Logistics.Shared.Policies;
 using Microsoft.Data.SqlClient;
@@ -10,22 +11,30 @@ namespace Logistics.Infrastructure.EF.Services;
 public class TenantDatabaseService : ITenantDatabaseService
 {
     private readonly TenantDbContext _context;
-    private readonly TenantsSettings _settings;
+    private readonly TenantsDatabaseOptions _databaseOptions;
     private readonly ILogger<TenantDatabaseService> _logger;
 
     public TenantDatabaseService(
         TenantDbContext context,
-        TenantsSettings settings,
+        TenantsDatabaseOptions databaseOptions,
         ILogger<TenantDatabaseService> logger)
     {
         _context = context;
         _logger = logger;
-        _settings = settings;
+        _databaseOptions = databaseOptions;
     }
 
-    public string GenerateConnectionString(string databaseName)
+    public string GenerateConnectionString(string tenantName)
     {
-        return $"Server={_settings.DatabaseHost}; Database={databaseName}; Uid={_settings.DatabaseUserId}; Pwd={_settings.DatabasePassword}; TrustServerCertificate=true";
+        if (string.IsNullOrEmpty(_databaseOptions.DatabaseNameTemplate))
+        {
+            throw new InvalidOperationException(
+                "The database name template is not defined in the TenantsDatabaseOptions appsettings.json file");
+        }
+        
+        var databaseName = Regex.Replace(_databaseOptions.DatabaseNameTemplate, "{tenant}", tenantName);
+        var connectionString =  $"Server={_databaseOptions.DatabaseHost}; Database={databaseName}; Uid={_databaseOptions.DatabaseUserId}; Pwd={_databaseOptions.DatabasePassword}; TrustServerCertificate=true";
+        return connectionString;
     }
 
     public async Task<bool> CreateDatabaseAsync(string connectionString)

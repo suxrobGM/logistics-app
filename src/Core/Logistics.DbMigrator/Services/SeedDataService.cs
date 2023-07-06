@@ -140,7 +140,7 @@ internal class SeedDataService : BackgroundService
         {
             Name = "default",
             DisplayName = "Test Company",
-            ConnectionString = databaseProvider.GenerateConnectionString("default_logistics") 
+            ConnectionString = databaseProvider.GenerateConnectionString("default") 
         };
 
         var existingTenant = mainDbContext.Set<Tenant>().FirstOrDefault(i => i.Name == defaultTenant.Name);

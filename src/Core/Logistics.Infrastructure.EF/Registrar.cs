@@ -32,7 +32,7 @@ public static class Registrar
         string connectionSection,
         string tenantsConfigSection)
     {
-        var tenantsSettings = configuration.GetSection(tenantsConfigSection).Get<TenantsSettings>();
+        var tenantsSettings = configuration.GetSection(tenantsConfigSection).Get<TenantsDatabaseOptions>();
         var connectionString = configuration.GetConnectionString(connectionSection);
 
         if (tenantsSettings != null)
@@ -72,7 +72,7 @@ public static class Registrar
         IConfiguration configuration,
         string defaultTenantDbConnectionSection = "DefaultTenantDatabase",
         string mainDbConnectionSection = "MainDatabase",
-        string tenantsConfigSection = "TenantsConfig")
+        string tenantsConfigSection = "TenantsDatabaseConfig")
     {
         var identityBuilder = AddIdentity(services);
         AddMainDatabase(services, configuration, mainDbConnectionSection);
