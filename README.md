@@ -1,10 +1,10 @@
 # Logistics TMS: Automated Transport Management Solution
 
-![Build Status](https://github.com/suxrobgm/logistics-app/actions/workflows/dotnet-build.yml/badge.svg)
-![Tests](https://github.com/suxrobgm/logistics-app/actions/workflows/dotnet-test.yml/badge.svg)
-![Deployment](https://github.com/suxrobgm/logistics-app/actions/workflows/deploy-ftp.yml/badge.svg)
-![OfficeApp Build](https://github.com/suxrobgm/logistics-app/actions/workflows/officeapp-build.yml/badge.svg)
-![DriverApp Build](https://github.com/suxrobgm/logistics-app/actions/workflows/driverapp-build.yml/badge.svg)
+[![Build Status](https://github.com/suxrobgm/logistics-app/actions/workflows/dotnet-build.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/dotnet-build.yml)
+[![Tests](https://github.com/suxrobgm/logistics-app/actions/workflows/dotnet-test.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/dotnet-test.yml)
+[![Deployment](https://github.com/suxrobgm/logistics-app/actions/workflows/deploy-ftp.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/deploy-ftp.yml)
+[![OfficeApp Build](https://github.com/suxrobgm/logistics-app/actions/workflows/officeapp-build.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/officeapp-build.yml)
+[![DriverApp Build](https://github.com/suxrobgm/logistics-app/actions/workflows/driverapp-build.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/driverapp-build.yml)
 
 Logistics TMS is an ultimate solution for all transport management needs. With a focus on automation, this Transportation Management System (TMS) is designed to streamline logistics, offering an efficient, optimized way to manage inbound and outbound transport operations.
 
@@ -49,6 +49,13 @@ Follow these steps to get the project up and running:
     - Identity Server: https://127.0.0.1:7001
     - Admin app: https://127.0.0.1:7002
     - Office app: https://127.0.0.1:7003
+
+## Demo application
+The sample deployed application is available at http://office.jfleets.org
+
+User email: Test1@gmail.com
+
+User password: Test12345#
 
 ## Architectural Overview
 
