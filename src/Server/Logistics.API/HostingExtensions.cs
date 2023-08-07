@@ -11,7 +11,7 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
-        // AddSecretsJson(builder.Configuration);
+        AddSecretsJson(builder.Configuration);
         builder.Services.AddApplicationLayer(builder.Configuration, "EmailConfig");
         builder.Services.AddAdminApplicationLayer();
         builder.Services.AddTenantApplicationLayer();

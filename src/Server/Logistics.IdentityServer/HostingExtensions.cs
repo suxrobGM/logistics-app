@@ -12,7 +12,7 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
-        // AddSecretsJson(builder.Configuration);
+        AddSecretsJson(builder.Configuration);
         builder.Services.AddRazorPages();
         builder.Services.AddApplicationLayer(builder.Configuration, "EmailConfig", "GoogleRecaptcha");
 
@@ -62,8 +62,8 @@ internal static class HostingExtensions
             options.AddPolicy("DefaultCors", cors =>
             {
                 cors.WithOrigins(
-                        "https://jfleets.org",
-                        "https://*.jfleets.org")
+                        "http://jfleets.org",
+                        "http://*.jfleets.org")
                     .SetIsOriginAllowedToAllowWildcardSubdomains()
                     .AllowAnyHeader()
                     .AllowAnyMethod();
