@@ -6,10 +6,17 @@ on:
 
 env:
   WEB_API_PROJECT: src/Server/Logistics.API/Logistics.API.csproj
+  WEB_API_FTP_FOLDER: logistics-api/
+  
   IDENTITY_SERVER_PROJECT: src/Server/Logistics.IdentityServer/Logistics.IdentityServer.csproj
+  IDENTITY_SERVER_FTP_FOLDER: logistics-id/
+  
   ADMIN_APP_PROJECT: src/Client/Logistics.AdminApp/Logistics.AdminApp.csproj
+  ADMIN_APP_FTP_FOLDER: logistics-admin/
+  
   OFFICE_APP_PATH: src/Client/Logistics.OfficeApp
-  OFFICE_APP_OUTPUT_PATH: dist/logistics.office-app
+  OFFICE_APP_OUTPUT_PATH: dist/logistics.office-app/
+  OFFICE_APP_FTP_FOLDER: logistics-office/
 
 jobs:
   test-dotnet:
@@ -53,8 +60,8 @@ jobs:
         server: ${{ secrets.FTP_HOST }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ${{ env.OFFICE_APP_PATH }}/${{ env.OFFICE_APP_OUTPUT_PATH }}/
-        server-dir: office.jfleets.org/
+        local-dir: ${{ env.OFFICE_APP_PATH }}/${{ env.OFFICE_APP_OUTPUT_PATH }}
+        server-dir: ${{ env.OFFICE_APP_FTP_FOLDER }}
 
   deploy-web-api:
     name: Deploy Web API
@@ -79,7 +86,7 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: Release/
-        server-dir: api.jfleets.org/
+        server-dir: ${{ env.WEB_API_FTP_FOLDER }}
 
   deploy-identity-server:
     name: Deploy Identity Server
@@ -104,7 +111,7 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: Release/
-        server-dir: id.jfleets.org/
+        server-dir: ${{ env.IDENTITY_SERVER_FTP_FOLDER }}
 
   deploy-admin-app:
     name: Deploy Admin App
@@ -129,4 +136,4 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: Release/
-        server-dir: admin.jfleets.org/
+        server-dir: ${{ env.ADMIN_APP_FTP_FOLDER }}
