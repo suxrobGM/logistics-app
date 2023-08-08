@@ -51,7 +51,7 @@ Follow these steps to get the project up and running:
     - Office app: https://127.0.0.1:7003
 
 ## Demo application
-The sample deployed application is available at http://office.jfleets.org
+The sample deployed application is available at http://office.jfleets.com
 
 User email: Test1@gmail.com
 
