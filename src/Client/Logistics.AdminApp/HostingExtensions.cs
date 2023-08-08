@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Logistics.AdminApp.Authorization;
+using Logistics.AdminApp.Extensions;
 using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Logistics.Shared.Claims;
@@ -29,6 +30,7 @@ internal static class HostingExtensions
             options.GetClaimsFromUserInfoEndpoint = true;
             options.MapInboundClaims = false;
             options.SaveTokens = true;
+            options.RequireHttpsMetadata = false;
             options.ClaimActions.Add(new JsonKeyClaimAction(CustomClaimTypes.Permission, ClaimValueTypes.String, "permission"));
             options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Role, ClaimValueTypes.String, "role"));
             options.ClaimActions.Add(new JsonKeyClaimAction(ClaimTypes.Name, ClaimValueTypes.String, "name"));
@@ -51,6 +53,7 @@ internal static class HostingExtensions
             app.UseHsts();
         }
 
+        app.UseLetsEncryptChallenge();
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseRouting();

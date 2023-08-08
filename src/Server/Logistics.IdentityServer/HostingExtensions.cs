@@ -26,7 +26,6 @@ internal static class HostingExtensions
             });
         
         AddAuthSchemes(builder.Services);
-        var a = Config.Clients(builder.Configuration);
 
         builder.Services
             .AddIdentityServer(options =>
@@ -62,10 +61,8 @@ internal static class HostingExtensions
             options.AddPolicy("DefaultCors", cors =>
             {
                 cors.WithOrigins(
-                        "http://localhost:7002",
-                        "http://localhost:7003",
-                        "http://jfleets.org",
-                        "http://*.jfleets.org")
+                        "https://jfleets.com",
+                        "https://*.jfleets.com")
                     .SetIsOriginAllowedToAllowWildcardSubdomains()
                     .AllowAnyHeader()
                     .AllowAnyMethod();
@@ -91,6 +88,7 @@ internal static class HostingExtensions
             app.UseDeveloperExceptionPage();
         }
 
+        app.UseLetsEncryptChallenge();
         app.UseStaticFiles();
         app.UseRouting();
         app.UseCors(app.Environment.IsDevelopment() ? "AnyCors" : "DefaultCors");

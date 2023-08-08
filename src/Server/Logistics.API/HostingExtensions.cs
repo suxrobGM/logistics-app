@@ -51,11 +51,8 @@ internal static class HostingExtensions
             options.AddPolicy("DefaultCors", cors =>
             {
                 cors.WithOrigins(
-                        "http://localhost:7001",
-                        "http://localhost:7002",
-                        "http://localhost:7003",
-                        "http://jfleets.org",
-                        "http://*.jfleets.org")
+                        "https://jfleets.com",
+                        "https://*.jfleets.com")
                     .SetIsOriginAllowedToAllowWildcardSubdomains()
                     .AllowAnyHeader()
                     .AllowAnyMethod();
@@ -79,6 +76,7 @@ internal static class HostingExtensions
             app.UseSwaggerUI();
         }
 
+        app.UseLetsEncryptChallenge();
         app.UseHttpsRedirection();
 
         app.UseCors(app.Environment.IsDevelopment() ? "AnyCors" : "DefaultCors");
