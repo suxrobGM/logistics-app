@@ -22,7 +22,7 @@ public partial class App : Application
     {
         var services = new ServiceCollection();
         var oidcOptions = configuration.GetSection("OidcClient").Get<OidcClientOptions>() 
-                          ?? throw new NullReferenceException("Could not get OidcClient form appsettings file");
+                          ?? throw new NullReferenceException("Could not get OidcClient form the appsettings.json file");
         services.AddSingleton(oidcOptions);
 
         services.AddTransient<AppShellViewModel>();
