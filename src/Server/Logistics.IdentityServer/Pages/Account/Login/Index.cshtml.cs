@@ -23,10 +23,10 @@ public class Index : PageModel
     private readonly IAuthenticationSchemeProvider _schemeProvider;
     private readonly IIdentityProviderStore _identityProviderStore;
 
-    public ViewModel View { get; set; }
+    public ViewModel View { get; set; } = default!;
 
-    [BindProperty] 
-    public InputModel Input { get; set; }
+    [BindProperty]
+    public InputModel Input { get; set; } = default!;
 
     public Index(
         IIdentityServerInteractionService interaction,
