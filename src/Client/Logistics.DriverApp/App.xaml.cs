@@ -41,7 +41,7 @@ public partial class App : Application
         var builder = new ConfigurationBuilder();
 
         TryAddConfig(builder, "appsettings.json");
-        TryAddConfig(builder, "appsettings.secrets.json");
+        // TryAddConfig(builder, "appsettings.secrets.json");
         return builder.Build();
     }
 
