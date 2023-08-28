@@ -30,7 +30,7 @@ public class LoginPageViewModel : ViewModelBase
                 return;
 
             _apiClient.AccessToken = result.AccessToken;
-            string? tenantId = await SecureStorage.Default.GetAsync(StorageKeys.TenantId);
+            var tenantId = await SecureStorage.Default.GetAsync(StorageKeys.TenantId);
 
             if (!string.IsNullOrEmpty(tenantId))
             {

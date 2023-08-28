@@ -9,7 +9,14 @@ public class AuthService : IAuthService
     private readonly OidcClient _oidcClient;
 
     public AuthService(OidcClientOptions options, IBrowser browser)
-    {
+    {      
+#if DEBUG
+        options.HttpClientFactory = (options) =>
+        {
+            var handler = new HttpsClientHandlerService();
+            return new HttpClient(handler.GetPlatformMessageHandler());
+        };
+#endif
         _oidcClient = new OidcClient(options);
         _oidcClient.Options.Browser = browser;
         Browser = browser;
