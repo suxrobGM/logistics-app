@@ -2,7 +2,7 @@
 using IdentityModel.OidcClient.Browser;
 using IBrowser = IdentityModel.OidcClient.Browser.IBrowser;
 
-namespace Logistics.DriverApp.Authentication;
+namespace Logistics.DriverApp.Services.Authentication;
 
 public class WebBrowserAuthenticator : IBrowser
 {

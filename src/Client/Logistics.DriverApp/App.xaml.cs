@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using IdentityModel.OidcClient;
+using Logistics.DriverApp.Services.Authentication;
 using Microsoft.Extensions.Configuration;
 
 namespace Logistics.DriverApp;

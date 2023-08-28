@@ -1,4 +1,4 @@
-﻿namespace Logistics.DriverApp.Authentication;
+﻿namespace Logistics.DriverApp.Services.Authentication;
 
 public class UserIdentity
 {

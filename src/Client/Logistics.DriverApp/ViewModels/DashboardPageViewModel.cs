@@ -1,4 +1,6 @@
-﻿namespace Logistics.DriverApp.ViewModels;
+﻿using Logistics.DriverApp.Services.Authentication;
+
+namespace Logistics.DriverApp.ViewModels;
 
 public class DashboardPageViewModel : ViewModelBase
 {

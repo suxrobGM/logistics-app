@@ -1,4 +1,7 @@
-﻿namespace Logistics.DriverApp.ViewModels;
+﻿using Logistics.DriverApp.Services;
+using Logistics.DriverApp.Services.Authentication;
+
+namespace Logistics.DriverApp.ViewModels;
 
 public class LoginPageViewModel : ViewModelBase
 {
@@ -33,11 +36,12 @@ public class LoginPageViewModel : ViewModelBase
             }
 
             _apiClient.AccessToken = result.AccessToken;
-            var tenantId = await SecureStorage.Default.GetAsync(StorageKeys.TenantId);
+            var tenantId = await TenantService.GetTenantIdFromCacheAsync();
 
             if (!string.IsNullOrEmpty(tenantId))
             {
                 _apiClient.TenantId = tenantId;
+                await TenantService.SaveTenantIdAsync(tenantId);
                 await Shell.Current.GoToAsync("//DashboardPage");
             }
             else

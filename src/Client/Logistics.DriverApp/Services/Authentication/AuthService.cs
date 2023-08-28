@@ -2,14 +2,14 @@
 using System.Security.Claims;
 using IBrowser = IdentityModel.OidcClient.Browser.IBrowser;
 
-namespace Logistics.DriverApp.Authentication;
+namespace Logistics.DriverApp.Services.Authentication;
 
 public class AuthService : IAuthService
 {
     private readonly OidcClient _oidcClient;
 
     public AuthService(OidcClientOptions options, IBrowser browser)
-    {      
+    {
 #if DEBUG
         options.HttpClientFactory = (options) =>
         {

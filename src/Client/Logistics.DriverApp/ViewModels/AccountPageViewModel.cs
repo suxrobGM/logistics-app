@@ -1,4 +1,5 @@
 ﻿using Logistics.DriverApp.Models;
+using Logistics.DriverApp.Services.Authentication;
 
 namespace Logistics.DriverApp.ViewModels;
 

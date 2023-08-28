@@ -1,4 +1,7 @@
-﻿namespace Logistics.DriverApp.ViewModels;
+﻿using Logistics.DriverApp.Services;
+using Logistics.DriverApp.Services.Authentication;
+
+namespace Logistics.DriverApp.ViewModels;
 
 public class AppShellViewModel : ViewModelBase
 {
@@ -9,11 +12,22 @@ public class AppShellViewModel : ViewModelBase
     {
         _authService = authService;
         _apiClient = apiClient;
-        SignOutCommand = new AsyncRelayCommand(SignOutAsync);
         _apiClient.OnErrorResponse += async (s, e) => await HandleApiErrors(e);
+        SignOutCommand = new AsyncRelayCommand(SignOutAsync);
     }
 
     public IAsyncRelayCommand SignOutCommand { get; }
+
+
+    #region Bindable properties
+
+    public bool DashboardPageVisible
+    {
+        get =>!string.IsNullOrEmpty(TenantService.TenantId);
+    }
+
+    #endregion
+
 
     public async Task SignOutAsync()
     {

@@ -8,9 +8,10 @@
     <TabBar Title="" Shell.FlyoutBehavior="Disabled" Shell.NavBarIsVisible="True">
         <ShellContent
             ContentTemplate="{DataTemplate views:LoginPage}"
-            Route="LoginPage" />
+            Route="LoginPage">
+        </ShellContent>
     </TabBar>
-    <ShellContent Title="Dashboard" ContentTemplate="{DataTemplate views:DashboardPage}" Route="DashboardPage" />
+    <ShellContent Title="Dashboard" ContentTemplate="{DataTemplate views:DashboardPage}" Route="DashboardPage" IsVisible="{Binding DashboardPageVisible}" />
     <ShellContent Title="Account" ContentTemplate="{DataTemplate views:AccountPage}" Route="AccountPage" />
     <ShellContent Title="Change Organization" ContentTemplate="{DataTemplate views:ChangeOrganizationPage}" Route="ChangeOrganizationPage" />
     <ShellContent Title="Settings" ContentTemplate="{DataTemplate views:SettingsPage}" Route="SettingsPage" />

@@ -1,7 +1,7 @@
 ﻿using IdentityModel.OidcClient;
 using IBrowser = IdentityModel.OidcClient.Browser.IBrowser;
 
-namespace Logistics.DriverApp.Authentication;
+namespace Logistics.DriverApp.Services.Authentication;
 
 public interface IAuthService
 {
