@@ -27,7 +27,10 @@ public class LoginPageViewModel : ViewModelBase
             var result = await _authService.LoginAsync();
             
             if (result.IsError)
+            {
+                await PopupHelpers.ShowError(result.ErrorDescription);
                 return;
+            }
 
             _apiClient.AccessToken = result.AccessToken;
             var tenantId = await SecureStorage.Default.GetAsync(StorageKeys.TenantId);

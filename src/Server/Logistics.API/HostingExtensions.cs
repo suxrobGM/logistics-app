@@ -1,9 +1,9 @@
 ﻿using System.Text;
 using Logistics.API.Authorization;
 using Logistics.API.Middlewares;
+using Logistics.Infrastructure.EF;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Logistics.Infrastructure.EF;
 
 namespace Logistics.API;
 
@@ -11,7 +11,9 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
+#if !DEBUG
         AddSecretsJson(builder.Configuration);
+#endif
         builder.Services.AddApplicationLayer(builder.Configuration, "EmailConfig");
         builder.Services.AddAdminApplicationLayer();
         builder.Services.AddTenantApplicationLayer();
@@ -23,7 +25,13 @@ internal static class HostingExtensions
             .AddJwtBearer("Bearer", options =>
             {
                 builder.Configuration.Bind("IdentityServer", options);
+#if DEBUG
+                options.TokenValidationParameters.ValidateAudience = false;
+                options.TokenValidationParameters.ValidateIssuer = false;
+#else
                 options.TokenValidationParameters.ValidateAudience = true;
+                options.TokenValidationParameters.ValidateIssuer = true;
+#endif
             });
 
         builder.Services.AddControllers(configure =>

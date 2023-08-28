@@ -27,6 +27,6 @@
                 </TableSection>
             </TableRoot>
         </TableView>
-        <Button Margin="0,10" Text="Update" Command="{Binding UpdateCommand}" />
+        <Button Margin="0,10" Text="Save" Command="{Binding SaveCommand}" />
     </VerticalStackLayout>
 </ContentPage>

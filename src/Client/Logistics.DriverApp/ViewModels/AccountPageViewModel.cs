@@ -16,13 +16,13 @@ public class AccountPageViewModel : ViewModelBase
         _apiClient = apiClient;
         _accountForm = new AccountEditForm();
         AccountCenterUrl = $"{_authService.Options.Authority}/account/manage";
-        UpdateCommand = new AsyncRelayCommand(UpdateAccountAsync, () => !IsBusy);
-        IsBusyChanged += (s, e) => UpdateCommand.NotifyCanExecuteChanged();
+        SaveCommand = new AsyncRelayCommand(UpdateAccountAsync, () => !IsBusy);
+        IsBusyChanged += (s, e) => SaveCommand.NotifyCanExecuteChanged();
 
         Task.Run(FetchUserAsync);
     }
 
-    public IAsyncRelayCommand UpdateCommand { get; }
+    public IAsyncRelayCommand SaveCommand { get; }
     public string AccountCenterUrl { get; }
     
     public AccountEditForm AccountForm 
