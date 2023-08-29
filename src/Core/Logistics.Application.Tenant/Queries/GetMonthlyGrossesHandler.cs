@@ -1,4 +1,6 @@
-﻿namespace Logistics.Application.Tenant.Queries;
+﻿using Logistics.Models;
+
+namespace Logistics.Application.Tenant.Queries;
 
 internal sealed class GetMonthlyGrossesHandler : RequestHandlerBase<GetMonthlyGrossesQuery, ResponseResult<MonthlyGrossesDto>>
 {

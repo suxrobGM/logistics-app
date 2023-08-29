@@ -1,11 +1,11 @@
-﻿using Logistics.Client.Models;
+﻿using Logistics.Models;
 
 namespace Logistics.Client.Abstractions;
 
 public interface ILoadApi
 {
-    Task<ResponseResult<Load>> GetLoadAsync(string id);
-    Task<PagedResponseResult<Load>> GetLoadsAsync(SearchableQuery query);
+    Task<ResponseResult<LoadDto>> GetLoadAsync(string id);
+    Task<PagedResponseResult<LoadDto>> GetLoadsAsync(SearchableQuery query);
     Task<ResponseResult> CreateLoadAsync(CreateLoad load);
     Task<ResponseResult> UpdateLoadAsync(UpdateLoad load);
     Task<ResponseResult> DeleteLoadAsync(string id);

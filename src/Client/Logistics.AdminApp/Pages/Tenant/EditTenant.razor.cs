@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Logistics.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Logistics.AdminApp.Pages.Tenant;
 
@@ -13,7 +14,7 @@ public partial class EditTenant : PageBase
     #endregion
 
 
-    private Client.Models.Tenant Tenant { get; set; } = new();
+    private TenantDto Tenant { get; set; } = new();
     private bool EditMode => !string.IsNullOrEmpty(Id);
 
     protected override async Task OnInitializedAsync()

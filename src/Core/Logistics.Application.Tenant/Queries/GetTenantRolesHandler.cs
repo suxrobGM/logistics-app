@@ -1,4 +1,6 @@
-﻿namespace Logistics.Application.Tenant.Queries;
+﻿using Logistics.Models;
+
+namespace Logistics.Application.Tenant.Queries;
 
 public class GetTenantRolesHandler : RequestHandlerBase<GetTenantRolesQuery, PagedResponseResult<TenantRoleDto>>
 {

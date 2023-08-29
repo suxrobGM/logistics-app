@@ -1,4 +1,6 @@
-﻿namespace Logistics.Application.Tenant.Queries;
+﻿using Logistics.Models;
+
+namespace Logistics.Application.Tenant.Queries;
 
 internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsRequest, PagedResponseResult<LoadDto>>
 {
@@ -58,7 +60,7 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsRequest, Page
             DispatchedDate = i.DispatchedDate,
             PickUpDate = i.PickUpDate,
             DeliveryDate = i.DeliveryDate,
-            Status = i.Status,
+            Status = (Models.LoadStatus)i.Status,
             AssignedDispatcherId = i.AssignedDispatcherId,
             AssignedDriverId = i.AssignedDriverId,
             AssignedTruckId = i.AssignedTruckId

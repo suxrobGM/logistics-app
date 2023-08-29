@@ -1,4 +1,6 @@
-﻿namespace Logistics.Application.Tenant.Queries;
+﻿using Logistics.Models;
+
+namespace Logistics.Application.Tenant.Queries;
 
 internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksRequest, PagedResponseResult<TruckDto>>
 {

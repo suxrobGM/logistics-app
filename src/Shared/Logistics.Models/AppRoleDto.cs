@@ -1,6 +1,6 @@
-﻿namespace Logistics.Application.Tenant.Models;
+﻿namespace Logistics.Models;
 
-public class TenantRoleDto
+public class AppRoleDto
 {
     public string? Name { get; set; }
     public string? DisplayName { get; set; }

@@ -1,6 +1,4 @@
-﻿using System.Text.RegularExpressions;
-
-namespace Logistics.Application.Admin.Commands;
+﻿namespace Logistics.Application.Admin.Commands;
 
 internal sealed class UpdateTenantHandler : RequestHandlerBase<UpdateTenantCommand, ResponseResult>
 {

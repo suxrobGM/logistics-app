@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Logistics.Models;
 
 namespace Logistics.Application.Admin.Queries;
 

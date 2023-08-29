@@ -1,4 +1,6 @@
-﻿namespace Logistics.Application.Admin.Queries;
+﻿using Logistics.Models;
+
+namespace Logistics.Application.Admin.Queries;
 
 internal class GetTenantDisplayNameHandler : RequestHandlerBase<GetTenantDisplayNameQuery, ResponseResult<TenantDto>>
 {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Logistics.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.Application.Admin.Queries;
 

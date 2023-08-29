@@ -1,4 +1,5 @@
 ﻿using Logistics.Domain.Shared.Enums;
+using Logistics.Models;
 
 namespace Logistics.API.Controllers;
 

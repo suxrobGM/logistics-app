@@ -1,6 +1,6 @@
-﻿namespace Logistics.Client.Models;
+﻿namespace Logistics.Models;
 
-public record TenantRole
+public class TenantRoleDto
 {
     public string? Name { get; set; }
     public string? DisplayName { get; set; }

@@ -1,4 +1,4 @@
-﻿namespace Logistics.Application.Tenant.Models;
+﻿namespace Logistics.Models;
 
 public class MonthlyGrossesDto
 {

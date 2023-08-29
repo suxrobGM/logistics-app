@@ -1,6 +1,6 @@
-﻿namespace Logistics.Client.Models;
+﻿namespace Logistics.Models;
 
-public record Truck
+public class TruckDto
 {
     public string? Id { get; set; }
     public int? TruckNumber { get; set; }

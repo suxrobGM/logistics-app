@@ -1,6 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using Logistics.Client.Exceptions;
-using Logistics.Client.Models;
+using Logistics.Models;
 using Logistics.Client.Options;
 
 namespace Logistics.Client.Implementations;
@@ -140,14 +139,14 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Load API
 
-    public Task<ResponseResult<Load>> GetLoadAsync(string id)
+    public Task<ResponseResult<LoadDto>> GetLoadAsync(string id)
     {
-        return MakeGetRequestAsync<ResponseResult<Load>>($"load/{id}");
+        return MakeGetRequestAsync<ResponseResult<LoadDto>>($"load/{id}");
     }
 
-    public Task<PagedResponseResult<Load>> GetLoadsAsync(SearchableQuery query)
+    public Task<PagedResponseResult<LoadDto>> GetLoadsAsync(SearchableQuery query)
     {
-        return MakeGetRequestAsync<PagedResponseResult<Load>>("load/list", query.ToDictionary());
+        return MakeGetRequestAsync<PagedResponseResult<LoadDto>>("load/list", query.ToDictionary());
     }
 
     public Task<ResponseResult> CreateLoadAsync(CreateLoad load)
@@ -170,21 +169,21 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Truck API
 
-    public Task<ResponseResult<Truck>> GetTruckAsync(string id)
+    public Task<ResponseResult<TruckDto>> GetTruckAsync(string id)
     {
-        return MakeGetRequestAsync<ResponseResult<Truck>>($"truck/{id}");
+        return MakeGetRequestAsync<ResponseResult<TruckDto>>($"truck/{id}");
     }
 
-    public Task<ResponseResult<Truck>> GetTruckByDriverAsync(string driverId)
+    public Task<ResponseResult<TruckDto>> GetTruckByDriverAsync(string driverId)
     {
-        return MakeGetRequestAsync<ResponseResult<Truck>>($"truck/getByDriver?driverId={driverId}");  
+        return MakeGetRequestAsync<ResponseResult<TruckDto>>($"truck/getByDriver?driverId={driverId}");  
     }
 
-    public Task<PagedResponseResult<Truck>> GetTrucksAsync(SearchableQuery query, bool includeCargoIds = false)
+    public Task<PagedResponseResult<TruckDto>> GetTrucksAsync(SearchableQuery query, bool includeCargoIds = false)
     {
         var queryDict = query.ToDictionary();
         queryDict.Add("includeCargoIds", includeCargoIds.ToString());
-        return MakeGetRequestAsync<PagedResponseResult<Truck>>("truck/list", queryDict);
+        return MakeGetRequestAsync<PagedResponseResult<TruckDto>>("truck/list", queryDict);
     }
 
     public Task<ResponseResult> CreateTruckAsync(CreateTruck truck)
@@ -207,14 +206,14 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Employee API
 
-    public Task<ResponseResult<Employee>> GetEmployeeAsync(string id)
+    public Task<ResponseResult<EmployeeDto>> GetEmployeeAsync(string id)
     {
-        return MakeGetRequestAsync<ResponseResult<Employee>>($"employee/{id}");
+        return MakeGetRequestAsync<ResponseResult<EmployeeDto>>($"employee/{id}");
     }
 
-    public Task<PagedResponseResult<Employee>> GetEmployeesAsync(SearchableQuery query)
+    public Task<PagedResponseResult<EmployeeDto>> GetEmployeesAsync(SearchableQuery query)
     {
-        return MakeGetRequestAsync<PagedResponseResult<Employee>>("employee/list", query.ToDictionary());
+        return MakeGetRequestAsync<PagedResponseResult<EmployeeDto>>("employee/list", query.ToDictionary());
     }
 
     public Task<ResponseResult> CreateEmployeeAsync(CreateEmployee employee)
@@ -242,14 +241,14 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakeGetRequestAsync<ResponseResult<string>>($"tenant/getDisplayName?id={id}");
     }
 
-    public Task<ResponseResult<Tenant>> GetTenantAsync(string identifier)
+    public Task<ResponseResult<TenantDto>> GetTenantAsync(string identifier)
     {
-        return MakeGetRequestAsync<ResponseResult<Tenant>>($"tenant/{identifier}");
+        return MakeGetRequestAsync<ResponseResult<TenantDto>>($"tenant/{identifier}");
     }
 
-    public Task<PagedResponseResult<Tenant>> GetTenantsAsync(SearchableQuery query)
+    public Task<PagedResponseResult<TenantDto>> GetTenantsAsync(SearchableQuery query)
     {
-        return MakeGetRequestAsync<PagedResponseResult<Tenant>>("tenant/list", query.ToDictionary());
+        return MakeGetRequestAsync<PagedResponseResult<TenantDto>>("tenant/list", query.ToDictionary());
     }
 
     public Task<ResponseResult> CreateTenantAsync(CreateTenant tenant)
@@ -272,9 +271,9 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region User API
 
-    public Task<ResponseResult<User>> GetUserAsync(string id)
+    public Task<ResponseResult<UserDto>> GetUserAsync(string id)
     {
-        return MakeGetRequestAsync<ResponseResult<User>>($"user/{id}");
+        return MakeGetRequestAsync<ResponseResult<UserDto>>($"user/{id}");
     }
 
     public Task<ResponseResult> UpdateUserAsync(UpdateUser user)

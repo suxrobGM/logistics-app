@@ -1,4 +1,6 @@
-﻿namespace Logistics.API.Controllers;
+﻿using Logistics.Models;
+
+namespace Logistics.API.Controllers;
 
 [Route("[controller]")]
 [ApiController]

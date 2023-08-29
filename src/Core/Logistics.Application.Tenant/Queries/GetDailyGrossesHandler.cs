@@ -1,4 +1,6 @@
-﻿namespace Logistics.Application.Tenant.Queries;
+﻿using Logistics.Models;
+
+namespace Logistics.Application.Tenant.Queries;
 
 internal sealed class GetDailyGrossesHandler : RequestHandlerBase<GetDailyGrossesQuery, ResponseResult<DailyGrossesDto>>
 {

@@ -1,4 +1,6 @@
-﻿namespace Logistics.Application.Admin.Queries;
+﻿using Logistics.Models;
+
+namespace Logistics.Application.Admin.Queries;
 
 internal sealed class GetUsersHandler : RequestHandlerBase<GetUsersQuery, PagedResponseResult<UserDto>>
 {

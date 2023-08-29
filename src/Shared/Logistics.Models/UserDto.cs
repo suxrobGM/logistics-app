@@ -1,14 +1,9 @@
-﻿namespace Logistics.Application.Admin.Models;
+﻿namespace Logistics.Models;
 
 public class UserDto
 {
-    public UserDto()
-    {
-        UserName = string.Empty;
-    }
-
     public string? Id { get; set; }
-    public string UserName { get; set; }
+    public string UserName { get; set; } = string.Empty;
     public string? FirstName { get; set; }
     public string? Email { get; set; }
     public string? PhoneNumber { get; set; }

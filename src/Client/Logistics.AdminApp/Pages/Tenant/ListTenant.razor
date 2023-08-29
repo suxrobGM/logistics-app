@@ -1,4 +1,5 @@
 ﻿@page "/list-tenant"
+@using Logistics.Models
 @inherits PageBase
 
 <h2>Tenants List</h2>
@@ -43,7 +44,7 @@
                             HeaderTextAlign="TextAlign.Center">
                         <Template>
                             @{
-                                var entity = context as Tenant;
+                                var entity = context as TenantDto;
                                 var editPageLink = $"/edit-tenant/{entity?.Id}";
                             }
 

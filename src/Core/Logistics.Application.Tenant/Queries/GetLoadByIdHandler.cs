@@ -1,4 +1,6 @@
-﻿namespace Logistics.Application.Tenant.Queries;
+﻿using Logistics.Models;
+
+namespace Logistics.Application.Tenant.Queries;
 
 internal sealed class GetLoadByIdHandler : RequestHandlerBase<GetLoadByIdQuery, ResponseResult<LoadDto>>
 {
@@ -36,7 +38,7 @@ internal sealed class GetLoadByIdHandler : RequestHandlerBase<GetLoadByIdQuery, 
             DeliveryDate = loadEntity.DeliveryDate,
             DeliveryCost = loadEntity.DeliveryCost,
             Distance = loadEntity.Distance,
-            Status = loadEntity.Status,
+            Status = (Models.LoadStatus)loadEntity.Status,
             AssignedDispatcherId = loadEntity.AssignedDispatcherId,
             AssignedDispatcherName = assignedDispatcher?.GetFullName(),
             AssignedDriverId = assignedDriver?.Id,

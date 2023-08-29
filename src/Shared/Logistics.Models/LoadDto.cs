@@ -1,8 +1,6 @@
-﻿using Logistics.Client.Enums;
+﻿namespace Logistics.Models;
 
-namespace Logistics.Client.Models;
-
-public record Load
+public class LoadDto
 {
     public string? Id { get; set; }
     public ulong RefId { get; set; } = 100_000;

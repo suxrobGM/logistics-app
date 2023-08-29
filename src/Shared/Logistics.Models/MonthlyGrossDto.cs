@@ -1,4 +1,4 @@
-﻿namespace Logistics.Application.Tenant.Models;
+﻿namespace Logistics.Models;
 
 public record MonthlyGrossDto(int Year, int Month)
 {

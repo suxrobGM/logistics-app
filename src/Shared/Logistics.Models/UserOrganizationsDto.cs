@@ -1,4 +1,4 @@
-﻿namespace Logistics.Application.Admin.Models;
+﻿namespace Logistics.Models;
 
 public class UserOrganizationsDto
 {

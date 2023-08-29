@@ -1,9 +1,9 @@
-﻿using Logistics.Client.Models;
+﻿using Logistics.Models;
 
 namespace Logistics.Client.Abstractions;
 
 public interface IUserApi
 {
-    Task<ResponseResult<User>> GetUserAsync(string id);
+    Task<ResponseResult<UserDto>> GetUserAsync(string id);
     Task<ResponseResult> UpdateUserAsync(UpdateUser user);
 }

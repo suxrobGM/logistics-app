@@ -1,4 +1,5 @@
-﻿using Logistics.Shared;
+﻿using Logistics.Models;
+using Logistics.Shared;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Logistics.AdminApp.Pages.Tenant;
@@ -6,8 +7,8 @@ namespace Logistics.AdminApp.Pages.Tenant;
 [Authorize(Policy = Permissions.Tenant.View)]
 public partial class ListTenant : PageBase
 {
-    private readonly PagedList<Client.Models.Tenant> _tenantsPagedList = new(20, true, i => i.Id!);
-    private IEnumerable<Client.Models.Tenant> _tenants = Array.Empty<Client.Models.Tenant>();
+    private readonly PagedList<TenantDto> _tenantsPagedList = new(20, true, i => i.Id!);
+    private IEnumerable<TenantDto> _tenants = Array.Empty<TenantDto>();
     private string _searchInput = string.Empty;
     private int _totalRecords;
     
