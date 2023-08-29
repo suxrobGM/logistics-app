@@ -2,16 +2,16 @@
 
 public abstract class ViewModelBase : ObservableRecipient
 {
-    public event EventHandler<bool>? IsBusyChanged;
+    public event EventHandler<bool>? IsLoadingChanged;
 
-    private bool _isBusy = false;
-    public bool IsBusy
+    private bool _isLoading;
+    public bool IsLoading
     {
-        get => _isBusy;
+        get => _isLoading;
         set 
         {
-            SetProperty(ref _isBusy, value);
-            IsBusyChanged?.Invoke(this, _isBusy);
+            SetProperty(ref _isLoading, value);
+            IsLoadingChanged?.Invoke(this, _isLoading);
         }
     }
 }

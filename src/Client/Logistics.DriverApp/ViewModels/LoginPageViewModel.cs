@@ -7,16 +7,19 @@ public class LoginPageViewModel : ViewModelBase
 {
     private readonly IAuthService _authService;
     private readonly IApiClient _apiClient;
+    private readonly ITenantService _tenantService;
 
     public LoginPageViewModel(
         IAuthService authService,
-        IApiClient apiClient)
+        IApiClient apiClient,
+        ITenantService tenantService)
     {
         _authService = authService;
         _apiClient = apiClient;
-        SignInCommand = new AsyncRelayCommand(LoginAsync, () => !IsBusy);
-        OpenSignUpCommand = new AsyncRelayCommand(OpenSignUpUrl, () => !IsBusy);
-        IsBusyChanged += HandleIsBusyChanged;
+        _tenantService = tenantService;
+        SignInCommand = new AsyncRelayCommand(LoginAsync, () => !IsLoading);
+        OpenSignUpCommand = new AsyncRelayCommand(OpenSignUpUrl, () => !IsLoading);
+        IsLoadingChanged += HandleIsLoadingChanged;
     }
 
     public IAsyncRelayCommand SignInCommand { get; }
@@ -24,24 +27,24 @@ public class LoginPageViewModel : ViewModelBase
 
     private async Task LoginAsync()
     {
-        IsBusy = true;
+        IsLoading = true;
         try
         {
             var result = await _authService.LoginAsync();
             
             if (result.IsError)
             {
-                await PopupHelpers.ShowError(result.ErrorDescription);
+                await PopupHelpers.ShowErrorAsync(result.ErrorDescription);
                 return;
             }
 
             _apiClient.AccessToken = result.AccessToken;
-            var tenantId = await TenantService.GetTenantIdFromCacheAsync();
+            var tenantId = await _tenantService.GetTenantIdFromCacheAsync();
 
             if (!string.IsNullOrEmpty(tenantId))
             {
                 _apiClient.TenantId = tenantId;
-                await TenantService.SaveTenantIdAsync(tenantId);
+                await _tenantService.SaveTenantIdAsync(tenantId);
                 await Shell.Current.GoToAsync("//DashboardPage");
             }
             else
@@ -51,11 +54,11 @@ public class LoginPageViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            await PopupHelpers.ShowError(ex.Message);
+            await PopupHelpers.ShowErrorAsync(ex.Message);
         }
         finally
         {
-            IsBusy = false;
+            IsLoading = false;
         }
     }
 
@@ -65,7 +68,7 @@ public class LoginPageViewModel : ViewModelBase
         await Launcher.OpenAsync(url);
     }
 
-    private void HandleIsBusyChanged(object? sender, bool value)
+    private void HandleIsLoadingChanged(object? sender, bool value)
     {
         OpenSignUpCommand.NotifyCanExecuteChanged();
         SignInCommand.NotifyCanExecuteChanged();

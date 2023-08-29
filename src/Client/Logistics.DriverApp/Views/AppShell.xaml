@@ -6,16 +6,25 @@
     xmlns:views="clr-namespace:Logistics.DriverApp.Views">
 
     <TabBar Title="" Shell.FlyoutBehavior="Disabled" Shell.NavBarIsVisible="True">
-        <ShellContent
-            ContentTemplate="{DataTemplate views:LoginPage}"
-            Route="LoginPage">
-        </ShellContent>
+        <ShellContent ContentTemplate="{DataTemplate views:LoginPage}"
+                      Route="LoginPage" />
     </TabBar>
-    <ShellContent Title="Dashboard" ContentTemplate="{DataTemplate views:DashboardPage}" Route="DashboardPage" IsVisible="{Binding DashboardPageVisible}" />
-    <ShellContent Title="Account" ContentTemplate="{DataTemplate views:AccountPage}" Route="AccountPage" />
-    <ShellContent Title="Change Organization" ContentTemplate="{DataTemplate views:ChangeOrganizationPage}" Route="ChangeOrganizationPage" />
-    <ShellContent Title="Settings" ContentTemplate="{DataTemplate views:SettingsPage}" Route="SettingsPage" />
-    <ShellContent Title="About" ContentTemplate="{DataTemplate views:AboutPage}" Route="AboutPage" />
+    <ShellContent Title="Dashboard" 
+                  ContentTemplate="{DataTemplate views:DashboardPage}" 
+                  Route="DashboardPage" 
+                  IsVisible="{Binding DashboardPageVisible}" />
+    <ShellContent Title="Account" 
+                  ContentTemplate="{DataTemplate views:AccountPage}" 
+                  Route="AccountPage" />
+    <ShellContent Title="Change Organization" 
+                  ContentTemplate="{DataTemplate views:ChangeOrganizationPage}" 
+                  Route="ChangeOrganizationPage" />
+    <ShellContent Title="Settings" 
+                  ContentTemplate="{DataTemplate views:SettingsPage}" 
+                  Route="SettingsPage" />
+    <ShellContent Title="About" 
+                  ContentTemplate="{DataTemplate views:AboutPage}" 
+                  Route="AboutPage" />
     <Shell.FlyoutFooter>
         <StackLayout Padding="20">
             <Button Text="Sign Out" Command="{Binding SignOutCommand}"></Button>

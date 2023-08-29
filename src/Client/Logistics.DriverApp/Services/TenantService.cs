@@ -1,22 +1,21 @@
 ﻿namespace Logistics.DriverApp.Services;
 
-internal static class TenantService
+public class TenantService : ITenantService
 {
     private const string TENANT_ID_KEY = "tenant_id";
+    private string? _currentTenantId;
 
-    public static string? TenantId { get; private set; }
-
-    public static async Task<string?> GetTenantIdFromCacheAsync()
+    public async Task<string?> GetTenantIdFromCacheAsync()
     {
         return await SecureStorage.Default.GetAsync(TENANT_ID_KEY);
     }
 
-    public static Task SaveTenantIdAsync(string tenantId)
+    public Task SaveTenantIdAsync(string tenantId)
     {
-        if (TenantId == tenantId)
+        if (_currentTenantId == tenantId)
             return Task.CompletedTask;
         
-        TenantId = tenantId;
+        _currentTenantId = tenantId;
         return SecureStorage.Default.SetAsync(TENANT_ID_KEY, tenantId);
     }
 }

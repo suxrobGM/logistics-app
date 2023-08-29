@@ -1,6 +1,8 @@
 ﻿using IdentityModel.OidcClient;
+using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.Authentication;
 using Microsoft.Extensions.Configuration;
+using Syncfusion.Licensing;
 
 namespace Logistics.DriverApp;
 
@@ -20,6 +22,8 @@ public partial class App : Application
 
     private static IServiceProvider ConfigureServices(IConfiguration configuration)
     {
+        var a = configuration.GetValue<string>("SyncfusionKey");
+        SyncfusionLicenseProvider.RegisterLicense(a);
         var services = new ServiceCollection();
         var oidcOptions = configuration.GetSection("OidcClient").Get<OidcClientOptions>() 
                           ?? throw new NullReferenceException("Could not get OidcClient form the appsettings.json file");
@@ -32,6 +36,7 @@ public partial class App : Application
         services.AddTransient<ChangeOrganizationPageVideModel>();
         services.AddScoped<IdentityModel.OidcClient.Browser.IBrowser, WebBrowserAuthenticator>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<ITenantService, TenantService>();
         services.AddWebApiClient(configuration);
         return services.BuildServiceProvider();
     }

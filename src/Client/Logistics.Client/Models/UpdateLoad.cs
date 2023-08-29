@@ -1,4 +1,4 @@
-﻿using Logistics.Client.Enums;
+﻿using Logistics.Models;
 
 namespace Logistics.Client.Models;
 

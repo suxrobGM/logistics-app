@@ -37,14 +37,14 @@ public class AppShellViewModel : ViewModelBase
 
     public async Task SignOutAsync()
     {
-        IsBusy = true;
+        IsLoading = true;
         await _authService.LogoutAsync();
         await Shell.Current.GoToAsync("//LoginPage", true);
-        IsBusy = false;
+        IsLoading = false;
     }
 
     private static Task HandleApiErrors(string error)
     {
-        return MainThread.InvokeOnMainThreadAsync(() => PopupHelpers.ShowError(error));
+        return MainThread.InvokeOnMainThreadAsync(() => PopupHelpers.ShowErrorAsync(error));
     }
 }

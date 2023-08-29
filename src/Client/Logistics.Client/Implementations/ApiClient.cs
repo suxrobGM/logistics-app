@@ -271,14 +271,19 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region User API
 
-    public Task<ResponseResult<UserDto>> GetUserAsync(string id)
+    public Task<ResponseResult<UserDto>> GetUserAsync(string userId)
     {
-        return MakeGetRequestAsync<ResponseResult<UserDto>>($"user/{id}");
+        return MakeGetRequestAsync<ResponseResult<UserDto>>($"user/{userId}");
     }
 
     public Task<ResponseResult> UpdateUserAsync(UpdateUser user)
     {
         return MakePutRequestAsync<ResponseResult, UpdateUser>($"user/update/{user.Id}", user);
+    }
+
+    public Task<ResponseResult<UserOrganizationsDto>> GetUserOrganizations(string userId)
+    {
+        return MakeGetRequestAsync<ResponseResult<UserOrganizationsDto>>($"user/{userId}/organizations");
     }
 
     #endregion

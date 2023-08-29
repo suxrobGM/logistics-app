@@ -1,5 +1,6 @@
 ﻿using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services.Authentication;
+using Logistics.Models;
 
 namespace Logistics.DriverApp.ViewModels;
 
@@ -8,6 +9,7 @@ public class AccountPageViewModel : ViewModelBase
     private readonly IAuthService _authService;
     private readonly IApiClient _apiClient;
     private AccountEditForm _accountForm;
+    private UserDto? _user;
 
     public AccountPageViewModel(
         IAuthService authService, 
@@ -17,10 +19,8 @@ public class AccountPageViewModel : ViewModelBase
         _apiClient = apiClient;
         _accountForm = new AccountEditForm();
         AccountCenterUrl = $"{_authService.Options.Authority}/account/manage";
-        SaveCommand = new AsyncRelayCommand(UpdateAccountAsync, () => !IsBusy);
-        IsBusyChanged += (s, e) => SaveCommand.NotifyCanExecuteChanged();
-
-        Task.Run(FetchUserAsync);
+        SaveCommand = new AsyncRelayCommand(UpdateAccountAsync, () => !IsLoading);
+        IsLoadingChanged += (s, e) => SaveCommand.NotifyCanExecuteChanged();
     }
 
     public IAsyncRelayCommand SaveCommand { get; }
@@ -31,28 +31,36 @@ public class AccountPageViewModel : ViewModelBase
         get => _accountForm;
         set => SetProperty(ref _accountForm, value);
     }
-    
+
+    protected override async void OnActivated()
+    {
+        await FetchUserAsync();
+    }
+
     private async Task FetchUserAsync()
     {
+        if (_user != null)
+            return;
+        
         var userId = _authService.User?.Id;
 
         if (string.IsNullOrEmpty(userId))
             return;
-
-        IsBusy = true;
+        
+        IsLoading = true;
         var result = await _apiClient.GetUserAsync(userId);
 
         if (result.Success)
         {
-            var user = result.Value!;
-            AccountForm.UserName = user.UserName;
-            AccountForm.FirstName = user.FirstName;
-            AccountForm.LastName = user.LastName;
-            AccountForm.Email = user.Email;
-            AccountForm.PhoneNumber = user.PhoneNumber;
+            _user = result.Value!;
+            AccountForm.UserName = _user.UserName;
+            AccountForm.FirstName = _user.FirstName;
+            AccountForm.LastName = _user.LastName;
+            AccountForm.Email = _user.Email;
+            AccountForm.PhoneNumber = _user.PhoneNumber;
         }
-
-        IsBusy = false;
+        
+        IsLoading = false;
     }
 
     private async Task UpdateAccountAsync()
@@ -63,11 +71,11 @@ public class AccountPageViewModel : ViewModelBase
         if (AccountForm.HasErrors)
         {
             var errors = string.Join('\n', AccountForm.GetErrors().Select(i => i.ErrorMessage));
-            await PopupHelpers.ShowError(errors);
+            await PopupHelpers.ShowErrorAsync(errors);
             return;
         }
 
-        IsBusy = true;
+        IsLoading = true;
         var result = await _apiClient.UpdateUserAsync(new UpdateUser()
         {
             Id = userId,
@@ -78,9 +86,9 @@ public class AccountPageViewModel : ViewModelBase
 
         if (result.Success)
         {
-            await PopupHelpers.ShowSuccess("Account details updated successfully");
+            await PopupHelpers.ShowSuccessAsync("Account details updated successfully");
         }
 
-        IsBusy = false;
+        IsLoading = false;
     }
 }
