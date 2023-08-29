@@ -12,7 +12,7 @@
         <SearchBar x:Name="searchBar" 
                    Placeholder="Type your organization name"
                    Text="{Binding SearchInput}" />
-        <ListView ItemsSource="{Binding SearchResults}" 
+        <ListView ItemsSource="{Binding Organizations}" 
                   SelectedItem="{Binding SelectedOrganization}" />
     </VerticalStackLayout>
 </ContentPage>

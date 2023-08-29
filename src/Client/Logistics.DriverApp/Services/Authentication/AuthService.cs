@@ -11,7 +11,7 @@ public class AuthService : IAuthService
     public AuthService(OidcClientOptions options, IBrowser browser)
     {
 #if DEBUG
-        options.HttpClientFactory = (options) =>
+        options.HttpClientFactory = (_) =>
         {
             var handler = new HttpsClientHandlerService();
             return new HttpClient(handler.GetPlatformMessageHandler());
@@ -33,12 +33,11 @@ public class AuthService : IAuthService
     {
         var result = await _oidcClient.LoginAsync();
 
-        if (!result.IsError)
-        {
-            AccessToken = result.AccessToken;
-            User = ParseUserIdentity(result.User.Claims);
-        }
-
+        if (result.IsError) 
+            return result;
+        
+        AccessToken = result.AccessToken;
+        User = ParseUserIdentity(result.User.Claims);
         return result;
     }
 
@@ -46,12 +45,11 @@ public class AuthService : IAuthService
     {
         var result = await _oidcClient.LogoutAsync();
 
-        if (!result.IsError)
-        {
-            AccessToken = null;
-            User = null;
-        }
-
+        if (result.IsError) 
+            return result;
+        
+        AccessToken = null;
+        User = null;
         return result;
     }
 

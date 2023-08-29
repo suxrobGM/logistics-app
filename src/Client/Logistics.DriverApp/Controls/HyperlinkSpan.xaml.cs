@@ -1,9 +1,6 @@
-using Microsoft.Maui.Graphics.Text;
-using System;
-
 namespace Logistics.DriverApp.Controls;
 
-public partial class HyperlinkSpan : Span
+public partial class HyperlinkSpan
 {
 	public HyperlinkSpan()
 	{

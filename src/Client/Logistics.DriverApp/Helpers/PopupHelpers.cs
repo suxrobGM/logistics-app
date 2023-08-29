@@ -1,6 +1,6 @@
 ﻿namespace Logistics.DriverApp.Helpers;
 
-public class PopupHelpers
+public static class PopupHelpers
 {
     public static Task ShowError(string errorMessage)
     {

@@ -26,7 +26,7 @@ public class WebBrowserAuthenticator : IBrowser
             return new BrowserResult
             {
                 ResultType = BrowserResultType.UserCancel,
-                ErrorDescription = "Login canceled by the user."
+                ErrorDescription = "Login canceled by the user"
             };
         }
     }

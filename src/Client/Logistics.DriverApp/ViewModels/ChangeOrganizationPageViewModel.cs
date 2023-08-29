@@ -29,7 +29,15 @@ public class ChangeOrganizationPageVideModel : ViewModelBase
     public string? SelectedOrganization
     {
         get => _selectedOrganization;
-        set => SetProperty(ref _selectedOrganization, value);
+        set
+        {
+            SetProperty(ref _selectedOrganization, value);
+            
+            if (!string.IsNullOrEmpty(value))
+            {
+                WeakReferenceMessenger.Default.Send(new TenantIdChangedMessage(value));
+            }
+        }
     }
 
     private string? _searchInput;
@@ -58,7 +66,7 @@ public class ChangeOrganizationPageVideModel : ViewModelBase
         if (string.IsNullOrEmpty(searchInput))
             return;
         
-        // WeakReferenceMessenger.Default.Send(new TenantIdChangedMessage(searchInput));
+       
         var result = await _apiClient.GetTenantsAsync(new SearchableQuery(searchInput));
         var hasItems = result.Items?.Any() ?? false;
 
