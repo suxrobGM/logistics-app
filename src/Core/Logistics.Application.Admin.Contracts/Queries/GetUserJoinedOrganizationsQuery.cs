@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Admin.Queries;
 
-public sealed class GetUserByIdQuery : RequestBase<ResponseResult<UserDto>>
+public class GetUserJoinedOrganizationsQuery : RequestBase<ResponseResult<UserOrganizationsDto>>
 {
     public required string UserId { get; set; }
 }

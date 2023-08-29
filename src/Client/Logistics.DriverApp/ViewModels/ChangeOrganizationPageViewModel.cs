@@ -1,12 +1,11 @@
-﻿namespace Logistics.DriverApp.ViewModels;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Logistics.DriverApp.Messages;
+
+namespace Logistics.DriverApp.ViewModels;
 
 public class ChangeOrganizationPageVideModel : ViewModelBase
 {
     private readonly IApiClient _apiClient;
-    private string? _currentOrganization;
-    private string? _selectedOrganization;
-    private string? _searchInput;
-    private IEnumerable<string>? _organizations;
 
     public ChangeOrganizationPageVideModel(IApiClient apiClient)
     {
@@ -16,45 +15,56 @@ public class ChangeOrganizationPageVideModel : ViewModelBase
 
     public IAsyncRelayCommand<string> PerformSearchCommand { get; }
 
+
+    #region Bindable properties
+
+    private string? _currentOrganization;
     public string? CurrentOrganization
     {
         get => _currentOrganization;
         set => SetProperty(ref _currentOrganization, value);
     }
 
+    private string? _selectedOrganization;
     public string? SelectedOrganization
     {
         get => _selectedOrganization;
         set => SetProperty(ref _selectedOrganization, value);
     }
 
+    private string? _searchInput;
     public string? SearchInput
     {
         get => _searchInput;
         set
         {
             SetProperty(ref _searchInput, value);
-
+            Task.Run(async () => await SearchOrganizationAsync(value));
         }
     }
 
-    public IEnumerable<string>? Organizations 
+    private IEnumerable<string>? _organizations;
+    public IEnumerable<string>? Organizations
     {
         get => _organizations;
         set => SetProperty(ref _organizations, value);
     }
+
+    #endregion
+
 
     private async Task SearchOrganizationAsync(string? searchInput)
     {
         if (string.IsNullOrEmpty(searchInput))
             return;
         
+        // WeakReferenceMessenger.Default.Send(new TenantIdChangedMessage(searchInput));
         var result = await _apiClient.GetTenantsAsync(new SearchableQuery(searchInput));
         var hasItems = result.Items?.Any() ?? false;
 
         if (result.Success && hasItems)
         {
-            Organizations = result.Items!.Select(i => i.DisplayName!).ToArray();
+            Organizations = result.Items!.Select(i => i.DisplayName!);
         }
     }
 }

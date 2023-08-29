@@ -2,5 +2,4 @@
 
 public class GetAppRolesQuery : SearchableRequest<AppRoleDto>
 {
-    
 }

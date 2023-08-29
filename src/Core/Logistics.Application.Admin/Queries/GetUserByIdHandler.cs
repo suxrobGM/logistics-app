@@ -14,7 +14,7 @@ internal sealed class GetUserByIdHandler : RequestHandlerBase<GetUserByIdQuery, 
     protected override async Task<ResponseResult<UserDto>> HandleValidated(
         GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-        var userEntity = await _userManager.FindByIdAsync(request.Id!);
+        var userEntity = await _userManager.FindByIdAsync(request.UserId!);
 
         if (userEntity == null)
             return ResponseResult<UserDto>.CreateError("Could not find the specified user");

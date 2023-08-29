@@ -6,7 +6,7 @@ internal class GetUserByIdValidator : AbstractValidator<GetUserByIdQuery>
 {
     public GetUserByIdValidator()
     {
-        RuleFor(i => i.Id)
+        RuleFor(i => i.UserId)
             .NotEmpty();
     }
 }

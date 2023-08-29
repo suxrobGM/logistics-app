@@ -11,8 +11,7 @@
         <Label Text="Select organization: " />
         <SearchBar x:Name="searchBar" 
                    Placeholder="Type your organization name"
-                   SearchCommand="{Binding PerformSearchCommand}" 
-                   SearchCommandParameter="{Binding Text, Source={x:Reference searchBar}}" />
+                   Text="{Binding SearchInput}" />
         <ListView ItemsSource="{Binding SearchResults}" 
                   SelectedItem="{Binding SelectedOrganization}" />
     </VerticalStackLayout>

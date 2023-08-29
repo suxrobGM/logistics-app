@@ -19,7 +19,7 @@ public class UserController : ControllerBase
     {
         var result = await _mediator.Send(new GetUserByIdQuery
         {
-            Id = id
+            UserId = id
         });
 
         if (result.Success)
@@ -35,6 +35,20 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetList([FromQuery] GetUsersQuery query)
     {
         var result = await _mediator.Send(query);
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result);
+    }
+
+    [HttpGet("{id}/organizations")]
+    [ProducesResponseType(typeof(PagedResponseResult<UserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.User.View)]
+    public async Task<IActionResult> GetList(string id)
+    {
+        var result = await _mediator.Send(new GetUserJoinedOrganizationsQuery() { UserId = id });
 
         if (result.Success)
             return Ok(result);

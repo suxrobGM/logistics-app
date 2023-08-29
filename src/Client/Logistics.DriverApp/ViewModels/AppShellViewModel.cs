@@ -1,4 +1,5 @@
-﻿using Logistics.DriverApp.Services;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Logistics.DriverApp.Messages;
 using Logistics.DriverApp.Services.Authentication;
 
 namespace Logistics.DriverApp.ViewModels;
@@ -14,6 +15,10 @@ public class AppShellViewModel : ViewModelBase
         _apiClient = apiClient;
         _apiClient.OnErrorResponse += async (s, e) => await HandleApiErrors(e);
         SignOutCommand = new AsyncRelayCommand(SignOutAsync);
+        Messenger.Register<TenantIdChangedMessage>(this, (s, m) =>
+        {
+            DashboardPageVisible = !string.IsNullOrEmpty(m.Value);
+        });
     }
 
     public IAsyncRelayCommand SignOutCommand { get; }
@@ -21,13 +26,14 @@ public class AppShellViewModel : ViewModelBase
 
     #region Bindable properties
 
+    public bool _dashboardPageVisible;
     public bool DashboardPageVisible
     {
-        get =>!string.IsNullOrEmpty(TenantService.TenantId);
+        get => _dashboardPageVisible;
+        set => SetProperty(ref _dashboardPageVisible, value);
     }
 
     #endregion
-
 
     public async Task SignOutAsync()
     {

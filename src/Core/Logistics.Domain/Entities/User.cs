@@ -10,6 +10,10 @@ public class User : IdentityUser, IEntity<string>, IAuditableEntity
     [StringLength(UserConsts.NameLength)]
     public string? LastName { get; set; }
     public string JoinedTenantIds { get; set; } = string.Empty;
+    public DateTime Created { get; set; } = DateTime.UtcNow;
+    public string? CreatedBy { get; set; }
+    public DateTime? LastModified { get; set; }
+    public string? LastModifiedBy { get; set; }
 
     public void JoinTenant(string tenantId)
     {
@@ -17,11 +21,11 @@ public class User : IdentityUser, IEntity<string>, IAuditableEntity
 
         if (tenantIds.Contains(tenantId))
             return;
-        
-        JoinedTenantIds = string.IsNullOrEmpty(JoinedTenantIds) ? 
+
+        JoinedTenantIds = string.IsNullOrEmpty(JoinedTenantIds) ?
             string.Join(',', tenantId) : string.Join(',', JoinedTenantIds, tenantId);
     }
-    
+
     public void RemoveTenant(string tenantId)
     {
         JoinedTenantIds = JoinedTenantIds.Replace($",{tenantId}", "")
@@ -37,8 +41,8 @@ public class User : IdentityUser, IEntity<string>, IAuditableEntity
         return string.Join(" ", FirstName, LastName);
     }
 
-    public DateTime Created { get; set; } = DateTime.UtcNow;
-    public string? CreatedBy { get; set; }
-    public DateTime? LastModified { get; set; }
-    public string? LastModifiedBy { get; set; }
+    public string[] GetJoinedTenants()
+    {
+        return JoinedTenantIds.Split(',');
+    }
 }
