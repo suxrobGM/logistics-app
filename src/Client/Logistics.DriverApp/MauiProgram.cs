@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Maui;
-using Syncfusion.Maui.Core.Hosting;
+﻿using Syncfusion.Maui.Core.Hosting;
 
 namespace Logistics.DriverApp;
 
@@ -10,7 +9,6 @@ public static class MauiProgram
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
-            .UseMauiCommunityToolkit()
             .ConfigureSyncfusionCore()
             .ConfigureFonts(fonts =>
             {
