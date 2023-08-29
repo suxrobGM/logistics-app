@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Logistics.Domain.Constraints;
+using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.Domain.Entities;
 

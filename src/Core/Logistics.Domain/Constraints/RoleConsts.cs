@@ -1,4 +1,4 @@
-﻿namespace Logistics.Domain.Shared.Constraints;
+﻿namespace Logistics.Domain.Constraints;
 
 public static class RoleConsts
 {

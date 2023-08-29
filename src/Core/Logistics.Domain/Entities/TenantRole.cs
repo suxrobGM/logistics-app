@@ -1,4 +1,6 @@
-﻿namespace Logistics.Domain.Entities;
+﻿using Logistics.Domain.Constraints;
+
+namespace Logistics.Domain.Entities;
 
 public class TenantRole : AuditableEntity, ITenantEntity
 {

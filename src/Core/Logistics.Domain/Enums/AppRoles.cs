@@ -1,4 +1,4 @@
-﻿namespace Logistics.Domain.Shared.Enums;
+﻿namespace Logistics.Domain.Enums;
 
 public static class AppRoles
 {

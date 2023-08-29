@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Logistics.Domain.Shared.Constraints;
+using Logistics.Domain.Constraints;
 
 namespace Logistics.Application.Tenant.Commands;
 

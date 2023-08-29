@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Logistics.Domain.Constraints;
 
 namespace Logistics.Domain.Entities;
 

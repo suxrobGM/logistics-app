@@ -12,8 +12,5 @@
       <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="7.0.5" />
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Logistics.Domain.Shared\Logistics.Domain.Shared.csproj" />
-    </ItemGroup>
 
 </Project>

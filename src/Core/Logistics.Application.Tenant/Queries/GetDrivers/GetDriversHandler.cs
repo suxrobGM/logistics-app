@@ -1,4 +1,5 @@
-﻿using Logistics.Models;
+﻿using Logistics.Domain.Enums;
+using Logistics.Models;
 
 namespace Logistics.Application.Tenant.Queries;
 

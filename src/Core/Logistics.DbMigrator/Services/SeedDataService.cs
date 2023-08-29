@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Logistics.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using Logistics.Shared.Policies;
 using CustomClaimTypes = Logistics.Shared.Claims.CustomClaimTypes;

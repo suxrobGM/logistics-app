@@ -1,4 +1,6 @@
-﻿namespace Logistics.Application.Tenant.Commands;
+﻿using Logistics.Domain.Enums;
+
+namespace Logistics.Application.Tenant.Commands;
 
 public sealed class UpdateLoadCommand : RequestBase<ResponseResult>
 {

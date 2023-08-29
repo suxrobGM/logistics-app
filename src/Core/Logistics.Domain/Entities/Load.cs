@@ -1,4 +1,6 @@
-﻿using Logistics.Domain.Events;
+﻿using Logistics.Domain.Constraints;
+using Logistics.Domain.Enums;
+using Logistics.Domain.Events;
 
 namespace Logistics.Domain.Entities;
 

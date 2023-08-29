@@ -1,6 +1,7 @@
 ﻿using System.Data.Common;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
+using Logistics.Domain.Enums;
 using Microsoft.Extensions.Logging;
 using Logistics.Shared.Policies;
 using Microsoft.Data.SqlClient;
