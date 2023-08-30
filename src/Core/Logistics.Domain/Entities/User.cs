@@ -42,7 +42,7 @@ public class User : IdentityUser, IEntity<string>, IAuditableEntity
         return string.Join(" ", FirstName, LastName);
     }
 
-    public string[] GetJoinedTenants()
+    public string[] GetJoinedTenantsIds()
     {
         if (string.IsNullOrEmpty(JoinedTenantIds))
             return Array.Empty<string>();

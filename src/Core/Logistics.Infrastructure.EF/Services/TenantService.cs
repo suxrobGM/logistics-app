@@ -20,9 +20,12 @@ internal class TenantService : ITenantService
         _mainRepository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
-    public Tenant GetTenant()
+    public async Task<Tenant> GetTenantAsync()
     {
-        if (_httpContext == null)
+        if (_currentTenant is not null)
+            return _currentTenant;
+
+        if (_httpContext is null)
         {
             _currentTenant = new Tenant
             {
@@ -32,44 +35,52 @@ internal class TenantService : ITenantService
 
             return _currentTenant;
         }
-
-        if (_currentTenant != null)
-            return _currentTenant;
         
         var tenantHeader = _httpContext.Request.Headers["X-Tenant"];
         var tenantSubDomain = ParseSubDomain(_httpContext.Request.Host);
         var tenantClaim = _httpContext.User.Claims.FirstOrDefault(i => i.Type == "tenant")?.Value;
+        string tenantId;
 
         if (!string.IsNullOrEmpty(tenantHeader))
         {
-            _currentTenant = FetchCurrentTenant(tenantHeader);
+            _currentTenant = await FetchCurrentTenantAsync(tenantHeader);
+            tenantId = tenantHeader.ToString();
         }
         else if (!string.IsNullOrEmpty(tenantSubDomain))
         {
-            _currentTenant = FetchCurrentTenant(tenantSubDomain);
+            _currentTenant = await FetchCurrentTenantAsync(tenantSubDomain);
+            tenantId = tenantSubDomain;
         }
         else if (!string.IsNullOrEmpty(tenantClaim))
         {
-            _currentTenant = FetchCurrentTenant(tenantClaim);
+            _currentTenant = await FetchCurrentTenantAsync(tenantClaim);
+            tenantId = tenantClaim;
         }
         else
         {
             throw new InvalidTenantException("Specify tenant ID in request header with the key 'X-Tenant'");
         }
+
+        if (_currentTenant is null)
+        {
+            throw new InvalidTenantException($"Could not find tenant with ID '{tenantId}'");
+        }
+        
         return _currentTenant;
     }
-    
-    public string GetConnectionString()
+
+    public async Task<bool> SetTenantAsync(string tenantId)
     {
-        var connectionString = GetTenant().ConnectionString;
+        var tenant = await FetchCurrentTenantAsync(tenantId);
 
-        if (string.IsNullOrEmpty(connectionString))
-            throw new InvalidTenantException("Invalid tenant's connection string");
+        if (tenant is null)
+            return false;
 
-        return connectionString;
+        _currentTenant = tenant;
+        return true;
     }
 
-    private Tenant FetchCurrentTenant(string? tenantId)
+    private async Task<Tenant?> FetchCurrentTenantAsync(string? tenantId)
     {
         if (string.IsNullOrEmpty(tenantId))
         {
@@ -77,8 +88,8 @@ internal class TenantService : ITenantService
         }
 
         tenantId = tenantId.Trim().ToLower();
-        var tenant = _mainRepository.Query<Tenant>().FirstOrDefault(i => i.Id == tenantId || i.Name == tenantId) ??
-            throw new InvalidTenantException($"Could not find tenant with ID '{tenantId}'");
+        var tenant = await _mainRepository.Query<Tenant>()
+            .FirstOrDefaultAsync(i => i.Id == tenantId || i.Name == tenantId);
         
         return tenant;
     }

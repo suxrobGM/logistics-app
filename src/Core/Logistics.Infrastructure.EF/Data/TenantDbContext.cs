@@ -6,7 +6,6 @@ public class TenantDbContext : DbContext
 {
     private readonly AuditableEntitySaveChangesInterceptor? _auditableEntitySaveChangesInterceptor;
     private readonly DispatchDomainEventsInterceptor? _dispatchDomainEventsInterceptor;
-    private readonly ITenantService? _tenantService;
     private readonly string _connectionString;
 
     public TenantDbContext(
@@ -17,13 +16,13 @@ public class TenantDbContext : DbContext
     {
         _auditableEntitySaveChangesInterceptor = auditableEntitySaveChangesInterceptor;
         _dispatchDomainEventsInterceptor = dispatchDomainEventsInterceptor;
-        _tenantService = tenantService;
         _connectionString = options.ConnectionString ?? ConnectionStrings.LocalDefaultTenant;
+        TenantService = tenantService;
     }
 
-    public Tenant? CurrentTenant => _tenantService?.GetTenant();
+    internal ITenantService? TenantService { get; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder options)
+    protected override async void OnConfiguring(DbContextOptionsBuilder options)
     {
         if (_auditableEntitySaveChangesInterceptor is not null)
         {
@@ -36,8 +35,14 @@ public class TenantDbContext : DbContext
 
         if (!options.IsConfigured)
         {
-            var connectionString = _tenantService?.GetConnectionString() ?? _connectionString;
-            DbContextHelpers.ConfigureSqlServer(connectionString, options);
+            string? connectionString = null;
+            
+            if (TenantService != null)
+            {
+                connectionString = (await TenantService.GetTenantAsync()).ConnectionString;
+            }
+            
+            DbContextHelpers.ConfigureSqlServer(connectionString ?? _connectionString, options);
         }
     }
 

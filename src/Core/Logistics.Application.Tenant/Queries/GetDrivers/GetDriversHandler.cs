@@ -19,7 +19,7 @@ public class GetDriversHandler : RequestHandlerBase<GetDriversRequest, PagedResp
     protected override async Task<PagedResponseResult<EmployeeDto>> HandleValidated(
         GetDriversRequest request, CancellationToken cancellationToken)
     {
-        var tenantId = _tenantRepository.CurrentTenant!.Id;
+        var tenant = await _tenantRepository.GetCurrentTenantAsync();
         var totalItems = _tenantRepository.Query<Employee>().Count();
         var driverRole = await _tenantRepository.GetAsync<TenantRole>(i => i.Name == TenantRoles.Driver);
 
@@ -27,7 +27,7 @@ public class GetDriversHandler : RequestHandlerBase<GetDriversRequest, PagedResp
             return PagedResponseResult<EmployeeDto>.CreateError("Could not found the driver role");
 
         var filteredUsers = _mainRepository
-            .ApplySpecification(new SearchUsersByTenantId(request.Search, tenantId, "Name"))
+            .ApplySpecification(new SearchUsersByTenantId(request.Search, tenant.Id, "Name"))
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
             .ToDictionary(user => user.Id);
@@ -63,11 +63,11 @@ public class GetDriversHandler : RequestHandlerBase<GetDriversRequest, PagedResp
     {
         errorDescription = string.Empty;
 
-        if (string.IsNullOrEmpty(_tenantRepository.CurrentTenant?.Id))
-        {
-            errorDescription = "Could not evaluate current tenant's ID";
-        }
-        else if (request.Page <= 0)
+        // if (string.IsNullOrEmpty(_tenantRepository.CurrentTenant?.Id))
+        // {
+        //     errorDescription = "Could not evaluate current tenant's ID";
+        // }
+        if (request.Page <= 0)
         {
             errorDescription = "Page number should be non-negative";
         }

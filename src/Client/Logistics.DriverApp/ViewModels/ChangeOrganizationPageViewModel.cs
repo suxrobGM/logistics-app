@@ -2,6 +2,7 @@
 using Logistics.DriverApp.Messages;
 using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.Authentication;
+using Logistics.Models;
 
 namespace Logistics.DriverApp.ViewModels;
 
@@ -19,37 +20,37 @@ public class ChangeOrganizationPageVideModel : ViewModelBase
         _authService = authService;
         _apiClient = apiClient;
         _tenantService = tenantService;
-        _organizations = Array.Empty<string>();
+        _organizations = Array.Empty<OrganizationDto>();
     }
 
 
     #region Bindable properties
 
-    private string? _currentOrganization;
-    public string? CurrentOrganization
+    private OrganizationDto? _currentOrganization;
+    public OrganizationDto? CurrentOrganization
     {
         get => _currentOrganization;
         set => SetProperty(ref _currentOrganization, value);
     }
 
-    private string? _selectedOrganization;
-    public string? SelectedOrganization
+    private OrganizationDto? _selectedOrganization;
+    public OrganizationDto? SelectedOrganization
     {
         get => _selectedOrganization;
         set
         {
             SetProperty(ref _selectedOrganization, value);
-            
-            if (!string.IsNullOrEmpty(value))
+
+            if (value != null)
             {
-                WeakReferenceMessenger.Default.Send(new TenantIdChangedMessage(value));
-                Task.Run(async () => await SaveOrganizationIdAsync(value));
+                Task.Run(async () => await SaveTenantIdAsync(value, true));
+                CurrentOrganization = value;
             }
         }
     }
 
-    private string[] _organizations;
-    public string[] Organizations
+    private OrganizationDto[] _organizations;
+    public OrganizationDto[] Organizations
     {
         get => _organizations;
         set => SetProperty(ref _organizations, value);
@@ -61,6 +62,9 @@ public class ChangeOrganizationPageVideModel : ViewModelBase
     protected override async void OnActivated()
     {
         await FetchUserOrganizationsAsync();
+
+        if (Organizations.Length > 0)
+            CurrentOrganization = Organizations.First();
     }
 
     private async Task FetchUserOrganizationsAsync()
@@ -78,29 +82,28 @@ public class ChangeOrganizationPageVideModel : ViewModelBase
             return;
         }
         
-        Organizations = result.Value!.Organizations;
+        Organizations = result.Value!;
 
         if (!Organizations.Any())
         {
             await PopupHelpers.ShowErrorAsync("You are not registered with any organization, ask your company to add you to the list of employees as a driver");
-            IsLoading = false;
-            return;
-        }
-        
-        // Automatically redirect to Dashboard page
-        if (Organizations.Length == 1)
-        {
-            CurrentOrganization = Organizations.First();
-            await _tenantService.SaveTenantIdAsync(CurrentOrganization);
-            await Shell.Current.GoToAsync("//DashboardPage");
         }
         
         IsLoading = false;
     }
 
-    private async Task SaveOrganizationIdAsync(string tenantId)
+    private async Task SaveTenantIdAsync(OrganizationDto organization, bool displaySuccessMessage = false)
     {
-        await _tenantService.SaveTenantIdAsync(tenantId);
-        await MainThread.InvokeOnMainThreadAsync(() => PopupHelpers.ShowSuccessAsync($"Successfully switched to organization: ${tenantId}"));
+        if (CurrentOrganization == organization)
+            return;
+        
+        await _tenantService.SaveTenantIdAsync(organization.TenantId);
+        WeakReferenceMessenger.Default.Send(new TenantIdChangedMessage(organization.TenantId));
+
+        if (displaySuccessMessage)
+        {
+            await MainThread.InvokeOnMainThreadAsync(() => 
+                PopupHelpers.ShowSuccessAsync($"Successfully switched to the organization: ${organization.DisplayName}"));
+        }
     }
 }

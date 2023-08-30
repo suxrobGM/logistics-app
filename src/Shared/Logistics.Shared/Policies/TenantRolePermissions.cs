@@ -50,6 +50,7 @@ public static class TenantRolePermissions
         {
             var list = new List<string>();
             list.AddRange(GetBasicPermissions());
+            list.Add(Permissions.Truck.View);
             return list;
         }
     }

@@ -15,7 +15,7 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksRequest, Pa
         _tenantRepository = tenantRepository;
     }
 
-    protected override Task<PagedResponseResult<TruckDto>> HandleValidated(
+    protected override async Task<PagedResponseResult<TruckDto>> HandleValidated(
         GetTrucksRequest req,
         CancellationToken cancellationToken)
     {
@@ -28,9 +28,9 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksRequest, Pa
                 .ToList();
         }
 
-        var tenantId = _tenantRepository.CurrentTenant!.Id;
+        var tenant = await _tenantRepository.GetCurrentTenantAsync();
         var totalItems = _tenantRepository.Query<Truck>().Count();
-        var filteredUsers = _mainRepository.ApplySpecification(new FilterUsersByTenantId(tenantId)).ToArray();
+        var filteredUsers = _mainRepository.ApplySpecification(new FilterUsersByTenantId(tenant.Id)).ToArray();
         var userIds = filteredUsers.Select(i => i.Id).ToArray();
         var userNames = filteredUsers.Select(i => i.UserName).ToArray();
         var userFirstNames = filteredUsers.Select(i => i.FirstName).ToArray();
@@ -69,18 +69,18 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksRequest, Pa
         }
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return Task.FromResult(new PagedResponseResult<TruckDto>(trucksDto, totalItems, totalPages));
+        return new PagedResponseResult<TruckDto>(trucksDto, totalItems, totalPages);
     }
 
     protected override bool Validate(GetTrucksRequest request, out string errorDescription)
     {
         errorDescription = string.Empty;
 
-        if (string.IsNullOrEmpty(_tenantRepository.CurrentTenant?.Id))
-        {
-            errorDescription = "Could not evaluate current tenant's ID";
-        }
-        else if (request.Page <= 0)
+        // if (string.IsNullOrEmpty(_tenantRepository.CurrentTenant?.Id))
+        // {
+        //     errorDescription = "Could not evaluate current tenant's ID";
+        // }
+        if (request.Page <= 0)
         {
             errorDescription = "Page number should be non-negative";
         }

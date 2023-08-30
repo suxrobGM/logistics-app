@@ -45,10 +45,10 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{id}/organizations")]
-    [ProducesResponseType(typeof(PagedResponseResult<UserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult<OrganizationDto[]>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.User.View)]
-    public async Task<IActionResult> GetList(string id)
+    public async Task<IActionResult> GetUserJoinedOrganizations(string id)
     {
         var result = await _mediator.Send(new GetUserJoinedOrganizationsQuery() { UserId = id });
 

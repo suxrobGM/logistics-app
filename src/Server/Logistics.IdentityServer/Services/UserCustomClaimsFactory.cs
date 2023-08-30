@@ -31,13 +31,15 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
     protected override async Task<ClaimsIdentity> GenerateClaimsAsync(User user)
     {
         var claimsIdentity = await base.GenerateClaimsAsync(user);
-        var tenantId = _httpContext.GetTenantId();
+        var joinedTenantId = user.GetJoinedTenantsIds().FirstOrDefault();
+        var tenantId = _httpContext.GetTenantId() ?? joinedTenantId;
         
         await AddAppRoleClaims(claimsIdentity, user);
 
         if (string.IsNullOrEmpty(tenantId)) 
             return claimsIdentity;
-        
+
+        await _tenantRepository.SetTenantIdAsync(tenantId);
         var employee = await _tenantRepository.GetAsync<Employee>(user.Id);
 
         AddTenantRoles(claimsIdentity, employee);

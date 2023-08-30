@@ -13,7 +13,7 @@ internal sealed class GetTenantsHandler : RequestHandlerBase<GetTenantsQuery, Pa
 
     protected override Task<PagedResponseResult<TenantDto>> HandleValidated(GetTenantsQuery query, CancellationToken cancellationToken)
     {
-        var totalItems = _repository.Query<Domain.Entities.Tenant>().Count();
+        var totalItems = _repository.Query<Tenant>().Count();
         var spec = new SearchTenants(query.Search, query.OrderBy, query.Descending);
 
         var items = _repository

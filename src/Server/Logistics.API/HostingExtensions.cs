@@ -4,6 +4,7 @@ using Logistics.API.Middlewares;
 using Logistics.Infrastructure.EF;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Serilog;
 
 namespace Logistics.API;
 
@@ -78,6 +79,8 @@ internal static class HostingExtensions
 
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
+        app.UseSerilogRequestLogging();
+        
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();

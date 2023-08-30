@@ -15,13 +15,13 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesReque
         _tenantRepository = tenantRepository;
     }
 
-    protected override Task<PagedResponseResult<EmployeeDto>> HandleValidated(
+    protected override async Task<PagedResponseResult<EmployeeDto>> HandleValidated(
         GetEmployeesRequest request, 
         CancellationToken cancellationToken)
     {
-        var tenantId = _tenantRepository.CurrentTenant!.Id;
+        var tenant = await _tenantRepository.GetCurrentTenantAsync();
         var totalItems = _tenantRepository.Query<Employee>().Count();
-        var spec = new SearchUsersByTenantId(request.Search, tenantId, request.OrderBy, request.Descending);
+        var spec = new SearchUsersByTenantId(request.Search, tenant.Id, request.OrderBy, request.Descending);
 
         var filteredUsers = _mainRepository
             .ApplySpecification(spec)
@@ -60,18 +60,18 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesReque
         }
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
-        return Task.FromResult(new PagedResponseResult<EmployeeDto>(employeesDtoList, totalItems, totalPages));
+        return new PagedResponseResult<EmployeeDto>(employeesDtoList, totalItems, totalPages);
     }
 
     protected override bool Validate(GetEmployeesRequest request, out string errorDescription)
     {
         errorDescription = string.Empty;
 
-        if (string.IsNullOrEmpty(_tenantRepository.CurrentTenant?.Id))
-        {
-            errorDescription = "Could not evaluate current tenant's ID";
-        }
-        else if (request.Page <= 0)
+        // if (string.IsNullOrEmpty(_tenantRepository.CurrentTenant?.Id))
+        // {
+        //     errorDescription = "Could not evaluate current tenant's ID";
+        // }
+        if (request.Page <= 0)
         {
             errorDescription = "Page number should be non-negative";
         }

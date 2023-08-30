@@ -12,7 +12,10 @@ var host = Host.CreateDefaultBuilder(args)
     {
         var secretsFile = Path.Combine(AppContext.BaseDirectory, "appsettings.secrets.json");
         var testDataFile = Path.Combine(AppContext.BaseDirectory, "fakeDataset.json");
-        // configuration.AddJsonFile(secretsFile, true);
+
+#if !DEBUG
+        configuration.AddJsonFile(secretsFile, true);
+#endif
         configuration.AddJsonFile(testDataFile, true);
     })
     .ConfigureServices((ctx, services) =>

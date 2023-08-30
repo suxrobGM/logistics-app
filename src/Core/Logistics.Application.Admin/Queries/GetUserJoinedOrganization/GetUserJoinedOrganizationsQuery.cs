@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Admin.Queries;
 
-public class GetUserJoinedOrganizationsQuery : RequestBase<ResponseResult<UserOrganizationsDto>>
+public class GetUserJoinedOrganizationsQuery : RequestBase<ResponseResult<OrganizationDto[]>>
 {
     public required string UserId { get; set; }
 }

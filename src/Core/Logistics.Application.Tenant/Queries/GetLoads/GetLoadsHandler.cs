@@ -15,13 +15,13 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsRequest, Page
         _tenantRepository = tenantRepository;
     }
 
-    protected override Task<PagedResponseResult<LoadDto>> HandleValidated(
+    protected override async Task<PagedResponseResult<LoadDto>> HandleValidated(
         GetLoadsRequest req, 
         CancellationToken cancellationToken)
     {
-        var tenantId = _tenantRepository.CurrentTenant!.Id;
+        var tenant = await _tenantRepository.GetCurrentTenantAsync();
         var totalItems = _tenantRepository.Query<Load>().Count();
-        var filteredUsers = _mainRepository.ApplySpecification(new FilterUsersByTenantId(tenantId)).ToArray();
+        var filteredUsers = _mainRepository.ApplySpecification(new FilterUsersByTenantId(tenant.Id)).ToArray();
         var userIds = filteredUsers.Select(i => i.Id).ToArray();
         var userNames = filteredUsers.Select(i => i.UserName).ToArray();
         var userFirstNames = filteredUsers.Select(i => i.FirstName).ToArray();
@@ -60,7 +60,7 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsRequest, Page
             DispatchedDate = i.DispatchedDate,
             PickUpDate = i.PickUpDate,
             DeliveryDate = i.DeliveryDate,
-            Status = (Models.LoadStatus)i.Status,
+            Status = (LoadStatus)i.Status,
             AssignedDispatcherId = i.AssignedDispatcherId,
             AssignedDriverId = i.AssignedDriverId,
             AssignedTruckId = i.AssignedTruckId
@@ -85,18 +85,18 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsRequest, Page
         }
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return Task.FromResult(new PagedResponseResult<LoadDto>(loadsDto, totalItems, totalPages));
+        return new PagedResponseResult<LoadDto>(loadsDto, totalItems, totalPages);
     }
 
     protected override bool Validate(GetLoadsRequest request, out string errorDescription)
     {
         errorDescription = string.Empty;
 
-        if (string.IsNullOrEmpty(_tenantRepository.CurrentTenant?.Id))
-        {
-            errorDescription = "Could not evaluate current tenant's ID";
-        }
-        else if (request.Page <= 0)
+        // if (string.IsNullOrEmpty(_tenantRepository.CurrentTenant?.Id))
+        // {
+        //     errorDescription = "Could not evaluate current tenant's ID";
+        // }
+        if (request.Page <= 0)
         {
             errorDescription = "Page number should be non-negative";
         }

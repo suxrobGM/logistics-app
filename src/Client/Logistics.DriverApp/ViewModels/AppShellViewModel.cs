@@ -15,6 +15,7 @@ public class AppShellViewModel : ViewModelBase
         _apiClient = apiClient;
         _apiClient.OnErrorResponse += async (s, e) => await HandleApiErrors(e);
         SignOutCommand = new AsyncRelayCommand(SignOutAsync);
+        DashboardPageVisible = true;
         Messenger.Register<TenantIdChangedMessage>(this, (s, m) =>
         {
             DashboardPageVisible = !string.IsNullOrEmpty(m.Value);
