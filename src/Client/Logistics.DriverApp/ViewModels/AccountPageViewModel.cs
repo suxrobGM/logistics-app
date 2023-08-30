@@ -23,7 +23,7 @@ public class AccountPageViewModel : ViewModelBase
     }
 
     public IAsyncRelayCommand SaveCommand { get; }
-    public AccountInfo AccountDetails { get; set; }
+    public AccountInfo AccountDetails { get; }
 
     private async Task FetchUserAsync()
     {

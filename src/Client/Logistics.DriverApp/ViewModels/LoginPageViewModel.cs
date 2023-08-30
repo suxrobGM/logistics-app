@@ -25,6 +25,16 @@ public class LoginPageViewModel : ViewModelBase
     public IAsyncRelayCommand SignInCommand { get; }
     public IAsyncRelayCommand OpenSignUpCommand { get; }
 
+    protected override async void OnActivated()
+    {
+        var canAutoLogin = await _authService.CanAutoLoginAsync();
+
+        if (canAutoLogin)
+        {
+            await LoginAsync(); // try auto login
+        }
+    }
+
     private async Task LoginAsync()
     {
         IsLoading = true;

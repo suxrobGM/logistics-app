@@ -1,4 +1,5 @@
-﻿using IdentityModel.OidcClient;
+﻿using System.IdentityModel.Tokens.Jwt;
+using IdentityModel.OidcClient;
 using System.Security.Claims;
 using IBrowser = IdentityModel.OidcClient.Browser.IBrowser;
 
@@ -7,8 +8,12 @@ namespace Logistics.DriverApp.Services.Authentication;
 public class AuthService : IAuthService
 {
     private readonly OidcClient _oidcClient;
+    private readonly ITokenStorage _tokenStorage;
 
-    public AuthService(OidcClientOptions options, IBrowser browser)
+    public AuthService(
+        OidcClientOptions options, 
+        IBrowser browser,
+        ITokenStorage tokenStorage)
     {
 #if DEBUG
         options.HttpClientFactory = (_) =>
@@ -19,51 +24,99 @@ public class AuthService : IAuthService
 #endif
         _oidcClient = new OidcClient(options);
         _oidcClient.Options.Browser = browser;
-        Browser = browser;
+        _tokenStorage = tokenStorage;
         Options = options;
     }
-
-    public string? AccessToken { get; private set; }
-    public IBrowser Browser { get; }
-    public UserIdentity? User { get; private set; }
-
+    
+    public UserInfo? User { get; private set; }
     public OidcClientOptions Options { get; }
-
-    public async Task<LoginResult> LoginAsync()
+    
+    public async Task<bool> CanAutoLoginAsync()
     {
-        var result = await _oidcClient.LoginAsync();
-
-        if (result.IsError) 
-            return result;
-        
-        AccessToken = result.AccessToken;
-        User = ParseUserIdentity(result.User.Claims);
-        return result;
+        var tokenInfo = await _tokenStorage.GetTokenAsync();
+        return tokenInfo != null;
     }
 
-    public async Task<LogoutResult> LogoutAsync()
+    public async Task<AuthResult> LoginAsync()
+    {
+        AuthResult loginResult;
+        var tokenInfo = await _tokenStorage.GetTokenAsync();
+        var isTokenExpired = IsAccessTokenExpired(tokenInfo);
+
+        if (tokenInfo == null) // first time login
+        {
+            loginResult = await PerformLoginAsync();
+        }
+        else if (isTokenExpired) // just refresh the access token
+        {
+            loginResult = await RefreshAccessTokenAsync(tokenInfo.RefreshToken);
+        }
+        else // use the existing unexpired access token
+        {
+            loginResult = new AuthResult() { AccessToken = tokenInfo.AccessToken };
+        }
+
+        if (loginResult.AccessToken != null)
+        {
+            User = ParseUserData(loginResult.AccessToken);
+        }
+        
+        return loginResult;
+    }
+
+    private async Task<AuthResult> PerformLoginAsync()
+    {
+        var loginResult = await _oidcClient.LoginAsync();
+        
+        if (!loginResult.IsError)
+        {
+            await _tokenStorage.SaveTokenAsync(loginResult.AccessToken, loginResult.AccessTokenExpiration, loginResult.RefreshToken);
+        }
+        
+        return new AuthResult()
+        {
+            Error = loginResult.Error,
+            ErrorDescription = loginResult.ErrorDescription,
+            AccessToken = loginResult.AccessToken
+        };
+    }
+
+    private async Task<AuthResult> RefreshAccessTokenAsync(string refreshToken)
+    {
+        var refreshTokenResult = await _oidcClient.RefreshTokenAsync(refreshToken);
+        
+        if (!refreshTokenResult.IsError)
+        {
+            await _tokenStorage.SaveTokenAsync(refreshTokenResult.AccessToken, refreshTokenResult.AccessTokenExpiration, refreshTokenResult.RefreshToken);
+        }
+        
+        return new AuthResult()
+        {
+            Error = refreshTokenResult.Error,
+            ErrorDescription = refreshTokenResult.ErrorDescription,
+            AccessToken = refreshTokenResult.AccessToken
+        };
+    }
+
+    public async Task<Result> LogoutAsync()
     {
         var result = await _oidcClient.LogoutAsync();
-
-        if (result.IsError) 
-            return result;
-        
-        AccessToken = null;
         User = null;
+        _tokenStorage.ClearTokenFromCache();
         return result;
     }
 
-    private static UserIdentity ParseUserIdentity(IEnumerable<Claim> claims)
+    private static UserInfo ParseUserData(string accessToken)
     {
-        var userIdentity = new UserIdentity();
+        var userIdentity = new UserInfo();
+        var handler = new JwtSecurityTokenHandler();
+        var jwtSecurityToken = handler.ReadToken(accessToken) as JwtSecurityToken;
+        var claims = jwtSecurityToken?.Claims.ToList() ?? new List<Claim>();
+        
         foreach (var claim in claims)
         {
             switch (claim.Type)
             {
-                case "name":
-                    userIdentity.UserName = claim.Value;
-                    break;
-
                 case "sub":
                     userIdentity.Id = claim.Value;
                     break;
@@ -73,10 +126,19 @@ public class AuthService : IAuthService
                     break;
 
                 case "permission":
-                    userIdentity.Roles.Add(claim.Value);
+                    userIdentity.Permissions.Add(claim.Value);
                     break;
             }
         }
         return userIdentity;
+    }
+    
+    private static bool IsAccessTokenExpired(TokenInfo? tokenInfo)
+    {
+        if (tokenInfo == null)
+            return false;
+            
+        var accessTokenExpiration = tokenInfo.AccessTokenExpiration;
+        return accessTokenExpiration.UtcDateTime <= DateTime.UtcNow;
     }
 }

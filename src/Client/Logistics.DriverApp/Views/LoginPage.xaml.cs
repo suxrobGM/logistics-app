@@ -7,4 +7,14 @@ public partial class LoginPage : ContentPage
 		InitializeComponent();
 		BindingContext = App.Current.Services.GetService<LoginPageViewModel>();
 	}
+	
+	protected override void OnAppearing()
+	{
+		(BindingContext as LoginPageViewModel)!.IsActive = true;
+	}
+
+	protected override void OnDisappearing()
+	{
+		(BindingContext as LoginPageViewModel)!.IsActive = false;
+	}
 }

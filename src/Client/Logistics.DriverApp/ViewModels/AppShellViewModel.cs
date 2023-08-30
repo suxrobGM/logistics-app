@@ -26,7 +26,7 @@ public class AppShellViewModel : ViewModelBase
 
     #region Bindable properties
 
-    public bool _dashboardPageVisible;
+    private bool _dashboardPageVisible;
     public bool DashboardPageVisible
     {
         get => _dashboardPageVisible;
@@ -35,7 +35,7 @@ public class AppShellViewModel : ViewModelBase
 
     #endregion
 
-    public async Task SignOutAsync()
+    private async Task SignOutAsync()
     {
         IsLoading = true;
         await _authService.LogoutAsync();

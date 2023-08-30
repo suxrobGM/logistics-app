@@ -13,23 +13,28 @@ public class DashboardPageViewModel : ViewModelBase
     {
         _apiClient = apiClient;
         _authService = authService;
-        DriverName = _authService.User?.UserName;
+        DriverName = "Driver name";
         Task.Run(FetchTruckAsync);
     }
 
-    public int? _truckNumber;
+    #region Bindable properties
+
+    private int? _truckNumber;
     public int? TruckNumber
     {
         get => _truckNumber;
         set => SetProperty(ref _truckNumber, value);
     }
 
-    public string? _driverName;
+    private string? _driverName;
     public string? DriverName
     {
         get => _driverName;
         set => SetProperty(ref _driverName, value);
     }
+
+    #endregion
+    
 
     private async Task FetchTruckAsync()
     {
