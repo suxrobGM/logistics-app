@@ -1,1 +1,163 @@
-<mxfile host="app.diagrams.net" modified="2022-06-25T00:17:25.601Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36" etag="WRszwLFSoiBdz29jLCnv" version="20.0.3" type="device"><diagram id="vlCdZQs1aoYzZf11PDD5" name="Page-1">5Vtbc5s6EP41nul5SIa78WNqO01m4mlau9OepzMyyEYJII8QddxffwQIc5Ev+IqS+iFBywJi9/tWq5Xo6P3g7QsBC2+EXeh3NMV96+iDjqapmqKyf4lklUm6upIJ5gS5XKkQjNEfyIW5WoxcGFUUKcY+RYuq0MFhCB1akQFC8LKqNsN+9akLMIeCYOwAX5T+RC71MqltKoX8AaK5lz9ZVfiZAOTKXBB5wMXLkkgfdvQ+wZhmR8FbH/qJ8XK7ZNfdbzm77hiBIW1ywdMP+t8o+kFcTfNG6PvLS+Q/3eRmjugqf2PoMgPwJibUw3McAn9YSD8THIcuTG6rsFah84TxgglVJnyBlK64N0FMMRN5NPD5WdZjsvqVXH9rqHYu+JcJbpRbRe3mksEbf0bWWpVbz5CgAFJIuFA0B7dQhGPiwB020DmsAJlDukPPzvQS+5QewI39BWLWG7JiCgT6gKLfVQABjsP5Wq9wFTvg3jrAc7zXv4Ef8ycNCHsoYbK7xaKjWT57l89T1rbmydGnCQwBM42mjPAUMT+mev8I7i+cm3hq6SEKxwuQGnDJKF515Fajs45Q+LbTTPxszqQ8PvDmsiCbanCZVyJarnd2u6qqYJLrMsJStDIjGCGUKxPCfJeEMAVCfJ3NkAP3E+InnMrCBk2XjA6m1jIdej2zSgez27suHay26MAvfcYohSmHiGFXIaKbNd9nHeVXFe6/IwSsSmqLRCE64Dm8q/db9HVzpz47yHpQYHFtk+PhaQmkv3MDFG7l/AikJyVivKHKxvhuy4zvVgm/h+zH87rbkNf5DSUZ57oC5B9d9u6IJl0YQ1LKAZUNDJAI+rZWhb5mt419ve3k70rQtxtCXzWkgr4tQP9hMnlO4Pz8yP72fZRYQsT8E5oSQFbtI141ZUO8abaB+OOR22uKXPMi2dihSZRZG9113q+LJkWm1XIU064UxpqCQbIRvLczjAnR6/twPJnF6W2lGLYt6YbtfJgqWZQn+sxgPnKYT3HS6mMGPOAkhBWsPJh8jZK+hW7ytJBNHGfMhlH75q6PGYbStrm1XqvxRe1U6wEXCy9q00JYe2nSNLZuvsUjvTd4CL+FT6HrDyc3xsnuiV4hdTzeeImDRX4xIE4uyfyk6iePFrbW69SWALSjSjzrFZa0QQl+hX3sY5LaQFfS3/pMvppTsLTmvQtjprQGdM18pB5M9Eo+slffMvfoK9Yu/cvkO6pY+t0U/oWQ38dBkMV7j/3zISkGgIjNo7PaMQoWPgwYDtK7SDAe6D3ZxoO8Zv3RZ81q00qwKtfKiCpWSddrHx8wQTK1tgmh2X9JgtS0hJojUJIE6fSax1UTpIPCmxRJUOPS+qlJ0GlxUSylb46LHzRzaD9QGn9L5tC44N6TK3MQK+5jj72/K2QOKSXSI06AghFgGqVJhRwkqGcLltk2CVSxHrg28gAH6UxmQwQKIwrSuR43MwzjQEL72kbb9tVPr4e8i2wsj+bvLcjk/S5vZdwG+2Gy0I2S4NJfX6EpePoC2aSlffDXR1gJwK+3C/5bJU2ASwQwVG0PBc68f2u9b7xZNnpOXhxVo7NqewBtq1eGwaH6l6m5rblRkHaYb0K5JyCAS0xeNxD4MZwRwPKB2KExSbjrg1WyYSWhswsomIIokTo4ZJQrjW4ELnCEKCZIhpJDV5OO52INVCR+6N4ln0SwVohDWLVKlfOlFLm0/ZiPYOfdf3m2fZUl25sbTJ/LTtx+KeyKrHk0C0fC7kvhPvU8SVdrN9qyjfNcBNbFouApgNnqXjndZlpHum2f+y/tNbFksctrjg+iCDmNmF799OYye63PVyh8X6hRa0O0eTmybyx4HrOt8aTCymFznmrN8rDS6qYwdJ4iptEUs/ZmiF54JffAhdxa1cM+77rsRtQdM/W4YmH9wIl5BaS11YBKMV3bVHi/v9fZ77wIbbz60gpAbasW8+rfp9anMcZp+idCmjWLb3Ez9eKLZn34Pw==</diagram></mxfile>
+<mxfile host="app.diagrams.net" modified="2023-08-30T21:25:08.561Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36" etag="toyb41meMUL3R9pKD8uw" version="21.7.1" type="device">
+  <diagram id="vlCdZQs1aoYzZf11PDD5" name="Page-1">
+    <mxGraphModel dx="1985" dy="785" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="LUt_MsUrd22hMiRjjslL-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.418;entryY=-0.017;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="LUt_MsUrd22hMiRjjslL-3" target="LUt_MsUrd22hMiRjjslL-8" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="25" y="200" />
+              <mxPoint x="105" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LUt_MsUrd22hMiRjjslL-3" value="Driver App - Logistics.DriverApp&lt;br&gt;(Tenant Mobile App,&lt;br&gt;MAUI framework)" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-70" y="70" width="190" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="LUt_MsUrd22hMiRjjslL-5" value="Office App&lt;br&gt;(Tenant Web App,&lt;br&gt;Angular framework)" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-240" y="70" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="cQ4H504q-O8ts6UtnCCo-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="LUt_MsUrd22hMiRjjslL-6" target="LUt_MsUrd22hMiRjjslL-8">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="240" y="200" />
+              <mxPoint x="165" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LUt_MsUrd22hMiRjjslL-6" value="Admin App - Logistics.AdminApp&lt;br&gt;(Main Web App,&lt;br&gt;Blazor framework)" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="170" y="60" width="165" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="cQ4H504q-O8ts6UtnCCo-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="LUt_MsUrd22hMiRjjslL-7" target="cQ4H504q-O8ts6UtnCCo-13">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="925" y="270" />
+              <mxPoint x="700" y="270" />
+              <mxPoint x="700" y="685" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cQ4H504q-O8ts6UtnCCo-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="LUt_MsUrd22hMiRjjslL-7" target="LUt_MsUrd22hMiRjjslL-21">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="963" y="375" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LUt_MsUrd22hMiRjjslL-7" value="Identity Server App - Logistics.IdentityServer&lt;br&gt;(Web App,&lt;br&gt;ASP.NET Core framework)" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="820" y="60" width="190" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="cQ4H504q-O8ts6UtnCCo-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="LUt_MsUrd22hMiRjjslL-8" target="LUt_MsUrd22hMiRjjslL-18">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="80" y="495" />
+              <mxPoint x="-50" y="495" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cQ4H504q-O8ts6UtnCCo-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="LUt_MsUrd22hMiRjjslL-8" target="cQ4H504q-O8ts6UtnCCo-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="LUt_MsUrd22hMiRjjslL-8" value="API Client Library - Logistics.Client" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="30" y="250" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="LUt_MsUrd22hMiRjjslL-55" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="LUt_MsUrd22hMiRjjslL-9" target="LUt_MsUrd22hMiRjjslL-15" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="550" y="300" />
+              <mxPoint x="550" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cQ4H504q-O8ts6UtnCCo-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="LUt_MsUrd22hMiRjjslL-9" target="LUt_MsUrd22hMiRjjslL-17">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="470" y="300" />
+              <mxPoint x="325" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cQ4H504q-O8ts6UtnCCo-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;jumpStyle=arc;" edge="1" parent="1" source="LUt_MsUrd22hMiRjjslL-9" target="LUt_MsUrd22hMiRjjslL-21">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="660" y="95" />
+              <mxPoint x="660" y="190" />
+              <mxPoint x="870" y="190" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LUt_MsUrd22hMiRjjslL-9" value="HTTP API - Logistics.API&lt;br&gt;(RESTfull App,&lt;br&gt;ASP.NET Core framework)" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="430" y="60" width="170" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="cQ4H504q-O8ts6UtnCCo-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.712;entryY=0.014;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="LUt_MsUrd22hMiRjjslL-15" target="cQ4H504q-O8ts6UtnCCo-13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cQ4H504q-O8ts6UtnCCo-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="LUt_MsUrd22hMiRjjslL-15" target="cQ4H504q-O8ts6UtnCCo-5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="510" y="490" />
+              <mxPoint x="380" y="490" />
+              <mxPoint x="380" y="685" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LUt_MsUrd22hMiRjjslL-15" value="Admin Application Layer - Logistics.Application.Admin&lt;br&gt;(CQRS and services implementations)" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="455" y="370" width="215" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="cQ4H504q-O8ts6UtnCCo-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.67;entryY=0.014;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="LUt_MsUrd22hMiRjjslL-17" target="cQ4H504q-O8ts6UtnCCo-5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="290" y="540" />
+              <mxPoint x="239" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cQ4H504q-O8ts6UtnCCo-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.25;entryY=0;entryDx=0;entryDy=0;jumpStyle=arc;" edge="1" parent="1" source="LUt_MsUrd22hMiRjjslL-17" target="cQ4H504q-O8ts6UtnCCo-13">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="325" y="540" />
+              <mxPoint x="464" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LUt_MsUrd22hMiRjjslL-17" value="Tenant Application Layer - Logistics.Application.Tenant&lt;br&gt;(CQRS and services implementations)" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="220" y="370" width="210" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="LUt_MsUrd22hMiRjjslL-18" value="Shared Library - Logistics.Shared (Common classes)" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-150" y="650" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="LUt_MsUrd22hMiRjjslL-20" value="Domain - Logistics.Domain&lt;br&gt;(Entities, value objects, domain events)" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="425" y="890" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="cQ4H504q-O8ts6UtnCCo-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="LUt_MsUrd22hMiRjjslL-21" target="LUt_MsUrd22hMiRjjslL-20">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="905" y="925" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LUt_MsUrd22hMiRjjslL-21" value="Infrastructure layer - Logistics.Infrastructure.EF&lt;br&gt;(Entity Framework, database contexts)" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="790" y="650" width="230" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="cQ4H504q-O8ts6UtnCCo-5" value="Shared Models - Logistics.Models (DTO classes)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="105" y="650" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="cQ4H504q-O8ts6UtnCCo-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.465;entryY=-0.057;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="cQ4H504q-O8ts6UtnCCo-13" target="LUt_MsUrd22hMiRjjslL-20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cQ4H504q-O8ts6UtnCCo-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.6;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="cQ4H504q-O8ts6UtnCCo-13" target="LUt_MsUrd22hMiRjjslL-18">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="460" y="825" />
+              <mxPoint x="-30" y="825" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cQ4H504q-O8ts6UtnCCo-13" value="Common Application Layer - Logistics.Application.Common&lt;br&gt;(Shared services and implementations)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="410" y="650" width="215" height="70" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
