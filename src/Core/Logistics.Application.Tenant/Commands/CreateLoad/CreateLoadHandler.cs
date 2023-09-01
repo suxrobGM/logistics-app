@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class CreateLoadHandler : RequestHandlerBase<CreateLoadCommand, ResponseResult>
+internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, ResponseResult>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;

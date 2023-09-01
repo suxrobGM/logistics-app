@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Admin.Queries;
 
-internal class GetTenantDisplayNameValidator : AbstractValidator<GetTenantDisplayNameQuery>
+internal sealed class GetTenantDisplayNameValidator : AbstractValidator<GetTenantDisplayNameQuery>
 {
     public GetTenantDisplayNameValidator()
     {

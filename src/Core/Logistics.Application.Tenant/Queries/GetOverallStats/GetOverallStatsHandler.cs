@@ -3,7 +3,7 @@ using Logistics.Models;
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetOverallStatsHandler : RequestHandlerBase<GetOverallStatsQuery, ResponseResult<OverallStatsDto>>
+internal sealed class GetOverallStatsHandler : RequestHandler<GetOverallStatsQuery, ResponseResult<OverallStatsDto>>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;

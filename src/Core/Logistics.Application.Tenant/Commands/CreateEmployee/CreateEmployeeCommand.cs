@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Tenant.Commands;
 
-public sealed class CreateEmployeeCommand : RequestBase<ResponseResult>
+public class CreateEmployeeCommand : Request<ResponseResult>
 {
     public string? Id { get; set; }
     public string? Role { get; set; }

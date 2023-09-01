@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class DeleteLoadHandler : RequestHandlerBase<DeleteLoadCommand, ResponseResult>
+internal sealed class DeleteLoadHandler : RequestHandler<DeleteLoadCommand, ResponseResult>
 {
     private readonly ITenantRepository _tenantRepository;
 

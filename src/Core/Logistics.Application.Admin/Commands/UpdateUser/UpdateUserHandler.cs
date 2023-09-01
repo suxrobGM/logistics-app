@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Admin.Commands;
 
-internal sealed class UpdateUserHandler : RequestHandlerBase<UpdateUserCommand, ResponseResult>
+internal sealed class UpdateUserHandler : RequestHandler<UpdateUserCommand, ResponseResult>
 {
     private readonly IMainRepository _mainRepository;
 

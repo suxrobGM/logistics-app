@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Logistics.Application.Common;
 
-public abstract class RequestHandlerBase<TRequest, TResponse> : IRequestHandler<TRequest, TResponse>
+public abstract class RequestHandler<TRequest, TResponse> : IRequestHandler<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
     where TResponse : IResponseResult, new()
 {

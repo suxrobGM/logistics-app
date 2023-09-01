@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Admin.Queries;
 
-internal class GetAppRolesValidator : AbstractValidator<GetAppRolesQuery>
+internal sealed class GetAppRolesValidator : AbstractValidator<GetAppRolesQuery>
 {
     public GetAppRolesValidator()
     {

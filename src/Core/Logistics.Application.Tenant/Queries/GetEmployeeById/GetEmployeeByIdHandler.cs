@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetEmployeeByIdHandler : RequestHandlerBase<GetEmployeeByIdQuery, ResponseResult<EmployeeDto>>
+internal sealed class GetEmployeeByIdHandler : RequestHandler<GetEmployeeByIdQuery, ResponseResult<EmployeeDto>>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;

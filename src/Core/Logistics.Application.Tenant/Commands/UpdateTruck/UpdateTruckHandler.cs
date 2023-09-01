@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class UpdateTruckHandler : RequestHandlerBase<UpdateTruckCommand, ResponseResult>
+internal sealed class UpdateTruckHandler : RequestHandler<UpdateTruckCommand, ResponseResult>
 {
     private readonly ITenantRepository _tenantRepository;
 

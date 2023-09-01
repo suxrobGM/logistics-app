@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.Application.Admin.Queries;
 
-internal sealed class GetUserByIdHandler : RequestHandlerBase<GetUserByIdQuery, ResponseResult<UserDto>>
+internal sealed class GetUserByIdHandler : RequestHandler<GetUserByIdQuery, ResponseResult<UserDto>>
 {
     private readonly UserManager<User> _userManager;
 

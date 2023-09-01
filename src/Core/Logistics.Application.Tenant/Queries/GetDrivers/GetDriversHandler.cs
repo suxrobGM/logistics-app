@@ -3,7 +3,7 @@ using Logistics.Models;
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class GetDriversHandler : RequestHandlerBase<GetDriversRequest, PagedResponseResult<EmployeeDto>>
+internal sealed class GetDriversHandler : RequestHandler<GetDriversQuery, PagedResponseResult<EmployeeDto>>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;
@@ -17,7 +17,7 @@ public class GetDriversHandler : RequestHandlerBase<GetDriversRequest, PagedResp
     }
     
     protected override async Task<PagedResponseResult<EmployeeDto>> HandleValidated(
-        GetDriversRequest request, CancellationToken cancellationToken)
+        GetDriversQuery query, CancellationToken cancellationToken)
     {
         var tenant = await _tenantRepository.GetCurrentTenantAsync();
         var totalItems = _tenantRepository.Query<Employee>().Count();
@@ -27,9 +27,9 @@ public class GetDriversHandler : RequestHandlerBase<GetDriversRequest, PagedResp
             return PagedResponseResult<EmployeeDto>.CreateError("Could not found the driver role");
 
         var filteredUsers = _mainRepository
-            .ApplySpecification(new SearchUsersByTenantId(request.Search, tenant.Id, "Name"))
-            .Skip((request.Page - 1) * request.PageSize)
-            .Take(request.PageSize)
+            .ApplySpecification(new SearchUsersByTenantId(query.Search, tenant.Id, "Name"))
+            .Skip((query.Page - 1) * query.PageSize)
+            .Take(query.PageSize)
             .ToDictionary(user => user.Id);
 
         var userIds = filteredUsers.Keys.ToArray();
@@ -55,11 +55,11 @@ public class GetDriversHandler : RequestHandlerBase<GetDriversRequest, PagedResp
             employee.PhoneNumber = user.PhoneNumber;
         }
 
-        var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
+        var totalPages = (int)Math.Ceiling(totalItems / (double)query.PageSize);
         return new PagedResponseResult<EmployeeDto>(employeesDto, totalItems, totalPages);
     }
 
-    protected override bool Validate(GetDriversRequest request, out string errorDescription)
+    protected override bool Validate(GetDriversQuery query, out string errorDescription)
     {
         errorDescription = string.Empty;
 
@@ -67,11 +67,11 @@ public class GetDriversHandler : RequestHandlerBase<GetDriversRequest, PagedResp
         // {
         //     errorDescription = "Could not evaluate current tenant's ID";
         // }
-        if (request.Page <= 0)
+        if (query.Page <= 0)
         {
             errorDescription = "Page number should be non-negative";
         }
-        else if (request.PageSize <= 1)
+        else if (query.PageSize <= 1)
         {
             errorDescription = "Page size should be greater than one";
         }

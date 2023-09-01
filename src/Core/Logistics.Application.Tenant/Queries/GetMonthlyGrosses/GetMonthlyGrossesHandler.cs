@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetMonthlyGrossesHandler : RequestHandlerBase<GetMonthlyGrossesQuery, ResponseResult<MonthlyGrossesDto>>
+internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrossesQuery, ResponseResult<MonthlyGrossesDto>>
 {
     private readonly ITenantRepository _tenantRepository;
 

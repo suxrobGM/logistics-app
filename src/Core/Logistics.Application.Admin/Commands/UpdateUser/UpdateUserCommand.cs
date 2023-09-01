@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Admin.Commands;
 
-public class UpdateUserCommand : RequestBase<ResponseResult>
+public class UpdateUserCommand : Request<ResponseResult>
 {
     public string? Id { get; set; }
     public string? FirstName { get; set; }

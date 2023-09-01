@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetDailyGrossesHandler : RequestHandlerBase<GetDailyGrossesQuery, ResponseResult<DailyGrossesDto>>
+internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQuery, ResponseResult<DailyGrossesDto>>
 {
     private readonly ITenantRepository _tenantRepository;
 

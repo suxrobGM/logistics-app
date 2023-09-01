@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Tenant.Commands;
 
-public sealed class UpdateTruckCommand : RequestBase<ResponseResult>
+public class UpdateTruckCommand : Request<ResponseResult>
 {
     public string? Id { get; set; }
     public int? TruckNumber { get; set; }

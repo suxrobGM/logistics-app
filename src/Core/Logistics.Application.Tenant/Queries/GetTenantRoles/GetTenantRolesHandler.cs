@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class GetTenantRolesHandler : RequestHandlerBase<GetTenantRolesQuery, PagedResponseResult<TenantRoleDto>>
+internal sealed class GetTenantRolesHandler : RequestHandler<GetTenantRolesQuery, PagedResponseResult<TenantRoleDto>>
 {
     private readonly ITenantRepository _tenantRepository;
 

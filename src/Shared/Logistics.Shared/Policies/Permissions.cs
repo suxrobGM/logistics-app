@@ -35,7 +35,7 @@ public static class Permissions
     {
         public const string Create = "Permissions.Tenant.Create";
         public const string View = "Permissions.Tenant.View";
-        public const string Edit =$"Permissions.Tenant.Edit";
+        public const string Edit = "Permissions.Tenant.Edit";
         public const string Delete = "Permissions.Tenant.Delete";
     }
     

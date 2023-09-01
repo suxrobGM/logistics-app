@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Admin.Commands;
 
-internal class UpdateTenantValidator : AbstractValidator<UpdateTenantCommand>
+internal sealed class UpdateTenantValidator : AbstractValidator<UpdateTenantCommand>
 {
     public UpdateTenantValidator()
     {

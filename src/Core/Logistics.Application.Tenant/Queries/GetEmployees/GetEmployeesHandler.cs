@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesRequest, PagedResponseResult<EmployeeDto>>
+internal sealed class GetEmployeesHandler : RequestHandler<GetEmployeesQuery, PagedResponseResult<EmployeeDto>>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;
@@ -16,17 +16,17 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesReque
     }
 
     protected override async Task<PagedResponseResult<EmployeeDto>> HandleValidated(
-        GetEmployeesRequest request, 
+        GetEmployeesQuery query, 
         CancellationToken cancellationToken)
     {
         var tenant = await _tenantRepository.GetCurrentTenantAsync();
         var totalItems = _tenantRepository.Query<Employee>().Count();
-        var spec = new SearchUsersByTenantId(request.Search, tenant.Id, request.OrderBy, request.Descending);
+        var spec = new SearchUsersByTenantId(query.Search, tenant.Id, query.OrderBy, query.Descending);
 
         var filteredUsers = _mainRepository
             .ApplySpecification(spec)
-            .Skip((request.Page - 1) * request.PageSize)
-            .Take(request.PageSize)
+            .Skip((query.Page - 1) * query.PageSize)
+            .Take(query.PageSize)
             .ToArray();
 
         var userIds = filteredUsers.Select(i => i.Id).ToArray();
@@ -59,11 +59,11 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesReque
             employeesDtoList.Add(employeeDto);
         }
 
-        var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
+        var totalPages = (int)Math.Ceiling(totalItems / (double)query.PageSize);
         return new PagedResponseResult<EmployeeDto>(employeesDtoList, totalItems, totalPages);
     }
 
-    protected override bool Validate(GetEmployeesRequest request, out string errorDescription)
+    protected override bool Validate(GetEmployeesQuery query, out string errorDescription)
     {
         errorDescription = string.Empty;
 
@@ -71,11 +71,11 @@ internal sealed class GetEmployeesHandler : RequestHandlerBase<GetEmployeesReque
         // {
         //     errorDescription = "Could not evaluate current tenant's ID";
         // }
-        if (request.Page <= 0)
+        if (query.Page <= 0)
         {
             errorDescription = "Page number should be non-negative";
         }
-        else if (request.PageSize <= 1)
+        else if (query.PageSize <= 1)
         {
             errorDescription = "Page size should be greater than one";
         }

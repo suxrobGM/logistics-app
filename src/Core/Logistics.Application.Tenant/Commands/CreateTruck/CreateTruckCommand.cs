@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Commands;
 
-public sealed class CreateTruckCommand : RequestBase<ResponseResult>
+public class CreateTruckCommand : Request<ResponseResult>
 {
     [Required]
     public int? TruckNumber { get; set; }

@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Admin.Commands;
 
-internal class RemoveUserRoleValidator : AbstractValidator<RemoveUserRoleCommand>
+internal sealed class RemoveUserRoleValidator : AbstractValidator<RemoveUserRoleCommand>
 {
     public RemoveUserRoleValidator()
     {

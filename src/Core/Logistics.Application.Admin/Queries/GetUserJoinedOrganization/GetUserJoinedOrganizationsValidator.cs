@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Admin.Queries;
 
-internal class GetUserJoinedOrganizationsValidator : AbstractValidator<GetUserJoinedOrganizationsQuery>
+internal sealed class GetUserJoinedOrganizationsValidator : AbstractValidator<GetUserJoinedOrganizationsQuery>
 {
     public GetUserJoinedOrganizationsValidator()
     {

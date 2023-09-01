@@ -34,9 +34,9 @@ public class LoadController : ControllerBase
     [ProducesResponseType(typeof(PagedResponseResult<LoadDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Load.View)]
-    public async Task<IActionResult> GetList([FromQuery] GetLoadsRequest request)
+    public async Task<IActionResult> GetList([FromQuery] GetLoadsQuery query)
     {
-        var result = await _mediator.Send(request);
+        var result = await _mediator.Send(query);
 
         if (result.Success)
             return Ok(result);

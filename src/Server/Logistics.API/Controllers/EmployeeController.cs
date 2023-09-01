@@ -34,9 +34,9 @@ public class EmployeeController : ControllerBase
     [ProducesResponseType(typeof(PagedResponseResult<EmployeeDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.View)]
-    public async Task<IActionResult> GetDrivers([FromQuery] GetDriversRequest request)
+    public async Task<IActionResult> GetDrivers([FromQuery] GetDriversQuery query)
     {
-        var result = await _mediator.Send(request);
+        var result = await _mediator.Send(query);
 
         if (result.Success)
             return Ok(result);
@@ -48,9 +48,9 @@ public class EmployeeController : ControllerBase
     [ProducesResponseType(typeof(PagedResponseResult<EmployeeDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.View)]
-    public async Task<IActionResult> GetList([FromQuery] GetEmployeesRequest request)
+    public async Task<IActionResult> GetList([FromQuery] GetEmployeesQuery query)
     {
-        var result = await _mediator.Send(request);
+        var result = await _mediator.Send(query);
 
         if (result.Success)
             return Ok(result);

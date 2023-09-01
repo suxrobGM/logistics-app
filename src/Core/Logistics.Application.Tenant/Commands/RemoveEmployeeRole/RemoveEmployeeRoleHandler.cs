@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Tenant.Commands;
 
-public class RemoveEmployeeRoleHandler : RequestHandlerBase<RemoveEmployeeRoleCommand, ResponseResult>
+internal sealed class RemoveEmployeeRoleHandler : RequestHandler<RemoveEmployeeRoleCommand, ResponseResult>
 {
     private readonly ITenantRepository _tenantRepository;
 

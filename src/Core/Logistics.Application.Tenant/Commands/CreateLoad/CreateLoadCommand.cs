@@ -3,7 +3,7 @@ using Logistics.Domain.Constraints;
 
 namespace Logistics.Application.Tenant.Commands;
 
-public sealed class CreateLoadCommand : RequestBase<ResponseResult>
+public class CreateLoadCommand : Request<ResponseResult>
 {
     public string? Name { get; set; }
     

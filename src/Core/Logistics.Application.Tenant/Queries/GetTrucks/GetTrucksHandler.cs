@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksRequest, PagedResponseResult<TruckDto>>
+internal sealed class GetTrucksHandler : RequestHandler<GetTrucksQuery, PagedResponseResult<TruckDto>>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;
@@ -16,7 +16,7 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksRequest, Pa
     }
 
     protected override async Task<PagedResponseResult<TruckDto>> HandleValidated(
-        GetTrucksRequest req,
+        GetTrucksQuery req,
         CancellationToken cancellationToken)
     {
         var loadIds = new List<string>();
@@ -72,7 +72,7 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksRequest, Pa
         return new PagedResponseResult<TruckDto>(trucksDto, totalItems, totalPages);
     }
 
-    protected override bool Validate(GetTrucksRequest request, out string errorDescription)
+    protected override bool Validate(GetTrucksQuery query, out string errorDescription)
     {
         errorDescription = string.Empty;
 
@@ -80,11 +80,11 @@ internal sealed class GetTrucksHandler : RequestHandlerBase<GetTrucksRequest, Pa
         // {
         //     errorDescription = "Could not evaluate current tenant's ID";
         // }
-        if (request.Page <= 0)
+        if (query.Page <= 0)
         {
             errorDescription = "Page number should be non-negative";
         }
-        else if (request.PageSize <= 1)
+        else if (query.PageSize <= 1)
         {
             errorDescription = "Page size should be greater than one";
         }

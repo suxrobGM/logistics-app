@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class CreateEmployeeHandler : RequestHandlerBase<CreateEmployeeCommand, ResponseResult>
+internal sealed class CreateEmployeeHandler : RequestHandler<CreateEmployeeCommand, ResponseResult>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;

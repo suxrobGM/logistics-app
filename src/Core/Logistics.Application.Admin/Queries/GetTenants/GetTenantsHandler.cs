@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Admin.Queries;
 
-internal sealed class GetTenantsHandler : RequestHandlerBase<GetTenantsQuery, PagedResponseResult<TenantDto>>
+internal sealed class GetTenantsHandler : RequestHandler<GetTenantsQuery, PagedResponseResult<TenantDto>>
 {
     private readonly IMainRepository _repository;
 

@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Commands;
 
-public sealed class UpdateLoadCommand : RequestBase<ResponseResult>
+public class UpdateLoadCommand : Request<ResponseResult>
 {
     public string? Id { get; set; }
     public string? Name { get; set; }

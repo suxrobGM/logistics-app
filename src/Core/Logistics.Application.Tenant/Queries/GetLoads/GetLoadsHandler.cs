@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsRequest, PagedResponseResult<LoadDto>>
+internal sealed class GetLoadsHandler : RequestHandler<GetLoadsQuery, PagedResponseResult<LoadDto>>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;
@@ -16,7 +16,7 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsRequest, Page
     }
 
     protected override async Task<PagedResponseResult<LoadDto>> HandleValidated(
-        GetLoadsRequest req, 
+        GetLoadsQuery req, 
         CancellationToken cancellationToken)
     {
         var tenant = await _tenantRepository.GetCurrentTenantAsync();
@@ -88,7 +88,7 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsRequest, Page
         return new PagedResponseResult<LoadDto>(loadsDto, totalItems, totalPages);
     }
 
-    protected override bool Validate(GetLoadsRequest request, out string errorDescription)
+    protected override bool Validate(GetLoadsQuery query, out string errorDescription)
     {
         errorDescription = string.Empty;
 
@@ -96,11 +96,11 @@ internal sealed class GetLoadsHandler : RequestHandlerBase<GetLoadsRequest, Page
         // {
         //     errorDescription = "Could not evaluate current tenant's ID";
         // }
-        if (request.Page <= 0)
+        if (query.Page <= 0)
         {
             errorDescription = "Page number should be non-negative";
         }
-        else if (request.PageSize <= 1)
+        else if (query.PageSize <= 1)
         {
             errorDescription = "Page size should be greater than one";
         }

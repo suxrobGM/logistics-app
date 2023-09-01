@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Admin.Commands;
 
-internal sealed class DeleteTenantHandler : RequestHandlerBase<DeleteTenantCommand, ResponseResult>
+internal sealed class DeleteTenantHandler : RequestHandler<DeleteTenantCommand, ResponseResult>
 {
     private readonly ITenantDatabaseService _tenantDatabase;
     private readonly IMainRepository _repository;

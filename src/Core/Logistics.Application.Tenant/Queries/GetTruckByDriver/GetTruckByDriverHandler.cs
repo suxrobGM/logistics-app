@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetTruckByDriverHandler : RequestHandlerBase<GetTruckByDriverQuery, ResponseResult<TruckDto>>
+internal sealed class GetTruckByDriverHandler : RequestHandler<GetTruckByDriverQuery, ResponseResult<TruckDto>>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;

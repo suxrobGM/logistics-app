@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Admin.Commands;
 
-public sealed class DeleteTenantCommand : RequestBase<ResponseResult>
+public class DeleteTenantCommand : Request<ResponseResult>
 {
     public string? Id { get; set; }
 }

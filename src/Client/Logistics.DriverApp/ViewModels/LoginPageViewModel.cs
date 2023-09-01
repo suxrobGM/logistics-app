@@ -28,7 +28,7 @@ public class LoginPageViewModel : ViewModelBase
     protected override async void OnActivated()
     {
         var canAutoLogin = await _authService.CanAutoLoginAsync();
-
+    
         if (canAutoLogin)
         {
             await LoginAsync(); // try auto login

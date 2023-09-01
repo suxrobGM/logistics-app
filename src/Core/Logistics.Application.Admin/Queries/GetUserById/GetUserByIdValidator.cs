@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Admin.Queries;
 
-internal class GetUserByIdValidator : AbstractValidator<GetUserByIdQuery>
+internal sealed class GetUserByIdValidator : AbstractValidator<GetUserByIdQuery>
 {
     public GetUserByIdValidator()
     {

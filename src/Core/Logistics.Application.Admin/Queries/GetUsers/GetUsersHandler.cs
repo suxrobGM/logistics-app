@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Admin.Queries;
 
-internal sealed class GetUsersHandler : RequestHandlerBase<GetUsersQuery, PagedResponseResult<UserDto>>
+internal sealed class GetUsersHandler : RequestHandler<GetUsersQuery, PagedResponseResult<UserDto>>
 {
     private readonly IMainRepository _repository;
 

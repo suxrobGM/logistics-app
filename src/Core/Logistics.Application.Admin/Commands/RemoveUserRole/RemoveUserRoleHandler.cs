@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Admin.Commands;
 
-public class RemoveUserRoleHandler : RequestHandlerBase<RemoveUserRoleCommand, ResponseResult>
+internal sealed class RemoveUserRoleHandler : RequestHandler<RemoveUserRoleCommand, ResponseResult>
 {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<AppRole> _roleManager;

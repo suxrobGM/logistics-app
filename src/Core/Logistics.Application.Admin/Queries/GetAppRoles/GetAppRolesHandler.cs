@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Admin.Queries;
 
-internal sealed class GetAppRolesHandler : RequestHandlerBase<GetAppRolesQuery, PagedResponseResult<AppRoleDto>>
+internal sealed class GetAppRolesHandler : RequestHandler<GetAppRolesQuery, PagedResponseResult<AppRoleDto>>
 {
     private readonly IMainRepository _repository;
 

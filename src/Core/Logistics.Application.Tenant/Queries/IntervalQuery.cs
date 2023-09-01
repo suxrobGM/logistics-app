@@ -1,13 +1,7 @@
 ﻿namespace Logistics.Application.Tenant.Queries;
 
-public abstract class IntervalQuery<T> : RequestBase<ResponseResult<T>>
+public abstract class IntervalQuery<T> : Request<ResponseResult<T>>
 {
-    protected IntervalQuery()
-    {
-        StartDate = DateTime.UtcNow;
-        EndDate = DateTime.UtcNow;
-    }
-    
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
+    public DateTime StartDate { get; set; } = DateTime.UtcNow;
+    public DateTime EndDate { get; set; } = DateTime.UtcNow;
 }
