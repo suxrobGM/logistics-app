@@ -1,4 +1,5 @@
-﻿using Logistics.Models;
+﻿using Logistics.Application.Tenant.Mappers;
+using Logistics.Models;
 
 namespace Logistics.Application.Tenant.Queries;
 
@@ -25,27 +26,11 @@ internal sealed class GetLoadByIdHandler : RequestHandler<GetLoadByIdQuery, Resp
 
         var assignedDispatcher = await _mainRepository.GetAsync<User>(loadEntity.AssignedDispatcherId);
         var assignedDriver = await _mainRepository.GetAsync<User>(i => loadEntity.AssignedDriver != null && i.Id == loadEntity.AssignedDriver.Id);
-        
-        var load = new LoadDto
-        {
-            Id = loadEntity.Id,
-            RefId = loadEntity.RefId,
-            Name = loadEntity.Name,
-            SourceAddress = loadEntity.SourceAddress,
-            DestinationAddress = loadEntity.DestinationAddress,
-            DispatchedDate = loadEntity.DispatchedDate,
-            PickUpDate = loadEntity.PickUpDate,
-            DeliveryDate = loadEntity.DeliveryDate,
-            DeliveryCost = loadEntity.DeliveryCost,
-            Distance = loadEntity.Distance,
-            Status = (Models.LoadStatus)loadEntity.Status,
-            AssignedDispatcherId = loadEntity.AssignedDispatcherId,
-            AssignedDispatcherName = assignedDispatcher?.GetFullName(),
-            AssignedDriverId = assignedDriver?.Id,
-            AssignedDriverName = assignedDriver?.GetFullName(),
-            AssignedTruckId = loadEntity.AssignedTruckId
-        };
-        return ResponseResult<LoadDto>.CreateSuccess(load);
+
+        var loadDto = LoadMapper.ToDto(loadEntity)!;
+        loadDto.AssignedDispatcherName = assignedDispatcher?.GetFullName();
+        loadDto.AssignedDriverName = assignedDriver?.GetFullName();
+        return ResponseResult<LoadDto>.CreateSuccess(loadDto);
     }
 
     protected override bool Validate(GetLoadByIdQuery request, out string errorDescription)
@@ -59,6 +44,4 @@ internal sealed class GetLoadByIdHandler : RequestHandler<GetLoadByIdQuery, Resp
 
         return string.IsNullOrEmpty(errorDescription);
     }
-
-    
 }
