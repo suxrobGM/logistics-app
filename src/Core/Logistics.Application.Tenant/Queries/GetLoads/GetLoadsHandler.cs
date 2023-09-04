@@ -15,7 +15,7 @@ internal sealed class GetLoadsHandler : RequestHandler<GetLoadsQuery, PagedRespo
         _tenantRepository = tenantRepository;
     }
 
-    protected override async Task<PagedResponseResult<LoadDto>> HandleValidated(
+    protected override Task<PagedResponseResult<LoadDto>> HandleValidated(
         GetLoadsQuery req, 
         CancellationToken cancellationToken)
     {
@@ -85,7 +85,7 @@ internal sealed class GetLoadsHandler : RequestHandler<GetLoadsQuery, PagedRespo
         }
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return new PagedResponseResult<LoadDto>(loadsDto, totalItems, totalPages);
+        return Task.FromResult(new PagedResponseResult<LoadDto>(loadsDto, totalItems, totalPages));
     }
 
     protected override bool Validate(GetLoadsQuery query, out string errorDescription)

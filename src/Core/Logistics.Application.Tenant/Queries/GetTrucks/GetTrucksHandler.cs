@@ -15,7 +15,7 @@ internal sealed class GetTrucksHandler : RequestHandler<GetTrucksQuery, PagedRes
         _tenantRepository = tenantRepository;
     }
 
-    protected override async Task<PagedResponseResult<TruckDto>> HandleValidated(
+    protected override Task<PagedResponseResult<TruckDto>> HandleValidated(
         GetTrucksQuery req,
         CancellationToken cancellationToken)
     {
@@ -69,7 +69,7 @@ internal sealed class GetTrucksHandler : RequestHandler<GetTrucksQuery, PagedRes
         }
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return new PagedResponseResult<TruckDto>(trucksDto, totalItems, totalPages);
+        return Task.FromResult(new PagedResponseResult<TruckDto>(trucksDto, totalItems, totalPages));
     }
 
     protected override bool Validate(GetTrucksQuery query, out string errorDescription)

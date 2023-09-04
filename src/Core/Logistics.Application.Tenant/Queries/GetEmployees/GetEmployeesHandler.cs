@@ -15,7 +15,7 @@ internal sealed class GetEmployeesHandler : RequestHandler<GetEmployeesQuery, Pa
         _tenantRepository = tenantRepository;
     }
 
-    protected override async Task<PagedResponseResult<EmployeeDto>> HandleValidated(
+    protected override Task<PagedResponseResult<EmployeeDto>> HandleValidated(
         GetEmployeesQuery query, 
         CancellationToken cancellationToken)
     {
@@ -60,7 +60,7 @@ internal sealed class GetEmployeesHandler : RequestHandler<GetEmployeesQuery, Pa
         }
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)query.PageSize);
-        return new PagedResponseResult<EmployeeDto>(employeesDtoList, totalItems, totalPages);
+        return Task.FromResult(new PagedResponseResult<EmployeeDto>(employeesDtoList, totalItems, totalPages));
     }
 
     protected override bool Validate(GetEmployeesQuery query, out string errorDescription)
