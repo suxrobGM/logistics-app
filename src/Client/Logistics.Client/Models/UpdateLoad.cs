@@ -12,5 +12,5 @@ public record UpdateLoad
     public double? Distance { get; set; }
     public string? AssignedDispatcherId { get; set; }
     public string? AssignedDriverId { get; set; }
-    public LoadStatus? Status { get; set; }
+    public LoadStatusDto? Status { get; set; }
 }

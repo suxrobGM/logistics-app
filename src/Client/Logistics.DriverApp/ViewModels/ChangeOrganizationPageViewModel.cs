@@ -6,7 +6,7 @@ using Logistics.Models;
 
 namespace Logistics.DriverApp.ViewModels;
 
-public class ChangeOrganizationPageVideModel : ViewModelBase
+public class ChangeOrganizationPageVideModel : BaseViewModel
 {
     private readonly IApiClient _apiClient;
     private readonly IAuthService _authService;
@@ -59,7 +59,7 @@ public class ChangeOrganizationPageVideModel : ViewModelBase
     #endregion
 
     
-    protected override async void OnActivated()
+    protected override async Task OnInitializedAsync()
     {
         await FetchUserOrganizationsAsync();
 

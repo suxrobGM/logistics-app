@@ -31,17 +31,18 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
     protected override async Task<ClaimsIdentity> GenerateClaimsAsync(User user)
     {
         var claimsIdentity = await base.GenerateClaimsAsync(user);
-        var joinedTenantId = user.GetJoinedTenantsIds().FirstOrDefault();
-        var tenantId = _httpContext.GetTenantId() ?? joinedTenantId;
+        var tenantIds = user.GetJoinedTenantsIds();
+        var tenantId = _httpContext.GetTenantId() ?? tenantIds.FirstOrDefault();
         
         await AddAppRoleClaims(claimsIdentity, user);
 
         if (string.IsNullOrEmpty(tenantId)) 
             return claimsIdentity;
 
-        await _tenantRepository.SetTenantIdAsync(tenantId);
+        _tenantRepository.SetTenantId(tenantId);
         var employee = await _tenantRepository.GetAsync<Employee>(user.Id);
 
+        AddTenantIdsClaim(claimsIdentity, tenantIds);
         AddTenantRoles(claimsIdentity, employee);
         await AddTenantRoleClaims(claimsIdentity, employee);
         
@@ -77,7 +78,15 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
         }
     }
 
-    private void AddTenantRoles(ClaimsIdentity claimsIdentity, Employee? employee)
+    private static void AddTenantIdsClaim(ClaimsIdentity claimsIdentity, IEnumerable<string> tenantIds)
+    {
+        foreach (var tenantId in tenantIds)
+        {
+            claimsIdentity.AddClaim(new Claim(CustomClaimTypes.Tenant, tenantId));
+        }
+    }
+
+    private static void AddTenantRoles(ClaimsIdentity claimsIdentity, Employee? employee)
     {
         if (employee == null)
             return;

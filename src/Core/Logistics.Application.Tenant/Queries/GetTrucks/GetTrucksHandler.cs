@@ -28,7 +28,7 @@ internal sealed class GetTrucksHandler : RequestHandler<GetTrucksQuery, PagedRes
                 .ToList();
         }
 
-        var tenant = await _tenantRepository.GetCurrentTenantAsync();
+        var tenant = _tenantRepository.GetCurrentTenant();
         var totalItems = _tenantRepository.Query<Truck>().Count();
         var filteredUsers = _mainRepository.ApplySpecification(new FilterUsersByTenantId(tenant.Id)).ToArray();
         var userIds = filteredUsers.Select(i => i.Id).ToArray();

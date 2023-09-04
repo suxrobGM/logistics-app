@@ -45,7 +45,7 @@ public class LoadMapper : IMapper<Load, LoadDto>
             DeliveryDate = entity.DeliveryDate,
             DeliveryCost = entity.DeliveryCost,
             Distance = entity.Distance,
-            Status = (LoadStatus)entity.Status,
+            Status = (LoadStatusDto)entity.Status,
             AssignedDispatcherId = entity.AssignedDispatcherId,
             AssignedDriverId = entity.Id,
             AssignedTruckId = entity.AssignedTruckId

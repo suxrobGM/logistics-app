@@ -287,4 +287,14 @@ internal class ApiClient : GenericApiClient, IApiClient
     }
 
     #endregion
+
+
+    #region Driver API
+
+    public Task<ResponseResult<DriverDashboardDto>> GetDriverDashboardDataAsync(string userId)
+    {
+        return MakeGetRequestAsync<ResponseResult<DriverDashboardDto>>($"driver/{userId}/dashboard");
+    }
+
+    #endregion
 }

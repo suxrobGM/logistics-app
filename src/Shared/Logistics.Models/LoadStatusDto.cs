@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Models;
 
-public enum LoadStatus
+public enum LoadStatusDto
 {
     Dispatched = 1,
     PickedUp,

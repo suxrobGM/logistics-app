@@ -15,7 +15,7 @@ public class DriverController : ControllerBase
     }
 
     [HttpGet("{userId}/dashboard")]
-    [ProducesResponseType(typeof(ResponseResult<DailyGrossesDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult<DriverDashboardDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.View)]
     public async Task<IActionResult> GetDriverDashboardData(string userId)

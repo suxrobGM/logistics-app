@@ -12,7 +12,7 @@ public class LoadDto
     public DateTime DispatchedDate { get; set; }
     public DateTime? PickUpDate { get; set; }
     public DateTime? DeliveryDate { get; set; }
-    public LoadStatus Status { get; set; }
+    public LoadStatusDto Status { get; set; }
     public string? AssignedDispatcherId { get; set; }
     public string? AssignedDispatcherName { get; set; }
     public string? AssignedDriverId { get; set; }

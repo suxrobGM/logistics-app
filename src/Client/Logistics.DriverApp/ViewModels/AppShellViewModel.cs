@@ -4,7 +4,7 @@ using Logistics.DriverApp.Services.Authentication;
 
 namespace Logistics.DriverApp.ViewModels;
 
-public class AppShellViewModel : ViewModelBase
+public class AppShellViewModel : BaseViewModel
 {
     private readonly IAuthService _authService;
     private readonly IApiClient _apiClient;

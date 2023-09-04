@@ -3,7 +3,7 @@ using Logistics.DriverApp.Services.Authentication;
 
 namespace Logistics.DriverApp.ViewModels;
 
-public class AccountPageViewModel : ViewModelBase
+public class AccountPageViewModel : BaseViewModel
 {
     private readonly IAuthService _authService;
     private readonly IApiClient _apiClient;
@@ -19,11 +19,15 @@ public class AccountPageViewModel : ViewModelBase
         // AccountCenterUrl = $"{_authService.Options.Authority}/account/manage";
         SaveCommand = new AsyncRelayCommand(UpdateAccountAsync, () => !IsLoading);
         IsLoadingChanged += (s, e) => SaveCommand.NotifyCanExecuteChanged();
-        Task.Run(FetchUserAsync);
     }
 
     public IAsyncRelayCommand SaveCommand { get; }
     public AccountInfo AccountDetails { get; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchUserAsync();
+    }
 
     private async Task FetchUserAsync()
     {

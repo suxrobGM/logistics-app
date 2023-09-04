@@ -16,7 +16,7 @@ internal sealed class DeleteEmployeeHandler : RequestHandler<DeleteEmployeeComma
     protected override async Task<ResponseResult> HandleValidated(
         DeleteEmployeeCommand request, CancellationToken cancellationToken)
     {
-        var tenant = await _tenantRepository.GetCurrentTenantAsync();
+        var tenant = _tenantRepository.GetCurrentTenant();
         var employee = await _tenantRepository.GetAsync<Employee>(request.Id!);
 
         if (employee == null)

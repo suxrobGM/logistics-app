@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Logistics.DriverApp.Views.AccountPage"
-             xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
-             xmlns:dataForm="clr-namespace:Syncfusion.Maui.DataForm;assembly=Syncfusion.Maui.DataForm"
-             Title="Account">
+<views:BaseContentPage x:TypeArguments="viewModels:AccountPageViewModel"
+                       x:Class="Logistics.DriverApp.Views.AccountPage"
+                       xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                       xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+                       xmlns:dataForm="clr-namespace:Syncfusion.Maui.DataForm;assembly=Syncfusion.Maui.DataForm"
+                       xmlns:views="clr-namespace:Logistics.DriverApp.Views"
+                       xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels"
+                       Title="Account">
     <Grid>
         <core:SfBusyIndicator IsRunning="{Binding IsLoading}"
                               IndicatorColor="Pink"
@@ -22,4 +25,4 @@
             <Button Text="Save" Command="{Binding SaveCommand}" />
         </VerticalStackLayout>
     </Grid>
-</ContentPage>
+</views:BaseContentPage>

@@ -1,10 +1,9 @@
 ﻿namespace Logistics.DriverApp.Views;
 
-public partial class DashboardPage : ContentPage
+public partial class DashboardPage
 {
     public DashboardPage()
     {
         InitializeComponent();
-        BindingContext = App.Current.Services.GetService<DashboardPageViewModel>();
     }
 }

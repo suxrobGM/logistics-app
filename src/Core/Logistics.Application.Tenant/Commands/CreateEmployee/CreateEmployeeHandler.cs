@@ -19,7 +19,7 @@ internal sealed class CreateEmployeeHandler : RequestHandler<CreateEmployeeComma
         var existingEmployee = await _tenantRepository.GetAsync<Employee>(i => i.Id == request.Id);
         var user = await _mainRepository.GetAsync<User>(i => i.Id == request.Id);
         var tenantRole = await _tenantRepository.GetAsync<TenantRole>(i => i.Name == request.Role);
-        var tenant = await _tenantRepository.GetCurrentTenantAsync();
+        var tenant = _tenantRepository.GetCurrentTenant();
 
         if (user == null)
             return ResponseResult.CreateError("Could not find the specified user");

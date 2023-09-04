@@ -9,14 +9,14 @@ public class TenantDbContext : DbContext
     private readonly string _connectionString;
 
     public TenantDbContext(
-        TenantDbContextOptions options, 
+        TenantDbContextOptions tenantDbContextOptions, 
         ITenantService? tenantService,
         AuditableEntitySaveChangesInterceptor? auditableEntitySaveChangesInterceptor,
         DispatchDomainEventsInterceptor? dispatchDomainEventsInterceptor)
     {
         _auditableEntitySaveChangesInterceptor = auditableEntitySaveChangesInterceptor;
         _dispatchDomainEventsInterceptor = dispatchDomainEventsInterceptor;
-        _connectionString = options.ConnectionString ?? ConnectionStrings.LocalDefaultTenant;
+        _connectionString = tenantDbContextOptions.ConnectionString ?? ConnectionStrings.LocalDefaultTenant;
         TenantService = tenantService;
     }
 
@@ -39,10 +39,15 @@ public class TenantDbContext : DbContext
             
             if (TenantService != null)
             {
-                connectionString = (await TenantService.GetTenantAsync()).ConnectionString;
+                connectionString = TenantService.GetTenant().ConnectionString;
             }
             
-            DbContextHelpers.ConfigureSqlServer(connectionString ?? _connectionString, options);
+            // DbContextHelpers.ConfigureSqlServer(connectionString ?? _connectionString, options);
+
+            options.UseSqlServer(connectionString ?? _connectionString, o =>
+            {
+                o.EnableRetryOnFailure(8, TimeSpan.FromSeconds(15), null);
+            }).UseLazyLoadingProxies();
         }
     }
 

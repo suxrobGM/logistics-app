@@ -2,6 +2,6 @@
 
 public interface ITenantService
 {
-    public Task<Tenant> GetTenantAsync();
-    public Task<bool> SetTenantAsync(string tenantId);
+    public Tenant GetTenant();
+    public bool SetTenant(string tenantId);
 }

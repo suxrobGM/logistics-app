@@ -1,6 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using IdentityModel.OidcClient;
 using System.Security.Claims;
+using IdentityModel;
+using Logistics.Shared.Claims;
 using IBrowser = IdentityModel.OidcClient.Browser.IBrowser;
 
 namespace Logistics.DriverApp.Services.Authentication;
@@ -50,6 +52,9 @@ public class AuthService : IAuthService
         else if (isTokenExpired) // just refresh the access token
         {
             loginResult = await RefreshAccessTokenAsync(tokenInfo.RefreshToken);
+
+            if (loginResult.IsError)
+                await PerformLoginAsync();
         }
         else // use the existing unexpired access token
         {
@@ -117,16 +122,17 @@ public class AuthService : IAuthService
         {
             switch (claim.Type)
             {
-                case "sub":
+                case JwtClaimTypes.Subject:
                     userIdentity.Id = claim.Value;
                     break;
-
-                case "role":
+                case CustomClaimTypes.Role:
                     userIdentity.Roles.Add(claim.Value);
                     break;
-
-                case "permission":
+                case CustomClaimTypes.Permission:
                     userIdentity.Permissions.Add(claim.Value);
+                    break;
+                case CustomClaimTypes.Tenant:
+                    userIdentity.TenantIds.Add(claim.Value);
                     break;
             }
         }

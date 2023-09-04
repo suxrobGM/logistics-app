@@ -19,7 +19,7 @@ internal sealed class GetEmployeesHandler : RequestHandler<GetEmployeesQuery, Pa
         GetEmployeesQuery query, 
         CancellationToken cancellationToken)
     {
-        var tenant = await _tenantRepository.GetCurrentTenantAsync();
+        var tenant = _tenantRepository.GetCurrentTenant();
         var totalItems = _tenantRepository.Query<Employee>().Count();
         var spec = new SearchUsersByTenantId(query.Search, tenant.Id, query.OrderBy, query.Descending);
 

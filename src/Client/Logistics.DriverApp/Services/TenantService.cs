@@ -1,13 +1,29 @@
-﻿namespace Logistics.DriverApp.Services;
+﻿using Logistics.DriverApp.Services.Authentication;
+
+namespace Logistics.DriverApp.Services;
 
 public class TenantService : ITenantService
 {
     private const string TENANT_ID_KEY = "tenant_id";
+    private readonly IAuthService _authService;
     private string? _currentTenantId;
+
+    public TenantService(IAuthService authService)
+    {
+        _authService = authService;
+    }
 
     public async Task<string?> GetTenantIdFromCacheAsync()
     {
-        return await SecureStorage.Default.GetAsync(TENANT_ID_KEY);
+        var cachedTenantId = await SecureStorage.Default.GetAsync(TENANT_ID_KEY);
+        var validTenantIds = _authService.User?.TenantIds;
+
+        if (string.IsNullOrEmpty(cachedTenantId) || validTenantIds == null)
+        {
+            return null;
+        }
+
+        return validTenantIds.Contains(cachedTenantId) ? cachedTenantId : null;
     }
 
     public Task SaveTenantIdAsync(string tenantId)

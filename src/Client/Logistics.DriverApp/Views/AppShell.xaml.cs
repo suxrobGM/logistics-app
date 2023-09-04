@@ -1,10 +1,9 @@
 ﻿namespace Logistics.DriverApp.Views;
 
-public partial class AppShell : Shell
+public partial class AppShell
 {
     public AppShell()
     {
         InitializeComponent();
-        BindingContext = App.Current.Services.GetService<AppShellViewModel>();
     }
 }

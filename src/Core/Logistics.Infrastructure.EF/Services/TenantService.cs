@@ -20,7 +20,7 @@ internal class TenantService : ITenantService
         _mainRepository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
-    public async Task<Tenant> GetTenantAsync()
+    public Tenant GetTenant()
     {
         if (_currentTenant is not null)
             return _currentTenant;
@@ -43,17 +43,17 @@ internal class TenantService : ITenantService
 
         if (!string.IsNullOrEmpty(tenantHeader))
         {
-            _currentTenant = await FetchCurrentTenantAsync(tenantHeader);
+            _currentTenant = FetchCurrentTenant(tenantHeader);
             tenantId = tenantHeader.ToString();
         }
         else if (!string.IsNullOrEmpty(tenantSubDomain))
         {
-            _currentTenant = await FetchCurrentTenantAsync(tenantSubDomain);
+            _currentTenant = FetchCurrentTenant(tenantSubDomain);
             tenantId = tenantSubDomain;
         }
         else if (!string.IsNullOrEmpty(tenantClaim))
         {
-            _currentTenant = await FetchCurrentTenantAsync(tenantClaim);
+            _currentTenant = FetchCurrentTenant(tenantClaim);
             tenantId = tenantClaim;
         }
         else
@@ -69,9 +69,9 @@ internal class TenantService : ITenantService
         return _currentTenant;
     }
 
-    public async Task<bool> SetTenantAsync(string tenantId)
+    public bool SetTenant(string tenantId)
     {
-        var tenant = await FetchCurrentTenantAsync(tenantId);
+        var tenant = FetchCurrentTenant(tenantId);
 
         if (tenant is null)
             return false;
@@ -80,7 +80,7 @@ internal class TenantService : ITenantService
         return true;
     }
 
-    private async Task<Tenant?> FetchCurrentTenantAsync(string? tenantId)
+    private Tenant? FetchCurrentTenant(string? tenantId)
     {
         if (string.IsNullOrEmpty(tenantId))
         {
@@ -88,8 +88,8 @@ internal class TenantService : ITenantService
         }
 
         tenantId = tenantId.Trim().ToLower();
-        var tenant = await _mainRepository.Query<Tenant>()
-            .FirstOrDefaultAsync(i => i.Id == tenantId || i.Name == tenantId);
+        var tenant = _mainRepository.Query<Tenant>()
+            .FirstOrDefault(i => i.Id == tenantId || i.Name == tenantId);
         
         return tenant;
     }

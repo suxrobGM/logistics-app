@@ -2,7 +2,7 @@
 
 namespace Logistics.DriverApp.ViewModels;
 
-public class DashboardPageViewModel : ViewModelBase
+public class DashboardPageViewModel : BaseViewModel
 {
     private readonly IApiClient _apiClient;
     private readonly IAuthService _authService;
@@ -13,14 +13,13 @@ public class DashboardPageViewModel : ViewModelBase
     {
         _apiClient = apiClient;
         _authService = authService;
-        DriverName = "Driver name";
-        Task.Run(FetchTruckAsync);
     }
-
+    
+    
     #region Bindable properties
 
-    private int? _truckNumber;
-    public int? TruckNumber
+    private string? _truckNumber;
+    public string? TruckNumber
     {
         get => _truckNumber;
         set => SetProperty(ref _truckNumber, value);
@@ -34,16 +33,21 @@ public class DashboardPageViewModel : ViewModelBase
     }
 
     #endregion
-    
 
-    private async Task FetchTruckAsync()
+    protected override async Task OnAppearingAsync()
+    {
+        await FetchDashboardDataAsync();
+    }
+
+    private async Task FetchDashboardDataAsync()
     {
         var driverId = _authService.User?.Id;
-        var result = await _apiClient.GetTruckByDriverAsync(driverId!);
+        var result = await _apiClient.GetDriverDashboardDataAsync(driverId!);
 
-        if (result.Success)
-        {
-            TruckNumber = result.Value!.TruckNumber;
-        }
+        if (!result.Success)
+            return;
+        
+        DriverName = result.Value!.DriverFullName;
+        TruckNumber = result.Value.TruckNumber;
     }
 }

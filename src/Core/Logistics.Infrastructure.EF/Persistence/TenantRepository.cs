@@ -13,20 +13,17 @@ internal class TenantRepository : GenericRepository<TenantDbContext>, ITenantRep
         _tenantContext = context;
     }
 
-    public async Task<Tenant> GetCurrentTenantAsync()
+    public Tenant GetCurrentTenant()
     {
         if (_tenantContext.TenantService is null)
             throw new InvalidOperationException("The tenant service is null from the Tenant DB context");
         
-        return await _tenantContext.TenantService.GetTenantAsync();
+        return _tenantContext.TenantService.GetTenant();
     }
 
-    public async Task SetTenantIdAsync(string tenantId)
+    public void SetTenantId(string tenantId)
     {
-        if (_tenantContext.TenantService is null)
-            return;
-        
-        await _tenantContext.TenantService.SetTenantAsync(tenantId);
+        _tenantContext.TenantService?.SetTenant(tenantId);
     }
 
     async Task<TEntity?> ITenantRepository.GetAsync<TEntity>(object? id)

@@ -11,9 +11,11 @@ public class TenantRoleClaim : AuditableEntity, ITenantEntity
         ClaimValue = claimValue;
     }
 
-    [StringLength(RoleConsts.ClaimLength)] public string ClaimType { get; set; }
+    [StringLength(RoleConsts.ClaimLength)] 
+    public string ClaimType { get; set; }
 
-    [StringLength(RoleConsts.ClaimLength)] public string ClaimValue { get; set; }
+    [StringLength(RoleConsts.ClaimLength)] 
+    public string ClaimValue { get; set; }
 
     public string? RoleId { get; set; }
     public virtual TenantRole? Role { get; set; }

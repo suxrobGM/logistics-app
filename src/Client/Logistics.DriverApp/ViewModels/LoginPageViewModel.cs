@@ -3,7 +3,7 @@ using Logistics.DriverApp.Services.Authentication;
 
 namespace Logistics.DriverApp.ViewModels;
 
-public class LoginPageViewModel : ViewModelBase
+public class LoginPageViewModel : BaseViewModel
 {
     private readonly IAuthService _authService;
     private readonly IApiClient _apiClient;
@@ -22,10 +22,16 @@ public class LoginPageViewModel : ViewModelBase
         IsLoadingChanged += HandleIsLoadingChanged;
     }
 
+    
+    #region Commands
+
     public IAsyncRelayCommand SignInCommand { get; }
     public IAsyncRelayCommand OpenSignUpCommand { get; }
 
-    protected override async void OnActivated()
+    #endregion
+    
+
+    protected override async Task OnInitializedAsync()
     {
         var canAutoLogin = await _authService.CanAutoLoginAsync();
     
@@ -49,7 +55,8 @@ public class LoginPageViewModel : ViewModelBase
             }
 
             _apiClient.AccessToken = result.AccessToken;
-            var tenantId = await _tenantService.GetTenantIdFromCacheAsync();
+            var tenantId = await _tenantService.GetTenantIdFromCacheAsync() ??
+                           _authService.User?.TenantIds.FirstOrDefault();
 
             if (!string.IsNullOrEmpty(tenantId))
             {

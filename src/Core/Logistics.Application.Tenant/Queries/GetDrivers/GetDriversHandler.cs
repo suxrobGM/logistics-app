@@ -19,7 +19,7 @@ internal sealed class GetDriversHandler : RequestHandler<GetDriversQuery, PagedR
     protected override async Task<PagedResponseResult<EmployeeDto>> HandleValidated(
         GetDriversQuery query, CancellationToken cancellationToken)
     {
-        var tenant = await _tenantRepository.GetCurrentTenantAsync();
+        var tenant = _tenantRepository.GetCurrentTenant();
         var totalItems = _tenantRepository.Query<Employee>().Count();
         var driverRole = await _tenantRepository.GetAsync<TenantRole>(i => i.Name == TenantRoles.Driver);
 

@@ -1,10 +1,9 @@
 namespace Logistics.DriverApp.Views;
 
-public partial class AccountPage : ContentPage
+public partial class AccountPage
 {
 	public AccountPage()
 	{
 		InitializeComponent();
-		BindingContext = App.Current.Services.GetService<AccountPageViewModel>();
 	}
 }

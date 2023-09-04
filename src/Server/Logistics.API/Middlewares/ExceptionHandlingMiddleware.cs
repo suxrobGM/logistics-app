@@ -1,5 +1,7 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Text.Json;
+using Azure;
 using FluentValidation;
 
 namespace Logistics.API.Middlewares;
@@ -19,9 +21,15 @@ public class ExceptionHandlingMiddleware : IMiddleware
         {
             await next(context);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            await HandleExceptionAsync(context, e);
+            await HandleExceptionAsync(context, ex);
+
+            if (GetStatusCode(ex) == StatusCodes.Status500InternalServerError)
+            {
+                // Log unknown error
+                _logger.LogError("{ErrorDescription}\n{StackTrace}", ex.Message, ex.StackTrace);
+            }
         }
     }
     

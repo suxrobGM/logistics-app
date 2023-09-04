@@ -1,20 +1,9 @@
 namespace Logistics.DriverApp.Views;
 
-public partial class LoginPage : ContentPage
+public partial class LoginPage
 {
 	public LoginPage()
 	{
 		InitializeComponent();
-		BindingContext = App.Current.Services.GetService<LoginPageViewModel>();
-	}
-	
-	protected override void OnAppearing()
-	{
-		(BindingContext as LoginPageViewModel)!.IsActive = true;
-	}
-
-	protected override void OnDisappearing()
-	{
-		(BindingContext as LoginPageViewModel)!.IsActive = false;
 	}
 }

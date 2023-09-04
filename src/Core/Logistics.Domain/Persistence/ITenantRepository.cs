@@ -8,13 +8,13 @@ public interface ITenantRepository : IRepository
     /// <summary>
     /// Gets the current tenant data.
     /// </summary>
-    Task<Tenant> GetCurrentTenantAsync();
+    Tenant GetCurrentTenant();
 
     /// <summary>
     /// Manually set the tenant ID
     /// </summary>
     /// <param name="tenantId">Tenant ID</param>
-    Task SetTenantIdAsync(string tenantId);
+    void SetTenantId(string tenantId);
 
     /// <summary>
     /// Gets an entity object by its ID.

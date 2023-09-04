@@ -19,7 +19,7 @@ internal sealed class GetLoadsHandler : RequestHandler<GetLoadsQuery, PagedRespo
         GetLoadsQuery req, 
         CancellationToken cancellationToken)
     {
-        var tenant = await _tenantRepository.GetCurrentTenantAsync();
+        var tenant = _tenantRepository.GetCurrentTenant();
         var totalItems = _tenantRepository.Query<Load>().Count();
         var filteredUsers = _mainRepository.ApplySpecification(new FilterUsersByTenantId(tenant.Id)).ToArray();
         var userIds = filteredUsers.Select(i => i.Id).ToArray();
@@ -60,7 +60,7 @@ internal sealed class GetLoadsHandler : RequestHandler<GetLoadsQuery, PagedRespo
             DispatchedDate = i.DispatchedDate,
             PickUpDate = i.PickUpDate,
             DeliveryDate = i.DeliveryDate,
-            Status = (LoadStatus)i.Status,
+            Status = (LoadStatusDto)i.Status,
             AssignedDispatcherId = i.AssignedDispatcherId,
             AssignedDriverId = i.AssignedDriverId,
             AssignedTruckId = i.AssignedTruckId
