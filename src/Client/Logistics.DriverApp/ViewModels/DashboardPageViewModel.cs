@@ -1,6 +1,8 @@
-﻿using Logistics.DriverApp.Services.Authentication;
+﻿using Logistics.DriverApp.Services;
+using Logistics.DriverApp.Services.Authentication;
 using Logistics.Models;
 using Plugin.Firebase.CloudMessaging;
+using Plugin.Firebase.CloudMessaging.EventArgs;
 
 namespace Logistics.DriverApp.ViewModels;
 
@@ -8,16 +10,20 @@ public class DashboardPageViewModel : BaseViewModel
 {
     private readonly IApiClient _apiClient;
     private readonly IAuthService _authService;
+    private readonly IMapsService _mapsService;
 
     public DashboardPageViewModel(
         IApiClient apiClient, 
-        IAuthService authService)
+        IAuthService authService,
+        IMapsService mapsService)
     {
         _apiClient = apiClient;
         _authService = authService;
+        _mapsService = mapsService;
+        CrossFirebaseCloudMessaging.Current.NotificationReceived += HandleLoadNotificationReceived;
     }
     
-    
+
     #region Bindable properties
 
     private string? _truckNumber;
@@ -62,6 +68,13 @@ public class DashboardPageViewModel : BaseViewModel
         get => _isNoLoadsLabelVisible;
         set => SetProperty(ref _isNoLoadsLabelVisible, value);
     }
+
+    private string? _embedMapHtml;
+    public string? EmbedMapHtml
+    {
+        get => _embedMapHtml;
+        set => SetProperty(ref _embedMapHtml, value);
+    }
     
     #endregion
 
@@ -97,6 +110,14 @@ public class DashboardPageViewModel : BaseViewModel
         if (!string.IsNullOrEmpty(token))
         {
             await _apiClient.SetDriverDeviceTokenAsync(driverId, token);
+        }
+    }
+    
+    private async void HandleLoadNotificationReceived(object? sender, FCMNotificationReceivedEventArgs e)
+    {
+        if (e.Notification.Data.ContainsKey("loadId"))
+        {
+            await FetchDashboardDataAsync();
         }
     }
 }

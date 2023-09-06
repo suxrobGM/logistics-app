@@ -27,6 +27,11 @@
                     <Label Text="Current Load #: " />
                     <Label Text="{Binding CurrentLoad.RefId}"/>
                 </HorizontalStackLayout>
+                <WebView HeightRequest="400">
+                    <WebView.Source>
+                        <HtmlWebViewSource Html="{Binding EmbedMapHtml}" />
+                    </WebView.Source>
+                </WebView>
             </VerticalStackLayout>
         </ScrollView>
     </Grid>

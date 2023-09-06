@@ -27,7 +27,11 @@ public class PushNotificationService : IPushNotificationService
         }
     }
     
-    public async Task SendNotificationAsync(string title, string body, string deviceToken)
+    public async Task SendNotificationAsync(
+        string title, 
+        string body, 
+        string deviceToken, 
+        IReadOnlyDictionary<string, string>? data = null)
     {
         if (_firebaseApp is null)
             return;
@@ -41,7 +45,8 @@ public class PushNotificationService : IPushNotificationService
                 {
                     Title = title,
                     Body = body
-                }
+                },
+                Data = data
             };
             await FirebaseMessaging.GetMessaging(_firebaseApp).SendAsync(message);
         }

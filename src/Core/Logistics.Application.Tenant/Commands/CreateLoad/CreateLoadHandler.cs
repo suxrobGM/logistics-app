@@ -57,7 +57,8 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resp
             await _pushNotificationService.SendNotificationAsync(
                 "Received a load",
                 $"A new load #{loadEntity.RefId} has been assigned to you", 
-                driver.DeviceToken);
+                driver.DeviceToken,
+                new Dictionary<string, string> {{"loadId", loadEntity.Id}});
         }
         
         return ResponseResult.CreateSuccess();

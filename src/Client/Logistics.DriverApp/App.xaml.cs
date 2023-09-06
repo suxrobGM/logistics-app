@@ -37,6 +37,7 @@ public partial class App
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ITokenStorage, TokenStorage>();
         services.AddScoped<ITenantService, TenantService>();
+        services.AddSingleton<IMapsService, GoogleMapsService>();
         services.AddWebApiClient(configuration);
         return services.BuildServiceProvider();
     }
