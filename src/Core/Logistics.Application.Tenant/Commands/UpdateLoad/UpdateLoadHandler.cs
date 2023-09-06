@@ -50,7 +50,7 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resp
             loadEntity.Name = request.Name;
         
         if (request.SourceAddress != null)
-            loadEntity.SourceAddress = request.SourceAddress;
+            loadEntity.OriginAddress = request.SourceAddress;
         
         if (request.DestinationAddress != null)
             loadEntity.DestinationAddress = request.DestinationAddress;

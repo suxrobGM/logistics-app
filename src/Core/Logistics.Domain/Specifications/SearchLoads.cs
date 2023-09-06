@@ -37,7 +37,7 @@ public class SearchLoads : BaseSpecification<Load>
         return propertyName switch
         {
             "name" => i => i.Name!,
-            "sourceaddress" => i => i.SourceAddress!,
+            "sourceaddress" => i => i.OriginAddress!,
             "destinationaddress" => i => i.DestinationAddress!,
             "deliverycost" => i => i.DeliveryCost,
             "distance" => i => i.Distance,

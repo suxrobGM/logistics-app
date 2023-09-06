@@ -98,6 +98,10 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<string>("DestinationCoordinates")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<DateTime>("DispatchedDate")
                         .HasColumnType("datetime2");
 
@@ -114,15 +118,19 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
+                    b.Property<string>("OriginAddress")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("OriginCoordinates")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<DateTime?>("PickUpDate")
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("RefId")
                         .HasColumnType("decimal(20,0)");
-
-                    b.Property<string>("SourceAddress")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");

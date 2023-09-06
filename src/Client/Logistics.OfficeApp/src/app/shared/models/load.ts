@@ -4,8 +4,10 @@ export interface Load {
   id?: string;
   refId?: number;
   name?: string;
-  sourceAddress?: string;
-  destinationAddress?: string;
+  originAddress: string;
+  originCoordinates: string;
+  destinationAddress: string;
+  destinationCoordinates: string;
   deliveryCost?: number;
   distance?: number;
   status?: LoadStatus;

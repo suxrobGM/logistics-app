@@ -53,7 +53,7 @@ internal sealed class GetLoadsHandler : RequestHandler<GetLoadsQuery, PagedRespo
             Id = i.Id,
             RefId = i.RefId,
             Name = i.Name,
-            SourceAddress = i.SourceAddress,
+            OriginAddress = i.OriginAddress,
             DestinationAddress = i.DestinationAddress,
             DeliveryCost = i.DeliveryCost,
             Distance = i.Distance,

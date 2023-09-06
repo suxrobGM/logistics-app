@@ -23,7 +23,7 @@ export class EditLoadComponent implements OnInit {
   private map!: mapboxgl.Map;
   private directions!: any;
   private destGeocoder!: MapboxGeocoder;
-  private srcGeocoder!: MapboxGeocoder;
+  private orgGeocoder!: MapboxGeocoder;
   private distanceMeters: number;
 
   public id?: string;
@@ -51,8 +51,10 @@ export class EditLoadComponent implements OnInit {
 
     this.form = new FormGroup({
       name: new FormControl(''),
-      srcAddress: new FormControl('', Validators.required),
+      orgAddress: new FormControl('', Validators.required),
+      orgCoords: new FormControl('', Validators.required),
       dstAddress: new FormControl('', Validators.required),
+      dstCoords: new FormControl('', Validators.required),
       dispatchedDate: new FormControl(new Date().toLocaleDateString(), Validators.required),
       deliveryCost: new FormControl(0, Validators.required),
       distance: new FormControl(0, Validators.required),
@@ -100,8 +102,10 @@ export class EditLoadComponent implements OnInit {
 
     const load: Load = {
       name: this.form.value.name,
-      sourceAddress: this.form.value.srcAddress,
+      originAddress: this.form.value.orgAddress,
+      originCoordinates: this.form.value.orgCoords,
       destinationAddress: this.form.value.dstAddress,
+      destinationCoordinates: this.form.value.dstCoords,
       deliveryCost: this.form.value.deliveryCost,
       distance: this.distanceMeters,
       assignedDispatcherId: this.form.value.dispatcherId,
@@ -191,7 +195,7 @@ export class EditLoadComponent implements OnInit {
   }
 
   private initGeocoderInputs() {
-    this.srcGeocoder = new MapboxGeocoder({
+    this.orgGeocoder = new MapboxGeocoder({
       accessToken: this.accessToken,
       countries: 'us',
     });
@@ -201,19 +205,23 @@ export class EditLoadComponent implements OnInit {
       countries: 'us',
     });
 
-    this.srcGeocoder.addTo('#srcAddress');
+    this.orgGeocoder.addTo('#orgAddress');
     this.destGeocoder.addTo('#dstAddress');
 
-    this.srcGeocoder.on('result', (data: any) => {
-      const address = data.result.place_name;
+    this.orgGeocoder.on('result', (data: any) => {
       this.directions.setOrigin(data.result.center);
-      this.form.patchValue({srcAddress: address});
+      this.form.patchValue({
+        orgAddress: data.result.place_name,
+        orgCoords: data.result.center,
+      });
     });
 
     this.destGeocoder.on('result', (data: any) => {
-      const address = data.result.place_name;
       this.directions.setDestination(data.result.center);
-      this.form.patchValue({dstAddress: address});
+      this.form.patchValue({
+        dstAddress: data.result.place_name,
+        dstCoords: data.result.center,
+      });
     });
   }
 
@@ -233,7 +241,7 @@ export class EditLoadComponent implements OnInit {
 
         this.form.patchValue({
           name: load.name,
-          srcAddress: load.sourceAddress,
+          orgAddress: load.originAddress,
           dstAddress: load.destinationAddress,
           dispatchedDate: this.getLocaleDate(load.dispatchedDate),
           deliveryCost: load.deliveryCost,
@@ -247,9 +255,9 @@ export class EditLoadComponent implements OnInit {
           },
         });
 
-        this.srcGeocoder.query(load.sourceAddress!);
+        this.orgGeocoder.query(load.originAddress!);
         this.destGeocoder.query(load.destinationAddress!);
-        this.directions.setOrigin(load.sourceAddress!);
+        this.directions.setOrigin(load.originAddress!);
         this.directions.setDestination(load.destinationAddress!);
       }
     });
@@ -264,7 +272,7 @@ export class EditLoadComponent implements OnInit {
       distance: 0,
     });
 
-    this.srcGeocoder.clear();
+    this.orgGeocoder.clear();
     this.destGeocoder.clear();
     this.directions.removeRoutes();
     this.editMode = false;

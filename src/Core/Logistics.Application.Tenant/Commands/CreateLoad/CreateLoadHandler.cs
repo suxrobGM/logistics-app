@@ -44,7 +44,13 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resp
         if (latestLoad != null)
             refId = latestLoad.RefId + 1;
         
-        var loadEntity = Load.CreateLoad(refId, request.SourceAddress!, request.DestinationAddress!, truck, dispatcher);
+        var loadEntity = Load.CreateLoad(refId, 
+            request.OriginAddress!,
+            request.OriginCoordinates!,
+            request.DestinationAddress!,
+            request.DestinationCoordinates!,
+            truck, 
+            dispatcher);
         loadEntity.Name = request.Name;
         loadEntity.Distance = request.Distance;
         loadEntity.DeliveryCost = request.DeliveryCost;

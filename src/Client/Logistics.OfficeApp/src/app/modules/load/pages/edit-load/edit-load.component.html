@@ -14,11 +14,13 @@
           <input id="name" formControlName="name" type="text" class="form-control" placeholder="Load name" />
         </div>
         <div class="mb-3">
-          <label for="srcAddress" class="form-label">Source Address</label>
-          <div id="srcAddress"></div>
+          <label for="orgAddress" class="form-label">Origin Address</label>
+          <input id="orgCoords" formControlName="orgCoords" type="hidden" />
+          <div id="orgAddress"></div>
         </div>
         <div class="mb-3">
           <label for="dstAddress" class="form-label">Destination Address</label>
+          <input id="dstCoords" formControlName="dstCoords" type="hidden" />
           <div id="dstAddress"></div>
         </div>
         <div class="mb-3">

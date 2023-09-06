@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.Infrastructure.EF.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20230706210453_Version_0001")]
+    [Migration("20230906201801_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -52,6 +52,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeviceToken")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("JoinedDate")
@@ -98,6 +101,10 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<string>("DestinationCoordinates")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<DateTime>("DispatchedDate")
                         .HasColumnType("datetime2");
 
@@ -114,15 +121,19 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
+                    b.Property<string>("OriginAddress")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("OriginCoordinates")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<DateTime?>("PickUpDate")
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("RefId")
                         .HasColumnType("decimal(20,0)");
-
-                    b.Property<string>("SourceAddress")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");

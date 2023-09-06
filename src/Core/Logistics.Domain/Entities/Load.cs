@@ -14,14 +14,18 @@ public class Load : AuditableEntity, ITenantEntity
     public string? Name { get; set; }
     
     [StringLength(LoadConsts.AddressLength)]
-    public string? SourceAddress { get; set; }
+    public string? OriginAddress { get; set; }
+    
+    [StringLength(LoadConsts.AddressLength)]
+    public string? OriginCoordinates { get; set; }
     
     [StringLength(LoadConsts.AddressLength)]
     public string? DestinationAddress { get; set; }
     
-    [Range(LoadConsts.MinDeliveryCost, LoadConsts.MaxDeliveryCost)]
-    public double DeliveryCost { get; set; }
+    [StringLength(LoadConsts.AddressLength)]
+    public string? DestinationCoordinates { get; set; }
     
+    public double DeliveryCost { get; set; }
     public double Distance { get; set; }
     
     public DateTime DispatchedDate { get; set; }
@@ -62,14 +66,21 @@ public class Load : AuditableEntity, ITenantEntity
     public virtual Employee? AssignedDriver { get; set; }
 
     public static Load CreateLoad(
-        ulong refId, string sourceAddress, string destinationAddress,
-        Truck assignedTruck, Employee assignedDispatcher)
+        ulong refId, 
+        string originAddress,
+        string originCoordinates,
+        string destinationAddress,
+        string destinationCoordinates,
+        Truck assignedTruck, 
+        Employee assignedDispatcher)
     {
         var load = new Load
         {
             RefId = refId,
-            SourceAddress = sourceAddress,
+            OriginAddress = originAddress,
+            OriginCoordinates = originCoordinates,
             DestinationAddress = destinationAddress,
+            DestinationCoordinates = destinationCoordinates,
             AssignedTruck = assignedTruck,
             AssignedDriver = assignedTruck.Driver,
             AssignedDispatcher = assignedDispatcher,

@@ -201,10 +201,18 @@ internal class FakeDataService
             var truck = PickRandom(trucks);
             var dispatcher = PickRandom(employees.Dispatchers);
             var pickupDate = RandomDate(DateTime.Today.AddMonths(-6), DateTime.Today.AddDays(-1));
-            const string sourceAddress = "40 Crescent Ave, Boston, United States";
+            const string originAddress = "40 Crescent Ave, Boston, United States";
+            const string originCoordinates = "42.319090,-71.054680";
             const string destAddress = "73 Tremont St, Boston, United States";
+            const string destCoordinates = "42.357820,-71.060810";
             
-            var load = Load.CreateLoad(refId, sourceAddress, destAddress, truck, dispatcher);
+            var load = Load.CreateLoad(refId, 
+                originAddress, 
+                originCoordinates,
+                destAddress, 
+                destCoordinates,
+                truck, 
+                dispatcher);
             load.Name = $"Test cargo {i}";
             load.Status = LoadStatus.Delivered;
             load.PickUpDate = pickupDate;
