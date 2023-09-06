@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.Infrastructure.EF.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20230906201801_Version_0001")]
+    [Migration("20230906204749_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -244,8 +244,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TruckNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("TruckNumber")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

@@ -32,8 +32,8 @@ internal sealed class UpdateTruckHandler : RequestHandler<UpdateTruckCommand, Re
         if (truckWithThisNumber != null)
             return ResponseResult.CreateError("Already exists truck with this number");
 
-        if (req.TruckNumber.HasValue)
-            truckEntity.TruckNumber = req.TruckNumber.Value;
+        if (!string.IsNullOrEmpty(req.TruckNumber))
+            truckEntity.TruckNumber = req.TruckNumber;
 
         if (driver != null)
             truckEntity.Driver = driver;

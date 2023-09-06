@@ -28,32 +28,12 @@ internal sealed class CreateTruckHandler : RequestHandler<CreateTruckCommand, Re
 
         var truckEntity = new Truck()
         {
-            TruckNumber = request.TruckNumber ?? 100,
+            TruckNumber = request.TruckNumber,
             Driver = driver
         };
         
         await _tenantRepository.AddAsync(truckEntity);
         await _tenantRepository.UnitOfWork.CommitAsync();
         return ResponseResult.CreateSuccess();
-    }
-
-    protected override bool Validate(CreateTruckCommand request, out string errorDescription)
-    {
-        errorDescription = string.Empty;
-
-        if (request.TruckNumber is null)
-        {
-            errorDescription = "Truck number is not specified";
-        }
-        else if (request.TruckNumber < 0)
-        {
-            errorDescription = "Truck number should be non-negative";
-        }
-        else if (string.IsNullOrEmpty(request.DriverId))
-        {
-            errorDescription = "DriverId is not specified";
-        }
-        
-        return string.IsNullOrEmpty(errorDescription);
     }
 }

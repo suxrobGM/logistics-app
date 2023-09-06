@@ -241,8 +241,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TruckNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("TruckNumber")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

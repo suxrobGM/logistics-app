@@ -8,7 +8,7 @@ public class Load : AuditableEntity, ITenantEntity
 {
     private LoadStatus _status = LoadStatus.Dispatched;
 
-    public ulong RefId { get; set; } = 100_000;
+    public ulong RefId { get; set; } = 1000;
     
     [StringLength(LoadConsts.NameLength)]
     public string? Name { get; set; }

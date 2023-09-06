@@ -169,10 +169,11 @@ internal class FakeDataService
 
             truck = new Truck
             {
-                TruckNumber = truckNumber++,
+                TruckNumber = truckNumber.ToString(),
                 Driver = driver
             };
-            
+
+            truckNumber++;
             trucksList.Add(truck);
             await tenantRepository.AddAsync(truck);
             _logger.LogInformation("Added a truck {Number}", truck.TruckNumber);
@@ -192,7 +193,7 @@ internal class FakeDataService
 
         for (ulong i = 1; i <= 100; i++)
         {
-            var refId = 100_000 + i;
+            var refId = 1000 + i;
             var existingLoad = loadsDb.FirstOrDefault(m => m.RefId == refId);
 
             if (existingLoad != null)

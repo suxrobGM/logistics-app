@@ -51,7 +51,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    TruckNumber = table.Column<int>(type: "int", nullable: false),
+                    TruckNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DriverId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),

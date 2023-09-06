@@ -2,7 +2,7 @@
 
 public class Truck : AuditableEntity, ITenantEntity
 {
-    public int TruckNumber { get; set; } = 100;
+    public string? TruckNumber { get; set; }
     public string? DriverId { get; set; }
 
     public virtual Employee? Driver { get; set; }
