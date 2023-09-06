@@ -22,6 +22,11 @@
                     <Label Text="Driver: " />
                     <Label Text="{Binding DriverName}"/>
                 </HorizontalStackLayout>
+                <Label Text="Currently, you do not have any active loads" IsVisible="{Binding IsNoLoadsLabelVisible}" />
+                <HorizontalStackLayout Margin="0, 10" IsVisible="{Binding IsCurrentLoadVisible}">
+                    <Label Text="Current Load #: " />
+                    <Label Text="{Binding CurrentLoad.RefId}"/>
+                </HorizontalStackLayout>
             </VerticalStackLayout>
         </ScrollView>
     </Grid>

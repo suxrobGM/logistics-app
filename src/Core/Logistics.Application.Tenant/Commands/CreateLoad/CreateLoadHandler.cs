@@ -1,16 +1,21 @@
-﻿namespace Logistics.Application.Tenant.Commands;
+﻿using Logistics.Application.Tenant.Services;
+
+namespace Logistics.Application.Tenant.Commands;
 
 internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, ResponseResult>
 {
     private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;
+    private readonly IPushNotificationService _pushNotificationService;
 
     public CreateLoadHandler(
         IMainRepository mainRepository,
-        ITenantRepository tenantRepository)
+        ITenantRepository tenantRepository,
+        IPushNotificationService pushNotificationService)
     {
         _mainRepository = mainRepository;
         _tenantRepository = tenantRepository;
+        _pushNotificationService = pushNotificationService;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
@@ -46,38 +51,15 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resp
 
         await _tenantRepository.AddAsync(loadEntity);
         await _tenantRepository.UnitOfWork.CommitAsync();
+
+        if (!string.IsNullOrEmpty(driver.DeviceToken))
+        {
+            await _pushNotificationService.SendNotificationAsync(
+                "Received a load",
+                $"A new load #{loadEntity.RefId} has been assigned to you", 
+                driver.DeviceToken);
+        }
+        
         return ResponseResult.CreateSuccess();
-    }
-
-    protected override bool Validate(CreateLoadCommand request, out string errorDescription)
-    {
-        errorDescription = string.Empty;
-
-        if (string.IsNullOrEmpty(request.AssignedDispatcherId))
-        {
-            errorDescription = "AssignedDispatcherId is an empty string";
-        }
-        else if (string.IsNullOrEmpty(request.AssignedDriverId))
-        {
-            errorDescription = "AssignedDriverId is an empty string";
-        }
-        else if (string.IsNullOrEmpty(request.SourceAddress))
-        {
-            errorDescription = "Source address is an empty string";
-        }
-        else if (string.IsNullOrEmpty(request.DestinationAddress))
-        {
-            errorDescription = "Destination address is an empty string";
-        }
-        else if (request.DeliveryCost < 0)
-        {
-            errorDescription = "Delivery cost should be non-negative value";
-        }
-        else if (request.Distance < 0)
-        {
-            errorDescription = "Distance should be non-negative value";
-        }
-
-        return string.IsNullOrEmpty(errorDescription);
     }
 }

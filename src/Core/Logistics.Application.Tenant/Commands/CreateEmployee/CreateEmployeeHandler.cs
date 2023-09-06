@@ -42,16 +42,4 @@ internal sealed class CreateEmployeeHandler : RequestHandler<CreateEmployeeComma
         await _tenantRepository.UnitOfWork.CommitAsync();
         return ResponseResult.CreateSuccess();
     }
-
-    protected override bool Validate(CreateEmployeeCommand request, out string errorDescription)
-    {
-        errorDescription = string.Empty;
-
-        if (string.IsNullOrEmpty(request.Id))
-        {
-            errorDescription = "User Id is an empty string";
-        }
-
-        return string.IsNullOrEmpty(errorDescription);
-    }
 }

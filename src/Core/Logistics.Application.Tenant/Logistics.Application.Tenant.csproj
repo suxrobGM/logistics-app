@@ -15,6 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="FirebaseAdmin" Version="2.4.0" />
       <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.2" />
 
     </ItemGroup>

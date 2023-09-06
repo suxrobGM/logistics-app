@@ -42,12 +42,7 @@ public class TenantDbContext : DbContext
                 connectionString = TenantService.GetTenant().ConnectionString;
             }
             
-            // DbContextHelpers.ConfigureSqlServer(connectionString ?? _connectionString, options);
-
-            options.UseSqlServer(connectionString ?? _connectionString, o =>
-            {
-                o.EnableRetryOnFailure(8, TimeSpan.FromSeconds(15), null);
-            }).UseLazyLoadingProxies();
+            DbContextHelpers.ConfigureSqlServer(connectionString ?? _connectionString, options);
         }
     }
 

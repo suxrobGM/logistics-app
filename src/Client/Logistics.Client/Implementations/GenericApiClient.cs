@@ -54,7 +54,6 @@ internal class GenericApiClient
 
     public async Task<TRes> GetRequestAsync<TRes>(string endpoint,
         IDictionary<string, string>? queries = null)
-        where TRes : new()
     {
         var content = await GetRequestAsync(endpoint, queries);
         var deserializedObj = Deserialize<TRes>(content);
@@ -88,8 +87,6 @@ internal class GenericApiClient
     }
 
     public async Task<TRes> PostRequestAsync<TRes, TBody>(string endpoint, TBody body)
-        where TRes : new()
-        where TBody : new()
     {
         var content = await PostRequestAsync(endpoint, body);
         var deserializedObj = Deserialize<TRes>(content);
@@ -118,8 +115,6 @@ internal class GenericApiClient
     }
 
     public async Task<TRes> PutRequestAsync<TRes, TBody>(string endpoint, TBody body)
-        where TRes : new()
-        where TBody : new()
     {
         var content = await PutRequestAsync(endpoint, body);
         var deserializedObj = Deserialize<TRes>(content);

@@ -27,4 +27,18 @@ public class DriverController : ControllerBase
 
         return BadRequest(result.Error);
     }
+    
+    [HttpPost("{userId}/deviceToken")]
+    [ProducesResponseType(typeof(ResponseResult<DriverDashboardDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Employee.View)]
+    public async Task<IActionResult> SetDriverDeviceToken([FromBody] SetDriverDeviceTokenCommand command)
+    {
+        var result = await _mediator.Send(command);
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result.Error);
+    } 
 }

@@ -296,5 +296,15 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakeGetRequestAsync<ResponseResult<DriverDashboardDto>>($"driver/{userId}/dashboard");
     }
 
+    public Task<ResponseResult> SetDriverDeviceTokenAsync(string userId, string token)
+    {
+        var command = new SetDeviceToken
+        {
+            UserId = userId,
+            DeviceToken = token
+        };
+        return MakePostRequestAsync<ResponseResult, SetDeviceToken>($"driver/{userId}/deviceToken", command);
+    }
+
     #endregion
 }
