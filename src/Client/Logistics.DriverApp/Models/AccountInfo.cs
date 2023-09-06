@@ -2,7 +2,7 @@
 
 namespace Logistics.DriverApp.Models;
 
-public class AccountInfo
+public class AccountInfo : ObservableObject
 {
     [Required]
     public string? Email { get; set; }

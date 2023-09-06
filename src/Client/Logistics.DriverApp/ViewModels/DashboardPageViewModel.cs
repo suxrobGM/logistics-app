@@ -41,13 +41,16 @@ public class DashboardPageViewModel : BaseViewModel
 
     private async Task FetchDashboardDataAsync()
     {
+        IsLoading = true;
         var driverId = _authService.User?.Id;
         var result = await _apiClient.GetDriverDashboardDataAsync(driverId!);
 
-        if (!result.Success)
-            return;
+        if (result.Success)
+        {
+            DriverName = result.Value!.DriverFullName;
+            TruckNumber = result.Value.TruckNumber;
+        }
         
-        DriverName = result.Value!.DriverFullName;
-        TruckNumber = result.Value.TruckNumber;
+        IsLoading = false;
     }
 }

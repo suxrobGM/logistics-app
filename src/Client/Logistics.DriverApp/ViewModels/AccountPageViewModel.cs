@@ -7,7 +7,6 @@ public class AccountPageViewModel : BaseViewModel
 {
     private readonly IAuthService _authService;
     private readonly IApiClient _apiClient;
-    private bool _isFetchedData;
 
     public AccountPageViewModel(
         IAuthService authService, 
@@ -15,14 +14,30 @@ public class AccountPageViewModel : BaseViewModel
     {
         _authService = authService;
         _apiClient = apiClient;
-        AccountDetails = new AccountInfo();
+        _accountInfo = new AccountInfo();
         // AccountCenterUrl = $"{_authService.Options.Authority}/account/manage";
         SaveCommand = new AsyncRelayCommand(UpdateAccountAsync, () => !IsLoading);
         IsLoadingChanged += (s, e) => SaveCommand.NotifyCanExecuteChanged();
     }
 
+    #region Commands
+
     public IAsyncRelayCommand SaveCommand { get; }
-    public AccountInfo AccountDetails { get; }
+
+    #endregion
+
+
+    #region Bindable properties
+
+    private AccountInfo _accountInfo;
+    public AccountInfo AccountDetails
+    {
+        get => _accountInfo;
+        set => SetProperty(ref _accountInfo, value);
+    }
+
+    #endregion
+    
 
     protected override async Task OnInitializedAsync()
     {
@@ -31,9 +46,6 @@ public class AccountPageViewModel : BaseViewModel
 
     private async Task FetchUserAsync()
     {
-        if (_isFetchedData)
-            return;
-        
         var userId = _authService.User?.Id;
 
         if (string.IsNullOrEmpty(userId))
@@ -45,11 +57,13 @@ public class AccountPageViewModel : BaseViewModel
         if (result.Success)
         {
             var user = result.Value!;
-            AccountDetails.Email = user.Email;
-            AccountDetails.FirstName = user.FirstName;
-            AccountDetails.LastName = user.LastName;
-            AccountDetails.PhoneNumber = user.PhoneNumber;
-            _isFetchedData = true;
+            AccountDetails = new AccountInfo()
+            {
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber
+            };
         }
         
         IsLoading = false;
