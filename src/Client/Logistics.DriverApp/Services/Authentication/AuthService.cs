@@ -18,11 +18,7 @@ public class AuthService : IAuthService
         ITokenStorage tokenStorage)
     {
 #if DEBUG
-        options.HttpClientFactory = (_) =>
-        {
-            var handler = new HttpsClientHandlerService();
-            return new HttpClient(handler.GetPlatformMessageHandler());
-        };
+        options.HttpClientFactory = (_) => new HttpClient(HttpsClientHandlerService.GetPlatformMessageHandler());
 #endif
         _oidcClient = new OidcClient(options);
         _oidcClient.Options.Browser = browser;
