@@ -1,6 +1,8 @@
 ﻿using Android.App;
+using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Plugin.Firebase.CloudMessaging;
 
 namespace Logistics.DriverApp;
 
@@ -15,4 +17,33 @@ namespace Logistics.DriverApp;
 )]
 public class MainActivity : MauiAppCompatActivity
 {
+    protected override void OnCreate(Bundle? savedInstanceState)
+    {
+        base.OnCreate(savedInstanceState);
+        FirebaseCloudMessagingImplementation.OnNewIntent(Intent);
+        CreateNotificationChannelIfNeeded();
+    }
+
+    protected override void OnNewIntent(Intent? intent)
+    {
+        base.OnNewIntent(intent);
+        FirebaseCloudMessagingImplementation.OnNewIntent(intent);
+    }
+
+    private void CreateNotificationChannelIfNeeded()
+    {
+        if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+        {
+            CreateNotificationChannel();
+        }
+    }
+
+    private void CreateNotificationChannel()
+    {
+        var channelId = $"{PackageName}.general";
+        var notificationManager = (NotificationManager)GetSystemService(NotificationService)!;
+        var channel = new NotificationChannel(channelId, "General", NotificationImportance.Max);
+        notificationManager.CreateNotificationChannel(channel);
+        FirebaseCloudMessagingImplementation.ChannelId = channelId;
+    }
 }

@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net7.0-ios;net7.0-android33.0</TargetFrameworks>
-		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net7.0-windows10.0.19041.0</TargetFrameworks>
+		<TargetFrameworks>net7.0-ios;net7.0-android</TargetFrameworks>
+<!--		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net7.0-windows10.0.19041.0</TargetFrameworks>-->
 		<OutputType>Exe</OutputType>
 		<RootNamespace>Logistics.DriverApp</RootNamespace>
 		<UseMaui>true</UseMaui>
@@ -23,8 +23,8 @@
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
-		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+<!--		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>-->
+<!--		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>-->
 		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
 		<AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
 		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
@@ -56,6 +56,13 @@
 		<EmbeddedResource Include="appsettings.secrets.json" />
 	</ItemGroup>
 
+	<ItemGroup Condition="'$(TargetFramework)' == 'net7.0-android'">
+		<GoogleServicesJson Include="google-services.json" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net7.0-ios'">
+		<BundleResource Include="GoogleService-Info.plist" />
+	</ItemGroup>
+
 	<ItemGroup>
 	  <PackageReference Include="CommunityToolkit.Maui" Version="5.3.0" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
@@ -67,21 +74,12 @@
 	  <PackageReference Include="Syncfusion.Maui.Inputs" Version="22.2.11" />
 	</ItemGroup>
 
+	<ItemGroup Condition="'$(TargetFramework)' == 'net7.0-ios' OR '$(TargetFramework)' == 'net7.0-android'">
+		<PackageReference Include="Plugin.Firebase" Version="2.0.5" />
+	</ItemGroup>
+
 	<ItemGroup>
 	  <ProjectReference Include="..\Logistics.Client\Logistics.Client.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <MauiXaml Update="Views\AppShell.xaml">
-	    <SubType>Designer</SubType>
-	  </MauiXaml>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Compile Update="Views\AppShell.xaml.cs">
-	    <DependentUpon>AppShell.xaml</DependentUpon>
-	    <SubType>Code</SubType>
-	  </Compile>
 	</ItemGroup>
 
 </Project>
