@@ -11,11 +11,6 @@ public abstract class RequestHandler<TRequest, TResponse> : IRequestHandler<TReq
     {
         try
         {
-            if (!Validate(request, out var error))
-            {
-                return Task.FromResult(new TResponse { Error = error });
-            }
-
             return HandleValidated(request, cancellationToken);
         }
         catch (InvalidOperationException ex)
@@ -25,10 +20,4 @@ public abstract class RequestHandler<TRequest, TResponse> : IRequestHandler<TReq
     }
 
     protected abstract Task<TResponse> HandleValidated(TRequest req, CancellationToken cancellationToken);
-
-    protected virtual bool Validate(TRequest request, out string errorDescription)
-    {
-        errorDescription = string.Empty;
-        return true;
-    }
 }
