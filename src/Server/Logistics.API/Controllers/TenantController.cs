@@ -32,7 +32,7 @@ public class TenantController : ControllerBase
         return BadRequest(result);
     }
 
-    [HttpGet("getDisplayName")]
+    [HttpGet("displayName/{id}")]
     [ProducesResponseType(typeof(ResponseResult<TenantDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize]

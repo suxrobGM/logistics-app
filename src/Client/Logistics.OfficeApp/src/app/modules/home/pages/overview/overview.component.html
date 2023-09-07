@@ -29,7 +29,7 @@
             <th>ID</th>
             <th>Origin</th>
             <th>Destination</th>
-            <th>Driver</th>
+            <th>Truck</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-load>
@@ -45,7 +45,11 @@
             <td [pTooltip]="load.sourceAddress" [showDelay]="500" tooltipPosition="bottom">
               {{load.destinationAddress}}
             </td>
-            <td>{{load.assignedDriverName}}</td>
+            <td>
+              <a [routerLink]="['/trucks/edit', load.assignedTruckId]">
+                {{load.assignedTruckNumber}}
+              </a>
+            </td>
           </tr>
         </ng-template>
         <ng-template pTemplate="footer">

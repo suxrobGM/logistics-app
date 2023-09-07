@@ -25,10 +25,6 @@
         </ng-template>
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="userName">
-              Username
-              <p-sortIcon field="userName"></p-sortIcon>
-            </th>
             <th pSortableColumn="firstName">
               First Name
               <p-sortIcon field="firstName"></p-sortIcon>
@@ -58,11 +54,14 @@
           <tr>
             <td>
               <a [routerLink]="['/employees/edit', employee.id]">
-                {{employee.userName}}
+                {{employee.firstName}}
               </a>
             </td>
-            <td>{{employee.firstName}}</td>
-            <td>{{employee.lastName}}</td>
+            <td>
+              <a [routerLink]="['/employees/edit', employee.id]">
+                {{employee.lastName}}
+              </a>
+            </td>
             <td>{{employee.email}}</td>
             <td>{{employee.phoneNumber}}</td>
             <td>{{employee.roles[0]?.displayName}}</td>

@@ -18,7 +18,9 @@ import {
   UpdateEmployee,
   CreateEmployee,
   RemoveEmployeeRole,
+  TruckDriver,
 } from '../models';
+
 
 @Injectable()
 export class ApiService {
@@ -38,7 +40,7 @@ export class ApiService {
 
   getTenant(): Observable<ResponseResult<Tenant>> {
     const tenantId = this.tenantService.getTenantId();
-    const url = `${this.host}/tenant/getDisplayName?id=${tenantId}`;
+    const url = `${this.host}/tenant/displayName/${tenantId}`;
 
     return this.httpClient
         .get<ResponseResult<Tenant>>(url)
@@ -145,6 +147,17 @@ export class ApiService {
         .pipe(catchError((err) => this.handleError(err)));
   }
 
+  getTruckDrivers(searchQuery = '', page = 1, pageSize = 10): Observable<PagedResponseResult<TruckDriver>> {
+    if (!searchQuery) {
+      searchQuery = '';
+    }
+
+    const url = `${this.host}/truck/drivers?search=${searchQuery}&page=${page}&pageSize=${pageSize}`;
+    return this.httpClient
+        .get<PagedResponseResult<TruckDriver>>(url)
+        .pipe(catchError((err) => this.handleError(err)));
+  }
+
   createTruck(truck: Truck): Observable<ResponseResult> {
     const url = `${this.host}/truck/create`;
     const body = JSON.stringify(truck);
@@ -217,7 +230,7 @@ export class ApiService {
   }
 
   updateEmployee(employee: UpdateEmployee): Observable<ResponseResult> {
-    const url = `${this.host}/employee/update/${employee.id}`;
+    const url = `${this.host}/employee/update/${employee.userId}`;
     const body = JSON.stringify(employee);
 
     return this.httpClient
@@ -230,22 +243,6 @@ export class ApiService {
 
     return this.httpClient
         .delete<ResponseResult>(url)
-        .pipe(catchError((err) => this.handleError(err)));
-  }
-
-  // #endregion
-
-
-  // #region Driver API
-
-  getDrivers(searchQuery = '', page = 1, pageSize = 10): Observable<PagedResponseResult<Employee>> {
-    if (!searchQuery) {
-      searchQuery = '';
-    }
-
-    const url = `${this.host}/driver/list?search=${searchQuery}&page=${page}&pageSize=${pageSize}`;
-    return this.httpClient
-        .get<PagedResponseResult<Employee>>(url)
         .pipe(catchError((err) => this.handleError(err)));
   }
 
@@ -267,10 +264,11 @@ export class ApiService {
 
   // #endregion
 
+
   // #region Dashboard API
 
   getOverallStats(): Observable<ResponseResult<OverallStats>> {
-    const url = `${this.host}/dashboard/getOverallStats`;
+    const url = `${this.host}/dashboard/overallStats`;
 
     return this.httpClient
         .get<ResponseResult<OverallStats>>(url)
@@ -278,7 +276,7 @@ export class ApiService {
   }
 
   getDailyGrosses(startDate: Date, endDate?: Date, truckId?: string): Observable<ResponseResult<DailyGrosses>> {
-    let url = `${this.host}/dashboard/getDailyGrosses?startDate=${startDate.toJSON()}`;
+    let url = `${this.host}/dashboard/dailyGrosses?startDate=${startDate.toJSON()}`;
 
     if (endDate) {
       url += `&endDate=${endDate.toJSON()}`;
@@ -293,7 +291,7 @@ export class ApiService {
   }
 
   getMonthlyGrosses(startDate: Date, endDate?: Date, truckId?: string): Observable<ResponseResult<MonthlyGrosses>> {
-    let url = `${this.host}/dashboard/getMonthlyGrosses?startDate=${startDate.toJSON()}`;
+    let url = `${this.host}/dashboard/monthlyGrosses?startDate=${startDate.toJSON()}`;
 
     if (endDate) {
       url += `&endDate=${endDate.toJSON()}`;
@@ -308,6 +306,7 @@ export class ApiService {
   }
 
   // #endregion
+
 
   parseSortProperty(sortField?: string, sortOrder?: number) {
     if (!sortOrder) {

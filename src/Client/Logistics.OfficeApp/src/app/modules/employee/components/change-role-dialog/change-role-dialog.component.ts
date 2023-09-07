@@ -51,7 +51,7 @@ export class ChangeRoleDialogComponent implements OnInit {
     }
 
     const updateEmployee: UpdateEmployee = {
-      id: this.userId,
+      userId: this.userId,
       role: role,
     };
 

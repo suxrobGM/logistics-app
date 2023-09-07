@@ -16,7 +16,7 @@
         <div class="mb-3">
           <label for="driver" class="form-label">Driver</label>
           <p-autoComplete formControlName="driver" styleClass="w-100" inputStyleClass="form-control"
-            placeholder="Type a driver name" field="userName" [minLength]="3" [suggestions]="suggestedDrivers"
+            placeholder="Type a driver name" field="userName" [minLength]="2" [suggestions]="suggestedDrivers"
             (completeMethod)="searchDriver($event)">
           </p-autoComplete>
         </div>
@@ -46,7 +46,6 @@
             label="Back to list">
           </button>
         </div>
-
       </form>
     </p-card>
   </div>

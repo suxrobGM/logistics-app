@@ -75,7 +75,7 @@ public class AccountPageViewModel : BaseViewModel
         var userId = _authService.User?.Id;
         var result = await _apiClient.UpdateUserAsync(new UpdateUser()
         {
-            Id = userId,
+            UserId = userId,
             FirstName = AccountDetails.FirstName,
             LastName = AccountDetails.LastName,
             PhoneNumber = AccountDetails.PhoneNumber,

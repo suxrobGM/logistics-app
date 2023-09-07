@@ -109,7 +109,7 @@ public class DashboardPageViewModel : BaseViewModel
 
         if (!string.IsNullOrEmpty(token))
         {
-            await _apiClient.SetDriverDeviceTokenAsync(driverId, token);
+            await _apiClient.SetDeviceTokenAsync(driverId, token);
         }
     }
     

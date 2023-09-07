@@ -1,39 +1,19 @@
-import {ResponseResult} from './responseResult';
-import {Employee} from './employee';
-import {Load} from './load';
-import {PagedResponseResult} from './pagedResponseResult';
-import {Tenant} from './tenant';
-import {Truck} from './truck';
-import {User} from './user';
-import {UserIdentity} from './userIdentity';
-import {Role} from './role';
-import {CreateEmployee} from './createEmployee';
-import {UpdateEmployee} from './updateEmployee';
-import {DailyGrosses} from './dailyGrosses';
-import {DailyGross} from './dailyGross';
-import {MonthlyGrosses} from './monthlyGrosses';
-import {MonthlyGross} from './monthlyGross';
-import {OverallStats} from './overallStats';
-import {RemoveEmployeeRole} from './removeEmployeeRole';
-import {UserData} from './userData';
-
-export {
-  ResponseResult,
-  Employee,
-  CreateEmployee,
-  UpdateEmployee,
-  RemoveEmployeeRole,
-  Load,
-  PagedResponseResult,
-  Tenant,
-  Truck,
-  User,
-  UserData,
-  UserIdentity,
-  Role,
-  DailyGross,
-  DailyGrosses,
-  MonthlyGross,
-  MonthlyGrosses,
-  OverallStats,
-};
+export {ResponseResult} from './responseResult';
+export {Employee} from './employee';
+export {Load} from './load';
+export {PagedResponseResult} from './pagedResponseResult';
+export {Tenant} from './tenant';
+export {Truck} from './truck';
+export {User} from './user';
+export {UserIdentity} from './userIdentity';
+export {Role} from './role';
+export {CreateEmployee} from './createEmployee';
+export {UpdateEmployee} from './updateEmployee';
+export {DailyGrosses} from './dailyGrosses';
+export {DailyGross} from './dailyGross';
+export {MonthlyGrosses} from './monthlyGrosses';
+export {MonthlyGross} from './monthlyGross';
+export {OverallStats} from './overallStats';
+export {RemoveEmployeeRole} from './removeEmployeeRole';
+export {UserData} from './userData';
+export {TruckDriver} from './truckDriver';

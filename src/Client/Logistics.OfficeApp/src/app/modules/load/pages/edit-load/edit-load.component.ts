@@ -7,7 +7,7 @@ import * as mapboxgl from 'mapbox-gl';
 import {ConfirmationService, MessageService} from 'primeng/api';
 import {OidcSecurityService} from 'angular-auth-oidc-client';
 import {AppConfig} from '@core';
-import {Employee, Load, UserIdentity} from '@shared/models';
+import {Employee, Load, TruckDriver, UserIdentity} from '@shared/models';
 import {ApiService} from '@shared/services';
 import {DistanceUnitPipe} from '@shared/pipes';
 import {EnumType, LoadStatus, LoadStatuses} from '@shared/types';
@@ -31,7 +31,7 @@ export class EditLoadComponent implements OnInit {
   public isBusy: boolean;
   public editMode: boolean;
   public form: FormGroup;
-  public suggestedDrivers: Employee[];
+  public suggestedDrivers: SuggestedDriver[];
   public loadStatuses: EnumType[];
 
   constructor(
@@ -60,7 +60,7 @@ export class EditLoadComponent implements OnInit {
       distance: new FormControl(0, Validators.required),
       dispatcherName: new FormControl('', Validators.required),
       dispatcherId: new FormControl('', Validators.required),
-      driver: new FormControl('', Validators.required),
+      assignedTruckId: new FormControl('', Validators.required),
       status: new FormControl(LoadStatus.Dispatched, Validators.required),
     });
   }
@@ -84,11 +84,20 @@ export class EditLoadComponent implements OnInit {
     }
   }
 
-  public searchDriver(event: any) {
-    this.apiService.getDrivers(event.query).subscribe((result) => {
-      if (result.success && result.items) {
-        this.suggestedDrivers = result.items;
+  public searchTruck(event: any) {
+    this.apiService.getTruckDrivers(event.query).subscribe((result) => {
+      if (!result.success || !result.items) {
+        return;
       }
+
+      this.suggestedDrivers = result.items.map((truckDriver) => {
+        const driversFullName = (truckDriver.drivers || []).map((driver) => driver.fullName).join(', ');
+
+        return {
+          truckId: truckDriver.truck!.id!,
+          driversName: `${truckDriver.truck?.truckNumber} - ${driversFullName}`,
+        };
+      });
     });
   }
 
@@ -109,7 +118,7 @@ export class EditLoadComponent implements OnInit {
       deliveryCost: this.form.value.deliveryCost,
       distance: this.distanceMeters,
       assignedDispatcherId: this.form.value.dispatcherId,
-      assignedDriverId: driver.id,
+      assignedTruckId: this.form.value.assignedTruckId,
       status: this.form.value.status,
     };
 
@@ -249,10 +258,7 @@ export class EditLoadComponent implements OnInit {
           dispatcherName: load.assignedDispatcherName,
           dispatcherId: load.assignedDispatcherId,
           status: load.status,
-          driver: {
-            id: load.assignedDriverId,
-            userName: load.assignedDriverName,
-          },
+          assignedTruckId: load.assignedTruckId,
         });
 
         this.orgGeocoder.query(load.originAddress!);
@@ -291,4 +297,9 @@ export class EditLoadComponent implements OnInit {
   private toMi(value?: number): number {
     return this.distanceUnit.transform(value, 'mi');
   }
+}
+
+interface SuggestedDriver {
+  driversName: string,
+  truckId: string;
 }

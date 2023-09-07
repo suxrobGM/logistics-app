@@ -2,9 +2,9 @@
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetDriversValidator : AbstractValidator<GetDriversQuery>
+internal sealed class GetTruckDriversValidator : AbstractValidator<GetTruckDriversQuery>
 {
-    public GetDriversValidator()
+    public GetTruckDriversValidator()
     {
         RuleFor(i => i.Page)
             .GreaterThanOrEqualTo(0);

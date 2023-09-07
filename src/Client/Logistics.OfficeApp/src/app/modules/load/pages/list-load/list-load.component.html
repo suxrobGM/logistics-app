@@ -66,10 +66,10 @@
               <p-sortIcon field="deliveryCost"></p-sortIcon>
             </th>
             <th>
-              Dispatcher
+              Truck
             </th>
             <th>
-              Driver
+              Dispatcher
             </th>
           </tr>
         </ng-template>
@@ -95,8 +95,8 @@
             <td>{{getLoadStatusName(load.status)}}</td>
             <td>{{load.distance | distanceUnit:'mi'}}</td>
             <td>{{load.deliveryCost | currency}}</td>
+            <td>{{load.assignedTruckNumber}}</td>
             <td>{{load.assignedDispatcherName}}</td>
-            <td>{{load.assignedDriverName}}</td>
           </tr>
         </ng-template>
       </p-table>

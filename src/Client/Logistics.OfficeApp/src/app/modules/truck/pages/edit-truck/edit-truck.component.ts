@@ -51,11 +51,11 @@ export class EditTruckComponent implements OnInit {
   }
 
   public searchDriver(event: any) {
-    this.apiService.getDrivers(event.query).subscribe((result) => {
-      if (result.success && result.items) {
-        this.suggestedDrivers = result.items;
-      }
-    });
+    // this.apiService.getTruckDrivers(event.query).subscribe((result) => {
+    //   if (result.success && result.items) {
+    //     this.suggestedDrivers = result.items;
+    //   }
+    // });
   }
 
   public submit() {

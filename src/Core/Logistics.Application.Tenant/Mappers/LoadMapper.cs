@@ -4,26 +4,6 @@ namespace Logistics.Application.Tenant.Mappers;
 
 public static class LoadMapper
 {
-    public static Load ToEntity(this LoadDto dto)
-    {
-        return new Load
-        {
-            Id = dto.Id!,
-            RefId = dto.RefId,
-            Name = dto.Name,
-            OriginAddress = dto.OriginAddress,
-            DestinationAddress = dto.DestinationAddress,
-            DispatchedDate = dto.DispatchedDate,
-            PickUpDate = dto.PickUpDate,
-            DeliveryDate = dto.DeliveryDate,
-            DeliveryCost = dto.DeliveryCost,
-            Distance = dto.Distance,
-            Status = (Domain.Enums.LoadStatus)dto.Status,
-            AssignedDispatcherId = dto.AssignedDispatcherId,
-            AssignedTruckId = dto.AssignedTruckId
-        };
-    }
-
     public static LoadDto ToDto(this Load entity)
     {
         return new LoadDto

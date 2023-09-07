@@ -1,4 +1,4 @@
 export interface UpdateEmployee {
-  id: string;
+  userId: string;
   role: string;
 }

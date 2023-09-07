@@ -2,7 +2,6 @@ import {Role} from './role';
 
 export interface Employee {
   id?: string;
-  userName?: string;
   firstName?: string;
   lastName?: string;
   fullName?: string;
@@ -10,4 +9,6 @@ export interface Employee {
   phoneNumber?: string;
   roles?: Role[];
   joinedDate?: Date;
+  truckNumber?: string;
+  truckId?: string;
 }

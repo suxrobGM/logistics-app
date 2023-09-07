@@ -13,15 +13,15 @@ public class EmployeeController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{userId}")]
     [ProducesResponseType(typeof(ResponseResult<EmployeeDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.View)]
-    public async Task<IActionResult> GetById(string id)
+    public async Task<IActionResult> GetById(string userId)
     {
         var result = await _mediator.Send(new GetEmployeeByIdQuery
         {
-            UserId = id
+            UserId = userId
         });
 
         if (result.Success)
@@ -71,14 +71,28 @@ public class EmployeeController : ControllerBase
 
         return BadRequest(result);
     }
+    
+    [HttpPost("setDeviceToken")]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Employee.View)]
+    public async Task<IActionResult> SetDeviceToken([FromBody] SetEmployeeDeviceTokenCommand command)
+    {
+        var result = await _mediator.Send(command);
 
-    [HttpPut("update/{id}")]
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result.Error);
+    }
+
+    [HttpPut("update/{userId}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.Edit)]
-    public async Task<IActionResult> Update(string id, [FromBody] UpdateEmployeeCommand request)
+    public async Task<IActionResult> Update(string userId, [FromBody] UpdateEmployeeCommand request)
     {
-        request.UserId = id;
+        request.UserId = userId;
         var result = await _mediator.Send(request);
 
         if (result.Success)
@@ -87,15 +101,15 @@ public class EmployeeController : ControllerBase
         return BadRequest(result);
     }
     
-    [HttpDelete("delete/{id}")]
+    [HttpDelete("delete/{userId}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.Delete)]
-    public async Task<IActionResult> Delete(string id)
+    public async Task<IActionResult> Delete(string userId)
     {
         var result = await _mediator.Send(new DeleteEmployeeCommand
         {
-            UserId = id
+            UserId = userId
         });
 
         if (result.Success)

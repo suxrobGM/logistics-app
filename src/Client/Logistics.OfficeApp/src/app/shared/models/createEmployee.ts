@@ -1,4 +1,4 @@
 export interface CreateEmployee {
-  id: string;
+  userId: string;
   role: string;
 }

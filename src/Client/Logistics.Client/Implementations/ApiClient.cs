@@ -206,9 +206,9 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Employee API
 
-    public Task<ResponseResult<EmployeeDto>> GetEmployeeAsync(string id)
+    public Task<ResponseResult<EmployeeDto>> GetEmployeeAsync(string userID)
     {
-        return MakeGetRequestAsync<ResponseResult<EmployeeDto>>($"employee/{id}");
+        return MakeGetRequestAsync<ResponseResult<EmployeeDto>>($"employee/{userID}");
     }
 
     public Task<PagedResponseResult<EmployeeDto>> GetEmployeesAsync(SearchableQuery query)
@@ -226,9 +226,19 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakePutRequestAsync<ResponseResult, UpdateEmployee>($"employee/update/{employee.UserId}", employee);
     }
     
-    public Task<ResponseResult> DeleteEmployeeAsync(string id)
+    public Task<ResponseResult> DeleteEmployeeAsync(string userId)
     {
-        return MakeDeleteRequestAsync<ResponseResult>($"employee/delete/{id}");
+        return MakeDeleteRequestAsync<ResponseResult>($"employee/delete/{userId}");
+    }
+    
+    public Task<ResponseResult> SetDeviceTokenAsync(string userId, string token)
+    {
+        var command = new SetDeviceToken
+        {
+            UserId = userId,
+            DeviceToken = token
+        };
+        return MakePostRequestAsync<ResponseResult, SetDeviceToken>("employee/setDeviceToken", command);
     }
 
     #endregion
@@ -238,7 +248,7 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     public Task<ResponseResult<string>> GetTenantDisplayNameAsync(string id)
     {
-        return MakeGetRequestAsync<ResponseResult<string>>($"tenant/getDisplayName?id={id}");
+        return MakeGetRequestAsync<ResponseResult<string>>($"tenant/displayName/{id}");
     }
 
     public Task<ResponseResult<TenantDto>> GetTenantAsync(string identifier)
@@ -278,7 +288,7 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     public Task<ResponseResult> UpdateUserAsync(UpdateUser user)
     {
-        return MakePutRequestAsync<ResponseResult, UpdateUser>($"user/update/{user.Id}", user);
+        return MakePutRequestAsync<ResponseResult, UpdateUser>($"user/update/{user.UserId}", user);
     }
 
     public Task<ResponseResult<OrganizationDto[]>> GetUserOrganizations(string userId)
@@ -289,21 +299,11 @@ internal class ApiClient : GenericApiClient, IApiClient
     #endregion
 
 
-    #region Driver API
+    #region Dashboard API
 
     public Task<ResponseResult<DriverDashboardDto>> GetDriverDashboardDataAsync(string userId)
     {
-        return MakeGetRequestAsync<ResponseResult<DriverDashboardDto>>($"driver/{userId}/dashboard");
-    }
-
-    public Task<ResponseResult> SetDriverDeviceTokenAsync(string userId, string token)
-    {
-        var command = new SetDeviceToken
-        {
-            UserId = userId,
-            DeviceToken = token
-        };
-        return MakePostRequestAsync<ResponseResult, SetDeviceToken>($"driver/{userId}/deviceToken", command);
+        return MakeGetRequestAsync<ResponseResult<DriverDashboardDto>>($"dashboard/driver/{userId}");
     }
 
     #endregion

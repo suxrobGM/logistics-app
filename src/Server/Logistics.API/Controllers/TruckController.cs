@@ -62,6 +62,20 @@ public class TruckController : ControllerBase
 
         return BadRequest(result);
     }
+    
+    [HttpGet("drivers")]
+    [ProducesResponseType(typeof(PagedResponseResult<TruckDriversDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Truck.View)]
+    public async Task<IActionResult> GetTruckDrivers([FromQuery] GetTruckDriversQuery query)
+    {
+        var result = await _mediator.Send(query);
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result);
+    }
 
     [HttpPost("create")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]

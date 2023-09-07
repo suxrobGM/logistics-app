@@ -46,10 +46,10 @@
           <input id="dispatcherName" formControlName="dispatcherName" type="text" class="form-control" readonly />
         </div>
         <div class="mb-3">
-          <label for="driver" class="form-label">Assigned Driver</label>
-          <p-autoComplete formControlName="driver" styleClass="w-100" inputStyleClass="form-control"
-            placeholder="Type a driver name" field="fullName" [minLength]="2" [suggestions]="suggestedDrivers"
-            (completeMethod)="searchDriver($event)">
+          <label for="assignedTruckId" class="form-label">Assigned Truck</label>
+          <p-autoComplete formControlName="assignedTruckId" styleClass="w-100" inputStyleClass="form-control"
+            placeholder="Type a driver name or truck number" field="driversName" [minLength]="2" [suggestions]="suggestedDrivers"
+            (completeMethod)="searchTruck($event)">
           </p-autoComplete>
         </div>
         <div class="mb-3">

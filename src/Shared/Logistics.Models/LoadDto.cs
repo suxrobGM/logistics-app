@@ -15,6 +15,6 @@ public class LoadDto
     public LoadStatusDto Status { get; set; }
     public string? AssignedDispatcherId { get; set; }
     public string? AssignedDispatcherName { get; set; }
-    public string? AssignedTruckNumber { get; set; }
     public string? AssignedTruckId { get; set; }
+    public string? AssignedTruckNumber { get; set; }
 }
