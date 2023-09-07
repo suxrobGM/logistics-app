@@ -1,8 +1,8 @@
 ﻿namespace Logistics.Domain.Specifications;
 
-public class SearchUsers : BaseSpecification<User>
+public class SearchEmployees : BaseSpecification<Employee>
 {
-    public SearchUsers(string? search, 
+    public SearchEmployees(string? search, 
         string? orderBy = "Email", 
         bool descending = false)
     {
@@ -19,7 +19,7 @@ public class SearchUsers : BaseSpecification<User>
             (i.Email != null && i.Email.Contains(search));
     }
     
-    private static Expression<Func<User, object>> InitOrderBy(string? propertyName)
+    private static Expression<Func<Employee, object>> InitOrderBy(string? propertyName)
     {
         propertyName = propertyName?.ToLower() ?? "email";
         return propertyName switch

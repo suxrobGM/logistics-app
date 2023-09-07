@@ -35,6 +35,8 @@ public class Employee : AuditableEntity, ITenantEntity
     /// </summary>
     public virtual HashSet<TenantRole> Roles { get; } = new(new TenantRoleComparer());
 
+    public virtual List<EmployeeTenantRole> EmployeeRoles { get; } = new();
+
     public string GetFullName() => $"{FirstName} {LastName}";
 
     public static Employee CreateEmployeeFromUser(User user)

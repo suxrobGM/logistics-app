@@ -31,16 +31,16 @@ public class TruckController : ControllerBase
         return BadRequest(result);
     }
 
-    [HttpGet("getByDriver")]
+    [HttpGet("driver/{userId}")]
     [ProducesResponseType(typeof(ResponseResult<TruckDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Truck.View)]
-    public async Task<IActionResult> GetByDriverId(string driverId, bool includeLoadIds = false)
+    public async Task<IActionResult> GetByDriverId(string userId, bool includeLoadIds = false)
     {
         var result = await _mediator.Send(new GetTruckByDriverQuery
         {
             IncludeLoadIds = includeLoadIds,
-            DriverId = driverId
+            DriverId = userId
         });
 
         if (result.Success)

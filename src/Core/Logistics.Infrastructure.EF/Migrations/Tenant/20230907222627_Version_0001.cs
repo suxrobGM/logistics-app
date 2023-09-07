@@ -101,21 +101,21 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "EmployeeRoles",
                 columns: table => new
                 {
-                    EmployeesId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RolesId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    EmployeeId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EmployeeRoles", x => new { x.EmployeesId, x.RolesId });
+                    table.PrimaryKey("PK_EmployeeRoles", x => new { x.EmployeeId, x.RoleId });
                     table.ForeignKey(
-                        name: "FK_EmployeeRoles_Employees_EmployeesId",
-                        column: x => x.EmployeesId,
+                        name: "FK_EmployeeRoles_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
                         principalTable: "Employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_EmployeeRoles_Roles_RolesId",
-                        column: x => x.RolesId,
+                        name: "FK_EmployeeRoles_Roles_RoleId",
+                        column: x => x.RoleId,
                         principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -168,9 +168,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmployeeRoles_RolesId",
+                name: "IX_EmployeeRoles_RoleId",
                 table: "EmployeeRoles",
-                column: "RolesId");
+                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_TruckId",

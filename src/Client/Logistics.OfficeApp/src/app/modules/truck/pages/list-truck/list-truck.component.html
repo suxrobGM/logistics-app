@@ -30,7 +30,7 @@
               <p-sortIcon field="truckNumber"></p-sortIcon>
             </th>
             <th>
-              Driver
+              Drivers
             </th>
             <th>
               <!-- <span class="float-end">Action</span> -->
@@ -45,7 +45,9 @@
               </a>
             </td>
             <td>
-              {{truck.driverName}}
+              <span class="me-1" *ngFor="let driver of truck.drivers">
+                {{driver.fullName}}
+              </span>
             </td>
             <td>
               <button pButton 

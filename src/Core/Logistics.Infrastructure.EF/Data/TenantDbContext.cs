@@ -66,7 +66,10 @@ public class TenantDbContext : DbContext
             entity.ToTable("Employees");
             entity.HasMany(i => i.Roles)
                 .WithMany(i => i.Employees)
-                .UsingEntity("EmployeeRoles");
+                .UsingEntity<EmployeeTenantRole>(
+                    l => l.HasOne<TenantRole>(i => i.Role).WithMany(i => i.EmployeeRoles),
+                    r => r.HasOne<Employee>(i => i.Employee).WithMany(i => i.EmployeeRoles),
+                    c => c.ToTable("EmployeeRoles"));
         });
 
         builder.Entity<Truck>(entity =>

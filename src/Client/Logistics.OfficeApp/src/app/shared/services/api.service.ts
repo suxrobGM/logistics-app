@@ -19,6 +19,10 @@ import {
   CreateEmployee,
   RemoveEmployeeRole,
   TruckDriver,
+  UpdateTruck,
+  CreateTruck,
+  UpdateLoad,
+  CreateLoad,
 } from '../models';
 
 
@@ -94,18 +98,18 @@ export class ApiService {
         .pipe(catchError((err) => this.handleError(err)));
   }
 
-  createLoad(load: Load): Observable<ResponseResult> {
+  createLoad(command: CreateLoad): Observable<ResponseResult> {
     const url = `${this.host}/load/create`;
-    const body = JSON.stringify(load);
+    const body = JSON.stringify(command);
 
     return this.httpClient
         .post<ResponseResult>(url, body, {headers: this.headers})
         .pipe(catchError((err) => this.handleError(err)));
   }
 
-  updateLoad(load: Load): Observable<ResponseResult> {
-    const url = `${this.host}/load/update/${load.id}`;
-    const body = JSON.stringify(load);
+  updateLoad(command: UpdateLoad): Observable<ResponseResult> {
+    const url = `${this.host}/load/update/${command.id}`;
+    const body = JSON.stringify(command);
 
     return this.httpClient
         .put<ResponseResult>(url, body, {headers: this.headers})
@@ -158,18 +162,18 @@ export class ApiService {
         .pipe(catchError((err) => this.handleError(err)));
   }
 
-  createTruck(truck: Truck): Observable<ResponseResult> {
+  createTruck(command: CreateTruck): Observable<ResponseResult> {
     const url = `${this.host}/truck/create`;
-    const body = JSON.stringify(truck);
+    const body = JSON.stringify(command);
 
     return this.httpClient
         .post<ResponseResult>(url, body, {headers: this.headers})
         .pipe(catchError((err) => this.handleError(err)));
   }
 
-  updateTruck(truck: Truck): Observable<ResponseResult> {
-    const url = `${this.host}/truck/update/${truck.id}`;
-    const body = JSON.stringify(truck);
+  updateTruck(command: UpdateTruck): Observable<ResponseResult> {
+    const url = `${this.host}/truck/update/${command.id}`;
+    const body = JSON.stringify(command);
 
     return this.httpClient
         .put<ResponseResult>(url, body, {headers: this.headers})
@@ -189,8 +193,8 @@ export class ApiService {
 
   // #region Employee API
 
-  getEmployee(id: string): Observable<ResponseResult<Employee>> {
-    const url = `${this.host}/employee/${id}`;
+  getEmployee(userId: string): Observable<ResponseResult<Employee>> {
+    const url = `${this.host}/employee/${userId}`;
     return this.httpClient
         .get<ResponseResult<Employee>>(url)
         .pipe(catchError((err) => this.handleError(err)));
@@ -206,6 +210,21 @@ export class ApiService {
     }
 
     const url = `${this.host}/employee/list?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
+    return this.httpClient
+        .get<PagedResponseResult<Employee>>(url)
+        .pipe(catchError((err) => this.handleError(err)));
+  }
+
+  getDrivers(searchQuery = '', orderBy = '', page = 1, pageSize = 10): Observable<PagedResponseResult<Employee>> {
+    if (!searchQuery) {
+      searchQuery = '';
+    }
+
+    if (!orderBy) {
+      orderBy = '';
+    }
+
+    const url = `${this.host}/employee/list?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}&role=tenant.driver`;
     return this.httpClient
         .get<PagedResponseResult<Employee>>(url)
         .pipe(catchError((err) => this.handleError(err)));

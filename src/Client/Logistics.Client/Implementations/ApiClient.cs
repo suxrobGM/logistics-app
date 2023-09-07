@@ -174,9 +174,10 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakeGetRequestAsync<ResponseResult<TruckDto>>($"truck/{id}");
     }
 
-    public Task<ResponseResult<TruckDto>> GetTruckByDriverAsync(string driverId)
+    public Task<ResponseResult<TruckDto>> GetTruckByDriverAsync(string userId, bool includeLoadIds = false)
     {
-        return MakeGetRequestAsync<ResponseResult<TruckDto>>($"truck/getByDriver?driverId={driverId}");  
+        var query = new Dictionary<string, string> { { "includeLoadIds", includeLoadIds.ToString() } };
+        return MakeGetRequestAsync<ResponseResult<TruckDto>>($"truck/driver/{userId}", query);  
     }
 
     public Task<PagedResponseResult<TruckDto>> GetTrucksAsync(SearchableQuery query, bool includeCargoIds = false)
@@ -206,9 +207,9 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Employee API
 
-    public Task<ResponseResult<EmployeeDto>> GetEmployeeAsync(string userID)
+    public Task<ResponseResult<EmployeeDto>> GetEmployeeAsync(string userId)
     {
-        return MakeGetRequestAsync<ResponseResult<EmployeeDto>>($"employee/{userID}");
+        return MakeGetRequestAsync<ResponseResult<EmployeeDto>>($"employee/{userId}");
     }
 
     public Task<PagedResponseResult<EmployeeDto>> GetEmployeesAsync(SearchableQuery query)

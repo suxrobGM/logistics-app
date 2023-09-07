@@ -3,5 +3,5 @@
 public class TruckDriversDto
 {
     public TruckDto? Truck { get; set; }
-    public EmployeeDto[]? Drivers { get; set; }
+    public IEnumerable<EmployeeDto>? Drivers { get; set; }
 }

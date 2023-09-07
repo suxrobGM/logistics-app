@@ -1,5 +1,4 @@
 ﻿using Logistics.Application.Tenant.Mappers;
-using Logistics.Domain.Enums;
 using Logistics.Models;
 
 namespace Logistics.Application.Tenant.Queries;
@@ -38,7 +37,7 @@ internal sealed class GetTruckDriversHandler : RequestHandler<GetTruckDriversQue
             .Select(g => new TruckDriversDto
             {
                 Truck = g.Key.ToDto(),
-                Drivers = g.Select(td => td.TeamDriver.ToDto()).ToArray()
+                Drivers = g.Select(td => td.TeamDriver.ToDto())
             });
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);

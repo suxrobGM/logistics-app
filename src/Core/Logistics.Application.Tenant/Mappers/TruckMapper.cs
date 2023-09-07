@@ -10,7 +10,7 @@ public static class TruckMapper
         {
             Id = entity.Id,
             TruckNumber = entity.TruckNumber,
-            DriverIds = entity.Drivers.Select(i => i.Id).ToArray()
+            Drivers = entity.Drivers.Select(i => i.ToDto())
         };
     }
 }

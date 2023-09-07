@@ -1,7 +1,7 @@
 import {Role} from './role';
 
 export interface Employee {
-  id?: string;
+  id: string;
   firstName?: string;
   lastName?: string;
   fullName?: string;

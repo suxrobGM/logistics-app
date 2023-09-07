@@ -21,7 +21,7 @@ public static class EmployeeMapper
             {
                 Name = i.Name,
                 DisplayName = i.DisplayName
-            }).ToArray()
+            })
         };
     }
 }

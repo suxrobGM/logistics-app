@@ -28,7 +28,7 @@ internal sealed class GetDriverDashboardDataHandler : RequestHandler<GetDriverDa
         {
             TruckNumber = driver.Truck?.TruckNumber,
             DriverFullName = driver.GetFullName(),
-            ActiveLoads = activeLoads!
+            ActiveLoads = activeLoads
         };
 
         return ResponseResult<DriverDashboardDto>.CreateSuccess(driverDashboardDto);

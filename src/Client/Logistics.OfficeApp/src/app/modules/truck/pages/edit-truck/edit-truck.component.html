@@ -14,9 +14,10 @@
           <input formControlName="truckNumber" id="truckNumber" type="number" class="form-control" />
         </div>
         <div class="mb-3">
-          <label for="driver" class="form-label">Driver</label>
-          <p-autoComplete formControlName="driver" styleClass="w-100" inputStyleClass="form-control"
-            placeholder="Type a driver name" field="userName" [minLength]="2" [suggestions]="suggestedDrivers"
+          <label for="drivers" class="form-label">Drivers</label>
+          <p-autoComplete formControlName="drivers" styleClass="w-100" inputStyleClass="form-control"
+            placeholder="Type a driver name" field="fullName" [minLength]="2" [multiple]="true"
+            [suggestions]="suggestedDrivers"
             (completeMethod)="searchDriver($event)">
           </p-autoComplete>
         </div>

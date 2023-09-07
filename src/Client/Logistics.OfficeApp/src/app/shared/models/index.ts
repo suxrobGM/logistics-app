@@ -17,3 +17,7 @@ export {OverallStats} from './overallStats';
 export {RemoveEmployeeRole} from './removeEmployeeRole';
 export {UserData} from './userData';
 export {TruckDriver} from './truckDriver';
+export {UpdateTruck} from './updateTruck';
+export {CreateTruck} from './createTruck';
+export {UpdateLoad} from './updateLoad';
+export {CreateLoad} from './createLoad';

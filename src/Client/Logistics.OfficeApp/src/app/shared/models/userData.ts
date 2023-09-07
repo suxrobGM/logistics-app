@@ -1,36 +1,20 @@
 import {UserIdentity} from './userIdentity';
 
 export class UserData {
-  private readonly _id: string;
-  private readonly _name: string;
-  private readonly _permissions: string[];
-  private readonly _roles: string[];
-
   constructor(userIdentity: UserIdentity) {
-    this._id = userIdentity.sub;
-    this._name = userIdentity.name;
-    this._permissions = [];
-    this._roles = [];
+    this.id = userIdentity.sub;
+    this.name = userIdentity.name;
+    this.permissions = [];
+    this.roles = [];
 
     this.tryToAddArray(this.permissions, userIdentity.permission);
     this.tryToAddArray(this.roles, userIdentity.role);
   }
 
-  public get id(): string {
-    return this._id;
-  }
-
-  public get name(): string {
-    return this._name;
-  }
-
-  public get permissions(): string[] {
-    return this._permissions;
-  }
-
-  public get roles(): string[] {
-    return this._roles;
-  }
+  public readonly id: string;
+  public readonly name: string;
+  public readonly permissions: string[];
+  public readonly roles: string[];
 
   private tryToAddArray(arr: string[], data?: string | string[]) {
     if (!data) {

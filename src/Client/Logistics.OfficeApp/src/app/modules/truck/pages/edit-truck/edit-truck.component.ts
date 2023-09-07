@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
-import {Employee, Truck} from '@shared/models';
+import {CreateTruck, Employee, Truck, UpdateTruck} from '@shared/models';
 import {ApiService} from '@shared/services';
 import {ConfirmationService, MessageService} from 'primeng/api';
 import {of, switchMap} from 'rxjs';
@@ -32,7 +32,7 @@ export class EditTruckComponent implements OnInit {
     this.editMode = true;
     this.form = new FormGroup({
       truckNumber: new FormControl(0, Validators.required),
-      driver: new FormControl({}, Validators.required),
+      drivers: new FormControl([], Validators.required),
     });
   }
 
@@ -51,47 +51,54 @@ export class EditTruckComponent implements OnInit {
   }
 
   public searchDriver(event: any) {
-    // this.apiService.getTruckDrivers(event.query).subscribe((result) => {
-    //   if (result.success && result.items) {
-    //     this.suggestedDrivers = result.items;
-    //   }
-    // });
+    this.apiService.getDrivers(event.query).subscribe((result) => {
+      if (result.success && result.items) {
+        this.suggestedDrivers = result.items;
+      }
+    });
   }
 
   public submit() {
-    const driver = this.form.value.driver as Employee;
+    const drivers = this.form.value.drivers as Employee[];
 
-    if (!driver) {
+    if (drivers.length === 0) {
       this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Select a driver'});
       return;
     }
 
-    const truck: Truck = {
-      id: this.id,
-      truckNumber: this.form.value.truckNumber,
-      driverId: driver.id!,
-    };
-
     this.isBusy = true;
+
     if (this.editMode) {
-      this.apiService.updateTruck(truck).subscribe((result) => {
+      const updateTruckCommand: UpdateTruck = {
+        id: this.id!,
+        truckNumber: this.form.value.truckNumber,
+        driverIds: drivers.map((i) => i.id),
+      };
+
+      this.apiService.updateTruck(updateTruckCommand).subscribe((result) => {
         if (result.success) {
           this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Truck has been updated successfully'});
         }
 
         this.isBusy = false;
       });
-    }
-    else {
-      this.apiService.createTruck(truck).subscribe((result) => {
-        if (result.success) {
-          this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A new truck has been created successfully'});
-          this.resetForm();
-        }
 
-        this.isBusy = false;
-      });
+      return;
     }
+
+    const createTruckCommand: CreateTruck = {
+      truckNumber: this.form.value.truckNumber,
+      driverIds: drivers.map((i) => i.id),
+    };
+
+    this.apiService.createTruck(createTruckCommand).subscribe((result) => {
+      if (result.success) {
+        this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A new truck has been created successfully'});
+        this.resetForm();
+      }
+
+      this.isBusy = false;
+    });
   }
 
   public confirmToDelete() {
@@ -124,21 +131,13 @@ export class EditTruckComponent implements OnInit {
   }
 
   private fetchTruck(id: string) {
-    this.apiService.getTruck(id).pipe(
-        switchMap((result) => {
-          if (result.success && result.value) {
-            const truck = result.value;
-            this.form.patchValue({truckNumber: truck.truckNumber});
-
-            return this.apiService.getEmployee(truck.driverId!);
-          }
-
-          return of({success: false, value: null});
-        }),
-    ).subscribe((result) => {
+    this.apiService.getTruck(id).subscribe((result) => {
       if (result.success && result.value) {
-        const driver = result.value;
-        this.form.patchValue({driver: driver});
+        const truck = result.value;
+        this.form.patchValue({
+          truckNumber: truck.truckNumber,
+          drivers: truck.drivers,
+        });
       }
     });
   }

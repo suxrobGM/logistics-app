@@ -1,9 +1,10 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ConfirmationService} from 'primeng/api';
-import {Employee, Role} from '@shared/models';
+import {Employee} from '@shared/models';
 import {ApiService, UserDataService} from '@shared/services';
 import {UserRole} from '@shared/types';
+
 
 @Component({
   selector: 'app-edit-employee',
@@ -61,7 +62,6 @@ export class EditEmployeeComponent implements OnInit {
         this.employee = result.value;
         const employeeRoles = this.employee.roles?.map((i) => i.name);
         const user = this.userDataService.getUser();
-
         this.evaluateCanChangeRole(user?.roles, employeeRoles);
       }
 

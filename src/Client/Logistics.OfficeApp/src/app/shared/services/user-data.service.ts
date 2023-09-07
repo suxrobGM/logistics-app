@@ -1,21 +1,23 @@
 import {Injectable} from '@angular/core';
 import {UserData, UserIdentity} from '@shared/models';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class UserDataService {
-  private _userData: UserData | null;
+  private userData: UserData | null;
 
   constructor() {
-    this._userData = null;
+    this.userData = null;
   }
 
   public setUser(userIdentity: UserIdentity | null) {
     if (userIdentity) {
-      this._userData = new UserData(userIdentity);
+      this.userData = new UserData(userIdentity);
     }
   }
 
   public getUser(): UserData | null {
-    return this._userData;
+    return this.userData;
   }
 }

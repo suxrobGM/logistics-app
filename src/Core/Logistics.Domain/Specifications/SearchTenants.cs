@@ -7,11 +7,11 @@ public class SearchTenants : BaseSpecification<Tenant>
         string? orderBy = "Name", 
         bool descending = false)
     {
-        Descending = descending;
-        OrderBy = InitOrderBy(orderBy);
-
         if (string.IsNullOrEmpty(search))
             return;
+        
+        Descending = descending;
+        OrderBy = InitOrderBy(orderBy);
         
         Criteria = i =>
             (!string.IsNullOrEmpty(i.Name) &&

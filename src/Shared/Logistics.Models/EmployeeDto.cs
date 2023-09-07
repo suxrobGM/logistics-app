@@ -11,5 +11,5 @@ public class EmployeeDto
     public string? TruckNumber { get; set; }
     public string? TruckId { get; set; }
     public DateTime JoinedDate { get; set; } = DateTime.UtcNow;
-    public TenantRoleDto[]? Roles { get; set; }
+    public IEnumerable<TenantRoleDto>? Roles { get; set; }
 }

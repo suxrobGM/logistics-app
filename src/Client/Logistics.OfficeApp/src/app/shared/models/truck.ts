@@ -1,7 +1,8 @@
+import {Employee} from './employee';
+
 export interface Truck {
-  id?: string;
+  id: string;
   truckNumber: string;
-  driverId: string;
-  driverName?: string;
+  drivers: Employee[];
   loadIds?: string[];
 }

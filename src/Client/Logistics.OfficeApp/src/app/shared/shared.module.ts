@@ -26,7 +26,7 @@ import {
     CookieService,
     DistanceUnitPipe,
     StorageService,
-    UserDataService,
+    // UserDataService,
   ],
 })
 export class SharedModule { }

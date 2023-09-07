@@ -25,21 +25,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("EmployeeRoles", b =>
-                {
-                    b.Property<string>("EmployeesId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("RolesId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("EmployeesId", "RolesId");
-
-                    b.HasIndex("RolesId");
-
-                    b.ToTable("EmployeeRoles");
-                });
-
             modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
                 {
                     b.Property<string>("Id")
@@ -83,6 +68,21 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.HasIndex("TruckId");
 
                     b.ToTable("Employees", (string)null);
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.EmployeeTenantRole", b =>
+                {
+                    b.Property<string>("EmployeeId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("EmployeeId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("EmployeeRoles", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Load", b =>
@@ -263,21 +263,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.ToTable("Trucks", (string)null);
                 });
 
-            modelBuilder.Entity("EmployeeRoles", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.Employee", null)
-                        .WithMany()
-                        .HasForeignKey("EmployeesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Logistics.Domain.Entities.TenantRole", null)
-                        .WithMany()
-                        .HasForeignKey("RolesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Truck", "Truck")
@@ -286,6 +271,25 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Truck");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.EmployeeTenantRole", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Employee", "Employee")
+                        .WithMany("EmployeeRoles")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Logistics.Domain.Entities.TenantRole", "Role")
+                        .WithMany("EmployeeRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Load", b =>
@@ -323,11 +327,15 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Navigation("DeliveredLoads");
 
                     b.Navigation("DispatchedLoads");
+
+                    b.Navigation("EmployeeRoles");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.TenantRole", b =>
                 {
                     b.Navigation("Claims");
+
+                    b.Navigation("EmployeeRoles");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>

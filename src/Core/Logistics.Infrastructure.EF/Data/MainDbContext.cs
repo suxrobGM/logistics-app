@@ -49,14 +49,5 @@ public class MainDbContext : IdentityDbContext<User, AppRole, string>
         builder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
         builder.Entity<Tenant>().ToTable("Tenants");
         builder.Entity<User>().ToTable("Users");
-
-        // builder.Entity<User>(entity =>
-        // {
-        //     entity.ToTable("Users");
-        //     entity.Property(e => e.JoinedTenantIds)
-        //         .HasConversion(
-        //             v => string.Join(',', v),
-        //             v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToHashSet());
-        // });
     }
 }

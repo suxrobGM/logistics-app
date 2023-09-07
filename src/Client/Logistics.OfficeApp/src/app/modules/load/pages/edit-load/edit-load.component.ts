@@ -7,7 +7,7 @@ import * as mapboxgl from 'mapbox-gl';
 import {ConfirmationService, MessageService} from 'primeng/api';
 import {OidcSecurityService} from 'angular-auth-oidc-client';
 import {AppConfig} from '@core';
-import {Employee, Load, TruckDriver, UserIdentity} from '@shared/models';
+import {CreateLoad, Employee, Load, TruckDriver, UpdateLoad, UserIdentity} from '@shared/models';
 import {ApiService} from '@shared/services';
 import {DistanceUnitPipe} from '@shared/pipes';
 import {EnumType, LoadStatus, LoadStatuses} from '@shared/types';
@@ -102,14 +102,57 @@ export class EditLoadComponent implements OnInit {
   }
 
   public submit() {
-    const driver = this.form.value.driver as Employee;
+    const assignedTruck = this.form.value.assignedTruckId;
 
-    if (!driver) {
-      this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Select a driver'});
+    if (!assignedTruck) {
+      this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Select a truck'});
       return;
     }
 
-    const load: Load = {
+    if (this.editMode) {
+      this.updateLoad();
+    }
+    else {
+      this.createLoad();
+    }
+  }
+
+  public confirmToDelete() {
+    this.confirmationService.confirm({
+      message: 'Are you sure that you want to delete this load?',
+      accept: () => this.deleteLoad(),
+    });
+  }
+
+  private createLoad() {
+    this.isBusy = true;
+
+    const command: CreateLoad = {
+      name: this.form.value.name,
+      originAddress: this.form.value.orgAddress,
+      originCoordinates: this.form.value.orgCoords,
+      destinationAddress: this.form.value.dstAddress,
+      destinationCoordinates: this.form.value.dstCoords,
+      deliveryCost: this.form.value.deliveryCost,
+      distance: this.distanceMeters,
+      assignedDispatcherId: this.form.value.dispatcherId,
+      assignedTruckId: this.form.value.assignedTruckId,
+    };
+
+    this.apiService.createLoad(command)
+        .subscribe((result) => {
+          if (result.success) {
+            this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A new load has been created successfully'});
+            this.resetForm();
+          }
+
+          this.isBusy = false;
+        });
+  }
+
+  private updateLoad() {
+    const command: UpdateLoad = {
+      id: this.id!,
       name: this.form.value.name,
       originAddress: this.form.value.orgAddress,
       originCoordinates: this.form.value.orgCoords,
@@ -122,39 +165,14 @@ export class EditLoadComponent implements OnInit {
       status: this.form.value.status,
     };
 
-    if (this.id) {
-      load.id = this.id;
-    }
+    this.apiService.updateLoad(command)
+        .subscribe((result) => {
+          if (result.success) {
+            this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Load has been updated successfully'});
+          }
 
-    this.isBusy = true;
-    if (this.editMode) {
-      this.apiService.updateLoad(load)
-          .subscribe((result) => {
-            if (result.success) {
-              this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Load has been updated successfully'});
-            }
-
-            this.isBusy = false;
-          });
-    }
-    else {
-      this.apiService.createLoad(load)
-          .subscribe((result) => {
-            if (result.success) {
-              this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A new load has been created successfully'});
-              this.resetForm();
-            }
-
-            this.isBusy = false;
-          });
-    }
-  }
-
-  public confirmToDelete() {
-    this.confirmationService.confirm({
-      message: 'Are you sure that you want to delete this load?',
-      accept: () => this.deleteLoad(),
-    });
+          this.isBusy = false;
+        });
   }
 
   private deleteLoad() {
