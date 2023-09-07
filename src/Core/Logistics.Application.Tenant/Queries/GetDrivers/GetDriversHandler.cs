@@ -17,7 +17,7 @@ internal sealed class GetDriversHandler : RequestHandler<GetDriversQuery, PagedR
     }
     
     protected override async Task<PagedResponseResult<EmployeeDto>> HandleValidated(
-        GetDriversQuery query, CancellationToken cancellationToken)
+        GetDriversQuery req, CancellationToken cancellationToken)
     {
         var tenant = _tenantRepository.GetCurrentTenant();
         var totalItems = _tenantRepository.Query<Employee>().Count();
@@ -27,9 +27,9 @@ internal sealed class GetDriversHandler : RequestHandler<GetDriversQuery, PagedR
             return PagedResponseResult<EmployeeDto>.CreateError("Could not found the driver role");
 
         var filteredUsers = _mainRepository
-            .ApplySpecification(new SearchUsersByTenantId(query.Search, tenant.Id, "Name"))
-            .Skip((query.Page - 1) * query.PageSize)
-            .Take(query.PageSize)
+            .ApplySpecification(new SearchUsersByTenantId(req.Search, tenant.Id, "Name"))
+            .Skip((req.Page - 1) * req.PageSize)
+            .Take(req.PageSize)
             .ToDictionary(user => user.Id);
 
         var userIds = filteredUsers.Keys.ToArray();
@@ -56,7 +56,7 @@ internal sealed class GetDriversHandler : RequestHandler<GetDriversQuery, PagedR
             employee.PhoneNumber = user.PhoneNumber;
         }
 
-        var totalPages = (int)Math.Ceiling(totalItems / (double)query.PageSize);
+        var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
         return new PagedResponseResult<EmployeeDto>(employeesDto, totalItems, totalPages);
     }
 }

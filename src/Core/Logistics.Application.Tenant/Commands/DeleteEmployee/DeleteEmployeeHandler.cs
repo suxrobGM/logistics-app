@@ -14,28 +14,25 @@ internal sealed class DeleteEmployeeHandler : RequestHandler<DeleteEmployeeComma
     }
 
     protected override async Task<ResponseResult> HandleValidated(
-        DeleteEmployeeCommand request, CancellationToken cancellationToken)
+        DeleteEmployeeCommand req, CancellationToken cancellationToken)
     {
         var tenant = _tenantRepository.GetCurrentTenant();
-        var employee = await _tenantRepository.GetAsync<Employee>(request.Id!);
+        var employee = await _tenantRepository.GetAsync<Employee>(req.Id!);
 
         if (employee == null)
-            return ResponseResult.CreateError($"Could not find employee with ID {request.Id}");
+            return ResponseResult.CreateError($"Could not find employee with ID {req.Id}");
 
         var user = await _mainRepository.GetAsync<User>(employee.Id);
         user?.RemoveTenant(tenant.Id);
         
         var employeeLoads = _tenantRepository.ApplySpecification(new GetEmployeeLoads(employee.Id));
-
+        // var truck = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == employee.Id);
+        
         foreach (var load in employeeLoads)
         {
             if (load.AssignedDispatcherId == employee.Id)
             {
                 load.AssignedDispatcher = null;
-            }
-            if (load.AssignedDriverId == employee.Id)
-            {
-                load.AssignedDriver = null;
             }
         }
         

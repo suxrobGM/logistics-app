@@ -23,7 +23,6 @@ public class LoadMapper : IMapper<Load, LoadDto>
             Distance = dto.Distance,
             Status = (Domain.Enums.LoadStatus)dto.Status,
             AssignedDispatcherId = dto.AssignedDispatcherId,
-            AssignedDriverId = dto.Id,
             AssignedTruckId = dto.AssignedTruckId
         };
     }
@@ -47,7 +46,7 @@ public class LoadMapper : IMapper<Load, LoadDto>
             Distance = entity.Distance,
             Status = (LoadStatusDto)entity.Status,
             AssignedDispatcherId = entity.AssignedDispatcherId,
-            AssignedDriverId = entity.Id,
+            // AssignedDriverId = entity.Id,
             AssignedTruckId = entity.AssignedTruckId
         };
     }

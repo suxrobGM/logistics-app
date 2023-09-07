@@ -58,12 +58,12 @@ public class Load : AuditableEntity, ITenantEntity
     }
     
     public string? AssignedDispatcherId { get; set; }
-    public string? AssignedDriverId { get; set; }
+    // public string? AssignedDriverId { get; set; }
     public string? AssignedTruckId { get; set; }
 
     public virtual Truck? AssignedTruck { get; set; }
     public virtual Employee? AssignedDispatcher { get; set; }
-    public virtual Employee? AssignedDriver { get; set; }
+    // public virtual Employee? AssignedDriver { get; set; }
 
     public static Load CreateLoad(
         ulong refId, 
@@ -82,7 +82,7 @@ public class Load : AuditableEntity, ITenantEntity
             DestinationAddress = destinationAddress,
             DestinationCoordinates = destinationCoordinates,
             AssignedTruck = assignedTruck,
-            AssignedDriver = assignedTruck.Driver,
+            // AssignedDriver = assignedTruck.Driver,
             AssignedDispatcher = assignedDispatcher,
             Status = LoadStatus.Dispatched
         };

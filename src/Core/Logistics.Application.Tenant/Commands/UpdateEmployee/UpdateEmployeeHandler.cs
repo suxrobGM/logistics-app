@@ -10,10 +10,10 @@ internal sealed class UpdateEmployeeHandler : RequestHandler<UpdateEmployeeComma
     }
 
     protected override async Task<ResponseResult> HandleValidated(
-        UpdateEmployeeCommand request, CancellationToken cancellationToken)
+        UpdateEmployeeCommand req, CancellationToken cancellationToken)
     {
-        var employeeEntity = await _tenantRepository.GetAsync<Employee>(request.Id);
-        var tenantRole = await _tenantRepository.GetAsync<TenantRole>(i => i.Name == request.Role);
+        var employeeEntity = await _tenantRepository.GetAsync<Employee>(req.Id);
+        var tenantRole = await _tenantRepository.GetAsync<TenantRole>(i => i.Name == req.Role);
 
         if (employeeEntity == null)
             return ResponseResult.CreateError("Could not find the specified user");

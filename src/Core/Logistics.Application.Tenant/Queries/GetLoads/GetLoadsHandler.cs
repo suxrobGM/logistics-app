@@ -1,4 +1,5 @@
-﻿using Logistics.Models;
+﻿using Logistics.Application.Tenant.Mappers;
+using Logistics.Models;
 
 namespace Logistics.Application.Tenant.Queries;
 
@@ -23,10 +24,9 @@ internal sealed class GetLoadsHandler : RequestHandler<GetLoadsQuery, PagedRespo
         var totalItems = _tenantRepository.Query<Load>().Count();
         var filteredUsers = _mainRepository.ApplySpecification(new FilterUsersByTenantId(tenant.Id)).ToArray();
         var userIds = filteredUsers.Select(i => i.Id).ToArray();
-        var userNames = filteredUsers.Select(i => i.UserName).ToArray();
         var userFirstNames = filteredUsers.Select(i => i.FirstName).ToArray();
         var userLastNames = filteredUsers.Select(i => i.LastName).ToArray();
-        var spec = new SearchLoads(req.Search, userIds, userNames!, userFirstNames, userLastNames, req.OrderBy, req.Descending);
+        var spec = new SearchLoads(req.Search, userIds, userFirstNames, userLastNames, req.OrderBy, req.Descending);
 
         var loads = _tenantRepository
             .ApplySpecification(spec)
@@ -34,58 +34,35 @@ internal sealed class GetLoadsHandler : RequestHandler<GetLoadsQuery, PagedRespo
             .Take(req.PageSize)
             .ToArray();
 
-        var driverIds = loads.Where(i => !string.IsNullOrEmpty(i.AssignedDriverId))
-            .Select(i => i.AssignedDriverId);
+        // var driverIds = loads.Where(i => !string.IsNullOrEmpty(i.AssignedDriverId))
+        //     .Select(i => i.AssignedDriverId);
         
         var dispatcherIds = loads.Where(i => !string.IsNullOrEmpty(i.AssignedDispatcherId))
             .Select(i => i.AssignedDispatcherId);
 
-        var drivers = _mainRepository.Query<User>()
-            .Where(user => driverIds.Contains(user.Id))
-            .ToDictionary(i => i.Id);
+        // var drivers = _mainRepository.Query<User>()
+        //     .Where(user => driverIds.Contains(user.Id))
+        //     .ToDictionary(i => i.Id);
         
         var dispatchers = _mainRepository.Query<User>()
             .Where(user => dispatcherIds.Contains(user.Id))
             .ToDictionary(i => i.Id);
 
-        var loadsDto = loads.Select(i => new LoadDto
-        {
-            Id = i.Id,
-            RefId = i.RefId,
-            Name = i.Name,
-            OriginAddress = i.OriginAddress,
-            DestinationAddress = i.DestinationAddress,
-            DeliveryCost = i.DeliveryCost,
-            Distance = i.Distance,
-            DispatchedDate = i.DispatchedDate,
-            PickUpDate = i.PickUpDate,
-            DeliveryDate = i.DeliveryDate,
-            Status = (LoadStatusDto)i.Status,
-            AssignedDispatcherId = i.AssignedDispatcherId,
-            AssignedDriverId = i.AssignedDriverId,
-            AssignedTruckId = i.AssignedTruckId
-        }).ToArray();
+        var loadsDto = loads.Select(LoadMapper.ToDto).ToArray();
         
         foreach (var loadDto in loadsDto)
         {
-            var dispatcherId = loadDto.AssignedDispatcherId;
-            var driverId = loadDto.AssignedDriverId;
+            var dispatcherId = loadDto!.AssignedDispatcherId;
 
             if (!string.IsNullOrWhiteSpace(dispatcherId) &&
                 dispatchers.TryGetValue(dispatcherId, out var dispatcher))
             {
                 loadDto.AssignedDispatcherName = dispatcher.GetFullName();
             }
-            
-            if (!string.IsNullOrWhiteSpace(driverId) && 
-                drivers.TryGetValue(driverId, out var driver))
-            {
-                loadDto.AssignedDriverName = driver.GetFullName();
-            }
         }
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return Task.FromResult(new PagedResponseResult<LoadDto>(loadsDto, totalItems, totalPages));
+        return Task.FromResult(new PagedResponseResult<LoadDto>(loadsDto!, totalItems, totalPages));
     }
 
     protected override bool Validate(GetLoadsQuery query, out string errorDescription)

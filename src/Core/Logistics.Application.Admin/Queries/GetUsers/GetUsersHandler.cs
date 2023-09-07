@@ -13,15 +13,15 @@ internal sealed class GetUsersHandler : RequestHandler<GetUsersQuery, PagedRespo
     }
 
     protected override Task<PagedResponseResult<UserDto>> HandleValidated(
-        GetUsersQuery query, 
+        GetUsersQuery req, 
         CancellationToken cancellationToken)
     {
         var totalItems = _repository.Query<User>().Count();
 
         var users = _repository
-            .ApplySpecification(new SearchUsers(query.Search))
-            .Skip((query.Page - 1) * query.PageSize)
-            .Take(query.PageSize)
+            .ApplySpecification(new SearchUsers(req.Search))
+            .Skip((req.Page - 1) * req.PageSize)
+            .Take(req.PageSize)
             .Select(i => new UserDto
             {
                 Id = i.Id,
@@ -33,7 +33,7 @@ internal sealed class GetUsersHandler : RequestHandler<GetUsersQuery, PagedRespo
             })
             .ToArray();
 
-        var totalPages = (int)Math.Ceiling(totalItems / (double)query.PageSize);
+        var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
         return Task.FromResult(new PagedResponseResult<UserDto>(users, totalItems, totalPages));
     }
 }

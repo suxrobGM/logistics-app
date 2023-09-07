@@ -10,9 +10,9 @@ internal sealed class DeleteLoadHandler : RequestHandler<DeleteLoadCommand, Resp
     }
 
     protected override async Task<ResponseResult> HandleValidated(
-        DeleteLoadCommand request, CancellationToken cancellationToken)
+        DeleteLoadCommand req, CancellationToken cancellationToken)
     {
-        var load = await _tenantRepository.GetAsync<Load>(request.Id);
+        var load = await _tenantRepository.GetAsync<Load>(req.Id);
         _tenantRepository.Delete(load);
         await _tenantRepository.UnitOfWork.CommitAsync();
         return ResponseResult.CreateSuccess();

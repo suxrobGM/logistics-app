@@ -13,10 +13,10 @@ internal sealed class GetUserJoinedOrganizationsHandler :
     }
 
     protected override async Task<ResponseResult<OrganizationDto[]>> HandleValidated(
-        GetUserJoinedOrganizationsQuery request, 
+        GetUserJoinedOrganizationsQuery req, 
         CancellationToken cancellationToken)
     {
-        var user = await _repository.GetAsync<User>(request.UserId);
+        var user = await _repository.GetAsync<User>(req.UserId);
 
         if (user == null)
             return ResponseResult<OrganizationDto[]>.CreateError("Could not find the specified user");

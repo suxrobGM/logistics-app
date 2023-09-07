@@ -95,7 +95,7 @@ public class DashboardPageViewModel : BaseViewModel
         {
             DriverName = result.Value!.DriverFullName;
             TruckNumber = result.Value.TruckNumber;
-            CurrentLoad = result.Value.AssignedLoad;
+            CurrentLoad = result.Value.ActiveLoads?.FirstOrDefault();
         }
         
         IsLoading = false;

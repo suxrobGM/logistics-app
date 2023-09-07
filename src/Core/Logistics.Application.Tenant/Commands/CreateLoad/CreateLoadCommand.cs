@@ -10,5 +10,5 @@ public class CreateLoadCommand : Request<ResponseResult>
     public double DeliveryCost { get; set; }
     public double Distance { get; set; }
     public string? AssignedDispatcherId { get; set; }
-    public string? AssignedDriverId { get; set; }
+    public string? AssignedTruckNumber { get; set; }
 }

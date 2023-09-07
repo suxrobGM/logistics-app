@@ -1,6 +1,5 @@
 ﻿using Logistics.Application.Tenant.Mappers;
 using Logistics.Models;
-using LoadStatus = Logistics.Domain.Enums.LoadStatus;
 
 namespace Logistics.Application.Tenant.Queries;
 
@@ -18,21 +17,29 @@ internal sealed class GetDriverDashboardDataHandler : RequestHandler<GetDriverDa
     }
     
     protected override async Task<ResponseResult<DriverDashboardDto>> HandleValidated(
-        GetDriverDashboardDataQuery request, CancellationToken cancellationToken)
+        GetDriverDashboardDataQuery req, CancellationToken cancellationToken)
     {
-        var driver = await _mainRepository.GetAsync<User>(i => i.Id == request.UserId);
+        var user = await _mainRepository.GetAsync<User>(req.UserId);
 
+        if (user == null)
+            return ResponseResult<DriverDashboardDto>.CreateError($"Could not find a user with ID '{req.UserId}'");
+        
+        var driver = await _tenantRepository.GetAsync<Employee>(req.UserId);
+        
         if (driver == null)
-            return ResponseResult<DriverDashboardDto>.CreateError($"Could not find a driver with ID '{request.UserId}'");
-
-        var activeLoad = await _tenantRepository.GetAsync<Load>(i => i.AssignedDriverId == driver.Id && i.Status != LoadStatus.Delivered);
-        var truck = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == driver.Id);
+            return ResponseResult<DriverDashboardDto>.CreateError($"Could not find a driver with ID '{req.UserId}'");
+        
+        var activeLoads = _tenantRepository.ApplySpecification(new GetDriverActiveLoads(req.UserId))
+            .Select(i => LoadMapper.ToDto(i))
+            .ToArray();
+        
+        
 
         var driverDashboardDto = new DriverDashboardDto()
         {
-            TruckNumber = truck?.TruckNumber,
-            DriverFullName = driver.GetFullName(),
-            AssignedLoad = LoadMapper.ToDto(activeLoad)
+            TruckNumber = driver.Truck?.TruckNumber,
+            DriverFullName = user.GetFullName(),
+            ActiveLoads = activeLoads!
         };
 
         return ResponseResult<DriverDashboardDto>.CreateSuccess(driverDashboardDto);

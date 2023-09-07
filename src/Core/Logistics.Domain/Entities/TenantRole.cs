@@ -23,8 +23,8 @@ public class TenantRole : AuditableEntity, ITenantEntity
     [StringLength(RoleConsts.NameLength)]
     public string? NormalizedName { get; set; }
     
-    public virtual IList<Employee> Employees { get; } = new List<Employee>();
-    public virtual ISet<TenantRoleClaim> Claims { get; } = new HashSet<TenantRoleClaim>(new TenantRoleClaimComparer());
+    public virtual List<Employee> Employees { get; } = new();
+    public virtual HashSet<TenantRoleClaim> Claims { get; } = new(new TenantRoleClaimComparer());
 }
 
 internal class TenantRoleComparer : IEqualityComparer<TenantRole>

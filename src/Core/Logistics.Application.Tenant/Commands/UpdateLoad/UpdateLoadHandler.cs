@@ -14,55 +14,42 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resp
     }
 
     protected override async Task<ResponseResult> HandleValidated(
-        UpdateLoadCommand request, CancellationToken cancellationToken)
+        UpdateLoadCommand req, CancellationToken cancellationToken)
     {
-        Employee? driver = null;
-        Truck? truck = null;
-        
-        if (request.AssignedDriverId != null)
-        {
-            driver = await _tenantRepository.GetAsync<Employee>(request.AssignedDriverId);
-
-            if (driver == null)
-                return ResponseResult.CreateError("Could not find the specified driver");
-            
-            truck = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == driver.Id);
-
-            if (truck == null)
-            {
-                var user = await _mainRepository.GetAsync<User>(request.AssignedDriverId);
-                return ResponseResult.CreateError($"Could not find the truck whose driver is '{user?.GetFullName()}'");
-            }
-        }
-
-        var loadEntity = await _tenantRepository.GetAsync<Load>(request.Id);
+        var loadEntity = await _tenantRepository.GetAsync<Load>(req.Id);
 
         if (loadEntity == null)
             return ResponseResult.CreateError("Could not find the specified load");
         
-        if (driver != null && truck != null)
+        if (req.AssignedTruckId != null)
         {
+            var truck = await _tenantRepository.GetAsync<Truck>(req.AssignedTruckId);
+
+            if (truck == null)
+            {
+                return ResponseResult.CreateError($"Could not find the truck with ID is '{req.AssignedTruckId}'");
+            }
+
             loadEntity.AssignedTruck = truck;
-            loadEntity.AssignedDriver = driver;
         }
 
-        if (request.Name != null)
-            loadEntity.Name = request.Name;
+        if (req.Name != null)
+            loadEntity.Name = req.Name;
         
-        if (request.SourceAddress != null)
-            loadEntity.OriginAddress = request.SourceAddress;
+        if (req.SourceAddress != null)
+            loadEntity.OriginAddress = req.SourceAddress;
         
-        if (request.DestinationAddress != null)
-            loadEntity.DestinationAddress = request.DestinationAddress;
+        if (req.DestinationAddress != null)
+            loadEntity.DestinationAddress = req.DestinationAddress;
         
-        if (request.DeliveryCost.HasValue)
-            loadEntity.DeliveryCost = request.DeliveryCost.Value;
+        if (req.DeliveryCost.HasValue)
+            loadEntity.DeliveryCost = req.DeliveryCost.Value;
         
-        if (request.Distance.HasValue)
-            loadEntity.Distance = request.Distance.Value;
+        if (req.Distance.HasValue)
+            loadEntity.Distance = req.Distance.Value;
 
-        if (request.Status.HasValue)
-            loadEntity.Status = request.Status.Value;  
+        if (req.Status.HasValue)
+            loadEntity.Status = req.Status.Value;  
         
         _tenantRepository.Update(loadEntity);
         await _tenantRepository.UnitOfWork.CommitAsync();

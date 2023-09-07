@@ -12,14 +12,14 @@ internal sealed class GetAppRolesHandler : RequestHandler<GetAppRolesQuery, Page
     }
 
     protected override Task<PagedResponseResult<AppRoleDto>> HandleValidated(
-        GetAppRolesQuery query, CancellationToken cancellationToken)
+        GetAppRolesQuery req, CancellationToken cancellationToken)
     {
         var totalItems = _repository.Query<AppRole>().Count();
 
         var rolesDto = _repository
-            .ApplySpecification(new SearchAppRoles(query.Search))
-            .Skip((query.Page - 1) * query.PageSize)
-            .Take(query.PageSize)
+            .ApplySpecification(new SearchAppRoles(req.Search))
+            .Skip((req.Page - 1) * req.PageSize)
+            .Take(req.PageSize)
             .Select(i => new AppRoleDto()
             {
                 Name = i.Name,
@@ -27,7 +27,7 @@ internal sealed class GetAppRolesHandler : RequestHandler<GetAppRolesQuery, Page
             })
             .ToArray();
         
-        var totalPages = (int)Math.Ceiling(totalItems / (double)query.PageSize);
+        var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
         return Task.FromResult(new PagedResponseResult<AppRoleDto>(rolesDto, totalItems, totalPages));
     }
 }

@@ -12,23 +12,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Employees",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    JoinedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeviceToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Employees", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
                 {
@@ -52,7 +35,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     TruckNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DriverId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -61,35 +43,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Trucks", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Trucks_Employees_DriverId",
-                        column: x => x.DriverId,
-                        principalTable: "Employees",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EmployeeRoles",
-                columns: table => new
-                {
-                    EmployeesId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RolesId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EmployeeRoles", x => new { x.EmployeesId, x.RolesId });
-                    table.ForeignKey(
-                        name: "FK_EmployeeRoles_Employees_EmployeesId",
-                        column: x => x.EmployeesId,
-                        principalTable: "Employees",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_EmployeeRoles_Roles_RolesId",
-                        column: x => x.RolesId,
-                        principalTable: "Roles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -117,6 +70,54 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 });
 
             migrationBuilder.CreateTable(
+                name: "Employees",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    JoinedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeviceToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TruckId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Employees", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Employees_Trucks_TruckId",
+                        column: x => x.TruckId,
+                        principalTable: "Trucks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmployeeRoles",
+                columns: table => new
+                {
+                    EmployeesId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RolesId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeeRoles", x => new { x.EmployeesId, x.RolesId });
+                    table.ForeignKey(
+                        name: "FK_EmployeeRoles_Employees_EmployeesId",
+                        column: x => x.EmployeesId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EmployeeRoles_Roles_RolesId",
+                        column: x => x.RolesId,
+                        principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Loads",
                 columns: table => new
                 {
@@ -134,8 +135,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     DeliveryDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
                     AssignedDispatcherId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    AssignedDriverId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     AssignedTruckId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    EmployeeId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -150,8 +151,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         principalTable: "Employees",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Loads_Employees_AssignedDriverId",
-                        column: x => x.AssignedDriverId,
+                        name: "FK_Loads_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
                         principalTable: "Employees",
                         principalColumn: "Id");
                     table.ForeignKey(
@@ -168,19 +169,24 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 column: "RolesId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Employees_TruckId",
+                table: "Employees",
+                column: "TruckId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Loads_AssignedDispatcherId",
                 table: "Loads",
                 column: "AssignedDispatcherId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Loads_AssignedDriverId",
-                table: "Loads",
-                column: "AssignedDriverId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Loads_AssignedTruckId",
                 table: "Loads",
                 column: "AssignedTruckId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Loads_EmployeeId",
+                table: "Loads",
+                column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Loads_RefId",
@@ -192,13 +198,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "IX_RoleClaims_RoleId",
                 table: "RoleClaims",
                 column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Trucks_DriverId",
-                table: "Trucks",
-                column: "DriverId",
-                unique: true,
-                filter: "[DriverId] IS NOT NULL");
         }
 
         /// <inheritdoc />
@@ -214,13 +213,13 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "RoleClaims");
 
             migrationBuilder.DropTable(
-                name: "Trucks");
+                name: "Employees");
 
             migrationBuilder.DropTable(
                 name: "Roles");
 
             migrationBuilder.DropTable(
-                name: "Employees");
+                name: "Trucks");
         }
     }
 }

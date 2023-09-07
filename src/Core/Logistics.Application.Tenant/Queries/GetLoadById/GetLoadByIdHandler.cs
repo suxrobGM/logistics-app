@@ -17,19 +17,19 @@ internal sealed class GetLoadByIdHandler : RequestHandler<GetLoadByIdQuery, Resp
     }
 
     protected override async Task<ResponseResult<LoadDto>> HandleValidated(
-        GetLoadByIdQuery request, CancellationToken cancellationToken)
+        GetLoadByIdQuery req, CancellationToken cancellationToken)
     {
-        var loadEntity = await _tenantRepository.GetAsync<Load>(request.Id);
+        var loadEntity = await _tenantRepository.GetAsync<Load>(req.Id);
 
         if (loadEntity == null)
             return ResponseResult<LoadDto>.CreateError("Could not find the specified cargo");
 
         var assignedDispatcher = await _mainRepository.GetAsync<User>(loadEntity.AssignedDispatcherId);
-        var assignedDriver = await _mainRepository.GetAsync<User>(i => loadEntity.AssignedDriver != null && i.Id == loadEntity.AssignedDriver.Id);
 
         var loadDto = LoadMapper.ToDto(loadEntity)!;
         loadDto.AssignedDispatcherName = assignedDispatcher?.GetFullName();
-        loadDto.AssignedDriverName = assignedDriver?.GetFullName();
+        loadDto.AssignedTruckNumber = loadEntity.AssignedTruck?.TruckNumber;
+        loadDto.AssignedTruckId = loadDto.AssignedTruckId;
         return ResponseResult<LoadDto>.CreateSuccess(loadDto);
     }
 

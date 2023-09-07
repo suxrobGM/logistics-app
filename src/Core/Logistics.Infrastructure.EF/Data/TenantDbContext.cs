@@ -22,7 +22,7 @@ public class TenantDbContext : DbContext
 
     internal ITenantService? TenantService { get; }
 
-    protected override async void OnConfiguring(DbContextOptionsBuilder options)
+    protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
         if (_auditableEntitySaveChangesInterceptor is not null)
         {
@@ -73,9 +73,10 @@ public class TenantDbContext : DbContext
         {
             entity.ToTable("Trucks");
 
-            entity.HasOne(m => m.Driver)
-                .WithOne()
-                .HasForeignKey<Truck>(m => m.DriverId);
+            entity.HasMany(m => m.Drivers)
+                .WithOne(i => i.Truck)
+                .HasForeignKey(m => m.TruckId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             entity.HasMany(m => m.Loads)
                 .WithOne(m => m.AssignedTruck)
@@ -95,9 +96,9 @@ public class TenantDbContext : DbContext
                 .HasForeignKey(m => m.AssignedDispatcherId);
                 //.OnDelete(DeleteBehavior.SetNull);
             
-            entity.HasOne(m => m.AssignedDriver)
-                .WithMany(m => m.DeliveredLoads)
-                .HasForeignKey(m => m.AssignedDriverId);
+            // entity.HasOne(m => m.AssignedDriver)
+            //     .WithMany(m => m.DeliveredLoads)
+            //     .HasForeignKey(m => m.AssignedDriverId);
                 //.OnDelete(DeleteBehavior.SetNull);
         });
     }

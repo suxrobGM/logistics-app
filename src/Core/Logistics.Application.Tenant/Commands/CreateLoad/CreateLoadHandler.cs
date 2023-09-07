@@ -4,69 +4,64 @@ namespace Logistics.Application.Tenant.Commands;
 
 internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, ResponseResult>
 {
-    private readonly IMainRepository _mainRepository;
     private readonly ITenantRepository _tenantRepository;
     private readonly IPushNotificationService _pushNotificationService;
 
     public CreateLoadHandler(
-        IMainRepository mainRepository,
         ITenantRepository tenantRepository,
         IPushNotificationService pushNotificationService)
     {
-        _mainRepository = mainRepository;
         _tenantRepository = tenantRepository;
         _pushNotificationService = pushNotificationService;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
-        CreateLoadCommand request, CancellationToken cancellationToken)
+        CreateLoadCommand req, CancellationToken cancellationToken)
     {
-        var dispatcher = await _tenantRepository.GetAsync<Employee>(request.AssignedDispatcherId);
-        var driver = await _tenantRepository.GetAsync<Employee>(request.AssignedDriverId);
+        var dispatcher = await _tenantRepository.GetAsync<Employee>(req.AssignedDispatcherId);
 
         if (dispatcher == null)
             return ResponseResult.CreateError("Could not find the specified dispatcher");
 
-        if (driver == null)
-            return ResponseResult.CreateError("Could not find the specified driver");
-
-        var truck = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == driver.Id);
+        var truck = await _tenantRepository.GetAsync<Truck>(i => i.TruckNumber == req.AssignedTruckNumber);
 
         if (truck == null)
-        {
-            var user = await _mainRepository.GetAsync<User>(request.AssignedDriverId);
-            return ResponseResult.CreateError($"Could not find the truck whose driver is '{user?.GetFullName()}'");
-        }
+            return ResponseResult.CreateError($"Could not find the truck with number '{req.AssignedTruckNumber}'");
         
         var latestLoad = _tenantRepository.Query<Load>().OrderBy(i => i.RefId).LastOrDefault();
-        ulong refId = 100_000;
+        ulong refId = 1000;
 
         if (latestLoad != null)
             refId = latestLoad.RefId + 1;
         
-        var loadEntity = Load.CreateLoad(refId, 
-            request.OriginAddress!,
-            request.OriginCoordinates!,
-            request.DestinationAddress!,
-            request.DestinationCoordinates!,
+        var load = Load.CreateLoad(refId, 
+            req.OriginAddress!,
+            req.OriginCoordinates!,
+            req.DestinationAddress!,
+            req.DestinationCoordinates!,
             truck, 
             dispatcher);
-        loadEntity.Name = request.Name;
-        loadEntity.Distance = request.Distance;
-        loadEntity.DeliveryCost = request.DeliveryCost;
+        load.Name = req.Name;
+        load.Distance = req.Distance;
+        load.DeliveryCost = req.DeliveryCost;
 
-        await _tenantRepository.AddAsync(loadEntity);
+        await _tenantRepository.AddAsync(load);
         await _tenantRepository.UnitOfWork.CommitAsync();
+        await SendNotificationsToDriversAsync(load, truck);
+        return ResponseResult.CreateSuccess();
+    }
 
-        if (!string.IsNullOrEmpty(driver.DeviceToken))
+    private async Task SendNotificationsToDriversAsync(Load load, Truck truck)
+    {
+        var drivers = truck.Drivers.Where(driver => !string.IsNullOrEmpty(driver.DeviceToken));
+        
+        foreach (var driver in drivers)
         {
             await _pushNotificationService.SendNotificationAsync(
                 "Received a load",
-                $"A new load #{loadEntity.RefId} has been assigned to you", 
-                driver.DeviceToken,
-                new Dictionary<string, string> {{"loadId", loadEntity.Id}});
+                $"A new load #{load.RefId} has been assigned to you", 
+                driver.DeviceToken!,
+                new Dictionary<string, string> {{"loadId", load.Id}});
         }
-        
-        return ResponseResult.CreateSuccess();
     }
 }

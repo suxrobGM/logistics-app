@@ -13,9 +13,9 @@ internal sealed class DeleteTenantHandler : RequestHandler<DeleteTenantCommand, 
         _repository = repository;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(DeleteTenantCommand request, CancellationToken cancellationToken)
+    protected override async Task<ResponseResult> HandleValidated(DeleteTenantCommand req, CancellationToken cancellationToken)
     {
-        var tenant = await _repository.GetAsync<Domain.Entities.Tenant>(request.Id!);
+        var tenant = await _repository.GetAsync<Domain.Entities.Tenant>(req.Id!);
 
         if (tenant == null)
             return ResponseResult.CreateError("Could not find the tenant");

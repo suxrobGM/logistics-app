@@ -63,7 +63,12 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TruckId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("TruckId");
 
                     b.ToTable("Employees", (string)null);
                 });
@@ -74,9 +79,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("AssignedDispatcherId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("AssignedDriverId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("AssignedTruckId")
@@ -107,6 +109,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
                     b.Property<double>("Distance")
                         .HasColumnType("float");
+
+                    b.Property<string>("EmployeeId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
@@ -139,9 +144,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
                     b.HasIndex("AssignedDispatcherId");
 
-                    b.HasIndex("AssignedDriverId");
-
                     b.HasIndex("AssignedTruckId");
+
+                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("RefId")
                         .IsUnique();
@@ -232,9 +237,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DriverId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
 
@@ -245,10 +247,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DriverId")
-                        .IsUnique()
-                        .HasFilter("[DriverId] IS NOT NULL");
 
                     b.ToTable("Trucks", (string)null);
                 });
@@ -268,24 +266,32 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Truck", "Truck")
+                        .WithMany("Drivers")
+                        .HasForeignKey("TruckId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Truck");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Load", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Employee", "AssignedDispatcher")
                         .WithMany("DispatchedLoads")
                         .HasForeignKey("AssignedDispatcherId");
 
-                    b.HasOne("Logistics.Domain.Entities.Employee", "AssignedDriver")
-                        .WithMany("DeliveredLoads")
-                        .HasForeignKey("AssignedDriverId");
-
                     b.HasOne("Logistics.Domain.Entities.Truck", "AssignedTruck")
                         .WithMany("Loads")
                         .HasForeignKey("AssignedTruckId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.Navigation("AssignedDispatcher");
+                    b.HasOne("Logistics.Domain.Entities.Employee", null)
+                        .WithMany("DeliveredLoads")
+                        .HasForeignKey("EmployeeId");
 
-                    b.Navigation("AssignedDriver");
+                    b.Navigation("AssignedDispatcher");
 
                     b.Navigation("AssignedTruck");
                 });
@@ -298,15 +304,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.Employee", "Driver")
-                        .WithOne()
-                        .HasForeignKey("Logistics.Domain.Entities.Truck", "DriverId");
-
-                    b.Navigation("Driver");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
@@ -323,6 +320,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
                 {
+                    b.Navigation("Drivers");
+
                     b.Navigation("Loads");
                 });
 #pragma warning restore 612, 618

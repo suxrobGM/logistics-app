@@ -16,17 +16,17 @@ internal sealed class GetEmployeesHandler : RequestHandler<GetEmployeesQuery, Pa
     }
 
     protected override Task<PagedResponseResult<EmployeeDto>> HandleValidated(
-        GetEmployeesQuery query, 
+        GetEmployeesQuery req, 
         CancellationToken cancellationToken)
     {
         var tenant = _tenantRepository.GetCurrentTenant();
         var totalItems = _tenantRepository.Query<Employee>().Count();
-        var spec = new SearchUsersByTenantId(query.Search, tenant.Id, query.OrderBy, query.Descending);
+        var spec = new SearchUsersByTenantId(req.Search, tenant.Id, req.OrderBy, req.Descending);
 
         var filteredUsers = _mainRepository
             .ApplySpecification(spec)
-            .Skip((query.Page - 1) * query.PageSize)
-            .Take(query.PageSize)
+            .Skip((req.Page - 1) * req.PageSize)
+            .Take(req.PageSize)
             .ToArray();
 
         var userIds = filteredUsers.Select(i => i.Id).ToArray();
@@ -59,7 +59,7 @@ internal sealed class GetEmployeesHandler : RequestHandler<GetEmployeesQuery, Pa
             employeesDtoList.Add(employeeDto);
         }
 
-        var totalPages = (int)Math.Ceiling(totalItems / (double)query.PageSize);
+        var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
         return Task.FromResult(new PagedResponseResult<EmployeeDto>(employeesDtoList, totalItems, totalPages));
     }
 

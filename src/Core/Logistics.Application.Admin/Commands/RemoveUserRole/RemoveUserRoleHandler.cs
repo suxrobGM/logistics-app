@@ -16,15 +16,15 @@ internal sealed class RemoveUserRoleHandler : RequestHandler<RemoveUserRoleComma
     }
     
     protected override async Task<ResponseResult> HandleValidated(
-        RemoveUserRoleCommand request, CancellationToken cancellationToken)
+        RemoveUserRoleCommand req, CancellationToken cancellationToken)
     {
-        request.Role = request.Role?.ToLower();
-        var user = await _userManager.FindByIdAsync(request.UserId!);
+        req.Role = req.Role?.ToLower();
+        var user = await _userManager.FindByIdAsync(req.UserId!);
 
         if (user == null)
             return ResponseResult.CreateError("Could not find the specified user");
 
-        var appRole = await _roleManager.FindByNameAsync(request.Role!);
+        var appRole = await _roleManager.FindByNameAsync(req.Role!);
         
         if (appRole == null)
             return ResponseResult.CreateError("Could not find the specified role name");

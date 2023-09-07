@@ -16,30 +16,34 @@ internal sealed class GetTruckByDriverHandler : RequestHandler<GetTruckByDriverQ
     }
 
     protected override async Task<ResponseResult<TruckDto>> HandleValidated(
-        GetTruckByDriverQuery request, CancellationToken cancellationToken)
+        GetTruckByDriverQuery req, CancellationToken cancellationToken)
     {
-        var truckEntity = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == request.DriverId);
-        var loadIds = new List<string>();
+        string[]? loadIds = null;
+        var driver = await _tenantRepository.GetAsync<Employee>(req.DriverId);
+        
+        if (driver == null)
+            return ResponseResult<TruckDto>.CreateError($"Could not find the specified driver with ID {req.DriverId}");
 
-        if (request.IncludeLoadIds)
+        if (driver.Truck == null)
+            return ResponseResult<TruckDto>.CreateError("The driver is not associated with any truck");
+        
+        
+        if (req.IncludeLoadIds)
         {
             loadIds = _tenantRepository.Query<Truck>()
                 .SelectMany(i => i.Loads)
                 .Select(i => i.Id)
-                .ToList();
+                .ToArray();
         }
-
-        if (truckEntity == null)
-            return ResponseResult<TruckDto>.CreateError("Could not find the specified truck");
-
-        var truckDriver = await _mainRepository.GetAsync<User>(i => i.Id == truckEntity.DriverId);
+        
+        // var user = await _mainRepository.GetAsync<User>(i => i.Id == req.DriverId);
         
         var truck = new TruckDto
         {
-            Id = truckEntity.Id,
-            TruckNumber = truckEntity.TruckNumber,
-            DriverId = truckEntity.DriverId,
-            DriverName = truckDriver?.GetFullName(),
+            Id = driver.Truck.Id,
+            TruckNumber = driver.Truck.TruckNumber,
+            DriverIds = driver.Truck.Drivers.Select(i => i.Id).ToArray(),
+            // DriverName = truckDriver?.GetFullName(),
             LoadIds = loadIds
         };
 

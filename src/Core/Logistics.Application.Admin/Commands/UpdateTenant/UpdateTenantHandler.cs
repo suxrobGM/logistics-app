@@ -9,15 +9,15 @@ internal sealed class UpdateTenantHandler : RequestHandler<UpdateTenantCommand, 
         _repository = repository;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(UpdateTenantCommand request, CancellationToken cancellationToken)
+    protected override async Task<ResponseResult> HandleValidated(UpdateTenantCommand req, CancellationToken cancellationToken)
     {
-        var tenant = await _repository.GetAsync<Domain.Entities.Tenant>(request.Id!);
+        var tenant = await _repository.GetAsync<Domain.Entities.Tenant>(req.Id!);
 
         if (tenant == null)
             return ResponseResult.CreateError("Could not find the tenant");
 
-        tenant.Name = request.Name?.Trim().ToLower();
-        tenant.DisplayName = string.IsNullOrEmpty(request.DisplayName) ? tenant.Name : request.DisplayName?.Trim();
+        tenant.Name = req.Name?.Trim().ToLower();
+        tenant.DisplayName = string.IsNullOrEmpty(req.DisplayName) ? tenant.Name : req.DisplayName?.Trim();
         
         _repository.Update(tenant);
         await _repository.UnitOfWork.CommitAsync();

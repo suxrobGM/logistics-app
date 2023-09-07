@@ -153,14 +153,13 @@ internal class FakeDataService
     private async Task<IList<Truck>> AddTrucksAsync(IEnumerable<Employee> drivers)
     {
         var tenantRepository = _serviceProvider.GetRequiredService<ITenantRepository>();
-        var trucksDb = await tenantRepository.GetListAsync<Truck>();
         var trucksList = new List<Truck>();
         var truckNumber = 101;
 
         foreach (var driver in drivers)
         {
-            var truck = trucksDb.FirstOrDefault(i => i.DriverId == driver.Id);
-
+            var truck = driver.Truck;
+            
             if (truck != null)
             {
                 trucksList.Add(truck);
@@ -170,7 +169,10 @@ internal class FakeDataService
             truck = new Truck
             {
                 TruckNumber = truckNumber.ToString(),
-                Driver = driver
+                Drivers = new List<Employee>
+                {
+                    driver
+                }
             };
 
             truckNumber++;

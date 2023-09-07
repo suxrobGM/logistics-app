@@ -16,9 +16,9 @@ internal sealed class GetEmployeeByIdHandler : RequestHandler<GetEmployeeByIdQue
     }
 
     protected override async Task<ResponseResult<EmployeeDto>> HandleValidated(
-        GetEmployeeByIdQuery request, CancellationToken cancellationToken)
+        GetEmployeeByIdQuery req, CancellationToken cancellationToken)
     {
-        var employeeEntity = await _tenantRepository.GetAsync<Employee>(request.Id);
+        var employeeEntity = await _tenantRepository.GetAsync<Employee>(req.Id);
         
         if (employeeEntity == null)
             return ResponseResult<EmployeeDto>.CreateError("Could not find the specified employee");

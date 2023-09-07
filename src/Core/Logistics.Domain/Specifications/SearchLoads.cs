@@ -5,7 +5,6 @@ public class SearchLoads : BaseSpecification<Load>
     public SearchLoads(
         string? search, 
         string[] userIds, 
-        string[] userNames, 
         string?[] userFirstNames,
         string?[] userLastNames,
         string? orderBy = "RefId", 
@@ -22,13 +21,7 @@ public class SearchLoads : BaseSpecification<Load>
              i.Name.Contains(search)) ||
             (!string.IsNullOrEmpty(i.AssignedDispatcherId) &&
              userIds.Contains(i.AssignedDispatcherId) &&
-             (userNames.Contains(search) || userFirstNames.Contains(search) || userLastNames.Contains(search))) ||
-            (!string.IsNullOrEmpty(i.AssignedDriverId) &&
-             userIds.Contains(i.AssignedDriverId) &&
-             (userNames.Contains(search) || userFirstNames.Contains(search) || userLastNames.Contains(search))) ||
-            (!string.IsNullOrEmpty(i.AssignedDispatcherId) &&
-             userIds.Contains(i.AssignedDispatcherId) &&
-             (userNames.Contains(search) || userFirstNames.Contains(search) || userLastNames.Contains(search)));
+             (userFirstNames.Contains(search) || userLastNames.Contains(search)));
     }
 
     private static Expression<Func<Load, object>> InitOrderBy(string? propertyName)

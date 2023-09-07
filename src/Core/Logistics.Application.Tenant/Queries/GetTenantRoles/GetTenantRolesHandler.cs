@@ -12,14 +12,14 @@ internal sealed class GetTenantRolesHandler : RequestHandler<GetTenantRolesQuery
     }
 
     protected override Task<PagedResponseResult<TenantRoleDto>> HandleValidated(
-        GetTenantRolesQuery query, CancellationToken cancellationToken)
+        GetTenantRolesQuery req, CancellationToken cancellationToken)
     {
         var totalItems = _tenantRepository.Query<TenantRole>().Count();
 
         var rolesDto = _tenantRepository
-            .ApplySpecification(new SearchTenantRoles(query.Search))
-            .Skip((query.Page - 1) * query.PageSize)
-            .Take(query.PageSize)
+            .ApplySpecification(new SearchTenantRoles(req.Search))
+            .Skip((req.Page - 1) * req.PageSize)
+            .Take(req.PageSize)
             .Select(i => new TenantRoleDto()
             {
                 Name = i.Name,
@@ -27,7 +27,7 @@ internal sealed class GetTenantRolesHandler : RequestHandler<GetTenantRolesQuery
             })
             .ToArray();
         
-        var totalPages = (int)Math.Ceiling(totalItems / (double)query.PageSize);
+        var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
         return Task.FromResult(new PagedResponseResult<TenantRoleDto>(rolesDto, totalItems, totalPages));
     }
 

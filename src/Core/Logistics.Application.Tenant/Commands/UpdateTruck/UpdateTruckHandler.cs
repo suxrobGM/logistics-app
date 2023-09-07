@@ -12,31 +12,24 @@ internal sealed class UpdateTruckHandler : RequestHandler<UpdateTruckCommand, Re
     protected override async Task<ResponseResult> HandleValidated(
         UpdateTruckCommand req, CancellationToken cancellationToken)
     {
-        var driver = await _tenantRepository.GetAsync<Employee>(req.DriverId!);
-
-        if (req.DriverId != null && driver == null)
-            return ResponseResult.CreateError("Could not find the specified driver");
-        
         var truckEntity = await _tenantRepository.GetAsync<Truck>(req.Id!);
 
         if (truckEntity == null)
             return ResponseResult.CreateError("Could not find the specified truck");
         
-        var truckWithThisDriver = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == req.DriverId);
         var truckWithThisNumber = await _tenantRepository.GetAsync<Truck>(i => i.TruckNumber == req.TruckNumber && 
                                                                                i.Id != truckEntity.Id);
 
-        if (truckWithThisDriver != null)
-            return ResponseResult.CreateError("Already exists truck with this driver");
-
         if (truckWithThisNumber != null)
             return ResponseResult.CreateError("Already exists truck with this number");
-
+        
+        var drivers = _tenantRepository.ApplySpecification(new GetEmployeesById(req.DriversIds)).ToList();
+        
         if (!string.IsNullOrEmpty(req.TruckNumber))
             truckEntity.TruckNumber = req.TruckNumber;
 
-        if (driver != null)
-            truckEntity.Driver = driver;
+        if (drivers.Any())
+            truckEntity.Drivers = drivers;
 
         _tenantRepository.Update(truckEntity);
         await _tenantRepository.UnitOfWork.CommitAsync();

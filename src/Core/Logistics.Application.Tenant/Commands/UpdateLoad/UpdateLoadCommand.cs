@@ -11,6 +11,6 @@ public class UpdateLoadCommand : Request<ResponseResult>
     public double? DeliveryCost { get; set; }
     public double? Distance { get; set; }
     public string? AssignedDispatcherId { get; set; }
-    public string? AssignedDriverId { get; set; }
+    public string? AssignedTruckId { get; set; }
     public LoadStatus? Status { get; set; }
 }

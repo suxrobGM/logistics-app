@@ -10,21 +10,21 @@ internal sealed class UpdateUserHandler : RequestHandler<UpdateUserCommand, Resp
     }
 
     protected override async Task<ResponseResult> HandleValidated(
-        UpdateUserCommand request, CancellationToken cancellationToken)
+        UpdateUserCommand req, CancellationToken cancellationToken)
     {
-        var user = await _mainRepository.GetAsync<User>(request.Id);
+        var user = await _mainRepository.GetAsync<User>(req.Id);
 
         if (user == null)
             return ResponseResult.CreateError("Could not find the specified user");
 
-        if (!string.IsNullOrEmpty(request.FirstName))
-            user.FirstName = request.FirstName;
+        if (!string.IsNullOrEmpty(req.FirstName))
+            user.FirstName = req.FirstName;
 
-        if (!string.IsNullOrEmpty(request.LastName))
-            user.LastName = request.LastName;
+        if (!string.IsNullOrEmpty(req.LastName))
+            user.LastName = req.LastName;
 
-        if (!string.IsNullOrEmpty(request.PhoneNumber))
-            user.PhoneNumber = request.PhoneNumber;
+        if (!string.IsNullOrEmpty(req.PhoneNumber))
+            user.PhoneNumber = req.PhoneNumber;
 
         _mainRepository.Update(user);
         await _mainRepository.UnitOfWork.CommitAsync();

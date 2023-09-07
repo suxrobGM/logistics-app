@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Logistics.Domain.Constraints;
 
 namespace Logistics.Application.Tenant.Commands;
 
@@ -8,6 +7,6 @@ internal sealed class CreateTruckValidator : AbstractValidator<CreateTruckComman
     public CreateTruckValidator()
     {
         RuleFor(i => i.TruckNumber).NotEmpty();
-        RuleFor(i => i.DriverId).NotEmpty();
+        RuleFor(i => i.DriversIds).NotEmpty();
     }
 }
