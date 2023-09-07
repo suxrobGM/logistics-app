@@ -1,6 +1,6 @@
 ﻿using Logistics.Models;
 
-namespace Logistics.Application.Tenant.Queries.GetDriverDashboardData;
+namespace Logistics.Application.Tenant.Queries;
 
 public class GetDriverDashboardDataQuery : Request<ResponseResult<DriverDashboardDto>>
 {

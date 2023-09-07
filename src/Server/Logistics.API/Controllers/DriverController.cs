@@ -1,5 +1,4 @@
-﻿using Logistics.Application.Tenant.Queries.GetDriverDashboardData;
-using Logistics.Models;
+﻿using Logistics.Models;
 
 namespace Logistics.API.Controllers;
 
@@ -40,5 +39,19 @@ public class DriverController : ControllerBase
             return Ok(result);
 
         return BadRequest(result.Error);
-    } 
+    }
+    
+    [HttpGet("list")]
+    [ProducesResponseType(typeof(PagedResponseResult<EmployeeDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Employee.View)]
+    public async Task<IActionResult> GetDriversList([FromQuery] GetDriversQuery query)
+    {
+        var result = await _mediator.Send(query);
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result.Error);
+    }
 }

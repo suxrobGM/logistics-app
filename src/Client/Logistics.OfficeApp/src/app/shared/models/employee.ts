@@ -5,6 +5,7 @@ export interface Employee {
   userName?: string;
   firstName?: string;
   lastName?: string;
+  fullName?: string;
   email?: string;
   phoneNumber?: string;
   roles?: Role[];

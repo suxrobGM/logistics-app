@@ -27,7 +27,7 @@
         <ng-template pTemplate="header">
           <tr>
             <th>ID</th>
-            <th>Source</th>
+            <th>Origin</th>
             <th>Destination</th>
             <th>Driver</th>
           </tr>
@@ -39,8 +39,8 @@
                 {{load.refId}}
               </a>
             </td>
-            <td [pTooltip]="load.sourceAddress" [showDelay]="500" tooltipPosition="bottom">
-              {{load.sourceAddress}}
+            <td [pTooltip]="load.originAddress" [showDelay]="500" tooltipPosition="bottom">
+              {{load.originAddress}}
             </td>
             <td [pTooltip]="load.sourceAddress" [showDelay]="500" tooltipPosition="bottom">
               {{load.destinationAddress}}

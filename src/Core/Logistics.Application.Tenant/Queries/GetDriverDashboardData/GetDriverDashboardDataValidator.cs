@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Logistics.Application.Tenant.Queries.GetDriverDashboardData;
+namespace Logistics.Application.Tenant.Queries;
 
 internal sealed class GetDriverDashboardDataValidator : AbstractValidator<GetDriverDashboardDataQuery>
 {

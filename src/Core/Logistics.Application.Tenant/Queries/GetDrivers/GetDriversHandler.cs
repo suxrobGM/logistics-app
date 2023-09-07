@@ -48,34 +48,15 @@ internal sealed class GetDriversHandler : RequestHandler<GetDriversQuery, PagedR
             if (!filteredUsers.TryGetValue(employee.Id, out var user))
                 continue;
             
-            employee.UserName = user.UserName!;
+            employee.UserName = user.UserName;
             employee.FirstName = user.FirstName;
             employee.LastName = user.LastName;
+            employee.FullName = $"{user.FirstName} {user.LastName}";
             employee.Email = user.Email;
             employee.PhoneNumber = user.PhoneNumber;
         }
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)query.PageSize);
         return new PagedResponseResult<EmployeeDto>(employeesDto, totalItems, totalPages);
-    }
-
-    protected override bool Validate(GetDriversQuery query, out string errorDescription)
-    {
-        errorDescription = string.Empty;
-
-        // if (string.IsNullOrEmpty(_tenantRepository.CurrentTenant?.Id))
-        // {
-        //     errorDescription = "Could not evaluate current tenant's ID";
-        // }
-        if (query.Page <= 0)
-        {
-            errorDescription = "Page number should be non-negative";
-        }
-        else if (query.PageSize <= 1)
-        {
-            errorDescription = "Page size should be greater than one";
-        }
-
-        return string.IsNullOrEmpty(errorDescription);
     }
 }

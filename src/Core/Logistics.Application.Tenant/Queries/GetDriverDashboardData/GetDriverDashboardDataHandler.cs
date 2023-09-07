@@ -2,7 +2,7 @@
 using Logistics.Models;
 using LoadStatus = Logistics.Domain.Enums.LoadStatus;
 
-namespace Logistics.Application.Tenant.Queries.GetDriverDashboardData;
+namespace Logistics.Application.Tenant.Queries;
 
 internal sealed class GetDriverDashboardDataHandler : RequestHandler<GetDriverDashboardDataQuery, ResponseResult<DriverDashboardDto>>
 {
@@ -30,7 +30,7 @@ internal sealed class GetDriverDashboardDataHandler : RequestHandler<GetDriverDa
 
         var driverDashboardDto = new DriverDashboardDto()
         {
-            TruckNumber = truck?.TruckNumber.ToString(),
+            TruckNumber = truck?.TruckNumber,
             DriverFullName = driver.GetFullName(),
             AssignedLoad = LoadMapper.ToDto(activeLoad)
         };

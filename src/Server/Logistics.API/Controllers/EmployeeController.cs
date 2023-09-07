@@ -30,20 +30,6 @@ public class EmployeeController : ControllerBase
         return BadRequest(result.Error);
     }
 
-    [HttpGet("drivers")]
-    [ProducesResponseType(typeof(PagedResponseResult<EmployeeDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Employee.View)]
-    public async Task<IActionResult> GetDrivers([FromQuery] GetDriversQuery query)
-    {
-        var result = await _mediator.Send(query);
-
-        if (result.Success)
-            return Ok(result);
-
-        return BadRequest(result.Error);
-    } 
-
     [HttpGet("list")]
     [ProducesResponseType(typeof(PagedResponseResult<EmployeeDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]

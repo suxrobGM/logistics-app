@@ -198,17 +198,6 @@ export class ApiService {
         .pipe(catchError((err) => this.handleError(err)));
   }
 
-  getDrivers(searchQuery = '', page = 1, pageSize = 10): Observable<PagedResponseResult<Employee>> {
-    if (!searchQuery) {
-      searchQuery = '';
-    }
-
-    const url = `${this.host}/employee/drivers?search=${searchQuery}&page=${page}&pageSize=${pageSize}`;
-    return this.httpClient
-        .get<PagedResponseResult<Employee>>(url)
-        .pipe(catchError((err) => this.handleError(err)));
-  }
-
   createEmployee(employee: CreateEmployee): Observable<ResponseResult> {
     const url = `${this.host}/employee/create`;
     const body = JSON.stringify(employee);
@@ -241,6 +230,22 @@ export class ApiService {
 
     return this.httpClient
         .delete<ResponseResult>(url)
+        .pipe(catchError((err) => this.handleError(err)));
+  }
+
+  // #endregion
+
+
+  // #region Driver API
+
+  getDrivers(searchQuery = '', page = 1, pageSize = 10): Observable<PagedResponseResult<Employee>> {
+    if (!searchQuery) {
+      searchQuery = '';
+    }
+
+    const url = `${this.host}/driver/list?search=${searchQuery}&page=${page}&pageSize=${pageSize}`;
+    return this.httpClient
+        .get<PagedResponseResult<Employee>>(url)
         .pipe(catchError((err) => this.handleError(err)));
   }
 
