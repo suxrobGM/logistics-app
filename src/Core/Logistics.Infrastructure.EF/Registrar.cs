@@ -84,6 +84,7 @@ public static class Registrar
         services.AddScoped<ITenantService, TenantService>();
         services.AddScoped<IMainRepository, MainRepository>();
         services.AddScoped<ITenantRepository, TenantRepository>();
+        services.AddScoped<IUserService, UserService>();
         services.AddScoped<UnitOfWork<MainDbContext>>();
         services.AddScoped<UnitOfWork<TenantDbContext>>();
         return new InfrastructureBuilder(identityBuilder);

@@ -74,6 +74,10 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     JoinedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DeviceToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TruckId = table.Column<string>(type: "nvarchar(450)", nullable: true),

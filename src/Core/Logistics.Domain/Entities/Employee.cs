@@ -2,6 +2,11 @@
 
 public class Employee : AuditableEntity, ITenantEntity
 {
+    public string? Email { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public string? PhoneNumber { get; set; }
+    
     /// <summary>
     /// When employee joined to this tenant
     /// </summary>
@@ -29,4 +34,20 @@ public class Employee : AuditableEntity, ITenantEntity
     /// User tenant roles
     /// </summary>
     public virtual HashSet<TenantRole> Roles { get; } = new(new TenantRoleComparer());
+
+    public string GetFullName() => $"{FirstName} {LastName}";
+
+    public static Employee CreateEmployeeFromUser(User user)
+    {
+        var newEmployee = new Employee
+        {
+            Id = user.Id,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            PhoneNumber = user.PhoneNumber
+        };
+
+        return newEmployee;
+    }
 }

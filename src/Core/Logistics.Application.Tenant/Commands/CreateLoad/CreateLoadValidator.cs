@@ -10,7 +10,7 @@ internal sealed class CreateLoadValidator : AbstractValidator<CreateLoadCommand>
     public CreateLoadValidator()
     {
         RuleFor(i => i.AssignedDispatcherId).NotEmpty();
-        RuleFor(i => i.AssignedTruckNumber).NotEmpty();
+        RuleFor(i => i.AssignedTruckId).NotEmpty();
         RuleFor(i => i.OriginAddress).NotEmpty();
         RuleFor(i => i.OriginCoordinates).NotEmpty().Matches(CoordinatesPattern);
         RuleFor(i => i.DestinationAddress).NotEmpty();

@@ -2,12 +2,12 @@
 
 namespace Logistics.Application.Admin.Commands;
 
-internal sealed class RemoveUserRoleHandler : RequestHandler<RemoveUserRoleCommand, ResponseResult>
+internal sealed class RemoveRoleFromUserHandler : RequestHandler<RemoveRoleFromUserCommand, ResponseResult>
 {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<AppRole> _roleManager;
 
-    public RemoveUserRoleHandler(
+    public RemoveRoleFromUserHandler(
         UserManager<User> userManager,
         RoleManager<AppRole> roleManager)
     {
@@ -16,7 +16,7 @@ internal sealed class RemoveUserRoleHandler : RequestHandler<RemoveUserRoleComma
     }
     
     protected override async Task<ResponseResult> HandleValidated(
-        RemoveUserRoleCommand req, CancellationToken cancellationToken)
+        RemoveRoleFromUserCommand req, CancellationToken cancellationToken)
     {
         req.Role = req.Role?.ToLower();
         var user = await _userManager.FindByIdAsync(req.UserId!);

@@ -38,16 +38,4 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrosse
         monthlyGrosses.Months = dict.Values;
         return Task.FromResult(ResponseResult<MonthlyGrossesDto>.CreateSuccess(monthlyGrosses));
     }
-
-    protected override bool Validate(GetMonthlyGrossesQuery request, out string errorDescription)
-    {
-        errorDescription = string.Empty;
-
-        if (request.StartDate > request.EndDate)
-        {
-            errorDescription = "The `StartDate` must be less than the `EndDate`";
-        }
-
-        return string.IsNullOrEmpty(errorDescription);
-    }
 }

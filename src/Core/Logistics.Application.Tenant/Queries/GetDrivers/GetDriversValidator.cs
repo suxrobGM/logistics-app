@@ -7,7 +7,7 @@ internal sealed class GetDriversValidator : AbstractValidator<GetDriversQuery>
     public GetDriversValidator()
     {
         RuleFor(i => i.Page)
-            .GreaterThanOrEqualTo(1);
+            .GreaterThanOrEqualTo(0);
         
         RuleFor(i => i.PageSize)
             .GreaterThanOrEqualTo(1);

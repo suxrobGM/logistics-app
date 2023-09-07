@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class RemoveEmployeeRoleHandler : RequestHandler<RemoveEmployeeRoleCommand, ResponseResult>
+internal sealed class RemoveEmployeeRoleHandler : RequestHandler<RemoveRoleFromEmployeeCommand, ResponseResult>
 {
     private readonly ITenantRepository _tenantRepository;
 
@@ -10,7 +10,7 @@ internal sealed class RemoveEmployeeRoleHandler : RequestHandler<RemoveEmployeeR
     }
     
     protected override async Task<ResponseResult> HandleValidated(
-        RemoveEmployeeRoleCommand req, CancellationToken cancellationToken)
+        RemoveRoleFromEmployeeCommand req, CancellationToken cancellationToken)
     {
         req.Role = req.Role?.ToLower();
         var employee = await _tenantRepository.GetAsync<Employee>(req.UserId);
@@ -26,22 +26,5 @@ internal sealed class RemoveEmployeeRoleHandler : RequestHandler<RemoveEmployeeR
         employee.Roles.Remove(tenantRole);
         await _tenantRepository.UnitOfWork.CommitAsync();
         return ResponseResult.CreateSuccess();
-    }
-
-    protected override bool Validate(
-        RemoveEmployeeRoleCommand request, out string errorDescription)
-    {
-        errorDescription = string.Empty;
-
-        if (string.IsNullOrEmpty(request.UserId))
-        {
-            errorDescription = "UserId is an empty string";
-        }
-        else if (string.IsNullOrEmpty(request.Role))
-        {
-            errorDescription = "Role name is an empty string";
-        }
-
-        return string.IsNullOrEmpty(errorDescription);
     }
 }

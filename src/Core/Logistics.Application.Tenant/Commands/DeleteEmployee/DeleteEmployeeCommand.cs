@@ -2,5 +2,5 @@
 
 public class DeleteEmployeeCommand : Request<ResponseResult>
 {
-    public string? Id { get; set; }
+    public string? UserId { get; set; }
 }

@@ -12,7 +12,7 @@ internal sealed class UpdateEmployeeHandler : RequestHandler<UpdateEmployeeComma
     protected override async Task<ResponseResult> HandleValidated(
         UpdateEmployeeCommand req, CancellationToken cancellationToken)
     {
-        var employeeEntity = await _tenantRepository.GetAsync<Employee>(req.Id);
+        var employeeEntity = await _tenantRepository.GetAsync<Employee>(req.UserId);
         var tenantRole = await _tenantRepository.GetAsync<TenantRole>(i => i.Name == req.Role);
 
         if (employeeEntity == null)
@@ -27,17 +27,5 @@ internal sealed class UpdateEmployeeHandler : RequestHandler<UpdateEmployeeComma
         _tenantRepository.Update(employeeEntity);
         await _tenantRepository.UnitOfWork.CommitAsync();
         return ResponseResult.CreateSuccess();
-    }
-
-    protected override bool Validate(UpdateEmployeeCommand request, out string errorDescription)
-    {
-        errorDescription = string.Empty;
-
-        if (string.IsNullOrEmpty(request.Id))
-        {
-            errorDescription = "Id is an empty string";
-        }
-
-        return string.IsNullOrEmpty(errorDescription);
     }
 }

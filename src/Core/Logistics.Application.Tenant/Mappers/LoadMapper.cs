@@ -2,13 +2,10 @@
 
 namespace Logistics.Application.Tenant.Mappers;
 
-public class LoadMapper : IMapper<Load, LoadDto>
+public static class LoadMapper
 {
-    public static Load? ToEntity(LoadDto? dto)
+    public static Load ToEntity(this LoadDto dto)
     {
-        if (dto is null)
-            return null;
-        
         return new Load
         {
             Id = dto.Id!,
@@ -27,11 +24,8 @@ public class LoadMapper : IMapper<Load, LoadDto>
         };
     }
 
-    public static LoadDto? ToDto(Load? entity)
+    public static LoadDto ToDto(this Load entity)
     {
-        if (entity is null)
-            return null;
-        
         return new LoadDto
         {
             Id = entity.Id,
@@ -46,8 +40,9 @@ public class LoadMapper : IMapper<Load, LoadDto>
             Distance = entity.Distance,
             Status = (LoadStatusDto)entity.Status,
             AssignedDispatcherId = entity.AssignedDispatcherId,
-            // AssignedDriverId = entity.Id,
-            AssignedTruckId = entity.AssignedTruckId
+            AssignedDispatcherName = entity.AssignedDispatcher?.GetFullName(),
+            AssignedTruckId = entity.AssignedTruckId,
+            AssignedTruckNumber = entity.AssignedTruck?.TruckNumber
         };
     }
 }

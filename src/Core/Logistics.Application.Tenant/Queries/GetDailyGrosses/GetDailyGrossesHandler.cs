@@ -38,16 +38,4 @@ internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQue
         dailyGrosses.Dates = dict.Values;
         return Task.FromResult(ResponseResult<DailyGrossesDto>.CreateSuccess(dailyGrosses));
     }
-
-    protected override bool Validate(GetDailyGrossesQuery request, out string errorDescription)
-    {
-        errorDescription = string.Empty;
-        
-        if (request.StartDate > request.EndDate)
-        {
-            errorDescription = "The `StartDate` must be less than the `EndDate`";
-        }
-
-        return string.IsNullOrEmpty(errorDescription);
-    }
 }

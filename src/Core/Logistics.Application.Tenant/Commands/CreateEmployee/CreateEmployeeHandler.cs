@@ -16,19 +16,21 @@ internal sealed class CreateEmployeeHandler : RequestHandler<CreateEmployeeComma
     protected override async Task<ResponseResult> HandleValidated(
         CreateEmployeeCommand req, CancellationToken cancellationToken)
     {
-        var existingEmployee = await _tenantRepository.GetAsync<Employee>(i => i.Id == req.Id);
-        var user = await _mainRepository.GetAsync<User>(i => i.Id == req.Id);
-        var tenantRole = await _tenantRepository.GetAsync<TenantRole>(i => i.Name == req.Role);
-        var tenant = _tenantRepository.GetCurrentTenant();
-
-        if (user == null)
-            return ResponseResult.CreateError("Could not find the specified user");
+        var existingEmployee = await _tenantRepository.GetAsync<Employee>(req.UserId);
         
         if (existingEmployee != null)
             return ResponseResult.CreateError("Employee already exists");
         
+        var user = await _mainRepository.GetAsync<User>(req.UserId);
+        
+        if (user == null)
+            return ResponseResult.CreateError("Could not find the specified user");
+        
+        var tenantRole = await _tenantRepository.GetAsync<TenantRole>(i => i.Name == req.Role);
+        var tenant = _tenantRepository.GetCurrentTenant();
+        
         user.JoinTenant(tenant.Id);
-        var employee = new Employee { Id = req.Id! };
+        var employee = Employee.CreateEmployeeFromUser(user);
 
         if (tenantRole != null)
         {

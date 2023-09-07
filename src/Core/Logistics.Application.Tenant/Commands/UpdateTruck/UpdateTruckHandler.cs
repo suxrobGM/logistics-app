@@ -19,32 +19,22 @@ internal sealed class UpdateTruckHandler : RequestHandler<UpdateTruckCommand, Re
         
         var truckWithThisNumber = await _tenantRepository.GetAsync<Truck>(i => i.TruckNumber == req.TruckNumber && 
                                                                                i.Id != truckEntity.Id);
-
         if (truckWithThisNumber != null)
             return ResponseResult.CreateError("Already exists truck with this number");
         
-        var drivers = _tenantRepository.ApplySpecification(new GetEmployeesById(req.DriversIds)).ToList();
+        if (req.DriverIds != null)
+        {
+            var drivers = _tenantRepository.ApplySpecification(new GetEmployeesById(req.DriverIds)).ToList();
+            
+            if (drivers.Any())
+                truckEntity.Drivers = drivers;
+        }
         
         if (!string.IsNullOrEmpty(req.TruckNumber))
             truckEntity.TruckNumber = req.TruckNumber;
 
-        if (drivers.Any())
-            truckEntity.Drivers = drivers;
-
         _tenantRepository.Update(truckEntity);
         await _tenantRepository.UnitOfWork.CommitAsync();
         return ResponseResult.CreateSuccess();
-    }
-
-    protected override bool Validate(UpdateTruckCommand request, out string errorDescription)
-    {
-        errorDescription = string.Empty;
-
-        if (string.IsNullOrEmpty(request.Id))
-        {
-            errorDescription = "Id is an empty string";
-        }
-
-        return string.IsNullOrEmpty(errorDescription);
     }
 }

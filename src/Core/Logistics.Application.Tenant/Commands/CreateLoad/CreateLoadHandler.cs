@@ -23,10 +23,10 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resp
         if (dispatcher == null)
             return ResponseResult.CreateError("Could not find the specified dispatcher");
 
-        var truck = await _tenantRepository.GetAsync<Truck>(i => i.TruckNumber == req.AssignedTruckNumber);
+        var truck = await _tenantRepository.GetAsync<Truck>(req.AssignedTruckId);
 
         if (truck == null)
-            return ResponseResult.CreateError($"Could not find the truck with number '{req.AssignedTruckNumber}'");
+            return ResponseResult.CreateError($"Could not find the truck with ID '{req.AssignedTruckId}'");
         
         var latestLoad = _tenantRepository.Query<Load>().OrderBy(i => i.RefId).LastOrDefault();
         ulong refId = 1000;

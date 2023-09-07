@@ -21,7 +21,7 @@ internal sealed class GetUserJoinedOrganizationsHandler :
         if (user == null)
             return ResponseResult<OrganizationDto[]>.CreateError("Could not find the specified user");
 
-        var tenantsIds = user.GetJoinedTenantsIds();
+        var tenantsIds = user.GetJoinedTenantIds();
         var organizations = _repository.Query<Tenant>()
             .Where(i => tenantsIds.Contains(i.Id))
             .Select(i => new OrganizationDto

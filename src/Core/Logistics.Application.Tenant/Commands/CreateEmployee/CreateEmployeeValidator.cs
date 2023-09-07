@@ -6,6 +6,6 @@ internal sealed class CreateEmployeeValidator : AbstractValidator<CreateEmployee
 {
     public CreateEmployeeValidator()
     {
-        RuleFor(i => i.Id).NotEmpty();
+        RuleFor(i => i.UserId).NotEmpty();
     }
 }

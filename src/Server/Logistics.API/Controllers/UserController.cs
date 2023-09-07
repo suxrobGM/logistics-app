@@ -77,7 +77,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.User.Edit)]
-    public async Task<IActionResult> RemoveRole([FromBody] RemoveUserRoleCommand request)
+    public async Task<IActionResult> RemoveRole([FromBody] RemoveRoleFromUserCommand request)
     {
         var result = await _mediator.Send(request);
 

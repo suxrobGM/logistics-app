@@ -12,23 +12,20 @@ internal sealed class CreateTruckHandler : RequestHandler<CreateTruckCommand, Re
     protected override async Task<ResponseResult> HandleValidated(
         CreateTruckCommand req, CancellationToken cancellationToken)
     {
-        // var driver = await _tenantRepository.GetAsync<Employee>(request.DriverId);
-        //
-        // if (driver == null)
-        //     return ResponseResult.CreateError("Could not find the specified driver");
-
-        
         var truckWithThisNumber = await _tenantRepository.GetAsync<Truck>(i => i.TruckNumber == req.TruckNumber);
 
         if (truckWithThisNumber != null)
-            return ResponseResult.CreateError("Already exists truck with this number");
+            return ResponseResult.CreateError($"Already exists truck with number {req.TruckNumber}");
         
-        var drivers = _tenantRepository.ApplySpecification(new GetEmployeesById(req.DriversIds)).ToList();
+        var drivers = _tenantRepository.ApplySpecification(new GetEmployeesById(req.DriversIds!)).ToList();
         
         if (!drivers.Any())
             return ResponseResult.CreateError("Could not find any drivers with specified IDs");
 
-        var hasAlreadyAssociatedDriver = drivers.Any(i => i.Truck != null && i.Truck.TruckNumber == req.TruckNumber);
+        var alreadyAssociatedDriver = drivers.FirstOrDefault(i => i.Truck != null && i.Truck.TruckNumber == req.TruckNumber);
+
+        if (alreadyAssociatedDriver != null)
+            return ResponseResult.CreateError($"Driver '{alreadyAssociatedDriver.GetFullName()}' is already associated with the truck number '{req.TruckNumber}'");
 
         var truckEntity = new Truck()
         {

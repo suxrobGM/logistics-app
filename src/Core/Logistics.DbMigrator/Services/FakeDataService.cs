@@ -142,7 +142,7 @@ internal class FakeDataService
         if (employee != null)
             return employee;
 
-        employee = new Employee { Id = user.Id };
+        employee = Employee.CreateEmployeeFromUser(user);
         user.JoinTenant(tenantId);
         await tenantRepository.AddAsync(employee);
         employee.Roles.Add(role);

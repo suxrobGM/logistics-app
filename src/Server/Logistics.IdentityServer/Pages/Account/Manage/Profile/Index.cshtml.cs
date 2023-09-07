@@ -1,96 +1,96 @@
+using Logistics.Domain.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.ComponentModel.DataAnnotations;
-using System.Xml.Linq;
 
-namespace Logistics.IdentityServer.Pages.Account.Manage.Profile
+namespace Logistics.IdentityServer.Pages.Account.Manage.Profile;
+
+public partial class ProfileModel : PageModel
 {
-    public partial class ProfileModel : PageModel
+    private readonly UserManager<User> _userManager;
+    private readonly SignInManager<User> _signInManager;
+    private readonly IUserService _userService;
+
+    public ProfileModel(
+        UserManager<User> userManager,
+        SignInManager<User> signInManager,
+        IUserService userService)
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
+        _userManager = userManager;
+        _signInManager = signInManager;
+        _userService = userService;
+    }
 
-        public ProfileModel(
-            UserManager<User> userManager,
-            SignInManager<User> signInManager)
+    public string Username { get; set; }
+
+    [TempData]
+    public string StatusMessage { get; set; }
+
+    [BindProperty]
+    public InputModel Input { get; set; }
+
+    public async Task<IActionResult> OnGetAsync()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            return LocalRedirect("/Identity/Account/Login");
         }
 
-        public string Username { get; set; }
+        await LoadAsync(user);
+        return Page();
+    }
 
-        [TempData]
-        public string StatusMessage { get; set; }
-
-        [BindProperty]
-        public InputModel Input { get; set; }
-
-
-
-        private async Task LoadAsync(User user)
+    public async Task<IActionResult> OnPostAsync()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        
+        if (user == null)
         {
-            var userName = await _userManager.GetUserNameAsync(user);
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            Username = userName;
-
-            Input = new InputModel
-            {
-                PhoneNumber = phoneNumber,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-            };
+            return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
         }
 
-        public async Task<IActionResult> OnGetAsync()
+        if (!ModelState.IsValid)
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return LocalRedirect("/Identity/Account/Login");
-            }
-
             await LoadAsync(user);
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        await _userService.UpdateUserAsync(new UpdateUserData(user.Id)
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
+            FirstName = Input.FirstName,
+            LastName = Input.LastName,
+            PhoneNumber = Input.PhoneNumber
+        });
 
-            if (!ModelState.IsValid)
-            {
-                await LoadAsync(user);
-                return Page();
-            }
+        //_signInManage
+        //var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+        //if (Input.PhoneNumber != phoneNumber)
+        //{
+        //    var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
+        //    if (!setPhoneResult.Succeeded)
+        //    {
+        //        StatusMessage = "Unexpected error when trying to set phone number.";
+        //        return RedirectToPage();
+        //    }
+        //}
 
-            user.FirstName = Input.FirstName;
-            user.LastName = Input.LastName;
-            user.PhoneNumber = Input.PhoneNumber;
+        await _signInManager.RefreshSignInAsync(user);
+        StatusMessage = "Your profile has been updated";
+        return RedirectToPage();
+    }
+    
+    private async Task LoadAsync(User user)
+    {
+        var userName = await _userManager.GetUserNameAsync(user);
+        var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+        Username = userName;
 
-            await _userManager.UpdateAsync(user);
-
-
-            //_signInManage
-            //var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            //if (Input.PhoneNumber != phoneNumber)
-            //{
-            //    var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
-            //    if (!setPhoneResult.Succeeded)
-            //    {
-            //        StatusMessage = "Unexpected error when trying to set phone number.";
-            //        return RedirectToPage();
-            //    }
-            //}
-
-            await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your profile has been updated";
-            return RedirectToPage();
-        }
+        Input = new InputModel
+        {
+            PhoneNumber = phoneNumber,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+        };
     }
 }

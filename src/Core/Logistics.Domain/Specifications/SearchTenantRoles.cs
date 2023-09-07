@@ -8,10 +8,7 @@ public class SearchTenantRoles : BaseSpecification<TenantRole>
             return;
         
         Criteria = i =>
-            (!string.IsNullOrEmpty(i.Name) &&
-             i.Name.Contains(search)) ||
-
-            (!string.IsNullOrEmpty(i.DisplayName) &&
-             i.DisplayName.Contains(search));
+            i.Name.Contains(search) ||
+            (i.DisplayName != null && i.DisplayName.Contains(search));
     }
 }

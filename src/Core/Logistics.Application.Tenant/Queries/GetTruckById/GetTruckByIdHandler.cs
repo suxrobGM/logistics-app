@@ -1,4 +1,5 @@
-﻿using Logistics.Models;
+﻿using Logistics.Application.Tenant.Mappers;
+using Logistics.Models;
 
 namespace Logistics.Application.Tenant.Queries;
 
@@ -15,40 +16,22 @@ internal sealed class GetTruckByIdHandler : RequestHandler<GetTruckByIdQuery, Re
         GetTruckByIdQuery req, CancellationToken cancellationToken)
     {
         var truckEntity = await _tenantRepository.GetAsync<Truck>(req.Id);
-        string[]? loadIds = null;
-
-        if (req.IncludeLoadIds)
-        {
-            loadIds = _tenantRepository.Query<Truck>()
-                .SelectMany(i => i.Loads)
-                .Select(i => i.Id)
-                .ToArray();
-        }
-
+        
         if (truckEntity == null)
             return ResponseResult<TruckDto>.CreateError("Could not find the specified truck");
         
-        var truck = new TruckDto
+        var truckDto = truckEntity.ToDto();
+
+        if (req.IncludeLoadIds)
         {
-            Id = truckEntity.Id,
-            TruckNumber = truckEntity.TruckNumber,
-            DriverIds = truckEntity.Drivers.Select(i => i.Id).ToArray(),
-            // DriverName = truckDriver?.GetFullName(),
-            LoadIds = loadIds
-        };
+            var loadIds = _tenantRepository.Query<Truck>()
+                .SelectMany(i => i.Loads)
+                .Select(i => i.Id)
+                .ToArray();
 
-        return ResponseResult<TruckDto>.CreateSuccess(truck);
-    }
-
-    protected override bool Validate(GetTruckByIdQuery request, out string errorDescription)
-    {
-        errorDescription = string.Empty;
-
-        if (string.IsNullOrEmpty(request.Id))
-        {
-            errorDescription = "Id is an empty string";
+            truckDto.LoadIds = loadIds;
         }
 
-        return string.IsNullOrEmpty(errorDescription);
+        return ResponseResult<TruckDto>.CreateSuccess(truckDto);
     }
 }

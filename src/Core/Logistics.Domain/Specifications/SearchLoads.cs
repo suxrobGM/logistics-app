@@ -3,25 +3,22 @@
 public class SearchLoads : BaseSpecification<Load>
 {
     public SearchLoads(
-        string? search, 
-        string[] userIds, 
-        string?[] userFirstNames,
-        string?[] userLastNames,
+        string? search,
         string? orderBy = "RefId", 
         bool descending = false)
     {
+        if (string.IsNullOrEmpty(search))
+            return;
+        
         Descending = descending;
         OrderBy = InitOrderBy(orderBy);
 
-        if (string.IsNullOrEmpty(search))
-            return;
-
         Criteria = i =>
-            (!string.IsNullOrEmpty(i.Name) &&
-             i.Name.Contains(search)) ||
-            (!string.IsNullOrEmpty(i.AssignedDispatcherId) &&
-             userIds.Contains(i.AssignedDispatcherId) &&
-             (userFirstNames.Contains(search) || userLastNames.Contains(search)));
+            (i.Name != null && i.Name.Contains(search)) ||
+            search.Contains(i.RefId.ToString()) ||
+            (i.OriginAddress != null && i.OriginAddress.Contains(search)) || 
+            (i.DestinationAddress != null && i.DestinationAddress.Contains(search)) ||
+            (i.AssignedTruck != null && search.Contains(i.AssignedTruck.TruckNumber!.ToString()));
     }
 
     private static Expression<Func<Load, object>> InitOrderBy(string? propertyName)

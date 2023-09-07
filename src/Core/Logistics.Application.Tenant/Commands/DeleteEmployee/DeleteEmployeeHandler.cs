@@ -17,10 +17,10 @@ internal sealed class DeleteEmployeeHandler : RequestHandler<DeleteEmployeeComma
         DeleteEmployeeCommand req, CancellationToken cancellationToken)
     {
         var tenant = _tenantRepository.GetCurrentTenant();
-        var employee = await _tenantRepository.GetAsync<Employee>(req.Id!);
+        var employee = await _tenantRepository.GetAsync<Employee>(req.UserId!);
 
         if (employee == null)
-            return ResponseResult.CreateError($"Could not find employee with ID {req.Id}");
+            return ResponseResult.CreateError($"Could not find employee with ID {req.UserId}");
 
         var user = await _mainRepository.GetAsync<User>(employee.Id);
         user?.RemoveTenant(tenant.Id);
@@ -40,21 +40,5 @@ internal sealed class DeleteEmployeeHandler : RequestHandler<DeleteEmployeeComma
         await _tenantRepository.UnitOfWork.CommitAsync();
         await _mainRepository.UnitOfWork.CommitAsync();
         return ResponseResult.CreateSuccess();
-    }
-
-    protected override bool Validate(DeleteEmployeeCommand request, out string errorDescription)
-    {
-        errorDescription = string.Empty;
-
-        // if (string.IsNullOrEmpty(_tenantRepository.CurrentTenant?.Id))
-        // {
-        //     errorDescription = "Could not evaluate current tenant's ID";
-        // }
-        if (string.IsNullOrEmpty(request.Id))
-        {
-            errorDescription = "Employee ID is an empty string";
-        }
-
-        return string.IsNullOrEmpty(errorDescription);
     }
 }

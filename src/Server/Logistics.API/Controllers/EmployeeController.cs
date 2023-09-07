@@ -21,7 +21,7 @@ public class EmployeeController : ControllerBase
     {
         var result = await _mediator.Send(new GetEmployeeByIdQuery
         {
-            Id = id
+            UserId = id
         });
 
         if (result.Success)
@@ -62,7 +62,7 @@ public class EmployeeController : ControllerBase
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.Edit)]
-    public async Task<IActionResult> RemoveRole([FromBody] RemoveEmployeeRoleCommand request)
+    public async Task<IActionResult> RemoveRole([FromBody] RemoveRoleFromEmployeeCommand request)
     {
         var result = await _mediator.Send(request);
 
@@ -78,7 +78,7 @@ public class EmployeeController : ControllerBase
     [Authorize(Policy = Permissions.Employee.Edit)]
     public async Task<IActionResult> Update(string id, [FromBody] UpdateEmployeeCommand request)
     {
-        request.Id = id;
+        request.UserId = id;
         var result = await _mediator.Send(request);
 
         if (result.Success)
@@ -95,7 +95,7 @@ public class EmployeeController : ControllerBase
     {
         var result = await _mediator.Send(new DeleteEmployeeCommand
         {
-            Id = id
+            UserId = id
         });
 
         if (result.Success)
