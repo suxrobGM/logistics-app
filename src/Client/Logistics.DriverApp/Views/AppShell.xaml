@@ -18,7 +18,8 @@
                   Route="AccountPage" />
     <ShellContent Title="Change Organization" 
                   ContentTemplate="{DataTemplate views:ChangeOrganizationPage}" 
-                  Route="ChangeOrganizationPage" />
+                  Route="ChangeOrganizationPage"
+                  IsVisible="{Binding ChangeOrganizationPageVisible}" />
     <ShellContent Title="Settings" 
                   ContentTemplate="{DataTemplate views:SettingsPage}" 
                   Route="SettingsPage" />

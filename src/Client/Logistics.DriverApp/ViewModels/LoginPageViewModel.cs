@@ -1,4 +1,6 @@
-﻿using Logistics.DriverApp.Services;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Logistics.DriverApp.Messages;
+using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.Authentication;
 
 namespace Logistics.DriverApp.ViewModels;
@@ -58,6 +60,11 @@ public class LoginPageViewModel : BaseViewModel
             var tenantId = await _tenantService.GetTenantIdFromCacheAsync() ??
                            _authService.User?.TenantIds.FirstOrDefault();
 
+            if (_authService.User is not null)
+            {
+                WeakReferenceMessenger.Default.Send(new SuccessfullyLoggedMessage(_authService.User));
+            }
+            
             if (!string.IsNullOrEmpty(tenantId))
             {
                 _apiClient.TenantId = tenantId;

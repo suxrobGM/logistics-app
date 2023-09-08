@@ -16,9 +16,14 @@ public class AppShellViewModel : BaseViewModel
         _apiClient.OnErrorResponse += async (s, e) => await HandleApiErrors(e);
         SignOutCommand = new AsyncRelayCommand(SignOutAsync);
         ActiveLoadsPageVisible = true;
-        Messenger.Register<TenantIdChangedMessage>(this, (s, m) =>
+        ChangeOrganizationPageVisible = true;
+        Messenger.Register<TenantIdChangedMessage>(this, (_, m) =>
         {
             ActiveLoadsPageVisible = !string.IsNullOrEmpty(m.Value);
+        });
+        Messenger.Register<SuccessfullyLoggedMessage>(this, (_, m) =>
+        {
+            ChangeOrganizationPageVisible = m.Value.TenantIds.Count > 1;
         });
     }
 
@@ -32,6 +37,13 @@ public class AppShellViewModel : BaseViewModel
     {
         get => _activeLoadsPageVisible;
         set => SetProperty(ref _activeLoadsPageVisible, value);
+    }
+    
+    private bool _changeOrganizationPageVisible;
+    public bool ChangeOrganizationPageVisible
+    {
+        get => _changeOrganizationPageVisible;
+        set => SetProperty(ref _changeOrganizationPageVisible, value);
     }
 
     #endregion
