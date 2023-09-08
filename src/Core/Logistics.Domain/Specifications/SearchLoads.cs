@@ -7,18 +7,17 @@ public class SearchLoads : BaseSpecification<Load>
         string? orderBy = "RefId", 
         bool descending = false)
     {
-        if (string.IsNullOrEmpty(search))
-            return;
-        
         Descending = descending;
         OrderBy = InitOrderBy(orderBy);
+        
+        if (string.IsNullOrEmpty(search))
+            return;
 
         Criteria = i =>
             (i.Name != null && i.Name.Contains(search)) ||
-            search.Contains(i.RefId.ToString()) ||
+            i.RefId.ToString().Contains(search) ||
             (i.OriginAddress != null && i.OriginAddress.Contains(search)) || 
-            (i.DestinationAddress != null && i.DestinationAddress.Contains(search)) ||
-            (i.AssignedTruck != null && search.Contains(i.AssignedTruck.TruckNumber!.ToString()));
+            (i.DestinationAddress != null && i.DestinationAddress.Contains(search));
     }
 
     private static Expression<Func<Load, object>> InitOrderBy(string? propertyName)
@@ -27,7 +26,7 @@ public class SearchLoads : BaseSpecification<Load>
         return propertyName switch
         {
             "name" => i => i.Name!,
-            "sourceaddress" => i => i.OriginAddress!,
+            "originaddress" => i => i.OriginAddress!,
             "destinationaddress" => i => i.DestinationAddress!,
             "deliverycost" => i => i.DeliveryCost,
             "distance" => i => i.Distance,

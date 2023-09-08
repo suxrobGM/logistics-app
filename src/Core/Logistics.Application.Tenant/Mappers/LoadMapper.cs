@@ -22,7 +22,9 @@ public static class LoadMapper
             AssignedDispatcherId = entity.AssignedDispatcherId,
             AssignedDispatcherName = entity.AssignedDispatcher?.GetFullName(),
             AssignedTruckId = entity.AssignedTruckId,
-            AssignedTruckNumber = entity.AssignedTruck?.TruckNumber
+            AssignedTruckNumber = entity.AssignedTruck?.TruckNumber,
+            AssignedTruckDriversId = entity.AssignedTruck?.Drivers.Select(i => i.Id),
+            AssignedTruckDriversName = entity.AssignedTruck?.Drivers.Select(i => i.GetFullName()) 
         };
     }
 }

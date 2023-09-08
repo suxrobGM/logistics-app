@@ -17,4 +17,6 @@ public class LoadDto
     public string? AssignedDispatcherName { get; set; }
     public string? AssignedTruckId { get; set; }
     public string? AssignedTruckNumber { get; set; }
+    public IEnumerable<string>? AssignedTruckDriversId { get; set; }
+    public IEnumerable<string>? AssignedTruckDriversName { get; set; }
 }

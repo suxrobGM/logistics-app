@@ -4,6 +4,8 @@ public class FilterLoadsByInterval : BaseSpecification<Load>
 {
     public FilterLoadsByInterval(string? truckId, DateTime startPeriod, DateTime endPeriod)
     {
+        OrderBy = i => i.DeliveryDate!;
+        
         if (!string.IsNullOrEmpty(truckId))
         {
             Criteria = i =>
@@ -15,7 +17,5 @@ public class FilterLoadsByInterval : BaseSpecification<Load>
             Criteria = i =>
                 i.DeliveryDate.HasValue && i.DeliveryDate >= startPeriod && i.DeliveryDate <= endPeriod;
         }
-
-        OrderBy = i => i.DeliveryDate!;
     }
 }

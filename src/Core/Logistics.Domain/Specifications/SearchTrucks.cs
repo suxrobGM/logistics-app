@@ -13,6 +13,6 @@ public class SearchTrucks : BaseSpecification<Truck>
             return;
         
         Criteria = i => 
-            i.TruckNumber!.ToString().Contains(search);
+            i.TruckNumber != null && i.TruckNumber.ToString().Contains(search);
     }
 }

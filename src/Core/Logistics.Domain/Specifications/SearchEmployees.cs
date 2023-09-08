@@ -6,11 +6,11 @@ public class SearchEmployees : BaseSpecification<Employee>
         string? orderBy = "Email", 
         bool descending = false)
     {
-        if (string.IsNullOrEmpty(search))
-            return;
-
         Descending = descending;
         OrderBy = InitOrderBy(orderBy);
+        
+        if (string.IsNullOrEmpty(search))
+            return;
         
         Criteria = i =>
             (i.FirstName != null && i.FirstName.Contains(search)) ||

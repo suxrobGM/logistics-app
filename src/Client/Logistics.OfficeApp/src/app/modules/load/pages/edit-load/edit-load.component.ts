@@ -60,7 +60,7 @@ export class EditLoadComponent implements OnInit {
       distance: new FormControl(0, Validators.required),
       dispatcherName: new FormControl('', Validators.required),
       dispatcherId: new FormControl('', Validators.required),
-      assignedTruckId: new FormControl('', Validators.required),
+      assignedTruck: new FormControl('', Validators.required),
       status: new FormControl(LoadStatus.Dispatched, Validators.required),
     });
   }
@@ -91,30 +91,30 @@ export class EditLoadComponent implements OnInit {
       }
 
       this.suggestedDrivers = result.items.map((truckDriver) => {
-        const driversFullName = (truckDriver.drivers || []).map((driver) => driver.fullName).join(', ');
+        const driversName = truckDriver.drivers.map((driver) => driver.fullName);
 
         return {
-          truckId: truckDriver.truck!.id!,
-          driversName: `${truckDriver.truck?.truckNumber} - ${driversFullName}`,
+          truckId: truckDriver.truck.id,
+          driversName: this.formatDriversName(truckDriver.truck.truckNumber, driversName),
         };
       });
     });
   }
 
   public submit() {
-    const assignedTruck = this.form.value.assignedTruckId;
+    const assignedTruck = this.form.value.assignedTruck;
 
     if (!assignedTruck) {
       this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Select a truck'});
       return;
     }
 
-    if (this.editMode) {
-      this.updateLoad();
-    }
-    else {
-      this.createLoad();
-    }
+    // if (this.editMode) {
+    //   this.updateLoad();
+    // }
+    // else {
+    //   this.createLoad();
+    // }
   }
 
   public confirmToDelete() {
@@ -276,7 +276,9 @@ export class EditLoadComponent implements OnInit {
           dispatcherName: load.assignedDispatcherName,
           dispatcherId: load.assignedDispatcherId,
           status: load.status,
-          assignedTruckId: load.assignedTruckId,
+          assignedTruck: {
+            truckId: load.assignedTruckId,
+            driversName: this.formatDriversName(load.assignedTruckNumber, load.assignedTruckDriversName)},
         });
 
         this.orgGeocoder.query(load.originAddress!);
@@ -303,6 +305,11 @@ export class EditLoadComponent implements OnInit {
     this.headerText = 'Add a new load';
     this.id = undefined;
     this.fetchCurrentDispatcher();
+  }
+
+  private formatDriversName(truckNumber: string, driversName: string[]): string {
+    const driversFullName = driversName.join(', ');
+    return `${truckNumber} - ${driversFullName}`;
   }
 
   private getLocaleDate(dateStr?: string | Date): string {

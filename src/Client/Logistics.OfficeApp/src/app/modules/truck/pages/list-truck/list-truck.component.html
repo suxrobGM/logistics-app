@@ -45,8 +45,9 @@
               </a>
             </td>
             <td>
-              <span class="me-1" *ngFor="let driver of truck.drivers">
+              <span *ngFor="let driver of truck.drivers">
                 {{driver.fullName}}
+                <span *ngIf="truck.drivers.length > 1">,</span>
               </span>
             </td>
             <td>

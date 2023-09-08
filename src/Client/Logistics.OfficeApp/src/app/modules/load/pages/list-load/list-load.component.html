@@ -35,7 +35,7 @@
             </th>
             <th pSortableColumn="originAddress">
               Origin
-              <p-sortIcon field="sourceAddress"></p-sortIcon>
+              <p-sortIcon field="originAddress"></p-sortIcon>
             </th>
             <th pSortableColumn="destinationAddress">
               Destination
@@ -83,8 +83,8 @@
             <td [pTooltip]="load.sourceAddress" [showDelay]="500" tooltipPosition="bottom">
               {{load.name}}
             </td>
-            <td [pTooltip]="load.sourceAddress" [showDelay]="500" tooltipPosition="bottom">
-              {{load.sourceAddress}}
+            <td [pTooltip]="load.originAddress" [showDelay]="500" tooltipPosition="bottom">
+              {{load.originAddress}}
             </td>
             <td [pTooltip]="load.sourceAddress" [showDelay]="500" tooltipPosition="bottom">
               {{load.destinationAddress}}
@@ -95,7 +95,11 @@
             <td>{{getLoadStatusName(load.status)}}</td>
             <td>{{load.distance | distanceUnit:'mi'}}</td>
             <td>{{load.deliveryCost | currency}}</td>
-            <td>{{load.assignedTruckNumber}}</td>
+            <td>
+              <a [routerLink]="['/trucks/edit', load.assignedTruckId]">
+                {{load.assignedTruckNumber}}
+              </a>
+            </td>
             <td>{{load.assignedDispatcherName}}</td>
           </tr>
         </ng-template>

@@ -18,13 +18,13 @@ internal sealed class GetTruckDriversHandler : RequestHandler<GetTruckDriversQue
         var totalItems = _tenantRepository.Query<Employee>().Count();
         var drivers = _tenantRepository.Query<Employee>().Where(i => !string.IsNullOrEmpty(i.TruckId));
 
-        var truckDriversEntity = from truck in _tenantRepository.Query<Truck>()
+        var truckDriversQuery = from truck in _tenantRepository.Query<Truck>()
                 join driver in drivers on truck.Id equals driver.TruckId into teamDrivers
                 from teamDriver in teamDrivers.DefaultIfEmpty()
-                where (teamDriver != null && (
-                          teamDriver.FirstName!.Contains(req.Search!) ||
-                          teamDriver.LastName!.Contains(req.Search!) ||
-                          teamDriver.Email!.Contains(req.Search!))) ||
+                where teamDriver != null &&
+                      teamDriver.FirstName!.Contains(req.Search!) ||
+                      teamDriver.LastName!.Contains(req.Search!) ||
+                      teamDriver.Email!.Contains(req.Search!) ||
                       truck.TruckNumber!.Contains(req.Search!)
                 select new
                 {
@@ -32,12 +32,13 @@ internal sealed class GetTruckDriversHandler : RequestHandler<GetTruckDriversQue
                     TeamDriver = teamDriver
                 };
 
-        var truckDriversDto = truckDriversEntity
+        var truckDriversDto = truckDriversQuery
             .GroupBy(td => td.Truck)
             .Select(g => new TruckDriversDto
             {
                 Truck = g.Key.ToDto(),
-                Drivers = g.Select(td => td.TeamDriver.ToDto())
+                Drivers = g.Where(td => td.TeamDriver != null)
+                    .Select(td => td.TeamDriver.ToDto())
             });
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
