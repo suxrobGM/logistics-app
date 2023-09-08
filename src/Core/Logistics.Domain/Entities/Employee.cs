@@ -17,6 +17,11 @@ public class Employee : AuditableEntity, ITenantEntity
     /// </summary>
     public string? DeviceToken { get; set; }
     
+    /// <summary>
+    /// Driver last known location. The format of data should be in "{Latitude},{Longitude}".
+    /// </summary>
+    public string? LastKnownLocation { get; set; }
+    
     public string? TruckId { get; set; }
     public virtual Truck? Truck { get; set; }
 

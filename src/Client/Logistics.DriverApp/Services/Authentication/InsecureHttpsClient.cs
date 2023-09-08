@@ -1,6 +1,6 @@
 ﻿namespace Logistics.DriverApp.Services.Authentication;
 
-internal static class HttpsClientHandlerService
+internal static class InsecureHttpsClient
 {
     public static HttpMessageHandler GetPlatformMessageHandler()
     {

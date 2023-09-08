@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Logistics.API.Authorization;
+using Logistics.API.Hubs;
 using Logistics.API.Middlewares;
 using Logistics.Infrastructure.EF;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -21,6 +22,12 @@ internal static class HostingExtensions
         builder.Services.AddInfrastructureLayer(builder.Configuration);
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddScoped<ExceptionHandlingMiddleware>();
+        builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+        builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
+        builder.Services.AddAuthorization();
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
+        builder.Services.AddSignalR();
 
         builder.Services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
@@ -47,12 +54,6 @@ internal static class HostingExtensions
             options.InvalidModelStateResponseFactory = context =>
                 new BadRequestObjectResult(ResponseResult.CreateError(GetModelStateErrors(context.ModelState)));
         });
-        
-        builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
-        builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
-        builder.Services.AddAuthorization();
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
         
         builder.Services.AddCors(options =>
         {
@@ -95,6 +96,7 @@ internal static class HostingExtensions
 
         app.UseCustomExceptionHandler();
         app.MapControllers();
+        app.MapHub<LiveTrackingHub>("/hubs/LiveTracking");
         return app;
     }
 

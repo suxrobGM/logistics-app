@@ -28,15 +28,16 @@ public partial class App
                           ?? throw new NullReferenceException("Could not get OidcClient form the appsettings.json file");
         services.AddSingleton(oidcOptions);
 
-        services.AddTransient<AppShellViewModel>();
-        services.AddTransient<ActiveLoadsPageViewModel>();
-        services.AddTransient<AccountPageViewModel>();
-        services.AddTransient<LoginPageViewModel>();
-        services.AddTransient<ChangeOrganizationPageVideModel>();
+        services.AddScoped<AppShellViewModel>();
+        services.AddScoped<ActiveLoadsPageViewModel>();
+        services.AddScoped<AccountPageViewModel>();
+        services.AddScoped<LoginPageViewModel>();
+        services.AddScoped<ChangeOrganizationPageVideModel>();
         services.AddScoped<IdentityModel.OidcClient.Browser.IBrowser, WebBrowserAuthenticator>();
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<ITokenStorage, TokenStorage>();
-        services.AddScoped<ITenantService, TenantService>();
+        services.AddScoped<ILocationTrackingService, LocationTrackingService>();
+        services.AddSingleton<ITokenStorage, TokenStorage>();
+        services.AddSingleton<ITenantService, TenantService>();
         services.AddSingleton<IMapsService, GoogleMapsService>();
         services.AddWebApiClient(configuration);
         return services.BuildServiceProvider();

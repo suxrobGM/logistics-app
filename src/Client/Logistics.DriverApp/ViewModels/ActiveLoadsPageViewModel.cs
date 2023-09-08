@@ -12,15 +12,18 @@ public class ActiveLoadsPageViewModel : BaseViewModel
     private readonly IApiClient _apiClient;
     private readonly IAuthService _authService;
     private readonly IMapsService _mapsService;
+    private readonly ILocationTrackingService _locationTrackingService;
 
     public ActiveLoadsPageViewModel(
         IApiClient apiClient, 
         IAuthService authService,
-        IMapsService mapsService)
+        IMapsService mapsService,
+        ILocationTrackingService locationTrackingService)
     {
         _apiClient = apiClient;
         _authService = authService;
         _mapsService = mapsService;
+        _locationTrackingService = locationTrackingService;
         CrossFirebaseCloudMessaging.Current.NotificationReceived += HandleLoadNotificationReceived;
     }
 
@@ -68,6 +71,7 @@ public class ActiveLoadsPageViewModel : BaseViewModel
     {
         await SendDeviceTokenAsync();
         await FetchDashboardDataAsync();
+        await _locationTrackingService.SendLocationDataAsync();
     }
 
     private async Task FetchDashboardDataAsync()
