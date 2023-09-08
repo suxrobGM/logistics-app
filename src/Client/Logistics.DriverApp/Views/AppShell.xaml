@@ -4,28 +4,49 @@
                  xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                  xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                  xmlns:views="clr-namespace:Logistics.DriverApp.Views"
-                 xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels">
+                 xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels"
+                 xmlns:helpers="clr-namespace:Logistics.DriverApp.Helpers">
     <TabBar Title="" Shell.FlyoutBehavior="Disabled" Shell.NavBarIsVisible="True">
         <ShellContent ContentTemplate="{DataTemplate views:LoginPage}"
                       Route="LoginPage" />
     </TabBar>
     <ShellContent Title="Active Loads" 
-                  ContentTemplate="{DataTemplate views:ActiveLoadsPage}" 
-                  Route="ActiveLoadsPage" 
-                  IsVisible="{Binding ActiveLoadsPageVisible}" />
+                  ContentTemplate="{DataTemplate views:ActiveLoadsPage}"
+                  Route="ActiveLoadsPage"
+                  IsVisible="{Binding ActiveLoadsPageVisible}">
+        <ShellContent.Icon>
+            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static helpers:MaterialIcons.Local_shipping}" Color="Black" />
+        </ShellContent.Icon>
+    </ShellContent>
     <ShellContent Title="Account" 
                   ContentTemplate="{DataTemplate views:AccountPage}" 
-                  Route="AccountPage" />
+                  Route="AccountPage">
+        <ShellContent.Icon>
+            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static helpers:MaterialIcons.Account_circle}" Color="Black" />
+        </ShellContent.Icon>
+    </ShellContent>
     <ShellContent Title="Change Organization" 
                   ContentTemplate="{DataTemplate views:ChangeOrganizationPage}" 
                   Route="ChangeOrganizationPage"
-                  IsVisible="{Binding ChangeOrganizationPageVisible}" />
+                  IsVisible="{Binding ChangeOrganizationPageVisible}">
+        <ShellContent.Icon>
+            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static helpers:MaterialIcons.Domain}" Color="Black" />
+        </ShellContent.Icon>
+    </ShellContent>
     <ShellContent Title="Settings" 
                   ContentTemplate="{DataTemplate views:SettingsPage}" 
-                  Route="SettingsPage" />
+                  Route="SettingsPage">
+        <ShellContent.Icon>
+            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static helpers:MaterialIcons.Settings}" Color="Black" />
+        </ShellContent.Icon>
+    </ShellContent>
     <ShellContent Title="About" 
                   ContentTemplate="{DataTemplate views:AboutPage}" 
-                  Route="AboutPage" />
+                  Route="AboutPage">
+        <ShellContent.Icon>
+            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static helpers:MaterialIcons.Info}" Color="Black" />
+        </ShellContent.Icon>
+    </ShellContent>
     <Shell.FlyoutFooter>
         <StackLayout Padding="20">
             <Button Text="Sign Out" Command="{Binding SignOutCommand}"></Button>
