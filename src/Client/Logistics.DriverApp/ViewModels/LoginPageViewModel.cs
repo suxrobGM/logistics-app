@@ -62,7 +62,7 @@ public class LoginPageViewModel : BaseViewModel
             {
                 _apiClient.TenantId = tenantId;
                 await _tenantService.SaveTenantIdAsync(tenantId);
-                await Shell.Current.GoToAsync("//DashboardPage");
+                await Shell.Current.GoToAsync("//ActiveLoadsPage");
             }
             else
             {

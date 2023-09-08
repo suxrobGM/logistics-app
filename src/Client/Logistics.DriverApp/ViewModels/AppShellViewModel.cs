@@ -15,10 +15,10 @@ public class AppShellViewModel : BaseViewModel
         _apiClient = apiClient;
         _apiClient.OnErrorResponse += async (s, e) => await HandleApiErrors(e);
         SignOutCommand = new AsyncRelayCommand(SignOutAsync);
-        DashboardPageVisible = true;
+        ActiveLoadsPageVisible = true;
         Messenger.Register<TenantIdChangedMessage>(this, (s, m) =>
         {
-            DashboardPageVisible = !string.IsNullOrEmpty(m.Value);
+            ActiveLoadsPageVisible = !string.IsNullOrEmpty(m.Value);
         });
     }
 
@@ -27,11 +27,11 @@ public class AppShellViewModel : BaseViewModel
 
     #region Bindable properties
 
-    private bool _dashboardPageVisible;
-    public bool DashboardPageVisible
+    private bool _activeLoadsPageVisible;
+    public bool ActiveLoadsPageVisible
     {
-        get => _dashboardPageVisible;
-        set => SetProperty(ref _dashboardPageVisible, value);
+        get => _activeLoadsPageVisible;
+        set => SetProperty(ref _activeLoadsPageVisible, value);
     }
 
     #endregion

@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<views:BaseContentPage x:TypeArguments="viewModels:ActiveLoadsPageViewModel"
+                       x:Class="Logistics.DriverApp.Views.ActiveLoadsPage"
+                       xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                       xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+                       xmlns:views="clr-namespace:Logistics.DriverApp.Views"
+                       xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels"
+                       Title="Active Loads">
+    <Grid>
+        <core:SfBusyIndicator IsRunning="{Binding IsLoading}"
+                              IndicatorColor="Pink"
+                              OverlayFill="#80000000">
+        </core:SfBusyIndicator>
+        <StackLayout Spacing="10" Padding="10">
+            <HorizontalStackLayout>
+                <Label Text="Truck: " FontAttributes="Bold" />
+                <Label Text="{Binding TruckNumber}" />
+            </HorizontalStackLayout>
+            <HorizontalStackLayout>
+                <Label Text="Driver: " FontAttributes="Bold" />
+                <Label Text="{Binding DriverName}" />
+            </HorizontalStackLayout>
+            <HorizontalStackLayout IsVisible="{Binding IsTeammateLabelVisible}">
+                <Label Text="Teammates: " FontAttributes="Bold" />
+                <Label Text="{Binding TeammatesName}" />
+            </HorizontalStackLayout>
+            
+            <StackLayout BindableLayout.ItemsSource="{Binding ActiveLoads}" Margin="0,5,0,5">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout Spacing="5">
+                            <HorizontalStackLayout>
+                                <Label Text="Load ID: " FontAttributes="Bold" />
+                                <Label Text="{Binding LoadData.RefId}" />
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout>
+                                <Label Text="Load Name: " FontAttributes="Bold" />
+                                <Label Text="{Binding LoadData.Name}" />
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout>
+                                <Label Text="Origin: " FontAttributes="Bold" />
+                                <Label Text="{Binding LoadData.OriginAddress}" />
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout>
+                                <Label Text="Destination: " FontAttributes="Bold" />
+                                <Label Text="{Binding LoadData.DestinationAddress}" />
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout>
+                                <Label Text="Delivery Cost: " FontAttributes="Bold" />
+                                <Label Text="{Binding LoadData.DeliveryCost}" />
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout>
+                                <Label Text="Distance: " FontAttributes="Bold" />
+                                <Label Text="{Binding LoadData.Distance}" />
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout>
+                                <Label Text="Dispatcher: " FontAttributes="Bold" />
+                                <Label Text="{Binding LoadData.AssignedDispatcherName}" />
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout>
+                                <Label Text="Status: " FontAttributes="Bold" />
+                                <Label Text="{Binding LoadData.Status}" />
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout>
+                                <Label Text="Dispatch Date: " FontAttributes="Bold" />
+                                <Label Text="{Binding LoadData.DispatchedDate}" />
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout>
+                                <Label Text="Pickup Date: " FontAttributes="Bold" />
+                                <Label Text="{Binding LoadData.PickUpDate}" />
+                            </HorizontalStackLayout>
+                            <WebView HeightRequest="400">
+                                <WebView.Source>
+                                    <HtmlWebViewSource Html="{Binding EmbedMapHtml}" />
+                                </WebView.Source>
+                            </WebView>
+                        </StackLayout>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+                <BindableLayout.EmptyView>
+                    <Label Text="Currently, you do not have any active loads" />
+                </BindableLayout.EmptyView>
+            </StackLayout>
+        </StackLayout>
+    </Grid>
+</views:BaseContentPage>

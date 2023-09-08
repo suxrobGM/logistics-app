@@ -21,13 +21,17 @@ internal sealed class GetDriverDashboardDataHandler : RequestHandler<GetDriverDa
             return ResponseResult<DriverDashboardDto>.CreateError($"Could not find a driver with ID '{req.UserId}'");
         
         var activeLoads = _tenantRepository.ApplySpecification(new GetDriverActiveLoads(req.UserId))
-            .Select(i => i.ToDto())
-            .ToArray();
+            .Select(i => i.ToDto());
+
+        var teammates = _tenantRepository.Query<Employee>()
+            .Where(i => i.Id != driver.Id && i.TruckId == driver.TruckId)
+            .Select(i => i.GetFullName());
 
         var driverDashboardDto = new DriverDashboardDto()
         {
             TruckNumber = driver.Truck?.TruckNumber,
             DriverFullName = driver.GetFullName(),
+            TeammatesName = teammates,
             ActiveLoads = activeLoads
         };
 

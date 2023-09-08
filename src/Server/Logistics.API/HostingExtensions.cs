@@ -26,12 +26,11 @@ internal static class HostingExtensions
             .AddJwtBearer("Bearer", options =>
             {
                 builder.Configuration.Bind("IdentityServer", options);
+                options.TokenValidationParameters.ValidateAudience = true;
+                options.TokenValidationParameters.ValidateIssuer = true;
 #if DEBUG
                 options.TokenValidationParameters.ValidateAudience = false;
                 options.TokenValidationParameters.ValidateIssuer = false;
-#else
-                options.TokenValidationParameters.ValidateAudience = true;
-                options.TokenValidationParameters.ValidateIssuer = true;
 #endif
             });
 
@@ -52,9 +51,9 @@ internal static class HostingExtensions
         builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
         builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
         builder.Services.AddAuthorization();
-
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("DefaultCors", cors =>
@@ -66,7 +65,6 @@ internal static class HostingExtensions
                     .AllowAnyHeader()
                     .AllowAnyMethod();
             });
-            
             options.AddPolicy("AnyCors", cors =>
             {
                 cors.AllowAnyOrigin()

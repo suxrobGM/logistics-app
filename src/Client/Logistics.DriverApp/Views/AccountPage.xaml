@@ -13,8 +13,8 @@
                               IndicatorColor="Pink"
                               OverlayFill="#80000000">
         </core:SfBusyIndicator>
-        <VerticalStackLayout>
-            <dataForm:SfDataForm DataObject="{Binding AccountDetails, Mode=TwoWay}" AutoGenerateItems="True">
+        <StackLayout>
+            <dataForm:SfDataForm DataObject="{Binding AccountDetails, Mode=TwoWay}" AutoGenerateItems="False">
                 <dataForm:SfDataForm.Items>
                     <dataForm:DataFormTextItem FieldName="Email" LabelText="Email:" IsReadOnly="True" />
                     <dataForm:DataFormTextItem FieldName="FirstName" LabelText="First Name:" />
@@ -23,6 +23,6 @@
                 </dataForm:SfDataForm.Items>
             </dataForm:SfDataForm>
             <Button Text="Save" Command="{Binding SaveCommand}" />
-        </VerticalStackLayout>
+        </StackLayout>
     </Grid>
 </views:BaseContentPage>

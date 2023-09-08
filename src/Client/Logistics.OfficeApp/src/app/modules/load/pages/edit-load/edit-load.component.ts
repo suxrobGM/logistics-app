@@ -109,12 +109,12 @@ export class EditLoadComponent implements OnInit {
       return;
     }
 
-    // if (this.editMode) {
-    //   this.updateLoad();
-    // }
-    // else {
-    //   this.createLoad();
-    // }
+    if (this.editMode) {
+      this.updateLoad();
+    }
+    else {
+      this.createLoad();
+    }
   }
 
   public confirmToDelete() {
@@ -130,13 +130,13 @@ export class EditLoadComponent implements OnInit {
     const command: CreateLoad = {
       name: this.form.value.name,
       originAddress: this.form.value.orgAddress,
-      originCoordinates: this.form.value.orgCoords,
+      originCoordinates: this.form.value.orgCoords.reverse().join(','),
       destinationAddress: this.form.value.dstAddress,
-      destinationCoordinates: this.form.value.dstCoords,
+      destinationCoordinates: this.form.value.dstCoords.reverse().join(','),
       deliveryCost: this.form.value.deliveryCost,
       distance: this.distanceMeters,
       assignedDispatcherId: this.form.value.dispatcherId,
-      assignedTruckId: this.form.value.assignedTruckId,
+      assignedTruckId: this.form.value.assignedTruck.truckId,
     };
 
     this.apiService.createLoad(command)
@@ -155,13 +155,13 @@ export class EditLoadComponent implements OnInit {
       id: this.id!,
       name: this.form.value.name,
       originAddress: this.form.value.orgAddress,
-      originCoordinates: this.form.value.orgCoords,
+      originCoordinates: this.form.value.orgCoords.reverse().join(','),
       destinationAddress: this.form.value.dstAddress,
-      destinationCoordinates: this.form.value.dstCoords,
+      destinationCoordinates: this.form.value.dstCoords.reverse().join(','),
       deliveryCost: this.form.value.deliveryCost,
       distance: this.distanceMeters,
       assignedDispatcherId: this.form.value.dispatcherId,
-      assignedTruckId: this.form.value.assignedTruckId,
+      assignedTruckId: this.form.value.assignedTruck.truckId,
       status: this.form.value.status,
     };
 

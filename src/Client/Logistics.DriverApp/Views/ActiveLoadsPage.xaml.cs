@@ -1,8 +1,8 @@
 ﻿namespace Logistics.DriverApp.Views;
 
-public partial class DashboardPage
+public partial class ActiveLoadsPage
 {
-    public DashboardPage()
+    public ActiveLoadsPage()
     {
         InitializeComponent();
     }

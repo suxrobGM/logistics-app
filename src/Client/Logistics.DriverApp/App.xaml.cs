@@ -29,7 +29,7 @@ public partial class App
         services.AddSingleton(oidcOptions);
 
         services.AddTransient<AppShellViewModel>();
-        services.AddTransient<DashboardPageViewModel>();
+        services.AddTransient<ActiveLoadsPageViewModel>();
         services.AddTransient<AccountPageViewModel>();
         services.AddTransient<LoginPageViewModel>();
         services.AddTransient<ChangeOrganizationPageVideModel>();

@@ -1,18 +1,19 @@
-﻿using Logistics.DriverApp.Services;
+﻿using System.Collections.ObjectModel;
+using Logistics.DriverApp.Models;
+using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.Authentication;
-using Logistics.Models;
 using Plugin.Firebase.CloudMessaging;
 using Plugin.Firebase.CloudMessaging.EventArgs;
 
 namespace Logistics.DriverApp.ViewModels;
 
-public class DashboardPageViewModel : BaseViewModel
+public class ActiveLoadsPageViewModel : BaseViewModel
 {
     private readonly IApiClient _apiClient;
     private readonly IAuthService _authService;
     private readonly IMapsService _mapsService;
 
-    public DashboardPageViewModel(
+    public ActiveLoadsPageViewModel(
         IApiClient apiClient, 
         IAuthService authService,
         IMapsService mapsService)
@@ -22,9 +23,11 @@ public class DashboardPageViewModel : BaseViewModel
         _mapsService = mapsService;
         CrossFirebaseCloudMessaging.Current.NotificationReceived += HandleLoadNotificationReceived;
     }
-    
+
 
     #region Bindable properties
+    
+    public ObservableCollection<ActiveLoad> ActiveLoads { get; } = new();
 
     private string? _truckNumber;
     public string? TruckNumber
@@ -40,40 +43,22 @@ public class DashboardPageViewModel : BaseViewModel
         set => SetProperty(ref _driverName, value);
     }
 
-    private LoadDto? _currentLoad;
-    public LoadDto? CurrentLoad
+    private string? _teammatesName;
+    public string? TeammatesName
     {
-        get => _currentLoad;
+        get => _teammatesName;
         set
         {
-            SetProperty(ref _currentLoad, value);
-            IsCurrentLoadVisible = _currentLoad != null;
+            SetProperty(ref _teammatesName, value);
+            IsTeammateLabelVisible = !string.IsNullOrEmpty(_teammatesName);
         }
     }
 
-    private bool _isCurrentLoadVisible;
-    public bool IsCurrentLoadVisible
+    private bool _isTeammateLabelVisible;
+    public bool IsTeammateLabelVisible
     {
-        get => _isCurrentLoadVisible;
-        set
-        {
-            SetProperty(ref _isCurrentLoadVisible, value);
-            IsNoLoadsLabelVisible = !_isCurrentLoadVisible;
-        }
-    }
-
-    private bool _isNoLoadsLabelVisible;
-    public bool IsNoLoadsLabelVisible
-    {
-        get => _isNoLoadsLabelVisible;
-        set => SetProperty(ref _isNoLoadsLabelVisible, value);
-    }
-
-    private string? _embedMapHtml;
-    public string? EmbedMapHtml
-    {
-        get => _embedMapHtml;
-        set => SetProperty(ref _embedMapHtml, value);
+        get => _isTeammateLabelVisible;
+        set => SetProperty(ref _isTeammateLabelVisible, value);
     }
     
     #endregion
@@ -91,11 +76,30 @@ public class DashboardPageViewModel : BaseViewModel
         var driverId = _authService.User?.Id!;
         var result = await _apiClient.GetDriverDashboardDataAsync(driverId);
 
-        if (result.Success)
+        if (!result.Success)
         {
-            DriverName = result.Value!.DriverFullName;
-            TruckNumber = result.Value.TruckNumber;
-            CurrentLoad = result.Value.ActiveLoads?.FirstOrDefault();
+            await PopupHelpers.ShowErrorAsync("Failed to load the dashboard data, try again");
+            IsLoading = false;
+            return;
+        }
+        
+        var dashboardData = result.Value!;
+        DriverName = dashboardData.DriverFullName;
+        TruckNumber = dashboardData.TruckNumber;
+
+        if (dashboardData.ActiveLoads != null)
+        {
+            foreach (var loadDto in dashboardData.ActiveLoads)
+            {
+                var embedMapHtml =
+                    _mapsService.GetDirectionsMapHtml(loadDto.OriginCoordinates!, loadDto.DestinationCoordinates!);
+                ActiveLoads.Add(new ActiveLoad(loadDto, embedMapHtml));
+            }
+        }
+        
+        if (dashboardData.TeammatesName != null)
+        {
+            TeammatesName = string.Join(", ", dashboardData.TeammatesName);
         }
         
         IsLoading = false;
@@ -112,7 +116,10 @@ public class DashboardPageViewModel : BaseViewModel
             await _apiClient.SetDeviceTokenAsync(driverId, token);
         }
     }
+
     
+    #region Event handlers
+
     private async void HandleLoadNotificationReceived(object? sender, FCMNotificationReceivedEventArgs e)
     {
         if (e.Notification.Data.ContainsKey("loadId"))
@@ -120,4 +127,6 @@ public class DashboardPageViewModel : BaseViewModel
             await FetchDashboardDataAsync();
         }
     }
+
+    #endregion
 }

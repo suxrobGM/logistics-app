@@ -8,7 +8,7 @@ public class GoogleMapsService : IMapsService
                           <!DOCTYPE html>
                           <html>
                           <head></head>
-                          <body>
+                          <body style="margin: 0">
                               <iframe loading="lazy"
                                 style="border:0; height: 100vh; width: 100vw"
                                 referrerpolicy="no-referrer-when-downgrade"

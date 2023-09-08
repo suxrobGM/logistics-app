@@ -12,6 +12,7 @@
 
 .idea/
 .config/
+.VSCodeCounter/
 secrets.json
 *.secrets.json
 firebase-adminsdk-key.json

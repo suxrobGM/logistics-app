@@ -9,10 +9,10 @@
         <ShellContent ContentTemplate="{DataTemplate views:LoginPage}"
                       Route="LoginPage" />
     </TabBar>
-    <ShellContent Title="Dashboard" 
-                  ContentTemplate="{DataTemplate views:DashboardPage}" 
-                  Route="DashboardPage" 
-                  IsVisible="{Binding DashboardPageVisible}" />
+    <ShellContent Title="Active Loads" 
+                  ContentTemplate="{DataTemplate views:ActiveLoadsPage}" 
+                  Route="ActiveLoadsPage" 
+                  IsVisible="{Binding ActiveLoadsPageVisible}" />
     <ShellContent Title="Account" 
                   ContentTemplate="{DataTemplate views:AccountPage}" 
                   Route="AccountPage" />
