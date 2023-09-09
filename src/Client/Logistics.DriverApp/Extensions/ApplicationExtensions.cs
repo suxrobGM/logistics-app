@@ -25,7 +25,6 @@ public static class ApplicationExtensions
         
         services.AddSingleton(oidcOptions);
         services.AddWebApiClient(configuration);
-        
         services.AddSingleton<ITokenStorage, TokenStorage>();
         services.AddSingleton<ITenantService, TenantService>();
         services.AddSingleton<IMapsService, GoogleMapsService>();
@@ -37,12 +36,7 @@ public static class ApplicationExtensions
         services.AddScoped<IdentityModel.OidcClient.Browser.IBrowser, WebBrowserAuthenticator>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ILocationTracker, LocationTracker>();
-
-#if ANDROID
         services.AddScoped<ILocationTrackerBackgroundService, LocationTrackerBackgroundService>();
-#elif IOS
-        services.AddScoped<ILocationTrackerBackgroundService, LocationTrackerBackgroundService>();
-#endif
         return builder;
     }
 
