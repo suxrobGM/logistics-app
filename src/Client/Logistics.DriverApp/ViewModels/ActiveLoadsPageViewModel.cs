@@ -14,18 +14,18 @@ public class ActiveLoadsPageViewModel : BaseViewModel
     private readonly IApiClient _apiClient;
     private readonly IAuthService _authService;
     private readonly IMapsService _mapsService;
-    private readonly ILocationTrackingService _locationTrackingService;
+    private readonly ILocationTrackerBackgroundService _locationTrackerBackgroundService;
 
     public ActiveLoadsPageViewModel(
         IApiClient apiClient, 
         IAuthService authService,
         IMapsService mapsService,
-        ILocationTrackingService locationTrackingService)
+        ILocationTrackerBackgroundService locationTrackerBackgroundService)
     {
         _apiClient = apiClient;
         _authService = authService;
         _mapsService = mapsService;
-        _locationTrackingService = locationTrackingService;
+        _locationTrackerBackgroundService = locationTrackerBackgroundService;
         CrossFirebaseCloudMessaging.Current.NotificationReceived += HandleLoadNotificationReceived;
         Messenger.Register<TenantIdChangedMessage>(this, async (_, _) =>
         {
@@ -77,7 +77,7 @@ public class ActiveLoadsPageViewModel : BaseViewModel
     {
         await SendDeviceTokenAsync();
         await FetchDashboardDataAsync();
-        await _locationTrackingService.SendLocationDataAsync();
+        _locationTrackerBackgroundService.Start();
     }
 
     private async Task FetchDashboardDataAsync()

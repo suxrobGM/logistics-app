@@ -4,6 +4,12 @@ using Logistics.DriverApp.Services.Authentication;
 using Microsoft.Extensions.Configuration;
 using Syncfusion.Licensing;
 
+#if ANDROID
+using Logistics.DriverApp.Platforms.Android.Services;
+#elif IOS
+using Logistics.DriverApp.Platforms.iOS.Services;
+#endif
+
 namespace Logistics.DriverApp.Extensions;
 
 public static class ApplicationExtensions
@@ -30,7 +36,13 @@ public static class ApplicationExtensions
         services.AddScoped<ChangeOrganizationPageViewModel>();
         services.AddScoped<IdentityModel.OidcClient.Browser.IBrowser, WebBrowserAuthenticator>();
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<ILocationTrackingService, LocationTrackingService>();
+        services.AddScoped<ILocationTracker, LocationTracker>();
+
+#if ANDROID
+        services.AddScoped<ILocationTrackerBackgroundService, LocationTrackerBackgroundService>();
+#elif IOS
+        services.AddScoped<ILocationTrackerBackgroundService, LocationTrackerBackgroundService>();
+#endif
         return builder;
     }
 

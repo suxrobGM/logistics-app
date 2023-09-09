@@ -1,7 +1,6 @@
-﻿using ObjCRuntime;
-using UIKit;
+﻿using UIKit;
 
-namespace Logistics.DriverApp;
+namespace Logistics.DriverApp.Platforms.iOS;
 
 public class Program
 {

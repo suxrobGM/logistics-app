@@ -6,7 +6,7 @@ public abstract class BaseShell<TViewModel> : Shell where TViewModel : BaseViewM
 {
     protected BaseShell()
     {
-        ViewModel = App.Current.Services.GetRequiredService<TViewModel>();
+        ViewModel = App.Current.GetRequiredService<TViewModel>();
         BindingContext = ViewModel;
         Behaviors.Add(new EventToCommandBehavior
         {

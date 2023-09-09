@@ -1,7 +1,7 @@
 ﻿using Android.App;
 using Android.Runtime;
 
-namespace Logistics.DriverApp;
+namespace Logistics.DriverApp.Platforms.Android;
 
 [Application]
 public class MainApplication : MauiApplication

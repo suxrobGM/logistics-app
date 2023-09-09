@@ -1,6 +1,6 @@
 ﻿using Foundation;
 
-namespace Logistics.DriverApp;
+namespace Logistics.DriverApp.Platforms.iOS;
 
 [Register("AppDelegate")]
 public class AppDelegate : MauiUIApplicationDelegate

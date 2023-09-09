@@ -5,13 +5,13 @@ using Microsoft.AspNetCore.SignalR.Client;
 
 namespace Logistics.DriverApp.Services;
 
-public class LocationTrackingService : ILocationTrackingService
+public class LocationTracker : ILocationTracker
 {
     private readonly HubConnection _hubConnection;
     private readonly IAuthService _authService;
     private bool _isConnected;
 
-    public LocationTrackingService(
+    public LocationTracker(
         ApiClientOptions apiClientOptions,
         IAuthService authService)
     {
@@ -79,12 +79,6 @@ public class LocationTrackingService : ILocationTrackingService
         {
             var request = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(10));
             var location = await Geolocation.Default.GetLocationAsync(request);
-
-            if (location is not null)
-            {
-                Console.WriteLine($"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}");
-            }
-
             return location;
         }
         catch (Exception)

@@ -6,7 +6,7 @@ public abstract class BaseContentPage<TViewModel> : ContentPage where TViewModel
 {
     protected BaseContentPage()
     {
-        ViewModel = App.Current.Services.GetRequiredService<TViewModel>();
+        ViewModel = App.Current.GetRequiredService<TViewModel>();
         BindingContext = ViewModel;
         Behaviors.Add(new EventToCommandBehavior
         {

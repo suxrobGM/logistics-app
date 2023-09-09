@@ -2,7 +2,7 @@
 using Android.Content;
 using Android.Content.PM;
 
-namespace Logistics.DriverApp;
+namespace Logistics.DriverApp.Platforms.Android;
 
 [Activity(NoHistory = true, LaunchMode = LaunchMode.SingleTop, Exported = true)]
 [IntentFilter(new[] { Intent.ActionView },

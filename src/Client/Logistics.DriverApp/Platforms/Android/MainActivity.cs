@@ -2,9 +2,10 @@
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Logistics.DriverApp.Platforms.Android.Consts;
 using Plugin.Firebase.CloudMessaging;
 
-namespace Logistics.DriverApp;
+namespace Logistics.DriverApp.Platforms.Android;
 
 [Activity(Theme = "@style/Maui.SplashTheme", 
     MainLauncher = true, 
@@ -20,8 +21,9 @@ public class MainActivity : MauiAppCompatActivity
     protected override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
+        CreateNotificationChannels();
         FirebaseCloudMessagingImplementation.OnNewIntent(Intent);
-        CreateNotificationChannel();
+        FirebaseCloudMessagingImplementation.ChannelId = NotificationChannels.GeneralChannelId;
     }
 
     protected override void OnNewIntent(Intent? intent)
@@ -30,12 +32,12 @@ public class MainActivity : MauiAppCompatActivity
         FirebaseCloudMessagingImplementation.OnNewIntent(intent);
     }
 
-    private void CreateNotificationChannel()
+    private void CreateNotificationChannels()
     {
-        var channelId = $"{PackageName}.general";
         var notificationManager = (NotificationManager)GetSystemService(NotificationService)!;
-        var channel = new NotificationChannel(channelId, "General", NotificationImportance.Max);
-        notificationManager.CreateNotificationChannel(channel);
-        FirebaseCloudMessagingImplementation.ChannelId = channelId;
+        var generalChanel = new NotificationChannel(NotificationChannels.GeneralChannelId, "General", NotificationImportance.Max);
+        var foregroundServiceChannel = new NotificationChannel(NotificationChannels.ForegroundServiceChannelId, "Background Services", NotificationImportance.Default);
+        notificationManager.CreateNotificationChannel(generalChanel);
+        notificationManager.CreateNotificationChannel(foregroundServiceChannel);
     }
 }
