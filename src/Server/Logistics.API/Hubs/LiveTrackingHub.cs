@@ -1,20 +1,18 @@
-﻿using Logistics.Domain.Entities;
-using Logistics.Domain.Persistence;
-using Logistics.Models;
+﻿using Logistics.Models;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Logistics.API.Hubs;
 
-public class LiveTrackingHub : Hub<ILiveTrackingClient>
+public class LiveTrackingHub : Hub<ILiveTrackingHubClient>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly IMediator _mediator;
     private readonly LiveTrackingClientsContext _clientsContext;
 
     public LiveTrackingHub(
-        ITenantRepository tenantRepository, 
+        IMediator mediator, 
         LiveTrackingClientsContext clientsContext)
     {
-        _tenantRepository = tenantRepository;
+        _mediator = mediator;
         _clientsContext = clientsContext;
     }
     
@@ -27,8 +25,7 @@ public class LiveTrackingHub : Hub<ILiveTrackingClient>
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         var geolocationData = _clientsContext.GetGeolocationData(Context.ConnectionId);
-
-        await SaveGeolocationDataAsync(geolocationData);
+        await _mediator.Send(new SaveEmployeeGeolocationCommand(geolocationData));
         _clientsContext.RemoveClient(Context.ConnectionId);
     }
 
@@ -52,23 +49,5 @@ public class LiveTrackingHub : Hub<ILiveTrackingClient>
     {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, tenantId);
         // await Clients.Group(groupName).SendAsync("Send", $"{Context.ConnectionId} has left the group {groupName}.");
-    }
-
-    private async Task SaveGeolocationDataAsync(GeolocationData? geolocation)
-    {
-        if (geolocation is null)
-            return;
-        
-        Console.WriteLine("Saving a geolocation to the database");
-        _tenantRepository.SetTenantId(geolocation.TenantId);
-        var employee = await _tenantRepository.GetAsync<Employee>(geolocation.UserId);
-
-        if (employee is not null)
-        {
-            employee.LastKnownLocation = $"{geolocation.Latitude},{geolocation.Longitude}";
-            _tenantRepository.Update(employee);
-            await _tenantRepository.UnitOfWork.CommitAsync();
-            Console.WriteLine("Geolocation data has been saved");
-        }
     }
 }
