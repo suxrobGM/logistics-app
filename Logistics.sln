@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Client", "src\Cli
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.API", "src\Server\Logistics.API\Logistics.API.csproj", "{48AA06BC-140B-49B8-AD72-95B5FC6A2D4B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Blazor", "src\Client\Logistics.Blazor\Logistics.Blazor.csproj", "{6FA09C6F-13C7-483F-8CEA-0FA1987A38C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.BlazorComponents", "src\Client\Logistics.BlazorComponents\Logistics.BlazorComponents.csproj", "{6FA09C6F-13C7-483F-8CEA-0FA1987A38C1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Blazor.Tests", "test\Logistics.Blazor.Tests\Logistics.Blazor.Tests.csproj", "{C4ADD85D-28AD-4EF0-B93D-548516CE3A20}"
 EndProject

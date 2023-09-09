@@ -1,0 +1,99 @@
+﻿@using System.ComponentModel
+@namespace Logistics.BlazorComponents.Grids
+@typeparam TData
+
+<CascadingValue IsFixed="true" Value="this">@GridColumns</CascadingValue>
+
+<table class="grid table table-bordered table-hover">
+    <thead>
+        <tr class="grid-header-row bg-light">
+            @for (var i = 0; i < columns.Count; i++)
+            {
+                var column = columns[i];
+                var columnWidth = column.Width != null ? $"min-width: {column.Width}px; wdith: {column.Width}px;" : "";
+                var textAlign = column.HeaderTextAlign.HasValue ? 
+                    $"text-align: {GetTextAlign(column.HeaderTextAlign.Value)}" : $"text-align: {GetTextAlign(column.TextAlign)};";
+
+                if (AllowSorting)
+                {
+                    <th style="@columnWidth @textAlign" @onclick="() => SortAsync(column)">
+                        <span>
+                            @column.HeaderCellTemplate
+                            @if (column.SortDirection == SortDirection.Ascending)
+                            {
+                                <i class="bi bi-arrow-up"></i>
+                            }
+                            else if (column.SortDirection == SortDirection.Descending)
+                            {
+                                <i class="bi bi-arrow-down"></i>
+                            }
+                        </span>
+
+                    </th>
+                }
+                else
+                {
+                    <th style="@columnWidth @textAlign">
+                        @column.HeaderCellTemplate
+                    </th>
+                }
+            }
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td class="grid-spinner-container" colspan="@columns.Count">
+                <div class="grid-spinner">
+                    <Spinner @ref="spinnerRef" Size="2"></Spinner>
+                </div>
+            </td>
+        </tr>
+        
+        @if (DataSource == null || !DataSource.Any())
+        {
+            <tr>
+                <td colspan="@columns.Count">
+                    <span>No records to display</span>
+                </td>
+            </tr>
+        }
+        else
+        {
+            foreach (var item in DataSource)
+            {
+                if (item == null)
+                {
+                    continue;
+                }
+                <tr @key="item.GetHashCode()" class="grid-body-row">
+                    @for (var i = 0; i < columns.Count; i++)
+                    {
+                        var column = columns[i];
+                        var borderCls = UseBorderlessCells && i != columns.Count - 1 ? "border-right-none" : "";
+                        var textAlign = $"text-align: {GetTextAlign(column.TextAlign)}";
+
+                        <td class="@borderCls" style="@textAlign">
+                            @column.BodyCellTemplate(item)
+                        </td>
+                    }
+                </tr>
+            }
+        }
+    </tbody>
+
+    @if (AllowPaging)
+    {
+        <tfoot>
+            <tr>
+                <td colspan="@columns.Count">
+                    <div class="d-flex justify-content-center">
+                        <Pager PagesCount="PageSettings.PagesCount" 
+                               OnPageChanged="PageChangedHandler" >
+                        </Pager>
+                    </div>
+                </td>
+            </tr>
+        </tfoot>
+    }
+</table>

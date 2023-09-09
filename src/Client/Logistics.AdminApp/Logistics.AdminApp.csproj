@@ -18,11 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Logistics.Client\Logistics.Client.csproj" />
-    <ProjectReference Include="..\Logistics.Blazor\Logistics.Blazor.csproj" />
+    <ProjectReference Include="..\Logistics.BlazorComponents\Logistics.BlazorComponents.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Components\ViewBaseComponent.razor" />
-  </ItemGroup>
-
+    
 </Project>

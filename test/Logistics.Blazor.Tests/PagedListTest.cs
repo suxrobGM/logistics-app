@@ -1,4 +1,4 @@
-using Logistics.Blazor.Pagination;
+using Logistics.BlazorComponents.Pagination;
 
 namespace Logistics.Blazor.Tests;
 

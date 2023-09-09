@@ -1,0 +1,23 @@
+﻿@namespace Logistics.BlazorComponents.Buttons
+
+@{
+    var disabledClass = IsBusy ? "disabled" : "";
+}
+
+<button class="btn @CssClass @disabledClass" 
+    @onclick="OnClick" 
+    @attributes="AdditionalAttributes">
+
+    @if (IsBusy)
+    {
+        <Spinner @bind-IsBusy="IsBusy" 
+            Size="@SpinnerSize" 
+            Label="@BusyText" 
+            LabelAlign="Spinner.Align.Left">
+        </Spinner>
+    }
+    else
+    {
+        @ChildContent
+    }
+</button>
