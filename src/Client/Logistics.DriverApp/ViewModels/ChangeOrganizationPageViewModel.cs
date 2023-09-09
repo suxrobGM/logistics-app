@@ -6,13 +6,13 @@ using Logistics.Models;
 
 namespace Logistics.DriverApp.ViewModels;
 
-public class ChangeOrganizationPageVideModel : BaseViewModel
+public class ChangeOrganizationPageViewModel : BaseViewModel
 {
     private readonly IApiClient _apiClient;
     private readonly IAuthService _authService;
     private readonly ITenantService _tenantService;
 
-    public ChangeOrganizationPageVideModel(
+    public ChangeOrganizationPageViewModel(
         IApiClient apiClient, 
         IAuthService authService,
         ITenantService tenantService)
@@ -96,7 +96,8 @@ public class ChangeOrganizationPageVideModel : BaseViewModel
     {
         if (CurrentOrganization == organization)
             return;
-        
+
+        _authService.User!.CurrentTenantId = organization.TenantId;
         await _tenantService.SaveTenantIdAsync(organization.TenantId);
         WeakReferenceMessenger.Default.Send(new TenantIdChangedMessage(organization.TenantId));
 

@@ -21,21 +21,13 @@ public class MainActivity : MauiAppCompatActivity
     {
         base.OnCreate(savedInstanceState);
         FirebaseCloudMessagingImplementation.OnNewIntent(Intent);
-        CreateNotificationChannelIfNeeded();
+        CreateNotificationChannel();
     }
 
     protected override void OnNewIntent(Intent? intent)
     {
         base.OnNewIntent(intent);
         FirebaseCloudMessagingImplementation.OnNewIntent(intent);
-    }
-
-    private void CreateNotificationChannelIfNeeded()
-    {
-        if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-        {
-            CreateNotificationChannel();
-        }
     }
 
     private void CreateNotificationChannel()

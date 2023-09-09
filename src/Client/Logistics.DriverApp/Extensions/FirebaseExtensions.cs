@@ -8,11 +8,11 @@ using Plugin.Firebase.Bundled.Platforms.iOS;
 using Plugin.Firebase.Bundled.Platforms.Android;
 #endif
 
-namespace Logistics.DriverApp;
+namespace Logistics.DriverApp.Extensions;
 
 public static class FirebaseExtensions
 {
-    public static MauiAppBuilder RegisterFirebaseServices(this MauiAppBuilder builder)
+    public static MauiAppBuilder ConfigureFirebaseServices(this MauiAppBuilder builder)
     {
         var firebaseSettings = new CrossFirebaseSettings(
             isCloudMessagingEnabled: true,

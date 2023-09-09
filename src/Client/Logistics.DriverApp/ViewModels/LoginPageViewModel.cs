@@ -60,14 +60,12 @@ public class LoginPageViewModel : BaseViewModel
             var tenantId = await _tenantService.GetTenantIdFromCacheAsync() ??
                            _authService.User?.TenantIds.FirstOrDefault();
 
-            if (_authService.User is not null)
-            {
-                WeakReferenceMessenger.Default.Send(new SuccessfullyLoggedMessage(_authService.User));
-            }
+            WeakReferenceMessenger.Default.Send(new SuccessfullyLoggedMessage(_authService.User!));
             
             if (!string.IsNullOrEmpty(tenantId))
             {
                 _apiClient.TenantId = tenantId;
+                _authService.User!.CurrentTenantId = tenantId;
                 await _tenantService.SaveTenantIdAsync(tenantId);
                 await Shell.Current.GoToAsync("//ActiveLoadsPage");
             }

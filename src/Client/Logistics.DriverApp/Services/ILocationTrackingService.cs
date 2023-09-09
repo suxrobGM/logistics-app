@@ -1,6 +1,6 @@
 ﻿namespace Logistics.DriverApp.Services;
 
-public interface ILocationTrackingService
+public interface ILocationTrackingService : IAsyncDisposable
 {
     Task SendLocationDataAsync();
 }

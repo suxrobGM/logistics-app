@@ -6,9 +6,9 @@ using Logistics.Application.Common;
 using Logistics.Infrastructure.EF;
 using Logistics.IdentityServer.Services;
 
-namespace Logistics.IdentityServer;
+namespace Logistics.IdentityServer.Extensions;
 
-internal static class HostingExtensions
+internal static class ApplicationExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {

@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.Messaging;
+using Logistics.DriverApp.Messages;
 using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.Authentication;
@@ -25,6 +27,10 @@ public class ActiveLoadsPageViewModel : BaseViewModel
         _mapsService = mapsService;
         _locationTrackingService = locationTrackingService;
         CrossFirebaseCloudMessaging.Current.NotificationReceived += HandleLoadNotificationReceived;
+        Messenger.Register<TenantIdChangedMessage>(this, async (_, _) =>
+        {
+            await FetchDashboardDataAsync();
+        });
     }
 
 

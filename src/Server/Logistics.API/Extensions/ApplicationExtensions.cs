@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Serilog;
 
-namespace Logistics.API;
+namespace Logistics.API.Extensions;
 
-internal static class HostingExtensions
+internal static class ApplicationExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
@@ -21,8 +21,9 @@ internal static class HostingExtensions
         builder.Services.AddTenantApplicationLayer();
         builder.Services.AddInfrastructureLayer(builder.Configuration);
         builder.Services.AddHttpContextAccessor();
-        builder.Services.AddScoped<ExceptionHandlingMiddleware>();
         builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+        builder.Services.AddSingleton<LiveTrackingClientsContext>();
+        builder.Services.AddScoped<ExceptionHandlingMiddleware>();
         builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
         builder.Services.AddAuthorization();
         builder.Services.AddEndpointsApiExplorer();

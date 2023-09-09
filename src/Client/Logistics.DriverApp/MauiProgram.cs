@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui;
+using Logistics.DriverApp.Extensions;
 using Syncfusion.Maui.Core.Hosting;
 
 namespace Logistics.DriverApp;
@@ -11,8 +12,9 @@ public static class MauiProgram
         builder
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit()
+            .ConfigureServices()
             .ConfigureSyncfusionCore()
-            .RegisterFirebaseServices()
+            .ConfigureFirebaseServices()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

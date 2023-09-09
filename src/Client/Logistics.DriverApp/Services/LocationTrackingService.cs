@@ -1,5 +1,6 @@
 ﻿using Logistics.Client.Options;
 using Logistics.DriverApp.Services.Authentication;
+using Logistics.Models;
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace Logistics.DriverApp.Services;
@@ -8,16 +9,13 @@ public class LocationTrackingService : ILocationTrackingService
 {
     private readonly HubConnection _hubConnection;
     private readonly IAuthService _authService;
-    private readonly ITenantService _tenantService;
     private bool _isConnected;
 
     public LocationTrackingService(
         ApiClientOptions apiClientOptions,
-        IAuthService authService,
-        ITenantService tenantService)
+        IAuthService authService)
     {
         _authService = authService;
-        _tenantService = tenantService;
         _hubConnection = new HubConnectionBuilder()
             .WithUrl($"{apiClientOptions.Host}/hubs/LiveTracking", options =>
             {
@@ -43,7 +41,7 @@ public class LocationTrackingService : ILocationTrackingService
         if (!_isConnected)
             return;
         
-        await _hubConnection.StopAsync();
+        await _hubConnection.DisposeAsync();
         _isConnected = false;
     }
 
@@ -51,7 +49,7 @@ public class LocationTrackingService : ILocationTrackingService
     {
         await ConnectAsync();
         var userId = _authService.User?.Id;
-        var tenantId = await _tenantService.GetTenantIdFromCacheAsync();
+        var tenantId = _authService.User?.CurrentTenantId;
 
         if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(tenantId))
         {
@@ -64,8 +62,15 @@ public class LocationTrackingService : ILocationTrackingService
         {
             return;
         }
-        
-        await _hubConnection.InvokeAsync("SendGeolocationData", userId, tenantId, location.Latitude, location.Longitude);
+
+        var geolocationData = new GeolocationData
+        {
+            UserId = userId,
+            TenantId = tenantId,
+            Latitude = location.Latitude,
+            Longitude = location.Longitude
+        };
+        await _hubConnection.InvokeAsync("SendGeolocationData", geolocationData);
     }
     
     private static async Task<Location?> GetCurrentLocationAsync()
@@ -87,5 +92,10 @@ public class LocationTrackingService : ILocationTrackingService
             // Unable to get location
             return null;
         }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await DisconnectAsync();
     }
 }
