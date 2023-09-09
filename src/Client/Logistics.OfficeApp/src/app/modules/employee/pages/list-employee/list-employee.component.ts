@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
+import {TableLazyLoadEvent} from 'primeng/table';
 import {Employee} from '@shared/models';
 import {ApiService} from '@shared/services';
-import {LazyLoadEvent} from 'primeng/api';
+
 
 @Component({
   selector: 'app-list-employee',
@@ -36,12 +37,12 @@ export class ListEmployeeComponent implements OnInit {
     });
   }
 
-  load(event: LazyLoadEvent) {
+  load(event: TableLazyLoadEvent) {
     this.isBusy = true;
     const page = event.first! / event.rows! + 1;
-    const sortField = this.apiService.parseSortProperty(event.sortField, event.sortOrder);
+    const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
-    this.apiService.getEmployees('', sortField, page, event.rows).subscribe((result) => {
+    this.apiService.getEmployees('', sortField, page, event.rows!).subscribe((result) => {
       if (result.success && result.items) {
         this.employees = result.items;
         this.totalRecords = result.itemsCount!;

@@ -327,7 +327,7 @@ export class ApiService {
   // #endregion
 
 
-  parseSortProperty(sortField?: string, sortOrder?: number) {
+  parseSortProperty(sortField?: string | null, sortOrder?: number | null) {
     if (!sortOrder) {
       sortOrder = 1;
     }

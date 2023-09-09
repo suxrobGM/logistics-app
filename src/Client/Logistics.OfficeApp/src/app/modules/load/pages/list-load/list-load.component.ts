@@ -1,8 +1,9 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {LazyLoadEvent} from 'primeng/api';
+import {TableLazyLoadEvent} from 'primeng/table';
 import {Load} from '@shared/models';
 import {ApiService} from '@shared/services';
 import {LoadStatus, LoadStatuses} from '@shared/types';
+
 
 @Component({
   selector: 'app-list-load',
@@ -38,12 +39,12 @@ export class ListLoadComponent implements OnInit {
     });
   }
 
-  load(event: LazyLoadEvent) {
+  load(event: TableLazyLoadEvent) {
     this.isBusy = true;
     const page = event.first! / event.rows! + 1;
-    const sortField = this.apiService.parseSortProperty(event.sortField, event.sortOrder);
+    const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
-    this.apiService.getLoads('', sortField, page, event.rows).subscribe((result) => {
+    this.apiService.getLoads('', sortField, page, event.rows!).subscribe((result) => {
       if (result.success && result.items) {
         this.loads = result.items;
         this.totalRecords = result.itemsCount!;
