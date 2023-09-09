@@ -1,10 +1,9 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {AppConfig} from '@core';
 import {DailyGrosses, Load} from '@shared/models';
 import {DistanceUnitPipe} from '@shared/pipes';
 import {ApiService} from '@shared/services';
 import {DateUtils} from '@shared/utils';
-import * as mapboxgl from 'mapbox-gl';
+
 
 @Component({
   selector: 'app-overview',
@@ -13,13 +12,11 @@ import * as mapboxgl from 'mapbox-gl';
   encapsulation: ViewEncapsulation.None,
 })
 export class OverviewComponent implements OnInit {
-  private map!: mapboxgl.Map;
   public todayGross: number;
   public weeklyGross: number;
   public weeklyDistance: number;
   public rpm: number;
   public loadingLoads: boolean;
-  public loadingMap: boolean;
   public loadingChart: boolean;
   public loads: Load[];
   public chartData: any;
@@ -31,7 +28,6 @@ export class OverviewComponent implements OnInit {
   {
     this.loads = [];
     this.loadingLoads = false;
-    this.loadingMap = false;
     this.loadingChart = false;
     this.todayGross = 0;
     this.weeklyGross = 0;
@@ -58,23 +54,8 @@ export class OverviewComponent implements OnInit {
   }
 
   public ngOnInit() {
-    this.initMapbox();
     this.fetchLatestLoads();
     this.fetchLastTenDaysGross();
-  }
-
-  private initMapbox() {
-    this.loadingMap = true;
-
-    this.map = new mapboxgl.Map({
-      container: 'map',
-      accessToken: AppConfig.mapboxToken,
-      style: 'mapbox://styles/mapbox/streets-v11',
-      center: [-74.5, 40],
-      zoom: 6,
-    });
-
-    this.map.on('load', () => this.loadingMap = false);
   }
 
   private fetchLatestLoads() {

@@ -1,9 +1,12 @@
 import {NgModule} from '@angular/core';
 import {CommonModule, CurrencyPipe} from '@angular/common';
+import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
+import {AppConfig} from '@core';
 import {SharedModule} from '@shared/shared.module';
 import {PrimengModule} from './primeng.module';
 import {HomeRoutingModule} from './home-routing.module';
 import {OverviewComponent} from './pages/overview/overview.component';
+
 
 @NgModule({
   declarations: [
@@ -14,6 +17,9 @@ import {OverviewComponent} from './pages/overview/overview.component';
     HomeRoutingModule,
     SharedModule,
     PrimengModule,
+    NgxMapboxGLModule.withConfig({
+      accessToken: AppConfig.mapboxToken,
+    }),
   ],
   providers: [
     CurrencyPipe,

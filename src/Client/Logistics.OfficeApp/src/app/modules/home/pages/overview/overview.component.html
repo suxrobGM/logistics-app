@@ -8,11 +8,10 @@
         <div class="ms-3 py-2 fw-bold">Active drivers</div>
         <hr class="w-100 m-0" />
       </ng-template>
-      <div *ngIf="loadingMap">
-        <p-skeleton height="700px"></p-skeleton>
-      </div>
-
-      <div id="map"></div>
+      <mgl-map [style]="'mapbox://styles/mapbox/streets-v11'" 
+        [zoom]="[6]"
+        [center]="[-74.5, 40]">
+      </mgl-map>
     </p-card>
   </div>
 

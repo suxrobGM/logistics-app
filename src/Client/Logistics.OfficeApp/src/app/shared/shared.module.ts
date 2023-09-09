@@ -6,7 +6,6 @@ import {
   ApiService,
   CookieService,
   StorageService,
-  UserDataService,
 } from './services';
 
 @NgModule({
@@ -26,7 +25,6 @@ import {
     CookieService,
     DistanceUnitPipe,
     StorageService,
-    // UserDataService,
   ],
 })
 export class SharedModule { }
