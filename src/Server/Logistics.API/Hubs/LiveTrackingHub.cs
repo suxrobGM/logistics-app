@@ -6,27 +6,27 @@ namespace Logistics.API.Hubs;
 public class LiveTrackingHub : Hub<ILiveTrackingHubClient>
 {
     private readonly IMediator _mediator;
-    private readonly LiveTrackingClientsContext _clientsContext;
+    private readonly LiveTrackingHubContext _hubContext;
 
     public LiveTrackingHub(
         IMediator mediator, 
-        LiveTrackingClientsContext clientsContext)
+        LiveTrackingHubContext hubContext)
     {
         _mediator = mediator;
-        _clientsContext = clientsContext;
+        _hubContext = hubContext;
     }
     
     public override Task OnConnectedAsync()
     {
-        _clientsContext.AddClient(Context.ConnectionId, null);
+        _hubContext.AddClient(Context.ConnectionId, null);
         return Task.CompletedTask;
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        var geolocationData = _clientsContext.GetGeolocationData(Context.ConnectionId);
+        var geolocationData = _hubContext.GetGeolocationData(Context.ConnectionId);
         await _mediator.Send(new SaveEmployeeGeolocationCommand(geolocationData));
-        _clientsContext.RemoveClient(Context.ConnectionId);
+        _hubContext.RemoveClient(Context.ConnectionId);
     }
 
     public Task SendGeolocationData(GeolocationData geolocation)
@@ -35,7 +35,7 @@ public class LiveTrackingHub : Hub<ILiveTrackingHubClient>
         Console.WriteLine(
             $"Received a geolocation data from: userId {geolocation.UserId}, tenantId: {geolocation.TenantId}, latitude: {geolocation.Latitude}, longitude: {geolocation.Longitude}");
         
-        _clientsContext.UpdateData(Context.ConnectionId, geolocation);
+        _hubContext.UpdateData(Context.ConnectionId, geolocation);
         return Task.CompletedTask;
     }
     

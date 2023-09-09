@@ -22,7 +22,7 @@ internal static class ApplicationExtensions
         builder.Services.AddInfrastructureLayer(builder.Configuration);
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
-        builder.Services.AddSingleton<LiveTrackingClientsContext>();
+        builder.Services.AddSingleton<LiveTrackingHubContext>();
         builder.Services.AddScoped<ExceptionHandlingMiddleware>();
         builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
         builder.Services.AddAuthorization();
