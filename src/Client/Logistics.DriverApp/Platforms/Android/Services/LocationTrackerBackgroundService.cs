@@ -64,7 +64,7 @@ public class LocationTrackerBackgroundService : Service, ILocationTrackerBackgro
             .SetAutoCancel(false)
             .SetOngoing(true)
             .SetSmallIcon(Resource.Mipmap.appicon)
-            .SetContentTitle("JFleets Driver")
+            .SetContentTitle("Real-time tracking")
             .SetContentText("Driver's geolocation is tracking in real-time")
             .Build();
         
