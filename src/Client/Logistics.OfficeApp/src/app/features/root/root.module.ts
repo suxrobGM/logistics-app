@@ -7,7 +7,9 @@ import {Error404Component} from './error404/error404.component';
 import {ForbiddenComponent} from './forbidden/forbidden.component';
 import {LoginComponent} from './login/login.component';
 import {UnauthorizedComponent} from './unauthorized/unauthorized.component';
-import {NavDockComponent, TopbarComponent} from './components';
+import {NavDockComponent} from './nav-dock/nav-dock.component';
+import {TopbarComponent} from './topbar/topbar.component';
+
 
 @NgModule({
   declarations: [

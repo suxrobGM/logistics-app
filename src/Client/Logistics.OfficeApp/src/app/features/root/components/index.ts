@@ -1,7 +1,0 @@
-import {NavDockComponent} from './nav-dock/nav-dock.component';
-import {TopbarComponent} from './topbar/topbar.component';
-
-export {
-  NavDockComponent,
-  TopbarComponent,
-};
