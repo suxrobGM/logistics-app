@@ -7,11 +7,7 @@ import {Error404Component} from './error404/error404.component';
 import {ForbiddenComponent} from './forbidden/forbidden.component';
 import {LoginComponent} from './login/login.component';
 import {UnauthorizedComponent} from './unauthorized/unauthorized.component';
-import {
-  NavDockComponent,
-  TopbarComponent,
-  BreadcrumbComponent,
-} from './components';
+import {NavDockComponent, TopbarComponent} from './components';
 
 @NgModule({
   declarations: [
@@ -21,7 +17,6 @@ import {
     LoginComponent,
     NavDockComponent,
     TopbarComponent,
-    BreadcrumbComponent,
   ],
   imports: [
     CommonModule,
@@ -32,7 +27,6 @@ import {
   exports: [
     NavDockComponent,
     TopbarComponent,
-    BreadcrumbComponent,
   ],
 })
 export class RootModule { }
