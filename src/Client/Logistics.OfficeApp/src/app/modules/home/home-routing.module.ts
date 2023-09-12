@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {Permissions} from '@shared/types';
 import {AuthGuard} from '@core';
-import {OverviewComponent} from './pages/overview/overview.component';
+import {OverviewComponent} from './overview/overview.component';
 
 const rootRoutes: Routes = [
   {

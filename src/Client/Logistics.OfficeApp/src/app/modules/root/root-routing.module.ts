@@ -1,12 +1,11 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {AuthGuard} from '@core';
-import {
-  Error404Component,
-  UnauthorizedComponent,
-  ForbiddenComponent,
-  LoginComponent,
-} from './pages';
+import {Error404Component} from './error404/error404.component';
+import {ForbiddenComponent} from './forbidden/forbidden.component';
+import {LoginComponent} from './login/login.component';
+import {UnauthorizedComponent} from './unauthorized/unauthorized.component';
+
 
 const rootRoutes: Routes = [
   {

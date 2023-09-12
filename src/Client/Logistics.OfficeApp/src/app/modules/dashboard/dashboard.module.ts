@@ -1,10 +1,10 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {SharedModule} from '@shared/index';
+import {SharedModule} from '@shared/shared.module';
 import {PrimengModule} from './primeng.module';
 import {DashboardRoutingModule} from './dashboard-routing.module';
-import {TruckDashboardComponent} from './pages/truck-dashboard/truck-dashboardcomponent';
-import {MainDashboardComponent} from './pages/main-dashboard/main-dashboardcomponent';
+import {TruckDashboardComponent} from './truck-dashboard/truck-dashboardcomponent';
+import {MainDashboardComponent} from './main-dashboard/main-dashboardcomponent';
 
 
 @NgModule({

@@ -2,8 +2,8 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {Permissions} from '@shared/types';
 import {AuthGuard} from '@core';
-import {TruckDashboardComponent} from './pages/truck-dashboard/truck-dashboardcomponent';
-import {MainDashboardComponent} from './pages/main-dashboard/main-dashboardcomponent';
+import {TruckDashboardComponent} from './truck-dashboard/truck-dashboardcomponent';
+import {MainDashboardComponent} from './main-dashboard/main-dashboardcomponent';
 
 const rootRoutes: Routes = [
   {
