@@ -1,0 +1,8 @@
+<h1 *ngIf="!isAuthenticated && !isLoading">Login to get access</h1>
+
+<div class="d-flex" *ngIf="isLoading">
+  <div class="h5 fw-bold align-self-center">Authenticating</div>
+  <div class="ms-2">
+    <p-progressSpinner></p-progressSpinner>
+  </div>
+</div>

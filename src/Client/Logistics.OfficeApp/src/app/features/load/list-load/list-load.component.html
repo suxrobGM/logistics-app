@@ -1,0 +1,109 @@
+<div class="d-flex align-items-center">
+  <h1>List Loads</h1>
+  <button pButton pRipple
+    class="p-button-lg p-button-rounded p-button-text text-black ms-2"
+    icon="bi bi-plus-square-fill"
+    pTooltip="Add a new load"
+    routerLink="/loads/add">
+  </button>
+</div>
+<hr class="w-100">
+
+<p-card>
+  <div class="row">
+    <div class="col-12">
+      <p-table [value]="loads" responsiveLayout="scroll" [lazy]="true" [paginator]="true" [showCurrentPageReport]="true"
+        (onLazyLoad)="load($event)" [rows]="10" [(first)]="first" [totalRecords]="totalRecords" [loading]="isBusy"
+        [rowsPerPageOptions]="[10,25,50]">
+        <ng-template pTemplate="caption">
+          <div class="d-flex">
+            <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" placeholder="Search" (input)="search($event)" />
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="refId">
+              ID
+              <p-sortIcon field="refId"></p-sortIcon>
+            </th>
+            <th pSortableColumn="name">
+              Name
+              <p-sortIcon field="name"></p-sortIcon>
+            </th>
+            <th pSortableColumn="originAddress">
+              Origin
+              <p-sortIcon field="originAddress"></p-sortIcon>
+            </th>
+            <th pSortableColumn="destinationAddress">
+              Destination
+              <p-sortIcon field="destinationAddress"></p-sortIcon>
+            </th>
+            <th pSortableColumn="dispatchedDate">
+              Dispatched
+              <p-sortIcon field="dispatchedDate"></p-sortIcon>
+            </th>
+            <th pSortableColumn="pickUpDate">
+              Pick Up
+              <p-sortIcon field="pickUpDate"></p-sortIcon>
+            </th>
+            <th pSortableColumn="deliveryDate">
+              Delivery
+              <p-sortIcon field="deliveryDate"></p-sortIcon>
+            </th>
+            <th pSortableColumn="status">
+              Status
+              <p-sortIcon field="status"></p-sortIcon>
+            </th>
+            <th pSortableColumn="distance">
+              Distance (mi)
+              <p-sortIcon field="distance"></p-sortIcon>
+            </th>
+            <th pSortableColumn="deliveryCost">
+              Cost
+              <p-sortIcon field="deliveryCost"></p-sortIcon>
+            </th>
+            <th>
+              Truck
+            </th>
+            <th>
+              Dispatcher
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-load>
+          <tr>
+            <td>
+              <a [routerLink]="['/loads/edit', load.id]">
+                {{load.refId}}
+              </a>
+            </td>
+            <td [pTooltip]="load.sourceAddress" [showDelay]="500" tooltipPosition="bottom">
+              {{load.name}}
+            </td>
+            <td [pTooltip]="load.originAddress" [showDelay]="500" tooltipPosition="bottom">
+              {{load.originAddress}}
+            </td>
+            <td [pTooltip]="load.sourceAddress" [showDelay]="500" tooltipPosition="bottom">
+              {{load.destinationAddress}}
+            </td>
+            <td>{{load.dispatchedDate | date:'mediumDate'}}</td>
+            <td>{{load.pickUpDate | date:'mediumDate'}}</td>
+            <td>{{load.deliveryDate | date:'mediumDate'}}</td>
+            <td>{{getLoadStatusName(load.status)}}</td>
+            <td>{{load.distance | distanceUnit:'mi'}}</td>
+            <td>{{load.deliveryCost | currency}}</td>
+            <td>
+              <a [routerLink]="['/trucks/edit', load.assignedTruckId]">
+                {{load.assignedTruckNumber}}
+              </a>
+            </td>
+            <td>{{load.assignedDispatcherName}}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</p-card>

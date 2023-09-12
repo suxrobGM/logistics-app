@@ -1,0 +1,14 @@
+.p-datatable .p-datatable-tbody > tr > td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
+.p-sortable-column-icon.pi-sort-alt {
+  display: none;
+}
+
+.p-dropdown {
+  min-height: 2.5rem;
+}

@@ -1,0 +1,53 @@
+<p-toast key="notification" position="top-right"></p-toast>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+<change-role-dialog [(visible)]="showUpdateDialog" [userId]="id" [currentRoles]="employee?.roles"></change-role-dialog>
+
+<h1 class="text-center">Edit Employee</h1>
+<hr class="w-100">
+
+<div class="row justify-content-center">
+  <div class="col-12 col-md-6">
+    <p-card>
+      <p-progressSpinner *ngIf="isBusy"></p-progressSpinner>
+      <p-messages key="errorMsg"></p-messages>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input id="email" type="text" class="form-control" [disabled]="true" [value]="employee?.email" />
+      </div>
+      <div class="mb-3">
+        <label for="firstName" class="form-label">First name</label>
+        <input id="firstName" type="text" class="form-control" [disabled]="true" [value]="employee?.firstName" />
+      </div>
+      <div class="mb-3">
+        <label for="lastName" class="form-label">Last name</label>
+        <input id="lastName" type="text" class="form-control" [disabled]="true" [value]="employee?.lastName" />
+      </div>
+      <div class="mb-3">
+        <label for="roleName" class="form-label">Role</label>
+        <div class="input-group">
+          <input id="roleName" type="text" class="form-control" [disabled]="true" [value]="getEmployeeRoleNames()" />
+          <button pButton class="p-button-raised" label="Change" type="button" (click)="openUpdateDialog()" [disabled]="!canChangeRole"></button>
+        </div>
+      </div>
+
+      <div>
+        <button pButton 
+          type="button"
+          class="p-button-raised p-button-danger mt-3"
+          icon="bi bi bi-trash"
+          label="Delete"
+          [disabled]="isBusy"
+          (click)="confirmToDelete()">
+        </button>
+        <button pButton 
+          type="button"
+          class="p-button-raised mt-3 ms-2"
+          icon="bi bi-arrow-left-square"
+          routerLink="/employees"
+          label="Back to list">
+        </button>
+      </div>
+    </p-card>
+  </div>
+</div>
