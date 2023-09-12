@@ -1,16 +1,16 @@
-import {Component, ElementRef, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import * as MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
 import * as mapboxgl from 'mapbox-gl';
 import {ConfirmationService, MessageService} from 'primeng/api';
-import {OidcSecurityService} from 'angular-auth-oidc-client';
 import {AppConfig} from '@configs';
-import {CreateLoad, UpdateLoad, UserIdentity} from '@core/models';
+import {AuthService} from '@core/auth';
+import {CreateLoad, UpdateLoad, EnumType, LoadStatus, LoadStatuses} from '@core/models';
 import {ApiService} from '@core/services';
 import {DistanceUnitPipe} from '@shared/pipes';
-import {EnumType, LoadStatus, LoadStatuses} from '@core/models';
+
 
 @Component({
   selector: 'app-edit-load',
@@ -35,10 +35,10 @@ export class EditLoadComponent implements OnInit {
   public loadStatuses: EnumType[];
 
   constructor(
+    private authService: AuthService,
     private apiService: ApiService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private oidcService: OidcSecurityService,
     private distanceUnit: DistanceUnitPipe,
     private route: ActivatedRoute)
   {
@@ -253,11 +253,17 @@ export class EditLoadComponent implements OnInit {
   }
 
   private fetchCurrentDispatcher() {
-    this.oidcService.getUserData().subscribe((user: UserIdentity) => {
-      this.form.patchValue({
-        dispatcherName: user.name,
-        dispatcherId: user.sub,
-      });
+    // this.oidcService.getUserData().subscribe((user: UserIdentity) => {
+    //   this.form.patchValue({
+    //     dispatcherName: user.name,
+    //     dispatcherId: user.sub,
+    //   });
+    // });
+
+    const userData = this.authService.getUserData();
+    this.form.patchValue({
+      dispatcherName: userData?.name,
+      dispatcherId: userData?.id,
     });
   }
 

@@ -1,7 +1,6 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {OidcSecurityService} from 'angular-auth-oidc-client';
 import {Permissions} from '@core/helpers';
-import {UserIdentity} from '@core/models';
+import {AuthService} from '@core/auth';
 
 @Component({
   selector: 'app-nav-dock',
@@ -12,19 +11,13 @@ import {UserIdentity} from '@core/models';
 export class NavDockComponent implements OnInit {
   public dockItems: MenuItem[];
 
-  constructor(private oidcService: OidcSecurityService) {
+  constructor(private authService: AuthService) {
     this.dockItems = this.createMenuItems();
   }
 
   public ngOnInit() {
-    this.oidcService.userData$.subscribe(({userData}) => {
-      const user = userData as UserIdentity;
-
-      if (!user?.permission) {
-        return;
-      }
-
-      const hasPermission = user?.permission.includes(Permissions.Report.View);
+    this.authService.onUserDataChanged().subscribe((userData) => {
+      const hasPermission = userData?.permissions.includes(Permissions.Report.View);
 
       if (hasPermission) {
         this.dockItems = this.createMenuItems([{

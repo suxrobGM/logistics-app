@@ -1,8 +1,10 @@
+/* eslint-disable indent */
 import {Injectable} from '@angular/core';
 import {map, Observable} from 'rxjs';
 import {Role, User} from '@core/models';
-import {ApiService, UserDataService} from '@core/services';
+import {ApiService} from '@core/services';
 import {UserRole} from '@core/models';
+import {AuthService} from '@core/auth';
 
 
 @Injectable()
@@ -10,10 +12,10 @@ export class UserService {
   private userRoles?: string[];
 
   constructor(
-    private apiService: ApiService,
-    userDataService: UserDataService)
+    authService: AuthService,
+    private apiService: ApiService)
   {
-    const user = userDataService.getUser();
+    const user = authService.getUserData();
     this.userRoles = user?.roles;
   }
 

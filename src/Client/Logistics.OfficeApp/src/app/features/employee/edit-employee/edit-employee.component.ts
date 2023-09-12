@@ -2,7 +2,8 @@ import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ConfirmationService} from 'primeng/api';
 import {Employee, UserRole} from '@core/models';
-import {ApiService, UserDataService} from '@core/services';
+import {ApiService} from '@core/services';
+import {AuthService} from '@core/auth';
 
 
 @Component({
@@ -19,10 +20,10 @@ export class EditEmployeeComponent implements OnInit {
   public employee?: Employee;
 
   constructor(
+    private authService: AuthService,
     private apiService: ApiService,
     private confirmationService: ConfirmationService,
-    private route: ActivatedRoute,
-    private userDataService: UserDataService)
+    private route: ActivatedRoute)
   {
     this.isBusy = false;
     this.showUpdateDialog = false;
@@ -60,7 +61,7 @@ export class EditEmployeeComponent implements OnInit {
       if (result.success && result.value) {
         this.employee = result.value;
         const employeeRoles = this.employee.roles?.map((i) => i.name);
-        const user = this.userDataService.getUser();
+        const user = this.authService.getUserData();
         this.evaluateCanChangeRole(user?.roles, employeeRoles);
       }
 

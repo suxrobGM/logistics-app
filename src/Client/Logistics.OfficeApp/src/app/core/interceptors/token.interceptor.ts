@@ -6,15 +6,16 @@ import {
   HttpInterceptor,
 } from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {OidcSecurityService} from 'angular-auth-oidc-client';
+import {AuthService} from '@core/auth';
+
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  constructor(private oidcSecurityService: OidcSecurityService) {}
+  constructor(private authService: AuthService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     let token = '';
-    this.oidcSecurityService.getAccessToken().subscribe((i) => token = i);
+    this.authService.getAccessToken().subscribe((i) => token = i);
     const headers = {Authorization: ''};
 
     if (!request.headers.get('bypassAuthorization')) {

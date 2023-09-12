@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {Router} from '@angular/router';
-import {EventTypes, OidcSecurityService, PublicEventsService} from 'angular-auth-oidc-client';
-import {filter} from 'rxjs';
+import {AuthService} from '@core/auth';
+
 
 @Component({
   selector: 'app-login',
@@ -14,8 +14,7 @@ export class LoginComponent implements OnInit {
   isLoading: boolean;
 
   constructor(
-    private oidcService: OidcSecurityService,
-    private eventService: PublicEventsService,
+    private authService: AuthService,
     private router: Router)
   {
     this.isAuthenticated = false;
@@ -23,30 +22,21 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.eventService.registerForEvents()
-        .pipe(filter((notifaction) => notifaction.type === EventTypes.CheckingAuth))
-        .subscribe((value) => {
-          this.isLoading = true;
-        });
+    this.authService.onCheckingAuth().subscribe(() => this.isLoading = true);
+    this.authService.onCheckingAuthFinished().subscribe(() => {
+      this.isLoading = false;
+      this.redirectToHome();
+    });
 
-    this.eventService.registerForEvents()
-        .pipe(filter((notifaction) => notifaction.type === EventTypes.CheckingAuthFinished))
-        .subscribe((value) => {
-          this.isLoading = false;
-
-          if (this.isAuthenticated) {
-            this.router.navigateByUrl('/home');
-          }
-        });
-
-    this.oidcService.isAuthenticated$.subscribe(({isAuthenticated}) => {
+    this.authService.onAuthenticated().subscribe((isAuthenticated) => {
       this.isAuthenticated = isAuthenticated;
+      this.redirectToHome();
     });
+  }
 
-    this.oidcService.isAuthenticated().subscribe((isAuthenticated) => {
-      if (isAuthenticated) {
-        this.router.navigateByUrl('/home');
-      }
-    });
+  private redirectToHome() {
+    if (this.isAuthenticated) {
+      this.router.navigateByUrl('/home');
+    }
   }
 }

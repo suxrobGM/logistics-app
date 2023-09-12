@@ -1,10 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {AppConfig} from '@configs';
-import {UserData} from '@core/models';
-import {ApiService, UserDataService} from '@core/services';
-import {UserRoleHelper} from '@core/helpers';
-import {OidcSecurityService} from 'angular-auth-oidc-client';
 import {of, switchMap} from 'rxjs';
+import {AppConfig} from '@configs';
+import {ApiService} from '@core/services';
+import {AuthService, UserData} from '@core/auth';
 
 
 @Component({
@@ -20,9 +18,8 @@ export class TopbarComponent implements OnInit {
   user: UserData | null;
 
   constructor(
-    private apiService: ApiService,
-    private oidcService: OidcSecurityService,
-    private userDataService: UserDataService)
+    private authService: AuthService,
+    private apiService: ApiService)
   {
     this.isAuthenticated = false;
     this.isBusy = false;
@@ -32,14 +29,13 @@ export class TopbarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.oidcService.userData$.subscribe(({userData}) => {
-      this.userDataService.setUser(userData);
-      this.user = this.userDataService.getUser();
-      this.userRole = UserRoleHelper.getRoleName(this.user?.roles[0]);
+    this.authService.onUserDataChanged().subscribe((userData) => {
+      this.user = userData;
+      this.userRole = this.authService.getUserRoleName();
     });
 
-    this.oidcService.isAuthenticated$.pipe(
-        switchMap(({isAuthenticated}) => {
+    this.authService.onAuthenticated().pipe(
+        switchMap((isAuthenticated) => {
           this.isAuthenticated = isAuthenticated;
 
           if (isAuthenticated) {
@@ -59,11 +55,11 @@ export class TopbarComponent implements OnInit {
 
   login() {
     this.isBusy = true;
-    this.oidcService.authorize();
+    this.authService.login();
   }
 
   logout() {
-    this.oidcService.logoff().subscribe((result) => result);
+    this.authService.logout();
   }
 
   openAccountUrl() {
