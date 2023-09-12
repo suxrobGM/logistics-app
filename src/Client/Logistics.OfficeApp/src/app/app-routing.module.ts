@@ -4,32 +4,32 @@ import {RouterModule, Routes} from '@angular/router';
 const routes: Routes = [
   {
     path: 'home',
-    loadChildren: () => import('./modules/home/home.module').then((m) => m.HomeModule),
+    loadChildren: () => import('./features/home/home.module').then((m) => m.HomeModule),
   },
   {
     path: 'employees',
-    loadChildren: () => import('./modules/employee/employee.module').then((m) => m.EmployeeModule),
+    loadChildren: () => import('./features/employee/employee.module').then((m) => m.EmployeeModule),
     data: {
       breadcrumb: 'Employees',
     },
   },
   {
     path: 'loads',
-    loadChildren: () => import('./modules/load/load.module').then((m) => m.LoadModule),
+    loadChildren: () => import('./features/load/load.module').then((m) => m.LoadModule),
     data: {
       breadcrumb: 'Loads',
     },
   },
   {
     path: 'trucks',
-    loadChildren: () => import('./modules/truck/truck.module').then((m) => m.TruckModule),
+    loadChildren: () => import('./features/truck/truck.module').then((m) => m.TruckModule),
     data: {
       breadcrumb: 'Trucks',
     },
   },
   {
     path: 'dashboard',
-    loadChildren: () => import('./modules/dashboard/dashboard.module').then((m) => m.DashboardModule),
+    loadChildren: () => import('./features/dashboard/dashboard.module').then((m) => m.DashboardModule),
     data: {
       breadcrumb: 'Dashboard',
     },
