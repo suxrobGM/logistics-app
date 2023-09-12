@@ -1,9 +1,8 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ConfirmationService} from 'primeng/api';
-import {Employee} from '@core/models';
+import {Employee, UserRole} from '@core/models';
 import {ApiService, UserDataService} from '@core/services';
-import {UserRole} from '@core/types';
 
 
 @Component({

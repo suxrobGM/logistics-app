@@ -1,4 +1,4 @@
-import {LoadStatus} from 'src/app/core/types';
+import {LoadStatus} from './loadStatus';
 
 export interface Load {
   id: string;

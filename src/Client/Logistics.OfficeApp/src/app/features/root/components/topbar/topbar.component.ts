@@ -1,10 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {AppConfig} from '@core/constants/app.config';
-import {UserData} from 'src/app/core/models';
+import {AppConfig} from '@configs';
+import {UserData} from '@core/models';
 import {ApiService, UserDataService} from '@core/services';
-import {getRoleName} from 'src/app/core/types';
+import {UserRoleHelper} from '@core/helpers';
 import {OidcSecurityService} from 'angular-auth-oidc-client';
 import {of, switchMap} from 'rxjs';
+
 
 @Component({
   selector: 'app-topbar',
@@ -34,7 +35,7 @@ export class TopbarComponent implements OnInit {
     this.oidcService.userData$.subscribe(({userData}) => {
       this.userDataService.setUser(userData);
       this.user = this.userDataService.getUser();
-      this.userRole = getRoleName(this.user?.roles[0]);
+      this.userRole = UserRoleHelper.getRoleName(this.user?.roles[0]);
     });
 
     this.oidcService.isAuthenticated$.pipe(

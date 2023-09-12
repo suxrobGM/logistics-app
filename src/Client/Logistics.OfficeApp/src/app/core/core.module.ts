@@ -2,12 +2,11 @@ import {AuthModule} from 'angular-auth-oidc-client';
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {HTTP_INTERCEPTORS} from '@angular/common/http';
-import {TenantService} from './services/tenant.service';
-import {AuthConfig} from './constants/auth.config';
+import {AuthConfig} from '@configs';
 import {TenantInterceptor} from './interceptors/tenant.interceptor';
 import {TokenInterceptor} from './interceptors/token.interceptor';
 import {AuthGuard} from './guards/auth.guard';
-import {ApiService, CookieService, StorageService} from './services';
+import {ApiService, CookieService, StorageService, TenantService} from './services';
 
 @NgModule({
   declarations: [],

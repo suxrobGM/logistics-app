@@ -21,3 +21,7 @@ export {UpdateTruck} from './updateTruck';
 export {CreateTruck} from './createTruck';
 export {UpdateLoad} from './updateLoad';
 export {CreateLoad} from './createLoad';
+export {LoadStatus} from './loadStatus';
+export {LoadStatuses} from './loadStatuses';
+export {UserRole} from './userRole';
+export {EnumType} from './enumType';

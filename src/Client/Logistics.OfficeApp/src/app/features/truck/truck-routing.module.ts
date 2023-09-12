@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {Permissions} from 'src/app/core/types';
+import {Permissions} from '@core/helpers';
 import {AuthGuard} from '@core/guards';
 import {EditTruckComponent} from './edit-truck/edit-truck.component';
 import {ListTruckComponent} from './list-truck/list-truck.component';

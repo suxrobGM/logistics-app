@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {Permissions} from 'src/app/core/types';
+import {Permissions} from '@core/helpers';
 import {AuthGuard} from '@core/guards';
 import {EditLoadComponent} from './edit-load/edit-load.component';
 import {ListLoadComponent} from './list-load/list-load.component';
