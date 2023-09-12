@@ -1,6 +1,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {AuthGuard} from '@core/guards';
+import {UserRole} from '@core/models';
 import {Error404Component} from './error404/error404.component';
 import {ForbiddenComponent} from './forbidden/forbidden.component';
 import {LoginComponent} from './login/login.component';
@@ -17,7 +18,7 @@ const rootRoutes: Routes = [
     component: ForbiddenComponent,
     canActivate: [AuthGuard],
     data: {
-      roles: ['app.admin', 'tenant.owner', 'tenant.manager', 'tenant.dispatcher'],
+      roles: [UserRole.AppAdmin, UserRole.Owner, UserRole.Manager, UserRole.Dispatcher],
     },
   },
   {
