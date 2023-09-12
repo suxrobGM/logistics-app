@@ -3,7 +3,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MessageService} from 'primeng/api';
 import {CreateEmployee, Role, User} from '@shared/models';
 import {ApiService} from '@shared/services';
-import {UserService} from '../shared/user.service';
+import {UserService} from '../services/user.service';
 
 
 @Component({

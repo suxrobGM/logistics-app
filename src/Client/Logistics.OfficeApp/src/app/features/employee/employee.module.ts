@@ -4,7 +4,7 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {SharedModule} from '@shared/shared.module';
 import {EmployeeRoutingModule} from './employee-routing.module';
 import {PrimengModule} from './primeng.module';
-import {UserService} from './shared/user.service';
+import {UserService} from './services/user.service';
 import {AddEmployeeComponent} from './add-employee/add-employee.component';
 import {ChangeRoleDialogComponent} from './change-role-dialog/change-role-dialog.component';
 import {EditEmployeeComponent} from './edit-employee/edit-employee.component';
