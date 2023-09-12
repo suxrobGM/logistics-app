@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MessageService} from 'primeng/api';
-import {RemoveEmployeeRole, Role, UpdateEmployee} from '@shared/models';
-import {ApiService} from '@shared/services';
+import {RemoveEmployeeRole, Role, UpdateEmployee} from '@core/models';
+import {ApiService} from '@core/services';
 import {UserService} from '../services/user.service';
 
 

@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {AppConfig} from '@core';
-import {UserData} from '@shared/models';
-import {ApiService, UserDataService} from '@shared/services';
-import {getRoleName} from '@shared/types';
+import {AppConfig} from '@core/constants/app.config';
+import {UserData} from 'src/app/core/models';
+import {ApiService, UserDataService} from '@core/services';
+import {getRoleName} from 'src/app/core/types';
 import {OidcSecurityService} from 'angular-auth-oidc-client';
 import {of, switchMap} from 'rxjs';
 
@@ -15,7 +15,7 @@ export class TopbarComponent implements OnInit {
   isAuthenticated: boolean;
   isBusy: boolean;
   tenantName: string;
-  userRole?: string;
+  userRole: string | null;
   user: UserData | null;
 
   constructor(
@@ -27,6 +27,7 @@ export class TopbarComponent implements OnInit {
     this.isBusy = false;
     this.tenantName = '';
     this.user = null;
+    this.userRole = null;
   }
 
   ngOnInit(): void {

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {TableLazyLoadEvent} from 'primeng/table';
-import {Truck} from '@shared/models';
-import {ApiService} from '@shared/services';
+import {Truck} from '@core/models';
+import {ApiService} from '@core/services';
 
 
 @Component({

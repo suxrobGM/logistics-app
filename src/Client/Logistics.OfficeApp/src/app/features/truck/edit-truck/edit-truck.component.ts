@@ -1,10 +1,10 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
-import {CreateTruck, Employee, Truck, UpdateTruck} from '@shared/models';
-import {ApiService} from '@shared/services';
+import {CreateTruck, Employee, UpdateTruck} from '@core/models';
+import {ApiService} from '@core/services';
 import {ConfirmationService, MessageService} from 'primeng/api';
-import {of, switchMap} from 'rxjs';
+
 
 @Component({
   selector: 'app-edit-truck',

@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {OidcSecurityService} from 'angular-auth-oidc-client';
-import {Permissions} from '@shared/types';
-import {UserIdentity} from '@shared/models';
+import {Permissions} from 'src/app/core/types';
+import {UserIdentity} from 'src/app/core/models';
 
 @Component({
   selector: 'app-nav-dock',

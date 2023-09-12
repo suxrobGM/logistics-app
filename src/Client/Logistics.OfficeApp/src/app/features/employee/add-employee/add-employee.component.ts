@@ -1,8 +1,8 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MessageService} from 'primeng/api';
-import {CreateEmployee, Role, User} from '@shared/models';
-import {ApiService} from '@shared/services';
+import {CreateEmployee, Role, User} from '@core/models';
+import {ApiService} from '@core/services';
 import {UserService} from '../services/user.service';
 
 

@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {Permissions} from '@shared/types';
-import {AuthGuard} from '@core';
+import {Permissions} from 'src/app/core/types';
+import {AuthGuard} from '@core/guards';
 import {AddEmployeeComponent} from './add-employee/add-employee.component';
 import {EditEmployeeComponent} from './edit-employee/edit-employee.component';
 import {ListEmployeeComponent} from './list-employee/list-employee.component';

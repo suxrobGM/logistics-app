@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {DailyGrosses, MonthlyGrosses, Truck} from '@shared/models';
+import {DailyGrosses, MonthlyGrosses, Truck} from '@core/models';
 import {DistanceUnitPipe} from '@shared/pipes';
-import {ApiService} from '@shared/services';
+import {ApiService} from '@core/services';
 import {DateUtils} from '@shared/utils';
 
 @Component({

@@ -6,11 +6,11 @@ import * as MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-d
 import * as mapboxgl from 'mapbox-gl';
 import {ConfirmationService, MessageService} from 'primeng/api';
 import {OidcSecurityService} from 'angular-auth-oidc-client';
-import {AppConfig} from '@core';
-import {CreateLoad, Employee, Load, TruckDriver, UpdateLoad, UserIdentity} from '@shared/models';
-import {ApiService} from '@shared/services';
+import {AppConfig} from '@core/constants/app.config';
+import {CreateLoad, UpdateLoad, UserIdentity} from '@core/models';
+import {ApiService} from '@core/services';
 import {DistanceUnitPipe} from '@shared/pipes';
-import {EnumType, LoadStatus, LoadStatuses} from '@shared/types';
+import {EnumType, LoadStatus, LoadStatuses} from '@core/types';
 
 @Component({
   selector: 'app-edit-load',

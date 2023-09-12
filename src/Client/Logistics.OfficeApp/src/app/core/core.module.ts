@@ -7,6 +7,7 @@ import {AuthConfig} from './constants/auth.config';
 import {TenantInterceptor} from './interceptors/tenant.interceptor';
 import {TokenInterceptor} from './interceptors/token.interceptor';
 import {AuthGuard} from './guards/auth.guard';
+import {ApiService, CookieService, StorageService} from './services';
 
 @NgModule({
   declarations: [],
@@ -21,6 +22,9 @@ import {AuthGuard} from './guards/auth.guard';
     {provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true},
     TenantService,
     AuthGuard,
+    ApiService,
+    CookieService,
+    StorageService,
   ],
 })
 export class CoreModule { }

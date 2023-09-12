@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {map, Observable} from 'rxjs';
-import {Role, User, UserIdentity} from '@shared/models';
-import {ApiService, UserDataService} from '@shared/services';
-import {UserRole} from '@shared/types';
+import {Role, User} from '@core/models';
+import {ApiService, UserDataService} from '@core/services';
+import {UserRole} from '@core/types';
 
 @Injectable()
 export class UserService {

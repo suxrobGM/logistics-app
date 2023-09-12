@@ -1,8 +1,8 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {TableLazyLoadEvent} from 'primeng/table';
-import {Load} from '@shared/models';
-import {ApiService} from '@shared/services';
-import {LoadStatus, LoadStatuses} from '@shared/types';
+import {Load} from '@core/models';
+import {ApiService} from '@core/services';
+import {LoadStatus, LoadStatuses} from '@core/types';
 
 
 @Component({

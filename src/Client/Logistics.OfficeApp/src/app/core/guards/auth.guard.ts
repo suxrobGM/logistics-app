@@ -5,7 +5,7 @@ import {
   RouterStateSnapshot,
   UrlTree,
 } from '@angular/router';
-import {UserIdentity} from '@shared/models';
+import {UserIdentity} from '../models';
 import {OidcSecurityService} from 'angular-auth-oidc-client';
 import {map, Observable} from 'rxjs';
 

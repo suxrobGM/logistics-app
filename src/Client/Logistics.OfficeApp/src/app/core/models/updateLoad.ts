@@ -1,4 +1,4 @@
-import {LoadStatus} from '@shared/types';
+import {LoadStatus} from 'src/app/core/types';
 
 export interface UpdateLoad {
   id: string;

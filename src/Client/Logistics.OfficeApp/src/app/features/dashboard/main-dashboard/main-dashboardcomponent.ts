@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {MonthlyGrosses, OverallStats} from '@shared/models';
+import {MonthlyGrosses, OverallStats} from '@core/models';
 import {DistanceUnitPipe} from '@shared/pipes';
-import {ApiService} from '@shared/services';
+import {ApiService} from '@core/services';
 import {DateUtils} from '@shared/utils';
 
 @Component({

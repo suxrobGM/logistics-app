@@ -7,7 +7,7 @@ export enum UserRole {
   Driver = 'tenant.driver'
 }
 
-export function getRoleName(role?: string): string | undefined {
+export function getRoleName(role?: string): string | null {
   switch (role) {
     case UserRole.AppSuperAdmin:
       return 'Super Admin';
@@ -28,5 +28,5 @@ export function getRoleName(role?: string): string | undefined {
       return 'Driver';
   }
 
-  return undefined;
+  return null;
 }
