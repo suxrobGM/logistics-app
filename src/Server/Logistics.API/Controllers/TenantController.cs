@@ -18,7 +18,7 @@ public class TenantController : ControllerBase
     [ProducesResponseType(typeof(ResponseResult<TenantDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Tenant.View)]
-    public async Task<IActionResult> GetById(string? identifier)
+    public async Task<IActionResult> GetById(string identifier)
     {
         var result = await _mediator.Send(new GetTenantQuery
         {

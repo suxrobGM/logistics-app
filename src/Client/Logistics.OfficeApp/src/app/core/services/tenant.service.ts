@@ -2,52 +2,68 @@ import {HttpHeaders} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {CookieService} from './cookie.service';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class TenantService {
-  constructor(private cookieService: CookieService) { }
+  private tenantId: string | null;
 
-  public getTenantId(): string {
+  constructor(private cookieService: CookieService) {
+    this.tenantId = null;
+  }
+
+  getTenantId(): string | null {
+    return this.tenantId;
+  }
+
+  setTenantId(value: string) {
+    if (this.tenantId === value) {
+      return;
+    }
+
+    this.tenantId = value;
+  }
+
+  getTenantName(): string {
     const urlParams = new URLSearchParams(window.location.search);
     const tenantSubDomain = this.getSubDomain(location.host);
     const tenantQuery = urlParams.get('tenant');
     const tenantCookie = this.cookieService.getCookie('X-Tenant');
-    let tenantId = 'default';
+    let tenantName = 'default';
 
     if (tenantSubDomain) {
-      tenantId = tenantSubDomain;
+      tenantName = tenantSubDomain;
     }
     else if (tenantQuery) {
-      tenantId = tenantQuery;
+      tenantName = tenantQuery;
     }
     else if (tenantCookie) {
-      tenantId = tenantCookie;
+      tenantName = tenantCookie;
     }
 
-    if (tenantId === 'office') {
-      tenantId = 'default';
+    if (tenantName === 'office') {
+      tenantName = 'default';
     }
 
-    return tenantId;
+    return tenantName;
   }
 
-  public createTenantHeaders(headers: HttpHeaders, tenantId: string): HttpHeaders {
-    return headers.append('X-Tenant', tenantId);
+  createTenantHeaders(headers: HttpHeaders, tenantName: string): HttpHeaders {
+    return headers.append('X-Tenant', tenantName);
   }
 
-  public setTenantId(tenantId: string) {
-    if (!tenantId) {
+  setTenantCookie(tenantName: string) {
+    if (!tenantName) {
       return;
     }
 
     const currentTenant = this.cookieService.getCookie('X-Tenant');
 
-    if (tenantId === currentTenant) {
+    if (tenantName === currentTenant) {
       return;
     }
 
     this.cookieService.setCookie({
       name: 'X-Tenant',
-      value: tenantId,
+      value: tenantName,
       session: true,
     });
   }

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {of, switchMap} from 'rxjs';
 import {AppConfig} from '@configs';
-import {ApiService} from '@core/services';
+import {ApiService, TenantService} from '@core/services';
 import {AuthService, UserData} from '@core/auth';
 
 
@@ -19,7 +19,8 @@ export class TopbarComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private apiService: ApiService)
+    private apiService: ApiService,
+    private tenantService: TenantService)
   {
     this.isAuthenticated = false;
     this.isBusy = false;
@@ -45,8 +46,9 @@ export class TopbarComponent implements OnInit {
           return of({success: false, value: null});
         }),
     ).subscribe((result) => {
-      if (result.success && result.value?.displayName) {
-        this.tenantName = result.value?.displayName;
+      if (result.success && result.value) {
+        this.tenantName = result.value.displayName;
+        this.tenantService.setTenantId(result.value.id);
       }
 
       this.isBusy = false;

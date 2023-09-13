@@ -11,7 +11,6 @@ import {
   CookieService,
   LiveTrackingService,
   StorageService,
-  TenantService,
 } from './services';
 
 
@@ -26,7 +25,6 @@ import {
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: TenantInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true},
-    TenantService,
     AuthGuard,
     ApiService,
     CookieService,

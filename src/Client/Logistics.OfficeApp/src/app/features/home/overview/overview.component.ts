@@ -71,8 +71,6 @@ export class OverviewComponent implements OnInit, OnDestroy {
   private connectToLiveTracking() {
     this.liveTrackingService.onReceiveGeolocationData = (data: GeolocationData) => {
       this.truksLocationsMap.set(data.userId, data);
-      console.log(data);
-      
       this.truksLocations = Array.from(this.truksLocationsMap.values());
     };
 

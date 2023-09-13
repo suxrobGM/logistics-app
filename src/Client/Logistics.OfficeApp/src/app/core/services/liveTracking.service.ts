@@ -3,7 +3,6 @@ import {HttpTransportType, HubConnection, HubConnectionBuilder} from '@microsoft
 import {AppConfig} from '@configs';
 import {GeolocationData} from '@core/models';
 import {TenantService} from './tenant.service';
-import {BehaviorSubject} from 'rxjs';
 
 
 @Injectable()

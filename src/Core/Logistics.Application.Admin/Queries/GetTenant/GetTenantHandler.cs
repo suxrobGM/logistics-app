@@ -11,7 +11,8 @@ internal sealed class GetTenantHandler : RequestHandler<GetTenantQuery, Response
         _repository = repository;
     }
 
-    protected override async Task<ResponseResult<TenantDto>> HandleValidated(GetTenantQuery req, CancellationToken cancellationToken)
+    protected override async Task<ResponseResult<TenantDto>> HandleValidated(
+        GetTenantQuery req, CancellationToken cancellationToken)
     {
         var tenantEntity = await _repository.GetAsync<Tenant>(i => i.Id == req.Id || i.Name == req.Name);
 

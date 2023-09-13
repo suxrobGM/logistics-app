@@ -17,12 +17,9 @@ export class GeolocationMapComponent implements OnInit, OnChanges {
   @Input() geolocationData: GeolocationData[] = [];
   @Input() initialCenter: [number, number] = [-95, 35];
 
-  ngOnInit(): void {}
 
-  ngOnChanges(changes: SimpleChanges): void {
-    // if (changes.geolocationData) {
-    // }
-  }
+  ngOnInit(): void {}
+  ngOnChanges(changes: SimpleChanges): void {}
 
   trackByFn(index: number, item: GeolocationData): string {
     return item.userId;

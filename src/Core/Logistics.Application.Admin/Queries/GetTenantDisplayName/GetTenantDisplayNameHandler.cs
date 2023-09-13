@@ -11,9 +11,10 @@ internal sealed class GetTenantDisplayNameHandler : RequestHandler<GetTenantDisp
         _repository = repository;
     }
 
-    protected override async Task<ResponseResult<TenantDto>> HandleValidated(GetTenantDisplayNameQuery req, CancellationToken cancellationToken)
+    protected override async Task<ResponseResult<TenantDto>> HandleValidated(
+        GetTenantDisplayNameQuery req, CancellationToken cancellationToken)
     {
-        var tenantEntity = await _repository.GetAsync<Domain.Entities.Tenant>(i => i.Id == req.Id || i.Name == req.Name);
+        var tenantEntity = await _repository.GetAsync<Tenant>(i => i.Id == req.Id || i.Name == req.Name);
 
         if (tenantEntity == null)
             return ResponseResult<TenantDto>.CreateError("Could not find the specified tenant");
