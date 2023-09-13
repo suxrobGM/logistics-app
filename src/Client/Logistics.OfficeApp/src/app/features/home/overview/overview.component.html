@@ -8,10 +8,16 @@
         <div class="ms-3 py-2 fw-bold">Active drivers</div>
         <hr class="w-100 m-0" />
       </ng-template>
-      <mgl-map [style]="'mapbox://styles/mapbox/streets-v11'" 
-        [zoom]="[6]"
-        [center]="[-74.5, 40]">
-      </mgl-map>
+      <!-- <mgl-map [style]="'mapbox://styles/mapbox/streets-v11'" 
+        [zoom]="[3]"
+        [center]="[-95, 35]">
+        <mgl-marker #markerRef [lngLat]="markerPos" [draggable]="true">
+        </mgl-marker>
+        <mgl-popup [marker]="markerRef">
+          <h3>Label Name</h3><p>Marker description</p>
+        </mgl-popup>
+      </mgl-map> -->
+      <app-geolocation-map [geolocationData]="truksLocations"></app-geolocation-map>
     </p-card>
   </div>
 

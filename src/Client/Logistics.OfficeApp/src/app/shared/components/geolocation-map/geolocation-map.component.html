@@ -1,0 +1,9 @@
+<mgl-map [style]="'mapbox://styles/mapbox/streets-v11'" [zoom]="[3]" [center]="initialCenter">
+  <mgl-marker *ngFor="let marker of geolocationData; trackBy: trackByFn" 
+    [lngLat]="[marker.longitude, marker.latitude]">
+    <mgl-popup>
+      <strong>{{ marker.userFullName }}</strong><br>
+      <span>Truck: {{ marker.truckNumber }}</span>
+    </mgl-popup>
+  </mgl-marker>
+</mgl-map>

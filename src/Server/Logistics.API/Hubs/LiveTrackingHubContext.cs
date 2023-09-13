@@ -18,7 +18,7 @@ public class LiveTrackingHubContext
         return geolocationData;
     }
 
-    public void UpdateData(string connectionId, GeolocationData geolocationData)
+    public void UpdateGeolocationData(string connectionId, GeolocationData geolocationData)
     {
         _connectedClients.AddOrUpdate(connectionId, geolocationData, (_, _) => geolocationData);
     }

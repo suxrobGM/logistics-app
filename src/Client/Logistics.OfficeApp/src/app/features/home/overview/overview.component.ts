@@ -1,7 +1,7 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {DailyGrosses, Load} from '@core/models';
+import {Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {DailyGrosses, GeolocationData, Load} from '@core/models';
 import {DistanceUnitPipe} from '@shared/pipes';
-import {ApiService} from '@core/services';
+import {ApiService, LiveTrackingService} from '@core/services';
 import {DateUtils} from '@shared/utils';
 
 
@@ -11,7 +11,7 @@ import {DateUtils} from '@shared/utils';
   styleUrls: ['./overview.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class OverviewComponent implements OnInit {
+export class OverviewComponent implements OnInit, OnDestroy {
   public todayGross: number;
   public weeklyGross: number;
   public weeklyDistance: number;
@@ -21,11 +21,16 @@ export class OverviewComponent implements OnInit {
   public loads: Load[];
   public chartData: any;
   public chartOptions: any;
+  public truksLocations: GeolocationData[];
+  private truksLocationsMap: Map<string, GeolocationData>;
 
   constructor(
     private apiService: ApiService,
+    private liveTrackingService: LiveTrackingService,
     private distanceUnit: DistanceUnitPipe)
   {
+    this.truksLocations = [];
+    this.truksLocationsMap = new Map();
     this.loads = [];
     this.loadingLoads = false;
     this.loadingChart = false;
@@ -56,6 +61,22 @@ export class OverviewComponent implements OnInit {
   public ngOnInit() {
     this.fetchLatestLoads();
     this.fetchLastTenDaysGross();
+    this.connectToLiveTracking();
+  }
+
+  public ngOnDestroy(): void {
+    this.liveTrackingService.disconnect();
+  }
+
+  private connectToLiveTracking() {
+    this.liveTrackingService.onReceiveGeolocationData = (data: GeolocationData) => {
+      this.truksLocationsMap.set(data.userId, data);
+      console.log(data);
+      
+      this.truksLocations = Array.from(this.truksLocationsMap.values());
+    };
+
+    this.liveTrackingService.connect();
   }
 
   private fetchLatestLoads() {

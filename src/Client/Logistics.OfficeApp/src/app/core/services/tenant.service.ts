@@ -15,9 +15,11 @@ export class TenantService {
 
     if (tenantSubDomain) {
       tenantId = tenantSubDomain;
-    } else if (tenantQuery) {
+    }
+    else if (tenantQuery) {
       tenantId = tenantQuery;
-    } else if (tenantCookie) {
+    }
+    else if (tenantCookie) {
       tenantId = tenantCookie;
     }
 

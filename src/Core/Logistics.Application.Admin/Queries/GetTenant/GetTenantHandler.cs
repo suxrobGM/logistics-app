@@ -13,7 +13,7 @@ internal sealed class GetTenantHandler : RequestHandler<GetTenantQuery, Response
 
     protected override async Task<ResponseResult<TenantDto>> HandleValidated(GetTenantQuery req, CancellationToken cancellationToken)
     {
-        var tenantEntity = await _repository.GetAsync<Domain.Entities.Tenant>(i => i.Id == req.Id || i.Name == req.Name);
+        var tenantEntity = await _repository.GetAsync<Tenant>(i => i.Id == req.Id || i.Name == req.Name);
 
         if (tenantEntity == null)
             return ResponseResult<TenantDto>.CreateError("Could not find the specified tenant");

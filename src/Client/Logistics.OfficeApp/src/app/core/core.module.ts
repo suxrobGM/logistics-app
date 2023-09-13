@@ -6,7 +6,13 @@ import {AuthConfig} from '@configs';
 import {TenantInterceptor} from './interceptors/tenant.interceptor';
 import {TokenInterceptor} from './interceptors/token.interceptor';
 import {AuthGuard} from './guards/auth.guard';
-import {ApiService, CookieService, StorageService, TenantService} from './services';
+import {
+  ApiService,
+  CookieService,
+  LiveTrackingService,
+  StorageService,
+  TenantService,
+} from './services';
 
 
 @NgModule({
@@ -25,6 +31,7 @@ import {ApiService, CookieService, StorageService, TenantService} from './servic
     ApiService,
     CookieService,
     StorageService,
+    LiveTrackingService,
   ],
 })
 export class CoreModule { }

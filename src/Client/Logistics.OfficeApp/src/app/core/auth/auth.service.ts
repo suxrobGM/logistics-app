@@ -8,7 +8,7 @@ import {UserData} from './userData';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
-  private accessToken: string |null;
+  private accessToken: string | null;
   private userData: UserData | null;
 
   constructor(
@@ -82,5 +82,9 @@ export class AuthService {
 
   getUserRoleName(): string | null {
     return UserRoleHelper.getRoleName(this.userData?.roles[0]);
+  }
+
+  private decodeJwt(accessToken: string): any {
+    return JSON.parse(atob(accessToken.split('.')[1]));
   }
 }

@@ -29,25 +29,22 @@ public class LiveTrackingHub : Hub<ILiveTrackingHubClient>
         _hubContext.RemoveClient(Context.ConnectionId);
     }
 
-    public Task SendGeolocationData(GeolocationData geolocation)
+    public async Task SendGeolocationData(GeolocationData geolocation)
     {
-        // await Clients.Group(tenantId).ReceiveGeolocationData(userId, latitude, longitude);
         Console.WriteLine(
             $"Received a geolocation data from: userId {geolocation.UserId}, tenantId: {geolocation.TenantId}, latitude: {geolocation.Latitude}, longitude: {geolocation.Longitude}");
         
-        _hubContext.UpdateData(Context.ConnectionId, geolocation);
-        return Task.CompletedTask;
+        await Clients.Group(geolocation.TenantId).ReceiveGeolocationData(geolocation);
+        _hubContext.UpdateGeolocationData(Context.ConnectionId, geolocation);
     }
     
     public async Task RegisterTenant(string tenantId)
     {
         await Groups.AddToGroupAsync(Context.ConnectionId, tenantId);
-        // await Clients.Group(tenantId).SendAsync("Send", $"{Context.ConnectionId} has joined the group {groupName}.");
     }
 
     public async Task UnregisterTenant(string tenantId)
     {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, tenantId);
-        // await Clients.Group(groupName).SendAsync("Send", $"{Context.ConnectionId} has left the group {groupName}.");
     }
 }

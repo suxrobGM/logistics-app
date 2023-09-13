@@ -43,10 +43,7 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
         var employee = await _tenantRepository.GetAsync<Employee>(user.Id);
 
         AddTenantIdsClaim(claimsIdentity, tenantIds);
-        AddTenantRoles(claimsIdentity, employee);
-        await AddTenantRoleClaims(claimsIdentity, employee);
-        
-        claimsIdentity.AddClaim(new Claim(CustomClaimTypes.Tenant, tenantId));
+        AddTenantRolesClaim(claimsIdentity, employee);
         return claimsIdentity;
     }
 
@@ -66,18 +63,6 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
         }
     }
 
-    private async Task AddTenantRoleClaims(ClaimsIdentity claimsIdentity, Employee? employee)
-    {
-        if (employee == null)
-            return;
-
-        foreach (var tenantRole in employee.Roles)
-        {
-            var roleClaims = await _tenantRepository.GetListAsync<TenantRoleClaim>(i => i.RoleId == tenantRole.Id);
-            claimsIdentity.AddClaims(roleClaims.Select(i => i.ToClaim()));
-        }
-    }
-
     private static void AddTenantIdsClaim(ClaimsIdentity claimsIdentity, IEnumerable<string> tenantIds)
     {
         foreach (var tenantId in tenantIds)
@@ -86,7 +71,7 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
         }
     }
 
-    private static void AddTenantRoles(ClaimsIdentity claimsIdentity, Employee? employee)
+    private static void AddTenantRolesClaim(ClaimsIdentity claimsIdentity, Employee? employee)
     {
         if (employee == null)
             return;
