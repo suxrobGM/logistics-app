@@ -120,7 +120,7 @@ public class TenantDatabaseService : ITenantDatabaseService
         foreach (var permission in permissions)
         {
             var claim = new Claim(CustomClaimTypes.Permission, permission);
-            role.Claims.Add(TenantRoleClaim.FromClaim(claim));
+            role.Claims.Add(new TenantRoleClaim(claim.Type, claim.Value));
             _logger.LogInformation("Added claim '{ClaimType}' - '{ClaimValue}' to the tenant role '{Role}'", claim.Type, claim.Value, role.Name);
         }
     }

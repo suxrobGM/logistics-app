@@ -18,15 +18,11 @@
               styleClass="p-button-lg p-button-text text-dark"  
               (click)="openAccountUrl()">
               <ng-template pTemplate="content">
-                <div class="me-2">
-                  <i class="bi bi-person-circle"></i>
-                </div>
-                <div>
-                  <span>{{user?.name}}</span>
-                  <span *ngIf="userRole">
-                    <span class="badge">{{userRole}}</span>
-                  </span>
-                </div>
+                <i class="bi bi-person-circle me-2"></i>
+                <span>{{user?.getFullName()}}</span>
+                <span *ngIf="userRole">
+                  <span class="badge">{{userRole}}</span>
+                </span>
               </ng-template>
             </p-button>
           </div>
