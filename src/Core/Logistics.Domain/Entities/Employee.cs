@@ -20,7 +20,12 @@ public class Employee : AuditableEntity, ITenantEntity
     /// <summary>
     /// Driver last known location. The format of data should be in "{Latitude},{Longitude}".
     /// </summary>
-    public string? LastKnownLocation { get; set; }
+    public string? LastKnownCoordinates { get; set; }
+    
+    /// <summary>
+    /// Driver last known location address
+    /// </summary>
+    public string? LastKnownAddress { get; set; }
     
     public string? TruckId { get; set; }
     public virtual Truck? Truck { get; set; }

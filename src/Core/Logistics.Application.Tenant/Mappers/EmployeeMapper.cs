@@ -17,7 +17,8 @@ public static class EmployeeMapper
             JoinedDate = entity.JoinedDate,
             TruckNumber = entity.Truck?.TruckNumber,
             TruckId = entity.TruckId,
-            LastKnownLocation = entity.LastKnownLocation,
+            LastKnownCoordinates = entity.LastKnownCoordinates,
+            LastKnownAddress = entity.LastKnownAddress,
             Roles = entity.Roles.Select(i => new TenantRoleDto
             {
                 Name = i.Name,

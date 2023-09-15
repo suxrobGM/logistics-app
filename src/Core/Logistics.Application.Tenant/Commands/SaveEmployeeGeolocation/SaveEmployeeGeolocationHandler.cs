@@ -21,7 +21,7 @@ internal sealed class SaveEmployeeGeolocationHandler : RequestHandler<SaveEmploy
         if (employee is null)
             return ResponseResult.CreateSuccess();
         
-        employee.LastKnownLocation = $"{req.GeolocationData.Latitude},{req.GeolocationData.Longitude}";
+        employee.LastKnownCoordinates = $"{req.GeolocationData.Latitude},{req.GeolocationData.Longitude}";
         _tenantRepository.Update(employee);
         await _tenantRepository.UnitOfWork.CommitAsync();
         return ResponseResult.CreateSuccess();
