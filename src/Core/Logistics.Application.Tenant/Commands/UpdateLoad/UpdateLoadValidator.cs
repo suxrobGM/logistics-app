@@ -15,14 +15,14 @@ internal sealed class UpdateLoadValidator : AbstractValidator<UpdateLoadCommand>
         
         When(i => !string.IsNullOrEmpty(i.OriginAddress), () =>
         {
-            RuleFor(i => i.OriginLatitude).NotEmpty().InclusiveBetween(-90, 90);
-            RuleFor(i => i.OriginLongitude).NotEmpty().InclusiveBetween(-180, 180);
+            RuleFor(i => i.OriginAddressLat).NotEmpty().InclusiveBetween(-90, 90);
+            RuleFor(i => i.OriginAddressLong).NotEmpty().InclusiveBetween(-180, 180);
         });
         
         When(i => !string.IsNullOrEmpty(i.DestinationAddress), () =>
         {
-            RuleFor(i => i.DestinationLatitude).NotEmpty().InclusiveBetween(-90, 90);
-            RuleFor(i => i.DestinationLongitude).NotEmpty().InclusiveBetween(-180, 180);
+            RuleFor(i => i.DestinationAddressLat).NotEmpty().InclusiveBetween(-90, 90);
+            RuleFor(i => i.DestinationAddressLong).NotEmpty().InclusiveBetween(-180, 180);
         });
     }
 }

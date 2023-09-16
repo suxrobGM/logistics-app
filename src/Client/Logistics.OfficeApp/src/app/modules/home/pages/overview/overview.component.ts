@@ -59,8 +59,9 @@ export class OverviewComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit() {
-    this.fetchLatestLoads();
+    this.fetchActiveLoads();
     this.fetchLastTenDaysGross();
+    this.fetchTrucksData();
     this.connectToLiveTracking();
   }
 
@@ -71,16 +72,45 @@ export class OverviewComponent implements OnInit, OnDestroy {
   private connectToLiveTracking() {
     this.liveTrackingService.onReceiveGeolocationData = (data: GeolocationData) => {
       this.truksLocationsMap.set(data.userId, data);
-      this.truksLocations = Array.from(this.truksLocationsMap.values());
+      const index = this.truksLocations.findIndex((loc) => loc.userId === data.userId);
+
+      if (index !== -1) {
+        this.truksLocations[index] = data;
+      }
+      else {
+        this.truksLocations.push(data);
+      }
     };
 
     this.liveTrackingService.connect();
   }
 
-  private fetchLatestLoads() {
+  private fetchTrucksData() {
+    this.apiService.getTrucks('', '', 1, 100).subscribe((result) => {
+      if (!result.success) {
+        return;
+      }
+
+      const truckLocations: GeolocationData[] = result.items!.flatMap((truck) => {
+        if (truck.currentLocation) {
+          return [{
+            latitude: truck.currentLocationLat!,
+            longitude: truck.currentLocationLong!,
+            userId: truck.drivers[0].id,
+            tenantId: '', // you might want to replace this with an actual value
+          }];
+        }
+        return [];
+      });
+
+      this.truksLocations = truckLocations;
+    });
+  }
+
+  private fetchActiveLoads() {
     this.loadingLoads = true;
 
-    this.apiService.getLoads('', '-dispatchedDate').subscribe((result) => {
+    this.apiService.getLoads('', true, '-dispatchedDate').subscribe((result) => {
       if (result.success && result.items) {
         this.loads = result.items;
       }

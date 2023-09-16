@@ -37,11 +37,11 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resp
         var load = Load.CreateLoad(
             refId, 
             req.OriginAddress!,
-            req.OriginLatitude,
-            req.OriginLongitude,
+            req.OriginAddressLat,
+            req.OriginAddressLong,
             req.DestinationAddress!,
-            req.DestinationLatitude,
-            req.DestinationLongitude,
+            req.DestinationAddressLat,
+            req.DestinationAddressLong,
             truck, 
             dispatcher);
         

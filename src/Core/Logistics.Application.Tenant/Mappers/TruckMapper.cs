@@ -11,6 +11,8 @@ public static class TruckMapper
             Id = entity.Id,
             TruckNumber = entity.TruckNumber,
             CurrentLocation = entity.Drivers.FirstOrDefault()?.LastKnownLocation,
+            CurrentLocationLat = entity.Drivers.FirstOrDefault()?.LastKnownLocationLat,
+            CurrentLocationLong = entity.Drivers.FirstOrDefault()?.LastKnownLocationLong,
             Drivers = entity.Drivers.Select(i => i.ToDto())
         };
     }

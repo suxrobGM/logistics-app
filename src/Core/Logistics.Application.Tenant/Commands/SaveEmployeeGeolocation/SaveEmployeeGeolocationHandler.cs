@@ -23,7 +23,7 @@ internal sealed class SaveEmployeeGeolocationHandler : RequestHandler<SaveEmploy
 
         employee.LastKnownLocation = req.GeolocationData.Address;
         employee.LastKnownLocationLat = req.GeolocationData.Latitude;
-        employee.LastKnownLocationLng = req.GeolocationData.Longitude;
+        employee.LastKnownLocationLong = req.GeolocationData.Longitude;
         _tenantRepository.Update(employee);
         await _tenantRepository.UnitOfWork.CommitAsync();
         return ResponseResult.CreateSuccess();

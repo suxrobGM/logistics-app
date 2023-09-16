@@ -5,6 +5,8 @@ public class TruckDto
     public string? Id { get; set; }
     public string? TruckNumber { get; set; }
     public string? CurrentLocation { get; set; }
+    public double? CurrentLocationLat { get; set; }
+    public double? CurrentLocationLong { get; set; }
     public IEnumerable<EmployeeDto>? Drivers { get; set; }
     public string[]? LoadIds { get; set; }
 }

@@ -31,7 +31,7 @@ export class ListLoadComponent implements OnInit {
   search(event: any) {
     const query = event.target.value;
 
-    this.apiService.getLoads(query, '', 1).subscribe((result) => {
+    this.apiService.getLoads(query, false).subscribe((result) => {
       if (result.success && result.items) {
         this.loads = result.items;
         this.totalRecords = result.itemsCount!;
@@ -44,7 +44,7 @@ export class ListLoadComponent implements OnInit {
     const page = event.first! / event.rows! + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
-    this.apiService.getLoads('', sortField, page, event.rows!).subscribe((result) => {
+    this.apiService.getLoads('', false, sortField, page, event.rows!).subscribe((result) => {
       if (result.success && result.items) {
         this.loads = result.items;
         this.totalRecords = result.itemsCount!;

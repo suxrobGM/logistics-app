@@ -5,7 +5,7 @@
   <div class="col-12 col-xl-7">
     <p-card>
       <ng-template pTemplate="header">
-        <div class="ms-3 py-2 fw-bold">Active drivers</div>
+        <div class="ms-3 py-2 fw-bold">Active trucks</div>
         <hr class="w-100 m-0" />
       </ng-template>
       <!-- <mgl-map [style]="'mapbox://styles/mapbox/streets-v11'" 
@@ -24,7 +24,7 @@
   <div class="col-12 col-xl-5 mt-3 mt-xl-0">
     <p-card styleClass="h-100">
       <ng-template pTemplate="header">
-        <div class="ms-3 py-2 fw-bold">Recent loads</div>
+        <div class="ms-3 py-2 fw-bold">Active loads</div>
         <hr class="w-100 m-0" />
       </ng-template>
 
@@ -32,8 +32,7 @@
         <ng-template pTemplate="header">
           <tr>
             <th>ID</th>
-            <th>Origin</th>
-            <th>Destination</th>
+            <th>Current Location</th>
             <th>Truck</th>
           </tr>
         </ng-template>
@@ -44,11 +43,8 @@
                 {{load.refId}}
               </a>
             </td>
-            <td [pTooltip]="load.originAddress" [showDelay]="500" tooltipPosition="bottom">
-              {{load.originAddress}}
-            </td>
-            <td [pTooltip]="load.sourceAddress" [showDelay]="500" tooltipPosition="bottom">
-              {{load.destinationAddress}}
+            <td [pTooltip]="load.currentLocation" [showDelay]="500" tooltipPosition="bottom">
+              {{load.currentLocation}}
             </td>
             <td>
               <a [routerLink]="['/trucks/edit', load.assignedTruckId]">

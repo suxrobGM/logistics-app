@@ -24,6 +24,7 @@ import {
   CreateTruck,
   UpdateLoad,
   CreateLoad,
+  LoadStatus,
 } from '../models';
 
 
@@ -84,7 +85,7 @@ export class ApiService {
         .pipe(catchError((err) => this.handleError(err)));
   }
 
-  getLoads(searchQuery = '', orderBy = '', page = 1, pageSize = 10): Observable<PagedResponseResult<Load>> {
+  getLoads(searchQuery = '', filterActiveLoads = false, orderBy = '', page = 1, pageSize = 10): Observable<PagedResponseResult<Load>> {
     if (!searchQuery) {
       searchQuery = '';
     }
@@ -93,7 +94,11 @@ export class ApiService {
       orderBy = '';
     }
 
-    const url = `${this.host}/load/list?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
+    let url = `${this.host}/load/list?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
+
+    if (filterActiveLoads) {
+      url = `${url}&filterActiveLoads=true`;
+    }
     return this.httpClient
         .get<PagedResponseResult<Load>>(url)
         .pipe(catchError((err) => this.handleError(err)));

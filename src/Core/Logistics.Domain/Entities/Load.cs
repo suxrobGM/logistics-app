@@ -16,14 +16,14 @@ public class Load : AuditableEntity, ITenantEntity
     [StringLength(LoadConsts.AddressLength)]
     public string? OriginAddress { get; set; }
     
-    public double? OriginLatitude { get; set; }
-    public double? OriginLongitude { get; set; }
+    public double? OriginAddressLat { get; set; }
+    public double? OriginAddressLong { get; set; }
     
     [StringLength(LoadConsts.AddressLength)]
     public string? DestinationAddress { get; set; }
     
-    public double? DestinationLatitude { get; set; }
-    public double? DestinationLongitude { get; set; }
+    public double? DestinationAddressLat { get; set; }
+    public double? DestinationAddressLong { get; set; }
     
     public double DeliveryCost { get; set; }
     public double Distance { get; set; }
@@ -80,11 +80,11 @@ public class Load : AuditableEntity, ITenantEntity
         {
             RefId = refId,
             OriginAddress = originAddress,
-            OriginLatitude = originLatitude,
-            OriginLongitude = originLongitude,
+            OriginAddressLat = originLatitude,
+            OriginAddressLong = originLongitude,
             DestinationAddress = destinationAddress,
-            DestinationLatitude = destinationLatitude,
-            DestinationLongitude = destinationLongitude,
+            DestinationAddressLat = destinationLatitude,
+            DestinationAddressLong = destinationLongitude,
             AssignedTruck = assignedTruck,
             AssignedDispatcher = assignedDispatcher,
             Status = LoadStatus.Dispatched

@@ -47,15 +47,15 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resp
         if (req.OriginAddress != null)
         {
             loadEntity.OriginAddress = req.OriginAddress;
-            loadEntity.OriginLatitude = req.OriginLatitude;
-            loadEntity.OriginLongitude = req.OriginLongitude;
+            loadEntity.OriginAddressLat = req.OriginAddressLat;
+            loadEntity.OriginAddressLong = req.OriginAddressLong;
         }
 
         if (req.DestinationAddress != null)
         {
             loadEntity.DestinationAddress = req.DestinationAddress;
-            loadEntity.DestinationLatitude = req.DestinationLatitude;
-            loadEntity.DestinationLongitude = req.DestinationLongitude;
+            loadEntity.DestinationAddressLat = req.DestinationAddressLat;
+            loadEntity.DestinationAddressLong = req.DestinationAddressLong;
         }
         
         if (req.DeliveryCost.HasValue)

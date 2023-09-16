@@ -4,11 +4,11 @@ export interface UpdateLoad {
   id: string;
   name?: string;
   originAddress: string;
-  originLatitude: number;
-  originLongitude: number;
+  originAddressLat: number;
+  originAddressLong: number;
   destinationAddress: string;
-  destinationLatitude: number;
-  destinationLongitude: number;
+  destinationAddressLat: number;
+  destinationAddressLong: number;
   deliveryCost: number;
   distance: number;
   assignedDispatcherId: string;

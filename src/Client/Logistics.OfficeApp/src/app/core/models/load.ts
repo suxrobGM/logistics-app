@@ -14,6 +14,7 @@ export interface Load {
   dispatchedDate: string;
   pickUpDate: string;
   deliveryDate: string;
+  currentLocation?: string;
   assignedDispatcherId: string;
   assignedDispatcherName: string;
   assignedTruckId: string;

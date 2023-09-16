@@ -30,7 +30,7 @@ public class Employee : AuditableEntity, ITenantEntity
     /// <summary>
     /// Driver last known location longitude
     /// </summary>
-    public double? LastKnownLocationLng { get; set; }
+    public double? LastKnownLocationLong { get; set; }
     
     public string? TruckId { get; set; }
     public virtual Truck? Truck { get; set; }
