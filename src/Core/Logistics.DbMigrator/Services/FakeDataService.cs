@@ -205,15 +205,20 @@ internal class FakeDataService
             var dispatcher = PickRandom(employees.Dispatchers);
             var pickupDate = RandomDate(DateTime.Today.AddMonths(-6), DateTime.Today.AddDays(-1));
             const string originAddress = "40 Crescent Ave, Boston, United States";
-            const string originCoordinates = "42.319090,-71.054680";
+            const double originLat = 42.319090;
+            const double originLng = -71.054680;
             const string destAddress = "73 Tremont St, Boston, United States";
-            const string destCoordinates = "42.357820,-71.060810";
+            const double destLat = 42.357820;
+            const double destLng = -71.060810;
             
-            var load = Load.CreateLoad(refId, 
+            var load = Load.CreateLoad(
+                refId, 
                 originAddress, 
-                originCoordinates,
+                originLat,
+                originLng,
                 destAddress, 
-                destCoordinates,
+                destLat,
+                destLng,
                 truck, 
                 dispatcher);
             load.Name = $"Test cargo {i}";

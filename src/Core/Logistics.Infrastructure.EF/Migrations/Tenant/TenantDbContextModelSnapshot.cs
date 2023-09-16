@@ -51,6 +51,12 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<string>("LastKnownLocation")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double?>("LastKnownLocationLat")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("LastKnownLocationLng")
+                        .HasColumnType("float");
+
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
 
@@ -115,9 +121,11 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("DestinationCoordinates")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                    b.Property<double?>("DestinationLatitude")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("DestinationLongitude")
+                        .HasColumnType("float");
 
                     b.Property<DateTime>("DispatchedDate")
                         .HasColumnType("datetime2");
@@ -142,9 +150,11 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("OriginCoordinates")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                    b.Property<double?>("OriginLatitude")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("OriginLongitude")
+                        .HasColumnType("float");
 
                     b.Property<DateTime?>("PickUpDate")
                         .HasColumnType("datetime2");

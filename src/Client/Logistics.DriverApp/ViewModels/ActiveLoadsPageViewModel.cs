@@ -101,8 +101,9 @@ public class ActiveLoadsPageViewModel : BaseViewModel
         {
             foreach (var loadDto in dashboardData.ActiveLoads)
             {
-                var embedMapHtml =
-                    _mapsService.GetDirectionsMapHtml(loadDto.OriginCoordinates!, loadDto.DestinationCoordinates!);
+                var originAddress = $"{loadDto.OriginLatitude},{loadDto.OriginLongitude}";
+                var destAddress = $"{loadDto.DestinationLatitude},{loadDto.DestinationLongitude}";
+                var embedMapHtml = _mapsService.GetDirectionsMapHtml(originAddress, destAddress);
                 ActiveLoads.Add(new ActiveLoad(loadDto, embedMapHtml));
             }
         }

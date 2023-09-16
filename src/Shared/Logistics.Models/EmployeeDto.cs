@@ -10,8 +10,9 @@ public class EmployeeDto
     public string? FullName { get; set; }
     public string? TruckNumber { get; set; }
     public string? TruckId { get; set; }
-    public string? LastKnownCoordinates { get; set; }
-    public string? LastKnownAddress { get; set; }
+    public string? LastKnownLocation { get; set; }
+    public double? LastKnownLocationLat { get; set; }
+    public double? LastKnownLocationLng { get; set; }
     public DateTime JoinedDate { get; set; } = DateTime.UtcNow;
     public IEnumerable<TenantRoleDto>? Roles { get; set; }
 }

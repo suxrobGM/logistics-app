@@ -1,9 +1,11 @@
 export interface CreateLoad {
   name?: string;
   originAddress: string;
-  originCoordinates: string;
+  originLatitude: number;
+  originLongitude: number;
   destinationAddress: string;
-  destinationCoordinates: string;
+  destinationLatitude: number;
+  destinationLongitude: number;
   deliveryCost: number;
   distance: number;
   assignedDispatcherId: string;
