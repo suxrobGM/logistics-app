@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {DailyGrosses, GeolocationData, Load} from '@core/models';
 import {DistanceUnitPipe} from '@shared/pipes';
 import {ApiService, LiveTrackingService} from '@core/services';

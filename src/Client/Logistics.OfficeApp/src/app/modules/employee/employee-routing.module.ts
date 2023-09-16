@@ -2,9 +2,7 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {Permissions} from '@core/helpers';
 import {AuthGuard} from '@core/guards';
-import {AddEmployeeComponent} from './add-employee/add-employee.component';
-import {EditEmployeeComponent} from './edit-employee/edit-employee.component';
-import {ListEmployeeComponent} from './list-employee/list-employee.component';
+import {AddEmployeeComponent, EditEmployeeComponent, ListEmployeeComponent} from './pages';
 
 
 const rootRoutes: Routes = [

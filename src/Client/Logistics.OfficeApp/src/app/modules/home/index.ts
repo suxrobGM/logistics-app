@@ -1,5 +1,1 @@
-import {HomeModule} from './home.module';
-
-export {
-  HomeModule,
-};
+export {HomeModule} from './home.module';

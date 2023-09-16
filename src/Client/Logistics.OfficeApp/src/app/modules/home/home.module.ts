@@ -5,7 +5,7 @@ import {AppConfig} from '@configs';
 import {SharedModule} from '@shared/shared.module';
 import {PrimengModule} from './primeng.module';
 import {HomeRoutingModule} from './home-routing.module';
-import {OverviewComponent} from './overview/overview.component';
+import {OverviewComponent} from './pages';
 
 
 @NgModule({

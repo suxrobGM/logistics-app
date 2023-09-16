@@ -1,5 +1,1 @@
-import {EmployeeModule} from './employee.module';
-
-export {
-  EmployeeModule,
-};
+export {EmployeeModule} from './employee.module';
