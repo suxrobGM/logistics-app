@@ -32,8 +32,8 @@
       "@shared/*": [
         "src/app/shared/*"
       ],
-      "@features/*": [
-        "src/app/features/*"
+      "@modules/*": [
+        "src/app/modules/*"
       ]
     },
     "useDefineForClassFields": false

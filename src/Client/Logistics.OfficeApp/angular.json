@@ -27,7 +27,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/assets/css/global.scss",
+              "src/styles/global.scss",
               "node_modules/primeng/resources/themes/bootstrap4-light-blue/theme.css",
               "node_modules/primeng/resources/primeng.min.css",
               "node_modules/primeicons/primeicons.css",
@@ -109,7 +109,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/assets/css/global.scss",
+              "src/styles/global.scss",
               "node_modules/primeng/resources/themes/bootstrap4-light-blue/theme.css",
               "node_modules/primeng/resources/primeng.min.css",
               "node_modules/primeicons/primeicons.css",
