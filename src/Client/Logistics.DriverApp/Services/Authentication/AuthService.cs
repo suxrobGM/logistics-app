@@ -121,6 +121,12 @@ public class AuthService : IAuthService
                 case JwtClaimTypes.Subject:
                     userIdentity.Id = claim.Value;
                     break;
+                case JwtClaimTypes.GivenName:
+                    userIdentity.FirstName = claim.Value;
+                    break;
+                case JwtClaimTypes.FamilyName:
+                    userIdentity.LastName = claim.Value;
+                    break;
                 case CustomClaimTypes.Role:
                     userIdentity.Roles.Add(claim.Value);
                     break;

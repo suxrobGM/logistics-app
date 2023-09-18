@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<views:BaseContentPage x:TypeArguments="viewModels:AccountPageViewModel"
-                       x:Class="Logistics.DriverApp.Views.AboutPage"
+<views:BaseContentPage x:TypeArguments="viewModels:DashboardPageViewModel"
+                       x:Class="Logistics.DriverApp.Views.DashboardPage"
                        xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                        xmlns:views="clr-namespace:Logistics.DriverApp.Views"
                        xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels"
-                       Title="About">
+                       Title="Dashboard">
     <VerticalStackLayout>
-        <Label Text="About Page"
+        <Label Text="Dashboard Page"
                VerticalOptions="Center" 
                HorizontalOptions="Center" />
     </VerticalStackLayout>

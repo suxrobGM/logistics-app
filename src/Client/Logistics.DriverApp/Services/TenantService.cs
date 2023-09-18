@@ -34,4 +34,9 @@ public class TenantService : ITenantService
         _currentTenantId = tenantId;
         return SecureStorage.Default.SetAsync(TENANT_ID_KEY, tenantId);
     }
+
+    public void ClearCache()
+    {
+        SecureStorage.Default.Remove(TENANT_ID_KEY);
+    }
 }

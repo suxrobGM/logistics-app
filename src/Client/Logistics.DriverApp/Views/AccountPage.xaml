@@ -14,13 +14,9 @@
                               OverlayFill="#80000000">
         </core:SfBusyIndicator>
         <StackLayout>
-            <dataForm:SfDataForm DataObject="{Binding AccountDetails, Mode=TwoWay}" AutoGenerateItems="False">
-                <dataForm:SfDataForm.Items>
-                    <dataForm:DataFormTextItem FieldName="Email" LabelText="Email:" IsReadOnly="True" />
-                    <dataForm:DataFormTextItem FieldName="FirstName" LabelText="First Name:" />
-                    <dataForm:DataFormTextItem FieldName="LastName" LabelText="Last Name:" />
-                    <dataForm:DataFormMaskedTextItem FieldName="PhoneNumber" LabelText="Phone Number:" Mask="+1 (000) 000 0000" MaskType="Simple" Keyboard="Numeric" />
-                </dataForm:SfDataForm.Items>
+            <dataForm:SfDataForm DataObject="{Binding AccountDetails}" 
+                                 AutoGenerateItems="True" 
+                                 GenerateDataFormItem="SfDataForm_GenerateDataFormItem">
             </dataForm:SfDataForm>
             <Button Text="Save" Command="{Binding SaveCommand}" />
         </StackLayout>

@@ -1,6 +1,7 @@
 <mgl-map [style]="'mapbox://styles/mapbox/streets-v11'" [zoom]="[3]" [center]="initialCenter">
   <mgl-marker *ngFor="let geoData of geolocationData; trackBy: trackByFn"
     [lngLat]="[geoData.longitude, geoData.latitude]">
+    <i class="bi bi-geo-alt-fill h1"></i>
   </mgl-marker>
   <!-- <mgl-popup *ngIf="selectedGeoData" [lngLat]="[selectedGeoData.longitude, selectedGeoData.latitude]">
     <strong>{{ selectedGeoData.userFullName }}</strong><br>

@@ -27,9 +27,9 @@ public class ActiveLoadsPageViewModel : BaseViewModel
         _mapsService = mapsService;
         _locationTrackerBackgroundService = locationTrackerBackgroundService;
         CrossFirebaseCloudMessaging.Current.NotificationReceived += HandleLoadNotificationReceived;
-        Messenger.Register<TenantIdChangedMessage>(this, async (_, _) =>
+        Messenger.Register<TenantIdChangedMessage>(this, (_, _) =>
         {
-            await FetchDashboardDataAsync();
+            MainThread.BeginInvokeOnMainThread(async () => await FetchDashboardDataAsync());
         });
     }
 
@@ -78,6 +78,7 @@ public class ActiveLoadsPageViewModel : BaseViewModel
         await SendDeviceTokenAsync();
         await FetchDashboardDataAsync();
         _locationTrackerBackgroundService.Start();
+        DriverName = _authService.User?.GetFullName();
     }
 
     private async Task FetchDashboardDataAsync()
@@ -94,7 +95,6 @@ public class ActiveLoadsPageViewModel : BaseViewModel
         }
         
         var dashboardData = result.Value!;
-        DriverName = dashboardData.DriverFullName;
         TruckNumber = dashboardData.TruckNumber;
 
         if (dashboardData.ActiveLoads != null)

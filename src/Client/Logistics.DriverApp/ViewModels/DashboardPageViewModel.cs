@@ -1,6 +1,6 @@
 ﻿namespace Logistics.DriverApp.ViewModels;
 
-public class DashboardPageViewModel
+public class DashboardPageViewModel : BaseViewModel
 {
     
 }

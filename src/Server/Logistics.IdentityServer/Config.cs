@@ -1,4 +1,5 @@
 ﻿using Duende.IdentityServer.Models;
+using IdentityModel;
 using Logistics.Shared.Claims;
 
 namespace Logistics.IdentityServer;
@@ -32,6 +33,8 @@ public static class Config
                 Name = "logistics.api.admin",
                 DisplayName = "Logistics Admin API",
                 UserClaims = {
+                    JwtClaimTypes.GivenName,
+                    JwtClaimTypes.FamilyName,
                     CustomClaimTypes.Role, 
                     CustomClaimTypes.Permission
                 }
@@ -41,6 +44,8 @@ public static class Config
                 Name = "logistics.api.tenant",
                 DisplayName = "Logistics Tenant API",
                 UserClaims = {
+                    JwtClaimTypes.GivenName,
+                    JwtClaimTypes.FamilyName,
                     CustomClaimTypes.Role, 
                     CustomClaimTypes.Permission, 
                     CustomClaimTypes.Tenant
@@ -62,6 +67,8 @@ public static class Config
                     "logistics.api.tenant"
                 },
                 UserClaims = {
+                    JwtClaimTypes.GivenName,
+                    JwtClaimTypes.FamilyName,
                     CustomClaimTypes.Role, 
                     CustomClaimTypes.Permission, 
                     CustomClaimTypes.Tenant

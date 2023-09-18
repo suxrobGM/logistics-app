@@ -43,7 +43,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{D56948
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Shared", "src\Shared\Logistics.Shared\Logistics.Shared.csproj", "{1DBE287E-B5F8-4213-BF68-B7932AE641F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.Models", "src\Shared\Logistics.Models\Logistics.Models.csproj", "{01EAEDA9-AD0A-457E-AACC-33F4B4EC27CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Models", "src\Shared\Logistics.Models\Logistics.Models.csproj", "{01EAEDA9-AD0A-457E-AACC-33F4B4EC27CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

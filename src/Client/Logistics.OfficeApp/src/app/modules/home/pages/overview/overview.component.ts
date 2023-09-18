@@ -22,7 +22,6 @@ export class OverviewComponent implements OnInit, OnDestroy {
   public chartData: any;
   public chartOptions: any;
   public truksLocations: GeolocationData[];
-  private truksLocationsMap: Map<string, GeolocationData>;
 
   constructor(
     private apiService: ApiService,
@@ -30,7 +29,6 @@ export class OverviewComponent implements OnInit, OnDestroy {
     private distanceUnit: DistanceUnitPipe)
   {
     this.truksLocations = [];
-    this.truksLocationsMap = new Map();
     this.loads = [];
     this.loadingLoads = false;
     this.loadingChart = false;
@@ -70,8 +68,9 @@ export class OverviewComponent implements OnInit, OnDestroy {
   }
 
   private connectToLiveTracking() {
+    this.liveTrackingService.connect();
+
     this.liveTrackingService.onReceiveGeolocationData = (data: GeolocationData) => {
-      this.truksLocationsMap.set(data.userId, data);
       const index = this.truksLocations.findIndex((loc) => loc.userId === data.userId);
 
       if (index !== -1) {
@@ -81,8 +80,6 @@ export class OverviewComponent implements OnInit, OnDestroy {
         this.truksLocations.push(data);
       }
     };
-
-    this.liveTrackingService.connect();
   }
 
   private fetchTrucksData() {
@@ -97,7 +94,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
             latitude: truck.currentLocationLat!,
             longitude: truck.currentLocationLong!,
             userId: truck.drivers[0].id,
-            tenantId: '', // you might want to replace this with an actual value
+            tenantId: '',
           }];
         }
         return [];
