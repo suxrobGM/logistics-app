@@ -16,9 +16,9 @@ import {CardModule} from 'primeng/card';
 
 
 @Component({
-  selector: 'app-overview',
-  templateUrl: './overview.component.html',
-  styleUrls: ['./overview.component.scss'],
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [
@@ -36,7 +36,7 @@ import {CardModule} from 'primeng/card';
     DistanceUnitPipe,
   ],
 })
-export class OverviewComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit, OnDestroy {
   public todayGross: number;
   public weeklyGross: number;
   public weeklyDistance: number;

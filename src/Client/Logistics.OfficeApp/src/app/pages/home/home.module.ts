@@ -4,7 +4,7 @@ import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
 import {AppConfig} from '@configs';
 import {SharedModule} from '@shared/shared.module';
 import {HomeRoutingModule} from './home-routing.module';
-import {OverviewComponent} from './overview/overview.component';
+import {HomeComponent} from './home.component';
 
 
 @NgModule({
@@ -15,7 +15,7 @@ import {OverviewComponent} from './overview/overview.component';
     NgxMapboxGLModule.withConfig({
       accessToken: AppConfig.mapboxToken,
     }),
-    OverviewComponent,
+    HomeComponent,
   ],
   providers: [
     CurrencyPipe,

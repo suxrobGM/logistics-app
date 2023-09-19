@@ -2,12 +2,12 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {Permissions} from '@core/helpers';
 import {AuthGuard} from '@core/guards';
-import {OverviewComponent} from './overview/overview.component';
+import {HomeComponent} from './home.component';
 
 const rootRoutes: Routes = [
   {
     path: '',
-    component: OverviewComponent,
+    component: HomeComponent,
     canActivate: [AuthGuard],
     data: {
       breadcrumb: 'Overview',
