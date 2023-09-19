@@ -1,11 +1,25 @@
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import {Routes} from '@angular/router';
+import {Error404Component} from '@pages/error404';
+import {LoginComponent} from '@pages/login';
+import {UnauthorizedComponent} from '@pages/unauthorized';
 
 
-const APP_ROUTES: Routes = [
+export const APP_ROUTES: Routes = [
+  {
+    path: '',
+    component: LoginComponent,
+  },
+  {
+    path: 'unauthorized',
+    component: UnauthorizedComponent,
+  },
+  {
+    path: '404',
+    component: Error404Component,
+  },
   {
     path: 'home',
-    loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
+    loadChildren: () => import('./pages/home').then((m) => m.HOME_ROUTES),
   },
   {
     path: 'employees',
@@ -35,10 +49,8 @@ const APP_ROUTES: Routes = [
       breadcrumb: 'Dashboard',
     },
   },
+  {
+    path: '**',
+    redirectTo: '404',
+  },
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(APP_ROUTES)],
-  exports: [RouterModule],
-})
-export class AppRoutingModule { }

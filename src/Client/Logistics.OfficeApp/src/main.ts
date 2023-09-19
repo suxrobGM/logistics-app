@@ -1,12 +1,15 @@
 import {enableProdMode, importProvidersFrom} from '@angular/core';
-import {environment} from './environments/environment';
-import {AppComponent} from './app/app.component';
-import {RootModule} from '@pages/root';
-import {CoreModule} from './app/core/core.module';
-import {AppRoutingModule} from './app/app-routing.module';
+import {provideRouter} from '@angular/router';
 import {withInterceptorsFromDi, provideHttpClient} from '@angular/common/http';
 import {provideAnimations} from '@angular/platform-browser/animations';
 import {BrowserModule, bootstrapApplication} from '@angular/platform-browser';
+import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
+import {AppConfig} from '@configs';
+import {CoreModule} from '@core/core.module';
+import {APP_ROUTES} from './app/app.routes';
+import {AppComponent} from './app/app.component';
+import {environment} from './environments/environment';
+
 
 if (environment.production) {
   enableProdMode();
@@ -14,9 +17,9 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
-    importProvidersFrom(BrowserModule, AppRoutingModule, CoreModule, RootModule),
+    provideRouter(APP_ROUTES),
+    importProvidersFrom(BrowserModule, CoreModule, NgxMapboxGLModule.withConfig({accessToken: AppConfig.mapboxToken})),
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
   ],
-})
-    .catch((err) => console.error(err));
+}).catch((err) => console.error(err));

@@ -4,7 +4,7 @@ import {AppConfig} from './app.config';
 export const AuthConfig: OpenIdConfiguration = {
   authority: AppConfig.idHost,
   postLoginRoute: '/',
-  forbiddenRoute: '/forbidden',
+  // forbiddenRoute: '/forbidden',
   unauthorizedRoute: '/unauthorized',
   redirectUrl: window.location.origin,
   postLogoutRedirectUri: window.location.origin,
