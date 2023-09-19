@@ -1,6 +1,9 @@
 import {Pipe, PipeTransform} from '@angular/core';
 
-@Pipe({name: 'distanceUnit'})
+@Pipe({
+  name: 'distanceUnit',
+  standalone: true,
+})
 export class DistanceUnitPipe implements PipeTransform {
   /**
    * Converts a distance value to the specified system of units.

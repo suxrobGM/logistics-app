@@ -2,12 +2,15 @@ import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {MenuItem} from 'primeng/api';
 import {filter} from 'rxjs';
+import {BreadcrumbModule} from 'primeng/breadcrumb';
 
 @Component({
   selector: 'app-breadcrumb',
   templateUrl: './breadcrumb.component.html',
   styleUrls: ['./breadcrumb.component.scss'],
   encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [BreadcrumbModule],
 })
 export class BreadcrumbComponent implements OnInit {
   public readonly home: MenuItem;

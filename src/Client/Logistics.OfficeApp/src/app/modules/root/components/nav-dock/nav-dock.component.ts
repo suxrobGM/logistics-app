@@ -1,12 +1,24 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {Permissions} from '@core/helpers';
 import {AuthService} from '@core/auth';
+import {TooltipModule} from 'primeng/tooltip';
+import {RouterLink} from '@angular/router';
+import {SharedModule} from 'primeng/api';
+import {DockModule} from 'primeng/dock';
+
 
 @Component({
   selector: 'app-nav-dock',
   templateUrl: './nav-dock.component.html',
   styleUrls: ['./nav-dock.component.scss'],
   encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [
+    DockModule,
+    SharedModule,
+    RouterLink,
+    TooltipModule,
+  ],
 })
 export class NavDockComponent implements OnInit {
   public dockItems: MenuItem[];

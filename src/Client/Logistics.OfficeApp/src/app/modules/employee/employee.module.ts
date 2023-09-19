@@ -10,18 +10,16 @@ import {ChangeRoleDialogComponent} from './components';
 
 
 @NgModule({
-  declarations: [
-    ListEmployeeComponent,
-    EditEmployeeComponent,
-    AddEmployeeComponent,
-    ChangeRoleDialogComponent,
-  ],
   imports: [
     CommonModule,
     EmployeeRoutingModule,
     SharedModule,
     ReactiveFormsModule,
     PrimengModule,
+    ListEmployeeComponent,
+    EditEmployeeComponent,
+    AddEmployeeComponent,
+    ChangeRoleDialogComponent,
   ],
   providers: [
     UserService,

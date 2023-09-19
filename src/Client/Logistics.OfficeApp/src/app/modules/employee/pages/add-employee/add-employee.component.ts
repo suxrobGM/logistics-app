@@ -1,9 +1,19 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MessageService} from 'primeng/api';
 import {CreateEmployee, Role, User} from '@core/models';
 import {ApiService} from '@core/services';
 import {UserService} from '@modules/employee/services';
+import {RouterLink} from '@angular/router';
+import {ButtonModule} from 'primeng/button';
+import {DropdownModule} from 'primeng/dropdown';
+import {AutoCompleteModule} from 'primeng/autocomplete';
+import {MessagesModule} from 'primeng/messages';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import {NgIf} from '@angular/common';
+import {CardModule} from 'primeng/card';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {ToastModule} from 'primeng/toast';
 
 
 @Component({
@@ -11,6 +21,21 @@ import {UserService} from '@modules/employee/services';
   templateUrl: './add-employee.component.html',
   styleUrls: ['./add-employee.component.scss'],
   encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [
+    ToastModule,
+    ConfirmDialogModule,
+    CardModule,
+    NgIf,
+    ProgressSpinnerModule,
+    MessagesModule,
+    FormsModule,
+    ReactiveFormsModule,
+    AutoCompleteModule,
+    DropdownModule,
+    ButtonModule,
+    RouterLink,
+  ],
 })
 export class AddEmployeeComponent implements OnInit {
   public suggestedUsers: User[];

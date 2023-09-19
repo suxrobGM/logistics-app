@@ -1,9 +1,16 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {ActivatedRoute} from '@angular/router';
+import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 import {CreateTruck, Employee, UpdateTruck} from '@core/models';
 import {ApiService} from '@core/services';
 import {ConfirmationService, MessageService} from 'primeng/api';
+import {ButtonModule} from 'primeng/button';
+import {AutoCompleteModule} from 'primeng/autocomplete';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import {NgIf} from '@angular/common';
+import {CardModule} from 'primeng/card';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {ToastModule} from 'primeng/toast';
 
 
 @Component({
@@ -11,6 +18,19 @@ import {ConfirmationService, MessageService} from 'primeng/api';
   templateUrl: './edit-truck.component.html',
   styleUrls: ['./edit-truck.component.scss'],
   encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [
+    ToastModule,
+    ConfirmDialogModule,
+    CardModule,
+    NgIf,
+    ProgressSpinnerModule,
+    FormsModule,
+    ReactiveFormsModule,
+    AutoCompleteModule,
+    ButtonModule,
+    RouterLink,
+  ],
 })
 export class EditTruckComponent implements OnInit {
   public id?: string;

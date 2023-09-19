@@ -1,14 +1,32 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 import {DailyGrosses, MonthlyGrosses, Truck} from '@core/models';
 import {DistanceUnitPipe} from '@shared/pipes';
 import {ApiService} from '@core/services';
 import {DateUtils} from '@shared/utils';
+import {ChartModule} from 'primeng/chart';
+import {SharedModule} from 'primeng/api';
+import {SkeletonModule} from 'primeng/skeleton';
+import {NgIf, NgFor, CurrencyPipe} from '@angular/common';
+import {CardModule} from 'primeng/card';
+
 
 @Component({
   selector: 'app-truck-dashboard',
   templateUrl: './truck-dashboard.component.html',
   styleUrls: ['./truck-dashboard.component.scss'],
+  standalone: true,
+  imports: [
+    CardModule,
+    NgIf,
+    SkeletonModule,
+    NgFor,
+    RouterLink,
+    SharedModule,
+    ChartModule,
+    CurrencyPipe,
+    DistanceUnitPipe,
+  ],
 })
 export class TruckDashboardComponent implements OnInit {
   public id!: string;

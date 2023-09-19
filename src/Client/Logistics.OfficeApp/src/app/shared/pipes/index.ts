@@ -1,5 +1,1 @@
-import {DistanceUnitPipe} from './distance-unit.pipe';
-
-export {
-  DistanceUnitPipe,
-};
+export {DistanceUnitPipe} from './distance-unit.pipe';

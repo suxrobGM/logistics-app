@@ -1,6 +1,8 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {Router} from '@angular/router';
 import {AuthService} from '@core/auth';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import {NgIf} from '@angular/common';
 
 
 @Component({
@@ -8,6 +10,8 @@ import {AuthService} from '@core/auth';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [NgIf, ProgressSpinnerModule],
 })
 export class LoginComponent implements OnInit {
   isAuthenticated: boolean;

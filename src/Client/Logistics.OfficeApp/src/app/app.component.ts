@@ -1,12 +1,26 @@
 import {Component, OnInit} from '@angular/core';
-import {Route, Router} from '@angular/router';
+import {Route, Router, RouterOutlet} from '@angular/router';
 import {AuthService} from '@core/auth';
+import {NavDockComponent} from '@modules/root/components';
+import {ToastModule} from 'primeng/toast';
+import {BreadcrumbComponent} from '@shared/components';
+import {NgIf} from '@angular/common';
+import {TopbarComponent} from '@modules/root/components';
 
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  standalone: true,
+  imports: [
+    TopbarComponent,
+    NgIf,
+    BreadcrumbComponent,
+    ToastModule,
+    RouterOutlet,
+    NavDockComponent,
+  ],
 })
 export class AppComponent implements OnInit {
   isAuthenticated: boolean;

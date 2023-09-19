@@ -3,11 +3,26 @@ import {MonthlyGrosses, OverallStats} from '@core/models';
 import {DistanceUnitPipe} from '@shared/pipes';
 import {ApiService} from '@core/services';
 import {DateUtils} from '@shared/utils';
+import {ChartModule} from 'primeng/chart';
+import {SharedModule} from 'primeng/api';
+import {SkeletonModule} from 'primeng/skeleton';
+import {NgIf, CurrencyPipe} from '@angular/common';
+import {CardModule} from 'primeng/card';
 
 @Component({
   selector: 'app-main-dashboard',
   templateUrl: './main-dashboard.component.html',
   styleUrls: ['./main-dashboard.component.scss'],
+  standalone: true,
+  imports: [
+    CardModule,
+    NgIf,
+    SkeletonModule,
+    SharedModule,
+    ChartModule,
+    CurrencyPipe,
+    DistanceUnitPipe,
+  ],
 })
 export class MainDashboardComponent implements OnInit {
   public loadingData: boolean;

@@ -8,16 +8,14 @@ import {EditTruckComponent, ListTruckComponent} from './pages';
 
 
 @NgModule({
-  declarations: [
-    EditTruckComponent,
-    ListTruckComponent,
-  ],
   imports: [
     CommonModule,
     TruckRoutingModule,
     SharedModule,
     ReactiveFormsModule,
     PrimengModule,
+    EditTruckComponent,
+    ListTruckComponent,
   ],
 })
 export class TruckModule { }

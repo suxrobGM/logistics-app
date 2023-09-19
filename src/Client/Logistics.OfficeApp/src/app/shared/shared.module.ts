@@ -8,17 +8,15 @@ import {AppConfig} from '../configs/app.config';
 
 
 @NgModule({
-  declarations: [
-    GeolocationMapComponent,
-    BreadcrumbComponent,
-    DistanceUnitPipe,
-  ],
   imports: [
     CommonModule,
     PrimengModule,
     NgxMapboxGLModule.withConfig({
       accessToken: AppConfig.mapboxToken,
     }),
+    GeolocationMapComponent,
+    BreadcrumbComponent,
+    DistanceUnitPipe,
   ],
   exports: [
     PrimengModule,

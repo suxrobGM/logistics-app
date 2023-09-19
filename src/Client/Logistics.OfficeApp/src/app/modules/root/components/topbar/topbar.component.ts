@@ -3,12 +3,21 @@ import {of, switchMap} from 'rxjs';
 import {AppConfig} from '@configs';
 import {ApiService, TenantService} from '@core/services';
 import {AuthService, UserData} from '@core/auth';
+import {SharedModule} from 'primeng/api';
+import {ButtonModule} from 'primeng/button';
+import {NgIf} from '@angular/common';
 
 
 @Component({
   selector: 'app-topbar',
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    ButtonModule,
+    SharedModule,
+  ],
 })
 export class TopbarComponent implements OnInit {
   isAuthenticated: boolean;

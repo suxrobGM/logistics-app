@@ -1,13 +1,31 @@
 import {Component, OnInit} from '@angular/core';
-import {TableLazyLoadEvent} from 'primeng/table';
+import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {Employee} from '@core/models';
 import {ApiService} from '@core/services';
+import {DatePipe} from '@angular/common';
+import {InputTextModule} from 'primeng/inputtext';
+import {SharedModule} from 'primeng/api';
+import {CardModule} from 'primeng/card';
+import {RouterLink} from '@angular/router';
+import {TooltipModule} from 'primeng/tooltip';
+import {ButtonModule} from 'primeng/button';
 
 
 @Component({
   selector: 'app-list-employee',
   templateUrl: './list-employee.component.html',
   styleUrls: ['./list-employee.component.scss'],
+  standalone: true,
+  imports: [
+    ButtonModule,
+    TooltipModule,
+    RouterLink,
+    CardModule,
+    TableModule,
+    SharedModule,
+    InputTextModule,
+    DatePipe,
+  ],
 })
 export class ListEmployeeComponent implements OnInit {
   employees: Employee[];

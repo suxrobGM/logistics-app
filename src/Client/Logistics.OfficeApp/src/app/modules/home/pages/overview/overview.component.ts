@@ -3,6 +3,16 @@ import {DailyGrosses, GeolocationData, Load} from '@core/models';
 import {DistanceUnitPipe} from '@shared/pipes';
 import {ApiService, LiveTrackingService} from '@core/services';
 import {DateUtils} from '@shared/utils';
+import {ChartModule} from 'primeng/chart';
+import {SkeletonModule} from 'primeng/skeleton';
+import {NgIf, CurrencyPipe} from '@angular/common';
+import {ButtonModule} from 'primeng/button';
+import {TooltipModule} from 'primeng/tooltip';
+import {RouterLink} from '@angular/router';
+import {TableModule} from 'primeng/table';
+import {GeolocationMapComponent} from '@shared/components';
+import {SharedModule} from 'primeng/api';
+import {CardModule} from 'primeng/card';
 
 
 @Component({
@@ -10,6 +20,21 @@ import {DateUtils} from '@shared/utils';
   templateUrl: './overview.component.html',
   styleUrls: ['./overview.component.scss'],
   encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [
+    CardModule,
+    SharedModule,
+    GeolocationMapComponent,
+    TableModule,
+    RouterLink,
+    TooltipModule,
+    ButtonModule,
+    NgIf,
+    SkeletonModule,
+    ChartModule,
+    CurrencyPipe,
+    DistanceUnitPipe,
+  ],
 })
 export class OverviewComponent implements OnInit, OnDestroy {
   public todayGross: number;

@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {ActivatedRoute} from '@angular/router';
+import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import * as MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
 import * as mapboxgl from 'mapbox-gl';
@@ -10,6 +10,14 @@ import {AuthService} from '@core/auth';
 import {CreateLoad, UpdateLoad, EnumType, LoadStatus, LoadStatuses} from '@core/models';
 import {ApiService} from '@core/services';
 import {DistanceUnitPipe} from '@shared/pipes';
+import {ButtonModule} from 'primeng/button';
+import {DropdownModule} from 'primeng/dropdown';
+import {AutoCompleteModule} from 'primeng/autocomplete';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import {NgIf} from '@angular/common';
+import {CardModule} from 'primeng/card';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {ToastModule} from 'primeng/toast';
 
 
 @Component({
@@ -17,6 +25,20 @@ import {DistanceUnitPipe} from '@shared/pipes';
   templateUrl: './edit-load.component.html',
   styleUrls: ['./edit-load.component.scss'],
   encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [
+    ToastModule,
+    ConfirmDialogModule,
+    CardModule,
+    NgIf,
+    ProgressSpinnerModule,
+    FormsModule,
+    ReactiveFormsModule,
+    AutoCompleteModule,
+    DropdownModule,
+    ButtonModule,
+    RouterLink,
+  ],
 })
 export class EditLoadComponent implements OnInit {
   private accessToken = AppConfig.mapboxToken;

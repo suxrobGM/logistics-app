@@ -1,9 +1,17 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 import {ConfirmationService} from 'primeng/api';
 import {Employee, UserRole} from '@core/models';
 import {ApiService} from '@core/services';
 import {AuthService} from '@core/auth';
+import {ButtonModule} from 'primeng/button';
+import {MessagesModule} from 'primeng/messages';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import {NgIf} from '@angular/common';
+import {CardModule} from 'primeng/card';
+import {ChangeRoleDialogComponent} from '../../components/change-role-dialog/change-role-dialog.component';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {ToastModule} from 'primeng/toast';
 
 
 @Component({
@@ -11,6 +19,18 @@ import {AuthService} from '@core/auth';
   templateUrl: './edit-employee.component.html',
   styleUrls: ['./edit-employee.component.scss'],
   encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [
+    ToastModule,
+    ConfirmDialogModule,
+    ChangeRoleDialogComponent,
+    CardModule,
+    NgIf,
+    ProgressSpinnerModule,
+    MessagesModule,
+    ButtonModule,
+    RouterLink,
+  ],
 })
 export class EditEmployeeComponent implements OnInit {
   public id!: string;

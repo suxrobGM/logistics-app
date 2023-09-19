@@ -1,8 +1,16 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {TableLazyLoadEvent} from 'primeng/table';
+import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {Load} from '@core/models';
 import {ApiService} from '@core/services';
 import {LoadStatus, LoadStatuses} from '@core/models';
+import {DistanceUnitPipe} from '@shared/pipes';
+import {CurrencyPipe, DatePipe} from '@angular/common';
+import {InputTextModule} from 'primeng/inputtext';
+import {SharedModule} from 'primeng/api';
+import {CardModule} from 'primeng/card';
+import {RouterLink} from '@angular/router';
+import {TooltipModule} from 'primeng/tooltip';
+import {ButtonModule} from 'primeng/button';
 
 
 @Component({
@@ -10,6 +18,19 @@ import {LoadStatus, LoadStatuses} from '@core/models';
   templateUrl: './list-load.component.html',
   styleUrls: ['./list-load.component.scss'],
   encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [
+    ButtonModule,
+    TooltipModule,
+    RouterLink,
+    CardModule,
+    TableModule,
+    SharedModule,
+    InputTextModule,
+    CurrencyPipe,
+    DatePipe,
+    DistanceUnitPipe,
+  ],
 })
 export class ListLoadComponent implements OnInit {
   loads: Load[];

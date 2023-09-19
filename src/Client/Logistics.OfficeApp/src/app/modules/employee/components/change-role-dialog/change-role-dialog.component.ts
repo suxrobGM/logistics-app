@@ -1,15 +1,30 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MessageService} from 'primeng/api';
 import {RemoveEmployeeRole, Role, UpdateEmployee} from '@core/models';
 import {ApiService} from '@core/services';
 import {UserService} from '@modules/employee/services';
+import {ButtonModule} from 'primeng/button';
+import {DropdownModule} from 'primeng/dropdown';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import {NgIf} from '@angular/common';
+import {DialogModule} from 'primeng/dialog';
 
 
 @Component({
   selector: 'change-role-dialog',
   templateUrl: './change-role-dialog.component.html',
   styleUrls: ['./change-role-dialog.component.scss'],
+  standalone: true,
+  imports: [
+    DialogModule,
+    NgIf,
+    ProgressSpinnerModule,
+    FormsModule,
+    ReactiveFormsModule,
+    DropdownModule,
+    ButtonModule,
+  ],
 })
 export class ChangeRoleDialogComponent implements OnInit {
   public roles: Role[];

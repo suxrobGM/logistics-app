@@ -4,6 +4,7 @@ import {Component, OnInit} from '@angular/core';
   selector: 'app-unauthorized',
   templateUrl: './unauthorized.component.html',
   styleUrls: ['./unauthorized.component.scss'],
+  standalone: true,
 })
 export class UnauthorizedComponent implements OnInit {
   constructor() { }
