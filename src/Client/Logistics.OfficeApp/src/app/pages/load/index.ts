@@ -1,5 +1,1 @@
-import {LoadModule} from './load.module';
-
-export {
-  LoadModule,
-};
+export {LOAD_ROUTES} from './load.routes';

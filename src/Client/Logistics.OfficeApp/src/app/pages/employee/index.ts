@@ -1,1 +1,1 @@
-export {EmployeeModule} from './employee.module';
+export {EMPLOYEE_ROUTES} from './employee.routes';

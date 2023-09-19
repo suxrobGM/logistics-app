@@ -40,6 +40,9 @@ import {DistanceUtils} from '@shared/utils';
     ButtonModule,
     RouterLink,
   ],
+  providers: [
+    ConfirmationService,
+  ],
 })
 export class EditLoadComponent implements OnInit {
   private accessToken = AppConfig.mapboxToken;

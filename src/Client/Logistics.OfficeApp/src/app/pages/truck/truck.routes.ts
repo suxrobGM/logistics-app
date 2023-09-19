@@ -1,12 +1,11 @@
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import {Routes} from '@angular/router';
 import {Permissions} from '@core/helpers';
 import {AuthGuard} from '@core/guards';
 import {EditTruckComponent} from './edit-truck/edit-truck.component';
 import {ListTruckComponent} from './list-truck/list-truck.component';
 
 
-const rootRoutes: Routes = [
+export const TRUCK_ROUTES: Routes = [
   {
     path: '',
     redirectTo: 'list',
@@ -40,9 +39,3 @@ const rootRoutes: Routes = [
     },
   },
 ];
-
-@NgModule({
-  imports: [RouterModule.forChild(rootRoutes)],
-  exports: [RouterModule],
-})
-export class TruckRoutingModule {}

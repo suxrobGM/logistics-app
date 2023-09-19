@@ -36,6 +36,9 @@ import {ToastModule} from 'primeng/toast';
     ButtonModule,
     RouterLink,
   ],
+  providers: [
+    UserService,
+  ],
 })
 export class AddEmployeeComponent implements OnInit {
   public suggestedUsers: User[];

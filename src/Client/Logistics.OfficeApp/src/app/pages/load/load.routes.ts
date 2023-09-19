@@ -1,12 +1,11 @@
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import {Routes} from '@angular/router';
 import {Permissions} from '@core/helpers';
 import {AuthGuard} from '@core/guards';
 import {EditLoadComponent} from './edit-load/edit-load.component';
 import {ListLoadComponent} from './list-load/list-load.component';
 
 
-const rootRoutes: Routes = [
+export const LOAD_ROUTES: Routes = [
   {
     path: '',
     redirectTo: 'list',
@@ -40,9 +39,3 @@ const rootRoutes: Routes = [
     },
   },
 ];
-
-@NgModule({
-  imports: [RouterModule.forChild(rootRoutes)],
-  exports: [RouterModule],
-})
-export class LoadRoutingModule {}

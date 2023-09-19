@@ -14,7 +14,7 @@ import {DialogModule} from 'primeng/dialog';
 @Component({
   selector: 'change-role-dialog',
   templateUrl: './change-role-dialog.component.html',
-  styleUrls: ['./change-role-dialog.component.scss'],
+  styleUrls: [],
   standalone: true,
   imports: [
     DialogModule,
@@ -24,6 +24,9 @@ import {DialogModule} from 'primeng/dialog';
     ReactiveFormsModule,
     DropdownModule,
     ButtonModule,
+  ],
+  providers: [
+    UserService,
   ],
 })
 export class ChangeRoleDialogComponent implements OnInit {

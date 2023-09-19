@@ -1,12 +1,11 @@
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import {Routes} from '@angular/router';
 import {Permissions} from '@core/helpers';
 import {AuthGuard} from '@core/guards';
 import {MainDashboardComponent} from './main-dashboard/main-dashboard.component';
 import {TruckDashboardComponent} from './truck-dashboard/truck-dashboard.component';
 
 
-const rootRoutes: Routes = [
+export const DASHBOARD_ROUTES: Routes = [
   {
     path: '',
     redirectTo: 'main',
@@ -31,9 +30,3 @@ const rootRoutes: Routes = [
     },
   },
 ];
-
-@NgModule({
-  imports: [RouterModule.forChild(rootRoutes)],
-  exports: [RouterModule],
-})
-export class DashboardRoutingModule {}

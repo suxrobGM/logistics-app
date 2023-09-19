@@ -1,1 +1,1 @@
-export {DashboardModule} from './dashboard.module';
+export {DASHBOARD_ROUTES} from './dashboard.routes';

@@ -31,6 +31,9 @@ import {ToastModule} from 'primeng/toast';
     ButtonModule,
     RouterLink,
   ],
+  providers: [
+    ConfirmationService,
+  ],
 })
 export class EditEmployeeComponent implements OnInit {
   public id!: string;

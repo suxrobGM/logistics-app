@@ -14,7 +14,7 @@ import {ButtonModule} from 'primeng/button';
 @Component({
   selector: 'app-list-employee',
   templateUrl: './list-employee.component.html',
-  styleUrls: ['./list-employee.component.scss'],
+  styleUrls: [],
   standalone: true,
   imports: [
     ButtonModule,

@@ -23,28 +23,28 @@ export const APP_ROUTES: Routes = [
   },
   {
     path: 'employees',
-    loadChildren: () => import('./pages/employee/employee.module').then((m) => m.EmployeeModule),
+    loadChildren: () => import('./pages/employee').then((m) => m.EMPLOYEE_ROUTES),
     data: {
       breadcrumb: 'Employees',
     },
   },
   {
     path: 'loads',
-    loadChildren: () => import('./pages/load/load.module').then((m) => m.LoadModule),
+    loadChildren: () => import('./pages/load').then((m) => m.LOAD_ROUTES),
     data: {
       breadcrumb: 'Loads',
     },
   },
   {
     path: 'trucks',
-    loadChildren: () => import('./pages/truck/truck.module').then((m) => m.TruckModule),
+    loadChildren: () => import('./pages/truck').then((m) => m.TRUCK_ROUTES),
     data: {
       breadcrumb: 'Trucks',
     },
   },
   {
     path: 'dashboard',
-    loadChildren: () => import('./pages/dashboard/dashboard.module').then((m) => m.DashboardModule),
+    loadChildren: () => import('./pages/dashboard').then((m) => m.DASHBOARD_ROUTES),
     data: {
       breadcrumb: 'Dashboard',
     },

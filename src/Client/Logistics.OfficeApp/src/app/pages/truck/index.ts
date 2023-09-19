@@ -1,1 +1,1 @@
-export {TruckModule} from './truck.module';
+export {TRUCK_ROUTES} from './truck.routes';
