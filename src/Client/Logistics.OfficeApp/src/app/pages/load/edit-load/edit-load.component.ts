@@ -1,23 +1,23 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {NgIf} from '@angular/common';
 import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ActivatedRoute, RouterLink} from '@angular/router';
+import {ConfirmationService, MessageService} from 'primeng/api';
+import {CardModule} from 'primeng/card';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {ToastModule} from 'primeng/toast';
+import {ButtonModule} from 'primeng/button';
+import {DropdownModule} from 'primeng/dropdown';
+import {AutoCompleteModule} from 'primeng/autocomplete';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import * as MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
 import * as mapboxgl from 'mapbox-gl';
-import {ConfirmationService, MessageService} from 'primeng/api';
 import {AppConfig} from '@configs';
 import {AuthService} from '@core/auth';
 import {CreateLoad, UpdateLoad, EnumType, LoadStatus, LoadStatuses} from '@core/models';
 import {ApiService} from '@core/services';
 import {DistanceUnitPipe} from '@shared/pipes';
-import {ButtonModule} from 'primeng/button';
-import {DropdownModule} from 'primeng/dropdown';
-import {AutoCompleteModule} from 'primeng/autocomplete';
-import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {NgIf} from '@angular/common';
-import {CardModule} from 'primeng/card';
-import {ConfirmDialogModule} from 'primeng/confirmdialog';
-import {ToastModule} from 'primeng/toast';
 
 
 @Component({

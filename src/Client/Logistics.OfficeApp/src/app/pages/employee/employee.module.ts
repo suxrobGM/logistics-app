@@ -5,8 +5,10 @@ import {SharedModule} from '@shared/shared.module';
 import {EmployeeRoutingModule} from './employee-routing.module';
 import {PrimengModule} from './primeng.module';
 import {UserService} from './services/user.service';
-import {AddEmployeeComponent, EditEmployeeComponent, ListEmployeeComponent} from './pages';
 import {ChangeRoleDialogComponent} from './components';
+import {AddEmployeeComponent} from './add-employee/add-employee.component';
+import {EditEmployeeComponent} from './edit-employee/edit-employee.component';
+import {ListEmployeeComponent} from './list-employee/list-employee.component';
 
 
 @NgModule({

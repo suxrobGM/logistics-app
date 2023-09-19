@@ -9,7 +9,7 @@ import {MessagesModule} from 'primeng/messages';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {NgIf} from '@angular/common';
 import {CardModule} from 'primeng/card';
-import {ChangeRoleDialogComponent} from '../../components';
+import {ChangeRoleDialogComponent} from '../components';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
 

@@ -3,9 +3,8 @@ import {CommonModule, CurrencyPipe} from '@angular/common';
 import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
 import {AppConfig} from '@configs';
 import {SharedModule} from '@shared/shared.module';
-
 import {HomeRoutingModule} from './home-routing.module';
-import {OverviewComponent} from './pages';
+import {OverviewComponent} from './overview/overview.component';
 
 
 @NgModule({

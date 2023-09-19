@@ -2,7 +2,8 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {Permissions} from '@core/helpers';
 import {AuthGuard} from '@core/guards';
-import {EditTruckComponent, ListTruckComponent} from './pages';
+import {EditTruckComponent} from './edit-truck/edit-truck.component';
+import {ListTruckComponent} from './list-truck/list-truck.component';
 
 
 const rootRoutes: Routes = [
