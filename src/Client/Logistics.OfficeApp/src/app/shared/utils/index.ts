@@ -1,7 +1,3 @@
-import {ArrayUtils} from './arrayUtils';
-import {DateUtils} from './dateUtils';
-
-export {
-  ArrayUtils,
-  DateUtils,
-};
+export {ArrayUtils} from './arrayUtils';
+export {DateUtils} from './dateUtils';
+export * from './distanceUtils';

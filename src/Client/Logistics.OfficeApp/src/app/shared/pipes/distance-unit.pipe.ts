@@ -1,4 +1,5 @@
 import {Pipe, PipeTransform} from '@angular/core';
+import {DistanceUnitTypes, DistanceUtils} from '@shared/utils';
 
 @Pipe({
   name: 'distanceUnit',
@@ -17,20 +18,6 @@ export class DistanceUnitPipe implements PipeTransform {
       return 0;
     }
 
-    let convertedValue = value;
-
-    if (unit === 'km') {
-      convertedValue = value*0.001;
-    }
-    else if (unit === 'mi') {
-      convertedValue = value*0.000621371;
-    }
-    else if (unit === 'yd') {
-      convertedValue = value*1.09361;
-    }
-
-    return Number.parseFloat(convertedValue.toFixed(2));
+    return DistanceUtils.metersTo(value, unit);
   }
 }
-
-type DistanceUnitTypes = 'm' | 'km' | 'mi' | 'yd';

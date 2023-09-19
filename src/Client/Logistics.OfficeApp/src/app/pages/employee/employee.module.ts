@@ -1,7 +1,6 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ReactiveFormsModule} from '@angular/forms';
-import {SharedModule} from '@shared/shared.module';
 import {EmployeeRoutingModule} from './employee-routing.module';
 import {PrimengModule} from './primeng.module';
 import {UserService} from './services/user.service';
@@ -15,7 +14,6 @@ import {ListEmployeeComponent} from './list-employee/list-employee.component';
   imports: [
     CommonModule,
     EmployeeRoutingModule,
-    SharedModule,
     ReactiveFormsModule,
     PrimengModule,
     ListEmployeeComponent,

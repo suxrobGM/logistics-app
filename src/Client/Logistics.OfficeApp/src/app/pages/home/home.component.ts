@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {DailyGrosses, GeolocationData, Load} from '@core/models';
 import {DistanceUnitPipe} from '@shared/pipes';
 import {ApiService, LiveTrackingService} from '@core/services';
-import {DateUtils} from '@shared/utils';
+import {DateUtils, DistanceUtils} from '@shared/utils';
 import {ChartModule} from 'primeng/chart';
 import {SkeletonModule} from 'primeng/skeleton';
 import {NgIf, CurrencyPipe} from '@angular/common';
@@ -50,8 +50,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   constructor(
     private apiService: ApiService,
-    private liveTrackingService: LiveTrackingService,
-    private distanceUnit: DistanceUnitPipe)
+    private liveTrackingService: LiveTrackingService)
   {
     this.truksLocations = [];
     this.loads = [];
@@ -151,7 +150,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         this.weeklyGross = grosses.totalIncome;
         this.weeklyDistance = grosses.totalDistance;
-        this.rpm = this.weeklyGross / this.toMi(this.weeklyDistance);
+        this.rpm = this.weeklyGross / DistanceUtils.metersTo(this.weeklyDistance, 'mi');
         this.drawChart(grosses);
         this.calcTodayGross(grosses);
       }
@@ -193,9 +192,5 @@ export class HomeComponent implements OnInit, OnDestroy {
         .forEach((i) => totalGross += i.income);
 
     this.todayGross = totalGross;
-  }
-
-  private toMi(value?: number): number {
-    return this.distanceUnit.transform(value, 'mi');
   }
 }

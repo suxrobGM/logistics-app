@@ -1,7 +1,6 @@
 import {enableProdMode, importProvidersFrom} from '@angular/core';
 import {environment} from './environments/environment';
 import {AppComponent} from './app/app.component';
-import {SharedModule} from '@shared/shared.module';
 import {RootModule} from '@pages/root';
 import {CoreModule} from './app/core/core.module';
 import {AppRoutingModule} from './app/app-routing.module';
@@ -15,7 +14,7 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
-    importProvidersFrom(BrowserModule, AppRoutingModule, CoreModule, RootModule, SharedModule),
+    importProvidersFrom(BrowserModule, AppRoutingModule, CoreModule, RootModule),
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
   ],

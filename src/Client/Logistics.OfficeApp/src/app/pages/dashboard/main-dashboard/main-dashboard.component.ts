@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {MonthlyGrosses, OverallStats} from '@core/models';
 import {DistanceUnitPipe} from '@shared/pipes';
 import {ApiService} from '@core/services';
-import {DateUtils} from '@shared/utils';
+import {DateUtils, DistanceUtils} from '@shared/utils';
 import {ChartModule} from 'primeng/chart';
 import {SharedModule} from 'primeng/api';
 import {SkeletonModule} from 'primeng/skeleton';
@@ -32,10 +32,7 @@ export class MainDashboardComponent implements OnInit {
   public chartData: any;
   public chartOptions: any;
 
-  constructor(
-    private apiService: ApiService,
-    private distanceUnit: DistanceUnitPipe,
-  )
+  constructor(private apiService: ApiService)
   {
     this.loadingData = false;
     this.loadingChart = false;
@@ -72,7 +69,7 @@ export class MainDashboardComponent implements OnInit {
       if (result.success && result.value) {
         const stats = result.value;
         this.overallStats = result.value;
-        this.rpm = stats.totalIncome / this.toMi(stats.totalDistance);
+        this.rpm = stats.totalIncome / DistanceUtils.metersTo(stats.totalDistance, 'mi');
       }
 
       this.loadingData = false;
@@ -114,9 +111,5 @@ export class MainDashboardComponent implements OnInit {
         },
       ],
     };
-  }
-
-  private toMi(value?: number): number {
-    return this.distanceUnit.transform(value, 'mi');
   }
 }

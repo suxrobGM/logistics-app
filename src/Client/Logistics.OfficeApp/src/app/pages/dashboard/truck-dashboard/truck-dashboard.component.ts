@@ -3,7 +3,7 @@ import {ActivatedRoute, RouterLink} from '@angular/router';
 import {DailyGrosses, MonthlyGrosses, Truck} from '@core/models';
 import {DistanceUnitPipe} from '@shared/pipes';
 import {ApiService} from '@core/services';
-import {DateUtils} from '@shared/utils';
+import {DateUtils, DistanceUtils} from '@shared/utils';
 import {ChartModule} from 'primeng/chart';
 import {SharedModule} from 'primeng/api';
 import {SkeletonModule} from 'primeng/skeleton';
@@ -44,8 +44,7 @@ export class TruckDashboardComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private route: ActivatedRoute,
-    private distanceUnit: DistanceUnitPipe)
+    private route: ActivatedRoute)
   {
     this.loadingData = false;
     this.loadingLineChart = false;
@@ -112,7 +111,7 @@ export class TruckDashboardComponent implements OnInit {
       if (result.success && result.value) {
         const dailyGrosses = result.value;
         this.dailyGrosses = result.value;
-        this.rpmCurrent = dailyGrosses.totalIncome / this.toMi(dailyGrosses.totalDistance);
+        this.rpmCurrent = dailyGrosses.totalIncome / DistanceUtils.metersTo(dailyGrosses.totalDistance, 'mi');
 
         this.drawLineChart(dailyGrosses);
       }
@@ -129,7 +128,7 @@ export class TruckDashboardComponent implements OnInit {
       if (result.success && result.value) {
         const monthlyGrosses = result.value;
         this.monthlyGrosses = result.value;
-        this.rpmAllTime = monthlyGrosses.totalIncome / this.toMi(monthlyGrosses.totalDistance);
+        this.rpmAllTime = monthlyGrosses.totalIncome / DistanceUtils.metersTo(monthlyGrosses.totalDistance, 'mi');
 
         this.drawBarChart(monthlyGrosses);
       }
@@ -183,9 +182,5 @@ export class TruckDashboardComponent implements OnInit {
         },
       ],
     };
-  }
-
-  private toMi(value?: number): number {
-    return this.distanceUnit.transform(value, 'mi');
   }
 }

@@ -18,6 +18,7 @@ import {AuthService} from '@core/auth';
 import {CreateLoad, UpdateLoad, EnumType, LoadStatus, LoadStatuses} from '@core/models';
 import {ApiService} from '@core/services';
 import {DistanceUnitPipe} from '@shared/pipes';
+import {DistanceUtils} from '@shared/utils';
 
 
 @Component({
@@ -61,7 +62,6 @@ export class EditLoadComponent implements OnInit {
     private apiService: ApiService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private distanceUnit: DistanceUnitPipe,
     private route: ActivatedRoute)
   {
     this.isBusy = false;
@@ -240,7 +240,7 @@ export class EditLoadComponent implements OnInit {
 
     this.directions.on('route', (data: any) => {
       this.distanceMeters = data.route[0].distance;
-      const distanceMiles = this.toMi(this.distanceMeters);
+      const distanceMiles = DistanceUtils.metersTo(this.distanceMeters, 'mi');
       this.form.patchValue({distance: distanceMiles});
     });
 
@@ -304,7 +304,7 @@ export class EditLoadComponent implements OnInit {
           dstAddress: load.destinationAddress,
           dispatchedDate: this.getLocaleDate(load.dispatchedDate),
           deliveryCost: load.deliveryCost,
-          distance: this.toMi(load.distance),
+          distance: DistanceUtils.metersTo(load.distance, 'mi'),
           dispatcherName: load.assignedDispatcherName,
           dispatcherId: load.assignedDispatcherId,
           status: load.status,
@@ -349,10 +349,6 @@ export class EditLoadComponent implements OnInit {
       return new Date(dateStr).toLocaleDateString();
     }
     return '';
-  }
-
-  private toMi(value?: number): number {
-    return this.distanceUnit.transform(value, 'mi');
   }
 }
 

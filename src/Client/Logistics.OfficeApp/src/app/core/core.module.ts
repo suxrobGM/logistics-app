@@ -12,6 +12,7 @@ import {
   LiveTrackingService,
   StorageService,
 } from './services';
+import {MessageService} from 'primeng/api';
 
 
 @NgModule({
@@ -30,6 +31,7 @@ import {
     CookieService,
     StorageService,
     LiveTrackingService,
+    MessageService,
   ],
 })
 export class CoreModule { }
