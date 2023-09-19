@@ -1,10 +1,10 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {Permissions} from '@core/helpers';
-import {AuthService} from '@core/auth';
-import {TooltipModule} from 'primeng/tooltip';
 import {RouterLink} from '@angular/router';
+import {TooltipModule} from 'primeng/tooltip';
 import {SharedModule} from 'primeng/api';
 import {DockModule} from 'primeng/dock';
+import {Permissions} from '@core/helpers';
+import {AuthService} from '@core/auth';
 
 
 @Component({

@@ -3,7 +3,7 @@ import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} fr
 import {MessageService} from 'primeng/api';
 import {RemoveEmployeeRole, Role, UpdateEmployee} from '@core/models';
 import {ApiService} from '@core/services';
-import {UserService} from '@modules/employee/services';
+import {UserService} from '@pages/employee/services';
 import {ButtonModule} from 'primeng/button';
 import {DropdownModule} from 'primeng/dropdown';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';

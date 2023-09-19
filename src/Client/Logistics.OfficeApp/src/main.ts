@@ -2,7 +2,7 @@ import {enableProdMode, importProvidersFrom} from '@angular/core';
 import {environment} from './environments/environment';
 import {AppComponent} from './app/app.component';
 import {SharedModule} from '@shared/shared.module';
-import {RootModule} from '@modules/root';
+import {RootModule} from '@pages/root';
 import {CoreModule} from './app/core/core.module';
 import {AppRoutingModule} from './app/app-routing.module';
 import {withInterceptorsFromDi, provideHttpClient} from '@angular/common/http';

@@ -1,11 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {Route, Router, RouterOutlet} from '@angular/router';
 import {AuthService} from '@core/auth';
-import {NavDockComponent} from '@modules/root/components';
+import {NavDockComponent, TopbarComponent} from '@layout';
 import {ToastModule} from 'primeng/toast';
 import {BreadcrumbComponent} from '@shared/components';
 import {NgIf} from '@angular/common';
-import {TopbarComponent} from '@modules/root/components';
 
 
 @Component({

@@ -3,7 +3,7 @@ import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} fr
 import {MessageService} from 'primeng/api';
 import {CreateEmployee, Role, User} from '@core/models';
 import {ApiService} from '@core/services';
-import {UserService} from '@modules/employee/services';
+import {UserService} from '../../services';
 import {RouterLink} from '@angular/router';
 import {ButtonModule} from 'primeng/button';
 import {DropdownModule} from 'primeng/dropdown';
