@@ -7,7 +7,6 @@ import {
 } from '@angular/core';
 import {NgFor, NgIf} from '@angular/common';
 import {MarkerComponent, NgxMapboxGLModule} from 'ngx-mapbox-gl';
-import {GeolocationData} from './geolocationData';
 import {TruckGeolocation} from '@core/models';
 
 
