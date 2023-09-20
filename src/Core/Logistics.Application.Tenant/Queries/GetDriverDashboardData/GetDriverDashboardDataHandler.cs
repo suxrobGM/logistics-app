@@ -27,7 +27,7 @@ internal sealed class GetDriverDashboardDataHandler : RequestHandler<GetDriverDa
             .Where(i => i.Id != driver.Id && i.TruckId == driver.TruckId)
             .Select(i => i.GetFullName());
 
-        var driverDashboardDto = new DriverDashboardDto()
+        var driverDashboardDto = new DriverDashboardDto
         {
             TruckNumber = driver.Truck?.TruckNumber,
             DriverFullName = driver.GetFullName(),

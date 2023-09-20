@@ -4,5 +4,5 @@ namespace Logistics.API.Hubs;
 
 public interface ILiveTrackingHubClient
 {
-    Task ReceiveGeolocationData(GeolocationData geolocationData);
+    Task ReceiveGeolocationData(TruckGeolocationDto truckGeolocationDto);
 }

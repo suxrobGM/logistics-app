@@ -14,9 +14,11 @@ public class LocationTrackerBackgroundService : Service, ILocationTrackerBackgro
     private const int NotificationId = 1000;
     private readonly ILocationTracker _locationTracker = App.Current.GetRequiredService<ILocationTracker>();
     private Timer? _timer;
+    private string? _truckId;
 
-    public void Start()
+    public void Start(string truckId)
     {
+        _truckId = truckId;
         var intent = new Intent(AndroidApp.Context, typeof(LocationTrackerBackgroundService));
         AndroidApp.Context.StartForegroundService(intent);
     }
@@ -55,7 +57,10 @@ public class LocationTrackerBackgroundService : Service, ILocationTrackerBackgro
 
     private async void SendGeolocationData(object? state)
     {
-        await _locationTracker.SendLocationDataAsync();
+        if (!string.IsNullOrEmpty(_truckId))
+        {
+            await _locationTracker.SendLocationDataAsync(_truckId);
+        }
     }
     
     private void StartForegroundService()

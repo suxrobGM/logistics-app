@@ -36,7 +36,7 @@ internal sealed class GetTruckDriversHandler : RequestHandler<GetTruckDriversQue
             .GroupBy(td => td.Truck)
             .Select(g => new TruckDriversDto
             {
-                Truck = g.Key.ToDto(),
+                Truck = g.Key.ToDto(new List<LoadDto>()),
                 Drivers = g.Where(td => td.TeamDriver != null)
                     .Select(td => td.TeamDriver.ToDto())
             });

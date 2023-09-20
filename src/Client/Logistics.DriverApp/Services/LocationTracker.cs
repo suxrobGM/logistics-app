@@ -46,13 +46,12 @@ public class LocationTracker : ILocationTracker
         _isConnected = false;
     }
 
-    public async Task SendLocationDataAsync()
+    public async Task SendLocationDataAsync(string truckId)
     {
         await ConnectAsync();
-        var userId = _authService.User?.Id;
         var tenantId = _authService.User?.CurrentTenantId;
 
-        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(tenantId))
+        if (string.IsNullOrEmpty(tenantId))
         {
             return;
         }
@@ -66,13 +65,13 @@ public class LocationTracker : ILocationTracker
 
         var address = await GetAddressFromGeocodeAsync(location.Latitude, location.Longitude);
 
-        var geolocationData = new GeolocationData
+        var geolocationData = new TruckGeolocationDto
         {
-            UserId = userId,
+            TruckId = truckId,
             TenantId = tenantId,
             Latitude = location.Latitude,
             Longitude = location.Longitude,
-            Address = address
+            CurrentLocation = address
         };
         await _hubConnection.InvokeAsync("SendGeolocationData", geolocationData);
     }

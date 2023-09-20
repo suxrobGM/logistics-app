@@ -4,6 +4,7 @@ using Logistics.DriverApp.Messages;
 using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.Authentication;
+using Logistics.Models;
 using Plugin.Firebase.CloudMessaging;
 using Plugin.Firebase.CloudMessaging.EventArgs;
 
@@ -15,6 +16,7 @@ public class ActiveLoadsPageViewModel : BaseViewModel
     private readonly IAuthService _authService;
     private readonly IMapsService _mapsService;
     private readonly ILocationTrackerBackgroundService _locationTrackerBackgroundService;
+    private string? _truckId;
 
     public ActiveLoadsPageViewModel(
         IApiClient apiClient, 
@@ -76,9 +78,42 @@ public class ActiveLoadsPageViewModel : BaseViewModel
     protected override async Task OnInitializedAsync()
     {
         await SendDeviceTokenAsync();
-        await FetchDashboardDataAsync();
-        _locationTrackerBackgroundService.Start();
+        await FetchTruckDataAsync();
         DriverName = _authService.User?.GetFullName();
+
+        if (!string.IsNullOrEmpty(_truckId))
+        {
+            _locationTrackerBackgroundService.Start(_truckId);
+        }
+    }
+
+    private async Task FetchTruckDataAsync()
+    {
+        IsLoading = true;
+        var driverId = _authService.User?.Id;
+
+        if (string.IsNullOrEmpty(driverId))
+        {
+            await PopupHelpers.ShowErrorAsync("Failed to load driver data, try again");
+            IsLoading = false;
+            return;
+        }
+        
+        var result = await _apiClient.GetTruckByDriverAsync(driverId, false, true);
+
+        if (!result.Success)
+        {
+            await PopupHelpers.ShowErrorAsync(result.Error);
+            IsLoading = false;
+            return;
+        }
+
+        var truck = result.Value!;
+        TruckNumber = truck.TruckNumber;
+        _truckId = truck.Id;
+        
+        AddActiveLoads(truck.Loads);
+        IsLoading = false;
     }
 
     private async Task FetchDashboardDataAsync()
@@ -96,23 +131,8 @@ public class ActiveLoadsPageViewModel : BaseViewModel
         
         var dashboardData = result.Value!;
         TruckNumber = dashboardData.TruckNumber;
-
-        if (dashboardData.ActiveLoads != null)
-        {
-            foreach (var loadDto in dashboardData.ActiveLoads)
-            {
-                var originAddress = $"{loadDto.OriginAddressLat},{loadDto.OriginAddressLong}";
-                var destAddress = $"{loadDto.DestinationAddressLat},{loadDto.DestinationAddressLong}";
-                var embedMapHtml = _mapsService.GetDirectionsMapHtml(originAddress, destAddress);
-                ActiveLoads.Add(new ActiveLoad(loadDto, embedMapHtml));
-            }
-        }
-        
-        if (dashboardData.TeammatesName != null)
-        {
-            TeammatesName = string.Join(", ", dashboardData.TeammatesName);
-        }
-        
+        TeammatesName = string.Join(", ", dashboardData.TeammatesName);
+        AddActiveLoads(dashboardData.ActiveLoads);
         IsLoading = false;
     }
     
@@ -128,6 +148,21 @@ public class ActiveLoadsPageViewModel : BaseViewModel
         }
     }
 
+    private void AddActiveLoads(IEnumerable<LoadDto> loads)
+    {
+        foreach (var loadDto in loads)
+        {
+            var existingLoad = ActiveLoads.FirstOrDefault(i => i.LoadData.Id == loadDto.Id);
+
+            if (existingLoad is not null) 
+                continue;
+            
+            var originAddress = $"{loadDto.OriginAddressLat},{loadDto.OriginAddressLong}";
+            var destAddress = $"{loadDto.DestinationAddressLat},{loadDto.DestinationAddressLong}";
+            var embedMapHtml = _mapsService.GetDirectionsMapHtml(originAddress, destAddress);
+            ActiveLoads.Add(new ActiveLoad(loadDto, embedMapHtml));
+        }
+    }
     
     #region Event handlers
 

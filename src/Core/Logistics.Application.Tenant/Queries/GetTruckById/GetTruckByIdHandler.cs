@@ -15,21 +15,20 @@ internal sealed class GetTruckByIdHandler : RequestHandler<GetTruckByIdQuery, Re
     protected override async Task<ResponseResult<TruckDto>> HandleValidated(
         GetTruckByIdQuery req, CancellationToken cancellationToken)
     {
-        var truckEntity = await _tenantRepository.GetAsync<Truck>(req.Id);
-        
+        var truckEntity = await _tenantRepository.GetAsync<Truck>(i => i.Id == req.Id);
+
         if (truckEntity == null)
-            return ResponseResult<TruckDto>.CreateError("Could not find the specified truck");
-        
-        var truckDto = truckEntity.ToDto();
-
-        if (req.IncludeLoadIds)
         {
-            var loadIds = _tenantRepository.Query<Truck>()
-                .SelectMany(i => i.Loads)
-                .Select(i => i.Id)
-                .ToArray();
+            return ResponseResult<TruckDto>.CreateError("Could not find the specified truck");
+        }
 
-            truckDto.LoadIds = loadIds;
+        var truckDto = truckEntity.ToDto(new List<LoadDto>());
+
+        if (req.IncludeLoads)
+        {
+            truckDto.Loads = truckEntity.Loads
+                .Select(l => l.ToDto())
+                .ToArray();
         }
 
         return ResponseResult<TruckDto>.CreateSuccess(truckDto);

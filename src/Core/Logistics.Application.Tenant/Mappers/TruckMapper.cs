@@ -4,15 +4,16 @@ namespace Logistics.Application.Tenant.Mappers;
 
 public static class TruckMapper
 {
-    public static TruckDto ToDto(this Truck entity)
+    public static TruckDto ToDto(this Truck entity, IEnumerable<LoadDto> loads)
     {
         return new TruckDto
         {
             Id = entity.Id,
             TruckNumber = entity.TruckNumber,
-            CurrentLocation = entity.Drivers.FirstOrDefault()?.LastKnownLocation,
-            CurrentLocationLat = entity.Drivers.FirstOrDefault()?.LastKnownLocationLat,
-            CurrentLocationLong = entity.Drivers.FirstOrDefault()?.LastKnownLocationLong,
+            CurrentLocation = entity.LastKnownLocation,
+            CurrentLocationLat = entity.LastKnownLocationLat,
+            CurrentLocationLong = entity.LastKnownLocationLong,
+            Loads = loads,
             Drivers = entity.Drivers.Select(i => i.ToDto())
         };
     }

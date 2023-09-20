@@ -4,7 +4,7 @@ namespace Logistics.DriverApp.Platforms.iOS.Services;
 
 public class LocationTrackerBackgroundService : ILocationTrackerBackgroundService
 {
-    public void Start()
+    public void Start(string truckId)
     {
         throw new NotImplementedException();
     }

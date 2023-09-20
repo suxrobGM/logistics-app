@@ -2,5 +2,5 @@
 
 public interface ILocationTracker : IAsyncDisposable
 {
-    Task SendLocationDataAsync();
+    Task SendLocationDataAsync(string truckId);
 }

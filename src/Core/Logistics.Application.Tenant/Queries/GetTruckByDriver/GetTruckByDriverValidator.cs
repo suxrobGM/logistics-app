@@ -6,6 +6,6 @@ internal sealed class GetTruckByDriverValidator : AbstractValidator<GetTruckByDr
 {
     public GetTruckByDriverValidator()
     {
-        RuleFor(i => i.DriverId).NotEmpty();
+        RuleFor(i => i.UserId).NotEmpty();
     }
 }

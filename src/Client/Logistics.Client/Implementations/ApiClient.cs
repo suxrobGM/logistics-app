@@ -169,21 +169,26 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Truck API
 
-    public Task<ResponseResult<TruckDto>> GetTruckAsync(string id)
+    public Task<ResponseResult<TruckDto>> GetTruckAsync(string id, bool includeLoads = false)
     {
-        return MakeGetRequestAsync<ResponseResult<TruckDto>>($"truck/{id}");
+        var query = new Dictionary<string, string> { { "includeLoads", includeLoads.ToString() } };
+        return MakeGetRequestAsync<ResponseResult<TruckDto>>($"truck/{id}", query);
     }
 
-    public Task<ResponseResult<TruckDto>> GetTruckByDriverAsync(string userId, bool includeLoadIds = false)
+    public Task<ResponseResult<TruckDto>> GetTruckByDriverAsync(string userId, bool includeLoads = false, bool includeOnlyActiveLoads = false)
     {
-        var query = new Dictionary<string, string> { { "includeLoadIds", includeLoadIds.ToString() } };
+        var query = new Dictionary<string, string>
+        {
+            { "includeLoads", includeLoads.ToString() },
+            { "includeOnlyActiveLoads", includeOnlyActiveLoads.ToString() }
+        };
         return MakeGetRequestAsync<ResponseResult<TruckDto>>($"truck/driver/{userId}", query);  
     }
 
-    public Task<PagedResponseResult<TruckDto>> GetTrucksAsync(SearchableQuery query, bool includeCargoIds = false)
+    public Task<PagedResponseResult<TruckDto>> GetTrucksAsync(SearchableQuery query, bool includeLoads = false)
     {
         var queryDict = query.ToDictionary();
-        queryDict.Add("includeCargoIds", includeCargoIds.ToString());
+        queryDict.Add("includeLoads", includeLoads.ToString());
         return MakeGetRequestAsync<PagedResponseResult<TruckDto>>("truck/list", queryDict);
     }
 

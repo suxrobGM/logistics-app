@@ -16,34 +16,19 @@ internal sealed class GetTrucksHandler : RequestHandler<GetTrucksQuery, PagedRes
         GetTrucksQuery req,
         CancellationToken cancellationToken)
     {
-        string[]? loadIds = null;
-        var trucksDtoList = new List<TruckDto>();
-        
-        if (req.IncludeLoadIds)
-        {
-            loadIds = _tenantRepository.Query<Truck>()
-                .SelectMany(i => i.Loads)
-                .Select(i => i.Id)
-                .ToArray();
-        }
-        
         var totalItems = _tenantRepository.Query<Truck>().Count();
         var spec = new SearchTrucks(req.Search, req.Descending);
-
-        var trucks = _tenantRepository
-            .ApplySpecification(spec)
+        
+        var truckQuery = _tenantRepository.ApplySpecification(spec)
             .Skip((req.Page - 1) * req.PageSize)
-            .Take(req.PageSize)
+            .Take(req.PageSize);
+
+        var trucks = (req.IncludeLoads 
+                ? truckQuery.Select(i => i.ToDto(i.Loads.Select(load => load.ToDto())))
+                : truckQuery.Select(i => i.ToDto(new List<LoadDto>())))
             .ToArray();
 
-        foreach (var truckEntity in trucks)
-        {
-            var truckDto = truckEntity.ToDto();
-            truckDto.LoadIds = loadIds;
-            trucksDtoList.Add(truckDto);
-        }
-
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return Task.FromResult(new PagedResponseResult<TruckDto>(trucksDtoList, totalItems, totalPages));
+        return Task.FromResult(new PagedResponseResult<TruckDto>(trucks, totalItems, totalPages));
     }
 }

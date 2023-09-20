@@ -1,4 +1,5 @@
 ﻿using Logistics.Application.Tenant.Mappers;
+using Logistics.Domain.Enums;
 using Logistics.Models;
 
 namespace Logistics.Application.Tenant.Queries;
@@ -15,26 +16,30 @@ internal sealed class GetTruckByDriverHandler : RequestHandler<GetTruckByDriverQ
     protected override async Task<ResponseResult<TruckDto>> HandleValidated(
         GetTruckByDriverQuery req, CancellationToken cancellationToken)
     {
-        var driver = await _tenantRepository.GetAsync<Employee>(req.DriverId);
+        var driver = await _tenantRepository.GetAsync<Employee>(req.UserId);
         
         if (driver == null)
-            return ResponseResult<TruckDto>.CreateError($"Could not find the specified driver with ID {req.DriverId}");
+            return ResponseResult<TruckDto>.CreateError($"Could not find the specified driver with ID {req.UserId}");
 
         if (driver.Truck == null)
             return ResponseResult<TruckDto>.CreateError("The driver is not associated with any truck");
         
-        var truckDto = driver.Truck.ToDto();
+        var truckDto = driver.Truck.ToDto(new List<LoadDto>());
         
-        if (req.IncludeLoadIds)
+        if (req.IncludeOnlyActiveLoads)
         {
-            var loadIds = _tenantRepository.Query<Truck>()
-                .SelectMany(i => i.Loads)
-                .Select(i => i.Id)
+            truckDto.Loads = driver.Truck.Loads
+                .Where(l => l.Status != LoadStatus.Delivered)
+                .Select(l => l.ToDto())
                 .ToArray();
-
-            truckDto.LoadIds = loadIds;
         }
-
+        else if (req.IncludeLoads)
+        {
+            truckDto.Loads = driver.Truck.Loads
+                .Select(l => l.ToDto())
+                .ToArray();
+        }
+        
         return ResponseResult<TruckDto>.CreateSuccess(truckDto);
     }
 }

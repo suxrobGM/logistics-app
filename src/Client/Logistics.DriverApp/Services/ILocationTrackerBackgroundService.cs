@@ -2,6 +2,6 @@
 
 public interface ILocationTrackerBackgroundService
 {
-    void Start();
+    void Start(string truckId);
     void Stop();
 }

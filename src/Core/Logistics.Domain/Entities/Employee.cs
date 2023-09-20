@@ -17,21 +17,6 @@ public class Employee : AuditableEntity, ITenantEntity
     /// </summary>
     public string? DeviceToken { get; set; }
     
-    /// <summary>
-    /// Driver last known location address
-    /// </summary>
-    public string? LastKnownLocation { get; set; }
-    
-    /// <summary>
-    /// Driver last known location latitude
-    /// </summary>
-    public double? LastKnownLocationLat { get; set; }
-    
-    /// <summary>
-    /// Driver last known location longitude
-    /// </summary>
-    public double? LastKnownLocationLong { get; set; }
-    
     public string? TruckId { get; set; }
     public virtual Truck? Truck { get; set; }
 

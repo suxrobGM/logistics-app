@@ -5,22 +5,22 @@ namespace Logistics.API.Hubs;
 
 public class LiveTrackingHubContext
 {
-    private readonly ConcurrentDictionary<string, GeolocationData?> _connectedClients = new();
+    private readonly ConcurrentDictionary<string, TruckGeolocationDto?> _connectedClients = new();
 
-    public void AddClient(string connectionId, GeolocationData? geolocationData)
+    public void AddClient(string connectionId, TruckGeolocationDto? geolocationData)
     {
         _connectedClients.TryAdd(connectionId, geolocationData);
     }
 
-    public GeolocationData? GetGeolocationData(string connectionId)
+    public TruckGeolocationDto? GetGeolocationData(string connectionId)
     {
         _connectedClients.TryGetValue(connectionId, out var geolocationData);
         return geolocationData;
     }
 
-    public void UpdateGeolocationData(string connectionId, GeolocationData geolocationData)
+    public void UpdateGeolocationData(string connectionId, TruckGeolocationDto truckGeolocationDto)
     {
-        _connectedClients.AddOrUpdate(connectionId, geolocationData, (_, _) => geolocationData);
+        _connectedClients.AddOrUpdate(connectionId, truckGeolocationDto, (_, _) => truckGeolocationDto);
     }
     
     public void RemoveClient(string connectionId)

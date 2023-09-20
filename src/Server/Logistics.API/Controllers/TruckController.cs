@@ -17,11 +17,11 @@ public class TruckController : ControllerBase
     [ProducesResponseType(typeof(ResponseResult<TruckDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Truck.View)]
-    public async Task<IActionResult> GetById(string id, bool includeLoadIds = false)
+    public async Task<IActionResult> GetById(string id, bool includeLoads = false)
     {
         var result = await _mediator.Send(new GetTruckByIdQuery
         {
-            IncludeLoadIds = includeLoadIds,
+            IncludeLoads = includeLoads,
             Id = id
         });
 
@@ -35,13 +35,10 @@ public class TruckController : ControllerBase
     [ProducesResponseType(typeof(ResponseResult<TruckDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Truck.View)]
-    public async Task<IActionResult> GetByDriverId(string userId, bool includeLoadIds = false)
+    public async Task<IActionResult> GetByDriverId(string userId, [FromQuery] GetTruckByDriverQuery query)
     {
-        var result = await _mediator.Send(new GetTruckByDriverQuery
-        {
-            IncludeLoadIds = includeLoadIds,
-            DriverId = userId
-        });
+        query.UserId = userId;
+        var result = await _mediator.Send(query);
 
         if (result.Success)
             return Ok(result);
