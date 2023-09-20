@@ -1,6 +1,7 @@
 ﻿using IdentityModel.OidcClient;
 using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.Authentication;
+using Logistics.DriverApp.Services.LocationTracking;
 using Microsoft.Extensions.Configuration;
 using Syncfusion.Licensing;
 

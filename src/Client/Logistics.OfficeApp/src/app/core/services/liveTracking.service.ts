@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpTransportType, HubConnection, HubConnectionBuilder} from '@microsoft/signalr';
 import {AppConfig} from '@configs';
-import {GeolocationData} from '@core/models';
+import {TruckGeolocation} from '@core/models';
 import {TenantService} from './tenant.service';
 
 
@@ -68,4 +68,4 @@ export class LiveTrackingService {
   }
 }
 
-type OnReceiveGeolocationDataCallback = (geolocation: GeolocationData) => void;
+type OnReceiveGeolocationDataCallback = (geolocation: TruckGeolocation) => void;

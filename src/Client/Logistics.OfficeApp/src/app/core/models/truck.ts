@@ -1,4 +1,5 @@
 import {Employee} from './employee';
+import {Load} from './load';
 
 export interface Truck {
   id: string;
@@ -7,5 +8,5 @@ export interface Truck {
   currentLocation?: string;
   currentLocationLat?: number;
   currentLocationLong?: number;
-  loadIds?: string[];
+  loads?: Load[];
 }

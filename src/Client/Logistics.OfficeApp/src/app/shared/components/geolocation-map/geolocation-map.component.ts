@@ -7,7 +7,8 @@ import {
 } from '@angular/core';
 import {NgFor, NgIf} from '@angular/common';
 import {MarkerComponent, NgxMapboxGLModule} from 'ngx-mapbox-gl';
-import {GeolocationData} from '@core/models';
+import {GeolocationData} from './geolocationData';
+import {TruckGeolocation} from '@core/models';
 
 
 @Component({
@@ -24,17 +25,17 @@ import {GeolocationData} from '@core/models';
 export class GeolocationMapComponent implements OnInit, OnChanges {
   public selectedMarker: Marker | null = null;
 
-  @Input() geolocationData: GeolocationData[] = [];
+  @Input() geolocationData: TruckGeolocation[] = [];
   @Input() initialCenter: [number, number] = [-95, 35];
 
   ngOnInit(): void {}
   ngOnChanges(changes: SimpleChanges): void {}
 
-  trackByFn(index: number, item: GeolocationData): string {
-    return item.userId;
+  trackByFn(index: number, item: TruckGeolocation): string {
+    return item.truckId;
   }
 
-  onSelectMarker(geoData: GeolocationData, markerComponent: MarkerComponent): void {
+  onSelectMarker(geoData: TruckGeolocation, markerComponent: MarkerComponent): void {
     this.selectedMarker = {
       component: markerComponent,
       data: geoData,
@@ -44,5 +45,5 @@ export class GeolocationMapComponent implements OnInit, OnChanges {
 
 interface Marker {
   component: MarkerComponent;
-  data: GeolocationData;
+  data: TruckGeolocation;
 }

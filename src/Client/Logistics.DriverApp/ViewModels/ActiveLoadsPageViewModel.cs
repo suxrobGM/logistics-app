@@ -4,6 +4,7 @@ using Logistics.DriverApp.Messages;
 using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.Authentication;
+using Logistics.DriverApp.Services.LocationTracking;
 using Logistics.Models;
 using Plugin.Firebase.CloudMessaging;
 using Plugin.Firebase.CloudMessaging.EventArgs;
@@ -77,14 +78,28 @@ public class ActiveLoadsPageViewModel : BaseViewModel
     
     protected override async Task OnInitializedAsync()
     {
+        DriverName = _authService.User?.GetFullName();
         await SendDeviceTokenAsync();
         await FetchTruckDataAsync();
-        DriverName = _authService.User?.GetFullName();
+        TryStartLocationTrackerService();
+    }
 
-        if (!string.IsNullOrEmpty(_truckId))
+    private void TryStartLocationTrackerService()
+    {
+        var tenantId = _authService.User?.CurrentTenantId;
+
+        if (string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(_truckId))
         {
-            _locationTrackerBackgroundService.Start(_truckId);
+            return;
         }
+
+        _locationTrackerBackgroundService.Start(new LocationTrackerOptions
+        {
+            TruckId = _truckId,
+            TenantId = tenantId,
+            DriversName = string.Join(", ", DriverName, TeammatesName),
+            TruckNumber = TruckNumber
+        });
     }
 
     private async Task FetchTruckDataAsync()
@@ -109,7 +124,9 @@ public class ActiveLoadsPageViewModel : BaseViewModel
         }
 
         var truck = result.Value!;
+        var teammates = truck.Drivers.Where(i => i.Id != driverId).Select(i => i.FullName);
         TruckNumber = truck.TruckNumber;
+        TeammatesName = string.Join(", ", teammates); 
         _truckId = truck.Id;
         
         AddActiveLoads(truck.Loads);
@@ -132,6 +149,7 @@ public class ActiveLoadsPageViewModel : BaseViewModel
         var dashboardData = result.Value!;
         TruckNumber = dashboardData.TruckNumber;
         TeammatesName = string.Join(", ", dashboardData.TeammatesName);
+        
         AddActiveLoads(dashboardData.ActiveLoads);
         IsLoading = false;
     }

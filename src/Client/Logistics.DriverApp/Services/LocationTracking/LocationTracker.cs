@@ -4,19 +4,15 @@ using Logistics.DriverApp.Services.Authentication;
 using Logistics.Models;
 using Microsoft.AspNetCore.SignalR.Client;
 
-namespace Logistics.DriverApp.Services;
+namespace Logistics.DriverApp.Services.LocationTracking;
 
 public class LocationTracker : ILocationTracker
 {
     private readonly HubConnection _hubConnection;
-    private readonly IAuthService _authService;
     private bool _isConnected;
 
-    public LocationTracker(
-        ApiClientOptions apiClientOptions,
-        IAuthService authService)
+    public LocationTracker(ApiClientOptions apiClientOptions)
     {
-        _authService = authService;
         _hubConnection = new HubConnectionBuilder()
             .WithUrl($"{apiClientOptions.Host}/hubs/LiveTracking", options =>
             {
@@ -46,16 +42,9 @@ public class LocationTracker : ILocationTracker
         _isConnected = false;
     }
 
-    public async Task SendLocationDataAsync(string truckId)
+    public async Task SendLocationDataAsync(LocationTrackerOptions options)
     {
         await ConnectAsync();
-        var tenantId = _authService.User?.CurrentTenantId;
-
-        if (string.IsNullOrEmpty(tenantId))
-        {
-            return;
-        }
-
         var location = await GetCurrentLocationAsync();
 
         if (location is null)
@@ -67,8 +56,10 @@ public class LocationTracker : ILocationTracker
 
         var geolocationData = new TruckGeolocationDto
         {
-            TruckId = truckId,
-            TenantId = tenantId,
+            TruckId = options.TruckId,
+            TruckNumber = options.TruckNumber,
+            TenantId = options.TenantId,
+            DriversName = options.DriversName,
             Latitude = location.Latitude,
             Longitude = location.Longitude,
             CurrentLocation = address

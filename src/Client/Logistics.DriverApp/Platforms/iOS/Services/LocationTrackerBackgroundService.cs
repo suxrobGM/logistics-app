@@ -1,10 +1,10 @@
-﻿using Logistics.DriverApp.Services;
+﻿using Logistics.DriverApp.Services.LocationTracking;
 
 namespace Logistics.DriverApp.Platforms.iOS.Services;
 
 public class LocationTrackerBackgroundService : ILocationTrackerBackgroundService
 {
-    public void Start(string truckId)
+    public void Start(LocationTrackerOptions options)
     {
         throw new NotImplementedException();
     }

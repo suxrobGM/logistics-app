@@ -24,4 +24,4 @@ export {LoadStatus} from './loadStatus';
 export {LoadStatuses} from './loadStatuses';
 export {UserRole} from './userRole';
 export {EnumType} from './enumType';
-export {GeolocationData} from './geolocationData';
+export {TruckGeolocation} from './truckGeolocation';

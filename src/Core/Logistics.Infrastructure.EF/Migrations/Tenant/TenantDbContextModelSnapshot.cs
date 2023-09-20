@@ -48,15 +48,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<DateTime>("JoinedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("LastKnownLocation")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("LastKnownLocationLat")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("LastKnownLocationLong")
-                        .HasColumnType("float");
-
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
 
@@ -261,6 +252,15 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastKnownLocation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("LastKnownLocationLat")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("LastKnownLocationLong")
+                        .HasColumnType("float");
 
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");

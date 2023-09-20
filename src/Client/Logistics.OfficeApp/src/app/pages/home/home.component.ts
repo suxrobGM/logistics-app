@@ -8,7 +8,7 @@ import {TooltipModule} from 'primeng/tooltip';
 import {TableModule} from 'primeng/table';
 import {SharedModule} from 'primeng/api';
 import {CardModule} from 'primeng/card';
-import {DailyGrosses, GeolocationData, Load} from '@core/models';
+import {DailyGrosses, TruckGeolocation, Load} from '@core/models';
 import {ApiService, LiveTrackingService} from '@core/services';
 import {GeolocationMapComponent} from '@shared/components';
 import {DistanceUnitPipe} from '@shared/pipes';
@@ -46,7 +46,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   public loads: Load[];
   public chartData: any;
   public chartOptions: any;
-  public truksLocations: GeolocationData[];
+  public truksLocations: TruckGeolocation[];
 
   constructor(
     private apiService: ApiService,
@@ -94,8 +94,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   private connectToLiveTracking() {
     this.liveTrackingService.connect();
 
-    this.liveTrackingService.onReceiveGeolocationData = (data: GeolocationData) => {
-      const index = this.truksLocations.findIndex((loc) => loc.userId === data.userId);
+    this.liveTrackingService.onReceiveGeolocationData = (data: TruckGeolocation) => {
+      const index = this.truksLocations.findIndex((loc) => loc.truckId === data.truckId);
 
       if (index !== -1) {
         this.truksLocations[index] = data;
@@ -112,15 +112,14 @@ export class HomeComponent implements OnInit, OnDestroy {
         return;
       }
 
-      const truckLocations: GeolocationData[] = result.items!.flatMap((truck) => {
+      const truckLocations: TruckGeolocation[] = result.items!.flatMap((truck) => {
         if (truck.currentLocation) {
           return [{
             latitude: truck.currentLocationLat!,
             longitude: truck.currentLocationLong!,
-            userId: truck.drivers[0].id,
+            truckId: truck.id,
             truckNumber: truck.truckNumber,
-            userFullName: `${truck.drivers[0].firstName} ${truck.drivers[0].lastName}`,
-            tenantId: '',
+            driversName: `${truck.drivers[0].firstName} ${truck.drivers[0].lastName}`,
           }];
         }
         return [];

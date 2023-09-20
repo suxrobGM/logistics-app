@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.Infrastructure.EF.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20230916074009_Version_0001")]
+    [Migration("20230920070109_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -50,15 +50,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
                     b.Property<DateTime>("JoinedDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("LastKnownLocation")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("LastKnownLocationLat")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("LastKnownLocationLong")
-                        .HasColumnType("float");
 
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
@@ -264,6 +255,15 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastKnownLocation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("LastKnownLocationLat")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("LastKnownLocationLong")
+                        .HasColumnType("float");
 
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
