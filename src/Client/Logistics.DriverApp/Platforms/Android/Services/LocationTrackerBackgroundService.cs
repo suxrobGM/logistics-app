@@ -1,4 +1,5 @@
-﻿using Android.App;
+﻿using System.Text.Json;
+using Android.App;
 using Android.Content;
 using Android.OS;
 using AndroidX.Core.App;
@@ -18,8 +19,9 @@ public class LocationTrackerBackgroundService : Service, ILocationTrackerBackgro
 
     public void Start(LocationTrackerOptions options)
     {
-        _options = options;
         var intent = new Intent(AndroidApp.Context, typeof(LocationTrackerBackgroundService));
+        var serializedOptions = JsonSerializer.Serialize(options);
+        intent.PutExtra(nameof(LocationTrackerOptions), serializedOptions);
         AndroidApp.Context.StartForegroundService(intent);
     }
 
@@ -36,7 +38,18 @@ public class LocationTrackerBackgroundService : Service, ILocationTrackerBackgro
 
     public override StartCommandResult OnStartCommand(Intent? intent, StartCommandFlags flags, int startId)
     {
-        StartForegroundService();
+        var optionsStr = intent?.GetStringExtra(nameof(LocationTrackerOptions));
+        
+        if(!string.IsNullOrEmpty(optionsStr))
+        {
+            _options = JsonSerializer.Deserialize<LocationTrackerOptions>(optionsStr);
+        }
+        
+        if (_options != null)
+        {
+            StartForegroundService();
+        }
+        
         return StartCommandResult.Sticky;
     }
     
@@ -57,10 +70,7 @@ public class LocationTrackerBackgroundService : Service, ILocationTrackerBackgro
 
     private async void SendGeolocationData(object? state)
     {
-        if (_options != null)
-        {
-            await _locationTracker.SendLocationDataAsync(_options);
-        }
+        await _locationTracker.SendLocationDataAsync(_options!);
     }
     
     private void StartForegroundService()

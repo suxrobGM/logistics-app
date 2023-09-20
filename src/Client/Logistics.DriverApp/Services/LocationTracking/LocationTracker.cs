@@ -44,6 +44,11 @@ public class LocationTracker : ILocationTracker
 
     public async Task SendLocationDataAsync(LocationTrackerOptions options)
     {
+        if (string.IsNullOrEmpty(options.TruckId) || string.IsNullOrEmpty(options.TenantId))
+        {
+            return;
+        }
+        
         await ConnectAsync();
         var location = await GetCurrentLocationAsync();
 

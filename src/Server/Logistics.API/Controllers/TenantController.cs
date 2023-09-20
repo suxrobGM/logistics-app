@@ -32,16 +32,16 @@ public class TenantController : ControllerBase
         return BadRequest(result);
     }
 
-    [HttpGet("displayName/{id}")]
+    [HttpGet("{identifier}/displayName")]
     [ProducesResponseType(typeof(ResponseResult<TenantDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize]
-    public async Task<IActionResult> GetDisplayName(string id)
+    public async Task<IActionResult> GetDisplayName(string identifier)
     {
         var result = await _mediator.Send(new GetTenantDisplayNameQuery
         {
-            Id = id,
-            Name = id
+            Id = identifier,
+            Name = identifier
         });
 
         if (result.Success)

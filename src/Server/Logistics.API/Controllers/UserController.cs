@@ -19,10 +19,7 @@ public class UserController : ControllerBase
     [Authorize(Policy = Permissions.User.View)]
     public async Task<IActionResult> GetById(string id)
     {
-        var result = await _mediator.Send(new GetUserByIdQuery
-        {
-            UserId = id
-        });
+        var result = await _mediator.Send(new GetUserByIdQuery {UserId = id});
 
         if (result.Success)
             return Ok(result);
@@ -73,12 +70,13 @@ public class UserController : ControllerBase
         return BadRequest(result);
     }
 
-    [HttpPost("removeRole")]
+    [HttpPost("{id}/removeRole")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.User.Edit)]
-    public async Task<IActionResult> RemoveRole([FromBody] RemoveRoleFromUserCommand request)
+    public async Task<IActionResult> RemoveRole(string id, [FromBody] RemoveRoleFromUserCommand request)
     {
+        request.UserId = id;
         var result = await _mediator.Send(request);
 
         if (result.Success)

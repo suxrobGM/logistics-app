@@ -19,13 +19,8 @@ internal sealed class GetLoadByIdHandler : RequestHandler<GetLoadByIdQuery, Resp
 
         if (loadEntity == null)
             return ResponseResult<LoadDto>.CreateError("Could not find the specified cargo");
-
-        var assignedDispatcher = await _tenantRepository.GetAsync<Employee>(loadEntity.AssignedDispatcherId);
-
+        
         var loadDto = loadEntity.ToDto();
-        loadDto.AssignedDispatcherName = assignedDispatcher?.GetFullName();
-        loadDto.AssignedTruckNumber = loadEntity.AssignedTruck?.TruckNumber;
-        loadDto.AssignedTruckId = loadDto.AssignedTruckId;
         return ResponseResult<LoadDto>.CreateSuccess(loadDto);
     }
 }

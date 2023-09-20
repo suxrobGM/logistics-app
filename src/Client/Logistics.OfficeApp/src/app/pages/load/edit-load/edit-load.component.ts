@@ -15,7 +15,7 @@ import * as MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-d
 import * as mapboxgl from 'mapbox-gl';
 import {AppConfig} from '@configs';
 import {AuthService} from '@core/auth';
-import {CreateLoad, UpdateLoad, EnumType, LoadStatus, LoadStatuses} from '@core/models';
+import {CreateLoad, UpdateLoad, EnumType, LoadStatus, LoadStatuses, Truck} from '@core/models';
 import {ApiService} from '@core/services';
 import {DistanceUtils} from '@shared/utils';
 
@@ -114,14 +114,12 @@ export class EditLoadComponent implements OnInit {
         return;
       }
 
-      this.suggestedDrivers = result.items.map((truckDriver) => {
-        const driversName = truckDriver.drivers.map((driver) => driver.fullName);
-
-        return {
+      this.suggestedDrivers = result.items.map((truckDriver) => (
+        {
           truckId: truckDriver.truck.id,
-          driversName: this.formatDriversName(truckDriver.truck.truckNumber, driversName),
-        };
-      });
+          driversName: this.formatDriversName(truckDriver.truck),
+        }),
+      );
     });
   }
 
@@ -311,8 +309,8 @@ export class EditLoadComponent implements OnInit {
           dispatcherId: load.assignedDispatcherId,
           status: load.status,
           assignedTruck: {
-            truckId: load.assignedTruckId,
-            driversName: this.formatDriversName(load.assignedTruckNumber, load.assignedTruckDriversName)},
+            truckId: load.assignedTruck.id,
+            driversName: this.formatDriversName(load.assignedTruck)},
         });
 
         this.orgGeocoder.query(load.originAddress!);
@@ -341,9 +339,9 @@ export class EditLoadComponent implements OnInit {
     this.fetchCurrentDispatcher();
   }
 
-  private formatDriversName(truckNumber: string, driversName: string[]): string {
-    const driversFullName = driversName.join(', ');
-    return `${truckNumber} - ${driversFullName}`;
+  private formatDriversName(truck: Truck): string {
+    const driversName = truck.drivers.map((driver) => driver.fullName);
+    return `${truck.truckNumber} - ${driversName}`;
   }
 
   private getLocaleDate(dateStr?: string | Date): string {

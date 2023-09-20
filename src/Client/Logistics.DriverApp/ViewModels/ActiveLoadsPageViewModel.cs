@@ -30,9 +30,9 @@ public class ActiveLoadsPageViewModel : BaseViewModel
         _mapsService = mapsService;
         _locationTrackerBackgroundService = locationTrackerBackgroundService;
         CrossFirebaseCloudMessaging.Current.NotificationReceived += HandleLoadNotificationReceived;
-        Messenger.Register<TenantIdChangedMessage>(this, (_, _) =>
+        Messenger.Register<TenantIdChangedMessage>(this, async (_, _) =>
         {
-            MainThread.BeginInvokeOnMainThread(async () => await FetchDashboardDataAsync());
+            await MainThread.InvokeOnMainThreadAsync(FetchTruckDataAsync);
         });
     }
 
@@ -185,7 +185,7 @@ public class ActiveLoadsPageViewModel : BaseViewModel
     {
         if (e.Notification.Data.ContainsKey("loadId"))
         {
-            await FetchDashboardDataAsync();
+            await MainThread.InvokeOnMainThreadAsync(FetchDashboardDataAsync);
         }
     }
 

@@ -55,12 +55,13 @@ public class EmployeeController : ControllerBase
         return BadRequest(result);
     }
     
-    [HttpPost("removeRole")]
+    [HttpPost("{userId}/removeRole")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.Edit)]
-    public async Task<IActionResult> RemoveRole([FromBody] RemoveRoleFromEmployeeCommand request)
+    public async Task<IActionResult> RemoveRole(string userId, [FromBody] RemoveRoleFromEmployeeCommand request)
     {
+        request.UserId = userId;
         var result = await _mediator.Send(request);
 
         if (result.Success)
@@ -90,10 +91,7 @@ public class EmployeeController : ControllerBase
     [Authorize(Policy = Permissions.Employee.Delete)]
     public async Task<IActionResult> Delete(string userId)
     {
-        var result = await _mediator.Send(new DeleteEmployeeCommand
-        {
-            UserId = userId
-        });
+        var result = await _mediator.Send(new DeleteEmployeeCommand {UserId = userId});
 
         if (result.Success)
             return Ok(result);

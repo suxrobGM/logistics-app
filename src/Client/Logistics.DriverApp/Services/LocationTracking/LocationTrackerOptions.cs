@@ -2,8 +2,8 @@
 
 public class LocationTrackerOptions
 {
-    public required string TruckId;
-    public required string TenantId;
-    public string? TruckNumber;
-    public string? DriversName;
+    public string? TruckId { get; set; }
+    public string? TenantId { get; set; }
+    public string? TruckNumber { get; set; }
+    public string? DriversName { get; set; }
 }

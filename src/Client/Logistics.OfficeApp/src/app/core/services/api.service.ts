@@ -46,7 +46,7 @@ export class ApiService {
 
   getTenant(): Observable<ResponseResult<Tenant>> {
     const tenantId = this.tenantService.getTenantName();
-    const url = `${this.host}/tenant/displayName/${tenantId}`;
+    const url = `${this.host}/tenant/${tenantId}/displayName`;
 
     return this.httpClient
         .get<ResponseResult<Tenant>>(url)
@@ -246,7 +246,7 @@ export class ApiService {
   }
 
   removeRoleFromEmployee(employee: RemoveEmployeeRole): Observable<ResponseResult> {
-    const url = `${this.host}/employee/removeRole`;
+    const url = `${this.host}/employee/${employee.userId}/removeRole`;
     const body = JSON.stringify(employee);
 
     return this.httpClient
