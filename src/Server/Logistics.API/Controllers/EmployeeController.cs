@@ -19,10 +19,7 @@ public class EmployeeController : ControllerBase
     [Authorize(Policy = Permissions.Employee.View)]
     public async Task<IActionResult> GetById(string userId)
     {
-        var result = await _mediator.Send(new GetEmployeeByIdQuery
-        {
-            UserId = userId
-        });
+        var result = await _mediator.Send(new GetEmployeeByIdQuery {UserId = userId});
 
         if (result.Success)
             return Ok(result);

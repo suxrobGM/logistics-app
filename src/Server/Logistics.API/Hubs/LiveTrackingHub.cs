@@ -25,7 +25,7 @@ public class LiveTrackingHub : Hub<ILiveTrackingHubClient>
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         var geolocationData = _hubContext.GetGeolocationData(Context.ConnectionId);
-        await _mediator.Send(new SaveTruckGeolocationCommand(geolocationData));
+        await _mediator.Send(new SetTruckGeolocationCommand(geolocationData));
         _hubContext.RemoveClient(Context.ConnectionId);
     }
 

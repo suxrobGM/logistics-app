@@ -2,21 +2,21 @@
 
 namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class SaveTruckGeolocationHandler : RequestHandler<SaveTruckGeolocationCommand, ResponseResult>
+internal sealed class SetTruckGeolocationHandler : RequestHandler<SetTruckGeolocationCommand, ResponseResult>
 {
     private readonly ITenantRepository _tenantRepository;
-    private readonly ILogger<SaveTruckGeolocationHandler> _logger;
+    private readonly ILogger<SetTruckGeolocationHandler> _logger;
 
-    public SaveTruckGeolocationHandler(
+    public SetTruckGeolocationHandler(
         ITenantRepository tenantRepository,
-        ILogger<SaveTruckGeolocationHandler> logger)
+        ILogger<SetTruckGeolocationHandler> logger)
     {
         _logger = logger;
         _tenantRepository = tenantRepository;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
-        SaveTruckGeolocationCommand req, CancellationToken cancellationToken)
+        SetTruckGeolocationCommand req, CancellationToken cancellationToken)
     {
         if (req.GeolocationData is null)
             return ResponseResult.CreateSuccess();

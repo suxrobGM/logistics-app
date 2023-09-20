@@ -19,10 +19,7 @@ public class DriverController : ControllerBase
     [Authorize(Policy = Permissions.Employee.View)]
     public async Task<IActionResult> GetById(string userId)
     {
-        var result = await _mediator.Send(new GetEmployeeByIdQuery
-        {
-            UserId = userId
-        });
+        var result = await _mediator.Send(new GetEmployeeByIdQuery {UserId = userId});
 
         if (result.Success)
             return Ok(result);
@@ -48,12 +45,9 @@ public class DriverController : ControllerBase
     [ProducesResponseType(typeof(ResponseResult<TruckDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Truck.View)]
-    public async Task<IActionResult> GetByDriverId(string userId, [FromQuery] GetTruckByDriverQuery query)
+    public async Task<IActionResult> GetDriverTruck(string userId, [FromQuery] GetTruckByDriverQuery query)
     {
-        Console.WriteLine($"userId_2: {query.UserId}");
         query.UserId = userId;
-        Console.WriteLine($"userId_1: {userId}");
-        
         var result = await _mediator.Send(query);
 
         if (result.Success)

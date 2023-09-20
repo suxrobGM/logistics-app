@@ -2,9 +2,9 @@
 
 namespace Logistics.Application.Tenant.Commands;
 
-public class SaveTruckGeolocationCommand : Request<ResponseResult>
+public class SetTruckGeolocationCommand : Request<ResponseResult>
 {
-    public SaveTruckGeolocationCommand(TruckGeolocationDto? geolocationData)
+    public SetTruckGeolocationCommand(TruckGeolocationDto? geolocationData)
     {
         GeolocationData = geolocationData;
     }
