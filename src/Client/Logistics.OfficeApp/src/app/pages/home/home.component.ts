@@ -119,7 +119,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             longitude: truck.currentLocationLong!,
             truckId: truck.id,
             truckNumber: truck.truckNumber,
-            driversName: `${truck.drivers[0].firstName} ${truck.drivers[0].lastName}`,
+            driversName: truck.drivers.map((driver) => driver.fullName).join(', '),
           }];
         }
         return [];
