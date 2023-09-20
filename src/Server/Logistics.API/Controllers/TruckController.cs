@@ -31,21 +31,6 @@ public class TruckController : ControllerBase
         return BadRequest(result);
     }
 
-    [HttpGet("driver/{userId}")]
-    [ProducesResponseType(typeof(ResponseResult<TruckDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Truck.View)]
-    public async Task<IActionResult> GetByDriverId(string userId, [FromQuery] GetTruckByDriverQuery query)
-    {
-        query.UserId = userId;
-        var result = await _mediator.Send(query);
-
-        if (result.Success)
-            return Ok(result);
-
-        return BadRequest(result);
-    }
-
     [HttpGet("list")]
     [ProducesResponseType(typeof(PagedResponseResult<TruckDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]

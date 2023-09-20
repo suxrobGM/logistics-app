@@ -73,7 +73,7 @@ internal class ApiClient : GenericApiClient, IApiClient
         catch (ApiException ex)
         {
             OnErrorResponse?.Invoke(this, ex.Message);
-            return new TRes() { Error = ex.Message };
+            return new TRes { Error = ex.Message };
         }
     }
 
@@ -93,7 +93,7 @@ internal class ApiClient : GenericApiClient, IApiClient
         catch (ApiException ex)
         {
             OnErrorResponse?.Invoke(this, ex.Message);
-            return new TRes() { Error = ex.Message };
+            return new TRes { Error = ex.Message };
         }
     }
 
@@ -113,7 +113,7 @@ internal class ApiClient : GenericApiClient, IApiClient
         catch (ApiException ex)
         {
             OnErrorResponse?.Invoke(this, ex.Message);
-            return new TRes() { Error = ex.Message };
+            return new TRes { Error = ex.Message };
         }
     }
 
@@ -132,7 +132,7 @@ internal class ApiClient : GenericApiClient, IApiClient
         catch (ApiException ex)
         {
             OnErrorResponse?.Invoke(this, ex.Message);
-            return new TRes() { Error = ex.Message };
+            return new TRes { Error = ex.Message };
         }
     }
 
@@ -173,16 +173,6 @@ internal class ApiClient : GenericApiClient, IApiClient
     {
         var query = new Dictionary<string, string> { { "includeLoads", includeLoads.ToString() } };
         return MakeGetRequestAsync<ResponseResult<TruckDto>>($"truck/{id}", query);
-    }
-
-    public Task<ResponseResult<TruckDto>> GetTruckByDriverAsync(string userId, bool includeLoads = false, bool includeOnlyActiveLoads = false)
-    {
-        var query = new Dictionary<string, string>
-        {
-            { "includeLoads", includeLoads.ToString() },
-            { "includeOnlyActiveLoads", includeOnlyActiveLoads.ToString() }
-        };
-        return MakeGetRequestAsync<ResponseResult<TruckDto>>($"truck/driver/{userId}", query);  
     }
 
     public Task<PagedResponseResult<TruckDto>> GetTrucksAsync(SearchableQuery query, bool includeLoads = false)
@@ -235,16 +225,6 @@ internal class ApiClient : GenericApiClient, IApiClient
     public Task<ResponseResult> DeleteEmployeeAsync(string userId)
     {
         return MakeDeleteRequestAsync<ResponseResult>($"employee/delete/{userId}");
-    }
-    
-    public Task<ResponseResult> SetDeviceTokenAsync(string userId, string token)
-    {
-        var command = new SetDeviceToken
-        {
-            UserId = userId,
-            DeviceToken = token
-        };
-        return MakePostRequestAsync<ResponseResult, SetDeviceToken>("employee/setDeviceToken", command);
     }
 
     #endregion
@@ -305,11 +285,31 @@ internal class ApiClient : GenericApiClient, IApiClient
     #endregion
 
 
-    #region Dashboard API
-
-    public Task<ResponseResult<DriverDashboardDto>> GetDriverDashboardDataAsync(string userId)
+    #region Driver API
+    
+    public Task<ResponseResult<DriverActiveLoadsDto>> GetDriverActiveLoadsAsync(string userId)
     {
-        return MakeGetRequestAsync<ResponseResult<DriverDashboardDto>>($"dashboard/driver/{userId}");
+        return MakeGetRequestAsync<ResponseResult<DriverActiveLoadsDto>>($"driver/{userId}/activeLoads");
+    }
+
+    public Task<ResponseResult<TruckDto>> GetDriverTruckAsync(string userId, bool includeLoads = false, bool includeOnlyActiveLoads = false)
+    {
+        var query = new Dictionary<string, string>
+        {
+            { "includeLoads", includeLoads.ToString() },
+            { "includeOnlyActiveLoads", includeOnlyActiveLoads.ToString() }
+        };
+        return MakeGetRequestAsync<ResponseResult<TruckDto>>($"driver/{userId}/truck", query);  
+    }
+    
+    public Task<ResponseResult> SetDeviceTokenAsync(string userId, string token)
+    {
+        var command = new SetDeviceToken
+        {
+            UserId = userId,
+            DeviceToken = token
+        };
+        return MakePostRequestAsync<ResponseResult, SetDeviceToken>($"driver/{userId}/deviceToken", command);
     }
 
     #endregion

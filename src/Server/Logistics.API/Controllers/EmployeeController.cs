@@ -71,20 +71,6 @@ public class EmployeeController : ControllerBase
 
         return BadRequest(result);
     }
-    
-    [HttpPost("setDeviceToken")]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Employee.View)]
-    public async Task<IActionResult> SetDeviceToken([FromBody] SetEmployeeDeviceTokenCommand command)
-    {
-        var result = await _mediator.Send(command);
-
-        if (result.Success)
-            return Ok(result);
-
-        return BadRequest(result.Error);
-    }
 
     [HttpPut("update/{userId}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]

@@ -1,16 +1,16 @@
 ﻿namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class SetEmployeeDeviceTokenHandler : RequestHandler<SetEmployeeDeviceTokenCommand, ResponseResult>
+internal sealed class SetDriverDeviceTokenHandler : RequestHandler<SetDriverDeviceTokenCommand, ResponseResult>
 {
     private readonly ITenantRepository _tenantRepository;
 
-    public SetEmployeeDeviceTokenHandler(ITenantRepository tenantRepository)
+    public SetDriverDeviceTokenHandler(ITenantRepository tenantRepository)
     {
         _tenantRepository = tenantRepository;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
-        SetEmployeeDeviceTokenCommand req, CancellationToken cancellationToken)
+        SetDriverDeviceTokenCommand req, CancellationToken cancellationToken)
     {
         var driver = await _tenantRepository.GetAsync<Employee>(req.UserId);
 

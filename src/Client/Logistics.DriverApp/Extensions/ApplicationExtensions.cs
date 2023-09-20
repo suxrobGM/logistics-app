@@ -33,6 +33,7 @@ public static class ApplicationExtensions
         services.AddScoped<ActiveLoadsPageViewModel>();
         services.AddScoped<AccountPageViewModel>();
         services.AddScoped<LoginPageViewModel>();
+        services.AddScoped<DashboardPageViewModel>();
         services.AddScoped<ChangeOrganizationPageViewModel>();
         services.AddScoped<IdentityModel.OidcClient.Browser.IBrowser, WebBrowserAuthenticator>();
         services.AddScoped<IAuthService, AuthService>();

@@ -2,9 +2,9 @@
 
 namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class SetEmployeeDeviceTokenValidator : AbstractValidator<SetEmployeeDeviceTokenCommand>
+internal sealed class SetDriverDeviceTokenValidator : AbstractValidator<SetDriverDeviceTokenCommand>
 {
-    public SetEmployeeDeviceTokenValidator()
+    public SetDriverDeviceTokenValidator()
     {
         RuleFor(i => i.UserId).NotEmpty();
         RuleFor(i => i.DeviceToken).NotEmpty();

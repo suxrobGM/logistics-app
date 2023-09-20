@@ -9,5 +9,4 @@ public interface IEmployeeApi
     Task<ResponseResult> CreateEmployeeAsync(CreateEmployee employee);
     Task<ResponseResult> UpdateEmployeeAsync(UpdateEmployee employee);
     Task<ResponseResult> DeleteEmployeeAsync(string userId);
-    Task<ResponseResult> SetDeviceTokenAsync(string userId, string token);
 }

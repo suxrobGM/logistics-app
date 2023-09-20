@@ -114,7 +114,7 @@ public class ActiveLoadsPageViewModel : BaseViewModel
             return;
         }
         
-        var result = await _apiClient.GetTruckByDriverAsync(driverId, false, true);
+        var result = await _apiClient.GetDriverTruckAsync(driverId, false, true);
 
         if (!result.Success)
         {
@@ -137,7 +137,7 @@ public class ActiveLoadsPageViewModel : BaseViewModel
     {
         IsLoading = true;
         var driverId = _authService.User?.Id!;
-        var result = await _apiClient.GetDriverDashboardDataAsync(driverId);
+        var result = await _apiClient.GetDriverActiveLoadsAsync(driverId);
 
         if (!result.Success)
         {
@@ -147,9 +147,6 @@ public class ActiveLoadsPageViewModel : BaseViewModel
         }
         
         var dashboardData = result.Value!;
-        TruckNumber = dashboardData.TruckNumber;
-        TeammatesName = string.Join(", ", dashboardData.TeammatesName);
-        
         AddActiveLoads(dashboardData.ActiveLoads);
         IsLoading = false;
     }
