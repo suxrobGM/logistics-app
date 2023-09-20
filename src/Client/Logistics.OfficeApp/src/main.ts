@@ -18,7 +18,11 @@ if (environment.production) {
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(APP_ROUTES),
-    importProvidersFrom(BrowserModule, CoreModule, NgxMapboxGLModule.withConfig({accessToken: AppConfig.mapboxToken})),
+    importProvidersFrom(
+        BrowserModule,
+        CoreModule,
+        NgxMapboxGLModule.withConfig({accessToken: AppConfig.mapboxToken}),
+    ),
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
   ],
