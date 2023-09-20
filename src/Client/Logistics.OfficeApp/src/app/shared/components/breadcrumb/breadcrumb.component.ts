@@ -1,8 +1,9 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {MenuItem} from 'primeng/api';
 import {filter} from 'rxjs';
+import {MenuItem} from 'primeng/api';
 import {BreadcrumbModule} from 'primeng/breadcrumb';
+
 
 @Component({
   selector: 'app-breadcrumb',

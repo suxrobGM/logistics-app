@@ -1,15 +1,14 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {NgIf} from '@angular/common';
 import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MessageService} from 'primeng/api';
-import {RemoveEmployeeRole, Role, UpdateEmployee} from '@core/models';
-import {ApiService} from '@core/services';
-import {UserService} from '@pages/employee/services';
 import {ButtonModule} from 'primeng/button';
 import {DropdownModule} from 'primeng/dropdown';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {NgIf} from '@angular/common';
 import {DialogModule} from 'primeng/dialog';
-
+import {RemoveEmployeeRole, Role, UpdateEmployee} from '@core/models';
+import {ApiService} from '@core/services';
+import {UserService} from '../../services';
 
 @Component({
   selector: 'change-role-dialog',

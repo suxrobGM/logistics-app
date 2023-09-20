@@ -17,7 +17,6 @@ import {AppConfig} from '@configs';
 import {AuthService} from '@core/auth';
 import {CreateLoad, UpdateLoad, EnumType, LoadStatus, LoadStatuses} from '@core/models';
 import {ApiService} from '@core/services';
-import {DistanceUnitPipe} from '@shared/pipes';
 import {DistanceUtils} from '@shared/utils';
 
 

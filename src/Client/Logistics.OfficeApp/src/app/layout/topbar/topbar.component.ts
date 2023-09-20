@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
+import {NgIf} from '@angular/common';
 import {of, switchMap} from 'rxjs';
+import {SharedModule} from 'primeng/api';
+import {ButtonModule} from 'primeng/button';
 import {AppConfig} from '@configs';
 import {ApiService, TenantService} from '@core/services';
 import {AuthService, UserData} from '@core/auth';
-import {SharedModule} from 'primeng/api';
-import {ButtonModule} from 'primeng/button';
-import {NgIf} from '@angular/common';
 
 
 @Component({

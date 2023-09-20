@@ -1,14 +1,14 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, RouterLink} from '@angular/router';
+import {NgIf, NgFor, CurrencyPipe} from '@angular/common';
+import {ChartModule} from 'primeng/chart';
+import {SharedModule} from 'primeng/api';
+import {SkeletonModule} from 'primeng/skeleton';
+import {CardModule} from 'primeng/card';
 import {DailyGrosses, MonthlyGrosses, Truck} from '@core/models';
 import {DistanceUnitPipe} from '@shared/pipes';
 import {ApiService} from '@core/services';
 import {DateUtils, DistanceUtils} from '@shared/utils';
-import {ChartModule} from 'primeng/chart';
-import {SharedModule} from 'primeng/api';
-import {SkeletonModule} from 'primeng/skeleton';
-import {NgIf, NgFor, CurrencyPipe} from '@angular/common';
-import {CardModule} from 'primeng/card';
 
 
 @Component({

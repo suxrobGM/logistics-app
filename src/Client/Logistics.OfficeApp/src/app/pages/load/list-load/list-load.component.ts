@@ -1,16 +1,16 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {CurrencyPipe, DatePipe} from '@angular/common';
+import {RouterLink} from '@angular/router';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
+import {InputTextModule} from 'primeng/inputtext';
+import {SharedModule} from 'primeng/api';
+import {CardModule} from 'primeng/card';
+import {TooltipModule} from 'primeng/tooltip';
+import {ButtonModule} from 'primeng/button';
 import {Load} from '@core/models';
 import {ApiService} from '@core/services';
 import {LoadStatus, LoadStatuses} from '@core/models';
 import {DistanceUnitPipe} from '@shared/pipes';
-import {CurrencyPipe, DatePipe} from '@angular/common';
-import {InputTextModule} from 'primeng/inputtext';
-import {SharedModule} from 'primeng/api';
-import {CardModule} from 'primeng/card';
-import {RouterLink} from '@angular/router';
-import {TooltipModule} from 'primeng/tooltip';
-import {ButtonModule} from 'primeng/button';
 
 
 @Component({

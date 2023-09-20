@@ -1,18 +1,18 @@
 import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
-import {DailyGrosses, GeolocationData, Load} from '@core/models';
-import {DistanceUnitPipe} from '@shared/pipes';
-import {ApiService, LiveTrackingService} from '@core/services';
-import {DateUtils, DistanceUtils} from '@shared/utils';
+import {NgIf, CurrencyPipe} from '@angular/common';
+import {RouterLink} from '@angular/router';
 import {ChartModule} from 'primeng/chart';
 import {SkeletonModule} from 'primeng/skeleton';
-import {NgIf, CurrencyPipe} from '@angular/common';
 import {ButtonModule} from 'primeng/button';
 import {TooltipModule} from 'primeng/tooltip';
-import {RouterLink} from '@angular/router';
 import {TableModule} from 'primeng/table';
-import {GeolocationMapComponent} from '@shared/components';
 import {SharedModule} from 'primeng/api';
 import {CardModule} from 'primeng/card';
+import {DailyGrosses, GeolocationData, Load} from '@core/models';
+import {ApiService, LiveTrackingService} from '@core/services';
+import {GeolocationMapComponent} from '@shared/components';
+import {DistanceUnitPipe} from '@shared/pipes';
+import {DateUtils, DistanceUtils} from '@shared/utils';
 
 
 @Component({

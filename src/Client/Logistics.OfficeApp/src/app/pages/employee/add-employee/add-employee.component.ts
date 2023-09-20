@@ -1,19 +1,19 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {NgIf} from '@angular/common';
 import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MessageService} from 'primeng/api';
-import {CreateEmployee, Role, User} from '@core/models';
-import {ApiService} from '@core/services';
-import {UserService} from '../services';
 import {RouterLink} from '@angular/router';
+import {MessageService} from 'primeng/api';
 import {ButtonModule} from 'primeng/button';
 import {DropdownModule} from 'primeng/dropdown';
 import {AutoCompleteModule} from 'primeng/autocomplete';
 import {MessagesModule} from 'primeng/messages';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {NgIf} from '@angular/common';
 import {CardModule} from 'primeng/card';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
+import {CreateEmployee, Role, User} from '@core/models';
+import {ApiService} from '@core/services';
+import {UserService} from '../services';
 
 
 @Component({

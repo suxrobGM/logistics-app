@@ -5,9 +5,9 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import {GeolocationData} from '@core/models';
 import {NgFor} from '@angular/common';
 import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
+import {GeolocationData} from '@core/models';
 
 
 @Component({

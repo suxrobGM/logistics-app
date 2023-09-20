@@ -1,8 +1,8 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {Router} from '@angular/router';
-import {AuthService} from '@core/auth';
-import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {NgIf} from '@angular/common';
+import {Router} from '@angular/router';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import {AuthService} from '@core/auth';
 
 
 @Component({

@@ -1,17 +1,17 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {NgIf} from '@angular/common';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import {ConfirmationService} from 'primeng/api';
-import {Employee, UserRole} from '@core/models';
-import {ApiService} from '@core/services';
-import {AuthService} from '@core/auth';
 import {ButtonModule} from 'primeng/button';
 import {MessagesModule} from 'primeng/messages';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {NgIf} from '@angular/common';
 import {CardModule} from 'primeng/card';
-import {ChangeRoleDialogComponent} from '../components';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
+import {Employee, UserRole} from '@core/models';
+import {ApiService} from '@core/services';
+import {AuthService} from '@core/auth';
+import {ChangeRoleDialogComponent} from '../components';
 
 
 @Component({
