@@ -16,7 +16,7 @@ import {ButtonModule} from 'primeng/button';
 @Component({
   selector: 'app-list-load',
   templateUrl: './list-load.component.html',
-  styleUrls: ['./list-load.component.scss'],
+  styleUrls: [],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [
