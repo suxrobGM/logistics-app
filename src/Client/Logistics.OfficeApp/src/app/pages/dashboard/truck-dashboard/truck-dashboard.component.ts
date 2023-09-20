@@ -14,7 +14,7 @@ import {CardModule} from 'primeng/card';
 @Component({
   selector: 'app-truck-dashboard',
   templateUrl: './truck-dashboard.component.html',
-  styleUrls: ['./truck-dashboard.component.scss'],
+  styleUrls: [],
   standalone: true,
   imports: [
     CardModule,

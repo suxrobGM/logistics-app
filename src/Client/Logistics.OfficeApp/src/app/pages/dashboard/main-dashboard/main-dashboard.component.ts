@@ -12,7 +12,7 @@ import {CardModule} from 'primeng/card';
 @Component({
   selector: 'app-main-dashboard',
   templateUrl: './main-dashboard.component.html',
-  styleUrls: ['./main-dashboard.component.scss'],
+  styleUrls: [],
   standalone: true,
   imports: [
     CardModule,
