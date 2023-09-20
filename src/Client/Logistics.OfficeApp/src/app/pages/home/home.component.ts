@@ -40,7 +40,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   public todayGross: number;
   public weeklyGross: number;
   public weeklyDistance: number;
-  public rpm: number;
+  public weeklyRpm: number;
   public loadingLoads: boolean;
   public loadingChart: boolean;
   public loads: Load[];
@@ -59,7 +59,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.todayGross = 0;
     this.weeklyGross = 0;
     this.weeklyDistance = 0;
-    this.rpm = 0;
+    this.weeklyRpm = 0;
 
     this.chartData = {
       labels: [],
@@ -118,6 +118,8 @@ export class HomeComponent implements OnInit, OnDestroy {
             latitude: truck.currentLocationLat!,
             longitude: truck.currentLocationLong!,
             userId: truck.drivers[0].id,
+            truckNumber: truck.truckNumber,
+            userFullName: `${truck.drivers[0].firstName} ${truck.drivers[0].lastName}`,
             tenantId: '',
           }];
         }
@@ -150,7 +152,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         this.weeklyGross = grosses.totalIncome;
         this.weeklyDistance = grosses.totalDistance;
-        this.rpm = this.weeklyGross / DistanceUtils.metersTo(this.weeklyDistance, 'mi');
+        this.weeklyRpm = this.weeklyGross / DistanceUtils.metersTo(this.weeklyDistance, 'mi');
         this.drawChart(grosses);
         this.calcTodayGross(grosses);
       }

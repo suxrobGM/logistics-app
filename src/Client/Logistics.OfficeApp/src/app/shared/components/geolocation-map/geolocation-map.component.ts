@@ -5,8 +5,8 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import {NgFor} from '@angular/common';
-import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
+import {NgFor, NgIf} from '@angular/common';
+import {MarkerComponent, NgxMapboxGLModule} from 'ngx-mapbox-gl';
 import {GeolocationData} from '@core/models';
 
 
@@ -15,12 +15,17 @@ import {GeolocationData} from '@core/models';
   templateUrl: './geolocation-map.component.html',
   styles: [],
   standalone: true,
-  imports: [NgxMapboxGLModule, NgFor],
+  imports: [
+    NgxMapboxGLModule,
+    NgFor,
+    NgIf,
+  ],
 })
 export class GeolocationMapComponent implements OnInit, OnChanges {
+  public selectedMarker: Marker | null = null;
+
   @Input() geolocationData: GeolocationData[] = [];
   @Input() initialCenter: [number, number] = [-95, 35];
-
 
   ngOnInit(): void {}
   ngOnChanges(changes: SimpleChanges): void {}
@@ -28,4 +33,16 @@ export class GeolocationMapComponent implements OnInit, OnChanges {
   trackByFn(index: number, item: GeolocationData): string {
     return item.userId;
   }
+
+  onSelectMarker(geoData: GeolocationData, markerComponent: MarkerComponent): void {
+    this.selectedMarker = {
+      component: markerComponent,
+      data: geoData,
+    };
+  }
+}
+
+interface Marker {
+  component: MarkerComponent;
+  data: GeolocationData;
 }

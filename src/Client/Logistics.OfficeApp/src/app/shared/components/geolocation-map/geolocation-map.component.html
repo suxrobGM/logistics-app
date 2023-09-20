@@ -1,10 +1,19 @@
 <mgl-map [style]="'mapbox://styles/mapbox/streets-v11'" [zoom]="[3]" [center]="initialCenter">
-  <mgl-marker *ngFor="let geoData of geolocationData; trackBy: trackByFn"
-    [lngLat]="[geoData.longitude, geoData.latitude]">
-    <i class="bi bi-geo-alt-fill h1"></i>
-  </mgl-marker>
-  <!-- <mgl-popup *ngIf="selectedGeoData" [lngLat]="[selectedGeoData.longitude, selectedGeoData.latitude]">
-    <strong>{{ selectedGeoData.userFullName }}</strong><br>
-    <span>Truck: {{ selectedGeoData.truckNumber }}</span>
-  </mgl-popup> -->
+  <ng-container *ngFor="let geoData of geolocationData; trackBy: trackByFn">
+    <mgl-marker #marker [lngLat]="[geoData.longitude, geoData.latitude]">
+      <div class="text-center" (click)="onSelectMarker(geoData, marker)">
+        <div class="bg-dark text-light rounded" >
+          {{geoData.truckNumber}}
+        </div>
+        <div class="text-danger">
+          <i class="bi bi-geo-alt-fill h4"></i>
+        </div>
+      </div>
+    </mgl-marker>
+  </ng-container>
+
+  <mgl-popup *ngIf="selectedMarker" [marker]="selectedMarker.component">
+    <span>Truck: {{selectedMarker.data.truckNumber}}</span><br/>
+    <span>Driver: {{selectedMarker.data.userFullName}}</span>
+  </mgl-popup>
 </mgl-map>

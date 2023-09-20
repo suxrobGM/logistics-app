@@ -5,18 +5,9 @@
   <div class="col-12 col-xl-7">
     <p-card>
       <ng-template pTemplate="header">
-        <div class="ms-3 py-2 fw-bold">Active trucks</div>
+        <div class="ms-3 py-2 fw-bold">Trucks</div>
         <hr class="w-100 m-0" />
       </ng-template>
-      <!-- <mgl-map [style]="'mapbox://styles/mapbox/streets-v11'" 
-        [zoom]="[3]"
-        [center]="[-95, 35]">
-        <mgl-marker #markerRef [lngLat]="markerPos" [draggable]="true">
-        </mgl-marker>
-        <mgl-popup [marker]="markerRef">
-          <h3>Label Name</h3><p>Marker description</p>
-        </mgl-popup>
-      </mgl-map> -->
       <app-geolocation-map [geolocationData]="truksLocations"></app-geolocation-map>
     </p-card>
   </div>
@@ -106,7 +97,7 @@
           </div>
           <div class="col-12 col-md-4 px-3">
             <span class="text-secondary text-uppercase">Rate Per Mile:</span><br/>
-            <span class="fw-bold fs-3">{{rpm | currency}}</span>
+            <span class="fw-bold fs-3">{{weeklyRpm | currency}}</span>
           </div>
         </div>
       </ng-template>
