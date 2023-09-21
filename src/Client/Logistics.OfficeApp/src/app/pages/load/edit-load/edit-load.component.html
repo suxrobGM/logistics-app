@@ -16,17 +16,17 @@
         <div class="mb-3">
           <label for="orgAddress" class="form-label">Origin Address</label>
           <app-address-searchbox field="orgAddress"
-            [(address)]="originAddress" 
+            formControlName="orgAddress" 
             [accessToken]="accessToken" 
-            (selectedAddress)="updateOriginAddress($event)">
+            (selectedAddress)="updateOrigin($event)">
           </app-address-searchbox>
         </div>
         <div class="mb-3">
           <label for="dstAddress" class="form-label">Destination Address</label>
           <app-address-searchbox field="dstAddress"
-            [(address)]="destinationAddress"
+            formControlName="dstAddress"
             [accessToken]="accessToken" 
-            (selectedAddress)="updateDestinationAddress($event)">
+            (selectedAddress)="updateDestination($event)">
           </app-address-searchbox>
         </div>
         <div class="mb-3">

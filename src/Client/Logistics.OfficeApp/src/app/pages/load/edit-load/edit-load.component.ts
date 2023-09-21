@@ -50,15 +50,13 @@ export class EditLoadComponent implements OnInit {
   private directions!: any;
   private distanceMeters: number;
 
-  public id?: string;
+  public id: string | null;
   public headerText: string;
   public isBusy: boolean;
   public editMode: boolean;
   public form: FormGroup;
   public suggestedDrivers: SuggestedDriver[];
   public loadStatuses: EnumType[];
-  public originAddress: string = '';
-  public destinationAddress: string = '';
 
   constructor(
     private authService: AuthService,
@@ -73,13 +71,14 @@ export class EditLoadComponent implements OnInit {
     this.suggestedDrivers = [];
     this.loadStatuses = LoadStatuses;
     this.distanceMeters = 0;
+    this.id = null;
 
     this.form = new FormGroup({
       name: new FormControl(''),
       orgAddress: new FormControl('', Validators.required),
-      orgCoords: new FormControl('', Validators.required),
+      orgCoords: new FormControl([], Validators.required),
       dstAddress: new FormControl('', Validators.required),
-      dstCoords: new FormControl('', Validators.required),
+      dstCoords: new FormControl([], Validators.required),
       dispatchedDate: new FormControl(new Date().toLocaleDateString(), Validators.required),
       deliveryCost: new FormControl(0, Validators.required),
       distance: new FormControl(0, Validators.required),
@@ -146,18 +145,16 @@ export class EditLoadComponent implements OnInit {
     });
   }
 
-  updateOriginAddress(eventData: SelectedAddressEvent) {
+  updateOrigin(eventData: SelectedAddressEvent) {
     this.directions.setOrigin(eventData.center);
     this.form.patchValue({
-      orgAddress: eventData.address,
       orgCoords: eventData.center,
     });
   }
 
-  updateDestinationAddress(eventData: SelectedAddressEvent) {
+  updateDestination(eventData: SelectedAddressEvent) {
     this.directions.setDestination(eventData.center);
     this.form.patchValue({
-      dstAddress: eventData.address,
       dstCoords: eventData.center,
     });
   }
@@ -293,8 +290,6 @@ export class EditLoadComponent implements OnInit {
 
         this.directions.setOrigin(load.originAddress!);
         this.directions.setDestination(load.destinationAddress!);
-        this.originAddress = load.originAddress;
-        this.destinationAddress = load.destinationAddress;
       }
     });
   }
@@ -306,14 +301,16 @@ export class EditLoadComponent implements OnInit {
       dispatchedDate: new Date().toLocaleDateString(),
       deliveryCost: 0,
       distance: 0,
+      orgAddress: '',
+      orgCoords: [],
+      dstAddress: '',
+      dstCoords: [],
     });
 
-    this.originAddress = '';
-    this.destinationAddress = '';
     this.directions.removeRoutes();
     this.editMode = false;
     this.headerText = 'Add a new load';
-    this.id = undefined;
+    this.id = null;
     this.fetchCurrentDispatcher();
   }
 

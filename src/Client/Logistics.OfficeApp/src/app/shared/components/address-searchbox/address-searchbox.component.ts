@@ -1,14 +1,27 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import {NgFor, NgIf} from '@angular/common';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+
 
 @Component({
   selector: 'app-address-searchbox',
   standalone: true,
-  imports: [CommonModule],
   templateUrl: './address-searchbox.component.html',
   styleUrls: ['./address-searchbox.component.scss'],
+  imports: [NgFor, NgIf],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: AddressSearchboxComponent,
+      multi: true,
+    },
+  ],
 })
-export class AddressSearchboxComponent implements OnInit {
+export class AddressSearchboxComponent implements OnInit, ControlValueAccessor {
+  public searchResults: GeocodingFeature[] = [];
+  private isTouched = false;
+  private isDisabled = false;
+
   @Input({required: true}) accessToken!: string;
   @Input() field: string = '';
   @Input() placeholder: string = 'Type address...';
@@ -17,29 +30,69 @@ export class AddressSearchboxComponent implements OnInit {
   @Output() addressChange = new EventEmitter<string>();
   @Output() selectedAddress = new EventEmitter<SelectedAddressEvent>();
 
-  public searchResults: GeocodingFeature[] = [];
-
   ngOnInit(): void {}
 
   async onAddressInputChange(event: Event) {
+    if (this.isDisabled) {
+      return;
+    }
+
     const query = (event.target as HTMLInputElement)?.value;
 
     if (!query) {
       this.searchResults = [];
+      this.markAsTouched();
       return;
     }
 
     const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${this.accessToken}&country=${this.country}&types=address`);
     const responseData = await response.json() as GeocodingResponse;
     this.searchResults = responseData.features;
+    this.markAsTouched();
   }
 
   onClickAddress(address: string, center: number[]) {
+    if (this.isDisabled) {
+      return;
+    }
+
     this.address = address;
     this.addressChange.emit(address);
     this.selectedAddress.emit({address: address, center});
     this.searchResults = [];
+    this.onChange(address);
+    this.markAsTouched();
   }
+
+  private onChange(value: any): void {};
+  private onTouched(): void {}
+
+  private markAsTouched() {
+    if (!this.isTouched) {
+      this.onTouched();
+      this.isTouched = true;
+    }
+  }
+
+  // #region Reactive forms methods
+
+  writeValue(value: string): void {
+    this.address = value;
+  }
+
+  registerOnChange(onChange: any): void {
+    this.onChange = onChange;
+  }
+
+  registerOnTouched(onTouched: any): void {
+    this.onTouched = onTouched;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.isDisabled = isDisabled;
+  }
+
+  // #endregion
 }
 
 interface GeocodingResponse {
