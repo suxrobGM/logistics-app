@@ -17,7 +17,7 @@ import {AuthService} from '@core/auth';
 import {CreateLoad, UpdateLoad, EnumType, LoadStatus, LoadStatuses, Truck} from '@core/models';
 import {ApiService} from '@core/services';
 import {DistanceUtils} from '@shared/utils';
-import {AddressSearchboxComponent, SelectedAddressEvent} from '@shared/components';
+import {AddressAutocompleteComponent, SelectedAddressEvent} from '@shared/components';
 
 
 @Component({
@@ -38,7 +38,7 @@ import {AddressSearchboxComponent, SelectedAddressEvent} from '@shared/component
     DropdownModule,
     ButtonModule,
     RouterLink,
-    AddressSearchboxComponent,
+    AddressAutocompleteComponent,
   ],
   providers: [
     ConfirmationService,

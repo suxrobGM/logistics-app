@@ -4,20 +4,20 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 
 
 @Component({
-  selector: 'app-address-searchbox',
+  selector: 'app-address-autocomplete',
   standalone: true,
-  templateUrl: './address-searchbox.component.html',
-  styleUrls: ['./address-searchbox.component.scss'],
+  templateUrl: './address-autocomplete.component.html',
+  styleUrls: ['./address-autocomplete.component.scss'],
   imports: [NgFor, NgIf],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: AddressSearchboxComponent,
+      useExisting: AddressAutocompleteComponent,
       multi: true,
     },
   ],
 })
-export class AddressSearchboxComponent implements OnInit, ControlValueAccessor {
+export class AddressAutocompleteComponent implements OnInit, ControlValueAccessor {
   public searchResults: GeocodingFeature[] = [];
   private isTouched = false;
   private isDisabled = false;
