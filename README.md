@@ -77,6 +77,7 @@ User password: Test12345#
 - CI/CD
 
 ### Design Patterns
+- Multi-Tenant Architecture
 - Domain-Driven Design
 - CQRS
 - Domain Events

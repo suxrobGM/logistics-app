@@ -10,7 +10,6 @@ import {ButtonModule} from 'primeng/button';
 import {DropdownModule} from 'primeng/dropdown';
 import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import * as MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
 import * as mapboxgl from 'mapbox-gl';
 import {AppConfig} from '@configs';
@@ -18,6 +17,7 @@ import {AuthService} from '@core/auth';
 import {CreateLoad, UpdateLoad, EnumType, LoadStatus, LoadStatuses, Truck} from '@core/models';
 import {ApiService} from '@core/services';
 import {DistanceUtils} from '@shared/utils';
+import {AddressSearchboxComponent, SelectedAddressEvent} from '@shared/components';
 
 
 @Component({
@@ -38,17 +38,16 @@ import {DistanceUtils} from '@shared/utils';
     DropdownModule,
     ButtonModule,
     RouterLink,
+    AddressSearchboxComponent,
   ],
   providers: [
     ConfirmationService,
   ],
 })
 export class EditLoadComponent implements OnInit {
-  private accessToken = AppConfig.mapboxToken;
+  public accessToken = AppConfig.mapboxToken;
   private map!: mapboxgl.Map;
   private directions!: any;
-  private destGeocoder!: MapboxGeocoder;
-  private orgGeocoder!: MapboxGeocoder;
   private distanceMeters: number;
 
   public id?: string;
@@ -58,6 +57,8 @@ export class EditLoadComponent implements OnInit {
   public form: FormGroup;
   public suggestedDrivers: SuggestedDriver[];
   public loadStatuses: EnumType[];
+  public originAddress: string = '';
+  public destinationAddress: string = '';
 
   constructor(
     private authService: AuthService,
@@ -89,13 +90,12 @@ export class EditLoadComponent implements OnInit {
     });
   }
 
-  public ngOnInit(): void {
+  ngOnInit(): void {
     this.route.params.subscribe((params) => {
       this.id = params['id'];
     });
 
     this.initMapbox();
-    this.initGeocoderInputs();
     this.fetchCurrentDispatcher();
 
     if (!this.id) {
@@ -108,7 +108,7 @@ export class EditLoadComponent implements OnInit {
     }
   }
 
-  public searchTruck(event: any) {
+  searchTruck(event: any) {
     this.apiService.getTruckDrivers(event.query).subscribe((result) => {
       if (!result.success || !result.items) {
         return;
@@ -123,7 +123,7 @@ export class EditLoadComponent implements OnInit {
     });
   }
 
-  public submit() {
+  submit() {
     const assignedTruck = this.form.value.assignedTruck;
 
     if (!assignedTruck) {
@@ -139,10 +139,26 @@ export class EditLoadComponent implements OnInit {
     }
   }
 
-  public confirmToDelete() {
+  confirmToDelete() {
     this.confirmationService.confirm({
       message: 'Are you sure that you want to delete this load?',
       accept: () => this.deleteLoad(),
+    });
+  }
+
+  updateOriginAddress(eventData: SelectedAddressEvent) {
+    this.directions.setOrigin(eventData.center);
+    this.form.patchValue({
+      orgAddress: eventData.address,
+      orgCoords: eventData.center,
+    });
+  }
+
+  updateDestinationAddress(eventData: SelectedAddressEvent) {
+    this.directions.setDestination(eventData.center);
+    this.form.patchValue({
+      dstAddress: eventData.address,
+      dstCoords: eventData.center,
     });
   }
 
@@ -247,45 +263,7 @@ export class EditLoadComponent implements OnInit {
     this.map.addControl(this.directions, 'top-left');
   }
 
-  private initGeocoderInputs() {
-    this.orgGeocoder = new MapboxGeocoder({
-      accessToken: this.accessToken,
-      countries: 'us',
-    });
-
-    this.destGeocoder = new MapboxGeocoder({
-      accessToken: this.accessToken,
-      countries: 'us',
-    });
-
-    this.orgGeocoder.addTo('#orgAddress');
-    this.destGeocoder.addTo('#dstAddress');
-
-    this.orgGeocoder.on('result', (data: any) => {
-      this.directions.setOrigin(data.result.center);
-      this.form.patchValue({
-        orgAddress: data.result.place_name,
-        orgCoords: data.result.center,
-      });
-    });
-
-    this.destGeocoder.on('result', (data: any) => {
-      this.directions.setDestination(data.result.center);
-      this.form.patchValue({
-        dstAddress: data.result.place_name,
-        dstCoords: data.result.center,
-      });
-    });
-  }
-
   private fetchCurrentDispatcher() {
-    // this.oidcService.getUserData().subscribe((user: UserIdentity) => {
-    //   this.form.patchValue({
-    //     dispatcherName: user.name,
-    //     dispatcherId: user.sub,
-    //   });
-    // });
-
     const userData = this.authService.getUserData();
     this.form.patchValue({
       dispatcherName: userData?.name,
@@ -313,10 +291,10 @@ export class EditLoadComponent implements OnInit {
             driversName: this.formatDriversName(load.assignedTruck)},
         });
 
-        this.orgGeocoder.query(load.originAddress!);
-        this.destGeocoder.query(load.destinationAddress!);
         this.directions.setOrigin(load.originAddress!);
         this.directions.setDestination(load.destinationAddress!);
+        this.originAddress = load.originAddress;
+        this.destinationAddress = load.destinationAddress;
       }
     });
   }
@@ -330,8 +308,8 @@ export class EditLoadComponent implements OnInit {
       distance: 0,
     });
 
-    this.orgGeocoder.clear();
-    this.destGeocoder.clear();
+    this.originAddress = '';
+    this.destinationAddress = '';
     this.directions.removeRoutes();
     this.editMode = false;
     this.headerText = 'Add a new load';

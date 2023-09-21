@@ -20,7 +20,6 @@
     "@angular/platform-browser-dynamic": "^16.2.4",
     "@angular/router": "^16.2.4",
     "@mapbox/mapbox-gl-directions": "^4.1.1",
-    "@mapbox/mapbox-gl-geocoder": "^5.0.1",
     "@microsoft/signalr": "^7.0.11",
     "angular-auth-oidc-client": "^15.0.5",
     "bootstrap": "^5.3.1",

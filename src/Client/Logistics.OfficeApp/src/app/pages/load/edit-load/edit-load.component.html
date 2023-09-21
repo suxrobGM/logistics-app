@@ -1,4 +1,4 @@
-<p-toast key="notification" position="top-right"></p-toast>
+<p-toast key="notification" position="top-right"></p-toast>mapboxgl
 <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
 
 <h1>{{headerText}}</h1>
@@ -15,13 +15,19 @@
         </div>
         <div class="mb-3">
           <label for="orgAddress" class="form-label">Origin Address</label>
-          <input id="orgCoords" formControlName="orgCoords" type="hidden" />
-          <div id="orgAddress"></div>
+          <app-address-searchbox field="orgAddress"
+            [(address)]="originAddress" 
+            [accessToken]="accessToken" 
+            (selectedAddress)="updateOriginAddress($event)">
+          </app-address-searchbox>
         </div>
         <div class="mb-3">
           <label for="dstAddress" class="form-label">Destination Address</label>
-          <input id="dstCoords" formControlName="dstCoords" type="hidden" />
-          <div id="dstAddress"></div>
+          <app-address-searchbox field="dstAddress"
+            [(address)]="destinationAddress"
+            [accessToken]="accessToken" 
+            (selectedAddress)="updateDestinationAddress($event)">
+          </app-address-searchbox>
         </div>
         <div class="mb-3">
           <label for="dispatchedDate" class="form-label">Dispatched Date</label>
