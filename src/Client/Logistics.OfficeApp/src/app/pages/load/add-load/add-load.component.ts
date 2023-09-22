@@ -1,17 +1,17 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
-import {ConfirmationService, MessageService} from 'primeng/api';
+import {Router, RouterLink} from '@angular/router';
+import {MessageService} from 'primeng/api';
 import {CardModule} from 'primeng/card';
-import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
 import {ButtonModule} from 'primeng/button';
 import {DropdownModule} from 'primeng/dropdown';
 import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {AppConfig} from '@configs';
-import {UpdateLoad, EnumType, LoadStatus, LoadStatuses, Truck} from '@core/models';
+import {AuthService} from '@core/auth';
+import {CreateLoad, EnumType, LoadStatus, LoadStatuses, Truck} from '@core/models';
 import {ApiService} from '@core/services';
 import {DistanceUtils} from '@shared/utils';
 import {
@@ -23,14 +23,13 @@ import {
 
 
 @Component({
-  selector: 'app-edit-load',
-  templateUrl: './edit-load.component.html',
-  styleUrls: ['./edit-load.component.scss'],
+  selector: 'app-add-load',
+  templateUrl: './add-load.component.html',
+  styleUrls: ['./add-load.component.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [
     ToastModule,
-    ConfirmDialogModule,
     CardModule,
     NgIf,
     ProgressSpinnerModule,
@@ -43,15 +42,11 @@ import {
     AddressAutocompleteComponent,
     DirectionsMapComponent,
   ],
-  providers: [
-    ConfirmationService,
-  ],
 })
-export class EditLoadComponent implements OnInit {
+export class AddLoadComponent implements OnInit {
   public readonly accessToken: string;
   private distanceMeters: number;
 
-  public id!: string;
   public isBusy: boolean;
   public form: FormGroup;
   public suggestedDrivers: SuggestedDriver[];
@@ -60,10 +55,9 @@ export class EditLoadComponent implements OnInit {
   public destinationCoords?: [number, number] | null;
 
   constructor(
+    private authService: AuthService,
     private apiService: ApiService,
-    private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private route: ActivatedRoute,
     private router: Router)
   {
     this.accessToken = AppConfig.mapboxToken;
@@ -89,16 +83,7 @@ export class EditLoadComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      this.id = params['id'];
-    });
-
-    if (!this.id) {
-      this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Missing the reqiured id parameter'});
-      return;
-    }
-
-    this.fetchLoad();
+    this.fetchCurrentDispatcher();
   }
 
   searchTruck(event: any) {
@@ -124,14 +109,7 @@ export class EditLoadComponent implements OnInit {
       return;
     }
 
-    this.updateLoad();
-  }
-
-  confirmToDelete() {
-    this.confirmationService.confirm({
-      message: 'Are you sure that you want to delete this load?',
-      accept: () => this.deleteLoad(),
-    });
+    this.createLoad();
   }
 
   updateOrigin(eventData: SelectedAddressEvent) {
@@ -154,9 +132,10 @@ export class EditLoadComponent implements OnInit {
     this.form.patchValue({distance: distanceMiles});
   }
 
-  private updateLoad() {
-    const command: UpdateLoad = {
-      id: this.id!,
+  private createLoad() {
+    this.isBusy = true;
+
+    const command: CreateLoad = {
       name: this.form.value.name,
       originAddress: this.form.value.orgAddress,
       originAddressLong: this.form.value.orgCoords[0],
@@ -168,71 +147,30 @@ export class EditLoadComponent implements OnInit {
       distance: this.distanceMeters,
       assignedDispatcherId: this.form.value.dispatcherId,
       assignedTruckId: this.form.value.assignedTruck.truckId,
-      status: this.form.value.status,
     };
 
-    this.apiService.updateLoad(command)
+    this.apiService.createLoad(command)
         .subscribe((result) => {
           if (result.success) {
-            this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Load has been updated successfully'});
+            this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A new load has been created successfully'});
+            this.router.navigateByUrl('/loads/list');
           }
 
           this.isBusy = false;
         });
   }
 
-  private deleteLoad() {
-    if (!this.id) {
-      return;
-    }
-
-    this.isBusy = true;
-    this.apiService.deleteLoad(this.id).subscribe((result) => {
-      if (result.success) {
-        this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A load has been deleted successfully'});
-        this.router.navigateByUrl('/loads/list');
-      }
-
-      this.isBusy = false;
-    });
-  }
-
-  private fetchLoad() {
-    this.apiService.getLoad(this.id).subscribe((result) => {
-      if (result.success && result.value) {
-        const load = result.value;
-
-        this.form.patchValue({
-          name: load.name,
-          orgAddress: load.originAddress,
-          dstAddress: load.destinationAddress,
-          dispatchedDate: this.getLocaleDate(load.dispatchedDate),
-          deliveryCost: load.deliveryCost,
-          distance: DistanceUtils.metersTo(load.distance, 'mi'),
-          dispatcherName: load.assignedDispatcherName,
-          dispatcherId: load.assignedDispatcherId,
-          status: load.status,
-          assignedTruck: {
-            truckId: load.assignedTruck.id,
-            driversName: this.formatDriversName(load.assignedTruck)},
-        });
-
-        this.originCoords = [load.originAddressLong, load.originAddressLat];
-        this.destinationCoords = [load.destinationAddressLong, load.destinationAddressLat];
-      }
+  private fetchCurrentDispatcher() {
+    const userData = this.authService.getUserData();
+    this.form.patchValue({
+      dispatcherName: userData?.name,
+      dispatcherId: userData?.id,
     });
   }
 
   private formatDriversName(truck: Truck): string {
     const driversName = truck.drivers.map((driver) => driver.fullName);
     return `${truck.truckNumber} - ${driversName}`;
-  }
-
-  private getLocaleDate(dateStr?: string | Date): string {
-    if (dateStr) {
-      return new Date(dateStr).toLocaleDateString();
-    }
-    return '';
   }
 }
 

@@ -1,7 +1,6 @@
 <p-toast key="notification" position="top-right"></p-toast>
-<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
 
-<h1>Edit a load</h1>
+<h1>Add a new load</h1>
 <hr class="w-100">
 
 <p-card>
@@ -58,27 +57,13 @@
             (completeMethod)="searchTruck($event)">
           </p-autoComplete>
         </div>
-        <div class="mb-3">
-          <label for="status" class="form-label">Status</label>
-          <p-dropdown formControlName="status" styleClass="w-100" [options]="loadStatuses" optionValue="value"
-            optionLabel="displayName">
-          </p-dropdown>
-        </div>
         <div>
           <button pButton 
             type="submit"
             class="p-button-raised mt-3"
             icon="bi bi-pencil-square"
-            label="Save"
+            label="Add"
             [disabled]="isBusy">
-          </button>
-          <button pButton 
-            type="button"
-            class="p-button-raised p-button-danger mt-3 ms-2"
-            icon="bi bi bi-trash"
-            label="Delete"
-            [disabled]="isBusy"
-            (click)="confirmToDelete()">
           </button>
           <button pButton 
             type="button"

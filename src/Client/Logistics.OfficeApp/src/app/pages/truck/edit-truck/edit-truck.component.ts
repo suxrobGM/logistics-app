@@ -36,7 +36,7 @@ import {ApiService} from '@core/services';
   ],
 })
 export class EditTruckComponent implements OnInit {
-  public id?: string;
+  public id: string | null;
   public headerText: string;
   public isBusy: boolean;
   public editMode: boolean;
@@ -49,6 +49,7 @@ export class EditTruckComponent implements OnInit {
     private messageService: MessageService,
     private route: ActivatedRoute)
   {
+    this.id = null;
     this.suggestedDrivers = [];
     this.headerText = 'Edit a truck';
     this.isBusy = false;
@@ -150,7 +151,7 @@ export class EditTruckComponent implements OnInit {
   private resetForm() {
     this.editMode = false;
     this.headerText = 'Add a new truck';
-    this.id = undefined;
+    this.id = null;
   }
 
   private fetchTruck(id: string) {

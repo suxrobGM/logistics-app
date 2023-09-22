@@ -3,6 +3,7 @@ import {Permissions} from '@core/helpers';
 import {AuthGuard} from '@core/guards';
 import {EditLoadComponent} from './edit-load/edit-load.component';
 import {ListLoadComponent} from './list-load/list-load.component';
+import {AddLoadComponent} from './add-load/add-load.component';
 
 
 export const LOAD_ROUTES: Routes = [
@@ -22,7 +23,7 @@ export const LOAD_ROUTES: Routes = [
   },
   {
     path: 'add',
-    component: EditLoadComponent,
+    component: AddLoadComponent,
     canActivate: [AuthGuard],
     data: {
       breadcrumb: 'Add',
