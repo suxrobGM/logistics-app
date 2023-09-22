@@ -4,7 +4,7 @@
     class="p-button-lg p-button-rounded p-button-text text-black ms-2"
     icon="bi bi-plus-square-fill"
     pTooltip="Add a new load"
-    routerLink="/loads/add">
+    routerLink="/load/add">
   </button>
 </div>
 <hr class="w-100">
@@ -76,7 +76,7 @@
         <ng-template pTemplate="body" let-load>
           <tr>
             <td>
-              <a [routerLink]="['/loads/edit', load.id]">
+              <a [routerLink]="['/load/edit', load.id]">
                 {{load.refId}}
               </a>
             </td>
@@ -96,7 +96,7 @@
             <td>{{load.distance | distanceUnit:'mi'}}</td>
             <td>{{load.deliveryCost | currency}}</td>
             <td>
-              <a [routerLink]="['/trucks/details', load.assignedTruck.id]">
+              <a [routerLink]="['/truck/details', load.assignedTruck.id]">
                 {{load.assignedTruck.truckNumber}}
               </a>
             </td>

@@ -177,7 +177,7 @@ export class EditLoadComponent implements OnInit {
     this.apiService.deleteLoad(this.id).subscribe((result) => {
       if (result.success) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A load has been deleted successfully'});
-        this.router.navigateByUrl('/loads/list');
+        this.router.navigateByUrl('/load/list');
       }
 
       this.isBusy = false;

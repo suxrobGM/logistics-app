@@ -33,7 +33,7 @@
         <ng-template pTemplate="body" let-load>
           <tr>
             <td>
-              <a [routerLink]="['/loads/edit', load.id]">
+              <a [routerLink]="['/load/edit', load.id]">
                 {{load.refId}}
               </a>
             </td>
@@ -41,7 +41,7 @@
               {{load.assignedTruck.currentLocation}}
             </td>
             <td>
-              <a [routerLink]="['/trucks/details', load.assignedTruck.id]">
+              <a [routerLink]="['/truck/details', load.assignedTruck.id]">
                 {{load.assignedTruck.truckNumber}}
               </a>
             </td>
@@ -52,12 +52,12 @@
             <td colspan="4">
               <button pButton 
                 class="p-button-raised" 
-                routerLink="/loads/add"
+                routerLink="/load/add"
                 label="Add">
               </button>
               <button pButton 
                 class="p-button-raised ms-2" 
-                routerLink="/loads"
+                routerLink="/load/list"
                 label="View all loads">
               </button>
             </td>
@@ -157,13 +157,13 @@
               <button pButton 
                 class="p-button-raised ms-2"
                 icon="bi bi-pencil"
-                routerLink="/employees/add"
+                routerLink="/employee/add"
                 label="Add">
               </button>
               <button pButton 
                 class="p-button-raised ms-2"
                 icon="bi bi-list"
-                routerLink="/employees"
+                routerLink="/employee/list"
                 label="List">
               </button>
             </td>
@@ -176,13 +176,13 @@
               <button pButton 
                 class="p-button-raised ms-2"
                 icon="bi bi-pencil"
-                routerLink="/trucks/edit"
+                routerLink="/truck/edit"
                 label="Add">
               </button>
               <button pButton 
                 class="p-button-raised ms-2"
                 icon="bi bi-list"
-                routerLink="/trucks"
+                routerLink="/truck/list"
                 label="List">
               </button>
             </td>
@@ -195,13 +195,13 @@
               <button pButton 
                 class="p-button-raised ms-2"
                 icon="bi bi-pencil"
-                routerLink="/loads/edit"
+                routerLink="/load/edit"
                 label="Add">
               </button>
               <button pButton 
                 class="p-button-raised ms-2"
                 icon="bi bi-list"
-                routerLink="/loads"
+                routerLink="/load/list"
                 label="List">
               </button>
             </td>

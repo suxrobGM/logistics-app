@@ -22,21 +22,21 @@ export const APP_ROUTES: Routes = [
     loadChildren: () => import('./pages/home').then((m) => m.HOME_ROUTES),
   },
   {
-    path: 'employees',
+    path: 'employee',
     loadChildren: () => import('./pages/employee').then((m) => m.EMPLOYEE_ROUTES),
     data: {
       breadcrumb: 'Employees',
     },
   },
   {
-    path: 'loads',
+    path: 'load',
     loadChildren: () => import('./pages/load').then((m) => m.LOAD_ROUTES),
     data: {
       breadcrumb: 'Loads',
     },
   },
   {
-    path: 'trucks',
+    path: 'truck',
     loadChildren: () => import('./pages/truck').then((m) => m.TRUCK_ROUTES),
     data: {
       breadcrumb: 'Trucks',

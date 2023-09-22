@@ -4,7 +4,7 @@
     class="p-button-lg p-button-rounded p-button-text text-black ms-2"
     icon="bi bi-plus-square-fill"
     pTooltip="Add a new truck"
-    routerLink="/trucks/add">
+    routerLink="/truck/add">
   </button>
 </div>
 <hr class="w-100">
@@ -40,9 +40,7 @@
         <ng-template pTemplate="body" let-truck>
           <tr>
             <td>
-              <a [routerLink]="['/trucks/edit', truck.id]">
-                {{truck.truckNumber}}
-              </a>
+              {{truck.truckNumber}}
             </td>
             <td>
               <span *ngFor="let driver of truck.drivers">
@@ -54,12 +52,12 @@
               <button pButton 
                 class="p-button-raised"
                 label="View details"
-                [routerLink]="['/trucks/details', truck.id]">
+                [routerLink]="['/truck/details', truck.id]">
               </button>
               <button pButton 
                 class="p-button-raised ms-2"
                 label="Edit"
-                [routerLink]="['/trucks/edit', truck.id]">
+                [routerLink]="['/truck/edit', truck.id]">
               </button>
             </td>
           </tr>
