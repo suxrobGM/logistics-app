@@ -52,6 +52,7 @@ export class EditLoadComponent implements OnInit {
   private distanceMeters: number;
 
   public id!: string;
+  public loadRefId!: number;
   public isBusy: boolean;
   public form: FormGroup;
   public suggestedDrivers: SuggestedDriver[];
@@ -156,7 +157,7 @@ export class EditLoadComponent implements OnInit {
 
   private updateLoad() {
     const command: UpdateLoad = {
-      id: this.id!,
+      id: this.id,
       name: this.form.value.name,
       originAddress: this.form.value.orgAddress,
       originAddressLong: this.form.value.orgCoords[0],
@@ -182,10 +183,6 @@ export class EditLoadComponent implements OnInit {
   }
 
   private deleteLoad() {
-    if (!this.id) {
-      return;
-    }
-
     this.isBusy = true;
     this.apiService.deleteLoad(this.id).subscribe((result) => {
       if (result.success) {
@@ -199,27 +196,31 @@ export class EditLoadComponent implements OnInit {
 
   private fetchLoad() {
     this.apiService.getLoad(this.id).subscribe((result) => {
-      if (result.success && result.value) {
-        const load = result.value;
-
-        this.form.patchValue({
-          name: load.name,
-          orgAddress: load.originAddress,
-          dstAddress: load.destinationAddress,
-          dispatchedDate: this.getLocaleDate(load.dispatchedDate),
-          deliveryCost: load.deliveryCost,
-          distance: DistanceUtils.metersTo(load.distance, 'mi'),
-          dispatcherName: load.assignedDispatcherName,
-          dispatcherId: load.assignedDispatcherId,
-          status: load.status,
-          assignedTruck: {
-            truckId: load.assignedTruck.id,
-            driversName: this.formatDriversName(load.assignedTruck)},
-        });
-
-        this.originCoords = [load.originAddressLong, load.originAddressLat];
-        this.destinationCoords = [load.destinationAddressLong, load.destinationAddressLat];
+      if (!result.success) {
+        this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: result.error});
+        return;
       }
+
+      const load = result.value!;
+
+      this.form.patchValue({
+        name: load.name,
+        orgAddress: load.originAddress,
+        dstAddress: load.destinationAddress,
+        dispatchedDate: this.getLocaleDate(load.dispatchedDate),
+        deliveryCost: load.deliveryCost,
+        distance: DistanceUtils.metersTo(load.distance, 'mi'),
+        dispatcherName: load.assignedDispatcherName,
+        dispatcherId: load.assignedDispatcherId,
+        status: load.status,
+        assignedTruck: {
+          truckId: load.assignedTruck.id,
+          driversName: this.formatDriversName(load.assignedTruck)},
+      });
+
+      this.loadRefId = load.refId;
+      this.originCoords = [load.originAddressLong, load.originAddressLat];
+      this.destinationCoords = [load.destinationAddressLong, load.destinationAddressLat];
     });
   }
 
