@@ -5,16 +5,18 @@ import {ChartModule} from 'primeng/chart';
 import {SharedModule} from 'primeng/api';
 import {SkeletonModule} from 'primeng/skeleton';
 import {CardModule} from 'primeng/card';
-import {DailyGrosses, MonthlyGrosses, Truck} from '@core/models';
+import {DailyGrosses, MonthlyGrosses, Truck, TruckGeolocation} from '@core/models';
 import {DistanceUnitPipe} from '@shared/pipes';
 import {ApiService} from '@core/services';
 import {DateUtils, DistanceUtils} from '@shared/utils';
+import {GeolocationMapComponent} from '@shared/components';
+import {AppConfig} from '@configs';
 
 
 @Component({
   selector: 'app-truck-details',
   templateUrl: './truck-details.component.html',
-  styleUrls: [],
+  styleUrls: ['./truck-details.component.scss'],
   standalone: true,
   imports: [
     CardModule,
@@ -26,9 +28,11 @@ import {DateUtils, DistanceUtils} from '@shared/utils';
     ChartModule,
     CurrencyPipe,
     DistanceUnitPipe,
+    GeolocationMapComponent,
   ],
 })
 export class TruckDetailsComponent implements OnInit {
+  public readonly accessToken: string;
   public id!: string;
   public loadingData: boolean;
   public loadingBarChart: boolean;
@@ -41,11 +45,14 @@ export class TruckDetailsComponent implements OnInit {
   public barChartData: any;
   public lineChartData: any;
   public chartOptions: any;
+  public truckLocations: TruckGeolocation[];
 
   constructor(
     private apiService: ApiService,
     private route: ActivatedRoute)
   {
+    this.accessToken = AppConfig.mapboxToken;
+    this.truckLocations = [];
     this.loadingData = false;
     this.loadingLineChart = false;
     this.loadingBarChart = false;
@@ -97,6 +104,14 @@ export class TruckDetailsComponent implements OnInit {
     this.apiService.getTruck(this.id).subscribe((result) => {
       if (result.success && result.value) {
         this.truck = result.value;
+
+        this.truckLocations = [{
+          latitude: this.truck.currentLocationLat!,
+          longitude: this.truck.currentLocationLong!,
+          truckId: this.truck.id,
+          truckNumber: this.truck.truckNumber,
+          driversName: this.truck.drivers.map((driver) => driver.fullName).join(', '),
+        }];
       }
 
       this.loadingData = false;
