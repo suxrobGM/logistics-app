@@ -2,6 +2,6 @@
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class GetTruckDriversQuery : SearchableRequest<TruckDriversDto>
+public class GetTruckDriversQuery : SearchableQuery<TruckDriversDto>
 {
 }

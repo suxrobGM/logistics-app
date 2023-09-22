@@ -29,20 +29,17 @@ import {ApiService} from '@core/services';
   ],
 })
 export class ListTruckComponent implements OnInit {
-  trucks: Truck[];
-  isBusy: boolean;
-  totalRecords: number;
-  first: number;
+  public trucks: Truck[];
+  public isLoading: boolean;
+  public totalRecords: number;
 
   constructor(private apiService: ApiService) {
     this.trucks = [];
-    this.isBusy = false;
+    this.isLoading = false;
     this.totalRecords = 0;
-    this.first = 0;
   }
 
   ngOnInit(): void {
-    this.isBusy = true;
   }
 
   search(event: any) {
@@ -57,7 +54,7 @@ export class ListTruckComponent implements OnInit {
   }
 
   load(event: TableLazyLoadEvent) {
-    this.isBusy = true;
+    this.isLoading = true;
     const page = event.first! / event.rows! + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
@@ -67,7 +64,7 @@ export class ListTruckComponent implements OnInit {
         this.totalRecords = result.itemsCount!;
       }
 
-      this.isBusy = false;
+      this.isLoading = false;
     });
   }
 }

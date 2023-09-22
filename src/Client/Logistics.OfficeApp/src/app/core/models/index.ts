@@ -25,3 +25,4 @@ export {LoadStatuses} from './loadStatuses';
 export {UserRole} from './userRole';
 export {EnumType} from './enumType';
 export {TruckGeolocation} from './truckGeolocation';
+export {TruckStats} from './truckStats';

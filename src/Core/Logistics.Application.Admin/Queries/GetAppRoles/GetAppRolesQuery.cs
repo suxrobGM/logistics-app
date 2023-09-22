@@ -2,6 +2,6 @@
 
 namespace Logistics.Application.Admin.Queries;
 
-public class GetAppRolesQuery : SearchableRequest<AppRoleDto>
+public class GetAppRolesQuery : SearchableQuery<AppRoleDto>
 {
 }

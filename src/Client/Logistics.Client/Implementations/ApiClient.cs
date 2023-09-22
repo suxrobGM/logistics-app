@@ -144,9 +144,9 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakeGetRequestAsync<ResponseResult<LoadDto>>($"load/{id}");
     }
 
-    public Task<PagedResponseResult<LoadDto>> GetLoadsAsync(SearchableQuery query)
+    public Task<PagedResponseResult<LoadDto>> GetLoadsAsync(SearchableRequest request)
     {
-        return MakeGetRequestAsync<PagedResponseResult<LoadDto>>("load/list", query.ToDictionary());
+        return MakeGetRequestAsync<PagedResponseResult<LoadDto>>("load/list", request.ToDictionary());
     }
 
     public Task<ResponseResult> CreateLoadAsync(CreateLoad load)
@@ -175,9 +175,9 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakeGetRequestAsync<ResponseResult<TruckDto>>($"truck/{id}", query);
     }
 
-    public Task<PagedResponseResult<TruckDto>> GetTrucksAsync(SearchableQuery query, bool includeLoads = false)
+    public Task<PagedResponseResult<TruckDto>> GetTrucksAsync(SearchableRequest request, bool includeLoads = false)
     {
-        var queryDict = query.ToDictionary();
+        var queryDict = request.ToDictionary();
         queryDict.Add("includeLoads", includeLoads.ToString());
         return MakeGetRequestAsync<PagedResponseResult<TruckDto>>("truck/list", queryDict);
     }
@@ -207,9 +207,9 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakeGetRequestAsync<ResponseResult<EmployeeDto>>($"employee/{userId}");
     }
 
-    public Task<PagedResponseResult<EmployeeDto>> GetEmployeesAsync(SearchableQuery query)
+    public Task<PagedResponseResult<EmployeeDto>> GetEmployeesAsync(SearchableRequest request)
     {
-        return MakeGetRequestAsync<PagedResponseResult<EmployeeDto>>("employee/list", query.ToDictionary());
+        return MakeGetRequestAsync<PagedResponseResult<EmployeeDto>>("employee/list", request.ToDictionary());
     }
 
     public Task<ResponseResult> CreateEmployeeAsync(CreateEmployee employee)
@@ -242,9 +242,9 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakeGetRequestAsync<ResponseResult<TenantDto>>($"tenant/{identifier}");
     }
 
-    public Task<PagedResponseResult<TenantDto>> GetTenantsAsync(SearchableQuery query)
+    public Task<PagedResponseResult<TenantDto>> GetTenantsAsync(SearchableRequest request)
     {
-        return MakeGetRequestAsync<PagedResponseResult<TenantDto>>("tenant/list", query.ToDictionary());
+        return MakeGetRequestAsync<PagedResponseResult<TenantDto>>("tenant/list", request.ToDictionary());
     }
 
     public Task<ResponseResult> CreateTenantAsync(CreateTenant tenant)

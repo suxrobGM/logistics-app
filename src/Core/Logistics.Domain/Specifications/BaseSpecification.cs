@@ -7,7 +7,7 @@ public abstract class BaseSpecification<TEntity> :
     {
         Criteria = entity => true;
         OrderBy = entity => entity.Id;
-        Includes = new();
+        Includes = new List<Expression<Func<TEntity, object>>>();
         Descending = false;
     }
 

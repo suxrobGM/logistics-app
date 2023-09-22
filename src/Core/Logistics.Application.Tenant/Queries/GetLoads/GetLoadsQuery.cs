@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class GetLoadsQuery : SearchableRequest<LoadDto>
+public class GetLoadsQuery : SearchableQuery<LoadDto>
 {
     public bool FilterActiveLoads { get; set; }
 }

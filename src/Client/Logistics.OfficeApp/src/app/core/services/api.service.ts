@@ -24,7 +24,7 @@ import {
   CreateTruck,
   UpdateLoad,
   CreateLoad,
-  LoadStatus,
+  TruckStats,
 } from '../models';
 
 
@@ -59,14 +59,6 @@ export class ApiService {
   // #region User API
 
   getUsers(searchQuery = '', orderBy = '', page = 1, pageSize = 10): Observable<PagedResponseResult<User>> {
-    if (!searchQuery) {
-      searchQuery = '';
-    }
-
-    if (!orderBy) {
-      orderBy = '';
-    }
-
     const url = `${this.host}/user/list?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
     return this.httpClient
         .get<PagedResponseResult<User>>(url)
@@ -86,14 +78,6 @@ export class ApiService {
   }
 
   getLoads(searchQuery = '', filterActiveLoads = false, orderBy = '', page = 1, pageSize = 10): Observable<PagedResponseResult<Load>> {
-    if (!searchQuery) {
-      searchQuery = '';
-    }
-
-    if (!orderBy) {
-      orderBy = '';
-    }
-
     let url = `${this.host}/load/list?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
 
     if (filterActiveLoads) {
@@ -143,14 +127,6 @@ export class ApiService {
   }
 
   getTrucks(searchQuery = '', orderBy = '', page = 1, pageSize = 10): Observable<PagedResponseResult<Truck>> {
-    if (!searchQuery) {
-      searchQuery = '';
-    }
-
-    if (!orderBy) {
-      orderBy = '';
-    }
-
     const url = `${this.host}/truck/list?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
     return this.httpClient
         .get<PagedResponseResult<Truck>>(url)
@@ -207,14 +183,6 @@ export class ApiService {
   }
 
   getEmployees(searchQuery = '', orderBy = '', page = 1, pageSize = 10): Observable<PagedResponseResult<Employee>> {
-    if (!searchQuery) {
-      searchQuery = '';
-    }
-
-    if (!orderBy) {
-      orderBy = '';
-    }
-
     const url = `${this.host}/employee/list?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
     return this.httpClient
         .get<PagedResponseResult<Employee>>(url)
@@ -222,14 +190,6 @@ export class ApiService {
   }
 
   getDrivers(searchQuery = '', orderBy = '', page = 1, pageSize = 10): Observable<PagedResponseResult<Employee>> {
-    if (!searchQuery) {
-      searchQuery = '';
-    }
-
-    if (!orderBy) {
-      orderBy = '';
-    }
-
     const url = `${this.host}/employee/list?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}&role=tenant.driver`;
     return this.httpClient
         .get<PagedResponseResult<Employee>>(url)
@@ -330,6 +290,14 @@ export class ApiService {
         .pipe(catchError((err) => this.handleError(err)));
   }
 
+  getTruckStats(startDate: Date, endDate: Date, orderBy = '', page = 1, pageSize = 10): Observable<PagedResponseResult<TruckStats>> {
+    const url = `${this.host}/dashboard/truckStats?startDate=${startDate.toJSON()}&endDate=${endDate.toJSON()}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
+
+    return this.httpClient
+        .get<ResponseResult<MonthlyGrosses>>(url)
+        .pipe(catchError((err) => this.handleError(err)));
+  }
+
   // #endregion
 
 
@@ -342,11 +310,7 @@ export class ApiService {
       sortField = '';
     }
 
-    if (sortOrder <= -1) {
-      return `-${sortField}`;
-    } else {
-      return sortField;
-    }
+    return sortOrder <= -1 ? `-${sortField}` : sortField;
   }
 
   private handleError(responseData: any): Observable<any> {

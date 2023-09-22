@@ -22,7 +22,7 @@ public class SearchLoads : BaseSpecification<Load>
 
     private static Expression<Func<Load, object>> InitOrderBy(string? propertyName)
     {
-        propertyName = propertyName?.ToLower() ?? "refid";
+        propertyName = propertyName?.ToLower() ?? string.Empty;
         return propertyName switch
         {
             "name" => i => i.Name!,

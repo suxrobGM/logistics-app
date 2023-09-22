@@ -1,8 +1,8 @@
 ﻿namespace Logistics.Shared;
 
-public record PagedQuery
+public record PagedRequest
 {
-    public PagedQuery(int page = 1, int pageSize = 10)
+    public PagedRequest(int page = 1, int pageSize = 10)
     {
         Page = page;
         PageSize = pageSize;

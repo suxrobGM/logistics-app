@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class GetEmployeesQuery : SearchableRequest<EmployeeDto>
+public class GetEmployeesQuery : SearchableQuery<EmployeeDto>
 {
     public string? Role { get; set; }
 }

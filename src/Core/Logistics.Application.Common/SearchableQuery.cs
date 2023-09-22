@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Common;
 
-public abstract class SearchableRequest<T> : PagedRequest<T>
+public abstract class SearchableQuery<T> : PagedQuery<T>
 {
     private string? _orderBy;
 

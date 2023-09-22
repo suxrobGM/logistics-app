@@ -54,4 +54,18 @@ public class DashboardController : ControllerBase
 
         return BadRequest(result.Error);
     }
+    
+    [HttpGet("truckStats")]
+    [ProducesResponseType(typeof(PagedResponseResult<TruckStatsDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Employee.View)]
+    public async Task<IActionResult> GetTruckStatsList([FromQuery] GetTruckStatsListQuery request)
+    {
+        var result = await _mediator.Send(request);
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result.Error);
+    }
 }
