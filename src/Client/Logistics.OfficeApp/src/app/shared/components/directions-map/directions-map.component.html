@@ -3,7 +3,9 @@
   [zoom]="[zoom]" 
   [center]="center"
   [fitBounds]="bounds!"
-  [fitBoundsOptions]="{padding: 50}">
+  [fitBoundsOptions]="{padding: 50}"
+  [style.width]="width"
+  [style.height]="height">
   <mgl-image id="custom-marker"
     url="https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png"
     (imageLoaded)="isImageLoaded = true">

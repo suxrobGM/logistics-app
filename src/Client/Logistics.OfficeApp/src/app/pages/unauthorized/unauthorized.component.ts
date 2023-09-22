@@ -6,9 +6,6 @@ import {Component, OnInit} from '@angular/core';
   styleUrls: [],
   standalone: true,
 })
-export class UnauthorizedComponent implements OnInit {
-  constructor() { }
-
-  ngOnInit(): void {
-  }
+export class UnauthorizedComponent {
+  constructor() {}
 }

@@ -1,8 +1,10 @@
 import {
   Component,
+  ElementRef,
   Input,
   OnChanges,
   OnInit,
+  Renderer2,
   SimpleChanges,
 } from '@angular/core';
 import {NgFor, NgIf} from '@angular/common';
@@ -21,15 +23,24 @@ import {TruckGeolocation} from '@core/models';
     NgIf,
   ],
 })
-export class GeolocationMapComponent implements OnInit, OnChanges {
+export class GeolocationMapComponent implements OnChanges {
   public selectedMarker: Marker | null = null;
 
   @Input({required: true}) accessToken!: string;
-  @Input() geolocationData: TruckGeolocation[] = [];
-  @Input() zoom: number = 3;
-  @Input() center: [number, number] = [-95, 35];
+  @Input() geolocationData: TruckGeolocation[];
+  @Input() zoom: number;
+  @Input() center: [number, number];
+  @Input() width: string;
+  @Input() height: string;
 
-  ngOnInit(): void {}
+  constructor() {
+    this.geolocationData = [];
+    this.zoom = 3;
+    this.center = [-95, 35];
+    this.width = '100%';
+    this.height = '100%';
+  }
+
   ngOnChanges(changes: SimpleChanges): void {}
 
   trackByFn(index: number, item: TruckGeolocation): string {

@@ -6,9 +6,6 @@ import {Component, OnInit} from '@angular/core';
   styleUrls: [],
   standalone: true,
 })
-export class Error404Component implements OnInit {
-  constructor() { }
-
-  ngOnInit(): void {
-  }
+export class Error404Component {
+  constructor() {}
 }

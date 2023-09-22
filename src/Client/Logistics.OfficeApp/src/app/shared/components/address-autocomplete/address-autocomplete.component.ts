@@ -17,7 +17,7 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
     },
   ],
 })
-export class AddressAutocompleteComponent implements OnInit, ControlValueAccessor {
+export class AddressAutocompleteComponent implements ControlValueAccessor {
   public searchResults: GeocodingFeature[] = [];
   private isTouched = false;
   private isDisabled = false;
@@ -29,8 +29,6 @@ export class AddressAutocompleteComponent implements OnInit, ControlValueAccesso
   @Input() address: string = '';
   @Output() addressChange = new EventEmitter<string>();
   @Output() selectedAddress = new EventEmitter<SelectedAddressEvent>();
-
-  ngOnInit(): void {}
 
   async onAddressInputChange(event: Event) {
     if (this.isDisabled) {

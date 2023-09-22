@@ -15,7 +15,7 @@ import {GeoJSONSourceRaw, LngLatLike} from 'mapbox-gl';
     NgIf,
   ],
 })
-export class DirectionsMapComponent implements OnInit, OnChanges {
+export class DirectionsMapComponent implements OnChanges {
   public bounds?: [LngLatLike, LngLatLike] | null;
   public route?: GeoJSONSourceRaw | null;
   public startPoint?: GeoJSONSourceRaw | null;
@@ -29,6 +29,8 @@ export class DirectionsMapComponent implements OnInit, OnChanges {
   @Input() zoom: number;
   @Input() start?: [number, number] | null;
   @Input() end?: [number, number] | null;
+  @Input() width: string;
+  @Input() height: string;
   @Output() routeChanged = new EventEmitter<RouteChangedEvent>;
 
   constructor(private http: HttpClient) {
@@ -39,11 +41,8 @@ export class DirectionsMapComponent implements OnInit, OnChanges {
     this.startPoint = null;
     this.endPoint = null;
     this.bounds = null;
-  }
-
-  ngOnInit() {
-    this.drawMarkers();
-    this.drawRoute();
+    this.width = '100%';
+    this.height = '100%';
   }
 
   ngOnChanges(changes: SimpleChanges) {
