@@ -39,8 +39,7 @@ export class ListTruckComponent implements OnInit {
     this.totalRecords = 0;
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   search(event: any) {
     const query = event.target.value;

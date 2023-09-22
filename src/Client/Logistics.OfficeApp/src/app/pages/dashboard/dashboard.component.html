@@ -90,9 +90,18 @@
 
   <p-card class="col-12 mt-3">
     <ng-template pTemplate="header">
-      <h4 class="ps-3 py-2">Truck statistics for the last 30 days:</h4>
+      <h4 class="ps-3 py-2">Truck statistics from {{startDate | date:'shortDate'}} to {{endDate | date:'shortDate'}}</h4>
       <hr class="w-100 m-0" />
     </ng-template>
+    <div class="mb-2">
+      <span>Select range:</span>
+      <p-calendar class="ms-1" [(ngModel)]="truckStatsDates" selectionMode="range" [showIcon]="true" [maxDate]="todayDate"></p-calendar>
+      <button pButton 
+        class="p-button-raised ms-1"
+        label="Apply"
+        (click)="reloadTable()">
+      </button>
+    </div>
     
     <p-table [value]="truckStats" responsiveLayout="scroll" 
       [lazy]="true" [paginator]="true" [showCurrentPageReport]="true" 

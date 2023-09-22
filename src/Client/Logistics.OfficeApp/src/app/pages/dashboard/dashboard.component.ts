@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {NgIf, CurrencyPipe, NgFor} from '@angular/common';
+import {NgIf, CurrencyPipe, NgFor, DatePipe} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 import {RouterLink} from '@angular/router';
 import {ChartModule} from 'primeng/chart';
 import {SharedModule} from 'primeng/api';
@@ -7,6 +8,7 @@ import {SkeletonModule} from 'primeng/skeleton';
 import {CardModule} from 'primeng/card';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {ButtonModule} from 'primeng/button';
+import {CalendarModule} from 'primeng/calendar';
 import {MonthlyGrosses, OverallStats, TruckStats} from '@core/models';
 import {DistanceUnitPipe} from '@shared/pipes';
 import {ApiService} from '@core/services';
@@ -30,6 +32,9 @@ import {DateUtils, DistanceUtils} from '@shared/utils';
     TableModule,
     ButtonModule,
     RouterLink,
+    CalendarModule,
+    FormsModule,
+    DatePipe,
   ],
 })
 export class DashboardComponent implements OnInit {
@@ -42,14 +47,21 @@ export class DashboardComponent implements OnInit {
   public chartOptions: any;
   public truckStats: TruckStats[];
   public totalTrucks: number;
+  public truckStatsDates: Date[];
+  public startDate: Date;
+  public endDate: Date;
+  public todayDate: Date;
 
   constructor(private apiService: ApiService) {
-    this.isLoadingTruckStats = false;
+    this.isLoadingTruckStats = true;
     this.isLoadingOverallStats = false;
     this.isLoadingChart = false;
     this.rpm = 0;
     this.truckStats = [];
     this.totalTrucks = 0;
+    this.endDate = this.todayDate = DateUtils.today();
+    this.startDate = DateUtils.daysAgo(30);
+    this.truckStatsDates = [this.startDate, this.endDate];
 
     this.chartData = {
       labels: [],
@@ -75,14 +87,22 @@ export class DashboardComponent implements OnInit {
     this.fetchMonthlyGrosses();
   }
 
+  reloadTable() {
+    if (this.truckStatsDates.length < 2) {
+      return;
+    }
+
+    this.startDate = this.truckStatsDates[0];
+    this.endDate = this.truckStatsDates[1];
+    this.fetchTrucksStats({first: 0, rows: 10});
+  }
+
   fetchTrucksStats(event: TableLazyLoadEvent) {
     this.isLoadingTruckStats = true;
     const page = event.first! / event.rows! + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
-    const oneMonthAgo = DateUtils.daysAgo(30);
-    const today = DateUtils.today();
 
-    this.apiService.getTruckStats(oneMonthAgo, today, sortField, page, event.rows!).subscribe((result) => {
+    this.apiService.getTruckStats(this.startDate, this.endDate, sortField, page, event.rows!).subscribe((result) => {
       if (result.success && result.items) {
         this.truckStats = result.items;
         this.totalTrucks = result.itemsCount!;
