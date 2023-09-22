@@ -1,0 +1,85 @@
+<p-card>
+  <div *ngIf="isLoadingOverallStats; else actualData">
+    <div class="row mb-3">
+      <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <p-skeleton styleClass="my-2" height="3rem"></p-skeleton>
+      </div>
+      <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <p-skeleton styleClass="my-2" height="3rem"></p-skeleton>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <p-skeleton styleClass="my-2" height="3rem"></p-skeleton>
+      </div>
+      <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <p-skeleton styleClass="my-2" height="3rem"></p-skeleton>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <p-skeleton styleClass="my-2" height="3rem"></p-skeleton>
+      </div>
+      <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <p-skeleton styleClass="my-2" height="3rem"></p-skeleton>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <p-skeleton styleClass="my-2" height="3rem"></p-skeleton>
+      </div>
+      <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <p-skeleton styleClass="my-2" height="3rem"></p-skeleton>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #actualData>
+    <div class="row mb-3">
+      <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <span class="fw-bold">Company Owner: </span><br />
+        <span>{{overallStats?.ownerName}}</span>
+      </div>
+      <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <span class="fw-bold">Number of Employees: </span><br />
+        <span>{{overallStats?.employeesCount}}</span>
+      </div>
+    </div>
+    
+    <div class="row mb-3">
+      <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <span class="fw-bold">Number of Dispatchers: </span><br />
+        <span>{{overallStats?.dispatchersCount}}</span>
+      </div>
+      <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <span class="fw-bold">Number of Drivers: </span><br />
+        <span>{{overallStats?.driversCount}}</span>
+      </div>
+    </div>
+    
+    <div class="row mb-3">
+      <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <span class="fw-bold">Number of Managers: </span><br />
+        <span>{{overallStats?.managersCount}}</span>
+      </div>
+      <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <span class="fw-bold">Total Gross For All Time: </span><br />
+        <span>{{overallStats?.totalIncome | currency}}</span>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <span class="fw-bold">RPM For All Time: </span><br />
+        <span>{{rpm | currency}}</span>
+      </div>
+      <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <span class="fw-bold">Total Distance For All Time: </span><br />
+        <span>{{overallStats?.totalDistance | distanceUnit:'mi'}} mi</span>
+      </div>
+    </div>
+  </ng-template>
+</p-card>
