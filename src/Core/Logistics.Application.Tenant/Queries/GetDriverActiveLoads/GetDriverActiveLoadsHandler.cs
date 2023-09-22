@@ -20,7 +20,7 @@ internal sealed class GetDriverActiveLoadsHandler : RequestHandler<GetDriverActi
         if (driver == null)
             return ResponseResult<DriverActiveLoadsDto>.CreateError($"Could not find a driver with ID '{req.UserId}'");
         
-        var activeLoads = _tenantRepository.ApplySpecification(new GetDriverActiveLoads(req.UserId))
+        var activeLoads = _tenantRepository.ApplySpecification(new GetDriverActiveLoads(req.UserId!))
             .Select(i => i.ToDto());
 
         var driverDashboardDto = new DriverActiveLoadsDto

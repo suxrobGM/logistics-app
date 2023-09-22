@@ -24,8 +24,10 @@ import {TruckGeolocation} from '@core/models';
 export class GeolocationMapComponent implements OnInit, OnChanges {
   public selectedMarker: Marker | null = null;
 
+  @Input({required: true}) accessToken!: string;
   @Input() geolocationData: TruckGeolocation[] = [];
-  @Input() initialCenter: [number, number] = [-95, 35];
+  @Input() zoom: number = 3;
+  @Input() center: [number, number] = [-95, 35];
 
   ngOnInit(): void {}
   ngOnChanges(changes: SimpleChanges): void {}

@@ -10,14 +10,17 @@ import {ButtonModule} from 'primeng/button';
 import {DropdownModule} from 'primeng/dropdown';
 import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import * as MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
-import * as mapboxgl from 'mapbox-gl';
 import {AppConfig} from '@configs';
 import {AuthService} from '@core/auth';
 import {CreateLoad, UpdateLoad, EnumType, LoadStatus, LoadStatuses, Truck} from '@core/models';
 import {ApiService} from '@core/services';
 import {DistanceUtils} from '@shared/utils';
-import {AddressAutocompleteComponent, SelectedAddressEvent} from '@shared/components';
+import {
+  AddressAutocompleteComponent,
+  DirectionsMapComponent,
+  RouteChangedEvent,
+  SelectedAddressEvent,
+} from '@shared/components';
 
 
 @Component({
@@ -39,15 +42,14 @@ import {AddressAutocompleteComponent, SelectedAddressEvent} from '@shared/compon
     ButtonModule,
     RouterLink,
     AddressAutocompleteComponent,
+    DirectionsMapComponent,
   ],
   providers: [
     ConfirmationService,
   ],
 })
 export class EditLoadComponent implements OnInit {
-  public accessToken = AppConfig.mapboxToken;
-  private map!: mapboxgl.Map;
-  private directions!: any;
+  public readonly accessToken: string;
   private distanceMeters: number;
 
   public id: string | null;
@@ -57,6 +59,8 @@ export class EditLoadComponent implements OnInit {
   public form: FormGroup;
   public suggestedDrivers: SuggestedDriver[];
   public loadStatuses: EnumType[];
+  public originCoords?: [number, number] | null;
+  public destinationCoords?: [number, number] | null;
 
   constructor(
     private authService: AuthService,
@@ -65,6 +69,7 @@ export class EditLoadComponent implements OnInit {
     private messageService: MessageService,
     private route: ActivatedRoute)
   {
+    this.accessToken = AppConfig.mapboxToken;
     this.isBusy = false;
     this.editMode = true;
     this.headerText = 'Edit a load';
@@ -94,7 +99,6 @@ export class EditLoadComponent implements OnInit {
       this.id = params['id'];
     });
 
-    this.initMapbox();
     this.fetchCurrentDispatcher();
 
     if (!this.id) {
@@ -146,17 +150,23 @@ export class EditLoadComponent implements OnInit {
   }
 
   updateOrigin(eventData: SelectedAddressEvent) {
-    this.directions.setOrigin(eventData.center);
+    this.originCoords = eventData.center;
     this.form.patchValue({
       orgCoords: eventData.center,
     });
   }
 
   updateDestination(eventData: SelectedAddressEvent) {
-    this.directions.setDestination(eventData.center);
+    this.destinationCoords = eventData.center;
     this.form.patchValue({
       dstCoords: eventData.center,
     });
+  }
+
+  updateDistance(eventData: RouteChangedEvent) {
+    this.distanceMeters = eventData.distance;
+    const distanceMiles = DistanceUtils.metersTo(this.distanceMeters, 'mi');
+    this.form.patchValue({distance: distanceMiles});
   }
 
   private createLoad() {
@@ -230,36 +240,6 @@ export class EditLoadComponent implements OnInit {
     });
   }
 
-  private initMapbox() {
-    this.map = new mapboxgl.Map({
-      container: 'routeMap',
-      accessToken: this.accessToken,
-      style: 'mapbox://styles/mapbox/streets-v11',
-      center: [-74.5, 40],
-      zoom: 6,
-    });
-
-    this.directions = new MapboxDirections({
-      accessToken: this.accessToken,
-      profile: 'mapbox/driving-traffic',
-      congestion: true,
-      interactive: false,
-      controls: {
-        profileSwitcher: false,
-        instructions: false,
-        inputs: false,
-      },
-    });
-
-    this.directions.on('route', (data: any) => {
-      this.distanceMeters = data.route[0].distance;
-      const distanceMiles = DistanceUtils.metersTo(this.distanceMeters, 'mi');
-      this.form.patchValue({distance: distanceMiles});
-    });
-
-    this.map.addControl(this.directions, 'top-left');
-  }
-
   private fetchCurrentDispatcher() {
     const userData = this.authService.getUserData();
     this.form.patchValue({
@@ -288,8 +268,8 @@ export class EditLoadComponent implements OnInit {
             driversName: this.formatDriversName(load.assignedTruck)},
         });
 
-        this.directions.setOrigin(load.originAddress!);
-        this.directions.setDestination(load.destinationAddress!);
+        this.originCoords = [load.originAddressLong, load.originAddressLat];
+        this.destinationCoords = [load.destinationAddressLong, load.destinationAddressLat];
       }
     });
   }
@@ -307,9 +287,10 @@ export class EditLoadComponent implements OnInit {
       dstCoords: [],
     });
 
-    this.directions.removeRoutes();
     this.editMode = false;
     this.headerText = 'Add a new load';
+    this.originCoords = null;
+    this.destinationCoords = null;
     this.id = null;
     this.fetchCurrentDispatcher();
   }

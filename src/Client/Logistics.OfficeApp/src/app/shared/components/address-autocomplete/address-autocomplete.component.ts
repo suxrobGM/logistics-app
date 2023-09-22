@@ -51,7 +51,7 @@ export class AddressAutocompleteComponent implements OnInit, ControlValueAccesso
     this.markAsTouched();
   }
 
-  onClickAddress(address: string, center: number[]) {
+  onClickAddress(address: string, center: [number, number]) {
     if (this.isDisabled) {
       return;
     }
@@ -105,10 +105,10 @@ interface GeocodingFeature {
   id: string;
   address: string;
   place_name: string;
-  center: number[];
+  center: [number, number];
 }
 
 export interface SelectedAddressEvent {
   address: string;
-  center: number[];
+  center: [number, number];
 }

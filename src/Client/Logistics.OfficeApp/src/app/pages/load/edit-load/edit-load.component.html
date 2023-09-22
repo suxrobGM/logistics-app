@@ -91,7 +91,11 @@
       </form>
     </div>
     <div class="col-12 col-md-6">
-      <div id="routeMap"></div>
+      <app-directions-map [accessToken]="accessToken"
+        [start]="originCoords"
+        [end]="destinationCoords"
+        (routeChanged)="updateDistance($event)">
+      </app-directions-map>
     </div>
   </div>
 </p-card>

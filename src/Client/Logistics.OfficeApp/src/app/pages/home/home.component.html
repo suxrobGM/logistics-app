@@ -8,7 +8,9 @@
         <div class="ms-3 py-2 fw-bold">Trucks</div>
         <hr class="w-100 m-0" />
       </ng-template>
-      <app-geolocation-map [geolocationData]="truksLocations"></app-geolocation-map>
+      <app-geolocation-map [accessToken]="accessToken"
+        [geolocationData]="truksLocations">
+      </app-geolocation-map>
     </p-card>
   </div>
 

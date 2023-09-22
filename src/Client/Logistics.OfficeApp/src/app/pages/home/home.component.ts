@@ -8,6 +8,7 @@ import {TooltipModule} from 'primeng/tooltip';
 import {TableModule} from 'primeng/table';
 import {SharedModule} from 'primeng/api';
 import {CardModule} from 'primeng/card';
+import {AppConfig} from '@configs';
 import {DailyGrosses, TruckGeolocation, Load} from '@core/models';
 import {ApiService, LiveTrackingService} from '@core/services';
 import {GeolocationMapComponent} from '@shared/components';
@@ -37,6 +38,7 @@ import {DateUtils, DistanceUtils} from '@shared/utils';
   ],
 })
 export class HomeComponent implements OnInit, OnDestroy {
+  public readonly accessToken: string;
   public todayGross: number;
   public weeklyGross: number;
   public weeklyDistance: number;
@@ -52,6 +54,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private apiService: ApiService,
     private liveTrackingService: LiveTrackingService)
   {
+    this.accessToken = AppConfig.mapboxToken;
     this.truksLocations = [];
     this.loads = [];
     this.loadingLoads = false;

@@ -6,9 +6,11 @@ export interface Load {
   refId: number;
   name?: string;
   originAddress: string;
-  originCoordinates: string;
+  originAddressLat: number;
+  originAddressLong: number;
   destinationAddress: string;
-  destinationCoordinates: string;
+  destinationAddressLat: number;
+  destinationAddressLong: number;
   deliveryCost: number;
   distance: number;
   status: LoadStatus;

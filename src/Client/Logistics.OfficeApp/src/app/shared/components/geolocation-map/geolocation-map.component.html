@@ -1,4 +1,7 @@
-<mgl-map [style]="'mapbox://styles/mapbox/streets-v11'" [zoom]="[3]" [center]="initialCenter">
+<mgl-map [accessToken]="accessToken"
+  [style]="'mapbox://styles/mapbox/streets-v11'" 
+  [zoom]="[3]" 
+  [center]="center">
   <ng-container *ngFor="let geoData of geolocationData; trackBy: trackByFn">
     <mgl-marker #marker [lngLat]="[geoData.longitude, geoData.latitude]">
       <div class="text-center" (click)="onSelectMarker(geoData, marker)">
