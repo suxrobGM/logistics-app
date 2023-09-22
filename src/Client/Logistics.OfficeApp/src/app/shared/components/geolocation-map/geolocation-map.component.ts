@@ -13,7 +13,7 @@ import {TruckGeolocation} from '@core/models';
 @Component({
   selector: 'app-geolocation-map',
   templateUrl: './geolocation-map.component.html',
-  styles: [],
+  styleUrls: ['./geolocation-map.component.scss'],
   standalone: true,
   imports: [
     NgxMapboxGLModule,
