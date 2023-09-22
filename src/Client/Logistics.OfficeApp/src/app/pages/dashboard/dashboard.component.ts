@@ -11,8 +11,8 @@ import {DateUtils, DistanceUtils} from '@shared/utils';
 
 
 @Component({
-  selector: 'app-main-dashboard',
-  templateUrl: './main-dashboard.component.html',
+  selector: 'app-dashboard',
+  templateUrl: './dashboard.component.html',
   styleUrls: [],
   standalone: true,
   imports: [
@@ -25,7 +25,7 @@ import {DateUtils, DistanceUtils} from '@shared/utils';
     DistanceUnitPipe,
   ],
 })
-export class MainDashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit {
   public loadingData: boolean;
   public loadingChart: boolean;
   public rpm: number;

@@ -45,9 +45,7 @@ export class ListLoadComponent implements OnInit {
     this.first = 0;
   }
 
-  ngOnInit(): void {
-    this.isBusy = true;
-  }
+  ngOnInit(): void {}
 
   search(event: any) {
     const query = event.target.value;

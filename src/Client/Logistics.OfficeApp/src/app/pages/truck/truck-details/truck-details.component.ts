@@ -12,8 +12,8 @@ import {DateUtils, DistanceUtils} from '@shared/utils';
 
 
 @Component({
-  selector: 'app-truck-dashboard',
-  templateUrl: './truck-dashboard.component.html',
+  selector: 'app-truck-details',
+  templateUrl: './truck-details.component.html',
   styleUrls: [],
   standalone: true,
   imports: [
@@ -28,7 +28,7 @@ import {DateUtils, DistanceUtils} from '@shared/utils';
     DistanceUnitPipe,
   ],
 })
-export class TruckDashboardComponent implements OnInit {
+export class TruckDetailsComponent implements OnInit {
   public id!: string;
   public loadingData: boolean;
   public loadingBarChart: boolean;

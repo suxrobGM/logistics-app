@@ -33,7 +33,7 @@
               Drivers
             </th>
             <th>
-              <!-- <span class="float-end">Action</span> -->
+              <span>Action</span>
             </th>
           </tr>
         </ng-template>
@@ -52,9 +52,14 @@
             </td>
             <td>
               <button pButton 
-                class="p-button-raised float-end"
-                label="View stats"
-                [routerLink]="['/dashboard/truck', truck.id]">
+                class="p-button-raised"
+                label="View details"
+                [routerLink]="['/trucks/details', truck.id]">
+              </button>
+              <button pButton 
+                class="p-button-raised ms-2"
+                label="Edit"
+                [routerLink]="['/trucks/edit', truck.id]">
               </button>
             </td>
           </tr>
