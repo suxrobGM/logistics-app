@@ -20,6 +20,7 @@ import {
   RouteChangedEvent,
   SelectedAddressEvent,
 } from '@shared/components';
+import {TruckData, TruckHelper} from '../shared';
 
 
 @Component({
@@ -55,7 +56,7 @@ export class EditLoadComponent implements OnInit {
   public loadRefId!: number;
   public isBusy: boolean;
   public form: FormGroup;
-  public suggestedDrivers: SuggestedDriver[];
+  public suggestedDrivers: TruckData[];
   public loadStatuses: EnumType[];
   public originCoords?: [number, number] | null;
   public destinationCoords?: [number, number] | null;
@@ -103,18 +104,7 @@ export class EditLoadComponent implements OnInit {
   }
 
   searchTruck(event: any) {
-    this.apiService.getTruckDrivers(event.query).subscribe((result) => {
-      if (!result.success || !result.items) {
-        return;
-      }
-
-      this.suggestedDrivers = result.items.map((truckDriver) => (
-        {
-          truckId: truckDriver.truck.id,
-          driversName: this.formatDriversName(truckDriver.truck),
-        }),
-      );
-    });
+    TruckHelper.findTruckDrivers(this.apiService, event.query).subscribe((drivers) => this.suggestedDrivers = drivers);
   }
 
   submit() {
@@ -215,7 +205,7 @@ export class EditLoadComponent implements OnInit {
         status: load.status,
         assignedTruck: {
           truckId: load.assignedTruck.id,
-          driversName: this.formatDriversName(load.assignedTruck)},
+          driversName: TruckHelper.formatDriversName(load.assignedTruck)},
       });
 
       this.loadRefId = load.refId;
@@ -224,20 +214,10 @@ export class EditLoadComponent implements OnInit {
     });
   }
 
-  private formatDriversName(truck: Truck): string {
-    const driversName = truck.drivers.map((driver) => driver.fullName);
-    return `${truck.truckNumber} - ${driversName}`;
-  }
-
   private getLocaleDate(dateStr?: string | Date): string {
     if (dateStr) {
       return new Date(dateStr).toLocaleDateString();
     }
     return '';
   }
-}
-
-interface SuggestedDriver {
-  driversName: string,
-  truckId: string;
 }

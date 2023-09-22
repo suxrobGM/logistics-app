@@ -20,6 +20,7 @@ import {
   RouteChangedEvent,
   SelectedAddressEvent,
 } from '@shared/components';
+import {TruckData, TruckHelper} from '../shared';
 
 
 @Component({
@@ -49,7 +50,7 @@ export class AddLoadComponent implements OnInit {
 
   public isBusy: boolean;
   public form: FormGroup;
-  public suggestedDrivers: SuggestedDriver[];
+  public suggestedDrivers: TruckData[];
   public loadStatuses: EnumType[];
   public originCoords?: [number, number] | null;
   public destinationCoords?: [number, number] | null;
@@ -87,18 +88,7 @@ export class AddLoadComponent implements OnInit {
   }
 
   searchTruck(event: any) {
-    this.apiService.getTruckDrivers(event.query).subscribe((result) => {
-      if (!result.success || !result.items) {
-        return;
-      }
-
-      this.suggestedDrivers = result.items.map((truckDriver) => (
-        {
-          truckId: truckDriver.truck.id,
-          driversName: this.formatDriversName(truckDriver.truck),
-        }),
-      );
-    });
+    TruckHelper.findTruckDrivers(this.apiService, event.query).subscribe((drivers) => this.suggestedDrivers = drivers);
   }
 
   submit() {
@@ -167,14 +157,4 @@ export class AddLoadComponent implements OnInit {
       dispatcherId: userData?.id,
     });
   }
-
-  private formatDriversName(truck: Truck): string {
-    const driversName = truck.drivers.map((driver) => driver.fullName);
-    return `${truck.truckNumber} - ${driversName}`;
-  }
-}
-
-interface SuggestedDriver {
-  driversName: string,
-  truckId: string;
 }
