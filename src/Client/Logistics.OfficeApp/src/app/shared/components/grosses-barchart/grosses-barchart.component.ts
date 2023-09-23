@@ -1,34 +1,46 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, SimpleChanges} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {SharedModule} from 'primeng/api';
 import {CardModule} from 'primeng/card';
 import {ChartModule} from 'primeng/chart';
 import {SkeletonModule} from 'primeng/skeleton';
 import {MonthlyGrosses} from '@core/models';
+import {DateUtils, DistanceUtils} from '@shared/utils';
 import {ApiService} from '@core/services';
-import {DateUtils} from '@shared/utils';
 
 
 @Component({
-  selector: 'app-grosses-chart',
+  selector: 'app-grosses-barchart',
   standalone: true,
-  templateUrl: './grosses-chart.component.html',
+  templateUrl: './grosses-barchart.component.html',
   styleUrls: [],
   imports: [
-    CardModule,
     CommonModule,
+    CardModule,
     SkeletonModule,
-    SharedModule,
     ChartModule,
   ],
 })
-export class GrossesChartComponent implements OnInit {
+export class GrossesBarchartComponent implements OnInit {
   public isLoading: boolean;
+  public monthlyGrosses?: MonthlyGrosses;
   public chartData: any;
   public chartOptions: any;
 
+  @Input() truckId?: string;
+  @Input() chartColor: string;
+  @Output() chartDrawn = new EventEmitter<BarChartDrawnEvent>;
+
   constructor(private apiService: ApiService) {
     this.isLoading = false;
+    this.chartColor = '#EC407A';
+
+    this.chartOptions = {
+      plugins: {
+        legend: {
+          display: false,
+        },
+      },
+    };
 
     this.chartData = {
       labels: [],
@@ -39,15 +51,8 @@ export class GrossesChartComponent implements OnInit {
         },
       ],
     };
-
-    this.chartOptions = {
-      plugins: {
-        legend: {
-          display: false,
-        },
-      },
-    };
   }
+
   ngOnInit(): void {
     this.fetchMonthlyGrosses();
   }
@@ -56,10 +61,13 @@ export class GrossesChartComponent implements OnInit {
     this.isLoading = true;
     const thisYear = DateUtils.thisYear();
 
-    this.apiService.getMonthlyGrosses(thisYear).subscribe((result) => {
+    this.apiService.getMonthlyGrosses(thisYear, undefined, this.truckId).subscribe((result) => {
       if (result.success && result.value) {
-        const monthlyGrosses = result.value;
-        this.drawChart(monthlyGrosses);
+        this.monthlyGrosses = result.value;
+        const rpm = this.monthlyGrosses.totalIncome / DistanceUtils.metersTo(this.monthlyGrosses.totalDistance, 'mi');
+
+        this.drawChart(this.monthlyGrosses);
+        this.chartDrawn.emit({monthlyGrosses: this.monthlyGrosses, rpm: rpm});
       }
 
       this.isLoading = false;
@@ -83,9 +91,14 @@ export class GrossesChartComponent implements OnInit {
           data: data,
           fill: true,
           tension: 0.4,
-          backgroundColor: '#88a5d3',
+          backgroundColor: this.chartColor,
         },
       ],
     };
   }
+}
+
+export interface BarChartDrawnEvent {
+  monthlyGrosses: MonthlyGrosses;
+  rpm: number;
 }

@@ -6,9 +6,9 @@ import {CardModule} from 'primeng/card';
 import {DailyGrosses, MonthlyGrosses, Truck, TruckGeolocation} from '@core/models';
 import {DistanceUnitPipe} from '@shared/pipes';
 import {ApiService} from '@core/services';
-import {GeolocationMapComponent} from '@shared/components';
+import {GeolocationMapComponent, GrossesBarchartComponent, BarChartDrawnEvent} from '@shared/components';
 import {AppConfig} from '@configs';
-import {BarChartDrawnEvent, LineChartDrawnEvent, TruckGrossesBarchartComponent, TruckGrossesLinechartComponent} from '../components';
+import {LineChartDrawnEvent, TruckGrossesLinechartComponent} from '../components';
 
 
 @Component({
@@ -25,7 +25,7 @@ import {BarChartDrawnEvent, LineChartDrawnEvent, TruckGrossesBarchartComponent, 
     DistanceUnitPipe,
     GeolocationMapComponent,
     TruckGrossesLinechartComponent,
-    TruckGrossesBarchartComponent,
+    GrossesBarchartComponent,
   ],
 })
 export class TruckDetailsComponent implements OnInit {

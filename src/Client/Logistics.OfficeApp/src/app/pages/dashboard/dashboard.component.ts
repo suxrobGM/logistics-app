@@ -1,10 +1,7 @@
 import {Component} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {
-  GrossesChartComponent,
-  OverallStatsComponent,
-  TruckStatsTableComponent,
-} from './components';
+import {OverallStatsComponent, TruckStatsTableComponent} from './components';
+import {GrossesBarchartComponent} from '@shared/components';
 
 
 @Component({
@@ -15,7 +12,7 @@ import {
   imports: [
     CommonModule,
     TruckStatsTableComponent,
-    GrossesChartComponent,
+    GrossesBarchartComponent,
     OverallStatsComponent,
   ],
 })

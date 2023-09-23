@@ -12,7 +12,7 @@ import {ApiService} from '@core/services';
   selector: 'app-truck-grosses-linechart',
   standalone: true,
   templateUrl: './truck-grosses-linechart.component.html',
-  styleUrls: ['./truck-grosses-linechart.component.scss'],
+  styleUrls: [],
   imports: [
     CommonModule,
     CardModule,
