@@ -192,7 +192,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     let totalGross = 0;
 
     grosses.dates
-        .filter((i) => DateUtils.getDate(i.date) === today.getDate())
+        .filter((i) => DateUtils.dayOfMonth(i.date) === today.getDate())
         .forEach((i) => totalGross += i.income);
 
     this.todayGross = totalGross;

@@ -1,15 +1,14 @@
 import {Component} from '@angular/core';
 import {CommonModule, CurrencyPipe, DatePipe} from '@angular/common';
-import {FormsModule} from '@angular/forms';
 import {RouterLink} from '@angular/router';
-import {ButtonModule} from 'primeng/button';
-import {CalendarModule} from 'primeng/calendar';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {CardModule} from 'primeng/card';
+import {ButtonModule} from 'primeng/button';
 import {TruckStats} from '@core/models';
 import {ApiService} from '@core/services';
 import {DateUtils} from '@shared/utils';
 import {DistanceUnitPipe} from '@shared/pipes';
+import {RangeCalendarComponent} from '@shared/components';
 
 
 @Component({
@@ -21,44 +20,30 @@ import {DistanceUnitPipe} from '@shared/pipes';
     CommonModule,
     CurrencyPipe,
     TableModule,
-    ButtonModule,
     RouterLink,
-    CalendarModule,
-    FormsModule,
     DatePipe,
     DistanceUnitPipe,
     CardModule,
+    ButtonModule,
+    RangeCalendarComponent,
   ],
 })
 export class TruckStatsTableComponent {
   public isLoading: boolean;
   public truckStats: TruckStats[];
   public totalRecords: number;
-  public dates: Date[];
   public startDate: Date;
   public endDate: Date;
-  public todayDate: Date;
 
   constructor(private apiService: ApiService) {
     this.isLoading = true;
     this.truckStats = [];
     this.totalRecords = 0;
-    this.endDate = this.todayDate = DateUtils.today();
     this.startDate = DateUtils.daysAgo(30);
-    this.dates = [this.startDate, this.endDate];
-  }
-
-  hasValidDates(): boolean {
-    return this.dates && this.dates.length >= 2 && this.dates[0] != null && this.dates[1] != null;
+    this.endDate = DateUtils.today();
   }
 
   reloadTable() {
-    if (!this.hasValidDates()) {
-      return;
-    }
-
-    this.startDate = this.dates[0];
-    this.endDate = this.dates[1];
     this.fetchTrucksStats({first: 0, rows: 10});
   }
 

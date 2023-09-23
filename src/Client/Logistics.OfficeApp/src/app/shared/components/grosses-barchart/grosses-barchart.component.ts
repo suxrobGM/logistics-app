@@ -6,6 +6,7 @@ import {SkeletonModule} from 'primeng/skeleton';
 import {MonthlyGrosses} from '@core/models';
 import {DateUtils, DistanceUtils} from '@shared/utils';
 import {ApiService} from '@core/services';
+import {RangeCalendarComponent} from '../range-calendar/range-calendar.component';
 
 
 @Component({
@@ -18,6 +19,7 @@ import {ApiService} from '@core/services';
     CardModule,
     SkeletonModule,
     ChartModule,
+    RangeCalendarComponent,
   ],
 })
 export class GrossesBarchartComponent implements OnInit {
@@ -25,6 +27,8 @@ export class GrossesBarchartComponent implements OnInit {
   public monthlyGrosses?: MonthlyGrosses;
   public chartData: any;
   public chartOptions: any;
+  public startDate: Date;
+  public endDate: Date;
 
   @Input() truckId?: string;
   @Input() chartColor: string;
@@ -33,6 +37,8 @@ export class GrossesBarchartComponent implements OnInit {
   constructor(private apiService: ApiService) {
     this.isLoading = false;
     this.chartColor = '#EC407A';
+    this.startDate = DateUtils.thisYear();
+    this.endDate = DateUtils.today();
 
     this.chartOptions = {
       plugins: {
@@ -57,11 +63,10 @@ export class GrossesBarchartComponent implements OnInit {
     this.fetchMonthlyGrosses();
   }
 
-  private fetchMonthlyGrosses() {
+  fetchMonthlyGrosses() {
     this.isLoading = true;
-    const thisYear = DateUtils.thisYear();
 
-    this.apiService.getMonthlyGrosses(thisYear, undefined, this.truckId).subscribe((result) => {
+    this.apiService.getMonthlyGrosses(this.startDate, this.endDate, this.truckId).subscribe((result) => {
       if (result.success && result.value) {
         this.monthlyGrosses = result.value;
         const rpm = this.monthlyGrosses.totalIncome / DistanceUtils.metersTo(this.monthlyGrosses.totalDistance, 'mi');
@@ -79,7 +84,7 @@ export class GrossesBarchartComponent implements OnInit {
     const data: Array<number> = [];
 
     grosses.months.forEach((i) => {
-      labels.push(DateUtils.getMonthName(i.month));
+      labels.push(DateUtils.monthName(i.month));
       data.push(i.income);
     });
 

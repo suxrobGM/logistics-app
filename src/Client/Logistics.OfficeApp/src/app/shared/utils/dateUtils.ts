@@ -23,11 +23,11 @@ export class DateUtils {
    * Gets the day-of-the-month.
    * @param dateStr Date value in string format
    */
-  static getDate(dateStr: string | Date): number {
+  static dayOfMonth(dateStr: string | Date): number {
     return new Date(dateStr).getDate();
   }
 
-  static getMonthName(month: number | Date): string {
+  static monthName(month: number | Date): string {
     let monthValue = month;
 
     if (month instanceof Date) {
@@ -92,5 +92,28 @@ export class DateUtils {
     const today = new Date();
     const daysAgo = new Date(today.setDate(today.getDate() - days));
     return daysAgo;
+  }
+
+  /**
+   * Checks whether two dates are valid range
+   * @param dates An array of two dates
+   */
+  static isValidRange(dates: Date[]): boolean {
+    const areDatesNotNull = dates && dates.length >= 2 && dates[0] != null && dates[1] != null;
+    const areDatesValid = this.isValidDate(dates[0]) && this.isValidDate(dates[1]);
+    const isEndDateGreater = dates[1] > dates[0];
+    return areDatesNotNull && areDatesValid && isEndDateGreater;
+  }
+
+  /**
+   * Checks whether the specified is instance of the Date class
+   * @param obj Any object
+   */
+  static isValidDate(obj: unknown): boolean {
+    if (obj instanceof Date) {
+      return true;
+    }
+
+    return false;
   }
 }

@@ -1,18 +1,14 @@
 <p-card>
   <ng-template pTemplate="header">
-    <h4 class="ps-3 py-2">Truck statistics from {{startDate | date:'shortDate'}} to {{endDate | date:'shortDate'}}</h4>
+    <h4 class="ps-3 py-2">Truck statistics for 
+      <span class="text-danger">{{startDate | date:'shortDate'}}</span> - 
+      <span class="text-danger">{{endDate | date:'shortDate'}}</span>
+    </h4>
     <hr class="w-100 m-0" />
   </ng-template>
 
   <div class="mb-2">
-    <span>Select range:</span>
-    <p-calendar class="ms-1" [(ngModel)]="dates" selectionMode="range" [showIcon]="true" [maxDate]="todayDate"></p-calendar>
-    <button pButton 
-      class="p-button-raised ms-1"
-      label="Apply"
-      [disabled]="!hasValidDates()"
-      (click)="reloadTable()">
-    </button>
+    <app-range-calendar [(startDate)]="startDate" [(endDate)]="endDate" (applyButtonClick)="reloadTable()"></app-range-calendar>
   </div>
   
   <p-table [value]="truckStats" responsiveLayout="scroll" 
