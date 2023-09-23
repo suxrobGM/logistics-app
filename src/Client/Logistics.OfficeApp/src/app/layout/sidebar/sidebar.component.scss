@@ -1,0 +1,42 @@
+.sidebar {
+  position: sticky;
+  width: 250px;
+  transition: width 0.3s ease;
+  overflow: hidden;
+  background-color: #c2d1dd;
+  background-image: url(https://www.gstatic.com/mobilesdk/190424_mobilesdk/nav_nachos@2x.png);
+  background-position: left 0 bottom 0;
+  background-repeat: no-repeat;
+  background-size: 256px 556px;
+  display: flex;
+  flex-direction: column;
+  padding-top: 0.5rem;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+.sidebar.minimized {
+  width: 80px;
+}
+
+.nav-link {
+  border-radius: 0;
+  color: black;
+  display: flex;
+  align-items: center;
+}
+
+.badge {
+  background-color: #28a745;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  height: 2.25rem;
+  line-height: 2.25rem;
+  border-radius: 10px;
+  text-align: center;
+  padding: 0 0.5rem;
+  margin-left: 0.25rem;
+}

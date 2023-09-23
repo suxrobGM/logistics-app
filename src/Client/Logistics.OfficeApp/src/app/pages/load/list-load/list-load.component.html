@@ -80,13 +80,13 @@
                 {{load.refId}}
               </a>
             </td>
-            <td [pTooltip]="load.sourceAddress" [showDelay]="500" tooltipPosition="bottom">
+            <td [pTooltip]="load.name" [showDelay]="500" tooltipPosition="bottom">
               {{load.name}}
             </td>
             <td [pTooltip]="load.originAddress" [showDelay]="500" tooltipPosition="bottom">
               {{load.originAddress}}
             </td>
-            <td [pTooltip]="load.sourceAddress" [showDelay]="500" tooltipPosition="bottom">
+            <td [pTooltip]="load.destinationAddress" [showDelay]="500" tooltipPosition="bottom">
               {{load.destinationAddress}}
             </td>
             <td>{{load.dispatchedDate | date:'mediumDate'}}</td>

@@ -3,7 +3,7 @@ import {NgIf} from '@angular/common';
 import {Route, Router, RouterOutlet} from '@angular/router';
 import {ToastModule} from 'primeng/toast';
 import {AuthService} from '@core/auth';
-import {NavDockComponent, TopbarComponent, BreadcrumbComponent} from '@layout';
+import {NavDockComponent, TopbarComponent, BreadcrumbComponent, SidebarComponent} from '@layout';
 
 
 @Component({
@@ -18,6 +18,7 @@ import {NavDockComponent, TopbarComponent, BreadcrumbComponent} from '@layout';
     ToastModule,
     RouterOutlet,
     NavDockComponent,
+    SidebarComponent,
   ],
 })
 export class AppComponent implements OnInit {

@@ -6,6 +6,7 @@ import {ButtonModule} from 'primeng/button';
 import {AppConfig} from '@configs';
 import {ApiService, TenantService} from '@core/services';
 import {AuthService, UserData} from '@core/auth';
+import {SidebarComponent} from '../sidebar/sidebar.component';
 
 
 @Component({
@@ -17,6 +18,7 @@ import {AuthService, UserData} from '@core/auth';
     NgIf,
     ButtonModule,
     SharedModule,
+    SidebarComponent,
   ],
 })
 export class TopbarComponent implements OnInit {

@@ -1,10 +1,13 @@
-<app-topbar></app-topbar>
-<app-breadcrumb *ngIf="isAuthenticated"></app-breadcrumb>
-
 <p-toast key="notification" position="top-right"></p-toast>
-
-<div class="container-fluid content">
-  <router-outlet></router-outlet>
+<div class="d-flex">
+  <app-sidebar *ngIf="isAuthenticated"></app-sidebar>
+  <div class="content">
+    <!-- <app-topbar></app-topbar> -->
+    <app-breadcrumb *ngIf="isAuthenticated"></app-breadcrumb>
+    <div class="ms-2">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
 </div>
 
-<app-nav-dock *ngIf="isAuthenticated"></app-nav-dock>
+<!-- <app-nav-dock *ngIf="isAuthenticated"></app-nav-dock> -->
