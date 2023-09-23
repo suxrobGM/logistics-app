@@ -43,22 +43,22 @@ export class HomeComponent implements OnInit, OnDestroy {
   public weeklyGross: number;
   public weeklyDistance: number;
   public weeklyRpm: number;
-  public loadingLoads: boolean;
-  public loadingChart: boolean;
+  public isLoadingLoadsData: boolean;
+  public isLoadingChartData: boolean;
   public loads: Load[];
   public chartData: any;
   public chartOptions: any;
-  public truksLocations: TruckGeolocation[];
+  public truckLocations: TruckGeolocation[];
 
   constructor(
     private apiService: ApiService,
     private liveTrackingService: LiveTrackingService)
   {
     this.accessToken = AppConfig.mapboxToken;
-    this.truksLocations = [];
+    this.truckLocations = [];
     this.loads = [];
-    this.loadingLoads = false;
-    this.loadingChart = false;
+    this.isLoadingLoadsData = false;
+    this.isLoadingChartData = false;
     this.todayGross = 0;
     this.weeklyGross = 0;
     this.weeklyDistance = 0;
@@ -98,13 +98,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.liveTrackingService.connect();
 
     this.liveTrackingService.onReceiveGeolocationData = (data: TruckGeolocation) => {
-      const index = this.truksLocations.findIndex((loc) => loc.truckId === data.truckId);
+      const index = this.truckLocations.findIndex((loc) => loc.truckId === data.truckId);
 
       if (index !== -1) {
-        this.truksLocations[index] = data;
+        this.truckLocations[index] = data;
       }
       else {
-        this.truksLocations.push(data);
+        this.truckLocations.push(data);
       }
     };
   }
@@ -128,24 +128,24 @@ export class HomeComponent implements OnInit, OnDestroy {
         return [];
       });
 
-      this.truksLocations = truckLocations;
+      this.truckLocations = truckLocations;
     });
   }
 
   private fetchActiveLoads() {
-    this.loadingLoads = true;
+    this.isLoadingLoadsData = true;
 
     this.apiService.getLoads('', true, '-dispatchedDate').subscribe((result) => {
       if (result.success && result.items) {
         this.loads = result.items;
       }
 
-      this.loadingLoads = false;
+      this.isLoadingLoadsData = false;
     });
   }
 
   private fetchLastTenDaysGross() {
-    this.loadingChart = true;
+    this.isLoadingChartData = true;
     const oneWeekAgo = DateUtils.daysAgo(7);
 
     this.apiService.getDailyGrosses(oneWeekAgo).subscribe((result) => {
@@ -159,7 +159,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.calcTodayGross(grosses);
       }
 
-      this.loadingChart = false;
+      this.isLoadingChartData = false;
     });
   }
 

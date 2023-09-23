@@ -10,7 +10,7 @@
       </ng-template>
       <app-geolocation-map [accessToken]="accessToken"
         [height]="'700px'"
-        [geolocationData]="truksLocations">
+        [geolocationData]="truckLocations">
       </app-geolocation-map>
     </p-card>
   </div>
@@ -22,7 +22,7 @@
         <hr class="w-100 m-0" />
       </ng-template>
 
-      <p-table [value]="loads" responsiveLayout="scroll" [loading]="loadingLoads">
+      <p-table [value]="loads" responsiveLayout="scroll" [loading]="isLoadingLoadsData">
         <ng-template pTemplate="header">
           <tr>
             <th>ID</th>
@@ -76,7 +76,7 @@
         <hr class="w-100 m-0" />
       </ng-template>
 
-      <div class="row" *ngIf="loadingChart; else data">
+      <div class="row" *ngIf="isLoadingChartData; else data">
         <div class="col-12 col-md-4">
           <p-skeleton height="3rem"></p-skeleton>
         </div>
@@ -116,7 +116,7 @@
         <hr class="w-100 m-0" />
       </ng-template>
 
-      <div class="row" *ngIf="loadingChart; else chart">
+      <div class="row" *ngIf="isLoadingChartData; else chart">
         <div class="col-12">
           <p-skeleton height="20vh"></p-skeleton>
         </div>
