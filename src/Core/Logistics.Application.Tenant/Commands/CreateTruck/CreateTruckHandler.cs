@@ -27,12 +27,7 @@ internal sealed class CreateTruckHandler : RequestHandler<CreateTruckCommand, Re
         if (alreadyAssociatedDriver != null)
             return ResponseResult.CreateError($"Driver '{alreadyAssociatedDriver.GetFullName()}' is already associated with the truck number '{req.TruckNumber}'");
 
-        var truckEntity = new Truck()
-        {
-            TruckNumber = req.TruckNumber,
-            Drivers = drivers
-        };
-        
+        var truckEntity = Truck.Create(req.TruckNumber!, req.DriverIncomePercentage, drivers);
         await _tenantRepository.AddAsync(truckEntity);
         await _tenantRepository.UnitOfWork.CommitAsync();
         return ResponseResult.CreateSuccess();

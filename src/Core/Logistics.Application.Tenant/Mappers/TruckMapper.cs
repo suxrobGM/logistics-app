@@ -13,6 +13,7 @@ public static class TruckMapper
             CurrentLocation = entity.LastKnownLocation,
             CurrentLocationLat = entity.LastKnownLocationLat,
             CurrentLocationLong = entity.LastKnownLocationLong,
+            DriverIncomePercentage = entity.DriverIncomePercentage,
             Loads = loads,
             Drivers = entity.Drivers.Select(i => i.ToDto())
         };

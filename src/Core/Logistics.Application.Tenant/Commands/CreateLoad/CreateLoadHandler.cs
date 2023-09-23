@@ -34,7 +34,7 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resp
         if (latestLoad != null)
             refId = latestLoad.RefId + 1;
         
-        var load = Load.CreateLoad(
+        var load = Load.Create(
             refId, 
             req.OriginAddress!,
             req.OriginAddressLat,

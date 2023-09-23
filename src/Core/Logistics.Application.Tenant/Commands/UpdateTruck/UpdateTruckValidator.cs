@@ -7,5 +7,6 @@ internal sealed class UpdateTruckValidator : AbstractValidator<UpdateTruckComman
     public UpdateTruckValidator()
     {
         RuleFor(i => i.Id).NotEmpty();
+        RuleFor(i => i.DriverIncomePercentage).InclusiveBetween(0, 1);
     }
 }

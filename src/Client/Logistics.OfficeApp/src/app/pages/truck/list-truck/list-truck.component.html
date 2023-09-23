@@ -25,30 +25,36 @@
         </ng-template>
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="truckNumber">
+            <th class="text-center" pSortableColumn="truckNumber">
               Number
               <p-sortIcon field="truckNumber"></p-sortIcon>
             </th>
-            <th>
+            <th class="text-center">
               Drivers
             </th>
-            <th>
-              <span>Action</span>
+            <th class="text-center">
+              Driver Income Percentage
+            </th>
+            <th class="text-center">
+              Action
             </th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-truck>
           <tr>
-            <td>
+            <td class="text-center">
               {{truck.truckNumber}}
             </td>
-            <td>
+            <td class="text-center">
               <span *ngFor="let driver of truck.drivers">
                 {{driver.fullName}}
                 <span *ngIf="truck.drivers.length > 1">,</span>
               </span>
             </td>
-            <td>
+            <td class="text-center">
+              {{truck.driverIncomePercentage | percent}}
+            </td>
+            <td class="text-center">
               <button pButton 
                 class="p-button-raised"
                 label="View details"

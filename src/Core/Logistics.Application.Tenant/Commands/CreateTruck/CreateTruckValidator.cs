@@ -8,5 +8,6 @@ internal sealed class CreateTruckValidator : AbstractValidator<CreateTruckComman
     {
         RuleFor(i => i.TruckNumber).NotEmpty();
         RuleFor(i => i.DriversIds).NotEmpty();
+        RuleFor(i => i.DriverIncomePercentage).InclusiveBetween(0, 1);
     }
 }

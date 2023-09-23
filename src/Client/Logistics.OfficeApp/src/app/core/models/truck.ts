@@ -9,4 +9,5 @@ export interface Truck {
   currentLocationLat?: number;
   currentLocationLong?: number;
   loads?: Load[];
+  driverIncomePercentage: number;
 }

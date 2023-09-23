@@ -14,6 +14,13 @@
           <input formControlName="truckNumber" id="truckNumber" class="form-control" />
         </div>
         <div class="mb-3">
+          <label for="driverIncomePercentage" class="form-label">Driver Income Percentage</label>
+          <div class="input-group">
+            <span class="input-group-text">%</span>
+            <input formControlName="driverIncomePercentage" id="driverIncomePercentage" class="form-control" type="number" min="0" max="100" />
+          </div>
+        </div>
+        <div class="mb-3">
           <label for="drivers" class="form-label">Drivers</label>
           <p-autoComplete formControlName="drivers" styleClass="w-100" inputStyleClass="form-control"
             placeholder="Type a driver name" field="fullName" [minLength]="2" [multiple]="true"

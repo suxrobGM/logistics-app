@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {NgFor, NgIf} from '@angular/common';
+import {CommonModule, NgFor, NgIf, PercentPipe} from '@angular/common';
 import {RouterLink} from '@angular/router';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {InputTextModule} from 'primeng/inputtext';
@@ -17,6 +17,7 @@ import {ApiService} from '@core/services';
   styleUrls: ['./list-truck.component.scss'],
   standalone: true,
   imports: [
+    CommonModule,
     ButtonModule,
     TooltipModule,
     RouterLink,
@@ -24,8 +25,7 @@ import {ApiService} from '@core/services';
     TableModule,
     SharedModule,
     InputTextModule,
-    NgFor,
-    NgIf,
+    PercentPipe,
   ],
 })
 export class ListTruckComponent implements OnInit {

@@ -11,6 +11,7 @@ import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
 import {CreateTruck, Employee, UpdateTruck} from '@core/models';
 import {ApiService} from '@core/services';
+import {NumberUtils} from '@shared/utils';
 
 
 @Component({
@@ -57,10 +58,11 @@ export class EditTruckComponent implements OnInit {
     this.form = new FormGroup({
       truckNumber: new FormControl(0, Validators.required),
       drivers: new FormControl([], Validators.required),
+      driverIncomePercentage: new FormControl(0, Validators.compose([Validators.required, Validators.min(0), Validators.max(1)])),
     });
   }
 
-  public ngOnInit(): void {
+  ngOnInit(): void {
     this.route.params.subscribe((params) => {
       this.id = params['id'];
     });
@@ -74,7 +76,7 @@ export class EditTruckComponent implements OnInit {
     this.fetchTruck(this.id);
   }
 
-  public searchDriver(event: any) {
+  searchDriver(event: any) {
     this.apiService.getDrivers(event.query).subscribe((result) => {
       if (result.success && result.items) {
         this.suggestedDrivers = result.items;
@@ -82,7 +84,7 @@ export class EditTruckComponent implements OnInit {
     });
   }
 
-  public submit() {
+  submit() {
     const drivers = this.form.value.drivers as Employee[];
 
     if (drivers.length === 0) {
@@ -90,32 +92,45 @@ export class EditTruckComponent implements OnInit {
       return;
     }
 
-    this.isBusy = true;
-
     if (this.editMode) {
-      const updateTruckCommand: UpdateTruck = {
-        id: this.id!,
-        truckNumber: this.form.value.truckNumber,
-        driverIds: drivers.map((i) => i.id),
-      };
-
-      this.apiService.updateTruck(updateTruckCommand).subscribe((result) => {
-        if (result.success) {
-          this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Truck has been updated successfully'});
-        }
-
-        this.isBusy = false;
-      });
-
-      return;
+      this.updateTruck();
     }
+    else {
+      this.createTruck();
+    }
+  }
 
-    const createTruckCommand: CreateTruck = {
+  confirmToDelete() {
+    this.confirmationService.confirm({
+      message: 'Are you sure that you want to delete this truck?',
+      accept: () => this.deleteTruck(),
+    });
+  }
+
+  private fetchTruck(id: string) {
+    this.apiService.getTruck(id).subscribe((result) => {
+      if (result.success && result.value) {
+        const truck = result.value;
+        this.form.patchValue({
+          truckNumber: truck.truckNumber,
+          drivers: truck.drivers,
+          driverIncomePercentage: NumberUtils.toPercentage(truck.driverIncomePercentage),
+        });
+      }
+    });
+  }
+
+  private createTruck() {
+    this.isBusy = true;
+    const drivers = this.form.value.drivers as Employee[];
+
+    const command: CreateTruck = {
       truckNumber: this.form.value.truckNumber,
+      driverIncomePercentage: NumberUtils.toRatio(this.form.value.driverIncomePercentage),
       driverIds: drivers.map((i) => i.id),
     };
 
-    this.apiService.createTruck(createTruckCommand).subscribe((result) => {
+    this.apiService.createTruck(command).subscribe((result) => {
       if (result.success) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A new truck has been created successfully'});
         this.resetForm();
@@ -125,10 +140,23 @@ export class EditTruckComponent implements OnInit {
     });
   }
 
-  public confirmToDelete() {
-    this.confirmationService.confirm({
-      message: 'Are you sure that you want to delete this truck?',
-      accept: () => this.deleteTruck(),
+  private updateTruck() {
+    this.isBusy = true;
+    const drivers = this.form.value.drivers as Employee[];
+
+    const updateTruckCommand: UpdateTruck = {
+      id: this.id!,
+      truckNumber: this.form.value.truckNumber,
+      driverIncomePercentage: NumberUtils.toRatio(this.form.value.driverIncomePercentage),
+      driverIds: drivers.map((i) => i.id),
+    };
+
+    this.apiService.updateTruck(updateTruckCommand).subscribe((result) => {
+      if (result.success) {
+        this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Truck has been updated successfully'});
+      }
+
+      this.isBusy = false;
     });
   }
 
@@ -142,9 +170,9 @@ export class EditTruckComponent implements OnInit {
       if (result.success) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A truck has been deleted successfully'});
         this.resetForm();
-
-        this.isBusy = false;
       }
+
+      this.isBusy = false;
     });
   }
 
@@ -152,17 +180,5 @@ export class EditTruckComponent implements OnInit {
     this.editMode = false;
     this.headerText = 'Add a new truck';
     this.id = null;
-  }
-
-  private fetchTruck(id: string) {
-    this.apiService.getTruck(id).subscribe((result) => {
-      if (result.success && result.value) {
-        const truck = result.value;
-        this.form.patchValue({
-          truckNumber: truck.truckNumber,
-          drivers: truck.drivers,
-        });
-      }
-    });
   }
 }

@@ -65,7 +65,7 @@ public class Load : AuditableEntity, ITenantEntity
     public virtual Employee? AssignedDispatcher { get; set; }
     // public virtual Employee? AssignedDriver { get; set; }
 
-    public static Load CreateLoad(
+    public static Load Create(
         ulong refId, 
         string originAddress,
         double originLatitude,

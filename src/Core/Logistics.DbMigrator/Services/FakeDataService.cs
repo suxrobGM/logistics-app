@@ -166,15 +166,7 @@ internal class FakeDataService
                 continue;
             }
 
-            truck = new Truck
-            {
-                TruckNumber = truckNumber.ToString(),
-                Drivers = new List<Employee>
-                {
-                    driver
-                }
-            };
-
+            truck = Truck.Create(truckNumber.ToString(), 0.30f, driver);
             truckNumber++;
             trucksList.Add(truck);
             await tenantRepository.AddAsync(truck);
@@ -211,7 +203,7 @@ internal class FakeDataService
             const double destLat = 42.357820;
             const double destLng = -71.060810;
             
-            var load = Load.CreateLoad(
+            var load = Load.Create(
                 refId, 
                 originAddress, 
                 originLat,
