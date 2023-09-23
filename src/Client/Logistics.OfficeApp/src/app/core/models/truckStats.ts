@@ -7,5 +7,6 @@ export interface TruckStats {
   endDate: string;
   gross: number;
   distance: number;
+  driverShare: number;
   drivers: Employee[];
 }

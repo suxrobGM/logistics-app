@@ -8,5 +8,6 @@ public class TruckStatsDto
     public DateTime EndDate { get; set; }
     public double Gross { get; set; }
     public double Distance { get; set; }
+    public double DriverShare { get; set; }
     public IEnumerable<EmployeeDto> Drivers { get; set; } = new List<EmployeeDto>();
 }

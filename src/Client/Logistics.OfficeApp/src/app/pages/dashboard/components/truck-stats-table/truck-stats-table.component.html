@@ -27,8 +27,12 @@
             Gross
             <p-sortIcon field="gross"></p-sortIcon>
           </th>
+          <th pSortableColumn="driverShare">
+            Driver Share
+            <p-sortIcon field="driverShare"></p-sortIcon>
+          </th>
           <th pSortableColumn="distance">
-            Distance (mi)
+            Traveled Distance (mi)
             <p-sortIcon field="distance"></p-sortIcon>
           </th>
           <th>
@@ -46,6 +50,9 @@
           </td>
           <td>
             {{truckStats.gross | currency}}
+          </td>
+          <td>
+            {{truckStats.driverShare | currency}}
           </td>
           <td>
             {{truckStats.distance | distanceUnit:'mi'}}

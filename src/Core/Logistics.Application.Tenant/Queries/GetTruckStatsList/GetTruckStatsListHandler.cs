@@ -24,17 +24,14 @@ public class GetTruckStatsListHandler : RequestHandler<GetTruckStatsListQuery, P
                            && load.DeliveryDate.HasValue
                            && load.DispatchedDate >= req.StartDate
                            && load.DeliveryDate.Value <= req.EndDate)
-            .GroupBy(load => new
-            {
-                TruckId = load.AssignedTruckId,
-                TruckNumber = load.AssignedTruck!.TruckNumber
-            })
+            .GroupBy(load => load.AssignedTruckId!)
             .Select(group => new TruckStats
             {
-                TruckId = group.Key.TruckId!,
-                TruckNumber = group.Key.TruckNumber!,
+                TruckId = group.Key,
+                TruckNumber = group.First().AssignedTruck!.TruckNumber!,
                 Gross = group.Sum(load => load.DeliveryCost),
                 Distance = group.Sum(load => load.Distance),
+                DriverShare = group.Sum(load => load.DeliveryCost) * group.First().AssignedTruck!.DriverIncomePercentage,
                 FirstLoad = group.FirstOrDefault()
             });
 
@@ -55,6 +52,7 @@ public class GetTruckStatsListHandler : RequestHandler<GetTruckStatsListQuery, P
                 EndDate = req.EndDate,
                 Gross = result.Gross,
                 Distance = result.Distance,
+                DriverShare = result.DriverShare, 
                 Drivers = result.FirstLoad?.AssignedTruck?.Drivers.Select(driver => driver.ToDto()) 
                           ?? new List<EmployeeDto>()
             });    
@@ -70,6 +68,7 @@ public class GetTruckStatsListHandler : RequestHandler<GetTruckStatsListQuery, P
         {
             "distance" => i => i.Distance,
             "gross" => i => i.Gross,
+            "drivershare" => i => i.DriverShare,
             _ => i => i.TruckNumber
         };
     }
@@ -80,6 +79,7 @@ public class GetTruckStatsListHandler : RequestHandler<GetTruckStatsListQuery, P
         public required string TruckNumber { get; set; }
         public required double Gross { get; set; }
         public required double Distance { get; set; }
+        public required double DriverShare { get; set; }
         public Load? FirstLoad { get; set; }
     }
 }

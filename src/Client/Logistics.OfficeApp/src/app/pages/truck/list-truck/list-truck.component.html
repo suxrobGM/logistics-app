@@ -29,12 +29,15 @@
               Number
               <p-sortIcon field="truckNumber"></p-sortIcon>
             </th>
-            <th class="text-center">
-              Drivers
-            </th>
             <th class="text-center" pSortableColumn="driverIncomePercentage">
               Driver Income Percentage
               <p-sortIcon field="driverIncomePercentage"></p-sortIcon>
+            </th>
+            <th class="text-center">
+              Current Location
+            </th>
+            <th class="text-center">
+              Drivers
             </th>
             <th class="text-center">
               Action
@@ -47,14 +50,18 @@
               {{truck.truckNumber}}
             </td>
             <td class="text-center">
+              {{truck.driverIncomePercentage | percent}}
+            </td>
+            <td class="text-center" [pTooltip]="truck.currentLocation" [showDelay]="500">
+              {{truck.currentLocation}}
+            </td>
+            <td class="text-center">
               <span *ngFor="let driver of truck.drivers">
                 {{driver.fullName}}
                 <span *ngIf="truck.drivers.length > 1">,</span>
               </span>
             </td>
-            <td class="text-center">
-              {{truck.driverIncomePercentage | percent}}
-            </td>
+            
             <td class="text-center">
               <button pButton 
                 class="p-button-raised"
