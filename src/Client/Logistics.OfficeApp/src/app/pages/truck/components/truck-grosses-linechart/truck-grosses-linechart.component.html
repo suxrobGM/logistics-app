@@ -1,0 +1,14 @@
+<p-card>
+  <ng-template pTemplate="header">
+    <h4 class="ps-3 py-2">Last 30 Days Gross</h4>
+    <hr class="w-100 m-0" />
+  </ng-template>
+
+  <div *ngIf="isLoading; else lineChart">
+    <p-skeleton styleClass="my-2" height="20rem" width="100%"></p-skeleton>
+  </div>
+
+  <ng-template #lineChart>
+    <p-chart type="line" [data]="chartData" [options]="chartOptions" width="100%" height="20rem"></p-chart>
+  </ng-template>
+</p-card>
