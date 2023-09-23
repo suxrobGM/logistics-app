@@ -6,6 +6,7 @@ import {ChartModule} from 'primeng/chart';
 import {DailyGrosses} from '@core/models';
 import {DateUtils, DistanceUtils} from '@shared/utils';
 import {ApiService} from '@core/services';
+import {RangeCalendarComponent} from '@shared/components';
 
 
 @Component({
@@ -18,6 +19,7 @@ import {ApiService} from '@core/services';
     CardModule,
     SkeletonModule,
     ChartModule,
+    RangeCalendarComponent,
   ],
 })
 export class TruckGrossesLinechartComponent implements OnInit {
@@ -25,12 +27,16 @@ export class TruckGrossesLinechartComponent implements OnInit {
   public dailyGrosses?: DailyGrosses;
   public chartData: any;
   public chartOptions: any;
+  public startDate: Date;
+  public endDate: Date;
 
   @Input({required: true}) truckId!: string;
   @Output() chartDrawn = new EventEmitter<LineChartDrawnEvent>;
 
   constructor(private apiService: ApiService) {
     this.isLoading = false;
+    this.startDate = DateUtils.daysAgo(30);
+    this.endDate = DateUtils.today();
 
     this.chartOptions = {
       plugins: {
@@ -55,11 +61,10 @@ export class TruckGrossesLinechartComponent implements OnInit {
     this.fetchDailyGrosses();
   }
 
-  private fetchDailyGrosses() {
+  fetchDailyGrosses() {
     this.isLoading = true;
-    const oneMonthAgo = DateUtils.daysAgo(30);
 
-    this.apiService.getDailyGrosses(oneMonthAgo, undefined, this.truckId).subscribe((result) => {
+    this.apiService.getDailyGrosses(this.startDate, this.endDate, this.truckId).subscribe((result) => {
       if (result.success && result.value) {
         this.dailyGrosses = result.value;
         const rpm = this.dailyGrosses.totalIncome / DistanceUtils.metersTo(this.dailyGrosses.totalDistance, 'mi');
