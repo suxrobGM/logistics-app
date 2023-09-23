@@ -4,7 +4,7 @@ public class SearchLoads : BaseSpecification<Load>
 {
     public SearchLoads(
         string? search,
-        string? orderBy = "RefId", 
+        string? orderBy, 
         bool descending = false)
     {
         Descending = descending;

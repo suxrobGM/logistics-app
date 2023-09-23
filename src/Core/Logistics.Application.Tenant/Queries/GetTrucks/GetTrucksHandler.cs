@@ -17,7 +17,7 @@ internal sealed class GetTrucksHandler : RequestHandler<GetTrucksQuery, PagedRes
         CancellationToken cancellationToken)
     {
         var totalItems = _tenantRepository.Query<Truck>().Count();
-        var spec = new SearchTrucks(req.Search, req.Descending);
+        var spec = new SearchTrucks(req.Search, req.OrderBy, req.Descending);
         
         var truckQuery = _tenantRepository.ApplySpecification(spec)
             .Skip((req.Page - 1) * req.PageSize)

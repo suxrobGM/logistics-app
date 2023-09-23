@@ -4,9 +4,10 @@ public class SearchTrucks : BaseSpecification<Truck>
 {
     public SearchTrucks(
         string? search,
+        string? orderBy,
         bool descending = false)
     {
-        OrderBy = i => i.TruckNumber!;
+        OrderBy = InitOrderBy(orderBy);
         Descending = descending;
 
         if (string.IsNullOrEmpty(search))
@@ -14,5 +15,15 @@ public class SearchTrucks : BaseSpecification<Truck>
         
         Criteria = i => 
             i.TruckNumber != null && i.TruckNumber.ToString().Contains(search);
+    }
+    
+    private static Expression<Func<Truck, object>> InitOrderBy(string? propertyName)
+    {
+        propertyName = propertyName?.ToLower() ?? string.Empty;
+        return propertyName switch
+        {
+            "driverincomepercentage" => i => i.DriverIncomePercentage!,
+            _ => i => i.TruckNumber!
+        };
     }
 }
