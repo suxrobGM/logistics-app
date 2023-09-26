@@ -2,6 +2,7 @@ import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {Router} from '@angular/router';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import {ButtonModule} from 'primeng/button';
 import {AuthService} from '@core/auth';
 
 
@@ -11,11 +12,15 @@ import {AuthService} from '@core/auth';
   styleUrls: ['./login.component.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [NgIf, ProgressSpinnerModule],
+  imports: [
+    NgIf,
+    ProgressSpinnerModule,
+    ButtonModule,
+  ],
 })
 export class LoginComponent implements OnInit {
-  isAuthenticated: boolean;
-  isLoading: boolean;
+  public isAuthenticated: boolean;
+  public isLoading: boolean;
 
   constructor(
     private authService: AuthService,
@@ -36,6 +41,11 @@ export class LoginComponent implements OnInit {
       this.isAuthenticated = isAuthenticated;
       this.redirectToHome();
     });
+  }
+
+  login() {
+    this.isLoading = true;
+    this.authService.login();
   }
 
   private redirectToHome() {

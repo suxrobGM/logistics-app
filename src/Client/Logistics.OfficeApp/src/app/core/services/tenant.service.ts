@@ -1,25 +1,27 @@
 import {HttpHeaders} from '@angular/common/http';
 import {Injectable} from '@angular/core';
+import {Tenant} from '@core/models';
 import {CookieService} from './cookie.service';
+
 
 @Injectable({providedIn: 'root'})
 export class TenantService {
-  private tenantId: string | null;
+  private tenant: Tenant | null;
 
   constructor(private cookieService: CookieService) {
-    this.tenantId = null;
+    this.tenant = null;
   }
 
-  getTenantId(): string | null {
-    return this.tenantId;
+  getTenantData(): Tenant | null {
+    return this.tenant;
   }
 
-  setTenantId(value: string) {
-    if (this.tenantId === value) {
+  setTenantData(value: Tenant) {
+    if (this.tenant === value) {
       return;
     }
 
-    this.tenantId = value;
+    this.tenant = value;
   }
 
   getTenantName(): string {

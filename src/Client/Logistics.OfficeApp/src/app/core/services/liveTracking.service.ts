@@ -30,15 +30,15 @@ export class LiveTrackingService {
     }
 
     try {
-      const tenantId = this.tenantService.getTenantId();
+      const tenant = this.tenantService.getTenantData();
 
-      if (!tenantId) {
+      if (!tenant) {
         console.error('Failed to connect to the LiveTracking hub, tenant ID is null');
         return;
       }
 
       await this.hubConnection.start();
-      await this.hubConnection.invoke('RegisterTenant', tenantId);
+      await this.hubConnection.invoke('RegisterTenant', tenant.id);
       this.isConnected = true;
     } catch (error) {
       console.error('Failed to connect to the LiveTracking hub', error);
@@ -52,14 +52,14 @@ export class LiveTrackingService {
     }
 
     try {
-      const tenantId = this.tenantService.getTenantId();
+      const tenant = this.tenantService.getTenantData();
 
-      if (!tenantId) {
+      if (!tenant) {
         console.error('Failed to disconnect from the LiveTracking hub, tenant ID is null');
         return;
       }
 
-      await this.hubConnection.invoke('UnregisterTenant', tenantId);
+      await this.hubConnection.invoke('UnregisterTenant', tenant.id);
       await this.hubConnection.stop();
       this.isConnected = false;
     } catch (error) {

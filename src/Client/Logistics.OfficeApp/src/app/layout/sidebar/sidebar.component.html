@@ -1,7 +1,7 @@
 <div class="sidebar" [ngClass]="{'minimized': !isOpened}">
   <a (click)="toggle()" class="py-3 navbar-brand border-bottom">
     <img src="assets/images/logo.svg" class="img-fluid" height="40" />
-    <span class="h4" *ngIf="isOpened">Test Company</span>
+    <span class="h4" *ngIf="isOpened">{{companyName}}</span>
   </a>
   <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
     <li>
@@ -36,20 +36,32 @@
     </li>
   </ul>
 
-  <div class="dropdown border-top">
-    <div class="px-3 pt-2" *ngIf="isOpened">
-      Role: <span class="fw-bold">Owner</span>
+  <div *ngIf="userFullName" class="border-top mb-2">
+    <div class="px-3 pt-2" *ngIf="userRole && isOpened">
+      Role: <span class="fw-bold">{{userRole}}</span>
     </div>
-    <a class="d-flex align-items-center p-3 link-dark text-decoration-none dropdown-toggle" 
-      id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-      <i class="bi bi-person-circle h3"></i>
-      <span class="ms-2" *ngIf="isOpened">Sukhrob Ilyosbekov </span>
-    </a>
+    <!-- <div>
+      <i class="bi bi-person-circle"></i>
+      <span *ngIf="userFullName && isOpened">{{userFullName}}</span>
+      <p-menu #menu [model]="accountMenuItems" [popup]="true"></p-menu>
+      <p-button styleClass="p-button-rounded p-button-danger p-button-text" 
+        icon="bi bi-arrow-right"
+        (click)="menu.toggle($event)">
+      </p-button>
+    </div> -->
     
-    <ul class="dropdown-menu text-small shadow" aria-labelledby="userDropdown">
-      <li><a class="dropdown-item" href="#">Profile</a></li>
-      <li><hr class="dropdown-divider" /></li>
-      <li><a class="dropdown-item" href="#">Sign out</a></li>
-    </ul>
+    <p-splitButton *ngIf="userFullName && isOpened else buttonWithoutLabel"
+      styleClass="p-button-raised p-button-secondary p-button-text"
+      icon="bi bi-person-circle" 
+      [label]="userFullName"
+      [model]="accountMenuItems">
+    </p-splitButton>
+
+    <ng-template #buttonWithoutLabel>
+      <p-splitButton styleClass="p-button-raised p-button-secondary p-button-text "
+        icon="bi bi-person-circle"
+        [model]="accountMenuItems">
+      </p-splitButton>
+    </ng-template>
   </div>
 </div>
