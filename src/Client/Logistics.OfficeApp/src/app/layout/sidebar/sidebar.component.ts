@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {RouterLink} from '@angular/router';
 import {TooltipModule} from 'primeng/tooltip';
 import {SplitButtonModule} from 'primeng/splitbutton';
-// import {MenuModule} from 'primeng/menu';
+import {PanelMenuModule} from 'primeng/panelmenu';
 import {MenuItem} from 'primeng/api';
 import {AppConfig} from '@configs';
 import {AuthService} from '@core/auth';
@@ -20,7 +20,7 @@ import {ApiService, TenantService} from '@core/services';
     RouterLink,
     TooltipModule,
     SplitButtonModule,
-    // MenuModule,
+    PanelMenuModule,
   ],
 })
 export class SidebarComponent {
@@ -42,15 +42,21 @@ export class SidebarComponent {
     this.isLoading = false;
     this.accountMenuItems = [
       {
-        label: 'Profile',
-        command: () => this.openAccountUrl(),
-      },
-      {
-        separator: true,
-      },
-      {
-        label: 'Sign out',
-        command: () => this.logout(),
+        label: 'User name',
+        icon: 'bi bi-person-circle',
+        items: [
+          {
+            label: 'Profile',
+            command: () => this.openAccountUrl(),
+          },
+          {
+            separator: true,
+          },
+          {
+            label: 'Sign out',
+            command: () => this.logout(),
+          },
+        ],
       },
     ];
   }
@@ -59,6 +65,7 @@ export class SidebarComponent {
     this.authService.onUserDataChanged().subscribe((userData) => {
       this.userFullName = userData?.getFullName();
       this.userRole = this.authService.getUserRoleName()!;
+      this.accountMenuItems[0].label = this.userFullName;
       this.fetchTenantData();
     });
   }

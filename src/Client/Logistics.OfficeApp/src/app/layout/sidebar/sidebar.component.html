@@ -1,37 +1,45 @@
 <div class="sidebar" [ngClass]="{'minimized': !isOpened}">
-  <a (click)="toggle()" class="py-3 navbar-brand border-bottom">
+  <a class="py-3 navbar-brand border-bottom">
     <img src="assets/images/logo.svg" class="img-fluid" height="40" />
     <span class="h4" *ngIf="isOpened">{{companyName}}</span>
   </a>
   <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
     <li>
-      <a class="nav-link border-bottom" [routerLink]="['/home']" pTooltip="Home">
-        <i class="bi bi-house-door h1"></i>
+      <a class="nav-link border-bottom" [routerLink]="['/home']">
+        <i class="bi bi-house-door h1" pTooltip="Home"></i>
         <span class="ms-2" *ngIf="isOpened">Home</span>
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link border-bottom" [routerLink]="['/dashboard']" pTooltip="Dashboard">
-        <i class="bi bi-speedometer2 h1"></i>
+      <a class="nav-link border-bottom" [routerLink]="['/dashboard']">
+        <i class="bi bi-speedometer2 h1" pTooltip="Dashboard"></i>
         <span class="ms-2" *ngIf="isOpened">Dashboard</span>
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link border-bottom" [routerLink]="['/load/list']" pTooltip="Loads">
-        <i class="bi bi-database h1"></i>
+      <a class="nav-link border-bottom" [routerLink]="['/load/list']">
+        <i class="bi bi-database h1" pTooltip="Loads"></i>
         <span class="ms-2" *ngIf="isOpened">Loads</span>
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link border-bottom" [routerLink]="['/truck/list']" pTooltip="Trucks">
-        <i class="bi bi-truck h1"></i>
+      <a class="nav-link border-bottom" [routerLink]="['/truck/list']">
+        <i class="bi bi-truck h1" pTooltip="Trucks"></i>
         <span class="ms-2" *ngIf="isOpened">Trucks</span>
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link border-bottom" [routerLink]="['/employee/list']" pTooltip="Employees">
-        <i class="bi bi-people h1"></i>
+      <a class="nav-link border-bottom" [routerLink]="['/employee/list']">
+        <i class="bi bi-people h1" pTooltip="Employees"></i>
         <span class="ms-2" *ngIf="isOpened">Employees</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link border-bottom">
+        <i *ngIf="isOpened else rightArrowIcon" class="bi bi-arrow-left h1" (click)="toggle()" pTooltip="Minimize menu"></i>
+        <ng-template #rightArrowIcon>
+          <i class="bi bi-arrow-right h1" (click)="toggle()" pTooltip="Maximize menu"></i>
+        </ng-template>
       </a>
     </li>
   </ul>
@@ -40,28 +48,12 @@
     <div class="px-3 pt-2" *ngIf="userRole && isOpened">
       Role: <span class="fw-bold">{{userRole}}</span>
     </div>
-    <!-- <div>
-      <i class="bi bi-person-circle"></i>
-      <span *ngIf="userFullName && isOpened">{{userFullName}}</span>
-      <p-menu #menu [model]="accountMenuItems" [popup]="true"></p-menu>
-      <p-button styleClass="p-button-rounded p-button-danger p-button-text" 
-        icon="bi bi-arrow-right"
-        (click)="menu.toggle($event)">
-      </p-button>
-    </div> -->
-    
-    <p-splitButton *ngIf="userFullName && isOpened else buttonWithoutLabel"
-      styleClass="p-button-raised p-button-secondary p-button-text"
-      icon="bi bi-person-circle" 
-      [label]="userFullName"
-      [model]="accountMenuItems">
-    </p-splitButton>
 
-    <ng-template #buttonWithoutLabel>
-      <p-splitButton styleClass="p-button-raised p-button-secondary p-button-text "
-        icon="bi bi-person-circle"
-        [model]="accountMenuItems">
-      </p-splitButton>
+    <p-panelMenu *ngIf="isOpened else accountIcon" [model]="accountMenuItems"></p-panelMenu>
+    <ng-template #accountIcon>
+      <div class="text-center">
+        <i (click)="toggle()" class="bi bi-person-circle h1" pTooltip="Account"></i>
+      </div>
     </ng-template>
   </div>
 </div>
