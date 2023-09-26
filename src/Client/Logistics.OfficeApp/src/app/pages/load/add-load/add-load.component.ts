@@ -13,7 +13,7 @@ import {AppConfig} from '@configs';
 import {AuthService} from '@core/auth';
 import {CreateLoad, EnumType, LoadStatus, LoadStatuses, Truck} from '@core/models';
 import {ApiService} from '@core/services';
-import {DistanceUtils} from '@shared/utils';
+import {DistanceConverter} from '@shared/utils';
 import {
   AddressAutocompleteComponent,
   DirectionsMapComponent,
@@ -118,7 +118,7 @@ export class AddLoadComponent implements OnInit {
 
   updateDistance(eventData: RouteChangedEvent) {
     this.distanceMeters = eventData.distance;
-    const distanceMiles = DistanceUtils.metersTo(this.distanceMeters, 'mi');
+    const distanceMiles = DistanceConverter.metersTo(this.distanceMeters, 'mi');
     this.form.patchValue({distance: distanceMiles});
   }
 

@@ -9,16 +9,21 @@
                        xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels"
                        Title="Account">
     <Grid>
-        <core:SfBusyIndicator IsRunning="{Binding IsLoading}"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <core:SfBusyIndicator Grid.RowSpan="2" 
+                              IsRunning="{Binding IsLoading}"
                               IndicatorColor="Pink"
                               OverlayFill="#80000000">
         </core:SfBusyIndicator>
-        <StackLayout>
-            <dataForm:SfDataForm DataObject="{Binding AccountDetails}" 
-                                 AutoGenerateItems="True" 
-                                 GenerateDataFormItem="SfDataForm_GenerateDataFormItem">
-            </dataForm:SfDataForm>
-            <Button Text="Save" Command="{Binding SaveCommand}" />
-        </StackLayout>
+        <dataForm:SfDataForm Grid.Row="0"
+                             DataObject="{Binding AccountDetails}" 
+                             AutoGenerateItems="True" 
+                             GenerateDataFormItem="SfDataForm_GenerateDataFormItem">
+        </dataForm:SfDataForm>
+        <Button VerticalOptions="End" Margin="5,0,5,5" Text="Save" Command="{Binding SaveCommand}" />
     </Grid>
 </views:BaseContentPage>

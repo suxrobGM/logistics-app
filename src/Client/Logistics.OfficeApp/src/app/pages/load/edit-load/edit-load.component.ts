@@ -13,7 +13,7 @@ import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {AppConfig} from '@configs';
 import {UpdateLoad, EnumType, LoadStatus, LoadStatuses, Truck} from '@core/models';
 import {ApiService} from '@core/services';
-import {DistanceUtils} from '@shared/utils';
+import {DistanceConverter} from '@shared/utils';
 import {
   AddressAutocompleteComponent,
   DirectionsMapComponent,
@@ -141,7 +141,7 @@ export class EditLoadComponent implements OnInit {
 
   updateDistance(eventData: RouteChangedEvent) {
     this.distanceMeters = eventData.distance;
-    const distanceMiles = DistanceUtils.metersTo(this.distanceMeters, 'mi');
+    const distanceMiles = DistanceConverter.metersTo(this.distanceMeters, 'mi');
     this.form.patchValue({distance: distanceMiles});
   }
 
@@ -199,7 +199,7 @@ export class EditLoadComponent implements OnInit {
         dstAddress: load.destinationAddress,
         dispatchedDate: this.getLocaleDate(load.dispatchedDate),
         deliveryCost: load.deliveryCost,
-        distance: DistanceUtils.metersTo(load.distance, 'mi'),
+        distance: DistanceConverter.metersTo(load.distance, 'mi'),
         dispatcherName: load.assignedDispatcherName,
         dispatcherId: load.assignedDispatcherId,
         status: load.status,

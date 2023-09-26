@@ -4,7 +4,7 @@ import {CardModule} from 'primeng/card';
 import {SkeletonModule} from 'primeng/skeleton';
 import {ChartModule} from 'primeng/chart';
 import {DailyGrosses} from '@core/models';
-import {DateUtils, DistanceUtils} from '@shared/utils';
+import {DateUtils, DistanceConverter} from '@shared/utils';
 import {ApiService} from '@core/services';
 import {RangeCalendarComponent} from '@shared/components';
 
@@ -67,7 +67,7 @@ export class TruckGrossesLinechartComponent implements OnInit {
     this.apiService.getDailyGrosses(this.startDate, this.endDate, this.truckId).subscribe((result) => {
       if (result.success && result.value) {
         this.dailyGrosses = result.value;
-        const rpm = this.dailyGrosses.totalIncome / DistanceUtils.metersTo(this.dailyGrosses.totalDistance, 'mi');
+        const rpm = this.dailyGrosses.totalIncome / DistanceConverter.metersTo(this.dailyGrosses.totalDistance, 'mi');
 
         this.drawChart(this.dailyGrosses);
         this.chartDrawn.emit({dailyGrosses: this.dailyGrosses, rpm: rpm});

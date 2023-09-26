@@ -1,4 +1,4 @@
-export class DistanceUtils {
+export class DistanceConverter {
   /**
    * Converts a distance value to the specified system of units.
    * The value must be in meters.

@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {CommonModule, CurrencyPipe} from '@angular/common';
 import {OverallStats} from '@core/models';
 import {ApiService} from '@core/services';
-import {DistanceUtils} from '@shared/utils';
+import {DistanceConverter} from '@shared/utils';
 import {DistanceUnitPipe} from '@shared/pipes';
 import {SharedModule} from 'primeng/api';
 import {CardModule} from 'primeng/card';
@@ -47,7 +47,7 @@ export class OverallStatsComponent {
       if (result.success && result.value) {
         const stats = result.value;
         this.overallStats = result.value;
-        this.rpm = stats.totalIncome / DistanceUtils.metersTo(stats.totalDistance, 'mi');
+        this.rpm = stats.totalIncome / DistanceConverter.metersTo(stats.totalDistance, 'mi');
       }
 
       this.isLoadingOverallStats = false;

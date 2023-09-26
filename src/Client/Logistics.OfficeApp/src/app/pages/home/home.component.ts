@@ -13,7 +13,7 @@ import {DailyGrosses, TruckGeolocation, Load} from '@core/models';
 import {ApiService, LiveTrackingService} from '@core/services';
 import {GeolocationMapComponent} from '@shared/components';
 import {DistanceUnitPipe} from '@shared/pipes';
-import {DateUtils, DistanceUtils} from '@shared/utils';
+import {DateUtils, DistanceConverter} from '@shared/utils';
 
 
 @Component({
@@ -154,7 +154,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         this.weeklyGross = grosses.totalIncome;
         this.weeklyDistance = grosses.totalDistance;
-        this.weeklyRpm = this.weeklyGross / DistanceUtils.metersTo(this.weeklyDistance, 'mi');
+        this.weeklyRpm = this.weeklyGross / DistanceConverter.metersTo(this.weeklyDistance, 'mi');
         this.drawChart(grosses);
         this.calcTodayGross(grosses);
       }
