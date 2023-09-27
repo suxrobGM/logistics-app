@@ -6,82 +6,102 @@
                        xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
                        xmlns:views="clr-namespace:Logistics.DriverApp.Views"
                        xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels"
+                       xmlns:converters="clr-namespace:Logistics.DriverApp.Converters"
                        Title="Active Loads">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:CurrencyConverter x:Key="CurrencyConverter" />
+            <converters:DistanceConverter x:Key="DistanceConverter" />
+            <converters:ShortAddressConverter x:Key="ShortAddressConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
     <Grid>
         <core:SfBusyIndicator IsRunning="{Binding IsLoading}"
                               IndicatorColor="Pink"
                               OverlayFill="#80000000">
         </core:SfBusyIndicator>
-        <StackLayout Spacing="10" Padding="10">
-            <HorizontalStackLayout>
-                <Label Text="Truck: " FontAttributes="Bold" />
-                <Label Text="{Binding TruckNumber}" />
-            </HorizontalStackLayout>
-            <HorizontalStackLayout>
-                <Label Text="Driver: " FontAttributes="Bold" />
-                <Label Text="{Binding DriverName}" />
-            </HorizontalStackLayout>
-            <HorizontalStackLayout IsVisible="{Binding IsTeammateLabelVisible}">
-                <Label Text="Teammates: " FontAttributes="Bold" />
-                <Label Text="{Binding TeammatesName}" />
-            </HorizontalStackLayout>
-            
-            <StackLayout BindableLayout.ItemsSource="{Binding ActiveLoads}" Margin="0,5,0,5">
-                <BindableLayout.ItemTemplate>
-                    <DataTemplate>
-                        <StackLayout Spacing="5">
-                            <HorizontalStackLayout>
-                                <Label Text="Load ID: " FontAttributes="Bold" />
-                                <Label Text="{Binding LoadData.RefId}" />
-                            </HorizontalStackLayout>
-                            <HorizontalStackLayout>
-                                <Label Text="Load Name: " FontAttributes="Bold" />
-                                <Label Text="{Binding LoadData.Name}" />
-                            </HorizontalStackLayout>
-                            <HorizontalStackLayout>
-                                <Label Text="Origin: " FontAttributes="Bold" />
-                                <Label Text="{Binding LoadData.OriginAddress}" />
-                            </HorizontalStackLayout>
-                            <HorizontalStackLayout>
-                                <Label Text="Destination: " FontAttributes="Bold" />
-                                <Label Text="{Binding LoadData.DestinationAddress}" />
-                            </HorizontalStackLayout>
-                            <HorizontalStackLayout>
-                                <Label Text="Delivery Cost: " FontAttributes="Bold" />
-                                <Label Text="{Binding LoadData.DeliveryCost}" />
-                            </HorizontalStackLayout>
-                            <HorizontalStackLayout>
-                                <Label Text="Distance: " FontAttributes="Bold" />
-                                <Label Text="{Binding LoadData.Distance}" />
-                            </HorizontalStackLayout>
-                            <HorizontalStackLayout>
-                                <Label Text="Dispatcher: " FontAttributes="Bold" />
-                                <Label Text="{Binding LoadData.AssignedDispatcherName}" />
-                            </HorizontalStackLayout>
-                            <HorizontalStackLayout>
-                                <Label Text="Status: " FontAttributes="Bold" />
-                                <Label Text="{Binding LoadData.Status}" />
-                            </HorizontalStackLayout>
-                            <HorizontalStackLayout>
-                                <Label Text="Dispatch Date: " FontAttributes="Bold" />
-                                <Label Text="{Binding LoadData.DispatchedDate}" />
-                            </HorizontalStackLayout>
-                            <HorizontalStackLayout>
-                                <Label Text="Pickup Date: " FontAttributes="Bold" />
-                                <Label Text="{Binding LoadData.PickUpDate}" />
-                            </HorizontalStackLayout>
-                            <WebView HeightRequest="400">
-                                <WebView.Source>
-                                    <HtmlWebViewSource Html="{Binding EmbedMapHtml}" />
-                                </WebView.Source>
-                            </WebView>
-                        </StackLayout>
-                    </DataTemplate>
-                </BindableLayout.ItemTemplate>
-                <BindableLayout.EmptyView>
-                    <Label Text="Currently, you do not have any active loads" />
-                </BindableLayout.EmptyView>
+        <ScrollView>
+            <StackLayout Spacing="10" Padding="10">
+                <Frame BackgroundColor="#F5F5F5" Padding="10" CornerRadius="10">
+                    <StackLayout Spacing="5">
+                        <HorizontalStackLayout Spacing="5">
+                            <Label Text="Truck:" FontAttributes="Bold" />
+                            <Label Text="{Binding TruckNumber}" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Spacing="5">
+                            <Label Text="Driver:" FontAttributes="Bold" />
+                            <Label Text="{Binding DriverName}" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout IsVisible="{Binding IsTeammateLabelVisible}" Spacing="5">
+                            <Label Text="Teammates:" FontAttributes="Bold" />
+                            <Label Text="{Binding TeammatesName}" />
+                        </HorizontalStackLayout>
+                    </StackLayout>
+                </Frame>
+
+                <Label Text="Current Loads" HorizontalOptions="CenterAndExpand" FontAttributes="Bold" />
+                <BoxView HeightRequest="1" Color="Gray"/>
+
+                <StackLayout BindableLayout.ItemsSource="{Binding ActiveLoads}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Frame BackgroundColor="#F5F5F5" Padding="10" CornerRadius="10">
+                                <StackLayout Spacing="8">
+                                    <HorizontalStackLayout>
+                                        <Label Text="ID: " FontAttributes="Bold" />
+                                        <Label Text="{Binding LoadData.RefId}" />
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <Label Text="Name: " FontAttributes="Bold" />
+                                        <Label Text="{Binding LoadData.Name}" />
+                                    </HorizontalStackLayout>
+                                    <VerticalStackLayout>
+                                        <Label Text="Origin: " FontAttributes="Bold" />
+                                        <Label Text="{Binding LoadData.OriginAddress, Converter={StaticResource ShortAddressConverter}}" />
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout>
+                                        <Label Text="Destination: " FontAttributes="Bold" />
+                                        <Label Text="{Binding LoadData.DestinationAddress, Converter={StaticResource ShortAddressConverter}}" />
+                                    </VerticalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <Label Text="Delivery Cost: " FontAttributes="Bold" />
+                                        <Label Text="{Binding LoadData.DeliveryCost, Converter={StaticResource CurrencyConverter}}" />
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <Label Text="Distance (mi): " FontAttributes="Bold" />
+                                        <Label Text="{Binding LoadData.Distance, Converter={StaticResource DistanceConverter}, ConverterParameter='mi'}" />
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <Label Text="Dispatcher: " FontAttributes="Bold" />
+                                        <Label Text="{Binding LoadData.AssignedDispatcherName}" />
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <Label Text="Status: " FontAttributes="Bold" />
+                                        <Label Text="{Binding LoadData.Status}" />
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <Label Text="Dispatch Date: " FontAttributes="Bold" />
+                                        <Label Text="{Binding LoadData.DispatchedDate}" />
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <Label Text="Pickup Date: " FontAttributes="Bold" />
+                                        <Label Text="{Binding LoadData.PickUpDate}" />
+                                    </HorizontalStackLayout>
+                                    <WebView HeightRequest="350">
+                                        <WebView.Source>
+                                            <HtmlWebViewSource Html="{Binding EmbedMapHtml}" />
+                                        </WebView.Source>
+                                    </WebView>
+                                </StackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                    <BindableLayout.EmptyView>
+                        <Label Text="Currently, you do not have any active loads" />
+                    </BindableLayout.EmptyView>
+                </StackLayout>
             </StackLayout>
-        </StackLayout>
+        </ScrollView>
     </Grid>
 </views:BaseContentPage>
