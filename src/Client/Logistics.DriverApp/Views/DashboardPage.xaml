@@ -36,6 +36,7 @@
                             <Label Text="{Binding DailyGrossesEndDate, StringFormat='{0:MM/dd/yyyy}'}" TextColor="Red" />
                         </HorizontalStackLayout>
                         <controls:Separator />
+                        
                         <HorizontalStackLayout Margin="0,5,0,0" Spacing="5">
                             <controls:DateRangePicker StartDate="{Binding DailyGrossesStartDate}"
                                                       EndDate="{Binding DailyGrossesEndDate}">
@@ -45,38 +46,43 @@
 
                         <chart:SfCartesianChart>
                             <chart:SfCartesianChart.XAxes>
-                                <chart:DateTimeAxis>
-                                    <!-- <chart:DateTimeAxis.Title> -->
-                                    <!--     <chart:ChartAxisTitle Text="Date" /> -->
-                                    <!-- </chart:DateTimeAxis.Title> -->
-                                </chart:DateTimeAxis>
+                                <chart:DateTimeAxis />
                             </chart:SfCartesianChart.XAxes>
 
                             <chart:SfCartesianChart.YAxes>
-                                <chart:NumericalAxis>
-                                    <!-- <chart:NumericalAxis.Title> -->
-                                    <!--     <chart:ChartAxisTitle Text="Gross $" /> -->
-                                    <!-- </chart:NumericalAxis.Title> -->
-                                </chart:NumericalAxis>
+                                <chart:NumericalAxis />
                             </chart:SfCartesianChart.YAxes>
 
                             <chart:SfCartesianChart.Resources>
-                                <DataTemplate x:Key="chartTemplate">
-                                    <Label Text="{Binding Item.Income, Converter={StaticResource CurrencyConverter}}"
-                                           TextColor="White"
-                                           FontAttributes="Bold"
-                                           FontSize="12"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center">
-                                    </Label>
+                                <DataTemplate x:Key="ChartTooltipTemplate">
+                                    <VerticalStackLayout>
+                                        <Label Text="{Binding Item.Date, StringFormat='{0:MM/dd/yyyy}'}"
+                                               TextColor="White" HorizontalTextAlignment="Center" />
+                                        <HorizontalStackLayout>
+                                            <Label Text="Gross: " TextColor="White" />
+                                            <Label Text="{Binding Item.Gross, Converter={StaticResource CurrencyConverter}}"
+                                                   TextColor="White" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout>
+                                            <Label Text="Share: " TextColor="White" />
+                                            <Label Text="{Binding Item.DriverShare, Converter={StaticResource CurrencyConverter}}"
+                                                   TextColor="White" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
                                 </DataTemplate>
                             </chart:SfCartesianChart.Resources>
 
                             <chart:AreaSeries ItemsSource="{Binding DailyGrosses}"
                                               EnableTooltip="True"
-                                              TooltipTemplate="{StaticResource chartTemplate}"
+                                              TooltipTemplate="{StaticResource ChartTooltipTemplate}"
                                               XBindingPath="Date"
-                                              YBindingPath="Income">
+                                              YBindingPath="Gross">
+                            </chart:AreaSeries>
+                            <chart:AreaSeries ItemsSource="{Binding DailyGrosses}"
+                                              EnableTooltip="True"
+                                              TooltipTemplate="{StaticResource ChartTooltipTemplate}"
+                                              XBindingPath="Date"
+                                              YBindingPath="DriverShare">
                             </chart:AreaSeries>
                         </chart:SfCartesianChart>
                     </StackLayout>
@@ -93,6 +99,7 @@
                                    TextColor="Red" />
                         </HorizontalStackLayout>
                         <controls:Separator />
+                        
                         <HorizontalStackLayout Margin="0,5,0,0" Spacing="5">
                             <controls:DateRangePicker StartDate="{Binding MonthlyGrossesStartDate}"
                                                       EndDate="{Binding MonthlyGrossesEndDate}">
@@ -102,35 +109,43 @@
 
                         <chart:SfCartesianChart>
                             <chart:SfCartesianChart.XAxes>
-                                <chart:CategoryAxis>
-                                </chart:CategoryAxis>
+                                <chart:DateTimeAxis IntervalType="Months" />
                             </chart:SfCartesianChart.XAxes>
 
                             <chart:SfCartesianChart.YAxes>
-                                <chart:NumericalAxis>
-                                    <!-- <chart:NumericalAxis.Title> -->
-                                    <!--     <chart:ChartAxisTitle Text="Gross $" /> -->
-                                    <!-- </chart:NumericalAxis.Title> -->
-                                </chart:NumericalAxis>
+                                <chart:NumericalAxis />
                             </chart:SfCartesianChart.YAxes>
 
                             <chart:SfCartesianChart.Resources>
-                                <DataTemplate x:Key="chartTemplate">
-                                    <Label Text="{Binding Item.Income, Converter={StaticResource CurrencyConverter}}"
-                                           TextColor="White"
-                                           FontAttributes="Bold"
-                                           FontSize="12"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center">
-                                    </Label>
+                                <DataTemplate x:Key="ChartTooltipTemplate">
+                                    <VerticalStackLayout>
+                                        <Label Text="{Binding Item.Date, StringFormat='{0:MMMM yyyy}'}"
+                                               TextColor="White" HorizontalTextAlignment="Center" />
+                                        <HorizontalStackLayout>
+                                            <Label Text="Gross: " TextColor="White" />
+                                            <Label Text="{Binding Item.Gross, Converter={StaticResource CurrencyConverter}}"
+                                                   TextColor="White" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout>
+                                            <Label Text="Share: " TextColor="White" />
+                                            <Label Text="{Binding Item.DriverShare, Converter={StaticResource CurrencyConverter}}"
+                                                   TextColor="White" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
                                 </DataTemplate>
                             </chart:SfCartesianChart.Resources>
 
                             <chart:ColumnSeries ItemsSource="{Binding MonthlyGrosses}"
                                                 EnableTooltip="True"
-                                                TooltipTemplate="{StaticResource chartTemplate}"
-                                                XBindingPath="Month"
-                                                YBindingPath="Income">
+                                                TooltipTemplate="{StaticResource ChartTooltipTemplate}"
+                                                XBindingPath="Date"
+                                                YBindingPath="Gross">
+                            </chart:ColumnSeries>
+                            <chart:ColumnSeries ItemsSource="{Binding MonthlyGrosses}"
+                                                EnableTooltip="True"
+                                                TooltipTemplate="{StaticResource ChartTooltipTemplate}"
+                                                XBindingPath="Date"
+                                                YBindingPath="DriverShare">
                             </chart:ColumnSeries>
                         </chart:SfCartesianChart>
                     </StackLayout>

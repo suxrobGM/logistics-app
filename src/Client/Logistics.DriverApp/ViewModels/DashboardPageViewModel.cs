@@ -19,11 +19,17 @@ public class DashboardPageViewModel : BaseViewModel
 		_dailyGrossesEndDate = DateTime.Today;
 		_monthlyGrossesStartDate = new DateTime(DateTime.Now.Year, 1, 1); // beginning of the current year
 		_monthlyGrossesEndDate = DateTime.Today;
-	}
+        //ChartBrushes = new List<Brush>
+        //{
+        //    new SolidColorBrush(Color.FromRgb(236, 64, 122)),
+        //    new SolidColorBrush(Color.FromRgb(136, 165, 211))
+        //};
+    }
 
 
     #region Bindable properties
 
+	// public IList<Brush> ChartBrushes { get; }
     public ObservableCollection<DailyGrossDto> DailyGrosses { get; } = new();
     public ObservableCollection<MonthlyGrossDto> MonthlyGrosses { get; } = new();
 
