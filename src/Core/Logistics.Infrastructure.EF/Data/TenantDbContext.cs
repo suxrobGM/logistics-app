@@ -92,6 +92,7 @@ public class TenantDbContext : DbContext
             entity.ToTable("Loads");
             //entity.OwnsOne(m => m.SourceAddress);
             //entity.OwnsOne(m => m.DestinationAddress);
+            entity.Property(m => m.DeliveryCost).HasPrecision(19, 4);
             entity.HasIndex(m => m.RefId).IsUnique();
 
             entity.HasOne(m => m.AssignedDispatcher)

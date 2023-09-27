@@ -12,7 +12,7 @@ public record DailyGrossDto : IGrossChart
     }
     
     public DateTime Date { get; set; }
-    public double DriverShare { get; set; }
-    public double Gross { get; set; }
+    public decimal DriverShare { get; set; }
+    public decimal Gross { get; set; }
     public double Distance { get; set; }
 }

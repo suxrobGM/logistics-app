@@ -31,7 +31,7 @@ public class GetTruckStatsListHandler : RequestHandler<GetTruckStatsListQuery, P
                 TruckNumber = group.First().AssignedTruck!.TruckNumber!,
                 Gross = group.Sum(load => load.DeliveryCost),
                 Distance = group.Sum(load => load.Distance),
-                DriverShare = group.Sum(load => load.DeliveryCost) * group.First().AssignedTruck!.DriverIncomePercentage,
+                DriverShare = group.Sum(load => load.DeliveryCost) * (decimal)group.First().AssignedTruck!.DriverIncomePercentage,
                 FirstLoad = group.FirstOrDefault()
             });
 
@@ -77,9 +77,9 @@ public class GetTruckStatsListHandler : RequestHandler<GetTruckStatsListQuery, P
     {
         public required string TruckId { get; set; }
         public required string TruckNumber { get; set; }
-        public required double Gross { get; set; }
+        public required decimal Gross { get; set; }
         public required double Distance { get; set; }
-        public required double DriverShare { get; set; }
+        public required decimal DriverShare { get; set; }
         public Load? FirstLoad { get; set; }
     }
 }

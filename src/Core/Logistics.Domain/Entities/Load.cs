@@ -25,7 +25,7 @@ public class Load : AuditableEntity, ITenantEntity
     public double? DestinationAddressLat { get; set; }
     public double? DestinationAddressLong { get; set; }
     
-    public double DeliveryCost { get; set; }
+    public decimal DeliveryCost { get; set; }
     public double Distance { get; set; }
     
     public DateTime DispatchedDate { get; set; }
@@ -63,9 +63,9 @@ public class Load : AuditableEntity, ITenantEntity
     public virtual Truck? AssignedTruck { get; set; }
     public virtual Employee? AssignedDispatcher { get; set; }
 
-    public double CalcDriverShare()
+    public decimal CalcDriverShare()
     {
-        return DeliveryCost * AssignedTruck?.DriverIncomePercentage ?? 0;
+        return DeliveryCost * (decimal)(AssignedTruck?.DriverIncomePercentage ?? 0);
     }
 
     public static Load Create(
