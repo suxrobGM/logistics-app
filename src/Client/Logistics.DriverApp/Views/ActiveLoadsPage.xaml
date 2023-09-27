@@ -7,6 +7,7 @@
                        xmlns:views="clr-namespace:Logistics.DriverApp.Views"
                        xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels"
                        xmlns:converters="clr-namespace:Logistics.DriverApp.Converters"
+                       xmlns:controls="clr-namespace:Logistics.DriverApp.Controls"
                        Title="Active Loads">
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -15,15 +16,15 @@
             <converters:ShortAddressConverter x:Key="ShortAddressConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
-    
-    <Grid>
+
+    <Grid BackgroundColor="#dae5f3">
         <core:SfBusyIndicator IsRunning="{Binding IsLoading}"
                               IndicatorColor="Pink"
                               OverlayFill="#80000000">
         </core:SfBusyIndicator>
         <ScrollView>
             <StackLayout Spacing="10" Padding="10">
-                <Frame BackgroundColor="#F5F5F5" Padding="10" CornerRadius="10">
+                <controls:Card>
                     <StackLayout Spacing="5">
                         <HorizontalStackLayout Spacing="5">
                             <Label Text="Truck:" FontAttributes="Bold" />
@@ -38,24 +39,24 @@
                             <Label Text="{Binding TeammatesName}" />
                         </HorizontalStackLayout>
                     </StackLayout>
-                </Frame>
+                </controls:Card>
 
                 <Label Text="Current Loads" HorizontalOptions="CenterAndExpand" FontAttributes="Bold" />
-                <BoxView HeightRequest="1" Color="Gray"/>
+                <BoxView HeightRequest="1" Color="Black"/>
 
                 <StackLayout BindableLayout.ItemsSource="{Binding ActiveLoads}">
                     <BindableLayout.ItemTemplate>
                         <DataTemplate>
-                            <Frame BackgroundColor="#F5F5F5" Padding="10" CornerRadius="10">
+                            <controls:Card>
                                 <StackLayout Spacing="8">
-                                    <HorizontalStackLayout>
-                                        <Label Text="ID: " FontAttributes="Bold" />
-                                        <Label Text="{Binding LoadData.RefId}" />
-                                    </HorizontalStackLayout>
-                                    <HorizontalStackLayout>
-                                        <Label Text="Name: " FontAttributes="Bold" />
-                                        <Label Text="{Binding LoadData.Name}" />
-                                    </HorizontalStackLayout>
+                                    <Grid HorizontalOptions="FillAndExpand">
+                                        <HorizontalStackLayout HorizontalOptions="Start">
+                                            <Label Text="#" FontAttributes="Bold" />
+                                            <Label FontAttributes="Bold" Text="{Binding LoadData.RefId}" />
+                                            <Label FontAttributes="Bold" Margin="10,0,0,0" Text="{Binding LoadData.Name}" />
+                                        </HorizontalStackLayout>
+                                    </Grid>
+                                    
                                     <VerticalStackLayout>
                                         <Label Text="Origin: " FontAttributes="Bold" />
                                         <Label Text="{Binding LoadData.OriginAddress, Converter={StaticResource ShortAddressConverter}}" />
@@ -94,7 +95,7 @@
                                         </WebView.Source>
                                     </WebView>
                                 </StackLayout>
-                            </Frame>
+                            </controls:Card>
                         </DataTemplate>
                     </BindableLayout.ItemTemplate>
                     <BindableLayout.EmptyView>
