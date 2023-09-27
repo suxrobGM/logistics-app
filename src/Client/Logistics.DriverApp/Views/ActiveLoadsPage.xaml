@@ -42,7 +42,6 @@
                 </controls:Card>
 
                 <Label Text="Current Loads" HorizontalOptions="CenterAndExpand" FontAttributes="Bold" />
-                <BoxView HeightRequest="1" Color="Black"/>
 
                 <StackLayout BindableLayout.ItemsSource="{Binding ActiveLoads}">
                     <BindableLayout.ItemTemplate>
@@ -56,7 +55,8 @@
                                             <Label FontAttributes="Bold" Margin="10,0,0,0" Text="{Binding LoadData.Name}" />
                                         </HorizontalStackLayout>
                                     </Grid>
-                                    
+
+                                    <controls:Separator />
                                     <VerticalStackLayout>
                                         <Label Text="Origin: " FontAttributes="Bold" />
                                         <Label Text="{Binding LoadData.OriginAddress, Converter={StaticResource ShortAddressConverter}}" />

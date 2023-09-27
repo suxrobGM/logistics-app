@@ -15,13 +15,45 @@ public class DashboardPageViewModel : BaseViewModel
 	{
 		_authService = authService;
 		_apiClient = apiClient;
+		_dailyGrossesStartDate = DateTime.Today.AddMonths(-1);
+		_dailyGrossesEndDate = DateTime.Today;
+		_monthlyGrossesStartDate = new DateTime(DateTime.Now.Year, 1, 1); // beginning of the current year
+		_monthlyGrossesEndDate = DateTime.Today;
 	}
 
 
     #region Bindable properties
 
     public ObservableCollection<DailyGrossDto> DailyGrosses { get; } = new();
+    public ObservableCollection<MonthlyGrossDto> MonthlyGrosses { get; } = new();
 
+    private DateTime _dailyGrossesStartDate;
+    public DateTime DailyGrossesStartDate
+    {
+	    get => _dailyGrossesStartDate;
+	    set => SetProperty(ref _dailyGrossesStartDate, value);
+    }
+
+    private DateTime _dailyGrossesEndDate;
+    public DateTime DailyGrossesEndDate
+    {
+	    get => _dailyGrossesEndDate;
+	    set => SetProperty(ref _dailyGrossesEndDate, value);
+    }
+    
+    private DateTime _monthlyGrossesStartDate;
+    public DateTime MonthlyGrossesStartDate
+    {
+	    get => _monthlyGrossesStartDate;
+	    set => SetProperty(ref _monthlyGrossesStartDate, value);
+    }
+
+    private DateTime _monthlyGrossesEndDate;
+    public DateTime MonthlyGrossesEndDate
+    {
+	    get => _monthlyGrossesEndDate;
+	    set => SetProperty(ref _monthlyGrossesEndDate, value);
+    }
 
     #endregion
 
@@ -29,24 +61,24 @@ public class DashboardPageViewModel : BaseViewModel
     protected override async Task OnInitializedAsync()
     {
         await FetchTruckDailyGrossesAsync();
+        await FetchTruckMonthlyGrossesAsync();
     }
 
     private async Task FetchTruckDailyGrossesAsync()
 	{
         IsLoading = true;
         var driverId = _authService.User!.Id!;
-        var monthAgo = DateTime.Now.AddMonths(-1);
 
         var result = await _apiClient.GetDailyGrossesAsync(new GetDailyGrossesQuery
         {
 	        UserId = driverId,
-	        StartDate = monthAgo,
-	        EndDate = DateTime.Now
+	        StartDate = DailyGrossesStartDate,
+	        EndDate = DailyGrossesEndDate
         });
 
         if (!result.Success)
         {
-	        await PopupHelpers.ShowErrorAsync("Failed to load driver grosses data, try again");
+	        await PopupHelpers.ShowErrorAsync("Failed to load driver's line chart data, try again");
 	        IsLoading = false;
 	        return;
         }
@@ -58,4 +90,31 @@ public class DashboardPageViewModel : BaseViewModel
 
         IsLoading = false;
 	}
+    
+    private async Task FetchTruckMonthlyGrossesAsync()
+    {
+	    IsLoading = true;
+	    var driverId = _authService.User!.Id!;
+
+	    var result = await _apiClient.GetMonthlyGrossesAsync(new GetMonthlyGrossesQuery
+	    {
+		    UserId = driverId,
+		    StartDate = MonthlyGrossesStartDate,
+		    EndDate = MonthlyGrossesEndDate
+	    });
+
+	    if (!result.Success)
+	    {
+		    await PopupHelpers.ShowErrorAsync("Failed to load driver bar chart data, try again");
+		    IsLoading = false;
+		    return;
+	    }
+
+	    foreach (var monthlyGross in result.Value!.Data)
+	    {
+		    MonthlyGrosses.Add(monthlyGross);
+	    }
+
+	    IsLoading = false;
+    }
 }
