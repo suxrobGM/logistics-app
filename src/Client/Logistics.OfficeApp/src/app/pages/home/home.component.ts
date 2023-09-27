@@ -152,7 +152,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       if (result.success && result.value) {
         const grosses = result.value;
 
-        this.weeklyGross = grosses.totalIncome;
+        this.weeklyGross = grosses.totalGross;
         this.weeklyDistance = grosses.totalDistance;
         this.weeklyRpm = this.weeklyGross / DistanceConverter.metersTo(this.weeklyDistance, 'mi');
         this.drawChart(grosses);
@@ -169,7 +169,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     grosses.data.forEach((i) => {
       labels.push(DateUtils.toLocaleDate(i.date));
-      data.push(i.income);
+      data.push(i.gross);
     });
 
     this.chartData = {
@@ -193,7 +193,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     grosses.data
         .filter((i) => DateUtils.dayOfMonth(i.date) === today.getDate())
-        .forEach((i) => totalGross += i.income);
+        .forEach((i) => totalGross += i.gross);
 
     this.todayGross = totalGross;
   }

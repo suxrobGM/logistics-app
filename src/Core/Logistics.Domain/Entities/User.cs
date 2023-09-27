@@ -35,10 +35,6 @@ public class User : IdentityUser, IEntity<string>, IAuditableEntity
 
     public string GetFullName()
     {
-        if (string.IsNullOrEmpty(FirstName) && string.IsNullOrEmpty(LastName))
-        {
-            return UserName!;
-        }
         return string.Join(" ", FirstName, LastName);
     }
 

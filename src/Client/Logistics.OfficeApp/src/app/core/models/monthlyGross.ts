@@ -1,6 +1,3 @@
-export interface MonthlyGross {
-  year: number;
-  month: number;
-  income: number;
-  distance: number;
-}
+import {DailyGross} from './dailyGross';
+
+export interface MonthlyGross extends DailyGross {}

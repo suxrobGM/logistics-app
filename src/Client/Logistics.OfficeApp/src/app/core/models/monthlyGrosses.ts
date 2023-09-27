@@ -1,7 +1,5 @@
+import {GrossesChart} from './grossesChart';
 import {MonthlyGross} from './monthlyGross';
 
-export interface MonthlyGrosses {
-  data: MonthlyGross[];
-  totalIncome: number;
-  totalDistance: number;
+export interface MonthlyGrosses extends GrossesChart<MonthlyGross> {
 }

@@ -46,7 +46,8 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrosse
                 continue;
             
             dict[key].Distance += load.Distance;
-            dict[key].Income += load.DeliveryCost;
+            dict[key].Gross += load.DeliveryCost;
+            dict[key].DriverShare += load.CalcDriverShare();
         }
 
         monthlyGrosses.Data = dict.Values;

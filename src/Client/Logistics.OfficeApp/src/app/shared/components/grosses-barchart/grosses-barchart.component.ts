@@ -69,7 +69,7 @@ export class GrossesBarchartComponent implements OnInit {
     this.apiService.getMonthlyGrosses(this.startDate, this.endDate, this.truckId).subscribe((result) => {
       if (result.success && result.value) {
         this.monthlyGrosses = result.value;
-        const rpm = this.monthlyGrosses.totalIncome / DistanceConverter.metersTo(this.monthlyGrosses.totalDistance, 'mi');
+        const rpm = this.monthlyGrosses.totalGross / DistanceConverter.metersTo(this.monthlyGrosses.totalDistance, 'mi');
 
         this.drawChart(this.monthlyGrosses);
         this.chartDrawn.emit({monthlyGrosses: this.monthlyGrosses, rpm: rpm});
@@ -84,8 +84,8 @@ export class GrossesBarchartComponent implements OnInit {
     const data: Array<number> = [];
 
     grosses.data.forEach((i) => {
-      labels.push(DateUtils.monthName(i.month));
-      data.push(i.income);
+      labels.push(DateUtils.monthNameWithYear(i.date));
+      data.push(i.gross);
     });
 
     this.chartData = {

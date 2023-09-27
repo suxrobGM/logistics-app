@@ -27,6 +27,20 @@ export class DateUtils {
     return new Date(dateStr).getDate();
   }
 
+  /**
+   * Gets month name and year in the format `{monthName} - {year}`
+   * @param dateStr A string containing valid date
+   */
+  static monthNameWithYear(dateStr: string): string {
+    const date = new Date(dateStr);
+    const monthName = this.monthName(date);
+    return `${monthName} ${date.getFullYear()}`;
+  }
+
+  /**
+   * Gets months name from index
+   * @param month Month index or date type
+   */
   static monthName(month: number | Date): string {
     let monthValue = month;
 

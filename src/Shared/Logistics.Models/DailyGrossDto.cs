@@ -1,14 +1,9 @@
 ﻿namespace Logistics.Models;
 
-public record DailyGrossDto
+public record DailyGrossDto : IGrossChart
 {
     public DailyGrossDto()
     {
-    }
-    
-    public DailyGrossDto(DateTime date)
-    {
-        Date = date;
     }
     
     public DailyGrossDto(int year, int month, int day)
@@ -17,6 +12,7 @@ public record DailyGrossDto
     }
     
     public DateTime Date { get; set; }
-    public double Income { get; set; }
+    public double DriverShare { get; set; }
+    public double Gross { get; set; }
     public double Distance { get; set; }
 }

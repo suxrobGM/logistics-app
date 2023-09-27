@@ -1,5 +1,6 @@
 export interface DailyGross {
   date: string;
-  income: number;
+  gross: number;
   distance: number;
+  driverShare: number;
 }

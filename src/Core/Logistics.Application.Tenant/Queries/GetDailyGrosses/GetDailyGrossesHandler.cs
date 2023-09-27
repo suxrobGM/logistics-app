@@ -45,8 +45,9 @@ internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQue
             if (!dict.ContainsKey(key)) 
                 continue;
             
-            dict[key].Income += load.DeliveryCost;
+            dict[key].Gross += load.DeliveryCost;
             dict[key].Distance += load.Distance;
+            dict[key].DriverShare += load.CalcDriverShare();
         }
 
         dailyGrosses.Data = dict.Values;

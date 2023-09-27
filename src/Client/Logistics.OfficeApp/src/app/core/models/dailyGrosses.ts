@@ -1,7 +1,5 @@
 import {DailyGross} from './dailyGross';
+import {GrossesChart} from './grossesChart';
 
-export interface DailyGrosses {
-  data: DailyGross[];
-  totalIncome: number;
-  totalDistance: number;
+export interface DailyGrosses extends GrossesChart<DailyGross> {
 }
