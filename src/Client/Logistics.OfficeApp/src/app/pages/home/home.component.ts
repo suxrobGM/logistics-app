@@ -167,7 +167,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     const labels: Array<string> = [];
     const data: Array<number> = [];
 
-    grosses.dates.forEach((i) => {
+    grosses.data.forEach((i) => {
       labels.push(DateUtils.toLocaleDate(i.date));
       data.push(i.income);
     });
@@ -191,7 +191,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     const today = new Date();
     let totalGross = 0;
 
-    grosses.dates
+    grosses.data
         .filter((i) => DateUtils.dayOfMonth(i.date) === today.getDate())
         .forEach((i) => totalGross += i.income);
 

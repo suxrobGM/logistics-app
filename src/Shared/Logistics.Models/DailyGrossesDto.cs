@@ -2,19 +2,19 @@
 
 public class DailyGrossesDto
 {
-    private IEnumerable<DailyGrossDto> _dates = new List<DailyGrossDto>();
+    private IEnumerable<DailyGrossDto> _data = new List<DailyGrossDto>();
 
-    public IEnumerable<DailyGrossDto> Dates
+    public IEnumerable<DailyGrossDto> Data
     {
-        get => _dates;
+        get => _data;
         set
         {
-            _dates = value;
+            _data = value;
 
-            foreach (var day in _dates)
+            foreach (var dailyGross in _data)
             {
-                TotalIncome += day.Income;
-                TotalDistance += day.Distance;
+                TotalIncome += dailyGross.Income;
+                TotalDistance += dailyGross.Distance;
             }
         }
     }

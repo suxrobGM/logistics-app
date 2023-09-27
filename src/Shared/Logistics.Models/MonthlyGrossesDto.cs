@@ -2,19 +2,19 @@
 
 public class MonthlyGrossesDto
 {
-    private IEnumerable<MonthlyGrossDto> _months = new List<MonthlyGrossDto>();
+    private IEnumerable<MonthlyGrossDto> _data = new List<MonthlyGrossDto>();
 
-    public IEnumerable<MonthlyGrossDto> Months
+    public IEnumerable<MonthlyGrossDto> Data
     {
-        get => _months;
+        get => _data;
         set
         {
-            _months = value;
+            _data = value;
 
-            foreach (var month in _months)
+            foreach (var monthlyGross in _data)
             {
-                TotalIncome += month.Income;
-                TotalDistance += month.Distance;
+                TotalIncome += monthlyGross.Income;
+                TotalDistance += monthlyGross.Distance;
             }
         }
     }

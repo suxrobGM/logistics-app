@@ -11,10 +11,24 @@ internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQue
         _tenantRepository = tenantRepository;
     }
     
-    protected override Task<ResponseResult<DailyGrossesDto>> HandleValidated(
+    protected override async Task<ResponseResult<DailyGrossesDto>> HandleValidated(
         GetDailyGrossesQuery req, CancellationToken cancellationToken)
     {
-        var spec = new FilterLoadsByInterval(req.TruckId, req.StartDate, req.EndDate);
+        var truckId = req.TruckId;
+        
+        if (!string.IsNullOrEmpty(req.UserId))
+        {
+            var driver = await _tenantRepository.GetAsync<Employee>(req.UserId);
+
+            if (driver is null)
+            {
+                return ResponseResult<DailyGrossesDto>.CreateError($"Could not find user with ID '{req.UserId}'");
+            }
+            
+            truckId = driver.TruckId;
+        }
+        
+        var spec = new FilterLoadsByInterval(truckId, req.StartDate, req.EndDate);
         var dailyGrosses = new DailyGrossesDto();
         var days = req.StartDate.DaysBetween(req.EndDate);
         var dict = days.ToDictionary(
@@ -35,7 +49,7 @@ internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQue
             dict[key].Distance += load.Distance;
         }
 
-        dailyGrosses.Dates = dict.Values;
-        return Task.FromResult(ResponseResult<DailyGrossesDto>.CreateSuccess(dailyGrosses));
+        dailyGrosses.Data = dict.Values;
+        return ResponseResult<DailyGrossesDto>.CreateSuccess(dailyGrosses);
     }
 }

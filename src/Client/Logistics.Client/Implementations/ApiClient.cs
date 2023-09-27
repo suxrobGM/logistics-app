@@ -313,4 +313,19 @@ internal class ApiClient : GenericApiClient, IApiClient
     }
 
     #endregion
+
+
+    #region Dashboard API
+
+    public Task<ResponseResult<DailyGrossesDto>> GetDailyGrossesAsync(GetDailyGrossesQuery query)
+    {
+        return MakeGetRequestAsync<ResponseResult<DailyGrossesDto>>("dashboard/dailyGrosses", query.ToDictionary());
+    }
+
+    public Task<ResponseResult<MonthlyGrossesDto>> GetMonthlyGrossesAsync(GetMonthlyGrossesQuery query)
+    {
+        return MakeGetRequestAsync<ResponseResult<MonthlyGrossesDto>>("dashboard/monthlyGrosses", query.ToDictionary());
+    }
+
+    #endregion
 }

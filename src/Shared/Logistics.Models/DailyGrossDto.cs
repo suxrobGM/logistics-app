@@ -2,6 +2,10 @@
 
 public record DailyGrossDto
 {
+    public DailyGrossDto()
+    {
+    }
+    
     public DailyGrossDto(DateTime date)
     {
         Date = date;

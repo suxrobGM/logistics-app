@@ -2,7 +2,14 @@
 
 namespace Logistics.Client;
 
-public interface IApiClient : ILoadApi, ITruckApi, IEmployeeApi, ITenantApi, IUserApi, IDriverApi
+public interface IApiClient : 
+    ILoadApi, 
+    ITruckApi, 
+    IEmployeeApi, 
+    ITenantApi, 
+    IUserApi, 
+    IDriverApi,
+    IDashboardApi
 {
     string? AccessToken { get; set; }
     string? TenantId { get; set; }

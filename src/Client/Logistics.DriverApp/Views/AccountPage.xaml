@@ -19,11 +19,17 @@
                               IndicatorColor="Pink"
                               OverlayFill="#80000000">
         </core:SfBusyIndicator>
+        
         <dataForm:SfDataForm Grid.Row="0"
                              DataObject="{Binding AccountDetails}" 
                              AutoGenerateItems="True" 
                              GenerateDataFormItem="SfDataForm_GenerateDataFormItem">
         </dataForm:SfDataForm>
-        <Button VerticalOptions="End" Margin="5,0,5,5" Text="Save" Command="{Binding SaveCommand}" />
+        <Button Grid.Row="0" 
+                VerticalOptions="End" 
+                Margin="5,0,5,5" 
+                Text="Save" 
+                Command="{Binding SaveCommand}">
+        </Button>
     </Grid>
 </views:BaseContentPage>

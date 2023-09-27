@@ -83,7 +83,7 @@ export class GrossesBarchartComponent implements OnInit {
     const labels: Array<string> = [];
     const data: Array<number> = [];
 
-    grosses.months.forEach((i) => {
+    grosses.data.forEach((i) => {
       labels.push(DateUtils.monthName(i.month));
       data.push(i.income);
     });

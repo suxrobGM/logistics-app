@@ -1,7 +1,7 @@
 import {DailyGross} from './dailyGross';
 
 export interface DailyGrosses {
-  dates: DailyGross[];
+  data: DailyGross[];
   totalIncome: number;
   totalDistance: number;
 }

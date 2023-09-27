@@ -5,10 +5,75 @@
                        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                        xmlns:views="clr-namespace:Logistics.DriverApp.Views"
                        xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels"
+                       xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+                       xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
+                       xmlns:converters="clr-namespace:Logistics.DriverApp.Converters"
                        Title="Dashboard">
-    <VerticalStackLayout>
-        <Label Text="Dashboard Page"
-               VerticalOptions="Center" 
-               HorizontalOptions="Center" />
-    </VerticalStackLayout>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:CurrencyConverter x:Key="CurrencyConverter" />
+            <converters:DistanceConverter x:Key="DistanceConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid Padding="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <core:SfBusyIndicator Grid.RowSpan="2" 
+                          IsRunning="{Binding IsLoading}"
+                          IndicatorColor="Pink"
+                          OverlayFill="#80000000">
+        </core:SfBusyIndicator>
+
+        <StackLayout Grid.Row="0">
+            <chart:SfCartesianChart>
+                <chart:SfCartesianChart.Title>
+                    <Label Text="Truck Grosses for " />
+                </chart:SfCartesianChart.Title>
+
+                <chart:SfCartesianChart.Legend>
+                    <chart:ChartLegend/>
+                </chart:SfCartesianChart.Legend>
+
+                <chart:SfCartesianChart.XAxes>
+                    <chart:DateTimeAxis>
+                        <chart:DateTimeAxis.Title>
+                            <chart:ChartAxisTitle Text="Date" />
+                        </chart:DateTimeAxis.Title>
+                    </chart:DateTimeAxis>
+                </chart:SfCartesianChart.XAxes>
+
+                <chart:SfCartesianChart.YAxes>
+                    <chart:NumericalAxis>
+                        <chart:NumericalAxis.Title>
+                            <chart:ChartAxisTitle Text="Gross $" />
+                        </chart:NumericalAxis.Title>
+                    </chart:NumericalAxis>
+                </chart:SfCartesianChart.YAxes>
+
+                <chart:SfCartesianChart.Resources>
+                    <DataTemplate x:Key="chartTemplate">
+                        <Label Text="{Binding Item.Income, Converter={StaticResource CurrencyConverter}}"
+                               TextColor="White"
+                               FontAttributes="Bold"
+                               FontSize="12"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center">    
+                        </Label>
+                    </DataTemplate>
+                </chart:SfCartesianChart.Resources>
+
+                <chart:AreaSeries ItemsSource="{Binding DailyGrosses}"
+                                  EnableTooltip="True"
+                                  TooltipTemplate="{StaticResource chartTemplate}"
+                                  XBindingPath="Date" 
+                                  YBindingPath="Income">
+                </chart:AreaSeries>
+            </chart:SfCartesianChart>
+        </StackLayout>
+    </Grid>
 </views:BaseContentPage>
