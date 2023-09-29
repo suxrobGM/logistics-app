@@ -44,32 +44,39 @@ public class LocationTracker : ILocationTracker
 
     public async Task SendLocationDataAsync(LocationTrackerOptions options)
     {
-        if (string.IsNullOrEmpty(options.TruckId) || string.IsNullOrEmpty(options.TenantId))
+        try
         {
-            return;
-        }
+            if (string.IsNullOrEmpty(options.TruckId) || string.IsNullOrEmpty(options.TenantId))
+            {
+                return;
+            }
         
-        await ConnectAsync();
-        var location = await GetCurrentLocationAsync();
+            await ConnectAsync();
+            var location = await GetCurrentLocationAsync();
 
-        if (location is null)
-        {
-            return;
+            if (location is null)
+            {
+                return;
+            }
+
+            var address = await GetAddressFromGeocodeAsync(location.Latitude, location.Longitude);
+
+            var geolocationData = new TruckGeolocationDto
+            {
+                TruckId = options.TruckId,
+                TruckNumber = options.TruckNumber,
+                TenantId = options.TenantId,
+                DriversName = options.DriversName,
+                Latitude = location.Latitude,
+                Longitude = location.Longitude,
+                CurrentLocation = address
+            };
+            await _hubConnection.InvokeAsync("SendGeolocationData", geolocationData);
         }
-
-        var address = await GetAddressFromGeocodeAsync(location.Latitude, location.Longitude);
-
-        var geolocationData = new TruckGeolocationDto
+        catch (Exception e)
         {
-            TruckId = options.TruckId,
-            TruckNumber = options.TruckNumber,
-            TenantId = options.TenantId,
-            DriversName = options.DriversName,
-            Latitude = location.Latitude,
-            Longitude = location.Longitude,
-            CurrentLocation = address
-        };
-        await _hubConnection.InvokeAsync("SendGeolocationData", geolocationData);
+            Console.WriteLine(e);
+        }
     }
     
     private static async Task<Location?> GetCurrentLocationAsync()
