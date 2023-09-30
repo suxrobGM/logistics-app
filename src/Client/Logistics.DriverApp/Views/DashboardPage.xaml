@@ -1,155 +1,111 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <views:BaseContentPage x:TypeArguments="viewModels:DashboardPageViewModel"
                        x:Class="Logistics.DriverApp.Views.DashboardPage"
                        xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                       xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
                        xmlns:views="clr-namespace:Logistics.DriverApp.Views"
                        xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels"
-                       xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
-                       xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
                        xmlns:converters="clr-namespace:Logistics.DriverApp.Converters"
                        xmlns:controls="clr-namespace:Logistics.DriverApp.Controls"
-                       Title="Dashboard">
-
+                       Title="Active Loads">
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:CurrencyConverter x:Key="CurrencyConverter" />
             <converters:DistanceConverter x:Key="DistanceConverter" />
+            <converters:ShortAddressConverter x:Key="ShortAddressConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <Grid BackgroundColor="#dae5f3" Padding="5">
+    <Grid BackgroundColor="#dae5f3">
         <core:SfBusyIndicator IsRunning="{Binding IsLoading}"
                               IndicatorColor="Pink"
                               OverlayFill="#80000000">
         </core:SfBusyIndicator>
-
         <ScrollView>
-            <StackLayout Spacing="10">
+            <StackLayout Spacing="10" Padding="0,10,0,10">
                 <controls:Card>
-                    <StackLayout>
-                        <HorizontalStackLayout Padding="0,0,0,5">
-                            <Label Text="Truck Daily Grosses for " FontAttributes="Bold" />
-                            <Label Text="{Binding DailyGrossesStartDate, StringFormat='{0:MM/dd/yyyy}'}"
-                                   TextColor="Red" />
-                            <Label Text=" - " />
-                            <Label Text="{Binding DailyGrossesEndDate, StringFormat='{0:MM/dd/yyyy}'}" TextColor="Red" />
+                    <StackLayout Spacing="5">
+                        <HorizontalStackLayout Spacing="5">
+                            <Label Text="Truck:" FontAttributes="Bold" />
+                            <Label Text="{Binding TruckNumber}" />
                         </HorizontalStackLayout>
-                        <controls:Separator />
-                        
-                        <HorizontalStackLayout Margin="0,5,0,0" Spacing="5">
-                            <controls:DateRangePicker StartDate="{Binding DailyGrossesStartDate}"
-                                                      EndDate="{Binding DailyGrossesEndDate}">
-                            </controls:DateRangePicker>
-                            <Button Text="Apply" HorizontalOptions="End" CornerRadius="30" />
+                        <HorizontalStackLayout Spacing="5">
+                            <Label Text="Driver:" FontAttributes="Bold" />
+                            <Label Text="{Binding DriverName}" />
                         </HorizontalStackLayout>
-
-                        <chart:SfCartesianChart>
-                            <chart:SfCartesianChart.XAxes>
-                                <chart:DateTimeAxis />
-                            </chart:SfCartesianChart.XAxes>
-
-                            <chart:SfCartesianChart.YAxes>
-                                <chart:NumericalAxis />
-                            </chart:SfCartesianChart.YAxes>
-
-                            <chart:SfCartesianChart.Resources>
-                                <DataTemplate x:Key="ChartTooltipTemplate">
-                                    <VerticalStackLayout>
-                                        <Label Text="{Binding Item.Date, StringFormat='{0:MM/dd/yyyy}'}"
-                                               TextColor="White" HorizontalTextAlignment="Center" />
-                                        <HorizontalStackLayout>
-                                            <Label Text="Gross: " TextColor="White" />
-                                            <Label Text="{Binding Item.Gross, Converter={StaticResource CurrencyConverter}}"
-                                                   TextColor="White" />
-                                        </HorizontalStackLayout>
-                                        <HorizontalStackLayout>
-                                            <Label Text="Share: " TextColor="White" />
-                                            <Label Text="{Binding Item.DriverShare, Converter={StaticResource CurrencyConverter}}"
-                                                   TextColor="White" />
-                                        </HorizontalStackLayout>
-                                    </VerticalStackLayout>
-                                </DataTemplate>
-                            </chart:SfCartesianChart.Resources>
-
-                            <chart:AreaSeries ItemsSource="{Binding DailyGrosses}"
-                                              EnableTooltip="True"
-                                              TooltipTemplate="{StaticResource ChartTooltipTemplate}"
-                                              XBindingPath="Date"
-                                              YBindingPath="Gross">
-                            </chart:AreaSeries>
-                            <chart:AreaSeries ItemsSource="{Binding DailyGrosses}"
-                                              EnableTooltip="True"
-                                              TooltipTemplate="{StaticResource ChartTooltipTemplate}"
-                                              XBindingPath="Date"
-                                              YBindingPath="DriverShare">
-                            </chart:AreaSeries>
-                        </chart:SfCartesianChart>
+                        <HorizontalStackLayout IsVisible="{Binding IsTeammateLabelVisible}" Spacing="5">
+                            <Label Text="Teammates:" FontAttributes="Bold" />
+                            <Label Text="{Binding TeammatesName}" />
+                        </HorizontalStackLayout>
                     </StackLayout>
                 </controls:Card>
 
-                <controls:Card>
-                    <StackLayout>
-                        <HorizontalStackLayout Padding="0,0,0,5">
-                            <Label Text="Truck Monthly Grosses for " FontAttributes="Bold" />
-                            <Label Text="{Binding MonthlyGrossesStartDate, StringFormat='{0:MM/dd/yyyy}'}"
-                                   TextColor="Red" />
-                            <Label Text=" - " />
-                            <Label Text="{Binding MonthlyGrossesEndDate, StringFormat='{0:MM/dd/yyyy}'}"
-                                   TextColor="Red" />
-                        </HorizontalStackLayout>
-                        <controls:Separator />
-                        
-                        <HorizontalStackLayout Margin="0,5,0,0" Spacing="5">
-                            <controls:DateRangePicker StartDate="{Binding MonthlyGrossesStartDate}"
-                                                      EndDate="{Binding MonthlyGrossesEndDate}">
-                            </controls:DateRangePicker>
-                            <Button Text="Apply" HorizontalOptions="End" CornerRadius="30" />
-                        </HorizontalStackLayout>
+                <Label Text="Current Loads" HorizontalOptions="CenterAndExpand" FontAttributes="Bold" />
 
-                        <chart:SfCartesianChart>
-                            <chart:SfCartesianChart.XAxes>
-                                <chart:DateTimeAxis IntervalType="Months" />
-                            </chart:SfCartesianChart.XAxes>
+                <StackLayout BindableLayout.ItemsSource="{Binding ActiveLoads}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <controls:Card>
+                                <StackLayout Spacing="8">
+                                    <Grid HorizontalOptions="FillAndExpand">
+                                        <HorizontalStackLayout HorizontalOptions="Start">
+                                            <Label Text="#" FontAttributes="Bold" />
+                                            <Label FontAttributes="Bold" Text="{Binding LoadData.RefId}" />
+                                            <Label FontAttributes="Bold" Margin="10,0,0,0" Text="{Binding LoadData.Name}" />
+                                        </HorizontalStackLayout>
+                                    </Grid>
 
-                            <chart:SfCartesianChart.YAxes>
-                                <chart:NumericalAxis />
-                            </chart:SfCartesianChart.YAxes>
-
-                            <chart:SfCartesianChart.Resources>
-                                <DataTemplate x:Key="ChartTooltipTemplate">
+                                    <controls:Separator />
                                     <VerticalStackLayout>
-                                        <Label Text="{Binding Item.Date, StringFormat='{0:MMMM yyyy}'}"
-                                               TextColor="White" HorizontalTextAlignment="Center" />
-                                        <HorizontalStackLayout>
-                                            <Label Text="Gross: " TextColor="White" />
-                                            <Label Text="{Binding Item.Gross, Converter={StaticResource CurrencyConverter}}"
-                                                   TextColor="White" />
-                                        </HorizontalStackLayout>
-                                        <HorizontalStackLayout>
-                                            <Label Text="Share: " TextColor="White" />
-                                            <Label Text="{Binding Item.DriverShare, Converter={StaticResource CurrencyConverter}}"
-                                                   TextColor="White" />
-                                        </HorizontalStackLayout>
+                                        <Label Text="Origin: " FontAttributes="Bold" />
+                                        <Label Text="{Binding LoadData.OriginAddress, Converter={StaticResource ShortAddressConverter}}" 
+                                               TextColor="DarkSlateGray" 
+                                               FontSize="12" />
                                     </VerticalStackLayout>
-                                </DataTemplate>
-                            </chart:SfCartesianChart.Resources>
-
-                            <chart:ColumnSeries ItemsSource="{Binding MonthlyGrosses}"
-                                                EnableTooltip="True"
-                                                TooltipTemplate="{StaticResource ChartTooltipTemplate}"
-                                                XBindingPath="Date"
-                                                YBindingPath="Gross">
-                            </chart:ColumnSeries>
-                            <chart:ColumnSeries ItemsSource="{Binding MonthlyGrosses}"
-                                                EnableTooltip="True"
-                                                TooltipTemplate="{StaticResource ChartTooltipTemplate}"
-                                                XBindingPath="Date"
-                                                YBindingPath="DriverShare">
-                            </chart:ColumnSeries>
-                        </chart:SfCartesianChart>
-                    </StackLayout>
-                </controls:Card>
+                                    <VerticalStackLayout>
+                                        <Label Text="Destination: " FontAttributes="Bold" />
+                                        <Label Text="{Binding LoadData.DestinationAddress, Converter={StaticResource ShortAddressConverter}}" 
+                                               TextColor="DarkSlateGray" 
+                                               FontSize="12" />
+                                    </VerticalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <Label Text="Delivery Cost: " FontAttributes="Bold" />
+                                        <Label Text="{Binding LoadData.DeliveryCost, Converter={StaticResource CurrencyConverter}}" />
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <Label Text="Distance (mi): " FontAttributes="Bold" />
+                                        <Label Text="{Binding LoadData.Distance, Converter={StaticResource DistanceConverter}, ConverterParameter='mi'}" />
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <Label Text="Dispatcher: " FontAttributes="Bold" />
+                                        <Label Text="{Binding LoadData.AssignedDispatcherName}" />
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <Label Text="Status: " FontAttributes="Bold" />
+                                        <Label Text="{Binding LoadData.Status}" />
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <Label Text="Dispatch Date: " FontAttributes="Bold" />
+                                        <Label Text="{Binding LoadData.DispatchedDate}" />
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <Label Text="Pickup Date: " FontAttributes="Bold" />
+                                        <Label Text="{Binding LoadData.PickUpDate}" />
+                                    </HorizontalStackLayout>
+                                    <WebView HeightRequest="350">
+                                        <WebView.Source>
+                                            <HtmlWebViewSource Html="{Binding EmbedMapHtml}" />
+                                        </WebView.Source>
+                                    </WebView>
+                                </StackLayout>
+                            </controls:Card>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                    <BindableLayout.EmptyView>
+                        <Label Text="Currently, you do not have any active loads" />
+                    </BindableLayout.EmptyView>
+                </StackLayout>
             </StackLayout>
         </ScrollView>
     </Grid>

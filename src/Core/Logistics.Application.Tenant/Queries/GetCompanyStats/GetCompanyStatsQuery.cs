@@ -2,6 +2,6 @@
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class GetOverallStatsQuery : Request<ResponseResult<OverallStatsDto>>
+public class GetCompanyStatsQuery : Request<ResponseResult<CompanyStatsDto>>
 {
 }

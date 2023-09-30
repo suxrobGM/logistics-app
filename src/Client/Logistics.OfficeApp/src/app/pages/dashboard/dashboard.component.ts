@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {OverallStatsComponent, TruckStatsTableComponent} from './components';
+import {CompanyStatsComponent, TruckStatsTableComponent} from './components';
 import {GrossesBarchartComponent} from '@shared/components';
 
 
@@ -13,7 +13,7 @@ import {GrossesBarchartComponent} from '@shared/components';
     CommonModule,
     TruckStatsTableComponent,
     GrossesBarchartComponent,
-    OverallStatsComponent,
+    CompanyStatsComponent,
   ],
 })
 export class DashboardComponent {

@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {CommonModule, CurrencyPipe} from '@angular/common';
-import {OverallStats} from '@core/models';
+import {CompanyStats} from '@core/models';
 import {ApiService} from '@core/services';
 import {DistanceConverter} from '@shared/utils';
 import {DistanceUnitPipe} from '@shared/pipes';
@@ -11,9 +11,9 @@ import {SkeletonModule} from 'primeng/skeleton';
 
 
 @Component({
-  selector: 'app-overall-stats',
+  selector: 'app-company-stats',
   standalone: true,
-  templateUrl: './overall-stats.component.html',
+  templateUrl: './company-stats.component.html',
   styleUrls: [],
   imports: [
     CommonModule,
@@ -26,31 +26,31 @@ import {SkeletonModule} from 'primeng/skeleton';
     ChartModule,
   ],
 })
-export class OverallStatsComponent {
-  public isLoadingOverallStats: boolean;
+export class CompanyStatsComponent {
+  public isLoading: boolean;
   public rpm: number;
-  public overallStats?: OverallStats;
+  public companyStats?: CompanyStats;
 
   constructor(private apiService: ApiService) {
-    this.isLoadingOverallStats = false;
+    this.isLoading = false;
     this.rpm = 0;
   }
 
   ngOnInit(): void {
-    this.fetchOverallStats();
+    this.fetchCompanyStats();
   }
 
-  private fetchOverallStats() {
-    this.isLoadingOverallStats = true;
+  private fetchCompanyStats() {
+    this.isLoading = true;
 
-    this.apiService.getOverallStats().subscribe((result) => {
+    this.apiService.getCompanyStats().subscribe((result) => {
       if (result.success && result.value) {
         const stats = result.value;
-        this.overallStats = result.value;
-        this.rpm = stats.totalIncome / DistanceConverter.metersTo(stats.totalDistance, 'mi');
+        this.companyStats = result.value;
+        this.rpm = stats.totalGross / DistanceConverter.metersTo(stats.totalDistance, 'mi');
       }
 
-      this.isLoadingOverallStats = false;
+      this.isLoading = false;
     });
   }
 }

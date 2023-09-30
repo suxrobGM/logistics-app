@@ -1,9 +1,9 @@
-export interface OverallStats {
-  ownerName?: string;
+export interface CompanyStats {
+  ownerName: string;
   employeesCount: number;
   managersCount: number;
   dispatchersCount: number;
   driversCount: number;
-  totalIncome: number;
+  totalGross: number;
   totalDistance: number;
 }

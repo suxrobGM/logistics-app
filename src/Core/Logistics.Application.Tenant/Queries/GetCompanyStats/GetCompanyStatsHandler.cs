@@ -3,19 +3,19 @@ using Logistics.Models;
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetOverallStatsHandler : RequestHandler<GetOverallStatsQuery, ResponseResult<OverallStatsDto>>
+internal sealed class GetCompanyStatsHandler : RequestHandler<GetCompanyStatsQuery, ResponseResult<CompanyStatsDto>>
 {
     private readonly ITenantRepository _tenantRepository;
 
-    public GetOverallStatsHandler(ITenantRepository tenantRepository)
+    public GetCompanyStatsHandler(ITenantRepository tenantRepository)
     {
         _tenantRepository = tenantRepository;
     }
     
-    protected override async Task<ResponseResult<OverallStatsDto>> HandleValidated(
-        GetOverallStatsQuery req, CancellationToken cancellationToken)
+    protected override async Task<ResponseResult<CompanyStatsDto>> HandleValidated(
+        GetCompanyStatsQuery req, CancellationToken cancellationToken)
     {
-        var overallStatsDto = new OverallStatsDto();
+        var overallStatsDto = new CompanyStatsDto();
         var rolesDict = await _tenantRepository.GetDictionaryAsync<string, TenantRole>(i => i.Name);
         var employees = await _tenantRepository.GetListAsync<Employee>();
         
@@ -47,7 +47,7 @@ internal sealed class GetOverallStatsHandler : RequestHandler<GetOverallStatsQue
         overallStatsDto.DispatchersCount = dispatchersCount;
         overallStatsDto.DriversCount = driversCount;
         overallStatsDto.TotalDistance = sum?.TotalDistance ?? 0;
-        overallStatsDto.TotalIncome = sum?.TotalGross ?? 0;
-        return ResponseResult<OverallStatsDto>.CreateSuccess(overallStatsDto);
+        overallStatsDto.TotalGross = sum?.TotalGross ?? 0;
+        return ResponseResult<CompanyStatsDto>.CreateSuccess(overallStatsDto);
     }
 }

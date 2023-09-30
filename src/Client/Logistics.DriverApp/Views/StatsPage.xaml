@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<views:BaseContentPage x:TypeArguments="viewModels:StatsPageViewModel"
+                       x:Class="Logistics.DriverApp.Views.StatsPage"
+                       xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                       xmlns:views="clr-namespace:Logistics.DriverApp.Views"
+                       xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels"
+                       xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+                       xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
+                       xmlns:converters="clr-namespace:Logistics.DriverApp.Converters"
+                       xmlns:controls="clr-namespace:Logistics.DriverApp.Controls"
+                       Title="My Stats">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:CurrencyConverter x:Key="CurrencyConverter" />
+            <converters:DistanceConverter x:Key="DistanceConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid BackgroundColor="#dae5f3">
+        <core:SfBusyIndicator IsRunning="{Binding IsLoading}"
+                              IndicatorColor="Pink"
+                              OverlayFill="#80000000">
+        </core:SfBusyIndicator>
+
+        <ScrollView Padding="0,10,0,10">
+            <StackLayout Spacing="10">
+                <controls:Card>
+                    <StackLayout>
+                        <HorizontalStackLayout Padding="0,0,0,5">
+                            <Label Text="Truck Daily Grosses for " FontAttributes="Bold" />
+                            <Label Text="{Binding DailyGrossesStartDate, StringFormat='{0:MM/dd/yyyy}'}"
+                                   TextColor="Red" />
+                            <Label Text=" - " />
+                            <Label Text="{Binding DailyGrossesEndDate, StringFormat='{0:MM/dd/yyyy}'}" TextColor="Red" />
+                        </HorizontalStackLayout>
+                        <controls:Separator />
+                        
+                        <HorizontalStackLayout Margin="0,5,0,0" Spacing="5">
+                            <controls:DateRangePicker StartDate="{Binding DailyGrossesStartDate}"
+                                                      EndDate="{Binding DailyGrossesEndDate}">
+                            </controls:DateRangePicker>
+                            <Button Text="Apply" HorizontalOptions="End" CornerRadius="30" />
+                        </HorizontalStackLayout>
+
+                        <chart:SfCartesianChart>
+                            <chart:SfCartesianChart.XAxes>
+                                <chart:DateTimeAxis />
+                            </chart:SfCartesianChart.XAxes>
+
+                            <chart:SfCartesianChart.YAxes>
+                                <chart:NumericalAxis />
+                            </chart:SfCartesianChart.YAxes>
+
+                            <chart:SfCartesianChart.Resources>
+                                <DataTemplate x:Key="ChartTooltipTemplate">
+                                    <VerticalStackLayout>
+                                        <Label Text="{Binding Item.Date, StringFormat='{0:MM/dd/yyyy}'}"
+                                               TextColor="White" HorizontalTextAlignment="Center" />
+                                        <HorizontalStackLayout>
+                                            <Label Text="Gross: " TextColor="White" />
+                                            <Label Text="{Binding Item.Gross, Converter={StaticResource CurrencyConverter}}"
+                                                   TextColor="White" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout>
+                                            <Label Text="Share: " TextColor="White" />
+                                            <Label Text="{Binding Item.DriverShare, Converter={StaticResource CurrencyConverter}}"
+                                                   TextColor="White" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </DataTemplate>
+                            </chart:SfCartesianChart.Resources>
+
+                            <chart:AreaSeries ItemsSource="{Binding DailyGrosses}"
+                                              EnableTooltip="True"
+                                              TooltipTemplate="{StaticResource ChartTooltipTemplate}"
+                                              XBindingPath="Date"
+                                              YBindingPath="Gross">
+                            </chart:AreaSeries>
+                            <chart:AreaSeries ItemsSource="{Binding DailyGrosses}"
+                                              EnableTooltip="True"
+                                              TooltipTemplate="{StaticResource ChartTooltipTemplate}"
+                                              XBindingPath="Date"
+                                              YBindingPath="DriverShare">
+                            </chart:AreaSeries>
+                        </chart:SfCartesianChart>
+                    </StackLayout>
+                </controls:Card>
+
+                <controls:Card>
+                    <StackLayout>
+                        <HorizontalStackLayout Padding="0,0,0,5">
+                            <Label Text="Truck Monthly Grosses for " FontAttributes="Bold" />
+                            <Label Text="{Binding MonthlyGrossesStartDate, StringFormat='{0:MM/dd/yyyy}'}"
+                                   TextColor="Red" />
+                            <Label Text=" - " />
+                            <Label Text="{Binding MonthlyGrossesEndDate, StringFormat='{0:MM/dd/yyyy}'}"
+                                   TextColor="Red" />
+                        </HorizontalStackLayout>
+                        <controls:Separator />
+                        
+                        <HorizontalStackLayout Margin="0,5,0,0" Spacing="5">
+                            <controls:DateRangePicker StartDate="{Binding MonthlyGrossesStartDate}"
+                                                      EndDate="{Binding MonthlyGrossesEndDate}">
+                            </controls:DateRangePicker>
+                            <Button Text="Apply" HorizontalOptions="End" CornerRadius="30" />
+                        </HorizontalStackLayout>
+
+                        <chart:SfCartesianChart>
+                            <chart:SfCartesianChart.XAxes>
+                                <chart:DateTimeAxis IntervalType="Months" />
+                            </chart:SfCartesianChart.XAxes>
+
+                            <chart:SfCartesianChart.YAxes>
+                                <chart:NumericalAxis />
+                            </chart:SfCartesianChart.YAxes>
+
+                            <chart:SfCartesianChart.Resources>
+                                <DataTemplate x:Key="ChartTooltipTemplate">
+                                    <VerticalStackLayout>
+                                        <Label Text="{Binding Item.Date, StringFormat='{0:MMMM yyyy}'}"
+                                               TextColor="White" HorizontalTextAlignment="Center" />
+                                        <HorizontalStackLayout>
+                                            <Label Text="Gross: " TextColor="White" />
+                                            <Label Text="{Binding Item.Gross, Converter={StaticResource CurrencyConverter}}"
+                                                   TextColor="White" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout>
+                                            <Label Text="Share: " TextColor="White" />
+                                            <Label Text="{Binding Item.DriverShare, Converter={StaticResource CurrencyConverter}}"
+                                                   TextColor="White" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </DataTemplate>
+                            </chart:SfCartesianChart.Resources>
+
+                            <chart:ColumnSeries ItemsSource="{Binding MonthlyGrosses}"
+                                                EnableTooltip="True"
+                                                TooltipTemplate="{StaticResource ChartTooltipTemplate}"
+                                                XBindingPath="Date"
+                                                YBindingPath="Gross">
+                            </chart:ColumnSeries>
+                            <chart:ColumnSeries ItemsSource="{Binding MonthlyGrosses}"
+                                                EnableTooltip="True"
+                                                TooltipTemplate="{StaticResource ChartTooltipTemplate}"
+                                                XBindingPath="Date"
+                                                YBindingPath="DriverShare">
+                            </chart:ColumnSeries>
+                        </chart:SfCartesianChart>
+                    </StackLayout>
+                </controls:Card>
+            </StackLayout>
+        </ScrollView>
+    </Grid>
+</views:BaseContentPage>

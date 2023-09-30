@@ -9,7 +9,7 @@ public interface IApiClient :
     ITenantApi, 
     IUserApi, 
     IDriverApi,
-    IDashboardApi
+    IStatsApi
 {
     string? AccessToken { get; set; }
     string? TenantId { get; set; }

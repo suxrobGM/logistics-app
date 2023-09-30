@@ -6,7 +6,7 @@ public partial class Card : Frame
     {
         BackgroundColor = new Color(245, 245, 245);
         // BorderColor = Colors.Gray;
-        CornerRadius = 10;
+        // CornerRadius = 10;
         Padding = 10;
         HasShadow = true;
         InitializeComponent();

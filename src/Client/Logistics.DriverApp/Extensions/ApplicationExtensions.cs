@@ -30,10 +30,10 @@ public static class ApplicationExtensions
         services.AddSingleton<ITenantService, TenantService>();
         services.AddSingleton<IMapsService, GoogleMapsService>();
         services.AddScoped<AppShellViewModel>();
-        services.AddScoped<ActiveLoadsPageViewModel>();
+        services.AddScoped<DashboardPageViewModel>();
         services.AddScoped<AccountPageViewModel>();
         services.AddScoped<LoginPageViewModel>();
-        services.AddScoped<DashboardPageViewModel>();
+        services.AddScoped<StatsPageViewModel>();
         services.AddScoped<ChangeOrganizationPageViewModel>();
         services.AddScoped<IdentityModel.OidcClient.Browser.IBrowser, WebBrowserAuthenticator>();
         services.AddScoped<IAuthService, AuthService>();

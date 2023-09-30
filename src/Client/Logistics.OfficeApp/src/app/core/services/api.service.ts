@@ -15,7 +15,7 @@ import {
   Role,
   DailyGrosses,
   MonthlyGrosses,
-  OverallStats,
+  CompanyStats,
   UpdateEmployee,
   CreateEmployee,
   RemoveEmployeeRole,
@@ -250,18 +250,18 @@ export class ApiService {
   // #endregion
 
 
-  // #region Dashboard API
+  // #region Stats API
 
-  getOverallStats(): Observable<ResponseResult<OverallStats>> {
-    const url = `${this.host}/dashboard/overallStats`;
+  getCompanyStats(): Observable<ResponseResult<CompanyStats>> {
+    const url = `${this.host}/stats/company`;
 
     return this.httpClient
-        .get<ResponseResult<OverallStats>>(url)
+        .get<ResponseResult<CompanyStats>>(url)
         .pipe(catchError((err) => this.handleError(err)));
   }
 
   getDailyGrosses(startDate: Date, endDate?: Date, truckId?: string): Observable<ResponseResult<DailyGrosses>> {
-    let url = `${this.host}/dashboard/dailyGrosses?startDate=${startDate.toJSON()}`;
+    let url = `${this.host}/stats/dailyGrosses?startDate=${startDate.toJSON()}`;
 
     if (endDate) {
       url += `&endDate=${endDate.toJSON()}`;
@@ -276,7 +276,7 @@ export class ApiService {
   }
 
   getMonthlyGrosses(startDate: Date, endDate?: Date, truckId?: string): Observable<ResponseResult<MonthlyGrosses>> {
-    let url = `${this.host}/dashboard/monthlyGrosses?startDate=${startDate.toJSON()}`;
+    let url = `${this.host}/stats/monthlyGrosses?startDate=${startDate.toJSON()}`;
 
     if (endDate) {
       url += `&endDate=${endDate.toJSON()}`;
@@ -291,7 +291,7 @@ export class ApiService {
   }
 
   getTruckStats(startDate: Date, endDate: Date, orderBy = '', page = 1, pageSize = 10): Observable<PagedResponseResult<TruckStats>> {
-    const url = `${this.host}/dashboard/truckStats?startDate=${startDate.toJSON()}&endDate=${endDate.toJSON()}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
+    const url = `${this.host}/stats/truck?startDate=${startDate.toJSON()}&endDate=${endDate.toJSON()}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
 
     return this.httpClient
         .get<ResponseResult<MonthlyGrosses>>(url)

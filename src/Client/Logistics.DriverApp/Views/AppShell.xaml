@@ -10,19 +10,18 @@
         <ShellContent ContentTemplate="{DataTemplate views:LoginPage}"
                       Route="LoginPage" />
     </TabBar>
-    <ShellContent Title="Active Loads" 
-                  ContentTemplate="{DataTemplate views:ActiveLoadsPage}"
-                  Route="ActiveLoadsPage"
-                  IsVisible="{Binding ActiveLoadsPageVisible}">
-        <ShellContent.Icon>
-            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static helpers:MaterialIcons.Local_shipping}" Color="Black" />
-        </ShellContent.Icon>
-    </ShellContent>
     <ShellContent Title="Dashboard" 
-                  ContentTemplate="{DataTemplate views:DashboardPage}" 
+                  ContentTemplate="{DataTemplate views:DashboardPage}"
                   Route="DashboardPage">
         <ShellContent.Icon>
             <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static helpers:MaterialIcons.Dashboard}" Color="Black" />
+        </ShellContent.Icon>
+    </ShellContent>
+    <ShellContent Title="My Stats" 
+                  ContentTemplate="{DataTemplate views:StatsPage}" 
+                  Route="StatsPage">
+        <ShellContent.Icon>
+            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static helpers:MaterialIcons.Bar_chart}" Color="Black" />
         </ShellContent.Icon>
     </ShellContent>
     <ShellContent Title="Account" 
