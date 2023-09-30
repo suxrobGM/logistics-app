@@ -15,83 +15,95 @@
             <converters:CurrencyConverter x:Key="CurrencyConverter" />
             <converters:DistanceConverter x:Key="DistanceConverter" />
             <converters:EmptyListToVisibilityConverter x:Key="EmptyListToVisibilityConverter" />
+            <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <Grid BackgroundColor="#dae5f3" RowSpacing="10" Padding="0,10,0,10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <core:SfBusyIndicator Grid.RowSpan="2" 
+    <Grid BackgroundColor="#dae5f3">
+        <core:SfBusyIndicator ZIndex="2"
                               IsRunning="{Binding IsLoading}"
                               IndicatorColor="Pink"
                               OverlayFill="#80000000">
         </core:SfBusyIndicator>
 
-        <controls:Card Grid.Row="0">
-            <StackLayout Spacing="5">
-                <HorizontalStackLayout Spacing="5">
-                    <Label Text="Truck:" FontAttributes="Bold" />
-                    <Label Text="{Binding TruckNumber}" />
-                </HorizontalStackLayout>
-                <HorizontalStackLayout Spacing="5">
-                    <Label Text="Driver:" FontAttributes="Bold" />
-                    <Label Text="{Binding DriverName}" />
-                </HorizontalStackLayout>
-                <HorizontalStackLayout IsVisible="{Binding IsTeammateLabelVisible}" Spacing="5">
-                    <Label Text="Teammates:" FontAttributes="Bold" />
-                    <Label Text="{Binding TeammatesName}" />
-                </HorizontalStackLayout>
-            </StackLayout>
-        </controls:Card>
+        <Grid RowSpacing="10" Padding="0,10,0,10" ZIndex="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-        <ListView Grid.Row="1" ItemsSource="{Binding Loads}" RowHeight="200" SelectionMode="None">
-            <ListView.Header>
-                <StackLayout Padding="0,10,0,10">
-                    <Label Text="Active loads" FontAttributes="Bold" HorizontalTextAlignment="Center" />
-                    <controls:Separator />
+            <controls:Card Grid.Row="0">
+                <StackLayout Spacing="5">
+                    <HorizontalStackLayout Spacing="5">
+                        <Label Text="Truck:" FontAttributes="Bold" />
+                        <Label Text="{Binding TruckNumber}" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Spacing="5">
+                        <Label Text="Driver:" FontAttributes="Bold" />
+                        <Label Text="{Binding DriverName}" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Spacing="5" IsVisible="{Binding TeammatesName, Converter={StaticResource StringToVisibilityConverter}}">
+                        <Label Text="Teammates:" FontAttributes="Bold" />
+                        <Label Text="{Binding TeammatesName}" />
+                    </HorizontalStackLayout>
                 </StackLayout>
-            </ListView.Header>
-            <ListView.Footer>
-                <Grid IsVisible="{Binding Loads, Converter={StaticResource EmptyListToVisibilityConverter}}">
-                    <Label Text="Currently there is no any active loads available" HorizontalTextAlignment="Center" />
-                </Grid>
-            </ListView.Footer>
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
-                        <controls:Card>
-                            <StackLayout Spacing="8" VerticalOptions="Fill">
-                                <Grid HorizontalOptions="FillAndExpand">
-                                    <HorizontalStackLayout HorizontalOptions="Start">
-                                        <Label Text="#" FontAttributes="Bold" />
-                                        <Label FontAttributes="Bold" Text="{Binding RefId}" />
-                                        <Label FontAttributes="Bold" Margin="10,0,0,0" Text="{Binding Name}" />
-                                    </HorizontalStackLayout>
-                                </Grid>
+            </controls:Card>
 
-                                <controls:Separator />
-                                <HorizontalStackLayout>
-                                    <Label Text="Delivery Cost: " FontAttributes="Bold" />
-                                    <Label Text="{Binding DeliveryCost, Converter={StaticResource CurrencyConverter}}" />
-                                </HorizontalStackLayout>
-                                <HorizontalStackLayout>
-                                    <Label Text="Distance (mi): " FontAttributes="Bold" />
-                                    <Label Text="{Binding Distance, Converter={StaticResource DistanceConverter}, ConverterParameter='mi'}" />
-                                </HorizontalStackLayout>
-                                <HorizontalStackLayout>
-                                    <Label Text="Status: " FontAttributes="Bold" />
-                                    <Label Text="{Binding Status}" />
-                                </HorizontalStackLayout>
-                                <Button Text="View details" 
-                                        Command="{Binding BindingContext.OpenLoadPageCommand, Source={x:Reference dashboardPage}}"
-                                        CommandParameter="{Binding Id}"/>
-                            </StackLayout>
-                        </controls:Card>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            <ListView Grid.Row="1"
+                      ItemsSource="{Binding Loads}"
+                      RowHeight="180"
+                      SelectionMode="None">
+                
+                <ListView.Header>
+                    <StackLayout Padding="0,10,0,10">
+                        <Label Text="Active Loads" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                        <controls:Separator />
+                    </StackLayout>
+                </ListView.Header>
+                
+                <ListView.Footer>
+                    <Grid IsVisible="{Binding Loads, Converter={StaticResource EmptyListToVisibilityConverter}}">
+                        <Label Text="Currently there is no any active loads available" HorizontalTextAlignment="Center" />
+                    </Grid>
+                </ListView.Footer>
+                
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <controls:Card>
+                                <StackLayout Spacing="8" VerticalOptions="Fill">
+                                    <Grid HorizontalOptions="FillAndExpand">
+                                        <HorizontalStackLayout HorizontalOptions="Start">
+                                            <Label Text="#" FontAttributes="Bold" />
+                                            <Label FontAttributes="Bold" Text="{Binding RefId}" />
+                                            <Label FontAttributes="Bold" Margin="10,0,0,0" Text="{Binding Name}" />
+                                        </HorizontalStackLayout>
+                                    </Grid>
+
+                                    <controls:Separator />
+                                    <HorizontalStackLayout>
+                                        <Label Text="Delivery Cost: " FontAttributes="Bold" />
+                                        <Label
+                                            Text="{Binding DeliveryCost, Converter={StaticResource CurrencyConverter}}" />
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <Label Text="Distance (mi): " FontAttributes="Bold" />
+                                        <Label
+                                            Text="{Binding Distance, Converter={StaticResource DistanceConverter}, ConverterParameter='mi'}" />
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <Label Text="Status: " FontAttributes="Bold" />
+                                        <Label Text="{Binding Status}" />
+                                    </HorizontalStackLayout>
+                                    <Button Text="View"
+                                            Command="{Binding BindingContext.OpenLoadPageCommand, Source={x:Reference dashboardPage}}"
+                                            CommandParameter="{Binding Id}" />
+                                </StackLayout>
+                            </controls:Card>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
     </Grid>
 </views:BaseContentPage>

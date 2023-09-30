@@ -61,7 +61,11 @@ export class ListLoadComponent implements OnInit {
   load(event: TableLazyLoadEvent) {
     this.isBusy = true;
     const page = event.first! / event.rows! + 1;
-    const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
+    let sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
+
+    if (sortField === '') { // default sort property
+      sortField = '-dispatchedDate';
+    }
 
     this.apiService.getLoads('', false, sortField, page, event.rows!).subscribe((result) => {
       if (result.success && result.items) {

@@ -5,12 +5,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Tenant.Services;
 
-public class PushNotificationService : IPushNotificationService
+public class PushNotification : IPushNotification
 {
     private readonly FirebaseApp? _firebaseApp;
-    private readonly ILogger<PushNotificationService> _logger;
+    private readonly ILogger<PushNotification> _logger;
 
-    public PushNotificationService(ILogger<PushNotificationService> logger)
+    public PushNotification(ILogger<PushNotification> logger)
     {
         _logger = logger;
 

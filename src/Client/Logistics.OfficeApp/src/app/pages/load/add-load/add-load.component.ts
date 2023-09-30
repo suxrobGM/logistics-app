@@ -143,7 +143,7 @@ export class AddLoadComponent implements OnInit {
         .subscribe((result) => {
           if (result.success) {
             this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A new load has been created successfully'});
-            this.router.navigateByUrl('/loads/list');
+            this.router.navigateByUrl('/load/list');
           }
 
           this.isBusy = false;

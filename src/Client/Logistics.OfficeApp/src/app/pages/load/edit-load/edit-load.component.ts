@@ -196,7 +196,9 @@ export class EditLoadComponent implements OnInit {
       this.form.patchValue({
         name: load.name,
         orgAddress: load.originAddress,
+        orgCoords: [load.originAddressLong, load.originAddressLat],
         dstAddress: load.destinationAddress,
+        dstCoords: [load.destinationAddressLong, load.destinationAddressLat],
         dispatchedDate: this.getLocaleDate(load.dispatchedDate),
         deliveryCost: load.deliveryCost,
         distance: DistanceConverter.metersTo(load.distance, 'mi'),

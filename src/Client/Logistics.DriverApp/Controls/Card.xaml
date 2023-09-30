@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Frame xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentView x:Class="Logistics.DriverApp.Controls.Card"
+       xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-       x:Name="This"
-       x:Class="Logistics.DriverApp.Controls.Card">
-</Frame>
+       BackgroundColor="#f5f5f5"
+       Padding="10">
+</ContentView>

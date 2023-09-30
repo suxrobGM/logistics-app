@@ -1,18 +1,19 @@
-﻿using Logistics.Application.Tenant.Services;
+﻿using Logistics.Application.Tenant.Extensions;
+using Logistics.Application.Tenant.Services;
 
 namespace Logistics.Application.Tenant.Commands;
 
 internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, ResponseResult>
 {
     private readonly ITenantRepository _tenantRepository;
-    private readonly IPushNotificationService _pushNotificationService;
+    private readonly IPushNotification _pushNotification;
 
     public CreateLoadHandler(
         ITenantRepository tenantRepository,
-        IPushNotificationService pushNotificationService)
+        IPushNotification pushNotification)
     {
         _tenantRepository = tenantRepository;
-        _pushNotificationService = pushNotificationService;
+        _pushNotification = pushNotification;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
@@ -51,21 +52,7 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resp
 
         await _tenantRepository.AddAsync(load);
         await _tenantRepository.UnitOfWork.CommitAsync();
-        await SendNotificationsToDriversAsync(load, truck);
+        await _pushNotification.SendNewLoadNotificationAsync(load, truck);
         return ResponseResult.CreateSuccess();
-    }
-
-    private async Task SendNotificationsToDriversAsync(Load load, Truck truck)
-    {
-        var drivers = truck.Drivers.Where(driver => !string.IsNullOrEmpty(driver.DeviceToken));
-        
-        foreach (var driver in drivers)
-        {
-            await _pushNotificationService.SendNotificationAsync(
-                "Received a load",
-                $"A new load #{load.RefId} has been assigned to you", 
-                driver.DeviceToken!,
-                new Dictionary<string, string> {{"loadId", load.Id}});
-        }
     }
 }

@@ -25,6 +25,9 @@ public class DashboardPageViewModel : BaseViewModel
         _authService = authService;
         _locationTrackerBackgroundService = locationTrackerBackgroundService;
         OpenLoadPageCommand = new AsyncRelayCommand<string?>(OpenLoadPageAsync);
+        RefreshCommand = new AsyncRelayCommand(FetchActiveLoadsAsync, () => !IsLoading);
+        
+        IsLoadingChanged += (s, e) => RefreshCommand.NotifyCanExecuteChanged();
         CrossFirebaseCloudMessaging.Current.NotificationReceived += HandleLoadNotificationReceived;
         
         Messenger.Register<TenantIdChangedMessage>(this, async (_, _) =>
@@ -37,13 +40,14 @@ public class DashboardPageViewModel : BaseViewModel
     #region Commands
 
     public IAsyncRelayCommand<string?> OpenLoadPageCommand { get; }
+    public IAsyncRelayCommand RefreshCommand { get; }
 
     #endregion
 
 
     #region Bindable properties
 
-    public ObservableCollection<LoadDto> Loads { get; set; } = new();
+    public ObservableCollection<LoadDto> Loads { get; } = new();
 
     private string? _truckNumber;
     public string? TruckNumber
@@ -148,7 +152,7 @@ public class DashboardPageViewModel : BaseViewModel
         IsLoading = false;
     }
 
-    private async Task FetchDashboardDataAsync()
+    private async Task FetchActiveLoadsAsync()
     {
         IsLoading = true;
         var driverId = _authService.User?.Id!;
@@ -179,15 +183,13 @@ public class DashboardPageViewModel : BaseViewModel
 
     private void AddActiveLoads(IEnumerable<LoadDto> loads)
     {
+        Loads.Clear();
         foreach (var loadDto in loads)
         {
-            var existingLoad = Loads.FirstOrDefault(i => i.Id == loadDto.Id);
-
-            if (existingLoad is not null) 
-                continue;
-            
             Loads.Add(loadDto);
         }
+        
+        OnPropertyChanged(nameof(Loads));
     }
     
     
@@ -197,7 +199,7 @@ public class DashboardPageViewModel : BaseViewModel
     {
         if (e.Notification.Data.ContainsKey("loadId"))
         {
-            await MainThread.InvokeOnMainThreadAsync(FetchDashboardDataAsync);
+            await MainThread.InvokeOnMainThreadAsync(FetchActiveLoadsAsync);
         }
     }
 
