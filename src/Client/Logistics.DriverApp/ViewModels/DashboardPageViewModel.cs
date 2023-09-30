@@ -1,8 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Logistics.DriverApp.Messages;
-using Logistics.DriverApp.Models;
-using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.Authentication;
 using Logistics.DriverApp.Services.LocationTracking;
 using Logistics.Models;
@@ -15,31 +13,37 @@ public class DashboardPageViewModel : BaseViewModel
 {
     private readonly IApiClient _apiClient;
     private readonly IAuthService _authService;
-    private readonly IMapsService _mapsService;
     private readonly ILocationTrackerBackgroundService _locationTrackerBackgroundService;
     private string? _truckId;
 
     public DashboardPageViewModel(
         IApiClient apiClient, 
         IAuthService authService,
-        IMapsService mapsService,
         ILocationTrackerBackgroundService locationTrackerBackgroundService)
     {
         _apiClient = apiClient;
         _authService = authService;
-        _mapsService = mapsService;
         _locationTrackerBackgroundService = locationTrackerBackgroundService;
+        OpenLoadPageCommand = new AsyncRelayCommand<string?>(OpenLoadPageAsync);
         CrossFirebaseCloudMessaging.Current.NotificationReceived += HandleLoadNotificationReceived;
+        
         Messenger.Register<TenantIdChangedMessage>(this, async (_, _) =>
         {
             await MainThread.InvokeOnMainThreadAsync(FetchTruckDataAsync);
         });
     }
 
+    
+    #region Commands
+
+    public IAsyncRelayCommand<string?> OpenLoadPageCommand { get; }
+
+    #endregion
+
 
     #region Bindable properties
-    
-    public ObservableCollection<ActiveLoad> ActiveLoads { get; } = new();
+
+    public ObservableCollection<LoadDto> Loads { get; set; } = new();
 
     private string? _truckNumber;
     public string? TruckNumber
@@ -102,6 +106,17 @@ public class DashboardPageViewModel : BaseViewModel
         });
     }
 
+    private async Task OpenLoadPageAsync(string? loadId)
+    {
+        if (string.IsNullOrEmpty(loadId))
+        {
+            return;
+        }
+
+        var parameters = new Dictionary<string, object> { { "loadId", loadId } };
+        await Shell.Current.GoToAsync("LoadPage", parameters);
+    }
+
     private async Task FetchTruckDataAsync()
     {
         IsLoading = true;
@@ -146,8 +161,7 @@ public class DashboardPageViewModel : BaseViewModel
             return;
         }
         
-        var dashboardData = result.Value!;
-        AddActiveLoads(dashboardData.ActiveLoads);
+        AddActiveLoads(result.Value!.ActiveLoads);
         IsLoading = false;
     }
     
@@ -167,17 +181,15 @@ public class DashboardPageViewModel : BaseViewModel
     {
         foreach (var loadDto in loads)
         {
-            var existingLoad = ActiveLoads.FirstOrDefault(i => i.LoadData.Id == loadDto.Id);
+            var existingLoad = Loads.FirstOrDefault(i => i.Id == loadDto.Id);
 
             if (existingLoad is not null) 
                 continue;
             
-            var originAddress = $"{loadDto.OriginAddressLat},{loadDto.OriginAddressLong}";
-            var destAddress = $"{loadDto.DestinationAddressLat},{loadDto.DestinationAddressLong}";
-            var embedMapHtml = _mapsService.GetDirectionsMapHtml(originAddress, destAddress);
-            ActiveLoads.Add(new ActiveLoad(loadDto, embedMapHtml));
+            Loads.Add(loadDto);
         }
     }
+    
     
     #region Event handlers
 

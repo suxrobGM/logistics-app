@@ -34,12 +34,19 @@ public static class ApplicationExtensions
         services.AddScoped<AccountPageViewModel>();
         services.AddScoped<LoginPageViewModel>();
         services.AddScoped<StatsPageViewModel>();
+        services.AddScoped<LoadPageViewModel>();
         services.AddScoped<ChangeOrganizationPageViewModel>();
         services.AddScoped<IdentityModel.OidcClient.Browser.IBrowser, WebBrowserAuthenticator>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ILocationTracker, LocationTracker>();
         services.AddScoped<ILocationTrackerBackgroundService, LocationTrackerBackgroundService>();
+        RegisterRoutes();
         return builder;
+    }
+
+    private static void RegisterRoutes()
+    {
+        Routing.RegisterRoute(nameof(LoadPage), typeof(LoadPage));
     }
 
     private static IConfiguration BuildConfiguration(this MauiAppBuilder builder)

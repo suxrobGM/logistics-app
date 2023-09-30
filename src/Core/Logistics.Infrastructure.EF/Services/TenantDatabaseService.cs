@@ -90,21 +90,21 @@ public class TenantDatabaseService : ITenantDatabaseService
             if (existingRole != null)
                 continue;
             
-            AddPermissions(role, TenantRolePermissions.GetBasicPermissions());
+            AddRolePermissions(role, TenantRolePermissions.GetBasicPermissions());
             
             switch (role.Name)
             {
                 case TenantRoles.Owner:
-                    AddPermissions(role, TenantRolePermissions.Owner);
+                    AddRolePermissions(role, TenantRolePermissions.Owner);
                     break;
                 case TenantRoles.Manager:
-                    AddPermissions(role, TenantRolePermissions.Manager);
+                    AddRolePermissions(role, TenantRolePermissions.Manager);
                     break;
                 case TenantRoles.Dispatcher:
-                    AddPermissions(role, TenantRolePermissions.Dispatcher);
+                    AddRolePermissions(role, TenantRolePermissions.Dispatcher);
                     break;
                 case TenantRoles.Driver:
-                    AddPermissions(role, TenantRolePermissions.Driver);
+                    AddRolePermissions(role, TenantRolePermissions.Driver);
                     break;
             }
 
@@ -115,7 +115,7 @@ public class TenantDatabaseService : ITenantDatabaseService
         await _context.SaveChangesAsync();
     }
 
-    private void AddPermissions(TenantRole role, IEnumerable<string> permissions)
+    private void AddRolePermissions(TenantRole role, IEnumerable<string> permissions)
     {
         foreach (var permission in permissions)
         {

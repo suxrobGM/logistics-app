@@ -11,7 +11,7 @@ export const DASHBOARD_ROUTES: Routes = [
     canActivate: [AuthGuard],
     data: {
       breadcrumb: 'Main',
-      permission: Permissions.Report.View,
+      permission: Permissions.Stats.View,
     },
   },
 ];

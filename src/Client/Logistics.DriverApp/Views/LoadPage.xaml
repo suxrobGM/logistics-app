@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<views:BaseContentPage x:Class="Logistics.DriverApp.Views.LoadPage"
+                       x:TypeArguments="viewModels:LoadPageViewModel"
+                       xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                       xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+                       xmlns:views="clr-namespace:Logistics.DriverApp.Views"
+                       xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels"
+                       xmlns:converters="clr-namespace:Logistics.DriverApp.Converters"
+                       xmlns:controls="clr-namespace:Logistics.DriverApp.Controls"
+                       Title="Load">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:CurrencyConverter x:Key="CurrencyConverter" />
+            <converters:DistanceConverter x:Key="DistanceConverter" />
+            <converters:ShortAddressConverter x:Key="ShortAddressConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid BackgroundColor="#dae5f3">
+        <core:SfBusyIndicator IsRunning="{Binding IsLoading}"
+                              IndicatorColor="Pink"
+                              OverlayFill="#80000000">
+        </core:SfBusyIndicator>
+        <ScrollView Padding="0,10,0,10">
+            <controls:Card>
+                <StackLayout Spacing="8">
+                    <HorizontalStackLayout>
+                        <Label Text="ID: " FontAttributes="Bold" />
+                        <Label Text="{Binding LoadData.RefId}" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout>
+                        <Label Text="Name: " FontAttributes="Bold" />
+                        <Label Text="{Binding LoadData.Name}" />
+                    </HorizontalStackLayout>
+                    <controls:Separator />
+                    <VerticalStackLayout>
+                        <Label Text="Origin: " FontAttributes="Bold" />
+                        <Label TextColor="DarkSlateGray"
+                               Text="{Binding LoadData.OriginAddress, Converter={StaticResource ShortAddressConverter}}"
+                               FontSize="12" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout>
+                        <Label Text="Destination: " FontAttributes="Bold" />
+                        <Label FontSize="12"
+                               Text="{Binding LoadData.DestinationAddress, Converter={StaticResource ShortAddressConverter}}"
+                               TextColor="DarkSlateGray"/>
+                    </VerticalStackLayout>
+                    <HorizontalStackLayout>
+                        <Label Text="Delivery Cost: " FontAttributes="Bold" />
+                        <Label Text="{Binding LoadData.DeliveryCost, Converter={StaticResource CurrencyConverter}}" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout>
+                        <Label Text="Distance (mi): " FontAttributes="Bold" />
+                        <Label Text="{Binding LoadData.Distance, Converter={StaticResource DistanceConverter}, ConverterParameter='mi'}" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout>
+                        <Label Text="Dispatcher: " FontAttributes="Bold" />
+                        <Label Text="{Binding LoadData.AssignedDispatcherName}" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout>
+                        <Label Text="Status: " FontAttributes="Bold" />
+                        <Label Text="{Binding LoadData.Status}" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout>
+                        <Label Text="Dispatch Date: " FontAttributes="Bold" />
+                        <Label Text="{Binding LoadData.DispatchedDate}" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout>
+                        <Label Text="Pickup Date: " FontAttributes="Bold" />
+                        <Label Text="{Binding LoadData.PickUpDate}" />
+                    </HorizontalStackLayout>
+                    <WebView HeightRequest="350">
+                        <WebView.Source>
+                            <HtmlWebViewSource Html="{Binding EmbedMapHtml}" />
+                        </WebView.Source>
+                    </WebView>
+                </StackLayout>
+            </controls:Card>
+        </ScrollView>
+    </Grid>
+</views:BaseContentPage>

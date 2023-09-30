@@ -8,11 +8,11 @@ public static class TenantRolePermissions
         {
             var list = new List<string>();
             list.AddRange(GetBasicPermissions());
-            list.AddRange(Permissions.GeneratePermissions("Employee"));
-            list.AddRange(Permissions.GeneratePermissions("Load"));
-            list.AddRange(Permissions.GeneratePermissions("Truck"));
-            list.AddRange(Permissions.GeneratePermissions("TenantRole"));
-            list.Add(Permissions.Report.View);
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Employee)));
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Load)));
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Truck)));
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.TenantRole)));
+            list.Add(Permissions.Stats.View);
             return list;
         }
     }
@@ -23,11 +23,11 @@ public static class TenantRolePermissions
         {
             var list = new List<string>();
             list.AddRange(GetBasicPermissions());
-            list.AddRange(Permissions.GeneratePermissions("Load"));
-            list.AddRange(Permissions.GeneratePermissions("Truck"));
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Load)));
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Truck)));
             list.Add(Permissions.Employee.Create);
             list.Add(Permissions.Employee.Edit);
-            list.Add(Permissions.Report.View);
+            list.Add(Permissions.Stats.View);
             return list;
         }
     }
@@ -38,7 +38,7 @@ public static class TenantRolePermissions
         {
             var list = new List<string>();
             list.AddRange(GetBasicPermissions());
-            list.AddRange(Permissions.GeneratePermissions("Load"));
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Load)));
             list.Add(Permissions.Truck.View);
             return list;
         }
@@ -51,6 +51,7 @@ public static class TenantRolePermissions
             var list = new List<string>();
             list.AddRange(GetBasicPermissions());
             list.Add(Permissions.Truck.View);
+            list.Add(Permissions.Load.View);
             return list;
         }
     }

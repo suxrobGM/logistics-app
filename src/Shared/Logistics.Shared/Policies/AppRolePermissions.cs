@@ -10,12 +10,12 @@ public static class AppRolePermissions
         {
             var list = new List<string>();
             list.AddRange(GetBasicPermissions());
-            list.AddRange(Permissions.GeneratePermissions("AppRole"));
-            list.AddRange(Permissions.GeneratePermissions("Employee"));
-            list.AddRange(Permissions.GeneratePermissions("Load"));
-            list.AddRange(Permissions.GeneratePermissions("Truck"));
-            list.AddRange(Permissions.GeneratePermissions("TenantRole"));
-            list.Add(Permissions.Report.View);
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.AppRole)));
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Employee)));
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Load)));
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Truck)));
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.TenantRole)));
+            list.Add(Permissions.Stats.View);
             list.Add(Permissions.Tenant.Create);
             list.Add(Permissions.Tenant.Edit);
             list.Add(Permissions.Tenant.View);
