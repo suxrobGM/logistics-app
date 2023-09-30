@@ -4,6 +4,16 @@ namespace Logistics.Shared.Policies;
 
 public static class Permissions
 {
+    private static readonly IEnumerable<string> Modules; 
+
+    static Permissions()
+    {
+        Modules = typeof(Permissions)
+            .GetNestedTypes(BindingFlags.Public | BindingFlags.Static)
+            .Where(type => type is { IsClass: true, IsSealed: true, IsAbstract: true })
+            .Select(type => type.Name);
+    }
+    
     public static class AppRole
     {
         public const string Create = $"{nameof(Permissions)}.{nameof(AppRole)}.Create";
@@ -67,19 +77,12 @@ public static class Permissions
 
     public static IEnumerable<string> GetAll()
     {
-        var modules = typeof(Permissions)
-            .GetNestedTypes(BindingFlags.Public | BindingFlags.Static)
-            .Where(type => type is { IsClass: true, IsSealed: true, IsAbstract: true })
-            .Select(type => type.Name);
-
         var list = new List<string>();
 
-        foreach (var module in modules)
+        foreach (var module in Modules)
         {
             list.AddRange(GeneratePermissions(module));
         }
-
-        list.Add(Stats.View);
         return list;
     }
 

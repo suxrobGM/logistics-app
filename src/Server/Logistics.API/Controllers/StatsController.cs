@@ -16,7 +16,7 @@ public class StatsController : ControllerBase
     [HttpGet("dailyGrosses")]
     [ProducesResponseType(typeof(ResponseResult<DailyGrossesDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Employee.View)]
+    [Authorize(Policy = Permissions.Stats.View)]
     public async Task<IActionResult> GetDailyGrosses([FromQuery] GetDailyGrossesQuery request)
     {
         var result = await _mediator.Send(request);
@@ -30,7 +30,7 @@ public class StatsController : ControllerBase
     [HttpGet("monthlyGrosses")]
     [ProducesResponseType(typeof(ResponseResult<MonthlyGrossesDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Employee.View)]
+    [Authorize(Policy = Permissions.Stats.View)]
     public async Task<IActionResult> GetMonthlyGrosses([FromQuery] GetMonthlyGrossesQuery request)
     {
         var result = await _mediator.Send(request);
@@ -44,7 +44,7 @@ public class StatsController : ControllerBase
     [HttpGet("company")]
     [ProducesResponseType(typeof(ResponseResult<CompanyStatsDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Employee.View)]
+    [Authorize(Policy = Permissions.Stats.View)]
     public async Task<IActionResult> GetCompanyStats([FromQuery] GetCompanyStatsQuery request)
     {
         var result = await _mediator.Send(request);
@@ -58,7 +58,7 @@ public class StatsController : ControllerBase
     [HttpGet("truck")]
     [ProducesResponseType(typeof(PagedResponseResult<TruckStatsDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Employee.View)]
+    [Authorize(Policy = Permissions.Stats.View)]
     public async Task<IActionResult> GetTruckStatsList([FromQuery] GetTruckStatsListQuery request)
     {
         var result = await _mediator.Send(request);

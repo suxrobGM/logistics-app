@@ -29,6 +29,7 @@ public static class AppRolePermissions
         {
             var list = new List<string>();
             list.AddRange(GetBasicPermissions());
+            list.Add(Permissions.Stats.View);
             list.Add(Permissions.Tenant.View);
             return list;
         }

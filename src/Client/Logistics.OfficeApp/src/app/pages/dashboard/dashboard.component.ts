@@ -1,7 +1,8 @@
 import {Component} from '@angular/core';
 import {CommonModule} from '@angular/common';
+import {AppConfig} from '@configs';
+import {GrossesBarchartComponent, TrucksMapComponent} from '@shared/components';
 import {CompanyStatsComponent, TruckStatsTableComponent} from './components';
-import {GrossesBarchartComponent} from '@shared/components';
 
 
 @Component({
@@ -14,8 +15,13 @@ import {GrossesBarchartComponent} from '@shared/components';
     TruckStatsTableComponent,
     GrossesBarchartComponent,
     CompanyStatsComponent,
+    TrucksMapComponent,
   ],
 })
 export class DashboardComponent {
-  constructor() {}
+  public readonly accessToken: string;
+
+  constructor() {
+    this.accessToken = AppConfig.mapboxToken;
+  }
 }

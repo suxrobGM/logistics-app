@@ -40,6 +40,7 @@ public static class TenantRolePermissions
             list.AddRange(GetBasicPermissions());
             list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Load)));
             list.Add(Permissions.Truck.View);
+            list.Add(Permissions.Stats.View);
             return list;
         }
     }
@@ -52,6 +53,7 @@ public static class TenantRolePermissions
             list.AddRange(GetBasicPermissions());
             list.Add(Permissions.Truck.View);
             list.Add(Permissions.Load.View);
+            list.Add(Permissions.Stats.View);
             return list;
         }
     }

@@ -8,10 +8,8 @@
         <h4 class="ps-3 py-2">Trucks</h4>
         <hr class="w-100 m-0" />
       </ng-template>
-      <app-geolocation-map [accessToken]="accessToken"
-        [height]="'700px'"
-        [geolocationData]="truckLocations">
-      </app-geolocation-map>
+      <app-trucks-map [accessToken]="accessToken" height="700px">
+      </app-trucks-map>
     </p-card>
   </div>
 

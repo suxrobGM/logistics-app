@@ -40,6 +40,14 @@ export class CompanyStatsComponent {
     this.fetchCompanyStats();
   }
 
+  calcRpm(gross?: number, distance?: number): number {
+    if (gross == null || distance == null) {
+      return 0;
+    }
+
+    return gross / DistanceConverter.metersTo(distance, 'mi');
+  }
+
   private fetchCompanyStats() {
     this.isLoading = true;
 

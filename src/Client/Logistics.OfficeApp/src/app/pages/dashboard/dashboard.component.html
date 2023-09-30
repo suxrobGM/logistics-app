@@ -2,7 +2,9 @@
 <hr class="w-100">
 
 <div class="row mt-3 g-3">
-  <app-company-stats class="col-12"></app-company-stats>
+  <app-company-stats class="col-12 col-md-6"></app-company-stats>
+  <app-trucks-map class="col-12 col-md-6" [accessToken]="accessToken" height="550px">
+  </app-trucks-map>
   <app-truck-stats-table class="col-12"></app-truck-stats-table>
   <app-grosses-barchart class="col-12" chartColor="#88a5d3"></app-grosses-barchart>
 </div>

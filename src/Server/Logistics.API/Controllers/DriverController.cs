@@ -45,7 +45,7 @@ public class DriverController : ControllerBase
     [ProducesResponseType(typeof(ResponseResult<TruckDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Truck.View)]
-    public async Task<IActionResult> GetDriverTruck(string userId, [FromQuery] GetTruckByDriverQuery query)
+    public async Task<IActionResult> GetTruckByDriver(string userId, [FromQuery] GetTruckByDriverQuery query)
     {
         query.UserId = userId;
         var result = await _mediator.Send(query);

@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {NgIf, CurrencyPipe} from '@angular/common';
 import {RouterLink} from '@angular/router';
 import {ChartModule} from 'primeng/chart';
@@ -10,8 +10,8 @@ import {SharedModule} from 'primeng/api';
 import {CardModule} from 'primeng/card';
 import {AppConfig} from '@configs';
 import {DailyGrosses, TruckGeolocation, Load} from '@core/models';
-import {ApiService, LiveTrackingService} from '@core/services';
-import {GeolocationMapComponent} from '@shared/components';
+import {ApiService} from '@core/services';
+import {TrucksMapComponent} from '@shared/components';
 import {DistanceUnitPipe} from '@shared/pipes';
 import {DateUtils, DistanceConverter} from '@shared/utils';
 
@@ -25,7 +25,6 @@ import {DateUtils, DistanceConverter} from '@shared/utils';
   imports: [
     CardModule,
     SharedModule,
-    GeolocationMapComponent,
     TableModule,
     RouterLink,
     TooltipModule,
@@ -35,9 +34,10 @@ import {DateUtils, DistanceConverter} from '@shared/utils';
     ChartModule,
     CurrencyPipe,
     DistanceUnitPipe,
+    TrucksMapComponent,
   ],
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit {
   public readonly accessToken: string;
   public todayGross: number;
   public weeklyGross: number;
@@ -50,9 +50,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   public chartOptions: any;
   public truckLocations: TruckGeolocation[];
 
-  constructor(
-    private apiService: ApiService,
-    private liveTrackingService: LiveTrackingService)
+  constructor(private apiService: ApiService)
   {
     this.accessToken = AppConfig.mapboxToken;
     this.truckLocations = [];
@@ -83,53 +81,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     };
   }
 
-  public ngOnInit() {
+  ngOnInit() {
     this.fetchActiveLoads();
     this.fetchLastTenDaysGross();
-    this.fetchTrucksData();
-    this.connectToLiveTracking();
-  }
-
-  public ngOnDestroy(): void {
-    this.liveTrackingService.disconnect();
-  }
-
-  private connectToLiveTracking() {
-    this.liveTrackingService.connect();
-
-    this.liveTrackingService.onReceiveGeolocationData = (data: TruckGeolocation) => {
-      const index = this.truckLocations.findIndex((loc) => loc.truckId === data.truckId);
-
-      if (index !== -1) {
-        this.truckLocations[index] = data;
-      }
-      else {
-        this.truckLocations.push(data);
-      }
-    };
-  }
-
-  private fetchTrucksData() {
-    this.apiService.getTrucks('', '', 1, 100).subscribe((result) => {
-      if (!result.success) {
-        return;
-      }
-
-      const truckLocations: TruckGeolocation[] = result.items!.flatMap((truck) => {
-        if (truck.currentLocation) {
-          return [{
-            latitude: truck.currentLocationLat!,
-            longitude: truck.currentLocationLong!,
-            truckId: truck.id,
-            truckNumber: truck.truckNumber,
-            driversName: truck.drivers.map((driver) => driver.fullName).join(', '),
-          }];
-        }
-        return [];
-      });
-
-      this.truckLocations = truckLocations;
-    });
   }
 
   private fetchActiveLoads() {
