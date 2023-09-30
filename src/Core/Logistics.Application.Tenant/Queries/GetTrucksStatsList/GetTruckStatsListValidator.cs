@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetTruckStatsListValidator : AbstractValidator<GetTruckStatsListQuery>
+internal sealed class GetTruckStatsListValidator : AbstractValidator<GetTrucksStatsListQuery>
 {
     public GetTruckStatsListValidator()
     {

@@ -290,8 +290,8 @@ export class ApiService {
         .pipe(catchError((err) => this.handleError(err)));
   }
 
-  getTruckStats(startDate: Date, endDate: Date, orderBy = '', page = 1, pageSize = 10): Observable<PagedResponseResult<TruckStats>> {
-    const url = `${this.host}/stats/truck?startDate=${startDate.toJSON()}&endDate=${endDate.toJSON()}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
+  getTrucksStats(startDate: Date, endDate: Date, orderBy = '', page = 1, pageSize = 10): Observable<PagedResponseResult<TruckStats>> {
+    const url = `${this.host}/stats/trucks?startDate=${startDate.toJSON()}&endDate=${endDate.toJSON()}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
 
     return this.httpClient
         .get<ResponseResult<MonthlyGrosses>>(url)

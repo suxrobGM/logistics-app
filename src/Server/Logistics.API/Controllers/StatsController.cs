@@ -55,12 +55,27 @@ public class StatsController : ControllerBase
         return BadRequest(result.Error);
     }
     
-    [HttpGet("truck")]
+    [HttpGet("trucks")]
     [ProducesResponseType(typeof(PagedResponseResult<TruckStatsDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Stats.View)]
-    public async Task<IActionResult> GetTruckStatsList([FromQuery] GetTruckStatsListQuery request)
+    public async Task<IActionResult> GetTrucksStatsList([FromQuery] GetTrucksStatsListQuery request)
     {
+        var result = await _mediator.Send(request);
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result.Error);
+    }
+    
+    [HttpGet("driver/{userId}")]
+    [ProducesResponseType(typeof(PagedResponseResult<DriverStatsDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Stats.View)]
+    public async Task<IActionResult> GetDriverStatsList(string userId, [FromQuery] GetDriverStatsQuery request)
+    {
+        request.UserId = userId;
         var result = await _mediator.Send(request);
 
         if (result.Success)

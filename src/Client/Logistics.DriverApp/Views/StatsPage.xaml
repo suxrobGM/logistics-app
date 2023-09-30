@@ -19,6 +19,71 @@
         <ScrollView Padding="0,10,0,10" ZIndex="1">
             <StackLayout Spacing="10">
                 <controls:Card>
+                    <StackLayout Spacing="8">
+                        <HorizontalStackLayout>
+                            <Label Text="Gross this week: " FontAttributes="Bold" />
+                            <Label Text="{Binding DriverStats.ThisWeekGross, Converter={StaticResource CurrencyConverter}}" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout>
+                            <Label Text="Your income this week: " FontAttributes="Bold" />
+                            <Label Text="{Binding DriverStats.ThisWeekShare, Converter={StaticResource CurrencyConverter}}" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout>
+                            <Label Text="Distance traveled this week: " FontAttributes="Bold" />
+                            <Label Text="{Binding DriverStats.ThisWeekDistance, Converter={StaticResource DistanceConverter}, ConverterParameter='mi'}" />
+                            <Label Text=" mi" />
+                        </HorizontalStackLayout>
+                        
+                        <controls:Separator />
+                        
+                        <HorizontalStackLayout>
+                            <Label Text="Gross last week: " FontAttributes="Bold" />
+                            <Label Text="{Binding DriverStats.LastWeekGross, Converter={StaticResource CurrencyConverter}}" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout>
+                            <Label Text="Your income last week: " FontAttributes="Bold" />
+                            <Label Text="{Binding DriverStats.LastWeekShare, Converter={StaticResource CurrencyConverter}}" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout>
+                            <Label Text="Distance traveled last week: " FontAttributes="Bold" />
+                            <Label Text="{Binding DriverStats.LastWeekDistance, Converter={StaticResource DistanceConverter}, ConverterParameter='mi'}" />
+                            <Label Text=" mi" />
+                        </HorizontalStackLayout>
+                        
+                        <controls:Separator />
+                        
+                        <HorizontalStackLayout>
+                            <Label Text="Gross this month: " FontAttributes="Bold" />
+                            <Label Text="{Binding DriverStats.ThisMonthGross, Converter={StaticResource CurrencyConverter}}" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout>
+                            <Label Text="Your income last month: " FontAttributes="Bold" />
+                            <Label Text="{Binding DriverStats.ThisMonthShare, Converter={StaticResource CurrencyConverter}}" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout>
+                            <Label Text="Distance traveled last month: " FontAttributes="Bold" />
+                            <Label Text="{Binding DriverStats.ThisMonthDistance, Converter={StaticResource DistanceConverter}, ConverterParameter='mi'}" />
+                            <Label Text=" mi" />
+                        </HorizontalStackLayout>
+                        
+                        <controls:Separator />
+                        
+                        <HorizontalStackLayout>
+                            <Label Text="Gross last month: " FontAttributes="Bold" />
+                            <Label Text="{Binding DriverStats.LastMonthGross, Converter={StaticResource CurrencyConverter}}" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout>
+                            <Label Text="Your income last month: " FontAttributes="Bold" />
+                            <Label Text="{Binding DriverStats.LastMonthShare, Converter={StaticResource CurrencyConverter}}" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout>
+                            <Label Text="Distance traveled last month: " FontAttributes="Bold" />
+                            <Label Text="{Binding DriverStats.LastMonthDistance, Converter={StaticResource DistanceConverter}, ConverterParameter='mi'}" />
+                            <Label Text=" mi" />
+                        </HorizontalStackLayout>
+                    </StackLayout>
+                </controls:Card>
+                <controls:Card>
                     <StackLayout>
                         <HorizontalStackLayout Padding="0,0,0,5">
                             <Label Text="Truck Daily Grosses for " FontAttributes="Bold" />

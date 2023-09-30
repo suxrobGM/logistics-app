@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class GetTruckStatsListQuery : PagedIntervalQuery<TruckStatsDto>
+public class GetTrucksStatsListQuery : PagedIntervalQuery<TruckStatsDto>
 {
     
 }

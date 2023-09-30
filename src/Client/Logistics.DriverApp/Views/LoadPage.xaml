@@ -44,8 +44,9 @@
                         <Label Text="{Binding LoadData.DeliveryCost, Converter={StaticResource CurrencyConverter}}" />
                     </HorizontalStackLayout>
                     <HorizontalStackLayout>
-                        <Label Text="Distance (mi): " FontAttributes="Bold" />
+                        <Label Text="Distance: " FontAttributes="Bold" />
                         <Label Text="{Binding LoadData.Distance, Converter={StaticResource DistanceConverter}, ConverterParameter='mi'}" />
+                        <Label Text=" mi" />
                     </HorizontalStackLayout>
                     <HorizontalStackLayout>
                         <Label Text="Dispatcher: " FontAttributes="Bold" />

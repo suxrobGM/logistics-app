@@ -43,6 +43,13 @@ public class StatsPageViewModel : BaseViewModel
 	// public IList<Brush> ChartBrushes { get; }
     public ObservableCollection<DailyGrossDto> DailyGrosses { get; } = new();
     public ObservableCollection<MonthlyGrossDto> MonthlyGrosses { get; } = new();
+    
+    private DriverStatsDto? _driverStats;
+    public DriverStatsDto? DriverStats
+    {
+	    get => _driverStats;
+	    set => SetProperty(ref _driverStats, value);
+    }
 
     private DateTime _dailyGrossesStartDate;
     public DateTime DailyGrossesStartDate
@@ -79,16 +86,34 @@ public class StatsPageViewModel : BaseViewModel
     {
         await FetchTruckDailyGrossesAsync();
         await FetchTruckMonthlyGrossesAsync();
+		await FetchDriverStatsAsync();
+    }
+
+    private async Task FetchDriverStatsAsync()
+    {
+	    IsLoading = true;
+	    var driverUserId = _authService.User!.Id!;
+	    var result = await _apiClient.GetDriverStatsAsync(driverUserId);
+
+	    if (!result.Success)
+	    {
+		    await PopupHelpers.ShowErrorAsync("Failed to fetch driver's stats, try again");
+		    IsLoading = false;
+		    return;
+	    }
+
+	    DriverStats = result.Value!;
+	    IsLoading = false;
     }
 
     private async Task FetchTruckDailyGrossesAsync()
 	{
         IsLoading = true;
-        var driverId = _authService.User!.Id!;
+        var driverUserId = _authService.User!.Id!;
 
         var result = await _apiClient.GetDailyGrossesAsync(new GetDailyGrossesQuery
         {
-	        UserId = driverId,
+	        UserId = driverUserId,
 	        StartDate = DailyGrossesStartDate,
 	        EndDate = DailyGrossesEndDate
         });
@@ -112,11 +137,11 @@ public class StatsPageViewModel : BaseViewModel
     private async Task FetchTruckMonthlyGrossesAsync()
     {
 	    IsLoading = true;
-	    var driverId = _authService.User!.Id!;
+	    var driverUserId = _authService.User!.Id!;
 
 	    var result = await _apiClient.GetMonthlyGrossesAsync(new GetMonthlyGrossesQuery
 	    {
-		    UserId = driverId,
+		    UserId = driverUserId,
 		    StartDate = MonthlyGrossesStartDate,
 		    EndDate = MonthlyGrossesEndDate
 	    });

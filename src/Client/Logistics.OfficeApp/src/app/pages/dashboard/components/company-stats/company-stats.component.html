@@ -82,65 +82,65 @@
       </div>
 
       <div class="col-6">
-        <span class="fw-bold">Total gross for this week: </span><br />
+        <span class="fw-bold">Total gross this week: </span><br />
         <span>{{companyStats?.thisWeekGross| currency}}</span>
       </div>
       <div class="col-6">
-        <span class="fw-bold">Total gross for last week: </span><br />
+        <span class="fw-bold">Total gross last week: </span><br />
         <span>{{companyStats?.lastWeekGross | currency}}</span>
       </div>
       <div class="col-6">
-        <span class="fw-bold">Total gross for this month: </span><br />
+        <span class="fw-bold">Total gross this month: </span><br />
         <span>{{companyStats?.thisMonthGross | currency}}</span>
       </div>
       <div class="col-6">
-        <span class="fw-bold">Total gross for last month: </span><br />
+        <span class="fw-bold">Total gross last month: </span><br />
         <span>{{companyStats?.lastMonthGross | currency}}</span>
       </div>
       <div class="col-6">
-        <span class="fw-bold">Total gross for all time: </span><br />
+        <span class="fw-bold">Total gross all time: </span><br />
         <span>{{companyStats?.totalGross | currency}}</span>
       </div>
 
       <!-- <div class="col-12 col-md-6">
-        <span class="fw-bold">Total distance for this week: </span><br />
+        <span class="fw-bold">Total distance this week: </span><br />
         <span>{{companyStats?.thisWeekDistance | distanceUnit:'mi'}} mi</span>
       </div>
       <div class="col-12 col-md-6">
-        <span class="fw-bold">Total distance for last week: </span><br />
+        <span class="fw-bold">Total distance last week: </span><br />
         <span>{{companyStats?.lastWeekDistance | distanceUnit:'mi'}} mi</span>
       </div>
       <div class="col-12 col-md-6">
-        <span class="fw-bold">Total distance for this month: </span><br />
+        <span class="fw-bold">Total distance this month: </span><br />
         <span>{{companyStats?.thisMonthDistance | distanceUnit:'mi'}} mi</span>
       </div>
       <div class="col-12 col-md-6">
-        <span class="fw-bold">Total distance for last month: </span><br />
+        <span class="fw-bold">Total distance last month: </span><br />
         <span>{{companyStats?.lastMonthDistance | distanceUnit:'mi'}} mi</span>
       </div>
       <div class="col-12 col-md-6">
-        <span class="fw-bold">Total distance for all time: </span><br />
+        <span class="fw-bold">Total distance all time: </span><br />
         <span>{{companyStats?.totalDistance | distanceUnit:'mi'}} mi</span>
       </div> -->
 
       <div class="col-6">
-        <span class="fw-bold">RPM for this week: </span><br />
+        <span class="fw-bold">RPM this week: </span><br />
         <span>{{calcRpm(companyStats?.thisWeekGross, companyStats?.thisWeekDistance) | currency}}</span>
       </div>
       <div class="col-6">
-        <span class="fw-bold">RPM for last week: </span><br />
+        <span class="fw-bold">RPM last week: </span><br />
         <span>{{calcRpm(companyStats?.lastWeekGross, companyStats?.lastWeekDistance) | currency}}</span>
       </div>
       <div class="col-6">
-        <span class="fw-bold">RPM for this month: </span><br />
+        <span class="fw-bold">RPM this month: </span><br />
         <span>{{calcRpm(companyStats?.thisMonthGross, companyStats?.thisMonthDistance) | currency}}</span>
       </div>
       <div class="col-6">
-        <span class="fw-bold">RPM for last month: </span><br />
+        <span class="fw-bold">RPM last month: </span><br />
         <span>{{calcRpm(companyStats?.lastMonthGross, companyStats?.lastMonthDistance) | currency}}</span>
       </div>
       <div class="col-6">
-        <span class="fw-bold">RPM for all time: </span><br />
+        <span class="fw-bold">RPM all time: </span><br />
         <span>{{calcRpm(companyStats?.totalGross, companyStats?.totalDistance) | currency}}</span>
       </div>
     </div>

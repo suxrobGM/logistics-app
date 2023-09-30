@@ -5,7 +5,7 @@ using Logistics.Models;
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class GetTruckStatsListHandler : RequestHandler<GetTruckStatsListQuery, PagedResponseResult<TruckStatsDto>>
+public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, PagedResponseResult<TruckStatsDto>>
 {
     private readonly ITenantRepository _tenantRepository;
 
@@ -15,7 +15,7 @@ public class GetTruckStatsListHandler : RequestHandler<GetTruckStatsListQuery, P
     }
     
     protected override Task<PagedResponseResult<TruckStatsDto>> HandleValidated(
-        GetTruckStatsListQuery req, CancellationToken cancellationToken)
+        GetTrucksStatsListQuery req, CancellationToken cancellationToken)
     {
         var totalItems = _tenantRepository.Query<Truck>().Count();
 

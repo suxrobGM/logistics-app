@@ -327,5 +327,10 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakeGetRequestAsync<ResponseResult<MonthlyGrossesDto>>("stats/monthlyGrosses", query.ToDictionary());
     }
 
+    public Task<ResponseResult<DriverStatsDto>> GetDriverStatsAsync(string userId)
+    {
+        return MakeGetRequestAsync<ResponseResult<DriverStatsDto>>($"stats/driver/{userId}");  
+    }
+
     #endregion
 }
