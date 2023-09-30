@@ -8,10 +8,10 @@ public partial class DateRangePicker : ContentView
     }
     
     public static readonly BindableProperty StartDateProperty = 
-        BindableProperty.Create(nameof(StartDate), typeof(DateTime), typeof(DateRangePicker), DateTime.Today.AddDays(-1), propertyChanged: OnStartDateChanged);
-    
-    public static readonly BindableProperty EndDateProperty = 
-        BindableProperty.Create(nameof(EndDate), typeof(DateTime), typeof(DateRangePicker), DateTime.Today, propertyChanged: OnEndDateChanged);
+        BindableProperty.Create(nameof(StartDate), typeof(DateTime), typeof(DateRangePicker), DateTime.Today.AddDays(-1), defaultBindingMode: BindingMode.TwoWay, propertyChanged: OnStartDateChanged);
+
+    public static readonly BindableProperty EndDateProperty =
+        BindableProperty.Create(nameof(EndDate), typeof(DateTime), typeof(DateRangePicker), DateTime.Today, defaultBindingMode: BindingMode.TwoWay, propertyChanged: OnEndDateChanged);
 
     public DateTime StartDate
     {

@@ -25,30 +25,31 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
     }
 
     #endregion
-    
-    public async void ApplyQueryAttributes(IDictionary<string, object> query)
+
+    protected override async Task OnAppearingAsync()
     {
-        var loadId = query["loadId"] as string;
-        
-        if (loadId == _lastLoadId)
-        {
-            return;
-        }
-
-        if (string.IsNullOrEmpty(loadId))
-        {
-            await PopupHelpers.ShowErrorAsync("Load ID is null, try again");
-            return;
-        }
-
-        _lastLoadId = loadId;
-        await FetchLoadAsync(loadId);
+        await FetchLoadAsync();
     }
 
-    private async Task FetchLoadAsync(string loadId)
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
+        var loadId = query["loadId"] as string;
+
+        if (!string.IsNullOrEmpty(loadId) && loadId != _lastLoadId)
+        {
+            _lastLoadId = loadId;
+        }
+    }
+
+    private async Task FetchLoadAsync()
+    {
+        if (string.IsNullOrEmpty(_lastLoadId))
+        {
+            return;
+        }
+        
         IsLoading = true;
-        var result = await _apiClient.GetLoadAsync(loadId);
+        var result = await _apiClient.GetLoadAsync(_lastLoadId);
         
         if (!result.Success)
         {

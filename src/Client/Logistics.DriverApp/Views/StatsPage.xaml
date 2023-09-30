@@ -7,24 +7,16 @@
                        xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels"
                        xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
                        xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
-                       xmlns:converters="clr-namespace:Logistics.DriverApp.Converters"
                        xmlns:controls="clr-namespace:Logistics.DriverApp.Controls"
                        Title="My Stats">
-
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <converters:CurrencyConverter x:Key="CurrencyConverter" />
-            <converters:DistanceConverter x:Key="DistanceConverter" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
-
     <Grid BackgroundColor="#dae5f3">
-        <core:SfBusyIndicator IsRunning="{Binding IsLoading}"
+        <core:SfBusyIndicator ZIndex="2" 
+                              IsRunning="{Binding IsLoading}"
                               IndicatorColor="Pink"
                               OverlayFill="#80000000">
         </core:SfBusyIndicator>
 
-        <ScrollView Padding="0,10,0,10">
+        <ScrollView Padding="0,10,0,10" ZIndex="1">
             <StackLayout Spacing="10">
                 <controls:Card>
                     <StackLayout>
@@ -41,7 +33,10 @@
                             <controls:DateRangePicker StartDate="{Binding DailyGrossesStartDate}"
                                                       EndDate="{Binding DailyGrossesEndDate}">
                             </controls:DateRangePicker>
-                            <Button Text="Apply" HorizontalOptions="End" CornerRadius="30" />
+                            <Button Text="Apply" 
+                                    HorizontalOptions="End" 
+                                    CornerRadius="30" 
+                                    Command="{Binding FetchTruckDailyGrossesCommand}" />
                         </HorizontalStackLayout>
 
                         <chart:SfCartesianChart>
@@ -72,18 +67,18 @@
                                 </DataTemplate>
                             </chart:SfCartesianChart.Resources>
 
-                            <chart:AreaSeries ItemsSource="{Binding DailyGrosses}"
-                                              EnableTooltip="True"
-                                              TooltipTemplate="{StaticResource ChartTooltipTemplate}"
-                                              XBindingPath="Date"
-                                              YBindingPath="Gross">
-                            </chart:AreaSeries>
-                            <chart:AreaSeries ItemsSource="{Binding DailyGrosses}"
-                                              EnableTooltip="True"
-                                              TooltipTemplate="{StaticResource ChartTooltipTemplate}"
-                                              XBindingPath="Date"
-                                              YBindingPath="DriverShare">
-                            </chart:AreaSeries>
+                            <chart:ColumnSeries ItemsSource="{Binding DailyGrosses}"
+                                                EnableTooltip="True"
+                                                TooltipTemplate="{StaticResource ChartTooltipTemplate}"
+                                                XBindingPath="Date"
+                                                YBindingPath="Gross">
+                            </chart:ColumnSeries>
+                            <chart:ColumnSeries ItemsSource="{Binding DailyGrosses}"
+                                                EnableTooltip="True"
+                                                TooltipTemplate="{StaticResource ChartTooltipTemplate}"
+                                                XBindingPath="Date"
+                                                YBindingPath="DriverShare">
+                            </chart:ColumnSeries>
                         </chart:SfCartesianChart>
                     </StackLayout>
                 </controls:Card>
@@ -104,7 +99,10 @@
                             <controls:DateRangePicker StartDate="{Binding MonthlyGrossesStartDate}"
                                                       EndDate="{Binding MonthlyGrossesEndDate}">
                             </controls:DateRangePicker>
-                            <Button Text="Apply" HorizontalOptions="End" CornerRadius="30" />
+                            <Button Text="Apply" 
+                                    HorizontalOptions="End" 
+                                    CornerRadius="30"
+                                    Command="{Binding FetchTruckMonthlyGrossesCommand}" />
                         </HorizontalStackLayout>
 
                         <chart:SfCartesianChart>

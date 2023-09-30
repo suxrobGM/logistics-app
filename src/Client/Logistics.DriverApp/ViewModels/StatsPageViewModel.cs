@@ -15,16 +15,27 @@ public class StatsPageViewModel : BaseViewModel
 	{
 		_authService = authService;
 		_apiClient = apiClient;
-		_dailyGrossesStartDate = DateTime.Today.AddMonths(-1);
+		_dailyGrossesStartDate = DateTime.Today.AddDays(-7);
 		_dailyGrossesEndDate = DateTime.Today;
 		_monthlyGrossesStartDate = new DateTime(DateTime.Now.Year, 1, 1); // beginning of the current year
 		_monthlyGrossesEndDate = DateTime.Today;
-        //ChartBrushes = new List<Brush>
-        //{
-        //    new SolidColorBrush(Color.FromRgb(236, 64, 122)),
-        //    new SolidColorBrush(Color.FromRgb(136, 165, 211))
-        //};
-    }
+		FetchTruckDailyGrossesCommand = new AsyncRelayCommand(FetchTruckDailyGrossesAsync, () => !IsLoading);
+		FetchTruckMonthlyGrossesCommand = new AsyncRelayCommand(FetchTruckMonthlyGrossesAsync, () => !IsLoading);
+		IsLoadingChanged += (_, _) => NotifyButtonsCanExecuteChanged();
+		//ChartBrushes = new List<Brush>
+		//{
+		//    new SolidColorBrush(Color.FromRgb(236, 64, 122)),
+		//    new SolidColorBrush(Color.FromRgb(136, 165, 211))
+		//};
+	}
+
+
+	#region Commands
+
+	public IAsyncRelayCommand FetchTruckDailyGrossesCommand { get; }
+	public IAsyncRelayCommand FetchTruckMonthlyGrossesCommand { get; }
+
+	#endregion
 
 
     #region Bindable properties
@@ -89,6 +100,7 @@ public class StatsPageViewModel : BaseViewModel
 	        return;
         }
 
+		DailyGrosses.Clear();
         foreach (var dailyGross in result.Value!.Data)
         {
 	        DailyGrosses.Add(dailyGross);
@@ -116,11 +128,18 @@ public class StatsPageViewModel : BaseViewModel
 		    return;
 	    }
 
-	    foreach (var monthlyGross in result.Value!.Data)
+        MonthlyGrosses.Clear();
+        foreach (var monthlyGross in result.Value!.Data)
 	    {
 		    MonthlyGrosses.Add(monthlyGross);
 	    }
 
 	    IsLoading = false;
+    }
+
+    private void NotifyButtonsCanExecuteChanged()
+    {
+	    FetchTruckDailyGrossesCommand.NotifyCanExecuteChanged();
+	    FetchTruckMonthlyGrossesCommand.NotifyCanExecuteChanged();
     }
 }
