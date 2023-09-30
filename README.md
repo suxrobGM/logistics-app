@@ -14,6 +14,9 @@ Logistics TMS primarily targets logistics and trucking companies seeking to stre
 
 Operating on a multi-tenant architecture, Logistics TMS features a primary database for storing user credentials and tenant data, including company name, subdomain name, database connection string, and billing periods. Each tenant or company has a dedicated database.
 
+## Development status
+The project is actively under development. I have completed nearly 85% of the work required for the inaugural release of the MVP.
+
 ## Getting Started
 
 Follow these steps to get the project up and running:
@@ -90,9 +93,25 @@ User password: Test12345#
 For a deeper understanding of the project structure, refer to the architecture diagram:
 ![Project architecture diagram](./docs/project_architecture.jpg?raw=true)
 
-## Sneak Peek into the Office App
+## Office Web App Preview
+Here is a sneak peek into the Office Application:
 
-Here are some screenshots of the Office Application for a better understanding:
 ![Office App](./docs/office_app_1.jpg?raw=true)
 ![Office App](./docs/office_app_2.jpg?raw=true)
 ![Office App](./docs/office_app_3.jpg?raw=true)
+![Office App](./docs/office_app_4.jpg?raw=true)
+![Office App](./docs/office_app_5.jpg?raw=true)
+![Office App](./docs/office_app_6.jpg?raw=true)
+![Office App](./docs/office_app_7.jpg?raw=true)
+![Office App](./docs/office_app_8.jpg?raw=true)
+![Office App](./docs/office_app_9.jpg?raw=true)
+
+
+## Driver Mobile App Preview
+![Driver App](./docs/driver_app_1.jpg?raw=true)
+![Driver App](./docs/driver_app_2.jpg?raw=true)
+![Driver App](./docs/driver_app_3.jpg?raw=true)
+![Driver App](./docs/driver_app_4.jpg?raw=true)
+![Driver App](./docs/driver_app_5.jpg?raw=true)
+![Driver App](./docs/driver_app_6.jpg?raw=true)
+![Driver App](./docs/driver_app_7.jpg?raw=true)

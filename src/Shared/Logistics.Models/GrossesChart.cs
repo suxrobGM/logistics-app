@@ -13,7 +13,7 @@ public class GrossesChart<T> where T : IGrossChart
             foreach (var data in _data)
             {
                 TotalGross += data.Gross;
-                TotalDistance = data.Distance;
+                TotalDistance += data.Distance;
             }
         }
     }

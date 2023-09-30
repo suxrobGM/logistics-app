@@ -48,12 +48,10 @@ export class HomeComponent implements OnInit {
   public loads: Load[];
   public chartData: any;
   public chartOptions: any;
-  public truckLocations: TruckGeolocation[];
 
   constructor(private apiService: ApiService)
   {
     this.accessToken = AppConfig.mapboxToken;
-    this.truckLocations = [];
     this.loads = [];
     this.isLoadingLoadsData = false;
     this.isLoadingChartData = false;
