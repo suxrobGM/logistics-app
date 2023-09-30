@@ -1,14 +1,20 @@
 ﻿<?xml version = "1.0" encoding = "UTF-8" ?>
-<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<Application x:Class="Logistics.DriverApp.App"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:Logistics.DriverApp"
-             x:Class="Logistics.DriverApp.App">
+             xmlns:converters="clr-namespace:Logistics.DriverApp.Converters">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <converters:CurrencyConverter x:Key="CurrencyConverter" />
+            <converters:DistanceConverter x:Key="DistanceConverter" />
+            <converters:ShortAddressConverter x:Key="ShortAddressConverter" />
+            <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+            <converters:EmptyListToVisibilityConverter x:Key="EmptyListToVisibilityConverter" />
+            <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

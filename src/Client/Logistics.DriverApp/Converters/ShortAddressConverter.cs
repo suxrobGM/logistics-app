@@ -9,10 +9,7 @@ public class ShortAddressConverter : IValueConverter
         if (value is not string address)
             throw new ArgumentException("Expected value to be a string type");
 
-        if (string.IsNullOrEmpty(address))
-            return string.Empty;
- 
-        return address[..address.LastIndexOf(',')];
+        return string.IsNullOrEmpty(address) ? string.Empty : address[..address.LastIndexOf(',')];
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

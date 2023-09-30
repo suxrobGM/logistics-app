@@ -14,18 +14,21 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
-        <core:SfBusyIndicator Grid.RowSpan="2" 
+        <core:SfBusyIndicator Grid.RowSpan="2"
+                              ZIndex="2"
                               IsRunning="{Binding IsLoading}"
                               IndicatorColor="Pink"
                               OverlayFill="#80000000">
         </core:SfBusyIndicator>
         
         <dataForm:SfDataForm Grid.Row="0"
+                             ZIndex="1"
                              DataObject="{Binding AccountDetails}" 
                              AutoGenerateItems="True" 
                              GenerateDataFormItem="SfDataForm_GenerateDataFormItem">
         </dataForm:SfDataForm>
-        <Button Grid.Row="0" 
+        <Button Grid.Row="1"
+                ZIndex="1"
                 VerticalOptions="End" 
                 Margin="5,0,5,5" 
                 Text="Save" 

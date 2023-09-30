@@ -6,25 +6,18 @@
                        xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
                        xmlns:views="clr-namespace:Logistics.DriverApp.Views"
                        xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels"
-                       xmlns:converters="clr-namespace:Logistics.DriverApp.Converters"
                        xmlns:controls="clr-namespace:Logistics.DriverApp.Controls"
                        Title="Load">
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <converters:CurrencyConverter x:Key="CurrencyConverter" />
-            <converters:DistanceConverter x:Key="DistanceConverter" />
-            <converters:ShortAddressConverter x:Key="ShortAddressConverter" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
-
     <Grid BackgroundColor="#dae5f3">
-        <core:SfBusyIndicator IsRunning="{Binding IsLoading}"
+        <core:SfBusyIndicator ZIndex="2"
+                              IsRunning="{Binding IsLoading}"
                               IndicatorColor="Pink"
                               OverlayFill="#80000000">
         </core:SfBusyIndicator>
-        <ScrollView Padding="0,10,0,10">
+        
+        <ScrollView ZIndex="1">
             <controls:Card>
-                <StackLayout Spacing="8">
+                <StackLayout Spacing="8" BindingContext="{Binding ActiveLoad}">
                     <HorizontalStackLayout>
                         <Label Text="ID: " FontAttributes="Bold" />
                         <Label Text="{Binding LoadData.RefId}" />
@@ -36,7 +29,7 @@
                     <controls:Separator />
                     <VerticalStackLayout>
                         <Label Text="Origin: " FontAttributes="Bold" />
-                        <Label TextColor="DarkSlateGray"
+                        <Label TextColor="Black"
                                Text="{Binding LoadData.OriginAddress, Converter={StaticResource ShortAddressConverter}}"
                                FontSize="12" />
                     </VerticalStackLayout>
@@ -44,7 +37,7 @@
                         <Label Text="Destination: " FontAttributes="Bold" />
                         <Label FontSize="12"
                                Text="{Binding LoadData.DestinationAddress, Converter={StaticResource ShortAddressConverter}}"
-                               TextColor="DarkSlateGray"/>
+                               TextColor="Black"/>
                     </VerticalStackLayout>
                     <HorizontalStackLayout>
                         <Label Text="Delivery Cost: " FontAttributes="Bold" />
@@ -66,11 +59,11 @@
                         <Label Text="Dispatch Date: " FontAttributes="Bold" />
                         <Label Text="{Binding LoadData.DispatchedDate}" />
                     </HorizontalStackLayout>
-                    <HorizontalStackLayout>
+                    <HorizontalStackLayout IsVisible="{Binding LoadData.PickUpDate, Converter={StaticResource NullToVisibilityConverter}}">
                         <Label Text="Pickup Date: " FontAttributes="Bold" />
                         <Label Text="{Binding LoadData.PickUpDate}" />
                     </HorizontalStackLayout>
-                    <WebView HeightRequest="350">
+                    <WebView HeightRequest="420">
                         <WebView.Source>
                             <HtmlWebViewSource Html="{Binding EmbedMapHtml}" />
                         </WebView.Source>

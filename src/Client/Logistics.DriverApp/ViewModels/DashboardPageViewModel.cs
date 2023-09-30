@@ -67,18 +67,7 @@ public class DashboardPageViewModel : BaseViewModel
     public string? TeammatesName
     {
         get => _teammatesName;
-        set
-        {
-            SetProperty(ref _teammatesName, value);
-            IsTeammateLabelVisible = !string.IsNullOrEmpty(_teammatesName);
-        }
-    }
-
-    private bool _isTeammateLabelVisible;
-    public bool IsTeammateLabelVisible
-    {
-        get => _isTeammateLabelVisible;
-        set => SetProperty(ref _isTeammateLabelVisible, value);
+        set => SetProperty(ref _teammatesName, value);
     }
     
     #endregion

@@ -6,19 +6,9 @@
                        xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
                        xmlns:views="clr-namespace:Logistics.DriverApp.Views"
                        xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels"
-                       xmlns:converters="clr-namespace:Logistics.DriverApp.Converters"
                        xmlns:controls="clr-namespace:Logistics.DriverApp.Controls"
                        x:Name="dashboardPage"
                        Title="Dashboard">
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <converters:CurrencyConverter x:Key="CurrencyConverter" />
-            <converters:DistanceConverter x:Key="DistanceConverter" />
-            <converters:EmptyListToVisibilityConverter x:Key="EmptyListToVisibilityConverter" />
-            <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
-
     <Grid BackgroundColor="#dae5f3">
         <core:SfBusyIndicator ZIndex="2"
                               IsRunning="{Binding IsLoading}"
@@ -95,7 +85,7 @@
                                         <Label Text="Status: " FontAttributes="Bold" />
                                         <Label Text="{Binding Status}" />
                                     </HorizontalStackLayout>
-                                    <Button Text="View"
+                                    <Button Text="View details"
                                             Command="{Binding BindingContext.OpenLoadPageCommand, Source={x:Reference dashboardPage}}"
                                             CommandParameter="{Binding Id}" />
                                 </StackLayout>
