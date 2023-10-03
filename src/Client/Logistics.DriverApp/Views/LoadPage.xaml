@@ -64,6 +64,10 @@
                         <Label Text="Pickup Date: " FontAttributes="Bold" />
                         <Label Text="{Binding LoadData.PickUpDate}" />
                     </HorizontalStackLayout>
+                    <HorizontalStackLayout IsVisible="{Binding LoadData.DeliveryDate, Converter={StaticResource NullToVisibilityConverter}}">
+                        <Label Text="Delivery Date: " FontAttributes="Bold" />
+                        <Label Text="{Binding LoadData.DeliveryDate}" />
+                    </HorizontalStackLayout>
                     <WebView HeightRequest="420">
                         <WebView.Source>
                             <HtmlWebViewSource Html="{Binding EmbedMapHtml}" />
