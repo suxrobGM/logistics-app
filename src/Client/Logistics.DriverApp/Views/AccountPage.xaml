@@ -26,6 +26,15 @@
                              DataObject="{Binding AccountDetails}" 
                              AutoGenerateItems="True" 
                              GenerateDataFormItem="SfDataForm_GenerateDataFormItem">
+            <dataForm:SfDataForm.DefaultLayoutSettings>
+                <dataForm:DataFormDefaultLayoutSettings LabelPosition="Top"/>
+            </dataForm:SfDataForm.DefaultLayoutSettings>
+            <!--<dataForm:SfDataForm.Items>
+                <dataForm:DataFormTextItem FieldName="Email" IsReadOnly="True" />
+                <dataForm:DataFormTextItem FieldName="FirstName" />
+                <dataForm:DataFormTextItem FieldName="LastName" />
+                <dataForm:DataFormMaskedTextItem FieldName="PhoneNumber" MaskType="Simple" Mask="+1 (000) 000 0000" />
+            </dataForm:SfDataForm.Items>-->
         </dataForm:SfDataForm>
         <Button Grid.Row="1"
                 ZIndex="1"

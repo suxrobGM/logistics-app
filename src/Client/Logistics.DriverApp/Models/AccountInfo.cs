@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Logistics.DriverApp.Models;
 
-public class AccountInfo : ObservableObject
+public class AccountInfo
 {
     [Required]
     [ReadOnly(true)]

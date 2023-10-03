@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Models;
 
-public record MonthlyGrossDto : IGrossChart
+public record MonthlyGrossDto : IGrossChartData
 {
     public MonthlyGrossDto()
     {

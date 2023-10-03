@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Models;
 
-public class GrossesChart<T> where T : IGrossChart
+public class GrossesDto<T> where T : IGrossChartData
 {
     private IEnumerable<T> _data = new List<T>();
 

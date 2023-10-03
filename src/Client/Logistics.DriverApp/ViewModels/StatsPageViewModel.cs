@@ -1,5 +1,6 @@
 ﻿using Logistics.Models;
 using System.Collections.ObjectModel;
+using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services.Authentication;
 
 namespace Logistics.DriverApp.ViewModels;
@@ -15,13 +16,22 @@ public class StatsPageViewModel : BaseViewModel
 	{
 		_authService = authService;
 		_apiClient = apiClient;
-		_dailyGrossesStartDate = DateTime.Today.AddDays(-7);
-		_dailyGrossesEndDate = DateTime.Today;
-		_monthlyGrossesStartDate = new DateTime(DateTime.Now.Year, 1, 1); // beginning of the current year
-		_monthlyGrossesEndDate = DateTime.Today;
-		FetchTruckDailyGrossesCommand = new AsyncRelayCommand(FetchTruckDailyGrossesAsync, () => !IsLoading);
-		FetchTruckMonthlyGrossesCommand = new AsyncRelayCommand(FetchTruckMonthlyGrossesAsync, () => !IsLoading);
-		IsLoadingChanged += (_, _) => NotifyButtonsCanExecuteChanged();
+		RefreshChartCommand = new AsyncRelayCommand(FetchChartDataAsync, () => !IsLoading);
+		IsLoadingChanged += (_, _) => RefreshChartCommand.NotifyCanExecuteChanged();
+		
+		ChartData = new ObservableCollection<IGrossChartData>();
+		ChartDateRanges = new List<DateRange>()
+		{
+			PredefinedDateRanges.ThisWeek,
+			PredefinedDateRanges.LastWeek,
+			PredefinedDateRanges.ThisMonth,
+			PredefinedDateRanges.LastMonth,
+			PredefinedDateRanges.Past90Days,
+			PredefinedDateRanges.ThisYear,
+			PredefinedDateRanges.LastYear
+        };
+
+        _chartDateRange = PredefinedDateRanges.ThisYear;
 		//ChartBrushes = new List<Brush>
 		//{
 		//    new SolidColorBrush(Color.FromRgb(236, 64, 122)),
@@ -32,8 +42,7 @@ public class StatsPageViewModel : BaseViewModel
 
 	#region Commands
 
-	public IAsyncRelayCommand FetchTruckDailyGrossesCommand { get; }
-	public IAsyncRelayCommand FetchTruckMonthlyGrossesCommand { get; }
+	public IAsyncRelayCommand RefreshChartCommand { get; }
 
 	#endregion
 
@@ -41,8 +50,15 @@ public class StatsPageViewModel : BaseViewModel
     #region Bindable properties
 
 	// public IList<Brush> ChartBrushes { get; }
-    public ObservableCollection<DailyGrossDto> DailyGrosses { get; } = new();
-    public ObservableCollection<MonthlyGrossDto> MonthlyGrosses { get; } = new();
+    public ObservableCollection<IGrossChartData> ChartData { get; }
+    public List<DateRange> ChartDateRanges { get; }
+    
+    private DateRange _chartDateRange;
+    public DateRange ChartDateRange
+    {
+	    get => _chartDateRange;
+	    set => SetProperty(ref _chartDateRange, value);
+    }
     
     private DriverStatsDto? _driverStats;
     public DriverStatsDto? DriverStats
@@ -51,42 +67,26 @@ public class StatsPageViewModel : BaseViewModel
 	    set => SetProperty(ref _driverStats, value);
     }
 
-    private DateTime _dailyGrossesStartDate;
-    public DateTime DailyGrossesStartDate
-    {
-	    get => _dailyGrossesStartDate;
-	    set => SetProperty(ref _dailyGrossesStartDate, value);
-    }
-
-    private DateTime _dailyGrossesEndDate;
-    public DateTime DailyGrossesEndDate
-    {
-	    get => _dailyGrossesEndDate;
-	    set => SetProperty(ref _dailyGrossesEndDate, value);
-    }
-    
-    private DateTime _monthlyGrossesStartDate;
-    public DateTime MonthlyGrossesStartDate
-    {
-	    get => _monthlyGrossesStartDate;
-	    set => SetProperty(ref _monthlyGrossesStartDate, value);
-    }
-
-    private DateTime _monthlyGrossesEndDate;
-    public DateTime MonthlyGrossesEndDate
-    {
-	    get => _monthlyGrossesEndDate;
-	    set => SetProperty(ref _monthlyGrossesEndDate, value);
-    }
-
     #endregion
 
 
     protected override async Task OnInitializedAsync()
     {
-        await FetchTruckDailyGrossesAsync();
-        await FetchTruckMonthlyGrossesAsync();
 		await FetchDriverStatsAsync();
+		await FetchChartDataAsync();
+    }
+
+    private async Task FetchChartDataAsync()
+    {
+	    if (ChartDateRange == PredefinedDateRanges.ThisYear || 
+	        ChartDateRange == PredefinedDateRanges.LastYear)
+	    {
+		    await FetchTruckMonthlyGrossesAsync();
+	    }
+	    else
+	    {
+		    await FetchTruckDailyGrossesAsync();
+	    }
     }
 
     private async Task FetchDriverStatsAsync()
@@ -114,23 +114,18 @@ public class StatsPageViewModel : BaseViewModel
         var result = await _apiClient.GetDailyGrossesAsync(new GetDailyGrossesQuery
         {
 	        UserId = driverUserId,
-	        StartDate = DailyGrossesStartDate,
-	        EndDate = DailyGrossesEndDate
+	        StartDate = ChartDateRange.StartDate,
+	        EndDate = ChartDateRange.EndDate
         });
 
         if (!result.Success)
         {
-	        await PopupHelpers.ShowErrorAsync("Failed to load driver's line chart data, try again");
+	        await PopupHelpers.ShowErrorAsync("Failed to load driver chart data, try again");
 	        IsLoading = false;
 	        return;
         }
 
-		DailyGrosses.Clear();
-        foreach (var dailyGross in result.Value!.Data)
-        {
-	        DailyGrosses.Add(dailyGross);
-        }
-
+        AddChartDataToList(result.Value!.Data);
         IsLoading = false;
 	}
     
@@ -142,29 +137,27 @@ public class StatsPageViewModel : BaseViewModel
 	    var result = await _apiClient.GetMonthlyGrossesAsync(new GetMonthlyGrossesQuery
 	    {
 		    UserId = driverUserId,
-		    StartDate = MonthlyGrossesStartDate,
-		    EndDate = MonthlyGrossesEndDate
+		    StartDate = ChartDateRange.StartDate,
+		    EndDate = ChartDateRange.EndDate
 	    });
 
 	    if (!result.Success)
 	    {
-		    await PopupHelpers.ShowErrorAsync("Failed to load driver bar chart data, try again");
+		    await PopupHelpers.ShowErrorAsync("Failed to load driver chart data, try again");
 		    IsLoading = false;
 		    return;
 	    }
-
-        MonthlyGrosses.Clear();
-        foreach (var monthlyGross in result.Value!.Data)
-	    {
-		    MonthlyGrosses.Add(monthlyGross);
-	    }
-
+	    
+        AddChartDataToList(result.Value!.Data);
 	    IsLoading = false;
     }
 
-    private void NotifyButtonsCanExecuteChanged()
+    private void AddChartDataToList(IEnumerable<IGrossChartData> grossesChart)
     {
-	    FetchTruckDailyGrossesCommand.NotifyCanExecuteChanged();
-	    FetchTruckMonthlyGrossesCommand.NotifyCanExecuteChanged();
+	    ChartData.Clear();
+	    foreach (var monthlyGross in grossesChart)
+	    {
+		    ChartData.Add(monthlyGross);
+	    }
     }
 }

@@ -38,7 +38,7 @@ Follow these steps to get the project up and running:
    ```
 
 4. Update database connection strings: 
-   Modify local or remote `MS SQL` database connection strings in the [Web API appsettings.json](./src/Api/Logistics.WebApi/appsettings.json) and the [IdentityServer appsettings.json](./src/Apps/Logistics.IdentityServer/appsettings.json) under the `ConnectionStrings:MainDatabase` section. Update tenant databases configuration in the [Web API appsettings.json](./src/Api/Logistics.WebApi/appsettings.json) under the `TenantsConfig` section.
+   Modify local or remote `MS SQL` database connection strings in the [Web API appsettings.json](./src/Server/Logistics.API/appsettings.json) and the [IdentityServer appsettings.json](./src/Server/Logistics.IdentityServer/appsettings.json) under the `ConnectionStrings:MainDatabase` section. Update tenant databases configuration in the [Web API appsettings.json](./src/Server/Logistics.API/appsettings.json) under the `TenantsConfig` section.
 
 5. Seed databases:
    To initialize and populate the databases, run the `seed-databases.bat` script provided in the repository.

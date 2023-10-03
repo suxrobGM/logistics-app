@@ -1,5 +1,5 @@
 ﻿namespace Logistics.Models;
 
-public class MonthlyGrossesDto : GrossesChart<MonthlyGrossDto>
+public class MonthlyGrossesDto : GrossesDto<MonthlyGrossDto>
 {
 }
