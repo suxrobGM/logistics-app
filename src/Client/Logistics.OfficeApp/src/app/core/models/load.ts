@@ -1,5 +1,4 @@
 import {LoadStatus} from './loadStatus';
-import {Truck} from './truck';
 
 export interface Load {
   id: string;
@@ -18,6 +17,8 @@ export interface Load {
   pickUpDate: string;
   deliveryDate: string;
   assignedDispatcherId: string;
-  assignedDispatcherName: string;
-  assignedTruck: Truck;
+  assignedDispatcherName?: string;
+  assignedTruckId: string;
+  assignedTruckNumber?: string;
+  assignedTruckDriversName?: string[];
 }

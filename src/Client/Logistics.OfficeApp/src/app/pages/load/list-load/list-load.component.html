@@ -96,8 +96,8 @@
             <td>{{load.distance | distanceUnit:'mi'}}</td>
             <td>{{load.deliveryCost | currency}}</td>
             <td>
-              <a [routerLink]="['/truck/details', load.assignedTruck.id]">
-                {{load.assignedTruck.truckNumber}}
+              <a [routerLink]="['/truck/details', load.assignedTruckId]">
+                {{load.assignedTruckNumber}}
               </a>
             </td>
             <td>{{load.assignedDispatcherName}}</td>

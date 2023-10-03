@@ -206,8 +206,8 @@ export class EditLoadComponent implements OnInit {
         dispatcherId: load.assignedDispatcherId,
         status: load.status,
         assignedTruck: {
-          truckId: load.assignedTruck.id,
-          driversName: TruckHelper.formatDriversName(load.assignedTruck)},
+          truckId: load.assignedTruckId,
+          driversName: TruckHelper.formatDriversName(load.assignedTruckNumber!, load.assignedTruckDriversName!)},
       });
 
       this.loadRefId = load.refId;

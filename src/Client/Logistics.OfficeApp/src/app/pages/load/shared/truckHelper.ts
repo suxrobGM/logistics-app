@@ -1,4 +1,3 @@
-import {Truck} from '@core/models';
 import {ApiService} from '@core/services';
 import {Observable, map} from 'rxjs';
 
@@ -13,15 +12,15 @@ export class TruckHelper {
 
           return result.items.map((truckDriver) => ({
             truckId: truckDriver.truck.id,
-            driversName: TruckHelper.formatDriversName(truckDriver.truck),
+            driversName: TruckHelper.formatDriversName(truckDriver.truck.truckNumber, truckDriver.drivers.map((i) => i.fullName)),
           }));
         }),
     );
   }
 
-  static formatDriversName(truck: Truck): string {
-    const driversName = truck.drivers.map((driver) => driver.fullName);
-    return `${truck.truckNumber} - ${driversName}`;
+  static formatDriversName(truckNumber: string, driversName: string[]): string {
+    const formattedDriversName = driversName.join(',');
+    return `${truckNumber} - ${formattedDriversName}`;
   }
 }
 
