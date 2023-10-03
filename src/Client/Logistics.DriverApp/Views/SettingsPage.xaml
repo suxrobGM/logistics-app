@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<views:BaseContentPage x:TypeArguments="viewModels:LoginPageViewModel"
-                       x:Class="Logistics.DriverApp.Views.SettingsPage"
+<views:BaseContentPage x:Class="Logistics.DriverApp.Views.SettingsPage"
+                       x:TypeArguments="viewModels:LoginPageViewModel"
                        xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                        xmlns:views="clr-namespace:Logistics.DriverApp.Views"
                        xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels"
                        Title="Settings">
     <VerticalStackLayout>
-        <Label 
-            Text="Settings Page"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+        <Label Text="Settings Page"
+               VerticalOptions="Center" 
+               HorizontalOptions="Center" />
     </VerticalStackLayout>
 </views:BaseContentPage>

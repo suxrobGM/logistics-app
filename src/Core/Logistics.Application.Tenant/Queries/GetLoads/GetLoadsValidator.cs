@@ -11,5 +11,7 @@ internal sealed class GetLoadsValidator : AbstractValidator<GetLoadsQuery>
         
         RuleFor(i => i.PageSize)
             .GreaterThanOrEqualTo(1);
+        
+        RuleFor(i => i.StartDate).LessThan(i => i.EndDate);
     }
 }

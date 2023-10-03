@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Shared;
 
-public record SearchableRequest : PagedRequest
+public class SearchableRequest : PagedRequest
 {
     public SearchableRequest(string? search = null, int page = 1, int pageSize = 10) 
         : base(page, pageSize)

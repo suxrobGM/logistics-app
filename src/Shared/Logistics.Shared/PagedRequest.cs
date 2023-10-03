@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Shared;
 
-public record PagedRequest
+public class PagedRequest
 {
     public PagedRequest(int page = 1, int pageSize = 10)
     {

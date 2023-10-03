@@ -25,5 +25,8 @@ public record PagedResponseResult<T> : IResponseResult
 
     public bool Success => string.IsNullOrEmpty(Error);
 
+    public static PagedResponseResult<T> Create(IEnumerable<T>? items, int itemsCount, int pagesCount) =>
+        new(items, itemsCount, pagesCount);
+
     public static PagedResponseResult<T> CreateError(string error) => new(null, 0, 0) { Error = error };
 }

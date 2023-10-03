@@ -6,7 +6,7 @@ public static class LoadMapper
 {
     public static LoadDto ToDto(this Load entity)
     {
-        return new LoadDto
+        var loadDto = new LoadDto
         {
             Id = entity.Id,
             RefId = entity.RefId,
@@ -25,7 +25,10 @@ public static class LoadMapper
             Status = (LoadStatusDto)entity.Status,
             AssignedDispatcherId = entity.AssignedDispatcherId,
             AssignedDispatcherName = entity.AssignedDispatcher?.GetFullName(),
-            AssignedTruck = entity.AssignedTruck?.ToDto(new List<LoadDto>())
+            AssignedTruckId = entity.AssignedTruckId,
+            AssignedTruckNumber = entity.AssignedTruck?.TruckNumber
         };
+        
+        return loadDto;
     }
 }

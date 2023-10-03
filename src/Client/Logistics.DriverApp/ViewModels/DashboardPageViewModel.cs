@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Messaging;
+using Logistics.DriverApp.Consts;
 using Logistics.DriverApp.Messages;
+using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.Authentication;
 using Logistics.DriverApp.Services.LocationTracking;
 using Logistics.Models;
@@ -14,16 +16,18 @@ public class DashboardPageViewModel : BaseViewModel
     private readonly IApiClient _apiClient;
     private readonly IAuthService _authService;
     private readonly ILocationTrackerBackgroundService _locationTrackerBackgroundService;
-    private string? _truckId;
+    private readonly ICache _cache;
 
     public DashboardPageViewModel(
         IApiClient apiClient, 
         IAuthService authService,
-        ILocationTrackerBackgroundService locationTrackerBackgroundService)
+        ILocationTrackerBackgroundService locationTrackerBackgroundService,
+        ICache cache)
     {
         _apiClient = apiClient;
         _authService = authService;
         _locationTrackerBackgroundService = locationTrackerBackgroundService;
+        _cache = cache;
         OpenLoadPageCommand = new AsyncRelayCommand<string?>(OpenLoadPageAsync);
         RefreshCommand = new AsyncRelayCommand(FetchActiveLoadsAsync, () => !IsLoading);
         
@@ -84,15 +88,16 @@ public class DashboardPageViewModel : BaseViewModel
     private void TryStartLocationTrackerService()
     {
         var tenantId = _authService.User?.CurrentTenantId;
+        var truckId = _cache.Get<string>(CacheKeys.TruckId);
 
-        if (string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(_truckId))
+        if (string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(truckId))
         {
             return;
         }
 
         _locationTrackerBackgroundService.Start(new LocationTrackerOptions
         {
-            TruckId = _truckId,
+            TruckId = truckId,
             TenantId = tenantId,
             DriversName = string.Join(", ", DriverName, TeammatesName),
             TruckNumber = TruckNumber
@@ -106,7 +111,14 @@ public class DashboardPageViewModel : BaseViewModel
             return;
         }
 
-        var parameters = new Dictionary<string, object> { { "loadId", loadId } };
+        var load = Loads.FirstOrDefault(i => i.Id == loadId);
+
+        if (load is null)
+        {
+            return;
+        }
+
+        var parameters = new Dictionary<string, object> { { "load", load } };
         await Shell.Current.GoToAsync("LoadPage", parameters);
     }
 
@@ -135,7 +147,7 @@ public class DashboardPageViewModel : BaseViewModel
         var teammates = truck.Drivers.Where(i => i.Id != driverId).Select(i => i.FullName);
         TruckNumber = truck.TruckNumber;
         TeammatesName = string.Join(", ", teammates); 
-        _truckId = truck.Id;
+        _cache.Set(CacheKeys.TruckId, truck.Id);
         
         AddActiveLoads(truck.Loads);
         IsLoading = false;

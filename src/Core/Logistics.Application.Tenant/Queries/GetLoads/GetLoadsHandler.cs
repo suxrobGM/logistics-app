@@ -26,14 +26,21 @@ internal sealed class GetLoadsHandler : RequestHandler<GetLoadsQuery, PagedRespo
         {
             baseQuery = baseQuery.Where(i => i.Status != LoadStatus.Delivered);
         }
+        if (string.IsNullOrEmpty(req.TruckId))
+        {
+            baseQuery = baseQuery.Where(i => i.AssignedTruckId == req.TruckId);
+        }
+        if (req.StartDate.HasValue && req.EndDate.HasValue)
+        {
+            baseQuery = baseQuery.Where(i => i.DispatchedDate >= req.StartDate && i.DispatchedDate <= req.EndDate);
+        }
+        if (!req.LoadAllPages)
+        {
+            baseQuery = baseQuery.Skip((req.Page - 1) * req.PageSize).Take(req.PageSize);
+        }
         
-        var loads = baseQuery
-            .Skip((req.Page - 1) * req.PageSize)
-            .Take(req.PageSize)
-            .ToArray();
-
-        var loadsDto = loads.Select(i => i.ToDto());
+        var loads = baseQuery.Select(i => i.ToDto()).ToArray();
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return Task.FromResult(new PagedResponseResult<LoadDto>(loadsDto, totalItems, totalPages));
+        return Task.FromResult(PagedResponseResult<LoadDto>.Create(loads, totalItems, totalPages));
     }
 }

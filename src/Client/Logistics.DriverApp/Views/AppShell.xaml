@@ -6,10 +6,13 @@
                  xmlns:views="clr-namespace:Logistics.DriverApp.Views"
                  xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels"
                  xmlns:helpers="clr-namespace:Logistics.DriverApp.Helpers">
+    
     <TabBar Title="" Shell.FlyoutBehavior="Disabled" Shell.NavBarIsVisible="True">
         <ShellContent ContentTemplate="{DataTemplate views:LoginPage}"
-                      Route="LoginPage" />
+                      Route="LoginPage">
+        </ShellContent>
     </TabBar>
+    
     <ShellContent Title="Dashboard" 
                   ContentTemplate="{DataTemplate views:DashboardPage}"
                   Route="DashboardPage">
@@ -22,6 +25,13 @@
                   Route="StatsPage">
         <ShellContent.Icon>
             <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static helpers:MaterialIcons.Bar_chart}" Color="Black" />
+        </ShellContent.Icon>
+    </ShellContent>
+    <ShellContent Title="Past Loads" 
+                  ContentTemplate="{DataTemplate views:PastLoadsPage}" 
+                  Route="PastLoadsPage">
+        <ShellContent.Icon>
+            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static helpers:MaterialIcons.List_alt}" Color="Black" />
         </ShellContent.Icon>
     </ShellContent>
     <ShellContent Title="Account" 
@@ -53,6 +63,7 @@
             <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static helpers:MaterialIcons.Info}" Color="Black" />
         </ShellContent.Icon>
     </ShellContent>
+    
     <Shell.FlyoutFooter>
         <StackLayout Padding="20">
             <Button Text="Sign Out" Command="{Binding SignOutCommand}"></Button>

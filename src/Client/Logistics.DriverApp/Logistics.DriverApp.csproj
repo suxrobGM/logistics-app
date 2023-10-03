@@ -73,6 +73,7 @@
 	  <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
 	  <PackageReference Include="Syncfusion.Maui.Charts" Version="23.1.38" />
 	  <PackageReference Include="Syncfusion.Maui.DataForm" Version="23.1.38" />
+	  <PackageReference Include="Syncfusion.Maui.DataGrid" Version="23.1.38" />
 	  <PackageReference Include="Syncfusion.Maui.Inputs" Version="23.1.38" />
 	</ItemGroup>
 
@@ -83,6 +84,5 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Logistics.Client\Logistics.Client.csproj" />
 	</ItemGroup>
-
 
 </Project>

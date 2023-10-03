@@ -1,5 +1,6 @@
 ﻿using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services;
+using Logistics.Models;
 
 namespace Logistics.DriverApp.ViewModels;
 
@@ -33,8 +34,16 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        var loadId = query["loadId"] as string;
+        if (query["load"] is LoadDto load)
+        {
+            var embedMapHtml = GetEmbedMapHtml(load);
+            ActiveLoad = new ActiveLoad(load, embedMapHtml);
+            _lastLoadId = load.Id;
+            return;
+        }
 
+        var loadId = query["loadId"] as string;
+        
         if (!string.IsNullOrEmpty(loadId) && loadId != _lastLoadId)
         {
             _lastLoadId = loadId;
@@ -43,7 +52,8 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
 
     private async Task FetchLoadAsync()
     {
-        if (string.IsNullOrEmpty(_lastLoadId))
+        if (string.IsNullOrEmpty(_lastLoadId) || 
+            _lastLoadId == ActiveLoad?.LoadData.Id)
         {
             return;
         }
@@ -59,10 +69,16 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
         }
 
         var loadDto = result.Value!;
-        var originAddress = $"{loadDto.OriginAddressLat},{loadDto.OriginAddressLong}";
-        var destinationAddress = $"{loadDto.DestinationAddressLat},{loadDto.DestinationAddressLong}";
-        var embedMapHtml = _mapsService.GetDirectionsMapHtml(originAddress, destinationAddress);
+        var embedMapHtml = GetEmbedMapHtml(loadDto);
         ActiveLoad = new ActiveLoad(loadDto, embedMapHtml);
         IsLoading = false;
+    }
+
+    private string GetEmbedMapHtml(LoadDto load)
+    {
+        var originAddress = $"{load.OriginAddressLat},{load.OriginAddressLong}";
+        var destinationAddress = $"{load.DestinationAddressLat},{load.DestinationAddressLong}";
+        var embedMapHtml = _mapsService.GetDirectionsMapHtml(originAddress, destinationAddress);
+        return embedMapHtml;
     }
 }

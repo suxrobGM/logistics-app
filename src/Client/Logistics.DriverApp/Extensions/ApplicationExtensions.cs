@@ -29,13 +29,17 @@ public static class ApplicationExtensions
         services.AddSingleton<ITokenStorage, TokenStorage>();
         services.AddSingleton<ITenantService, TenantService>();
         services.AddSingleton<IMapsService, GoogleMapsService>();
+        services.AddSingleton<ICache, InMemoryCache>();
+        
         services.AddScoped<AppShellViewModel>();
         services.AddScoped<DashboardPageViewModel>();
         services.AddScoped<AccountPageViewModel>();
         services.AddScoped<LoginPageViewModel>();
         services.AddScoped<StatsPageViewModel>();
         services.AddScoped<LoadPageViewModel>();
+        services.AddScoped<PastLoadsPageViewModel>();
         services.AddScoped<ChangeOrganizationPageViewModel>();
+        
         services.AddScoped<IdentityModel.OidcClient.Browser.IBrowser, WebBrowserAuthenticator>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ILocationTracker, LocationTracker>();

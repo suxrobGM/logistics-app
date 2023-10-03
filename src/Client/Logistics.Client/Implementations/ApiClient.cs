@@ -144,9 +144,9 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakeGetRequestAsync<ResponseResult<LoadDto>>($"load/{id}");
     }
 
-    public Task<PagedResponseResult<LoadDto>> GetLoadsAsync(SearchableRequest request)
+    public Task<PagedResponseResult<LoadDto>> GetLoadsAsync(GetLoadsQuery query)
     {
-        return MakeGetRequestAsync<PagedResponseResult<LoadDto>>("load/list", request.ToDictionary());
+        return MakeGetRequestAsync<PagedResponseResult<LoadDto>>("load/list", query.ToDictionary());
     }
 
     public Task<ResponseResult> CreateLoadAsync(CreateLoad load)
