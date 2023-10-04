@@ -3,9 +3,9 @@ using Logistics.DriverApp.Services.Authentication;
 
 namespace Logistics.DriverApp.Messages;
 
-public class SuccessfullyLoggedMessage : ValueChangedMessage<UserInfo>
+public class UserLoggedInMessage : ValueChangedMessage<UserInfo>
 {
-    public SuccessfullyLoggedMessage(UserInfo value) : base(value)
+    public UserLoggedInMessage(UserInfo value) : base(value)
     {
     }
 }

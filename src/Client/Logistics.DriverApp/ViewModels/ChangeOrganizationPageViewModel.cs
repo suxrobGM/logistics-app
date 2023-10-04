@@ -99,7 +99,7 @@ public class ChangeOrganizationPageViewModel : BaseViewModel
 
         _authService.User!.CurrentTenantId = organization.TenantId;
         await _tenantService.SaveTenantIdAsync(organization.TenantId);
-        WeakReferenceMessenger.Default.Send(new TenantIdChangedMessage(organization.TenantId));
+        Messenger.Send(new TenantIdChangedMessage(organization.TenantId));
 
         if (displaySuccessMessage)
         {

@@ -60,7 +60,7 @@ public class LoginPageViewModel : BaseViewModel
             var tenantId = await _tenantService.GetTenantIdFromCacheAsync() ??
                            _authService.User?.TenantIds.FirstOrDefault();
 
-            WeakReferenceMessenger.Default.Send(new SuccessfullyLoggedMessage(_authService.User!));
+            Messenger.Send(new UserLoggedInMessage(_authService.User!));
             
             if (!string.IsNullOrEmpty(tenantId))
             {

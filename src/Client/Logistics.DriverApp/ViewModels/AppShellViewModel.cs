@@ -22,7 +22,7 @@ public class AppShellViewModel : BaseViewModel
         _apiClient.OnErrorResponse += async (s, e) => await HandleApiErrors(e);
         SignOutCommand = new AsyncRelayCommand(SignOutAsync);
         ChangeOrganizationPageVisible = true;
-        Messenger.Register<SuccessfullyLoggedMessage>(this, (_, m) =>
+        Messenger.Register<UserLoggedInMessage>(this, (_, m) =>
         {
             ChangeOrganizationPageVisible = m.Value.TenantIds.Count > 1;
         });

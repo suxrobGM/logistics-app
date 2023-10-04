@@ -84,6 +84,6 @@ public class LocationTrackerBackgroundService : Service, ILocationTrackerBackgro
             .Build();
         
         StartForeground(NotificationId, notification);
-        _timer = new Timer(SendGeolocationData, null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
+        _timer = new Timer(SendGeolocationData, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
     }
 }
