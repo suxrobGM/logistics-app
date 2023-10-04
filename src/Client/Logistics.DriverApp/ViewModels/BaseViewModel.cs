@@ -8,11 +8,13 @@ public abstract class BaseViewModel : ObservableRecipient
     protected BaseViewModel()
     {
         InitializeCommand = new AsyncRelayCommand(HandleInitializeCommandAsync);
+        DisappearingCommand = new AsyncRelayCommand(OnDisappearingAsync);
     }
 
     #region Commands
 
     public IAsyncRelayCommand InitializeCommand { get; }
+    public IAsyncRelayCommand DisappearingCommand { get; }
 
     #endregion
     
@@ -39,6 +41,11 @@ public abstract class BaseViewModel : ObservableRecipient
     }
 
     protected virtual Task OnAppearingAsync()
+    {
+        return Task.CompletedTask;
+    }
+    
+    protected virtual Task OnDisappearingAsync()
     {
         return Task.CompletedTask;
     }

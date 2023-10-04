@@ -40,7 +40,7 @@ public class LoadProximityUpdater : ILoadProximityUpdater
             load.DestinationAddressLong!.Value, 
             DistanceUnits.Kilometers);
 
-        if (originDistance <= 0.5)
+        if (originDistance <= 0.5 && !load.CanConfirmPickUp)
         {
             await _apiClient.UpdateLoadProximity(new UpdateLoadProximity
             {
@@ -49,7 +49,7 @@ public class LoadProximityUpdater : ILoadProximityUpdater
             });
         }
         
-        if (destDistance <= 0.5)
+        if (destDistance <= 0.5 && !load.CanConfirmDelivery)
         {
             await _apiClient.UpdateLoadProximity(new UpdateLoadProximity
             {

@@ -13,6 +13,11 @@ public abstract class BaseContentPage<TViewModel> : ContentPage where TViewModel
             EventName = "Appearing",
             Command = (BindingContext as TViewModel)?.InitializeCommand
         });
+        Behaviors.Add(new EventToCommandBehavior
+        {
+            EventName = "Disappearing",
+            Command = (BindingContext as TViewModel)?.DisappearingCommand
+        });
     }
     
     public TViewModel ViewModel { get; }

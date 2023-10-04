@@ -61,34 +61,61 @@
                     <DataTemplate>
                         <ViewCell>
                             <controls:Card>
-                                <StackLayout Spacing="8" VerticalOptions="Fill">
-                                    <Grid HorizontalOptions="FillAndExpand">
-                                        <HorizontalStackLayout HorizontalOptions="Start">
-                                            <Label Text="#" FontAttributes="Bold" />
-                                            <Label FontAttributes="Bold" Text="{Binding RefId}" />
-                                            <Label FontAttributes="Bold" Margin="10,0,0,0" Text="{Binding Name}" />
-                                        </HorizontalStackLayout>
-                                    </Grid>
+                                <Grid RowSpacing="8" ColumnSpacing="5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
 
-                                    <controls:Separator />
-                                    <HorizontalStackLayout>
-                                        <Label Text="Delivery Cost: " FontAttributes="Bold" />
-                                        <Label
-                                            Text="{Binding DeliveryCost, Converter={StaticResource CurrencyConverter}}" />
+
+                                    <HorizontalStackLayout Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+                                        <Label Text="#" FontAttributes="Bold" />
+                                        <Label FontAttributes="Bold" Text="{Binding RefId}" />
+                                        <Label FontAttributes="Bold" Margin="10,0,0,0" Text="{Binding Name}" />
                                     </HorizontalStackLayout>
-                                    <HorizontalStackLayout>
-                                        <Label Text="Distance (mi): " FontAttributes="Bold" />
-                                        <Label
-                                            Text="{Binding Distance, Converter={StaticResource DistanceConverter}, ConverterParameter='mi'}" />
-                                    </HorizontalStackLayout>
-                                    <HorizontalStackLayout>
-                                        <Label Text="Status: " FontAttributes="Bold" />
-                                        <Label Text="{Binding Status}" />
-                                    </HorizontalStackLayout>
-                                    <Button Text="View details"
+
+                                    <controls:Separator Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" />
+                                    
+                                    <StackLayout Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Spacing="8">
+                                        <HorizontalStackLayout>
+                                            <Label Text="Delivery Cost: " FontAttributes="Bold" />
+                                            <Label Text="{Binding DeliveryCost, Converter={StaticResource CurrencyConverter}}" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout>
+                                            <Label Text="Distance (mi): " FontAttributes="Bold" />
+                                            <Label Text="{Binding Distance, Converter={StaticResource DistanceConverter}, ConverterParameter='mi'}" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout>
+                                            <Label Text="Status: " FontAttributes="Bold" />
+                                            <Label Text="{Binding Status}" />
+                                        </HorizontalStackLayout>
+                                    </StackLayout>
+                                    
+                                    <Button Grid.Row="3" Grid.Column="0" 
+                                            Text="Confirm Pick Up"                                              
+                                            IsVisible="{Binding CanConfirmPickUp, Converter={StaticResource BoolToVisibilityConverter}}"
                                             Command="{Binding BindingContext.OpenLoadPageCommand, Source={x:Reference dashboardPage}}"
-                                            CommandParameter="{Binding Id}" />
-                                </StackLayout>
+                                            CommandParameter="{Binding Id}">
+                                    </Button>
+                                    <Button Grid.Row="3" Grid.Column="0" 
+                                            Text="Confirm Delivery"
+                                            IsVisible="{Binding CanConfirmDelivery, Converter={StaticResource BoolToVisibilityConverter}}"
+                                            Command="{Binding BindingContext.OpenLoadPageCommand, Source={x:Reference dashboardPage}}"
+                                            CommandParameter="{Binding Id}">
+                                    </Button>
+                                    <Button Grid.Row="3" Grid.Column="1" 
+                                            Text="View details"
+                                            HorizontalOptions="Fill"
+                                            Command="{Binding BindingContext.OpenLoadPageCommand, Source={x:Reference dashboardPage}}"
+                                            CommandParameter="{Binding Id}">
+                                    </Button>
+                                </Grid>
                             </controls:Card>
                         </ViewCell>
                     </DataTemplate>

@@ -1,4 +1,6 @@
-﻿using Logistics.DriverApp.Models;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Logistics.DriverApp.Messages;
+using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services;
 using Logistics.Models;
 
@@ -9,13 +11,29 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
     private readonly IApiClient _apiClient;
     private readonly IMapsService _mapsService;
     private string? _lastLoadId;
+    private bool _isOpened;
 
     public LoadPageViewModel(IApiClient apiClient, IMapsService mapsService)
     {
         _apiClient = apiClient;
         _mapsService = mapsService;
-        ConfirmPickUpCommand = new AsyncRelayCommand(ConfirmPickUpAsync);
-        ConfirmDeliveryCommand = new AsyncRelayCommand(ConfirmDeliveryAsync);
+        ConfirmPickUpCommand = new AsyncRelayCommand(() => ConfirmLoadStatusAsync(LoadStatusDto.PickedUp));
+        ConfirmDeliveryCommand = new AsyncRelayCommand(() => ConfirmLoadStatusAsync(LoadStatusDto.Delivered));
+        
+        Messenger.Register<ActiveLoadsChangedMessage>(this, (_, m) =>
+        {
+            if (!_isOpened || string.IsNullOrEmpty(_lastLoadId))
+            {
+                return;
+            }
+            
+            var load = m.Value.FirstOrDefault(i => i.Id == _lastLoadId);
+
+            if (load is not null)
+            {
+                ActiveLoad = new ActiveLoad(load, GetEmbedMapHtml(load));
+            }
+        });
     }
 
     #region Commands
@@ -25,6 +43,7 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
 
     #endregion
 
+    
     #region Bindable properties
 
     private ActiveLoad? _activeLoad;
@@ -36,9 +55,17 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
 
     #endregion
 
+    
     protected override async Task OnAppearingAsync()
     {
+        _isOpened = true;
         await FetchLoadAsync();
+    }
+
+    protected override Task OnDisappearingAsync()
+    {
+        _isOpened = false;
+        return base.OnDisappearingAsync();
     }
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -83,22 +110,35 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
         IsLoading = false;
     }
 
-    private Task ConfirmPickUpAsync()
-    { 
-        return _apiClient.ConfirmLoadStatusAsync(new ConfirmLoadStatus
-        {
-            LoadId = _lastLoadId,
-            LoadStatus = LoadStatusDto.PickedUp
-        });
-    }
-    
-    private Task ConfirmDeliveryAsync()
+    private async Task ConfirmLoadStatusAsync(LoadStatusDto status)
     {
-        return _apiClient.ConfirmLoadStatusAsync(new ConfirmLoadStatus
+        IsLoading = true;
+
+        var result = status switch
         {
-            LoadId = _lastLoadId,
-            LoadStatus = LoadStatusDto.Delivered
-        });
+            LoadStatusDto.PickedUp => await _apiClient.ConfirmLoadStatusAsync(new ConfirmLoadStatus
+            {
+                LoadId = _lastLoadId, 
+                LoadStatus = LoadStatusDto.PickedUp
+            }),
+            LoadStatusDto.Delivered => await _apiClient.ConfirmLoadStatusAsync(new ConfirmLoadStatus
+            {
+                LoadId = _lastLoadId, 
+                LoadStatus = LoadStatusDto.Delivered
+            }),
+            _ => default
+        };
+
+        if (result is { Success: false })
+        {
+            await PopupHelpers.ShowErrorAsync($"Could not confirm the load status, error: {result.Error}");
+            IsLoading = false;
+            return;
+        }
+
+        ActiveLoad = null;
+        await FetchLoadAsync();
+        IsLoading = false;
     }
 
     private string GetEmbedMapHtml(LoadDto load)

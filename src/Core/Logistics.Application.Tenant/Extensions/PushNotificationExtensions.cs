@@ -1,4 +1,5 @@
 ﻿using Logistics.Application.Tenant.Services;
+using Logistics.Domain.Enums;
 
 namespace Logistics.Application.Tenant.Extensions;
 
@@ -18,14 +19,29 @@ internal static class PushNotificationExtensions
         }
     }
     
-    public static Task SendUpdatedLoadNotificationAsync(this IPushNotification pushNotification, Load load)
+    public static async Task SendConfirmLoadStatusNotificationAsync(this IPushNotification pushNotification, Load load, LoadStatus loadStatus)
     {
         if (load.AssignedTruck is null)
         {
-            return Task.CompletedTask;
+            return;
         }
         
-        return SendUpdatedLoadNotificationAsync(pushNotification, load, load.AssignedTruck);
+        var drivers = load.AssignedTruck.Drivers.Where(driver => !string.IsNullOrEmpty(driver.DeviceToken));
+
+        var loadStatusText = loadStatus switch
+        {
+            LoadStatus.PickedUp => "pick up",
+            LoadStatus.Delivered => "delivered",
+        };
+
+        foreach (var driver in drivers)
+        {
+            await pushNotification.SendNotificationAsync(
+                "Confirm load status",
+                $"You can confirm the {loadStatusText} date of load #{load.RefId}", 
+                driver.DeviceToken!,
+                new Dictionary<string, string> {{"loadId", load.Id}});
+        }
     }
     
     public static async Task SendUpdatedLoadNotificationAsync(this IPushNotification pushNotification, Load load, Truck truck)

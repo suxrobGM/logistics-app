@@ -1,4 +1,6 @@
-﻿namespace Logistics.Application.Tenant.Commands;
+﻿using Logistics.Domain.Enums;
+
+namespace Logistics.Application.Tenant.Commands;
 
 internal sealed class ConfirmLoadStatusHandler : RequestHandler<ConfirmLoadStatusCommand, ResponseResult>
 {
@@ -17,7 +19,20 @@ internal sealed class ConfirmLoadStatusHandler : RequestHandler<ConfirmLoadStatu
         if (load is null)
             return ResponseResult.CreateError($"Could not find load with ID '{req.LoadId}'");
 
-        load.SetStatus(req.LoadStatus!.Value);
+        var loadStatus = req.LoadStatus!.Value;
+        load.SetStatus(loadStatus);
+
+        switch (loadStatus)
+        {
+            case LoadStatus.PickedUp:
+                load.CanConfirmPickUp = false;
+                break;
+            case LoadStatus.Delivered:
+                load.CanConfirmPickUp = false;
+                load.CanConfirmDelivery = false;
+                break;
+        }
+        
         _tenantRepository.Update(load);
         await _tenantRepository.UnitOfWork.CommitAsync();
         return ResponseResult.CreateSuccess();
