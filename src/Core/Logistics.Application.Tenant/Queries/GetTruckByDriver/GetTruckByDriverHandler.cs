@@ -29,7 +29,7 @@ internal sealed class GetTruckByDriverHandler : RequestHandler<GetTruckByDriverQ
         if (req.IncludeOnlyActiveLoads)
         {
             truckDto.Loads = driver.Truck.Loads
-                .Where(l => l.DeliveryDate.HasValue)
+                .Where(l => l.DeliveryDate == null)
                 .Select(l => l.ToDto())
                 .ToArray();
         }

@@ -292,7 +292,7 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakeGetRequestAsync<ResponseResult<DriverActiveLoadsDto>>($"driver/{userId}/activeLoads");
     }
 
-    public Task<ResponseResult<TruckDto>> GetDriverTruckAsync(string userId, bool includeLoads = false, bool includeOnlyActiveLoads = false)
+    public Task<ResponseResult<TruckDto>> GetDriverTruckDataAsync(string userId, bool includeLoads = false, bool includeOnlyActiveLoads = false)
     {
         var query = new Dictionary<string, string>
         {
@@ -302,14 +302,19 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakeGetRequestAsync<ResponseResult<TruckDto>>($"driver/{userId}/truck", query);  
     }
     
-    public Task<ResponseResult> SetDeviceTokenAsync(string userId, string token)
+    public Task<ResponseResult> SetDeviceTokenAsync(SetDeviceToken command)
     {
-        var command = new SetDeviceToken
-        {
-            UserId = userId,
-            DeviceToken = token
-        };
-        return MakePostRequestAsync<ResponseResult, SetDeviceToken>($"driver/{userId}/deviceToken", command);
+        return MakePostRequestAsync<ResponseResult, SetDeviceToken>($"driver/{command.UserId}/deviceToken", command);
+    }
+
+    public Task<ResponseResult> ConfirmLoadStatusAsync(ConfirmLoadStatus command)
+    {
+        return MakePostRequestAsync<ResponseResult, ConfirmLoadStatus>("driver/confirmLoadStatus", command);
+    }
+
+    public Task<ResponseResult> UpdateLoadProximity(UpdateLoadProximity command)
+    {
+        return MakePostRequestAsync<ResponseResult, UpdateLoadProximity>("driver/updateLoadProximity", command);
     }
 
     #endregion

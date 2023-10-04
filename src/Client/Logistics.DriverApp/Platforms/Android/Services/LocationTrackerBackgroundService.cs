@@ -4,6 +4,7 @@ using Android.Content;
 using Android.OS;
 using AndroidX.Core.App;
 using Logistics.DriverApp.Platforms.Android.Consts;
+using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.LocationTracking;
 using AndroidApp = Android.App.Application;
 
@@ -14,6 +15,7 @@ public class LocationTrackerBackgroundService : Service, ILocationTrackerBackgro
 {
     private const int NotificationId = 1000;
     private readonly ILocationTracker _locationTracker = App.Current.GetRequiredService<ILocationTracker>();
+    private readonly ILoadProximityUpdater _proximityUpdater = App.Current.GetRequiredService<ILoadProximityUpdater>();
     private Timer? _timer;
     private LocationTrackerOptions? _options;
 
@@ -70,7 +72,12 @@ public class LocationTrackerBackgroundService : Service, ILocationTrackerBackgro
 
     private async void SendGeolocationData(object? state)
     {
-        await _locationTracker.SendLocationDataAsync(_options!);
+        var currentLocation = await _locationTracker.SendLocationDataAsync(_options!);
+
+        if (currentLocation is not null)
+        {
+            await _proximityUpdater.UpdateLoadProximitiesAsync(currentLocation);
+        }
     }
     
     private void StartForegroundService()

@@ -22,6 +22,8 @@ public static class LoadMapper
             DeliveryDate = entity.DeliveryDate,
             DeliveryCost = entity.DeliveryCost,
             Distance = entity.Distance,
+            CanConfirmPickUp = entity.CanConfirmPickUp,
+            CanConfirmDelivery = entity.CanConfirmDelivery,
             Status = (LoadStatusDto)entity.GetStatus(),
             AssignedDispatcherId = entity.AssignedDispatcherId,
             AssignedDispatcherName = entity.AssignedDispatcher?.GetFullName(),

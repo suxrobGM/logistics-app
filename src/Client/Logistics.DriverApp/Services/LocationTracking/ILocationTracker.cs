@@ -2,5 +2,5 @@
 
 public interface ILocationTracker : IAsyncDisposable
 {
-    Task SendLocationDataAsync(LocationTrackerOptions options);
+    Task<Location?> SendLocationDataAsync(LocationTrackerOptions options);
 }

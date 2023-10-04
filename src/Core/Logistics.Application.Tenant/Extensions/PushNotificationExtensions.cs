@@ -18,6 +18,16 @@ internal static class PushNotificationExtensions
         }
     }
     
+    public static Task SendUpdatedLoadNotificationAsync(this IPushNotification pushNotification, Load load)
+    {
+        if (load.AssignedTruck is null)
+        {
+            return Task.CompletedTask;
+        }
+        
+        return SendUpdatedLoadNotificationAsync(pushNotification, load, load.AssignedTruck);
+    }
+    
     public static async Task SendUpdatedLoadNotificationAsync(this IPushNotification pushNotification, Load load, Truck truck)
     {
         var drivers = truck.Drivers.Where(driver => !string.IsNullOrEmpty(driver.DeviceToken));

@@ -7,6 +7,7 @@
                        xmlns:views="clr-namespace:Logistics.DriverApp.Views"
                        xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels"
                        xmlns:controls="clr-namespace:Logistics.DriverApp.Controls"
+                       x:Name="loadPage"
                        Title="Load">
     <Grid BackgroundColor="#dae5f3">
         <core:SfBusyIndicator ZIndex="2"
@@ -68,6 +69,14 @@
                         <Label Text="Delivery Date: " FontAttributes="Bold" />
                         <Label Text="{Binding LoadData.DeliveryDate}" />
                     </HorizontalStackLayout>
+                    <Button Text="Confirm Pick Up"
+                            IsVisible="{Binding LoadData.CanConfirmPickUp, Converter={StaticResource BoolToVisibilityConverter}}"
+                            Command="{Binding BindingContext.ConfirmPickUpCommand, Source={x:Reference loadPage}}">
+                    </Button>
+                    <Button Text="Confirm Delivery"
+                            IsVisible="{Binding LoadData.CanConfirmDelivery, Converter={StaticResource BoolToVisibilityConverter}}"
+                            Command="{Binding BindingContext.ConfirmDeliveryCommand, Source={x:Reference loadPage}}">
+                    </Button>
                     <WebView HeightRequest="420">
                         <WebView.Source>
                             <HtmlWebViewSource Html="{Binding EmbedMapHtml}" />

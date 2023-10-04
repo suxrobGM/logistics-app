@@ -30,7 +30,7 @@ internal sealed class SetTruckGeolocationHandler : RequestHandler<SetTruckGeoloc
             return ResponseResult.CreateSuccess();
         }
 
-        truck.LastKnownLocation = req.GeolocationData.CurrentLocation;
+        truck.LastKnownLocation = req.GeolocationData.CurrentAddress;
         truck.LastKnownLocationLat = req.GeolocationData.Latitude;
         truck.LastKnownLocationLong = req.GeolocationData.Longitude;
         _tenantRepository.Update(truck);

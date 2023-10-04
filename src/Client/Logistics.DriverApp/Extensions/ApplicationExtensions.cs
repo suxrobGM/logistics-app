@@ -42,6 +42,7 @@ public static class ApplicationExtensions
         
         services.AddScoped<IdentityModel.OidcClient.Browser.IBrowser, WebBrowserAuthenticator>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<ILoadProximityUpdater, LoadProximityUpdater>();
         services.AddScoped<ILocationTracker, LocationTracker>();
         services.AddScoped<ILocationTrackerBackgroundService, LocationTrackerBackgroundService>();
         RegisterRoutes();

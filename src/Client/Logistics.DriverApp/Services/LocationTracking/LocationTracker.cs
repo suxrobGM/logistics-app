@@ -42,13 +42,13 @@ public class LocationTracker : ILocationTracker
         _isConnected = false;
     }
 
-    public async Task SendLocationDataAsync(LocationTrackerOptions options)
+    public async Task<Location?> SendLocationDataAsync(LocationTrackerOptions options)
     {
         try
         {
             if (string.IsNullOrEmpty(options.TruckId) || string.IsNullOrEmpty(options.TenantId))
             {
-                return;
+                return default;
             }
         
             await ConnectAsync();
@@ -56,12 +56,11 @@ public class LocationTracker : ILocationTracker
 
             if (location is null)
             {
-                return;
+                return default;
             }
 
             var address = await GetAddressFromGeocodeAsync(location.Latitude, location.Longitude);
-
-            // Location.CalculateDistance(location, location, DistanceUnits.Kilometers)
+            
             var geolocationData = new TruckGeolocationDto
             {
                 TruckId = options.TruckId,
@@ -70,13 +69,15 @@ public class LocationTracker : ILocationTracker
                 DriversName = options.DriversName,
                 Latitude = location.Latitude,
                 Longitude = location.Longitude,
-                CurrentLocation = address
+                CurrentAddress = address
             };
             await _hubConnection.InvokeAsync("SendGeolocationData", geolocationData);
+            return location;
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
+            return default;
         }
     }
     

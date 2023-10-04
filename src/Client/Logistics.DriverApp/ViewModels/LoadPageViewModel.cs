@@ -14,7 +14,16 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
     {
         _apiClient = apiClient;
         _mapsService = mapsService;
+        ConfirmPickUpCommand = new AsyncRelayCommand(ConfirmPickUpAsync);
+        ConfirmDeliveryCommand = new AsyncRelayCommand(ConfirmDeliveryAsync);
     }
+
+    #region Commands
+
+    public IAsyncRelayCommand ConfirmPickUpCommand { get; }
+    public IAsyncRelayCommand ConfirmDeliveryCommand { get; }
+
+    #endregion
 
     #region Bindable properties
 
@@ -72,6 +81,24 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
         var embedMapHtml = GetEmbedMapHtml(loadDto);
         ActiveLoad = new ActiveLoad(loadDto, embedMapHtml);
         IsLoading = false;
+    }
+
+    private Task ConfirmPickUpAsync()
+    { 
+        return _apiClient.ConfirmLoadStatusAsync(new ConfirmLoadStatus
+        {
+            LoadId = _lastLoadId,
+            LoadStatus = LoadStatusDto.PickedUp
+        });
+    }
+    
+    private Task ConfirmDeliveryAsync()
+    {
+        return _apiClient.ConfirmLoadStatusAsync(new ConfirmLoadStatus
+        {
+            LoadId = _lastLoadId,
+            LoadStatus = LoadStatusDto.Delivered
+        });
     }
 
     private string GetEmbedMapHtml(LoadDto load)

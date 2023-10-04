@@ -29,9 +29,6 @@ public class DashboardPageViewModel : BaseViewModel
         _locationTrackerBackgroundService = locationTrackerBackgroundService;
         _cache = cache;
         OpenLoadPageCommand = new AsyncRelayCommand<string?>(OpenLoadPageAsync);
-        RefreshCommand = new AsyncRelayCommand(FetchActiveLoadsAsync, () => !IsLoading);
-        
-        IsLoadingChanged += (s, e) => RefreshCommand.NotifyCanExecuteChanged();
         CrossFirebaseCloudMessaging.Current.NotificationReceived += HandleLoadNotificationReceived;
         
         Messenger.Register<TenantIdChangedMessage>(this, async (_, _) =>
@@ -44,7 +41,6 @@ public class DashboardPageViewModel : BaseViewModel
     #region Commands
 
     public IAsyncRelayCommand<string?> OpenLoadPageCommand { get; }
-    public IAsyncRelayCommand RefreshCommand { get; }
 
     #endregion
 
@@ -134,7 +130,7 @@ public class DashboardPageViewModel : BaseViewModel
             return;
         }
         
-        var result = await _apiClient.GetDriverTruckAsync(driverId, false, true);
+        var result = await _apiClient.GetDriverTruckDataAsync(driverId, false, true);
 
         if (!result.Success)
         {
@@ -148,7 +144,8 @@ public class DashboardPageViewModel : BaseViewModel
         TruckNumber = truck.TruckNumber;
         TeammatesName = string.Join(", ", teammates); 
         _cache.Set(CacheKeys.TruckId, truck.Id);
-        
+
+        Messenger.Send(new ActiveLoadsChangedMessage(truck.Loads.ToArray()));
         AddActiveLoads(truck.Loads);
         IsLoading = false;
     }
@@ -178,7 +175,7 @@ public class DashboardPageViewModel : BaseViewModel
 
         if (!string.IsNullOrEmpty(token))
         {
-            await _apiClient.SetDeviceTokenAsync(driverId, token);
+            await _apiClient.SetDeviceTokenAsync(new SetDeviceToken {UserId = driverId, DeviceToken = token});
         }
     }
 

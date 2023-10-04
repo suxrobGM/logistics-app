@@ -45,10 +45,10 @@ public class DriverController : ControllerBase
     [ProducesResponseType(typeof(ResponseResult<TruckDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Truck.View)]
-    public async Task<IActionResult> GetTruckByDriver(string userId, [FromQuery] GetTruckByDriverQuery query)
+    public async Task<IActionResult> GetTruckByDriver(string userId, [FromQuery] GetTruckByDriverQuery request)
     {
-        query.UserId = userId;
-        var result = await _mediator.Send(query);
+        request.UserId = userId;
+        var result = await _mediator.Send(request);
 
         if (result.Success)
             return Ok(result);
@@ -60,10 +60,38 @@ public class DriverController : ControllerBase
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.View)]
-    public async Task<IActionResult> SetDeviceToken(string userId, [FromBody] SetDriverDeviceTokenCommand command)
+    public async Task<IActionResult> SetDeviceToken(string userId, [FromBody] SetDriverDeviceTokenCommand request)
     {
-        command.UserId = userId;
-        var result = await _mediator.Send(command);
+        request.UserId = userId;
+        var result = await _mediator.Send(request);
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result.Error);
+    }
+    
+    [HttpPost("confirmLoadStatus")]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Employee.View)]
+    public async Task<IActionResult> ConfirmLoadStatus([FromBody] ConfirmLoadStatusCommand request)
+    {
+        var result = await _mediator.Send(request);
+
+        if (result.Success)
+            return Ok(result);
+
+        return BadRequest(result.Error);
+    }
+    
+    [HttpPost("updateLoadProximity")]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Employee.View)]
+    public async Task<IActionResult> UpdateLoadProximity([FromBody] UpdateLoadProximityCommand request)
+    {
+        var result = await _mediator.Send(request);
 
         if (result.Success)
             return Ok(result);

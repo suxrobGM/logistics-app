@@ -127,24 +127,6 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resp
                 load.SetStatus(req.Status.Value);
                 updated = true;
             }
-            
-            if (req.CanConfirmPickUp.HasValue && req.CanConfirmPickUp != load.CanConfirmPickUp)
-            {
-                load.CanConfirmPickUp = req.CanConfirmPickUp.Value;
-                updated = true;
-            }
-            
-            if (req.CanConfirmDelivery.HasValue && req.CanConfirmDelivery != load.CanConfirmDelivery)
-            {
-                load.CanConfirmDelivery = req.CanConfirmDelivery.Value;
-
-                if (req.CanConfirmDelivery.Value)
-                {
-                    load.CanConfirmPickUp = true;
-                }
-                
-                updated = true;
-            }
 
             return updated;
         }
