@@ -96,7 +96,7 @@ internal class FakeDataService
         var mainRepository = _serviceProvider.GetRequiredService<IMainRepository>();
         var tenant = await mainRepository.GetAsync<Tenant>(i => i.Name == "default");
 
-        if (tenant == null)
+        if (tenant is null)
             throw new InvalidOperationException("Could not find the default tenant");
         
         var owner = users[0];
@@ -214,12 +214,12 @@ internal class FakeDataService
                 truck, 
                 dispatcher);
             load.Name = $"Test cargo {i}";
-            load.Status = LoadStatus.Delivered;
             load.PickUpDate = pickupDate;
             load.DispatchedDate = pickupDate;
             load.DeliveryDate = pickupDate.AddDays(1);
             load.Distance = _random.Next(16093, 321869);
             load.DeliveryCost = _random.Next(1000, 3000);
+            load.SetStatus(LoadStatus.Delivered);
 
             await tenantRepository.AddAsync(load);
             _logger.LogInformation("Added a load {Name}", load.Name);

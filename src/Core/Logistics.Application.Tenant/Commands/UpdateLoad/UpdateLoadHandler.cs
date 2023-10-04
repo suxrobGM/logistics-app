@@ -84,47 +84,65 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resp
             }
         }
 
-        private bool UpdateLoadDetails(UpdateLoadCommand req, Load loadEntity)
+        private bool UpdateLoadDetails(UpdateLoadCommand req, Load load)
         {
             var updated = false;
 
-            if (req.Name != null && req.Name != loadEntity.Name)
+            if (req.Name != null && req.Name != load.Name)
             {
-                loadEntity.Name = req.Name;
+                load.Name = req.Name;
                 updated = true;
             }
 
-            if (req.OriginAddress != null && req.OriginAddress != loadEntity.OriginAddress)
+            if (req.OriginAddress != null && req.OriginAddress != load.OriginAddress)
             {
-                loadEntity.OriginAddress = req.OriginAddress;
-                loadEntity.OriginAddressLat = req.OriginAddressLat;
-                loadEntity.OriginAddressLong = req.OriginAddressLong;
+                load.OriginAddress = req.OriginAddress;
+                load.OriginAddressLat = req.OriginAddressLat;
+                load.OriginAddressLong = req.OriginAddressLong;
                 updated = true;
             }
 
-            if (req.DestinationAddress != null && req.DestinationAddress != loadEntity.DestinationAddress)
+            if (req.DestinationAddress != null && req.DestinationAddress != load.DestinationAddress)
             {
-                loadEntity.DestinationAddress = req.DestinationAddress;
-                loadEntity.DestinationAddressLat = req.DestinationAddressLat;
-                loadEntity.DestinationAddressLong = req.DestinationAddressLong;
+                load.DestinationAddress = req.DestinationAddress;
+                load.DestinationAddressLat = req.DestinationAddressLat;
+                load.DestinationAddressLong = req.DestinationAddressLong;
                 updated = true;
             }
-
-            if (req.DeliveryCost.HasValue && req.DeliveryCost != loadEntity.DeliveryCost)
+            
+            if (req.DeliveryCost.HasValue && req.DeliveryCost != load.DeliveryCost)
             {
-                loadEntity.DeliveryCost = req.DeliveryCost.Value;
+                load.DeliveryCost = req.DeliveryCost.Value;
                 updated = true;
             }
-
-            if (req.Distance.HasValue && req.Distance != loadEntity.Distance)
+            
+            if (req.Distance.HasValue && req.Distance != load.Distance)
             {
-                loadEntity.Distance = req.Distance.Value;
+                load.Distance = req.Distance.Value;
                 updated = true;
             }
-
-            if (req.Status.HasValue && req.Status != loadEntity.Status)
+            
+            if (req.Status.HasValue && req.Status != load.GetStatus())
             {
-                loadEntity.Status = req.Status.Value;
+                load.SetStatus(req.Status.Value);
+                updated = true;
+            }
+            
+            if (req.CanConfirmPickUp.HasValue && req.CanConfirmPickUp != load.CanConfirmPickUp)
+            {
+                load.CanConfirmPickUp = req.CanConfirmPickUp.Value;
+                updated = true;
+            }
+            
+            if (req.CanConfirmDelivery.HasValue && req.CanConfirmDelivery != load.CanConfirmDelivery)
+            {
+                load.CanConfirmDelivery = req.CanConfirmDelivery.Value;
+
+                if (req.CanConfirmDelivery.Value)
+                {
+                    load.CanConfirmPickUp = true;
+                }
+                
                 updated = true;
             }
 

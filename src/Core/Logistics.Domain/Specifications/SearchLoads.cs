@@ -33,7 +33,6 @@ public class SearchLoads : BaseSpecification<Load>
             "dispatcheddate" => i => i.DispatchedDate,
             "pickupdate" => i => i.PickUpDate!,
             "deliverydate" => i => i.DeliveryDate!,
-            "status" => i => i.Status,
             _ => i => i.RefId
         };
     }

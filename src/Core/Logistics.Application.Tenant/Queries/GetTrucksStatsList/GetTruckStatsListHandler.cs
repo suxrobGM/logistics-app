@@ -20,9 +20,8 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
         var totalItems = _tenantRepository.Query<Truck>().Count();
 
         var truckStatsQuery = _tenantRepository.Query<Load>()
-            .Where(load => load.Status == LoadStatus.Delivered
-                           && load.DeliveryDate.HasValue
-                           && load.DispatchedDate >= req.StartDate
+            .Where(load => load.DeliveryDate.HasValue
+                           && load.DeliveryDate >= req.StartDate
                            && load.DeliveryDate.Value <= req.EndDate)
             .GroupBy(load => load.AssignedTruckId!)
             .Select(group => new TruckStats

@@ -22,7 +22,7 @@ public static class LoadMapper
             DeliveryDate = entity.DeliveryDate,
             DeliveryCost = entity.DeliveryCost,
             Distance = entity.Distance,
-            Status = (LoadStatusDto)entity.Status,
+            Status = (LoadStatusDto)entity.GetStatus(),
             AssignedDispatcherId = entity.AssignedDispatcherId,
             AssignedDispatcherName = entity.AssignedDispatcher?.GetFullName(),
             AssignedTruckId = entity.AssignedTruckId,

@@ -6,8 +6,6 @@ namespace Logistics.Domain.Entities;
 
 public class Load : AuditableEntity, ITenantEntity
 {
-    private LoadStatus _status = LoadStatus.Dispatched;
-
     public ulong RefId { get; set; } = 1000;
     
     [StringLength(LoadConsts.NameLength)]
@@ -28,40 +26,49 @@ public class Load : AuditableEntity, ITenantEntity
     public decimal DeliveryCost { get; set; }
     public double Distance { get; set; }
     
-    public DateTime DispatchedDate { get; set; }
+    public bool CanConfirmPickUp { get; set; }
+    public bool CanConfirmDelivery { get; set; }
+    
+    public DateTime DispatchedDate { get; set; } = DateTime.UtcNow;
     public DateTime? PickUpDate { get; set; }
     public DateTime? DeliveryDate { get; set; }
-    
-    public LoadStatus Status
-    {
-        get => _status;
-        set
-        {
-            _status = value;
-
-            switch (_status)
-            {
-                case LoadStatus.Dispatched:
-                    DispatchedDate = DateTime.UtcNow;
-                    PickUpDate = null;
-                    DeliveryDate = null;
-                    break;
-                case LoadStatus.PickedUp:
-                    PickUpDate = DateTime.UtcNow;
-                    DeliveryDate = null;
-                    break;
-                case LoadStatus.Delivered:
-                    DeliveryDate = DateTime.UtcNow;
-                    break;
-            }
-        }
-    }
     
     public string? AssignedDispatcherId { get; set; }
     public string? AssignedTruckId { get; set; }
 
     public virtual Truck? AssignedTruck { get; set; }
     public virtual Employee? AssignedDispatcher { get; set; }
+
+    public void SetStatus(LoadStatus status)
+    {
+        switch (status)
+        {
+            case LoadStatus.Dispatched:
+                DispatchedDate = DateTime.UtcNow;
+                PickUpDate = null;
+                DeliveryDate = null;
+                break;
+            case LoadStatus.PickedUp:
+                PickUpDate = DateTime.UtcNow;
+                DeliveryDate = null;
+                break;
+            case LoadStatus.Delivered:
+                DeliveryDate = DateTime.UtcNow;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(status), status, null);
+        }
+    }
+
+    public LoadStatus GetStatus()
+    {
+        if (DeliveryDate.HasValue)
+        {
+            return LoadStatus.Delivered;
+        }
+
+        return PickUpDate.HasValue ? LoadStatus.PickedUp : LoadStatus.Dispatched;
+    }
 
     public decimal CalcDriverShare()
     {
@@ -89,8 +96,7 @@ public class Load : AuditableEntity, ITenantEntity
             DestinationAddressLat = destinationLatitude,
             DestinationAddressLong = destinationLongitude,
             AssignedTruck = assignedTruck,
-            AssignedDispatcher = assignedDispatcher,
-            Status = LoadStatus.Dispatched
+            AssignedDispatcher = assignedDispatcher
         };
         
         load.DomainEvents.Add(new NewLoadCreatedEvent(refId));

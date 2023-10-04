@@ -61,6 +61,7 @@ public class LocationTracker : ILocationTracker
 
             var address = await GetAddressFromGeocodeAsync(location.Latitude, location.Longitude);
 
+            // Location.CalculateDistance(location, location, DistanceUnits.Kilometers)
             var geolocationData = new TruckGeolocationDto
             {
                 TruckId = options.TruckId,
@@ -73,9 +74,9 @@ public class LocationTracker : ILocationTracker
             };
             await _hubConnection.InvokeAsync("SendGeolocationData", geolocationData);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine(e);
+            Console.WriteLine(ex);
         }
     }
     
@@ -114,8 +115,9 @@ public class LocationTracker : ILocationTracker
 
             return null;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Console.WriteLine(ex);
             return null;
         }
     }
