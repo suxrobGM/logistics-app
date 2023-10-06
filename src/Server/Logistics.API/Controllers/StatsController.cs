@@ -21,7 +21,7 @@ public class StatsController : ControllerBase
     {
         var result = await _mediator.Send(request);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result.Error);
@@ -35,7 +35,7 @@ public class StatsController : ControllerBase
     {
         var result = await _mediator.Send(request);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result.Error);
@@ -49,7 +49,7 @@ public class StatsController : ControllerBase
     {
         var result = await _mediator.Send(request);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result.Error);
@@ -63,7 +63,7 @@ public class StatsController : ControllerBase
     {
         var result = await _mediator.Send(request);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result.Error);
@@ -78,7 +78,7 @@ public class StatsController : ControllerBase
         request.UserId = userId;
         var result = await _mediator.Send(request);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result.Error);

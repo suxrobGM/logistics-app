@@ -94,7 +94,7 @@ export class AddEmployeeComponent implements OnInit {
 
     this.isBusy = true;
     this.apiService.createEmployee(newEmployee).subscribe((result) => {
-      if (result.success) {
+      if (result.isSuccess) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'New employee has been added successfully'});
         this.form.reset();
       }

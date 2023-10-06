@@ -72,7 +72,7 @@ export class TruckDetailsComponent implements OnInit {
     this.isLoading = true;
 
     this.apiService.getTruck(this.id).subscribe((result) => {
-      if (result.success && result.value) {
+      if (result.isSuccess && result.value) {
         this.truck = result.value;
 
         this.truckLocations = [{

@@ -13,19 +13,16 @@ public class TruckController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{truckOrDriverId}")]
     [ProducesResponseType(typeof(ResponseResult<TruckDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Truck.View)]
-    public async Task<IActionResult> GetById(string id, bool includeLoads = false)
+    public async Task<IActionResult> GetById(string truckOrDriverId, [FromQuery] GetTruckQuery request)
     {
-        var result = await _mediator.Send(new GetTruckByIdQuery
-        {
-            IncludeLoads = includeLoads,
-            Id = id
-        });
+        request.TruckOrDriverId = truckOrDriverId;
+        var result = await _mediator.Send(request);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);
@@ -39,7 +36,7 @@ public class TruckController : ControllerBase
     {
         var result = await _mediator.Send(query);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);
@@ -53,7 +50,7 @@ public class TruckController : ControllerBase
     {
         var result = await _mediator.Send(query);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);
@@ -67,7 +64,7 @@ public class TruckController : ControllerBase
     {
         var result = await _mediator.Send(request);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);
@@ -82,7 +79,7 @@ public class TruckController : ControllerBase
         request.Id = id;
         var result = await _mediator.Send(request);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);
@@ -99,7 +96,7 @@ public class TruckController : ControllerBase
             Id = id
         });
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);

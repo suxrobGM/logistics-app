@@ -23,7 +23,7 @@ public record PagedResponseResult<T> : IResponseResult
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? Error { get; init; }
 
-    public bool Success => string.IsNullOrEmpty(Error);
+    public bool IsSuccess => string.IsNullOrEmpty(Error);
 
     public static PagedResponseResult<T> Create(IEnumerable<T>? items, int itemsCount, int pagesCount) =>
         new(items, itemsCount, pagesCount);

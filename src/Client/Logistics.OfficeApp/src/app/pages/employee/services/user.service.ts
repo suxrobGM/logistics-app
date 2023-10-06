@@ -30,7 +30,7 @@ export class UserService {
 
     return roles$.pipe(
         map((result) => {
-          if (result.success && result.items) {
+          if (result.isSuccess && result.items) {
             const roles = result.items;
             const roleNames = roles.map((i) => i.name);
 

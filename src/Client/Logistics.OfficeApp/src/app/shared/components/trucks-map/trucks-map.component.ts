@@ -57,7 +57,7 @@ export class TrucksMapComponent implements OnInit, OnDestroy {
 
   private fetchTrucksData() {
     this.apiService.getTrucks('', '', 1, 100).subscribe((result) => {
-      if (!result.success) {
+      if (!result.isSuccess) {
         return;
       }
 

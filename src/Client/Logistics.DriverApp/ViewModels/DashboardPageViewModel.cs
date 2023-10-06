@@ -133,9 +133,14 @@ public class DashboardPageViewModel : BaseViewModel
             return;
         }
         
-        var result = await _apiClient.GetDriverTruckDataAsync(driverId, false, true);
+        var result = await _apiClient.GetTruckAsync(new GetTruckQuery
+        {
+            TruckOrDriverId = driverId,
+            IncludeLoads = true,
+            OnlyActiveLoads = true,
+        });
 
-        if (!result.Success)
+        if (!result.IsSuccess)
         {
             await PopupHelpers.ShowErrorAsync(result.Error);
             IsLoading = false;
@@ -158,15 +163,14 @@ public class DashboardPageViewModel : BaseViewModel
         var driverId = _authService.User?.Id!;
         var result = await _apiClient.GetDriverActiveLoadsAsync(driverId);
 
-        if (!result.Success)
+        if (!result.IsSuccess)
         {
             await PopupHelpers.ShowErrorAsync("Failed to load the dashboard data, try again");
             IsLoading = false;
             return;
         }
         
-        var loads = result.Value!.ActiveLoads;
-        AddActiveLoads(loads);
+        AddActiveLoads(result.Value!);
         IsLoading = false;
     }
     

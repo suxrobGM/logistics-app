@@ -24,7 +24,7 @@ public class LoadController : ControllerBase
             Id = id
         });
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);
@@ -40,7 +40,7 @@ public class LoadController : ControllerBase
     {
         var result = await _mediator.Send(query);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);
@@ -54,7 +54,7 @@ public class LoadController : ControllerBase
     {
         var result = await _mediator.Send(request);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);
@@ -69,7 +69,7 @@ public class LoadController : ControllerBase
         request.Id = id;
         var result = await _mediator.Send(request);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);
@@ -86,7 +86,7 @@ public class LoadController : ControllerBase
             Id = id
         });
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);

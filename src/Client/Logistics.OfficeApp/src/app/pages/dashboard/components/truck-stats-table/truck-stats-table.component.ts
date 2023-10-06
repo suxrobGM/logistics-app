@@ -53,7 +53,7 @@ export class TruckStatsTableComponent {
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
     this.apiService.getTrucksStats(this.startDate, this.endDate, sortField, page, event.rows!).subscribe((result) => {
-      if (result.success && result.items) {
+      if (result.isSuccess && result.items) {
         this.truckStats = result.items;
         this.totalRecords = result.itemsCount!;
       }

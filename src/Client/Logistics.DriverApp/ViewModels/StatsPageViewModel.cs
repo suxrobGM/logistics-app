@@ -95,7 +95,7 @@ public class StatsPageViewModel : BaseViewModel
 	    var driverUserId = _authService.User!.Id!;
 	    var result = await _apiClient.GetDriverStatsAsync(driverUserId);
 
-	    if (!result.Success)
+	    if (!result.IsSuccess)
 	    {
 		    await PopupHelpers.ShowErrorAsync("Failed to fetch driver's stats, try again");
 		    IsLoading = false;
@@ -118,7 +118,7 @@ public class StatsPageViewModel : BaseViewModel
 	        EndDate = ChartDateRange.EndDate
         });
 
-        if (!result.Success)
+        if (!result.IsSuccess)
         {
 	        await PopupHelpers.ShowErrorAsync("Failed to load driver chart data, try again");
 	        IsLoading = false;
@@ -141,7 +141,7 @@ public class StatsPageViewModel : BaseViewModel
 		    EndDate = ChartDateRange.EndDate
 	    });
 
-	    if (!result.Success)
+	    if (!result.IsSuccess)
 	    {
 		    await PopupHelpers.ShowErrorAsync("Failed to load driver chart data, try again");
 		    IsLoading = false;

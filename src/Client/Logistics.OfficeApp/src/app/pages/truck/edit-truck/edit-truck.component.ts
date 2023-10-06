@@ -78,7 +78,7 @@ export class EditTruckComponent implements OnInit {
 
   searchDriver(event: any) {
     this.apiService.getDrivers(event.query).subscribe((result) => {
-      if (result.success && result.items) {
+      if (result.isSuccess && result.items) {
         this.suggestedDrivers = result.items;
       }
     });
@@ -109,7 +109,7 @@ export class EditTruckComponent implements OnInit {
 
   private fetchTruck(id: string) {
     this.apiService.getTruck(id).subscribe((result) => {
-      if (result.success && result.value) {
+      if (result.isSuccess && result.value) {
         const truck = result.value;
         this.form.patchValue({
           truckNumber: truck.truckNumber,
@@ -131,7 +131,7 @@ export class EditTruckComponent implements OnInit {
     };
 
     this.apiService.createTruck(command).subscribe((result) => {
-      if (result.success) {
+      if (result.isSuccess) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A new truck has been created successfully'});
         this.resetForm();
       }
@@ -152,7 +152,7 @@ export class EditTruckComponent implements OnInit {
     };
 
     this.apiService.updateTruck(updateTruckCommand).subscribe((result) => {
-      if (result.success) {
+      if (result.isSuccess) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Truck has been updated successfully'});
       }
 
@@ -167,7 +167,7 @@ export class EditTruckComponent implements OnInit {
 
     this.isBusy = true;
     this.apiService.deleteTruck(this.id).subscribe((result) => {
-      if (result.success) {
+      if (result.isSuccess) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A truck has been deleted successfully'});
         this.resetForm();
       }

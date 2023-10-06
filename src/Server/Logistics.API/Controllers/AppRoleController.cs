@@ -21,7 +21,7 @@ public class AppRoleController : ControllerBase
     {
         var result = await _mediator.Send(query);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);

@@ -77,11 +77,11 @@ export class ApiService {
         .pipe(catchError((err) => this.handleError(err)));
   }
 
-  getLoads(searchQuery = '', filterActiveLoads = false, orderBy = '', page = 1, pageSize = 10): Observable<PagedResponseResult<Load>> {
+  getLoads(searchQuery = '', onlyActiveLoads = false, orderBy = '', page = 1, pageSize = 10): Observable<PagedResponseResult<Load>> {
     let url = `${this.host}/loads?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
 
-    if (filterActiveLoads) {
-      url = `${url}&filterActiveLoads=true`;
+    if (onlyActiveLoads) {
+      url = `${url}&onlyActiveLoads=true`;
     }
     return this.httpClient
         .get<PagedResponseResult<Load>>(url)
@@ -119,8 +119,8 @@ export class ApiService {
 
   // #region Truck API
 
-  getTruck(id: string): Observable<ResponseResult<Truck>> {
-    const url = `${this.host}/trucks/${id}`;
+  getTruck(truckId: string): Observable<ResponseResult<Truck>> {
+    const url = `${this.host}/trucks/${truckId}`;
     return this.httpClient
         .get<ResponseResult<Truck>>(url)
         .pipe(catchError((err) => this.handleError(err)));

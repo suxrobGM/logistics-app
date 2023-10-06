@@ -100,7 +100,7 @@ public abstract class PageBase : ComponentBase
 
     private bool HandleError(IResponseResult apiResult)
     {
-        if (!apiResult.Success && !string.IsNullOrEmpty(apiResult.Error))
+        if (!apiResult.IsSuccess && !string.IsNullOrEmpty(apiResult.Error))
         {
             Error = apiResult.Error;
             return false;

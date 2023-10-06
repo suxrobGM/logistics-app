@@ -65,7 +65,7 @@ internal class ApiClient : GenericApiClient, IApiClient
         {
             var result = await GetRequestAsync<TRes>(endpoint, query);
 
-            if (!result.Success)
+            if (!result.IsSuccess)
                 OnErrorResponse?.Invoke(this, result.Error!);
 
             return result;
@@ -85,7 +85,7 @@ internal class ApiClient : GenericApiClient, IApiClient
         {
             var result = await PostRequestAsync<TRes, TBody>(endpoint, body);
 
-            if (!result.Success)
+            if (!result.IsSuccess)
                 OnErrorResponse?.Invoke(this, result.Error!);
 
             return result;
@@ -105,7 +105,7 @@ internal class ApiClient : GenericApiClient, IApiClient
         {
             var result = await PutRequestAsync<TRes, TBody>(endpoint, body);
 
-            if (!result.Success)
+            if (!result.IsSuccess)
                 OnErrorResponse?.Invoke(this, result.Error!);
 
             return result;
@@ -124,7 +124,7 @@ internal class ApiClient : GenericApiClient, IApiClient
         {
             var result = await DeleteRequestAsync<TRes>(endpoint);
 
-            if (!result.Success)
+            if (!result.IsSuccess)
                 OnErrorResponse?.Invoke(this, result.Error!);
 
             return result;
@@ -138,7 +138,7 @@ internal class ApiClient : GenericApiClient, IApiClient
 
 
     #region Load API
-
+    
     public Task<ResponseResult<LoadDto>> GetLoadAsync(string id)
     {
         return MakeGetRequestAsync<ResponseResult<LoadDto>>($"loads/{id}");
@@ -147,6 +147,17 @@ internal class ApiClient : GenericApiClient, IApiClient
     public Task<PagedResponseResult<LoadDto>> GetLoadsAsync(GetLoadsQuery query)
     {
         return MakeGetRequestAsync<PagedResponseResult<LoadDto>>("loads", query.ToDictionary());
+    }
+    
+    public Task<ResponseResult<ICollection<LoadDto>>> GetDriverActiveLoadsAsync(string userId)
+    {
+        var query = new Dictionary<string, string>
+        {
+            { "userId", userId },
+            { "onlyActiveLoads", "true" },
+            { "loadAllPage", "true" }
+        };
+        return MakeGetRequestAsync<ResponseResult<ICollection<LoadDto>>>("loads", query);
     }
 
     public Task<ResponseResult> CreateLoadAsync(CreateLoad load)
@@ -169,10 +180,10 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Truck API
 
-    public Task<ResponseResult<TruckDto>> GetTruckAsync(string id, bool includeLoads = false)
+    public Task<ResponseResult<TruckDto>> GetTruckAsync(GetTruckQuery query)
     {
-        var query = new Dictionary<string, string> { { "includeLoads", includeLoads.ToString() } };
-        return MakeGetRequestAsync<ResponseResult<TruckDto>>($"trucks/{id}", query);
+        var id = query.TruckOrDriverId;
+        return MakeGetRequestAsync<ResponseResult<TruckDto>>($"trucks/{id}", query.ToDictionary());
     }
 
     public Task<PagedResponseResult<TruckDto>> GetTrucksAsync(SearchableRequest request, bool includeLoads = false)
@@ -286,21 +297,6 @@ internal class ApiClient : GenericApiClient, IApiClient
 
 
     #region Driver API
-    
-    public Task<ResponseResult<DriverActiveLoadsDto>> GetDriverActiveLoadsAsync(string userId)
-    {
-        return MakeGetRequestAsync<ResponseResult<DriverActiveLoadsDto>>($"drivers/{userId}/active-loads");
-    }
-
-    public Task<ResponseResult<TruckDto>> GetDriverTruckDataAsync(string userId, bool includeLoads = false, bool includeOnlyActiveLoads = false)
-    {
-        var query = new Dictionary<string, string>
-        {
-            { "includeLoads", includeLoads.ToString() },
-            { "includeOnlyActiveLoads", includeOnlyActiveLoads.ToString() }
-        };
-        return MakeGetRequestAsync<ResponseResult<TruckDto>>($"drivers/{userId}/truck", query);  
-    }
     
     public Task<ResponseResult> SetDeviceTokenAsync(SetDeviceToken command)
     {

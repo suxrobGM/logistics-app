@@ -6,7 +6,7 @@ export class TruckHelper {
   static findTruckDrivers(apiService: ApiService, searchQuery: string): Observable<TruckData[]> {
     return apiService.getTruckDrivers(searchQuery).pipe(
         map((result) => {
-          if (!result.success || !result.items) {
+          if (!result.isSuccess || !result.items) {
             return [];
           }
 

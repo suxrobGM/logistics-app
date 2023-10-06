@@ -1,5 +1,6 @@
 export interface PagedResponseResult<T> {
-  success: boolean;
+  isSuccess: boolean;
+  isError: boolean;
   items?: T[];
   error?: string;
   itemsCount?: number;

@@ -74,7 +74,7 @@ export class ChangeRoleDialogComponent implements OnInit {
 
     this.loading = true;
     this.apiService.updateEmployee(updateEmployee).subscribe((result) => {
-      if (result.success) {
+      if (result.isSuccess) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Successfully changed employee\'s role'});
       }
 
@@ -108,7 +108,7 @@ export class ChangeRoleDialogComponent implements OnInit {
 
     this.loading = true;
     this.apiService.removeRoleFromEmployee(removeRole).subscribe((result) => {
-      if (result.success) {
+      if (result.isSuccess) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: `Removed ${roleName} role from employee`});
       }
 

@@ -1,5 +1,6 @@
 export interface ResponseResult<T = any> {
-  success: boolean;
+  isSuccess: boolean;
+  isError: boolean;
   value?: T;
   error?: string;
 }

@@ -2,6 +2,6 @@
 
 public interface IResponseResult
 {
-    bool Success { get; }
+    bool IsSuccess { get; }
     string? Error { get; init; }
 }

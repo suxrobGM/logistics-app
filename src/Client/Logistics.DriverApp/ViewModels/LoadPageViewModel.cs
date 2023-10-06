@@ -80,7 +80,7 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
         IsLoading = true;
         var result = await _apiClient.GetLoadAsync(_lastLoadId);
         
-        if (!result.Success)
+        if (!result.IsSuccess)
         {
             await PopupHelpers.ShowErrorAsync("Failed to fetch the load data, try later");
             IsLoading = false;
@@ -122,7 +122,7 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
                 break;
         }
 
-        if (result is { Success: false })
+        if (result is { IsSuccess: false })
         {
             await PopupHelpers.ShowErrorAsync($"Could not confirm the load status, error: {result.Error}");
             IsLoading = false;

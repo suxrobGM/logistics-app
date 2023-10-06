@@ -26,7 +26,7 @@ public class TenantController : ControllerBase
             Name = identifier
         });
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);
@@ -44,7 +44,7 @@ public class TenantController : ControllerBase
             Name = identifier
         });
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);
@@ -63,7 +63,7 @@ public class TenantController : ControllerBase
 
         var result = await _mediator.Send(query);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);
@@ -77,7 +77,7 @@ public class TenantController : ControllerBase
     {
         var result = await _mediator.Send(request);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);
@@ -92,7 +92,7 @@ public class TenantController : ControllerBase
         request.Id = id;
         var result = await _mediator.Send(request);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);
@@ -109,7 +109,7 @@ public class TenantController : ControllerBase
             Id = id
         });
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);

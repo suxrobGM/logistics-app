@@ -48,7 +48,7 @@ export class ListEmployeeComponent implements OnInit {
     const query = event.target.value;
 
     this.apiService.getEmployees(query, '', 1).subscribe((result) => {
-      if (result.success && result.items) {
+      if (result.isSuccess && result.items) {
         this.employees = result.items;
         this.totalRecords = result.itemsCount!;
       }
@@ -61,7 +61,7 @@ export class ListEmployeeComponent implements OnInit {
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
     this.apiService.getEmployees('', sortField, page, event.rows!).subscribe((result) => {
-      if (result.success && result.items) {
+      if (result.isSuccess && result.items) {
         this.employees = result.items;
         this.totalRecords = result.itemsCount!;
       }

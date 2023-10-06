@@ -21,7 +21,7 @@ public class UserController : ControllerBase
     {
         var result = await _mediator.Send(new GetUserByIdQuery {UserId = id});
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result.Error);
@@ -35,7 +35,7 @@ public class UserController : ControllerBase
     {
         var result = await _mediator.Send(query);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);
@@ -49,7 +49,7 @@ public class UserController : ControllerBase
     {
         var result = await _mediator.Send(new GetUserJoinedOrganizationsQuery() { UserId = id });
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);
@@ -64,7 +64,7 @@ public class UserController : ControllerBase
         request.Id = id;
         var result = await _mediator.Send(request);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);
@@ -79,7 +79,7 @@ public class UserController : ControllerBase
         request.UserId = id;
         var result = await _mediator.Send(request);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);

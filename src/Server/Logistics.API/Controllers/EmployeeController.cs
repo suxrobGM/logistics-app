@@ -21,7 +21,7 @@ public class EmployeeController : ControllerBase
     {
         var result = await _mediator.Send(new GetEmployeeByIdQuery {UserId = userId});
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result.Error);
@@ -35,7 +35,7 @@ public class EmployeeController : ControllerBase
     {
         var result = await _mediator.Send(query);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);
@@ -49,7 +49,7 @@ public class EmployeeController : ControllerBase
     {
         var result = await _mediator.Send(request);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);
@@ -64,7 +64,7 @@ public class EmployeeController : ControllerBase
         request.UserId = userId;
         var result = await _mediator.Send(request);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);
@@ -79,7 +79,7 @@ public class EmployeeController : ControllerBase
         request.UserId = userId;
         var result = await _mediator.Send(request);
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);
@@ -93,7 +93,7 @@ public class EmployeeController : ControllerBase
     {
         var result = await _mediator.Send(new DeleteEmployeeCommand {UserId = userId});
 
-        if (result.Success)
+        if (result.IsSuccess)
             return Ok(result);
 
         return BadRequest(result);

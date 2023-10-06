@@ -22,9 +22,14 @@ internal sealed class GetLoadsHandler : RequestHandler<GetLoadsQuery, PagedRespo
 
         var baseQuery = _tenantRepository.ApplySpecification(spec);
 
-        if (req.FilterActiveLoads)
+        if (req.OnlyActiveLoads)
         {
             baseQuery = baseQuery.Where(i => i.DeliveryDate == null);
+        }
+        if (!string.IsNullOrEmpty(req.UserId))
+        {
+            baseQuery = baseQuery.Where(i => i.AssignedTruck != null &&
+                                             i.AssignedTruck.Drivers.Select(emp => emp.Id).Contains(req.UserId));
         }
         if (!string.IsNullOrEmpty(req.TruckId))
         {
@@ -32,7 +37,8 @@ internal sealed class GetLoadsHandler : RequestHandler<GetLoadsQuery, PagedRespo
         }
         if (req.StartDate.HasValue && req.EndDate.HasValue)
         {
-            baseQuery = baseQuery.Where(i => i.DispatchedDate >= req.StartDate && i.DispatchedDate <= req.EndDate);
+            baseQuery = baseQuery.Where(i => i.DispatchedDate >= req.StartDate && 
+                                             i.DispatchedDate <= req.EndDate);
         }
         if (!req.LoadAllPages)
         {

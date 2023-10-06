@@ -164,7 +164,7 @@ export class EditLoadComponent implements OnInit {
 
     this.apiService.updateLoad(command)
         .subscribe((result) => {
-          if (result.success) {
+          if (result.isSuccess) {
             this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Load has been updated successfully'});
           }
 
@@ -175,7 +175,7 @@ export class EditLoadComponent implements OnInit {
   private deleteLoad() {
     this.isBusy = true;
     this.apiService.deleteLoad(this.id).subscribe((result) => {
-      if (result.success) {
+      if (result.isSuccess) {
         this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A load has been deleted successfully'});
         this.router.navigateByUrl('/load/list');
       }
@@ -186,7 +186,7 @@ export class EditLoadComponent implements OnInit {
 
   private fetchLoad() {
     this.apiService.getLoad(this.id).subscribe((result) => {
-      if (!result.success) {
+      if (!result.isSuccess) {
         this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: result.error});
         return;
       }
