@@ -2,7 +2,7 @@
 
 namespace Logistics.API.Controllers;
 
-[Route("[controller]")]
+[Route("loads")]
 [ApiController]
 public class LoadController : ControllerBase
 {
@@ -32,7 +32,7 @@ public class LoadController : ControllerBase
     
     
 
-    [HttpGet("list")]
+    [HttpGet]
     [ProducesResponseType(typeof(PagedResponseResult<LoadDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Load.View)]
@@ -46,7 +46,7 @@ public class LoadController : ControllerBase
         return BadRequest(result);
     }
 
-    [HttpPost("create")]
+    [HttpPost]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Load.Create)]
@@ -60,7 +60,7 @@ public class LoadController : ControllerBase
         return BadRequest(result);
     }
 
-    [HttpPut("update/{id}")]
+    [HttpPut("{id}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Load.Edit)]
@@ -75,7 +75,7 @@ public class LoadController : ControllerBase
         return BadRequest(result);
     }
 
-    [HttpDelete("delete/{id}")]
+    [HttpDelete("{id}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Load.Delete)]

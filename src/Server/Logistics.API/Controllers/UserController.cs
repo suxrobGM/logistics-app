@@ -2,7 +2,7 @@
 
 namespace Logistics.API.Controllers;
 
-[Route("[controller]")]
+[Route("users")]
 [ApiController]
 public class UserController : ControllerBase
 {
@@ -27,7 +27,7 @@ public class UserController : ControllerBase
         return BadRequest(result.Error);
     }
 
-    [HttpGet("list")]
+    [HttpGet]
     [ProducesResponseType(typeof(PagedResponseResult<UserDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.User.View)]
@@ -55,7 +55,7 @@ public class UserController : ControllerBase
         return BadRequest(result);
     }
 
-    [HttpPut("update/{id}")]
+    [HttpPut("{id}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.User.View)]
@@ -70,7 +70,7 @@ public class UserController : ControllerBase
         return BadRequest(result);
     }
 
-    [HttpPost("{id}/removeRole")]
+    [HttpPost("{id}/remove-role")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.User.Edit)]

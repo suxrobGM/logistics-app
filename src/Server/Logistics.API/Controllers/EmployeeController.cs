@@ -2,7 +2,7 @@
 
 namespace Logistics.API.Controllers;
 
-[Route("[controller]")]
+[Route("employees")]
 [ApiController]
 public class EmployeeController : ControllerBase
 {
@@ -27,7 +27,7 @@ public class EmployeeController : ControllerBase
         return BadRequest(result.Error);
     }
 
-    [HttpGet("list")]
+    [HttpGet]
     [ProducesResponseType(typeof(PagedResponseResult<EmployeeDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.View)]
@@ -41,7 +41,7 @@ public class EmployeeController : ControllerBase
         return BadRequest(result);
     }
 
-    [HttpPost("create")]
+    [HttpPost]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.Create)]
@@ -55,7 +55,7 @@ public class EmployeeController : ControllerBase
         return BadRequest(result);
     }
     
-    [HttpPost("{userId}/removeRole")]
+    [HttpPost("{userId}/remove-role")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.Edit)]
@@ -70,7 +70,7 @@ public class EmployeeController : ControllerBase
         return BadRequest(result);
     }
 
-    [HttpPut("update/{userId}")]
+    [HttpPut("{userId}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.Edit)]
@@ -85,7 +85,7 @@ public class EmployeeController : ControllerBase
         return BadRequest(result);
     }
     
-    [HttpDelete("delete/{userId}")]
+    [HttpDelete("{userId}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.Delete)]

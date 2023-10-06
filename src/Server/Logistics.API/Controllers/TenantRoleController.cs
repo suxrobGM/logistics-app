@@ -2,7 +2,7 @@
 
 namespace Logistics.API.Controllers;
 
-[Route("[controller]")]
+[Route("tenant-roles")]
 [ApiController]
 public class TenantRoleController : ControllerBase
 {
@@ -13,7 +13,7 @@ public class TenantRoleController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet("list")]
+    [HttpGet]
     [ProducesResponseType(typeof(PagedResponseResult<TenantRoleDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.TenantRole.View)]

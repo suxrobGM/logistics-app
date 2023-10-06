@@ -21,4 +21,5 @@ export interface Load {
   assignedTruckId: string;
   assignedTruckNumber?: string;
   assignedTruckDriversName?: string[];
+  currentLocation?: string;
 }

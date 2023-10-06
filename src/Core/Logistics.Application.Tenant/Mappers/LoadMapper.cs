@@ -29,7 +29,8 @@ public static class LoadMapper
             AssignedDispatcherName = entity.AssignedDispatcher?.GetFullName(),
             AssignedTruckId = entity.AssignedTruckId,
             AssignedTruckNumber = entity.AssignedTruck?.TruckNumber,
-            AssignedTruckDriversName = entity.AssignedTruck?.Drivers.Select(i => i.GetFullName())
+            AssignedTruckDriversName = entity.AssignedTruck?.Drivers.Select(i => i.GetFullName()),
+            CurrentLocation = entity.AssignedTruck?.LastKnownLocation
         };
         
         return loadDto;

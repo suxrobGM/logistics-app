@@ -2,7 +2,7 @@
 
 namespace Logistics.API.Controllers;
 
-[Route("[controller]")]
+[Route("drivers")]
 [ApiController]
 public class DriverController : ControllerBase
 {
@@ -27,7 +27,7 @@ public class DriverController : ControllerBase
         return BadRequest(result.Error);
     }
 
-    [HttpGet("{userId}/activeLoads")]
+    [HttpGet("{userId}/active-loads")]
     [ProducesResponseType(typeof(ResponseResult<DriverActiveLoadsDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.View)]
@@ -56,7 +56,7 @@ public class DriverController : ControllerBase
         return BadRequest(result);
     }
     
-    [HttpPost("{userId}/deviceToken")]
+    [HttpPost("{userId}/device-token")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.View)]
@@ -71,7 +71,7 @@ public class DriverController : ControllerBase
         return BadRequest(result.Error);
     }
     
-    [HttpPost("confirmLoadStatus")]
+    [HttpPost("confirm-load-status")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.View)]
@@ -85,7 +85,7 @@ public class DriverController : ControllerBase
         return BadRequest(result.Error);
     }
     
-    [HttpPost("updateLoadProximity")]
+    [HttpPost("update-load-proximity")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.View)]

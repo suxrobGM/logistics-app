@@ -24,7 +24,7 @@ internal sealed class GetLoadsHandler : RequestHandler<GetLoadsQuery, PagedRespo
 
         if (req.FilterActiveLoads)
         {
-            baseQuery = baseQuery.Where(i => i.DeliveryDate.HasValue);
+            baseQuery = baseQuery.Where(i => i.DeliveryDate == null);
         }
         if (!string.IsNullOrEmpty(req.TruckId))
         {

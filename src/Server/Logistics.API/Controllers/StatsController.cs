@@ -2,7 +2,7 @@
 
 namespace Logistics.API.Controllers;
 
-[Route("[controller]")]
+[Route("stats")]
 [ApiController]
 public class StatsController : ControllerBase
 {
@@ -13,7 +13,7 @@ public class StatsController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet("dailyGrosses")]
+    [HttpGet("daily-grosses")]
     [ProducesResponseType(typeof(ResponseResult<DailyGrossesDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Stats.View)]
@@ -27,7 +27,7 @@ public class StatsController : ControllerBase
         return BadRequest(result.Error);
     }
     
-    [HttpGet("monthlyGrosses")]
+    [HttpGet("monthly-grosses")]
     [ProducesResponseType(typeof(ResponseResult<MonthlyGrossesDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Stats.View)]

@@ -2,7 +2,7 @@
 
 namespace Logistics.API.Controllers;
 
-[Route("[controller]")]
+[Route("app-roles")]
 [ApiController]
 public class AppRoleController : ControllerBase
 {
@@ -13,7 +13,7 @@ public class AppRoleController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet("list")]
+    [HttpGet]
     [ProducesResponseType(typeof(PagedResponseResult<AppRoleDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.AppRole.View)]

@@ -3,7 +3,7 @@ using Logistics.Models;
 
 namespace Logistics.API.Controllers;
 
-[Route("[controller]")]
+[Route("tenants")]
 [ApiController]
 public class TenantController : ControllerBase
 {
@@ -32,7 +32,7 @@ public class TenantController : ControllerBase
         return BadRequest(result);
     }
 
-    [HttpGet("{identifier}/displayName")]
+    [HttpGet("{identifier}/display-name")]
     [ProducesResponseType(typeof(ResponseResult<TenantDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize]
@@ -50,7 +50,7 @@ public class TenantController : ControllerBase
         return BadRequest(result);
     }
 
-    [HttpGet("list")]
+    [HttpGet]
     [ProducesResponseType(typeof(PagedResponseResult<LoadDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Tenant.View)]
@@ -69,7 +69,7 @@ public class TenantController : ControllerBase
         return BadRequest(result);
     }
 
-    [HttpPost("create")]
+    [HttpPost]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Tenant.Create)]
@@ -83,7 +83,7 @@ public class TenantController : ControllerBase
         return BadRequest(result);
     }
 
-    [HttpPut("update/{id}")]
+    [HttpPut("{id}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Tenant.Edit)]
@@ -98,7 +98,7 @@ public class TenantController : ControllerBase
         return BadRequest(result);
     }
 
-    [HttpDelete("delete/{id}")]
+    [HttpDelete("{id}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Tenant.Delete)]
