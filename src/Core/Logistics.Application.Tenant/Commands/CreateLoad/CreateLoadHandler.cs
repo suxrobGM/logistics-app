@@ -6,14 +6,14 @@ namespace Logistics.Application.Tenant.Commands;
 internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, ResponseResult>
 {
     private readonly ITenantRepository _tenantRepository;
-    private readonly IPushNotification _pushNotification;
+    private readonly IPushNotificationService _pushNotificationService;
 
     public CreateLoadHandler(
         ITenantRepository tenantRepository,
-        IPushNotification pushNotification)
+        IPushNotificationService pushNotificationService)
     {
         _tenantRepository = tenantRepository;
-        _pushNotification = pushNotification;
+        _pushNotificationService = pushNotificationService;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
@@ -52,7 +52,7 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resp
 
         await _tenantRepository.AddAsync(load);
         await _tenantRepository.UnitOfWork.CommitAsync();
-        await _pushNotification.SendNewLoadNotificationAsync(load, truck);
+        await _pushNotificationService.SendNewLoadNotificationAsync(load, truck);
         return ResponseResult.CreateSuccess();
     }
 }

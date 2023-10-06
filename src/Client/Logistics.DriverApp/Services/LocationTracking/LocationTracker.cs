@@ -14,7 +14,7 @@ public class LocationTracker : ILocationTracker
     public LocationTracker(ApiClientOptions apiClientOptions)
     {
         _hubConnection = new HubConnectionBuilder()
-            .WithUrl($"{apiClientOptions.Host}/hubs/LiveTracking", options =>
+            .WithUrl($"{apiClientOptions.Host}/hubs/live-tracking", options =>
             {
 #if DEBUG
                 // bypass self-signed certs

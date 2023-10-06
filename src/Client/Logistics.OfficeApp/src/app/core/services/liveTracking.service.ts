@@ -13,7 +13,7 @@ export class LiveTrackingService {
   constructor(private tenantService: TenantService) {
     this.isConnected = false;
     this.hubConnection = new HubConnectionBuilder()
-        .withUrl(`${AppConfig.apiHost}/hubs/LiveTracking`, {
+        .withUrl(`${AppConfig.apiHost}/hubs/live-tracking`, {
           skipNegotiation: true,
           transport: HttpTransportType.WebSockets,
         })

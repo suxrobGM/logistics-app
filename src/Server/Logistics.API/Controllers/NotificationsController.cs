@@ -14,12 +14,12 @@ public class NotificationsController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(PagedResponseResult<AppRoleDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult<NotificationDto[]>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.AppRole.View)]
-    public async Task<IActionResult> GetList([FromQuery] GetAppRolesQuery query)
+    public async Task<IActionResult> GetList([FromQuery] GetNotificationsQuery request)
     {
-        var result = await _mediator.Send(query);
+        var result = await _mediator.Send(request);
 
         if (result.IsSuccess)
             return Ok(result);

@@ -6,14 +6,14 @@ namespace Logistics.Application.Tenant.Commands;
 internal sealed class DeleteLoadHandler : RequestHandler<DeleteLoadCommand, ResponseResult>
 {
     private readonly ITenantRepository _tenantRepository;
-    private readonly IPushNotification _pushNotification;
+    private readonly IPushNotificationService _pushNotificationService;
 
     public DeleteLoadHandler(
         ITenantRepository tenantRepository,
-        IPushNotification pushNotification)
+        IPushNotificationService pushNotificationService)
     {
         _tenantRepository = tenantRepository;
-        _pushNotification = pushNotification;
+        _pushNotificationService = pushNotificationService;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
@@ -25,7 +25,7 @@ internal sealed class DeleteLoadHandler : RequestHandler<DeleteLoadCommand, Resp
         
         if (load != null && changes > 0)
         {
-            await _pushNotification.SendRemovedLoadNotificationAsync(load, load.AssignedTruck!);
+            await _pushNotificationService.SendRemovedLoadNotificationAsync(load, load.AssignedTruck!);
         }
         
         return ResponseResult.CreateSuccess();

@@ -5,13 +5,13 @@ namespace Logistics.Application.Tenant.Extensions;
 
 internal static class PushNotificationExtensions
 {
-    public static async Task SendNewLoadNotificationAsync(this IPushNotification pushNotification, Load load, Truck truck)
+    public static async Task SendNewLoadNotificationAsync(this IPushNotificationService pushNotificationService, Load load, Truck truck)
     {
         var drivers = truck.Drivers.Where(driver => !string.IsNullOrEmpty(driver.DeviceToken));
         
         foreach (var driver in drivers)
         {
-            await pushNotification.SendNotificationAsync(
+            await pushNotificationService.SendNotificationAsync(
                 "Received a load",
                 $"A new load #{load.RefId} has been assigned to you", 
                 driver.DeviceToken!,
@@ -19,7 +19,7 @@ internal static class PushNotificationExtensions
         }
     }
     
-    public static async Task SendConfirmLoadStatusNotificationAsync(this IPushNotification pushNotification, Load load, LoadStatus loadStatus)
+    public static async Task SendConfirmLoadStatusNotificationAsync(this IPushNotificationService pushNotificationService, Load load, LoadStatus loadStatus)
     {
         if (load.AssignedTruck is null)
         {
@@ -36,7 +36,7 @@ internal static class PushNotificationExtensions
 
         foreach (var driver in drivers)
         {
-            await pushNotification.SendNotificationAsync(
+            await pushNotificationService.SendNotificationAsync(
                 "Confirm load status",
                 $"You can confirm the {loadStatusText} date of load #{load.RefId}", 
                 driver.DeviceToken!,
@@ -44,13 +44,13 @@ internal static class PushNotificationExtensions
         }
     }
     
-    public static async Task SendUpdatedLoadNotificationAsync(this IPushNotification pushNotification, Load load, Truck truck)
+    public static async Task SendUpdatedLoadNotificationAsync(this IPushNotificationService pushNotificationService, Load load, Truck truck)
     {
         var drivers = truck.Drivers.Where(driver => !string.IsNullOrEmpty(driver.DeviceToken));
         
         foreach (var driver in drivers)
         {
-            await pushNotification.SendNotificationAsync(
+            await pushNotificationService.SendNotificationAsync(
                 "Load update",
                 $"A load #{load.RefId} details has been updated check details", 
                 driver.DeviceToken!,
@@ -58,13 +58,13 @@ internal static class PushNotificationExtensions
         }
     }
     
-    public static async Task SendRemovedLoadNotificationAsync(this IPushNotification pushNotification, Load load, Truck truck)
+    public static async Task SendRemovedLoadNotificationAsync(this IPushNotificationService pushNotificationService, Load load, Truck truck)
     {
         var drivers = truck.Drivers.Where(driver => !string.IsNullOrEmpty(driver.DeviceToken));
         
         foreach (var driver in drivers)
         {
-            await pushNotification.SendNotificationAsync(
+            await pushNotificationService.SendNotificationAsync(
                 "Load update",
                 $"A load #{load.RefId} has been removed from you", 
                 driver.DeviceToken!,

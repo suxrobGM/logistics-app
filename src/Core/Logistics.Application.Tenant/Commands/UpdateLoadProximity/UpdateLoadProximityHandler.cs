@@ -6,15 +6,15 @@ namespace Logistics.Application.Tenant.Commands;
 
 internal sealed class UpdateLoadProximityHandler : RequestHandler<UpdateLoadProximityCommand, ResponseResult>
 {
-    private readonly IPushNotification _pushNotification;
+    private readonly IPushNotificationService _pushNotificationService;
     private readonly ITenantRepository _tenantRepository;
 
     public UpdateLoadProximityHandler(
         ITenantRepository tenantRepository,
-        IPushNotification pushNotification)
+        IPushNotificationService pushNotificationService)
     {
         _tenantRepository = tenantRepository;
-        _pushNotification = pushNotification;
+        _pushNotificationService = pushNotificationService;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
@@ -42,7 +42,7 @@ internal sealed class UpdateLoadProximityHandler : RequestHandler<UpdateLoadProx
         
         if (loadStatus.HasValue && changes > 0)
         {
-            await _pushNotification.SendConfirmLoadStatusNotificationAsync(load, loadStatus.Value);
+            await _pushNotificationService.SendConfirmLoadStatusNotificationAsync(load, loadStatus.Value);
         }
         return ResponseResult.CreateSuccess();
     }

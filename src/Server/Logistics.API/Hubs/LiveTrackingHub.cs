@@ -25,15 +25,17 @@ public class LiveTrackingHub : Hub<ILiveTrackingHubClient>
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         var geolocationData = _hubContext.GetGeolocationData(Context.ConnectionId);
-        await _mediator.Send(new SetTruckGeolocationCommand(geolocationData));
+        
+        if (geolocationData != null)
+        {
+            await _mediator.Send(new SetTruckGeolocationCommand(geolocationData));
+        }
+        
         _hubContext.RemoveClient(Context.ConnectionId);
     }
 
     public async Task SendGeolocationData(TruckGeolocationDto truckGeolocation)
     {
-        Console.WriteLine(
-            $"Received a geolocation data from: truckId {truckGeolocation}, tenantId: {truckGeolocation.TenantId}, latitude: {truckGeolocation.Latitude}, longitude: {truckGeolocation.Longitude}");
-        
         await Clients.Group(truckGeolocation.TenantId).ReceiveGeolocationData(truckGeolocation);
         _hubContext.UpdateGeolocationData(Context.ConnectionId, truckGeolocation);
     }

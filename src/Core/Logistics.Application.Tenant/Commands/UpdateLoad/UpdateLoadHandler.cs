@@ -6,14 +6,14 @@ namespace Logistics.Application.Tenant.Commands;
 internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, ResponseResult>
 {
     private readonly ITenantRepository _tenantRepository;
-    private readonly IPushNotification _pushNotification;
+    private readonly IPushNotificationService _pushNotificationService;
 
     public UpdateLoadHandler(
         ITenantRepository tenantRepository,
-        IPushNotification pushNotification)
+        IPushNotificationService pushNotificationService)
     {
         _tenantRepository = tenantRepository;
-        _pushNotification = pushNotification;
+        _pushNotificationService = pushNotificationService;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
@@ -136,13 +136,13 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resp
             if (detailsUpdated && oldTruck != null)
             {
                 // send updates to the old truck
-                await _pushNotification.SendUpdatedLoadNotificationAsync(loadEntity, oldTruck);
+                await _pushNotificationService.SendUpdatedLoadNotificationAsync(loadEntity, oldTruck);
             }
             if (newTruck != null && oldTruck != null && oldTruck.Id != newTruck.Id)
             {
                 // The truck was switched
-                await _pushNotification.SendNewLoadNotificationAsync(loadEntity, newTruck);
-                await _pushNotification.SendRemovedLoadNotificationAsync(loadEntity, oldTruck);
+                await _pushNotificationService.SendNewLoadNotificationAsync(loadEntity, newTruck);
+                await _pushNotificationService.SendRemovedLoadNotificationAsync(loadEntity, oldTruck);
             }
         }
 }

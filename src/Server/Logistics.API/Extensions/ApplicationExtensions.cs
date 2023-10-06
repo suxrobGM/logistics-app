@@ -97,7 +97,8 @@ internal static class ApplicationExtensions
 
         app.UseCustomExceptionHandler();
         app.MapControllers();
-        app.MapHub<LiveTrackingHub>("/hubs/LiveTracking");
+        app.MapHub<LiveTrackingHub>("/hubs/live-tracking");
+        app.MapHub<NotificationHub>("/hubs/notification");
         return app;
     }
 
