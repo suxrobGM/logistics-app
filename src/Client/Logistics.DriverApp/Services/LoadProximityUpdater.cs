@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Logistics.DriverApp.Messages;
+using Logistics.DriverApp.Models;
 using Logistics.Models;
 
 namespace Logistics.DriverApp.Services;
@@ -7,28 +8,23 @@ namespace Logistics.DriverApp.Services;
 public class LoadProximityUpdater : ILoadProximityUpdater
 {
     private readonly IApiClient _apiClient;
-    private LoadDto[]? _activeLoads;
 
     public LoadProximityUpdater(IApiClient apiClient)
     {
         _apiClient = apiClient;
-        WeakReferenceMessenger.Default.Register<ActiveLoadsChangedMessage>(this, (_, m) => _activeLoads = m.Value);
     }
 
     public async Task UpdateLoadProximitiesAsync(Location currentLocation)
     {
-        if (_activeLoads is null)
-        {
-            return;
-        }
+        var activeLoadsMessage = WeakReferenceMessenger.Default.Send<ActiveLoadsRequestMessage>();
         
-        foreach (var load in _activeLoads)
+        foreach (var load in activeLoadsMessage.Response)
         {
             await UpdateLoadProximityAsync(load, currentLocation);
         }
     }
 
-    private async Task UpdateLoadProximityAsync(LoadDto load, Location currentLocation)
+    private async Task UpdateLoadProximityAsync(ActiveLoad load, Location currentLocation)
     {
         var originDistance = Location.CalculateDistance(currentLocation, 
             load.OriginAddressLat!.Value,
@@ -40,8 +36,9 @@ public class LoadProximityUpdater : ILoadProximityUpdater
             load.DestinationAddressLong!.Value, 
             DistanceUnits.Kilometers);
 
-        if (originDistance <= 0.5 && !load.CanConfirmPickUp)
+        if (originDistance < 0.5 && !load.CanConfirmPickUp && load.Status != LoadStatusDto.PickedUp)
         {
+            load.CanConfirmPickUp = true;
             await _apiClient.UpdateLoadProximity(new UpdateLoadProximity
             {
                 LoadId = load.Id,
@@ -49,8 +46,9 @@ public class LoadProximityUpdater : ILoadProximityUpdater
             });
         }
         
-        if (destDistance <= 0.5 && !load.CanConfirmDelivery)
+        if (destDistance < 0.5 && !load.CanConfirmDelivery && load.Status != LoadStatusDto.Delivered)
         {
+            load.CanConfirmDelivery = true;
             await _apiClient.UpdateLoadProximity(new UpdateLoadProximity
             {
                 LoadId = load.Id,

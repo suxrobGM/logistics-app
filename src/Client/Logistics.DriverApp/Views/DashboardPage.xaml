@@ -73,7 +73,6 @@
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
 
-
                                     <HorizontalStackLayout Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
                                         <Label Text="#" FontAttributes="Bold" />
                                         <Label FontAttributes="Bold" Text="{Binding RefId}" />
@@ -99,13 +98,13 @@
                                     
                                     <Button Grid.Row="3" Grid.Column="0" 
                                             Text="Confirm Pick Up"                                              
-                                            IsVisible="{Binding CanConfirmPickUp, Converter={StaticResource BoolToVisibilityConverter}}"
+                                            IsVisible="{Binding CanConfirmPickUp}"
                                             Command="{Binding BindingContext.OpenLoadPageCommand, Source={x:Reference dashboardPage}}"
                                             CommandParameter="{Binding Id}">
                                     </Button>
                                     <Button Grid.Row="3" Grid.Column="0" 
                                             Text="Confirm Delivery"
-                                            IsVisible="{Binding CanConfirmDelivery, Converter={StaticResource BoolToVisibilityConverter}}"
+                                            IsVisible="{Binding CanConfirmDelivery}"
                                             Command="{Binding BindingContext.OpenLoadPageCommand, Source={x:Reference dashboardPage}}"
                                             CommandParameter="{Binding Id}">
                                     </Button>

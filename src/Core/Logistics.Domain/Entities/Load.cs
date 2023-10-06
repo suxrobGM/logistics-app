@@ -45,11 +45,14 @@ public class Load : AuditableEntity, ITenantEntity
         {
             case LoadStatus.Dispatched:
                 DispatchedDate = DateTime.UtcNow;
+                CanConfirmDelivery = false;
+                CanConfirmPickUp = false;
                 PickUpDate = null;
                 DeliveryDate = null;
                 break;
             case LoadStatus.PickedUp:
                 PickUpDate = DateTime.UtcNow;
+                CanConfirmDelivery = false;
                 DeliveryDate = null;
                 break;
             case LoadStatus.Delivered:

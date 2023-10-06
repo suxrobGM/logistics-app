@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using Logistics.DriverApp.Messages;
-using Logistics.DriverApp.Models;
+﻿using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services;
 using Logistics.Models;
 
@@ -11,7 +9,6 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
     private readonly IApiClient _apiClient;
     private readonly IMapsService _mapsService;
     private string? _lastLoadId;
-    private bool _isOpened;
 
     public LoadPageViewModel(IApiClient apiClient, IMapsService mapsService)
     {
@@ -19,23 +16,9 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
         _mapsService = mapsService;
         ConfirmPickUpCommand = new AsyncRelayCommand(() => ConfirmLoadStatusAsync(LoadStatusDto.PickedUp));
         ConfirmDeliveryCommand = new AsyncRelayCommand(() => ConfirmLoadStatusAsync(LoadStatusDto.Delivered));
-        
-        Messenger.Register<ActiveLoadsChangedMessage>(this, (_, m) =>
-        {
-            if (!_isOpened || string.IsNullOrEmpty(_lastLoadId))
-            {
-                return;
-            }
-            
-            var load = m.Value.FirstOrDefault(i => i.Id == _lastLoadId);
-
-            if (load is not null)
-            {
-                ActiveLoad = new ActiveLoad(load, GetEmbedMapHtml(load));
-            }
-        });
     }
 
+    
     #region Commands
 
     public IAsyncRelayCommand ConfirmPickUpCommand { get; }
@@ -46,11 +29,18 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
     
     #region Bindable properties
 
-    private ActiveLoad? _activeLoad;
-    public ActiveLoad? ActiveLoad
+    private ActiveLoad? _load;
+    public ActiveLoad? Load
     {
-        get => _activeLoad;
-        set => SetProperty(ref _activeLoad, value);
+        get => _load;
+        set => SetProperty(ref _load, value);
+    }
+
+    private string? _embedMapHtml;
+    public string? EmbedMapHtml
+    {
+        get => _embedMapHtml;
+        set => SetProperty(ref _embedMapHtml, value);
     }
 
     #endregion
@@ -58,22 +48,15 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
     
     protected override async Task OnAppearingAsync()
     {
-        _isOpened = true;
         await FetchLoadAsync();
-    }
-
-    protected override Task OnDisappearingAsync()
-    {
-        _isOpened = false;
-        return base.OnDisappearingAsync();
     }
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        if (query["load"] is LoadDto load)
+        if (query["load"] is ActiveLoad load)
         {
-            var embedMapHtml = GetEmbedMapHtml(load);
-            ActiveLoad = new ActiveLoad(load, embedMapHtml);
+            Load = load;
+            EmbedMapHtml = GetEmbedMapHtml(Load);
             _lastLoadId = load.Id;
             return;
         }
@@ -89,7 +72,7 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
     private async Task FetchLoadAsync()
     {
         if (string.IsNullOrEmpty(_lastLoadId) || 
-            _lastLoadId == ActiveLoad?.LoadData.Id)
+            _lastLoadId == Load?.Id)
         {
             return;
         }
@@ -104,30 +87,40 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
             return;
         }
 
-        var loadDto = result.Value!;
-        var embedMapHtml = GetEmbedMapHtml(loadDto);
-        ActiveLoad = new ActiveLoad(loadDto, embedMapHtml);
+        Load = new ActiveLoad(result.Value!);
+        EmbedMapHtml = GetEmbedMapHtml(Load);
         IsLoading = false;
     }
 
     private async Task ConfirmLoadStatusAsync(LoadStatusDto status)
     {
+        if (Load is null)
+            return;
+        
         IsLoading = true;
+        ResponseResult? result = default;
 
-        var result = status switch
+        switch (status)
         {
-            LoadStatusDto.PickedUp => await _apiClient.ConfirmLoadStatusAsync(new ConfirmLoadStatus
-            {
-                LoadId = _lastLoadId, 
-                LoadStatus = LoadStatusDto.PickedUp
-            }),
-            LoadStatusDto.Delivered => await _apiClient.ConfirmLoadStatusAsync(new ConfirmLoadStatus
-            {
-                LoadId = _lastLoadId, 
-                LoadStatus = LoadStatusDto.Delivered
-            }),
-            _ => default
-        };
+            case LoadStatusDto.PickedUp:
+                Load.Status = LoadStatusDto.PickedUp;
+                Load.CanConfirmPickUp = false;
+                result = await _apiClient.ConfirmLoadStatusAsync(new ConfirmLoadStatus
+                {
+                    LoadId = _lastLoadId,
+                    LoadStatus = LoadStatusDto.PickedUp
+                });
+                break;
+            case LoadStatusDto.Delivered:
+                Load.Status = LoadStatusDto.Delivered;
+                Load.CanConfirmDelivery = false;
+                result = await _apiClient.ConfirmLoadStatusAsync(new ConfirmLoadStatus
+                {
+                    LoadId = _lastLoadId,
+                    LoadStatus = LoadStatusDto.Delivered
+                });
+                break;
+        }
 
         if (result is { Success: false })
         {
@@ -136,12 +129,12 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
             return;
         }
 
-        ActiveLoad = null;
+        Load = default;
         await FetchLoadAsync();
         IsLoading = false;
     }
 
-    private string GetEmbedMapHtml(LoadDto load)
+    private string GetEmbedMapHtml(ActiveLoad load)
     {
         var originAddress = $"{load.OriginAddressLat},{load.OriginAddressLong}";
         var destinationAddress = $"{load.DestinationAddressLat},{load.DestinationAddressLong}";

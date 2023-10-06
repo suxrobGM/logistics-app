@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Logistics.DriverApp.Consts;
 using Logistics.DriverApp.Messages;
+using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.Authentication;
 using Logistics.DriverApp.Services.LocationTracking;
@@ -35,6 +36,8 @@ public class DashboardPageViewModel : BaseViewModel
         {
             await MainThread.InvokeOnMainThreadAsync(FetchTruckDataAsync);
         });
+        
+        Messenger.Register<ActiveLoadsRequestMessage>(this, (_, m) => m.Reply(Loads));
     }
 
     
@@ -47,7 +50,7 @@ public class DashboardPageViewModel : BaseViewModel
 
     #region Bindable properties
 
-    public ObservableCollection<LoadDto> Loads { get; } = new();
+    public ObservableCollection<ActiveLoad> Loads { get; } = new();
 
     private string? _truckNumber;
     public string? TruckNumber
@@ -145,7 +148,6 @@ public class DashboardPageViewModel : BaseViewModel
         TeammatesName = string.Join(", ", teammates); 
         _cache.Set(CacheKeys.TruckId, truck.Id);
 
-        Messenger.Send(new ActiveLoadsChangedMessage(truck.Loads.ToArray()));
         AddActiveLoads(truck.Loads);
         IsLoading = false;
     }
@@ -163,7 +165,8 @@ public class DashboardPageViewModel : BaseViewModel
             return;
         }
         
-        AddActiveLoads(result.Value!.ActiveLoads);
+        var loads = result.Value!.ActiveLoads;
+        AddActiveLoads(loads);
         IsLoading = false;
     }
     
@@ -181,10 +184,27 @@ public class DashboardPageViewModel : BaseViewModel
 
     private void AddActiveLoads(IEnumerable<LoadDto> loads)
     {
-        Loads.Clear();
-        foreach (var loadDto in loads)
+        var loadsArr = loads.ToArray();
+        
+        // Update or add loads
+        foreach (var loadDto in loadsArr)
         {
-            Loads.Add(loadDto);
+            var existingLoad = Loads.FirstOrDefault(i => i.Id == loadDto.Id);
+            if (existingLoad != null)
+            {
+                existingLoad.UpdateFromDto(loadDto);
+            }
+            else
+            {
+                Loads.Add(new ActiveLoad(loadDto));
+            }
+        }
+
+        // Find and remove loads that no longer exist
+        var loadsToRemove = Loads.Where(l => loadsArr.All(i => i.Id != l.Id));
+        foreach (var loadToRemove in loadsToRemove)
+        {
+            Loads.Remove(loadToRemove);
         }
         
         OnPropertyChanged(nameof(Loads));

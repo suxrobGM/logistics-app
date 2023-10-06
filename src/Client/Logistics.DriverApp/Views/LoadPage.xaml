@@ -18,64 +18,64 @@
         
         <ScrollView ZIndex="1">
             <controls:Card>
-                <StackLayout Spacing="8" BindingContext="{Binding ActiveLoad}">
+                <StackLayout Spacing="8">
                     <HorizontalStackLayout>
                         <Label Text="ID: " FontAttributes="Bold" />
-                        <Label Text="{Binding LoadData.RefId}" />
+                        <Label Text="{Binding Load.RefId}" />
                     </HorizontalStackLayout>
                     <HorizontalStackLayout>
                         <Label Text="Name: " FontAttributes="Bold" />
-                        <Label Text="{Binding LoadData.Name}" />
+                        <Label Text="{Binding Load.Name}" />
                     </HorizontalStackLayout>
                     <controls:Separator />
                     <VerticalStackLayout>
                         <Label Text="Origin: " FontAttributes="Bold" />
                         <Label TextColor="Black"
-                               Text="{Binding LoadData.OriginAddress, Converter={StaticResource ShortAddressConverter}}"
+                               Text="{Binding Load.OriginAddress, Converter={StaticResource ShortAddressConverter}}"
                                FontSize="12" />
                     </VerticalStackLayout>
                     <VerticalStackLayout>
                         <Label Text="Destination: " FontAttributes="Bold" />
                         <Label FontSize="12"
-                               Text="{Binding LoadData.DestinationAddress, Converter={StaticResource ShortAddressConverter}}"
+                               Text="{Binding Load.DestinationAddress, Converter={StaticResource ShortAddressConverter}}"
                                TextColor="Black"/>
                     </VerticalStackLayout>
                     <HorizontalStackLayout>
                         <Label Text="Delivery Cost: " FontAttributes="Bold" />
-                        <Label Text="{Binding LoadData.DeliveryCost, Converter={StaticResource CurrencyConverter}}" />
+                        <Label Text="{Binding Load.DeliveryCost, Converter={StaticResource CurrencyConverter}}" />
                     </HorizontalStackLayout>
                     <HorizontalStackLayout>
                         <Label Text="Distance: " FontAttributes="Bold" />
-                        <Label Text="{Binding LoadData.Distance, Converter={StaticResource DistanceConverter}, ConverterParameter='mi'}" />
+                        <Label Text="{Binding Load.Distance, Converter={StaticResource DistanceConverter}, ConverterParameter='mi'}" />
                         <Label Text=" mi" />
                     </HorizontalStackLayout>
                     <HorizontalStackLayout>
                         <Label Text="Dispatcher: " FontAttributes="Bold" />
-                        <Label Text="{Binding LoadData.AssignedDispatcherName}" />
+                        <Label Text="{Binding Load.AssignedDispatcherName}" />
                     </HorizontalStackLayout>
                     <HorizontalStackLayout>
                         <Label Text="Status: " FontAttributes="Bold" />
-                        <Label Text="{Binding LoadData.Status}" />
+                        <Label Text="{Binding Load.Status}" />
                     </HorizontalStackLayout>
                     <HorizontalStackLayout>
                         <Label Text="Dispatch Date: " FontAttributes="Bold" />
-                        <Label Text="{Binding LoadData.DispatchedDate}" />
+                        <Label Text="{Binding Load.DispatchedDate}" />
                     </HorizontalStackLayout>
-                    <HorizontalStackLayout IsVisible="{Binding LoadData.PickUpDate, Converter={StaticResource NullToVisibilityConverter}}">
+                    <HorizontalStackLayout IsVisible="{Binding Load.PickUpDate, Converter={StaticResource NullToVisibilityConverter}}">
                         <Label Text="Pickup Date: " FontAttributes="Bold" />
-                        <Label Text="{Binding LoadData.PickUpDate}" />
+                        <Label Text="{Binding Load.PickUpDate}" />
                     </HorizontalStackLayout>
-                    <HorizontalStackLayout IsVisible="{Binding LoadData.DeliveryDate, Converter={StaticResource NullToVisibilityConverter}}">
+                    <HorizontalStackLayout IsVisible="{Binding Load.DeliveryDate, Converter={StaticResource NullToVisibilityConverter}}">
                         <Label Text="Delivery Date: " FontAttributes="Bold" />
-                        <Label Text="{Binding LoadData.DeliveryDate}" />
+                        <Label Text="{Binding Load.DeliveryDate}" />
                     </HorizontalStackLayout>
                     <Button Text="Confirm Pick Up"
-                            IsVisible="{Binding LoadData.CanConfirmPickUp, Converter={StaticResource BoolToVisibilityConverter}}"
-                            Command="{Binding BindingContext.ConfirmPickUpCommand, Source={x:Reference loadPage}}">
+                            IsVisible="{Binding Load.CanConfirmPickUp}"
+                            Command="{Binding ConfirmPickUpCommand}">
                     </Button>
                     <Button Text="Confirm Delivery"
-                            IsVisible="{Binding LoadData.CanConfirmDelivery, Converter={StaticResource BoolToVisibilityConverter}}"
-                            Command="{Binding BindingContext.ConfirmDeliveryCommand, Source={x:Reference loadPage}}">
+                            IsVisible="{Binding Load.CanConfirmDelivery}"
+                            Command="{Binding ConfirmDeliveryCommand}">
                     </Button>
                     <WebView HeightRequest="420">
                         <WebView.Source>
