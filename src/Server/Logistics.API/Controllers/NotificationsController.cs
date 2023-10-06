@@ -2,22 +2,22 @@
 
 namespace Logistics.API.Controllers;
 
-[Route("tenant-roles")]
+[Route("notifications")]
 [ApiController]
-public class TenantRoleController : ControllerBase
+public class NotificationsController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public TenantRoleController(IMediator mediator)
+    public NotificationsController(IMediator mediator)
     {
         _mediator = mediator;
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(PagedResponseResult<TenantRoleDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PagedResponseResult<AppRoleDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.TenantRole.View)]
-    public async Task<IActionResult> GetList([FromQuery] GetTenantRolesQuery query)
+    [Authorize(Policy = Permissions.AppRole.View)]
+    public async Task<IActionResult> GetList([FromQuery] GetAppRolesQuery query)
     {
         var result = await _mediator.Send(query);
 

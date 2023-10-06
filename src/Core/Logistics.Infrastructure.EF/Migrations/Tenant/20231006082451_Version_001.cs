@@ -6,23 +6,34 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Logistics.Infrastructure.EF.Migrations.Tenant
 {
     /// <inheritdoc />
-    public partial class Version_0001 : Migration
+    public partial class Version_001 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsRead = table.Column<bool>(type: "bit", nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    DisplayName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
-                    NormalizedName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NormalizedName = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -38,6 +49,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     LastKnownLocation = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastKnownLocationLat = table.Column<double>(type: "float", nullable: true),
                     LastKnownLocationLong = table.Column<double>(type: "float", nullable: true),
+                    DriverIncomePercentage = table.Column<float>(type: "real", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -53,8 +65,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    ClaimValue = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RoleId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -130,19 +142,20 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     RefId = table.Column<decimal>(type: "decimal(20,0)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
-                    OriginAddress = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OriginAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OriginAddressLat = table.Column<double>(type: "float", nullable: true),
                     OriginAddressLong = table.Column<double>(type: "float", nullable: true),
-                    DestinationAddress = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    DestinationAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DestinationAddressLat = table.Column<double>(type: "float", nullable: true),
                     DestinationAddressLong = table.Column<double>(type: "float", nullable: true),
-                    DeliveryCost = table.Column<double>(type: "float", nullable: false),
+                    DeliveryCost = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
                     Distance = table.Column<double>(type: "float", nullable: false),
+                    CanConfirmPickUp = table.Column<bool>(type: "bit", nullable: false),
+                    CanConfirmDelivery = table.Column<bool>(type: "bit", nullable: false),
                     DispatchedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PickUpDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeliveryDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: false),
                     AssignedDispatcherId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     AssignedTruckId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     EmployeeId = table.Column<string>(type: "nvarchar(450)", nullable: true),
@@ -217,6 +230,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             migrationBuilder.DropTable(
                 name: "Loads");
+
+            migrationBuilder.DropTable(
+                name: "Notifications");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");

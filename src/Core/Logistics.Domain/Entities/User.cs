@@ -5,10 +5,7 @@ namespace Logistics.Domain.Entities;
 
 public class User : IdentityUser, IEntity<string>, IAuditableEntity
 {
-    [StringLength(UserConsts.NameLength)]
     public string? FirstName { get; set; }
-    
-    [StringLength(UserConsts.NameLength)]
     public string? LastName { get; set; }
     public string JoinedTenantIds { get; set; } = string.Empty;
     public DateTime Created { get; set; } = DateTime.UtcNow;

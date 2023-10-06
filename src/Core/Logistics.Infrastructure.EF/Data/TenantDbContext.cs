@@ -51,6 +51,7 @@ public class TenantDbContext : DbContext
         base.OnModelCreating(builder);
 
         builder.Entity<TenantRoleClaim>().ToTable("RoleClaims");
+        builder.Entity<Notification>().ToTable("Notifications");
 
         builder.Entity<TenantRole>(entity =>
         {

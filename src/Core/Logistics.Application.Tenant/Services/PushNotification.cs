@@ -41,7 +41,7 @@ public class PushNotification : IPushNotification
             var message = new Message
             {
                 Token = deviceToken,
-                Notification = new Notification
+                Notification = new FirebaseAdmin.Messaging.Notification
                 {
                     Title = title,
                     Body = body

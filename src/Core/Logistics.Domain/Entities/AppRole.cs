@@ -1,9 +1,8 @@
-﻿using Logistics.Domain.Constraints;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.Domain.Entities;
 
-public class AppRole : IdentityRole<string>, IEntity<string>, IAuditableEntity
+public class AppRole : IdentityRole<string>, IEntity<string>
 {
     public AppRole(string name): base(name)
     {
@@ -14,12 +13,5 @@ public class AppRole : IdentityRole<string>, IEntity<string>, IAuditableEntity
     }
 
     public override string Id { get; set; } = Guid.NewGuid().ToString();
-
-    [StringLength(RoleConsts.DisplayNameLength)]
     public string? DisplayName { get; set; }
-
-    public DateTime Created { get; set; } = DateTime.UtcNow;
-    public string? CreatedBy { get; set; }
-    public DateTime? LastModified { get; set; }
-    public string? LastModifiedBy { get; set; }
 }

@@ -1,32 +1,26 @@
-﻿using Logistics.Domain.Enums;
-using Logistics.Models;
+﻿using Logistics.Models;
 
 namespace Logistics.API.Controllers;
 
-[Route("tenants")]
+[Route("trucks")]
 [ApiController]
-public class TenantController : ControllerBase
+public class TrucksController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public TenantController(IMediator mediator)
+    public TrucksController(IMediator mediator)
     {
         _mediator = mediator;
     }
 
-    [HttpGet("{identifier}")]
-    [ProducesResponseType(typeof(ResponseResult<TenantDto>), StatusCodes.Status200OK)]
+    [HttpGet("{truckOrDriverId}")]
+    [ProducesResponseType(typeof(ResponseResult<TruckDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize]
-    public async Task<IActionResult> GetById(string identifier)
+    [Authorize(Policy = Permissions.Truck.View)]
+    public async Task<IActionResult> GetById(string truckOrDriverId, [FromQuery] GetTruckQuery request)
     {
-        var includeConnectionString = HttpContext.User.HasOneTheseRoles(AppRoles.SuperAdmin, AppRoles.Admin);
-        var result = await _mediator.Send(new GetTenantQuery
-        {
-            Id = identifier,
-            Name = identifier,
-            IncludeConnectionString = includeConnectionString
-        });
+        request.TruckOrDriverId = truckOrDriverId;
+        var result = await _mediator.Send(request);
 
         if (result.IsSuccess)
             return Ok(result);
@@ -35,16 +29,25 @@ public class TenantController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(PagedResponseResult<LoadDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PagedResponseResult<TruckDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Tenant.View)]
-    public async Task<IActionResult> GetList([FromQuery] GetTenantsQuery query)
+    [Authorize(Policy = Permissions.Truck.View)]
+    public async Task<IActionResult> GetList([FromQuery] GetTrucksQuery query)
     {
-        if (User.HasOneTheseRoles(AppRoles.SuperAdmin, AppRoles.Admin))
-        {
-            query.IncludeConnectionStrings = true;
-        }
+        var result = await _mediator.Send(query);
 
+        if (result.IsSuccess)
+            return Ok(result);
+
+        return BadRequest(result);
+    }
+    
+    [HttpGet("drivers")]
+    [ProducesResponseType(typeof(PagedResponseResult<TruckDriversDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Truck.View)]
+    public async Task<IActionResult> GetTruckDrivers([FromQuery] GetTruckDriversQuery query)
+    {
         var result = await _mediator.Send(query);
 
         if (result.IsSuccess)
@@ -56,8 +59,8 @@ public class TenantController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Tenant.Create)]
-    public async Task<IActionResult> Create([FromBody] CreateTenantCommand request)
+    [Authorize(Policy = Permissions.Truck.Create)]
+    public async Task<IActionResult> Create([FromBody] CreateTruckCommand request)
     {
         var result = await _mediator.Send(request);
 
@@ -70,8 +73,8 @@ public class TenantController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Tenant.Edit)]
-    public async Task<IActionResult> Update(string id, [FromBody] UpdateTenantCommand request)
+    [Authorize(Policy = Permissions.Truck.Edit)]
+    public async Task<IActionResult> Update(string id, [FromBody] UpdateTruckCommand request)
     {
         request.Id = id;
         var result = await _mediator.Send(request);
@@ -85,10 +88,10 @@ public class TenantController : ControllerBase
     [HttpDelete("{id}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Tenant.Delete)]
+    [Authorize(Policy = Permissions.Truck.Delete)]
     public async Task<IActionResult> Delete(string id)
     {
-        var result = await _mediator.Send(new DeleteTenantCommand
+        var result = await _mediator.Send(new DeleteTruckCommand
         {
             Id = id
         });

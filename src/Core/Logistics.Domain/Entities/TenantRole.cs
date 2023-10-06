@@ -2,7 +2,7 @@
 
 namespace Logistics.Domain.Entities;
 
-public class TenantRole : AuditableEntity, ITenantEntity
+public class TenantRole : Entity, ITenantEntity
 {
     public TenantRole(string name)
     {
@@ -14,13 +14,8 @@ public class TenantRole : AuditableEntity, ITenantEntity
         NormalizedName = name.ToUpper();
     }
     
-    [StringLength(RoleConsts.NameLength)]
     public string Name { get; set; }
-    
-    [StringLength(RoleConsts.DisplayNameLength)]
     public string? DisplayName { get; set; }
-    
-    [StringLength(RoleConsts.NameLength)]
     public string? NormalizedName { get; set; }
     
     public virtual List<Employee> Employees { get; } = new();
@@ -39,8 +34,8 @@ internal class TenantRoleComparer : IEqualityComparer<TenantRole>
         return x.Name == y.Name;
     }
 
-    public int GetHashCode(TenantRole obj)
+    public int GetHashCode(TenantRole? obj)
     {
-        return obj.Name != null ? obj.Name.GetHashCode() : 0;
+        return obj?.Name != null ? obj.Name.GetHashCode() : 0;
     }
 }

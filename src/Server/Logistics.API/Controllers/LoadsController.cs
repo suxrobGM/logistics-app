@@ -2,39 +2,27 @@
 
 namespace Logistics.API.Controllers;
 
-[Route("trucks")]
+[Route("loads")]
 [ApiController]
-public class TruckController : ControllerBase
+public class LoadsController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public TruckController(IMediator mediator)
+    public LoadsController(IMediator mediator)
     {
         _mediator = mediator;
     }
 
-    [HttpGet("{truckOrDriverId}")]
-    [ProducesResponseType(typeof(ResponseResult<TruckDto>), StatusCodes.Status200OK)]
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(ResponseResult<LoadDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Truck.View)]
-    public async Task<IActionResult> GetById(string truckOrDriverId, [FromQuery] GetTruckQuery request)
+    [Authorize(Policy = Permissions.Load.View)]
+    public async Task<IActionResult> GetById(string id)
     {
-        request.TruckOrDriverId = truckOrDriverId;
-        var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
-    }
-
-    [HttpGet]
-    [ProducesResponseType(typeof(PagedResponseResult<TruckDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Truck.View)]
-    public async Task<IActionResult> GetList([FromQuery] GetTrucksQuery query)
-    {
-        var result = await _mediator.Send(query);
+        var result = await _mediator.Send(new GetLoadByIdQuery
+        {
+            Id = id
+        });
 
         if (result.IsSuccess)
             return Ok(result);
@@ -42,11 +30,13 @@ public class TruckController : ControllerBase
         return BadRequest(result);
     }
     
-    [HttpGet("drivers")]
-    [ProducesResponseType(typeof(PagedResponseResult<TruckDriversDto>), StatusCodes.Status200OK)]
+    
+
+    [HttpGet]
+    [ProducesResponseType(typeof(PagedResponseResult<LoadDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Truck.View)]
-    public async Task<IActionResult> GetTruckDrivers([FromQuery] GetTruckDriversQuery query)
+    [Authorize(Policy = Permissions.Load.View)]
+    public async Task<IActionResult> GetList([FromQuery] GetLoadsQuery query)
     {
         var result = await _mediator.Send(query);
 
@@ -59,8 +49,8 @@ public class TruckController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Truck.Create)]
-    public async Task<IActionResult> Create([FromBody] CreateTruckCommand request)
+    [Authorize(Policy = Permissions.Load.Create)]
+    public async Task<IActionResult> Create([FromBody] CreateLoadCommand request)
     {
         var result = await _mediator.Send(request);
 
@@ -73,8 +63,8 @@ public class TruckController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Truck.Edit)]
-    public async Task<IActionResult> Update(string id, [FromBody] UpdateTruckCommand request)
+    [Authorize(Policy = Permissions.Load.Edit)]
+    public async Task<IActionResult> Update(string id, [FromBody] UpdateLoadCommand request)
     {
         request.Id = id;
         var result = await _mediator.Send(request);
@@ -88,10 +78,10 @@ public class TruckController : ControllerBase
     [HttpDelete("{id}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Truck.Delete)]
+    [Authorize(Policy = Permissions.Load.Delete)]
     public async Task<IActionResult> Delete(string id)
     {
-        var result = await _mediator.Send(new DeleteTruckCommand
+        var result = await _mediator.Send(new DeleteLoadCommand
         {
             Id = id
         });

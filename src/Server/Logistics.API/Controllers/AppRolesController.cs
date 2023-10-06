@@ -4,11 +4,11 @@ namespace Logistics.API.Controllers;
 
 [Route("app-roles")]
 [ApiController]
-public class AppRoleController : ControllerBase
+public class AppRolesController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public AppRoleController(IMediator mediator)
+    public AppRolesController(IMediator mediator)
     {
         _mediator = mediator;
     }

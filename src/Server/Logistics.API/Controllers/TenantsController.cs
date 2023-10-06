@@ -1,27 +1,31 @@
-﻿using Logistics.Models;
+﻿using Logistics.Domain.Enums;
+using Logistics.Models;
 
 namespace Logistics.API.Controllers;
 
-[Route("loads")]
+[Route("tenants")]
 [ApiController]
-public class LoadController : ControllerBase
+public class TenantsController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public LoadController(IMediator mediator)
+    public TenantsController(IMediator mediator)
     {
         _mediator = mediator;
     }
 
-    [HttpGet("{id}")]
-    [ProducesResponseType(typeof(ResponseResult<LoadDto>), StatusCodes.Status200OK)]
+    [HttpGet("{identifier}")]
+    [ProducesResponseType(typeof(ResponseResult<TenantDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Load.View)]
-    public async Task<IActionResult> GetById(string id)
+    [Authorize]
+    public async Task<IActionResult> GetById(string identifier)
     {
-        var result = await _mediator.Send(new GetLoadByIdQuery
+        var includeConnectionString = HttpContext.User.HasOneTheseRoles(AppRoles.SuperAdmin, AppRoles.Admin);
+        var result = await _mediator.Send(new GetTenantQuery
         {
-            Id = id
+            Id = identifier,
+            Name = identifier,
+            IncludeConnectionString = includeConnectionString
         });
 
         if (result.IsSuccess)
@@ -29,15 +33,18 @@ public class LoadController : ControllerBase
 
         return BadRequest(result);
     }
-    
-    
 
     [HttpGet]
     [ProducesResponseType(typeof(PagedResponseResult<LoadDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Load.View)]
-    public async Task<IActionResult> GetList([FromQuery] GetLoadsQuery query)
+    [Authorize(Policy = Permissions.Tenant.View)]
+    public async Task<IActionResult> GetList([FromQuery] GetTenantsQuery query)
     {
+        if (User.HasOneTheseRoles(AppRoles.SuperAdmin, AppRoles.Admin))
+        {
+            query.IncludeConnectionStrings = true;
+        }
+
         var result = await _mediator.Send(query);
 
         if (result.IsSuccess)
@@ -49,8 +56,8 @@ public class LoadController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Load.Create)]
-    public async Task<IActionResult> Create([FromBody] CreateLoadCommand request)
+    [Authorize(Policy = Permissions.Tenant.Create)]
+    public async Task<IActionResult> Create([FromBody] CreateTenantCommand request)
     {
         var result = await _mediator.Send(request);
 
@@ -63,8 +70,8 @@ public class LoadController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Load.Edit)]
-    public async Task<IActionResult> Update(string id, [FromBody] UpdateLoadCommand request)
+    [Authorize(Policy = Permissions.Tenant.Edit)]
+    public async Task<IActionResult> Update(string id, [FromBody] UpdateTenantCommand request)
     {
         request.Id = id;
         var result = await _mediator.Send(request);
@@ -78,10 +85,10 @@ public class LoadController : ControllerBase
     [HttpDelete("{id}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Load.Delete)]
+    [Authorize(Policy = Permissions.Tenant.Delete)]
     public async Task<IActionResult> Delete(string id)
     {
-        var result = await _mediator.Send(new DeleteLoadCommand
+        var result = await _mediator.Send(new DeleteTenantCommand
         {
             Id = id
         });

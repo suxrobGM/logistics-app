@@ -7,17 +7,11 @@ namespace Logistics.Domain.Entities;
 public class Load : AuditableEntity, ITenantEntity
 {
     public ulong RefId { get; set; } = 1000;
-    
-    [StringLength(LoadConsts.NameLength)]
     public string? Name { get; set; }
-    
-    [StringLength(LoadConsts.AddressLength)]
     public string? OriginAddress { get; set; }
     
     public double? OriginAddressLat { get; set; }
     public double? OriginAddressLong { get; set; }
-    
-    [StringLength(LoadConsts.AddressLength)]
     public string? DestinationAddress { get; set; }
     
     public double? DestinationAddressLat { get; set; }

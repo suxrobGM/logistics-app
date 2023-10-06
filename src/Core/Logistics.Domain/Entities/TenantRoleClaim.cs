@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Logistics.Domain.Constraints;
+﻿using Logistics.Domain.Constraints;
 
 namespace Logistics.Domain.Entities;
 
@@ -10,11 +9,8 @@ public class TenantRoleClaim : AuditableEntity, ITenantEntity
         ClaimType = claimType;
         ClaimValue = claimValue;
     }
-
-    [StringLength(RoleConsts.ClaimLength)] 
+    
     public string ClaimType { get; set; }
-
-    [StringLength(RoleConsts.ClaimLength)] 
     public string ClaimValue { get; set; }
 
     public string? RoleId { get; set; }

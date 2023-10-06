@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.Infrastructure.EF.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20230920070109_Version_0001")]
-    partial class Version_0001
+    [Migration("20231006082451_Version_001")]
+    partial class Version_001
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -99,21 +99,27 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<string>("AssignedTruckId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<bool>("CanConfirmDelivery")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanConfirmPickUp")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("DeliveryCost")
-                        .HasColumnType("float");
+                    b.Property<decimal>("DeliveryCost")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<DateTime?>("DeliveryDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DestinationAddress")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double?>("DestinationAddressLat")
                         .HasColumnType("float");
@@ -137,12 +143,10 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OriginAddress")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double?>("OriginAddressLat")
                         .HasColumnType("float");
@@ -155,9 +159,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
                     b.Property<decimal>("RefId")
                         .HasColumnType("decimal(20,0)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -173,7 +174,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.ToTable("Loads", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.TenantRole", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.Notification", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -181,27 +182,34 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreatedBy")
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Notifications", (string)null);
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.TenantRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("DisplayName")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedName")
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -215,13 +223,11 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
                     b.Property<string>("ClaimType")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ClaimValue")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -255,6 +261,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("DriverIncomePercentage")
+                        .HasColumnType("real");
 
                     b.Property<string>("LastKnownLocation")
                         .HasColumnType("nvarchar(max)");

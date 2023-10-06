@@ -24,4 +24,5 @@
     <ProjectReference Include="..\..\Shared\Logistics.Shared\Logistics.Shared.csproj" />
     <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />
   </ItemGroup>
+	
 </Project>
