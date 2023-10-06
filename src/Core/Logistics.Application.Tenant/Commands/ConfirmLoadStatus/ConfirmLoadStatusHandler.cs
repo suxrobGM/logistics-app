@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Enums;
+﻿using Logistics.Models;
 
 namespace Logistics.Application.Tenant.Commands;
 
@@ -14,6 +14,7 @@ internal sealed class ConfirmLoadStatusHandler : RequestHandler<ConfirmLoadStatu
     protected override async Task<ResponseResult> HandleValidated(
         ConfirmLoadStatusCommand req, CancellationToken cancellationToken)
     {
+        var tenantId = _tenantRepository.GetCurrentTenant().Id;
         var load = await _tenantRepository.GetAsync<Load>(req.LoadId);
         
         if (load is null)
@@ -21,20 +22,31 @@ internal sealed class ConfirmLoadStatusHandler : RequestHandler<ConfirmLoadStatu
 
         var loadStatus = req.LoadStatus!.Value;
         load.SetStatus(loadStatus);
-
-        switch (loadStatus)
-        {
-            case LoadStatus.PickedUp:
-                load.CanConfirmPickUp = false;
-                break;
-            case LoadStatus.Delivered:
-                load.CanConfirmPickUp = false;
-                load.CanConfirmDelivery = false;
-                break;
-        }
         
         _tenantRepository.Update(load);
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        var changes = await _tenantRepository.UnitOfWork.CommitAsync();
+
+        if (changes > 0)
+        {
+            await SendNotificationAsync(req, tenantId, load);
+        }
+        
         return ResponseResult.CreateSuccess();
+    }
+
+    private async Task SendNotificationAsync(ConfirmLoadStatusCommand req, string tenantId, Load load)
+    {
+        if (req.SendNotificationAsync is null)
+        {
+            return;
+        }
+        
+        var notification = new NotificationDto
+        {
+            Title = "Load updates",
+            Message = $"Driver confirmed the load #{load.RefId} status to '{load.GetStatus()}'"
+        };
+
+        await req.SendNotificationAsync(tenantId, notification);
     }
 }

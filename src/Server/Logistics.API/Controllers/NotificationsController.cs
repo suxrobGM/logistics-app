@@ -16,9 +16,24 @@ public class NotificationsController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(ResponseResult<NotificationDto[]>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.AppRole.View)]
+    [Authorize(Policy = Permissions.Employee.View)]
     public async Task<IActionResult> GetList([FromQuery] GetNotificationsQuery request)
     {
+        var result = await _mediator.Send(request);
+
+        if (result.IsSuccess)
+            return Ok(result);
+
+        return BadRequest(result);
+    }
+    
+    [HttpPut("{id}")]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Employee.View)]
+    public async Task<IActionResult> Update(string id, [FromQuery] UpdateNotificationCommand request)
+    {
+        request.Id = id;
         var result = await _mediator.Send(request);
 
         if (result.IsSuccess)

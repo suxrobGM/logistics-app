@@ -25,6 +25,8 @@ import {
   UpdateLoad,
   CreateLoad,
   TruckStats,
+  Notification,
+  UpdateNotification,
 } from '../models';
 
 
@@ -295,6 +297,28 @@ export class ApiService {
 
     return this.httpClient
         .get<ResponseResult<MonthlyGrosses>>(url)
+        .pipe(catchError((err) => this.handleError(err)));
+  }
+
+  // #endregion
+
+
+  // #region Notifications API
+
+  getNotifications(startDate: Date, endDate: Date): Observable<ResponseResult<Notification[]>> {
+    const url = `${this.host}/notifications?startDate=${startDate.toJSON()}&endDate=${endDate.toJSON()}`;
+
+    return this.httpClient
+        .get<ResponseResult<Notification>>(url)
+        .pipe(catchError((err) => this.handleError(err)));
+  }
+
+  updateNotification(commad: UpdateNotification): Observable<ResponseResult> {
+    const url = `${this.host}/notifications/${commad.id}`;
+    const body = JSON.stringify(commad);
+
+    return this.httpClient
+        .put<ResponseResult>(url, body, {headers: this.headers})
         .pipe(catchError((err) => this.handleError(err)));
   }
 

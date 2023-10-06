@@ -10,6 +10,7 @@ import {
   ApiService,
   CookieService,
   LiveTrackingService,
+  NotificationService,
   StorageService,
 } from './services';
 import {MessageService} from 'primeng/api';
@@ -31,6 +32,7 @@ import {MessageService} from 'primeng/api';
     CookieService,
     StorageService,
     LiveTrackingService,
+    NotificationService,
     MessageService,
   ],
 })

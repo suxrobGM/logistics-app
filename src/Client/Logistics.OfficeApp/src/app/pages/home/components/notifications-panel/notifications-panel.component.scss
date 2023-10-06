@@ -1,0 +1,17 @@
+.notification-list {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.notification-item {
+  cursor: pointer;
+  background-color: #f8f9fa;  // Add a light grey background to unread notifications
+}
+
+.notification-item.bg-lighter {
+  background-color: #d6e0f0;  // Use a slightly different color for unread notifications
+}
+
+.border-bottom {
+  border-bottom: 1px solid #dee2e6 !important;
+}

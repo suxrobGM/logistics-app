@@ -14,6 +14,7 @@ import {ApiService} from '@core/services';
 import {TrucksMapComponent} from '@shared/components';
 import {DistanceUnitPipe} from '@shared/pipes';
 import {DateUtils, DistanceConverter} from '@shared/utils';
+import {NotificationsPanelComponent} from './components';
 
 
 @Component({
@@ -35,6 +36,7 @@ import {DateUtils, DistanceConverter} from '@shared/utils';
     CurrencyPipe,
     DistanceUnitPipe,
     TrucksMapComponent,
+    NotificationsPanelComponent,
   ],
 })
 export class HomeComponent implements OnInit {

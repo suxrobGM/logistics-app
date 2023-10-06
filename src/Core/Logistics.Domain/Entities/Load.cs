@@ -51,6 +51,8 @@ public class Load : AuditableEntity, ITenantEntity
                 break;
             case LoadStatus.Delivered:
                 DeliveryDate = DateTime.UtcNow;
+                CanConfirmDelivery = false;
+                CanConfirmPickUp = false;
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(status), status, null);

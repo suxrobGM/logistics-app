@@ -26,3 +26,5 @@ export * from './userRole';
 export * from './enumType';
 export * from './truckGeolocation';
 export * from './truckStats';
+export * from './notification';
+export * from './updateNotification';

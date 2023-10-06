@@ -1,0 +1,45 @@
+<p-card>
+  <ng-template pTemplate="header">
+    <div class="ps-3 pt-3 pb-1 h4">
+      <i class="bi bi-bell" pBadge [badgeDisabled]="!notifications.length" [value]="getUnreadNotificationsCount()"></i>
+      <span class="ms-3">Notifications</span>
+    </div>
+    <hr class="w-100 m-0" />
+  </ng-template>
+
+  <div class="notification-list" [style]="{maxHeight: height}">
+    <ng-container *ngIf="isLoading; else notificationsList">
+      <p-progressSpinner></p-progressSpinner>
+    </ng-container>
+    
+    <ng-template #notificationsList>
+      <div *ngFor="let notification of notifications" 
+          [ngClass]="{'bg-lighter': !notification.isRead}"
+          class="notification-item p-1 border-bottom"
+          (click)="showNotification(notification)">
+        
+        <h5>{{notification.title}}</h5>
+        <div class="row">
+          <div class="col-10">
+            {{notification.message}}
+          </div>
+          <div class="col-2">
+            <small class="text-muted">{{notification.created | timeAgo}}</small>
+          </div>
+        </div>
+      </div>
+
+      <p *ngIf="!notifications.length" class="p-3 text-muted">No notifications.</p>
+    </ng-template>
+  </div>
+
+  <p-dialog [(visible)]="displayDialog" [modal]="true" [style]="{width: '50vw'}" [closable]="false" [dismissableMask]="true">
+    <ng-template pTemplate="header">
+      <span>{{selectedNotification?.title}}</span>
+    </ng-template>
+    <p>{{selectedNotification?.message}}</p>
+    <p-footer>
+      <button pButton type="button" label="Close" icon="pi pi-check" (click)="closeDialog()"></button>
+    </p-footer>
+  </p-dialog>
+</p-card>

@@ -1,4 +1,6 @@
-﻿using Logistics.Models;
+﻿using Logistics.API.Hubs;
+using Logistics.Models;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Logistics.API.Controllers;
 
@@ -7,10 +9,14 @@ namespace Logistics.API.Controllers;
 public class DriversController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IHubContext<NotificationHub, INotificationHubClient> _notificationHub;
 
-    public DriversController(IMediator mediator)
+    public DriversController(
+        IMediator mediator, 
+        IHubContext<NotificationHub, INotificationHubClient> notificationHub)
     {
         _mediator = mediator;
+        _notificationHub = notificationHub;
     }
 
     [HttpGet("{userId}")]
@@ -48,6 +54,9 @@ public class DriversController : ControllerBase
     [Authorize(Policy = Permissions.Employee.View)]
     public async Task<IActionResult> ConfirmLoadStatus([FromBody] ConfirmLoadStatusCommand request)
     {
+        request.SendNotificationAsync = (tenantId, notification) =>
+            _notificationHub.Clients.Group(tenantId).ReceiveNotification(notification);
+        
         var result = await _mediator.Send(request);
 
         if (result.IsSuccess)
