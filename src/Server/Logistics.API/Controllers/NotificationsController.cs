@@ -31,7 +31,7 @@ public class NotificationsController : ControllerBase
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employee.View)]
-    public async Task<IActionResult> Update(string id, [FromQuery] UpdateNotificationCommand request)
+    public async Task<IActionResult> Update(string id, [FromBody] UpdateNotificationCommand request)
     {
         request.Id = id;
         var result = await _mediator.Send(request);

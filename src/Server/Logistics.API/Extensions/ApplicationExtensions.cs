@@ -2,6 +2,8 @@
 using Logistics.API.Authorization;
 using Logistics.API.Hubs;
 using Logistics.API.Middlewares;
+using Logistics.API.Services;
+using Logistics.Application.Tenant.Services;
 using Logistics.Infrastructure.EF;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -13,22 +15,25 @@ internal static class ApplicationExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
+        var services = builder.Services;
 #if !DEBUG
         AddSecretsJson(builder.Configuration);
 #endif
-        builder.Services.AddApplicationLayer(builder.Configuration, "EmailConfig");
-        builder.Services.AddAdminApplicationLayer();
-        builder.Services.AddTenantApplicationLayer();
-        builder.Services.AddInfrastructureLayer(builder.Configuration);
-        builder.Services.AddHttpContextAccessor();
-        builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
-        builder.Services.AddSingleton<LiveTrackingHubContext>();
-        builder.Services.AddScoped<ExceptionHandlingMiddleware>();
-        builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
-        builder.Services.AddAuthorization();
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-        builder.Services.AddSignalR();
+        services.AddApplicationLayer(builder.Configuration, "EmailConfig");
+        services.AddAdminApplicationLayer();
+        services.AddTenantApplicationLayer();
+        services.AddInfrastructureLayer(builder.Configuration);
+        services.AddHttpContextAccessor();
+        services.AddAuthorization();
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen();
+        services.AddSignalR();
+        
+        services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+        services.AddSingleton<LiveTrackingHubContext>();
+        services.AddScoped<ExceptionHandlingMiddleware>();
+        services.AddScoped<IAuthorizationHandler, PermissionHandler>();
+        services.AddScoped<INotificationService, NotificationService>();
 
         builder.Services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>

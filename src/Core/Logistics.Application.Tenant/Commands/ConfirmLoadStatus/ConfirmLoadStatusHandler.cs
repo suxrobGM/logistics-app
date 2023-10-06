@@ -1,20 +1,23 @@
-﻿using Logistics.Models;
+﻿using Logistics.Application.Tenant.Services;
 
 namespace Logistics.Application.Tenant.Commands;
 
 internal sealed class ConfirmLoadStatusHandler : RequestHandler<ConfirmLoadStatusCommand, ResponseResult>
 {
     private readonly ITenantRepository _tenantRepository;
+    private readonly INotificationService _notificationService;
 
-    public ConfirmLoadStatusHandler(ITenantRepository tenantRepository)
+    public ConfirmLoadStatusHandler(
+        ITenantRepository tenantRepository,
+        INotificationService notificationService)
     {
         _tenantRepository = tenantRepository;
+        _notificationService = notificationService;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
         ConfirmLoadStatusCommand req, CancellationToken cancellationToken)
     {
-        var tenantId = _tenantRepository.GetCurrentTenant().Id;
         var load = await _tenantRepository.GetAsync<Load>(req.LoadId);
         
         if (load is null)
@@ -28,25 +31,17 @@ internal sealed class ConfirmLoadStatusHandler : RequestHandler<ConfirmLoadStatu
 
         if (changes > 0)
         {
-            await SendNotificationAsync(req, tenantId, load);
+            await SendNotificationAsync(load);
         }
         
         return ResponseResult.CreateSuccess();
     }
 
-    private async Task SendNotificationAsync(ConfirmLoadStatusCommand req, string tenantId, Load load)
+    private async Task SendNotificationAsync(Load load)
     {
-        if (req.SendNotificationAsync is null)
-        {
-            return;
-        }
-        
-        var notification = new NotificationDto
-        {
-            Title = "Load updates",
-            Message = $"Driver confirmed the load #{load.RefId} status to '{load.GetStatus()}'"
-        };
-
-        await req.SendNotificationAsync(tenantId, notification);
+        const string title = "Load updates";
+        var driverName = load.AssignedTruck?.Drivers.FirstOrDefault()?.GetFullName();
+        var message = $"Driver {driverName} confirmed the load #{load.RefId} status to '{load.GetStatus()}'";
+        await _notificationService.SendNotificationAsync(title, message);
     }
 }

@@ -8,6 +8,7 @@ import {ButtonModule} from 'primeng/button';
 import {BadgeModule} from 'primeng/badge';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {DialogModule} from 'primeng/dialog';
+import {MessageService} from 'primeng/api';
 
 
 @Component({
@@ -33,7 +34,10 @@ export class NotificationsPanelComponent implements OnInit, OnDestroy {
 
   @Input() height: string;
 
-  constructor(private notificationService: NotificationService) {
+  constructor(
+    private notificationService: NotificationService,
+    private messageService: MessageService)
+  {
     this.notifications = [];
     this.isLoading = false;
     this.displayDialog = false;
@@ -41,8 +45,12 @@ export class NotificationsPanelComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.notificationService.connect();
     this.fetchNotifications();
+    this.notificationService.connect();
+    this.notificationService.onReceiveNotification = (notification) => {
+      this.messageService.add({key: 'notification', severity: 'success', summary: notification.title, detail: notification.message});
+      this.notifications.push(notification);
+    };
 
     // Generating 15 fake notifications
     // this.notifications = Array.from({length: 15}, (_, index) => {
@@ -96,5 +104,9 @@ export class NotificationsPanelComponent implements OnInit, OnDestroy {
 
   getUnreadNotificationsCount(): string {
     return this.notifications.filter((i) => !i.isRead).length.toString();
+  }
+
+  trackByFn(index: number, item: Notification): string {
+    return item.id;
   }
 }
