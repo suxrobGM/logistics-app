@@ -16,8 +16,8 @@ public record ResponseResult : IResponseResult
 public record ResponseResult<T> : ResponseResult
 {
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public T? Value { get; init; }
+    public T? Data { get; init; }
 
-    public static ResponseResult<T> CreateSuccess(T result) => new() { Value = result };
+    public static ResponseResult<T> CreateSuccess(T result) => new() { Data = result };
     public new static ResponseResult<T> CreateError(string error) => new() { Error = error };
 }

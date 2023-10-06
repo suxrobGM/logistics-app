@@ -102,7 +102,7 @@ public class StatsPageViewModel : BaseViewModel
 		    return;
 	    }
 
-	    DriverStats = result.Value!;
+	    DriverStats = result.Data!;
 	    IsLoading = false;
     }
 
@@ -125,7 +125,7 @@ public class StatsPageViewModel : BaseViewModel
 	        return;
         }
 
-        AddChartDataToList(result.Value!.Data);
+        AddChartDataToList(result.Data!.Data);
         IsLoading = false;
 	}
     
@@ -148,7 +148,7 @@ public class StatsPageViewModel : BaseViewModel
 		    return;
 	    }
 	    
-        AddChartDataToList(result.Value!.Data);
+        AddChartDataToList(result.Data!.Data);
 	    IsLoading = false;
     }
 

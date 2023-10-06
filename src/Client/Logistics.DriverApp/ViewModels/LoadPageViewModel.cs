@@ -87,7 +87,7 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
             return;
         }
 
-        Load = new ActiveLoad(result.Value!);
+        Load = new ActiveLoad(result.Data!);
         EmbedMapHtml = GetEmbedMapHtml(Load);
         IsLoading = false;
     }

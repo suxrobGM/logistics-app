@@ -52,9 +52,9 @@ export class CompanyStatsComponent {
     this.isLoading = true;
 
     this.apiService.getCompanyStats().subscribe((result) => {
-      if (result.isSuccess && result.value) {
-        const stats = result.value;
-        this.companyStats = result.value;
+      if (result.isSuccess && result.data) {
+        const stats = result.data;
+        this.companyStats = result.data;
         this.rpm = stats.totalGross / DistanceConverter.metersTo(stats.totalDistance, 'mi');
       }
 

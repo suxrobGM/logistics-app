@@ -75,7 +75,7 @@ public class PastLoadsPageViewModel : BaseViewModel
         }
         
         Loads.Clear();
-        foreach (var load in result.Items!)
+        foreach (var load in result.Data!)
         {
             Loads.Add(load);
         }

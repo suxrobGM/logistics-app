@@ -82,7 +82,7 @@ public class ChangeOrganizationPageViewModel : BaseViewModel
             return;
         }
         
-        Organizations = result.Value!;
+        Organizations = result.Data!;
 
         if (!Organizations.Any())
         {

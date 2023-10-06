@@ -1,8 +1,9 @@
-export interface PagedResponseResult<T> {
+import {ResponseResult} from './responseResult';
+
+export interface PagedResponseResult<T> extends ResponseResult<T[]> {
   isSuccess: boolean;
   isError: boolean;
-  items?: T[];
   error?: string;
-  itemsCount?: number;
-  pagesCount?: number;
+  totalItems: number;
+  totalPages: number;
 }

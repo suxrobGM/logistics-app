@@ -83,7 +83,7 @@ public abstract class PageBase : ComponentBase
         var apiResult = await apiFunction(ApiClient);
         HandleError(apiResult);
         IsLoading = false;
-        return apiResult.Value;
+        return apiResult.Data;
     }
     
     protected async Task<PagedData<T>?> CallApiAsync<T>(Func<IApiClient, Task<PagedResponseResult<T>>> apiFunction)
@@ -94,8 +94,8 @@ public abstract class PageBase : ComponentBase
         var apiResult = await apiFunction(ApiClient);
         HandleError(apiResult);
         IsLoading = false;
-        return apiResult.Items != null
-            ? new PagedData<T>(apiResult.Items, apiResult.ItemsCount, apiResult.PagesCount) : default;
+        return apiResult.Data != null
+            ? new PagedData<T>(apiResult.Data, apiResult.TotalItems, apiResult.TotalPages) : default;
     }
 
     private bool HandleError(IResponseResult apiResult)

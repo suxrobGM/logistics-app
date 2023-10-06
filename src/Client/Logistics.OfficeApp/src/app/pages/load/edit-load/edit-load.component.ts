@@ -191,7 +191,7 @@ export class EditLoadComponent implements OnInit {
         return;
       }
 
-      const load = result.value!;
+      const load = result.data!;
 
       this.form.patchValue({
         name: load.name,

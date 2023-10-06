@@ -147,7 +147,7 @@ public class DashboardPageViewModel : BaseViewModel
             return;
         }
 
-        var truck = result.Value!;
+        var truck = result.Data!;
         var teammates = truck.Drivers.Where(i => i.Id != driverId).Select(i => i.FullName);
         TruckNumber = truck.TruckNumber;
         TeammatesName = string.Join(", ", teammates); 
@@ -170,7 +170,7 @@ public class DashboardPageViewModel : BaseViewModel
             return;
         }
         
-        AddActiveLoads(result.Value!);
+        AddActiveLoads(result.Data!);
         IsLoading = false;
     }
     

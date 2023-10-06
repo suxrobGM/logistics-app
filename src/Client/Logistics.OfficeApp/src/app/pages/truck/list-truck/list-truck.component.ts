@@ -45,9 +45,9 @@ export class ListTruckComponent implements OnInit {
     const query = event.target.value;
 
     this.apiService.getTrucks(query, '', 1).subscribe((result) => {
-      if (result.isSuccess && result.items) {
-        this.trucks = result.items;
-        this.totalRecords = result.itemsCount!;
+      if (result.isSuccess && result.data) {
+        this.trucks = result.data;
+        this.totalRecords = result.totalItems!;
       }
     });
   }
@@ -58,9 +58,9 @@ export class ListTruckComponent implements OnInit {
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
     this.apiService.getTrucks('', sortField, page, event.rows!).subscribe((result) => {
-      if (result.isSuccess && result.items) {
-        this.trucks = result.items;
-        this.totalRecords = result.itemsCount!;
+      if (result.isSuccess && result.data) {
+        this.trucks = result.data;
+        this.totalRecords = result.totalItems!;
       }
 
       this.isLoading = false;

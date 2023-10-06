@@ -78,8 +78,8 @@ export class EditTruckComponent implements OnInit {
 
   searchDriver(event: any) {
     this.apiService.getDrivers(event.query).subscribe((result) => {
-      if (result.isSuccess && result.items) {
-        this.suggestedDrivers = result.items;
+      if (result.isSuccess && result.data) {
+        this.suggestedDrivers = result.data;
       }
     });
   }
@@ -109,8 +109,8 @@ export class EditTruckComponent implements OnInit {
 
   private fetchTruck(id: string) {
     this.apiService.getTruck(id).subscribe((result) => {
-      if (result.isSuccess && result.value) {
-        const truck = result.value;
+      if (result.isSuccess && result.data) {
+        const truck = result.data;
         this.form.patchValue({
           truckNumber: truck.truckNumber,
           drivers: truck.drivers,

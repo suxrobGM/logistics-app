@@ -61,7 +61,7 @@ export class TrucksMapComponent implements OnInit, OnDestroy {
         return;
       }
 
-      const truckLocations: TruckGeolocation[] = result.items!.flatMap((truck) => {
+      const truckLocations: TruckGeolocation[] = result.data!.flatMap((truck) => {
         if (truck.currentLocation) {
           return [{
             latitude: truck.currentLocationLat!,

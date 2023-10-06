@@ -76,8 +76,8 @@ export class SidebarComponent {
         return;
       }
 
-      this.tenantService.setTenantData(result.value!);
-      this.companyName = result.value!.displayName;
+      this.tenantService.setTenantData(result.data!);
+      this.companyName = result.data!.displayName;
     });
   }
 

@@ -67,8 +67,8 @@ export class GrossesBarchartComponent implements OnInit {
     this.isLoading = true;
 
     this.apiService.getMonthlyGrosses(this.startDate, this.endDate, this.truckId).subscribe((result) => {
-      if (result.isSuccess && result.value) {
-        this.monthlyGrosses = result.value;
+      if (result.isSuccess && result.data) {
+        this.monthlyGrosses = result.data;
         const rpm = this.monthlyGrosses.totalGross / DistanceConverter.metersTo(this.monthlyGrosses.totalDistance, 'mi');
 
         this.drawChart(this.monthlyGrosses);

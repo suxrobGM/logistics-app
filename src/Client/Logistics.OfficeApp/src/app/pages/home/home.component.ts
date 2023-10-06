@@ -88,8 +88,8 @@ export class HomeComponent implements OnInit {
     this.isLoadingLoadsData = true;
 
     this.apiService.getLoads('', true, '-dispatchedDate').subscribe((result) => {
-      if (result.isSuccess && result.items) {
-        this.loads = result.items;
+      if (result.isSuccess && result.data) {
+        this.loads = result.data;
       }
 
       this.isLoadingLoadsData = false;
@@ -101,8 +101,8 @@ export class HomeComponent implements OnInit {
     const oneWeekAgo = DateUtils.daysAgo(7);
 
     this.apiService.getDailyGrosses(oneWeekAgo).subscribe((result) => {
-      if (result.isSuccess && result.value) {
-        const grosses = result.value;
+      if (result.isSuccess && result.data) {
+        const grosses = result.data;
 
         this.weeklyGross = grosses.totalGross;
         this.weeklyDistance = grosses.totalDistance;

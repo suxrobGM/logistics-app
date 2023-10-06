@@ -81,8 +81,8 @@ export class EditEmployeeComponent implements OnInit {
     this.isBusy = true;
 
     this.apiService.getEmployee(this.id!).subscribe((result) => {
-      if (result.isSuccess && result.value) {
-        this.employee = result.value;
+      if (result.isSuccess && result.data) {
+        this.employee = result.data;
         const employeeRoles = this.employee.roles?.map((i) => i.name);
         const user = this.authService.getUserData();
         this.evaluateCanChangeRole(user?.roles, employeeRoles);

@@ -56,7 +56,7 @@ public class AccountPageViewModel : BaseViewModel
 
         if (result.IsSuccess)
         {
-            var user = result.Value!;
+            var user = result.Data!;
             AccountDetails = new AccountInfo()
             {
                 Email = user.Email,

@@ -6,11 +6,11 @@ export class TruckHelper {
   static findTruckDrivers(apiService: ApiService, searchQuery: string): Observable<TruckData[]> {
     return apiService.getTruckDrivers(searchQuery).pipe(
         map((result) => {
-          if (!result.isSuccess || !result.items) {
+          if (!result.isSuccess || !result.data) {
             return [];
           }
 
-          return result.items.map((truckDriver) => ({
+          return result.data.map((truckDriver) => ({
             truckId: truckDriver.truck.id,
             driversName: TruckHelper.formatDriversName(truckDriver.truck.truckNumber, truckDriver.drivers.map((i) => i.fullName)),
           }));

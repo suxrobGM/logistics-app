@@ -21,7 +21,7 @@ export class UserService {
 
   public searchUser(searchQuery: string): Observable<User[] | undefined> {
     const users$ = this.apiService.getUsers(searchQuery);
-    return users$.pipe(map((i) => i.items));
+    return users$.pipe(map((i) => i.data));
   }
 
   public fetchRoles(): Observable<Role[]> {
@@ -30,8 +30,8 @@ export class UserService {
 
     return roles$.pipe(
         map((result) => {
-          if (result.isSuccess && result.items) {
-            const roles = result.items;
+          if (result.isSuccess && result.data) {
+            const roles = result.data;
             const roleNames = roles.map((i) => i.name);
 
             if (this.userRoles?.includes(UserRole.Owner)) {

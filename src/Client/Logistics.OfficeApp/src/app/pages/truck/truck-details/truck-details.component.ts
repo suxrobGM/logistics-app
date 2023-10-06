@@ -72,8 +72,8 @@ export class TruckDetailsComponent implements OnInit {
     this.isLoading = true;
 
     this.apiService.getTruck(this.id).subscribe((result) => {
-      if (result.isSuccess && result.value) {
-        this.truck = result.value;
+      if (result.isSuccess && result.data) {
+        this.truck = result.data;
 
         this.truckLocations = [{
           latitude: this.truck.currentLocationLat!,
