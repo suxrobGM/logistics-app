@@ -24,7 +24,7 @@ internal sealed class GetTenantHandler : RequestHandler<GetTenantQuery, Response
             Id = tenantEntity.Id,
             Name = tenantEntity.Name,
             DisplayName = tenantEntity.DisplayName,
-            ConnectionString = tenantEntity.ConnectionString
+            ConnectionString = req.IncludeConnectionString ? tenantEntity.ConnectionString : default
         };
 
         return ResponseResult<TenantDto>.CreateSuccess(tenant);

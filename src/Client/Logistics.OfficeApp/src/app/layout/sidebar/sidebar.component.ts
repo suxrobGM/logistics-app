@@ -72,7 +72,7 @@ export class SidebarComponent {
 
   private fetchTenantData() {
     this.apiService.getTenant().subscribe((result) => {
-      if (!result.isSuccess) {
+      if (result.isError) {
         return;
       }
 

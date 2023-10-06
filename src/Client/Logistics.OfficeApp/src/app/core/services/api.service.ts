@@ -46,7 +46,7 @@ export class ApiService {
 
   getTenant(): Observable<ResponseResult<Tenant>> {
     const tenantId = this.tenantService.getTenantName();
-    const url = `${this.host}/tenants/${tenantId}/display-name`;
+    const url = `${this.host}/tenants/${tenantId}`;
 
     return this.httpClient
         .get<ResponseResult<Tenant>>(url)

@@ -17,31 +17,15 @@ public class TenantController : ControllerBase
     [HttpGet("{identifier}")]
     [ProducesResponseType(typeof(ResponseResult<TenantDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Tenant.View)]
+    [Authorize]
     public async Task<IActionResult> GetById(string identifier)
     {
+        var includeConnectionString = HttpContext.User.HasOneTheseRoles(AppRoles.SuperAdmin, AppRoles.Admin);
         var result = await _mediator.Send(new GetTenantQuery
         {
             Id = identifier,
-            Name = identifier
-        });
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
-    }
-
-    [HttpGet("{identifier}/display-name")]
-    [ProducesResponseType(typeof(ResponseResult<TenantDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize]
-    public async Task<IActionResult> GetDisplayName(string identifier)
-    {
-        var result = await _mediator.Send(new GetTenantDisplayNameQuery
-        {
-            Id = identifier,
-            Name = identifier
+            Name = identifier,
+            IncludeConnectionString = includeConnectionString
         });
 
         if (result.IsSuccess)
@@ -56,7 +40,7 @@ public class TenantController : ControllerBase
     [Authorize(Policy = Permissions.Tenant.View)]
     public async Task<IActionResult> GetList([FromQuery] GetTenantsQuery query)
     {
-        if (User.HasOneTheseRoles(new[] {AppRoles.SuperAdmin, AppRoles.Admin}))
+        if (User.HasOneTheseRoles(AppRoles.SuperAdmin, AppRoles.Admin))
         {
             query.IncludeConnectionStrings = true;
         }
