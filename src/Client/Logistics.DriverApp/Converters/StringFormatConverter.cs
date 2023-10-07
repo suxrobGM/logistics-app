@@ -26,9 +26,6 @@ public class StringFormatConverter : IValueConverter
             return strValue;
         }
 
-        var a = parameter as Binding;
-        var b = a?.Source as StatsPage;
-
         if (parameter is Binding bindingProperty && bindingProperty.Source is StatsPage statsPage)
         {
             return statsPage.ViewModel.DateFormat;
