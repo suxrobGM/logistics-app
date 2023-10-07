@@ -1,8 +1,6 @@
 import {
   Component,
   Input,
-  OnChanges,
-  SimpleChanges,
 } from '@angular/core';
 import {NgFor, NgIf} from '@angular/common';
 import {MarkerComponent, NgxMapboxGLModule} from 'ngx-mapbox-gl';
@@ -20,7 +18,7 @@ import {TruckGeolocation} from '@core/models';
     NgIf,
   ],
 })
-export class GeolocationMapComponent implements OnChanges {
+export class GeolocationMapComponent {
   public selectedMarker: Marker | null = null;
 
   @Input({required: true}) accessToken!: string;
@@ -37,8 +35,6 @@ export class GeolocationMapComponent implements OnChanges {
     this.width = '100%';
     this.height = '100%';
   }
-
-  ngOnChanges(changes: SimpleChanges): void {}
 
   trackByFn(index: number, item: TruckGeolocation): string {
     return item.truckId;

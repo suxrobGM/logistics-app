@@ -1,4 +1,4 @@
-export interface ResponseResult<T = any> {
+export interface ResponseResult<T = unknown> {
   isSuccess: boolean;
   isError: boolean;
   data?: T;

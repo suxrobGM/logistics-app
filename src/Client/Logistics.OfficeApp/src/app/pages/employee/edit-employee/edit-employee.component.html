@@ -1,6 +1,6 @@
 <p-toast key="notification" position="top-right"></p-toast>
 <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
-<change-role-dialog [(visible)]="showUpdateDialog" [userId]="id" [currentRoles]="employee?.roles"></change-role-dialog>
+<app-change-role-dialog [(visible)]="showUpdateDialog" [userId]="id" [currentRoles]="employee?.roles"></app-change-role-dialog>
 
 <h1 class="text-center">Edit Employee</h1>
 <hr class="w-100">
@@ -26,7 +26,9 @@
         <label for="roleName" class="form-label">Role</label>
         <div class="input-group">
           <input id="roleName" type="text" class="form-control" [disabled]="true" [value]="getEmployeeRoleNames()" />
-          <button pButton class="p-button-raised" label="Change" type="button" (click)="openUpdateDialog()" [disabled]="!canChangeRole"></button>
+          <button pButton class="p-button-raised" type="button" (click)="openUpdateDialog()" [disabled]="!canChangeRole">
+            Change
+          </button>
         </div>
       </div>
 

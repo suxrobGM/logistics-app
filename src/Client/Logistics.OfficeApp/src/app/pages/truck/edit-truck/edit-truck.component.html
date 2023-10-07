@@ -34,24 +34,24 @@
             type="submit"
             class="p-button-raised mt-3"
             icon="bi bi-pencil-square"
-            label="Save"
             [disabled]="isBusy">
+            Save
           </button>
           <button pButton
             *ngIf="editMode"
             type="button"
             class="p-button-raised p-button-danger mt-3 ms-2"
             icon="bi bi bi-trash"
-            label="Delete"
             [disabled]="isBusy"
             (click)="confirmToDelete()">
+            Delete
           </button>
           <button pButton 
             type="button"
             class="p-button-raised mt-3 ms-0 ms-md-2"
             icon="bi bi-arrow-left-square"
-            routerLink="/truck/list"
-            label="Back to list">
+            routerLink="/truck/list">
+            Back to list
           </button>
         </div>
       </form>

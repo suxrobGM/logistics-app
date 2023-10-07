@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, OnChanges, SimpleChanges, Output, EventEmitter} from '@angular/core';
+import {Component, Input, OnChanges, SimpleChanges, Output, EventEmitter} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
 import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
@@ -45,7 +45,7 @@ export class DirectionsMapComponent implements OnChanges {
     this.height = '100%';
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges() {
     if (!this.start && !this.end) {
       this.clearRoutes();
     }

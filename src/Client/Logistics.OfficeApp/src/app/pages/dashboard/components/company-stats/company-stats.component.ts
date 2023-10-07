@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {CommonModule, CurrencyPipe} from '@angular/common';
 import {CompanyStats} from '@core/models';
 import {ApiService} from '@core/services';
@@ -26,7 +26,7 @@ import {SkeletonModule} from 'primeng/skeleton';
     ChartModule,
   ],
 })
-export class CompanyStatsComponent {
+export class CompanyStatsComponent implements OnInit {
   public isLoading: boolean;
   public rpm: number;
   public companyStats?: CompanyStats;

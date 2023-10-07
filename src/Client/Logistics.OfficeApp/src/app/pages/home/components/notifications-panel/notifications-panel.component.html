@@ -16,7 +16,8 @@
       <div *ngFor="let notification of notifications; trackBy: trackByFn" 
           [ngClass]="{'bg-lighter': !notification.isRead}"
           class="notification-item p-1 border-bottom"
-          (click)="showNotification(notification)">
+          (click)="showNotification(notification)"
+          role="presentation">
         
         <h5>{{notification.title}}</h5>
         <div class="row">
@@ -47,6 +48,6 @@
     <p>{{selectedNotification?.message}}</p>
     
     <p-footer>
-      <button pButton type="button" label="Close" icon="pi pi-check" (click)="closeDialog()"></button>
+      <button pButton type="button" icon="pi pi-check" (click)="closeDialog()">Close</button>
     </p-footer>
   </p-dialog>

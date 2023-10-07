@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "docker:dev": "ng serve --port 7003 --host 0.0.0.0 --poll 2000",
-    "test": "ng test"
+    "test": "ng test",
+    "lint": "ng lint"
   },
   "private": true,
   "dependencies": {
@@ -33,14 +34,18 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^16.2.1",
+    "@angular-eslint/builder": "16.2.0",
+    "@angular-eslint/eslint-plugin": "16.2.0",
+    "@angular-eslint/eslint-plugin-template": "16.2.0",
+    "@angular-eslint/schematics": "16.2.0",
+    "@angular-eslint/template-parser": "16.2.0",
     "@angular/cli": "^16.2.1",
     "@angular/compiler-cli": "^16.2.4",
     "@types/jasmine": "^4.3.5",
     "@types/mapbox-gl": "^2.7.14",
-    "@typescript-eslint/eslint-plugin": "^5.62.0",
-    "@typescript-eslint/parser": "^5.62.0",
+    "@typescript-eslint/eslint-plugin": "5.62.0",
+    "@typescript-eslint/parser": "5.62.0",
     "eslint": "^8.49.0",
-    "eslint-config-google": "^0.14.0",
     "jasmine-core": "^5.1.1",
     "karma": "^6.4.2",
     "karma-chrome-launcher": "^3.2.0",

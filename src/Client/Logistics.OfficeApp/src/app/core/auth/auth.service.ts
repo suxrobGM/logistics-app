@@ -1,7 +1,7 @@
 /* eslint-disable indent */
 import {Injectable} from '@angular/core';
-import {EventTypes, OidcClientNotification, OidcSecurityService, PublicEventsService} from 'angular-auth-oidc-client';
-import {Observable, filter, map, of} from 'rxjs';
+import {EventTypes, OidcSecurityService, PublicEventsService} from 'angular-auth-oidc-client';
+import {Observable, filter, map} from 'rxjs';
 import {UserRoleHelper} from '@core/helpers';
 import {UserData} from './userData';
 
@@ -49,7 +49,7 @@ export class AuthService {
   }
 
   logout() {
-    this.oidcService.logoff().subscribe((result) => {
+    this.oidcService.logoff().subscribe(() => {
       this.userData = null;
       this.accessToken = null;
     });
@@ -82,9 +82,5 @@ export class AuthService {
 
   getUserRoleName(): string | null {
     return UserRoleHelper.getRoleName(this.userData?.roles[0]);
-  }
-
-  private decodeJwt(accessToken: string): any {
-    return JSON.parse(atob(accessToken.split('.')[1]));
   }
 }

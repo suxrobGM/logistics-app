@@ -11,7 +11,7 @@ import {DropdownModule} from 'primeng/dropdown';
 import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {AppConfig} from '@configs';
-import {UpdateLoad, EnumType, LoadStatus, LoadStatuses, Truck} from '@core/models';
+import {UpdateLoad, EnumType, LoadStatus, LoadStatuses} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {DistanceConverter} from '@shared/utils';
 import {

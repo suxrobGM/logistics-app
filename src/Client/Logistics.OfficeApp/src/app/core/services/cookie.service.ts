@@ -2,14 +2,12 @@ import {Injectable} from '@angular/core';
 
 @Injectable()
 export class CookieService {
-  constructor() { }
-
-  public getCookie(name: string): string {
+  getCookie(name: string): string {
     const cookies: Array<string> = document.cookie.split(';');
     const cookieName = `${name}=`;
     let cookie: string;
 
-    for (let i: number = 0; i < cookies.length; i += 1) {
+    for (let i = 0; i < cookies.length; i += 1) {
       cookie = cookies[i].replace(/^\s+/g, '');
       if (cookie.indexOf(cookieName) == 0) {
         return cookie.substring(cookieName.length, cookie.length);
@@ -18,7 +16,7 @@ export class CookieService {
     return '';
   }
 
-  public deleteCookie(cookieName: string) {
+  deleteCookie(cookieName: string) {
     this.setCookie({name: cookieName, value: '', expireDays: -1});
   }
 
@@ -32,7 +30,7 @@ export class CookieService {
    * {service instance}.setCookie({name:'userName',value:'John Doe', secure:true }); <- If page is not https then secure will not apply
    * {service instance}.setCookie({name:'niceCar', value:'red', expireDays:10 }); <- For all this examples if path is not provided default will be root
    */
-  public setCookie(cookie: Cookie) {
+  setCookie(cookie: Cookie) {
     const date: Date = new Date();
     date.setTime(date.getTime() + (cookie.expireDays ? cookie.expireDays : 1) * 24 * 60 * 60 * 1000);
     const path = cookie.path && cookie.path.length > 0 ? cookie.path : '/';

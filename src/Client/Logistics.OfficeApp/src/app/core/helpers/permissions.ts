@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-namespace */
+
 export namespace Permissions {
   export enum Employees {
     Create = 'Permissions.Employees.Create',

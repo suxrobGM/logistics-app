@@ -8,7 +8,6 @@ import {ButtonModule} from 'primeng/button';
 import {BadgeModule} from 'primeng/badge';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {DialogModule} from 'primeng/dialog';
-import {MessageService} from 'primeng/api';
 
 
 @Component({

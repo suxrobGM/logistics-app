@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 
 @Component({
   selector: 'app-unauthorized',
@@ -7,5 +7,4 @@ import {Component, OnInit} from '@angular/core';
   standalone: true,
 })
 export class UnauthorizedComponent {
-  constructor() {}
 }

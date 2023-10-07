@@ -35,8 +35,11 @@ export class RangeCalendarComponent implements OnChanges {
     this.dates = [];
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.dates = [this.startDate!, this.endDate!];
+  ngOnChanges(): void {
+    if (this.startDate && this.endDate) {
+      this.dates = [this.startDate, this.endDate];
+    }
+    
   }
 
   areDatesValid(): boolean {

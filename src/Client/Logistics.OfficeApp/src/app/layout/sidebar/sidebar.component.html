@@ -1,6 +1,6 @@
 <div class="sidebar" [ngClass]="{'minimized': !isOpened}">
   <a class="py-3 navbar-brand border-bottom">
-    <img src="assets/images/logo.svg" class="img-fluid" height="40" />
+    <img src="assets/images/logo.svg" class="img-fluid" height="40" alt="logo" />
     <span class="h4" *ngIf="isOpened">{{companyName}}</span>
   </a>
   <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
@@ -36,9 +36,9 @@
     </li>
     <li class="nav-item">
       <a class="nav-link border-bottom">
-        <i *ngIf="isOpened else rightArrowIcon" class="bi bi-arrow-left h1" (click)="toggle()" pTooltip="Minimize menu"></i>
+        <i *ngIf="isOpened else rightArrowIcon" class="bi bi-arrow-left h1" (click)="toggle()" pTooltip="Minimize menu" role="presentation"></i>
         <ng-template #rightArrowIcon>
-          <i class="bi bi-arrow-right h1" (click)="toggle()" pTooltip="Maximize menu"></i>
+          <i class="bi bi-arrow-right h1" (click)="toggle()" pTooltip="Maximize menu" role="presentation"></i>
         </ng-template>
       </a>
     </li>
@@ -52,7 +52,7 @@
     <p-panelMenu *ngIf="isOpened else accountIcon" [model]="accountMenuItems"></p-panelMenu>
     <ng-template #accountIcon>
       <div class="text-center">
-        <i (click)="toggle()" class="bi bi-person-circle h1" pTooltip="Account"></i>
+        <i (click)="toggle()" class="bi bi-person-circle h1" pTooltip="Account" role="presentation"></i>
       </div>
     </ng-template>
   </div>

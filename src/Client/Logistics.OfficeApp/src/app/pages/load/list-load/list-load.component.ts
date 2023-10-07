@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, ViewEncapsulation} from '@angular/core';
 import {CurrencyPipe, DatePipe} from '@angular/common';
 import {RouterLink} from '@angular/router';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
@@ -32,7 +32,7 @@ import {DistanceUnitPipe} from '@shared/pipes';
     DistanceUnitPipe,
   ],
 })
-export class ListLoadComponent implements OnInit {
+export class ListLoadComponent {
   loads: Load[];
   isBusy: boolean;
   totalRecords: number;
@@ -44,8 +44,6 @@ export class ListLoadComponent implements OnInit {
     this.totalRecords = 0;
     this.first = 0;
   }
-
-  ngOnInit(): void {}
 
   search(event: any) {
     const query = event.target.value;

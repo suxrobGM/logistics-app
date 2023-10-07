@@ -2,7 +2,6 @@ import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterLink} from '@angular/router';
-import {MessageService} from 'primeng/api';
 import {ButtonModule} from 'primeng/button';
 import {DropdownModule} from 'primeng/dropdown';
 import {AutoCompleteModule} from 'primeng/autocomplete';
@@ -59,11 +58,11 @@ export class AddEmployeeComponent implements OnInit {
     });
   }
 
-  public ngOnInit(): void {
+  ngOnInit(): void {
     this.fetchRoles();
   }
 
-  public searchUser(event: any) {
+  searchUser(event: any) {
     this.userService.searchUser(event.query).subscribe((users) => {
       if (users) {
         this.suggestedUsers = users;
@@ -71,13 +70,13 @@ export class AddEmployeeComponent implements OnInit {
     });
   }
 
-  public clearSelctedRole() {
+  clearSelctedRole() {
     this.form.patchValue({
       role: {name: '', displayName: ' '},
     });
   }
 
-  public submit() {
+  submit() {
     const user = this.form.value.user as User;
 
     if (!user) {
@@ -86,7 +85,7 @@ export class AddEmployeeComponent implements OnInit {
     }
 
     const newEmployee: CreateEmployee = {
-      userId: user.id!,
+      userId: user.id,
       role: this.form.value.role,
     };
 

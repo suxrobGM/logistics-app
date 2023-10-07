@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {CommonModule, NgFor, NgIf, PercentPipe} from '@angular/common';
+import {Component} from '@angular/core';
+import {CommonModule, PercentPipe} from '@angular/common';
 import {RouterLink} from '@angular/router';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {InputTextModule} from 'primeng/inputtext';
@@ -28,7 +28,7 @@ import {ApiService} from '@core/services';
     PercentPipe,
   ],
 })
-export class ListTruckComponent implements OnInit {
+export class ListTruckComponent {
   public trucks: Truck[];
   public isLoading: boolean;
   public totalRecords: number;
@@ -39,15 +39,13 @@ export class ListTruckComponent implements OnInit {
     this.totalRecords = 0;
   }
 
-  ngOnInit(): void {}
-
   search(event: any) {
     const query = event.target.value;
 
     this.apiService.getTrucks(query, '', 1).subscribe((result) => {
       if (result.isSuccess && result.data) {
         this.trucks = result.data;
-        this.totalRecords = result.totalItems!;
+        this.totalRecords = result.totalItems;
       }
     });
   }
@@ -60,7 +58,7 @@ export class ListTruckComponent implements OnInit {
     this.apiService.getTrucks('', sortField, page, event.rows!).subscribe((result) => {
       if (result.isSuccess && result.data) {
         this.trucks = result.data;
-        this.totalRecords = result.totalItems!;
+        this.totalRecords = result.totalItems;
       }
 
       this.isLoading = false;

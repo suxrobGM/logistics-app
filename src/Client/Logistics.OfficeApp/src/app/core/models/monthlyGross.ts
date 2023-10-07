@@ -1,3 +1,3 @@
 import {DailyGross} from './dailyGross';
 
-export interface MonthlyGross extends DailyGross {}
+export type MonthlyGross = DailyGross;

@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {RouterLink} from '@angular/router';
 import {TooltipModule} from 'primeng/tooltip';
@@ -23,12 +23,12 @@ import {ApiService, TenantService} from '@core/services';
     PanelMenuModule,
   ],
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
   public isAuthenticated: boolean;
   public isLoading: boolean;
   public isOpened: boolean;
   public companyName?: string;
-  public userRole?: string;
+  public userRole?: string | null;
   public userFullName?: string;
   public accountMenuItems: MenuItem[];
 
@@ -64,7 +64,7 @@ export class SidebarComponent {
   ngOnInit(): void {
     this.authService.onUserDataChanged().subscribe((userData) => {
       this.userFullName = userData?.getFullName();
-      this.userRole = this.authService.getUserRoleName()!;
+      this.userRole = this.authService.getUserRoleName();
       this.accountMenuItems[0].label = this.userFullName;
       this.fetchTenantData();
     });

@@ -10,7 +10,7 @@ import {ApiService, ToastService} from '@core/services';
 import {UserService} from '../../services';
 
 @Component({
-  selector: 'change-role-dialog',
+  selector: 'app-change-role-dialog',
   templateUrl: './change-role-dialog.component.html',
   styleUrls: [],
   standalone: true,

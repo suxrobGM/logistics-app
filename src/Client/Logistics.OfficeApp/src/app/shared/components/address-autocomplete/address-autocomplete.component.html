@@ -10,7 +10,8 @@
   <div class="popup" *ngIf="searchResults.length">
     <div *ngFor="let result of searchResults" 
       class="popup-item" 
-      (click)="onClickAddress(result.place_name, result.center)">
+      (click)="onClickAddress(result.place_name, result.center)"
+      role="presentation">
       {{ result.place_name }}
     </div>
   </div>

@@ -7,8 +7,8 @@
   <ng-container *ngFor="let geoData of geolocationData; trackBy: trackByFn">
     <mgl-marker #marker 
       [lngLat]="[geoData.longitude, geoData.latitude]">
-      <div class="text-center" (click)="onSelectMarker(geoData, marker)">
-        <div class="bg-dark text-light rounded" >
+      <div class="text-center" (click)="onSelectMarker(geoData, marker)" role="presentation">
+        <div class="bg-dark text-light rounded">
           {{geoData.truckNumber}}
         </div>
         <div class="text-danger">

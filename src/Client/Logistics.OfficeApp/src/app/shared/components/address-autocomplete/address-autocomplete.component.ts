@@ -1,4 +1,5 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+/* eslint-disable @typescript-eslint/no-empty-function */
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {NgFor, NgIf} from '@angular/common';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 
@@ -23,10 +24,10 @@ export class AddressAutocompleteComponent implements ControlValueAccessor {
   private isDisabled = false;
 
   @Input({required: true}) accessToken!: string;
-  @Input() field: string = '';
-  @Input() placeholder: string = 'Type address...';
-  @Input() country: string = 'us';
-  @Input() address: string = '';
+  @Input() field = '';
+  @Input() placeholder = 'Type address...';
+  @Input() country = 'us';
+  @Input() address = '';
   @Output() addressChange = new EventEmitter<string>();
   @Output() selectedAddress = new EventEmitter<SelectedAddressEvent>();
 
@@ -62,7 +63,7 @@ export class AddressAutocompleteComponent implements ControlValueAccessor {
     this.markAsTouched();
   }
 
-  private onChange(value: any): void {};
+  private onChange(value: any): void {}
   private onTouched(): void {}
 
   private markAsTouched() {

@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, RouterLink} from '@angular/router';
-import {NgIf, NgFor, CurrencyPipe, CommonModule} from '@angular/common';
+import {CurrencyPipe, CommonModule} from '@angular/common';
 import {SkeletonModule} from 'primeng/skeleton';
 import {CardModule} from 'primeng/card';
 import {DailyGrosses, MonthlyGrosses, Truck, TruckGeolocation} from '@core/models';

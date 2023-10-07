@@ -9,7 +9,7 @@ import {TableModule} from 'primeng/table';
 import {SharedModule} from 'primeng/api';
 import {CardModule} from 'primeng/card';
 import {AppConfig} from '@configs';
-import {DailyGrosses, TruckGeolocation, Load} from '@core/models';
+import {DailyGrosses, Load} from '@core/models';
 import {ApiService} from '@core/services';
 import {TrucksMapComponent} from '@shared/components';
 import {DistanceUnitPipe} from '@shared/pipes';

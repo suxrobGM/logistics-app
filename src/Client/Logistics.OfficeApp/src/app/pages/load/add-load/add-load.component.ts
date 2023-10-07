@@ -10,7 +10,7 @@ import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {AppConfig} from '@configs';
 import {AuthService} from '@core/auth';
-import {CreateLoad, EnumType, LoadStatus, LoadStatuses, Truck} from '@core/models';
+import {CreateLoad, EnumType, LoadStatus, LoadStatuses} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {DistanceConverter} from '@shared/utils';
 import {
