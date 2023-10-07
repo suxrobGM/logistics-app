@@ -1,6 +1,6 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {NotificationService} from '@core/services';
+import {NotificationService, ToastService} from '@core/services';
 import {Notification} from '@core/models';
 import {TimeAgoPipe} from '@shared/pipes';
 import {CardModule} from 'primeng/card';
@@ -36,7 +36,7 @@ export class NotificationsPanelComponent implements OnInit, OnDestroy {
 
   constructor(
     private notificationService: NotificationService,
-    private messageService: MessageService)
+    private toastSerice: ToastService)
   {
     this.notifications = [];
     this.isLoading = false;
@@ -48,7 +48,7 @@ export class NotificationsPanelComponent implements OnInit, OnDestroy {
     this.fetchNotifications();
     this.notificationService.connect();
     this.notificationService.onReceiveNotification = (notification) => {
-      this.messageService.add({key: 'notification', severity: 'success', summary: notification.title, detail: notification.message});
+      this.toastSerice.showSuccess(notification.message, notification.title);
       this.notifications.push(notification);
     };
 

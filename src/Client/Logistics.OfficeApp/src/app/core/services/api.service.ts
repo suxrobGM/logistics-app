@@ -341,7 +341,7 @@ export class ApiService {
     const errorMessage = responseData.error?.error ?? responseData.error;
 
     this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: errorMessage});
-    this.messageService.add({key: 'errorMsg', severity: 'error', summary: 'Error', detail: errorMessage});
+    // this.messageService.add({key: 'errorMsg', severity: 'error', summary: 'Error', detail: errorMessage});
     console.error(errorMessage ?? responseData);
     return of({error: errorMessage, success: false});
   }

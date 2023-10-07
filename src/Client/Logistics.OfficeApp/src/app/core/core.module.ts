@@ -12,6 +12,7 @@ import {
   LiveTrackingService,
   NotificationService,
   StorageService,
+  ToastService,
 } from './services';
 import {MessageService} from 'primeng/api';
 
@@ -34,6 +35,7 @@ import {MessageService} from 'primeng/api';
     LiveTrackingService,
     NotificationService,
     MessageService,
+    ToastService,
   ],
 })
 export class CoreModule { }

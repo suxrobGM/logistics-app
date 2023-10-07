@@ -2,7 +2,6 @@ import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
-import {MessageService} from 'primeng/api';
 import {CardModule} from 'primeng/card';
 import {ToastModule} from 'primeng/toast';
 import {ButtonModule} from 'primeng/button';
@@ -12,7 +11,7 @@ import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {AppConfig} from '@configs';
 import {AuthService} from '@core/auth';
 import {CreateLoad, EnumType, LoadStatus, LoadStatuses, Truck} from '@core/models';
-import {ApiService} from '@core/services';
+import {ApiService, ToastService} from '@core/services';
 import {DistanceConverter} from '@shared/utils';
 import {
   AddressAutocompleteComponent,
@@ -58,7 +57,7 @@ export class AddLoadComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private apiService: ApiService,
-    private messageService: MessageService,
+    private toastService: ToastService,
     private router: Router)
   {
     this.accessToken = AppConfig.mapboxToken;
@@ -95,7 +94,7 @@ export class AddLoadComponent implements OnInit {
     const assignedTruck = this.form.value.assignedTruck;
 
     if (!assignedTruck) {
-      this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Select a truck'});
+      this.toastService.showError('Select a truck');
       return;
     }
 
@@ -142,7 +141,7 @@ export class AddLoadComponent implements OnInit {
     this.apiService.createLoad(command)
         .subscribe((result) => {
           if (result.isSuccess) {
-            this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A new load has been created successfully'});
+            this.toastService.showSuccess('A new load has been created successfully');
             this.router.navigateByUrl('/load/list');
           }
 

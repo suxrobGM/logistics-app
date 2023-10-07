@@ -1,13 +1,12 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MessageService} from 'primeng/api';
 import {ButtonModule} from 'primeng/button';
 import {DropdownModule} from 'primeng/dropdown';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {DialogModule} from 'primeng/dialog';
 import {RemoveEmployeeRole, Role, UpdateEmployee} from '@core/models';
-import {ApiService} from '@core/services';
+import {ApiService, ToastService} from '@core/services';
 import {UserService} from '../../services';
 
 @Component({
@@ -41,7 +40,7 @@ export class ChangeRoleDialogComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private userService: UserService,
-    private messageService: MessageService)
+    private toastService: ToastService)
   {
     this.currentRoles = [];
     this.roles = [];
@@ -63,7 +62,7 @@ export class ChangeRoleDialogComponent implements OnInit {
     const role = this.form.value.role;
 
     if (role === '') {
-      this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Select a role from the list'});
+      this.toastService.showError('Select a role from the list');
       return;
     }
 
@@ -75,7 +74,7 @@ export class ChangeRoleDialogComponent implements OnInit {
     this.loading = true;
     this.apiService.updateEmployee(updateEmployee).subscribe((result) => {
       if (result.isSuccess) {
-        this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Successfully changed employee\'s role'});
+        this.toastService.showSuccess(`Successfully changed employee's role`);
       }
 
       this.loading = false;
@@ -109,7 +108,7 @@ export class ChangeRoleDialogComponent implements OnInit {
     this.loading = true;
     this.apiService.removeRoleFromEmployee(removeRole).subscribe((result) => {
       if (result.isSuccess) {
-        this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: `Removed ${roleName} role from employee`});
+        this.toastService.showSuccess(`Removed ${roleName} role from the employee`);
       }
 
       this.loading = false;

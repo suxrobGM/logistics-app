@@ -2,7 +2,7 @@ import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
-import {ConfirmationService, MessageService} from 'primeng/api';
+import {ConfirmationService} from 'primeng/api';
 import {CardModule} from 'primeng/card';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
@@ -12,7 +12,7 @@ import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {AppConfig} from '@configs';
 import {UpdateLoad, EnumType, LoadStatus, LoadStatuses, Truck} from '@core/models';
-import {ApiService} from '@core/services';
+import {ApiService, ToastService} from '@core/services';
 import {DistanceConverter} from '@shared/utils';
 import {
   AddressAutocompleteComponent,
@@ -64,7 +64,7 @@ export class EditLoadComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService,
+    private toastService: ToastService,
     private route: ActivatedRoute,
     private router: Router)
   {
@@ -96,7 +96,7 @@ export class EditLoadComponent implements OnInit {
     });
 
     if (!this.id) {
-      this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Missing the reqiured id parameter'});
+      this.toastService.showError('Missing the reqiured id parameter');
       return;
     }
 
@@ -111,7 +111,7 @@ export class EditLoadComponent implements OnInit {
     const assignedTruck = this.form.value.assignedTruck;
 
     if (!assignedTruck) {
-      this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Select a truck'});
+      this.toastService.showError('Select a truck');
       return;
     }
 
@@ -165,7 +165,7 @@ export class EditLoadComponent implements OnInit {
     this.apiService.updateLoad(command)
         .subscribe((result) => {
           if (result.isSuccess) {
-            this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Load has been updated successfully'});
+            this.toastService.showSuccess('Load has been updated successfully');
           }
 
           this.isBusy = false;
@@ -176,7 +176,7 @@ export class EditLoadComponent implements OnInit {
     this.isBusy = true;
     this.apiService.deleteLoad(this.id).subscribe((result) => {
       if (result.isSuccess) {
-        this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A load has been deleted successfully'});
+        this.toastService.showSuccess('A load has been deleted successfully');
         this.router.navigateByUrl('/load/list');
       }
 
@@ -186,8 +186,7 @@ export class EditLoadComponent implements OnInit {
 
   private fetchLoad() {
     this.apiService.getLoad(this.id).subscribe((result) => {
-      if (!result.isSuccess) {
-        this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: result.error});
+      if (result.isError) {
         return;
       }
 

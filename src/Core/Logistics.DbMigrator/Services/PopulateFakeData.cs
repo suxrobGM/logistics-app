@@ -196,7 +196,7 @@ internal class PopulateFakeData
 
             var truck = PickRandom(trucks);
             var dispatcher = PickRandom(employees.Dispatchers);
-            var pickupDate = RandomDate(DateTime.Today.AddMonths(-3), DateTime.Today.AddDays(-1));
+            var dispatchedDate = RandomDate(DateTime.Today.AddMonths(-3), DateTime.Today.AddDays(-3));
             const string originAddress = "40 Crescent Ave, Boston, United States";
             const double originLat = 42.319090;
             const double originLng = -71.054680;
@@ -215,12 +215,11 @@ internal class PopulateFakeData
                 truck, 
                 dispatcher);
             load.Name = $"Test cargo {i}";
-            load.PickUpDate = pickupDate;
-            load.DispatchedDate = pickupDate;
-            load.DeliveryDate = pickupDate.AddDays(1);
+            load.DispatchedDate = dispatchedDate;
+            load.PickUpDate = dispatchedDate.AddDays(1);
+            load.DeliveryDate = dispatchedDate.AddDays(2);
             load.Distance = _random.Next(16093, 321869);
             load.DeliveryCost = _random.Next(1000, 3000);
-            load.SetStatus(LoadStatus.Delivered);
 
             await tenantRepository.AddAsync(load);
             _logger.LogInformation("Added a load {Name}", load.Name);

@@ -6,13 +6,12 @@ import {MessageService} from 'primeng/api';
 import {ButtonModule} from 'primeng/button';
 import {DropdownModule} from 'primeng/dropdown';
 import {AutoCompleteModule} from 'primeng/autocomplete';
-import {MessagesModule} from 'primeng/messages';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {CardModule} from 'primeng/card';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
 import {CreateEmployee, Role, User} from '@core/models';
-import {ApiService} from '@core/services';
+import {ApiService, ToastService} from '@core/services';
 import {UserService} from '../services';
 
 
@@ -28,7 +27,6 @@ import {UserService} from '../services';
     CardModule,
     NgIf,
     ProgressSpinnerModule,
-    MessagesModule,
     FormsModule,
     ReactiveFormsModule,
     AutoCompleteModule,
@@ -48,7 +46,7 @@ export class AddEmployeeComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private messageService: MessageService,
+    private toastService: ToastService,
     private userService: UserService)
   {
     this.suggestedUsers = [];
@@ -83,7 +81,7 @@ export class AddEmployeeComponent implements OnInit {
     const user = this.form.value.user as User;
 
     if (!user) {
-      this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Select user'});
+      this.toastService.showError('Select user');
       return;
     }
 
@@ -95,7 +93,7 @@ export class AddEmployeeComponent implements OnInit {
     this.isBusy = true;
     this.apiService.createEmployee(newEmployee).subscribe((result) => {
       if (result.isSuccess) {
-        this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'New employee has been added successfully'});
+        this.toastService.showSuccess('New employee has been added successfully');
         this.form.reset();
       }
 

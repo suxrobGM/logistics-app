@@ -3,7 +3,6 @@ import {NgIf} from '@angular/common';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import {ConfirmationService} from 'primeng/api';
 import {ButtonModule} from 'primeng/button';
-import {MessagesModule} from 'primeng/messages';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {CardModule} from 'primeng/card';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
@@ -27,7 +26,6 @@ import {ChangeRoleDialogComponent} from '../components';
     CardModule,
     NgIf,
     ProgressSpinnerModule,
-    MessagesModule,
     ButtonModule,
     RouterLink,
   ],

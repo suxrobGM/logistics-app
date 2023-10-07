@@ -2,7 +2,7 @@ import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ActivatedRoute, RouterLink} from '@angular/router';
-import {ConfirmationService, MessageService} from 'primeng/api';
+import {ConfirmationService} from 'primeng/api';
 import {ButtonModule} from 'primeng/button';
 import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
@@ -10,7 +10,7 @@ import {CardModule} from 'primeng/card';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
 import {CreateTruck, Employee, UpdateTruck} from '@core/models';
-import {ApiService} from '@core/services';
+import {ApiService, ToastService} from '@core/services';
 import {NumberUtils} from '@shared/utils';
 
 
@@ -47,7 +47,7 @@ export class EditTruckComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService,
+    private toastService: ToastService,
     private route: ActivatedRoute)
   {
     this.id = null;
@@ -88,7 +88,7 @@ export class EditTruckComponent implements OnInit {
     const drivers = this.form.value.drivers as Employee[];
 
     if (drivers.length === 0) {
-      this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: 'Select a driver'});
+      this.toastService.showError('Select a driver');
       return;
     }
 
@@ -132,7 +132,7 @@ export class EditTruckComponent implements OnInit {
 
     this.apiService.createTruck(command).subscribe((result) => {
       if (result.isSuccess) {
-        this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A new truck has been created successfully'});
+        this.toastService.showSuccess('A new truck has been created successfully');
         this.resetForm();
       }
 
@@ -153,7 +153,7 @@ export class EditTruckComponent implements OnInit {
 
     this.apiService.updateTruck(updateTruckCommand).subscribe((result) => {
       if (result.isSuccess) {
-        this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'Truck has been updated successfully'});
+        this.toastService.showSuccess('Truck has been updated successfully');
       }
 
       this.isBusy = false;
@@ -168,7 +168,7 @@ export class EditTruckComponent implements OnInit {
     this.isBusy = true;
     this.apiService.deleteTruck(this.id).subscribe((result) => {
       if (result.isSuccess) {
-        this.messageService.add({key: 'notification', severity: 'success', summary: 'Notification', detail: 'A truck has been deleted successfully'});
+        this.toastService.showSuccess('A truck has been deleted successfully');
         this.resetForm();
       }
 
