@@ -3,7 +3,7 @@ export interface TruckGeolocation {
   tenantId?: string;
   latitude: number;
   longitude: number;
-  currentLocation?: string;
+  currentAddress?: string;
   truckNumber?: string;
   driversName?: string;
 }

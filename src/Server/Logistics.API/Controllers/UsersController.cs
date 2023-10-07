@@ -16,7 +16,7 @@ public class UsersController : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(ResponseResult<UserDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.User.View)]
+    [Authorize(Policy = Permissions.Users.View)]
     public async Task<IActionResult> GetById(string id)
     {
         var result = await _mediator.Send(new GetUserByIdQuery {UserId = id});
@@ -30,7 +30,7 @@ public class UsersController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(PagedResponseResult<UserDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.User.View)]
+    [Authorize(Policy = Permissions.Users.View)]
     public async Task<IActionResult> GetList([FromQuery] GetUsersQuery query)
     {
         var result = await _mediator.Send(query);
@@ -44,7 +44,7 @@ public class UsersController : ControllerBase
     [HttpGet("{id}/organizations")]
     [ProducesResponseType(typeof(ResponseResult<OrganizationDto[]>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.User.View)]
+    [Authorize(Policy = Permissions.Users.View)]
     public async Task<IActionResult> GetUserJoinedOrganizations(string id)
     {
         var result = await _mediator.Send(new GetUserJoinedOrganizationsQuery() { UserId = id });
@@ -58,7 +58,7 @@ public class UsersController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.User.View)]
+    [Authorize(Policy = Permissions.Users.View)]
     public async Task<IActionResult> Update(string id, [FromBody] UpdateUserCommand request)
     {
         request.Id = id;
@@ -73,7 +73,7 @@ public class UsersController : ControllerBase
     [HttpPost("{id}/remove-role")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.User.Edit)]
+    [Authorize(Policy = Permissions.Users.Edit)]
     public async Task<IActionResult> RemoveRole(string id, [FromBody] RemoveRoleFromUserCommand request)
     {
         request.UserId = id;

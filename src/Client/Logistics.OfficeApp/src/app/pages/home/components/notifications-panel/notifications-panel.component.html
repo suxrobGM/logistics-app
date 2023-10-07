@@ -32,8 +32,9 @@
       <p *ngIf="!notifications.length" class="p-3 text-muted">No notifications.</p>
     </ng-template>
   </div>
+</p-card>
 
-  <p-dialog [(visible)]="displayDialog" 
+<p-dialog [(visible)]="displayDialog" 
     [modal]="true" 
     [style]="{width: '50vw'}" 
     [closable]="false" 
@@ -49,4 +50,3 @@
       <button pButton type="button" label="Close" icon="pi pi-check" (click)="closeDialog()"></button>
     </p-footer>
   </p-dialog>
-</p-card>

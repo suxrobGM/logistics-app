@@ -16,7 +16,7 @@ public class DriversController : ControllerBase
     [HttpGet("{userId}")]
     [ProducesResponseType(typeof(ResponseResult<EmployeeDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Employee.View)]
+    [Authorize(Policy = Permissions.Drivers.View)]
     public async Task<IActionResult> GetById(string userId)
     {
         var result = await _mediator.Send(new GetEmployeeByIdQuery {UserId = userId});
@@ -30,7 +30,7 @@ public class DriversController : ControllerBase
     [HttpPost("{userId}/device-token")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Employee.View)]
+    [Authorize(Policy = Permissions.Drivers.Edit)]
     public async Task<IActionResult> SetDeviceToken(string userId, [FromBody] SetDriverDeviceTokenCommand request)
     {
         request.UserId = userId;
@@ -45,7 +45,7 @@ public class DriversController : ControllerBase
     [HttpPost("confirm-load-status")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Employee.View)]
+    [Authorize(Policy = Permissions.Drivers.Edit)]
     public async Task<IActionResult> ConfirmLoadStatus([FromBody] ConfirmLoadStatusCommand request)
     {
         var result = await _mediator.Send(request);
@@ -59,7 +59,7 @@ public class DriversController : ControllerBase
     [HttpPost("update-load-proximity")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Employee.View)]
+    [Authorize(Policy = Permissions.Drivers.Edit)]
     public async Task<IActionResult> UpdateLoadProximity([FromBody] UpdateLoadProximityCommand request)
     {
         var result = await _mediator.Send(request);

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Logistics.AdminApp.Pages.Tenant;
 
-[Authorize(Policy = Permissions.Tenant.Edit)]
+[Authorize(Policy = Permissions.Tenants.Edit)]
 public partial class EditTenant : PageBase
 {
     #region Parameters

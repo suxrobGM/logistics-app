@@ -18,7 +18,7 @@ export const LOAD_ROUTES: Routes = [
     canActivate: [AuthGuard],
     data: {
       breadcrumb: 'List',
-      permission: Permissions.Load.View,
+      permission: Permissions.Loads.View,
     },
   },
   {
@@ -27,7 +27,7 @@ export const LOAD_ROUTES: Routes = [
     canActivate: [AuthGuard],
     data: {
       breadcrumb: 'Add',
-      permission: Permissions.Load.Create,
+      permission: Permissions.Loads.Create,
     },
   },
   {
@@ -36,7 +36,7 @@ export const LOAD_ROUTES: Routes = [
     canActivate: [AuthGuard],
     data: {
       breadcrumb: 'Edit',
-      permission: Permissions.Load.Edit,
+      permission: Permissions.Loads.Edit,
     },
   },
 ];

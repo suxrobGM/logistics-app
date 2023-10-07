@@ -18,7 +18,7 @@ export const TRUCK_ROUTES: Routes = [
     canActivate: [AuthGuard],
     data: {
       breadcrumb: 'List',
-      permission: Permissions.Truck.View,
+      permission: Permissions.Trucks.View,
     },
   },
   {
@@ -27,7 +27,7 @@ export const TRUCK_ROUTES: Routes = [
     canActivate: [AuthGuard],
     data: {
       breadcrumb: 'Add',
-      permission: Permissions.Truck.Create,
+      permission: Permissions.Trucks.Create,
     },
   },
   {
@@ -36,7 +36,7 @@ export const TRUCK_ROUTES: Routes = [
     canActivate: [AuthGuard],
     data: {
       breadcrumb: 'Edit',
-      permission: Permissions.Truck.Edit,
+      permission: Permissions.Trucks.Edit,
     },
   },
   {
@@ -45,7 +45,7 @@ export const TRUCK_ROUTES: Routes = [
     canActivate: [AuthGuard],
     data: {
       breadcrumb: 'Details',
-      permission: Permissions.Truck.View,
+      permission: Permissions.Trucks.View,
     },
   },
 ];

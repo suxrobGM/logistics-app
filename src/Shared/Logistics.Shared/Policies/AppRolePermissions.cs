@@ -10,15 +10,16 @@ public static class AppRolePermissions
         {
             var list = new List<string>();
             list.AddRange(GetBasicPermissions());
-            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.AppRole)));
-            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Employee)));
-            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Load)));
-            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Truck)));
-            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.TenantRole)));
-            list.Add(Permissions.Stats.View);
-            list.Add(Permissions.Tenant.Create);
-            list.Add(Permissions.Tenant.Edit);
-            list.Add(Permissions.Tenant.View);
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.AppRoles)));
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Employees)));
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Loads)));
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Trucks)));
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.TenantRoles)));
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Notifications)));
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Stats)));
+            list.Add(Permissions.Tenants.Create);
+            list.Add(Permissions.Tenants.Edit);
+            list.Add(Permissions.Tenants.View);
             return list;
         }
     }
@@ -30,16 +31,16 @@ public static class AppRolePermissions
             var list = new List<string>();
             list.AddRange(GetBasicPermissions());
             list.Add(Permissions.Stats.View);
-            list.Add(Permissions.Tenant.View);
+            list.Add(Permissions.Tenants.View);
             return list;
         }
     }
 
     public static IEnumerable<string> GetBasicPermissions()
     {
-        yield return Permissions.AppRole.View;
-        yield return Permissions.TenantRole.View;
-        yield return Permissions.User.View;
-        yield return Permissions.Employee.View;
+        yield return Permissions.AppRoles.View;
+        yield return Permissions.TenantRoles.View;
+        yield return Permissions.Users.View;
+        yield return Permissions.Employees.View;
     }
 }

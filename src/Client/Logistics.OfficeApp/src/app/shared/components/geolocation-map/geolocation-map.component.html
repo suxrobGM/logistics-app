@@ -19,7 +19,15 @@
   </ng-container>
 
   <mgl-popup *ngIf="selectedMarker" [marker]="selectedMarker.component">
-    <span>Truck: {{selectedMarker.data.truckNumber}}</span><br/>
-    <span>Drivers: {{selectedMarker.data.driversName}}</span>
+    <span>
+      <strong>Truck:</strong> {{selectedMarker.data.truckNumber}}
+    </span><br/>
+    <span>
+      <strong>Drivers:</strong> {{selectedMarker.data.driversName}}
+    </span><br/>
+    <span *ngIf="selectedMarker.data.currentAddress">
+      <strong>Address:</strong>
+      {{formatAddress(selectedMarker.data.currentAddress)}}
+    </span>
   </mgl-popup>
 </mgl-map>

@@ -1,10 +1,7 @@
 import {
   Component,
-  ElementRef,
   Input,
   OnChanges,
-  OnInit,
-  Renderer2,
   SimpleChanges,
 } from '@angular/core';
 import {NgFor, NgIf} from '@angular/common';
@@ -15,7 +12,7 @@ import {TruckGeolocation} from '@core/models';
 @Component({
   selector: 'app-geolocation-map',
   templateUrl: './geolocation-map.component.html',
-  styleUrls: ['./geolocation-map.component.scss'],
+  styleUrls: [],
   standalone: true,
   imports: [
     NgxMapboxGLModule,
@@ -52,6 +49,10 @@ export class GeolocationMapComponent implements OnChanges {
       component: markerComponent,
       data: geoData,
     };
+  }
+
+  formatAddress(address: string): string {
+    return address.substring(0, address.lastIndexOf(','));
   }
 }
 

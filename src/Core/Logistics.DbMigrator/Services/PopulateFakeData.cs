@@ -1,16 +1,17 @@
-﻿using Logistics.Domain.Enums;
+﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using Logistics.Domain.Persistence;
 
 namespace Logistics.DbMigrator.Services;
 
-internal class FakeDataService
+internal class PopulateFakeData
 {
     private readonly ILogger _logger;
     private readonly IServiceProvider _serviceProvider;
     private readonly Random _random;
     
-    public FakeDataService(
+    public PopulateFakeData(
         ILogger logger,
         IServiceProvider serviceProvider)
     {
@@ -195,7 +196,7 @@ internal class FakeDataService
 
             var truck = PickRandom(trucks);
             var dispatcher = PickRandom(employees.Dispatchers);
-            var pickupDate = RandomDate(DateTime.Today.AddMonths(-6), DateTime.Today.AddDays(-1));
+            var pickupDate = RandomDate(DateTime.Today.AddMonths(-3), DateTime.Today.AddDays(-1));
             const string originAddress = "40 Crescent Ave, Boston, United States";
             const double originLat = 42.319090;
             const double originLng = -71.054680;

@@ -18,7 +18,7 @@ export const EMPLOYEE_ROUTES: Routes = [
     canActivate: [AuthGuard],
     data: {
       breadcrumb: 'List',
-      permission: Permissions.Employee.View,
+      permission: Permissions.Employees.View,
     },
   },
   {
@@ -27,7 +27,7 @@ export const EMPLOYEE_ROUTES: Routes = [
     canActivate: [AuthGuard],
     data: {
       breadcrumb: 'Add',
-      permission: Permissions.Employee.Create,
+      permission: Permissions.Employees.Create,
     },
   },
   {
@@ -36,7 +36,7 @@ export const EMPLOYEE_ROUTES: Routes = [
     canActivate: [AuthGuard],
     data: {
       breadcrumb: 'Edit',
-      permission: Permissions.Employee.Edit,
+      permission: Permissions.Employees.Edit,
     },
   },
 ];

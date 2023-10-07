@@ -16,7 +16,7 @@ public class LoadsController : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(ResponseResult<LoadDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Load.View)]
+    [Authorize(Policy = Permissions.Loads.View)]
     public async Task<IActionResult> GetById(string id)
     {
         var result = await _mediator.Send(new GetLoadByIdQuery
@@ -35,7 +35,7 @@ public class LoadsController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(PagedResponseResult<LoadDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Load.View)]
+    [Authorize(Policy = Permissions.Loads.View)]
     public async Task<IActionResult> GetList([FromQuery] GetLoadsQuery query)
     {
         var result = await _mediator.Send(query);
@@ -49,7 +49,7 @@ public class LoadsController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Load.Create)]
+    [Authorize(Policy = Permissions.Loads.Create)]
     public async Task<IActionResult> Create([FromBody] CreateLoadCommand request)
     {
         var result = await _mediator.Send(request);
@@ -63,7 +63,7 @@ public class LoadsController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Load.Edit)]
+    [Authorize(Policy = Permissions.Loads.Edit)]
     public async Task<IActionResult> Update(string id, [FromBody] UpdateLoadCommand request)
     {
         request.Id = id;
@@ -78,7 +78,7 @@ public class LoadsController : ControllerBase
     [HttpDelete("{id}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Load.Delete)]
+    [Authorize(Policy = Permissions.Loads.Delete)]
     public async Task<IActionResult> Delete(string id)
     {
         var result = await _mediator.Send(new DeleteLoadCommand

@@ -37,7 +37,7 @@ public class TenantsController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(PagedResponseResult<LoadDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Tenant.View)]
+    [Authorize(Policy = Permissions.Tenants.View)]
     public async Task<IActionResult> GetList([FromQuery] GetTenantsQuery query)
     {
         if (User.HasOneTheseRoles(AppRoles.SuperAdmin, AppRoles.Admin))
@@ -56,7 +56,7 @@ public class TenantsController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Tenant.Create)]
+    [Authorize(Policy = Permissions.Tenants.Create)]
     public async Task<IActionResult> Create([FromBody] CreateTenantCommand request)
     {
         var result = await _mediator.Send(request);
@@ -70,7 +70,7 @@ public class TenantsController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Tenant.Edit)]
+    [Authorize(Policy = Permissions.Tenants.Edit)]
     public async Task<IActionResult> Update(string id, [FromBody] UpdateTenantCommand request)
     {
         request.Id = id;
@@ -85,7 +85,7 @@ public class TenantsController : ControllerBase
     [HttpDelete("{id}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Tenant.Delete)]
+    [Authorize(Policy = Permissions.Tenants.Delete)]
     public async Task<IActionResult> Delete(string id)
     {
         var result = await _mediator.Send(new DeleteTenantCommand

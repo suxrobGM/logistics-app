@@ -51,8 +51,7 @@ export class HomeComponent implements OnInit {
   public chartData: any;
   public chartOptions: any;
 
-  constructor(private apiService: ApiService)
-  {
+  constructor(private apiService: ApiService) {
     this.accessToken = AppConfig.mapboxToken;
     this.loads = [];
     this.isLoadingLoadsData = false;

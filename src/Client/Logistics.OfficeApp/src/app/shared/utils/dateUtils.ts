@@ -1,7 +1,7 @@
 /**
  * Date helper methods
  */
-export class DateUtils {
+export abstract class DateUtils {
   /**
    * Gets a today's date value.
    */

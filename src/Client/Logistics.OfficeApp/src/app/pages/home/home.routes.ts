@@ -11,7 +11,7 @@ export const HOME_ROUTES: Routes = [
     canActivate: [AuthGuard],
     data: {
       breadcrumb: 'Home',
-      permission: Permissions.Load.View,
+      permission: Permissions.Loads.View,
     },
   },
 ];

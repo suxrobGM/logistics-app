@@ -1,36 +1,38 @@
 export namespace Permissions {
-  export enum Employee {
-    Create = 'Permissions.Employee.Create',
-    View = 'Permissions.Employee.View',
-    Edit = 'Permissions.Employee.Edit',
-    Delete = 'Permissions.Employee.Delete'
+  export enum Employees {
+    Create = 'Permissions.Employees.Create',
+    View = 'Permissions.Employees.View',
+    Edit = 'Permissions.Employees.Edit',
+    Delete = 'Permissions.Employees.Delete'
   }
 
-  export enum Load {
-    Create = 'Permissions.Load.Create',
-    View = 'Permissions.Load.View',
-    Edit = 'Permissions.Load.Edit',
-    Delete = 'Permissions.Load.Delete'
+  export enum Loads {
+    Create = 'Permissions.Loads.Create',
+    View = 'Permissions.Loads.View',
+    Edit = 'Permissions.Loads.Edit',
+    Delete = 'Permissions.Loads.Delete'
+  }
+
+  export enum Notifications {
+    View = 'Permissions.Notifications.View',
+    Edit = 'Permissions.Notifications.Edit',
   }
 
   export enum Stats {
-    Create = `Permissions.Stats.Create`,
     View = 'Permissions.Stats.View',
-    Edit = 'Permissions.Stats.Edit',
-    Delete = 'Permissions.Stats.Delete'
   }
 
-  export enum TenantRole {
-    Create = 'Permissions.TenantRole.Create',
-    View = 'Permissions.TenantRole.View',
-    Edit = 'Permissions.TenantRole.Edit',
-    Delete = 'Permissions.TenantRole.Delete'
+  export enum TenantRoles {
+    Create = 'Permissions.TenantRoles.Create',
+    View = 'Permissions.TenantRoles.View',
+    Edit = 'Permissions.TenantRoles.Edit',
+    Delete = 'Permissions.TenantRoles.Delete'
   }
 
-  export enum Truck {
-    Create = 'Permissions.Truck.Create',
-    View = 'Permissions.Truck.View',
-    Edit = 'Permissions.Truck.Edit',
-    Delete = 'Permissions.Truck.Delete'
+  export enum Trucks {
+    Create = 'Permissions.Trucks.Create',
+    View = 'Permissions.Trucks.View',
+    Edit = 'Permissions.Trucks.Edit',
+    Delete = 'Permissions.Trucks.Delete'
   }
 }

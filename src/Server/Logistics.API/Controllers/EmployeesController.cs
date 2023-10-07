@@ -16,7 +16,7 @@ public class EmployeesController : ControllerBase
     [HttpGet("{userId}")]
     [ProducesResponseType(typeof(ResponseResult<EmployeeDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Employee.View)]
+    [Authorize(Policy = Permissions.Employees.View)]
     public async Task<IActionResult> GetById(string userId)
     {
         var result = await _mediator.Send(new GetEmployeeByIdQuery {UserId = userId});
@@ -30,7 +30,7 @@ public class EmployeesController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(PagedResponseResult<EmployeeDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Employee.View)]
+    [Authorize(Policy = Permissions.Employees.View)]
     public async Task<IActionResult> GetList([FromQuery] GetEmployeesQuery query)
     {
         var result = await _mediator.Send(query);
@@ -44,7 +44,7 @@ public class EmployeesController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Employee.Create)]
+    [Authorize(Policy = Permissions.Employees.Create)]
     public async Task<IActionResult> Create([FromBody] CreateEmployeeCommand request)
     {
         var result = await _mediator.Send(request);
@@ -58,7 +58,7 @@ public class EmployeesController : ControllerBase
     [HttpPost("{userId}/remove-role")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Employee.Edit)]
+    [Authorize(Policy = Permissions.Employees.Edit)]
     public async Task<IActionResult> RemoveRole(string userId, [FromBody] RemoveRoleFromEmployeeCommand request)
     {
         request.UserId = userId;
@@ -73,7 +73,7 @@ public class EmployeesController : ControllerBase
     [HttpPut("{userId}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Employee.Edit)]
+    [Authorize(Policy = Permissions.Employees.Edit)]
     public async Task<IActionResult> Update(string userId, [FromBody] UpdateEmployeeCommand request)
     {
         request.UserId = userId;
@@ -88,7 +88,7 @@ public class EmployeesController : ControllerBase
     [HttpDelete("{userId}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Employee.Delete)]
+    [Authorize(Policy = Permissions.Employees.Delete)]
     public async Task<IActionResult> Delete(string userId)
     {
         var result = await _mediator.Send(new DeleteEmployeeCommand {UserId = userId});

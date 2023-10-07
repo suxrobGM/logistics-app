@@ -1,18 +1,22 @@
 using System.Security.Claims;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Enums;
-using Microsoft.AspNetCore.Identity;
+using Logistics.Domain.Services;
+using Logistics.Infrastructure.EF.Data;
 using Logistics.Shared.Policies;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using CustomClaimTypes = Logistics.Shared.Claims.CustomClaimTypes;
 
 namespace Logistics.DbMigrator.Services;
 
-internal class SeedDataService : BackgroundService
+internal class SeedData : BackgroundService
 {
-    private readonly ILogger<SeedDataService> _logger;
+    private readonly ILogger<SeedData> _logger;
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public SeedDataService(
-        ILogger<SeedDataService> logger,
+    public SeedData(
+        ILogger<SeedData> logger,
         IServiceScopeFactory serviceScopeFactory)
     {
         _logger = logger;
@@ -41,7 +45,7 @@ internal class SeedDataService : BackgroundService
             await AddDefaultTenantAsync(scope.ServiceProvider);
             _logger.LogInformation("Successfully seeded databases");
 
-            var populateTestData = new FakeDataService(_logger, scope.ServiceProvider);
+            var populateTestData = new PopulateFakeData(_logger, scope.ServiceProvider);
             await populateTestData.ExecuteAsync();
             _logger.LogInformation("Finished all operations!");
         }

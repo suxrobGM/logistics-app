@@ -16,7 +16,7 @@ public class TrucksController : ControllerBase
     [HttpGet("{truckOrDriverId}")]
     [ProducesResponseType(typeof(ResponseResult<TruckDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Truck.View)]
+    [Authorize(Policy = Permissions.Trucks.View)]
     public async Task<IActionResult> GetById(string truckOrDriverId, [FromQuery] GetTruckQuery request)
     {
         request.TruckOrDriverId = truckOrDriverId;
@@ -31,7 +31,7 @@ public class TrucksController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(PagedResponseResult<TruckDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Truck.View)]
+    [Authorize(Policy = Permissions.Trucks.View)]
     public async Task<IActionResult> GetList([FromQuery] GetTrucksQuery query)
     {
         var result = await _mediator.Send(query);
@@ -45,7 +45,7 @@ public class TrucksController : ControllerBase
     [HttpGet("drivers")]
     [ProducesResponseType(typeof(PagedResponseResult<TruckDriversDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Truck.View)]
+    [Authorize(Policy = Permissions.Trucks.View)]
     public async Task<IActionResult> GetTruckDrivers([FromQuery] GetTruckDriversQuery query)
     {
         var result = await _mediator.Send(query);
@@ -59,7 +59,7 @@ public class TrucksController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Truck.Create)]
+    [Authorize(Policy = Permissions.Trucks.Create)]
     public async Task<IActionResult> Create([FromBody] CreateTruckCommand request)
     {
         var result = await _mediator.Send(request);
@@ -73,7 +73,7 @@ public class TrucksController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Truck.Edit)]
+    [Authorize(Policy = Permissions.Trucks.Edit)]
     public async Task<IActionResult> Update(string id, [FromBody] UpdateTruckCommand request)
     {
         request.Id = id;
@@ -88,7 +88,7 @@ public class TrucksController : ControllerBase
     [HttpDelete("{id}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Truck.Delete)]
+    [Authorize(Policy = Permissions.Trucks.Delete)]
     public async Task<IActionResult> Delete(string id)
     {
         var result = await _mediator.Send(new DeleteTruckCommand

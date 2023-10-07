@@ -1,4 +1,5 @@
 using Logistics.DbMigrator.Services;
+using Logistics.Infrastructure.EF;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -21,7 +22,7 @@ var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((ctx, services) =>
     {
         services.AddInfrastructureLayer(ctx.Configuration);
-        services.AddHostedService<SeedDataService>();
+        services.AddHostedService<SeedData>();
     })
     .UseSerilog()
     .Build();

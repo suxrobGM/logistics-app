@@ -1,4 +1,4 @@
-export class NumberUtils {
+export abstract class NumberUtils {
   static toPercentage(value: number): number {
     return value * 100.0;
   }

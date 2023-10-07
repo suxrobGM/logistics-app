@@ -16,7 +16,7 @@ public class TenantRolesController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(PagedResponseResult<TenantRoleDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.TenantRole.View)]
+    [Authorize(Policy = Permissions.TenantRoles.View)]
     public async Task<IActionResult> GetList([FromQuery] GetTenantRolesQuery query)
     {
         var result = await _mediator.Send(query);
