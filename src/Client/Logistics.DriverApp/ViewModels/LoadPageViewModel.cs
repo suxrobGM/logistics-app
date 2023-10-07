@@ -1,4 +1,5 @@
-﻿using Logistics.DriverApp.Models;
+﻿using Logistics.Shared.Enums;
+using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services;
 using Logistics.Models;
 
@@ -14,8 +15,8 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
     {
         _apiClient = apiClient;
         _mapsService = mapsService;
-        ConfirmPickUpCommand = new AsyncRelayCommand(() => ConfirmLoadStatusAsync(LoadStatusDto.PickedUp));
-        ConfirmDeliveryCommand = new AsyncRelayCommand(() => ConfirmLoadStatusAsync(LoadStatusDto.Delivered));
+        ConfirmPickUpCommand = new AsyncRelayCommand(() => ConfirmLoadStatusAsync(LoadStatus.PickedUp));
+        ConfirmDeliveryCommand = new AsyncRelayCommand(() => ConfirmLoadStatusAsync(LoadStatus.Delivered));
     }
 
     
@@ -91,7 +92,7 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
         IsLoading = false;
     }
 
-    private async Task ConfirmLoadStatusAsync(LoadStatusDto status)
+    private async Task ConfirmLoadStatusAsync(LoadStatus status)
     {
         if (Load is null)
             return;
@@ -101,22 +102,22 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
 
         switch (status)
         {
-            case LoadStatusDto.PickedUp:
-                Load.Status = LoadStatusDto.PickedUp;
+            case LoadStatus.PickedUp:
+                Load.Status = LoadStatus.PickedUp;
                 Load.CanConfirmPickUp = false;
                 result = await _apiClient.ConfirmLoadStatusAsync(new ConfirmLoadStatus
                 {
                     LoadId = Load.Id,
-                    LoadStatus = LoadStatusDto.PickedUp
+                    LoadStatus = LoadStatus.PickedUp
                 });
                 break;
-            case LoadStatusDto.Delivered:
-                Load.Status = LoadStatusDto.Delivered;
+            case LoadStatus.Delivered:
+                Load.Status = LoadStatus.Delivered;
                 Load.CanConfirmDelivery = false;
                 result = await _apiClient.ConfirmLoadStatusAsync(new ConfirmLoadStatus
                 {
                     LoadId = Load.Id,
-                    LoadStatus = LoadStatusDto.Delivered
+                    LoadStatus = LoadStatus.Delivered
                 });
                 break;
         }

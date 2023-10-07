@@ -1,4 +1,6 @@
-﻿namespace Logistics.Domain.Services;
+﻿using Logistics.Domain.Entities;
+
+namespace Logistics.Domain.Services;
 
 public interface ITenantService
 {

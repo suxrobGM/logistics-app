@@ -1,9 +1,9 @@
-﻿using Logistics.Models;
+﻿using Logistics.Shared.Enums;
 
 namespace Logistics.Client.Models;
 
 public class ConfirmLoadStatus
 {
     public string? LoadId { get; set; }
-    public LoadStatusDto LoadStatus { get; set; }
+    public LoadStatus LoadStatus { get; set; }
 }

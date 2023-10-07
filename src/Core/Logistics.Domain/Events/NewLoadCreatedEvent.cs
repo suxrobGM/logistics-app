@@ -1,4 +1,6 @@
-﻿namespace Logistics.Domain.Events;
+﻿using Logistics.Domain.Abstractions;
+
+namespace Logistics.Domain.Events;
 
 public class NewLoadCreatedEvent : IDomainEvent
 {

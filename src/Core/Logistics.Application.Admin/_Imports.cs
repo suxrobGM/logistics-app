@@ -1,7 +1,4 @@
-﻿global using MediatR;
-global using Logistics.Application.Admin.Commands;
-global using Logistics.Application.Common;
-global using Logistics.Domain.Common;
+﻿global using Logistics.Application.Common;
 global using Logistics.Domain.Entities;
 global using Logistics.Domain.Persistence;
 global using Logistics.Domain.Specifications;

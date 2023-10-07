@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Logistics.Shared.Enums\Logistics.Shared.Enums.csproj" />
+  </ItemGroup>
+
 </Project>

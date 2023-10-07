@@ -1,4 +1,7 @@
-﻿namespace Logistics.Domain.Specifications;
+﻿using System.Linq.Expressions;
+using Logistics.Domain.Entities;
+
+namespace Logistics.Domain.Specifications;
 
 public class SearchUsers : BaseSpecification<User>
 {

@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Enums;
 using Logistics.Domain.Services;
+using Logistics.Domain.ValueObjects;
 using Logistics.Infrastructure.EF.Data;
 using Logistics.Shared.Policies;
 using Microsoft.AspNetCore.Identity;

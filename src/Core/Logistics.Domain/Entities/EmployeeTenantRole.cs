@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Logistics.Domain.Abstractions;
 
 namespace Logistics.Domain.Entities;
 

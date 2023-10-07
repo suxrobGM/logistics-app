@@ -1,9 +1,11 @@
-﻿namespace Logistics.Models;
+﻿using Logistics.Shared.Enums;
+
+namespace Logistics.Models;
 
 public class LoadDto
 {
     public string? Id { get; set; }
-    public ulong RefId { get; set; } = 100_000;
+    public ulong RefId { get; set; }
     public string? Name { get; set; }
     public string? OriginAddress { get; set; }
     public double? OriginAddressLat { get; set; }
@@ -18,7 +20,7 @@ public class LoadDto
     public DateTime? DeliveryDate { get; set; }
     public bool CanConfirmPickUp { get; set; }
     public bool CanConfirmDelivery { get; set; }
-    public LoadStatusDto Status { get; set; }
+    public LoadStatus Status { get; set; }
     public string? AssignedDispatcherId { get; set; }
     public string? AssignedDispatcherName { get; set; }
     public string? AssignedTruckId { get; set; }

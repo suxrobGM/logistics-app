@@ -1,4 +1,4 @@
-﻿using Logistics.Models;
+﻿using Logistics.Shared.Enums;
 
 namespace Logistics.Client.Models;
 
@@ -12,5 +12,5 @@ public record UpdateLoad
     public double? Distance { get; set; }
     public string? AssignedDispatcherId { get; set; }
     public string? AssignedDriverId { get; set; }
-    public LoadStatusDto? Status { get; set; }
+    public LoadStatus? Status { get; set; }
 }

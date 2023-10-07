@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Logistics.Domain.Common;
+namespace Logistics.Domain.Abstractions;
 
 public interface IDomainEvent : INotification
 {

@@ -1,4 +1,8 @@
-﻿namespace Logistics.Domain.Persistence;
+﻿using System.Linq.Expressions;
+using Logistics.Domain.Abstractions;
+using Logistics.Domain.Entities;
+
+namespace Logistics.Domain.Persistence;
 
 /// <summary>
 /// Tenant's repository.

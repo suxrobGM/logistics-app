@@ -1,5 +1,5 @@
 ﻿using Logistics.Application.Tenant.Services;
-using Logistics.Domain.Enums;
+using Logistics.Shared.Enums;
 
 namespace Logistics.Application.Tenant.Extensions;
 

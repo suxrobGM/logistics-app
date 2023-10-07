@@ -1,4 +1,6 @@
-﻿namespace Logistics.Domain.ValueObjects;
+﻿using Logistics.Domain.Abstractions;
+
+namespace Logistics.Domain.ValueObjects;
 
 public class Address : ValueObject
 {
@@ -7,11 +9,11 @@ public class Address : ValueObject
     public string? ZipCode { get; init; }
     public string? Country {get; init; }
     
-    protected override IEnumerable<object> GetEqualityComponents()
+    protected override IEnumerable<object?> GetEqualityComponents()
     {
-        yield return Street!;
-        yield return City!;
-        yield return ZipCode!;
-        yield return Country!;
+        yield return Street;
+        yield return City;
+        yield return ZipCode;
+        yield return Country;
     }
 }

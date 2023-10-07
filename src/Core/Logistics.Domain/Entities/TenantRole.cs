@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Constraints;
+﻿using Logistics.Domain.Abstractions;
 
 namespace Logistics.Domain.Entities;
 

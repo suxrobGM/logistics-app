@@ -1,4 +1,7 @@
-﻿namespace Logistics.Domain.Persistence;
+﻿using System.Linq.Expressions;
+using Logistics.Domain.Abstractions;
+
+namespace Logistics.Domain.Persistence;
 
 /// <summary>
 /// Generic repository.

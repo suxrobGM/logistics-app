@@ -1,4 +1,7 @@
-﻿namespace Logistics.Domain.Specifications;
+﻿using System.Linq.Expressions;
+using Logistics.Domain.Abstractions;
+
+namespace Logistics.Domain.Specifications;
 
 public abstract class BaseSpecification<TEntity> : 
     ISpecification<TEntity> where TEntity : class, IEntity<string>

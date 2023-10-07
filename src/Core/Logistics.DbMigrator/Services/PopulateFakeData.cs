@@ -1,7 +1,7 @@
 ﻿using Logistics.Domain.Entities;
-using Logistics.Domain.Enums;
-using Microsoft.AspNetCore.Identity;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.ValueObjects;
+using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.DbMigrator.Services;
 

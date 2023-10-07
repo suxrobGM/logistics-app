@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Enums;
+﻿using Logistics.Domain.ValueObjects;
 using Logistics.Models;
 
 namespace Logistics.API.Controllers;

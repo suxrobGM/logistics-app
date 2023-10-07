@@ -1,4 +1,6 @@
-﻿namespace Logistics.Domain.Entities;
+﻿using Logistics.Domain.Abstractions;
+
+namespace Logistics.Domain.Entities;
 
 public class Truck : AuditableEntity, ITenantEntity
 {

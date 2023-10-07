@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Enums;
+﻿using Logistics.Shared.Enums;
 
 namespace Logistics.Application.Tenant.Commands;
 

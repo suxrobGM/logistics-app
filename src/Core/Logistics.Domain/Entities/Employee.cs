@@ -1,4 +1,7 @@
-﻿namespace Logistics.Domain.Entities;
+﻿using Logistics.Domain.Abstractions;
+using Logistics.Shared.Enums;
+
+namespace Logistics.Domain.Entities;
 
 public class Employee : AuditableEntity, ITenantEntity
 {
@@ -6,6 +9,9 @@ public class Employee : AuditableEntity, ITenantEntity
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? PhoneNumber { get; set; }
+    
+    public decimal Salary { get; set; }
+    public SalaryType SalaryType { get; set; }
     
     /// <summary>
     /// When employee joined to this tenant
@@ -24,11 +30,8 @@ public class Employee : AuditableEntity, ITenantEntity
     /// Dispatched loads by dispatchers
     /// </summary>
     public virtual List<Load> DispatchedLoads { get; } = new();
-    
-    /// <summary>
-    /// Delivered loads by drivers
-    /// </summary>
-    public virtual List<Load> DeliveredLoads { get; } = new();
+
+    public virtual List<BillingInfo> BillingStatements { get; set; } = new();
 
     /// <summary>
     /// User tenant roles

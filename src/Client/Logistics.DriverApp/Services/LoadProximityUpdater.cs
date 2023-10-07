@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Logistics.Shared.Enums;
 using Logistics.DriverApp.Messages;
 using Logistics.DriverApp.Models;
-using Logistics.Models;
 
 namespace Logistics.DriverApp.Services;
 
@@ -40,7 +40,7 @@ public class LoadProximityUpdater : ILoadProximityUpdater
                 load.DestinationAddressLong!.Value,
                 DistanceUnits.Kilometers);
 
-            if (originDistance < 0.5 && !load.CanConfirmPickUp && load.Status != LoadStatusDto.PickedUp)
+            if (originDistance < 0.5 && !load.CanConfirmPickUp && load.Status != LoadStatus.PickedUp)
             {
                 load.CanConfirmPickUp = true;
                 await _apiClient.UpdateLoadProximity(new UpdateLoadProximity
@@ -50,7 +50,7 @@ public class LoadProximityUpdater : ILoadProximityUpdater
                 });
             }
 
-            if (destDistance < 0.5 && !load.CanConfirmDelivery && load.Status != LoadStatusDto.Delivered)
+            if (destDistance < 0.5 && !load.CanConfirmDelivery && load.Status != LoadStatus.Delivered)
             {
                 load.CanConfirmDelivery = true;
                 await _apiClient.UpdateLoadProximity(new UpdateLoadProximity

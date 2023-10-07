@@ -1,4 +1,4 @@
-﻿namespace Logistics.Domain.Enums;
+﻿namespace Logistics.Domain.ValueObjects;
 
 public static class TenantRoles
 {

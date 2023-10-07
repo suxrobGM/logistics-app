@@ -24,7 +24,7 @@ public static class LoadMapper
             Distance = entity.Distance,
             CanConfirmPickUp = entity.CanConfirmPickUp,
             CanConfirmDelivery = entity.CanConfirmDelivery,
-            Status = (LoadStatusDto)entity.GetStatus(),
+            Status = entity.GetStatus(),
             AssignedDispatcherId = entity.AssignedDispatcherId,
             AssignedDispatcherName = entity.AssignedDispatcher?.GetFullName(),
             AssignedTruckId = entity.AssignedTruckId,

@@ -1,4 +1,5 @@
-﻿using Logistics.Models;
+﻿using Logistics.Shared.Enums;
+using Logistics.Models;
 
 namespace Logistics.DriverApp.Models;
 
@@ -112,8 +113,8 @@ public class ActiveLoad : ObservableRecipient
         set => SetProperty(ref _deliveryDate, value);
     }
 
-    private LoadStatusDto _status;
-    public LoadStatusDto Status 
+    private LoadStatus _status;
+    public LoadStatus Status 
     {
         get => _status;
         set => SetProperty(ref _status, value);

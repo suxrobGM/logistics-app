@@ -1,4 +1,5 @@
-﻿using Logistics.Domain.Specifications;
+﻿using Logistics.Domain.Abstractions;
+using Logistics.Domain.Specifications;
 
 namespace Logistics.Domain.Persistence;
 
