@@ -1,4 +1,9 @@
-﻿namespace Logistics.Application.Admin.Commands;
+﻿using Logistics.Application.Common;
+using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
+using Logistics.Shared;
+
+namespace Logistics.Application.Admin.Commands;
 
 internal sealed class UpdateUserHandler : RequestHandler<UpdateUserCommand, ResponseResult>
 {

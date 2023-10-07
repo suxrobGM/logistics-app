@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Abstractions;
+﻿using Logistics.Domain.Core;
 using Logistics.Domain.Events;
 using Microsoft.Extensions.Logging;
 

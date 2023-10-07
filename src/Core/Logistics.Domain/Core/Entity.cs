@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Logistics.Domain.Abstractions;
+namespace Logistics.Domain.Core;
 
 public abstract class Entity : IEntity<string>
 {

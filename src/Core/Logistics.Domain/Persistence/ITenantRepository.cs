@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using Logistics.Domain.Abstractions;
+using Logistics.Domain.Core;
 using Logistics.Domain.Entities;
 
 namespace Logistics.Domain.Persistence;

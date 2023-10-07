@@ -1,4 +1,8 @@
-﻿using Logistics.Models;
+﻿using Logistics.Application.Common;
+using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
+using Logistics.Models;
+using Logistics.Shared;
 
 namespace Logistics.Application.Admin.Queries;
 

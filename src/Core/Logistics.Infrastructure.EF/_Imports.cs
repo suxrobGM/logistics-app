@@ -1,5 +1,5 @@
 ﻿global using Microsoft.EntityFrameworkCore;
-global using Logistics.Domain.Abstractions;
+global using Logistics.Domain.Core;
 global using Logistics.Domain.Entities;
 global using Logistics.Domain.Options;
 global using Logistics.Domain.Services;

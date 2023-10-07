@@ -1,4 +1,4 @@
-﻿namespace Logistics.Domain.Abstractions;
+﻿namespace Logistics.Domain.Core;
 
 public abstract class AuditableEntity : Entity, IAuditableEntity
 {

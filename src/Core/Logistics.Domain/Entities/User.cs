@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Abstractions;
+﻿using Logistics.Domain.Core;
 using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.Domain.Entities;
