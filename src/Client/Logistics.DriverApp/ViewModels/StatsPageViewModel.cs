@@ -16,7 +16,9 @@ public class StatsPageViewModel : BaseViewModel
 	{
 		_authService = authService;
 		_apiClient = apiClient;
-		RefreshChartCommand = new AsyncRelayCommand(FetchChartDataAsync, () => !IsLoading);
+		_dateFormat = "{0:MMMM yyyy}";
+
+        RefreshChartCommand = new AsyncRelayCommand(FetchChartDataAsync, () => !IsLoading);
 		IsLoadingChanged += (_, _) => RefreshChartCommand.NotifyCanExecuteChanged();
 		
 		ChartData = new ObservableCollection<IGrossChartData>();
@@ -52,6 +54,13 @@ public class StatsPageViewModel : BaseViewModel
 	// public IList<Brush> ChartBrushes { get; }
     public ObservableCollection<IGrossChartData> ChartData { get; }
     public List<DateRange> ChartDateRanges { get; }
+
+	private string _dateFormat;
+	public string DateFormat
+	{
+		get => _dateFormat;
+		set => SetProperty(ref _dateFormat, value);
+	}
     
     private DateRange _chartDateRange;
     public DateRange ChartDateRange
@@ -81,11 +90,13 @@ public class StatsPageViewModel : BaseViewModel
 	    if (ChartDateRange == PredefinedDateRanges.ThisYear || 
 	        ChartDateRange == PredefinedDateRanges.LastYear)
 	    {
-		    await FetchTruckMonthlyGrossesAsync();
+			DateFormat = "{0:MMMM yyyy}";
+            await FetchTruckMonthlyGrossesAsync();
 	    }
 	    else
 	    {
-		    await FetchTruckDailyGrossesAsync();
+			DateFormat = "{0:MM/dd/yyyy}";
+            await FetchTruckDailyGrossesAsync();
 	    }
     }
 

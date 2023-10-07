@@ -13,6 +13,7 @@ namespace Logistics.DriverApp.Platforms.Android.Services;
 [Service]
 public class LocationTrackerBackgroundService : Service, ILocationTrackerBackgroundService
 {
+    private const int TimerSeconds = 30;
     private const int NotificationId = 1000;
     private readonly ILocationTracker _locationTracker = App.Current.GetRequiredService<ILocationTracker>();
     private readonly ILoadProximityUpdater _proximityUpdater = App.Current.GetRequiredService<ILoadProximityUpdater>();
@@ -60,13 +61,14 @@ public class LocationTrackerBackgroundService : Service, ILocationTrackerBackgro
         // Stop the service when the app is removed from the recent apps list
         StopForeground(StopForegroundFlags.Remove);
         StopSelf();
-        OnDestroy();
+        DisposeResources();
         System.Diagnostics.Process.GetCurrentProcess().Kill();
+        base.OnTaskRemoved(rootIntent);
     }
 
     public override void OnDestroy()
     {
-        _timer?.Dispose();
+        DisposeResources();
         base.OnDestroy();
     }
 
@@ -91,6 +93,11 @@ public class LocationTrackerBackgroundService : Service, ILocationTrackerBackgro
             .Build();
         
         StartForeground(NotificationId, notification);
-        _timer = new Timer(SendGeolocationData, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
+        _timer = new Timer(SendGeolocationData, null, TimeSpan.Zero, TimeSpan.FromSeconds(TimerSeconds));
+    }
+
+    private void DisposeResources()
+    {
+        _timer?.Dispose();
     }
 }

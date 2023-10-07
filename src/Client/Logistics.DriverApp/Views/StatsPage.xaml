@@ -8,11 +8,13 @@
                        xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
                        xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
                        xmlns:controls="clr-namespace:Logistics.DriverApp.Controls"
+                       x:Name="statsPage"
                        Title="My Stats">
+    
     <Grid BackgroundColor="#dae5f3">
         <core:SfBusyIndicator ZIndex="2" 
                               IsRunning="{Binding IsLoading}"
-                              IndicatorColor="Pink"
+                              IndicatorColor="Red"
                               OverlayFill="#80000000">
         </core:SfBusyIndicator>
 
@@ -133,8 +135,9 @@
                             <chart:SfCartesianChart.Resources>
                                 <DataTemplate x:Key="ChartTooltipTemplate">
                                     <VerticalStackLayout>
-                                        <Label Text="{Binding Item.Date, StringFormat='{0:MMMM yyyy}'}"
-                                               TextColor="White" HorizontalTextAlignment="Center" />
+                                        <Label Text="{Binding Item.Date, Converter={StaticResource StringFormatConverter}, ConverterParameter={Binding ViewModel.DateFormat, Source={x:Reference statsPage}}}"
+                                               TextColor="White" HorizontalTextAlignment="Center">
+                                        </Label>
                                         <HorizontalStackLayout>
                                             <Label Text="Gross: " TextColor="White" />
                                             <Label Text="{Binding Item.Gross, Converter={StaticResource CurrencyConverter}}"

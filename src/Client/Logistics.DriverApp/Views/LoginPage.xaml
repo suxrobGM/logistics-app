@@ -3,17 +3,21 @@
                        x:Class="Logistics.DriverApp.Views.LoginPage"
                        xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                       xmlns:syncfusion="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
                        xmlns:views="clr-namespace:Logistics.DriverApp.Views"
                        xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels">
-    <StackLayout Spacing="10" Padding="10">
-        <HorizontalStackLayout IsVisible="{Binding IsLoading}">
-            <ActivityIndicator IsRunning="True" VerticalOptions="Start" />
-            <Label Text="Authenticating" VerticalOptions="Center" Margin="10,0" FontSize="Medium" />
-        </HorizontalStackLayout>
-        <StackLayout Spacing="10">
+    <Grid>
+        <syncfusion:SfBusyIndicator ZIndex="2"
+                      IsRunning="{Binding IsLoading}"
+                      IndicatorColor="Red"
+                      Title="Authenticating"
+                      OverlayFill="#80000000">
+        </syncfusion:SfBusyIndicator>
+
+        <StackLayout ZIndex="1" Spacing="10" Padding="10">
             <Label Text="Click the login button to sign in and get access. If you do not have an account then click the create an account button." FontSize="Medium" />
             <Button Text="Login" Command="{Binding SignInCommand}" />
             <Button Text="Create an account" Command="{Binding OpenSignUpCommand}" />
         </StackLayout>
-    </StackLayout>
+    </Grid>
 </views:BaseContentPage>

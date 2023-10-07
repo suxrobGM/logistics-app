@@ -3,18 +3,18 @@
                        x:TypeArguments="viewModels:DashboardPageViewModel"
                        xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-                       xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+                       xmlns:syncfusion="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
                        xmlns:views="clr-namespace:Logistics.DriverApp.Views"
                        xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels"
                        xmlns:controls="clr-namespace:Logistics.DriverApp.Controls"
                        x:Name="dashboardPage"
                        Title="Dashboard">
     <Grid BackgroundColor="#dae5f3">
-        <core:SfBusyIndicator ZIndex="2"
+        <syncfusion:SfBusyIndicator ZIndex="2"
                               IsRunning="{Binding IsLoading}"
-                              IndicatorColor="Pink"
+                              IndicatorColor="Red"
                               OverlayFill="#80000000">
-        </core:SfBusyIndicator>
+        </syncfusion:SfBusyIndicator>
 
         <Grid RowSpacing="10" Padding="0,10,0,10" ZIndex="1">
             <Grid.RowDefinitions>

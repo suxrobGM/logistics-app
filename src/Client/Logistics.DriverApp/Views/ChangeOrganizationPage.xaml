@@ -8,7 +8,7 @@
                        xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels">
     <Grid BackgroundColor="#dae5f3">
         <syncfusion:SfBusyIndicator IsRunning="{Binding IsLoading}"
-                                    IndicatorColor="Pink"
+                                    IndicatorColor="Red"
                                     OverlayFill="#80000000">
         </syncfusion:SfBusyIndicator>
         <VerticalStackLayout Padding="10">

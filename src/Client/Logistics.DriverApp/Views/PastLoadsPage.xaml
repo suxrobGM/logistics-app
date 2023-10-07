@@ -29,7 +29,7 @@
     <Grid>
         <core:SfBusyIndicator ZIndex="2"
                               IsRunning="{Binding IsLoading}"
-                              IndicatorColor="Pink"
+                              IndicatorColor="Red"
                               OverlayFill="#80000000">
         </core:SfBusyIndicator>
         
