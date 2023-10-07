@@ -1,4 +1,6 @@
-﻿using Logistics.Models;
+﻿using Logistics.Client.Models;
+using Logistics.Shared;
+using Logistics.Shared.Models;
 
 namespace Logistics.Client.Abstractions;
 

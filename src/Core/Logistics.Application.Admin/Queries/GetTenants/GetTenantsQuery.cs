@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using Logistics.Application.Common;
-using Logistics.Models;
+using Logistics.Shared.Models;
 
 namespace Logistics.Application.Admin.Queries;
 

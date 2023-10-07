@@ -1,4 +1,5 @@
-﻿using Logistics.Models;
+﻿using Logistics.Shared.Policies;
+using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Logistics.AdminApp.Pages.Tenant;

@@ -1,5 +1,5 @@
-﻿using Logistics.Models;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using Logistics.Shared.Models;
 using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services.Authentication;
 

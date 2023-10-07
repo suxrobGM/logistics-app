@@ -1,6 +1,6 @@
 ﻿using Logistics.Shared.Enums;
 
-namespace Logistics.Models;
+namespace Logistics.Shared.Models;
 
 public class LoadDto
 {

@@ -1,7 +1,7 @@
 ﻿using Logistics.Shared.Enums;
 using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services;
-using Logistics.Models;
+using Logistics.Shared.Models;
 
 namespace Logistics.DriverApp.ViewModels;
 

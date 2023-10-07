@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using Logistics.Shared;
 
 namespace Logistics.Client.Models;
 

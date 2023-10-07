@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Logistics.Shared;
+﻿namespace Logistics.Shared;
 
 public record PagedResponseResult<T> : ResponseResult<IEnumerable<T>>
 {

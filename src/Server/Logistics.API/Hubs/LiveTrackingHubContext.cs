@@ -1,5 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using Logistics.Models;
+using Logistics.Shared.Models;
 
 namespace Logistics.API.Hubs;
 

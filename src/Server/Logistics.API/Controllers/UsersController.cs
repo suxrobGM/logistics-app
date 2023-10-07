@@ -1,4 +1,4 @@
-﻿using Logistics.Models;
+﻿using Logistics.Shared.Models;
 
 namespace Logistics.API.Controllers;
 

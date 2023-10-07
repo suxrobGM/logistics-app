@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using Logistics.Client.Options;
 using Logistics.DriverApp.Services.Authentication;
-using Logistics.Models;
+using Logistics.Shared.Models;
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace Logistics.DriverApp.Services.LocationTracking;

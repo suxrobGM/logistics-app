@@ -1,4 +1,4 @@
-﻿namespace Logistics.Models;
+﻿namespace Logistics.Shared.Models;
 
 public class GrossesDto<T> where T : IGrossChartData
 {

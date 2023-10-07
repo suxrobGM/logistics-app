@@ -1,6 +1,9 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using Logistics.Models;
+using Logistics.Client.Exceptions;
+using Logistics.Client.Models;
+using Logistics.Shared.Models;
 using Logistics.Client.Options;
+using Logistics.Shared;
 
 namespace Logistics.Client.Implementations;
 
@@ -242,11 +245,6 @@ internal class ApiClient : GenericApiClient, IApiClient
 
 
     #region Tenant API
-
-    public Task<ResponseResult<string>> GetTenantDisplayNameAsync(string id)
-    {
-        return MakeGetRequestAsync<ResponseResult<string>>($"tenants/{id}/display-name");
-    }
 
     public Task<ResponseResult<TenantDto>> GetTenantAsync(string identifier)
     {

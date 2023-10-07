@@ -6,7 +6,7 @@ using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.Authentication;
 using Logistics.DriverApp.Services.LocationTracking;
-using Logistics.Models;
+using Logistics.Shared.Models;
 using Plugin.Firebase.CloudMessaging;
 using Plugin.Firebase.CloudMessaging.EventArgs;
 

@@ -2,7 +2,7 @@
 using Logistics.DriverApp.Messages;
 using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.Authentication;
-using Logistics.Models;
+using Logistics.Shared.Models;
 
 namespace Logistics.DriverApp.ViewModels;
 

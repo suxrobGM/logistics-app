@@ -2,7 +2,7 @@
 using Logistics.DriverApp.Consts;
 using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services;
-using Logistics.Models;
+using Logistics.Shared.Models;
 
 namespace Logistics.DriverApp.ViewModels;
 

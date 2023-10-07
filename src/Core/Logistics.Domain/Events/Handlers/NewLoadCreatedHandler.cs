@@ -1,10 +1,9 @@
 ﻿using Logistics.Domain.Core;
-using Logistics.Domain.Events;
 using Microsoft.Extensions.Logging;
 
-namespace Logistics.Domain.EventHandlers;
+namespace Logistics.Domain.Events.Handlers;
 
-public class NewLoadCreatedHandler : IDomainEventHandler<NewLoadCreatedEvent>
+internal sealed class NewLoadCreatedHandler : IDomainEventHandler<NewLoadCreatedEvent>
 {
     private readonly ILogger<NewLoadCreatedHandler> _logger;
 

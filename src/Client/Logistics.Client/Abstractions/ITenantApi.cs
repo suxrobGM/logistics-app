@@ -1,10 +1,11 @@
-﻿using Logistics.Models;
+﻿using Logistics.Client.Models;
+using Logistics.Shared;
+using Logistics.Shared.Models;
 
 namespace Logistics.Client.Abstractions;
 
 public interface ITenantApi
 {
-    Task<ResponseResult<string>> GetTenantDisplayNameAsync(string id);
     Task<ResponseResult<TenantDto>> GetTenantAsync(string identifier);
     Task<PagedResponseResult<TenantDto>> GetTenantsAsync(SearchableRequest request);
     Task<ResponseResult> CreateTenantAsync(CreateTenant tenant);

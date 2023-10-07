@@ -1,4 +1,4 @@
-﻿using Logistics.Models;
+﻿using Logistics.Shared.Models;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Logistics.API.Hubs;

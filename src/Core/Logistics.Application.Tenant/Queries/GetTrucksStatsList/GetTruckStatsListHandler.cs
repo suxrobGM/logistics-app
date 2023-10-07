@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Logistics.Application.Tenant.Mappers;
-using Logistics.Models;
+using Logistics.Shared.Models;
 
 namespace Logistics.Application.Tenant.Queries;
 

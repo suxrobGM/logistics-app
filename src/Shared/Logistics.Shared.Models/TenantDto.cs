@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Logistics.Models;
+namespace Logistics.Shared.Models;
 
 public class TenantDto
 {
