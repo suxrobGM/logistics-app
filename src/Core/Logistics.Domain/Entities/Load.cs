@@ -8,29 +8,34 @@ public class Load : AuditableEntity, ITenantEntity
 {
     public ulong RefId { get; set; } = 1000;
     public string? Name { get; set; }
-    public string? OriginAddress { get; set; }
     
+    public string OriginAddress { get; set; } = default!;
     public double? OriginAddressLat { get; set; }
     public double? OriginAddressLong { get; set; }
-    public string? DestinationAddress { get; set; }
     
+    public string DestinationAddress { get; set; } = default!;
     public double? DestinationAddressLat { get; set; }
     public double? DestinationAddressLong { get; set; }
     
     public decimal DeliveryCost { get; set; }
     public double Distance { get; set; }
-    
     public bool CanConfirmPickUp { get; set; }
     public bool CanConfirmDelivery { get; set; }
     
     public DateTime DispatchedDate { get; set; } = DateTime.UtcNow;
     public DateTime? PickUpDate { get; set; }
     public DateTime? DeliveryDate { get; set; }
+
+    public string CustomerId { get; set; } = default!;
+    public virtual Customer Customer { get; set; } = default!;
+    
+    public string? InvoiceId { get; set; }
+    public virtual Invoice? Invoice { get; set; }
+    
+    public string? AssignedTruckId { get; set; }
+    public virtual Truck? AssignedTruck { get; set; }
     
     public string? AssignedDispatcherId { get; set; }
-    public string? AssignedTruckId { get; set; }
-
-    public virtual Truck? AssignedTruck { get; set; }
     public virtual Employee? AssignedDispatcher { get; set; }
 
     public void SetStatus(LoadStatus status)
@@ -82,6 +87,7 @@ public class Load : AuditableEntity, ITenantEntity
         string destinationAddress,
         double destinationLatitude,
         double destinationLongitude,
+        Customer customer,
         Truck assignedTruck, 
         Employee assignedDispatcher)
     {
@@ -95,7 +101,8 @@ public class Load : AuditableEntity, ITenantEntity
             DestinationAddressLat = destinationLatitude,
             DestinationAddressLong = destinationLongitude,
             AssignedTruck = assignedTruck,
-            AssignedDispatcher = assignedDispatcher
+            AssignedDispatcher = assignedDispatcher,
+            Customer = customer
         };
         
         load.DomainEvents.Add(new NewLoadCreatedEvent(refId));

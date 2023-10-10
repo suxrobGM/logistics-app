@@ -30,8 +30,7 @@ public class Employee : AuditableEntity, ITenantEntity
     /// Dispatched loads by dispatchers
     /// </summary>
     public virtual List<Load> DispatchedLoads { get; } = new();
-
-    public virtual List<BillingInfo> BillingStatements { get; set; } = new();
+    public virtual List<PayrollPayment> PayrollPayments { get; set; } = new();
 
     /// <summary>
     /// User tenant roles

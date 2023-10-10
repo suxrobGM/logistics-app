@@ -29,6 +29,7 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resp
                 var newTruck = await AssignTruckIfUpdated(req, loadEntity);
 
                 await AssignDispatcherIfUpdated(req, loadEntity);
+                await UpdateCustomerIfUpdated(req, loadEntity);
                 var updatedDetails = UpdateLoadDetails(req, loadEntity);
 
                 _tenantRepository.Update(loadEntity);
@@ -44,6 +45,23 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resp
             catch (InvalidOperationException ex)
             {
                 return ResponseResult.CreateError(ex.Message);
+            }
+        }
+    
+        private async Task UpdateCustomerIfUpdated(UpdateLoadCommand req, Load loadEntity)
+        {
+            if (req.CustomerId is null) 
+                return;
+
+            var customer = await _tenantRepository.GetAsync<Customer>(req.CustomerId);
+            if (customer is null)
+            {
+                throw new InvalidOperationException($"Could not find a customer with ID '{req.CustomerId}'");
+            }
+
+            if (loadEntity.CustomerId != customer.Id)
+            {
+                loadEntity.Customer = customer;
             }
         }
 

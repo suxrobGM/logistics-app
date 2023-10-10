@@ -4,7 +4,7 @@ namespace Logistics.Domain.Entities;
 
 public class Truck : AuditableEntity, ITenantEntity
 {
-    public string? TruckNumber { get; set; }
+    public string TruckNumber { get; set; } = default!;
     
     /// <summary>
     /// Truck last known location address

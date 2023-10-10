@@ -1,62 +1,69 @@
 {
+  "Customers": [
+    {
+      "Name": "Crowley Maritime"
+    },
+    {
+      "Name": "General Steamship Company"
+    },
+    {
+      "Name": "American Export-Isbrandtsen Lines"
+    },
+    {
+      "Name": "Matson, Inc."
+    },
+    {
+      "Name": "Norton Lilly International"
+    }
+  ],
   "Users": [
     {
       "Email": "Test1@gmail.com",
-      "Password": "Test12345#",
       "FirstName": "Gloria",
       "LastName": "Kaufman"
     },
     {
       "Email": "Test2@gmail.com",
-      "Password": "Test12345#",
       "FirstName": "Ivory",
       "LastName": "Collins"
     },
     {
       "Email": "Test3@gmail.com",
-      "Password": "Test12345#",
       "FirstName": "Rosalyn",
       "LastName": "Callahan"
     },
     {
       "Email": "Test4@gmail.com",
-      "Password": "Test12345#",
       "FirstName": "Zane",
       "LastName": "Salinas"
     },
     {
       "Email": "Test5@gmail.com",
-      "Password": "Test12345#",
       "FirstName": "Justine",
       "LastName": "Blevins"
     },
     {
       "Email": "Test6@gmail.com",
-      "Password": "Test12345#",
       "FirstName": "John",
       "LastName": "Ortiz"
     },
     {
       "Email": "Test7@gmail.com",
-      "Password": "Test12345#",
       "FirstName": "Anne",
       "LastName": "Shields"
     },
     {
       "Email": "Test8@gmail.com",
-      "Password": "Test12345#",
       "FirstName": "Tate",
       "LastName": "Taylor"
     },
     {
       "Email": "Test9@gmail.com",
-      "Password": "Test12345#",
       "FirstName": "Ronan",
       "LastName": "Hudson"
     },
     {
       "Email": "Test10@gmail.com",
-      "Password": "Test12345#",
       "FirstName": "Clarke",
       "LastName": "Bonner"
     }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.Infrastructure.EF.Migrations.Main
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20231006082441_Version_001")]
-    partial class Version_001
+    [Migration("20231010145123_Version_0001")]
+    partial class Version_0001
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -118,6 +118,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Main
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("JoinedTenantIds")
@@ -131,6 +132,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Main
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")

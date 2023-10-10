@@ -13,8 +13,8 @@ public class TenantRoleClaim : AuditableEntity, ITenantEntity
     public string ClaimType { get; set; }
     public string ClaimValue { get; set; }
 
-    public string? RoleId { get; set; }
-    public virtual TenantRole? Role { get; set; }
+    public string RoleId { get; set; } = default!;
+    public virtual TenantRole Role { get; set; } = default!;
 }
 
 internal class TenantRoleClaimComparer : IEqualityComparer<TenantRoleClaim>

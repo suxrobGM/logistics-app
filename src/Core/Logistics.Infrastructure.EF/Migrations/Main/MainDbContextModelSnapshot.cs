@@ -115,6 +115,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Main
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("JoinedTenantIds")
@@ -128,6 +129,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Main
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")

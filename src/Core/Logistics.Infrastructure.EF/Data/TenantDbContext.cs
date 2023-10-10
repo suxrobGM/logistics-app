@@ -52,19 +52,67 @@ public class TenantDbContext : DbContext
 
         builder.Entity<TenantRoleClaim>().ToTable("RoleClaims");
         builder.Entity<Notification>().ToTable("Notifications");
+        builder.Entity<Customer>().ToTable("Customers");
+        
+        builder.Entity<Payment>(entity =>
+        {
+            entity.ToTable("Payments");
+            entity.Property(i => i.Amount).HasPrecision(19, 4);
+        });
+
+        builder.Entity<Invoice>(entity =>
+        {
+            entity.ToTable("Invoices");
+
+            entity.HasOne(i => i.Load)
+                .WithOne(i => i.Invoice)
+                .HasForeignKey<Load>(i => i.InvoiceId);
+            
+            entity.HasOne(i => i.Customer)
+                .WithMany(i => i.Invoices)
+                .HasForeignKey(i => i.CustomerId);
+
+            entity.HasOne(i => i.Payment)
+                .WithOne()
+                .HasForeignKey<Invoice>(i => i.PaymentId);
+        });
+
+        builder.Entity<PayrollPayment>(entity =>
+        {
+            entity.ToTable("PayrollPayments");
+
+            entity.HasOne(i => i.Payment)
+                .WithOne()
+                .HasForeignKey<PayrollPayment>(i => i.PaymentId);
+            
+            entity.HasOne(i => i.Employee)
+                .WithMany(i => i.PayrollPayments)
+                .HasForeignKey(i => i.EmployeeId);
+        });
+        
+        builder.Entity<SubscriptionPayment>(entity =>
+        {
+            entity.ToTable("SubscriptionPayments");
+
+            entity.HasOne(i => i.Payment)
+                .WithOne()
+                .HasForeignKey<SubscriptionPayment>(i => i.PaymentId);
+        });
 
         builder.Entity<TenantRole>(entity =>
         {
             entity.ToTable("Roles");
-            entity.HasMany(m => m.Claims)
-                .WithOne(m => m.Role)
-                .HasForeignKey(m => m.RoleId)
+            entity.HasMany(i => i.Claims)
+                .WithOne(i => i.Role)
+                .HasForeignKey(i => i.RoleId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.Entity<Employee>(entity =>
         {
             entity.ToTable("Employees");
+            entity.Property(i => i.Salary).HasPrecision(19, 4);
+            
             entity.HasMany(i => i.Roles)
                 .WithMany(i => i.Employees)
                 .UsingEntity<EmployeeTenantRole>(
@@ -77,14 +125,14 @@ public class TenantDbContext : DbContext
         {
             entity.ToTable("Trucks");
 
-            entity.HasMany(m => m.Drivers)
+            entity.HasMany(i => i.Drivers)
                 .WithOne(i => i.Truck)
-                .HasForeignKey(m => m.TruckId)
+                .HasForeignKey(i => i.TruckId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            entity.HasMany(m => m.Loads)
-                .WithOne(m => m.AssignedTruck)
-                .HasForeignKey(m => m.AssignedTruckId)
+            entity.HasMany(i => i.Loads)
+                .WithOne(i => i.AssignedTruck)
+                .HasForeignKey(i => i.AssignedTruckId)
                 .OnDelete(DeleteBehavior.SetNull);
         });
 
@@ -93,12 +141,12 @@ public class TenantDbContext : DbContext
             entity.ToTable("Loads");
             //entity.OwnsOne(m => m.SourceAddress);
             //entity.OwnsOne(m => m.DestinationAddress);
-            entity.Property(m => m.DeliveryCost).HasPrecision(19, 4);
-            entity.HasIndex(m => m.RefId).IsUnique();
+            entity.Property(i => i.DeliveryCost).HasPrecision(19, 4);
+            entity.HasIndex(i => i.RefId).IsUnique();
 
-            entity.HasOne(m => m.AssignedDispatcher)
-                .WithMany(m => m.DispatchedLoads)
-                .HasForeignKey(m => m.AssignedDispatcherId);
+            entity.HasOne(i => i.AssignedDispatcher)
+                .WithMany(i => i.DispatchedLoads)
+                .HasForeignKey(i => i.AssignedDispatcherId);
                 //.OnDelete(DeleteBehavior.SetNull);
             
             // entity.HasOne(m => m.AssignedDriver)

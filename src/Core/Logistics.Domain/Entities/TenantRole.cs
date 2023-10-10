@@ -16,7 +16,7 @@ public class TenantRole : Entity, ITenantEntity
     
     public string Name { get; set; }
     public string? DisplayName { get; set; }
-    public string? NormalizedName { get; set; }
+    public string NormalizedName { get; set; }
     
     public virtual List<Employee> Employees { get; } = new();
     public virtual List<EmployeeTenantRole> EmployeeRoles { get; } = new();

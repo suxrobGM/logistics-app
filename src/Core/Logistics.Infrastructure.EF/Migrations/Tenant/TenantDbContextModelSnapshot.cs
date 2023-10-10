@@ -25,6 +25,19 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Logistics.Domain.Entities.Customer", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Customers", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
                 {
                     b.Property<string>("Id")
@@ -60,6 +73,13 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("Salary")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
+
+                    b.Property<int>("SalaryType")
+                        .HasColumnType("int");
+
                     b.Property<string>("TruckId")
                         .HasColumnType("nvarchar(450)");
 
@@ -85,6 +105,39 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.ToTable("EmployeeRoles", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.Invoice", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CompanyAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("LoadId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("PaymentId")
+                        .IsUnique();
+
+                    b.ToTable("Invoices", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Load", b =>
                 {
                     b.Property<string>("Id")
@@ -108,6 +161,10 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<decimal>("DeliveryCost")
                         .HasPrecision(19, 4)
                         .HasColumnType("decimal(19,4)");
@@ -116,6 +173,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DestinationAddress")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double?>("DestinationAddressLat")
@@ -130,7 +188,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<double>("Distance")
                         .HasColumnType("float");
 
-                    b.Property<string>("EmployeeId")
+                    b.Property<string>("InvoiceId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("LastModified")
@@ -143,6 +201,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OriginAddress")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double?>("OriginAddressLat")
@@ -163,7 +222,11 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
                     b.HasIndex("AssignedTruckId");
 
-                    b.HasIndex("EmployeeId");
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("InvoiceId")
+                        .IsUnique()
+                        .HasFilter("[InvoiceId] IS NOT NULL");
 
                     b.HasIndex("RefId")
                         .IsUnique();
@@ -193,6 +256,89 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.ToTable("Notifications", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.Payment", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Method")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PaymentFor")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Payments", (string)null);
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.PayrollPayment", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("EmployeeId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("PaymentId")
+                        .IsUnique()
+                        .HasFilter("[PaymentId] IS NOT NULL");
+
+                    b.ToTable("PayrollPayments", (string)null);
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionPayment", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentId")
+                        .IsUnique()
+                        .HasFilter("[PaymentId] IS NOT NULL");
+
+                    b.ToTable("SubscriptionPayments", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.TenantRole", b =>
                 {
                     b.Property<string>("Id")
@@ -206,6 +352,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -239,6 +386,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RoleId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -278,6 +426,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TruckNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -314,6 +463,25 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.Invoice", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Customer", "Customer")
+                        .WithMany("Invoices")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Logistics.Domain.Entities.Payment", "Payment")
+                        .WithOne()
+                        .HasForeignKey("Logistics.Domain.Entities.Invoice", "PaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Payment");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Load", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Employee", "AssignedDispatcher")
@@ -325,13 +493,47 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasForeignKey("AssignedTruckId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("Logistics.Domain.Entities.Employee", null)
-                        .WithMany("DeliveredLoads")
-                        .HasForeignKey("EmployeeId");
+                    b.HasOne("Logistics.Domain.Entities.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Logistics.Domain.Entities.Invoice", "Invoice")
+                        .WithOne("Load")
+                        .HasForeignKey("Logistics.Domain.Entities.Load", "InvoiceId");
 
                     b.Navigation("AssignedDispatcher");
 
                     b.Navigation("AssignedTruck");
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Invoice");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.PayrollPayment", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Employee", "Employee")
+                        .WithMany("PayrollPayments")
+                        .HasForeignKey("EmployeeId");
+
+                    b.HasOne("Logistics.Domain.Entities.Payment", "Payment")
+                        .WithOne()
+                        .HasForeignKey("Logistics.Domain.Entities.PayrollPayment", "PaymentId");
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("Payment");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionPayment", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Payment", "Payment")
+                        .WithOne()
+                        .HasForeignKey("Logistics.Domain.Entities.SubscriptionPayment", "PaymentId");
+
+                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.TenantRoleClaim", b =>
@@ -339,18 +541,30 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.HasOne("Logistics.Domain.Entities.TenantRole", "Role")
                         .WithMany("Claims")
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.Customer", b =>
+                {
+                    b.Navigation("Invoices");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
                 {
-                    b.Navigation("DeliveredLoads");
-
                     b.Navigation("DispatchedLoads");
 
                     b.Navigation("EmployeeRoles");
+
+                    b.Navigation("PayrollPayments");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.Invoice", b =>
+                {
+                    b.Navigation("Load")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.TenantRole", b =>

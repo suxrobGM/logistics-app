@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
 using Logistics.Domain.Services;
 using Logistics.Domain.ValueObjects;
 using Logistics.Infrastructure.EF.Data;
@@ -12,6 +13,7 @@ namespace Logistics.DbMigrator.Services;
 
 internal class SeedData : BackgroundService
 {
+    private const string UserDefaultPassword = "Test12345#";
     private readonly ILogger<SeedData> _logger;
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
@@ -101,12 +103,7 @@ internal class SeedData : BackgroundService
     {
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
         var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
-
-        var adminData = configuration.GetSection("SuperAdmin").Get<UserDto>();
-
-        if (adminData == null)
-            return;
-        
+        var adminData = configuration.GetRequiredSection("SuperAdmin").Get<User>()!;
         var superAdmin = await userManager.FindByEmailAsync(adminData.Email!);
         
         if (superAdmin is null)
@@ -114,13 +111,13 @@ internal class SeedData : BackgroundService
             superAdmin = new User
             {
                 UserName = adminData.Email,
-                FirstName = adminData.FirstName ?? "Admin",
-                LastName = adminData.LastName ?? "Admin",
+                FirstName = adminData.FirstName,
+                LastName = adminData.LastName,
                 Email = adminData.Email,
                 EmailConfirmed = true
             };
 
-            var result = await userManager.CreateAsync(superAdmin, adminData.Password!);
+            var result = await userManager.CreateAsync(superAdmin, UserDefaultPassword);
             if (!result.Succeeded)
                 throw new Exception(result.Errors.First().Description);
 
@@ -138,7 +135,7 @@ internal class SeedData : BackgroundService
 
     private async Task AddDefaultTenantAsync(IServiceProvider serviceProvider)
     {
-        var mainDbContext = serviceProvider.GetRequiredService<MainDbContext>();
+        var mainRepository = serviceProvider.GetRequiredService<IMainRepository>();
         var databaseProvider = serviceProvider.GetRequiredService<ITenantDatabaseService>();
 
         var defaultTenant = new Tenant
@@ -148,12 +145,12 @@ internal class SeedData : BackgroundService
             ConnectionString = databaseProvider.GenerateConnectionString("default") 
         };
 
-        var existingTenant = mainDbContext.Set<Tenant>().FirstOrDefault(i => i.Name == defaultTenant.Name);
+        var existingTenant = await mainRepository.GetAsync<Tenant>(i => i.Name == defaultTenant.Name);
 
         if (existingTenant is null)
         {
-            mainDbContext.Add(defaultTenant);
-            await mainDbContext.SaveChangesAsync();
+            await mainRepository.AddAsync(defaultTenant);
+            await mainRepository.UnitOfWork.CommitAsync();
             await databaseProvider.CreateDatabaseAsync(defaultTenant.ConnectionString);
             _logger.LogInformation("Added default tenant");
         }

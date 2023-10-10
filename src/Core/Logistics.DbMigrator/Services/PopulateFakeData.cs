@@ -7,9 +7,13 @@ namespace Logistics.DbMigrator.Services;
 
 internal class PopulateFakeData
 {
+    private const string UserDefaultPassword = "Test12345#";
     private readonly ILogger _logger;
     private readonly IServiceProvider _serviceProvider;
     private readonly Random _random;
+    private readonly ITenantRepository _tenantRepository;
+    private readonly IMainRepository _mainRepository;
+    private readonly IConfiguration _configuration;
     
     public PopulateFakeData(
         ILogger logger,
@@ -17,6 +21,9 @@ internal class PopulateFakeData
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
+        _tenantRepository = serviceProvider.GetRequiredService<ITenantRepository>();
+        _mainRepository = serviceProvider.GetRequiredService<IMainRepository>();
+        _configuration = serviceProvider.GetRequiredService<IConfiguration>();
         _random = new Random();
     }
     
@@ -24,17 +31,17 @@ internal class PopulateFakeData
     {
         try
         {
-            var configuration = _serviceProvider.GetRequiredService<IConfiguration>();
-            var populate = configuration.GetValue<bool>("PopulateFakeData");
+            var populate = _configuration.GetValue<bool>("PopulateFakeData");
 
             if (!populate)
                 return;
 
             _logger.LogInformation("Populating databases with fake data");
-            var users = await AddUsersAsync(configuration);
+            var users = await AddUsersAsync();
             var employees = await AddEmployeesAsync(users);
             var trucks = await AddTrucksAsync(employees.Drivers);
-            await AddLoadsAsync(employees, trucks);
+            var customers = await AddCustomersAsync();
+            await AddLoadsAsync(employees, trucks, customers);
             _logger.LogInformation("Databases have been populated successfully");
         }
         catch (Exception ex)
@@ -43,10 +50,10 @@ internal class PopulateFakeData
         }
     }
     
-    private async Task<IList<User>> AddUsersAsync(IConfiguration configuration)
+    private async Task<IList<User>> AddUsersAsync()
     {
         var userManager = _serviceProvider.GetRequiredService<UserManager<User>>();
-        var testUsers = configuration.GetSection("Users").Get<UserDto[]>();
+        var testUsers = _configuration.GetSection("Users").Get<User[]>();
         var usersList = new List<User>();
 
         if (testUsers == null)
@@ -73,7 +80,7 @@ internal class PopulateFakeData
             
             try
             {
-                var result = await userManager.CreateAsync(user, fakeUser.Password!);
+                var result = await userManager.CreateAsync(user, UserDefaultPassword);
                 if (!result.Succeeded)
                     throw new Exception(result.Errors.First().Description);
                 
@@ -88,14 +95,12 @@ internal class PopulateFakeData
         return usersList;
     }
 
-    private async Task<EmployeesDto> AddEmployeesAsync(IList<User> users)
+    private async Task<CompanyEmployees> AddEmployeesAsync(IList<User> users)
     {
         if (users.Count < 10)
             throw new InvalidOperationException("Add at least 10 test users in the 'testData.json' under the `Users` section");
         
-        var tenantRepository = _serviceProvider.GetRequiredService<ITenantRepository>();
-        var mainRepository = _serviceProvider.GetRequiredService<IMainRepository>();
-        var tenant = await mainRepository.GetAsync<Tenant>(i => i.Name == "default");
+        var tenant = await _mainRepository.GetAsync<Tenant>(i => i.Name == "default");
 
         if (tenant is null)
             throw new InvalidOperationException("Could not find the default tenant");
@@ -105,55 +110,74 @@ internal class PopulateFakeData
         var dispatchers = users.Skip(2).Take(3);
         var drivers = users.Skip(5);
 
-        var roles = await tenantRepository.GetListAsync<TenantRole>();
+        var roles = await _tenantRepository.GetListAsync<TenantRole>();
         var ownerRole = roles.First(i => i.Name == TenantRoles.Owner);
         var managerRole = roles.First(i => i.Name == TenantRoles.Manager);
         var dispatcherRole = roles.First(i => i.Name == TenantRoles.Dispatcher);
         var driverRole = roles.First(i => i.Name == TenantRoles.Driver);
 
-        var ownerEmployee = await TryAddEmployeeAsync(tenantRepository, tenant.Id, owner, ownerRole);
-        var managerEmployee = await TryAddEmployeeAsync(tenantRepository, tenant.Id, manager, managerRole);
-        var employeesDto = new EmployeesDto(ownerEmployee, managerEmployee);
+        var ownerEmployee = await TryAddEmployeeAsync(tenant.Id, owner, ownerRole);
+        var managerEmployee = await TryAddEmployeeAsync(tenant.Id, manager, managerRole);
+        var employeesDto = new CompanyEmployees(ownerEmployee, managerEmployee);
 
         foreach (var dispatcher in dispatchers)
         {
-            var dispatcherEmployee = await TryAddEmployeeAsync(tenantRepository, tenant.Id, dispatcher, dispatcherRole);
+            var dispatcherEmployee = await TryAddEmployeeAsync(tenant.Id, dispatcher, dispatcherRole);
             employeesDto.Dispatchers.Add(dispatcherEmployee);
         }
         
         foreach (var driver in drivers)
         {
-            var driverEmployee = await TryAddEmployeeAsync(tenantRepository, tenant.Id, driver, driverRole);
+            var driverEmployee = await TryAddEmployeeAsync(tenant.Id, driver, driverRole);
             employeesDto.Drivers.Add(driverEmployee);
         }
 
-        await tenantRepository.UnitOfWork.CommitAsync();
-        await mainRepository.UnitOfWork.CommitAsync();
+        await _tenantRepository.UnitOfWork.CommitAsync();
+        await _mainRepository.UnitOfWork.CommitAsync();
         return employeesDto;
     }
 
     private async Task<Employee> TryAddEmployeeAsync(
-        ITenantRepository tenantRepository,
         string tenantId, 
         User user, 
         TenantRole role)
     {
-        var employee = await tenantRepository.GetAsync<Employee>(user.Id);
+        var employee = await _tenantRepository.GetAsync<Employee>(user.Id);
 
         if (employee != null)
             return employee;
 
         employee = Employee.CreateEmployeeFromUser(user);
         user.JoinTenant(tenantId);
-        await tenantRepository.AddAsync(employee);
+        await _tenantRepository.AddAsync(employee);
         employee.Roles.Add(role);
         _logger.LogInformation("Added an employee {Name} with role {Role}", user.UserName, role.Name);
         return employee;
     }
 
+    private async Task<IList<Customer>> AddCustomersAsync()
+    {
+        var customers = _configuration.GetRequiredSection("Customers").Get<Customer[]>()!;
+        var customersList = new List<Customer>();
+
+        foreach (var customer in customers)
+        {
+            var existingCustomer = await _tenantRepository.GetAsync<Customer>(i => i.Name == customer.Name);
+            customersList.Add(customer);
+            
+            if (existingCustomer is not null)
+                continue;
+
+            await _tenantRepository.AddAsync(customer);
+            _logger.LogInformation("Added a customer '{CustomerName}'", customer.Name);
+        }
+
+        await _tenantRepository.UnitOfWork.CommitAsync();
+        return customersList;
+    }
+
     private async Task<IList<Truck>> AddTrucksAsync(IEnumerable<Employee> drivers)
     {
-        var tenantRepository = _serviceProvider.GetRequiredService<ITenantRepository>();
         var trucksList = new List<Truck>();
         var truckNumber = 101;
 
@@ -170,21 +194,20 @@ internal class PopulateFakeData
             truck = Truck.Create(truckNumber.ToString(), 0.30f, driver);
             truckNumber++;
             trucksList.Add(truck);
-            await tenantRepository.AddAsync(truck);
+            await _tenantRepository.AddAsync(truck);
             _logger.LogInformation("Added a truck {Number}", truck.TruckNumber);
         }
 
-        await tenantRepository.UnitOfWork.CommitAsync();
+        await _tenantRepository.UnitOfWork.CommitAsync();
         return trucksList;
     }
 
-    private async Task AddLoadsAsync(EmployeesDto employees, IList<Truck> trucks)
+    private async Task AddLoadsAsync(CompanyEmployees companyEmployees, IList<Truck> trucks, IList<Customer> customers)
     {
         if (!trucks.Any())
             throw new InvalidOperationException("Empty list of trucks");
         
-        var tenantRepository = _serviceProvider.GetRequiredService<ITenantRepository>();
-        var loadsDb = await tenantRepository.GetListAsync<Load>();
+        var loadsDb = await _tenantRepository.GetListAsync<Load>();
 
         for (ulong i = 1; i <= 100; i++)
         {
@@ -195,37 +218,49 @@ internal class PopulateFakeData
                 continue;
 
             var truck = PickRandom(trucks);
-            var dispatcher = PickRandom(employees.Dispatchers);
-            var dispatchedDate = RandomDate(DateTime.Today.AddMonths(-3), DateTime.Today.AddDays(-3));
-            const string originAddress = "40 Crescent Ave, Boston, United States";
-            const double originLat = 42.319090;
-            const double originLng = -71.054680;
-            const string destAddress = "73 Tremont St, Boston, United States";
-            const double destLat = 42.357820;
-            const double destLng = -71.060810;
-            
-            var load = Load.Create(
-                refId, 
-                originAddress, 
-                originLat,
-                originLng,
-                destAddress, 
-                destLat,
-                destLng,
-                truck, 
-                dispatcher);
-            load.Name = $"Test cargo {i}";
-            load.DispatchedDate = dispatchedDate;
-            load.PickUpDate = dispatchedDate.AddDays(1);
-            load.DeliveryDate = dispatchedDate.AddDays(2);
-            load.Distance = _random.Next(16093, 321869);
-            load.DeliveryCost = _random.Next(1000, 3000);
-
-            await tenantRepository.AddAsync(load);
-            _logger.LogInformation("Added a load {Name}", load.Name);
+            var customer = PickRandom(customers);
+            var dispatcher = PickRandom(companyEmployees.Dispatchers);
+            await AddLoadAsync(i, truck, dispatcher, customer);
         }
 
-        await tenantRepository.UnitOfWork.CommitAsync();
+        await _tenantRepository.UnitOfWork.CommitAsync();
+    }
+
+    private async Task AddLoadAsync(
+        ulong index,
+        Truck truck,
+        Employee dispatcher,
+        Customer customer)
+    {
+        var dispatchedDate = RandomDate(DateTime.Today.AddMonths(-3), DateTime.Today.AddDays(-3));
+        const string originAddress = "40 Crescent Ave, Boston, United States";
+        const double originLat = 42.319090;
+        const double originLng = -71.054680;
+        const string destAddress = "73 Tremont St, Boston, United States";
+        const double destLat = 42.357820;
+        const double destLng = -71.060810;
+            
+        var load = Load.Create(
+            1000 + index, 
+            originAddress, 
+            originLat,
+            originLng,
+            destAddress, 
+            destLat,
+            destLng,
+            customer,
+            truck, 
+            dispatcher);
+        
+        load.Name = $"Test cargo {index}";
+        load.DispatchedDate = dispatchedDate;
+        load.PickUpDate = dispatchedDate.AddDays(1);
+        load.DeliveryDate = dispatchedDate.AddDays(2);
+        load.Distance = _random.Next(16093, 321869);
+        load.DeliveryCost = _random.Next(1000, 3000);
+
+        await _tenantRepository.AddAsync(load);
+        _logger.LogInformation("Added a load {Name}", load.Name);
     }
 
     private T PickRandom<T>(IList<T> list)
@@ -241,16 +276,8 @@ internal class PopulateFakeData
     }
 }
 
-internal record EmployeesDto(Employee Owner, Employee Manager)
+internal record CompanyEmployees(Employee Owner, Employee Manager)
 {
     public IList<Employee> Dispatchers { get; } = new List<Employee>();
     public IList<Employee> Drivers { get; } = new List<Employee>();
-}
-
-internal record UserDto
-{
-    public string? Email { get; init; }
-    public string? Password { get; init; }
-    public string? FirstName { get; init; }
-    public string? LastName { get; init; }
 }

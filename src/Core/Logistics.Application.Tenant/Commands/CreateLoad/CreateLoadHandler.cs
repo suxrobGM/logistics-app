@@ -21,13 +21,18 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resp
     {
         var dispatcher = await _tenantRepository.GetAsync<Employee>(req.AssignedDispatcherId);
 
-        if (dispatcher == null)
+        if (dispatcher is null)
             return ResponseResult.CreateError("Could not find the specified dispatcher");
 
         var truck = await _tenantRepository.GetAsync<Truck>(req.AssignedTruckId);
 
-        if (truck == null)
+        if (truck is null)
             return ResponseResult.CreateError($"Could not find the truck with ID '{req.AssignedTruckId}'");
+
+        var customer = await _tenantRepository.GetAsync<Customer>(req.CustomerId);
+        
+        if (customer is null)
+            return ResponseResult.CreateError($"Could not find the customer with ID '{req.CustomerId}'");
         
         var latestLoad = _tenantRepository.Query<Load>().OrderBy(i => i.RefId).LastOrDefault();
         ulong refId = 1000;
@@ -43,6 +48,7 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resp
             req.DestinationAddress!,
             req.DestinationAddressLat,
             req.DestinationAddressLong,
+            customer,
             truck, 
             dispatcher);
         
