@@ -12,9 +12,9 @@ internal sealed class NewLoadCreatedHandler : IDomainEventHandler<NewLoadCreated
         _logger = logger;
     }
 
-    public Task Handle(NewLoadCreatedEvent notification, CancellationToken cancellationToken)
+    public Task Handle(NewLoadCreatedEvent @event, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Created a new load #{@LoadRefId}", notification.LoadRefId);
+        _logger.LogInformation("Created a new load #{LoadRefId}", @event.LoadRefId);
         return Task.CompletedTask;
     }
 }

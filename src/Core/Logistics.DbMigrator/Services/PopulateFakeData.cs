@@ -1,6 +1,8 @@
-﻿using Logistics.Domain.Entities;
+﻿using Logistics.DbMigrator.Extensions;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.ValueObjects;
+using Logistics.Shared.Enums;
 using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.DbMigrator.Services;
@@ -42,6 +44,7 @@ internal class PopulateFakeData
             var trucks = await AddTrucksAsync(employees.Drivers);
             var customers = await AddCustomersAsync();
             await AddLoadsAsync(employees, trucks, customers);
+            await AddNotificationsAsync();
             _logger.LogInformation("Databases have been populated successfully");
         }
         catch (Exception ex)
@@ -217,9 +220,9 @@ internal class PopulateFakeData
             if (existingLoad != null)
                 continue;
 
-            var truck = PickRandom(trucks);
-            var customer = PickRandom(customers);
-            var dispatcher = PickRandom(companyEmployees.Dispatchers);
+            var truck = _random.Pick(trucks);
+            var customer = _random.Pick(customers);
+            var dispatcher = _random.Pick(companyEmployees.Dispatchers);
             await AddLoadAsync(i, truck, dispatcher, customer);
         }
 
@@ -232,11 +235,11 @@ internal class PopulateFakeData
         Employee dispatcher,
         Customer customer)
     {
-        var dispatchedDate = RandomDate(DateTime.Today.AddMonths(-3), DateTime.Today.AddDays(-3));
-        const string originAddress = "40 Crescent Ave, Boston, United States";
+        var dispatchedDate = _random.Date(DateTime.Today.AddMonths(-3), DateTime.Today.AddDays(-3));
+        const string originAddress = "40 Crescent Ave, Boston, MA 02125, United States";
         const double originLat = 42.319090;
         const double originLng = -71.054680;
-        const string destAddress = "73 Tremont St, Boston, United States";
+        const string destAddress = "73 Tremont St, Boston, MA 02108, United States";
         const double destLat = 42.357820;
         const double destLng = -71.060810;
             
@@ -258,21 +261,58 @@ internal class PopulateFakeData
         load.DeliveryDate = dispatchedDate.AddDays(2);
         load.Distance = _random.Next(16093, 321869);
         load.DeliveryCost = _random.Next(1000, 3000);
+        load.Invoice = CreateInvoice(load);
 
         await _tenantRepository.AddAsync(load);
         _logger.LogInformation("Added a load {Name}", load.Name);
     }
 
-    private T PickRandom<T>(IList<T> list)
+    private Invoice CreateInvoice(Load load)
     {
-        var rndIndex = _random.Next(list.Count);
-        return list[rndIndex];
+        const string companyName = "Test Company";
+        const string companyAddress = "7 Allstate Rd, Dorchester, MA 02125, United States";
+        
+        var payment = new Payment
+        {
+            Amount = load.DeliveryCost,
+            Status = PaymentStatus.Paid,
+            CreatedDate = DateTime.Today,
+            PaymentDate = DateTime.Now,
+            PaymentFor = PaymentFor.Invoice,
+            Method = PaymentMethod.BankAccount
+        };
+
+        var invoice = new Invoice
+        {
+            CompanyName = companyName,
+            CompanyAddress = companyAddress,
+            CustomerId = load.CustomerId,
+            Customer = load.Customer,
+            LoadId = load.Id,
+            Load = load,
+            PaymentId = payment.Id,
+            Payment = payment,
+        };
+
+        return invoice;
     }
 
-    private DateTime RandomDate(DateTime minDate, DateTime maxDate)
+    private async Task AddNotificationsAsync()
     {
-        var ticks = _random.NextInt64(minDate.Ticks, maxDate.Ticks);
-        return new DateTime(ticks);
+        for (var i = 1; i <= 10; i++)
+        {
+            var notification = new Notification
+            {
+                Title = $"Test notification {i}",
+                Message = $"Notification {i} description",
+                Created = _random.Date(DateTime.Today.AddMonths(-1), DateTime.Today.AddDays(-1))
+            };
+
+            await _tenantRepository.AddAsync(notification);
+            _logger.LogInformation("Added a notification {Notification}", notification.Title);
+        }
+
+        await _tenantRepository.UnitOfWork.CommitAsync();
     }
 }
 
