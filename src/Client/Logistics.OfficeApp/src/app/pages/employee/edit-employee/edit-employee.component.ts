@@ -7,7 +7,7 @@ import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {CardModule} from 'primeng/card';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
-import {Employee, UserRole} from '@core/models';
+import {Employee, UserRoles} from '@core/models';
 import {ApiService} from '@core/services';
 import {AuthService} from '@core/auth';
 import {ChangeRoleDialogComponent} from '../components';
@@ -78,7 +78,7 @@ export class EditEmployeeComponent implements OnInit {
   private fetchEmployee() {
     this.isBusy = true;
 
-    this.apiService.getEmployee(this.id!).subscribe((result) => {
+    this.apiService.getEmployee(this.id).subscribe((result) => {
       if (result.isSuccess && result.data) {
         this.employee = result.data;
         const employeeRoles = this.employee.roles?.map((i) => i.name);
@@ -103,13 +103,13 @@ export class EditEmployeeComponent implements OnInit {
 
     const employeeRole = employeeRoles[0];
 
-    if (userRoles.includes(UserRole.AppSuperAdmin) || userRoles.includes(UserRole.AppAdmin)) {
+    if (userRoles.includes(UserRoles.AppSuperAdmin) || userRoles.includes(UserRoles.AppAdmin)) {
       this.canChangeRole = true;
     }
-    else if (userRoles.includes(UserRole.Owner) && employeeRole !== UserRole.Owner) {
+    else if (userRoles.includes(UserRoles.Owner) && employeeRole !== UserRoles.Owner) {
       this.canChangeRole = true;
     }
-    else if (userRoles.includes(UserRole.Manager) && employeeRole !== UserRole.Owner && employeeRole !== UserRole.Manager) {
+    else if (userRoles.includes(UserRoles.Manager) && employeeRole !== UserRoles.Owner && employeeRole !== UserRoles.Manager) {
       this.canChangeRole = true;
     }
   }

@@ -30,7 +30,9 @@ public static class LoadMapper
             AssignedTruckId = entity.AssignedTruckId,
             AssignedTruckNumber = entity.AssignedTruck?.TruckNumber,
             AssignedTruckDriversName = entity.AssignedTruck?.Drivers.Select(i => i.GetFullName()),
-            CurrentLocation = entity.AssignedTruck?.LastKnownLocation
+            CurrentLocation = entity.AssignedTruck?.LastKnownLocation,
+            Customer = entity.Customer?.ToDto(),
+            Invoice = entity.Invoice?.ToDto()
         };
         
         return loadDto;

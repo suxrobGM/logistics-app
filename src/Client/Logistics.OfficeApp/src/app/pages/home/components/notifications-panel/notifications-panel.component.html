@@ -36,18 +36,18 @@
 </p-card>
 
 <p-dialog [(visible)]="displayDialog" 
-    [modal]="true" 
-    [style]="{width: '50vw'}" 
-    [closable]="false" 
-    [dismissableMask]="true">
+  [modal]="true" 
+  [style]="{width: '50vw'}" 
+  [closable]="false" 
+  [dismissableMask]="true">
 
-    <ng-template pTemplate="header">
-      <span>{{selectedNotification?.title}}</span>
-    </ng-template>
+  <ng-template pTemplate="header">
+    <span>{{selectedNotification?.title}}</span>
+  </ng-template>
 
-    <p>{{selectedNotification?.message}}</p>
-    
-    <p-footer>
-      <button pButton type="button" icon="pi pi-check" (click)="closeDialog()">Close</button>
-    </p-footer>
+  <p>{{selectedNotification?.message}}</p>
+  
+  <p-footer>
+    <button pButton type="button" icon="pi pi-check" (click)="closeDialog()">Close</button>
+  </p-footer>
 </p-dialog>

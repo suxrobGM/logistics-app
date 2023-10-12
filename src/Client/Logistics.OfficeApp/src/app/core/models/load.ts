@@ -1,4 +1,7 @@
+import {Customer} from './customer';
+import {Invoice} from './invoice';
 import {LoadStatus} from './loadStatus';
+
 
 export interface Load {
   id: string;
@@ -22,4 +25,6 @@ export interface Load {
   assignedTruckNumber?: string;
   assignedTruckDriversName?: string[];
   currentLocation?: string;
+  customer?: Customer;
+  invoice?: Invoice;
 }

@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 import {map, Observable} from 'rxjs';
 import {Role, User} from '@core/models';
 import {ApiService} from '@core/services';
-import {UserRole} from '@core/models';
+import {UserRoles} from '@core/models';
 import {AuthService} from '@core/auth';
 
 
@@ -34,12 +34,12 @@ export class UserService {
             const roles = result.data;
             const roleNames = roles.map((i) => i.name);
 
-            if (this.userRoles?.includes(UserRole.Owner)) {
-              roles.splice(roleNames.indexOf(UserRole.Owner), 1);
+            if (this.userRoles?.includes(UserRoles.Owner)) {
+              roles.splice(roleNames.indexOf(UserRoles.Owner), 1);
             }
-            else if (this.userRoles?.includes(UserRole.Manager)) {
-              roles.splice(roleNames.indexOf(UserRole.Owner), 1);
-              roles.splice(roleNames.indexOf(UserRole.Manager), 1);
+            else if (this.userRoles?.includes(UserRoles.Manager)) {
+              roles.splice(roleNames.indexOf(UserRoles.Owner), 1);
+              roles.splice(roleNames.indexOf(UserRoles.Manager), 1);
             }
 
             return [dummyRole, ...roles];

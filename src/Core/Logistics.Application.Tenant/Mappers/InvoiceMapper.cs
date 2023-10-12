@@ -1,6 +1,18 @@
-﻿namespace Logistics.Application.Tenant.Mappers;
+﻿using Logistics.Shared.Models;
 
-public class InvoiceMapper
+namespace Logistics.Application.Tenant.Mappers;
+
+public static class InvoiceMapper
 {
-    
+    public static InvoiceDto ToDto(this Invoice entity)
+    {
+        return new InvoiceDto
+        {
+            CompanyAddress = entity.CompanyAddress,
+            CompanyName = entity.CompanyName,
+            CustomerId = entity.CustomerId,
+            LoadId = entity.LoadId,
+            Payment = entity.Payment.ToDto()
+        };
+    }
 }

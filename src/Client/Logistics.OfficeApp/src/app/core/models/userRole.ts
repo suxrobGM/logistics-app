@@ -1,4 +1,4 @@
-export enum UserRole {
+export enum UserRoles {
   AppSuperAdmin = 'app.superadmin',
   AppAdmin = 'app.admin',
   Owner = 'tenant.owner',

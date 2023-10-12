@@ -1,14 +1,14 @@
-import {UserRole} from '../models';
+import {UserRoles} from '../models';
 
 export abstract class UserRoleHelper {
   static getRoleName(role?: string): string | null {
     switch (role) {
-      case UserRole.AppSuperAdmin: return 'Super Admin';
-      case UserRole.AppAdmin: return 'Admin';
-      case UserRole.Owner: return 'Owner';
-      case UserRole.Manager: return 'Manager';
-      case UserRole.Dispatcher: return 'Dispatcher';
-      case UserRole.Driver: return 'Driver';
+      case UserRoles.AppSuperAdmin: return 'Super Admin';
+      case UserRoles.AppAdmin: return 'Admin';
+      case UserRoles.Owner: return 'Owner';
+      case UserRoles.Manager: return 'Manager';
+      case UserRoles.Dispatcher: return 'Dispatcher';
+      case UserRoles.Driver: return 'Driver';
     }
 
     return null;

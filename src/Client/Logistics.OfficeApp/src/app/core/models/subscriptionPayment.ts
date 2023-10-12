@@ -1,10 +1,8 @@
-import {Employee} from './employee';
 import {Payment} from './payment';
 
 
-export interface PayrollPayment {
+export interface SubscriptionPayment {
   startDate: string;
   endDate: string;
   payment: Payment;
-  employee?: Employee; 
 }

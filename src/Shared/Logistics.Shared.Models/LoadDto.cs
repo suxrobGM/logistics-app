@@ -4,13 +4,13 @@ namespace Logistics.Shared.Models;
 
 public class LoadDto
 {
-    public string? Id { get; set; }
+    public string Id { get; set; } = default!;
     public ulong RefId { get; set; }
     public string? Name { get; set; }
-    public string? OriginAddress { get; set; }
+    public string OriginAddress { get; set; } = default!;
     public double? OriginAddressLat { get; set; }
     public double? OriginAddressLong { get; set; }
-    public string? DestinationAddress { get; set; }
+    public string DestinationAddress { get; set; } = default!;
     public double? DestinationAddressLat { get; set; }
     public double? DestinationAddressLong { get; set; }
     public decimal DeliveryCost { get; set; }
@@ -26,5 +26,7 @@ public class LoadDto
     public string? AssignedTruckId { get; set; }
     public string? AssignedTruckNumber { get; set; }
     public string? CurrentLocation { get; set; }
+    public InvoiceDto? Invoice { get; set; }
+    public CustomerDto? Customer { get; set; }
     public IEnumerable<string>? AssignedTruckDriversName { get; set; }
 }

@@ -68,7 +68,7 @@ export class ListLoadComponent {
     this.apiService.getLoads('', false, sortField, page, event.rows!).subscribe((result) => {
       if (result.isSuccess && result.data) {
         this.loads = result.data;
-        this.totalRecords = result.totalItems!;
+        this.totalRecords = result.totalItems;
       }
 
       this.isBusy = false;
@@ -76,6 +76,6 @@ export class ListLoadComponent {
   }
 
   getLoadStatusName(status: LoadStatus): string {
-    return LoadStatuses[status - 1].displayName;
+    return LoadStatuses[status - 1].description;
   }
 }

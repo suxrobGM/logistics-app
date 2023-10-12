@@ -1,4 +1,4 @@
 export type EnumType = {
   value: string | number;
-  displayName: string;
+  description: string;
 }
