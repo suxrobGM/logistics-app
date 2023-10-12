@@ -74,28 +74,28 @@ internal class SeedData : BackgroundService
                 DisplayName = appRole.DisplayName
             };
 
-            var roleExists = await roleManager.RoleExistsAsync(role.Name!);
-            if (roleExists)
-                continue;
-            
-            var result = await roleManager.CreateAsync(role);
-            await AddPermissions(roleManager, role, AppRolePermissions.GetBasicPermissions());
-
-            switch (role.Name)
+            var existingRole = await roleManager.FindByNameAsync(role.Name!);
+            if (existingRole is not null)
             {
-                case AppRoles.SuperAdmin:
-                    await AddPermissions(roleManager, role, AppRolePermissions.SuperAdmin);
-                    break;
-                case AppRoles.Admin:
-                    await AddPermissions(roleManager, role, AppRolePermissions.Admin);
-                    break;
-                case AppRoles.Manager:
-                    await AddPermissions(roleManager, role, AppRolePermissions.Manager);
-                    break;
+                // Update existing role claims
+                await AddPermissions(roleManager, existingRole, GetPermissionsBasedOnRole(existingRole.Name!));
+                _logger.LogInformation("Updated app role '{Role}'", existingRole.Name);
             }
-
-            if (result.Succeeded)
-                _logger.LogInformation("Added the '{RoleName}' role", appRole.Value);
+            else
+            {
+                // Add new role and its claims
+                var result = await roleManager.CreateAsync(role);
+                if (result.Succeeded)
+                {
+                    await AddPermissions(roleManager, role, AppRolePermissions.GetBasicPermissions());
+                    await AddPermissions(roleManager, role, GetPermissionsBasedOnRole(role.Name!));
+                    _logger.LogInformation("Added the '{RoleName}' role", role.Name);
+                }
+                else
+                {
+                    _logger.LogError("Failed to add the '{RoleName}' role", role.Name);
+                }
+            }
         }
     }
 
@@ -163,18 +163,38 @@ internal class SeedData : BackgroundService
             await AddPermission(roleManager, role, permission);
         }
     }
-    
+
     private async Task AddPermission(RoleManager<AppRole> roleManager, AppRole role, string permission)
     {
         var allClaims = await roleManager.GetClaimsAsync(role);
         var claim = new Claim(CustomClaimTypes.Permission, permission);
-        
-        if (!allClaims.Any(i => i.Type == CustomClaimTypes.Permission && i.Value == permission))
+
+        if (!allClaims.Any(i => i.Type == claim.Type && i.Value == claim.Value))
         {
             var result = await roleManager.AddClaimAsync(role, claim);
-
+            
             if (result.Succeeded)
-                _logger.LogInformation("Added claim '{ClaimType}' - '{ClaimValue}' to the role '{Role}'", claim.Type, claim.Value, role.Name);
+            {
+                _logger.LogInformation("Added claim '{ClaimType}' - '{ClaimValue}' to the role '{Role}'", claim.Type,
+                    claim.Value, role.Name);
+            }
+            else
+            {
+                _logger.LogError("Failed to add claim '{ClaimType}' - '{ClaimValue}' to the role '{Role}'", claim.Type,
+                    claim.Value, role.Name);
+            }
         }
+    }
+    
+    private static IEnumerable<string> GetPermissionsBasedOnRole(string roleName)
+    {
+        // This method returns the specific permissions based on the role name.
+        return roleName switch
+        {
+            AppRoles.SuperAdmin => AppRolePermissions.SuperAdmin,
+            AppRoles.Admin => AppRolePermissions.Admin,
+            AppRoles.Manager => AppRolePermissions.Manager,
+            _ => Enumerable.Empty<string>()
+        };
     }
 }

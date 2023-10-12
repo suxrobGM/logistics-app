@@ -32,9 +32,10 @@ public class TenantDatabaseService : ITenantDatabaseService
             throw new InvalidOperationException(
                 "The database name template is not defined in the TenantsDatabaseOptions appsettings.json file");
         }
-        
+
         var databaseName = Regex.Replace(_databaseOptions.DatabaseNameTemplate, "{tenant}", tenantName);
-        var connectionString =  $"Server={_databaseOptions.DatabaseHost}; Database={databaseName}; Uid={_databaseOptions.DatabaseUserId}; Pwd={_databaseOptions.DatabasePassword}; TrustServerCertificate=true";
+        var connectionString =
+            $"Server={_databaseOptions.DatabaseHost}; Database={databaseName}; Uid={_databaseOptions.DatabaseUserId}; Pwd={_databaseOptions.DatabasePassword}; TrustServerCertificate=true";
         return connectionString;
     }
 
@@ -78,7 +79,7 @@ public class TenantDatabaseService : ITenantDatabaseService
     private async Task AddTenantRoles()
     {
         var roles = TenantRoles.GetValues();
-        
+
         foreach (var tenantRole in roles)
         {
             var role = new TenantRole(tenantRole.Value)
@@ -88,28 +89,23 @@ public class TenantDatabaseService : ITenantDatabaseService
 
             var existingRole = await _context.Set<TenantRole>().FirstOrDefaultAsync(i => i.Name == role.Name);
             if (existingRole != null)
-                continue;
-            
-            AddRolePermissions(role, TenantRolePermissions.GetBasicPermissions());
-            
-            switch (role.Name)
             {
-                case TenantRoles.Owner:
-                    AddRolePermissions(role, TenantRolePermissions.Owner);
-                    break;
-                case TenantRoles.Manager:
-                    AddRolePermissions(role, TenantRolePermissions.Manager);
-                    break;
-                case TenantRoles.Dispatcher:
-                    AddRolePermissions(role, TenantRolePermissions.Dispatcher);
-                    break;
-                case TenantRoles.Driver:
-                    AddRolePermissions(role, TenantRolePermissions.Driver);
-                    break;
+                // Update existing role claims
+                var newPermissions = GetPermissionsBasedOnRole(role.Name);
+                AddRolePermissions(existingRole, newPermissions);
+                _context.Set<TenantRole>().Update(existingRole);
+                _logger.LogInformation("Updated tenant role '{Role}'", existingRole.Name);
             }
+            else
+            {
+                // Add new role and its claims
+                AddRolePermissions(role, TenantRolePermissions.GetBasicPermissions());
+                var newPermissions = GetPermissionsBasedOnRole(role.Name);
+                AddRolePermissions(role, newPermissions);
 
-            _context.Set<TenantRole>().Add(role);
-            _logger.LogInformation("Added tenant role '{Role}'", role.Name);
+                _context.Set<TenantRole>().Add(role);
+                _logger.LogInformation("Added tenant role '{Role}'", role.Name);
+            }
         }
 
         await _context.SaveChangesAsync();
@@ -119,9 +115,27 @@ public class TenantDatabaseService : ITenantDatabaseService
     {
         foreach (var permission in permissions)
         {
-            var claim = new Claim(CustomClaimTypes.Permission, permission);
-            role.Claims.Add(new TenantRoleClaim(claim.Type, claim.Value));
-            _logger.LogInformation("Added claim '{ClaimType}' - '{ClaimValue}' to the tenant role '{Role}'", claim.Type, claim.Value, role.Name);
+            // Add the claim only if it does not already exist.
+            if (!role.Claims.Any(c => c.ClaimType == CustomClaimTypes.Permission && c.ClaimValue == permission))
+            {
+                var claim = new Claim(CustomClaimTypes.Permission, permission);
+                role.Claims.Add(new TenantRoleClaim(claim.Type, claim.Value));
+                
+                _logger.LogInformation("Added claim '{ClaimType}' - '{ClaimValue}' to the tenant role '{Role}'",
+                    claim.Type, claim.Value, role.Name);
+            }
         }
+    }
+    
+    private static IEnumerable<string> GetPermissionsBasedOnRole(string roleName)
+    {
+        return roleName switch
+        {
+            TenantRoles.Owner => TenantRolePermissions.Owner,
+            TenantRoles.Manager => TenantRolePermissions.Manager,
+            TenantRoles.Dispatcher => TenantRolePermissions.Dispatcher,
+            TenantRoles.Driver => TenantRolePermissions.Driver,
+            _ => Enumerable.Empty<string>()
+        };
     }
 }
