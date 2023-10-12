@@ -4,7 +4,7 @@ import {Observable, map} from 'rxjs';
 
 export class TruckHelper {
   static findTruckDrivers(apiService: ApiService, searchQuery: string): Observable<TruckData[]> {
-    return apiService.getTruckDrivers(searchQuery).pipe(
+    return apiService.getTruckDrivers({search: searchQuery}).pipe(
         map((result) => {
           if (!result.isSuccess || !result.data) {
             return [];

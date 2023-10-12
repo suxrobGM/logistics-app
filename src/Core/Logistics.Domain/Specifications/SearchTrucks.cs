@@ -16,8 +16,7 @@ public class SearchTrucks : BaseSpecification<Truck>
         if (string.IsNullOrEmpty(search))
             return;
         
-        Criteria = i => 
-            i.TruckNumber != null && i.TruckNumber.ToString().Contains(search);
+        Criteria = i => i.TruckNumber.Contains(search);
     }
     
     private static Expression<Func<Truck, object>> InitOrderBy(string? propertyName)

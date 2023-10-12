@@ -19,12 +19,12 @@ export class UserService {
     this.userRoles = user?.roles;
   }
 
-  public searchUser(searchQuery: string): Observable<User[] | undefined> {
-    const users$ = this.apiService.getUsers(searchQuery);
+  searchUser(searchQuery: string): Observable<User[] | undefined> {
+    const users$ = this.apiService.getUsers({search: searchQuery});
     return users$.pipe(map((i) => i.data));
   }
 
-  public fetchRoles(): Observable<Role[]> {
+  fetchRoles(): Observable<Role[]> {
     const dummyRole: Role = {name: '', displayName: ' '};
     const roles$ = this.apiService.getRoles();
 

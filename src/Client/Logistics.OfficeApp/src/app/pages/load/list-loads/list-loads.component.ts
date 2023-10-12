@@ -45,10 +45,10 @@ export class ListLoadComponent {
     this.first = 0;
   }
 
-  search(event: any) {
-    const query = event.target.value;
+  search(event: Event) {
+    const searchValue = (event.target as HTMLInputElement).value;
 
-    this.apiService.getLoads(query, false).subscribe((result) => {
+    this.apiService.getLoads({search: searchValue}, false).subscribe((result) => {
       if (result.isSuccess && result.data) {
         this.loads = result.data;
         this.totalRecords = result.totalItems;
@@ -58,14 +58,16 @@ export class ListLoadComponent {
 
   load(event: TableLazyLoadEvent) {
     this.isBusy = true;
-    const page = event.first! / event.rows! + 1;
+    const first = event.first ?? 1;
+    const rows = event.rows ?? 10;
+    const page = first / rows + 1;
     let sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
     if (sortField === '') { // default sort property
       sortField = '-dispatchedDate';
     }
 
-    this.apiService.getLoads('', false, sortField, page, event.rows!).subscribe((result) => {
+    this.apiService.getLoads({orderBy: sortField, page: page, pageSize: rows}, false).subscribe((result) => {
       if (result.isSuccess && result.data) {
         this.loads = result.data;
         this.totalRecords = result.totalItems;

@@ -27,6 +27,10 @@ import {
   TruckStats,
   Notification,
   UpdateNotification,
+  SearchableQuery,
+  Customer,
+  UpdateCustomer,
+  CreateCustomer,
 } from '../models';
 
 
@@ -48,11 +52,8 @@ export class ApiService {
 
   getTenant(): Observable<ResponseResult<Tenant>> {
     const tenantId = this.tenantService.getTenantName();
-    const url = `${this.host}/tenants/${tenantId}`;
-
-    return this.httpClient
-        .get<ResponseResult<Tenant>>(url)
-        .pipe(catchError((err) => this.handleError(err)));
+    const url = `/tenants/${tenantId}`;
+    return this.get<ResponseResult<Tenant>>(url);
   }
 
   // #endregion
@@ -60,11 +61,9 @@ export class ApiService {
 
   // #region User API
 
-  getUsers(searchQuery = '', orderBy = '', page = 1, pageSize = 10): Observable<PagedResponseResult<User>> {
-    const url = `${this.host}/users?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
-    return this.httpClient
-        .get<PagedResponseResult<User>>(url)
-        .pipe(catchError((err) => this.handleError(err)));
+  getUsers(query?: SearchableQuery): Observable<PagedResponseResult<User>> {
+    const url = `/users?${this.stringfyQuery(query)}`;
+    return this.get<PagedResponseResult<User>>(url);
   }
 
   // #endregion
@@ -73,47 +72,32 @@ export class ApiService {
   // #region Load API
 
   getLoad(id: string): Observable<ResponseResult<Load>> {
-    const url = `${this.host}/loads/${id}`;
-    return this.httpClient
-        .get<ResponseResult<Load>>(url)
-        .pipe(catchError((err) => this.handleError(err)));
+    const url = `/loads/${id}`;
+    return this.get<ResponseResult<Load>>(url);
   }
 
-  getLoads(searchQuery = '', onlyActiveLoads = false, orderBy = '', page = 1, pageSize = 10): Observable<PagedResponseResult<Load>> {
-    let url = `${this.host}/loads?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
+  getLoads(query?: SearchableQuery, onlyActiveLoads = false): Observable<PagedResponseResult<Load>> {
+    let url = `/loads?${this.stringfyQuery(query)}`;
 
     if (onlyActiveLoads) {
-      url = `${url}&onlyActiveLoads=true`;
+      url += '&onlyActiveLoads=true';
     }
-    return this.httpClient
-        .get<PagedResponseResult<Load>>(url)
-        .pipe(catchError((err) => this.handleError(err)));
+    return this.get<PagedResponseResult<Load>>(url);
   }
 
   createLoad(command: CreateLoad): Observable<ResponseResult> {
-    const url = `${this.host}/loads`;
-    const body = JSON.stringify(command);
-
-    return this.httpClient
-        .post<ResponseResult>(url, body, {headers: this.headers})
-        .pipe(catchError((err) => this.handleError(err)));
+    const url = `/loads`;
+    return this.post<ResponseResult, CreateLoad>(url, command);
   }
 
   updateLoad(command: UpdateLoad): Observable<ResponseResult> {
-    const url = `${this.host}/loads/${command.id}`;
-    const body = JSON.stringify(command);
-
-    return this.httpClient
-        .put<ResponseResult>(url, body, {headers: this.headers})
-        .pipe(catchError((err) => this.handleError(err)));
+    const url = `/loads/${command.id}`;
+    return this.put<ResponseResult, UpdateLoad>(url, command);
   }
 
   deleteLoad(loadId: string): Observable<ResponseResult> {
-    const url = `${this.host}/loads/${loadId}`;
-
-    return this.httpClient
-        .delete<ResponseResult>(url)
-        .pipe(catchError((err) => this.handleError(err)));
+    const url = `/loads/${loadId}`;
+    return this.delete<ResponseResult>(url);
   }
 
   // #endregion
@@ -122,54 +106,34 @@ export class ApiService {
   // #region Truck API
 
   getTruck(truckId: string): Observable<ResponseResult<Truck>> {
-    const url = `${this.host}/trucks/${truckId}`;
-    return this.httpClient
-        .get<ResponseResult<Truck>>(url)
-        .pipe(catchError((err) => this.handleError(err)));
+    const url = `/trucks/${truckId}`;
+    return this.get<ResponseResult<Truck>>(url);
   }
 
-  getTrucks(searchQuery = '', orderBy = '', page = 1, pageSize = 10): Observable<PagedResponseResult<Truck>> {
-    const url = `${this.host}/trucks?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
-    return this.httpClient
-        .get<PagedResponseResult<Truck>>(url)
-        .pipe(catchError((err) => this.handleError(err)));
+  getTrucks(query?: SearchableQuery): Observable<PagedResponseResult<Truck>> {
+    const url = `/trucks?${this.stringfyQuery(query)}`;
+    return this.get<PagedResponseResult<Truck>>(url);
   }
 
-  getTruckDrivers(searchQuery = '', page = 1, pageSize = 10): Observable<PagedResponseResult<TruckDriver>> {
-    if (!searchQuery) {
-      searchQuery = '';
-    }
-
-    const url = `${this.host}/trucks/drivers?search=${searchQuery}&page=${page}&pageSize=${pageSize}`;
-    return this.httpClient
-        .get<PagedResponseResult<TruckDriver>>(url)
-        .pipe(catchError((err) => this.handleError(err)));
+  getTruckDrivers(query?: SearchableQuery): Observable<PagedResponseResult<TruckDriver>> {
+    const url = `/trucks/drivers?${this.stringfyQuery(query)}`;
+    return this.get<PagedResponseResult<TruckDriver>>(url);
   }
 
   createTruck(command: CreateTruck): Observable<ResponseResult> {
-    const url = `${this.host}/trucks`;
-    const body = JSON.stringify(command);
-
-    return this.httpClient
-        .post<ResponseResult>(url, body, {headers: this.headers})
-        .pipe(catchError((err) => this.handleError(err)));
+    const url = `/trucks`;
+    return this.post<ResponseResult, CreateTruck>(url, command);
   }
 
   updateTruck(command: UpdateTruck): Observable<ResponseResult> {
-    const url = `${this.host}/trucks/${command.id}`;
-    const body = JSON.stringify(command);
-
-    return this.httpClient
-        .put<ResponseResult>(url, body, {headers: this.headers})
-        .pipe(catchError((err) => this.handleError(err)));
+    const url = `/trucks/${command.id}`;
+    return this.put<ResponseResult, UpdateTruck>(url, command);
   }
 
   deleteTruck(truckId: string): Observable<ResponseResult> {
-    const url = `${this.host}/trucks/${truckId}`;
+    const url = `/trucks/${truckId}`;
 
-    return this.httpClient
-        .delete<ResponseResult>(url)
-        .pipe(catchError((err) => this.handleError(err)));
+    return this.delete<ResponseResult>(url);
   }
 
   // #endregion
@@ -178,59 +142,38 @@ export class ApiService {
   // #region Employee API
 
   getEmployee(userId: string): Observable<ResponseResult<Employee>> {
-    const url = `${this.host}/employees/${userId}`;
-    return this.httpClient
-        .get<ResponseResult<Employee>>(url)
-        .pipe(catchError((err) => this.handleError(err)));
+    const url = `/employees/${userId}`;
+    return this.get<ResponseResult<Employee>>(url);
   }
 
-  getEmployees(searchQuery = '', orderBy = '', page = 1, pageSize = 10): Observable<PagedResponseResult<Employee>> {
-    const url = `${this.host}/employees?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
-    return this.httpClient
-        .get<PagedResponseResult<Employee>>(url)
-        .pipe(catchError((err) => this.handleError(err)));
+  getEmployees(query?: SearchableQuery): Observable<PagedResponseResult<Employee>> {
+    const url = `/employees?${this.stringfyQuery(query)}`;
+    return this.get<PagedResponseResult<Employee>>(url);
   }
 
-  getDrivers(searchQuery = '', orderBy = '', page = 1, pageSize = 10): Observable<PagedResponseResult<Employee>> {
-    const url = `${this.host}/employees?search=${searchQuery}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}&role=tenant.driver`;
-    return this.httpClient
-        .get<PagedResponseResult<Employee>>(url)
-        .pipe(catchError((err) => this.handleError(err)));
+  getDrivers(query?: SearchableQuery): Observable<PagedResponseResult<Employee>> {
+    const url = `/employees?${this.stringfyQuery(query)}&role=tenant.driver`;
+    return this.get<PagedResponseResult<Employee>>(url);
   }
 
-  createEmployee(employee: CreateEmployee): Observable<ResponseResult> {
-    const url = `${this.host}/employees`;
-    const body = JSON.stringify(employee);
-
-    return this.httpClient
-        .post<ResponseResult>(url, body, {headers: this.headers})
-        .pipe(catchError((err) => this.handleError(err)));
+  createEmployee(command: CreateEmployee): Observable<ResponseResult> {
+    const url = `/employees`;
+    return this.post<ResponseResult, CreateEmployee>(url, command);
   }
 
-  removeRoleFromEmployee(employee: RemoveEmployeeRole): Observable<ResponseResult> {
-    const url = `${this.host}/employees/${employee.userId}/remove-role`;
-    const body = JSON.stringify(employee);
-
-    return this.httpClient
-        .post<ResponseResult>(url, body, {headers: this.headers})
-        .pipe(catchError((err) => this.handleError(err)));
+  removeRoleFromEmployee(command: RemoveEmployeeRole): Observable<ResponseResult> {
+    const url = `/employees/${command.userId}/remove-role`;
+    return this.post<ResponseResult, RemoveEmployeeRole>(url, command);
   }
 
-  updateEmployee(employee: UpdateEmployee): Observable<ResponseResult> {
-    const url = `${this.host}/employees/${employee.userId}`;
-    const body = JSON.stringify(employee);
-
-    return this.httpClient
-        .put<ResponseResult>(url, body, {headers: this.headers})
-        .pipe(catchError((err) => this.handleError(err)));
+  updateEmployee(command: UpdateEmployee): Observable<ResponseResult> {
+    const url = `/employees/${command.userId}`;
+    return this.put<ResponseResult, UpdateEmployee>(url, command);
   }
 
   deleteEmployee(employeeId: string): Observable<ResponseResult> {
-    const url = `${this.host}/employees/${employeeId}`;
-
-    return this.httpClient
-        .delete<ResponseResult>(url)
-        .pipe(catchError((err) => this.handleError(err)));
+    const url = `/employees/${employeeId}`;
+    return this.delete<ResponseResult>(url);
   }
 
   // #endregion
@@ -238,15 +181,9 @@ export class ApiService {
 
   // #region Tenant Role API
 
-  getRoles(searchQuery = '', page = 1, pageSize = 10): Observable<PagedResponseResult<Role>> {
-    if (!searchQuery) {
-      searchQuery = '';
-    }
-
-    const url = `${this.host}/tenant-roles?search=${searchQuery}&page=${page}&pageSize=${pageSize}`;
-    return this.httpClient
-        .get<PagedResponseResult<Role>>(url)
-        .pipe(catchError((err) => this.handleError(err)));
+  getRoles(query?: SearchableQuery): Observable<PagedResponseResult<Role>> {
+    const url = `/tenant-roles?${this.stringfyQuery(query)}`;
+    return this.get<PagedResponseResult<Role>>(url);
   }
 
   // #endregion
@@ -255,15 +192,12 @@ export class ApiService {
   // #region Stats API
 
   getCompanyStats(): Observable<ResponseResult<CompanyStats>> {
-    const url = `${this.host}/stats/company`;
-
-    return this.httpClient
-        .get<ResponseResult<CompanyStats>>(url)
-        .pipe(catchError((err) => this.handleError(err)));
+    const url = `/stats/company`;
+    return this.get<ResponseResult<CompanyStats>>(url);
   }
 
   getDailyGrosses(startDate: Date, endDate?: Date, truckId?: string): Observable<ResponseResult<DailyGrosses>> {
-    let url = `${this.host}/stats/daily-grosses?startDate=${startDate.toJSON()}`;
+    let url = `/stats/daily-grosses?startDate=${startDate.toJSON()}`;
 
     if (endDate) {
       url += `&endDate=${endDate.toJSON()}`;
@@ -272,13 +206,11 @@ export class ApiService {
       url += `&truckId=${truckId}`;
     }
 
-    return this.httpClient
-        .get<ResponseResult<DailyGrosses>>(url)
-        .pipe(catchError((err) => this.handleError(err)));
+    return this.get<ResponseResult<DailyGrosses>>(url);
   }
 
   getMonthlyGrosses(startDate: Date, endDate?: Date, truckId?: string): Observable<ResponseResult<MonthlyGrosses>> {
-    let url = `${this.host}/stats/monthly-grosses?startDate=${startDate.toJSON()}`;
+    let url = `/stats/monthly-grosses?startDate=${startDate.toJSON()}`;
 
     if (endDate) {
       url += `&endDate=${endDate.toJSON()}`;
@@ -287,17 +219,12 @@ export class ApiService {
       url += `&truckId=${truckId}`;
     }
 
-    return this.httpClient
-        .get<ResponseResult<MonthlyGrosses>>(url)
-        .pipe(catchError((err) => this.handleError(err)));
+    return this.get<ResponseResult<MonthlyGrosses>>(url);
   }
 
   getTrucksStats(startDate: Date, endDate: Date, orderBy = '', page = 1, pageSize = 10): Observable<PagedResponseResult<TruckStats>> {
-    const url = `${this.host}/stats/trucks?startDate=${startDate.toJSON()}&endDate=${endDate.toJSON()}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
-
-    return this.httpClient
-        .get<ResponseResult<MonthlyGrosses>>(url)
-        .pipe(catchError((err) => this.handleError(err)));
+    const url = `/stats/trucks?startDate=${startDate.toJSON()}&endDate=${endDate.toJSON()}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
+    return this.get<PagedResponseResult<TruckStats>>(url);
   }
 
   // #endregion
@@ -306,20 +233,43 @@ export class ApiService {
   // #region Notifications API
 
   getNotifications(startDate: Date, endDate: Date): Observable<ResponseResult<Notification[]>> {
-    const url = `${this.host}/notifications?startDate=${startDate.toJSON()}&endDate=${endDate.toJSON()}`;
-
-    return this.httpClient
-        .get<ResponseResult<Notification>>(url)
-        .pipe(catchError((err) => this.handleError(err)));
+    const url = `/notifications?startDate=${startDate.toJSON()}&endDate=${endDate.toJSON()}`;
+    return this.get<ResponseResult<Notification[]>>(url);
   }
 
   updateNotification(commad: UpdateNotification): Observable<ResponseResult> {
-    const url = `${this.host}/notifications/${commad.id}`;
-    const body = JSON.stringify(commad);
+    const url = `/notifications/${commad.id}`;
+    return this.put<ResponseResult, UpdateNotification>(url, commad);
+  }
 
-    return this.httpClient
-        .put<ResponseResult>(url, body, {headers: this.headers})
-        .pipe(catchError((err) => this.handleError(err)));
+  // #endregion
+
+
+  // #region Customers API
+
+  getCustomer(id: string): Observable<ResponseResult<Customer>> {
+    const url = `/customers/${id}`;
+    return this.get<ResponseResult<Customer>>(url);
+  }
+
+  getCustomers(query?: SearchableQuery): Observable<PagedResponseResult<Customer>> {
+    const url = `/customers?${this.stringfyQuery(query)}`;
+    return this.get<PagedResponseResult<Customer>>(url);
+  }
+
+  createCustomer(command: CreateCustomer): Observable<ResponseResult> {
+    const url = `/customers`;
+    return this.post<ResponseResult, CreateCustomer>(url, command);
+  }
+
+  updateCustomer(command: UpdateCustomer): Observable<ResponseResult> {
+    const url = `/customers/${command.id}`;
+    return this.put(url, command);
+  }
+
+  deleteCustomer(customerId: string): Observable<ResponseResult> {
+    const url = `/customers/${customerId}`;
+    return this.delete(url);
   }
 
   // #endregion
@@ -335,6 +285,42 @@ export class ApiService {
     }
 
     return sortOrder <= -1 ? `-${sortField}` : sortField;
+  }
+
+  private get<TResponse>(endpoint: string): Observable<TResponse> {
+    return this.httpClient
+      .get<TResponse>(this.host + endpoint)
+      .pipe(catchError((err) => this.handleError(err)));
+  }
+
+  private post<TResponse, TBody>(endpoint: string, body: TBody): Observable<TResponse> {
+    const bodyJson = JSON.stringify(body);
+
+    return this.httpClient
+      .post<TResponse>(this.host + endpoint, bodyJson, {headers: this.headers})
+      .pipe(catchError((err) => this.handleError(err)));
+  }
+
+  private put<TResponse, TBody>(endpoint: string, body: TBody): Observable<TResponse> {
+    const bodyJson = JSON.stringify(body);
+
+    return this.httpClient
+      .put<TResponse>(this.host + endpoint, bodyJson, {headers: this.headers})
+      .pipe(catchError((err) => this.handleError(err)));
+  }
+
+  private delete<TResponse>(endpoint: string): Observable<TResponse> {
+    return this.httpClient
+      .delete<TResponse>(this.host + endpoint)
+      .pipe(catchError((err) => this.handleError(err)));
+  }
+
+  private stringfyQuery(query?: SearchableQuery): string {
+    const search = query?.search ?? '';
+    const orderBy = query?.orderBy ?? '';
+    const page = query?.page ?? 1;
+    const pageSize = query?.pageSize ?? 10;
+    return `search=${search}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
   }
 
   private handleError(responseData: any): Observable<any> {

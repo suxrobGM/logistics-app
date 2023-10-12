@@ -28,45 +28,47 @@ import {ApiService} from '@core/services';
   ],
 })
 export class ListEmployeeComponent implements OnInit {
-  employees: Employee[];
-  isBusy: boolean;
-  totalRecords: number;
-  first: number;
+  public employees: Employee[];
+  public isLoading: boolean;
+  public totalRecords: number;
+  public first: number;
 
   constructor(private apiService: ApiService) {
     this.employees = [];
-    this.isBusy = false;
+    this.isLoading = false;
     this.totalRecords = 0;
     this.first = 0;
   }
 
   ngOnInit(): void {
-    this.isBusy = true;
+    this.isLoading = true;
   }
 
-  search(event: any) {
-    const query = event.target.value;
+  search(event: Event) {
+    const searchValue = (event.target as HTMLInputElement).value;
 
-    this.apiService.getEmployees(query, '', 1).subscribe((result) => {
+    this.apiService.getEmployees({search: searchValue}).subscribe((result) => {
       if (result.isSuccess && result.data) {
         this.employees = result.data;
-        this.totalRecords = result.totalItems!;
+        this.totalRecords = result.totalItems;
       }
     });
   }
 
   load(event: TableLazyLoadEvent) {
-    this.isBusy = true;
-    const page = event.first! / event.rows! + 1;
+    this.isLoading = true;
+    const first = event.first ?? 1;
+    const rows = event.rows ?? 10;
+    const page = first / rows + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
-    this.apiService.getEmployees('', sortField, page, event.rows!).subscribe((result) => {
+    this.apiService.getEmployees({orderBy: sortField, page: page, pageSize: rows}).subscribe((result) => {
       if (result.isSuccess && result.data) {
         this.employees = result.data;
-        this.totalRecords = result.totalItems!;
+        this.totalRecords = result.totalItems;
       }
 
-      this.isBusy = false;
+      this.isLoading = false;
     });
   }
 }

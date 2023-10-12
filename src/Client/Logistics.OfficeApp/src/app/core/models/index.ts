@@ -28,3 +28,6 @@ export * from './invoice';
 export * from './payment';
 export * from './payrollPayment';
 export * from './subscriptionPayment';
+export * from './searchableQuery';
+export * from './createCustomer';
+export * from './updateCustomer';

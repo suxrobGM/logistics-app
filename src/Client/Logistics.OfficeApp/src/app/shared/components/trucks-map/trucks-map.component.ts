@@ -57,12 +57,12 @@ export class TrucksMapComponent implements OnInit, OnDestroy {
   }
 
   private fetchTrucksData() {
-    this.apiService.getTrucks('', '', 1, 100).subscribe((result) => {
-      if (!result.isSuccess) {
+    this.apiService.getTrucks({pageSize: 100}).subscribe((result) => {
+      if (!result.isSuccess || !result.data) {
         return;
       }
 
-      const truckLocations: TruckGeolocation[] = result.data!.flatMap((truck) => {
+      const truckLocations: TruckGeolocation[] = result.data.flatMap((truck) => {
         if (truck.currentLocation) {
           return [{
             latitude: truck.currentLocationLat!,

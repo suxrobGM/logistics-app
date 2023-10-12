@@ -39,10 +39,10 @@ export class ListTruckComponent {
     this.totalRecords = 0;
   }
 
-  search(event: any) {
-    const query = event.target.value;
+  search(event: Event) {
+    const searchValue = (event.target as HTMLInputElement).value;
 
-    this.apiService.getTrucks(query, '', 1).subscribe((result) => {
+    this.apiService.getTrucks({search: searchValue}).subscribe((result) => {
       if (result.isSuccess && result.data) {
         this.trucks = result.data;
         this.totalRecords = result.totalItems;
@@ -52,10 +52,12 @@ export class ListTruckComponent {
 
   load(event: TableLazyLoadEvent) {
     this.isLoading = true;
-    const page = event.first! / event.rows! + 1;
+    const first = event.first ?? 1;
+    const rows = event.rows ?? 10;
+    const page = first / rows + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
-    this.apiService.getTrucks('', sortField, page, event.rows!).subscribe((result) => {
+    this.apiService.getTrucks({orderBy: sortField, page: page, pageSize: rows}).subscribe((result) => {
       if (result.isSuccess && result.data) {
         this.trucks = result.data;
         this.totalRecords = result.totalItems;
