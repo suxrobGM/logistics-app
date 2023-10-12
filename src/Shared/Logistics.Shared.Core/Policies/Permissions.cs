@@ -35,6 +35,14 @@ public static class Permissions
         public const string Delete = $"{nameof(Permissions)}.{nameof(Employees)}.Delete";
     }
     
+    public static class Customers
+    {
+        public const string Create = $"{nameof(Permissions)}.{nameof(Customers)}.Create";
+        public const string View = $"{nameof(Permissions)}.{nameof(Customers)}.View";
+        public const string Edit = $"{nameof(Permissions)}.{nameof(Customers)}.Edit";
+        public const string Delete = $"{nameof(Permissions)}.{nameof(Customers)}.Delete";
+    }
+    
     public static class Drivers
     {
         public const string View = $"{nameof(Permissions)}.{nameof(Drivers)}.View";
