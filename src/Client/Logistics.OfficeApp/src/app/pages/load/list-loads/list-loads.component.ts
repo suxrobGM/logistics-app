@@ -14,8 +14,8 @@ import {DistanceUnitPipe} from '@shared/pipes';
 
 
 @Component({
-  selector: 'app-list-load',
-  templateUrl: './list-load.component.html',
+  selector: 'app-list-loads',
+  templateUrl: './list-loads.component.html',
   styleUrls: [],
   encapsulation: ViewEncapsulation.None,
   standalone: true,

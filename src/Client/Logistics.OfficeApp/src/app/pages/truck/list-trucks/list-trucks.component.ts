@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {DatePipe} from '@angular/common';
+import {Component} from '@angular/core';
+import {CommonModule, PercentPipe} from '@angular/common';
 import {RouterLink} from '@angular/router';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {InputTextModule} from 'primeng/inputtext';
@@ -7,16 +7,17 @@ import {SharedModule} from 'primeng/api';
 import {CardModule} from 'primeng/card';
 import {TooltipModule} from 'primeng/tooltip';
 import {ButtonModule} from 'primeng/button';
-import {Employee} from '@core/models';
+import {Truck} from '@core/models';
 import {ApiService} from '@core/services';
 
 
 @Component({
-  selector: 'app-list-employee',
-  templateUrl: './list-employee.component.html',
-  styleUrls: [],
+  selector: 'app-list-trucks',
+  templateUrl: './list-trucks.component.html',
+  styleUrls: ['./list-trucks.component.scss'],
   standalone: true,
   imports: [
+    CommonModule,
     ButtonModule,
     TooltipModule,
     RouterLink,
@@ -24,49 +25,43 @@ import {ApiService} from '@core/services';
     TableModule,
     SharedModule,
     InputTextModule,
-    DatePipe,
+    PercentPipe,
   ],
 })
-export class ListEmployeeComponent implements OnInit {
-  employees: Employee[];
-  isBusy: boolean;
-  totalRecords: number;
-  first: number;
+export class ListTruckComponent {
+  public trucks: Truck[];
+  public isLoading: boolean;
+  public totalRecords: number;
 
   constructor(private apiService: ApiService) {
-    this.employees = [];
-    this.isBusy = false;
+    this.trucks = [];
+    this.isLoading = false;
     this.totalRecords = 0;
-    this.first = 0;
-  }
-
-  ngOnInit(): void {
-    this.isBusy = true;
   }
 
   search(event: any) {
     const query = event.target.value;
 
-    this.apiService.getEmployees(query, '', 1).subscribe((result) => {
+    this.apiService.getTrucks(query, '', 1).subscribe((result) => {
       if (result.isSuccess && result.data) {
-        this.employees = result.data;
-        this.totalRecords = result.totalItems!;
+        this.trucks = result.data;
+        this.totalRecords = result.totalItems;
       }
     });
   }
 
   load(event: TableLazyLoadEvent) {
-    this.isBusy = true;
+    this.isLoading = true;
     const page = event.first! / event.rows! + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
-    this.apiService.getEmployees('', sortField, page, event.rows!).subscribe((result) => {
+    this.apiService.getTrucks('', sortField, page, event.rows!).subscribe((result) => {
       if (result.isSuccess && result.data) {
-        this.employees = result.data;
-        this.totalRecords = result.totalItems!;
+        this.trucks = result.data;
+        this.totalRecords = result.totalItems;
       }
 
-      this.isBusy = false;
+      this.isLoading = false;
     });
   }
 }

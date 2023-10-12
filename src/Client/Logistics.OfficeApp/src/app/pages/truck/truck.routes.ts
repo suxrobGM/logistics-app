@@ -2,7 +2,7 @@ import {Routes} from '@angular/router';
 import {Permissions} from '@core/helpers';
 import {AuthGuard} from '@core/guards';
 import {EditTruckComponent} from './edit-truck/edit-truck.component';
-import {ListTruckComponent} from './list-truck/list-truck.component';
+import {ListTruckComponent} from './list-trucks/list-trucks.component';
 import {TruckDetailsComponent} from './truck-details/truck-details.component';
 
 

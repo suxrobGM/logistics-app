@@ -1,1 +1,1 @@
-export {EMPLOYEE_ROUTES} from './employee.routes';
+export * from './employee.routes';

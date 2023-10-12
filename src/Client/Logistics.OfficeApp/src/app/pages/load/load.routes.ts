@@ -2,7 +2,7 @@ import {Routes} from '@angular/router';
 import {Permissions} from '@core/helpers';
 import {AuthGuard} from '@core/guards';
 import {EditLoadComponent} from './edit-load/edit-load.component';
-import {ListLoadComponent} from './list-load/list-load.component';
+import {ListLoadComponent} from './list-loads/list-loads.component';
 import {AddLoadComponent} from './add-load/add-load.component';
 
 
