@@ -1,4 +1,4 @@
-import {LoadStatus} from './loadStatus';
+import {LoadStatus} from '@core/enums';
 
 export interface UpdateLoad {
   id: string;

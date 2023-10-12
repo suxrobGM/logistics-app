@@ -10,7 +10,8 @@ import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {AppConfig} from '@configs';
 import {AuthService} from '@core/auth';
-import {CreateLoad, EnumType, LoadStatus, LoadStatuses} from '@core/models';
+import {LoadStatus} from '@core/enums';
+import {CreateLoad} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {DistanceConverter} from '@shared/utils';
 import {
@@ -50,7 +51,6 @@ export class AddLoadComponent implements OnInit {
   public isBusy: boolean;
   public form: FormGroup;
   public suggestedDrivers: TruckData[];
-  public loadStatuses: EnumType[];
   public originCoords?: [number, number] | null;
   public destinationCoords?: [number, number] | null;
 
@@ -63,7 +63,6 @@ export class AddLoadComponent implements OnInit {
     this.accessToken = AppConfig.mapboxToken;
     this.isBusy = false;
     this.suggestedDrivers = [];
-    this.loadStatuses = LoadStatuses;
     this.distanceMeters = 0;
 
     this.form = new FormGroup({

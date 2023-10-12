@@ -11,7 +11,8 @@ import {DropdownModule} from 'primeng/dropdown';
 import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {AppConfig} from '@configs';
-import {UpdateLoad, EnumType, LoadStatus, LoadStatuses} from '@core/models';
+import {EnumValue, LoadStatus, LoadStatusEnum, convertEnumToArray} from '@core/enums';
+import {UpdateLoad} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {DistanceConverter} from '@shared/utils';
 import {
@@ -21,6 +22,7 @@ import {
   SelectedAddressEvent,
 } from '@shared/components';
 import {TruckData, TruckHelper} from '../shared';
+
 
 
 @Component({
@@ -57,7 +59,7 @@ export class EditLoadComponent implements OnInit {
   public isBusy: boolean;
   public form: FormGroup;
   public suggestedDrivers: TruckData[];
-  public loadStatuses: EnumType[];
+  public loadStatuses: EnumValue[];
   public originCoords?: [number, number] | null;
   public destinationCoords?: [number, number] | null;
 
@@ -71,7 +73,7 @@ export class EditLoadComponent implements OnInit {
     this.accessToken = AppConfig.mapboxToken;
     this.isBusy = false;
     this.suggestedDrivers = [];
-    this.loadStatuses = LoadStatuses;
+    this.loadStatuses = convertEnumToArray(LoadStatusEnum);
     this.distanceMeters = 0;
 
     this.form = new FormGroup({

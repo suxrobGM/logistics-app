@@ -7,9 +7,9 @@ import {SharedModule} from 'primeng/api';
 import {CardModule} from 'primeng/card';
 import {TooltipModule} from 'primeng/tooltip';
 import {ButtonModule} from 'primeng/button';
+import {LoadStatus, LoadStatusEnum, getEnumDescription} from '@core/enums';
 import {Load} from '@core/models';
 import {ApiService} from '@core/services';
-import {LoadStatus, LoadStatuses} from '@core/models';
 import {DistanceUnitPipe} from '@shared/pipes';
 
 
@@ -51,7 +51,7 @@ export class ListLoadComponent {
     this.apiService.getLoads(query, false).subscribe((result) => {
       if (result.isSuccess && result.data) {
         this.loads = result.data;
-        this.totalRecords = result.totalItems!;
+        this.totalRecords = result.totalItems;
       }
     });
   }
@@ -76,6 +76,6 @@ export class ListLoadComponent {
   }
 
   getLoadStatusName(status: LoadStatus): string {
-    return LoadStatuses[status - 1].description;
+    return getEnumDescription(LoadStatusEnum, status.toString());
   }
 }

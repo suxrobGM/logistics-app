@@ -1,6 +1,4 @@
-import {PaymentFor} from './paymentFor';
-import {PaymentMethod} from './paymentMethod';
-import {PaymentStatus} from './paymentStatus';
+import {PaymentFor, PaymentMethod, PaymentStatus} from '@core/enums';
 
 
 export interface Payment {

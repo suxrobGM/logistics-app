@@ -7,7 +7,8 @@ import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {CardModule} from 'primeng/card';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
-import {Employee, UserRoles} from '@core/models';
+import {UserRole} from '@core/enums';
+import {Employee} from '@core/models';
 import {ApiService} from '@core/services';
 import {AuthService} from '@core/auth';
 import {ChangeRoleDialogComponent} from '../components';
@@ -103,13 +104,13 @@ export class EditEmployeeComponent implements OnInit {
 
     const employeeRole = employeeRoles[0];
 
-    if (userRoles.includes(UserRoles.AppSuperAdmin) || userRoles.includes(UserRoles.AppAdmin)) {
+    if (userRoles.includes(UserRole.AppSuperAdmin) || userRoles.includes(UserRole.AppAdmin)) {
       this.canChangeRole = true;
     }
-    else if (userRoles.includes(UserRoles.Owner) && employeeRole !== UserRoles.Owner) {
+    else if (userRoles.includes(UserRole.Owner) && employeeRole !== UserRole.Owner) {
       this.canChangeRole = true;
     }
-    else if (userRoles.includes(UserRoles.Manager) && employeeRole !== UserRoles.Owner && employeeRole !== UserRoles.Manager) {
+    else if (userRoles.includes(UserRole.Manager) && employeeRole !== UserRole.Owner && employeeRole !== UserRole.Manager) {
       this.canChangeRole = true;
     }
   }
