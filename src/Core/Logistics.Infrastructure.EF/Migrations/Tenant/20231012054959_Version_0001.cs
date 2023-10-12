@@ -31,7 +31,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsRead = table.Column<bool>(type: "bit", nullable: false),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -125,7 +125,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PaymentId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    PaymentId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -134,7 +134,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         name: "FK_SubscriptionPayments_Payments_PaymentId",
                         column: x => x.PaymentId,
                         principalTable: "Payments",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -235,7 +236,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     DispatchedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PickUpDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeliveryDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     InvoiceId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     AssignedTruckId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     AssignedDispatcherId = table.Column<string>(type: "nvarchar(450)", nullable: true),
@@ -251,8 +252,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         name: "FK_Loads_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Loads_Employees_AssignedDispatcherId",
                         column: x => x.AssignedDispatcherId,
@@ -278,7 +278,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PaymentId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    PaymentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     EmployeeId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
@@ -293,7 +293,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         name: "FK_PayrollPayments_Payments_PaymentId",
                         column: x => x.PaymentId,
                         principalTable: "Payments",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -354,8 +355,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "IX_PayrollPayments_PaymentId",
                 table: "PayrollPayments",
                 column: "PaymentId",
-                unique: true,
-                filter: "[PaymentId] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
@@ -366,8 +366,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "IX_SubscriptionPayments_PaymentId",
                 table: "SubscriptionPayments",
                 column: "PaymentId",
-                unique: true,
-                filter: "[PaymentId] IS NOT NULL");
+                unique: true);
         }
 
         /// <inheritdoc />

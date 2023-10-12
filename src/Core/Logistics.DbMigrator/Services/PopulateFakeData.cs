@@ -305,7 +305,7 @@ internal class PopulateFakeData
             {
                 Title = $"Test notification {i}",
                 Message = $"Notification {i} description",
-                Created = _random.Date(DateTime.Today.AddMonths(-1), DateTime.Today.AddDays(-1))
+                CreatedDate = _random.Date(DateTime.Today.AddMonths(-1), DateTime.Today.AddDays(-1))
             };
 
             await _tenantRepository.AddAsync(notification);

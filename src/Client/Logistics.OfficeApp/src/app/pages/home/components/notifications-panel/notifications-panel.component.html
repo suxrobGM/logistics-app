@@ -15,7 +15,7 @@
     <ng-template #notificationsList>
       <div *ngFor="let notification of notifications; trackBy: trackByFn" 
           [ngClass]="{'bg-lighter': !notification.isRead}"
-          class="notification-item p-1 border-bottom"
+          class="notification-item my-1 border-bottom"
           (click)="showNotification(notification)"
           role="presentation">
         
@@ -25,7 +25,7 @@
             {{notification.message}}
           </div>
           <div class="col-2">
-            <small class="text-muted">{{notification.created | timeAgo}}</small>
+            <small class="text-muted">{{notification.createdDate | timeAgo}}</small>
           </div>
         </div>
       </div>

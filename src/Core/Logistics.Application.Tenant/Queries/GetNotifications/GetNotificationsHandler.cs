@@ -17,7 +17,7 @@ internal sealed class GetNotificationsHandler : RequestHandler<GetNotificationsQ
         CancellationToken cancellationToken)
     {
         var notificationsList =
-            await _tenantRepository.GetListAsync<Notification>(i => i.Created > req.StartDate && i.Created <= req.EndDate);
+            await _tenantRepository.GetListAsync<Notification>(i => i.CreatedDate >= req.StartDate && i.CreatedDate <= req.EndDate);
 
         var notificationsDto = notificationsList.Select(i => i.ToDto()).ToArray();
         return ResponseResult<NotificationDto[]>.CreateSuccess(notificationsDto);

@@ -3,5 +3,5 @@ export interface Notification {
   title: string;
   message: string;
   isRead: boolean;
-  created: string;
+  createdDate: string;
 }

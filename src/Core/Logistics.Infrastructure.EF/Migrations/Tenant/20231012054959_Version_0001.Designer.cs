@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.Infrastructure.EF.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20231010145114_Version_0001")]
+    [Migration("20231012054959_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -165,7 +165,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CustomerId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("DeliveryCost")
@@ -242,7 +241,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("Created")
+                    b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsRead")
@@ -303,6 +302,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PaymentId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("StartDate")
@@ -313,8 +313,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.HasIndex("EmployeeId");
 
                     b.HasIndex("PaymentId")
-                        .IsUnique()
-                        .HasFilter("[PaymentId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("PayrollPayments", (string)null);
                 });
@@ -328,6 +327,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PaymentId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("StartDate")
@@ -336,8 +336,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.HasKey("Id");
 
                     b.HasIndex("PaymentId")
-                        .IsUnique()
-                        .HasFilter("[PaymentId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("SubscriptionPayments", (string)null);
                 });
@@ -498,9 +497,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
                     b.HasOne("Logistics.Domain.Entities.Customer", "Customer")
                         .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CustomerId");
 
                     b.HasOne("Logistics.Domain.Entities.Invoice", "Invoice")
                         .WithOne("Load")
@@ -523,7 +520,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
                     b.HasOne("Logistics.Domain.Entities.Payment", "Payment")
                         .WithOne()
-                        .HasForeignKey("Logistics.Domain.Entities.PayrollPayment", "PaymentId");
+                        .HasForeignKey("Logistics.Domain.Entities.PayrollPayment", "PaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Employee");
 
@@ -534,7 +533,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 {
                     b.HasOne("Logistics.Domain.Entities.Payment", "Payment")
                         .WithOne()
-                        .HasForeignKey("Logistics.Domain.Entities.SubscriptionPayment", "PaymentId");
+                        .HasForeignKey("Logistics.Domain.Entities.SubscriptionPayment", "PaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Payment");
                 });

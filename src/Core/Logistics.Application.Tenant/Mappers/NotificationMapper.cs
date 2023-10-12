@@ -11,7 +11,8 @@ public static class NotificationMapper
             Id = entity.Id,
             Title = entity.Title,
             Message = entity.Message,
-            IsRead = entity.IsRead
+            IsRead = entity.IsRead,
+            CreatedDate = entity.CreatedDate
         };
     }
 }
