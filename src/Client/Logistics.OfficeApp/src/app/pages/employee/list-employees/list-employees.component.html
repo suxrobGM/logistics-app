@@ -4,7 +4,7 @@
     class="p-button-lg p-button-rounded p-button-text text-black ms-2"
     icon="bi bi-plus-square-fill"
     pTooltip="Add a new employee"
-    routerLink="/employee/add">
+    routerLink="/employees/add">
   </button>
 </div>
 <hr class="w-100">
@@ -53,12 +53,12 @@
         <ng-template pTemplate="body" let-employee>
           <tr>
             <td>
-              <a [routerLink]="['/employee/edit', employee.id]">
+              <a [routerLink]="['/employees/edit', employee.id]">
                 {{employee.firstName}}
               </a>
             </td>
             <td>
-              <a [routerLink]="['/employee/edit', employee.id]">
+              <a [routerLink]="['/employees/edit', employee.id]">
                 {{employee.lastName}}
               </a>
             </td>

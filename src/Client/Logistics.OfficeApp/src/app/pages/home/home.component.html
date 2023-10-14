@@ -31,7 +31,7 @@
         <ng-template pTemplate="body" let-load>
           <tr>
             <td>
-              <a [routerLink]="['/load/edit', load.id]">
+              <a [routerLink]="['/loads/edit', load.id]">
                 {{load.refId}}
               </a>
             </td>
@@ -39,7 +39,7 @@
               {{load.currentLocation}}
             </td>
             <td>
-              <a [routerLink]="['/truck/details', load.assignedTruckId]">
+              <a [routerLink]="['/trucks/details', load.assignedTruckId]">
                 {{load.assignedTruckNumber}}
               </a>
             </td>
@@ -50,12 +50,12 @@
             <td colspan="4">
               <button pButton 
                 class="p-button-raised" 
-                routerLink="/load/add">
+                routerLink="/loads/add">
                 Add
               </button>
               <button pButton 
                 class="p-button-raised ms-2" 
-                routerLink="/load/list">
+                routerLink="/loads">
                 View all loads
               </button>
             </td>

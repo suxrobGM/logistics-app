@@ -9,15 +9,10 @@ import {AddLoadComponent} from './add-load/add-load.component';
 export const LOAD_ROUTES: Routes = [
   {
     path: '',
-    redirectTo: 'list',
-    pathMatch: 'full',
-  },
-  {
-    path: 'list',
     component: ListLoadComponent,
     canActivate: [AuthGuard],
     data: {
-      breadcrumb: 'List',
+      breadcrumb: '',
       permission: Permissions.Loads.View,
     },
   },

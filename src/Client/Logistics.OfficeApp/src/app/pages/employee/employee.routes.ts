@@ -9,15 +9,10 @@ import {ListEmployeeComponent} from './list-employees/list-employees.component';
 export const EMPLOYEE_ROUTES: Routes = [
   {
     path: '',
-    redirectTo: 'list',
-    pathMatch: 'full',
-  },
-  {
-    path: 'list',
     component: ListEmployeeComponent,
     canActivate: [AuthGuard],
     data: {
-      breadcrumb: 'List',
+      breadcrumb: '',
       permission: Permissions.Employees.View,
     },
   },

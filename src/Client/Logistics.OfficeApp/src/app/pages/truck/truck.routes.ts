@@ -9,15 +9,10 @@ import {TruckDetailsComponent} from './truck-details/truck-details.component';
 export const TRUCK_ROUTES: Routes = [
   {
     path: '',
-    redirectTo: 'list',
-    pathMatch: 'full',
-  },
-  {
-    path: 'list',
     component: ListTruckComponent,
     canActivate: [AuthGuard],
     data: {
-      breadcrumb: 'List',
+      breadcrumb: '',
       permission: Permissions.Trucks.View,
     },
   },

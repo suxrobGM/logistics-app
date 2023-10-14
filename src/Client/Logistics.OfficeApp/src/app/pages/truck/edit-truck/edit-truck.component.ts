@@ -76,8 +76,8 @@ export class EditTruckComponent implements OnInit {
     this.fetchTruck(this.id);
   }
 
-  searchDriver(event: any) {
-    this.apiService.getDrivers(event.query).subscribe((result) => {
+  searchDriver(event: {query: string}) {
+    this.apiService.getDrivers({search: event.query}).subscribe((result) => {
       if (result.isSuccess && result.data) {
         this.suggestedDrivers = result.data;
       }
