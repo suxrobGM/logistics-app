@@ -14,7 +14,7 @@ internal sealed class UpdateCustomerHandler : RequestHandler<UpdateCustomerComma
     {
         var customerEntity = await _tenantRepository.GetAsync<Customer>(req.Id);
 
-        if (customerEntity == null)
+        if (customerEntity is null)
             return ResponseResult.CreateError($"Could not find a customer with ID '{req.Id}'");
 
         customerEntity.Name = req.Name;

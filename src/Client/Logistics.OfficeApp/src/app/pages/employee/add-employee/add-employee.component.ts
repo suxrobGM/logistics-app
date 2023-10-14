@@ -62,7 +62,7 @@ export class AddEmployeeComponent implements OnInit {
     this.fetchRoles();
   }
 
-  searchUser(event: any) {
+  searchUser(event: {query: string}) {
     this.userService.searchUser(event.query).subscribe((users) => {
       if (users) {
         this.suggestedUsers = users;

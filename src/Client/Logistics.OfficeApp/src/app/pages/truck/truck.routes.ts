@@ -1,5 +1,5 @@
 import {Routes} from '@angular/router';
-import {Permissions} from '@core/helpers';
+import {Permissions} from '@core/enums';
 import {AuthGuard} from '@core/guards';
 import {EditTruckComponent} from './edit-truck/edit-truck.component';
 import {ListTruckComponent} from './list-trucks/list-trucks.component';

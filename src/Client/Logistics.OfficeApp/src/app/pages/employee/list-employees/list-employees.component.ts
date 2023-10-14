@@ -27,7 +27,7 @@ import {ApiService} from '@core/services';
     DatePipe,
   ],
 })
-export class ListEmployeeComponent implements OnInit {
+export class ListEmployeeComponent {
   public employees: Employee[];
   public isLoading: boolean;
   public totalRecords: number;
@@ -40,11 +40,8 @@ export class ListEmployeeComponent implements OnInit {
     this.first = 0;
   }
 
-  ngOnInit(): void {
-    this.isLoading = true;
-  }
-
   search(event: Event) {
+    this.isLoading = true;
     const searchValue = (event.target as HTMLInputElement).value;
 
     this.apiService.getEmployees({search: searchValue}).subscribe((result) => {
@@ -52,6 +49,8 @@ export class ListEmployeeComponent implements OnInit {
         this.employees = result.data;
         this.totalRecords = result.totalItems;
       }
+
+      this.isLoading = false;
     });
   }
 

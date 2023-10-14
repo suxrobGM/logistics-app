@@ -35,6 +35,12 @@
       </a>
     </li>
     <li class="nav-item">
+      <a class="nav-link border-bottom" [routerLink]="['/customers']">
+        <i class="bi bi-building h1" pTooltip="Customers"></i>
+        <span class="ms-2" *ngIf="isOpened">Customers</span>
+      </a>
+    </li>
+    <li class="nav-item">
       <a class="nav-link border-bottom">
         <i *ngIf="isOpened else rightArrowIcon" class="bi bi-arrow-left h1" (click)="toggle()" pTooltip="Minimize menu" role="presentation"></i>
         <ng-template #rightArrowIcon>

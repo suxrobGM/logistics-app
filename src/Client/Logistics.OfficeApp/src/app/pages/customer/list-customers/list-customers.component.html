@@ -1,10 +1,12 @@
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
 <div class="d-flex align-items-center">
-  <h1>List Employees</h1>
+  <h1>List Customers</h1>
   <button pButton pRipple
     class="p-button-lg p-button-rounded p-button-text text-black ms-2"
     icon="bi bi-plus-square-fill"
-    pTooltip="Add a new employee"
-    routerLink="/employee/add">
+    pTooltip="Add a new customer"
+    routerLink="/customers/add">
   </button>
 </div>
 <hr class="w-100">
@@ -12,9 +14,9 @@
 <p-card>
   <div class="row">
     <div class="col-12">
-      <p-table [value]="employees" responsiveLayout="scroll" [lazy]="true" [paginator]="true"
+      <p-table [value]="customers" responsiveLayout="scroll" [lazy]="true" [paginator]="true"
         [showCurrentPageReport]="true" (onLazyLoad)="load($event)" [rows]="10" [(first)]="first"
-        [totalRecords]="totalRecords" [loading]="isBusy" [rowsPerPageOptions]="[10,25,50]">
+        [totalRecords]="totalRecords" [loading]="isLoading" [rowsPerPageOptions]="[10,25,50]">
         <ng-template pTemplate="caption">
           <div class="d-flex">
             <span class="p-input-icon-left">
@@ -25,47 +27,37 @@
         </ng-template>
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="firstName">
-              First Name
-              <p-sortIcon field="firstName"></p-sortIcon>
+            <th pSortableColumn="name">
+              Name
+              <p-sortIcon field="name"></p-sortIcon>
             </th>
-            <th pSortableColumn="lastName">
-              Last Name
-              <p-sortIcon field="lastName"></p-sortIcon>
-            </th>
-            <th pSortableColumn="email">
-              Email
-              <p-sortIcon field="email"></p-sortIcon>
-            </th>
-            <th pSortableColumn="phoneNumber">
-              Phone Number
-              <p-sortIcon field="phoneNumber"></p-sortIcon>
-            </th>
-            <th>
-              Role
-            </th>
-            <th pSortableColumn="joinedDate">
-              Joined Date
-              <p-sortIcon field="joinedDate"></p-sortIcon>
+            <th class="text-center">
+              Action
             </th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-employee>
+        <ng-template pTemplate="body" let-customer>
           <tr>
             <td>
-              <a [routerLink]="['/employee/edit', employee.id]">
-                {{employee.firstName}}
-              </a>
+              {{customer.name}}
             </td>
-            <td>
-              <a [routerLink]="['/employee/edit', employee.id]">
-                {{employee.lastName}}
-              </a>
+            <td class="text-center">
+              <!-- <button pButton 
+                class="p-button-raised"
+                label="View details"
+                [routerLink]="['/customer/details', customer.id]">
+              </button> -->
+              <button pButton 
+                class="p-button-raised ms-2"
+                [routerLink]="['/customers/edit', customer.id]">
+                Edit
+              </button>
+              <button pButton 
+                class="p-button-raised p-button-danger ms-2"
+                (click)="confirmToDelete(customer.id)">
+                Delete
+              </button>
             </td>
-            <td>{{employee.email}}</td>
-            <td>{{employee.phoneNumber}}</td>
-            <td>{{employee.roles[0]?.displayName}}</td>
-            <td>{{employee.joinedDate | date:'mediumDate'}}</td>
           </tr>
         </ng-template>
       </p-table>

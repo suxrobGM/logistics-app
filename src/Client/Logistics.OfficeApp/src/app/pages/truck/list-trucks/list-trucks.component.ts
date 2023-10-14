@@ -40,6 +40,7 @@ export class ListTruckComponent {
   }
 
   search(event: Event) {
+    this.isLoading = true;
     const searchValue = (event.target as HTMLInputElement).value;
 
     this.apiService.getTrucks({search: searchValue}).subscribe((result) => {
@@ -47,6 +48,8 @@ export class ListTruckComponent {
         this.trucks = result.data;
         this.totalRecords = result.totalItems;
       }
+
+      this.isLoading = false;
     });
   }
 

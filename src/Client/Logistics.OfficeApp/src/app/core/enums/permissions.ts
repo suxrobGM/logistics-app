@@ -37,4 +37,11 @@ export namespace Permissions {
     Edit = 'Permissions.Trucks.Edit',
     Delete = 'Permissions.Trucks.Delete'
   }
+
+  export enum Customers {
+    Create = 'Permissions.Customers.Create',
+    View = 'Permissions.Customers.View',
+    Edit = 'Permissions.Customers.Edit',
+    Delete = 'Permissions.Customers.Delete'
+  }
 }

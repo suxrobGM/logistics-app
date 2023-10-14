@@ -1,0 +1,34 @@
+<h1 class="text-center">{{title}}</h1>
+<hr class="w-100">
+
+<div class="row justify-content-center mx-0">
+  <div class="col-12 col-md-6">
+    <p-card>
+      <p-progressSpinner *ngIf="isLoading"></p-progressSpinner>
+      
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="mb-3">
+          <label for="name" class="form-label">Customer Name</label>
+          <input id="name" formControlName="name" class="form-control" />
+        </div>
+        
+        <div>
+          <button pButton 
+            type="submit"
+            class="p-button-raised mt-3"
+            icon="bi bi-pencil-square"
+            [disabled]="isLoading">
+            Save
+          </button>
+          <button pButton 
+            type="button"
+            class="p-button-raised mt-3 ms-2"
+            icon="bi bi-arrow-left-square"
+            [routerLink]="['/customers']">
+            Back to list
+          </button>
+        </div>
+      </form>
+    </p-card>
+  </div>
+</div>

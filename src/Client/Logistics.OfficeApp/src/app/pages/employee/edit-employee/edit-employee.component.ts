@@ -36,7 +36,7 @@ import {ChangeRoleDialogComponent} from '../components';
 })
 export class EditEmployeeComponent implements OnInit {
   public id!: string;
-  public isBusy: boolean;
+  public isLoading: boolean;
   public showUpdateDialog: boolean;
   public canChangeRole: boolean;
   public employee?: Employee;
@@ -47,12 +47,12 @@ export class EditEmployeeComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private route: ActivatedRoute)
   {
-    this.isBusy = false;
+    this.isLoading = false;
     this.showUpdateDialog = false;
     this.canChangeRole = false;
   }
 
-  public ngOnInit(): void {
+  ngOnInit(): void {
     this.route.params.subscribe((params) => {
       this.id = params['id'];
     });
@@ -60,24 +60,24 @@ export class EditEmployeeComponent implements OnInit {
     this.fetchEmployee();
   }
 
-  public confirmToDelete() {
+  confirmToDelete() {
     this.confirmationService.confirm({
       message: 'Are you sure that you want to delete this employee from the company?',
       // accept: () => this.deleteLoad()
     });
   }
 
-  public getEmployeeRoleNames(): string {
+  getEmployeeRoleNames(): string {
     const roleNames = this.employee?.roles?.map((i) => i.displayName).join(',');
     return roleNames ? roleNames : '';
   }
 
-  public openUpdateDialog() {
+  openUpdateDialog() {
     this.showUpdateDialog = true;
   }
 
   private fetchEmployee() {
-    this.isBusy = true;
+    this.isLoading = true;
 
     this.apiService.getEmployee(this.id).subscribe((result) => {
       if (result.isSuccess && result.data) {
@@ -87,7 +87,7 @@ export class EditEmployeeComponent implements OnInit {
         this.evaluateCanChangeRole(user?.roles, employeeRoles);
       }
 
-      this.isBusy = false;
+      this.isLoading = false;
     });
   }
 

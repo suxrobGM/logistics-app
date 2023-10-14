@@ -105,7 +105,7 @@ export class EditLoadComponent implements OnInit {
     this.fetchLoad();
   }
 
-  searchTruck(event: any) {
+  searchTruck(event: {query: string}) {
     TruckHelper.findTruckDrivers(this.apiService, event.query).subscribe((drivers) => this.suggestedDrivers = drivers);
   }
 
@@ -188,11 +188,11 @@ export class EditLoadComponent implements OnInit {
 
   private fetchLoad() {
     this.apiService.getLoad(this.id).subscribe((result) => {
-      if (result.isError) {
+      if (result.isError || !result.data) {
         return;
       }
 
-      const load = result.data!;
+      const load = result.data;
 
       this.form.patchValue({
         name: load.name,
@@ -208,6 +208,7 @@ export class EditLoadComponent implements OnInit {
         status: load.status,
         assignedTruck: {
           truckId: load.assignedTruckId,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           driversName: TruckHelper.formatDriversName(load.assignedTruckNumber!, load.assignedTruckDriversName!)},
       });
 

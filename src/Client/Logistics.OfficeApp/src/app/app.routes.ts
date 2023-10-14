@@ -50,6 +50,13 @@ export const APP_ROUTES: Routes = [
     },
   },
   {
+    path: 'customers',
+    loadChildren: () => import('./pages/customer').then((m) => m.CUSTOMER_ROUTES),
+    data: {
+      breadcrumb: 'Customers',
+    },
+  },
+  {
     path: '**',
     redirectTo: '404',
   },

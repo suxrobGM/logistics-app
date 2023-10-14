@@ -8,8 +8,9 @@ public static class CustomerMapper
     {
         return new CustomerDto
         {
+            Id = entity.Id,
             Name = entity.Name,
-            Invoices = entity.Invoices.Select(i => i.ToDto())
+            // Invoices = entity.Invoices.Select(i => i.ToDto())
         };
     }
 }

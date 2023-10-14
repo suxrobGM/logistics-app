@@ -1,4 +1,3 @@
-<p-toast key="notification" position="top-right"></p-toast>
 <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
 <app-change-role-dialog [(visible)]="showUpdateDialog" [userId]="id" [currentRoles]="employee?.roles"></app-change-role-dialog>
 
@@ -8,7 +7,7 @@
 <div class="row justify-content-center">
   <div class="col-12 col-md-6">
     <p-card>
-      <p-progressSpinner *ngIf="isBusy"></p-progressSpinner>
+      <p-progressSpinner *ngIf="isLoading"></p-progressSpinner>
 
       <div class="mb-3">
         <label for="email" class="form-label">Email</label>
@@ -38,7 +37,7 @@
           class="p-button-raised p-button-danger mt-3"
           icon="bi bi bi-trash"
           label="Delete"
-          [disabled]="isBusy"
+          [disabled]="isLoading"
           (click)="confirmToDelete()">
         </button>
         <button pButton 
