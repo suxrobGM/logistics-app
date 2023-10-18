@@ -58,8 +58,13 @@ internal static class PushNotificationExtensions
         }
     }
     
-    public static async Task SendRemovedLoadNotificationAsync(this IPushNotificationService pushNotificationService, Load load, Truck truck)
+    public static async Task SendRemovedLoadNotificationAsync(this IPushNotificationService pushNotificationService, Load load, Truck? truck)
     {
+        if (truck is null)
+        {
+            return;
+        }
+        
         var drivers = truck.Drivers.Where(driver => !string.IsNullOrEmpty(driver.DeviceToken));
         
         foreach (var driver in drivers)

@@ -13,5 +13,6 @@ export interface UpdateLoad {
   distance: number;
   assignedDispatcherId: string;
   assignedTruckId: string;
+  customerId?: string;
   status?: LoadStatus;
 }

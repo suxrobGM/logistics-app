@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -12,7 +13,7 @@ import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {AppConfig} from '@configs';
 import {EnumValue, LoadStatus, LoadStatusEnum, convertEnumToArray} from '@core/enums';
-import {UpdateLoad} from '@core/models';
+import {Customer, UpdateLoad} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {DistanceConverter} from '@shared/utils';
 import {
@@ -22,6 +23,7 @@ import {
   SelectedAddressEvent,
 } from '@shared/components';
 import {TruckData, TruckHelper} from '../shared';
+import {SearchCustomerComponent, SearchTruckComponent} from '../components';
 
 
 
@@ -45,6 +47,8 @@ import {TruckData, TruckHelper} from '../shared';
     RouterLink,
     AddressAutocompleteComponent,
     DirectionsMapComponent,
+    SearchCustomerComponent,
+    SearchTruckComponent
   ],
   providers: [
     ConfirmationService,
@@ -56,9 +60,10 @@ export class EditLoadComponent implements OnInit {
 
   public id!: string;
   public loadRefId!: number;
-  public isBusy: boolean;
+  public isLoading: boolean;
   public form: FormGroup;
-  public suggestedDrivers: TruckData[];
+  public selectedTruck: TruckData | null;
+  public selectedCustomer: Customer | null;
   public loadStatuses: EnumValue[];
   public originCoords?: [number, number] | null;
   public destinationCoords?: [number, number] | null;
@@ -71,8 +76,9 @@ export class EditLoadComponent implements OnInit {
     private router: Router)
   {
     this.accessToken = AppConfig.mapboxToken;
-    this.isBusy = false;
-    this.suggestedDrivers = [];
+    this.isLoading = false;
+    this.selectedTruck = null;
+    this.selectedCustomer = null;
     this.loadStatuses = convertEnumToArray(LoadStatusEnum);
     this.distanceMeters = 0;
 
@@ -87,7 +93,6 @@ export class EditLoadComponent implements OnInit {
       distance: new FormControl(0, Validators.required),
       dispatcherName: new FormControl('', Validators.required),
       dispatcherId: new FormControl('', Validators.required),
-      assignedTruck: new FormControl('', Validators.required),
       status: new FormControl(LoadStatus.Dispatched, Validators.required),
     });
   }
@@ -103,21 +108,6 @@ export class EditLoadComponent implements OnInit {
     }
 
     this.fetchLoad();
-  }
-
-  searchTruck(event: {query: string}) {
-    TruckHelper.findTruckDrivers(this.apiService, event.query).subscribe((drivers) => this.suggestedDrivers = drivers);
-  }
-
-  submit() {
-    const assignedTruck = this.form.value.assignedTruck;
-
-    if (!assignedTruck) {
-      this.toastService.showError('Select a truck');
-      return;
-    }
-
-    this.updateLoad();
   }
 
   confirmToDelete() {
@@ -147,7 +137,12 @@ export class EditLoadComponent implements OnInit {
     this.form.patchValue({distance: distanceMiles});
   }
 
-  private updateLoad() {
+  updateLoad() {
+    if (!this.isValid()) {
+      return;
+    }
+
+    this.isLoading = true;
     const command: UpdateLoad = {
       id: this.id,
       name: this.form.value.name,
@@ -160,33 +155,60 @@ export class EditLoadComponent implements OnInit {
       deliveryCost: this.form.value.deliveryCost,
       distance: this.distanceMeters,
       assignedDispatcherId: this.form.value.dispatcherId,
-      assignedTruckId: this.form.value.assignedTruck.truckId,
+      assignedTruckId: this.selectedTruck!.truckId,
+      customerId: this.selectedCustomer!.id,
       status: this.form.value.status,
     };
 
     this.apiService.updateLoad(command)
-        .subscribe((result) => {
-          if (result.isSuccess) {
-            this.toastService.showSuccess('Load has been updated successfully');
-          }
+      .subscribe((result) => {
+        if (result.isSuccess) {
+          this.toastService.showSuccess('Load has been updated successfully');
+        }
 
-          this.isBusy = false;
-        });
+        this.isLoading = false;
+      });
+  }
+
+  private isValid(): boolean {
+    if (!this.selectedTruck) {
+      this.toastService.showError('Please select the truck');
+      return false;
+    }
+
+    if (!this.selectedCustomer) {
+      this.toastService.showError('Please select the customer');
+      return false;
+    }
+
+    if (!this.form.value.orgAddress) {
+      this.toastService.showError('Please select the origin address');
+      return false;
+    }
+
+    if (!this.form.value.dstAddress) {
+      this.toastService.showError('Please select the destination address');
+      return false;
+    }
+
+    return true;
   }
 
   private deleteLoad() {
-    this.isBusy = true;
+    this.isLoading = true;
     this.apiService.deleteLoad(this.id).subscribe((result) => {
       if (result.isSuccess) {
         this.toastService.showSuccess('A load has been deleted successfully');
         this.router.navigateByUrl('/loads');
       }
 
-      this.isBusy = false;
+      this.isLoading = false;
     });
   }
 
   private fetchLoad() {
+    this.isLoading = true;
+
     this.apiService.getLoad(this.id).subscribe((result) => {
       if (result.isError || !result.data) {
         return;
@@ -215,6 +237,7 @@ export class EditLoadComponent implements OnInit {
       this.loadRefId = load.refId;
       this.originCoords = [load.originAddressLong, load.originAddressLat];
       this.destinationCoords = [load.destinationAddressLong, load.destinationAddressLat];
+      this.isLoading = false;
     });
   }
 

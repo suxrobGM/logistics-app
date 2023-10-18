@@ -1,6 +1,33 @@
-@import 'mapboxgl';
-@import 'primeng';
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+@import "~bootstrap/dist/css/bootstrap.min.css";
+@import "~primeng/resources/themes/bootstrap4-light-blue/theme.css";
+@import "~primeng/resources/primeng.min.css";
+@import "~primeicons/primeicons.css";
 
 body {
   background-color: #dae5f3 !important;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
+.p-sortable-column-icon.pi-sort-alt {
+  display: none;
+}
+
+.p-dropdown {
+  min-height: 2.5rem;
+}
+
+ol, ul {
+  padding-left: 0;
+}
+
+dl, ol, ul {
+  margin-top: 0;
+  margin-bottom: 0;
 }

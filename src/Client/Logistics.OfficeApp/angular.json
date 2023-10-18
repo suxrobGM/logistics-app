@@ -28,13 +28,8 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles/global.scss",
-              "node_modules/primeng/resources/themes/bootstrap4-light-blue/theme.css",
-              "node_modules/primeng/resources/primeng.min.css",
-              "node_modules/primeicons/primeicons.css",
-              "node_modules/bootstrap-icons/font/bootstrap-icons.css",
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "node_modules/mapbox-gl/dist/mapbox-gl.css"
+              "node_modules/mapbox-gl/dist/mapbox-gl.css",
+              "src/styles/global.scss"
             ],
             "scripts": [
               "node_modules/chart.js/dist/chart.js"
@@ -109,16 +104,11 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles/global.scss",
-              "node_modules/primeng/resources/themes/bootstrap4-light-blue/theme.css",
-              "node_modules/primeng/resources/primeng.min.css",
-              "node_modules/primeicons/primeicons.css",
-              "node_modules/bootstrap-icons/font/bootstrap-icons.css",
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "node_modules/mapbox-gl/dist/mapbox-gl.css"
+              "node_modules/mapbox-gl/dist/mapbox-gl.css",
+              "src/styles/global.scss"
             ],
             "scripts": [
-              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+              "node_modules/chart.js/dist/chart.js"
             ]
           }
         },

@@ -323,6 +323,7 @@ export class ApiService {
     return `search=${search}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private handleError(responseData: any): Observable<any> {
     const errorMessage = responseData.error?.error ?? responseData.error;
 

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {NgFor, NgIf} from '@angular/common';
@@ -27,7 +29,8 @@ export class AddressAutocompleteComponent implements ControlValueAccessor {
   @Input() field = '';
   @Input() placeholder = 'Type address...';
   @Input() country = 'us';
-  @Input() address = '';
+  @Input() address: string | null = null;
+  @Input() forceSelection = false;
   @Output() addressChange = new EventEmitter<string>();
   @Output() selectedAddress = new EventEmitter<SelectedAddressEvent>();
 
@@ -47,6 +50,13 @@ export class AddressAutocompleteComponent implements ControlValueAccessor {
     const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${this.accessToken}&country=${this.country}&types=address`);
     const responseData = await response.json() as GeocodingResponse;
     this.searchResults = responseData.features;
+
+    // Check if forceSelection is enabled and if the entered address is not in the search results
+  if (this.forceSelection && !this.searchResults.some(result => result.place_name === query)) {
+    this.address = null;
+    this.onChange(null);  // Clear out the input value
+  }
+
     this.markAsTouched();
   }
 

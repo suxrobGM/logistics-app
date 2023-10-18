@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -11,7 +12,7 @@ import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {AppConfig} from '@configs';
 import {AuthService} from '@core/auth';
 import {LoadStatus} from '@core/enums';
-import {CreateLoad} from '@core/models';
+import {CreateLoad, Customer} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {DistanceConverter} from '@shared/utils';
 import {
@@ -20,7 +21,7 @@ import {
   RouteChangedEvent,
   SelectedAddressEvent,
 } from '@shared/components';
-import {TruckData, TruckHelper} from '../shared';
+import {SearchCustomerComponent, SearchTruckComponent, TruckData} from '../components';
 
 
 @Component({
@@ -42,27 +43,33 @@ import {TruckData, TruckHelper} from '../shared';
     RouterLink,
     AddressAutocompleteComponent,
     DirectionsMapComponent,
+    SearchCustomerComponent,
+    SearchTruckComponent,
   ],
 })
 export class AddLoadComponent implements OnInit {
   public readonly accessToken: string;
   private distanceMeters: number;
 
-  public isBusy: boolean;
+  public isLoading: boolean;
   public form: FormGroup;
-  public suggestedDrivers: TruckData[];
+  public selectedTruck: TruckData | null;
+  public selectedCustomer: Customer | null;
+  public suggestedCustomers: Customer[];
   public originCoords?: [number, number] | null;
   public destinationCoords?: [number, number] | null;
 
   constructor(
-    private authService: AuthService,
-    private apiService: ApiService,
-    private toastService: ToastService,
-    private router: Router)
+    private readonly authService: AuthService,
+    private readonly apiService: ApiService,
+    private readonly toastService: ToastService,
+    private readonly router: Router)
   {
     this.accessToken = AppConfig.mapboxToken;
-    this.isBusy = false;
-    this.suggestedDrivers = [];
+    this.isLoading = false;
+    this.selectedTruck = null;
+    this.selectedCustomer = null;
+    this.suggestedCustomers = [];
     this.distanceMeters = 0;
 
     this.form = new FormGroup({
@@ -76,28 +83,12 @@ export class AddLoadComponent implements OnInit {
       distance: new FormControl(0, Validators.required),
       dispatcherName: new FormControl('', Validators.required),
       dispatcherId: new FormControl('', Validators.required),
-      assignedTruck: new FormControl('', Validators.required),
       status: new FormControl(LoadStatus.Dispatched, Validators.required),
     });
   }
 
   ngOnInit(): void {
     this.fetchCurrentDispatcher();
-  }
-
-  searchTruck(event: any) {
-    TruckHelper.findTruckDrivers(this.apiService, event.query).subscribe((drivers) => this.suggestedDrivers = drivers);
-  }
-
-  submit() {
-    const assignedTruck = this.form.value.assignedTruck;
-
-    if (!assignedTruck) {
-      this.toastService.showError('Select a truck');
-      return;
-    }
-
-    this.createLoad();
   }
 
   updateOrigin(eventData: SelectedAddressEvent) {
@@ -120,9 +111,12 @@ export class AddLoadComponent implements OnInit {
     this.form.patchValue({distance: distanceMiles});
   }
 
-  private createLoad() {
-    this.isBusy = true;
+  createLoad() {
+    if (!this.isValid()) {
+      return;
+    }
 
+    this.isLoading = true;
     const command: CreateLoad = {
       name: this.form.value.name,
       originAddress: this.form.value.orgAddress,
@@ -134,18 +128,44 @@ export class AddLoadComponent implements OnInit {
       deliveryCost: this.form.value.deliveryCost,
       distance: this.distanceMeters,
       assignedDispatcherId: this.form.value.dispatcherId,
-      assignedTruckId: this.form.value.assignedTruck.truckId,
+      assignedTruckId: this.selectedTruck!.truckId,
+      customerId: this.form.value.customer.id
     };
+    
 
     this.apiService.createLoad(command)
-        .subscribe((result) => {
-          if (result.isSuccess) {
-            this.toastService.showSuccess('A new load has been created successfully');
-            this.router.navigateByUrl('/load/list');
-          }
+      .subscribe((result) => {
+        if (result.isSuccess) {
+          this.toastService.showSuccess('A new load has been created successfully');
+          this.router.navigateByUrl('/loads');
+        }
 
-          this.isBusy = false;
-        });
+        this.isLoading = false;
+      });
+  }
+
+  private isValid(): boolean {
+    if (!this.selectedTruck) {
+      this.toastService.showError('Please select the truck');
+      return false;
+    }
+
+    if (!this.selectedCustomer) {
+      this.toastService.showError('Please select the customer');
+      return false;
+    }
+
+    if (!this.form.value.orgAddress) {
+      this.toastService.showError('Please select the origin address');
+      return false;
+    }
+
+    if (!this.form.value.dstAddress) {
+      this.toastService.showError('Please select the destination address');
+      return false;
+    }
+
+    return true;
   }
 
   private fetchCurrentDispatcher() {

@@ -1,0 +1,16 @@
+<p-autoComplete #autoCompleteInput 
+  [suggestions]="suggestedCustomers"
+  styleClass="w-100" inputStyleClass="form-control"
+  (completeMethod)="searchCustomer($event)"
+  [minLength]="2"
+  [forceSelection]="true"
+  field="name"
+  (onSelect)="changeSelectedCustomer">
+</p-autoComplete>
+
+<!-- <p-overlayPanel #emptyResultsPanel [showCloseIcon]="true" [appendTo]="autoCompleteInput">
+  <div>
+    No results found. Would you like to add a new customer with name "<span>{{searchQuery}}</span>" ?
+    <button pButton class="p-button-text" (click)="addCustomer()">Add</button>
+  </div>
+</p-overlayPanel> -->
