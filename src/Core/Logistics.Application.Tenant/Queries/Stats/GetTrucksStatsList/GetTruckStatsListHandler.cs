@@ -26,11 +26,11 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
             .Select(group => new TruckStats
             {
                 TruckId = group.Key,
-                TruckNumber = group.First().AssignedTruck!.TruckNumber!,
+                TruckNumber = group.First().AssignedTruck!.TruckNumber,
                 Gross = group.Sum(load => load.DeliveryCost),
                 Distance = group.Sum(load => load.Distance),
-                DriverShare = group.Sum(load => load.DeliveryCost) * (decimal)group.First().AssignedTruck!.DriverIncomePercentage,
-                FirstLoad = group.FirstOrDefault()
+                DriverShare = group.Sum(load => load.DeliveryCost) * (decimal)group.First().AssignedTruck!.GetDriversShareRatio(),
+                Drivers = group.First().AssignedTruck!.Drivers,
             });
 
         truckStatsQuery = req.Descending
@@ -40,7 +40,7 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
         truckStatsQuery = truckStatsQuery
             .Skip((req.Page - 1) * req.PageSize)
             .Take(req.PageSize);
-            
+
         var truckStatsDto = truckStatsQuery.ToArray()
             .Select(result => new TruckStatsDto
             {
@@ -50,10 +50,9 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
                 EndDate = req.EndDate,
                 Gross = result.Gross,
                 Distance = result.Distance,
-                DriverShare = result.DriverShare, 
-                Drivers = result.FirstLoad?.AssignedTruck?.Drivers.Select(driver => driver.ToDto()) 
-                          ?? new List<EmployeeDto>()
-            });    
+                DriverShare = result.DriverShare,
+                Drivers = result.Drivers.Select(i => i?.ToDto())!
+            });
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
         return Task.FromResult(new PagedResponseResult<TruckStatsDto>(truckStatsDto, totalItems, totalPages));
@@ -78,6 +77,6 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
         public required decimal Gross { get; set; }
         public required double Distance { get; set; }
         public required decimal DriverShare { get; set; }
-        public Load? FirstLoad { get; set; }
+        public IEnumerable<Employee?> Drivers { get; set; }
     }
 }

@@ -407,9 +407,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("DriverIncomePercentage")
-                        .HasColumnType("real");
-
                     b.Property<string>("LastKnownLocation")
                         .HasColumnType("nvarchar(max)");
 

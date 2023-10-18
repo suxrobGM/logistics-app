@@ -34,10 +34,6 @@ internal sealed class UpdateTruckHandler : RequestHandler<UpdateTruckCommand, Re
         {
             truckEntity.TruckNumber = req.TruckNumber;
         }
-        if (req.DriverIncomePercentage.HasValue)
-        {
-            truckEntity.DriverIncomePercentage = req.DriverIncomePercentage.Value;
-        }
         
         _tenantRepository.Update(truckEntity);
         await _tenantRepository.UnitOfWork.CommitAsync();

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.Infrastructure.EF.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20231012065513_Version_0001")]
+    [Migration("20231018183034_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -409,9 +409,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<float>("DriverIncomePercentage")
-                        .HasColumnType("real");
 
                     b.Property<string>("LastKnownLocation")
                         .HasColumnType("nvarchar(max)");

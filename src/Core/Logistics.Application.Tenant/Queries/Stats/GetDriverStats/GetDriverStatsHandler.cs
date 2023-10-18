@@ -1,4 +1,5 @@
-﻿using Logistics.Shared.Models;
+﻿using Logistics.Shared.Enums;
+using Logistics.Shared.Models;
 
 namespace Logistics.Application.Tenant.Queries;
 
@@ -28,7 +29,7 @@ internal sealed class GetDriverStatsHandler : RequestHandler<GetDriverStatsQuery
             return ResponseResult<DriverStatsDto>.CreateError("Driver does not have an assigned truck");
         }
 
-        var driverIncomePercentage = (decimal)driver.Truck!.DriverIncomePercentage;
+        var driverIncomePercentage = driver.SalaryType == SalaryType.ShareOfGross ? driver.Salary : 0;
         var now = DateTime.UtcNow;
         var startOfWeek = now.AddDays(-(int)now.DayOfWeek + (int)DayOfWeek.Monday);
         var lastWeekStart = startOfWeek.AddDays(-7);

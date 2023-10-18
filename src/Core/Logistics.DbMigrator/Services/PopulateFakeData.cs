@@ -194,7 +194,7 @@ internal class PopulateFakeData
                 continue;
             }
 
-            truck = Truck.Create(truckNumber.ToString(), 0.30f, driver);
+            truck = Truck.Create(truckNumber.ToString(), driver);
             truckNumber++;
             trucksList.Add(truck);
             await _tenantRepository.AddAsync(truck);
@@ -286,8 +286,8 @@ internal class PopulateFakeData
         {
             CompanyName = companyName,
             CompanyAddress = companyAddress,
-            CustomerId = load.CustomerId,
-            Customer = load.Customer,
+            CustomerId = load.CustomerId!,
+            Customer = load.Customer!,
             LoadId = load.Id,
             Load = load,
             PaymentId = payment.Id,

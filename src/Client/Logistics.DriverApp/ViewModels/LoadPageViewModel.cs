@@ -1,6 +1,7 @@
 ﻿using Logistics.Shared.Enums;
 using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services;
+using Logistics.DriverApp.Services.Authentication;
 using Logistics.Shared.Models;
 
 namespace Logistics.DriverApp.ViewModels;
@@ -8,12 +9,17 @@ namespace Logistics.DriverApp.ViewModels;
 public class LoadPageViewModel : BaseViewModel, IQueryAttributable
 {
     private readonly IApiClient _apiClient;
+    private readonly IAuthService _authService;
     private readonly IMapsService _mapsService;
     private string? _lastLoadId;
 
-    public LoadPageViewModel(IApiClient apiClient, IMapsService mapsService)
+    public LoadPageViewModel(
+        IApiClient apiClient,
+        IAuthService authService,
+        IMapsService mapsService)
     {
         _apiClient = apiClient;
+        _authService = authService;
         _mapsService = mapsService;
         ConfirmPickUpCommand = new AsyncRelayCommand(() => ConfirmLoadStatusAsync(LoadStatus.PickedUp));
         ConfirmDeliveryCommand = new AsyncRelayCommand(() => ConfirmLoadStatusAsync(LoadStatus.Delivered));
@@ -107,6 +113,7 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
                 Load.CanConfirmPickUp = false;
                 result = await _apiClient.ConfirmLoadStatusAsync(new ConfirmLoadStatus
                 {
+                    DriverId = _authService.User?.Id,
                     LoadId = Load.Id,
                     LoadStatus = LoadStatus.PickedUp
                 });
@@ -116,6 +123,7 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
                 Load.CanConfirmDelivery = false;
                 result = await _apiClient.ConfirmLoadStatusAsync(new ConfirmLoadStatus
                 {
+                    DriverId = _authService.User?.Id,
                     LoadId = Load.Id,
                     LoadStatus = LoadStatus.Delivered
                 });

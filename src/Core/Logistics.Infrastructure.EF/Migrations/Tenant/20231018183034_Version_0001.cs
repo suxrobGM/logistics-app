@@ -79,7 +79,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     LastKnownLocation = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastKnownLocationLat = table.Column<double>(type: "float", nullable: true),
                     LastKnownLocationLong = table.Column<double>(type: "float", nullable: true),
-                    DriverIncomePercentage = table.Column<float>(type: "real", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),

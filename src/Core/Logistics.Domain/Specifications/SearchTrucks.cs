@@ -24,8 +24,8 @@ public class SearchTrucks : BaseSpecification<Truck>
         propertyName = propertyName?.ToLower() ?? string.Empty;
         return propertyName switch
         {
-            "driverincomepercentage" => i => i.DriverIncomePercentage!,
-            _ => i => i.TruckNumber!
+            // "driverincomepercentage" => i => i.DriverIncomePercentage,
+            _ => i => i.TruckNumber
         };
     }
 }

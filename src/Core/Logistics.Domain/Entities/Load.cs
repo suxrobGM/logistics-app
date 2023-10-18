@@ -76,7 +76,7 @@ public class Load : AuditableEntity, ITenantEntity
 
     public decimal CalcDriverShare()
     {
-        return DeliveryCost * (decimal)(AssignedTruck?.DriverIncomePercentage ?? 0);
+        return DeliveryCost * (decimal)(AssignedTruck?.GetDriversShareRatio() ?? 0);
     }
 
     public static Load Create(
