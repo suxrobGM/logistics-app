@@ -129,10 +129,9 @@ export class AddLoadComponent implements OnInit {
       distance: this.distanceMeters,
       assignedDispatcherId: this.form.value.dispatcherId,
       assignedTruckId: this.selectedTruck!.truckId,
-      customerId: this.form.value.customer.id
+      customerId: this.selectedCustomer!.id
     };
     
-
     this.apiService.createLoad(command)
       .subscribe((result) => {
         if (result.isSuccess) {
@@ -146,12 +145,12 @@ export class AddLoadComponent implements OnInit {
 
   private isValid(): boolean {
     if (!this.selectedTruck) {
-      this.toastService.showError('Please select the truck');
+      this.toastService.showError('Please select a truck');
       return false;
     }
 
     if (!this.selectedCustomer) {
-      this.toastService.showError('Please select the customer');
+      this.toastService.showError('Please select a customer');
       return false;
     }
 

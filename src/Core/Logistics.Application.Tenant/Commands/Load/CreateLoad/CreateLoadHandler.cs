@@ -57,8 +57,12 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resp
         load.DeliveryCost = req.DeliveryCost;
 
         await _tenantRepository.AddAsync(load);
-        await _tenantRepository.UnitOfWork.CommitAsync();
-        await _pushNotificationService.SendNewLoadNotificationAsync(load, truck);
+        var changes = await _tenantRepository.UnitOfWork.CommitAsync();
+
+        if (changes > 0)
+        {
+            await _pushNotificationService.SendNewLoadNotificationAsync(load, truck);
+        }
         return ResponseResult.CreateSuccess();
     }
 }

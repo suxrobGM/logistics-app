@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {NgFor, NgIf} from '@angular/common';
-import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {CommonModule} from '@angular/common';
+import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/forms';
 
 
 @Component({
@@ -11,7 +11,7 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
   standalone: true,
   templateUrl: './address-autocomplete.component.html',
   styleUrls: ['./address-autocomplete.component.scss'],
-  imports: [NgFor, NgIf],
+  imports: [CommonModule, FormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -51,12 +51,6 @@ export class AddressAutocompleteComponent implements ControlValueAccessor {
     const responseData = await response.json() as GeocodingResponse;
     this.searchResults = responseData.features;
 
-    // Check if forceSelection is enabled and if the entered address is not in the search results
-  if (this.forceSelection && !this.searchResults.some(result => result.place_name === query)) {
-    this.address = null;
-    this.onChange(null);  // Clear out the input value
-  }
-
     this.markAsTouched();
   }
 
@@ -71,6 +65,17 @@ export class AddressAutocompleteComponent implements ControlValueAccessor {
     this.searchResults = [];
     this.onChange(address);
     this.markAsTouched();
+  }
+
+  onInputFocusOut(event: FocusEvent) {
+    // Delay the execution to allow click event to be processed (in case an address is clicked from the list)
+    setTimeout(() => {
+      if (this.forceSelection && this.searchResults.length) {
+        this.address = null;
+        this.onChange(null);
+        this.searchResults = [];
+      }
+    }, 100);
   }
 
   private onChange(value: any): void {}

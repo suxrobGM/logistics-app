@@ -4,8 +4,9 @@
     [name]="field" 
     class="form-control" 
     [placeholder]="placeholder" 
-    (input)="onAddressInputChange($event)" 
-    [value]="address" />
+    (input)="onAddressInputChange($event)"
+    (focusout)="onInputFocusOut($event)"
+    [(ngModel)]="address" />
 
   <div class="popup" *ngIf="searchResults.length">
     <div *ngFor="let result of searchResults" 

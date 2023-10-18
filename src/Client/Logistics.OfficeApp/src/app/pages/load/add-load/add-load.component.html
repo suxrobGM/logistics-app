@@ -19,7 +19,8 @@
         <div class="mb-3">
           <label for="orgAddress" class="form-label">Origin Address</label>
           <app-address-autocomplete field="orgAddress"
-            formControlName="orgAddress" 
+            formControlName="orgAddress"
+            [forceSelection]="true" 
             [accessToken]="accessToken" 
             (selectedAddress)="updateOrigin($event)">
           </app-address-autocomplete>
@@ -28,6 +29,7 @@
           <label for="dstAddress" class="form-label">Destination Address</label>
           <app-address-autocomplete field="dstAddress"
             formControlName="dstAddress"
+            [forceSelection]="true"
             [accessToken]="accessToken" 
             (selectedAddress)="updateDestination($event)">
           </app-address-autocomplete>
