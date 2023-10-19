@@ -15,6 +15,18 @@ body {
   max-width: 150px;
 }
 
+.p-panelmenu .p-panelmenu-header .p-panelmenu-header-content .p-panelmenu-header-action {
+  color: #212529;
+}
+
+.p-panelmenu .p-panelmenu-header-action {
+  text-decoration: none;
+}
+
+.p-breadcrumb .p-menuitem-link {
+  text-decoration: none;
+}
+
 ol, ul {
   padding-left: 0;
 }
