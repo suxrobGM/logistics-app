@@ -3,7 +3,6 @@ using Logistics.API.Authorization;
 using Logistics.API.Hubs;
 using Logistics.API.Middlewares;
 using Logistics.API.Services;
-using Logistics.Application.Core;
 using Logistics.Application.Tenant.Services;
 using Logistics.Infrastructure.EF;
 using Microsoft.AspNetCore.Mvc.Authorization;

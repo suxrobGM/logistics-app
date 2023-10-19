@@ -12,4 +12,14 @@ public class Payment : Entity, ITenantEntity
     public PaymentStatus Status { get; set; }
     public PaymentFor PaymentFor { get; set; }
     public string? Comment { get; set; }
+
+    public void SetStatus(PaymentStatus status)
+    {
+        if (status == PaymentStatus.Paid)
+        {
+            PaymentDate = DateTime.UtcNow;
+        }
+
+        Status = status;
+    }
 }

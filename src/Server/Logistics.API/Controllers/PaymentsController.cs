@@ -45,7 +45,7 @@ public class PaymentsController : ControllerBase
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.Create)]
-    public async Task<IActionResult> Create([FromBody] CreateCustomerCommand request)
+    public async Task<IActionResult> Create([FromBody] CreatePaymentCommand request)
     {
         var result = await _mediator.Send(request);
 
@@ -59,7 +59,7 @@ public class PaymentsController : ControllerBase
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.Edit)]
-    public async Task<IActionResult> Update(string id, [FromBody] UpdateCustomerCommand request)
+    public async Task<IActionResult> Update(string id, [FromBody] UpdatePaymentCommand request)
     {
         request.Id = id;
         var result = await _mediator.Send(request);
