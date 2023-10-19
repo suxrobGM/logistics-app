@@ -3,7 +3,7 @@ using Logistics.Shared;
 
 namespace Logistics.Client.Models;
 
-public class GetLoadsQuery : SearchableRequest
+public class GetLoadsQuery : SearchableQuery
 {
     public string? TruckId { get; set; }
     public bool? FilterActiveLoads { get; set; }

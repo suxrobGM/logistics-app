@@ -1,8 +1,9 @@
 ﻿using System.Text.Json.Serialization;
+using MediatR;
 
 namespace Logistics.Application.Tenant.Commands;
 
-public class UpdateNotificationCommand : Request<ResponseResult>
+public class UpdateNotificationCommand : IRequest<ResponseResult>
 {
     [JsonIgnore]
     public string? Id { get; set; }

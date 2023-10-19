@@ -1,6 +1,8 @@
-﻿namespace Logistics.Application.Tenant.Commands;
+﻿using MediatR;
 
-public class DeleteCustomerCommand : Request<ResponseResult>
+namespace Logistics.Application.Tenant.Commands;
+
+public class DeleteCustomerCommand : IRequest<ResponseResult>
 {
     public string Id { get; set; } = default!;
 }

@@ -1,9 +1,10 @@
 ﻿using Logistics.Application.Common;
 using Logistics.Shared;
+using MediatR;
 
 namespace Logistics.Application.Admin.Commands;
 
-public class DeleteTenantCommand : Request<ResponseResult>
+public class DeleteTenantCommand : IRequest<ResponseResult>
 {
     public string? Id { get; set; }
 }

@@ -1,8 +1,9 @@
 ﻿using Logistics.Shared.Enums;
+using MediatR;
 
 namespace Logistics.Application.Tenant.Commands;
 
-public class UpdateEmployeeCommand : Request<ResponseResult>
+public class UpdateEmployeeCommand : IRequest<ResponseResult>
 {
     public string? UserId { get; set; }
     public string? Role { get; set; }

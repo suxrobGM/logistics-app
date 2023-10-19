@@ -1,6 +1,8 @@
-﻿namespace Logistics.Application.Tenant.Commands;
+﻿using MediatR;
 
-public class DeleteEmployeeCommand : Request<ResponseResult>
+namespace Logistics.Application.Tenant.Commands;
+
+public class DeleteEmployeeCommand : IRequest<ResponseResult>
 {
     public string? UserId { get; set; }
 }

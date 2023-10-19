@@ -1,8 +1,9 @@
 ﻿using Logistics.Shared.Enums;
+using MediatR;
 
 namespace Logistics.Application.Tenant.Commands;
 
-public class ConfirmLoadStatusCommand : Request<ResponseResult>
+public class ConfirmLoadStatusCommand : IRequest<ResponseResult>
 {
     public string? DriverId { get; set; }
     public string? LoadId { get; set; }

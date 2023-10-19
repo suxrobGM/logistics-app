@@ -1,6 +1,8 @@
-﻿namespace Logistics.Application.Tenant.Commands;
+﻿using MediatR;
 
-public class CreateLoadCommand : Request<ResponseResult>
+namespace Logistics.Application.Tenant.Commands;
+
+public class CreateLoadCommand : IRequest<ResponseResult>
 {
     public string? Name { get; set; }
     public string? OriginAddress { get; set; }

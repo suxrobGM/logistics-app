@@ -15,8 +15,7 @@ public class SearchCustomers : BaseSpecification<Customer>
         if (string.IsNullOrEmpty(search))
             return;
         
-        Criteria = i =>
-            i.Name != null && i.Name.Contains(search);
+        Criteria = i => i.Name.Contains(search);
     }
     
     private static Expression<Func<Customer, object>> InitOrderBy(string? propertyName)

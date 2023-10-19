@@ -1,6 +1,8 @@
-﻿namespace Logistics.Application.Tenant.Commands;
+﻿using MediatR;
 
-public class CreateCustomerCommand : Request<ResponseResult>
+namespace Logistics.Application.Tenant.Commands;
+
+public class CreateCustomerCommand : IRequest<ResponseResult>
 {
     public string Name { get; set; } = default!;
 }

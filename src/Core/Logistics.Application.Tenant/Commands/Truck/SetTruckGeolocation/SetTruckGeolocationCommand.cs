@@ -1,8 +1,9 @@
 ﻿using Logistics.Shared.Models;
+using MediatR;
 
 namespace Logistics.Application.Tenant.Commands;
 
-public class SetTruckGeolocationCommand : Request<ResponseResult>
+public class SetTruckGeolocationCommand : IRequest<ResponseResult>
 {
     public SetTruckGeolocationCommand(TruckGeolocationDto geolocationData)
     {

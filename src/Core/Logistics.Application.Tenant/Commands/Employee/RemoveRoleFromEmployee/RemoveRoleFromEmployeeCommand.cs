@@ -1,6 +1,8 @@
-﻿namespace Logistics.Application.Tenant.Commands;
+﻿using MediatR;
 
-public class RemoveRoleFromEmployeeCommand : Request<ResponseResult>
+namespace Logistics.Application.Tenant.Commands;
+
+public class RemoveRoleFromEmployeeCommand : IRequest<ResponseResult>
 {
     public string? UserId { get; set; }
     public string? Role { get; set; }

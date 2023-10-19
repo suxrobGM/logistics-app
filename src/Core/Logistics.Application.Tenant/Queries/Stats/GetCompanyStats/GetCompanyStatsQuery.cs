@@ -1,7 +1,8 @@
 ﻿using Logistics.Shared.Models;
+using MediatR;
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class GetCompanyStatsQuery : Request<ResponseResult<CompanyStatsDto>>
+public class GetCompanyStatsQuery : IRequest<ResponseResult<CompanyStatsDto>>
 {
 }

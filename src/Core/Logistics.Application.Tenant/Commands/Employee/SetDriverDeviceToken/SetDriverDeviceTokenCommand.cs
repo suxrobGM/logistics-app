@@ -1,6 +1,8 @@
-﻿namespace Logistics.Application.Tenant.Commands;
+﻿using MediatR;
 
-public class SetDriverDeviceTokenCommand : Request<ResponseResult>
+namespace Logistics.Application.Tenant.Commands;
+
+public class SetDriverDeviceTokenCommand : IRequest<ResponseResult>
 {
     public string? UserId { get; set; }
     public string? DeviceToken { get; set; }

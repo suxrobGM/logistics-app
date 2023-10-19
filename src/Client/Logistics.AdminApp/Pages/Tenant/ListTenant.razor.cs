@@ -24,7 +24,7 @@ public partial class ListTenant : PageBase
 
     private async Task LoadPage(PageEventArgs e, string searchInput = "")
     {
-        var pagedData = await CallApiAsync(api => api.GetTenantsAsync(new SearchableRequest(searchInput, e.Page)));
+        var pagedData = await CallApiAsync(api => api.GetTenantsAsync(new SearchableQuery(searchInput, e.Page)));
 
         if (pagedData != null)
         {

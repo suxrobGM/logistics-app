@@ -189,9 +189,9 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakeGetRequestAsync<ResponseResult<TruckDto>>($"trucks/{id}", query.ToDictionary());
     }
 
-    public Task<PagedResponseResult<TruckDto>> GetTrucksAsync(SearchableRequest request, bool includeLoads = false)
+    public Task<PagedResponseResult<TruckDto>> GetTrucksAsync(SearchableQuery query, bool includeLoads = false)
     {
-        var queryDict = request.ToDictionary();
+        var queryDict = query.ToDictionary();
         queryDict.Add("includeLoads", includeLoads.ToString());
         return MakeGetRequestAsync<PagedResponseResult<TruckDto>>("trucks", queryDict);
     }
@@ -221,9 +221,9 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakeGetRequestAsync<ResponseResult<EmployeeDto>>($"employees/{userId}");
     }
 
-    public Task<PagedResponseResult<EmployeeDto>> GetEmployeesAsync(SearchableRequest request)
+    public Task<PagedResponseResult<EmployeeDto>> GetEmployeesAsync(SearchableQuery query)
     {
-        return MakeGetRequestAsync<PagedResponseResult<EmployeeDto>>("employees", request.ToDictionary());
+        return MakeGetRequestAsync<PagedResponseResult<EmployeeDto>>("employees", query.ToDictionary());
     }
 
     public Task<ResponseResult> CreateEmployeeAsync(CreateEmployee employee)
@@ -251,9 +251,9 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakeGetRequestAsync<ResponseResult<TenantDto>>($"tenants/{identifier}");
     }
 
-    public Task<PagedResponseResult<TenantDto>> GetTenantsAsync(SearchableRequest request)
+    public Task<PagedResponseResult<TenantDto>> GetTenantsAsync(SearchableQuery query)
     {
-        return MakeGetRequestAsync<PagedResponseResult<TenantDto>>("tenants", request.ToDictionary());
+        return MakeGetRequestAsync<PagedResponseResult<TenantDto>>("tenants", query.ToDictionary());
     }
 
     public Task<ResponseResult> CreateTenantAsync(CreateTenant tenant)

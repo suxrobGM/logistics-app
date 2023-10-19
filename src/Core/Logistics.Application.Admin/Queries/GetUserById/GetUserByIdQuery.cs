@@ -1,10 +1,10 @@
-﻿using Logistics.Application.Common;
-using Logistics.Shared.Models;
+﻿using Logistics.Shared.Models;
 using Logistics.Shared;
+using MediatR;
 
 namespace Logistics.Application.Admin.Queries;
 
-public sealed class GetUserByIdQuery : Request<ResponseResult<UserDto>>
+public sealed class GetUserByIdQuery : IRequest<ResponseResult<UserDto>>
 {
     public required string UserId { get; set; }
 }

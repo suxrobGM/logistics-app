@@ -1,7 +1,8 @@
 ﻿using Logistics.Shared.Models;
+using MediatR;
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class GetNotificationsQuery : IntervalQuery<NotificationDto[]>
+public class GetNotificationsQuery : IntervalQuery, IRequest<ResponseResult<NotificationDto[]>>
 {
 }

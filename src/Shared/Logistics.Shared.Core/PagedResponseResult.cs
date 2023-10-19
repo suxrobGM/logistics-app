@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Shared;
 
-public record PagedResponseResult<T> : ResponseResult<IEnumerable<T>>
+public class PagedResponseResult<T> : ResponseResult<IEnumerable<T>>
 {
     public PagedResponseResult(): this(null, 0, 0)
     {

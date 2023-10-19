@@ -19,7 +19,6 @@ export class ValidationSummaryComponent implements OnInit {
   public formErrors$ = this.formErrorsSubject.asObservable();
 
   @Input({required: true}) form!: FormGroup;
-  
 
   ngOnInit(): void {
     this.form.valueChanges

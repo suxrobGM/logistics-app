@@ -1,8 +1,9 @@
-﻿using Logistics.Application.Common;
+﻿using Logistics.Shared;
 using Logistics.Shared.Models;
+using MediatR;
 
 namespace Logistics.Application.Admin.Queries;
 
-public sealed class GetUsersQuery : SearchableQuery<UserDto>
+public sealed class GetUsersQuery : SearchableQuery, IRequest<PagedResponseResult<UserDto>>
 {
 }

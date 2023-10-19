@@ -99,6 +99,30 @@ public static class Permissions
         public const string Edit = $"{nameof(Permissions)}.{nameof(Users)}.Edit";
         public const string Delete = $"{nameof(Permissions)}.{nameof(Users)}.Delete";
     }
+    
+    public static class Payments
+    {
+        public const string Create = $"{nameof(Permissions)}.{nameof(Payments)}.Create";
+        public const string View = $"{nameof(Permissions)}.{nameof(Payments)}.View";
+        public const string Edit = $"{nameof(Permissions)}.{nameof(Payments)}.Edit";
+        public const string Delete = $"{nameof(Permissions)}.{nameof(Payments)}.Delete";
+    }
+    
+    public static class Invoices
+    {
+        public const string Create = $"{nameof(Permissions)}.{nameof(Invoices)}.Create";
+        public const string View = $"{nameof(Permissions)}.{nameof(Invoices)}.View";
+        public const string Edit = $"{nameof(Permissions)}.{nameof(Invoices)}.Edit";
+        public const string Delete = $"{nameof(Permissions)}.{nameof(Invoices)}.Delete";
+    }
+    
+    public static class Payroll
+    {
+        public const string Create = $"{nameof(Permissions)}.{nameof(Payroll)}.Create";
+        public const string View = $"{nameof(Permissions)}.{nameof(Payroll)}.View";
+        public const string Edit = $"{nameof(Permissions)}.{nameof(Payroll)}.Edit";
+        public const string Delete = $"{nameof(Permissions)}.{nameof(Payroll)}.Delete";
+    }
 
     public static IEnumerable<string> GetAll()
     {

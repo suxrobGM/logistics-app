@@ -1,14 +1,13 @@
 ﻿namespace Logistics.Shared;
 
-public class SearchableRequest : PagedRequest
+public class SearchableQuery : PagedQuery
 {
-    public SearchableRequest(string? search = null, int page = 1, int pageSize = 10) 
+    public SearchableQuery(string? search = null, int page = 1, int pageSize = 10) 
         : base(page, pageSize)
     {
         Search = search;
     }
-
-    public string? OrderBy { get; init; }
+    
     public string? Search { get; init; }
 
     public override IDictionary<string, string> ToDictionary()

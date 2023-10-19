@@ -1,9 +1,10 @@
 ﻿using Logistics.Application.Common;
 using Logistics.Shared;
+using MediatR;
 
 namespace Logistics.Application.Admin.Commands;
 
-public class UpdateTenantCommand : Request<ResponseResult>
+public class UpdateTenantCommand : IRequest<ResponseResult>
 {
     public string? Id { get; set; }
     public string? Name { get; set; }

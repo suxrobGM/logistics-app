@@ -1,6 +1,8 @@
-﻿namespace Logistics.Application.Tenant.Commands;
+﻿using MediatR;
 
-public class UpdateLoadProximityCommand : Request<ResponseResult>
+namespace Logistics.Application.Tenant.Commands;
+
+public class UpdateLoadProximityCommand : IRequest<ResponseResult>
 {
     public string? LoadId { get; set; }
     public bool? CanConfirmPickUp { get; set; }

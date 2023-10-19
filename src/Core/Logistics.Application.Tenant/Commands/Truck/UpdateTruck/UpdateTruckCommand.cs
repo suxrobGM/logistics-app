@@ -1,6 +1,8 @@
-﻿namespace Logistics.Application.Tenant.Commands;
+﻿using MediatR;
 
-public class UpdateTruckCommand : Request<ResponseResult>
+namespace Logistics.Application.Tenant.Commands;
+
+public class UpdateTruckCommand : IRequest<ResponseResult>
 {
     public string? Id { get; set; }
     public string? TruckNumber { get; set; }
