@@ -3,6 +3,7 @@ using Logistics.API.Authorization;
 using Logistics.API.Hubs;
 using Logistics.API.Middlewares;
 using Logistics.API.Services;
+using Logistics.Application.Core;
 using Logistics.Application.Tenant.Services;
 using Logistics.Infrastructure.EF;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -19,7 +20,7 @@ internal static class ApplicationExtensions
 #if !DEBUG
         AddSecretsJson(builder.Configuration);
 #endif
-        services.AddApplicationLayer(builder.Configuration, "EmailConfig");
+        services.AddApplicationCoreLayer(builder.Configuration, "EmailConfig");
         services.AddAdminApplicationLayer();
         services.AddTenantApplicationLayer();
         services.AddInfrastructureLayer(builder.Configuration);

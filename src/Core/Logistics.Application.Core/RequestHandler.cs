@@ -1,7 +1,7 @@
 ﻿using Logistics.Shared;
 using MediatR;
 
-namespace Logistics.Application.Common;
+namespace Logistics.Application.Core;
 
 public abstract class RequestHandler<TRequest, TResponse> : IRequestHandler<TRequest, TResponse>
     where TRequest : IRequest<TResponse>

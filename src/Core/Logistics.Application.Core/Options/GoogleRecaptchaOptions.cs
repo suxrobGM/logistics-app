@@ -1,4 +1,4 @@
-﻿namespace Logistics.Application.Common.Options;
+﻿namespace Logistics.Application.Core.Options;
 
 public class GoogleRecaptchaOptions
 {

@@ -1,4 +1,4 @@
-﻿namespace Logistics.Application.Common.Services;
+﻿namespace Logistics.Application.Core.Services;
 
 /// <summary>
 /// Email service

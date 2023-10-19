@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Common;
+﻿using Logistics.Application.Core;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Services;
 using Logistics.Shared;

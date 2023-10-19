@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Common;
+﻿using Logistics.Application.Core;
 using Logistics.Shared;
 using MediatR;
 

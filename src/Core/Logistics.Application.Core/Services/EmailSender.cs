@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using System.Net.Mail;
-using Logistics.Application.Common.Options;
+using Logistics.Application.Core.Options;
 using Microsoft.Extensions.Logging;
 
-namespace Logistics.Application.Common.Services;
+namespace Logistics.Application.Core.Services;
 
 internal sealed class EmailSender : IEmailSender
 {

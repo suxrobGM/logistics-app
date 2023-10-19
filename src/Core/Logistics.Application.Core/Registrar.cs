@@ -1,15 +1,15 @@
-﻿using Logistics.Application.Common.Behaviours;
-using Logistics.Application.Common.Options;
-using Logistics.Application.Common.Services;
+﻿using Logistics.Application.Core.Behaviours;
+using Logistics.Application.Core.Options;
+using Logistics.Application.Core.Services;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Logistics.Application.Common;
+namespace Logistics.Application.Core;
 
 public static class Registrar
 {
-    public static IServiceCollection AddApplicationLayer(
+    public static IServiceCollection AddApplicationCoreLayer(
         this IServiceCollection services,
         IConfiguration configuration,
         string emailConfigSection = "Email",

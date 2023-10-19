@@ -1,7 +1,7 @@
 ﻿using System.Net.Http.Json;
-using Logistics.Application.Common.Options;
+using Logistics.Application.Core.Options;
 
-namespace Logistics.Application.Common.Services;
+namespace Logistics.Application.Core.Services;
 
 internal sealed class GoogleRecaptchaService : ICaptchaService
 {

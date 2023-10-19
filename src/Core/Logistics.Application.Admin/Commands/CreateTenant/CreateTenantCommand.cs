@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Logistics.Application.Common;
+using Logistics.Application.Core;
 using Logistics.Domain.Constraints;
 using Logistics.Shared;
 using MediatR;

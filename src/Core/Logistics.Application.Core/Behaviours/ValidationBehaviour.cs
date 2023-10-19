@@ -2,7 +2,7 @@
 using Logistics.Shared;
 using MediatR;
 
-namespace Logistics.Application.Common.Behaviours;
+namespace Logistics.Application.Core.Behaviours;
 
 public sealed class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>

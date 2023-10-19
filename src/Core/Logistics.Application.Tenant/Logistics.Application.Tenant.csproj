@@ -10,7 +10,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Shared\Logistics.Shared.Models\Logistics.Shared.Models.csproj" />
-      <ProjectReference Include="..\Logistics.Application.Common\Logistics.Application.Common.csproj" />
+      <ProjectReference Include="..\Logistics.Application.Core\Logistics.Application.Core.csproj" />
       <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />
     </ItemGroup>
 

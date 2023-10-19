@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Duende.IdentityServer;
 using Serilog;
-using Logistics.Application.Common;
+using Logistics.Application.Core;
 using Logistics.Infrastructure.EF;
 using Logistics.IdentityServer.Services;
 
@@ -16,7 +16,7 @@ internal static class ApplicationExtensions
         AddSecretsJson(builder.Configuration);
 #endif
         builder.Services.AddRazorPages();
-        builder.Services.AddApplicationLayer(builder.Configuration, "EmailConfig", "GoogleRecaptcha");
+        builder.Services.AddApplicationCoreLayer(builder.Configuration, "EmailConfig", "GoogleRecaptcha");
 
         builder.Services.AddInfrastructureLayer(builder.Configuration)
             .ConfigureIdentity(identityBuilder =>

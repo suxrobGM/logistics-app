@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Common;
+﻿using Logistics.Application.Core;
 using Logistics.Domain.Entities;
 using Logistics.Shared;
 using Microsoft.AspNetCore.Identity;

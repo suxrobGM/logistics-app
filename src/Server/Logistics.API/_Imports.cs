@@ -8,7 +8,7 @@ global using Logistics.Application.Admin.Queries;
 global using Logistics.Application.Tenant;
 global using Logistics.Application.Tenant.Commands;
 global using Logistics.Application.Tenant.Queries;
-global using Logistics.Application.Common;
+global using Logistics.Application.Core;
 global using Logistics.Shared;
 global using Logistics.Shared.Policies;
 global using Logistics.API.Extensions;
