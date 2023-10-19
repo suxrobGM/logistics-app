@@ -4,3 +4,4 @@ export * from './directions-map/directions-map.component';
 export * from './grosses-barchart/grosses-barchart.component';
 export * from './range-calendar/range-calendar.component';
 export * from './trucks-map/trucks-map.component';
+export * from './validation-summary/validation-summary.component';

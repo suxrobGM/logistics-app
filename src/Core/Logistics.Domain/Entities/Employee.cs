@@ -41,7 +41,7 @@ public class Employee : AuditableEntity, ITenantEntity
 
     public string GetFullName() => $"{FirstName} {LastName}";
 
-    public static Employee CreateEmployeeFromUser(User user)
+    public static Employee CreateEmployeeFromUser(User user, decimal salary = 0, SalaryType salaryType = SalaryType.None)
     {
         var newEmployee = new Employee
         {
@@ -49,7 +49,9 @@ public class Employee : AuditableEntity, ITenantEntity
             Email = user.Email,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            PhoneNumber = user.PhoneNumber
+            PhoneNumber = user.PhoneNumber,
+            Salary = salary,
+            SalaryType = salaryType
         };
 
         return newEmployee;

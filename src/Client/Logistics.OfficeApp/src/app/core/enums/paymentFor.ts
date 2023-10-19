@@ -8,8 +8,8 @@ export enum PaymentFor {
 }
 
 export const PaymentForEnum: EnumLike = {
-  Payroll: {value: '0', description: 'Payroll'},
-  Subscription: {value: '1', description: 'Subscription'},
-  Invoice: {value: '2', description: 'Invoice'},
-  Other: {value: '3', description: 'Other'}
+  Payroll: {value: 0, description: 'Payroll'},
+  Subscription: {value: 1, description: 'Subscription'},
+  Invoice: {value: 2, description: 'Invoice'},
+  Other: {value: 3, description: 'Other'}
 };

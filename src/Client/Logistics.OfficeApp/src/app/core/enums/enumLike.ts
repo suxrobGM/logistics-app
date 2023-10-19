@@ -1,5 +1,5 @@
 export interface EnumValue {
-  value: string;
+  value: string | number;
   description: string;
 }
 
@@ -16,7 +16,7 @@ export function convertEnumToArray(enumLike: EnumLike): EnumValue[] {
   });
 }
 
-export function getEnumDescription(enumLike: EnumLike, enumValue: string): string {
+export function getEnumDescription(enumLike: EnumLike, enumValue: string | number): string {
   const enumItem = Object.values(enumLike).find(i => i.value === enumValue);
   return enumItem ? enumItem.description : 'Description not found';
 }

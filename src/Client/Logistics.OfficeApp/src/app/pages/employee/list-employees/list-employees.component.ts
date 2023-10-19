@@ -9,6 +9,7 @@ import {TooltipModule} from 'primeng/tooltip';
 import {ButtonModule} from 'primeng/button';
 import {Employee} from '@core/models';
 import {ApiService} from '@core/services';
+import {SalaryType, SalaryTypeEnum, getEnumDescription} from '@core/enums';
 
 
 @Component({
@@ -69,5 +70,9 @@ export class ListEmployeeComponent {
 
       this.isLoading = false;
     });
+  }
+
+  getSalaryTypeName(status: SalaryType): string {
+    return getEnumDescription(SalaryTypeEnum, status.toString());
   }
 }

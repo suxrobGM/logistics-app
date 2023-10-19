@@ -1,3 +1,4 @@
+import {SalaryType} from '@core/enums';
 import {Role} from './role';
 
 export interface Employee {
@@ -11,4 +12,6 @@ export interface Employee {
   joinedDate: Date;
   truckNumber?: string;
   truckId?: string;
+  salary?: number;
+  salaryType?: SalaryType;
 }

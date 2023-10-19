@@ -6,7 +6,7 @@
 <div class="row justify-content-center">
   <div class="col-12 col-md-6">
     <p-card>
-      <p-progressSpinner *ngIf="isBusy"></p-progressSpinner>
+      <p-progressSpinner *ngIf="isLoading"></p-progressSpinner>
       
       <form [formGroup]="form" (ngSubmit)="submit()">
         <div class="mb-3">
@@ -15,6 +15,16 @@
             placeholder="Type user name" field="userName" [minLength]="3" [suggestions]="suggestedUsers"
             (completeMethod)="searchUser($event)">
           </p-autoComplete>
+        </div>
+        <div class="mb-3">
+          <label for="salaryType" class="form-label">Salary Type</label>
+          <p-dropdown formControlName="salaryType" styleClass="w-100" [options]="salaryTypes" 
+            optionValue="name" optionLabel="description">
+          </p-dropdown>
+        </div>
+        <div class="mb-3">
+          <label for="salary" class="form-label">Salary</label>
+          <input name="salary" formControlName="salary" class="form-control" />
         </div>
         <div class="mb-3">
           <label for="role" class="form-label">Role</label>
@@ -28,7 +38,7 @@
             type="submit"
             class="p-button-raised mt-3"
             icon="bi bi-pencil-square"
-            [disabled]="isBusy"
+            [disabled]="isLoading"
             label="Add">
           </button>
           <button pButton 

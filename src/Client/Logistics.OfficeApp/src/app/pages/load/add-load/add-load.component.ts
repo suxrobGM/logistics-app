@@ -10,8 +10,7 @@ import {DropdownModule} from 'primeng/dropdown';
 import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {AppConfig} from '@configs';
-import {AuthService} from '@core/auth';
-import {LoadStatus} from '@core/enums';
+import {AuthService} from '@core/auth';;
 import {CreateLoad, Customer} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {DistanceConverter} from '@shared/utils';
@@ -83,7 +82,6 @@ export class AddLoadComponent implements OnInit {
       distance: new FormControl(0, Validators.required),
       dispatcherName: new FormControl('', Validators.required),
       dispatcherId: new FormControl('', Validators.required),
-      status: new FormControl(LoadStatus.Dispatched, Validators.required),
     });
   }
 

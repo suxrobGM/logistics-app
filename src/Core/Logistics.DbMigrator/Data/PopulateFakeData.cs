@@ -119,19 +119,19 @@ internal class PopulateFakeData
         var dispatcherRole = roles.First(i => i.Name == TenantRoles.Dispatcher);
         var driverRole = roles.First(i => i.Name == TenantRoles.Driver);
 
-        var ownerEmployee = await TryAddEmployeeAsync(tenant.Id, owner, ownerRole);
-        var managerEmployee = await TryAddEmployeeAsync(tenant.Id, manager, managerRole);
+        var ownerEmployee = await TryAddEmployeeAsync(tenant.Id, owner, 0, SalaryType.None, ownerRole);
+        var managerEmployee = await TryAddEmployeeAsync(tenant.Id, manager, 5000, SalaryType.Monthly, managerRole);
         var employeesDto = new CompanyEmployees(ownerEmployee, managerEmployee);
 
         foreach (var dispatcher in dispatchers)
         {
-            var dispatcherEmployee = await TryAddEmployeeAsync(tenant.Id, dispatcher, dispatcherRole);
+            var dispatcherEmployee = await TryAddEmployeeAsync(tenant.Id, dispatcher, 1000, SalaryType.Weekly, dispatcherRole);
             employeesDto.Dispatchers.Add(dispatcherEmployee);
         }
         
         foreach (var driver in drivers)
         {
-            var driverEmployee = await TryAddEmployeeAsync(tenant.Id, driver, driverRole);
+            var driverEmployee = await TryAddEmployeeAsync(tenant.Id, driver, 0.3M, SalaryType.ShareOfGross, driverRole);
             employeesDto.Drivers.Add(driverEmployee);
         }
 
@@ -142,7 +142,9 @@ internal class PopulateFakeData
 
     private async Task<Employee> TryAddEmployeeAsync(
         string tenantId, 
-        User user, 
+        User user,
+        decimal salary,
+        SalaryType salaryType,
         TenantRole role)
     {
         var employee = await _tenantRepository.GetAsync<Employee>(user.Id);
@@ -150,7 +152,7 @@ internal class PopulateFakeData
         if (employee != null)
             return employee;
 
-        employee = Employee.CreateEmployeeFromUser(user);
+        employee = Employee.CreateEmployeeFromUser(user, salary, salaryType);
         user.JoinTenant(tenantId);
         await _tenantRepository.AddAsync(employee);
         employee.Roles.Add(role);

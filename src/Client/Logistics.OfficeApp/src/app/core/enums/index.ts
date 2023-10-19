@@ -5,3 +5,4 @@ export * from './paymentStatus';
 export * from './loadStatus';
 export * from './userRole';
 export * from './permissions';
+export * from './salaryType';

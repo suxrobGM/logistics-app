@@ -26,12 +26,8 @@
         <ng-template pTemplate="header">
           <tr>
             <th pSortableColumn="firstName">
-              First Name
+              Name
               <p-sortIcon field="firstName"></p-sortIcon>
-            </th>
-            <th pSortableColumn="lastName">
-              Last Name
-              <p-sortIcon field="lastName"></p-sortIcon>
             </th>
             <th pSortableColumn="email">
               Email
@@ -40,6 +36,14 @@
             <th pSortableColumn="phoneNumber">
               Phone Number
               <p-sortIcon field="phoneNumber"></p-sortIcon>
+            </th>
+            <th pSortableColumn="salary">
+              Salary
+              <p-sortIcon field="salary"></p-sortIcon>
+            </th>
+            <th pSortableColumn="salaryType">
+              Salary Type
+              <p-sortIcon field="salaryType"></p-sortIcon>
             </th>
             <th>
               Role
@@ -54,16 +58,13 @@
           <tr>
             <td>
               <a [routerLink]="['/employees/edit', employee.id]">
-                {{employee.firstName}}
-              </a>
-            </td>
-            <td>
-              <a [routerLink]="['/employees/edit', employee.id]">
-                {{employee.lastName}}
+                {{employee.fullName}}
               </a>
             </td>
             <td>{{employee.email}}</td>
             <td>{{employee.phoneNumber}}</td>
+            <td>{{employee.salary}}</td>
+            <td>{{getSalaryTypeName(employee.salaryType)}}</td>
             <td>{{employee.roles[0]?.displayName}}</td>
             <td>{{employee.joinedDate | date:'mediumDate'}}</td>
           </tr>

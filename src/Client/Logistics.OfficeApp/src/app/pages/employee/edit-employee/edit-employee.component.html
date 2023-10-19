@@ -9,45 +9,77 @@
     <p-card>
       <p-progressSpinner *ngIf="isLoading"></p-progressSpinner>
 
-      <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
-        <input id="email" type="text" class="form-control" [disabled]="true" [value]="employee?.email" />
-      </div>
-      <div class="mb-3">
-        <label for="firstName" class="form-label">First name</label>
-        <input id="firstName" type="text" class="form-control" [disabled]="true" [value]="employee?.firstName" />
-      </div>
-      <div class="mb-3">
-        <label for="lastName" class="form-label">Last name</label>
-        <input id="lastName" type="text" class="form-control" [disabled]="true" [value]="employee?.lastName" />
-      </div>
-      <div class="mb-3">
-        <label for="roleName" class="form-label">Role</label>
-        <div class="input-group">
-          <input id="roleName" type="text" class="form-control" [disabled]="true" [value]="getEmployeeRoleNames()" />
-          <button pButton class="p-button-raised" type="button" (click)="openUpdateDialog()" [disabled]="!canChangeRole">
-            Change
+      <form [formGroup]="form" (ngSubmit)="updateEmployee()">
+        <app-validation-summary [form]="form"></app-validation-summary>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input id="email" type="text" class="form-control" [disabled]="true" [value]="employee?.email" />
+        </div>
+        <div class="mb-3">
+          <label for="firstName" class="form-label">First name</label>
+          <input id="firstName" type="text" class="form-control" [disabled]="true" [value]="employee?.firstName" />
+        </div>
+        <div class="mb-3">
+          <label for="lastName" class="form-label">Last name</label>
+          <input id="lastName" type="text" class="form-control" [disabled]="true" [value]="employee?.lastName" />
+        </div>
+        <div class="mb-3">
+          <label for="salaryType" class="form-label">Salary Type</label>
+          <p-dropdown formControlName="salaryType" styleClass="w-100" [options]="salaryTypes" 
+            optionValue="value" optionLabel="description">
+          </p-dropdown>
+        </div>
+        <div class="mb-3">
+          <label for="salary" class="form-label">Salary</label>
+          <div class="input-group" *ngIf="isShareOfGrossSalary() else fixedSalaryInput">
+            <span class="input-group-text">%</span>
+            <input id="salary" formControlName="salary" type="number" class="form-control" [min]="0" [max]="100" />
+          </div>
+
+          <ng-template #fixedSalaryInput>
+            <div class="input-group">
+              <span class="input-group-text">$$</span>
+              <input id="salary" formControlName="salary" type="number" class="form-control" [min]="0" />
+            </div>
+          </ng-template>
+
+        </div>
+        <div class="mb-3">
+          <label for="roleName" class="form-label">Role</label>
+          <div class="input-group">
+            <input id="roleName" type="text" class="form-control" [disabled]="true" [value]="getEmployeeRoleNames()" />
+            <button pButton class="p-button-raised" type="button" (click)="openUpdateDialog()" [disabled]="!canChangeRole">
+              Change
+            </button>
+          </div>
+        </div>
+  
+        <div>
+          <button pButton 
+            type="submit"
+            class="p-button-raised mt-3"
+            icon="bi bi-pencil-square"
+            [disabled]="isLoading"
+            label="Save">
+          </button>
+          <button pButton 
+            type="button"
+            class="p-button-raised p-button-danger mt-3"
+            icon="bi bi bi-trash"
+            [disabled]="isLoading"
+            (click)="confirmToDelete()">
+            Delete
+          </button>
+          <button pButton 
+            type="button"
+            class="p-button-raised mt-3 ms-2"
+            icon="bi bi-arrow-left-square"
+            routerLink="/employees">
+            Back to list
           </button>
         </div>
-      </div>
-
-      <div>
-        <button pButton 
-          type="button"
-          class="p-button-raised p-button-danger mt-3"
-          icon="bi bi bi-trash"
-          label="Delete"
-          [disabled]="isLoading"
-          (click)="confirmToDelete()">
-        </button>
-        <button pButton 
-          type="button"
-          class="p-button-raised mt-3 ms-2"
-          icon="bi bi-arrow-left-square"
-          routerLink="/employees"
-          label="Back to list">
-        </button>
-      </div>
+      </form>
+      
     </p-card>
   </div>
 </div>

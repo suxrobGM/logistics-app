@@ -1,5 +1,6 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {NgIf} from '@angular/common';
+import {CommonModule} from '@angular/common';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import {ConfirmationService} from 'primeng/api';
 import {ButtonModule} from 'primeng/button';
@@ -7,11 +8,13 @@ import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {CardModule} from 'primeng/card';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
-import {UserRole} from '@core/enums';
-import {Employee} from '@core/models';
-import {ApiService} from '@core/services';
+import {DropdownModule} from 'primeng/dropdown';
+import {EnumValue, SalaryType, SalaryTypeEnum, UserRole, convertEnumToArray} from '@core/enums';
+import {Employee, UpdateEmployee} from '@core/models';
+import {ApiService, ToastService} from '@core/services';
 import {AuthService} from '@core/auth';
 import {ChangeRoleDialogComponent} from '../components';
+import { ValidationSummaryComponent } from '@shared/components';
 
 
 @Component({
@@ -25,10 +28,13 @@ import {ChangeRoleDialogComponent} from '../components';
     ConfirmDialogModule,
     ChangeRoleDialogComponent,
     CardModule,
-    NgIf,
+    CommonModule,
     ProgressSpinnerModule,
     ButtonModule,
     RouterLink,
+    DropdownModule,
+    ReactiveFormsModule,
+    ValidationSummaryComponent
   ],
   providers: [
     ConfirmationService,
@@ -40,16 +46,37 @@ export class EditEmployeeComponent implements OnInit {
   public showUpdateDialog: boolean;
   public canChangeRole: boolean;
   public employee?: Employee;
+  public salaryTypes: EnumValue[];
+  public form: FormGroup<UpdateEmployeeForm>;
 
   constructor(
-    private authService: AuthService,
-    private apiService: ApiService,
-    private confirmationService: ConfirmationService,
-    private route: ActivatedRoute)
+    private readonly authService: AuthService,
+    private readonly apiService: ApiService,
+    private readonly confirmationService: ConfirmationService,
+    private readonly toastService: ToastService,
+    private readonly route: ActivatedRoute)
   {
     this.isLoading = false;
     this.showUpdateDialog = false;
     this.canChangeRole = false;
+    this.salaryTypes = convertEnumToArray(SalaryTypeEnum);
+    
+    this.form = new FormGroup<UpdateEmployeeForm>({
+      salary: new FormControl<number>(0, {validators: Validators.compose([Validators.required, Validators.min(0)]), nonNullable: true}),
+      salaryType: new FormControl<SalaryType>(SalaryType.None, {validators: Validators.required, nonNullable: true})
+    });
+
+    this.form.get('salaryType')?.valueChanges.subscribe((selectedSalaryType) => {
+      const salaryControl = this.form.get('salary');
+      
+      if (selectedSalaryType === SalaryType.ShareOfGross) {
+        salaryControl?.setValidators([Validators.required, Validators.min(0), Validators.max(100)]);
+      }
+      else {
+        salaryControl?.setValidators([Validators.required, Validators.min(0)]);
+      }
+      salaryControl?.updateValueAndValidity();
+  });
   }
 
   ngOnInit(): void {
@@ -58,6 +85,28 @@ export class EditEmployeeComponent implements OnInit {
     });
 
     this.fetchEmployee();
+  }
+
+  updateEmployee() {
+    if (!this.form.valid) {
+      console.log(this.form);
+      return;
+    }
+
+    const command: UpdateEmployee = {
+      userId: this.id,
+      salary: this.form.value.salary,
+      salaryType: this.form.value.salaryType,
+    }
+    
+    // this.isLoading = true;
+    // this.apiService.updateEmployee(command).subscribe((result) => {
+    //   if (result.isSuccess) {
+    //     this.toastService.showSuccess('The employee data has been successfully saved');
+    //   }
+
+    //   this.isLoading = false;
+    // });
   }
 
   confirmToDelete() {
@@ -74,6 +123,10 @@ export class EditEmployeeComponent implements OnInit {
 
   openUpdateDialog() {
     this.showUpdateDialog = true;
+  }
+
+  isShareOfGrossSalary() {
+    return this.form.value.salaryType === SalaryType.ShareOfGross;
   }
 
   private fetchEmployee() {
@@ -114,4 +167,9 @@ export class EditEmployeeComponent implements OnInit {
       this.canChangeRole = true;
     }
   }
+}
+
+interface UpdateEmployeeForm {
+  salary: FormControl<number>;
+  salaryType: FormControl<SalaryType>;
 }

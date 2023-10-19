@@ -28,7 +28,7 @@ internal sealed class GetEmployeesHandler : RequestHandler<GetEmployeesQuery, Pa
                 employeesQuery = _tenantRepository
                     .Query<EmployeeTenantRole>()
                     .Where(i => i.RoleId == role.Id)
-                    .Select(i => i.Employee!);
+                    .Select(i => i.Employee);
             }
         }
         
@@ -36,7 +36,7 @@ internal sealed class GetEmployeesHandler : RequestHandler<GetEmployeesQuery, Pa
             .Skip((req.Page - 1) * req.PageSize)
             .Take(req.PageSize);
 
-        var employeeDto = employeesQuery.Select(employeeEntity => employeeEntity.ToDto()).ToList();
+        var employeeDto = employeesQuery.Select(employeeEntity => employeeEntity.ToDto()).ToArray();
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
         return new PagedResponseResult<EmployeeDto>(employeeDto, totalItems, totalPages);
     }

@@ -9,6 +9,7 @@ import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {CardModule} from 'primeng/card';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
+import {EnumValue, SalaryType, SalaryTypeEnum, convertEnumToArray} from '@core/enums';
 import {CreateEmployee, Role, User} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {UserService} from '../services';
@@ -39,9 +40,10 @@ import {UserService} from '../services';
 })
 export class AddEmployeeComponent implements OnInit {
   public suggestedUsers: User[];
-  public form: FormGroup;
+  public form: FormGroup<CreateEmployeeForm>;
   public roles: Role[];
-  public isBusy: boolean;
+  public salaryTypes: EnumValue[];
+  public isLoading: boolean;
 
   constructor(
     private apiService: ApiService,
@@ -50,11 +52,14 @@ export class AddEmployeeComponent implements OnInit {
   {
     this.suggestedUsers = [];
     this.roles = [];
-    this.isBusy = false;
+    this.isLoading = false;
+    this.salaryTypes = convertEnumToArray(SalaryTypeEnum);
 
-    this.form = new FormGroup({
-      user: new FormControl('', Validators.required),
-      role: new FormControl('', Validators.required),
+    this.form = new FormGroup<CreateEmployeeForm>({
+      user: new FormControl(null, {validators: Validators.required}),
+      role: new FormControl(null, {validators: Validators.required}),
+      salary: new FormControl<number>(0, {validators: Validators.required, nonNullable: true}),
+      salaryType: new FormControl<SalaryType>(SalaryType.None, {validators: Validators.required, nonNullable: true})
     });
   }
 
@@ -86,29 +91,38 @@ export class AddEmployeeComponent implements OnInit {
 
     const newEmployee: CreateEmployee = {
       userId: user.id,
-      role: this.form.value.role,
+      role: this.form.value.role?.name,
+      salary: this.form.value.salary ?? 0,
+      salaryType: this.form.value.salaryType ?? SalaryType.None,
     };
 
-    this.isBusy = true;
+    this.isLoading = true;
     this.apiService.createEmployee(newEmployee).subscribe((result) => {
       if (result.isSuccess) {
         this.toastService.showSuccess('New employee has been added successfully');
         this.form.reset();
       }
 
-      this.isBusy = false;
+      this.isLoading = false;
     });
   }
 
   private fetchRoles() {
-    this.isBusy = true;
+    this.isLoading = true;
 
     this.userService.fetchRoles().subscribe((roles) => {
       if (roles) {
         this.roles = roles;
       }
 
-      this.isBusy = false;
+      this.isLoading = false;
     });
   }
+}
+
+interface CreateEmployeeForm {
+  user: FormControl<User | null>;
+  role: FormControl<Role | null>;
+  salary: FormControl<number>;
+  salaryType: FormControl<SalaryType>;
 }

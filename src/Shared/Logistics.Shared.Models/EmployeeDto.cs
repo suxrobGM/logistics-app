@@ -1,4 +1,6 @@
-﻿namespace Logistics.Shared.Models;
+﻿using Logistics.Shared.Enums;
+
+namespace Logistics.Shared.Models;
 
 public class EmployeeDto
 {
@@ -13,6 +15,8 @@ public class EmployeeDto
     public string? LastKnownLocation { get; set; }
     public double? LastKnownLocationLat { get; set; }
     public double? LastKnownLocationLng { get; set; }
-    public DateTime JoinedDate { get; set; } = DateTime.UtcNow;
+    public decimal Salary { get; set; }
+    public SalaryType SalaryType { get; set; }
+    public DateTime JoinedDate { get; set; }
     public IEnumerable<TenantRoleDto>? Roles { get; set; }
 }

@@ -4,6 +4,9 @@ namespace Logistics.Shared.Enums;
 
 public enum SalaryType
 {
+    [Description("None")]
+    None,
+    
     [Description("Monthly")]
     Monthly,
     

@@ -1,0 +1,5 @@
+<ul *ngIf="(formErrors$ | async)?.length" class="validation-list">
+  <li *ngFor="let error of formErrors$ | async">
+    {{error}}
+  </li>
+</ul>

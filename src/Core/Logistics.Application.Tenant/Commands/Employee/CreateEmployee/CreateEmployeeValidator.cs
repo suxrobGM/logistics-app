@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Logistics.Shared.Enums;
 
 namespace Logistics.Application.Tenant.Commands;
 
@@ -7,5 +8,8 @@ internal sealed class CreateEmployeeValidator : AbstractValidator<CreateEmployee
     public CreateEmployeeValidator()
     {
         RuleFor(i => i.UserId).NotEmpty();
+        RuleFor(i => i.Salary).GreaterThanOrEqualTo(0M);
+        When(i => i.SalaryType != SalaryType.None,
+            () => RuleFor(i => i.Salary).GreaterThan(0M));
     }
 }
