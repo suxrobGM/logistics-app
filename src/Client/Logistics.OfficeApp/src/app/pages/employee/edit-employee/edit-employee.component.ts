@@ -15,6 +15,7 @@ import {ApiService, ToastService} from '@core/services';
 import {AuthService} from '@core/auth';
 import {ChangeRoleDialogComponent} from '../components';
 import { ValidationSummaryComponent } from '@shared/components';
+import { NumberUtils } from '@shared/utils';
 
 
 @Component({
@@ -68,14 +69,23 @@ export class EditEmployeeComponent implements OnInit {
 
     this.form.get('salaryType')?.valueChanges.subscribe((selectedSalaryType) => {
       const salaryControl = this.form.get('salary');
+
+      if (!salaryControl) {
+        return;
+      }
       
       if (selectedSalaryType === SalaryType.ShareOfGross) {
-        salaryControl?.setValidators([Validators.required, Validators.min(0), Validators.max(100)]);
+        salaryControl.setValidators([Validators.required, Validators.min(0), Validators.max(100)]);
+        salaryControl.setValue(0);
+      }
+      else if (selectedSalaryType === SalaryType.None) {
+        salaryControl.setValue(0);
       }
       else {
-        salaryControl?.setValidators([Validators.required, Validators.min(0)]);
+        salaryControl.setValidators([Validators.required, Validators.min(0)]);
       }
-      salaryControl?.updateValueAndValidity();
+
+      salaryControl.updateValueAndValidity();
   });
   }
 
@@ -89,24 +99,26 @@ export class EditEmployeeComponent implements OnInit {
 
   updateEmployee() {
     if (!this.form.valid) {
-      console.log(this.form);
       return;
     }
 
+    const salaryType = this.form.value.salaryType;
+    const salary = this.form.value.salary;
+
     const command: UpdateEmployee = {
       userId: this.id,
-      salary: this.form.value.salary,
-      salaryType: this.form.value.salaryType,
+      salary: salaryType === SalaryType.ShareOfGross ? NumberUtils.toRatio(salary ?? 0) : salary,
+      salaryType: salaryType,
     }
     
-    // this.isLoading = true;
-    // this.apiService.updateEmployee(command).subscribe((result) => {
-    //   if (result.isSuccess) {
-    //     this.toastService.showSuccess('The employee data has been successfully saved');
-    //   }
+    this.isLoading = true;
+    this.apiService.updateEmployee(command).subscribe((result) => {
+      if (result.isSuccess) {
+        this.toastService.showSuccess('The employee data has been successfully saved');
+      }
 
-    //   this.isLoading = false;
-    // });
+      this.isLoading = false;
+    });
   }
 
   confirmToDelete() {
@@ -138,6 +150,14 @@ export class EditEmployeeComponent implements OnInit {
         const employeeRoles = this.employee.roles?.map((i) => i.name);
         const user = this.authService.getUserData();
         this.evaluateCanChangeRole(user?.roles, employeeRoles);
+
+        const salaryType = result.data.salaryType;
+        const salary = result.data.salary;
+
+        this.form.patchValue({
+          salary: salaryType === SalaryType.ShareOfGross ? NumberUtils.toPercent(salary ?? 0) : salary,
+          salaryType: salaryType
+        });
       }
 
       this.isLoading = false;

@@ -80,7 +80,7 @@ export class ListLoadComponent {
     });
   }
 
-  getLoadStatusName(status: LoadStatus): string {
-    return getEnumDescription(LoadStatusEnum, status.toString());
+  getLoadStatusName(enumValue: LoadStatus): string {
+    return getEnumDescription(LoadStatusEnum, enumValue);
   }
 }

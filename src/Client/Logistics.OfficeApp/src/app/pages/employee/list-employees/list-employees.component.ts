@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {DatePipe} from '@angular/common';
+import {CommonModule, CurrencyPipe, DatePipe, PercentPipe} from '@angular/common';
 import {RouterLink} from '@angular/router';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {InputTextModule} from 'primeng/inputtext';
@@ -18,6 +18,7 @@ import {SalaryType, SalaryTypeEnum, getEnumDescription} from '@core/enums';
   styleUrls: [],
   standalone: true,
   imports: [
+    CommonModule,
     ButtonModule,
     TooltipModule,
     RouterLink,
@@ -26,6 +27,8 @@ import {SalaryType, SalaryTypeEnum, getEnumDescription} from '@core/enums';
     SharedModule,
     InputTextModule,
     DatePipe,
+    PercentPipe,
+    CurrencyPipe,
   ],
 })
 export class ListEmployeeComponent {
@@ -72,7 +75,7 @@ export class ListEmployeeComponent {
     });
   }
 
-  getSalaryTypeName(status: SalaryType): string {
-    return getEnumDescription(SalaryTypeEnum, status.toString());
+  getSalaryTypeName(enumValue: SalaryType): string {
+    return getEnumDescription(SalaryTypeEnum, enumValue);
   }
 }

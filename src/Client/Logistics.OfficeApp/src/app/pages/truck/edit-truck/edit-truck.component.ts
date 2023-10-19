@@ -11,7 +11,6 @@ import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
 import {CreateTruck, Employee, UpdateTruck} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
-import {NumberUtils} from '@shared/utils';
 
 
 @Component({
@@ -124,7 +123,6 @@ export class EditTruckComponent implements OnInit {
 
     const command: CreateTruck = {
       truckNumber: this.form.value.truckNumber,
-      driverIncomePercentage: NumberUtils.toRatio(this.form.value.driverIncomePercentage),
       driverIds: drivers.map((i) => i.id),
     };
 
@@ -145,7 +143,6 @@ export class EditTruckComponent implements OnInit {
     const updateTruckCommand: UpdateTruck = {
       id: this.id!,
       truckNumber: this.form.value.truckNumber,
-      driverIncomePercentage: NumberUtils.toRatio(this.form.value.driverIncomePercentage),
       driverIds: drivers.map((i) => i.id),
     };
 

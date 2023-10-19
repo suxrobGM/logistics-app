@@ -10,7 +10,7 @@ import {DropdownModule} from 'primeng/dropdown';
 import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {AppConfig} from '@configs';
-import {AuthService} from '@core/auth';;
+import {AuthService} from '@core/auth';
 import {CreateLoad, Customer} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {DistanceConverter} from '@shared/utils';

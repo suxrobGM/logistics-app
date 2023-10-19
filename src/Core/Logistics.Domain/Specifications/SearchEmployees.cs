@@ -31,7 +31,7 @@ public class SearchEmployees : BaseSpecification<Employee>
             "lastname" => i => i.LastName!,
             "phonenumber" => i => i.PhoneNumber!,
             "salary" => i => i.Salary,
-            "salaryType" => i => i.SalaryType,
+            "salarytype" => i => i.SalaryType,
             _ => i => i.Email!
         };
     }

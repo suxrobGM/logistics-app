@@ -1,7 +1,7 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {AsyncPipe, CommonModule} from '@angular/common';
 import {FormGroup} from '@angular/forms';
-import {BehaviorSubject, Subject, takeUntil} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 
 
 @Component({
