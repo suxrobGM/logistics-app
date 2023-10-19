@@ -58,7 +58,6 @@ export class EditTruckComponent implements OnInit {
     this.form = new FormGroup({
       truckNumber: new FormControl(0, Validators.required),
       drivers: new FormControl([], Validators.required),
-      driverIncomePercentage: new FormControl(0, Validators.compose([Validators.required, Validators.min(0), Validators.max(1)])),
     });
   }
 
@@ -114,7 +113,6 @@ export class EditTruckComponent implements OnInit {
         this.form.patchValue({
           truckNumber: truck.truckNumber,
           drivers: truck.drivers,
-          driverIncomePercentage: NumberUtils.toPercentage(truck.driverIncomePercentage),
         });
       }
     });

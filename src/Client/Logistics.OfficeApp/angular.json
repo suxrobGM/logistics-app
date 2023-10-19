@@ -28,8 +28,8 @@
               "src/assets"
             ],
             "styles": [
+              "src/styles/global.scss",
               "node_modules/mapbox-gl/dist/mapbox-gl.css",
-              "src/styles/global.scss"
             ],
             "scripts": [
               "node_modules/chart.js/dist/chart.js"
@@ -104,8 +104,8 @@
               "src/assets"
             ],
             "styles": [
-              "node_modules/mapbox-gl/dist/mapbox-gl.css",
-              "src/styles/global.scss"
+              "src/styles/global.scss",
+              "node_modules/mapbox-gl/dist/mapbox-gl.css"
             ],
             "scripts": [
               "node_modules/chart.js/dist/chart.js"

@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {CommonModule, PercentPipe} from '@angular/common';
+import {CommonModule} from '@angular/common';
 import {RouterLink} from '@angular/router';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {InputTextModule} from 'primeng/inputtext';
@@ -25,7 +25,6 @@ import {ApiService} from '@core/services';
     TableModule,
     SharedModule,
     InputTextModule,
-    PercentPipe,
   ],
 })
 export class ListTruckComponent {

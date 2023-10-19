@@ -19,7 +19,11 @@ internal sealed class GetNotificationsHandler : RequestHandler<GetNotificationsQ
         var notificationsList =
             await _tenantRepository.GetListAsync<Notification>(i => i.CreatedDate >= req.StartDate && i.CreatedDate <= req.EndDate);
 
-        var notificationsDto = notificationsList.Select(i => i.ToDto()).ToArray();
+        var notificationsDto = notificationsList
+            .Select(i => i.ToDto())
+            .OrderByDescending(i => i.CreatedDate)
+            .ToArray();
+        
         return ResponseResult<NotificationDto[]>.CreateSuccess(notificationsDto);
     }
 }

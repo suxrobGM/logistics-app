@@ -1,8 +1,8 @@
-@import "~bootstrap-icons/font/bootstrap-icons.css";
 @import "~bootstrap/dist/css/bootstrap.min.css";
 @import "~primeng/resources/themes/bootstrap4-light-blue/theme.css";
 @import "~primeng/resources/primeng.min.css";
 @import "~primeicons/primeicons.css";
+@import "~bootstrap-icons/font/bootstrap-icons.css";
 
 body {
   background-color: #dae5f3 !important;
@@ -15,14 +15,6 @@ body {
   max-width: 150px;
 }
 
-.p-sortable-column-icon.pi-sort-alt {
-  display: none;
-}
-
-.p-dropdown {
-  min-height: 2.5rem;
-}
-
 ol, ul {
   padding-left: 0;
 }
@@ -30,4 +22,13 @@ ol, ul {
 dl, ol, ul {
   margin-top: 0;
   margin-bottom: 0;
+}
+
+tbody, td, tfoot, th, thead, tr {
+  border: 1px solid #dee2e6;
+  border-width: 1px 0 2px 0;
+}
+
+button {
+  border-radius: 4px;
 }
