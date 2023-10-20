@@ -1,5 +1,5 @@
-import {Employee} from './employee';
-import {Load} from './load';
+import {Employee} from '../employee/employee';
+import {Load} from '../load/load';
 
 export interface Truck {
   id: string;

@@ -1,4 +1,4 @@
-import {Employee} from './employee';
+import {Employee} from '../employee/employee';
 import {Payment} from './payment';
 
 

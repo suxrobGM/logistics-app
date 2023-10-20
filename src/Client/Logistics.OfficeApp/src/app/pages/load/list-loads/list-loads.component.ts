@@ -33,10 +33,10 @@ import {DistanceUnitPipe} from '@shared/pipes';
   ],
 })
 export class ListLoadComponent {
-  loads: Load[];
-  isLoading: boolean;
-  totalRecords: number;
-  first: number;
+  public loads: Load[];
+  public isLoading: boolean;
+  public totalRecords: number;
+  public first: number;
 
   constructor(private apiService: ApiService) {
     this.loads = [];

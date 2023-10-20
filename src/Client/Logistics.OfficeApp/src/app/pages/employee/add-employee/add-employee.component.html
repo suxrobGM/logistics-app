@@ -9,6 +9,8 @@
       <p-progressSpinner *ngIf="isLoading"></p-progressSpinner>
       
       <form [formGroup]="form" (ngSubmit)="submit()">
+        <app-validation-summary [form]="form"></app-validation-summary>
+
         <div class="mb-3">
           <label for="name" class="form-label">User Name</label>
           <p-autoComplete formControlName="user" styleClass="w-100" inputStyleClass="form-control"
@@ -24,7 +26,17 @@
         </div>
         <div class="mb-3">
           <label for="salary" class="form-label">Salary</label>
-          <input name="salary" formControlName="salary" class="form-control" />
+          <div class="input-group" *ngIf="isShareOfGrossSalary() else fixedSalaryInput">
+            <span class="input-group-text">%</span>
+            <input id="salary" formControlName="salary" type="number" class="form-control" [min]="0" [max]="100" />
+          </div>
+
+          <ng-template #fixedSalaryInput>
+            <div class="input-group">
+              <span class="input-group-text">$$</span>
+              <input id="salary" formControlName="salary" type="number" class="form-control" [min]="0" [disabled]="isNoneSalary()" />
+            </div>
+          </ng-template>
         </div>
         <div class="mb-3">
           <label for="role" class="form-label">Role</label>

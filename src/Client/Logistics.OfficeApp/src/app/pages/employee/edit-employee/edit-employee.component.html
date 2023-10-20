@@ -11,6 +11,7 @@
 
       <form [formGroup]="form" (ngSubmit)="updateEmployee()">
         <app-validation-summary [form]="form"></app-validation-summary>
+
         <div class="mb-3">
           <label for="email" class="form-label">Email</label>
           <input id="email" type="text" class="form-control" [disabled]="true" [value]="employee?.email" />
@@ -29,6 +30,7 @@
             optionValue="value" optionLabel="description">
           </p-dropdown>
         </div>
+        
         <div class="mb-3">
           <label for="salary" class="form-label">Salary</label>
           <div class="input-group" *ngIf="isShareOfGrossSalary() else fixedSalaryInput">
@@ -39,11 +41,11 @@
           <ng-template #fixedSalaryInput>
             <div class="input-group">
               <span class="input-group-text">$$</span>
-              <input id="salary" formControlName="salary" type="number" class="form-control" [min]="0" />
+              <input id="salary" formControlName="salary" type="number" class="form-control" [min]="0" [disabled]="isNoneSalary()" />
             </div>
           </ng-template>
-
         </div>
+
         <div class="mb-3">
           <label for="roleName" class="form-label">Role</label>
           <div class="input-group">

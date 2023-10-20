@@ -74,8 +74,8 @@ export class NotificationsPanelComponent implements OnInit, OnDestroy {
     this.isLoading = true;
 
     this.notificationService.getPastTwoWeeksNotifications().subscribe((result) => {
-      if (result.isSuccess) {
-        this.notifications = result.data!;
+      if (result.data) {
+        this.notifications = result.data;
       }
 
       this.isLoading = false;
@@ -102,6 +102,8 @@ export class NotificationsPanelComponent implements OnInit, OnDestroy {
   }
 
   getUnreadNotificationsCount(): string {
+    console.log(this.notifications.filter((i) => !i.isRead).length);
+    
     return this.notifications.filter((i) => !i.isRead).length.toString();
   }
 

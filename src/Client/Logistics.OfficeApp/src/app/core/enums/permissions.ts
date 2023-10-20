@@ -44,4 +44,25 @@ export namespace Permissions {
     Edit = 'Permissions.Customers.Edit',
     Delete = 'Permissions.Customers.Delete'
   }
+
+  export enum Payments {
+    Create = 'Permissions.Payments.Create',
+    View = 'Permissions.Payments.View',
+    Edit = 'Permissions.Payments.Edit',
+    Delete = 'Permissions.Payments.Delete'
+  }
+
+  export enum Invoices {
+    Create = 'Permissions.Invoices.Create',
+    View = 'Permissions.Invoices.View',
+    Edit = 'Permissions.Invoices.Edit',
+    Delete = 'Permissions.Invoices.Delete'
+  }
+
+  export enum Payroll {
+    Create = 'Permissions.Payroll.Create',
+    View = 'Permissions.Payroll.View',
+    Edit = 'Permissions.Payroll.Edit',
+    Delete = 'Permissions.Payroll.Delete'
+  }
 }

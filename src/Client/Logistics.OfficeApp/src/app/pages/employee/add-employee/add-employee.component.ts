@@ -13,6 +13,7 @@ import {EnumValue, SalaryType, SalaryTypeEnum, convertEnumToArray} from '@core/e
 import {CreateEmployee, Role, User} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {UserService} from '../services';
+import {ValidationSummaryComponent} from '@shared/components';
 
 
 @Component({
@@ -33,6 +34,7 @@ import {UserService} from '../services';
     DropdownModule,
     ButtonModule,
     RouterLink,
+    ValidationSummaryComponent,
   ],
   providers: [
     UserService,
@@ -82,6 +84,10 @@ export class AddEmployeeComponent implements OnInit {
   }
 
   submit() {
+    if (!this.form.valid) {
+      return;
+    }
+
     const user = this.form.value.user as User;
 
     if (!user) {
@@ -105,6 +111,14 @@ export class AddEmployeeComponent implements OnInit {
 
       this.isLoading = false;
     });
+  }
+
+  isShareOfGrossSalary() {
+    return this.form.value.salaryType === SalaryType.ShareOfGross;
+  }
+
+  isNoneSalary() {
+    return this.form.value.salaryType === SalaryType.None;
   }
 
   private fetchRoles() {

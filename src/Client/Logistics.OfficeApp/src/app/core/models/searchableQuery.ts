@@ -1,6 +1,5 @@
-export interface SearchableQuery {
-  search?: string; 
-  orderBy?: string;
-  page?: number;
-  pageSize?: number;
+import {PagedQuery} from './pagedQuery';
+
+export interface SearchableQuery extends PagedQuery {
+  search?: string;
 }

@@ -7,6 +7,8 @@
       <p-progressSpinner *ngIf="isLoading"></p-progressSpinner>
       
       <form [formGroup]="form" (ngSubmit)="submit()">
+        <app-validation-summary [form]="form"></app-validation-summary>
+
         <div class="mb-3">
           <label for="name" class="form-label">Customer Name</label>
           <input id="name" formControlName="name" class="form-control" />

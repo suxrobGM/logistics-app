@@ -301,6 +301,13 @@ internal class PopulateFakeData
 
     private async Task AddNotificationsAsync()
     {
+        var notificationsCount = await _tenantRepository.CountAsync<Notification>();
+
+        if (notificationsCount > 0)
+        {
+            return;
+        }
+        
         for (var i = 1; i <= 10; i++)
         {
             var notification = new Notification

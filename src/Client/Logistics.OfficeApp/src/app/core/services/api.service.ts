@@ -31,6 +31,11 @@ import {
   Customer,
   UpdateCustomer,
   CreateCustomer,
+  Payment,
+  CreatePayment,
+  UpdatePayment,
+  PagedQuery,
+  PagedIntervalQuery,
 } from '../models';
 
 
@@ -53,7 +58,7 @@ export class ApiService {
   getTenant(): Observable<ResponseResult<Tenant>> {
     const tenantId = this.tenantService.getTenantName();
     const url = `/tenants/${tenantId}`;
-    return this.get<ResponseResult<Tenant>>(url);
+    return this.get(url);
   }
 
   // #endregion
@@ -62,8 +67,8 @@ export class ApiService {
   // #region User API
 
   getUsers(query?: SearchableQuery): Observable<PagedResponseResult<User>> {
-    const url = `/users?${this.stringfyQuery(query)}`;
-    return this.get<PagedResponseResult<User>>(url);
+    const url = `/users?${this.stringfySearchableQuery(query)}`;
+    return this.get(url);
   }
 
   // #endregion
@@ -73,31 +78,31 @@ export class ApiService {
 
   getLoad(id: string): Observable<ResponseResult<Load>> {
     const url = `/loads/${id}`;
-    return this.get<ResponseResult<Load>>(url);
+    return this.get(url);
   }
 
   getLoads(query?: SearchableQuery, onlyActiveLoads = false): Observable<PagedResponseResult<Load>> {
-    let url = `/loads?${this.stringfyQuery(query)}`;
+    let url = `/loads?${this.stringfySearchableQuery(query)}`;
 
     if (onlyActiveLoads) {
       url += '&onlyActiveLoads=true';
     }
-    return this.get<PagedResponseResult<Load>>(url);
+    return this.get(url);
   }
 
   createLoad(command: CreateLoad): Observable<ResponseResult> {
     const url = `/loads`;
-    return this.post<ResponseResult, CreateLoad>(url, command);
+    return this.post(url, command);
   }
 
   updateLoad(command: UpdateLoad): Observable<ResponseResult> {
     const url = `/loads/${command.id}`;
-    return this.put<ResponseResult, UpdateLoad>(url, command);
+    return this.put(url, command);
   }
 
   deleteLoad(loadId: string): Observable<ResponseResult> {
     const url = `/loads/${loadId}`;
-    return this.delete<ResponseResult>(url);
+    return this.delete(url);
   }
 
   // #endregion
@@ -107,33 +112,32 @@ export class ApiService {
 
   getTruck(truckId: string): Observable<ResponseResult<Truck>> {
     const url = `/trucks/${truckId}`;
-    return this.get<ResponseResult<Truck>>(url);
+    return this.get(url);
   }
 
   getTrucks(query?: SearchableQuery): Observable<PagedResponseResult<Truck>> {
-    const url = `/trucks?${this.stringfyQuery(query)}`;
-    return this.get<PagedResponseResult<Truck>>(url);
+    const url = `/trucks?${this.stringfySearchableQuery(query)}`;
+    return this.get(url);
   }
 
   getTruckDrivers(query?: SearchableQuery): Observable<PagedResponseResult<TruckDriver>> {
-    const url = `/trucks/drivers?${this.stringfyQuery(query)}`;
-    return this.get<PagedResponseResult<TruckDriver>>(url);
+    const url = `/trucks/drivers?${this.stringfySearchableQuery(query)}`;
+    return this.get(url);
   }
 
   createTruck(command: CreateTruck): Observable<ResponseResult> {
     const url = `/trucks`;
-    return this.post<ResponseResult, CreateTruck>(url, command);
+    return this.post(url, command);
   }
 
   updateTruck(command: UpdateTruck): Observable<ResponseResult> {
     const url = `/trucks/${command.id}`;
-    return this.put<ResponseResult, UpdateTruck>(url, command);
+    return this.put(url, command);
   }
 
   deleteTruck(truckId: string): Observable<ResponseResult> {
     const url = `/trucks/${truckId}`;
-
-    return this.delete<ResponseResult>(url);
+    return this.delete(url);
   }
 
   // #endregion
@@ -143,37 +147,37 @@ export class ApiService {
 
   getEmployee(userId: string): Observable<ResponseResult<Employee>> {
     const url = `/employees/${userId}`;
-    return this.get<ResponseResult<Employee>>(url);
+    return this.get(url);
   }
 
   getEmployees(query?: SearchableQuery): Observable<PagedResponseResult<Employee>> {
-    const url = `/employees?${this.stringfyQuery(query)}`;
-    return this.get<PagedResponseResult<Employee>>(url);
+    const url = `/employees?${this.stringfySearchableQuery(query)}`;
+    return this.get(url);
   }
 
   getDrivers(query?: SearchableQuery): Observable<PagedResponseResult<Employee>> {
-    const url = `/employees?${this.stringfyQuery(query)}&role=tenant.driver`;
-    return this.get<PagedResponseResult<Employee>>(url);
+    const url = `/employees?${this.stringfySearchableQuery(query)}&role=tenant.driver`;
+    return this.get(url);
   }
 
   createEmployee(command: CreateEmployee): Observable<ResponseResult> {
     const url = `/employees`;
-    return this.post<ResponseResult, CreateEmployee>(url, command);
+    return this.post(url, command);
   }
 
   removeRoleFromEmployee(command: RemoveEmployeeRole): Observable<ResponseResult> {
     const url = `/employees/${command.userId}/remove-role`;
-    return this.post<ResponseResult, RemoveEmployeeRole>(url, command);
+    return this.post(url, command);
   }
 
   updateEmployee(command: UpdateEmployee): Observable<ResponseResult> {
     const url = `/employees/${command.userId}`;
-    return this.put<ResponseResult, UpdateEmployee>(url, command);
+    return this.put(url, command);
   }
 
   deleteEmployee(employeeId: string): Observable<ResponseResult> {
     const url = `/employees/${employeeId}`;
-    return this.delete<ResponseResult>(url);
+    return this.delete(url);
   }
 
   // #endregion
@@ -182,8 +186,8 @@ export class ApiService {
   // #region Tenant Role API
 
   getRoles(query?: SearchableQuery): Observable<PagedResponseResult<Role>> {
-    const url = `/tenant-roles?${this.stringfyQuery(query)}`;
-    return this.get<PagedResponseResult<Role>>(url);
+    const url = `/tenant-roles?${this.stringfySearchableQuery(query)}`;
+    return this.get(url);
   }
 
   // #endregion
@@ -193,7 +197,7 @@ export class ApiService {
 
   getCompanyStats(): Observable<ResponseResult<CompanyStats>> {
     const url = `/stats/company`;
-    return this.get<ResponseResult<CompanyStats>>(url);
+    return this.get(url);
   }
 
   getDailyGrosses(startDate: Date, endDate?: Date, truckId?: string): Observable<ResponseResult<DailyGrosses>> {
@@ -206,7 +210,7 @@ export class ApiService {
       url += `&truckId=${truckId}`;
     }
 
-    return this.get<ResponseResult<DailyGrosses>>(url);
+    return this.get(url);
   }
 
   getMonthlyGrosses(startDate: Date, endDate?: Date, truckId?: string): Observable<ResponseResult<MonthlyGrosses>> {
@@ -222,9 +226,9 @@ export class ApiService {
     return this.get<ResponseResult<MonthlyGrosses>>(url);
   }
 
-  getTrucksStats(startDate: Date, endDate: Date, orderBy = '', page = 1, pageSize = 10): Observable<PagedResponseResult<TruckStats>> {
-    const url = `/stats/trucks?startDate=${startDate.toJSON()}&endDate=${endDate.toJSON()}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
-    return this.get<PagedResponseResult<TruckStats>>(url);
+  getTrucksStats(query: PagedIntervalQuery): Observable<PagedResponseResult<TruckStats>> {
+    const url = `/stats/trucks?${this.stringfyPagedIntervalQuery(query)}`;
+    return this.get(url);
   }
 
   // #endregion
@@ -234,12 +238,12 @@ export class ApiService {
 
   getNotifications(startDate: Date, endDate: Date): Observable<ResponseResult<Notification[]>> {
     const url = `/notifications?startDate=${startDate.toJSON()}&endDate=${endDate.toJSON()}`;
-    return this.get<ResponseResult<Notification[]>>(url);
+    return this.get(url);
   }
 
   updateNotification(commad: UpdateNotification): Observable<ResponseResult> {
     const url = `/notifications/${commad.id}`;
-    return this.put<ResponseResult, UpdateNotification>(url, commad);
+    return this.put(url, commad);
   }
 
   // #endregion
@@ -249,17 +253,17 @@ export class ApiService {
 
   getCustomer(id: string): Observable<ResponseResult<Customer>> {
     const url = `/customers/${id}`;
-    return this.get<ResponseResult<Customer>>(url);
+    return this.get(url);
   }
 
   getCustomers(query?: SearchableQuery): Observable<PagedResponseResult<Customer>> {
-    const url = `/customers?${this.stringfyQuery(query)}`;
-    return this.get<PagedResponseResult<Customer>>(url);
+    const url = `/customers?${this.stringfySearchableQuery(query)}`;
+    return this.get(url);
   }
 
   createCustomer(command: CreateCustomer): Observable<ResponseResult> {
     const url = `/customers`;
-    return this.post<ResponseResult, CreateCustomer>(url, command);
+    return this.post(url, command);
   }
 
   updateCustomer(command: UpdateCustomer): Observable<ResponseResult> {
@@ -275,7 +279,37 @@ export class ApiService {
   // #endregion
 
 
-  parseSortProperty(sortField?: string | null, sortOrder?: number | null) {
+  // #region Payments API
+  
+  getPayment(id: string): Observable<ResponseResult<Payment>> {
+    const url = `/payments/${id}`;
+    return this.get(url);
+  }
+
+  getPayments(query?: PagedQuery): Observable<PagedResponseResult<Payment>> {
+    const url = `/payments?${this.stringfyPagedQuery(query)}`;
+    return this.get(url);
+  }
+
+  createPayment(command: CreatePayment): Observable<ResponseResult> {
+    const url = `/payments`;
+    return this.post(url, command);
+  }
+
+  updatePayment(command: UpdatePayment): Observable<ResponseResult> {
+    const url = `/payments/${command.id}`;
+    return this.put(url, command);
+  }
+
+  deletePayment(paymentId: string): Observable<ResponseResult> {
+    const url = `/payments/${paymentId}`;
+    return this.delete(url);
+  }
+
+  // #endregion
+
+
+  parseSortProperty(sortField?: string | null, sortOrder?: number | null): string {
     if (!sortOrder) {
       sortOrder = 1;
     }
@@ -315,12 +349,34 @@ export class ApiService {
       .pipe(catchError((err) => this.handleError(err)));
   }
 
-  private stringfyQuery(query?: SearchableQuery): string {
+  private stringfySearchableQuery(query?: SearchableQuery): string {
     const search = query?.search ?? '';
     const orderBy = query?.orderBy ?? '';
     const page = query?.page ?? 1;
     const pageSize = query?.pageSize ?? 10;
     return `search=${search}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
+  }
+
+  private stringfyPagedQuery(query?: PagedQuery): string {
+    const orderBy = query?.orderBy ?? '';
+    const page = query?.page ?? 1;
+    const pageSize = query?.pageSize ?? 10;
+    return `orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
+  }
+
+  private stringfyPagedIntervalQuery(query?: PagedIntervalQuery): string {
+    const startDate = query?.startDate ?? new Date().toJSON();
+    const endDate = query?.endDate;
+    const orderBy = query?.orderBy ?? '';
+    const page = query?.page ?? 1;
+    const pageSize = query?.pageSize ?? 10;
+    let queryStr = `startDate=${startDate}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
+
+    if (endDate) {
+      queryStr += `&endDate=${endDate.toJSON()}`
+    }
+
+    return queryStr;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

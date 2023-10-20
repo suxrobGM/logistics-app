@@ -1,5 +1,5 @@
-import {Customer} from './customer';
-import {Invoice} from './invoice';
+import {Customer} from '../customer/customer';
+import {Invoice} from '../payment/invoice';
 import {LoadStatus} from '@core/enums';
 
 

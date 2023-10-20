@@ -8,6 +8,7 @@ import {ButtonModule} from 'primeng/button';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {ApiService, ToastService} from '@core/services';
 import {UpdateCustomer} from '@core/models';
+import {ValidationSummaryComponent} from '@shared/components';
 
 
 @Component({
@@ -22,6 +23,7 @@ import {UpdateCustomer} from '@core/models';
     ProgressSpinnerModule,
     ReactiveFormsModule,
     RouterModule,
+    ValidationSummaryComponent
   ],
 })
 export class EditCustomerComponent implements OnInit {
@@ -60,6 +62,10 @@ export class EditCustomerComponent implements OnInit {
   }
 
   submit() {
+    if (!this.form.valid) {
+      return;
+    }
+
     if (this.id) {
       this.updateCustomer();
     }
@@ -103,7 +109,7 @@ export class EditCustomerComponent implements OnInit {
 
     this.apiService.updateCustomer(commad).subscribe((result) => {
       if (result.isSuccess) {
-        this.toastService.showSuccess('A new customer has been added successfully');
+        this.toastService.showSuccess('A customer data has been updated successfully');
         this.router.navigateByUrl('/customers');
       }
 

@@ -141,6 +141,10 @@ export class EditEmployeeComponent implements OnInit {
     return this.form.value.salaryType === SalaryType.ShareOfGross;
   }
 
+  isNoneSalary() {
+    return this.form.value.salaryType === SalaryType.None;
+  }
+
   private fetchEmployee() {
     this.isLoading = true;
 

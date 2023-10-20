@@ -4,7 +4,7 @@ import {RouterLink} from '@angular/router';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {CardModule} from 'primeng/card';
 import {ButtonModule} from 'primeng/button';
-import {TruckStats} from '@core/models';
+import {PagedIntervalQuery, TruckStats} from '@core/models';
 import {ApiService} from '@core/services';
 import {DateUtils} from '@shared/utils';
 import {DistanceUnitPipe} from '@shared/pipes';
@@ -49,13 +49,23 @@ export class TruckStatsTableComponent {
 
   fetchTrucksStats(event: TableLazyLoadEvent) {
     this.isLoading = true;
-    const page = event.first! / event.rows! + 1;
+    const first = event.first ?? 1;
+    const rows = event.rows ?? 10;
+    const page = first / rows + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
-    this.apiService.getTrucksStats(this.startDate, this.endDate, sortField, page, event.rows!).subscribe((result) => {
+    const query: PagedIntervalQuery = {
+      startDate: this.startDate,
+      endDate: this.endDate,
+      orderBy: sortField,
+      page: page,
+      pageSize: rows
+    }
+
+    this.apiService.getTrucksStats(query).subscribe((result) => {
       if (result.isSuccess && result.data) {
         this.truckStats = result.data;
-        this.totalRecords = result.totalItems!;
+        this.totalRecords = result.totalItems;
       }
 
       this.isLoading = false;
