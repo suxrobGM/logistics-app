@@ -4,6 +4,7 @@ import {RouterLink} from '@angular/router';
 import {TooltipModule} from 'primeng/tooltip';
 import {SplitButtonModule} from 'primeng/splitbutton';
 import {PanelMenuModule} from 'primeng/panelmenu';
+import {OverlayPanelModule} from 'primeng/overlaypanel';
 import {MenuItem} from 'primeng/api';
 import {AppConfig} from '@configs';
 import {AuthService} from '@core/auth';
@@ -21,6 +22,7 @@ import {ApiService, TenantService} from '@core/services';
     TooltipModule,
     SplitButtonModule,
     PanelMenuModule,
+    OverlayPanelModule,
   ],
 })
 export class SidebarComponent implements OnInit {
@@ -30,7 +32,8 @@ export class SidebarComponent implements OnInit {
   public companyName?: string;
   public userRole?: string | null;
   public userFullName?: string;
-  public accountMenuItems: MenuItem[];
+  public profileMenuItems: MenuItem[];
+  public accountingMenuItems: MenuItem[];
 
   constructor(
     private authService: AuthService,
@@ -40,7 +43,7 @@ export class SidebarComponent implements OnInit {
     this.isAuthenticated = false;
     this.isOpened = false;
     this.isLoading = false;
-    this.accountMenuItems = [
+    this.profileMenuItems = [
       {
         label: 'User name',
         icon: 'bi bi-person-circle',
@@ -59,25 +62,46 @@ export class SidebarComponent implements OnInit {
         ],
       },
     ];
+
+    this.accountingMenuItems = [
+      {
+        label: 'Accounting',
+        icon: 'bi bi-journal-text h1',
+        items: [
+          {
+            label: 'Payroll Management',
+            // command: () => this.openAccountUrl(),
+          },
+          {
+            label: 'Payments',
+            // command: () => this.logout(),
+          },
+          {
+            label: 'Invoices',
+            // command: () => this.logout(),
+          },
+        ],
+      },
+    ];
   }
 
   ngOnInit(): void {
     this.authService.onUserDataChanged().subscribe((userData) => {
       this.userFullName = userData?.getFullName();
       this.userRole = this.authService.getUserRoleName();
-      this.accountMenuItems[0].label = this.userFullName;
+      this.profileMenuItems[0].label = this.userFullName;
       this.fetchTenantData();
     });
   }
 
   private fetchTenantData() {
     this.apiService.getTenant().subscribe((result) => {
-      if (result.isError) {
+      if (result.isError || !result.data) {
         return;
       }
 
-      this.tenantService.setTenantData(result.data!);
-      this.companyName = result.data!.displayName;
+      this.tenantService.setTenantData(result.data);
+      this.companyName = result.data.displayName;
     });
   }
 

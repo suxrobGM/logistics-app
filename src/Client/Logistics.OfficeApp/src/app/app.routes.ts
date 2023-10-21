@@ -57,6 +57,13 @@ export const APP_ROUTES: Routes = [
     },
   },
   {
+    path: 'accounting',
+    loadChildren: () => import('./pages/accounting').then((m) => m.ACCOUNTING_ROUTES),
+    data: {
+      breadcrumb: '',
+    },
+  },
+  {
     path: '**',
     redirectTo: '404',
   },

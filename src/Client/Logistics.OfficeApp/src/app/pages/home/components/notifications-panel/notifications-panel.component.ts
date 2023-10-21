@@ -102,8 +102,6 @@ export class NotificationsPanelComponent implements OnInit, OnDestroy {
   }
 
   getUnreadNotificationsCount(): string {
-    console.log(this.notifications.filter((i) => !i.isRead).length);
-    
     return this.notifications.filter((i) => !i.isRead).length.toString();
   }
 

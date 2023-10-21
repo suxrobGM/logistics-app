@@ -3,7 +3,8 @@
     <img src="assets/images/logo.svg" class="img-fluid" height="40" alt="logo" />
     <span class="h4" *ngIf="isOpened">{{companyName}}</span>
   </a>
-  <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
+
+  <ul class="nav flex-column mb-auto">
     <li>
       <a class="nav-link border-bottom" [routerLink]="['/home']">
         <i class="bi bi-house-door h1" pTooltip="Home"></i>
@@ -41,6 +42,27 @@
       </a>
     </li>
     <li class="nav-item">
+      <!-- <a class="nav-link border-bottom">
+        <i class="bi bi-journal-text h1"></i>
+        <span class="ms-2" *ngIf="isOpened">Accounting</span>
+      </a> -->
+
+      <p-panelMenu *ngIf="isOpened else accountingIcon" [model]="accountingMenuItems"></p-panelMenu>
+      <ng-template #accountingIcon>
+        <p-overlayPanel #accountingPanel>
+          <div *ngFor="let item of accountingMenuItems[0].items">
+            <button *ngIf="!item.separator" class="p-button p-button-text p-button-secondary" (click)="item?.command({})" role="none">
+              {{item.label}}
+            </button>
+          </div>
+        </p-overlayPanel>
+        <div class="text-center">
+          <i (click)="accountingPanel.toggle($event)" class="bi bi-journal-text h1" pTooltip="Accounting" role="presentation"></i>
+        </div>
+      </ng-template>
+
+    </li>
+    <li class="nav-item">
       <a class="nav-link border-bottom">
         <i *ngIf="isOpened else rightArrowIcon" class="bi bi-arrow-left h1" (click)="toggle()" pTooltip="Minimize menu" role="presentation"></i>
         <ng-template #rightArrowIcon>
@@ -55,10 +77,17 @@
       Role: <span class="fw-bold">{{userRole}}</span>
     </div>
 
-    <p-panelMenu *ngIf="isOpened else accountIcon" [model]="accountMenuItems"></p-panelMenu>
-    <ng-template #accountIcon>
+    <p-panelMenu *ngIf="isOpened else profileIcon" [model]="profileMenuItems"></p-panelMenu>
+    <ng-template #profileIcon>
+      <p-overlayPanel #profilePanel>
+        <div *ngFor="let item of profileMenuItems[0].items">
+          <button *ngIf="!item.separator" class="p-button p-button-text p-button-secondary" (click)="item?.command({})" role="none">
+            {{item.label}}
+          </button>
+        </div>
+      </p-overlayPanel>
       <div class="text-center">
-        <i (click)="toggle()" class="bi bi-person-circle h1" pTooltip="Account" role="presentation"></i>
+        <i (click)="profilePanel.toggle($event)" class="bi bi-person-circle h1" pTooltip="Account" role="presentation"></i>
       </div>
     </ng-template>
   </div>
