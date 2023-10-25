@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.Infrastructure.EF.Migrations.Main
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20231018183212_Version_0001")]
+    [Migration("20231025013349_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -63,6 +63,12 @@ namespace Logistics.Infrastructure.EF.Migrations.Main
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("CompanyAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ConnectionString")
                         .HasColumnType("nvarchar(max)");
 
@@ -70,9 +76,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Main
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DisplayName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("LastModified")
@@ -83,9 +86,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Main
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 

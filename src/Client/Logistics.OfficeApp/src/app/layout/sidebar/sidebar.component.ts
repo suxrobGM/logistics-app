@@ -101,7 +101,7 @@ export class SidebarComponent implements OnInit {
       }
 
       this.tenantService.setTenantData(result.data);
-      this.companyName = result.data.displayName;
+      this.companyName = result.data.companyName;
     });
   }
 

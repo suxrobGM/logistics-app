@@ -1,16 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Logistics.Application.Core;
-using Logistics.Domain.Constraints;
-using Logistics.Shared;
+﻿using Logistics.Shared;
 using MediatR;
 
 namespace Logistics.Application.Admin.Commands;
 
 public class CreateTenantCommand : IRequest<ResponseResult>
 {
-    [Required, StringLength(TenantConsts.NameLength)]
-    public string? Name { get; set; }
-    
-    [StringLength(TenantConsts.DisplayNameLength)]
-    public string? DisplayName { get; set; }
+    public string Name { get; set; } = default!;
+    public string? CompanyName { get; set; }
+    public string? CompanyAddress { get; set; }
 }

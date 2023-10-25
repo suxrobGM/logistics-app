@@ -22,8 +22,8 @@ internal sealed class GetUserJoinedOrganizationsHandler :
     {
         var user = await _repository.GetAsync<User>(req.UserId);
 
-        if (user == null)
-            return ResponseResult<OrganizationDto[]>.CreateError("Could not find the specified user");
+        if (user is null)
+            return ResponseResult<OrganizationDto[]>.CreateError($"Could not find an user with ID '{req.UserId}'");
 
         var tenantsIds = user.GetJoinedTenantIds();
         var organizations = _repository.Query<Tenant>()
@@ -32,7 +32,7 @@ internal sealed class GetUserJoinedOrganizationsHandler :
             {
                 TenantId = i.Id,
                 Name = i.Name!,
-                DisplayName = i.DisplayName!
+                DisplayName = i.CompanyName!
             }).ToArray();
         return ResponseResult<OrganizationDto[]>.CreateSuccess(organizations);
     }

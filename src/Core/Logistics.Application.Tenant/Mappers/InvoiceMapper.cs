@@ -8,8 +8,6 @@ public static class InvoiceMapper
     {
         return new InvoiceDto
         {
-            CompanyAddress = entity.CompanyAddress,
-            CompanyName = entity.CompanyName,
             CustomerId = entity.CustomerId,
             LoadId = entity.LoadId,
             Payment = entity.Payment.ToDto()

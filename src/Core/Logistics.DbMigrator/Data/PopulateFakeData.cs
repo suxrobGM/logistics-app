@@ -271,8 +271,7 @@ internal class PopulateFakeData
 
     private Invoice CreateInvoice(Load load)
     {
-        const string companyName = "Test Company";
-        const string companyAddress = "7 Allstate Rd, Dorchester, MA 02125, United States";
+        
         
         var payment = new Payment
         {
@@ -286,8 +285,6 @@ internal class PopulateFakeData
 
         var invoice = new Invoice
         {
-            CompanyName = companyName,
-            CompanyAddress = companyAddress,
             CustomerId = load.CustomerId!,
             Customer = load.Customer!,
             LoadId = load.Id,

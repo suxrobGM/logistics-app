@@ -20,17 +20,10 @@ internal sealed class GetTenantHandler : RequestHandler<GetTenantQuery, Response
     {
         var tenantEntity = await _repository.GetAsync<Tenant>(i => i.Id == req.Id || i.Name == req.Name);
 
-        if (tenantEntity == null)
+        if (tenantEntity is null)
             return ResponseResult<TenantDto>.CreateError("Could not find the specified tenant");
-        
-        var tenant = new TenantDto
-        {
-            Id = tenantEntity.Id,
-            Name = tenantEntity.Name,
-            DisplayName = tenantEntity.DisplayName,
-            ConnectionString = req.IncludeConnectionString ? tenantEntity.ConnectionString : default
-        };
 
-        return ResponseResult<TenantDto>.CreateSuccess(tenant);
+        var tenantDto = tenantEntity.ToDto(req.IncludeConnectionString);
+        return ResponseResult<TenantDto>.CreateSuccess(tenantDto);
     }
 }

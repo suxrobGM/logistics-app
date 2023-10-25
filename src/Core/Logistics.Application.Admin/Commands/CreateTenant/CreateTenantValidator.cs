@@ -6,11 +6,9 @@ internal sealed class CreateTenantValidator : AbstractValidator<CreateTenantComm
 {
     public CreateTenantValidator()
     {
-        const string namePattern = @"^[a-z]+\d*";
-
         RuleFor(i => i.Name)
             .NotEmpty()
             .MinimumLength(4)
-            .Matches(namePattern);
+            .Matches(RegexPatterns.TENANT_NAME);
     }
 }

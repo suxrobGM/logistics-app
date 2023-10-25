@@ -2,11 +2,8 @@
 
 namespace Logistics.Domain.Entities;
 
-public class Invoice : Entity, ITenantEntity
+public class Invoice : AuditableEntity, ITenantEntity
 {
-    public string? CompanyName { get; set; }
-    public string? CompanyAddress { get; set; }
-    
     public string LoadId { get; set; } = default!;
     public virtual Load Load { get; set; } = default!;
 

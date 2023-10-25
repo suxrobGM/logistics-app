@@ -6,14 +6,12 @@ internal sealed class UpdateTenantValidator : AbstractValidator<UpdateTenantComm
 {
     public UpdateTenantValidator()
     {
-        const string tenantNamePattern = @"^[a-z]+\d*";
-        
         RuleFor(i => i.Id)
             .NotEmpty();
         
         RuleFor(i => i.Name)
             .NotEmpty()
             .MinimumLength(4)
-            .Matches(tenantNamePattern);
+            .Matches(RegexPatterns.TENANT_NAME);
     }
 }

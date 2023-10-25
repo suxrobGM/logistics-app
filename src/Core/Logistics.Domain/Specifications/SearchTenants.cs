@@ -20,8 +20,8 @@ public class SearchTenants : BaseSpecification<Tenant>
             (!string.IsNullOrEmpty(i.Name) &&
              i.Name.Contains(search)) ||
 
-            (!string.IsNullOrEmpty(i.DisplayName) &&
-             i.DisplayName.Contains(search));
+            (!string.IsNullOrEmpty(i.CompanyName) &&
+             i.CompanyName.Contains(search));
     }
     
     private static Expression<Func<Tenant, object>> InitOrderBy(string? propertyName)
@@ -29,7 +29,7 @@ public class SearchTenants : BaseSpecification<Tenant>
         propertyName = propertyName?.ToLower() ?? "name";
         return propertyName switch
         {
-            "displayname" => i => i.DisplayName!,
+            "displayname" => i => i.CompanyName!,
             _ => i => i.Name!
         };
     }

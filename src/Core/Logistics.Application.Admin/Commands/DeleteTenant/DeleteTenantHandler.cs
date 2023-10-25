@@ -25,9 +25,9 @@ internal sealed class DeleteTenantHandler : RequestHandler<DeleteTenantCommand, 
         if (tenant == null)
             return ResponseResult.CreateError("Could not find the tenant");
 
-        var deleted = await _tenantDatabase.DeleteDatabaseAsync(tenant.ConnectionString!);
+        var isDeleted = await _tenantDatabase.DeleteDatabaseAsync(tenant.ConnectionString!);
 
-        if (!deleted)
+        if (!isDeleted)
             return ResponseResult.CreateError("Could not delete the tenant's database");
 
         _repository.Delete(tenant);

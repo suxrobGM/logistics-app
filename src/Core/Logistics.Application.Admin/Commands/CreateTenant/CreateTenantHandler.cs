@@ -1,4 +1,5 @@
 ﻿using Logistics.Application.Core;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Services;
 using Logistics.Shared;
@@ -20,19 +21,15 @@ internal sealed class CreateTenantHandler : RequestHandler<CreateTenantCommand, 
 
     protected override async Task<ResponseResult> HandleValidated(CreateTenantCommand req, CancellationToken cancellationToken)
     {
-        var tenant = new Domain.Entities.Tenant
+        var tenant = new Tenant
         {
-            Name = req.Name?.Trim().ToLower(),
-            DisplayName = req.DisplayName
+            Name = req.Name.Trim().ToLower(),
+            CompanyName = req.CompanyName,
+            CompanyAddress = req.CompanyAddress
         };
-        tenant.ConnectionString = _tenantDatabase.GenerateConnectionString(tenant.Name!); 
+        tenant.ConnectionString = _tenantDatabase.GenerateConnectionString(tenant.Name); 
 
-        if (string.IsNullOrEmpty(tenant.DisplayName))
-        {
-            tenant.DisplayName = tenant.Name;
-        }
-
-        var existingTenant = await _repository.GetAsync<Domain.Entities.Tenant>(i => i.Name == tenant.Name);
+        var existingTenant = await _repository.GetAsync<Tenant>(i => i.Name == tenant.Name);
         if (existingTenant != null)
         {
             return ResponseResult.CreateError($"Tenant name '{tenant.Name}' is already taken, please chose another name");

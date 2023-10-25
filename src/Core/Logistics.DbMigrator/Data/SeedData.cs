@@ -141,7 +141,8 @@ internal class SeedData : BackgroundService
         var defaultTenant = new Tenant
         {
             Name = "default",
-            DisplayName = "Test Company",
+            CompanyName = "Test Company",
+            CompanyAddress = "7 Allstate Rd, Dorchester, MA 02125, United States",
             ConnectionString = databaseProvider.GenerateConnectionString("default") 
         };
 

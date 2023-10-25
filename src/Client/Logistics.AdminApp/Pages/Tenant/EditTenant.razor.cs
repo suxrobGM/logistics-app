@@ -46,10 +46,10 @@ public partial class EditTenant : PageBase
     {
         if (EditMode)
         {
-            var success = await CallApiAsync(api => api.UpdateTenantAsync(new UpdateTenant()
+            var success = await CallApiAsync(api => api.UpdateTenantAsync(new UpdateTenant
             {
                 Id = Tenant.Id,
-                DisplayName = Tenant.DisplayName
+                CompanyName = Tenant.CompanyName
             }));
             
             if (!success)
@@ -62,7 +62,7 @@ public partial class EditTenant : PageBase
             var success = await CallApiAsync(api => api.CreateTenantAsync(new CreateTenant()
             {
                 Name = Tenant.Name,
-                DisplayName = Tenant.DisplayName
+                DisplayName = Tenant.CompanyName
             }));
             
             if (!success)
@@ -78,7 +78,7 @@ public partial class EditTenant : PageBase
     private void ResetData()
     {
         Tenant.Name = string.Empty;
-        Tenant.DisplayName = string.Empty;
+        Tenant.CompanyName = string.Empty;
         Tenant.ConnectionString = string.Empty;
     }
 
@@ -93,7 +93,7 @@ public partial class EditTenant : PageBase
             return;
         
         Tenant.Name = tenant.Name;
-        Tenant.DisplayName = tenant.DisplayName;
+        Tenant.CompanyName = tenant.CompanyName;
         Tenant.ConnectionString = tenant.ConnectionString;
     }
 }

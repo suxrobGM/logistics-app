@@ -25,13 +25,7 @@ internal sealed class GetTenantsHandler : RequestHandler<GetTenantsQuery, PagedR
             .ApplySpecification(spec)
             .Skip((req.Page - 1) * req.PageSize)
             .Take(req.PageSize)
-            .Select(i => new TenantDto
-            {
-                Id = i.Id,
-                Name = i.Name,
-                DisplayName = i.DisplayName,
-                ConnectionString = req.IncludeConnectionStrings ? i.ConnectionString : null,
-            })
+            .Select(i => i.ToDto(req.IncludeConnectionStrings))
             .ToArray();
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
