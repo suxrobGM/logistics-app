@@ -8,8 +8,9 @@ public static class InvoiceMapper
     {
         return new InvoiceDto
         {
-            Customer = entity.Customer.ToDto(),
+            LoadRefId = entity.Load.RefId,
             LoadId = entity.LoadId,
+            Customer = entity.Customer.ToDto(),
             Payment = entity.Payment.ToDto()
         };
     }
