@@ -14,12 +14,12 @@ public class InvoicesController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(ResponseResult<PaymentDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult<InvoiceDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Invoices.View)]
     public async Task<IActionResult> GetById(string id)
     {
-        var result = await _mediator.Send(new GetPaymentByIdQuery {Id = id});
+        var result = await _mediator.Send(new GetInvoiceByIdQuery {Id = id});
 
         if (result.IsSuccess)
             return Ok(result);
@@ -28,10 +28,10 @@ public class InvoicesController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(PagedResponseResult<PaymentDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PagedResponseResult<InvoiceDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Invoices.View)]
-    public async Task<IActionResult> GetList([FromQuery] GetPaymentsQuery query)
+    public async Task<IActionResult> GetList([FromQuery] GetInvoicesQuery query)
     {
         var result = await _mediator.Send(query);
 

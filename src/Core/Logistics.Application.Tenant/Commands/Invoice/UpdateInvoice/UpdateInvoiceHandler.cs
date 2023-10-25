@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class UpdateInvoiceHandler : RequestHandler<UpdatePaymentCommand, ResponseResult>
+internal sealed class UpdateInvoiceHandler : RequestHandler<UpdateInvoiceCommand, ResponseResult>
 {
     private readonly ITenantRepository _tenantRepository;
 
@@ -10,35 +10,23 @@ internal sealed class UpdateInvoiceHandler : RequestHandler<UpdatePaymentCommand
     }
 
     protected override async Task<ResponseResult> HandleValidated(
-        UpdatePaymentCommand req, CancellationToken cancellationToken)
+        UpdateInvoiceCommand req, CancellationToken cancellationToken)
     {
-        var payment = await _tenantRepository.GetAsync<Payment>(req.Id);
+        var invoice = await _tenantRepository.GetAsync<Invoice>(req.Id);
 
-        if (payment is null)
-            return ResponseResult.CreateError($"Could not find a payment with ID '{req.Id}'");
-
-        if (req.PaymentFor.HasValue && payment.PaymentFor != req.PaymentFor)
+        if (invoice is null)
+            return ResponseResult.CreateError($"Could not find an invoice with ID '{req.Id}'");
+        
+        if (req.PaymentMethod.HasValue && invoice.Payment.Method != req.PaymentMethod)
         {
-            payment.PaymentFor = req.PaymentFor.Value;
+            invoice.Payment.Method = req.PaymentMethod.Value;
         }
-        if (req.Method.HasValue && payment.Method != req.Method)
+        if (req.PaymentAmount.HasValue && invoice.Payment.Amount != req.PaymentAmount)
         {
-            payment.Method = req.Method.Value;
-        }
-        if (req.Status.HasValue && payment.Status != req.Status)
-        {
-            payment.SetStatus(req.Status.Value);
-        }
-        if (req.Amount.HasValue && payment.Amount != req.Amount)
-        {
-            payment.Amount = req.Amount.Value;
-        }
-        if (!string.IsNullOrEmpty(req.Comment) && payment.Comment != req.Comment)
-        {
-            payment.Comment = req.Comment;
+            invoice.Payment.Amount = req.PaymentAmount.Value;
         }
         
-        _tenantRepository.Update(payment);
+        _tenantRepository.Update(invoice);
         await _tenantRepository.UnitOfWork.CommitAsync();
         return ResponseResult.CreateSuccess();
     }
