@@ -36,6 +36,9 @@ import {
   UpdatePayment,
   PagedQuery,
   PagedIntervalQuery,
+  Invoice,
+  CreateInvoice,
+  UpdateInvoice,
 } from '../models';
 
 
@@ -303,6 +306,36 @@ export class ApiService {
 
   deletePayment(paymentId: string): Observable<ResponseResult> {
     const url = `/payments/${paymentId}`;
+    return this.delete(url);
+  }
+
+  // #endregion
+
+
+  // #region Invoices API
+  
+  getInvoice(id: string): Observable<ResponseResult<Invoice>> {
+    const url = `/invoices/${id}`;
+    return this.get(url);
+  }
+
+  getInvoices(query?: PagedQuery): Observable<PagedResponseResult<Invoice>> {
+    const url = `/invoices?${this.stringfyPagedQuery(query)}`;
+    return this.get(url);
+  }
+
+  createInvoice(command: CreateInvoice): Observable<ResponseResult> {
+    const url = `/invoices`;
+    return this.post(url, command);
+  }
+
+  updateInvoice(command: UpdateInvoice): Observable<ResponseResult> {
+    const url = `/invoices/${command.id}`;
+    return this.put(url, command);
+  }
+
+  deleteInvoice(invoiceId: string): Observable<ResponseResult> {
+    const url = `/invoices/${invoiceId}`;
     return this.delete(url);
   }
 
