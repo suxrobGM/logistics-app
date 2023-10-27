@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {CommonModule, CurrencyPipe} from '@angular/common';
+import {CommonModule, CurrencyPipe, DatePipe} from '@angular/common';
 import {RouterModule} from '@angular/router';
 import {CardModule} from 'primeng/card';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
@@ -21,6 +21,7 @@ import {LoadStatus, LoadStatusEnum, PaymentFor, PaymentForEnum, PaymentMethod, P
     TooltipModule,
     RouterModule,
     CurrencyPipe,
+    DatePipe
   ],
 })
 export class ListPaymentsComponent {

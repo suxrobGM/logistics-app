@@ -1,81 +1,67 @@
-<!-- <div class="d-flex align-items-center">
-  <h1>Payments</h1>
+<div class="d-flex align-items-center">
+  <h1>Invoices</h1>
   <button pButton pRipple
     class="p-button-lg p-button-rounded p-button-text text-black ms-2"
     icon="bi bi-plus-square-fill"
-    pTooltip="Add a new payment"
-    routerLink="/accounting/payments/add">
+    pTooltip="Add a new invoice"
+    routerLink="/accounting/invoices/add">
   </button>
 </div>
-<hr class="w-100"> -->
+<hr class="w-100">
 
-<!-- <p-card>
+<p-card>
   <div class="row">
     <div class="col-12">
-      <p-table [value]="payments" responsiveLayout="scroll" [lazy]="true" 
+      <p-table [value]="invoices" responsiveLayout="scroll" [lazy]="true" 
         [paginator]="true" [showCurrentPageReport]="true"
         (onLazyLoad)="load($event)" [rows]="10" [(first)]="first" 
         [totalRecords]="totalRecords" [loading]="isLoading"
         [rowsPerPageOptions]="[10,25,50]">
 
-        <ng-template pTemplate="caption">
-          <div class="d-flex">
-            <span class="p-input-icon-left">
-              <i class="pi pi-search"></i>
-              <input pInputText type="text" placeholder="Search" (input)="search($event)" />
-            </span>
-          </div>
-        </ng-template>
-
         <ng-template pTemplate="header">
           <tr>
+            <th pSortableColumn="loadRef">
+              Load ID
+              <p-sortIcon field="loadRef"></p-sortIcon>
+            </th>
+            <th pSortableColumn="cutomerName">
+              Customer
+              <p-sortIcon field="cutomerName"></p-sortIcon>
+            </th>
             <th pSortableColumn="createdDate">
-              Created Date
+              Date
               <p-sortIcon field="createdDate"></p-sortIcon>
+            </th>
+            <th pSortableColumn="paymentAmount">
+              Payment Amount
+              <p-sortIcon field="paymentAmount"></p-sortIcon>
+            </th>
+            <th pSortableColumn="paymentStatus">
+              Payment Status
+              <p-sortIcon field="paymentStatus"></p-sortIcon>
             </th>
             <th pSortableColumn="paymentDate">
               Payment Date
               <p-sortIcon field="paymentDate"></p-sortIcon>
             </th>
-            <th pSortableColumn="method">
-              Method
-              <p-sortIcon field="method"></p-sortIcon>
-            </th>
-            <th pSortableColumn="amount">
-              Amount
-              <p-sortIcon field="amount"></p-sortIcon>
-            </th>
-            <th pSortableColumn="status">
-              Status
-              <p-sortIcon field="status"></p-sortIcon>
-            </th>
-            <th pSortableColumn="paymentFor">
-              Payment For
-              <p-sortIcon field="paymentFor"></p-sortIcon>
-            </th>
-            <th pSortableColumn="comment">
-              Comment
-              <p-sortIcon field="comment"></p-sortIcon>
-            </th>
           </tr>
         </ng-template>
         
-        <ng-template pTemplate="body" let-payment>
+        <ng-template pTemplate="body" let-invoice>
           <tr>
             <td>
-              <a [routerLink]="['/accounting/payments/edit', payment.id]">
-                {{payment.createdDate}}
+              <a [routerLink]="['/accounting/loads/edit', invoice.loadId]">
+                {{invoice.loadRef}}
               </a>
             </td>
-            <td>{{payment.paymentDate}}</td>
-            <td>{{getPaymentMethodDesc(payment.method)}}</td>
-            <td>{{payment.amount | currency}}</td>
-            <td>{{payment.status}}</td>
-            <td>{{getPaymentForDesc(payment.paymentFor)}}</td>
-            <td>{{payment.comment}}</td>
+            <td>{{invoice.customer.name}}</td>
+            <td>{{invoice.createdDate | date:'mediumDate'}}</td>
+            <td>{{invoice.payment.amount | currency}}</td>
+            <td>{{invoice.payment.status}}</td>
+            <td>{{invoice.payment.paymentDate | date:'mediumDate'}}</td>
           </tr>
         </ng-template>
       </p-table>
     </div>
   </div>
-</p-card> -->
+</p-card>

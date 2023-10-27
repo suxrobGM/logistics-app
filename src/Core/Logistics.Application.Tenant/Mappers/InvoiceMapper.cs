@@ -10,6 +10,7 @@ public static class InvoiceMapper
         {
             LoadRefId = entity.Load.RefId,
             LoadId = entity.LoadId,
+            CreatedDate = entity.Created,
             Customer = entity.Customer.ToDto(),
             Payment = entity.Payment.ToDto()
         };

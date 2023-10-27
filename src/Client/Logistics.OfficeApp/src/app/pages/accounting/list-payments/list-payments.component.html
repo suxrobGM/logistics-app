@@ -64,7 +64,7 @@
           <tr>
             <td>
               <a [routerLink]="['/accounting/payments/edit', payment.id]">
-                {{payment.createdDate}}
+                {{payment.createdDate | date:'mediumDate'}}
               </a>
             </td>
             <td>{{payment.paymentDate}}</td>
