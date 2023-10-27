@@ -42,11 +42,6 @@
       </a>
     </li>
     <li class="nav-item">
-      <!-- <a class="nav-link border-bottom">
-        <i class="bi bi-journal-text h1"></i>
-        <span class="ms-2" *ngIf="isOpened">Accounting</span>
-      </a> -->
-
       <p-panelMenu *ngIf="isOpened else accountingIcon" [model]="accountingMenuItems"></p-panelMenu>
       <ng-template #accountingIcon>
         <p-overlayPanel #accountingPanel>
@@ -60,7 +55,6 @@
           <i (click)="accountingPanel.toggle($event)" class="bi bi-journal-text h1" pTooltip="Accounting" role="presentation"></i>
         </div>
       </ng-template>
-
     </li>
     <li class="nav-item">
       <a class="nav-link border-bottom">

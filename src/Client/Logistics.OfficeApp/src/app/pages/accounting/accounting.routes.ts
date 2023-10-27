@@ -3,6 +3,7 @@ import {Permissions} from '@core/enums';
 import {AuthGuard} from '@core/guards';
 import {ListPaymentsComponent} from './list-payments/list-payments.component';
 import {EditPaymentComponent} from './edit-payment/edit-payment.component';
+import {ListInvoicesComponent} from './list-invoices/list-invoices.component';
 
 
 export const ACCOUNTING_ROUTES: Routes = [
@@ -12,7 +13,7 @@ export const ACCOUNTING_ROUTES: Routes = [
     canActivate: [AuthGuard],
     data: {
       breadcrumb: 'Payments',
-      permission: Permissions.Loads.View,
+      permission: Permissions.Payments.View,
     },
   },
   {
@@ -21,7 +22,7 @@ export const ACCOUNTING_ROUTES: Routes = [
     canActivate: [AuthGuard],
     data: {
       breadcrumb: 'Add',
-      permission: Permissions.Loads.Create,
+      permission: Permissions.Payments.Create,
     },
   },
   {
@@ -30,7 +31,16 @@ export const ACCOUNTING_ROUTES: Routes = [
     canActivate: [AuthGuard],
     data: {
       breadcrumb: 'Edit',
-      permission: Permissions.Loads.Edit,
+      permission: Permissions.Payments.Edit,
+    },
+  },
+  {
+    path: 'invoices',
+    component: ListInvoicesComponent,
+    canActivate: [AuthGuard],
+    data: {
+      breadcrumb: 'Invoices',
+      permission: Permissions.Invoices.View,
     },
   },
 ];

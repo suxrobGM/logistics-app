@@ -271,8 +271,6 @@ internal class PopulateFakeData
 
     private Invoice CreateInvoice(Load load)
     {
-        
-        
         var payment = new Payment
         {
             Amount = load.DeliveryCost,

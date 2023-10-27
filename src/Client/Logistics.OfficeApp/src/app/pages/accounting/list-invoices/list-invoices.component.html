@@ -1,5 +1,5 @@
 <div class="d-flex align-items-center">
-  <h1>Invoices</h1>
+  <h1>Invoices for the past 90 days</h1>
   <button pButton pRipple
     class="p-button-lg p-button-rounded p-button-text text-black ms-2"
     icon="bi bi-plus-square-fill"
@@ -24,14 +24,11 @@
               Load ID
               <p-sortIcon field="loadRef"></p-sortIcon>
             </th>
-            <th pSortableColumn="cutomerName">
+            <th pSortableColumn="customerName">
               Customer
-              <p-sortIcon field="cutomerName"></p-sortIcon>
+              <p-sortIcon field="customerName"></p-sortIcon>
             </th>
-            <th pSortableColumn="createdDate">
-              Date
-              <p-sortIcon field="createdDate"></p-sortIcon>
-            </th>
+            
             <th pSortableColumn="paymentAmount">
               Payment Amount
               <p-sortIcon field="paymentAmount"></p-sortIcon>
@@ -39,6 +36,10 @@
             <th pSortableColumn="paymentStatus">
               Payment Status
               <p-sortIcon field="paymentStatus"></p-sortIcon>
+            </th>
+            <th pSortableColumn="createdDate">
+              Invoice Date
+              <p-sortIcon field="createdDate"></p-sortIcon>
             </th>
             <th pSortableColumn="paymentDate">
               Payment Date
@@ -55,9 +56,9 @@
               </a>
             </td>
             <td>{{invoice.customer.name}}</td>
-            <td>{{invoice.createdDate | date:'mediumDate'}}</td>
             <td>{{invoice.payment.amount | currency}}</td>
-            <td>{{invoice.payment.status}}</td>
+            <td>{{getPaymentStatusDesc(invoice.payment.status)}}</td>
+            <td>{{invoice.createdDate | date:'mediumDate'}}</td>
             <td>{{invoice.payment.paymentDate | date:'mediumDate'}}</td>
           </tr>
         </ng-template>

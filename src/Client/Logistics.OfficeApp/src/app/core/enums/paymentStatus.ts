@@ -6,6 +6,6 @@ export enum PaymentStatus {
 }
 
 export const PaymentStatusEnum: EnumLike = {
-  Pending: {value: 0, description: 'Super Admin'},
-  Paid: {value: 1, description: 'Admin'}
+  Pending: {value: 0, description: 'Pending'},
+  Paid: {value: 1, description: 'Paid'}
 };

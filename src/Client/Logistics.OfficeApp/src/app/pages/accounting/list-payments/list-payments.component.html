@@ -1,5 +1,5 @@
 <div class="d-flex align-items-center">
-  <h1>Payments</h1>
+  <h1>Payments for the past 90 days</h1>
   <button pButton pRipple
     class="p-button-lg p-button-rounded p-button-text text-black ms-2"
     icon="bi bi-plus-square-fill"
@@ -62,15 +62,11 @@
         
         <ng-template pTemplate="body" let-payment>
           <tr>
-            <td>
-              <a [routerLink]="['/accounting/payments/edit', payment.id]">
-                {{payment.createdDate | date:'mediumDate'}}
-              </a>
-            </td>
-            <td>{{payment.paymentDate}}</td>
+            <td>{{payment.createdDate | date:'mediumDate'}}</td>
+            <td>{{payment.paymentDate | date:'mediumDate'}}</td>
             <td>{{getPaymentMethodDesc(payment.method)}}</td>
             <td>{{payment.amount | currency}}</td>
-            <td>{{payment.status}}</td>
+            <td>{{getPaymentStatusDesc(payment.status)}}</td>
             <td>{{getPaymentForDesc(payment.paymentFor)}}</td>
             <td>{{payment.comment}}</td>
           </tr>

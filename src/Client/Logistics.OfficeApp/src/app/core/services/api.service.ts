@@ -289,8 +289,8 @@ export class ApiService {
     return this.get(url);
   }
 
-  getPayments(query?: PagedQuery): Observable<PagedResponseResult<Payment>> {
-    const url = `/payments?${this.stringfyPagedQuery(query)}`;
+  getPayments(query?: PagedIntervalQuery): Observable<PagedResponseResult<Payment>> {
+    const url = `/payments?${this.stringfyPagedIntervalQuery(query)}`;
     return this.get(url);
   }
 
@@ -319,8 +319,8 @@ export class ApiService {
     return this.get(url);
   }
 
-  getInvoices(query?: PagedQuery): Observable<PagedResponseResult<Invoice>> {
-    const url = `/invoices?${this.stringfyPagedQuery(query)}`;
+  getInvoices(query?: PagedIntervalQuery): Observable<PagedResponseResult<Invoice>> {
+    const url = `/invoices?${this.stringfyPagedIntervalQuery(query)}`;
     return this.get(url);
   }
 
@@ -398,15 +398,15 @@ export class ApiService {
   }
 
   private stringfyPagedIntervalQuery(query?: PagedIntervalQuery): string {
-    const startDate = query?.startDate ?? new Date().toJSON();
-    const endDate = query?.endDate;
+    const startDate = query?.startDate.toJSON() ?? new Date().toJSON();
+    const endDate = query?.endDate?.toJSON();
     const orderBy = query?.orderBy ?? '';
     const page = query?.page ?? 1;
     const pageSize = query?.pageSize ?? 10;
     let queryStr = `startDate=${startDate}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
 
     if (endDate) {
-      queryStr += `&endDate=${endDate.toJSON()}`
+      queryStr += `&endDate=${endDate}`
     }
 
     return queryStr;

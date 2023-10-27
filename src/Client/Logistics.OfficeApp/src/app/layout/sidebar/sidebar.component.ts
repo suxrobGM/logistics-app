@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {RouterLink} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import {TooltipModule} from 'primeng/tooltip';
 import {SplitButtonModule} from 'primeng/splitbutton';
 import {PanelMenuModule} from 'primeng/panelmenu';
@@ -36,9 +36,10 @@ export class SidebarComponent implements OnInit {
   public accountingMenuItems: MenuItem[];
 
   constructor(
-    private authService: AuthService,
-    private apiService: ApiService,
-    private tenantService: TenantService)
+    private readonly authService: AuthService,
+    private readonly apiService: ApiService,
+    private readonly tenantService: TenantService,
+    private readonly router: Router)
   {
     this.isAuthenticated = false;
     this.isOpened = false;
@@ -70,15 +71,15 @@ export class SidebarComponent implements OnInit {
         items: [
           {
             label: 'Payroll Management',
-            // command: () => this.openAccountUrl(),
+            command: () => router.navigateByUrl('/accounting/payroll'),
           },
           {
             label: 'Payments',
-            // command: () => this.logout(),
+            command: () => router.navigateByUrl('/accounting/payments'),
           },
           {
             label: 'Invoices',
-            // command: () => this.logout(),
+            command: () => router.navigateByUrl('/accounting/invoices'),
           },
         ],
       },

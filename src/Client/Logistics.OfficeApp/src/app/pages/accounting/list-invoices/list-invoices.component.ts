@@ -5,6 +5,8 @@ import {CardModule} from 'primeng/card';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {Invoice} from '@core/models';
 import {ApiService} from '@core/services';
+import { PredefinedDateRanges } from '@core/helpers';
+import { PaymentStatus, getEnumDescription, PaymentStatusEnum } from '@core/enums';
 
 
 @Component({
@@ -23,7 +25,7 @@ import {ApiService} from '@core/services';
 })
 export class ListInvoicesComponent {
   public invoices: Invoice[] = [];
-  public isLoading = false;
+  public isLoading = true;
   public totalRecords = 0;
   public first = 0;
 
@@ -36,8 +38,15 @@ export class ListInvoicesComponent {
     const rows = event.rows ?? 10;
     const page = first / rows + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
+    const past90days = PredefinedDateRanges.getPast90Days();
 
-    this.apiService.getInvoices({orderBy: sortField, page: page, pageSize: rows}).subscribe((result) => {
+    this.apiService.getInvoices({
+      orderBy: sortField,
+      page: page,
+      pageSize: rows,
+      startDate: past90days.startDate,
+      endDate: past90days.endDate
+    }).subscribe((result) => {
       if (result.isSuccess && result.data) {
         this.invoices = result.data;
         this.totalRecords = result.totalItems;
@@ -45,5 +54,9 @@ export class ListInvoicesComponent {
 
       this.isLoading = false;
     });
+  }
+
+  getPaymentStatusDesc(enumValue: PaymentStatus): string {
+    return getEnumDescription(PaymentStatusEnum, enumValue);
   }
 }
