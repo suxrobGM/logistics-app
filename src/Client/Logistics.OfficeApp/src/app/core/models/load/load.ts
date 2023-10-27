@@ -1,6 +1,6 @@
-import {Customer} from '../customer/customer';
-import {Invoice} from '../payment/invoice';
 import {LoadStatus} from '@core/enums';
+import {Customer} from '../customer';
+import {Invoice} from '../invoice';
 
 
 export interface Load {
