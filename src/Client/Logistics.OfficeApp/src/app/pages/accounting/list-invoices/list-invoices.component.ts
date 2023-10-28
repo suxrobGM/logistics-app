@@ -13,7 +13,7 @@ import { PaymentStatus, getEnumDescription, PaymentStatusEnum } from '@core/enum
   selector: 'app-list-invoices',
   standalone: true,
   templateUrl: './list-invoices.component.html',
-  styleUrls: ['./list-invoices.component.scss'],
+  styleUrls: [],
   imports: [
     CommonModule,
     RouterModule,

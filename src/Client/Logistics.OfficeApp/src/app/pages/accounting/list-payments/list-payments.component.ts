@@ -22,7 +22,7 @@ import {PredefinedDateRanges} from '@core/helpers';
   selector: 'app-list-payments',
   standalone: true,
   templateUrl: './list-payments.component.html',
-  styleUrls: ['./list-payments.component.scss'],
+  styleUrls: [],
   imports: [
     CommonModule,
     CardModule,
