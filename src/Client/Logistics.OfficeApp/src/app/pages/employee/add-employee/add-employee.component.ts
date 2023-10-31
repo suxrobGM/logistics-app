@@ -48,9 +48,9 @@ export class AddEmployeeComponent implements OnInit {
   public isLoading: boolean;
 
   constructor(
-    private apiService: ApiService,
-    private toastService: ToastService,
-    private userService: UserService)
+    private readonly apiService: ApiService,
+    private readonly toastService: ToastService,
+    private readonly userService: UserService)
   {
     this.suggestedUsers = [];
     this.roles = [];

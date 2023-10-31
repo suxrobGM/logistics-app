@@ -48,9 +48,9 @@ export class ApiService {
   private headers: Record<string, string>;
 
   constructor(
-    private httpClient: HttpClient,
-    private tenantService: TenantService,
-    private messageService: MessageService)
+    private readonly httpClient: HttpClient,
+    private readonly tenantService: TenantService,
+    private readonly messageService: MessageService)
   {
     this.host = AppConfig.apiHost;
     this.headers = {'content-type': 'application/json'};
