@@ -25,6 +25,7 @@
     "bootstrap": "^5.3.1",
     "bootstrap-icons": "^1.10.5",
     "chart.js": "^4.4.0",
+    "jspdf": "^2.5.1",
     "ngx-mapbox-gl": "^10.0.0",
     "primeicons": "^6.0.1",
     "primeng": "^16.3.1",

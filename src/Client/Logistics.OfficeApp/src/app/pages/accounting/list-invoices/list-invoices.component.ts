@@ -3,10 +3,11 @@ import {CommonModule, CurrencyPipe, DatePipe} from '@angular/common';
 import {RouterModule} from '@angular/router';
 import {CardModule} from 'primeng/card';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
+import {ButtonModule} from 'primeng/button';
 import {Invoice} from '@core/models';
 import {ApiService} from '@core/services';
-import { PredefinedDateRanges } from '@core/helpers';
-import { PaymentStatus, getEnumDescription, PaymentStatusEnum } from '@core/enums';
+import {PredefinedDateRanges} from '@core/helpers';
+import {PaymentStatus, getEnumDescription, PaymentStatusEnum} from '@core/enums';
 
 
 @Component({
@@ -20,7 +21,8 @@ import { PaymentStatus, getEnumDescription, PaymentStatusEnum } from '@core/enum
     CardModule,
     TableModule,
     CurrencyPipe,
-    DatePipe
+    DatePipe,
+    ButtonModule
   ],
 })
 export class ListInvoicesComponent {

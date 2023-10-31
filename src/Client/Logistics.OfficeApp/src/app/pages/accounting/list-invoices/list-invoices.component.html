@@ -28,7 +28,6 @@
               Customer
               <p-sortIcon field="customerName"></p-sortIcon>
             </th>
-            
             <th pSortableColumn="paymentAmount">
               Payment Amount
               <p-sortIcon field="paymentAmount"></p-sortIcon>
@@ -45,6 +44,7 @@
               Payment Date
               <p-sortIcon field="paymentDate"></p-sortIcon>
             </th>
+            <th>Action</th>
           </tr>
         </ng-template>
         
@@ -60,6 +60,13 @@
             <td>{{getPaymentStatusDesc(invoice.payment.status)}}</td>
             <td>{{invoice.createdDate | date:'mediumDate'}}</td>
             <td>{{invoice.payment.paymentDate | date:'mediumDate'}}</td>
+            <td>
+              <button pButton 
+                class="p-button-raised"
+                [routerLink]="['/accounting/invoices/view', invoice.id]">
+                View details
+              </button>
+            </td>
           </tr>
         </ng-template>
       </p-table>

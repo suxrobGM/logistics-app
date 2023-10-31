@@ -1,0 +1,35 @@
+<h1 class="text-center">Invoice Details</h1>
+<hr class="w-100">
+
+<p-card class="col-12 col-sm-6">
+  <p-progressSpinner *ngIf="isLoading"></p-progressSpinner>
+
+  <div *ngIf="invoice">
+    <h2>{{companyName}}</h2>
+    <p>{{companyAddress}}</p>
+    <hr />
+    <p>
+      <strong>Load ID:</strong> {{invoice.loadRef}}
+    </p>
+    <p>
+      <strong>Date:</strong> {{invoice.createdDate | date:'mediumDate'}}
+    </p>
+    <p>
+      <strong>Customer:</strong> {{invoice.customer.name}}
+    </p>
+    <h4>Payment Details</h4>
+    <p>
+      <strong>Method:</strong> {{getPaymentMethodDesc(invoice.payment.method)}}
+    </p>
+    <p>
+      <strong>Amount:</strong> {{invoice.payment.amount | currency}}
+    </p>
+    <p>
+      <strong>Payment Date:</strong> {{invoice.payment.paymentDate | date:'mediumDate'}}
+    </p>
+
+    <button pButton class="p-button-raised" (click)="exportToPDF()">
+      Export to PDF
+    </button>
+  </div>
+</p-card>
