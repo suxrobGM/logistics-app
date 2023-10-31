@@ -273,25 +273,26 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 });
 
             migrationBuilder.CreateTable(
-                name: "PayrollPayments",
+                name: "Payrolls",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PaymentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    EmployeeId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    EmployeeId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PayrollPayments", x => x.Id);
+                    table.PrimaryKey("PK_Payrolls", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PayrollPayments_Employees_EmployeeId",
+                        name: "FK_Payrolls_Employees_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PayrollPayments_Payments_PaymentId",
+                        name: "FK_Payrolls_Payments_PaymentId",
                         column: x => x.PaymentId,
                         principalTable: "Payments",
                         principalColumn: "Id",
@@ -348,13 +349,13 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PayrollPayments_EmployeeId",
-                table: "PayrollPayments",
+                name: "IX_Payrolls_EmployeeId",
+                table: "Payrolls",
                 column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PayrollPayments_PaymentId",
-                table: "PayrollPayments",
+                name: "IX_Payrolls_PaymentId",
+                table: "Payrolls",
                 column: "PaymentId",
                 unique: true);
 
@@ -383,7 +384,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "Notifications");
 
             migrationBuilder.DropTable(
-                name: "PayrollPayments");
+                name: "Payrolls");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");

@@ -77,13 +77,13 @@ public class TenantDbContext : DbContext
                 .HasForeignKey<Invoice>(i => i.PaymentId);
         });
 
-        builder.Entity<PayrollPayment>(entity =>
+        builder.Entity<Payroll>(entity =>
         {
-            entity.ToTable("PayrollPayments");
+            entity.ToTable("Payrolls");
 
             entity.HasOne(i => i.Payment)
                 .WithOne()
-                .HasForeignKey<PayrollPayment>(i => i.PaymentId);
+                .HasForeignKey<Payroll>(i => i.PaymentId);
             
             entity.HasOne(i => i.Employee)
                 .WithMany(i => i.PayrollPayments)

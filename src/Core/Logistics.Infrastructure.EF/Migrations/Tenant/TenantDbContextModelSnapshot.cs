@@ -294,12 +294,13 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.ToTable("Payments", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.PayrollPayment", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.Payroll", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("EmployeeId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("EndDate")
@@ -319,7 +320,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.HasIndex("PaymentId")
                         .IsUnique();
 
-                    b.ToTable("PayrollPayments", (string)null);
+                    b.ToTable("Payrolls", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionPayment", b =>
@@ -513,15 +514,17 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Navigation("Invoice");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.PayrollPayment", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.Payroll", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Employee", "Employee")
                         .WithMany("PayrollPayments")
-                        .HasForeignKey("EmployeeId");
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Logistics.Domain.Entities.Payment", "Payment")
                         .WithOne()
-                        .HasForeignKey("Logistics.Domain.Entities.PayrollPayment", "PaymentId")
+                        .HasForeignKey("Logistics.Domain.Entities.Payroll", "PaymentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

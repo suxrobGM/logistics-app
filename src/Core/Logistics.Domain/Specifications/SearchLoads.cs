@@ -19,8 +19,8 @@ public class SearchLoads : BaseSpecification<Load>
         Criteria = i =>
             (i.Name != null && i.Name.Contains(search)) ||
             i.RefId.ToString().Contains(search) ||
-            (i.OriginAddress != null && i.OriginAddress.Contains(search)) || 
-            (i.DestinationAddress != null && i.DestinationAddress.Contains(search));
+            i.OriginAddress.Contains(search) || 
+            i.DestinationAddress.Contains(search);
     }
 
     private static Expression<Func<Load, object>> InitOrderBy(string? propertyName)

@@ -2,7 +2,7 @@
 
 namespace Logistics.Domain.Entities;
 
-public class PayrollPayment : Entity, ITenantEntity
+public class Payroll : Entity, ITenantEntity
 {
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
@@ -10,6 +10,6 @@ public class PayrollPayment : Entity, ITenantEntity
     public string PaymentId { get; set; } = default!;
     public virtual Payment Payment { get; set; } = default!;
 
-    public string? EmployeeId { get; set; }
-    public virtual Employee? Employee { get; set; }
+    public string EmployeeId { get; set; } = default!;
+    public virtual Employee Employee { get; set; } = default!;
 }

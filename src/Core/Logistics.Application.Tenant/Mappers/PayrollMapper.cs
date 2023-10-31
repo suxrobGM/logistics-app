@@ -2,15 +2,16 @@
 
 namespace Logistics.Application.Tenant.Mappers;
 
-public static class PayrollPaymentMapper
+public static class PayrollMapper
 {
-    public static PayrollPaymentDto ToDto(this PayrollPayment entity)
+    public static PayrollDto ToDto(this Payroll entity)
     {
-        return new PayrollPaymentDto
+        return new PayrollDto
         {
+            Id = entity.Id,
             StartDate = entity.StartDate,
             EndDate = entity.EndDate,
-            Employee = entity.Employee?.ToDto(),
+            Employee = entity.Employee.ToDto(),
             Payment = entity.Payment.ToDto()
         };
     }
