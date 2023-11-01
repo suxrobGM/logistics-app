@@ -9,10 +9,10 @@ namespace Logistics.Application.Admin.Queries;
 
 internal sealed class GetUsersHandler : RequestHandler<GetUsersQuery, PagedResponseResult<UserDto>>
 {
-    private readonly IMainRepository _repository;
+    private readonly IMasterRepository _repository;
 
     public GetUsersHandler(
-        IMainRepository repository)
+        IMasterRepository repository)
     {
         _repository = repository;
     }

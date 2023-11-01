@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Domain.Persistence;
 
-public interface IMainRepository : IRepository
+public interface IMasterRepository : IRepository
 {
     
 }

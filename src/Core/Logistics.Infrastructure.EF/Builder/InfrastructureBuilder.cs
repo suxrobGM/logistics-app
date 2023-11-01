@@ -19,12 +19,12 @@ internal class InfrastructureBuilder : ServiceCollection, IInfrastructureBuilder
         return this;
     }
 
-    public IInfrastructureBuilder ConfigureMainDatabase(Action<MainDbContextOptions> configure)
+    public IInfrastructureBuilder ConfigureMainDatabase(Action<MasterDbContextOptions> configure)
     {
-        var options = new MainDbContextOptions();
+        var options = new MasterDbContextOptions();
         configure(options);
 
-        var serviceDesc = new ServiceDescriptor(typeof(MainDbContextOptions), options);
+        var serviceDesc = new ServiceDescriptor(typeof(MasterDbContextOptions), options);
 
         if (Contains(serviceDesc))
         {

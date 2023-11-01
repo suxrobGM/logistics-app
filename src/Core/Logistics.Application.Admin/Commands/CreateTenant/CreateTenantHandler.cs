@@ -9,11 +9,11 @@ namespace Logistics.Application.Admin.Commands;
 internal sealed class CreateTenantHandler : RequestHandler<CreateTenantCommand, ResponseResult>
 {
     private readonly ITenantDatabaseService _tenantDatabase;
-    private readonly IMainRepository _repository;
+    private readonly IMasterRepository _repository;
 
     public CreateTenantHandler(
         ITenantDatabaseService tenantDatabase,
-        IMainRepository repository)
+        IMasterRepository repository)
     {
         _tenantDatabase = tenantDatabase;
         _repository = repository;

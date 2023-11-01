@@ -7,6 +7,6 @@ namespace Logistics.Infrastructure.EF.Builder;
 public interface IInfrastructureBuilder : IServiceCollection
 {
     IInfrastructureBuilder ConfigureIdentity(Action<IdentityBuilder> configure);
-    IInfrastructureBuilder ConfigureMainDatabase(Action<MainDbContextOptions> configure);
+    IInfrastructureBuilder ConfigureMainDatabase(Action<MasterDbContextOptions> configure);
     IInfrastructureBuilder ConfigureTenantDatabase(Action<TenantDbContextOptions> configure);
 }

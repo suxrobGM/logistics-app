@@ -2,14 +2,14 @@
 
 internal sealed class DeleteEmployeeHandler : RequestHandler<DeleteEmployeeCommand, ResponseResult>
 {
-    private readonly IMainRepository _mainRepository;
+    private readonly IMasterRepository _masterRepository;
     private readonly ITenantRepository _tenantRepository;
 
     public DeleteEmployeeHandler(
-        IMainRepository mainRepository,
+        IMasterRepository masterRepository,
         ITenantRepository tenantRepository)
     {
-        _mainRepository = mainRepository;
+        _masterRepository = masterRepository;
         _tenantRepository = tenantRepository;
     }
 
@@ -22,7 +22,7 @@ internal sealed class DeleteEmployeeHandler : RequestHandler<DeleteEmployeeComma
         if (employee == null)
             return ResponseResult.CreateError($"Could not find employee with ID {req.UserId}");
 
-        var user = await _mainRepository.GetAsync<User>(employee.Id);
+        var user = await _masterRepository.GetAsync<User>(employee.Id);
         user?.RemoveTenant(tenant.Id);
         
         var employeeLoads = _tenantRepository.ApplySpecification(new GetEmployeeLoads(employee.Id));
@@ -38,7 +38,7 @@ internal sealed class DeleteEmployeeHandler : RequestHandler<DeleteEmployeeComma
         
         _tenantRepository.Delete(employee);
         await _tenantRepository.UnitOfWork.CommitAsync();
-        await _mainRepository.UnitOfWork.CommitAsync();
+        await _masterRepository.UnitOfWork.CommitAsync();
         return ResponseResult.CreateSuccess();
     }
 }

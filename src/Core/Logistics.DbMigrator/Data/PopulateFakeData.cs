@@ -14,7 +14,7 @@ internal class PopulateFakeData
     private readonly IServiceProvider _serviceProvider;
     private readonly Random _random;
     private readonly ITenantRepository _tenantRepository;
-    private readonly IMainRepository _mainRepository;
+    private readonly IMasterRepository _masterRepository;
     private readonly IConfiguration _configuration;
     
     public PopulateFakeData(
@@ -24,7 +24,7 @@ internal class PopulateFakeData
         _logger = logger;
         _serviceProvider = serviceProvider;
         _tenantRepository = serviceProvider.GetRequiredService<ITenantRepository>();
-        _mainRepository = serviceProvider.GetRequiredService<IMainRepository>();
+        _masterRepository = serviceProvider.GetRequiredService<IMasterRepository>();
         _configuration = serviceProvider.GetRequiredService<IConfiguration>();
         _random = new Random();
     }
@@ -103,7 +103,7 @@ internal class PopulateFakeData
         if (users.Count < 10)
             throw new InvalidOperationException("Add at least 10 test users in the 'testData.json' under the `Users` section");
         
-        var tenant = await _mainRepository.GetAsync<Tenant>(i => i.Name == "default");
+        var tenant = await _masterRepository.GetAsync<Tenant>(i => i.Name == "default");
 
         if (tenant is null)
             throw new InvalidOperationException("Could not find the default tenant");
@@ -136,7 +136,7 @@ internal class PopulateFakeData
         }
 
         await _tenantRepository.UnitOfWork.CommitAsync();
-        await _mainRepository.UnitOfWork.CommitAsync();
+        await _masterRepository.UnitOfWork.CommitAsync();
         return employeesDto;
     }
 

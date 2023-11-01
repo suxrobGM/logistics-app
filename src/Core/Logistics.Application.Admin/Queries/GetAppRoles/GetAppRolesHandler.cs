@@ -9,9 +9,9 @@ namespace Logistics.Application.Admin.Queries;
 
 internal sealed class GetAppRolesHandler : RequestHandler<GetAppRolesQuery, PagedResponseResult<AppRoleDto>>
 {
-    private readonly IMainRepository _repository;
+    private readonly IMasterRepository _repository;
 
-    public GetAppRolesHandler(IMainRepository repository)
+    public GetAppRolesHandler(IMasterRepository repository)
     {
         _repository = repository;
     }

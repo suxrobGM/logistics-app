@@ -75,8 +75,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Salary")
-                        .HasPrecision(19, 4)
-                        .HasColumnType("decimal(19,4)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("SalaryType")
                         .HasColumnType("int");
@@ -172,8 +172,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("DeliveryCost")
-                        .HasPrecision(19, 4)
-                        .HasColumnType("decimal(19,4)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("DeliveryDate")
                         .HasColumnType("datetime2");
@@ -268,8 +268,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("Amount")
-                        .HasPrecision(19, 4)
-                        .HasColumnType("decimal(19,4)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");

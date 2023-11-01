@@ -1,9 +1,15 @@
 ﻿using Logistics.Domain;
+using Logistics.Domain.Entities;
+using Logistics.Domain.Options;
+using Logistics.Domain.Persistence;
+using Logistics.Domain.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Logistics.Infrastructure.EF.Builder;
+using Logistics.Infrastructure.EF.Data;
 using Logistics.Infrastructure.EF.Interceptors;
+using Logistics.Infrastructure.EF.Options;
 using Logistics.Infrastructure.EF.Persistence;
 using Logistics.Infrastructure.EF.Services;
 
@@ -11,19 +17,42 @@ namespace Logistics.Infrastructure.EF;
 
 public static class Registrar
 {
-    private static void AddMainDatabase(
+    public static IInfrastructureBuilder AddInfrastructureLayer(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        string defaultTenantDbConnectionSection = "DefaultTenantDatabase",
+        string masterDbConnectionSection = "MasterDatabase",
+        string tenantsConfigSection = "TenantsDatabaseConfig")
+    {
+        var identityBuilder = AddIdentity(services);
+        AddMasterDatabase(services, configuration, masterDbConnectionSection);
+        AddTenantDatabase(services, configuration, defaultTenantDbConnectionSection, tenantsConfigSection);
+
+        services.AddDomainLayer();
+        services.AddScoped<AuditableEntitySaveChangesInterceptor>();
+        services.AddScoped<DispatchDomainEventsInterceptor>();
+        services.AddScoped<ITenantService, TenantService>();
+        services.AddScoped<IMasterRepository, MasterRepository>();
+        services.AddScoped<ITenantRepository, TenantRepository>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<UnitOfWork<MasterDbContext>>();
+        services.AddScoped<UnitOfWork<TenantDbContext>>();
+        return new InfrastructureBuilder(identityBuilder);
+    }
+    
+    private static void AddMasterDatabase(
         IServiceCollection services,
         IConfiguration configuration,
         string connectionSection)
     {
         var connectionString = configuration.GetConnectionString(connectionSection);
-        var options = new MainDbContextOptions
+        var options = new MasterDbContextOptions
         {
             ConnectionString = connectionString
         };
         
         services.AddSingleton(options);
-        services.AddDbContext<MainDbContext>();
+        services.AddDbContext<MasterDbContext>();
     }
     
     private static void AddTenantDatabase(
@@ -62,31 +91,8 @@ public static class Registrar
             options.User.RequireUniqueEmail = true;
         })
         .AddRoles<AppRole>()
-        .AddEntityFrameworkStores<MainDbContext>();
+        .AddEntityFrameworkStores<MasterDbContext>();
 
         return identityBuilder;
-    }
-    
-    public static IInfrastructureBuilder AddInfrastructureLayer(
-        this IServiceCollection services,
-        IConfiguration configuration,
-        string defaultTenantDbConnectionSection = "DefaultTenantDatabase",
-        string mainDbConnectionSection = "MainDatabase",
-        string tenantsConfigSection = "TenantsDatabaseConfig")
-    {
-        var identityBuilder = AddIdentity(services);
-        AddMainDatabase(services, configuration, mainDbConnectionSection);
-        AddTenantDatabase(services, configuration, defaultTenantDbConnectionSection, tenantsConfigSection);
-
-        services.AddDomainLayer();
-        services.AddScoped<AuditableEntitySaveChangesInterceptor>();
-        services.AddScoped<DispatchDomainEventsInterceptor>();
-        services.AddScoped<ITenantService, TenantService>();
-        services.AddScoped<IMainRepository, MainRepository>();
-        services.AddScoped<ITenantRepository, TenantRepository>();
-        services.AddScoped<IUserService, UserService>();
-        services.AddScoped<UnitOfWork<MainDbContext>>();
-        services.AddScoped<UnitOfWork<TenantDbContext>>();
-        return new InfrastructureBuilder(identityBuilder);
     }
 }

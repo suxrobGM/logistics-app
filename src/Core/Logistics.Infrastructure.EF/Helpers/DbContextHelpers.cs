@@ -1,4 +1,6 @@
-﻿namespace Logistics.Infrastructure.EF.Helpers;
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Logistics.Infrastructure.EF.Helpers;
 
 internal static class DbContextHelpers
 {

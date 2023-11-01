@@ -1,10 +1,15 @@
 ﻿using System.Data.Common;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
+using Logistics.Domain.Entities;
+using Logistics.Domain.Options;
+using Logistics.Domain.Services;
 using Logistics.Domain.ValueObjects;
+using Logistics.Infrastructure.EF.Data;
 using Logistics.Shared.Policies;
 using Microsoft.Extensions.Logging;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using CustomClaimTypes = Logistics.Shared.Claims.CustomClaimTypes;
 
 namespace Logistics.Infrastructure.EF.Services;

@@ -9,9 +9,9 @@ namespace Logistics.Application.Admin.Queries;
 internal sealed class GetUserJoinedOrganizationsHandler :
     RequestHandler<GetUserJoinedOrganizationsQuery, ResponseResult<OrganizationDto[]>>
 {
-    private readonly IMainRepository _repository;
+    private readonly IMasterRepository _repository;
 
-    public GetUserJoinedOrganizationsHandler(IMainRepository repository)
+    public GetUserJoinedOrganizationsHandler(IMasterRepository repository)
     {
         _repository = repository;
     }

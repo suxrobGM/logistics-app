@@ -4,16 +4,19 @@ using Logistics.Infrastructure.EF.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Logistics.Infrastructure.EF.Migrations.Main
+namespace Logistics.Infrastructure.EF.Migrations.Master
 {
-    [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(MasterDbContext))]
+    [Migration("20231101210423_Version_0001")]
+    partial class Version_0001
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

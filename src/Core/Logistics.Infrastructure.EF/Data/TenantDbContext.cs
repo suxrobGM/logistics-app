@@ -1,4 +1,9 @@
-﻿using Logistics.Infrastructure.EF.Interceptors;
+﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Services;
+using Logistics.Infrastructure.EF.Helpers;
+using Logistics.Infrastructure.EF.Interceptors;
+using Logistics.Infrastructure.EF.Options;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Infrastructure.EF.Data;
 
@@ -57,7 +62,7 @@ public class TenantDbContext : DbContext
         builder.Entity<Payment>(entity =>
         {
             entity.ToTable("Payments");
-            entity.Property(i => i.Amount).HasPrecision(19, 4);
+            entity.Property(i => i.Amount).HasPrecision(18, 2);
         });
 
         builder.Entity<Invoice>(entity =>
@@ -111,7 +116,7 @@ public class TenantDbContext : DbContext
         builder.Entity<Employee>(entity =>
         {
             entity.ToTable("Employees");
-            entity.Property(i => i.Salary).HasPrecision(19, 4);
+            entity.Property(i => i.Salary).HasPrecision(18, 2);
             
             entity.HasMany(i => i.Roles)
                 .WithMany(i => i.Employees)
@@ -141,7 +146,7 @@ public class TenantDbContext : DbContext
             entity.ToTable("Loads");
             //entity.OwnsOne(m => m.SourceAddress);
             //entity.OwnsOne(m => m.DestinationAddress);
-            entity.Property(i => i.DeliveryCost).HasPrecision(19, 4);
+            entity.Property(i => i.DeliveryCost).HasPrecision(18, 2);
             entity.HasIndex(i => i.RefId).IsUnique();
 
             entity.HasOne(i => i.AssignedDispatcher)

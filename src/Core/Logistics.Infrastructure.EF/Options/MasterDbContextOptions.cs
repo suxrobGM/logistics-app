@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Infrastructure.EF.Options;
 
-public class MainDbContextOptions
+public class MasterDbContextOptions
 {
     public string? ConnectionString { get; set; }
 }

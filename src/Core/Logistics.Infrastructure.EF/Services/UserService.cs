@@ -1,21 +1,25 @@
-﻿namespace Logistics.Infrastructure.EF.Services;
+﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
+using Logistics.Domain.Services;
+
+namespace Logistics.Infrastructure.EF.Services;
 
 public class UserService : IUserService
 {
-    private readonly IMainRepository _mainRepository;
+    private readonly IMasterRepository _masterRepository;
     private readonly ITenantRepository _tenantRepository;
 
     public UserService(
-        IMainRepository mainRepository,
+        IMasterRepository masterRepository,
         ITenantRepository tenantRepository)
     {
-        _mainRepository = mainRepository;
+        _masterRepository = masterRepository;
         _tenantRepository = tenantRepository;
     }
 
     public async Task UpdateUserAsync(UpdateUserData userData)
     {
-        var user = await _mainRepository.GetAsync<User>(userData.Id);
+        var user = await _masterRepository.GetAsync<User>(userData.Id);
 
         if (user == null)
             return;
@@ -36,8 +40,8 @@ public class UserService : IUserService
             await UpdateTenantEmployeeDataAsync(tenantId, user);
         }
         
-        _mainRepository.Update(user);
-        await _mainRepository.UnitOfWork.CommitAsync();
+        _masterRepository.Update(user);
+        await _masterRepository.UnitOfWork.CommitAsync();
     }
 
     private async Task UpdateTenantEmployeeDataAsync(string tenantId, User user)

@@ -24,8 +24,8 @@ public class GetPayrolls : BaseSpecification<Payroll>
             "employeefirstname" => i => i.Employee.FirstName!,
             "employeelastname" => i => i.Employee.LastName!,
             "employeeemail" => i => i.Employee.Email!,
-            "employesalary" => i => i.Employee.Salary,
-            "employesalarytype" => i => i.Employee.SalaryType,
+            "employeesalary" => i => i.Employee.Salary,
+            "employeesalarytype" => i => i.Employee.SalaryType,
             _ => i => i.Id
         };
     }

@@ -1,4 +1,7 @@
-﻿namespace Logistics.Infrastructure.EF.Persistence;
+﻿using Logistics.Domain.Persistence;
+using Microsoft.EntityFrameworkCore;
+
+namespace Logistics.Infrastructure.EF.Persistence;
 
 internal class UnitOfWork<TContext> : IUnitOfWork where TContext : DbContext
 {

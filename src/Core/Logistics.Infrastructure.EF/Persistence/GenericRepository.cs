@@ -1,4 +1,7 @@
 ﻿using System.Linq.Expressions;
+using Logistics.Domain.Core;
+using Logistics.Domain.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Infrastructure.EF.Persistence;
 

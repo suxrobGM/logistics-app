@@ -1,9 +1,0 @@
-﻿global using Microsoft.EntityFrameworkCore;
-global using Logistics.Domain.Core;
-global using Logistics.Domain.Entities;
-global using Logistics.Domain.Options;
-global using Logistics.Domain.Services;
-global using Logistics.Domain.Persistence;
-global using Logistics.Infrastructure.EF.Data;
-global using Logistics.Infrastructure.EF.Options;
-global using Logistics.Infrastructure.EF.Helpers;

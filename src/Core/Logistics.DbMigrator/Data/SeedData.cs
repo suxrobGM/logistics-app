@@ -30,12 +30,12 @@ internal class SeedData : BackgroundService
         try
         {
             using var scope = _serviceScopeFactory.CreateScope();
-            var mainDbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+            var masterDbContext = scope.ServiceProvider.GetRequiredService<MasterDbContext>();
             var tenantDbContext = scope.ServiceProvider.GetRequiredService<TenantDbContext>();
 
-            _logger.LogInformation("Initializing main database...");
-            await MigrateDatabaseAsync(mainDbContext);
-            _logger.LogInformation("Successfully initialized the main database");
+            _logger.LogInformation("Initializing master database...");
+            await MigrateDatabaseAsync(masterDbContext);
+            _logger.LogInformation("Successfully initialized the master database");
 
             _logger.LogInformation("Initializing tenant database...");
             await MigrateDatabaseAsync(tenantDbContext);
@@ -135,7 +135,7 @@ internal class SeedData : BackgroundService
 
     private async Task AddDefaultTenantAsync(IServiceProvider serviceProvider)
     {
-        var mainRepository = serviceProvider.GetRequiredService<IMainRepository>();
+        var mainRepository = serviceProvider.GetRequiredService<IMasterRepository>();
         var databaseProvider = serviceProvider.GetRequiredService<ITenantDatabaseService>();
 
         var defaultTenant = new Tenant

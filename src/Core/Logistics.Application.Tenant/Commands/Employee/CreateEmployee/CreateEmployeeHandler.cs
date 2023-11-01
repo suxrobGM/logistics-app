@@ -4,16 +4,16 @@ namespace Logistics.Application.Tenant.Commands;
 
 internal sealed class CreateEmployeeHandler : RequestHandler<CreateEmployeeCommand, ResponseResult>
 {
-    private readonly IMainRepository _mainRepository;
+    private readonly IMasterRepository _masterRepository;
     private readonly ITenantRepository _tenantRepository;
     private readonly INotificationService _notificationService;
 
     public CreateEmployeeHandler(
-        IMainRepository mainRepository,
+        IMasterRepository masterRepository,
         ITenantRepository tenantRepository,
         INotificationService notificationService)
     {
-        _mainRepository = mainRepository;
+        _masterRepository = masterRepository;
         _tenantRepository = tenantRepository;
         _notificationService = notificationService;
     }
@@ -26,7 +26,7 @@ internal sealed class CreateEmployeeHandler : RequestHandler<CreateEmployeeComma
         if (existingEmployee is not null)
             return ResponseResult.CreateError("Employee already exists");
         
-        var user = await _mainRepository.GetAsync<User>(req.UserId);
+        var user = await _masterRepository.GetAsync<User>(req.UserId);
         
         if (user is null)
             return ResponseResult.CreateError("Could not find the specified user");
@@ -43,9 +43,9 @@ internal sealed class CreateEmployeeHandler : RequestHandler<CreateEmployeeComma
         }
         
         await _tenantRepository.AddAsync(employee);
-        _mainRepository.Update(user);
+        _masterRepository.Update(user);
         
-        await _mainRepository.UnitOfWork.CommitAsync();
+        await _masterRepository.UnitOfWork.CommitAsync();
         await _tenantRepository.UnitOfWork.CommitAsync();
 
         await _notificationService.SendNotificationAsync("New Employee",

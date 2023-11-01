@@ -6,9 +6,9 @@ namespace Logistics.Application.Admin.Commands;
 
 internal sealed class UpdateTenantHandler : RequestHandler<UpdateTenantCommand, ResponseResult>
 {
-    private readonly IMainRepository _repository;
+    private readonly IMasterRepository _repository;
 
-    public UpdateTenantHandler(IMainRepository repository)
+    public UpdateTenantHandler(IMasterRepository repository)
     {
         _repository = repository;
     }

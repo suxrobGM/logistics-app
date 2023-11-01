@@ -7,21 +7,21 @@ namespace Logistics.Application.Admin.Commands;
 
 internal sealed class UpdateUserHandler : RequestHandler<UpdateUserCommand, ResponseResult>
 {
-    private readonly IMainRepository _mainRepository;
+    private readonly IMasterRepository _masterRepository;
     private readonly ITenantRepository _tenantRepository;
 
     public UpdateUserHandler(
-        IMainRepository mainRepository,
+        IMasterRepository masterRepository,
         ITenantRepository tenantRepository)
     {
-        _mainRepository = mainRepository;
+        _masterRepository = masterRepository;
         _tenantRepository = tenantRepository;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
         UpdateUserCommand req, CancellationToken cancellationToken)
     {
-        var user = await _mainRepository.GetAsync<User>(req.Id);
+        var user = await _masterRepository.GetAsync<User>(req.Id);
 
         if (user == null)
             return ResponseResult.CreateError("Could not find the specified user");
@@ -42,8 +42,8 @@ internal sealed class UpdateUserHandler : RequestHandler<UpdateUserCommand, Resp
             await UpdateTenantEmployeeDataAsync(tenantId, user);
         }
         
-        _mainRepository.Update(user);
-        await _mainRepository.UnitOfWork.CommitAsync();
+        _masterRepository.Update(user);
+        await _masterRepository.UnitOfWork.CommitAsync();
         return ResponseResult.CreateSuccess();
     }
 

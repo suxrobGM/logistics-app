@@ -1,23 +1,27 @@
-﻿using Logistics.Infrastructure.EF.Interceptors;
+﻿using Logistics.Domain.Entities;
+using Logistics.Infrastructure.EF.Helpers;
+using Logistics.Infrastructure.EF.Interceptors;
+using Logistics.Infrastructure.EF.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Infrastructure.EF.Data;
 
-public class MainDbContext : IdentityDbContext<User, AppRole, string>
+public class MasterDbContext : IdentityDbContext<User, AppRole, string>
 {
     private readonly AuditableEntitySaveChangesInterceptor? _auditableEntitySaveChangesInterceptor;
     private readonly DispatchDomainEventsInterceptor? _dispatchDomainEventsInterceptor;
     private readonly string _connectionString;
 
-    public MainDbContext(
-        MainDbContextOptions options,
+    public MasterDbContext(
+        MasterDbContextOptions options,
         AuditableEntitySaveChangesInterceptor? auditableEntitySaveChangesInterceptor,
         DispatchDomainEventsInterceptor? dispatchDomainEventsInterceptor)
     {
         _auditableEntitySaveChangesInterceptor = auditableEntitySaveChangesInterceptor;
         _dispatchDomainEventsInterceptor = dispatchDomainEventsInterceptor;
-        _connectionString = options.ConnectionString ?? ConnectionStrings.LocalMain;
+        _connectionString = options.ConnectionString ?? ConnectionStrings.LocalMaster;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
