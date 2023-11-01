@@ -40,7 +40,7 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
         if (string.IsNullOrEmpty(tenantId)) 
             return claimsIdentity;
 
-        _tenantRepository.SetTenantId(tenantId);
+        _tenantRepository.SetCurrentTenantById(tenantId);
         var employee = await _tenantRepository.GetAsync<Employee>(user.Id);
 
         AddTenantIdClaims(claimsIdentity, tenantIds);

@@ -19,15 +19,20 @@ internal class TenantRepository : GenericRepository<TenantDbContext>, ITenantRep
 
     public Tenant GetCurrentTenant()
     {
-        if (_tenantContext.TenantService is null)
-            throw new InvalidOperationException("The tenant service is null from the Tenant DB context");
-        
-        return _tenantContext.TenantService.GetTenant();
+        ThrowIfTenantServiceIsNull();
+        return _tenantContext.TenantService!.GetTenant();
     }
 
-    public void SetTenantId(string tenantId)
+    public void SetCurrentTenantById(string tenantId)
     {
-        _tenantContext.TenantService?.SetTenant(tenantId);
+        ThrowIfTenantServiceIsNull();
+        _tenantContext.TenantService!.SetTenantById(tenantId);
+    }
+
+    public void SetCurrentTenant(Tenant tenant)
+    {
+        ThrowIfTenantServiceIsNull();
+        _tenantContext.TenantService!.SetTenant(tenant);
     }
 
     async Task<TEntity?> ITenantRepository.GetAsync<TEntity>(object? id)
@@ -76,8 +81,7 @@ internal class TenantRepository : GenericRepository<TenantDbContext>, ITenantRep
     void ITenantRepository.Update<TEntity>(TEntity entity)
         where TEntity : class
     {
-        Context.Set<TEntity>().Attach(entity);
-        Context.Entry(entity).State = EntityState.Modified;
+        Context.Set<TEntity>().Update(entity);
     }
 
     void ITenantRepository.Delete<TEntity>(TEntity? entity)
@@ -87,5 +91,13 @@ internal class TenantRepository : GenericRepository<TenantDbContext>, ITenantRep
             return;
 
         Context.Set<TEntity>().Remove(entity);
+    }
+
+    private void ThrowIfTenantServiceIsNull()
+    {
+        if (_tenantContext.TenantService is null)
+        {
+            throw new InvalidOperationException("The tenant service is null from the Tenant DB context");
+        }
     }
 }

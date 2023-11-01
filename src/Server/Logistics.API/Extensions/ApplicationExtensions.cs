@@ -1,6 +1,8 @@
 ﻿using System.Text;
+using Hangfire;
 using Logistics.API.Authorization;
 using Logistics.API.Hubs;
+using Logistics.API.Jobs;
 using Logistics.API.Middlewares;
 using Logistics.API.Services;
 using Logistics.Application.Tenant.Services;
@@ -34,6 +36,13 @@ internal static class ApplicationExtensions
         services.AddScoped<ExceptionHandlingMiddleware>();
         services.AddScoped<IAuthorizationHandler, PermissionHandler>();
         services.AddScoped<INotificationService, NotificationService>();
+        
+        services.AddHangfireServer();
+        services.AddHangfire(configuration => configuration
+            .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UseSqlServerStorage(builder.Configuration.GetConnectionString("MasterDatabase")));
 
         builder.Services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
@@ -99,11 +108,18 @@ internal static class ApplicationExtensions
 
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseHangfireDashboard();
 
         app.UseCustomExceptionHandler();
         app.MapControllers();
         app.MapHub<LiveTrackingHub>("/hubs/live-tracking");
         app.MapHub<NotificationHub>("/hubs/notification");
+        return app;
+    }
+
+    public static WebApplication ScheduleJobs(this WebApplication app)
+    {
+        PayrollGenerationJob.ScheduleJobs();
         return app;
     }
 

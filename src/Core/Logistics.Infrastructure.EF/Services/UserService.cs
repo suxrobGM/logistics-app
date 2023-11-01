@@ -46,7 +46,7 @@ public class UserService : IUserService
 
     private async Task UpdateTenantEmployeeDataAsync(string tenantId, User user)
     {
-        _tenantRepository.SetTenantId(tenantId);
+        _tenantRepository.SetCurrentTenantById(tenantId);
         var employee = await _tenantRepository.GetAsync<Employee>(user.Id);
 
         if (employee is null)

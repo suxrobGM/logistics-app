@@ -15,10 +15,16 @@ public interface ITenantRepository : IRepository
     Tenant GetCurrentTenant();
 
     /// <summary>
-    /// Manually set the tenant ID
+    /// Manually set the current tenant by its ID
     /// </summary>
     /// <param name="tenantId">Tenant ID</param>
-    void SetTenantId(string tenantId);
+    void SetCurrentTenantById(string tenantId);
+    
+    /// <summary>
+    /// Manually set the current tenant by directly passing the instance
+    /// </summary>
+    /// <param name="tenant">An instance of Tenant class</param>
+    void SetCurrentTenant(Tenant tenant);
 
     /// <summary>
     /// Gets an entity object by its ID.

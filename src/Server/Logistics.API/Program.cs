@@ -17,7 +17,9 @@ try
 
     var app = builder
         .ConfigureServices()
-        .ConfigurePipeline();
+        .ConfigurePipeline()
+        .ScheduleJobs();
+    
     app.Run();
 }
 catch (Exception ex) when (ex.GetType().Name is not "StopTheHostException")

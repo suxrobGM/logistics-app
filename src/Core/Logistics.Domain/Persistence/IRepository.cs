@@ -24,15 +24,6 @@ public interface IRepository
         where TEntity: class, IEntity<string>;
     
     /// <summary>
-    /// Asynchronously computes the sum of a sequence of values
-    /// </summary>
-    /// <param name="selector">A projection function to apply to each element</param>
-    /// <typeparam name="TEntity">Class that implements the <see cref="IEntity{TKey}"/> interface</typeparam>
-    /// <returns>The sum of the projected values</returns>
-    Task<double> SumAsync<TEntity>(Expression<Func<TEntity, double>> selector)
-        where TEntity: class, IEntity<string>;
-    
-    /// <summary>
     /// Gets an entity object by ID.
     /// </summary>
     /// <param name="id">Entity primary key</param>

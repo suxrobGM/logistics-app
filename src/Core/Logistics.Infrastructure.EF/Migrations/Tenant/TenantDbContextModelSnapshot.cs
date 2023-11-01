@@ -277,7 +277,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Method")
+                    b.Property<int?>("Method")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("PaymentDate")

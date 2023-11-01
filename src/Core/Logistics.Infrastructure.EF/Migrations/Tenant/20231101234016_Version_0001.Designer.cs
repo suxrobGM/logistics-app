@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.Infrastructure.EF.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20231101210404_Version_0001")]
+    [Migration("20231101234016_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -280,7 +280,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Method")
+                    b.Property<int?>("Method")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("PaymentDate")

@@ -27,12 +27,6 @@ internal class GenericRepository<TContext> : IRepository
             : Context.Set<TEntity>().CountAsync(predicate);
     }
 
-    public Task<double> SumAsync<TEntity>(Expression<Func<TEntity, double>> selector)
-        where TEntity : class, IEntity<string>
-    {
-        return Context.Set<TEntity>().SumAsync(selector);
-    }
-
     public async Task<TEntity?> GetAsync<TEntity>(object? id)
         where TEntity : class, IEntity<string>
     {
@@ -80,14 +74,13 @@ internal class GenericRepository<TContext> : IRepository
     public void Update<TEntity>(TEntity entity)
         where TEntity : class, IEntity<string>
     {
-        Context.Set<TEntity>().Attach(entity);
-        Context.Entry(entity).State = EntityState.Modified;
+        Context.Set<TEntity>().Update(entity);
     }
 
     public void Delete<TEntity>(TEntity? entity)
         where TEntity : class, IEntity<string>
     {
-        if (entity == null)
+        if (entity is null)
             return;
 
         Context.Set<TEntity>().Remove(entity);

@@ -12,6 +12,7 @@ public static class Registrar
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), includeInternalTypes: true);
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Registrar).Assembly));
         services.AddSingleton<IPushNotificationService, PushNotificationService>();
+        services.AddScoped<IPayrollService, PayrollService>();
         return services;
     }
 }

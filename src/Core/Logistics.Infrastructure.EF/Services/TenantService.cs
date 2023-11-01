@@ -73,15 +73,16 @@ internal class TenantService : ITenantService
         return _currentTenant;
     }
 
-    public bool SetTenant(string tenantId)
+    public Tenant? SetTenantById(string tenantId)
     {
         var tenant = FetchCurrentTenant(tenantId);
-
-        if (tenant is null)
-            return false;
-
         _currentTenant = tenant;
-        return true;
+        return _currentTenant;
+    }
+
+    public void SetTenant(Tenant tenant)
+    {
+        _currentTenant = tenant;
     }
 
     private Tenant? FetchCurrentTenant(string? tenantId)

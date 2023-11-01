@@ -45,7 +45,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Method = table.Column<int>(type: "int", nullable: false),
+                    Method = table.Column<int>(type: "int", nullable: true),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     PaymentFor = table.Column<int>(type: "int", nullable: false),
