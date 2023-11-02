@@ -5,7 +5,7 @@ export interface Payment {
   id: string;
   createdDate: string;
   paymentDate?: string;
-  method: PaymentMethod;
+  method?: PaymentMethod;
   amount: number;
   status: PaymentStatus;
   paymentFor: PaymentFor;

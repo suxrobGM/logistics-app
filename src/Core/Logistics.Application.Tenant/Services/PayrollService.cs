@@ -26,7 +26,6 @@ public class PayrollService : IPayrollService
         foreach (var tenant in tenants)
         {
             _tenantRepository.SetCurrentTenant(tenant);
-        
             var previousMonthStart = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1).AddMonths(-1);
             var previousMonthEnd = previousMonthStart.AddMonths(1).AddDays(-1);
             var employees = await _tenantRepository.GetListAsync<Employee>(e => 
@@ -35,12 +34,8 @@ public class PayrollService : IPayrollService
 
             foreach (var employee in employees)
             {
-                var existingPayroll = await _tenantRepository.GetAsync<Payroll>(p => 
-                    p.EmployeeId == employee.Id && 
-                    p.StartDate >= previousMonthStart && 
-                    p.EndDate <= previousMonthEnd);
-            
-                if (existingPayroll != null)
+                var isPayrollExisting = await IsPayrollExisting(employee.Id, previousMonthStart, previousMonthEnd);
+                if (isPayrollExisting)
                 {
                     continue;
                 }
@@ -61,19 +56,14 @@ public class PayrollService : IPayrollService
         foreach (var tenant in tenants)
         {
             _tenantRepository.SetCurrentTenant(tenant);
-        
             var previousWeekStart = StartOfPreviousWeek(DateTime.UtcNow);
             var previousWeekEnd = previousWeekStart.AddDays(6);
             var employees = await _tenantRepository.GetListAsync<Employee>(e => e.SalaryType == SalaryType.Weekly);
 
             foreach (var employee in employees)
             {
-                var existingPayroll = await _tenantRepository.GetAsync<Payroll>(p => 
-                    p.EmployeeId == employee.Id && 
-                    p.StartDate >= previousWeekStart && 
-                    p.EndDate <= previousWeekEnd);
-            
-                if (existingPayroll != null)
+                var isPayrollExisting = await IsPayrollExisting(employee.Id, previousWeekStart, previousWeekEnd);
+                if (isPayrollExisting)
                 {
                     continue;
                 }
@@ -85,6 +75,16 @@ public class PayrollService : IPayrollService
             _logger.LogInformation("Generated weekly payrolls for the tenant: {TenantName}", tenant.Name);
             await _tenantRepository.UnitOfWork.CommitAsync();
         }
+    }
+    
+    private async Task<bool> IsPayrollExisting(string employeeId, DateTime startDate, DateTime endDate)
+    {
+        var payroll = await _tenantRepository.GetAsync<Payroll>(p =>
+            p.EmployeeId == employeeId &&
+            p.StartDate >= startDate &&
+            p.EndDate <= endDate);
+
+        return payroll != null;
     }
 
     private static Payroll CreatePayroll(Employee employee, DateTime startDate, DateTime endDate)

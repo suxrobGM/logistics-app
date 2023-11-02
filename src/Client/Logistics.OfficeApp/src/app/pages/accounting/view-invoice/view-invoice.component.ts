@@ -49,7 +49,10 @@ export class ViewInvoiceComponent implements OnInit {
     this.fetchInvoice();
   }
 
-  getPaymentMethodDesc(enumValue: PaymentMethod): string {
+  getPaymentMethodDesc(enumValue?: PaymentMethod): string {
+    if (!enumValue) {
+      return 'N/A';
+    }
     return getEnumDescription(PaymentMethodEnum, enumValue);
   }
 

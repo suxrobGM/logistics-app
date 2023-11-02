@@ -1,4 +1,4 @@
-using Logistics.DbMigrator.Services;
+using Logistics.DbMigrator.Data;
 using Logistics.Infrastructure.EF;
 using Serilog;
 

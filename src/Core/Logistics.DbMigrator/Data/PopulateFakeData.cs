@@ -1,21 +1,26 @@
-﻿using Logistics.DbMigrator.Extensions;
+﻿using Logistics.DbMigrator.Core;
+using Logistics.DbMigrator.Extensions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.ValueObjects;
 using Logistics.Shared.Enums;
 using Microsoft.AspNetCore.Identity;
 
-namespace Logistics.DbMigrator.Services;
+namespace Logistics.DbMigrator.Data;
 
 internal class PopulateFakeData
 {
     private const string UserDefaultPassword = "Test12345#";
+    private readonly DateTime _startDate = DateTime.Today.AddMonths(-3);
+    private readonly DateTime _endDate = DateTime.Today.AddDays(-3); 
+    
+    private readonly Random _random = new();
     private readonly ILogger _logger;
     private readonly IServiceProvider _serviceProvider;
-    private readonly Random _random;
     private readonly ITenantRepository _tenantRepository;
     private readonly IMasterRepository _masterRepository;
     private readonly IConfiguration _configuration;
+    private readonly PayrollGenerator _payrollGenerator;
     
     public PopulateFakeData(
         ILogger logger,
@@ -26,7 +31,7 @@ internal class PopulateFakeData
         _tenantRepository = serviceProvider.GetRequiredService<ITenantRepository>();
         _masterRepository = serviceProvider.GetRequiredService<IMasterRepository>();
         _configuration = serviceProvider.GetRequiredService<IConfiguration>();
-        _random = new Random();
+        _payrollGenerator = new PayrollGenerator(_tenantRepository, _startDate, _endDate, _logger);
     }
     
     public async Task ExecuteAsync()
@@ -45,6 +50,7 @@ internal class PopulateFakeData
             var customers = await AddCustomersAsync();
             await AddLoadsAsync(employees, trucks, customers);
             await AddNotificationsAsync();
+            await _payrollGenerator.GeneratePayrolls(employees);
             _logger.LogInformation("Databases have been populated successfully");
         }
         catch (Exception ex)
@@ -127,14 +133,18 @@ internal class PopulateFakeData
         {
             var dispatcherEmployee = await TryAddEmployeeAsync(tenant.Id, dispatcher, 1000, SalaryType.Weekly, dispatcherRole);
             employeesDto.Dispatchers.Add(dispatcherEmployee);
+            employeesDto.AllEmployees.Add(dispatcherEmployee);
         }
         
         foreach (var driver in drivers)
         {
             var driverEmployee = await TryAddEmployeeAsync(tenant.Id, driver, 0.3M, SalaryType.ShareOfGross, driverRole);
             employeesDto.Drivers.Add(driverEmployee);
+            employeesDto.AllEmployees.Add(driverEmployee);
         }
 
+        employeesDto.AllEmployees.Add(ownerEmployee);
+        employeesDto.AllEmployees.Add(managerEmployee);
         await _tenantRepository.UnitOfWork.CommitAsync();
         await _masterRepository.UnitOfWork.CommitAsync();
         return employeesDto;
@@ -237,7 +247,7 @@ internal class PopulateFakeData
         Employee dispatcher,
         Customer customer)
     {
-        var dispatchedDate = _random.Date(DateTime.Today.AddMonths(-3), DateTime.Today.AddDays(-3));
+        var dispatchedDate = _random.Date(_startDate, _endDate);
         const string originAddress = "40 Crescent Ave, Boston, MA 02125, United States";
         const double originLat = 42.319090;
         const double originLng = -71.054680;
@@ -318,10 +328,4 @@ internal class PopulateFakeData
 
         await _tenantRepository.UnitOfWork.CommitAsync();
     }
-}
-
-internal record CompanyEmployees(Employee Owner, Employee Manager)
-{
-    public IList<Employee> Dispatchers { get; } = new List<Employee>();
-    public IList<Employee> Drivers { get; } = new List<Employee>();
 }

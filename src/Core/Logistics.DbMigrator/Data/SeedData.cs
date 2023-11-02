@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using CustomClaimTypes = Logistics.Shared.Claims.CustomClaimTypes;
 
-namespace Logistics.DbMigrator.Services;
+namespace Logistics.DbMigrator.Data;
 
 internal class SeedData : BackgroundService
 {
