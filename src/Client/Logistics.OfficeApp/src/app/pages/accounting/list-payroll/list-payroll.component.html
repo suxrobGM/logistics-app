@@ -18,14 +18,14 @@
         [totalRecords]="totalRecords" [loading]="isLoading"
         [rowsPerPageOptions]="[10,25,50]">
 
-        <!-- <ng-template pTemplate="caption">
+        <ng-template pTemplate="caption">
           <div class="d-flex">
             <span class="p-input-icon-left">
               <i class="pi pi-search"></i>
-              <input pInputText type="text" placeholder="Search" (input)="search($event)" />
+              <input pInputText type="text" placeholder="Search by employeer name" (input)="search($event)" />
             </span>
           </div>
-        </ng-template> -->
+        </ng-template>
 
         <ng-template pTemplate="header">
           <tr>
@@ -61,13 +61,24 @@
         
         <ng-template pTemplate="body" let-payroll>
           <tr>
-            <td>{{payroll.startDate | date:'mediumDate'}} - {{payroll.endDate | date:'mediumDate'}}</td>
+            <td>{{payroll.startDate | date:'MMM d'}} - {{payroll.endDate | date:'mediumDate'}}</td>
             <td>{{payroll.employee.fullName}}</td>
-            <td>{{getPaymentMethodDesc(payroll.employee.salaryType)}}</td>
-            <td>{{payroll.amount | currency}}</td>
-            <td>{{getPaymentStatusDesc(payroll.status)}}</td>
-            <td>{{getPaymentForDesc(payroll.paymentFor)}}</td>
-            <td>{{payroll.comment}}</td>
+            <td>{{getSalaryTypeDesc(payroll.employee.salaryType)}}</td>
+            <td>
+              <ng-container *ngIf="isShareOfGrossSalary(payroll.employee.salaryType) else currencySalary">
+                {{payroll.employee.salary | percent}}
+              </ng-container>
+              <ng-template #currencySalary>
+                {{payroll.employee.salary | currency}}
+              </ng-template>
+            </td>
+            <td>{{payroll.payment.amount | currency}}</td>
+            <td>
+              <p-tag [severity]="getPaymentStatusTagSeverity(payroll.payment.status)">
+                {{getPaymentStatusDesc(payroll.payment.status)}}
+              </p-tag>
+            </td>
+            <td>{{getPaymentMethodDesc(payroll.payment.method)}}</td>
           </tr>
         </ng-template>
       </p-table>

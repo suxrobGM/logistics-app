@@ -17,7 +17,7 @@ internal sealed class GetPayrollsHandler : RequestHandler<GetPayrollsQuery, Page
         CancellationToken cancellationToken)
     {
         var totalItems = _tenantRepository.Query<Payroll>().Count();
-        var specification = new GetPayrolls(req.OrderBy, req.Descending);
+        var specification = new GetPayrolls(req.Search, req.OrderBy, req.Descending);
         
         var payrolls = _tenantRepository.ApplySpecification(specification)
             .Skip((req.Page - 1) * req.PageSize)

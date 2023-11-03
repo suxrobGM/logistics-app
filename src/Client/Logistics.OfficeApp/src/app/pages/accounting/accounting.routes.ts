@@ -5,6 +5,7 @@ import {ListPaymentsComponent} from './list-payments/list-payments.component';
 import {EditPaymentComponent} from './edit-payment/edit-payment.component';
 import {ListInvoicesComponent} from './list-invoices/list-invoices.component';
 import {ViewInvoiceComponent} from './view-invoice/view-invoice.component';
+import {ListPayrollComponent} from './list-payroll/list-payroll.component';
 
 
 export const ACCOUNTING_ROUTES: Routes = [
@@ -51,6 +52,15 @@ export const ACCOUNTING_ROUTES: Routes = [
     data: {
       breadcrumb: 'View Invoice',
       permission: Permissions.Invoices.View,
+    },
+  },
+  {
+    path: 'payrolls',
+    component: ListPayrollComponent,
+    canActivate: [AuthGuard],
+    data: {
+      breadcrumb: 'Payrolls',
+      permission: Permissions.Payrolls.View,
     },
   },
 ];

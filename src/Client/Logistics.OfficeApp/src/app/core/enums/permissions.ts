@@ -59,10 +59,10 @@ export namespace Permissions {
     Delete = 'Permissions.Invoices.Delete'
   }
 
-  export enum Payroll {
-    Create = 'Permissions.Payroll.Create',
-    View = 'Permissions.Payroll.View',
-    Edit = 'Permissions.Payroll.Edit',
-    Delete = 'Permissions.Payroll.Delete'
+  export enum Payrolls {
+    Create = 'Permissions.Payrolls.Create',
+    View = 'Permissions.Payrolls.View',
+    Edit = 'Permissions.Payrolls.Edit',
+    Delete = 'Permissions.Payrolls.Delete'
   }
 }

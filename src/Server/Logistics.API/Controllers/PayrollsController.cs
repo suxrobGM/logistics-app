@@ -16,7 +16,7 @@ public class PayrollsController : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(ResponseResult<PayrollDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Payments.View)]
+    [Authorize(Policy = Permissions.Payrolls.View)]
     public async Task<IActionResult> GetById(string id)
     {
         var result = await _mediator.Send(new GetPaymentByIdQuery {Id = id});
@@ -30,7 +30,7 @@ public class PayrollsController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(PagedResponseResult<PayrollDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Payments.View)]
+    [Authorize(Policy = Permissions.Payrolls.View)]
     public async Task<IActionResult> GetList([FromQuery] GetPayrollsQuery query)
     {
         var result = await _mediator.Send(query);

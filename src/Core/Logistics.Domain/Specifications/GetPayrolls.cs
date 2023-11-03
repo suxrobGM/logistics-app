@@ -6,11 +6,21 @@ namespace Logistics.Domain.Specifications;
 public class GetPayrolls : BaseSpecification<Payroll>
 {
     public GetPayrolls(
+        string? search,
         string? orderBy, 
         bool descending = false)
     {
         Descending = descending;
         OrderBy = InitOrderBy(orderBy);
+
+        if (string.IsNullOrEmpty(search))
+        {
+            return;
+        }
+
+        Criteria = i =>
+            !string.IsNullOrEmpty(i.Employee.FirstName) && i.Employee.FirstName.Contains(search) || 
+            !string.IsNullOrEmpty(i.Employee.LastName) && i.Employee.LastName.Contains(search);
     }
 
     private static Expression<Func<Payroll, object>> InitOrderBy(string? propertyName)
@@ -20,7 +30,7 @@ public class GetPayrolls : BaseSpecification<Payroll>
         {
             "paymentamount" => i => i.Payment.Amount,
             "paymentdate" => i => i.Payment.PaymentDate!,
-            "paymentmethod" => i => i.Payment.Method,
+            "paymentmethod" => i => i.Payment.Method!,
             "employeefirstname" => i => i.Employee.FirstName!,
             "employeelastname" => i => i.Employee.LastName!,
             "employeeemail" => i => i.Employee.Email!,

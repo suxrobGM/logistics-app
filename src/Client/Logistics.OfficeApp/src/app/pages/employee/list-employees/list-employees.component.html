@@ -72,7 +72,7 @@
                 <span>{{employee.salary | currency}}</span>
               </ng-template>
             </td>
-            <td>{{getSalaryTypeName(employee.salaryType)}}</td>
+            <td>{{getSalaryTypeDesc(employee.salaryType)}}</td>
             <td>{{employee.roles[0]?.displayName}}</td>
             <td>{{employee.joinedDate | date:'mediumDate'}}</td>
           </tr>

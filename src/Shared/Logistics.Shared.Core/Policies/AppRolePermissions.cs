@@ -20,7 +20,7 @@ public static class AppRolePermissions
             list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Customers)));
             list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Payments)));
             list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Invoices)));
-            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Payroll)));
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Payrolls)));
             list.Add(Permissions.Tenants.Create);
             list.Add(Permissions.Tenants.Edit);
             list.Add(Permissions.Tenants.View);

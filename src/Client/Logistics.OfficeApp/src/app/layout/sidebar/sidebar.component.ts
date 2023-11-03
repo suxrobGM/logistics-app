@@ -70,8 +70,8 @@ export class SidebarComponent implements OnInit {
         icon: 'bi bi-journal-text h1',
         items: [
           {
-            label: 'Payroll Management',
-            command: () => router.navigateByUrl('/accounting/payroll'),
+            label: 'Payrolls',
+            command: () => router.navigateByUrl('/accounting/payrolls'),
           },
           {
             label: 'Payments',

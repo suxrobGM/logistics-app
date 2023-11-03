@@ -66,7 +66,11 @@
             <td>{{payment.paymentDate | date:'mediumDate'}}</td>
             <td>{{getPaymentMethodDesc(payment.method)}}</td>
             <td>{{payment.amount | currency}}</td>
-            <td>{{getPaymentStatusDesc(payment.status)}}</td>
+            <td>
+              <p-tag [severity]="getPaymentStatusTagSeverity(payment.status)">
+              {{getPaymentStatusDesc(payment.status)}}
+            </p-tag>
+            </td>
             <td>{{getPaymentForDesc(payment.paymentFor)}}</td>
             <td>{{payment.comment}}</td>
           </tr>

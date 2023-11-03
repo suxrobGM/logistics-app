@@ -350,8 +350,8 @@ export class ApiService {
     return this.get(url);
   }
 
-  getPayrolls(query?: PagedIntervalQuery): Observable<PagedResponseResult<Payroll>> {
-    const url = `/payrolls?${this.stringfyPagedIntervalQuery(query)}`;
+  getPayrolls(query?: SearchableQuery): Observable<PagedResponseResult<Payroll>> {
+    const url = `/payrolls?${this.stringfySearchableQuery(query)}`;
     return this.get(url);
   }
 

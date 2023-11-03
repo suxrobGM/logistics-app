@@ -1,6 +1,9 @@
 import {Component} from '@angular/core';
-import {CommonModule, CurrencyPipe, DatePipe} from '@angular/common';
+import {CommonModule, CurrencyPipe, DatePipe, PercentPipe} from '@angular/common';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
+import {CardModule} from 'primeng/card';
+import {InputTextModule} from 'primeng/inputtext';
+import {TagModule} from 'primeng/tag';
 import {Payroll} from '@core/models';
 import {
   PaymentMethod,
@@ -8,25 +11,26 @@ import {
   PaymentMethodEnum,
   PaymentStatus,
   PaymentStatusEnum,
-  PaymentFor,
-  PaymentForEnum,
+  SalaryType,
+  SalaryTypeEnum,
 } from '@core/enums';
-import {PredefinedDateRanges} from '@core/helpers';
 import {ApiService} from '@core/services';
-import { CardModule } from 'primeng/card';
 
 
 @Component({
   selector: 'app-list-payroll',
   standalone: true,
   templateUrl: './list-payroll.component.html',
-  styleUrls: ['./list-payroll.component.scss'],
+  styleUrls: [],
   imports: [
     CommonModule,
     CurrencyPipe,
     DatePipe,
     TableModule,
-    CardModule
+    CardModule,
+    PercentPipe,
+    InputTextModule,
+    TagModule,
   ],
 })
 export class ListPayrollComponent {
@@ -38,19 +42,19 @@ export class ListPayrollComponent {
   constructor(private readonly apiService: ApiService) {
   }
 
-  // search(event: Event) {
-  //   this.isLoading = true;
-  //   const searchValue = (event.target as HTMLInputElement).value;
+  search(event: Event) {
+    this.isLoading = true;
+    const searchValue = (event.target as HTMLInputElement).value;
 
-  //   this.apiService.getPayments({search: searchValue}).subscribe((result) => {
-  //     if (result.isSuccess && result.data) {
-  //       this.payments = result.data;
-  //       this.totalRecords = result.totalItems;
-  //     }
+    this.apiService.getPayrolls({search: searchValue}).subscribe((result) => {
+      if (result.isSuccess && result.data) {
+        this.payrolls = result.data;
+        this.totalRecords = result.totalItems;
+      }
 
-  //     this.isLoading = false;
-  //   });
-  // }
+      this.isLoading = false;
+    });
+  }
 
   load(event: TableLazyLoadEvent) {
     this.isLoading = true;
@@ -58,14 +62,11 @@ export class ListPayrollComponent {
     const rows = event.rows ?? 10;
     const page = first / rows + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
-    const past90days = PredefinedDateRanges.getPast90Days();
 
     this.apiService.getPayrolls({
       orderBy: sortField, 
       page: page, 
       pageSize: rows,
-      startDate: past90days.startDate,
-      endDate: past90days.endDate
     }).subscribe((result) => {
       if (result.isSuccess && result.data) {
         this.payrolls = result.data;
@@ -76,7 +77,19 @@ export class ListPayrollComponent {
     });
   }
 
-  getPaymentMethodDesc(enumValue: PaymentMethod): string {
+  isShareOfGrossSalary(salaryType: SalaryType): boolean {
+    return salaryType === SalaryType.ShareOfGross;
+  }
+
+  getPaymentStatusTagSeverity(paymentStatus: PaymentStatus): string {
+    return paymentStatus === PaymentStatus.Paid ? 'success' : 'warning';
+  }
+
+  getPaymentMethodDesc(enumValue?: PaymentMethod): string {
+    if (enumValue == null) {
+      return 'N/A';
+    }
+
     return getEnumDescription(PaymentMethodEnum, enumValue);
   }
 
@@ -84,7 +97,7 @@ export class ListPayrollComponent {
     return getEnumDescription(PaymentStatusEnum, enumValue);
   }
 
-  getPaymentForDesc(enumValue: PaymentFor): string {
-    return getEnumDescription(PaymentForEnum, enumValue);
+  getSalaryTypeDesc(enumValue: SalaryType): string {
+    return getEnumDescription(SalaryTypeEnum, enumValue);
   }
 }

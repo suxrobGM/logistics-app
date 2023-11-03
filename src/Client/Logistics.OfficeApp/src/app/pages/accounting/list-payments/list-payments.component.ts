@@ -4,6 +4,7 @@ import {RouterModule} from '@angular/router';
 import {CardModule} from 'primeng/card';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {TooltipModule} from 'primeng/tooltip';
+import {TagModule} from 'primeng/tag';
 import {Payment} from '@core/models';
 import {ApiService} from '@core/services';
 import {
@@ -30,7 +31,8 @@ import {PredefinedDateRanges} from '@core/helpers';
     TooltipModule,
     RouterModule,
     CurrencyPipe,
-    DatePipe
+    DatePipe,
+    TagModule,
   ],
 })
 export class ListPaymentsComponent {
@@ -80,7 +82,11 @@ export class ListPaymentsComponent {
     });
   }
 
-  getPaymentMethodDesc(enumValue: PaymentMethod): string {
+  getPaymentMethodDesc(enumValue?: PaymentMethod): string {
+    if (enumValue == null) {
+      return 'N/A';
+    }
+
     return getEnumDescription(PaymentMethodEnum, enumValue);
   }
 
@@ -90,5 +96,9 @@ export class ListPaymentsComponent {
 
   getPaymentForDesc(enumValue: PaymentFor): string {
     return getEnumDescription(PaymentForEnum, enumValue);
+  }
+
+  getPaymentStatusTagSeverity(paymentStatus: PaymentStatus): string {
+    return paymentStatus === PaymentStatus.Paid ? 'success' : 'warning';
   }
 }

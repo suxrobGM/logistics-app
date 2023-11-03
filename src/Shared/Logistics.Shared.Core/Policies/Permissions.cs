@@ -116,12 +116,12 @@ public static class Permissions
         public const string Delete = $"{nameof(Permissions)}.{nameof(Invoices)}.Delete";
     }
     
-    public static class Payroll
+    public static class Payrolls
     {
-        public const string Create = $"{nameof(Permissions)}.{nameof(Payroll)}.Create";
-        public const string View = $"{nameof(Permissions)}.{nameof(Payroll)}.View";
-        public const string Edit = $"{nameof(Permissions)}.{nameof(Payroll)}.Edit";
-        public const string Delete = $"{nameof(Permissions)}.{nameof(Payroll)}.Delete";
+        public const string Create = $"{nameof(Permissions)}.{nameof(Payrolls)}.Create";
+        public const string View = $"{nameof(Permissions)}.{nameof(Payrolls)}.View";
+        public const string Edit = $"{nameof(Permissions)}.{nameof(Payrolls)}.Edit";
+        public const string Delete = $"{nameof(Permissions)}.{nameof(Payrolls)}.Delete";
     }
 
     public static IEnumerable<string> GetAll()
