@@ -44,7 +44,9 @@ public class PayrollService : IPayrollService
                 await _tenantRepository.AddAsync(payroll);
             }
 
-            _logger.LogInformation("Generated monthly payrolls for the tenant: {TenantName}", tenant.Name);
+            _logger.LogInformation(
+                "Generated monthly payrolls for the tenant: {TenantName}, start date: {StartDate}, end date: {EndDate}",
+                tenant.Name, previousMonthStart, previousMonthEnd);
             await _tenantRepository.UnitOfWork.CommitAsync();
         }
     }
@@ -72,22 +74,14 @@ public class PayrollService : IPayrollService
                 await _tenantRepository.AddAsync(payroll);
             }
 
-            _logger.LogInformation("Generated weekly payrolls for the tenant: {TenantName}", tenant.Name);
+            _logger.LogInformation(
+                "Generated weekly payrolls for the tenant: {TenantName}, start date: {StartDate}, end date: {EndDate}",
+                tenant.Name, previousWeekStart, previousWeekEnd);
             await _tenantRepository.UnitOfWork.CommitAsync();
         }
     }
-    
-    private async Task<bool> IsPayrollExisting(string employeeId, DateTime startDate, DateTime endDate)
-    {
-        var payroll = await _tenantRepository.GetAsync<Payroll>(p =>
-            p.EmployeeId == employeeId &&
-            p.StartDate >= startDate &&
-            p.EndDate <= endDate);
 
-        return payroll != null;
-    }
-
-    private static Payroll CreatePayroll(Employee employee, DateTime startDate, DateTime endDate)
+    public Payroll CreatePayroll(Employee employee, DateTime startDate, DateTime endDate)
     {
         var payment = new Payment
         {
@@ -105,6 +99,16 @@ public class PayrollService : IPayrollService
 
         return payroll;
     }
+    
+    private async Task<bool> IsPayrollExisting(string employeeId, DateTime startDate, DateTime endDate)
+    {
+        var payroll = await _tenantRepository.GetAsync<Payroll>(p =>
+            p.EmployeeId == employeeId &&
+            p.StartDate >= startDate &&
+            p.EndDate <= endDate);
+
+        return payroll != null;
+    }
 
     private static decimal CalculateSalary(Employee employee, DateTime startDate, DateTime endDate)
     {
@@ -119,7 +123,57 @@ public class PayrollService : IPayrollService
             return totalDeliveredLoadsGross * employee.Salary;
         }
         
+        // Calculate salary for employees paid weekly.
+        if (employee.SalaryType is SalaryType.Weekly)
+        {
+            var numberOfWeeks = CountWeeks(startDate, endDate);
+            return numberOfWeeks * employee.Salary;
+        }
+
+        // Calculate salary for employees paid monthly.
+        if (employee.SalaryType is SalaryType.Monthly)
+        {
+            var numberOfMonths = CountMonths(startDate, endDate);
+            return numberOfMonths * employee.Salary;
+        }
+
+        // Default return for other salary types (e.g., a fixed salary not dependent on date range).
         return employee.Salary;
+    }
+    
+    private static int CountWeeks(DateTime startDate, DateTime endDate)
+    {
+        // Assuming a week starts on Sunday and ends on Saturday.
+        var days = (endDate - startDate).Days + 1; // +1 to include the start day in the count
+        var fullWeeks = days / 7;
+        var remainingDays = days % 7;
+    
+        // Check if the remaining days form a week when combined with the start and end dates.
+        if (remainingDays > 0)
+        {
+            var startDay = startDate.DayOfWeek;
+            var endDay = endDate.AddDays(-remainingDays).DayOfWeek;
+
+            if (endDay >= startDay)
+            {
+                fullWeeks++;
+            }
+        }
+    
+        return fullWeeks;
+    }
+
+    private static int CountMonths(DateTime startDate, DateTime endDate)
+    {
+        var months = (endDate.Year - startDate.Year) * 12 + endDate.Month - startDate.Month;
+    
+        // If endDate is in a month but before the start date day, then reduce a month.
+        if (endDate.Day < startDate.Day)
+        {
+            months--;
+        }
+    
+        return months + 1; // +1 to include the starting month
     }
     
     private static DateTime StartOfPreviousWeek(DateTime date)

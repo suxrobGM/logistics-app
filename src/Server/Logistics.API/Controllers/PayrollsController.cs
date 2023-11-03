@@ -40,4 +40,47 @@ public class PayrollsController : ControllerBase
 
         return BadRequest(result);
     }
+    
+    [HttpPost]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Payrolls.Create)]
+    public async Task<IActionResult> Create([FromBody] CreatePayrollCommand request)
+    {
+        var result = await _mediator.Send(request);
+
+        if (result.IsSuccess)
+            return Ok(result);
+
+        return BadRequest(result);
+    }
+
+    [HttpPut("{id}")]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Payrolls.Edit)]
+    public async Task<IActionResult> Update(string id, [FromBody] UpdatePayrollCommand request)
+    {
+        request.Id = id;
+        var result = await _mediator.Send(request);
+
+        if (result.IsSuccess)
+            return Ok(result);
+
+        return BadRequest(result);
+    }
+    
+    [HttpDelete("{id}")]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Payrolls.Delete)]
+    public async Task<IActionResult> Delete(string id)
+    {
+        var result = await _mediator.Send(new DeletePayrollCommand {Id = id});
+
+        if (result.IsSuccess)
+            return Ok(result);
+
+        return BadRequest(result);
+    }
 }
