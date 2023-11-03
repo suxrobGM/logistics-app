@@ -7,7 +7,7 @@ import {jsPDF} from 'jspdf';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {ApiService, TenantService} from '@core/services';
 import {Invoice} from '@core/models';
-import {getEnumDescription, PaymentMethod, PaymentMethodEnum} from '@core/enums';
+import {PaymentMethod, PaymentMethodEnum} from '@core/enums';
 
 
 @Component({
@@ -50,10 +50,10 @@ export class ViewInvoiceComponent implements OnInit {
   }
 
   getPaymentMethodDesc(enumValue?: PaymentMethod): string {
-    if (!enumValue) {
+    if (enumValue == null) {
       return 'N/A';
     }
-    return getEnumDescription(PaymentMethodEnum, enumValue);
+    return PaymentMethodEnum.getDescription(enumValue);
   }
 
   exportToPDF() {

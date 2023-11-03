@@ -7,7 +7,7 @@ import {SharedModule} from 'primeng/api';
 import {CardModule} from 'primeng/card';
 import {TooltipModule} from 'primeng/tooltip';
 import {ButtonModule} from 'primeng/button';
-import {LoadStatus, LoadStatusEnum, getEnumDescription} from '@core/enums';
+import {LoadStatus, LoadStatusEnum} from '@core/enums';
 import {Load} from '@core/models';
 import {ApiService} from '@core/services';
 import {DistanceUnitPipe} from '@shared/pipes';
@@ -80,7 +80,7 @@ export class ListLoadComponent {
     });
   }
 
-  getLoadStatusName(enumValue: LoadStatus): string {
-    return getEnumDescription(LoadStatusEnum, enumValue);
+  getLoadStatusDesc(enumValue: LoadStatus): string {
+    return LoadStatusEnum.getDescription(enumValue);
   }
 }

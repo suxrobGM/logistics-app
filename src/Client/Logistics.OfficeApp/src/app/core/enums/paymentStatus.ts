@@ -1,4 +1,4 @@
-import {EnumLike} from './enumLike';
+import {EnumLike, getEnumDescription} from './enumLike';
 
 export enum PaymentStatus {
   Pending,
@@ -7,5 +7,9 @@ export enum PaymentStatus {
 
 export const PaymentStatusEnum: EnumLike = {
   Pending: {value: 0, description: 'Pending'},
-  Paid: {value: 1, description: 'Paid'}
+  Paid: {value: 1, description: 'Paid'},
+
+  getDescription(value: string | number): string {
+    return getEnumDescription(this, value);
+  },
 };

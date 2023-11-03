@@ -1,4 +1,4 @@
-import {EnumLike} from './enumLike';
+import {EnumLike, getEnumDescription} from './enumLike';
 
 export enum UserRole {
   AppSuperAdmin = 'app.superadmin',
@@ -16,4 +16,8 @@ export const UserRoleEnum: EnumLike = {
   Manager: {value: 'tenant.manager', description: 'Manager'},
   Dispatcher: {value: 'tenant.dispatcher', description: 'Dispatcher'},
   Driver: {value: 'tenant.driver', description: 'Driver'},
+
+  getDescription(value: string | number): string {
+    return getEnumDescription(this, value);
+  },
 };

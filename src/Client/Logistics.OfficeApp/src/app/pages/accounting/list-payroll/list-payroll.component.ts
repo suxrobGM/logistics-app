@@ -7,7 +7,6 @@ import {TagModule} from 'primeng/tag';
 import {Payroll} from '@core/models';
 import {
   PaymentMethod,
-  getEnumDescription,
   PaymentMethodEnum,
   PaymentStatus,
   PaymentStatusEnum,
@@ -90,14 +89,14 @@ export class ListPayrollComponent {
       return 'N/A';
     }
 
-    return getEnumDescription(PaymentMethodEnum, enumValue);
+    return PaymentMethodEnum.getDescription(enumValue);
   }
 
   getPaymentStatusDesc(enumValue: PaymentStatus): string {
-    return getEnumDescription(PaymentStatusEnum, enumValue);
+    return PaymentStatusEnum.getDescription(enumValue);
   }
 
   getSalaryTypeDesc(enumValue: SalaryType): string {
-    return getEnumDescription(SalaryTypeEnum, enumValue);
+    return SalaryTypeEnum.getDescription(enumValue);
   }
 }

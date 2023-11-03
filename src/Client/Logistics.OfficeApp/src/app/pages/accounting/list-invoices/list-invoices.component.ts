@@ -7,7 +7,7 @@ import {ButtonModule} from 'primeng/button';
 import {Invoice} from '@core/models';
 import {ApiService} from '@core/services';
 import {PredefinedDateRanges} from '@core/helpers';
-import {PaymentStatus, getEnumDescription, PaymentStatusEnum} from '@core/enums';
+import {PaymentStatus, PaymentStatusEnum} from '@core/enums';
 
 
 @Component({
@@ -59,6 +59,6 @@ export class ListInvoicesComponent {
   }
 
   getPaymentStatusDesc(enumValue: PaymentStatus): string {
-    return getEnumDescription(PaymentStatusEnum, enumValue);
+    return PaymentStatusEnum.getDescription(enumValue);
   }
 }

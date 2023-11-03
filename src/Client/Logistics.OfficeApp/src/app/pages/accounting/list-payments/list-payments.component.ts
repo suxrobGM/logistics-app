@@ -14,7 +14,6 @@ import {
   PaymentMethodEnum,
   PaymentStatus,
   PaymentStatusEnum,
-  getEnumDescription,
 } from '@core/enums';
 import {PredefinedDateRanges} from '@core/helpers';
 
@@ -87,15 +86,15 @@ export class ListPaymentsComponent {
       return 'N/A';
     }
 
-    return getEnumDescription(PaymentMethodEnum, enumValue);
+    return PaymentMethodEnum.getDescription(enumValue);
   }
 
   getPaymentStatusDesc(enumValue: PaymentStatus): string {
-    return getEnumDescription(PaymentStatusEnum, enumValue);
+    return PaymentStatusEnum.getDescription(enumValue);
   }
 
   getPaymentForDesc(enumValue: PaymentFor): string {
-    return getEnumDescription(PaymentForEnum, enumValue);
+    return PaymentForEnum.getDescription(enumValue);
   }
 
   getPaymentStatusTagSeverity(paymentStatus: PaymentStatus): string {

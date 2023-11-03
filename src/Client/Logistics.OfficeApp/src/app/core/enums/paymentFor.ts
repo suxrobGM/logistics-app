@@ -1,4 +1,4 @@
-import {EnumLike} from './enumLike';
+import {EnumLike, getEnumDescription} from './enumLike';
 
 export enum PaymentFor {
   Payroll,
@@ -11,5 +11,9 @@ export const PaymentForEnum: EnumLike = {
   Payroll: {value: 0, description: 'Payroll'},
   Subscription: {value: 1, description: 'Subscription'},
   Invoice: {value: 2, description: 'Invoice'},
-  Other: {value: 3, description: 'Other'}
+  Other: {value: 3, description: 'Other'},
+
+  getDescription(value: string | number): string {
+    return getEnumDescription(this, value);
+  },
 };
