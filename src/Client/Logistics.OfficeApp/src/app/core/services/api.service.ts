@@ -39,6 +39,7 @@ import {
   Invoice,
   CreateInvoice,
   UpdateInvoice,
+  Payroll,
 } from '../models';
 
 
@@ -340,6 +341,22 @@ export class ApiService {
   }
 
   // #endregion
+
+
+  // #region Payrolls API
+  
+  getPayroll(id: string): Observable<ResponseResult<Payroll>> {
+    const url = `/payrolls/${id}`;
+    return this.get(url);
+  }
+
+  getPayrolls(query?: PagedIntervalQuery): Observable<PagedResponseResult<Payroll>> {
+    const url = `/payrolls?${this.stringfyPagedIntervalQuery(query)}`;
+    return this.get(url);
+  }
+
+  // #endregion
+
 
 
   parseSortProperty(sortField?: string | null, sortOrder?: number | null): string {

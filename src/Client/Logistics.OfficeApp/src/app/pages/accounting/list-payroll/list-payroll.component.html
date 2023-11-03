@@ -1,1 +1,76 @@
-<p>list-payroll works!</p>
+<div class="d-flex align-items-center">
+  <h1>Payrolls</h1>
+  <button pButton pRipple
+    class="p-button-lg p-button-rounded p-button-text text-black ms-2"
+    icon="bi bi-plus-square-fill"
+    pTooltip="Add a new payroll"
+    routerLink="/accounting/payrolls/add">
+  </button>
+</div>
+<hr class="w-100">
+
+<p-card>
+  <div class="row">
+    <div class="col-12">
+      <p-table [value]="payrolls" responsiveLayout="scroll" [lazy]="true" 
+        [paginator]="true" [showCurrentPageReport]="true"
+        (onLazyLoad)="load($event)" [rows]="10" [(first)]="first" 
+        [totalRecords]="totalRecords" [loading]="isLoading"
+        [rowsPerPageOptions]="[10,25,50]">
+
+        <!-- <ng-template pTemplate="caption">
+          <div class="d-flex">
+            <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" placeholder="Search" (input)="search($event)" />
+            </span>
+          </div>
+        </ng-template> -->
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th>
+              Period
+            </th>
+            <th pSortableColumn="employeeFirstName">
+              Employee
+              <p-sortIcon field="employeeFirstName"></p-sortIcon>
+            </th>
+            <th pSortableColumn="employeeSalaryType">
+              Employee Salary Type
+              <p-sortIcon field="employeeSalaryType"></p-sortIcon>
+            </th>
+            <th pSortableColumn="employeeSalary">
+              Employee Salary
+              <p-sortIcon field="employeeSalary"></p-sortIcon>
+            </th>
+            <th pSortableColumn="paymentAmount">
+              Payment Amount
+              <p-sortIcon field="paymentAmount"></p-sortIcon>
+            </th>
+            <th pSortableColumn="paymentStatus">
+              Payment Status
+              <p-sortIcon field="paymentStatus"></p-sortIcon>
+            </th>
+            <th pSortableColumn="paymentMethod">
+              Payment Method
+              <p-sortIcon field="paymentMethod"></p-sortIcon>
+            </th>
+          </tr>
+        </ng-template>
+        
+        <ng-template pTemplate="body" let-payroll>
+          <tr>
+            <td>{{payroll.startDate | date:'mediumDate'}} - {{payroll.endDate | date:'mediumDate'}}</td>
+            <td>{{payroll.employee.fullName}}</td>
+            <td>{{getPaymentMethodDesc(payroll.employee.salaryType)}}</td>
+            <td>{{payroll.amount | currency}}</td>
+            <td>{{getPaymentStatusDesc(payroll.status)}}</td>
+            <td>{{getPaymentForDesc(payroll.paymentFor)}}</td>
+            <td>{{payroll.comment}}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</p-card>
