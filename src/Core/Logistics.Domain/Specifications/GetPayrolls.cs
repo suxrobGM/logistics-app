@@ -31,12 +31,13 @@ public class GetPayrolls : BaseSpecification<Payroll>
             "paymentamount" => i => i.Payment.Amount,
             "paymentdate" => i => i.Payment.PaymentDate!,
             "paymentmethod" => i => i.Payment.Method!,
+            "paymentstatus" => i => i.Payment.Status,
             "employeefirstname" => i => i.Employee.FirstName!,
             "employeelastname" => i => i.Employee.LastName!,
             "employeeemail" => i => i.Employee.Email!,
             "employeesalary" => i => i.Employee.Salary,
             "employeesalarytype" => i => i.Employee.SalaryType,
-            _ => i => i.Id
+            _ => i => i.Payment.Status
         };
     }
 }

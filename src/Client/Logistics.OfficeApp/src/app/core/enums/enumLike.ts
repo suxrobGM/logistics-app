@@ -26,12 +26,14 @@ export function convertEnumToArray(enumLike: EnumLike): EnumValue[] {
 }
 
 export function getEnumDescription(enumLike: EnumLike, enumValue: string | number): string {
-  // Type assertion here to indicate to TypeScript that we are dealing with non-function items only
-  const enumItem = Object.values(enumLike)
-    .filter((item): item is EnumValue => typeof item !== 'function')
-    .find(item => item.value === enumValue);
+  for (const key in enumLike) {
+    const item = enumLike[key];
+    if (typeof item !== 'function' && item.value === enumValue) {
+      return item.description;
+    }
+  }
   
-  return enumItem ? enumItem.description : 'Description not found';
+  return 'Description not found';
 }
 
 type GetEnumDescFunction = (enumValue: string | number) => string;
