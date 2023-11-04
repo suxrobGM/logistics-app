@@ -15,7 +15,7 @@
             selectionMode="range"
             [showIcon]="true"
             [maxDate]="todayDate"
-            (onSelect)="selectDate($event)">
+            (onSelect)="tryCalculatePayroll()">
           </p-calendar>
         </div>
         
@@ -74,7 +74,7 @@
             type="button"
             class="p-button-raised mt-3 ms-2"
             icon="bi bi-arrow-left-square"
-            [routerLink]="['/accouting/payrolls']">
+            [routerLink]="['/accounting/payrolls']">
             Back to list
           </button>
         </div>

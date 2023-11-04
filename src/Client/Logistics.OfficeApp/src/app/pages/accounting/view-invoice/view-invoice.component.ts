@@ -14,7 +14,7 @@ import {PaymentMethod, PaymentMethodEnum} from '@core/enums';
   selector: 'app-view-invoice',
   standalone: true,
   templateUrl: './view-invoice.component.html',
-  styleUrls: ['./view-invoice.component.scss'],
+  styleUrls: [],
   imports: [
     CommonModule,
     CardModule,

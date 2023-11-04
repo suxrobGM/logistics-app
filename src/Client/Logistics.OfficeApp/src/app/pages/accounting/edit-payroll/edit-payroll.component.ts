@@ -11,21 +11,17 @@ import {CalendarModule} from 'primeng/calendar';
 import {CreatePayroll, Employee, Payroll, UpdatePayroll} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {PredefinedDateRanges} from '@core/helpers';
-import {
-  convertEnumToArray,
-  PaymentStatusEnum,
-  PaymentMethodEnum,
-  SalaryType,
-  SalaryTypeEnum,
-} from '@core/enums';
+import {SalaryType, SalaryTypeEnum} from '@core/enums';
 import {ValidationSummaryComponent} from '@shared/components';
+import {DateUtils} from '@shared/utils';
+import { ButtonModule } from 'primeng/button';
 
 
 @Component({
   selector: 'app-edit-payroll',
   standalone: true,
   templateUrl: './edit-payroll.component.html',
-  styleUrls: ['./edit-payroll.component.scss'],
+  styleUrls: [],
   imports: [
     CommonModule,
     CardModule,
@@ -36,11 +32,10 @@ import {ValidationSummaryComponent} from '@shared/components';
     ProgressSpinnerModule,
     ReactiveFormsModule,
     CalendarModule,
+    ButtonModule,
   ],
 })
 export class EditPayrollComponent implements OnInit {
-  public readonly paymentStatuses = convertEnumToArray(PaymentStatusEnum);
-  public readonly paymentMethods = convertEnumToArray(PaymentMethodEnum);
   public title = 'Edit payroll';
   public id: string | null = null;
   public isLoading = false;
@@ -71,16 +66,19 @@ export class EditPayrollComponent implements OnInit {
 
     if (this.isEditMode()) {
       this.title = 'Edit payroll';
-      this.fetchPayment();
+      this.fetchPayroll();
     }
     else {
       this.title = 'Add a new payroll';
     }
   }
   
-  selectDate(event: any) {
-    console.log(event);
+  tryCalculatePayroll() {
+    if (!DateUtils.isValidRange(this.form.value.dateRange) || !this.selectedEmployee) {
+      return;
+    }
     
+    this.calculatePayrollForEmployee(this.selectedEmployee);
   }
 
   searchEmployee(event: {query: string}) {
@@ -133,7 +131,7 @@ export class EditPayrollComponent implements OnInit {
     return SalaryTypeEnum.getDescription(salaryType);
   }
 
-  private fetchPayment() {
+  private fetchPayroll() {
     if (!this.id) {
       return;
     }

@@ -25,7 +25,7 @@ import {ValidationSummaryComponent} from '@shared/components';
   selector: 'app-edit-payment',
   standalone: true,
   templateUrl: './edit-payment.component.html',
-  styleUrls: ['./edit-payment.component.scss'],
+  styleUrls: [],
   imports: [
     CommonModule,
     CardModule,

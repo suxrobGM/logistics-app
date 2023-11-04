@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {CommonModule, CurrencyPipe, DatePipe, PercentPipe} from '@angular/common';
+import {RouterModule} from '@angular/router';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {CardModule} from 'primeng/card';
 import {InputTextModule} from 'primeng/inputtext';
@@ -14,7 +15,7 @@ import {
   SalaryTypeEnum,
 } from '@core/enums';
 import {ApiService} from '@core/services';
-import { RouterModule } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
 
 
 @Component({
@@ -32,6 +33,7 @@ import { RouterModule } from '@angular/router';
     InputTextModule,
     TagModule,
     RouterModule,
+    ButtonModule,
   ],
 })
 export class ListPayrollComponent {
