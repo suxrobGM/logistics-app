@@ -9,6 +9,7 @@ import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {CardModule} from 'primeng/card';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
+import {ConfirmationService} from 'primeng/api';
 import {EnumValue, SalaryType, SalaryTypeEnum, convertEnumToArray} from '@core/enums';
 import {CreateEmployee, Role, User} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
@@ -38,6 +39,7 @@ import {ValidationSummaryComponent} from '@shared/components';
   ],
   providers: [
     UserService,
+    ConfirmationService
   ],
 })
 export class AddEmployeeComponent implements OnInit {
@@ -59,7 +61,7 @@ export class AddEmployeeComponent implements OnInit {
 
     this.form = new FormGroup<CreateEmployeeForm>({
       user: new FormControl(null, {validators: Validators.required}),
-      role: new FormControl(null, {validators: Validators.required}),
+      role: new FormControl(null),
       salary: new FormControl<number>(0, {validators: Validators.required, nonNullable: true}),
       salaryType: new FormControl<SalaryType>(SalaryType.None, {validators: Validators.required, nonNullable: true})
     });
@@ -79,7 +81,7 @@ export class AddEmployeeComponent implements OnInit {
 
   clearSelctedRole() {
     this.form.patchValue({
-      role: {name: '', displayName: ' '},
+      role: null,
     });
   }
 
