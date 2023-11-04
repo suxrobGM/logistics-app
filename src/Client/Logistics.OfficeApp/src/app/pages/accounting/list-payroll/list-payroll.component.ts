@@ -14,6 +14,7 @@ import {
   SalaryTypeEnum,
 } from '@core/enums';
 import {ApiService} from '@core/services';
+import { RouterModule } from '@angular/router';
 
 
 @Component({
@@ -30,6 +31,7 @@ import {ApiService} from '@core/services';
     PercentPipe,
     InputTextModule,
     TagModule,
+    RouterModule,
   ],
 })
 export class ListPayrollComponent {

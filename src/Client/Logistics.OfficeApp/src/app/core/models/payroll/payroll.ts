@@ -1,5 +1,5 @@
 import {Employee} from '../employee/employee';
-import {Payment} from './payment';
+import {Payment} from '../payment/payment';
 
 
 export interface Payroll {

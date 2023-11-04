@@ -29,8 +29,6 @@ public class LoadsController : ControllerBase
 
         return BadRequest(result);
     }
-    
-    
 
     [HttpGet]
     [ProducesResponseType(typeof(PagedResponseResult<LoadDto>), StatusCodes.Status200OK)]

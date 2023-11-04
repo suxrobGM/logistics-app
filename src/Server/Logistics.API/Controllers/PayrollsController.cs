@@ -26,6 +26,20 @@ public class PayrollsController : ControllerBase
 
         return BadRequest(result.Error);
     }
+    
+    [HttpGet("calculate")]
+    [ProducesResponseType(typeof(ResponseResult<PayrollDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Payrolls.View)]
+    public async Task<IActionResult> CalculateEmployeePayroll([FromQuery] CalculatePayrollQuery request)
+    {
+        var result = await _mediator.Send(request);
+
+        if (result.IsSuccess)
+            return Ok(result);
+
+        return BadRequest(result.Error);
+    }
 
     [HttpGet]
     [ProducesResponseType(typeof(PagedResponseResult<PayrollDto>), StatusCodes.Status200OK)]

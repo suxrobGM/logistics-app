@@ -8,25 +8,15 @@
     <h2>{{companyName}}</h2>
     <p>{{companyAddress}}</p>
     <hr />
-    <p>
-      <strong>Load ID:</strong> {{invoice.loadRef}}
-    </p>
-    <p>
-      <strong>Date:</strong> {{invoice.createdDate | date:'mediumDate'}}
-    </p>
-    <p>
-      <strong>Customer:</strong> {{invoice.customer.name}}
-    </p>
+
+    <p><strong>Load ID:</strong> {{invoice.loadRef}}</p>
+    <p><strong>Date:</strong> {{invoice.createdDate | date:'mediumDate'}}</p>
+    <p><strong>Customer:</strong> {{invoice.customer.name}}</p>
+
     <h4>Payment Details</h4>
-    <p>
-      <strong>Method:</strong> {{getPaymentMethodDesc(invoice.payment.method)}}
-    </p>
-    <p>
-      <strong>Amount:</strong> {{invoice.payment.amount | currency}}
-    </p>
-    <p>
-      <strong>Payment Date:</strong> {{invoice.payment.paymentDate | date:'mediumDate'}}
-    </p>
+    <p><strong>Method:</strong> {{getPaymentMethodDesc(invoice.payment.method)}}</p>
+    <p><strong>Amount:</strong> {{invoice.payment.amount | currency}}</p>
+    <p><strong>Payment Date:</strong> {{invoice.payment.paymentDate | date:'mediumDate'}}</p>
 
     <button pButton class="p-button-raised" (click)="exportToPDF()">
       Export to PDF

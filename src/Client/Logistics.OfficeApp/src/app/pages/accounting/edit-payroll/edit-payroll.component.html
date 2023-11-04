@@ -10,31 +10,57 @@
         <app-validation-summary [form]="form"></app-validation-summary>
 
         <div class="mb-3">
-          <label for="paymentMethod" class="form-label">Payment Method</label>
-          <p-dropdown formControlName="status" styleClass="w-100" [options]="paymentMethods" 
-            optionValue="value" optionLabel="description">
-          </p-dropdown>
+          <label for="dateRange" class="mb-2">Date range</label><br/>
+          <p-calendar formControlName="dateRange"
+            selectionMode="range"
+            [showIcon]="true"
+            [maxDate]="todayDate"
+            (onSelect)="selectDate($event)">
+          </p-calendar>
         </div>
+        
         <div class="mb-3">
-          <label for="amount" class="form-label">Amount</label>
-          <input formControlName="amount" class="form-control" type="number" />
+          <label for="employee" class="form-label">Employee</label>
+          <p-autoComplete formControlName="employee" styleClass="w-100" 
+            inputStyleClass="form-control"
+            placeholder="Type employee's name" field="fullName" 
+            [minLength]="2" [suggestions]="suggestedEmployees"
+            (completeMethod)="searchEmployee($event)" 
+            (onSelect)="calculatePayrollForEmployee($event)">
+          </p-autoComplete>
         </div>
-        <div class="mb-3">
-          <label for="paymentFor" class="form-label">Payment For</label>
-          <p-dropdown formControlName="paymentFor" styleClass="w-100" [options]="paymentForValues" 
-            optionValue="value" optionLabel="description">
-          </p-dropdown>
-        </div>
-        <div *ngIf="isEditMode()" class="mb-3">
+
+        <!-- <div *ngIf="isEditMode()" class="mb-3">
           <label for="paymentStatus" class="form-label">Payment Status</label>
           <p-dropdown formControlName="paymentStatus" styleClass="w-100" [options]="paymentStatuses" 
             optionValue="value" optionLabel="description">
           </p-dropdown>
-        </div>
-        <div class="mb-3">
-          <label for="comment" class="form-label">Comment</label>
-          <input formControlName="comment" class="form-control" />
-        </div>
+        </div> -->
+        <!-- <div class="mb-3">
+          <label for="paymentMethod" class="form-label">Payment Method</label>
+          <p-dropdown formControlName="status" styleClass="w-100" [options]="paymentMethods" 
+            optionValue="value" optionLabel="description">
+          </p-dropdown>
+        </div> -->
+        
+        <ng-container *ngIf="selectedEmployee && computedPayroll">
+          <h4>Payment details</h4>
+          <hr />
+  
+          <p><strong>Employee Role:</strong> {{selectedEmployee.roles[0].displayName}}</p>
+          <p><strong>Employee's Salary Type:</strong> {{getSalaryTypeDesc(selectedEmployee.salaryType)}}</p>
+          <p>
+            <strong>Employee's Salary:</strong>
+            <ng-container *ngIf="isShareOfGrossSalary() else currencySalary">
+              {{selectedEmployee.salary | percent}}
+            </ng-container>
+            
+            <ng-template #currencySalary>
+              {{selectedEmployee.salary | currency}}
+            </ng-template>
+          </p>
+          <p><strong>Expected Payment:</strong> {{computedPayroll.payment.amount | currency}}</p>
+        </ng-container>
         
         <div>
           <button pButton 
@@ -48,7 +74,7 @@
             type="button"
             class="p-button-raised mt-3 ms-2"
             icon="bi bi-arrow-left-square"
-            [routerLink]="['/customers']">
+            [routerLink]="['/accouting/payrolls']">
             Back to list
           </button>
         </div>

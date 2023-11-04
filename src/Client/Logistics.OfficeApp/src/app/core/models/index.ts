@@ -14,3 +14,4 @@ export * from './notification';
 export * from './customer';
 export * from './payment';
 export * from './invoice';
+export * from './payroll';

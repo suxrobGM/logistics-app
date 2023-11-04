@@ -1,21 +1,24 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {FormGroup, FormControl, Validators} from '@angular/forms';
+import {FormGroup, FormControl, Validators, ReactiveFormsModule} from '@angular/forms';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import {CardModule} from 'primeng/card';
 import {DropdownModule} from 'primeng/dropdown';
-import {ValidationSummaryComponent} from '@shared/components';
-import {CreatePayment, UpdatePayment} from '@core/models';
+import {AutoCompleteModule} from 'primeng/autocomplete';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import {CalendarModule} from 'primeng/calendar';
+import {CreatePayroll, Employee, Payroll, UpdatePayroll} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
+import {PredefinedDateRanges} from '@core/helpers';
 import {
   convertEnumToArray,
   PaymentStatusEnum,
   PaymentMethodEnum,
-  PaymentForEnum,
-  PaymentMethod,
-  PaymentFor,
-  PaymentStatus
+  SalaryType,
+  SalaryTypeEnum,
 } from '@core/enums';
+import {ValidationSummaryComponent} from '@shared/components';
 
 
 @Component({
@@ -29,16 +32,23 @@ import {
     ValidationSummaryComponent,
     RouterModule,
     DropdownModule,
+    AutoCompleteModule,
+    ProgressSpinnerModule,
+    ReactiveFormsModule,
+    CalendarModule,
   ],
 })
 export class EditPayrollComponent implements OnInit {
   public readonly paymentStatuses = convertEnumToArray(PaymentStatusEnum);
   public readonly paymentMethods = convertEnumToArray(PaymentMethodEnum);
-  public readonly paymentForValues = convertEnumToArray(PaymentForEnum);
-  public title: string;
-  public id: string | null
-  public form: FormGroup<PaymentForm>;
-  public isLoading: boolean;
+  public title = 'Edit payroll';
+  public id: string | null = null;
+  public isLoading = false;
+  public todayDate = new Date();
+  public form: FormGroup<PayrollForm>;
+  public suggestedEmployees: Employee[] = [];
+  public selectedEmployee?: Employee;
+  public computedPayroll?: Payroll;
 
   constructor(
     private readonly apiService: ApiService,
@@ -46,16 +56,11 @@ export class EditPayrollComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly router: Router)
   {
-    this.title = 'Edit payment';
-    this.id = null;
-    this.isLoading = false;
+    const lastWeek = [PredefinedDateRanges.getLastWeek().startDate, PredefinedDateRanges.getLastWeek().endDate]
   
-    this.form = new FormGroup<PaymentForm>({
-      comment: new FormControl<string>('', {validators: Validators.required, nonNullable: true}),
-      paymentMethod: new FormControl<PaymentMethod>(PaymentMethod.BankAccount, {validators: Validators.required, nonNullable: true}),
-      amount: new FormControl<number>(1, {validators: Validators.compose([Validators.required, Validators.min(0.01)]), nonNullable: true}),
-      paymentFor: new FormControl<PaymentFor>(PaymentFor.Payroll, {validators: Validators.required, nonNullable: true}),
-      paymentStatus: new FormControl<PaymentStatus>(PaymentStatus.Pending, {validators: Validators.required, nonNullable: true})
+    this.form = new FormGroup<PayrollForm>({
+      employee: new FormControl<Employee | null>(null, {validators: Validators.required}),
+      dateRange: new FormControl<Date[]>(lastWeek, {validators: Validators.required, nonNullable: true}),
     });
   }
 
@@ -65,12 +70,42 @@ export class EditPayrollComponent implements OnInit {
     });
 
     if (this.isEditMode()) {
-      this.title = 'Edit payment';
+      this.title = 'Edit payroll';
       this.fetchPayment();
     }
     else {
-      this.title = 'Add a new payment';
+      this.title = 'Add a new payroll';
     }
+  }
+  
+  selectDate(event: any) {
+    console.log(event);
+    
+  }
+
+  searchEmployee(event: {query: string}) {
+    this.apiService.getEmployees({search: event.query}).subscribe((result) => {
+      if (result.data) {
+        this.suggestedEmployees = result.data;
+      }
+    });
+  }
+
+  calculatePayrollForEmployee(employee: Employee) {
+    if (!this.form.valid) {
+      return;
+    }
+
+    this.selectedEmployee = employee;
+    const query: CreatePayroll = {
+      employeeId: employee.id,
+      startDate: this.form.value.dateRange![0],
+      endDate: this.form.value.dateRange![1],
+    }
+
+    this.apiService.calculateEmployeePayroll(query).subscribe((result) => {
+      this.computedPayroll = result.data;
+    });
   }
 
   submit() {
@@ -79,10 +114,10 @@ export class EditPayrollComponent implements OnInit {
     }
 
     if (this.id) {
-      this.updatePayment();
+      this.updatePayroll();
     }
     else {
-      this.addPayment();
+      this.addPayroll();
     }
   }
 
@@ -90,19 +125,25 @@ export class EditPayrollComponent implements OnInit {
     return this.id != null && this.id !== '';
   }
 
+  isShareOfGrossSalary() {
+    return this.selectedEmployee?.salaryType === SalaryType.ShareOfGross;
+  }
+
+  getSalaryTypeDesc(salaryType: SalaryType): string {
+    return SalaryTypeEnum.getDescription(salaryType);
+  }
+
   private fetchPayment() {
+    if (!this.id) {
+      return;
+    }
+
     this.isLoading = true;
-
-    this.apiService.getPayment(this.id!).subscribe((result) => {
-      if (result.data) {
-        const payment = result.data;
-
+    this.apiService.getPayroll(this.id).subscribe(({data: payroll}) => {
+      if (payroll) {
         this.form.patchValue({
-          paymentMethod: payment.method,
-          paymentFor: payment.paymentFor,
-          paymentStatus: payment.status,
-          amount: payment.amount,
-          comment: payment.comment
+          employee: payroll.employee,
+          dateRange: [new Date(payroll.startDate), new Date(payroll.endDate)],
         });
       }
 
@@ -110,42 +151,42 @@ export class EditPayrollComponent implements OnInit {
     })
   }
 
-  private addPayment() {
-    this.isLoading = true;
-
-    const command: CreatePayment = {
-      amount: this.form.value.amount!,
-      method: this.form.value.paymentMethod!,
-      paymentFor: this.form.value.paymentFor!,
-      comment: this.form.value.comment
+  private addPayroll() {
+    if (!this.form.valid) {
+      return;
     }
 
-    this.apiService.createPayment(command).subscribe((result) => {
+    this.isLoading = true;
+    const command: CreatePayroll = {
+      employeeId: this.form.value.employee!.id,
+      startDate: this.form.value.dateRange![0],
+      endDate: this.form.value.dateRange![1],
+    }
+
+    this.apiService.createPayroll(command).subscribe((result) => {
       if (result.isSuccess) {
-        this.toastService.showSuccess('A new payment has been added successfully');
-        this.router.navigateByUrl('/accounting/payments');
+        this.toastService.showSuccess('A new payroll entry has been added successfully');
+        this.router.navigateByUrl('/accounting/payrolls');
       }
 
       this.isLoading = false;
     });
   }
 
-  private updatePayment() {
+  private updatePayroll() {
     this.isLoading = true;
 
-    const commad: UpdatePayment = {
+    const commad: UpdatePayroll = {
       id: this.id!,
-      amount: this.form.value.amount,
-      method: this.form.value.paymentMethod,
-      paymentFor: this.form.value.paymentFor,
-      comment: this.form.value.comment,
-      status: this.form.value.paymentStatus
+      employeeId: this.form.value.employee!.id,
+      startDate: this.form.value.dateRange![0],
+      endDate: this.form.value.dateRange![1],
     }
 
-    this.apiService.updatePayment(commad).subscribe((result) => {
+    this.apiService.updatePayroll(commad).subscribe((result) => {
       if (result.isSuccess) {
-        this.toastService.showSuccess('A payment data has been updated successfully');
-        this.router.navigateByUrl('/accounting/payments');
+        this.toastService.showSuccess('A payroll data has been updated successfully');
+        this.router.navigateByUrl('/accounting/payrolls');
       }
 
       this.isLoading = false;
@@ -153,10 +194,7 @@ export class EditPayrollComponent implements OnInit {
   }
 }
 
-interface PaymentForm {
-  paymentMethod: FormControl<PaymentMethod>;
-  amount: FormControl<number>;
-  paymentFor: FormControl<PaymentFor>;
-  paymentStatus: FormControl<PaymentStatus>;
-  comment: FormControl<string>;
+interface PayrollForm {
+  employee: FormControl<Employee | null>;
+  dateRange: FormControl<Date[]>;
 }

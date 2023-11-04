@@ -40,6 +40,8 @@ import {
   CreateInvoice,
   UpdateInvoice,
   Payroll,
+  UpdatePayroll,
+  CreatePayroll,
 } from '../models';
 
 
@@ -353,6 +355,26 @@ export class ApiService {
   getPayrolls(query?: SearchableQuery): Observable<PagedResponseResult<Payroll>> {
     const url = `/payrolls?${this.stringfySearchableQuery(query)}`;
     return this.get(url);
+  }
+
+  calculateEmployeePayroll(query: CreatePayroll): Observable<ResponseResult<Payroll>> {
+    const url = `/payrolls/calculate?employeeId=${query.employeeId}&startDate=${query.startDate.toJSON()}&endDate=${query.endDate.toJSON()}`;
+    return this.get(url);
+  }
+
+  createPayroll(command: CreatePayroll): Observable<ResponseResult> {
+    const url = `/payrolls`;
+    return this.post(url, command);
+  }
+
+  updatePayroll(command: UpdatePayroll): Observable<ResponseResult> {
+    const url = `/payrolls/${command.id}`;
+    return this.put(url, command);
+  }
+
+  deletePayroll(payrollId: string): Observable<ResponseResult> {
+    const url = `/payrolls/${payrollId}`;
+    return this.delete(url);
   }
 
   // #endregion

@@ -42,9 +42,9 @@ export class EditPaymentComponent implements OnInit {
   public readonly paymentMethods = convertEnumToArray(PaymentMethodEnum);
   public readonly paymentForValues = convertEnumToArray(PaymentForEnum);
   public title: string;
-  public id: string | null
-  public form: FormGroup<PaymentForm>;
+  public id: string | null;
   public isLoading: boolean;
+  public form: FormGroup<PaymentForm>;
 
   constructor(
     private readonly apiService: ApiService,

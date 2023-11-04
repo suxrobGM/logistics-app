@@ -45,8 +45,8 @@ public class PayrollService : IPayrollService
             }
 
             _logger.LogInformation(
-                "Generated monthly payrolls for the tenant: {TenantName}, start date: {StartDate}, end date: {EndDate}",
-                tenant.Name, previousMonthStart, previousMonthEnd);
+                "Generated monthly payrolls for the tenant: {TenantName}, date range: {StartDate} - {EndDate}",
+                tenant.Name, previousMonthStart.ToShortDateString(), previousMonthEnd.ToShortDateString());
             await _tenantRepository.UnitOfWork.CommitAsync();
         }
     }
@@ -75,8 +75,8 @@ public class PayrollService : IPayrollService
             }
 
             _logger.LogInformation(
-                "Generated weekly payrolls for the tenant: {TenantName}, start date: {StartDate}, end date: {EndDate}",
-                tenant.Name, previousWeekStart, previousWeekEnd);
+                "Generated weekly payrolls for the tenant: {TenantName}, date range: {StartDate} - {EndDate}",
+                tenant.Name, previousWeekStart.ToShortDateString(), previousWeekEnd.ToShortDateString());
             await _tenantRepository.UnitOfWork.CommitAsync();
         }
     }

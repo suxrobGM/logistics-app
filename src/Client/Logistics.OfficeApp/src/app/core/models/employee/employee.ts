@@ -8,10 +8,10 @@ export interface Employee {
   fullName: string;
   email: string;
   phoneNumber?: string;
-  roles?: Role[];
+  roles: Role[];
   joinedDate: Date;
   truckNumber?: string;
   truckId?: string;
-  salary?: number;
-  salaryType?: SalaryType;
+  salary: number;
+  salaryType: SalaryType;
 }
