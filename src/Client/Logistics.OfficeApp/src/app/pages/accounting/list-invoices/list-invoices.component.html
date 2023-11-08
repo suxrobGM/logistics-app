@@ -51,7 +51,7 @@
         <ng-template pTemplate="body" let-invoice>
           <tr>
             <td>
-              <a [routerLink]="['/accounting/loads/edit', invoice.loadId]">
+              <a [routerLink]="['/loads/edit', invoice.loadId]">
                 {{invoice.loadRef}}
               </a>
             </td>
@@ -65,7 +65,15 @@
             <td>{{invoice.createdDate | date:'mediumDate'}}</td>
             <td>{{invoice.payment.paymentDate | date:'mediumDate'}}</td>
             <td>
-              <p-button icon="bi-card-list"
+              <p-button
+                icon="bi bi-credit-card"
+                pTooltip="Make payment"
+                tooltipPosition="bottom"
+                [routerLink]="['/payment/invoice', invoice.id]">
+              </p-button>
+              <p-button 
+                styleClass="ms-2"
+                icon="bi-card-list"
                 pTooltip="View details"
                 [routerLink]="['/accounting/invoices/view', invoice.id]">
               </p-button>

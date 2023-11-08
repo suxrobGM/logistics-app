@@ -38,9 +38,9 @@ export class ChangeRoleDialogComponent implements OnInit {
   @Output() visibleChange: EventEmitter<boolean>;
 
   constructor(
-    private apiService: ApiService,
-    private userService: UserService,
-    private toastService: ToastService)
+    private readonly apiService: ApiService,
+    private readonly userService: UserService,
+    private readonly toastService: ToastService)
   {
     this.currentRoles = [];
     this.roles = [];
@@ -54,11 +54,11 @@ export class ChangeRoleDialogComponent implements OnInit {
     });
   }
 
-  public ngOnInit(): void {
+  ngOnInit(): void {
     this.fetchRoles();
   }
 
-  public submit() {
+  submit() {
     const role = this.form.value.role;
 
     if (role === '') {
@@ -81,19 +81,19 @@ export class ChangeRoleDialogComponent implements OnInit {
     });
   }
 
-  public close() {
+  close() {
     this.visible = false;
     this.visibleChange.emit(false);
     this.clearSelctedRole();
   }
 
-  public clearSelctedRole() {
+  clearSelctedRole() {
     this.form.patchValue({
       role: {name: '', displayName: ' '},
     });
   }
 
-  public removeRoles() {
+  removeRoles() {
     this.currentRoles?.forEach((role) => {
       this.removeRole(role.name);
     });

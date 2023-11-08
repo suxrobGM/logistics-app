@@ -6,7 +6,6 @@
     Are you sure that you want to change employee's role? <br />
     If you want to remove role from employee then select <strong>Remove Role</strong>.
   </p>
-  
 
   <form [formGroup]="form" (ngSubmit)="submit()">
     <div class="mb-3">
@@ -15,20 +14,17 @@
         optionValue="name" optionLabel="displayName" [showClear]="true" (onClear)="clearSelctedRole()" >
       </p-dropdown>
     </div>
-    <button pButton 
-      type="submit"
-      class="p-button-raised"
+    <p-button type="submit"
       icon="bi bi-pencil-square"
       label="Change Role"
       [disabled]="loading">
-    </button>
-    <button pButton 
-      type="submit"
-      class="p-button-raised p-button-danger ms-2"
+    </p-button>
+    <p-button type="button"
+      styleClass="p-button-danger ms-2"
       icon="bi bi bi-trash"
       label="Remove Role"
       [disabled]="loading"
       (click)="removeRoles()">
-    </button>
+    </p-button>
   </form>
 </p-dialog>
