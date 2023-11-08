@@ -5,6 +5,8 @@ import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {CardModule} from 'primeng/card';
 import {InputTextModule} from 'primeng/inputtext';
 import {TagModule} from 'primeng/tag';
+import {ButtonModule} from 'primeng/button';
+import {TooltipModule} from 'primeng/tooltip';
 import {Payroll} from '@core/models';
 import {
   PaymentMethod,
@@ -15,7 +17,6 @@ import {
   SalaryTypeEnum,
 } from '@core/enums';
 import {ApiService} from '@core/services';
-import { ButtonModule } from 'primeng/button';
 
 
 @Component({
@@ -34,6 +35,7 @@ import { ButtonModule } from 'primeng/button';
     TagModule,
     RouterModule,
     ButtonModule,
+    TooltipModule,
   ],
 })
 export class ListPayrollComponent {

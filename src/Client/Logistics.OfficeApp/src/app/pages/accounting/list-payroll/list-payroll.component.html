@@ -1,11 +1,11 @@
 <div class="d-flex align-items-center">
   <h1>Payrolls</h1>
-  <button pButton pRipple
-    class="p-button-lg p-button-rounded p-button-text text-black ms-2"
+  <p-button
+    styleClass="p-button-lg p-button-rounded p-button-text text-black ms-2"
     icon="bi bi-plus-square-fill"
     pTooltip="Add a new payroll"
     [routerLink]="['/accounting/payrolls/add']">
-  </button>
+  </p-button>
 </div>
 <hr class="w-100">
 
@@ -56,7 +56,7 @@
               Payment Method
               <p-sortIcon field="paymentMethod"></p-sortIcon>
             </th>
-            <th class="text-center">Action</th>
+            <th>Action</th>
           </tr>
         </ng-template>
         
@@ -81,16 +81,17 @@
             </td>
             <td>{{getPaymentMethodDesc(payroll.payment.method)}}</td>
             <td class="overflow-visible">
-              <button  
-                pButton class="p-button-raised"
+              <p-button
+                icon="bi bi-credit-card"
+                pTooltip="Make payment"
+                tooltipPosition="bottom"
                 [routerLink]="['/payment/payroll', payroll.id]">
-                Make payment
-              </button>
-              <button pButton 
-                class="p-button-raised ms-2"
+              </p-button>
+              <p-button class="ms-2"
+                icon="bi bi-pencil"
+                pTooltip="Edit payroll"
                 [routerLink]="['/accounting/payrolls/edit', payroll.id]">
-                Edit
-              </button>
+              </p-button>
             </td>
           </tr>
         </ng-template>

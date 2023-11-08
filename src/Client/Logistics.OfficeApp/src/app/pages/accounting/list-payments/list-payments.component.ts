@@ -4,6 +4,7 @@ import {RouterModule} from '@angular/router';
 import {CardModule} from 'primeng/card';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {TooltipModule} from 'primeng/tooltip';
+import {ButtonModule} from 'primeng/button';
 import {TagModule} from 'primeng/tag';
 import {Payment} from '@core/models';
 import {ApiService} from '@core/services';
@@ -32,6 +33,7 @@ import {PredefinedDateRanges} from '@core/helpers';
     CurrencyPipe,
     DatePipe,
     TagModule,
+    ButtonModule,
   ],
 })
 export class ListPaymentsComponent {

@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ActivatedRoute, RouterLink} from '@angular/router';
@@ -17,7 +17,6 @@ import {ApiService, ToastService} from '@core/services';
   selector: 'app-edit-truck',
   templateUrl: './edit-truck.component.html',
   styleUrls: ['./edit-truck.component.scss'],
-  encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [
     ToastModule,

@@ -26,6 +26,7 @@ import {ApiService, ToastService} from '@core/services';
     TableModule,
     InputTextModule,
     ConfirmDialogModule,
+    TooltipModule,
   ],
   providers: [
     ConfirmationService

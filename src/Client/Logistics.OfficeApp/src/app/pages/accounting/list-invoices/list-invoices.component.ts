@@ -4,6 +4,8 @@ import {RouterModule} from '@angular/router';
 import {CardModule} from 'primeng/card';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {ButtonModule} from 'primeng/button';
+import {TooltipModule} from 'primeng/tooltip';
+import {TagModule} from 'primeng/tag';
 import {Invoice} from '@core/models';
 import {ApiService} from '@core/services';
 import {PredefinedDateRanges} from '@core/helpers';
@@ -22,7 +24,9 @@ import {PaymentStatus, PaymentStatusEnum} from '@core/enums';
     TableModule,
     CurrencyPipe,
     DatePipe,
-    ButtonModule
+    ButtonModule,
+    TooltipModule,
+    TagModule,
   ],
 })
 export class ListInvoicesComponent {
@@ -31,8 +35,7 @@ export class ListInvoicesComponent {
   public totalRecords = 0;
   public first = 0;
 
-  constructor(private readonly apiService: ApiService) {
-  }
+  constructor(private readonly apiService: ApiService) {}
 
   load(event: TableLazyLoadEvent) {
     this.isLoading = true;
@@ -60,5 +63,9 @@ export class ListInvoicesComponent {
 
   getPaymentStatusDesc(enumValue: PaymentStatus): string {
     return PaymentStatusEnum.getDescription(enumValue);
+  }
+
+  getPaymentStatusTagSeverity(paymentStatus: PaymentStatus): string {
+    return paymentStatus === PaymentStatus.Paid ? 'success' : 'warning';
   }
 }

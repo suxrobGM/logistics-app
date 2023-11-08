@@ -1,11 +1,11 @@
 <div class="d-flex align-items-center">
   <h1>Payments for the past 90 days</h1>
-  <button pButton pRipple
-    class="p-button-lg p-button-rounded p-button-text text-black ms-2"
+  <p-button 
+    styleClass="p-button-lg p-button-rounded p-button-text text-black ms-2"
     icon="bi bi-plus-square-fill"
     pTooltip="Add a new payment"
-    routerLink="/accounting/payments/add">
-  </button>
+    [routerLink]="['/accounting/payments/add']">
+  </p-button>
 </div>
 <hr class="w-100">
 
@@ -68,8 +68,8 @@
             <td>{{payment.amount | currency}}</td>
             <td>
               <p-tag [severity]="getPaymentStatusTagSeverity(payment.status)">
-              {{getPaymentStatusDesc(payment.status)}}
-            </p-tag>
+                {{getPaymentStatusDesc(payment.status)}}
+              </p-tag>
             </td>
             <td>{{getPaymentForDesc(payment.paymentFor)}}</td>
             <td>{{payment.comment}}</td>

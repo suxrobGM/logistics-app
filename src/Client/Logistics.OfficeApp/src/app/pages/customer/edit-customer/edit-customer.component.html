@@ -15,20 +15,18 @@
         </div>
         
         <div>
-          <button pButton 
-            type="submit"
-            class="p-button-raised mt-3"
+          <p-button type="submit"
+            class="mt-3"
             icon="bi bi-pencil-square"
+            label="Save"
             [disabled]="isLoading">
-            Save
-          </button>
-          <button pButton 
-            type="button"
-            class="p-button-raised mt-3 ms-2"
+          </p-button>
+          <p-button type="button"
+            class="mt-3 ms-2"
             icon="bi bi-arrow-left-square"
+            label="Back to list"
             [routerLink]="['/customers']">
-            Back to list
-          </button>
+          </p-button>
         </div>
       </form>
     </p-card>

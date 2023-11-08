@@ -68,28 +68,25 @@
           </p-dropdown>
         </div>
         <div>
-          <button pButton 
-            type="submit"
-            class="p-button-raised mt-3"
+          <p-button type="submit"
+            class=" mt-3"
             icon="bi bi-pencil-square"
+            label="Save"
             [disabled]="isLoading">
-            Save
-          </button>
-          <button pButton 
-            type="button"
-            class="p-button-raised p-button-danger mt-3 ms-2"
+          </p-button>
+          <p-button type="button"
+            styleClass="p-button-danger mt-3 ms-2"
             icon="bi bi bi-trash"
+            label="Delete"
             [disabled]="isLoading"
             (click)="confirmToDelete()">
-            Delete
-          </button>
-          <button pButton 
-            type="button"
-            class="p-button-raised mt-3 ms-0 ms-md-2"
+          </p-button>
+          <p-button type="button"
+            class="mt-3 ms-0 ms-md-2"
             icon="bi bi-arrow-left-square"
-            routerLink="/loads">
-            Back to list
-          </button>
+            label="Back to list"
+            [routerLink]="['/loads']">
+          </p-button>
         </div>
       </form>
     </div>

@@ -57,15 +57,18 @@
             </td>
             <td>{{invoice.customer.name}}</td>
             <td>{{invoice.payment.amount | currency}}</td>
-            <td>{{getPaymentStatusDesc(invoice.payment.status)}}</td>
+            <td>
+              <p-tag [severity]="getPaymentStatusTagSeverity(invoice.payment.status)">
+                {{getPaymentStatusDesc(invoice.payment.status)}}
+              </p-tag>
+            </td>
             <td>{{invoice.createdDate | date:'mediumDate'}}</td>
             <td>{{invoice.payment.paymentDate | date:'mediumDate'}}</td>
             <td>
-              <button pButton 
-                class="p-button-raised"
+              <p-button icon="bi-card-list"
+                pTooltip="View details"
                 [routerLink]="['/accounting/invoices/view', invoice.id]">
-                View details
-              </button>
+              </p-button>
             </td>
           </tr>
         </ng-template>
