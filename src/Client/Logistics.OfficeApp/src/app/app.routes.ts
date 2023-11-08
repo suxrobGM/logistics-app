@@ -6,18 +6,6 @@ import {UnauthorizedComponent} from '@pages/unauthorized';
 
 export const APP_ROUTES: Routes = [
   {
-    path: '',
-    component: LoginComponent,
-  },
-  {
-    path: 'unauthorized',
-    component: UnauthorizedComponent,
-  },
-  {
-    path: '404',
-    component: Error404Component,
-  },
-  {
     path: 'home',
     loadChildren: () => import('./pages/home').then((m) => m.HOME_ROUTES),
   },
@@ -62,6 +50,25 @@ export const APP_ROUTES: Routes = [
     data: {
       breadcrumb: '',
     },
+  },
+  {
+    path: 'payment',
+    loadChildren: () => import('./pages/payment').then((m) => m.PAYMENT_ROUTES),
+    data: {
+      breadcrumb: '',
+    },
+  },
+  {
+    path: '',
+    component: LoginComponent,
+  },
+  {
+    path: 'unauthorized',
+    component: UnauthorizedComponent,
+  },
+  {
+    path: '404',
+    component: Error404Component,
   },
   {
     path: '**',

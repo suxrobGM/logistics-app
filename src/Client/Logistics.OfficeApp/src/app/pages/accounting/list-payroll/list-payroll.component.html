@@ -56,6 +56,7 @@
               Payment Method
               <p-sortIcon field="paymentMethod"></p-sortIcon>
             </th>
+            <th class="text-center">Action</th>
           </tr>
         </ng-template>
         
@@ -79,6 +80,18 @@
               </p-tag>
             </td>
             <td>{{getPaymentMethodDesc(payroll.payment.method)}}</td>
+            <td class="overflow-visible">
+              <button  
+                pButton class="p-button-raised"
+                [routerLink]="['/payment/payroll', payroll.id]">
+                Make payment
+              </button>
+              <button pButton 
+                class="p-button-raised ms-2"
+                [routerLink]="['/accounting/payrolls/edit', payroll.id]">
+                Edit
+              </button>
+            </td>
           </tr>
         </ng-template>
       </p-table>

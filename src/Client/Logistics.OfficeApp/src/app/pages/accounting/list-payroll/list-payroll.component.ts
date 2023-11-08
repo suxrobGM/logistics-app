@@ -84,6 +84,10 @@ export class ListPayrollComponent {
     return salaryType === SalaryType.ShareOfGross;
   }
 
+  isPendingPaymentStatus(paymentStatus: PaymentStatus): boolean {
+    return paymentStatus === PaymentStatus.Pending;
+  }
+
   getPaymentStatusTagSeverity(paymentStatus: PaymentStatus): string {
     return paymentStatus === PaymentStatus.Paid ? 'success' : 'warning';
   }

@@ -19,7 +19,7 @@ public class PayrollsController : ControllerBase
     [Authorize(Policy = Permissions.Payrolls.View)]
     public async Task<IActionResult> GetById(string id)
     {
-        var result = await _mediator.Send(new GetPaymentByIdQuery {Id = id});
+        var result = await _mediator.Send(new GetPayrollByIdQuery {Id = id});
 
         if (result.IsSuccess)
             return Ok(result);

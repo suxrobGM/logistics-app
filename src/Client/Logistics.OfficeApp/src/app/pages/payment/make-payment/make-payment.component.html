@@ -1,0 +1,144 @@
+<h1 class="text-center">{{title}}</h1>
+<hr class="w-100">
+
+<div class="row justify-content-center mx-0">
+  <div class="col-12 col-md-6">
+    <p-card>
+      <p-progressSpinner *ngIf="isLoading"></p-progressSpinner>
+      
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <app-validation-summary [form]="form"></app-validation-summary>
+
+        <div class="mb-3">
+          <div *ngFor="let paymentMethod of paymentMethods" class="field-checkbox">
+            <p-radioButton formControlName="paymentMethod" [inputId]="paymentMethod.description" [value]="paymentMethod.value"></p-radioButton>
+            <label [for]="paymentMethod.description" class="ms-2">{{paymentMethod.description}}</label>
+          </div>
+        </div>
+
+        <div *ngIf="invoice && tenantData">
+          <h4>Invoice details</h4>
+          <hr />
+      
+          <div class="row mb-3">
+            <div class="col-4">
+              <h6>Carrier:</h6>
+            </div>
+            <div class="col-8">
+              {{tenantData.companyName}}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-4">
+              <h6>Carrier Address:</h6>
+            </div>
+            <div class="col-8">
+              {{tenantData.companyAddress}}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-4">
+              <h6>Shipper/Dealer:</h6>
+            </div>
+            <div class="col-8">
+              {{invoice.customer.name}}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-4">
+              <h6>>Invoice Load ID:</h6>
+            </div>
+            <div class="col-8">
+              {{invoice.loadRef}}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-4">
+              <h6>Invoice Date:</h6>
+            </div>
+            <div class="col-8">
+              {{invoice.createdDate | date:'mediumDate'}}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-4">
+              <h6>Payment Amount:</h6>
+            </div>
+            <div class="col-8">
+              {{invoice.payment.amount | currency}}
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="payroll">
+          <h4>Payroll details</h4>
+          <hr />
+      
+          <div class="row mb-3">
+            <div class="col-4">
+              <h6>Employee:</h6>
+            </div>
+            <div class="col-8">
+              {{payroll.employee.fullName}}
+            </div>
+          </div>    
+          <div class="row mb-3">
+            <div class="col-4">
+              <h6>Employee Position:</h6>
+            </div>
+            <div class="col-8">
+              {{payroll.employee.roles[0].displayName}}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-4">
+              <h6>Payroll period:</h6>
+            </div>
+            <div class="col-8">
+              {{payroll.startDate | date:'mediumDate'}} - {{payroll.endDate | date:'mediumDate'}}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-4">
+              <h6>Salary type:</h6>
+            </div>
+            <div class="col-8">
+              {{getSalaryTypeDesc(payroll.employee.salaryType)}}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-4">
+              <h6>Salary:</h6>
+            </div>
+            <div class="col-8">
+              <ng-container *ngIf="isShareOfGrossSalary(payroll.employee.salaryType) else currencySalary">
+                {{payroll.employee.salary | percent}}
+              </ng-container>
+              <ng-template #currencySalary>
+                {{payroll.employee.salary | currency}}
+              </ng-template>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-4">
+              <h6>Payment Amount:</h6>
+            </div>
+            <div class="col-8">
+              {{payroll.payment.amount | currency}}
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <button pButton 
+            type="submit"
+            class="p-button-raised mt-3"
+            icon="bi bi-wallet"
+            [disabled]="isLoading">
+            Process payment
+          </button>
+        </div>
+      </form>
+    </p-card>
+  </div>
+</div>
