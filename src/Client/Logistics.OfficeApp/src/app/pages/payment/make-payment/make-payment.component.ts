@@ -48,11 +48,14 @@ export class MakePaymentComponent implements OnInit {
   {
     this.form = new FormGroup<PaymentForm>({
       paymentMethod: new FormControl(PaymentMethod.CreditCard, {validators: Validators.required, nonNullable: true}),
+      cardholderName: new FormControl(''),
       cardNumber: new FormControl(''),
       cardExpireDate: new FormControl(''),
       cardCvv: new FormControl(''),
+      billingAddress: new FormControl(''),
+      bankName: new FormControl(''),
       bankAccountNumber: new FormControl(''),
-      bankAccountRoutingNumber: new FormControl(''),
+      bankRoutingNumber: new FormControl(''),
     });
 
     this.tenantData = tenantService.getTenantData();
@@ -95,41 +98,55 @@ export class MakePaymentComponent implements OnInit {
   }
 
   private setConditionalValidators() {
-    const cardNumberControl = this.form.get('cardNumber');
-    const cardExpireDateControl = this.form.get('cardExpireDate');
-    const cardCvvControl = this.form.get('cardCvv');
-    const bankAccountNumberControl = this.form.get('bankAccountNumber');
-    const bankAccountRoutingNumberControl = this.form.get('bankAccountRoutingNumber');
+    const cardholderName = this.form.get('cardholderName');
+    const cardNumber = this.form.get('cardNumber');
+    const cardExpireDate = this.form.get('cardExpireDate');
+    const cardCvv = this.form.get('cardCvv');
+    const billingAddress = this.form.get('billingAddress');
+    const bankName = this.form.get('bankName');
+    const bankAccountNumber = this.form.get('bankAccountNumber');
+    const bankRoutingNumber = this.form.get('bankRoutingNumber');
 
     this.form.get('paymentMethod')?.valueChanges.subscribe((method: PaymentMethod) => {
       if (method === PaymentMethod.CreditCard) {
-        cardNumberControl?.setValidators([Validators.required, Validators.pattern(RegexPatterns.CREDIT_CARD_NUMBER)]);
-        cardExpireDateControl?.setValidators([Validators.required, Validators.pattern(RegexPatterns.CARD_EXPIRATION_DATE)]);
-        cardCvvControl?.setValidators([Validators.required, Validators.pattern(RegexPatterns.CARD_CVV)]);
-        bankAccountNumberControl?.clearValidators();
-        bankAccountRoutingNumberControl?.clearValidators();
+        cardholderName?.setValidators([Validators.required]);
+        cardNumber?.setValidators([Validators.required, Validators.pattern(RegexPatterns.CREDIT_CARD_NUMBER)]);
+        cardExpireDate?.setValidators([Validators.required, Validators.pattern(RegexPatterns.CARD_EXPIRATION_DATE)]);
+        cardCvv?.setValidators([Validators.required, Validators.pattern(RegexPatterns.CARD_CVV)]);
+        bankName?.clearValidators();
+        bankAccountNumber?.clearValidators();
+        bankRoutingNumber?.clearValidators();
       }
       else if (method === PaymentMethod.BankAccount) {
-        bankAccountNumberControl?.setValidators([Validators.required]);
-        bankAccountRoutingNumberControl?.setValidators([Validators.required, Validators.pattern(RegexPatterns.ROUTING_NUMBER)]);
-        cardNumberControl?.clearValidators();
-        cardExpireDateControl?.clearValidators();
-        cardCvvControl?.clearValidators();
+        bankName?.setValidators([Validators.required]);
+        bankAccountNumber?.setValidators([Validators.required]);
+        bankRoutingNumber?.setValidators([Validators.required, Validators.pattern(RegexPatterns.ROUTING_NUMBER)]);
+        cardholderName?.clearValidators();
+        cardNumber?.clearValidators();
+        cardExpireDate?.clearValidators();
+        cardCvv?.clearValidators();
+        billingAddress?.clearValidators();
       }
       else {
         // If 'Cash' or anything else, clear all validators
-        cardNumberControl?.clearValidators();
-        cardExpireDateControl?.clearValidators();
-        cardCvvControl?.clearValidators();
-        bankAccountNumberControl?.clearValidators();
-        bankAccountRoutingNumberControl?.clearValidators();
+        cardholderName?.clearValidators();
+        cardNumber?.clearValidators();
+        cardExpireDate?.clearValidators();
+        cardCvv?.clearValidators();
+        billingAddress?.clearValidators();
+        bankName?.clearValidators();
+        bankAccountNumber?.clearValidators();
+        bankRoutingNumber?.clearValidators();
       }
 
-      cardNumberControl?.updateValueAndValidity();
-      cardExpireDateControl?.updateValueAndValidity();
-      cardCvvControl?.updateValueAndValidity();
-      bankAccountNumberControl?.updateValueAndValidity();
-      bankAccountRoutingNumberControl?.updateValueAndValidity();
+      cardholderName?.updateValueAndValidity();
+      cardNumber?.updateValueAndValidity();
+      cardExpireDate?.updateValueAndValidity();
+      cardCvv?.updateValueAndValidity();
+      billingAddress?.updateValueAndValidity();
+      bankName?.updateValueAndValidity();
+      bankAccountNumber?.updateValueAndValidity();
+      bankRoutingNumber?.updateValueAndValidity();
     });
   }
 
@@ -152,9 +169,12 @@ export class MakePaymentComponent implements OnInit {
 
 interface PaymentForm {
   paymentMethod: FormControl<PaymentMethod>;
+  cardholderName: FormControl<string | null>;
   cardNumber: FormControl<string | null>;
   cardExpireDate: FormControl<string | null>;
   cardCvv: FormControl<string | null>;
+  billingAddress: FormControl<string | null>;
+  bankName: FormControl<string | null>;
   bankAccountNumber: FormControl<string | null>;
-  bankAccountRoutingNumber: FormControl<string | null>;
+  bankRoutingNumber: FormControl<string | null>;
 }
