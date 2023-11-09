@@ -6,7 +6,9 @@
 <div class="row justify-content-center">
   <div class="col-12 col-md-6">
     <p-card>
-      <p-progressSpinner *ngIf="isLoading"></p-progressSpinner>
+      @if (isLoading) {
+        <p-progressSpinner></p-progressSpinner>
+      }
       
       <form [formGroup]="form" (ngSubmit)="submit()">
         <app-validation-summary [form]="form"></app-validation-summary>
@@ -26,17 +28,18 @@
         </div>
         <div class="mb-3">
           <label for="salary" class="form-label">Salary</label>
-          <div class="input-group" *ngIf="isShareOfGrossSalary() else fixedSalaryInput">
-            <span class="input-group-text">%</span>
-            <input id="salary" formControlName="salary" type="number" class="form-control" [min]="0" [max]="100" />
-          </div>
-
-          <ng-template #fixedSalaryInput>
+          @if (isShareOfGrossSalary()) {
+            <div class="input-group">
+              <span class="input-group-text">%</span>
+              <input id="salary" formControlName="salary" type="number" class="form-control" [min]="0" [max]="100" />
+            </div>
+          }
+          @else {
             <div class="input-group">
               <span class="input-group-text">$$</span>
               <input id="salary" formControlName="salary" type="number" class="form-control" [min]="0" [disabled]="isNoneSalary()" />
             </div>
-          </ng-template>
+          }
         </div>
         <div class="mb-3">
           <label for="role" class="form-label">Role</label>

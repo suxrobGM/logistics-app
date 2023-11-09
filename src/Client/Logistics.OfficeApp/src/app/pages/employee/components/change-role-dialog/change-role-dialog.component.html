@@ -1,6 +1,8 @@
 <p-dialog header="Update Employee's Role" [(visible)]="visible" 
   [modal]="true" [resizable]="true" (onHide)="close()">
-  <p-progressSpinner *ngIf="loading"></p-progressSpinner>
+  @if (loading) {
+    <p-progressSpinner></p-progressSpinner>
+  }
 
   <p>
     Are you sure that you want to change employee's role? <br />

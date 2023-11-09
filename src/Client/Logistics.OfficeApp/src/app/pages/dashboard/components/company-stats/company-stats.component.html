@@ -1,5 +1,5 @@
 <p-card class="d-flex h-100">
-  <div *ngIf="isLoading; else actualData">
+  @if (isLoading) {
     <div class="row gy-2">
       <div class="col-6">
         <p-skeleton styleClass="my-2" height="3rem"></p-skeleton>
@@ -52,9 +52,8 @@
         <p-skeleton styleClass="my-2" height="3rem"></p-skeleton>
       </div>
     </div>
-  </div>
-
-  <ng-template #actualData>
+  }
+  @else {
     <div class="row gy-2">
       <div class="col-6">
         <span class="fw-bold">Company owner: </span><br />
@@ -144,5 +143,5 @@
         <span>{{calcRpm(companyStats?.totalGross, companyStats?.totalDistance) | currency}}</span>
       </div>
     </div>
-  </ng-template>
+  }
 </p-card>

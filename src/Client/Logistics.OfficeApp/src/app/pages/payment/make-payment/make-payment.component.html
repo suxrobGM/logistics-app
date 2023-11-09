@@ -4,73 +4,78 @@
 <div class="row justify-content-center mx-0">
   <div class="col-12 col-md-6">
     <p-card>
-      <p-progressSpinner *ngIf="isLoading"></p-progressSpinner>
+      @if (isLoading) {
+        <p-progressSpinner></p-progressSpinner>
+      }
       
       <form [formGroup]="form" (ngSubmit)="submit()">
         <app-validation-summary [form]="form"></app-validation-summary>
 
         <div class="mb-3">
-          <div *ngFor="let paymentMethod of paymentMethods" class="field-checkbox">
-            <p-radioButton formControlName="paymentMethod" [inputId]="paymentMethod.description" [value]="paymentMethod.value"></p-radioButton>
-            <label [for]="paymentMethod.description" class="ms-2">{{paymentMethod.description}}</label>
-          </div>
+          @for (paymentMethod of paymentMethods; track paymentMethod.value) {
+            <div class="field-checkbox">
+              <p-radioButton formControlName="paymentMethod" [inputId]="paymentMethod.description" [value]="paymentMethod.value"></p-radioButton>
+              <label [for]="paymentMethod.description" class="ms-2">{{paymentMethod.description}}</label>
+            </div>
+          }
         </div>
 
-        <div *ngIf="invoice && tenantData">
+        @if (invoice && tenantData) {
           <h4>Invoice details</h4>
-          <hr />
-      
-          <div class="row mb-3">
-            <div class="col-4">
-              <h6>Carrier:</h6>
+            <hr />
+        
+            <div class="row mb-3">
+              <div class="col-4">
+                <h6>Carrier:</h6>
+              </div>
+              <div class="col-8">
+                {{tenantData.companyName}}
+              </div>
             </div>
-            <div class="col-8">
-              {{tenantData.companyName}}
+            <div class="row mb-3">
+              <div class="col-4">
+                <h6>Carrier Address:</h6>
+              </div>
+              <div class="col-8">
+                {{tenantData.companyAddress}}
+              </div>
             </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-4">
-              <h6>Carrier Address:</h6>
+            <div class="row mb-3">
+              <div class="col-4">
+                <h6>Shipper/Dealer:</h6>
+              </div>
+              <div class="col-8">
+                {{invoice.customer.name}}
+              </div>
             </div>
-            <div class="col-8">
-              {{tenantData.companyAddress}}
+            <div class="row mb-3">
+              <div class="col-4">
+                <h6>Invoice Load ID:</h6>
+              </div>
+              <div class="col-8">
+                {{invoice.loadRef}}
+              </div>
             </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-4">
-              <h6>Shipper/Dealer:</h6>
+            <div class="row mb-3">
+              <div class="col-4">
+                <h6>Invoice Date:</h6>
+              </div>
+              <div class="col-8">
+                {{invoice.createdDate | date:'mediumDate'}}
+              </div>
             </div>
-            <div class="col-8">
-              {{invoice.customer.name}}
+            <div class="row mb-3">
+              <div class="col-4">
+                <h6>Payment Amount:</h6>
+              </div>
+              <div class="col-8">
+                {{invoice.payment.amount | currency}}
+              </div>
             </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-4">
-              <h6>Invoice Load ID:</h6>
-            </div>
-            <div class="col-8">
-              {{invoice.loadRef}}
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-4">
-              <h6>Invoice Date:</h6>
-            </div>
-            <div class="col-8">
-              {{invoice.createdDate | date:'mediumDate'}}
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-4">
-              <h6>Payment Amount:</h6>
-            </div>
-            <div class="col-8">
-              {{invoice.payment.amount | currency}}
-            </div>
-          </div>
-        </div>
+        }
+        
 
-        <div *ngIf="payroll">
+        @if (payroll) {
           <h4>Payroll details</h4>
           <hr />
       
@@ -111,12 +116,12 @@
               <h6>Salary:</h6>
             </div>
             <div class="col-8">
-              <ng-container *ngIf="isShareOfGrossSalary(payroll.employee.salaryType) else currencySalary">
+              @if (isShareOfGrossSalary(payroll.employee.salaryType)) {
                 {{payroll.employee.salary | percent}}
-              </ng-container>
-              <ng-template #currencySalary>
+              }
+              @else {
                 {{payroll.employee.salary | currency}}
-              </ng-template>
+              }
             </div>
           </div>
           <div class="row mb-3">
@@ -127,7 +132,7 @@
               {{payroll.payment.amount | currency}}
             </div>
           </div>
-        </div>
+          }
         
         <div>
           <p-button type="submit"

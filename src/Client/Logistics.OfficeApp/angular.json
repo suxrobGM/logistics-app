@@ -72,10 +72,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "Logistics.OfficeApp:build:production"
+              "buildTarget": "Logistics.OfficeApp:build:production"
             },
             "development": {
-              "browserTarget": "Logistics.OfficeApp:build:development"
+              "buildTarget": "Logistics.OfficeApp:build:development"
             }
           },
           "defaultConfiguration": "development",
@@ -86,7 +86,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "Logistics.OfficeApp:build"
+            "buildTarget": "Logistics.OfficeApp:build"
           }
         },
         "test": {

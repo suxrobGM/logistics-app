@@ -1,8 +1,11 @@
 <div class="d-flex align-items-center">
   <h1>Payments for the past 90 days</h1>
   <p-button 
-    styleClass="p-button-lg p-button-rounded p-button-text text-black ms-2"
+    styleClass="text-black ms-2"
     icon="bi bi-plus-square-fill"
+    size="large"
+    [rounded]="true"
+    [text]="true"
     pTooltip="Add a new payment"
     [routerLink]="['/accounting/payments/add']">
   </p-button>

@@ -4,7 +4,9 @@
 <div class="row justify-content-center mx-0">
   <div class="col-12 col-md-6">
     <p-card>
-      <p-progressSpinner *ngIf="isLoading"></p-progressSpinner>
+      @if (isLoading) {
+        <p-progressSpinner></p-progressSpinner>
+      }
       
       <form [formGroup]="form" (ngSubmit)="submit()">
         <app-validation-summary [form]="form"></app-validation-summary>
@@ -26,7 +28,7 @@
             placeholder="Type employee's name" field="fullName" 
             [minLength]="2" [suggestions]="suggestedEmployees"
             (completeMethod)="searchEmployee($event)" 
-            (onSelect)="calculatePayrollForEmployee($event)">
+            (onSelect)="handleAutoCompleteSelectEvent($event)">
           </p-autoComplete>
         </div>
 
@@ -43,7 +45,7 @@
           </p-dropdown>
         </div> -->
         
-        <ng-container *ngIf="selectedEmployee && computedPayroll">
+        @if (selectedEmployee && computedPayroll) {
           <h4>Payment details</h4>
           <hr />
   
@@ -51,16 +53,15 @@
           <p><strong>Employee's Salary Type:</strong> {{getSalaryTypeDesc(selectedEmployee.salaryType)}}</p>
           <p>
             <strong>Employee's Salary:</strong>
-            <ng-container *ngIf="isShareOfGrossSalary() else currencySalary">
+            @if (isShareOfGrossSalary()) {
               {{selectedEmployee.salary | percent}}
-            </ng-container>
-            
-            <ng-template #currencySalary>
+            }
+            @else {
               {{selectedEmployee.salary | currency}}
-            </ng-template>
+            }
           </p>
           <p><strong>Expected Payment:</strong> {{computedPayroll.payment.amount | currency}}</p>
-        </ng-container>
+        }
         
         <div>
           <p-button type="submit"

@@ -4,6 +4,7 @@ import {RouterLink} from '@angular/router';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {CardModule} from 'primeng/card';
 import {ButtonModule} from 'primeng/button';
+import {TooltipModule} from 'primeng/tooltip';
 import {PagedIntervalQuery, TruckStats} from '@core/models';
 import {ApiService} from '@core/services';
 import {DateUtils} from '@shared/utils';
@@ -26,6 +27,7 @@ import {RangeCalendarComponent} from '@shared/components';
     CardModule,
     ButtonModule,
     RangeCalendarComponent,
+    TooltipModule
   ],
 })
 export class TruckStatsTableComponent {

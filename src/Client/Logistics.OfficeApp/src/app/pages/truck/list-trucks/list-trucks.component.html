@@ -1,8 +1,11 @@
 <div class="d-flex align-items-center">
   <h1>List Trucks</h1>
   <p-button
-    styleClass="p-button-lg p-button-rounded p-button-text text-black ms-2"
+    styleClass="text-black ms-2"
     icon="bi bi-plus-square-fill"
+    size="large"
+    [rounded]="true"
+    [text]="true"
     pTooltip="Add a new truck"
     [routerLink]="['/trucks/add']">
   </p-button>
@@ -49,10 +52,14 @@
               {{truck.currentLocation}}
             </td>
             <td class="text-center">
-              <span *ngFor="let driver of truck.drivers">
-                {{driver.fullName}}
-                <span *ngIf="truck.drivers.length > 1">,</span>
-              </span>
+              @for (driver of truck.drivers; track driver.id) {
+                <span>
+                  {{driver.fullName}}
+                  @if (truck.drivers.length > 1) {
+                    <span>,</span>
+                  }
+                </span>
+              }
             </td>
             
             <td class="text-center">

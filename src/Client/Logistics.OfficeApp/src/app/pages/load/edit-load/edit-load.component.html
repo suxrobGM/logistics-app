@@ -7,7 +7,9 @@
 <p-card>
   <div class="row">
     <div class="col-12 col-md-6">
-      <p-progressSpinner *ngIf="isLoading"></p-progressSpinner>
+      @if (isLoading) {
+        <p-progressSpinner></p-progressSpinner>
+      }
       <form [formGroup]="form" (ngSubmit)="updateLoad()">
         <div class="mb-3">
           <label for="name" class="form-label">Name</label>

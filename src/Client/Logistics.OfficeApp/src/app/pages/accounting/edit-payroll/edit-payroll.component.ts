@@ -5,7 +5,7 @@ import {FormGroup, FormControl, Validators, ReactiveFormsModule} from '@angular/
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import {CardModule} from 'primeng/card';
 import {DropdownModule} from 'primeng/dropdown';
-import {AutoCompleteModule} from 'primeng/autocomplete';
+import {AutoCompleteModule, AutoCompleteOnSelectEvent} from 'primeng/autocomplete';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {CalendarModule} from 'primeng/calendar';
 import {CreatePayroll, Employee, Payroll, UpdatePayroll} from '@core/models';
@@ -87,6 +87,10 @@ export class EditPayrollComponent implements OnInit {
         this.suggestedEmployees = result.data;
       }
     });
+  }
+
+  handleAutoCompleteSelectEvent(event: AutoCompleteOnSelectEvent) {
+    this.calculatePayrollForEmployee(event.value);
   }
 
   calculatePayrollForEmployee(employee: Employee) {

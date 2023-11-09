@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {AutoCompleteModule} from 'primeng/autocomplete';
+import {AutoCompleteModule, AutoCompleteOnSelectEvent} from 'primeng/autocomplete';
 import {ApiService} from '@core/services';
 import {Customer} from '@core/models';
 
@@ -32,7 +32,7 @@ export class SearchCustomerComponent {
     });
   }
 
-  changeSelectedCustomer(event: Customer) {
-    this.selectedCustomerChange.emit(event);
+  changeSelectedCustomer(event: AutoCompleteOnSelectEvent) {
+    this.selectedCustomerChange.emit(event.value);
   }
 }

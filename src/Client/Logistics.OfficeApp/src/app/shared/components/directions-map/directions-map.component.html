@@ -12,33 +12,39 @@
   </mgl-image>
   
   <!-- Route Layer -->
-  <mgl-layer *ngIf="route" 
-    id="routeLayer" 
-    type="line" 
-    [source]="route" 
-    [paint]="{
-      'line-color': '#28a745',
-      'line-width': 8
-    }">
-  </mgl-layer>
+  @if (route) {
+    <mgl-layer 
+      id="routeLayer" 
+      type="line" 
+      [source]="route" 
+      [paint]="{
+        'line-color': '#28a745',
+        'line-width': 8
+      }">
+    </mgl-layer>
+  }
 
   <!-- Start Point Symbol Layer -->
-  <mgl-layer *ngIf="startPoint && isImageLoaded"
-    id="startPointLayer"
-    type="symbol"
-    [source]="startPoint"
-    [layout]="{
-      'icon-image': 'custom-marker'
-    }">
-  </mgl-layer>
+  @if (startPoint && isImageLoaded) {
+    <mgl-layer
+      id="startPointLayer"
+      type="symbol"
+      [source]="startPoint"
+      [layout]="{
+        'icon-image': 'custom-marker'
+      }">
+    </mgl-layer>
+  }
 
   <!-- End Point Symbol Layer -->
-  <mgl-layer *ngIf="endPoint && isImageLoaded"
-    id="endPointLayer"
-    type="symbol"
-    [source]="endPoint"
-    [layout]="{
-      'icon-image': 'custom-marker'
-    }">
+  @if (endPoint && isImageLoaded) {
+    <mgl-layer
+      id="endPointLayer"
+      type="symbol"
+      [source]="endPoint"
+      [layout]="{
+        'icon-image': 'custom-marker'
+      }">
   </mgl-layer>
+  }
 </mgl-map>

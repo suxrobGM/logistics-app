@@ -4,7 +4,9 @@
 <div class="row justify-content-center mx-0">
   <div class="col-12 col-md-6">
     <p-card>
-      <p-progressSpinner *ngIf="isLoading"></p-progressSpinner>
+      @if (isLoading) {
+        <p-progressSpinner></p-progressSpinner>
+      }
       
       <form [formGroup]="form" (ngSubmit)="submit()">
         <app-validation-summary [form]="form"></app-validation-summary>
@@ -25,12 +27,16 @@
             optionValue="value" optionLabel="description">
           </p-dropdown>
         </div>
-        <div *ngIf="isEditMode()" class="mb-3">
-          <label for="paymentStatus" class="form-label">Payment Status</label>
-          <p-dropdown formControlName="paymentStatus" styleClass="w-100" [options]="paymentStatuses" 
-            optionValue="value" optionLabel="description">
-          </p-dropdown>
-        </div>
+        
+        @if (isEditMode()) {
+          <div class="mb-3">
+            <label for="paymentStatus" class="form-label">Payment Status</label>
+            <p-dropdown formControlName="paymentStatus" styleClass="w-100" [options]="paymentStatuses" 
+              optionValue="value" optionLabel="description">
+            </p-dropdown>
+          </div>
+        }
+
         <div class="mb-3">
           <label for="comment" class="form-label">Comment</label>
           <input formControlName="comment" class="form-control" />

@@ -2,9 +2,11 @@
 <hr class="w-100">
 
 <p-card class="col-12 col-sm-6">
-  <p-progressSpinner *ngIf="isLoading"></p-progressSpinner>
+  @if (isLoading) {
+    <p-progressSpinner></p-progressSpinner>
+  }
 
-  <div *ngIf="invoice">
+  @if (invoice) {
     <h2>{{companyName}}</h2>
     <p>{{companyAddress}}</p>
     <hr />
@@ -21,5 +23,5 @@
     <button pButton class="p-button-raised" (click)="exportToPDF()">
       Export to PDF
     </button>
-  </div>
+  }
 </p-card>

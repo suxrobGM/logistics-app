@@ -1,88 +1,118 @@
 <div class="sidebar" [ngClass]="{'minimized': !isOpened}">
   <a class="py-3 navbar-brand border-bottom">
     <img src="assets/images/logo.svg" class="img-fluid" height="40" alt="logo" />
-    <span class="h4" *ngIf="isOpened">{{companyName}}</span>
+    @if (isOpened) {
+      <span class="h4">{{companyName}}</span>
+    }
   </a>
 
   <ul class="nav flex-column mb-auto">
     <li>
       <a class="nav-link border-bottom" [routerLink]="['/home']">
         <i class="bi bi-house-door h1" pTooltip="Home"></i>
-        <span class="ms-2" *ngIf="isOpened">Home</span>
+        @if (isOpened) {
+          <span class="ms-2">Home</span>
+        }
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link border-bottom" [routerLink]="['/dashboard']">
         <i class="bi bi-speedometer2 h1" pTooltip="Dashboard"></i>
-        <span class="ms-2" *ngIf="isOpened">Dashboard</span>
+        @if (isOpened) {
+          <span class="ms-2">Dashboard</span>
+        }
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link border-bottom" [routerLink]="['/loads']">
         <i class="bi bi-database h1" pTooltip="Loads"></i>
-        <span class="ms-2" *ngIf="isOpened">Loads</span>
+        @if (isOpened) {
+          <span class="ms-2">Loads</span>
+        }
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link border-bottom" [routerLink]="['/trucks']">
         <i class="bi bi-truck h1" pTooltip="Trucks"></i>
-        <span class="ms-2" *ngIf="isOpened">Trucks</span>
+        @if (isOpened) {
+          <span class="ms-2">Trucks</span>
+        }
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link border-bottom" [routerLink]="['/employees']">
         <i class="bi bi-people h1" pTooltip="Employees"></i>
-        <span class="ms-2" *ngIf="isOpened">Employees</span>
+        @if (isOpened) {
+          <span class="ms-2">Employees</span>
+        }
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link border-bottom" [routerLink]="['/customers']">
         <i class="bi bi-building h1" pTooltip="Customers"></i>
-        <span class="ms-2" *ngIf="isOpened">Customers</span>
+        @if (isOpened) {
+          <span class="ms-2">Customers</span>
+        }
       </a>
     </li>
     <li class="nav-item">
-      <p-panelMenu *ngIf="isOpened else accountingIcon" [model]="accountingMenuItems"></p-panelMenu>
-      <ng-template #accountingIcon>
+      @if (isOpened) {
+        <p-panelMenu [model]="accountingMenuItems"></p-panelMenu>
+      }
+      @else {
         <p-overlayPanel #accountingPanel>
-          <div *ngFor="let item of accountingMenuItems[0].items">
-            <button *ngIf="!item.separator" class="p-button p-button-text p-button-secondary" (click)="item?.command({})" role="none">
-              {{item.label}}
-            </button>
-          </div>
+          @for (item of accountingMenuItems[0].items; track item.label) {
+            @if (!item.separator) {
+              <p-button styleClass="p-button-secondary"
+                [label]="item.label"
+                (click)="item?.command({})">
+              </p-button>
+            }
+          }
         </p-overlayPanel>
         <div class="text-center">
           <i (click)="accountingPanel.toggle($event)" class="bi bi-journal-text h1" pTooltip="Accounting" role="presentation"></i>
         </div>
-      </ng-template>
+      }
     </li>
     <li class="nav-item">
       <a class="nav-link border-bottom">
-        <i *ngIf="isOpened else rightArrowIcon" class="bi bi-arrow-left h1" (click)="toggle()" pTooltip="Minimize menu" role="presentation"></i>
-        <ng-template #rightArrowIcon>
+        @if (isOpened) {
+          <i class="bi bi-arrow-left h1" (click)="toggle()" pTooltip="Minimize menu" role="presentation"></i>
+        }
+        @else {
           <i class="bi bi-arrow-right h1" (click)="toggle()" pTooltip="Maximize menu" role="presentation"></i>
-        </ng-template>
+        }
       </a>
     </li>
   </ul>
 
-  <div *ngIf="userFullName" class="border-top mb-2">
-    <div class="px-3 pt-2" *ngIf="userRole && isOpened">
-      Role: <span class="fw-bold">{{userRole}}</span>
-    </div>
-
-    <p-panelMenu *ngIf="isOpened else profileIcon" [model]="profileMenuItems"></p-panelMenu>
-    <ng-template #profileIcon>
-      <p-overlayPanel #profilePanel>
-        <div *ngFor="let item of profileMenuItems[0].items">
-          <button *ngIf="!item.separator" class="p-button p-button-text p-button-secondary" (click)="item?.command({})" role="none">
-            {{item.label}}
-          </button>
+  @if (userFullName) {
+    <div class="border-top mb-2">
+      @if (userRole && isOpened) {
+        <div class="px-3 pt-2">
+          Role: <span class="fw-bold">{{userRole}}</span>
         </div>
-      </p-overlayPanel>
-      <div class="text-center">
-        <i (click)="profilePanel.toggle($event)" class="bi bi-person-circle h1" pTooltip="Account" role="presentation"></i>
-      </div>
-    </ng-template>
-  </div>
+      }
+
+      @if (isOpened) {
+        <p-panelMenu [model]="profileMenuItems"></p-panelMenu>
+      }
+      @else {
+        <p-overlayPanel #profilePanel>
+          @for (item of profileMenuItems[0].items; track item.label) {
+            @if (!item.separator) {
+              <p-button styleClass="p-button-secondary"
+                [label]="item.label"
+                (click)="item?.command({})">
+              </p-button>
+            }
+          }
+        </p-overlayPanel>
+        <div class="text-center">
+          <i (click)="profilePanel.toggle($event)" class="bi bi-person-circle h1" pTooltip="Account" role="presentation"></i>
+        </div>
+      }
+    </div>
+  }
 </div>

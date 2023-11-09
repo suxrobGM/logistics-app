@@ -72,17 +72,35 @@
         <hr class="w-100 m-0" />
       </ng-template>
 
-      <div class="row" *ngIf="isLoadingChartData; else data">
-        <div class="col-12 col-md-4">
-          <p-skeleton height="3rem"></p-skeleton>
+      @if (isLoadingChartData) {
+        <div class="row">
+          <div class="col-12 col-md-4">
+            <p-skeleton height="3rem"></p-skeleton>
+          </div>
+          <div class="col-12 col-md-4">
+            <p-skeleton height="3rem"></p-skeleton>
+          </div>
+          <div class="col-12 col-md-4">
+            <p-skeleton height="3rem"></p-skeleton>
+          </div>
         </div>
-        <div class="col-12 col-md-4">
-          <p-skeleton height="3rem"></p-skeleton>
+      }
+      @else {
+        <div class="row">
+          <div class="col-12 col-md-4 px-3">
+            <span class="text-secondary text-uppercase">Total Gross:</span><br/>
+            <span class="fw-bold fs-3">{{weeklyGross | currency}}</span>
+          </div>
+          <div class="col-12 col-md-4 px-3">
+            <span class="text-secondary text-uppercase">Billed Miles:</span><br/>
+            <span class="fw-bold fs-3">{{weeklyDistance | distanceUnit:'mi'}}</span>
+          </div>
+          <div class="col-12 col-md-4 px-3">
+            <span class="text-secondary text-uppercase">Rate Per Mile:</span><br/>
+            <span class="fw-bold fs-3">{{weeklyRpm | currency}}</span>
+          </div>
         </div>
-        <div class="col-12 col-md-4">
-          <p-skeleton height="3rem"></p-skeleton>
-        </div>
-      </div>
+      }
 
       <ng-template #data>
         <div class="row">
@@ -112,13 +130,14 @@
         <hr class="w-100 m-0" />
       </ng-template>
 
-      <div class="row" *ngIf="isLoadingChartData; else chart">
-        <div class="col-12">
-          <p-skeleton height="20vh"></p-skeleton>
+      @if (isLoadingChartData) {
+        <div class="row">
+          <div class="col-12">
+            <p-skeleton height="20vh"></p-skeleton>
+          </div>
         </div>
-      </div>
-
-      <ng-template #chart>
+      }
+      @else {
         <div class="row">
           <div class="col-12 col-md-3 mb-2">
             <span class="fw-bold">Today Gross:</span><br/>
@@ -128,7 +147,7 @@
             <p-chart type="line" [data]="chartData" [options]="chartOptions" width="40vw" height="20vh"></p-chart>
           </div>
         </div>
-      </ng-template>
+      }
     </p-card>
   </div>
   <div class="col-12 col-xl-5">

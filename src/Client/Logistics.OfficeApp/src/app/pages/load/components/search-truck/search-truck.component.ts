@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {AutoCompleteModule} from 'primeng/autocomplete';
+import {AutoCompleteModule, AutoCompleteOnSelectEvent} from 'primeng/autocomplete';
 import {ApiService} from '@core/services';
 import {TruckHelper} from '@pages/load/shared';
 
@@ -38,8 +38,8 @@ export class SearchTruckComponent {
     });
   }
 
-  changeSelectedTruck(event: TruckData) {
-    this.selectedTruckChange.emit(event);
+  changeSelectedTruck(event: AutoCompleteOnSelectEvent) {
+    this.selectedTruckChange.emit(event.value);
   }
 }
 

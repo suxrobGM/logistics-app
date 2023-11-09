@@ -3,8 +3,11 @@
 <div class="d-flex align-items-center">
   <h1>List Customers</h1>
   <p-button
-    styleClass="p-button-lg p-button-rounded p-button-text text-black ms-2"
+    styleClass="text-black ms-2"
     icon="bi bi-plus-square-fill"
+    size="large"
+    [rounded]="true"
+    [text]="true"
     pTooltip="Add a new customer"
     [routerLink]="['/customers/add']">
   </p-button>

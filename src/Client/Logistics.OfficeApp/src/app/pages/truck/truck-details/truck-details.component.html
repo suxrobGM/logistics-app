@@ -3,7 +3,7 @@
 
 <div class="row mt-3 g-3">
   <p-card class="col-12 col-sm-6">
-    <div *ngIf="isLoading; else actualData">
+    @if (isLoading) {
       <div class="row mb-3">
         <div class="col-12 col-md-6 mb-2 mb-md-0">
           <p-skeleton styleClass="my-2" height="3rem"></p-skeleton>
@@ -39,15 +39,14 @@
           <p-skeleton styleClass="my-2" height="3rem"></p-skeleton>
         </div>
       </div>
-    </div>
-
-    <ng-template #actualData>
+    }
+    @else {
       <div class="row mb-3">
         <div class="col-12 col-md-6 mb-2 mb-md-0">
           <span class="fw-bold">Drivers: </span><br />
-          <span class="me-1" *ngFor="let driver of truck?.drivers">
-            {{driver.fullName}}
-          </span>
+          @for (driver of truck?.drivers; track driver.id) {
+            <span class="me-1">{{driver.fullName}}</span>
+          }
         </div>
         <div class="col-12 col-md-6 mb-2 mb-md-0">
           <span class="fw-bold">Truck Number: </span><br />
@@ -87,7 +86,7 @@
           <span>{{rpmCurrent | currency}}</span>
         </div>
       </div>
-    </ng-template>
+    }
   </p-card>
 
   <div class="col-12 col-sm-6 map-container">

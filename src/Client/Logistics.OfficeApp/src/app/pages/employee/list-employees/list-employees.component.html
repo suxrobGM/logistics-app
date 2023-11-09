@@ -1,8 +1,11 @@
 <div class="d-flex align-items-center">
   <h1>List Employees</h1>
   <p-button
-    styleClass="p-button-lg p-button-rounded p-button-text text-black ms-2"
+    styleClass="text-black ms-2"
     icon="bi bi-plus-square-fill"
+    size="large"
+    [rounded]="true"
+    [text]="true"
     pTooltip="Add a new employee"
     [routerLink]="['/employees/add']">
   </p-button>
@@ -59,13 +62,12 @@
             <td>{{employee.email}}</td>
             <td>{{employee.phoneNumber}}</td>
             <td>
-              <ng-container *ngIf="employee.salaryType === 3 else fixedSalary">
+              @if (employee.salaryType === 3) {
                 {{employee.salary | percent}}
-              </ng-container>
-
-              <ng-template #fixedSalary>
-                <span>{{employee.salary | currency}}</span>
-              </ng-template>
+              }
+              @else {
+                {{employee.salary | currency}}
+              }
             </td>
             <td>{{getSalaryTypeDesc(employee.salaryType)}}</td>
             <td>{{employee.roles[0]?.displayName}}</td>

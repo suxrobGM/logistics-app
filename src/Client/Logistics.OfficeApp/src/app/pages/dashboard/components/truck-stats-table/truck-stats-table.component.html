@@ -58,22 +58,27 @@
             {{truckStats.distance | distanceUnit:'mi'}}
           </td>
           <td>
-            <span *ngFor="let driver of truckStats.drivers">
-              {{driver.fullName}}
-              <span *ngIf="truckStats.drivers.length > 1">,</span>
-            </span>
+            @for (driver of truckStats.drivers; track driver.id) {
+              <span>
+                {{driver.fullName}}
+                @if (truckStats.drivers.length > 1) {
+                  <span>,</span>
+                }
+              </span>
+            }
           </td>
-          <td>
-            <button pButton 
-              class="p-button-raised"
-              label="View details"
+          <td class="overflow-visible">
+            <p-button
+              icon="bi bi-journal-text"
+              pTooltip="View details"
               [routerLink]="['/trucks/details', truckStats.truckId]">
-            </button>
-            <button pButton 
-              class="p-button-raised ms-2"
-              label="Edit"
+            </p-button>
+            <p-button 
+              class="ms-2"
+              icon="bi bi-pencil"
+              pTooltip="Edit"
               [routerLink]="['/trucks/edit', truckStats.truckId]">
-            </button>
+            </p-button>
           </td>
         </tr>
       </ng-template>

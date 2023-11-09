@@ -8,30 +8,31 @@
   </ng-template>
 
   <div class="notification-list" [style]="{maxHeight: height}">
-    <ng-container *ngIf="isLoading; else notificationsList">
+    @if (isLoading) {
       <p-progressSpinner></p-progressSpinner>
-    </ng-container>
-    
-    <ng-template #notificationsList>
-      <div *ngFor="let notification of notifications; trackBy: trackByFn" 
+    }
+    @else {
+      @for (notification of notifications; track notification.id) {
+        <div class="notification-item my-1 border-bottom"
           [ngClass]="{'bg-lighter': !notification.isRead}"
-          class="notification-item my-1 border-bottom"
           (click)="showNotification(notification)"
           role="presentation">
-        
-        <h5>{{notification.title}}</h5>
-        <div class="row">
-          <div class="col-10">
-            {{notification.message}}
-          </div>
-          <div class="col-2">
-            <small class="text-muted">{{notification.createdDate | timeAgo}}</small>
+          
+          <h5>{{notification.title}}</h5>
+          <div class="row">
+            <div class="col-10">
+              {{notification.message}}
+            </div>
+            <div class="col-2">
+              <small class="text-muted">{{notification.createdDate | timeAgo}}</small>
+            </div>
           </div>
         </div>
-      </div>
-
-      <p *ngIf="!notifications.length" class="p-3 text-muted">No notifications.</p>
-    </ng-template>
+      }
+      @if (!notifications.length) {
+        <p class="p-3 text-muted">No notifications.</p>
+      }
+    }
   </div>
 </p-card>
 

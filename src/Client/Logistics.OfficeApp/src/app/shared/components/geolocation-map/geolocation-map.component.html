@@ -4,7 +4,8 @@
   [center]="center"
   [style.width]="width"
   [style.height]="height">
-  <ng-container *ngFor="let geoData of geolocationData; trackBy: trackByFn">
+
+  @for (geoData of geolocationData; track geoData.truckId) {
     <mgl-marker #marker 
       [lngLat]="[geoData.longitude, geoData.latitude]">
       <div class="text-center" (click)="onSelectMarker(geoData, marker)" role="presentation">
@@ -16,18 +17,22 @@
         </div>
       </div>
     </mgl-marker>
-  </ng-container>
+  }
 
-  <mgl-popup *ngIf="selectedMarker" [marker]="selectedMarker.component">
-    <span>
-      <strong>Truck:</strong> {{selectedMarker.data.truckNumber}}
-    </span><br/>
-    <span>
-      <strong>Drivers:</strong> {{selectedMarker.data.driversName}}
-    </span><br/>
-    <span *ngIf="selectedMarker.data.currentAddress">
-      <strong>Address:</strong>
-      {{formatAddress(selectedMarker.data.currentAddress)}}
-    </span>
-  </mgl-popup>
+  @if (selectedMarker) {
+    <mgl-popup [marker]="selectedMarker.component">
+      <span>
+        <strong>Truck:</strong> {{selectedMarker.data.truckNumber}}
+      </span><br/>
+      <span>
+        <strong>Drivers:</strong> {{selectedMarker.data.driversName}}
+      </span><br/>
+      @if (selectedMarker.data.currentAddress) {
+        <span>
+          <strong>Address:</strong>
+          {{formatAddress(selectedMarker.data.currentAddress)}}
+        </span>
+      }
+    </mgl-popup>
+  }
 </mgl-map>
