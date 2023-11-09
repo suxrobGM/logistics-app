@@ -47,17 +47,15 @@
         </ng-template>
         <ng-template pTemplate="footer">
           <tr>
-            <td colspan="4">
-              <button pButton 
-                class="p-button-raised" 
-                routerLink="/loads/add">
-                Add
-              </button>
-              <button pButton 
-                class="p-button-raised ms-2" 
-                routerLink="/loads">
-                View all loads
-              </button>
+            <td colspan="4" class="text-start">
+              <p-button
+                label="Add"
+                [routerLink]="['/loads/add']">
+              </p-button>
+              <p-button class="ms-2"
+                label="View all loads" 
+                [routerLink]="['/loads']">
+              </p-button>
             </td>
           </tr>
         </ng-template>

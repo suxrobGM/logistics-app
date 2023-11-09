@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
@@ -27,7 +27,6 @@ import {SearchCustomerComponent, SearchTruckComponent, TruckData} from '../compo
   selector: 'app-add-load',
   templateUrl: './add-load.component.html',
   styleUrls: ['./add-load.component.scss'],
-  encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [
     ToastModule,

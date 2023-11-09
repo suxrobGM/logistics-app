@@ -1,4 +1,4 @@
-import {Component, ViewEncapsulation} from '@angular/core';
+import {Component} from '@angular/core';
 import {CurrencyPipe, DatePipe} from '@angular/common';
 import {RouterLink} from '@angular/router';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
@@ -17,7 +17,6 @@ import {DistanceUnitPipe} from '@shared/pipes';
   selector: 'app-list-loads',
   templateUrl: './list-loads.component.html',
   styleUrls: [],
-  encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [
     ButtonModule,

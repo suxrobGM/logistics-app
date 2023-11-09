@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {NgIf, CurrencyPipe} from '@angular/common';
 import {RouterLink} from '@angular/router';
 import {ChartModule} from 'primeng/chart';
@@ -21,7 +21,6 @@ import {NotificationsPanelComponent} from './components';
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [
     CardModule,
@@ -40,27 +39,18 @@ import {NotificationsPanelComponent} from './components';
   ],
 })
 export class HomeComponent implements OnInit {
-  public readonly accessToken: string;
-  public todayGross: number;
-  public weeklyGross: number;
-  public weeklyDistance: number;
-  public weeklyRpm: number;
-  public isLoadingLoadsData: boolean;
-  public isLoadingChartData: boolean;
-  public loads: Load[];
-  public chartData: any;
-  public chartOptions: any;
+  public readonly accessToken = AppConfig.mapboxToken;
+  public todayGross = 0;
+  public weeklyGross = 0;
+  public weeklyDistance = 0;
+  public weeklyRpm = 0;
+  public isLoadingLoadsData = false;
+  public isLoadingChartData = false;
+  public loads: Load[] = [];
+  public chartData: unknown;
+  public chartOptions: unknown;
 
-  constructor(private apiService: ApiService) {
-    this.accessToken = AppConfig.mapboxToken;
-    this.loads = [];
-    this.isLoadingLoadsData = false;
-    this.isLoadingChartData = false;
-    this.todayGross = 0;
-    this.weeklyGross = 0;
-    this.weeklyDistance = 0;
-    this.weeklyRpm = 0;
-
+  constructor(private readonly apiService: ApiService) {
     this.chartData = {
       labels: [],
       datasets: [
@@ -145,8 +135,8 @@ export class HomeComponent implements OnInit {
     let totalGross = 0;
 
     grosses.data
-        .filter((i) => DateUtils.dayOfMonth(i.date) === today.getDate())
-        .forEach((i) => totalGross += i.gross);
+      .filter((i) => DateUtils.dayOfMonth(i.date) === today.getDate())
+      .forEach((i) => totalGross += i.gross);
 
     this.todayGross = totalGross;
   }
