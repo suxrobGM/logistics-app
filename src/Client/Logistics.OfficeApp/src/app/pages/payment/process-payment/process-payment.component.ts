@@ -170,7 +170,7 @@ export class ProcessPaymentComponent implements OnInit {
     this.isLoading = true;
     this.apiService.getPayroll(payrollId).subscribe((result) => {
       this.payroll = result.data;
-      // this.isPaymentCompleted = this.invoice?.payment.status === PaymentStatus.Paid;
+      this.isPaymentCompleted = this.payroll?.payment.status === PaymentStatus.Paid;
       this.isLoading = false;
     });
   }
@@ -179,7 +179,7 @@ export class ProcessPaymentComponent implements OnInit {
     this.isLoading = true;
     this.apiService.getInvoice(invoiceId).subscribe((result) => {
       this.invoice = result.data;
-      // this.isPaymentCompleted = this.invoice?.payment.status === PaymentStatus.Paid;
+      this.isPaymentCompleted = this.invoice?.payment.status === PaymentStatus.Paid;
       this.isLoading = false;
     });
   }

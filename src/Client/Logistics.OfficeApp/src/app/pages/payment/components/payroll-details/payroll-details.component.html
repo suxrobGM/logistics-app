@@ -19,7 +19,7 @@
 </div>
 <div class="row mb-3">
   <div class="col-4">
-    <h6>Payroll period:</h6>
+    <h6>Billing period:</h6>
   </div>
   <div class="col-8">
     {{payroll.startDate | date:'mediumDate'}} - {{payroll.endDate | date:'mediumDate'}}
@@ -39,7 +39,7 @@
   </div>
   <div class="col-8">
     @if (payroll.employee.salaryType === salaryType.ShareOfGross) {
-      {{payroll.employee.salary | percent}}
+      {{payroll.employee.salary | percent}} of gross
     }
     @else {
       {{payroll.employee.salary | currency}}

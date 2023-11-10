@@ -1,29 +1,27 @@
-<div class="row">
-  <form [formGroup]="form" class="col-12 col-md-6">
-    <app-validation-summary [form]="form"></app-validation-summary>
-    <div class="mb-3">
-      <label for="addressLine1" class="form-label">Address Line 1:</label>
-      <input type="text" id="addressLine1" formControlName="addressLine1" class="form-control"/>
-    </div>
-    <div class="mb-3">
-      <label for="addressLine2" class="form-label">Address Line 2 (optional):</label>
-      <input type="text" id="addressLine2" formControlName="addressLine2" class="form-control"/>
-    </div>
-    <div class="mb-3">
-      <label for="city" class="form-label">City:</label>
-      <input type="text" id="city" formControlName="city" class="form-control"/>
-    </div>
-    <div class="mb-3">
-      <label for="region" class="form-label">State/Region:</label>
-      <input type="text" id="region" formControlName="region" class="form-control"/>
-    </div>
-    <div class="mb-3">
-      <label for="zipCode" class="form-label">Zip Code:</label>
-      <input type="text" id="zipCode" formControlName="zipCode" class="form-control"/>
-    </div>
-    <div class="mb-3">
-      <label for="country" class="form-label">Country:</label>
-      <input type="text" id="country" formControlName="country" class="form-control"/>
-    </div>
-  </form>
-</div>
+<form [formGroup]="form">
+  <app-validation-summary [form]="form"></app-validation-summary>
+  <div class="mb-3">
+    <label for="addressLine1" class="form-label">Address Line 1:</label>
+    <input id="addressLine1" formControlName="addressLine1" class="form-control"/>
+  </div>
+  <div class="mb-3">
+    <label for="addressLine2" class="form-label">Address Line 2 (optional):</label>
+    <input id="addressLine2" formControlName="addressLine2" class="form-control"/>
+  </div>
+  <div class="mb-3">
+    <label for="city" class="form-label">City:</label>
+    <input id="city" formControlName="city" class="form-control"/>
+  </div>
+  <div class="mb-3">
+    <label for="region" class="form-label">State/Region:</label>
+    <input id="region" formControlName="region" class="form-control"/>
+  </div>
+  <div class="mb-3">
+    <label for="zipCode" class="form-label">Zip Code:</label>
+    <input id="zipCode" formControlName="zipCode" class="form-control"/>
+  </div>
+  <div class="mb-3">
+    <label for="country" class="form-label">Country:</label>
+    <input id="country" formControlName="country" class="form-control"/>
+  </div>
+</form>
