@@ -1,23 +1,24 @@
 import {Component, OnInit} from '@angular/core';
-import {CommonModule, CurrencyPipe, DatePipe, PercentPipe} from '@angular/common';
+import {CommonModule} from '@angular/common';
 import {FormGroup, FormControl, Validators, ReactiveFormsModule} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {CardModule} from 'primeng/card';
 import {ButtonModule} from 'primeng/button';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {RadioButtonModule} from 'primeng/radiobutton';
-import {PaymentMethod, PaymentMethodEnum, SalaryType, SalaryTypeEnum, convertEnumToArray} from '@core/enums';
-import {Invoice, Payroll, Tenant} from '@core/models';
+import {InputMaskModule} from 'primeng/inputmask';
+import {PaymentMethod, PaymentMethodEnum, convertEnumToArray} from '@core/enums';
+import {Invoice, Payroll} from '@core/models';
 import {RegexPatterns} from '@core/helpers';
-import {ApiService, TenantService, ToastService} from '@core/services';
-import {ValidationSummaryComponent} from '@shared/components';
+import {ApiService, ToastService} from '@core/services';
+import {AddressControlComponent, ValidationSummaryComponent} from '@shared/components';
+import {InvoiceDetailsComponent, PayrollDetailsComponent} from '../components';
 
 
 @Component({
   selector: 'app-make-payment',
   standalone: true,
   templateUrl: './make-payment.component.html',
-  styleUrls: ['./make-payment.component.scss'],
   imports: [
     CommonModule,
     CardModule,
@@ -25,40 +26,39 @@ import {ValidationSummaryComponent} from '@shared/components';
     ReactiveFormsModule,
     ValidationSummaryComponent,
     RadioButtonModule,
-    CurrencyPipe,
-    DatePipe,
-    PercentPipe,
     ButtonModule,
+    InvoiceDetailsComponent,
+    PayrollDetailsComponent,
+    InputMaskModule,
+    AddressControlComponent,
   ],
 })
 export class MakePaymentComponent implements OnInit {
+  public paymentMethod = PaymentMethod;
   public paymentMethods = convertEnumToArray(PaymentMethodEnum)
   public title = '';
   public isLoading = false;
   public form: FormGroup<PaymentForm>;
-  public tenantData: Tenant | null;
   public payroll?: Payroll;
   public invoice?: Invoice;
 
   constructor(
     private readonly apiService: ApiService,
     private readonly toastService: ToastService,
-    private readonly tenantService: TenantService,
     private readonly route: ActivatedRoute)
   {
     this.form = new FormGroup<PaymentForm>({
       paymentMethod: new FormControl(PaymentMethod.CreditCard, {validators: Validators.required, nonNullable: true}),
       cardholderName: new FormControl(''),
       cardNumber: new FormControl(''),
-      cardExpireDate: new FormControl(''),
+      cardExpirationDate: new FormControl(''),
       cardCvv: new FormControl(''),
-      billingAddress: new FormControl(''),
+      billingAddress: new FormControl('', {validators: Validators.required, nonNullable: true}),
       bankName: new FormControl(''),
       bankAccountNumber: new FormControl(''),
       bankRoutingNumber: new FormControl(''),
     });
 
-    this.tenantData = tenantService.getTenantData();
     this.setConditionalValidators();
   }
 
@@ -89,20 +89,11 @@ export class MakePaymentComponent implements OnInit {
     
   }
 
-  isShareOfGrossSalary(salaryType: SalaryType): boolean {
-    return salaryType === SalaryType.ShareOfGross;
-  }
-
-  getSalaryTypeDesc(enumValue: SalaryType): string {
-    return SalaryTypeEnum.getDescription(enumValue);
-  }
-
   private setConditionalValidators() {
     const cardholderName = this.form.get('cardholderName');
     const cardNumber = this.form.get('cardNumber');
     const cardExpireDate = this.form.get('cardExpireDate');
     const cardCvv = this.form.get('cardCvv');
-    const billingAddress = this.form.get('billingAddress');
     const bankName = this.form.get('bankName');
     const bankAccountNumber = this.form.get('bankAccountNumber');
     const bankRoutingNumber = this.form.get('bankRoutingNumber');
@@ -125,7 +116,6 @@ export class MakePaymentComponent implements OnInit {
         cardNumber?.clearValidators();
         cardExpireDate?.clearValidators();
         cardCvv?.clearValidators();
-        billingAddress?.clearValidators();
       }
       else {
         // If 'Cash' or anything else, clear all validators
@@ -133,7 +123,6 @@ export class MakePaymentComponent implements OnInit {
         cardNumber?.clearValidators();
         cardExpireDate?.clearValidators();
         cardCvv?.clearValidators();
-        billingAddress?.clearValidators();
         bankName?.clearValidators();
         bankAccountNumber?.clearValidators();
         bankRoutingNumber?.clearValidators();
@@ -143,7 +132,6 @@ export class MakePaymentComponent implements OnInit {
       cardNumber?.updateValueAndValidity();
       cardExpireDate?.updateValueAndValidity();
       cardCvv?.updateValueAndValidity();
-      billingAddress?.updateValueAndValidity();
       bankName?.updateValueAndValidity();
       bankAccountNumber?.updateValueAndValidity();
       bankRoutingNumber?.updateValueAndValidity();
@@ -171,9 +159,9 @@ interface PaymentForm {
   paymentMethod: FormControl<PaymentMethod>;
   cardholderName: FormControl<string | null>;
   cardNumber: FormControl<string | null>;
-  cardExpireDate: FormControl<string | null>;
+  cardExpirationDate: FormControl<string | null>;
   cardCvv: FormControl<string | null>;
-  billingAddress: FormControl<string | null>;
+  billingAddress: FormControl<string>;
   bankName: FormControl<string | null>;
   bankAccountNumber: FormControl<string | null>;
   bankRoutingNumber: FormControl<string | null>;

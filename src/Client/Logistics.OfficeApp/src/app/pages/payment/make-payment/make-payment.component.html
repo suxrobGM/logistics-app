@@ -11,7 +11,16 @@
       <form [formGroup]="form" (ngSubmit)="submit()">
         <app-validation-summary [form]="form"></app-validation-summary>
 
+        @if (invoice) {
+          <app-invoice-details [invoice]="invoice"></app-invoice-details>
+        }
+
+        @if (payroll) {
+          <app-payroll-details [payroll]="payroll"></app-payroll-details>
+        }
+
         <div class="mb-3">
+          <h5>Choose payment method:</h5>
           @for (paymentMethod of paymentMethods; track paymentMethod.value) {
             <div class="field-checkbox">
               <p-radioButton formControlName="paymentMethod" [inputId]="paymentMethod.description" [value]="paymentMethod.value"></p-radioButton>
@@ -20,119 +29,58 @@
           }
         </div>
 
-        @if (invoice && tenantData) {
-          <h4>Invoice details</h4>
-            <hr />
-        
-            <div class="row mb-3">
-              <div class="col-4">
-                <h6>Carrier:</h6>
-              </div>
-              <div class="col-8">
-                {{tenantData.companyName}}
-              </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col-4">
-                <h6>Carrier Address:</h6>
-              </div>
-              <div class="col-8">
-                {{tenantData.companyAddress}}
-              </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col-4">
-                <h6>Shipper/Dealer:</h6>
-              </div>
-              <div class="col-8">
-                {{invoice.customer.name}}
-              </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col-4">
-                <h6>Invoice Load ID:</h6>
-              </div>
-              <div class="col-8">
-                {{invoice.loadRef}}
-              </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col-4">
-                <h6>Invoice Date:</h6>
-              </div>
-              <div class="col-8">
-                {{invoice.createdDate | date:'mediumDate'}}
-              </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col-4">
-                <h6>Payment Amount:</h6>
-              </div>
-              <div class="col-8">
-                {{invoice.payment.amount | currency}}
-              </div>
-            </div>
-        }
-        
+        @if (form.get('paymentMethod')?.value === paymentMethod.CreditCard) {
+          <h5>Credit/Debit card details</h5>
+          <hr/>
 
-        @if (payroll) {
-          <h4>Payroll details</h4>
-          <hr />
-      
-          <div class="row mb-3">
-            <div class="col-4">
-              <h6>Employee:</h6>
+          <div class="col-12 col-md-6">
+            <div class="mb-3">
+              <label for="cardholderName" class="form-label">Cardholder Name</label>
+              <input id="cardholderName" formControlName="cardholderName" class="form-control" placeholder="ex. John Smith" />
             </div>
-            <div class="col-8">
-              {{payroll.employee.fullName}}
+            <div class="mb-3">
+              <label for="cardNumber" class="form-label">Card Number</label>
+              <p-inputMask id="cardNumber" formControlName="cardNumber" styleClass="form-control" mask="9999 9999 9999 9999" placeholder="1234 0000 0000 0000" />
             </div>
-          </div>    
-          <div class="row mb-3">
-            <div class="col-4">
-              <h6>Employee Position:</h6>
-            </div>
-            <div class="col-8">
-              {{payroll.employee.roles[0].displayName}}
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-4">
-              <h6>Payroll period:</h6>
-            </div>
-            <div class="col-8">
-              {{payroll.startDate | date:'mediumDate'}} - {{payroll.endDate | date:'mediumDate'}}
+            <div class="row mb-3">
+              <div class="col-6">
+                <label for="cardExpirationDate" class="form-label">Card Expiration Date</label>
+                <p-inputMask id="cardExpirationDate" formControlName="cardExpirationDate" styleClass="form-control" mask="99/99" placeholder="MM/YY" />
+              </div>
+              <div class="col-6">
+                <label for="cardCvv" class="form-label">Card CVV</label>
+                <input id="cardCvv" formControlName="cardCvv" class="form-control" placeholder="123" />
+              </div>
             </div>
           </div>
-          <div class="row mb-3">
-            <div class="col-4">
-              <h6>Salary type:</h6>
+          
+        }
+        @else if (form.get('paymentMethod')?.value === paymentMethod.BankAccount) {
+          <h5>Bank account details</h5>
+          <hr/>
+
+          <div class="col-12 col-md-6">
+            <div class="mb-3">
+              <label for="bankName" class="form-label">Bank Name</label>
+              <input formControlName="bankName" class="form-control" placeholder="ex. Bank of America" />
             </div>
-            <div class="col-8">
-              {{getSalaryTypeDesc(payroll.employee.salaryType)}}
+            <div class="mb-3">
+              <label for="bankAccountNumber" class="form-label">Account Number</label>
+              <input formControlName="bankAccountNumber" class="form-control" placeholder="ex. 1234567891011" />
             </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-4">
-              <h6>Salary:</h6>
-            </div>
-            <div class="col-8">
-              @if (isShareOfGrossSalary(payroll.employee.salaryType)) {
-                {{payroll.employee.salary | percent}}
-              }
-              @else {
-                {{payroll.employee.salary | currency}}
-              }
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-4">
-              <h6>Payment Amount:</h6>
-            </div>
-            <div class="col-8">
-              {{payroll.payment.amount | currency}}
+            <div class="mb-3">
+              <label for="bankRoutingNumber" class="form-label">Routing Number</label>
+              <input formControlName="bankRoutingNumber" class="form-control" placeholder="ex. 123456789" />
             </div>
           </div>
-          }
+        }
+
+        <div>
+          <h5>Billing address</h5>
+          <hr/>
+
+          <app-address-control formControlName="billingAddress"></app-address-control>
+        </div>
         
         <div>
           <p-button type="submit"
