@@ -271,6 +271,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("BillingAddress")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
 
@@ -321,29 +324,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .IsUnique();
 
                     b.ToTable("Payrolls", (string)null);
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionPayment", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PaymentId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PaymentId")
-                        .IsUnique();
-
-                    b.ToTable("SubscriptionPayments", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.TenantRole", b =>
@@ -529,17 +509,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .IsRequired();
 
                     b.Navigation("Employee");
-
-                    b.Navigation("Payment");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionPayment", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.Payment", "Payment")
-                        .WithOne()
-                        .HasForeignKey("Logistics.Domain.Entities.SubscriptionPayment", "PaymentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("Payment");
                 });

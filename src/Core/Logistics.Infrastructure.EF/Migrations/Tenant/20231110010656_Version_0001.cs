@@ -49,6 +49,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     Amount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     PaymentFor = table.Column<int>(type: "int", nullable: false),
+                    BillingAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -113,26 +114,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Invoices_Payments_PaymentId",
-                        column: x => x.PaymentId,
-                        principalTable: "Payments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SubscriptionPayments",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PaymentId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SubscriptionPayments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SubscriptionPayments_Payments_PaymentId",
                         column: x => x.PaymentId,
                         principalTable: "Payments",
                         principalColumn: "Id",
@@ -363,12 +344,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "IX_RoleClaims_RoleId",
                 table: "RoleClaims",
                 column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SubscriptionPayments_PaymentId",
-                table: "SubscriptionPayments",
-                column: "PaymentId",
-                unique: true);
         }
 
         /// <inheritdoc />
@@ -388,9 +363,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");
-
-            migrationBuilder.DropTable(
-                name: "SubscriptionPayments");
 
             migrationBuilder.DropTable(
                 name: "Invoices");

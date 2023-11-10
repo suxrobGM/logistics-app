@@ -17,6 +17,7 @@ internal sealed class CreatePaymentHandler : RequestHandler<CreatePaymentCommand
             Amount = req.Amount,
             Method = req.Method,
             PaymentFor = req.PaymentFor,
+            BillingAddress = req.BillingAddress,
             Comment = req.Comment
         };
         

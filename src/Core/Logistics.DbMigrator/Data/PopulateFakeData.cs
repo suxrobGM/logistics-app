@@ -273,35 +273,10 @@ internal class PopulateFakeData
         load.DeliveryDate = dispatchedDate.AddDays(2);
         load.Distance = _random.Next(16093, 321869);
         load.DeliveryCost = _random.Next(1000, 3000);
-        load.Invoice = CreateInvoice(load);
+        load.Invoice = InvoiceGenerator.GenerateInvoice(load);
 
         await _tenantRepository.AddAsync(load);
         _logger.LogInformation("Added a load {Name}", load.Name);
-    }
-
-    private Invoice CreateInvoice(Load load)
-    {
-        var payment = new Payment
-        {
-            Amount = load.DeliveryCost,
-            Status = PaymentStatus.Paid,
-            CreatedDate = DateTime.Today,
-            PaymentDate = DateTime.Now,
-            PaymentFor = PaymentFor.Invoice,
-            Method = PaymentMethod.BankAccount
-        };
-
-        var invoice = new Invoice
-        {
-            CustomerId = load.CustomerId!,
-            Customer = load.Customer!,
-            LoadId = load.Id,
-            Load = load,
-            PaymentId = payment.Id,
-            Payment = payment,
-        };
-
-        return invoice;
     }
 
     private async Task AddNotificationsAsync()

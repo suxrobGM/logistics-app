@@ -8,13 +8,15 @@ public static class PaymentMapper
     {
         return new PaymentDto
         {
+            Id = entity.Id,
             Amount = entity.Amount,
             CreatedDate = entity.CreatedDate,
             Comment = entity.Comment,
             Method = entity.Method,
             PaymentDate = entity.PaymentDate,
             PaymentFor = entity.PaymentFor,
-            Status = entity.Status
+            Status = entity.Status,
+            BillingAddress = entity.BillingAddress
         };
     }
 }

@@ -94,15 +94,6 @@ public class TenantDbContext : DbContext
                 .WithMany(i => i.PayrollPayments)
                 .HasForeignKey(i => i.EmployeeId);
         });
-        
-        builder.Entity<SubscriptionPayment>(entity =>
-        {
-            entity.ToTable("SubscriptionPayments");
-
-            entity.HasOne(i => i.Payment)
-                .WithOne()
-                .HasForeignKey<SubscriptionPayment>(i => i.PaymentId);
-        });
 
         builder.Entity<TenantRole>(entity =>
         {

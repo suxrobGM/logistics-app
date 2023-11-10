@@ -76,7 +76,8 @@ public class PayrollGenerator
             PaymentFor = PaymentFor.Payroll,
             Method = PaymentMethod.BankAccount,
             Status = PaymentStatus.Paid,
-            PaymentDate = DateTime.UtcNow
+            PaymentDate = DateTime.UtcNow,
+            BillingAddress = "40 Crescent Ave, Boston, MA 02125, United States"
         };
         
         var payroll = new Payroll

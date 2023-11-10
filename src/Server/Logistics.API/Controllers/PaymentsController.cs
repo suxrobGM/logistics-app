@@ -54,6 +54,20 @@ public class PaymentsController : ControllerBase
 
         return BadRequest(result);
     }
+    
+    [HttpPost("process-payment")]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [AllowAnonymous]
+    public async Task<IActionResult> ProcessPayment([FromBody] ProcessPaymentCommand request)
+    {
+        var result = await _mediator.Send(request);
+
+        if (result.IsSuccess)
+            return Ok(result);
+
+        return BadRequest(result);
+    }
 
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]

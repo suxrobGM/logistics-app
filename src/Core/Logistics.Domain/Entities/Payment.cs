@@ -11,6 +11,7 @@ public class Payment : Entity, ITenantEntity
     public decimal Amount { get; set; }
     public PaymentStatus Status { get; set; }
     public PaymentFor PaymentFor { get; set; }
+    public string? BillingAddress { get; set; }
     public string? Comment { get; set; }
 
     public void SetStatus(PaymentStatus status)
