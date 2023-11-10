@@ -14,17 +14,18 @@ public class FilterPaymentsByInterval : BaseSpecification<Payment>
             i.CreatedDate >= startPeriod && i.CreatedDate <= endPeriod;
     }
     
-    private static Expression<Func<Payment, object>> InitOrderBy(string? propertyName)
+    private static Expression<Func<Payment, object?>> InitOrderBy(string? propertyName)
     {
         propertyName = propertyName?.ToLower();
         return propertyName switch
         {
-            "paymentdate" => i => i.PaymentDate!,
+            "paymentdate" => i => i.PaymentDate,
             "method" => i => i.Method,
             "amount" => i => i.Amount,
             "status" => i => i.Status,
-            "Comment" => i => i.Comment!,
+            "comment" => i => i.Comment!,
             "paymentfor" => i => i.PaymentFor,
+            "billingaddress" => i => i.BillingAddress,
             _ => i => i.CreatedDate
         };
     }

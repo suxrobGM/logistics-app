@@ -42,6 +42,7 @@ import {
   Payroll,
   UpdatePayroll,
   CreatePayroll,
+  ProcessPayment,
 } from '../models';
 
 
@@ -295,6 +296,11 @@ export class ApiService {
   getPayments(query?: PagedIntervalQuery): Observable<PagedResponseResult<Payment>> {
     const url = `/payments?${this.stringfyPagedIntervalQuery(query)}`;
     return this.get(url);
+  }
+
+  processPayment(command: ProcessPayment): Observable<ResponseResult> {
+    const url = `/payments/process-payment`;
+    return this.post(url, command);
   }
 
   createPayment(command: CreatePayment): Observable<ResponseResult> {

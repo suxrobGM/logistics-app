@@ -72,10 +72,12 @@ User password: Test12345#
 - MS SQL
 - xUnit
 - Moq
-- Angular 16
+- Angular 17
 - PrimeNG
 - Blazor
 - MAUI
+- Firebase
+- SignalR
 - Docker
 - CI/CD
 

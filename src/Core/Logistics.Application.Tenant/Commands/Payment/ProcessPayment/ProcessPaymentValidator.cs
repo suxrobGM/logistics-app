@@ -7,7 +7,6 @@ internal sealed class ProcessPaymentValidator : AbstractValidator<ProcessPayment
 {
     public ProcessPaymentValidator()
     {
-        RuleFor(i => i.Amount).GreaterThanOrEqualTo(0);
         RuleFor(i => i.PaymentId).NotEmpty();
         RuleFor(i => i.BillingAddress).NotEmpty();
         

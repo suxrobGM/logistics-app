@@ -21,9 +21,9 @@ export class ValidationSummaryComponent implements OnInit {
   @Input({required: true}) form!: FormGroup;
 
   ngOnInit(): void {
-    this.form.valueChanges
-    .subscribe(() => {
+    this.form.valueChanges.subscribe(() => {
       const errors = this.calculateErrors();
+      
       this.formErrorsSubject.next(errors);
     });
   }
@@ -56,7 +56,7 @@ export class ValidationSummaryComponent implements OnInit {
       maxlength: `${controlName} can't be more than ${control.errors[errorKey]?.requiredLength} characters long.`,
       pattern: `${controlName} has an invalid format.`,
       min: `${controlName} must be greater than or equal to ${control.errors[errorKey]?.min}.`,
-      max: `${controlName} must be less than or equal to ${control.errors[errorKey]?.max}.`
+      max: `${controlName} must be less than or equal to ${control.errors[errorKey]?.max}.`,
     };
 
     return defaultMessages[errorKey];

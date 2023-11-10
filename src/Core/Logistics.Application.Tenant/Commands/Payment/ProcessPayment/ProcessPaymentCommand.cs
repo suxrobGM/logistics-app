@@ -7,7 +7,6 @@ public class ProcessPaymentCommand : IRequest<ResponseResult>
 {
     public string PaymentId { get; set; } = default!;
     public PaymentMethod PaymentMethod { get; set; }
-    public decimal Amount { get; set; }
     public string? CardholderName { get; set; }
     public string? CardNumber { get; set; }
     public string? CardExpirationDate { get; set; }

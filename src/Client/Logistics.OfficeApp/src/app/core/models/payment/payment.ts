@@ -9,5 +9,6 @@ export interface Payment {
   amount: number;
   status: PaymentStatus;
   paymentFor: PaymentFor;
+  billingAddress?: string;
   comment?: string;
 }

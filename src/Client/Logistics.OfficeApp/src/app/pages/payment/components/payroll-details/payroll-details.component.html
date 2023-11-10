@@ -39,10 +39,10 @@
   </div>
   <div class="col-8">
     @if (payroll.employee.salaryType === salaryType.ShareOfGross) {
-    {{payroll.employee.salary | percent}}
+      {{payroll.employee.salary | percent}}
     }
     @else {
-    {{payroll.employee.salary | currency}}
+      {{payroll.employee.salary | currency}}
     }
   </div>
 </div>

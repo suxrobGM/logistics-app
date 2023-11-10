@@ -8,13 +8,13 @@ import {DropdownModule} from 'primeng/dropdown';
 import {AutoCompleteModule, AutoCompleteOnSelectEvent} from 'primeng/autocomplete';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {CalendarModule} from 'primeng/calendar';
+import {ButtonModule} from 'primeng/button';
 import {CreatePayroll, Employee, Payroll, UpdatePayroll} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {PredefinedDateRanges} from '@core/helpers';
 import {SalaryType, SalaryTypeEnum} from '@core/enums';
 import {ValidationSummaryComponent} from '@shared/components';
 import {DateUtils} from '@shared/utils';
-import { ButtonModule } from 'primeng/button';
 
 
 @Component({

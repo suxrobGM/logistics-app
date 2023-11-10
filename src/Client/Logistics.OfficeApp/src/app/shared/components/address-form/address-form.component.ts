@@ -21,9 +21,9 @@ import {ValidationSummaryComponent} from '../validation-summary/validation-summa
 
 
 @Component({
-  selector: 'app-address-control',
+  selector: 'app-address-form',
   standalone: true,
-  templateUrl: './address-control.component.html',
+  templateUrl: './address-form.component.html',
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -32,18 +32,18 @@ import {ValidationSummaryComponent} from '../validation-summary/validation-summa
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => AddressControlComponent),
+      useExisting: forwardRef(() => AddressFormComponent),
       multi: true
     }
   ]
 })
-export class AddressControlComponent implements OnInit, OnChanges, ControlValueAccessor {
+export class AddressFormComponent implements OnInit, OnChanges, ControlValueAccessor {
   public form: FormGroup<AddressForm>;
   private onTouched?: () => void;
-  private onChanged?: (value: string) => void;
+  private onChanged?: (value: string | null) => void;
 
   @Input() addressString = '';
-  @Output() addressStringChange = new EventEmitter<string>();
+  @Output() addressStringChange = new EventEmitter<string | null>();
 
   constructor() {
     this.form = new FormGroup<AddressForm>({
@@ -53,16 +53,18 @@ export class AddressControlComponent implements OnInit, OnChanges, ControlValueA
       region: new FormControl('', {validators: Validators.required, nonNullable: true}),
       zipCode: new FormControl('', {validators: Validators.required, nonNullable: true}),
       country: new FormControl('', {validators: Validators.required, nonNullable: true})
-    })
+    });
   }
 
   ngOnInit() {
     this.form.valueChanges.subscribe((values) => {
-      const address = Object.values(values).filter(Boolean).join(', ');
+      // const address = Object.values(values).filter(Boolean).join(', ');
+      const address = this.convertToString(values);
+      
       if (this.onChanged) {
         this.onChanged(address);
+        this.addressStringChange.emit(address);
       }
-      this.addressStringChange.emit(address);
     });
   }
 
@@ -88,6 +90,25 @@ export class AddressControlComponent implements OnInit, OnChanges, ControlValueA
 
   setDisabledState(isDisabled: boolean): void {
     isDisabled ? this.form.disable() : this.form.enable();
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private convertToString(values: any): string | null {
+    const requiredFieldsFilled = this.form.get('addressLine1')?.value &&
+      this.form.get('city')?.value &&
+      this.form.get('region')?.value &&
+      this.form.get('zipCode')?.value &&
+      this.form.get('country')?.value;
+
+    // If all required fields are filled, construct the address string.
+    if (requiredFieldsFilled) {
+      const {addressLine2, ...otherValues} = values;
+      let address = Object.values(otherValues).filter(Boolean).join(', ');
+      address += addressLine2 ? `, ${addressLine2}` : '';
+      return address;
+    }
+
+    return null;
   }
 
   private parseAddressString(address: string): void {

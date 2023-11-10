@@ -56,6 +56,10 @@
               Payment For
               <p-sortIcon field="paymentFor"></p-sortIcon>
             </th>
+            <th pSortableColumn="billingAddress">
+              Billing Address
+              <p-sortIcon field="billingAddress"></p-sortIcon>
+            </th>
             <th pSortableColumn="comment">
               Comment
               <p-sortIcon field="comment"></p-sortIcon>
@@ -75,6 +79,7 @@
               </p-tag>
             </td>
             <td>{{getPaymentForDesc(payment.paymentFor)}}</td>
+            <td>{{payment.billingAddress}}</td>
             <td>{{payment.comment}}</td>
           </tr>
         </ng-template>

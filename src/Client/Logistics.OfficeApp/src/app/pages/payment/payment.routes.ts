@@ -1,18 +1,18 @@
 import {Routes} from '@angular/router';
-import {MakePaymentComponent} from './make-payment/make-payment.component';
+import {ProcessPaymentComponent} from './process-payment/process-payment.component';
 
 
 export const PAYMENT_ROUTES: Routes = [
   {
     path: 'invoice/:invoiceId',
-    component: MakePaymentComponent,
+    component: ProcessPaymentComponent,
     data: {
       breadcrumb: 'Invoice Payment',
     },
   },
   {
     path: 'payroll/:payrollId',
-    component: MakePaymentComponent,
+    component: ProcessPaymentComponent,
     data: {
       breadcrumb: 'Payroll Payment',
     },
