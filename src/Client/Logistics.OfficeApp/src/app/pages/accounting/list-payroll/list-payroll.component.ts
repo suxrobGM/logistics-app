@@ -39,6 +39,8 @@ import {ApiService} from '@core/services';
   ],
 })
 export class ListPayrollComponent {
+  public salaryType = SalaryType;
+  public paymentStatus = PaymentStatus;
   public payrolls: Payroll[] = [];
   public isLoading = false;
   public totalRecords = 0;
@@ -80,14 +82,6 @@ export class ListPayrollComponent {
 
       this.isLoading = false;
     });
-  }
-
-  isShareOfGrossSalary(salaryType: SalaryType): boolean {
-    return salaryType === SalaryType.ShareOfGross;
-  }
-
-  isPendingPaymentStatus(paymentStatus: PaymentStatus): boolean {
-    return paymentStatus === PaymentStatus.Pending;
   }
 
   getPaymentStatusTagSeverity(paymentStatus: PaymentStatus): string {

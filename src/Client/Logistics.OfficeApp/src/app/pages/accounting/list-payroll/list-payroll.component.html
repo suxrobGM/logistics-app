@@ -69,7 +69,7 @@
             <td>{{payroll.employee.fullName}}</td>
             <td>{{getSalaryTypeDesc(payroll.employee.salaryType)}}</td>
             <td>
-              @if (isShareOfGrossSalary(payroll.employee.salaryType)) {
+              @if (payroll.employee.salaryType === salaryType.ShareOfGross) {
                 {{payroll.employee.salary | percent}}
               }
               @else {
@@ -84,12 +84,15 @@
             </td>
             <td>{{getPaymentMethodDesc(payroll.payment.method)}}</td>
             <td class="overflow-visible">
-              <p-button
-                icon="bi bi-credit-card"
-                pTooltip="Make payment"
-                tooltipPosition="bottom"
-                [routerLink]="['/payment/payroll', payroll.id]">
-              </p-button>
+              @if (payroll.payment.status === paymentStatus.Pending) {
+                <p-button 
+                  icon="bi bi-credit-card"
+                  pTooltip="Make payment"
+                  tooltipPosition="bottom"
+                  [routerLink]="['/payment/payroll', payroll.id]">
+                </p-button>
+              }
+              
               <p-button class="ms-2"
                 icon="bi bi-pencil"
                 pTooltip="Edit payroll"
