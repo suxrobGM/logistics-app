@@ -28,26 +28,28 @@
   align-items: center;
 }
 
-:host ::ng-deep .p-panelmenu-header-content {
-  background-color: transparent;
-}
+:host ::ng-deep {
+  .p-panelmenu-header-content {
+    background-color: transparent;
+  }
 
-:host ::ng-deep .p-panelmenu-content {
-  background-color: transparent;
-}
+  .p-menuitem-link {
+    text-decoration: none;
+  }
 
-:host ::ng-deep .p-menuitem-link {
-  text-decoration: none;
-}
+  .p-panelmenu-header chevronrighticon {
+    order: 2;
+  }
 
-:host ::ng-deep .p-panelmenu-header chevronrighticon {
-  order: 2;
-}
+  .p-panelmenu-content {
+    background-color: transparent;
+  }
 
-:host ::ng-deep .p-panelmenu-header chevrondownicon {
-  order: 2;
-}
+  .p-panelmenu-header chevrondownicon {
+    order: 2;
+  }
 
-:host ::ng-deep .p-panelmenu-header .p-menuitem-text {
-  order: 1;
+  .p-panelmenu-header .p-menuitem-text {
+    order: 1;
+  }
 }

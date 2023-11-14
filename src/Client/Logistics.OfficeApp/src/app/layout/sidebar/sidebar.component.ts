@@ -71,15 +71,15 @@ export class SidebarComponent implements OnInit {
         items: [
           {
             label: 'Payrolls',
-            command: () => router.navigateByUrl('/accounting/payrolls'),
+            routerLink: '/accounting/payrolls',
           },
           {
             label: 'Payments',
-            command: () => router.navigateByUrl('/accounting/payments'),
+            routerLink: '/accounting/payments',
           },
           {
             label: 'Invoices',
-            command: () => router.navigateByUrl('/accounting/invoices'),
+            routerLink: '/accounting/invoices',
           },
         ],
       },

@@ -63,10 +63,13 @@
         <p-overlayPanel #accountingPanel>
           @for (item of accountingMenuItems[0].items; track item.label) {
             @if (!item.separator) {
-              <p-button styleClass="p-button-secondary"
-                [label]="item.label"
-                (click)="item?.command({})">
-              </p-button>
+              <div class="p-1">
+                <p-button severity="secondary"
+                  [text]="true"
+                  [label]="item.label"
+                  (click)="item?.command({})">
+                </p-button>
+              </div>
             }
           }
         </p-overlayPanel>
@@ -102,10 +105,13 @@
         <p-overlayPanel #profilePanel>
           @for (item of profileMenuItems[0].items; track item.label) {
             @if (!item.separator) {
-              <p-button styleClass="p-button-secondary"
-                [label]="item.label"
-                (click)="item?.command({})">
-              </p-button>
+              <div class="p-1">
+                <p-button severity="secondary"
+                  [text]="true"
+                  [label]="item.label"
+                  (click)="item?.command({})">
+                </p-button>
+              </div>
             }
           }
         </p-overlayPanel>
