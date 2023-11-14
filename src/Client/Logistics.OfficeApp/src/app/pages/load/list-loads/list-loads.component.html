@@ -70,21 +70,24 @@
               Cost
               <p-sortIcon field="deliveryCost"></p-sortIcon>
             </th>
-            <th>
+            <th pSortableColumn="invoicePaymentStatus">
+              Invoice Payment Status
+              <p-sortIcon field="invoicePaymentStatus"></p-sortIcon>
+            </th>
+            <th pSortableColumn="assignedTruck">
               Truck
+              <p-sortIcon field="assignedTruck"></p-sortIcon>
             </th>
-            <th>
+            <th pSortableColumn="assignedDispatcher">
               Dispatcher
+              <p-sortIcon field="assignedDispatcher"></p-sortIcon>
             </th>
+            <th>Action</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-load>
           <tr>
-            <td>
-              <a [routerLink]="['/loads/edit', load.id]">
-                {{load.refId}}
-              </a>
-            </td>
+            <td>{{load.refId}}</td>
             <td [pTooltip]="load.name" [showDelay]="500" tooltipPosition="bottom">
               {{load.name}}
             </td>
@@ -101,11 +104,32 @@
             <td>{{load.distance | distanceUnit:'mi'}}</td>
             <td>{{load.deliveryCost | currency}}</td>
             <td>
-              <a [routerLink]="['/trucks/details', load.assignedTruckId]">
-                {{load.assignedTruckNumber}}
-              </a>
+              <app-payment-status-tag [paymentStatus]="load.invoice.payment.status"></app-payment-status-tag>
             </td>
+            <td>{{load.assignedTruckNumber}}</td>
             <td>{{load.assignedDispatcherName}}</td>
+            <td>
+              <p-button 
+                icon="bi bi-pencil"
+                pTooltip="Edit load details"
+                tooltipPosition="bottom"
+                [routerLink]="['/loads/edit', load.id]">
+              </p-button>
+              <p-button 
+                styleClass="ms-2"
+                icon="bi bi-truck"
+                pTooltip="View truck details"
+                tooltipPosition="bottom"
+                [routerLink]="['/trucks/view', load.assignedTruckId]">
+              </p-button>
+              <p-button 
+                styleClass="ms-2"
+                icon="bi bi-card-list"
+                pTooltip="View invoice details"
+                tooltipPosition="bottom"
+                [routerLink]="['/accounting/invoices/view', load.invoice.id]">
+              </p-button>
+            </td>
           </tr>
         </ng-template>
       </p-table>

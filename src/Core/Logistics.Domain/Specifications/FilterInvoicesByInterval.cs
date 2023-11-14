@@ -23,7 +23,8 @@ public class FilterInvoicesByInterval : BaseSpecification<Invoice>
             "paymentamount" => i => i.Payment.Amount,
             "paymentdate" => i => i.Payment.PaymentDate,
             "customername" => i => i.Customer.Name,
-            _ => i => i.Created
+            "createddate" => i => i.Created,
+            _ => i => i.Payment.Status
         };
     }
 }

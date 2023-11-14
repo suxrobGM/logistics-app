@@ -23,19 +23,22 @@ public class SearchLoads : BaseSpecification<Load>
             i.DestinationAddress.Contains(search);
     }
 
-    private static Expression<Func<Load, object>> InitOrderBy(string? propertyName)
+    private static Expression<Func<Load, object?>> InitOrderBy(string? propertyName)
     {
         propertyName = propertyName?.ToLower() ?? string.Empty;
         return propertyName switch
         {
-            "name" => i => i.Name!,
-            "originaddress" => i => i.OriginAddress!,
-            "destinationaddress" => i => i.DestinationAddress!,
+            "name" => i => i.Name,
+            "originaddress" => i => i.OriginAddress,
+            "destinationaddress" => i => i.DestinationAddress,
             "deliverycost" => i => i.DeliveryCost,
             "distance" => i => i.Distance,
             "dispatcheddate" => i => i.DispatchedDate,
-            "pickupdate" => i => i.PickUpDate!,
-            "deliverydate" => i => i.DeliveryDate!,
+            "pickupdate" => i => i.PickUpDate,
+            "deliverydate" => i => i.DeliveryDate,
+            "invoicepaymentstatus" => i => i.Invoice!.Payment.Status,
+            "assignedtruck" => i => i.AssignedTruck!.TruckNumber,
+            "assigneddispatcher" => i => i.AssignedDispatcher!.FirstName,
             _ => i => i.RefId
         };
     }

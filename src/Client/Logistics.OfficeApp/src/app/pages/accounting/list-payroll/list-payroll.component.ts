@@ -1,10 +1,9 @@
 import {Component} from '@angular/core';
-import {CommonModule, CurrencyPipe, DatePipe, PercentPipe} from '@angular/common';
+import {CommonModule} from '@angular/common';
 import {RouterModule} from '@angular/router';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {CardModule} from 'primeng/card';
 import {InputTextModule} from 'primeng/inputtext';
-import {TagModule} from 'primeng/tag';
 import {ButtonModule} from 'primeng/button';
 import {TooltipModule} from 'primeng/tooltip';
 import {Payroll} from '@core/models';
@@ -12,11 +11,11 @@ import {
   PaymentMethod,
   PaymentMethodEnum,
   PaymentStatus,
-  PaymentStatusEnum,
   SalaryType,
   SalaryTypeEnum,
 } from '@core/enums';
 import {ApiService} from '@core/services';
+import {PaymentStatusTagComponent} from '@shared/components';
 
 
 @Component({
@@ -26,16 +25,13 @@ import {ApiService} from '@core/services';
   styleUrls: [],
   imports: [
     CommonModule,
-    CurrencyPipe,
-    DatePipe,
     TableModule,
     CardModule,
-    PercentPipe,
     InputTextModule,
-    TagModule,
     RouterModule,
     ButtonModule,
     TooltipModule,
+    PaymentStatusTagComponent,
   ],
 })
 export class ListPayrollComponent {
@@ -84,20 +80,12 @@ export class ListPayrollComponent {
     });
   }
 
-  getPaymentStatusTagSeverity(paymentStatus: PaymentStatus): string {
-    return paymentStatus === PaymentStatus.Paid ? 'success' : 'warning';
-  }
-
   getPaymentMethodDesc(enumValue?: PaymentMethod): string {
     if (enumValue == null) {
       return 'N/A';
     }
 
     return PaymentMethodEnum.getDescription(enumValue);
-  }
-
-  getPaymentStatusDesc(enumValue: PaymentStatus): string {
-    return PaymentStatusEnum.getDescription(enumValue);
   }
 
   getSalaryTypeDesc(enumValue: SalaryType): string {

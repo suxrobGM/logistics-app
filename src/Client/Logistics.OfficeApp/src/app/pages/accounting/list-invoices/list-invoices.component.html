@@ -58,22 +58,23 @@
             <td>{{invoice.customer.name}}</td>
             <td>{{invoice.payment.amount | currency}}</td>
             <td>
-              <p-tag [severity]="getPaymentStatusTagSeverity(invoice.payment.status)">
-                {{getPaymentStatusDesc(invoice.payment.status)}}
-              </p-tag>
+              <app-payment-status-tag [paymentStatus]="invoice.payment.status"></app-payment-status-tag>
             </td>
             <td>{{invoice.createdDate | date:'mediumDate'}}</td>
             <td>{{invoice.payment.paymentDate | date:'mediumDate'}}</td>
             <td>
-              <p-button
-                icon="bi bi-credit-card"
-                pTooltip="Make payment"
-                tooltipPosition="bottom"
-                [routerLink]="['/payment/invoice', invoice.id]">
-              </p-button>
+              @if (invoice.payment.status === paymentStatus.Pending) {
+                <p-button
+                  icon="bi bi-credit-card"
+                  pTooltip="Make payment"
+                  tooltipPosition="bottom"
+                  [routerLink]="['/payment/invoice', invoice.id]">
+                </p-button>
+              }
+              
               <p-button 
                 styleClass="ms-2"
-                icon="bi-card-list"
+                icon="bi bi-card-list"
                 pTooltip="View details"
                 [routerLink]="['/accounting/invoices/view', invoice.id]">
               </p-button>

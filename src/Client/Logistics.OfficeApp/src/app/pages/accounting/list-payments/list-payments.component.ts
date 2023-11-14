@@ -1,11 +1,10 @@
 import {Component} from '@angular/core';
-import {CommonModule, CurrencyPipe, DatePipe} from '@angular/common';
+import {CommonModule} from '@angular/common';
 import {RouterModule} from '@angular/router';
 import {CardModule} from 'primeng/card';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {TooltipModule} from 'primeng/tooltip';
 import {ButtonModule} from 'primeng/button';
-import {TagModule} from 'primeng/tag';
 import {Payment} from '@core/models';
 import {ApiService} from '@core/services';
 import {
@@ -13,10 +12,9 @@ import {
   PaymentForEnum,
   PaymentMethod,
   PaymentMethodEnum,
-  PaymentStatus,
-  PaymentStatusEnum,
 } from '@core/enums';
 import {PredefinedDateRanges} from '@core/helpers';
+import {PaymentStatusTagComponent} from '@shared/components';
 
 
 @Component({
@@ -30,10 +28,8 @@ import {PredefinedDateRanges} from '@core/helpers';
     TableModule,
     TooltipModule,
     RouterModule,
-    CurrencyPipe,
-    DatePipe,
-    TagModule,
     ButtonModule,
+    PaymentStatusTagComponent
   ],
 })
 export class ListPaymentsComponent {
@@ -91,15 +87,7 @@ export class ListPaymentsComponent {
     return PaymentMethodEnum.getDescription(enumValue);
   }
 
-  getPaymentStatusDesc(enumValue: PaymentStatus): string {
-    return PaymentStatusEnum.getDescription(enumValue);
-  }
-
   getPaymentForDesc(enumValue: PaymentFor): string {
     return PaymentForEnum.getDescription(enumValue);
-  }
-
-  getPaymentStatusTagSeverity(paymentStatus: PaymentStatus): string {
-    return paymentStatus === PaymentStatus.Paid ? 'success' : 'warning';
   }
 }

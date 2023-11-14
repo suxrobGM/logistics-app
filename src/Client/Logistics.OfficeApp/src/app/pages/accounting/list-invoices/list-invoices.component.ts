@@ -5,11 +5,11 @@ import {CardModule} from 'primeng/card';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {ButtonModule} from 'primeng/button';
 import {TooltipModule} from 'primeng/tooltip';
-import {TagModule} from 'primeng/tag';
 import {Invoice} from '@core/models';
 import {ApiService} from '@core/services';
 import {PredefinedDateRanges} from '@core/helpers';
-import {PaymentStatus, PaymentStatusEnum} from '@core/enums';
+import {PaymentStatus} from '@core/enums';
+import {PaymentStatusTagComponent} from '@shared/components';
 
 
 @Component({
@@ -26,10 +26,11 @@ import {PaymentStatus, PaymentStatusEnum} from '@core/enums';
     DatePipe,
     ButtonModule,
     TooltipModule,
-    TagModule,
+    PaymentStatusTagComponent,
   ],
 })
 export class ListInvoicesComponent {
+  public paymentStatus = PaymentStatus;
   public invoices: Invoice[] = [];
   public isLoading = true;
   public totalRecords = 0;
@@ -59,13 +60,5 @@ export class ListInvoicesComponent {
 
       this.isLoading = false;
     });
-  }
-
-  getPaymentStatusDesc(enumValue: PaymentStatus): string {
-    return PaymentStatusEnum.getDescription(enumValue);
-  }
-
-  getPaymentStatusTagSeverity(paymentStatus: PaymentStatus): string {
-    return paymentStatus === PaymentStatus.Paid ? 'success' : 'warning';
   }
 }

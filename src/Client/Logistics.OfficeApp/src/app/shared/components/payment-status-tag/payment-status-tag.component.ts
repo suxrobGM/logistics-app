@@ -1,0 +1,26 @@
+import {Component, Input} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {PaymentStatus, PaymentStatusEnum} from '@core/enums';
+import {TagModule} from 'primeng/tag';
+
+
+@Component({
+  selector: 'app-payment-status-tag',
+  standalone: true,
+  templateUrl: './payment-status-tag.component.html',
+  imports: [
+    CommonModule,
+    TagModule,
+  ],
+})
+export class PaymentStatusTagComponent {
+  @Input({required: true}) paymentStatus!: PaymentStatus;
+
+  getPaymentStatusDesc(enumValue: PaymentStatus): string {
+    return PaymentStatusEnum.getDescription(enumValue);
+  }
+
+  getPaymentStatusTagSeverity(paymentStatus: PaymentStatus): string {
+    return paymentStatus === PaymentStatus.Paid ? 'success' : 'warning';
+  }
+}

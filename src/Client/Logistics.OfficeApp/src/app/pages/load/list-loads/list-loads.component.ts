@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {CurrencyPipe, DatePipe} from '@angular/common';
+import {CommonModule} from '@angular/common';
 import {RouterLink} from '@angular/router';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {InputTextModule} from 'primeng/inputtext';
@@ -11,6 +11,7 @@ import {LoadStatus, LoadStatusEnum} from '@core/enums';
 import {Load} from '@core/models';
 import {ApiService} from '@core/services';
 import {DistanceUnitPipe} from '@shared/pipes';
+import {PaymentStatusTagComponent} from '@shared/components';
 
 
 @Component({
@@ -19,6 +20,7 @@ import {DistanceUnitPipe} from '@shared/pipes';
   styleUrls: [],
   standalone: true,
   imports: [
+    CommonModule,
     ButtonModule,
     TooltipModule,
     RouterLink,
@@ -26,9 +28,8 @@ import {DistanceUnitPipe} from '@shared/pipes';
     TableModule,
     SharedModule,
     InputTextModule,
-    CurrencyPipe,
-    DatePipe,
     DistanceUnitPipe,
+    PaymentStatusTagComponent,
   ],
 })
 export class ListLoadComponent {

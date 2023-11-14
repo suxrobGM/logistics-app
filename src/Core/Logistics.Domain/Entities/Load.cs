@@ -26,8 +26,8 @@ public class Load : AuditableEntity, ITenantEntity
     public DateTime? PickUpDate { get; set; }
     public DateTime? DeliveryDate { get; set; }
 
-    public string? CustomerId { get; set; } = default!;
-    public virtual Customer? Customer { get; set; } = default!;
+    public string? CustomerId { get; set; }
+    public virtual Customer? Customer { get; set; }
     
     public string? InvoiceId { get; set; }
     public virtual Invoice? Invoice { get; set; }

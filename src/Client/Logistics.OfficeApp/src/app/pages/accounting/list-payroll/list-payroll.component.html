@@ -78,9 +78,7 @@
             </td>
             <td>{{payroll.payment.amount | currency}}</td>
             <td>
-              <p-tag [severity]="getPaymentStatusTagSeverity(payroll.payment.status)">
-                {{getPaymentStatusDesc(payroll.payment.status)}}
-              </p-tag>
+              <app-payment-status-tag [paymentStatus]="payroll.payment.status"></app-payment-status-tag>
             </td>
             <td>{{getPaymentMethodDesc(payroll.payment.method)}}</td>
             <td class="overflow-visible">

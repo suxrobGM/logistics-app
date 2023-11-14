@@ -74,9 +74,7 @@
             <td>{{getPaymentMethodDesc(payment.method)}}</td>
             <td>{{payment.amount | currency}}</td>
             <td>
-              <p-tag [severity]="getPaymentStatusTagSeverity(payment.status)">
-                {{getPaymentStatusDesc(payment.status)}}
-              </p-tag>
+              <app-payment-status-tag [paymentStatus]="payment.status"></app-payment-status-tag>
             </td>
             <td>{{getPaymentForDesc(payment.paymentFor)}}</td>
             <td [pTooltip]="payment.billingAddress" [showDelay]="500" tooltipPosition="bottom">

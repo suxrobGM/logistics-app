@@ -35,7 +35,7 @@ export const TRUCK_ROUTES: Routes = [
     },
   },
   {
-    path: 'details/:id',
+    path: 'view/:id',
     component: TruckDetailsComponent,
     canActivate: [AuthGuard],
     data: {
