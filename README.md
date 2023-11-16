@@ -63,10 +63,10 @@ User password: Test12345#
 ## Architectural Overview
 
 ### Technical Stack
-- .NET 7
+- .NET 8
 - ASP.NET Core
 - Entity Framework Core
-- Identity Server
+- Deunde Identity Server
 - FluentValidator
 - MediatR
 - MS SQL
