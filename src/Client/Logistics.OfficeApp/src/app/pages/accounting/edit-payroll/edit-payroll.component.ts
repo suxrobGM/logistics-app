@@ -12,8 +12,16 @@ import {ButtonModule} from 'primeng/button';
 import {CreatePayroll, Employee, Payroll, UpdatePayroll} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {PredefinedDateRanges} from '@core/helpers';
-import {SalaryType, SalaryTypeEnum} from '@core/enums';
-import {ValidationSummaryComponent} from '@shared/components';
+import {
+  PaymentMethod,
+  PaymentMethodEnum,
+  PaymentStatus,
+  PaymentStatusEnum,
+  SalaryType,
+  SalaryTypeEnum,
+  convertEnumToArray,
+} from '@core/enums';
+import {AddressFormComponent, ValidationSummaryComponent} from '@shared/components';
 import {DateUtils} from '@shared/utils';
 
 
@@ -33,9 +41,14 @@ import {DateUtils} from '@shared/utils';
     ReactiveFormsModule,
     CalendarModule,
     ButtonModule,
+    AddressFormComponent,
   ],
 })
 export class EditPayrollComponent implements OnInit {
+  public salaryType = SalaryType;
+  public paymentStatus = PaymentStatus;
+  public paymentStatuses = convertEnumToArray(PaymentStatusEnum);
+  public paymentMethods = convertEnumToArray(PaymentMethodEnum);
   public title = 'Edit payroll';
   public id: string | null = null;
   public isLoading = false;
@@ -54,8 +67,15 @@ export class EditPayrollComponent implements OnInit {
     const lastWeek = [PredefinedDateRanges.getLastWeek().startDate, PredefinedDateRanges.getLastWeek().endDate]
   
     this.form = new FormGroup<PayrollForm>({
-      employee: new FormControl<Employee | null>(null, {validators: Validators.required}),
-      dateRange: new FormControl<Date[]>(lastWeek, {validators: Validators.required, nonNullable: true}),
+      employee: new FormControl(null, {validators: Validators.required}),
+      dateRange: new FormControl(lastWeek, {validators: Validators.required, nonNullable: true}),
+      paymentStatus: new FormControl(null),
+      paymentMethod: new FormControl(null),
+      paymentBillingAddress: new FormControl(null),
+    });
+
+    this.form.get('paymentStatus')?.valueChanges.subscribe((status) => {
+      this.setConditionalValidators(status);
     });
   }
 
@@ -127,12 +147,26 @@ export class EditPayrollComponent implements OnInit {
     return this.id != null && this.id !== '';
   }
 
-  isShareOfGrossSalary() {
-    return this.selectedEmployee?.salaryType === SalaryType.ShareOfGross;
-  }
-
   getSalaryTypeDesc(salaryType: SalaryType): string {
     return SalaryTypeEnum.getDescription(salaryType);
+  }
+
+  private setConditionalValidators(paymentStatus: PaymentStatus | null) {
+    if (!paymentStatus) {
+      return;
+    }
+
+    const paymentMethodControl = this.form.get('paymentMethod');
+    const billingAddressControl = this.form.get('paymentBillingAddress');
+
+    if (paymentStatus === PaymentStatus.Paid) {
+      paymentMethodControl?.setValidators(Validators.required);
+      billingAddressControl?.setValidators(Validators.required);
+    }
+    else {
+      paymentMethodControl?.clearValidators();
+      billingAddressControl?.clearValidators();
+    }
   }
 
   private fetchPayroll() {
@@ -146,7 +180,13 @@ export class EditPayrollComponent implements OnInit {
         this.form.patchValue({
           employee: payroll.employee,
           dateRange: [new Date(payroll.startDate), new Date(payroll.endDate)],
+          paymentMethod: payroll.payment.method,
+          paymentStatus: payroll.payment.status,
+          paymentBillingAddress: payroll.payment.billingAddress,
         });
+
+        this.computedPayroll = payroll;
+        this.selectedEmployee = payroll.employee;
       }
 
       this.isLoading = false;
@@ -199,4 +239,7 @@ export class EditPayrollComponent implements OnInit {
 interface PayrollForm {
   employee: FormControl<Employee | null>;
   dateRange: FormControl<Date[]>;
+  paymentStatus: FormControl<PaymentStatus | null>;
+  paymentMethod: FormControl<PaymentMethod | null>;
+  paymentBillingAddress: FormControl<string | null>;
 }

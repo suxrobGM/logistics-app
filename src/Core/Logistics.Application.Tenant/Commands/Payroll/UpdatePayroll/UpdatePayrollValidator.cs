@@ -7,7 +7,6 @@ internal sealed class UpdatePayrollValidator : AbstractValidator<UpdatePayrollCo
     public UpdatePayrollValidator()
     {
         RuleFor(i => i.StartDate).LessThan(i => i.EndDate);
-        RuleFor(i => i.Amount).GreaterThanOrEqualTo(0);
         RuleFor(i => i.Id).NotEmpty();
     }
 }

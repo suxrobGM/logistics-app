@@ -74,6 +74,8 @@ export class ListLoadComponent {
       if (result.isSuccess && result.data) {
         this.loads = result.data;
         this.totalRecords = result.totalItems;
+        console.log(this.loads);
+        
       }
 
       this.isLoading = false;

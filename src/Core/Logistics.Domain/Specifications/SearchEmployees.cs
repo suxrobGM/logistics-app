@@ -22,17 +22,17 @@ public class SearchEmployees : BaseSpecification<Employee>
             (i.Email != null && i.Email.Contains(search));
     }
     
-    private static Expression<Func<Employee, object>> InitOrderBy(string? propertyName)
+    private static Expression<Func<Employee, object?>> InitOrderBy(string? propertyName)
     {
         propertyName = propertyName?.ToLower() ?? "email";
         return propertyName switch
         {
-            "firstname" => i => i.FirstName!,
-            "lastname" => i => i.LastName!,
-            "phonenumber" => i => i.PhoneNumber!,
+            "firstname" => i => i.FirstName,
+            "lastname" => i => i.LastName,
+            "phonenumber" => i => i.PhoneNumber,
             "salary" => i => i.Salary,
             "salarytype" => i => i.SalaryType,
-            _ => i => i.Email!
+            _ => i => i.Email
         };
     }
 }

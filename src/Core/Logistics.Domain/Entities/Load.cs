@@ -80,7 +80,8 @@ public class Load : AuditableEntity, ITenantEntity
     }
 
     public static Load Create(
-        ulong refId, 
+        ulong refId,
+        decimal deliveryCost,
         string originAddress,
         double originLatitude,
         double originLongitude,
@@ -94,6 +95,7 @@ public class Load : AuditableEntity, ITenantEntity
         var load = new Load
         {
             RefId = refId,
+            DeliveryCost = deliveryCost,
             OriginAddress = originAddress,
             OriginAddressLat = originLatitude,
             OriginAddressLong = originLongitude,
@@ -104,8 +106,33 @@ public class Load : AuditableEntity, ITenantEntity
             AssignedDispatcher = assignedDispatcher,
             Customer = customer
         };
-        
+
+        var invoice = CreateInvoice(load);
+        load.Invoice = invoice;
+        load.InvoiceId = invoice.Id;
         load.DomainEvents.Add(new NewLoadCreatedEvent(refId));
         return load;
+    }
+
+    private static Invoice CreateInvoice(Load load)
+    {
+        var payment = new Payment
+        {
+            Amount = load.DeliveryCost,
+            Status = PaymentStatus.Pending,
+            PaymentFor = PaymentFor.Invoice
+        };
+
+        var invoice = new Invoice
+        {
+            CustomerId = load.CustomerId!,
+            Customer = load.Customer!,
+            LoadId = load.Id,
+            Load = load,
+            PaymentId = payment.Id,
+            Payment = payment
+        };
+
+        return invoice;
     }
 }

@@ -87,13 +87,15 @@ export class ProcessPaymentComponent implements OnInit {
   }
 
   submit() {
-    if (!this.form.valid || !this.payroll || !this.invoice) {
+    const paymentId = this.payroll?.payment.id ?? this.invoice?.payment.id;
+    
+    if (!this.form.valid || !paymentId) {
       return;
     }
 
     this.isLoading = true;
     const command: ProcessPayment = {
-      paymentId: this.payroll.payment.id ?? this.invoice.payment.id,
+      paymentId: paymentId,
       paymentMethod: this.form.value.paymentMethod!,
       billingAddress: this.form.value.billingAddress!,
       cardholderName: this.form.value.cardholderName!,

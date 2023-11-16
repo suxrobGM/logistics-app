@@ -254,9 +254,11 @@ internal class PopulateFakeData
         const string destAddress = "73 Tremont St, Boston, MA 02108, United States";
         const double destLat = 42.357820;
         const double destLng = -71.060810;
+        var deliveryCost = _random.Next(1000, 3000);
             
         var load = Load.Create(
-            1000 + index, 
+            1000 + index,
+            deliveryCost,
             originAddress, 
             originLat,
             originLng,
@@ -272,8 +274,9 @@ internal class PopulateFakeData
         load.PickUpDate = dispatchedDate.AddDays(1);
         load.DeliveryDate = dispatchedDate.AddDays(2);
         load.Distance = _random.Next(16093, 321869);
-        load.DeliveryCost = _random.Next(1000, 3000);
-        load.Invoice = InvoiceGenerator.GenerateInvoice(load);
+        load.Invoice!.Payment.SetStatus(PaymentStatus.Paid);
+        load.Invoice.Payment.Method = PaymentMethod.BankAccount;
+        load.Invoice.Payment.BillingAddress = originAddress;
 
         await _tenantRepository.AddAsync(load);
         _logger.LogInformation("Added a load {Name}", load.Name);

@@ -24,13 +24,13 @@ public class SearchTenants : BaseSpecification<Tenant>
              i.CompanyName.Contains(search));
     }
     
-    private static Expression<Func<Tenant, object>> InitOrderBy(string? propertyName)
+    private static Expression<Func<Tenant, object?>> InitOrderBy(string? propertyName)
     {
         propertyName = propertyName?.ToLower() ?? "name";
         return propertyName switch
         {
-            "displayname" => i => i.CompanyName!,
-            _ => i => i.Name!
+            "displayname" => i => i.CompanyName,
+            _ => i => i.Name
         };
     }
 }

@@ -23,18 +23,18 @@ public class GetPayrolls : BaseSpecification<Payroll>
             !string.IsNullOrEmpty(i.Employee.LastName) && i.Employee.LastName.Contains(search);
     }
 
-    private static Expression<Func<Payroll, object>> InitOrderBy(string? propertyName)
+    private static Expression<Func<Payroll, object?>> InitOrderBy(string? propertyName)
     {
         propertyName = propertyName?.ToLower() ?? string.Empty;
         return propertyName switch
         {
             "paymentamount" => i => i.Payment.Amount,
-            "paymentdate" => i => i.Payment.PaymentDate!,
-            "paymentmethod" => i => i.Payment.Method!,
+            "paymentdate" => i => i.Payment.PaymentDate,
+            "paymentmethod" => i => i.Payment.Method,
             "paymentstatus" => i => i.Payment.Status,
-            "employeefirstname" => i => i.Employee.FirstName!,
-            "employeelastname" => i => i.Employee.LastName!,
-            "employeeemail" => i => i.Employee.Email!,
+            "employeefirstname" => i => i.Employee.FirstName,
+            "employeelastname" => i => i.Employee.LastName,
+            "employeeemail" => i => i.Employee.Email,
             "employeesalary" => i => i.Employee.Salary,
             "employeesalarytype" => i => i.Employee.SalaryType,
             _ => i => i.Payment.Status

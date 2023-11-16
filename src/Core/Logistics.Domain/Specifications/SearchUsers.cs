@@ -16,21 +16,21 @@ public class SearchUsers : BaseSpecification<User>
             return;
         
         Criteria = i =>
-            (i.FirstName != null && i.FirstName.Contains(search)) ||
-            (i.LastName != null && i.LastName.Contains(search)) ||
+            (i.FirstName.Contains(search)) ||
+            (i.LastName.Contains(search)) ||
             (i.PhoneNumber != null && i.PhoneNumber.Contains(search)) ||
             (i.Email != null && i.Email.Contains(search));
     }
     
-    private static Expression<Func<User, object>> InitOrderBy(string? propertyName)
+    private static Expression<Func<User, object?>> InitOrderBy(string? propertyName)
     {
         propertyName = propertyName?.ToLower() ?? "email";
         return propertyName switch
         {
-            "firstname" => i => i.FirstName!,
-            "lastname" => i => i.LastName!,
-            "phonenumber" => i => i.PhoneNumber!,
-            _ => i => i.Email!
+            "firstname" => i => i.FirstName,
+            "lastname" => i => i.LastName,
+            "phonenumber" => i => i.PhoneNumber,
+            _ => i => i.Email
         };
     }
 }

@@ -41,7 +41,8 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resp
             refId = latestLoad.RefId + 1;
         
         var load = Load.Create(
-            refId, 
+            refId,
+            req.DeliveryCost,
             req.OriginAddress!,
             req.OriginAddressLat,
             req.OriginAddressLong,
@@ -54,7 +55,6 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resp
         
         load.Name = req.Name;
         load.Distance = req.Distance;
-        load.DeliveryCost = req.DeliveryCost;
 
         await _tenantRepository.AddAsync(load);
         var changes = await _tenantRepository.UnitOfWork.CommitAsync();

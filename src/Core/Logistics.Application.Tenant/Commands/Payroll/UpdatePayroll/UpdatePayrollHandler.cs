@@ -1,6 +1,8 @@
-﻿namespace Logistics.Application.Tenant.Commands;
+﻿using Logistics.Shared.Enums;
 
-internal sealed class UpdatePayrollHandler : RequestHandler<UpdatePaymentCommand, ResponseResult>
+namespace Logistics.Application.Tenant.Commands;
+
+internal sealed class UpdatePayrollHandler : RequestHandler<UpdatePayrollCommand, ResponseResult>
 {
     private readonly ITenantRepository _tenantRepository;
 
@@ -10,35 +12,42 @@ internal sealed class UpdatePayrollHandler : RequestHandler<UpdatePaymentCommand
     }
 
     protected override async Task<ResponseResult> HandleValidated(
-        UpdatePaymentCommand req, CancellationToken cancellationToken)
+        UpdatePayrollCommand req, CancellationToken cancellationToken)
     {
-        var payment = await _tenantRepository.GetAsync<Payment>(req.Id);
+        var payroll = await _tenantRepository.GetAsync<Payroll>(req.Id);
 
-        if (payment is null)
-            return ResponseResult.CreateError($"Could not find a payment with ID '{req.Id}'");
-
-        if (req.PaymentFor.HasValue && payment.PaymentFor != req.PaymentFor)
+        if (payroll is null)
         {
-            payment.PaymentFor = req.PaymentFor.Value;
-        }
-        if (req.Method.HasValue && payment.Method != req.Method)
-        {
-            payment.Method = req.Method.Value;
-        }
-        if (req.Status.HasValue && payment.Status != req.Status)
-        {
-            payment.SetStatus(req.Status.Value);
-        }
-        if (req.Amount.HasValue && payment.Amount != req.Amount)
-        {
-            payment.Amount = req.Amount.Value;
-        }
-        if (!string.IsNullOrEmpty(req.Comment) && payment.Comment != req.Comment)
-        {
-            payment.Comment = req.Comment;
+            return ResponseResult.CreateError($"Could not find a payroll with ID '{req.Id}'");
         }
         
-        _tenantRepository.Update(payment);
+        if (!string.IsNullOrEmpty(req.EmployeeId) && req.EmployeeId != payroll.EmployeeId)
+        {
+            var employee = await _tenantRepository.GetAsync<Employee>(req.EmployeeId);
+
+            if (employee is null)
+            {
+                return ResponseResult.CreateError($"Could not find an employer with ID '{req.EmployeeId}'");
+            }
+            
+            payroll.Employee = employee;
+        }
+
+        if (req is { StartDate: not null, EndDate: not null } &&  payroll.StartDate != req.StartDate &&
+            payroll.EndDate != req.EndDate)
+        {
+            payroll.StartDate = req.StartDate.Value;
+            payroll.EndDate = req.EndDate.Value;
+        }
+        
+        if (req.PaymentStatus.HasValue && payroll.Payment.Status != req.PaymentStatus)
+        {
+            payroll.Payment.SetStatus(req.PaymentStatus.Value);
+            payroll.Payment.Method = req.PaymentMethod;
+            payroll.Payment.BillingAddress = req.PaymentBillingAddress;
+        }
+        
+        _tenantRepository.Update(payroll);
         await _tenantRepository.UnitOfWork.CommitAsync();
         return ResponseResult.CreateSuccess();
     }

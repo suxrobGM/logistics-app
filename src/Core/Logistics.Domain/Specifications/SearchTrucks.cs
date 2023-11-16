@@ -19,7 +19,7 @@ public class SearchTrucks : BaseSpecification<Truck>
         Criteria = i => i.TruckNumber.Contains(search);
     }
     
-    private static Expression<Func<Truck, object>> InitOrderBy(string? propertyName)
+    private static Expression<Func<Truck, object?>> InitOrderBy(string? propertyName)
     {
         propertyName = propertyName?.ToLower() ?? string.Empty;
         return propertyName switch

@@ -18,7 +18,7 @@ public class SearchCustomers : BaseSpecification<Customer>
         Criteria = i => i.Name.Contains(search);
     }
     
-    private static Expression<Func<Customer, object>> InitOrderBy(string? propertyName)
+    private static Expression<Func<Customer, object?>> InitOrderBy(string? propertyName)
     {
         propertyName = propertyName?.ToLower() ?? "name";
         return propertyName switch

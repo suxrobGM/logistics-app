@@ -67,7 +67,8 @@
                 <p-button severity="secondary"
                   [text]="true"
                   [label]="item.label"
-                  (click)="item?.command({})">
+                  [routerLink]="item.routerLink"
+                  (onClick)="accountingPanel.hide()">
                 </p-button>
               </div>
             }
