@@ -30,7 +30,7 @@
       @if (selectedMarker.data.currentAddress) {
         <span>
           <strong>Address:</strong>
-          {{formatAddress(selectedMarker.data.currentAddress)}}
+          {{selectedMarker.data.currentAddress | address}}
         </span>
       }
     </mgl-popup>

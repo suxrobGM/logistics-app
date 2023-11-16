@@ -248,13 +248,29 @@ internal class PopulateFakeData
         Customer customer)
     {
         var dispatchedDate = _random.Date(_startDate, _endDate);
-        const string originAddress = "40 Crescent Ave, Boston, MA 02125, United States";
         const double originLat = 42.319090;
         const double originLng = -71.054680;
-        const string destAddress = "73 Tremont St, Boston, MA 02108, United States";
         const double destLat = 42.357820;
         const double destLng = -71.060810;
         var deliveryCost = _random.Next(1000, 3000);
+        
+        var originAddress = new Address
+        {
+            Line1 = "40 Crescent Ave",
+            City = "Boston",
+            Region = "Massachusetts",
+            ZipCode = "02125",
+            Country = "United States"
+        };
+        
+        var destinationAddress = new Address
+        {
+            Line1 = "73 Tremont St",
+            City = "Boston",
+            Region = "Massachusetts",
+            ZipCode = "02108",
+            Country = "United States"
+        };
             
         var load = Load.Create(
             1000 + index,
@@ -262,7 +278,7 @@ internal class PopulateFakeData
             originAddress, 
             originLat,
             originLng,
-            destAddress, 
+            destinationAddress, 
             destLat,
             destLng,
             customer,

@@ -1,4 +1,5 @@
-﻿using Logistics.Shared.Enums;
+﻿using Logistics.Domain.ValueObjects;
+using Logistics.Shared.Enums;
 using MediatR;
 
 namespace Logistics.Application.Tenant.Commands;
@@ -11,5 +12,5 @@ public class UpdatePayrollCommand : IRequest<ResponseResult>
     public string? EmployeeId { get; set; }
     public PaymentStatus? PaymentStatus { get; set; }
     public PaymentMethod? PaymentMethod { get; set; }
-    public string? PaymentBillingAddress { get; set; }
+    public Address? PaymentBillingAddress { get; set; }
 }

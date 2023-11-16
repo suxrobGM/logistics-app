@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Domain.Core;
 
-public abstract class ValueObject
+public abstract record ValueObject
 {
     protected static bool EqualOperator(ValueObject? left, ValueObject? right)
     {
@@ -17,17 +17,15 @@ public abstract class ValueObject
     }
 
     protected abstract IEnumerable<object?> GetEqualityComponents();
-
-    public override bool Equals(object? obj)
+    
+    public virtual bool Equals(ValueObject? obj)
     {
-        if (obj == null || obj.GetType() != GetType())
+        if (obj is null || obj.GetType() != GetType())
         {
             return false;
         }
 
-        var other = (ValueObject)obj;
-
-        return GetEqualityComponents().SequenceEqual(other.GetEqualityComponents());
+        return GetEqualityComponents().SequenceEqual(obj.GetEqualityComponents());
     }
 
     public override int GetHashCode()

@@ -9,7 +9,7 @@ import {AutoCompleteModule, AutoCompleteOnSelectEvent} from 'primeng/autocomplet
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {CalendarModule} from 'primeng/calendar';
 import {ButtonModule} from 'primeng/button';
-import {CreatePayroll, Employee, Payroll, UpdatePayroll} from '@core/models';
+import {Address, CreatePayroll, Employee, Payroll, UpdatePayroll} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {PredefinedDateRanges} from '@core/helpers';
 import {
@@ -241,5 +241,5 @@ interface PayrollForm {
   dateRange: FormControl<Date[]>;
   paymentStatus: FormControl<PaymentStatus | null>;
   paymentMethod: FormControl<PaymentMethod | null>;
-  paymentBillingAddress: FormControl<string | null>;
+  paymentBillingAddress: FormControl<Address | null>;
 }

@@ -1,6 +1,7 @@
 ﻿using Logistics.Domain.Core;
 using Logistics.Shared.Enums;
 using Logistics.Domain.Events;
+using Logistics.Domain.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
@@ -9,11 +10,11 @@ public class Load : AuditableEntity, ITenantEntity
     public ulong RefId { get; set; } = 1000;
     public string? Name { get; set; }
     
-    public string OriginAddress { get; set; } = default!;
+    public required Address OriginAddress { get; set; }
     public double? OriginAddressLat { get; set; }
     public double? OriginAddressLong { get; set; }
     
-    public string DestinationAddress { get; set; } = default!;
+    public required Address DestinationAddress { get; set; }
     public double? DestinationAddressLat { get; set; }
     public double? DestinationAddressLong { get; set; }
     
@@ -82,10 +83,10 @@ public class Load : AuditableEntity, ITenantEntity
     public static Load Create(
         ulong refId,
         decimal deliveryCost,
-        string originAddress,
+        Address originAddress,
         double originLatitude,
         double originLongitude,
-        string destinationAddress,
+        Address destinationAddress,
         double destinationLatitude,
         double destinationLongitude,
         Customer customer,

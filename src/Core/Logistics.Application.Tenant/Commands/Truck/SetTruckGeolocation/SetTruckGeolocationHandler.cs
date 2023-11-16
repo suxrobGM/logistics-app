@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Logistics.Application.Tenant.Mappers;
+using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Tenant.Commands;
 
@@ -27,9 +28,9 @@ internal sealed class SetTruckGeolocationHandler : RequestHandler<SetTruckGeoloc
             return ResponseResult.CreateSuccess();
         }
 
-        truck.LastKnownLocation = req.GeolocationData.CurrentAddress;
-        truck.LastKnownLocationLat = req.GeolocationData.Latitude;
-        truck.LastKnownLocationLong = req.GeolocationData.Longitude;
+        truck.CurrentLocation = req.GeolocationData.CurrentAddress?.ToEntity();
+        truck.CurrentLocationLat = req.GeolocationData.Latitude;
+        truck.CurrentLocationLong = req.GeolocationData.Longitude;
         _tenantRepository.Update(truck);
         await _tenantRepository.UnitOfWork.CommitAsync();
         return ResponseResult.CreateSuccess();

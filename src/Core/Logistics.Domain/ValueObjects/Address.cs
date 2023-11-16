@@ -1,19 +1,40 @@
-﻿using Logistics.Domain.Core;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Logistics.Domain.Core;
 
 namespace Logistics.Domain.ValueObjects;
 
-public class Address : ValueObject
+[ComplexType]
+public record Address
 {
-    public string? Street { get; init; }
-    public string? City { get; init; }
-    public string? ZipCode { get; init; }
-    public string? Country {get; init; }
-    
-    protected override IEnumerable<object?> GetEqualityComponents()
+    // Temporary workaround for handling null values
+    public static readonly Address NullAddress = new()
     {
-        yield return Street;
-        yield return City;
-        yield return ZipCode;
-        yield return Country;
-    }
+        Line1 = "NULL",
+        Line2 = "NULL",
+        City = "NULL",
+        ZipCode = "NULL",
+        Region = "NULL",
+        Country = "NULL"
+    };
+    
+    public required string Line1 { get; init; }
+    public string? Line2 { get; init; }
+    public required string City { get; init; }
+    public required string ZipCode { get; init; }
+    public required string Region { get; init; }
+    public required string Country { get; init; }
+
+    public bool IsNull() => this == NullAddress;
+    public bool IsNotNull() => !IsNull();
+    
+    
+    // protected override IEnumerable<object?> GetEqualityComponents()
+    // {
+    //     yield return Line1;
+    //     yield return Line2;
+    //     yield return City;
+    //     yield return ZipCode;
+    //     yield return Region;
+    //     yield return Country;
+    // }
 }

@@ -17,6 +17,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import {Address} from '@core/models';
 import {ValidationSummaryComponent} from '../validation-summary/validation-summary.component';
 
 
@@ -40,15 +41,15 @@ import {ValidationSummaryComponent} from '../validation-summary/validation-summa
 export class AddressFormComponent implements OnInit, OnChanges, ControlValueAccessor {
   public form: FormGroup<AddressForm>;
   private onTouched?: () => void;
-  private onChanged?: (value: string | null) => void;
+  private onChanged?: (value: Address | null) => void;
 
-  @Input() addressString = '';
-  @Output() addressStringChange = new EventEmitter<string | null>();
+  @Input() address?: Address;
+  @Output() addressChange = new EventEmitter<Address | null>();
 
   constructor() {
     this.form = new FormGroup<AddressForm>({
       addressLine1: new FormControl('', {validators: Validators.required, nonNullable: true}),
-      addressLine2: new FormControl(''),
+      addressLine2: new FormControl(null),
       city: new FormControl('', {validators: Validators.required, nonNullable: true}),
       region: new FormControl('', {validators: Validators.required, nonNullable: true}),
       zipCode: new FormControl('', {validators: Validators.required, nonNullable: true}),
@@ -58,20 +59,36 @@ export class AddressFormComponent implements OnInit, OnChanges, ControlValueAcce
 
   ngOnInit() {
     this.form.valueChanges.subscribe((values) => {
-      // const address = Object.values(values).filter(Boolean).join(', ');
-      const address = this.convertToString(values);
+      
+      if (!values.addressLine1 || 
+        !values.city || 
+        !values.region || 
+        !values.zipCode || 
+        !values.country)
+      {
+        return;
+      }
+      
+      const address: Address = {
+        line1: values.addressLine1,
+        line2: values.addressLine2,
+        city: values.city,
+        region: values.region,
+        zipCode: values.zipCode,
+        country: values.country
+      }
       
       if (this.onChanged) {
         this.onChanged(address);
-        this.addressStringChange.emit(address);
+        this.addressChange.emit(address);
       }
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['addressString']) {
-      this.parseAddressString(changes['addressString'].currentValue);
-    }
+    // if (changes['addressString']) {
+    //   this.parseAddressString(changes['addressString'].currentValue);
+    // }
   }
 
   writeValue(value: never): void {
@@ -90,46 +107,6 @@ export class AddressFormComponent implements OnInit, OnChanges, ControlValueAcce
 
   setDisabledState(isDisabled: boolean): void {
     isDisabled ? this.form.disable() : this.form.enable();
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private convertToString(values: any): string | null {
-    const requiredFieldsFilled = this.form.get('addressLine1')?.value &&
-      this.form.get('city')?.value &&
-      this.form.get('region')?.value &&
-      this.form.get('zipCode')?.value &&
-      this.form.get('country')?.value;
-
-    // If all required fields are filled, construct the address string.
-    if (requiredFieldsFilled) {
-      const {addressLine2, ...otherValues} = values;
-      let address = Object.values(otherValues).filter(Boolean).join(', ');
-      address += addressLine2 ? `, ${addressLine2}` : '';
-      return address;
-    }
-
-    return null;
-  }
-
-  private parseAddressString(address: string): void {
-    if (!address) {
-      return;
-    }
-
-    const addressRegex = /^(.*?)(?:, (.*?))?(?:, (.*?))?, ([^,]+), (\d+), (.*)$/;
-    const match = address.match(addressRegex);
-    
-    if (match) {
-      this.form.setValue({
-        addressLine1: match[1] ?? '',
-        addressLine2: match[2] ?? '',
-        city: match[3] ?? '',
-        region: match[4] ?? '',
-        zipCode: match[5] ?? '',
-        country: match[6] ?? ''
-      },
-      {emitEvent: false});
-    }
   }
 }
 

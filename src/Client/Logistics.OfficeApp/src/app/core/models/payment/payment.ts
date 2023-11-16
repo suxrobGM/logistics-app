@@ -1,4 +1,5 @@
 import {PaymentFor, PaymentMethod, PaymentStatus} from '@core/enums';
+import {Address} from '../address';
 
 
 export interface Payment {
@@ -9,6 +10,6 @@ export interface Payment {
   amount: number;
   status: PaymentStatus;
   paymentFor: PaymentFor;
-  billingAddress?: string;
+  billingAddress?: Address;
   comment?: string;
 }

@@ -9,6 +9,7 @@ import {TooltipModule} from 'primeng/tooltip';
 import {ButtonModule} from 'primeng/button';
 import {Truck} from '@core/models';
 import {ApiService} from '@core/services';
+import {AddressPipe} from '@shared/pipes';
 
 
 @Component({
@@ -25,6 +26,7 @@ import {ApiService} from '@core/services';
     TableModule,
     SharedModule,
     InputTextModule,
+    AddressPipe,
   ],
 })
 export class ListTruckComponent {

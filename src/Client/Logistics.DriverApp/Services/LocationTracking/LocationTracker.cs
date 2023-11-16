@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Logistics.Client.Options;
+﻿using Logistics.Client.Options;
 using Logistics.DriverApp.Services.Authentication;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -96,22 +95,24 @@ public class LocationTracker : ILocationTracker
         }
     }
 
-    private static async Task<string?> GetAddressFromGeocodeAsync(double latitude, double longitude)
+    private static async Task<AddressDto?> GetAddressFromGeocodeAsync(double latitude, double longitude)
     {
         try
         {
             var placemarks = await Geocoding.Default.GetPlacemarksAsync(latitude, longitude);
-            var placemark = placemarks?.FirstOrDefault();
+            var placemark = placemarks.FirstOrDefault();
         
             if (placemark != null)
             {
-                return JoinNonEmptyStrings(", ",
-                    $"{placemark.SubThoroughfare} {placemark.Thoroughfare}",
-                    placemark.Locality,
-                    placemark.SubAdminArea,
-                    placemark.AdminArea,
-                    placemark.PostalCode,
-                    placemark.CountryName);
+                return new AddressDto
+                {
+                    Line1 = placemark.SubThoroughfare,
+                    Line2 = placemark.Thoroughfare,
+                    City = placemark.Locality,
+                    Region = placemark.AdminArea,
+                    ZipCode = placemark.PostalCode,
+                    Country = placemark.CountryName
+                };
             }
 
             return null;
@@ -121,27 +122,6 @@ public class LocationTracker : ILocationTracker
             Console.WriteLine(ex);
             return null;
         }
-    }
-
-    private static string JoinNonEmptyStrings(string separator, params string?[] strings)
-    {
-        var strBuilder = new StringBuilder();
-        for (var i = 0; i < strings.Length; i++)
-        {
-            var str = strings[i];
-            
-            if (!string.IsNullOrEmpty(str))
-            {
-                strBuilder.Append(str);
-            }
-
-            if (i != strings.Length - 1)
-            {
-                strBuilder.Append(separator);
-            }
-        }
-
-        return strBuilder.ToString();
     }
 
     public async ValueTask DisposeAsync()

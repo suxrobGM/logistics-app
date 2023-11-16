@@ -8,7 +8,7 @@ import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {RadioButtonModule} from 'primeng/radiobutton';
 import {InputMaskModule} from 'primeng/inputmask';
 import {PaymentMethod, PaymentMethodEnum, PaymentStatus, convertEnumToArray} from '@core/enums';
-import {Invoice, Payroll, ProcessPayment} from '@core/models';
+import {Address, Invoice, Payroll, ProcessPayment} from '@core/models';
 import {RegexPatterns} from '@core/helpers';
 import {ApiService, ToastService} from '@core/services';
 import {AddressFormComponent, ValidationSummaryComponent} from '@shared/components';
@@ -193,7 +193,7 @@ interface PaymentForm {
   cardNumber: FormControl<string | null>;
   cardExpirationDate: FormControl<string | null>;
   cardCvv: FormControl<string | null>;
-  billingAddress: FormControl<string | null>;
+  billingAddress: FormControl<Address | null>;
   bankName: FormControl<string | null>;
   bankAccountNumber: FormControl<string | null>;
   bankRoutingNumber: FormControl<string | null>;

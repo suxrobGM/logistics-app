@@ -1,0 +1,33 @@
+﻿using Logistics.Domain.ValueObjects;
+using Logistics.Shared.Models;
+
+namespace Logistics.Application.Tenant.Mappers;
+
+public static class AddressMapper
+{
+    public static AddressDto ToDto(this Address entity)
+    {
+        return new AddressDto
+        {
+            Line1 = entity.Line1,
+            Line2 = entity.Line2,
+            City = entity.City,
+            Region = entity.Region,
+            ZipCode = entity.ZipCode,
+            Country = entity.Country
+        };
+    }
+
+    public static Address ToEntity(this AddressDto dto)
+    {
+        return new Address
+        {
+            Line1 = dto.Line1,
+            Line2 = dto.Line2,
+            City = dto.City,
+            Region = dto.Region,
+            ZipCode = dto.ZipCode,
+            Country = dto.Country
+        };
+    }
+}

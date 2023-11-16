@@ -6,7 +6,7 @@ public static class PaymentMapper
 {
     public static PaymentDto ToDto(this Payment entity)
     {
-        return new PaymentDto
+        var dto = new PaymentDto
         {
             Id = entity.Id,
             Amount = entity.Amount,
@@ -16,7 +16,12 @@ public static class PaymentMapper
             PaymentDate = entity.PaymentDate,
             PaymentFor = entity.PaymentFor,
             Status = entity.Status,
-            BillingAddress = entity.BillingAddress
         };
+        
+        if (entity.BillingAddress.IsNotNull())
+        {
+            dto.BillingAddress = entity.BillingAddress.ToDto();
+        }
+        return dto;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.ValueObjects;
 using Logistics.Shared.Enums;
 
 namespace Logistics.DbMigrator.Core;
@@ -70,6 +71,15 @@ public class PayrollGenerator
     
     private static Payroll CreatePayroll(Employee employee, DateTime startDate, DateTime endDate)
     {
+        var billingAddress = new Address
+        {
+            Line1 = "40 Crescent Ave",
+            City = "Boston",
+            Region = "Massachusetts",
+            ZipCode = "02125",
+            Country = "United States"
+        };
+        
         var payment = new Payment
         {
             Amount = CalculateSalary(employee, startDate, endDate),
@@ -77,7 +87,7 @@ public class PayrollGenerator
             Method = PaymentMethod.BankAccount,
             Status = PaymentStatus.Paid,
             PaymentDate = DateTime.UtcNow,
-            BillingAddress = "40 Crescent Ave, Boston, MA 02125, United States"
+            BillingAddress = billingAddress
         };
         
         var payroll = new Payroll

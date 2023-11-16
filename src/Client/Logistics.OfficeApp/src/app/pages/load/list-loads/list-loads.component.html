@@ -91,11 +91,11 @@
             <td [pTooltip]="load.name" [showDelay]="500" tooltipPosition="bottom">
               {{load.name}}
             </td>
-            <td [pTooltip]="load.originAddress" [showDelay]="500" tooltipPosition="bottom">
-              {{load.originAddress}}
+            <td [pTooltip]="load.originAddress | address" [showDelay]="500" tooltipPosition="bottom">
+              {{load.originAddress | address}}
             </td>
-            <td [pTooltip]="load.destinationAddress" [showDelay]="500" tooltipPosition="bottom">
-              {{load.destinationAddress}}
+            <td [pTooltip]="load.destinationAddress | address" [showDelay]="500" tooltipPosition="bottom">
+              {{load.destinationAddress | address}}
             </td>
             <td>{{load.dispatchedDate | date:'mediumDate'}}</td>
             <td>{{load.pickUpDate | date:'mediumDate'}}</td>

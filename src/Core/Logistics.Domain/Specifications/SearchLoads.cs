@@ -19,8 +19,10 @@ public class SearchLoads : BaseSpecification<Load>
         Criteria = i =>
             (i.Name != null && i.Name.Contains(search)) ||
             i.RefId.ToString().Contains(search) ||
-            i.OriginAddress.Contains(search) || 
-            i.DestinationAddress.Contains(search);
+            i.OriginAddress.Line1.Contains(search) || 
+            (i.OriginAddress.Line2 != null && i.OriginAddress.Line2.Contains(search)) ||
+            i.DestinationAddress.Line1.Contains(search) ||
+            (i.DestinationAddress.Line2 != null && i.DestinationAddress.Line2.Contains(search));
     }
 
     private static Expression<Func<Load, object?>> InitOrderBy(string? propertyName)
@@ -29,8 +31,8 @@ public class SearchLoads : BaseSpecification<Load>
         return propertyName switch
         {
             "name" => i => i.Name,
-            "originaddress" => i => i.OriginAddress,
-            "destinationaddress" => i => i.DestinationAddress,
+            "originaddress" => i => i.OriginAddress.Line1,
+            "destinationaddress" => i => i.DestinationAddress.Line1,
             "deliverycost" => i => i.DeliveryCost,
             "distance" => i => i.Distance,
             "dispatcheddate" => i => i.DispatchedDate,

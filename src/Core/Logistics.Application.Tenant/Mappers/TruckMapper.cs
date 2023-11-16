@@ -6,15 +6,20 @@ public static class TruckMapper
 {
     public static TruckDto ToDto(this Truck entity, IEnumerable<LoadDto> loads)
     {
-        return new TruckDto
+        var dto = new TruckDto
         {
             Id = entity.Id,
             TruckNumber = entity.TruckNumber,
-            CurrentLocation = entity.LastKnownLocation,
-            CurrentLocationLat = entity.LastKnownLocationLat,
-            CurrentLocationLong = entity.LastKnownLocationLong,
+            CurrentLocationLat = entity.CurrentLocationLat,
+            CurrentLocationLong = entity.CurrentLocationLong,
             Loads = loads,
             Drivers = entity.Drivers.Select(i => i.ToDto())
         };
+
+        if (entity.CurrentLocation.IsNotNull())
+        {
+            dto.CurrentLocation = entity.CurrentLocation.ToDto();
+        }
+        return dto;
     }
 }

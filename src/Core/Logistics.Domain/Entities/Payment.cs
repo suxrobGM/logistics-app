@@ -1,4 +1,5 @@
 ﻿using Logistics.Domain.Core;
+using Logistics.Domain.ValueObjects;
 using Logistics.Shared.Enums;
 
 namespace Logistics.Domain.Entities;
@@ -11,7 +12,7 @@ public class Payment : Entity, ITenantEntity
     public decimal Amount { get; set; }
     public PaymentStatus Status { get; set; }
     public PaymentFor PaymentFor { get; set; }
-    public string? BillingAddress { get; set; }
+    public Address BillingAddress { get; set; } = Address.NullAddress;
     public string? Comment { get; set; }
 
     public void SetStatus(PaymentStatus status)

@@ -1,16 +1,17 @@
 import {LoadStatus} from '@core/enums';
 import {Customer} from '../customer';
 import {Invoice} from '../invoice';
+import {Address} from '../address';
 
 
 export interface Load {
   id: string;
   refId: number;
   name?: string;
-  originAddress: string;
+  originAddress: Address;
   originAddressLat: number;
   originAddressLong: number;
-  destinationAddress: string;
+  destinationAddress: Address;
   destinationAddressLat: number;
   destinationAddressLong: number;
   deliveryCost: number;

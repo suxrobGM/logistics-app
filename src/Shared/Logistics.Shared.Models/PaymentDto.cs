@@ -11,6 +11,6 @@ public class PaymentDto
     public decimal Amount { get; set; }
     public PaymentStatus Status { get; set; }
     public PaymentFor PaymentFor { get; set; }
-    public string? BillingAddress { get; set; }
+    public AddressDto? BillingAddress { get; set; }
     public string? Comment { get; set; }
 }

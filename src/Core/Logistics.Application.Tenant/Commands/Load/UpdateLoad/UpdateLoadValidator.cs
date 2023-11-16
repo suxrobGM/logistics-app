@@ -13,13 +13,13 @@ internal sealed class UpdateLoadValidator : AbstractValidator<UpdateLoadCommand>
             .GreaterThan(LoadConsts.MinDeliveryCost)
             .LessThan(LoadConsts.MaxDeliveryCost);
         
-        When(i => !string.IsNullOrEmpty(i.OriginAddress), () =>
+        When(i => i.OriginAddress != null, () =>
         {
             RuleFor(i => i.OriginAddressLat).NotEmpty().InclusiveBetween(-90, 90);
             RuleFor(i => i.OriginAddressLong).NotEmpty().InclusiveBetween(-180, 180);
         });
         
-        When(i => !string.IsNullOrEmpty(i.DestinationAddress), () =>
+        When(i => i.DestinationAddress != null, () =>
         {
             RuleFor(i => i.DestinationAddressLat).NotEmpty().InclusiveBetween(-90, 90);
             RuleFor(i => i.DestinationAddressLong).NotEmpty().InclusiveBetween(-180, 180);

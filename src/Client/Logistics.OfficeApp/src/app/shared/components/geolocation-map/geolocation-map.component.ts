@@ -2,9 +2,10 @@ import {
   Component,
   Input,
 } from '@angular/core';
-import {NgFor, NgIf} from '@angular/common';
+import {CommonModule} from '@angular/common';
 import {MarkerComponent, NgxMapboxGLModule} from 'ngx-mapbox-gl';
 import {TruckGeolocation} from '@core/models';
+import {AddressPipe} from '@shared/pipes';
 
 
 @Component({
@@ -13,9 +14,9 @@ import {TruckGeolocation} from '@core/models';
   styleUrls: [],
   standalone: true,
   imports: [
+    CommonModule,
     NgxMapboxGLModule,
-    NgFor,
-    NgIf,
+    AddressPipe,
   ],
 })
 export class GeolocationMapComponent {
@@ -36,19 +37,11 @@ export class GeolocationMapComponent {
     this.height = '100%';
   }
 
-  trackByFn(index: number, item: TruckGeolocation): string {
-    return item.truckId;
-  }
-
   onSelectMarker(geoData: TruckGeolocation, markerComponent: MarkerComponent): void {
     this.selectedMarker = {
       component: markerComponent,
       data: geoData,
     };
-  }
-
-  formatAddress(address: string): string {
-    return address.substring(0, address.lastIndexOf(','));
   }
 }
 

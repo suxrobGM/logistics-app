@@ -1,4 +1,5 @@
 import {PaymentMethod} from '@core/enums';
+import {Address} from '../address';
 
 
 export interface ProcessPayment {
@@ -11,5 +12,5 @@ export interface ProcessPayment {
   bankName?: string;
   bankAccountNumber?: string;
   bankRoutingNumber?: string;
-  billingAddress: string;
+  billingAddress: Address;
 }

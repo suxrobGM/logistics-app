@@ -36,7 +36,7 @@
               </a>
             </td>
             <td [pTooltip]="load.currentLocation" [showDelay]="500" tooltipPosition="bottom">
-              {{load.currentLocation}}
+              {{load.currentLocation | address}}
             </td>
             <td>
               <a [routerLink]="['/trucks/details', load.assignedTruckId]">

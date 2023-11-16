@@ -12,7 +12,7 @@ import {AppConfig} from '@configs';
 import {DailyGrosses, Load} from '@core/models';
 import {ApiService} from '@core/services';
 import {TrucksMapComponent} from '@shared/components';
-import {DistanceUnitPipe} from '@shared/pipes';
+import {AddressPipe, DistanceUnitPipe} from '@shared/pipes';
 import {DateUtils, DistanceConverter} from '@shared/utils';
 import {NotificationsPanelComponent} from './components';
 
@@ -36,6 +36,7 @@ import {NotificationsPanelComponent} from './components';
     DistanceUnitPipe,
     TrucksMapComponent,
     NotificationsPanelComponent,
+    AddressPipe,
   ],
 })
 export class HomeComponent implements OnInit {

@@ -1,26 +1,27 @@
 ﻿using Logistics.Domain.Core;
+using Logistics.Domain.ValueObjects;
 using Logistics.Shared.Enums;
 
 namespace Logistics.Domain.Entities;
 
 public class Truck : AuditableEntity, ITenantEntity
 {
-    public string TruckNumber { get; set; } = default!;
+    public required string TruckNumber { get; set; }
     
     /// <summary>
     /// Truck last known location address
     /// </summary>
-    public string? LastKnownLocation { get; set; }
+    public Address CurrentLocation { get; set; } = Address.NullAddress;
     
     /// <summary>
     /// Truck last known location latitude
     /// </summary>
-    public double? LastKnownLocationLat { get; set; }
+    public double? CurrentLocationLat { get; set; }
     
     /// <summary>
     /// Truck last known location longitude
     /// </summary>
-    public double? LastKnownLocationLong { get; set; }
+    public double? CurrentLocationLong { get; set; }
 
     public virtual List<Employee> Drivers { get; set; } = new();
     public virtual List<Load> Loads { get; } = new();
@@ -34,7 +35,7 @@ public class Truck : AuditableEntity, ITenantEntity
     {
         var newTruck = new Truck
         {
-            TruckNumber = truckNumber,
+            TruckNumber = truckNumber
         };
 
         newTruck.Drivers.AddRange(drivers);

@@ -33,7 +33,7 @@ internal sealed class UpdatePaymentHandler : RequestHandler<UpdatePaymentCommand
         {
             payment.Amount = req.Amount.Value;
         }
-        if (!string.IsNullOrEmpty(req.BillingAddress) && payment.BillingAddress != req.BillingAddress)
+        if (req.BillingAddress != null && payment.BillingAddress != req.BillingAddress)
         {
             payment.BillingAddress = req.BillingAddress;
         }

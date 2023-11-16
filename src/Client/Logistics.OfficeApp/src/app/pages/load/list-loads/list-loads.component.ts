@@ -10,7 +10,7 @@ import {ButtonModule} from 'primeng/button';
 import {LoadStatus, LoadStatusEnum} from '@core/enums';
 import {Load} from '@core/models';
 import {ApiService} from '@core/services';
-import {DistanceUnitPipe} from '@shared/pipes';
+import {AddressPipe, DistanceUnitPipe} from '@shared/pipes';
 import {PaymentStatusTagComponent} from '@shared/components';
 
 
@@ -30,6 +30,7 @@ import {PaymentStatusTagComponent} from '@shared/components';
     InputTextModule,
     DistanceUnitPipe,
     PaymentStatusTagComponent,
+    AddressPipe,
   ],
 })
 export class ListLoadComponent {
@@ -74,8 +75,6 @@ export class ListLoadComponent {
       if (result.isSuccess && result.data) {
         this.loads = result.data;
         this.totalRecords = result.totalItems;
-        console.log(this.loads);
-        
       }
 
       this.isLoading = false;

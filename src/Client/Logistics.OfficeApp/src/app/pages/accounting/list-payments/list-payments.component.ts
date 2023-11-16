@@ -15,6 +15,7 @@ import {
 } from '@core/enums';
 import {PredefinedDateRanges} from '@core/helpers';
 import {PaymentStatusTagComponent} from '@shared/components';
+import {AddressPipe} from '@shared/pipes';
 
 
 @Component({
@@ -29,7 +30,8 @@ import {PaymentStatusTagComponent} from '@shared/components';
     TooltipModule,
     RouterModule,
     ButtonModule,
-    PaymentStatusTagComponent
+    PaymentStatusTagComponent,
+    AddressPipe,
   ],
 })
 export class ListPaymentsComponent {

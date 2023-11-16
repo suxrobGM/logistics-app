@@ -49,7 +49,7 @@
               {{truck.truckNumber}}
             </td>
             <td class="text-center" [pTooltip]="truck.currentLocation" [showDelay]="500">
-              {{truck.currentLocation}}
+              {{truck.currentLocation | address}}
             </td>
             <td class="text-center">
               @for (driver of truck.drivers; track driver.id) {

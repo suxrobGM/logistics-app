@@ -1,14 +1,15 @@
-﻿using MediatR;
+﻿using Logistics.Domain.ValueObjects;
+using MediatR;
 
 namespace Logistics.Application.Tenant.Commands;
 
 public class CreateLoadCommand : IRequest<ResponseResult>
 {
     public string? Name { get; set; }
-    public string? OriginAddress { get; set; }
+    public Address? OriginAddress { get; set; }
     public double OriginAddressLat { get; set; }
     public double OriginAddressLong { get; set; }
-    public string? DestinationAddress { get; set; }
+    public Address? DestinationAddress { get; set; }
     public double DestinationAddressLat { get; set; }
     public double DestinationAddressLong { get; set; }
     public decimal DeliveryCost { get; set; }
