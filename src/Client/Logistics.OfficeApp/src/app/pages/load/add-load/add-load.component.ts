@@ -11,7 +11,7 @@ import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {AppConfig} from '@configs';
 import {AuthService} from '@core/auth';
-import {CreateLoad, Customer} from '@core/models';
+import {Address, CreateLoad, Customer} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {Converters} from '@shared/utils';
 import {
@@ -19,8 +19,10 @@ import {
   DirectionsMapComponent,
   RouteChangedEvent,
   SelectedAddressEvent,
+  ValidationSummaryComponent,
 } from '@shared/components';
-import {SearchCustomerComponent, SearchTruckComponent, TruckData} from '../components';
+import {SearchCustomerComponent, SearchTruckComponent} from '../components';
+import {TruckData} from '../shared';
 
 
 @Component({
@@ -43,19 +45,16 @@ import {SearchCustomerComponent, SearchTruckComponent, TruckData} from '../compo
     DirectionsMapComponent,
     SearchCustomerComponent,
     SearchTruckComponent,
+    ValidationSummaryComponent,
   ],
 })
 export class AddLoadComponent implements OnInit {
-  public readonly accessToken: string;
-  private distanceMeters: number;
-
-  public isLoading: boolean;
-  public form: FormGroup;
-  public selectedTruck: TruckData | null;
-  public selectedCustomer: Customer | null;
-  public suggestedCustomers: Customer[];
-  public originCoords?: [number, number] | null;
-  public destinationCoords?: [number, number] | null;
+  public readonly accessToken = AppConfig.mapboxToken;
+  private distanceMeters = 0;
+  public isLoading = false;
+  public form: FormGroup<AddLoadForm>;
+  public originCoords: [number, number] | null = null;
+  public destinationCoords: [number, number] | null = null;
 
   constructor(
     private readonly authService: AuthService,
@@ -63,24 +62,19 @@ export class AddLoadComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly router: Router)
   {
-    this.accessToken = AppConfig.mapboxToken;
-    this.isLoading = false;
-    this.selectedTruck = null;
-    this.selectedCustomer = null;
-    this.suggestedCustomers = [];
-    this.distanceMeters = 0;
-
-    this.form = new FormGroup({
+    this.form = new FormGroup<AddLoadForm>({
       name: new FormControl(''),
-      orgAddress: new FormControl('', Validators.required),
-      orgCoords: new FormControl([], Validators.required),
-      dstAddress: new FormControl('', Validators.required),
-      dstCoords: new FormControl([], Validators.required),
-      dispatchedDate: new FormControl(new Date().toLocaleDateString(), Validators.required),
-      deliveryCost: new FormControl(0, Validators.required),
-      distance: new FormControl(0, Validators.required),
-      dispatcherName: new FormControl('', Validators.required),
-      dispatcherId: new FormControl('', Validators.required),
+      customer: new FormControl(null, {validators: Validators.required}),
+      orgAddress: new FormControl(null, {validators: Validators.required, nonNullable: true}),
+      orgCoords: new FormControl([0,0], {validators: Validators.required, nonNullable: true}),
+      dstAddress: new FormControl(null, {validators: Validators.required, nonNullable: true}),
+      dstCoords: new FormControl([0,0], {validators: Validators.required, nonNullable: true}),
+      dispatchedDate: new FormControl(new Date().toLocaleDateString(), {validators: Validators.required, nonNullable: true}),
+      deliveryCost: new FormControl(0, {validators: Validators.required, nonNullable: true}),
+      distance: new FormControl(0, {validators: Validators.required, nonNullable: true}),
+      assignedTruck: new FormControl(null, {validators: Validators.required}),
+      assignedDispatcherId: new FormControl('', {validators: Validators.required, nonNullable: true}),
+      assignedDispatcherName: new FormControl('', {validators: Validators.required, nonNullable: true}),
     });
   }
 
@@ -109,24 +103,24 @@ export class AddLoadComponent implements OnInit {
   }
 
   createLoad() {
-    if (!this.isValid()) {
+    if (!this.form.valid) {
       return;
     }
 
     this.isLoading = true;
     const command: CreateLoad = {
-      name: this.form.value.name,
-      originAddress: this.form.value.orgAddress,
-      originAddressLong: this.form.value.orgCoords[0],
-      originAddressLat: this.form.value.orgCoords[1],
-      destinationAddress: this.form.value.dstAddress,
-      destinationAddressLong: this.form.value.dstCoords[0],
-      destinationAddressLat: this.form.value.dstCoords[1],
-      deliveryCost: this.form.value.deliveryCost,
+      name: this.form.value.name!,
+      originAddress: this.form.value.orgAddress!,
+      originAddressLong: this.form.value.orgCoords![0],
+      originAddressLat: this.form.value.orgCoords![1],
+      destinationAddress: this.form.value.dstAddress!,
+      destinationAddressLong: this.form.value.dstCoords![0],
+      destinationAddressLat: this.form.value.dstCoords![1],
+      deliveryCost: this.form.value.deliveryCost!,
       distance: this.distanceMeters,
-      assignedDispatcherId: this.form.value.dispatcherId,
-      assignedTruckId: this.selectedTruck!.truckId,
-      customerId: this.selectedCustomer!.id
+      assignedDispatcherId: this.form.value.assignedDispatcherId!,
+      assignedTruckId: this.form.value.assignedTruck!.truckId,
+      customerId: this.form.value.customer!.id,
     };
     
     this.apiService.createLoad(command)
@@ -140,35 +134,29 @@ export class AddLoadComponent implements OnInit {
       });
   }
 
-  private isValid(): boolean {
-    if (!this.selectedTruck) {
-      this.toastService.showError('Please select a truck');
-      return false;
-    }
-
-    if (!this.selectedCustomer) {
-      this.toastService.showError('Please select a customer');
-      return false;
-    }
-
-    if (!this.form.value.orgAddress) {
-      this.toastService.showError('Please select the origin address');
-      return false;
-    }
-
-    if (!this.form.value.dstAddress) {
-      this.toastService.showError('Please select the destination address');
-      return false;
-    }
-
-    return true;
-  }
-
   private fetchCurrentDispatcher() {
     const userData = this.authService.getUserData();
-    this.form.patchValue({
-      dispatcherName: userData?.name,
-      dispatcherId: userData?.id,
-    });
+
+    if (userData) {
+      this.form.patchValue({
+        assignedDispatcherId: userData.id,
+        assignedDispatcherName: userData.getFullName(),
+      });
+    }
   }
+}
+
+interface AddLoadForm {
+  name: FormControl<string | null>;
+  customer: FormControl<Customer | null>;
+  orgAddress: FormControl<Address | null>;
+  orgCoords: FormControl<[number, number]>;
+  dstAddress: FormControl<Address | null>;
+  dstCoords: FormControl<[number, number]>;
+  dispatchedDate: FormControl<string>;
+  deliveryCost: FormControl<number>;
+  distance: FormControl<number>;
+  assignedTruck: FormControl<TruckData | null>;
+  assignedDispatcherId: FormControl<string>;
+  assignedDispatcherName: FormControl<string>;
 }

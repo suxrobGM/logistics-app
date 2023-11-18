@@ -1,12 +1,13 @@
 import {LoadStatus} from '@core/enums';
+import {Address} from '../address';
 
 export interface UpdateLoad {
   id: string;
   name?: string;
-  originAddress: string;
+  originAddress: Address;
   originAddressLat: number;
   originAddressLong: number;
-  destinationAddress: string;
+  destinationAddress: Address;
   destinationAddressLat: number;
   destinationAddressLong: number;
   deliveryCost: number;

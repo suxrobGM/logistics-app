@@ -1,29 +1,36 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output, forwardRef} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {FormsModule} from '@angular/forms';
+import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {AutoCompleteModule, AutoCompleteOnSelectEvent} from 'primeng/autocomplete';
 import {ApiService} from '@core/services';
-import {TruckHelper} from '@pages/load/shared';
+import {TruckData, TruckHelper} from '../../shared';
 
 
 @Component({
   selector: 'app-search-truck',
   standalone: true,
   templateUrl: './search-truck.component.html',
-  styleUrls: [],
   imports: [
     CommonModule,
     AutoCompleteModule,
     FormsModule,
   ],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => SearchTruckComponent),
+      multi: true,
+    },
+  ],
 })
-export class SearchTruckComponent {
+export class SearchTruckComponent implements ControlValueAccessor {
+  private isDisabled = false;
   public suggestedTrucks: TruckData[] = [];
+
   @Input() selectedTruck: TruckData | null = null;
   @Output() selectedTruckChange = new EventEmitter<TruckData>();
 
-  constructor(private readonly apiService: ApiService) {
-  }
+  constructor(private readonly apiService: ApiService) {}
 
   searchTruck(event: {query: string}) {
     this.apiService.getTruckDrivers({search: event.query}).subscribe((result) => {
@@ -40,10 +47,30 @@ export class SearchTruckComponent {
 
   changeSelectedTruck(event: AutoCompleteOnSelectEvent) {
     this.selectedTruckChange.emit(event.value);
+    this.onChange(event.value);
   }
-}
 
-export interface TruckData {
-  driversName: string,
-  truckId: string;
+  //#region Implementation Reactive forms
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private onChange(value: TruckData | null): void {}
+  private onTouched(): void {}
+
+  writeValue(value: TruckData | null): void {
+    this.selectedTruck = value;
+  }
+
+  registerOnChange(fn: () => void): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.isDisabled = isDisabled;
+  }
+
+  //#endregion
 }

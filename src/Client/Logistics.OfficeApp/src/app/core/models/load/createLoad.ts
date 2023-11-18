@@ -1,9 +1,11 @@
+import {Address} from '../address';
+
 export interface CreateLoad {
   name?: string;
-  originAddress: string;
+  originAddress: Address;
   originAddressLat: number;
   originAddressLong: number;
-  destinationAddress: string;
+  destinationAddress: Address;
   destinationAddressLat: number;
   destinationAddressLong: number;
   deliveryCost: number;

@@ -4,8 +4,8 @@ export interface EnumValue {
 }
 
 export interface EnumLike {
-  getDescription: GetEnumDescFunction;
-  [key: string]: EnumValue | GetEnumDescFunction;
+  getDescription: GetDescriptionFn;
+  [key: string]: EnumValue | GetDescriptionFn;
 }
 
 export function convertEnumToArray(enumLike: EnumLike): EnumValue[] {
@@ -36,4 +36,5 @@ export function getEnumDescription(enumLike: EnumLike, enumValue: string | numbe
   return 'Description not found';
 }
 
-type GetEnumDescFunction = (enumValue: string | number) => string;
+type GetDescriptionFn = (enumValue: string | number) => string;
+type ToArrayFn = (enumLike: EnumLike) => EnumValue[];

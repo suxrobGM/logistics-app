@@ -28,13 +28,14 @@ export class AddressAutocompleteComponent implements ControlValueAccessor, OnIni
   public searchResults: GeocodingFeature[] = [];
   public addressString: string | null = null;
   private isDisabled = false;
+  private isTouched = false;
 
   @Input({required: true}) accessToken!: string;
   @Input() field = '';
   @Input() placeholder = 'Type address...';
   @Input() country = 'us';
-  @Input() address: Address | null = null;
   @Input() forceSelection = false;
+  @Input() address: Address | null = null;
   @Output() addressChange = new EventEmitter<Address>();
   @Output() selectedAddress = new EventEmitter<SelectedAddressEvent>();
 
@@ -50,6 +51,7 @@ export class AddressAutocompleteComponent implements ControlValueAccessor, OnIni
     const query = (event.target as HTMLInputElement)?.value;
 
     if (!query) {
+      this.markAsTouched();
       this.searchResults = [];
       return;
     }
@@ -63,7 +65,7 @@ export class AddressAutocompleteComponent implements ControlValueAccessor, OnIni
     if (this.isDisabled) {
       return;
     }
-
+    
     const street = geocodingFeature.place_name.substring(0, geocodingFeature.place_name.indexOf(','));
     const city = geocodingFeature.context.find((i) => i.id.startsWith('place'))?.text ?? '';
     const region = geocodingFeature.context.find((i) => i.id.startsWith('region'))?.text ?? '';
@@ -86,7 +88,9 @@ export class AddressAutocompleteComponent implements ControlValueAccessor, OnIni
     });
 
     this.searchResults = [];
+    this.setAddressString(addressObj);
     this.onChange(addressObj);
+    this.markAsTouched();
   }
 
   handleInputFocusOut(event: FocusEvent) {
@@ -94,8 +98,9 @@ export class AddressAutocompleteComponent implements ControlValueAccessor, OnIni
     setTimeout(() => {
       if (this.forceSelection && this.searchResults.length) {
         this.address = null;
-        this.onChange(null);
+        this.addressString = null;
         this.searchResults = [];
+        this.onChange(null);
       }
     }, 100);
   }
@@ -108,6 +113,13 @@ export class AddressAutocompleteComponent implements ControlValueAccessor, OnIni
 
   private onChange(value: Address | null): void {}
   private onTouched(): void {}
+
+  private markAsTouched() {
+    if (!this.isTouched) {
+      this.isTouched = true;
+      this.onTouched();
+    }
+  }
 
   writeValue(value: Address): void {
     this.address = value;

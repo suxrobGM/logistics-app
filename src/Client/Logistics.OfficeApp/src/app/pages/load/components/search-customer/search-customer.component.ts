@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output, forwardRef} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {AutoCompleteModule, AutoCompleteOnSelectEvent} from 'primeng/autocomplete';
 import {ApiService} from '@core/services';
 import {Customer} from '@core/models';
@@ -13,6 +13,7 @@ import {Customer} from '@core/models';
   imports: [
     CommonModule,
     AutoCompleteModule,
+    FormsModule,
   ],
   providers: [
     {
@@ -24,7 +25,6 @@ import {Customer} from '@core/models';
 })
 export class SearchCustomerComponent implements ControlValueAccessor {
   private isDisabled = false;
-  private customer: Customer | null = null;
   public suggestedCustomers: Customer[] = [];
 
   @Input() selectedCustomer: Customer | null = null;
@@ -41,9 +41,8 @@ export class SearchCustomerComponent implements ControlValueAccessor {
   }
 
   changeSelectedCustomer(event: AutoCompleteOnSelectEvent) {
-    this.customer = event.value;
-    this.selectedCustomerChange.emit(this.customer);
-    this.onChange(this.customer);
+    this.selectedCustomerChange.emit(event.value);
+    this.onChange(event.value);
   }
   
   //#region Implementation Reactive forms
@@ -52,8 +51,8 @@ export class SearchCustomerComponent implements ControlValueAccessor {
   private onChange(value: Customer | null): void {}
   private onTouched(): void {}
 
-  writeValue(obj: Customer | null): void {
-    this.customer = obj;
+  writeValue(value: Customer | null): void {
+    this.selectedCustomer = value;
   }
 
   registerOnChange(fn: () => void): void {

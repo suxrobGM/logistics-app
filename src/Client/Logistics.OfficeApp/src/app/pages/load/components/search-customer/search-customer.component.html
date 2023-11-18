@@ -6,6 +6,7 @@
   [minLength]="2"
   [forceSelection]="true"
   field="name"
+  [(ngModel)]="selectedCustomer"
   (completeMethod)="searchCustomer($event)"
   (onSelect)="changeSelectedCustomer($event)">
 </p-autoComplete>
