@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {Component, OnInit} from '@angular/core';
-import {NgIf} from '@angular/common';
+import {CommonModule} from '@angular/common';
 import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {ConfirmationService} from 'primeng/api';
@@ -15,12 +15,13 @@ import {AppConfig} from '@configs';
 import {EnumValue, LoadStatus, LoadStatusEnum, convertEnumToArray} from '@core/enums';
 import {Customer, UpdateLoad} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
-import {DistanceConverter} from '@shared/utils';
+import {Converters} from '@shared/utils';
 import {
   AddressAutocompleteComponent,
   DirectionsMapComponent,
   RouteChangedEvent,
   SelectedAddressEvent,
+  ValidationSummaryComponent,
 } from '@shared/components';
 import {TruckData, TruckHelper} from '../shared';
 import {SearchCustomerComponent, SearchTruckComponent} from '../components';
@@ -33,10 +34,10 @@ import {SearchCustomerComponent, SearchTruckComponent} from '../components';
   styleUrls: ['./edit-load.component.scss'],
   standalone: true,
   imports: [
+    CommonModule,
     ToastModule,
     ConfirmDialogModule,
     CardModule,
-    NgIf,
     ProgressSpinnerModule,
     FormsModule,
     ReactiveFormsModule,
@@ -47,7 +48,8 @@ import {SearchCustomerComponent, SearchTruckComponent} from '../components';
     AddressAutocompleteComponent,
     DirectionsMapComponent,
     SearchCustomerComponent,
-    SearchTruckComponent
+    SearchTruckComponent,
+    ValidationSummaryComponent,
   ],
   providers: [
     ConfirmationService,
@@ -62,7 +64,6 @@ export class EditLoadComponent implements OnInit {
   public isLoading: boolean;
   public form: FormGroup;
   public selectedTruck: TruckData | null;
-  public selectedCustomer: Customer | null;
   public loadStatuses: EnumValue[];
   public originCoords?: [number, number] | null;
   public destinationCoords?: [number, number] | null;
@@ -77,12 +78,12 @@ export class EditLoadComponent implements OnInit {
     this.accessToken = AppConfig.mapboxToken;
     this.isLoading = false;
     this.selectedTruck = null;
-    this.selectedCustomer = null;
     this.loadStatuses = convertEnumToArray(LoadStatusEnum);
     this.distanceMeters = 0;
 
     this.form = new FormGroup({
       name: new FormControl(''),
+      customer: new FormControl('', Validators.required),
       orgAddress: new FormControl('', Validators.required),
       orgCoords: new FormControl([], Validators.required),
       dstAddress: new FormControl('', Validators.required),
@@ -132,7 +133,7 @@ export class EditLoadComponent implements OnInit {
 
   updateDistance(eventData: RouteChangedEvent) {
     this.distanceMeters = eventData.distance;
-    const distanceMiles = DistanceConverter.metersTo(this.distanceMeters, 'mi');
+    const distanceMiles = Converters.metersTo(this.distanceMeters, 'mi');
     this.form.patchValue({distance: distanceMiles});
   }
 
@@ -155,7 +156,7 @@ export class EditLoadComponent implements OnInit {
       distance: this.distanceMeters,
       assignedDispatcherId: this.form.value.dispatcherId,
       assignedTruckId: this.selectedTruck!.truckId,
-      customerId: this.selectedCustomer!.id,
+      customerId: this.form.value.customer.id,
       status: this.form.value.status,
     };
 
@@ -175,11 +176,6 @@ export class EditLoadComponent implements OnInit {
       return false;
     }
 
-    if (!this.selectedCustomer) {
-      this.toastService.showError('Please select the customer');
-      return false;
-    }
-
     if (!this.form.value.orgAddress) {
       this.toastService.showError('Please select the origin address');
       return false;
@@ -190,7 +186,7 @@ export class EditLoadComponent implements OnInit {
       return false;
     }
 
-    return true;
+    return this.form.valid;
   }
 
   private deleteLoad() {
@@ -217,13 +213,14 @@ export class EditLoadComponent implements OnInit {
 
       this.form.patchValue({
         name: load.name,
+        customer: load.customer,
         orgAddress: load.originAddress,
         orgCoords: [load.originAddressLong, load.originAddressLat],
         dstAddress: load.destinationAddress,
         dstCoords: [load.destinationAddressLong, load.destinationAddressLat],
         dispatchedDate: this.getLocaleDate(load.dispatchedDate),
         deliveryCost: load.deliveryCost,
-        distance: DistanceConverter.metersTo(load.distance, 'mi'),
+        distance: Converters.metersTo(load.distance, 'mi'),
         dispatcherName: load.assignedDispatcherName,
         dispatcherId: load.assignedDispatcherId,
         status: load.status,
@@ -247,3 +244,8 @@ export class EditLoadComponent implements OnInit {
     return '';
   }
 }
+
+// interface EditLoadForm {
+//   name: FormControl<string | null>;
+//   orgAddress: FormControl<string>;
+// }

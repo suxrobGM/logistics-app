@@ -4,7 +4,7 @@ import {CardModule} from 'primeng/card';
 import {ChartModule} from 'primeng/chart';
 import {SkeletonModule} from 'primeng/skeleton';
 import {MonthlyGrosses} from '@core/models';
-import {DateUtils, DistanceConverter} from '@shared/utils';
+import {DateUtils, Converters} from '@shared/utils';
 import {ApiService} from '@core/services';
 import {RangeCalendarComponent} from '../range-calendar/range-calendar.component';
 
@@ -25,8 +25,8 @@ import {RangeCalendarComponent} from '../range-calendar/range-calendar.component
 export class GrossesBarchartComponent implements OnInit {
   public isLoading: boolean;
   public monthlyGrosses?: MonthlyGrosses;
-  public chartData: any;
-  public chartOptions: any;
+  public chartData: unknown;
+  public chartOptions: unknown;
   public startDate: Date;
   public endDate: Date;
 
@@ -69,7 +69,7 @@ export class GrossesBarchartComponent implements OnInit {
     this.apiService.getMonthlyGrosses(this.startDate, this.endDate, this.truckId).subscribe((result) => {
       if (result.isSuccess && result.data) {
         this.monthlyGrosses = result.data;
-        const rpm = this.monthlyGrosses.totalGross / DistanceConverter.metersTo(this.monthlyGrosses.totalDistance, 'mi');
+        const rpm = this.monthlyGrosses.totalGross / Converters.metersTo(this.monthlyGrosses.totalDistance, 'mi');
 
         this.drawChart(this.monthlyGrosses);
         this.chartDrawn.emit({monthlyGrosses: this.monthlyGrosses, rpm: rpm});

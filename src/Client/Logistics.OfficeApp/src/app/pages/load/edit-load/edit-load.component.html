@@ -11,13 +11,14 @@
         <p-progressSpinner></p-progressSpinner>
       }
       <form [formGroup]="form" (ngSubmit)="updateLoad()">
+        <app-validation-summary [form]="form"></app-validation-summary>
         <div class="mb-3">
           <label for="name" class="form-label">Name</label>
           <input id="name" formControlName="name" type="text" class="form-control" placeholder="Load name" />
         </div>
         <div class="mb-3">
           <label for="customer" class="form-label">Customer</label>
-          <app-search-customer [(selectedCustomer)]="selectedCustomer"></app-search-customer>
+          <app-search-customer formControlName="customer"></app-search-customer>
         </div>
         <div class="mb-3">
           <label for="orgAddress" class="form-label">Origin Address</label>

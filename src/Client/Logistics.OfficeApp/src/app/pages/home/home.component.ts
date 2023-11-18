@@ -13,7 +13,7 @@ import {DailyGrosses, Load} from '@core/models';
 import {ApiService} from '@core/services';
 import {TrucksMapComponent} from '@shared/components';
 import {AddressPipe, DistanceUnitPipe} from '@shared/pipes';
-import {DateUtils, DistanceConverter} from '@shared/utils';
+import {DateUtils, Converters} from '@shared/utils';
 import {NotificationsPanelComponent} from './components';
 
 
@@ -98,7 +98,7 @@ export class HomeComponent implements OnInit {
 
         this.weeklyGross = grosses.totalGross;
         this.weeklyDistance = grosses.totalDistance;
-        this.weeklyRpm = this.weeklyGross / DistanceConverter.metersTo(this.weeklyDistance, 'mi');
+        this.weeklyRpm = this.weeklyGross / Converters.metersTo(this.weeklyDistance, 'mi');
         this.drawChart(grosses);
         this.calcTodayGross(grosses);
       }

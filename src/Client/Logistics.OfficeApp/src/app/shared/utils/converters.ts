@@ -1,4 +1,21 @@
-export abstract class DistanceConverter {
+import {Address} from '@core/models';
+
+export abstract class Converters {
+  /**
+   * Converts an address object to the formatted string
+   * @param value Address object
+   * @returns A formatted string
+   */
+  static addressToString(value: Address | null): string {
+    if (!value) {
+      return '';
+    }
+    if (value.line2) {
+      return `${value.line1} ${value.line2}, ${value.city}, ${value.region} ${value.zipCode}`;
+    }
+    return `${value.line1}, ${value.city}, ${value.region} ${value.zipCode}`;
+  }
+
   /**
    * Converts a distance value to the specified system of units.
    * The value must be in meters.

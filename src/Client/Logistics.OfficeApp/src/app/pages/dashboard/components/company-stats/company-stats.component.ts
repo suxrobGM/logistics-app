@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {CommonModule, CurrencyPipe} from '@angular/common';
 import {CompanyStats} from '@core/models';
 import {ApiService} from '@core/services';
-import {DistanceConverter} from '@shared/utils';
+import {Converters} from '@shared/utils';
 import {DistanceUnitPipe} from '@shared/pipes';
 import {SharedModule} from 'primeng/api';
 import {CardModule} from 'primeng/card';
@@ -45,7 +45,7 @@ export class CompanyStatsComponent implements OnInit {
       return 0;
     }
 
-    return gross / DistanceConverter.metersTo(distance, 'mi');
+    return gross / Converters.metersTo(distance, 'mi');
   }
 
   private fetchCompanyStats() {
@@ -55,7 +55,7 @@ export class CompanyStatsComponent implements OnInit {
       if (result.isSuccess && result.data) {
         const stats = result.data;
         this.companyStats = result.data;
-        this.rpm = stats.totalGross / DistanceConverter.metersTo(stats.totalDistance, 'mi');
+        this.rpm = stats.totalGross / Converters.metersTo(stats.totalDistance, 'mi');
       }
 
       this.isLoading = false;

@@ -1,4 +1,4 @@
 export * from './arrayUtils';
 export * from './dateUtils';
-export * from './distanceUtils';
+export * from './converters';
 export * from './numberUtils';

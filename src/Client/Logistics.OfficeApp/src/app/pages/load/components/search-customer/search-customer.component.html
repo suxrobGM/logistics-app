@@ -1,10 +1,11 @@
-<p-autoComplete #autoCompleteInput
+<p-autoComplete
   [suggestions]="suggestedCustomers"
-  styleClass="w-100" inputStyleClass="form-control"
+  styleClass="w-100" 
+  inputStyleClass="form-control"
   placeholder="Type a customer name"
-  (completeMethod)="searchCustomer($event)"
   [minLength]="2"
   [forceSelection]="true"
   field="name"
+  (completeMethod)="searchCustomer($event)"
   (onSelect)="changeSelectedCustomer($event)">
 </p-autoComplete>
