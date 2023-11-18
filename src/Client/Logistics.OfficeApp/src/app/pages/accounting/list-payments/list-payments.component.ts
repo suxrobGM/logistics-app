@@ -86,10 +86,10 @@ export class ListPaymentsComponent {
       return 'N/A';
     }
 
-    return PaymentMethodEnum.getDescription(enumValue);
+    return PaymentMethodEnum.getValue(enumValue).description;
   }
 
   getPaymentForDesc(enumValue: PaymentFor): string {
-    return PaymentForEnum.getDescription(enumValue);
+    return PaymentForEnum.getValue(enumValue).description;
   }
 }

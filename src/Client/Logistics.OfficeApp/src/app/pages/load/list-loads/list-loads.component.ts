@@ -39,7 +39,7 @@ export class ListLoadComponent {
   public totalRecords: number;
   public first: number;
 
-  constructor(private apiService: ApiService) {
+  constructor(private readonly apiService: ApiService) {
     this.loads = [];
     this.isLoading = false;
     this.totalRecords = 0;
@@ -82,6 +82,6 @@ export class ListLoadComponent {
   }
 
   getLoadStatusDesc(enumValue: LoadStatus): string {
-    return LoadStatusEnum.getDescription(enumValue);
+    return LoadStatusEnum.getValue(enumValue).description;
   }
 }

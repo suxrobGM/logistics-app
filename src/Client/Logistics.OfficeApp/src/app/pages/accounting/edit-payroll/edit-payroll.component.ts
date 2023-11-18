@@ -19,7 +19,6 @@ import {
   PaymentStatusEnum,
   SalaryType,
   SalaryTypeEnum,
-  convertEnumToArray,
 } from '@core/enums';
 import {AddressFormComponent, ValidationSummaryComponent} from '@shared/components';
 import {DateUtils} from '@shared/utils';
@@ -47,8 +46,8 @@ import {DateUtils} from '@shared/utils';
 export class EditPayrollComponent implements OnInit {
   public salaryType = SalaryType;
   public paymentStatus = PaymentStatus;
-  public paymentStatuses = convertEnumToArray(PaymentStatusEnum);
-  public paymentMethods = convertEnumToArray(PaymentMethodEnum);
+  public paymentStatuses = PaymentStatusEnum.toArray();
+  public paymentMethods = PaymentMethodEnum.toArray();
   public title = 'Edit payroll';
   public id: string | null = null;
   public isLoading = false;
@@ -148,7 +147,7 @@ export class EditPayrollComponent implements OnInit {
   }
 
   getSalaryTypeDesc(salaryType: SalaryType): string {
-    return SalaryTypeEnum.getDescription(salaryType);
+    return SalaryTypeEnum.getValue(salaryType).description;
   }
 
   private setConditionalValidators(paymentStatus: PaymentStatus | null) {

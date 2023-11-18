@@ -17,7 +17,7 @@ export class PaymentStatusTagComponent {
   @Input({required: true}) paymentStatus!: PaymentStatus;
 
   getPaymentStatusDesc(enumValue: PaymentStatus): string {
-    return PaymentStatusEnum.getDescription(enumValue);
+    return PaymentStatusEnum.getValue(enumValue).description;
   }
 
   getPaymentStatusTagSeverity(paymentStatus: PaymentStatus): string {

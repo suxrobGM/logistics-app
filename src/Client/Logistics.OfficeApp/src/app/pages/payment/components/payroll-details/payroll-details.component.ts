@@ -15,6 +15,6 @@ export class PayrollDetailsComponent {
   @Input({required: true}) payroll!: Payroll;
 
   getSalaryTypeDesc(enumValue: SalaryType): string {
-    return SalaryTypeEnum.getDescription(enumValue);
+    return SalaryTypeEnum.getValue(enumValue).description;
   }
 }

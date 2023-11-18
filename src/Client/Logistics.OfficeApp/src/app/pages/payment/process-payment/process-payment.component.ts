@@ -7,7 +7,7 @@ import {ButtonModule} from 'primeng/button';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {RadioButtonModule} from 'primeng/radiobutton';
 import {InputMaskModule} from 'primeng/inputmask';
-import {PaymentMethod, PaymentMethodEnum, PaymentStatus, convertEnumToArray} from '@core/enums';
+import {PaymentMethod, PaymentMethodEnum, PaymentStatus} from '@core/enums';
 import {Address, Invoice, Payroll, ProcessPayment} from '@core/models';
 import {RegexPatterns} from '@core/helpers';
 import {ApiService, ToastService} from '@core/services';
@@ -35,7 +35,7 @@ import {InvoiceDetailsComponent, PayrollDetailsComponent} from '../components';
 })
 export class ProcessPaymentComponent implements OnInit {
   public paymentMethod = PaymentMethod;
-  public paymentMethods = convertEnumToArray(PaymentMethodEnum)
+  public paymentMethods = PaymentMethodEnum.toArray();
   public title = '';
   public isLoading = false;
   public isPaymentCompleted = false;

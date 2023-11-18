@@ -1,4 +1,9 @@
-import {EnumLike, getEnumDescription} from './enumLike';
+import {
+  EnumLike,
+  EnumType,
+  convertEnumToArray,
+  findValueFromEnum,
+} from './enumLike';
 
 export enum PaymentMethod {
   BankAccount,
@@ -11,7 +16,11 @@ export const PaymentMethodEnum: EnumLike = {
   CreditCard: {value: 1, description: 'Credit Card'},
   Cash: {value: 2, description: 'Cash'},
 
-  getDescription(value: string | number): string {
-    return getEnumDescription(this, value);
+  getValue(enumValue: string | number): EnumType {
+    return findValueFromEnum(this, enumValue);
+  },
+
+  toArray(): EnumType[] {
+    return convertEnumToArray(this);
   },
 };

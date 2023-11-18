@@ -53,7 +53,7 @@ export class ViewInvoiceComponent implements OnInit {
     if (enumValue == null) {
       return 'N/A';
     }
-    return PaymentMethodEnum.getDescription(enumValue);
+    return PaymentMethodEnum.getValue(enumValue).description;
   }
 
   exportToPDF() {

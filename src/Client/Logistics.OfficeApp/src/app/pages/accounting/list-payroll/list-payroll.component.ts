@@ -85,10 +85,10 @@ export class ListPayrollComponent {
       return 'N/A';
     }
 
-    return PaymentMethodEnum.getDescription(enumValue);
+    return PaymentMethodEnum.getValue(enumValue).description;
   }
 
   getSalaryTypeDesc(enumValue: SalaryType): string {
-    return SalaryTypeEnum.getDescription(enumValue);
+    return SalaryTypeEnum.getValue(enumValue).description;
   }
 }

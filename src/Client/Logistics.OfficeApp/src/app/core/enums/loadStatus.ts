@@ -1,4 +1,9 @@
-import {EnumLike, getEnumDescription} from './enumLike';
+import {
+  EnumLike,
+  EnumType,
+  convertEnumToArray,
+  findValueFromEnum,
+} from './enumLike';
 
 export enum LoadStatus {
   Dispatched,
@@ -11,7 +16,11 @@ export const LoadStatusEnum: EnumLike = {
   PickedUp: {value: 1, description: 'Picked Up'},
   Delivered: {value: 2, description: 'Delivered'},
 
-  getDescription(value: string | number): string {
-    return getEnumDescription(this, value);
+  getValue(enumValue: string | number): EnumType {
+    return findValueFromEnum(this, enumValue);
+  },
+
+  toArray(): EnumType[] {
+    return convertEnumToArray(this);
   },
 };

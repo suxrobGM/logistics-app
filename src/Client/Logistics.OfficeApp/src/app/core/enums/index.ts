@@ -1,4 +1,4 @@
-export * from './enumLike';
+export {EnumLike, EnumType} from './enumLike';
 export * from './paymentFor';
 export * from './paymentMethod';
 export * from './paymentStatus';

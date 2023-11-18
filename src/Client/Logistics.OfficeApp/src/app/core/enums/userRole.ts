@@ -1,4 +1,9 @@
-import {EnumLike, getEnumDescription} from './enumLike';
+import {
+  EnumLike,
+  EnumType,
+  convertEnumToArray,
+  findValueFromEnum,
+} from './enumLike';
 
 export enum UserRole {
   AppSuperAdmin = 'app.superadmin',
@@ -17,7 +22,11 @@ export const UserRoleEnum: EnumLike = {
   Dispatcher: {value: 'tenant.dispatcher', description: 'Dispatcher'},
   Driver: {value: 'tenant.driver', description: 'Driver'},
 
-  getDescription(value: string | number): string {
-    return getEnumDescription(this, value);
+  getValue(enumValue: string | number): EnumType {
+    return findValueFromEnum(this, enumValue);
+  },
+
+  toArray(): EnumType[] {
+    return convertEnumToArray(this);
   },
 };

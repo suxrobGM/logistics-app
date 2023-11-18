@@ -13,7 +13,6 @@ import {
   PaymentMethod,
   PaymentFor,
   PaymentStatus,
-  convertEnumToArray,
   PaymentStatusEnum,
   PaymentMethodEnum,
   PaymentForEnum,
@@ -38,9 +37,9 @@ import {ValidationSummaryComponent} from '@shared/components';
   ],
 })
 export class EditPaymentComponent implements OnInit {
-  public readonly paymentStatuses = convertEnumToArray(PaymentStatusEnum);
-  public readonly paymentMethods = convertEnumToArray(PaymentMethodEnum);
-  public readonly paymentForValues = convertEnumToArray(PaymentForEnum);
+  public readonly paymentStatuses = PaymentStatusEnum.toArray();
+  public readonly paymentMethods = PaymentMethodEnum.toArray();
+  public readonly paymentForValues = PaymentForEnum.toArray();
   public title: string;
   public id: string | null;
   public isLoading: boolean;

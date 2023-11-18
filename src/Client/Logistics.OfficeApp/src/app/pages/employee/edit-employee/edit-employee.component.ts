@@ -9,13 +9,13 @@ import {CardModule} from 'primeng/card';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
 import {DropdownModule} from 'primeng/dropdown';
-import {EnumValue, SalaryType, SalaryTypeEnum, UserRole, convertEnumToArray} from '@core/enums';
+import {SalaryType, SalaryTypeEnum, UserRole} from '@core/enums';
 import {Employee, UpdateEmployee} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {AuthService} from '@core/auth';
 import {ChangeRoleDialogComponent} from '../components';
-import { ValidationSummaryComponent } from '@shared/components';
-import { NumberUtils } from '@shared/utils';
+import {ValidationSummaryComponent} from '@shared/components';
+import {NumberUtils} from '@shared/utils';
 
 
 @Component({
@@ -43,11 +43,11 @@ import { NumberUtils } from '@shared/utils';
 })
 export class EditEmployeeComponent implements OnInit {
   public id!: string;
-  public isLoading: boolean;
-  public showUpdateDialog: boolean;
-  public canChangeRole: boolean;
+  public isLoading = false;
+  public showUpdateDialog = false;
+  public canChangeRole = false;
   public employee?: Employee;
-  public salaryTypes: EnumValue[];
+  public salaryTypes = SalaryTypeEnum.toArray();
   public form: FormGroup<UpdateEmployeeForm>;
 
   constructor(
@@ -57,11 +57,6 @@ export class EditEmployeeComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly route: ActivatedRoute)
   {
-    this.isLoading = false;
-    this.showUpdateDialog = false;
-    this.canChangeRole = false;
-    this.salaryTypes = convertEnumToArray(SalaryTypeEnum);
-    
     this.form = new FormGroup<UpdateEmployeeForm>({
       salary: new FormControl<number>(0, {validators: Validators.compose([Validators.required, Validators.min(0)]), nonNullable: true}),
       salaryType: new FormControl<SalaryType>(SalaryType.None, {validators: Validators.required, nonNullable: true})

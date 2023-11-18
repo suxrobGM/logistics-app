@@ -10,7 +10,7 @@ import {CardModule} from 'primeng/card';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
 import {ConfirmationService} from 'primeng/api';
-import {EnumValue, SalaryType, SalaryTypeEnum, convertEnumToArray} from '@core/enums';
+import {SalaryType, SalaryTypeEnum} from '@core/enums';
 import {CreateEmployee, Role, User} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {UserService} from '../services';
@@ -43,22 +43,17 @@ import {ValidationSummaryComponent} from '@shared/components';
   ],
 })
 export class AddEmployeeComponent implements OnInit {
-  public suggestedUsers: User[];
+  public suggestedUsers: User[] = [];
   public form: FormGroup<CreateEmployeeForm>;
-  public roles: Role[];
-  public salaryTypes: EnumValue[];
-  public isLoading: boolean;
+  public roles: Role[] = [];
+  public salaryTypes = SalaryTypeEnum.toArray();
+  public isLoading = false;
 
   constructor(
     private readonly apiService: ApiService,
     private readonly toastService: ToastService,
     private readonly userService: UserService)
   {
-    this.suggestedUsers = [];
-    this.roles = [];
-    this.isLoading = false;
-    this.salaryTypes = convertEnumToArray(SalaryTypeEnum);
-
     this.form = new FormGroup<CreateEmployeeForm>({
       user: new FormControl(null, {validators: Validators.required}),
       role: new FormControl(null),

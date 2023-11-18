@@ -12,7 +12,7 @@ import {DropdownModule} from 'primeng/dropdown';
 import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {AppConfig} from '@configs';
-import {LoadStatus, LoadStatusEnum, convertEnumToArray} from '@core/enums';
+import {EnumType, LoadStatus, LoadStatusEnum} from '@core/enums';
 import {Address, Customer, UpdateLoad} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {Converters} from '@shared/utils';
@@ -62,7 +62,7 @@ export class EditLoadComponent implements OnInit {
   public loadRefId!: number;
   public isLoading = false;
   public form: FormGroup<EditLoadForm>;
-  public loadStatuses = convertEnumToArray(LoadStatusEnum);
+  public loadStatuses = LoadStatusEnum.toArray();
   public originCoords: [number, number] | null = null;
   public destinationCoords: [number, number] | null = null;
 
@@ -83,7 +83,7 @@ export class EditLoadComponent implements OnInit {
       dispatchedDate: new FormControl(new Date().toLocaleDateString(), {validators: Validators.required, nonNullable: true}),
       deliveryCost: new FormControl(0, {validators: Validators.required, nonNullable: true}),
       distance: new FormControl(0, {validators: Validators.required, nonNullable: true}),
-      status: new FormControl(LoadStatus.Dispatched, {validators: Validators.required, nonNullable: true}),
+      status: new FormControl(LoadStatusEnum.getValue(LoadStatus.Dispatched), {validators: Validators.required, nonNullable: true}),
       assignedTruck: new FormControl(null, {validators: Validators.required}),
       assignedDispatcherId: new FormControl('', {validators: Validators.required, nonNullable: true}),
       assignedDispatcherName: new FormControl('', {validators: Validators.required, nonNullable: true}),
@@ -149,8 +149,8 @@ export class EditLoadComponent implements OnInit {
       distance: this.distanceMeters,
       assignedDispatcherId: this.form.value.assignedDispatcherId!,
       assignedTruckId: this.form.value.assignedTruck!.truckId,
-      customerId: this.form.value.customer!.id,
-      status: this.form.value.status,
+      customerId: this.form.value.customer?.id,
+      status: this.form.value.status?.value as LoadStatus,
     };
 
     this.apiService.updateLoad(command)
@@ -195,7 +195,7 @@ export class EditLoadComponent implements OnInit {
         dispatchedDate: this.getLocaleDate(load.dispatchedDate),
         deliveryCost: load.deliveryCost,
         distance: Converters.metersTo(load.distance, 'mi'),
-        status: load.status,
+        status: LoadStatusEnum.getValue(load.status),
         assignedDispatcherId: load.assignedDispatcherId,
         assignedDispatcherName: load.assignedDispatcherName,
         assignedTruck: {
@@ -228,7 +228,7 @@ interface EditLoadForm {
   dispatchedDate: FormControl<string>;
   deliveryCost: FormControl<number>;
   distance: FormControl<number>;
-  status: FormControl<LoadStatus>;
+  status: FormControl<EnumType>;
   assignedTruck: FormControl<TruckData | null>;
   assignedDispatcherId: FormControl<string>;
   assignedDispatcherName: FormControl<string>;

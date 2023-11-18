@@ -76,6 +76,6 @@ export class ListEmployeeComponent {
   }
 
   getSalaryTypeDesc(enumValue: SalaryType): string {
-    return SalaryTypeEnum.getDescription(enumValue);
+    return SalaryTypeEnum.getValue(enumValue).description;
   }
 }
