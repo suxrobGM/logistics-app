@@ -18,6 +18,7 @@ public class SearchLoads : BaseSpecification<Load>
 
         Criteria = i =>
             (i.Name != null && i.Name.Contains(search)) ||
+            (i.Customer != null && i.Customer.Name.Contains(search)) ||
             i.RefId.ToString().Contains(search) ||
             i.OriginAddress.Line1.Contains(search) || 
             (i.OriginAddress.Line2 != null && i.OriginAddress.Line2.Contains(search)) ||
@@ -31,6 +32,7 @@ public class SearchLoads : BaseSpecification<Load>
         return propertyName switch
         {
             "name" => i => i.Name,
+            "customer" => i => i.Customer!.Name,
             "originaddress" => i => i.OriginAddress.Line1,
             "destinationaddress" => i => i.DestinationAddress.Line1,
             "deliverycost" => i => i.DeliveryCost,

@@ -38,6 +38,10 @@
               Name
               <p-sortIcon field="name"></p-sortIcon>
             </th>
+            <th pSortableColumn="customer">
+              Customer
+              <p-sortIcon field="customer"></p-sortIcon>
+            </th>
             <th pSortableColumn="originAddress">
               Origin
               <p-sortIcon field="originAddress"></p-sortIcon>
@@ -90,6 +94,9 @@
             <td>{{load.refId}}</td>
             <td [pTooltip]="load.name" [showDelay]="500" tooltipPosition="bottom">
               {{load.name}}
+            </td>
+            <td [pTooltip]="load.customer.name" [showDelay]="500" tooltipPosition="bottom">
+              {{load.customer.name}}
             </td>
             <td [pTooltip]="load.originAddress | address" [showDelay]="500" tooltipPosition="bottom">
               {{load.originAddress | address}}
