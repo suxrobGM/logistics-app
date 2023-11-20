@@ -79,6 +79,13 @@
                 tooltipPosition="bottom"
                 [routerLink]="['/employees/edit', employee.id]">
               </p-button>
+              <p-button
+                styleClass="ms-2"
+                icon="bi bi-file-earmark-ruled"
+                pTooltip="View employee payrolls"
+                tooltipPosition="bottom"
+                [routerLink]="['/accounting/employee-payrolls', employee.id]">
+              </p-button>
             </td>
           </tr>
         </ng-template>

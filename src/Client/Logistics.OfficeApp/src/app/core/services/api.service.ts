@@ -34,7 +34,6 @@ import {
   Payment,
   CreatePayment,
   UpdatePayment,
-  PagedQuery,
   PagedIntervalQuery,
   Invoice,
   CreateInvoice,
@@ -43,6 +42,7 @@ import {
   UpdatePayroll,
   CreatePayroll,
   ProcessPayment,
+  GetPayrollsQuery,
 } from '../models';
 
 
@@ -287,7 +287,7 @@ export class ApiService {
 
 
   // #region Payments API
-  
+
   getPayment(id: string): Observable<ResponseResult<Payment>> {
     const url = `/payments/${id}`;
     return this.get(url);
@@ -322,7 +322,7 @@ export class ApiService {
 
 
   // #region Invoices API
-  
+
   getInvoice(id: string): Observable<ResponseResult<Invoice>> {
     const url = `/invoices/${id}`;
     return this.get(url);
@@ -352,14 +352,19 @@ export class ApiService {
 
 
   // #region Payrolls API
-  
+
   getPayroll(id: string): Observable<ResponseResult<Payroll>> {
     const url = `/payrolls/${id}`;
     return this.get(url);
   }
 
-  getPayrolls(query?: SearchableQuery): Observable<PagedResponseResult<Payroll>> {
-    const url = `/payrolls?${this.stringfySearchableQuery(query)}`;
+  getPayrolls(query?: GetPayrollsQuery): Observable<PagedResponseResult<Payroll>> {
+    let url = `/payrolls?${this.stringfySearchableQuery(query)}`;
+
+    if (query?.employeeId) {
+      url += `&employeeId=${query.employeeId}`;
+    }
+
     return this.get(url);
   }
 
@@ -433,13 +438,6 @@ export class ApiService {
     const page = query?.page ?? 1;
     const pageSize = query?.pageSize ?? 10;
     return `search=${search}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
-  }
-
-  private stringfyPagedQuery(query?: PagedQuery): string {
-    const orderBy = query?.orderBy ?? '';
-    const page = query?.page ?? 1;
-    const pageSize = query?.pageSize ?? 10;
-    return `orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
   }
 
   private stringfyPagedIntervalQuery(query?: PagedIntervalQuery): string {

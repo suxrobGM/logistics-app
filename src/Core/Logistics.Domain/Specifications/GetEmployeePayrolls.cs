@@ -3,24 +3,16 @@ using Logistics.Domain.Entities;
 
 namespace Logistics.Domain.Specifications;
 
-public class GetPayrolls : BaseSpecification<Payroll>
+public class GetEmployeePayrolls : BaseSpecification<Payroll>
 {
-    public GetPayrolls(
-        string? search,
+    public GetEmployeePayrolls(
+        string employeeId,
         string? orderBy,
         bool descending = false)
     {
         Descending = descending;
         OrderBy = InitOrderBy(orderBy);
-
-        if (string.IsNullOrEmpty(search))
-        {
-            return;
-        }
-
-        Criteria = i =>
-            !string.IsNullOrEmpty(i.Employee.FirstName) && i.Employee.FirstName.Contains(search) || 
-            !string.IsNullOrEmpty(i.Employee.LastName) && i.Employee.LastName.Contains(search);
+        Criteria = i => i.EmployeeId == employeeId;
     }
 
     private static Expression<Func<Payroll, object?>> InitOrderBy(string? propertyName)

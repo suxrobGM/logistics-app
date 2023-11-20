@@ -7,6 +7,7 @@ import {ListInvoicesComponent} from './list-invoices/list-invoices.component';
 import {ViewInvoiceComponent} from './view-invoice/view-invoice.component';
 import {ListPayrollComponent} from './list-payroll/list-payroll.component';
 import {EditPayrollComponent} from './edit-payroll/edit-payroll.component';
+import {ViewEmployeePayrollsComponent} from './view-employee-payrolls/view-employee-payrolls.component';
 
 
 export const ACCOUNTING_ROUTES: Routes = [
@@ -80,6 +81,15 @@ export const ACCOUNTING_ROUTES: Routes = [
     data: {
       breadcrumb: 'Edit Payroll',
       permission: Permissions.Payrolls.Edit,
+    },
+  },
+  {
+    path: 'employee-payrolls/:employeeId',
+    component: ViewEmployeePayrollsComponent,
+    canActivate: [AuthGuard],
+    data: {
+      breadcrumb: 'View Employee Payrolls',
+      permission: Permissions.Payrolls.View,
     },
   },
 ];
