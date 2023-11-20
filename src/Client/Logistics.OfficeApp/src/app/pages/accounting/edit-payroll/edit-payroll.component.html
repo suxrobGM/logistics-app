@@ -53,19 +53,21 @@
         @if (isEditMode()) {
           <div class="mb-3">
             <label for="paymentStatus" class="form-label">Payment Status</label>
-            <p-dropdown formControlName="paymentStatus" styleClass="w-100" [options]="paymentStatuses" 
-              optionValue="value" optionLabel="description">
+            <p-dropdown formControlName="paymentStatus" styleClass="w-100" 
+              [options]="paymentStatuses" 
+              optionLabel="description">
             </p-dropdown>
           </div>
 
-          @if (form.get('paymentStatus')?.value === paymentStatus.Paid) {
+          @if (form.get('paymentStatus')?.value?.value === paymentStatus.Paid) {
             <h4>Payment details</h4>
             <hr/>
 
             <div class="mb-3">
               <label for="paymentMethod" class="form-label">Payment Method</label>
-              <p-dropdown formControlName="paymentMethod" styleClass="w-100" [options]="paymentMethods" 
-                optionValue="value" optionLabel="description">
+              <p-dropdown formControlName="paymentMethod" styleClass="w-100" 
+                [options]="paymentMethods" 
+                optionLabel="description">
               </p-dropdown>
             </div>
 

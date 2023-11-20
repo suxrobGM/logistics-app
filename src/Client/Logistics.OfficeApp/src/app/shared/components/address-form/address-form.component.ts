@@ -38,7 +38,7 @@ import {ValidationSummaryComponent} from '../validation-summary/validation-summa
     }
   ]
 })
-export class AddressFormComponent implements OnInit, OnChanges, ControlValueAccessor {
+export class AddressFormComponent implements ControlValueAccessor {
   public form: FormGroup<AddressForm>;
   private onTouched?: () => void;
   private onChanged?: (value: Address | null) => void;
@@ -53,13 +53,10 @@ export class AddressFormComponent implements OnInit, OnChanges, ControlValueAcce
       city: new FormControl('', {validators: Validators.required, nonNullable: true}),
       region: new FormControl('', {validators: Validators.required, nonNullable: true}),
       zipCode: new FormControl('', {validators: Validators.required, nonNullable: true}),
-      country: new FormControl('', {validators: Validators.required, nonNullable: true})
+      country: new FormControl('', {validators: Validators.required, nonNullable: true}),
     });
-  }
 
-  ngOnInit() {
     this.form.valueChanges.subscribe((values) => {
-      
       if (!values.addressLine1 || 
         !values.city || 
         !values.region || 
@@ -85,16 +82,19 @@ export class AddressFormComponent implements OnInit, OnChanges, ControlValueAcce
     });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    // if (changes['addressString']) {
-    //   this.parseAddressString(changes['addressString'].currentValue);
-    // }
-  }
-
-  writeValue(value: never): void {
-    if (value) {
-      this.form.setValue(value, {emitEvent: false});
+  writeValue(value: Address | null): void {
+    if (!value) {
+      return;
     }
+
+    this.form.setValue({
+      addressLine1: value.line1,
+      addressLine2: value.line2 ?? null,
+      city: value.city,
+      region: value.region,
+      zipCode: value.zipCode,
+      country: value.country,
+    }, {emitEvent: false});
   }
 
   registerOnChange(fn: never): void {

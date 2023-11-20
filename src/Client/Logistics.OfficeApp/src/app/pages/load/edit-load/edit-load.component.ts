@@ -80,13 +80,12 @@ export class EditLoadComponent implements OnInit {
       orgCoords: new FormControl([0,0], {validators: Validators.required, nonNullable: true}),
       dstAddress: new FormControl(null, {validators: Validators.required, nonNullable: true}),
       dstCoords: new FormControl([0,0], {validators: Validators.required, nonNullable: true}),
-      dispatchedDate: new FormControl(new Date().toLocaleDateString(), {validators: Validators.required, nonNullable: true}),
       deliveryCost: new FormControl(0, {validators: Validators.required, nonNullable: true}),
-      distance: new FormControl(0, {validators: Validators.required, nonNullable: true}),
+      distance: new FormControl({value: 0, disabled: true}, {validators: Validators.required, nonNullable: true}),
       status: new FormControl(LoadStatusEnum.getValue(LoadStatus.Dispatched), {validators: Validators.required, nonNullable: true}),
       assignedTruck: new FormControl(null, {validators: Validators.required}),
       assignedDispatcherId: new FormControl('', {validators: Validators.required, nonNullable: true}),
-      assignedDispatcherName: new FormControl('', {validators: Validators.required, nonNullable: true}),
+      assignedDispatcherName: new FormControl({value: '', disabled: true}, {validators: Validators.required, nonNullable: true}),
     });
   }
 
@@ -192,7 +191,6 @@ export class EditLoadComponent implements OnInit {
         orgCoords: [load.originAddressLong, load.originAddressLat],
         dstAddress: load.destinationAddress,
         dstCoords: [load.destinationAddressLong, load.destinationAddressLat],
-        dispatchedDate: this.getLocaleDate(load.dispatchedDate),
         deliveryCost: load.deliveryCost,
         distance: Converters.metersTo(load.distance, 'mi'),
         status: LoadStatusEnum.getValue(load.status),
@@ -225,7 +223,6 @@ interface EditLoadForm {
   orgCoords: FormControl<[number, number]>;
   dstAddress: FormControl<Address | null>;
   dstCoords: FormControl<[number, number]>;
-  dispatchedDate: FormControl<string>;
   deliveryCost: FormControl<number>;
   distance: FormControl<number>;
   status: FormControl<EnumType>;

@@ -13,7 +13,7 @@ import {Address, CreatePayroll, Employee, Payroll, UpdatePayroll} from '@core/mo
 import {ApiService, ToastService} from '@core/services';
 import {PredefinedDateRanges} from '@core/helpers';
 import {
-  PaymentMethod,
+  EnumType,
   PaymentMethodEnum,
   PaymentStatus,
   PaymentStatusEnum,
@@ -74,7 +74,7 @@ export class EditPayrollComponent implements OnInit {
     });
 
     this.form.get('paymentStatus')?.valueChanges.subscribe((status) => {
-      this.setConditionalValidators(status);
+      this.setConditionalValidators(status?.value as PaymentStatus);
     });
   }
 
@@ -179,8 +179,8 @@ export class EditPayrollComponent implements OnInit {
         this.form.patchValue({
           employee: payroll.employee,
           dateRange: [new Date(payroll.startDate), new Date(payroll.endDate)],
-          paymentMethod: payroll.payment.method,
-          paymentStatus: payroll.payment.status,
+          paymentMethod: PaymentMethodEnum.getValue(payroll.payment.method!),
+          paymentStatus: PaymentStatusEnum.getValue(payroll.payment.status),
           paymentBillingAddress: payroll.payment.billingAddress,
         });
 
@@ -238,7 +238,7 @@ export class EditPayrollComponent implements OnInit {
 interface PayrollForm {
   employee: FormControl<Employee | null>;
   dateRange: FormControl<Date[]>;
-  paymentStatus: FormControl<PaymentStatus | null>;
-  paymentMethod: FormControl<PaymentMethod | null>;
+  paymentStatus: FormControl<EnumType | null>;
+  paymentMethod: FormControl<EnumType | null>;
   paymentBillingAddress: FormControl<Address | null>;
 }

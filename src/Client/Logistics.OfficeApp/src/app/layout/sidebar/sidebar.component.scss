@@ -31,6 +31,7 @@
 :host ::ng-deep {
   .p-panelmenu-header-content {
     background-color: transparent;
+    border-top: unset;
   }
 
   .p-menuitem-link {

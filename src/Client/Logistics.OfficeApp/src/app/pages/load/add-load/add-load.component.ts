@@ -69,12 +69,11 @@ export class AddLoadComponent implements OnInit {
       orgCoords: new FormControl([0,0], {validators: Validators.required, nonNullable: true}),
       dstAddress: new FormControl(null, {validators: Validators.required, nonNullable: true}),
       dstCoords: new FormControl([0,0], {validators: Validators.required, nonNullable: true}),
-      dispatchedDate: new FormControl(new Date().toLocaleDateString(), {validators: Validators.required, nonNullable: true}),
       deliveryCost: new FormControl(0, {validators: Validators.required, nonNullable: true}),
-      distance: new FormControl(0, {validators: Validators.required, nonNullable: true}),
+      distance: new FormControl({value: 0, disabled: true}, {validators: Validators.required, nonNullable: true}),
       assignedTruck: new FormControl(null, {validators: Validators.required}),
       assignedDispatcherId: new FormControl('', {validators: Validators.required, nonNullable: true}),
-      assignedDispatcherName: new FormControl('', {validators: Validators.required, nonNullable: true}),
+      assignedDispatcherName: new FormControl({value: '', disabled: true}, {validators: Validators.required, nonNullable: true}),
     });
   }
 
@@ -153,7 +152,6 @@ interface AddLoadForm {
   orgCoords: FormControl<[number, number]>;
   dstAddress: FormControl<Address | null>;
   dstCoords: FormControl<[number, number]>;
-  dispatchedDate: FormControl<string>;
   deliveryCost: FormControl<number>;
   distance: FormControl<number>;
   assignedTruck: FormControl<TruckData | null>;

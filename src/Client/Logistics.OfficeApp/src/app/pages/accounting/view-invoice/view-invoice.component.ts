@@ -1,13 +1,13 @@
 import {Component, OnInit} from '@angular/core';
-import {CommonModule, CurrencyPipe, DatePipe} from '@angular/common';
-import {ActivatedRoute} from '@angular/router';
+import {CommonModule} from '@angular/common';
+import {ActivatedRoute, RouterModule} from '@angular/router';
 import {CardModule} from 'primeng/card';
 import {ButtonModule} from 'primeng/button';
 import {jsPDF} from 'jspdf';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {ApiService, TenantService} from '@core/services';
 import {Invoice} from '@core/models';
-import {PaymentMethod, PaymentMethodEnum} from '@core/enums';
+import {PaymentMethod, PaymentMethodEnum, PaymentStatus} from '@core/enums';
 
 
 @Component({
@@ -20,12 +20,12 @@ import {PaymentMethod, PaymentMethodEnum} from '@core/enums';
     CardModule,
     ButtonModule,
     ProgressSpinnerModule,
-    CurrencyPipe,
-    DatePipe
+    RouterModule,
   ],
 })
 export class ViewInvoiceComponent implements OnInit {
   private id?: string;
+  public paymentStatus = PaymentStatus;
   public isLoading = false;
   public companyName?: string;
   public companyAddress?: string;
