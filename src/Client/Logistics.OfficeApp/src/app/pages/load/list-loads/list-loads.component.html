@@ -50,21 +50,8 @@
               Destination
               <p-sortIcon field="destinationAddress"></p-sortIcon>
             </th>
-            <th pSortableColumn="dispatchedDate">
-              Dispatched
-              <p-sortIcon field="dispatchedDate"></p-sortIcon>
-            </th>
-            <th pSortableColumn="pickUpDate">
-              Pick Up
-              <p-sortIcon field="pickUpDate"></p-sortIcon>
-            </th>
-            <th pSortableColumn="deliveryDate">
-              Delivery
-              <p-sortIcon field="deliveryDate"></p-sortIcon>
-            </th>
-            <th pSortableColumn="status">
+            <th>
               Status
-              <p-sortIcon field="status"></p-sortIcon>
             </th>
             <th pSortableColumn="distance">
               Distance (mi)
@@ -104,10 +91,26 @@
             <td [pTooltip]="load.destinationAddress | address" [showDelay]="500" tooltipPosition="bottom">
               {{load.destinationAddress | address}}
             </td>
-            <td>{{load.dispatchedDate | date:'mediumDate'}}</td>
-            <td>{{load.pickUpDate | date:'mediumDate'}}</td>
-            <td>{{load.deliveryDate | date:'mediumDate'}}</td>
-            <td>{{getLoadStatusDesc(load.status)}}</td>
+            <td>
+              <p-tag [icon]="getLoadStatusIcon(load.status)" 
+                [value]="getLoadStatusDesc(load.status)"
+                [severity]="getLoadStatusSeverity(load.status)">
+              </p-tag>
+
+              <div class="fst-italic">
+                @switch (load.status) {
+                  @case (loadStatus.Dispatched) {
+                    {{load.dispatchedDate | date:'mediumDate'}}
+                  }
+                  @case (loadStatus.PickedUp) {
+                    {{load.pickUpDate | date:'mediumDate'}}
+                  }
+                  @case (loadStatus.Delivered) {
+                    {{load.deliveryDate | date:'mediumDate'}}
+                  }
+                }
+              </div>
+            </td>
             <td>{{load.distance | distanceUnit:'mi'}}</td>
             <td>{{load.deliveryCost | currency}}</td>
             <td>

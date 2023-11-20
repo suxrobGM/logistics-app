@@ -7,6 +7,7 @@ import {SharedModule} from 'primeng/api';
 import {CardModule} from 'primeng/card';
 import {TooltipModule} from 'primeng/tooltip';
 import {ButtonModule} from 'primeng/button';
+import {TagModule} from 'primeng/tag';
 import {LoadStatus, LoadStatusEnum} from '@core/enums';
 import {Load} from '@core/models';
 import {ApiService} from '@core/services';
@@ -31,20 +32,17 @@ import {PaymentStatusTagComponent} from '@shared/components';
     DistanceUnitPipe,
     PaymentStatusTagComponent,
     AddressPipe,
+    TagModule,
   ],
 })
 export class ListLoadComponent {
-  public loads: Load[];
-  public isLoading: boolean;
-  public totalRecords: number;
-  public first: number;
+  public loadStatus = LoadStatus;
+  public loads: Load[] = [];
+  public isLoading = false;
+  public totalRecords = 0;
+  public first = 0;
 
-  constructor(private readonly apiService: ApiService) {
-    this.loads = [];
-    this.isLoading = false;
-    this.totalRecords = 0;
-    this.first = 0;
-  }
+  constructor(private readonly apiService: ApiService) {}
 
   search(event: Event) {
     this.isLoading = true;
@@ -83,5 +81,13 @@ export class ListLoadComponent {
 
   getLoadStatusDesc(enumValue: LoadStatus): string {
     return LoadStatusEnum.getValue(enumValue).description;
+  }
+
+  getLoadStatusSeverity(status: LoadStatus): string {
+    return status === LoadStatus.Delivered ? 'success' : 'info';
+  }
+
+  getLoadStatusIcon(status: LoadStatus): string {
+    return status === LoadStatus.Delivered ? 'bi bi-check' : 'bi bi-truck';
   }
 }
