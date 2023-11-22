@@ -7,21 +7,20 @@ public class SearchTenants : BaseSpecification<Tenant>
 {
     public SearchTenants(
         string? search, 
-        string? orderBy = "Name", 
-        bool descending = false)
+        string? orderBy, 
+        bool descending)
     {
-        Descending = descending;
-        OrderBy = InitOrderBy(orderBy);
-        
-        if (string.IsNullOrEmpty(search))
-            return;
-        
-        Criteria = i =>
-            (!string.IsNullOrEmpty(i.Name) &&
-             i.Name.Contains(search)) ||
+        if (!string.IsNullOrEmpty(search))
+        {
+            Criteria = i =>
+                (!string.IsNullOrEmpty(i.Name) &&
+                 i.Name.Contains(search)) ||
 
-            (!string.IsNullOrEmpty(i.CompanyName) &&
-             i.CompanyName.Contains(search));
+                (!string.IsNullOrEmpty(i.CompanyName) &&
+                 i.CompanyName.Contains(search));
+        }
+        
+        ApplyOrderBy(InitOrderBy(orderBy), descending);
     }
     
     private static Expression<Func<Tenant, object?>> InitOrderBy(string? propertyName)

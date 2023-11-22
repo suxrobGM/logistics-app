@@ -4,22 +4,20 @@ namespace Logistics.Application.Tenant.Queries;
 
 internal sealed class GetTenantRolesHandler : RequestHandler<GetTenantRolesQuery, PagedResponseResult<TenantRoleDto>>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public GetTenantRolesHandler(ITenantRepository tenantRepository)
+    public GetTenantRolesHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
-    protected override Task<PagedResponseResult<TenantRoleDto>> HandleValidated(
+    protected override async Task<PagedResponseResult<TenantRoleDto>> HandleValidated(
         GetTenantRolesQuery req, CancellationToken cancellationToken)
     {
-        var totalItems = _tenantRepository.Query<TenantRole>().Count();
+        var totalItems = await _tenantUow.Repository<TenantRole>().CountAsync();
 
-        var rolesDto = _tenantRepository
-            .ApplySpecification(new SearchTenantRoles(req.Search))
-            .Skip((req.Page - 1) * req.PageSize)
-            .Take(req.PageSize)
+        var rolesDto = _tenantUow.Repository<TenantRole>()
+            .ApplySpecification(new SearchTenantRoles(req.Search, req.Page, req.PageSize))
             .Select(i => new TenantRoleDto()
             {
                 Name = i.Name,
@@ -28,6 +26,6 @@ internal sealed class GetTenantRolesHandler : RequestHandler<GetTenantRolesQuery
             .ToArray();
         
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return Task.FromResult(new PagedResponseResult<TenantRoleDto>(rolesDto, totalItems, totalPages));
+        return PagedResponseResult<TenantRoleDto>.Create(rolesDto, totalItems, totalPages);
     }
 }

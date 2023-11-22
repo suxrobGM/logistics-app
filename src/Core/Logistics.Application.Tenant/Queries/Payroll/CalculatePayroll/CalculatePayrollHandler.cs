@@ -6,21 +6,21 @@ namespace Logistics.Application.Tenant.Queries;
 
 internal sealed class CalculatePayrollHandler : RequestHandler<CalculatePayrollQuery, ResponseResult<PayrollDto>>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
     private readonly IPayrollService _payrollService;
 
     public CalculatePayrollHandler(
-        ITenantRepository tenantRepository,
+        ITenantUnityOfWork tenantUow,
         IPayrollService payrollService)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
         _payrollService = payrollService;
     }
 
     protected override async Task<ResponseResult<PayrollDto>> HandleValidated(
         CalculatePayrollQuery req, CancellationToken cancellationToken)
     {
-        var employee = await _tenantRepository.GetAsync<Employee>(req.EmployeeId);
+        var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId);
 
         if (employee is null)
         {

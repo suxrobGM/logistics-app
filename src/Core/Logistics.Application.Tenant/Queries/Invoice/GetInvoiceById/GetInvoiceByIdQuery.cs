@@ -5,5 +5,5 @@ namespace Logistics.Application.Tenant.Queries;
 
 public class GetInvoiceByIdQuery : IRequest<ResponseResult<InvoiceDto>>
 {
-    public string? Id { get; set; }
+    public string Id { get; set; } = default!;
 }

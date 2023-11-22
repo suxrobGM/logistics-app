@@ -5,27 +5,26 @@ namespace Logistics.Application.Tenant.Queries;
 
 internal sealed class GetInvoicesHandler : RequestHandler<GetInvoicesQuery, PagedResponseResult<InvoiceDto>>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public GetInvoicesHandler(ITenantRepository tenantRepository)
+    public GetInvoicesHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
-    protected override Task<PagedResponseResult<InvoiceDto>> HandleValidated(
+    protected override async Task<PagedResponseResult<InvoiceDto>> HandleValidated(
         GetInvoicesQuery req, 
         CancellationToken cancellationToken)
     {
-        var totalItems = _tenantRepository.Query<Invoice>().Count();
-        var specification = new FilterInvoicesByInterval(req.OrderBy, req.StartDate, req.EndDate, req.Descending);
+        var totalItems = await _tenantUow.Repository<Invoice>().CountAsync();
+        var specification = new FilterInvoicesByInterval(req.OrderBy, req.StartDate, req.EndDate, req.Page, req.PageSize, req.Descending);
         
-        var invoicesDto = _tenantRepository.ApplySpecification(specification)
-            .Skip((req.Page - 1) * req.PageSize)
-            .Take(req.PageSize)
+        var invoicesDto = _tenantUow.Repository<Invoice>()
+            .ApplySpecification(specification)
             .Select(i => i.ToDto())
             .ToArray();
         
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return Task.FromResult(PagedResponseResult<InvoiceDto>.Create(invoicesDto, totalItems, totalPages));
+        return PagedResponseResult<InvoiceDto>.Create(invoicesDto, totalItems, totalPages);
     }
 }

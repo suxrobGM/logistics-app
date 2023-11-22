@@ -3,15 +3,20 @@ using Logistics.Domain.Entities;
 
 namespace Logistics.Domain.Specifications;
 
-public class FilterInvoicesByInterval : BaseSpecification<Invoice>
+public sealed class FilterInvoicesByInterval : BaseSpecification<Invoice>
 {
-    public FilterInvoicesByInterval(string? orderProperty, DateTime? startPeriod, DateTime endPeriod, bool descending)
+    public FilterInvoicesByInterval(
+        string? orderProperty,
+        DateTime? startPeriod,
+        DateTime endPeriod,
+        int page,
+        int pageSize,
+        bool descending)
     {
-        Descending = descending;
-        OrderBy = InitOrderBy(orderProperty);
-
         Criteria = i =>
             i.Created >= startPeriod && i.Created <= endPeriod;
+        
+        ApplyOrderBy(InitOrderBy(orderProperty), descending);
     }
     
     private static Expression<Func<Invoice, object?>> InitOrderBy(string? propertyName)

@@ -15,13 +15,13 @@ public class MasterUnitOfWork : IMasterUnityOfWork
         _masterDbContext = masterDbContext;
     }
 
-    public IMasterRepository2<TEntity> Repository<TEntity>() where TEntity : class, IEntity<string>
+    public IMasterRepository<TEntity> Repository<TEntity>() where TEntity : class, IEntity<string>
     {
         var type = typeof(TEntity).Name;
 
         if (!_repositories.ContainsKey(type))
         {
-            var repositoryType = typeof(MasterRepository2<>);
+            var repositoryType = typeof(MasterRepository<>);
 
             var repositoryInstance =
                 Activator.CreateInstance(repositoryType
@@ -30,15 +30,15 @@ public class MasterUnitOfWork : IMasterUnityOfWork
             _repositories.Add(type, repositoryInstance);
         }
 
-        if (_repositories[type] is not IMasterRepository2<TEntity> repository)
+        if (_repositories[type] is not MasterRepository<TEntity> repository)
         {
-            throw new InvalidOperationException("Could not create a repository");
+            throw new InvalidOperationException("Could not create a master repository");
         }
         
         return repository;
     }
 
-    public Task<int> CommitAsync()
+    public Task<int> SaveChangesAsync()
     {
         return _masterDbContext.SaveChangesAsync();
     }

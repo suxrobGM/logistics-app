@@ -5,17 +5,19 @@ namespace Logistics.Domain.Specifications;
 
 public class SearchCustomers : BaseSpecification<Customer>
 {
-    public SearchCustomers(string? search, 
-        string? orderBy = "Name", 
-        bool descending = false)
+    public SearchCustomers(
+        string? search, 
+        string? orderBy,
+        int page,
+        int pageSize,
+        bool descending)
     {
-        Descending = descending;
-        OrderBy = InitOrderBy(orderBy);
+        if (!string.IsNullOrEmpty(search))
+        {
+            Criteria = i => i.Name.Contains(search);
+        }
         
-        if (string.IsNullOrEmpty(search))
-            return;
-        
-        Criteria = i => i.Name.Contains(search);
+        ApplyOrderBy(InitOrderBy(orderBy), descending);
     }
     
     private static Expression<Func<Customer, object?>> InitOrderBy(string? propertyName)

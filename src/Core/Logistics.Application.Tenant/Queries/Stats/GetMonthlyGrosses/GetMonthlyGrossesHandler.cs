@@ -4,11 +4,11 @@ namespace Logistics.Application.Tenant.Queries;
 
 internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrossesQuery, ResponseResult<MonthlyGrossesDto>>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public GetMonthlyGrossesHandler(ITenantRepository tenantRepository)
+    public GetMonthlyGrossesHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
     protected override async Task<ResponseResult<MonthlyGrossesDto>> HandleValidated(
@@ -18,7 +18,7 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrosse
         
         if (!string.IsNullOrEmpty(req.UserId))
         {
-            var driver = await _tenantRepository.GetAsync<Employee>(req.UserId);
+            var driver = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
 
             if (driver is null)
             {
@@ -28,10 +28,9 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrosse
             truckId = driver.TruckId;
         }
         
-        var spec = new FilterLoadsByInterval(truckId, req.StartDate, req.EndDate);
-        var monthlyGrosses = new MonthlyGrossesDto();
+        var spec = new FilterLoadsByDeliveryDate(truckId, req.StartDate, req.EndDate);
         var months = req.StartDate.MonthsBetween(req.EndDate);
-        var filteredLoads = _tenantRepository.ApplySpecification(spec).ToArray();
+        var filteredLoads = _tenantUow.Repository<Load>().ApplySpecification(spec).ToArray();
 
         var dict = months.ToDictionary(
             k => (k.Year, k.Month), 
@@ -50,7 +49,10 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrosse
             dict[key].DriverShare += load.CalcDriverShare();
         }
 
-        monthlyGrosses.Data = dict.Values;
+        var monthlyGrosses = new MonthlyGrossesDto
+        {
+            Data = dict.Values
+        };
         return ResponseResult<MonthlyGrossesDto>.CreateSuccess(monthlyGrosses);
     }
 }

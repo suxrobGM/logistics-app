@@ -5,5 +5,5 @@ namespace Logistics.Application.Tenant.Queries;
 
 public class GetLoadByIdQuery : IRequest<ResponseResult<LoadDto>>
 {
-    public string? Id { get; set; }
+    public string Id { get; set; } = default!;
 }

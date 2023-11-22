@@ -17,8 +17,8 @@ internal class PopulateFakeData
     private readonly Random _random = new();
     private readonly ILogger _logger;
     private readonly IServiceProvider _serviceProvider;
-    private readonly ITenantRepository _tenantRepository;
-    private readonly IMasterRepository _masterRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly IMasterUnityOfWork _masterUow;
     private readonly IConfiguration _configuration;
     private readonly PayrollGenerator _payrollGenerator;
     
@@ -28,10 +28,10 @@ internal class PopulateFakeData
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
-        _tenantRepository = serviceProvider.GetRequiredService<ITenantRepository>();
-        _masterRepository = serviceProvider.GetRequiredService<IMasterRepository>();
+        _tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
+        _masterUow = serviceProvider.GetRequiredService<IMasterUnityOfWork>();
         _configuration = serviceProvider.GetRequiredService<IConfiguration>();
-        _payrollGenerator = new PayrollGenerator(_tenantRepository, _startDate, _endDate, _logger);
+        _payrollGenerator = new PayrollGenerator(_tenantUow, _startDate, _endDate, _logger);
     }
     
     public async Task ExecuteAsync()
@@ -41,7 +41,9 @@ internal class PopulateFakeData
             var populate = _configuration.GetValue<bool>("PopulateFakeData");
 
             if (!populate)
+            {
                 return;
+            }
 
             _logger.LogInformation("Populating databases with fake data");
             var users = await AddUsersAsync();
@@ -109,7 +111,7 @@ internal class PopulateFakeData
         if (users.Count < 10)
             throw new InvalidOperationException("Add at least 10 test users in the 'testData.json' under the `Users` section");
         
-        var tenant = await _masterRepository.GetAsync<Tenant>(i => i.Name == "default");
+        var tenant = await _masterUow.Repository<Tenant>().GetAsync(i => i.Name == "default");
 
         if (tenant is null)
             throw new InvalidOperationException("Could not find the default tenant");
@@ -119,7 +121,7 @@ internal class PopulateFakeData
         var dispatchers = users.Skip(2).Take(3);
         var drivers = users.Skip(5);
 
-        var roles = await _tenantRepository.GetListAsync<TenantRole>();
+        var roles = await _tenantUow.Repository<TenantRole>().GetListAsync();
         var ownerRole = roles.First(i => i.Name == TenantRoles.Owner);
         var managerRole = roles.First(i => i.Name == TenantRoles.Manager);
         var dispatcherRole = roles.First(i => i.Name == TenantRoles.Dispatcher);
@@ -145,8 +147,8 @@ internal class PopulateFakeData
 
         employeesDto.AllEmployees.Add(ownerEmployee);
         employeesDto.AllEmployees.Add(managerEmployee);
-        await _tenantRepository.UnitOfWork.CommitAsync();
-        await _masterRepository.UnitOfWork.CommitAsync();
+        await _tenantUow.SaveChangesAsync();
+        await _masterUow.SaveChangesAsync();
         return employeesDto;
     }
 
@@ -157,14 +159,15 @@ internal class PopulateFakeData
         SalaryType salaryType,
         TenantRole role)
     {
-        var employee = await _tenantRepository.GetAsync<Employee>(user.Id);
+        var employeeRepository = _tenantUow.Repository<Employee>();
+        var employee = await employeeRepository.GetByIdAsync(user.Id);
 
         if (employee != null)
             return employee;
 
         employee = Employee.CreateEmployeeFromUser(user, salary, salaryType);
         user.JoinTenant(tenantId);
-        await _tenantRepository.AddAsync(employee);
+        await employeeRepository.AddAsync(employee);
         employee.Roles.Add(role);
         _logger.LogInformation("Added an employee {Name} with role {Role}", user.UserName, role.Name);
         return employee;
@@ -174,20 +177,21 @@ internal class PopulateFakeData
     {
         var customers = _configuration.GetRequiredSection("Customers").Get<Customer[]>()!;
         var customersList = new List<Customer>();
+        var customerRepository = _tenantUow.Repository<Customer>();
 
         foreach (var customer in customers)
         {
-            var existingCustomer = await _tenantRepository.GetAsync<Customer>(i => i.Name == customer.Name);
+            var existingCustomer = await customerRepository.GetAsync(i => i.Name == customer.Name);
             customersList.Add(customer);
             
             if (existingCustomer is not null)
                 continue;
 
-            await _tenantRepository.AddAsync(customer);
+            await customerRepository.AddAsync(customer);
             _logger.LogInformation("Added a customer '{CustomerName}'", customer.Name);
         }
 
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        await _tenantUow.SaveChangesAsync();
         return customersList;
     }
 
@@ -195,6 +199,7 @@ internal class PopulateFakeData
     {
         var trucksList = new List<Truck>();
         var truckNumber = 101;
+        var truckRepository = _tenantUow.Repository<Truck>();
 
         foreach (var driver in drivers)
         {
@@ -209,11 +214,11 @@ internal class PopulateFakeData
             truck = Truck.Create(truckNumber.ToString(), driver);
             truckNumber++;
             trucksList.Add(truck);
-            await _tenantRepository.AddAsync(truck);
+            await truckRepository.AddAsync(truck);
             _logger.LogInformation("Added a truck {Number}", truck.TruckNumber);
         }
 
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        await _tenantUow.SaveChangesAsync();
         return trucksList;
     }
 
@@ -222,7 +227,7 @@ internal class PopulateFakeData
         if (!trucks.Any())
             throw new InvalidOperationException("Empty list of trucks");
         
-        var loadsDb = await _tenantRepository.GetListAsync<Load>();
+        var loadsDb = await _tenantUow.Repository<Load>().GetListAsync();
 
         for (ulong i = 1; i <= 100; i++)
         {
@@ -238,7 +243,7 @@ internal class PopulateFakeData
             await AddLoadAsync(i, truck, dispatcher, customer);
         }
 
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        await _tenantUow.SaveChangesAsync();
     }
 
     private async Task AddLoadAsync(
@@ -294,13 +299,14 @@ internal class PopulateFakeData
         load.Invoice.Payment.Method = PaymentMethod.BankAccount;
         load.Invoice.Payment.BillingAddress = originAddress;
 
-        await _tenantRepository.AddAsync(load);
+        await _tenantUow.Repository<Load>().AddAsync(load);
         _logger.LogInformation("Added a load {Name}", load.Name);
     }
 
     private async Task AddNotificationsAsync()
     {
-        var notificationsCount = await _tenantRepository.CountAsync<Notification>();
+        var notificationRepository = _tenantUow.Repository<Notification>();
+        var notificationsCount = await notificationRepository.CountAsync();
 
         if (notificationsCount > 0)
         {
@@ -316,10 +322,10 @@ internal class PopulateFakeData
                 CreatedDate = _random.Date(DateTime.Today.AddMonths(-1), DateTime.Today.AddDays(-1))
             };
 
-            await _tenantRepository.AddAsync(notification);
+            await notificationRepository.AddAsync(notification);
             _logger.LogInformation("Added a notification {Notification}", notification.Title);
         }
 
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        await _tenantUow.SaveChangesAsync();
     }
 }

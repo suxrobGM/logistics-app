@@ -6,22 +6,23 @@ namespace Logistics.Infrastructure.EF.Services;
 
 public class UserService : IUserService
 {
-    private readonly IMasterRepository _masterRepository;
-    private readonly ITenantRepository _tenantRepository;
+    private readonly IMasterUnityOfWork _masterUow;
+    private readonly ITenantUnityOfWork _tenantUow;
 
     public UserService(
-        IMasterRepository masterRepository,
-        ITenantRepository tenantRepository)
+        IMasterUnityOfWork masterUow,
+        ITenantUnityOfWork tenantUow)
     {
-        _masterRepository = masterRepository;
-        _tenantRepository = tenantRepository;
+        _masterUow = masterUow;
+        _tenantUow = tenantUow;
     }
 
     public async Task UpdateUserAsync(UpdateUserData userData)
     {
-        var user = await _masterRepository.GetAsync<User>(userData.Id);
+        var userRepository = _masterUow.Repository<User>();
+        var user = await userRepository.GetByIdAsync(userData.Id);
 
-        if (user == null)
+        if (user is null)
             return;
 
         if (!string.IsNullOrEmpty(userData.FirstName))
@@ -40,14 +41,15 @@ public class UserService : IUserService
             await UpdateTenantEmployeeDataAsync(tenantId, user);
         }
         
-        _masterRepository.Update(user);
-        await _masterRepository.UnitOfWork.CommitAsync();
+        userRepository.Update(user);
+        await _masterUow.SaveChangesAsync();
     }
 
     private async Task UpdateTenantEmployeeDataAsync(string tenantId, User user)
     {
-        _tenantRepository.SetCurrentTenantById(tenantId);
-        var employee = await _tenantRepository.GetAsync<Employee>(user.Id);
+        _tenantUow.SetCurrentTenantById(tenantId);
+        var employeeRepository = _tenantUow.Repository<Employee>();
+        var employee = await employeeRepository.GetByIdAsync(user.Id);
 
         if (employee is null)
             return;
@@ -56,7 +58,7 @@ public class UserService : IUserService
         employee.LastName = user.LastName;
         employee.Email = user.Email;
         employee.PhoneNumber = user.PhoneNumber;
-        _tenantRepository.Update(employee);
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        employeeRepository.Update(employee);
+        await _tenantUow.SaveChangesAsync();
     }
 }

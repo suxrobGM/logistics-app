@@ -8,22 +8,21 @@ public class SearchLoads : BaseSpecification<Load>
     public SearchLoads(
         string? search,
         string? orderBy, 
-        bool descending = false)
+        bool descending)
     {
-        Descending = descending;
-        OrderBy = InitOrderBy(orderBy);
-        
-        if (string.IsNullOrEmpty(search))
-            return;
+        if (!string.IsNullOrEmpty(search))
+        {
+            Criteria = i =>
+                (i.Name != null && i.Name.Contains(search)) ||
+                (i.Customer != null && i.Customer.Name.Contains(search)) ||
+                i.RefId.ToString().Contains(search) ||
+                i.OriginAddress.Line1.Contains(search) || 
+                (i.OriginAddress.Line2 != null && i.OriginAddress.Line2.Contains(search)) ||
+                i.DestinationAddress.Line1.Contains(search) ||
+                (i.DestinationAddress.Line2 != null && i.DestinationAddress.Line2.Contains(search));
+        }
 
-        Criteria = i =>
-            (i.Name != null && i.Name.Contains(search)) ||
-            (i.Customer != null && i.Customer.Name.Contains(search)) ||
-            i.RefId.ToString().Contains(search) ||
-            i.OriginAddress.Line1.Contains(search) || 
-            (i.OriginAddress.Line2 != null && i.OriginAddress.Line2.Contains(search)) ||
-            i.DestinationAddress.Line1.Contains(search) ||
-            (i.DestinationAddress.Line2 != null && i.DestinationAddress.Line2.Contains(search));
+        ApplyOrderBy(InitOrderBy(orderBy), descending);
     }
 
     private static Expression<Func<Load, object?>> InitOrderBy(string? propertyName)

@@ -5,20 +5,22 @@ namespace Logistics.Application.Tenant.Queries;
 
 internal sealed class GetLoadByIdHandler : RequestHandler<GetLoadByIdQuery, ResponseResult<LoadDto>>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public GetLoadByIdHandler(ITenantRepository tenantRepository)
+    public GetLoadByIdHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
     protected override async Task<ResponseResult<LoadDto>> HandleValidated(
         GetLoadByIdQuery req, CancellationToken cancellationToken)
     {
-        var loadEntity = await _tenantRepository.GetAsync<Load>(req.Id);
+        var loadEntity = await _tenantUow.Repository<Load>().GetByIdAsync(req.Id);
 
-        if (loadEntity == null)
-            return ResponseResult<LoadDto>.CreateError("Could not find the specified cargo");
+        if (loadEntity is null)
+        {
+            return ResponseResult<LoadDto>.CreateError($"Could not find a load with ID '{req.Id}'");
+        }
         
         var loadDto = loadEntity.ToDto();
         return ResponseResult<LoadDto>.CreateSuccess(loadDto);

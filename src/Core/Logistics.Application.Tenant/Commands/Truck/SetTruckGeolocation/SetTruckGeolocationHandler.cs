@@ -1,26 +1,27 @@
 ﻿using Logistics.Application.Tenant.Mappers;
+using Logistics.Domain.ValueObjects;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Tenant.Commands;
 
 internal sealed class SetTruckGeolocationHandler : RequestHandler<SetTruckGeolocationCommand, ResponseResult>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
     private readonly ILogger<SetTruckGeolocationHandler> _logger;
 
     public SetTruckGeolocationHandler(
-        ITenantRepository tenantRepository,
+        ITenantUnityOfWork tenantUow,
         ILogger<SetTruckGeolocationHandler> logger)
     {
         _logger = logger;
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
         SetTruckGeolocationCommand req, CancellationToken cancellationToken)
     {
-        _tenantRepository.SetCurrentTenantById(req.GeolocationData.TenantId);
-        var truck = await _tenantRepository.GetAsync<Truck>(req.GeolocationData.TruckId);
+        _tenantUow.SetCurrentTenantById(req.GeolocationData.TenantId);
+        var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(req.GeolocationData.TruckId);
 
         if (truck is null)
         {
@@ -28,11 +29,11 @@ internal sealed class SetTruckGeolocationHandler : RequestHandler<SetTruckGeoloc
             return ResponseResult.CreateSuccess();
         }
 
-        truck.CurrentLocation = req.GeolocationData.CurrentAddress?.ToEntity();
+        truck.CurrentLocation = req.GeolocationData.CurrentAddress?.ToEntity() ?? Address.NullAddress;
         truck.CurrentLocationLat = req.GeolocationData.Latitude;
         truck.CurrentLocationLong = req.GeolocationData.Longitude;
-        _tenantRepository.Update(truck);
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        _tenantUow.Repository<Truck>().Update(truck);
+        await _tenantUow.SaveChangesAsync();
         return ResponseResult.CreateSuccess();
     }
 }

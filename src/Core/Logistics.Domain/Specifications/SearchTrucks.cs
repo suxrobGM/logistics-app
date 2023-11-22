@@ -3,20 +3,22 @@ using Logistics.Domain.Entities;
 
 namespace Logistics.Domain.Specifications;
 
-public class SearchTrucks : BaseSpecification<Truck>
+public sealed class SearchTrucks : BaseSpecification<Truck>
 {
     public SearchTrucks(
         string? search,
         string? orderBy,
-        bool descending = false)
+        int page,
+        int pageSize,
+        bool descending)
     {
-        OrderBy = InitOrderBy(orderBy);
-        Descending = descending;
-
-        if (string.IsNullOrEmpty(search))
-            return;
+        if (!string.IsNullOrEmpty(search))
+        {
+            Criteria = i => i.TruckNumber.Contains(search);
+        }
         
-        Criteria = i => i.TruckNumber.Contains(search);
+        ApplyOrderBy(InitOrderBy(orderBy), descending);
+        ApplyPaging(page, pageSize);
     }
     
     private static Expression<Func<Truck, object?>> InitOrderBy(string? propertyName)

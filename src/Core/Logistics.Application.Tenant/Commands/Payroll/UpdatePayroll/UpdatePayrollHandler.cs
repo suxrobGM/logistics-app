@@ -33,7 +33,8 @@ internal sealed class UpdatePayrollHandler : RequestHandler<UpdatePayrollCommand
             payroll.Employee = employee;
         }
 
-        if (req is { StartDate: not null, EndDate: not null } &&  payroll.StartDate != req.StartDate &&
+        if (req is { StartDate: not null, EndDate: not null } && 
+            payroll.StartDate != req.StartDate &&
             payroll.EndDate != req.EndDate)
         {
             payroll.StartDate = req.StartDate.Value;

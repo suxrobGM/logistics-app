@@ -5,27 +5,26 @@ namespace Logistics.Application.Tenant.Queries;
 
 internal sealed class GetCustomersHandler : RequestHandler<GetCustomersQuery, PagedResponseResult<CustomerDto>>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public GetCustomersHandler(ITenantRepository tenantRepository)
+    public GetCustomersHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
-    protected override Task<PagedResponseResult<CustomerDto>> HandleValidated(
+    protected override async Task<PagedResponseResult<CustomerDto>> HandleValidated(
         GetCustomersQuery req, 
         CancellationToken cancellationToken)
     {
-        var totalItems = _tenantRepository.Query<Customer>().Count();
-        var specification = new SearchCustomers(req.Search, req.OrderBy, req.Descending);
+        var totalItems = await _tenantUow.Repository<Customer>().CountAsync();
+        var specification = new SearchCustomers(req.Search, req.OrderBy, req.Page, req.PageSize, req.Descending);
         
-        var customers = _tenantRepository.ApplySpecification(specification)
-            .Skip((req.Page - 1) * req.PageSize)
-            .Take(req.PageSize)
+        var customers = _tenantUow.Repository<Customer>()
+            .ApplySpecification(specification)
             .Select(i => i.ToDto())
             .ToArray();
         
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return Task.FromResult(PagedResponseResult<CustomerDto>.Create(customers, totalItems, totalPages));
+        return PagedResponseResult<CustomerDto>.Create(customers, totalItems, totalPages);
     }
 }
