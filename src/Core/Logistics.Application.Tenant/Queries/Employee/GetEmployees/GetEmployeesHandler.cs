@@ -18,7 +18,7 @@ internal sealed class GetEmployeesHandler : RequestHandler<GetEmployeesQuery, Pa
     {
         var totalItems = await _tenantUow.Repository<Employee>().CountAsync();
         var employeesQuery = _tenantUow.Repository<Employee>().Query();
-        var specification = new SearchEmployees(req.Search, req.OrderBy, req.Descending);
+        var specification = new SearchEmployees(req.Search, req.OrderBy, req.Page, req.PageSize, req.Descending);
 
         if (!string.IsNullOrEmpty(req.Role))
         {
@@ -31,13 +31,12 @@ internal sealed class GetEmployeesHandler : RequestHandler<GetEmployeesQuery, Pa
                     .Select(i => i.Employee);
             }
         }
-        
-        employeesQuery = employeesQuery.ApplySpecification(specification)
-            .Skip((req.Page - 1) * req.PageSize)
-            .Take(req.PageSize);
 
-        var employeeDto = employeesQuery.Select(employeeEntity => employeeEntity.ToDto()).ToArray();
+        var employeeDto = employeesQuery.ApplySpecification(specification)
+            .Select(employeeEntity => employeeEntity.ToDto())
+            .ToArray();
+        
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return new PagedResponseResult<EmployeeDto>(employeeDto, totalItems, totalPages);
+        return PagedResponseResult<EmployeeDto>.Create(employeeDto, totalItems, totalPages);
     }
 }

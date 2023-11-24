@@ -10,11 +10,18 @@ public static class QueryableExtensions
         ISpecification<TEntity> specification)
         where TEntity : class, IEntity<string>
     {
-        var query = queryable.Where(specification.Criteria!);
-        
-        query = specification.Descending ? 
-            query.OrderByDescending(specification.OrderBy!)
-            : query.OrderBy(specification.OrderBy!);
+        var query = queryable;
+        if (specification.Criteria is not null)
+        {
+            query = queryable.Where(specification.Criteria);
+        }
+
+        if (specification.OrderBy is not null)
+        {
+            query = specification.Descending ? 
+                query.OrderByDescending(specification.OrderBy)
+                : query.OrderBy(specification.OrderBy);
+        }
         
         if (specification.IsPagingEnabled)
         {
