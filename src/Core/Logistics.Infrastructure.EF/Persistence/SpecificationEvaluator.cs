@@ -4,7 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Infrastructure.EF.Persistence;
 
-public static class SpecificationEvaluator<TEntity> where TEntity : class, IEntity<string>
+public static class SpecificationEvaluator<TEntity, TEntityKey> 
+    where TEntity : class, IEntity<TEntityKey>
 {
     public static IQueryable<TEntity> GetQuery(IQueryable<TEntity> inputQuery, ISpecification<TEntity> specification)
     {
