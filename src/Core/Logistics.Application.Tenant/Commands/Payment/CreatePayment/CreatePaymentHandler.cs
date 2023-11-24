@@ -1,12 +1,14 @@
-﻿namespace Logistics.Application.Tenant.Commands;
+﻿using Logistics.Domain.ValueObjects;
+
+namespace Logistics.Application.Tenant.Commands;
 
 internal sealed class CreatePaymentHandler : RequestHandler<CreatePaymentCommand, ResponseResult>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public CreatePaymentHandler(ITenantRepository tenantRepository)
+    public CreatePaymentHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
@@ -17,12 +19,12 @@ internal sealed class CreatePaymentHandler : RequestHandler<CreatePaymentCommand
             Amount = req.Amount,
             Method = req.Method,
             PaymentFor = req.PaymentFor,
-            BillingAddress = req.BillingAddress,
+            BillingAddress = req.BillingAddress ?? Address.NullAddress,
             Comment = req.Comment
         };
         
-        await _tenantRepository.AddAsync(payment);
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        await _tenantUow.Repository<Payment>().AddAsync(payment);
+        await _tenantUow.SaveChangesAsync();
         return ResponseResult.CreateSuccess();
     }
 }

@@ -2,23 +2,25 @@
 
 internal sealed class DeleteInvoiceHandler : RequestHandler<DeletePaymentCommand, ResponseResult>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public DeleteInvoiceHandler(ITenantRepository tenantRepository)
+    public DeleteInvoiceHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
         DeletePaymentCommand req, CancellationToken cancellationToken)
     {
-        var invoice = await _tenantRepository.GetAsync<Invoice>(req.Id);
+        var invoice = await _tenantUow.Repository<Invoice>().GetByIdAsync(req.Id);
 
         if (invoice is null)
+        {
             return ResponseResult.CreateError($"Could not find an invoice with ID {req.Id}");
+        }
         
-        _tenantRepository.Delete(invoice);
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        _tenantUow.Repository<Invoice>().Delete(invoice);
+        await _tenantUow.SaveChangesAsync();
         return ResponseResult.CreateSuccess();
     }
 }

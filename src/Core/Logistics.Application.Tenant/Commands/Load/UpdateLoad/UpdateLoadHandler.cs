@@ -5,23 +5,26 @@ namespace Logistics.Application.Tenant.Commands;
 
 internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, ResponseResult>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
     private readonly IPushNotificationService _pushNotificationService;
 
     public UpdateLoadHandler(
-        ITenantRepository tenantRepository,
+        ITenantUnityOfWork tenantUow,
         IPushNotificationService pushNotificationService)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
         _pushNotificationService = pushNotificationService;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
             UpdateLoadCommand req, CancellationToken cancellationToken)
         {
-            var loadEntity = await _tenantRepository.GetAsync<Load>(req.Id);
-            if (loadEntity == null)
+            var loadEntity = await _tenantUow.Repository<Load>().GetByIdAsync(req.Id);
+            
+            if (loadEntity is null)
+            {
                 return ResponseResult.CreateError("Could not find the specified load");
+            }
 
             try
             {
@@ -32,8 +35,8 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resp
                 await UpdateCustomerIfUpdated(req, loadEntity);
                 var updatedDetails = UpdateLoadDetails(req, loadEntity);
 
-                _tenantRepository.Update(loadEntity);
-                var changes = await _tenantRepository.UnitOfWork.CommitAsync();
+                _tenantUow.Repository<Load>().Update(loadEntity);
+                var changes = await _tenantUow.SaveChangesAsync();
 
                 if (changes > 0)
                 {
@@ -50,10 +53,12 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resp
     
         private async Task UpdateCustomerIfUpdated(UpdateLoadCommand req, Load loadEntity)
         {
-            if (req.CustomerId is null) 
+            if (req.CustomerId is null)
+            {
                 return;
+            }
 
-            var customer = await _tenantRepository.GetAsync<Customer>(req.CustomerId);
+            var customer = await _tenantUow.Repository<Customer>().GetByIdAsync(req.CustomerId);
             if (customer is null)
             {
                 throw new InvalidOperationException($"Could not find a customer with ID '{req.CustomerId}'");
@@ -67,30 +72,35 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resp
 
         private async Task<Truck?> AssignTruckIfUpdated(UpdateLoadCommand req, Load loadEntity)
         {
-            if (req.AssignedTruckId is null) 
+            if (req.AssignedTruckId is null)
+            {
                 return null;
+            }
 
-            var truck = await _tenantRepository.GetAsync<Truck>(req.AssignedTruckId);
+            var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(req.AssignedTruckId);
             if (truck is null)
             {
                 throw new InvalidOperationException($"Could not find a truck with ID '{req.AssignedTruckId}'");
             }
 
-            if (loadEntity.AssignedTruckId != truck.Id)
+            if (loadEntity.AssignedTruckId == truck.Id)
             {
-                loadEntity.AssignedTruck = truck;
-                return truck;
+                return null;
             }
+            
+            loadEntity.AssignedTruck = truck;
+            return truck;
 
-            return null;
         }
 
         private async Task AssignDispatcherIfUpdated(UpdateLoadCommand req, Load loadEntity)
         {
-            if (req.AssignedDispatcherId is null) 
+            if (req.AssignedDispatcherId is null)
+            {
                 return;
+            }
 
-            var dispatcher = await _tenantRepository.GetAsync<Employee>(req.AssignedDispatcherId);
+            var dispatcher = await _tenantUow.Repository<Employee>().GetByIdAsync(req.AssignedDispatcherId);
             if (dispatcher is null)
             {
                 throw new InvalidOperationException($"Could not find a dispatcher with ID '{req.AssignedDispatcherId}'");
@@ -106,7 +116,7 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resp
         {
             var updated = false;
 
-            if (req.Name != null && req.Name != load.Name)
+            if (req.Name is not null && req.Name != load.Name)
             {
                 load.Name = req.Name;
                 updated = true;

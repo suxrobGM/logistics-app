@@ -7,7 +7,9 @@ public class SearchTenants : BaseSpecification<Tenant>
 {
     public SearchTenants(
         string? search, 
-        string? orderBy, 
+        string? orderBy,
+        int page,
+        int pageSize,
         bool descending)
     {
         if (!string.IsNullOrEmpty(search))
@@ -20,6 +22,7 @@ public class SearchTenants : BaseSpecification<Tenant>
                  i.CompanyName.Contains(search));
         }
         
+        ApplyPaging(page, pageSize);
         ApplyOrderBy(InitOrderBy(orderBy), descending);
     }
     

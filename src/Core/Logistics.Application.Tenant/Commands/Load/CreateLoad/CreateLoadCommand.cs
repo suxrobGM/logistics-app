@@ -14,7 +14,7 @@ public class CreateLoadCommand : IRequest<ResponseResult>
     public double DestinationAddressLong { get; set; }
     public decimal DeliveryCost { get; set; }
     public double Distance { get; set; }
-    public string? AssignedDispatcherId { get; set; }
-    public string? AssignedTruckId { get; set; }
-    public string? CustomerId { get; set; }
+    public string AssignedDispatcherId { get; set; } = default!;
+    public string AssignedTruckId { get; set; } = default!;
+    public string CustomerId { get; set; } = default!;
 }

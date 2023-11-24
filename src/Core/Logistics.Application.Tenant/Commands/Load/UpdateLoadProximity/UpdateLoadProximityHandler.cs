@@ -7,24 +7,26 @@ namespace Logistics.Application.Tenant.Commands;
 internal sealed class UpdateLoadProximityHandler : RequestHandler<UpdateLoadProximityCommand, ResponseResult>
 {
     private readonly IPushNotificationService _pushNotificationService;
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
     public UpdateLoadProximityHandler(
-        ITenantRepository tenantRepository,
+        ITenantUnityOfWork tenantUow,
         IPushNotificationService pushNotificationService)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
         _pushNotificationService = pushNotificationService;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
         UpdateLoadProximityCommand req, CancellationToken cancellationToken)
     {
-        var load = await _tenantRepository.GetAsync<Load>(req.LoadId);
-        
-        if (load is null)
-            return ResponseResult.CreateError($"Could not find load with ID '{req.LoadId}'");
+        var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.LoadId);
 
+        if (load is null)
+        {
+            return ResponseResult.CreateError($"Could not find load with ID '{req.LoadId}'");
+        }
+        
         LoadStatus? loadStatus = null;
         if (req.CanConfirmPickUp.HasValue && req.CanConfirmPickUp != load.CanConfirmPickUp)
         {
@@ -37,8 +39,8 @@ internal sealed class UpdateLoadProximityHandler : RequestHandler<UpdateLoadProx
             loadStatus = LoadStatus.Delivered;
         }
         
-        _tenantRepository.Update(load);
-        var changes = await _tenantRepository.UnitOfWork.CommitAsync();
+        _tenantUow.Repository<Load>().Update(load);
+        var changes = await _tenantUow.SaveChangesAsync();
         
         if (loadStatus.HasValue && changes > 0)
         {

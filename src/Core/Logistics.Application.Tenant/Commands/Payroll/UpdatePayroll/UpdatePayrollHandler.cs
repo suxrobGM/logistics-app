@@ -4,17 +4,17 @@ namespace Logistics.Application.Tenant.Commands;
 
 internal sealed class UpdatePayrollHandler : RequestHandler<UpdatePayrollCommand, ResponseResult>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public UpdatePayrollHandler(ITenantRepository tenantRepository)
+    public UpdatePayrollHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
         UpdatePayrollCommand req, CancellationToken cancellationToken)
     {
-        var payroll = await _tenantRepository.GetAsync<Payroll>(req.Id);
+        var payroll = await _tenantUow.Repository<Payroll>().GetByIdAsync(req.Id);
 
         if (payroll is null)
         {
@@ -23,7 +23,7 @@ internal sealed class UpdatePayrollHandler : RequestHandler<UpdatePayrollCommand
         
         if (!string.IsNullOrEmpty(req.EmployeeId) && req.EmployeeId != payroll.EmployeeId)
         {
-            var employee = await _tenantRepository.GetAsync<Employee>(req.EmployeeId);
+            var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId);
 
             if (employee is null)
             {
@@ -48,8 +48,8 @@ internal sealed class UpdatePayrollHandler : RequestHandler<UpdatePayrollCommand
             payroll.Payment.BillingAddress = req.PaymentBillingAddress;
         }
         
-        _tenantRepository.Update(payroll);
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        _tenantUow.Repository<Payroll>().Update(payroll);
+        await _tenantUow.SaveChangesAsync();
         return ResponseResult.CreateSuccess();
     }
 }

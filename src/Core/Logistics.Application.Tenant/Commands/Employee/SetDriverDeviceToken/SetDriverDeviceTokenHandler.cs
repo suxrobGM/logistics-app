@@ -2,20 +2,22 @@
 
 internal sealed class SetDriverDeviceTokenHandler : RequestHandler<SetDriverDeviceTokenCommand, ResponseResult>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public SetDriverDeviceTokenHandler(ITenantRepository tenantRepository)
+    public SetDriverDeviceTokenHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
         SetDriverDeviceTokenCommand req, CancellationToken cancellationToken)
     {
-        var driver = await _tenantRepository.GetAsync<Employee>(req.UserId);
+        var driver = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
 
-        if (driver == null)
+        if (driver is null)
+        {
             return ResponseResult.CreateError("Could not find the specified driver");
+        }
 
         if (!string.IsNullOrEmpty(driver.DeviceToken) && driver.DeviceToken == req.DeviceToken)
         {
@@ -23,8 +25,8 @@ internal sealed class SetDriverDeviceTokenHandler : RequestHandler<SetDriverDevi
         }
 
         driver.DeviceToken = req.DeviceToken;
-        _tenantRepository.Update(driver);
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        _tenantUow.Repository<Employee>().Update(driver);
+        await _tenantUow.SaveChangesAsync();
         return ResponseResult.CreateSuccess();
     }
 }

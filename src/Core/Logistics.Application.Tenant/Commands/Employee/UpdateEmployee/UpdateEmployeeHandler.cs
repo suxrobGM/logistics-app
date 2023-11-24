@@ -4,23 +4,25 @@ namespace Logistics.Application.Tenant.Commands;
 
 internal sealed class UpdateEmployeeHandler : RequestHandler<UpdateEmployeeCommand, ResponseResult>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public UpdateEmployeeHandler(ITenantRepository tenantRepository)
+    public UpdateEmployeeHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
         UpdateEmployeeCommand req, CancellationToken cancellationToken)
     {
-        var employeeEntity = await _tenantRepository.GetAsync<Employee>(req.UserId);
-        var tenantRole = await _tenantRepository.GetAsync<TenantRole>(i => i.Name == req.Role);
+        var employeeEntity = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
+        var tenantRole = await _tenantUow.Repository<TenantRole>().GetAsync(i => i.Name == req.Role);
 
-        if (employeeEntity == null)
+        if (employeeEntity is null)
+        {
             return ResponseResult.CreateError("Could not find the specified user");
+        }
 
-        if (tenantRole != null)
+        if (tenantRole is not null)
         {
             employeeEntity.Roles.Clear();
             employeeEntity.Roles.Add(tenantRole);
@@ -34,8 +36,8 @@ internal sealed class UpdateEmployeeHandler : RequestHandler<UpdateEmployeeComma
             employeeEntity.Salary = req.SalaryType == SalaryType.None ? 0 : req.Salary.Value;
         }
         
-        _tenantRepository.Update(employeeEntity);
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        _tenantUow.Repository<Employee>().Update(employeeEntity);
+        await _tenantUow.SaveChangesAsync();
         return ResponseResult.CreateSuccess();
     }
 }

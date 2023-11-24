@@ -6,7 +6,6 @@ internal sealed class DeleteTenantValidator : AbstractValidator<DeleteTenantComm
 {
     public DeleteTenantValidator()
     {
-        RuleFor(i => i.Id)
-            .NotEmpty();
+        RuleFor(i => i.Id).NotEmpty();
     }
 }

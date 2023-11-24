@@ -4,24 +4,24 @@ namespace Logistics.Application.Tenant.Commands;
 
 internal sealed class CreateInvoiceHandler : RequestHandler<CreateInvoiceCommand, ResponseResult>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public CreateInvoiceHandler(ITenantRepository tenantRepository)
+    public CreateInvoiceHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
         CreateInvoiceCommand req, CancellationToken cancellationToken)
     {
-        var load = await _tenantRepository.GetAsync<Load>(req.LoadId);
+        var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.LoadId);
 
         if (load is null)
         {
             return ResponseResult.CreateError($"Could not find a load with ID '{req.LoadId}'");
         }
         
-        var customer = await _tenantRepository.GetAsync<Customer>(req.CustomerId);
+        var customer = await _tenantUow.Repository<Customer>().GetByIdAsync(req.CustomerId);
 
         if (customer is null)
         {
@@ -42,8 +42,8 @@ internal sealed class CreateInvoiceHandler : RequestHandler<CreateInvoiceCommand
             Payment = payment
         };
         
-        await _tenantRepository.AddAsync(invoice);
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        await _tenantUow.Repository<Invoice>().AddAsync(invoice);
+        await _tenantUow.SaveChangesAsync();
         return ResponseResult.CreateSuccess();
     }
 }

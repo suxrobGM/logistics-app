@@ -2,23 +2,26 @@
 
 internal sealed class DeletePaymentHandler : RequestHandler<DeletePaymentCommand, ResponseResult>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public DeletePaymentHandler(ITenantRepository tenantRepository)
+    public DeletePaymentHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
         DeletePaymentCommand req, CancellationToken cancellationToken)
     {
-        var payment = await _tenantRepository.GetAsync<Payment>(req.Id);
+        var payment = await _tenantUow.Repository<Payment>().GetByIdAsync(req.Id);
 
         if (payment is null)
+        {
             return ResponseResult.CreateError($"Could not find a payment with ID {req.Id}");
+        }
+            
         
-        _tenantRepository.Delete(payment);
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        _tenantUow.Repository<Payment>().Delete(payment);
+        await _tenantUow.SaveChangesAsync();
         return ResponseResult.CreateSuccess();
     }
 }

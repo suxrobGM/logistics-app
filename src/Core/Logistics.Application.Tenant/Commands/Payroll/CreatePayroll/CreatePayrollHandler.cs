@@ -4,21 +4,21 @@ namespace Logistics.Application.Tenant.Commands;
 
 internal sealed class CreatePayrollHandler : RequestHandler<CreatePayrollCommand, ResponseResult>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
     private readonly IPayrollService _payrollService;
 
     public CreatePayrollHandler(
-        ITenantRepository tenantRepository,
+        ITenantUnityOfWork tenantUow,
         IPayrollService payrollService)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
         _payrollService = payrollService;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
         CreatePayrollCommand req, CancellationToken cancellationToken)
     {
-        var employee = await _tenantRepository.GetAsync<Employee>(req.EmployeeId);
+        var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId);
 
         if (employee is null)
         {
@@ -26,8 +26,8 @@ internal sealed class CreatePayrollHandler : RequestHandler<CreatePayrollCommand
         }
 
         var payroll = _payrollService.CreatePayroll(employee, req.StartDate, req.EndDate);
-        await _tenantRepository.AddAsync(payroll);
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        await _tenantUow.Repository<Payroll>().AddAsync(payroll);
+        await _tenantUow.SaveChangesAsync();
         return ResponseResult.CreateSuccess();
     }
 }

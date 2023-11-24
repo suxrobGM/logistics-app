@@ -5,5 +5,5 @@ namespace Logistics.Application.Admin.Commands;
 
 public class DeleteTenantCommand : IRequest<ResponseResult>
 {
-    public string? Id { get; set; }
+    public string Id { get; set; } = default!;
 }

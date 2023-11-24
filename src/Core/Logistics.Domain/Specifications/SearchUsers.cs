@@ -7,7 +7,9 @@ public class SearchUsers : BaseSpecification<User>
 {
     public SearchUsers(
         string? search, 
-        string? orderBy, 
+        string? orderBy,
+        int page,
+        int pageSize,
         bool descending)
     {
         if (!string.IsNullOrEmpty(search))
@@ -19,6 +21,7 @@ public class SearchUsers : BaseSpecification<User>
                 (i.Email != null && i.Email.Contains(search));
         }
         
+        ApplyPaging(page, pageSize);
         ApplyOrderBy(InitOrderBy(orderBy), descending);
     }
     

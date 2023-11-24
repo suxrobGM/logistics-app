@@ -4,35 +4,39 @@ namespace Logistics.Application.Tenant.Commands;
 
 internal sealed class CreateEmployeeHandler : RequestHandler<CreateEmployeeCommand, ResponseResult>
 {
-    private readonly IMasterRepository _masterRepository;
-    private readonly ITenantRepository _tenantRepository;
+    private readonly IMasterUnityOfWork _masterUow;
+    private readonly ITenantUnityOfWork _tenantUow;
     private readonly INotificationService _notificationService;
 
     public CreateEmployeeHandler(
-        IMasterRepository masterRepository,
-        ITenantRepository tenantRepository,
+        IMasterUnityOfWork masterUow,
+        ITenantUnityOfWork tenantUow,
         INotificationService notificationService)
     {
-        _masterRepository = masterRepository;
-        _tenantRepository = tenantRepository;
+        _masterUow = masterUow;
+        _tenantUow = tenantUow;
         _notificationService = notificationService;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
         CreateEmployeeCommand req, CancellationToken cancellationToken)
     {
-        var existingEmployee = await _tenantRepository.GetAsync<Employee>(req.UserId);
-        
+        var existingEmployee = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
+
         if (existingEmployee is not null)
+        {
             return ResponseResult.CreateError("Employee already exists");
+        }
         
-        var user = await _masterRepository.GetAsync<User>(req.UserId);
-        
+        var user = await _masterUow.Repository<User>().GetByIdAsync(req.UserId);
+
         if (user is null)
+        {
             return ResponseResult.CreateError("Could not find the specified user");
+        }
         
-        var tenantRole = await _tenantRepository.GetAsync<TenantRole>(i => i.Name == req.Role);
-        var tenant = _tenantRepository.GetCurrentTenant();
+        var tenantRole = await _tenantUow.Repository<TenantRole>().GetAsync(i => i.Name == req.Role);
+        var tenant = _tenantUow.GetCurrentTenant();
         
         user.JoinTenant(tenant.Id);
         var employee = Employee.CreateEmployeeFromUser(user, req.Salary, req.SalaryType);
@@ -42,11 +46,11 @@ internal sealed class CreateEmployeeHandler : RequestHandler<CreateEmployeeComma
             employee.Roles.Add(tenantRole);
         }
         
-        await _tenantRepository.AddAsync(employee);
-        _masterRepository.Update(user);
+        await _tenantUow.Repository<Employee>().AddAsync(employee);
+        _masterUow.Repository<User>().Update(user);
         
-        await _masterRepository.UnitOfWork.CommitAsync();
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        await _masterUow.SaveChangesAsync();
+        await _tenantUow.SaveChangesAsync();
 
         await _notificationService.SendNotificationAsync("New Employee",
             $"A new employee '{employee.GetFullName()}' has joined. Role is '{tenantRole?.DisplayName}'");

@@ -2,24 +2,26 @@
 
 internal sealed class UpdateCustomerHandler : RequestHandler<UpdateCustomerCommand, ResponseResult>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public UpdateCustomerHandler(ITenantRepository tenantRepository)
+    public UpdateCustomerHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
         UpdateCustomerCommand req, CancellationToken cancellationToken)
     {
-        var customerEntity = await _tenantRepository.GetAsync<Customer>(req.Id);
+        var customerEntity = await _tenantUow.Repository<Customer>().GetByIdAsync(req.Id);
 
         if (customerEntity is null)
+        {
             return ResponseResult.CreateError($"Could not find a customer with ID '{req.Id}'");
+        }
 
         customerEntity.Name = req.Name;
-        _tenantRepository.Update(customerEntity);
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        _tenantUow.Repository<Customer>().Update(customerEntity);
+        await _tenantUow.SaveChangesAsync();
         return ResponseResult.CreateSuccess();
     }
 }
