@@ -9,22 +9,20 @@ namespace Logistics.Application.Admin.Queries;
 
 internal sealed class GetAppRolesHandler : RequestHandler<GetAppRolesQuery, PagedResponseResult<AppRoleDto>>
 {
-    private readonly IMasterRepository _repository;
+    private readonly IMasterUnityOfWork _masterUow;
 
-    public GetAppRolesHandler(IMasterRepository repository)
+    public GetAppRolesHandler(IMasterUnityOfWork masterUow)
     {
-        _repository = repository;
+        _masterUow = masterUow;
     }
 
-    protected override Task<PagedResponseResult<AppRoleDto>> HandleValidated(
+    protected override async Task<PagedResponseResult<AppRoleDto>> HandleValidated(
         GetAppRolesQuery req, CancellationToken cancellationToken)
     {
-        var totalItems = _repository.Query<AppRole>().Count();
+        var totalItems = await _masterUow.Repository<AppRole>().CountAsync();
 
-        var rolesDto = _repository
-            .ApplySpecification(new SearchAppRoles(req.Search))
-            .Skip((req.Page - 1) * req.PageSize)
-            .Take(req.PageSize)
+        var rolesDto = _masterUow.Repository<AppRole>()
+            .ApplySpecification(new SearchAppRoles(req.Search, req.Page, req.PageSize))
             .Select(i => new AppRoleDto()
             {
                 Name = i.Name,
@@ -33,6 +31,6 @@ internal sealed class GetAppRolesHandler : RequestHandler<GetAppRolesQuery, Page
             .ToArray();
         
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return Task.FromResult(new PagedResponseResult<AppRoleDto>(rolesDto, totalItems, totalPages));
+        return PagedResponseResult<AppRoleDto>.Create(rolesDto, totalItems, totalPages);
     }
 }

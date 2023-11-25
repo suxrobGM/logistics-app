@@ -5,11 +5,11 @@ namespace Logistics.Application.Tenant.Queries;
 
 internal sealed class GetNotificationsHandler : RequestHandler<GetNotificationsQuery, ResponseResult<NotificationDto[]>>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public GetNotificationsHandler(ITenantRepository tenantRepository)
+    public GetNotificationsHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
     protected override async Task<ResponseResult<NotificationDto[]>> HandleValidated(
@@ -17,7 +17,7 @@ internal sealed class GetNotificationsHandler : RequestHandler<GetNotificationsQ
         CancellationToken cancellationToken)
     {
         var notificationsList =
-            await _tenantRepository.GetListAsync<Notification>(i => i.CreatedDate >= req.StartDate && i.CreatedDate <= req.EndDate);
+            await _tenantUow.Repository<Notification>().GetListAsync(i => i.CreatedDate >= req.StartDate && i.CreatedDate <= req.EndDate);
 
         var notificationsDto = notificationsList
             .Select(i => i.ToDto())

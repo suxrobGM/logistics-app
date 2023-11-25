@@ -5,21 +5,21 @@ namespace Logistics.Application.Tenant.Queries;
 
 internal sealed class GetTrucksHandler : RequestHandler<GetTrucksQuery, PagedResponseResult<TruckDto>>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public GetTrucksHandler(ITenantRepository tenantRepository)
+    public GetTrucksHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
-    protected override Task<PagedResponseResult<TruckDto>> HandleValidated(
+    protected override async Task<PagedResponseResult<TruckDto>> HandleValidated(
         GetTrucksQuery req,
         CancellationToken cancellationToken)
     {
-        var totalItems = _tenantRepository.Query<Truck>().Count();
-        var spec = new SearchTrucks(req.Search, req.OrderBy, req.Descending);
+        var totalItems = await _tenantUow.Repository<Truck>().CountAsync();
+        var spec = new SearchTrucks(req.Search, req.OrderBy, req.Page, req.PageSize, req.Descending);
         
-        var truckQuery = _tenantRepository.ApplySpecification(spec)
+        var truckQuery = _tenantUow.Repository<Truck>().ApplySpecification(spec)
             .Skip((req.Page - 1) * req.PageSize)
             .Take(req.PageSize);
 
@@ -29,6 +29,6 @@ internal sealed class GetTrucksHandler : RequestHandler<GetTrucksQuery, PagedRes
             .ToArray();
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return Task.FromResult(new PagedResponseResult<TruckDto>(trucks, totalItems, totalPages));
+        return PagedResponseResult<TruckDto>.Create(trucks, totalItems, totalPages);
     }
 }

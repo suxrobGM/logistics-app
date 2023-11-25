@@ -12,20 +12,20 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
     private readonly HttpContext _httpContext;
     private readonly RoleManager<AppRole> _roleManager;
     private readonly UserManager<User> _userManager;
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
     public UserCustomClaimsFactory(
         UserManager<User> userManager, 
         RoleManager<AppRole> roleManager, 
         IOptions<IdentityOptions> options,
         IHttpContextAccessor httpContextAccessor,
-        ITenantRepository tenantRepository) 
+        ITenantUnityOfWork tenantUow) 
         : base(userManager, roleManager, options)
     {
         _httpContext = httpContextAccessor.HttpContext!;
         _roleManager = roleManager;
         _userManager = userManager;
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
     protected override async Task<ClaimsIdentity> GenerateClaimsAsync(User user)
@@ -37,11 +37,13 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
         AddProfileClaims(claimsIdentity, user);
         await AddAppRoleClaimsAsync(claimsIdentity, user);
 
-        if (string.IsNullOrEmpty(tenantId)) 
+        if (string.IsNullOrEmpty(tenantId))
+        {
             return claimsIdentity;
-
-        _tenantRepository.SetCurrentTenantById(tenantId);
-        var employee = await _tenantRepository.GetAsync<Employee>(user.Id);
+        }
+        
+        _tenantUow.SetCurrentTenantById(tenantId);
+        var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(user.Id);
 
         AddTenantIdClaims(claimsIdentity, tenantIds);
         await AddTenantRoleClaimsAsync(claimsIdentity, employee);
@@ -66,12 +68,16 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
     
     private async Task AddTenantRoleClaimsAsync(ClaimsIdentity claimsIdentity, Employee? employee)
     {
-        if (employee == null)
+        if (employee is null)
+        {
             return;
+        }
+
+        var tenantRoleClaimRepository = _tenantUow.Repository<TenantRoleClaim>();
 
         foreach (var tenantRole in employee.Roles)
         {
-            var roleClaims = await _tenantRepository.GetListAsync<TenantRoleClaim>(i => i.RoleId == tenantRole.Id);
+            var roleClaims = await tenantRoleClaimRepository.GetListAsync(i => i.RoleId == tenantRole.Id);
             claimsIdentity.AddClaims(roleClaims.Select(i => new Claim(i.ClaimType, i.ClaimValue)));
             claimsIdentity.AddClaim(new Claim(CustomClaimTypes.Role, tenantRole.Name));
         }

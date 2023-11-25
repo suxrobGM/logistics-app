@@ -32,11 +32,9 @@ public static class Registrar
         services.AddScoped<AuditableEntitySaveChangesInterceptor>();
         services.AddScoped<DispatchDomainEventsInterceptor>();
         services.AddScoped<ITenantService, TenantService>();
-        services.AddScoped<IMasterRepository, MasterRepository>();
-        services.AddScoped<ITenantRepository, TenantRepository>();
+        services.AddScoped<IMasterUnityOfWork, MasterUnitOfWork>();
+        services.AddScoped<ITenantUnityOfWork, TenantUnitOfWork>();
         services.AddScoped<IUserService, UserService>();
-        services.AddScoped<UnitOfWork<MasterDbContext>>();
-        services.AddScoped<UnitOfWork<TenantDbContext>>();
         return new InfrastructureBuilder(identityBuilder);
     }
     

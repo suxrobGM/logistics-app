@@ -2,29 +2,33 @@
 
 internal sealed class RemoveEmployeeRoleHandler : RequestHandler<RemoveRoleFromEmployeeCommand, ResponseResult>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public RemoveEmployeeRoleHandler(ITenantRepository tenantRepository)
+    public RemoveEmployeeRoleHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
     
     protected override async Task<ResponseResult> HandleValidated(
         RemoveRoleFromEmployeeCommand req, CancellationToken cancellationToken)
     {
-        req.Role = req.Role?.ToLower();
-        var employee = await _tenantRepository.GetAsync<Employee>(req.UserId);
+        req.Role = req.Role.ToLower();
+        var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
 
-        if (employee == null)
+        if (employee is null)
+        {
             return ResponseResult.CreateError("Could not find the specified user");
+        }
 
-        var tenantRole = await _tenantRepository.GetAsync<TenantRole>(i => i.Name == req.Role);
-        
-        if (tenantRole == null)
+        var tenantRole = await _tenantUow.Repository<TenantRole>().GetAsync(i => i.Name == req.Role);
+
+        if (tenantRole is null)
+        {
             return ResponseResult.CreateError("Could not find the specified role name");
-
+        }
+        
         employee.Roles.Remove(tenantRole);
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        await _tenantUow.SaveChangesAsync();
         return ResponseResult.CreateSuccess();
     }
 }

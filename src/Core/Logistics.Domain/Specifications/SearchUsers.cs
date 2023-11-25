@@ -5,21 +5,24 @@ namespace Logistics.Domain.Specifications;
 
 public class SearchUsers : BaseSpecification<User>
 {
-    public SearchUsers(string? search, 
-        string? orderBy = "Email", 
-        bool descending = false)
+    public SearchUsers(
+        string? search, 
+        string? orderBy,
+        int page,
+        int pageSize,
+        bool descending)
     {
-        Descending = descending;
-        OrderBy = InitOrderBy(orderBy);
+        if (!string.IsNullOrEmpty(search))
+        {
+            Criteria = i =>
+                i.FirstName.Contains(search) ||
+                i.LastName.Contains(search) ||
+                (i.PhoneNumber != null && i.PhoneNumber.Contains(search)) ||
+                (i.Email != null && i.Email.Contains(search));
+        }
         
-        if (string.IsNullOrEmpty(search))
-            return;
-        
-        Criteria = i =>
-            (i.FirstName.Contains(search)) ||
-            (i.LastName.Contains(search)) ||
-            (i.PhoneNumber != null && i.PhoneNumber.Contains(search)) ||
-            (i.Email != null && i.Email.Contains(search));
+        ApplyPaging(page, pageSize);
+        ApplyOrderBy(InitOrderBy(orderBy), descending);
     }
     
     private static Expression<Func<User, object?>> InitOrderBy(string? propertyName)

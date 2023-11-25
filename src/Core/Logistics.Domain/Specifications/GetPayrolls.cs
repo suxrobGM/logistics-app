@@ -8,19 +8,19 @@ public class GetPayrolls : BaseSpecification<Payroll>
     public GetPayrolls(
         string? search,
         string? orderBy,
-        bool descending = false)
+        int page,
+        int pageSize,
+        bool descending)
     {
-        Descending = descending;
-        OrderBy = InitOrderBy(orderBy);
-
-        if (string.IsNullOrEmpty(search))
+        if (!string.IsNullOrEmpty(search))
         {
-            return;
+            Criteria = i =>
+                !string.IsNullOrEmpty(i.Employee.FirstName) && i.Employee.FirstName.Contains(search) || 
+                !string.IsNullOrEmpty(i.Employee.LastName) && i.Employee.LastName.Contains(search);
         }
 
-        Criteria = i =>
-            !string.IsNullOrEmpty(i.Employee.FirstName) && i.Employee.FirstName.Contains(search) || 
-            !string.IsNullOrEmpty(i.Employee.LastName) && i.Employee.LastName.Contains(search);
+        ApplyOrderBy(InitOrderBy(orderBy), descending);
+        ApplyPaging(page, pageSize);
     }
 
     private static Expression<Func<Payroll, object?>> InitOrderBy(string? propertyName)

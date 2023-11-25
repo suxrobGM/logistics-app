@@ -3,16 +3,18 @@ using Logistics.Domain.Entities;
 
 namespace Logistics.Domain.Specifications;
 
-public class GetEmployeePayrolls : BaseSpecification<Payroll>
+public class FilterPayrollsByEmployeeId : BaseSpecification<Payroll>
 {
-    public GetEmployeePayrolls(
+    public FilterPayrollsByEmployeeId(
         string employeeId,
         string? orderBy,
-        bool descending = false)
+        int page,
+        int pageSize,
+        bool descending)
     {
-        Descending = descending;
-        OrderBy = InitOrderBy(orderBy);
         Criteria = i => i.EmployeeId == employeeId;
+        ApplyOrderBy(InitOrderBy(orderBy), descending);
+        ApplyPaging(page, pageSize);
     }
 
     private static Expression<Func<Payroll, object?>> InitOrderBy(string? propertyName)

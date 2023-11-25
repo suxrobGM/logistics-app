@@ -5,5 +5,5 @@ namespace Logistics.Application.Tenant.Queries;
 
 public class GetPayrollByIdQuery : IRequest<ResponseResult<PayrollDto>>
 {
-    public string? Id { get; set; }
+    public string Id { get; set; } = default!;
 }

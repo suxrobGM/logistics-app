@@ -5,13 +5,18 @@ namespace Logistics.Domain.Specifications;
 
 public class FilterPaymentsByInterval : BaseSpecification<Payment>
 {
-    public FilterPaymentsByInterval(string? orderProperty, DateTime? startPeriod, DateTime endPeriod, bool descending)
+    public FilterPaymentsByInterval(
+        string? orderProperty,
+        DateTime? startPeriod,
+        DateTime endPeriod,
+        int page,
+        int pageSize,
+        bool descending)
     {
-        Descending = descending;
-        OrderBy = InitOrderBy(orderProperty);
-
         Criteria = i =>
             i.CreatedDate >= startPeriod && i.CreatedDate <= endPeriod;
+        
+        ApplyOrderBy(InitOrderBy(orderProperty), descending);
     }
     
     private static Expression<Func<Payment, object?>> InitOrderBy(string? propertyName)

@@ -4,11 +4,11 @@ namespace Logistics.Application.Tenant.Queries;
 
 internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQuery, ResponseResult<DailyGrossesDto>>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public GetDailyGrossesHandler(ITenantRepository tenantRepository)
+    public GetDailyGrossesHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
     
     protected override async Task<ResponseResult<DailyGrossesDto>> HandleValidated(
@@ -18,7 +18,7 @@ internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQue
         
         if (!string.IsNullOrEmpty(req.UserId))
         {
-            var driver = await _tenantRepository.GetAsync<Employee>(req.UserId);
+            var driver = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
 
             if (driver is null)
             {
@@ -28,14 +28,14 @@ internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQue
             truckId = driver.TruckId;
         }
         
-        var spec = new FilterLoadsByInterval(truckId, req.StartDate, req.EndDate);
-        var dailyGrosses = new DailyGrossesDto();
+        var spec = new FilterLoadsByDeliveryDate(truckId, req.StartDate, req.EndDate);
+        
         var days = req.StartDate.DaysBetween(req.EndDate);
         var dict = days.ToDictionary(
             k => (k.Year, k.Month, k.Day), 
             m => new DailyGrossDto(m.Year, m.Month, m.Day));
         
-        var filteredLoads = _tenantRepository.ApplySpecification(spec).ToArray();
+        var filteredLoads = _tenantUow.Repository<Load>().ApplySpecification(spec).ToArray();
 
         foreach (var load in filteredLoads)
         {
@@ -50,7 +50,10 @@ internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQue
             dict[key].DriverShare += load.CalcDriverShare();
         }
 
-        dailyGrosses.Data = dict.Values;
+        var dailyGrosses = new DailyGrossesDto
+        {
+            Data = dict.Values
+        };
         return ResponseResult<DailyGrossesDto>.CreateSuccess(dailyGrosses);
     }
 }

@@ -9,24 +9,21 @@ namespace Logistics.Application.Admin.Queries;
 
 internal sealed class GetUsersHandler : RequestHandler<GetUsersQuery, PagedResponseResult<UserDto>>
 {
-    private readonly IMasterRepository _repository;
+    private readonly IMasterUnityOfWork _masterUow;
 
-    public GetUsersHandler(
-        IMasterRepository repository)
+    public GetUsersHandler(IMasterUnityOfWork masterUow)
     {
-        _repository = repository;
+        _masterUow = masterUow;
     }
 
-    protected override Task<PagedResponseResult<UserDto>> HandleValidated(
+    protected override async Task<PagedResponseResult<UserDto>> HandleValidated(
         GetUsersQuery req, 
         CancellationToken cancellationToken)
     {
-        var totalItems = _repository.Query<User>().Count();
+        var totalItems = await _masterUow.Repository<User>().CountAsync();
 
-        var users = _repository
-            .ApplySpecification(new SearchUsers(req.Search))
-            .Skip((req.Page - 1) * req.PageSize)
-            .Take(req.PageSize)
+        var users = _masterUow.Repository<User>()
+            .ApplySpecification(new SearchUsers(req.Search, req.OrderBy, req.Page, req.PageSize, req.Descending))
             .Select(i => new UserDto
             {
                 Id = i.Id,
@@ -39,6 +36,6 @@ internal sealed class GetUsersHandler : RequestHandler<GetUsersQuery, PagedRespo
             .ToArray();
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return Task.FromResult(new PagedResponseResult<UserDto>(users, totalItems, totalPages));
+        return PagedResponseResult<UserDto>.Create(users, totalItems, totalPages);
     }
 }

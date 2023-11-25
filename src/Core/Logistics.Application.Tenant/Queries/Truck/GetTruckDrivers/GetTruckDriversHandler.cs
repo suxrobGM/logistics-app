@@ -5,20 +5,22 @@ namespace Logistics.Application.Tenant.Queries;
 
 internal sealed class GetTruckDriversHandler : RequestHandler<GetTruckDriversQuery, PagedResponseResult<TruckDriversDto>>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public GetTruckDriversHandler(ITenantRepository tenantRepository)
+    public GetTruckDriversHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
-    protected override Task<PagedResponseResult<TruckDriversDto>> HandleValidated(
+    protected override async Task<PagedResponseResult<TruckDriversDto>> HandleValidated(
         GetTruckDriversQuery req, CancellationToken cancellationToken)
     {
-        var totalItems = _tenantRepository.Query<Employee>().Count();
-        var drivers = _tenantRepository.Query<Employee>().Where(i => !string.IsNullOrEmpty(i.TruckId));
+        var employeeRepository = _tenantUow.Repository<Employee>();
+        var truckRepository = _tenantUow.Repository<Truck>();
+        var totalItems = await employeeRepository.CountAsync();
+        var drivers = employeeRepository.ApplySpecification(new GetDrivers());
 
-        var truckDriversQuery = from truck in _tenantRepository.Query<Truck>()
+        var truckDriversQuery = from truck in truckRepository.Query()
                 join driver in drivers on truck.Id equals driver.TruckId into teamDrivers
                 from teamDriver in teamDrivers.DefaultIfEmpty()
                 where teamDriver != null &&
@@ -43,6 +45,6 @@ internal sealed class GetTruckDriversHandler : RequestHandler<GetTruckDriversQue
             });
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return Task.FromResult(new PagedResponseResult<TruckDriversDto>(truckDriversDto, totalItems, totalPages));
+        return new PagedResponseResult<TruckDriversDto>(truckDriversDto, totalItems, totalPages);
     }
 }

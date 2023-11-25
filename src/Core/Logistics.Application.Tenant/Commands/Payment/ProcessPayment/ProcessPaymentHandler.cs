@@ -4,17 +4,17 @@ namespace Logistics.Application.Tenant.Commands;
 
 internal sealed class ProcessPaymentHandler : RequestHandler<ProcessPaymentCommand, ResponseResult>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public ProcessPaymentHandler(ITenantRepository tenantRepository)
+    public ProcessPaymentHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
         ProcessPaymentCommand req, CancellationToken cancellationToken)
     {
-        var payment = await _tenantRepository.GetAsync<Payment>(req.PaymentId);
+        var payment = await _tenantUow.Repository<Payment>().GetByIdAsync(req.PaymentId);
 
         if (payment is null)
         {
@@ -23,8 +23,8 @@ internal sealed class ProcessPaymentHandler : RequestHandler<ProcessPaymentComma
 
         // TODO: Add payment verification from external provider
         payment.SetStatus(PaymentStatus.Paid);
-        _tenantRepository.Update(payment);
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        _tenantUow.Repository<Payment>().Update(payment);
+        await _tenantUow.SaveChangesAsync();
         return ResponseResult.CreateSuccess();
     }
 }

@@ -9,28 +9,30 @@ namespace Logistics.Application.Admin.Commands;
 internal sealed class CreateTenantHandler : RequestHandler<CreateTenantCommand, ResponseResult>
 {
     private readonly ITenantDatabaseService _tenantDatabase;
-    private readonly IMasterRepository _repository;
+    private readonly IMasterUnityOfWork _masterUow;
 
     public CreateTenantHandler(
         ITenantDatabaseService tenantDatabase,
-        IMasterRepository repository)
+        IMasterUnityOfWork masterUow)
     {
         _tenantDatabase = tenantDatabase;
-        _repository = repository;
+        _masterUow = masterUow;
     }
 
     protected override async Task<ResponseResult> HandleValidated(CreateTenantCommand req, CancellationToken cancellationToken)
     {
+        var tenantName = req.Name.Trim().ToLower();
         var tenant = new Tenant
         {
-            Name = req.Name.Trim().ToLower(),
+            Name = tenantName,
             CompanyName = req.CompanyName,
-            CompanyAddress = req.CompanyAddress
+            CompanyAddress = req.CompanyAddress,
+            ConnectionString = _tenantDatabase.GenerateConnectionString(tenantName)
         };
-        tenant.ConnectionString = _tenantDatabase.GenerateConnectionString(tenant.Name); 
 
-        var existingTenant = await _repository.GetAsync<Tenant>(i => i.Name == tenant.Name);
-        if (existingTenant != null)
+        var existingTenant = await _masterUow.Repository<Tenant>().GetAsync(i => i.Name == tenant.Name);
+        
+        if (existingTenant is not null)
         {
             return ResponseResult.CreateError($"Tenant name '{tenant.Name}' is already taken, please chose another name");
         }
@@ -41,8 +43,8 @@ internal sealed class CreateTenantHandler : RequestHandler<CreateTenantCommand, 
             return ResponseResult.CreateError("Could not create the tenant's database");
         }
 
-        await _repository.AddAsync(tenant);
-        await _repository.UnitOfWork.CommitAsync();
+        await _masterUow.Repository<Tenant>().AddAsync(tenant);
+        await _masterUow.SaveChangesAsync();
         return ResponseResult.CreateSuccess();
     }
 }

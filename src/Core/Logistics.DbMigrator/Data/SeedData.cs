@@ -135,7 +135,7 @@ internal class SeedData : BackgroundService
 
     private async Task AddDefaultTenantAsync(IServiceProvider serviceProvider)
     {
-        var mainRepository = serviceProvider.GetRequiredService<IMasterRepository>();
+        var masterUow = serviceProvider.GetRequiredService<IMasterUnityOfWork>();
         var databaseProvider = serviceProvider.GetRequiredService<ITenantDatabaseService>();
 
         var defaultTenant = new Tenant
@@ -146,12 +146,12 @@ internal class SeedData : BackgroundService
             ConnectionString = databaseProvider.GenerateConnectionString("default") 
         };
 
-        var existingTenant = await mainRepository.GetAsync<Tenant>(i => i.Name == defaultTenant.Name);
+        var existingTenant = await masterUow.Repository<Tenant>().GetAsync(i => i.Name == defaultTenant.Name);
 
         if (existingTenant is null)
         {
-            await mainRepository.AddAsync(defaultTenant);
-            await mainRepository.UnitOfWork.CommitAsync();
+            await masterUow.Repository<Tenant>().AddAsync(defaultTenant);
+            await masterUow.SaveChangesAsync();
             await databaseProvider.CreateDatabaseAsync(defaultTenant.ConnectionString);
             _logger.LogInformation("Added default tenant");
         }

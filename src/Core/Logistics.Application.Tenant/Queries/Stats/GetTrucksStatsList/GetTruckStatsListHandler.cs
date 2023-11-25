@@ -6,22 +6,20 @@ namespace Logistics.Application.Tenant.Queries;
 
 public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, PagedResponseResult<TruckStatsDto>>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public GetTruckStatsListHandler(ITenantRepository tenantRepository)
+    public GetTruckStatsListHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
     
-    protected override Task<PagedResponseResult<TruckStatsDto>> HandleValidated(
+    protected override async Task<PagedResponseResult<TruckStatsDto>> HandleValidated(
         GetTrucksStatsListQuery req, CancellationToken cancellationToken)
     {
-        var totalItems = _tenantRepository.Query<Truck>().Count();
+        var totalItems = await _tenantUow.Repository<Truck>().CountAsync();
 
-        var truckStatsQuery = _tenantRepository.Query<Load>()
-            .Where(load => load.DeliveryDate.HasValue
-                           && load.DeliveryDate >= req.StartDate
-                           && load.DeliveryDate.Value <= req.EndDate)
+        var truckStatsQuery = _tenantUow.Repository<Load>()
+            .ApplySpecification(new FilterLoadsByDeliveryDate(null, req.StartDate, req.EndDate))
             .GroupBy(load => load.AssignedTruckId!)
             .Select(group => new TruckStats
             {
@@ -55,7 +53,7 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
             });
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return Task.FromResult(new PagedResponseResult<TruckStatsDto>(truckStatsDto, totalItems, totalPages));
+        return PagedResponseResult<TruckStatsDto>.Create(truckStatsDto, totalItems, totalPages);
     }
     
     private static Expression<Func<TruckStats, object>> InitOrderBy(string? propertyName)

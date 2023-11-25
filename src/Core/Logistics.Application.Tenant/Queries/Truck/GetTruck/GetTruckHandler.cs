@@ -5,11 +5,13 @@ namespace Logistics.Application.Tenant.Queries;
 
 internal sealed class GetTruckHandler : RequestHandler<GetTruckQuery, ResponseResult<TruckDto>>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantRepository<Truck> _truckRepository;
+    private readonly ITenantRepository<Employee> _employeeRepository;
 
-    public GetTruckHandler(ITenantRepository tenantRepository)
+    public GetTruckHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _truckRepository = tenantUow.Repository<Truck>();
+        _employeeRepository = tenantUow.Repository<Employee>();
     }
 
     protected override async Task<ResponseResult<TruckDto>> HandleValidated(
@@ -31,13 +33,13 @@ internal sealed class GetTruckHandler : RequestHandler<GetTruckQuery, ResponseRe
         if (string.IsNullOrEmpty(truckOrDriverId))
             return default;
 
-        var truck = await _tenantRepository.GetAsync<Truck>(i => i.Id == truckOrDriverId);
+        var truck = await _truckRepository.GetAsync(i => i.Id == truckOrDriverId);
         return truck ?? await GetTruckFromDriver(truckOrDriverId);
     }
 
     private async Task<Truck?> GetTruckFromDriver(string userId)
     {
-        var driver = await _tenantRepository.GetAsync<Employee>(userId);
+        var driver = await _employeeRepository.GetByIdAsync(userId);
         return driver?.Truck;
     }
 

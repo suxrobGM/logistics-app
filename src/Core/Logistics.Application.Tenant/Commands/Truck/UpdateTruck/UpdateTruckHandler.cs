@@ -2,31 +2,38 @@
 
 internal sealed class UpdateTruckHandler : RequestHandler<UpdateTruckCommand, ResponseResult>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public UpdateTruckHandler(ITenantRepository tenantRepository)
+    public UpdateTruckHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
         UpdateTruckCommand req, CancellationToken cancellationToken)
     {
-        var truckEntity = await _tenantRepository.GetAsync<Truck>(req.Id!);
+        var truckRepository = _tenantUow.Repository<Truck>();
+        var truckEntity = await truckRepository.GetByIdAsync(req.Id);
 
-        if (truckEntity == null)
+        if (truckEntity is null)
+        {
             return ResponseResult.CreateError("Could not find the specified truck");
+        }
         
-        var truckWithThisNumber = await _tenantRepository.GetAsync<Truck>(i => i.TruckNumber == req.TruckNumber && 
-                                                                               i.Id != truckEntity.Id);
-        if (truckWithThisNumber != null)
+        var truckWithThisNumber = await truckRepository.GetAsync(i => i.TruckNumber == req.TruckNumber && 
+                                                                             i.Id != truckEntity.Id);
+        if (truckWithThisNumber is not null)
+        {
             return ResponseResult.CreateError("Already exists truck with this number");
+        }
         
         if (req.DriverIds != null)
         {
-            var drivers = _tenantRepository.ApplySpecification(new GetEmployeesById(req.DriverIds)).ToList();
+            var drivers = _tenantUow.Repository<Employee>()
+                .ApplySpecification(new GetEmployeesById(req.DriverIds))
+                .ToList();
             
-            if (drivers.Any())
+            if (drivers.Count != 0)
                 truckEntity.Drivers = drivers;
         }
 
@@ -35,8 +42,8 @@ internal sealed class UpdateTruckHandler : RequestHandler<UpdateTruckCommand, Re
             truckEntity.TruckNumber = req.TruckNumber;
         }
         
-        _tenantRepository.Update(truckEntity);
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        truckRepository.Update(truckEntity);
+        await _tenantUow.SaveChangesAsync();
         return ResponseResult.CreateSuccess();
     }
 }

@@ -5,17 +5,17 @@ namespace Logistics.Application.Tenant.Queries;
 
 internal sealed class GetPayrollByIdHandler : RequestHandler<GetPayrollByIdQuery, ResponseResult<PayrollDto>>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public GetPayrollByIdHandler(ITenantRepository tenantRepository)
+    public GetPayrollByIdHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
     protected override async Task<ResponseResult<PayrollDto>> HandleValidated(
         GetPayrollByIdQuery req, CancellationToken cancellationToken)
     {
-        var payrollEntity = await _tenantRepository.GetAsync<Payroll>(req.Id);
+        var payrollEntity = await _tenantUow.Repository<Payroll>().GetByIdAsync(req.Id);
         
         if (payrollEntity is null)
             return ResponseResult<PayrollDto>.CreateError($"Could not find a payroll with ID {req.Id}");

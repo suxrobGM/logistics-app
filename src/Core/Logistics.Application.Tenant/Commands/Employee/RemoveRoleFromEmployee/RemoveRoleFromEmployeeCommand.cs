@@ -4,6 +4,6 @@ namespace Logistics.Application.Tenant.Commands;
 
 public class RemoveRoleFromEmployeeCommand : IRequest<ResponseResult>
 {
-    public string? UserId { get; set; }
-    public string? Role { get; set; }
+    public string UserId { get; set; } = default!;
+    public string Role { get; set; } = default!;
 }

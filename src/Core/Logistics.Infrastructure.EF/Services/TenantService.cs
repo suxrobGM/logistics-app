@@ -1,6 +1,7 @@
 ﻿using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Services;
+using Logistics.Infrastructure.EF.Data;
 using Logistics.Infrastructure.EF.Exceptions;
 using Logistics.Infrastructure.EF.Options;
 using Microsoft.AspNetCore.Http;
@@ -9,19 +10,19 @@ namespace Logistics.Infrastructure.EF.Services;
 
 internal class TenantService : ITenantService
 {
-    private readonly IMasterRepository _masterRepository;
+    private readonly MasterDbContext _masterDbContext;
     private readonly TenantDbContextOptions _dbOptions;
     private readonly HttpContext? _httpContext;
     private Tenant? _currentTenant;
 
     public TenantService(
         TenantDbContextOptions contextOptions,
-        IMasterRepository repository, 
+        MasterDbContext masterDbContext, 
         IHttpContextAccessor? contextAccessor = null)
     {
         _httpContext = contextAccessor?.HttpContext;
         _dbOptions = contextOptions ?? throw new ArgumentNullException(nameof(contextOptions));
-        _masterRepository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _masterDbContext = masterDbContext ?? throw new ArgumentNullException(nameof(masterDbContext));
     }
 
     public Tenant GetTenant()
@@ -93,9 +94,7 @@ internal class TenantService : ITenantService
         }
 
         tenantId = tenantId.Trim().ToLower();
-        var tenant = _masterRepository.Query<Tenant>()
-            .FirstOrDefault(i => i.Id == tenantId || i.Name == tenantId);
-        
+        var tenant = _masterDbContext.Set<Tenant>().FirstOrDefault(i => i.Id == tenantId || i.Name == tenantId);
         return tenant;
     }
 

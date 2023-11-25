@@ -6,7 +6,7 @@ public class GetEmployeesById : BaseSpecification<Employee>
 {
     public GetEmployeesById(string[] userIds)
     {
-        OrderBy = i => i.Id;
         Criteria = i => userIds.Contains(i.Id);
+        ApplyOrderBy(i => i.Id);
     }
 }

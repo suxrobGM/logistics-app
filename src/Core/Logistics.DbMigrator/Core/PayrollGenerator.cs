@@ -7,18 +7,18 @@ namespace Logistics.DbMigrator.Core;
 
 public class PayrollGenerator
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
     private readonly ILogger _logger;
     private readonly DateTime _startDate;
     private readonly DateTime _endDate;
 
     public PayrollGenerator(
-        ITenantRepository tenantRepository,
+        ITenantUnityOfWork tenantUow,
         DateTime startDate,
         DateTime endDate,
         ILogger logger)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
         _startDate = startDate;
         _endDate = endDate;
         _logger = logger;
@@ -33,16 +33,17 @@ public class PayrollGenerator
 
         await ProcessPayrolls(monthlyEmployees, monthlyRanges);
         await ProcessPayrolls(weeklyEmployees, weeklyRanges);
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        await _tenantUow.SaveChangesAsync();
     }
     
     private async Task ProcessPayrolls(Employee[] employees, List<(DateTime StartDate, DateTime EndDate)> dateRanges)
     {
+        var payrollRepository = _tenantUow.Repository<Payroll>();
         foreach (var range in dateRanges)
         {
             foreach (var employee in employees)
             {
-                var isPayrollExisting = await IsPayrollExisting(employee.Id, range.StartDate, range.EndDate);
+                var isPayrollExisting = await IsPayrollExisting(payrollRepository, employee.Id, range.StartDate, range.EndDate);
                 
                 if (isPayrollExisting)
                 {
@@ -50,7 +51,7 @@ public class PayrollGenerator
                 }
                 
                 var payroll = CreatePayroll(employee, range.StartDate, range.EndDate);
-                await _tenantRepository.AddAsync(payroll);
+                await payrollRepository.AddAsync(payroll);
                 
                 _logger.LogInformation(
                     "Generated payrolls for the employee '{EmployeeName}', date range: {StartDate} - {EndDate}",
@@ -59,9 +60,13 @@ public class PayrollGenerator
         }
     } 
     
-    private async Task<bool> IsPayrollExisting(string employeeId, DateTime startDate, DateTime endDate)
+    private async Task<bool> IsPayrollExisting(
+        ITenantRepository<Payroll> payrollRepository,
+        string employeeId,
+        DateTime startDate,
+        DateTime endDate)
     {
-        var payroll = await _tenantRepository.GetAsync<Payroll>(p =>
+        var payroll = await payrollRepository.GetAsync(p =>
             p.EmployeeId == employeeId &&
             p.StartDate >= startDate &&
             p.EndDate <= endDate);

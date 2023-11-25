@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Infrastructure.EF.Persistence;
 
-public static class SpecificationEvaluator<TEntity> where TEntity : class, IEntity<string>
+public static class SpecificationEvaluator<TEntity, TEntityKey> 
+    where TEntity : class, IEntity<TEntityKey>
 {
     public static IQueryable<TEntity> GetQuery(IQueryable<TEntity> inputQuery, ISpecification<TEntity> specification)
     {
         var query = inputQuery;
-
-        // modify the IQueryable using the specification's criteria expression
-        if (specification.Criteria != null)
+        
+        if (specification.Criteria is not null)
         {
             query = query.Where(specification.Criteria);
         }
@@ -23,21 +23,19 @@ public static class SpecificationEvaluator<TEntity> where TEntity : class, IEnti
         // Include any string-based include statements
         query = specification.IncludeStrings.Aggregate(query,
             (current, include) => current.Include(include));
-
-        // Apply ordering if expressions are set
-        if (specification.OrderBy != null)
+        
+        if (specification.OrderBy is not null)
         {
             query = specification.Descending
                 ? query.OrderByDescending(specification.OrderBy)
                 : query.OrderBy(specification.OrderBy);
         }
 
-        if (specification.GroupBy != null)
+        if (specification.GroupBy is not null)
         {
             query = query.GroupBy(specification.GroupBy).SelectMany(x => x);
         }
-
-        // Apply paging if enabled
+        
         if (specification.IsPagingEnabled)
         {
             query = query.Skip((specification.Page - 1) * specification.PageSize)

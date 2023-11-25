@@ -1,98 +1,70 @@
 ﻿using System.Linq.Expressions;
 using Logistics.Domain.Core;
+using Logistics.Domain.Specifications;
 
 namespace Logistics.Domain.Persistence;
 
 /// <summary>
 /// Generic repository.
 /// </summary>
-
-public interface IRepository
+/// <typeparam name="TEntity">Class that implements the <see cref="IEntity{TKey}"/> interface</typeparam>
+/// <typeparam name="TEntityKey">The data type of entity primary key</typeparam> 
+public interface IRepository<TEntity, in TEntityKey> where TEntity : class, IEntity<TEntityKey>
 {
-    /// <summary>
-    /// Unit of work
-    /// </summary>
-    IUnitOfWork UnitOfWork { get; }
+    IQueryable<TEntity> ApplySpecification(ISpecification<TEntity> specification);
+
+    IQueryable<TEntity> Query();
     
     /// <summary>
     /// Asynchronously counts number of entities.
     /// </summary>
     /// <param name="predicate">Predicate to filter query</param>
-    /// <typeparam name="TEntity">Class that implements the <see cref="IEntity{TKey}"/> interface</typeparam>
     /// <returns>Number of elements that satisfies the specified condition</returns>
-    Task<int> CountAsync<TEntity>(Expression<Func<TEntity, bool>>? predicate = default)
-        where TEntity: class, IEntity<string>;
+    Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = default);
     
     /// <summary>
     /// Gets an entity object by ID.
     /// </summary>
     /// <param name="id">Entity primary key</param>
-    /// <typeparam name="TEntity">Class that implements the <see cref="IEntity{TKey}"/> interface</typeparam>
     /// <returns>Entity object</returns>
-    Task<TEntity?> GetAsync<TEntity>(object? id) 
-        where TEntity: class, IEntity<string>;
+    Task<TEntity?> GetByIdAsync(TEntityKey id);
 
     /// <summary>
     /// Gets an entity object filtered by predicate.
     /// </summary>
     /// <param name="predicate">Predicate to filter query</param>
-    /// <typeparam name="TEntity">Class that implements the <see cref="IEntity{TKey}"/> interface</typeparam>
     /// <returns>Entity object</returns>
-    Task<TEntity?> GetAsync<TEntity>(Expression<Func<TEntity, bool>> predicate) 
-        where TEntity: class, IEntity<string>;
+    Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate);
 
     /// <summary>
     /// Gets a list of the entity objects
     /// </summary>
     /// <param name="predicate">Predicate to filter query</param>
-    /// <typeparam name="TEntity">Class that implements the <see cref="IEntity{TKey}"/> interface</typeparam>
     /// <returns>List of entity objects</returns>
-    Task<List<TEntity>> GetListAsync<TEntity>(Expression<Func<TEntity, bool>>? predicate = default)
-        where TEntity: class, IEntity<string>;
+    Task<List<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate);
     
     /// <summary>
-    /// Gets a dictionary of the entities and specified keys.
+    /// Gets a list of the entity objects
     /// </summary>
-    /// <param name="keySelector">Key selector</param>
-    /// <param name="predicate">Predicate to filter query</param>
-    /// <typeparam name="TEntity">Class that implements the <see cref="IEntity{TKey}"/> interface</typeparam>
-    /// <typeparam name="TKey">Key</typeparam>
-    Task<Dictionary<TKey, TEntity>> GetDictionaryAsync<TKey, TEntity>(
-        Func<TEntity, TKey> keySelector,
-        Expression<Func<TEntity, bool>>? predicate = default)
-        where TEntity : class, IEntity<string>
-        where TKey : notnull;
-
-    /// <summary>
-    /// Gets IQueryable entity objects.
-    /// </summary>
-    /// <param name="predicate">Predicate to filter query</param>
-    /// <typeparam name="TEntity">Class that implements the <see cref="IEntity{TKey}"/> interface</typeparam>
-    /// <returns>IQueryable of entity objects</returns>
-    IQueryable<TEntity> Query<TEntity>(Expression<Func<TEntity, bool>>? predicate = default)
-        where TEntity: class, IEntity<string>;
+    /// <param name="specification">Specification</param>
+    /// <returns>List of entity objects</returns>
+    Task<List<TEntity>> GetListAsync(ISpecification<TEntity>? specification = default);
 
     /// <summary>
     /// Adds new entry to database.
     /// </summary>
     /// <param name="entity">Entity object</param>
-    /// <typeparam name="TEntity">Class that implements the <see cref="IEntity{TKey}"/> interface</typeparam>
-    Task AddAsync<TEntity>(TEntity entity)
-        where TEntity: class, IEntity<string>;
+    Task AddAsync(TEntity entity);
 
     /// <summary>
     /// Updates existing entry.
     /// </summary>
     /// <param name="entity">Entity object</param>
-    /// <typeparam name="TEntity">Class that implements the <see cref="IEntity{TKey}"/> interface</typeparam>
-    void Update<TEntity>(TEntity entity)
-        where TEntity: class, IEntity<string>;
+    void Update(TEntity entity);
 
     /// <summary>
     /// Deletes entity object from database.
     /// </summary>
     /// <param name="entity">Entity object</param>
-    /// <typeparam name="TEntity">Class that implements the <see cref="IEntity{TKey}"/> interface</typeparam>
-    void Delete<TEntity>(TEntity? entity)
-        where TEntity: class, IEntity<string>;
+    void Delete(TEntity? entity);
 }

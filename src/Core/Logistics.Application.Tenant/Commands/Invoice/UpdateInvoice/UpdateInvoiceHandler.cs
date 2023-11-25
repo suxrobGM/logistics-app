@@ -2,20 +2,22 @@
 
 internal sealed class UpdateInvoiceHandler : RequestHandler<UpdateInvoiceCommand, ResponseResult>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public UpdateInvoiceHandler(ITenantRepository tenantRepository)
+    public UpdateInvoiceHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
         UpdateInvoiceCommand req, CancellationToken cancellationToken)
     {
-        var invoice = await _tenantRepository.GetAsync<Invoice>(req.Id);
+        var invoice = await _tenantUow.Repository<Invoice>().GetByIdAsync(req.Id);
 
         if (invoice is null)
+        {
             return ResponseResult.CreateError($"Could not find an invoice with ID '{req.Id}'");
+        }
         
         if (req.PaymentMethod.HasValue && invoice.Payment.Method != req.PaymentMethod)
         {
@@ -26,8 +28,8 @@ internal sealed class UpdateInvoiceHandler : RequestHandler<UpdateInvoiceCommand
             invoice.Payment.Amount = req.PaymentAmount.Value;
         }
         
-        _tenantRepository.Update(invoice);
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        _tenantUow.Repository<Invoice>().Update(invoice);
+        await _tenantUow.SaveChangesAsync();
         return ResponseResult.CreateSuccess();
     }
 }

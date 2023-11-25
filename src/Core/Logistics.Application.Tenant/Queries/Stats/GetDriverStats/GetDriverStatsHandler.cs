@@ -5,19 +5,18 @@ namespace Logistics.Application.Tenant.Queries;
 
 internal sealed class GetDriverStatsHandler : RequestHandler<GetDriverStatsQuery, ResponseResult<DriverStatsDto>>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public GetDriverStatsHandler(ITenantRepository tenantRepository)
+    public GetDriverStatsHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
     protected override async Task<ResponseResult<DriverStatsDto>> HandleValidated(
         GetDriverStatsQuery req, CancellationToken cancellationToken)
     {
         var driverStats = new DriverStatsDto();
-
-        var driver = await _tenantRepository.GetAsync<Employee>(req.UserId);
+        var driver = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId!);
 
         if (driver is null)
         {
@@ -35,12 +34,12 @@ internal sealed class GetDriverStatsHandler : RequestHandler<GetDriverStatsQuery
         var lastWeekStart = startOfWeek.AddDays(-7);
         var startOfMonth = new DateTime(now.Year, now.Month, 1);
         var lastMonthStart = startOfMonth.AddMonths(-1);
-
-        var loads = _tenantRepository.Query<Load>();
-        var thisWeekLoads = loads.Where(l => l.AssignedTruckId == driver.TruckId && l.DeliveryDate >= startOfWeek);
-        var lastWeekLoads = loads.Where(l => l.AssignedTruckId == driver.TruckId && l.DeliveryDate >= lastWeekStart && l.DeliveryDate < startOfWeek);
-        var thisMonthLoads = loads.Where(l => l.AssignedTruckId == driver.TruckId && l.DeliveryDate >= startOfMonth);
-        var lastMonthLoads = loads.Where(l => l.AssignedTruckId == driver.TruckId && l.DeliveryDate >= lastMonthStart && l.DeliveryDate < startOfMonth);
+        
+        var loadsRepository = _tenantUow.Repository<Load>();
+        var thisWeekLoads = loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(driver.TruckId, startOfWeek, now));
+        var lastWeekLoads = loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(driver.TruckId, lastWeekStart, startOfWeek));
+        var thisMonthLoads = loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(driver.TruckId, startOfMonth, now));
+        var lastMonthLoads = loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(driver.TruckId, lastMonthStart, startOfMonth));
 
         driverStats.ThisWeekGross = thisWeekLoads.Sum(l => l.DeliveryCost);
         driverStats.ThisWeekShare = driverStats.ThisWeekGross * driverIncomePercentage;

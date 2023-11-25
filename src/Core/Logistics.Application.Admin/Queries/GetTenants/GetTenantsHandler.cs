@@ -9,26 +9,24 @@ namespace Logistics.Application.Admin.Queries;
 
 internal sealed class GetTenantsHandler : RequestHandler<GetTenantsQuery, PagedResponseResult<TenantDto>>
 {
-    private readonly IMasterRepository _repository;
+    private readonly IMasterUnityOfWork _masterUow;
 
-    public GetTenantsHandler(IMasterRepository repository)
+    public GetTenantsHandler(IMasterUnityOfWork masterUow)
     {
-        _repository = repository;
+        _masterUow = masterUow;
     }
 
-    protected override Task<PagedResponseResult<TenantDto>> HandleValidated(GetTenantsQuery req, CancellationToken cancellationToken)
+    protected override async Task<PagedResponseResult<TenantDto>> HandleValidated(GetTenantsQuery req, CancellationToken cancellationToken)
     {
-        var totalItems = _repository.Query<Tenant>().Count();
-        var spec = new SearchTenants(req.Search, req.OrderBy, req.Descending);
+        var totalItems = await _masterUow.Repository<Tenant>().CountAsync();
+        var spec = new SearchTenants(req.Search, req.OrderBy, req.Page, req.PageSize, req.Descending);
 
-        var items = _repository
+        var items = _masterUow.Repository<Tenant>()
             .ApplySpecification(spec)
-            .Skip((req.Page - 1) * req.PageSize)
-            .Take(req.PageSize)
             .Select(i => i.ToDto(req.IncludeConnectionStrings))
             .ToArray();
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return Task.FromResult(new PagedResponseResult<TenantDto>(items, totalItems, totalPages));
+        return PagedResponseResult<TenantDto>.Create(items, totalItems, totalPages);
     }
 }

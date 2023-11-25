@@ -4,5 +4,5 @@ namespace Logistics.Application.Tenant.Commands;
 
 public class DeleteEmployeeCommand : IRequest<ResponseResult>
 {
-    public string? UserId { get; set; }
+    public string UserId { get; set; } = default!;
 }

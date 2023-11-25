@@ -8,20 +8,22 @@ namespace Logistics.Application.Admin.Queries;
 
 internal sealed class GetTenantHandler : RequestHandler<GetTenantQuery, ResponseResult<TenantDto>>
 {
-    private readonly IMasterRepository _repository;
+    private readonly IMasterUnityOfWork _masterUow;
 
-    public GetTenantHandler(IMasterRepository repository)
+    public GetTenantHandler(IMasterUnityOfWork masterUow)
     {
-        _repository = repository;
+        _masterUow = masterUow;
     }
 
     protected override async Task<ResponseResult<TenantDto>> HandleValidated(
         GetTenantQuery req, CancellationToken cancellationToken)
     {
-        var tenantEntity = await _repository.GetAsync<Tenant>(i => i.Id == req.Id || i.Name == req.Name);
+        var tenantEntity = await _masterUow.Repository<Tenant>().GetAsync(i => i.Id == req.Id || i.Name == req.Name);
 
         if (tenantEntity is null)
+        {
             return ResponseResult<TenantDto>.CreateError("Could not find the specified tenant");
+        }
 
         var tenantDto = tenantEntity.ToDto(req.IncludeConnectionString);
         return ResponseResult<TenantDto>.CreateSuccess(tenantDto);

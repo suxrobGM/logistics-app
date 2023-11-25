@@ -2,17 +2,17 @@
 
 internal sealed class UpdateNotificationHandler : RequestHandler<UpdateNotificationCommand, ResponseResult>
 {
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public UpdateNotificationHandler(ITenantRepository tenantRepository)
+    public UpdateNotificationHandler(ITenantUnityOfWork tenantUow)
     {
-        _tenantRepository = tenantRepository;
+        _tenantUow = tenantUow;
     }
 
     protected override async Task<ResponseResult> HandleValidated(
         UpdateNotificationCommand req, CancellationToken cancellationToken)
     {
-        var notification = await _tenantRepository.GetAsync<Notification>(req.Id);
+        var notification = await _tenantUow.Repository<Notification>().GetByIdAsync(req.Id);
 
         if (notification is null)
         {
@@ -24,8 +24,8 @@ internal sealed class UpdateNotificationHandler : RequestHandler<UpdateNotificat
             notification.IsRead = req.IsRead.Value;
         }
         
-        _tenantRepository.Update(notification);
-        await _tenantRepository.UnitOfWork.CommitAsync();
+        _tenantUow.Repository<Notification>().Update(notification);
+        await _tenantUow.SaveChangesAsync();
         return ResponseResult.CreateSuccess();
     }
 }
