@@ -26,13 +26,19 @@ public class UserService : IUserService
             return;
 
         if (!string.IsNullOrEmpty(userData.FirstName))
+        {
             user.FirstName = userData.FirstName;
+        }
 
         if (!string.IsNullOrEmpty(userData.LastName))
+        {
             user.LastName = userData.LastName;
+        }
 
         if (!string.IsNullOrEmpty(userData.PhoneNumber))
+        {
             user.PhoneNumber = userData.PhoneNumber;
+        }
 
         var tenantIds = user.GetJoinedTenantIds();
 
@@ -52,7 +58,9 @@ public class UserService : IUserService
         var employee = await employeeRepository.GetByIdAsync(user.Id);
 
         if (employee is null)
+        {
             return;
+        }
 
         employee.FirstName = user.FirstName;
         employee.LastName = user.LastName;

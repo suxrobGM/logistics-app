@@ -22,7 +22,7 @@ The project is actively under development. I have completed nearly 85% of the wo
 Follow these steps to get the project up and running:
 
 1. Install SDKs 
-   - [Download](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) and install the .NET 7 SDK. 
+   - [Download](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) and install the .NET 8 SDK. 
    - [Download](https://nodejs.org) and install the Node.js runtime.
 
 2. Clone this repository: 
