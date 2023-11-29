@@ -6,14 +6,14 @@ namespace Logistics.Domain.Entities;
 
 public class Payment : Entity, ITenantEntity
 {
-    public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
-    public DateTime? PaymentDate { get; set; }
-    public PaymentMethod? Method { get; set; }
     public decimal Amount { get; set; }
     public PaymentStatus Status { get; set; }
+    public PaymentMethod? Method { get; set; }
     public PaymentFor PaymentFor { get; set; }
-    public Address BillingAddress { get; set; } = Address.NullAddress;
+    public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+    public DateTime? PaymentDate { get; set; }
     public string? Comment { get; set; }
+    public Address BillingAddress { get; set; } = Address.NullAddress;
 
     public void SetStatus(PaymentStatus status)
     {

@@ -1,9 +1,7 @@
 ﻿using Logistics.Domain.Entities;
-using Logistics.Domain.Persistence;
 using Logistics.Domain.Services;
 using Logistics.Infrastructure.EF.Data;
 using Logistics.Infrastructure.EF.Exceptions;
-using Logistics.Infrastructure.EF.Options;
 using Microsoft.AspNetCore.Http;
 
 namespace Logistics.Infrastructure.EF.Services;
@@ -11,33 +9,21 @@ namespace Logistics.Infrastructure.EF.Services;
 internal class TenantService : ITenantService
 {
     private readonly MasterDbContext _masterDbContext;
-    private readonly TenantDbContextOptions _dbOptions;
-    private readonly HttpContext? _httpContext;
+    private readonly HttpContext _httpContext;
     private Tenant? _currentTenant;
 
     public TenantService(
-        TenantDbContextOptions contextOptions,
         MasterDbContext masterDbContext, 
-        IHttpContextAccessor? contextAccessor = null)
+        IHttpContextAccessor contextAccessor)
     {
-        _httpContext = contextAccessor?.HttpContext;
-        _dbOptions = contextOptions ?? throw new ArgumentNullException(nameof(contextOptions));
+        _httpContext = contextAccessor.HttpContext;
         _masterDbContext = masterDbContext ?? throw new ArgumentNullException(nameof(masterDbContext));
     }
 
     public Tenant GetTenant()
     {
         if (_currentTenant is not null)
-            return _currentTenant;
-
-        if (_httpContext is null)
         {
-            _currentTenant = new Tenant
-            {
-                ConnectionString = _dbOptions.ConnectionString,
-                Name = "default"
-            };
-
             return _currentTenant;
         }
         

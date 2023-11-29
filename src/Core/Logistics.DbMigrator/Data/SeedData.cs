@@ -44,6 +44,7 @@ internal class SeedData : BackgroundService
             _logger.LogInformation("Seeding data...");
             await AddAppRolesAsync(scope.ServiceProvider);
             await AddSuperAdminAsync(scope.ServiceProvider);
+            await AddSubscriptionPlanAsync(scope.ServiceProvider);
             await AddDefaultTenantAsync(scope.ServiceProvider);
             _logger.LogInformation("Successfully seeded databases");
 
@@ -133,6 +134,26 @@ internal class SeedData : BackgroundService
         }
     }
 
+    private async Task AddSubscriptionPlanAsync(IServiceProvider serviceProvider)
+    {
+        var masterUow = serviceProvider.GetRequiredService<IMasterUnityOfWork>();
+        var standardPlan = new SubscriptionPlan
+        {
+            Name = "Standard",
+            Description = "Standard monthly subscription plan charging $30 per employee",
+            Price = 30
+        };
+
+        var existingPlan = await masterUow.Repository<SubscriptionPlan>().GetAsync(i => i.Name == standardPlan.Name);
+
+        if (existingPlan is null)
+        {
+            await masterUow.Repository<SubscriptionPlan>().AddAsync(standardPlan);
+            await masterUow.SaveChangesAsync();
+            _logger.LogInformation("Added a subscription plan {PlanName}", standardPlan.Name);
+        }
+    }
+
     private async Task AddDefaultTenantAsync(IServiceProvider serviceProvider)
     {
         var masterUow = serviceProvider.GetRequiredService<IMasterUnityOfWork>();
@@ -151,7 +172,7 @@ internal class SeedData : BackgroundService
             Name = "default",
             CompanyName = "Test Company",
             CompanyAddress = companyAddress,
-            ConnectionString = databaseProvider.GenerateConnectionString("default") 
+            ConnectionString = databaseProvider.GenerateConnectionString("default"),
         };
 
         var existingTenant = await masterUow.Repository<Tenant>().GetAsync(i => i.Name == defaultTenant.Name);

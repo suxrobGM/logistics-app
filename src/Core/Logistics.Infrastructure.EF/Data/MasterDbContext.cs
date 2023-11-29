@@ -45,10 +45,35 @@ public class MasterDbContext : IdentityDbContext<User, AppRole, string>
         builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
         builder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
         builder.Entity<User>().ToTable("Users");
-        builder.Entity<SubscriptionPlan>().ToTable("Subscriptions");
-        builder.Entity<Tenant>(entity =>
+        builder.Entity<Tenant>().ToTable("Tenants");
+        
+        builder.Entity<SubscriptionPayment>(entity =>
         {
-            entity.ToTable("Tenants");
+            entity.ToTable("SubscriptionPayments");
+            entity.Property(i => i.Amount).HasPrecision(18, 2);
+        });
+        
+        builder.Entity<SubscriptionPlan>(entity =>
+        {
+            entity.ToTable("SubscriptionPlans");
+            entity.Property(i => i.Price).HasPrecision(18, 2);
+
+            entity.HasMany(i => i.Subscriptions)
+                .WithOne(i => i.Plan)
+                .HasForeignKey(i => i.PlanId);
+        });
+
+        builder.Entity<Subscription>(entity =>
+        {
+            entity.ToTable("Subscription");
+            
+            entity.HasOne(i => i.Tenant)
+                .WithOne(i => i.Subscription)
+                .HasForeignKey<Subscription>(i => i.TenantId);
+
+            entity.HasMany(i => i.Payments)
+                .WithOne(i => i.Subscription)
+                .HasForeignKey(i => i.SubscriptionId);
         });
     }
 }
