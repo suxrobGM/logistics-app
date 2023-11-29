@@ -58,8 +58,10 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
         {
             var role = await _roleManager.FindByNameAsync(roleName);
 
-            if (role == null)
+            if (role is null)
+            {
                 continue;
+            }
             
             var claims = await _roleManager.GetClaimsAsync(role);
             claimsIdentity.AddClaims(claims);

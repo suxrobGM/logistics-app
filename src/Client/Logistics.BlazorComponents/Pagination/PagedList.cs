@@ -93,7 +93,8 @@ public class PagedList<T> : List<T>
         {
             return;
         }
-        else if (_allowCaching)
+
+        if (_allowCaching)
         {
             AddToCache(item);
         }
@@ -204,7 +205,7 @@ public class PagedList<T> : List<T>
         try
         {
             var key = _keySelector(item);
-            var _ = _cachedItems[key];
+            _ = _cachedItems[key];
             return true;
         }
         catch (KeyNotFoundException)

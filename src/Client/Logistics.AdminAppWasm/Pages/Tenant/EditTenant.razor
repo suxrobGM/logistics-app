@@ -1,0 +1,44 @@
+﻿@page "/edit-tenant/{id?}"
+@inherits PageBase
+
+@{
+    var headText = EditMode ? "Edit" : "Add a new";
+    var submitBtnText = EditMode ? "Save" : "Submit";
+}
+<h2>@headText Tenant</h2>
+<hr />
+<div class="row">
+    <div class="col-12 col-md-10 col-lg-8 col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <Spinner IsBusy="IsLoading"
+                         Label="@SpinnerText"
+                         LabelAlign="Spinner.Align.Left"
+                         Size="2">
+                </Spinner>
+
+                <EditForm Model="Tenant" OnValidSubmit="UpdateAsync">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Tenant Name</label>
+                        <InputText id="name" class="form-control" @bind-Value="Tenant.Name" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="displayName" class="form-label">Display Name</label>
+                        <InputText id="displayName" class="form-control" @bind-Value="Tenant.CompanyName" />
+                    </div>
+                    <div class="mt-3">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bi bi-pencil-square"></i> @submitBtnText
+                        </button>
+                        <NavLink class="btn btn-primary" href="/list-tenant">
+                            <i class="bi bi-arrow-left-square"></i> Back
+                        </NavLink>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
