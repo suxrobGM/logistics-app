@@ -1,7 +1,7 @@
 ﻿using Logistics.Domain.ValueObjects;
 using Logistics.Shared.Models;
 
-namespace Logistics.Application.Tenant.Mappers;
+namespace Logistics.Mappings;
 
 public static class AddressMapper
 {

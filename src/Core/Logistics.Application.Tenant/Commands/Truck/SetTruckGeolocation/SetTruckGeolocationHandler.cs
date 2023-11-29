@@ -1,5 +1,5 @@
-﻿using Logistics.Application.Tenant.Mappers;
-using Logistics.Domain.ValueObjects;
+﻿using Logistics.Domain.ValueObjects;
+using Logistics.Mappings;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Tenant.Commands;

@@ -8,7 +8,7 @@
 
   @if (invoice) {
     <h2>{{companyName}}</h2>
-    <p>{{companyAddress}}</p>
+    <p>{{companyAddress | address}}</p>
     <hr />
 
     <p><strong>Load ID:</strong> {{invoice.loadRef}}</p>

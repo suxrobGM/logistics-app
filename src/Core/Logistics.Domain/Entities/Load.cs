@@ -5,7 +5,7 @@ using Logistics.Domain.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
-public class Load : AuditableEntity, ITenantEntity
+public class Load : Entity, ITenantEntity
 {
     public ulong RefId { get; set; } = 1000;
     public string? Name { get; set; }

@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Tenant.Mappers;
+﻿using Logistics.Mappings;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Tenant.Queries;

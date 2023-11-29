@@ -4,7 +4,7 @@ using Logistics.Shared.Enums;
 
 namespace Logistics.Domain.Entities;
 
-public class Truck : AuditableEntity, ITenantEntity
+public class Truck : Entity, ITenantEntity
 {
     public required string TruckNumber { get; set; }
     

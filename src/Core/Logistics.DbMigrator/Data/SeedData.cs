@@ -137,12 +137,20 @@ internal class SeedData : BackgroundService
     {
         var masterUow = serviceProvider.GetRequiredService<IMasterUnityOfWork>();
         var databaseProvider = serviceProvider.GetRequiredService<ITenantDatabaseService>();
+        var companyAddress = new Address
+        {
+            Line1 = "7 Allstate Rd",
+            City = "Dorchester",
+            Region = "Massachusetts",
+            ZipCode = "02125",
+            Country = "United States"
+        };
 
         var defaultTenant = new Tenant
         {
             Name = "default",
             CompanyName = "Test Company",
-            CompanyAddress = "7 Allstate Rd, Dorchester, MA 02125, United States",
+            CompanyAddress = companyAddress,
             ConnectionString = databaseProvider.GenerateConnectionString("default") 
         };
 

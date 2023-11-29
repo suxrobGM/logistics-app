@@ -1,6 +1,7 @@
-﻿using Logistics.Shared.Models;
+﻿using Logistics.Domain.Entities;
+using Logistics.Shared.Models;
 
-namespace Logistics.Application.Tenant.Mappers;
+namespace Logistics.Mappings;
 
 public static class InvoiceMapper
 {
@@ -11,7 +12,7 @@ public static class InvoiceMapper
             Id = entity.Id,
             LoadRef = entity.Load.RefId,
             LoadId = entity.LoadId,
-            CreatedDate = entity.Created,
+            CreatedDate = entity.CreateDate,
             Customer = entity.Customer.ToDto(),
             Payment = entity.Payment.ToDto()
         };

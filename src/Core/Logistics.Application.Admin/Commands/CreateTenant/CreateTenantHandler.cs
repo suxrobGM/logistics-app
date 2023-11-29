@@ -2,6 +2,7 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Services;
+using Logistics.Domain.ValueObjects;
 using Logistics.Shared;
 
 namespace Logistics.Application.Admin.Commands;
@@ -26,7 +27,7 @@ internal sealed class CreateTenantHandler : RequestHandler<CreateTenantCommand, 
         {
             Name = tenantName,
             CompanyName = req.CompanyName,
-            CompanyAddress = req.CompanyAddress,
+            CompanyAddress = req.CompanyAddress ?? Address.NullAddress,
             ConnectionString = _tenantDatabase.GenerateConnectionString(tenantName)
         };
 

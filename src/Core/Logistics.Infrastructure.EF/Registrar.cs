@@ -29,7 +29,7 @@ public static class Registrar
         AddTenantDatabase(services, configuration, defaultTenantDbConnectionSection, tenantsConfigSection);
 
         services.AddDomainLayer();
-        services.AddScoped<AuditableEntitySaveChangesInterceptor>();
+        // services.AddScoped<AuditableEntitySaveChangesInterceptor>();
         services.AddScoped<DispatchDomainEventsInterceptor>();
         services.AddScoped<ITenantService, TenantService>();
         services.AddScoped<IMasterUnityOfWork, MasterUnitOfWork>();

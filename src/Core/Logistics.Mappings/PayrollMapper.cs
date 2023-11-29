@@ -1,6 +1,7 @@
-﻿using Logistics.Shared.Models;
+﻿using Logistics.Domain.Entities;
+using Logistics.Shared.Models;
 
-namespace Logistics.Application.Tenant.Mappers;
+namespace Logistics.Mappings;
 
 public static class PayrollMapper
 {

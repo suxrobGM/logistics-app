@@ -1,7 +1,7 @@
 ﻿using Logistics.Domain.Entities;
 using Logistics.Shared.Models;
 
-namespace Logistics.Application.Admin;
+namespace Logistics.Mappings;
 
 public static class TenantMapper
 {
@@ -12,7 +12,7 @@ public static class TenantMapper
             Id = entity.Id,
             Name = entity.Name,
             CompanyName = entity.CompanyName,
-            CompanyAddress = entity.CompanyAddress,
+            CompanyAddress = entity.CompanyAddress.ToDto(),
             ConnectionString = includeConnectionString ? entity.ConnectionString : null
         };
     }

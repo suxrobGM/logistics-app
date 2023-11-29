@@ -9,17 +9,14 @@ namespace Logistics.Infrastructure.EF.Data;
 
 public class TenantDbContext : DbContext
 {
-    private readonly AuditableEntitySaveChangesInterceptor? _auditableEntitySaveChangesInterceptor;
     private readonly DispatchDomainEventsInterceptor? _dispatchDomainEventsInterceptor;
     private readonly string _connectionString;
 
     public TenantDbContext(
         TenantDbContextOptions tenantDbContextOptions, 
         ITenantService? tenantService,
-        AuditableEntitySaveChangesInterceptor? auditableEntitySaveChangesInterceptor,
         DispatchDomainEventsInterceptor? dispatchDomainEventsInterceptor)
     {
-        _auditableEntitySaveChangesInterceptor = auditableEntitySaveChangesInterceptor;
         _dispatchDomainEventsInterceptor = dispatchDomainEventsInterceptor;
         _connectionString = tenantDbContextOptions.ConnectionString ?? ConnectionStrings.LocalDefaultTenant;
         TenantService = tenantService;
@@ -29,10 +26,6 @@ public class TenantDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        if (_auditableEntitySaveChangesInterceptor is not null)
-        {
-            options.AddInterceptors(_auditableEntitySaveChangesInterceptor);
-        }
         if (_dispatchDomainEventsInterceptor is not null)
         {
             options.AddInterceptors(_dispatchDomainEventsInterceptor);

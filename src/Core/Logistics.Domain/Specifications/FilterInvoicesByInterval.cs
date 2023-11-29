@@ -14,7 +14,7 @@ public sealed class FilterInvoicesByInterval : BaseSpecification<Invoice>
         bool descending)
     {
         Criteria = i =>
-            i.Created >= startPeriod && i.Created <= endPeriod;
+            i.CreateDate >= startPeriod && i.CreateDate <= endPeriod;
         
         ApplyOrderBy(InitOrderBy(orderProperty), descending);
     }
@@ -28,7 +28,7 @@ public sealed class FilterInvoicesByInterval : BaseSpecification<Invoice>
             "paymentamount" => i => i.Payment.Amount,
             "paymentdate" => i => i.Payment.PaymentDate,
             "customername" => i => i.Customer.Name,
-            "createddate" => i => i.Created,
+            "createddate" => i => i.CreateDate,
             _ => i => i.Payment.Status
         };
     }

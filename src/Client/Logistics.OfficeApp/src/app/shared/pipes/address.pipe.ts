@@ -1,6 +1,7 @@
 import {Pipe, PipeTransform} from '@angular/core';
 import {Address} from '@core/models';
 
+
 @Pipe({
   name: 'address',
   standalone: true
@@ -11,7 +12,7 @@ export class AddressPipe implements PipeTransform {
    * @param value Address object
    * @returns A formatted string
    */
-  transform(value: Address | null): string {
+  transform(value?: Address | null): string {
     if (!value) {
       return '';
     }

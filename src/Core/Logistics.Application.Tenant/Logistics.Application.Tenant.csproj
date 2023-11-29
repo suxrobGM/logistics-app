@@ -12,6 +12,7 @@
       <ProjectReference Include="..\..\Shared\Logistics.Shared.Models\Logistics.Shared.Models.csproj" />
       <ProjectReference Include="..\Logistics.Application.Core\Logistics.Application.Core.csproj" />
       <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />
+      <ProjectReference Include="..\Logistics.Mappings\Logistics.Mappings.csproj" />
     </ItemGroup>
 
     <ItemGroup>

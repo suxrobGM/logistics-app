@@ -31,7 +31,7 @@ internal sealed class UpdateTenantHandler : RequestHandler<UpdateTenantCommand, 
         {
             tenant.CompanyName = req.CompanyName;
         }
-        if (!string.IsNullOrEmpty(req.CompanyAddress) && tenant.CompanyAddress != req.CompanyAddress)
+        if (req.CompanyAddress != null && tenant.CompanyAddress != req.CompanyAddress)
         {
             tenant.CompanyAddress = req.CompanyAddress;
         }

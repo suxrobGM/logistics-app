@@ -1,6 +1,7 @@
 ﻿using Logistics.Application.Core;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Logistics.Shared;
 

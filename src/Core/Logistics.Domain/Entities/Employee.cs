@@ -3,7 +3,7 @@ using Logistics.Shared.Enums;
 
 namespace Logistics.Domain.Entities;
 
-public class Employee : AuditableEntity, ITenantEntity
+public class Employee : Entity, ITenantEntity
 {
     public string? Email { get; set; }
     public string? FirstName { get; set; }
