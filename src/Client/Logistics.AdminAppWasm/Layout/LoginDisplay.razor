@@ -1,15 +1,17 @@
-﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inject NavigationManager Navigation
 
-<AuthorizeView>
-    <Authorized>
-        Hello, @context.User.Identity?.Name
-        <button class="nav-link btn btn-link" @onclick="BeginLogOut">Log out</button>
-    </Authorized>
-    <NotAuthorized>
-        <a href="authentication/login">Log in</a>
-    </NotAuthorized>
-</AuthorizeView>
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+    <AuthorizeView>
+        <Authorized>
+            <RadzenLink Icon="account_circle">@context.User.Identity?.Name</RadzenLink>
+            <RadzenLink Icon="login" Path="authentication/logout">Sign Out</RadzenLink>
+        </Authorized>
+        <NotAuthorized>
+            <RadzenLink Icon="login" Path="authentication/login">Sign In</RadzenLink>
+        </NotAuthorized>
+    </AuthorizeView>
+</RadzenStack>
 
 @code {
     private void BeginLogOut()

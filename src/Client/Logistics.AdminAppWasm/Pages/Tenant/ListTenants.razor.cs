@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Logistics.AdminApp.Pages.Tenant;
 
 [Authorize(Policy = Permissions.Tenants.View)]
-public partial class ListTenant : PageBase
+public partial class ListTenants : PageBase
 {
     private readonly PagedList<TenantDto> _tenantsPagedList = new(20, true, i => i.Id!);
     private IEnumerable<TenantDto> _tenants = Array.Empty<TenantDto>();
