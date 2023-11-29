@@ -9,10 +9,10 @@ internal class PermissionHandler : AuthorizationHandler<PermissionRequirement>
         AuthorizationHandlerContext context, 
         PermissionRequirement requirement)
     {
-        var claims = context.User.Claims.ToArray();
-        var permissions = context.User.Claims.Where(x => x.Type == CustomClaimTypes.Permission &&
-                                                          x.Value == requirement.Permission).ToArray();
-        if (permissions.Any())
+        var permissionClaim = context.User.Claims.FirstOrDefault(i => i.Type == CustomClaimTypes.Permission);
+        var hasRequiredPermission = permissionClaim?.Value.Contains(requirement.Permission) ?? false;
+
+        if (hasRequiredPermission)
         {
             context.Succeed(requirement);
         }
