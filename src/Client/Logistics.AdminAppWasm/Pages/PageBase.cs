@@ -3,6 +3,7 @@ using Logistics.BlazorComponents.Popups;
 using Logistics.Client;
 using Logistics.Shared;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 
 namespace Logistics.AdminApp.Pages;
 
@@ -12,6 +13,9 @@ public abstract class PageBase : ComponentBase
 
     [Inject]
     private IApiClient ApiClient { get; set; } = default!;
+
+    [Inject] 
+    private IAccessTokenProvider AccessTokenProvider { get; set; } = default!;
 
     #endregion
     
@@ -62,8 +66,10 @@ public abstract class PageBase : ComponentBase
 
     protected void SetValue<T>(ref T storage, T value)
     {
-        if (storage == null || storage.Equals(value)) 
+        if (storage is null || storage.Equals(value))
+        {
             return;
+        }
         
         storage = value;
         StateHasChanged();
@@ -74,6 +80,7 @@ public abstract class PageBase : ComponentBase
         Error = string.Empty;
         IsLoading = true;
         
+        await TrySetAccessTokenAsync();
         var apiResult = await apiFunction(ApiClient);
         IsLoading = false;
         return HandleError(apiResult);
@@ -84,6 +91,7 @@ public abstract class PageBase : ComponentBase
         Error = string.Empty;
         IsLoading = true;
         
+        await TrySetAccessTokenAsync();
         var apiResult = await apiFunction(ApiClient);
         HandleError(apiResult);
         IsLoading = false;
@@ -94,12 +102,13 @@ public abstract class PageBase : ComponentBase
     {
         Error = string.Empty;
         IsLoading = true;
-        
+
+        await TrySetAccessTokenAsync();
         var apiResult = await apiFunction(ApiClient);
         HandleError(apiResult);
         IsLoading = false;
         return apiResult.Data != null
-            ? new PagedData<T>(apiResult.Data, apiResult.TotalItems, apiResult.TotalPages) : default;
+            ? new PagedData<T>(apiResult.Data, apiResult.TotalItems) : default;
     }
 
     private bool HandleError(IResponseResult apiResult)
@@ -112,6 +121,21 @@ public abstract class PageBase : ComponentBase
 
         return true;
     }
+
+    private async Task TrySetAccessTokenAsync()
+    {
+        if (!string.IsNullOrEmpty(ApiClient.AccessToken))
+        {
+            return;
+        }
+
+        var result = await AccessTokenProvider.RequestAccessToken();
+
+        if (result.TryGetToken(out var accessToken))
+        {
+            ApiClient.AccessToken = accessToken.Value;
+        }
+    }
 }
 
-public record PagedData<T>(IEnumerable<T> Items, int ItemsCount, int PageSize);
+public record PagedData<T>(IEnumerable<T> Items, int TotalItems);

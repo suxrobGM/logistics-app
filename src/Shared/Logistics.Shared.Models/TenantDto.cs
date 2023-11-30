@@ -11,4 +11,7 @@ public class TenantDto
     
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? ConnectionString { get; set; }
+    
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public SubscriptionDto? Subscription { get; set; }
 }

@@ -13,8 +13,8 @@ public class SubscriptionPayment : Entity
     public DateTime? PaymentDate { get; set; }
     public Address BillingAddress { get; set; } = Address.NullAddress;
 
-    public string? SubscriptionId { get; set; }
-    public virtual Subscription? Subscription { get; set; }
+    public required string SubscriptionId { get; set; }
+    public virtual required Subscription Subscription { get; set; }
     
     public void SetStatus(PaymentStatus status)
     {

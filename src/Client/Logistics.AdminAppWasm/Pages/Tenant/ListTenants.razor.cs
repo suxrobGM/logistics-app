@@ -1,40 +1,37 @@
-﻿using Logistics.BlazorComponents.Pagination;
-using Logistics.Shared.Models;
+﻿using Logistics.Shared.Models;
 using Logistics.Shared;
 using Logistics.Shared.Policies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components;
+using Radzen;
 
 namespace Logistics.AdminApp.Pages.Tenant;
 
 [Authorize(Policy = Permissions.Tenants.View)]
 public partial class ListTenants : PageBase
 {
-    private readonly PagedList<TenantDto> _tenantsPagedList = new(20, true, i => i.Id!);
-    private IEnumerable<TenantDto> _tenants = Array.Empty<TenantDto>();
-    private string _searchInput = string.Empty;
-    private int _totalRecords;
+    private IEnumerable<TenantDto>? _tenants;
+    private int _totalRecords = 10;
     
-    protected override async Task OnInitializedAsync()
+    #region Injectable services
+
+    [Inject] 
+    private NavigationManager Navigation { get; set; } = default!;
+
+    #endregion
+    
+    private async void LoadTenants(LoadDataArgs e)
     {
-        await LoadPage(new PageEventArgs { Page = 1 });
+        var page = (e.Skip ?? 0) + 1;
+        var pageSize = e.Top ?? 10;
+        var pagedData = await CallApiAsync(api => api.GetTenantsAsync(new SearchableQuery(null, page, pageSize)));
+        _tenants = pagedData?.Items;
+        _totalRecords = pagedData?.TotalItems ?? 0;
+        StateHasChanged();
     }
 
-    private Task SearchAsync()
+    private void OpenEditPage(TenantDto tenant)
     {
-        return LoadPage(new PageEventArgs { Page = 1 }, _searchInput);
-    }
-
-    private async Task LoadPage(PageEventArgs e, string searchInput = "")
-    {
-        var pagedData = await CallApiAsync(api => api.GetTenantsAsync(new SearchableQuery(searchInput, e.Page)));
-
-        if (pagedData != null)
-        {
-            _tenantsPagedList.AddRange(pagedData.Items);
-            _tenantsPagedList.TotalItems = pagedData.ItemsCount;
-            _totalRecords = pagedData.ItemsCount;
-            _tenants = _tenantsPagedList.GetPage(e.Page);
-            StateHasChanged();
-        }
+        Navigation.NavigateTo($"tenants/{tenant.Id}");
     }
 }

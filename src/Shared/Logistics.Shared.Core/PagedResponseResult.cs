@@ -4,7 +4,6 @@ public class PagedResponseResult<T> : ResponseResult<IEnumerable<T>>
 {
     public PagedResponseResult(): this(null, 0, 0)
     {
-        
     }
 
     public PagedResponseResult(IEnumerable<T>? data, int totalItems, int totalPages)
@@ -14,8 +13,8 @@ public class PagedResponseResult<T> : ResponseResult<IEnumerable<T>>
         TotalPages = totalPages;
     }
     
-    public int TotalItems { get; }
-    public int TotalPages { get; }
+    public int TotalItems { get; set; }
+    public int TotalPages { get; set; }
 
     public static PagedResponseResult<T> Create(IEnumerable<T>? items, int totalItems, int totalPages) =>
         new(items, totalItems, totalPages);

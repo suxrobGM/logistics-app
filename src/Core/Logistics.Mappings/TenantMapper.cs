@@ -13,7 +13,8 @@ public static class TenantMapper
             Name = entity.Name,
             CompanyName = entity.CompanyName,
             CompanyAddress = entity.CompanyAddress.ToDto(),
-            ConnectionString = includeConnectionString ? entity.ConnectionString : null
+            ConnectionString = includeConnectionString ? entity.ConnectionString : null,
+            Subscription = includeConnectionString ? entity.Subscription?.ToDto() : null
         };
     }
 }

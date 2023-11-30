@@ -5,10 +5,10 @@
     <AuthorizeView>
         <Authorized>
             <RadzenLink Icon="account_circle">@context.User.Identity?.Name</RadzenLink>
-            <RadzenLink Icon="login" Path="authentication/logout">Sign Out</RadzenLink>
+            <RadzenButton Icon="login" Text="Sign Out" Variant="Variant.Flat" Click="BeginLogOut"></RadzenButton>
         </Authorized>
         <NotAuthorized>
-            <RadzenLink Icon="login" Path="authentication/login">Sign In</RadzenLink>
+            <RadzenLink Icon="login" Path="authentication/login" Text="Sign In"></RadzenLink>
         </NotAuthorized>
     </AuthorizeView>
 </RadzenStack>
