@@ -43,7 +43,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.Shared.Enums", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.Mappings", "src\Core\Logistics.Mappings\Logistics.Mappings.csproj", "{999E7EC8-AE07-4FD9-8BF2-A1B92C7122F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.AdminAppWasm", "src\Client\Logistics.AdminAppWasm\Logistics.AdminAppWasm.csproj", "{81DAEA98-B520-4F4A-9FDF-FA378A7D6579}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.AdminApp", "src\Client\Logistics.AdminApp\Logistics.AdminApp.csproj", "{81DAEA98-B520-4F4A-9FDF-FA378A7D6579}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
