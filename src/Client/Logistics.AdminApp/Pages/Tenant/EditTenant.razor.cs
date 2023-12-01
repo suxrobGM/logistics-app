@@ -16,9 +16,9 @@ public partial class EditTenant : PageBase
 
     [Parameter]
     public string? Id { get; set; }
-    
-    [Parameter]
-    public bool EditMode { get; set; }
+
+    [Parameter] 
+    public bool EditMode { get; set; } = true;
 
     #endregion
     
