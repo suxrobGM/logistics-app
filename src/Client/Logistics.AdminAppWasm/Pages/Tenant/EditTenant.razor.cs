@@ -9,25 +9,38 @@ namespace Logistics.AdminApp.Pages.Tenant;
 [Authorize(Policy = Permissions.Tenants.Edit)]
 public partial class EditTenant : PageBase
 {
+    private TenantDto Tenant { get; set; } = new();
+    
+    
     #region Parameters
 
     [Parameter]
     public string? Id { get; set; }
+    
+    [Parameter]
+    public bool EditMode { get; set; }
 
     #endregion
+    
 
+    #region Injectable services
 
-    private TenantDto Tenant { get; set; } = new();
-    private bool EditMode => !string.IsNullOrEmpty(Id);
+    [Inject] 
+    private NavigationManager Navigation { get; set; } = default!;
+
+    #endregion
+    
 
     protected override async Task OnInitializedAsync()
     {
         if (!EditMode)
+        {
             return;
+        }
         
         var tenant = await CallApiAsync(api => api.GetTenantAsync(Id!));
 
-        if (tenant != null)
+        if (tenant is not null)
         {
             Tenant = tenant;
         }
@@ -36,7 +49,9 @@ public partial class EditTenant : PageBase
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender)
+        {
             return;
+        }
 
         if (!EditMode)
         {
@@ -53,9 +68,11 @@ public partial class EditTenant : PageBase
                 Id = Tenant.Id,
                 CompanyName = Tenant.CompanyName
             }));
-            
+
             if (!success)
+            {
                 return;
+            }
             
             Toast?.Show("Tenant has been saved successfully.", "Notification");
         }
@@ -66,9 +83,11 @@ public partial class EditTenant : PageBase
                 Name = Tenant.Name,
                 DisplayName = Tenant.CompanyName
             }));
-            
+
             if (!success)
+            {
                 return;
+            }
             
             Toast?.Show("A new tenant has been created successfully.", "Notification");
             ResetData();
@@ -87,15 +106,24 @@ public partial class EditTenant : PageBase
     private async Task LoadCurrentTenantAsync()
     {
         if (string.IsNullOrEmpty(Id))
+        {
             return;
+        }
         
         var tenant = await CallApiAsync(api => api.GetTenantAsync(Id));
 
-        if (tenant == null)
+        if (tenant is null)
+        {
             return;
+        }
         
         Tenant.Name = tenant.Name;
         Tenant.CompanyName = tenant.CompanyName;
         Tenant.ConnectionString = tenant.ConnectionString;
+    }
+
+    private void BackToTenantsPage()
+    {
+        Navigation.NavigateTo("/tenants");
     }
 }

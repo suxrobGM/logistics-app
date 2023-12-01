@@ -12,12 +12,12 @@
                     <RadzenLabel Text="Logistics Admin"/>
                 </RadzenStack>
             </RadzenColumn>
-            <RadzenColumn Size="2" Offset="8" class="d-flex justify-content-end pe-3">
+            <RadzenColumn Size="10" class="d-flex justify-content-end pe-3">
                 <LoginDisplay/>
             </RadzenColumn>
         </RadzenRow>
-        
     </RadzenHeader>
+    
     <RadzenSidebar @bind-Expanded="@_sidebarExpanded">
         <RadzenPanelMenu>
             <RadzenPanelMenuItem Text="Home" Icon="home" Path="/" />
@@ -26,6 +26,7 @@
             <RadzenPanelMenuItem Text="Users" Icon="group" />
         </RadzenPanelMenu>
     </RadzenSidebar>
+    
     <RadzenBody>
         <div class="rz-p-4">
             <Alert @ref="_alertRef" />

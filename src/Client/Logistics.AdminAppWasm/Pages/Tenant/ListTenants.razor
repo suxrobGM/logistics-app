@@ -3,38 +3,38 @@
 @inherits PageBase
 
 <RadzenText TextStyle="TextStyle.H3">Tenants</RadzenText>
-<hr />
+<hr/>
 
 <RadzenGrid Data="_tenants"
             LoadData="LoadTenants"
             Count="_totalRecords"
             AllowPaging="true"
             AllowSorting="true"
-            PageSizeOptions="new []{10, 25, 50}"
+            PageSizeOptions="new[] { 10, 25, 50 }"
             PageSize="10">
     <Columns>
         <RadzenGridColumn TItem="TenantDto"
-                              Property="Name"
-                              Title="Name">
+                          Property="Name"
+                          Title="Name">
         </RadzenGridColumn>
         <RadzenGridColumn TItem="TenantDto"
-                              Property="CompanyName"
-                              Title="Company">
+                          Property="CompanyName"
+                          Title="Company">
         </RadzenGridColumn>
         <RadzenGridColumn TItem="TenantDto"
-                              Property="CompanyAddress"
-                              Title="Company Address">
+                          Property="CompanyAddress"
+                          Title="Company Address">
             <Template Context="tenant">
                 @AddressUtils.ConvertToString(tenant.CompanyAddress)
             </Template>
         </RadzenGridColumn>
         <RadzenGridColumn TItem="TenantDto"
-                              Property="ConnectionString"
-                              Title="DB Connection">
+                          Property="ConnectionString"
+                          Title="DB Connection">
         </RadzenGridColumn>
         <RadzenGridColumn TItem="TenantDto"
-                              Property="Subscription"
-                              Title="Subscription Plan">
+                          Property="Subscription"
+                          Title="Subscription Plan">
             <Template Context="tenant">
                 @tenant.Subscription?.Plan.Name
             </Template>

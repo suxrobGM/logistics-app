@@ -1,5 +1,4 @@
 @page "/"
-@attribute [Authorize]
 
 <PageTitle>Logistics Admin</PageTitle>
 <RadzenText TextStyle="TextStyle.H3">Dashboard</RadzenText>
@@ -17,12 +16,12 @@
             <span class="fw-bold">Tenants</span>
         </td>
         <td class="col-6 col-sm-5 col-md-4 col-lg-3">
-            <NavLink class="btn btn-primary" href="/tenants">
-                <i class="bi bi-pencil"></i> Add
-            </NavLink>
-            <NavLink class="btn btn-primary" href="/tenants">
-                <i class="bi bi-list"></i> List
-            </NavLink>
+            <RadzenButton Icon="create"
+                          Click="@(() => Navigation.NavigateTo("/tenants/add"))">
+            </RadzenButton>
+            <RadzenButton Icon="list"
+                          Click="@(() => Navigation.NavigateTo("/tenants"))">
+            </RadzenButton>
         </td>
     </tr>
     </tbody>

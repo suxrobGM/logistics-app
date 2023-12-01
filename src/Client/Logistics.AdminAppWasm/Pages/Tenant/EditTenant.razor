@@ -1,44 +1,51 @@
-﻿@page "/tenants/{id?}"
+@page "/tenants/{id?}"
 @inherits PageBase
 
 @{
     var headText = EditMode ? "Edit" : "Add a new";
     var submitBtnText = EditMode ? "Save" : "Submit";
 }
-<h2>@headText Tenant</h2>
-<hr />
-<div class="row">
-    <div class="col-12 col-md-10 col-lg-8 col-xl-6">
-        <div class="card">
-            <div class="card-body">
-                <Spinner IsBusy="IsLoading"
-                         Label="@SpinnerText"
-                         LabelAlign="Spinner.Align.Left"
-                         Size="2">
-                </Spinner>
+<RadzenText TextStyle="TextStyle.H3">@headText Tenant</RadzenText>
+<hr/>
 
-                <EditForm Model="Tenant" OnValidSubmit="UpdateAsync">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
+<RadzenRow>
+    <RadzenColumn Size="12" SizeMD="10" SizeLG="8" SizeXL="6">
+        <RadzenCard>
+            @if (IsLoading)
+            {
+                <RadzenProgressBarCircular Value="100"
+                                           ShowValue="false"
+                                           Mode="ProgressBarMode.Indeterminate">
+                </RadzenProgressBarCircular>
+            }
 
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Tenant Name</label>
-                        <InputText id="name" class="form-control" @bind-Value="Tenant.Name" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="displayName" class="form-label">Display Name</label>
-                        <InputText id="displayName" class="form-control" @bind-Value="Tenant.CompanyName" />
-                    </div>
-                    <div class="mt-3">
-                        <button class="btn btn-primary" type="submit">
-                            <i class="bi bi-pencil-square"></i> @submitBtnText
-                        </button>
-                        <NavLink class="btn btn-primary" href="/list-tenant">
-                            <i class="bi bi-arrow-left-square"></i> Back
-                        </NavLink>
-                    </div>
-                </EditForm>
-            </div>
-        </div>
-    </div>
-</div>
+            <EditForm Model="Tenant" OnValidSubmit="UpdateAsync">
+                <DataAnnotationsValidator/>
+                <ValidationSummary/>
+
+                <RadzenStack Orientation="Orientation.Vertical">
+                    <RadzenFormField Text="Tenant Name" Variant="Variant.Outlined">
+                        <RadzenTextBox @bind-Value="Tenant.Name"/>
+                    </RadzenFormField>
+                    <RadzenFormField Text="Company Name" Variant="Variant.Outlined">
+                        <RadzenTextBox @bind-Value="Tenant.CompanyName"/>
+                    </RadzenFormField>
+                    <RadzenFieldset Text="Company Address">
+                        <AddressForm @bind-Address="Tenant.CompanyAddress"></AddressForm>
+                    </RadzenFieldset>
+                    <RadzenStack Orientation="Orientation.Horizontal">
+                        <RadzenButton Icon="save"
+                                      Text="@submitBtnText"
+                                      Disabled="@IsLoading"
+                                      ButtonType="ButtonType.Submit">
+                        </RadzenButton>
+                        <RadzenButton Icon="arrow_back"
+                                      Text="Back"
+                                      Click="BackToTenantsPage">
+                        </RadzenButton>
+                    </RadzenStack>
+                </RadzenStack>
+            </EditForm>
+        </RadzenCard>
+    </RadzenColumn>
+</RadzenRow>
