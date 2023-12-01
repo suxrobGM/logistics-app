@@ -74,7 +74,7 @@ public partial class EditTenant : PageBase
                 return;
             }
             
-            Toast?.Show("Tenant has been saved successfully.", "Notification");
+            ShowNotification("Tenant has been saved successfully");
         }
         else
         {
@@ -89,7 +89,7 @@ public partial class EditTenant : PageBase
                 return;
             }
             
-            Toast?.Show("A new tenant has been created successfully.", "Notification");
+            ShowNotification("A new tenant has been created successfully");
             ResetData();
         }
 

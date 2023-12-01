@@ -1,7 +1,6 @@
 @inherits LayoutComponentBase
 
 <PageTitle>Logistics Admin</PageTitle>
-<Toast @ref="_toastRef" ToastPosition="Toast.Position.BottomRight"></Toast>
 
 <RadzenLayout>
     <RadzenHeader>
@@ -29,18 +28,11 @@
     
     <RadzenBody>
         <div class="rz-p-4">
-            <Alert @ref="_alertRef" />
-            <CascadingValue Value="_toastRef">
-                <CascadingValue Value="_alertRef">
-                    @Body
-                </CascadingValue>
-            </CascadingValue>
+            @Body
         </div>
     </RadzenBody>
 </RadzenLayout>
 
 @code {
     private bool _sidebarExpanded = true;
-    private Toast? _toastRef;
-    private Alert? _alertRef;
 }

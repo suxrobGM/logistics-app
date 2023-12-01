@@ -15,7 +15,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Logistics.BlazorComponents\Logistics.BlazorComponents.csproj" />
       <ProjectReference Include="..\Logistics.Client\Logistics.Client.csproj" />
     </ItemGroup>
 </Project>

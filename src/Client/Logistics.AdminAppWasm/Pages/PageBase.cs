@@ -1,9 +1,8 @@
-﻿using Logistics.BlazorComponents;
-using Logistics.BlazorComponents.Popups;
-using Logistics.Client;
+﻿using Logistics.Client;
 using Logistics.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using Radzen;
 
 namespace Logistics.AdminApp.Pages;
 
@@ -17,16 +16,8 @@ public abstract class PageBase : ComponentBase
     [Inject] 
     private IAccessTokenProvider AccessTokenProvider { get; set; } = default!;
 
-    #endregion
-    
-    
-    #region Parameters
-
-    [CascadingParameter]
-    public Toast? Toast { get; set; }
-    
-    [CascadingParameter]
-    public Alert? Alert { get; set; }
+    [Inject] 
+    private NotificationService NotificationService { get; set; } = default!;
 
     #endregion
 
@@ -41,27 +32,6 @@ public abstract class PageBase : ComponentBase
         set => SetValue(ref _isLoading, value);
     }
 
-    private string _spinnerText = string.Empty;
-    protected string SpinnerText
-    {
-        get => _spinnerText;
-        set => SetValue(ref _spinnerText, value );
-    }
-
-    private string _error = string.Empty;
-    protected string Error
-    {
-        get => _error;
-        set
-        {
-            _error = value;
-            if (!string.IsNullOrEmpty(value))
-            {
-                Alert?.Show(value, Alert.AlertType.Error);
-            }
-        }
-    }
-
     #endregion
 
     protected void SetValue<T>(ref T storage, T value)
@@ -74,10 +44,19 @@ public abstract class PageBase : ComponentBase
         storage = value;
         StateHasChanged();
     }
+
+    protected void ShowNotification(string message)
+    {
+        NotificationService.Notify(new NotificationMessage
+        {
+            Summary = "Notification",
+            Detail = message,
+            Severity = NotificationSeverity.Success
+        });
+    }
     
     protected async Task<bool> CallApiAsync(Func<IApiClient, Task<ResponseResult>> apiFunction)
     {
-        Error = string.Empty;
         IsLoading = true;
         
         await TrySetAccessTokenAsync();
@@ -88,7 +67,6 @@ public abstract class PageBase : ComponentBase
 
     protected async Task<T?> CallApiAsync<T>(Func<IApiClient, Task<ResponseResult<T>>> apiFunction)
     {
-        Error = string.Empty;
         IsLoading = true;
         
         await TrySetAccessTokenAsync();
@@ -100,7 +78,6 @@ public abstract class PageBase : ComponentBase
     
     protected async Task<PagedData<T>?> CallApiAsync<T>(Func<IApiClient, Task<PagedResponseResult<T>>> apiFunction)
     {
-        Error = string.Empty;
         IsLoading = true;
 
         await TrySetAccessTokenAsync();
@@ -115,7 +92,12 @@ public abstract class PageBase : ComponentBase
     {
         if (!apiResult.IsSuccess && !string.IsNullOrEmpty(apiResult.Error))
         {
-            Error = apiResult.Error;
+            NotificationService.Notify(new NotificationMessage
+            {
+                Summary = "API Error",
+                Detail = apiResult.Error,
+                Severity = NotificationSeverity.Error
+            });
             return false;
         }
 
