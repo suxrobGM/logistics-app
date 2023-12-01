@@ -17,4 +17,10 @@
     <ItemGroup>
       <ProjectReference Include="..\Logistics.Client\Logistics.Client.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="wwwroot\appsettings.secrets.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
 </Project>
