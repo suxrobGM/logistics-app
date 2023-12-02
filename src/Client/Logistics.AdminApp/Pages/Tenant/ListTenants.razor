@@ -43,7 +43,7 @@
         </RadzenGridColumn>
         <RadzenGridColumn TItem="TenantDto" Title="Action">
             <Template Context="tenant">
-                <RadzenButton Click="() => OpenEditPage(tenant)">Edit</RadzenButton>
+                <RadzenButton Click="@(() => Navigation.NavigateTo($"tenants/{tenant.Id}"))">Edit</RadzenButton>
             </Template>
         </RadzenGridColumn>
     </Columns>

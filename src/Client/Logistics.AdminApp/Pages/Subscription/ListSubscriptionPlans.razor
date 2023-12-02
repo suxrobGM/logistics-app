@@ -1,3 +1,38 @@
 ﻿@page "/subscription-plans"
-<RadzenText TextStyle="TextStyle.H3">Subscription Plans</RadzenText>
+@inherits PageBase
 
+<RadzenText TextStyle="TextStyle.H3">Subscription Plans</RadzenText>
+<hr/>
+
+<RadzenButton class="mb-3" Click="@(() => Navigation.NavigateTo("/tenants/add"))">Add</RadzenButton>
+
+<RadzenGrid Data="_subscriptionPlans"
+            LoadData="LoadTenants"
+            Count="_totalRecords"
+            AllowPaging="true"
+            AllowSorting="true"
+            PageSizeOptions="new[] { 10, 25, 50 }"
+            PageSize="10">
+    <Columns>
+        <RadzenGridColumn TItem="SubscriptionPlanDto"
+                          Property="Name"
+                          Title="Name">
+        </RadzenGridColumn>
+        <RadzenGridColumn TItem="SubscriptionPlanDto"
+                          Property="Description"
+                          Title="Description">
+        </RadzenGridColumn>
+        <RadzenGridColumn TItem="SubscriptionPlanDto"
+                          Property="Price"
+                          Title="Price">
+            <Template Context="subscriptionPlan">
+                <FinancialFormatter Value="subscriptionPlan.Price"/>
+            </Template>
+        </RadzenGridColumn>
+        <RadzenGridColumn TItem="SubscriptionPlanDto" Title="Action">
+            <Template Context="subscriptionPlan">
+                <RadzenButton Click="@(() => Navigation.NavigateTo($"subscription-plans/{subscriptionPlan.Id}"))">Edit</RadzenButton>
+            </Template>
+        </RadzenGridColumn>
+    </Columns>
+</RadzenGrid>

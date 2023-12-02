@@ -25,7 +25,9 @@ internal class ApiClient : GenericApiClient, IApiClient
         set
         {
             if (string.IsNullOrEmpty(value))
+            {
                 return;
+            }
 
             _accessToken = value;
             SetAuthorizationHeader("Bearer", _accessToken);
@@ -46,7 +48,9 @@ internal class ApiClient : GenericApiClient, IApiClient
     private void SetTenantIdFromAccessToken(string? accessToken)
     {
         if (string.IsNullOrEmpty(accessToken))
+        {
             return;
+        }
         
         var handler = new JwtSecurityTokenHandler();
         var token = handler.ReadJwtToken(accessToken);
@@ -69,7 +73,9 @@ internal class ApiClient : GenericApiClient, IApiClient
             var result = await GetRequestAsync<TRes>(endpoint, query);
 
             if (!result.IsSuccess)
+            {
                 OnErrorResponse?.Invoke(this, result.Error!);
+            }
 
             return result;
         }
@@ -89,7 +95,9 @@ internal class ApiClient : GenericApiClient, IApiClient
             var result = await PostRequestAsync<TRes, TBody>(endpoint, body);
 
             if (!result.IsSuccess)
+            {
                 OnErrorResponse?.Invoke(this, result.Error!);
+            }
 
             return result;
         }
@@ -109,7 +117,9 @@ internal class ApiClient : GenericApiClient, IApiClient
             var result = await PutRequestAsync<TRes, TBody>(endpoint, body);
 
             if (!result.IsSuccess)
+            {
                 OnErrorResponse?.Invoke(this, result.Error!);
+            }
 
             return result;
         }
@@ -128,7 +138,9 @@ internal class ApiClient : GenericApiClient, IApiClient
             var result = await DeleteRequestAsync<TRes>(endpoint);
 
             if (!result.IsSuccess)
+            {
                 OnErrorResponse?.Invoke(this, result.Error!);
+            }
 
             return result;
         }
@@ -329,6 +341,31 @@ internal class ApiClient : GenericApiClient, IApiClient
     public Task<ResponseResult<DriverStatsDto>> GetDriverStatsAsync(string userId)
     {
         return MakeGetRequestAsync<ResponseResult<DriverStatsDto>>($"stats/driver/{userId}");  
+    }
+
+    #endregion
+
+    
+    #region Subscriptions API
+
+    public Task<ResponseResult<SubscriptionDto>> GetSubscriptionAsync(string id)
+    {
+        return MakeGetRequestAsync<ResponseResult<SubscriptionDto>>($"subscriptions/{id}");
+    }
+
+    public Task<ResponseResult<SubscriptionPlanDto>> GetSubscriptionPlanAsync(string planId)
+    {
+        return MakeGetRequestAsync<ResponseResult<SubscriptionPlanDto>>($"subscriptions/plans/{planId}");
+    }
+
+    public Task<PagedResponseResult<SubscriptionDto>> GetSubscriptionsAsync(PagedQuery query)
+    {
+        return MakeGetRequestAsync<PagedResponseResult<SubscriptionDto>>("subscriptions", query.ToDictionary());
+    }
+
+    public Task<PagedResponseResult<SubscriptionPlanDto>> GetSubscriptionPlansAsync(PagedQuery query)
+    {
+        return MakeGetRequestAsync<PagedResponseResult<SubscriptionPlanDto>>("subscriptions/plans", query.ToDictionary());
     }
 
     #endregion

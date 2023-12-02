@@ -3,7 +3,6 @@ using Logistics.Shared;
 using Logistics.Shared.Policies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
 using Radzen;
 
 namespace Logistics.AdminApp.Pages.Tenant;
@@ -19,16 +18,7 @@ public partial class ListTenants : PageBase
     [Inject] 
     private NavigationManager Navigation { get; set; } = default!;
 
-    [Inject]
-    private AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
-
     #endregion
-
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var claims = authState.User.Claims.ToArray();
-    }
 
     private async void LoadTenants(LoadDataArgs e)
     {
@@ -38,10 +28,5 @@ public partial class ListTenants : PageBase
         _tenants = pagedData?.Items;
         _totalRecords = pagedData?.TotalItems ?? 0;
         StateHasChanged();
-    }
-
-    private void OpenEditPage(TenantDto tenant)
-    {
-        Navigation.NavigateTo($"tenants/{tenant.Id}");
     }
 }
