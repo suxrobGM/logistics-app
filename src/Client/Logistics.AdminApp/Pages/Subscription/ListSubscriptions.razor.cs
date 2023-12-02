@@ -5,9 +5,9 @@ using Radzen;
 
 namespace Logistics.AdminApp.Pages.Subscription;
 
-public partial class ListSubscriptionPlans : PageBase
+public partial class ListSubscriptions : PageBase
 {
-    private IEnumerable<SubscriptionPlanDto>? _subscriptionPlans;
+    private IEnumerable<SubscriptionDto>? _subscriptions;
     private int _totalRecords = 10;
     
     
@@ -23,8 +23,8 @@ public partial class ListSubscriptionPlans : PageBase
     {
         var page = (e.Skip ?? 0) + 1;
         var pageSize = e.Top ?? 10;
-        var pagedData = await CallApiAsync(api => api.GetSubscriptionPlansAsync(new PagedQuery(page, pageSize)));
-        _subscriptionPlans = pagedData?.Items;
+        var pagedData = await CallApiAsync(api => api.GetSubscriptionsAsync(new PagedQuery(page, pageSize)));
+        _subscriptions = pagedData?.Items;
         _totalRecords = pagedData?.TotalItems ?? 0;
         StateHasChanged();
     }

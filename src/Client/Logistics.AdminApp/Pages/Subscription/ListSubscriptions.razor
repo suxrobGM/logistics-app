@@ -1,0 +1,64 @@
+﻿@page "/subscriptions"
+@inherits PageBase
+
+<RadzenText TextStyle="TextStyle.H3">Subscription Plans</RadzenText>
+<hr/>
+
+<RadzenButton class="mb-3" Click="@(() => Navigation.NavigateTo("/tenants/add"))">Add</RadzenButton>
+
+<RadzenGrid Data="_subscriptions"
+            LoadData="LoadData"
+            Count="_totalRecords"
+            AllowPaging="true"
+            AllowSorting="true"
+            PageSizeOptions="new[] { 10, 25, 50 }"
+            PageSize="10">
+    <Columns>
+        <RadzenGridColumn TItem="SubscriptionDto"
+                          Property="Tenant"
+                          Title="Tenant">
+            <Template Context="subscription">
+                <RadzenText Text="@subscription.Tenant.Name" />
+            </Template>
+        </RadzenGridColumn>
+        <RadzenGridColumn TItem="SubscriptionDto"
+                          Property="Tenant"
+                          Title="Company">
+            <Template Context="subscription">
+                <RadzenText Text="@subscription.Tenant.CompanyName" />
+            </Template>
+        </RadzenGridColumn>
+        <RadzenGridColumn TItem="SubscriptionDto"
+                          Property="Plan"
+                          Title="Subscription Plan">
+            <Template Context="subscription">
+                <RadzenText Text="@subscription.Plan.Name" />
+            </Template>
+        </RadzenGridColumn>
+        <RadzenGridColumn TItem="SubscriptionDto"
+                          Property="Status"
+                          Title="Status">
+        </RadzenGridColumn>
+        <RadzenGridColumn TItem="SubscriptionDto"
+                          Property="StartDate"
+                          Title="Start Date">
+        </RadzenGridColumn>
+        <RadzenGridColumn TItem="SubscriptionDto"
+                          Property="NextPaymentDate"
+                          Title="Next Payment Date">
+        </RadzenGridColumn>
+        <RadzenGridColumn TItem="SubscriptionDto"
+                          Property="TrialEndDate"
+                          Title="Trial End Date">
+        </RadzenGridColumn>
+        <RadzenGridColumn TItem="SubscriptionDto"
+                          Property="EndDate"
+                          Title="End Date">
+        </RadzenGridColumn>
+        <RadzenGridColumn TItem="SubscriptionDto" Title="Action">
+            <Template Context="subscription">
+                <RadzenButton Click="@(() => Navigation.NavigateTo($"subscriptions/{subscription.Id}"))">Edit</RadzenButton>
+            </Template>
+        </RadzenGridColumn>
+    </Columns>
+</RadzenGrid>

@@ -7,7 +7,7 @@
 <RadzenButton class="mb-3" Click="@(() => Navigation.NavigateTo("/tenants/add"))">Add</RadzenButton>
 
 <RadzenGrid Data="_subscriptionPlans"
-            LoadData="LoadTenants"
+            LoadData="LoadData"
             Count="_totalRecords"
             AllowPaging="true"
             AllowSorting="true"
@@ -26,7 +26,7 @@
                           Property="Price"
                           Title="Price">
             <Template Context="subscriptionPlan">
-                <FinancialFormatter Value="subscriptionPlan.Price"/>
+                <CurrencyText Value="subscriptionPlan.Price"/>
             </Template>
         </RadzenGridColumn>
         <RadzenGridColumn TItem="SubscriptionPlanDto" Title="Action">

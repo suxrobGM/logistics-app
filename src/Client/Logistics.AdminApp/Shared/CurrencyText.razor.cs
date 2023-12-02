@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Logistics.AdminApp.Shared;
 
-public partial class FinancialFormatter
+public partial class CurrencyText
 {
     private string FormattedValue => FormatValueAsCurrency(Value);
     
