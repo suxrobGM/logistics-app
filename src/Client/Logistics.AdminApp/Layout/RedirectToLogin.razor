@@ -4,6 +4,10 @@
 @code {
     protected override void OnInitialized()
     {
-        Navigation.NavigateToLogin("authentication/login");
+        Navigation.NavigateToLogin("authentication/login", new InteractiveRequestOptions
+        {
+            Interaction = InteractionType.SignIn,
+            ReturnUrl = "/"
+        });
     }
 }

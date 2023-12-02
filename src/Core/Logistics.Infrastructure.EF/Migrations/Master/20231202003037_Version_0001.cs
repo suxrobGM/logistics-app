@@ -33,7 +33,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false)
+                    Price = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -239,7 +240,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     Method = table.Column<int>(type: "int", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    SubscriptionId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    SubscriptionId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     BillingAddress_City = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BillingAddress_Country = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BillingAddress_Line1 = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -254,7 +255,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                         name: "FK_SubscriptionPayments_Subscription_SubscriptionId",
                         column: x => x.SubscriptionId,
                         principalTable: "Subscription",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

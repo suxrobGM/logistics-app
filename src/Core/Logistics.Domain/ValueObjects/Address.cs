@@ -26,15 +26,4 @@ public record Address
 
     public bool IsNull() => this == NullAddress;
     public bool IsNotNull() => !IsNull();
-    
-    
-    // protected override IEnumerable<object?> GetEqualityComponents()
-    // {
-    //     yield return Line1;
-    //     yield return Line2;
-    //     yield return City;
-    //     yield return ZipCode;
-    //     yield return Region;
-    //     yield return Country;
-    // }
 }

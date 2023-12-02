@@ -17,6 +17,7 @@ public class FilterPaymentsByInterval : BaseSpecification<Payment>
             i.CreatedDate >= startPeriod && i.CreatedDate <= endPeriod;
         
         ApplyOrderBy(InitOrderBy(orderProperty), descending);
+        ApplyPaging(page, pageSize);
     }
     
     private static Expression<Func<Payment, object?>> InitOrderBy(string? propertyName)

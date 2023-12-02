@@ -29,7 +29,6 @@ public static class Registrar
         AddTenantDatabase(services, configuration, defaultTenantDbConnectionSection, tenantsConfigSection);
 
         services.AddDomainLayer();
-        // services.AddScoped<AuditableEntitySaveChangesInterceptor>();
         services.AddScoped<DispatchDomainEventsInterceptor>();
         services.AddScoped<ITenantService, TenantService>();
         services.AddScoped<IMasterUnityOfWork, MasterUnitOfWork>();
@@ -62,7 +61,7 @@ public static class Registrar
         var tenantsSettings = configuration.GetSection(tenantsConfigSection).Get<TenantsDatabaseOptions>();
         var connectionString = configuration.GetConnectionString(connectionSection);
 
-        if (tenantsSettings != null)
+        if (tenantsSettings is not null)
         {
             services.AddScoped<ITenantDatabaseService, TenantDatabaseService>();
             services.AddSingleton(tenantsSettings);

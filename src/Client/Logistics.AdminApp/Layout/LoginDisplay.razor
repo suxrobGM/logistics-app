@@ -8,12 +8,17 @@
             <RadzenButton Icon="login" Text="Sign Out" Variant="Variant.Flat" Click="BeginLogOut"></RadzenButton>
         </Authorized>
         <NotAuthorized>
-            <RadzenLink Icon="login" Path="authentication/login" Text="Sign In"></RadzenLink>
+            <RadzenButton Icon="login" Text="Sign In" Variant="Variant.Flat" Click="BeginLogIn"></RadzenButton>
         </NotAuthorized>
     </AuthorizeView>
 </RadzenStack>
 
 @code {
+    private void BeginLogIn()
+    {
+        Navigation.NavigateToLogin("authentication/login");
+    }
+    
     private void BeginLogOut()
     {
         Navigation.NavigateToLogout("authentication/logout");

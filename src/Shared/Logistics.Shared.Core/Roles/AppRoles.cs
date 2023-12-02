@@ -1,4 +1,4 @@
-﻿namespace Logistics.Domain.ValueObjects;
+﻿namespace Logistics.Shared.Roles;
 
 public static class AppRoles
 {

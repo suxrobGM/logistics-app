@@ -1,3 +1,3 @@
-﻿namespace Logistics.Domain.ValueObjects;
+﻿namespace Logistics.Shared;
 
 public record EnumType(string Value, string DisplayName);

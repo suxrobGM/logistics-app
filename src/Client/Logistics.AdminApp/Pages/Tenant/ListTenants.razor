@@ -5,6 +5,8 @@
 <RadzenText TextStyle="TextStyle.H3">Tenants</RadzenText>
 <hr/>
 
+<RadzenButton class="mb-3" Click="@(() => Navigation.NavigateTo("/tenants/add"))">Add</RadzenButton>
+
 <RadzenGrid Data="_tenants"
             LoadData="LoadTenants"
             Count="_totalRecords"

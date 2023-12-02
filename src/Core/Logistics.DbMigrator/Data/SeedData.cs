@@ -5,6 +5,7 @@ using Logistics.Domain.Services;
 using Logistics.Domain.ValueObjects;
 using Logistics.Infrastructure.EF.Data;
 using Logistics.Shared.Policies;
+using Logistics.Shared.Roles;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using CustomClaimTypes = Logistics.Shared.Claims.CustomClaimTypes;

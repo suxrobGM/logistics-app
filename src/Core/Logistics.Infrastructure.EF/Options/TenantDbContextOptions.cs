@@ -2,5 +2,5 @@
 
 public class TenantDbContextOptions
 {
-    public string? ConnectionString { get; set; }
+    public string ConnectionString { get; set; } = default!;
 }

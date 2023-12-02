@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.Infrastructure.EF.Migrations.Master
 {
     [DbContext(typeof(MasterDbContext))]
-    [Migration("20231129050403_Version_0001")]
+    [Migration("20231202003037_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -119,6 +119,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                         .HasColumnType("int");
 
                     b.Property<string>("SubscriptionId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.ComplexProperty<Dictionary<string, object>>("BillingAddress", "Logistics.Domain.Entities.SubscriptionPayment.BillingAddress#Address", b1 =>
@@ -160,6 +161,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -447,7 +451,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 {
                     b.HasOne("Logistics.Domain.Entities.Subscription", "Subscription")
                         .WithMany("Payments")
-                        .HasForeignKey("SubscriptionId");
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Subscription");
                 });

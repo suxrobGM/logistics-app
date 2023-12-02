@@ -1,5 +1,5 @@
-﻿using Logistics.Domain.ValueObjects;
-using Logistics.Shared.Models;
+﻿using Logistics.Shared.Models;
+using Logistics.Shared.Roles;
 
 namespace Logistics.Application.Tenant.Queries;
 

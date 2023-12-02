@@ -13,6 +13,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddOidcAuthentication(options =>
 {
     builder.Configuration.Bind("Oidc", options.ProviderOptions);
+    options.UserOptions.RoleClaim = "role";
 });
 
 builder.Services.AddWebApiClient(builder.Configuration);

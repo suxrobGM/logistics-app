@@ -11,5 +11,6 @@ public class SubscriptionPlan : Entity
     /// Subscription price per employee
     /// </summary>
     public decimal Price { get; set; }
+    public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     public virtual List<Subscription> Subscriptions { get; set; } = new();
 }

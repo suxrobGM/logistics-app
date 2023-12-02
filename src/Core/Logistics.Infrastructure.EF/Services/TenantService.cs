@@ -2,21 +2,25 @@
 using Logistics.Domain.Services;
 using Logistics.Infrastructure.EF.Data;
 using Logistics.Infrastructure.EF.Exceptions;
+using Logistics.Infrastructure.EF.Options;
 using Microsoft.AspNetCore.Http;
 
 namespace Logistics.Infrastructure.EF.Services;
 
 internal class TenantService : ITenantService
 {
+    private readonly TenantDbContextOptions _dbContextOptions;
     private readonly MasterDbContext _masterDbContext;
-    private readonly HttpContext _httpContext;
+    private readonly HttpContext? _httpContext;
     private Tenant? _currentTenant;
 
     public TenantService(
+        TenantDbContextOptions dbContextContextOptions,
         MasterDbContext masterDbContext, 
-        IHttpContextAccessor contextAccessor)
+        IHttpContextAccessor? contextAccessor = null)
     {
-        _httpContext = contextAccessor.HttpContext;
+        _dbContextOptions = dbContextContextOptions;
+        _httpContext = contextAccessor?.HttpContext;
         _masterDbContext = masterDbContext ?? throw new ArgumentNullException(nameof(masterDbContext));
     }
 
@@ -25,6 +29,18 @@ internal class TenantService : ITenantService
         if (_currentTenant is not null)
         {
             return _currentTenant;
+        }
+
+        if (_httpContext is null)
+        {
+            var defaultTenant = new Tenant
+            {
+                Name = "default",
+                ConnectionString = _dbContextOptions.ConnectionString,
+            };
+
+            _currentTenant = defaultTenant;
+            return defaultTenant;
         }
         
         var tenantHeader = _httpContext.Request.Headers["X-Tenant"];
@@ -90,7 +106,9 @@ internal class TenantService : ITenantService
         var domains = hostString.Host.Split('.');
 
         if (domains.Length <= 2)
+        {
             return subDomain;
+        }
 
         subDomain = domains[0];
         return subDomain.ToLower();

@@ -35,7 +35,7 @@ public class TenantDbContext : DbContext
         {
             string? connectionString = null;
             
-            if (TenantService != null)
+            if (TenantService is not null)
             {
                 connectionString = TenantService.GetTenant().ConnectionString;
             }
