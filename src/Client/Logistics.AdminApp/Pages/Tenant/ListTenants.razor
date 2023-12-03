@@ -1,5 +1,5 @@
 @page "/tenants"
-@using Logistics.AdminApp.Utils
+@using Logistics.AdminApp.Extensions
 @inherits PageBase
 
 <RadzenText TextStyle="TextStyle.H3">Tenants</RadzenText>
@@ -17,31 +17,36 @@
     <Columns>
         <RadzenGridColumn TItem="TenantDto"
                           Property="Name"
-                          Title="Name">
+                          Title="Name"
+                          SortProperty="Name">
         </RadzenGridColumn>
         <RadzenGridColumn TItem="TenantDto"
                           Property="CompanyName"
-                          Title="Company">
+                          Title="Company"
+                          SortProperty="CompanyName">
         </RadzenGridColumn>
         <RadzenGridColumn TItem="TenantDto"
                           Property="CompanyAddress"
-                          Title="Company Address">
+                          Title="Company Address"
+                          SortProperty="CompanyAddress">
             <Template Context="tenant">
-                @AddressUtils.ConvertToString(tenant.CompanyAddress)
+                @tenant.CompanyAddress.ConvertToString()
             </Template>
         </RadzenGridColumn>
         <RadzenGridColumn TItem="TenantDto"
                           Property="ConnectionString"
-                          Title="DB Connection">
+                          Title="DB Connection"
+                          Sortable="false">
         </RadzenGridColumn>
         <RadzenGridColumn TItem="TenantDto"
                           Property="Subscription"
-                          Title="Subscription Plan">
+                          Title="Subscription Plan"
+                          SortProperty="SubscriptionPlan">
             <Template Context="tenant">
                 @tenant.Subscription?.Plan.Name
             </Template>
         </RadzenGridColumn>
-        <RadzenGridColumn TItem="TenantDto" Title="Action">
+        <RadzenGridColumn TItem="TenantDto" Title="Action" Sortable="false">
             <Template Context="tenant">
                 <RadzenButton Click="@(() => Navigation.NavigateTo($"tenants/{tenant.Id}"))">Edit</RadzenButton>
             </Template>

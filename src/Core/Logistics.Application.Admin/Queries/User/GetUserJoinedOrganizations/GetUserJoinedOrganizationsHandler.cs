@@ -34,7 +34,7 @@ internal sealed class GetUserJoinedOrganizationsHandler :
             .Select(i => new OrganizationDto
             {
                 TenantId = i.Id,
-                Name = i.Name!,
+                Name = i.Name,
                 DisplayName = i.CompanyName!
             })
             .ToArray();

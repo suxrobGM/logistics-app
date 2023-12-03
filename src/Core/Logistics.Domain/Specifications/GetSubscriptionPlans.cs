@@ -6,18 +6,16 @@ namespace Logistics.Domain.Specifications;
 public class GetSubscriptionPlans : BaseSpecification<SubscriptionPlan>
 {
     public GetSubscriptionPlans(
-        string? orderProperty,
+        string? orderBy,
         int page,
-        int pageSize,
-        bool descending)
+        int pageSize)
     {
-        ApplyOrderBy(InitOrderBy(orderProperty), descending);
+        ApplyOrderBy(orderBy);
         ApplyPaging(page, pageSize);
     }
     
-    private static Expression<Func<SubscriptionPlan, object?>> InitOrderBy(string? propertyName)
+    protected override Expression<Func<SubscriptionPlan, object?>> CreateOrderByExpression(string propertyName)
     {
-        propertyName = propertyName?.ToLower();
         return propertyName switch
         {
             "name" => i => i.Name,

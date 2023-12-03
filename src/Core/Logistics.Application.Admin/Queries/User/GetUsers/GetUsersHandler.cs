@@ -2,6 +2,7 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Specifications;
+using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Logistics.Shared;
 
@@ -23,16 +24,8 @@ internal sealed class GetUsersHandler : RequestHandler<GetUsersQuery, PagedRespo
         var totalItems = await _masterUow.Repository<User>().CountAsync();
 
         var users = _masterUow.Repository<User>()
-            .ApplySpecification(new SearchUsers(req.Search, req.OrderBy, req.Page, req.PageSize, req.Descending))
-            .Select(i => new UserDto
-            {
-                Id = i.Id,
-                UserName = i.UserName!,
-                FirstName = i.FirstName,
-                LastName = i.LastName,
-                Email = i.Email,
-                PhoneNumber = i.PhoneNumber
-            })
+            .ApplySpecification(new SearchUsers(req.Search, req.OrderBy, req.Page, req.PageSize))
+            .Select(i => i.ToDto(null))
             .ToArray();
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);

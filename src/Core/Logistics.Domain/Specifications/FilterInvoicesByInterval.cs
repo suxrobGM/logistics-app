@@ -6,22 +6,21 @@ namespace Logistics.Domain.Specifications;
 public sealed class FilterInvoicesByInterval : BaseSpecification<Invoice>
 {
     public FilterInvoicesByInterval(
-        string? orderProperty,
+        string? orderBy,
         DateTime? startPeriod,
         DateTime endPeriod,
         int page,
-        int pageSize,
-        bool descending)
+        int pageSize)
     {
         Criteria = i =>
             i.CreateDate >= startPeriod && i.CreateDate <= endPeriod;
         
-        ApplyOrderBy(InitOrderBy(orderProperty), descending);
+        ApplyOrderBy(orderBy);
+        ApplyPaging(page, pageSize);
     }
     
-    private static Expression<Func<Invoice, object?>> InitOrderBy(string? propertyName)
+    protected override Expression<Func<Invoice, object?>> CreateOrderByExpression(string propertyName)
     {
-        propertyName = propertyName?.ToLower();
         return propertyName switch
         {
             "loadref" => i => i.Load.RefId,

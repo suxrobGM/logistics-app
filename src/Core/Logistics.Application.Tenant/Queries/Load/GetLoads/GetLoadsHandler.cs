@@ -17,7 +17,7 @@ internal sealed class GetLoadsHandler : RequestHandler<GetLoadsQuery, PagedRespo
         CancellationToken cancellationToken)
     {
         var totalItems = await _tenantUow.Repository<Load>().CountAsync();
-        var spec = new SearchLoads(req.Search, req.OrderBy, req.Descending);
+        var spec = new SearchLoads(req.Search, req.OrderBy);
 
         var baseQuery = _tenantUow.Repository<Load>().ApplySpecification(spec);
 

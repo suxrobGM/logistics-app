@@ -1,10 +1,10 @@
 ﻿using Logistics.Shared.Models;
 
-namespace Logistics.AdminApp.Utils;
+namespace Logistics.AdminApp.Extensions;
 
-public static class AddressUtils
+public static class AddressExtensions
 {
-    public static string ConvertToString(AddressDto? address)
+    public static string ConvertToString(this AddressDto? address)
     {
         if (address is null)
         {

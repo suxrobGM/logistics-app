@@ -38,7 +38,9 @@ public class User : IdentityUser, IEntity<string>, IAuditableEntity
     public string[] GetJoinedTenantIds()
     {
         if (string.IsNullOrEmpty(JoinedTenantIds))
+        {
             return Array.Empty<string>();
+        }
         
         return JoinedTenantIds.Split(',');
     }

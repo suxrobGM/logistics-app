@@ -17,7 +17,7 @@ internal sealed class GetCustomersHandler : RequestHandler<GetCustomersQuery, Pa
         CancellationToken cancellationToken)
     {
         var totalItems = await _tenantUow.Repository<Customer>().CountAsync();
-        var specification = new SearchCustomers(req.Search, req.OrderBy, req.Page, req.PageSize, req.Descending);
+        var specification = new SearchCustomers(req.Search, req.OrderBy, req.Page, req.PageSize);
         
         var customers = _tenantUow.Repository<Customer>()
             .ApplySpecification(specification)

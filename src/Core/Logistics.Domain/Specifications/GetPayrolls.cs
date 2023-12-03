@@ -9,8 +9,7 @@ public class GetPayrolls : BaseSpecification<Payroll>
         string? search,
         string? orderBy,
         int page,
-        int pageSize,
-        bool descending)
+        int pageSize)
     {
         if (!string.IsNullOrEmpty(search))
         {
@@ -19,13 +18,12 @@ public class GetPayrolls : BaseSpecification<Payroll>
                 !string.IsNullOrEmpty(i.Employee.LastName) && i.Employee.LastName.Contains(search);
         }
 
-        ApplyOrderBy(InitOrderBy(orderBy), descending);
+        ApplyOrderBy(orderBy);
         ApplyPaging(page, pageSize);
     }
 
-    private static Expression<Func<Payroll, object?>> InitOrderBy(string? propertyName)
+    protected override Expression<Func<Payroll, object?>> CreateOrderByExpression(string propertyName)
     {
-        propertyName = propertyName?.ToLower() ?? string.Empty;
         return propertyName switch
         {
             "paymentamount" => i => i.Payment.Amount,

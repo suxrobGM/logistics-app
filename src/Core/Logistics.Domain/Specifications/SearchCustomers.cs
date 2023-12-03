@@ -9,20 +9,19 @@ public class SearchCustomers : BaseSpecification<Customer>
         string? search, 
         string? orderBy,
         int page,
-        int pageSize,
-        bool descending)
+        int pageSize)
     {
         if (!string.IsNullOrEmpty(search))
         {
             Criteria = i => i.Name.Contains(search);
         }
         
-        ApplyOrderBy(InitOrderBy(orderBy), descending);
+        ApplyOrderBy(orderBy);
+        ApplyPaging(page, pageSize);
     }
     
-    private static Expression<Func<Customer, object?>> InitOrderBy(string? propertyName)
+    protected override Expression<Func<Customer, object?>> CreateOrderByExpression(string propertyName)
     {
-        propertyName = propertyName?.ToLower() ?? "name";
         return propertyName switch
         {
             // "firstname" => i => i.FirstName!,

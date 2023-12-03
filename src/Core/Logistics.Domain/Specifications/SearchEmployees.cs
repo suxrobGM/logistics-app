@@ -9,8 +9,7 @@ public class SearchEmployees : BaseSpecification<Employee>
         string? search, 
         string? orderBy,
         int page,
-        int pageSize,
-        bool descending)
+        int pageSize)
     {
         if (!string.IsNullOrEmpty(search))
         {
@@ -21,13 +20,12 @@ public class SearchEmployees : BaseSpecification<Employee>
                 (i.Email != null && i.Email.Contains(search));
         }
         
+        ApplyOrderBy(orderBy);
         ApplyPaging(page, pageSize);
-        ApplyOrderBy(InitOrderBy(orderBy), descending);
     }
     
-    private static Expression<Func<Employee, object?>> InitOrderBy(string? propertyName)
+    protected override Expression<Func<Employee, object?>> CreateOrderByExpression(string propertyName)
     {
-        propertyName = propertyName?.ToLower() ?? "email";
         return propertyName switch
         {
             "firstname" => i => i.FirstName,

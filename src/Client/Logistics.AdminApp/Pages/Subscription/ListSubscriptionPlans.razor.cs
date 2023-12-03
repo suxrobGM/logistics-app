@@ -1,4 +1,5 @@
-﻿using Logistics.Shared;
+﻿using Logistics.AdminApp.Extensions;
+using Logistics.Shared;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Components;
 using Radzen;
@@ -21,9 +22,10 @@ public partial class ListSubscriptionPlans : PageBase
     
     private async void LoadData(LoadDataArgs e)
     {
-        var page = (e.Skip ?? 0) + 1;
-        var pageSize = e.Top ?? 10;
-        var pagedData = await CallApiAsync(api => api.GetSubscriptionPlansAsync(new PagedQuery(page, pageSize)));
+        var orderBy = e.GetOrderBy();
+        var page = e.GetPageNumber();
+        var pageSize = e.GetPageSize();
+        var pagedData = await CallApiAsync(api => api.GetSubscriptionPlansAsync(new PagedQuery(orderBy, page, pageSize)));
         _subscriptionPlans = pagedData?.Items;
         _totalRecords = pagedData?.TotalItems ?? 0;
         StateHasChanged();

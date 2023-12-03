@@ -2,8 +2,12 @@
 
 public class SearchableQuery : PagedQuery
 {
-    public SearchableQuery(string? search = null, int page = 1, int pageSize = 10) 
-        : base(page, pageSize)
+    public SearchableQuery(
+        string? search = null,
+        string? orderBy = null,
+        int page = 1,
+        int pageSize = 10) 
+        : base(orderBy, page, pageSize)
     {
         Search = search;
     }

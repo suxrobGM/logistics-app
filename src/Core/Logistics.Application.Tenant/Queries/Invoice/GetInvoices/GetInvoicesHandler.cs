@@ -17,7 +17,7 @@ internal sealed class GetInvoicesHandler : RequestHandler<GetInvoicesQuery, Page
         CancellationToken cancellationToken)
     {
         var totalItems = await _tenantUow.Repository<Invoice>().CountAsync();
-        var specification = new FilterInvoicesByInterval(req.OrderBy, req.StartDate, req.EndDate, req.Page, req.PageSize, req.Descending);
+        var specification = new FilterInvoicesByInterval(req.OrderBy, req.StartDate, req.EndDate, req.Page, req.PageSize);
         
         var invoicesDto = _tenantUow.Repository<Invoice>()
             .ApplySpecification(specification)

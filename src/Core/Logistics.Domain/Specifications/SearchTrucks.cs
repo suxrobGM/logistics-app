@@ -9,21 +9,19 @@ public sealed class SearchTrucks : BaseSpecification<Truck>
         string? search,
         string? orderBy,
         int page,
-        int pageSize,
-        bool descending)
+        int pageSize)
     {
         if (!string.IsNullOrEmpty(search))
         {
             Criteria = i => i.TruckNumber.Contains(search);
         }
         
-        ApplyOrderBy(InitOrderBy(orderBy), descending);
+        ApplyOrderBy(orderBy);
         ApplyPaging(page, pageSize);
     }
     
-    private static Expression<Func<Truck, object?>> InitOrderBy(string? propertyName)
+    protected override Expression<Func<Truck, object?>> CreateOrderByExpression(string propertyName)
     {
-        propertyName = propertyName?.ToLower() ?? string.Empty;
         return propertyName switch
         {
             // "driverincomepercentage" => i => i.DriverIncomePercentage,

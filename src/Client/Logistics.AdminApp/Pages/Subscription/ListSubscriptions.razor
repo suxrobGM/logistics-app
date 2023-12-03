@@ -16,46 +16,54 @@
     <Columns>
         <RadzenGridColumn TItem="SubscriptionDto"
                           Property="Tenant"
-                          Title="Tenant">
+                          Title="Tenant"
+                          SortProperty="TenantName">
             <Template Context="subscription">
                 <RadzenText Text="@subscription.Tenant.Name" />
             </Template>
         </RadzenGridColumn>
         <RadzenGridColumn TItem="SubscriptionDto"
                           Property="Tenant"
-                          Title="Company">
+                          Title="Company"
+                          SortProperty="TenantCompanyName">
             <Template Context="subscription">
                 <RadzenText Text="@subscription.Tenant.CompanyName" />
             </Template>
         </RadzenGridColumn>
         <RadzenGridColumn TItem="SubscriptionDto"
                           Property="Plan"
-                          Title="Subscription Plan">
+                          Title="Subscription Plan"
+                          SortProperty="PlanName">
             <Template Context="subscription">
                 <RadzenText Text="@subscription.Plan.Name" />
             </Template>
         </RadzenGridColumn>
         <RadzenGridColumn TItem="SubscriptionDto"
                           Property="Status"
-                          Title="Status">
+                          Title="Status"
+                          SortProperty="Status">
         </RadzenGridColumn>
         <RadzenGridColumn TItem="SubscriptionDto"
                           Property="StartDate"
-                          Title="Start Date">
+                          Title="Start Date"
+                          SortProperty="StartDate">
         </RadzenGridColumn>
         <RadzenGridColumn TItem="SubscriptionDto"
                           Property="NextPaymentDate"
-                          Title="Next Payment Date">
+                          Title="Next Payment Date"
+                          SortProperty="NextPaymentDate">
         </RadzenGridColumn>
         <RadzenGridColumn TItem="SubscriptionDto"
                           Property="TrialEndDate"
-                          Title="Trial End Date">
+                          Title="Trial End Date"
+                          SortProperty="TrialEndDate">
         </RadzenGridColumn>
         <RadzenGridColumn TItem="SubscriptionDto"
                           Property="EndDate"
-                          Title="End Date">
+                          Title="End Date"
+                          SortProperty="EndDate">
         </RadzenGridColumn>
-        <RadzenGridColumn TItem="SubscriptionDto" Title="Action">
+        <RadzenGridColumn TItem="SubscriptionDto" Title="Action" Sortable="false">
             <Template Context="subscription">
                 <RadzenButton Click="@(() => Navigation.NavigateTo($"subscriptions/{subscription.Id}"))">Edit</RadzenButton>
             </Template>

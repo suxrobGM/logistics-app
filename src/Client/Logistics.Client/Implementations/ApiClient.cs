@@ -293,6 +293,11 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakeGetRequestAsync<ResponseResult<UserDto>>($"users/{userId}");
     }
 
+    public Task<PagedResponseResult<UserDto>> GetUsersAsync(SearchableQuery query)
+    {
+        return MakeGetRequestAsync<PagedResponseResult<UserDto>>("users", query.ToDictionary());
+    }
+
     public Task<ResponseResult> UpdateUserAsync(UpdateUser user)
     {
         return MakePutRequestAsync<ResponseResult, UpdateUser>($"users/{user.UserId}", user);

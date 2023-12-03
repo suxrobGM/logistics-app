@@ -9,17 +9,15 @@ public class FilterPayrollsByEmployeeId : BaseSpecification<Payroll>
         string employeeId,
         string? orderBy,
         int page,
-        int pageSize,
-        bool descending)
+        int pageSize)
     {
         Criteria = i => i.EmployeeId == employeeId;
-        ApplyOrderBy(InitOrderBy(orderBy), descending);
+        ApplyOrderBy(orderBy);
         ApplyPaging(page, pageSize);
     }
 
-    private static Expression<Func<Payroll, object?>> InitOrderBy(string? propertyName)
+    protected override Expression<Func<Payroll, object?>> CreateOrderByExpression(string propertyName)
     {
-        propertyName = propertyName?.ToLower() ?? string.Empty;
         return propertyName switch
         {
             "paymentamount" => i => i.Payment.Amount,

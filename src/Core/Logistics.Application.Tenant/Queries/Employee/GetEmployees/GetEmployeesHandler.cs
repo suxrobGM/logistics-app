@@ -18,7 +18,7 @@ internal sealed class GetEmployeesHandler : RequestHandler<GetEmployeesQuery, Pa
     {
         var totalItems = await _tenantUow.Repository<Employee>().CountAsync();
         var employeesQuery = _tenantUow.Repository<Employee>().Query();
-        var specification = new SearchEmployees(req.Search, req.OrderBy, req.Page, req.PageSize, req.Descending);
+        var specification = new SearchEmployees(req.Search, req.OrderBy, req.Page, req.PageSize);
 
         if (!string.IsNullOrEmpty(req.Role))
         {

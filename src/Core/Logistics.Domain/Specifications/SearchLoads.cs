@@ -7,8 +7,7 @@ public class SearchLoads : BaseSpecification<Load>
 {
     public SearchLoads(
         string? search,
-        string? orderBy, 
-        bool descending)
+        string? orderBy)
     {
         if (!string.IsNullOrEmpty(search))
         {
@@ -22,12 +21,11 @@ public class SearchLoads : BaseSpecification<Load>
                 (i.DestinationAddress.Line2 != null && i.DestinationAddress.Line2.Contains(search));
         }
 
-        ApplyOrderBy(InitOrderBy(orderBy), descending);
+        ApplyOrderBy(orderBy);
     }
 
-    private static Expression<Func<Load, object?>> InitOrderBy(string? propertyName)
+    protected override Expression<Func<Load, object?>> CreateOrderByExpression(string propertyName)
     {
-        propertyName = propertyName?.ToLower() ?? string.Empty;
         return propertyName switch
         {
             "name" => i => i.Name,

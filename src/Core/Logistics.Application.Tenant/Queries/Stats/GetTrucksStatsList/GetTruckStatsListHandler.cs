@@ -31,7 +31,8 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
                 Drivers = group.First().AssignedTruck!.Drivers,
             });
 
-        truckStatsQuery = req.Descending
+        var isDescendingOrder = req.OrderBy.StartsWith('-');
+        truckStatsQuery = isDescendingOrder
             ? truckStatsQuery.OrderByDescending(InitOrderBy(req.OrderBy))
             : truckStatsQuery.OrderBy(InitOrderBy(req.OrderBy));
 

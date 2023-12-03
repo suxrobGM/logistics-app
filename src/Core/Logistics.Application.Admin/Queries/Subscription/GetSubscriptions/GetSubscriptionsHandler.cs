@@ -21,7 +21,7 @@ internal sealed class GetSubscriptionsHandler : RequestHandler<GetSubscriptionsQ
         GetSubscriptionsQuery req, CancellationToken cancellationToken)
     {
         var totalItems = await _masterUow.Repository<Subscription>().CountAsync();
-        var spec = new GetSubscriptions(req.OrderBy, req.Page, req.PageSize, req.Descending);
+        var spec = new GetSubscriptions(req.OrderBy, req.Page, req.PageSize);
 
         var items = _masterUow.Repository<Subscription>()
             .ApplySpecification(spec)

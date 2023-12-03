@@ -20,7 +20,7 @@ internal sealed class GetTenantsHandler : RequestHandler<GetTenantsQuery, PagedR
     protected override async Task<PagedResponseResult<TenantDto>> HandleValidated(GetTenantsQuery req, CancellationToken cancellationToken)
     {
         var totalItems = await _masterUow.Repository<Tenant>().CountAsync();
-        var spec = new SearchTenants(req.Search, req.OrderBy, req.Page, req.PageSize, req.Descending);
+        var spec = new SearchTenants(req.Search, req.OrderBy, req.Page, req.PageSize);
 
         var items = _masterUow.Repository<Tenant>()
             .ApplySpecification(spec)

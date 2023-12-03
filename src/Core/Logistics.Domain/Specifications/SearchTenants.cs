@@ -9,8 +9,7 @@ public class SearchTenants : BaseSpecification<Tenant>
         string? search, 
         string? orderBy,
         int page,
-        int pageSize,
-        bool descending)
+        int pageSize)
     {
         if (!string.IsNullOrEmpty(search))
         {
@@ -22,16 +21,17 @@ public class SearchTenants : BaseSpecification<Tenant>
                  i.CompanyName.Contains(search));
         }
         
+        ApplyOrderBy(orderBy);
         ApplyPaging(page, pageSize);
-        ApplyOrderBy(InitOrderBy(orderBy), descending);
     }
     
-    private static Expression<Func<Tenant, object?>> InitOrderBy(string? propertyName)
+    protected override Expression<Func<Tenant, object?>> CreateOrderByExpression(string propertyName)
     {
-        propertyName = propertyName?.ToLower() ?? "name";
         return propertyName switch
         {
-            "displayname" => i => i.CompanyName,
+            "companyname" => i => i.CompanyName,
+            "companyaddress" => i => i.CompanyAddress.Line1,
+            "subscriptionplan" => i => i.Subscription!.Plan.Name,
             _ => i => i.Name
         };
     }

@@ -23,12 +23,12 @@ internal sealed class GetPayrollsHandler
 
         if (!string.IsNullOrEmpty(req.EmployeeId))
         {
-            specification = new FilterPayrollsByEmployeeId(req.EmployeeId, req.OrderBy, req.Page, req.PageSize, req.Descending);
+            specification = new FilterPayrollsByEmployeeId(req.EmployeeId, req.OrderBy, req.Page, req.PageSize);
             totalItems = await payrollRepository.CountAsync(i => i.EmployeeId == req.EmployeeId);
         }
         else
         {
-            specification = new GetPayrolls(req.Search, req.OrderBy, req.Page, req.PageSize, req.Descending);
+            specification = new GetPayrolls(req.Search, req.OrderBy, req.Page, req.PageSize);
             totalItems = await payrollRepository.CountAsync();
         }
         

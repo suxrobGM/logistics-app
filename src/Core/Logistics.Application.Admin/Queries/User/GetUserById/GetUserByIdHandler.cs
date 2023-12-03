@@ -1,5 +1,6 @@
 ﻿using Logistics.Application.Core;
 using Logistics.Domain.Entities;
+using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Logistics.Shared;
 using Microsoft.AspNetCore.Identity;
@@ -20,22 +21,14 @@ internal sealed class GetUserByIdHandler : RequestHandler<GetUserByIdQuery, Resp
     {
         var userEntity = await _userManager.FindByIdAsync(req.UserId);
 
-        if (userEntity == null)
+        if (userEntity is null)
+        {
             return ResponseResult<UserDto>.CreateError($"Could not find an user with ID '{req.UserId}'");
+        }
 
         var userRoles = await _userManager.GetRolesAsync(userEntity);
         
-        var user = new UserDto
-        {
-            Id = userEntity.Id,
-            UserName = userEntity.UserName!,
-            FirstName = userEntity.FirstName,
-            LastName = userEntity.LastName,
-            Roles = userRoles,
-            Email = userEntity.Email,
-            PhoneNumber = userEntity.PhoneNumber
-        };
-
+        var user = userEntity.ToDto(userRoles);
         return ResponseResult<UserDto>.CreateSuccess(user);
     }
 }

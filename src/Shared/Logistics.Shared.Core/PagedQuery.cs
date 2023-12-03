@@ -1,46 +1,33 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Logistics.Shared;
+﻿namespace Logistics.Shared;
 
 public class PagedQuery
 {
-    private string? _orderBy;
-    
-    public PagedQuery(int page = 1, int pageSize = 10)
+    public PagedQuery(
+        string? orderBy = null,
+        int page = 1,
+        int pageSize = 10)
     {
+        OrderBy = orderBy ?? string.Empty;
         Page = page;
         PageSize = pageSize;
     }
     
-    public string? OrderBy
-    {
-        get => _orderBy;
-        set 
-        {
-            value ??= string.Empty;
-
-            if (value.StartsWith("-"))
-            {
-                value = value[1..];
-                Descending = true;
-            }
-            _orderBy = value;
-        }
-    }
-    
-    [JsonIgnore]
-    public bool Descending { get; private set; }
-    
-    public int Page { get; init; }
-    public int PageSize { get; init; }
+    public string OrderBy { get; set; }
+    public int Page { get; set; }
+    public int PageSize { get; set; }
     
     public virtual IDictionary<string, string> ToDictionary()
     {
         var queryDict = new Dictionary<string, string>
         {
-            {"page", Page.ToString() },
-            {"pageSize", PageSize.ToString() }
+            {"page", Page.ToString()},
+            {"pageSize", PageSize.ToString()}
         };
+
+        if (!string.IsNullOrEmpty(OrderBy))
+        {
+            queryDict.Add("orderBy", OrderBy);
+        }
 
         return queryDict;
     }
