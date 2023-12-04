@@ -20,11 +20,7 @@ public class StatsController : ControllerBase
     public async Task<IActionResult> GetDailyGrosses([FromQuery] GetDailyGrossesQuery request)
     {
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result.Error);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
     
     [HttpGet("monthly-grosses")]
@@ -34,11 +30,7 @@ public class StatsController : ControllerBase
     public async Task<IActionResult> GetMonthlyGrosses([FromQuery] GetMonthlyGrossesQuery request)
     {
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result.Error);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpGet("company")]
@@ -48,11 +40,7 @@ public class StatsController : ControllerBase
     public async Task<IActionResult> GetCompanyStats([FromQuery] GetCompanyStatsQuery request)
     {
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result.Error);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
     
     [HttpGet("trucks")]
@@ -62,11 +50,7 @@ public class StatsController : ControllerBase
     public async Task<IActionResult> GetTrucksStatsList([FromQuery] GetTrucksStatsListQuery request)
     {
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result.Error);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
     
     [HttpGet("driver/{userId}")]
@@ -77,10 +61,6 @@ public class StatsController : ControllerBase
     {
         request.UserId = userId;
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result.Error);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 }

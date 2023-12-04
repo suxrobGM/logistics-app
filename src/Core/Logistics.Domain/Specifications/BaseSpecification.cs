@@ -13,7 +13,7 @@ public abstract class BaseSpecification<T> : ISpecification<T> where T : IEntity
     public int PageSize { get; private set; }
     public int Page { get; private set; }
     public bool IsPagingEnabled { get; private set; }
-    public bool Descending { get; private set; }
+    public bool IsDescending { get; private set; }
     
     protected virtual Expression<Func<T, object?>> CreateOrderByExpression(string propertyName)
     {
@@ -30,7 +30,7 @@ public abstract class BaseSpecification<T> : ISpecification<T> where T : IEntity
     protected void ApplyOrderBy(string? orderByProperty)
     {
         var parsedOrderByProperty = ParseOrderByProperty(orderByProperty);
-        OrderBy = CreateOrderByExpression(parsedOrderByProperty);;
+        OrderBy = CreateOrderByExpression(parsedOrderByProperty);
     }
 
     private string ParseOrderByProperty(string? orderByProperty)
@@ -42,7 +42,7 @@ public abstract class BaseSpecification<T> : ISpecification<T> where T : IEntity
 
         if (orderByProperty.StartsWith('-'))
         {
-            Descending = true;
+            IsDescending = true;
             orderByProperty = orderByProperty[1..];
         }
         return orderByProperty.ToLower();

@@ -20,10 +20,6 @@ public class TenantRolesController : ControllerBase
     public async Task<IActionResult> GetList([FromQuery] GetTenantRolesQuery query)
     {
         var result = await _mediator.Send(query);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 }

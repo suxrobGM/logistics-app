@@ -19,15 +19,8 @@ public class LoadsController : ControllerBase
     [Authorize(Policy = Permissions.Loads.View)]
     public async Task<IActionResult> GetById(string id)
     {
-        var result = await _mediator.Send(new GetLoadByIdQuery
-        {
-            Id = id
-        });
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        var result = await _mediator.Send(new GetLoadByIdQuery {Id = id});
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpGet]
@@ -37,11 +30,7 @@ public class LoadsController : ControllerBase
     public async Task<IActionResult> GetList([FromQuery] GetLoadsQuery query)
     {
         var result = await _mediator.Send(query);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpPost]
@@ -51,11 +40,7 @@ public class LoadsController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateLoadCommand request)
     {
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpPut("{id}")]
@@ -66,11 +51,7 @@ public class LoadsController : ControllerBase
     {
         request.Id = id;
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpDelete("{id}")]
@@ -79,14 +60,7 @@ public class LoadsController : ControllerBase
     [Authorize(Policy = Permissions.Loads.Delete)]
     public async Task<IActionResult> Delete(string id)
     {
-        var result = await _mediator.Send(new DeleteLoadCommand
-        {
-            Id = id
-        });
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        var result = await _mediator.Send(new DeleteLoadCommand {Id = id});
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 }

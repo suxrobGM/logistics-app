@@ -12,5 +12,5 @@ public interface ISpecification<T>
     int PageSize { get; }
     int Page { get; }
     bool IsPagingEnabled { get; }
-    bool Descending { get; }
+    bool IsDescending { get; }
 }

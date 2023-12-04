@@ -8,6 +8,6 @@ public interface IUserApi
 {
     Task<ResponseResult<UserDto>> GetUserAsync(string userId);
     Task<PagedResponseResult<UserDto>> GetUsersAsync(SearchableQuery query);
-    Task<ResponseResult> UpdateUserAsync(UpdateUser user);
+    Task<ResponseResult> UpdateUserAsync(UpdateUser command);
     Task<ResponseResult<OrganizationDto[]>> GetUserOrganizations(string userId);
 }

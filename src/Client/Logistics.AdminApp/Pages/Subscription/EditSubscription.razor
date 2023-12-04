@@ -1,0 +1,51 @@
+﻿@page "/subscriptions/{id}"
+@inherits PageBase
+
+@{
+    var title = EditMode ? "Edit" : "Add a new";
+}
+
+<RadzenText TextStyle="TextStyle.H3">@title subscription plan</RadzenText>
+<hr/>
+
+<RadzenRow>
+    <RadzenColumn Size="12" SizeMD="10" SizeLG="8" SizeXL="6">
+        <RadzenCard>
+            @if (IsLoading)
+            {
+                <RadzenProgressBarCircular Value="100"
+                                           ShowValue="false"
+                                           Mode="ProgressBarMode.Indeterminate">
+                </RadzenProgressBarCircular>
+            }
+
+            <EditForm Model="_subscription" OnValidSubmit="SubmitAsync">
+                <DataAnnotationsValidator/>
+                <ValidationSummary/>
+
+                <RadzenStack Orientation="Orientation.Vertical">
+                    <RadzenFormField Text="Subscription Status" Variant="Variant.Outlined">
+                        <RadzenTextBox @bind-Value="_subscription.Name"/>
+                    </RadzenFormField>
+                    <RadzenFormField Text="Description" Variant="Variant.Outlined">
+                        <RadzenTextArea @bind-Value="_subscription.Description" Rows="3"/>
+                    </RadzenFormField>
+                    <RadzenFormField Text="Price" Variant="Variant.Outlined">
+                        <RadzenNumeric TValue="decimal" Min="0" @bind-Value="_subscription.Price"/>
+                    </RadzenFormField>
+                    <RadzenStack Orientation="Orientation.Horizontal">
+                        <RadzenButton Icon="save"
+                                      Text="Save"
+                                      Disabled="@IsLoading"
+                                      ButtonType="ButtonType.Submit">
+                        </RadzenButton>
+                        <RadzenButton Icon="arrow_back"
+                                      Text="Back"
+                                      Click="@(() => Navigation.NavigateTo("/subscriptions/plans"))">
+                        </RadzenButton>
+                    </RadzenStack>
+                </RadzenStack>
+            </EditForm>
+        </RadzenCard>
+    </RadzenColumn>
+</RadzenRow>

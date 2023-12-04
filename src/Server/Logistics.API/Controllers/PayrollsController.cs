@@ -20,11 +20,7 @@ public class PayrollsController : ControllerBase
     public async Task<IActionResult> GetById(string id)
     {
         var result = await _mediator.Send(new GetPayrollByIdQuery {Id = id});
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result.Error);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
     
     [HttpGet("calculate")]
@@ -34,11 +30,7 @@ public class PayrollsController : ControllerBase
     public async Task<IActionResult> CalculateEmployeePayroll([FromQuery] CalculatePayrollQuery request)
     {
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result.Error);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpGet]
@@ -48,11 +40,7 @@ public class PayrollsController : ControllerBase
     public async Task<IActionResult> GetList([FromQuery] GetPayrollsQuery query)
     {
         var result = await _mediator.Send(query);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
     
     [HttpPost]
@@ -62,11 +50,7 @@ public class PayrollsController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreatePayrollCommand request)
     {
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpPut("{id}")]
@@ -77,11 +61,7 @@ public class PayrollsController : ControllerBase
     {
         request.Id = id;
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
     
     [HttpDelete("{id}")]
@@ -91,10 +71,6 @@ public class PayrollsController : ControllerBase
     public async Task<IActionResult> Delete(string id)
     {
         var result = await _mediator.Send(new DeletePayrollCommand {Id = id});
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 }

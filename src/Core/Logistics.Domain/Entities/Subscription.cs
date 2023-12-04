@@ -16,6 +16,19 @@ public class Subscription : Entity
     public DateTime? TrialEndDate { get; set; }
     public virtual List<SubscriptionPayment> Payments { get; set; } = new();
 
+    public static Subscription Create(Tenant tenant, SubscriptionPlan plan)
+    {
+        return new Subscription
+        {
+            Status = SubscriptionStatus.Active,
+            NextPaymentDate = DateTime.UtcNow.AddDays(30),
+            TenantId = tenant.Id,
+            Tenant = tenant,
+            PlanId = plan.Id,
+            Plan = plan
+        };
+    }
+    
     public static Subscription Create30DaysTrial(Tenant tenant, SubscriptionPlan plan)
     {
         return new Subscription

@@ -20,11 +20,7 @@ public class NotificationsController : ControllerBase
     public async Task<IActionResult> GetList([FromQuery] GetNotificationsQuery request)
     {
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
     
     [HttpPut("{id}")]
@@ -35,10 +31,6 @@ public class NotificationsController : ControllerBase
     {
         request.Id = id;
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 }

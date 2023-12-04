@@ -21,11 +21,7 @@ public class TrucksController : ControllerBase
     {
         request.TruckOrDriverId = truckOrDriverId;
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpGet]
@@ -35,11 +31,7 @@ public class TrucksController : ControllerBase
     public async Task<IActionResult> GetList([FromQuery] GetTrucksQuery query)
     {
         var result = await _mediator.Send(query);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
     
     [HttpGet("drivers")]
@@ -49,11 +41,7 @@ public class TrucksController : ControllerBase
     public async Task<IActionResult> GetTruckDrivers([FromQuery] GetTruckDriversQuery query)
     {
         var result = await _mediator.Send(query);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpPost]
@@ -63,11 +51,7 @@ public class TrucksController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateTruckCommand request)
     {
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpPut("{id}")]
@@ -78,11 +62,7 @@ public class TrucksController : ControllerBase
     {
         request.Id = id;
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpDelete("{id}")]
@@ -91,14 +71,7 @@ public class TrucksController : ControllerBase
     [Authorize(Policy = Permissions.Trucks.Delete)]
     public async Task<IActionResult> Delete(string id)
     {
-        var result = await _mediator.Send(new DeleteTruckCommand
-        {
-            Id = id
-        });
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        var result = await _mediator.Send(new DeleteTruckCommand {Id = id});
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 }

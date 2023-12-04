@@ -20,11 +20,7 @@ public class EmployeesController : ControllerBase
     public async Task<IActionResult> GetById(string userId)
     {
         var result = await _mediator.Send(new GetEmployeeByIdQuery {UserId = userId});
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result.Error);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpGet]
@@ -34,11 +30,7 @@ public class EmployeesController : ControllerBase
     public async Task<IActionResult> GetList([FromQuery] GetEmployeesQuery query)
     {
         var result = await _mediator.Send(query);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpPost]
@@ -48,11 +40,7 @@ public class EmployeesController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateEmployeeCommand request)
     {
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
     
     [HttpPost("{userId}/remove-role")]
@@ -63,11 +51,7 @@ public class EmployeesController : ControllerBase
     {
         request.UserId = userId;
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpPut("{userId}")]
@@ -78,11 +62,7 @@ public class EmployeesController : ControllerBase
     {
         request.UserId = userId;
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
     
     [HttpDelete("{userId}")]
@@ -92,10 +72,6 @@ public class EmployeesController : ControllerBase
     public async Task<IActionResult> Delete(string userId)
     {
         var result = await _mediator.Send(new DeleteEmployeeCommand {UserId = userId});
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 }

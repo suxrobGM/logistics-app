@@ -8,7 +8,7 @@ public interface IEmployeeApi
 {
     Task<ResponseResult<EmployeeDto>> GetEmployeeAsync(string userId);
     Task<PagedResponseResult<EmployeeDto>> GetEmployeesAsync(SearchableQuery query);
-    Task<ResponseResult> CreateEmployeeAsync(CreateEmployee employee);
-    Task<ResponseResult> UpdateEmployeeAsync(UpdateEmployee employee);
+    Task<ResponseResult> CreateEmployeeAsync(CreateEmployee command);
+    Task<ResponseResult> UpdateEmployeeAsync(UpdateEmployee command);
     Task<ResponseResult> DeleteEmployeeAsync(string userId);
 }

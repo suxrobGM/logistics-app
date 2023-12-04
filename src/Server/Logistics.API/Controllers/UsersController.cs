@@ -20,11 +20,7 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> GetById(string id)
     {
         var result = await _mediator.Send(new GetUserByIdQuery {UserId = id});
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result.Error);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpGet]
@@ -34,11 +30,7 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> GetList([FromQuery] GetUsersQuery query)
     {
         var result = await _mediator.Send(query);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpGet("{id}/organizations")]
@@ -48,11 +40,7 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> GetUserJoinedOrganizations(string id)
     {
         var result = await _mediator.Send(new GetUserJoinedOrganizationsQuery() { UserId = id });
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpPut("{id}")]
@@ -63,11 +51,7 @@ public class UsersController : ControllerBase
     {
         request.Id = id;
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpPost("{id}/remove-role")]
@@ -78,10 +62,6 @@ public class UsersController : ControllerBase
     {
         request.UserId = id;
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 }

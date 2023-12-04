@@ -1,12 +1,11 @@
-@page "/tenants/{id?}"
+@page "/tenants/{id}"
 @inherits PageBase
 
 @{
-    var headText = EditMode ? "Edit" : "Add a new";
-    var submitBtnText = EditMode ? "Save" : "Submit";
+    var title = EditMode ? "Edit" : "Add a new";
 }
 
-<RadzenText TextStyle="TextStyle.H3">@headText Tenant</RadzenText>
+<RadzenText TextStyle="TextStyle.H3">@title Tenant</RadzenText>
 <hr/>
 
 <RadzenRow>
@@ -20,29 +19,29 @@
                 </RadzenProgressBarCircular>
             }
 
-            <EditForm Model="Tenant" OnValidSubmit="UpdateAsync">
+            <EditForm Model="_tenant" OnValidSubmit="SubmitAsync">
                 <DataAnnotationsValidator/>
                 <ValidationSummary/>
 
                 <RadzenStack Orientation="Orientation.Vertical">
                     <RadzenFormField Text="Tenant Name" Variant="Variant.Outlined">
-                        <RadzenTextBox @bind-Value="Tenant.Name"/>
+                        <RadzenTextBox @bind-Value="_tenant.Name"/>
                     </RadzenFormField>
                     <RadzenFormField Text="Company Name" Variant="Variant.Outlined">
-                        <RadzenTextBox @bind-Value="Tenant.CompanyName"/>
+                        <RadzenTextBox @bind-Value="_tenant.CompanyName"/>
                     </RadzenFormField>
                     <RadzenFieldset Text="Company Address">
-                        <AddressForm @bind-Address="Tenant.CompanyAddress"></AddressForm>
+                        <AddressForm @bind-Address="_tenant.CompanyAddress"></AddressForm>
                     </RadzenFieldset>
                     <RadzenStack Orientation="Orientation.Horizontal">
                         <RadzenButton Icon="save"
-                                      Text="@submitBtnText"
+                                      Text="Save"
                                       Disabled="@IsLoading"
                                       ButtonType="ButtonType.Submit">
                         </RadzenButton>
                         <RadzenButton Icon="arrow_back"
                                       Text="Back"
-                                      Click="BackToTenantsPage">
+                                      Click="@(() => Navigation.NavigateTo("/tenants"))">
                         </RadzenButton>
                     </RadzenStack>
                 </RadzenStack>

@@ -20,11 +20,7 @@ public class DriversController : ControllerBase
     public async Task<IActionResult> GetById(string userId)
     {
         var result = await _mediator.Send(new GetEmployeeByIdQuery {UserId = userId});
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result.Error);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
     
     [HttpPost("{userId}/device-token")]
@@ -35,11 +31,7 @@ public class DriversController : ControllerBase
     {
         request.UserId = userId;
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result.Error);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
     
     [HttpPost("confirm-load-status")]
@@ -49,11 +41,7 @@ public class DriversController : ControllerBase
     public async Task<IActionResult> ConfirmLoadStatus([FromBody] ConfirmLoadStatusCommand request)
     {
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result.Error);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
     
     [HttpPost("update-load-proximity")]
@@ -63,10 +51,6 @@ public class DriversController : ControllerBase
     public async Task<IActionResult> UpdateLoadProximity([FromBody] UpdateLoadProximityCommand request)
     {
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result.Error);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 }

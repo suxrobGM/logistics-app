@@ -20,11 +20,7 @@ public class InvoicesController : ControllerBase
     public async Task<IActionResult> GetById(string id)
     {
         var result = await _mediator.Send(new GetInvoiceByIdQuery {Id = id});
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result.Error);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpGet]
@@ -34,11 +30,7 @@ public class InvoicesController : ControllerBase
     public async Task<IActionResult> GetList([FromQuery] GetInvoicesQuery query)
     {
         var result = await _mediator.Send(query);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpPost]
@@ -48,11 +40,7 @@ public class InvoicesController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateInvoiceCommand request)
     {
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpPut("{id}")]
@@ -63,11 +51,7 @@ public class InvoicesController : ControllerBase
     {
         request.Id = id;
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
     
     [HttpDelete("{id}")]
@@ -77,10 +61,6 @@ public class InvoicesController : ControllerBase
     public async Task<IActionResult> Delete(string id)
     {
         var result = await _mediator.Send(new DeleteInvoiceCommand {Id = id});
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 }

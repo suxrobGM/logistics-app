@@ -28,10 +28,7 @@ public class TenantsController : ControllerBase
             IncludeConnectionString = includeConnectionString
         });
 
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpGet]
@@ -46,11 +43,7 @@ public class TenantsController : ControllerBase
         }
 
         var result = await _mediator.Send(query);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpPost]
@@ -60,11 +53,7 @@ public class TenantsController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateTenantCommand request)
     {
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpPut("{id}")]
@@ -75,11 +64,7 @@ public class TenantsController : ControllerBase
     {
         request.Id = id;
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpDelete("{id}")]
@@ -88,14 +73,7 @@ public class TenantsController : ControllerBase
     [Authorize(Policy = Permissions.Tenants.Delete)]
     public async Task<IActionResult> Delete(string id)
     {
-        var result = await _mediator.Send(new DeleteTenantCommand
-        {
-            Id = id
-        });
-
-        if (result.IsSuccess)
-            return Ok(result);
-
-        return BadRequest(result);
+        var result = await _mediator.Send(new DeleteTenantCommand {Id = id});
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 }

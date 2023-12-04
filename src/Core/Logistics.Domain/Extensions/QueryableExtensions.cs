@@ -18,7 +18,7 @@ public static class QueryableExtensions
 
         if (specification.OrderBy is not null)
         {
-            query = specification.Descending ? 
+            query = specification.IsDescending ? 
                 query.OrderByDescending(specification.OrderBy)
                 : query.OrderBy(specification.OrderBy);
         }

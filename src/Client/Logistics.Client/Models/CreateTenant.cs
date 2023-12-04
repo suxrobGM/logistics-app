@@ -9,5 +9,5 @@ public record CreateTenant
     public string? Name { get; set; }
 
     [StringLength(TenantConsts.DisplayNameLength)]
-    public string? DisplayName { get; set; }
+    public string? CompanyName { get; set; }
 }

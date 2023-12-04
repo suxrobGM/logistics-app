@@ -9,7 +9,7 @@ namespace Logistics.AdminApp.Pages.Tenant;
 [Authorize(Policy = Permissions.Tenants.Edit)]
 public partial class EditTenant : PageBase
 {
-    private TenantDto Tenant { get; set; } = new();
+    private TenantDto _tenant = new();
     
     
     #region Parameters
@@ -37,36 +37,28 @@ public partial class EditTenant : PageBase
         {
             return;
         }
-        
+
+        IsLoading = true;
         var tenant = await CallApiAsync(api => api.GetTenantAsync(Id!));
 
         if (tenant is not null)
         {
-            Tenant = tenant;
+            _tenant = tenant;
         }
+
+        IsLoading = false;
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private async Task SubmitAsync()
     {
-        if (!firstRender)
-        {
-            return;
-        }
-
-        if (!EditMode)
-        {
-            await LoadCurrentTenantAsync();
-        }
-    }
-
-    private async Task UpdateAsync()
-    {
+        IsLoading = true;
+        
         if (EditMode)
         {
             var success = await CallApiAsync(api => api.UpdateTenantAsync(new UpdateTenant
             {
-                Id = Tenant.Id,
-                CompanyName = Tenant.CompanyName
+                Id = _tenant.Id,
+                CompanyName = _tenant.CompanyName
             }));
 
             if (!success)
@@ -78,19 +70,17 @@ public partial class EditTenant : PageBase
         }
         else
         {
-            var success = await CallApiAsync(api => api.CreateTenantAsync(new CreateTenant()
+            var success = await CallApiAsync(api => api.CreateTenantAsync(new CreateTenant
             {
-                Name = Tenant.Name,
-                DisplayName = Tenant.CompanyName
+                Name = _tenant.Name,
+                CompanyName = _tenant.CompanyName
             }));
 
-            if (!success)
+            if (success)
             {
-                return;
+                ShowNotification("A new tenant has been created successfully");
+                ResetData();
             }
-            
-            ShowNotification("A new tenant has been created successfully");
-            ResetData();
         }
 
         IsLoading = false;
@@ -98,32 +88,6 @@ public partial class EditTenant : PageBase
 
     private void ResetData()
     {
-        Tenant.Name = string.Empty;
-        Tenant.CompanyName = string.Empty;
-        Tenant.ConnectionString = string.Empty;
-    }
-
-    private async Task LoadCurrentTenantAsync()
-    {
-        if (string.IsNullOrEmpty(Id))
-        {
-            return;
-        }
-        
-        var tenant = await CallApiAsync(api => api.GetTenantAsync(Id));
-
-        if (tenant is null)
-        {
-            return;
-        }
-        
-        Tenant.Name = tenant.Name;
-        Tenant.CompanyName = tenant.CompanyName;
-        Tenant.ConnectionString = tenant.ConnectionString;
-    }
-
-    private void BackToTenantsPage()
-    {
-        Navigation.NavigateTo("/tenants");
+        _tenant = new TenantDto();
     }
 }

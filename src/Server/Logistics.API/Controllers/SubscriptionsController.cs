@@ -21,13 +21,7 @@ public class SubscriptionsController : ControllerBase
     public async Task<IActionResult> GetSubscriptionById(string id)
     {
         var result = await _mediator.Send(new GetSubscriptionQuery {Id = id});
-
-        if (result.IsSuccess)
-        {
-            return Ok(result);
-        }
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
     
     [HttpGet]
@@ -36,13 +30,7 @@ public class SubscriptionsController : ControllerBase
     public async Task<IActionResult> GetSubscriptions([FromQuery] GetSubscriptionsQuery request)
     {
         var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-        {
-            return Ok(result);
-        }
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpGet("plans/{id}")]
@@ -51,13 +39,7 @@ public class SubscriptionsController : ControllerBase
     public async Task<IActionResult> GetSubscriptionPlanById(string id)
     {
         var result = await _mediator.Send(new GetSubscriptionPlanQuery {Id = id});
-
-        if (result.IsSuccess)
-        {
-            return Ok(result);
-        }
-
-        return BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpGet("plans")]
@@ -66,12 +48,62 @@ public class SubscriptionsController : ControllerBase
     public async Task<IActionResult> GetSubscriptionPlans([FromQuery] GetSubscriptionPlansQuery request)
     {
         var result = await _mediator.Send(request);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
+    }
+    
+    [HttpPost()]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CreateSubscription([FromBody] CreateSubscriptionCommand request)
+    {
+        var result = await _mediator.Send(request);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
+    }
 
-        if (result.IsSuccess)
-        {
-            return Ok(result);
-        }
+    [HttpPut("{id}")]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateSubscription(string id, [FromBody] UpdateSubscriptionCommand request)
+    {
+        request.Id = id;
+        var result = await _mediator.Send(request);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
+    }
 
-        return BadRequest(result);
+    [HttpDelete("{id}")]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> DeleteSubscription(string id)
+    {
+        var result = await _mediator.Send(new DeleteSubscriptionCommand {Id = id});
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
+    }
+    
+    [HttpPost("plans")]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CreateSubscriptionPlan([FromBody] CreateSubscriptionPlanCommand request)
+    {
+        var result = await _mediator.Send(request);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpPut("plans/{id}")]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateSubscriptionPlan(string id, [FromBody] UpdateSubscriptionPlanCommand request)
+    {
+        request.Id = id;
+        var result = await _mediator.Send(request);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpDelete("plans/{id}")]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> DeleteSubscriptionPlan(string id)
+    {
+        var result = await _mediator.Send(new DeleteSubscriptionPlanCommand {Id = id});
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 }
