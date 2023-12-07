@@ -1,11 +1,12 @@
 ﻿@page "/subscriptions/{id}"
+@using Logistics.Shared.Enums
 @inherits PageBase
 
 @{
     var title = EditMode ? "Edit" : "Add a new";
 }
 
-<RadzenText TextStyle="TextStyle.H3">@title subscription plan</RadzenText>
+<RadzenText TextStyle="TextStyle.H3">@title subscription</RadzenText>
 <hr/>
 
 <RadzenRow>
@@ -25,13 +26,13 @@
 
                 <RadzenStack Orientation="Orientation.Vertical">
                     <RadzenFormField Text="Subscription Status" Variant="Variant.Outlined">
-                        <RadzenTextBox @bind-Value="_subscription.Status"/>
+                        <RadzenDropDown @bind-Value="_subscription.Status" Data="@(Enum.GetValues(typeof(SubscriptionStatus)).Cast<Enum>())" />
                     </RadzenFormField>
-                    <RadzenFormField Text="Description" Variant="Variant.Outlined">
-                        <RadzenTextArea @bind-Value="_subscription.Description" Rows="3"/>
+                    <RadzenFormField Text="Subscription Plan" Variant="Variant.Outlined">
+                        <RadzenDropDown @bind-Value="_subscription.Plan" Data="_subscriptionPlans" TextProperty="Name" />
                     </RadzenFormField>
-                    <RadzenFormField Text="Price" Variant="Variant.Outlined">
-                        <RadzenNumeric TValue="decimal" Min="0" @bind-Value="_subscription.Price"/>
+                    <RadzenFormField Text="Tenant" Variant="Variant.Outlined">
+                        <RadzenDropDown @bind-Value="_subscription.Tenant" Data="_tenants" TextProperty="CompanyName" />
                     </RadzenFormField>
                     <RadzenStack Orientation="Orientation.Horizontal">
                         <RadzenButton Icon="save"

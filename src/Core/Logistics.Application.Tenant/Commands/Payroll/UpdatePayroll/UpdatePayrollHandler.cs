@@ -1,4 +1,4 @@
-﻿using Logistics.Shared.Enums;
+﻿using Logistics.Domain.ValueObjects;
 
 namespace Logistics.Application.Tenant.Commands;
 
@@ -45,7 +45,7 @@ internal sealed class UpdatePayrollHandler : RequestHandler<UpdatePayrollCommand
         {
             payroll.Payment.SetStatus(req.PaymentStatus.Value);
             payroll.Payment.Method = req.PaymentMethod;
-            payroll.Payment.BillingAddress = req.PaymentBillingAddress;
+            payroll.Payment.BillingAddress = req.PaymentBillingAddress ?? Address.NullAddress;
         }
         
         _tenantUow.Repository<Payroll>().Update(payroll);

@@ -1,10 +1,10 @@
 ﻿@page "/subscriptions"
 @inherits PageBase
 
-<RadzenText TextStyle="TextStyle.H3">Subscription Plans</RadzenText>
+<RadzenText TextStyle="TextStyle.H3">Subscriptions</RadzenText>
 <hr/>
 
-<RadzenButton class="mb-3" Click="@(() => Navigation.NavigateTo("/tenants/add"))">Add</RadzenButton>
+<RadzenButton class="mb-3" Click="@(() => Navigation.NavigateTo("/subscriptions/add"))">Add</RadzenButton>
 
 <RadzenGrid Data="_subscriptions"
             LoadData="LoadData"
@@ -19,7 +19,7 @@
                           Title="Tenant"
                           SortProperty="TenantName">
             <Template Context="subscription">
-                <RadzenText Text="@subscription.Tenant.Name" />
+                <RadzenText Text="@subscription.Tenant?.Name" />
             </Template>
         </RadzenGridColumn>
         <RadzenGridColumn TItem="SubscriptionDto"
@@ -27,7 +27,7 @@
                           Title="Company"
                           SortProperty="TenantCompanyName">
             <Template Context="subscription">
-                <RadzenText Text="@subscription.Tenant.CompanyName" />
+                <RadzenText Text="@subscription.Tenant?.CompanyName" />
             </Template>
         </RadzenGridColumn>
         <RadzenGridColumn TItem="SubscriptionDto"
@@ -35,7 +35,7 @@
                           Title="Subscription Plan"
                           SortProperty="PlanName">
             <Template Context="subscription">
-                <RadzenText Text="@subscription.Plan.Name" />
+                <RadzenText Text="@subscription.Plan?.Name" />
             </Template>
         </RadzenGridColumn>
         <RadzenGridColumn TItem="SubscriptionDto"

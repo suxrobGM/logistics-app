@@ -50,7 +50,7 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
                 Gross = result.Gross,
                 Distance = result.Distance,
                 DriverShare = result.DriverShare,
-                Drivers = result.Drivers.Select(i => i?.ToDto())!
+                Drivers = result.Drivers.Select(i => i.ToDto())
             });
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
@@ -76,6 +76,6 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
         public required decimal Gross { get; set; }
         public required double Distance { get; set; }
         public required decimal DriverShare { get; set; }
-        public IEnumerable<Employee?> Drivers { get; set; }
+        public IEnumerable<Employee> Drivers { get; set; } = Array.Empty<Employee>();
     }
 }

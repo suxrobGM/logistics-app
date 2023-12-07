@@ -1,4 +1,6 @@
 ﻿using Logistics.Client.Models;
+using Logistics.Shared;
+using Logistics.Shared.Enums;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Components;
 
@@ -7,8 +9,8 @@ namespace Logistics.AdminApp.Pages.Subscription;
 public partial class EditSubscription
 {
     private SubscriptionDto _subscription = new();
-    private SubscriptionPlanDto? _selectedSubscriptionPlan;
-    private TenantDto? _selectedTenant;
+    private IEnumerable<SubscriptionPlanDto>? _subscriptionPlans;
+    private IEnumerable<TenantDto>? _tenants;
     
     
     #region Parameters
@@ -32,22 +34,38 @@ public partial class EditSubscription
 
     protected override async Task OnInitializedAsync()
     {
-        if (!EditMode)
+        IsLoading = true;
+        
+        if (EditMode)
         {
-            return;
+            await FetchSubscriptionAsync();
         }
         
-        IsLoading = true;
+        await FetchSubscriptionPlansAsync();
+        await FetchTenantsAsync();
+        IsLoading = false;
+    }
+
+    private async Task FetchSubscriptionAsync()
+    {
         var subscription = await CallApiAsync(api => api.GetSubscriptionAsync(Id!));
 
         if (subscription is not null)
         {
             _subscription = subscription;
-            _selectedSubscriptionPlan = subscription.Plan;
-            _selectedTenant = subscription.Tenant;
         }
+    }
 
-        IsLoading = false;
+    private async Task FetchSubscriptionPlansAsync()
+    {
+        var pagedData = await CallApiAsync(api => api.GetSubscriptionPlansAsync(new PagedQuery { PageSize = 100 }));
+        _subscriptionPlans = pagedData?.Items;
+    }
+    
+    private async Task FetchTenantsAsync()
+    {
+        var pagedData = await CallApiAsync(api => api.GetTenantsAsync(new SearchableQuery { PageSize = 100 }));
+        _tenants = pagedData?.Items;
     }
 
     private async Task SubmitAsync()
@@ -59,8 +77,8 @@ public partial class EditSubscription
             var success = await CallApiAsync(api => api.UpdateSubscriptionAsync(new UpdateSubscription
             {
                 Id = _subscription.Id,
-                PlanId = _selectedSubscriptionPlan?.Id,
-                TenantId = _selectedTenant?.Id
+                PlanId = _subscription.Plan?.Id,
+                TenantId = _subscription.Tenant?.Id
             }));
 
             if (success)
@@ -73,8 +91,8 @@ public partial class EditSubscription
             var success = await CallApiAsync(api => api.CreateSubscriptionAsync(new CreateSubscription
             {
                 Status = _subscription.Status,
-                PlanId = _selectedSubscriptionPlan?.Id,
-                TenantId = _selectedTenant?.Id
+                PlanId = _subscription.Plan?.Id,
+                TenantId = _subscription.Tenant?.Id
             }));
 
             if (success)

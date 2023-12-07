@@ -1,3 +1,3 @@
 ﻿namespace Logistics.Shared;
 
-public record EnumType(string Value, string DisplayName);
+public record EnumType<T>(T Value, string DisplayName);

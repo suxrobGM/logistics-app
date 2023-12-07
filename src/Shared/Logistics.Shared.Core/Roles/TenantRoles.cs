@@ -7,11 +7,11 @@ public static class TenantRoles
     public const string Dispatcher = "tenant.dispatcher";
     public const string Driver = "tenant.driver";
 
-    public static IEnumerable<EnumType> GetValues()
+    public static IEnumerable<EnumType<string>> GetValues()
     {
-        yield return new EnumType(Owner, "Owner");
-        yield return new EnumType(Manager, "Manager");
-        yield return new EnumType(Dispatcher, "Dispatcher");
-        yield return new EnumType(Driver, "Driver");
+        yield return new EnumType<string>(Owner, "Owner");
+        yield return new EnumType<string>(Manager, "Manager");
+        yield return new EnumType<string>(Dispatcher, "Dispatcher");
+        yield return new EnumType<string>(Driver, "Driver");
     }
 }
