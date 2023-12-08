@@ -2,11 +2,20 @@
 
 public static class EnumerableExtensions
 {
-    public static IEnumerable<TSource> Sort<TSource>(
+    public static IOrderedEnumerable<TSource> OrderBy<TSource, TKey>(
         this IEnumerable<TSource> query,
-        Func<TSource, object> keySelector, 
-        bool descending)
+        Func<TSource, TKey> keySelector,
+        bool isDescendingOrder)
     {
-        return descending ? query.OrderByDescending(keySelector) : query.OrderBy(keySelector);
+        return isDescendingOrder ? query.OrderByDescending(keySelector) : query.OrderBy(keySelector);
+    }
+        
+    public static IEnumerable<TSource> ApplyPaging<TSource>(
+        this IEnumerable<TSource> query,
+        int page,
+        int pageSize)
+    {
+        return query.Skip((page - 1) * pageSize)
+            .Take(pageSize);
     }
 }

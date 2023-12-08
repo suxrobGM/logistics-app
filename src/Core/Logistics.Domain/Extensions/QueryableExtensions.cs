@@ -1,4 +1,5 @@
-﻿using Logistics.Domain.Core;
+﻿using System.Linq.Expressions;
+using Logistics.Domain.Core;
 using Logistics.Domain.Specifications;
 
 namespace Logistics.Domain.Persistence;
@@ -30,5 +31,22 @@ public static class QueryableExtensions
         }
 
         return query;
+    }
+    
+    public static IQueryable<TSource> OrderBy<TSource, TKey>(
+        this IQueryable<TSource> query,
+        Expression<Func<TSource, TKey>> keySelector,
+        bool isDescendingOrder)
+    {
+        return isDescendingOrder ? query.OrderByDescending(keySelector) : query.OrderBy(keySelector);
+    }
+        
+    public static IQueryable<TSource> ApplyPaging<TSource>(
+        this IQueryable<TSource> query,
+        int page,
+        int pageSize)
+    {
+        return query.Skip((page - 1) * pageSize)
+            .Take(pageSize);
     }
 }
