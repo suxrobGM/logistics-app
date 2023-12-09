@@ -34,14 +34,14 @@ internal sealed class GetLoadsHandler : RequestHandler<GetLoadsQuery, PagedRespo
         {
             baseQuery = baseQuery.Where(i => i.AssignedTruckId == req.TruckId);
         }
-        if (req.StartDate.HasValue && req.EndDate.HasValue)
+        if (req is { StartDate: not null, EndDate: not null })
         {
             baseQuery = baseQuery.Where(i => i.DispatchedDate >= req.StartDate && 
                                              i.DispatchedDate <= req.EndDate);
         }
         if (!req.LoadAllPages)
         {
-            baseQuery = baseQuery.Skip((req.Page - 1) * req.PageSize).Take(req.PageSize);
+            baseQuery = baseQuery.ApplyPaging(req.Page, req.PageSize);
         }
         
         var loads = baseQuery.Select(i => i.ToDto()).ToArray();
