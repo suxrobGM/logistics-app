@@ -16,8 +16,16 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
     protected override async Task<PagedResponseResult<TruckStatsDto>> HandleValidated(
         GetTrucksStatsListQuery req, CancellationToken cancellationToken)
     {
+        var orderBy = req.OrderBy;
+        var isDescendingOrder = false;
+        
+        if (req.OrderBy.StartsWith('-'))
+        {
+            orderBy = req.OrderBy[1..];
+            isDescendingOrder = true;
+        }
+        
         var totalItems = await _tenantUow.Repository<Truck>().CountAsync();
-
         var truckStatsQuery = _tenantUow.Repository<Load>()
             .ApplySpecification(new FilterLoadsByDeliveryDate(null, req.StartDate, req.EndDate))
             .GroupBy(load => load.AssignedTruckId!)
@@ -31,14 +39,10 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
                 Drivers = group.First().AssignedTruck!.Drivers,
             });
 
-        var isDescendingOrder = req.OrderBy.StartsWith('-');
-        truckStatsQuery = isDescendingOrder
-            ? truckStatsQuery.OrderByDescending(InitOrderBy(req.OrderBy))
-            : truckStatsQuery.OrderBy(InitOrderBy(req.OrderBy));
-
+        
         truckStatsQuery = truckStatsQuery
-            .Skip((req.Page - 1) * req.PageSize)
-            .Take(req.PageSize);
+            .OrderBy(InitOrderBy(orderBy), isDescendingOrder)
+            .ApplyPaging(req.Page, req.PageSize);
 
         var truckStatsDto = truckStatsQuery.ToArray()
             .Select(result => new TruckStatsDto
@@ -52,9 +56,8 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
                 DriverShare = result.DriverShare,
                 Drivers = result.Drivers.Select(i => i.ToDto())
             });
-
-        var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return PagedResponseResult<TruckStatsDto>.Create(truckStatsDto, totalItems, totalPages);
+        
+        return PagedResponseResult<TruckStatsDto>.Create(truckStatsDto, totalItems, req.PageSize);
     }
     
     private static Expression<Func<TruckStats, object>> InitOrderBy(string? propertyName)

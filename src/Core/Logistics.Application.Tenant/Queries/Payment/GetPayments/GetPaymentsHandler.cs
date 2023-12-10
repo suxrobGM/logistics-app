@@ -24,7 +24,6 @@ internal sealed class GetPaymentsHandler : RequestHandler<GetPaymentsQuery, Page
             .Select(i => i.ToDto())
             .ToArray();
         
-        var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return PagedResponseResult<PaymentDto>.Create(payments, totalItems, totalPages);
+        return PagedResponseResult<PaymentDto>.Create(payments, totalItems, req.PageSize);
     }
 }

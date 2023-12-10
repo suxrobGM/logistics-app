@@ -25,7 +25,6 @@ internal sealed class GetTenantRolesHandler : RequestHandler<GetTenantRolesQuery
             })
             .ToArray();
         
-        var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return PagedResponseResult<TenantRoleDto>.Create(rolesDto, totalItems, totalPages);
+        return PagedResponseResult<TenantRoleDto>.Create(rolesDto, totalItems, req.PageSize);
     }
 }

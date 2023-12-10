@@ -30,7 +30,6 @@ internal sealed class GetAppRolesHandler : RequestHandler<GetAppRolesQuery, Page
             })
             .ToArray();
         
-        var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return PagedResponseResult<AppRoleDto>.Create(rolesDto, totalItems, totalPages);
+        return PagedResponseResult<AppRoleDto>.Create(rolesDto, totalItems, req.PageSize);
     }
 }

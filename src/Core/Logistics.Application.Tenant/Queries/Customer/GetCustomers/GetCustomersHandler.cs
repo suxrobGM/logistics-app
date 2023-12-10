@@ -24,7 +24,6 @@ internal sealed class GetCustomersHandler : RequestHandler<GetCustomersQuery, Pa
             .Select(i => i.ToDto())
             .ToArray();
         
-        var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return PagedResponseResult<CustomerDto>.Create(customers, totalItems, totalPages);
+        return PagedResponseResult<CustomerDto>.Create(customers, totalItems, req.PageSize);
     }
 }

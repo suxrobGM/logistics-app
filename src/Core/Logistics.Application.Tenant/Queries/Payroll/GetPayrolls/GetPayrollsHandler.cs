@@ -36,7 +36,6 @@ internal sealed class GetPayrollsHandler
             .Select(i => i.ToDto())
             .ToArray();
         
-        var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return PagedResponseResult<PayrollDto>.Create(payrolls, totalItems, totalPages);
+        return PagedResponseResult<PayrollDto>.Create(payrolls, totalItems, req.PageSize);
     }
 }

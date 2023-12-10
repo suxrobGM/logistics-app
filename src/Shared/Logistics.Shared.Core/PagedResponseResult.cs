@@ -6,11 +6,11 @@ public class PagedResponseResult<T> : ResponseResult<IEnumerable<T>>
     {
     }
 
-    public PagedResponseResult(IEnumerable<T>? data, int totalItems, int totalPages)
+    public PagedResponseResult(IEnumerable<T>? data, int totalItems, int pageSize)
     {
         Data = data;
         TotalItems = totalItems;
-        TotalPages = totalPages;
+        TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
     }
     
     public int TotalItems { get; set; }
@@ -19,5 +19,6 @@ public class PagedResponseResult<T> : ResponseResult<IEnumerable<T>>
     public static PagedResponseResult<T> Create(IEnumerable<T>? items, int totalItems, int totalPages) =>
         new(items, totalItems, totalPages);
 
-    public new static PagedResponseResult<T> CreateError(string error) => new(null, 0, 0) { Error = error };
+    public new static PagedResponseResult<T> CreateError(string error) => 
+        new(null, 0, 0) { Error = error };
 }

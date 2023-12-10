@@ -45,7 +45,6 @@ internal sealed class GetLoadsHandler : RequestHandler<GetLoadsQuery, PagedRespo
         }
         
         var loads = baseQuery.Select(i => i.ToDto()).ToArray();
-        var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return PagedResponseResult<LoadDto>.Create(loads, totalItems, totalPages);
+        return PagedResponseResult<LoadDto>.Create(loads, totalItems, req.PageSize);
     }
 }

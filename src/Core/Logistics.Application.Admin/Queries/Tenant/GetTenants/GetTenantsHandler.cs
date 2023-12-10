@@ -17,7 +17,8 @@ internal sealed class GetTenantsHandler : RequestHandler<GetTenantsQuery, PagedR
         _masterUow = masterUow;
     }
 
-    protected override async Task<PagedResponseResult<TenantDto>> HandleValidated(GetTenantsQuery req, CancellationToken cancellationToken)
+    protected override async Task<PagedResponseResult<TenantDto>> HandleValidated(
+        GetTenantsQuery req, CancellationToken cancellationToken)
     {
         var totalItems = await _masterUow.Repository<Tenant>().CountAsync();
         var spec = new SearchTenants(req.Search, req.OrderBy, req.Page, req.PageSize);
@@ -26,8 +27,7 @@ internal sealed class GetTenantsHandler : RequestHandler<GetTenantsQuery, PagedR
             .ApplySpecification(spec)
             .Select(i => i.ToDto(req.IncludeConnectionStrings))
             .ToArray();
-
-        var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return PagedResponseResult<TenantDto>.Create(items, totalItems, totalPages);
+        
+        return PagedResponseResult<TenantDto>.Create(items, totalItems, req.PageSize);
     }
 }

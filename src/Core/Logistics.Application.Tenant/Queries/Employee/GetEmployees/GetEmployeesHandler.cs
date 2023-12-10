@@ -36,7 +36,6 @@ internal sealed class GetEmployeesHandler : RequestHandler<GetEmployeesQuery, Pa
             .Select(employeeEntity => employeeEntity.ToDto())
             .ToArray();
         
-        var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return PagedResponseResult<EmployeeDto>.Create(employeeDto, totalItems, totalPages);
+        return PagedResponseResult<EmployeeDto>.Create(employeeDto, totalItems, req.PageSize);
     }
 }

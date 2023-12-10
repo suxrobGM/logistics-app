@@ -27,8 +27,7 @@ internal sealed class GetSubscriptionsHandler : RequestHandler<GetSubscriptionsQ
             .ApplySpecification(spec)
             .Select(i => i.ToDto())
             .ToArray();
-
-        var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return PagedResponseResult<SubscriptionDto>.Create(items, totalItems, totalPages);
+        
+        return PagedResponseResult<SubscriptionDto>.Create(items, totalItems, req.PageSize);
     }
 }

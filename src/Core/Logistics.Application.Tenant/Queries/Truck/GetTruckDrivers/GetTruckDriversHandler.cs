@@ -43,8 +43,7 @@ internal sealed class GetTruckDriversHandler : RequestHandler<GetTruckDriversQue
                 Drivers = g.Where(td => td.TeamDriver != null)
                     .Select(td => td.TeamDriver.ToDto())
             });
-
-        var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return new PagedResponseResult<TruckDriversDto>(truckDriversDto, totalItems, totalPages);
+        
+        return PagedResponseResult<TruckDriversDto>.Create(truckDriversDto, totalItems, req.PageSize);
     }
 }

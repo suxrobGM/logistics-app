@@ -24,7 +24,6 @@ internal sealed class GetInvoicesHandler : RequestHandler<GetInvoicesQuery, Page
             .Select(i => i.ToDto())
             .ToArray();
         
-        var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return PagedResponseResult<InvoiceDto>.Create(invoicesDto, totalItems, totalPages);
+        return PagedResponseResult<InvoiceDto>.Create(invoicesDto, totalItems, req.PageSize);
     }
 }

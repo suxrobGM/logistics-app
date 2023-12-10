@@ -27,8 +27,7 @@ internal sealed class GetUsersHandler : RequestHandler<GetUsersQuery, PagedRespo
             .ApplySpecification(new SearchUsers(req.Search, req.OrderBy, req.Page, req.PageSize))
             .Select(i => i.ToDto(null))
             .ToArray();
-
-        var totalPages = (int)Math.Ceiling(totalItems / (double)req.PageSize);
-        return PagedResponseResult<UserDto>.Create(users, totalItems, totalPages);
+        
+        return PagedResponseResult<UserDto>.Create(users, totalItems, req.PageSize);
     }
 }
