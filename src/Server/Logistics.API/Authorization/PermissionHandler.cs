@@ -1,4 +1,5 @@
 ﻿using Logistics.Shared.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Logistics.API.Authorization;
 

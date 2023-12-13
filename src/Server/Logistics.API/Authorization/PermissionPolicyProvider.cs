@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Logistics.Shared.Policies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
 
 namespace Logistics.API.Authorization;
 

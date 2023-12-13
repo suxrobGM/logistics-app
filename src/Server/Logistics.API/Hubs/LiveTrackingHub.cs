@@ -1,4 +1,6 @@
-﻿using Logistics.Shared.Models;
+﻿using Logistics.Application.Tenant.Commands;
+using Logistics.Shared.Models;
+using MediatR;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Logistics.API.Hubs;

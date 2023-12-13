@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()

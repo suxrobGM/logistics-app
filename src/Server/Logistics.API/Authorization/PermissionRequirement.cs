@@ -1,4 +1,6 @@
-﻿namespace Logistics.API.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace Logistics.API.Authorization;
 
 internal class PermissionRequirement : IAuthorizationRequirement
 {
