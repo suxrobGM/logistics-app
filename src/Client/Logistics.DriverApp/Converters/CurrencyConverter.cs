@@ -4,8 +4,10 @@ namespace Logistics.DriverApp.Converters;
 
 public class CurrencyConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
+        ArgumentNullException.ThrowIfNull(value);
+
         return value switch
         {
             decimal decimalValue => string.Format(culture, "{0:C}", decimalValue),
@@ -15,7 +17,7 @@ public class CurrencyConverter : IValueConverter
         };
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }
