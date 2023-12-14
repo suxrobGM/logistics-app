@@ -39,11 +39,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Shared.Core", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Shared.Models", "src\Shared\Logistics.Shared.Models\Logistics.Shared.Models.csproj", "{01EAEDA9-AD0A-457E-AACC-33F4B4EC27CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.Shared.Enums", "src\Shared\Logistics.Shared.Enums\Logistics.Shared.Enums.csproj", "{EF45EFF1-E88C-4EB7-9505-C1A26377E118}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Shared.Enums", "src\Shared\Logistics.Shared.Enums\Logistics.Shared.Enums.csproj", "{EF45EFF1-E88C-4EB7-9505-C1A26377E118}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.Mappings", "src\Core\Logistics.Mappings\Logistics.Mappings.csproj", "{999E7EC8-AE07-4FD9-8BF2-A1B92C7122F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Mappings", "src\Core\Logistics.Mappings\Logistics.Mappings.csproj", "{999E7EC8-AE07-4FD9-8BF2-A1B92C7122F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.AdminApp", "src\Client\Logistics.AdminApp\Logistics.AdminApp.csproj", "{81DAEA98-B520-4F4A-9FDF-FA378A7D6579}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.AdminApp", "src\Client\Logistics.AdminApp\Logistics.AdminApp.csproj", "{81DAEA98-B520-4F4A-9FDF-FA378A7D6579}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
