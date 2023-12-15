@@ -178,7 +178,7 @@ export class EditLoadComponent implements OnInit {
     this.isLoading = true;
 
     this.apiService.getLoad(this.id).subscribe((result) => {
-      if (result.isError || !result.data) {
+      if (!result.isSuccess || !result.data) {
         return;
       }
 

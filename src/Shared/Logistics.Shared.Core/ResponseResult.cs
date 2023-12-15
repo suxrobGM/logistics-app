@@ -7,7 +7,6 @@ public class ResponseResult : IResponseResult
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? Error { get; init; }
     public bool IsSuccess => string.IsNullOrEmpty(Error);
-    public bool IsError => !IsSuccess;
 
     public static ResponseResult CreateSuccess() => new();
     public static ResponseResult CreateError(string error) => new() { Error = error };

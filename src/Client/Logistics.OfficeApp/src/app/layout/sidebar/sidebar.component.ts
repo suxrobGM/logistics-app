@@ -97,7 +97,7 @@ export class SidebarComponent implements OnInit {
 
   private fetchTenantData() {
     this.apiService.getTenant().subscribe((result) => {
-      if (result.isError || !result.data) {
+      if (!result.isSuccess || !result.data) {
         return;
       }
 
