@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 
-namespace Logistics.AdminApp.Pages;
+namespace Logistics.AdminApp.Components.Pages;
 
 public partial class Home
 {

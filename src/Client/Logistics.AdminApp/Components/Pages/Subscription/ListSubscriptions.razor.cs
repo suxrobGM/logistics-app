@@ -1,30 +1,32 @@
 ﻿using Logistics.AdminApp.Extensions;
-using Logistics.Shared.Models;
 using Logistics.Shared;
+using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Components;
 using Radzen;
 
-namespace Logistics.AdminApp.Pages.Tenant;
+namespace Logistics.AdminApp.Components.Pages.Subscription;
 
-public partial class ListTenants : PageBase
+public partial class ListSubscriptions : PageBase
 {
-    private IEnumerable<TenantDto>? _tenants;
+    private IEnumerable<SubscriptionDto>? _subscriptions;
     private int _totalRecords = 10;
+    
     
     #region Injectable services
 
-    [Inject] 
+    [Inject]
     private NavigationManager Navigation { get; set; } = default!;
 
     #endregion
-
-    private async void LoadTenants(LoadDataArgs e)
+    
+    
+    private async void LoadData(LoadDataArgs e)
     {
         var orderBy = e.GetOrderBy();
         var page = e.GetPageNumber();
         var pageSize = e.GetPageSize();
-        var pagedData = await CallApiAsync(api => api.GetTenantsAsync(new SearchableQuery(null, orderBy, page, pageSize)));
-        _tenants = pagedData?.Items;
+        var pagedData = await CallApiAsync(api => api.GetSubscriptionsAsync(new PagedQuery(orderBy, page, pageSize)));
+        _subscriptions = pagedData?.Items;
         _totalRecords = pagedData?.TotalItems ?? 0;
         StateHasChanged();
     }

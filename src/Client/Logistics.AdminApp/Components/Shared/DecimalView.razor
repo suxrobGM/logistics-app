@@ -1,0 +1,29 @@
+﻿@typeparam TNumber
+
+<span>@FormattedNumber</span>
+
+@code {
+    [Parameter] 
+    public TNumber? Value { get; set; }
+    
+    [Parameter] 
+    public int DecimalPlaces { get; set; } = 2;
+
+    private string? FormattedNumber => FormatNumber(Value, DecimalPlaces);
+
+    private static string? FormatNumber(TNumber? number, int decimalPlaces)
+    {
+        if (number is null)
+        {
+            return string.Empty;
+        }
+
+        return number switch
+        {
+            decimal d => d.ToString($"F{decimalPlaces}"),
+            double d => d.ToString($"F{decimalPlaces}"),
+            float f => f.ToString($"F{decimalPlaces}"),
+            _ => number.ToString()
+        };
+    }
+}

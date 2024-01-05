@@ -1,0 +1,10 @@
+﻿<AuthorizeView>
+    <Authorized>
+        @ChildContent
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

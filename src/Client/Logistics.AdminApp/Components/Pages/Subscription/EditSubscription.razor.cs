@@ -4,7 +4,7 @@ using Logistics.Shared.Enums;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Components;
 
-namespace Logistics.AdminApp.Pages.Subscription;
+namespace Logistics.AdminApp.Components.Pages.Subscription;
 
 public partial class EditSubscription
 {

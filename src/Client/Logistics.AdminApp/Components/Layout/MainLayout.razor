@@ -1,0 +1,52 @@
+@inherits LayoutComponentBase
+
+<PageTitle>Logistics Admin</PageTitle>
+<RadzenNotification />
+<RadzenTooltip />
+
+<RadzenLayout>
+    <RadzenHeader>
+        <RadzenRow class="h-100">
+            <RadzenColumn class="d-flex" Size="3">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+                    <AuthorizedView>
+                        <RadzenSidebarToggle Click="@ToggleSidebar"/>
+                    </AuthorizedView>
+                    <RadzenText class="text-light ms-2" Text="Logistics Admin" TextStyle="TextStyle.H5" />
+                </RadzenStack>
+            </RadzenColumn>
+            <RadzenColumn Size="9" class="d-flex justify-content-end pe-3">
+                <LoginDisplay />
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenHeader>
+
+    <AuthorizedView>
+        <RadzenSidebar @bind-Expanded="@_sidebarExpanded">
+            <RadzenPanelMenu>
+                <RadzenPanelMenuItem Text="Home" Icon="home" Path="/"/>
+                <RadzenPanelMenuItem Text="Tenants" Icon="business" Path="/tenants"/>
+                <RadzenPanelMenuItem Text="Subscriptions" Icon="subscriptions">
+                    <RadzenPanelMenuItem Text="Plans" Icon="cases" Path="/subscription-plans"/>
+                    <RadzenPanelMenuItem Text="Subscription customers" Icon="account_balance" Path="/subscriptions"/>
+                </RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Users" Icon="group" Path="/users"/>
+            </RadzenPanelMenu>
+        </RadzenSidebar>
+    </AuthorizedView>
+
+    <RadzenBody>
+        <div class="rz-p-4">
+            @Body
+        </div>
+    </RadzenBody>
+</RadzenLayout>
+
+@code {
+    private bool _sidebarExpanded = true;
+    
+    private void ToggleSidebar()
+    {
+        _sidebarExpanded = !_sidebarExpanded;
+    }
+}

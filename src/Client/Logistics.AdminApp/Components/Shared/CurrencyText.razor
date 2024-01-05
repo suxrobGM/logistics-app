@@ -1,10 +1,7 @@
-﻿using System.Globalization;
-using Microsoft.AspNetCore.Components;
+﻿@using System.Globalization
+<div>@FormattedValue</div>
 
-namespace Logistics.AdminApp.Shared;
-
-public partial class CurrencyText
-{
+@code {
     private string FormattedValue => FormatValueAsCurrency(Value);
     
     [Parameter] 

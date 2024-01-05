@@ -1,7 +1,7 @@
 ﻿using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Components;
 
-namespace Logistics.AdminApp.Shared;
+namespace Logistics.AdminApp.Components.Shared;
 
 public partial class AddressForm
 {

@@ -4,13 +4,12 @@ using Logistics.Shared;
 using Microsoft.AspNetCore.Components;
 using Radzen;
 
-namespace Logistics.AdminApp.Pages.User;
+namespace Logistics.AdminApp.Components.Pages.Tenant;
 
-public partial class ListUsers : PageBase
+public partial class ListTenants : PageBase
 {
-    private IEnumerable<UserDto>? _users;
+    private IEnumerable<TenantDto>? _tenants;
     private int _totalRecords = 10;
-    
     
     #region Injectable services
 
@@ -19,14 +18,13 @@ public partial class ListUsers : PageBase
 
     #endregion
 
-    
-    private async void LoadData(LoadDataArgs e)
+    private async void LoadTenants(LoadDataArgs e)
     {
         var orderBy = e.GetOrderBy();
         var page = e.GetPageNumber();
         var pageSize = e.GetPageSize();
-        var pagedData = await CallApiAsync(api => api.GetUsersAsync(new SearchableQuery(null, orderBy, page, pageSize)));
-        _users = pagedData?.Items;
+        var pagedData = await CallApiAsync(api => api.GetTenantsAsync(new SearchableQuery(null, orderBy, page, pageSize)));
+        _tenants = pagedData?.Items;
         _totalRecords = pagedData?.TotalItems ?? 0;
         StateHasChanged();
     }

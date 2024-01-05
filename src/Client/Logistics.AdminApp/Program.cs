@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Logistics.AdminApp;
+using Logistics.AdminApp.Components;
 using Logistics.AdminApp.Authorization;
 using Logistics.Client;
 using Microsoft.AspNetCore.Authorization;

@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 
-namespace Logistics.AdminApp.Pages.Tenant;
+namespace Logistics.AdminApp.Components.Pages.Tenant;
 
 [Authorize(Policy = Permissions.Tenants.Edit)]
 public partial class EditTenant : PageBase

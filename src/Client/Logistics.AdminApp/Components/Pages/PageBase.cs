@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Radzen;
 
-namespace Logistics.AdminApp.Pages;
+namespace Logistics.AdminApp.Components.Pages;
 
 public abstract class PageBase : ComponentBase
 {
