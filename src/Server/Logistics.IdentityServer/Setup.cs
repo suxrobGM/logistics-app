@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Identity;
 using Duende.IdentityServer;
 using Serilog;
 using Logistics.Application.Core;
+using Logistics.Domain.Entities;
+using Logistics.IdentityServer.Extensions;
 using Logistics.Infrastructure.EF;
 using Logistics.IdentityServer.Services;
 
-namespace Logistics.IdentityServer.Extensions;
+namespace Logistics.IdentityServer;
 
-internal static class ApplicationExtensions
+internal static class Setup
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {

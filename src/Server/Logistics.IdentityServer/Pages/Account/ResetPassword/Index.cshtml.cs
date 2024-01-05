@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Xml.Linq;
+using Logistics.Domain.Entities;
 
 namespace Logistics.IdentityServer.Pages.Account.ResetPassword;
 

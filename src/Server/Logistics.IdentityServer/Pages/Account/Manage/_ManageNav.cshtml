@@ -1,4 +1,6 @@
 ﻿@using Logistics.IdentityServer.Pages.Account.Manage
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Logistics.Domain.Entities
 @inject SignInManager<User> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();

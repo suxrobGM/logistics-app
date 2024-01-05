@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Security.Claims;
+using Logistics.Domain.Entities;
 using ClaimTypes = System.Security.Claims.ClaimTypes;
 
 namespace Logistics.IdentityServer.Pages.ExternalLogin;

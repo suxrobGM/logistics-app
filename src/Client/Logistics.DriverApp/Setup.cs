@@ -1,4 +1,5 @@
 ﻿using IdentityModel.OidcClient;
+using Logistics.DriverApp.Extensions;
 using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.Authentication;
 using Logistics.DriverApp.Services.LocationTracking;
@@ -11,9 +12,9 @@ using Logistics.DriverApp.Platforms.Android.Services;
 using Logistics.DriverApp.Platforms.iOS.Services;
 #endif
 
-namespace Logistics.DriverApp.Extensions;
+namespace Logistics.DriverApp;
 
-public static class ApplicationExtensions
+public static class Setup
 {
     public static MauiAppBuilder ConfigureServices(this MauiAppBuilder builder)
     {

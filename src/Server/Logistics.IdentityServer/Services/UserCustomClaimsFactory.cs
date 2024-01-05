@@ -1,8 +1,10 @@
 ﻿#nullable enable
 using System.Security.Claims;
+using Logistics.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Logistics.Domain.Persistence;
+using Logistics.IdentityServer.Extensions;
 using CustomClaimTypes = Logistics.Shared.Claims.CustomClaimTypes;
 
 namespace Logistics.IdentityServer.Services;

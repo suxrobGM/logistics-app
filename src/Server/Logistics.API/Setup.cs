@@ -19,7 +19,7 @@ using Serilog;
 
 namespace Logistics.API.Extensions;
 
-internal static class ApplicationExtensions
+internal static class Setup
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {

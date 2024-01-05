@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using Logistics.IdentityServer;
+using Serilog;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()

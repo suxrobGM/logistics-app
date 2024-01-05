@@ -1,3 +1,4 @@
+using Logistics.Domain.Entities;
 using Logistics.Domain.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
