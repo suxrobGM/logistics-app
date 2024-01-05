@@ -1,5 +1,4 @@
 @page "/tenants"
-@using Logistics.AdminApp.Extensions
 @inherits PageBase
 
 <RadzenText TextStyle="TextStyle.H3">Tenants</RadzenText>
@@ -43,7 +42,7 @@
                           Title="Subscription Plan"
                           SortProperty="SubscriptionPlan">
             <Template Context="tenant">
-                @tenant.Subscription?.Plan.Name
+                @tenant.Subscription?.Plan?.Name
             </Template>
         </RadzenGridColumn>
         <RadzenGridColumn TItem="TenantDto" Title="Action" Sortable="false">

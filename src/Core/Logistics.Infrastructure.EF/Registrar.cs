@@ -66,13 +66,17 @@ public static class Registrar
             services.AddScoped<ITenantDatabaseService, TenantDatabaseService>();
             services.AddSingleton(tenantsSettings);
         }
-        
-        var options = new TenantDbContextOptions
+
+        if (string.IsNullOrEmpty(connectionString))
         {
-            ConnectionString = connectionString
-        };
+            var options = new TenantDbContextOptions
+            {
+                ConnectionString = connectionString
+            };
         
-        services.AddSingleton(options);
+            services.AddSingleton(options);
+        }
+       
         services.AddDbContext<TenantDbContext>();
     }
     

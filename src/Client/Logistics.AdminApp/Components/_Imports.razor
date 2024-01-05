@@ -1,4 +1,4 @@
-@attribute [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
+@* @attribute [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")] *@
 
 @using System.Net.Http
 @using System.Net.Http.Json
@@ -14,8 +14,10 @@
 @using Logistics.AdminApp.Components
 @using Logistics.AdminApp.Components.Layout
 @using Logistics.AdminApp.Components.Shared
+@using Logistics.AdminApp.Extensions
 @using Logistics.Shared.Models
 @using Logistics.Shared.Roles
+@using Logistics.Shared.Enums
 
 @using Radzen
 @using Radzen.Blazor

@@ -39,7 +39,6 @@ internal static class Setup
         
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
         services.AddSingleton<LiveTrackingHubContext>();
-        services.AddScoped<ExceptionHandlingMiddleware>();
         services.AddScoped<IAuthorizationHandler, PermissionHandler>();
         services.AddScoped<INotificationService, NotificationService>();
         
