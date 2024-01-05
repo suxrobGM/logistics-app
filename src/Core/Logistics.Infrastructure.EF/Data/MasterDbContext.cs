@@ -37,14 +37,6 @@ public class MasterDbContext : IdentityDbContext<User, AppRole, string>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        
-        builder.Entity<AppRole>().ToTable("Roles");
-        builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
-        builder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
-        builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
-        builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
-        builder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
-        builder.Entity<User>().ToTable("Users");
         builder.Entity<Tenant>().ToTable("Tenants");
         
         builder.Entity<SubscriptionPayment>(entity =>
