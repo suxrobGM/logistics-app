@@ -9,14 +9,14 @@ namespace Logistics.Infrastructure.EF.Services;
 
 internal class TenantService : ITenantService
 {
-    private readonly TenantDbContextOptions _dbContextOptions;
+    private readonly TenantDbContextOptions? _dbContextOptions;
     private readonly MasterDbContext _masterDbContext;
     private readonly HttpContext? _httpContext;
     private Tenant? _currentTenant;
 
     public TenantService(
-        TenantDbContextOptions dbContextContextOptions,
         MasterDbContext masterDbContext, 
+        TenantDbContextOptions? dbContextContextOptions = null,
         IHttpContextAccessor? contextAccessor = null)
     {
         _dbContextOptions = dbContextContextOptions;
@@ -36,7 +36,7 @@ internal class TenantService : ITenantService
             var defaultTenant = new Tenant
             {
                 Name = "default",
-                ConnectionString = _dbContextOptions.ConnectionString,
+                ConnectionString = _dbContextOptions?.ConnectionString ?? ConnectionStrings.LocalDefaultTenant,
             };
 
             _currentTenant = defaultTenant;

@@ -13,12 +13,12 @@ public class TenantDbContext : DbContext
     private readonly string _connectionString;
 
     public TenantDbContext(
-        TenantDbContextOptions tenantDbContextOptions, 
-        ITenantService? tenantService,
-        DispatchDomainEventsInterceptor? dispatchDomainEventsInterceptor)
+        TenantDbContextOptions? tenantDbContextOptions = null, 
+        ITenantService? tenantService = null,
+        DispatchDomainEventsInterceptor? dispatchDomainEventsInterceptor = null)
     {
         _dispatchDomainEventsInterceptor = dispatchDomainEventsInterceptor;
-        _connectionString = tenantDbContextOptions.ConnectionString ?? ConnectionStrings.LocalDefaultTenant;
+        _connectionString = tenantDbContextOptions?.ConnectionString ?? ConnectionStrings.LocalDefaultTenant;
         TenantService = tenantService;
     }
 

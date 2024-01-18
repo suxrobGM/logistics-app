@@ -7,7 +7,7 @@ public class PagedQuery
         int page = 1,
         int pageSize = 10)
     {
-        OrderBy = orderBy ?? string.Empty;
+        OrderBy = orderBy;
         Page = page;
         PageSize = pageSize;
     }

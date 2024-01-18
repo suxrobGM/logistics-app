@@ -67,7 +67,7 @@ public static class Registrar
             services.AddSingleton(tenantsSettings);
         }
 
-        if (string.IsNullOrEmpty(connectionString))
+        if (!string.IsNullOrEmpty(connectionString))
         {
             var options = new TenantDbContextOptions
             {
