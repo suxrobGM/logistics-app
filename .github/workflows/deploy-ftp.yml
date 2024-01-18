@@ -127,7 +127,7 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Publish
-      run: dotnet publish ${{ env.ADMIN_APP_PROJECT }} -c Release -r win-x86 -p:PublishSingleFile=true --self-contained true --output ./Release
+      run: dotnet publish ${{ env.ADMIN_APP_PROJECT }} -c Release -r win-x86 -p:PublishTrimmed=true --self-contained true --output ./Release
     
     - name: Deploy to host
       uses: SamKirkland/FTP-Deploy-Action@4.3.2
