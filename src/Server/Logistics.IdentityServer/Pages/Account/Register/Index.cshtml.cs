@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using System.Text.Encodings.Web;
-using Logistics.Application.Core.Options;
 using Logistics.Application.Core.Services;
 using Logistics.Domain.Entities;
 using Microsoft.AspNetCore.Authentication;
@@ -22,7 +21,7 @@ public class Index : PageModel
     private readonly ILogger<Index> _logger;
 
     public Index(
-        GoogleRecaptchaOptions recaptchaOptions,
+        IConfiguration configuration,
         SignInManager<User> signInManager,
         UserManager<User> userManager,
         IEmailSender emailSender,
@@ -34,7 +33,7 @@ public class Index : PageModel
         _emailSender = emailSender;
         _captchaService = captchaService;
         _logger = logger;
-        CaptchaSiteKey = recaptchaOptions.SiteKey;
+        CaptchaSiteKey = configuration.GetValue<string>("GoogleRecaptchaConfig:SiteKey");
     }
 
     [BindProperty]
@@ -79,7 +78,7 @@ public class Index : PageModel
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
             var callbackUrl = Url.Page("/Account/ConfirmEmail", null, new { userId = user.Id, code, returnUrl }, Request.Scheme);
 
-            await _emailSender.SendMailAsync(Input.Email, "Confirm your email",
+            await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                 $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl!)}'>clicking here</a>.");
 
             if (_userManager.Options.SignIn.RequireConfirmedAccount)

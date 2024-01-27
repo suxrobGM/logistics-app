@@ -45,7 +45,7 @@ public class ForgotPasswordModel : PageModel
                 new { area = "Identity", code },
                 Request.Scheme);
 
-            await _emailSenderService.SendMailAsync(
+            await _emailSenderService.SendEmailAsync(
                 Input.Email,
                 "Reset Password",
                 $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");

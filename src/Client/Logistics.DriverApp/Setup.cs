@@ -59,9 +59,6 @@ public static class Setup
     {
         var configuration = builder.Configuration
             .AddJsonConfig("appsettings.json")
-#if !DEBUG
-            .AddJsonConfig("appsettings.secrets.json")
-#endif
             .Build();
 
         return configuration;

@@ -46,7 +46,6 @@
 
 	<ItemGroup>
 		<EmbeddedResource Include="appsettings.json" />
-		<EmbeddedResource Include="appsettings.secrets.json" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">

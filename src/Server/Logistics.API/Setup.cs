@@ -24,10 +24,7 @@ internal static class Setup
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         var services = builder.Services;
-#if !DEBUG
-        AddSecretsJson(builder.Configuration);
-#endif
-        services.AddApplicationCoreLayer(builder.Configuration, "EmailConfig");
+        services.AddApplicationCoreLayer(builder.Configuration);
         services.AddAdminApplicationLayer();
         services.AddTenantApplicationLayer();
         services.AddInfrastructureLayer(builder.Configuration);
@@ -126,12 +123,6 @@ internal static class Setup
     {
         PayrollGenerationJob.ScheduleJobs();
         return app;
-    }
-
-    private static void AddSecretsJson(IConfigurationBuilder configuration)
-    {
-        var path = Path.Combine(AppContext.BaseDirectory, "appsettings.secrets.json");
-        configuration.AddJsonFile(path, true);
     }
 
     private static string GetModelStateErrors(ModelStateDictionary modelState)

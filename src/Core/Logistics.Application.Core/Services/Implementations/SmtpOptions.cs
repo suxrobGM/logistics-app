@@ -1,8 +1,8 @@
-﻿namespace Logistics.Application.Core.Options;
+﻿namespace Logistics.Application.Core.Services.Implementations;
 
-public class EmailSenderOptions
+internal class SmtpOptions
 {
-    public string? SenderMail { get; set; }
+    public string? SenderEmail { get; set; }
     public string? SenderName { get; set; }
     public string? UserName { get; set; }
     public string? Password { get; set; }

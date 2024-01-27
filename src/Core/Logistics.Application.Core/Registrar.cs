@@ -1,6 +1,6 @@
 ﻿using Logistics.Application.Core.Behaviours;
-using Logistics.Application.Core.Options;
 using Logistics.Application.Core.Services;
+using Logistics.Application.Core.Services.Implementations;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,20 +12,20 @@ public static class Registrar
     public static IServiceCollection AddApplicationCoreLayer(
         this IServiceCollection services,
         IConfiguration configuration,
-        string emailConfigSection = "Email",
-        string captchaConfigSection = "Captcha")
+        string emailConfigSection = "SmtpConfig",
+        string captchaConfigSection = "GoogleRecaptchaConfig")
     {
 
-        var emailSenderOptions = configuration.GetSection(emailConfigSection).Get<EmailSenderOptions>();
+        var emailSenderOptions = configuration.GetSection(emailConfigSection).Get<SmtpOptions>();
         var googleRecaptchaOptions = configuration.GetSection(captchaConfigSection).Get<GoogleRecaptchaOptions>();
 
-        if (emailSenderOptions != null)
+        if (emailSenderOptions is not null)
         {
             services.AddSingleton(emailSenderOptions);
-            services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IEmailSender, SmtpEmailSender>();
         }
 
-        if (googleRecaptchaOptions != null)
+        if (googleRecaptchaOptions is not null)
         {
             services.AddSingleton(googleRecaptchaOptions);
             services.AddScoped<ICaptchaService, GoogleRecaptchaService>();

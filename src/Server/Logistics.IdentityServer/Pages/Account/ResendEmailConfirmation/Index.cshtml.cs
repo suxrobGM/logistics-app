@@ -52,7 +52,7 @@ public class ResendEmailConfirmationModel : PageModel
             null,
             new { userId = userId, code = code },
             Request.Scheme);
-        await _emailSenderService.SendMailAsync(
+        await _emailSenderService.SendEmailAsync(
             Input.Email,
             "Confirm your email",
             $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");

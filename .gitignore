@@ -3,19 +3,20 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Exclude production appsettings file
+appsettings.Production.json
+
+.idea/
+.config/
+.VSCodeCounter/
+firebase-adminsdk-key.json
+
 # User-specific files
 *.rsuser
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
-
-.idea/
-.config/
-.VSCodeCounter/
-secrets.json
-*.secrets.json
-firebase-adminsdk-key.json
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

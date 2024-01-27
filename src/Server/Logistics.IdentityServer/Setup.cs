@@ -14,11 +14,8 @@ internal static class Setup
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
-#if !DEBUG
-        AddSecretsJson(builder.Configuration);
-#endif
         builder.Services.AddRazorPages();
-        builder.Services.AddApplicationCoreLayer(builder.Configuration, "EmailConfig", "GoogleRecaptcha");
+        builder.Services.AddApplicationCoreLayer(builder.Configuration);
 
         builder.Services.AddInfrastructureLayer(builder.Configuration)
             .ConfigureIdentity(identityBuilder =>
@@ -101,12 +98,6 @@ internal static class Setup
         app.UseAuthorization();
         app.MapRazorPages().RequireAuthorization();
         return app;
-    }
-    
-    private static void AddSecretsJson(IConfigurationBuilder configuration)
-    {
-        var path = Path.Combine(AppContext.BaseDirectory, "appsettings.secrets.json");
-        configuration.AddJsonFile(path, true);
     }
 
     private static void AddAuthSchemes(IServiceCollection services)

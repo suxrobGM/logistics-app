@@ -83,7 +83,7 @@ public partial class EmailModel : PageModel
                 pageHandler: null,
                 values: new { userId = userId, email = Input.NewEmail, code = code },
                 protocol: Request.Scheme);
-            await _emailSender.SendMailAsync(
+            await _emailSender.SendEmailAsync(
                 Input.NewEmail,
                 "Confirm your email",
                 $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
@@ -119,7 +119,7 @@ public partial class EmailModel : PageModel
             pageHandler: null,
             values: new { area = "Identity", userId = userId, code = code },
             protocol: Request.Scheme);
-        await _emailSender.SendMailAsync(
+        await _emailSender.SendEmailAsync(
             email,
             "Confirm your email",
             $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
