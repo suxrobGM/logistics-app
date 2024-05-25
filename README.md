@@ -6,6 +6,12 @@
 [![OfficeApp Build](https://github.com/suxrobgm/logistics-app/actions/workflows/officeapp-build.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/officeapp-build.yml)
 [![DriverApp Build](https://github.com/suxrobgm/logistics-app/actions/workflows/driverapp-build.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/driverapp-build.yml)
 
+[![CC BY-NC 4.0][cc-by-nc-shield]][cc-by-nc]
+
+[cc-by-nc]: https://creativecommons.org/licenses/by-nc/4.0/
+[cc-by-nc-image]: https://licensebuttons.net/l/by-nc/4.0/88x31.png
+[cc-by-nc-shield]: https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg
+
 Logistics TMS is an ultimate solution for all transport management needs. With a focus on automation, this Transportation Management System (TMS) is designed to streamline logistics, offering an efficient, optimized way to manage inbound and outbound transport operations.
 
 ## Overview
@@ -15,7 +21,7 @@ Logistics TMS primarily targets logistics and trucking companies seeking to stre
 Operating on a multi-tenant architecture, Logistics TMS features a primary database for storing user credentials and tenant data, including company name, subdomain name, database connection string, and billing periods. Each tenant or company has a dedicated database.
 
 ## Development status
-The project is actively under development. I have completed nearly 85% of the work required for the inaugural release of the MVP.
+The project is actively under development. I have completed 85% of the work required for the first version of the MVP.
 
 ## Getting Started
 
@@ -72,7 +78,7 @@ User password: Test12345#
 - MS SQL
 - xUnit
 - Moq
-- Angular 17
+- Angular 18
 - PrimeNG
 - Blazor
 - MAUI
@@ -92,6 +98,15 @@ User password: Test12345#
 - Inversion of Control / Dependency injection
 - Specification Pattern
 
+## Copyright
+This work is licensed under a
+[Creative Commons Attribution-NonCommercial 4.0 International License][cc-by-nc].
+
+[![CC BY-NC 4.0][cc-by-nc-image]][cc-by-nc]
+
+For commercial use, please contact me at **suxrobgm@gmail.com** or Telegram **@suxrobgm**
+
+## Architecture Diagram
 For a deeper understanding of the project structure, refer to the architecture diagram:
 ![Project architecture diagram](./docs/project_architecture.jpg?raw=true)
 
