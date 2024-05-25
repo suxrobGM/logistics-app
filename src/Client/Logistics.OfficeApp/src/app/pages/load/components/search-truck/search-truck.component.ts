@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, Output, forwardRef} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {AutoCompleteModule, AutoCompleteOnSelectEvent} from 'primeng/autocomplete';
+import {AutoCompleteModule, AutoCompleteSelectEvent} from 'primeng/autocomplete';
 import {ApiService} from '@core/services';
 import {TruckData, TruckHelper} from '../../shared';
 
@@ -45,7 +45,7 @@ export class SearchTruckComponent implements ControlValueAccessor {
     });
   }
 
-  changeSelectedTruck(event: AutoCompleteOnSelectEvent) {
+  changeSelectedTruck(event: AutoCompleteSelectEvent) {
     this.selectedTruckChange.emit(event.value);
     this.onChange(event.value);
   }

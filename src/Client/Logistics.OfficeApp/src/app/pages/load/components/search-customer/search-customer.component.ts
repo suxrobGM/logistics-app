@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, Output, forwardRef} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {AutoCompleteModule, AutoCompleteOnSelectEvent} from 'primeng/autocomplete';
+import {AutoCompleteModule, AutoCompleteSelectEvent} from 'primeng/autocomplete';
 import {ApiService} from '@core/services';
 import {Customer} from '@core/models';
 
@@ -40,7 +40,7 @@ export class SearchCustomerComponent implements ControlValueAccessor {
     });
   }
 
-  changeSelectedCustomer(event: AutoCompleteOnSelectEvent) {
+  changeSelectedCustomer(event: AutoCompleteSelectEvent) {
     this.selectedCustomerChange.emit(event.value);
     this.onChange(event.value);
   }

@@ -83,7 +83,7 @@ export class ListLoadComponent {
     return LoadStatusEnum.getValue(enumValue).description;
   }
 
-  getLoadStatusSeverity(status: LoadStatus): string {
+  getLoadStatusSeverity(status: LoadStatus): 'success' | 'info' {
     return status === LoadStatus.Delivered ? 'success' : 'info';
   }
 

@@ -20,7 +20,7 @@ export class PaymentStatusTagComponent {
     return PaymentStatusEnum.getValue(enumValue).description;
   }
 
-  getPaymentStatusTagSeverity(paymentStatus: PaymentStatus): string {
+  getPaymentStatusTagSeverity(paymentStatus: PaymentStatus): 'success' | 'warning' {
     return paymentStatus === PaymentStatus.Paid ? 'success' : 'warning';
   }
 }

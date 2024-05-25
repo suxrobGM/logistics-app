@@ -5,7 +5,7 @@ import {FormGroup, FormControl, Validators, ReactiveFormsModule} from '@angular/
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import {CardModule} from 'primeng/card';
 import {DropdownModule} from 'primeng/dropdown';
-import {AutoCompleteModule, AutoCompleteOnSelectEvent} from 'primeng/autocomplete';
+import {AutoCompleteModule, AutoCompleteSelectEvent} from 'primeng/autocomplete';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {CalendarModule} from 'primeng/calendar';
 import {ButtonModule} from 'primeng/button';
@@ -28,7 +28,6 @@ import {DateUtils} from '@shared/utils';
   selector: 'app-edit-payroll',
   standalone: true,
   templateUrl: './edit-payroll.component.html',
-  styleUrls: [],
   imports: [
     CommonModule,
     CardModule,
@@ -108,7 +107,7 @@ export class EditPayrollComponent implements OnInit {
     });
   }
 
-  handleAutoCompleteSelectEvent(event: AutoCompleteOnSelectEvent) {
+  handleAutoCompleteSelectEvent(event: AutoCompleteSelectEvent) {
     this.calculatePayrollForEmployee(event.value);
   }
 

@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, SimpleChanges, Output, EventEmitter} from '@angular/core';
+import {Component, Input, OnChanges, Output, EventEmitter} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
 import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
