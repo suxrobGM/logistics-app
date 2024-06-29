@@ -7,7 +7,7 @@ using Logistics.Shared;
 
 namespace Logistics.Application.Admin.Queries;
 
-internal sealed class GetTenantHandler : RequestHandler<GetTenantQuery, ResponseResult<TenantDto>>
+internal sealed class GetTenantHandler : RequestHandler<GetTenantQuery, Result<TenantDto>>
 {
     private readonly IMasterUnityOfWork _masterUow;
 
@@ -16,17 +16,17 @@ internal sealed class GetTenantHandler : RequestHandler<GetTenantQuery, Response
         _masterUow = masterUow;
     }
 
-    protected override async Task<ResponseResult<TenantDto>> HandleValidated(
+    protected override async Task<Result<TenantDto>> HandleValidated(
         GetTenantQuery req, CancellationToken cancellationToken)
     {
         var tenantEntity = await _masterUow.Repository<Tenant>().GetAsync(i => i.Id == req.Id || i.Name == req.Name);
 
         if (tenantEntity is null)
         {
-            return ResponseResult<TenantDto>.CreateError("Could not find the specified tenant");
+            return Result<TenantDto>.Fail("Could not find the specified tenant");
         }
 
         var tenantDto = tenantEntity.ToDto(req.IncludeConnectionString);
-        return ResponseResult<TenantDto>.CreateSuccess(tenantDto);
+        return Result<TenantDto>.Succeed(tenantDto);
     }
 }

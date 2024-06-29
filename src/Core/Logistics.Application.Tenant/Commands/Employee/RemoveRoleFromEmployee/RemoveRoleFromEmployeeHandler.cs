@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class RemoveEmployeeRoleHandler : RequestHandler<RemoveRoleFromEmployeeCommand, ResponseResult>
+internal sealed class RemoveEmployeeRoleHandler : RequestHandler<RemoveRoleFromEmployeeCommand, Result>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -9,7 +9,7 @@ internal sealed class RemoveEmployeeRoleHandler : RequestHandler<RemoveRoleFromE
         _tenantUow = tenantUow;
     }
     
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         RemoveRoleFromEmployeeCommand req, CancellationToken cancellationToken)
     {
         req.Role = req.Role.ToLower();
@@ -17,18 +17,18 @@ internal sealed class RemoveEmployeeRoleHandler : RequestHandler<RemoveRoleFromE
 
         if (employee is null)
         {
-            return ResponseResult.CreateError("Could not find the specified user");
+            return Result.Fail("Could not find the specified user");
         }
 
         var tenantRole = await _tenantUow.Repository<TenantRole>().GetAsync(i => i.Name == req.Role);
 
         if (tenantRole is null)
         {
-            return ResponseResult.CreateError("Could not find the specified role name");
+            return Result.Fail("Could not find the specified role name");
         }
         
         employee.Roles.Remove(tenantRole);
         await _tenantUow.SaveChangesAsync();
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

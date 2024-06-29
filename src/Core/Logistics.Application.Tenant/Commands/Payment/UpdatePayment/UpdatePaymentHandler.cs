@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class UpdatePaymentHandler : RequestHandler<UpdatePaymentCommand, ResponseResult>
+internal sealed class UpdatePaymentHandler : RequestHandler<UpdatePaymentCommand, Result>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -9,14 +9,14 @@ internal sealed class UpdatePaymentHandler : RequestHandler<UpdatePaymentCommand
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         UpdatePaymentCommand req, CancellationToken cancellationToken)
     {
         var payment = await _tenantUow.Repository<Payment>().GetByIdAsync(req.Id);
 
         if (payment is null)
         {
-            return ResponseResult.CreateError($"Could not find a payment with ID '{req.Id}'");
+            return Result.Fail($"Could not find a payment with ID '{req.Id}'");
         }
 
         if (req.PaymentFor.HasValue && payment.PaymentFor != req.PaymentFor)
@@ -46,6 +46,6 @@ internal sealed class UpdatePaymentHandler : RequestHandler<UpdatePaymentCommand
         
         _tenantUow.Repository<Payment>().Update(payment);
         await _tenantUow.SaveChangesAsync();
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class CreatePaymentHandler : RequestHandler<CreatePaymentCommand, ResponseResult>
+internal sealed class CreatePaymentHandler : RequestHandler<CreatePaymentCommand, Result>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -11,7 +11,7 @@ internal sealed class CreatePaymentHandler : RequestHandler<CreatePaymentCommand
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         CreatePaymentCommand req, CancellationToken cancellationToken)
     {
         var payment = new Payment
@@ -25,6 +25,6 @@ internal sealed class CreatePaymentHandler : RequestHandler<CreatePaymentCommand
         
         await _tenantUow.Repository<Payment>().AddAsync(payment);
         await _tenantUow.SaveChangesAsync();
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

@@ -140,7 +140,7 @@ public class DashboardPageViewModel : BaseViewModel
             OnlyActiveLoads = true,
         });
 
-        if (!result.IsSuccess)
+        if (!result.Success)
         {
             await PopupHelpers.ShowErrorAsync(result.Error);
             IsLoading = false;
@@ -163,7 +163,7 @@ public class DashboardPageViewModel : BaseViewModel
         var driverId = _authService.User?.Id!;
         var result = await _apiClient.GetDriverActiveLoadsAsync(driverId);
 
-        if (!result.IsSuccess)
+        if (!result.Success)
         {
             await PopupHelpers.ShowErrorAsync("Failed to load the dashboard data, try again");
             IsLoading = false;

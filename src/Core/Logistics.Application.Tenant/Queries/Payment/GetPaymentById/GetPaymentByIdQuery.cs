@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class GetPaymentByIdQuery : IRequest<ResponseResult<PaymentDto>>
+public class GetPaymentByIdQuery : IRequest<Result<PaymentDto>>
 {
     public string Id { get; set; } = default!;
 }

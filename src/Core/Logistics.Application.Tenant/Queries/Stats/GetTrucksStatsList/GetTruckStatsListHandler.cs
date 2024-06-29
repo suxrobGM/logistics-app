@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, PagedResponseResult<TruckStatsDto>>
+public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, PagedResult<TruckStatsDto>>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -13,7 +13,7 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
         _tenantUow = tenantUow;
     }
     
-    protected override async Task<PagedResponseResult<TruckStatsDto>> HandleValidated(
+    protected override async Task<PagedResult<TruckStatsDto>> HandleValidated(
         GetTrucksStatsListQuery req, CancellationToken cancellationToken)
     {
         var orderBy = req.OrderBy;
@@ -57,7 +57,7 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
                 Drivers = result.Drivers.Select(i => i.ToDto())
             });
         
-        return PagedResponseResult<TruckStatsDto>.Create(truckStatsDto, totalItems, req.PageSize);
+        return PagedResult<TruckStatsDto>.Succeed(truckStatsDto, totalItems, req.PageSize);
     }
     
     private static Expression<Func<TruckStats, object>> InitOrderBy(string? propertyName)

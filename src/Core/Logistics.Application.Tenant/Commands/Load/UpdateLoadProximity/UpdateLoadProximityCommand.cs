@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Commands;
 
-public class UpdateLoadProximityCommand : IRequest<ResponseResult>
+public class UpdateLoadProximityCommand : IRequest<Result>
 {
     public string LoadId { get; set; } = default!;
     public bool? CanConfirmPickUp { get; set; }

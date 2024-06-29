@@ -1,14 +1,11 @@
 ﻿using Logistics.Application.Core;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Services;
-using Logistics.Domain.ValueObjects;
 using Logistics.Shared;
-using Logistics.Shared.Enums;
 
 namespace Logistics.Application.Admin.Commands;
 
-internal sealed class UpdateSubscriptionHandler : RequestHandler<UpdateSubscriptionCommand, ResponseResult>
+internal sealed class UpdateSubscriptionHandler : RequestHandler<UpdateSubscriptionCommand, Result>
 {
     private readonly IMasterUnityOfWork _masterUow;
 
@@ -17,14 +14,14 @@ internal sealed class UpdateSubscriptionHandler : RequestHandler<UpdateSubscript
         _masterUow = masterUow;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         UpdateSubscriptionCommand req, CancellationToken cancellationToken)
     {
         var subscription = await _masterUow.Repository<Subscription>().GetByIdAsync(req.Id);
 
         if (subscription is null)
         {
-            return ResponseResult.CreateError($"Could not find a subscription with ID '{req.TenantId}'");
+            return Result.Fail($"Could not find a subscription with ID '{req.TenantId}'");
         }
 
         if (!string.IsNullOrEmpty(req.TenantId) && subscription.TenantId != req.TenantId)
@@ -33,7 +30,7 @@ internal sealed class UpdateSubscriptionHandler : RequestHandler<UpdateSubscript
 
             if (tenant is null)
             {
-                return ResponseResult.CreateError($"Could not find a tenant with ID '{req.TenantId}'");
+                return Result.Fail($"Could not find a tenant with ID '{req.TenantId}'");
             }
 
             subscription.Tenant = tenant;
@@ -45,7 +42,7 @@ internal sealed class UpdateSubscriptionHandler : RequestHandler<UpdateSubscript
 
             if (subscriptionPlan is null)
             {
-                return ResponseResult.CreateError($"Could not find a subscription plan with ID '{req.TenantId}'");
+                return Result.Fail($"Could not find a subscription plan with ID '{req.TenantId}'");
             }
 
             subscription.Plan = subscriptionPlan;
@@ -53,6 +50,6 @@ internal sealed class UpdateSubscriptionHandler : RequestHandler<UpdateSubscript
 
         _masterUow.Repository<Subscription>().Update(subscription);
         await _masterUow.SaveChangesAsync();
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

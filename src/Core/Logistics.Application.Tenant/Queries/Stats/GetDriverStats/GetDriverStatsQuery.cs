@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class GetDriverStatsQuery : IRequest<ResponseResult<DriverStatsDto>>
+public class GetDriverStatsQuery : IRequest<Result<DriverStatsDto>>
 {
     public string? UserId { get; set; }
 }

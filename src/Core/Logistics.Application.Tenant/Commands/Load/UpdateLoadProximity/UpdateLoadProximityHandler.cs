@@ -1,10 +1,10 @@
 ﻿using Logistics.Application.Tenant.Extensions;
 using Logistics.Application.Tenant.Services;
-using Logistics.Shared.Enums;
+using Logistics.Shared.Consts;
 
 namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class UpdateLoadProximityHandler : RequestHandler<UpdateLoadProximityCommand, ResponseResult>
+internal sealed class UpdateLoadProximityHandler : RequestHandler<UpdateLoadProximityCommand, Result>
 {
     private readonly IPushNotificationService _pushNotificationService;
     private readonly ITenantUnityOfWork _tenantUow;
@@ -17,14 +17,14 @@ internal sealed class UpdateLoadProximityHandler : RequestHandler<UpdateLoadProx
         _pushNotificationService = pushNotificationService;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         UpdateLoadProximityCommand req, CancellationToken cancellationToken)
     {
         var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.LoadId);
 
         if (load is null)
         {
-            return ResponseResult.CreateError($"Could not find load with ID '{req.LoadId}'");
+            return Result.Fail($"Could not find load with ID '{req.LoadId}'");
         }
         
         LoadStatus? loadStatus = null;
@@ -46,6 +46,6 @@ internal sealed class UpdateLoadProximityHandler : RequestHandler<UpdateLoadProx
         {
             await _pushNotificationService.SendConfirmLoadStatusNotificationAsync(load, loadStatus.Value);
         }
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

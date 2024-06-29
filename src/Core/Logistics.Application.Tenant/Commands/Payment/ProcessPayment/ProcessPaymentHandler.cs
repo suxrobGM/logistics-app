@@ -1,8 +1,8 @@
-﻿using Logistics.Shared.Enums;
+﻿using Logistics.Shared.Consts;
 
 namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class ProcessPaymentHandler : RequestHandler<ProcessPaymentCommand, ResponseResult>
+internal sealed class ProcessPaymentHandler : RequestHandler<ProcessPaymentCommand, Result>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -11,20 +11,20 @@ internal sealed class ProcessPaymentHandler : RequestHandler<ProcessPaymentComma
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         ProcessPaymentCommand req, CancellationToken cancellationToken)
     {
         var payment = await _tenantUow.Repository<Payment>().GetByIdAsync(req.PaymentId);
 
         if (payment is null)
         {
-            return ResponseResult.CreateError($"Could not find a payment with ID '{req.PaymentId}'");
+            return Result.Fail($"Could not find a payment with ID '{req.PaymentId}'");
         }
 
         // TODO: Add payment verification from external provider
         payment.SetStatus(PaymentStatus.Paid);
         _tenantUow.Repository<Payment>().Update(payment);
         await _tenantUow.SaveChangesAsync();
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

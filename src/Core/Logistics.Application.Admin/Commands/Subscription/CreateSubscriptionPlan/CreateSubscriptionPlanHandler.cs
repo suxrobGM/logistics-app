@@ -7,7 +7,7 @@ using Logistics.Shared;
 
 namespace Logistics.Application.Admin.Commands;
 
-internal sealed class CreateSubscriptionPlanHandler : RequestHandler<CreateSubscriptionPlanCommand, ResponseResult>
+internal sealed class CreateSubscriptionPlanHandler : RequestHandler<CreateSubscriptionPlanCommand, Result>
 {
     private readonly IMasterUnityOfWork _masterUow;
 
@@ -16,7 +16,7 @@ internal sealed class CreateSubscriptionPlanHandler : RequestHandler<CreateSubsc
         _masterUow = masterUow;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         CreateSubscriptionPlanCommand req, CancellationToken cancellationToken)
     {
         var subscriptionPlan = new SubscriptionPlan
@@ -27,6 +27,6 @@ internal sealed class CreateSubscriptionPlanHandler : RequestHandler<CreateSubsc
         };
         await _masterUow.Repository<SubscriptionPlan>().AddAsync(subscriptionPlan);
         await _masterUow.SaveChangesAsync();
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Logistics.Application.Tenant.Commands;
 
-public class CreateLoadCommand : IRequest<ResponseResult>
+public class CreateLoadCommand : IRequest<Result>
 {
     public string? Name { get; set; }
     public Address? OriginAddress { get; set; }

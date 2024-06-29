@@ -1,7 +1,7 @@
 ﻿using Logistics.Application.Tenant.Queries;
 using Logistics.Shared;
 using Logistics.Shared.Models;
-using Logistics.Shared.Policies;
+using Logistics.Shared.Consts.Policies;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,53 +20,53 @@ public class StatsController : ControllerBase
     }
 
     [HttpGet("daily-grosses")]
-    [ProducesResponseType(typeof(ResponseResult<DailyGrossesDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(Result<DailyGrossesDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Stats.View)]
     public async Task<IActionResult> GetDailyGrosses([FromQuery] GetDailyGrossesQuery request)
     {
         var result = await _mediator.Send(request);
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result) : BadRequest(result);
     }
     
     [HttpGet("monthly-grosses")]
-    [ProducesResponseType(typeof(ResponseResult<MonthlyGrossesDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(Result<MonthlyGrossesDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Stats.View)]
     public async Task<IActionResult> GetMonthlyGrosses([FromQuery] GetMonthlyGrossesQuery request)
     {
         var result = await _mediator.Send(request);
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result) : BadRequest(result);
     }
 
     [HttpGet("company")]
-    [ProducesResponseType(typeof(ResponseResult<CompanyStatsDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(Result<CompanyStatsDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Stats.View)]
     public async Task<IActionResult> GetCompanyStats([FromQuery] GetCompanyStatsQuery request)
     {
         var result = await _mediator.Send(request);
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result) : BadRequest(result);
     }
     
     [HttpGet("trucks")]
-    [ProducesResponseType(typeof(PagedResponseResult<TruckStatsDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(PagedResult<TruckStatsDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Stats.View)]
     public async Task<IActionResult> GetTrucksStatsList([FromQuery] GetTrucksStatsListQuery request)
     {
         var result = await _mediator.Send(request);
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result) : BadRequest(result);
     }
     
     [HttpGet("driver/{userId}")]
-    [ProducesResponseType(typeof(PagedResponseResult<DriverStatsDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(PagedResult<DriverStatsDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Stats.View)]
     public async Task<IActionResult> GetDriverStatsList(string userId, [FromQuery] GetDriverStatsQuery request)
     {
         request.UserId = userId;
         var result = await _mediator.Send(request);
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result) : BadRequest(result);
     }
 }

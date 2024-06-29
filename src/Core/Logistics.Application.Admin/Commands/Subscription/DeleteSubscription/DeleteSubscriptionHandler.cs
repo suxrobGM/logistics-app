@@ -6,7 +6,7 @@ using Logistics.Shared;
 
 namespace Logistics.Application.Admin.Commands;
 
-internal sealed class DeleteSubscriptionHandler : RequestHandler<DeleteSubscriptionCommand, ResponseResult>
+internal sealed class DeleteSubscriptionHandler : RequestHandler<DeleteSubscriptionCommand, Result>
 {
     private readonly IMasterUnityOfWork _masterUow;
 
@@ -15,18 +15,18 @@ internal sealed class DeleteSubscriptionHandler : RequestHandler<DeleteSubscript
         _masterUow = masterUow;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         DeleteSubscriptionCommand req, CancellationToken cancellationToken)
     {
         var subscription = await _masterUow.Repository<Subscription>().GetByIdAsync(req.Id);
 
         if (subscription is null)
         {
-            return ResponseResult.CreateError($"Could not find a subscription with ID '{req.Id}'");
+            return Result.Fail($"Could not find a subscription with ID '{req.Id}'");
         }
 
         _masterUow.Repository<Subscription>().Delete(subscription);
         await _masterUow.SaveChangesAsync();
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

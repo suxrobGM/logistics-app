@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetPayrollByIdHandler : RequestHandler<GetPayrollByIdQuery, ResponseResult<PayrollDto>>
+internal sealed class GetPayrollByIdHandler : RequestHandler<GetPayrollByIdQuery, Result<PayrollDto>>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -12,15 +12,15 @@ internal sealed class GetPayrollByIdHandler : RequestHandler<GetPayrollByIdQuery
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<ResponseResult<PayrollDto>> HandleValidated(
+    protected override async Task<Result<PayrollDto>> HandleValidated(
         GetPayrollByIdQuery req, CancellationToken cancellationToken)
     {
         var payrollEntity = await _tenantUow.Repository<Payroll>().GetByIdAsync(req.Id);
         
         if (payrollEntity is null)
-            return ResponseResult<PayrollDto>.CreateError($"Could not find a payroll with ID {req.Id}");
+            return Result<PayrollDto>.Fail($"Could not find a payroll with ID {req.Id}");
 
         var payrollDto = payrollEntity.ToDto();
-        return ResponseResult<PayrollDto>.CreateSuccess(payrollDto);
+        return Result<PayrollDto>.Succeed(payrollDto);
     }
 }

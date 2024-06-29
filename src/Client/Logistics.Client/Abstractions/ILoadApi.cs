@@ -6,10 +6,10 @@ namespace Logistics.Client.Abstractions;
 
 public interface ILoadApi
 {
-    Task<ResponseResult<LoadDto>> GetLoadAsync(string id);
-    Task<PagedResponseResult<LoadDto>> GetLoadsAsync(GetLoadsQuery query);
-    Task<ResponseResult<ICollection<LoadDto>>> GetDriverActiveLoadsAsync(string userId);
-    Task<ResponseResult> CreateLoadAsync(CreateLoad command);
-    Task<ResponseResult> UpdateLoadAsync(UpdateLoad command);
-    Task<ResponseResult> DeleteLoadAsync(string id);
+    Task<Result<LoadDto>> GetLoadAsync(string id);
+    Task<PagedResult<LoadDto>> GetLoadsAsync(GetLoadsQuery query);
+    Task<Result<ICollection<LoadDto>>> GetDriverActiveLoadsAsync(string userId);
+    Task<Result> CreateLoadAsync(CreateLoad command);
+    Task<Result> UpdateLoadAsync(UpdateLoad command);
+    Task<Result> DeleteLoadAsync(string id);
 }

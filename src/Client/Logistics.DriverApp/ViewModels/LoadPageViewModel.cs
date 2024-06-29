@@ -1,4 +1,4 @@
-﻿using Logistics.Shared.Enums;
+﻿using Logistics.Shared.Consts;
 using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.Authentication;
@@ -86,7 +86,7 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
         IsLoading = true;
         var result = await _apiClient.GetLoadAsync(_lastLoadId);
         
-        if (!result.IsSuccess)
+        if (!result.Success)
         {
             await PopupHelpers.ShowErrorAsync("Failed to fetch the load data, try later");
             IsLoading = false;
@@ -104,7 +104,7 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
             return;
         
         IsLoading = true;
-        ResponseResult? result = default;
+        Result? result = default;
 
         switch (status)
         {
@@ -130,7 +130,7 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
                 break;
         }
 
-        if (result is { IsSuccess: false })
+        if (result is { Success: false })
         {
             await PopupHelpers.ShowErrorAsync($"Could not confirm the load status, error: {result.Error}");
             IsLoading = false;

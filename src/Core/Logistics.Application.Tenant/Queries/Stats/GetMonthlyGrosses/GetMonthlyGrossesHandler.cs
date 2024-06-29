@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrossesQuery, ResponseResult<MonthlyGrossesDto>>
+internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrossesQuery, Result<MonthlyGrossesDto>>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -11,7 +11,7 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrosse
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<ResponseResult<MonthlyGrossesDto>> HandleValidated(
+    protected override async Task<Result<MonthlyGrossesDto>> HandleValidated(
         GetMonthlyGrossesQuery req, CancellationToken cancellationToken)
     {
         var truckId = req.TruckId;
@@ -22,7 +22,7 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrosse
 
             if (driver is null)
             {
-                return ResponseResult<MonthlyGrossesDto>.CreateError($"Could not find user with ID '{req.UserId}'");
+                return Result<MonthlyGrossesDto>.Fail($"Could not find user with ID '{req.UserId}'");
             }
             
             truckId = driver.TruckId;
@@ -53,6 +53,6 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrosse
         {
             Data = dict.Values
         };
-        return ResponseResult<MonthlyGrossesDto>.CreateSuccess(monthlyGrosses);
+        return Result<MonthlyGrossesDto>.Succeed(monthlyGrosses);
     }
 }

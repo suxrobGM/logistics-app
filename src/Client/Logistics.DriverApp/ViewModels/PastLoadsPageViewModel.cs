@@ -67,7 +67,7 @@ public class PastLoadsPageViewModel : BaseViewModel
             EndDate = past90Days.EndDate
         });
         
-        if (!result.IsSuccess)
+        if (!result.Success)
         {
             await PopupHelpers.ShowErrorAsync($"Failed to fetch the loads from server.\nError: {result.Error}");
             IsLoading = false;

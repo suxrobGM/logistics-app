@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Logistics.Shared.Policies;
+namespace Logistics.Shared.Consts.Policies;
 
 public static class Permissions
 {

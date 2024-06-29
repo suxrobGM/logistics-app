@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Logistics.Application.Tenant.Commands;
 
-public class SetTruckGeolocationCommand : IRequest<ResponseResult>
+public class SetTruckGeolocationCommand : IRequest<Result>
 {
     public SetTruckGeolocationCommand(TruckGeolocationDto geolocationData)
     {

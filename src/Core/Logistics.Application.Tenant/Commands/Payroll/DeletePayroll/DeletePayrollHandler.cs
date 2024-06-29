@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class DeletePayrollHandler : RequestHandler<DeletePaymentCommand, ResponseResult>
+internal sealed class DeletePayrollHandler : RequestHandler<DeletePaymentCommand, Result>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -9,18 +9,18 @@ internal sealed class DeletePayrollHandler : RequestHandler<DeletePaymentCommand
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         DeletePaymentCommand req, CancellationToken cancellationToken)
     {
         var payroll = await _tenantUow.Repository<Payroll>().GetByIdAsync(req.Id);
 
         if (payroll is null)
         {
-            return ResponseResult.CreateError($"Could not find a payroll with ID {req.Id}");
+            return Result.Fail($"Could not find a payroll with ID {req.Id}");
         }
         
         _tenantUow.Repository<Payroll>().Delete(payroll);
         await _tenantUow.SaveChangesAsync();
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

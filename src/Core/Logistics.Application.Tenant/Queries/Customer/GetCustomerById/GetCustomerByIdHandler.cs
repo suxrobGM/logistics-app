@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetCustomerByIdHandler : RequestHandler<GetCustomerByIdQuery, ResponseResult<CustomerDto>>
+internal sealed class GetCustomerByIdHandler : RequestHandler<GetCustomerByIdQuery, Result<CustomerDto>>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -12,17 +12,17 @@ internal sealed class GetCustomerByIdHandler : RequestHandler<GetCustomerByIdQue
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<ResponseResult<CustomerDto>> HandleValidated(
+    protected override async Task<Result<CustomerDto>> HandleValidated(
         GetCustomerByIdQuery req, CancellationToken cancellationToken)
     {
         var customerEntity = await _tenantUow.Repository<Customer>().GetByIdAsync(req.Id);
 
         if (customerEntity is null)
         {
-            return ResponseResult<CustomerDto>.CreateError($"Could not find a customer with ID {req.Id}");
+            return Result<CustomerDto>.Fail($"Could not find a customer with ID {req.Id}");
         }
 
         var customerDto = customerEntity.ToDto();
-        return ResponseResult<CustomerDto>.CreateSuccess(customerDto);
+        return Result<CustomerDto>.Succeed(customerDto);
     }
 }

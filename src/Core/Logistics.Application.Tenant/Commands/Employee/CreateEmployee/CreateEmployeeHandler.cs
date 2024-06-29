@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class CreateEmployeeHandler : RequestHandler<CreateEmployeeCommand, ResponseResult>
+internal sealed class CreateEmployeeHandler : RequestHandler<CreateEmployeeCommand, Result>
 {
     private readonly IMasterUnityOfWork _masterUow;
     private readonly ITenantUnityOfWork _tenantUow;
@@ -18,21 +18,21 @@ internal sealed class CreateEmployeeHandler : RequestHandler<CreateEmployeeComma
         _notificationService = notificationService;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         CreateEmployeeCommand req, CancellationToken cancellationToken)
     {
         var existingEmployee = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
 
         if (existingEmployee is not null)
         {
-            return ResponseResult.CreateError("Employee already exists");
+            return Result.Fail("Employee already exists");
         }
         
         var user = await _masterUow.Repository<User>().GetByIdAsync(req.UserId);
 
         if (user is null)
         {
-            return ResponseResult.CreateError("Could not find the specified user");
+            return Result.Fail("Could not find the specified user");
         }
         
         var tenantRole = await _tenantUow.Repository<TenantRole>().GetAsync(i => i.Name == req.Role);
@@ -54,6 +54,6 @@ internal sealed class CreateEmployeeHandler : RequestHandler<CreateEmployeeComma
 
         await _notificationService.SendNotificationAsync("New Employee",
             $"A new employee '{employee.GetFullName()}' has joined. Role is '{tenantRole?.DisplayName}'");
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

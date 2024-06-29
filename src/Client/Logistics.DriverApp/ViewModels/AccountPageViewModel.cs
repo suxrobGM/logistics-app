@@ -54,7 +54,7 @@ public class AccountPageViewModel : BaseViewModel
         IsLoading = true;
         var result = await _apiClient.GetUserAsync(userId);
 
-        if (result.IsSuccess)
+        if (result.Success)
         {
             var user = result.Data!;
             AccountDetails = new AccountInfo()
@@ -81,7 +81,7 @@ public class AccountPageViewModel : BaseViewModel
             PhoneNumber = AccountDetails.PhoneNumber,
         });
 
-        if (result.IsSuccess)
+        if (result.Success)
         {
             await PopupHelpers.ShowSuccessAsync("Account details has been updated successfully");
         }

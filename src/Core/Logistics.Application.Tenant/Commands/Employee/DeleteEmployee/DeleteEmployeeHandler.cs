@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class DeleteEmployeeHandler : RequestHandler<DeleteEmployeeCommand, ResponseResult>
+internal sealed class DeleteEmployeeHandler : RequestHandler<DeleteEmployeeCommand, Result>
 {
     private readonly IMasterUnityOfWork _masterUow;
     private readonly ITenantUnityOfWork _tenantUow;
@@ -13,7 +13,7 @@ internal sealed class DeleteEmployeeHandler : RequestHandler<DeleteEmployeeComma
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         DeleteEmployeeCommand req, CancellationToken cancellationToken)
     {
         var tenant = _tenantUow.GetCurrentTenant();
@@ -21,7 +21,7 @@ internal sealed class DeleteEmployeeHandler : RequestHandler<DeleteEmployeeComma
 
         if (employee is null)
         {
-            return ResponseResult.CreateError($"Could not find employee with ID {req.UserId}");
+            return Result.Fail($"Could not find employee with ID {req.UserId}");
         }
 
         var user = await _masterUow.Repository<User>().GetByIdAsync(employee.Id);
@@ -41,6 +41,6 @@ internal sealed class DeleteEmployeeHandler : RequestHandler<DeleteEmployeeComma
         _tenantUow.Repository<Employee>().Delete(employee);
         await _tenantUow.SaveChangesAsync();
         await _masterUow.SaveChangesAsync();
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

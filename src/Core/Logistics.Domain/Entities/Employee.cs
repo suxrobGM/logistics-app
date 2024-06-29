@@ -1,5 +1,5 @@
 ﻿using Logistics.Domain.Core;
-using Logistics.Shared.Enums;
+using Logistics.Shared.Consts;
 
 namespace Logistics.Domain.Entities;
 

@@ -1,10 +1,10 @@
 ﻿using Logistics.Domain.ValueObjects;
-using Logistics.Shared.Enums;
+using Logistics.Shared.Consts;
 using MediatR;
 
 namespace Logistics.Application.Tenant.Commands;
 
-public class UpdatePayrollCommand : IRequest<ResponseResult>
+public class UpdatePayrollCommand : IRequest<Result>
 {
     public string Id { get; set; } = default!;
     public DateTime? StartDate { get; set; }

@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Logistics.Shared.Core\Logistics.Shared.Core.csproj" />
+    <ProjectReference Include="..\..\Shared\Logistics.Core\Logistics.Core.csproj" />
   </ItemGroup>
 
 </Project>

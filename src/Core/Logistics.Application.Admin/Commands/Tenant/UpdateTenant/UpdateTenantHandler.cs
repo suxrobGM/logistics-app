@@ -5,7 +5,7 @@ using Logistics.Shared;
 
 namespace Logistics.Application.Admin.Commands;
 
-internal sealed class UpdateTenantHandler : RequestHandler<UpdateTenantCommand, ResponseResult>
+internal sealed class UpdateTenantHandler : RequestHandler<UpdateTenantCommand, Result>
 {
     private readonly IMasterUnityOfWork _masterUow;
 
@@ -14,13 +14,13 @@ internal sealed class UpdateTenantHandler : RequestHandler<UpdateTenantCommand, 
         _masterUow = masterUow;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(UpdateTenantCommand req, CancellationToken cancellationToken)
+    protected override async Task<Result> HandleValidated(UpdateTenantCommand req, CancellationToken cancellationToken)
     {
         var tenant = await _masterUow.Repository<Tenant>().GetByIdAsync(req.Id);
 
         if (tenant is null)
         {
-            return ResponseResult.CreateError($"Could not find a tenant with ID '{req.Id}'");
+            return Result.Fail($"Could not find a tenant with ID '{req.Id}'");
         }
 
         if (!string.IsNullOrEmpty(req.Name) && tenant.Name != req.Name)
@@ -42,6 +42,6 @@ internal sealed class UpdateTenantHandler : RequestHandler<UpdateTenantCommand, 
         
         _masterUow.Repository<Tenant>().Update(tenant);
         await _masterUow.SaveChangesAsync();
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

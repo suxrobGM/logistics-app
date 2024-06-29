@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class CalculatePayrollQuery : IRequest<ResponseResult<PayrollDto>>
+public class CalculatePayrollQuery : IRequest<Result<PayrollDto>>
 {
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }

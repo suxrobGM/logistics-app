@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Logistics.Application.Admin.Commands;
 
-public class UpdateTenantCommand : IRequest<ResponseResult>
+public class UpdateTenantCommand : IRequest<Result>
 {
     public string Id { get; set; } = default!;
     public string? Name { get; set; }

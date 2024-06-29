@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetTenantRolesHandler : RequestHandler<GetTenantRolesQuery, PagedResponseResult<TenantRoleDto>>
+internal sealed class GetTenantRolesHandler : RequestHandler<GetTenantRolesQuery, PagedResult<TenantRoleDto>>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -11,7 +11,7 @@ internal sealed class GetTenantRolesHandler : RequestHandler<GetTenantRolesQuery
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<PagedResponseResult<TenantRoleDto>> HandleValidated(
+    protected override async Task<PagedResult<TenantRoleDto>> HandleValidated(
         GetTenantRolesQuery req, CancellationToken cancellationToken)
     {
         var totalItems = await _tenantUow.Repository<TenantRole>().CountAsync();
@@ -25,6 +25,6 @@ internal sealed class GetTenantRolesHandler : RequestHandler<GetTenantRolesQuery
             })
             .ToArray();
         
-        return PagedResponseResult<TenantRoleDto>.Create(rolesDto, totalItems, req.PageSize);
+        return PagedResult<TenantRoleDto>.Succeed(rolesDto, totalItems, req.PageSize);
     }
 }

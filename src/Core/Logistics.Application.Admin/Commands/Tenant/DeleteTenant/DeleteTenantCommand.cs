@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Logistics.Application.Admin.Commands;
 
-public class DeleteTenantCommand : IRequest<ResponseResult>
+public class DeleteTenantCommand : IRequest<Result>
 {
     public string Id { get; set; } = default!;
 }

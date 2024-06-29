@@ -3,7 +3,7 @@ using Logistics.Application.Tenant.Services;
 
 namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, ResponseResult>
+internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Result>
 {
     private readonly ITenantUnityOfWork _tenantUow;
     private readonly IPushNotificationService _pushNotificationService;
@@ -16,14 +16,14 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resp
         _pushNotificationService = pushNotificationService;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
             UpdateLoadCommand req, CancellationToken cancellationToken)
         {
             var loadEntity = await _tenantUow.Repository<Load>().GetByIdAsync(req.Id);
             
             if (loadEntity is null)
             {
-                return ResponseResult.CreateError("Could not find the specified load");
+                return Result.Fail("Could not find the specified load");
             }
 
             try
@@ -43,11 +43,11 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resp
                     await NotifyTrucksAboutUpdates(updatedDetails, oldTruck, newTruck, loadEntity);
                 }
                 
-                return ResponseResult.CreateSuccess();
+                return Result.Succeed();
             }
             catch (InvalidOperationException ex)
             {
-                return ResponseResult.CreateError(ex.Message);
+                return Result.Fail(ex.Message);
             }
         }
     

@@ -6,8 +6,8 @@ namespace Logistics.Client.Abstractions;
 
 public interface IUserApi
 {
-    Task<ResponseResult<UserDto>> GetUserAsync(string userId);
-    Task<PagedResponseResult<UserDto>> GetUsersAsync(SearchableQuery query);
-    Task<ResponseResult> UpdateUserAsync(UpdateUser command);
-    Task<ResponseResult<OrganizationDto[]>> GetUserOrganizations(string userId);
+    Task<Result<UserDto>> GetUserAsync(string userId);
+    Task<PagedResult<UserDto>> GetUsersAsync(SearchableQuery query);
+    Task<Result> UpdateUserAsync(UpdateUser command);
+    Task<Result<OrganizationDto[]>> GetUserOrganizations(string userId);
 }

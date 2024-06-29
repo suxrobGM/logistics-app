@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.Application.Admin.Commands;
 
-internal sealed class RemoveRoleFromUserHandler : RequestHandler<RemoveRoleFromUserCommand, ResponseResult>
+internal sealed class RemoveRoleFromUserHandler : RequestHandler<RemoveRoleFromUserCommand, Result>
 {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<AppRole> _roleManager;
@@ -18,21 +18,21 @@ internal sealed class RemoveRoleFromUserHandler : RequestHandler<RemoveRoleFromU
         _roleManager = roleManager;
     }
     
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         RemoveRoleFromUserCommand req, CancellationToken cancellationToken)
     {
         req.Role = req.Role?.ToLower();
         var user = await _userManager.FindByIdAsync(req.UserId!);
 
         if (user == null)
-            return ResponseResult.CreateError("Could not find the specified user");
+            return Result.Fail("Could not find the specified user");
 
         var appRole = await _roleManager.FindByNameAsync(req.Role!);
         
         if (appRole == null)
-            return ResponseResult.CreateError("Could not find the specified role name");
+            return Result.Fail("Could not find the specified role name");
 
         await _userManager.RemoveFromRoleAsync(user, appRole.Name!);
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

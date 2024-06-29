@@ -3,6 +3,6 @@ using MediatR;
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class GetInvoicesQuery : PagedIntervalQuery, IRequest<PagedResponseResult<InvoiceDto>>
+public class GetInvoicesQuery : PagedIntervalQuery, IRequest<PagedResult<InvoiceDto>>
 {
 }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Logistics.Shared.Enums;
+namespace Logistics.Shared.Consts;
 
 public static class EnumExtensions
 {

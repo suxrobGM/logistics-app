@@ -8,7 +8,7 @@ using Logistics.Shared;
 
 namespace Logistics.Application.Admin.Queries;
 
-internal sealed class GetSubscriptionsHandler : RequestHandler<GetSubscriptionsQuery, PagedResponseResult<SubscriptionDto>>
+internal sealed class GetSubscriptionsHandler : RequestHandler<GetSubscriptionsQuery, PagedResult<SubscriptionDto>>
 {
     private readonly IMasterUnityOfWork _masterUow;
 
@@ -17,7 +17,7 @@ internal sealed class GetSubscriptionsHandler : RequestHandler<GetSubscriptionsQ
         _masterUow = masterUow;
     }
 
-    protected override async Task<PagedResponseResult<SubscriptionDto>> HandleValidated(
+    protected override async Task<PagedResult<SubscriptionDto>> HandleValidated(
         GetSubscriptionsQuery req, CancellationToken cancellationToken)
     {
         var totalItems = await _masterUow.Repository<Subscription>().CountAsync();
@@ -28,6 +28,6 @@ internal sealed class GetSubscriptionsHandler : RequestHandler<GetSubscriptionsQ
             .Select(i => i.ToDto())
             .ToArray();
         
-        return PagedResponseResult<SubscriptionDto>.Create(items, totalItems, req.PageSize);
+        return PagedResult<SubscriptionDto>.Succeed(items, totalItems, req.PageSize);
     }
 }

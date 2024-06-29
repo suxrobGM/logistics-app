@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetTruckHandler : RequestHandler<GetTruckQuery, ResponseResult<TruckDto>>
+internal sealed class GetTruckHandler : RequestHandler<GetTruckQuery, Result<TruckDto>>
 {
     private readonly ITenantRepository<Truck> _truckRepository;
     private readonly ITenantRepository<Employee> _employeeRepository;
@@ -14,18 +14,18 @@ internal sealed class GetTruckHandler : RequestHandler<GetTruckQuery, ResponseRe
         _employeeRepository = tenantUow.Repository<Employee>();
     }
 
-    protected override async Task<ResponseResult<TruckDto>> HandleValidated(
+    protected override async Task<Result<TruckDto>> HandleValidated(
         GetTruckQuery req, CancellationToken cancellationToken)
     {
         var truckEntity = await TryGetTruck(req.TruckOrDriverId);
 
         if (truckEntity is null)
         {
-            return ResponseResult<TruckDto>.CreateError($"Could not find a truck with ID '{req.TruckOrDriverId}'");
+            return Result<TruckDto>.Fail($"Could not find a truck with ID '{req.TruckOrDriverId}'");
         }
 
         var truckDto = ConvertToDto(truckEntity, req.IncludeLoads, req.OnlyActiveLoads);
-        return ResponseResult<TruckDto>.CreateSuccess(truckDto);
+        return Result<TruckDto>.Succeed(truckDto);
     }
 
     private async Task<Truck?> TryGetTruck(string? truckOrDriverId)

@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class DeletePaymentHandler : RequestHandler<DeletePaymentCommand, ResponseResult>
+internal sealed class DeletePaymentHandler : RequestHandler<DeletePaymentCommand, Result>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -9,19 +9,19 @@ internal sealed class DeletePaymentHandler : RequestHandler<DeletePaymentCommand
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         DeletePaymentCommand req, CancellationToken cancellationToken)
     {
         var payment = await _tenantUow.Repository<Payment>().GetByIdAsync(req.Id);
 
         if (payment is null)
         {
-            return ResponseResult.CreateError($"Could not find a payment with ID {req.Id}");
+            return Result.Fail($"Could not find a payment with ID {req.Id}");
         }
             
         
         _tenantUow.Repository<Payment>().Delete(payment);
         await _tenantUow.SaveChangesAsync();
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

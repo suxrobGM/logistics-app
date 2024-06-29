@@ -4,6 +4,6 @@ using MediatR;
 
 namespace Logistics.Application.Admin.Queries;
 
-public sealed class GetUsersQuery : SearchableQuery, IRequest<PagedResponseResult<UserDto>>
+public sealed class GetUsersQuery : SearchableQuery, IRequest<PagedResult<UserDto>>
 {
 }

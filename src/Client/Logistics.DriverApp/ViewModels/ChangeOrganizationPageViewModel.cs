@@ -75,7 +75,7 @@ public class ChangeOrganizationPageViewModel : BaseViewModel
         IsLoading = true;
         var result = await _apiClient.GetUserOrganizations(_authService.User.Id);
 
-        if (!result.IsSuccess)
+        if (!result.Success)
         {
             await PopupHelpers.ShowErrorAsync(result.Error);
             IsLoading = false;

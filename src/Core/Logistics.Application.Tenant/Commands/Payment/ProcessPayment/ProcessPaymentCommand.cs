@@ -1,9 +1,9 @@
-﻿using Logistics.Shared.Enums;
+﻿using Logistics.Shared.Consts;
 using MediatR;
 
 namespace Logistics.Application.Tenant.Commands;
 
-public class ProcessPaymentCommand : IRequest<ResponseResult>
+public class ProcessPaymentCommand : IRequest<Result>
 {
     public string PaymentId { get; set; } = default!;
     public PaymentMethod PaymentMethod { get; set; }

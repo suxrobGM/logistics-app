@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetNotificationsHandler : RequestHandler<GetNotificationsQuery, ResponseResult<NotificationDto[]>>
+internal sealed class GetNotificationsHandler : RequestHandler<GetNotificationsQuery, Result<NotificationDto[]>>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -12,7 +12,7 @@ internal sealed class GetNotificationsHandler : RequestHandler<GetNotificationsQ
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<ResponseResult<NotificationDto[]>> HandleValidated(
+    protected override async Task<Result<NotificationDto[]>> HandleValidated(
         GetNotificationsQuery req, 
         CancellationToken cancellationToken)
     {
@@ -24,6 +24,6 @@ internal sealed class GetNotificationsHandler : RequestHandler<GetNotificationsQ
             .OrderByDescending(i => i.CreatedDate)
             .ToArray();
         
-        return ResponseResult<NotificationDto[]>.CreateSuccess(notificationsDto);
+        return Result<NotificationDto[]>.Succeed(notificationsDto);
     }
 }

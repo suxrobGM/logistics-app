@@ -3,6 +3,6 @@ using MediatR;
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class GetCompanyStatsQuery : IRequest<ResponseResult<CompanyStatsDto>>
+public class GetCompanyStatsQuery : IRequest<Result<CompanyStatsDto>>
 {
 }

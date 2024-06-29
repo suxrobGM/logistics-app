@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Logistics.Application.Admin.Commands;
 
-public class UpdateUserCommand : IRequest<ResponseResult>
+public class UpdateUserCommand : IRequest<Result>
 {
     public string Id { get; set; } = default!;
     public string? FirstName { get; set; }

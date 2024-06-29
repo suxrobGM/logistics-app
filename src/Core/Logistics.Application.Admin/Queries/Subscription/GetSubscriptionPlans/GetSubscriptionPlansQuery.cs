@@ -4,6 +4,6 @@ using MediatR;
 
 namespace Logistics.Application.Admin.Queries;
 
-public sealed class GetSubscriptionPlansQuery : SearchableQuery, IRequest<PagedResponseResult<SubscriptionPlanDto>>
+public sealed class GetSubscriptionPlansQuery : SearchableQuery, IRequest<PagedResult<SubscriptionPlanDto>>
 {
 }

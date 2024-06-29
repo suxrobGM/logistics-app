@@ -1,4 +1,5 @@
 ﻿using IdentityModel.OidcClient;
+using Result = IdentityModel.OidcClient.Result;
 
 namespace Logistics.DriverApp.Services.Authentication;
 
@@ -32,7 +33,7 @@ public interface IAuthService
     /// <summary>
     /// Signs the user out and removes all tokens from secure storage.
     /// </summary>
-    /// <returns>A <see cref="Result"/> indicating the outcome.</returns>
+    /// <returns>A <see cref="IdentityModel.OidcClient.Result"/> indicating the outcome.</returns>
     Task<Result> LogoutAsync();
 
     /// <summary>

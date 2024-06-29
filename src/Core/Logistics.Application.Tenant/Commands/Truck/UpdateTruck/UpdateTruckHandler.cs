@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class UpdateTruckHandler : RequestHandler<UpdateTruckCommand, ResponseResult>
+internal sealed class UpdateTruckHandler : RequestHandler<UpdateTruckCommand, Result>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -9,7 +9,7 @@ internal sealed class UpdateTruckHandler : RequestHandler<UpdateTruckCommand, Re
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         UpdateTruckCommand req, CancellationToken cancellationToken)
     {
         var truckRepository = _tenantUow.Repository<Truck>();
@@ -17,14 +17,14 @@ internal sealed class UpdateTruckHandler : RequestHandler<UpdateTruckCommand, Re
 
         if (truckEntity is null)
         {
-            return ResponseResult.CreateError("Could not find the specified truck");
+            return Result.Fail("Could not find the specified truck");
         }
         
         var truckWithThisNumber = await truckRepository.GetAsync(i => i.TruckNumber == req.TruckNumber && 
                                                                              i.Id != truckEntity.Id);
         if (truckWithThisNumber is not null)
         {
-            return ResponseResult.CreateError("Already exists truck with this number");
+            return Result.Fail("Already exists truck with this number");
         }
         
         if (req.DriverIds != null)
@@ -44,6 +44,6 @@ internal sealed class UpdateTruckHandler : RequestHandler<UpdateTruckCommand, Re
         
         truckRepository.Update(truckEntity);
         await _tenantUow.SaveChangesAsync();
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

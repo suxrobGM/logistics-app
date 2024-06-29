@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class UpdatePayrollHandler : RequestHandler<UpdatePayrollCommand, ResponseResult>
+internal sealed class UpdatePayrollHandler : RequestHandler<UpdatePayrollCommand, Result>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -11,14 +11,14 @@ internal sealed class UpdatePayrollHandler : RequestHandler<UpdatePayrollCommand
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         UpdatePayrollCommand req, CancellationToken cancellationToken)
     {
         var payroll = await _tenantUow.Repository<Payroll>().GetByIdAsync(req.Id);
 
         if (payroll is null)
         {
-            return ResponseResult.CreateError($"Could not find a payroll with ID '{req.Id}'");
+            return Result.Fail($"Could not find a payroll with ID '{req.Id}'");
         }
         
         if (!string.IsNullOrEmpty(req.EmployeeId) && req.EmployeeId != payroll.EmployeeId)
@@ -27,7 +27,7 @@ internal sealed class UpdatePayrollHandler : RequestHandler<UpdatePayrollCommand
 
             if (employee is null)
             {
-                return ResponseResult.CreateError($"Could not find an employer with ID '{req.EmployeeId}'");
+                return Result.Fail($"Could not find an employer with ID '{req.EmployeeId}'");
             }
             
             payroll.Employee = employee;
@@ -50,6 +50,6 @@ internal sealed class UpdatePayrollHandler : RequestHandler<UpdatePayrollCommand
         
         _tenantUow.Repository<Payroll>().Update(payroll);
         await _tenantUow.SaveChangesAsync();
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

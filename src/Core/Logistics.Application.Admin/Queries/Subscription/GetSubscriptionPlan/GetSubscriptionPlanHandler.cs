@@ -7,7 +7,7 @@ using Logistics.Shared;
 
 namespace Logistics.Application.Admin.Queries;
 
-internal sealed class GetSubscriptionPlanHandler : RequestHandler<GetSubscriptionPlanQuery, ResponseResult<SubscriptionPlanDto>>
+internal sealed class GetSubscriptionPlanHandler : RequestHandler<GetSubscriptionPlanQuery, Result<SubscriptionPlanDto>>
 {
     private readonly IMasterUnityOfWork _masterUow;
 
@@ -16,17 +16,17 @@ internal sealed class GetSubscriptionPlanHandler : RequestHandler<GetSubscriptio
         _masterUow = masterUow;
     }
 
-    protected override async Task<ResponseResult<SubscriptionPlanDto>> HandleValidated(
+    protected override async Task<Result<SubscriptionPlanDto>> HandleValidated(
         GetSubscriptionPlanQuery req, CancellationToken cancellationToken)
     {
         var entity = await _masterUow.Repository<SubscriptionPlan>().GetAsync(i => i.Id == req.Id);
 
         if (entity is null)
         {
-            return ResponseResult<SubscriptionPlanDto>.CreateError($"Could not find a subscription plan with ID '{req.Id}'");
+            return Result<SubscriptionPlanDto>.Fail($"Could not find a subscription plan with ID '{req.Id}'");
         }
 
         var dto = entity.ToDto();
-        return ResponseResult<SubscriptionPlanDto>.CreateSuccess(dto);
+        return Result<SubscriptionPlanDto>.Succeed(dto);
     }
 }

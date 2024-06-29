@@ -3,8 +3,8 @@ using Logistics.DbMigrator.Extensions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.ValueObjects;
-using Logistics.Shared.Enums;
-using Logistics.Shared.Roles;
+using Logistics.Shared.Consts;
+using Logistics.Shared.Consts.Roles;
 using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.DbMigrator.Data;

@@ -35,11 +35,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.DriverApp", "src\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{D5694866-E7F1-4837-90DA-06CC062C35D4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Shared.Core", "src\Shared\Logistics.Shared.Core\Logistics.Shared.Core.csproj", "{1DBE287E-B5F8-4213-BF68-B7932AE641F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Core", "src\Shared\Logistics.Core\Logistics.Core.csproj", "{1DBE287E-B5F8-4213-BF68-B7932AE641F6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Shared.Models", "src\Shared\Logistics.Shared.Models\Logistics.Shared.Models.csproj", "{01EAEDA9-AD0A-457E-AACC-33F4B4EC27CC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Shared.Enums", "src\Shared\Logistics.Shared.Enums\Logistics.Shared.Enums.csproj", "{EF45EFF1-E88C-4EB7-9505-C1A26377E118}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Shared.Consts", "src\Shared\Logistics.Shared.Consts\Logistics.Shared.Consts.csproj", "{EF45EFF1-E88C-4EB7-9505-C1A26377E118}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Mappings", "src\Core\Logistics.Mappings\Logistics.Mappings.csproj", "{999E7EC8-AE07-4FD9-8BF2-A1B92C7122F2}"
 EndProject

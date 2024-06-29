@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class UpdateInvoiceHandler : RequestHandler<UpdateInvoiceCommand, ResponseResult>
+internal sealed class UpdateInvoiceHandler : RequestHandler<UpdateInvoiceCommand, Result>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -9,14 +9,14 @@ internal sealed class UpdateInvoiceHandler : RequestHandler<UpdateInvoiceCommand
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         UpdateInvoiceCommand req, CancellationToken cancellationToken)
     {
         var invoice = await _tenantUow.Repository<Invoice>().GetByIdAsync(req.Id);
 
         if (invoice is null)
         {
-            return ResponseResult.CreateError($"Could not find an invoice with ID '{req.Id}'");
+            return Result.Fail($"Could not find an invoice with ID '{req.Id}'");
         }
         
         if (req.PaymentMethod.HasValue && invoice.Payment.Method != req.PaymentMethod)
@@ -30,6 +30,6 @@ internal sealed class UpdateInvoiceHandler : RequestHandler<UpdateInvoiceCommand
         
         _tenantUow.Repository<Invoice>().Update(invoice);
         await _tenantUow.SaveChangesAsync();
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

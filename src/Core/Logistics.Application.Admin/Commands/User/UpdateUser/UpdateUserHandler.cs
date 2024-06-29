@@ -5,7 +5,7 @@ using Logistics.Shared;
 
 namespace Logistics.Application.Admin.Commands;
 
-internal sealed class UpdateUserHandler : RequestHandler<UpdateUserCommand, ResponseResult>
+internal sealed class UpdateUserHandler : RequestHandler<UpdateUserCommand, Result>
 {
     private readonly IMasterUnityOfWork _masterUow;
     private readonly ITenantUnityOfWork _tenantUow;
@@ -18,14 +18,14 @@ internal sealed class UpdateUserHandler : RequestHandler<UpdateUserCommand, Resp
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         UpdateUserCommand req, CancellationToken cancellationToken)
     {
         var user = await _masterUow.Repository<User>().GetByIdAsync(req.Id);
 
         if (user is null)
         {
-            return ResponseResult.CreateError("Could not find the specified user");
+            return Result.Fail("Could not find the specified user");
         }
 
         if (!string.IsNullOrEmpty(req.FirstName))
@@ -53,7 +53,7 @@ internal sealed class UpdateUserHandler : RequestHandler<UpdateUserCommand, Resp
         _masterUow.Repository<User>().Update(user);
         await _masterUow.SaveChangesAsync();
         await _tenantUow.SaveChangesAsync();
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 
     private async Task UpdateTenantEmployeeDataAsync(string tenantId, User user)

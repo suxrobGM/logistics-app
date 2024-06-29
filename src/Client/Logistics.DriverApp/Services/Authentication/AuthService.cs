@@ -2,8 +2,9 @@
 using IdentityModel.OidcClient;
 using System.Security.Claims;
 using IdentityModel;
-using Logistics.Shared.Claims;
+using Logistics.Shared.Consts.Claims;
 using IBrowser = IdentityModel.OidcClient.Browser.IBrowser;
+using Result = IdentityModel.OidcClient.Result;
 
 namespace Logistics.DriverApp.Services.Authentication;
 

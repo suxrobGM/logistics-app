@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQuery, ResponseResult<DailyGrossesDto>>
+internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQuery, Result<DailyGrossesDto>>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -11,7 +11,7 @@ internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQue
         _tenantUow = tenantUow;
     }
     
-    protected override async Task<ResponseResult<DailyGrossesDto>> HandleValidated(
+    protected override async Task<Result<DailyGrossesDto>> HandleValidated(
         GetDailyGrossesQuery req, CancellationToken cancellationToken)
     {
         var truckId = req.TruckId;
@@ -22,7 +22,7 @@ internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQue
 
             if (driver is null)
             {
-                return ResponseResult<DailyGrossesDto>.CreateError($"Could not find user with ID '{req.UserId}'");
+                return Result<DailyGrossesDto>.Fail($"Could not find user with ID '{req.UserId}'");
             }
             
             truckId = driver.TruckId;
@@ -54,6 +54,6 @@ internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQue
         {
             Data = dict.Values
         };
-        return ResponseResult<DailyGrossesDto>.CreateSuccess(dailyGrosses);
+        return Result<DailyGrossesDto>.Succeed(dailyGrosses);
     }
 }

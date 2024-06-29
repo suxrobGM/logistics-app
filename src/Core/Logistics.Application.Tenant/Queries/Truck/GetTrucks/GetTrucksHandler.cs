@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetTrucksHandler : RequestHandler<GetTrucksQuery, PagedResponseResult<TruckDto>>
+internal sealed class GetTrucksHandler : RequestHandler<GetTrucksQuery, PagedResult<TruckDto>>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -12,7 +12,7 @@ internal sealed class GetTrucksHandler : RequestHandler<GetTrucksQuery, PagedRes
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<PagedResponseResult<TruckDto>> HandleValidated(
+    protected override async Task<PagedResult<TruckDto>> HandleValidated(
         GetTrucksQuery req,
         CancellationToken cancellationToken)
     {
@@ -26,6 +26,6 @@ internal sealed class GetTrucksHandler : RequestHandler<GetTrucksQuery, PagedRes
                 : truckQuery.Select(i => i.ToDto(new List<LoadDto>())))
             .ToArray();
         
-        return PagedResponseResult<TruckDto>.Create(trucks, totalItems, req.PageSize);
+        return PagedResult<TruckDto>.Succeed(trucks, totalItems, req.PageSize);
     }
 }

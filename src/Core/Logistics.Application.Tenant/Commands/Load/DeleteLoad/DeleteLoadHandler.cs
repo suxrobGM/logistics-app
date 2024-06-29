@@ -3,7 +3,7 @@ using Logistics.Application.Tenant.Services;
 
 namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class DeleteLoadHandler : RequestHandler<DeleteLoadCommand, ResponseResult>
+internal sealed class DeleteLoadHandler : RequestHandler<DeleteLoadCommand, Result>
 {
     private readonly ITenantUnityOfWork _tenantUow;
     private readonly IPushNotificationService _pushNotificationService;
@@ -16,7 +16,7 @@ internal sealed class DeleteLoadHandler : RequestHandler<DeleteLoadCommand, Resp
         _pushNotificationService = pushNotificationService;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         DeleteLoadCommand req, CancellationToken cancellationToken)
     {
         var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.Id);
@@ -30,6 +30,6 @@ internal sealed class DeleteLoadHandler : RequestHandler<DeleteLoadCommand, Resp
             await _pushNotificationService.SendRemovedLoadNotificationAsync(load, truck);
         }
         
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

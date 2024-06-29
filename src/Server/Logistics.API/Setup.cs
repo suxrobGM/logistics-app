@@ -69,7 +69,7 @@ internal static class Setup
         .ConfigureApiBehaviorOptions(options =>
         {
             options.InvalidModelStateResponseFactory = context =>
-                new BadRequestObjectResult(ResponseResult.CreateError(GetModelStateErrors(context.ModelState)));
+                new BadRequestObjectResult(Result.Fail(GetModelStateErrors(context.ModelState)));
         });
         
         builder.Services.AddCors(options =>

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Logistics.Application.Admin.Commands;
 
-public class DeleteSubscriptionCommand : IRequest<ResponseResult>
+public class DeleteSubscriptionCommand : IRequest<Result>
 {
     public string Id { get; set; } = default!;
 }

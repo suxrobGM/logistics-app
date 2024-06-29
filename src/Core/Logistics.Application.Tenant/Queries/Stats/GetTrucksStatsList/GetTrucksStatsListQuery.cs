@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class GetTrucksStatsListQuery : PagedIntervalQuery, IRequest<PagedResponseResult<TruckStatsDto>>
+public class GetTrucksStatsListQuery : PagedIntervalQuery, IRequest<PagedResult<TruckStatsDto>>
 {
     
 }

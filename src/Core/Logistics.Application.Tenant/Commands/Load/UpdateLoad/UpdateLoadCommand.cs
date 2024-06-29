@@ -1,10 +1,10 @@
 ﻿using Logistics.Domain.ValueObjects;
-using Logistics.Shared.Enums;
+using Logistics.Shared.Consts;
 using MediatR;
 
 namespace Logistics.Application.Tenant.Commands;
 
-public class UpdateLoadCommand : IRequest<ResponseResult>
+public class UpdateLoadCommand : IRequest<Result>
 {
     public required string Id { get; set; }
     public string? Name { get; set; }

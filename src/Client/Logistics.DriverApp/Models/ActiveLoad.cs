@@ -1,4 +1,4 @@
-﻿using Logistics.Shared.Enums;
+﻿using Logistics.Shared.Consts;
 using Logistics.Shared.Models;
 
 namespace Logistics.DriverApp.Models;

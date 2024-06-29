@@ -1,11 +1,10 @@
-﻿using Logistics.Domain.Entities;
-using Logistics.Shared;
-using Logistics.Shared.Enums;
+﻿using Logistics.Shared;
+using Logistics.Shared.Consts;
 using MediatR;
 
 namespace Logistics.Application.Admin.Commands;
 
-public class UpdateSubscriptionCommand : IRequest<ResponseResult>
+public class UpdateSubscriptionCommand : IRequest<Result>
 {
     public string Id { get; set; } = default!;
     public SubscriptionStatus? Status { get; set; }

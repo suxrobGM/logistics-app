@@ -1,7 +1,7 @@
 ﻿using Logistics.Application.Admin.Queries;
 using Logistics.Shared;
 using Logistics.Shared.Models;
-using Logistics.Shared.Policies;
+using Logistics.Shared.Consts.Policies;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,12 +20,12 @@ public class AppRolesController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(PagedResponseResult<AppRoleDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(PagedResult<AppRoleDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.AppRoles.View)]
     public async Task<IActionResult> GetList([FromQuery] GetAppRolesQuery query)
     {
         var result = await _mediator.Send(query);
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result) : BadRequest(result);
     }
 }

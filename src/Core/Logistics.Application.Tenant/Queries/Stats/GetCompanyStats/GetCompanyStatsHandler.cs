@@ -1,9 +1,9 @@
 ﻿using Logistics.Shared.Models;
-using Logistics.Shared.Roles;
+using Logistics.Shared.Consts.Roles;
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetCompanyStatsHandler : RequestHandler<GetCompanyStatsQuery, ResponseResult<CompanyStatsDto>>
+internal sealed class GetCompanyStatsHandler : RequestHandler<GetCompanyStatsQuery, Result<CompanyStatsDto>>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -12,7 +12,7 @@ internal sealed class GetCompanyStatsHandler : RequestHandler<GetCompanyStatsQue
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<ResponseResult<CompanyStatsDto>> HandleValidated(
+    protected override async Task<Result<CompanyStatsDto>> HandleValidated(
         GetCompanyStatsQuery req, CancellationToken cancellationToken)
     {
         var companyStats = new CompanyStatsDto();
@@ -64,6 +64,6 @@ internal sealed class GetCompanyStatsHandler : RequestHandler<GetCompanyStatsQue
 
         companyStats.TotalDistance = totalStats?.TotalDistance ?? 0;
         companyStats.TotalGross = totalStats?.TotalGross ?? 0;
-        return ResponseResult<CompanyStatsDto>.CreateSuccess(companyStats);
+        return Result<CompanyStatsDto>.Succeed(companyStats);
     }
 }

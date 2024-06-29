@@ -5,7 +5,7 @@ namespace Logistics.Application.Core;
 
 public abstract class RequestHandler<TRequest, TResponse> : IRequestHandler<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
-    where TResponse : IResponseResult, new()
+    where TResponse : IResult, new()
 {
     public Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken)
     {

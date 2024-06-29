@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class GetLoadsQuery : SearchableQuery, IRequest<PagedResponseResult<LoadDto>>
+public class GetLoadsQuery : SearchableQuery, IRequest<PagedResult<LoadDto>>
 {
     public bool LoadAllPages { get; set; }
     public bool OnlyActiveLoads { get; set; }

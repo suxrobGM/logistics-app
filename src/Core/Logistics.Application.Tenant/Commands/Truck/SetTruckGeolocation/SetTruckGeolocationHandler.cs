@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class SetTruckGeolocationHandler : RequestHandler<SetTruckGeolocationCommand, ResponseResult>
+internal sealed class SetTruckGeolocationHandler : RequestHandler<SetTruckGeolocationCommand, Result>
 {
     private readonly ITenantUnityOfWork _tenantUow;
     private readonly ILogger<SetTruckGeolocationHandler> _logger;
@@ -17,7 +17,7 @@ internal sealed class SetTruckGeolocationHandler : RequestHandler<SetTruckGeoloc
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         SetTruckGeolocationCommand req, CancellationToken cancellationToken)
     {
         _tenantUow.SetCurrentTenantById(req.GeolocationData.TenantId);
@@ -26,7 +26,7 @@ internal sealed class SetTruckGeolocationHandler : RequestHandler<SetTruckGeoloc
         if (truck is null)
         {
             _logger.LogWarning("Could not find a truck with ID {TruckId}, skipped saving geolocation data", req.GeolocationData.TruckId);
-            return ResponseResult.CreateSuccess();
+            return Result.Succeed();
         }
 
         truck.CurrentLocation = req.GeolocationData.CurrentAddress?.ToEntity() ?? Address.NullAddress;
@@ -34,6 +34,6 @@ internal sealed class SetTruckGeolocationHandler : RequestHandler<SetTruckGeoloc
         truck.CurrentLocationLong = req.GeolocationData.Longitude;
         _tenantUow.Repository<Truck>().Update(truck);
         await _tenantUow.SaveChangesAsync();
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

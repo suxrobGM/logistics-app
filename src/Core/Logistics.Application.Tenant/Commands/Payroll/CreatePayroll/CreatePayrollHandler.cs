@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class CreatePayrollHandler : RequestHandler<CreatePayrollCommand, ResponseResult>
+internal sealed class CreatePayrollHandler : RequestHandler<CreatePayrollCommand, Result>
 {
     private readonly ITenantUnityOfWork _tenantUow;
     private readonly IPayrollService _payrollService;
@@ -15,19 +15,19 @@ internal sealed class CreatePayrollHandler : RequestHandler<CreatePayrollCommand
         _payrollService = payrollService;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         CreatePayrollCommand req, CancellationToken cancellationToken)
     {
         var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId);
 
         if (employee is null)
         {
-            return ResponseResult.CreateError($"Could not find an employer with ID '{req.EmployeeId}'");
+            return Result.Fail($"Could not find an employer with ID '{req.EmployeeId}'");
         }
 
         var payroll = _payrollService.CreatePayroll(employee, req.StartDate, req.EndDate);
         await _tenantUow.Repository<Payroll>().AddAsync(payroll);
         await _tenantUow.SaveChangesAsync();
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

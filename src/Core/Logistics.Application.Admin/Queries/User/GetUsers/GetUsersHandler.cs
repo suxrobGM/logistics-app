@@ -8,7 +8,7 @@ using Logistics.Shared;
 
 namespace Logistics.Application.Admin.Queries;
 
-internal sealed class GetUsersHandler : RequestHandler<GetUsersQuery, PagedResponseResult<UserDto>>
+internal sealed class GetUsersHandler : RequestHandler<GetUsersQuery, PagedResult<UserDto>>
 {
     private readonly IMasterUnityOfWork _masterUow;
 
@@ -17,7 +17,7 @@ internal sealed class GetUsersHandler : RequestHandler<GetUsersQuery, PagedRespo
         _masterUow = masterUow;
     }
 
-    protected override async Task<PagedResponseResult<UserDto>> HandleValidated(
+    protected override async Task<PagedResult<UserDto>> HandleValidated(
         GetUsersQuery req, 
         CancellationToken cancellationToken)
     {
@@ -28,6 +28,6 @@ internal sealed class GetUsersHandler : RequestHandler<GetUsersQuery, PagedRespo
             .Select(i => i.ToDto(null))
             .ToArray();
         
-        return PagedResponseResult<UserDto>.Create(users, totalItems, req.PageSize);
+        return PagedResult<UserDto>.Succeed(users, totalItems, req.PageSize);
     }
 }

@@ -1,8 +1,8 @@
-﻿using Logistics.Shared.Enums;
+﻿using Logistics.Shared.Consts;
 
 namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class UpdateEmployeeHandler : RequestHandler<UpdateEmployeeCommand, ResponseResult>
+internal sealed class UpdateEmployeeHandler : RequestHandler<UpdateEmployeeCommand, Result>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -11,7 +11,7 @@ internal sealed class UpdateEmployeeHandler : RequestHandler<UpdateEmployeeComma
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         UpdateEmployeeCommand req, CancellationToken cancellationToken)
     {
         var employeeEntity = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
@@ -19,7 +19,7 @@ internal sealed class UpdateEmployeeHandler : RequestHandler<UpdateEmployeeComma
 
         if (employeeEntity is null)
         {
-            return ResponseResult.CreateError("Could not find the specified user");
+            return Result.Fail("Could not find the specified user");
         }
 
         if (tenantRole is not null)
@@ -38,6 +38,6 @@ internal sealed class UpdateEmployeeHandler : RequestHandler<UpdateEmployeeComma
         
         _tenantUow.Repository<Employee>().Update(employeeEntity);
         await _tenantUow.SaveChangesAsync();
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

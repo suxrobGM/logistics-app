@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Tenant.Queries;
 
 internal sealed class GetPayrollsHandler
-    : RequestHandler<GetPayrollsQuery, PagedResponseResult<PayrollDto>>
+    : RequestHandler<GetPayrollsQuery, PagedResult<PayrollDto>>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -13,7 +13,7 @@ internal sealed class GetPayrollsHandler
         _tenantUow = tenantUow;
     }
     
-    protected override async Task<PagedResponseResult<PayrollDto>> HandleValidated(
+    protected override async Task<PagedResult<PayrollDto>> HandleValidated(
         GetPayrollsQuery req, 
         CancellationToken cancellationToken)
     {
@@ -36,6 +36,6 @@ internal sealed class GetPayrollsHandler
             .Select(i => i.ToDto())
             .ToArray();
         
-        return PagedResponseResult<PayrollDto>.Create(payrolls, totalItems, req.PageSize);
+        return PagedResult<PayrollDto>.Succeed(payrolls, totalItems, req.PageSize);
     }
 }

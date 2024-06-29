@@ -55,7 +55,7 @@ public abstract class PageBase : ComponentBase
         });
     }
     
-    protected async Task<bool> CallApiAsync(Func<IApiClient, Task<ResponseResult>> apiFunction)
+    protected async Task<bool> CallApiAsync(Func<IApiClient, Task<Result>> apiFunction)
     {
         IsLoading = true;
         
@@ -65,7 +65,7 @@ public abstract class PageBase : ComponentBase
         return HandleError(apiResult);
     }
 
-    protected async Task<T?> CallApiAsync<T>(Func<IApiClient, Task<ResponseResult<T>>> apiFunction)
+    protected async Task<T?> CallApiAsync<T>(Func<IApiClient, Task<Result<T>>> apiFunction)
     {
         IsLoading = true;
         
@@ -76,7 +76,7 @@ public abstract class PageBase : ComponentBase
         return apiResult.Data;
     }
     
-    protected async Task<PagedData<T>?> CallApiAsync<T>(Func<IApiClient, Task<PagedResponseResult<T>>> apiFunction)
+    protected async Task<PagedData<T>?> CallApiAsync<T>(Func<IApiClient, Task<PagedResult<T>>> apiFunction)
     {
         IsLoading = true;
 
@@ -88,9 +88,9 @@ public abstract class PageBase : ComponentBase
             ? new PagedData<T>(apiResult.Data, apiResult.TotalItems) : default;
     }
 
-    private bool HandleError(IResponseResult apiResult)
+    private bool HandleError(IResult apiResult)
     {
-        if (!apiResult.IsSuccess && !string.IsNullOrEmpty(apiResult.Error))
+        if (!apiResult.Success && !string.IsNullOrEmpty(apiResult.Error))
         {
             NotificationService.Notify(new NotificationMessage
             {

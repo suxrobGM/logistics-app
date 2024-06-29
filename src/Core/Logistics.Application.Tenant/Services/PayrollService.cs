@@ -1,4 +1,4 @@
-﻿using Logistics.Shared.Enums;
+﻿using Logistics.Shared.Consts;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Tenant.Services;

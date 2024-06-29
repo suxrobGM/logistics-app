@@ -2,7 +2,7 @@
 
 namespace Logistics.Application.Tenant.Commands;
 
-public class DeleteTruckCommand : IRequest<ResponseResult>
+public class DeleteTruckCommand : IRequest<Result>
 {
     public string Id { get; set; } = default!;
 }

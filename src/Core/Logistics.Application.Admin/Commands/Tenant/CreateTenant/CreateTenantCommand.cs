@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Logistics.Application.Admin.Commands;
 
-public class CreateTenantCommand : IRequest<ResponseResult>
+public class CreateTenantCommand : IRequest<Result>
 {
     public string Name { get; set; } = default!;
     public string? CompanyName { get; set; }

@@ -7,7 +7,7 @@ using Logistics.Shared;
 
 namespace Logistics.Application.Admin.Commands;
 
-internal sealed class CreateTenantHandler : RequestHandler<CreateTenantCommand, ResponseResult>
+internal sealed class CreateTenantHandler : RequestHandler<CreateTenantCommand, Result>
 {
     private readonly ITenantDatabaseService _tenantDatabase;
     private readonly IMasterUnityOfWork _masterUow;
@@ -20,7 +20,7 @@ internal sealed class CreateTenantHandler : RequestHandler<CreateTenantCommand, 
         _masterUow = masterUow;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(CreateTenantCommand req, CancellationToken cancellationToken)
+    protected override async Task<Result> HandleValidated(CreateTenantCommand req, CancellationToken cancellationToken)
     {
         var tenantName = req.Name.Trim().ToLower();
         var tenant = new Tenant
@@ -35,17 +35,17 @@ internal sealed class CreateTenantHandler : RequestHandler<CreateTenantCommand, 
         
         if (existingTenant is not null)
         {
-            return ResponseResult.CreateError($"Tenant name '{tenant.Name}' is already taken, please chose another name");
+            return Result.Fail($"Tenant name '{tenant.Name}' is already taken, please chose another name");
         }
 
         var created = await _tenantDatabase.CreateDatabaseAsync(tenant.ConnectionString);
         if (!created)
         {
-            return ResponseResult.CreateError("Could not create the tenant's database");
+            return Result.Fail("Could not create the tenant's database");
         }
 
         await _masterUow.Repository<Tenant>().AddAsync(tenant);
         await _masterUow.SaveChangesAsync();
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

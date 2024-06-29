@@ -4,11 +4,11 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Services;
 using Logistics.Domain.ValueObjects;
 using Logistics.Infrastructure.EF.Data;
-using Logistics.Shared.Policies;
-using Logistics.Shared.Roles;
+using Logistics.Shared.Consts.Policies;
+using Logistics.Shared.Consts.Roles;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using CustomClaimTypes = Logistics.Shared.Claims.CustomClaimTypes;
+using CustomClaimTypes = Logistics.Shared.Consts.Claims.CustomClaimTypes;
 
 namespace Logistics.DbMigrator.Data;
 

@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetEmployeeByIdHandler : RequestHandler<GetEmployeeByIdQuery, ResponseResult<EmployeeDto>>
+internal sealed class GetEmployeeByIdHandler : RequestHandler<GetEmployeeByIdQuery, Result<EmployeeDto>>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -12,17 +12,17 @@ internal sealed class GetEmployeeByIdHandler : RequestHandler<GetEmployeeByIdQue
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<ResponseResult<EmployeeDto>> HandleValidated(
+    protected override async Task<Result<EmployeeDto>> HandleValidated(
         GetEmployeeByIdQuery req, CancellationToken cancellationToken)
     {
         var employeeEntity = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
 
         if (employeeEntity is null)
         {
-            return ResponseResult<EmployeeDto>.CreateError($"Could not find the specified employee with ID {req.UserId}");
+            return Result<EmployeeDto>.Fail($"Could not find the specified employee with ID {req.UserId}");
         }
 
         var employeeDto = employeeEntity.ToDto();
-        return ResponseResult<EmployeeDto>.CreateSuccess(employeeDto);
+        return Result<EmployeeDto>.Succeed(employeeDto);
     }
 }

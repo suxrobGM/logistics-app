@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Logistics.Application.Admin.Queries;
 
-public sealed class GetTenantsQuery : SearchableQuery, IRequest<PagedResponseResult<TenantDto>>
+public sealed class GetTenantsQuery : SearchableQuery, IRequest<PagedResult<TenantDto>>
 {
     [JsonIgnore]
     public bool IncludeConnectionStrings { get; set; }

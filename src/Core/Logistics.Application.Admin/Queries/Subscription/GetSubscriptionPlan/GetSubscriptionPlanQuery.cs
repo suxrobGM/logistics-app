@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Logistics.Application.Admin.Queries;
 
-public sealed class GetSubscriptionPlanQuery : IRequest<ResponseResult<SubscriptionPlanDto>>
+public sealed class GetSubscriptionPlanQuery : IRequest<Result<SubscriptionPlanDto>>
 {
     public string Id { get; set; } = default!;
 }

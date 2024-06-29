@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Logistics.Application.Admin.Commands;
 
-public class CreateSubscriptionPlanCommand : IRequest<ResponseResult>
+public class CreateSubscriptionPlanCommand : IRequest<Result>
 {
     public string Name { get; set; } = default!;
     public string? Description { get; set; }

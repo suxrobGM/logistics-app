@@ -8,7 +8,7 @@ using Logistics.Shared;
 
 namespace Logistics.Application.Admin.Queries;
 
-internal sealed class GetTenantsHandler : RequestHandler<GetTenantsQuery, PagedResponseResult<TenantDto>>
+internal sealed class GetTenantsHandler : RequestHandler<GetTenantsQuery, PagedResult<TenantDto>>
 {
     private readonly IMasterUnityOfWork _masterUow;
 
@@ -17,7 +17,7 @@ internal sealed class GetTenantsHandler : RequestHandler<GetTenantsQuery, PagedR
         _masterUow = masterUow;
     }
 
-    protected override async Task<PagedResponseResult<TenantDto>> HandleValidated(
+    protected override async Task<PagedResult<TenantDto>> HandleValidated(
         GetTenantsQuery req, CancellationToken cancellationToken)
     {
         var totalItems = await _masterUow.Repository<Tenant>().CountAsync();
@@ -28,6 +28,6 @@ internal sealed class GetTenantsHandler : RequestHandler<GetTenantsQuery, PagedR
             .Select(i => i.ToDto(req.IncludeConnectionStrings))
             .ToArray();
         
-        return PagedResponseResult<TenantDto>.Create(items, totalItems, req.PageSize);
+        return PagedResult<TenantDto>.Succeed(items, totalItems, req.PageSize);
     }
 }

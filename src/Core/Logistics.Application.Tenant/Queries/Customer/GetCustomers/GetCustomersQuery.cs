@@ -3,6 +3,6 @@ using MediatR;
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class GetCustomersQuery : SearchableQuery, IRequest<PagedResponseResult<CustomerDto>>
+public class GetCustomersQuery : SearchableQuery, IRequest<PagedResult<CustomerDto>>
 {
 }

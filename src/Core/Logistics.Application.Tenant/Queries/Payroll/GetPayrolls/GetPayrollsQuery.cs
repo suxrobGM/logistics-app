@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class GetPayrollsQuery : SearchableQuery, IRequest<PagedResponseResult<PayrollDto>>
+public class GetPayrollsQuery : SearchableQuery, IRequest<PagedResult<PayrollDto>>
 {
     public string? EmployeeId { get; set; }
 }

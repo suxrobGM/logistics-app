@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class GetLoadByIdHandler : RequestHandler<GetLoadByIdQuery, ResponseResult<LoadDto>>
+internal sealed class GetLoadByIdHandler : RequestHandler<GetLoadByIdQuery, Result<LoadDto>>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -12,17 +12,17 @@ internal sealed class GetLoadByIdHandler : RequestHandler<GetLoadByIdQuery, Resp
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<ResponseResult<LoadDto>> HandleValidated(
+    protected override async Task<Result<LoadDto>> HandleValidated(
         GetLoadByIdQuery req, CancellationToken cancellationToken)
     {
         var loadEntity = await _tenantUow.Repository<Load>().GetByIdAsync(req.Id);
 
         if (loadEntity is null)
         {
-            return ResponseResult<LoadDto>.CreateError($"Could not find a load with ID '{req.Id}'");
+            return Result<LoadDto>.Fail($"Could not find a load with ID '{req.Id}'");
         }
         
         var loadDto = loadEntity.ToDto();
-        return ResponseResult<LoadDto>.CreateSuccess(loadDto);
+        return Result<LoadDto>.Succeed(loadDto);
     }
 }

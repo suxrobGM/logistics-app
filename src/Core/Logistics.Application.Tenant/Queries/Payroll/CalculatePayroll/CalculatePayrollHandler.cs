@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Tenant.Queries;
 
-internal sealed class CalculatePayrollHandler : RequestHandler<CalculatePayrollQuery, ResponseResult<PayrollDto>>
+internal sealed class CalculatePayrollHandler : RequestHandler<CalculatePayrollQuery, Result<PayrollDto>>
 {
     private readonly ITenantUnityOfWork _tenantUow;
     private readonly IPayrollService _payrollService;
@@ -17,18 +17,18 @@ internal sealed class CalculatePayrollHandler : RequestHandler<CalculatePayrollQ
         _payrollService = payrollService;
     }
 
-    protected override async Task<ResponseResult<PayrollDto>> HandleValidated(
+    protected override async Task<Result<PayrollDto>> HandleValidated(
         CalculatePayrollQuery req, CancellationToken cancellationToken)
     {
         var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId);
 
         if (employee is null)
         {
-            return ResponseResult<PayrollDto>.CreateError($"Could not find an employer with ID '{req.EmployeeId}'");
+            return Result<PayrollDto>.Fail($"Could not find an employer with ID '{req.EmployeeId}'");
         }
 
         var payrollEntity = _payrollService.CreatePayroll(employee, req.StartDate, req.EndDate);
         var payrollDto = payrollEntity.ToDto();
-        return ResponseResult<PayrollDto>.CreateSuccess(payrollDto);
+        return Result<PayrollDto>.Succeed(payrollDto);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Logistics.Client.Models;
 using Logistics.Shared;
-using Logistics.Shared.Enums;
+using Logistics.Shared.Consts;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Components;
 

@@ -7,7 +7,7 @@ using Logistics.Shared;
 namespace Logistics.Application.Admin.Queries;
 
 internal sealed class GetUserJoinedOrganizationsHandler : 
-    RequestHandler<GetUserJoinedOrganizationsQuery, ResponseResult<OrganizationDto[]>>
+    RequestHandler<GetUserJoinedOrganizationsQuery, Result<OrganizationDto[]>>
 {
     private readonly IMasterUnityOfWork _masterUow;
 
@@ -16,7 +16,7 @@ internal sealed class GetUserJoinedOrganizationsHandler :
         _masterUow = masterUow;
     }
 
-    protected override async Task<ResponseResult<OrganizationDto[]>> HandleValidated(
+    protected override async Task<Result<OrganizationDto[]>> HandleValidated(
         GetUserJoinedOrganizationsQuery req, 
         CancellationToken cancellationToken)
     {
@@ -24,7 +24,7 @@ internal sealed class GetUserJoinedOrganizationsHandler :
 
         if (user is null)
         {
-            return ResponseResult<OrganizationDto[]>.CreateError($"Could not find an user with ID '{req.UserId}'");
+            return Result<OrganizationDto[]>.Fail($"Could not find an user with ID '{req.UserId}'");
         }
 
         var tenantsIds = user.GetJoinedTenantIds();
@@ -39,6 +39,6 @@ internal sealed class GetUserJoinedOrganizationsHandler :
             })
             .ToArray();
         
-        return ResponseResult<OrganizationDto[]>.CreateSuccess(organizationsDto);
+        return Result<OrganizationDto[]>.Succeed(organizationsDto);
     }
 }

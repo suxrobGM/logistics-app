@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class GetMonthlyGrossesQuery : IntervalQuery, IRequest<ResponseResult<MonthlyGrossesDto>>
+public class GetMonthlyGrossesQuery : IntervalQuery, IRequest<Result<MonthlyGrossesDto>>
 {
     public string? TruckId { get; set; }
     public string? UserId { get; set; }

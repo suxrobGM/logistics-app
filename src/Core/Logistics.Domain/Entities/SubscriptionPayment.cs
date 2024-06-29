@@ -1,6 +1,6 @@
 ﻿using Logistics.Domain.Core;
 using Logistics.Domain.ValueObjects;
-using Logistics.Shared.Enums;
+using Logistics.Shared.Consts;
 
 namespace Logistics.Domain.Entities;
 

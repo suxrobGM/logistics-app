@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Logistics.Application.Tenant.Queries;
 
-public class GetTruckQuery : IRequest<ResponseResult<TruckDto>>
+public class GetTruckQuery : IRequest<Result<TruckDto>>
 {
     public string? TruckOrDriverId { get; set; }
     public bool IncludeLoads { get; set; }

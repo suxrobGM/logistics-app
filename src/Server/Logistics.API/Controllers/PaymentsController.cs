@@ -2,7 +2,7 @@
 using Logistics.Application.Tenant.Queries;
 using Logistics.Shared;
 using Logistics.Shared.Models;
-using Logistics.Shared.Policies;
+using Logistics.Shared.Consts.Policies;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,63 +21,63 @@ public class PaymentsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(ResponseResult<PaymentDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(Result<PaymentDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.View)]
     public async Task<IActionResult> GetById(string id)
     {
         var result = await _mediator.Send(new GetPaymentByIdQuery {Id = id});
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result) : BadRequest(result);
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(PagedResponseResult<PaymentDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(PagedResult<PaymentDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.View)]
     public async Task<IActionResult> GetList([FromQuery] GetPaymentsQuery query)
     {
         var result = await _mediator.Send(query);
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result) : BadRequest(result);
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.Create)]
     public async Task<IActionResult> Create([FromBody] CreatePaymentCommand request)
     {
         var result = await _mediator.Send(request);
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result) : BadRequest(result);
     }
     
     [HttpPost("process-payment")]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [AllowAnonymous]
     public async Task<IActionResult> ProcessPayment([FromBody] ProcessPaymentCommand request)
     {
         var result = await _mediator.Send(request);
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result) : BadRequest(result);
     }
 
     [HttpPut("{id}")]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.Edit)]
     public async Task<IActionResult> Update(string id, [FromBody] UpdatePaymentCommand request)
     {
         request.Id = id;
         var result = await _mediator.Send(request);
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result) : BadRequest(result);
     }
     
     [HttpDelete("{id}")]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.Delete)]
     public async Task<IActionResult> Delete(string id)
     {
         var result = await _mediator.Send(new DeleteCustomerCommand {Id = id});
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result) : BadRequest(result);
     }
 }

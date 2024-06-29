@@ -1,7 +1,7 @@
 ﻿namespace Logistics.Shared;
 
-public interface IResponseResult
+public interface IResult
 {
-    bool IsSuccess { get; }
+    bool Success { get; }
     string? Error { get; init; }
 }

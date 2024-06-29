@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using Logistics.Shared.Enums;
+using Logistics.Shared.Consts;
 using Logistics.DriverApp.Messages;
 using Logistics.DriverApp.Models;
 

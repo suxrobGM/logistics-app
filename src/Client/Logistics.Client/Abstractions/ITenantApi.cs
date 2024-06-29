@@ -6,9 +6,9 @@ namespace Logistics.Client.Abstractions;
 
 public interface ITenantApi
 {
-    Task<ResponseResult<TenantDto>> GetTenantAsync(string identifier);
-    Task<PagedResponseResult<TenantDto>> GetTenantsAsync(SearchableQuery query);
-    Task<ResponseResult> CreateTenantAsync(CreateTenant command);
-    Task<ResponseResult> UpdateTenantAsync(UpdateTenant command);
-    Task<ResponseResult> DeleteTenantAsync(string id);
+    Task<Result<TenantDto>> GetTenantAsync(string identifier);
+    Task<PagedResult<TenantDto>> GetTenantsAsync(SearchableQuery query);
+    Task<Result> CreateTenantAsync(CreateTenant command);
+    Task<Result> UpdateTenantAsync(UpdateTenant command);
+    Task<Result> DeleteTenantAsync(string id);
 }

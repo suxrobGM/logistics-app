@@ -1,6 +1,6 @@
 ﻿using Duende.IdentityServer.Models;
 using IdentityModel;
-using Logistics.Shared.Claims;
+using Logistics.Shared.Consts.Claims;
 
 namespace Logistics.IdentityServer;
 

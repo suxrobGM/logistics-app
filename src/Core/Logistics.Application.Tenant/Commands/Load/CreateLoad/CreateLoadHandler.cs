@@ -3,7 +3,7 @@ using Logistics.Application.Tenant.Services;
 
 namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, ResponseResult>
+internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Result>
 {
     private readonly ITenantUnityOfWork _tenantUow;
     private readonly IPushNotificationService _pushNotificationService;
@@ -16,28 +16,28 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resp
         _pushNotificationService = pushNotificationService;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         CreateLoadCommand req, CancellationToken cancellationToken)
     {
         var dispatcher = await _tenantUow.Repository<Employee>().GetByIdAsync(req.AssignedDispatcherId);
 
         if (dispatcher is null)
         {
-            return ResponseResult.CreateError("Could not find the specified dispatcher");
+            return Result.Fail("Could not find the specified dispatcher");
         }
 
         var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(req.AssignedTruckId);
 
         if (truck is null)
         {
-            return ResponseResult.CreateError($"Could not find the truck with ID '{req.AssignedTruckId}'");
+            return Result.Fail($"Could not find the truck with ID '{req.AssignedTruckId}'");
         }
         
         var customer = await _tenantUow.Repository<Customer>().GetByIdAsync(req.CustomerId);
 
         if (customer is null)
         {
-            return ResponseResult.CreateError($"Could not find the customer with ID '{req.CustomerId}'");
+            return Result.Fail($"Could not find the customer with ID '{req.CustomerId}'");
         }
         
         var latestLoad = _tenantUow.Repository<Load>().Query().OrderBy(i => i.RefId).LastOrDefault();
@@ -71,6 +71,6 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resp
         {
             await _pushNotificationService.SendNewLoadNotificationAsync(load, truck);
         }
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

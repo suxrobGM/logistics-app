@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Application.Tenant.Commands;
 
-internal sealed class DeleteTruckHandler : RequestHandler<DeleteTruckCommand, ResponseResult>
+internal sealed class DeleteTruckHandler : RequestHandler<DeleteTruckCommand, Result>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -9,12 +9,12 @@ internal sealed class DeleteTruckHandler : RequestHandler<DeleteTruckCommand, Re
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<ResponseResult> HandleValidated(
+    protected override async Task<Result> HandleValidated(
         DeleteTruckCommand req, CancellationToken cancellationToken)
     {
         var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(req.Id);
         _tenantUow.Repository<Truck>().Delete(truck);
         await _tenantUow.SaveChangesAsync();
-        return ResponseResult.CreateSuccess();
+        return Result.Succeed();
     }
 }

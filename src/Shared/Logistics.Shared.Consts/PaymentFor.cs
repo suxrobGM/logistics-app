@@ -1,4 +1,4 @@
-﻿namespace Logistics.Shared.Enums;
+﻿namespace Logistics.Shared.Consts;
 
 public enum PaymentFor
 {

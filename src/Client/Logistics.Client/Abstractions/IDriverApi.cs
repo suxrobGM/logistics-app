@@ -5,7 +5,7 @@ namespace Logistics.Client.Abstractions;
 
 public interface IDriverApi
 {
-    Task<ResponseResult> SetDeviceTokenAsync(SetDeviceToken command);
-    Task<ResponseResult> ConfirmLoadStatusAsync(ConfirmLoadStatus command);
-    Task<ResponseResult> UpdateLoadProximity(UpdateLoadProximity command);
+    Task<Result> SetDeviceTokenAsync(SetDeviceToken command);
+    Task<Result> ConfirmLoadStatusAsync(ConfirmLoadStatus command);
+    Task<Result> UpdateLoadProximity(UpdateLoadProximity command);
 }

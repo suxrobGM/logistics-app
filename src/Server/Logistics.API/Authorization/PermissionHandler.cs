@@ -1,4 +1,4 @@
-﻿using Logistics.Shared.Claims;
+﻿using Logistics.Shared.Consts.Claims;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Logistics.API.Authorization;
