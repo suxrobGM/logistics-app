@@ -50,7 +50,7 @@ Follow these steps to get the project up and running:
    To initialize and populate the databases, run the `seed-databases.bat` script provided in the repository.
 
 6. Run applications:
-   Launch all the applications in the suite using the respective `.bat` scripts in the repository.
+   Launch all the applications in the suite using the respective `.cmd` scripts in the repository.
 
 7. Access the applications:
    Use the following local URLs to access the apps:

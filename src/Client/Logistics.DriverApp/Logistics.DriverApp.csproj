@@ -58,19 +58,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="CommunityToolkit.Maui" Version="9.0.0" />
+	  <PackageReference Include="CommunityToolkit.Maui" Version="9.0.1" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 	  <PackageReference Include="IdentityModel.OidcClient" Version="6.0.0" />
-	  <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.5" />
+	  <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.6" />
 	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
 	  <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.1" />
 	  <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
-	  <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.40" />
-	  <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.40" />
-	  <PackageReference Include="Syncfusion.Maui.Charts" Version="25.2.5" />
-	  <PackageReference Include="Syncfusion.Maui.DataForm" Version="25.2.5" />
-	  <PackageReference Include="Syncfusion.Maui.DataGrid" Version="25.2.5" />
-	  <PackageReference Include="Syncfusion.Maui.Inputs" Version="25.2.5" />
+	  <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.61" />
+	  <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.61" />
+	  <PackageReference Include="Syncfusion.Maui.Charts" Version="26.1.39" />
+	  <PackageReference Include="Syncfusion.Maui.DataForm" Version="26.1.39" />
+	  <PackageReference Include="Syncfusion.Maui.DataGrid" Version="26.1.39" />
+	  <PackageReference Include="Syncfusion.Maui.Inputs" Version="26.1.39" />
 	  <PackageReference Include="Plugin.Firebase" Version="2.0.14" />
 	</ItemGroup>
 
