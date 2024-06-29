@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Logistics.AdminApp.Components;
 using Logistics.AdminApp.Authorization;
-using Logistics.Client;
+using Logistics.HttpClient;
 using Microsoft.AspNetCore.Authorization;
 using Radzen;
 
@@ -10,7 +10,7 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddWebApiClient(builder.Configuration);
+builder.Services.AddApiHttpClient(builder.Configuration);
 builder.Services.AddAuthorizationCore();
 builder.Services.AddRadzenComponents();
 builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();

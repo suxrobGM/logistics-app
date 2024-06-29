@@ -1,4 +1,4 @@
-﻿using Logistics.Client.Models;
+﻿using Logistics.HttpClient.Models;
 using Logistics.Shared.Consts.Policies;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Authorization;

@@ -1,4 +1,4 @@
-﻿using Logistics.Client;
+﻿using Logistics.HttpClient;
 using Logistics.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;

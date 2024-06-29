@@ -1,4 +1,4 @@
-﻿using Logistics.Client.Options;
+﻿using Logistics.HttpClient.Options;
 using Logistics.DriverApp.Services.Authentication;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.SignalR.Client;

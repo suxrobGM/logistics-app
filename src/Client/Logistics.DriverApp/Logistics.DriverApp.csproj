@@ -75,7 +75,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Logistics.Client\Logistics.Client.csproj" />
+	  <ProjectReference Include="..\Logistics.HttpClient\Logistics.HttpClient.csproj" />
 	</ItemGroup>
 
 </Project>

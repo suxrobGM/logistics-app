@@ -1,4 +1,4 @@
-﻿using Logistics.Client.Models;
+﻿using Logistics.HttpClient.Models;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Components;
 

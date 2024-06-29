@@ -3,31 +3,29 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.31903.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{45FFBEC0-FFF0-4964-A506-F326A76702CC}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{61325513-BB52-47A8-AFDD-755454AD71F8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{7B06ED10-5DDF-4EFB-9CD7-37B9415EDD3D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Domain", "src\Core\Logistics.Domain\Logistics.Domain.csproj", "{E92A6E55-158F-48CE-9774-6E81DB77F81C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Domain", "src\Server\Logistics.Domain\Logistics.Domain.csproj", "{E92A6E55-158F-48CE-9774-6E81DB77F81C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Tenant", "src\Core\Logistics.Application.Tenant\Logistics.Application.Tenant.csproj", "{53B069CE-0FEB-4191-B82D-BCE01159AE90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Tenant", "src\Server\Logistics.Application.Tenant\Logistics.Application.Tenant.csproj", "{53B069CE-0FEB-4191-B82D-BCE01159AE90}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Infrastructure.EF", "src\Core\Logistics.Infrastructure.EF\Logistics.Infrastructure.EF.csproj", "{0646E83A-CB9F-458A-BD84-8F2AE768CB91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Infrastructure.EF", "src\Server\Logistics.Infrastructure.EF\Logistics.Infrastructure.EF.csproj", "{0646E83A-CB9F-458A-BD84-8F2AE768CB91}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{F47DBB17-4146-4B24-9E95-5CE0DF59BF35}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Client", "src\Client\Logistics.Client\Logistics.Client.csproj", "{A2272F96-50F5-40EA-88E7-15EA8EEE1022}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.HttpClient", "src\Client\Logistics.HttpClient\Logistics.HttpClient.csproj", "{A2272F96-50F5-40EA-88E7-15EA8EEE1022}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.API", "src\Server\Logistics.API\Logistics.API.csproj", "{48AA06BC-140B-49B8-AD72-95B5FC6A2D4B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Admin", "src\Core\Logistics.Application.Admin\Logistics.Application.Admin.csproj", "{CEE34293-FC12-4E35-999C-EEDE063F8B25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Admin", "src\Server\Logistics.Application.Admin\Logistics.Application.Admin.csproj", "{CEE34293-FC12-4E35-999C-EEDE063F8B25}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Core", "src\Core\Logistics.Application.Core\Logistics.Application.Core.csproj", "{77D09657-5BE2-4462-AE24-39612759625A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Core", "src\Server\Logistics.Application.Core\Logistics.Application.Core.csproj", "{77D09657-5BE2-4462-AE24-39612759625A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.IdentityServer", "src\Server\Logistics.IdentityServer\Logistics.IdentityServer.csproj", "{CCDB0C07-4270-4253-B91A-9EB9FCDC8A05}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.DbMigrator", "src\Core\Logistics.DbMigrator\Logistics.DbMigrator.csproj", "{F40A53FD-29ED-4D8A-A2CE-E7D08FFFA54F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.DbMigrator", "src\Server\Logistics.DbMigrator\Logistics.DbMigrator.csproj", "{F40A53FD-29ED-4D8A-A2CE-E7D08FFFA54F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Admin.Tests", "test\Logistics.Application.Admin.Tests\Logistics.Application.Admin.Tests.csproj", "{566AE1D3-A3AE-40CC-A781-95B342E6CD88}"
 EndProject
@@ -41,7 +39,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Shared.Models", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Shared.Consts", "src\Shared\Logistics.Shared.Consts\Logistics.Shared.Consts.csproj", "{EF45EFF1-E88C-4EB7-9505-C1A26377E118}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Mappings", "src\Core\Logistics.Mappings\Logistics.Mappings.csproj", "{999E7EC8-AE07-4FD9-8BF2-A1B92C7122F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Mappings", "src\Server\Logistics.Mappings\Logistics.Mappings.csproj", "{999E7EC8-AE07-4FD9-8BF2-A1B92C7122F2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.AdminApp", "src\Client\Logistics.AdminApp\Logistics.AdminApp.csproj", "{81DAEA98-B520-4F4A-9FDF-FA378A7D6579}"
 EndProject
@@ -263,22 +261,22 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{E92A6E55-158F-48CE-9774-6E81DB77F81C} = {45FFBEC0-FFF0-4964-A506-F326A76702CC}
-		{53B069CE-0FEB-4191-B82D-BCE01159AE90} = {45FFBEC0-FFF0-4964-A506-F326A76702CC}
-		{0646E83A-CB9F-458A-BD84-8F2AE768CB91} = {45FFBEC0-FFF0-4964-A506-F326A76702CC}
 		{A2272F96-50F5-40EA-88E7-15EA8EEE1022} = {61325513-BB52-47A8-AFDD-755454AD71F8}
 		{48AA06BC-140B-49B8-AD72-95B5FC6A2D4B} = {F47DBB17-4146-4B24-9E95-5CE0DF59BF35}
-		{CEE34293-FC12-4E35-999C-EEDE063F8B25} = {45FFBEC0-FFF0-4964-A506-F326A76702CC}
-		{77D09657-5BE2-4462-AE24-39612759625A} = {45FFBEC0-FFF0-4964-A506-F326A76702CC}
 		{CCDB0C07-4270-4253-B91A-9EB9FCDC8A05} = {F47DBB17-4146-4B24-9E95-5CE0DF59BF35}
-		{F40A53FD-29ED-4D8A-A2CE-E7D08FFFA54F} = {45FFBEC0-FFF0-4964-A506-F326A76702CC}
 		{566AE1D3-A3AE-40CC-A781-95B342E6CD88} = {7B06ED10-5DDF-4EFB-9CD7-37B9415EDD3D}
 		{920DFC2D-23C4-4662-BE89-1784DB7DC72F} = {61325513-BB52-47A8-AFDD-755454AD71F8}
 		{1DBE287E-B5F8-4213-BF68-B7932AE641F6} = {D5694866-E7F1-4837-90DA-06CC062C35D4}
 		{01EAEDA9-AD0A-457E-AACC-33F4B4EC27CC} = {D5694866-E7F1-4837-90DA-06CC062C35D4}
 		{EF45EFF1-E88C-4EB7-9505-C1A26377E118} = {D5694866-E7F1-4837-90DA-06CC062C35D4}
-		{999E7EC8-AE07-4FD9-8BF2-A1B92C7122F2} = {45FFBEC0-FFF0-4964-A506-F326A76702CC}
 		{81DAEA98-B520-4F4A-9FDF-FA378A7D6579} = {61325513-BB52-47A8-AFDD-755454AD71F8}
+		{CEE34293-FC12-4E35-999C-EEDE063F8B25} = {F47DBB17-4146-4B24-9E95-5CE0DF59BF35}
+		{77D09657-5BE2-4462-AE24-39612759625A} = {F47DBB17-4146-4B24-9E95-5CE0DF59BF35}
+		{53B069CE-0FEB-4191-B82D-BCE01159AE90} = {F47DBB17-4146-4B24-9E95-5CE0DF59BF35}
+		{F40A53FD-29ED-4D8A-A2CE-E7D08FFFA54F} = {F47DBB17-4146-4B24-9E95-5CE0DF59BF35}
+		{E92A6E55-158F-48CE-9774-6E81DB77F81C} = {F47DBB17-4146-4B24-9E95-5CE0DF59BF35}
+		{0646E83A-CB9F-458A-BD84-8F2AE768CB91} = {F47DBB17-4146-4B24-9E95-5CE0DF59BF35}
+		{999E7EC8-AE07-4FD9-8BF2-A1B92C7122F2} = {F47DBB17-4146-4B24-9E95-5CE0DF59BF35}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C75A7F7A-4BBD-445A-9FCC-B0D18AAA404B}

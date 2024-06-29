@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Core\Logistics.Application.Admin\Logistics.Application.Admin.csproj" />
+      <ProjectReference Include="..\..\src\Server\Logistics.Application.Admin\Logistics.Application.Admin.csproj" />
     </ItemGroup>
 
 </Project>

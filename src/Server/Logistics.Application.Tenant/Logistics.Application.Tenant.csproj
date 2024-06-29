@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>Logistics.Application.Tenant</RootNamespace>
+        <LangVersion>12</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="FirebaseAdmin" Version="3.0.0"/>
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.1"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Shared\Logistics.Shared.Models\Logistics.Shared.Models.csproj"/>
+        <ProjectReference Include="..\Logistics.Application.Core\Logistics.Application.Core.csproj"/>
+        <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj"/>
+        <ProjectReference Include="..\Logistics.Mappings\Logistics.Mappings.csproj"/>
+    </ItemGroup>
+
+</Project>

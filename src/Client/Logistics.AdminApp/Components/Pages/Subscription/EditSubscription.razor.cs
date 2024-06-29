@@ -1,4 +1,4 @@
-﻿using Logistics.Client.Models;
+﻿using Logistics.HttpClient.Models;
 using Logistics.Shared;
 using Logistics.Shared.Consts;
 using Logistics.Shared.Models;

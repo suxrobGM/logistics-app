@@ -26,7 +26,7 @@ public static class Setup
                           ?? throw new NullReferenceException("Could not get OidcClient form the appsettings.json file");
         
         services.AddSingleton(oidcOptions);
-        services.AddWebApiClient(configuration);
+        services.AddApiHttpClient(configuration);
         services.AddSingleton<ITokenStorage, TokenStorage>();
         services.AddSingleton<ITenantService, TenantService>();
         services.AddSingleton<IMapsService, GoogleMapsService>();
