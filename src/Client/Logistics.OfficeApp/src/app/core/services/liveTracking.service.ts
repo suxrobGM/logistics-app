@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {TruckGeolocation} from '@core/models';
+import {TruckGeolocationDto} from '@core/models';
 import {TenantService} from './tenant.service';
 import {BaseHubConnection} from './baseHubConnection';
 
@@ -15,4 +15,4 @@ export class LiveTrackingService extends BaseHubConnection {
   }
 }
 
-type OnReceiveGeolocationDataCallback = (geolocation: TruckGeolocation) => void;
+type OnReceiveGeolocationDataCallback = (geolocation: TruckGeolocationDto) => void;

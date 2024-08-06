@@ -11,7 +11,7 @@ import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
 import {ConfirmationService} from 'primeng/api';
 import {SalaryType, SalaryTypeEnum} from '@core/enums';
-import {CreateEmployee, Role, User} from '@core/models';
+import {CreateEmployeeCommand, RoleDto, UserDto} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {UserService} from '../services';
 import {ValidationSummaryComponent} from '@shared/components';
@@ -43,9 +43,9 @@ import {ValidationSummaryComponent} from '@shared/components';
   ],
 })
 export class AddEmployeeComponent implements OnInit {
-  public suggestedUsers: User[] = [];
+  public suggestedUsers: UserDto[] = [];
   public form: FormGroup<CreateEmployeeForm>;
-  public roles: Role[] = [];
+  public roles: RoleDto[] = [];
   public salaryTypes = SalaryTypeEnum.toArray();
   public isLoading = false;
 
@@ -85,14 +85,14 @@ export class AddEmployeeComponent implements OnInit {
       return;
     }
 
-    const user = this.form.value.user as User;
+    const user = this.form.value.user as UserDto;
 
     if (!user) {
       this.toastService.showError('Select user');
       return;
     }
 
-    const newEmployee: CreateEmployee = {
+    const newEmployee: CreateEmployeeCommand = {
       userId: user.id,
       role: this.form.value.role?.name,
       salary: this.form.value.salary ?? 0,
@@ -101,7 +101,7 @@ export class AddEmployeeComponent implements OnInit {
 
     this.isLoading = true;
     this.apiService.createEmployee(newEmployee).subscribe((result) => {
-      if (result.isSuccess) {
+      if (result.success) {
         this.toastService.showSuccess('New employee has been added successfully');
         this.form.reset();
       }
@@ -132,8 +132,8 @@ export class AddEmployeeComponent implements OnInit {
 }
 
 interface CreateEmployeeForm {
-  user: FormControl<User | null>;
-  role: FormControl<Role | null>;
+  user: FormControl<UserDto | null>;
+  role: FormControl<RoleDto | null>;
   salary: FormControl<number>;
   salaryType: FormControl<SalaryType>;
 }

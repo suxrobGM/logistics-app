@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {Notification, ResponseResult} from '@core/models';
+import {NotificationDto, Result} from '@core/models';
 import {PredefinedDateRanges} from '@core/helpers';
 import {TenantService} from './tenant.service';
 import {BaseHubConnection} from './baseHubConnection';
@@ -20,12 +20,12 @@ export class NotificationService extends BaseHubConnection {
     this.hubConnection.on('ReceiveNotification', callback);
   }
 
-  getPastTwoWeeksNotifications(): Observable<ResponseResult<Notification[]>> {
+  getPastTwoWeeksNotifications(): Observable<Result<NotificationDto[]>> {
     const pastTwoWeeksDateRange = PredefinedDateRanges.getPastTwoWeeks();
     return this.apiService.getNotifications(pastTwoWeeksDateRange.startDate, pastTwoWeeksDateRange.endDate);
   }
 
-  markAsRead(notificationId: string): Observable<ResponseResult> {
+  markAsRead(notificationId: string): Observable<Result> {
     return this.apiService.updateNotification({
       id: notificationId,
       isRead: true,
@@ -33,4 +33,4 @@ export class NotificationService extends BaseHubConnection {
   }
 }
 
-type OnReceiveNotifictionCallback = (notification: Notification) => void;
+type OnReceiveNotifictionCallback = (notification: NotificationDto) => void;

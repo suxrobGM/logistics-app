@@ -1,7 +1,7 @@
 /* eslint-disable indent */
 import {Injectable} from '@angular/core';
 import {map, Observable} from 'rxjs';
-import {Role, User} from '@core/models';
+import {RoleDto, UserDto} from '@core/models';
 import {ApiService} from '@core/services';
 import {UserRole} from '@core/enums';
 import {AuthService} from '@core/auth';
@@ -19,18 +19,18 @@ export class UserService {
     this.userRoles = user?.roles;
   }
 
-  searchUser(searchQuery: string): Observable<User[] | undefined> {
+  searchUser(searchQuery: string): Observable<UserDto[] | undefined> {
     const users$ = this.apiService.getUsers({search: searchQuery});
     return users$.pipe(map((i) => i.data));
   }
 
-  fetchRoles(): Observable<Role[]> {
-    const dummyRole: Role = {name: '', displayName: ' '};
+  fetchRoles(): Observable<RoleDto[]> {
+    const dummyRole: RoleDto = {name: '', displayName: ' '};
     const roles$ = this.apiService.getRoles();
 
     return roles$.pipe(
         map((result) => {
-          if (result.isSuccess && result.data) {
+          if (result.success && result.data) {
             const roles = result.data;
             const roleNames = roles.map((i) => i.name);
 

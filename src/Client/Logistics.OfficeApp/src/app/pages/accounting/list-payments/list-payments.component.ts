@@ -5,7 +5,7 @@ import {CardModule} from 'primeng/card';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {TooltipModule} from 'primeng/tooltip';
 import {ButtonModule} from 'primeng/button';
-import {Payment} from '@core/models';
+import {PaymentDto} from '@core/models';
 import {ApiService} from '@core/services';
 import {
   PaymentFor,
@@ -35,7 +35,7 @@ import {AddressPipe} from '@shared/pipes';
   ],
 })
 export class ListPaymentsComponent {
-  public payments: Payment[] = [];
+  public payments: PaymentDto[] = [];
   public isLoading = false;
   public totalRecords = 0;
   public first = 0;
@@ -72,7 +72,7 @@ export class ListPaymentsComponent {
       startDate: past90days.startDate,
       endDate: past90days.endDate
     }).subscribe((result) => {
-      if (result.isSuccess && result.data) {
+      if (result.success && result.data) {
         this.payments = result.data;
         this.totalRecords = result.totalItems;
       }

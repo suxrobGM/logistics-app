@@ -1,5 +1,5 @@
 import {SalaryType} from '@core/enums';
-import {Role} from './RoleDto';
+import {RoleDto} from './RoleDto';
 
 export interface EmployeeDto {
   id: string;
@@ -8,7 +8,7 @@ export interface EmployeeDto {
   fullName: string;
   email: string;
   phoneNumber?: string;
-  roles: Role[];
+  roles: RoleDto[];
   joinedDate: Date;
   truckNumber?: string;
   truckId?: string;

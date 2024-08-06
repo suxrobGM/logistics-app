@@ -17,7 +17,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import {Address} from '@core/models';
+import {AddressDto} from '@core/models';
 import {ValidationSummaryComponent} from '../validation-summary/validation-summary.component';
 
 
@@ -41,10 +41,10 @@ import {ValidationSummaryComponent} from '../validation-summary/validation-summa
 export class AddressFormComponent implements ControlValueAccessor {
   public form: FormGroup<AddressForm>;
   private onTouched?: () => void;
-  private onChanged?: (value: Address | null) => void;
+  private onChanged?: (value: AddressDto | null) => void;
 
-  @Input() address?: Address;
-  @Output() addressChange = new EventEmitter<Address | null>();
+  @Input() address?: AddressDto;
+  @Output() addressChange = new EventEmitter<AddressDto | null>();
 
   constructor() {
     this.form = new FormGroup<AddressForm>({
@@ -66,7 +66,7 @@ export class AddressFormComponent implements ControlValueAccessor {
         return;
       }
       
-      const address: Address = {
+      const address: AddressDto = {
         line1: values.addressLine1,
         line2: values.addressLine2,
         city: values.city,
@@ -82,7 +82,7 @@ export class AddressFormComponent implements ControlValueAccessor {
     });
   }
 
-  writeValue(value: Address | null): void {
+  writeValue(value: AddressDto | null): void {
     if (!value) {
       return;
     }

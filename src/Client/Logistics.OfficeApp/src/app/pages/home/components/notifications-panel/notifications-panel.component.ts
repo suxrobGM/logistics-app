@@ -1,7 +1,7 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {NotificationService, ToastService} from '@core/services';
-import {Notification} from '@core/models';
+import {NotificationDto} from '@core/models';
 import {TimeAgoPipe} from '@shared/pipes';
 import {CardModule} from 'primeng/card';
 import {ButtonModule} from 'primeng/button';
@@ -26,10 +26,10 @@ import {DialogModule} from 'primeng/dialog';
   ],
 })
 export class NotificationsPanelComponent implements OnInit, OnDestroy {
-  public notifications: Notification[];
+  public notifications: NotificationDto[];
   public isLoading: boolean;
   public displayDialog: boolean;
-  public selectedNotification?: Notification;
+  public selectedNotification?: NotificationDto;
 
   @Input() height: string;
 
@@ -82,7 +82,7 @@ export class NotificationsPanelComponent implements OnInit, OnDestroy {
     });
   }
 
-  showNotification(notification: Notification): void {
+  showNotification(notification: NotificationDto): void {
     this.selectedNotification = notification;
     this.displayDialog = true;
 
@@ -95,7 +95,7 @@ export class NotificationsPanelComponent implements OnInit, OnDestroy {
     this.displayDialog = false;
   }
 
-  markAsRead(notification: Notification): void {
+  markAsRead(notification: NotificationDto): void {
     // Update frontend state
     notification.isRead = true;
     this.notificationService.markAsRead(notification.id).subscribe((_) => _);

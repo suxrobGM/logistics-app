@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {Payroll} from '@core/models';
+import {PayrollDto} from '@core/models';
 import {SalaryType, SalaryTypeEnum} from '@core/enums';
 
 
@@ -12,7 +12,7 @@ import {SalaryType, SalaryTypeEnum} from '@core/enums';
 })
 export class PayrollDetailsComponent {
   public salaryType = SalaryType;
-  @Input({required: true}) payroll!: Payroll;
+  @Input({required: true}) payroll!: PayrollDto;
 
   getSalaryTypeDesc(enumValue: SalaryType): string {
     return SalaryTypeEnum.getValue(enumValue).description;

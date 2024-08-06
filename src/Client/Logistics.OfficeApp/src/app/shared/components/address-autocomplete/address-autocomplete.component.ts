@@ -3,7 +3,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {Address} from '@core/models';
+import {AddressDto} from '@core/models';
 import {Converters} from '@shared/utils';
 
 
@@ -35,8 +35,8 @@ export class AddressAutocompleteComponent implements ControlValueAccessor, OnIni
   @Input() placeholder = 'Type address...';
   @Input() country = 'us';
   @Input() forceSelection = false;
-  @Input() address: Address | null = null;
-  @Output() addressChange = new EventEmitter<Address>();
+  @Input() address: AddressDto | null = null;
+  @Output() addressChange = new EventEmitter<AddressDto>();
   @Output() selectedAddress = new EventEmitter<SelectedAddressEvent>();
 
   ngOnInit(): void {
@@ -72,7 +72,7 @@ export class AddressAutocompleteComponent implements ControlValueAccessor, OnIni
     const zipCode = geocodingFeature.context.find((i) => i.id.startsWith('postcode'))?.text ?? '';
     const country = geocodingFeature.context.find((i) => i.id.startsWith('country'))?.text ?? '';
 
-    const addressObj: Address = {
+    const addressObj: AddressDto = {
       line1: street,
       city: city,
       region: region,
@@ -105,13 +105,13 @@ export class AddressAutocompleteComponent implements ControlValueAccessor, OnIni
     }, 100);
   }
 
-  private setAddressString(address: Address | null) {
+  private setAddressString(address: AddressDto | null) {
     this.addressString = Converters.addressToString(address);
   }
 
   // #region Reactive forms methods
 
-  private onChange(value: Address | null): void {}
+  private onChange(value: AddressDto | null): void {}
   private onTouched(): void {}
 
   private markAsTouched() {
@@ -121,12 +121,12 @@ export class AddressAutocompleteComponent implements ControlValueAccessor, OnIni
     }
   }
 
-  writeValue(value: Address): void {
+  writeValue(value: AddressDto): void {
     this.address = value;
     this.setAddressString(value);
   }
 
-  registerOnChange(fn: (value: Address | null) => void): void {
+  registerOnChange(fn: (value: AddressDto | null) => void): void {
     this.onChange = fn;
   }
 
@@ -161,6 +161,6 @@ interface FeatureContext {
 }
 
 export interface SelectedAddressEvent {
-  address: Address;
+  address: AddressDto;
   center: [number, number];
 }

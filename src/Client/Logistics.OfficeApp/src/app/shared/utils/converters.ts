@@ -1,4 +1,4 @@
-import {Address} from '@core/models';
+import {AddressDto} from '@core/models';
 
 export abstract class Converters {
   /**
@@ -6,7 +6,7 @@ export abstract class Converters {
    * @param value Address object
    * @returns A formatted string
    */
-  static addressToString(value: Address | null): string {
+  static addressToString(value: AddressDto | null): string {
     if (!value) {
       return '';
     }

@@ -1,4 +1,4 @@
-export interface RemoveEmployeeRole {
+export interface RemoveEmployeeRoleCommand {
   userId: string;
   role: string;
 }

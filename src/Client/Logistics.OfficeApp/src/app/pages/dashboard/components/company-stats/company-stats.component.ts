@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonModule, CurrencyPipe} from '@angular/common';
-import {CompanyStats} from '@core/models';
+import {CompanyStatsDto} from '@core/models';
 import {ApiService} from '@core/services';
 import {Converters} from '@shared/utils';
 import {DistanceUnitPipe} from '@shared/pipes';
@@ -29,7 +29,7 @@ import {SkeletonModule} from 'primeng/skeleton';
 export class CompanyStatsComponent implements OnInit {
   public isLoading: boolean;
   public rpm: number;
-  public companyStats?: CompanyStats;
+  public companyStats?: CompanyStatsDto;
 
   constructor(private apiService: ApiService) {
     this.isLoading = false;
@@ -52,7 +52,7 @@ export class CompanyStatsComponent implements OnInit {
     this.isLoading = true;
 
     this.apiService.getCompanyStats().subscribe((result) => {
-      if (result.isSuccess && result.data) {
+      if (result.success && result.data) {
         const stats = result.data;
         this.companyStats = result.data;
         this.rpm = stats.totalGross / Converters.metersTo(stats.totalDistance, 'mi');

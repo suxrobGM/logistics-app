@@ -3,7 +3,7 @@ import {ActivatedRoute, RouterLink} from '@angular/router';
 import {CurrencyPipe, CommonModule} from '@angular/common';
 import {SkeletonModule} from 'primeng/skeleton';
 import {CardModule} from 'primeng/card';
-import {DailyGrosses, MonthlyGrosses, Truck, TruckGeolocation} from '@core/models';
+import {DailyGrossesDto, MonthlyGrossesDto, TruckDto, TruckGeolocationDto} from '@core/models';
 import {DistanceUnitPipe} from '@shared/pipes';
 import {ApiService} from '@core/services';
 import {GeolocationMapComponent, GrossesBarchartComponent, BarChartDrawnEvent} from '@shared/components';
@@ -32,12 +32,12 @@ export class TruckDetailsComponent implements OnInit {
   public readonly accessToken: string;
   public id!: string;
   public isLoading: boolean;
-  public truck?: Truck;
-  public dailyGrosses?: DailyGrosses;
-  public monthlyGrosses?: MonthlyGrosses;
+  public truck?: TruckDto;
+  public dailyGrosses?: DailyGrossesDto;
+  public monthlyGrosses?: MonthlyGrossesDto;
   public rpmCurrent: number;
   public rpmAllTime: number;
-  public truckLocations: TruckGeolocation[];
+  public truckLocations: TruckGeolocationDto[];
 
   constructor(
     private apiService: ApiService,
@@ -72,7 +72,7 @@ export class TruckDetailsComponent implements OnInit {
     this.isLoading = true;
 
     this.apiService.getTruck(this.id).subscribe((result) => {
-      if (result.isSuccess && result.data) {
+      if (result.success && result.data) {
         this.truck = result.data;
 
         this.truckLocations = [{

@@ -9,7 +9,7 @@ import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {CardModule} from 'primeng/card';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
-import {CreateTruck, Employee, UpdateTruck} from '@core/models';
+import {CreateTruckCommand, EmployeeDto, UpdateTruckCommand} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 
 
@@ -40,7 +40,7 @@ export class EditTruckComponent implements OnInit {
   public isBusy: boolean;
   public editMode: boolean;
   public form: FormGroup;
-  public suggestedDrivers: Employee[];
+  public suggestedDrivers: EmployeeDto[];
 
   constructor(
     private apiService: ApiService,
@@ -75,14 +75,14 @@ export class EditTruckComponent implements OnInit {
 
   searchDriver(event: {query: string}) {
     this.apiService.getDrivers({search: event.query}).subscribe((result) => {
-      if (result.isSuccess && result.data) {
+      if (result.success && result.data) {
         this.suggestedDrivers = result.data;
       }
     });
   }
 
   submit() {
-    const drivers = this.form.value.drivers as Employee[];
+    const drivers = this.form.value.drivers as EmployeeDto[];
 
     if (drivers.length === 0) {
       this.toastService.showError('Select a driver');
@@ -106,7 +106,7 @@ export class EditTruckComponent implements OnInit {
 
   private fetchTruck(id: string) {
     this.apiService.getTruck(id).subscribe((result) => {
-      if (result.isSuccess && result.data) {
+      if (result.success && result.data) {
         const truck = result.data;
         this.form.patchValue({
           truckNumber: truck.truckNumber,
@@ -118,15 +118,15 @@ export class EditTruckComponent implements OnInit {
 
   private createTruck() {
     this.isBusy = true;
-    const drivers = this.form.value.drivers as Employee[];
+    const drivers = this.form.value.drivers as EmployeeDto[];
 
-    const command: CreateTruck = {
+    const command: CreateTruckCommand = {
       truckNumber: this.form.value.truckNumber,
       driverIds: drivers.map((i) => i.id),
     };
 
     this.apiService.createTruck(command).subscribe((result) => {
-      if (result.isSuccess) {
+      if (result.success) {
         this.toastService.showSuccess('A new truck has been created successfully');
         this.resetForm();
       }
@@ -137,16 +137,16 @@ export class EditTruckComponent implements OnInit {
 
   private updateTruck() {
     this.isBusy = true;
-    const drivers = this.form.value.drivers as Employee[];
+    const drivers = this.form.value.drivers as EmployeeDto[];
 
-    const updateTruckCommand: UpdateTruck = {
+    const updateTruckCommand: UpdateTruckCommand = {
       id: this.id!,
       truckNumber: this.form.value.truckNumber,
       driverIds: drivers.map((i) => i.id),
     };
 
     this.apiService.updateTruck(updateTruckCommand).subscribe((result) => {
-      if (result.isSuccess) {
+      if (result.success) {
         this.toastService.showSuccess('Truck has been updated successfully');
       }
 
@@ -161,7 +161,7 @@ export class EditTruckComponent implements OnInit {
 
     this.isBusy = true;
     this.apiService.deleteTruck(this.id).subscribe((result) => {
-      if (result.isSuccess) {
+      if (result.success) {
         this.toastService.showSuccess('A truck has been deleted successfully');
         this.resetForm();
       }

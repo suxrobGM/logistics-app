@@ -5,7 +5,7 @@ import {ButtonModule} from 'primeng/button';
 import {DropdownModule} from 'primeng/dropdown';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {DialogModule} from 'primeng/dialog';
-import {RemoveEmployeeRole, Role, UpdateEmployee} from '@core/models';
+import {RemoveEmployeeRoleCommand, RoleDto, UpdateEmployeeCommand} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {UserService} from '../../services';
 
@@ -28,12 +28,12 @@ import {UserService} from '../../services';
   ],
 })
 export class ChangeRoleDialogComponent implements OnInit {
-  public roles: Role[];
+  public roles: RoleDto[];
   public form: FormGroup;
   public loading: boolean;
 
   @Input() userId: string;
-  @Input() currentRoles?: Role[];
+  @Input() currentRoles?: RoleDto[];
   @Input() visible: boolean;
   @Output() visibleChange: EventEmitter<boolean>;
 
@@ -66,14 +66,14 @@ export class ChangeRoleDialogComponent implements OnInit {
       return;
     }
 
-    const updateEmployee: UpdateEmployee = {
+    const updateEmployee: UpdateEmployeeCommand = {
       userId: this.userId,
       role: role,
     };
 
     this.loading = true;
     this.apiService.updateEmployee(updateEmployee).subscribe((result) => {
-      if (result.isSuccess) {
+      if (result.success) {
         this.toastService.showSuccess(`Successfully changed employee's role`);
       }
 
@@ -100,14 +100,14 @@ export class ChangeRoleDialogComponent implements OnInit {
   }
 
   private removeRole(roleName: string) {
-    const removeRole: RemoveEmployeeRole = {
+    const removeRole: RemoveEmployeeRoleCommand = {
       userId: this.userId,
       role: roleName,
     };
 
     this.loading = true;
     this.apiService.removeRoleFromEmployee(removeRole).subscribe((result) => {
-      if (result.isSuccess) {
+      if (result.success) {
         this.toastService.showSuccess(`Removed ${roleName} role from the employee`);
       }
 

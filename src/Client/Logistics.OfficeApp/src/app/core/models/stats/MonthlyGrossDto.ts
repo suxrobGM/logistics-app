@@ -1,3 +1,5 @@
 import {DailyGrossDto} from './DailyGrossDto';
 
-export type MonthlyGrossDto = DailyGrossDto;
+export interface MonthlyGrossDto extends DailyGrossDto {
+
+}

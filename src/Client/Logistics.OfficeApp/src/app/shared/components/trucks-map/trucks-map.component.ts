@@ -2,7 +2,7 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {GeolocationMapComponent} from '@shared/components';
-import {TruckGeolocation} from '@core/models';
+import {TruckGeolocationDto} from '@core/models';
 import {ApiService, LiveTrackingService} from '@core/services';
 
 
@@ -17,7 +17,7 @@ import {ApiService, LiveTrackingService} from '@core/services';
   ],
 })
 export class TrucksMapComponent implements OnInit, OnDestroy {
-  public truckLocations: TruckGeolocation[];
+  public truckLocations: TruckGeolocationDto[];
 
   @Input({required: true}) accessToken!: string;
   @Input() width: string;
@@ -44,7 +44,7 @@ export class TrucksMapComponent implements OnInit, OnDestroy {
   private connectToLiveTracking() {
     this.liveTrackingService.connect();
 
-    this.liveTrackingService.onReceiveGeolocationData = (data: TruckGeolocation) => {
+    this.liveTrackingService.onReceiveGeolocationData = (data: TruckGeolocationDto) => {
       const index = this.truckLocations.findIndex((loc) => loc.truckId === data.truckId);
 
       if (index !== -1) {
@@ -58,11 +58,11 @@ export class TrucksMapComponent implements OnInit, OnDestroy {
 
   private fetchTrucksData() {
     this.apiService.getTrucks({pageSize: 100}).subscribe((result) => {
-      if (!result.isSuccess || !result.data) {
+      if (!result.success || !result.data) {
         return;
       }
 
-      const truckLocations: TruckGeolocation[] = result.data.flatMap((truck) => {
+      const truckLocations: TruckGeolocationDto[] = result.data.flatMap((truck) => {
         if (truck.currentLocation) {
           return [{
             latitude: truck.currentLocationLat!,

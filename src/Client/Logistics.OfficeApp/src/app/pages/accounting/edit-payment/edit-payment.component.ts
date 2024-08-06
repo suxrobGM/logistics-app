@@ -7,7 +7,7 @@ import {ButtonModule} from 'primeng/button';
 import {CardModule} from 'primeng/card';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {DropdownModule} from 'primeng/dropdown';
-import {CreatePayment, UpdatePayment} from '@core/models';
+import {CreatePaymentCommand, UpdatePaymentCommand} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {
   PaymentMethod,
@@ -118,7 +118,7 @@ export class EditPaymentComponent implements OnInit {
   private addPayment() {
     this.isLoading = true;
 
-    const command: CreatePayment = {
+    const command: CreatePaymentCommand = {
       amount: this.form.value.amount!,
       method: this.form.value.paymentMethod!,
       paymentFor: this.form.value.paymentFor!,
@@ -126,7 +126,7 @@ export class EditPaymentComponent implements OnInit {
     }
 
     this.apiService.createPayment(command).subscribe((result) => {
-      if (result.isSuccess) {
+      if (result.success) {
         this.toastService.showSuccess('A new payment has been added successfully');
         this.router.navigateByUrl('/accounting/payments');
       }
@@ -138,7 +138,7 @@ export class EditPaymentComponent implements OnInit {
   private updatePayment() {
     this.isLoading = true;
 
-    const commad: UpdatePayment = {
+    const commad: UpdatePaymentCommand = {
       id: this.id!,
       amount: this.form.value.amount,
       method: this.form.value.paymentMethod,
@@ -148,7 +148,7 @@ export class EditPaymentComponent implements OnInit {
     }
 
     this.apiService.updatePayment(commad).subscribe((result) => {
-      if (result.isSuccess) {
+      if (result.success) {
         this.toastService.showSuccess('A payment data has been updated successfully');
         this.router.navigateByUrl('/accounting/payments');
       }

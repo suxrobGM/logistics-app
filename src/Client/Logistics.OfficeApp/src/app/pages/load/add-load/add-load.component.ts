@@ -11,7 +11,7 @@ import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {AppConfig} from '@configs';
 import {AuthService} from '@core/auth';
-import {Address, CreateLoad, Customer} from '@core/models';
+import {AddressDto, CreateLoadCommand, CustomerDto} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {Converters} from '@shared/utils';
 import {
@@ -107,7 +107,7 @@ export class AddLoadComponent implements OnInit {
     }
 
     this.isLoading = true;
-    const command: CreateLoad = {
+    const command: CreateLoadCommand = {
       name: this.form.value.name!,
       originAddress: this.form.value.orgAddress!,
       originAddressLong: this.form.value.orgCoords![0],
@@ -124,7 +124,7 @@ export class AddLoadComponent implements OnInit {
     
     this.apiService.createLoad(command)
       .subscribe((result) => {
-        if (result.isSuccess) {
+        if (result.success) {
           this.toastService.showSuccess('A new load has been created successfully');
           this.router.navigateByUrl('/loads');
         }
@@ -147,10 +147,10 @@ export class AddLoadComponent implements OnInit {
 
 interface AddLoadForm {
   name: FormControl<string | null>;
-  customer: FormControl<Customer | null>;
-  orgAddress: FormControl<Address | null>;
+  customer: FormControl<CustomerDto | null>;
+  orgAddress: FormControl<AddressDto | null>;
   orgCoords: FormControl<[number, number]>;
-  dstAddress: FormControl<Address | null>;
+  dstAddress: FormControl<AddressDto | null>;
   dstCoords: FormControl<[number, number]>;
   deliveryCost: FormControl<number>;
   distance: FormControl<number>;

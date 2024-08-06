@@ -7,7 +7,7 @@ import {SharedModule} from 'primeng/api';
 import {CardModule} from 'primeng/card';
 import {TooltipModule} from 'primeng/tooltip';
 import {ButtonModule} from 'primeng/button';
-import {Truck} from '@core/models';
+import {TruckDto} from '@core/models';
 import {ApiService} from '@core/services';
 import {AddressPipe} from '@shared/pipes';
 
@@ -30,7 +30,7 @@ import {AddressPipe} from '@shared/pipes';
   ],
 })
 export class ListTruckComponent {
-  public trucks: Truck[];
+  public trucks: TruckDto[];
   public isLoading: boolean;
   public totalRecords: number;
 
@@ -45,7 +45,7 @@ export class ListTruckComponent {
     const searchValue = (event.target as HTMLInputElement).value;
 
     this.apiService.getTrucks({search: searchValue}).subscribe((result) => {
-      if (result.isSuccess && result.data) {
+      if (result.success && result.data) {
         this.trucks = result.data;
         this.totalRecords = result.totalItems;
       }
@@ -62,7 +62,7 @@ export class ListTruckComponent {
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
     this.apiService.getTrucks({orderBy: sortField, page: page, pageSize: rows}).subscribe((result) => {
-      if (result.isSuccess && result.data) {
+      if (result.success && result.data) {
         this.trucks = result.data;
         this.totalRecords = result.totalItems;
       }

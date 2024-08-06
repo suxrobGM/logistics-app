@@ -9,7 +9,7 @@ import {TooltipModule} from 'primeng/tooltip';
 import {ButtonModule} from 'primeng/button';
 import {TagModule} from 'primeng/tag';
 import {LoadStatus, LoadStatusEnum} from '@core/enums';
-import {Load} from '@core/models';
+import {LoadDto} from '@core/models';
 import {ApiService} from '@core/services';
 import {AddressPipe, DistanceUnitPipe} from '@shared/pipes';
 import {PaymentStatusTagComponent} from '@shared/components';
@@ -37,7 +37,7 @@ import {PaymentStatusTagComponent} from '@shared/components';
 })
 export class ListLoadComponent {
   public loadStatus = LoadStatus;
-  public loads: Load[] = [];
+  public loads: LoadDto[] = [];
   public isLoading = false;
   public totalRecords = 0;
   public first = 0;
@@ -49,7 +49,7 @@ export class ListLoadComponent {
     const searchValue = (event.target as HTMLInputElement).value;
 
     this.apiService.getLoads({search: searchValue}, false).subscribe((result) => {
-      if (result.isSuccess && result.data) {
+      if (result.success && result.data) {
         this.loads = result.data;
         this.totalRecords = result.totalItems;
       }
@@ -70,9 +70,12 @@ export class ListLoadComponent {
     }
 
     this.apiService.getLoads({orderBy: sortField, page: page, pageSize: rows}, false).subscribe((result) => {
-      if (result.isSuccess && result.data) {
+      console.log("Loads: ", result);
+
+      if (result.success && result.data) {
         this.loads = result.data;
         this.totalRecords = result.totalItems;
+        
       }
 
       this.isLoading = false;

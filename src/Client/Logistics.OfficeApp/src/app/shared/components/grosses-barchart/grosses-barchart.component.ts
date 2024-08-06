@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {CardModule} from 'primeng/card';
 import {ChartModule} from 'primeng/chart';
 import {SkeletonModule} from 'primeng/skeleton';
-import {MonthlyGrosses} from '@core/models';
+import {MonthlyGrossesDto} from '@core/models';
 import {DateUtils, Converters} from '@shared/utils';
 import {ApiService} from '@core/services';
 import {RangeCalendarComponent} from '../range-calendar/range-calendar.component';
@@ -24,7 +24,7 @@ import {RangeCalendarComponent} from '../range-calendar/range-calendar.component
 })
 export class GrossesBarchartComponent implements OnInit {
   public isLoading: boolean;
-  public monthlyGrosses?: MonthlyGrosses;
+  public monthlyGrosses?: MonthlyGrossesDto;
   public chartData: unknown;
   public chartOptions: unknown;
   public startDate: Date;
@@ -67,7 +67,7 @@ export class GrossesBarchartComponent implements OnInit {
     this.isLoading = true;
 
     this.apiService.getMonthlyGrosses(this.startDate, this.endDate, this.truckId).subscribe((result) => {
-      if (result.isSuccess && result.data) {
+      if (result.success && result.data) {
         this.monthlyGrosses = result.data;
         const rpm = this.monthlyGrosses.totalGross / Converters.metersTo(this.monthlyGrosses.totalDistance, 'mi');
 
@@ -79,7 +79,7 @@ export class GrossesBarchartComponent implements OnInit {
     });
   }
 
-  private drawChart(grosses: MonthlyGrosses) {
+  private drawChart(grosses: MonthlyGrossesDto) {
     const labels: Array<string> = [];
     const data: Array<number> = [];
 
@@ -104,6 +104,6 @@ export class GrossesBarchartComponent implements OnInit {
 }
 
 export interface BarChartDrawnEvent {
-  monthlyGrosses: MonthlyGrosses;
+  monthlyGrosses: MonthlyGrossesDto;
   rpm: number;
 }

@@ -13,7 +13,7 @@ import {
   PaymentMethodEnum,
   SalaryTypeEnum,
 } from '@core/enums';
-import {Employee, Payroll} from '@core/models';
+import {EmployeeDto, PayrollDto} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {PaymentStatusTagComponent} from '@shared/components';
 
@@ -37,8 +37,8 @@ export class ViewEmployeePayrollsComponent implements OnInit {
   private employeeId!: string;
   public salaryType = SalaryType;
   public paymentStatus = PaymentStatus;
-  public payrolls: Payroll[] = [];
-  public employee?: Employee;
+  public payrolls: PayrollDto[] = [];
+  public employee?: EmployeeDto;
   public isLoadingEmployee = false;
   public isLoadingPayrolls = false;
   public totalRecords = 0;
@@ -72,7 +72,7 @@ export class ViewEmployeePayrollsComponent implements OnInit {
       pageSize: rows,
       employeeId: this.employeeId,
     }).subscribe((result) => {
-      if (result.isSuccess && result.data) {
+      if (result.success && result.data) {
         this.payrolls = result.data;
         this.totalRecords = result.totalItems;
       }

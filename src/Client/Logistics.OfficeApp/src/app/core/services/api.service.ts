@@ -5,43 +5,43 @@ import {catchError, Observable, of} from 'rxjs';
 import {TenantService} from '@core/services';
 import {AppConfig} from '@configs';
 import {
-  ResponseResult,
-  Employee,
+  Result,
+  EmployeeDto,
   PagedResponseResult,
-  Tenant,
-  Truck,
-  User,
-  Load,
-  Role,
-  DailyGrosses,
-  MonthlyGrosses,
-  CompanyStats,
-  UpdateEmployee,
-  CreateEmployee,
-  RemoveEmployeeRole,
-  TruckDriver,
-  UpdateTruck,
-  CreateTruck,
-  UpdateLoad,
-  CreateLoad,
-  TruckStats,
-  Notification,
-  UpdateNotification,
+  TenantDto,
+  TruckDto,
+  UserDto,
+  LoadDto,
+  RoleDto,
+  DailyGrossesDto,
+  MonthlyGrossesDto,
+  CompanyStatsDto,
+  UpdateEmployeeCommand,
+  CreateEmployeeCommand,
+  RemoveEmployeeRoleCommand,
+  TruckDriverDto,
+  UpdateTruckCommand,
+  CreateTruckCommand,
+  UpdateLoadCommand,
+  CreateLoadCommand,
+  TruckStatsDto,
+  NotificationDto,
+  UpdateNotificationCommand,
   SearchableQuery,
-  Customer,
-  UpdateCustomer,
-  CreateCustomer,
-  Payment,
-  CreatePayment,
-  UpdatePayment,
+  CustomerDto,
+  UpdateCustomerCommand,
+  CreateCustomerCommand,
+  PaymentDto,
+  CreatePaymentCommand,
+  UpdatePaymentCommand,
   PagedIntervalQuery,
-  Invoice,
-  CreateInvoice,
-  UpdateInvoice,
-  Payroll,
-  UpdatePayroll,
-  CreatePayroll,
-  ProcessPayment,
+  InvoiceDto,
+  CreateInvoiceCommand,
+  UpdateInvoiceCommand,
+  PayrollDto,
+  UpdatePayrollCommand,
+  CreatePayrollCommand,
+  ProcessPaymentCommand,
   GetPayrollsQuery,
 } from '../models';
 
@@ -62,7 +62,7 @@ export class ApiService {
 
   // #region Tenant API
 
-  getTenant(): Observable<ResponseResult<Tenant>> {
+  getTenant(): Observable<Result<TenantDto>> {
     const tenantId = this.tenantService.getTenantName();
     const url = `/tenants/${tenantId}`;
     return this.get(url);
@@ -73,7 +73,7 @@ export class ApiService {
 
   // #region User API
 
-  getUsers(query?: SearchableQuery): Observable<PagedResponseResult<User>> {
+  getUsers(query?: SearchableQuery): Observable<PagedResponseResult<UserDto>> {
     const url = `/users?${this.stringfySearchableQuery(query)}`;
     return this.get(url);
   }
@@ -83,12 +83,12 @@ export class ApiService {
 
   // #region Load API
 
-  getLoad(id: string): Observable<ResponseResult<Load>> {
+  getLoad(id: string): Observable<Result<LoadDto>> {
     const url = `/loads/${id}`;
     return this.get(url);
   }
 
-  getLoads(query?: SearchableQuery, onlyActiveLoads = false): Observable<PagedResponseResult<Load>> {
+  getLoads(query?: SearchableQuery, onlyActiveLoads = false): Observable<PagedResponseResult<LoadDto>> {
     let url = `/loads?${this.stringfySearchableQuery(query)}`;
 
     if (onlyActiveLoads) {
@@ -97,17 +97,17 @@ export class ApiService {
     return this.get(url);
   }
 
-  createLoad(command: CreateLoad): Observable<ResponseResult> {
+  createLoad(command: CreateLoadCommand): Observable<Result> {
     const url = `/loads`;
     return this.post(url, command);
   }
 
-  updateLoad(command: UpdateLoad): Observable<ResponseResult> {
+  updateLoad(command: UpdateLoadCommand): Observable<Result> {
     const url = `/loads/${command.id}`;
     return this.put(url, command);
   }
 
-  deleteLoad(loadId: string): Observable<ResponseResult> {
+  deleteLoad(loadId: string): Observable<Result> {
     const url = `/loads/${loadId}`;
     return this.delete(url);
   }
@@ -117,32 +117,32 @@ export class ApiService {
 
   // #region Truck API
 
-  getTruck(truckId: string): Observable<ResponseResult<Truck>> {
+  getTruck(truckId: string): Observable<Result<TruckDto>> {
     const url = `/trucks/${truckId}`;
     return this.get(url);
   }
 
-  getTrucks(query?: SearchableQuery): Observable<PagedResponseResult<Truck>> {
+  getTrucks(query?: SearchableQuery): Observable<PagedResponseResult<TruckDto>> {
     const url = `/trucks?${this.stringfySearchableQuery(query)}`;
     return this.get(url);
   }
 
-  getTruckDrivers(query?: SearchableQuery): Observable<PagedResponseResult<TruckDriver>> {
+  getTruckDrivers(query?: SearchableQuery): Observable<PagedResponseResult<TruckDriverDto>> {
     const url = `/trucks/drivers?${this.stringfySearchableQuery(query)}`;
     return this.get(url);
   }
 
-  createTruck(command: CreateTruck): Observable<ResponseResult> {
+  createTruck(command: CreateTruckCommand): Observable<Result> {
     const url = `/trucks`;
     return this.post(url, command);
   }
 
-  updateTruck(command: UpdateTruck): Observable<ResponseResult> {
+  updateTruck(command: UpdateTruckCommand): Observable<Result> {
     const url = `/trucks/${command.id}`;
     return this.put(url, command);
   }
 
-  deleteTruck(truckId: string): Observable<ResponseResult> {
+  deleteTruck(truckId: string): Observable<Result> {
     const url = `/trucks/${truckId}`;
     return this.delete(url);
   }
@@ -152,37 +152,37 @@ export class ApiService {
 
   // #region Employee API
 
-  getEmployee(userId: string): Observable<ResponseResult<Employee>> {
+  getEmployee(userId: string): Observable<Result<EmployeeDto>> {
     const url = `/employees/${userId}`;
     return this.get(url);
   }
 
-  getEmployees(query?: SearchableQuery): Observable<PagedResponseResult<Employee>> {
+  getEmployees(query?: SearchableQuery): Observable<PagedResponseResult<EmployeeDto>> {
     const url = `/employees?${this.stringfySearchableQuery(query)}`;
     return this.get(url);
   }
 
-  getDrivers(query?: SearchableQuery): Observable<PagedResponseResult<Employee>> {
+  getDrivers(query?: SearchableQuery): Observable<PagedResponseResult<EmployeeDto>> {
     const url = `/employees?${this.stringfySearchableQuery(query)}&role=tenant.driver`;
     return this.get(url);
   }
 
-  createEmployee(command: CreateEmployee): Observable<ResponseResult> {
+  createEmployee(command: CreateEmployeeCommand): Observable<Result> {
     const url = `/employees`;
     return this.post(url, command);
   }
 
-  removeRoleFromEmployee(command: RemoveEmployeeRole): Observable<ResponseResult> {
+  removeRoleFromEmployee(command: RemoveEmployeeRoleCommand): Observable<Result> {
     const url = `/employees/${command.userId}/remove-role`;
     return this.post(url, command);
   }
 
-  updateEmployee(command: UpdateEmployee): Observable<ResponseResult> {
+  updateEmployee(command: UpdateEmployeeCommand): Observable<Result> {
     const url = `/employees/${command.userId}`;
     return this.put(url, command);
   }
 
-  deleteEmployee(employeeId: string): Observable<ResponseResult> {
+  deleteEmployee(employeeId: string): Observable<Result> {
     const url = `/employees/${employeeId}`;
     return this.delete(url);
   }
@@ -192,7 +192,7 @@ export class ApiService {
 
   // #region Tenant Role API
 
-  getRoles(query?: SearchableQuery): Observable<PagedResponseResult<Role>> {
+  getRoles(query?: SearchableQuery): Observable<PagedResponseResult<RoleDto>> {
     const url = `/tenant-roles?${this.stringfySearchableQuery(query)}`;
     return this.get(url);
   }
@@ -202,12 +202,12 @@ export class ApiService {
 
   // #region Stats API
 
-  getCompanyStats(): Observable<ResponseResult<CompanyStats>> {
+  getCompanyStats(): Observable<Result<CompanyStatsDto>> {
     const url = `/stats/company`;
     return this.get(url);
   }
 
-  getDailyGrosses(startDate: Date, endDate?: Date, truckId?: string): Observable<ResponseResult<DailyGrosses>> {
+  getDailyGrosses(startDate: Date, endDate?: Date, truckId?: string): Observable<Result<DailyGrossesDto>> {
     let url = `/stats/daily-grosses?startDate=${startDate.toJSON()}`;
 
     if (endDate) {
@@ -220,7 +220,7 @@ export class ApiService {
     return this.get(url);
   }
 
-  getMonthlyGrosses(startDate: Date, endDate?: Date, truckId?: string): Observable<ResponseResult<MonthlyGrosses>> {
+  getMonthlyGrosses(startDate: Date, endDate?: Date, truckId?: string): Observable<Result<MonthlyGrossesDto>> {
     let url = `/stats/monthly-grosses?startDate=${startDate.toJSON()}`;
 
     if (endDate) {
@@ -230,10 +230,10 @@ export class ApiService {
       url += `&truckId=${truckId}`;
     }
 
-    return this.get<ResponseResult<MonthlyGrosses>>(url);
+    return this.get<Result<MonthlyGrossesDto>>(url);
   }
 
-  getTrucksStats(query: PagedIntervalQuery): Observable<PagedResponseResult<TruckStats>> {
+  getTrucksStats(query: PagedIntervalQuery): Observable<PagedResponseResult<TruckStatsDto>> {
     const url = `/stats/trucks?${this.stringfyPagedIntervalQuery(query)}`;
     return this.get(url);
   }
@@ -243,12 +243,12 @@ export class ApiService {
 
   // #region Notifications API
 
-  getNotifications(startDate: Date, endDate: Date): Observable<ResponseResult<Notification[]>> {
+  getNotifications(startDate: Date, endDate: Date): Observable<Result<NotificationDto[]>> {
     const url = `/notifications?startDate=${startDate.toJSON()}&endDate=${endDate.toJSON()}`;
     return this.get(url);
   }
 
-  updateNotification(commad: UpdateNotification): Observable<ResponseResult> {
+  updateNotification(commad: UpdateNotificationCommand): Observable<Result> {
     const url = `/notifications/${commad.id}`;
     return this.put(url, commad);
   }
@@ -258,27 +258,27 @@ export class ApiService {
 
   // #region Customers API
 
-  getCustomer(id: string): Observable<ResponseResult<Customer>> {
+  getCustomer(id: string): Observable<Result<CustomerDto>> {
     const url = `/customers/${id}`;
     return this.get(url);
   }
 
-  getCustomers(query?: SearchableQuery): Observable<PagedResponseResult<Customer>> {
+  getCustomers(query?: SearchableQuery): Observable<PagedResponseResult<CustomerDto>> {
     const url = `/customers?${this.stringfySearchableQuery(query)}`;
     return this.get(url);
   }
 
-  createCustomer(command: CreateCustomer): Observable<ResponseResult> {
+  createCustomer(command: CreateCustomerCommand): Observable<Result> {
     const url = `/customers`;
     return this.post(url, command);
   }
 
-  updateCustomer(command: UpdateCustomer): Observable<ResponseResult> {
+  updateCustomer(command: UpdateCustomerCommand): Observable<Result> {
     const url = `/customers/${command.id}`;
     return this.put(url, command);
   }
 
-  deleteCustomer(customerId: string): Observable<ResponseResult> {
+  deleteCustomer(customerId: string): Observable<Result> {
     const url = `/customers/${customerId}`;
     return this.delete(url);
   }
@@ -288,32 +288,32 @@ export class ApiService {
 
   // #region Payments API
 
-  getPayment(id: string): Observable<ResponseResult<Payment>> {
+  getPayment(id: string): Observable<Result<PaymentDto>> {
     const url = `/payments/${id}`;
     return this.get(url);
   }
 
-  getPayments(query?: PagedIntervalQuery): Observable<PagedResponseResult<Payment>> {
+  getPayments(query?: PagedIntervalQuery): Observable<PagedResponseResult<PaymentDto>> {
     const url = `/payments?${this.stringfyPagedIntervalQuery(query)}`;
     return this.get(url);
   }
 
-  processPayment(command: ProcessPayment): Observable<ResponseResult> {
+  processPayment(command: ProcessPaymentCommand): Observable<Result> {
     const url = `/payments/process-payment`;
     return this.post(url, command);
   }
 
-  createPayment(command: CreatePayment): Observable<ResponseResult> {
+  createPayment(command: CreatePaymentCommand): Observable<Result> {
     const url = `/payments`;
     return this.post(url, command);
   }
 
-  updatePayment(command: UpdatePayment): Observable<ResponseResult> {
+  updatePayment(command: UpdatePaymentCommand): Observable<Result> {
     const url = `/payments/${command.id}`;
     return this.put(url, command);
   }
 
-  deletePayment(paymentId: string): Observable<ResponseResult> {
+  deletePayment(paymentId: string): Observable<Result> {
     const url = `/payments/${paymentId}`;
     return this.delete(url);
   }
@@ -323,27 +323,27 @@ export class ApiService {
 
   // #region Invoices API
 
-  getInvoice(id: string): Observable<ResponseResult<Invoice>> {
+  getInvoice(id: string): Observable<Result<InvoiceDto>> {
     const url = `/invoices/${id}`;
     return this.get(url);
   }
 
-  getInvoices(query?: PagedIntervalQuery): Observable<PagedResponseResult<Invoice>> {
+  getInvoices(query?: PagedIntervalQuery): Observable<PagedResponseResult<InvoiceDto>> {
     const url = `/invoices?${this.stringfyPagedIntervalQuery(query)}`;
     return this.get(url);
   }
 
-  createInvoice(command: CreateInvoice): Observable<ResponseResult> {
+  createInvoice(command: CreateInvoiceCommand): Observable<Result> {
     const url = `/invoices`;
     return this.post(url, command);
   }
 
-  updateInvoice(command: UpdateInvoice): Observable<ResponseResult> {
+  updateInvoice(command: UpdateInvoiceCommand): Observable<Result> {
     const url = `/invoices/${command.id}`;
     return this.put(url, command);
   }
 
-  deleteInvoice(invoiceId: string): Observable<ResponseResult> {
+  deleteInvoice(invoiceId: string): Observable<Result> {
     const url = `/invoices/${invoiceId}`;
     return this.delete(url);
   }
@@ -353,12 +353,12 @@ export class ApiService {
 
   // #region Payrolls API
 
-  getPayroll(id: string): Observable<ResponseResult<Payroll>> {
+  getPayroll(id: string): Observable<Result<PayrollDto>> {
     const url = `/payrolls/${id}`;
     return this.get(url);
   }
 
-  getPayrolls(query?: GetPayrollsQuery): Observable<PagedResponseResult<Payroll>> {
+  getPayrolls(query?: GetPayrollsQuery): Observable<PagedResponseResult<PayrollDto>> {
     let url = `/payrolls?${this.stringfySearchableQuery(query)}`;
 
     if (query?.employeeId) {
@@ -368,22 +368,22 @@ export class ApiService {
     return this.get(url);
   }
 
-  calculateEmployeePayroll(query: CreatePayroll): Observable<ResponseResult<Payroll>> {
+  calculateEmployeePayroll(query: CreatePayrollCommand): Observable<Result<PayrollDto>> {
     const url = `/payrolls/calculate?employeeId=${query.employeeId}&startDate=${query.startDate.toJSON()}&endDate=${query.endDate.toJSON()}`;
     return this.get(url);
   }
 
-  createPayroll(command: CreatePayroll): Observable<ResponseResult> {
+  createPayroll(command: CreatePayrollCommand): Observable<Result> {
     const url = `/payrolls`;
     return this.post(url, command);
   }
 
-  updatePayroll(command: UpdatePayroll): Observable<ResponseResult> {
+  updatePayroll(command: UpdatePayrollCommand): Observable<Result> {
     const url = `/payrolls/${command.id}`;
     return this.put(url, command);
   }
 
-  deletePayroll(payrollId: string): Observable<ResponseResult> {
+  deletePayroll(payrollId: string): Observable<Result> {
     const url = `/payrolls/${payrollId}`;
     return this.delete(url);
   }

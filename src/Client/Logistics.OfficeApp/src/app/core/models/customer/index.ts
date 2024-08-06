@@ -1,3 +1,3 @@
-export * from './createCustomer';
-export * from './updateCustomer';
-export * from './customer';
+export * from './CreateCustomerCommand';
+export * from './UpdateCustomerCommand';
+export * from './CustomerDto';

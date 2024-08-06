@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {MarkerComponent, NgxMapboxGLModule} from 'ngx-mapbox-gl';
-import {TruckGeolocation} from '@core/models';
+import {TruckGeolocationDto} from '@core/models';
 import {AddressPipe} from '@shared/pipes';
 
 
@@ -23,7 +23,7 @@ export class GeolocationMapComponent {
   public selectedMarker: Marker | null = null;
 
   @Input({required: true}) accessToken!: string;
-  @Input() geolocationData: TruckGeolocation[];
+  @Input() geolocationData: TruckGeolocationDto[];
   @Input() zoom: number;
   @Input() center: [number, number];
   @Input() width: string;
@@ -37,7 +37,7 @@ export class GeolocationMapComponent {
     this.height = '100%';
   }
 
-  onSelectMarker(geoData: TruckGeolocation, markerComponent: MarkerComponent): void {
+  onSelectMarker(geoData: TruckGeolocationDto, markerComponent: MarkerComponent): void {
     this.selectedMarker = {
       component: markerComponent,
       data: geoData,
@@ -47,5 +47,5 @@ export class GeolocationMapComponent {
 
 interface Marker {
   component: MarkerComponent;
-  data: TruckGeolocation;
+  data: TruckGeolocationDto;
 }

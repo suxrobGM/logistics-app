@@ -6,7 +6,7 @@ import {CardModule} from 'primeng/card';
 import {InputTextModule} from 'primeng/inputtext';
 import {ButtonModule} from 'primeng/button';
 import {TooltipModule} from 'primeng/tooltip';
-import {Payroll} from '@core/models';
+import {PayrollDto} from '@core/models';
 import {
   PaymentMethod,
   PaymentMethodEnum,
@@ -37,7 +37,7 @@ import {PaymentStatusTagComponent} from '@shared/components';
 export class ListPayrollComponent {
   public salaryType = SalaryType;
   public paymentStatus = PaymentStatus;
-  public payrolls: Payroll[] = [];
+  public payrolls: PayrollDto[] = [];
   public isLoading = false;
   public totalRecords = 0;
   public first = 0;
@@ -50,7 +50,7 @@ export class ListPayrollComponent {
     const searchValue = (event.target as HTMLInputElement).value;
 
     this.apiService.getPayrolls({search: searchValue}).subscribe((result) => {
-      if (result.isSuccess && result.data) {
+      if (result.success && result.data) {
         this.payrolls = result.data;
         this.totalRecords = result.totalItems;
       }
@@ -71,7 +71,7 @@ export class ListPayrollComponent {
       page: page, 
       pageSize: rows,
     }).subscribe((result) => {
-      if (result.isSuccess && result.data) {
+      if (result.success && result.data) {
         this.payrolls = result.data;
         this.totalRecords = result.totalItems;
       }

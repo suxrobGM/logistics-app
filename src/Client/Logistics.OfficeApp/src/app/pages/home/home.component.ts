@@ -9,7 +9,7 @@ import {TableModule} from 'primeng/table';
 import {SharedModule} from 'primeng/api';
 import {CardModule} from 'primeng/card';
 import {AppConfig} from '@configs';
-import {DailyGrosses, Load} from '@core/models';
+import {DailyGrossesDto, LoadDto} from '@core/models';
 import {ApiService} from '@core/services';
 import {TrucksMapComponent} from '@shared/components';
 import {AddressPipe, DistanceUnitPipe} from '@shared/pipes';
@@ -47,7 +47,7 @@ export class HomeComponent implements OnInit {
   public weeklyRpm = 0;
   public isLoadingLoadsData = false;
   public isLoadingChartData = false;
-  public loads: Load[] = [];
+  public loads: LoadDto[] = [];
   public chartData: unknown;
   public chartOptions: unknown;
 
@@ -80,7 +80,7 @@ export class HomeComponent implements OnInit {
     this.isLoadingLoadsData = true;
 
     this.apiService.getLoads({orderBy: '-dispatchedDate'}, true).subscribe((result) => {
-      if (result.isSuccess && result.data) {
+      if (result.success && result.data) {
         this.loads = result.data;
       }
 
@@ -93,7 +93,7 @@ export class HomeComponent implements OnInit {
     const oneWeekAgo = DateUtils.daysAgo(7);
 
     this.apiService.getDailyGrosses(oneWeekAgo).subscribe((result) => {
-      if (result.isSuccess && result.data) {
+      if (result.success && result.data) {
         const grosses = result.data;
 
         this.weeklyGross = grosses.totalGross;
@@ -107,7 +107,7 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  private drawChart(grosses: DailyGrosses) {
+  private drawChart(grosses: DailyGrossesDto) {
     const labels: Array<string> = [];
     const data: Array<number> = [];
 
@@ -131,7 +131,7 @@ export class HomeComponent implements OnInit {
     };
   }
 
-  private calcTodayGross(grosses: DailyGrosses) {
+  private calcTodayGross(grosses: DailyGrossesDto) {
     const today = new Date();
     let totalGross = 0;
 

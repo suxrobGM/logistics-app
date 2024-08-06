@@ -8,7 +8,7 @@ import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {RadioButtonModule} from 'primeng/radiobutton';
 import {InputMaskModule} from 'primeng/inputmask';
 import {PaymentMethod, PaymentMethodEnum, PaymentStatus} from '@core/enums';
-import {Address, Invoice, Payroll, ProcessPayment} from '@core/models';
+import {AddressDto, InvoiceDto, PayrollDto, ProcessPaymentCommand} from '@core/models';
 import {RegexPatterns} from '@core/helpers';
 import {ApiService, ToastService} from '@core/services';
 import {AddressFormComponent, ValidationSummaryComponent} from '@shared/components';
@@ -40,8 +40,8 @@ export class ProcessPaymentComponent implements OnInit {
   public isLoading = false;
   public isPaymentCompleted = false;
   public form: FormGroup<PaymentForm>;
-  public payroll?: Payroll;
-  public invoice?: Invoice;
+  public payroll?: PayrollDto;
+  public invoice?: InvoiceDto;
 
   constructor(
     private readonly apiService: ApiService,
@@ -94,7 +94,7 @@ export class ProcessPaymentComponent implements OnInit {
     }
 
     this.isLoading = true;
-    const command: ProcessPayment = {
+    const command: ProcessPaymentCommand = {
       paymentId: paymentId,
       paymentMethod: this.form.value.paymentMethod!,
       billingAddress: this.form.value.billingAddress!,
@@ -108,7 +108,7 @@ export class ProcessPaymentComponent implements OnInit {
     }
     
     this.apiService.processPayment(command).subscribe((result) => {
-      if (result.isSuccess) {
+      if (result.success) {
         this.toastService.showSuccess('Payment has been processed successfully');
         this.isPaymentCompleted = true;
       }
@@ -193,7 +193,7 @@ interface PaymentForm {
   cardNumber: FormControl<string | null>;
   cardExpirationDate: FormControl<string | null>;
   cardCvv: FormControl<string | null>;
-  billingAddress: FormControl<Address | null>;
+  billingAddress: FormControl<AddressDto | null>;
   bankName: FormControl<string | null>;
   bankAccountNumber: FormControl<string | null>;
   bankRoutingNumber: FormControl<string | null>;

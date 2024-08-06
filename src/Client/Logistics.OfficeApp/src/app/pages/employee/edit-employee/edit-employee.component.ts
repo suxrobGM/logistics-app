@@ -10,7 +10,7 @@ import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
 import {DropdownModule} from 'primeng/dropdown';
 import {SalaryType, SalaryTypeEnum, UserRole} from '@core/enums';
-import {Employee, UpdateEmployee} from '@core/models';
+import {EmployeeDto, UpdateEmployeeCommand} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {AuthService} from '@core/auth';
 import {ChangeRoleDialogComponent} from '../components';
@@ -46,7 +46,7 @@ export class EditEmployeeComponent implements OnInit {
   public isLoading = false;
   public showUpdateDialog = false;
   public canChangeRole = false;
-  public employee?: Employee;
+  public employee?: EmployeeDto;
   public salaryTypes = SalaryTypeEnum.toArray();
   public form: FormGroup<UpdateEmployeeForm>;
 
@@ -100,7 +100,7 @@ export class EditEmployeeComponent implements OnInit {
     const salaryType = this.form.value.salaryType;
     const salary = this.form.value.salary;
 
-    const command: UpdateEmployee = {
+    const command: UpdateEmployeeCommand = {
       userId: this.id,
       salary: salaryType === SalaryType.ShareOfGross ? NumberUtils.toRatio(salary ?? 0) : salary,
       salaryType: salaryType,
@@ -108,7 +108,7 @@ export class EditEmployeeComponent implements OnInit {
     
     this.isLoading = true;
     this.apiService.updateEmployee(command).subscribe((result) => {
-      if (result.isSuccess) {
+      if (result.success) {
         this.toastService.showSuccess('The employee data has been successfully saved');
       }
 
@@ -144,7 +144,7 @@ export class EditEmployeeComponent implements OnInit {
     this.isLoading = true;
 
     this.apiService.getEmployee(this.id).subscribe((result) => {
-      if (result.isSuccess && result.data) {
+      if (result.success && result.data) {
         this.employee = result.data;
         const employeeRoles = this.employee.roles?.map((i) => i.name);
         const user = this.authService.getUserData();

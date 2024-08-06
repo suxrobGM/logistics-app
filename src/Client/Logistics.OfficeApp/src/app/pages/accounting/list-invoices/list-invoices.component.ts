@@ -5,7 +5,7 @@ import {CardModule} from 'primeng/card';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {ButtonModule} from 'primeng/button';
 import {TooltipModule} from 'primeng/tooltip';
-import {Invoice} from '@core/models';
+import {InvoiceDto} from '@core/models';
 import {ApiService} from '@core/services';
 import {PredefinedDateRanges} from '@core/helpers';
 import {PaymentStatus} from '@core/enums';
@@ -31,7 +31,7 @@ import {PaymentStatusTagComponent} from '@shared/components';
 })
 export class ListInvoicesComponent {
   public paymentStatus = PaymentStatus;
-  public invoices: Invoice[] = [];
+  public invoices: InvoiceDto[] = [];
   public isLoading = true;
   public totalRecords = 0;
   public first = 0;
@@ -53,7 +53,7 @@ export class ListInvoicesComponent {
       startDate: past90days.startDate,
       endDate: past90days.endDate
     }).subscribe((result) => {
-      if (result.isSuccess && result.data) {
+      if (result.success && result.data) {
         this.invoices = result.data;
         this.totalRecords = result.totalItems;
       }

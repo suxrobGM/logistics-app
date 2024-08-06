@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {AutoCompleteModule, AutoCompleteSelectEvent} from 'primeng/autocomplete';
 import {ApiService} from '@core/services';
-import {Customer} from '@core/models';
+import {CustomerDto} from '@core/models';
 
 
 @Component({
@@ -25,10 +25,10 @@ import {Customer} from '@core/models';
 })
 export class SearchCustomerComponent implements ControlValueAccessor {
   private isDisabled = false;
-  public suggestedCustomers: Customer[] = [];
+  public suggestedCustomers: CustomerDto[] = [];
 
-  @Input() selectedCustomer: Customer | null = null;
-  @Output() selectedCustomerChange = new EventEmitter<Customer | null>();
+  @Input() selectedCustomer: CustomerDto | null = null;
+  @Output() selectedCustomerChange = new EventEmitter<CustomerDto | null>();
 
   constructor(private readonly apiService: ApiService) {}
 
@@ -48,10 +48,10 @@ export class SearchCustomerComponent implements ControlValueAccessor {
   //#region Implementation Reactive forms
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private onChange(value: Customer | null): void {}
+  private onChange(value: CustomerDto | null): void {}
   private onTouched(): void {}
 
-  writeValue(value: Customer | null): void {
+  writeValue(value: CustomerDto | null): void {
     this.selectedCustomer = value;
   }
 

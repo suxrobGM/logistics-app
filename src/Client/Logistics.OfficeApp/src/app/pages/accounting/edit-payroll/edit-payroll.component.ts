@@ -9,7 +9,7 @@ import {AutoCompleteModule, AutoCompleteSelectEvent} from 'primeng/autocomplete'
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {CalendarModule} from 'primeng/calendar';
 import {ButtonModule} from 'primeng/button';
-import {Address, CreatePayroll, Employee, Payroll, UpdatePayroll} from '@core/models';
+import {AddressDto, CreatePayrollCommand, EmployeeDto, PayrollDto, UpdatePayrollCommand} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {PredefinedDateRanges} from '@core/helpers';
 import {
@@ -52,9 +52,9 @@ export class EditPayrollComponent implements OnInit {
   public isLoading = false;
   public todayDate = new Date();
   public form: FormGroup<PayrollForm>;
-  public suggestedEmployees: Employee[] = [];
-  public selectedEmployee?: Employee;
-  public computedPayroll?: Payroll;
+  public suggestedEmployees: EmployeeDto[] = [];
+  public selectedEmployee?: EmployeeDto;
+  public computedPayroll?: PayrollDto;
 
   constructor(
     private readonly apiService: ApiService,
@@ -111,13 +111,13 @@ export class EditPayrollComponent implements OnInit {
     this.calculatePayrollForEmployee(event.value);
   }
 
-  calculatePayrollForEmployee(employee: Employee) {
+  calculatePayrollForEmployee(employee: EmployeeDto) {
     if (!this.form.valid) {
       return;
     }
 
     this.selectedEmployee = employee;
-    const query: CreatePayroll = {
+    const query: CreatePayrollCommand = {
       employeeId: employee.id,
       startDate: this.form.value.dateRange![0],
       endDate: this.form.value.dateRange![1],
@@ -197,14 +197,14 @@ export class EditPayrollComponent implements OnInit {
     }
 
     this.isLoading = true;
-    const command: CreatePayroll = {
+    const command: CreatePayrollCommand = {
       employeeId: this.form.value.employee!.id,
       startDate: this.form.value.dateRange![0],
       endDate: this.form.value.dateRange![1],
     }
 
     this.apiService.createPayroll(command).subscribe((result) => {
-      if (result.isSuccess) {
+      if (result.success) {
         this.toastService.showSuccess('A new payroll entry has been added successfully');
         this.router.navigateByUrl('/accounting/payrolls');
       }
@@ -216,7 +216,7 @@ export class EditPayrollComponent implements OnInit {
   private updatePayroll() {
     this.isLoading = true;
 
-    const commad: UpdatePayroll = {
+    const commad: UpdatePayrollCommand = {
       id: this.id!,
       employeeId: this.form.value.employee!.id,
       startDate: this.form.value.dateRange![0],
@@ -224,7 +224,7 @@ export class EditPayrollComponent implements OnInit {
     }
 
     this.apiService.updatePayroll(commad).subscribe((result) => {
-      if (result.isSuccess) {
+      if (result.success) {
         this.toastService.showSuccess('A payroll data has been updated successfully');
         this.router.navigateByUrl('/accounting/payrolls');
       }
@@ -235,9 +235,9 @@ export class EditPayrollComponent implements OnInit {
 }
 
 interface PayrollForm {
-  employee: FormControl<Employee | null>;
+  employee: FormControl<EmployeeDto | null>;
   dateRange: FormControl<Date[]>;
   paymentStatus: FormControl<EnumType | null>;
   paymentMethod: FormControl<EnumType | null>;
-  paymentBillingAddress: FormControl<Address | null>;
+  paymentBillingAddress: FormControl<AddressDto | null>;
 }

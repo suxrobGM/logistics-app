@@ -1,5 +1,5 @@
 import {CustomerDto} from '../customer/CustomerDto';
-import {Payment} from '../payment/Payment_';
+import {PaymentDto} from '../payment/PaymentDto';
 
 export interface InvoiceDto {
   id: string;
@@ -7,5 +7,5 @@ export interface InvoiceDto {
   loadRef: number;
   createdDate: string;
   customer: CustomerDto;
-  payment: Payment;
+  payment: PaymentDto;
 }

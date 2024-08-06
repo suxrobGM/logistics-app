@@ -7,7 +7,7 @@ import {CardModule} from 'primeng/card';
 import {ButtonModule} from 'primeng/button';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {ApiService, ToastService} from '@core/services';
-import {UpdateCustomer} from '@core/models';
+import {UpdateCustomerCommand} from '@core/models';
 import {ValidationSummaryComponent} from '@shared/components';
 
 
@@ -78,7 +78,7 @@ export class EditCustomerComponent implements OnInit {
     this.isLoading = true;
 
     this.apiService.getCustomer(this.id!).subscribe((result) => {
-      if (result.isSuccess) {
+      if (result.success) {
         this.form.patchValue({name: result.data?.name});
       }
 
@@ -90,7 +90,7 @@ export class EditCustomerComponent implements OnInit {
     this.isLoading = true;
 
     this.apiService.createCustomer({name: this.form.value.name!}).subscribe((result) => {
-      if (result.isSuccess) {
+      if (result.success) {
         this.toastService.showSuccess('A new customer has been added successfully');
         this.router.navigateByUrl('/customers');
       }
@@ -102,13 +102,13 @@ export class EditCustomerComponent implements OnInit {
   private updateCustomer() {
     this.isLoading = true;
 
-    const commad: UpdateCustomer = {
+    const commad: UpdateCustomerCommand = {
       id: this.id!,
       name: this.form.value.name!,
     }
 
     this.apiService.updateCustomer(commad).subscribe((result) => {
-      if (result.isSuccess) {
+      if (result.success) {
         this.toastService.showSuccess('A customer data has been updated successfully');
         this.router.navigateByUrl('/customers');
       }

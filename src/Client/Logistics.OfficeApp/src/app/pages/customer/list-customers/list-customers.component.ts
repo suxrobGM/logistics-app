@@ -8,7 +8,7 @@ import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {TooltipModule} from 'primeng/tooltip';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ConfirmationService} from 'primeng/api';
-import {Customer} from '@core/models';
+import {CustomerDto} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 
 
@@ -33,7 +33,7 @@ import {ApiService, ToastService} from '@core/services';
   ]
 })
 export class ListCustomersComponent {
-  public customers: Customer[];
+  public customers: CustomerDto[];
   public isLoading: boolean;
   public totalRecords: number;
   public first: number;
@@ -54,7 +54,7 @@ export class ListCustomersComponent {
     const searchValue = (event.target as HTMLInputElement).value;
 
     this.apiService.getCustomers({search: searchValue}).subscribe((result) => {
-      if (result.isSuccess && result.data) {
+      if (result.success && result.data) {
         this.customers = result.data;
         this.totalRecords = result.totalItems;
       }
@@ -71,7 +71,7 @@ export class ListCustomersComponent {
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
     this.apiService.getCustomers({orderBy: sortField, page: page, pageSize: rows}).subscribe((result) => {
-      if (result.isSuccess && result.data) {
+      if (result.success && result.data) {
         this.customers = result.data;
         this.totalRecords = result.totalItems;
       }
@@ -91,7 +91,7 @@ export class ListCustomersComponent {
     this.isLoading = true;
 
     this.apiService.deleteCustomer(id).subscribe((result) => {
-      if (result.isSuccess) {
+      if (result.success) {
         this.toastService.showSuccess('The customer has been deleted successfully');
         const index = this.customers.findIndex((i) => i.id === id);
 

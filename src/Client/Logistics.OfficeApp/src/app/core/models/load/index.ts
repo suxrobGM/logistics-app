@@ -1,3 +1,3 @@
-export * from './createLoad';
-export * from './load';
-export * from './updateLoad';
+export * from './CreateLoadCommand';
+export * from './LoadDto';
+export * from './UpdateLoadCommand';

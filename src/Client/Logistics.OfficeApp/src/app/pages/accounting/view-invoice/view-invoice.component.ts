@@ -6,7 +6,7 @@ import {ButtonModule} from 'primeng/button';
 import {jsPDF} from 'jspdf';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {ApiService, TenantService} from '@core/services';
-import {Address, Invoice} from '@core/models';
+import {AddressDto, InvoiceDto} from '@core/models';
 import {PaymentMethod, PaymentMethodEnum, PaymentStatus} from '@core/enums';
 import {AddressPipe} from '@shared/pipes';
 
@@ -30,8 +30,8 @@ export class ViewInvoiceComponent implements OnInit {
   public paymentStatus = PaymentStatus;
   public isLoading = false;
   public companyName?: string;
-  public companyAddress?: Address;
-  public invoice?: Invoice;
+  public companyAddress?: AddressDto;
+  public invoice?: InvoiceDto;
 
   constructor(
     private readonly apiService: ApiService,

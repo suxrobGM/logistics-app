@@ -13,7 +13,7 @@ import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {AppConfig} from '@configs';
 import {EnumType, LoadStatus, LoadStatusEnum} from '@core/enums';
-import {Address, Customer, UpdateLoad} from '@core/models';
+import {AddressDto, CustomerDto, UpdateLoadCommand} from '@core/models';
 import {ApiService, ToastService} from '@core/services';
 import {Converters} from '@shared/utils';
 import {
@@ -135,7 +135,7 @@ export class EditLoadComponent implements OnInit {
     }
 
     this.isLoading = true;
-    const command: UpdateLoad = {
+    const command: UpdateLoadCommand = {
       id: this.id,
       name: this.form.value.name!,
       originAddress: this.form.value.orgAddress!,
@@ -154,7 +154,7 @@ export class EditLoadComponent implements OnInit {
 
     this.apiService.updateLoad(command)
       .subscribe((result) => {
-        if (result.isSuccess) {
+        if (result.success) {
           this.toastService.showSuccess('Load has been updated successfully');
         }
 
@@ -165,7 +165,7 @@ export class EditLoadComponent implements OnInit {
   private deleteLoad() {
     this.isLoading = true;
     this.apiService.deleteLoad(this.id).subscribe((result) => {
-      if (result.isSuccess) {
+      if (result.success) {
         this.toastService.showSuccess('A load has been deleted successfully');
         this.router.navigateByUrl('/loads');
       }
@@ -178,7 +178,7 @@ export class EditLoadComponent implements OnInit {
     this.isLoading = true;
 
     this.apiService.getLoad(this.id).subscribe((result) => {
-      if (!result.isSuccess || !result.data) {
+      if (!result.success || !result.data) {
         return;
       }
 
@@ -218,10 +218,10 @@ export class EditLoadComponent implements OnInit {
 
 interface EditLoadForm {
   name: FormControl<string | null>;
-  customer: FormControl<Customer | null>;
-  orgAddress: FormControl<Address | null>;
+  customer: FormControl<CustomerDto | null>;
+  orgAddress: FormControl<AddressDto | null>;
   orgCoords: FormControl<[number, number]>;
-  dstAddress: FormControl<Address | null>;
+  dstAddress: FormControl<AddressDto | null>;
   dstCoords: FormControl<[number, number]>;
   deliveryCost: FormControl<number>;
   distance: FormControl<number>;

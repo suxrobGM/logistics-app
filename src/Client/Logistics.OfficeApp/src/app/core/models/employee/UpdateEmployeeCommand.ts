@@ -1,6 +1,6 @@
 import {SalaryType} from '@core/enums';
 
-export interface UpdateEmployee {
+export interface UpdateEmployeeCommand {
   userId: string;
   role?: string;
   salary?: number;

@@ -5,7 +5,7 @@ import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {CardModule} from 'primeng/card';
 import {ButtonModule} from 'primeng/button';
 import {TooltipModule} from 'primeng/tooltip';
-import {PagedIntervalQuery, TruckStats} from '@core/models';
+import {PagedIntervalQuery, TruckStatsDto} from '@core/models';
 import {ApiService} from '@core/services';
 import {DateUtils} from '@shared/utils';
 import {DistanceUnitPipe} from '@shared/pipes';
@@ -32,7 +32,7 @@ import {RangeCalendarComponent} from '@shared/components';
 })
 export class TruckStatsTableComponent {
   public isLoading: boolean;
-  public truckStats: TruckStats[];
+  public truckStats: TruckStatsDto[];
   public totalRecords: number;
   public startDate: Date;
   public endDate: Date;
@@ -65,7 +65,7 @@ export class TruckStatsTableComponent {
     }
 
     this.apiService.getTrucksStats(query).subscribe((result) => {
-      if (result.isSuccess && result.data) {
+      if (result.success && result.data) {
         this.truckStats = result.data;
         this.totalRecords = result.totalItems;
       }
