@@ -72,7 +72,7 @@ export class TruckGrossesLinechartComponent implements OnInit {
 
   private drawChart(grosses: DailyGrossesDto) {
     const labels: string[] = [];
-    const data: string[] = [];
+    const data: number[] = [];
 
     grosses.data.forEach((i) => {
       labels.push(DateUtils.toLocaleDate(i.date));
