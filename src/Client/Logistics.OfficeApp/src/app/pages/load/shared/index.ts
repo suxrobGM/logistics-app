@@ -1,1 +1,1 @@
-export * from './truckHelper';
+export * from "./truckHelper";

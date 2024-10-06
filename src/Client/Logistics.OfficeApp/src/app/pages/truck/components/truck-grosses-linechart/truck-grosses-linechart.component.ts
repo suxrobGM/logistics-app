@@ -1,26 +1,19 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {CardModule} from 'primeng/card';
-import {SkeletonModule} from 'primeng/skeleton';
-import {ChartModule} from 'primeng/chart';
-import {DailyGrossesDto} from '@/core/models';
-import {DateUtils, Converters} from '@/core/utils';
-import {ApiService} from '@/core/services';
-import {RangeCalendarComponent} from '@/components';
-
+import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {CardModule} from "primeng/card";
+import {SkeletonModule} from "primeng/skeleton";
+import {ChartModule} from "primeng/chart";
+import {DailyGrossesDto} from "@/core/models";
+import {DateUtils, Converters} from "@/core/utils";
+import {ApiService} from "@/core/services";
+import {RangeCalendarComponent} from "@/components";
 
 @Component({
-  selector: 'app-truck-grosses-linechart',
+  selector: "app-truck-grosses-linechart",
   standalone: true,
-  templateUrl: './truck-grosses-linechart.component.html',
+  templateUrl: "./truck-grosses-linechart.component.html",
   styleUrls: [],
-  imports: [
-    CommonModule,
-    CardModule,
-    SkeletonModule,
-    ChartModule,
-    RangeCalendarComponent,
-  ],
+  imports: [CommonModule, CardModule, SkeletonModule, ChartModule, RangeCalendarComponent],
 })
 export class TruckGrossesLinechartComponent implements OnInit {
   public isLoading: boolean;
@@ -31,7 +24,7 @@ export class TruckGrossesLinechartComponent implements OnInit {
   public endDate: Date;
 
   @Input({required: true}) truckId!: string;
-  @Output() chartDrawn = new EventEmitter<LineChartDrawnEvent>;
+  @Output() chartDrawn = new EventEmitter<LineChartDrawnEvent>();
 
   constructor(private apiService: ApiService) {
     this.isLoading = false;
@@ -50,7 +43,7 @@ export class TruckGrossesLinechartComponent implements OnInit {
       labels: [],
       datasets: [
         {
-          label: 'Daily Gross',
+          label: "Daily Gross",
           data: [],
         },
       ],
@@ -67,7 +60,7 @@ export class TruckGrossesLinechartComponent implements OnInit {
     this.apiService.getDailyGrosses(this.startDate, this.endDate, this.truckId).subscribe((result) => {
       if (result.success && result.data) {
         this.dailyGrosses = result.data;
-        const rpm = this.dailyGrosses.totalGross / Converters.metersTo(this.dailyGrosses.totalDistance, 'mi');
+        const rpm = this.dailyGrosses.totalGross / Converters.metersTo(this.dailyGrosses.totalDistance, "mi");
 
         this.drawChart(this.dailyGrosses);
         this.chartDrawn.emit({dailyGrosses: this.dailyGrosses, rpm: rpm});
@@ -90,12 +83,12 @@ export class TruckGrossesLinechartComponent implements OnInit {
       labels: labels,
       datasets: [
         {
-          label: 'Daily Gross',
+          label: "Daily Gross",
           data: data,
           fill: true,
           tension: 0.4,
-          borderColor: '#405a83',
-          backgroundColor: '#88a5d3',
+          borderColor: "#405a83",
+          backgroundColor: "#88a5d3",
         },
       ],
     };

@@ -1,20 +1,22 @@
-import {AppConfig} from '@/configs';
-import {HubConnection, HubConnectionBuilder, HttpTransportType} from '@microsoft/signalr';
-import {TenantService} from './tenant.service';
-
+import {AppConfig} from "@/configs";
+import {HubConnection, HubConnectionBuilder, HttpTransportType} from "@microsoft/signalr";
+import {TenantService} from "./tenant.service";
 
 export abstract class BaseHubConnection {
   protected readonly hubConnection: HubConnection;
   private isConnected: boolean;
 
-  constructor(private hubName: string, private tenantService: TenantService) {
+  constructor(
+    private hubName: string,
+    private tenantService: TenantService
+  ) {
     this.isConnected = false;
     this.hubConnection = new HubConnectionBuilder()
-        .withUrl(`${AppConfig.apiHost}/hubs/${hubName}`, {
-          skipNegotiation: true,
-          transport: HttpTransportType.WebSockets,
-        })
-        .build();
+      .withUrl(`${AppConfig.apiHost}/hubs/${hubName}`, {
+        skipNegotiation: true,
+        transport: HttpTransportType.WebSockets,
+      })
+      .build();
   }
 
   async connect(): Promise<void> {
@@ -31,7 +33,7 @@ export abstract class BaseHubConnection {
       }
 
       await this.hubConnection.start();
-      await this.hubConnection.invoke('RegisterTenant', tenant.id);
+      await this.hubConnection.invoke("RegisterTenant", tenant.id);
       this.isConnected = true;
     } catch (error) {
       console.error(`Failed to connect to the ${this.hubName} hub`, error);
@@ -52,7 +54,7 @@ export abstract class BaseHubConnection {
         return;
       }
 
-      await this.hubConnection.invoke('UnregisterTenant', tenant.id);
+      await this.hubConnection.invoke("UnregisterTenant", tenant.id);
       await this.hubConnection.stop();
       this.isConnected = false;
     } catch (error) {

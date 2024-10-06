@@ -1,4 +1,4 @@
-import {PagedQuery} from './PagedQuery';
+import {PagedQuery} from "./PagedQuery";
 
 export interface SearchableQuery extends PagedQuery {
   search?: string;

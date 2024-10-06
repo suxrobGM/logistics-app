@@ -1,5 +1,5 @@
 <h1>Overview</h1>
-<hr class="w-100">
+<hr class="w-100" />
 
 <div class="row g-3 mt-3">
   <div class="col-12 col-xl-7">
@@ -8,8 +8,7 @@
         <h4 class="ps-3 py-2">Trucks</h4>
         <hr class="w-100 m-0" />
       </ng-template>
-      <app-trucks-map [accessToken]="accessToken" height="700px">
-      </app-trucks-map>
+      <app-trucks-map [accessToken]="accessToken" height="700px"> </app-trucks-map>
     </p-card>
   </div>
 
@@ -32,15 +31,15 @@
           <tr>
             <td>
               <a [routerLink]="['/loads/edit', load.id]">
-                {{load.refId}}
+                {{ load.refId }}
               </a>
             </td>
             <td [pTooltip]="load.currentLocation" [showDelay]="500" tooltipPosition="bottom">
-              {{load.currentLocation | address}}
+              {{ load.currentLocation | address }}
             </td>
             <td>
               <a [routerLink]="['/trucks/details', load.assignedTruckId]">
-                {{load.assignedTruckNumber}}
+                {{ load.assignedTruckNumber }}
               </a>
             </td>
           </tr>
@@ -48,14 +47,8 @@
         <ng-template pTemplate="footer">
           <tr>
             <td colspan="4" class="text-start">
-              <p-button
-                label="Add"
-                [routerLink]="['/loads/add']">
-              </p-button>
-              <p-button class="ms-2"
-                label="View all loads" 
-                [routerLink]="['/loads']">
-              </p-button>
+              <p-button label="Add" [routerLink]="['/loads/add']"> </p-button>
+              <p-button class="ms-2" label="View all loads" [routerLink]="['/loads']"> </p-button>
             </td>
           </tr>
         </ng-template>
@@ -84,20 +77,19 @@
             <p-skeleton height="3rem"></p-skeleton>
           </div>
         </div>
-      }
-      @else {
+      } @else {
         <div class="row">
           <div class="col-12 col-md-4 px-3">
-            <span class="text-secondary text-uppercase">Total Gross:</span><br/>
-            <span class="fw-bold fs-3">{{weeklyGross | currency}}</span>
+            <span class="text-secondary text-uppercase">Total Gross:</span><br />
+            <span class="fw-bold fs-3">{{ weeklyGross | currency }}</span>
           </div>
           <div class="col-12 col-md-4 px-3">
-            <span class="text-secondary text-uppercase">Billed Miles:</span><br/>
-            <span class="fw-bold fs-3">{{weeklyDistance | distanceUnit:'mi'}}</span>
+            <span class="text-secondary text-uppercase">Billed Miles:</span><br />
+            <span class="fw-bold fs-3">{{ weeklyDistance | distanceUnit: "mi" }}</span>
           </div>
           <div class="col-12 col-md-4 px-3">
-            <span class="text-secondary text-uppercase">Rate Per Mile:</span><br/>
-            <span class="fw-bold fs-3">{{weeklyRpm | currency}}</span>
+            <span class="text-secondary text-uppercase">Rate Per Mile:</span><br />
+            <span class="fw-bold fs-3">{{ weeklyRpm | currency }}</span>
           </div>
         </div>
       }
@@ -105,16 +97,16 @@
       <ng-template #data>
         <div class="row">
           <div class="col-12 col-md-4 px-3">
-            <span class="text-secondary text-uppercase">Total Gross:</span><br/>
-            <span class="fw-bold fs-3">{{weeklyGross | currency}}</span>
+            <span class="text-secondary text-uppercase">Total Gross:</span><br />
+            <span class="fw-bold fs-3">{{ weeklyGross | currency }}</span>
           </div>
           <div class="col-12 col-md-4 px-3">
-            <span class="text-secondary text-uppercase">Billed Miles:</span><br/>
-            <span class="fw-bold fs-3">{{weeklyDistance | distanceUnit:'mi'}}</span>
+            <span class="text-secondary text-uppercase">Billed Miles:</span><br />
+            <span class="fw-bold fs-3">{{ weeklyDistance | distanceUnit: "mi" }}</span>
           </div>
           <div class="col-12 col-md-4 px-3">
-            <span class="text-secondary text-uppercase">Rate Per Mile:</span><br/>
-            <span class="fw-bold fs-3">{{weeklyRpm | currency}}</span>
+            <span class="text-secondary text-uppercase">Rate Per Mile:</span><br />
+            <span class="fw-bold fs-3">{{ weeklyRpm | currency }}</span>
           </div>
         </div>
       </ng-template>
@@ -136,12 +128,11 @@
             <p-skeleton height="20vh"></p-skeleton>
           </div>
         </div>
-      }
-      @else {
+      } @else {
         <div class="row">
           <div class="col-12 col-md-3 mb-2">
-            <span class="fw-bold">Today Gross:</span><br/>
-            <span class="fw-bold fs-3">{{todayGross | currency}}</span>
+            <span class="fw-bold">Today Gross:</span><br />
+            <span class="fw-bold fs-3">{{ todayGross | currency }}</span>
           </div>
           <div class="col-12 col-md-9">
             <p-chart type="line" [data]="chartData" [options]="chartOptions" width="40vw" height="20vh"></p-chart>

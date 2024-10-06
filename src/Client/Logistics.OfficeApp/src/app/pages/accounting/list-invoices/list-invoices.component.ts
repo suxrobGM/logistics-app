@@ -1,21 +1,20 @@
-import {Component} from '@angular/core';
-import {CommonModule, CurrencyPipe, DatePipe} from '@angular/common';
-import {RouterModule} from '@angular/router';
-import {CardModule} from 'primeng/card';
-import {TableLazyLoadEvent, TableModule} from 'primeng/table';
-import {ButtonModule} from 'primeng/button';
-import {TooltipModule} from 'primeng/tooltip';
-import {InvoiceDto} from '@/core/models';
-import {ApiService} from '@/core/services';
-import {PredefinedDateRanges} from '@/core/helpers';
-import {PaymentStatus} from '@/core/enums';
-import {PaymentStatusTagComponent} from '@/components';
-
+import {Component} from "@angular/core";
+import {CommonModule, CurrencyPipe, DatePipe} from "@angular/common";
+import {RouterModule} from "@angular/router";
+import {CardModule} from "primeng/card";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
+import {ButtonModule} from "primeng/button";
+import {TooltipModule} from "primeng/tooltip";
+import {InvoiceDto} from "@/core/models";
+import {ApiService} from "@/core/services";
+import {PredefinedDateRanges} from "@/core/helpers";
+import {PaymentStatus} from "@/core/enums";
+import {PaymentStatusTagComponent} from "@/components";
 
 @Component({
-  selector: 'app-list-invoices',
+  selector: "app-list-invoices",
   standalone: true,
-  templateUrl: './list-invoices.component.html',
+  templateUrl: "./list-invoices.component.html",
   styleUrls: [],
   imports: [
     CommonModule,
@@ -46,19 +45,21 @@ export class ListInvoicesComponent {
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
     const past90days = PredefinedDateRanges.getPast90Days();
 
-    this.apiService.getInvoices({
-      orderBy: sortField,
-      page: page,
-      pageSize: rows,
-      startDate: past90days.startDate,
-      endDate: past90days.endDate
-    }).subscribe((result) => {
-      if (result.success && result.data) {
-        this.invoices = result.data;
-        this.totalRecords = result.totalItems;
-      }
+    this.apiService
+      .getInvoices({
+        orderBy: sortField,
+        page: page,
+        pageSize: rows,
+        startDate: past90days.startDate,
+        endDate: past90days.endDate,
+      })
+      .subscribe((result) => {
+        if (result.success && result.data) {
+          this.invoices = result.data;
+          this.totalRecords = result.totalItems;
+        }
 
-      this.isLoading = false;
-    });
+        this.isLoading = false;
+      });
   }
 }

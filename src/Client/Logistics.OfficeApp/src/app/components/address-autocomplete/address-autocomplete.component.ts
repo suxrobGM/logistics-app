@@ -1,21 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {AddressDto} from '@/core/models';
-import {Converters} from '@/core/utils';
-
+import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
+import {AddressDto} from "@/core/models";
+import {Converters} from "@/core/utils";
 
 @Component({
-  selector: 'app-address-autocomplete',
+  selector: "app-address-autocomplete",
   standalone: true,
-  templateUrl: './address-autocomplete.component.html',
-  styleUrls: ['./address-autocomplete.component.scss'],
-  imports: [
-    CommonModule,
-    FormsModule,
-  ],
+  templateUrl: "./address-autocomplete.component.html",
+  styleUrls: ["./address-autocomplete.component.scss"],
+  imports: [CommonModule, FormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -31,9 +27,9 @@ export class AddressAutocompleteComponent implements ControlValueAccessor, OnIni
   private isTouched = false;
 
   @Input({required: true}) accessToken!: string;
-  @Input() field = '';
-  @Input() placeholder = 'Type address...';
-  @Input() country = 'us';
+  @Input() field = "";
+  @Input() placeholder = "Type address...";
+  @Input() country = "us";
   @Input() forceSelection = false;
   @Input() address: AddressDto | null = null;
   @Output() addressChange = new EventEmitter<AddressDto>();
@@ -56,8 +52,10 @@ export class AddressAutocompleteComponent implements ControlValueAccessor, OnIni
       return;
     }
 
-    const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${this.accessToken}&country=${this.country}&types=address`);
-    const responseData = await response.json() as GeocodingResponse;
+    const response = await fetch(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${this.accessToken}&country=${this.country}&types=address`
+    );
+    const responseData = (await response.json()) as GeocodingResponse;
     this.searchResults = responseData.features;
   }
 
@@ -66,11 +64,11 @@ export class AddressAutocompleteComponent implements ControlValueAccessor, OnIni
       return;
     }
 
-    const street = geocodingFeature.place_name.substring(0, geocodingFeature.place_name.indexOf(','));
-    const city = geocodingFeature.context.find((i) => i.id.startsWith('place'))?.text ?? '';
-    const region = geocodingFeature.context.find((i) => i.id.startsWith('region'))?.text ?? '';
-    const zipCode = geocodingFeature.context.find((i) => i.id.startsWith('postcode'))?.text ?? '';
-    const country = geocodingFeature.context.find((i) => i.id.startsWith('country'))?.text ?? '';
+    const street = geocodingFeature.place_name.substring(0, geocodingFeature.place_name.indexOf(","));
+    const city = geocodingFeature.context.find((i) => i.id.startsWith("place"))?.text ?? "";
+    const region = geocodingFeature.context.find((i) => i.id.startsWith("region"))?.text ?? "";
+    const zipCode = geocodingFeature.context.find((i) => i.id.startsWith("postcode"))?.text ?? "";
+    const country = geocodingFeature.context.find((i) => i.id.startsWith("country"))?.text ?? "";
 
     const addressObj: AddressDto = {
       line1: street,

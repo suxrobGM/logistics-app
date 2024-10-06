@@ -1,23 +1,22 @@
-import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
-import {NotificationDto, Result} from '@/core/models';
-import {PredefinedDateRanges} from '@/core/helpers';
-import {TenantService} from './tenant.service';
-import {BaseHubConnection} from './baseHubConnection';
-import {ApiService} from './api.service';
-
+import {Injectable} from "@angular/core";
+import {Observable} from "rxjs";
+import {NotificationDto, Result} from "@/core/models";
+import {PredefinedDateRanges} from "@/core/helpers";
+import {TenantService} from "./tenant.service";
+import {BaseHubConnection} from "./baseHubConnection";
+import {ApiService} from "./api.service";
 
 @Injectable()
 export class NotificationService extends BaseHubConnection {
   constructor(
     private apiService: ApiService,
-    tenantService: TenantService)
-  {
-    super('notification', tenantService);
+    tenantService: TenantService
+  ) {
+    super("notification", tenantService);
   }
 
   set onReceiveNotification(callback: OnReceiveNotifictionCallback) {
-    this.hubConnection.on('ReceiveNotification', callback);
+    this.hubConnection.on("ReceiveNotification", callback);
   }
 
   getPastTwoWeeksNotifications(): Observable<Result<NotificationDto[]>> {

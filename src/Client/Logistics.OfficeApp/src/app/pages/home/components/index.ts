@@ -1,1 +1,1 @@
-export * from './notifications-panel/notifications-panel.component';
+export * from "./notifications-panel/notifications-panel.component";

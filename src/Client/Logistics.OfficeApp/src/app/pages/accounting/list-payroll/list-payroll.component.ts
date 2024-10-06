@@ -1,27 +1,20 @@
-import {Component} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {RouterModule} from '@angular/router';
-import {TableLazyLoadEvent, TableModule} from 'primeng/table';
-import {CardModule} from 'primeng/card';
-import {InputTextModule} from 'primeng/inputtext';
-import {ButtonModule} from 'primeng/button';
-import {TooltipModule} from 'primeng/tooltip';
-import {PayrollDto} from '@/core/models';
-import {
-  PaymentMethod,
-  PaymentMethodEnum,
-  PaymentStatus,
-  SalaryType,
-  SalaryTypeEnum,
-} from '@/core/enums';
-import {ApiService} from '@/core/services';
-import {PaymentStatusTagComponent} from '@/components';
-
+import {Component} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {RouterModule} from "@angular/router";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
+import {CardModule} from "primeng/card";
+import {InputTextModule} from "primeng/inputtext";
+import {ButtonModule} from "primeng/button";
+import {TooltipModule} from "primeng/tooltip";
+import {PayrollDto} from "@/core/models";
+import {PaymentMethod, PaymentMethodEnum, PaymentStatus, SalaryType, SalaryTypeEnum} from "@/core/enums";
+import {ApiService} from "@/core/services";
+import {PaymentStatusTagComponent} from "@/components";
 
 @Component({
-  selector: 'app-list-payroll',
+  selector: "app-list-payroll",
   standalone: true,
-  templateUrl: './list-payroll.component.html',
+  templateUrl: "./list-payroll.component.html",
   styleUrls: [],
   imports: [
     CommonModule,
@@ -42,8 +35,7 @@ export class ListPayrollComponent {
   public totalRecords = 0;
   public first = 0;
 
-  constructor(private readonly apiService: ApiService) {
-  }
+  constructor(private readonly apiService: ApiService) {}
 
   search(event: Event) {
     this.isLoading = true;
@@ -66,23 +58,25 @@ export class ListPayrollComponent {
     const page = first / rows + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
-    this.apiService.getPayrolls({
-      orderBy: sortField,
-      page: page,
-      pageSize: rows,
-    }).subscribe((result) => {
-      if (result.success && result.data) {
-        this.payrolls = result.data;
-        this.totalRecords = result.totalItems;
-      }
+    this.apiService
+      .getPayrolls({
+        orderBy: sortField,
+        page: page,
+        pageSize: rows,
+      })
+      .subscribe((result) => {
+        if (result.success && result.data) {
+          this.payrolls = result.data;
+          this.totalRecords = result.totalItems;
+        }
 
-      this.isLoading = false;
-    });
+        this.isLoading = false;
+      });
   }
 
   getPaymentMethodDesc(enumValue?: PaymentMethod): string {
     if (enumValue == null) {
-      return 'N/A';
+      return "N/A";
     }
 
     return PaymentMethodEnum.getValue(enumValue).description;

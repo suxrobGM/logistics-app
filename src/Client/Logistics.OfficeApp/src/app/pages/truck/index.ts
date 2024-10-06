@@ -1,1 +1,1 @@
-export * from './truck.routes';
+export * from "./truck.routes";

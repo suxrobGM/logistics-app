@@ -10,44 +10,44 @@
   <div class="notification-list" [style]="{maxHeight: height}">
     @if (isLoading) {
       <p-progressSpinner></p-progressSpinner>
-    }
-    @else {
+    } @else {
       @for (notification of notifications; track notification.id) {
-        <div class="notification-item my-1 border-bottom"
+        <div
+          class="notification-item my-1 border-bottom"
           [ngClass]="{'bg-lighter': !notification.isRead}"
           (click)="showNotification(notification)"
-          role="presentation">
-          
-          <h5>{{notification.title}}</h5>
+          role="presentation"
+        >
+          <h5>{{ notification.title }}</h5>
           <div class="row">
             <div class="col-10">
-              {{notification.message}}
+              {{ notification.message }}
             </div>
             <div class="col-2">
-              <small class="text-muted">{{notification.createdDate | timeAgo}}</small>
+              <small class="text-muted">{{ notification.createdDate | timeAgo }}</small>
             </div>
           </div>
         </div>
-      }
-      @empty {
+      } @empty {
         <p class="p-3 text-muted">No notifications.</p>
       }
     }
   </div>
 </p-card>
 
-<p-dialog [(visible)]="displayDialog" 
-  [modal]="true" 
-  [style]="{width: '50vw'}" 
-  [closable]="false" 
-  [dismissableMask]="true">
-
+<p-dialog
+  [(visible)]="displayDialog"
+  [modal]="true"
+  [style]="{width: '50vw'}"
+  [closable]="false"
+  [dismissableMask]="true"
+>
   <ng-template pTemplate="header">
-    <span>{{selectedNotification?.title}}</span>
+    <span>{{ selectedNotification?.title }}</span>
   </ng-template>
 
-  <p>{{selectedNotification?.message}}</p>
-  
+  <p>{{ selectedNotification?.message }}</p>
+
   <p-footer>
     <button pButton type="button" icon="pi pi-check" (click)="closeDialog()">Close</button>
   </p-footer>

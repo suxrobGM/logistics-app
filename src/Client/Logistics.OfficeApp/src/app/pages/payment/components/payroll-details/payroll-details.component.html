@@ -6,7 +6,7 @@
     <h6>Employee:</h6>
   </div>
   <div class="col-8">
-    {{payroll.employee.fullName}}
+    {{ payroll.employee.fullName }}
   </div>
 </div>
 <div class="row mb-3">
@@ -14,23 +14,21 @@
     <h6>Employee position:</h6>
   </div>
   <div class="col-8">
-    {{payroll.employee.roles[0].displayName}}
+    {{ payroll.employee.roles[0].displayName }}
   </div>
 </div>
 <div class="row mb-3">
   <div class="col-4">
     <h6>Billing period:</h6>
   </div>
-  <div class="col-8">
-    {{payroll.startDate | date:'mediumDate'}} - {{payroll.endDate | date:'mediumDate'}}
-  </div>
+  <div class="col-8">{{ payroll.startDate | date: "mediumDate" }} - {{ payroll.endDate | date: "mediumDate" }}</div>
 </div>
 <div class="row mb-3">
   <div class="col-4">
     <h6>Salary type:</h6>
   </div>
   <div class="col-8">
-    {{getSalaryTypeDesc(payroll.employee.salaryType)}}
+    {{ getSalaryTypeDesc(payroll.employee.salaryType) }}
   </div>
 </div>
 <div class="row mb-3">
@@ -39,10 +37,9 @@
   </div>
   <div class="col-8">
     @if (payroll.employee.salaryType === salaryType.ShareOfGross) {
-      {{payroll.employee.salary | percent}} of gross
-    }
-    @else {
-      {{payroll.employee.salary | currency}}
+      {{ payroll.employee.salary | percent }} of gross
+    } @else {
+      {{ payroll.employee.salary | currency }}
     }
   </div>
 </div>
@@ -51,6 +48,6 @@
     <h6>Payment amount:</h6>
   </div>
   <div class="col-8">
-    {{payroll.payment.amount | currency}}
+    {{ payroll.payment.amount | currency }}
   </div>
 </div>

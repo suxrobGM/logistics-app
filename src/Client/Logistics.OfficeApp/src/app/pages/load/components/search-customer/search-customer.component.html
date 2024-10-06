@@ -1,6 +1,6 @@
 <p-autoComplete
   [suggestions]="suggestedCustomers"
-  styleClass="w-100" 
+  styleClass="w-100"
   inputStyleClass="form-control"
   placeholder="Type a customer name"
   [minLength]="2"
@@ -8,5 +8,6 @@
   field="name"
   [(ngModel)]="selectedCustomer"
   (completeMethod)="searchCustomer($event)"
-  (onSelect)="changeSelectedCustomer($event)">
+  (onSelect)="changeSelectedCustomer($event)"
+>
 </p-autoComplete>

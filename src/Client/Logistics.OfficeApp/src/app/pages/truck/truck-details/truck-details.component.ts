@@ -1,20 +1,19 @@
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, RouterLink} from '@angular/router';
-import {CurrencyPipe, CommonModule} from '@angular/common';
-import {SkeletonModule} from 'primeng/skeleton';
-import {CardModule} from 'primeng/card';
-import {DailyGrossesDto, MonthlyGrossesDto, TruckDto, TruckGeolocationDto} from '@/core/models';
-import {DistanceUnitPipe} from '@/core/pipes';
-import {ApiService} from '@/core/services';
-import {GeolocationMapComponent, GrossesBarchartComponent, BarChartDrawnEvent} from '@/components';
-import {AppConfig} from '@/configs';
-import {LineChartDrawnEvent, TruckGrossesLinechartComponent} from '../components';
-
+import {Component, OnInit} from "@angular/core";
+import {ActivatedRoute, RouterLink} from "@angular/router";
+import {CurrencyPipe, CommonModule} from "@angular/common";
+import {SkeletonModule} from "primeng/skeleton";
+import {CardModule} from "primeng/card";
+import {DailyGrossesDto, MonthlyGrossesDto, TruckDto, TruckGeolocationDto} from "@/core/models";
+import {DistanceUnitPipe} from "@/core/pipes";
+import {ApiService} from "@/core/services";
+import {GeolocationMapComponent, GrossesBarchartComponent, BarChartDrawnEvent} from "@/components";
+import {AppConfig} from "@/configs";
+import {LineChartDrawnEvent, TruckGrossesLinechartComponent} from "../components";
 
 @Component({
-  selector: 'app-truck-details',
-  templateUrl: './truck-details.component.html',
-  styleUrls: ['./truck-details.component.scss'],
+  selector: "app-truck-details",
+  templateUrl: "./truck-details.component.html",
+  styleUrls: ["./truck-details.component.scss"],
   standalone: true,
   imports: [
     CommonModule,
@@ -41,8 +40,8 @@ export class TruckDetailsComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private route: ActivatedRoute)
-  {
+    private route: ActivatedRoute
+  ) {
     this.accessToken = AppConfig.mapboxToken;
     this.truckLocations = [];
     this.isLoading = false;
@@ -52,7 +51,7 @@ export class TruckDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      this.id = params['id'];
+      this.id = params["id"];
     });
 
     this.fetchTruck();
@@ -75,13 +74,15 @@ export class TruckDetailsComponent implements OnInit {
       if (result.success && result.data) {
         this.truck = result.data;
 
-        this.truckLocations = [{
-          latitude: this.truck.currentLocationLat!,
-          longitude: this.truck.currentLocationLong!,
-          truckId: this.truck.id,
-          truckNumber: this.truck.truckNumber,
-          driversName: this.truck.drivers.map((driver) => driver.fullName).join(', '),
-        }];
+        this.truckLocations = [
+          {
+            latitude: this.truck.currentLocationLat!,
+            longitude: this.truck.currentLocationLong!,
+            truckId: this.truck.id,
+            truckNumber: this.truck.truckNumber,
+            driversName: this.truck.drivers.map((driver) => driver.fullName).join(", "),
+          },
+        ];
       }
 
       this.isLoading = false;

@@ -1,26 +1,34 @@
 <div class="d-flex align-items-center">
   <h1>Payments for the past 90 days</h1>
-  <p-button 
+  <p-button
     styleClass="text-black ms-2"
     icon="bi bi-plus-square-fill"
     size="large"
     [rounded]="true"
     [text]="true"
     pTooltip="Add a new payment"
-    [routerLink]="['/accounting/payments/add']">
+    [routerLink]="['/accounting/payments/add']"
+  >
   </p-button>
 </div>
-<hr class="w-100">
+<hr class="w-100" />
 
 <p-card>
   <div class="row">
     <div class="col-12">
-      <p-table [value]="payments" responsiveLayout="scroll" [lazy]="true" 
-        [paginator]="true" [showCurrentPageReport]="true"
-        (onLazyLoad)="load($event)" [rows]="10" [(first)]="first" 
-        [totalRecords]="totalRecords" [loading]="isLoading"
-        [rowsPerPageOptions]="[10,25,50]">
-
+      <p-table
+        [value]="payments"
+        responsiveLayout="scroll"
+        [lazy]="true"
+        [paginator]="true"
+        [showCurrentPageReport]="true"
+        (onLazyLoad)="load($event)"
+        [rows]="10"
+        [(first)]="first"
+        [totalRecords]="totalRecords"
+        [loading]="isLoading"
+        [rowsPerPageOptions]="[10, 25, 50]"
+      >
         <!-- <ng-template pTemplate="caption">
           <div class="d-flex">
             <span class="p-input-icon-left">
@@ -66,22 +74,22 @@
             </th>
           </tr>
         </ng-template>
-        
+
         <ng-template pTemplate="body" let-payment>
           <tr>
-            <td>{{payment.createdDate | date:'mediumDate'}}</td>
-            <td>{{payment.paymentDate | date:'mediumDate'}}</td>
-            <td>{{getPaymentMethodDesc(payment.method)}}</td>
-            <td>{{payment.amount | currency}}</td>
+            <td>{{ payment.createdDate | date: "mediumDate" }}</td>
+            <td>{{ payment.paymentDate | date: "mediumDate" }}</td>
+            <td>{{ getPaymentMethodDesc(payment.method) }}</td>
+            <td>{{ payment.amount | currency }}</td>
             <td>
               <app-payment-status-tag [paymentStatus]="payment.status"></app-payment-status-tag>
             </td>
-            <td>{{getPaymentForDesc(payment.paymentFor)}}</td>
+            <td>{{ getPaymentForDesc(payment.paymentFor) }}</td>
             <td [pTooltip]="payment.billingAddress | address" [showDelay]="500" tooltipPosition="bottom">
-              {{payment.billingAddress | address}}
+              {{ payment.billingAddress | address }}
             </td>
             <td [pTooltip]="payment.comment" [showDelay]="500" tooltipPosition="bottom">
-              {{payment.comment}}
+              {{ payment.comment }}
             </td>
           </tr>
         </ng-template>

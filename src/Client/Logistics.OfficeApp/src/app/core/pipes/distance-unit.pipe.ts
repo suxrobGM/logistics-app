@@ -1,8 +1,8 @@
-import {Pipe, PipeTransform} from '@angular/core';
-import {DistanceUnitTypes, Converters} from '@/core/utils';
+import {Pipe, PipeTransform} from "@angular/core";
+import {DistanceUnitTypes, Converters} from "@/core/utils";
 
 @Pipe({
-  name: 'distanceUnit',
+  name: "distanceUnit",
   standalone: true,
 })
 export class DistanceUnitPipe implements PipeTransform {
@@ -13,7 +13,7 @@ export class DistanceUnitPipe implements PipeTransform {
    * @param unit Unit value, should be either `m`, `km`, `mi`, or `yd`.
    * @return Tranformed distance value in 2 decimals format.
    */
-  transform(value?: number, unit: DistanceUnitTypes = 'm'): number {
+  transform(value?: number, unit: DistanceUnitTypes = "m"): number {
     if (!value) {
       return 0;
     }

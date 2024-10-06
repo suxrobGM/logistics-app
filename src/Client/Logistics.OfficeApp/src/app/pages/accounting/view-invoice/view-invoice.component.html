@@ -1,5 +1,5 @@
 <h1 class="text-center">Invoice Details</h1>
-<hr class="w-100">
+<hr class="w-100" />
 
 <p-card class="col-12 col-sm-6">
   @if (isLoading) {
@@ -7,35 +7,32 @@
   }
 
   @if (invoice) {
-    <h2>{{companyName}}</h2>
-    <p>{{companyAddress | address}}</p>
+    <h2>{{ companyName }}</h2>
+    <p>{{ companyAddress | address }}</p>
     <hr />
 
-    <p><strong>Load ID:</strong> {{invoice.loadRef}}</p>
-    <p><strong>Date:</strong> {{invoice.createdDate | date:'mediumDate'}}</p>
-    <p><strong>Customer:</strong> {{invoice.customer.name}}</p>
+    <p><strong>Load ID:</strong> {{ invoice.loadRef }}</p>
+    <p><strong>Date:</strong> {{ invoice.createdDate | date: "mediumDate" }}</p>
+    <p><strong>Customer:</strong> {{ invoice.customer.name }}</p>
 
     <h4>Payment Details</h4>
-    <p><strong>Method:</strong> {{getPaymentMethodDesc(invoice.payment.method)}}</p>
-    <p><strong>Amount:</strong> {{invoice.payment.amount | currency}}</p>
+    <p><strong>Method:</strong> {{ getPaymentMethodDesc(invoice.payment.method) }}</p>
+    <p><strong>Amount:</strong> {{ invoice.payment.amount | currency }}</p>
 
     @if (invoice.payment.status === paymentStatus.Paid) {
-      <p><strong>Payment Date:</strong> {{invoice.payment.paymentDate | date:'mediumDate'}}</p>
+      <p><strong>Payment Date:</strong> {{ invoice.payment.paymentDate | date: "mediumDate" }}</p>
     }
-    
-    <p-button 
-      icon="bi bi-file-pdf"
-      label="Export to PDF" 
-      (click)="exportToPDF()">
-    </p-button>
+
+    <p-button icon="bi bi-file-pdf" label="Export to PDF" (click)="exportToPDF()"> </p-button>
 
     @if (invoice.payment.status === paymentStatus.Pending) {
       <p-button
         styleClass="ms-2"
         icon="bi bi-credit-card"
         label="Make payment"
-        severity="info" 
-        [routerLink]="['/payment/invoice', invoice.id]">
+        severity="info"
+        [routerLink]="['/payment/invoice', invoice.id]"
+      >
       </p-button>
     }
   }

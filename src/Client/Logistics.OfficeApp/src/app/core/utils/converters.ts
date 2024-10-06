@@ -1,4 +1,4 @@
-import {AddressDto} from '@/core/models';
+import {AddressDto} from "@/core/models";
 
 export abstract class Converters {
   /**
@@ -8,7 +8,7 @@ export abstract class Converters {
    */
   static addressToString(value: AddressDto | null): string {
     if (!value) {
-      return '';
+      return "";
     }
     if (value.line2) {
       return `${value.line1} ${value.line2}, ${value.city}, ${value.region} ${value.zipCode}`;
@@ -26,18 +26,16 @@ export abstract class Converters {
   static metersTo(meters: number, unit: DistanceUnitTypes): number {
     let convertedValue = meters;
 
-    if (unit === 'km') {
-      convertedValue = meters*0.001;
-    }
-    else if (unit === 'mi') {
-      convertedValue = meters*0.000621371;
-    }
-    else if (unit === 'yd') {
-      convertedValue = meters*1.09361;
+    if (unit === "km") {
+      convertedValue = meters * 0.001;
+    } else if (unit === "mi") {
+      convertedValue = meters * 0.000621371;
+    } else if (unit === "yd") {
+      convertedValue = meters * 1.09361;
     }
 
     return Number.parseFloat(convertedValue.toFixed(2));
   }
 }
 
-export type DistanceUnitTypes = 'm' | 'km' | 'mi' | 'yd';
+export type DistanceUnitTypes = "m" | "km" | "mi" | "yd";

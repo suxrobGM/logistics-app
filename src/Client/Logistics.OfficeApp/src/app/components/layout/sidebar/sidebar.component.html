@@ -1,8 +1,8 @@
-<div class="sidebar" [ngClass]="{'minimized': !isOpened}">
+<div class="sidebar" [ngClass]="{minimized: !isOpened}">
   <a class="py-3 navbar-brand border-bottom">
     <img src="assets/images/logo.svg" class="img-fluid" height="40" alt="logo" />
     @if (isOpened) {
-      <span class="h4">{{companyName}}</span>
+      <span class="h4">{{ companyName }}</span>
     }
   </a>
 
@@ -48,7 +48,7 @@
       </a>
     </li>
     <li>
-      <a class="nav-link border-bottom" pTooltip="Customers" [routerLink]="['/customers']" >
+      <a class="nav-link border-bottom" pTooltip="Customers" [routerLink]="['/customers']">
         <i class="bi bi-building h1"></i>
         @if (isOpened) {
           <span class="ms-2">Customers</span>
@@ -58,23 +58,29 @@
     <li>
       @if (isOpened) {
         <p-panelMenu [model]="accountingMenuItems"></p-panelMenu>
-      }
-      @else {
+      } @else {
         <p-overlayPanel #accountingPanel>
           @for (item of accountingMenuItems[0].items; track item.label) {
             @if (!item.separator) {
               <div class="p-1">
-                <p-button severity="secondary"
+                <p-button
+                  severity="secondary"
                   [text]="true"
                   [label]="item.label"
                   [routerLink]="item.routerLink"
-                  (onClick)="accountingPanel.hide()">
+                  (onClick)="accountingPanel.hide()"
+                >
                 </p-button>
               </div>
             }
           }
         </p-overlayPanel>
-        <a class="nav-link border-bottom" pTooltip="Accounting" (click)="accountingPanel.toggle($event)" role="presentation">
+        <a
+          class="nav-link border-bottom"
+          pTooltip="Accounting"
+          (click)="accountingPanel.toggle($event)"
+          role="presentation"
+        >
           <i class="bi bi-journal-text h1"></i>
         </a>
       }
@@ -83,8 +89,7 @@
       <a class="nav-link border-bottom">
         @if (isOpened) {
           <i class="bi bi-arrow-left h1" (click)="toggle()" pTooltip="Minimize menu" role="presentation"></i>
-        }
-        @else {
+        } @else {
           <i class="bi bi-arrow-right h1" (click)="toggle()" pTooltip="Maximize menu" role="presentation"></i>
         }
       </a>
@@ -95,22 +100,18 @@
     <div class="d-flex justify-content-center border-top py-2">
       @if (userRole && isOpened) {
         <div class="px-3 pt-2">
-          Role: <span class="fw-bold">{{userRole}}</span>
+          Role: <span class="fw-bold">{{ userRole }}</span>
         </div>
       }
 
       @if (isOpened) {
         <p-panelMenu [model]="profileMenuItems"></p-panelMenu>
-      }
-      @else {
+      } @else {
         <p-overlayPanel #profilePanel>
           @for (item of profileMenuItems[0].items; track item.label) {
             @if (!item.separator) {
               <div class="p-1">
-                <p-button severity="secondary"
-                  [text]="true"
-                  [label]="item.label"
-                  (click)="item?.command({})">
+                <p-button severity="secondary" [text]="true" [label]="item.label" (click)="item?.command({})">
                 </p-button>
               </div>
             }

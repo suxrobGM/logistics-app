@@ -1,4 +1,4 @@
-import {DailyGrossDto} from './DailyGrossDto';
+import {DailyGrossDto} from "./DailyGrossDto";
 
 export interface GrossesChartDto<T extends DailyGrossDto> {
   data: T[];

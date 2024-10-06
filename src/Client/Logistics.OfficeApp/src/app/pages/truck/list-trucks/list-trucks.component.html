@@ -7,17 +7,27 @@
     [rounded]="true"
     [text]="true"
     pTooltip="Add a new truck"
-    [routerLink]="['/trucks/add']">
+    [routerLink]="['/trucks/add']"
+  >
   </p-button>
 </div>
-<hr class="w-100">
+<hr class="w-100" />
 
 <p-card>
   <div class="row">
     <div class="col-12">
-      <p-table [value]="trucks" responsiveLayout="scroll" [lazy]="true" [paginator]="true"
-        [showCurrentPageReport]="true" (onLazyLoad)="load($event)" [rows]="10"
-        [totalRecords]="totalRecords" [loading]="isLoading" [rowsPerPageOptions]="[10,25,50]">
+      <p-table
+        [value]="trucks"
+        responsiveLayout="scroll"
+        [lazy]="true"
+        [paginator]="true"
+        [showCurrentPageReport]="true"
+        (onLazyLoad)="load($event)"
+        [rows]="10"
+        [totalRecords]="totalRecords"
+        [loading]="isLoading"
+        [rowsPerPageOptions]="[10, 25, 50]"
+      >
         <ng-template pTemplate="caption">
           <div class="d-flex">
             <span class="p-input-icon-left">
@@ -32,46 +42,39 @@
               Number
               <p-sortIcon field="truckNumber"></p-sortIcon>
             </th>
-            <th class="text-center">
-              Current Location
-            </th>
-            <th class="text-center">
-              Drivers
-            </th>
-            <th class="text-center">
-              Action
-            </th>
+            <th class="text-center">Current Location</th>
+            <th class="text-center">Drivers</th>
+            <th class="text-center">Action</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-truck>
           <tr>
             <td class="text-center">
-              {{truck.truckNumber}}
+              {{ truck.truckNumber }}
             </td>
             <td class="text-center" [pTooltip]="truck.currentLocation" [showDelay]="500">
-              {{truck.currentLocation | address}}
+              {{ truck.currentLocation | address }}
             </td>
             <td class="text-center">
               @for (driver of truck.drivers; track driver.id) {
                 <span>
-                  {{driver.fullName}}
+                  {{ driver.fullName }}
                   @if (truck.drivers.length > 1) {
                     <span>,</span>
                   }
                 </span>
               }
             </td>
-            
+
             <td class="text-center">
-              <p-button 
-                icon="bi bi-card-list"
-                pTooltip="View details"
-                [routerLink]="['/trucks/view', truck.id]">
+              <p-button icon="bi bi-card-list" pTooltip="View details" [routerLink]="['/trucks/view', truck.id]">
               </p-button>
-              <p-button class="ms-2"
+              <p-button
+                class="ms-2"
                 icon="bi bi-pencil"
                 pTooltip="Edit truck"
-                [routerLink]="['/trucks/edit', truck.id]">
+                [routerLink]="['/trucks/edit', truck.id]"
+              >
               </p-button>
             </td>
           </tr>

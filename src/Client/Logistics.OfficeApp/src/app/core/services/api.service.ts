@@ -1,9 +1,9 @@
-import {HttpClient} from '@angular/common/http';
-import {Injectable} from '@angular/core';
-import {MessageService} from 'primeng/api';
-import {catchError, Observable, of} from 'rxjs';
-import {TenantService} from '@/core/services';
-import {AppConfig} from '@/configs';
+import {HttpClient} from "@angular/common/http";
+import {Injectable} from "@angular/core";
+import {MessageService} from "primeng/api";
+import {catchError, Observable, of} from "rxjs";
+import {TenantService} from "@/core/services";
+import {AppConfig} from "@/configs";
 import {
   Result,
   EmployeeDto,
@@ -43,8 +43,7 @@ import {
   CreatePayrollCommand,
   ProcessPaymentCommand,
   GetPayrollsQuery,
-} from '../models';
-
+} from "../models";
 
 @Injectable()
 export class ApiService {
@@ -54,10 +53,10 @@ export class ApiService {
   constructor(
     private readonly httpClient: HttpClient,
     private readonly tenantService: TenantService,
-    private readonly messageService: MessageService)
-  {
+    private readonly messageService: MessageService
+  ) {
     this.host = AppConfig.apiHost;
-    this.headers = {'content-type': 'application/json'};
+    this.headers = {"content-type": "application/json"};
   }
 
   // #region Tenant API
@@ -70,7 +69,6 @@ export class ApiService {
 
   // #endregion
 
-
   // #region User API
 
   getUsers(query?: SearchableQuery): Observable<PagedResponseResult<UserDto>> {
@@ -79,7 +77,6 @@ export class ApiService {
   }
 
   // #endregion
-
 
   // #region Load API
 
@@ -92,7 +89,7 @@ export class ApiService {
     let url = `/loads?${this.stringfySearchableQuery(query)}`;
 
     if (onlyActiveLoads) {
-      url += '&onlyActiveLoads=true';
+      url += "&onlyActiveLoads=true";
     }
     return this.get(url);
   }
@@ -113,7 +110,6 @@ export class ApiService {
   }
 
   // #endregion
-
 
   // #region Truck API
 
@@ -148,7 +144,6 @@ export class ApiService {
   }
 
   // #endregion
-
 
   // #region Employee API
 
@@ -189,7 +184,6 @@ export class ApiService {
 
   // #endregion
 
-
   // #region Tenant Role API
 
   getRoles(query?: SearchableQuery): Observable<PagedResponseResult<RoleDto>> {
@@ -198,7 +192,6 @@ export class ApiService {
   }
 
   // #endregion
-
 
   // #region Stats API
 
@@ -240,7 +233,6 @@ export class ApiService {
 
   // #endregion
 
-
   // #region Notifications API
 
   getNotifications(startDate: Date, endDate: Date): Observable<Result<NotificationDto[]>> {
@@ -254,7 +246,6 @@ export class ApiService {
   }
 
   // #endregion
-
 
   // #region Customers API
 
@@ -284,7 +275,6 @@ export class ApiService {
   }
 
   // #endregion
-
 
   // #region Payments API
 
@@ -320,7 +310,6 @@ export class ApiService {
 
   // #endregion
 
-
   // #region Invoices API
 
   getInvoice(id: string): Observable<Result<InvoiceDto>> {
@@ -349,7 +338,6 @@ export class ApiService {
   }
 
   // #endregion
-
 
   // #region Payrolls API
 
@@ -390,24 +378,20 @@ export class ApiService {
 
   // #endregion
 
-
-
   parseSortProperty(sortField?: string | null, sortOrder?: number | null): string {
     if (!sortOrder) {
       sortOrder = 1;
     }
 
     if (!sortField) {
-      sortField = '';
+      sortField = "";
     }
 
     return sortOrder <= -1 ? `-${sortField}` : sortField;
   }
 
   private get<TResponse>(endpoint: string): Observable<TResponse> {
-    return this.httpClient
-      .get<TResponse>(this.host + endpoint)
-      .pipe(catchError((err) => this.handleError(err)));
+    return this.httpClient.get<TResponse>(this.host + endpoint).pipe(catchError((err) => this.handleError(err)));
   }
 
   private post<TResponse, TBody>(endpoint: string, body: TBody): Observable<TResponse> {
@@ -427,14 +411,12 @@ export class ApiService {
   }
 
   private delete<TResponse>(endpoint: string): Observable<TResponse> {
-    return this.httpClient
-      .delete<TResponse>(this.host + endpoint)
-      .pipe(catchError((err) => this.handleError(err)));
+    return this.httpClient.delete<TResponse>(this.host + endpoint).pipe(catchError((err) => this.handleError(err)));
   }
 
   private stringfySearchableQuery(query?: SearchableQuery): string {
-    const search = query?.search ?? '';
-    const orderBy = query?.orderBy ?? '';
+    const search = query?.search ?? "";
+    const orderBy = query?.orderBy ?? "";
     const page = query?.page ?? 1;
     const pageSize = query?.pageSize ?? 10;
     return `search=${search}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
@@ -443,13 +425,13 @@ export class ApiService {
   private stringfyPagedIntervalQuery(query?: PagedIntervalQuery): string {
     const startDate = query?.startDate.toJSON() ?? new Date().toJSON();
     const endDate = query?.endDate?.toJSON();
-    const orderBy = query?.orderBy ?? '';
+    const orderBy = query?.orderBy ?? "";
     const page = query?.page ?? 1;
     const pageSize = query?.pageSize ?? 10;
     let queryStr = `startDate=${startDate}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
 
     if (endDate) {
-      queryStr += `&endDate=${endDate}`
+      queryStr += `&endDate=${endDate}`;
     }
 
     return queryStr;
@@ -459,7 +441,7 @@ export class ApiService {
   private handleError(responseData: any): Observable<any> {
     const errorMessage = responseData.error?.error ?? responseData.error;
 
-    this.messageService.add({key: 'notification', severity: 'error', summary: 'Error', detail: errorMessage});
+    this.messageService.add({key: "notification", severity: "error", summary: "Error", detail: errorMessage});
     // this.messageService.add({key: 'errorMsg', severity: 'error', summary: 'Error', detail: errorMessage});
     console.error(errorMessage ?? responseData);
     return of({error: errorMessage, success: false});

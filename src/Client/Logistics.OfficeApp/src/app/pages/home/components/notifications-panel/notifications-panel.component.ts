@@ -1,29 +1,20 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {NotificationService, ToastService} from '@/core/services';
-import {NotificationDto} from '@/core/models';
-import {TimeAgoPipe} from '@/core/pipes';
-import {CardModule} from 'primeng/card';
-import {ButtonModule} from 'primeng/button';
-import {BadgeModule} from 'primeng/badge';
-import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {DialogModule} from 'primeng/dialog';
-
+import {Component, Input, OnDestroy, OnInit} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {NotificationService, ToastService} from "@/core/services";
+import {NotificationDto} from "@/core/models";
+import {TimeAgoPipe} from "@/core/pipes";
+import {CardModule} from "primeng/card";
+import {ButtonModule} from "primeng/button";
+import {BadgeModule} from "primeng/badge";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {DialogModule} from "primeng/dialog";
 
 @Component({
-  selector: 'app-notifications-panel',
+  selector: "app-notifications-panel",
   standalone: true,
-  templateUrl: './notifications-panel.component.html',
-  styleUrls: ['./notifications-panel.component.scss'],
-  imports: [
-    CommonModule,
-    CardModule,
-    ButtonModule,
-    TimeAgoPipe,
-    BadgeModule,
-    ProgressSpinnerModule,
-    DialogModule,
-  ],
+  templateUrl: "./notifications-panel.component.html",
+  styleUrls: ["./notifications-panel.component.scss"],
+  imports: [CommonModule, CardModule, ButtonModule, TimeAgoPipe, BadgeModule, ProgressSpinnerModule, DialogModule],
 })
 export class NotificationsPanelComponent implements OnInit, OnDestroy {
   public notifications: NotificationDto[];
@@ -35,12 +26,12 @@ export class NotificationsPanelComponent implements OnInit, OnDestroy {
 
   constructor(
     private notificationService: NotificationService,
-    private toastSerice: ToastService)
-  {
+    private toastSerice: ToastService
+  ) {
     this.notifications = [];
     this.isLoading = false;
     this.displayDialog = false;
-    this.height = '100%';
+    this.height = "100%";
   }
 
   ngOnInit(): void {

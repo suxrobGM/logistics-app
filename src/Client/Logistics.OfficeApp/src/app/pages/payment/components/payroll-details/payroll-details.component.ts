@@ -1,13 +1,12 @@
-import {Component, Input} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {PayrollDto} from '@/core/models';
-import {SalaryType, SalaryTypeEnum} from '@/core/enums';
-
+import {Component, Input} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {PayrollDto} from "@/core/models";
+import {SalaryType, SalaryTypeEnum} from "@/core/enums";
 
 @Component({
-  selector: 'app-payroll-details',
+  selector: "app-payroll-details",
   standalone: true,
-  templateUrl: './payroll-details.component.html',
+  templateUrl: "./payroll-details.component.html",
   imports: [CommonModule],
 })
 export class PayrollDetailsComponent {

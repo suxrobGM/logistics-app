@@ -1,13 +1,12 @@
-import {Component} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {AppConfig} from '@/configs';
-import {GrossesBarchartComponent, TrucksMapComponent} from '@/components';
-import {CompanyStatsComponent, TruckStatsTableComponent} from './components';
-
+import {Component} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {AppConfig} from "@/configs";
+import {GrossesBarchartComponent, TrucksMapComponent} from "@/components";
+import {CompanyStatsComponent, TruckStatsTableComponent} from "./components";
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
+  selector: "app-dashboard",
+  templateUrl: "./dashboard.component.html",
   styleUrls: [],
   standalone: true,
   imports: [

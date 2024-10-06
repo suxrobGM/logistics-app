@@ -1,19 +1,18 @@
-import {Component, OnInit} from '@angular/core';
-import {CommonModule, CurrencyPipe} from '@angular/common';
-import {CompanyStatsDto} from '@/core/models';
-import {ApiService} from '@/core/services';
-import {Converters} from '@/core/utils';
-import {DistanceUnitPipe} from '@/core/pipes';
-import {SharedModule} from 'primeng/api';
-import {CardModule} from 'primeng/card';
-import {ChartModule} from 'primeng/chart';
-import {SkeletonModule} from 'primeng/skeleton';
-
+import {Component, OnInit} from "@angular/core";
+import {CommonModule, CurrencyPipe} from "@angular/common";
+import {CompanyStatsDto} from "@/core/models";
+import {ApiService} from "@/core/services";
+import {Converters} from "@/core/utils";
+import {DistanceUnitPipe} from "@/core/pipes";
+import {SharedModule} from "primeng/api";
+import {CardModule} from "primeng/card";
+import {ChartModule} from "primeng/chart";
+import {SkeletonModule} from "primeng/skeleton";
 
 @Component({
-  selector: 'app-company-stats',
+  selector: "app-company-stats",
   standalone: true,
-  templateUrl: './company-stats.component.html',
+  templateUrl: "./company-stats.component.html",
   styleUrls: [],
   imports: [
     CommonModule,
@@ -45,7 +44,7 @@ export class CompanyStatsComponent implements OnInit {
       return 0;
     }
 
-    return gross / Converters.metersTo(distance, 'mi');
+    return gross / Converters.metersTo(distance, "mi");
   }
 
   private fetchCompanyStats() {
@@ -55,7 +54,7 @@ export class CompanyStatsComponent implements OnInit {
       if (result.success && result.data) {
         const stats = result.data;
         this.companyStats = result.data;
-        this.rpm = stats.totalGross / Converters.metersTo(stats.totalDistance, 'mi');
+        this.rpm = stats.totalGross / Converters.metersTo(stats.totalDistance, "mi");
       }
 
       this.isLoading = false;

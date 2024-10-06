@@ -1,22 +1,16 @@
-import {Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormsModule} from '@angular/forms';
-import {CalendarModule} from 'primeng/calendar';
-import {ButtonModule} from 'primeng/button';
-import {DateUtils} from '@/core/utils';
-
+import {Component, EventEmitter, Input, OnChanges, Output} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {FormsModule} from "@angular/forms";
+import {CalendarModule} from "primeng/calendar";
+import {ButtonModule} from "primeng/button";
+import {DateUtils} from "@/core/utils";
 
 @Component({
-  selector: 'app-range-calendar',
+  selector: "app-range-calendar",
   standalone: true,
-  templateUrl: './range-calendar.component.html',
+  templateUrl: "./range-calendar.component.html",
   styleUrls: [],
-  imports: [
-    CommonModule,
-    CalendarModule,
-    FormsModule,
-    ButtonModule,
-  ],
+  imports: [CommonModule, CalendarModule, FormsModule, ButtonModule],
 })
 export class RangeCalendarComponent implements OnChanges {
   public dates: Date[];
@@ -30,7 +24,7 @@ export class RangeCalendarComponent implements OnChanges {
   @Output() applyButtonClick = new EventEmitter<void>();
 
   constructor() {
-    this.label = 'Select range:';
+    this.label = "Select range:";
     this.todayDate = DateUtils.today();
     this.dates = [];
   }
@@ -39,7 +33,6 @@ export class RangeCalendarComponent implements OnChanges {
     if (this.startDate && this.endDate) {
       this.dates = [this.startDate, this.endDate];
     }
-
   }
 
   areDatesValid(): boolean {

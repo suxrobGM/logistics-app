@@ -7,19 +7,28 @@
     [rounded]="true"
     [text]="true"
     pTooltip="Add a new load"
-    [routerLink]="['/loads/add']">
+    [routerLink]="['/loads/add']"
+  >
   </p-button>
 </div>
-<hr class="w-100">
+<hr class="w-100" />
 
 <p-card>
   <div class="row">
     <div class="col-12">
-      <p-table [value]="loads" responsiveLayout="scroll" [lazy]="true" 
-        [paginator]="true" [showCurrentPageReport]="true"
-        (onLazyLoad)="load($event)" [rows]="10" [(first)]="first" 
-        [totalRecords]="totalRecords" [loading]="isLoading"
-        [rowsPerPageOptions]="[10,25,50]">
+      <p-table
+        [value]="loads"
+        responsiveLayout="scroll"
+        [lazy]="true"
+        [paginator]="true"
+        [showCurrentPageReport]="true"
+        (onLazyLoad)="load($event)"
+        [rows]="10"
+        [(first)]="first"
+        [totalRecords]="totalRecords"
+        [loading]="isLoading"
+        [rowsPerPageOptions]="[10, 25, 50]"
+      >
         <ng-template pTemplate="caption">
           <div class="d-flex">
             <span class="p-input-icon-left">
@@ -50,9 +59,7 @@
               Destination
               <p-sortIcon field="destinationAddress"></p-sortIcon>
             </th>
-            <th>
-              Status
-            </th>
+            <th>Status</th>
             <th pSortableColumn="distance">
               Distance (mi)
               <p-sortIcon field="distance"></p-sortIcon>
@@ -78,66 +85,71 @@
         </ng-template>
         <ng-template pTemplate="body" let-load>
           <tr>
-            <td>{{load.refId}}</td>
+            <td>{{ load.refId }}</td>
             <td [pTooltip]="load.name" [showDelay]="500" tooltipPosition="bottom">
-              {{load.name}}
+              {{ load.name }}
             </td>
             <td [pTooltip]="load.customer.name" [showDelay]="500" tooltipPosition="bottom">
-              {{load.customer.name}}
+              {{ load.customer.name }}
             </td>
             <td [pTooltip]="load.originAddress | address" [showDelay]="500" tooltipPosition="bottom">
-              {{load.originAddress | address}}
+              {{ load.originAddress | address }}
             </td>
             <td [pTooltip]="load.destinationAddress | address" [showDelay]="500" tooltipPosition="bottom">
-              {{load.destinationAddress | address}}
+              {{ load.destinationAddress | address }}
             </td>
             <td>
-              <p-tag [icon]="getLoadStatusIcon(load.status)" 
+              <p-tag
+                [icon]="getLoadStatusIcon(load.status)"
                 [value]="getLoadStatusDesc(load.status)"
-                [severity]="getLoadStatusSeverity(load.status)">
+                [severity]="getLoadStatusSeverity(load.status)"
+              >
               </p-tag>
 
               <div class="fst-italic">
                 @switch (load.status) {
                   @case (loadStatus.Dispatched) {
-                    {{load.dispatchedDate | date:'mediumDate'}}
+                    {{ load.dispatchedDate | date: "mediumDate" }}
                   }
                   @case (loadStatus.PickedUp) {
-                    {{load.pickUpDate | date:'mediumDate'}}
+                    {{ load.pickUpDate | date: "mediumDate" }}
                   }
                   @case (loadStatus.Delivered) {
-                    {{load.deliveryDate | date:'mediumDate'}}
+                    {{ load.deliveryDate | date: "mediumDate" }}
                   }
                 }
               </div>
             </td>
-            <td>{{load.distance | distanceUnit:'mi'}}</td>
-            <td>{{load.deliveryCost | currency}}</td>
+            <td>{{ load.distance | distanceUnit: "mi" }}</td>
+            <td>{{ load.deliveryCost | currency }}</td>
             <td>
               <app-payment-status-tag [paymentStatus]="load.invoice.payment.status"></app-payment-status-tag>
             </td>
-            <td>{{load.assignedTruckNumber}}</td>
-            <td>{{load.assignedDispatcherName}}</td>
+            <td>{{ load.assignedTruckNumber }}</td>
+            <td>{{ load.assignedDispatcherName }}</td>
             <td class="overflow-visible">
-              <p-button 
+              <p-button
                 icon="bi bi-pencil"
                 pTooltip="Edit load details"
                 tooltipPosition="bottom"
-                [routerLink]="['/loads/edit', load.id]">
+                [routerLink]="['/loads/edit', load.id]"
+              >
               </p-button>
-              <p-button 
+              <p-button
                 styleClass="ms-2"
                 icon="bi bi-truck"
                 pTooltip="View truck details"
                 tooltipPosition="bottom"
-                [routerLink]="['/trucks/view', load.assignedTruckId]">
+                [routerLink]="['/trucks/view', load.assignedTruckId]"
+              >
               </p-button>
-              <p-button 
+              <p-button
                 styleClass="ms-2"
                 icon="bi bi-card-list"
                 pTooltip="View invoice details"
                 tooltipPosition="bottom"
-                [routerLink]="['/accounting/invoices/view', load.invoice.id]">
+                [routerLink]="['/accounting/invoices/view', load.invoice.id]"
+              >
               </p-button>
             </td>
           </tr>

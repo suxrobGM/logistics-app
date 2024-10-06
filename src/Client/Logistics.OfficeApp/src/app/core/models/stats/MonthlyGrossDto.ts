@@ -1,5 +1,3 @@
-import {DailyGrossDto} from './DailyGrossDto';
+import {DailyGrossDto} from "./DailyGrossDto";
 
-export interface MonthlyGrossDto extends DailyGrossDto {
-
-}
+export interface MonthlyGrossDto extends DailyGrossDto {}

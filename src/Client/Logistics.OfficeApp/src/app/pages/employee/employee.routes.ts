@@ -1,36 +1,35 @@
-import {Routes} from '@angular/router';
-import {Permissions} from '@/core/enums';
-import {AuthGuard} from '@/core/guards';
-import {AddEmployeeComponent} from './add-employee/add-employee.component';
-import {EditEmployeeComponent} from './edit-employee/edit-employee.component';
-import {ListEmployeeComponent} from './list-employees/list-employees.component';
-
+import {Routes} from "@angular/router";
+import {Permissions} from "@/core/enums";
+import {AuthGuard} from "@/core/guards";
+import {AddEmployeeComponent} from "./add-employee/add-employee.component";
+import {EditEmployeeComponent} from "./edit-employee/edit-employee.component";
+import {ListEmployeeComponent} from "./list-employees/list-employees.component";
 
 export const EMPLOYEE_ROUTES: Routes = [
   {
-    path: '',
+    path: "",
     component: ListEmployeeComponent,
     canActivate: [AuthGuard],
     data: {
-      breadcrumb: '',
+      breadcrumb: "",
       permission: Permissions.Employees.View,
     },
   },
   {
-    path: 'add',
+    path: "add",
     component: AddEmployeeComponent,
     canActivate: [AuthGuard],
     data: {
-      breadcrumb: 'Add',
+      breadcrumb: "Add",
       permission: Permissions.Employees.Create,
     },
   },
   {
-    path: 'edit/:id',
+    path: "edit/:id",
     component: EditEmployeeComponent,
     canActivate: [AuthGuard],
     data: {
-      breadcrumb: 'Edit',
+      breadcrumb: "Edit",
       permission: Permissions.Employees.Edit,
     },
   },

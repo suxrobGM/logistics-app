@@ -1,45 +1,44 @@
-import {Routes} from '@angular/router';
-import {Permissions} from '@/core/enums';
-import {AuthGuard} from '@/core/guards';
-import {EditTruckComponent} from './edit-truck/edit-truck.component';
-import {ListTruckComponent} from './list-trucks/list-trucks.component';
-import {TruckDetailsComponent} from './truck-details/truck-details.component';
-
+import {Routes} from "@angular/router";
+import {Permissions} from "@/core/enums";
+import {AuthGuard} from "@/core/guards";
+import {EditTruckComponent} from "./edit-truck/edit-truck.component";
+import {ListTruckComponent} from "./list-trucks/list-trucks.component";
+import {TruckDetailsComponent} from "./truck-details/truck-details.component";
 
 export const TRUCK_ROUTES: Routes = [
   {
-    path: '',
+    path: "",
     component: ListTruckComponent,
     canActivate: [AuthGuard],
     data: {
-      breadcrumb: '',
+      breadcrumb: "",
       permission: Permissions.Trucks.View,
     },
   },
   {
-    path: 'add',
+    path: "add",
     component: EditTruckComponent,
     canActivate: [AuthGuard],
     data: {
-      breadcrumb: 'Add',
+      breadcrumb: "Add",
       permission: Permissions.Trucks.Create,
     },
   },
   {
-    path: 'edit/:id',
+    path: "edit/:id",
     component: EditTruckComponent,
     canActivate: [AuthGuard],
     data: {
-      breadcrumb: 'Edit',
+      breadcrumb: "Edit",
       permission: Permissions.Trucks.Edit,
     },
   },
   {
-    path: 'view/:id',
+    path: "view/:id",
     component: TruckDetailsComponent,
     canActivate: [AuthGuard],
     data: {
-      breadcrumb: 'Details',
+      breadcrumb: "Details",
       permission: Permissions.Trucks.View,
     },
   },

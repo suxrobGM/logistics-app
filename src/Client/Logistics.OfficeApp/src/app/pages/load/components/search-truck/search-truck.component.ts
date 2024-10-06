@@ -1,20 +1,15 @@
-import {Component, EventEmitter, Input, Output, forwardRef} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {AutoCompleteModule, AutoCompleteSelectEvent} from 'primeng/autocomplete';
-import {ApiService} from '@/core/services';
-import {TruckData, TruckHelper} from '../../shared';
-
+import {Component, EventEmitter, Input, Output, forwardRef} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
+import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
+import {ApiService} from "@/core/services";
+import {TruckData, TruckHelper} from "../../shared";
 
 @Component({
-  selector: 'app-search-truck',
+  selector: "app-search-truck",
   standalone: true,
-  templateUrl: './search-truck.component.html',
-  imports: [
-    CommonModule,
-    AutoCompleteModule,
-    FormsModule,
-  ],
+  templateUrl: "./search-truck.component.html",
+  imports: [CommonModule, AutoCompleteModule, FormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -40,7 +35,10 @@ export class SearchTruckComponent implements ControlValueAccessor {
 
       this.suggestedTrucks = result.data.map((truckDriver) => ({
         truckId: truckDriver.truck.id,
-        driversName: TruckHelper.formatDriversName(truckDriver.truck.truckNumber, truckDriver.drivers.map((i) => i.fullName)),
+        driversName: TruckHelper.formatDriversName(
+          truckDriver.truck.truckNumber,
+          truckDriver.drivers.map((i) => i.fullName)
+        ),
       }));
     });
   }

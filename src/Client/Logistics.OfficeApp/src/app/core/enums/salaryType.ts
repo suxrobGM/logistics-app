@@ -1,9 +1,4 @@
-import {
-  EnumLike,
-  EnumType,
-  convertEnumToArray,
-  findValueFromEnum,
-} from './enumLike';
+import {EnumLike, EnumType, convertEnumToArray, findValueFromEnum} from "./enumLike";
 
 export enum SalaryType {
   None,
@@ -13,10 +8,10 @@ export enum SalaryType {
 }
 
 export const SalaryTypeEnum: EnumLike = {
-  None: {value: 0, description: 'None'},
-  Monthly: {value: 1, description: 'Monthly'},
-  Weekly: {value: 2, description: 'Weekly'},
-  ShareOfGross: {value: 3, description: 'Share of gross'},
+  None: {value: 0, description: "None"},
+  Monthly: {value: 1, description: "Monthly"},
+  Weekly: {value: 2, description: "Weekly"},
+  ShareOfGross: {value: 3, description: "Share of gross"},
 
   getValue(enumValue: string | number): EnumType {
     return findValueFromEnum(this, enumValue);

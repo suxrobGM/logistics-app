@@ -1,8 +1,7 @@
-import {LoadStatus} from '@/core/enums';
-import {CustomerDto} from '../customer';
-import {InvoiceDto} from '../invoice';
-import {AddressDto} from '../AddressDto';
-
+import {LoadStatus} from "@/core/enums";
+import {CustomerDto} from "../customer";
+import {InvoiceDto} from "../invoice";
+import {AddressDto} from "../AddressDto";
 
 export interface LoadDto {
   id: string;

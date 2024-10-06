@@ -1,11 +1,11 @@
-import {AuthModule} from 'angular-auth-oidc-client';
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {HTTP_INTERCEPTORS} from '@angular/common/http';
-import {AuthConfig} from '@/configs';
-import {TenantInterceptor} from './interceptors/tenant.interceptor';
-import {TokenInterceptor} from './interceptors/token.interceptor';
-import {AuthGuard} from './guards/auth.guard';
+import {AuthModule} from "angular-auth-oidc-client";
+import {NgModule} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {HTTP_INTERCEPTORS} from "@angular/common/http";
+import {AuthConfig} from "@/configs";
+import {TenantInterceptor} from "./interceptors/tenant.interceptor";
+import {TokenInterceptor} from "./interceptors/token.interceptor";
+import {AuthGuard} from "./guards/auth.guard";
 import {
   ApiService,
   CookieService,
@@ -13,9 +13,8 @@ import {
   NotificationService,
   StorageService,
   ToastService,
-} from './services';
-import {MessageService} from 'primeng/api';
-
+} from "./services";
+import {MessageService} from "primeng/api";
 
 @NgModule({
   declarations: [],
@@ -38,4 +37,4 @@ import {MessageService} from 'primeng/api';
     ToastService,
   ],
 })
-export class CoreModule { }
+export class CoreModule {}

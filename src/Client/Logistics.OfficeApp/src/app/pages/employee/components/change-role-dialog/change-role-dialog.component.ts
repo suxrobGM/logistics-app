@@ -1,31 +1,21 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {NgIf} from '@angular/common';
-import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {ButtonModule} from 'primeng/button';
-import {DropdownModule} from 'primeng/dropdown';
-import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {DialogModule} from 'primeng/dialog';
-import {RemoveEmployeeRoleCommand, RoleDto, UpdateEmployeeCommand} from '@/core/models';
-import {ApiService, ToastService} from '@/core/services';
-import {UserService} from '../../services';
+import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
+import {NgIf} from "@angular/common";
+import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {ButtonModule} from "primeng/button";
+import {DropdownModule} from "primeng/dropdown";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {DialogModule} from "primeng/dialog";
+import {RemoveEmployeeRoleCommand, RoleDto, UpdateEmployeeCommand} from "@/core/models";
+import {ApiService, ToastService} from "@/core/services";
+import {UserService} from "../../services";
 
 @Component({
-  selector: 'app-change-role-dialog',
-  templateUrl: './change-role-dialog.component.html',
+  selector: "app-change-role-dialog",
+  templateUrl: "./change-role-dialog.component.html",
   styleUrls: [],
   standalone: true,
-  imports: [
-    DialogModule,
-    NgIf,
-    ProgressSpinnerModule,
-    FormsModule,
-    ReactiveFormsModule,
-    DropdownModule,
-    ButtonModule,
-  ],
-  providers: [
-    UserService,
-  ],
+  imports: [DialogModule, NgIf, ProgressSpinnerModule, FormsModule, ReactiveFormsModule, DropdownModule, ButtonModule],
+  providers: [UserService],
 })
 export class ChangeRoleDialogComponent implements OnInit {
   public roles: RoleDto[];
@@ -40,17 +30,17 @@ export class ChangeRoleDialogComponent implements OnInit {
   constructor(
     private readonly apiService: ApiService,
     private readonly userService: UserService,
-    private readonly toastService: ToastService)
-  {
+    private readonly toastService: ToastService
+  ) {
     this.currentRoles = [];
     this.roles = [];
     this.visible = false;
     this.loading = false;
-    this.userId = '';
+    this.userId = "";
     this.visibleChange = new EventEmitter<boolean>();
 
     this.form = new FormGroup({
-      role: new FormControl('', Validators.required),
+      role: new FormControl("", Validators.required),
     });
   }
 
@@ -61,8 +51,8 @@ export class ChangeRoleDialogComponent implements OnInit {
   submit() {
     const role = this.form.value.role;
 
-    if (role === '') {
-      this.toastService.showError('Select a role from the list');
+    if (role === "") {
+      this.toastService.showError("Select a role from the list");
       return;
     }
 
@@ -89,7 +79,7 @@ export class ChangeRoleDialogComponent implements OnInit {
 
   clearSelctedRole() {
     this.form.patchValue({
-      role: {name: '', displayName: ' '},
+      role: {name: "", displayName: " "},
     });
   }
 

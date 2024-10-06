@@ -1,27 +1,26 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {ActivatedRoute, RouterLink} from '@angular/router';
-import {ConfirmationService} from 'primeng/api';
-import {ButtonModule} from 'primeng/button';
-import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {CardModule} from 'primeng/card';
-import {ConfirmDialogModule} from 'primeng/confirmdialog';
-import {ToastModule} from 'primeng/toast';
-import {DropdownModule} from 'primeng/dropdown';
-import {SalaryType, SalaryTypeEnum, UserRole} from '@/core/enums';
-import {EmployeeDto, UpdateEmployeeCommand} from '@/core/models';
-import {ApiService, ToastService} from '@/core/services';
-import {AuthService} from '@/core/auth';
-import {ChangeRoleDialogComponent} from '../components';
-import {ValidationSummaryComponent} from '@/components';
-import {NumberUtils} from '@/core/utils';
-
+import {Component, OnInit, ViewEncapsulation} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {ActivatedRoute, RouterLink} from "@angular/router";
+import {ConfirmationService} from "primeng/api";
+import {ButtonModule} from "primeng/button";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {CardModule} from "primeng/card";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {ToastModule} from "primeng/toast";
+import {DropdownModule} from "primeng/dropdown";
+import {SalaryType, SalaryTypeEnum, UserRole} from "@/core/enums";
+import {EmployeeDto, UpdateEmployeeCommand} from "@/core/models";
+import {ApiService, ToastService} from "@/core/services";
+import {AuthService} from "@/core/auth";
+import {ChangeRoleDialogComponent} from "../components";
+import {ValidationSummaryComponent} from "@/components";
+import {NumberUtils} from "@/core/utils";
 
 @Component({
-  selector: 'app-edit-employee',
-  templateUrl: './edit-employee.component.html',
-  styleUrls: ['./edit-employee.component.scss'],
+  selector: "app-edit-employee",
+  templateUrl: "./edit-employee.component.html",
+  styleUrls: ["./edit-employee.component.scss"],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [
@@ -35,11 +34,9 @@ import {NumberUtils} from '@/core/utils';
     RouterLink,
     DropdownModule,
     ReactiveFormsModule,
-    ValidationSummaryComponent
+    ValidationSummaryComponent,
   ],
-  providers: [
-    ConfirmationService,
-  ],
+  providers: [ConfirmationService],
 })
 export class EditEmployeeComponent implements OnInit {
   public id!: string;
@@ -55,15 +52,18 @@ export class EditEmployeeComponent implements OnInit {
     private readonly apiService: ApiService,
     private readonly confirmationService: ConfirmationService,
     private readonly toastService: ToastService,
-    private readonly route: ActivatedRoute)
-  {
+    private readonly route: ActivatedRoute
+  ) {
     this.form = new FormGroup<UpdateEmployeeForm>({
-      salary: new FormControl<number>(0, {validators: Validators.compose([Validators.required, Validators.min(0)]), nonNullable: true}),
-      salaryType: new FormControl<SalaryType>(SalaryType.None, {validators: Validators.required, nonNullable: true})
+      salary: new FormControl<number>(0, {
+        validators: Validators.compose([Validators.required, Validators.min(0)]),
+        nonNullable: true,
+      }),
+      salaryType: new FormControl<SalaryType>(SalaryType.None, {validators: Validators.required, nonNullable: true}),
     });
 
-    this.form.get('salaryType')?.valueChanges.subscribe((selectedSalaryType) => {
-      const salaryControl = this.form.get('salary');
+    this.form.get("salaryType")?.valueChanges.subscribe((selectedSalaryType) => {
+      const salaryControl = this.form.get("salary");
 
       if (!salaryControl) {
         return;
@@ -72,21 +72,19 @@ export class EditEmployeeComponent implements OnInit {
       if (selectedSalaryType === SalaryType.ShareOfGross) {
         salaryControl.setValidators([Validators.required, Validators.min(0), Validators.max(100)]);
         salaryControl.setValue(0);
-      }
-      else if (selectedSalaryType === SalaryType.None) {
+      } else if (selectedSalaryType === SalaryType.None) {
         salaryControl.setValue(0);
-      }
-      else {
+      } else {
         salaryControl.setValidators([Validators.required, Validators.min(0)]);
       }
 
       salaryControl.updateValueAndValidity();
-  });
+    });
   }
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      this.id = params['id'];
+      this.id = params["id"];
     });
 
     this.fetchEmployee();
@@ -104,12 +102,12 @@ export class EditEmployeeComponent implements OnInit {
       userId: this.id,
       salary: salaryType === SalaryType.ShareOfGross ? NumberUtils.toRatio(salary ?? 0) : salary,
       salaryType: salaryType,
-    }
+    };
 
     this.isLoading = true;
     this.apiService.updateEmployee(command).subscribe((result) => {
       if (result.success) {
-        this.toastService.showSuccess('The employee data has been successfully saved');
+        this.toastService.showSuccess("The employee data has been successfully saved");
       }
 
       this.isLoading = false;
@@ -118,14 +116,14 @@ export class EditEmployeeComponent implements OnInit {
 
   confirmToDelete() {
     this.confirmationService.confirm({
-      message: 'Are you sure that you want to delete this employee from the company?',
+      message: "Are you sure that you want to delete this employee from the company?",
       // accept: () => this.deleteLoad()
     });
   }
 
   getEmployeeRoleNames(): string {
-    const roleNames = this.employee?.roles?.map((i) => i.displayName).join(',');
-    return roleNames ? roleNames : '';
+    const roleNames = this.employee?.roles?.map((i) => i.displayName).join(",");
+    return roleNames ? roleNames : "";
   }
 
   openUpdateDialog() {
@@ -155,7 +153,7 @@ export class EditEmployeeComponent implements OnInit {
 
         this.form.patchValue({
           salary: salaryType === SalaryType.ShareOfGross ? NumberUtils.toPercent(salary ?? 0) : salary,
-          salaryType: salaryType
+          salaryType: salaryType,
         });
       }
 
@@ -178,11 +176,13 @@ export class EditEmployeeComponent implements OnInit {
 
     if (userRoles.includes(UserRole.AppSuperAdmin) || userRoles.includes(UserRole.AppAdmin)) {
       this.canChangeRole = true;
-    }
-    else if (userRoles.includes(UserRole.Owner) && employeeRole !== UserRole.Owner) {
+    } else if (userRoles.includes(UserRole.Owner) && employeeRole !== UserRole.Owner) {
       this.canChangeRole = true;
-    }
-    else if (userRoles.includes(UserRole.Manager) && employeeRole !== UserRole.Owner && employeeRole !== UserRole.Manager) {
+    } else if (
+      userRoles.includes(UserRole.Manager) &&
+      employeeRole !== UserRole.Owner &&
+      employeeRole !== UserRole.Manager
+    ) {
       this.canChangeRole = true;
     }
   }

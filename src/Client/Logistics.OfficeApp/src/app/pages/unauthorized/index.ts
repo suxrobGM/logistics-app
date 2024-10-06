@@ -1,1 +1,1 @@
-export {UnauthorizedComponent} from './unauthorized.component';
+export {UnauthorizedComponent} from "./unauthorized.component";

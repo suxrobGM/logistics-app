@@ -1,27 +1,20 @@
-import {Component, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {ActivatedRoute, RouterModule} from '@angular/router';
-import {TableLazyLoadEvent, TableModule} from 'primeng/table';
-import {TooltipModule} from 'primeng/tooltip';
-import {CardModule} from 'primeng/card';
-import {ButtonModule} from 'primeng/button';
-import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {
-  SalaryType,
-  PaymentStatus,
-  PaymentMethod,
-  PaymentMethodEnum,
-  SalaryTypeEnum,
-} from '@/core/enums';
-import {EmployeeDto, PayrollDto} from '@/core/models';
-import {ApiService, ToastService} from '@/core/services';
-import {PaymentStatusTagComponent} from '@/components';
-
+import {Component, OnInit} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {ActivatedRoute, RouterModule} from "@angular/router";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
+import {TooltipModule} from "primeng/tooltip";
+import {CardModule} from "primeng/card";
+import {ButtonModule} from "primeng/button";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {SalaryType, PaymentStatus, PaymentMethod, PaymentMethodEnum, SalaryTypeEnum} from "@/core/enums";
+import {EmployeeDto, PayrollDto} from "@/core/models";
+import {ApiService, ToastService} from "@/core/services";
+import {PaymentStatusTagComponent} from "@/components";
 
 @Component({
-  selector: 'app-view-employee-payrolls',
+  selector: "app-view-employee-payrolls",
   standalone: true,
-  templateUrl: './view-employee-payrolls.component.html',
+  templateUrl: "./view-employee-payrolls.component.html",
   imports: [
     CommonModule,
     CardModule,
@@ -47,13 +40,12 @@ export class ViewEmployeePayrollsComponent implements OnInit {
   constructor(
     private readonly apiService: ApiService,
     private readonly route: ActivatedRoute,
-    private readonly toastService: ToastService)
-  {
-  }
+    private readonly toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      this.employeeId = params['employeeId'];
+      this.employeeId = params["employeeId"];
     });
 
     this.fetchEmployee();
@@ -66,24 +58,26 @@ export class ViewEmployeePayrollsComponent implements OnInit {
     const page = first / rows + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
-    this.apiService.getPayrolls({
-      orderBy: sortField,
-      page: page,
-      pageSize: rows,
-      employeeId: this.employeeId,
-    }).subscribe((result) => {
-      if (result.success && result.data) {
-        this.payrolls = result.data;
-        this.totalRecords = result.totalItems;
-      }
+    this.apiService
+      .getPayrolls({
+        orderBy: sortField,
+        page: page,
+        pageSize: rows,
+        employeeId: this.employeeId,
+      })
+      .subscribe((result) => {
+        if (result.success && result.data) {
+          this.payrolls = result.data;
+          this.totalRecords = result.totalItems;
+        }
 
-      this.isLoadingPayrolls = false;
-    });
+        this.isLoadingPayrolls = false;
+      });
   }
 
   getPaymentMethodDesc(enumValue?: PaymentMethod): string {
     if (enumValue == null) {
-      return 'N/A';
+      return "N/A";
     }
 
     return PaymentMethodEnum.getValue(enumValue).description;

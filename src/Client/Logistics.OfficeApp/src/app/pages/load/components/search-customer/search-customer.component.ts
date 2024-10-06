@@ -1,20 +1,15 @@
-import {Component, EventEmitter, Input, Output, forwardRef} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {AutoCompleteModule, AutoCompleteSelectEvent} from 'primeng/autocomplete';
-import {ApiService} from '@/core/services';
-import {CustomerDto} from '@/core/models';
-
+import {Component, EventEmitter, Input, Output, forwardRef} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
+import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
+import {ApiService} from "@/core/services";
+import {CustomerDto} from "@/core/models";
 
 @Component({
-  selector: 'app-search-customer',
+  selector: "app-search-customer",
   standalone: true,
-  templateUrl: './search-customer.component.html',
-  imports: [
-    CommonModule,
-    AutoCompleteModule,
-    FormsModule,
-  ],
+  templateUrl: "./search-customer.component.html",
+  imports: [CommonModule, AutoCompleteModule, FormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

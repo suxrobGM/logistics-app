@@ -1,26 +1,25 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {NgIf} from '@angular/common';
-import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {RouterLink} from '@angular/router';
-import {ButtonModule} from 'primeng/button';
-import {DropdownModule} from 'primeng/dropdown';
-import {AutoCompleteModule} from 'primeng/autocomplete';
-import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {CardModule} from 'primeng/card';
-import {ConfirmDialogModule} from 'primeng/confirmdialog';
-import {ToastModule} from 'primeng/toast';
-import {ConfirmationService} from 'primeng/api';
-import {SalaryType, SalaryTypeEnum} from '@/core/enums';
-import {CreateEmployeeCommand, RoleDto, UserDto} from '@/core/models';
-import {ApiService, ToastService} from '@/core/services';
-import {UserService} from '../services';
-import {ValidationSummaryComponent} from '@/components';
-
+import {Component, OnInit, ViewEncapsulation} from "@angular/core";
+import {NgIf} from "@angular/common";
+import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {RouterLink} from "@angular/router";
+import {ButtonModule} from "primeng/button";
+import {DropdownModule} from "primeng/dropdown";
+import {AutoCompleteModule} from "primeng/autocomplete";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {CardModule} from "primeng/card";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {ToastModule} from "primeng/toast";
+import {ConfirmationService} from "primeng/api";
+import {SalaryType, SalaryTypeEnum} from "@/core/enums";
+import {CreateEmployeeCommand, RoleDto, UserDto} from "@/core/models";
+import {ApiService, ToastService} from "@/core/services";
+import {UserService} from "../services";
+import {ValidationSummaryComponent} from "@/components";
 
 @Component({
-  selector: 'app-add-employee',
-  templateUrl: './add-employee.component.html',
-  styleUrls: ['./add-employee.component.scss'],
+  selector: "app-add-employee",
+  templateUrl: "./add-employee.component.html",
+  styleUrls: ["./add-employee.component.scss"],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [
@@ -37,10 +36,7 @@ import {ValidationSummaryComponent} from '@/components';
     RouterLink,
     ValidationSummaryComponent,
   ],
-  providers: [
-    UserService,
-    ConfirmationService
-  ],
+  providers: [UserService, ConfirmationService],
 })
 export class AddEmployeeComponent implements OnInit {
   public suggestedUsers: UserDto[] = [];
@@ -52,13 +48,13 @@ export class AddEmployeeComponent implements OnInit {
   constructor(
     private readonly apiService: ApiService,
     private readonly toastService: ToastService,
-    private readonly userService: UserService)
-  {
+    private readonly userService: UserService
+  ) {
     this.form = new FormGroup<CreateEmployeeForm>({
       user: new FormControl(null, {validators: Validators.required}),
       role: new FormControl(null),
       salary: new FormControl<number>(0, {validators: Validators.required, nonNullable: true}),
-      salaryType: new FormControl<SalaryType>(SalaryType.None, {validators: Validators.required, nonNullable: true})
+      salaryType: new FormControl<SalaryType>(SalaryType.None, {validators: Validators.required, nonNullable: true}),
     });
   }
 
@@ -88,7 +84,7 @@ export class AddEmployeeComponent implements OnInit {
     const user = this.form.value.user as UserDto;
 
     if (!user) {
-      this.toastService.showError('Select user');
+      this.toastService.showError("Select user");
       return;
     }
 
@@ -102,7 +98,7 @@ export class AddEmployeeComponent implements OnInit {
     this.isLoading = true;
     this.apiService.createEmployee(newEmployee).subscribe((result) => {
       if (result.success) {
-        this.toastService.showSuccess('New employee has been added successfully');
+        this.toastService.showSuccess("New employee has been added successfully");
         this.form.reset();
       }
 

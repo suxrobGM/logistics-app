@@ -1,8 +1,12 @@
 <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
-<app-change-role-dialog [(visible)]="showUpdateDialog" [userId]="id" [currentRoles]="employee?.roles"></app-change-role-dialog>
+<app-change-role-dialog
+  [(visible)]="showUpdateDialog"
+  [userId]="id"
+  [currentRoles]="employee?.roles"
+></app-change-role-dialog>
 
 <h1 class="text-center">Edit Employee</h1>
-<hr class="w-100">
+<hr class="w-100" />
 
 <div class="row justify-content-center">
   <div class="col-12 col-md-6">
@@ -28,11 +32,16 @@
         </div>
         <div class="mb-3">
           <label for="salaryType" class="form-label">Salary Type</label>
-          <p-dropdown formControlName="salaryType" styleClass="w-100" [options]="salaryTypes" 
-            optionValue="value" optionLabel="description">
+          <p-dropdown
+            formControlName="salaryType"
+            styleClass="w-100"
+            [options]="salaryTypes"
+            optionValue="value"
+            optionLabel="description"
+          >
           </p-dropdown>
         </div>
-        
+
         <div class="mb-3">
           <label for="salary" class="form-label">Salary</label>
           @if (isShareOfGrossSalary()) {
@@ -40,11 +49,17 @@
               <span class="input-group-text">%</span>
               <input id="salary" formControlName="salary" type="number" class="form-control" [min]="0" [max]="100" />
             </div>
-          }
-          @else {
+          } @else {
             <div class="input-group">
               <span class="input-group-text">$$</span>
-              <input id="salary" formControlName="salary" type="number" class="form-control" [min]="0" [disabled]="isNoneSalary()" />
+              <input
+                id="salary"
+                formControlName="salary"
+                type="number"
+                class="form-control"
+                [min]="0"
+                [disabled]="isNoneSalary()"
+              />
             </div>
           }
         </div>
@@ -53,36 +68,31 @@
           <label for="roleName" class="form-label">Role</label>
           <div class="input-group">
             <input id="roleName" type="text" class="form-control" [disabled]="true" [value]="getEmployeeRoleNames()" />
-            <p-button type="button"
-              label="Change"
-              [disabled]="!canChangeRole"
-              (click)="openUpdateDialog()">
-            </p-button>
+            <p-button type="button" label="Change" [disabled]="!canChangeRole" (click)="openUpdateDialog()"> </p-button>
           </div>
         </div>
-  
+
         <div class="mt-3">
-          <p-button type="submit"
-            icon="bi bi-pencil-square"
-            label="Save"
-            [disabled]="isLoading">
-          </p-button>
-          <p-button type="button"
+          <p-button type="submit" icon="bi bi-pencil-square" label="Save" [disabled]="isLoading"> </p-button>
+          <p-button
+            type="button"
             styleClass="p-button-danger ms-2"
             icon="bi bi bi-trash"
             label="Delete"
             [disabled]="isLoading"
-            (click)="confirmToDelete()">
+            (click)="confirmToDelete()"
+          >
           </p-button>
-          <p-button type="button"
+          <p-button
+            type="button"
             class="ms-2"
             icon="bi bi-arrow-left-square"
             label="Back to list"
-            [routerLink]="['/employees']">
+            [routerLink]="['/employees']"
+          >
           </p-button>
         </div>
       </form>
-      
     </p-card>
   </div>
 </div>

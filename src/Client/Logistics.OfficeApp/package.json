@@ -8,7 +8,8 @@
     "watch": "ng build --watch --configuration development",
     "docker:dev": "ng serve --port 7003 --host 0.0.0.0 --poll 2000",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "prettier": "prettier --write ./src"
   },
   "private": true,
   "dependencies": {
@@ -27,6 +28,7 @@
     "chart.js": "^4.4.4",
     "jspdf": "^2.5.2",
     "ngx-mapbox-gl": "^11.0.1",
+    "prettier": "^3.3.3",
     "primeicons": "^7.0.0",
     "primeng": "^17.18.11",
     "rxjs": "^7.8.1",

@@ -1,21 +1,20 @@
-import {Component} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {RouterLink} from '@angular/router';
-import {ButtonModule} from 'primeng/button';
-import {CardModule} from 'primeng/card';
-import {InputTextModule} from 'primeng/inputtext';
-import {TableLazyLoadEvent, TableModule} from 'primeng/table';
-import {TooltipModule} from 'primeng/tooltip';
-import {ConfirmDialogModule} from 'primeng/confirmdialog';
-import {ConfirmationService} from 'primeng/api';
-import {CustomerDto} from '@/core/models';
-import {ApiService, ToastService} from '@/core/services';
-
+import {Component} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {RouterLink} from "@angular/router";
+import {ButtonModule} from "primeng/button";
+import {CardModule} from "primeng/card";
+import {InputTextModule} from "primeng/inputtext";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
+import {TooltipModule} from "primeng/tooltip";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {ConfirmationService} from "primeng/api";
+import {CustomerDto} from "@/core/models";
+import {ApiService, ToastService} from "@/core/services";
 
 @Component({
-  selector: 'app-list-customers',
+  selector: "app-list-customers",
   standalone: true,
-  templateUrl: './list-customers.component.html',
+  templateUrl: "./list-customers.component.html",
   styleUrls: [],
   imports: [
     CommonModule,
@@ -28,9 +27,7 @@ import {ApiService, ToastService} from '@/core/services';
     ConfirmDialogModule,
     TooltipModule,
   ],
-  providers: [
-    ConfirmationService
-  ]
+  providers: [ConfirmationService],
 })
 export class ListCustomersComponent {
   public customers: CustomerDto[];
@@ -41,8 +38,8 @@ export class ListCustomersComponent {
   constructor(
     private apiService: ApiService,
     private toastService: ToastService,
-    private confirmationService: ConfirmationService)
-  {
+    private confirmationService: ConfirmationService
+  ) {
     this.customers = [];
     this.isLoading = false;
     this.totalRecords = 0;
@@ -82,7 +79,7 @@ export class ListCustomersComponent {
 
   confirmToDelete(id: string) {
     this.confirmationService.confirm({
-      message: 'Are you sure that you want to delete this customer?',
+      message: "Are you sure that you want to delete this customer?",
       accept: () => this.deleteCustomer(id),
     });
   }
@@ -92,7 +89,7 @@ export class ListCustomersComponent {
 
     this.apiService.deleteCustomer(id).subscribe((result) => {
       if (result.success) {
-        this.toastService.showSuccess('The customer has been deleted successfully');
+        this.toastService.showSuccess("The customer has been deleted successfully");
         const index = this.customers.findIndex((i) => i.id === id);
 
         if (index !== -1) {
@@ -101,6 +98,6 @@ export class ListCustomersComponent {
       }
 
       this.isLoading = false;
-    })
+    });
   }
 }

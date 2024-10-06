@@ -1,2 +1,2 @@
-export {TenantInterceptor} from './tenant.interceptor';
-export {TokenInterceptor} from './token.interceptor';
+export {TenantInterceptor} from "./tenant.interceptor";
+export {TokenInterceptor} from "./token.interceptor";

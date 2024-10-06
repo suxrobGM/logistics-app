@@ -1,22 +1,21 @@
-import {Component, OnInit} from '@angular/core';
-import {NgIf} from '@angular/common';
-import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {ActivatedRoute, RouterLink} from '@angular/router';
-import {ConfirmationService} from 'primeng/api';
-import {ButtonModule} from 'primeng/button';
-import {AutoCompleteModule} from 'primeng/autocomplete';
-import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {CardModule} from 'primeng/card';
-import {ConfirmDialogModule} from 'primeng/confirmdialog';
-import {ToastModule} from 'primeng/toast';
-import {CreateTruckCommand, EmployeeDto, UpdateTruckCommand} from '@/core/models';
-import {ApiService, ToastService} from '@/core/services';
-
+import {Component, OnInit} from "@angular/core";
+import {NgIf} from "@angular/common";
+import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {ActivatedRoute, RouterLink} from "@angular/router";
+import {ConfirmationService} from "primeng/api";
+import {ButtonModule} from "primeng/button";
+import {AutoCompleteModule} from "primeng/autocomplete";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {CardModule} from "primeng/card";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {ToastModule} from "primeng/toast";
+import {CreateTruckCommand, EmployeeDto, UpdateTruckCommand} from "@/core/models";
+import {ApiService, ToastService} from "@/core/services";
 
 @Component({
-  selector: 'app-edit-truck',
-  templateUrl: './edit-truck.component.html',
-  styleUrls: ['./edit-truck.component.scss'],
+  selector: "app-edit-truck",
+  templateUrl: "./edit-truck.component.html",
+  styleUrls: ["./edit-truck.component.scss"],
   standalone: true,
   imports: [
     ToastModule,
@@ -30,9 +29,7 @@ import {ApiService, ToastService} from '@/core/services';
     ButtonModule,
     RouterLink,
   ],
-  providers: [
-    ConfirmationService,
-  ],
+  providers: [ConfirmationService],
 })
 export class EditTruckComponent implements OnInit {
   public id: string | null;
@@ -46,11 +43,11 @@ export class EditTruckComponent implements OnInit {
     private apiService: ApiService,
     private confirmationService: ConfirmationService,
     private toastService: ToastService,
-    private route: ActivatedRoute)
-  {
+    private route: ActivatedRoute
+  ) {
     this.id = null;
     this.suggestedDrivers = [];
-    this.headerText = 'Edit a truck';
+    this.headerText = "Edit a truck";
     this.isBusy = false;
     this.editMode = true;
     this.form = new FormGroup({
@@ -61,12 +58,12 @@ export class EditTruckComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      this.id = params['id'];
+      this.id = params["id"];
     });
 
     if (!this.id) {
       this.editMode = false;
-      this.headerText = 'Add a new truck';
+      this.headerText = "Add a new truck";
       return;
     }
 
@@ -85,21 +82,20 @@ export class EditTruckComponent implements OnInit {
     const drivers = this.form.value.drivers as EmployeeDto[];
 
     if (drivers.length === 0) {
-      this.toastService.showError('Select a driver');
+      this.toastService.showError("Select a driver");
       return;
     }
 
     if (this.editMode) {
       this.updateTruck();
-    }
-    else {
+    } else {
       this.createTruck();
     }
   }
 
   confirmToDelete() {
     this.confirmationService.confirm({
-      message: 'Are you sure that you want to delete this truck?',
+      message: "Are you sure that you want to delete this truck?",
       accept: () => this.deleteTruck(),
     });
   }
@@ -127,7 +123,7 @@ export class EditTruckComponent implements OnInit {
 
     this.apiService.createTruck(command).subscribe((result) => {
       if (result.success) {
-        this.toastService.showSuccess('A new truck has been created successfully');
+        this.toastService.showSuccess("A new truck has been created successfully");
         this.resetForm();
       }
 
@@ -147,7 +143,7 @@ export class EditTruckComponent implements OnInit {
 
     this.apiService.updateTruck(updateTruckCommand).subscribe((result) => {
       if (result.success) {
-        this.toastService.showSuccess('Truck has been updated successfully');
+        this.toastService.showSuccess("Truck has been updated successfully");
       }
 
       this.isBusy = false;
@@ -162,7 +158,7 @@ export class EditTruckComponent implements OnInit {
     this.isBusy = true;
     this.apiService.deleteTruck(this.id).subscribe((result) => {
       if (result.success) {
-        this.toastService.showSuccess('A truck has been deleted successfully');
+        this.toastService.showSuccess("A truck has been deleted successfully");
         this.resetForm();
       }
 
@@ -172,7 +168,7 @@ export class EditTruckComponent implements OnInit {
 
   private resetForm() {
     this.editMode = false;
-    this.headerText = 'Add a new truck';
+    this.headerText = "Add a new truck";
     this.id = null;
   }
 }

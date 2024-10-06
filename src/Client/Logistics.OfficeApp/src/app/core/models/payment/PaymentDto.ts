@@ -1,6 +1,5 @@
-import {PaymentFor, PaymentMethod, PaymentStatus} from '@/core/enums';
-import {AddressDto} from '../AddressDto';
-
+import {PaymentFor, PaymentMethod, PaymentStatus} from "@/core/enums";
+import {AddressDto} from "../AddressDto";
 
 export interface PaymentDto {
   id: string;

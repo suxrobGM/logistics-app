@@ -1,29 +1,21 @@
-import {Component, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {ActivatedRoute, RouterModule} from '@angular/router';
-import {CardModule} from 'primeng/card';
-import {ButtonModule} from 'primeng/button';
-import {jsPDF} from 'jspdf';
-import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {ApiService, TenantService} from '@/core/services';
-import {AddressDto, InvoiceDto} from '@/core/models';
-import {PaymentMethod, PaymentMethodEnum, PaymentStatus} from '@/core/enums';
-import {AddressPipe} from '@/core/pipes';
-
+import {Component, OnInit} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {ActivatedRoute, RouterModule} from "@angular/router";
+import {CardModule} from "primeng/card";
+import {ButtonModule} from "primeng/button";
+import {jsPDF} from "jspdf";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {ApiService, TenantService} from "@/core/services";
+import {AddressDto, InvoiceDto} from "@/core/models";
+import {PaymentMethod, PaymentMethodEnum, PaymentStatus} from "@/core/enums";
+import {AddressPipe} from "@/core/pipes";
 
 @Component({
-  selector: 'app-view-invoice',
+  selector: "app-view-invoice",
   standalone: true,
-  templateUrl: './view-invoice.component.html',
+  templateUrl: "./view-invoice.component.html",
   styleUrls: [],
-  imports: [
-    CommonModule,
-    CardModule,
-    ButtonModule,
-    ProgressSpinnerModule,
-    RouterModule,
-    AddressPipe,
-  ],
+  imports: [CommonModule, CardModule, ButtonModule, ProgressSpinnerModule, RouterModule, AddressPipe],
 })
 export class ViewInvoiceComponent implements OnInit {
   private id?: string;
@@ -36,13 +28,12 @@ export class ViewInvoiceComponent implements OnInit {
   constructor(
     private readonly apiService: ApiService,
     private readonly tenantService: TenantService,
-    private readonly route: ActivatedRoute)
-  {
-  }
+    private readonly route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      this.id = params['id'];
+      this.id = params["id"];
     });
 
     const tenantData = this.tenantService.getTenantData();
@@ -53,7 +44,7 @@ export class ViewInvoiceComponent implements OnInit {
 
   getPaymentMethodDesc(enumValue?: PaymentMethod): string {
     if (enumValue == null) {
-      return 'N/A';
+      return "N/A";
     }
     return PaymentMethodEnum.getValue(enumValue).description;
   }
@@ -64,15 +55,15 @@ export class ViewInvoiceComponent implements OnInit {
     }
 
     const doc = new jsPDF();
-    doc.setFont('helvetica', 'bold');
+    doc.setFont("helvetica", "bold");
 
     // Adding 'Invoice' text centered
     const middleOfPage = doc.internal.pageSize.getWidth() / 2;
     doc.setFontSize(18); // Larger font size
-    doc.text('Invoice', middleOfPage, 10, { align: 'center' });
+    doc.text("Invoice", middleOfPage, 10, {align: "center"});
 
     // Reverting to normal font for the rest of the text
-    doc.setFont('helvetica', 'normal');
+    doc.setFont("helvetica", "normal");
     doc.setFontSize(12);
 
     doc.text(`Company: ${this.companyName}`, 10, 20);

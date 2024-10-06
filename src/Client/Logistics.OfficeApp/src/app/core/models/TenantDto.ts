@@ -1,4 +1,4 @@
-import {AddressDto} from './AddressDto';
+import {AddressDto} from "./AddressDto";
 
 export interface TenantDto {
   id: string;

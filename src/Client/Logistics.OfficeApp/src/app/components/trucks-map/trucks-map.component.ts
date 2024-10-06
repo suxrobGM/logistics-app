@@ -1,20 +1,16 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {GeolocationMapComponent} from '@/components';
-import {TruckGeolocationDto} from '@/core/models';
-import {ApiService, LiveTrackingService} from '@/core/services';
-
+import {Component, Input, OnDestroy, OnInit} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {GeolocationMapComponent} from "@/components";
+import {TruckGeolocationDto} from "@/core/models";
+import {ApiService, LiveTrackingService} from "@/core/services";
 
 @Component({
-  selector: 'app-trucks-map',
+  selector: "app-trucks-map",
   standalone: true,
-  templateUrl: './trucks-map.component.html',
+  templateUrl: "./trucks-map.component.html",
   styleUrls: [],
-  imports: [
-    CommonModule,
-    GeolocationMapComponent,
-  ],
+  imports: [CommonModule, GeolocationMapComponent],
 })
 export class TrucksMapComponent implements OnInit, OnDestroy {
   public truckLocations: TruckGeolocationDto[];
@@ -25,11 +21,11 @@ export class TrucksMapComponent implements OnInit, OnDestroy {
 
   constructor(
     private apiService: ApiService,
-    private liveTrackingService: LiveTrackingService)
-  {
+    private liveTrackingService: LiveTrackingService
+  ) {
     this.truckLocations = [];
-    this.width = '100%';
-    this.height = '100%';
+    this.width = "100%";
+    this.height = "100%";
   }
 
   ngOnInit(): void {
@@ -49,8 +45,7 @@ export class TrucksMapComponent implements OnInit, OnDestroy {
 
       if (index !== -1) {
         this.truckLocations[index] = data;
-      }
-      else {
+      } else {
         this.truckLocations.push(data);
       }
     };
@@ -64,13 +59,15 @@ export class TrucksMapComponent implements OnInit, OnDestroy {
 
       const truckLocations: TruckGeolocationDto[] = result.data.flatMap((truck) => {
         if (truck.currentLocation) {
-          return [{
-            latitude: truck.currentLocationLat!,
-            longitude: truck.currentLocationLong!,
-            truckId: truck.id,
-            truckNumber: truck.truckNumber,
-            driversName: truck.drivers.map((driver) => driver.fullName).join(', '),
-          }];
+          return [
+            {
+              latitude: truck.currentLocationLat!,
+              longitude: truck.currentLocationLong!,
+              truckId: truck.id,
+              truckNumber: truck.truckNumber,
+              driversName: truck.drivers.map((driver) => driver.fullName).join(", "),
+            },
+          ];
         }
         return [];
       });

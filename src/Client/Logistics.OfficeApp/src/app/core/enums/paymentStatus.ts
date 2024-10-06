@@ -1,9 +1,4 @@
-import {
-  EnumLike,
-  EnumType,
-  convertEnumToArray,
-  findValueFromEnum,
-} from './enumLike';
+import {EnumLike, EnumType, convertEnumToArray, findValueFromEnum} from "./enumLike";
 
 export enum PaymentStatus {
   Pending,
@@ -11,8 +6,8 @@ export enum PaymentStatus {
 }
 
 export const PaymentStatusEnum: EnumLike = {
-  Pending: {value: 0, description: 'Pending'},
-  Paid: {value: 1, description: 'Paid'},
+  Pending: {value: 0, description: "Pending"},
+  Paid: {value: 1, description: "Paid"},
 
   getValue(enumValue: string | number): EnumType {
     return findValueFromEnum(this, enumValue);

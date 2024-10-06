@@ -1,3 +1,3 @@
-export * from './dateRange';
-export * from './predefinedDateRanges';
-export * from './regexPatterns';
+export * from "./dateRange";
+export * from "./predefinedDateRanges";
+export * from "./regexPatterns";

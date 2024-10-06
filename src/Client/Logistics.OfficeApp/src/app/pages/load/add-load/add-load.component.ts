@@ -1,34 +1,33 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {Component, OnInit} from '@angular/core';
-import {NgIf} from '@angular/common';
-import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {Router, RouterLink} from '@angular/router';
-import {CardModule} from 'primeng/card';
-import {ToastModule} from 'primeng/toast';
-import {ButtonModule} from 'primeng/button';
-import {DropdownModule} from 'primeng/dropdown';
-import {AutoCompleteModule} from 'primeng/autocomplete';
-import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {AppConfig} from '@/configs';
-import {AuthService} from '@/core/auth';
-import {AddressDto, CreateLoadCommand, CustomerDto} from '@/core/models';
-import {ApiService, ToastService} from '@/core/services';
-import {Converters} from '@/core/utils';
+import {Component, OnInit} from "@angular/core";
+import {NgIf} from "@angular/common";
+import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {Router, RouterLink} from "@angular/router";
+import {CardModule} from "primeng/card";
+import {ToastModule} from "primeng/toast";
+import {ButtonModule} from "primeng/button";
+import {DropdownModule} from "primeng/dropdown";
+import {AutoCompleteModule} from "primeng/autocomplete";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {AppConfig} from "@/configs";
+import {AuthService} from "@/core/auth";
+import {AddressDto, CreateLoadCommand, CustomerDto} from "@/core/models";
+import {ApiService, ToastService} from "@/core/services";
+import {Converters} from "@/core/utils";
 import {
   AddressAutocompleteComponent,
   DirectionsMapComponent,
   RouteChangedEvent,
   SelectedAddressEvent,
   ValidationSummaryComponent,
-} from '@/components';
-import {SearchCustomerComponent, SearchTruckComponent} from '../components';
-import {TruckData} from '../shared';
-
+} from "@/components";
+import {SearchCustomerComponent, SearchTruckComponent} from "../components";
+import {TruckData} from "../shared";
 
 @Component({
-  selector: 'app-add-load',
-  templateUrl: './add-load.component.html',
-  styleUrls: ['./add-load.component.scss'],
+  selector: "app-add-load",
+  templateUrl: "./add-load.component.html",
+  styleUrls: ["./add-load.component.scss"],
   standalone: true,
   imports: [
     ToastModule,
@@ -60,20 +59,23 @@ export class AddLoadComponent implements OnInit {
     private readonly authService: AuthService,
     private readonly apiService: ApiService,
     private readonly toastService: ToastService,
-    private readonly router: Router)
-  {
+    private readonly router: Router
+  ) {
     this.form = new FormGroup<AddLoadForm>({
-      name: new FormControl(''),
+      name: new FormControl(""),
       customer: new FormControl(null, {validators: Validators.required}),
       orgAddress: new FormControl(null, {validators: Validators.required, nonNullable: true}),
-      orgCoords: new FormControl([0,0], {validators: Validators.required, nonNullable: true}),
+      orgCoords: new FormControl([0, 0], {validators: Validators.required, nonNullable: true}),
       dstAddress: new FormControl(null, {validators: Validators.required, nonNullable: true}),
-      dstCoords: new FormControl([0,0], {validators: Validators.required, nonNullable: true}),
+      dstCoords: new FormControl([0, 0], {validators: Validators.required, nonNullable: true}),
       deliveryCost: new FormControl(0, {validators: Validators.required, nonNullable: true}),
       distance: new FormControl({value: 0, disabled: true}, {validators: Validators.required, nonNullable: true}),
       assignedTruck: new FormControl(null, {validators: Validators.required}),
-      assignedDispatcherId: new FormControl('', {validators: Validators.required, nonNullable: true}),
-      assignedDispatcherName: new FormControl({value: '', disabled: true}, {validators: Validators.required, nonNullable: true}),
+      assignedDispatcherId: new FormControl("", {validators: Validators.required, nonNullable: true}),
+      assignedDispatcherName: new FormControl(
+        {value: "", disabled: true},
+        {validators: Validators.required, nonNullable: true}
+      ),
     });
   }
 
@@ -97,7 +99,7 @@ export class AddLoadComponent implements OnInit {
 
   updateDistance(eventData: RouteChangedEvent) {
     this.distanceMeters = eventData.distance;
-    const distanceMiles = Converters.metersTo(this.distanceMeters, 'mi');
+    const distanceMiles = Converters.metersTo(this.distanceMeters, "mi");
     this.form.patchValue({distance: distanceMiles});
   }
 
@@ -122,15 +124,14 @@ export class AddLoadComponent implements OnInit {
       customerId: this.form.value.customer!.id,
     };
 
-    this.apiService.createLoad(command)
-      .subscribe((result) => {
-        if (result.success) {
-          this.toastService.showSuccess('A new load has been created successfully');
-          this.router.navigateByUrl('/loads');
-        }
+    this.apiService.createLoad(command).subscribe((result) => {
+      if (result.success) {
+        this.toastService.showSuccess("A new load has been created successfully");
+        this.router.navigateByUrl("/loads");
+      }
 
-        this.isLoading = false;
-      });
+      this.isLoading = false;
+    });
   }
 
   private fetchCurrentDispatcher() {

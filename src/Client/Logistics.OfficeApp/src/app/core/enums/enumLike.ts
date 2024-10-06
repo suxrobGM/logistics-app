@@ -11,17 +11,17 @@ export interface EnumLike {
 
 export function convertEnumToArray(enumLike: EnumLike): EnumType[] {
   return Object.keys(enumLike)
-    .filter(key => typeof enumLike[key] !== 'function') // Filter out function properties
-    .map(key => {
+    .filter((key) => typeof enumLike[key] !== "function") // Filter out function properties
+    .map((key) => {
       const enumItem = enumLike[key];
 
-      if (typeof enumItem === 'function') {
-        throw new Error('Encountered a function when converting enum to array');
+      if (typeof enumItem === "function") {
+        throw new Error("Encountered a function when converting enum to array");
       }
 
       return {
         value: enumItem.value,
-        description: enumItem.description
+        description: enumItem.description,
       };
     });
 }
@@ -29,12 +29,12 @@ export function convertEnumToArray(enumLike: EnumLike): EnumType[] {
 export function findValueFromEnum(enumLike: EnumLike, enumValue: string | number): EnumType {
   for (const key in enumLike) {
     const item = enumLike[key];
-    if (typeof item !== 'function' && item.value === enumValue) {
+    if (typeof item !== "function" && item.value === enumValue) {
       return item;
     }
   }
-  
-  return {value: '', description: ''};
+
+  return {value: "", description: ""};
 }
 
 type GetValueFn = (enumValue: string | number) => EnumType;

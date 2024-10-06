@@ -1,4 +1,4 @@
-import {UserIdentity} from './userIdentity';
+import {UserIdentity} from "./userIdentity";
 
 export class UserData {
   constructor(userIdentity: UserIdentity) {
@@ -29,10 +29,9 @@ export class UserData {
       return;
     }
 
-    if (typeof data === 'string') {
+    if (typeof data === "string") {
       arr.push(data);
-    }
-    else if (Array.isArray(data)) {
+    } else if (Array.isArray(data)) {
       arr.push(...data);
     }
   }

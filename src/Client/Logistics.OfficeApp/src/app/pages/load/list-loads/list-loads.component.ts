@@ -1,23 +1,22 @@
-import {Component} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {RouterLink} from '@angular/router';
-import {TableLazyLoadEvent, TableModule} from 'primeng/table';
-import {InputTextModule} from 'primeng/inputtext';
-import {SharedModule} from 'primeng/api';
-import {CardModule} from 'primeng/card';
-import {TooltipModule} from 'primeng/tooltip';
-import {ButtonModule} from 'primeng/button';
-import {TagModule} from 'primeng/tag';
-import {LoadStatus, LoadStatusEnum} from '@/core/enums';
-import {LoadDto} from '@/core/models';
-import {ApiService} from '@/core/services';
-import {AddressPipe, DistanceUnitPipe} from '@/core/pipes';
-import {PaymentStatusTagComponent} from '@/components';
-
+import {Component} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {RouterLink} from "@angular/router";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
+import {InputTextModule} from "primeng/inputtext";
+import {SharedModule} from "primeng/api";
+import {CardModule} from "primeng/card";
+import {TooltipModule} from "primeng/tooltip";
+import {ButtonModule} from "primeng/button";
+import {TagModule} from "primeng/tag";
+import {LoadStatus, LoadStatusEnum} from "@/core/enums";
+import {LoadDto} from "@/core/models";
+import {ApiService} from "@/core/services";
+import {AddressPipe, DistanceUnitPipe} from "@/core/pipes";
+import {PaymentStatusTagComponent} from "@/components";
 
 @Component({
-  selector: 'app-list-loads',
-  templateUrl: './list-loads.component.html',
+  selector: "app-list-loads",
+  templateUrl: "./list-loads.component.html",
   styleUrls: [],
   standalone: true,
   imports: [
@@ -65,8 +64,9 @@ export class ListLoadComponent {
     const page = first / rows + 1;
     let sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
-    if (sortField === '') { // default sort property
-      sortField = '-dispatchedDate';
+    if (sortField === "") {
+      // default sort property
+      sortField = "-dispatchedDate";
     }
 
     this.apiService.getLoads({orderBy: sortField, page: page, pageSize: rows}, false).subscribe((result) => {
@@ -75,7 +75,6 @@ export class ListLoadComponent {
       if (result.success && result.data) {
         this.loads = result.data;
         this.totalRecords = result.totalItems;
-
       }
 
       this.isLoading = false;
@@ -86,11 +85,11 @@ export class ListLoadComponent {
     return LoadStatusEnum.getValue(enumValue).description;
   }
 
-  getLoadStatusSeverity(status: LoadStatus): 'success' | 'info' {
-    return status === LoadStatus.Delivered ? 'success' : 'info';
+  getLoadStatusSeverity(status: LoadStatus): "success" | "info" {
+    return status === LoadStatus.Delivered ? "success" : "info";
   }
 
   getLoadStatusIcon(status: LoadStatus): string {
-    return status === LoadStatus.Delivered ? 'bi bi-check' : 'bi bi-truck';
+    return status === LoadStatus.Delivered ? "bi bi-check" : "bi bi-truck";
   }
 }

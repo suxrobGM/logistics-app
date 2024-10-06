@@ -1,23 +1,23 @@
-import {Injectable} from '@angular/core';
+import {Injectable} from "@angular/core";
 
 @Injectable()
 export class CookieService {
   getCookie(name: string): string {
-    const cookies: Array<string> = document.cookie.split(';');
+    const cookies: Array<string> = document.cookie.split(";");
     const cookieName = `${name}=`;
     let cookie: string;
 
     for (let i = 0; i < cookies.length; i += 1) {
-      cookie = cookies[i].replace(/^\s+/g, '');
+      cookie = cookies[i].replace(/^\s+/g, "");
       if (cookie.indexOf(cookieName) == 0) {
         return cookie.substring(cookieName.length, cookie.length);
       }
     }
-    return '';
+    return "";
   }
 
   deleteCookie(cookieName: string) {
-    this.setCookie({name: cookieName, value: '', expireDays: -1});
+    this.setCookie({name: cookieName, value: "", expireDays: -1});
   }
 
   /**
@@ -33,18 +33,18 @@ export class CookieService {
   setCookie(cookie: Cookie) {
     const date: Date = new Date();
     date.setTime(date.getTime() + (cookie.expireDays ? cookie.expireDays : 1) * 24 * 60 * 60 * 1000);
-    const path = cookie.path && cookie.path.length > 0 ? cookie.path : '/';
-    const expires = cookie.session && cookie.session == true ? '' : `expires=${date.toUTCString()};`;
-    const secure = location.protocol === 'https:' && cookie.secure && cookie.secure == true ? 'secure' : '';
+    const path = cookie.path && cookie.path.length > 0 ? cookie.path : "/";
+    const expires = cookie.session && cookie.session == true ? "" : `expires=${date.toUTCString()};`;
+    const secure = location.protocol === "https:" && cookie.secure && cookie.secure == true ? "secure" : "";
     document.cookie = `${cookie.name}=${cookie.value};path=${path};${expires}${secure}`;
   }
 }
 
 interface Cookie {
-  name: string,
-  value: string,
-  path?: string,
-  expireDays?: number,
-  session?: boolean,
-  secure?: boolean
+  name: string;
+  value: string;
+  path?: string;
+  expireDays?: number;
+  session?: boolean;
+  secure?: boolean;
 }

@@ -1,23 +1,15 @@
-import {
-  Component,
-  Input,
-} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {MarkerComponent, NgxMapboxGLModule} from 'ngx-mapbox-gl';
-import {TruckGeolocationDto} from '@/core/models';
-import {AddressPipe} from '@/core/pipes';
-
+import {Component, Input} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {MarkerComponent, NgxMapboxGLModule} from "ngx-mapbox-gl";
+import {TruckGeolocationDto} from "@/core/models";
+import {AddressPipe} from "@/core/pipes";
 
 @Component({
-  selector: 'app-geolocation-map',
-  templateUrl: './geolocation-map.component.html',
+  selector: "app-geolocation-map",
+  templateUrl: "./geolocation-map.component.html",
   styleUrls: [],
   standalone: true,
-  imports: [
-    CommonModule,
-    NgxMapboxGLModule,
-    AddressPipe,
-  ],
+  imports: [CommonModule, NgxMapboxGLModule, AddressPipe],
 })
 export class GeolocationMapComponent {
   public selectedMarker: Marker | null = null;
@@ -33,8 +25,8 @@ export class GeolocationMapComponent {
     this.geolocationData = [];
     this.zoom = 3;
     this.center = [-95, 35];
-    this.width = '100%';
-    this.height = '100%';
+    this.width = "100%";
+    this.height = "100%";
   }
 
   onSelectMarker(geoData: TruckGeolocationDto, markerComponent: MarkerComponent): void {

@@ -1,22 +1,17 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {NgIf} from '@angular/common';
-import {Router} from '@angular/router';
-import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {ButtonModule} from 'primeng/button';
-import {AuthService} from '@/core/auth';
-
+import {Component, OnInit, ViewEncapsulation} from "@angular/core";
+import {NgIf} from "@angular/common";
+import {Router} from "@angular/router";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {ButtonModule} from "primeng/button";
+import {AuthService} from "@/core/auth";
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  selector: "app-login",
+  templateUrl: "./login.component.html",
+  styleUrls: ["./login.component.scss"],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [
-    NgIf,
-    ProgressSpinnerModule,
-    ButtonModule,
-  ],
+  imports: [NgIf, ProgressSpinnerModule, ButtonModule],
 })
 export class LoginComponent implements OnInit {
   public isAuthenticated: boolean;
@@ -24,14 +19,14 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private router: Router)
-  {
+    private router: Router
+  ) {
     this.isAuthenticated = false;
     this.isLoading = false;
   }
 
   ngOnInit(): void {
-    this.authService.onCheckingAuth().subscribe(() => this.isLoading = true);
+    this.authService.onCheckingAuth().subscribe(() => (this.isLoading = true));
     this.authService.onCheckingAuthFinished().subscribe(() => {
       this.isLoading = false;
       this.redirectToHome();
@@ -50,7 +45,7 @@ export class LoginComponent implements OnInit {
 
   private redirectToHome() {
     if (this.isAuthenticated) {
-      this.router.navigateByUrl('/home');
+      this.router.navigateByUrl("/home");
     }
   }
 }

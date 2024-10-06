@@ -1,37 +1,35 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {Component, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
-import {ConfirmationService} from 'primeng/api';
-import {CardModule} from 'primeng/card';
-import {ConfirmDialogModule} from 'primeng/confirmdialog';
-import {ToastModule} from 'primeng/toast';
-import {ButtonModule} from 'primeng/button';
-import {DropdownModule} from 'primeng/dropdown';
-import {AutoCompleteModule} from 'primeng/autocomplete';
-import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {AppConfig} from '@/configs';
-import {EnumType, LoadStatus, LoadStatusEnum} from '@/core/enums';
-import {AddressDto, CustomerDto, UpdateLoadCommand} from '@/core/models';
-import {ApiService, ToastService} from '@/core/services';
-import {Converters} from '@/core/utils';
+import {Component, OnInit} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {ActivatedRoute, Router, RouterLink} from "@angular/router";
+import {ConfirmationService} from "primeng/api";
+import {CardModule} from "primeng/card";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {ToastModule} from "primeng/toast";
+import {ButtonModule} from "primeng/button";
+import {DropdownModule} from "primeng/dropdown";
+import {AutoCompleteModule} from "primeng/autocomplete";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {AppConfig} from "@/configs";
+import {EnumType, LoadStatus, LoadStatusEnum} from "@/core/enums";
+import {AddressDto, CustomerDto, UpdateLoadCommand} from "@/core/models";
+import {ApiService, ToastService} from "@/core/services";
+import {Converters} from "@/core/utils";
 import {
   AddressAutocompleteComponent,
   DirectionsMapComponent,
   RouteChangedEvent,
   SelectedAddressEvent,
   ValidationSummaryComponent,
-} from '@/components';
-import {TruckData, TruckHelper} from '../shared';
-import {SearchCustomerComponent, SearchTruckComponent} from '../components';
-
-
+} from "@/components";
+import {TruckData, TruckHelper} from "../shared";
+import {SearchCustomerComponent, SearchTruckComponent} from "../components";
 
 @Component({
-  selector: 'app-edit-load',
-  templateUrl: './edit-load.component.html',
-  styleUrls: ['./edit-load.component.scss'],
+  selector: "app-edit-load",
+  templateUrl: "./edit-load.component.html",
+  styleUrls: ["./edit-load.component.scss"],
   standalone: true,
   imports: [
     CommonModule,
@@ -51,9 +49,7 @@ import {SearchCustomerComponent, SearchTruckComponent} from '../components';
     SearchTruckComponent,
     ValidationSummaryComponent,
   ],
-  providers: [
-    ConfirmationService,
-  ],
+  providers: [ConfirmationService],
 })
 export class EditLoadComponent implements OnInit {
   public readonly accessToken = AppConfig.mapboxToken;
@@ -71,31 +67,37 @@ export class EditLoadComponent implements OnInit {
     private readonly confirmationService: ConfirmationService,
     private readonly toastService: ToastService,
     private readonly route: ActivatedRoute,
-    private readonly router: Router)
-  {
+    private readonly router: Router
+  ) {
     this.form = new FormGroup<EditLoadForm>({
-      name: new FormControl(''),
+      name: new FormControl(""),
       customer: new FormControl(null, {validators: Validators.required}),
       orgAddress: new FormControl(null, {validators: Validators.required, nonNullable: true}),
-      orgCoords: new FormControl([0,0], {validators: Validators.required, nonNullable: true}),
+      orgCoords: new FormControl([0, 0], {validators: Validators.required, nonNullable: true}),
       dstAddress: new FormControl(null, {validators: Validators.required, nonNullable: true}),
-      dstCoords: new FormControl([0,0], {validators: Validators.required, nonNullable: true}),
+      dstCoords: new FormControl([0, 0], {validators: Validators.required, nonNullable: true}),
       deliveryCost: new FormControl(0, {validators: Validators.required, nonNullable: true}),
       distance: new FormControl({value: 0, disabled: true}, {validators: Validators.required, nonNullable: true}),
-      status: new FormControl(LoadStatusEnum.getValue(LoadStatus.Dispatched), {validators: Validators.required, nonNullable: true}),
+      status: new FormControl(LoadStatusEnum.getValue(LoadStatus.Dispatched), {
+        validators: Validators.required,
+        nonNullable: true,
+      }),
       assignedTruck: new FormControl(null, {validators: Validators.required}),
-      assignedDispatcherId: new FormControl('', {validators: Validators.required, nonNullable: true}),
-      assignedDispatcherName: new FormControl({value: '', disabled: true}, {validators: Validators.required, nonNullable: true}),
+      assignedDispatcherId: new FormControl("", {validators: Validators.required, nonNullable: true}),
+      assignedDispatcherName: new FormControl(
+        {value: "", disabled: true},
+        {validators: Validators.required, nonNullable: true}
+      ),
     });
   }
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      this.id = params['id'];
+      this.id = params["id"];
     });
 
     if (!this.id) {
-      this.toastService.showError('Missing the reqiured id parameter');
+      this.toastService.showError("Missing the reqiured id parameter");
       return;
     }
 
@@ -104,7 +106,7 @@ export class EditLoadComponent implements OnInit {
 
   confirmToDelete() {
     this.confirmationService.confirm({
-      message: 'Are you sure that you want to delete this load?',
+      message: "Are you sure that you want to delete this load?",
       accept: () => this.deleteLoad(),
     });
   }
@@ -125,7 +127,7 @@ export class EditLoadComponent implements OnInit {
 
   updateDistance(eventData: RouteChangedEvent) {
     this.distanceMeters = eventData.distance;
-    const distanceMiles = Converters.metersTo(this.distanceMeters, 'mi');
+    const distanceMiles = Converters.metersTo(this.distanceMeters, "mi");
     this.form.patchValue({distance: distanceMiles});
   }
 
@@ -152,22 +154,21 @@ export class EditLoadComponent implements OnInit {
       status: this.form.value.status?.value as LoadStatus,
     };
 
-    this.apiService.updateLoad(command)
-      .subscribe((result) => {
-        if (result.success) {
-          this.toastService.showSuccess('Load has been updated successfully');
-        }
+    this.apiService.updateLoad(command).subscribe((result) => {
+      if (result.success) {
+        this.toastService.showSuccess("Load has been updated successfully");
+      }
 
-        this.isLoading = false;
-      });
+      this.isLoading = false;
+    });
   }
 
   private deleteLoad() {
     this.isLoading = true;
     this.apiService.deleteLoad(this.id).subscribe((result) => {
       if (result.success) {
-        this.toastService.showSuccess('A load has been deleted successfully');
-        this.router.navigateByUrl('/loads');
+        this.toastService.showSuccess("A load has been deleted successfully");
+        this.router.navigateByUrl("/loads");
       }
 
       this.isLoading = false;
@@ -192,13 +193,14 @@ export class EditLoadComponent implements OnInit {
         dstAddress: load.destinationAddress,
         dstCoords: [load.destinationAddressLong, load.destinationAddressLat],
         deliveryCost: load.deliveryCost,
-        distance: Converters.metersTo(load.distance, 'mi'),
+        distance: Converters.metersTo(load.distance, "mi"),
         status: LoadStatusEnum.getValue(load.status),
         assignedDispatcherId: load.assignedDispatcherId,
         assignedDispatcherName: load.assignedDispatcherName,
         assignedTruck: {
           truckId: load.assignedTruckId!,
-          driversName: TruckHelper.formatDriversName(load.assignedTruckNumber!, load.assignedTruckDriversName!)},
+          driversName: TruckHelper.formatDriversName(load.assignedTruckNumber!, load.assignedTruckDriversName!),
+        },
       });
 
       this.loadRefId = load.refId;
@@ -212,7 +214,7 @@ export class EditLoadComponent implements OnInit {
     if (dateStr) {
       return new Date(dateStr).toLocaleDateString();
     }
-    return '';
+    return "";
   }
 }
 

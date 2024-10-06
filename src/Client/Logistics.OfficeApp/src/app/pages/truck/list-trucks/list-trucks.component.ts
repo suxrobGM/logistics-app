@@ -1,21 +1,20 @@
-import {Component} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {RouterLink} from '@angular/router';
-import {TableLazyLoadEvent, TableModule} from 'primeng/table';
-import {InputTextModule} from 'primeng/inputtext';
-import {SharedModule} from 'primeng/api';
-import {CardModule} from 'primeng/card';
-import {TooltipModule} from 'primeng/tooltip';
-import {ButtonModule} from 'primeng/button';
-import {TruckDto} from '@/core/models';
-import {ApiService} from '@/core/services';
-import {AddressPipe} from '@/core/pipes';
-
+import {Component} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {RouterLink} from "@angular/router";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
+import {InputTextModule} from "primeng/inputtext";
+import {SharedModule} from "primeng/api";
+import {CardModule} from "primeng/card";
+import {TooltipModule} from "primeng/tooltip";
+import {ButtonModule} from "primeng/button";
+import {TruckDto} from "@/core/models";
+import {ApiService} from "@/core/services";
+import {AddressPipe} from "@/core/pipes";
 
 @Component({
-  selector: 'app-list-trucks',
-  templateUrl: './list-trucks.component.html',
-  styleUrls: ['./list-trucks.component.scss'],
+  selector: "app-list-trucks",
+  templateUrl: "./list-trucks.component.html",
+  styleUrls: ["./list-trucks.component.scss"],
   standalone: true,
   imports: [
     CommonModule,

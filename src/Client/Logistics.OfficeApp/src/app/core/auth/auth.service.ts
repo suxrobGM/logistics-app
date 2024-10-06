@@ -1,20 +1,19 @@
 /* eslint-disable indent */
-import {Injectable} from '@angular/core';
-import {EventTypes, OidcSecurityService, PublicEventsService} from 'angular-auth-oidc-client';
-import {Observable, filter, map} from 'rxjs';
-import {UserRoleEnum} from '@/core/enums';
-import {UserData} from './userData';
+import {Injectable} from "@angular/core";
+import {EventTypes, OidcSecurityService, PublicEventsService} from "angular-auth-oidc-client";
+import {Observable, filter, map} from "rxjs";
+import {UserRoleEnum} from "@/core/enums";
+import {UserData} from "./userData";
 
-
-@Injectable({providedIn: 'root'})
+@Injectable({providedIn: "root"})
 export class AuthService {
   private accessToken: string | null;
   private userData: UserData | null;
 
   constructor(
     private oidcService: OidcSecurityService,
-    private eventService: PublicEventsService)
-  {
+    private eventService: PublicEventsService
+  ) {
     this.accessToken = null;
     this.userData = null;
     this.onUserDataChanged().subscribe((_) => _);
@@ -25,23 +24,29 @@ export class AuthService {
   }
 
   onUserDataChanged(): Observable<UserData | null> {
-    return this.oidcService.userData$.pipe(map(({userData}) => {
-      if (userData) {
-        this.userData = new UserData(userData);
-      }
+    return this.oidcService.userData$.pipe(
+      map(({userData}) => {
+        if (userData) {
+          this.userData = new UserData(userData);
+        }
 
-      return this.userData;
-    }));
+        return this.userData;
+      })
+    );
   }
 
   onCheckingAuth(): Observable<void> {
-    return this.eventService.registerForEvents()
-        .pipe(filter((notifaction) => notifaction.type === EventTypes.CheckingAuth), map(() => void 0));
+    return this.eventService.registerForEvents().pipe(
+      filter((notifaction) => notifaction.type === EventTypes.CheckingAuth),
+      map(() => void 0)
+    );
   }
 
   onCheckingAuthFinished(): Observable<void> {
-    return this.eventService.registerForEvents()
-        .pipe(filter((notifaction) => notifaction.type === EventTypes.CheckingAuthFinished), map(() => void 0));
+    return this.eventService.registerForEvents().pipe(
+      filter((notifaction) => notifaction.type === EventTypes.CheckingAuthFinished),
+      map(() => void 0)
+    );
   }
 
   login() {
@@ -68,7 +73,7 @@ export class AuthService {
           this.accessToken = accessToken;
         }
         return isAuthenticated;
-      }),
+      })
     );
   }
 

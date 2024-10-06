@@ -1,20 +1,19 @@
-import {Component} from '@angular/core';
-import {CommonModule, CurrencyPipe, DatePipe, PercentPipe} from '@angular/common';
-import {RouterLink} from '@angular/router';
-import {TableLazyLoadEvent, TableModule} from 'primeng/table';
-import {InputTextModule} from 'primeng/inputtext';
-import {SharedModule} from 'primeng/api';
-import {CardModule} from 'primeng/card';
-import {TooltipModule} from 'primeng/tooltip';
-import {ButtonModule} from 'primeng/button';
-import {EmployeeDto} from '@/core/models';
-import {ApiService} from '@/core/services';
-import {SalaryType, SalaryTypeEnum} from '@/core/enums';
-
+import {Component} from "@angular/core";
+import {CommonModule, CurrencyPipe, DatePipe, PercentPipe} from "@angular/common";
+import {RouterLink} from "@angular/router";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
+import {InputTextModule} from "primeng/inputtext";
+import {SharedModule} from "primeng/api";
+import {CardModule} from "primeng/card";
+import {TooltipModule} from "primeng/tooltip";
+import {ButtonModule} from "primeng/button";
+import {EmployeeDto} from "@/core/models";
+import {ApiService} from "@/core/services";
+import {SalaryType, SalaryTypeEnum} from "@/core/enums";
 
 @Component({
-  selector: 'app-list-employees',
-  templateUrl: './list-employees.component.html',
+  selector: "app-list-employees",
+  templateUrl: "./list-employees.component.html",
   styleUrls: [],
   standalone: true,
   imports: [

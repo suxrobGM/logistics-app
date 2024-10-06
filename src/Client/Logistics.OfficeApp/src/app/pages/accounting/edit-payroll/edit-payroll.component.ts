@@ -1,33 +1,25 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {Component, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormGroup, FormControl, Validators, ReactiveFormsModule} from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
-import {CardModule} from 'primeng/card';
-import {DropdownModule} from 'primeng/dropdown';
-import {AutoCompleteModule, AutoCompleteSelectEvent} from 'primeng/autocomplete';
-import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {CalendarModule} from 'primeng/calendar';
-import {ButtonModule} from 'primeng/button';
-import {AddressDto, CreatePayrollCommand, EmployeeDto, PayrollDto, UpdatePayrollCommand} from '@/core/models';
-import {ApiService, ToastService} from '@/core/services';
-import {PredefinedDateRanges} from '@/core/helpers';
-import {
-  EnumType,
-  PaymentMethodEnum,
-  PaymentStatus,
-  PaymentStatusEnum,
-  SalaryType,
-  SalaryTypeEnum,
-} from '@/core/enums';
-import {AddressFormComponent, ValidationSummaryComponent} from '@/components';
-import {DateUtils} from '@/core/utils';
-
+import {Component, OnInit} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {FormGroup, FormControl, Validators, ReactiveFormsModule} from "@angular/forms";
+import {ActivatedRoute, Router, RouterModule} from "@angular/router";
+import {CardModule} from "primeng/card";
+import {DropdownModule} from "primeng/dropdown";
+import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {CalendarModule} from "primeng/calendar";
+import {ButtonModule} from "primeng/button";
+import {AddressDto, CreatePayrollCommand, EmployeeDto, PayrollDto, UpdatePayrollCommand} from "@/core/models";
+import {ApiService, ToastService} from "@/core/services";
+import {PredefinedDateRanges} from "@/core/helpers";
+import {EnumType, PaymentMethodEnum, PaymentStatus, PaymentStatusEnum, SalaryType, SalaryTypeEnum} from "@/core/enums";
+import {AddressFormComponent, ValidationSummaryComponent} from "@/components";
+import {DateUtils} from "@/core/utils";
 
 @Component({
-  selector: 'app-edit-payroll',
+  selector: "app-edit-payroll",
   standalone: true,
-  templateUrl: './edit-payroll.component.html',
+  templateUrl: "./edit-payroll.component.html",
   imports: [
     CommonModule,
     CardModule,
@@ -47,7 +39,7 @@ export class EditPayrollComponent implements OnInit {
   public paymentStatus = PaymentStatus;
   public paymentStatuses = PaymentStatusEnum.toArray();
   public paymentMethods = PaymentMethodEnum.toArray();
-  public title = 'Edit payroll';
+  public title = "Edit payroll";
   public id: string | null = null;
   public isLoading = false;
   public todayDate = new Date();
@@ -60,9 +52,9 @@ export class EditPayrollComponent implements OnInit {
     private readonly apiService: ApiService,
     private readonly toastService: ToastService,
     private readonly route: ActivatedRoute,
-    private readonly router: Router)
-  {
-    const lastWeek = [PredefinedDateRanges.getLastWeek().startDate, PredefinedDateRanges.getLastWeek().endDate]
+    private readonly router: Router
+  ) {
+    const lastWeek = [PredefinedDateRanges.getLastWeek().startDate, PredefinedDateRanges.getLastWeek().endDate];
 
     this.form = new FormGroup<PayrollForm>({
       employee: new FormControl(null, {validators: Validators.required}),
@@ -72,22 +64,21 @@ export class EditPayrollComponent implements OnInit {
       paymentBillingAddress: new FormControl(null),
     });
 
-    this.form.get('paymentStatus')?.valueChanges.subscribe((status) => {
+    this.form.get("paymentStatus")?.valueChanges.subscribe((status) => {
       this.setConditionalValidators(status?.value as PaymentStatus);
     });
   }
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      this.id = params['id'];
+      this.id = params["id"];
     });
 
     if (this.isEditMode()) {
-      this.title = 'Edit payroll';
+      this.title = "Edit payroll";
       this.fetchPayroll();
-    }
-    else {
-      this.title = 'Add a new payroll';
+    } else {
+      this.title = "Add a new payroll";
     }
   }
 
@@ -121,7 +112,7 @@ export class EditPayrollComponent implements OnInit {
       employeeId: employee.id,
       startDate: this.form.value.dateRange![0],
       endDate: this.form.value.dateRange![1],
-    }
+    };
 
     this.apiService.calculateEmployeePayroll(query).subscribe((result) => {
       this.computedPayroll = result.data;
@@ -135,14 +126,13 @@ export class EditPayrollComponent implements OnInit {
 
     if (this.id) {
       this.updatePayroll();
-    }
-    else {
+    } else {
       this.addPayroll();
     }
   }
 
   isEditMode(): boolean {
-    return this.id != null && this.id !== '';
+    return this.id != null && this.id !== "";
   }
 
   getSalaryTypeDesc(salaryType: SalaryType): string {
@@ -154,14 +144,13 @@ export class EditPayrollComponent implements OnInit {
       return;
     }
 
-    const paymentMethodControl = this.form.get('paymentMethod');
-    const billingAddressControl = this.form.get('paymentBillingAddress');
+    const paymentMethodControl = this.form.get("paymentMethod");
+    const billingAddressControl = this.form.get("paymentBillingAddress");
 
     if (paymentStatus === PaymentStatus.Paid) {
       paymentMethodControl?.setValidators(Validators.required);
       billingAddressControl?.setValidators(Validators.required);
-    }
-    else {
+    } else {
       paymentMethodControl?.clearValidators();
       billingAddressControl?.clearValidators();
     }
@@ -188,7 +177,7 @@ export class EditPayrollComponent implements OnInit {
       }
 
       this.isLoading = false;
-    })
+    });
   }
 
   private addPayroll() {
@@ -201,12 +190,12 @@ export class EditPayrollComponent implements OnInit {
       employeeId: this.form.value.employee!.id,
       startDate: this.form.value.dateRange![0],
       endDate: this.form.value.dateRange![1],
-    }
+    };
 
     this.apiService.createPayroll(command).subscribe((result) => {
       if (result.success) {
-        this.toastService.showSuccess('A new payroll entry has been added successfully');
-        this.router.navigateByUrl('/accounting/payrolls');
+        this.toastService.showSuccess("A new payroll entry has been added successfully");
+        this.router.navigateByUrl("/accounting/payrolls");
       }
 
       this.isLoading = false;
@@ -221,12 +210,12 @@ export class EditPayrollComponent implements OnInit {
       employeeId: this.form.value.employee!.id,
       startDate: this.form.value.dateRange![0],
       endDate: this.form.value.dateRange![1],
-    }
+    };
 
     this.apiService.updatePayroll(commad).subscribe((result) => {
       if (result.success) {
-        this.toastService.showSuccess('A payroll data has been updated successfully');
-        this.router.navigateByUrl('/accounting/payrolls');
+        this.toastService.showSuccess("A payroll data has been updated successfully");
+        this.router.navigateByUrl("/accounting/payrolls");
       }
 
       this.isLoading = false;

@@ -1,5 +1,5 @@
-import {SalaryType} from '@/core/enums';
-import {RoleDto} from './RoleDto';
+import {SalaryType} from "@/core/enums";
+import {RoleDto} from "./RoleDto";
 
 export interface EmployeeDto {
   id: string;

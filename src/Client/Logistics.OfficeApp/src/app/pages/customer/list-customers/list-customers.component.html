@@ -9,17 +9,28 @@
     [rounded]="true"
     [text]="true"
     pTooltip="Add a new customer"
-    [routerLink]="['/customers/add']">
+    [routerLink]="['/customers/add']"
+  >
   </p-button>
 </div>
-<hr class="w-100">
+<hr class="w-100" />
 
 <p-card>
   <div class="row">
     <div class="col-12">
-      <p-table [value]="customers" responsiveLayout="scroll" [lazy]="true" [paginator]="true"
-        [showCurrentPageReport]="true" (onLazyLoad)="load($event)" [rows]="10" [(first)]="first"
-        [totalRecords]="totalRecords" [loading]="isLoading" [rowsPerPageOptions]="[10,25,50]">
+      <p-table
+        [value]="customers"
+        responsiveLayout="scroll"
+        [lazy]="true"
+        [paginator]="true"
+        [showCurrentPageReport]="true"
+        (onLazyLoad)="load($event)"
+        [rows]="10"
+        [(first)]="first"
+        [totalRecords]="totalRecords"
+        [loading]="isLoading"
+        [rowsPerPageOptions]="[10, 25, 50]"
+      >
         <ng-template pTemplate="caption">
           <div class="d-flex">
             <span class="p-input-icon-left">
@@ -34,15 +45,13 @@
               Name
               <p-sortIcon field="name"></p-sortIcon>
             </th>
-            <th class="text-center">
-              Action
-            </th>
+            <th class="text-center">Action</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-customer>
           <tr>
             <td>
-              {{customer.name}}
+              {{ customer.name }}
             </td>
             <td class="text-center">
               <!-- <button pButton 
@@ -50,15 +59,19 @@
                 label="View details"
                 [routerLink]="['/customer/details', customer.id]">
               </button> -->
-              <p-button class="ms-2"
+              <p-button
+                class="ms-2"
                 icon="bi bi-pencil"
                 pTooltip="Edit Cutomer"
-                [routerLink]="['/customers/edit', customer.id]">
+                [routerLink]="['/customers/edit', customer.id]"
+              >
               </p-button>
-              <p-button styleClass="ms-2 p-button-danger"
+              <p-button
+                styleClass="ms-2 p-button-danger"
                 icon="bi bi-trash"
                 pTooltip="Delete Customer"
-                (click)="confirmToDelete(customer.id)">
+                (click)="confirmToDelete(customer.id)"
+              >
               </p-button>
             </td>
           </tr>

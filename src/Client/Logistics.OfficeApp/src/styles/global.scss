@@ -27,16 +27,24 @@ body {
   text-decoration: none;
 }
 
-ol, ul {
+ol,
+ul {
   padding-left: 0;
 }
 
-dl, ol, ul {
+dl,
+ol,
+ul {
   margin-top: 0;
   margin-bottom: 0;
 }
 
-tbody, td, tfoot, th, thead, tr {
+tbody,
+td,
+tfoot,
+th,
+thead,
+tr {
   border: 1px solid #dee2e6;
   border-width: 1px 0 2px 0;
   text-align: center;

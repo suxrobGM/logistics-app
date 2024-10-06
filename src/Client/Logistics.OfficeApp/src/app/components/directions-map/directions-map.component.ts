@@ -1,19 +1,15 @@
-import {Component, Input, OnChanges, Output, EventEmitter} from '@angular/core';
-import {NgIf} from '@angular/common';
-import {HttpClient} from '@angular/common/http';
-import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
-import {GeoJSONSourceRaw, LngLatLike} from 'mapbox-gl';
-
+import {Component, Input, OnChanges, Output, EventEmitter} from "@angular/core";
+import {NgIf} from "@angular/common";
+import {HttpClient} from "@angular/common/http";
+import {NgxMapboxGLModule} from "ngx-mapbox-gl";
+import {GeoJSONSourceRaw, LngLatLike} from "mapbox-gl";
 
 @Component({
-  selector: 'app-directions-map',
+  selector: "app-directions-map",
   standalone: true,
-  templateUrl: './directions-map.component.html',
-  styleUrls: ['./directions-map.component.scss'],
-  imports: [
-    NgxMapboxGLModule,
-    NgIf,
-  ],
+  templateUrl: "./directions-map.component.html",
+  styleUrls: ["./directions-map.component.scss"],
+  imports: [NgxMapboxGLModule, NgIf],
 })
 export class DirectionsMapComponent implements OnChanges {
   public bounds?: [LngLatLike, LngLatLike] | null;
@@ -31,7 +27,7 @@ export class DirectionsMapComponent implements OnChanges {
   @Input() end?: [number, number] | null;
   @Input() width: string;
   @Input() height: string;
-  @Output() routeChanged = new EventEmitter<RouteChangedEvent>;
+  @Output() routeChanged = new EventEmitter<RouteChangedEvent>();
 
   constructor(private http: HttpClient) {
     this.zoom = this.defaultZoom = 3;
@@ -41,15 +37,14 @@ export class DirectionsMapComponent implements OnChanges {
     this.startPoint = null;
     this.endPoint = null;
     this.bounds = null;
-    this.width = '100%';
-    this.height = '100%';
+    this.width = "100%";
+    this.height = "100%";
   }
 
   ngOnChanges() {
     if (!this.start && !this.end) {
       this.clearRoutes();
-    }
-    else {
+    } else {
       this.drawMarkers();
       this.drawRoute();
     }
@@ -63,20 +58,19 @@ export class DirectionsMapComponent implements OnChanges {
     const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${this.start[0]},${this.start[1]};${this.end[0]},${this.end[1]}?geometries=geojson&access_token=${this.accessToken}`;
 
     this.http.get<ResponseData>(url).subscribe((data) => {
-      if (data.code !== 'Ok') {
+      if (data.code !== "Ok") {
         return;
       }
 
-      this.route = {
-        type: 'geojson',
+      (this.route = {
+        type: "geojson",
         data: {
-          type: 'Feature',
+          type: "Feature",
           geometry: data.routes[0].geometry,
           properties: {},
         },
-      },
-
-      this.bounds = [this.start as LngLatLike, this.end as LngLatLike];
+      }),
+        (this.bounds = [this.start as LngLatLike, this.end as LngLatLike]);
       this.routeChanged.emit({
         origin: this.start!,
         destination: this.end!,
@@ -97,11 +91,11 @@ export class DirectionsMapComponent implements OnChanges {
 
   private getPointSource(coords: number[]): GeoJSONSourceRaw {
     return {
-      type: 'geojson',
+      type: "geojson",
       data: {
-        type: 'Feature',
+        type: "Feature",
         geometry: {
-          type: 'Point',
+          type: "Point",
           coordinates: coords,
         },
         properties: {},

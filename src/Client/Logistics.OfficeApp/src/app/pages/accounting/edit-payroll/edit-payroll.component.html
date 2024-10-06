@@ -1,5 +1,5 @@
-<h1 class="text-center">{{title}}</h1>
-<hr class="w-100">
+<h1 class="text-center">{{ title }}</h1>
+<hr class="w-100" />
 
 <div class="row justify-content-center mx-0">
   <div class="col-12 col-md-6">
@@ -7,67 +7,79 @@
       @if (isLoading) {
         <p-progressSpinner></p-progressSpinner>
       }
-      
+
       <form [formGroup]="form" (ngSubmit)="submit()">
         <app-validation-summary [form]="form"></app-validation-summary>
 
         <div class="mb-3">
-          <label for="dateRange" class="mb-2">Date range</label><br/>
-          <p-calendar formControlName="dateRange"
+          <label for="dateRange" class="mb-2">Date range</label><br />
+          <p-calendar
+            formControlName="dateRange"
             selectionMode="range"
             [showIcon]="true"
             [maxDate]="todayDate"
-            (onSelect)="tryCalculatePayroll()">
+            (onSelect)="tryCalculatePayroll()"
+          >
           </p-calendar>
         </div>
-        
+
         <div class="mb-3">
           <label for="employee" class="form-label">Employee</label>
-          <p-autoComplete formControlName="employee" styleClass="w-100" 
+          <p-autoComplete
+            formControlName="employee"
+            styleClass="w-100"
             inputStyleClass="form-control"
-            placeholder="Type employee's name" field="fullName" 
-            [minLength]="2" [suggestions]="suggestedEmployees"
-            (completeMethod)="searchEmployee($event)" 
-            (onSelect)="handleAutoCompleteSelectEvent($event)">
+            placeholder="Type employee's name"
+            field="fullName"
+            [minLength]="2"
+            [suggestions]="suggestedEmployees"
+            (completeMethod)="searchEmployee($event)"
+            (onSelect)="handleAutoCompleteSelectEvent($event)"
+          >
           </p-autoComplete>
         </div>
-        
+
         @if (selectedEmployee && computedPayroll) {
           <h4>Payment details</h4>
           <hr />
-  
-          <p><strong>Employee Role:</strong> {{selectedEmployee.roles[0].displayName}}</p>
-          <p><strong>Employee's Salary Type:</strong> {{getSalaryTypeDesc(selectedEmployee.salaryType)}}</p>
+
+          <p><strong>Employee Role:</strong> {{ selectedEmployee.roles[0].displayName }}</p>
+          <p><strong>Employee's Salary Type:</strong> {{ getSalaryTypeDesc(selectedEmployee.salaryType) }}</p>
           <p>
             <strong>Employee's Salary:</strong>
             @if (selectedEmployee.salaryType === salaryType.ShareOfGross) {
-              {{selectedEmployee.salary | percent}}
-            }
-            @else {
-              {{selectedEmployee.salary | currency}}
+              {{ selectedEmployee.salary | percent }}
+            } @else {
+              {{ selectedEmployee.salary | currency }}
             }
           </p>
-          <p><strong>Expected Payment:</strong> {{computedPayroll.payment.amount | currency}}</p>
+          <p><strong>Expected Payment:</strong> {{ computedPayroll.payment.amount | currency }}</p>
         }
 
         @if (isEditMode()) {
           <div class="mb-3">
             <label for="paymentStatus" class="form-label">Payment Status</label>
-            <p-dropdown formControlName="paymentStatus" styleClass="w-100" 
-              [options]="paymentStatuses" 
-              optionLabel="description">
+            <p-dropdown
+              formControlName="paymentStatus"
+              styleClass="w-100"
+              [options]="paymentStatuses"
+              optionLabel="description"
+            >
             </p-dropdown>
           </div>
 
-          @if (form.get('paymentStatus')?.value?.value === paymentStatus.Paid) {
+          @if (form.get("paymentStatus")?.value?.value === paymentStatus.Paid) {
             <h4>Payment details</h4>
-            <hr/>
+            <hr />
 
             <div class="mb-3">
               <label for="paymentMethod" class="form-label">Payment Method</label>
-              <p-dropdown formControlName="paymentMethod" styleClass="w-100" 
-                [options]="paymentMethods" 
-                optionLabel="description">
+              <p-dropdown
+                formControlName="paymentMethod"
+                styleClass="w-100"
+                [options]="paymentMethods"
+                optionLabel="description"
+              >
               </p-dropdown>
             </div>
 
@@ -75,18 +87,22 @@
             <app-address-form formControlName="paymentBillingAddress"></app-address-form>
           }
         }
-        
-        <p-button type="submit"
+
+        <p-button
+          type="submit"
           class="mt-3"
           icon="bi bi-pencil-square"
           label="Save"
-          [disabled]="isLoading || !form.valid || computedPayroll?.payment?.amount === 0">
+          [disabled]="isLoading || !form.valid || computedPayroll?.payment?.amount === 0"
+        >
         </p-button>
-        <p-button type="button"
+        <p-button
+          type="button"
           class="mt-3 ms-2"
           icon="bi bi-arrow-left-square"
           label="Back to list"
-          [routerLink]="['/accounting/payrolls']">
+          [routerLink]="['/accounting/payrolls']"
+        >
         </p-button>
       </form>
     </p-card>

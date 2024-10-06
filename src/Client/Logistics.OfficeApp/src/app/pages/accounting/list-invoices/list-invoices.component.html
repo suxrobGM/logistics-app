@@ -7,17 +7,24 @@
     routerLink="/accounting/invoices/add">
   </button> -->
 </div>
-<hr class="w-100">
+<hr class="w-100" />
 
 <p-card>
   <div class="row">
     <div class="col-12">
-      <p-table [value]="invoices" responsiveLayout="scroll" [lazy]="true" 
-        [paginator]="true" [showCurrentPageReport]="true"
-        (onLazyLoad)="load($event)" [rows]="10" [(first)]="first" 
-        [totalRecords]="totalRecords" [loading]="isLoading"
-        [rowsPerPageOptions]="[10,25,50]">
-
+      <p-table
+        [value]="invoices"
+        responsiveLayout="scroll"
+        [lazy]="true"
+        [paginator]="true"
+        [showCurrentPageReport]="true"
+        (onLazyLoad)="load($event)"
+        [rows]="10"
+        [(first)]="first"
+        [totalRecords]="totalRecords"
+        [loading]="isLoading"
+        [rowsPerPageOptions]="[10, 25, 50]"
+      >
         <ng-template pTemplate="header">
           <tr>
             <th pSortableColumn="loadRef">
@@ -47,14 +54,14 @@
             <th>Action</th>
           </tr>
         </ng-template>
-        
+
         <ng-template pTemplate="body" let-invoice>
           <tr>
-            <td>{{invoice.loadRef}}</td>
-            <td>{{invoice.customer.name}}</td>
-            <td>{{invoice.payment.amount | currency}}</td>
-            <td>{{invoice.createdDate | date:'mediumDate'}}</td>
-            <td>{{invoice.payment.paymentDate | date:'mediumDate'}}</td>
+            <td>{{ invoice.loadRef }}</td>
+            <td>{{ invoice.customer.name }}</td>
+            <td>{{ invoice.payment.amount | currency }}</td>
+            <td>{{ invoice.createdDate | date: "mediumDate" }}</td>
+            <td>{{ invoice.payment.paymentDate | date: "mediumDate" }}</td>
             <td>
               <app-payment-status-tag [paymentStatus]="invoice.payment.status"></app-payment-status-tag>
             </td>
@@ -64,15 +71,17 @@
                   icon="bi bi-credit-card"
                   pTooltip="Make payment"
                   tooltipPosition="bottom"
-                  [routerLink]="['/payment/invoice', invoice.id]">
+                  [routerLink]="['/payment/invoice', invoice.id]"
+                >
                 </p-button>
               }
-              
-              <p-button 
+
+              <p-button
                 styleClass="ms-2"
                 icon="bi bi-card-list"
                 pTooltip="View details"
-                [routerLink]="['/accounting/invoices/view', invoice.id]">
+                [routerLink]="['/accounting/invoices/view', invoice.id]"
+              >
               </p-button>
             </td>
           </tr>

@@ -1,5 +1,4 @@
-<p-dialog header="Update Employee's Role" [(visible)]="visible" 
-  [modal]="true" [resizable]="true" (onHide)="close()">
+<p-dialog header="Update Employee's Role" [(visible)]="visible" [modal]="true" [resizable]="true" (onHide)="close()">
   @if (loading) {
     <p-progressSpinner></p-progressSpinner>
   }
@@ -12,21 +11,27 @@
   <form [formGroup]="form" (ngSubmit)="submit()">
     <div class="mb-3">
       <label for="role" class="form-label">Select Role</label>
-      <p-dropdown formControlName="role" styleClass="w-100" appendTo="body" [options]="roles" 
-        optionValue="name" optionLabel="displayName" [showClear]="true" (onClear)="clearSelctedRole()" >
+      <p-dropdown
+        formControlName="role"
+        styleClass="w-100"
+        appendTo="body"
+        [options]="roles"
+        optionValue="name"
+        optionLabel="displayName"
+        [showClear]="true"
+        (onClear)="clearSelctedRole()"
+      >
       </p-dropdown>
     </div>
-    <p-button type="submit"
-      icon="bi bi-pencil-square"
-      label="Change Role"
-      [disabled]="loading">
-    </p-button>
-    <p-button type="button"
+    <p-button type="submit" icon="bi bi-pencil-square" label="Change Role" [disabled]="loading"> </p-button>
+    <p-button
+      type="button"
       styleClass="p-button-danger ms-2"
       icon="bi bi bi-trash"
       label="Remove Role"
       [disabled]="loading"
-      (click)="removeRoles()">
+      (click)="removeRoles()"
+    >
     </p-button>
   </form>
 </p-dialog>

@@ -1,11 +1,10 @@
 /* eslint-disable indent */
-import {Injectable} from '@angular/core';
-import {map, Observable} from 'rxjs';
-import {RoleDto, UserDto} from '@/core/models';
-import {ApiService} from '@/core/services';
-import {UserRole} from '@/core/enums';
-import {AuthService} from '@/core/auth';
-
+import {Injectable} from "@angular/core";
+import {map, Observable} from "rxjs";
+import {RoleDto, UserDto} from "@/core/models";
+import {ApiService} from "@/core/services";
+import {UserRole} from "@/core/enums";
+import {AuthService} from "@/core/auth";
 
 @Injectable()
 export class UserService {
@@ -13,8 +12,8 @@ export class UserService {
 
   constructor(
     authService: AuthService,
-    private apiService: ApiService)
-  {
+    private apiService: ApiService
+  ) {
     const user = authService.getUserData();
     this.userRoles = user?.roles;
   }
@@ -25,28 +24,27 @@ export class UserService {
   }
 
   fetchRoles(): Observable<RoleDto[]> {
-    const dummyRole: RoleDto = {name: '', displayName: ' '};
+    const dummyRole: RoleDto = {name: "", displayName: " "};
     const roles$ = this.apiService.getRoles();
 
     return roles$.pipe(
-        map((result) => {
-          if (result.success && result.data) {
-            const roles = result.data;
-            const roleNames = roles.map((i) => i.name);
+      map((result) => {
+        if (result.success && result.data) {
+          const roles = result.data;
+          const roleNames = roles.map((i) => i.name);
 
-            if (this.userRoles?.includes(UserRole.Owner)) {
-              roles.splice(roleNames.indexOf(UserRole.Owner), 1);
-            }
-            else if (this.userRoles?.includes(UserRole.Manager)) {
-              roles.splice(roleNames.indexOf(UserRole.Owner), 1);
-              roles.splice(roleNames.indexOf(UserRole.Manager), 1);
-            }
-
-            return [dummyRole, ...roles];
+          if (this.userRoles?.includes(UserRole.Owner)) {
+            roles.splice(roleNames.indexOf(UserRole.Owner), 1);
+          } else if (this.userRoles?.includes(UserRole.Manager)) {
+            roles.splice(roleNames.indexOf(UserRole.Owner), 1);
+            roles.splice(roleNames.indexOf(UserRole.Manager), 1);
           }
 
-          return [dummyRole];
-        }),
+          return [dummyRole, ...roles];
+        }
+
+        return [dummyRole];
+      })
     );
   }
 }

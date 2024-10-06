@@ -1,26 +1,25 @@
-import {Component, OnInit} from '@angular/core';
-import {NgIf, CurrencyPipe} from '@angular/common';
-import {RouterLink} from '@angular/router';
-import {ChartModule} from 'primeng/chart';
-import {SkeletonModule} from 'primeng/skeleton';
-import {ButtonModule} from 'primeng/button';
-import {TooltipModule} from 'primeng/tooltip';
-import {TableModule} from 'primeng/table';
-import {SharedModule} from 'primeng/api';
-import {CardModule} from 'primeng/card';
-import {AppConfig} from '@/configs';
-import {DailyGrossesDto, LoadDto} from '@/core/models';
-import {ApiService} from '@/core/services';
-import {TrucksMapComponent} from '@/components';
-import {AddressPipe, DistanceUnitPipe} from '@/core/pipes';
-import {DateUtils, Converters} from '@/core/utils';
-import {NotificationsPanelComponent} from './components';
-
+import {Component, OnInit} from "@angular/core";
+import {NgIf, CurrencyPipe} from "@angular/common";
+import {RouterLink} from "@angular/router";
+import {ChartModule} from "primeng/chart";
+import {SkeletonModule} from "primeng/skeleton";
+import {ButtonModule} from "primeng/button";
+import {TooltipModule} from "primeng/tooltip";
+import {TableModule} from "primeng/table";
+import {SharedModule} from "primeng/api";
+import {CardModule} from "primeng/card";
+import {AppConfig} from "@/configs";
+import {DailyGrossesDto, LoadDto} from "@/core/models";
+import {ApiService} from "@/core/services";
+import {TrucksMapComponent} from "@/components";
+import {AddressPipe, DistanceUnitPipe} from "@/core/pipes";
+import {DateUtils, Converters} from "@/core/utils";
+import {NotificationsPanelComponent} from "./components";
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
+  selector: "app-home",
+  templateUrl: "./home.component.html",
+  styleUrls: ["./home.component.scss"],
   standalone: true,
   imports: [
     CardModule,
@@ -52,23 +51,22 @@ export class HomeComponent implements OnInit {
   public chartOptions: unknown;
 
   constructor(private readonly apiService: ApiService) {
-    this.chartData = {
+    (this.chartData = {
       labels: [],
       datasets: [
         {
-          label: 'Daily Gross',
+          label: "Daily Gross",
           data: [],
         },
       ],
-    },
-
-    this.chartOptions = {
-      plugins: {
-        legend: {
-          display: false,
+    }),
+      (this.chartOptions = {
+        plugins: {
+          legend: {
+            display: false,
+          },
         },
-      },
-    };
+      });
   }
 
   ngOnInit() {
@@ -79,7 +77,7 @@ export class HomeComponent implements OnInit {
   private fetchActiveLoads() {
     this.isLoadingLoadsData = true;
 
-    this.apiService.getLoads({orderBy: '-dispatchedDate'}, true).subscribe((result) => {
+    this.apiService.getLoads({orderBy: "-dispatchedDate"}, true).subscribe((result) => {
       if (result.success && result.data) {
         this.loads = result.data;
       }
@@ -98,7 +96,7 @@ export class HomeComponent implements OnInit {
 
         this.weeklyGross = grosses.totalGross;
         this.weeklyDistance = grosses.totalDistance;
-        this.weeklyRpm = this.weeklyGross / Converters.metersTo(this.weeklyDistance, 'mi');
+        this.weeklyRpm = this.weeklyGross / Converters.metersTo(this.weeklyDistance, "mi");
         this.drawChart(grosses);
         this.calcTodayGross(grosses);
       }
@@ -120,12 +118,12 @@ export class HomeComponent implements OnInit {
       labels: labels,
       datasets: [
         {
-          label: 'Daily Gross',
+          label: "Daily Gross",
           data: data,
           fill: true,
           tension: 0.4,
-          borderColor: '#405a83',
-          backgroundColor: '#88a5d3',
+          borderColor: "#405a83",
+          backgroundColor: "#88a5d3",
         },
       ],
     };
@@ -137,7 +135,7 @@ export class HomeComponent implements OnInit {
 
     grosses.data
       .filter((i) => DateUtils.dayOfMonth(i.date) === today.getDate())
-      .forEach((i) => totalGross += i.gross);
+      .forEach((i) => (totalGross += i.gross));
 
     this.todayGross = totalGross;
   }

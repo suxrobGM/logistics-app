@@ -1,5 +1,5 @@
-import {CustomerDto} from '../customer/CustomerDto';
-import {PaymentDto} from '../payment/PaymentDto';
+import {CustomerDto} from "../customer/CustomerDto";
+import {PaymentDto} from "../payment/PaymentDto";
 
 export interface InvoiceDto {
   id: string;

@@ -52,53 +52,52 @@
         <p-skeleton styleClass="my-2" height="3rem"></p-skeleton>
       </div>
     </div>
-  }
-  @else {
+  } @else {
     <div class="row gy-2">
       <div class="col-6">
         <span class="fw-bold">Company owner: </span><br />
-        <span>{{companyStats?.ownerName}}</span>
+        <span>{{ companyStats?.ownerName }}</span>
       </div>
       <div class="col-6">
         <span class="fw-bold">Number of employees: </span><br />
-        <span>{{companyStats?.employeesCount}}</span>
+        <span>{{ companyStats?.employeesCount }}</span>
       </div>
       <div class="col-6">
         <span class="fw-bold">Number of dispatchers: </span><br />
-        <span>{{companyStats?.dispatchersCount}}</span>
+        <span>{{ companyStats?.dispatchersCount }}</span>
       </div>
       <div class="col-6">
         <span class="fw-bold">Number of drivers: </span><br />
-        <span>{{companyStats?.driversCount}}</span>
+        <span>{{ companyStats?.driversCount }}</span>
       </div>
       <div class="col-6">
         <span class="fw-bold">Number of managers: </span><br />
-        <span>{{companyStats?.managersCount}}</span>
+        <span>{{ companyStats?.managersCount }}</span>
       </div>
       <div class="col-6">
         <span class="fw-bold">Number of trucks: </span><br />
-        <span>{{companyStats?.trucksCount}}</span>
+        <span>{{ companyStats?.trucksCount }}</span>
       </div>
 
       <div class="col-6">
         <span class="fw-bold">Total gross this week: </span><br />
-        <span>{{companyStats?.thisWeekGross| currency}}</span>
+        <span>{{ companyStats?.thisWeekGross | currency }}</span>
       </div>
       <div class="col-6">
         <span class="fw-bold">Total gross last week: </span><br />
-        <span>{{companyStats?.lastWeekGross | currency}}</span>
+        <span>{{ companyStats?.lastWeekGross | currency }}</span>
       </div>
       <div class="col-6">
         <span class="fw-bold">Total gross this month: </span><br />
-        <span>{{companyStats?.thisMonthGross | currency}}</span>
+        <span>{{ companyStats?.thisMonthGross | currency }}</span>
       </div>
       <div class="col-6">
         <span class="fw-bold">Total gross last month: </span><br />
-        <span>{{companyStats?.lastMonthGross | currency}}</span>
+        <span>{{ companyStats?.lastMonthGross | currency }}</span>
       </div>
       <div class="col-6">
         <span class="fw-bold">Total gross all time: </span><br />
-        <span>{{companyStats?.totalGross | currency}}</span>
+        <span>{{ companyStats?.totalGross | currency }}</span>
       </div>
 
       <!-- <div class="col-12 col-md-6">
@@ -124,23 +123,23 @@
 
       <div class="col-6">
         <span class="fw-bold">RPM this week: </span><br />
-        <span>{{calcRpm(companyStats?.thisWeekGross, companyStats?.thisWeekDistance) | currency}}</span>
+        <span>{{ calcRpm(companyStats?.thisWeekGross, companyStats?.thisWeekDistance) | currency }}</span>
       </div>
       <div class="col-6">
         <span class="fw-bold">RPM last week: </span><br />
-        <span>{{calcRpm(companyStats?.lastWeekGross, companyStats?.lastWeekDistance) | currency}}</span>
+        <span>{{ calcRpm(companyStats?.lastWeekGross, companyStats?.lastWeekDistance) | currency }}</span>
       </div>
       <div class="col-6">
         <span class="fw-bold">RPM this month: </span><br />
-        <span>{{calcRpm(companyStats?.thisMonthGross, companyStats?.thisMonthDistance) | currency}}</span>
+        <span>{{ calcRpm(companyStats?.thisMonthGross, companyStats?.thisMonthDistance) | currency }}</span>
       </div>
       <div class="col-6">
         <span class="fw-bold">RPM last month: </span><br />
-        <span>{{calcRpm(companyStats?.lastMonthGross, companyStats?.lastMonthDistance) | currency}}</span>
+        <span>{{ calcRpm(companyStats?.lastMonthGross, companyStats?.lastMonthDistance) | currency }}</span>
       </div>
       <div class="col-6">
         <span class="fw-bold">RPM all time: </span><br />
-        <span>{{calcRpm(companyStats?.totalGross, companyStats?.totalDistance) | currency}}</span>
+        <span>{{ calcRpm(companyStats?.totalGross, companyStats?.totalDistance) | currency }}</span>
       </div>
     </div>
   }

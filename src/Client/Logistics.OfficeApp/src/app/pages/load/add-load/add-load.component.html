@@ -1,7 +1,7 @@
 <p-toast key="notification" position="top-right"></p-toast>
 
 <h1>Add a new load</h1>
-<hr class="w-100">
+<hr class="w-100" />
 
 <p-card>
   <div class="row">
@@ -21,20 +21,24 @@
         </div>
         <div class="mb-3">
           <label for="orgAddress" class="form-label">Origin Address</label>
-          <app-address-autocomplete field="orgAddress"
+          <app-address-autocomplete
+            field="orgAddress"
             formControlName="orgAddress"
-            [forceSelection]="true" 
-            [accessToken]="accessToken" 
-            (selectedAddress)="updateOrigin($event)">
+            [forceSelection]="true"
+            [accessToken]="accessToken"
+            (selectedAddress)="updateOrigin($event)"
+          >
           </app-address-autocomplete>
         </div>
         <div class="mb-3">
           <label for="dstAddress" class="form-label">Destination Address</label>
-          <app-address-autocomplete field="dstAddress"
+          <app-address-autocomplete
+            field="dstAddress"
             formControlName="dstAddress"
             [forceSelection]="true"
-            [accessToken]="accessToken" 
-            (selectedAddress)="updateDestination($event)">
+            [accessToken]="accessToken"
+            (selectedAddress)="updateDestination($event)"
+          >
           </app-address-autocomplete>
         </div>
         <div class="mb-3">
@@ -59,26 +63,32 @@
           <label for="assignedTruck" class="form-label">Assigned Truck</label>
           <app-search-truck formControlName="assignedTruck"></app-search-truck>
         </div>
-        
-        <p-button type="submit"
+
+        <p-button
+          type="submit"
           class="mt-3"
           icon="bi bi-pencil-square"
           label="Add"
-          [disabled]="isLoading || !form.valid">
+          [disabled]="isLoading || !form.valid"
+        >
         </p-button>
-        <p-button type="button"
+        <p-button
+          type="button"
           class="mt-3 ms-0 ms-md-2"
           icon="bi bi-arrow-left-square"
           label="Back to list"
-          [routerLink]="['/loads']">
+          [routerLink]="['/loads']"
+        >
         </p-button>
       </form>
     </div>
     <div class="col-12 col-md-6">
-      <app-directions-map [accessToken]="accessToken"
+      <app-directions-map
+        [accessToken]="accessToken"
         [start]="originCoords"
         [end]="destinationCoords"
-        (routeChanged)="updateDistance($event)">
+        (routeChanged)="updateDistance($event)"
+      >
       </app-directions-map>
     </div>
   </div>

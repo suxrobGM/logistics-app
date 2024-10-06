@@ -1,13 +1,10 @@
-<span class="fw-bold">{{label}}</span>
-<p-calendar class="ms-2" 
-  [(ngModel)]="dates"
-  selectionMode="range"
-  [showIcon]="true"
-  [maxDate]="todayDate">
+<span class="fw-bold">{{ label }}</span>
+<p-calendar class="ms-2" [(ngModel)]="dates" selectionMode="range" [showIcon]="true" [maxDate]="todayDate">
 </p-calendar>
-<button pButton 
+<button
+  pButton
   class="p-button-raised ms-2"
   label="Apply"
   [disabled]="!areDatesValid()"
-  (click)="onClickButton()">
-</button>
+  (click)="onClickButton()"
+></button>

@@ -3,11 +3,7 @@
     @if (!isAuthenticated && !isLoading) {
       <div class="col-12 col-md-4">
         <h2>Click login button to sign in and get access to the website</h2>
-        <p-button
-          icon="bi bi-box-arrow-in-right"
-          label="Login" 
-          (click)="login()">
-        </p-button>
+        <p-button icon="bi bi-box-arrow-in-right" label="Login" (click)="login()"> </p-button>
       </div>
     }
     @if (isLoading) {

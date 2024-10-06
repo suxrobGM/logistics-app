@@ -1,24 +1,23 @@
-import {Component, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormGroup, FormControl, Validators, ReactiveFormsModule} from '@angular/forms';
-import {ActivatedRoute} from '@angular/router';
-import {CardModule} from 'primeng/card';
-import {ButtonModule} from 'primeng/button';
-import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {RadioButtonModule} from 'primeng/radiobutton';
-import {InputMaskModule} from 'primeng/inputmask';
-import {PaymentMethod, PaymentMethodEnum, PaymentStatus} from '@/core/enums';
-import {AddressDto, InvoiceDto, PayrollDto, ProcessPaymentCommand} from '@/core/models';
-import {RegexPatterns} from '@/core/helpers';
-import {ApiService, ToastService} from '@/core/services';
-import {AddressFormComponent, ValidationSummaryComponent} from '@/components';
-import {InvoiceDetailsComponent, PayrollDetailsComponent} from '../components';
-
+import {Component, OnInit} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {FormGroup, FormControl, Validators, ReactiveFormsModule} from "@angular/forms";
+import {ActivatedRoute} from "@angular/router";
+import {CardModule} from "primeng/card";
+import {ButtonModule} from "primeng/button";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {RadioButtonModule} from "primeng/radiobutton";
+import {InputMaskModule} from "primeng/inputmask";
+import {PaymentMethod, PaymentMethodEnum, PaymentStatus} from "@/core/enums";
+import {AddressDto, InvoiceDto, PayrollDto, ProcessPaymentCommand} from "@/core/models";
+import {RegexPatterns} from "@/core/helpers";
+import {ApiService, ToastService} from "@/core/services";
+import {AddressFormComponent, ValidationSummaryComponent} from "@/components";
+import {InvoiceDetailsComponent, PayrollDetailsComponent} from "../components";
 
 @Component({
-  selector: 'app-process-payment',
+  selector: "app-process-payment",
   standalone: true,
-  templateUrl: './process-payment.component.html',
+  templateUrl: "./process-payment.component.html",
   imports: [
     CommonModule,
     CardModule,
@@ -36,7 +35,7 @@ import {InvoiceDetailsComponent, PayrollDetailsComponent} from '../components';
 export class ProcessPaymentComponent implements OnInit {
   public paymentMethod = PaymentMethod;
   public paymentMethods = PaymentMethodEnum.toArray();
-  public title = '';
+  public title = "";
   public isLoading = false;
   public isPaymentCompleted = false;
   public form: FormGroup<PaymentForm>;
@@ -46,8 +45,8 @@ export class ProcessPaymentComponent implements OnInit {
   constructor(
     private readonly apiService: ApiService,
     private readonly toastService: ToastService,
-    private readonly route: ActivatedRoute)
-  {
+    private readonly route: ActivatedRoute
+  ) {
     this.form = new FormGroup<PaymentForm>({
       paymentMethod: new FormControl(PaymentMethod.CreditCard, {validators: Validators.required, nonNullable: true}),
       cardholderName: new FormControl(null),
@@ -60,7 +59,7 @@ export class ProcessPaymentComponent implements OnInit {
       bankRoutingNumber: new FormControl(null),
     });
 
-    this.form.get('paymentMethod')?.valueChanges.subscribe((method: PaymentMethod) => {
+    this.form.get("paymentMethod")?.valueChanges.subscribe((method: PaymentMethod) => {
       this.setConditionalValidators(method);
     });
 
@@ -72,16 +71,15 @@ export class ProcessPaymentComponent implements OnInit {
     let payrollId: string | null = null;
 
     this.route.params.subscribe((params) => {
-      invoiceId = params['invoiceId'];
-      payrollId = params['payrollId'];
+      invoiceId = params["invoiceId"];
+      payrollId = params["payrollId"];
     });
 
     if (invoiceId) {
-      this.title = 'Invoice payment';
+      this.title = "Invoice payment";
       this.fetchInvoice(invoiceId);
-    }
-    else if (payrollId) {
-      this.title = 'Payroll payment';
+    } else if (payrollId) {
+      this.title = "Payroll payment";
       this.fetchPayroll(payrollId);
     }
   }
@@ -105,14 +103,13 @@ export class ProcessPaymentComponent implements OnInit {
       bankName: this.form.value.bankName!,
       bankAccountNumber: this.form.value.bankAccountNumber!,
       bankRoutingNumber: this.form.value.bankRoutingNumber!,
-    }
+    };
 
     this.apiService.processPayment(command).subscribe((result) => {
       if (result.success) {
-        this.toastService.showSuccess('Payment has been processed successfully');
+        this.toastService.showSuccess("Payment has been processed successfully");
         this.isPaymentCompleted = true;
-      }
-      else if (result.error) {
+      } else if (result.error) {
         this.toastService.showError(result.error);
       }
 
@@ -121,13 +118,13 @@ export class ProcessPaymentComponent implements OnInit {
   }
 
   private setConditionalValidators(paymentMethod: PaymentMethod) {
-    const cardholderName = this.form.get('cardholderName');
-    const cardNumber = this.form.get('cardNumber');
-    const cardExpireDate = this.form.get('cardExpireDate');
-    const cardCvv = this.form.get('cardCvv');
-    const bankName = this.form.get('bankName');
-    const bankAccountNumber = this.form.get('bankAccountNumber');
-    const bankRoutingNumber = this.form.get('bankRoutingNumber');
+    const cardholderName = this.form.get("cardholderName");
+    const cardNumber = this.form.get("cardNumber");
+    const cardExpireDate = this.form.get("cardExpireDate");
+    const cardCvv = this.form.get("cardCvv");
+    const bankName = this.form.get("bankName");
+    const bankAccountNumber = this.form.get("bankAccountNumber");
+    const bankRoutingNumber = this.form.get("bankRoutingNumber");
 
     if (paymentMethod === PaymentMethod.CreditCard) {
       cardholderName?.setValidators([Validators.required]);
@@ -137,9 +134,7 @@ export class ProcessPaymentComponent implements OnInit {
       bankName?.clearValidators();
       bankAccountNumber?.clearValidators();
       bankRoutingNumber?.clearValidators();
-
-    }
-    else if (paymentMethod === PaymentMethod.BankAccount) {
+    } else if (paymentMethod === PaymentMethod.BankAccount) {
       bankName?.setValidators([Validators.required]);
       bankAccountNumber?.setValidators([Validators.required]);
       bankRoutingNumber?.setValidators([Validators.required, Validators.pattern(RegexPatterns.ROUTING_NUMBER)]);
@@ -147,8 +142,7 @@ export class ProcessPaymentComponent implements OnInit {
       cardNumber?.clearValidators();
       cardExpireDate?.clearValidators();
       cardCvv?.clearValidators();
-    }
-    else {
+    } else {
       // If 'Cash' or anything else, clear all validators
       cardholderName?.clearValidators();
       cardNumber?.clearValidators();

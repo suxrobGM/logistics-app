@@ -1,21 +1,20 @@
-import {Component} from '@angular/core';
-import {CommonModule, CurrencyPipe, DatePipe} from '@angular/common';
-import {RouterLink} from '@angular/router';
-import {TableLazyLoadEvent, TableModule} from 'primeng/table';
-import {CardModule} from 'primeng/card';
-import {ButtonModule} from 'primeng/button';
-import {TooltipModule} from 'primeng/tooltip';
-import {PagedIntervalQuery, TruckStatsDto} from '@/core/models';
-import {ApiService} from '@/core/services';
-import {DateUtils} from '@/core/utils';
-import {DistanceUnitPipe} from '@/core/pipes';
-import {RangeCalendarComponent} from '@/components';
-
+import {Component} from "@angular/core";
+import {CommonModule, CurrencyPipe, DatePipe} from "@angular/common";
+import {RouterLink} from "@angular/router";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
+import {CardModule} from "primeng/card";
+import {ButtonModule} from "primeng/button";
+import {TooltipModule} from "primeng/tooltip";
+import {PagedIntervalQuery, TruckStatsDto} from "@/core/models";
+import {ApiService} from "@/core/services";
+import {DateUtils} from "@/core/utils";
+import {DistanceUnitPipe} from "@/core/pipes";
+import {RangeCalendarComponent} from "@/components";
 
 @Component({
-  selector: 'app-truck-stats-table',
+  selector: "app-truck-stats-table",
   standalone: true,
-  templateUrl: './truck-stats-table.component.html',
+  templateUrl: "./truck-stats-table.component.html",
   styleUrls: [],
   imports: [
     CommonModule,
@@ -27,7 +26,7 @@ import {RangeCalendarComponent} from '@/components';
     CardModule,
     ButtonModule,
     RangeCalendarComponent,
-    TooltipModule
+    TooltipModule,
   ],
 })
 export class TruckStatsTableComponent {
@@ -61,8 +60,8 @@ export class TruckStatsTableComponent {
       endDate: this.endDate,
       orderBy: sortField,
       page: page,
-      pageSize: rows
-    }
+      pageSize: rows,
+    };
 
     this.apiService.getTrucksStats(query).subscribe((result) => {
       if (result.success && result.data) {

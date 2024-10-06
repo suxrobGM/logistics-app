@@ -7,31 +7,31 @@
     [rounded]="true"
     [text]="true"
     pTooltip="Add a new payroll"
-    [routerLink]="['/accounting/payrolls/add']">
+    [routerLink]="['/accounting/payrolls/add']"
+  >
   </p-button>
 </div>
-<hr class="w-100">
+<hr class="w-100" />
 
 @if (isLoadingEmployee || !employee) {
   <div class="d-flex align-items-center">
     <p-progressSpinner></p-progressSpinner>
     <div class="ms-2">Loading employee data</div>
   </div>
-}
-@else {
+} @else {
   <p-card styleClass="mb-3">
     <ng-template pTemplate="header">
       <h4 class="ps-3 py-2">Payroll details</h4>
       <hr class="w-100 m-0" />
     </ng-template>
-  
+
     <div class="col-12 col-md-5">
       <div class="row mb-3">
         <div class="col-4">
           <h6>Employee:</h6>
         </div>
         <div class="col-8">
-          {{employee.fullName}}
+          {{ employee.fullName }}
         </div>
       </div>
       <div class="row mb-3">
@@ -39,7 +39,7 @@
           <h6>Position:</h6>
         </div>
         <div class="col-8">
-          {{employee.roles[0].displayName}}
+          {{ employee.roles[0].displayName }}
         </div>
       </div>
       <div class="row mb-3">
@@ -47,7 +47,7 @@
           <h6>Salary type:</h6>
         </div>
         <div class="col-8">
-          {{getSalaryTypeDesc(employee.salaryType)}}
+          {{ getSalaryTypeDesc(employee.salaryType) }}
         </div>
       </div>
       <div class="row mb-3">
@@ -56,32 +56,35 @@
         </div>
         <div class="col-8">
           @if (employee.salaryType === salaryType.ShareOfGross) {
-            {{employee.salary | percent}}
-          }
-          @else {
-            {{employee.salary | currency}}
+            {{ employee.salary | percent }}
+          } @else {
+            {{ employee.salary | currency }}
           }
         </div>
       </div>
     </div>
-    
   </p-card>
 }
 
 <p-card>
   <div class="row">
     <div class="col-12">
-      <p-table [value]="payrolls" responsiveLayout="scroll" [lazy]="true" 
-        [paginator]="true" [showCurrentPageReport]="true"
-        (onLazyLoad)="load($event)" [rows]="10" [(first)]="first" 
-        [totalRecords]="totalRecords" [loading]="isLoadingPayrolls"
-        [rowsPerPageOptions]="[10,25,50]">
-
+      <p-table
+        [value]="payrolls"
+        responsiveLayout="scroll"
+        [lazy]="true"
+        [paginator]="true"
+        [showCurrentPageReport]="true"
+        (onLazyLoad)="load($event)"
+        [rows]="10"
+        [(first)]="first"
+        [totalRecords]="totalRecords"
+        [loading]="isLoadingPayrolls"
+        [rowsPerPageOptions]="[10, 25, 50]"
+      >
         <ng-template pTemplate="header">
           <tr>
-            <th>
-              Period
-            </th>
+            <th>Period</th>
             <th pSortableColumn="paymentAmount">
               Payment Amount
               <p-sortIcon field="paymentAmount"></p-sortIcon>
@@ -97,30 +100,33 @@
             <th>Action</th>
           </tr>
         </ng-template>
-        
+
         <ng-template pTemplate="body" let-payroll>
           <tr>
-            <td>{{payroll.startDate | date:'MMM d'}} - {{payroll.endDate | date:'mediumDate'}}</td>
-            <td>{{payroll.payment.amount | currency}}</td>
+            <td>{{ payroll.startDate | date: "MMM d" }} - {{ payroll.endDate | date: "mediumDate" }}</td>
+            <td>{{ payroll.payment.amount | currency }}</td>
             <td>
               <app-payment-status-tag [paymentStatus]="payroll.payment.status"></app-payment-status-tag>
             </td>
-            <td>{{getPaymentMethodDesc(payroll.payment.method)}}</td>
+            <td>{{ getPaymentMethodDesc(payroll.payment.method) }}</td>
             <td class="overflow-visible">
               @if (payroll.payment.status === paymentStatus.Pending) {
-                <p-button 
+                <p-button
                   icon="bi bi-credit-card"
                   pTooltip="Make payment"
                   tooltipPosition="bottom"
-                  [routerLink]="['/payment/payroll', payroll.id]">
+                  [routerLink]="['/payment/payroll', payroll.id]"
+                >
                 </p-button>
               }
-              
-              <p-button class="ms-2"
+
+              <p-button
+                class="ms-2"
                 icon="bi bi-pencil"
                 pTooltip="Edit payroll"
                 tooltipPosition="bottom"
-                [routerLink]="['/accounting/payrolls/edit', payroll.id]">
+                [routerLink]="['/accounting/payrolls/edit', payroll.id]"
+              >
               </p-button>
             </td>
           </tr>

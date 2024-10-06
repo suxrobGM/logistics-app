@@ -1,18 +1,14 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {AsyncPipe, CommonModule} from '@angular/common';
-import {FormGroup} from '@angular/forms';
-import {BehaviorSubject} from 'rxjs';
-
+import {Component, Input, OnInit} from "@angular/core";
+import {AsyncPipe, CommonModule} from "@angular/common";
+import {FormGroup} from "@angular/forms";
+import {BehaviorSubject} from "rxjs";
 
 @Component({
-  selector: 'app-validation-summary',
+  selector: "app-validation-summary",
   standalone: true,
-  templateUrl: './validation-summary.component.html',
-  styleUrls: ['./validation-summary.component.scss'],
-  imports: [
-    CommonModule,
-    AsyncPipe
-  ],
+  templateUrl: "./validation-summary.component.html",
+  styleUrls: ["./validation-summary.component.scss"],
+  imports: [CommonModule, AsyncPipe],
 })
 export class ValidationSummaryComponent implements OnInit {
   private formErrorsSubject = new BehaviorSubject<string[]>([]);
@@ -23,29 +19,29 @@ export class ValidationSummaryComponent implements OnInit {
   ngOnInit(): void {
     this.form.valueChanges.subscribe(() => {
       const errors = this.calculateErrors();
-      
+
       this.formErrorsSubject.next(errors);
     });
   }
 
   private calculateErrors(): string[] {
     return Object.keys(this.form.controls)
-    .filter(controlName => {
-      const control = this.form.controls[controlName];
-      return control.errors && (control.touched || control.dirty);
-    })
-    .flatMap(controlName => {
-      const control = this.form.controls[controlName];
-      return Object.keys(control.errors ?? {})
-        .filter(errorKey => Object.prototype.hasOwnProperty.call(control.errors, errorKey))
-        .map(errorKey => this.getErrorDescription(controlName, errorKey))
-        .filter((message): message is string => Boolean(message));
-    });
+      .filter((controlName) => {
+        const control = this.form.controls[controlName];
+        return control.errors && (control.touched || control.dirty);
+      })
+      .flatMap((controlName) => {
+        const control = this.form.controls[controlName];
+        return Object.keys(control.errors ?? {})
+          .filter((errorKey) => Object.prototype.hasOwnProperty.call(control.errors, errorKey))
+          .map((errorKey) => this.getErrorDescription(controlName, errorKey))
+          .filter((message): message is string => Boolean(message));
+      });
   }
 
   private getErrorDescription(controlName: string, errorKey: string): string | null {
     const control = this.form.controls[controlName];
-    
+
     if (!control.errors) {
       return null;
     }

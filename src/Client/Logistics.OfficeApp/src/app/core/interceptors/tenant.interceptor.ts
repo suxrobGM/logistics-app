@@ -1,12 +1,7 @@
-import {Injectable} from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
-} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {TenantService} from '../services/tenant.service';
+import {Injectable} from "@angular/core";
+import {HttpRequest, HttpHandler, HttpEvent, HttpInterceptor} from "@angular/common/http";
+import {Observable} from "rxjs";
+import {TenantService} from "../services/tenant.service";
 
 @Injectable()
 export class TenantInterceptor implements HttpInterceptor {

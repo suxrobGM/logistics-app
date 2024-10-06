@@ -1,5 +1,4 @@
-import {PaymentDto} from './PaymentDto';
-
+import {PaymentDto} from "./PaymentDto";
 
 export interface SubscriptionPaymentDto {
   id: string;

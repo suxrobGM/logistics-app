@@ -1,7 +1,7 @@
 <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
 
 <h1 class="text-center">Add a new employee</h1>
-<hr class="w-100">
+<hr class="w-100" />
 
 <div class="row justify-content-center">
   <div class="col-12 col-md-6">
@@ -9,21 +9,33 @@
       @if (isLoading) {
         <p-progressSpinner></p-progressSpinner>
       }
-      
+
       <form [formGroup]="form" (ngSubmit)="submit()">
         <app-validation-summary [form]="form"></app-validation-summary>
 
         <div class="mb-3">
           <label for="name" class="form-label">User Name</label>
-          <p-autoComplete formControlName="user" styleClass="w-100" inputStyleClass="form-control"
-            placeholder="Type user name" field="userName" [minLength]="3" [suggestions]="suggestedUsers"
-            (completeMethod)="searchUser($event)">
+          <p-autoComplete
+            formControlName="user"
+            styleClass="w-100"
+            inputStyleClass="form-control"
+            placeholder="Type user name"
+            field="userName"
+            [minLength]="3"
+            [suggestions]="suggestedUsers"
+            (completeMethod)="searchUser($event)"
+          >
           </p-autoComplete>
         </div>
         <div class="mb-3">
           <label for="salaryType" class="form-label">Salary Type</label>
-          <p-dropdown formControlName="salaryType" styleClass="w-100" [options]="salaryTypes" 
-            optionValue="name" optionLabel="description">
+          <p-dropdown
+            formControlName="salaryType"
+            styleClass="w-100"
+            [options]="salaryTypes"
+            optionValue="name"
+            optionLabel="description"
+          >
           </p-dropdown>
         </div>
         <div class="mb-3">
@@ -33,35 +45,44 @@
               <span class="input-group-text">%</span>
               <input id="salary" formControlName="salary" type="number" class="form-control" [min]="0" [max]="100" />
             </div>
-          }
-          @else {
+          } @else {
             <div class="input-group">
               <span class="input-group-text">$$</span>
-              <input id="salary" formControlName="salary" type="number" class="form-control" [min]="0" [disabled]="isNoneSalary()" />
+              <input
+                id="salary"
+                formControlName="salary"
+                type="number"
+                class="form-control"
+                [min]="0"
+                [disabled]="isNoneSalary()"
+              />
             </div>
           }
         </div>
         <div class="mb-3">
           <label for="role" class="form-label">Role</label>
-          <p-dropdown formControlName="role" styleClass="w-100" [options]="roles" 
-            optionValue="name" optionLabel="displayName"
-            [showClear]="true" 
-            (onClear)="clearSelctedRole()">
+          <p-dropdown
+            formControlName="role"
+            styleClass="w-100"
+            [options]="roles"
+            optionValue="name"
+            optionLabel="displayName"
+            [showClear]="true"
+            (onClear)="clearSelctedRole()"
+          >
           </p-dropdown>
         </div>
-        
+
         <div>
-          <p-button type="submit"
-            class="mt-3"
-            icon="bi bi-pencil-square"
-            label="Add"
-            [disabled]="isLoading">
+          <p-button type="submit" class="mt-3" icon="bi bi-pencil-square" label="Add" [disabled]="isLoading">
           </p-button>
-          <p-button type="button"
+          <p-button
+            type="button"
             class="mt-3 ms-2"
             icon="bi bi-arrow-left-square"
             label="Back to list"
-            [routerLink]="['/employees']">
+            [routerLink]="['/employees']"
+          >
           </p-button>
         </div>
       </form>

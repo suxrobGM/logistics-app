@@ -1,2 +1,2 @@
-export {AuthService} from './auth.service';
-export {UserData} from './userData';
+export {AuthService} from "./auth.service";
+export {UserData} from "./userData";
