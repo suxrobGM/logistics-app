@@ -1,0 +1,125 @@
+<div class="sidebar" [ngClass]="{'minimized': !isOpened}">
+  <a class="py-3 navbar-brand border-bottom">
+    <img src="assets/images/logo.svg" class="img-fluid" height="40" alt="logo" />
+    @if (isOpened) {
+      <span class="h4">{{companyName}}</span>
+    }
+  </a>
+
+  <ul class="nav flex-column mb-auto">
+    <li>
+      <a class="nav-link border-bottom" pTooltip="Home" [routerLink]="['/home']">
+        <i class="bi bi-house-door h1"></i>
+        @if (isOpened) {
+          <span class="ms-2">Home</span>
+        }
+      </a>
+    </li>
+    <li>
+      <a class="nav-link border-bottom" pTooltip="Dashboard" [routerLink]="['/dashboard']">
+        <i class="bi bi-speedometer2 h1"></i>
+        @if (isOpened) {
+          <span class="ms-2">Dashboard</span>
+        }
+      </a>
+    </li>
+    <li>
+      <a class="nav-link border-bottom" pTooltip="Loads" [routerLink]="['/loads']">
+        <i class="bi bi-database h1"></i>
+        @if (isOpened) {
+          <span class="ms-2">Loads</span>
+        }
+      </a>
+    </li>
+    <li>
+      <a class="nav-link border-bottom" pTooltip="Trucks" [routerLink]="['/trucks']">
+        <i class="bi bi-truck h1"></i>
+        @if (isOpened) {
+          <span class="ms-2">Trucks</span>
+        }
+      </a>
+    </li>
+    <li>
+      <a class="nav-link border-bottom" pTooltip="Employees" [routerLink]="['/employees']">
+        <i class="bi bi-people h1"></i>
+        @if (isOpened) {
+          <span class="ms-2">Employees</span>
+        }
+      </a>
+    </li>
+    <li>
+      <a class="nav-link border-bottom" pTooltip="Customers" [routerLink]="['/customers']" >
+        <i class="bi bi-building h1"></i>
+        @if (isOpened) {
+          <span class="ms-2">Customers</span>
+        }
+      </a>
+    </li>
+    <li>
+      @if (isOpened) {
+        <p-panelMenu [model]="accountingMenuItems"></p-panelMenu>
+      }
+      @else {
+        <p-overlayPanel #accountingPanel>
+          @for (item of accountingMenuItems[0].items; track item.label) {
+            @if (!item.separator) {
+              <div class="p-1">
+                <p-button severity="secondary"
+                  [text]="true"
+                  [label]="item.label"
+                  [routerLink]="item.routerLink"
+                  (onClick)="accountingPanel.hide()">
+                </p-button>
+              </div>
+            }
+          }
+        </p-overlayPanel>
+        <a class="nav-link border-bottom" pTooltip="Accounting" (click)="accountingPanel.toggle($event)" role="presentation">
+          <i class="bi bi-journal-text h1"></i>
+        </a>
+      }
+    </li>
+    <li>
+      <a class="nav-link border-bottom">
+        @if (isOpened) {
+          <i class="bi bi-arrow-left h1" (click)="toggle()" pTooltip="Minimize menu" role="presentation"></i>
+        }
+        @else {
+          <i class="bi bi-arrow-right h1" (click)="toggle()" pTooltip="Maximize menu" role="presentation"></i>
+        }
+      </a>
+    </li>
+  </ul>
+
+  @if (userFullName) {
+    <div class="d-flex justify-content-center border-top py-2">
+      @if (userRole && isOpened) {
+        <div class="px-3 pt-2">
+          Role: <span class="fw-bold">{{userRole}}</span>
+        </div>
+      }
+
+      @if (isOpened) {
+        <p-panelMenu [model]="profileMenuItems"></p-panelMenu>
+      }
+      @else {
+        <p-overlayPanel #profilePanel>
+          @for (item of profileMenuItems[0].items; track item.label) {
+            @if (!item.separator) {
+              <div class="p-1">
+                <p-button severity="secondary"
+                  [text]="true"
+                  [label]="item.label"
+                  (click)="item?.command({})">
+                </p-button>
+              </div>
+            }
+          }
+        </p-overlayPanel>
+        <a class="nav-link" pTooltip="Account" (click)="profilePanel.toggle($event)" role="presentation">
+          <i class="bi bi-person-circle h1"></i>
+        </a>
+      }
+    </div>
+  }
+</div>
