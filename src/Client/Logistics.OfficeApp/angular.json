@@ -125,6 +125,7 @@
     }
   },
   "cli": {
+    "packageManager": "bun",
     "schematicCollections": [
       "@angular-eslint/schematics"
     ]

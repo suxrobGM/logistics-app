@@ -16,12 +16,12 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
     protected override async Task<PagedResult<TruckStatsDto>> HandleValidated(
         GetTrucksStatsListQuery req, CancellationToken cancellationToken)
     {
-        var orderBy = req.OrderBy;
+        var orderBy = req.OrderBy ?? string.Empty;
         var isDescendingOrder = false;
         
-        if (req.OrderBy.StartsWith('-'))
+        if (orderBy.StartsWith('-'))
         {
-            orderBy = req.OrderBy[1..];
+            orderBy = orderBy[1..];
             isDescendingOrder = true;
         }
         

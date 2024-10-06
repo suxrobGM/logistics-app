@@ -1,8 +1,8 @@
 export * from './Result';
 export * from './PagedResult';
-export * from './SearchableQuery_';
-export * from './PagedQuery_';
-export * from './PagedIntervalQuery_';
+export * from './SearchableQuery';
+export * from './PagedQuery';
+export * from './PagedIntervalQuery';
 export * from './TenantDto';
 export * from './UserDto';
 

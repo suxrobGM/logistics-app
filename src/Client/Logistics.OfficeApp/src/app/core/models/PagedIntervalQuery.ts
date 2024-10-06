@@ -1,4 +1,4 @@
-import {PagedQuery} from './PagedQuery_';
+import {PagedQuery} from './PagedQuery';
 
 export interface PagedIntervalQuery extends PagedQuery {
   startDate: Date;
