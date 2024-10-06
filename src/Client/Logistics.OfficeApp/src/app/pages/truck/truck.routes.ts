@@ -1,6 +1,6 @@
 import {Routes} from "@angular/router";
 import {Permissions} from "@/core/enums";
-import {AuthGuard} from "@/core/guards";
+import {authGuard} from "@/core/guards";
 import {EditTruckComponent} from "./edit-truck/edit-truck.component";
 import {ListTruckComponent} from "./list-trucks/list-trucks.component";
 import {TruckDetailsComponent} from "./truck-details/truck-details.component";
@@ -9,7 +9,7 @@ export const TRUCK_ROUTES: Routes = [
   {
     path: "",
     component: ListTruckComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: {
       breadcrumb: "",
       permission: Permissions.Trucks.View,
@@ -18,7 +18,7 @@ export const TRUCK_ROUTES: Routes = [
   {
     path: "add",
     component: EditTruckComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: {
       breadcrumb: "Add",
       permission: Permissions.Trucks.Create,
@@ -27,7 +27,7 @@ export const TRUCK_ROUTES: Routes = [
   {
     path: "edit/:id",
     component: EditTruckComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: {
       breadcrumb: "Edit",
       permission: Permissions.Trucks.Edit,
@@ -36,7 +36,7 @@ export const TRUCK_ROUTES: Routes = [
   {
     path: "view/:id",
     component: TruckDetailsComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: {
       breadcrumb: "Details",
       permission: Permissions.Trucks.View,

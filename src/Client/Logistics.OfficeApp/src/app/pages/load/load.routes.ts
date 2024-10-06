@@ -1,6 +1,6 @@
 import {Routes} from "@angular/router";
 import {Permissions} from "@/core/enums";
-import {AuthGuard} from "@/core/guards";
+import {authGuard} from "@/core/guards";
 import {EditLoadComponent} from "./edit-load/edit-load.component";
 import {ListLoadComponent} from "./list-loads/list-loads.component";
 import {AddLoadComponent} from "./add-load/add-load.component";
@@ -9,7 +9,7 @@ export const LOAD_ROUTES: Routes = [
   {
     path: "",
     component: ListLoadComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: {
       breadcrumb: "",
       permission: Permissions.Loads.View,
@@ -18,7 +18,7 @@ export const LOAD_ROUTES: Routes = [
   {
     path: "add",
     component: AddLoadComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: {
       breadcrumb: "Add",
       permission: Permissions.Loads.Create,
@@ -27,7 +27,7 @@ export const LOAD_ROUTES: Routes = [
   {
     path: "edit/:id",
     component: EditLoadComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: {
       breadcrumb: "Edit",
       permission: Permissions.Loads.Edit,

@@ -1,32 +1,25 @@
-import {Injectable} from "@angular/core";
-import {ActivatedRouteSnapshot, Router, UrlTree} from "@angular/router";
-import {map, Observable} from "rxjs";
+import {inject} from "@angular/core";
+import { CanActivateFn, Router} from "@angular/router";
+import {map} from "rxjs";
 import {AuthService, UserData} from "@/core/auth";
 
-@Injectable({providedIn: "root"})
-export class AuthGuard {
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
+export const authGuard: CanActivateFn = (route) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
 
-  public canActivate(
-    route: ActivatedRouteSnapshot
-  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    let user: UserData | null;
-    this.authService.onUserDataChanged().subscribe((userData) => (user = userData));
+  let user: UserData | null;
+  authService.onUserDataChanged().subscribe((userData) => (user = userData));
 
-    return this.authService.onAuthenticated().pipe(
-      map((isAuthenticated) => {
-        const permission = route.data["permission"] as string;
-        const hasAccess = user?.permissions?.includes(permission);
+  return authService.onAuthenticated().pipe(
+    map((isAuthenticated) => {
+      const permission = route.data["permission"] as string;
+      const hasAccess = user?.permissions?.includes(permission);
 
-        if (isAuthenticated && hasAccess) {
-          return true;
-        }
+      if (isAuthenticated && hasAccess) {
+        return true;
+      }
 
-        return this.router.parseUrl("/unauthorized");
-      })
-    );
-  }
+      return router.parseUrl("/unauthorized");
+    })
+  );
 }

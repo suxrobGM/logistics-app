@@ -1,6 +1,6 @@
 import {Routes} from "@angular/router";
 import {Permissions} from "@/core/enums";
-import {AuthGuard} from "@/core/guards";
+import {authGuard} from "@/core/guards";
 import {ListPaymentsComponent} from "./list-payments/list-payments.component";
 import {EditPaymentComponent} from "./edit-payment/edit-payment.component";
 import {ListInvoicesComponent} from "./list-invoices/list-invoices.component";
@@ -13,7 +13,7 @@ export const ACCOUNTING_ROUTES: Routes = [
   {
     path: "payments",
     component: ListPaymentsComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: {
       breadcrumb: "Payments",
       permission: Permissions.Payments.View,
@@ -22,7 +22,7 @@ export const ACCOUNTING_ROUTES: Routes = [
   {
     path: "payments/add",
     component: EditPaymentComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: {
       breadcrumb: "Add",
       permission: Permissions.Payments.Create,
@@ -31,7 +31,7 @@ export const ACCOUNTING_ROUTES: Routes = [
   {
     path: "payments/edit/:id",
     component: EditPaymentComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: {
       breadcrumb: "Edit",
       permission: Permissions.Payments.Edit,
@@ -40,7 +40,7 @@ export const ACCOUNTING_ROUTES: Routes = [
   {
     path: "invoices",
     component: ListInvoicesComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: {
       breadcrumb: "Invoices",
       permission: Permissions.Invoices.View,
@@ -49,7 +49,7 @@ export const ACCOUNTING_ROUTES: Routes = [
   {
     path: "invoices/view/:id",
     component: ViewInvoiceComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: {
       breadcrumb: "View Invoice",
       permission: Permissions.Invoices.View,
@@ -58,7 +58,7 @@ export const ACCOUNTING_ROUTES: Routes = [
   {
     path: "payrolls",
     component: ListPayrollComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: {
       breadcrumb: "Payrolls",
       permission: Permissions.Payrolls.View,
@@ -67,7 +67,7 @@ export const ACCOUNTING_ROUTES: Routes = [
   {
     path: "payrolls/add",
     component: EditPayrollComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: {
       breadcrumb: "Add Payroll",
       permission: Permissions.Payrolls.Create,
@@ -76,7 +76,7 @@ export const ACCOUNTING_ROUTES: Routes = [
   {
     path: "payrolls/edit/:id",
     component: EditPayrollComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: {
       breadcrumb: "Edit Payroll",
       permission: Permissions.Payrolls.Edit,
@@ -85,7 +85,7 @@ export const ACCOUNTING_ROUTES: Routes = [
   {
     path: "employee-payrolls/:employeeId",
     component: ViewEmployeePayrollsComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: {
       breadcrumb: "View Employee Payrolls",
       permission: Permissions.Payrolls.View,

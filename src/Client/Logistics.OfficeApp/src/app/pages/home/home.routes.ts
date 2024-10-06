@@ -1,13 +1,13 @@
 import {Routes} from "@angular/router";
 import {Permissions} from "@/core/enums";
-import {AuthGuard} from "@/core/guards";
+import {authGuard} from "@/core/guards";
 import {HomeComponent} from "./home.component";
 
 export const HOME_ROUTES: Routes = [
   {
     path: "",
     component: HomeComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: {
       breadcrumb: "Home",
       permission: Permissions.Loads.View,

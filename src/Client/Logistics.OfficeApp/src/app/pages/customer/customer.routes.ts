@@ -1,6 +1,6 @@
 import {Routes} from "@angular/router";
 import {Permissions} from "@/core/enums";
-import {AuthGuard} from "@/core/guards";
+import {authGuard} from "@/core/guards";
 import {ListCustomersComponent} from "./list-customers/list-customers.component";
 import {EditCustomerComponent} from "./edit-customer/edit-customer.component";
 
@@ -8,7 +8,7 @@ export const CUSTOMER_ROUTES: Routes = [
   {
     path: "",
     component: ListCustomersComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: {
       breadcrumb: "",
       permission: Permissions.Customers.View,
@@ -17,7 +17,7 @@ export const CUSTOMER_ROUTES: Routes = [
   {
     path: "add",
     component: EditCustomerComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: {
       breadcrumb: "Add",
       permission: Permissions.Customers.Create,
@@ -26,7 +26,7 @@ export const CUSTOMER_ROUTES: Routes = [
   {
     path: "edit/:id",
     component: EditCustomerComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: {
       breadcrumb: "Edit",
       permission: Permissions.Customers.Edit,
