@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {Component, OnInit} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {FormGroup, FormControl, Validators, ReactiveFormsModule} from "@angular/forms";

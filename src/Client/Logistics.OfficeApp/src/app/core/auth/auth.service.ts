@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 import {Injectable} from "@angular/core";
 import {EventTypes, OidcSecurityService, PublicEventsService} from "angular-auth-oidc-client";
 import {Observable, filter, map} from "rxjs";

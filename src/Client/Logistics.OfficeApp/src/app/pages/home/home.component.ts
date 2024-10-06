@@ -51,7 +51,7 @@ export class HomeComponent implements OnInit {
   public chartOptions: unknown;
 
   constructor(private readonly apiService: ApiService) {
-    (this.chartData = {
+    this.chartData = {
       labels: [],
       datasets: [
         {
@@ -59,14 +59,14 @@ export class HomeComponent implements OnInit {
           data: [],
         },
       ],
-    }),
-      (this.chartOptions = {
-        plugins: {
-          legend: {
-            display: false,
-          },
+    },
+    this.chartOptions = {
+      plugins: {
+        legend: {
+          display: false,
         },
-      });
+      },
+    };
   }
 
   ngOnInit() {
@@ -106,8 +106,8 @@ export class HomeComponent implements OnInit {
   }
 
   private drawChart(grosses: DailyGrossesDto) {
-    const labels: Array<string> = [];
-    const data: Array<number> = [];
+    const labels: string[] = [];
+    const data: number[] = [];
 
     grosses.data.forEach((i) => {
       labels.push(DateUtils.toLocaleDate(i.date));

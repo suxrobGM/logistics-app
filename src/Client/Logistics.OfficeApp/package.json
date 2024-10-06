@@ -1,6 +1,8 @@
 {
   "name": "logistics.office-app",
   "version": "0.0.0",
+  "private": true,
+  "type": "module",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port 7003",
@@ -11,7 +13,6 @@
     "lint": "ng lint",
     "prettier": "prettier --write ./src"
   },
-  "private": true,
   "dependencies": {
     "@angular/animations": "^18.2.7",
     "@angular/common": "^18.2.7",
@@ -37,17 +38,11 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^18.2.7",
-    "@angular-eslint/builder": "^18.3.1",
-    "@angular-eslint/eslint-plugin": "^18.3.1",
-    "@angular-eslint/eslint-plugin-template": "^18.3.1",
-    "@angular-eslint/schematics": "^18.3.1",
-    "@angular-eslint/template-parser": "^18.3.1",
     "@angular/cli": "^18.2.7",
     "@angular/compiler-cli": "^18.2.7",
     "@types/jasmine": "^5.1.4",
     "@types/mapbox-gl": "^3.4.0",
-    "@typescript-eslint/eslint-plugin": "^8.8.0",
-    "@typescript-eslint/parser": "^8.8.0",
+    "angular-eslint": "^18.3.1",
     "eslint": "^9.12.0",
     "jasmine-core": "^5.3.0",
     "karma": "^6.4.4",
@@ -55,6 +50,7 @@
     "karma-coverage": "^2.2.1",
     "karma-jasmine": "^5.1.0",
     "karma-jasmine-html-reporter": "^2.1.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^8.8.0"
   }
 }

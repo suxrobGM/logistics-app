@@ -73,8 +73,8 @@ export class GrossesBarchartComponent implements OnInit {
   }
 
   private drawChart(grosses: MonthlyGrossesDto) {
-    const labels: Array<string> = [];
-    const data: Array<number> = [];
+    const labels: string[] = [];
+    const data: number[] = [];
 
     grosses.data.forEach((i) => {
       labels.push(DateUtils.monthNameWithYear(i.date));

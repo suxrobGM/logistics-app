@@ -62,15 +62,15 @@ export class DirectionsMapComponent implements OnChanges {
         return;
       }
 
-      (this.route = {
+      this.route = {
         type: "geojson",
         data: {
           type: "Feature",
           geometry: data.routes[0].geometry,
           properties: {},
         },
-      }),
-        (this.bounds = [this.start as LngLatLike, this.end as LngLatLike]);
+      },
+      this.bounds = [this.start as LngLatLike, this.end as LngLatLike];
       this.routeChanged.emit({
         origin: this.start!,
         destination: this.end!,

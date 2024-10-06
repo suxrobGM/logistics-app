@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 import {Injectable} from "@angular/core";
 import {map, Observable} from "rxjs";
 import {RoleDto, UserDto} from "@/core/models";

@@ -5,7 +5,9 @@ export class StorageService {
   get<T = unknown>(name: string): T | null {
     try {
       return JSON.parse(localStorage.getItem(name) as string) as T;
-    } catch (error) {
+    }
+    catch (error) {
+      console.error("Error while parsing data from local storage", error);
       return null;
     }
   }
