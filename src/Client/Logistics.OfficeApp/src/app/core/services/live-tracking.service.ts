@@ -3,7 +3,7 @@ import {TruckGeolocationDto} from "@/core/models";
 import {TenantService} from "./tenant.service";
 import {BaseHubConnection} from "./base-hub-connection";
 
-@Injectable()
+@Injectable({providedIn: "root"})
 export class LiveTrackingService extends BaseHubConnection {
   constructor(tenantService: TenantService) {
     super("live-tracking", tenantService);
