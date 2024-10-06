@@ -1,8 +1,7 @@
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
-import {MessageService} from "primeng/api";
 import {catchError, Observable, of} from "rxjs";
-import {TenantService} from "@/core/services";
+import {TenantService, ToastService} from "@/core/services";
 import {GLOBAL_CONFIG} from "@/configs";
 import {
   Result,
@@ -53,7 +52,7 @@ export class ApiService {
   constructor(
     private readonly httpClient: HttpClient,
     private readonly tenantService: TenantService,
-    private readonly messageService: MessageService
+    private readonly toastService: ToastService,
   ) {
     this.host = GLOBAL_CONFIG.apiHost;
     this.headers = {"content-type": "application/json"};
@@ -441,8 +440,7 @@ export class ApiService {
   private handleError(responseData: any): Observable<any> {
     const errorMessage = responseData.error?.error ?? responseData.error;
 
-    this.messageService.add({key: "notification", severity: "error", summary: "Error", detail: errorMessage});
-    // this.messageService.add({key: 'errorMsg', severity: 'error', summary: 'Error', detail: errorMessage});
+    this.toastService.showError(errorMessage);
     console.error(errorMessage ?? responseData);
     return of({error: errorMessage, success: false});
   }
