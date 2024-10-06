@@ -21,7 +21,7 @@ Logistics TMS primarily targets logistics and trucking companies seeking to stre
 Operating on a multi-tenant architecture, Logistics TMS features a primary database for storing user credentials and tenant data, including company name, subdomain name, database connection string, and billing periods. Each tenant or company has a dedicated database.
 
 ## Development status
-The project is actively under development. I have completed 85% of the work required for the first version of the MVP.
+I work on this project in my free time so it is not actively maintained. However, I am open to collaboration and contributions. If you are interested in contributing to this project, please feel free to reach out to me at **suxrobgm@gmail.com** or [Telegram](https://t.me/suxrobgm).
 
 ## Getting Started
 
@@ -29,7 +29,7 @@ Follow these steps to get the project up and running:
 
 1. Install SDKs 
    - [Download](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) and install the .NET 8 SDK. 
-   - [Download](https://nodejs.org) and install the Node.js runtime.
+   - Install Bun runtime to run Angular project. Follow [these](https://bun.sh/docs/installation) instructions.
 
 2. Clone this repository: 
     ```
@@ -59,13 +59,6 @@ Follow these steps to get the project up and running:
     - Admin app: https://127.0.0.1:7002
     - Office app: https://127.0.0.1:7003
 
-## Demo application
-The sample deployed application is available at http://office.jfleets.com
-
-User email: Test1@gmail.com
-
-User password: Test12345#
-
 ## Architectural Overview
 
 ### Technical Stack
@@ -86,6 +79,7 @@ User password: Test12345#
 - SignalR
 - Docker
 - CI/CD
+- Bun
 
 ### Design Patterns
 - Multi-Tenant Architecture
