@@ -1,7 +1,7 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, input, OnInit, signal} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {ActivatedRoute, Router, RouterModule} from "@angular/router";
+import {Router, RouterModule} from "@angular/router";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
@@ -38,21 +38,16 @@ export class EditPaymentComponent implements OnInit {
   public readonly paymentStatuses = PaymentStatusEnum.toArray();
   public readonly paymentMethods = PaymentMethodEnum.toArray();
   public readonly paymentForValues = PaymentForEnum.toArray();
-  public title: string;
-  public id: string | null;
-  public isLoading: boolean;
+  public title = signal("Edit payment");
+  public id = input<string>("");
+  public isLoading = signal(false);
   public form: FormGroup<PaymentForm>;
 
   constructor(
     private readonly apiService: ApiService,
     private readonly toastService: ToastService,
-    private readonly route: ActivatedRoute,
     private readonly router: Router
   ) {
-    this.title = "Edit payment";
-    this.id = null;
-    this.isLoading = false;
-
     this.form = new FormGroup<PaymentForm>({
       comment: new FormControl<string>("", {validators: Validators.required, nonNullable: true}),
       paymentMethod: new FormControl<PaymentMethod>(PaymentMethod.BankAccount, {
@@ -72,15 +67,11 @@ export class EditPaymentComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      this.id = params["id"];
-    });
-
     if (this.isEditMode()) {
-      this.title = "Edit payment";
+      this.title.set("Edit payment");
       this.fetchPayment();
     } else {
-      this.title = "Add a new payment";
+      this.title.set("Add a new payment");
     }
   }
 
@@ -89,7 +80,7 @@ export class EditPaymentComponent implements OnInit {
       return;
     }
 
-    if (this.id) {
+    if (this.isEditMode()) {
       this.updatePayment();
     } else {
       this.addPayment();
@@ -97,13 +88,13 @@ export class EditPaymentComponent implements OnInit {
   }
 
   isEditMode(): boolean {
-    return this.id != null && this.id !== "";
+    return this.id() != null && this.id() !== "";
   }
 
   private fetchPayment() {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
-    this.apiService.getPayment(this.id!).subscribe((result) => {
+    this.apiService.getPayment(this.id()!).subscribe((result) => {
       if (result.data) {
         const payment = result.data;
 
@@ -116,12 +107,12 @@ export class EditPaymentComponent implements OnInit {
         });
       }
 
-      this.isLoading = false;
+      this.isLoading.set(false);
     });
   }
 
   private addPayment() {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     const command: CreatePaymentCommand = {
       amount: this.form.value.amount!,
@@ -136,15 +127,15 @@ export class EditPaymentComponent implements OnInit {
         this.router.navigateByUrl("/accounting/payments");
       }
 
-      this.isLoading = false;
+      this.isLoading.set(false);
     });
   }
 
   private updatePayment() {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     const commad: UpdatePaymentCommand = {
-      id: this.id!,
+      id: this.id()!,
       amount: this.form.value.amount,
       method: this.form.value.paymentMethod,
       paymentFor: this.form.value.paymentFor,
@@ -158,7 +149,7 @@ export class EditPaymentComponent implements OnInit {
         this.router.navigateByUrl("/accounting/payments");
       }
 
-      this.isLoading = false;
+      this.isLoading.set(false);
     });
   }
 }

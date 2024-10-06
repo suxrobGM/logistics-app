@@ -3,7 +3,7 @@ import {Permissions} from "@/core/enums";
 import {authGuard} from "@/core/guards";
 import {HomeComponent} from "./home.component";
 
-export const HOME_ROUTES: Routes = [
+export const homeRoutes: Routes = [
   {
     path: "",
     component: HomeComponent,

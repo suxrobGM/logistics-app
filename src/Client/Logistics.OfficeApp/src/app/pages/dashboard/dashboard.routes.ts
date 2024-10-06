@@ -3,7 +3,7 @@ import {Permissions} from "@/core/enums";
 import {authGuard} from "@/core/guards";
 import {DashboardComponent} from "./dashboard.component";
 
-export const DASHBOARD_ROUTES: Routes = [
+export const dashboardRoutes: Routes = [
   {
     path: "",
     component: DashboardComponent,

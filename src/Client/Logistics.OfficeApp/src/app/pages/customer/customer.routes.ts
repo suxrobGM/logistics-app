@@ -4,7 +4,7 @@ import {authGuard} from "@/core/guards";
 import {ListCustomersComponent} from "./list-customers/list-customers.component";
 import {EditCustomerComponent} from "./edit-customer/edit-customer.component";
 
-export const CUSTOMER_ROUTES: Routes = [
+export const customerRoutes: Routes = [
   {
     path: "",
     component: ListCustomersComponent,

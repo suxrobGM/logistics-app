@@ -5,7 +5,7 @@ import {EditTruckComponent} from "./edit-truck/edit-truck.component";
 import {ListTruckComponent} from "./list-trucks/list-trucks.component";
 import {TruckDetailsComponent} from "./truck-details/truck-details.component";
 
-export const TRUCK_ROUTES: Routes = [
+export const truckRoutes: Routes = [
   {
     path: "",
     component: ListTruckComponent,

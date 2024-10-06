@@ -5,7 +5,7 @@ import {EditLoadComponent} from "./edit-load/edit-load.component";
 import {ListLoadComponent} from "./list-loads/list-loads.component";
 import {AddLoadComponent} from "./add-load/add-load.component";
 
-export const LOAD_ROUTES: Routes = [
+export const loadRoutes: Routes = [
   {
     path: "",
     component: ListLoadComponent,

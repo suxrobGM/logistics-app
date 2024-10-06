@@ -9,7 +9,7 @@ import {ListPayrollComponent} from "./list-payroll/list-payroll.component";
 import {EditPayrollComponent} from "./edit-payroll/edit-payroll.component";
 import {ViewEmployeePayrollsComponent} from "./view-employee-payrolls/view-employee-payrolls.component";
 
-export const ACCOUNTING_ROUTES: Routes = [
+export const accountingRoutes: Routes = [
   {
     path: "payments",
     component: ListPaymentsComponent,

@@ -1,1 +1,1 @@
-export {LOAD_ROUTES} from "./load.routes";
+export * from "./load.routes";

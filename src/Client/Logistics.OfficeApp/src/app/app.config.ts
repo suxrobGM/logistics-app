@@ -2,17 +2,17 @@ import {provideHttpClient, withInterceptors} from "@angular/common/http";
 import {ApplicationConfig, importProvidersFrom} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
 import {provideAnimations} from "@angular/platform-browser/animations";
-import {provideRouter} from "@angular/router";
+import {provideRouter, withComponentInputBinding} from "@angular/router";
 import {provideAuth} from "angular-auth-oidc-client";
-import {APP_ROUTES} from "./app.routes";
-import {AUTH_CONFIG} from "./configs";
-import {tenantInterceptor, tokenInterceptor} from "./core/interceptors";
-import { MessageService } from "primeng/api";
+import {MessageService} from "primeng/api";
+import {tenantInterceptor, tokenInterceptor} from "@/core/interceptors";
+import {AUTH_CONFIG} from "@/configs";
+import {appRoutes} from "./app.routes";
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideAuth({config: AUTH_CONFIG}),
-    provideRouter(APP_ROUTES),
+    provideRouter(appRoutes, withComponentInputBinding()),
     importProvidersFrom(BrowserModule),
     provideAnimations(),
     provideHttpClient(withInterceptors([tenantInterceptor, tokenInterceptor])),
