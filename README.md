@@ -47,10 +47,10 @@ Follow these steps to get the project up and running:
    Modify local or remote `MS SQL` database connection strings in the [Web API appsettings.json](./src/Server/Logistics.API/appsettings.json) and the [IdentityServer appsettings.json](./src/Server/Logistics.IdentityServer/appsettings.json) under the `ConnectionStrings:MainDatabase` section. Update tenant databases configuration in the [Web API appsettings.json](./src/Server/Logistics.API/appsettings.json) under the `TenantsConfig` section.
 
 5. Seed databases:
-   To initialize and populate the databases, run the `seed-databases.bat` script provided in the repository.
+   To initialize and populate the databases, run the `seed-databases.cmd` script provided in the repository.
 
 6. Run applications:
-   Launch all the applications in the suite using the respective `.cmd` scripts in the repository.
+   Launch all the applications in the project using the respective `.cmd` scripts in the repository.
 
 7. Access the applications:
    Use the following local URLs to access the apps:
@@ -98,7 +98,7 @@ This work is licensed under a
 
 [![CC BY-NC 4.0][cc-by-nc-image]][cc-by-nc]
 
-For commercial use, please contact me at **suxrobgm@gmail.com** or Telegram **@suxrobgm**
+For commercial use, please contact me at **suxrobgm@gmail.com** or [Telegram](https://t.me/suxrobgm).
 
 ## Architecture Diagram
 For a deeper understanding of the project structure, refer to the architecture diagram:
