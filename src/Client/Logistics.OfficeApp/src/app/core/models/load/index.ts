@@ -1,3 +1,3 @@
-export * from "./CreateLoadCommand";
-export * from "./LoadDto";
-export * from "./UpdateLoadCommand";
+export * from "./create-load.command";
+export * from "./load.dto";
+export * from "./update-load.command";

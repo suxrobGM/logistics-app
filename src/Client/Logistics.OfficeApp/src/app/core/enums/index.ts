@@ -1,8 +1,8 @@
-export {EnumLike, EnumType} from "./enumLike";
-export * from "./paymentFor";
-export * from "./paymentMethod";
-export * from "./paymentStatus";
-export * from "./loadStatus";
-export * from "./userRole";
+export {EnumLike, EnumType} from "./enum-like";
+export * from "./payment-for.enum";
+export * from "./payment-method";
+export * from "./payment-status";
+export * from "./load-status.enum";
+export * from "./user-role";
 export * from "./permissions";
-export * from "./salaryType";
+export * from "./salary-type";

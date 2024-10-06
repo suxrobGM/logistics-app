@@ -1,3 +1,3 @@
-export * from "./CreateInvoiceCommand";
-export * from "./UpdateInvoiceCommand";
-export * from "./InvoiceDto";
+export * from "./create-invoice.command";
+export * from "./update-invoice.command";
+export * from "./invoice.dto";

@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {EventTypes, OidcSecurityService, PublicEventsService} from "angular-auth-oidc-client";
 import {Observable, filter, map} from "rxjs";
 import {UserRoleEnum} from "@/core/enums";
-import {UserData} from "./userData";
+import {UserData} from "./user-data";
 
 @Injectable({providedIn: "root"})
 export class AuthService {

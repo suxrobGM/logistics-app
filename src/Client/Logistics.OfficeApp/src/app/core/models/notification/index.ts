@@ -1,2 +1,2 @@
-export * from "./NotificationDto";
-export * from "./UpdateNotificationCommand";
+export * from "./notification.dto";
+export * from "./update-notification.command";

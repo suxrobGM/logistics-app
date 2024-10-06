@@ -1,5 +1,5 @@
 import {LoadStatus} from "@/core/enums";
-import {AddressDto} from "../AddressDto";
+import {AddressDto} from "../address.dto";
 
 export interface UpdateLoadCommand {
   id: string;

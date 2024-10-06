@@ -1,4 +1,4 @@
-import {UserIdentity} from "./userIdentity";
+import {UserIdentity} from "./user-identity";
 
 export class UserData {
   constructor(userIdentity: UserIdentity) {

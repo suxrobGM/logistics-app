@@ -1,4 +1,4 @@
-import {AddressDto} from "../AddressDto";
+import {AddressDto} from "../address.dto";
 import {EmployeeDto} from "../employee/employee.dto";
 import {LoadDto} from "../load/load.dto";
 

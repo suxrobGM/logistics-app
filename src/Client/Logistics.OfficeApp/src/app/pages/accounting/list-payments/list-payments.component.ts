@@ -8,7 +8,7 @@ import {ButtonModule} from "primeng/button";
 import {PaymentDto} from "@/core/models";
 import {ApiService} from "@/core/services";
 import {PaymentFor, PaymentForEnum, PaymentMethod, PaymentMethodEnum} from "@/core/enums";
-import {PredefinedDateRanges} from "@/core/helpers";
+import {PredefinedDateRanges} from "@/core/utils";
 import {PaymentStatusTagComponent} from "@/components";
 import {AddressPipe} from "@/core/pipes";
 
