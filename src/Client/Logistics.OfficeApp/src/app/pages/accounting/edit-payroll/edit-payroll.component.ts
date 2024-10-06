@@ -9,9 +9,9 @@ import {AutoCompleteModule, AutoCompleteSelectEvent} from 'primeng/autocomplete'
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {CalendarModule} from 'primeng/calendar';
 import {ButtonModule} from 'primeng/button';
-import {AddressDto, CreatePayrollCommand, EmployeeDto, PayrollDto, UpdatePayrollCommand} from '@core/models';
-import {ApiService, ToastService} from '@core/services';
-import {PredefinedDateRanges} from '@core/helpers';
+import {AddressDto, CreatePayrollCommand, EmployeeDto, PayrollDto, UpdatePayrollCommand} from '@/core/models';
+import {ApiService, ToastService} from '@/core/services';
+import {PredefinedDateRanges} from '@/core/helpers';
 import {
   EnumType,
   PaymentMethodEnum,
@@ -19,9 +19,9 @@ import {
   PaymentStatusEnum,
   SalaryType,
   SalaryTypeEnum,
-} from '@core/enums';
-import {AddressFormComponent, ValidationSummaryComponent} from '@shared/components';
-import {DateUtils} from '@shared/utils';
+} from '@/core/enums';
+import {AddressFormComponent, ValidationSummaryComponent} from '@/components';
+import {DateUtils} from '@/core/utils';
 
 
 @Component({
@@ -63,7 +63,7 @@ export class EditPayrollComponent implements OnInit {
     private readonly router: Router)
   {
     const lastWeek = [PredefinedDateRanges.getLastWeek().startDate, PredefinedDateRanges.getLastWeek().endDate]
-  
+
     this.form = new FormGroup<PayrollForm>({
       employee: new FormControl(null, {validators: Validators.required}),
       dateRange: new FormControl(lastWeek, {validators: Validators.required, nonNullable: true}),
@@ -90,12 +90,12 @@ export class EditPayrollComponent implements OnInit {
       this.title = 'Add a new payroll';
     }
   }
-  
+
   tryCalculatePayroll() {
     if (!DateUtils.isValidRange(this.form.value.dateRange) || !this.selectedEmployee) {
       return;
     }
-    
+
     this.calculatePayrollForEmployee(this.selectedEmployee);
   }
 

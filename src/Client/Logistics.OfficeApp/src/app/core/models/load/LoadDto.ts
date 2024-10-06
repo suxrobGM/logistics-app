@@ -1,4 +1,4 @@
-import {LoadStatus} from '@core/enums';
+import {LoadStatus} from '@/core/enums';
 import {CustomerDto} from '../customer';
 import {InvoiceDto} from '../invoice';
 import {AddressDto} from '../AddressDto';

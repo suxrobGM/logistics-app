@@ -25,21 +25,7 @@
       "dom"
     ],
     "paths": {
-      "@configs": [
-        "src/app/configs/index"
-      ],
-      "@core/*": [
-        "src/app/core/*"
-      ],
-      "@shared/*": [
-        "src/app/shared/*"
-      ],
-      "@pages/*": [
-        "src/app/pages/*"
-      ],
-      "@layout": [
-        "src/app/layout/index"
-      ]
+      "@/*": ["./src/app/*"],
     },
     "useDefineForClassFields": false
   },

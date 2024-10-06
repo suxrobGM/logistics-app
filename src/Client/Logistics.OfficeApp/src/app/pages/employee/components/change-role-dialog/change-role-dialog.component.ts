@@ -5,8 +5,8 @@ import {ButtonModule} from 'primeng/button';
 import {DropdownModule} from 'primeng/dropdown';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {DialogModule} from 'primeng/dialog';
-import {RemoveEmployeeRoleCommand, RoleDto, UpdateEmployeeCommand} from '@core/models';
-import {ApiService, ToastService} from '@core/services';
+import {RemoveEmployeeRoleCommand, RoleDto, UpdateEmployeeCommand} from '@/core/models';
+import {ApiService, ToastService} from '@/core/services';
 import {UserService} from '../../services';
 
 @Component({

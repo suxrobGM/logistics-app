@@ -8,12 +8,12 @@ import {TooltipModule} from 'primeng/tooltip';
 import {TableModule} from 'primeng/table';
 import {SharedModule} from 'primeng/api';
 import {CardModule} from 'primeng/card';
-import {AppConfig} from '@configs';
-import {DailyGrossesDto, LoadDto} from '@core/models';
-import {ApiService} from '@core/services';
-import {TrucksMapComponent} from '@shared/components';
-import {AddressPipe, DistanceUnitPipe} from '@shared/pipes';
-import {DateUtils, Converters} from '@shared/utils';
+import {AppConfig} from '@/configs';
+import {DailyGrossesDto, LoadDto} from '@/core/models';
+import {ApiService} from '@/core/services';
+import {TrucksMapComponent} from '@/components';
+import {AddressPipe, DistanceUnitPipe} from '@/core/pipes';
+import {DateUtils, Converters} from '@/core/utils';
 import {NotificationsPanelComponent} from './components';
 
 

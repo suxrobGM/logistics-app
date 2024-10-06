@@ -3,11 +3,11 @@ import {ActivatedRoute, RouterLink} from '@angular/router';
 import {CurrencyPipe, CommonModule} from '@angular/common';
 import {SkeletonModule} from 'primeng/skeleton';
 import {CardModule} from 'primeng/card';
-import {DailyGrossesDto, MonthlyGrossesDto, TruckDto, TruckGeolocationDto} from '@core/models';
-import {DistanceUnitPipe} from '@shared/pipes';
-import {ApiService} from '@core/services';
-import {GeolocationMapComponent, GrossesBarchartComponent, BarChartDrawnEvent} from '@shared/components';
-import {AppConfig} from '@configs';
+import {DailyGrossesDto, MonthlyGrossesDto, TruckDto, TruckGeolocationDto} from '@/core/models';
+import {DistanceUnitPipe} from '@/core/pipes';
+import {ApiService} from '@/core/services';
+import {GeolocationMapComponent, GrossesBarchartComponent, BarChartDrawnEvent} from '@/components';
+import {AppConfig} from '@/configs';
 import {LineChartDrawnEvent, TruckGrossesLinechartComponent} from '../components';
 
 

@@ -2,7 +2,7 @@ import {AuthModule} from 'angular-auth-oidc-client';
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {HTTP_INTERCEPTORS} from '@angular/common/http';
-import {AuthConfig} from '@configs';
+import {AuthConfig} from '@/configs';
 import {TenantInterceptor} from './interceptors/tenant.interceptor';
 import {TokenInterceptor} from './interceptors/token.interceptor';
 import {AuthGuard} from './guards/auth.guard';

@@ -8,11 +8,11 @@ import {CardModule} from 'primeng/card';
 import {TooltipModule} from 'primeng/tooltip';
 import {ButtonModule} from 'primeng/button';
 import {TagModule} from 'primeng/tag';
-import {LoadStatus, LoadStatusEnum} from '@core/enums';
-import {LoadDto} from '@core/models';
-import {ApiService} from '@core/services';
-import {AddressPipe, DistanceUnitPipe} from '@shared/pipes';
-import {PaymentStatusTagComponent} from '@shared/components';
+import {LoadStatus, LoadStatusEnum} from '@/core/enums';
+import {LoadDto} from '@/core/models';
+import {ApiService} from '@/core/services';
+import {AddressPipe, DistanceUnitPipe} from '@/core/pipes';
+import {PaymentStatusTagComponent} from '@/components';
 
 
 @Component({
@@ -75,7 +75,7 @@ export class ListLoadComponent {
       if (result.success && result.data) {
         this.loads = result.data;
         this.totalRecords = result.totalItems;
-        
+
       }
 
       this.isLoading = false;

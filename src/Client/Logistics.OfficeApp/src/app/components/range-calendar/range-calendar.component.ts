@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {CalendarModule} from 'primeng/calendar';
 import {ButtonModule} from 'primeng/button';
-import {DateUtils} from '@core/utils';
+import {DateUtils} from '@/core/utils';
 
 
 @Component({

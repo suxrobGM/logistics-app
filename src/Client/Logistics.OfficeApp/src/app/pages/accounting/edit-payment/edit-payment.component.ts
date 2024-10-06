@@ -7,8 +7,8 @@ import {ButtonModule} from 'primeng/button';
 import {CardModule} from 'primeng/card';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {DropdownModule} from 'primeng/dropdown';
-import {CreatePaymentCommand, UpdatePaymentCommand} from '@core/models';
-import {ApiService, ToastService} from '@core/services';
+import {CreatePaymentCommand, UpdatePaymentCommand} from '@/core/models';
+import {ApiService, ToastService} from '@/core/services';
 import {
   PaymentMethod,
   PaymentFor,
@@ -16,8 +16,8 @@ import {
   PaymentStatusEnum,
   PaymentMethodEnum,
   PaymentForEnum,
-} from '@core/enums';
-import {ValidationSummaryComponent} from '@shared/components';
+} from '@/core/enums';
+import {ValidationSummaryComponent} from '@/components';
 
 
 @Component({
@@ -54,7 +54,7 @@ export class EditPaymentComponent implements OnInit {
     this.title = 'Edit payment';
     this.id = null;
     this.isLoading = false;
-  
+
     this.form = new FormGroup<PaymentForm>({
       comment: new FormControl<string>('', {validators: Validators.required, nonNullable: true}),
       paymentMethod: new FormControl<PaymentMethod>(PaymentMethod.BankAccount, {validators: Validators.required, nonNullable: true}),

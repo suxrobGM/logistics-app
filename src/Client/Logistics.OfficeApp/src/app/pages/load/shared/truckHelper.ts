@@ -1,4 +1,4 @@
-import {ApiService} from '@core/services';
+import {ApiService} from '@/core/services';
 import {Observable, map} from 'rxjs';
 
 

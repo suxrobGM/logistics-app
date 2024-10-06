@@ -1,8 +1,8 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {NotificationService, ToastService} from '@core/services';
-import {NotificationDto} from '@core/models';
-import {TimeAgoPipe} from '@shared/pipes';
+import {NotificationService, ToastService} from '@/core/services';
+import {NotificationDto} from '@/core/models';
+import {TimeAgoPipe} from '@/core/pipes';
 import {CardModule} from 'primeng/card';
 import {ButtonModule} from 'primeng/button';
 import {BadgeModule} from 'primeng/badge';

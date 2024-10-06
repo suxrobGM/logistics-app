@@ -1,6 +1,6 @@
 import {HttpHeaders} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {TenantDto} from '@core/models';
+import {TenantDto} from '@/core/models';
 import {CookieService} from './cookie.service';
 
 

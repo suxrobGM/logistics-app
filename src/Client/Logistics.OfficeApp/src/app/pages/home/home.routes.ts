@@ -1,6 +1,6 @@
 import {Routes} from '@angular/router';
-import {Permissions} from '@core/enums';
-import {AuthGuard} from '@core/guards';
+import {Permissions} from '@/core/enums';
+import {AuthGuard} from '@/core/guards';
 import {HomeComponent} from './home.component';
 
 

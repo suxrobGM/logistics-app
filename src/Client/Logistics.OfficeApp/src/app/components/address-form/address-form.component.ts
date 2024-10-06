@@ -17,7 +17,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import {AddressDto} from '@core/models';
+import {AddressDto} from '@/core/models';
 import {ValidationSummaryComponent} from '../validation-summary/validation-summary.component';
 
 
@@ -57,15 +57,15 @@ export class AddressFormComponent implements ControlValueAccessor {
     });
 
     this.form.valueChanges.subscribe((values) => {
-      if (!values.addressLine1 || 
-        !values.city || 
-        !values.region || 
-        !values.zipCode || 
+      if (!values.addressLine1 ||
+        !values.city ||
+        !values.region ||
+        !values.zipCode ||
         !values.country)
       {
         return;
       }
-      
+
       const address: AddressDto = {
         line1: values.addressLine1,
         line2: values.addressLine2,
@@ -74,7 +74,7 @@ export class AddressFormComponent implements ControlValueAccessor {
         zipCode: values.zipCode,
         country: values.country
       }
-      
+
       if (this.onChanged) {
         this.onChanged(address);
         this.addressChange.emit(address);

@@ -12,10 +12,10 @@ import {
   PaymentMethod,
   PaymentMethodEnum,
   SalaryTypeEnum,
-} from '@core/enums';
-import {EmployeeDto, PayrollDto} from '@core/models';
-import {ApiService, ToastService} from '@core/services';
-import {PaymentStatusTagComponent} from '@shared/components';
+} from '@/core/enums';
+import {EmployeeDto, PayrollDto} from '@/core/models';
+import {ApiService, ToastService} from '@/core/services';
+import {PaymentStatusTagComponent} from '@/components';
 
 
 @Component({
@@ -47,7 +47,7 @@ export class ViewEmployeePayrollsComponent implements OnInit {
   constructor(
     private readonly apiService: ApiService,
     private readonly route: ActivatedRoute,
-    private readonly toastService: ToastService) 
+    private readonly toastService: ToastService)
   {
   }
 
@@ -67,8 +67,8 @@ export class ViewEmployeePayrollsComponent implements OnInit {
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
     this.apiService.getPayrolls({
-      orderBy: sortField, 
-      page: page, 
+      orderBy: sortField,
+      page: page,
       pageSize: rows,
       employeeId: this.employeeId,
     }).subscribe((result) => {
@@ -95,12 +95,12 @@ export class ViewEmployeePayrollsComponent implements OnInit {
 
   private fetchEmployee() {
     this.isLoadingEmployee = true;
-    
+
     this.apiService.getEmployee(this.employeeId).subscribe((result) => {
       if (result.data) {
         this.employee = result.data;
       }
-      
+
       this.isLoadingEmployee = false;
     });
   }

@@ -5,10 +5,10 @@ import {CardModule} from 'primeng/card';
 import {ButtonModule} from 'primeng/button';
 import {jsPDF} from 'jspdf';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {ApiService, TenantService} from '@core/services';
-import {AddressDto, InvoiceDto} from '@core/models';
-import {PaymentMethod, PaymentMethodEnum, PaymentStatus} from '@core/enums';
-import {AddressPipe} from '@shared/pipes';
+import {ApiService, TenantService} from '@/core/services';
+import {AddressDto, InvoiceDto} from '@/core/models';
+import {PaymentMethod, PaymentMethodEnum, PaymentStatus} from '@/core/enums';
+import {AddressPipe} from '@/core/pipes';
 
 
 @Component({
@@ -74,7 +74,7 @@ export class ViewInvoiceComponent implements OnInit {
     // Reverting to normal font for the rest of the text
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(12);
-    
+
     doc.text(`Company: ${this.companyName}`, 10, 20);
     doc.text(`Address: ${this.companyAddress}`, 10, 30);
     doc.text(`Load ID: ${this.invoice.loadRef}`, 10, 40);
@@ -83,7 +83,7 @@ export class ViewInvoiceComponent implements OnInit {
     doc.text(`Payment Method: ${this.getPaymentMethodDesc(this.invoice.payment.method)}`, 10, 90);
     doc.text(`Amount: $${this.invoice.payment.amount}`, 10, 100);
     doc.text(`Payment Date: ${this.invoice.payment.paymentDate}`, 10, 110);
-  
+
     // Save the PDF
     doc.save(`invoice-${this.invoice.loadRef}.pdf`);
   }

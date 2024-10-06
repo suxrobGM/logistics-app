@@ -6,9 +6,9 @@ import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import {CardModule} from 'primeng/card';
 import {ButtonModule} from 'primeng/button';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {ApiService, ToastService} from '@core/services';
-import {UpdateCustomerCommand} from '@core/models';
-import {ValidationSummaryComponent} from '@shared/components';
+import {ApiService, ToastService} from '@/core/services';
+import {UpdateCustomerCommand} from '@/core/models';
+import {ValidationSummaryComponent} from '@/components';
 
 
 @Component({
@@ -41,7 +41,7 @@ export class EditCustomerComponent implements OnInit {
     this.title = 'Edit customer';
     this.id = null;
     this.isLoading = false;
-  
+
     this.form = new FormGroup<CustomerForm>({
       name: new FormControl<string>('', {validators: Validators.required, nonNullable: true})
     });

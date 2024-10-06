@@ -2,8 +2,8 @@ import {Component, EventEmitter, Input, Output, forwardRef} from '@angular/core'
 import {CommonModule} from '@angular/common';
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {AutoCompleteModule, AutoCompleteSelectEvent} from 'primeng/autocomplete';
-import {ApiService} from '@core/services';
-import {CustomerDto} from '@core/models';
+import {ApiService} from '@/core/services';
+import {CustomerDto} from '@/core/models';
 
 
 @Component({
@@ -44,7 +44,7 @@ export class SearchCustomerComponent implements ControlValueAccessor {
     this.selectedCustomerChange.emit(event.value);
     this.onChange(event.value);
   }
-  
+
   //#region Implementation Reactive forms
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

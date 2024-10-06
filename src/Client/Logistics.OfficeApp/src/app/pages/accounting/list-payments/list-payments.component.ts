@@ -5,17 +5,17 @@ import {CardModule} from 'primeng/card';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {TooltipModule} from 'primeng/tooltip';
 import {ButtonModule} from 'primeng/button';
-import {PaymentDto} from '@core/models';
-import {ApiService} from '@core/services';
+import {PaymentDto} from '@/core/models';
+import {ApiService} from '@/core/services';
 import {
   PaymentFor,
   PaymentForEnum,
   PaymentMethod,
   PaymentMethodEnum,
-} from '@core/enums';
-import {PredefinedDateRanges} from '@core/helpers';
-import {PaymentStatusTagComponent} from '@shared/components';
-import {AddressPipe} from '@shared/pipes';
+} from '@/core/enums';
+import {PredefinedDateRanges} from '@/core/helpers';
+import {PaymentStatusTagComponent} from '@/components';
+import {AddressPipe} from '@/core/pipes';
 
 
 @Component({
@@ -66,8 +66,8 @@ export class ListPaymentsComponent {
     const past90days = PredefinedDateRanges.getPast90Days();
 
     this.apiService.getPayments({
-      orderBy: sortField, 
-      page: page, 
+      orderBy: sortField,
+      page: page,
       pageSize: rows,
       startDate: past90days.startDate,
       endDate: past90days.endDate

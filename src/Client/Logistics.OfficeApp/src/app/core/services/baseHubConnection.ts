@@ -1,4 +1,4 @@
-import {AppConfig} from '@configs';
+import {AppConfig} from '@/configs';
 import {HubConnection, HubConnectionBuilder, HttpTransportType} from '@microsoft/signalr';
 import {TenantService} from './tenant.service';
 

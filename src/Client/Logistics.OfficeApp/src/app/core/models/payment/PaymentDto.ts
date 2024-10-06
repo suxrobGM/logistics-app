@@ -1,4 +1,4 @@
-import {PaymentFor, PaymentMethod, PaymentStatus} from '@core/enums';
+import {PaymentFor, PaymentMethod, PaymentStatus} from '@/core/enums';
 import {AddressDto} from '../AddressDto';
 
 

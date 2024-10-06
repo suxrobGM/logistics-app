@@ -8,8 +8,8 @@ import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {TooltipModule} from 'primeng/tooltip';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ConfirmationService} from 'primeng/api';
-import {CustomerDto} from '@core/models';
-import {ApiService, ToastService} from '@core/services';
+import {CustomerDto} from '@/core/models';
+import {ApiService, ToastService} from '@/core/services';
 
 
 @Component({

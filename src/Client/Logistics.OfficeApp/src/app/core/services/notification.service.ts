@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {NotificationDto, Result} from '@core/models';
-import {PredefinedDateRanges} from '@core/helpers';
+import {NotificationDto, Result} from '@/core/models';
+import {PredefinedDateRanges} from '@/core/helpers';
 import {TenantService} from './tenant.service';
 import {BaseHubConnection} from './baseHubConnection';
 import {ApiService} from './api.service';

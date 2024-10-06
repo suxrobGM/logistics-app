@@ -3,10 +3,10 @@ import {CommonModule} from '@angular/common';
 import {CardModule} from 'primeng/card';
 import {SkeletonModule} from 'primeng/skeleton';
 import {ChartModule} from 'primeng/chart';
-import {DailyGrossesDto} from '@core/models';
-import {DateUtils, Converters} from '@shared/utils';
-import {ApiService} from '@core/services';
-import {RangeCalendarComponent} from '@shared/components';
+import {DailyGrossesDto} from '@/core/models';
+import {DateUtils, Converters} from '@/core/utils';
+import {ApiService} from '@/core/services';
+import {RangeCalendarComponent} from '@/components';
 
 
 @Component({

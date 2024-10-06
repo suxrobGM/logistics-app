@@ -5,11 +5,11 @@ import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {CardModule} from 'primeng/card';
 import {ButtonModule} from 'primeng/button';
 import {TooltipModule} from 'primeng/tooltip';
-import {PagedIntervalQuery, TruckStatsDto} from '@core/models';
-import {ApiService} from '@core/services';
-import {DateUtils} from '@shared/utils';
-import {DistanceUnitPipe} from '@shared/pipes';
-import {RangeCalendarComponent} from '@shared/components';
+import {PagedIntervalQuery, TruckStatsDto} from '@/core/models';
+import {ApiService} from '@/core/services';
+import {DateUtils} from '@/core/utils';
+import {DistanceUnitPipe} from '@/core/pipes';
+import {RangeCalendarComponent} from '@/components';
 
 
 @Component({

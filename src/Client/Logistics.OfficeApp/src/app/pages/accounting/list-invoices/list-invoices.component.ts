@@ -5,11 +5,11 @@ import {CardModule} from 'primeng/card';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {ButtonModule} from 'primeng/button';
 import {TooltipModule} from 'primeng/tooltip';
-import {InvoiceDto} from '@core/models';
-import {ApiService} from '@core/services';
-import {PredefinedDateRanges} from '@core/helpers';
-import {PaymentStatus} from '@core/enums';
-import {PaymentStatusTagComponent} from '@shared/components';
+import {InvoiceDto} from '@/core/models';
+import {ApiService} from '@/core/services';
+import {PredefinedDateRanges} from '@/core/helpers';
+import {PaymentStatus} from '@/core/enums';
+import {PaymentStatusTagComponent} from '@/components';
 
 
 @Component({

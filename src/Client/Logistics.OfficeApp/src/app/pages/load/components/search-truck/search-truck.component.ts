@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, Output, forwardRef} from '@angular/core'
 import {CommonModule} from '@angular/common';
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {AutoCompleteModule, AutoCompleteSelectEvent} from 'primeng/autocomplete';
-import {ApiService} from '@core/services';
+import {ApiService} from '@/core/services';
 import {TruckData, TruckHelper} from '../../shared';
 
 

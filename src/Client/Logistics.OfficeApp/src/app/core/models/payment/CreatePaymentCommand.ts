@@ -1,4 +1,4 @@
-import {PaymentFor, PaymentMethod} from '@core/enums';
+import {PaymentFor, PaymentMethod} from '@/core/enums';
 
 export interface CreatePaymentCommand {
   method: PaymentMethod;

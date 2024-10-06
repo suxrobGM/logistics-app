@@ -1,10 +1,10 @@
 /* eslint-disable indent */
 import {Injectable} from '@angular/core';
 import {map, Observable} from 'rxjs';
-import {RoleDto, UserDto} from '@core/models';
-import {ApiService} from '@core/services';
-import {UserRole} from '@core/enums';
-import {AuthService} from '@core/auth';
+import {RoleDto, UserDto} from '@/core/models';
+import {ApiService} from '@/core/services';
+import {UserRole} from '@/core/enums';
+import {AuthService} from '@/core/auth';
 
 
 @Injectable()

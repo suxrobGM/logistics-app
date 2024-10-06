@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {AppConfig} from '@configs';
-import {GrossesBarchartComponent, TrucksMapComponent} from '@shared/components';
+import {AppConfig} from '@/configs';
+import {GrossesBarchartComponent, TrucksMapComponent} from '@/components';
 import {CompanyStatsComponent, TruckStatsTableComponent} from './components';
 
 

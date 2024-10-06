@@ -3,9 +3,9 @@ import {CommonModule} from '@angular/common';
 import {CardModule} from 'primeng/card';
 import {ChartModule} from 'primeng/chart';
 import {SkeletonModule} from 'primeng/skeleton';
-import {MonthlyGrossesDto} from '@core/models';
-import {DateUtils, Converters} from '@core/utils';
-import {ApiService} from '@core/services';
+import {MonthlyGrossesDto} from '@/core/models';
+import {DateUtils, Converters} from '@/core/utils';
+import {ApiService} from '@/core/services';
 import {RangeCalendarComponent} from '../range-calendar/range-calendar.component';
 
 

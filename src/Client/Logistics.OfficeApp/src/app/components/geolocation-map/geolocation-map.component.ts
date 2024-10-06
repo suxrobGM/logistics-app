@@ -4,8 +4,8 @@ import {
 } from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {MarkerComponent, NgxMapboxGLModule} from 'ngx-mapbox-gl';
-import {TruckGeolocationDto} from '@core/models';
-import {AddressPipe} from '@core/pipes';
+import {TruckGeolocationDto} from '@/core/models';
+import {AddressPipe} from '@/core/pipes';
 
 
 @Component({

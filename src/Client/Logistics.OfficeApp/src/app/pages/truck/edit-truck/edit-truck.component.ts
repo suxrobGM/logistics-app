@@ -9,8 +9,8 @@ import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {CardModule} from 'primeng/card';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
-import {CreateTruckCommand, EmployeeDto, UpdateTruckCommand} from '@core/models';
-import {ApiService, ToastService} from '@core/services';
+import {CreateTruckCommand, EmployeeDto, UpdateTruckCommand} from '@/core/models';
+import {ApiService, ToastService} from '@/core/services';
 
 
 @Component({

@@ -2,7 +2,7 @@
 import {Injectable} from '@angular/core';
 import {EventTypes, OidcSecurityService, PublicEventsService} from 'angular-auth-oidc-client';
 import {Observable, filter, map} from 'rxjs';
-import {UserRoleEnum} from '@core/enums';
+import {UserRoleEnum} from '@/core/enums';
 import {UserData} from './userData';
 
 
@@ -82,7 +82,7 @@ export class AuthService {
 
   getUserRoleName(): string | null {
     const roleValue = this.userData?.roles[0];
-    
+
     if (!roleValue) {
       return null;
     }

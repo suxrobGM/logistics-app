@@ -7,11 +7,11 @@ import {ButtonModule} from 'primeng/button';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {RadioButtonModule} from 'primeng/radiobutton';
 import {InputMaskModule} from 'primeng/inputmask';
-import {PaymentMethod, PaymentMethodEnum, PaymentStatus} from '@core/enums';
-import {AddressDto, InvoiceDto, PayrollDto, ProcessPaymentCommand} from '@core/models';
-import {RegexPatterns} from '@core/helpers';
-import {ApiService, ToastService} from '@core/services';
-import {AddressFormComponent, ValidationSummaryComponent} from '@shared/components';
+import {PaymentMethod, PaymentMethodEnum, PaymentStatus} from '@/core/enums';
+import {AddressDto, InvoiceDto, PayrollDto, ProcessPaymentCommand} from '@/core/models';
+import {RegexPatterns} from '@/core/helpers';
+import {ApiService, ToastService} from '@/core/services';
+import {AddressFormComponent, ValidationSummaryComponent} from '@/components';
 import {InvoiceDetailsComponent, PayrollDetailsComponent} from '../components';
 
 
@@ -88,7 +88,7 @@ export class ProcessPaymentComponent implements OnInit {
 
   submit() {
     const paymentId = this.payroll?.payment.id ?? this.invoice?.payment.id;
-    
+
     if (!this.form.valid || !paymentId) {
       return;
     }
@@ -106,7 +106,7 @@ export class ProcessPaymentComponent implements OnInit {
       bankAccountNumber: this.form.value.bankAccountNumber!,
       bankRoutingNumber: this.form.value.bankRoutingNumber!,
     }
-    
+
     this.apiService.processPayment(command).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess('Payment has been processed successfully');
@@ -137,7 +137,7 @@ export class ProcessPaymentComponent implements OnInit {
       bankName?.clearValidators();
       bankAccountNumber?.clearValidators();
       bankRoutingNumber?.clearValidators();
-      
+
     }
     else if (paymentMethod === PaymentMethod.BankAccount) {
       bankName?.setValidators([Validators.required]);

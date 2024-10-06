@@ -7,9 +7,9 @@ import {SharedModule} from 'primeng/api';
 import {CardModule} from 'primeng/card';
 import {TooltipModule} from 'primeng/tooltip';
 import {ButtonModule} from 'primeng/button';
-import {EmployeeDto} from '@core/models';
-import {ApiService} from '@core/services';
-import {SalaryType, SalaryTypeEnum} from '@core/enums';
+import {EmployeeDto} from '@/core/models';
+import {ApiService} from '@/core/services';
+import {SalaryType, SalaryTypeEnum} from '@/core/enums';
 
 
 @Component({

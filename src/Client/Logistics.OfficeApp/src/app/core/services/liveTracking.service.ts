@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {TruckGeolocationDto} from '@core/models';
+import {TruckGeolocationDto} from '@/core/models';
 import {TenantService} from './tenant.service';
 import {BaseHubConnection} from './baseHubConnection';
 

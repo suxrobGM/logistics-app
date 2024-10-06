@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {GeolocationMapComponent} from '@shared/components';
-import {TruckGeolocationDto} from '@core/models';
-import {ApiService, LiveTrackingService} from '@core/services';
+import {GeolocationMapComponent} from '@/components';
+import {TruckGeolocationDto} from '@/core/models';
+import {ApiService, LiveTrackingService} from '@/core/services';
 
 
 @Component({

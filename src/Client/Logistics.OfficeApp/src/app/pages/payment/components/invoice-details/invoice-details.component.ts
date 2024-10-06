@@ -1,8 +1,8 @@
 import {Component, Input} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {InvoiceDto, TenantDto} from '@core/models';
-import {TenantService} from '@core/services';
-import {AddressPipe} from '@shared/pipes';
+import {InvoiceDto, TenantDto} from '@/core/models';
+import {TenantService} from '@/core/services';
+import {AddressPipe} from '@/core/pipes';
 
 
 @Component({

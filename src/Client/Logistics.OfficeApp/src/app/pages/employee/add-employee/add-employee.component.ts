@@ -10,11 +10,11 @@ import {CardModule} from 'primeng/card';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
 import {ConfirmationService} from 'primeng/api';
-import {SalaryType, SalaryTypeEnum} from '@core/enums';
-import {CreateEmployeeCommand, RoleDto, UserDto} from '@core/models';
-import {ApiService, ToastService} from '@core/services';
+import {SalaryType, SalaryTypeEnum} from '@/core/enums';
+import {CreateEmployeeCommand, RoleDto, UserDto} from '@/core/models';
+import {ApiService, ToastService} from '@/core/services';
 import {UserService} from '../services';
-import {ValidationSummaryComponent} from '@shared/components';
+import {ValidationSummaryComponent} from '@/components';
 
 
 @Component({

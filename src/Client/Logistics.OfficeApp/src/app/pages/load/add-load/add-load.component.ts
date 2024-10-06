@@ -9,18 +9,18 @@ import {ButtonModule} from 'primeng/button';
 import {DropdownModule} from 'primeng/dropdown';
 import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {AppConfig} from '@configs';
-import {AuthService} from '@core/auth';
-import {AddressDto, CreateLoadCommand, CustomerDto} from '@core/models';
-import {ApiService, ToastService} from '@core/services';
-import {Converters} from '@shared/utils';
+import {AppConfig} from '@/configs';
+import {AuthService} from '@/core/auth';
+import {AddressDto, CreateLoadCommand, CustomerDto} from '@/core/models';
+import {ApiService, ToastService} from '@/core/services';
+import {Converters} from '@/core/utils';
 import {
   AddressAutocompleteComponent,
   DirectionsMapComponent,
   RouteChangedEvent,
   SelectedAddressEvent,
   ValidationSummaryComponent,
-} from '@shared/components';
+} from '@/components';
 import {SearchCustomerComponent, SearchTruckComponent} from '../components';
 import {TruckData} from '../shared';
 
@@ -121,7 +121,7 @@ export class AddLoadComponent implements OnInit {
       assignedTruckId: this.form.value.assignedTruck!.truckId,
       customerId: this.form.value.customer!.id,
     };
-    
+
     this.apiService.createLoad(command)
       .subscribe((result) => {
         if (result.success) {

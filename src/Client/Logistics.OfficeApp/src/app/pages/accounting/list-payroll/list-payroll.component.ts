@@ -6,16 +6,16 @@ import {CardModule} from 'primeng/card';
 import {InputTextModule} from 'primeng/inputtext';
 import {ButtonModule} from 'primeng/button';
 import {TooltipModule} from 'primeng/tooltip';
-import {PayrollDto} from '@core/models';
+import {PayrollDto} from '@/core/models';
 import {
   PaymentMethod,
   PaymentMethodEnum,
   PaymentStatus,
   SalaryType,
   SalaryTypeEnum,
-} from '@core/enums';
-import {ApiService} from '@core/services';
-import {PaymentStatusTagComponent} from '@shared/components';
+} from '@/core/enums';
+import {ApiService} from '@/core/services';
+import {PaymentStatusTagComponent} from '@/components';
 
 
 @Component({
@@ -67,8 +67,8 @@ export class ListPayrollComponent {
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
     this.apiService.getPayrolls({
-      orderBy: sortField, 
-      page: page, 
+      orderBy: sortField,
+      page: page,
       pageSize: rows,
     }).subscribe((result) => {
       if (result.success && result.data) {

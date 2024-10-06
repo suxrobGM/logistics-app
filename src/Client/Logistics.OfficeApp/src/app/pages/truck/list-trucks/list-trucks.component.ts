@@ -7,9 +7,9 @@ import {SharedModule} from 'primeng/api';
 import {CardModule} from 'primeng/card';
 import {TooltipModule} from 'primeng/tooltip';
 import {ButtonModule} from 'primeng/button';
-import {TruckDto} from '@core/models';
-import {ApiService} from '@core/services';
-import {AddressPipe} from '@shared/pipes';
+import {TruckDto} from '@/core/models';
+import {ApiService} from '@/core/services';
+import {AddressPipe} from '@/core/pipes';
 
 
 @Component({

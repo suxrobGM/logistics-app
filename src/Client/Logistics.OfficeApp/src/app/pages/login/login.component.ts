@@ -3,7 +3,7 @@ import {NgIf} from '@angular/common';
 import {Router} from '@angular/router';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {ButtonModule} from 'primeng/button';
-import {AuthService} from '@core/auth';
+import {AuthService} from '@/core/auth';
 
 
 @Component({

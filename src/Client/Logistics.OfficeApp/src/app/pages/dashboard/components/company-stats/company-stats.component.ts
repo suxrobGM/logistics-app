@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonModule, CurrencyPipe} from '@angular/common';
-import {CompanyStatsDto} from '@core/models';
-import {ApiService} from '@core/services';
-import {Converters} from '@shared/utils';
-import {DistanceUnitPipe} from '@shared/pipes';
+import {CompanyStatsDto} from '@/core/models';
+import {ApiService} from '@/core/services';
+import {Converters} from '@/core/utils';
+import {DistanceUnitPipe} from '@/core/pipes';
 import {SharedModule} from 'primeng/api';
 import {CardModule} from 'primeng/card';
 import {ChartModule} from 'primeng/chart';

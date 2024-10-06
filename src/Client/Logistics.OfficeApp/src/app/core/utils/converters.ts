@@ -1,4 +1,4 @@
-import {AddressDto} from '@core/models';
+import {AddressDto} from '@/core/models';
 
 export abstract class Converters {
   /**

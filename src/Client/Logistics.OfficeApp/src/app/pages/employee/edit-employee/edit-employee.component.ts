@@ -9,13 +9,13 @@ import {CardModule} from 'primeng/card';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
 import {DropdownModule} from 'primeng/dropdown';
-import {SalaryType, SalaryTypeEnum, UserRole} from '@core/enums';
-import {EmployeeDto, UpdateEmployeeCommand} from '@core/models';
-import {ApiService, ToastService} from '@core/services';
-import {AuthService} from '@core/auth';
+import {SalaryType, SalaryTypeEnum, UserRole} from '@/core/enums';
+import {EmployeeDto, UpdateEmployeeCommand} from '@/core/models';
+import {ApiService, ToastService} from '@/core/services';
+import {AuthService} from '@/core/auth';
 import {ChangeRoleDialogComponent} from '../components';
-import {ValidationSummaryComponent} from '@shared/components';
-import {NumberUtils} from '@shared/utils';
+import {ValidationSummaryComponent} from '@/components';
+import {NumberUtils} from '@/core/utils';
 
 
 @Component({
@@ -68,7 +68,7 @@ export class EditEmployeeComponent implements OnInit {
       if (!salaryControl) {
         return;
       }
-      
+
       if (selectedSalaryType === SalaryType.ShareOfGross) {
         salaryControl.setValidators([Validators.required, Validators.min(0), Validators.max(100)]);
         salaryControl.setValue(0);
@@ -105,7 +105,7 @@ export class EditEmployeeComponent implements OnInit {
       salary: salaryType === SalaryType.ShareOfGross ? NumberUtils.toRatio(salary ?? 0) : salary,
       salaryType: salaryType,
     }
-    
+
     this.isLoading = true;
     this.apiService.updateEmployee(command).subscribe((result) => {
       if (result.success) {

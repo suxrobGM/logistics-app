@@ -1,7 +1,7 @@
 import {Routes} from '@angular/router';
-import {Error404Component} from '@pages/error404';
-import {LoginComponent} from '@pages/login';
-import {UnauthorizedComponent} from '@pages/unauthorized';
+import {Error404Component} from '@/pages/error404';
+import {LoginComponent} from '@/pages/login';
+import {UnauthorizedComponent} from '@/pages/unauthorized';
 
 
 export const APP_ROUTES: Routes = [

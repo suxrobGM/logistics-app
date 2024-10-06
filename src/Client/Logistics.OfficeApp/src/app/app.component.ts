@@ -2,8 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {Router, RouterOutlet} from '@angular/router';
 import {ToastModule} from 'primeng/toast';
-import {AuthService} from '@core/auth';
-import {BreadcrumbComponent, SidebarComponent} from '@layout';
+import {AuthService} from '@/core/auth';
+import {BreadcrumbComponent, SidebarComponent} from '@/components/layout';
 
 
 @Component({

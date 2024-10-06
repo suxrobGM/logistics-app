@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {PaymentStatus, PaymentStatusEnum} from '@core/enums';
+import {PaymentStatus, PaymentStatusEnum} from '@/core/enums';
 import {TagModule} from 'primeng/tag';
 
 
