@@ -6,7 +6,7 @@ import {TenantService} from "./tenant.service";
 import {BaseHubConnection} from "./base-hub-connection";
 import {ApiService} from "./api.service";
 
-@Injectable()
+@Injectable({providedIn: "root"})
 export class NotificationService extends BaseHubConnection {
   constructor(
     private apiService: ApiService,
@@ -15,7 +15,7 @@ export class NotificationService extends BaseHubConnection {
     super("notification", tenantService);
   }
 
-  set onReceiveNotification(callback: OnReceiveNotifictionCallback) {
+  set onReceiveNotification(callback: OnReceiveNotifictionFn) {
     this.hubConnection.on("ReceiveNotification", callback);
   }
 
@@ -32,4 +32,4 @@ export class NotificationService extends BaseHubConnection {
   }
 }
 
-type OnReceiveNotifictionCallback = (notification: NotificationDto) => void;
+type OnReceiveNotifictionFn = (notification: NotificationDto) => void;

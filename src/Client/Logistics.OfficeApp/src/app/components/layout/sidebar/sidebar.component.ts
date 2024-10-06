@@ -6,7 +6,7 @@ import {SplitButtonModule} from "primeng/splitbutton";
 import {PanelMenuModule} from "primeng/panelmenu";
 import {OverlayPanelModule} from "primeng/overlaypanel";
 import {MenuItem} from "primeng/api";
-import {AppConfig} from "@/configs";
+import {GLOBAL_CONFIG} from "@/configs";
 import {AuthService} from "@/core/auth";
 import {ApiService, TenantService} from "@/core/services";
 
@@ -107,6 +107,6 @@ export class SidebarComponent implements OnInit {
   }
 
   openAccountUrl() {
-    window.open(`${AppConfig.idHost}/account/manage/profile`, "_blank");
+    window.open(`${GLOBAL_CONFIG.idHost}/account/manage/profile`, "_blank");
   }
 }

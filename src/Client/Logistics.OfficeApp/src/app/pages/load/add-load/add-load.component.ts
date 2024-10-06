@@ -8,7 +8,7 @@ import {ButtonModule} from "primeng/button";
 import {DropdownModule} from "primeng/dropdown";
 import {AutoCompleteModule} from "primeng/autocomplete";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {AppConfig} from "@/configs";
+import {GLOBAL_CONFIG} from "@/configs";
 import {AuthService} from "@/core/auth";
 import {AddressDto, CreateLoadCommand, CustomerDto} from "@/core/models";
 import {ApiService, ToastService} from "@/core/services";
@@ -47,7 +47,7 @@ import {TruckData} from "../shared";
   ],
 })
 export class AddLoadComponent implements OnInit {
-  public readonly accessToken = AppConfig.mapboxToken;
+  public readonly accessToken = GLOBAL_CONFIG.mapboxToken;
   private distanceMeters = 0;
   public isLoading = false;
   public form: FormGroup<AddLoadForm>;

@@ -10,7 +10,7 @@ import {ButtonModule} from "primeng/button";
 import {DropdownModule} from "primeng/dropdown";
 import {AutoCompleteModule} from "primeng/autocomplete";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {AppConfig} from "@/configs";
+import {GLOBAL_CONFIG} from "@/configs";
 import {EnumType, LoadStatus, LoadStatusEnum} from "@/core/enums";
 import {AddressDto, CustomerDto, UpdateLoadCommand} from "@/core/models";
 import {ApiService, ToastService} from "@/core/services";
@@ -51,7 +51,7 @@ import {SearchCustomerComponent, SearchTruckComponent} from "../components";
   providers: [ConfirmationService],
 })
 export class EditLoadComponent implements OnInit {
-  public readonly accessToken = AppConfig.mapboxToken;
+  public readonly accessToken = GLOBAL_CONFIG.mapboxToken;
   private distanceMeters = 0;
   public id!: string;
   public loadRefId!: number;

@@ -1,2 +1,2 @@
-export {AuthConfig} from "./auth.config";
-export {AppConfig} from "./app.config";
+export * from "./auth.config";
+export * from "./global.config";

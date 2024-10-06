@@ -37,10 +37,10 @@ Follow these steps to get the project up and running:
     $ cd logistics-app
     ```
 
-3. Install Angular app NPM packages:
+3. Install Angular app dependencies:
    ```
    cd src\Client\Logistics.OfficeApp
-   npm install
+   bun install
    ```
 
 4. Update database connection strings: 

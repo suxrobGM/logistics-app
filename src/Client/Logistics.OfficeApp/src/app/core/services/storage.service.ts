@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 
-@Injectable()
+@Injectable({providedIn: "root"})
 export class StorageService {
   get<T = unknown>(name: string): T | null {
     try {

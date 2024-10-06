@@ -8,7 +8,7 @@ import {TooltipModule} from "primeng/tooltip";
 import {TableModule} from "primeng/table";
 import {SharedModule} from "primeng/api";
 import {CardModule} from "primeng/card";
-import {AppConfig} from "@/configs";
+import {GLOBAL_CONFIG} from "@/configs";
 import {DailyGrossesDto, LoadDto} from "@/core/models";
 import {ApiService} from "@/core/services";
 import {TrucksMapComponent} from "@/components";
@@ -39,7 +39,7 @@ import {NotificationsPanelComponent} from "./components";
   ],
 })
 export class HomeComponent implements OnInit {
-  public readonly accessToken = AppConfig.mapboxToken;
+  public readonly accessToken = GLOBAL_CONFIG.mapboxToken;
   public todayGross = 0;
   public weeklyGross = 0;
   public weeklyDistance = 0;

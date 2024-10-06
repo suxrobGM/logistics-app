@@ -7,7 +7,7 @@ import {DailyGrossesDto, MonthlyGrossesDto, TruckDto, TruckGeolocationDto} from 
 import {DistanceUnitPipe} from "@/core/pipes";
 import {ApiService} from "@/core/services";
 import {GeolocationMapComponent, GrossesBarchartComponent, BarChartDrawnEvent} from "@/components";
-import {AppConfig} from "@/configs";
+import {GLOBAL_CONFIG} from "@/configs";
 import {LineChartDrawnEvent, TruckGrossesLinechartComponent} from "../components";
 
 @Component({
@@ -28,26 +28,20 @@ import {LineChartDrawnEvent, TruckGrossesLinechartComponent} from "../components
   ],
 })
 export class TruckDetailsComponent implements OnInit {
-  public readonly accessToken: string;
+  public readonly accessToken = GLOBAL_CONFIG.mapboxToken;
   public id!: string;
-  public isLoading: boolean;
+  public isLoading = false;
   public truck?: TruckDto;
   public dailyGrosses?: DailyGrossesDto;
   public monthlyGrosses?: MonthlyGrossesDto;
-  public rpmCurrent: number;
-  public rpmAllTime: number;
-  public truckLocations: TruckGeolocationDto[];
+  public rpmCurrent = 0;
+  public rpmAllTime = 0;
+  public truckLocations: TruckGeolocationDto[] = [];
 
   constructor(
     private apiService: ApiService,
     private route: ActivatedRoute
-  ) {
-    this.accessToken = AppConfig.mapboxToken;
-    this.truckLocations = [];
-    this.isLoading = false;
-    this.rpmCurrent = 0;
-    this.rpmAllTime = 0;
-  }
+  ) {}
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {

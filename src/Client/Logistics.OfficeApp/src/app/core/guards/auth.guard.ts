@@ -3,7 +3,7 @@ import {ActivatedRouteSnapshot, Router, UrlTree} from "@angular/router";
 import {map, Observable} from "rxjs";
 import {AuthService, UserData} from "@/core/auth";
 
-@Injectable()
+@Injectable({providedIn: "root"})
 export class AuthGuard {
   constructor(
     private authService: AuthService,

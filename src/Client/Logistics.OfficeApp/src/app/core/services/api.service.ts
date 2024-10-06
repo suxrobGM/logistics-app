@@ -3,7 +3,7 @@ import {Injectable} from "@angular/core";
 import {MessageService} from "primeng/api";
 import {catchError, Observable, of} from "rxjs";
 import {TenantService} from "@/core/services";
-import {AppConfig} from "@/configs";
+import {GLOBAL_CONFIG} from "@/configs";
 import {
   Result,
   EmployeeDto,
@@ -45,7 +45,7 @@ import {
   GetPayrollsQuery,
 } from "../models";
 
-@Injectable()
+@Injectable({providedIn: "root"})
 export class ApiService {
   private host: string;
   private headers: Record<string, string>;
@@ -55,7 +55,7 @@ export class ApiService {
     private readonly tenantService: TenantService,
     private readonly messageService: MessageService
   ) {
-    this.host = AppConfig.apiHost;
+    this.host = GLOBAL_CONFIG.apiHost;
     this.headers = {"content-type": "application/json"};
   }
 

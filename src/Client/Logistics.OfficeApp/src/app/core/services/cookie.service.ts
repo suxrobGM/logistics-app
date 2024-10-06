@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 
-@Injectable()
+@Injectable({providedIn: "root"})
 export class CookieService {
   getCookie(name: string): string {
     const cookies = document.cookie.split(";");
