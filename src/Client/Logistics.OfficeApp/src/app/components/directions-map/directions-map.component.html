@@ -1,0 +1,50 @@
+<mgl-map [accessToken]="accessToken"
+  [style]="'mapbox://styles/mapbox/streets-v11'" 
+  [zoom]="[zoom]" 
+  [center]="center"
+  [fitBounds]="bounds!"
+  [fitBoundsOptions]="{padding: 50}"
+  [style.width]="width"
+  [style.height]="height">
+  <mgl-image id="custom-marker"
+    url="https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png"
+    (imageLoaded)="isImageLoaded = true">
+  </mgl-image>
+  
+  <!-- Route Layer -->
+  @if (route) {
+    <mgl-layer 
+      id="routeLayer" 
+      type="line" 
+      [source]="route" 
+      [paint]="{
+        'line-color': '#28a745',
+        'line-width': 8
+      }">
+    </mgl-layer>
+  }
+
+  <!-- Start Point Symbol Layer -->
+  @if (startPoint && isImageLoaded) {
+    <mgl-layer
+      id="startPointLayer"
+      type="symbol"
+      [source]="startPoint"
+      [layout]="{
+        'icon-image': 'custom-marker'
+      }">
+    </mgl-layer>
+  }
+
+  <!-- End Point Symbol Layer -->
+  @if (endPoint && isImageLoaded) {
+    <mgl-layer
+      id="endPointLayer"
+      type="symbol"
+      [source]="endPoint"
+      [layout]="{
+        'icon-image': 'custom-marker'
+      }">
+  </mgl-layer>
+  }
+</mgl-map>
