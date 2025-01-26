@@ -7,9 +7,12 @@ public partial class App
     public App(IServiceProvider serviceProvider)
     {
         InitializeComponent();
-        
         _serviceProvider = serviceProvider;
-        MainPage = new AppShell();
+    }
+
+    protected override Window CreateWindow(IActivationState? activationState)
+    {
+        return new Window(new AppShell());
     }
 
     public new static App Current => (App)Application.Current!;

@@ -8,6 +8,7 @@
                        xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels"
                        xmlns:controls="clr-namespace:Logistics.DriverApp.Controls"
                        x:Name="loadPage"
+                       x:DataType="viewModels:LoadPageViewModel"
                        Title="Load">
     <Grid BackgroundColor="#dae5f3">
         <syncfusion:SfBusyIndicator ZIndex="2"

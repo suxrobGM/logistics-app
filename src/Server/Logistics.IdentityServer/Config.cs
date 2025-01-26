@@ -1,5 +1,5 @@
-﻿using Duende.IdentityServer.Models;
-using IdentityModel;
+﻿using Duende.IdentityModel;
+using Duende.IdentityServer.Models;
 using Logistics.Shared.Consts.Claims;
 
 namespace Logistics.IdentityServer;

@@ -6,8 +6,10 @@
                        xmlns:syncfusion="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
                        xmlns:views="clr-namespace:Logistics.DriverApp.Views"
                        xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels"
+                       xmlns:models="clr-namespace:Logistics.DriverApp.Models"
                        xmlns:controls="clr-namespace:Logistics.DriverApp.Controls"
                        x:Name="dashboardPage"
+                       x:DataType="viewModels:DashboardPageViewModel"
                        Title="Dashboard">
     <Grid BackgroundColor="#dae5f3">
         <syncfusion:SfBusyIndicator ZIndex="2"
@@ -42,7 +44,8 @@
             <ListView Grid.Row="1"
                       ItemsSource="{Binding Loads}"
                       RowHeight="180"
-                      SelectionMode="None">
+                      SelectionMode="None"
+                      x:DataType="models:ActiveLoad">
                 
                 <ListView.Header>
                     <StackLayout Padding="0,10,0,10">

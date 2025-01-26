@@ -7,6 +7,7 @@
                        xmlns:dataForm="clr-namespace:Syncfusion.Maui.DataForm;assembly=Syncfusion.Maui.DataForm"
                        xmlns:views="clr-namespace:Logistics.DriverApp.Views"
                        xmlns:viewModels="clr-namespace:Logistics.DriverApp.ViewModels"
+                       x:DataType="viewModels:AccountPageViewModel"
                        Title="Account">
     <Grid>
         <Grid.RowDefinitions>

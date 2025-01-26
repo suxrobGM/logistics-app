@@ -6,33 +6,40 @@
 
 <RadzenButton class="mb-3" Click="@(() => Navigation.NavigateTo("/subscription-plans/add"))">Add</RadzenButton>
 
-<RadzenGrid Data="_subscriptionPlans"
-            LoadData="LoadData"
-            Count="_totalRecords"
-            AllowPaging="true"
-            AllowSorting="true"
-            PageSizeOptions="new[] { 10, 25, 50 }"
-            PageSize="10">
+<RadzenDataGridColumn 
+    Data="_subscriptionPlans"
+    TItem="SubscriptionPlanDto"
+    LoadData="LoadData"
+    Count="_totalRecords"
+    AllowPaging="true"
+    AllowSorting="true"
+    PageSizeOptions="new[] { 10, 25, 50 }"
+    PageSize="10">
     <Columns>
-        <RadzenGridColumn TItem="SubscriptionPlanDto"
-                          Property="Name"
-                          Title="Name">
-        </RadzenGridColumn>
-        <RadzenGridColumn TItem="SubscriptionPlanDto"
-                          Property="Description"
-                          Title="Description">
-        </RadzenGridColumn>
-        <RadzenGridColumn TItem="SubscriptionPlanDto"
-                          Property="Price"
-                          Title="Price">
+        <RadzenDataGridColumn 
+            TItem="SubscriptionPlanDto"
+            Property="Name"
+            Title="Name">
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn 
+            TItem="SubscriptionPlanDto"
+            Property="Description"
+            Title="Description">
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn 
+            TItem="SubscriptionPlanDto"
+            Property="Price"
+            Title="Price">
             <Template Context="subscriptionPlan">
                 <CurrencyText Value="subscriptionPlan.Price"/>
             </Template>
-        </RadzenGridColumn>
-        <RadzenGridColumn TItem="SubscriptionPlanDto" Title="Action">
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn 
+            TItem="SubscriptionPlanDto" 
+            Title="Action">
             <Template Context="subscriptionPlan">
                 <RadzenButton Click="@(() => Navigation.NavigateTo($"subscription-plans/{subscriptionPlan.Id}"))">Edit</RadzenButton>
             </Template>
-        </RadzenGridColumn>
+        </RadzenDataGridColumn>
     </Columns>
-</RadzenGrid>
+</RadzenDataGridColumn>

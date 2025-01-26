@@ -10,6 +10,7 @@
                        xmlns:syncfusion="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
                        xmlns:controls="clr-namespace:Logistics.DriverApp.Controls"
                        x:Name="pastLoadsPage"
+                       x:DataType="viewModels:PastLoadsPageViewModel"
                        Title="Past Loads">
 
     <ContentPage.Resources>

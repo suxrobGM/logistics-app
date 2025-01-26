@@ -50,7 +50,7 @@ public class DashboardPageViewModel : BaseViewModel
 
     #region Bindable properties
 
-    public ObservableCollection<ActiveLoad> Loads { get; } = new();
+    public ObservableCollection<ActiveLoad> Loads { get; } = [];
 
     private string? _truckNumber;
     public string? TruckNumber
