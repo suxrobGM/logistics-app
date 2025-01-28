@@ -1,0 +1,120 @@
+﻿<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="iPhone" />
+    <Platform Name="iPhoneSimulator" />
+  </Configurations>
+  <Folder Name="/Client/">
+    <Project Path="src\Client\Logistics.AdminApp\Logistics.AdminApp.csproj">
+      <Configuration Solution="Debug|iPhone" Project="Debug|Any CPU" />
+      <Configuration Solution="Debug|iPhoneSimulator" Project="Debug|Any CPU" />
+      <Configuration Solution="Release|iPhone" Project="Release|Any CPU" />
+      <Configuration Solution="Release|iPhoneSimulator" Project="Release|Any CPU" />
+    </Project>
+    <Project Path="src\Client\Logistics.DriverApp\Logistics.DriverApp.csproj" Type="Classic C#">
+      <Configuration Solution="Debug|iPhone" Project="Debug|Any CPU" />
+      <Configuration Solution="Debug|iPhoneSimulator" Project="Debug|Any CPU" />
+      <Configuration Solution="Release|iPhone" Project="Release|Any CPU" />
+      <Configuration Solution="Release|iPhoneSimulator" Project="Release|Any CPU" />
+    </Project>
+    <Project Path="src\Client\Logistics.HttpClient\Logistics.HttpClient.csproj">
+      <Configuration Solution="Debug|iPhone" Project="Debug|Any CPU" />
+      <Configuration Solution="Debug|iPhoneSimulator" Project="Debug|Any CPU" />
+      <Configuration Solution="Release|iPhone" Project="Release|Any CPU" />
+      <Configuration Solution="Release|iPhoneSimulator" Project="Release|Any CPU" />
+    </Project>
+    <Project Path="src\Client\MauiApp1\MauiApp1.csproj" Type="Classic C#">
+      <Configuration Solution="Debug|iPhone" Project="Debug|Any CPU" />
+      <Configuration Solution="Debug|iPhoneSimulator" Project="Debug|Any CPU" />
+      <Configuration Solution="Release|iPhone" Project="Release|Any CPU" />
+      <Configuration Solution="Release|iPhoneSimulator" Project="Release|Any CPU" />
+    </Project>
+  </Folder>
+  <Folder Name="/Docs/">
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Server/">
+    <Project Path="src\Server\Logistics.API\Logistics.API.csproj">
+      <Configuration Solution="Debug|iPhone" Project="Debug|Any CPU" />
+      <Configuration Solution="Debug|iPhoneSimulator" Project="Debug|Any CPU" />
+      <Configuration Solution="Release|iPhone" Project="Release|Any CPU" />
+      <Configuration Solution="Release|iPhoneSimulator" Project="Release|Any CPU" />
+    </Project>
+    <Project Path="src\Server\Logistics.Application.Admin\Logistics.Application.Admin.csproj">
+      <Configuration Solution="Debug|iPhone" Project="Debug|Any CPU" />
+      <Configuration Solution="Debug|iPhoneSimulator" Project="Debug|Any CPU" />
+      <Configuration Solution="Release|iPhone" Project="Release|Any CPU" />
+      <Configuration Solution="Release|iPhoneSimulator" Project="Release|Any CPU" />
+    </Project>
+    <Project Path="src\Server\Logistics.Application.Core\Logistics.Application.Core.csproj">
+      <Configuration Solution="Debug|iPhone" Project="Debug|Any CPU" />
+      <Configuration Solution="Debug|iPhoneSimulator" Project="Debug|Any CPU" />
+      <Configuration Solution="Release|iPhone" Project="Release|Any CPU" />
+      <Configuration Solution="Release|iPhoneSimulator" Project="Release|Any CPU" />
+    </Project>
+    <Project Path="src\Server\Logistics.Application.Tenant\Logistics.Application.Tenant.csproj">
+      <Configuration Solution="Debug|iPhone" Project="Debug|Any CPU" />
+      <Configuration Solution="Debug|iPhoneSimulator" Project="Debug|Any CPU" />
+      <Configuration Solution="Release|iPhone" Project="Release|Any CPU" />
+      <Configuration Solution="Release|iPhoneSimulator" Project="Release|Any CPU" />
+    </Project>
+    <Project Path="src\Server\Logistics.DbMigrator\Logistics.DbMigrator.csproj">
+      <Configuration Solution="Debug|iPhone" Project="Debug|Any CPU" />
+      <Configuration Solution="Debug|iPhoneSimulator" Project="Debug|Any CPU" />
+      <Configuration Solution="Release|iPhone" Project="Release|Any CPU" />
+      <Configuration Solution="Release|iPhoneSimulator" Project="Release|Any CPU" />
+    </Project>
+    <Project Path="src\Server\Logistics.Domain\Logistics.Domain.csproj">
+      <Configuration Solution="Debug|iPhone" Project="Debug|Any CPU" />
+      <Configuration Solution="Debug|iPhoneSimulator" Project="Debug|Any CPU" />
+      <Configuration Solution="Release|iPhone" Project="Release|Any CPU" />
+      <Configuration Solution="Release|iPhoneSimulator" Project="Release|Any CPU" />
+    </Project>
+    <Project Path="src\Server\Logistics.IdentityServer\Logistics.IdentityServer.csproj">
+      <Configuration Solution="Debug|iPhone" Project="Debug|Any CPU" />
+      <Configuration Solution="Debug|iPhoneSimulator" Project="Debug|Any CPU" />
+      <Configuration Solution="Release|iPhone" Project="Release|Any CPU" />
+      <Configuration Solution="Release|iPhoneSimulator" Project="Release|Any CPU" />
+    </Project>
+    <Project Path="src\Server\Logistics.Infrastructure.EF\Logistics.Infrastructure.EF.csproj">
+      <Configuration Solution="Debug|iPhone" Project="Debug|Any CPU" />
+      <Configuration Solution="Debug|iPhoneSimulator" Project="Debug|Any CPU" />
+      <Configuration Solution="Release|iPhone" Project="Release|Any CPU" />
+      <Configuration Solution="Release|iPhoneSimulator" Project="Release|Any CPU" />
+    </Project>
+    <Project Path="src\Server\Logistics.Mappings\Logistics.Mappings.csproj">
+      <Configuration Solution="Debug|iPhone" Project="Debug|Any CPU" />
+      <Configuration Solution="Debug|iPhoneSimulator" Project="Debug|Any CPU" />
+      <Configuration Solution="Release|iPhone" Project="Release|Any CPU" />
+      <Configuration Solution="Release|iPhoneSimulator" Project="Release|Any CPU" />
+    </Project>
+  </Folder>
+  <Folder Name="/Shared/">
+    <Project Path="src\Shared\Logistics.Shared.Consts\Logistics.Shared.Consts.csproj">
+      <Configuration Solution="Debug|iPhone" Project="Debug|Any CPU" />
+      <Configuration Solution="Debug|iPhoneSimulator" Project="Debug|Any CPU" />
+      <Configuration Solution="Release|iPhone" Project="Release|Any CPU" />
+      <Configuration Solution="Release|iPhoneSimulator" Project="Release|Any CPU" />
+    </Project>
+    <Project Path="src\Shared\Logistics.Shared.Models\Logistics.Shared.Models.csproj">
+      <Configuration Solution="Debug|iPhone" Project="Debug|Any CPU" />
+      <Configuration Solution="Debug|iPhoneSimulator" Project="Debug|Any CPU" />
+      <Configuration Solution="Release|iPhone" Project="Release|Any CPU" />
+      <Configuration Solution="Release|iPhoneSimulator" Project="Release|Any CPU" />
+    </Project>
+    <Project Path="src\Shared\Logistics.Shared\Logistics.Shared.csproj">
+      <Configuration Solution="Debug|iPhone" Project="Debug|Any CPU" />
+      <Configuration Solution="Debug|iPhoneSimulator" Project="Debug|Any CPU" />
+      <Configuration Solution="Release|iPhone" Project="Release|Any CPU" />
+      <Configuration Solution="Release|iPhoneSimulator" Project="Release|Any CPU" />
+    </Project>
+  </Folder>
+  <Folder Name="/Test/">
+    <Project Path="test\Logistics.Application.Admin.Tests\Logistics.Application.Admin.Tests.csproj">
+      <Configuration Solution="Debug|iPhone" Project="Debug|Any CPU" />
+      <Configuration Solution="Debug|iPhoneSimulator" Project="Debug|Any CPU" />
+      <Configuration Solution="Release|iPhone" Project="Release|Any CPU" />
+      <Configuration Solution="Release|iPhoneSimulator" Project="Release|Any CPU" />
+    </Project>
+  </Folder>
+</Solution>
