@@ -22,7 +22,7 @@
     <h6>Shipper/Dealer:</h6>
   </div>
   <div class="col-8">
-    {{ invoice.customer.name }}
+    {{ invoice().customer.name }}
   </div>
 </div>
 <div class="row mb-3">
@@ -30,7 +30,7 @@
     <h6>Invoice Load ID:</h6>
   </div>
   <div class="col-8">
-    {{ invoice.loadRef }}
+    {{ invoice().loadRef }}
   </div>
 </div>
 <div class="row mb-3">
@@ -38,7 +38,7 @@
     <h6>Invoice Date:</h6>
   </div>
   <div class="col-8">
-    {{ invoice.createdDate | date: "mediumDate" }}
+    {{ invoice().createdDate | date: "mediumDate" }}
   </div>
 </div>
 <div class="row mb-3">
@@ -46,6 +46,6 @@
     <h6>Payment Amount:</h6>
   </div>
   <div class="col-8">
-    {{ invoice.payment.amount | currency }}
+    {{ invoice().payment.amount | currency }}
   </div>
 </div>

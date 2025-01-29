@@ -1,4 +1,4 @@
-import {Component, Input} from "@angular/core";
+import {Component, input} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {PaymentStatus, PaymentStatusEnum} from "@/core/enums";
 import {TagModule} from "primeng/tag";
@@ -10,7 +10,7 @@ import {TagModule} from "primeng/tag";
   imports: [CommonModule, TagModule],
 })
 export class PaymentStatusTagComponent {
-  @Input({required: true}) paymentStatus!: PaymentStatus;
+  public readonly paymentStatus = input.required<PaymentStatus>();
 
   getPaymentStatusDesc(enumValue: PaymentStatus): string {
     return PaymentStatusEnum.getValue(enumValue).description;

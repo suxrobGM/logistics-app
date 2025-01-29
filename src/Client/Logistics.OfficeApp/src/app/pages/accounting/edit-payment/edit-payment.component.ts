@@ -38,10 +38,10 @@ export class EditPaymentComponent implements OnInit {
   public readonly paymentStatuses = PaymentStatusEnum.toArray();
   public readonly paymentMethods = PaymentMethodEnum.toArray();
   public readonly paymentForValues = PaymentForEnum.toArray();
-  public title = signal("Edit payment");
-  public id = input<string>("");
-  public isLoading = signal(false);
-  public form: FormGroup<PaymentForm>;
+  public readonly title = signal("Edit payment");
+  public readonly id = input<string>("");
+  public readonly isLoading = signal(false);
+  public readonly form: FormGroup<PaymentForm>;
 
   constructor(
     private readonly apiService: ApiService,

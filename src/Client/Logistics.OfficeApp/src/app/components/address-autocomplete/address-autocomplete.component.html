@@ -1,10 +1,10 @@
 <div class="position-relative">
   <input
     type="text"
-    [id]="field"
-    [name]="field"
+    [id]="field()"
+    [name]="field()"
     class="form-control"
-    [placeholder]="placeholder"
+    [placeholder]="placeholder()"
     (input)="handleAddressInputChange($event)"
     (focusout)="handleInputFocusOut($event)"
     [(ngModel)]="addressString"
@@ -12,7 +12,7 @@
 
   @if (searchResults.length) {
     <div class="popup">
-      @for (result of searchResults; track result.id) {
+      @for (result of searchResults(); track result.id) {
         <div class="popup-item" (click)="handleClickAddress(result)" role="presentation">
           {{ result.place_name }}
         </div>

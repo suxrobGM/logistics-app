@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from "@angular/core";
+import {Component, Input, OnDestroy, OnInit, input} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {GeolocationMapComponent} from "@/components";
 import {TruckGeolocationDto} from "@/core/models";
@@ -14,7 +14,7 @@ import {ApiService, LiveTrackingService} from "@/core/services";
 export class TrucksMapComponent implements OnInit, OnDestroy {
   public truckLocations: TruckGeolocationDto[];
 
-  @Input({required: true}) accessToken!: string;
+  public readonly accessToken = input.required<string>();
   @Input() width: string;
   @Input() height: string;
 

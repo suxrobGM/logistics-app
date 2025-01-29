@@ -1,4 +1,4 @@
-import {Component, Input} from "@angular/core";
+import {Component, input} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {InvoiceDto, TenantDto} from "@/core/models";
 import {TenantService} from "@/core/services";
@@ -12,7 +12,7 @@ import {AddressPipe} from "@/core/pipes";
 })
 export class InvoiceDetailsComponent {
   public tenantData: TenantDto | null;
-  @Input({required: true}) invoice!: InvoiceDto;
+  public readonly invoice = input.required<InvoiceDto>();
 
   constructor(private readonly tenantService: TenantService) {
     this.tenantData = tenantService.getTenantData();

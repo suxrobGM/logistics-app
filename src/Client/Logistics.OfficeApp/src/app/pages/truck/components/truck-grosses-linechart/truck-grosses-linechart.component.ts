@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
+import {Component, OnInit, input, output} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {CardModule} from "primeng/card";
 import {SkeletonModule} from "primeng/skeleton";
@@ -23,8 +23,8 @@ export class TruckGrossesLinechartComponent implements OnInit {
   public startDate: Date;
   public endDate: Date;
 
-  @Input({required: true}) truckId!: string;
-  @Output() chartDrawn = new EventEmitter<LineChartDrawnEvent>();
+  public readonly truckId = input.required<string>();
+  public readonly chartDrawn = output<LineChartDrawnEvent>();
 
   constructor(private apiService: ApiService) {
     this.isLoading = false;
@@ -58,7 +58,7 @@ export class TruckGrossesLinechartComponent implements OnInit {
     this.isLoading = true;
 
     this.apiService
-      .getDailyGrosses(this.startDate, this.endDate, this.truckId)
+      .getDailyGrosses(this.startDate, this.endDate, this.truckId())
       .subscribe((result) => {
         if (result.success && result.data) {
           this.dailyGrosses = result.data;

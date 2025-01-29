@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
+import {Component, OnInit, input, model, output, signal} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {AddressDto} from "@/core/models";
@@ -21,25 +21,25 @@ import {Converters} from "@/core/utils";
   ],
 })
 export class AddressAutocompleteComponent implements ControlValueAccessor, OnInit {
-  public searchResults: GeocodingFeature[] = [];
-  public addressString: string | null = null;
   private isDisabled = false;
   private isTouched = false;
+  public readonly searchResults = signal<GeocodingFeature[]>([]);
+  public readonly addressString = model<string | null>(null);
 
-  @Input({required: true}) accessToken!: string;
-  @Input() field = "";
-  @Input() placeholder = "Type address...";
-  @Input() country = "us";
-  @Input() forceSelection = false;
-  @Input() address: AddressDto | null = null;
-  @Output() addressChange = new EventEmitter<AddressDto>();
-  @Output() selectedAddress = new EventEmitter<SelectedAddressEvent>();
+  public readonly accessToken = input.required<string>();
+  public readonly field = input("");
+  public readonly placeholder = input("Type address...");
+  public readonly country = input("us");
+  public readonly forceSelection = input(false);
+  public readonly address = model<AddressDto | null>(null);
+  public readonly addressChange = output<AddressDto>();
+  public readonly selectedAddress = output<SelectedAddressEvent>();
 
   ngOnInit(): void {
-    this.setAddressString(this.address);
+    this.setAddressString(this.address());
   }
 
-  async handleAddressInputChange(event: Event) {
+  async handleAddressInputChange(event: Event): Promise<void> {
     if (this.isDisabled) {
       return;
     }
@@ -48,18 +48,19 @@ export class AddressAutocompleteComponent implements ControlValueAccessor, OnIni
 
     if (!query) {
       this.markAsTouched();
-      this.searchResults = [];
+      this.searchResults.set([]);
       return;
     }
 
     const response = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${this.accessToken}&country=${this.country}&types=address`
+      `https://api.mapbox.com/search/geocode/v6/forward?q=${query}&access_token=${this.accessToken()}&country=${this.country()}&types=address`
     );
+
     const responseData = (await response.json()) as GeocodingResponse;
-    this.searchResults = responseData.features;
+    this.searchResults.set(responseData.features);
   }
 
-  handleClickAddress(geocodingFeature: GeocodingFeature) {
+  handleClickAddress(geocodingFeature: GeocodingFeature): void {
     if (this.isDisabled) {
       return;
     }
@@ -81,33 +82,33 @@ export class AddressAutocompleteComponent implements ControlValueAccessor, OnIni
       country: country,
     };
 
-    this.address = addressObj;
+    this.address.set(addressObj);
     this.addressChange.emit(addressObj);
     this.selectedAddress.emit({
       address: addressObj,
       center: geocodingFeature.center,
     });
 
-    this.searchResults = [];
+    this.searchResults.set([]);
     this.setAddressString(addressObj);
     this.onChange(addressObj);
     this.markAsTouched();
   }
 
-  handleInputFocusOut(event: FocusEvent) {
+  handleInputFocusOut(event: FocusEvent): void {
     // Delay the execution to allow click event to be processed (in case an address is clicked from the list)
     setTimeout(() => {
-      if (this.forceSelection && this.searchResults.length) {
-        this.address = null;
-        this.addressString = null;
-        this.searchResults = [];
+      if (this.forceSelection() && this.searchResults.length) {
+        this.address.set(null);
+        this.addressString.set(null);
+        this.searchResults.set([]);
         this.onChange(null);
       }
     }, 100);
   }
 
-  private setAddressString(address: AddressDto | null) {
-    this.addressString = Converters.addressToString(address);
+  private setAddressString(address: AddressDto | null): void {
+    this.addressString.set(Converters.addressToString(address));
   }
 
   // #region Reactive forms methods
@@ -123,7 +124,7 @@ export class AddressAutocompleteComponent implements ControlValueAccessor, OnIni
   }
 
   writeValue(value: AddressDto): void {
-    this.address = value;
+    this.address.set(value);
     this.setAddressString(value);
   }
 

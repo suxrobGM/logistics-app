@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from "@angular/core";
+import {Component, OnInit, input} from "@angular/core";
 import {AsyncPipe, CommonModule} from "@angular/common";
 import {FormGroup} from "@angular/forms";
 import {BehaviorSubject} from "rxjs";
@@ -14,10 +14,10 @@ export class ValidationSummaryComponent implements OnInit {
   private formErrorsSubject = new BehaviorSubject<string[]>([]);
   public formErrors$ = this.formErrorsSubject.asObservable();
 
-  @Input({required: true}) form!: FormGroup;
+  public readonly form = input.required<FormGroup>();
 
   ngOnInit(): void {
-    this.form.valueChanges.subscribe(() => {
+    this.form().valueChanges.subscribe(() => {
       const errors = this.calculateErrors();
 
       this.formErrorsSubject.next(errors);
@@ -25,13 +25,13 @@ export class ValidationSummaryComponent implements OnInit {
   }
 
   private calculateErrors(): string[] {
-    return Object.keys(this.form.controls)
+    return Object.keys(this.form().controls)
       .filter((controlName) => {
-        const control = this.form.controls[controlName];
+        const control = this.form().controls[controlName];
         return control.errors && (control.touched || control.dirty);
       })
       .flatMap((controlName) => {
-        const control = this.form.controls[controlName];
+        const control = this.form().controls[controlName];
         return Object.keys(control.errors ?? {})
           .filter((errorKey) => Object.prototype.hasOwnProperty.call(control.errors, errorKey))
           .map((errorKey) => this.getErrorDescription(controlName, errorKey))
@@ -40,7 +40,7 @@ export class ValidationSummaryComponent implements OnInit {
   }
 
   private getErrorDescription(controlName: string, errorKey: string): string | null {
-    const control = this.form.controls[controlName];
+    const control = this.form().controls[controlName];
 
     if (!control.errors) {
       return null;

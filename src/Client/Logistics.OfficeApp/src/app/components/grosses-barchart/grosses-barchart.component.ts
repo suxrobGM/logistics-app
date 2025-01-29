@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
+import {Component, Input, OnInit, input, output} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {CardModule} from "primeng/card";
 import {ChartModule} from "primeng/chart";
@@ -23,9 +23,9 @@ export class GrossesBarchartComponent implements OnInit {
   public startDate: Date;
   public endDate: Date;
 
-  @Input() truckId?: string;
+  public readonly truckId = input<string>();
   @Input() chartColor: string;
-  @Output() chartDrawn = new EventEmitter<BarChartDrawnEvent>();
+  public readonly chartDrawn = output<BarChartDrawnEvent>();
 
   constructor(private apiService: ApiService) {
     this.isLoading = false;
@@ -60,7 +60,7 @@ export class GrossesBarchartComponent implements OnInit {
     this.isLoading = true;
 
     this.apiService
-      .getMonthlyGrosses(this.startDate, this.endDate, this.truckId)
+      .getMonthlyGrosses(this.startDate, this.endDate, this.truckId())
       .subscribe((result) => {
         if (result.success && result.data) {
           this.monthlyGrosses = result.data;

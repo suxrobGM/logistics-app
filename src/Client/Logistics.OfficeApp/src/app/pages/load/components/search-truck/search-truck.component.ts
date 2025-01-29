@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output, forwardRef} from "@angular/core";
+import {Component, Input, forwardRef, output} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
@@ -23,7 +23,7 @@ export class SearchTruckComponent implements ControlValueAccessor {
   public suggestedTrucks: TruckData[] = [];
 
   @Input() selectedTruck: TruckData | null = null;
-  @Output() selectedTruckChange = new EventEmitter<TruckData>();
+  readonly selectedTruckChange = output<TruckData>();
 
   constructor(private readonly apiService: ApiService) {}
 

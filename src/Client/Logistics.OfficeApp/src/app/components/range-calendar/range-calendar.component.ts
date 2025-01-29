@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, Output} from "@angular/core";
+import {Component, Input, OnChanges, output} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {CalendarModule} from "primeng/calendar";
@@ -19,9 +19,9 @@ export class RangeCalendarComponent implements OnChanges {
   @Input() label: string;
   @Input() startDate?: Date;
   @Input() endDate?: Date;
-  @Output() startDateChange = new EventEmitter<Date>();
-  @Output() endDateChange = new EventEmitter<Date>();
-  @Output() applyButtonClick = new EventEmitter<void>();
+  public readonly startDateChange = output<Date>();
+  public readonly endDateChange = output<Date>();
+  public readonly applyButtonClick = output<void>();
 
   constructor() {
     this.label = "Select range:";

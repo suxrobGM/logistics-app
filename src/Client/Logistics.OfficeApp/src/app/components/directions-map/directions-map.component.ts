@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, Output, EventEmitter} from "@angular/core";
+import {Component, Input, OnChanges, input, output} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {NgxMapboxGLModule} from "ngx-mapbox-gl";
 import {GeoJSONSourceRaw, LngLatLike} from "mapbox-gl";
@@ -19,14 +19,14 @@ export class DirectionsMapComponent implements OnChanges {
   private defaultCenter: [number, number];
   private defaultZoom: number;
 
-  @Input({required: true}) accessToken!: string;
+  public readonly accessToken = input.required<string>();
   @Input() center: [number, number];
   @Input() zoom: number;
-  @Input() start?: [number, number] | null;
-  @Input() end?: [number, number] | null;
+  public readonly start = input<[number, number] | null>();
+  public readonly end = input<[number, number] | null>();
   @Input() width: string;
   @Input() height: string;
-  @Output() routeChanged = new EventEmitter<RouteChangedEvent>();
+  public readonly routeChanged = output<RouteChangedEvent>();
 
   constructor(private http: HttpClient) {
     this.zoom = this.defaultZoom = 3;
@@ -41,7 +41,7 @@ export class DirectionsMapComponent implements OnChanges {
   }
 
   ngOnChanges() {
-    if (!this.start && !this.end) {
+    if (!this.start() && !this.end()) {
       this.clearRoutes();
     } else {
       this.drawMarkers();
@@ -50,11 +50,13 @@ export class DirectionsMapComponent implements OnChanges {
   }
 
   private drawRoute() {
-    if (!this.start || !this.end) {
+    const start = this.start();
+    const end = this.end();
+    if (!start || !end) {
       return;
     }
 
-    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${this.start[0]},${this.start[1]};${this.end[0]},${this.end[1]}?geometries=geojson&access_token=${this.accessToken}`;
+    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?geometries=geojson&access_token=${this.accessToken()}`;
 
     this.http.get<ResponseData>(url).subscribe((data) => {
       if (data.code !== "Ok") {
@@ -69,22 +71,24 @@ export class DirectionsMapComponent implements OnChanges {
           properties: {},
         },
       };
-      this.bounds = [this.start as LngLatLike, this.end as LngLatLike];
+      this.bounds = [this.start() as LngLatLike, this.end() as LngLatLike];
       this.routeChanged.emit({
-        origin: this.start!,
-        destination: this.end!,
+        origin: this.start()!,
+        destination: this.end()!,
         distance: data.routes[0].distance,
       });
     });
   }
 
   private drawMarkers() {
-    if (this.start) {
-      this.startPoint = this.getPointSource(this.start);
-      this.center = this.start;
+    const start = this.start();
+    if (start) {
+      this.startPoint = this.getPointSource(start);
+      this.center = start;
     }
-    if (this.end) {
-      this.endPoint = this.getPointSource(this.end);
+    const end = this.end();
+    if (end) {
+      this.endPoint = this.getPointSource(end);
     }
   }
 

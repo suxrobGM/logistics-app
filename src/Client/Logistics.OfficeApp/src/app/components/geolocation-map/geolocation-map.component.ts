@@ -1,4 +1,4 @@
-import {Component, Input} from "@angular/core";
+import {Component, Input, input} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {MarkerComponent, NgxMapboxGLModule} from "ngx-mapbox-gl";
 import {TruckGeolocationDto} from "@/core/models";
@@ -14,7 +14,7 @@ import {AddressPipe} from "@/core/pipes";
 export class GeolocationMapComponent {
   public selectedMarker: Marker | null = null;
 
-  @Input({required: true}) accessToken!: string;
+  public readonly accessToken = input.required<string>();
   @Input() geolocationData: TruckGeolocationDto[];
   @Input() zoom: number;
   @Input() center: [number, number];

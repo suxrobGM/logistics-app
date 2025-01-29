@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output, forwardRef} from "@angular/core";
+import {Component, Input, forwardRef, output} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
@@ -23,7 +23,7 @@ export class SearchCustomerComponent implements ControlValueAccessor {
   public suggestedCustomers: CustomerDto[] = [];
 
   @Input() selectedCustomer: CustomerDto | null = null;
-  @Output() selectedCustomerChange = new EventEmitter<CustomerDto | null>();
+  public readonly selectedCustomerChange = output<CustomerDto | null>();
 
   constructor(private readonly apiService: ApiService) {}
 
