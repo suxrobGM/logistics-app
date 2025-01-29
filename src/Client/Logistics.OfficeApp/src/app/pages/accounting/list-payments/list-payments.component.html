@@ -85,7 +85,11 @@
               <app-payment-status-tag [paymentStatus]="payment.status"></app-payment-status-tag>
             </td>
             <td>{{ getPaymentForDesc(payment.paymentFor) }}</td>
-            <td [pTooltip]="payment.billingAddress | address" [showDelay]="500" tooltipPosition="bottom">
+            <td
+              [pTooltip]="payment.billingAddress | address"
+              [showDelay]="500"
+              tooltipPosition="bottom"
+            >
               {{ payment.billingAddress | address }}
             </td>
             <td [pTooltip]="payment.comment" [showDelay]="500" tooltipPosition="bottom">

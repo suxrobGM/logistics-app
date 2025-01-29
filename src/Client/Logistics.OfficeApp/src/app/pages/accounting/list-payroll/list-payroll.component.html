@@ -33,7 +33,12 @@
           <div class="d-flex">
             <span class="p-input-icon-left">
               <i class="pi pi-search"></i>
-              <input pInputText type="text" placeholder="Search by employeer name" (input)="search($event)" />
+              <input
+                pInputText
+                type="text"
+                placeholder="Search by employeer name"
+                (input)="search($event)"
+              />
             </span>
           </div>
         </ng-template>
@@ -71,7 +76,9 @@
 
         <ng-template pTemplate="body" let-payroll>
           <tr>
-            <td>{{ payroll.startDate | date: "MMM d" }} - {{ payroll.endDate | date: "mediumDate" }}</td>
+            <td>
+              {{ payroll.startDate | date: "MMM d" }} - {{ payroll.endDate | date: "mediumDate" }}
+            </td>
             <td>{{ payroll.employee.fullName }}</td>
             <td>{{ getSalaryTypeDesc(payroll.employee.salaryType) }}</td>
             <td>
@@ -83,7 +90,9 @@
             </td>
             <td>{{ payroll.payment.amount | currency }}</td>
             <td>
-              <app-payment-status-tag [paymentStatus]="payroll.payment.status"></app-payment-status-tag>
+              <app-payment-status-tag
+                [paymentStatus]="payroll.payment.status"
+              ></app-payment-status-tag>
             </td>
             <td>{{ getPaymentMethodDesc(payroll.payment.method) }}</td>
             <td class="overflow-visible">

@@ -64,7 +64,10 @@ export class AddressAutocompleteComponent implements ControlValueAccessor, OnIni
       return;
     }
 
-    const street = geocodingFeature.place_name.substring(0, geocodingFeature.place_name.indexOf(","));
+    const street = geocodingFeature.place_name.substring(
+      0,
+      geocodingFeature.place_name.indexOf(",")
+    );
     const city = geocodingFeature.context.find((i) => i.id.startsWith("place"))?.text ?? "";
     const region = geocodingFeature.context.find((i) => i.id.startsWith("region"))?.text ?? "";
     const zipCode = geocodingFeature.context.find((i) => i.id.startsWith("postcode"))?.text ?? "";

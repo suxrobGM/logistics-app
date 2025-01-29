@@ -52,7 +52,10 @@ export class AddEmployeeComponent implements OnInit {
       user: new FormControl(null, {validators: Validators.required}),
       role: new FormControl(null),
       salary: new FormControl<number>(0, {validators: Validators.required, nonNullable: true}),
-      salaryType: new FormControl<SalaryType>(SalaryType.None, {validators: Validators.required, nonNullable: true}),
+      salaryType: new FormControl<SalaryType>(SalaryType.None, {
+        validators: Validators.required,
+        nonNullable: true,
+      }),
     });
   }
 

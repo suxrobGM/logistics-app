@@ -13,7 +13,13 @@
         <app-validation-summary [form]="form"></app-validation-summary>
         <div class="mb-3">
           <label for="name" class="form-label">Name</label>
-          <input id="name" formControlName="name" type="text" class="form-control" placeholder="Load name" />
+          <input
+            id="name"
+            formControlName="name"
+            type="text"
+            class="form-control"
+            placeholder="Load name"
+          />
         </div>
         <div class="mb-3">
           <label for="customer" class="form-label">Customer</label>
@@ -45,19 +51,36 @@
           <label for="deliveryCost" class="form-label">Delivery Cost</label>
           <div class="input-group">
             <span class="input-group-text">$$</span>
-            <input id="deliveryCost" formControlName="deliveryCost" type="number" class="form-control" min="0" />
+            <input
+              id="deliveryCost"
+              formControlName="deliveryCost"
+              type="number"
+              class="form-control"
+              min="0"
+            />
           </div>
         </div>
         <div class="mb-3">
           <label for="distance" class="form-label">Estimated Distance</label>
           <div class="input-group">
             <span class="input-group-text">mi</span>
-            <input id="distance" formControlName="distance" type="number" class="form-control" min="0" />
+            <input
+              id="distance"
+              formControlName="distance"
+              type="number"
+              class="form-control"
+              min="0"
+            />
           </div>
         </div>
         <div class="mb-3">
           <label for="dispatcherName" class="form-label">Assigned Dispatcher</label>
-          <input id="dispatcherName" formControlName="assignedDispatcherName" type="text" class="form-control" />
+          <input
+            id="dispatcherName"
+            formControlName="assignedDispatcherName"
+            type="text"
+            class="form-control"
+          />
         </div>
         <div class="mb-3">
           <label for="assignedTruck" class="form-label">Assigned Truck</label>

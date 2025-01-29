@@ -14,7 +14,15 @@ import {DialogModule} from "primeng/dialog";
   standalone: true,
   templateUrl: "./notifications-panel.component.html",
   styleUrls: ["./notifications-panel.component.scss"],
-  imports: [CommonModule, CardModule, ButtonModule, TimeAgoPipe, BadgeModule, ProgressSpinnerModule, DialogModule],
+  imports: [
+    CommonModule,
+    CardModule,
+    ButtonModule,
+    TimeAgoPipe,
+    BadgeModule,
+    ProgressSpinnerModule,
+    DialogModule,
+  ],
 })
 export class NotificationsPanelComponent implements OnInit, OnDestroy {
   public notifications: NotificationDto[];

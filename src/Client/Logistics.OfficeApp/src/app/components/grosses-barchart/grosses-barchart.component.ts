@@ -59,17 +59,21 @@ export class GrossesBarchartComponent implements OnInit {
   fetchMonthlyGrosses() {
     this.isLoading = true;
 
-    this.apiService.getMonthlyGrosses(this.startDate, this.endDate, this.truckId).subscribe((result) => {
-      if (result.success && result.data) {
-        this.monthlyGrosses = result.data;
-        const rpm = this.monthlyGrosses.totalGross / Converters.metersTo(this.monthlyGrosses.totalDistance, "mi");
+    this.apiService
+      .getMonthlyGrosses(this.startDate, this.endDate, this.truckId)
+      .subscribe((result) => {
+        if (result.success && result.data) {
+          this.monthlyGrosses = result.data;
+          const rpm =
+            this.monthlyGrosses.totalGross /
+            Converters.metersTo(this.monthlyGrosses.totalDistance, "mi");
 
-        this.drawChart(this.monthlyGrosses);
-        this.chartDrawn.emit({monthlyGrosses: this.monthlyGrosses, rpm: rpm});
-      }
+          this.drawChart(this.monthlyGrosses);
+          this.chartDrawn.emit({monthlyGrosses: this.monthlyGrosses, rpm: rpm});
+        }
 
-      this.isLoading = false;
-    });
+        this.isLoading = false;
+      });
   }
 
   private drawChart(grosses: MonthlyGrossesDto) {

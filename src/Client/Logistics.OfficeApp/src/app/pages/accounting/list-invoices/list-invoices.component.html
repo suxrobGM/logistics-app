@@ -63,7 +63,9 @@
             <td>{{ invoice.createdDate | date: "mediumDate" }}</td>
             <td>{{ invoice.payment.paymentDate | date: "mediumDate" }}</td>
             <td>
-              <app-payment-status-tag [paymentStatus]="invoice.payment.status"></app-payment-status-tag>
+              <app-payment-status-tag
+                [paymentStatus]="invoice.payment.status"
+              ></app-payment-status-tag>
             </td>
             <td>
               @if (invoice.payment.status === paymentStatus.Pending) {

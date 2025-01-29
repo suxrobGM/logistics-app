@@ -13,7 +13,15 @@ import {SkeletonModule} from "primeng/skeleton";
   standalone: true,
   templateUrl: "./company-stats.component.html",
   styleUrls: [],
-  imports: [CommonModule, CurrencyPipe, CardModule, CommonModule, SkeletonModule, SharedModule, ChartModule],
+  imports: [
+    CommonModule,
+    CurrencyPipe,
+    CardModule,
+    CommonModule,
+    SkeletonModule,
+    SharedModule,
+    ChartModule,
+  ],
 })
 export class CompanyStatsComponent implements OnInit {
   public isLoading: boolean;

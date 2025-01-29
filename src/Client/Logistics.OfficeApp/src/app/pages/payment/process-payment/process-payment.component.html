@@ -51,7 +51,9 @@
                         [inputId]="paymentMethod.description"
                         [value]="paymentMethod.value"
                       ></p-radioButton>
-                      <label [for]="paymentMethod.description" class="ms-2">{{ paymentMethod.description }}</label>
+                      <label [for]="paymentMethod.description" class="ms-2">{{
+                        paymentMethod.description
+                      }}</label>
                     </div>
                   }
                 </div>
@@ -92,7 +94,12 @@
                     </div>
                     <div class="col-6">
                       <label for="cardCvv" class="form-label">CVV</label>
-                      <input id="cardCvv" formControlName="cardCvv" class="form-control" placeholder="123" />
+                      <input
+                        id="cardCvv"
+                        formControlName="cardCvv"
+                        class="form-control"
+                        placeholder="123"
+                      />
                     </div>
                   </div>
                 } @else if (form.get("paymentMethod")?.value === paymentMethod.BankAccount) {
@@ -101,15 +108,27 @@
 
                   <div class="mb-3">
                     <label for="bankName" class="form-label">Bank Name</label>
-                    <input formControlName="bankName" class="form-control" placeholder="ex. Bank of America" />
+                    <input
+                      formControlName="bankName"
+                      class="form-control"
+                      placeholder="ex. Bank of America"
+                    />
                   </div>
                   <div class="mb-3">
                     <label for="bankAccountNumber" class="form-label">Account Number</label>
-                    <input formControlName="bankAccountNumber" class="form-control" placeholder="ex. 1234567891011" />
+                    <input
+                      formControlName="bankAccountNumber"
+                      class="form-control"
+                      placeholder="ex. 1234567891011"
+                    />
                   </div>
                   <div class="mb-3">
                     <label for="bankRoutingNumber" class="form-label">Routing Number</label>
-                    <input formControlName="bankRoutingNumber" class="form-control" placeholder="ex. 123456789" />
+                    <input
+                      formControlName="bankRoutingNumber"
+                      class="form-control"
+                      placeholder="ex. 123456789"
+                    />
                   </div>
                 }
               </div>

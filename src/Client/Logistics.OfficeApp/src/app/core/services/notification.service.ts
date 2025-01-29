@@ -21,7 +21,10 @@ export class NotificationService extends BaseHubConnection {
 
   getPastTwoWeeksNotifications(): Observable<Result<NotificationDto[]>> {
     const pastTwoWeeksDateRange = PredefinedDateRanges.getPastTwoWeeks();
-    return this.apiService.getNotifications(pastTwoWeeksDateRange.startDate, pastTwoWeeksDateRange.endDate);
+    return this.apiService.getNotifications(
+      pastTwoWeeksDateRange.startDate,
+      pastTwoWeeksDateRange.endDate
+    );
   }
 
   markAsRead(notificationId: string): Observable<Result> {

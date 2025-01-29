@@ -76,13 +76,19 @@ export class EditLoadComponent implements OnInit {
       dstAddress: new FormControl(null, {validators: Validators.required, nonNullable: true}),
       dstCoords: new FormControl([0, 0], {validators: Validators.required, nonNullable: true}),
       deliveryCost: new FormControl(0, {validators: Validators.required, nonNullable: true}),
-      distance: new FormControl({value: 0, disabled: true}, {validators: Validators.required, nonNullable: true}),
+      distance: new FormControl(
+        {value: 0, disabled: true},
+        {validators: Validators.required, nonNullable: true}
+      ),
       status: new FormControl(LoadStatusEnum.getValue(LoadStatus.Dispatched), {
         validators: Validators.required,
         nonNullable: true,
       }),
       assignedTruck: new FormControl(null, {validators: Validators.required}),
-      assignedDispatcherId: new FormControl("", {validators: Validators.required, nonNullable: true}),
+      assignedDispatcherId: new FormControl("", {
+        validators: Validators.required,
+        nonNullable: true,
+      }),
       assignedDispatcherName: new FormControl(
         {value: "", disabled: true},
         {validators: Validators.required, nonNullable: true}
@@ -198,7 +204,10 @@ export class EditLoadComponent implements OnInit {
         assignedDispatcherName: load.assignedDispatcherName,
         assignedTruck: {
           truckId: load.assignedTruckId!,
-          driversName: TruckHelper.formatDriversName(load.assignedTruckNumber!, load.assignedTruckDriversName!),
+          driversName: TruckHelper.formatDriversName(
+            load.assignedTruckNumber!,
+            load.assignedTruckDriversName!
+          ),
         },
       });
 

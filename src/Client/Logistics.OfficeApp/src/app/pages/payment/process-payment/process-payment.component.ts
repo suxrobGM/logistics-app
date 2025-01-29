@@ -48,7 +48,10 @@ export class ProcessPaymentComponent implements OnInit {
     private readonly route: ActivatedRoute
   ) {
     this.form = new FormGroup<PaymentForm>({
-      paymentMethod: new FormControl(PaymentMethod.CreditCard, {validators: Validators.required, nonNullable: true}),
+      paymentMethod: new FormControl(PaymentMethod.CreditCard, {
+        validators: Validators.required,
+        nonNullable: true,
+      }),
       cardholderName: new FormControl(null),
       cardNumber: new FormControl(null),
       cardExpirationDate: new FormControl(null),
@@ -128,8 +131,14 @@ export class ProcessPaymentComponent implements OnInit {
 
     if (paymentMethod === PaymentMethod.CreditCard) {
       cardholderName?.setValidators([Validators.required]);
-      cardNumber?.setValidators([Validators.required, Validators.pattern(RegexPatterns.CREDIT_CARD_NUMBER)]);
-      cardExpireDate?.setValidators([Validators.required, Validators.pattern(RegexPatterns.CARD_EXPIRATION_DATE)]);
+      cardNumber?.setValidators([
+        Validators.required,
+        Validators.pattern(RegexPatterns.CREDIT_CARD_NUMBER),
+      ]);
+      cardExpireDate?.setValidators([
+        Validators.required,
+        Validators.pattern(RegexPatterns.CARD_EXPIRATION_DATE),
+      ]);
       cardCvv?.setValidators([Validators.required, Validators.pattern(RegexPatterns.CARD_CVV)]);
       bankName?.clearValidators();
       bankAccountNumber?.clearValidators();
@@ -137,7 +146,10 @@ export class ProcessPaymentComponent implements OnInit {
     } else if (paymentMethod === PaymentMethod.BankAccount) {
       bankName?.setValidators([Validators.required]);
       bankAccountNumber?.setValidators([Validators.required]);
-      bankRoutingNumber?.setValidators([Validators.required, Validators.pattern(RegexPatterns.ROUTING_NUMBER)]);
+      bankRoutingNumber?.setValidators([
+        Validators.required,
+        Validators.pattern(RegexPatterns.ROUTING_NUMBER),
+      ]);
       cardholderName?.clearValidators();
       cardNumber?.clearValidators();
       cardExpireDate?.clearValidators();

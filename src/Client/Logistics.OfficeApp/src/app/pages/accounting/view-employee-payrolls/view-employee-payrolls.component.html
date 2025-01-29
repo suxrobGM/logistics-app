@@ -103,10 +103,14 @@
 
         <ng-template pTemplate="body" let-payroll>
           <tr>
-            <td>{{ payroll.startDate | date: "MMM d" }} - {{ payroll.endDate | date: "mediumDate" }}</td>
+            <td>
+              {{ payroll.startDate | date: "MMM d" }} - {{ payroll.endDate | date: "mediumDate" }}
+            </td>
             <td>{{ payroll.payment.amount | currency }}</td>
             <td>
-              <app-payment-status-tag [paymentStatus]="payroll.payment.status"></app-payment-status-tag>
+              <app-payment-status-tag
+                [paymentStatus]="payroll.payment.status"
+              ></app-payment-status-tag>
             </td>
             <td>{{ getPaymentMethodDesc(payroll.payment.method) }}</td>
             <td class="overflow-visible">

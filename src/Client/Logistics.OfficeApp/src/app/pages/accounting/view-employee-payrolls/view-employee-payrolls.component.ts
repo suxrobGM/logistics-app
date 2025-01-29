@@ -6,7 +6,13 @@ import {TooltipModule} from "primeng/tooltip";
 import {CardModule} from "primeng/card";
 import {ButtonModule} from "primeng/button";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {SalaryType, PaymentStatus, PaymentMethod, PaymentMethodEnum, SalaryTypeEnum} from "@/core/enums";
+import {
+  SalaryType,
+  PaymentStatus,
+  PaymentMethod,
+  PaymentMethodEnum,
+  SalaryTypeEnum,
+} from "@/core/enums";
 import {EmployeeDto, PayrollDto} from "@/core/models";
 import {ApiService, ToastService} from "@/core/services";
 import {PaymentStatusTagComponent} from "@/components";

@@ -44,7 +44,10 @@
           <hr />
 
           <p><strong>Employee Role:</strong> {{ selectedEmployee.roles[0].displayName }}</p>
-          <p><strong>Employee's Salary Type:</strong> {{ getSalaryTypeDesc(selectedEmployee.salaryType) }}</p>
+          <p>
+            <strong>Employee's Salary Type:</strong>
+            {{ getSalaryTypeDesc(selectedEmployee.salaryType) }}
+          </p>
           <p>
             <strong>Employee's Salary:</strong>
             @if (selectedEmployee.salaryType === salaryType.ShareOfGross) {

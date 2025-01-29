@@ -57,17 +57,21 @@ export class TruckGrossesLinechartComponent implements OnInit {
   fetchDailyGrosses() {
     this.isLoading = true;
 
-    this.apiService.getDailyGrosses(this.startDate, this.endDate, this.truckId).subscribe((result) => {
-      if (result.success && result.data) {
-        this.dailyGrosses = result.data;
-        const rpm = this.dailyGrosses.totalGross / Converters.metersTo(this.dailyGrosses.totalDistance, "mi");
+    this.apiService
+      .getDailyGrosses(this.startDate, this.endDate, this.truckId)
+      .subscribe((result) => {
+        if (result.success && result.data) {
+          this.dailyGrosses = result.data;
+          const rpm =
+            this.dailyGrosses.totalGross /
+            Converters.metersTo(this.dailyGrosses.totalDistance, "mi");
 
-        this.drawChart(this.dailyGrosses);
-        this.chartDrawn.emit({dailyGrosses: this.dailyGrosses, rpm: rpm});
-      }
+          this.drawChart(this.dailyGrosses);
+          this.chartDrawn.emit({dailyGrosses: this.dailyGrosses, rpm: rpm});
+        }
 
-      this.isLoading = false;
-    });
+        this.isLoading = false;
+      });
   }
 
   private drawChart(grosses: DailyGrossesDto) {

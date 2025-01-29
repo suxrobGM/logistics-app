@@ -21,7 +21,9 @@
   <div class="col-4">
     <h6>Billing period:</h6>
   </div>
-  <div class="col-8">{{ payroll.startDate | date: "mediumDate" }} - {{ payroll.endDate | date: "mediumDate" }}</div>
+  <div class="col-8">
+    {{ payroll.startDate | date: "mediumDate" }} - {{ payroll.endDate | date: "mediumDate" }}
+  </div>
 </div>
 <div class="row mb-3">
   <div class="col-4">

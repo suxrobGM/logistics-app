@@ -64,14 +64,16 @@ export class ListEmployeeComponent {
     const page = first / rows + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
-    this.apiService.getEmployees({orderBy: sortField, page: page, pageSize: rows}).subscribe((result) => {
-      if (result.success && result.data) {
-        this.employees = result.data;
-        this.totalRecords = result.totalItems;
-      }
+    this.apiService
+      .getEmployees({orderBy: sortField, page: page, pageSize: rows})
+      .subscribe((result) => {
+        if (result.success && result.data) {
+          this.employees = result.data;
+          this.totalRecords = result.totalItems;
+        }
 
-      this.isLoading = false;
-    });
+        this.isLoading = false;
+      });
   }
 
   getSalaryTypeDesc(enumValue: SalaryType): string {

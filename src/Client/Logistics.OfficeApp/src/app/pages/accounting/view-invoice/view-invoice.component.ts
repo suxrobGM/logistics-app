@@ -15,7 +15,14 @@ import {AddressPipe} from "@/core/pipes";
   standalone: true,
   templateUrl: "./view-invoice.component.html",
   styleUrls: [],
-  imports: [CommonModule, CardModule, ButtonModule, ProgressSpinnerModule, RouterModule, AddressPipe],
+  imports: [
+    CommonModule,
+    CardModule,
+    ButtonModule,
+    ProgressSpinnerModule,
+    RouterModule,
+    AddressPipe,
+  ],
 })
 export class ViewInvoiceComponent implements OnInit {
   private id?: string;

@@ -11,7 +11,7 @@
     "docker:dev": "ng serve --port 7003 --host 0.0.0.0 --poll 2000",
     "test": "ng test",
     "lint": "ng lint",
-    "prettier": "prettier --write ./src"
+    "format": "prettier --write ./src"
   },
   "dependencies": {
     "@angular/animations": "^19.1.3",

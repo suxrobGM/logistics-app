@@ -67,14 +67,16 @@ export class ListCustomersComponent {
     const page = first / rows + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
-    this.apiService.getCustomers({orderBy: sortField, page: page, pageSize: rows}).subscribe((result) => {
-      if (result.success && result.data) {
-        this.customers = result.data;
-        this.totalRecords = result.totalItems;
-      }
+    this.apiService
+      .getCustomers({orderBy: sortField, page: page, pageSize: rows})
+      .subscribe((result) => {
+        if (result.success && result.data) {
+          this.customers = result.data;
+          this.totalRecords = result.totalItems;
+        }
 
-      this.isLoading = false;
-    });
+        this.isLoading = false;
+      });
   }
 
   confirmToDelete(id: string) {

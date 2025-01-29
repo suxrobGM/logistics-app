@@ -69,16 +69,18 @@ export class ListLoadComponent {
       sortField = "-dispatchedDate";
     }
 
-    this.apiService.getLoads({orderBy: sortField, page: page, pageSize: rows}, false).subscribe((result) => {
-      console.log("Loads: ", result);
+    this.apiService
+      .getLoads({orderBy: sortField, page: page, pageSize: rows}, false)
+      .subscribe((result) => {
+        console.log("Loads: ", result);
 
-      if (result.success && result.data) {
-        this.loads = result.data;
-        this.totalRecords = result.totalItems;
-      }
+        if (result.success && result.data) {
+          this.loads = result.data;
+          this.totalRecords = result.totalItems;
+        }
 
-      this.isLoading = false;
-    });
+        this.isLoading = false;
+      });
   }
 
   getLoadStatusDesc(enumValue: LoadStatus): string {

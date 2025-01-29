@@ -22,4 +22,4 @@ export const authGuard: CanActivateFn = (route) => {
       return router.parseUrl("/unauthorized");
     })
   );
-}
+};

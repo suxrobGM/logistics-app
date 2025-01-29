@@ -7,7 +7,13 @@ import {InputTextModule} from "primeng/inputtext";
 import {ButtonModule} from "primeng/button";
 import {TooltipModule} from "primeng/tooltip";
 import {PayrollDto} from "@/core/models";
-import {PaymentMethod, PaymentMethodEnum, PaymentStatus, SalaryType, SalaryTypeEnum} from "@/core/enums";
+import {
+  PaymentMethod,
+  PaymentMethodEnum,
+  PaymentStatus,
+  SalaryType,
+  SalaryTypeEnum,
+} from "@/core/enums";
 import {ApiService} from "@/core/services";
 import {PaymentStatusTagComponent} from "@/components";
 

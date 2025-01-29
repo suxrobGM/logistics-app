@@ -92,10 +92,18 @@
             <td [pTooltip]="load.customer.name" [showDelay]="500" tooltipPosition="bottom">
               {{ load.customer.name }}
             </td>
-            <td [pTooltip]="load.originAddress | address" [showDelay]="500" tooltipPosition="bottom">
+            <td
+              [pTooltip]="load.originAddress | address"
+              [showDelay]="500"
+              tooltipPosition="bottom"
+            >
               {{ load.originAddress | address }}
             </td>
-            <td [pTooltip]="load.destinationAddress | address" [showDelay]="500" tooltipPosition="bottom">
+            <td
+              [pTooltip]="load.destinationAddress | address"
+              [showDelay]="500"
+              tooltipPosition="bottom"
+            >
               {{ load.destinationAddress | address }}
             </td>
             <td>
@@ -123,7 +131,9 @@
             <td>{{ load.distance | distanceUnit: "mi" }}</td>
             <td>{{ load.deliveryCost | currency }}</td>
             <td>
-              <app-payment-status-tag [paymentStatus]="load.invoice.payment.status"></app-payment-status-tag>
+              <app-payment-status-tag
+                [paymentStatus]="load.invoice.payment.status"
+              ></app-payment-status-tag>
             </td>
             <td>{{ load.assignedTruckNumber }}</td>
             <td>{{ load.assignedDispatcherName }}</td>

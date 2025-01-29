@@ -52,7 +52,7 @@ export class ApiService {
   constructor(
     private readonly httpClient: HttpClient,
     private readonly tenantService: TenantService,
-    private readonly toastService: ToastService,
+    private readonly toastService: ToastService
   ) {
     this.host = GLOBAL_CONFIG.apiHost;
     this.headers = {"content-type": "application/json"};
@@ -84,7 +84,10 @@ export class ApiService {
     return this.get(url);
   }
 
-  getLoads(query?: SearchableQuery, onlyActiveLoads = false): Observable<PagedResponseResult<LoadDto>> {
+  getLoads(
+    query?: SearchableQuery,
+    onlyActiveLoads = false
+  ): Observable<PagedResponseResult<LoadDto>> {
     let url = `/loads?${this.stringfySearchableQuery(query)}`;
 
     if (onlyActiveLoads) {
@@ -199,7 +202,11 @@ export class ApiService {
     return this.get(url);
   }
 
-  getDailyGrosses(startDate: Date, endDate?: Date, truckId?: string): Observable<Result<DailyGrossesDto>> {
+  getDailyGrosses(
+    startDate: Date,
+    endDate?: Date,
+    truckId?: string
+  ): Observable<Result<DailyGrossesDto>> {
     let url = `/stats/daily-grosses?startDate=${startDate.toJSON()}`;
 
     if (endDate) {
@@ -212,7 +219,11 @@ export class ApiService {
     return this.get(url);
   }
 
-  getMonthlyGrosses(startDate: Date, endDate?: Date, truckId?: string): Observable<Result<MonthlyGrossesDto>> {
+  getMonthlyGrosses(
+    startDate: Date,
+    endDate?: Date,
+    truckId?: string
+  ): Observable<Result<MonthlyGrossesDto>> {
     let url = `/stats/monthly-grosses?startDate=${startDate.toJSON()}`;
 
     if (endDate) {
@@ -390,7 +401,9 @@ export class ApiService {
   }
 
   private get<TResponse>(endpoint: string): Observable<TResponse> {
-    return this.httpClient.get<TResponse>(this.host + endpoint).pipe(catchError((err) => this.handleError(err)));
+    return this.httpClient
+      .get<TResponse>(this.host + endpoint)
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   private post<TResponse, TBody>(endpoint: string, body: TBody): Observable<TResponse> {
@@ -410,7 +423,9 @@ export class ApiService {
   }
 
   private delete<TResponse>(endpoint: string): Observable<TResponse> {
-    return this.httpClient.delete<TResponse>(this.host + endpoint).pipe(catchError((err) => this.handleError(err)));
+    return this.httpClient
+      .delete<TResponse>(this.host + endpoint)
+      .pipe(catchError((err) => this.handleError(err)));
   }
 
   private stringfySearchableQuery(query?: SearchableQuery): string {

@@ -59,7 +59,10 @@ export class EditEmployeeComponent implements OnInit {
         validators: Validators.compose([Validators.required, Validators.min(0)]),
         nonNullable: true,
       }),
-      salaryType: new FormControl<SalaryType>(SalaryType.None, {validators: Validators.required, nonNullable: true}),
+      salaryType: new FormControl<SalaryType>(SalaryType.None, {
+        validators: Validators.required,
+        nonNullable: true,
+      }),
     });
 
     this.form.get("salaryType")?.valueChanges.subscribe((selectedSalaryType) => {
@@ -152,7 +155,8 @@ export class EditEmployeeComponent implements OnInit {
         const salary = result.data.salary;
 
         this.form.patchValue({
-          salary: salaryType === SalaryType.ShareOfGross ? NumberUtils.toPercent(salary ?? 0) : salary,
+          salary:
+            salaryType === SalaryType.ShareOfGross ? NumberUtils.toPercent(salary ?? 0) : salary,
           salaryType: salaryType,
         });
       }

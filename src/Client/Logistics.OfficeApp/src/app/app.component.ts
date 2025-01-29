@@ -22,7 +22,9 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.authService.checkAuth().subscribe((isAuthenticated) => (this.isAuthenticated = isAuthenticated));
+    this.authService
+      .checkAuth()
+      .subscribe((isAuthenticated) => (this.isAuthenticated = isAuthenticated));
     this.authService.onAuthenticated().subscribe((result) => (this.isAuthenticated = result));
     // this.printPath('', this.router.config);
   }

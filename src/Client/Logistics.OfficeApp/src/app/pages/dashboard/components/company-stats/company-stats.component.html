@@ -123,19 +123,27 @@
 
       <div class="col-6">
         <span class="fw-bold">RPM this week: </span><br />
-        <span>{{ calcRpm(companyStats?.thisWeekGross, companyStats?.thisWeekDistance) | currency }}</span>
+        <span>{{
+          calcRpm(companyStats?.thisWeekGross, companyStats?.thisWeekDistance) | currency
+        }}</span>
       </div>
       <div class="col-6">
         <span class="fw-bold">RPM last week: </span><br />
-        <span>{{ calcRpm(companyStats?.lastWeekGross, companyStats?.lastWeekDistance) | currency }}</span>
+        <span>{{
+          calcRpm(companyStats?.lastWeekGross, companyStats?.lastWeekDistance) | currency
+        }}</span>
       </div>
       <div class="col-6">
         <span class="fw-bold">RPM this month: </span><br />
-        <span>{{ calcRpm(companyStats?.thisMonthGross, companyStats?.thisMonthDistance) | currency }}</span>
+        <span>{{
+          calcRpm(companyStats?.thisMonthGross, companyStats?.thisMonthDistance) | currency
+        }}</span>
       </div>
       <div class="col-6">
         <span class="fw-bold">RPM last month: </span><br />
-        <span>{{ calcRpm(companyStats?.lastMonthGross, companyStats?.lastMonthDistance) | currency }}</span>
+        <span>{{
+          calcRpm(companyStats?.lastMonthGross, companyStats?.lastMonthDistance) | currency
+        }}</span>
       </div>
       <div class="col-6">
         <span class="fw-bold">RPM all time: </span><br />

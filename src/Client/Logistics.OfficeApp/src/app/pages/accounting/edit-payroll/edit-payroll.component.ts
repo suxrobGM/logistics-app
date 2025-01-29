@@ -8,10 +8,23 @@ import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete"
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {CalendarModule} from "primeng/calendar";
 import {ButtonModule} from "primeng/button";
-import {AddressDto, CreatePayrollCommand, EmployeeDto, PayrollDto, UpdatePayrollCommand} from "@/core/models";
+import {
+  AddressDto,
+  CreatePayrollCommand,
+  EmployeeDto,
+  PayrollDto,
+  UpdatePayrollCommand,
+} from "@/core/models";
 import {ApiService, ToastService} from "@/core/services";
 import {PredefinedDateRanges} from "@/core/utils";
-import {EnumType, PaymentMethodEnum, PaymentStatus, PaymentStatusEnum, SalaryType, SalaryTypeEnum} from "@/core/enums";
+import {
+  EnumType,
+  PaymentMethodEnum,
+  PaymentStatus,
+  PaymentStatusEnum,
+  SalaryType,
+  SalaryTypeEnum,
+} from "@/core/enums";
 import {AddressFormComponent, ValidationSummaryComponent} from "@/components";
 import {DateUtils} from "@/core/utils";
 
@@ -53,7 +66,10 @@ export class EditPayrollComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly router: Router
   ) {
-    const lastWeek = [PredefinedDateRanges.getLastWeek().startDate, PredefinedDateRanges.getLastWeek().endDate];
+    const lastWeek = [
+      PredefinedDateRanges.getLastWeek().startDate,
+      PredefinedDateRanges.getLastWeek().endDate,
+    ];
 
     this.form = new FormGroup<PayrollForm>({
       employee: new FormControl(null, {validators: Validators.required}),

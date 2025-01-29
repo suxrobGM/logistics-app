@@ -135,7 +135,13 @@
             <span class="fw-bold fs-3">{{ todayGross | currency }}</span>
           </div>
           <div class="col-12 col-md-9">
-            <p-chart type="line" [data]="chartData" [options]="chartOptions" width="40vw" height="20vh"></p-chart>
+            <p-chart
+              type="line"
+              [data]="chartData"
+              [options]="chartOptions"
+              width="40vw"
+              height="20vh"
+            ></p-chart>
           </div>
         </div>
       }

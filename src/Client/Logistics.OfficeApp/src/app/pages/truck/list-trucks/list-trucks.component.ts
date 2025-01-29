@@ -60,13 +60,15 @@ export class ListTruckComponent {
     const page = first / rows + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
-    this.apiService.getTrucks({orderBy: sortField, page: page, pageSize: rows}).subscribe((result) => {
-      if (result.success && result.data) {
-        this.trucks = result.data;
-        this.totalRecords = result.totalItems;
-      }
+    this.apiService
+      .getTrucks({orderBy: sortField, page: page, pageSize: rows})
+      .subscribe((result) => {
+        if (result.success && result.data) {
+          this.trucks = result.data;
+          this.totalRecords = result.totalItems;
+        }
 
-      this.isLoading = false;
-    });
+        this.isLoading = false;
+      });
   }
 }

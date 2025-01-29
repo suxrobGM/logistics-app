@@ -13,7 +13,14 @@ import {UserService} from "../../services";
   templateUrl: "./change-role-dialog.component.html",
   styleUrls: [],
   standalone: true,
-  imports: [DialogModule, ProgressSpinnerModule, FormsModule, ReactiveFormsModule, DropdownModule, ButtonModule],
+  imports: [
+    DialogModule,
+    ProgressSpinnerModule,
+    FormsModule,
+    ReactiveFormsModule,
+    DropdownModule,
+    ButtonModule,
+  ],
   providers: [UserService],
 })
 export class ChangeRoleDialogComponent implements OnInit {

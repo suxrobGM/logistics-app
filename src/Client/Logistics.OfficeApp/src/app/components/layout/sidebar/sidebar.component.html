@@ -88,9 +88,19 @@
     <li>
       <a class="nav-link border-bottom">
         @if (isOpened) {
-          <i class="bi bi-arrow-left h1" (click)="toggle()" pTooltip="Minimize menu" role="presentation"></i>
+          <i
+            class="bi bi-arrow-left h1"
+            (click)="toggle()"
+            pTooltip="Minimize menu"
+            role="presentation"
+          ></i>
         } @else {
-          <i class="bi bi-arrow-right h1" (click)="toggle()" pTooltip="Maximize menu" role="presentation"></i>
+          <i
+            class="bi bi-arrow-right h1"
+            (click)="toggle()"
+            pTooltip="Maximize menu"
+            role="presentation"
+          ></i>
         }
       </a>
     </li>
@@ -111,13 +121,23 @@
           @for (item of profileMenuItems[0].items; track item.label) {
             @if (!item.separator) {
               <div class="p-1">
-                <p-button severity="secondary" [text]="true" [label]="item.label" (click)="item?.command({})">
+                <p-button
+                  severity="secondary"
+                  [text]="true"
+                  [label]="item.label"
+                  (click)="item?.command({})"
+                >
                 </p-button>
               </div>
             }
           }
         </p-overlayPanel>
-        <a class="nav-link" pTooltip="Account" (click)="profilePanel.toggle($event)" role="presentation">
+        <a
+          class="nav-link"
+          pTooltip="Account"
+          (click)="profilePanel.toggle($event)"
+          role="presentation"
+        >
           <i class="bi bi-person-circle h1"></i>
         </a>
       }

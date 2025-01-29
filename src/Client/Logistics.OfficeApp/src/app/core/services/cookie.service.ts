@@ -31,10 +31,14 @@ export class CookieService {
    */
   setCookie(cookie: Cookie) {
     const date = new Date();
-    date.setTime(date.getTime() + (cookie.expireDays ? cookie.expireDays : 1) * 24 * 60 * 60 * 1000);
+    date.setTime(
+      date.getTime() + (cookie.expireDays ? cookie.expireDays : 1) * 24 * 60 * 60 * 1000
+    );
     const path = cookie.path && cookie.path.length > 0 ? cookie.path : "/";
-    const expires = cookie.session && cookie.session == true ? "" : `expires=${date.toUTCString()};`;
-    const secure = location.protocol === "https:" && cookie.secure && cookie.secure == true ? "secure" : "";
+    const expires =
+      cookie.session && cookie.session == true ? "" : `expires=${date.toUTCString()};`;
+    const secure =
+      location.protocol === "https:" && cookie.secure && cookie.secure == true ? "secure" : "";
     document.cookie = `${cookie.name}=${cookie.value};path=${path};${expires}${secure}`;
   }
 }

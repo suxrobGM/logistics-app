@@ -58,7 +58,10 @@ export class EditPaymentComponent implements OnInit {
         validators: Validators.compose([Validators.required, Validators.min(0.01)]),
         nonNullable: true,
       }),
-      paymentFor: new FormControl<PaymentFor>(PaymentFor.Payroll, {validators: Validators.required, nonNullable: true}),
+      paymentFor: new FormControl<PaymentFor>(PaymentFor.Payroll, {
+        validators: Validators.required,
+        nonNullable: true,
+      }),
       paymentStatus: new FormControl<PaymentStatus>(PaymentStatus.Pending, {
         validators: Validators.required,
         nonNullable: true,
