@@ -28,7 +28,7 @@ I work on this project in my free time so it is not actively maintained. However
 Follow these steps to get the project up and running:
 
 1. Install SDKs 
-   - [Download](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) and install the .NET 8 SDK. 
+   - [Download](https://dotnet.microsoft.com/en-us/download/dotnet/9.0) and install the .NET 9 SDK. 
    - Install Bun runtime to run Angular project. Follow [these](https://bun.sh/docs/installation) instructions.
 
 2. Clone this repository: 
@@ -62,7 +62,7 @@ Follow these steps to get the project up and running:
 ## Architectural Overview
 
 ### Technical Stack
-- .NET 8
+- .NET 9
 - ASP.NET Core
 - Entity Framework Core
 - Deunde Identity Server
@@ -71,7 +71,7 @@ Follow these steps to get the project up and running:
 - MS SQL
 - xUnit
 - Moq
-- Angular 18
+- Angular 19
 - PrimeNG
 - Blazor
 - MAUI
