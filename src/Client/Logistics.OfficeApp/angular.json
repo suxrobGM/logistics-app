@@ -24,16 +24,9 @@
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "assets": [
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles/global.scss",
-              "node_modules/mapbox-gl/dist/mapbox-gl.css",
-            ],
-            "scripts": [
-              "node_modules/chart.js/dist/chart.js"
-            ]
+            "assets": ["src/assets"],
+            "styles": ["src/styles/global.scss", "node_modules/mapbox-gl/dist/mapbox-gl.css"],
+            "scripts": ["node_modules/chart.js/dist/chart.js"]
           },
           "configurations": {
             "production": {
@@ -93,32 +86,19 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "src/test.ts",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "inlineStyleLanguage": "scss",
-            "assets": [
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles/global.scss",
-              "node_modules/mapbox-gl/dist/mapbox-gl.css"
-            ],
-            "scripts": [
-              "node_modules/chart.js/dist/chart.js"
-            ]
+            "assets": ["src/assets"],
+            "styles": ["src/styles/global.scss", "node_modules/mapbox-gl/dist/mapbox-gl.css"],
+            "scripts": ["node_modules/chart.js/dist/chart.js"]
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         }
       }
@@ -126,8 +106,7 @@
   },
   "cli": {
     "packageManager": "bun",
-    "schematicCollections": [
-      "@angular-eslint/schematics"
-    ]
+    "schematicCollections": ["@angular-eslint/schematics"],
+    "analytics": false
   }
 }

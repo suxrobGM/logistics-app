@@ -1,5 +1,4 @@
 import {Component, Input, OnChanges, Output, EventEmitter} from "@angular/core";
-import {NgIf} from "@angular/common";
 import {HttpClient} from "@angular/common/http";
 import {NgxMapboxGLModule} from "ngx-mapbox-gl";
 import {GeoJSONSourceRaw, LngLatLike} from "mapbox-gl";
@@ -9,7 +8,7 @@ import {GeoJSONSourceRaw, LngLatLike} from "mapbox-gl";
   standalone: true,
   templateUrl: "./directions-map.component.html",
   styleUrls: ["./directions-map.component.scss"],
-  imports: [NgxMapboxGLModule, NgIf],
+  imports: [NgxMapboxGLModule],
 })
 export class DirectionsMapComponent implements OnChanges {
   public bounds?: [LngLatLike, LngLatLike] | null;
@@ -62,15 +61,15 @@ export class DirectionsMapComponent implements OnChanges {
         return;
       }
 
-      this.route = {
+      (this.route = {
         type: "geojson",
         data: {
           type: "Feature",
           geometry: data.routes[0].geometry,
           properties: {},
         },
-      },
-      this.bounds = [this.start as LngLatLike, this.end as LngLatLike];
+      }),
+        (this.bounds = [this.start as LngLatLike, this.end as LngLatLike]);
       this.routeChanged.emit({
         origin: this.start!,
         destination: this.end!,

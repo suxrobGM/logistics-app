@@ -1,5 +1,4 @@
 import {Component, OnInit} from "@angular/core";
-import {NgIf} from "@angular/common";
 import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {Router, RouterLink} from "@angular/router";
 import {CardModule} from "primeng/card";
@@ -31,7 +30,6 @@ import {TruckData} from "../shared";
   imports: [
     ToastModule,
     CardModule,
-    NgIf,
     ProgressSpinnerModule,
     FormsModule,
     ReactiveFormsModule,

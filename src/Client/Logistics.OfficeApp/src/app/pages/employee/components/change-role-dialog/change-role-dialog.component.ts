@@ -1,5 +1,4 @@
 import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
-import {NgIf} from "@angular/common";
 import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ButtonModule} from "primeng/button";
 import {DropdownModule} from "primeng/dropdown";
@@ -14,7 +13,7 @@ import {UserService} from "../../services";
   templateUrl: "./change-role-dialog.component.html",
   styleUrls: [],
   standalone: true,
-  imports: [DialogModule, NgIf, ProgressSpinnerModule, FormsModule, ReactiveFormsModule, DropdownModule, ButtonModule],
+  imports: [DialogModule, ProgressSpinnerModule, FormsModule, ReactiveFormsModule, DropdownModule, ButtonModule],
   providers: [UserService],
 })
 export class ChangeRoleDialogComponent implements OnInit {

@@ -1,5 +1,4 @@
 import {Component, OnInit} from "@angular/core";
-import {NgIf} from "@angular/common";
 import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {ConfirmationService} from "primeng/api";
@@ -21,7 +20,6 @@ import {ApiService, ToastService} from "@/core/services";
     ToastModule,
     ConfirmDialogModule,
     CardModule,
-    NgIf,
     ProgressSpinnerModule,
     FormsModule,
     ReactiveFormsModule,

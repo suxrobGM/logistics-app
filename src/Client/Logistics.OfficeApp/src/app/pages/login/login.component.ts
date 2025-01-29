@@ -1,5 +1,4 @@
 import {Component, OnInit, ViewEncapsulation} from "@angular/core";
-import {NgIf} from "@angular/common";
 import {Router} from "@angular/router";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {ButtonModule} from "primeng/button";
@@ -11,7 +10,7 @@ import {AuthService} from "@/core/auth";
   styleUrls: ["./login.component.scss"],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [NgIf, ProgressSpinnerModule, ButtonModule],
+  imports: [ProgressSpinnerModule, ButtonModule],
 })
 export class LoginComponent implements OnInit {
   public isAuthenticated: boolean;

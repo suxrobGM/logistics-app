@@ -1,5 +1,4 @@
 import {Component, OnInit, ViewEncapsulation} from "@angular/core";
-import {NgIf} from "@angular/common";
 import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {RouterLink} from "@angular/router";
 import {ButtonModule} from "primeng/button";
@@ -26,7 +25,6 @@ import {ValidationSummaryComponent} from "@/components";
     ToastModule,
     ConfirmDialogModule,
     CardModule,
-    NgIf,
     ProgressSpinnerModule,
     FormsModule,
     ReactiveFormsModule,

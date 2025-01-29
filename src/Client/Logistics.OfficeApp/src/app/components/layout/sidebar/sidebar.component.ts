@@ -5,6 +5,7 @@ import {TooltipModule} from "primeng/tooltip";
 import {SplitButtonModule} from "primeng/splitbutton";
 import {PanelMenuModule} from "primeng/panelmenu";
 import {OverlayPanelModule} from "primeng/overlaypanel";
+import {ButtonModule} from "primeng/button";
 import {MenuItem} from "primeng/api";
 import {GLOBAL_CONFIG} from "@/configs";
 import {AuthService} from "@/core/auth";
@@ -15,7 +16,15 @@ import {ApiService, TenantService} from "@/core/services";
   standalone: true,
   templateUrl: "./sidebar.component.html",
   styleUrls: ["./sidebar.component.scss"],
-  imports: [CommonModule, RouterLink, TooltipModule, SplitButtonModule, PanelMenuModule, OverlayPanelModule],
+  imports: [
+    CommonModule,
+    RouterLink,
+    TooltipModule,
+    ButtonModule,
+    SplitButtonModule,
+    PanelMenuModule,
+    OverlayPanelModule,
+  ],
 })
 export class SidebarComponent implements OnInit {
   public isAuthenticated: boolean;

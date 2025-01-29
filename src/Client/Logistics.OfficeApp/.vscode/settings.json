@@ -2,6 +2,7 @@
   "editor.tabSize": 2,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "prettier.configPath": "./.prettierrc.js",
+  "editor.formatOnSave": true,
   "files.exclude": {
     "**/node_modules": true,
     "**/.angular": true,
