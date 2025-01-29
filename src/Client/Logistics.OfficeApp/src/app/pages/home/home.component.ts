@@ -49,7 +49,24 @@ export class HomeComponent implements OnInit {
   public chartData: unknown;
   public chartOptions: unknown;
 
-  constructor(private readonly apiService: ApiService) {}
+  constructor(private readonly apiService: ApiService) {
+    this.chartData = {
+      labels: [],
+      datasets: [
+        {
+          label: "Daily Gross",
+          data: [],
+        },
+      ],
+    };
+    this.chartOptions = {
+      plugins: {
+        legend: {
+          display: false,
+        },
+      },
+    };
+  }
 
   ngOnInit() {
     this.fetchActiveLoads();
