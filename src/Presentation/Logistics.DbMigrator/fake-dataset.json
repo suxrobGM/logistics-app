@@ -17,16 +17,19 @@
     }
   ],
   "Users": [
+    // Owner
     {
       "Email": "Test1@gmail.com",
       "FirstName": "Gloria",
       "LastName": "Kaufman"
     },
+    // Manager
     {
       "Email": "Test2@gmail.com",
       "FirstName": "Ivory",
       "LastName": "Collins"
     },
+    // Dispatchers
     {
       "Email": "Test3@gmail.com",
       "FirstName": "Rosalyn",
@@ -42,6 +45,7 @@
       "FirstName": "Justine",
       "LastName": "Blevins"
     },
+    // The rest of the users are drivers
     {
       "Email": "Test6@gmail.com",
       "FirstName": "John",

@@ -43,11 +43,13 @@ Follow these steps to get the project up and running:
    bun install
    ```
 
-4. Update database connection strings: 
-   Modify local or remote `MS SQL` database connection strings in the [Web API appsettings.json](./src/Server/Logistics.API/appsettings.json) and the [IdentityServer appsettings.json](./src/Server/Logistics.IdentityServer/appsettings.json) under the `ConnectionStrings:MainDatabase` section. Update tenant databases configuration in the [Web API appsettings.json](./src/Server/Logistics.API/appsettings.json) under the `TenantsConfig` section.
+4. Update database connection strings:
+   - Add a SQL login with username `LogistsUser` and password `Test12345` (you can specify your own password) with `db_owner` role to the local or remote `MS SQL` server. 
+   - Modify local or remote `MS SQL` database connection strings in the [Web API appsettings.json](./src/Presentation/Logistics.API/appsettings.json) and the [IdentityServer appsettings.json](./src/Presentation/Logistics.IdentityServer/appsettings.json) under the `ConnectionStrings:MainDatabase` section. Update tenant databases configuration in the [Web API appsettings.json](./src/Presentation/Logistics.API/appsettings.json) under the `TenantsConfig` section.
 
 5. Seed databases:
    To initialize and populate the databases, run the `seed-databases.cmd` script provided in the repository.
+   Alternatively, you can run the [Logistics.DbMigrator](./src/Presentation/Logistics.DbMigrator) project to seed the databases.
 
 6. Run applications:
    Launch all the applications in the project using the respective `.cmd` scripts in the repository.
@@ -59,7 +61,17 @@ Follow these steps to get the project up and running:
     - Admin app: https://127.0.0.1:7002
     - Office app: https://127.0.0.1:7003
 
-## Architectural Overview
+8. Login to the applications:
+   Use the following test credentials to log in to the applications:
+    - Admin web app: 
+      - Super admin user: email: `admin@gmail.com`, password: `Test12345#`
+    - Office web app:
+      - Owner user: email: `Test1@gmail.com`, password: `Test12345#`
+      - Manager user: email: `Test2@gmail.com`, password: `Test12345#`
+      - Dispatcher user: email: `Test3@gmail.com`, password: `Test12345#`
+      - Driver user: email: `Test6@gmail.com`, password: `Test12345#`
+    - Driver mobile app:
+      - Driver user: email: `Test6@gmail.com`, password: `Test12345#`
 
 ### Technical Stack
 - .NET 9
@@ -99,10 +111,6 @@ This work is licensed under a
 [![CC BY-NC 4.0][cc-by-nc-image]][cc-by-nc]
 
 For commercial use, please contact me at **suxrobgm@gmail.com** or [Telegram](https://t.me/suxrobgm).
-
-## Architecture Diagram
-For a deeper understanding of the project structure, refer to the architecture diagram:
-![Project architecture diagram](./docs/project_architecture.jpg?raw=true)
 
 ## Office Web App Preview
 Here is a sneak peek into the Office Application:
