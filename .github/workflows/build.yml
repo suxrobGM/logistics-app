@@ -67,4 +67,4 @@ jobs:
           dotnet workload install maui
 
       - name: Build Maui App
-        run: dotnet build ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Maui/Logistics.Maui.csproj
+        run: dotnet build ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.DriverApp/Logistics.DriverApp.csproj
