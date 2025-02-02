@@ -67,7 +67,6 @@ Follow these steps to get the project up and running:
       - Owner user: email: `Test1@gmail.com`, password: `Test12345#`
       - Manager user: email: `Test2@gmail.com`, password: `Test12345#`
       - Dispatcher user: email: `Test3@gmail.com`, password: `Test12345#`
-      - Driver user: email: `Test6@gmail.com`, password: `Test12345#`
     - Driver mobile app:
       - Driver user: email: `Test6@gmail.com`, password: `Test12345#`
 
