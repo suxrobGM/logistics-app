@@ -29,7 +29,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 9.0.x
 
       - name: Test
         run: dotnet test --no-build --verbosity normal
@@ -45,10 +45,12 @@ jobs:
         uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        run: bun install --prefix ${{ env.OFFICE_APP_PATH }} --force
+        working-directory: ${{ env.OFFICE_APP_PATH }}
+        run: bun install --force
 
       - name: Build
-        run: bun run build --prefix ${{ env.OFFICE_APP_PATH }}
+        working-directory: ${{ env.OFFICE_APP_PATH }}
+        run: bun run build
 
       - name: Deploy to host
         uses: SamKirkland/FTP-Deploy-Action@4.3.2

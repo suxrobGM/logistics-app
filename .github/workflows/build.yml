@@ -40,13 +40,12 @@ jobs:
       - name: Install Bun
         uses: oven-sh/setup-bun@v2
 
-      - name: Navigate to Office App
-        run: cd ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.OfficeApp
-
       - name: Install dependencies
+        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.OfficeApp
         run: bun install --force
 
       - name: Build
+        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.OfficeApp
         run: bun run build
 
   build-maui:
