@@ -53,7 +53,7 @@ jobs:
         run: bun run build
 
       - name: Deploy to host
-        uses: SamKirkland/FTP-Deploy-Action@4.3.2
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
@@ -78,7 +78,7 @@ jobs:
         run: dotnet publish ${{ env.WEB_API_PROJECT }} -c Release -r win-x86 -p:PublishSingleFile=true --self-contained true --output ./Release
 
       - name: Deploy to host
-        uses: SamKirkland/FTP-Deploy-Action@4.3.2
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
@@ -103,7 +103,7 @@ jobs:
         run: dotnet publish ${{ env.IDENTITY_SERVER_PROJECT }} -c Release -r win-x86 -p:PublishSingleFile=true --self-contained true --output ./Release
 
       - name: Deploy to host
-        uses: SamKirkland/FTP-Deploy-Action@4
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
@@ -128,7 +128,7 @@ jobs:
         run: dotnet publish ${{ env.ADMIN_APP_PROJECT }} -c Release -r win-x86 -p:PublishTrimmed=true --self-contained true --output ./Release
 
       - name: Deploy to host
-        uses: SamKirkland/FTP-Deploy-Action@4
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
