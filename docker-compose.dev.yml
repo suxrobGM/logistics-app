@@ -12,7 +12,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=Test12345
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=Test12345#
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
       
     volumes:
@@ -31,7 +31,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=Test12345
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=Test12345#
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
       
     volumes:
@@ -50,7 +50,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=Test12345
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=Test12345#
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
       
     volumes:

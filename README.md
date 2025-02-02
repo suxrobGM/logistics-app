@@ -42,7 +42,7 @@ Follow these steps to get the project up and running:
    ```
 
 4. Update database connection strings:
-   - Add a SQL login with username `LogistsUser` and password `Test12345` (you can specify your own password) with `db_owner` role to the local or remote `MS SQL` server. 
+   - Add a SQL login with username `LogistsUser` and password `Test12345#` (you can specify your own password) with `db_owner` role to the local or remote `MS SQL` server. 
    - Modify local or remote `MS SQL` database connection strings in the [Web API appsettings.json](./src/Presentation/Logistics.API/appsettings.json) and the [IdentityServer appsettings.json](./src/Presentation/Logistics.IdentityServer/appsettings.json) under the `ConnectionStrings:MainDatabase` section. Update tenant databases configuration in the [Web API appsettings.json](./src/Presentation/Logistics.API/appsettings.json) under the `TenantsConfig` section.
 
 5. Seed databases:
