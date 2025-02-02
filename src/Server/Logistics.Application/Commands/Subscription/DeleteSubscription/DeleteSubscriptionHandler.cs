@@ -4,7 +4,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Services;
 using Logistics.Shared;
 
-namespace Logistics.Application.Admin.Commands;
+namespace Logistics.Application.Commands;
 
 internal sealed class DeleteSubscriptionHandler : RequestHandler<DeleteSubscriptionCommand, Result>
 {

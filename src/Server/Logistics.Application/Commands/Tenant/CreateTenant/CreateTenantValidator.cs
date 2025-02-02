@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Logistics.Shared;
 
-namespace Logistics.Application.Admin.Commands;
+namespace Logistics.Application.Commands;
 
 internal sealed class CreateTenantValidator : AbstractValidator<CreateTenantCommand>
 {
@@ -10,6 +10,6 @@ internal sealed class CreateTenantValidator : AbstractValidator<CreateTenantComm
         RuleFor(i => i.Name)
             .NotEmpty()
             .MinimumLength(4)
-            .Matches(RegexPatterns.TENANT_NAME);
+            .Matches(RegexPatterns.TenantName);
     }
 }

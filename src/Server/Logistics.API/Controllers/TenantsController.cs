@@ -1,5 +1,5 @@
 ﻿using Logistics.API.Extensions;
-using Logistics.Application.Admin.Commands;
+using Logistics.Application.Commands;
 using Logistics.Application.Queries;
 using Logistics.Shared;
 using Logistics.Shared.Models;

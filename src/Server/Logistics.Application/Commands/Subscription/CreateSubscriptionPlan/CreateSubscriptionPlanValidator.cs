@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Logistics.Shared;
 
-namespace Logistics.Application.Admin.Commands;
+namespace Logistics.Application.Commands;
 
 internal sealed class CreateSubscriptionPlanValidator : AbstractValidator<CreateSubscriptionPlanCommand>
 {

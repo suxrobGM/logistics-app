@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Logistics.Shared;
 
-namespace Logistics.Application.Admin.Commands;
+namespace Logistics.Application.Commands;
 
 internal sealed class UpdateSubscriptionPlanValidator : AbstractValidator<UpdateTenantCommand>
 {
@@ -13,6 +13,6 @@ internal sealed class UpdateSubscriptionPlanValidator : AbstractValidator<Update
         RuleFor(i => i.Name)
             .NotEmpty()
             .MinimumLength(4)
-            .Matches(RegexPatterns.TENANT_NAME);
+            .Matches(RegexPatterns.TenantName);
     }
 }

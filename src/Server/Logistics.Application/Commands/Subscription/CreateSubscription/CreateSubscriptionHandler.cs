@@ -4,7 +4,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Shared;
 using Logistics.Shared.Consts;
 
-namespace Logistics.Application.Admin.Commands;
+namespace Logistics.Application.Commands;
 
 internal sealed class CreateSubscriptionHandler : RequestHandler<CreateSubscriptionCommand, Result>
 {

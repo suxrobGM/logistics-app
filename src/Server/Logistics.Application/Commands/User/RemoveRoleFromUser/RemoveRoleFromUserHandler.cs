@@ -3,7 +3,7 @@ using Logistics.Domain.Entities;
 using Logistics.Shared;
 using Microsoft.AspNetCore.Identity;
 
-namespace Logistics.Application.Admin.Commands;
+namespace Logistics.Application.Commands;
 
 internal sealed class RemoveRoleFromUserHandler : RequestHandler<RemoveRoleFromUserCommand, Result>
 {

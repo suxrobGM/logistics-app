@@ -1,7 +1,7 @@
 ﻿using Logistics.Shared;
 using MediatR;
 
-namespace Logistics.Application.Admin.Commands;
+namespace Logistics.Application.Commands;
 
 public class DeleteSubscriptionCommand : IRequest<Result>
 {

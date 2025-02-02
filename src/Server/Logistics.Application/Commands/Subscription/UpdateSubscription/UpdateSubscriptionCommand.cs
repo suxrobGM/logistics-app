@@ -2,7 +2,7 @@
 using Logistics.Shared.Consts;
 using MediatR;
 
-namespace Logistics.Application.Admin.Commands;
+namespace Logistics.Application.Commands;
 
 public class UpdateSubscriptionCommand : IRequest<Result>
 {

@@ -5,7 +5,7 @@ using Logistics.Domain.Services;
 using Logistics.Domain.ValueObjects;
 using Logistics.Shared;
 
-namespace Logistics.Application.Admin.Commands;
+namespace Logistics.Application.Commands;
 
 internal sealed class CreateTenantHandler : RequestHandler<CreateTenantCommand, Result>
 {

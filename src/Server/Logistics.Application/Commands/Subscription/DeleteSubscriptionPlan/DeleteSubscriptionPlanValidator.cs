@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Logistics.Application.Admin.Commands;
+namespace Logistics.Application.Commands;
 
 internal sealed class DeleteSubscriptionPlanValidator : AbstractValidator<DeleteSubscriptionPlanCommand>
 {
