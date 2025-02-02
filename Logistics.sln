@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.IdentityServer", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.DbMigrator", "src\Presentation\Logistics.DbMigrator\Logistics.DbMigrator.csproj", "{F40A53FD-29ED-4D8A-A2CE-E7D08FFFA54F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Admin.Tests", "test\Logistics.Application.Admin.Tests\Logistics.Application.Admin.Tests.csproj", "{566AE1D3-A3AE-40CC-A781-95B342E6CD88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.Application.Tests", "test\Logistics.Application.Tests\Logistics.Application.Tests.csproj", "{566AE1D3-A3AE-40CC-A781-95B342E6CD88}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistics.DriverApp", "src\Client\Logistics.DriverApp\Logistics.DriverApp.csproj", "{920DFC2D-23C4-4662-BE89-1784DB7DC72F}"
 EndProject

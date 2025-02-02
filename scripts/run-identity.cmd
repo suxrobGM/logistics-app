@@ -1,2 +1,2 @@
 title Identity Server
-dotnet run --project ../src/Server/Logistics.IdentityServer
+dotnet run --project ../src/Presentation/Logistics.IdentityServer

@@ -2,10 +2,10 @@ name: Office App Angular Build
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
-    
+    branches: ["main"]
+
 env:
   PROJECT_DIR: ./src/Client/Logistics.OfficeApp
 
@@ -14,17 +14,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-        
-    - name: Setup Node.js 18.x
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18.x
-        cache: 'npm'
-        cache-dependency-path: ${{ env.PROJECT_DIR }}/package-lock.json
-        
-    - name: Install dependencies
-      run: npm install --prefix ${{ env.PROJECT_DIR }} --force
+      - uses: actions/checkout@v4
 
-    - name: Build
-      run: npm run build --prefix ${{ env.PROJECT_DIR }}
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: "npm"
+          cache-dependency-path: ${{ env.PROJECT_DIR }}/package-lock.json
+
+      - name: Install dependencies
+        run: npm install --prefix ${{ env.PROJECT_DIR }} --force
+
+      - name: Build
+        run: npm run build --prefix ${{ env.PROJECT_DIR }}

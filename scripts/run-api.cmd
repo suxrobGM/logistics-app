@@ -1,2 +1,2 @@
 title API Server
-dotnet run --project ../src/Server/Logistics.API
+dotnet run --project ../src/Presentation/Logistics.API
