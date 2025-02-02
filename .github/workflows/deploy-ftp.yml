@@ -41,18 +41,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js 22.x
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22.x
-          cache: "npm"
-          cache-dependency-path: ${{ env.OFFICE_APP_PATH }}/package-lock.json
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        run: npm install --prefix ${{ env.OFFICE_APP_PATH }} --force
+        run: bun install --prefix ${{ env.OFFICE_APP_PATH }} --force
 
       - name: Build
-        run: npm run build --prefix ${{ env.OFFICE_APP_PATH }}
+        run: bun run build --prefix ${{ env.OFFICE_APP_PATH }}
 
       - name: Deploy to host
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
