@@ -1,5 +1,5 @@
 ﻿using Hangfire;
-using Logistics.Application.Tenant.Services;
+using Logistics.Application.Services;
 
 namespace Logistics.API.Jobs;
 

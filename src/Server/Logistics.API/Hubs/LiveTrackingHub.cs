@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Tenant.Commands;
+﻿using Logistics.Application.Commands;
 using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;

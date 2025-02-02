@@ -1,5 +1,5 @@
-﻿using Logistics.Application.Tenant.Commands;
-using Logistics.Application.Tenant.Queries;
+﻿using Logistics.Application.Commands;
+using Logistics.Application.Queries;
 using Logistics.Shared;
 using Logistics.Shared.Models;
 using Logistics.Shared.Consts.Policies;

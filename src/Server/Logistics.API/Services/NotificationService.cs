@@ -1,5 +1,5 @@
 ﻿using Logistics.API.Hubs;
-using Logistics.Application.Tenant.Services;
+using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;

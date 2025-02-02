@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Duende.IdentityServer;
 using Serilog;
-using Logistics.Application.Core;
+using Logistics.Application;
 using Logistics.Domain.Entities;
 using Logistics.IdentityServer.Extensions;
 using Logistics.Infrastructure.EF;
@@ -15,7 +15,7 @@ internal static class Setup
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddRazorPages();
-        builder.Services.AddApplicationCoreLayer(builder.Configuration);
+        builder.Services.AddApplicationLayer(builder.Configuration);
 
         builder.Services.AddInfrastructureLayer(builder.Configuration)
             .ConfigureIdentity(identityBuilder =>

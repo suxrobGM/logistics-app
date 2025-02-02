@@ -18,8 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Logistics.Application.Admin\Logistics.Application.Admin.csproj" />
-    <ProjectReference Include="..\Logistics.Application.Tenant\Logistics.Application.Tenant.csproj" />
+    <ProjectReference Include="..\Logistics.Application\Logistics.Application.csproj" />
     <ProjectReference Include="..\Logistics.Infrastructure.EF\Logistics.Infrastructure.EF.csproj" />
   </ItemGroup>
 

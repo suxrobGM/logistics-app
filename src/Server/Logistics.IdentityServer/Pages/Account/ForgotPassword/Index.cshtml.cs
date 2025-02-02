@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
 using System.Text;
-using Logistics.Application.Core.Services;
+using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 
 namespace Logistics.IdentityServer.Pages.Account.ForgotPassword;

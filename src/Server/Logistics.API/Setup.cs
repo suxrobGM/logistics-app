@@ -1,14 +1,13 @@
 ﻿using System.Text;
 using Hangfire;
 using Logistics.API.Authorization;
+using Logistics.API.Extensions;
 using Logistics.API.Hubs;
 using Logistics.API.Jobs;
 using Logistics.API.Middlewares;
 using Logistics.API.Services;
-using Logistics.Application.Admin;
-using Logistics.Application.Core;
-using Logistics.Application.Tenant;
-using Logistics.Application.Tenant.Services;
+using Logistics.Application;
+using Logistics.Application.Services;
 using Logistics.Infrastructure.EF;
 using Logistics.Shared;
 using Microsoft.AspNetCore.Authorization;
@@ -17,16 +16,14 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Serilog;
 
-namespace Logistics.API.Extensions;
+namespace Logistics.API;
 
 internal static class Setup
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         var services = builder.Services;
-        services.AddApplicationCoreLayer(builder.Configuration);
-        services.AddAdminApplicationLayer();
-        services.AddTenantApplicationLayer();
+        services.AddApplicationLayer(builder.Configuration);
         services.AddInfrastructureLayer(builder.Configuration);
         services.AddHttpContextAccessor();
         services.AddAuthorization();
