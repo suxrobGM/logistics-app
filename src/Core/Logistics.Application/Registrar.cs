@@ -34,6 +34,7 @@ public static class Registrar
         
         services.AddSingleton<IPushNotificationService, PushNotificationService>();
         services.AddScoped<IPayrollService, PayrollService>();
+        //services.AddScoped<INotificationService, NotificationS>()
         // services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), includeInternalTypes: true);

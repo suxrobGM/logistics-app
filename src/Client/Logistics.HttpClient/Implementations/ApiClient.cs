@@ -1,9 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using Logistics.Shared.Models;
 using Logistics.HttpClient.Exceptions;
-using Logistics.HttpClient.Models;
 using Logistics.HttpClient.Options;
-using Logistics.Shared;
 
 namespace Logistics.HttpClient.Implementations;
 

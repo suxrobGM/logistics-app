@@ -1,11 +1,11 @@
 ﻿using Logistics.Application.Commands;
 using Logistics.Application.Queries;
-using Logistics.Shared;
 using Logistics.Shared.Models;
 using Logistics.Shared.Consts.Policies;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using GetTruckQuery = Logistics.Application.Queries.GetTruckQuery;
 
 namespace Logistics.API.Controllers;
 

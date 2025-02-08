@@ -1,4 +1,4 @@
-﻿using Logistics.Shared;
+﻿using Logistics.Shared.Models;
 using Logistics.Shared.Models;
 using MediatR;
 

@@ -9,7 +9,7 @@ using Logistics.API.Services;
 using Logistics.Application;
 using Logistics.Application.Services;
 using Logistics.Infrastructure.EF;
-using Logistics.Shared;
+using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;

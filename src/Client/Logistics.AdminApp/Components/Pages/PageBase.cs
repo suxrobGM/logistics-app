@@ -1,5 +1,5 @@
 ﻿using Logistics.HttpClient;
-using Logistics.Shared;
+using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Radzen;

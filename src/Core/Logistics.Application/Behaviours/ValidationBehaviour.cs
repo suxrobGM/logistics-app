@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Logistics.Shared;
+using Logistics.Shared.Models;
 using MediatR;
 
 namespace Logistics.Application.Behaviours;

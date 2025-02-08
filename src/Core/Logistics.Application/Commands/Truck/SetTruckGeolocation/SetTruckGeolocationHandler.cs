@@ -2,7 +2,7 @@
 using Logistics.Domain.Persistence;
 using Logistics.Domain.ValueObjects;
 using Logistics.Mappings;
-using Logistics.Shared;
+using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;

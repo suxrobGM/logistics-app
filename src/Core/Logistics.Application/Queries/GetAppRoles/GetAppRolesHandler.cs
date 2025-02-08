@@ -3,7 +3,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Specifications;
 using Logistics.Shared.Models;
-using Logistics.Shared;
+using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 

@@ -1,5 +1,5 @@
-﻿using Logistics.HttpClient.Models;
-using Logistics.Shared;
+﻿using Logistics.Shared.Models;
+using Logistics.Shared.Models;
 using Logistics.Shared.Consts;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Components;

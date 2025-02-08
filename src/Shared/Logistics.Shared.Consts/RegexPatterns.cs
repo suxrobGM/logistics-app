@@ -1,4 +1,4 @@
-﻿namespace Logistics.Shared;
+﻿namespace Logistics.Shared.Consts;
 
 public static class RegexPatterns
 {

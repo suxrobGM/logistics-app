@@ -1,6 +1,6 @@
 ﻿using Logistics.Application;
 using Logistics.Domain.Entities;
-using Logistics.Shared;
+using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.Application.Commands;

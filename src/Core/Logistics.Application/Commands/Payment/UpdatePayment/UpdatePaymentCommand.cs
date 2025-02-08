@@ -1,5 +1,5 @@
 ﻿using Logistics.Domain.ValueObjects;
-using Logistics.Shared;
+using Logistics.Shared.Models;
 using Logistics.Shared.Consts;
 using MediatR;
 

@@ -1,7 +1,6 @@
 ﻿using Logistics.API.Extensions;
 using Logistics.Application.Commands;
 using Logistics.Application.Queries;
-using Logistics.Shared;
 using Logistics.Shared.Models;
 using Logistics.Shared.Consts.Policies;
 using Logistics.Shared.Consts.Roles;

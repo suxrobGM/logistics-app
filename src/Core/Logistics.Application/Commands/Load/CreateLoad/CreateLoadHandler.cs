@@ -2,7 +2,7 @@
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Shared;
+using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 

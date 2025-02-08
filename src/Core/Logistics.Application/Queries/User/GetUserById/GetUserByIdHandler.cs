@@ -2,7 +2,7 @@
 using Logistics.Domain.Entities;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
-using Logistics.Shared;
+using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.Application.Queries;
