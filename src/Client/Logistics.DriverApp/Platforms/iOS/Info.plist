@@ -32,7 +32,7 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>JFleets Driver URL</string>
+			<string>Logistics Driver URL</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>jfleets-driver</string>

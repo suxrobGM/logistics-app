@@ -61,8 +61,8 @@ internal static class Setup
             options.AddPolicy("DefaultCors", cors =>
             {
                 cors.WithOrigins(
-                        "https://jfleets.com",
-                        "https://*.jfleets.com")
+                        "https://suxrobgm.net",
+                        "https://*.suxrobgm.net")
                     .SetIsOriginAllowedToAllowWildcardSubdomains()
                     .AllowAnyHeader()
                     .AllowAnyMethod();

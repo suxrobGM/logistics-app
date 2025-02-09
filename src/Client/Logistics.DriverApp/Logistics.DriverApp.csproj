@@ -11,7 +11,7 @@
 		<Nullable>enable</Nullable>
 
 		<!-- Display name -->
-		<ApplicationTitle>JFleets Driver</ApplicationTitle>
+		<ApplicationTitle>Logistics Driver</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>com.jfleets.driver</ApplicationId>
