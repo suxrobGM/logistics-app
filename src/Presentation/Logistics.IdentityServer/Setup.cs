@@ -96,8 +96,7 @@ internal static class Setup
         {
             app.UseDeveloperExceptionPage();
         }
-
-        app.UseLetsEncryptChallenge();
+        
         app.UseStaticFiles();
         app.UseRouting();
         app.UseCors(app.Environment.IsDevelopment() ? "AnyCors" : "DefaultCors");

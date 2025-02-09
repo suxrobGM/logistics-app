@@ -31,8 +31,10 @@ internal static class PushNotificationExtensions
 
         var loadStatusText = loadStatus switch
         {
-            LoadStatus.PickedUp => "pick up",
+            LoadStatus.PickedUp => "picked up",
             LoadStatus.Delivered => "delivered",
+            LoadStatus.Dispatched => "dispatched",
+            _ => throw new ArgumentOutOfRangeException(nameof(loadStatus), loadStatus, null)
         };
 
         foreach (var driver in drivers)

@@ -74,6 +74,7 @@ internal class InfrastructureBuilder : IInfrastructureBuilder
         }
 
         options.ConnectionString = connectionString;
+        _services.AddSingleton(options);
         _services.AddDbContext<TenantDbContext>();
         _services.AddScoped<ITenantUnityOfWork, TenantUnitOfWork>();
         _logger?.LogInformation("Added default tenant database with connection string: {ConnectionString}", connectionString);
