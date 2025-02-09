@@ -7,6 +7,8 @@ using Logistics.Domain.Entities;
 using Logistics.IdentityServer.Extensions;
 using Logistics.Infrastructure.EF;
 using Logistics.IdentityServer.Services;
+using Logistics.Infrastructure.EF.Builder;
+using Serilog.Extensions.Logging;
 
 namespace Logistics.IdentityServer;
 
@@ -14,10 +16,17 @@ internal static class Setup
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
-        builder.Services.AddRazorPages();
-        builder.Services.AddApplicationLayer(builder.Configuration);
-        builder.Services.AddInfrastructureLayer(builder.Configuration)
-            .ConfigureIdentity(identityBuilder =>
+        var services = builder.Services;
+        var microsoftLogger = new SerilogLoggerFactory(Log.Logger)
+            .CreateLogger<IInfrastructureBuilder>();
+        
+        services.AddRazorPages();
+        services.AddApplicationLayer(builder.Configuration);
+        services.AddInfrastructureLayer(builder.Configuration)
+            .UseLogger(microsoftLogger)
+            .AddMasterDatabase()
+            .AddTenantDatabase()
+            .AddIdentity(identityBuilder =>
             {
                 identityBuilder
                     .AddSignInManager()
@@ -25,9 +34,9 @@ internal static class Setup
                     .AddDefaultTokenProviders();
             });
         
-        AddAuthSchemes(builder.Services);
+        AddAuthSchemes(services);
 
-        builder.Services
+        services
             .AddIdentityServer(options =>
             {
                 options.Events.RaiseErrorEvents = true;
@@ -44,7 +53,7 @@ internal static class Setup
             .AddInMemoryClients(Config.Clients(builder.Configuration))
             .AddAspNetIdentity<User>();
 
-        builder.Services.AddAuthentication()
+        services.AddAuthentication()
             .AddGoogle(options =>
             {
                 options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
@@ -56,7 +65,7 @@ internal static class Setup
                 options.ClientSecret = "copy client secret from Google here";
             });
         
-        builder.Services.AddCors(options =>
+        services.AddCors(options =>
         {
             options.AddPolicy("DefaultCors", cors =>
             {

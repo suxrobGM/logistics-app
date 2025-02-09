@@ -1,12 +1,13 @@
 ﻿using Logistics.Infrastructure.EF.Options;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.EF.Builder;
 
-public interface IInfrastructureBuilder : IServiceCollection
+public interface IInfrastructureBuilder
 {
-    IInfrastructureBuilder ConfigureIdentity(Action<IdentityBuilder> configure);
-    IInfrastructureBuilder ConfigureMainDatabase(Action<MasterDbContextOptions> configure);
-    IInfrastructureBuilder ConfigureTenantDatabase(Action<TenantDbContextOptions> configure);
+    IInfrastructureBuilder AddIdentity(Action<IdentityBuilder>? configure = null);
+    IInfrastructureBuilder AddMasterDatabase(Action<MasterDbContextOptions>? configure = null);
+    IInfrastructureBuilder AddTenantDatabase(Action<TenantDbContextOptions>? configure = null);
+    IInfrastructureBuilder UseLogger(ILogger<IInfrastructureBuilder> logger);
 }

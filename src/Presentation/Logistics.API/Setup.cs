@@ -7,12 +7,14 @@ using Logistics.API.Middlewares;
 using Logistics.Application;
 using Logistics.Application.Hubs;
 using Logistics.Infrastructure.EF;
+using Logistics.Infrastructure.EF.Builder;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Serilog;
+using Serilog.Extensions.Logging;
 
 namespace Logistics.API;
 
@@ -21,8 +23,15 @@ internal static class Setup
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         var services = builder.Services;
+        var microsoftLogger = new SerilogLoggerFactory(Log.Logger)
+            .CreateLogger<IInfrastructureBuilder>();
+        
         services.AddApplicationLayer(builder.Configuration);
-        services.AddInfrastructureLayer(builder.Configuration);
+        services.AddInfrastructureLayer(builder.Configuration)
+            .UseLogger(microsoftLogger)
+            .AddMasterDatabase()
+            .AddTenantDatabase();
+        
         services.AddHttpContextAccessor();
         services.AddAuthorization();
         services.AddEndpointsApiExplorer();

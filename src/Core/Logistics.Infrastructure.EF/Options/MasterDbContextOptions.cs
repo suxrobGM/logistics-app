@@ -1,6 +1,7 @@
 ﻿namespace Logistics.Infrastructure.EF.Options;
 
-public class MasterDbContextOptions
+public record MasterDbContextOptions
 {
+    public string DbConnectionSection { get; set; } = "MasterDatabase";
     public string? ConnectionString { get; set; }
 }

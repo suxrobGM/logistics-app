@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Domain.Options;
 
-public class TenantsDatabaseOptions
+public record TenantsDatabaseOptions
 {
     public string? DatabaseNameTemplate { get; set; }
     public string? DatabaseHost { get; set; }
