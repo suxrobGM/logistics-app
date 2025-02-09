@@ -6,9 +6,8 @@
 
 <RadzenButton class="mb-3" Click="@(() => Navigation.NavigateTo("/subscriptions/add"))">Add</RadzenButton>
 
-<RadzenDataGridColumn 
+<RadzenDataGrid 
     Data="_subscriptions"
-    TItem="SubscriptionDto"
     LoadData="LoadData"
     Count="_totalRecords"
     AllowPaging="true"
@@ -79,4 +78,4 @@
             </Template>
         </RadzenDataGridColumn>
     </Columns>
-</RadzenDataGridColumn>
+</RadzenDataGrid>

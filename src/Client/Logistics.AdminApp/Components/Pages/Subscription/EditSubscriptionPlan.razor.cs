@@ -1,5 +1,4 @@
 ﻿using Logistics.Shared.Models;
-using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace Logistics.AdminApp.Components.Pages.Subscription;

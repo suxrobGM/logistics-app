@@ -4,34 +4,39 @@
 <RadzenText TextStyle="TextStyle.H3">Tenants</RadzenText>
 <hr/>
 
-<RadzenGrid Data="_users"
-            LoadData="LoadData"
-            Count="_totalRecords"
-            AllowPaging="true"
-            AllowSorting="true"
-            PageSizeOptions="new[] { 10, 25, 50 }"
-            PageSize="10">
+<RadzenDataGrid 
+    Data="_users"
+    LoadData="LoadData"
+    Count="_totalRecords"
+    AllowPaging="true"
+    AllowSorting="true"
+    PageSizeOptions="new[] { 10, 25, 50 }"
+    PageSize="10">
     <Columns>
-        <RadzenGridColumn TItem="UserDto"
-                          Property="FirstName"
-                          Title="First Name">
-        </RadzenGridColumn>
-        <RadzenGridColumn TItem="UserDto"
-                          Property="LastName"
-                          Title="Last Name">
-        </RadzenGridColumn>
-        <RadzenGridColumn TItem="UserDto"
-                          Property="Email"
-                          Title="Email">
-        </RadzenGridColumn>
-        <RadzenGridColumn TItem="UserDto"
-                          Property="PhoneNumber"
-                          Title="Phone Number">
-        </RadzenGridColumn>
-        @* <RadzenGridColumn TItem="UserDto" Title="Action"> *@
+        <RadzenDataGridColumn 
+            TItem="UserDto"
+            Property="FirstName"
+            Title="First Name">
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn 
+            TItem="UserDto"
+            Property="LastName"
+            Title="Last Name">
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn 
+            TItem="UserDto"
+            Property="Email"
+            Title="Email">
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn 
+            TItem="UserDto"
+            Property="PhoneNumber"
+            Title="Phone Number">
+        </RadzenDataGridColumn>
+        @* <RadzenDataGridColumn TItem="UserDto" Title="Action"> *@
         @*     <Template Context="user"> *@
         @*         <RadzenButton Click="@(() => Navigation.NavigateTo($"tenants/{tenant.Id}"))">Edit</RadzenButton> *@
         @*     </Template> *@
-        @* </RadzenGridColumn> *@
+        @* </RadzenDataGridColumn> *@
     </Columns>
-</RadzenGrid>
+</RadzenDataGrid>

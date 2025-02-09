@@ -6,41 +6,47 @@
 
 <RadzenButton class="mb-3" Click="@(() => Navigation.NavigateTo("/tenants/add"))">Add</RadzenButton>
 
-<RadzenDataGrid Data="_tenants"
-            LoadData="LoadTenants"
-            Count="_totalRecords"
-            AllowPaging="true"
-            AllowSorting="true"
-            PageSizeOptions="new[] { 10, 25, 50 }"
-            PageSize="10">
+<RadzenDataGrid 
+    Data="_tenants"
+    LoadData="LoadTenants"
+    Count="_totalRecords"
+    AllowPaging="true"
+    AllowSorting="true"
+    PageSizeOptions="new[] { 10, 25, 50 }"
+    PageSize="10">
     <Columns>
-        <RadzenDataGridColumn TItem="TenantDto"
-                          Property="Name"
-                          Title="Name"
-                          SortProperty="Name">
+        <RadzenDataGridColumn 
+            TItem="TenantDto"
+            Property="Name"
+            Title="Name"
+            SortProperty="Name">
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="TenantDto"
-                          Property="CompanyName"
-                          Title="Company"
-                          SortProperty="CompanyName">
+        <RadzenDataGridColumn 
+            TItem="TenantDto"
+            Property="CompanyName"
+            Title="Company"
+            SortProperty="CompanyName">
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="TenantDto"
-                          Property="CompanyAddress"
-                          Title="Company Address"
-                          SortProperty="CompanyAddress">
+        <RadzenDataGridColumn 
+            TItem="TenantDto"
+            Property="CompanyAddress"
+            Title="Company Address"
+            SortProperty="CompanyAddress">
             <Template Context="tenant">
                 @tenant.CompanyAddress.ConvertToString()
             </Template>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="TenantDto"
-                          Property="ConnectionString"
-                          Title="DB Connection"
-                          Sortable="false">
+        <RadzenDataGridColumn 
+            TItem="TenantDto"
+            Property="ConnectionString"
+            Title="DB Connection"
+            Sortable="false">
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="TenantDto"
-                          Property="Subscription"
-                          Title="Subscription Plan"
-                          SortProperty="SubscriptionPlan">
+        <RadzenDataGridColumn 
+            TItem="TenantDto"
+            Property="Subscription"
+            Title="Subscription Plan"
+            SortProperty="SubscriptionPlan">
             <Template Context="tenant">
                 @tenant.Subscription?.Plan?.Name
             </Template>
