@@ -2,19 +2,18 @@ import {Injectable} from "@angular/core";
 import {EventTypes, OidcSecurityService, PublicEventsService} from "angular-auth-oidc-client";
 import {Observable, filter, map} from "rxjs";
 import {UserRoleEnum} from "@/core/enums";
+import {TenantService} from "@/core/services";
 import {UserData} from "./user-data";
 
 @Injectable({providedIn: "root"})
 export class AuthService {
-  private accessToken: string | null;
-  private userData: UserData | null;
+  private userData: UserData | null = null;
 
   constructor(
-    private oidcService: OidcSecurityService,
-    private eventService: PublicEventsService
+    private readonly oidcService: OidcSecurityService,
+    private readonly eventService: PublicEventsService,
+    private readonly tenantService: TenantService
   ) {
-    this.accessToken = null;
-    this.userData = null;
     this.onUserDataChanged().subscribe((_) => _);
   }
 
@@ -34,6 +33,9 @@ export class AuthService {
     );
   }
 
+  /**
+   * Register for the event that is emitted when the authentication process is started
+   */
   onCheckingAuth(): Observable<void> {
     return this.eventService.registerForEvents().pipe(
       filter((notifaction) => notifaction.type === EventTypes.CheckingAuth),
@@ -41,6 +43,9 @@ export class AuthService {
     );
   }
 
+  /**
+   * Register for the event that is emitted when the authentication process is finished
+   */
   onCheckingAuthFinished(): Observable<void> {
     return this.eventService.registerForEvents().pipe(
       filter((notifaction) => notifaction.type === EventTypes.CheckingAuthFinished),
@@ -48,30 +53,30 @@ export class AuthService {
     );
   }
 
-  login() {
+  login(): void {
     this.oidcService.authorize();
   }
 
-  logout() {
+  logout(): void {
     this.oidcService.logoff().subscribe(() => {
       this.userData = null;
-      this.accessToken = null;
     });
   }
 
+  /**
+   * Initiate the authentication process and check if the user is authenticated
+   * @returns An observable that emits a boolean value indicating whether the user is authenticated
+   */
   checkAuth(): Observable<boolean> {
     return this.oidcService.checkAuth().pipe(
-      map(({isAuthenticated, userData, accessToken}) => {
-        console.log(userData);
-
-        if (isAuthenticated) {
-          this.userData = new UserData(userData);
+      map((response) => {
+        if (response.isAuthenticated) {
+          this.userData = new UserData(response.userData);
+          this.tenantService.setTenantId(this.userData.tenant);
         }
 
-        if (accessToken) {
-          this.accessToken = accessToken;
-        }
-        return isAuthenticated;
+        console.log("User data:", this.userData);
+        return response.isAuthenticated;
       })
     );
   }

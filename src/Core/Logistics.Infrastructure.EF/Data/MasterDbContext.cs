@@ -2,7 +2,6 @@
 using Logistics.Infrastructure.EF.Helpers;
 using Logistics.Infrastructure.EF.Interceptors;
 using Logistics.Infrastructure.EF.Options;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

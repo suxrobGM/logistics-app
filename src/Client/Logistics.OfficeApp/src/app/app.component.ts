@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, signal} from "@angular/core";
 import {Router, RouterOutlet} from "@angular/router";
 import {ToastModule} from "primeng/toast";
 import {AuthService} from "@/core/auth";
@@ -12,20 +12,19 @@ import {BreadcrumbComponent, SidebarComponent} from "@/components/layout";
   imports: [BreadcrumbComponent, ToastModule, RouterOutlet, SidebarComponent],
 })
 export class AppComponent implements OnInit {
-  isAuthenticated: boolean;
+  public readonly isAuthenticated = signal(false);
 
   constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {
-    this.isAuthenticated = false;
-  }
+    private readonly authService: AuthService,
+    private readonly router: Router
+  ) {}
 
   ngOnInit(): void {
     this.authService
       .checkAuth()
-      .subscribe((isAuthenticated) => (this.isAuthenticated = isAuthenticated));
-    this.authService.onAuthenticated().subscribe((result) => (this.isAuthenticated = result));
+      .subscribe((isAuthenticated) => this.isAuthenticated.set(isAuthenticated));
+
+    this.authService.onAuthenticated().subscribe((result) => this.isAuthenticated.set(result));
     // this.printPath('', this.router.config);
   }
 

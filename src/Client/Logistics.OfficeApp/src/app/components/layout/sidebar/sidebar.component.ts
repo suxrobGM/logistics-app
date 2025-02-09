@@ -7,7 +7,7 @@ import {PanelMenuModule} from "primeng/panelmenu";
 import {OverlayPanelModule} from "primeng/overlaypanel";
 import {ButtonModule} from "primeng/button";
 import {MenuItem} from "primeng/api";
-import {GLOBAL_CONFIG} from "@/configs";
+import {globalConfig} from "@/configs";
 import {AuthService} from "@/core/auth";
 import {ApiService, TenantService} from "@/core/services";
 
@@ -116,6 +116,6 @@ export class SidebarComponent implements OnInit {
   }
 
   openAccountUrl() {
-    window.open(`${GLOBAL_CONFIG.idHost}/account/manage/profile`, "_blank");
+    window.open(`${globalConfig.idHost}/account/manage/profile`, "_blank");
   }
 }

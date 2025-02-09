@@ -8,12 +8,12 @@ import {MessageService} from "primeng/api";
 import {providePrimeNG} from "primeng/config";
 import Aura from "@primeng/themes/aura";
 import {tenantInterceptor, tokenInterceptor} from "@/core/interceptors";
-import {AUTH_CONFIG} from "@/configs";
+import {authConfig} from "@/configs";
 import {appRoutes} from "./app.routes";
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideAuth({config: AUTH_CONFIG}),
+    provideAuth({config: authConfig}),
     provideRouter(appRoutes, withComponentInputBinding()),
     importProvidersFrom(BrowserModule),
     provideAnimations(),

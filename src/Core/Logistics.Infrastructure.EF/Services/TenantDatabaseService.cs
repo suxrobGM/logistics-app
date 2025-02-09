@@ -140,7 +140,7 @@ public class TenantDatabaseService : ITenantDatabaseService
             TenantRoles.Manager => TenantRolePermissions.Manager,
             TenantRoles.Dispatcher => TenantRolePermissions.Dispatcher,
             TenantRoles.Driver => TenantRolePermissions.Driver,
-            _ => Enumerable.Empty<string>()
+            _ => []
         };
     }
 }

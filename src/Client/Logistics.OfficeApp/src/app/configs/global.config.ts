@@ -1,6 +1,6 @@
 import {environment} from "src/environments/environment";
 
-export const GLOBAL_CONFIG = {
+export const globalConfig = {
   apiHost: environment.apiHost,
   idHost: environment.idHost,
   mapboxToken: environment.mapboxToken,

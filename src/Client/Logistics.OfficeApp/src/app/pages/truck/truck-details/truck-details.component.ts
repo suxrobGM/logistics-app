@@ -7,7 +7,7 @@ import {DailyGrossesDto, MonthlyGrossesDto, TruckDto, TruckGeolocationDto} from 
 import {DistanceUnitPipe} from "@/core/pipes";
 import {ApiService} from "@/core/services";
 import {GeolocationMapComponent, GrossesBarchartComponent, BarChartDrawnEvent} from "@/components";
-import {GLOBAL_CONFIG} from "@/configs";
+import {globalConfig} from "@/configs";
 import {LineChartDrawnEvent, TruckGrossesLinechartComponent} from "../components";
 
 @Component({
@@ -28,7 +28,7 @@ import {LineChartDrawnEvent, TruckGrossesLinechartComponent} from "../components
   ],
 })
 export class TruckDetailsComponent implements OnInit {
-  public readonly accessToken = GLOBAL_CONFIG.mapboxToken;
+  public readonly accessToken = globalConfig.mapboxToken;
   public id!: string;
   public isLoading = false;
   public truck?: TruckDto;

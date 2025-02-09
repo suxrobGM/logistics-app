@@ -5,77 +5,67 @@ import {CookieService} from "./cookie.service";
 
 @Injectable({providedIn: "root"})
 export class TenantService {
-  private tenant: TenantDto | null;
+  private tenantId: string | null = null;
+  private tenantData: TenantDto | null = null;
 
-  constructor(private cookieService: CookieService) {
-    this.tenant = null;
-  }
+  constructor(private readonly cookieService: CookieService) {}
 
   getTenantData(): TenantDto | null {
-    return this.tenant;
+    return this.tenantData;
   }
 
-  setTenantData(value: TenantDto) {
-    if (this.tenant === value) {
+  setTenantData(value: TenantDto): void {
+    if (this.tenantData === value) {
       return;
     }
 
-    this.tenant = value;
+    this.tenantData = value;
   }
 
-  getTenantName(): string {
-    const urlParams = new URLSearchParams(window.location.search);
-    const tenantSubDomain = this.getSubDomain(location.host);
-    const tenantQuery = urlParams.get("tenant");
-    const tenantCookie = this.cookieService.getCookie("X-Tenant");
-    let tenantName = "default";
+  /**
+   * Set tenant id and save it to the cookie
+   * @param tenantId Tenant id
+   */
+  setTenantId(tenantId: string): void {
+    this.tenantId = tenantId;
+    this.setTenantCookie(tenantId);
+  }
 
-    if (tenantSubDomain) {
-      tenantName = tenantSubDomain;
-    } else if (tenantQuery) {
-      tenantName = tenantQuery;
-    } else if (tenantCookie) {
-      tenantName = tenantCookie;
+  /**
+   * Get tenant id
+   */
+  getTenantId(): string | null {
+    return this.tenantId;
+  }
+
+  /**
+   * Append tenant header 'X-Tenant' to the headers
+   * @param headers HttpHeaders
+   * @returns Updated HttpHeaders
+   */
+  generateTenantHeaders(headers: HttpHeaders): HttpHeaders {
+    if (!this.tenantId) {
+      throw new Error("TenantId is not set");
     }
 
-    if (tenantName === "office") {
-      tenantName = "default";
-    }
-
-    return tenantName;
+    return headers.append("X-Tenant", this.tenantId);
   }
 
-  createTenantHeaders(headers: HttpHeaders, tenantName: string): HttpHeaders {
-    return headers.append("X-Tenant", tenantName);
-  }
-
-  setTenantCookie(tenantName: string) {
-    if (!tenantName) {
+  private setTenantCookie(tenantId: string) {
+    if (!tenantId) {
       return;
     }
 
     const currentTenant = this.cookieService.getCookie("X-Tenant");
 
-    if (tenantName === currentTenant) {
+    if (tenantId === currentTenant) {
       return;
     }
 
     this.cookieService.setCookie({
       name: "X-Tenant",
-      value: tenantName,
+      value: tenantId,
       session: true,
     });
-  }
-
-  private getSubDomain(host: string) {
-    let subDomain = "";
-    const domains = host.split(".");
-
-    if (domains.length <= 2) {
-      return subDomain;
-    }
-
-    subDomain = domains[0];
-    return subDomain;
   }
 }

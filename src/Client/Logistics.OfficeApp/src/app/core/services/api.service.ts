@@ -2,7 +2,7 @@ import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {catchError, Observable, of} from "rxjs";
 import {TenantService, ToastService} from "@/core/services";
-import {GLOBAL_CONFIG} from "@/configs";
+import {globalConfig} from "@/configs";
 import {
   Result,
   EmployeeDto,
@@ -46,22 +46,19 @@ import {
 
 @Injectable({providedIn: "root"})
 export class ApiService {
-  private host: string;
-  private headers: Record<string, string>;
+  private readonly host = globalConfig.apiHost;
+  private readonly headers = {"content-type": "application/json"};
 
   constructor(
     private readonly httpClient: HttpClient,
     private readonly tenantService: TenantService,
     private readonly toastService: ToastService
-  ) {
-    this.host = GLOBAL_CONFIG.apiHost;
-    this.headers = {"content-type": "application/json"};
-  }
+  ) {}
 
   // #region Tenant API
 
   getTenant(): Observable<Result<TenantDto>> {
-    const tenantId = this.tenantService.getTenantName();
+    const tenantId = this.tenantService.getTenantId();
     const url = `/tenants/${tenantId}`;
     return this.get(url);
   }

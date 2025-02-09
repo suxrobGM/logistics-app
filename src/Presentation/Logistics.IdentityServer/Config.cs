@@ -8,11 +8,11 @@ public static class Config
 {
     public static IEnumerable<IdentityResource> IdentityResources()
     {
-        return new IdentityResource[]
-        {
+        return
+        [
             new IdentityResources.OpenId(),
             new IdentityResources.Profile(),
-            new()
+            new IdentityResource
             {
                 Name = "roles",
                 DisplayName = "Identity roles",
@@ -20,15 +20,23 @@ public static class Config
                     CustomClaimTypes.Role, 
                     CustomClaimTypes.Permission
                 }
+            },
+            new IdentityResource
+            {
+                Name = "tenant",
+                DisplayName = "Tenant ID",
+                UserClaims = {
+                    CustomClaimTypes.Tenant
+                }
             }
-        };
+        ];
     }
     
     public static IEnumerable<ApiScope> ApiScopes()
     {
-        return new ApiScope[]
-        {
-            new()
+        return
+        [
+            new ApiScope
             {
                 Name = "logistics.api.admin",
                 DisplayName = "Logistics Admin API",
@@ -39,7 +47,7 @@ public static class Config
                     CustomClaimTypes.Permission
                 }
             },
-            new()
+            new ApiScope
             {
                 Name = "logistics.api.tenant",
                 DisplayName = "Logistics Tenant API",
@@ -51,14 +59,14 @@ public static class Config
                     CustomClaimTypes.Tenant
                 }
             }
-        };
+        ];
     }
 
     public static IEnumerable<ApiResource> ApiResources()
     {
-        return new ApiResource[]
-        {
-            new()
+        return
+        [
+            new ApiResource
             {
                 Name = "logistics.api",
                 DisplayName = "Logistics API",
@@ -74,7 +82,7 @@ public static class Config
                     CustomClaimTypes.Tenant
                 }
             }
-        };
+        ];
     }
 
     public static IEnumerable<Client> Clients(IConfiguration configuration)

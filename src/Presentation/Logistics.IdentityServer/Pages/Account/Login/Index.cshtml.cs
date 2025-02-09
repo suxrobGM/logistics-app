@@ -24,10 +24,10 @@ public class Index : PageModel
     private readonly IAuthenticationSchemeProvider _schemeProvider;
     private readonly IIdentityProviderStore _identityProviderStore;
 
-    public ViewModel View { get; set; } = default!;
+    public ViewModel View { get; set; } = null!;
 
     [BindProperty]
-    public InputModel Input { get; set; } = default!;
+    public InputModel Input { get; set; } = null!;
 
     public Index(
         IIdentityServerInteractionService interaction,
@@ -45,7 +45,7 @@ public class Index : PageModel
         _events = events;
     }
 
-    public async Task<IActionResult> OnGet(string returnUrl)
+    public async Task<IActionResult> OnGet(string? returnUrl)
     {
         await BuildModelAsync(returnUrl);
 
@@ -60,8 +60,6 @@ public class Index : PageModel
 
     public async Task<IActionResult> OnPost()
     {
-        Input.ReturnUrl ??= Url.Content("/");
-        
         // check if we are in the context of an authorization request
         var context = await _interaction.GetAuthorizationContextAsync(Input.ReturnUrl);
 
@@ -84,8 +82,7 @@ public class Index : PageModel
         const string emailPattern = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}" +
                                     @"\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\" +
                                     @".)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
-        var regex = new Regex(emailPattern);
-        if (!regex.IsMatch(Input.Email))
+        if (!Regex.IsMatch(Input.Email, emailPattern))
         {
             ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
         }
@@ -123,11 +120,11 @@ public class Index : PageModel
         return Page();
     }
 
-    private async Task BuildModelAsync(string returnUrl)
+    private async Task BuildModelAsync(string? returnUrl)
     {
         Input = new InputModel
         {
-            ReturnUrl = returnUrl
+            ReturnUrl = returnUrl ?? "/",
         };
 
         var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
@@ -145,7 +142,7 @@ public class Index : PageModel
 
             if (!local)
             {
-                View.ExternalProviders = new[] { new ViewModel.ExternalProvider { AuthenticationScheme = context.IdP } };
+                View.ExternalProviders = [new ViewModel.ExternalProvider { AuthenticationScheme = context.IdP }];
             }
 
             return;
@@ -176,7 +173,7 @@ public class Index : PageModel
         if (client != null)
         {
             allowLocal = client.EnableLocalLogin;
-            if (client.IdentityProviderRestrictions != null && client.IdentityProviderRestrictions.Any())
+            if (client.IdentityProviderRestrictions != null && client.IdentityProviderRestrictions.Count != 0)
             {
                 providers = providers.Where(provider => client.IdentityProviderRestrictions.Contains(provider.AuthenticationScheme)).ToList();
             }
