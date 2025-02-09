@@ -2,7 +2,6 @@
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Specifications;
 using Logistics.Shared.Models;
-using Logistics.Shared.Models;
 using Logistics.Shared.Consts.Roles;
 
 namespace Logistics.Application.Queries;

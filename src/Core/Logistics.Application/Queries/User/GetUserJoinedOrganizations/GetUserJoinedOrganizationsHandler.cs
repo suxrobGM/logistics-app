@@ -1,7 +1,6 @@
 ﻿using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
-using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
