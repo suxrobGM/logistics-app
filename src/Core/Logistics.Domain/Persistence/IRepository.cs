@@ -20,7 +20,7 @@ public interface IRepository<TEntity, in TEntityKey> where TEntity : class, IEnt
     /// </summary>
     /// <param name="predicate">Predicate to filter query</param>
     /// <returns>Number of elements that satisfies the specified condition</returns>
-    Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = default);
+    Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null);
     
     /// <summary>
     /// Gets an entity object by ID.
@@ -48,7 +48,7 @@ public interface IRepository<TEntity, in TEntityKey> where TEntity : class, IEnt
     /// </summary>
     /// <param name="specification">Specification</param>
     /// <returns>List of entity objects</returns>
-    Task<List<TEntity>> GetListAsync(ISpecification<TEntity>? specification = default);
+    Task<List<TEntity>> GetListAsync(ISpecification<TEntity>? specification = null);
 
     /// <summary>
     /// Adds new entry to database.

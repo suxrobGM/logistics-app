@@ -5,8 +5,8 @@ namespace Logistics.Domain.Entities;
 
 public class User : IdentityUser, IEntity<string>, IAuditableEntity
 {
-    public string FirstName { get; set; } = default!;
-    public string LastName { get; set; } = default!;
+    public string FirstName { get; set; } = null!;
+    public string LastName { get; set; } = null!;
     public string JoinedTenantIds { get; set; } = string.Empty;
     public DateTime Created { get; set; } = DateTime.UtcNow;
     public string? CreatedBy { get; set; }
@@ -37,11 +37,6 @@ public class User : IdentityUser, IEntity<string>, IAuditableEntity
 
     public string[] GetJoinedTenantIds()
     {
-        if (string.IsNullOrEmpty(JoinedTenantIds))
-        {
-            return Array.Empty<string>();
-        }
-        
-        return JoinedTenantIds.Split(',');
+        return string.IsNullOrEmpty(JoinedTenantIds) ? [] : JoinedTenantIds.Split(',');
     }
 }

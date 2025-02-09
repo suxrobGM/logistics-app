@@ -6,6 +6,10 @@
 # Exclude production appsettings file
 appsettings.Production.json
 
+# Exception for production appsettings files in the following projects
+!**/Logistics.AdminApp/wwwroot/appsettings.Production.json
+!**/Logistics.DriverApp/appsettings.Production.json
+
 .idea/
 .config/
 .VSCodeCounter/
