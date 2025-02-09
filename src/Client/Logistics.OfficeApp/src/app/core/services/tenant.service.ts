@@ -45,7 +45,8 @@ export class TenantService {
    */
   generateTenantHeaders(headers: HttpHeaders): HttpHeaders {
     if (!this.tenantId) {
-      throw new Error("TenantId is not set");
+      //throw new Error("TenantId is not set");
+      return headers;
     }
 
     return headers.append("X-Tenant", this.tenantId);
