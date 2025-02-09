@@ -1,7 +1,7 @@
 ﻿using Logistics.Shared.Models;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Logistics.API.Hubs;
+namespace Logistics.Application.Hubs;
 
 public class NotificationHub : Hub<INotificationHubClient>
 {

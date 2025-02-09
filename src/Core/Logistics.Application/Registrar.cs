@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using FluentValidation;
 using Logistics.Application.Behaviours;
+using Logistics.Application.Hubs;
 using Logistics.Application.Services;
 using Logistics.Application.Services.Implementations;
 using MediatR;
@@ -32,13 +33,16 @@ public static class Registrar
             services.AddScoped<ICaptchaService, GoogleRecaptchaService>();
         }
         
-        services.AddSingleton<IPushNotificationService, PushNotificationService>();
-        services.AddScoped<IPayrollService, PayrollService>();
-        //services.AddScoped<INotificationService, NotificationS>()
-        // services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+        services.AddSignalR();
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), includeInternalTypes: true);
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Registrar).Assembly));
+        
+        services.AddSingleton<IPushNotificationService, PushNotificationService>();
+        services.AddSingleton<LiveTrackingHubContext>();
+        services.AddScoped<IPayrollService, PayrollService>();
+        services.AddScoped<INotificationService, NotificationService>();
+        // services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
         return services;
     }
 }

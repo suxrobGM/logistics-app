@@ -2,12 +2,10 @@
 using Hangfire;
 using Logistics.API.Authorization;
 using Logistics.API.Extensions;
-using Logistics.API.Hubs;
 using Logistics.API.Jobs;
 using Logistics.API.Middlewares;
-using Logistics.API.Services;
 using Logistics.Application;
-using Logistics.Application.Services;
+using Logistics.Application.Hubs;
 using Logistics.Infrastructure.EF;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -29,12 +27,9 @@ internal static class Setup
         services.AddAuthorization();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-        services.AddSignalR();
         
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
-        services.AddSingleton<LiveTrackingHubContext>();
         services.AddScoped<IAuthorizationHandler, PermissionHandler>();
-        services.AddScoped<INotificationService, NotificationService>();
         
         services.AddHangfireServer();
         services.AddHangfire(configuration => configuration
@@ -111,6 +106,8 @@ internal static class Setup
 
         app.UseCustomExceptionHandler();
         app.MapControllers();
+        
+        // SignalR Hubs
         app.MapHub<LiveTrackingHub>("/hubs/live-tracking");
         app.MapHub<NotificationHub>("/hubs/notification");
         return app;

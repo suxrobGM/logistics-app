@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using Logistics.Shared.Models;
 
-namespace Logistics.API.Hubs;
+namespace Logistics.Application.Hubs;
 
 public class LiveTrackingHubContext
 {

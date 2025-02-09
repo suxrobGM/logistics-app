@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Logistics.API.Hubs;
+namespace Logistics.Application.Hubs;
 
 public class LiveTrackingHub : Hub<ILiveTrackingHubClient>
 {

@@ -16,7 +16,6 @@ internal static class Setup
     {
         builder.Services.AddRazorPages();
         builder.Services.AddApplicationLayer(builder.Configuration);
-
         builder.Services.AddInfrastructureLayer(builder.Configuration)
             .ConfigureIdentity(identityBuilder =>
             {

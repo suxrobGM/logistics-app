@@ -1,13 +1,12 @@
-﻿using Logistics.API.Hubs;
-using Logistics.Application.Services;
+﻿using Logistics.Application.Hubs;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Logistics.API.Services;
+namespace Logistics.Application.Services.Implementations;
 
-public class NotificationService : INotificationService
+internal class NotificationService : INotificationService
 {
     private readonly ITenantUnityOfWork _tenantUow;
     private readonly ITenantRepository<Notification> _notificationRepository;
