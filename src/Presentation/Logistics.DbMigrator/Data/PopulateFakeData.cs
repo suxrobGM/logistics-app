@@ -167,7 +167,7 @@ internal class PopulateFakeData
             return employee;
 
         employee = Employee.CreateEmployeeFromUser(user, salary, salaryType);
-        user.JoinTenant(tenantId);
+        user.TenantId = tenantId;
         await employeeRepository.AddAsync(employee);
         employee.Roles.Add(role);
         _logger.LogInformation("Added an employee {Name} with role {Role}", user.UserName, role.Name);

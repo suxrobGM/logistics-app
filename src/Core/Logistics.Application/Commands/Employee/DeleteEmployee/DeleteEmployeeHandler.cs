@@ -30,7 +30,12 @@ internal sealed class DeleteEmployeeHandler : RequestHandler<DeleteEmployeeComma
         }
 
         var user = await _masterUow.Repository<User>().GetByIdAsync(employee.Id);
-        user?.RemoveTenant(tenant.Id);
+
+        // Remove tenant from user if it matches the current tenant
+        if (user?.Tenant != null && user.Tenant.Id == tenant.Id)
+        {
+            user.Tenant = null;
+        }
         
         var employeeLoads = _tenantUow.Repository<Load>().ApplySpecification(new GetEmployeeLoads(employee.Id));
         // var truck = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == employee.Id);

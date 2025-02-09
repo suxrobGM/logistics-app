@@ -33,8 +33,7 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
     protected override async Task<ClaimsIdentity> GenerateClaimsAsync(User user)
     {
         var claimsIdentity = await base.GenerateClaimsAsync(user);
-        var tenantIds = user.GetJoinedTenantIds();
-        var tenantId = _httpContext.GetTenantId() ?? tenantIds.FirstOrDefault();
+        var tenantId = _httpContext.GetTenantId() ?? user.TenantId;
 
         AddProfileClaims(claimsIdentity, user);
         await AddAppRoleClaimsAsync(claimsIdentity, user);
@@ -46,8 +45,8 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
         
         _tenantUow.SetCurrentTenantById(tenantId);
         var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(user.Id);
-
-        AddTenantIdClaims(claimsIdentity, tenantIds);
+        
+        claimsIdentity.AddClaim(new Claim(CustomClaimTypes.Tenant, tenantId));
         await AddTenantRoleClaimsAsync(claimsIdentity, employee);
         return claimsIdentity;
     }
@@ -96,14 +95,6 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
         if (!string.IsNullOrEmpty(user.LastName))
         {
             claimsIdentity.AddClaim(new Claim("family_name", user.LastName));
-        }
-    }
-
-    private static void AddTenantIdClaims(ClaimsIdentity claimsIdentity, IEnumerable<string> tenantIds)
-    {
-        foreach (var tenantId in tenantIds)
-        {
-            claimsIdentity.AddClaim(new Claim(CustomClaimTypes.Tenant, tenantId));
         }
     }
 }

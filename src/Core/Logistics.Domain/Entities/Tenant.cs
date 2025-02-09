@@ -12,4 +12,9 @@ public class Tenant : Entity
     
     public string? SubscriptionId { get; set; }
     public virtual Subscription? Subscription { get; set; }
+    
+    /**
+     * Users that belong to this tenant
+     */
+    public virtual List<User> Users { get; } = [];
 }

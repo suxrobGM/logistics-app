@@ -40,11 +40,9 @@ public class UserService : IUserService
             user.PhoneNumber = userData.PhoneNumber;
         }
 
-        var tenantIds = user.GetJoinedTenantIds();
-
-        foreach (var tenantId in tenantIds)
+        if (!string.IsNullOrEmpty(userData.TenantId))
         {
-            await UpdateTenantEmployeeDataAsync(tenantId, user);
+            await UpdateTenantEmployeeDataAsync(userData.TenantId, user);
         }
         
         userRepository.Update(user);

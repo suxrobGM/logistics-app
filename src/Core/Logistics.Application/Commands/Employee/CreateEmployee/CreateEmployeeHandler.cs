@@ -41,7 +41,7 @@ internal sealed class CreateEmployeeHandler : RequestHandler<CreateEmployeeComma
         var tenantRole = await _tenantUow.Repository<TenantRole>().GetAsync(i => i.Name == req.Role);
         var tenant = _tenantUow.GetCurrentTenant();
         
-        user.JoinTenant(tenant.Id);
+        user.Tenant = tenant;
         var employee = Employee.CreateEmployeeFromUser(user, req.Salary, req.SalaryType);
 
         if (tenantRole is not null)

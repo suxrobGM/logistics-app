@@ -37,6 +37,14 @@ public class MasterDbContext : IdentityDbContext<User, AppRole, string>
     {
         base.OnModelCreating(builder);
         builder.Entity<Tenant>().ToTable("Tenants");
+
+        builder.Entity<User>(entity =>
+        {
+            entity.HasOne(i => i.Tenant)
+                .WithMany(i => i.Users)
+                .HasForeignKey(i => i.TenantId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
         
         builder.Entity<SubscriptionPayment>(entity =>
         {

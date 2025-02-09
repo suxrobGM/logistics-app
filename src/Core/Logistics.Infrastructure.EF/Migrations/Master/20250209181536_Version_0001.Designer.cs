@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logistics.Infrastructure.EF.Migrations.Master
 {
     [DbContext(typeof(MasterDbContext))]
-    [Migration("20240105025909_Version_0001")]
+    [Migration("20250209181536_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -21,7 +21,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "9.0.1")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true)
@@ -262,10 +262,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("JoinedTenantIds")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
 
@@ -302,6 +298,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TenantId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -318,6 +317,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -458,6 +459,16 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     b.Navigation("Subscription");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.User", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Tenant", "Tenant")
+                        .WithMany("Users")
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Tenant");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.AppRole", null)
@@ -522,6 +533,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
             modelBuilder.Entity("Logistics.Domain.Entities.Tenant", b =>
                 {
                     b.Navigation("Subscription");
+
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }
