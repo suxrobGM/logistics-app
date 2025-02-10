@@ -36,8 +36,7 @@ internal static class Setup
         
         AddAuthSchemes(services);
 
-        services
-            .AddIdentityServer(options =>
+        services.AddIdentityServer(options =>
             {
                 options.Events.RaiseErrorEvents = true;
                 options.Events.RaiseInformationEvents = true;

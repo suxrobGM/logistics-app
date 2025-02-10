@@ -1,4 +1,4 @@
-import {Component, OnInit, signal, ViewEncapsulation} from "@angular/core";
+import {Component, OnInit, signal} from "@angular/core";
 import {Router} from "@angular/router";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {ButtonModule} from "primeng/button";
@@ -7,8 +7,7 @@ import {AuthService} from "@/core/auth";
 @Component({
   selector: "app-login",
   templateUrl: "./login.component.html",
-  styleUrls: ["./login.component.scss"],
-  encapsulation: ViewEncapsulation.None,
+  styleUrl: "./login.component.scss",
   standalone: true,
   imports: [ProgressSpinnerModule, ButtonModule],
 })

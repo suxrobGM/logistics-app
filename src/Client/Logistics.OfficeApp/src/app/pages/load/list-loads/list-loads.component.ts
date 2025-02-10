@@ -72,8 +72,6 @@ export class ListLoadComponent {
     this.apiService
       .getLoads({orderBy: sortField, page: page, pageSize: rows}, false)
       .subscribe((result) => {
-        console.log("Loads: ", result);
-
         if (result.success && result.data) {
           this.loads = result.data;
           this.totalRecords = result.totalItems;

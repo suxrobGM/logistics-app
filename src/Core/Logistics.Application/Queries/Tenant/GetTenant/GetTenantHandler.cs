@@ -20,7 +20,7 @@ internal sealed class GetTenantHandler : RequestHandler<GetTenantQuery, Result<T
 
         if (tenantEntity is null)
         {
-            return Result<TenantDto>.Fail("Could not find the specified tenant");
+            return Result<TenantDto>.Fail($"Could not find a tenant with ID or Name: {req.Id} or {req.Name}");
         }
 
         var tenantDto = tenantEntity.ToDto(req.IncludeConnectionString);

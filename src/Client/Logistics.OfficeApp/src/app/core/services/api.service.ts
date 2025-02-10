@@ -57,8 +57,7 @@ export class ApiService {
 
   // #region Tenant API
 
-  getTenant(): Observable<Result<TenantDto>> {
-    const tenantId = this.tenantService.getTenantId();
+  getTenant(tenantId: string): Observable<Result<TenantDto>> {
     const url = `/tenants/${tenantId}`;
     return this.get(url);
   }

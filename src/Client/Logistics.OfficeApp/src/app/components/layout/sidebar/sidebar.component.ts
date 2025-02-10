@@ -1,6 +1,6 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, signal} from "@angular/core";
 import {CommonModule} from "@angular/common";
-import {Router, RouterLink} from "@angular/router";
+import {RouterLink} from "@angular/router";
 import {TooltipModule} from "primeng/tooltip";
 import {SplitButtonModule} from "primeng/splitbutton";
 import {PanelMenuModule} from "primeng/panelmenu";
@@ -27,24 +27,18 @@ import {ApiService, TenantService} from "@/core/services";
   ],
 })
 export class SidebarComponent implements OnInit {
-  public isAuthenticated: boolean;
-  public isLoading: boolean;
-  public isOpened: boolean;
-  public companyName?: string;
-  public userRole?: string | null;
-  public userFullName?: string;
-  public profileMenuItems: MenuItem[];
-  public accountingMenuItems: MenuItem[];
+  public readonly isOpened = signal(false);
+  public readonly companyName = signal<string | null>(null);
+  public readonly userRole = signal<string | null>(null);
+  public readonly userFullName = signal<string | null>(null);
+  public readonly profileMenuItems: MenuItem[];
+  public readonly accountingMenuItems: MenuItem[];
 
   constructor(
     private readonly authService: AuthService,
     private readonly apiService: ApiService,
-    private readonly tenantService: TenantService,
-    private readonly router: Router
+    private readonly tenantService: TenantService
   ) {
-    this.isAuthenticated = false;
-    this.isOpened = false;
-    this.isLoading = false;
     this.profileMenuItems = [
       {
         label: "User name",
@@ -89,33 +83,38 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit(): void {
     this.authService.onUserDataChanged().subscribe((userData) => {
-      this.userFullName = userData?.getFullName();
-      this.userRole = this.authService.getUserRoleName();
-      this.profileMenuItems[0].label = this.userFullName;
-      this.fetchTenantData();
+      if (userData?.getFullName()) {
+        this.userFullName.set(userData.getFullName());
+        this.profileMenuItems[0].label = userData.getFullName();
+      }
+
+      if (userData?.tenant) {
+        this.fetchTenantData(userData?.tenant);
+      }
+
+      this.userRole.set(this.authService.getUserRoleName());
     });
   }
 
-  private fetchTenantData() {
-    this.apiService.getTenant().subscribe((result) => {
+  toggle(): void {
+    this.isOpened.set(!this.isOpened());
+  }
+
+  logout(): void {
+    this.authService.logout();
+  }
+
+  openAccountUrl(): void {
+    window.open(`${globalConfig.idHost}/account/manage/profile`, "_blank");
+  }
+  private fetchTenantData(tenantId: string): void {
+    this.apiService.getTenant(tenantId).subscribe((result) => {
       if (!result.success || !result.data) {
         return;
       }
 
       this.tenantService.setTenantData(result.data);
-      this.companyName = result.data.companyName;
+      this.companyName.set(result.data.companyName);
     });
-  }
-
-  toggle() {
-    this.isOpened = !this.isOpened;
-  }
-
-  logout() {
-    this.authService.logout();
-  }
-
-  openAccountUrl() {
-    window.open(`${globalConfig.idHost}/account/manage/profile`, "_blank");
   }
 }

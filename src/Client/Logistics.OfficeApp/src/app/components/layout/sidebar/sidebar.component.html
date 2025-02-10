@@ -1,8 +1,8 @@
-<div class="sidebar" [ngClass]="{minimized: !isOpened}">
+<div class="sidebar" [ngClass]="{minimized: !isOpened()}">
   <a class="py-3 navbar-brand border-bottom">
     <img src="assets/images/logo.svg" class="img-fluid" height="40" alt="logo" />
-    @if (isOpened) {
-      <span class="h4">{{ companyName }}</span>
+    @if (isOpened()) {
+      <span class="h4">{{ companyName() }}</span>
     }
   </a>
 
@@ -10,7 +10,7 @@
     <li>
       <a class="nav-link border-bottom" pTooltip="Home" [routerLink]="['/home']">
         <i class="bi bi-house-door h1"></i>
-        @if (isOpened) {
+        @if (isOpened()) {
           <span class="ms-2">Home</span>
         }
       </a>
@@ -18,7 +18,7 @@
     <li>
       <a class="nav-link border-bottom" pTooltip="Dashboard" [routerLink]="['/dashboard']">
         <i class="bi bi-speedometer2 h1"></i>
-        @if (isOpened) {
+        @if (isOpened()) {
           <span class="ms-2">Dashboard</span>
         }
       </a>
@@ -26,7 +26,7 @@
     <li>
       <a class="nav-link border-bottom" pTooltip="Loads" [routerLink]="['/loads']">
         <i class="bi bi-database h1"></i>
-        @if (isOpened) {
+        @if (isOpened()) {
           <span class="ms-2">Loads</span>
         }
       </a>
@@ -34,7 +34,7 @@
     <li>
       <a class="nav-link border-bottom" pTooltip="Trucks" [routerLink]="['/trucks']">
         <i class="bi bi-truck h1"></i>
-        @if (isOpened) {
+        @if (isOpened()) {
           <span class="ms-2">Trucks</span>
         }
       </a>
@@ -42,7 +42,7 @@
     <li>
       <a class="nav-link border-bottom" pTooltip="Employees" [routerLink]="['/employees']">
         <i class="bi bi-people h1"></i>
-        @if (isOpened) {
+        @if (isOpened()) {
           <span class="ms-2">Employees</span>
         }
       </a>
@@ -50,13 +50,13 @@
     <li>
       <a class="nav-link border-bottom" pTooltip="Customers" [routerLink]="['/customers']">
         <i class="bi bi-building h1"></i>
-        @if (isOpened) {
+        @if (isOpened()) {
           <span class="ms-2">Customers</span>
         }
       </a>
     </li>
     <li>
-      @if (isOpened) {
+      @if (isOpened()) {
         <p-panelMenu [model]="accountingMenuItems"></p-panelMenu>
       } @else {
         <p-overlayPanel #accountingPanel>
@@ -87,7 +87,7 @@
     </li>
     <li>
       <a class="nav-link border-bottom">
-        @if (isOpened) {
+        @if (isOpened()) {
           <i
             class="bi bi-arrow-left h1"
             (click)="toggle()"
@@ -106,15 +106,15 @@
     </li>
   </ul>
 
-  @if (userFullName) {
+  @if (userFullName()) {
     <div class="d-flex justify-content-center border-top py-2">
-      @if (userRole && isOpened) {
+      @if (userRole() && isOpened()) {
         <div class="px-3 pt-2">
-          Role: <span class="fw-bold">{{ userRole }}</span>
+          Role: <span class="fw-bold">{{ userRole() }}</span>
         </div>
       }
 
-      @if (isOpened) {
+      @if (isOpened()) {
         <p-panelMenu [model]="profileMenuItems"></p-panelMenu>
       } @else {
         <p-overlayPanel #profilePanel>

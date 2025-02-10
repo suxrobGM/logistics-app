@@ -29,6 +29,7 @@ export class TenantService {
   setTenantId(tenantId: string): void {
     this.tenantId = tenantId;
     this.setTenantCookie(tenantId);
+    console.log("TenantId set to:", tenantId);
   }
 
   /**
