@@ -4,6 +4,7 @@ using Logistics.Infrastructure.EF.Interceptors;
 using Logistics.Infrastructure.EF.Options;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.EF.Data;
 
@@ -11,13 +12,16 @@ public class MasterDbContext : IdentityDbContext<User, AppRole, string>
 {
     private readonly DispatchDomainEventsInterceptor? _dispatchDomainEventsInterceptor;
     private readonly string _connectionString;
+    private readonly ILogger<MasterDbContext>? _logger;
 
     public MasterDbContext(
         MasterDbContextOptions options,
-        DispatchDomainEventsInterceptor? dispatchDomainEventsInterceptor)
+        DispatchDomainEventsInterceptor? dispatchDomainEventsInterceptor = null,
+        ILogger<MasterDbContext>? logger = null)
     {
         _dispatchDomainEventsInterceptor = dispatchDomainEventsInterceptor;
         _connectionString = options.ConnectionString ?? ConnectionStrings.LocalMaster;
+        _logger = logger;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
@@ -30,6 +34,7 @@ public class MasterDbContext : IdentityDbContext<User, AppRole, string>
         if (!options.IsConfigured)
         {
             DbContextHelpers.ConfigureSqlServer(_connectionString, options);
+            _logger?.LogInformation("Configured master database with connection string: {ConnectionString}", _connectionString);
         }
     }
 

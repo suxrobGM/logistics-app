@@ -4,6 +4,7 @@ using Logistics.Infrastructure.EF.Helpers;
 using Logistics.Infrastructure.EF.Interceptors;
 using Logistics.Infrastructure.EF.Options;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.EF.Data;
 
@@ -11,15 +12,18 @@ public class TenantDbContext : DbContext
 {
     private readonly DispatchDomainEventsInterceptor? _dispatchDomainEventsInterceptor;
     private readonly string _connectionString;
+    private readonly ILogger<TenantDbContext>? _logger;
 
     public TenantDbContext(
         TenantDbContextOptions? tenantDbContextOptions = null, 
         ITenantService? tenantService = null,
-        DispatchDomainEventsInterceptor? dispatchDomainEventsInterceptor = null)
+        DispatchDomainEventsInterceptor? dispatchDomainEventsInterceptor = null,
+        ILogger<TenantDbContext>? logger = null)
     {
         _dispatchDomainEventsInterceptor = dispatchDomainEventsInterceptor;
         _connectionString = tenantDbContextOptions?.ConnectionString ?? ConnectionStrings.LocalDefaultTenant;
         TenantService = tenantService;
+        _logger = logger;
     }
 
     internal ITenantService? TenantService { get; }
@@ -33,14 +37,17 @@ public class TenantDbContext : DbContext
 
         if (!options.IsConfigured)
         {
-            string? connectionString = null;
+            var tenantConnectionString = _connectionString;
+            string? tenantName = null;
             
             if (TenantService is not null)
             {
-                connectionString = TenantService.GetTenant().ConnectionString;
+                tenantConnectionString = TenantService.GetTenant().ConnectionString;
+                tenantName = TenantService.GetTenant().Name;
             }
             
-            DbContextHelpers.ConfigureSqlServer(connectionString ?? _connectionString, options);
+            DbContextHelpers.ConfigureSqlServer(tenantConnectionString, options);
+            _logger?.LogInformation("Configured tenant database for '{TenantName}' with connection string: {ConnectionString}", tenantName, tenantConnectionString);
         }
     }
 

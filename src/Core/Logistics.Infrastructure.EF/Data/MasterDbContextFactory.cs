@@ -7,6 +7,6 @@ public class MasterDbContextFactory : IDesignTimeDbContextFactory<MasterDbContex
 {
     public MasterDbContext CreateDbContext(string[] args)
     {
-        return new MasterDbContext(new MasterDbContextOptions(), null);
+        return new MasterDbContext(new MasterDbContextOptions());
     }
 }

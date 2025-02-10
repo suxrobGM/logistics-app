@@ -30,7 +30,8 @@ internal static class Setup
         services.AddInfrastructureLayer(builder.Configuration)
             .UseLogger(microsoftLogger)
             .AddMasterDatabase()
-            .AddTenantDatabase();
+            .AddTenantDatabase()
+            .AddIdentity();
         
         services.AddHttpContextAccessor();
         services.AddAuthorization();

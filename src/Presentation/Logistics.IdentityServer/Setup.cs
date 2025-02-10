@@ -4,10 +4,10 @@ using Duende.IdentityServer;
 using Serilog;
 using Logistics.Application;
 using Logistics.Domain.Entities;
-using Logistics.IdentityServer.Extensions;
 using Logistics.Infrastructure.EF;
 using Logistics.IdentityServer.Services;
 using Logistics.Infrastructure.EF.Builder;
+using Logistics.Infrastructure.EF.Data;
 using Serilog.Extensions.Logging;
 
 namespace Logistics.IdentityServer;
