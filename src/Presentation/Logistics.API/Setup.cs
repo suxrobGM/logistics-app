@@ -55,7 +55,6 @@ internal static class Setup
                 builder.Configuration.Bind("IdentityServer", options);
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuerSigningKey = false,
                     ValidateAudience = true,
                     ValidateIssuer = true,
                     ValidIssuer = builder.Configuration["IdentityServer:Authority"],
