@@ -53,10 +53,12 @@ internal static class Setup
             .AddJwtBearer("Bearer", options =>
             {
                 builder.Configuration.Bind("IdentityServer", options);
+                options.UseSecurityTokenValidators = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateAudience = true,
                     ValidateIssuer = true,
+                    //ValidIssuers = [builder.Configuration["IdentityServer:Authority"]],
                     ValidIssuer = builder.Configuration["IdentityServer:Authority"],
                     ValidAudience = builder.Configuration["IdentityServer:Audience"],
                 };

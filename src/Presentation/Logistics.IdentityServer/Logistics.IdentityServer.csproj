@@ -31,4 +31,8 @@
     <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\README.md" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="keys\" />
+  </ItemGroup>
+
 </Project>
