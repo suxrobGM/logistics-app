@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Extensions.Logging;
 
@@ -52,14 +53,14 @@ internal static class Setup
             .AddJwtBearer("Bearer", options =>
             {
                 builder.Configuration.Bind("IdentityServer", options);
-                options.TokenValidationParameters.ValidateAudience = true;
-                options.TokenValidationParameters.ValidateIssuer = true;
-                options.TokenValidationParameters.ValidIssuer = builder.Configuration["IdentityServer:Authority"];
-                options.TokenValidationParameters.ValidAudience = builder.Configuration["IdentityServer:Audience"];
-// #if DEBUG
-//                 options.TokenValidationParameters.ValidateAudience = false;
-//                 options.TokenValidationParameters.ValidateIssuer = false;
-// #endif
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = false,
+                    ValidateAudience = true,
+                    ValidateIssuer = true,
+                    ValidIssuer = builder.Configuration["IdentityServer:Authority"],
+                    ValidAudience = builder.Configuration["IdentityServer:Audience"],
+                };
             });
 
         builder.Services.AddControllers(configure =>
