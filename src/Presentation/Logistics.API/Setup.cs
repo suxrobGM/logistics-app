@@ -54,7 +54,7 @@ internal static class Setup
                 builder.Configuration.Bind("IdentityServer", options);
                 options.TokenValidationParameters.ValidateAudience = true;
                 options.TokenValidationParameters.ValidateIssuer = true;
-                options.TokenValidationParameters.ValidIssuer = builder.Configuration["IdentityServer:Issuer"];
+                options.TokenValidationParameters.ValidIssuer = builder.Configuration["IdentityServer:Authority"];
                 options.TokenValidationParameters.ValidAudience = builder.Configuration["IdentityServer:Audience"];
 // #if DEBUG
 //                 options.TokenValidationParameters.ValidateAudience = false;

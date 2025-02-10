@@ -18,31 +18,44 @@ Logistics TMS primarily targets logistics and trucking companies seeking to stre
 
 Operating on a multi-tenant architecture, Logistics TMS features a primary database for storing user credentials and tenant data, including company name, subdomain name, database connection string, and billing periods. Each tenant or company has a dedicated database.
 
+## Demo
+
+A live demo of the application is available at [https://logistics-office.suxrobgm.net](https://logistics-office.suxrobgm.net). Use one of the following test credentials to log in to the application:
+
+- Owner user: email: `Test1@gmail.com`, password: `Test12345#`
+- Manager user: email: `Test2@gmail.com`, password: `Test12345#`
+- Dispatcher user: email: `Test3@gmail.com`, password: `Test12345#`
+
 ## Development status
-I work on this project in my free time so it is not actively maintained. However, I am open to collaboration and contributions. If you are interested in contributing to this project, please feel free to reach out to me at **suxrobgm@gmail.com** or [Telegram](https://t.me/suxrobgm).
+
+I work on this project in my free time so it is not actively maintained. However, I am open to collaboration and contributions. If you are interested in contributing to this project, please feel free to reach out to me at **<suxrobgm@gmail.com>** or [Telegram](https://t.me/suxrobgm).
 
 ## Getting Started
 
 Follow these steps to get the project up and running:
 
-1. Install SDKs 
-   - [Download](https://dotnet.microsoft.com/en-us/download/dotnet/9.0) and install the .NET 9 SDK. 
+1. Install SDKs
+
+   - [Download](https://dotnet.microsoft.com/en-us/download/dotnet/9.0) and install the .NET 9 SDK.
    - Install Bun runtime to run Angular project. Follow [these](https://bun.sh/docs/installation) instructions.
 
-2. Clone this repository: 
-    ```
-    $ git clone https://github.com/suxrobGM/logistics-app.git
-    $ cd logistics-app
-    ```
+2. Clone this repository:
+
+   ```
+   git clone https://github.com/suxrobGM/logistics-app.git
+   cd logistics-app
+   ```
 
 3. Install Angular app dependencies:
+
    ```
    cd src\Client\Logistics.OfficeApp
    bun install
    ```
 
 4. Update database connection strings:
-   - Add a SQL login with username `LogistsUser` and password `Test12345#` (you can specify your own password) with `db_owner` role to the local or remote `MS SQL` server. 
+
+   - Add a SQL login with username `LogistsUser` and password `Test12345#` (you can specify your own password) with `db_owner` role to the local or remote `MS SQL` server.
    - Modify local or remote `MS SQL` database connection strings in the [Web API appsettings.json](./src/Presentation/Logistics.API/appsettings.json) and the [IdentityServer appsettings.json](./src/Presentation/Logistics.IdentityServer/appsettings.json) under the `ConnectionStrings:MainDatabase` section. Update tenant databases configuration in the [Web API appsettings.json](./src/Presentation/Logistics.API/appsettings.json) under the `TenantsConfig` section.
 
 5. Seed databases:
@@ -54,23 +67,25 @@ Follow these steps to get the project up and running:
 
 7. Access the applications:
    Use the following local URLs to access the apps:
-    - Web API: https://127.0.0.1:7000
-    - Identity Server: https://127.0.0.1:7001
-    - Admin app: https://127.0.0.1:7002
-    - Office app: https://127.0.0.1:7003
+
+   - Web API: <https://127.0.0.1:7000>
+   - Identity Server: <https://127.0.0.1:7001>
+   - Admin app: <https://127.0.0.1:7002>
+   - Office app: <https://127.0.0.1:7003>
 
 8. Login to the applications:
    Use the following test credentials to log in to the applications:
-    - Admin web app: 
-      - Super admin user: email: `admin@gmail.com`, password: `Test12345#`
-    - Office web app:
-      - Owner user: email: `Test1@gmail.com`, password: `Test12345#`
-      - Manager user: email: `Test2@gmail.com`, password: `Test12345#`
-      - Dispatcher user: email: `Test3@gmail.com`, password: `Test12345#`
-    - Driver mobile app:
-      - Driver user: email: `Test6@gmail.com`, password: `Test12345#`
+   - Admin web app:
+     - Super admin user: email: `admin@gmail.com`, password: `Test12345#`
+   - Office web app:
+     - Owner user: email: `Test1@gmail.com`, password: `Test12345#`
+     - Manager user: email: `Test2@gmail.com`, password: `Test12345#`
+     - Dispatcher user: email: `Test3@gmail.com`, password: `Test12345#`
+   - Driver mobile app:
+     - Driver user: email: `Test6@gmail.com`, password: `Test12345#`
 
 ### Technical Stack
+
 - .NET 9
 - ASP.NET Core
 - Entity Framework Core
@@ -91,6 +106,7 @@ Follow these steps to get the project up and running:
 - Bun
 
 ### Design Patterns
+
 - Multi-Tenant Architecture
 - Domain-Driven Design
 - CQRS
@@ -102,14 +118,16 @@ Follow these steps to get the project up and running:
 - Specification Pattern
 
 ## Copyright
+
 This work is licensed under a
 [Creative Commons Attribution-NonCommercial 4.0 International License][cc-by-nc].
 
 [![CC BY-NC 4.0][cc-by-nc-image]][cc-by-nc]
 
-For commercial use, please contact me at **suxrobgm@gmail.com** or [Telegram](https://t.me/suxrobgm).
+For commercial use, please contact me at **<suxrobgm@gmail.com>** or [Telegram](https://t.me/suxrobgm).
 
 ## Office Web App Preview
+
 Here is a sneak peek into the Office Application:
 
 ![Office App](./docs/office_app_1.jpg?raw=true)
@@ -122,8 +140,8 @@ Here is a sneak peek into the Office Application:
 ![Office App](./docs/office_app_8.jpg?raw=true)
 ![Office App](./docs/office_app_9.jpg?raw=true)
 
-
 ## Driver Mobile App Preview
+
 ![Driver App](./docs/driver_app_1.jpg?raw=true)
 ![Driver App](./docs/driver_app_2.jpg?raw=true)
 ![Driver App](./docs/driver_app_3.jpg?raw=true)
