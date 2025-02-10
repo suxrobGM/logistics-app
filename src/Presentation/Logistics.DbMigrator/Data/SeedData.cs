@@ -157,8 +157,11 @@ internal class SeedData : BackgroundService
 
     private async Task AddDefaultTenantAsync(IServiceProvider serviceProvider)
     {
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
         var masterUow = serviceProvider.GetRequiredService<IMasterUnityOfWork>();
         var databaseProvider = serviceProvider.GetRequiredService<ITenantDatabaseService>();
+        var defaultTenantConnectionString = configuration.GetConnectionString("DefaultTenantDatabase") 
+                                            ?? databaseProvider.GenerateConnectionString("default");
         var companyAddress = new Address
         {
             Line1 = "7 Allstate Rd",
@@ -173,7 +176,7 @@ internal class SeedData : BackgroundService
             Name = "default",
             CompanyName = "Test Company",
             CompanyAddress = companyAddress,
-            ConnectionString = databaseProvider.GenerateConnectionString("default"),
+            ConnectionString = defaultTenantConnectionString,
         };
 
         var existingTenant = await masterUow.Repository<Tenant>().GetAsync(i => i.Name == defaultTenant.Name);
@@ -183,7 +186,7 @@ internal class SeedData : BackgroundService
             await masterUow.Repository<Tenant>().AddAsync(defaultTenant);
             await masterUow.SaveChangesAsync();
             await databaseProvider.CreateDatabaseAsync(defaultTenant.ConnectionString);
-            _logger.LogInformation("Added default tenant");
+            _logger.LogInformation("Added default tenant with connection string: {ConnectionString}", defaultTenant.ConnectionString);
         }
     }
 
