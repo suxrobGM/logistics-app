@@ -46,7 +46,6 @@ internal static class Setup
                 // see https://docs.duendesoftware.com/identityserver/v6/fundamentals/resources/
                 options.EmitStaticAudienceClaim = true;
             })
-            .AddDeveloperSigningCredential(filename: "keys/tempkey.jwk") // TODO: replace with real certificate in production
             .AddInMemoryIdentityResources(Config.IdentityResources())
             .AddInMemoryApiScopes(Config.ApiScopes())
             .AddInMemoryApiResources(Config.ApiResources())
