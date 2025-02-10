@@ -11,7 +11,6 @@
     <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico" />
     
     <link rel="stylesheet" href="~/lib/bootstrap5/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/lib/bootstrap4-glyphicons/css/bootstrap-glyphicons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
@@ -20,8 +19,7 @@
     <div class="container body-container">
         @RenderBody()
     </div>
-
-    <script src="~/lib/jquery/dist/jquery.slim.min.js"></script>
+    
     <script src="~/lib/bootstrap5/js/bootstrap.bundle.min.js"></script>
 
     @await RenderSectionAsync("scripts", required: false)

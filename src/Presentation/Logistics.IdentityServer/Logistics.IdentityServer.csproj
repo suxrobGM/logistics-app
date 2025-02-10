@@ -20,4 +20,15 @@
     <ProjectReference Include="..\..\Core\Logistics.Infrastructure.EF\Logistics.Infrastructure.EF.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\dist\jquery.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\dist\jquery.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\dist\jquery.min.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\dist\jquery.slim.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\dist\jquery.slim.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\dist\jquery.slim.min.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\LICENSE.txt" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\README.md" />
+  </ItemGroup>
+
 </Project>
