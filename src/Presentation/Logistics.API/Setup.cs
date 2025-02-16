@@ -9,10 +9,13 @@ using Logistics.Application.Hubs;
 using Logistics.Infrastructure.EF;
 using Logistics.Infrastructure.EF.Builder;
 using Logistics.Shared.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Extensions.Logging;
@@ -48,17 +51,20 @@ internal static class Setup
             .UseSimpleAssemblyNameTypeSerializer()
             .UseRecommendedSerializerSettings()
             .UseSqlServerStorage(builder.Configuration.GetConnectionString("MasterDatabase")));
-
-        builder.Services.AddAuthentication("Bearer")
-            .AddJwtBearer("Bearer", options =>
+        
+        //var configManager = new ConfigurationManager<OpenIdConnectConfiguration>($"{builder.Configuration["IdentityServer:Authority"]}/.well-known/openid-configuration", new OpenIdConnectConfigurationRetriever());
+        //var openIdConfig = configManager.GetConfigurationAsync().Result;
+        
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
                 builder.Configuration.Bind("IdentityServer", options);
-                options.UseSecurityTokenValidators = true;
+                options.MetadataAddress = $"{builder.Configuration["IdentityServer:Authority"]}/.well-known/openid-configuration";
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateAudience = true,
                     ValidateIssuer = true,
-                    //ValidIssuers = [builder.Configuration["IdentityServer:Authority"]],
+                    //IssuerSigningKeys = openIdConfig.SigningKeys,
                     ValidIssuer = builder.Configuration["IdentityServer:Authority"],
                     ValidAudience = builder.Configuration["IdentityServer:Audience"],
                 };
