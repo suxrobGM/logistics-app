@@ -52,19 +52,19 @@ internal static class Setup
             .UseRecommendedSerializerSettings()
             .UseSqlServerStorage(builder.Configuration.GetConnectionString("MasterDatabase")));
         
-        //var configManager = new ConfigurationManager<OpenIdConnectConfiguration>($"{builder.Configuration["IdentityServer:Authority"]}/.well-known/openid-configuration", new OpenIdConnectConfigurationRetriever());
-        //var openIdConfig = configManager.GetConfigurationAsync().Result;
+        var configManager = new ConfigurationManager<OpenIdConnectConfiguration>($"{builder.Configuration["IdentityServer:Authority"]}/.well-known/openid-configuration", new OpenIdConnectConfigurationRetriever());
+        var openIdConfig = configManager.GetConfigurationAsync().Result;
         
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
                 builder.Configuration.Bind("IdentityServer", options);
-                options.MetadataAddress = $"{builder.Configuration["IdentityServer:Authority"]}/.well-known/openid-configuration";
+                //options.MetadataAddress = $"{builder.Configuration["IdentityServer:Authority"]}/.well-known/openid-configuration";
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateAudience = true,
                     ValidateIssuer = true,
-                    //IssuerSigningKeys = openIdConfig.SigningKeys,
+                    IssuerSigningKeys = openIdConfig.SigningKeys,
                     ValidIssuer = builder.Configuration["IdentityServer:Authority"],
                     ValidAudience = builder.Configuration["IdentityServer:Audience"],
                 };
