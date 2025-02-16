@@ -33,7 +33,7 @@ public class MasterDbContext : IdentityDbContext<User, AppRole, string>
 
         if (!options.IsConfigured)
         {
-            DbContextHelpers.ConfigureSqlServer(_connectionString, options);
+            DbContextHelpers.ConfigurePostgreSql(_connectionString, options);
             _logger?.LogInformation("Configured master database with connection string: {ConnectionString}", _connectionString);
         }
     }

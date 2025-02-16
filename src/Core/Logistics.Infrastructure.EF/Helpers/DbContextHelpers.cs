@@ -16,9 +16,17 @@ internal static class DbContextHelpers
     //         .UseLazyLoadingProxies();
     // }
 
-    public static void ConfigureSqlServer(string connectionString, DbContextOptionsBuilder options)
+    // public static void ConfigureSqlServer(string connectionString, DbContextOptionsBuilder options)
+    // {
+    //     options.UseSqlServer(connectionString, o =>
+    //     {
+    //         o.EnableRetryOnFailure(8, TimeSpan.FromSeconds(15), null);
+    //     }).UseLazyLoadingProxies();
+    // }
+    
+    public static void ConfigurePostgreSql(string connectionString, DbContextOptionsBuilder options)
     {
-        options.UseSqlServer(connectionString, o =>
+        options.UseNpgsql(connectionString, o =>
         {
             o.EnableRetryOnFailure(8, TimeSpan.FromSeconds(15), null);
         }).UseLazyLoadingProxies();

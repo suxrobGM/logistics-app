@@ -12,8 +12,8 @@ namespace Logistics.DbMigrator.Data;
 internal class PopulateFakeData
 {
     private const string UserDefaultPassword = "Test12345#";
-    private readonly DateTime _startDate = DateTime.Today.AddMonths(-3);
-    private readonly DateTime _endDate = DateTime.Today.AddDays(-3); 
+    private readonly DateTime _startDate = DateTime.UtcNow.AddMonths(-3);
+    private readonly DateTime _endDate = DateTime.UtcNow.AddDays(-3); 
     
     private readonly Random _random = new();
     private readonly ILogger _logger;
@@ -254,6 +254,8 @@ internal class PopulateFakeData
         Customer customer)
     {
         var dispatchedDate = _random.Date(_startDate, _endDate);
+        dispatchedDate = DateTime.SpecifyKind(dispatchedDate, DateTimeKind.Utc);
+        
         const double originLat = 42.319090;
         const double originLng = -71.054680;
         const double destLat = 42.357820;
@@ -320,7 +322,7 @@ internal class PopulateFakeData
             {
                 Title = $"Test notification {i}",
                 Message = $"Notification {i} description",
-                CreatedDate = _random.Date(DateTime.Today.AddMonths(-1), DateTime.Today.AddDays(-1))
+                CreatedDate = DateTime.SpecifyKind(_random.Date(DateTime.UtcNow.AddMonths(-1), DateTime.UtcNow.AddDays(-1)), DateTimeKind.Utc),
             };
 
             await notificationRepository.AddAsync(notification);

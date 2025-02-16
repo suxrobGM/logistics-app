@@ -38,6 +38,7 @@ Follow these steps to get the project up and running:
 
    - [Download](https://dotnet.microsoft.com/en-us/download/dotnet/9.0) and install the .NET 9 SDK.
    - Install Bun runtime to run Angular project. Follow [these](https://bun.sh/docs/installation) instructions.
+   - Download and install PostgreSQL database from [here](https://www.postgresql.org/download/).
 
 2. Clone this repository:
 
@@ -54,9 +55,7 @@ Follow these steps to get the project up and running:
    ```
 
 4. Update database connection strings:
-
-   - Add a SQL login with username `LogistsUser` and password `Test12345#` (you can specify your own password) with `db_owner` role to the local or remote `MS SQL` server.
-   - Modify local or remote `MS SQL` database connection strings in the [Web API appsettings.json](./src/Presentation/Logistics.API/appsettings.json) and the [IdentityServer appsettings.json](./src/Presentation/Logistics.IdentityServer/appsettings.json) under the `ConnectionStrings:MainDatabase` section. Update tenant databases configuration in the [Web API appsettings.json](./src/Presentation/Logistics.API/appsettings.json) under the `TenantsConfig` section.
+   - Modify local or remote `PostgreSQL` database connection strings in the [Web API appsettings.json](./src/Presentation/Logistics.API/appsettings.json) and the [IdentityServer appsettings.json](./src/Presentation/Logistics.IdentityServer/appsettings.json) under the `ConnectionStrings:MasterDatabase` and `ConnectionStrings:DefaultTenantDatabase` section. Update tenant databases configuration in the [Web API appsettings.json](./src/Presentation/Logistics.API/appsettings.json) under the `TenantsConfig` section.
 
 5. Seed databases:
    To initialize and populate the databases, run the `seed-databases.cmd` script provided in the repository.
@@ -92,7 +91,7 @@ Follow these steps to get the project up and running:
 - Deunde Identity Server
 - FluentValidator
 - MediatR
-- MS SQL
+- PostgreSQL
 - xUnit
 - Moq
 - Angular 19

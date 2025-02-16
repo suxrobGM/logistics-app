@@ -16,7 +16,10 @@ var host = Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices((ctx, services) =>
     {
-        services.AddInfrastructureLayer(ctx.Configuration);
+        services.AddInfrastructureLayer(ctx.Configuration)
+            .AddMasterDatabase()
+            .AddTenantDatabase()
+            .AddIdentity();
         services.AddHostedService<SeedData>();
     })
     .UseSerilog()

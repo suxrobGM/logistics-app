@@ -8,8 +8,8 @@ using Logistics.Infrastructure.EF.Data;
 using Logistics.Shared.Consts.Policies;
 using Logistics.Shared.Consts.Roles;
 using Microsoft.Extensions.Logging;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using CustomClaimTypes = Logistics.Shared.Consts.Claims.CustomClaimTypes;
 
 namespace Logistics.Infrastructure.EF.Services;
@@ -63,15 +63,26 @@ public class TenantDatabaseService : ITenantDatabaseService
     {
         try
         {
-            var connection = new DbConnectionStringBuilder
+            // Build a main connection for the database to drop
+            var sourceBuilder = new NpgsqlConnectionStringBuilder(connectionString);
+            var targetDbName = sourceBuilder.Database;
+
+            // Switch to a different database like 'postgres' to perform the drop
+            var masterBuilder = new NpgsqlConnectionStringBuilder
             {
-                ConnectionString = connectionString
+                Host = sourceBuilder.Host,
+                Port = sourceBuilder.Port,
+                Username = sourceBuilder.Username,
+                Password = sourceBuilder.Password,
+                Database = "postgres"
             };
 
-            var database = connection["Initial Catalog"];
-            var dropQuery = $"DROP DATABASE '{database}'";
-            await using var sqlCommand = new SqlCommand(dropQuery);
-            await sqlCommand.ExecuteScalarAsync();
+            await using var connection = new NpgsqlConnection(masterBuilder.ConnectionString);
+            await connection.OpenAsync();
+
+            var dropQuery = $"DROP DATABASE {targetDbName}";
+            await using var cmd = new NpgsqlCommand(dropQuery, connection);
+            await cmd.ExecuteNonQueryAsync();
             return true;
         }
         catch (DbException ex)

@@ -15,8 +15,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "Customers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -27,11 +27,11 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "Notifications",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsRead = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: true),
+                    Message = table.Column<string>(type: "text", nullable: true),
+                    IsRead = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -42,20 +42,20 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "Payments",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    Method = table.Column<int>(type: "int", nullable: true),
-                    PaymentFor = table.Column<int>(type: "int", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BillingAddress_City = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BillingAddress_Country = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BillingAddress_Line1 = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BillingAddress_Line2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BillingAddress_Region = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BillingAddress_ZipCode = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Method = table.Column<int>(type: "integer", nullable: true),
+                    PaymentFor = table.Column<int>(type: "integer", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PaymentDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Comment = table.Column<string>(type: "text", nullable: true),
+                    BillingAddress_City = table.Column<string>(type: "text", nullable: false),
+                    BillingAddress_Country = table.Column<string>(type: "text", nullable: false),
+                    BillingAddress_Line1 = table.Column<string>(type: "text", nullable: false),
+                    BillingAddress_Line2 = table.Column<string>(type: "text", nullable: true),
+                    BillingAddress_Region = table.Column<string>(type: "text", nullable: false),
+                    BillingAddress_ZipCode = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -66,10 +66,10 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "Roles",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NormalizedName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    DisplayName = table.Column<string>(type: "text", nullable: true),
+                    NormalizedName = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -80,16 +80,16 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "Trucks",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    TruckNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CurrentLocationLat = table.Column<double>(type: "float", nullable: true),
-                    CurrentLocationLong = table.Column<double>(type: "float", nullable: true),
-                    CurrentLocation_City = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CurrentLocation_Country = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CurrentLocation_Line1 = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CurrentLocation_Line2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CurrentLocation_Region = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CurrentLocation_ZipCode = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    TruckNumber = table.Column<string>(type: "text", nullable: false),
+                    CurrentLocationLat = table.Column<double>(type: "double precision", nullable: true),
+                    CurrentLocationLong = table.Column<double>(type: "double precision", nullable: true),
+                    CurrentLocation_City = table.Column<string>(type: "text", nullable: false),
+                    CurrentLocation_Country = table.Column<string>(type: "text", nullable: false),
+                    CurrentLocation_Line1 = table.Column<string>(type: "text", nullable: false),
+                    CurrentLocation_Line2 = table.Column<string>(type: "text", nullable: true),
+                    CurrentLocation_Region = table.Column<string>(type: "text", nullable: false),
+                    CurrentLocation_ZipCode = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -100,11 +100,11 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "Invoices",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LoadId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    PaymentId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LoadId = table.Column<string>(type: "text", nullable: false),
+                    CustomerId = table.Column<string>(type: "text", nullable: false),
+                    PaymentId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -127,10 +127,10 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "RoleClaims",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    ClaimType = table.Column<string>(type: "text", nullable: false),
+                    ClaimValue = table.Column<string>(type: "text", nullable: false),
+                    RoleId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -147,16 +147,16 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "Employees",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Salary = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    SalaryType = table.Column<int>(type: "int", nullable: false),
-                    JoinedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeviceToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TruckId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: true),
+                    FirstName = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    Salary = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    SalaryType = table.Column<int>(type: "integer", nullable: false),
+                    JoinedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DeviceToken = table.Column<string>(type: "text", nullable: true),
+                    TruckId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -173,8 +173,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "EmployeeRoles",
                 columns: table => new
                 {
-                    EmployeeId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    EmployeeId = table.Column<string>(type: "text", nullable: false),
+                    RoleId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -197,36 +197,36 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "Loads",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RefId = table.Column<decimal>(type: "decimal(20,0)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OriginAddressLat = table.Column<double>(type: "float", nullable: true),
-                    OriginAddressLong = table.Column<double>(type: "float", nullable: true),
-                    DestinationAddressLat = table.Column<double>(type: "float", nullable: true),
-                    DestinationAddressLong = table.Column<double>(type: "float", nullable: true),
-                    DeliveryCost = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    Distance = table.Column<double>(type: "float", nullable: false),
-                    CanConfirmPickUp = table.Column<bool>(type: "bit", nullable: false),
-                    CanConfirmDelivery = table.Column<bool>(type: "bit", nullable: false),
-                    DispatchedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PickUpDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeliveryDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    InvoiceId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    AssignedTruckId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    AssignedDispatcherId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    DestinationAddress_City = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DestinationAddress_Country = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DestinationAddress_Line1 = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DestinationAddress_Line2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DestinationAddress_Region = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DestinationAddress_ZipCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OriginAddress_City = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OriginAddress_Country = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OriginAddress_Line1 = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OriginAddress_Line2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OriginAddress_Region = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OriginAddress_ZipCode = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    RefId = table.Column<decimal>(type: "numeric(20,0)", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    OriginAddressLat = table.Column<double>(type: "double precision", nullable: true),
+                    OriginAddressLong = table.Column<double>(type: "double precision", nullable: true),
+                    DestinationAddressLat = table.Column<double>(type: "double precision", nullable: true),
+                    DestinationAddressLong = table.Column<double>(type: "double precision", nullable: true),
+                    DeliveryCost = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    Distance = table.Column<double>(type: "double precision", nullable: false),
+                    CanConfirmPickUp = table.Column<bool>(type: "boolean", nullable: false),
+                    CanConfirmDelivery = table.Column<bool>(type: "boolean", nullable: false),
+                    DispatchedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PickUpDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeliveryDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CustomerId = table.Column<string>(type: "text", nullable: true),
+                    InvoiceId = table.Column<string>(type: "text", nullable: true),
+                    AssignedTruckId = table.Column<string>(type: "text", nullable: true),
+                    AssignedDispatcherId = table.Column<string>(type: "text", nullable: true),
+                    DestinationAddress_City = table.Column<string>(type: "text", nullable: false),
+                    DestinationAddress_Country = table.Column<string>(type: "text", nullable: false),
+                    DestinationAddress_Line1 = table.Column<string>(type: "text", nullable: false),
+                    DestinationAddress_Line2 = table.Column<string>(type: "text", nullable: true),
+                    DestinationAddress_Region = table.Column<string>(type: "text", nullable: false),
+                    DestinationAddress_ZipCode = table.Column<string>(type: "text", nullable: false),
+                    OriginAddress_City = table.Column<string>(type: "text", nullable: false),
+                    OriginAddress_Country = table.Column<string>(type: "text", nullable: false),
+                    OriginAddress_Line1 = table.Column<string>(type: "text", nullable: false),
+                    OriginAddress_Line2 = table.Column<string>(type: "text", nullable: true),
+                    OriginAddress_Region = table.Column<string>(type: "text", nullable: false),
+                    OriginAddress_ZipCode = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -258,11 +258,11 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "Payrolls",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PaymentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    EmployeeId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PaymentId = table.Column<string>(type: "text", nullable: false),
+                    EmployeeId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -321,8 +321,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "IX_Loads_InvoiceId",
                 table: "Loads",
                 column: "InvoiceId",
-                unique: true,
-                filter: "[InvoiceId] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Loads_RefId",

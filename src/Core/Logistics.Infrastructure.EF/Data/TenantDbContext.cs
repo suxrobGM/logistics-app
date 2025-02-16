@@ -46,7 +46,7 @@ public class TenantDbContext : DbContext
                 tenantName = TenantService.GetTenant().Name;
             }
             
-            DbContextHelpers.ConfigureSqlServer(tenantConnectionString, options);
+            DbContextHelpers.ConfigurePostgreSql(tenantConnectionString, options);
             _logger?.LogInformation("Configured tenant database for '{TenantName}' with connection string: {ConnectionString}", tenantName, tenantConnectionString);
         }
     }

@@ -54,6 +54,8 @@ internal class InfrastructureBuilder : IInfrastructureBuilder
         _services.AddSingleton(options);
         _services.AddDbContext<MasterDbContext>();
         _services.AddScoped<IMasterUnityOfWork, MasterUnitOfWork>();
+        _services.AddScoped<ITenantService, TenantService>();
+        _services.AddScoped<IUserService, UserService>();
         _logger?.LogInformation("Added master database with connection string: {ConnectionString}", connectionString);
         return this;
     }
