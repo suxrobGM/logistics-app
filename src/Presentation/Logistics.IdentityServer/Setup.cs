@@ -77,16 +77,14 @@ internal static class Setup
                 cors.SetIsOriginAllowedToAllowWildcardSubdomains()
                     .WithOrigins("https://*.suxrobgm.net")
                     .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials();
+                    .AllowAnyMethod();
             });
             
             options.AddPolicy("AnyCors", cors =>
             {
                 cors.AllowAnyOrigin()
                     .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials();
+                    .AllowAnyMethod();
             });
         });
 
