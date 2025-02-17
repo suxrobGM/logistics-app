@@ -1,4 +1,4 @@
-name: Deploy FTP
+name: Deploy SSH
 
 on:
   push:
@@ -100,7 +100,7 @@ jobs:
         run: echo '${{ secrets.API_APPSETTINGS }}' > ./Release/appsettings.Production.json
 
       - name: Stop service and clean
-        uses: appleboy/ssh-action@v1
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -119,7 +119,7 @@ jobs:
           target: ${{ env.WEB_API_DEPLOY_PATH }}
 
       - name: Restart service
-        uses: appleboy/ssh-action@v1
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -167,7 +167,7 @@ jobs:
             rm -rf ${{ env.IDENTITY_SERVER_DEPLOY_PATH }}*
 
       - name: Upload files
-        uses: appleboy/scp-action@v1.0.3
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -222,7 +222,7 @@ jobs:
             rm -rf ${{ env.ADMIN_APP_DEPLOY_PATH }}*
 
       - name: Upload files
-        uses: appleboy/scp-action@v1.0.3
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
