@@ -71,15 +71,15 @@ jobs:
           target: ${{ env.OFFICE_APP_DEPLOY_PATH }}
           rm: true
 
-      - name: Move files from ${{ env.OFFICE_APP_PATH }}/${{ env.OFFICE_APP_OUTPUT_PATH }} to ${{ env.OFFICE_APP_DEPLOY_PATH }}
+      - name: Move files from ${{ env.OFFICE_APP_DEPLOY_PATH }}/${{ env.OFFICE_APP_PATH }}/${{ env.OFFICE_APP_OUTPUT_PATH }} to ${{ env.OFFICE_APP_DEPLOY_PATH }}
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            sudo mv ${{ env.OFFICE_APP_DEPLOY_PATH }}/${{ env.OFFICE_APP_OUTPUT_PATH }}/* ${{ env.OFFICE_APP_DEPLOY_PATH }}
-            rm -rf ${{ env.OFFICE_APP_DEPLOY_PATH }}/${{ env.OFFICE_APP_OUTPUT_PATH }}
+            sudo mv ${{ env.OFFICE_APP_DEPLOY_PATH }}/${{ env.OFFICE_APP_PATH }}/${{ env.OFFICE_APP_OUTPUT_PATH }}/* ${{ env.OFFICE_APP_DEPLOY_PATH }}
+            rm -rf ${{ env.OFFICE_APP_DEPLOY_PATH }}/src
 
   deploy-web-api:
     name: Deploy Web API
@@ -118,7 +118,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             sudo systemctl stop logistics-api.service
-            rm -rf ${{ env.WEB_API_DEPLOY_PATH }}*
+            rm -rf ${{ env.WEB_API_DEPLOY_PATH }}/*
 
       - name: Upload files
         uses: appleboy/scp-action@v0.1.7
@@ -186,7 +186,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             sudo systemctl stop logistics-id.service
-            rm -rf ${{ env.IDENTITY_SERVER_DEPLOY_PATH }}*
+            rm -rf ${{ env.IDENTITY_SERVER_DEPLOY_PATH }}/*
 
       - name: Upload files
         uses: appleboy/scp-action@v0.1.7
@@ -251,7 +251,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             sudo systemctl stop logistics-admin.service
-            rm -rf ${{ env.ADMIN_APP_DEPLOY_PATH }}*
+            rm -rf ${{ env.ADMIN_APP_DEPLOY_PATH }}/*
 
       - name: Upload files
         uses: appleboy/scp-action@v0.1.7
