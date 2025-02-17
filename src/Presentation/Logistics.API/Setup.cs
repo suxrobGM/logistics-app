@@ -116,10 +116,8 @@ internal static class Setup
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-
-        app.UseLetsEncryptChallenge();
+        
         app.UseHttpsRedirection();
-
         app.UseCors(app.Environment.IsDevelopment() ? "AnyCors" : "DefaultCors");
 
         app.UseAuthentication();

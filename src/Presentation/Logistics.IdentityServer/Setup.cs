@@ -105,9 +105,11 @@ internal static class Setup
             app.UseDeveloperExceptionPage();
         }
         
+        app.UseHttpsRedirection();
+        app.UseCors(app.Environment.IsDevelopment() ? "AnyCors" : "DefaultCors");
+        
         app.UseStaticFiles();
         app.UseRouting();
-        app.UseCors(app.Environment.IsDevelopment() ? "AnyCors" : "DefaultCors");
         
         app.UseIdentityServer();
         app.UseAuthorization();
