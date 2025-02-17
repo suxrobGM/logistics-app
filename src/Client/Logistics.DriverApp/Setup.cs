@@ -22,8 +22,8 @@ public static class Setup
         var configuration = builder.BuildConfiguration();
         SyncfusionLicenseProvider.RegisterLicense(configuration.GetValue<string>("SyncfusionKey"));
         
-        var oidcOptions = configuration.GetSection("OidcClient").Get<OidcClientOptions>() 
-                          ?? throw new NullReferenceException("Could not get OidcClient form the appsettings.json file");
+        var oidcOptions = configuration.GetSection("Oidc").Get<OidcClientOptions>() 
+                          ?? throw new NullReferenceException("Could not get Oidc form the appsettings.json file");
         
         services.AddSingleton(oidcOptions);
         services.AddApiHttpClient(configuration);
