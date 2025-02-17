@@ -243,15 +243,15 @@ jobs:
       #     local-dir: Release/
       #     server-dir: ${{ env.ADMIN_APP_DEPLOY_PATH }}
 
-      - name: Stop service and clean
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            sudo systemctl stop logistics-admin.service
-            rm -rf ${{ env.ADMIN_APP_DEPLOY_PATH }}/*
+      # - name: Stop service and clean
+      #   uses: appleboy/ssh-action@v1.2.0
+      #   with:
+      #     host: ${{ secrets.SSH_HOST }}
+      #     username: ${{ secrets.SSH_USERNAME }}
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     script: |
+      #       sudo systemctl stop logistics-admin.service
+      #       rm -rf ${{ env.ADMIN_APP_DEPLOY_PATH }}/*
 
       - name: Upload files
         uses: appleboy/scp-action@v0.1.7
@@ -272,12 +272,12 @@ jobs:
             sudo mv ${{ env.ADMIN_APP_DEPLOY_PATH }}/publish/* ${{ env.ADMIN_APP_DEPLOY_PATH }}
             rm -rf ${{ env.ADMIN_APP_DEPLOY_PATH }}/publish
           
-      - name: Restart service
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            sudo systemctl daemon-reload
-            sudo systemctl start logistics-admin.service
+      # - name: Restart service
+      #   uses: appleboy/ssh-action@v1.2.0
+      #   with:
+      #     host: ${{ secrets.SSH_HOST }}
+      #     username: ${{ secrets.SSH_USERNAME }}
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     script: |
+      #       sudo systemctl daemon-reload
+      #       sudo systemctl start logistics-admin.service
