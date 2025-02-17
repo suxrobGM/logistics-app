@@ -78,7 +78,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            sudo mv ${{ env.OFFICE_APP_DEPLOY_PATH }}${{ env.OFFICE_APP_OUTPUT_PATH }}/* ${{ env.OFFICE_APP_DEPLOY_PATH }}
+            sudo mv ${{ env.OFFICE_APP_DEPLOY_PATH }}/${{ env.OFFICE_APP_OUTPUT_PATH }}/* ${{ env.OFFICE_APP_DEPLOY_PATH }}
             rm -rf ${{ env.OFFICE_APP_DEPLOY_PATH }}/${{ env.OFFICE_APP_OUTPUT_PATH }}
 
   deploy-web-api:
@@ -136,7 +136,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            mv ${{ env.WEB_API_DEPLOY_PATH }}publish/* ${{ env.WEB_API_DEPLOY_PATH }}
+            mv ${{ env.WEB_API_DEPLOY_PATH }}/publish/* ${{ env.WEB_API_DEPLOY_PATH }}
             rm -rf ${{ env.WEB_API_DEPLOY_PATH }}/publish
 
       - name: Restart service
@@ -204,7 +204,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            sudo mv ${{ env.IDENTITY_SERVER_DEPLOY_PATH }}publish/* ${{ env.IDENTITY_SERVER_DEPLOY_PATH }}
+            sudo mv ${{ env.IDENTITY_SERVER_DEPLOY_PATH }}/publish/* ${{ env.IDENTITY_SERVER_DEPLOY_PATH }}
             rm -rf ${{ env.IDENTITY_SERVER_DEPLOY_PATH }}/publish
 
       - name: Restart service
@@ -269,7 +269,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            sudo mv ${{ env.ADMIN_APP_DEPLOY_PATH }}publish/* ${{ env.ADMIN_APP_DEPLOY_PATH }}
+            sudo mv ${{ env.ADMIN_APP_DEPLOY_PATH }}/publish/* ${{ env.ADMIN_APP_DEPLOY_PATH }}
             rm -rf ${{ env.ADMIN_APP_DEPLOY_PATH }}/publish
           
       - name: Restart service
