@@ -214,9 +214,9 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            sudo chown -R www-data:www-data ${{ env.IDENTITY_SERVER_DEPLOY_PATH }}
             sudo systemctl daemon-reload
             sudo systemctl start logistics-id.service
-          rm: true
 
   deploy-admin-app:
     name: Deploy Admin App
@@ -234,26 +234,7 @@ jobs:
       - name: Publish
         run: dotnet publish ${{ env.ADMIN_APP_PROJECT }} -c Release -r linux-x64 -p:PublishTrimmed=true --output ./publish
 
-      # - name: Deploy to host
-      #   uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-      #   with:
-      #     server: ${{ secrets.FTP_HOST }}
-      #     username: ${{ secrets.FTP_USERNAME }}
-      #     password: ${{ secrets.FTP_PASSWORD }}
-      #     local-dir: Release/
-      #     server-dir: ${{ env.ADMIN_APP_DEPLOY_PATH }}
-
-      # - name: Stop service and clean
-      #   uses: appleboy/ssh-action@v1.2.0
-      #   with:
-      #     host: ${{ secrets.SSH_HOST }}
-      #     username: ${{ secrets.SSH_USERNAME }}
-      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-      #     script: |
-      #       sudo systemctl stop logistics-admin.service
-      #       rm -rf ${{ env.ADMIN_APP_DEPLOY_PATH }}/*
-
-      - name: Upload files
+      - name: Deploy to host
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -271,13 +252,3 @@ jobs:
           script: |
             sudo mv ${{ env.ADMIN_APP_DEPLOY_PATH }}/publish/* ${{ env.ADMIN_APP_DEPLOY_PATH }}
             rm -rf ${{ env.ADMIN_APP_DEPLOY_PATH }}/publish
-          
-      # - name: Restart service
-      #   uses: appleboy/ssh-action@v1.2.0
-      #   with:
-      #     host: ${{ secrets.SSH_HOST }}
-      #     username: ${{ secrets.SSH_USERNAME }}
-      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-      #     script: |
-      #       sudo systemctl daemon-reload
-      #       sudo systemctl start logistics-admin.service
