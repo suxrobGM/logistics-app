@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Hangfire;
+using Hangfire.PostgreSql;
 using Logistics.API.Authorization;
 using Logistics.API.Extensions;
 using Logistics.API.Jobs;
@@ -14,8 +15,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.IdentityModel.Protocols;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Extensions.Logging;
@@ -27,11 +26,13 @@ internal static class Setup
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         var services = builder.Services;
+        var configuration = builder.Configuration;
+        
         var microsoftLogger = new SerilogLoggerFactory(Log.Logger)
             .CreateLogger<IInfrastructureBuilder>();
         
-        services.AddApplicationLayer(builder.Configuration);
-        services.AddInfrastructureLayer(builder.Configuration)
+        services.AddApplicationLayer(configuration);
+        services.AddInfrastructureLayer(configuration)
             .UseLogger(microsoftLogger)
             .AddMasterDatabase()
             .AddTenantDatabase()
@@ -46,27 +47,28 @@ internal static class Setup
         services.AddScoped<IAuthorizationHandler, PermissionHandler>();
         
         services.AddHangfireServer();
-        services.AddHangfire(configuration => configuration
+        services.AddHangfire(config => config
             .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
             .UseSimpleAssemblyNameTypeSerializer()
             .UseRecommendedSerializerSettings()
-            .UseSqlServerStorage(builder.Configuration.GetConnectionString("MasterDatabase")));
+            .UsePostgreSqlStorage(c =>
+                c.UseNpgsqlConnection(configuration.GetConnectionString("MasterDatabase"))));
         
-        //var configManager = new ConfigurationManager<OpenIdConnectConfiguration>($"{builder.Configuration["IdentityServer:Authority"]}/.well-known/openid-configuration", new OpenIdConnectConfigurationRetriever());
+        //var configManager = new ConfigurationManager<OpenIdConnectConfiguration>($"{configuration["IdentityServer:Authority"]}/.well-known/openid-configuration", new OpenIdConnectConfigurationRetriever());
         //var openIdConfig = configManager.GetConfigurationAsync().Result;
         
-        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
-                builder.Configuration.Bind("IdentityServer", options);
-                //options.MetadataAddress = $"{builder.Configuration["IdentityServer:Authority"]}/.well-known/openid-configuration";
+                configuration.Bind("IdentityServer", options);
+                //options.MetadataAddress = $"{configuration["IdentityServer:Authority"]}/.well-known/openid-configuration";
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateAudience = true,
                     ValidateIssuer = true,
                     //IssuerSigningKeys = openIdConfig.SigningKeys,
-                    ValidIssuer = builder.Configuration["IdentityServer:Authority"],
-                    ValidAudience = builder.Configuration["IdentityServer:Audience"],
+                    ValidIssuer = configuration["IdentityServer:Authority"],
+                    ValidAudience = configuration["IdentityServer:Audience"],
                 };
             });
 
