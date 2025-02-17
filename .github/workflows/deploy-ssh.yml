@@ -234,6 +234,15 @@ jobs:
       - name: Publish
         run: dotnet publish ${{ env.ADMIN_APP_PROJECT }} -c Release -r linux-x64 -p:PublishTrimmed=true --output ./publish
 
+      - name: Clean deploy path
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            rm -rf ${{ env.ADMIN_APP_DEPLOY_PATH }}/*
+
       - name: Deploy to host
         uses: appleboy/scp-action@v0.1.7
         with:
