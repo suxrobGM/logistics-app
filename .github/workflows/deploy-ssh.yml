@@ -97,7 +97,7 @@ jobs:
       #     server-dir: ${{ env.WEB_API_DEPLOY_PATH }}
 
       - name: Add production config
-        run: echo '${{ secrets.API_APPSETTINGS }}' > ./Release/appsettings.Production.json
+        run: echo '${{ env.API_APPSETTINGS }}' > ./Release/appsettings.Production.json
 
       - name: Stop service and clean
         uses: appleboy/ssh-action@v1.2.0
@@ -154,7 +154,7 @@ jobs:
       #     server-dir: ${{ env.IDENTITY_SERVER_DEPLOY_PATH }}
 
       - name: Add production config
-        run: echo '${{ secrets.IDENTITY_APPSETTINGS }}' > ./Release/appsettings.Production.json
+        run: echo '${{ env.IDENTITY_APPSETTINGS }}' > ./Release/appsettings.Production.json
 
       - name: Stop service and clean
         uses: appleboy/ssh-action@v1.2.0
