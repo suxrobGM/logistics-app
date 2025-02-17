@@ -6,17 +6,17 @@ on:
 
 env:
   WEB_API_PROJECT: src/Presentation/Logistics.API/Logistics.API.csproj
-  WEB_API_DEPLOY_PATH: /var/www/logistics-api/
+  WEB_API_DEPLOY_PATH: /var/www/logistics-api
 
   IDENTITY_SERVER_PROJECT: src/Presentation/Logistics.IdentityServer/Logistics.IdentityServer.csproj
-  IDENTITY_SERVER_DEPLOY_PATH: /var/www/logistics-id/
+  IDENTITY_SERVER_DEPLOY_PATH: /var/www/logistics-id
 
   ADMIN_APP_PROJECT: src/Client/Logistics.AdminApp/Logistics.AdminApp.csproj
-  ADMIN_APP_DEPLOY_PATH: /var/www/logistics-admin/
+  ADMIN_APP_DEPLOY_PATH: /var/www/logistics-admin
 
   OFFICE_APP_PATH: src/Client/Logistics.OfficeApp
-  OFFICE_APP_OUTPUT_PATH: dist/logistics.office-app/
-  OFFICE_APP_DEPLOY_PATH: /var/www/logistics-office/
+  OFFICE_APP_OUTPUT_PATH: dist/logistics.office-app
+  OFFICE_APP_DEPLOY_PATH: /var/www/logistics-office
 
 jobs:
   test-dotnet:
@@ -67,9 +67,19 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "${{ env.OFFICE_APP_PATH }}/${{ env.OFFICE_APP_OUTPUT_PATH }}*"
+          source: "${{ env.OFFICE_APP_PATH }}/${{ env.OFFICE_APP_OUTPUT_PATH }}/*"
           target: ${{ env.OFFICE_APP_DEPLOY_PATH }}
           rm: true
+
+      - name: Move files from ${{ env.OFFICE_APP_PATH }}/${{ env.OFFICE_APP_OUTPUT_PATH }} to ${{ env.OFFICE_APP_DEPLOY_PATH }}
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sudo mv ${{ env.OFFICE_APP_DEPLOY_PATH }}${{ env.OFFICE_APP_OUTPUT_PATH }}/* ${{ env.OFFICE_APP_DEPLOY_PATH }}
+            rm -rf ${{ env.OFFICE_APP_DEPLOY_PATH }}/${{ env.OFFICE_APP_OUTPUT_PATH }}
 
   deploy-web-api:
     name: Deploy Web API
@@ -98,7 +108,7 @@ jobs:
 
       - name: Add production config
         run: |
-          echo '${{ vars.API_APPSETTINGS }}' > ./publish/appsettings.Production.json
+          echo '${{ secrets.API_APPSETTINGS }}' > ./publish/appsettings.Production.json
 
       - name: Stop service and clean
         uses: appleboy/ssh-action@v1.2.0
@@ -118,6 +128,16 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "./publish/*"
           target: ${{ env.WEB_API_DEPLOY_PATH }}
+
+      - name: Move files from publish to deploy path
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            mv ${{ env.WEB_API_DEPLOY_PATH }}publish/* ${{ env.WEB_API_DEPLOY_PATH }}
+            rm -rf ${{ env.WEB_API_DEPLOY_PATH }}/publish
 
       - name: Restart service
         uses: appleboy/ssh-action@v1.2.0
@@ -156,7 +176,7 @@ jobs:
 
       - name: Add production config
         run: |
-          echo '${{ vars.IDENTITY_APPSETTINGS }}' > ./publish/appsettings.Production.json
+          echo '${{ secrets.IDENTITY_APPSETTINGS }}' > ./publish/appsettings.Production.json
 
       - name: Stop service and clean
         uses: appleboy/ssh-action@v1.2.0
@@ -176,6 +196,16 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "./publish/*"
           target: ${{ env.IDENTITY_SERVER_DEPLOY_PATH }}
+
+      - name: Move files from publish to deploy path
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sudo mv ${{ env.IDENTITY_SERVER_DEPLOY_PATH }}publish/* ${{ env.IDENTITY_SERVER_DEPLOY_PATH }}
+            rm -rf ${{ env.IDENTITY_SERVER_DEPLOY_PATH }}/publish
 
       - name: Restart service
         uses: appleboy/ssh-action@v1.2.0
@@ -231,6 +261,16 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "./publish/*"
           target: ${{ env.ADMIN_APP_DEPLOY_PATH }}
+
+      - name: Move files from publish to deploy path
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sudo mv ${{ env.ADMIN_APP_DEPLOY_PATH }}publish/* ${{ env.ADMIN_APP_DEPLOY_PATH }}
+            rm -rf ${{ env.ADMIN_APP_DEPLOY_PATH }}/publish
           
       - name: Restart service
         uses: appleboy/ssh-action@v1.2.0
