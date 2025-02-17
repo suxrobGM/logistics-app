@@ -67,7 +67,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "${{ env.OFFICE_APP_PATH }}/${{ env.OFFICE_APP_OUTPUT_PATH }}"
+          source: "${{ env.OFFICE_APP_PATH }}/${{ env.OFFICE_APP_OUTPUT_PATH }}*"
           target: ${{ env.OFFICE_APP_DEPLOY_PATH }}
           rm: true
 
@@ -85,7 +85,7 @@ jobs:
           dotnet-version: 9.0.x
 
       - name: Publish
-        run: dotnet publish ${{ env.WEB_API_PROJECT }} -c Release -r linux-x64 -p:PublishSingleFile=true --output ./Release
+        run: dotnet publish ${{ env.WEB_API_PROJECT }} -c Release -r linux-x64 -p:PublishSingleFile=true --output ./publish
 
       # - name: Deploy to host via FTP
       #   uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -98,8 +98,7 @@ jobs:
 
       - name: Add production config
         run: |
-          echo "::add-mask::${{ vars.API_APPSETTINGS }}"
-          echo '${{ vars.API_APPSETTINGS }}' > ./Release/appsettings.Production.json
+          echo '${{ vars.API_APPSETTINGS }}' > ./publish/appsettings.Production.json
 
       - name: Stop service and clean
         uses: appleboy/ssh-action@v1.2.0
@@ -117,7 +116,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "./Release/*"
+          source: "./publish/*"
           target: ${{ env.WEB_API_DEPLOY_PATH }}
 
       - name: Restart service
@@ -144,7 +143,7 @@ jobs:
           dotnet-version: 9.0.x
 
       - name: Publish
-        run: dotnet publish ${{ env.IDENTITY_SERVER_PROJECT }} -c Release -r linux-x64 -p:PublishSingleFile=true --output ./Release
+        run: dotnet publish ${{ env.IDENTITY_SERVER_PROJECT }} -c Release -r linux-x64 -p:PublishSingleFile=true --output ./publish
 
       # - name: Deploy to host
       #   uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -157,8 +156,7 @@ jobs:
 
       - name: Add production config
         run: |
-          echo "::add-mask::${{ vars.IDENTITY_APPSETTINGS }}" 
-          echo '${{ vars.IDENTITY_APPSETTINGS }}' > ./Release/appsettings.Production.json
+          echo '${{ vars.IDENTITY_APPSETTINGS }}' > ./publish/appsettings.Production.json
 
       - name: Stop service and clean
         uses: appleboy/ssh-action@v1.2.0
@@ -176,7 +174,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "./Release/*"
+          source: "./publish/*"
           target: ${{ env.IDENTITY_SERVER_DEPLOY_PATH }}
 
       - name: Restart service
@@ -204,7 +202,7 @@ jobs:
           dotnet-version: 9.0.x
 
       - name: Publish
-        run: dotnet publish ${{ env.ADMIN_APP_PROJECT }} -c Release -r linux-x64 -p:PublishTrimmed=true --output ./Release
+        run: dotnet publish ${{ env.ADMIN_APP_PROJECT }} -c Release -r linux-x64 -p:PublishTrimmed=true --output ./publish
 
       # - name: Deploy to host
       #   uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -231,7 +229,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "./Release/*"
+          source: "./publish/*"
           target: ${{ env.ADMIN_APP_DEPLOY_PATH }}
           
       - name: Restart service
