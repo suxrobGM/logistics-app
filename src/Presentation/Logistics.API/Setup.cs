@@ -90,10 +90,8 @@ internal static class Setup
         {
             options.AddPolicy("DefaultCors", cors =>
             {
-                cors.WithOrigins(
-                        "https://suxrobgm.net",
-                        "https://*.suxrobgm.net")
-                    .SetIsOriginAllowedToAllowWildcardSubdomains()
+                cors.SetIsOriginAllowedToAllowWildcardSubdomains()
+                    .WithOrigins("https://*.suxrobgm.net")
                     .AllowAnyHeader()
                     .AllowAnyMethod();
             });

@@ -74,19 +74,19 @@ internal static class Setup
         {
             options.AddPolicy("DefaultCors", cors =>
             {
-                cors.WithOrigins(
-                        "https://suxrobgm.net",
-                        "https://*.suxrobgm.net")
-                    .SetIsOriginAllowedToAllowWildcardSubdomains()
+                cors.SetIsOriginAllowedToAllowWildcardSubdomains()
+                    .WithOrigins("https://*.suxrobgm.net")
                     .AllowAnyHeader()
-                    .AllowAnyMethod();
+                    .AllowAnyMethod()
+                    .AllowCredentials();
             });
             
             options.AddPolicy("AnyCors", cors =>
             {
                 cors.AllowAnyOrigin()
                     .AllowAnyHeader()
-                    .AllowAnyMethod();
+                    .AllowAnyMethod()
+                    .AllowCredentials();
             });
         });
 
@@ -103,10 +103,9 @@ internal static class Setup
         }
         
         app.UseHttpsRedirection();
-        app.UseCors(app.Environment.IsDevelopment() ? "AnyCors" : "DefaultCors");
-        
         app.UseStaticFiles();
         app.UseRouting();
+        app.UseCors(app.Environment.IsDevelopment() ? "AnyCors" : "DefaultCors");
         
         app.UseIdentityServer();
         app.UseAuthorization();
@@ -125,6 +124,9 @@ internal static class Setup
         .AddCookie(IdentityConstants.ApplicationScheme, o =>
         {
             o.LoginPath = new PathString("/Account/Login");
+            o.Cookie.SameSite = SameSiteMode.None;
+            o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            o.Cookie.HttpOnly = true;
             o.Events = new CookieAuthenticationEvents()
             {
                 OnValidatePrincipal = SecurityStampValidator.ValidatePrincipalAsync
