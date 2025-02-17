@@ -22,6 +22,8 @@ builder.Services.AddOidcAuthentication(options =>
     options.UserOptions.RoleClaim = "role";
 });
 
+Console.WriteLine($"Client Hosting Environment: {builder.HostEnvironment.Environment}");
+
 await builder
     .Build()
     .RunAsync();

@@ -42,6 +42,8 @@ internal static class Setup
         {
             services.AddDataProtection()
                 .PersistKeysToFileSystem(new DirectoryInfo("/var/www/logistics-id/keys"));
+            
+            microsoftLogger.LogInformation("Configured data protection with file system storage");
         }
 
         services.AddIdentityServer(options =>
