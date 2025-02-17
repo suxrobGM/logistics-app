@@ -7,7 +7,7 @@ using Logistics.Domain.Entities;
 using Logistics.Infrastructure.EF;
 using Logistics.IdentityServer.Services;
 using Logistics.Infrastructure.EF.Builder;
-using Logistics.Infrastructure.EF.Data;
+using Microsoft.AspNetCore.DataProtection;
 using Serilog.Extensions.Logging;
 
 namespace Logistics.IdentityServer;
@@ -17,12 +17,14 @@ internal static class Setup
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         var services = builder.Services;
+        var configuration = builder.Configuration;
+        
         var microsoftLogger = new SerilogLoggerFactory(Log.Logger)
             .CreateLogger<IInfrastructureBuilder>();
         
         services.AddRazorPages();
-        services.AddApplicationLayer(builder.Configuration);
-        services.AddInfrastructureLayer(builder.Configuration)
+        services.AddApplicationLayer(configuration);
+        services.AddInfrastructureLayer(configuration)
             .UseLogger(microsoftLogger)
             .AddMasterDatabase()
             .AddTenantDatabase()
@@ -35,6 +37,12 @@ internal static class Setup
             });
         
         AddAuthSchemes(services);
+
+        if (builder.Environment.IsProduction())
+        {
+            services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo("/var/www/logistics-id/keys"));
+        }
 
         services.AddIdentityServer(options =>
             {
@@ -49,7 +57,7 @@ internal static class Setup
             .AddInMemoryIdentityResources(Config.IdentityResources())
             .AddInMemoryApiScopes(Config.ApiScopes())
             .AddInMemoryApiResources(Config.ApiResources())
-            .AddInMemoryClients(Config.Clients(builder.Configuration))
+            .AddInMemoryClients(Config.Clients(configuration))
             .AddAspNetIdentity<User>();
 
         services.AddAuthentication()
