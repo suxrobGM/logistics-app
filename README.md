@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/suxrobgm/logistics-app/actions/workflows/build.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/build.yml)
 [![Tests](https://github.com/suxrobgm/logistics-app/actions/workflows/test.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/test.yml)
-[![Deployment](https://github.com/suxrobgm/logistics-app/actions/workflows/deploy-ftp.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/deploy-ftp.yml)
+[![Deployment](https://github.com/suxrobgm/logistics-app/actions/workflows/deploy-ssh.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/deploy-ssh.yml)
 
 [![CC BY-NC 4.0][cc-by-nc-shield]][cc-by-nc]
 

@@ -1,0 +1,16 @@
+[Unit]
+Description=Logistics API Service
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/logistics-api
+ExecStart=/var/www/logistics-api/Logistics.API
+Restart=always
+RestartSec=30
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_URLS=http://*:7000
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,241 @@
+name: Deploy FTP
+
+on:
+  push:
+    branches: ["main"]
+
+env:
+  WEB_API_PROJECT: src/Presentation/Logistics.API/Logistics.API.csproj
+  WEB_API_DEPLOY_PATH: /var/www/logistics-api/
+
+  IDENTITY_SERVER_PROJECT: src/Presentation/Logistics.IdentityServer/Logistics.IdentityServer.csproj
+  IDENTITY_SERVER_DEPLOY_PATH: /var/www/logistics-id/
+
+  ADMIN_APP_PROJECT: src/Client/Logistics.AdminApp/Logistics.AdminApp.csproj
+  ADMIN_APP_DEPLOY_PATH: /var/www/logistics-admin/
+
+  OFFICE_APP_PATH: src/Client/Logistics.OfficeApp
+  OFFICE_APP_OUTPUT_PATH: dist/logistics.office-app/
+  OFFICE_APP_DEPLOY_PATH: /var/www/logistics-office/
+
+jobs:
+  test-dotnet:
+    name: .NET Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
+
+  deploy-office-app:
+    name: Deploy Office App
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        working-directory: ${{ env.OFFICE_APP_PATH }}
+        run: bun install --force
+
+      - name: Build
+        working-directory: ${{ env.OFFICE_APP_PATH }}
+        run: bun run build
+
+      # - name: Deploy to host via FTP
+      #   uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      #   with:
+      #     server: ${{ secrets.FTP_HOST }}
+      #     username: ${{ secrets.FTP_USERNAME }}
+      #     password: ${{ secrets.FTP_PASSWORD }}
+      #     local-dir: ${{ env.OFFICE_APP_PATH }}/${{ env.OFFICE_APP_OUTPUT_PATH }}
+      #     server-dir: ${{ env.OFFICE_APP_DEPLOY_PATH }}
+
+      - name: Deploy to host via SSH
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "${{ env.OFFICE_APP_PATH }}/${{ env.OFFICE_APP_OUTPUT_PATH }}"
+          target: ${{ env.OFFICE_APP_DEPLOY_PATH }}
+          rm: true
+
+  deploy-web-api:
+    name: Deploy Web API
+    runs-on: windows-latest
+    needs: [test-dotnet]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Publish
+        run: dotnet publish ${{ env.WEB_API_PROJECT }} -c Release -r linux-x64 -p:PublishSingleFile=true --output ./Release
+
+      # - name: Deploy to host via FTP
+      #   uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      #   with:
+      #     server: ${{ secrets.FTP_HOST }}
+      #     username: ${{ secrets.FTP_USERNAME }}
+      #     password: ${{ secrets.FTP_PASSWORD }}
+      #     local-dir: Release/
+      #     server-dir: ${{ env.WEB_API_DEPLOY_PATH }}
+
+      - name: Add production config
+        run: echo '${{ secrets.API_APPSETTINGS }}' > ./Release/appsettings.Production.json
+
+      - name: Stop service and clean
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sudo systemctl stop logistics-api.service
+            rm -rf ${{ env.WEB_API_DEPLOY_PATH }}*
+
+      - name: Upload files
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "./Release/*"
+          target: ${{ env.WEB_API_DEPLOY_PATH }}
+
+      - name: Restart service
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sudo systemctl daemon-reload
+            sudo systemctl start logistics-api.service
+
+  deploy-identity-server:
+    name: Deploy Identity Server
+    runs-on: windows-latest
+    needs: [test-dotnet]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Publish
+        run: dotnet publish ${{ env.IDENTITY_SERVER_PROJECT }} -c Release -r linux-x64 -p:PublishSingleFile=true --output ./Release
+
+      # - name: Deploy to host
+      #   uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      #   with:
+      #     server: ${{ secrets.FTP_HOST }}
+      #     username: ${{ secrets.FTP_USERNAME }}
+      #     password: ${{ secrets.FTP_PASSWORD }}
+      #     local-dir: Release/
+      #     server-dir: ${{ env.IDENTITY_SERVER_DEPLOY_PATH }}
+
+      - name: Add production config
+        run: echo '${{ secrets.IDENTITY_APPSETTINGS }}' > ./Release/appsettings.Production.json
+
+      - name: Stop service and clean
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sudo systemctl stop logistics-id.service
+            rm -rf ${{ env.IDENTITY_SERVER_DEPLOY_PATH }}*
+
+      - name: Upload files
+        uses: appleboy/scp-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "./Release/*"
+          target: ${{ env.IDENTITY_SERVER_DEPLOY_PATH }}
+
+      - name: Restart service
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sudo systemctl daemon-reload
+            sudo systemctl start logistics-id.service
+          rm: true
+
+  deploy-admin-app:
+    name: Deploy Admin App
+    runs-on: windows-latest
+    needs: [test-dotnet]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Publish
+        run: dotnet publish ${{ env.ADMIN_APP_PROJECT }} -c Release -r linux-x64 -p:PublishTrimmed=true --output ./Release
+
+      # - name: Deploy to host
+      #   uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      #   with:
+      #     server: ${{ secrets.FTP_HOST }}
+      #     username: ${{ secrets.FTP_USERNAME }}
+      #     password: ${{ secrets.FTP_PASSWORD }}
+      #     local-dir: Release/
+      #     server-dir: ${{ env.ADMIN_APP_DEPLOY_PATH }}
+
+      - name: Stop service and clean
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sudo systemctl stop logistics-admin.service
+            rm -rf ${{ env.ADMIN_APP_DEPLOY_PATH }}*
+
+      - name: Upload files
+        uses: appleboy/scp-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "./Release/*"
+          target: ${{ env.ADMIN_APP_DEPLOY_PATH }}
+          
+      - name: Restart service
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sudo systemctl daemon-reload
+            sudo systemctl start logistics-admin.service
