@@ -73,7 +73,7 @@ jobs:
 
   deploy-web-api:
     name: Deploy Web API
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     needs: [test-dotnet]
 
     steps:
@@ -130,7 +130,7 @@ jobs:
 
   deploy-identity-server:
     name: Deploy Identity Server
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     needs: [test-dotnet]
 
     steps:
@@ -188,7 +188,7 @@ jobs:
 
   deploy-admin-app:
     name: Deploy Admin App
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     needs: [test-dotnet]
 
     steps:
