@@ -7,6 +7,7 @@ using Logistics.Domain.Entities;
 using Logistics.Infrastructure.EF;
 using Logistics.IdentityServer.Services;
 using Logistics.Infrastructure.EF.Builder;
+using Logistics.Infrastructure.EF.Data;
 using Microsoft.AspNetCore.DataProtection;
 using Serilog.Extensions.Logging;
 
@@ -41,8 +42,7 @@ internal static class Setup
         if (builder.Environment.IsProduction())
         {
             services.AddDataProtection()
-                .PersistKeysToFileSystem(new DirectoryInfo("/var/www/logistics-id/keys"))
-                .SetApplicationName("Logistics.IdentityServer");
+                .PersistKeysToDbContext<MasterDbContext>();
         }
 
         services.AddIdentityServer(options =>

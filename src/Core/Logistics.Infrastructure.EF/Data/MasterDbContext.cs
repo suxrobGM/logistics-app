@@ -2,13 +2,14 @@
 using Logistics.Infrastructure.EF.Helpers;
 using Logistics.Infrastructure.EF.Interceptors;
 using Logistics.Infrastructure.EF.Options;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.EF.Data;
 
-public class MasterDbContext : IdentityDbContext<User, AppRole, string>
+public class MasterDbContext : IdentityDbContext<User, AppRole, string>, IDataProtectionKeyContext
 {
     private readonly DispatchDomainEventsInterceptor? _dispatchDomainEventsInterceptor;
     private readonly string _connectionString;
@@ -23,6 +24,8 @@ public class MasterDbContext : IdentityDbContext<User, AppRole, string>
         _connectionString = options.ConnectionString ?? ConnectionStrings.LocalMaster;
         _logger = logger;
     }
+    
+    public DbSet<DataProtectionKey> DataProtectionKeys { get; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
