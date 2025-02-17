@@ -41,9 +41,8 @@ internal static class Setup
         if (builder.Environment.IsProduction())
         {
             services.AddDataProtection()
-                .PersistKeysToFileSystem(new DirectoryInfo("/var/www/logistics-id/keys"));
-            
-            microsoftLogger.LogInformation("Configured data protection with file system storage");
+                .PersistKeysToFileSystem(new DirectoryInfo("/var/www/logistics-id/keys"))
+                .SetApplicationName("Logistics.IdentityServer");
         }
 
         services.AddIdentityServer(options =>

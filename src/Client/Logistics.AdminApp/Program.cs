@@ -16,9 +16,14 @@ builder.Services.AddRadzenComponents();
 builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false)
+    .AddJsonFile($"appsettings.{builder.HostEnvironment.Environment}.json", optional: true);
+
 builder.Services.AddOidcAuthentication(options =>
 {
     builder.Configuration.Bind("Oidc", options.ProviderOptions);
+    Console.WriteLine($"Authority: {options.ProviderOptions.Authority}");
     options.UserOptions.RoleClaim = "role";
 });
 
