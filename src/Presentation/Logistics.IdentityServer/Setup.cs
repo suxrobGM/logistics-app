@@ -38,12 +38,9 @@ internal static class Setup
             });
         
         AddAuthSchemes(services);
-
-        if (builder.Environment.IsProduction())
-        {
-            services.AddDataProtection()
-                .PersistKeysToDbContext<MasterDbContext>();
-        }
+        
+        services.AddDataProtection()
+            .PersistKeysToDbContext<MasterDbContext>();
 
         services.AddIdentityServer(options =>
             {

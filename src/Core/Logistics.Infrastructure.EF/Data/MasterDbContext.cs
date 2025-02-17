@@ -25,7 +25,7 @@ public class MasterDbContext : IdentityDbContext<User, AppRole, string>, IDataPr
         _logger = logger;
     }
     
-    public DbSet<DataProtectionKey> DataProtectionKeys { get; }
+    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
