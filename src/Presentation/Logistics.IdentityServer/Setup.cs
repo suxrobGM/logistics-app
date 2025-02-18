@@ -40,6 +40,12 @@ internal static class Setup
         
         AddAuthSchemes(services);
         
+        services.Configure<ForwardedHeadersOptions>(options =>
+        {
+            options.ForwardedHeaders =
+                ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        });
+        
         services.AddDataProtection()
             .PersistKeysToDbContext<MasterDbContext>();
 
@@ -102,11 +108,7 @@ internal static class Setup
             app.UseDeveloperExceptionPage();
         }
         
-        app.UseForwardedHeaders(new ForwardedHeadersOptions
-        {
-            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-        });
-        
+        app.UseForwardedHeaders();
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseRouting();

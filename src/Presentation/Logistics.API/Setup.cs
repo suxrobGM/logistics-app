@@ -58,6 +58,12 @@ internal static class Setup
         //var configManager = new ConfigurationManager<OpenIdConnectConfiguration>($"{configuration["IdentityServer:Authority"]}/.well-known/openid-configuration", new OpenIdConnectConfigurationRetriever());
         //var openIdConfig = configManager.GetConfigurationAsync().Result;
         
+        services.Configure<ForwardedHeadersOptions>(options =>
+        {
+            options.ForwardedHeaders =
+                ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        });
+        
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
@@ -116,11 +122,7 @@ internal static class Setup
             app.UseSwaggerUI();
         }
         
-        app.UseForwardedHeaders(new ForwardedHeadersOptions
-        {
-            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-        });
-        
+        app.UseForwardedHeaders();
         app.UseHttpsRedirection();
         app.UseCors(app.Environment.IsDevelopment() ? "AnyCors" : "DefaultCors");
 
