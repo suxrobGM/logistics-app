@@ -45,6 +45,7 @@ internal static class Setup
 
         services.AddIdentityServer(options =>
             {
+                options.IssuerUri = configuration["IdentityServer:IssuerUri"];
                 options.Events.RaiseErrorEvents = true;
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;

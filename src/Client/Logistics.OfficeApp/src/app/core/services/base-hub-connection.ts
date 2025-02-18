@@ -41,7 +41,7 @@ export abstract class BaseHubConnection {
     }
   }
 
-  async disconnect() {
+  async disconnect(): Promise<void> {
     if (!this.isConnected) {
       return;
     }
