@@ -9,6 +9,7 @@ using Logistics.IdentityServer.Services;
 using Logistics.Infrastructure.EF.Builder;
 using Logistics.Infrastructure.EF.Data;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.HttpOverrides;
 using Serilog.Extensions.Logging;
 
 namespace Logistics.IdentityServer;
@@ -99,6 +100,11 @@ internal static class Setup
         {
             app.UseDeveloperExceptionPage();
         }
+        
+        app.UseForwardedHeaders(new ForwardedHeadersOptions
+        {
+            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+        });
         
         app.UseHttpsRedirection();
         app.UseStaticFiles();

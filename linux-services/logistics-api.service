@@ -9,8 +9,9 @@ WorkingDirectory=/var/www/logistics-api
 ExecStart=/var/www/logistics-api/Logistics.API
 Restart=always
 RestartSec=30
-Environment=ASPNETCORE_ENVIRONMENT=Production
 Environment=ASPNETCORE_URLS=http://*:7000
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
 
 [Install]
 WantedBy=multi-user.target
