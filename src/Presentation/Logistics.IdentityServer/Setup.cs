@@ -9,7 +9,6 @@ using Logistics.IdentityServer.Services;
 using Logistics.Infrastructure.EF.Builder;
 using Logistics.Infrastructure.EF.Data;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.HttpOverrides;
 using Serilog.Extensions.Logging;
 
 namespace Logistics.IdentityServer;
@@ -40,18 +39,11 @@ internal static class Setup
         
         AddAuthSchemes(services);
         
-        services.Configure<ForwardedHeadersOptions>(options =>
-        {
-            options.ForwardedHeaders =
-                ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-        });
-        
         services.AddDataProtection()
             .PersistKeysToDbContext<MasterDbContext>();
 
         services.AddIdentityServer(options =>
             {
-                options.IssuerUri = configuration["IdentityServer:IssuerUri"];
                 options.Events.RaiseErrorEvents = true;
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
@@ -108,7 +100,6 @@ internal static class Setup
             app.UseDeveloperExceptionPage();
         }
         
-        app.UseForwardedHeaders();
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseRouting();

@@ -2,7 +2,6 @@
 using Hangfire;
 using Hangfire.PostgreSql;
 using Logistics.API.Authorization;
-using Logistics.API.Extensions;
 using Logistics.API.Jobs;
 using Logistics.API.Middlewares;
 using Logistics.Application;
@@ -12,7 +11,6 @@ using Logistics.Infrastructure.EF.Builder;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -55,31 +53,20 @@ internal static class Setup
             .UsePostgreSqlStorage(c =>
                 c.UseNpgsqlConnection(configuration.GetConnectionString("MasterDatabase"))));
         
-        //var configManager = new ConfigurationManager<OpenIdConnectConfiguration>($"{configuration["IdentityServer:Authority"]}/.well-known/openid-configuration", new OpenIdConnectConfigurationRetriever());
-        //var openIdConfig = configManager.GetConfigurationAsync().Result;
-        
-        services.Configure<ForwardedHeadersOptions>(options =>
-        {
-            options.ForwardedHeaders =
-                ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-        });
-        
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
                 configuration.Bind("IdentityServer", options);
-                //options.MetadataAddress = $"{configuration["IdentityServer:Authority"]}/.well-known/openid-configuration";
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateAudience = true,
                     ValidateIssuer = true,
-                    //IssuerSigningKeys = openIdConfig.SigningKeys,
                     ValidIssuer = configuration["IdentityServer:Authority"],
                     ValidAudience = configuration["IdentityServer:Audience"],
                 };
             });
 
-        builder.Services.AddControllers(configure =>
+        services.AddControllers(configure =>
         {
             var policy = new AuthorizationPolicyBuilder()
                             .RequireAuthenticatedUser()
@@ -93,7 +80,7 @@ internal static class Setup
                 new BadRequestObjectResult(Result.Fail(GetModelStateErrors(context.ModelState)));
         });
         
-        builder.Services.AddCors(options =>
+        services.AddCors(options =>
         {
             options.AddPolicy("DefaultCors", cors =>
             {
@@ -122,7 +109,6 @@ internal static class Setup
             app.UseSwaggerUI();
         }
         
-        app.UseForwardedHeaders();
         app.UseHttpsRedirection();
         app.UseCors(app.Environment.IsDevelopment() ? "AnyCors" : "DefaultCors");
 
