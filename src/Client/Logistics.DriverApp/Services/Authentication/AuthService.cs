@@ -21,8 +21,13 @@ public class AuthService : IAuthService
 #if DEBUG
         options.HttpClientFactory = (_) => new System.Net.Http.HttpClient(InsecureHttpsClient.GetPlatformMessageHandler());
 #endif
-        _oidcClient = new OidcClient(options);
-        _oidcClient.Options.Browser = browser;
+        _oidcClient = new OidcClient(options)
+        {
+            Options =
+            {
+                Browser = browser
+            }
+        };
         _tokenStorage = tokenStorage;
         Options = options;
     }
@@ -135,7 +140,7 @@ public class AuthService : IAuthService
                     userIdentity.Permissions.Add(claim.Value);
                     break;
                 case CustomClaimTypes.Tenant:
-                    userIdentity.TenantIds.Add(claim.Value);
+                    userIdentity.TenantId = claim.Value;
                     break;
             }
         }
@@ -144,7 +149,7 @@ public class AuthService : IAuthService
     
     private static bool IsAccessTokenExpired(TokenInfo? tokenInfo)
     {
-        if (tokenInfo == null)
+        if (tokenInfo is null)
             return false;
             
         var accessTokenExpiration = tokenInfo.AccessTokenExpiration;

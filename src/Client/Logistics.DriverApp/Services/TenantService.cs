@@ -4,7 +4,7 @@ namespace Logistics.DriverApp.Services;
 
 public class TenantService : ITenantService
 {
-    private const string TENANT_ID_KEY = "tenant_id";
+    private const string TenantIdKey = "tenant_id";
     private readonly IAuthService _authService;
     private string? _currentTenantId;
 
@@ -15,15 +15,15 @@ public class TenantService : ITenantService
 
     public async Task<string?> GetTenantIdFromCacheAsync()
     {
-        var cachedTenantId = await SecureStorage.Default.GetAsync(TENANT_ID_KEY);
-        var validTenantIds = _authService.User?.TenantIds;
+        var cachedTenantId = await SecureStorage.Default.GetAsync(TenantIdKey);
+        var validTenantId = _authService.User?.TenantId;
 
-        if (string.IsNullOrEmpty(cachedTenantId) || validTenantIds == null)
+        if (string.IsNullOrEmpty(cachedTenantId) || string.IsNullOrEmpty(validTenantId))
         {
             return null;
         }
 
-        return validTenantIds.Contains(cachedTenantId) ? cachedTenantId : null;
+        return validTenantId == cachedTenantId ? cachedTenantId : null;
     }
 
     public Task SaveTenantIdAsync(string tenantId)
@@ -32,11 +32,11 @@ public class TenantService : ITenantService
             return Task.CompletedTask;
         
         _currentTenantId = tenantId;
-        return SecureStorage.Default.SetAsync(TENANT_ID_KEY, tenantId);
+        return SecureStorage.Default.SetAsync(TenantIdKey, tenantId);
     }
 
     public void ClearCache()
     {
-        SecureStorage.Default.Remove(TENANT_ID_KEY);
+        SecureStorage.Default.Remove(TenantIdKey);
     }
 }

@@ -21,26 +21,10 @@ public class AppShellViewModel : BaseViewModel
         _tenantService = tenantService;
         _apiClient.OnErrorResponse += async (s, e) => await HandleApiErrors(e);
         SignOutCommand = new AsyncRelayCommand(SignOutAsync);
-        ChangeOrganizationPageVisible = true;
-        Messenger.Register<UserLoggedInMessage>(this, (_, m) =>
-        {
-            ChangeOrganizationPageVisible = m.Value.TenantIds.Count > 1;
-        });
     }
 
     public IAsyncRelayCommand SignOutCommand { get; }
-
-
-    #region Bindable properties
     
-    private bool _changeOrganizationPageVisible;
-    public bool ChangeOrganizationPageVisible
-    {
-        get => _changeOrganizationPageVisible;
-        set => SetProperty(ref _changeOrganizationPageVisible, value);
-    }
-
-    #endregion
 
     private async Task SignOutAsync()
     {

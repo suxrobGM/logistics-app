@@ -86,7 +86,7 @@ public class DashboardPageViewModel : BaseViewModel
 
     private void TryStartLocationTrackerService()
     {
-        var tenantId = _authService.User?.CurrentTenantId;
+        var tenantId = _authService.User?.TenantId;
         var truckId = _cache.Get<string>(CacheKeys.TruckId);
 
         if (string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(truckId))

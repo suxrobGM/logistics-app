@@ -42,14 +42,6 @@
             <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static helpers:MaterialIcons.Account_circle}" Color="Black" />
         </ShellContent.Icon>
     </ShellContent>
-    <ShellContent Title="Change Organization" 
-                  ContentTemplate="{DataTemplate views:ChangeOrganizationPage}" 
-                  Route="ChangeOrganizationPage"
-                  IsVisible="{Binding ChangeOrganizationPageVisible}">
-        <ShellContent.Icon>
-            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static helpers:MaterialIcons.Domain}" Color="Black" />
-        </ShellContent.Icon>
-    </ShellContent>
     <ShellContent Title="Settings" 
                   ContentTemplate="{DataTemplate views:SettingsPage}" 
                   Route="SettingsPage">

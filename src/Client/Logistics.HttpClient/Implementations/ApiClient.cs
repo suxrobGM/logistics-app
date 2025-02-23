@@ -301,9 +301,9 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakePutRequestAsync<Result, UpdateUser>($"users/{command.UserId}", command);
     }
 
-    public Task<Result<OrganizationDto[]>> GetUserOrganizations(string userId)
+    public Task<Result<TenantDto>> GetUserCurrentTenant(string userId)
     {
-        return MakeGetRequestAsync<Result<OrganizationDto[]>>($"users/{userId}/organizations");
+        return MakeGetRequestAsync<Result<TenantDto>>($"users/{userId}/tenant");
     }
 
     #endregion

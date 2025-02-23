@@ -57,21 +57,19 @@ public class LoginPageViewModel : BaseViewModel
             }
 
             _apiClient.AccessToken = result.AccessToken;
-            var tenantId = await _tenantService.GetTenantIdFromCacheAsync() ??
-                           _authService.User?.TenantIds.FirstOrDefault();
+            var tenantId = await _tenantService.GetTenantIdFromCacheAsync() ?? _authService.User?.TenantId;
 
             Messenger.Send(new UserLoggedInMessage(_authService.User!));
             
             if (!string.IsNullOrEmpty(tenantId))
             {
                 _apiClient.TenantId = tenantId;
-                _authService.User!.CurrentTenantId = tenantId;
                 await _tenantService.SaveTenantIdAsync(tenantId);
                 await Shell.Current.GoToAsync("//DashboardPage");
             }
             else
             {
-                await Shell.Current.GoToAsync("//ChangeOrganizationPage");
+                await PopupHelpers.ShowErrorAsync("You have not joined any company yet. Please contact your company administrator to get an invite.");
             }
         }
         catch (Exception ex)

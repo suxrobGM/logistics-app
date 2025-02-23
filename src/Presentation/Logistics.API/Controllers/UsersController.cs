@@ -39,13 +39,13 @@ public class UsersController : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpGet("{id}/organizations")]
-    [ProducesResponseType(typeof(Result<OrganizationDto[]>), StatusCodes.Status200OK)]
+    [HttpGet("{id}/tenant")]
+    [ProducesResponseType(typeof(Result<TenantDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Users.View)]
-    public async Task<IActionResult> GetUserJoinedOrganizations(string id)
+    public async Task<IActionResult> GetUserCurrentTenant(string id)
     {
-        var result = await _mediator.Send(new GetUserJoinedOrganizationsQuery() { UserId = id });
+        var result = await _mediator.Send(new GetUserCurrentTenantQuery() { UserId = id });
         return result.Success ? Ok(result) : BadRequest(result);
     }
 

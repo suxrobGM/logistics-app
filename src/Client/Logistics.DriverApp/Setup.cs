@@ -39,7 +39,6 @@ public static class Setup
         services.AddScoped<StatsPageViewModel>();
         services.AddScoped<LoadPageViewModel>();
         services.AddScoped<PastLoadsPageViewModel>();
-        services.AddScoped<ChangeOrganizationPageViewModel>();
         
         services.AddScoped<IdentityModel.OidcClient.Browser.IBrowser, WebBrowserAuthenticator>();
         services.AddScoped<IAuthService, AuthService>();

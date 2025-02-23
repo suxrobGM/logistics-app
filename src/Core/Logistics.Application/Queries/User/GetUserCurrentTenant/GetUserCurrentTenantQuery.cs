@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Logistics.Application.Queries;
 
-public class GetUserJoinedOrganizationsQuery : IRequest<Result<OrganizationDto[]>>
+public class GetUserCurrentTenantQuery : IRequest<Result<TenantDto>>
 {
     public required string UserId { get; set; }
 }
