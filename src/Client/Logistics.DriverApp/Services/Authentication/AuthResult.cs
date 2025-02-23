@@ -1,5 +1,4 @@
-﻿using IdentityModel.OidcClient;
-using Result = IdentityModel.OidcClient.Result;
+﻿using Result = Duende.IdentityModel.OidcClient.Result;
 
 namespace Logistics.DriverApp.Services.Authentication;
 

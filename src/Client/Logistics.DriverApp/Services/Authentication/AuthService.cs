@@ -1,10 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using IdentityModel.OidcClient;
 using System.Security.Claims;
-using IdentityModel;
+using Duende.IdentityModel;
+using Duende.IdentityModel.OidcClient;
 using Logistics.Shared.Consts.Claims;
-using IBrowser = IdentityModel.OidcClient.Browser.IBrowser;
-using Result = IdentityModel.OidcClient.Result;
+using IBrowser = Duende.IdentityModel.OidcClient.Browser.IBrowser;
+using Result = Duende.IdentityModel.OidcClient.Result;
 
 namespace Logistics.DriverApp.Services.Authentication;
 
