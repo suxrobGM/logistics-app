@@ -2,15 +2,15 @@
 
 public class TokenStorage : ITokenStorage
 {
-    private const string ACCESS_TOKEN_KEY = "access_token";
-    private const string ACCESS_TOKEN_EXPIRATION_KEY = "access_token_expiration";
-    private const string REFRESH_TOKEN_KEY = "refresh_token";
+    private const string AccessTokenKey = "access_token";
+    private const string AccessTokenExpirationKey = "access_token_expiration";
+    private const string RefreshTokenKey = "refresh_token";
 
     public async Task<TokenInfo?> GetTokenAsync()
     {
-        var accessToken = await SecureStorage.GetAsync(ACCESS_TOKEN_KEY);
-        var refreshToken = await SecureStorage.GetAsync(REFRESH_TOKEN_KEY);
-        var accessTokenExpirationStr = await SecureStorage.GetAsync(ACCESS_TOKEN_EXPIRATION_KEY);
+        var accessToken = await SecureStorage.GetAsync(AccessTokenKey);
+        var refreshToken = await SecureStorage.GetAsync(RefreshTokenKey);
+        var accessTokenExpirationStr = await SecureStorage.GetAsync(AccessTokenExpirationKey);
         var parsedExpirationDate = DateTimeOffset.TryParse(accessTokenExpirationStr, out var accessTokenExpiration);
 
         if (!string.IsNullOrEmpty(accessToken) && !string.IsNullOrEmpty(refreshToken) && parsedExpirationDate)
@@ -23,15 +23,15 @@ public class TokenStorage : ITokenStorage
 
     public async Task SaveTokenAsync(string accessToken, DateTimeOffset accessTokenExpiration, string refreshToken)
     {
-        await SecureStorage.SetAsync(ACCESS_TOKEN_KEY, accessToken);
-        await SecureStorage.SetAsync(ACCESS_TOKEN_EXPIRATION_KEY, accessTokenExpiration.ToString());
-        await SecureStorage.SetAsync(REFRESH_TOKEN_KEY, refreshToken);
+        await SecureStorage.SetAsync(AccessTokenKey, accessToken);
+        await SecureStorage.SetAsync(AccessTokenExpirationKey, accessTokenExpiration.ToString());
+        await SecureStorage.SetAsync(RefreshTokenKey, refreshToken);
     }
 
     public void ClearTokenFromCache()
     {
-        SecureStorage.Remove(ACCESS_TOKEN_KEY);
-        SecureStorage.Remove(ACCESS_TOKEN_EXPIRATION_KEY);
-        SecureStorage.Remove(REFRESH_TOKEN_KEY);
+        SecureStorage.Remove(AccessTokenKey);
+        SecureStorage.Remove(AccessTokenExpirationKey);
+        SecureStorage.Remove(RefreshTokenKey);
     }
 }

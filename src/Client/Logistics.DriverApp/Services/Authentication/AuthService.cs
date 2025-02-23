@@ -38,7 +38,7 @@ public class AuthService : IAuthService
     public async Task<bool> CanAutoLoginAsync()
     {
         var tokenInfo = await _tokenStorage.GetTokenAsync();
-        return tokenInfo != null;
+        return tokenInfo is not null;
     }
 
     public async Task<AuthResult> LoginAsync()

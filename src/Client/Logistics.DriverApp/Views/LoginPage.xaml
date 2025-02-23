@@ -18,6 +18,7 @@
         <StackLayout ZIndex="1" Spacing="10" Padding="10">
             <Label Text="Click the login button to sign in and get access. If you do not have an account then click the create an account button." FontSize="Medium" />
             <Button Text="Login" Command="{Binding SignInCommand}" />
+            <!-- <Button Text="Use Biometrics" Command="{Binding BiometricLoginCommand}" /> -->
             <Button Text="Create an account" Command="{Binding OpenSignUpCommand}" />
         </StackLayout>
     </Grid>

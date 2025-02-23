@@ -69,6 +69,7 @@
 	  <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.1" />
 	  <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.30" />
 	  <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.30" />
+	  <PackageReference Include="Plugin.Fingerprint" Version="2.1.5" />
 	  <PackageReference Include="Syncfusion.Maui.Charts" Version="28.1.41" />
 	  <PackageReference Include="Syncfusion.Maui.DataForm" Version="28.1.41" />
 	  <PackageReference Include="Syncfusion.Maui.DataGrid" Version="28.1.41" />

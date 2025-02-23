@@ -47,5 +47,7 @@
 	</array>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Can we use your location at all times?</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>We need face ID for faster login</string>
 </dict>
 </plist>

@@ -3,6 +3,7 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Logistics.DriverApp.Platforms.Android.Consts;
+using Plugin.Fingerprint;
 using Plugin.Firebase.CloudMessaging;
 
 namespace Logistics.DriverApp.Platforms.Android;
@@ -24,6 +25,7 @@ public class MainActivity : MauiAppCompatActivity
         CreateNotificationChannels();
         FirebaseCloudMessagingImplementation.OnNewIntent(Intent);
         FirebaseCloudMessagingImplementation.ChannelId = NotificationChannels.GeneralChannelId;
+        CrossFingerprint.SetCurrentActivityResolver(() => this);
     }
 
     protected override void OnNewIntent(Intent? intent)
