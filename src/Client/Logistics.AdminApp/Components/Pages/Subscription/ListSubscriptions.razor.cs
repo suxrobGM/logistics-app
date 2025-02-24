@@ -14,12 +14,14 @@ public partial class ListSubscriptions : PageBase
     #region Injectable services
 
     [Inject]
-    private NavigationManager Navigation { get; set; } = default!;
+    private NavigationManager Navigation { get; set; } = null!;
+    
+    [Inject]
+    private DialogService DialogService { get; set; } = null!;
 
     #endregion
     
-    
-    private async void LoadData(LoadDataArgs e)
+    private async Task LoadData(LoadDataArgs e)
     {
         var orderBy = e.GetOrderBy();
         var page = e.GetPageNumber();
@@ -28,5 +30,21 @@ public partial class ListSubscriptions : PageBase
         _subscriptions = pagedData?.Items;
         _totalRecords = pagedData?.TotalItems ?? 0;
         StateHasChanged();
+    }
+    
+    private async Task DeleteSubscription(string? id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+        {
+            return;
+        }
+        
+        var confirm = await DialogService.Confirm("Are you sure you want to delete this subscription?");
+        
+        if (confirm.HasValue && confirm.Value)
+        {
+            await CallApiAsync(api => api.DeleteSubscriptionAsync(id));
+            await LoadData(new LoadDataArgs());
+        }
     }
 }

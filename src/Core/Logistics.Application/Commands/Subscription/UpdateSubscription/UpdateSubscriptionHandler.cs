@@ -26,7 +26,7 @@ internal sealed class UpdateSubscriptionHandler : RequestHandler<UpdateSubscript
 
         if (!string.IsNullOrEmpty(req.TenantId) && subscription.TenantId != req.TenantId)
         {
-            var tenant = await _masterUow.Repository<Domain.Entities.Tenant>().GetByIdAsync(req.TenantId);
+            var tenant = await _masterUow.Repository<Tenant>().GetByIdAsync(req.TenantId);
 
             if (tenant is null)
             {

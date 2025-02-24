@@ -159,10 +159,10 @@ internal class GenericApiClient
     }
 
     public async Task<string> DeleteRequestAsync(string endpoint,
-        IDictionary<string, string> queries = default!)
+        IDictionary<string, string>? queries = null!)
     {
         var requestEndpoint = endpoint;
-        if (queries.Count > 0)
+        if (queries?.Count > 0)
             requestEndpoint = QueryUtils.BuildQueryParameters(endpoint, queries);
 
         try
