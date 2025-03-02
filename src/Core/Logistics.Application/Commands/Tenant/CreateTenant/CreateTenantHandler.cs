@@ -1,5 +1,4 @@
-﻿using Logistics.Application;
-using Logistics.Domain.Entities;
+﻿using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Services;
 using Logistics.Domain.ValueObjects;
@@ -23,15 +22,16 @@ internal sealed class CreateTenantHandler : RequestHandler<CreateTenantCommand, 
     protected override async Task<Result> HandleValidated(CreateTenantCommand req, CancellationToken cancellationToken)
     {
         var tenantName = req.Name.Trim().ToLower();
-        var tenant = new Domain.Entities.Tenant
+        var tenant = new Tenant
         {
             Name = tenantName,
             CompanyName = req.CompanyName,
             CompanyAddress = req.CompanyAddress ?? Address.NullAddress,
+            BillingEmail = req.BillingEmail!,
             ConnectionString = _tenantDatabase.GenerateConnectionString(tenantName)
         };
 
-        var existingTenant = await _masterUow.Repository<Domain.Entities.Tenant>().GetAsync(i => i.Name == tenant.Name);
+        var existingTenant = await _masterUow.Repository<Tenant>().GetAsync(i => i.Name == tenant.Name);
         
         if (existingTenant is not null)
         {
@@ -44,7 +44,7 @@ internal sealed class CreateTenantHandler : RequestHandler<CreateTenantCommand, 
             return Result.Fail("Could not create the tenant's database");
         }
 
-        await _masterUow.Repository<Domain.Entities.Tenant>().AddAsync(tenant);
+        await _masterUow.Repository<Tenant>().AddAsync(tenant);
         await _masterUow.SaveChangesAsync();
         return Result.Succeed();
     }

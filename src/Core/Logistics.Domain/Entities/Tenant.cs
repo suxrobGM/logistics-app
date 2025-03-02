@@ -9,6 +9,7 @@ public class Tenant : Entity
     public string? CompanyName { get; set; }
     public Address CompanyAddress { get; set; } = Address.NullAddress;
     public required string ConnectionString { get; set; }
+    public required string BillingEmail { get; set; }
     
     public string? SubscriptionId { get; set; }
     public virtual Subscription? Subscription { get; set; }

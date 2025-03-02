@@ -17,6 +17,8 @@ public static class SubscriptionMapper
             TrialEndDate = entity.TrialEndDate,
             Tenant = entity.Tenant.ToDto(),
             Plan = entity.Plan.ToDto(),
+            StripeSubscriptionId = entity.StripeSubscriptionId,
+            StripeCustomerId = entity.StripeCustomerId,
         };
     }
 }

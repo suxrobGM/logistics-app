@@ -15,12 +15,17 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.1" />
+    <PackageReference Include="Stripe.net" Version="47.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Logistics.Shared.Models\Logistics.Shared.Models.csproj" />
     <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />
     <ProjectReference Include="..\Logistics.Mappings\Logistics.Mappings.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Commands\Webhooks\" />
   </ItemGroup>
 
 </Project>

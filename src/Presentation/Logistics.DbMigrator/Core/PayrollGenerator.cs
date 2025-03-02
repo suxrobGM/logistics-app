@@ -80,7 +80,7 @@ public class PayrollGenerator
         {
             Line1 = "40 Crescent Ave",
             City = "Boston",
-            Region = "Massachusetts",
+            State = "Massachusetts",
             ZipCode = "02125",
             Country = "United States"
         };

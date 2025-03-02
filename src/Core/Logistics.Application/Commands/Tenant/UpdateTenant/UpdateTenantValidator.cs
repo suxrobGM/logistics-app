@@ -11,8 +11,10 @@ internal sealed class UpdateTenantValidator : AbstractValidator<UpdateTenantComm
             .NotEmpty();
         
         RuleFor(i => i.Name)
-            .NotEmpty()
             .MinimumLength(4)
             .Matches(RegexPatterns.TenantName);
+        
+        RuleFor(i => i.BillingEmail)
+            .EmailAddress();
     }
 }

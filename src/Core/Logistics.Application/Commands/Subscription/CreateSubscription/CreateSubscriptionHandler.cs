@@ -32,9 +32,7 @@ internal sealed class CreateSubscriptionHandler : RequestHandler<CreateSubscript
             return Result.Fail($"Could not find a subscription plan with ID '{req.TenantId}'");
         }
 
-        var subscription = req.Status == SubscriptionStatus.Trial
-            ? Subscription.Create30DaysTrial(tenant, subscriptionPlan)
-            : Subscription.Create(tenant, subscriptionPlan);
+        var subscription = Subscription.Create(tenant, subscriptionPlan);
 
         await _masterUow.Repository<Subscription>().AddAsync(subscription);
         await _masterUow.SaveChangesAsync();

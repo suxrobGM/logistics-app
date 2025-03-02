@@ -12,4 +12,6 @@ public class SubscriptionDto
     public DateTime? EndDate { get; set; }
     public DateTime? NextPaymentDate { get; set; }
     public DateTime? TrialEndDate { get; set; }
+    public string? StripeSubscriptionId { get; set; }
+    public string? StripeCustomerId { get; set; }
 }

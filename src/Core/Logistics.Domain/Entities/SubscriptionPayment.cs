@@ -12,6 +12,8 @@ public class SubscriptionPayment : Entity
     public DateTime CreatedDate { get; set; }
     public DateTime? PaymentDate { get; set; }
     public Address BillingAddress { get; set; } = Address.NullAddress;
+    public string? StripeInvoiceId { get; set; }
+    public string? StripePaymentIntentId { get; set; }
 
     public required string SubscriptionId { get; set; }
     public virtual required Subscription Subscription { get; set; }

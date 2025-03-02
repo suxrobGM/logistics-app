@@ -166,7 +166,7 @@ internal class SeedData : BackgroundService
         {
             Line1 = "7 Allstate Rd",
             City = "Dorchester",
-            Region = "Massachusetts",
+            State = "Massachusetts",
             ZipCode = "02125",
             Country = "United States"
         };
@@ -175,6 +175,7 @@ internal class SeedData : BackgroundService
         {
             Name = "default",
             CompanyName = "Test Company",
+            BillingEmail = "test@gmail.com",
             CompanyAddress = companyAddress,
             ConnectionString = defaultTenantConnectionString,
         };

@@ -1,8 +1,10 @@
 name: Deploy SSH
 
 on:
-  push:
-    branches: ["main"]
+  # push:
+  #   branches: ["main"]
+  release:
+    types: [created]
 
 env:
   WEB_API_PROJECT: src/Presentation/Logistics.API/Logistics.API.csproj

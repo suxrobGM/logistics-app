@@ -9,7 +9,7 @@ import {ApiService} from "./api.service";
 @Injectable({providedIn: "root"})
 export class NotificationService extends BaseHubConnection {
   constructor(
-    private apiService: ApiService,
+    private readonly apiService: ApiService,
     tenantService: TenantService
   ) {
     super("notification", tenantService);

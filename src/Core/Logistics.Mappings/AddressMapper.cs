@@ -12,7 +12,7 @@ public static class AddressMapper
             Line1 = entity.Line1,
             Line2 = entity.Line2,
             City = entity.City,
-            Region = entity.Region,
+            Region = entity.State,
             ZipCode = entity.ZipCode,
             Country = entity.Country
         };
@@ -25,7 +25,7 @@ public static class AddressMapper
             Line1 = dto.Line1,
             Line2 = dto.Line2,
             City = dto.City,
-            Region = dto.Region,
+            State = dto.Region,
             ZipCode = dto.ZipCode,
             Country = dto.Country
         };

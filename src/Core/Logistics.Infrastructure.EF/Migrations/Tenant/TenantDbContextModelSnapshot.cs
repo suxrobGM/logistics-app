@@ -201,7 +201,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                             b1.Property<string>("Line2")
                                 .HasColumnType("text");
 
-                            b1.Property<string>("Region")
+                            b1.Property<string>("State")
                                 .IsRequired()
                                 .HasColumnType("text");
 
@@ -229,7 +229,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                             b1.Property<string>("Line2")
                                 .HasColumnType("text");
 
-                            b1.Property<string>("Region")
+                            b1.Property<string>("State")
                                 .IsRequired()
                                 .HasColumnType("text");
 
@@ -323,7 +323,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                             b1.Property<string>("Line2")
                                 .HasColumnType("text");
 
-                            b1.Property<string>("Region")
+                            b1.Property<string>("State")
                                 .IsRequired()
                                 .HasColumnType("text");
 
@@ -445,7 +445,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                             b1.Property<string>("Line2")
                                 .HasColumnType("text");
 
-                            b1.Property<string>("Region")
+                            b1.Property<string>("State")
                                 .IsRequired()
                                 .HasColumnType("text");
 

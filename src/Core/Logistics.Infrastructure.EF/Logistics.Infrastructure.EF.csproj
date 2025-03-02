@@ -27,8 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Migrations\Master\" />
-      <Folder Include="Migrations\Tenant\" />
+      <Folder Include="Migrations\" />
     </ItemGroup>
 	
 </Project>

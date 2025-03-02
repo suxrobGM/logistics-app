@@ -7,6 +7,7 @@ public class TenantDto
     public string? Id { get; set; }
     public string? Name { get; set; }
     public string? CompanyName { get; set; }
+    public string? BillingEmail { get; set; }
     public AddressDto CompanyAddress { get; set; } = AddressDto.Empty();
     
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]

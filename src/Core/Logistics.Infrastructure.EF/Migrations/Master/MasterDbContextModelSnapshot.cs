@@ -76,6 +76,12 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("StripeCustomerId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StripeSubscriptionId")
+                        .HasColumnType("text");
+
                     b.Property<string>("TenantId")
                         .IsRequired()
                         .HasColumnType("text");
@@ -114,6 +120,12 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("StripeInvoiceId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StripePaymentIntentId")
+                        .HasColumnType("text");
+
                     b.Property<string>("SubscriptionId")
                         .IsRequired()
                         .HasColumnType("text");
@@ -137,7 +149,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                             b1.Property<string>("Line2")
                                 .HasColumnType("text");
 
-                            b1.Property<string>("Region")
+                            b1.Property<string>("State")
                                 .IsRequired()
                                 .HasColumnType("text");
 
@@ -164,6 +176,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
+                    b.Property<bool>("HasTrial")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -171,6 +186,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)");
+
+                    b.Property<string>("StripePriceId")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -180,6 +198,10 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
             modelBuilder.Entity("Logistics.Domain.Entities.Tenant", b =>
                 {
                     b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("BillingEmail")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("CompanyName")
@@ -215,7 +237,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                             b1.Property<string>("Line2")
                                 .HasColumnType("text");
 
-                            b1.Property<string>("Region")
+                            b1.Property<string>("State")
                                 .IsRequired()
                                 .HasColumnType("text");
 

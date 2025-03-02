@@ -266,7 +266,7 @@ internal class PopulateFakeData
         {
             Line1 = "40 Crescent Ave",
             City = "Boston",
-            Region = "Massachusetts",
+            State = "Massachusetts",
             ZipCode = "02125",
             Country = "United States"
         };
@@ -275,7 +275,7 @@ internal class PopulateFakeData
         {
             Line1 = "73 Tremont St",
             City = "Boston",
-            Region = "Massachusetts",
+            State = "Massachusetts",
             ZipCode = "02108",
             Country = "United States"
         };

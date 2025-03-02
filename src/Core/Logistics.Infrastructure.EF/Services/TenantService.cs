@@ -36,6 +36,7 @@ internal class TenantService : ITenantService
             var defaultTenant = new Tenant
             {
                 Name = "default",
+                BillingEmail = "test@gmail.com",
                 ConnectionString = _dbContextOptions?.ConnectionString ?? ConnectionStrings.LocalDefaultTenant,
             };
 

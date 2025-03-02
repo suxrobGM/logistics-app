@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using Logistics.Domain.Core;
 
 namespace Logistics.Domain.ValueObjects;
 
@@ -13,7 +12,7 @@ public record Address
         Line2 = "NULL",
         City = "NULL",
         ZipCode = "NULL",
-        Region = "NULL",
+        State = "NULL",
         Country = "NULL"
     };
     
@@ -21,7 +20,7 @@ public record Address
     public string? Line2 { get; init; }
     public required string City { get; init; }
     public required string ZipCode { get; init; }
-    public required string Region { get; init; }
+    public required string State { get; init; }
     public required string Country { get; init; }
 
     public bool IsNull() => this == NullAddress;

@@ -6,56 +6,62 @@ import {UnauthorizedComponent} from "@/pages/unauthorized";
 export const appRoutes: Routes = [
   {
     path: "home",
-    loadChildren: () => import("./pages/home").then((m) => m.HOME_ROUTES),
+    loadChildren: () => import("./pages/home/home.routes").then((m) => m.homeRoutes),
   },
   {
     path: "dashboard",
-    loadChildren: () => import("./pages/dashboard").then((m) => m.DASHBOARD_ROUTES),
+    loadChildren: () => import("./pages/dashboard/dashboard.routes").then((m) => m.dashboardRoutes),
     data: {
       breadcrumb: "Dashboard",
     },
   },
   {
     path: "employees",
-    loadChildren: () => import("./pages/employee").then((m) => m.employeeRoutes),
+    loadChildren: () => import("./pages/employee/employee.routes").then((m) => m.employeeRoutes),
     data: {
       breadcrumb: "Employees",
     },
   },
   {
     path: "loads",
-    loadChildren: () => import("./pages/load").then((m) => m.loadRoutes),
+    loadChildren: () => import("./pages/load/load.routes").then((m) => m.loadRoutes),
     data: {
       breadcrumb: "Loads",
     },
   },
   {
     path: "trucks",
-    loadChildren: () => import("./pages/truck").then((m) => m.truckRoutes),
+    loadChildren: () => import("./pages/truck/truck.routes").then((m) => m.truckRoutes),
     data: {
       breadcrumb: "Trucks",
     },
   },
   {
     path: "customers",
-    loadChildren: () => import("./pages/customer").then((m) => m.customerRoutes),
+    loadChildren: () => import("./pages/customer/customer.routes").then((m) => m.customerRoutes),
     data: {
       breadcrumb: "Customers",
     },
   },
   {
     path: "accounting",
-    loadChildren: () => import("./pages/accounting").then((m) => m.accountingRoutes),
+    loadChildren: () =>
+      import("./pages/accounting/accounting.routes").then((m) => m.accountingRoutes),
     data: {
       breadcrumb: "",
     },
   },
   {
     path: "payment",
-    loadChildren: () => import("./pages/payment").then((m) => m.paymentRoutes),
+    loadChildren: () => import("./pages/payment/payment.routes").then((m) => m.paymentRoutes),
     data: {
       breadcrumb: "",
     },
+  },
+  {
+    path: "subscription",
+    loadChildren: () =>
+      import("./pages/subscription/subscription.routes").then((m) => m.subscriptionRoutes),
   },
   {
     path: "",

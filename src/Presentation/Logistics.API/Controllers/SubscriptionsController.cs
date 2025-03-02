@@ -56,7 +56,7 @@ public class SubscriptionsController : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
     
-    [HttpPost()]
+    [HttpPost]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateSubscription([FromBody] CreateSubscriptionCommand request)

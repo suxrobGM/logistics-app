@@ -3,7 +3,6 @@ using FluentValidation;
 using Logistics.Application.Behaviours;
 using Logistics.Application.Hubs;
 using Logistics.Application.Services;
-using Logistics.Application.Services.Implementations;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,21 +15,46 @@ public static class Registrar
         this IServiceCollection services,
         IConfiguration configuration,
         string emailConfigSection = "SmtpConfig",
-        string captchaConfigSection = "GoogleRecaptchaConfig")
+        string captchaConfigSection = "GoogleRecaptchaConfig",
+        string stripeConfigSection = "StripeConfig")
     {
         var emailSenderOptions = configuration.GetSection(emailConfigSection).Get<SmtpOptions>();
         var googleRecaptchaOptions = configuration.GetSection(captchaConfigSection).Get<GoogleRecaptchaOptions>();
+        var stripeOptions = configuration.GetSection(stripeConfigSection).Get<StripeOptions>();
 
         if (emailSenderOptions is not null)
         {
-            services.AddSingleton(emailSenderOptions);
-            services.AddTransient<IEmailSender, SmtpEmailSender>();
+            services.Configure<SmtpOptions>(options =>
+            {
+                options.Host = emailSenderOptions.Host;
+                options.Port = emailSenderOptions.Port;
+                options.UserName = emailSenderOptions.UserName;
+                options.Password = emailSenderOptions.Password;
+                options.SenderName = emailSenderOptions.SenderName;
+                options.SenderEmail = emailSenderOptions.SenderEmail;
+            });
+            services.AddSingleton<IEmailSender, SmtpEmailSender>();
         }
 
         if (googleRecaptchaOptions is not null)
         {
-            services.AddSingleton(googleRecaptchaOptions);
-            services.AddScoped<ICaptchaService, GoogleRecaptchaService>();
+            services.Configure<GoogleRecaptchaOptions>(options =>
+            {
+                options.SecretKey = googleRecaptchaOptions.SecretKey;
+                options.SiteKey = googleRecaptchaOptions.SiteKey;
+            });
+            services.AddSingleton<ICaptchaService, GoogleRecaptchaService>();
+        }
+        
+        if (stripeOptions is not null)
+        {
+            services.Configure<StripeOptions>(options =>
+            {
+                options.PublishableKey = stripeOptions.PublishableKey;
+                options.SecretKey = stripeOptions.SecretKey;
+                options.WebhookSecret = stripeOptions.WebhookSecret;
+            });
+            services.AddSingleton<IStripeService, StripeService>();
         }
         
         services.AddSignalR();
