@@ -1,4 +1,4 @@
-﻿using Logistics.Application;
+﻿using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -24,18 +24,10 @@ internal sealed class UpdateSubscriptionPlanHandler : RequestHandler<UpdateSubsc
             return Result.Fail($"Could not find a subscription plan with ID '{req.Id}'");
         }
 
-        if (!string.IsNullOrEmpty(req.Name) && subscriptionPlan.Name != req.Name)
-        {
-            subscriptionPlan.Name = req.Name;
-        }
-        if (!string.IsNullOrEmpty(req.Description) && subscriptionPlan.Description != req.Description)
-        {
-            subscriptionPlan.Description = req.Description;
-        }
-        if (req.Price.HasValue && subscriptionPlan.Price != req.Price)
-        {
-            subscriptionPlan.Price = req.Price.Value;
-        }
+        subscriptionPlan.Name = PropertyUpdater.UpdateIfChanged(req.Name, subscriptionPlan.Name);
+        subscriptionPlan.Description = PropertyUpdater.UpdateIfChanged(req.Description, subscriptionPlan.Description);
+        subscriptionPlan.Price = PropertyUpdater.UpdateIfChanged(req.Price, subscriptionPlan.Price);
+        subscriptionPlan.HasTrial = PropertyUpdater.UpdateIfChanged(req.HasTrial, subscriptionPlan.HasTrial);
         
         _masterUow.Repository<SubscriptionPlan>().Update(subscriptionPlan);
         await _masterUow.SaveChangesAsync();

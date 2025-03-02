@@ -14,7 +14,7 @@ public partial class ListSubscriptionPlans : PageBase
     #region Injectable services
 
     [Inject]
-    private NavigationManager Navigation { get; set; } = default!;
+    private NavigationManager Navigation { get; set; } = null!;
 
     #endregion
     

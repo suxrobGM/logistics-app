@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Logistics.AdminApp.Components.Pages.Subscription;
 
-public partial class EditSubscription
+public partial class EditSubscription : PageBase
 {
     private SubscriptionDto _subscription = new();
     private IEnumerable<SubscriptionPlanDto>? _subscriptionPlans;
@@ -31,8 +31,6 @@ public partial class EditSubscription
 
     protected override async Task OnInitializedAsync()
     {
-        IsLoading = true;
-        
         if (EditMode)
         {
             await FetchSubscriptionAsync();
@@ -40,7 +38,6 @@ public partial class EditSubscription
         
         await FetchSubscriptionPlansAsync();
         await FetchTenantsAsync();
-        IsLoading = false;
     }
 
     private async Task FetchSubscriptionAsync()
@@ -67,8 +64,6 @@ public partial class EditSubscription
 
     private async Task SubmitAsync()
     {
-        IsLoading = true;
-        
         if (EditMode)
         {
             var success = await CallApiAsync(api => api.UpdateSubscriptionAsync(new UpdateSubscription
@@ -98,8 +93,6 @@ public partial class EditSubscription
                 ResetData();
             }
         }
-
-        IsLoading = false;
     }
 
     private void ResetData()

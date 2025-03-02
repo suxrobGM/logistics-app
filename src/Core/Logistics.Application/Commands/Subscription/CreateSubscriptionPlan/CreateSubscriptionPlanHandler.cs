@@ -23,7 +23,8 @@ internal sealed class CreateSubscriptionPlanHandler : RequestHandler<CreateSubsc
         {
             Name = req.Name,
             Description = req.Description,
-            Price = req.Price
+            Price = req.Price,
+            HasTrial = req.HasTrial
         };
         await _masterUow.Repository<SubscriptionPlan>().AddAsync(subscriptionPlan);
         await _masterUow.SaveChangesAsync();

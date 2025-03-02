@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Logistics.AdminApp.Components.Pages.Subscription;
 
-public partial class EditSubscriptionPlan
+public partial class EditSubscriptionPlan : PageBase
 {
     private SubscriptionPlanDto _subscriptionPlan = new();
     
@@ -34,21 +34,16 @@ public partial class EditSubscriptionPlan
             return;
         }
         
-        IsLoading = true;
         var subscriptionPlan = await CallApiAsync(api => api.GetSubscriptionPlanAsync(Id!));
 
         if (subscriptionPlan is not null)
         {
             _subscriptionPlan = subscriptionPlan;
         }
-
-        IsLoading = false;
     }
 
     private async Task SubmitAsync()
     {
-        IsLoading = true;
-        
         if (EditMode)
         {
             var success = await CallApiAsync(api => api.UpdateSubscriptionPlanAsync(new UpdateSubscriptionPlan
@@ -57,6 +52,7 @@ public partial class EditSubscriptionPlan
                 Name = _subscriptionPlan.Name,
                 Description = _subscriptionPlan.Description,
                 Price = _subscriptionPlan.Price,
+                HasTrial = _subscriptionPlan.HasTrial
             }));
 
             if (!success)
@@ -72,7 +68,8 @@ public partial class EditSubscriptionPlan
             {
                 Name = _subscriptionPlan.Name,
                 Description = _subscriptionPlan.Description,
-                Price = _subscriptionPlan.Price
+                Price = _subscriptionPlan.Price,
+                HasTrial = _subscriptionPlan.HasTrial
             }));
 
             if (success)
@@ -81,8 +78,6 @@ public partial class EditSubscriptionPlan
                 ResetData();
             }
         }
-
-        IsLoading = false;
     }
 
     private void ResetData()
