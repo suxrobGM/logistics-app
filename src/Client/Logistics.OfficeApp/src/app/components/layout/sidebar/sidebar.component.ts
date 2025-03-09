@@ -9,13 +9,12 @@ import {globalConfig} from "@/configs";
 import {AuthService} from "@/core/auth";
 import {ApiService, TenantService} from "@/core/services";
 import {sidebarNavItems} from "@/components/layout/data";
-import {PanelMenuComponent} from "../panelMenu";
+import {PanelMenuComponent} from "../panel-menu";
 
 @Component({
   selector: "app-sidebar",
-  standalone: true,
   templateUrl: "./sidebar.component.html",
-  styleUrls: ["./sidebar.component.scss"],
+  styleUrl: "./sidebar.component.scss",
   imports: [
     CommonModule,
     TooltipModule,

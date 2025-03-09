@@ -6,8 +6,8 @@ import {Router} from "@angular/router";
 @Component({
   selector: "app-panel-menu",
   imports: [PanelMenuModule],
-  templateUrl: "./panelMenu.component.html",
-  styleUrl: "./panelMenu.component.scss",
+  templateUrl: "./panel-menu.component.html",
+  styleUrl: "./panel-menu.component.scss",
 })
 export class PanelMenuComponent {
   readonly items = input.required<MenuItem[]>();

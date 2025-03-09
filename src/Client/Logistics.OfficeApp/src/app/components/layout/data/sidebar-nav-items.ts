@@ -1,4 +1,4 @@
-import {MenuItem} from "@/components/layout/panelMenu";
+import {MenuItem} from "@/components/layout/panel-menu";
 
 export const sidebarNavItems: MenuItem[] = [
   {
