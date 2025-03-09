@@ -1,0 +1,22 @@
+<p-panelMenu [model]="items()" [styleClass]="styleClass()">
+  <ng-template #item let-item>
+    <div class="p-panelmenu-header-link">
+      <span
+        class="p-menuitem-icon"
+        [class]="item.icon"
+        (click)="handleClick($event, item)"
+        aria-hidden="true"
+      ></span>
+
+      @if (expanded()) {
+        <span class="p-menuitem-text" (click)="handleClick($event, item)" aria-hidden="true">{{
+          item.label
+        }}</span>
+
+        @if (item.items) {
+          <span class="p-panelmenu-icon pi pi-fw pi-chevron-down"></span>
+        }
+      }
+    </div>
+  </ng-template>
+</p-panelMenu>

@@ -35,7 +35,7 @@ internal sealed class GetDriverStatsHandler : RequestHandler<GetDriverStatsQuery
         var now = DateTime.UtcNow;
         var startOfWeek = now.AddDays(-(int)now.DayOfWeek + (int)DayOfWeek.Monday);
         var lastWeekStart = startOfWeek.AddDays(-7);
-        var startOfMonth = new DateTime(now.Year, now.Month, 1);
+        var startOfMonth = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
         var lastMonthStart = startOfMonth.AddMonths(-1);
         
         var loadsRepository = _tenantUow.Repository<Load>();

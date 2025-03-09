@@ -1,2 +1,91 @@
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
 <h1 class="text-center">Manage subscription</h1>
 <hr class="w-100" />
+
+<div class="grid">
+  <!-- Current Plan Card -->
+  <div class="col-12 md:col-6">
+    <p-card header="Current Plan">
+      <div class="grid">
+        <div class="col-6 font-bold">Plan Name:</div>
+        <div class="col-6">subscription.plan.name</div>
+
+        <div class="col-6 font-bold">Price per Employee:</div>
+        <div class="col-6">subscription.plan.price | currency</div>
+
+        <div class="col-6 font-bold">Next Billing Date:</div>
+        <div class="col-6">subscription.nextPaymentDate | date</div>
+
+        <div class="col-6 font-bold">Status:</div>
+        <div class="col-6">
+          <p-tag severity="success"> subscription.status </p-tag>
+        </div>
+
+        <div class="col-6 font-bold">Employees Count:</div>
+        <div class="col-6">
+          <p-inputNumber [min]="1"></p-inputNumber>
+          <p-button label="Update" class="ml-2"></p-button>
+        </div>
+      </div>
+
+      <ng-template pTemplate="footer">
+        <p-button label="Change Plan" icon="pi pi-credit-card"></p-button>
+        <p-button
+          label="Cancel Subscription"
+          icon="pi pi-times"
+          severity="danger"
+          class="ml-2"
+        ></p-button>
+      </ng-template>
+    </p-card>
+  </div>
+
+  <!-- Payment Method Card -->
+  <div class="col-12 md:col-6">
+    <p-card header="Payment Method">
+      <!-- <div *ngIf="paymentMethod">
+        <div class="mb-2">**** **** **** {{ paymentMethod.card.last4 }}</div>
+        <div>Expires: {{ paymentMethod.card.exp_month }}/{{ paymentMethod.card.exp_year }}</div>
+      </div> -->
+
+      <!-- @if(!paymentMethod) {
+        <div class="text-gray-500">No payment method on file</div>
+      } -->
+
+      <ng-template pTemplate="footer">
+        <p-button label="Update Payment Method" icon="pi pi-wallet"></p-button>
+      </ng-template>
+    </p-card>
+  </div>
+
+  <!-- Billing History Table -->
+  <div class="col-12">
+    <p-card header="Billing History">
+      <p-table [rows]="5" [paginator]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Invoice</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-payment>
+          <tr>
+            <td>{{ payment.created | date }}</td>
+            <td>{{ payment.amount | currency }}</td>
+            <td>
+              <p-tag [severity]="payment.status === 'paid' ? 'success' : 'danger'">
+                {{ payment.status }}
+              </p-tag>
+            </td>
+            <td>
+              <a [href]="payment.invoiceUrl" target="_blank" class="text-primary"> View Invoice </a>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+</div>

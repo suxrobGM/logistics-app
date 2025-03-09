@@ -1,0 +1,9 @@
+<!-- Payment Method Dialog -->
+<p-dialog header="Update Payment Method" [(visible)]="showDialog">
+  <div #cardElement class="p-3 border-round mb-3"></div>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Cancel" icon="pi pi-times" (click)="showDialog.set(false)"></p-button>
+    <p-button label="Save" icon="pi pi-check" [loading]="isLoading()"></p-button>
+  </ng-template>
+</p-dialog>

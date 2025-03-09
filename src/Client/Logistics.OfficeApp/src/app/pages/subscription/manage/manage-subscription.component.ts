@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
@@ -7,6 +7,7 @@ import {DialogModule} from "primeng/dialog";
 import {InputNumberModule} from "primeng/inputnumber";
 import {TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
+import {ConfirmationService} from "primeng/api";
 
 @Component({
   selector: "app-manage-subscription",
@@ -21,5 +22,6 @@ import {TagModule} from "primeng/tag";
     TagModule,
     ConfirmDialogModule,
   ],
+  providers: [ConfirmationService],
 })
-export class ManageSubscriptionComponent implements OnInit {}
+export class ManageSubscriptionComponent {}

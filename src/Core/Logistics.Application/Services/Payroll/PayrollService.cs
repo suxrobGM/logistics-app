@@ -29,7 +29,7 @@ internal class PayrollService : IPayrollService
         {
             _tenantUow.SetCurrentTenant(tenant);
             
-            var previousMonthStart = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1).AddMonths(-1);
+            var previousMonthStart = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(-1);
             var previousMonthEnd = previousMonthStart.AddMonths(1).AddDays(-1);
             var employees = await _tenantUow.Repository<Employee>().GetListAsync(e => 
                 e.SalaryType == SalaryType.Monthly || 

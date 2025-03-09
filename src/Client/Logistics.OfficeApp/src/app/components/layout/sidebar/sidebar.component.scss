@@ -23,34 +23,7 @@
 
 .nav-link {
   border-radius: 0;
-  color: black;
+  color: var(--p-neutral-800);
   display: flex;
   align-items: center;
-}
-
-:host ::ng-deep {
-  .p-panelmenu-header-content {
-    background-color: transparent;
-    border-top: unset;
-  }
-
-  .p-menuitem-link {
-    text-decoration: none;
-  }
-
-  .p-panelmenu-header chevronrighticon {
-    order: 2;
-  }
-
-  .p-panelmenu-content {
-    background-color: transparent;
-  }
-
-  .p-panelmenu-header chevrondownicon {
-    order: 2;
-  }
-
-  .p-panelmenu-header .p-menuitem-text {
-    order: 1;
-  }
 }

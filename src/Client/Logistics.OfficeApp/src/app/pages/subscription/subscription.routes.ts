@@ -3,7 +3,7 @@ import {ManageSubscriptionComponent} from "./manage/manage-subscription.componen
 
 export const subscriptionRoutes: Routes = [
   {
-    path: "subscription/manage",
+    path: "manage",
     component: ManageSubscriptionComponent,
     data: {
       breadcrumb: "Manage Subscription",

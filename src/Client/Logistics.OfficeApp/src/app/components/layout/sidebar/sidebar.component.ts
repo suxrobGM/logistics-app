@@ -1,15 +1,15 @@
 import {Component, OnInit, signal} from "@angular/core";
 import {CommonModule} from "@angular/common";
-import {RouterLink} from "@angular/router";
 import {TooltipModule} from "primeng/tooltip";
 import {SplitButtonModule} from "primeng/splitbutton";
 import {PanelMenuModule} from "primeng/panelmenu";
-import {OverlayPanelModule} from "primeng/overlaypanel";
 import {ButtonModule} from "primeng/button";
 import {MenuItem} from "primeng/api";
 import {globalConfig} from "@/configs";
 import {AuthService} from "@/core/auth";
 import {ApiService, TenantService} from "@/core/services";
+import {sidebarNavItems} from "@/components/layout/data";
+import {PanelMenuComponent} from "../panelMenu";
 
 @Component({
   selector: "app-sidebar",
@@ -18,12 +18,11 @@ import {ApiService, TenantService} from "@/core/services";
   styleUrls: ["./sidebar.component.scss"],
   imports: [
     CommonModule,
-    RouterLink,
     TooltipModule,
     ButtonModule,
     SplitButtonModule,
     PanelMenuModule,
-    OverlayPanelModule,
+    PanelMenuComponent,
   ],
 })
 export class SidebarComponent implements OnInit {
@@ -31,8 +30,8 @@ export class SidebarComponent implements OnInit {
   public readonly companyName = signal<string | null>(null);
   public readonly userRole = signal<string | null>(null);
   public readonly userFullName = signal<string | null>(null);
+  public readonly navItems = sidebarNavItems;
   public readonly profileMenuItems: MenuItem[];
-  public readonly accountingMenuItems: MenuItem[];
 
   constructor(
     private readonly authService: AuthService,
@@ -42,7 +41,7 @@ export class SidebarComponent implements OnInit {
     this.profileMenuItems = [
       {
         label: "User name",
-        icon: "bi bi-person-circle",
+        icon: "bi bi-person-circle h3",
         items: [
           {
             label: "Profile",
@@ -54,27 +53,6 @@ export class SidebarComponent implements OnInit {
           {
             label: "Sign out",
             command: () => this.logout(),
-          },
-        ],
-      },
-    ];
-
-    this.accountingMenuItems = [
-      {
-        label: "Accounting",
-        icon: "bi bi-journal-text h1",
-        items: [
-          {
-            label: "Payrolls",
-            routerLink: "/accounting/payrolls",
-          },
-          {
-            label: "Payments",
-            routerLink: "/accounting/payments",
-          },
-          {
-            label: "Invoices",
-            routerLink: "/accounting/invoices",
           },
         ],
       },
@@ -107,6 +85,7 @@ export class SidebarComponent implements OnInit {
   openAccountUrl(): void {
     window.open(`${globalConfig.idHost}/account/manage/profile`, "_blank");
   }
+
   private fetchTenantData(tenantId: string): void {
     this.apiService.getTenant(tenantId).subscribe((result) => {
       if (!result.success || !result.data) {

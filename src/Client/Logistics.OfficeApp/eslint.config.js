@@ -29,14 +29,12 @@ export default tseslint.config(
           style: "kebab-case",
         },
       ],
+      "@angular-eslint/template/click-events-have-key-events": ["off"],
     },
   },
   {
     files: ["**/*.html"],
-    extends: [
-      ...angular.configs.templateRecommended,
-      ...angular.configs.templateAccessibility,
-    ],
+    extends: [...angular.configs.templateRecommended, ...angular.configs.templateAccessibility],
     rules: {},
   }
 );
