@@ -10,7 +10,6 @@
   background-size: 256px 556px;
   display: flex;
   flex-direction: column;
-  padding-top: 0.5rem;
   height: 100vh;
   top: 0;
   left: 0;
@@ -18,7 +17,7 @@
 }
 
 .sidebar.minimized {
-  width: 80px;
+  width: 70px;
 }
 
 .nav-link {
