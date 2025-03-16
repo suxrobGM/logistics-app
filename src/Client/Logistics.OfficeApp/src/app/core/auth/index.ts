@@ -1,2 +1,3 @@
-export {AuthService} from "./auth.service";
-export {UserData} from "./user-data";
+export * from "./auth.service";
+export * from "./user-data";
+export * from "./auth.guard";

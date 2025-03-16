@@ -1,5 +1,5 @@
 import {Routes} from "@angular/router";
-import {authGuard} from "@/core/guards";
+import {authGuard} from "@/core/auth";
 import {ProcessPaymentComponent} from "./process-payment/process-payment.component";
 
 export const paymentRoutes: Routes = [

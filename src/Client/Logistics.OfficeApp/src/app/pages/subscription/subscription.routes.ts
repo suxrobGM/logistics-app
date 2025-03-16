@@ -1,5 +1,5 @@
 import {Routes} from "@angular/router";
-import {authGuard} from "@/core/guards";
+import {authGuard} from "@/core/auth";
 import {ManageSubscriptionComponent} from "./manage-subscription/manage-subscription.component";
 import {RenewSubscriptionComponent} from "./renew-subscription/renew-subscription.component";
 

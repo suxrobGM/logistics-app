@@ -1,13 +1,13 @@
 import {Routes} from "@angular/router";
+import {authGuard} from "@/core/auth";
 import {Permissions} from "@/core/enums";
-import {authGuard} from "@/core/guards";
-import {ListPaymentsComponent} from "./list-payments/list-payments.component";
 import {EditPaymentComponent} from "./edit-payment/edit-payment.component";
-import {ListInvoicesComponent} from "./list-invoices/list-invoices.component";
-import {ViewInvoiceComponent} from "./view-invoice/view-invoice.component";
-import {ListPayrollComponent} from "./list-payroll/list-payroll.component";
 import {EditPayrollComponent} from "./edit-payroll/edit-payroll.component";
+import {ListInvoicesComponent} from "./list-invoices/list-invoices.component";
+import {ListPaymentsComponent} from "./list-payments/list-payments.component";
+import {ListPayrollComponent} from "./list-payroll/list-payroll.component";
 import {ViewEmployeePayrollsComponent} from "./view-employee-payrolls/view-employee-payrolls.component";
+import {ViewInvoiceComponent} from "./view-invoice/view-invoice.component";
 
 export const accountingRoutes: Routes = [
   {

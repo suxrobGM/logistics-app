@@ -1,9 +1,9 @@
 import {Routes} from "@angular/router";
+import {authGuard} from "@/core/auth";
 import {Permissions} from "@/core/enums";
-import {authGuard} from "@/core/guards";
+import {AddLoadComponent} from "./add-load/add-load.component";
 import {EditLoadComponent} from "./edit-load/edit-load.component";
 import {ListLoadComponent} from "./list-loads/list-loads.component";
-import {AddLoadComponent} from "./add-load/add-load.component";
 
 export const loadRoutes: Routes = [
   {

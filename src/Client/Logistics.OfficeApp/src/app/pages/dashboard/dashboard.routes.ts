@@ -1,6 +1,6 @@
 import {Routes} from "@angular/router";
+import {authGuard} from "@/core/auth";
 import {Permissions} from "@/core/enums";
-import {authGuard} from "@/core/guards";
 import {DashboardComponent} from "./dashboard.component";
 
 export const dashboardRoutes: Routes = [
