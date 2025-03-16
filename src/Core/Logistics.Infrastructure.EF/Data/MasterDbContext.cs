@@ -72,7 +72,7 @@ public class MasterDbContext : IdentityDbContext<User, AppRole, string>, IDataPr
 
         builder.Entity<Subscription>(entity =>
         {
-            entity.ToTable("Subscription");
+            entity.ToTable("Subscriptions");
             
             entity.HasOne(i => i.Tenant)
                 .WithOne(i => i.Subscription)

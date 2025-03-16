@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.EF.Migrations.Master
 {
     [DbContext(typeof(MasterDbContext))]
-    [Migration("20250302230005_Version_0001")]
+    [Migration("20250316211808_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -99,7 +99,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     b.HasIndex("TenantId")
                         .IsUnique();
 
-                    b.ToTable("Subscription", (string)null);
+                    b.ToTable("Subscriptions", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionPayment", b =>

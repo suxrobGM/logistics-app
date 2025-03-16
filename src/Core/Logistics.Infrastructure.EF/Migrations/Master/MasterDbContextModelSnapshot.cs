@@ -96,7 +96,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     b.HasIndex("TenantId")
                         .IsUnique();
 
-                    b.ToTable("Subscription", (string)null);
+                    b.ToTable("Subscriptions", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionPayment", b =>

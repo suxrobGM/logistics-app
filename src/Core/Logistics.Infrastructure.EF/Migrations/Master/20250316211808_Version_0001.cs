@@ -140,7 +140,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 });
 
             migrationBuilder.CreateTable(
-                name: "Subscription",
+                name: "Subscriptions",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
@@ -156,15 +156,15 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Subscription", x => x.Id);
+                    table.PrimaryKey("PK_Subscriptions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Subscription_SubscriptionPlans_PlanId",
+                        name: "FK_Subscriptions_SubscriptionPlans_PlanId",
                         column: x => x.PlanId,
                         principalTable: "SubscriptionPlans",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Subscription_Tenants_TenantId",
+                        name: "FK_Subscriptions_Tenants_TenantId",
                         column: x => x.TenantId,
                         principalTable: "Tenants",
                         principalColumn: "Id",
@@ -280,9 +280,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 {
                     table.PrimaryKey("PK_SubscriptionPayments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SubscriptionPayments_Subscription_SubscriptionId",
+                        name: "FK_SubscriptionPayments_Subscriptions_SubscriptionId",
                         column: x => x.SubscriptionId,
-                        principalTable: "Subscription",
+                        principalTable: "Subscriptions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -330,20 +330,20 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Subscription_PlanId",
-                table: "Subscription",
-                column: "PlanId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Subscription_TenantId",
-                table: "Subscription",
-                column: "TenantId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_SubscriptionPayments_SubscriptionId",
                 table: "SubscriptionPayments",
                 column: "SubscriptionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Subscriptions_PlanId",
+                table: "Subscriptions",
+                column: "PlanId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Subscriptions_TenantId",
+                table: "Subscriptions",
+                column: "TenantId",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -377,7 +377,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Subscription");
+                name: "Subscriptions");
 
             migrationBuilder.DropTable(
                 name: "SubscriptionPlans");
