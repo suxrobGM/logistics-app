@@ -10,6 +10,7 @@ public class Tenant : Entity
     public Address CompanyAddress { get; set; } = Address.NullAddress;
     public required string ConnectionString { get; set; }
     public required string BillingEmail { get; set; }
+    public string? DotNumber { get; set; }
     
     /// <summary>
     /// Subscription ID, if not set, the tenant is on a free plan

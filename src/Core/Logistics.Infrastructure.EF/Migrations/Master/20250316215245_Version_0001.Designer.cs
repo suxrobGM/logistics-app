@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.EF.Migrations.Master
 {
     [DbContext(typeof(MasterDbContext))]
-    [Migration("20250316211808_Version_0001")]
+    [Migration("20250316215245_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -212,6 +212,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
 
                     b.Property<string>("ConnectionString")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DotNumber")
                         .HasColumnType("text");
 
                     b.Property<string>("Name")

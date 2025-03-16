@@ -28,6 +28,7 @@ internal sealed class UpdateTenantHandler : RequestHandler<UpdateTenantCommand, 
         tenant.CompanyAddress = PropertyUpdater.UpdateIfChanged(req.CompanyAddress, tenant.CompanyAddress);
         tenant.ConnectionString = PropertyUpdater.UpdateIfChanged(req.ConnectionString, tenant.ConnectionString);
         tenant.BillingEmail = PropertyUpdater.UpdateIfChanged(req.BillingEmail, tenant.BillingEmail);
+        tenant.DotNumber = PropertyUpdater.UpdateIfChanged(req.DotNumber, tenant.DotNumber);
         
         _masterUow.Repository<Tenant>().Update(tenant);
         await _masterUow.SaveChangesAsync();

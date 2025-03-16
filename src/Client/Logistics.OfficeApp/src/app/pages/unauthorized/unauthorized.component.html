@@ -1,1 +1,10 @@
 <h1 class="text-danger">Access denied</h1>
+
+<p>
+  {{ getReasonMessage() }}
+  <br />
+
+  @if (reason() === "subscription") {
+    <a [routerLink]="['/subscription/renew']">Renew subscription now</a>
+  }
+</p>

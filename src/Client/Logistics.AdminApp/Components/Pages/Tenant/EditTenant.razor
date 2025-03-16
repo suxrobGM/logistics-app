@@ -30,6 +30,9 @@
                     <RadzenFormField Text="Company Name" Variant="Variant.Outlined">
                         <RadzenTextBox @bind-Value="_tenant.CompanyName"/>
                     </RadzenFormField>
+                    <RadzenFormField Text="USDOT Number" Variant="Variant.Outlined">
+                        <RadzenTextBox @bind-Value="_tenant.DotNumber"/>
+                    </RadzenFormField>
                     <RadzenFieldset Text="Company Address">
                         <AddressForm @bind-Address="_tenant.CompanyAddress"></AddressForm>
                     </RadzenFieldset>

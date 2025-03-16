@@ -67,6 +67,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     CompanyName = table.Column<string>(type: "text", nullable: true),
                     ConnectionString = table.Column<string>(type: "text", nullable: false),
                     BillingEmail = table.Column<string>(type: "text", nullable: false),
+                    DotNumber = table.Column<string>(type: "text", nullable: true),
                     SubscriptionId = table.Column<string>(type: "text", nullable: true),
                     CompanyAddress_City = table.Column<string>(type: "text", nullable: false),
                     CompanyAddress_Country = table.Column<string>(type: "text", nullable: false),

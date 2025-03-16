@@ -211,6 +211,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("DotNumber")
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");

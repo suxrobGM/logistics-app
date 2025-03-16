@@ -10,6 +10,7 @@ public class UpdateTenantCommand : IRequest<Result>
     public string? Name { get; set; }
     public string? CompanyName { get; set; }
     public string? BillingEmail { get; set; }
+    public string? DotNumber { get; set; }
     public Address? CompanyAddress { get; set; }
     public string? ConnectionString { get; set; }
 }

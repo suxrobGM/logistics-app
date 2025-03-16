@@ -8,11 +8,11 @@ public class TenantDto
     public string? Name { get; set; }
     public string? CompanyName { get; set; }
     public string? BillingEmail { get; set; }
+    public string? DotNumber { get; set; }
     public AddressDto CompanyAddress { get; set; } = AddressDto.Empty();
     
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? ConnectionString { get; set; }
     
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public SubscriptionDto? Subscription { get; set; }
 }

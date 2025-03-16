@@ -26,6 +26,7 @@ internal sealed class CreateTenantHandler : RequestHandler<CreateTenantCommand, 
         {
             Name = tenantName,
             CompanyName = req.CompanyName,
+            DotNumber = req.DotNumber,
             CompanyAddress = req.CompanyAddress ?? Address.NullAddress,
             BillingEmail = req.BillingEmail!,
             ConnectionString = _tenantDatabase.GenerateConnectionString(tenantName)

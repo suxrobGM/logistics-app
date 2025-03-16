@@ -1,6 +1,6 @@
 import {HttpHeaders} from "@angular/common/http";
 import {Injectable} from "@angular/core";
-import {TenantDto} from "@/core/models";
+import {SubscriptionStatus, TenantDto} from "@/core/models";
 import {CookieService} from "./cookie.service";
 import {ApiService} from "./api.service";
 
@@ -47,6 +47,24 @@ export class TenantService {
     }
 
     return headers.append("X-Tenant", this.tenantId);
+  }
+
+  /**
+   * Check if the tenant has an active subscription
+   * If the tenant is not required to have a subscription, it returns true
+   * @returns True if the tenant has an active subscription, otherwise false
+   */
+  isSubscriptionActive(): boolean {
+    if (!this.tenantData) {
+      return false;
+    }
+
+    // If subscription is null, it means the tenant is not required to have a subscription
+    if (this.tenantData.subscription === null) {
+      return true;
+    }
+
+    return this.tenantData?.subscription?.status === SubscriptionStatus.Active;
   }
 
   private setTenantCookie(tenantId: string) {

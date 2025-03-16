@@ -26,15 +26,17 @@ export class PanelMenuComponent {
   }
 
   handleClick(ev: MouseEvent, item: MenuItem): void {
-    if (!this.expanded()) {
+    // Prevent default behavior if the item has children and expand the submenu
+    if (!this.expanded() && item.items) {
       this.expanded.set(true);
-      this.naviageTo(item.route);
       ev.stopPropagation();
-      return;
-    }
+    } else {
+      this.naviageTo(item.route);
 
-    this.naviageTo(item.route);
-    this.itemClick.emit(item);
+      if (this.expanded()) {
+        this.itemClick.emit(item);
+      }
+    }
   }
 
   private collapseAllItems(): void {
