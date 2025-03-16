@@ -1,4 +1,4 @@
-import {Component, OnInit, signal} from "@angular/core";
+import {Component, signal} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {TooltipModule} from "primeng/tooltip";
 import {SplitButtonModule} from "primeng/splitbutton";
@@ -7,7 +7,6 @@ import {ButtonModule} from "primeng/button";
 import {MenuItem} from "primeng/api";
 import {globalConfig} from "@/configs";
 import {AuthService} from "@/core/auth";
-import {ApiService, TenantService} from "@/core/services";
 import {sidebarNavItems} from "@/components/layout/data";
 import {PanelMenuComponent} from "../panel-menu";
 
@@ -24,19 +23,15 @@ import {PanelMenuComponent} from "../panel-menu";
     PanelMenuComponent,
   ],
 })
-export class SidebarComponent implements OnInit {
-  public readonly isOpened = signal(false);
+export class SidebarComponent {
+  public readonly isOpened = signal(true);
   public readonly companyName = signal<string | null>(null);
   public readonly userRole = signal<string | null>(null);
   public readonly userFullName = signal<string | null>(null);
   public readonly navItems = sidebarNavItems;
   public readonly profileMenuItems: MenuItem[];
 
-  constructor(
-    private readonly authService: AuthService,
-    private readonly apiService: ApiService,
-    private readonly tenantService: TenantService
-  ) {
+  constructor(private readonly authService: AuthService) {
     this.profileMenuItems = [
       {
         label: "User name",
@@ -56,17 +51,11 @@ export class SidebarComponent implements OnInit {
         ],
       },
     ];
-  }
 
-  ngOnInit(): void {
     this.authService.onUserDataChanged().subscribe((userData) => {
       if (userData?.getFullName()) {
         this.userFullName.set(userData.getFullName());
         this.profileMenuItems[0].label = userData.getFullName();
-      }
-
-      if (userData?.tenant) {
-        this.fetchTenantData(userData?.tenant);
       }
 
       this.userRole.set(this.authService.getUserRoleName());
@@ -83,16 +72,5 @@ export class SidebarComponent implements OnInit {
 
   openAccountUrl(): void {
     window.open(`${globalConfig.idHost}/account/manage/profile`, "_blank");
-  }
-
-  private fetchTenantData(tenantId: string): void {
-    this.apiService.getTenant(tenantId).subscribe((result) => {
-      if (!result.success || !result.data) {
-        return;
-      }
-
-      this.tenantService.setTenantData(result.data);
-      this.companyName.set(result.data.companyName);
-    });
   }
 }

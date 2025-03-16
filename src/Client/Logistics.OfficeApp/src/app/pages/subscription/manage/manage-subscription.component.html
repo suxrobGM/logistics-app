@@ -21,12 +21,6 @@
         <div class="col-6">
           <p-tag severity="success"> subscription.status </p-tag>
         </div>
-
-        <div class="col-6 font-bold">Employees Count:</div>
-        <div class="col-6">
-          <p-inputNumber [min]="1"></p-inputNumber>
-          <p-button label="Update" class="ml-2"></p-button>
-        </div>
       </div>
 
       <ng-template pTemplate="footer">
@@ -44,15 +38,6 @@
   <!-- Payment Method Card -->
   <div class="col-12 md:col-6">
     <p-card header="Payment Method">
-      <!-- <div *ngIf="paymentMethod">
-        <div class="mb-2">**** **** **** {{ paymentMethod.card.last4 }}</div>
-        <div>Expires: {{ paymentMethod.card.exp_month }}/{{ paymentMethod.card.exp_year }}</div>
-      </div> -->
-
-      <!-- @if(!paymentMethod) {
-        <div class="text-gray-500">No payment method on file</div>
-      } -->
-
       <ng-template pTemplate="footer">
         <p-button label="Update Payment Method" icon="pi pi-wallet"></p-button>
       </ng-template>

@@ -1,11 +1,12 @@
 import {Component, effect, input, model, output} from "@angular/core";
 import {PanelMenuModule} from "primeng/panelmenu";
-import {MenuItem} from "./types";
 import {Router} from "@angular/router";
+import {TooltipModule} from "primeng/tooltip";
+import {MenuItem} from "./types";
 
 @Component({
   selector: "app-panel-menu",
-  imports: [PanelMenuModule],
+  imports: [PanelMenuModule, TooltipModule],
   templateUrl: "./panel-menu.component.html",
   styleUrl: "./panel-menu.component.scss",
 })
@@ -27,19 +28,23 @@ export class PanelMenuComponent {
   handleClick(ev: MouseEvent, item: MenuItem): void {
     if (!this.expanded()) {
       this.expanded.set(true);
+      this.naviageTo(item.route);
       ev.stopPropagation();
       return;
     }
 
-    if (item.route) {
-      this.router.navigateByUrl(item.route);
-    }
-
+    this.naviageTo(item.route);
     this.itemClick.emit(item);
   }
 
   private collapseAllItems(): void {
     // Force collapse all submenus by resetting expanded state
     this.items().forEach((i) => (i.expanded = false));
+  }
+
+  private naviageTo(route: string | undefined): void {
+    if (route) {
+      this.router.navigateByUrl(route);
+    }
   }
 }

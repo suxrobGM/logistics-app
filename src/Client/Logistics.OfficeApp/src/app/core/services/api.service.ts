@@ -1,7 +1,7 @@
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {catchError, Observable, of} from "rxjs";
-import {TenantService, ToastService} from "@/core/services";
+import {ToastService} from "@/core/services";
 import {globalConfig} from "@/configs";
 import {
   Result,
@@ -51,7 +51,6 @@ export class ApiService {
 
   constructor(
     private readonly httpClient: HttpClient,
-    private readonly tenantService: TenantService,
     private readonly toastService: ToastService
   ) {}
 

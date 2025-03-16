@@ -13,14 +13,20 @@ export class AuthService {
     private readonly oidcService: OidcSecurityService,
     private readonly eventService: PublicEventsService,
     private readonly tenantService: TenantService
-  ) {
-    this.onUserDataChanged().subscribe((_) => _);
-  }
+  ) {}
 
+  /**
+   * Register for the event that is emitted when the user is authenticated
+   * @returns An observable that emits a boolean value indicating whether the user is authenticated
+   */
   onAuthenticated(): Observable<boolean> {
     return this.oidcService.isAuthenticated$.pipe(map(({isAuthenticated}) => isAuthenticated));
   }
 
+  /**
+   * Register for the event that is emitted when the user's data is changed
+   * @returns An observable that emits the user
+   */
   onUserDataChanged(): Observable<UserData | null> {
     return this.oidcService.userData$.pipe(
       map(({userData}) => {
@@ -65,6 +71,7 @@ export class AuthService {
 
   /**
    * Initiate the authentication process and check if the user is authenticated
+   * If the user is authenticated, set the user data and tenant ID
    * @returns An observable that emits a boolean value indicating whether the user is authenticated
    */
   checkAuth(): Observable<boolean> {

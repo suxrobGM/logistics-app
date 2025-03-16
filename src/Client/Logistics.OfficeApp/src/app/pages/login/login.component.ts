@@ -1,4 +1,4 @@
-import {Component, OnInit, signal} from "@angular/core";
+import {Component, signal} from "@angular/core";
 import {Router} from "@angular/router";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {ButtonModule} from "primeng/button";
@@ -11,16 +11,14 @@ import {AuthService} from "@/core/auth";
   standalone: true,
   imports: [ProgressSpinnerModule, ButtonModule],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
   public readonly isAuthenticated = signal(false);
   public readonly isLoading = signal(false);
 
   constructor(
     private readonly authService: AuthService,
     private readonly router: Router
-  ) {}
-
-  ngOnInit(): void {
+  ) {
     this.authService.onCheckingAuth().subscribe(() => this.isLoading.set(true));
     this.authService.onCheckingAuthFinished().subscribe(() => {
       this.isLoading.set(false);

@@ -5,6 +5,7 @@
         class="p-menuitem-icon"
         [class]="item.icon"
         (click)="handleClick($event, item)"
+        [pTooltip]="item.label"
         aria-hidden="true"
       ></span>
 

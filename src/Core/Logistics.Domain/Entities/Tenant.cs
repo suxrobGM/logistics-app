@@ -11,11 +11,14 @@ public class Tenant : Entity
     public required string ConnectionString { get; set; }
     public required string BillingEmail { get; set; }
     
+    /// <summary>
+    /// Subscription ID, if not set, the tenant is on a free plan
+    /// </summary>
     public string? SubscriptionId { get; set; }
     public virtual Subscription? Subscription { get; set; }
     
-    /**
-     * Users that belong to this tenant
-     */
+    /// <summary>
+    /// Users that belong to this tenant
+    /// </summary>
     public virtual List<User> Users { get; } = [];
 }
