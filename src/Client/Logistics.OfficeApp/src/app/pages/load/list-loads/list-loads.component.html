@@ -30,12 +30,18 @@
         [rowsPerPageOptions]="[10, 25, 50]"
       >
         <ng-template pTemplate="caption">
-          <div class="d-flex">
-            <span class="p-input-icon-left">
+          <p-input-group>
+            <p-inputgroup-addon>
               <i class="pi pi-search"></i>
-              <input pInputText type="text" placeholder="Search" (input)="search($event)" />
-            </span>
-          </div>
+            </p-inputgroup-addon>
+            <input
+              pInputText
+              type="text"
+              placeholder="Search"
+              (input)="search($event)"
+              [style]="{'flex-grow': '0', width: 'auto'}"
+            />
+          </p-input-group>
         </ng-template>
         <ng-template pTemplate="header">
           <tr>

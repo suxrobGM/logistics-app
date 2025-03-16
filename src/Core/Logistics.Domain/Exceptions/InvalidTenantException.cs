@@ -1,4 +1,4 @@
-﻿namespace Logistics.Infrastructure.EF.Exceptions;
+﻿namespace Logistics.Domain.Exceptions;
 
 [Serializable]
 public class InvalidTenantException : Exception

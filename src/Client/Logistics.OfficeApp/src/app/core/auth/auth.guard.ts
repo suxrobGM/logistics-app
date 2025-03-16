@@ -15,7 +15,7 @@ export const authGuard: CanActivateFn = (route) => {
   return authService.onAuthenticated().pipe(
     map((isAuthenticated) => {
       const permission = route.data["permission"] as string;
-      const hasAccess = user?.permissions?.includes(permission);
+      const hasAccess = !permission || user?.permissions?.includes(permission);
 
       // Check if the user has an active subscription
       if (!tenantService.isSubscriptionActive()) {

@@ -8,6 +8,8 @@ import {CardModule} from "primeng/card";
 import {TooltipModule} from "primeng/tooltip";
 import {ButtonModule} from "primeng/button";
 import {TagModule} from "primeng/tag";
+import {InputGroupModule} from 'primeng/inputgroup';
+import {InputGroupAddonModule} from 'primeng/inputgroupaddon';
 import {LoadStatus, LoadStatusEnum} from "@/core/enums";
 import {LoadDto} from "@/core/models";
 import {ApiService} from "@/core/services";
@@ -32,6 +34,8 @@ import {PaymentStatusTagComponent} from "@/components";
     PaymentStatusTagComponent,
     AddressPipe,
     TagModule,
+    InputGroupModule,
+    InputGroupAddonModule,
   ],
 })
 export class ListLoadComponent {

@@ -1,8 +1,10 @@
 ﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Exceptions;
 using Logistics.Domain.Services;
 using Logistics.Infrastructure.EF.Data;
-using Logistics.Infrastructure.EF.Exceptions;
 using Logistics.Infrastructure.EF.Options;
+using Logistics.Shared.Consts;
+using Logistics.Shared.Consts.Claims;
 using Microsoft.AspNetCore.Http;
 
 namespace Logistics.Infrastructure.EF.Services;
@@ -27,48 +29,20 @@ internal class TenantService : ITenantService
     public Tenant GetTenant()
     {
         if (_currentTenant is not null)
-        {
             return _currentTenant;
-        }
 
         if (_httpContext is null)
         {
-            var defaultTenant = new Tenant
-            {
-                Name = "default",
-                BillingEmail = "test@gmail.com",
-                ConnectionString = _dbContextOptions?.ConnectionString ?? ConnectionStrings.LocalDefaultTenant,
-            };
-
-            _currentTenant = defaultTenant;
-            return defaultTenant;
+            _currentTenant = CreateDefaultTenant();
+            return _currentTenant;
         }
+
+        var tenantId = GetTenantIdFromHttpContext();
+        _currentTenant = FetchCurrentTenant(tenantId);
+        CheckSubscription(_currentTenant);
         
-        var tenantHeader = _httpContext.Request.Headers["X-Tenant"];
-        var tenantClaim = _httpContext.User.Claims.FirstOrDefault(i => i.Type == "tenant")?.Value;
-        string tenantId;
-
-        if (!string.IsNullOrEmpty(tenantHeader))
-        {
-            _currentTenant = FetchCurrentTenant(tenantHeader);
-            tenantId = tenantHeader.ToString();
-        }
-        else if (!string.IsNullOrEmpty(tenantClaim))
-        {
-            _currentTenant = FetchCurrentTenant(tenantClaim);
-            tenantId = tenantClaim;
-        }
-        else
-        {
-            throw new InvalidTenantException("Specify tenant ID in request header with the key 'X-Tenant'");
-        }
-
-        if (_currentTenant is null)
-        {
-            throw new InvalidTenantException($"Could not find tenant with ID '{tenantId}'");
-        }
-        
-        return _currentTenant;
+        return _currentTenant ?? throw new InvalidTenantException(
+            $"Could not find tenant with ID/name '{tenantId}'");
     }
 
     public Tenant? SetTenantById(string tenantId)
@@ -83,15 +57,60 @@ internal class TenantService : ITenantService
         _currentTenant = tenant;
     }
 
+    private Tenant CreateDefaultTenant()
+    {
+        return new Tenant
+        {
+            Name = "default",
+            BillingEmail = "test@gmail.com",
+            ConnectionString = _dbContextOptions?.ConnectionString ?? ConnectionStrings.LocalDefaultTenant,
+        };
+    }
+
+    private string GetTenantIdFromHttpContext()
+    {
+        var tenantId = _httpContext!.Request.Headers["X-Tenant"].FirstOrDefault();
+        if (!string.IsNullOrEmpty(tenantId))
+            return tenantId;
+
+        tenantId = _httpContext.User.Claims
+            .FirstOrDefault(c => c.Type == CustomClaimTypes.Tenant)?.Value;
+        
+        if (!string.IsNullOrEmpty(tenantId))
+            return tenantId;
+
+        throw new InvalidTenantException(
+            "Tenant ID must be specified in the 'X-Tenant' header or 'tenant' claim");
+    }
+
     private Tenant? FetchCurrentTenant(string? tenantId)
     {
-        if (string.IsNullOrEmpty(tenantId))
+        if (string.IsNullOrWhiteSpace(tenantId))
         {
-            throw new InvalidTenantException("Tenant ID is a null, specify tenant ID in request header with the key 'X-Tenant'");
+            throw new InvalidTenantException(
+                "Tenant ID must be specified in the 'X-Tenant' header or 'tenant' claim");
         }
 
-        tenantId = tenantId.Trim().ToLower();
-        var tenant = _masterDbContext.Set<Tenant>().FirstOrDefault(i => i.Id == tenantId || i.Name == tenantId);
-        return tenant;
+        var normalizedId = tenantId.Trim().ToLowerInvariant();
+        return _masterDbContext.Set<Tenant>()
+            .FirstOrDefault(t => t.Id == normalizedId || t.Name == normalizedId);
+    }
+    
+    /// <summary>
+    /// Check if the tenant has an active subscription. Throws <see cref="SubscriptionExpiredException"/> if not.
+    /// If tenant subscription is null, it is free and considered active.
+    /// </summary>
+    /// <param name="tenant">Tenant to check</param>
+    /// <exception cref="SubscriptionExpiredException"></exception>
+    private void CheckSubscription(Tenant? tenant)
+    {
+        if (tenant?.Subscription is null)
+            return;
+        
+        if (tenant.Subscription.Status != SubscriptionStatus.Active)
+        {
+            throw new SubscriptionExpiredException(
+                $"Tenant '{tenant.Name}' does not have an active subscription");
+        }
     }
 }
