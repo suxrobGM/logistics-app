@@ -15,4 +15,6 @@ public class AppRole : IdentityRole<string>, IEntity<string>
 
     public override string Id { get; set; } = Guid.NewGuid().ToString();
     public string? DisplayName { get; set; }
+    
+    public virtual HashSet<AppRoleClaim> Claims { get; } = new(new AppRoleClaimComparer());
 }

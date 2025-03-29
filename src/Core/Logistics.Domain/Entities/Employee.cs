@@ -37,7 +37,7 @@ public class Employee : Entity, ITenantEntity
     /// </summary>
     public virtual HashSet<TenantRole> Roles { get; } = new(new TenantRoleComparer());
 
-    public virtual List<EmployeeTenantRole> EmployeeRoles { get; } = new();
+    public virtual List<EmployeeTenantRole> EmployeeRoles { get; } = [];
 
     public string GetFullName() => $"{FirstName} {LastName}";
 

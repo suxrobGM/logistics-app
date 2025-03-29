@@ -20,11 +20,7 @@ public static class EmployeeMapper
             TruckId = entity.TruckId,
             Salary = entity.Salary,
             SalaryType = entity.SalaryType,
-            Roles = entity.Roles.Select(i => new TenantRoleDto
-            {
-                Name = i.Name,
-                DisplayName = i.DisplayName
-            })
+            Roles = entity.Roles.Select(i => i.ToDto())
         };
     }
 }

@@ -18,5 +18,5 @@ public class EmployeeDto
     public decimal Salary { get; set; }
     public SalaryType SalaryType { get; set; }
     public DateTime JoinedDate { get; set; }
-    public IEnumerable<TenantRoleDto> Roles { get; set; } = Array.Empty<TenantRoleDto>();
+    public IEnumerable<RoleDto> Roles { get; set; } = Array.Empty<RoleDto>();
 }

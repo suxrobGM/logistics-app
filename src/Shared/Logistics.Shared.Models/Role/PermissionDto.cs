@@ -1,7 +1,6 @@
 ﻿namespace Logistics.Shared.Models;
 
-public class TenantRoleDto
+public record PermissionDto
 {
     public string? Name { get; set; }
-    public string? DisplayName { get; set; }
 }

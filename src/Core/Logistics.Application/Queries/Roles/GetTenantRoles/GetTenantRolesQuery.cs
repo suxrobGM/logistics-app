@@ -3,6 +3,6 @@ using MediatR;
 
 namespace Logistics.Application.Queries;
 
-public class GetAppRolesQuery : SearchableQuery, IRequest<PagedResult<AppRoleDto>>
+public class GetTenantRolesQuery : SearchableQuery, IRequest<PagedResult<RoleDto>>
 {
 }
