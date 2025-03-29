@@ -1,5 +1,8 @@
 ﻿namespace Logistics.Domain.Core;
 
-public interface ITenantEntity : IEntity<string>
+/// <summary>
+/// Marker interface for tenant entities.
+/// </summary>
+public interface ITenantEntity
 {
 }

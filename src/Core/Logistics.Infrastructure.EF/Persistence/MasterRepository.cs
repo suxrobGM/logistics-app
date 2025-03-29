@@ -4,7 +4,7 @@ using Logistics.Infrastructure.EF.Data;
 
 namespace Logistics.Infrastructure.EF.Persistence;
 
-public class MasterRepository<TEntity, TKey> : 
+internal class MasterRepository<TEntity, TKey> : 
     Repository<MasterDbContext, TEntity, TKey>, IMasterRepository<TEntity, TKey>
     where TEntity : class, IEntity<TKey>
 {

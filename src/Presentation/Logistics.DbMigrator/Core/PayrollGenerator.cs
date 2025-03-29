@@ -61,7 +61,7 @@ public class PayrollGenerator
     } 
     
     private async Task<bool> IsPayrollExisting(
-        ITenantRepository<Payroll> payrollRepository,
+        ITenantRepository<Payroll, string> payrollRepository,
         string employeeId,
         DateTime startDate,
         DateTime endDate)

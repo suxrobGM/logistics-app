@@ -6,7 +6,7 @@ using Logistics.Infrastructure.EF.Data;
 
 namespace Logistics.Infrastructure.EF.Persistence;
 
-public class TenantUnitOfWork : ITenantUnityOfWork
+internal class TenantUnitOfWork : ITenantUnityOfWork
 {
     private readonly TenantDbContext _tenantDbContext;
     private readonly Hashtable _repositories = new();
@@ -16,22 +16,30 @@ public class TenantUnitOfWork : ITenantUnityOfWork
         _tenantDbContext = tenantDbContext;
     }
 
-    public ITenantRepository<TEntity> Repository<TEntity>() where TEntity : class, ITenantEntity
+    public ITenantRepository<TEntity, string> Repository<TEntity>() 
+        where TEntity : class, IEntity<string>, ITenantEntity
+    {
+        return Repository<TEntity, string>();
+    }
+
+    public ITenantRepository<TEntity, TKey> Repository<TEntity, TKey>() 
+        where TEntity : class, IEntity<TKey>, ITenantEntity
     {
         var type = typeof(TEntity).Name;
 
         if (!_repositories.ContainsKey(type))
         {
-            var repositoryType = typeof(TenantRepository<>);
+            var repositoryType = typeof(TenantRepository<,>);
 
             var repositoryInstance =
                 Activator.CreateInstance(repositoryType
-                    .MakeGenericType(typeof(TEntity)), _tenantDbContext);
+                    .MakeGenericType(typeof(TEntity), typeof(TKey)), 
+                    _tenantDbContext);
 
             _repositories.Add(type, repositoryInstance);
         }
 
-        if (_repositories[type] is not TenantRepository<TEntity> repository)
+        if (_repositories[type] is not TenantRepository<TEntity, TKey> repository)
         {
             throw new InvalidOperationException("Could not create a tenant repository");
         }

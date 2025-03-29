@@ -9,7 +9,6 @@ namespace Logistics.Application.Services;
 internal class NotificationService : INotificationService
 {
     private readonly ITenantUnityOfWork _tenantUow;
-    private readonly ITenantRepository<Notification> _notificationRepository;
     private readonly IHubContext<NotificationHub, INotificationHubClient> _notificationHub;
 
     public NotificationService(
@@ -17,7 +16,6 @@ internal class NotificationService : INotificationService
         IHubContext<NotificationHub, INotificationHubClient> notificationHub)
     {
         _tenantUow = tenantUow;
-        _notificationRepository = _tenantUow.Repository<Notification>();
         _notificationHub = notificationHub;
     }
 
@@ -30,7 +28,8 @@ internal class NotificationService : INotificationService
             Message = message
         };
         
-        await _notificationRepository.AddAsync(notification);
+        var notificationRepository = _tenantUow.Repository<Notification>();
+        await notificationRepository.AddAsync(notification);
         var changes = await _tenantUow.SaveChangesAsync();
 
         if (changes > 0)

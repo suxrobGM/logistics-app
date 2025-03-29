@@ -3,7 +3,7 @@ using Logistics.Domain.Core;
 
 namespace Logistics.Domain.Entities;
 
-public class EmployeeTenantRole : ITenantEntity
+public class EmployeeTenantRole : IEntity<string>, ITenantEntity
 {
     [NotMapped]
     public string Id { get; set; } = Guid.NewGuid().ToString();

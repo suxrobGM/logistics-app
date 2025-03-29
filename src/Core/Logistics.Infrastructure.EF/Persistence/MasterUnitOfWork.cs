@@ -5,7 +5,7 @@ using Logistics.Infrastructure.EF.Data;
 
 namespace Logistics.Infrastructure.EF.Persistence;
 
-public class MasterUnitOfWork : IMasterUnityOfWork
+internal class MasterUnitOfWork : IMasterUnityOfWork
 {
     private readonly MasterDbContext _masterDbContext;
     private readonly Hashtable _repositories = new();
@@ -15,12 +15,14 @@ public class MasterUnitOfWork : IMasterUnityOfWork
         _masterDbContext = masterDbContext;
     }
 
-    public IMasterRepository<TEntity, string> Repository<TEntity>() where TEntity : class, IEntity<string>
+    public IMasterRepository<TEntity, string> Repository<TEntity>() 
+        where TEntity : class, IEntity<string>
     {
         return Repository<TEntity, string>();
     }
 
-    public IMasterRepository<TEntity, TKey> Repository<TEntity, TKey>() where TEntity : class, IEntity<TKey>
+    public IMasterRepository<TEntity, TKey> Repository<TEntity, TKey>() 
+        where TEntity : class, IEntity<TKey>
     {
         var type = typeof(TEntity).Name;
 
@@ -30,7 +32,8 @@ public class MasterUnitOfWork : IMasterUnityOfWork
 
             var repositoryInstance =
                 Activator.CreateInstance(repositoryType
-                    .MakeGenericType(typeof(TEntity), typeof(TKey)), _masterDbContext);
+                    .MakeGenericType(typeof(TEntity), typeof(TKey)), 
+                    _masterDbContext);
 
             _repositories.Add(type, repositoryInstance);
         }

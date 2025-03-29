@@ -4,8 +4,9 @@ using Logistics.Infrastructure.EF.Data;
 
 namespace Logistics.Infrastructure.EF.Persistence;
 
-public class TenantRepository<TEntity> : Repository<TenantDbContext, TEntity, string>, ITenantRepository<TEntity> 
-    where TEntity : class, ITenantEntity
+internal class TenantRepository<TEntity, TKey> : 
+    Repository<TenantDbContext, TEntity, TKey>, ITenantRepository<TEntity, TKey> 
+    where TEntity : class, IEntity<TKey>, ITenantEntity
 {
     public TenantRepository(TenantDbContext tenantDbContext) : base(tenantDbContext)
     {

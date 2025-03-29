@@ -7,13 +7,11 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetTruckHandler : RequestHandler<GetTruckQuery, Result<TruckDto>>
 {
-    private readonly ITenantRepository<Truck> _truckRepository;
-    private readonly ITenantRepository<Employee> _employeeRepository;
+    private readonly ITenantUnityOfWork _tenantUow;
 
     public GetTruckHandler(ITenantUnityOfWork tenantUow)
     {
-        _truckRepository = tenantUow.Repository<Truck>();
-        _employeeRepository = tenantUow.Repository<Employee>();
+        _tenantUow = tenantUow;
     }
 
     protected override async Task<Result<TruckDto>> HandleValidated(
@@ -33,19 +31,21 @@ internal sealed class GetTruckHandler : RequestHandler<GetTruckQuery, Result<Tru
     private async Task<Truck?> TryGetTruck(string? truckOrDriverId)
     {
         if (string.IsNullOrEmpty(truckOrDriverId))
-            return default;
+            return null;
 
-        var truck = await _truckRepository.GetAsync(i => i.Id == truckOrDriverId);
+        var truckRepository = _tenantUow.Repository<Truck>();
+        var truck = await truckRepository.GetAsync(i => i.Id == truckOrDriverId);
         return truck ?? await GetTruckFromDriver(truckOrDriverId);
     }
 
     private async Task<Truck?> GetTruckFromDriver(string userId)
     {
-        var driver = await _employeeRepository.GetByIdAsync(userId);
+        var employeeRepository = _tenantUow.Repository<Employee>();
+        var driver = await employeeRepository.GetByIdAsync(userId);
         return driver?.Truck;
     }
 
-    private TruckDto ConvertToDto(Truck truckEntity, bool includeLoads, bool onlyActiveLoads)
+    private static TruckDto ConvertToDto(Truck truckEntity, bool includeLoads, bool onlyActiveLoads)
     {
         var truckDto = truckEntity.ToDto(new List<LoadDto>());
 
