@@ -5,17 +5,17 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetPaymentByIdHandler : RequestHandler<GetPaymentByIdQuery, Result<PaymentDto>>
+internal sealed class GetPaymentHandler : RequestHandler<GetPaymentQuery, Result<PaymentDto>>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
-    public GetPaymentByIdHandler(ITenantUnityOfWork tenantUow)
+    public GetPaymentHandler(ITenantUnityOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
 
     protected override async Task<Result<PaymentDto>> HandleValidated(
-        GetPaymentByIdQuery req, CancellationToken cancellationToken)
+        GetPaymentQuery req, CancellationToken cancellationToken)
     {
         var paymentEntity = await _tenantUow.Repository<Payment>().GetByIdAsync(req.Id);
 

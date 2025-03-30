@@ -1,47 +1,49 @@
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
-import {catchError, Observable, of} from "rxjs";
-import {ToastService} from "@/core/services";
+import {Observable, catchError, of} from "rxjs";
 import {globalConfig} from "@/configs";
+import {ToastService} from "@/core/services";
 import {
-  Result,
-  EmployeeDto,
-  PagedResponseResult,
-  TenantDto,
-  TruckDto,
-  UserDto,
-  LoadDto,
-  RoleDto,
-  DailyGrossesDto,
-  MonthlyGrossesDto,
   CompanyStatsDto,
-  UpdateEmployeeCommand,
-  CreateEmployeeCommand,
-  RemoveEmployeeRoleCommand,
-  TruckDriverDto,
-  UpdateTruckCommand,
-  CreateTruckCommand,
-  UpdateLoadCommand,
-  CreateLoadCommand,
-  TruckStatsDto,
-  NotificationDto,
-  UpdateNotificationCommand,
-  SearchableQuery,
-  CustomerDto,
-  UpdateCustomerCommand,
   CreateCustomerCommand,
-  PaymentDto,
-  CreatePaymentCommand,
-  UpdatePaymentCommand,
-  PagedIntervalQuery,
-  InvoiceDto,
+  CreateEmployeeCommand,
   CreateInvoiceCommand,
-  UpdateInvoiceCommand,
-  PayrollDto,
-  UpdatePayrollCommand,
+  CreateLoadCommand,
+  CreatePaymentCommand,
   CreatePayrollCommand,
-  ProcessPaymentCommand,
+  CreateTruckCommand,
+  CustomerDto,
+  DailyGrossesDto,
+  EmployeeDto,
   GetPayrollsQuery,
+  GetSubscriptionPaymentsQuery,
+  InvoiceDto,
+  LoadDto,
+  MonthlyGrossesDto,
+  NotificationDto,
+  PagedIntervalQuery,
+  PagedResponseResult,
+  PaymentDto,
+  PayrollDto,
+  ProcessPaymentCommand,
+  RemoveEmployeeRoleCommand,
+  Result,
+  RoleDto,
+  SearchableQuery,
+  SubscriptionPaymentDto,
+  TenantDto,
+  TruckDriverDto,
+  TruckDto,
+  TruckStatsDto,
+  UpdateCustomerCommand,
+  UpdateEmployeeCommand,
+  UpdateInvoiceCommand,
+  UpdateLoadCommand,
+  UpdateNotificationCommand,
+  UpdatePaymentCommand,
+  UpdatePayrollCommand,
+  UpdateTruckCommand,
+  UserDto,
 } from "../models";
 
 @Injectable({providedIn: "root"})
@@ -383,6 +385,28 @@ export class ApiService {
 
   // #endregion
 
+  // #region Subscription API
+
+  getSubscriptionPayment(
+    subscriptionId: string,
+    paymentId: string
+  ): Observable<Result<SubscriptionPaymentDto>> {
+    const url = `/subscriptions/${subscriptionId}/payments/${paymentId}`;
+    return this.get(url);
+  }
+
+  getSubscriptionPayments(
+    query: GetSubscriptionPaymentsQuery
+  ): Observable<PagedResponseResult<SubscriptionPaymentDto>> {
+    const queryStr = this.stringfySearchableQuery(query);
+    const url = `/subscriptions/${query.subscriptionId}/payments?${queryStr}`;
+    return this.get(url);
+  }
+
+  // #endregion
+
+  // #region Utility methods
+
   parseSortProperty(sortField?: string | null, sortOrder?: number | null): string {
     if (!sortOrder) {
       sortOrder = 1;
@@ -454,4 +478,6 @@ export class ApiService {
     console.error(errorMessage ?? responseData);
     return of({error: errorMessage, success: false});
   }
+
+  // #endregion
 }

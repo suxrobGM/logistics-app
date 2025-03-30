@@ -1,8 +1,11 @@
-import {PaymentDto} from "./payment.dto";
+import {PaymentMethod, PaymentStatus} from "@/core/enums";
+import {AddressDto} from "../address.dto";
 
 export interface SubscriptionPaymentDto {
   id: string;
-  startDate: string;
-  endDate: string;
-  payment: PaymentDto;
+  amount: number;
+  status: PaymentStatus;
+  method: PaymentMethod;
+  paymentDate: Date;
+  billingAddress: AddressDto;
 }

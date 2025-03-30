@@ -1,0 +1,38 @@
+<p-table
+  [value]="payments()"
+  responsiveLayout="scroll"
+  [lazy]="true"
+  [paginator]="true"
+  [showCurrentPageReport]="true"
+  (onLazyLoad)="load($event)"
+  [rows]="10"
+  [(first)]="first"
+  [totalRecords]="totalRecords()"
+  [loading]="isLoading()"
+  [rowsPerPageOptions]="[10, 25, 50]"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Date</th>
+      <th>Amount</th>
+      <th>Status</th>
+      <th>Billing Address</th>
+      <!-- <th>Invoice</th> -->
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-payment>
+    <tr>
+      <td>{{ payment.paymentDate | date }}</td>
+      <td>{{ payment.amount | currency }}</td>
+      <td>
+        <p-tag [severity]="payment.status === 'paid' ? 'success' : 'danger'">
+          {{ payment.status }}
+        </p-tag>
+      </td>
+      <td>{{ payment.billingAddress | address }}</td>
+      <!-- <td>
+        <a [href]="payment.invoiceUrl" target="_blank" class="text-primary"> View Invoice </a>
+      </td> -->
+    </tr>
+  </ng-template>
+</p-table>

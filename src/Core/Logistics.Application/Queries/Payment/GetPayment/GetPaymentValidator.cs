@@ -2,9 +2,9 @@
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetPaymentByIdValidator : AbstractValidator<GetPaymentByIdQuery>
+internal sealed class GetPaymentValidator : AbstractValidator<GetPaymentQuery>
 {
-    public GetPaymentByIdValidator()
+    public GetPaymentValidator()
     {
         RuleFor(i => i.Id).NotEmpty();
     }

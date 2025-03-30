@@ -5,21 +5,23 @@
 
 <div class="d-flex flex-column gap-2">
   <!-- Current Plan Card -->
-  <div class="col-12 md:col-6">
+  <div class="col-12">
     <p-card header="Current Plan">
-      <div class="grid">
-        <div class="col-6 font-bold">Plan Name:</div>
-        <div class="col-6">subscription.plan.name</div>
+      <div class="row">
+        <div class="col-6 fw-bold">Plan Name:</div>
+        <div class="col-6">{{ subscription.plan?.name }}</div>
 
-        <div class="col-6 font-bold">Price per Employee:</div>
-        <div class="col-6">subscription.plan.price | currency</div>
+        <div class="col-6 fw-bold">Price per Employee:</div>
+        <div class="col-6">{{ subscription.plan?.price | currency }}</div>
 
-        <div class="col-6 font-bold">Next Billing Date:</div>
-        <div class="col-6">subscription.nextPaymentDate | date</div>
+        <div class="col-6 fw-bold">Next Billing Date:</div>
+        <div class="col-6">{{ subscription.nextPaymentDate | date }}</div>
 
-        <div class="col-6 font-bold">Status:</div>
+        <div class="col-6 fw-bold">Status:</div>
         <div class="col-6">
-          <p-tag severity="success"> subscription.status </p-tag>
+          <p-tag [severity]="getSubStatusSeverity()" styleClass="text-center">
+            {{ getSubStatusLabel() }}
+          </p-tag>
         </div>
       </div>
 
@@ -36,7 +38,7 @@
   </div>
 
   <!-- Payment Method Card -->
-  <div class="col-12 md:col-6">
+  <div class="col-12">
     <p-card header="Payment Method">
       <ng-template pTemplate="footer">
         <p-button label="Update Payment Method" icon="pi pi-wallet"></p-button>
@@ -47,30 +49,7 @@
   <!-- Billing History Table -->
   <div class="col-12">
     <p-card header="Billing History">
-      <p-table [rows]="5" [paginator]="true">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Date</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Invoice</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-payment>
-          <tr>
-            <td>{{ payment.created | date }}</td>
-            <td>{{ payment.amount | currency }}</td>
-            <td>
-              <p-tag [severity]="payment.status === 'paid' ? 'success' : 'danger'">
-                {{ payment.status }}
-              </p-tag>
-            </td>
-            <td>
-              <a [href]="payment.invoiceUrl" target="_blank" class="text-primary"> View Invoice </a>
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
+      <app-billing-history></app-billing-history>
     </p-card>
   </div>
 </div>

@@ -25,7 +25,7 @@ public class PaymentsController : ControllerBase
     [Authorize(Policy = Permissions.Payments.View)]
     public async Task<IActionResult> GetById(string id)
     {
-        var result = await _mediator.Send(new GetPaymentByIdQuery {Id = id});
+        var result = await _mediator.Send(new GetPaymentQuery {Id = id});
         return result.Success ? Ok(result) : BadRequest(result);
     }
 

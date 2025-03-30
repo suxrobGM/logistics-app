@@ -27,7 +27,7 @@ public class Repository<TDbContext, TEntity, TEntityKey> : IRepository<TEntity, 
         return _dbContext.Set<TEntity>();
     }
     
-    public Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = default)
+    public Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null)
     {
         if (predicate is null)
         {
