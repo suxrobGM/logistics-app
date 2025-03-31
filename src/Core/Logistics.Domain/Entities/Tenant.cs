@@ -11,6 +11,7 @@ public class Tenant : Entity
     public required string ConnectionString { get; set; }
     public required string BillingEmail { get; set; }
     public string? DotNumber { get; set; }
+    public string? StripeCustomerId { get; set; }
     
     /// <summary>
     /// Subscription ID, if not set, the tenant is on a free plan

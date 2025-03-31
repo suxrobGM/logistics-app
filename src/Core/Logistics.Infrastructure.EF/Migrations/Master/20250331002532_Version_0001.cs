@@ -49,8 +49,10 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
                     Price = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    Currency = table.Column<string>(type: "text", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     StripePriceId = table.Column<string>(type: "text", nullable: true),
+                    StripeProductId = table.Column<string>(type: "text", nullable: true),
                     HasTrial = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -68,6 +70,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     ConnectionString = table.Column<string>(type: "text", nullable: false),
                     BillingEmail = table.Column<string>(type: "text", nullable: false),
                     DotNumber = table.Column<string>(type: "text", nullable: true),
+                    StripeCustomerId = table.Column<string>(type: "text", nullable: true),
                     SubscriptionId = table.Column<string>(type: "text", nullable: true),
                     CompanyAddress_City = table.Column<string>(type: "text", nullable: false),
                     CompanyAddress_Country = table.Column<string>(type: "text", nullable: false),

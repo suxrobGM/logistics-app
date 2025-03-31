@@ -62,6 +62,7 @@ public static class Registrar
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Registrar).Assembly));
         
         services.AddSingleton<IPushNotificationService, PushNotificationService>();
+        services.AddSingleton<IStripeService, StripeService>();
         services.AddSingleton<LiveTrackingHubContext>();
         services.AddScoped<IPayrollService, PayrollService>();
         services.AddScoped<INotificationService, NotificationService>();

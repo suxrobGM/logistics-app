@@ -45,7 +45,7 @@ internal class SeedData : BackgroundService
             _logger.LogInformation("Seeding data...");
             await AddAppRolesAsync(scope.ServiceProvider);
             await AddSuperAdminAsync(scope.ServiceProvider);
-            await AddSubscriptionPlanAsync(scope.ServiceProvider);
+            //await AddSubscriptionPlanAsync(scope.ServiceProvider);
             await AddDefaultTenantAsync(scope.ServiceProvider);
             _logger.LogInformation("Successfully seeded databases");
 
@@ -229,7 +229,7 @@ internal class SeedData : BackgroundService
             AppRoles.SuperAdmin => AppRolePermissions.SuperAdmin,
             AppRoles.Admin => AppRolePermissions.Admin,
             AppRoles.Manager => AppRolePermissions.Manager,
-            _ => Enumerable.Empty<string>()
+            _ => []
         };
     }
 }

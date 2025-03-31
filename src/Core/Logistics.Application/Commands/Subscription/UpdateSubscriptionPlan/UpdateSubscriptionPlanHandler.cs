@@ -1,17 +1,26 @@
-﻿using Logistics.Application.Utilities;
+﻿using Logistics.Application.Services;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
 
 internal sealed class UpdateSubscriptionPlanHandler : RequestHandler<UpdateSubscriptionPlanCommand, Result>
 {
     private readonly IMasterUnityOfWork _masterUow;
+    private readonly IStripeService _stripeService;
+    private readonly ILogger<UpdateSubscriptionPlanHandler> _logger;
 
-    public UpdateSubscriptionPlanHandler(IMasterUnityOfWork masterUow)
+    public UpdateSubscriptionPlanHandler(
+        IMasterUnityOfWork masterUow, 
+        IStripeService stripeService, 
+        ILogger<UpdateSubscriptionPlanHandler> logger)
     {
         _masterUow = masterUow;
+        _stripeService = stripeService;
+        _logger = logger;
     }
 
     protected override async Task<Result> HandleValidated(
@@ -29,8 +38,10 @@ internal sealed class UpdateSubscriptionPlanHandler : RequestHandler<UpdateSubsc
         subscriptionPlan.Price = PropertyUpdater.UpdateIfChanged(req.Price, subscriptionPlan.Price);
         subscriptionPlan.HasTrial = PropertyUpdater.UpdateIfChanged(req.HasTrial, subscriptionPlan.HasTrial);
         
+        await _stripeService.UpdateSubscriptionPlanAsync(subscriptionPlan);
         _masterUow.Repository<SubscriptionPlan>().Update(subscriptionPlan);
         await _masterUow.SaveChangesAsync();
+        _logger.LogInformation("Updated subscription plan {SubscriptionPlanId}", subscriptionPlan.Id);
         return Result.Succeed();
     }
 }

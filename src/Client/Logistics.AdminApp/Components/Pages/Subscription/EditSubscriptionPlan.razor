@@ -33,9 +33,10 @@
                     <RadzenFormField Text="Price" Variant="Variant.Outlined">
                         <RadzenNumeric TValue="decimal" Min="0" @bind-Value="_subscriptionPlan.Price"/>
                     </RadzenFormField>
-                    <RadzenFormField Text="Has Trial" Variant="Variant.Outlined">
-                        <RadzenCheckBox TValue="bool" @bind-Value="_subscriptionPlan.HasTrial"></RadzenCheckBox>
-                    </RadzenFormField>
+                    <div>
+                        <RadzenCheckBox TValue="bool" Name="TrialCheckbox" @bind-Value="_subscriptionPlan.HasTrial"></RadzenCheckBox>
+                        <RadzenLabel Text="Has Trial" Component="TrialCheckbox" class="rz-ms-2" />
+                    </div>
                     <RadzenStack Orientation="Orientation.Horizontal">
                         <RadzenButton Icon="save"
                                       Text="Save"

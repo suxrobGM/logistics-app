@@ -85,7 +85,7 @@ public abstract class PageBase : ComponentBase
         HandleError(apiResult);
         IsLoading = false;
         return apiResult.Data != null
-            ? new PagedData<T>(apiResult.Data, apiResult.TotalItems) : default;
+            ? new PagedData<T>(apiResult.Data, apiResult.TotalItems) : null;
     }
 
     private bool HandleError(IResult apiResult)
@@ -98,6 +98,7 @@ public abstract class PageBase : ComponentBase
                 Detail = apiResult.Error,
                 Severity = NotificationSeverity.Error
             });
+            Console.Error.WriteLine(apiResult.Error);
             return false;
         }
 

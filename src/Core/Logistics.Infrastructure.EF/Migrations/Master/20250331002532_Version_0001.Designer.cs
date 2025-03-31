@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.EF.Migrations.Master
 {
     [DbContext(typeof(MasterDbContext))]
-    [Migration("20250329204545_Version_0001")]
+    [Migration("20250331002532_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -201,6 +201,10 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -216,6 +220,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                         .HasColumnType("numeric(18,2)");
 
                     b.Property<string>("StripePriceId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StripeProductId")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -244,6 +251,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("StripeCustomerId")
                         .HasColumnType("text");
 
                     b.Property<string>("SubscriptionId")
