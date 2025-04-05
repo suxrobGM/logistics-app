@@ -13,10 +13,6 @@ public class Tenant : Entity
     public string? DotNumber { get; set; }
     public string? StripeCustomerId { get; set; }
     
-    /// <summary>
-    /// Subscription ID, if not set, the tenant is on a free plan
-    /// </summary>
-    public string? SubscriptionId { get; set; }
     public virtual Subscription? Subscription { get; set; }
     
     /// <summary>

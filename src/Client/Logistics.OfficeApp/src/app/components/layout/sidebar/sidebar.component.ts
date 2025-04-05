@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, signal} from "@angular/core";
+import {Component, OnInit, signal} from "@angular/core";
 import {MenuItem} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {PanelMenuModule} from "primeng/panelmenu";
@@ -24,23 +24,18 @@ import {PanelMenuComponent} from "../panel-menu";
     PanelMenuComponent,
   ],
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
   public readonly isOpened = signal(true);
   public readonly companyName = signal<string | null>(null);
   public readonly userRole = signal<string | null>(null);
   public readonly userFullName = signal<string | null>(null);
-  public readonly navItems: MenuItem[];
+  public readonly navItems = signal<MenuItem[]>(sidebarNavItems);
   public readonly profileMenuItems: MenuItem[];
 
   constructor(
     private readonly authService: AuthService,
     private readonly tenantService: TenantService
   ) {
-    // Remove the subscription menu if the tenant does not have a subscription
-    this.navItems = this.tenantService.getTenantData()?.subscription
-      ? sidebarNavItems
-      : sidebarNavItems.filter((item) => item.label !== "Subscriptions");
-
     this.profileMenuItems = [
       {
         label: "User name",
@@ -69,6 +64,14 @@ export class SidebarComponent {
 
       this.userRole.set(this.authService.getUserRoleName());
     });
+  }
+  ngOnInit(): void {
+    // Remove the subscription menu if the tenant does not have a subscription
+    const tenantSubscription = this.tenantService.getTenantData()?.subscription;
+
+    if (!tenantSubscription) {
+      this.navItems.set(sidebarNavItems);
+    }
   }
 
   toggle(): void {

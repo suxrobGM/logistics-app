@@ -22,7 +22,7 @@ public partial class EditSubscriptionPlan : PageBase
     #region Injectable services
 
     [Inject] 
-    private NavigationManager Navigation { get; set; } = default!;
+    private NavigationManager Navigation { get; set; } = null!;
 
     #endregion
     
@@ -76,6 +76,7 @@ public partial class EditSubscriptionPlan : PageBase
             {
                 ShowNotification("A new subscription plan has been created successfully");
                 ResetData();
+                Navigation.NavigateTo("/subscription-plans");
             }
         }
     }

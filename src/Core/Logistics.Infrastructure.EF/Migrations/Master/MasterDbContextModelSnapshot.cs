@@ -253,9 +253,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     b.Property<string>("StripeCustomerId")
                         .HasColumnType("text");
 
-                    b.Property<string>("SubscriptionId")
-                        .HasColumnType("text");
-
                     b.ComplexProperty<Dictionary<string, object>>("CompanyAddress", "Logistics.Domain.Entities.Tenant.CompanyAddress#Address", b1 =>
                         {
                             b1.IsRequired();

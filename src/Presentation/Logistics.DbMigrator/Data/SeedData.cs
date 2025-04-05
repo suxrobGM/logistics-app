@@ -141,7 +141,7 @@ internal class SeedData : BackgroundService
         var standardPlan = new SubscriptionPlan
         {
             Name = "Standard",
-            Description = "Standard monthly subscription plan charging $30 per employee",
+            Description = "Standard monthly subscription plan charging per employee",
             Price = 30
         };
 
