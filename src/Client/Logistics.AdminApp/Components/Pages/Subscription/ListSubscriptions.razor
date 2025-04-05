@@ -79,7 +79,22 @@
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="SubscriptionDto" Title="Action" Sortable="false">
             <Template Context="subscription">
-                <RadzenButton ButtonStyle="ButtonStyle.Danger" Click="() => DeleteSubscription(subscription.Id)">Delete</RadzenButton>
+                <RadzenStack Orientation="Orientation.Horizontal">
+                    <RadzenButton
+                        ButtonStyle="ButtonStyle.Danger"
+                        Icon="delete"
+                        Size="ButtonSize.Small" 
+                        Click="() => DeleteSubscription(subscription.Id!)"
+                        MouseEnter="@(args => ShowTooltip(args, "Delete Subscription"))">
+                    </RadzenButton>
+                    <RadzenButton
+                        ButtonStyle="ButtonStyle.Warning"
+                        Icon="cancel"
+                        Size="ButtonSize.Small"
+                        Click="() => CancelSubscription(subscription.Id!)"
+                        MouseEnter="@(args => ShowTooltip(args, "Cancel Subscription"))">
+                    </RadzenButton>
+                </RadzenStack>
             </Template>
         </RadzenDataGridColumn>
     </Columns>

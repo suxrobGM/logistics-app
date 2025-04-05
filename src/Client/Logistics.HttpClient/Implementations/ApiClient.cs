@@ -395,6 +395,11 @@ internal class ApiClient : GenericApiClient, IApiClient
     {
         return MakeDeleteRequestAsync<Result>($"subscriptions/{id}");
     }
+    
+    public Task<Result> CancelSubscriptionAsync(CancelSubscriptionDto command)
+    {
+        return MakePutRequestAsync<Result, CancelSubscriptionDto>($"subscriptions/{command.Id}/cancel", command);
+    }
 
     #endregion
 }

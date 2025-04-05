@@ -1,5 +1,6 @@
 import {CommonModule} from "@angular/common";
-import {Component} from "@angular/core";
+import {Component, signal} from "@angular/core";
+import {RouterModule} from "@angular/router";
 import {ConfirmationService} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
@@ -9,7 +10,7 @@ import {InputNumberModule} from "primeng/inputnumber";
 import {TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {SubscriptionDto, SubscriptionStatus} from "@/core/models";
-import {ApiService, TenantService} from "@/core/services";
+import {ApiService, TenantService, ToastService} from "@/core/services";
 import {BillingHistoryComponent} from "../components";
 
 @Component({
@@ -25,16 +26,20 @@ import {BillingHistoryComponent} from "../components";
     TagModule,
     ConfirmDialogModule,
     BillingHistoryComponent,
+    RouterModule,
   ],
   providers: [ConfirmationService],
 })
 export class ManageSubscriptionComponent {
   readonly subscription: SubscriptionDto;
+  readonly isLoading = signal(false);
+  readonly isCancelled = signal(false);
 
   constructor(
     private readonly tenantService: TenantService,
     private readonly apiService: ApiService,
-    private readonly confirmationService: ConfirmationService
+    private readonly confirmationService: ConfirmationService,
+    private readonly toastService: ToastService
   ) {
     const subscription = this.tenantService.getTenantData()?.subscription;
 
@@ -69,5 +74,42 @@ export class ManageSubscriptionComponent {
       default:
         return "Unknown";
     }
+  }
+
+  confirmCancelSubscription(): void {
+    this.confirmationService.confirm({
+      message:
+        "Are you sure you want to cancel your subscription? Your subscription will be cancelled at the end of the billing cycle.",
+      header: "Cancel Subscription",
+      icon: "pi pi-exclamation-triangle",
+      acceptLabel: "Yes, Cancel",
+      rejectLabel: "No, Keep",
+      acceptButtonStyleClass: "p-button-danger",
+      rejectButtonStyleClass: "p-button-success",
+      acceptIcon: "pi pi-check",
+      rejectIcon: "pi pi-times",
+      closeOnEscape: true,
+      dismissableMask: true,
+      accept: () => {
+        this.isLoading.set(true);
+
+        this.apiService.cancelSubscription({id: this.subscription.id}).subscribe((result) => {
+          if (result.success) {
+            this.toastService.showSuccess("Subscription cancelled successfully");
+            this.isCancelled.set(true);
+          }
+
+          this.isLoading.set(false);
+        });
+      },
+    });
+  }
+
+  isSubscriptionCancelled(): boolean {
+    return this.subscription.status === SubscriptionStatus.Cancelled;
+  }
+
+  isActiveSubscription(): boolean {
+    return this.subscription.status === SubscriptionStatus.Active;
   }
 }

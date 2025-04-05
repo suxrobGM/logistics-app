@@ -14,8 +14,15 @@
         <div class="col-6 fw-bold">Price per Employee:</div>
         <div class="col-6">{{ subscription.plan?.price | currency }}</div>
 
-        <div class="col-6 fw-bold">Next Billing Date:</div>
-        <div class="col-6">{{ subscription.nextPaymentDate | date }}</div>
+        @if (subscription.endDate) {
+          <div class="col-6 fw-bold">End Date:</div>
+          <div class="col-6">{{ subscription.endDate | date }}</div>
+        }
+
+        @if (isActiveSubscription()) {
+          <div class="col-6 fw-bold">Next Billing Date:</div>
+          <div class="col-6">{{ subscription.nextPaymentDate | date }}</div>
+        }
 
         <div class="col-6 fw-bold">Status:</div>
         <div class="col-6">
@@ -27,8 +34,18 @@
 
       <ng-template pTemplate="footer">
         <div class="d-flex gap-2">
-          <p-button label="Change Plan" icon="pi pi-credit-card"></p-button>
-          <p-button label="Cancel Subscription" icon="pi pi-times" severity="danger"></p-button>
+          <p-button
+            [routerLink]="'/subscription/plans'"
+            label="Change Plan"
+            icon="pi pi-credit-card"
+          ></p-button>
+          <p-button
+            label="Cancel Subscription"
+            icon="pi pi-times"
+            severity="danger"
+            [disabled]="isLoading() || isCancelled() || isSubscriptionCancelled()"
+            (click)="confirmCancelSubscription()"
+          ></p-button>
         </div>
       </ng-template>
     </p-card>
@@ -38,7 +55,11 @@
   <div class="col-12">
     <p-card header="Payment Method">
       <ng-template pTemplate="footer">
-        <p-button label="Update Payment Method" icon="pi pi-wallet"></p-button>
+        <p-button
+          label="Update Payment Method"
+          icon="pi pi-wallet"
+          [disabled]="isLoading()"
+        ></p-button>
       </ng-template>
     </p-card>
   </div>

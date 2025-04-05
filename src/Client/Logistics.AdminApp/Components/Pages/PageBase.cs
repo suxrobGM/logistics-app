@@ -11,13 +11,16 @@ public abstract class PageBase : ComponentBase
     #region Injectable services
 
     [Inject]
-    private IApiClient ApiClient { get; set; } = default!;
+    private IApiClient ApiClient { get; set; } = null!;
 
     [Inject] 
-    private IAccessTokenProvider AccessTokenProvider { get; set; } = default!;
+    private IAccessTokenProvider AccessTokenProvider { get; set; } = null!;
 
     [Inject] 
-    private NotificationService NotificationService { get; set; } = default!;
+    private NotificationService NotificationService { get; set; } = null!;
+    
+    [Inject]
+    private TooltipService TooltipService { get; set; } = null!;
 
     #endregion
 
@@ -53,6 +56,11 @@ public abstract class PageBase : ComponentBase
             Detail = message,
             Severity = NotificationSeverity.Success
         });
+    }
+
+    protected void ShowTooltip(ElementReference element, string message, TooltipOptions options = null!)
+    {
+        TooltipService.Open(element, message, options);
     }
     
     protected async Task<bool> CallApiAsync(Func<IApiClient, Task<Result>> apiFunction)

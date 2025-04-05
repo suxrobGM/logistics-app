@@ -4,6 +4,7 @@ import {Observable, catchError, of} from "rxjs";
 import {globalConfig} from "@/configs";
 import {ToastService} from "@/core/services";
 import {
+  CancelSubscriptionCommand,
   CompanyStatsDto,
   CreateCustomerCommand,
   CreateEmployeeCommand,
@@ -31,6 +32,7 @@ import {
   RoleDto,
   SearchableQuery,
   SubscriptionPaymentDto,
+  SubscriptionPlanDto,
   TenantDto,
   TruckDriverDto,
   TruckDto,
@@ -387,6 +389,10 @@ export class ApiService {
 
   // #region Subscription API
 
+  getSubscriptionPlans(): Observable<Result<SubscriptionPlanDto[]>> {
+    return this.get("/subscriptions/plans");
+  }
+
   getSubscriptionPayment(
     subscriptionId: string,
     paymentId: string
@@ -401,6 +407,10 @@ export class ApiService {
     const queryStr = this.stringfySearchableQuery(query);
     const url = `/subscriptions/${query.subscriptionId}/payments?${queryStr}`;
     return this.get(url);
+  }
+
+  cancelSubscription(command: CancelSubscriptionCommand): Observable<Result> {
+    return this.put(`/subscriptions/${command.id}/cancel`, command);
   }
 
   // #endregion

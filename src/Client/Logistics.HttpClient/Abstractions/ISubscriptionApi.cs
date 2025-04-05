@@ -13,4 +13,5 @@ public interface ISubscriptionApi
     Task<Result> DeleteSubscriptionPlanAsync(string id);
     Task<Result> CreateSubscriptionAsync(CreateSubscription command);
     Task<Result> DeleteSubscriptionAsync(string id);
+    Task<Result> CancelSubscriptionAsync(CancelSubscriptionDto command);
 }

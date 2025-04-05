@@ -32,18 +32,26 @@ public partial class ListSubscriptions : PageBase
         StateHasChanged();
     }
     
-    private async Task DeleteSubscription(string? id)
+    private async Task DeleteSubscription(string id)
     {
-        if (string.IsNullOrWhiteSpace(id))
-        {
-            return;
-        }
-        
-        var confirm = await DialogService.Confirm("Are you sure you want to delete this subscription?");
+        var confirm = await DialogService.Confirm(
+            "Are you sure you want to delete this subscription? The Stripe subscription will be cancelled immediately.");
         
         if (confirm.HasValue && confirm.Value)
         {
             await CallApiAsync(api => api.DeleteSubscriptionAsync(id));
+            await LoadData(new LoadDataArgs());
+        }
+    }
+
+    private async Task CancelSubscription(string id)
+    {
+        var confirm = await DialogService.Confirm(
+            "Are you sure you want to cancel this subscription? The subscription will be cancelled at the end of the billing period.");
+        
+        if (confirm.HasValue && confirm.Value)
+        {
+            await CallApiAsync(api => api.CancelSubscriptionAsync(new CancelSubscriptionDto {Id = id}));
             await LoadData(new LoadDataArgs());
         }
     }
