@@ -391,11 +391,6 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakePostRequestAsync<Result, CreateSubscription>("subscriptions", command);
     }
 
-    public Task<Result> UpdateSubscriptionAsync(UpdateSubscription command)
-    {
-        return MakePutRequestAsync<Result, UpdateSubscription>($"subscriptions/{command.Id}", command);
-    }
-
     public Task<Result> DeleteSubscriptionAsync(string id)
     {
         return MakeDeleteRequestAsync<Result>($"subscriptions/{id}");

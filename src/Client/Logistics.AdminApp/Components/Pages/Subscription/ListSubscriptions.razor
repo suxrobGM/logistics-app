@@ -79,7 +79,6 @@
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="SubscriptionDto" Title="Action" Sortable="false">
             <Template Context="subscription">
-                <RadzenButton Click="@(() => Navigation.NavigateTo($"subscriptions/{subscription.Id}"))">Edit</RadzenButton>
                 <RadzenButton ButtonStyle="ButtonStyle.Danger" Click="() => DeleteSubscription(subscription.Id)">Delete</RadzenButton>
             </Template>
         </RadzenDataGridColumn>

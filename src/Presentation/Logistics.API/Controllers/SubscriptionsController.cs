@@ -94,17 +94,6 @@ public class SubscriptionsController : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPut("{id}")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
-    public async Task<IActionResult> UpdateSubscription(string id, [FromBody] UpdateSubscriptionCommand request)
-    {
-        request.Id = id;
-        var result = await _mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
-    }
-
     [HttpDelete("{id}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]

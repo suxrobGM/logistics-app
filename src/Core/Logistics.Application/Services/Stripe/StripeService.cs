@@ -19,21 +19,21 @@ internal class StripeService : IStripeService
     
     public async Task<StripeCustomer> CreateCustomerAsync(Tenant tenant)
     {
-        var options = new CustomerCreateOptions
+        // ReSharper disable once UseObjectOrCollectionInitializer
+        var options = new CustomerCreateOptions();
+        options.Email = tenant.BillingEmail;
+        options.Name = tenant.CompanyName;
+        options.Address = new AddressOptions
         {
-            Email = tenant.BillingEmail,
-            Name = tenant.CompanyName,
-            Address =
-            {
-                Line1 = tenant.CompanyAddress.Line1,
-                Line2 = tenant.CompanyAddress.Line2,
-                City = tenant.CompanyAddress.City,
-                State = tenant.CompanyAddress.State,
-                PostalCode = tenant.CompanyAddress.ZipCode,
-                Country = tenant.CompanyAddress.Country
-            },
-            Metadata = new Dictionary<string, string> { { "tenant_id", tenant.Id } }
+            Line1 = tenant.CompanyAddress.Line1,
+            Line2 = tenant.CompanyAddress.Line2 ?? "",
+            City = tenant.CompanyAddress.City,
+            State = tenant.CompanyAddress.State,
+            PostalCode = tenant.CompanyAddress.ZipCode,
+            Country = tenant.CompanyAddress.Country
         };
+        options.Metadata = new Dictionary<string, string> { { "tenant_id", tenant.Id } };
+        
         var customer = await new CustomerService().CreateAsync(options);
         _logger.LogInformation("Created Stripe customer for tenant {TenantId}", tenant.Id);
         return customer;
@@ -54,26 +54,26 @@ internal class StripeService : IStripeService
         {
             throw new ArgumentException("Tenant must have a StripeCustomerId");
         }
-        
-        var options = new SubscriptionCreateOptions
-        {
-            Customer = tenant.StripeCustomerId,
-            Items =
-            [
-                new SubscriptionItemOptions
-                {
-                    Price = plan.StripePriceId, // Store Stripe Price ID in SubscriptionPlan
-                    Quantity = employeeCount
-                }
-            ],
-            Metadata =
+
+        // ReSharper disable once UseObjectOrCollectionInitializer
+        var options = new SubscriptionCreateOptions();
+        options.Customer = tenant.StripeCustomerId;
+        options.Items =
+        [
+            new SubscriptionItemOptions()
             {
-                ["plan_id"] = plan.Id,
-                ["tenant_id"] = tenant.Id
-            },
-            PaymentBehavior = "default_incomplete", // For trials or manual confirmation
-            TrialEnd = plan.HasTrial ? DateTime.UtcNow.AddDays(30) : null
+                Price = plan.StripePriceId, // Store Stripe Price ID in SubscriptionPlan
+                Quantity = employeeCount
+            }
+        ];
+        options.Metadata = new Dictionary<string, string>
+        {
+            { "tenant_id", tenant.Id },
+            { "plan_id", plan.Id }
         };
+        options.PaymentBehavior = "default_incomplete"; // For trials or manual confirmation
+        options.TrialEnd = plan.HasTrial ? DateTime.UtcNow.AddDays(30) : null;
+        
         var subscription = await new SubscriptionService().CreateAsync(options);
         _logger.LogInformation("Created Stripe subscription for tenant {TenantId}", tenant.Id);
         return subscription;

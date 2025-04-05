@@ -1,4 +1,46 @@
 ﻿@page "/subscriptions/add"
 @inherits PageBase
 
-<EditSubscription EditMode="false"></EditSubscription>
+<RadzenText TextStyle="TextStyle.H3">Add a new subscription</RadzenText>
+<hr/>
+
+<RadzenRow>
+    <RadzenColumn Size="12" SizeMD="10" SizeLG="8" SizeXL="6">
+        <RadzenCard>
+            @if (IsLoading)
+            {
+                <RadzenProgressBarCircular Value="100"
+                                           ShowValue="false"
+                                           Mode="ProgressBarMode.Indeterminate">
+                </RadzenProgressBarCircular>
+            }
+
+            <RadzenTemplateForm TItem="SubscriptionDto" Data="_subscription" Submit="SubmitAsync">
+                <RadzenStack Orientation="Orientation.Vertical">
+                    @* <RadzenFormField Text="Subscription Status" Variant="Variant.Outlined"> *@
+                    @*     <RadzenDropDown @bind-Value="_subscription.Status" Data="@(Enum.GetValues(typeof(SubscriptionStatus)).Cast<Enum>())" /> *@
+                    @* </RadzenFormField> *@
+                    <RadzenFormField Text="Subscription Plan" Variant="Variant.Outlined">
+                        <RadzenDropDown Name="SubscriptionPlan" @bind-Value="_subscription.Plan" Data="_subscriptionPlans" TextProperty="Name" />
+                        <RadzenRequiredValidator Component="SubscriptionPlan" Text="Subscription plan is required" />
+                    </RadzenFormField>
+                    <RadzenFormField Text="Tenant" Variant="Variant.Outlined">
+                        <RadzenDropDown Name="Tenant" @bind-Value="_subscription.Tenant" Data="_tenants" TextProperty="CompanyName" />
+                        <RadzenRequiredValidator Component="Tenant" Text="Tenant is required" />
+                    </RadzenFormField>
+                    <RadzenStack Orientation="Orientation.Horizontal">
+                        <RadzenButton Icon="save"
+                                      Text="Save"
+                                      Disabled="@IsLoading"
+                                      ButtonType="ButtonType.Submit">
+                        </RadzenButton>
+                        <RadzenButton Icon="arrow_back"
+                                      Text="Back"
+                                      Click="@(() => Navigation.NavigateTo("/subscriptions"))">
+                        </RadzenButton>
+                    </RadzenStack>
+                </RadzenStack>
+            </RadzenTemplateForm>
+        </RadzenCard>
+    </RadzenColumn>
+</RadzenRow>

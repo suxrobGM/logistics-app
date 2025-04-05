@@ -34,7 +34,11 @@ internal sealed class DeleteSubscriptionHandler : RequestHandler<DeleteSubscript
             return Result.Fail($"Could not find a subscription with ID '{req.Id}'");
         }
 
-        await _stripeService.CancelSubscriptionAsync(subscription.Id);
+        if (!string.IsNullOrEmpty(subscription.StripeSubscriptionId))
+        {
+            _logger.LogInformation("Cancelling stripe subscription {StripeSubscriptionId}", subscription.StripeSubscriptionId);
+            await _stripeService.CancelSubscriptionAsync(subscription.StripeSubscriptionId);
+        }
         
         _masterUow.Repository<Subscription>().Delete(subscription);
         await _masterUow.SaveChangesAsync();

@@ -40,9 +40,7 @@ internal sealed class CreateSubscriptionHandler : RequestHandler<CreateSubscript
         
         if (tenant.StripeCustomerId is null)
         {
-            var stripeCustomer = await _stripeService.CreateCustomerAsync(tenant);
-            tenant.StripeCustomerId = stripeCustomer.Id;
-            _masterUow.Repository<Tenant>().Update(tenant);
+            await CreateStripeCustomerAsync(tenant);
         }
         
         var subscriptionPlan = await _masterUow.Repository<SubscriptionPlan>().GetByIdAsync(req.PlanId);
@@ -60,5 +58,13 @@ internal sealed class CreateSubscriptionHandler : RequestHandler<CreateSubscript
         await _masterUow.SaveChangesAsync();
         _logger.LogInformation("Created Subscription for tenant {TenantId}, employee count: {EmployeeCount}", tenant.Id, tenantEmployeeCount);
         return Result.Succeed();
+    }
+    
+    private async Task CreateStripeCustomerAsync(Tenant tenant)
+    {
+        var stripeCustomer = await _stripeService.CreateCustomerAsync(tenant);
+        tenant.StripeCustomerId = stripeCustomer.Id;
+        _masterUow.Repository<Tenant>().Update(tenant);
+        await _masterUow.SaveChangesAsync();
     }
 }
