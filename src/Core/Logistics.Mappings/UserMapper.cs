@@ -15,6 +15,8 @@ public static class UserMapper
             Roles = roles ?? Array.Empty<string>(),
             Email = entity.Email,
             PhoneNumber = entity.PhoneNumber,
+            TenantId = entity.TenantId,
+            TenantName = entity.Tenant?.Name
         };
         return dto;
     }

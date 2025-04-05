@@ -51,6 +51,11 @@
                 @tenant.Subscription?.Plan?.Name
             </Template>
         </RadzenDataGridColumn>
+        <RadzenDataGridColumn
+            TItem="TenantDto"
+            Property="StripeCustomerId"
+            Title="Stripe Customer ID">
+        </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="TenantDto" Title="Action" Sortable="false">
             <Template Context="tenant">
                 <RadzenButton Click="@(() => Navigation.NavigateTo($"tenants/{tenant.Id}"))">Edit</RadzenButton>

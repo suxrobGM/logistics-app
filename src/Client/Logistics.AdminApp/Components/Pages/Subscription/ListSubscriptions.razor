@@ -1,7 +1,7 @@
 ﻿@page "/subscriptions"
 @inherits PageBase
 
-<RadzenText TextStyle="TextStyle.H3">Subscriptions</RadzenText>
+<RadzenText TextStyle="TextStyle.H3">Subscription Customers</RadzenText>
 <hr/>
 
 <RadzenButton class="mb-3" Click="@(() => Navigation.NavigateTo("/subscriptions/add"))">Add</RadzenButton>
@@ -71,6 +71,11 @@
             Property="EndDate"
             Title="End Date"
             SortProperty="EndDate">
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn
+            TItem="SubscriptionDto"
+            Property="StripeSubscriptionId"
+            Title="Stripe Subscription ID">
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="SubscriptionDto" Title="Action" Sortable="false">
             <Template Context="subscription">

@@ -10,6 +10,7 @@ public class TenantDto
     public string? BillingEmail { get; set; }
     public string? DotNumber { get; set; }
     public AddressDto CompanyAddress { get; set; } = AddressDto.Empty();
+    public string? StripeCustomerId { get; set; }
     
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? ConnectionString { get; set; }
