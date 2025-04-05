@@ -1,8 +1,8 @@
 import {HttpHeaders} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {SubscriptionStatus, TenantDto} from "@/core/models";
-import {CookieService} from "./cookie.service";
 import {ApiService} from "./api.service";
+import {CookieService} from "./cookie.service";
 
 @Injectable({providedIn: "root"})
 export class TenantService {
@@ -60,7 +60,7 @@ export class TenantService {
     }
 
     // If subscription is null, it means the tenant is not required to have a subscription
-    if (this.tenantData.subscription === null) {
+    if (this.tenantData.subscription == null) {
       return true;
     }
 

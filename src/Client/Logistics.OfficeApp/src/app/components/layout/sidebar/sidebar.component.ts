@@ -1,13 +1,14 @@
-import {Component, signal} from "@angular/core";
 import {CommonModule} from "@angular/common";
-import {TooltipModule} from "primeng/tooltip";
-import {SplitButtonModule} from "primeng/splitbutton";
-import {PanelMenuModule} from "primeng/panelmenu";
-import {ButtonModule} from "primeng/button";
+import {Component, signal} from "@angular/core";
 import {MenuItem} from "primeng/api";
+import {ButtonModule} from "primeng/button";
+import {PanelMenuModule} from "primeng/panelmenu";
+import {SplitButtonModule} from "primeng/splitbutton";
+import {TooltipModule} from "primeng/tooltip";
+import {sidebarNavItems} from "@/components/layout/data";
 import {globalConfig} from "@/configs";
 import {AuthService} from "@/core/auth";
-import {sidebarNavItems} from "@/components/layout/data";
+import {TenantService} from "@/core/services";
 import {PanelMenuComponent} from "../panel-menu";
 
 @Component({
@@ -28,10 +29,18 @@ export class SidebarComponent {
   public readonly companyName = signal<string | null>(null);
   public readonly userRole = signal<string | null>(null);
   public readonly userFullName = signal<string | null>(null);
-  public readonly navItems = sidebarNavItems;
+  public readonly navItems: MenuItem[];
   public readonly profileMenuItems: MenuItem[];
 
-  constructor(private readonly authService: AuthService) {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly tenantService: TenantService
+  ) {
+    // Remove the subscription menu if the tenant does not have a subscription
+    this.navItems = this.tenantService.getTenantData()?.subscription
+      ? sidebarNavItems
+      : sidebarNavItems.filter((item) => item.label !== "Subscriptions");
+
     this.profileMenuItems = [
       {
         label: "User name",
