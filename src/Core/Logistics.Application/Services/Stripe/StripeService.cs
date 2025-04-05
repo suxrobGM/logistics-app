@@ -17,6 +17,15 @@ internal class StripeService : IStripeService
         StripeConfiguration.ApiKey = options.Value.SecretKey;
     }
     
+    public Task<StripeCustomer> GetCustomerAsync(string stripeCustomerId)
+    {
+        var options = new CustomerGetOptions
+        {
+            Expand = ["subscriptions"]
+        };
+        return new CustomerService().GetAsync(stripeCustomerId, options);
+    }
+    
     public async Task<StripeCustomer> CreateCustomerAsync(Tenant tenant)
     {
         // ReSharper disable once UseObjectOrCollectionInitializer
@@ -38,14 +47,36 @@ internal class StripeService : IStripeService
         _logger.LogInformation("Created Stripe customer for tenant {TenantId}", tenant.Id);
         return customer;
     }
-
-    public Task<StripeCustomer> GetCustomerAsync(string stripeCustomerId)
+    
+    public Task<StripeCustomer> UpdateCustomerAsync(Tenant tenant)
     {
-        var options = new CustomerGetOptions
+        if (tenant.StripeCustomerId is null)
         {
-            Expand = ["subscriptions"]
+            throw new ArgumentException("Tenant must have a StripeCustomerId");
+        }
+
+        // ReSharper disable once UseObjectOrCollectionInitializer
+        var options = new CustomerUpdateOptions();
+        options.Email = tenant.BillingEmail;
+        options.Name = tenant.CompanyName;
+        options.Address = new AddressOptions
+        {
+            Line1 = tenant.CompanyAddress.Line1,
+            Line2 = tenant.CompanyAddress.Line2 ?? "",
+            City = tenant.CompanyAddress.City,
+            State = tenant.CompanyAddress.State,
+            PostalCode = tenant.CompanyAddress.ZipCode,
+            Country = tenant.CompanyAddress.Country
         };
-        return new CustomerService().GetAsync(stripeCustomerId, options);
+        options.Metadata = new Dictionary<string, string> { { "tenant_id", tenant.Id } };
+        
+        return new CustomerService().UpdateAsync(tenant.StripeCustomerId, options);
+    }
+
+    public Task DeleteCustomerAsync(string stripeCustomerId)
+    {
+        var options = new CustomerDeleteOptions();
+        return new CustomerService().DeleteAsync(stripeCustomerId, options);
     }
 
     public async Task<StripeSubscription> CreateSubscriptionAsync(SubscriptionPlan plan, Tenant tenant, int employeeCount)

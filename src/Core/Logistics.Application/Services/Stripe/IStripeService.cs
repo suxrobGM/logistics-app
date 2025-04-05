@@ -8,6 +8,13 @@ namespace Logistics.Application.Services;
 public interface IStripeService
 {
     /// <summary>
+    /// Retrieve a Stripe customer by their ID.
+    /// </summary>
+    /// <param name="stripeCustomerId">Stripe customer ID.</param>
+    /// <returns>Stripe customer object.</returns>
+    Task<StripeCustomer> GetCustomerAsync(string stripeCustomerId);
+    
+    /// <summary>
     /// Create a new customer in Stripe for the given tenant.
     /// </summary>
     /// <param name="tenant">Tenant for which the customer is to be created.</param>
@@ -15,11 +22,17 @@ public interface IStripeService
     Task<StripeCustomer> CreateCustomerAsync(Tenant tenant);
     
     /// <summary>
-    /// Retrieve a Stripe customer by their ID.
+    /// Update an existing Stripe customer with the tenant's information.
+    /// </summary>
+    /// <param name="tenant">Tenant for which the customer is to be updated.</param>
+    /// <returns>Stripe customer object.</returns>
+    Task<StripeCustomer> UpdateCustomerAsync(Tenant tenant);
+    
+    /// <summary>
+    /// Delete a Stripe customer by their ID.
     /// </summary>
     /// <param name="stripeCustomerId">Stripe customer ID.</param>
-    /// <returns>Stripe customer object.</returns>
-    Task<StripeCustomer> GetCustomerAsync(string stripeCustomerId);
+    Task DeleteCustomerAsync(string stripeCustomerId);
     
     /// <summary>
     /// Create a new subscription in Stripe for the given plan and customer.
