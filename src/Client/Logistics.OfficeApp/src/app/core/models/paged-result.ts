@@ -1,4 +1,4 @@
-import {Result} from "./_result";
+import {Result} from "./result";
 
 export interface PagedResponseResult<T> extends Result<T[]> {
   totalItems: number;
