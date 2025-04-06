@@ -36,7 +36,9 @@ internal sealed class UpdateSubscriptionPlanHandler : RequestHandler<UpdateSubsc
         subscriptionPlan.Name = PropertyUpdater.UpdateIfChanged(req.Name, subscriptionPlan.Name);
         subscriptionPlan.Description = PropertyUpdater.UpdateIfChanged(req.Description, subscriptionPlan.Description);
         subscriptionPlan.Price = PropertyUpdater.UpdateIfChanged(req.Price, subscriptionPlan.Price);
-        subscriptionPlan.HasTrial = PropertyUpdater.UpdateIfChanged(req.HasTrial, subscriptionPlan.HasTrial);
+        subscriptionPlan.TrialPeriod = PropertyUpdater.UpdateIfChanged(req.TrialPeriod, subscriptionPlan.TrialPeriod);
+        subscriptionPlan.Interval = PropertyUpdater.UpdateIfChanged(req.Interval, subscriptionPlan.Interval);
+        subscriptionPlan.IntervalCount = PropertyUpdater.UpdateIfChanged(req.IntervalCount, subscriptionPlan.IntervalCount);
         
         await _stripeService.UpdateSubscriptionPlanAsync(subscriptionPlan);
         _masterUow.Repository<SubscriptionPlan>().Update(subscriptionPlan);

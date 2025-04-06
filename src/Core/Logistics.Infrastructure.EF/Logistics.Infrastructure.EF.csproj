@@ -25,9 +25,5 @@
         <ProjectReference Include="..\..\Shared\Logistics.Shared.Consts\Logistics.Shared.Consts.csproj" />
         <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj"/>
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Migrations\" />
-    </ItemGroup>
 	
 </Project>

@@ -53,7 +53,10 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     StripePriceId = table.Column<string>(type: "text", nullable: true),
                     StripeProductId = table.Column<string>(type: "text", nullable: true),
-                    HasTrial = table.Column<bool>(type: "boolean", nullable: false)
+                    Interval = table.Column<int>(type: "integer", nullable: false),
+                    IntervalCount = table.Column<int>(type: "integer", nullable: false),
+                    BillingCycleAnchor = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    TrialPeriod = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -152,7 +155,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     PlanId = table.Column<string>(type: "text", nullable: false),
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    NextPaymentDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    NextBillingDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     TrialEndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     StripeSubscriptionId = table.Column<string>(type: "text", nullable: true),
                     StripeCustomerId = table.Column<string>(type: "text", nullable: true)

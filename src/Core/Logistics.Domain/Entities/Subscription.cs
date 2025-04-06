@@ -1,4 +1,5 @@
 ﻿using Logistics.Domain.Core;
+using Logistics.Domain.Utilities;
 using Logistics.Shared.Consts;
 
 namespace Logistics.Domain.Entities;
@@ -12,7 +13,7 @@ public class Subscription : Entity
     public virtual required SubscriptionPlan Plan { get; set; }
     public DateTime StartDate { get; set; } = DateTime.UtcNow;
     public DateTime? EndDate { get; set; }
-    public DateTime? NextPaymentDate { get; set; }
+    public DateTime? NextBillingDate { get; set; }
     public DateTime? TrialEndDate { get; set; }
     public string? StripeSubscriptionId { get; set; }
     public string? StripeCustomerId { get; set; }
@@ -24,8 +25,8 @@ public class Subscription : Entity
         return new Subscription
         {
             Status = SubscriptionStatus.Active,
-            NextPaymentDate = DateTime.UtcNow.AddDays(30),
-            TrialEndDate = plan.HasTrial ? DateTime.UtcNow.AddDays(30) : null,
+            NextBillingDate = SubscriptionUtils.GetNextBillingDate(plan.Interval, plan.IntervalCount),
+            TrialEndDate = SubscriptionUtils.GetTrialEndDate(plan.TrialPeriod),
             TenantId = tenant.Id,
             Tenant = tenant,
             PlanId = plan.Id,

@@ -1,5 +1,6 @@
 import {HttpHeaders} from "@angular/common/http";
 import {Injectable} from "@angular/core";
+import {Subject} from "rxjs";
 import {SubscriptionStatus, TenantDto} from "@/core/models";
 import {ApiService} from "./api.service";
 import {CookieService} from "./cookie.service";
@@ -8,6 +9,12 @@ import {CookieService} from "./cookie.service";
 export class TenantService {
   private tenantId: string | null = null;
   private tenantData: TenantDto | null = null;
+  private readonly tenantDataChangedSource = new Subject<TenantDto | null>();
+
+  /**
+   * Observable that emits when the tenant data changes
+   */
+  public readonly tenantDataChanged$ = this.tenantDataChangedSource.asObservable();
 
   constructor(
     private readonly cookieService: CookieService,
@@ -25,6 +32,11 @@ export class TenantService {
   setTenantId(tenantId: string): void {
     this.tenantId = tenantId;
     this.setTenantCookie(tenantId);
+
+    // Clear existing data and notify subscribers
+    this.tenantData = null;
+    this.tenantDataChangedSource.next(null);
+
     this.fetchTenantData(tenantId);
   }
 
@@ -96,6 +108,7 @@ export class TenantService {
       }
 
       this.tenantData = result.data;
+      this.tenantDataChangedSource.next(result.data);
       console.log("Tenant data:", result.data);
     });
   }

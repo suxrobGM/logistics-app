@@ -1,4 +1,5 @@
 ﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Stripe;
@@ -103,7 +104,8 @@ internal class StripeService : IStripeService
             { "plan_id", plan.Id }
         };
         options.PaymentBehavior = "default_incomplete"; // For trials or manual confirmation
-        options.TrialEnd = plan.HasTrial ? DateTime.UtcNow.AddDays(30) : null;
+        options.BillingCycleAnchor = plan.BillingCycleAnchor;
+        options.TrialEnd = SubscriptionUtils.GetTrialEndDate(plan.TrialPeriod);
         
         var subscription = await new SubscriptionService().CreateAsync(options);
         _logger.LogInformation("Created Stripe subscription for tenant {TenantId}", tenant.Id);
@@ -169,8 +171,8 @@ internal class StripeService : IStripeService
             Currency = plan.Currency.ToLower(),
             Recurring = new PriceRecurringOptions
             {
-                Interval = "month",
-                IntervalCount = 1,
+                Interval = plan.Interval.ToString().ToLower(),
+                IntervalCount = plan.IntervalCount,
                 UsageType = "licensed"
             },
             Metadata = new Dictionary<string, string>
@@ -178,6 +180,20 @@ internal class StripeService : IStripeService
                 ["plan_id"] = plan.Id
             }
         });
+        
+        if (plan.BillingCycleAnchor.HasValue)
+        {
+            var billingCycleAnchorStr = plan.BillingCycleAnchor.Value.ToString("O");
+            await new PriceService().UpdateAsync(price.Id, new PriceUpdateOptions
+            {
+                Metadata = new Dictionary<string, string>
+                {
+                    ["billing_cycle_anchor"] = billingCycleAnchorStr
+                }
+            });
+            
+            _logger.LogInformation("Updated Stripe price for plan {PlanId} with billing cycle anchor {BillingCycleAnchor}", plan.Id, billingCycleAnchorStr);
+        }
 
         _logger.LogInformation("Created Stripe price for plan {PlanId}", plan.Id);
         return (product, price);
@@ -209,16 +225,22 @@ internal class StripeService : IStripeService
         
         _logger.LogInformation("Updated Stripe product for plan {PlanId}", plan.Id);
 
-        // 2. Check if price needs update
+        // Check if price needs update
         var priceService = new PriceService();
         var existingPrice = await priceService.GetAsync(plan.StripePriceId);
         var priceChanged = existingPrice.UnitAmountDecimal != plan.Price * 100;
         var currencyChanged = !existingPrice.Currency.Equals(plan.Currency, StringComparison.OrdinalIgnoreCase);
+        
+        // Check if billing cycle changed
+        var billingChanged =
+            !existingPrice.Recurring.Interval.Equals(plan.Interval.ToString(),
+                StringComparison.CurrentCultureIgnoreCase) ||
+            existingPrice.Recurring.IntervalCount != plan.IntervalCount;
 
         var activePrice = existingPrice;
-    
-        // 3. Create new price if changes detected
-        if (priceChanged || currencyChanged)
+        
+        // Create a new price if any of the price, currency, or billing cycle has changed
+        if (priceChanged || currencyChanged || billingChanged)
         {
             activePrice = await priceService.CreateAsync(new PriceCreateOptions
             {
@@ -227,8 +249,8 @@ internal class StripeService : IStripeService
                 Currency = plan.Currency.ToLower(),
                 Recurring = new PriceRecurringOptions
                 {
-                    Interval = "month",
-                    IntervalCount = 1,
+                    Interval = plan.Interval.ToString().ToLower(),
+                    IntervalCount = plan.IntervalCount,
                     UsageType = "licensed"
                 },
                 Metadata = new Dictionary<string, string>

@@ -36,6 +36,7 @@
                         </RadzenButton>
                         <RadzenButton Icon="arrow_back"
                                       Text="Back"
+                                      Disabled="@IsLoading"
                                       Click="@(() => Navigation.NavigateTo("/subscriptions"))">
                         </RadzenButton>
                     </RadzenStack>

@@ -1,8 +1,8 @@
-import {Component, input} from "@angular/core";
 import {CommonModule} from "@angular/common";
+import {Component, input, signal} from "@angular/core";
 import {InvoiceDto, TenantDto} from "@/core/models";
-import {TenantService} from "@/core/services";
 import {AddressPipe} from "@/core/pipes";
+import {TenantService} from "@/core/services";
 
 @Component({
   selector: "app-invoice-details",
@@ -11,10 +11,10 @@ import {AddressPipe} from "@/core/pipes";
   imports: [CommonModule, AddressPipe],
 })
 export class InvoiceDetailsComponent {
-  public tenantData: TenantDto | null;
-  public readonly invoice = input.required<InvoiceDto>();
+  readonly tenantData = signal<TenantDto | null>(null);
+  readonly invoice = input.required<InvoiceDto>();
 
-  constructor(private readonly tenantService: TenantService) {
-    this.tenantData = tenantService.getTenantData();
+  constructor(readonly tenantService: TenantService) {
+    this.tenantData.set(this.tenantService.getTenantData());
   }
 }

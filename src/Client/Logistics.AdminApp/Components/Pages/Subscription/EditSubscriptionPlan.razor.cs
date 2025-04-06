@@ -42,34 +42,36 @@ public partial class EditSubscriptionPlan : PageBase
         }
     }
 
-    private async Task SubmitAsync()
+    private async Task SubmitAsync(SubscriptionPlanDto model)
     {
         if (EditMode)
         {
             var success = await CallApiAsync(api => api.UpdateSubscriptionPlanAsync(new UpdateSubscriptionPlan
             {
-                Id = _subscriptionPlan.Id,
-                Name = _subscriptionPlan.Name,
-                Description = _subscriptionPlan.Description,
-                Price = _subscriptionPlan.Price,
-                HasTrial = _subscriptionPlan.HasTrial
+                Id = model.Id,
+                Name = model.Name,
+                Description = model.Description,
+                Price = model.Price,
+                TrialPeriod = model.TrialPeriod,
+                Interval = model.Interval,
+                IntervalCount = model.IntervalCount
             }));
 
-            if (!success)
+            if (success)
             {
-                return;
+                ShowNotification("The subscription plan has been saved successfully");
             }
-            
-            ShowNotification("The subscription plan has been saved successfully");
         }
         else
         {
             var success = await CallApiAsync(api => api.CreateSubscriptionPlanAsync(new CreateSubscriptionPlan
             {
-                Name = _subscriptionPlan.Name,
-                Description = _subscriptionPlan.Description,
-                Price = _subscriptionPlan.Price,
-                HasTrial = _subscriptionPlan.HasTrial
+                Name = model.Name,
+                Description = model.Description,
+                Price = model.Price,
+                TrialPeriod = model.TrialPeriod,
+                Interval = model.Interval,
+                IntervalCount = model.IntervalCount
             }));
 
             if (success)

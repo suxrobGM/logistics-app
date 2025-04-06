@@ -13,7 +13,7 @@ public static class SubscriptionMapper
             Status = entity.Status,
             StartDate = entity.StartDate,
             EndDate = entity.EndDate,
-            NextPaymentDate = entity.NextPaymentDate,
+            NextBillingDate = entity.NextBillingDate,
             TrialEndDate = entity.TrialEndDate,
             Tenant = GetTenantDto(entity.Tenant),
             Plan = entity.Plan.ToDto(),

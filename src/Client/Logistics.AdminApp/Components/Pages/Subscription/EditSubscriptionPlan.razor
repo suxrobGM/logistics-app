@@ -19,10 +19,7 @@
                 </RadzenProgressBarCircular>
             }
 
-            <EditForm Model="_subscriptionPlan" OnValidSubmit="SubmitAsync">
-                <DataAnnotationsValidator/>
-                <ValidationSummary/>
-
+            <RadzenTemplateForm TItem="SubscriptionPlanDto" Data="_subscriptionPlan" Submit="SubmitAsync">
                 <RadzenStack Orientation="Orientation.Vertical">
                     <RadzenFormField Text="Plan Name" Variant="Variant.Outlined">
                         <RadzenTextBox @bind-Value="_subscriptionPlan.Name"/>
@@ -31,12 +28,17 @@
                         <RadzenTextArea @bind-Value="_subscriptionPlan.Description" Rows="3"/>
                     </RadzenFormField>
                     <RadzenFormField Text="Price" Variant="Variant.Outlined">
-                        <RadzenNumeric TValue="decimal" Min="0" @bind-Value="_subscriptionPlan.Price"/>
+                        <RadzenNumeric TValue="decimal" Min="0" Format="c" @bind-Value="_subscriptionPlan.Price"/>
                     </RadzenFormField>
-                    <div>
-                        <RadzenCheckBox TValue="bool" Name="TrialCheckbox" @bind-Value="_subscriptionPlan.HasTrial"></RadzenCheckBox>
-                        <RadzenLabel Text="Has Trial" Component="TrialCheckbox" class="rz-ms-2" />
-                    </div>
+                    <RadzenFormField Text="Billing Interval" Variant="Variant.Outlined">
+                        <RadzenDropDown @bind-Value="_subscriptionPlan.Interval" Data="@(Enum.GetValues(typeof(BillingInterval)).Cast<Enum>())" />
+                    </RadzenFormField>
+                    <RadzenFormField Text="Billing Interval Count" Variant="Variant.Outlined">
+                        <RadzenNumeric TValue="int" Min="1" @bind-Value="_subscriptionPlan.IntervalCount"/>
+                    </RadzenFormField>
+                    <RadzenFormField Text="Trial Period" Variant="Variant.Outlined">
+                        <RadzenDropDown @bind-Value="_subscriptionPlan.TrialPeriod" Data="@(Enum.GetValues(typeof(TrialPeriod)).Cast<Enum>())" />
+                    </RadzenFormField>
                     <RadzenStack Orientation="Orientation.Horizontal">
                         <RadzenButton Icon="save"
                                       Text="Save"
@@ -49,7 +51,7 @@
                         </RadzenButton>
                     </RadzenStack>
                 </RadzenStack>
-            </EditForm>
+            </RadzenTemplateForm>
         </RadzenCard>
     </RadzenColumn>
 </RadzenRow>

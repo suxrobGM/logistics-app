@@ -22,7 +22,7 @@ public class GetSubscriptions : BaseSpecification<Subscription>
             "tenantname" => i => i.Tenant.Name,
             "tenantcompanyname" => i => i.Tenant.CompanyName,
             "planname" => i => i.Plan.Name,
-            "nextpaymentdate" => i => i.NextPaymentDate,
+            "nextbillingdate" => i => i.NextBillingDate,
             "startdate" => i => i.StartDate,
             "enddate" => i => i.EndDate,
             "trialenddate" => i => i.TrialEndDate,

@@ -30,7 +30,9 @@ internal sealed class CreateSubscriptionPlanHandler : RequestHandler<CreateSubsc
             Name = req.Name,
             Description = req.Description,
             Price = req.Price,
-            HasTrial = req.HasTrial
+            TrialPeriod = req.TrialPeriod,
+            Interval = req.Interval,
+            IntervalCount = req.IntervalCount
         };
 
         var (product, price) = await _stripeService.CreateSubscriptionPlanAsync(subscriptionPlan);

@@ -50,7 +50,7 @@ export const sidebarNavItems: MenuItem[] = [
     ],
   },
   {
-    label: "Subscriptions",
+    label: "Subscription",
     icon: "bi bi-credit-card h2",
     route: "/subscription/manage",
   },

@@ -15,7 +15,9 @@ public static class SubscriptionPlanMapper
             Price = entity.Price,
             StripePriceId = entity.StripePriceId,
             StripeProductId = entity.StripeProductId,
-            HasTrial = entity.HasTrial,
+            TrialPeriod = entity.TrialPeriod,
+            Interval = entity.Interval,
+            IntervalCount = entity.IntervalCount
         };
     }
 }

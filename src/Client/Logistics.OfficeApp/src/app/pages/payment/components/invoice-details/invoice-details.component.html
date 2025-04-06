@@ -6,7 +6,7 @@
     <h6>Carrier:</h6>
   </div>
   <div class="col-8">
-    {{ tenantData?.companyName }}
+    {{ tenantData()?.companyName }}
   </div>
 </div>
 <div class="row mb-3">
@@ -14,7 +14,7 @@
     <h6>Carrier Address:</h6>
   </div>
   <div class="col-8">
-    {{ tenantData?.companyAddress | address }}
+    {{ tenantData()?.companyAddress | address }}
   </div>
 </div>
 <div class="row mb-3">

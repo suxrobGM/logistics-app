@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.EF.Migrations.Master
 {
     [DbContext(typeof(MasterDbContext))]
-    [Migration("20250405193056_Version_0001")]
+    [Migration("20250405233736_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -91,7 +91,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime?>("NextPaymentDate")
+                    b.Property<DateTime?>("NextBillingDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("PlanId")
@@ -198,6 +198,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     b.Property<string>("Id")
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("BillingCycleAnchor")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -208,8 +211,11 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<bool>("HasTrial")
-                        .HasColumnType("boolean");
+                    b.Property<int>("Interval")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("IntervalCount")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -224,6 +230,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
 
                     b.Property<string>("StripeProductId")
                         .HasColumnType("text");
+
+                    b.Property<int>("TrialPeriod")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
