@@ -1,15 +1,15 @@
-import {Component} from "@angular/core";
 import {CommonModule, CurrencyPipe, DatePipe, PercentPipe} from "@angular/common";
+import {Component} from "@angular/core";
 import {RouterLink} from "@angular/router";
-import {TableLazyLoadEvent, TableModule} from "primeng/table";
-import {InputTextModule} from "primeng/inputtext";
 import {SharedModule} from "primeng/api";
-import {CardModule} from "primeng/card";
-import {TooltipModule} from "primeng/tooltip";
 import {ButtonModule} from "primeng/button";
-import {EmployeeDto} from "@/core/models";
-import {ApiService} from "@/core/services";
+import {CardModule} from "primeng/card";
+import {InputTextModule} from "primeng/inputtext";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
+import {TooltipModule} from "primeng/tooltip";
+import {ApiService} from "@/core/api";
 import {SalaryType, SalaryTypeEnum} from "@/core/enums";
+import {EmployeeDto} from "@/core/models";
 
 @Component({
   selector: "app-list-employees",

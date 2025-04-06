@@ -1,12 +1,12 @@
-import {Component, OnInit, input, output} from "@angular/core";
 import {CommonModule} from "@angular/common";
+import {Component, OnInit, input, output} from "@angular/core";
 import {CardModule} from "primeng/card";
-import {SkeletonModule} from "primeng/skeleton";
 import {ChartModule} from "primeng/chart";
-import {DailyGrossesDto} from "@/core/models";
-import {DateUtils, Converters} from "@/core/utils";
-import {ApiService} from "@/core/services";
+import {SkeletonModule} from "primeng/skeleton";
 import {RangeCalendarComponent} from "@/components";
+import {ApiService} from "@/core/api";
+import {DailyGrossesDto} from "@/core/models";
+import {Converters, DateUtils} from "@/core/utils";
 
 @Component({
   selector: "app-truck-grosses-linechart",

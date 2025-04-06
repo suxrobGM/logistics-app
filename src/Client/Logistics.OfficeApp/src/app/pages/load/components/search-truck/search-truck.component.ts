@@ -1,8 +1,8 @@
-import {Component, Input, forwardRef, output} from "@angular/core";
 import {CommonModule} from "@angular/common";
+import {Component, Input, forwardRef, output} from "@angular/core";
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
-import {ApiService} from "@/core/services";
+import {ApiService} from "@/core/api";
 import {TruckData, TruckHelper} from "../../shared";
 
 @Component({

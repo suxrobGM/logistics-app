@@ -1,13 +1,14 @@
-import {Component, OnInit} from "@angular/core";
 import {CommonModule} from "@angular/common";
+import {Component, OnInit} from "@angular/core";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ActivatedRoute, Router, RouterModule} from "@angular/router";
-import {CardModule} from "primeng/card";
 import {ButtonModule} from "primeng/button";
+import {CardModule} from "primeng/card";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {ApiService, ToastService} from "@/core/services";
-import {UpdateCustomerCommand} from "@/core/models";
 import {ValidationSummaryComponent} from "@/components";
+import {ApiService} from "@/core/api";
+import {UpdateCustomerCommand} from "@/core/models";
+import {ToastService} from "@/core/services";
 
 @Component({
   selector: "app-edit-customer",

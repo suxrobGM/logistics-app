@@ -1,21 +1,22 @@
-import {Component, OnInit} from "@angular/core";
 import {CommonModule} from "@angular/common";
+import {Component, OnInit} from "@angular/core";
 import {ActivatedRoute, RouterModule} from "@angular/router";
+import {ButtonModule} from "primeng/button";
+import {CardModule} from "primeng/card";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
-import {CardModule} from "primeng/card";
-import {ButtonModule} from "primeng/button";
-import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {PaymentStatusTagComponent} from "@/components";
+import {ApiService} from "@/core/api";
 import {
-  SalaryType,
-  PaymentStatus,
   PaymentMethod,
   PaymentMethodEnum,
+  PaymentStatus,
+  SalaryType,
   SalaryTypeEnum,
 } from "@/core/enums";
 import {EmployeeDto, PayrollDto} from "@/core/models";
-import {ApiService, ToastService} from "@/core/services";
-import {PaymentStatusTagComponent} from "@/components";
+import {ToastService} from "@/core/services";
 
 @Component({
   selector: "app-view-employee-payrolls",

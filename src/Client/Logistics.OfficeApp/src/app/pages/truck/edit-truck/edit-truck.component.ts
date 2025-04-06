@@ -1,15 +1,16 @@
 import {Component, OnInit} from "@angular/core";
-import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {ConfirmationService} from "primeng/api";
-import {ButtonModule} from "primeng/button";
 import {AutoCompleteModule} from "primeng/autocomplete";
-import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {ToastModule} from "primeng/toast";
+import {ApiService} from "@/core/api";
 import {CreateTruckCommand, EmployeeDto, UpdateTruckCommand} from "@/core/models";
-import {ApiService, ToastService} from "@/core/services";
+import {ToastService} from "@/core/services";
 
 @Component({
   selector: "app-edit-truck",

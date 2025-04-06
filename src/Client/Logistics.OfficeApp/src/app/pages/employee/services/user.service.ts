@@ -1,9 +1,9 @@
 import {Injectable} from "@angular/core";
-import {map, Observable} from "rxjs";
-import {RoleDto, UserDto} from "@/core/models";
-import {ApiService} from "@/core/services";
-import {UserRole} from "@/core/enums";
+import {Observable, map} from "rxjs";
+import {ApiService} from "@/core/api";
 import {AuthService} from "@/core/auth";
+import {UserRole} from "@/core/enums";
+import {RoleDto, UserDto} from "@/core/models";
 
 @Injectable()
 export class UserService {

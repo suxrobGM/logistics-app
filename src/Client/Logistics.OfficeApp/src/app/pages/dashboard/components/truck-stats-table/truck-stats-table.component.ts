@@ -1,15 +1,15 @@
-import {Component} from "@angular/core";
 import {CommonModule, CurrencyPipe, DatePipe} from "@angular/common";
+import {Component} from "@angular/core";
 import {RouterLink} from "@angular/router";
-import {TableLazyLoadEvent, TableModule} from "primeng/table";
-import {CardModule} from "primeng/card";
 import {ButtonModule} from "primeng/button";
+import {CardModule} from "primeng/card";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
-import {PagedIntervalQuery, TruckStatsDto} from "@/core/models";
-import {ApiService} from "@/core/services";
-import {DateUtils} from "@/core/utils";
-import {DistanceUnitPipe} from "@/core/pipes";
 import {RangeCalendarComponent} from "@/components";
+import {ApiService} from "@/core/api";
+import {PagedIntervalQuery, TruckStatsDto} from "@/core/models";
+import {DistanceUnitPipe} from "@/core/pipes";
+import {DateUtils} from "@/core/utils";
 
 @Component({
   selector: "app-truck-stats-table",

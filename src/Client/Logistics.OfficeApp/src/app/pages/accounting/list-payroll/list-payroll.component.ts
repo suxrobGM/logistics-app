@@ -1,12 +1,13 @@
-import {Component} from "@angular/core";
 import {CommonModule} from "@angular/common";
+import {Component} from "@angular/core";
 import {RouterModule} from "@angular/router";
-import {TableLazyLoadEvent, TableModule} from "primeng/table";
+import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {InputTextModule} from "primeng/inputtext";
-import {ButtonModule} from "primeng/button";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
-import {PayrollDto} from "@/core/models";
+import {PaymentStatusTagComponent} from "@/components";
+import {ApiService} from "@/core/api";
 import {
   PaymentMethod,
   PaymentMethodEnum,
@@ -14,8 +15,7 @@ import {
   SalaryType,
   SalaryTypeEnum,
 } from "@/core/enums";
-import {ApiService} from "@/core/services";
-import {PaymentStatusTagComponent} from "@/components";
+import {PayrollDto} from "@/core/models";
 
 @Component({
   selector: "app-list-payroll",

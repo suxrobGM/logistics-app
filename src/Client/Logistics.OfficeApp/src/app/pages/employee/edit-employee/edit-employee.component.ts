@@ -1,21 +1,22 @@
-import {Component, OnInit, ViewEncapsulation} from "@angular/core";
 import {CommonModule} from "@angular/common";
+import {Component, OnInit, ViewEncapsulation} from "@angular/core";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {ConfirmationService} from "primeng/api";
 import {ButtonModule} from "primeng/button";
-import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {CardModule} from "primeng/card";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
-import {ToastModule} from "primeng/toast";
 import {DropdownModule} from "primeng/dropdown";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {ToastModule} from "primeng/toast";
+import {ValidationSummaryComponent} from "@/components";
+import {ApiService} from "@/core/api";
+import {AuthService} from "@/core/auth";
 import {SalaryType, SalaryTypeEnum, UserRole} from "@/core/enums";
 import {EmployeeDto, UpdateEmployeeCommand} from "@/core/models";
-import {ApiService, ToastService} from "@/core/services";
-import {AuthService} from "@/core/auth";
-import {ChangeRoleDialogComponent} from "../components";
-import {ValidationSummaryComponent} from "@/components";
+import {ToastService} from "@/core/services";
 import {NumberUtils} from "@/core/utils";
+import {ChangeRoleDialogComponent} from "../components";
 
 @Component({
   selector: "app-edit-employee",

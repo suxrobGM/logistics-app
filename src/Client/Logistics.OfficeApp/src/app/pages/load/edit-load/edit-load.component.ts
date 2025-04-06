@@ -1,20 +1,15 @@
-import {Component, OnInit} from "@angular/core";
 import {CommonModule} from "@angular/common";
-import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {Component, OnInit} from "@angular/core";
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ActivatedRoute, Router, RouterLink} from "@angular/router";
 import {ConfirmationService} from "primeng/api";
+import {AutoCompleteModule} from "primeng/autocomplete";
+import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
-import {ToastModule} from "primeng/toast";
-import {ButtonModule} from "primeng/button";
 import {DropdownModule} from "primeng/dropdown";
-import {AutoCompleteModule} from "primeng/autocomplete";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {globalConfig} from "@/configs";
-import {EnumType, LoadStatus, LoadStatusEnum} from "@/core/enums";
-import {AddressDto, CustomerDto, UpdateLoadCommand} from "@/core/models";
-import {ApiService, ToastService} from "@/core/services";
-import {Converters} from "@/core/utils";
+import {ToastModule} from "primeng/toast";
 import {
   AddressAutocompleteComponent,
   DirectionsMapComponent,
@@ -22,8 +17,14 @@ import {
   SelectedAddressEvent,
   ValidationSummaryComponent,
 } from "@/components";
-import {TruckData, TruckHelper} from "../shared";
+import {globalConfig} from "@/configs";
+import {ApiService} from "@/core/api";
+import {EnumType, LoadStatus, LoadStatusEnum} from "@/core/enums";
+import {AddressDto, CustomerDto, UpdateLoadCommand} from "@/core/models";
+import {ToastService} from "@/core/services";
+import {Converters} from "@/core/utils";
 import {SearchCustomerComponent, SearchTruckComponent} from "../components";
+import {TruckData, TruckHelper} from "../shared";
 
 @Component({
   selector: "app-edit-load",

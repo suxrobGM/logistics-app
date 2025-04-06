@@ -1,20 +1,20 @@
-import {Component} from "@angular/core";
 import {CommonModule} from "@angular/common";
+import {Component} from "@angular/core";
 import {RouterLink} from "@angular/router";
-import {TableLazyLoadEvent, TableModule} from "primeng/table";
-import {InputTextModule} from "primeng/inputtext";
 import {SharedModule} from "primeng/api";
-import {CardModule} from "primeng/card";
-import {TooltipModule} from "primeng/tooltip";
 import {ButtonModule} from "primeng/button";
+import {CardModule} from "primeng/card";
+import {InputGroupModule} from "primeng/inputgroup";
+import {InputGroupAddonModule} from "primeng/inputgroupaddon";
+import {InputTextModule} from "primeng/inputtext";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
-import {InputGroupModule} from 'primeng/inputgroup';
-import {InputGroupAddonModule} from 'primeng/inputgroupaddon';
+import {TooltipModule} from "primeng/tooltip";
+import {PaymentStatusTagComponent} from "@/components";
+import {ApiService} from "@/core/api";
 import {LoadStatus, LoadStatusEnum} from "@/core/enums";
 import {LoadDto} from "@/core/models";
-import {ApiService} from "@/core/services";
 import {AddressPipe, DistanceUnitPipe} from "@/core/pipes";
-import {PaymentStatusTagComponent} from "@/components";
 
 @Component({
   selector: "app-list-loads",

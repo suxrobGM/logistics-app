@@ -1,17 +1,18 @@
-import {Component, OnInit} from "@angular/core";
 import {CommonModule} from "@angular/common";
-import {FormGroup, FormControl, Validators, ReactiveFormsModule} from "@angular/forms";
+import {Component, OnInit} from "@angular/core";
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ActivatedRoute} from "@angular/router";
-import {CardModule} from "primeng/card";
 import {ButtonModule} from "primeng/button";
+import {CardModule} from "primeng/card";
+import {InputMaskModule} from "primeng/inputmask";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {RadioButtonModule} from "primeng/radiobutton";
-import {InputMaskModule} from "primeng/inputmask";
+import {AddressFormComponent, ValidationSummaryComponent} from "@/components";
+import {ApiService} from "@/core/api";
 import {PaymentMethod, PaymentMethodEnum, PaymentStatus} from "@/core/enums";
 import {AddressDto, InvoiceDto, PayrollDto, ProcessPaymentCommand} from "@/core/models";
+import {ToastService} from "@/core/services";
 import {RegexPatterns} from "@/core/utils";
-import {ApiService, ToastService} from "@/core/services";
-import {AddressFormComponent, ValidationSummaryComponent} from "@/components";
 import {InvoiceDetailsComponent, PayrollDetailsComponent} from "../components";
 
 @Component({

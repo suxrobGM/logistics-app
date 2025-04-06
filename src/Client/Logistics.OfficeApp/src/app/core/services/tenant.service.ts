@@ -1,8 +1,8 @@
 import {HttpHeaders} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Subject} from "rxjs";
+import {ApiService} from "@/core/api";
 import {SubscriptionStatus, TenantDto} from "@/core/models";
-import {ApiService} from "./api.service";
 import {CookieService} from "./cookie.service";
 
 @Injectable({providedIn: "root"})

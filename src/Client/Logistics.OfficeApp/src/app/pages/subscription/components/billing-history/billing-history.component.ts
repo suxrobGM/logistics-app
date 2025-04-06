@@ -2,9 +2,10 @@ import {CommonModule} from "@angular/common";
 import {Component, model, signal} from "@angular/core";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
+import {ApiService} from "@/core/api";
 import {SubscriptionPaymentDto} from "@/core/models";
 import {AddressPipe} from "@/core/pipes";
-import {ApiService, TenantService} from "@/core/services";
+import {TenantService} from "@/core/services";
 
 @Component({
   selector: "app-billing-history",

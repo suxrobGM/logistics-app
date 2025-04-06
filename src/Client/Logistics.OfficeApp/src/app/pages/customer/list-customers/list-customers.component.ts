@@ -1,15 +1,16 @@
-import {Component} from "@angular/core";
 import {CommonModule} from "@angular/common";
+import {Component} from "@angular/core";
 import {RouterLink} from "@angular/router";
+import {ConfirmationService} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {InputTextModule} from "primeng/inputtext";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
-import {ConfirmDialogModule} from "primeng/confirmdialog";
-import {ConfirmationService} from "primeng/api";
+import {ApiService} from "@/core/api";
 import {CustomerDto} from "@/core/models";
-import {ApiService, ToastService} from "@/core/services";
+import {ToastService} from "@/core/services";
 
 @Component({
   selector: "app-list-customers",

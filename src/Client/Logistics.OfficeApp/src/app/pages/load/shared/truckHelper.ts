@@ -1,5 +1,5 @@
-import {ApiService} from "@/core/services";
 import {Observable, map} from "rxjs";
+import {ApiService} from "@/core/api";
 
 export class TruckHelper {
   static findTruckDrivers(apiService: ApiService, searchQuery: string): Observable<TruckData[]> {

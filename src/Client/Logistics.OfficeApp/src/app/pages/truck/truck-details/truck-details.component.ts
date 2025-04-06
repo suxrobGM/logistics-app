@@ -1,13 +1,13 @@
+import {CommonModule, CurrencyPipe} from "@angular/common";
 import {Component, OnInit} from "@angular/core";
 import {ActivatedRoute, RouterLink} from "@angular/router";
-import {CurrencyPipe, CommonModule} from "@angular/common";
-import {SkeletonModule} from "primeng/skeleton";
 import {CardModule} from "primeng/card";
+import {SkeletonModule} from "primeng/skeleton";
+import {BarChartDrawnEvent, GeolocationMapComponent, GrossesBarchartComponent} from "@/components";
+import {globalConfig} from "@/configs";
+import {ApiService} from "@/core/api";
 import {DailyGrossesDto, MonthlyGrossesDto, TruckDto, TruckGeolocationDto} from "@/core/models";
 import {DistanceUnitPipe} from "@/core/pipes";
-import {ApiService} from "@/core/services";
-import {GeolocationMapComponent, GrossesBarchartComponent, BarChartDrawnEvent} from "@/components";
-import {globalConfig} from "@/configs";
 import {LineChartDrawnEvent, TruckGrossesLinechartComponent} from "../components";
 
 @Component({
@@ -39,8 +39,8 @@ export class TruckDetailsComponent implements OnInit {
   public truckLocations: TruckGeolocationDto[] = [];
 
   constructor(
-    private apiService: ApiService,
-    private route: ActivatedRoute
+    private readonly apiService: ApiService,
+    private readonly route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {

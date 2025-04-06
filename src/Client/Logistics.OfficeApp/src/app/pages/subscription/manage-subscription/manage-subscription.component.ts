@@ -9,8 +9,9 @@ import {DialogModule} from "primeng/dialog";
 import {InputNumberModule} from "primeng/inputnumber";
 import {TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
+import {ApiService} from "@/core/api";
 import {SubscriptionDto, SubscriptionStatus} from "@/core/models";
-import {ApiService, TenantService, ToastService} from "@/core/services";
+import {TenantService, ToastService} from "@/core/services";
 import {BillingHistoryComponent} from "../components";
 
 @Component({

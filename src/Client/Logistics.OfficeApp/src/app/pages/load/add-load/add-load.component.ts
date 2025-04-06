@@ -1,17 +1,12 @@
 import {Component, OnInit} from "@angular/core";
-import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Router, RouterLink} from "@angular/router";
-import {CardModule} from "primeng/card";
-import {ToastModule} from "primeng/toast";
-import {ButtonModule} from "primeng/button";
-import {DropdownModule} from "primeng/dropdown";
 import {AutoCompleteModule} from "primeng/autocomplete";
+import {ButtonModule} from "primeng/button";
+import {CardModule} from "primeng/card";
+import {DropdownModule} from "primeng/dropdown";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {globalConfig} from "@/configs";
-import {AuthService} from "@/core/auth";
-import {AddressDto, CreateLoadCommand, CustomerDto} from "@/core/models";
-import {ApiService, ToastService} from "@/core/services";
-import {Converters} from "@/core/utils";
+import {ToastModule} from "primeng/toast";
 import {
   AddressAutocompleteComponent,
   DirectionsMapComponent,
@@ -19,6 +14,12 @@ import {
   SelectedAddressEvent,
   ValidationSummaryComponent,
 } from "@/components";
+import {globalConfig} from "@/configs";
+import {ApiService} from "@/core/api";
+import {AuthService} from "@/core/auth";
+import {AddressDto, CreateLoadCommand, CustomerDto} from "@/core/models";
+import {ToastService} from "@/core/services";
+import {Converters} from "@/core/utils";
 import {SearchCustomerComponent, SearchTruckComponent} from "../components";
 import {TruckData} from "../shared";
 

@@ -1,14 +1,14 @@
-import {Component} from "@angular/core";
 import {CommonModule} from "@angular/common";
+import {Component} from "@angular/core";
 import {RouterLink} from "@angular/router";
-import {TableLazyLoadEvent, TableModule} from "primeng/table";
-import {InputTextModule} from "primeng/inputtext";
 import {SharedModule} from "primeng/api";
-import {CardModule} from "primeng/card";
-import {TooltipModule} from "primeng/tooltip";
 import {ButtonModule} from "primeng/button";
+import {CardModule} from "primeng/card";
+import {InputTextModule} from "primeng/inputtext";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
+import {TooltipModule} from "primeng/tooltip";
+import {ApiService} from "@/core/api";
 import {TruckDto} from "@/core/models";
-import {ApiService} from "@/core/services";
 import {AddressPipe} from "@/core/pipes";
 
 @Component({

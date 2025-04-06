@@ -1,11 +1,12 @@
 import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
-import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ButtonModule} from "primeng/button";
+import {DialogModule} from "primeng/dialog";
 import {DropdownModule} from "primeng/dropdown";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {DialogModule} from "primeng/dialog";
+import {ApiService} from "@/core/api";
 import {RemoveEmployeeRoleCommand, RoleDto, UpdateEmployeeCommand} from "@/core/models";
-import {ApiService, ToastService} from "@/core/services";
+import {ToastService} from "@/core/services";
 import {UserService} from "../../services";
 
 @Component({

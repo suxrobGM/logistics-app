@@ -1,22 +1,15 @@
-import {Component, OnInit} from "@angular/core";
 import {CommonModule} from "@angular/common";
-import {FormGroup, FormControl, Validators, ReactiveFormsModule} from "@angular/forms";
+import {Component, OnInit} from "@angular/core";
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ActivatedRoute, Router, RouterModule} from "@angular/router";
+import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
+import {ButtonModule} from "primeng/button";
+import {CalendarModule} from "primeng/calendar";
 import {CardModule} from "primeng/card";
 import {DropdownModule} from "primeng/dropdown";
-import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {CalendarModule} from "primeng/calendar";
-import {ButtonModule} from "primeng/button";
-import {
-  AddressDto,
-  CreatePayrollCommand,
-  EmployeeDto,
-  PayrollDto,
-  UpdatePayrollCommand,
-} from "@/core/models";
-import {ApiService, ToastService} from "@/core/services";
-import {PredefinedDateRanges} from "@/core/utils";
+import {AddressFormComponent, ValidationSummaryComponent} from "@/components";
+import {ApiService} from "@/core/api";
 import {
   EnumType,
   PaymentMethodEnum,
@@ -25,7 +18,15 @@ import {
   SalaryType,
   SalaryTypeEnum,
 } from "@/core/enums";
-import {AddressFormComponent, ValidationSummaryComponent} from "@/components";
+import {
+  AddressDto,
+  CreatePayrollCommand,
+  EmployeeDto,
+  PayrollDto,
+  UpdatePayrollCommand,
+} from "@/core/models";
+import {ToastService} from "@/core/services";
+import {PredefinedDateRanges} from "@/core/utils";
 import {DateUtils} from "@/core/utils";
 
 @Component({

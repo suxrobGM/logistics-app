@@ -1,4 +1,3 @@
-export * from "./api.service";
 export * from "./cookie.service";
 export * from "./storage.service";
 export * from "./tenant.service";

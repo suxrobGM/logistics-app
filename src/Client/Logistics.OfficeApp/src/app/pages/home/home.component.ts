@@ -1,19 +1,19 @@
-import {Component, OnInit} from "@angular/core";
 import {CurrencyPipe} from "@angular/common";
+import {Component, OnInit} from "@angular/core";
 import {RouterLink} from "@angular/router";
+import {SharedModule} from "primeng/api";
+import {ButtonModule} from "primeng/button";
+import {CardModule} from "primeng/card";
 import {ChartModule} from "primeng/chart";
 import {SkeletonModule} from "primeng/skeleton";
-import {ButtonModule} from "primeng/button";
-import {TooltipModule} from "primeng/tooltip";
 import {TableModule} from "primeng/table";
-import {SharedModule} from "primeng/api";
-import {CardModule} from "primeng/card";
-import {globalConfig} from "@/configs";
-import {DailyGrossesDto, LoadDto} from "@/core/models";
-import {ApiService} from "@/core/services";
+import {TooltipModule} from "primeng/tooltip";
 import {TrucksMapComponent} from "@/components";
+import {globalConfig} from "@/configs";
+import {ApiService} from "@/core/api";
+import {DailyGrossesDto, LoadDto} from "@/core/models";
 import {AddressPipe, DistanceUnitPipe} from "@/core/pipes";
-import {DateUtils, Converters} from "@/core/utils";
+import {Converters, DateUtils} from "@/core/utils";
 import {NotificationsPanelComponent} from "./components";
 
 @Component({

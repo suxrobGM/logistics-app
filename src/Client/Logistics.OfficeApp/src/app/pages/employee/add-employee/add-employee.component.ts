@@ -1,19 +1,20 @@
 import {Component, OnInit, ViewEncapsulation} from "@angular/core";
-import {FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {RouterLink} from "@angular/router";
-import {ButtonModule} from "primeng/button";
-import {DropdownModule} from "primeng/dropdown";
+import {ConfirmationService} from "primeng/api";
 import {AutoCompleteModule} from "primeng/autocomplete";
-import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {DropdownModule} from "primeng/dropdown";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {ToastModule} from "primeng/toast";
-import {ConfirmationService} from "primeng/api";
+import {ValidationSummaryComponent} from "@/components";
+import {ApiService} from "@/core/api";
 import {SalaryType, SalaryTypeEnum} from "@/core/enums";
 import {CreateEmployeeCommand, RoleDto, UserDto} from "@/core/models";
-import {ApiService, ToastService} from "@/core/services";
+import {ToastService} from "@/core/services";
 import {UserService} from "../services";
-import {ValidationSummaryComponent} from "@/components";
 
 @Component({
   selector: "app-add-employee",

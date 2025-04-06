@@ -1,14 +1,15 @@
-import {Component, OnInit} from "@angular/core";
 import {CommonModule} from "@angular/common";
+import {Component, OnInit} from "@angular/core";
 import {ActivatedRoute, RouterModule} from "@angular/router";
-import {CardModule} from "primeng/card";
-import {ButtonModule} from "primeng/button";
 import {jsPDF} from "jspdf";
+import {ButtonModule} from "primeng/button";
+import {CardModule} from "primeng/card";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {ApiService, TenantService} from "@/core/services";
-import {AddressDto, InvoiceDto} from "@/core/models";
+import {ApiService} from "@/core/api";
 import {PaymentMethod, PaymentMethodEnum, PaymentStatus} from "@/core/enums";
+import {AddressDto, InvoiceDto} from "@/core/models";
 import {AddressPipe} from "@/core/pipes";
+import {TenantService} from "@/core/services";
 
 @Component({
   selector: "app-view-invoice",

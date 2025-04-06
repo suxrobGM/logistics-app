@@ -1,4 +1,4 @@
-export * from "./Result";
+export * from "./_result";
 export * from "./paged-result";
 export * from "./searchable-query";
 export * from "./paged-query";
