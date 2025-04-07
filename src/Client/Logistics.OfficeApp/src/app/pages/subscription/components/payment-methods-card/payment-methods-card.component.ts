@@ -128,8 +128,6 @@ export class PaymentMethodsCardComponent implements OnInit {
 
     this.isLoading.set(true);
 
-    console.log("Fetching payment methods for tenant:", tenantId);
-
     this.apiService.paymentMethodApi.getPaymentMethods(tenantId).subscribe((result) => {
       if (result.success) {
         // Move the default payment method to the top of the list

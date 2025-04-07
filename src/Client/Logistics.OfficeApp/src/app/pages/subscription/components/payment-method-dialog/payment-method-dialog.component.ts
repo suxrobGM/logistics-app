@@ -15,6 +15,13 @@ import {
   CreatePaymentMethodCommand,
   PaymentMethodType,
   UpdatePaymentMethodCommand,
+  UsBankAccountHolderType,
+  UsBankAccountType,
+  cardBrandOptions,
+  cardFundingTypeOptions,
+  pymentMethodTypeOptions,
+  usBankAccountHolderTypeOptions,
+  usBankAccountTypeOptions,
 } from "@/core/models";
 import {TenantService} from "@/core/services";
 
@@ -39,23 +46,11 @@ export class PaymentMethodDialogComponent {
   readonly isLoading = signal(false);
   readonly paymentMethodId = input<string | null | undefined>(null);
   readonly form: FormGroup<PaymentMethodForm>;
-
-  readonly pymentMethodTypes = [
-    {label: "Credit/Debit Card", value: PaymentMethodType.Card},
-    {label: "US Bank Account", value: PaymentMethodType.UsBankAccount},
-    {label: "International Bank", value: PaymentMethodType.InternationalBankAccount},
-  ];
-  readonly cardBrands = [
-    {label: "American Express", value: CardBrand.AmericanExpress},
-    {label: "Discover", value: CardBrand.Discover},
-    {label: "MasterCard", value: CardBrand.MasterCard},
-    {label: "Visa", value: CardBrand.Visa},
-  ];
-  readonly cardFundingTypes = [
-    {label: "Credit", value: CardFundingType.Credit},
-    {label: "Debit", value: CardFundingType.Debit},
-    {label: "Prepaid", value: CardFundingType.Prepaid},
-  ];
+  readonly pymentMethodTypes = pymentMethodTypeOptions;
+  readonly cardBrands = cardBrandOptions;
+  readonly cardFundingTypes = cardFundingTypeOptions;
+  readonly usBankAccountHolderTypes = usBankAccountHolderTypeOptions;
+  readonly usBankAccountTypes = usBankAccountTypeOptions;
 
   constructor(
     private readonly apiService: ApiService,
@@ -84,6 +79,8 @@ export class PaymentMethodDialogComponent {
       bankAccountNumber: new FormControl(null),
       bankRoutingNumber: new FormControl(null),
       bankAccountHolderName: new FormControl(null),
+      bankAccountType: new FormControl<UsBankAccountType | null>(null),
+      bankAccountHolderType: new FormControl<UsBankAccountHolderType | null>(null),
       swiftCode: new FormControl(null),
     });
   }
@@ -122,6 +119,8 @@ export class PaymentMethodDialogComponent {
       accountNumber: formValue.bankAccountNumber!,
       routingNumber: formValue.bankRoutingNumber!,
       accountHolderName: formValue.bankAccountHolderName!,
+      accountHolderType: formValue.bankAccountHolderType!,
+      accountType: formValue.bankAccountType!,
       swiftCode: formValue.swiftCode!,
     };
 
@@ -164,5 +163,7 @@ interface PaymentMethodForm {
   bankAccountNumber: FormControl<string | null>;
   bankRoutingNumber: FormControl<string | null>;
   bankAccountHolderName: FormControl<string | null>;
+  bankAccountType: FormControl<UsBankAccountType | null>;
+  bankAccountHolderType: FormControl<UsBankAccountHolderType | null>;
   swiftCode: FormControl<string | null>;
 }

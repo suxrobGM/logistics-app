@@ -83,6 +83,14 @@
           />
         </div>
         <div class="mb-3">
+          <label for="bankAccountType" class="form-label">Account Type</label>
+          <p-select
+            formControlName="bankAccountType"
+            [options]="usBankAccountTypes"
+            class="w-100"
+          ></p-select>
+        </div>
+        <div class="mb-3">
           <label for="bankAccountNumber" class="form-label">Account Number</label>
           <input
             formControlName="bankAccountNumber"
@@ -97,6 +105,14 @@
             class="form-control"
             placeholder="ex. 123456789"
           />
+        </div>
+        <div class="mb-3">
+          <label for="bankAccountHolderType" class="form-label">Account Holder Type</label>
+          <p-select
+            formControlName="bankAccountHolderType"
+            [options]="usBankAccountHolderTypes"
+            class="w-100"
+          ></p-select>
         </div>
         <div class="mb-3">
           <label for="bankAccountHolderName" class="form-label">Account Holder Name</label>
