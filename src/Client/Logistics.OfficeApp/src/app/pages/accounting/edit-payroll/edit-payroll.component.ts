@@ -11,6 +11,13 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {AddressFormComponent, ValidationSummaryComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {
+  AddressDto,
+  CreatePayrollCommand,
+  EmployeeDto,
+  PayrollDto,
+  UpdatePayrollCommand,
+} from "@/core/api/models";
+import {
   EnumType,
   PaymentMethodTypeEnum,
   PaymentStatus,
@@ -18,13 +25,6 @@ import {
   SalaryType,
   SalaryTypeEnum,
 } from "@/core/enums";
-import {
-  AddressDto,
-  CreatePayrollCommand,
-  EmployeeDto,
-  PayrollDto,
-  UpdatePayrollCommand,
-} from "@/core/models";
 import {ToastService} from "@/core/services";
 import {PredefinedDateRanges} from "@/core/utils";
 import {DateUtils} from "@/core/utils";

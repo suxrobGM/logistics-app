@@ -1,8 +1,8 @@
 import {HttpClient} from "@angular/common/http";
 import {inject} from "@angular/core";
 import {Observable, catchError, of} from "rxjs";
-import {PagedIntervalQuery, SearchableQuery} from "../models";
 import {ToastService} from "../services";
+import {PagedIntervalQuery, SearchableQuery} from "./models";
 
 export abstract class ApiBase {
   private readonly headers = {"content-type": "application/json"};

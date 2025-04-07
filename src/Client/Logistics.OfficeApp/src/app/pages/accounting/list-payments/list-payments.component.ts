@@ -7,8 +7,8 @@ import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {PaymentStatusTagComponent} from "@/components";
 import {ApiService} from "@/core/api";
+import {PaymentDto} from "@/core/api/models";
 import {PaymentFor, PaymentForEnum, PaymentMethodType, PaymentMethodTypeEnum} from "@/core/enums";
-import {PaymentDto} from "@/core/models";
 import {AddressPipe} from "@/core/pipes";
 import {PredefinedDateRanges} from "@/core/utils";
 

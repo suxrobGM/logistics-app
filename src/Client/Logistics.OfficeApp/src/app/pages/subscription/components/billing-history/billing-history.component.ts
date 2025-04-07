@@ -3,7 +3,7 @@ import {Component, model, signal} from "@angular/core";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {ApiService} from "@/core/api";
-import {SubscriptionPaymentDto} from "@/core/models";
+import {SubscriptionPaymentDto} from "@/core/api/models";
 import {AddressPipe} from "@/core/pipes";
 import {TenantService} from "@/core/services";
 

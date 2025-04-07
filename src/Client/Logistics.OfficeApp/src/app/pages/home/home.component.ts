@@ -11,7 +11,7 @@ import {TooltipModule} from "primeng/tooltip";
 import {TrucksMapComponent} from "@/components";
 import {globalConfig} from "@/configs";
 import {ApiService} from "@/core/api";
-import {DailyGrossesDto, LoadDto} from "@/core/models";
+import {DailyGrossesDto, LoadDto} from "@/core/api/models";
 import {AddressPipe, DistanceUnitPipe} from "@/core/pipes";
 import {Converters, DateUtils} from "@/core/utils";
 import {NotificationsPanelComponent} from "./components";

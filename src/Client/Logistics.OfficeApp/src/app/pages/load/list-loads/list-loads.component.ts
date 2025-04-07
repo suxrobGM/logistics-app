@@ -12,8 +12,8 @@ import {TagModule} from "primeng/tag";
 import {TooltipModule} from "primeng/tooltip";
 import {PaymentStatusTagComponent} from "@/components";
 import {ApiService} from "@/core/api";
+import {LoadDto} from "@/core/api/models";
 import {LoadStatus, LoadStatusEnum} from "@/core/enums";
-import {LoadDto} from "@/core/models";
 import {AddressPipe, DistanceUnitPipe} from "@/core/pipes";
 
 @Component({

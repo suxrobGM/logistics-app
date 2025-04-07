@@ -10,7 +10,7 @@ import {InputNumberModule} from "primeng/inputnumber";
 import {TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {ApiService} from "@/core/api";
-import {PaymentMethodDto, SubscriptionDto, SubscriptionStatus} from "@/core/models";
+import {PaymentMethodDto, SubscriptionDto, SubscriptionStatus} from "@/core/api/models";
 import {TenantService, ToastService} from "@/core/services";
 import {BillingHistoryComponent, PaymentMethodsCardComponent} from "../components";
 

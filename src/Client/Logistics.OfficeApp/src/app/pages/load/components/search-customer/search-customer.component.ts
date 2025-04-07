@@ -3,7 +3,7 @@ import {Component, Input, forwardRef, output} from "@angular/core";
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
 import {ApiService} from "@/core/api";
-import {CustomerDto} from "@/core/models";
+import {CustomerDto} from "@/core/api/models";
 
 @Component({
   selector: "app-search-customer",

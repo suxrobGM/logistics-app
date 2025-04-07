@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import {Component, OnInit, input, model, output, signal} from "@angular/core";
 import {CommonModule} from "@angular/common";
+import {Component, OnInit, input, model, output, signal} from "@angular/core";
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
-import {AddressDto} from "@/core/models";
+import {AddressDto} from "@/core/api/models";
 import {Converters} from "@/core/utils";
 
 @Component({

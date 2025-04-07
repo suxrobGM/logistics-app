@@ -8,7 +8,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import {AddressDto} from "@/core/models";
+import {AddressDto} from "@/core/api/models";
 import {ValidationSummaryComponent} from "../validation-summary/validation-summary.component";
 
 @Component({

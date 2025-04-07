@@ -8,6 +8,7 @@ import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {PaymentStatusTagComponent} from "@/components";
 import {ApiService} from "@/core/api";
+import {PayrollDto} from "@/core/api/models";
 import {
   PaymentMethodType,
   PaymentMethodTypeEnum,
@@ -15,7 +16,6 @@ import {
   SalaryType,
   SalaryTypeEnum,
 } from "@/core/enums";
-import {PayrollDto} from "@/core/models";
 
 @Component({
   selector: "app-list-payroll",

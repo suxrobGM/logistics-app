@@ -11,8 +11,8 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {ToastModule} from "primeng/toast";
 import {ValidationSummaryComponent} from "@/components";
 import {ApiService} from "@/core/api";
+import {CreateEmployeeCommand, RoleDto, UserDto} from "@/core/api/models";
 import {SalaryType, SalaryTypeEnum} from "@/core/enums";
-import {CreateEmployeeCommand, RoleDto, UserDto} from "@/core/models";
 import {ToastService} from "@/core/services";
 import {UserService} from "../services";
 

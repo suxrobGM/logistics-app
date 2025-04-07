@@ -3,7 +3,7 @@ import {Component, OnInit, signal} from "@angular/core";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ApiService} from "@/core/api";
-import {SubscriptionPlanDto} from "@/core/models";
+import {SubscriptionPlanDto} from "@/core/api/models";
 import {TenantService} from "@/core/services";
 
 @Component({

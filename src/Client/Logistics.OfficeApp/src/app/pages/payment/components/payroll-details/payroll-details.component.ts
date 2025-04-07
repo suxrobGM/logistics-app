@@ -1,6 +1,6 @@
-import {Component, Input} from "@angular/core";
 import {CommonModule} from "@angular/common";
-import {PayrollDto} from "@/core/models";
+import {Component, Input} from "@angular/core";
+import {PayrollDto} from "@/core/api/models";
 import {SalaryType, SalaryTypeEnum} from "@/core/enums";
 
 @Component({

@@ -5,7 +5,7 @@ import {CardModule} from "primeng/card";
 import {ChartModule} from "primeng/chart";
 import {SkeletonModule} from "primeng/skeleton";
 import {ApiService} from "@/core/api";
-import {CompanyStatsDto} from "@/core/models";
+import {CompanyStatsDto} from "@/core/api/models";
 import {Converters} from "@/core/utils";
 
 @Component({

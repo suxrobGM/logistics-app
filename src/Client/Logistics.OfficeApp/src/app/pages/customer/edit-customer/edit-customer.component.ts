@@ -7,7 +7,7 @@ import {CardModule} from "primeng/card";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {ValidationSummaryComponent} from "@/components";
 import {ApiService} from "@/core/api";
-import {UpdateCustomerCommand} from "@/core/models";
+import {UpdateCustomerCommand} from "@/core/api/models";
 import {ToastService} from "@/core/services";
 
 @Component({

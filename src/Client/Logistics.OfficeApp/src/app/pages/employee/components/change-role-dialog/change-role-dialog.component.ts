@@ -5,7 +5,7 @@ import {DialogModule} from "primeng/dialog";
 import {DropdownModule} from "primeng/dropdown";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {ApiService} from "@/core/api";
-import {RemoveEmployeeRoleCommand, RoleDto, UpdateEmployeeCommand} from "@/core/models";
+import {RemoveEmployeeRoleCommand, RoleDto, UpdateEmployeeCommand} from "@/core/api/models";
 import {ToastService} from "@/core/services";
 import {UserService} from "../../services";
 

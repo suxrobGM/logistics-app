@@ -6,8 +6,8 @@ import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {ApiService} from "@/core/api";
+import {AddressDto, InvoiceDto} from "@/core/api/models";
 import {PaymentMethodType, PaymentMethodTypeEnum, PaymentStatus} from "@/core/enums";
-import {AddressDto, InvoiceDto} from "@/core/models";
 import {AddressPipe} from "@/core/pipes";
 import {TenantService} from "@/core/services";
 

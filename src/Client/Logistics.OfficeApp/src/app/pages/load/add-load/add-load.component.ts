@@ -16,8 +16,8 @@ import {
 } from "@/components";
 import {globalConfig} from "@/configs";
 import {ApiService} from "@/core/api";
+import {AddressDto, CreateLoadCommand, CustomerDto} from "@/core/api/models";
 import {AuthService} from "@/core/auth";
-import {AddressDto, CreateLoadCommand, CustomerDto} from "@/core/models";
 import {ToastService} from "@/core/services";
 import {Converters} from "@/core/utils";
 import {SearchCustomerComponent, SearchTruckComponent} from "../components";

@@ -8,7 +8,7 @@ import {InputTextModule} from "primeng/inputtext";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {ApiService} from "@/core/api";
-import {TruckDto} from "@/core/models";
+import {TruckDto} from "@/core/api/models";
 import {AddressPipe} from "@/core/pipes";
 
 @Component({

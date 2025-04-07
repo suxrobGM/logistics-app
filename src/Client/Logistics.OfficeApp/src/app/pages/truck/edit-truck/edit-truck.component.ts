@@ -9,7 +9,7 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {ToastModule} from "primeng/toast";
 import {ApiService} from "@/core/api";
-import {CreateTruckCommand, EmployeeDto, UpdateTruckCommand} from "@/core/models";
+import {CreateTruckCommand, EmployeeDto, UpdateTruckCommand} from "@/core/api/models";
 import {ToastService} from "@/core/services";
 
 @Component({

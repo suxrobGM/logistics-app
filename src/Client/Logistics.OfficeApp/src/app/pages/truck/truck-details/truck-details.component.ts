@@ -6,7 +6,7 @@ import {SkeletonModule} from "primeng/skeleton";
 import {BarChartDrawnEvent, GeolocationMapComponent, GrossesBarchartComponent} from "@/components";
 import {globalConfig} from "@/configs";
 import {ApiService} from "@/core/api";
-import {DailyGrossesDto, MonthlyGrossesDto, TruckDto, TruckGeolocationDto} from "@/core/models";
+import {DailyGrossesDto, MonthlyGrossesDto, TruckDto, TruckGeolocationDto} from "@/core/api/models";
 import {DistanceUnitPipe} from "@/core/pipes";
 import {LineChartDrawnEvent, TruckGrossesLinechartComponent} from "../components";
 

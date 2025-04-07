@@ -8,8 +8,8 @@ import {InputTextModule} from "primeng/inputtext";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {ApiService} from "@/core/api";
+import {EmployeeDto} from "@/core/api/models";
 import {SalaryType, SalaryTypeEnum} from "@/core/enums";
-import {EmployeeDto} from "@/core/models";
 
 @Component({
   selector: "app-list-employees",

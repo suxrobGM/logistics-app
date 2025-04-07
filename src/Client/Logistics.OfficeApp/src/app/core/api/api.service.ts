@@ -2,6 +2,7 @@ import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
 import {globalConfig} from "@/configs";
+import {ApiBase} from "./api-base";
 import {
   CancelSubscriptionCommand,
   CompanyStatsDto,
@@ -45,8 +46,7 @@ import {
   UpdatePayrollCommand,
   UpdateTruckCommand,
   UserDto,
-} from "../models";
-import {ApiBase} from "./api-base";
+} from "./models";
 import {PaymentMethodApi} from "./payment-method.api";
 
 @Injectable({providedIn: "root"})

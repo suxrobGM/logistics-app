@@ -19,8 +19,8 @@ import {
 } from "@/components";
 import {globalConfig} from "@/configs";
 import {ApiService} from "@/core/api";
+import {AddressDto, CustomerDto, UpdateLoadCommand} from "@/core/api/models";
 import {EnumType, LoadStatus, LoadStatusEnum} from "@/core/enums";
-import {AddressDto, CustomerDto, UpdateLoadCommand} from "@/core/models";
 import {ToastService} from "@/core/services";
 import {Converters} from "@/core/utils";
 import {SearchCustomerComponent, SearchTruckComponent} from "../components";

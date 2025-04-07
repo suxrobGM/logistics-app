@@ -1,7 +1,7 @@
-import {Component, Input, input} from "@angular/core";
 import {CommonModule} from "@angular/common";
+import {Component, Input, input} from "@angular/core";
 import {MarkerComponent, NgxMapboxGLModule} from "ngx-mapbox-gl";
-import {TruckGeolocationDto} from "@/core/models";
+import {TruckGeolocationDto} from "@/core/api/models";
 import {AddressPipe} from "@/core/pipes";
 
 @Component({

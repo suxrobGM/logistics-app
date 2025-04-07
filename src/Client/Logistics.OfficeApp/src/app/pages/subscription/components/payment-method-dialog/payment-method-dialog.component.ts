@@ -22,7 +22,7 @@ import {
   pymentMethodTypeOptions,
   usBankAccountHolderTypeOptions,
   usBankAccountTypeOptions,
-} from "@/core/models";
+} from "@/core/api/models";
 import {TenantService} from "@/core/services";
 
 @Component({

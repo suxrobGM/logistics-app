@@ -1,5 +1,6 @@
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
+import {ApiBase} from "./api-base";
 import {
   CreatePaymentMethodCommand,
   DeletePaymentMethodCommand,
@@ -7,8 +8,7 @@ import {
   Result,
   SetDefaultPaymentMethodCommand,
   UpdatePaymentMethodCommand,
-} from "../models";
-import {ApiBase} from "./api-base";
+} from "./models";
 
 export class PaymentMethodApi extends ApiBase {
   constructor(apiUrl: string, http: HttpClient) {

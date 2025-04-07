@@ -7,8 +7,8 @@ import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {PaymentStatusTagComponent} from "@/components";
 import {ApiService} from "@/core/api";
+import {InvoiceDto} from "@/core/api/models";
 import {PaymentStatus} from "@/core/enums";
-import {InvoiceDto} from "@/core/models";
 import {PredefinedDateRanges} from "@/core/utils";
 
 @Component({

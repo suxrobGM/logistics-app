@@ -8,6 +8,7 @@ import {DropdownModule} from "primeng/dropdown";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {ValidationSummaryComponent} from "@/components";
 import {ApiService} from "@/core/api";
+import {CreatePaymentCommand, UpdatePaymentCommand} from "@/core/api/models";
 import {
   PaymentFor,
   PaymentForEnum,
@@ -16,7 +17,6 @@ import {
   PaymentStatus,
   PaymentStatusEnum,
 } from "@/core/enums";
-import {CreatePaymentCommand, UpdatePaymentCommand} from "@/core/models";
 import {ToastService} from "@/core/services";
 
 @Component({

@@ -1,13 +1,13 @@
-import {Component, Input, OnDestroy, OnInit} from "@angular/core";
 import {CommonModule} from "@angular/common";
-import {NotificationService, ToastService} from "@/core/services";
-import {NotificationDto} from "@/core/models";
-import {TimeAgoPipe} from "@/core/pipes";
-import {CardModule} from "primeng/card";
-import {ButtonModule} from "primeng/button";
+import {Component, Input, OnDestroy, OnInit} from "@angular/core";
 import {BadgeModule} from "primeng/badge";
-import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {ButtonModule} from "primeng/button";
+import {CardModule} from "primeng/card";
 import {DialogModule} from "primeng/dialog";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {NotificationDto} from "@/core/api/models";
+import {TimeAgoPipe} from "@/core/pipes";
+import {NotificationService, ToastService} from "@/core/services";
 
 @Component({
   selector: "app-notifications-panel",

@@ -1,6 +1,6 @@
 import {CommonModule} from "@angular/common";
 import {Component, input, signal} from "@angular/core";
-import {InvoiceDto, TenantDto} from "@/core/models";
+import {InvoiceDto, TenantDto} from "@/core/api/models";
 import {AddressPipe} from "@/core/pipes";
 import {TenantService} from "@/core/services";
 

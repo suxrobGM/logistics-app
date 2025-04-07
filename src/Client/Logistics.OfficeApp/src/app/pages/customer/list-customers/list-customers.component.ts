@@ -9,7 +9,7 @@ import {InputTextModule} from "primeng/inputtext";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {ApiService} from "@/core/api";
-import {CustomerDto} from "@/core/models";
+import {CustomerDto} from "@/core/api/models";
 import {ToastService} from "@/core/services";
 
 @Component({
