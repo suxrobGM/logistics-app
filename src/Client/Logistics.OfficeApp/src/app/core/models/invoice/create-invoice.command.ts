@@ -1,8 +1,8 @@
-import {PaymentMethod} from "@/core/enums";
+import {PaymentMethodType} from "@/core/enums";
 
 export interface CreateInvoiceCommand {
   loadId: string;
   customerId: string;
-  paymentMethod: PaymentMethod;
+  paymentMethod: PaymentMethodType;
   paymentAmount: number;
 }

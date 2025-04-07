@@ -89,7 +89,7 @@ public class PayrollGenerator
         {
             Amount = CalculateSalary(employee, startDate, endDate),
             PaymentFor = PaymentFor.Payroll,
-            Method = PaymentMethod.BankAccount,
+            Method = PaymentMethodType.Card,
             Status = PaymentStatus.Paid,
             PaymentDate = DateTime.UtcNow,
             BillingAddress = billingAddress

@@ -51,17 +51,9 @@
     </p-card>
   </div>
 
-  <!-- Payment Method Card -->
+  <!-- Payment Methods Card -->
   <div class="col-12">
-    <p-card header="Payment Method">
-      <ng-template pTemplate="footer">
-        <p-button
-          label="Update Payment Method"
-          icon="pi pi-wallet"
-          [disabled]="isLoading()"
-        ></p-button>
-      </ng-template>
-    </p-card>
+    <app-payment-methods-card></app-payment-methods-card>
   </div>
 
   <!-- Billing History Table -->

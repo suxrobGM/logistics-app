@@ -6,7 +6,7 @@ import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {ApiService} from "@/core/api";
-import {PaymentMethod, PaymentMethodEnum, PaymentStatus} from "@/core/enums";
+import {PaymentMethodType, PaymentMethodTypeEnum, PaymentStatus} from "@/core/enums";
 import {AddressDto, InvoiceDto} from "@/core/models";
 import {AddressPipe} from "@/core/pipes";
 import {TenantService} from "@/core/services";
@@ -50,11 +50,11 @@ export class ViewInvoiceComponent implements OnInit {
     this.fetchInvoice();
   }
 
-  getPaymentMethodDesc(enumValue?: PaymentMethod): string {
+  getPaymentMethodDesc(enumValue?: PaymentMethodType): string {
     if (enumValue == null) {
       return "N/A";
     }
-    return PaymentMethodEnum.getValue(enumValue).description;
+    return PaymentMethodTypeEnum.getValue(enumValue).description;
   }
 
   exportToPDF() {

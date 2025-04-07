@@ -9,7 +9,7 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {RadioButtonModule} from "primeng/radiobutton";
 import {AddressFormComponent, ValidationSummaryComponent} from "@/components";
 import {ApiService} from "@/core/api";
-import {PaymentMethod, PaymentMethodEnum, PaymentStatus} from "@/core/enums";
+import {PaymentMethodType, PaymentMethodTypeEnum, PaymentStatus} from "@/core/enums";
 import {AddressDto, InvoiceDto, PayrollDto, ProcessPaymentCommand} from "@/core/models";
 import {ToastService} from "@/core/services";
 import {RegexPatterns} from "@/core/utils";
@@ -34,8 +34,8 @@ import {InvoiceDetailsComponent, PayrollDetailsComponent} from "../components";
   ],
 })
 export class ProcessPaymentComponent implements OnInit {
-  public paymentMethod = PaymentMethod;
-  public paymentMethods = PaymentMethodEnum.toArray();
+  public paymentMethod = PaymentMethodType;
+  public paymentMethods = PaymentMethodTypeEnum.toArray();
   public title = "";
   public isLoading = false;
   public isPaymentCompleted = false;
@@ -49,7 +49,7 @@ export class ProcessPaymentComponent implements OnInit {
     private readonly route: ActivatedRoute
   ) {
     this.form = new FormGroup<PaymentForm>({
-      paymentMethod: new FormControl(PaymentMethod.CreditCard, {
+      paymentMethod: new FormControl(PaymentMethodType.CreditCard, {
         validators: Validators.required,
         nonNullable: true,
       }),
@@ -63,7 +63,7 @@ export class ProcessPaymentComponent implements OnInit {
       bankRoutingNumber: new FormControl(null),
     });
 
-    this.form.get("paymentMethod")?.valueChanges.subscribe((method: PaymentMethod) => {
+    this.form.get("paymentMethod")?.valueChanges.subscribe((method: PaymentMethodType) => {
       this.setConditionalValidators(method);
     });
 
@@ -121,7 +121,7 @@ export class ProcessPaymentComponent implements OnInit {
     });
   }
 
-  private setConditionalValidators(paymentMethod: PaymentMethod) {
+  private setConditionalValidators(paymentMethod: PaymentMethodType) {
     const cardholderName = this.form.get("cardholderName");
     const cardNumber = this.form.get("cardNumber");
     const cardExpireDate = this.form.get("cardExpireDate");
@@ -130,7 +130,7 @@ export class ProcessPaymentComponent implements OnInit {
     const bankAccountNumber = this.form.get("bankAccountNumber");
     const bankRoutingNumber = this.form.get("bankRoutingNumber");
 
-    if (paymentMethod === PaymentMethod.CreditCard) {
+    if (paymentMethod === PaymentMethodType.CreditCard) {
       cardholderName?.setValidators([Validators.required]);
       cardNumber?.setValidators([
         Validators.required,
@@ -144,7 +144,7 @@ export class ProcessPaymentComponent implements OnInit {
       bankName?.clearValidators();
       bankAccountNumber?.clearValidators();
       bankRoutingNumber?.clearValidators();
-    } else if (paymentMethod === PaymentMethod.BankAccount) {
+    } else if (paymentMethod === PaymentMethodType.BankAccount) {
       bankName?.setValidators([Validators.required]);
       bankAccountNumber?.setValidators([Validators.required]);
       bankRoutingNumber?.setValidators([
@@ -195,7 +195,7 @@ export class ProcessPaymentComponent implements OnInit {
 }
 
 interface PaymentForm {
-  paymentMethod: FormControl<PaymentMethod>;
+  paymentMethod: FormControl<PaymentMethodType>;
   cardholderName: FormControl<string | null>;
   cardNumber: FormControl<string | null>;
   cardExpirationDate: FormControl<string | null>;

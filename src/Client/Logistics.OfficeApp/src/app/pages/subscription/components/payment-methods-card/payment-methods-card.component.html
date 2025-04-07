@@ -1,0 +1,111 @@
+<p-card header="Payment Methods">
+  @for (paymentMethod of paymentMethods(); track paymentMethod.id) {
+    <div class="d-flex flex-column gap-3">
+      <p-card
+        [header]="getMethodLabel(paymentMethod)"
+        [subheader]="paymentMethod.isDefault ? 'Default' : ''"
+      >
+        <div class="row mb-2">
+          @switch (paymentMethod.type) {
+            <!-- Card -->
+            @case (0) {
+              <div class="col-6 fw-bold">Card Brand:</div>
+              <div class="col-6">{{ paymentMethod.cardBrand }}</div>
+
+              <div class="col-6 fw-bold">Card Funding Type:</div>
+              <div class="col-6">{{ getCardFundingTypeLabel(paymentMethod) }}</div>
+
+              <div class="col-6 fw-bold">Cardholder Name:</div>
+              <div class="col-6">{{ paymentMethod.cardHolderName }}</div>
+
+              <div class="col-6 fw-bold">Card Number:</div>
+              <div class="col-6">{{ paymentMethod.cardNumber }}</div>
+
+              <div class="col-6 fw-bold">CVV:</div>
+              <div class="col-6">{{ paymentMethod.cvv }}</div>
+
+              <div class="col-6 fw-bold">Expiry Date:</div>
+              <div class="col-6">{{ paymentMethod.expMonth }}/{{ paymentMethod.expYear }}</div>
+            }
+            <!-- US Bank Account -->
+            @case (1) {
+              <div class="col-6 fw-bold">Account Holder Type:</div>
+              <div class="col-6">{{ paymentMethod.accountHolderType }}</div>
+
+              <div class="col-6 fw-bold">Account Holder:</div>
+              <div class="col-6">{{ paymentMethod.accountHolderName }}</div>
+
+              <div class="col-6 fw-bold">Bank Name:</div>
+              <div class="col-6">{{ paymentMethod.bankName }}</div>
+
+              <div class="col-6 fw-bold">Account Number:</div>
+              <div class="col-6">{{ paymentMethod.accountNumber }}</div>
+
+              <div class="col-6 fw-bold">Routing Number:</div>
+              <div class="col-6">{{ paymentMethod.routingNumber }}</div>
+
+              <div class="col-6 fw-bold">Account Type:</div>
+              <div class="col-6">{{ paymentMethod.accountType }}</div>
+            }
+            <!-- International Bank Account -->
+            @case (2) {
+              <div class="col-6 fw-bold">Account Holder:</div>
+              <div class="col-6">{{ paymentMethod.accountHolderName }}</div>
+
+              <div class="col-6 fw-bold">Bank Name:</div>
+              <div class="col-6">{{ paymentMethod.bankName }}</div>
+
+              <div class="col-6 fw-bold">Account Number:</div>
+              <div class="col-6">{{ paymentMethod.accountNumber }}</div>
+
+              <div class="col-6 fw-bold">SWIFT:</div>
+              <div class="col-6">{{ paymentMethod.swiftCode }}</div>
+            }
+          }
+
+          <div class="col-6 fw-bold">Billing Address:</div>
+          <div class="col-6">{{ paymentMethod.billingAddress | address }}</div>
+        </div>
+
+        <ng-template pTemplate="footer">
+          <div class="d-flex gap-2">
+            <p-button
+              label="Set as Default"
+              icon="pi pi-check"
+              size="small"
+              [disabled]="isLoading() || paymentMethod.isDefault"
+              (click)="setDefaultPaymentMethod(paymentMethod)"
+            ></p-button>
+            <p-button
+              label="Update Payment Method"
+              icon="pi pi-wallet"
+              size="small"
+              [disabled]="isLoading()"
+            ></p-button>
+            <p-button
+              label="Delete Payment Method"
+              icon="pi pi-times"
+              severity="danger"
+              size="small"
+              [disabled]="isLoading() || paymentMethod.isDefault"
+              (click)="deletePaymentMethod(paymentMethod)"
+            ></p-button>
+          </div>
+        </ng-template>
+      </p-card>
+    </div>
+  }
+
+  <p-button
+    label="Add Payment Method"
+    icon="pi pi-plus"
+    [disabled]="isLoading()"
+    (click)="showDialog.set(true)"
+  >
+  </p-button>
+</p-card>
+
+<app-payment-method-dialog
+  [(showDialog)]="showDialog"
+  [paymentMethodId]="selectedPaymentMethod()?.id"
+></app-payment-method-dialog>

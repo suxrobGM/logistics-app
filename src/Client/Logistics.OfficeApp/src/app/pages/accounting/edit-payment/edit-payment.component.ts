@@ -11,8 +11,8 @@ import {ApiService} from "@/core/api";
 import {
   PaymentFor,
   PaymentForEnum,
-  PaymentMethod,
-  PaymentMethodEnum,
+  PaymentMethodType,
+  PaymentMethodTypeEnum,
   PaymentStatus,
   PaymentStatusEnum,
 } from "@/core/enums";
@@ -37,7 +37,7 @@ import {ToastService} from "@/core/services";
 })
 export class EditPaymentComponent implements OnInit {
   public readonly paymentStatuses = PaymentStatusEnum.toArray();
-  public readonly paymentMethods = PaymentMethodEnum.toArray();
+  public readonly paymentMethods = PaymentMethodTypeEnum.toArray();
   public readonly paymentForValues = PaymentForEnum.toArray();
   public readonly title = signal("Edit payment");
   public readonly id = input<string>("");
@@ -51,7 +51,7 @@ export class EditPaymentComponent implements OnInit {
   ) {
     this.form = new FormGroup<PaymentForm>({
       comment: new FormControl<string>("", {validators: Validators.required, nonNullable: true}),
-      paymentMethod: new FormControl<PaymentMethod>(PaymentMethod.BankAccount, {
+      paymentMethod: new FormControl<PaymentMethodType>(PaymentMethodType.BankAccount, {
         validators: Validators.required,
         nonNullable: true,
       }),
@@ -159,7 +159,7 @@ export class EditPaymentComponent implements OnInit {
 }
 
 interface PaymentForm {
-  paymentMethod: FormControl<PaymentMethod>;
+  paymentMethod: FormControl<PaymentMethodType>;
   amount: FormControl<number>;
   paymentFor: FormControl<PaymentFor>;
   paymentStatus: FormControl<PaymentStatus>;

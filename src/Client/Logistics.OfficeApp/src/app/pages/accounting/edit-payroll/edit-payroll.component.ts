@@ -12,7 +12,7 @@ import {AddressFormComponent, ValidationSummaryComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {
   EnumType,
-  PaymentMethodEnum,
+  PaymentMethodTypeEnum,
   PaymentStatus,
   PaymentStatusEnum,
   SalaryType,
@@ -51,7 +51,7 @@ export class EditPayrollComponent implements OnInit {
   public salaryType = SalaryType;
   public paymentStatus = PaymentStatus;
   public paymentStatuses = PaymentStatusEnum.toArray();
-  public paymentMethods = PaymentMethodEnum.toArray();
+  public paymentMethods = PaymentMethodTypeEnum.toArray();
   public title = "Edit payroll";
   public id: string | null = null;
   public isLoading = false;
@@ -183,7 +183,7 @@ export class EditPayrollComponent implements OnInit {
         this.form.patchValue({
           employee: payroll.employee,
           dateRange: [new Date(payroll.startDate), new Date(payroll.endDate)],
-          paymentMethod: PaymentMethodEnum.getValue(payroll.payment.method!),
+          paymentMethod: PaymentMethodTypeEnum.getValue(payroll.payment.method!),
           paymentStatus: PaymentStatusEnum.getValue(payroll.payment.status),
           paymentBillingAddress: payroll.payment.billingAddress,
         });

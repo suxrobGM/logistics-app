@@ -19,7 +19,9 @@ public class SubscriptionsController : ControllerBase
     {
         _mediator = mediator;
     }
-    
+
+    #region Subscriptions
+
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Result<SubscriptionDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
@@ -35,50 +37,6 @@ public class SubscriptionsController : ControllerBase
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
     public async Task<IActionResult> GetSubscriptions([FromQuery] GetSubscriptionsQuery request)
-    {
-        var result = await _mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
-    }
-    
-    [HttpGet("{subscriptionId}/payments/{paymentId}")]
-    [ProducesResponseType(typeof(Result<SubscriptionPaymentDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Payments.View)]
-    public async Task<IActionResult> GetSubscriptionPaymentById(string subscriptionId, string paymentId)
-    {
-        var result = await _mediator.Send(new GetSubscriptionPaymentQuery()
-        {
-            SubscriptionId = subscriptionId, 
-            PaymentId = paymentId
-        });
-        return result.Success ? Ok(result) : BadRequest(result);
-    }
-    
-    [HttpGet("{subscriptionId}/payments")]
-    [ProducesResponseType(typeof(PagedResult<SubscriptionPaymentDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Payments.View)]
-    public async Task<IActionResult> GetSubscriptionPayments(string subscriptionId)
-    {
-        var result = await _mediator.Send(new GetSubscriptionPaymentsQuery() {SubscriptionId = subscriptionId});
-        return result.Success ? Ok(result) : BadRequest(result);
-    }
-
-    [HttpGet("plans/{id}")]
-    [ProducesResponseType(typeof(Result<SubscriptionPlanDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    //[Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
-    public async Task<IActionResult> GetSubscriptionPlanById(string id)
-    {
-        var result = await _mediator.Send(new GetSubscriptionPlanQuery {Id = id});
-        return result.Success ? Ok(result) : BadRequest(result);
-    }
-
-    [HttpGet("plans")]
-    [ProducesResponseType(typeof(PagedResult<SubscriptionPlanDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    //[Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
-    public async Task<IActionResult> GetSubscriptionPlans([FromQuery] GetSubscriptionPlansQuery request)
     {
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
@@ -113,7 +71,59 @@ public class SubscriptionsController : ControllerBase
         var result = await _mediator.Send(new DeleteSubscriptionCommand {Id = id});
         return result.Success ? Ok(result) : BadRequest(result);
     }
+
+    #endregion
+
+    #region Subscription Payments
+
+    [HttpGet("{subscriptionId}/payments/{paymentId}")]
+    [ProducesResponseType(typeof(Result<SubscriptionPaymentDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Payments.View)]
+    public async Task<IActionResult> GetSubscriptionPaymentById(string subscriptionId, string paymentId)
+    {
+        var result = await _mediator.Send(new GetSubscriptionPaymentQuery()
+        {
+            SubscriptionId = subscriptionId, 
+            PaymentId = paymentId
+        });
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
     
+    [HttpGet("{subscriptionId}/payments")]
+    [ProducesResponseType(typeof(PagedResult<SubscriptionPaymentDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Payments.View)]
+    public async Task<IActionResult> GetSubscriptionPayments(string subscriptionId)
+    {
+        var result = await _mediator.Send(new GetSubscriptionPaymentsQuery() {SubscriptionId = subscriptionId});
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+
+    #endregion
+
+    #region Subscription Plans
+    
+    [HttpGet("plans/{id}")]
+    [ProducesResponseType(typeof(Result<SubscriptionPlanDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    //[Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
+    public async Task<IActionResult> GetSubscriptionPlanById(string id)
+    {
+        var result = await _mediator.Send(new GetSubscriptionPlanQuery {Id = id});
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpGet("plans")]
+    [ProducesResponseType(typeof(PagedResult<SubscriptionPlanDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    //[Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
+    public async Task<IActionResult> GetSubscriptionPlans([FromQuery] GetSubscriptionPlansQuery request)
+    {
+        var result = await _mediator.Send(request);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+
     [HttpPost("plans")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
@@ -144,4 +154,6 @@ public class SubscriptionsController : ControllerBase
         var result = await _mediator.Send(new DeleteSubscriptionPlanCommand {Id = id});
         return result.Success ? Ok(result) : BadRequest(result);
     }
+
+    #endregion
 }

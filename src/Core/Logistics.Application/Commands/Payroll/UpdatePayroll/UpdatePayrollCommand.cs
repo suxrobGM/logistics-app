@@ -12,6 +12,6 @@ public class UpdatePayrollCommand : IRequest<Result>
     public DateTime? EndDate { get; set; }
     public string? EmployeeId { get; set; }
     public PaymentStatus? PaymentStatus { get; set; }
-    public PaymentMethod? PaymentMethod { get; set; }
+    public PaymentMethodType? PaymentMethod { get; set; }
     public Address? PaymentBillingAddress { get; set; }
 }

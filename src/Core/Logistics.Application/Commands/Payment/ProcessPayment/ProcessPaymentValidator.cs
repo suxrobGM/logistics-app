@@ -11,7 +11,7 @@ internal sealed class ProcessPaymentValidator : AbstractValidator<ProcessPayment
         RuleFor(i => i.PaymentId).NotEmpty();
         RuleFor(i => i.BillingAddress).NotEmpty();
         
-        When(i => i.PaymentMethod == PaymentMethod.CreditCard, () =>
+        When(i => i.PaymentMethod == PaymentMethodType.Card, () =>
         {
             RuleFor(i => i.CardholderName).NotEmpty();
             RuleFor(i => i.CardNumber).NotEmpty().Matches(RegexPatterns.CreditCardNumber);
@@ -19,7 +19,7 @@ internal sealed class ProcessPaymentValidator : AbstractValidator<ProcessPayment
             RuleFor(i => i.CardCvv).NotEmpty().Matches(RegexPatterns.CardCvv);
         });
         
-        When(i => i.PaymentMethod == PaymentMethod.BankAccount, () =>
+        When(i => i.PaymentMethod == PaymentMethodType.UsBankAccount, () =>
         {
             RuleFor(i => i.BankName).NotEmpty();
             RuleFor(i => i.BankAccountNumber).NotEmpty();

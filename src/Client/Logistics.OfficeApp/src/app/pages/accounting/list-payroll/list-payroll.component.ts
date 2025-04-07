@@ -9,8 +9,8 @@ import {TooltipModule} from "primeng/tooltip";
 import {PaymentStatusTagComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {
-  PaymentMethod,
-  PaymentMethodEnum,
+  PaymentMethodType,
+  PaymentMethodTypeEnum,
   PaymentStatus,
   SalaryType,
   SalaryTypeEnum,
@@ -80,12 +80,12 @@ export class ListPayrollComponent {
       });
   }
 
-  getPaymentMethodDesc(enumValue?: PaymentMethod): string {
+  getPaymentMethodDesc(enumValue?: PaymentMethodType): string {
     if (enumValue == null) {
       return "N/A";
     }
 
-    return PaymentMethodEnum.getValue(enumValue).description;
+    return PaymentMethodTypeEnum.getValue(enumValue).description;
   }
 
   getSalaryTypeDesc(enumValue: SalaryType): string {

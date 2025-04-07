@@ -8,7 +8,7 @@ public class SubscriptionPayment : Entity
 {
     public decimal Amount { get; set; }
     public PaymentStatus Status { get; set; }
-    public PaymentMethod? Method { get; set; }
+    public PaymentMethodType? Method { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime? PaymentDate { get; set; }
     public Address BillingAddress { get; set; } = Address.NullAddress;

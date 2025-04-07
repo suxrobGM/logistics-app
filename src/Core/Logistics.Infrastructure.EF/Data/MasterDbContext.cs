@@ -2,6 +2,7 @@
 using Logistics.Infrastructure.EF.Helpers;
 using Logistics.Infrastructure.EF.Interceptors;
 using Logistics.Infrastructure.EF.Options;
+using Logistics.Shared.Consts;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -100,6 +101,23 @@ public class MasterDbContext : IdentityDbContext<
             entity.HasMany(i => i.Payments)
                 .WithOne(i => i.Subscription)
                 .HasForeignKey(i => i.SubscriptionId);
+        });
+
+        builder.Entity<PaymentMethod>(entity =>
+        {
+            entity.ToTable("PaymentMethods")
+                .HasDiscriminator(pm => pm.Type)
+                .HasValue<CardPaymentMethod>(PaymentMethodType.Card)
+                .HasValue<UsBankAccountPaymentMethod>(PaymentMethodType.UsBankAccount)
+                .HasValue<BankAccountPaymentMethod>(PaymentMethodType.InternationalBankAccount);
+
+            entity.HasOne(i => i.Tenant)
+                .WithMany(i => i.PaymentMethods)
+                .HasForeignKey(i => i.TenantId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(i => i.StripePaymentMethodId);
+            entity.HasIndex(i => i.TenantId);
         });
     }
 }

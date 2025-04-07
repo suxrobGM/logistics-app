@@ -19,4 +19,6 @@ public class Tenant : Entity
     /// Users that belong to this tenant
     /// </summary>
     public virtual List<User> Users { get; } = [];
+    
+    public virtual List<PaymentMethod> PaymentMethods { get; } = [];
 }

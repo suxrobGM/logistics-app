@@ -146,6 +146,51 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 });
 
             migrationBuilder.CreateTable(
+                name: "PaymentMethods",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    StripePaymentMethodId = table.Column<string>(type: "text", nullable: true),
+                    IsDefault = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TenantId = table.Column<string>(type: "text", nullable: false),
+                    BillingAddress_City = table.Column<string>(type: "text", nullable: false),
+                    BillingAddress_Country = table.Column<string>(type: "text", nullable: false),
+                    BillingAddress_Line1 = table.Column<string>(type: "text", nullable: false),
+                    BillingAddress_Line2 = table.Column<string>(type: "text", nullable: true),
+                    BillingAddress_State = table.Column<string>(type: "text", nullable: false),
+                    BillingAddress_ZipCode = table.Column<string>(type: "text", nullable: false),
+                    AccountNumber = table.Column<string>(type: "text", nullable: true),
+                    BankName = table.Column<string>(type: "text", nullable: true),
+                    AccountHolderName = table.Column<string>(type: "text", nullable: true),
+                    SwiftCode = table.Column<string>(type: "text", nullable: true),
+                    CardHolderName = table.Column<string>(type: "text", nullable: true),
+                    CardBrand = table.Column<string>(type: "text", nullable: true),
+                    CardNumber = table.Column<string>(type: "text", nullable: true),
+                    Cvv = table.Column<string>(type: "text", nullable: true),
+                    ExpMonth = table.Column<int>(type: "integer", nullable: true),
+                    ExpYear = table.Column<int>(type: "integer", nullable: true),
+                    FundingType = table.Column<int>(type: "integer", nullable: true),
+                    UsBankAccountPaymentMethod_AccountNumber = table.Column<string>(type: "text", nullable: true),
+                    UsBankAccountPaymentMethod_BankName = table.Column<string>(type: "text", nullable: true),
+                    RoutingNumber = table.Column<string>(type: "text", nullable: true),
+                    AccountHolderType = table.Column<int>(type: "integer", nullable: true),
+                    UsBankAccountPaymentMethod_AccountHolderName = table.Column<string>(type: "text", nullable: true),
+                    AccountType = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentMethods", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PaymentMethods_Tenants_TenantId",
+                        column: x => x.TenantId,
+                        principalTable: "Tenants",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Subscriptions",
                 columns: table => new
                 {
@@ -336,6 +381,16 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_PaymentMethods_StripePaymentMethodId",
+                table: "PaymentMethods",
+                column: "StripePaymentMethodId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaymentMethods_TenantId",
+                table: "PaymentMethods",
+                column: "TenantId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SubscriptionPayments_SubscriptionId",
                 table: "SubscriptionPayments",
                 column: "SubscriptionId");
@@ -372,6 +427,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
 
             migrationBuilder.DropTable(
                 name: "DataProtectionKeys");
+
+            migrationBuilder.DropTable(
+                name: "PaymentMethods");
 
             migrationBuilder.DropTable(
                 name: "SubscriptionPayments");

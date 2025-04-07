@@ -1,7 +1,7 @@
-import {PaymentMethod} from "@/core/enums";
+import {PaymentMethodType} from "@/core/enums";
 
 export interface UpdateInvoiceCommand {
   id: string;
-  paymentMethod: PaymentMethod;
+  paymentMethod: PaymentMethodType;
   paymentAmount: number;
 }

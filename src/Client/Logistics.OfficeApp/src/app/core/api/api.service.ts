@@ -1,8 +1,7 @@
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
-import {Observable, catchError, of} from "rxjs";
+import {Observable} from "rxjs";
 import {globalConfig} from "@/configs";
-import {ToastService} from "@/core/services";
 import {
   CancelSubscriptionCommand,
   CompanyStatsDto,
@@ -23,7 +22,7 @@ import {
   MonthlyGrossesDto,
   NotificationDto,
   PagedIntervalQuery,
-  PagedResponseResult,
+  PagedResult,
   PaymentDto,
   PayrollDto,
   ProcessPaymentCommand,
@@ -47,16 +46,16 @@ import {
   UpdateTruckCommand,
   UserDto,
 } from "../models";
+import {ApiBase} from "./api-base";
+import {PaymentMethodApi} from "./payment-method.api";
 
 @Injectable({providedIn: "root"})
-export class ApiService {
-  private readonly host = globalConfig.apiHost;
-  private readonly headers = {"content-type": "application/json"};
+export class ApiService extends ApiBase {
+  constructor(httpClient: HttpClient) {
+    super(globalConfig.apiHost, httpClient);
+  }
 
-  constructor(
-    private readonly httpClient: HttpClient,
-    private readonly toastService: ToastService
-  ) {}
+  public readonly paymentMethodApi = new PaymentMethodApi(this.apiUrl, this.http);
 
   // #region Tenant API
 
@@ -69,7 +68,7 @@ export class ApiService {
 
   // #region User API
 
-  getUsers(query?: SearchableQuery): Observable<PagedResponseResult<UserDto>> {
+  getUsers(query?: SearchableQuery): Observable<PagedResult<UserDto>> {
     const url = `/users?${this.stringfySearchableQuery(query)}`;
     return this.get(url);
   }
@@ -83,10 +82,7 @@ export class ApiService {
     return this.get(url);
   }
 
-  getLoads(
-    query?: SearchableQuery,
-    onlyActiveLoads = false
-  ): Observable<PagedResponseResult<LoadDto>> {
+  getLoads(query?: SearchableQuery, onlyActiveLoads = false): Observable<PagedResult<LoadDto>> {
     let url = `/loads?${this.stringfySearchableQuery(query)}`;
 
     if (onlyActiveLoads) {
@@ -119,12 +115,12 @@ export class ApiService {
     return this.get(url);
   }
 
-  getTrucks(query?: SearchableQuery): Observable<PagedResponseResult<TruckDto>> {
+  getTrucks(query?: SearchableQuery): Observable<PagedResult<TruckDto>> {
     const url = `/trucks?${this.stringfySearchableQuery(query)}`;
     return this.get(url);
   }
 
-  getTruckDrivers(query?: SearchableQuery): Observable<PagedResponseResult<TruckDriverDto>> {
+  getTruckDrivers(query?: SearchableQuery): Observable<PagedResult<TruckDriverDto>> {
     const url = `/trucks/drivers?${this.stringfySearchableQuery(query)}`;
     return this.get(url);
   }
@@ -153,12 +149,12 @@ export class ApiService {
     return this.get(url);
   }
 
-  getEmployees(query?: SearchableQuery): Observable<PagedResponseResult<EmployeeDto>> {
+  getEmployees(query?: SearchableQuery): Observable<PagedResult<EmployeeDto>> {
     const url = `/employees?${this.stringfySearchableQuery(query)}`;
     return this.get(url);
   }
 
-  getDrivers(query?: SearchableQuery): Observable<PagedResponseResult<EmployeeDto>> {
+  getDrivers(query?: SearchableQuery): Observable<PagedResult<EmployeeDto>> {
     const url = `/employees?${this.stringfySearchableQuery(query)}&role=tenant.driver`;
     return this.get(url);
   }
@@ -187,7 +183,7 @@ export class ApiService {
 
   // #region Tenant Role API
 
-  getRoles(query?: SearchableQuery): Observable<PagedResponseResult<RoleDto>> {
+  getRoles(query?: SearchableQuery): Observable<PagedResult<RoleDto>> {
     const url = `/tenant-roles?${this.stringfySearchableQuery(query)}`;
     return this.get(url);
   }
@@ -235,7 +231,7 @@ export class ApiService {
     return this.get<Result<MonthlyGrossesDto>>(url);
   }
 
-  getTrucksStats(query: PagedIntervalQuery): Observable<PagedResponseResult<TruckStatsDto>> {
+  getTrucksStats(query: PagedIntervalQuery): Observable<PagedResult<TruckStatsDto>> {
     const url = `/stats/trucks?${this.stringfyPagedIntervalQuery(query)}`;
     return this.get(url);
   }
@@ -263,7 +259,7 @@ export class ApiService {
     return this.get(url);
   }
 
-  getCustomers(query?: SearchableQuery): Observable<PagedResponseResult<CustomerDto>> {
+  getCustomers(query?: SearchableQuery): Observable<PagedResult<CustomerDto>> {
     const url = `/customers?${this.stringfySearchableQuery(query)}`;
     return this.get(url);
   }
@@ -292,7 +288,7 @@ export class ApiService {
     return this.get(url);
   }
 
-  getPayments(query?: PagedIntervalQuery): Observable<PagedResponseResult<PaymentDto>> {
+  getPayments(query?: PagedIntervalQuery): Observable<PagedResult<PaymentDto>> {
     const url = `/payments?${this.stringfyPagedIntervalQuery(query)}`;
     return this.get(url);
   }
@@ -326,7 +322,7 @@ export class ApiService {
     return this.get(url);
   }
 
-  getInvoices(query?: PagedIntervalQuery): Observable<PagedResponseResult<InvoiceDto>> {
+  getInvoices(query?: PagedIntervalQuery): Observable<PagedResult<InvoiceDto>> {
     const url = `/invoices?${this.stringfyPagedIntervalQuery(query)}`;
     return this.get(url);
   }
@@ -355,7 +351,7 @@ export class ApiService {
     return this.get(url);
   }
 
-  getPayrolls(query?: GetPayrollsQuery): Observable<PagedResponseResult<PayrollDto>> {
+  getPayrolls(query?: GetPayrollsQuery): Observable<PagedResult<PayrollDto>> {
     let url = `/payrolls?${this.stringfySearchableQuery(query)}`;
 
     if (query?.employeeId) {
@@ -403,7 +399,7 @@ export class ApiService {
 
   getSubscriptionPayments(
     query: GetSubscriptionPaymentsQuery
-  ): Observable<PagedResponseResult<SubscriptionPaymentDto>> {
+  ): Observable<PagedResult<SubscriptionPaymentDto>> {
     const queryStr = this.stringfySearchableQuery(query);
     const url = `/subscriptions/${query.subscriptionId}/payments?${queryStr}`;
     return this.get(url);
@@ -411,82 +407,6 @@ export class ApiService {
 
   cancelSubscription(command: CancelSubscriptionCommand): Observable<Result> {
     return this.put(`/subscriptions/${command.id}/cancel`, command);
-  }
-
-  // #endregion
-
-  // #region Utility methods
-
-  parseSortProperty(sortField?: string | null, sortOrder?: number | null): string {
-    if (!sortOrder) {
-      sortOrder = 1;
-    }
-
-    if (!sortField) {
-      sortField = "";
-    }
-
-    return sortOrder <= -1 ? `-${sortField}` : sortField;
-  }
-
-  private get<TResponse>(endpoint: string): Observable<TResponse> {
-    return this.httpClient
-      .get<TResponse>(this.host + endpoint)
-      .pipe(catchError((err) => this.handleError(err)));
-  }
-
-  private post<TResponse, TBody>(endpoint: string, body: TBody): Observable<TResponse> {
-    const bodyJson = JSON.stringify(body);
-
-    return this.httpClient
-      .post<TResponse>(this.host + endpoint, bodyJson, {headers: this.headers})
-      .pipe(catchError((err) => this.handleError(err)));
-  }
-
-  private put<TResponse, TBody>(endpoint: string, body: TBody): Observable<TResponse> {
-    const bodyJson = JSON.stringify(body);
-
-    return this.httpClient
-      .put<TResponse>(this.host + endpoint, bodyJson, {headers: this.headers})
-      .pipe(catchError((err) => this.handleError(err)));
-  }
-
-  private delete<TResponse>(endpoint: string): Observable<TResponse> {
-    return this.httpClient
-      .delete<TResponse>(this.host + endpoint)
-      .pipe(catchError((err) => this.handleError(err)));
-  }
-
-  private stringfySearchableQuery(query?: SearchableQuery): string {
-    const search = query?.search ?? "";
-    const orderBy = query?.orderBy ?? "";
-    const page = query?.page ?? 1;
-    const pageSize = query?.pageSize ?? 10;
-    return `search=${search}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
-  }
-
-  private stringfyPagedIntervalQuery(query?: PagedIntervalQuery): string {
-    const startDate = query?.startDate.toJSON() ?? new Date().toJSON();
-    const endDate = query?.endDate?.toJSON();
-    const orderBy = query?.orderBy ?? "";
-    const page = query?.page ?? 1;
-    const pageSize = query?.pageSize ?? 10;
-    let queryStr = `startDate=${startDate}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
-
-    if (endDate) {
-      queryStr += `&endDate=${endDate}`;
-    }
-
-    return queryStr;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private handleError(responseData: any): Observable<any> {
-    const errorMessage = responseData.error?.error ?? responseData.error;
-
-    this.toastService.showError(errorMessage);
-    console.error(errorMessage ?? responseData);
-    return of({error: errorMessage, success: false});
   }
 
   // #endregion

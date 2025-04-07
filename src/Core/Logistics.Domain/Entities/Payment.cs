@@ -8,7 +8,7 @@ public class Payment : Entity, ITenantEntity
 {
     public decimal Amount { get; set; }
     public PaymentStatus Status { get; set; }
-    public PaymentMethod? Method { get; set; }
+    public PaymentMethodType? Method { get; set; }
     public PaymentFor PaymentFor { get; set; }
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     public DateTime? PaymentDate { get; set; }

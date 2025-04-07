@@ -10,9 +10,9 @@ import {InputNumberModule} from "primeng/inputnumber";
 import {TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {ApiService} from "@/core/api";
-import {SubscriptionDto, SubscriptionStatus} from "@/core/models";
+import {PaymentMethodDto, SubscriptionDto, SubscriptionStatus} from "@/core/models";
 import {TenantService, ToastService} from "@/core/services";
-import {BillingHistoryComponent} from "../components";
+import {BillingHistoryComponent, PaymentMethodsCardComponent} from "../components";
 
 @Component({
   selector: "app-manage-subscription",
@@ -28,13 +28,14 @@ import {BillingHistoryComponent} from "../components";
     ConfirmDialogModule,
     BillingHistoryComponent,
     RouterModule,
+    PaymentMethodsCardComponent,
   ],
-  providers: [ConfirmationService],
 })
 export class ManageSubscriptionComponent {
   readonly subscription: SubscriptionDto;
   readonly isLoading = signal(false);
   readonly isCancelled = signal(false);
+  readonly paymentMethods = signal<PaymentMethodDto[]>([]);
 
   constructor(
     private readonly tenantService: TenantService,

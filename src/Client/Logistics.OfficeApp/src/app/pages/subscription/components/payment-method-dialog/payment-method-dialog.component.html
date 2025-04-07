@@ -1,9 +1,155 @@
-<!-- Payment Method Dialog -->
-<p-dialog header="Update Payment Method" [(visible)]="showDialog">
-  <div #cardElement class="p-3 border-round mb-3"></div>
+<p-dialog
+  [header]="getDialogTitle()"
+  [(visible)]="showDialog"
+  modal="true"
+  [style]="{width: '50vw'}"
+>
+  <form class="row gx-5" [formGroup]="form" (ngSubmit)="submit()">
+    <app-validation-summary [form]="form"></app-validation-summary>
 
-  <ng-template pTemplate="footer">
-    <p-button label="Cancel" icon="pi pi-times" (click)="showDialog.set(false)"></p-button>
-    <p-button label="Save" icon="pi pi-check" [loading]="isLoading()"></p-button>
-  </ng-template>
+    <div class="col-12">
+      <h5>Choose payment method:</h5>
+
+      <div class="mb-3">
+        <label for="methodType" class="form-label">Payment Type</label>
+        <p-select
+          formControlName="methodType"
+          [options]="pymentMethodTypes"
+          class="w-100"
+        ></p-select>
+      </div>
+
+      @if (form.get("methodType")?.value === 0) {
+        <h5>Credit/Debit card details</h5>
+        <hr />
+
+        <div class="mb-3">
+          <label for="cardBrand" class="form-label">Card Brand Type</label>
+          <p-select formControlName="cardBrand" [options]="cardBrands" class="w-100"></p-select>
+        </div>
+        <div class="mb-3">
+          <label for="cardFundingType" class="form-label">Card Funding Type</label>
+          <p-select
+            formControlName="cardFundingType"
+            [options]="cardFundingTypes"
+            class="w-100"
+          ></p-select>
+        </div>
+        <div class="mb-3">
+          <label for="cardHolderName" class="form-label">Cardholder Name</label>
+          <input
+            id="cardHolderName"
+            formControlName="cardHolderName"
+            class="form-control"
+            placeholder="ex. John Smith"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="cardNumber" class="form-label">Card Number</label>
+          <p-inputMask
+            id="cardNumber"
+            formControlName="cardNumber"
+            styleClass="form-control"
+            mask="9999 9999 9999 9999"
+            placeholder="1234 0000 0000 0000"
+          />
+        </div>
+        <div class="row mb-3">
+          <div class="col-6">
+            <label for="cardExpirationDate" class="form-label">Expiration Date</label>
+            <p-inputMask
+              id="cardExpirationDate"
+              formControlName="cardExpirationDate"
+              styleClass="form-control"
+              mask="99/99"
+              placeholder="MM/YY"
+            />
+          </div>
+          <div class="col-6">
+            <label for="cardCvv" class="form-label">CVV</label>
+            <input id="cardCvv" formControlName="cardCvv" class="form-control" placeholder="123" />
+          </div>
+        </div>
+      } @else if (form.get("methodType")?.value === 1) {
+        <h5>US bank account details</h5>
+        <hr />
+
+        <div class="mb-3">
+          <label for="bankName" class="form-label">Bank Name</label>
+          <input
+            formControlName="bankName"
+            class="form-control"
+            placeholder="ex. Bank of America"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="bankAccountNumber" class="form-label">Account Number</label>
+          <input
+            formControlName="bankAccountNumber"
+            class="form-control"
+            placeholder="ex. 1234567891011"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="bankRoutingNumber" class="form-label">Routing Number</label>
+          <input
+            formControlName="bankRoutingNumber"
+            class="form-control"
+            placeholder="ex. 123456789"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="bankAccountHolderName" class="form-label">Account Holder Name</label>
+          <input
+            formControlName="bankAccountHolderName"
+            class="form-control"
+            placeholder="ex. John Smith"
+          />
+        </div>
+      } @else if (form.get("methodType")?.value === 2) {
+        <h5>International bank account details</h5>
+        <hr />
+
+        <div class="mb-3">
+          <label for="bankName" class="form-label">Bank Name</label>
+          <input
+            formControlName="bankName"
+            class="form-control"
+            placeholder="ex. Bank of America"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="bankAccountNumber" class="form-label">Account Number</label>
+          <input
+            formControlName="bankAccountNumber"
+            class="form-control"
+            placeholder="ex. 1234567891011"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="swiftCode" class="form-label">SWIFT Code</label>
+          <input formControlName="swiftCode" class="form-control" placeholder="ex. ABCD1234" />
+        </div>
+        <div class="mb-3">
+          <label for="bankAccountHolderName" class="form-label">Account Holder Name</label>
+          <input
+            formControlName="bankAccountHolderName"
+            class="form-control"
+            placeholder="ex. John Smith"
+          />
+        </div>
+      }
+    </div>
+
+    <div class="col-12">
+      <h5>Billing address</h5>
+      <hr />
+      <app-address-form formControlName="billingAddress"></app-address-form>
+    </div>
+
+    <div class="d-flex gap-2">
+      <p-button type="submit" label="Save" icon="pi pi-check" [loading]="isLoading()"></p-button>
+      <p-button label="Cancel" icon="pi pi-times" (click)="showDialog.set(false)"></p-button>
+    </div>
+  </form>
 </p-dialog>

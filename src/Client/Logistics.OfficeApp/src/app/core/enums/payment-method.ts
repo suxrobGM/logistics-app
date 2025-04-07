@@ -1,12 +1,12 @@
 import {EnumLike, EnumType, convertEnumToArray, findValueFromEnum} from "./enum-like";
 
-export enum PaymentMethod {
+export enum PaymentMethodType {
   BankAccount,
   CreditCard,
   Cash,
 }
 
-export const PaymentMethodEnum: EnumLike = {
+export const PaymentMethodTypeEnum: EnumLike = {
   BankAccount: {value: 0, description: "Bank Account"},
   CreditCard: {value: 1, description: "Credit Card"},
   Cash: {value: 2, description: "Cash"},

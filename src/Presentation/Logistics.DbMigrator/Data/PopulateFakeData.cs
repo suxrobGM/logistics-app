@@ -299,7 +299,7 @@ internal class PopulateFakeData
         load.DeliveryDate = dispatchedDate.AddDays(2);
         load.Distance = _random.Next(16093, 321869);
         load.Invoice!.Payment.SetStatus(PaymentStatus.Paid);
-        load.Invoice.Payment.Method = PaymentMethod.BankAccount;
+        load.Invoice.Payment.Method = PaymentMethodType.Card;
         load.Invoice.Payment.BillingAddress = originAddress;
 
         await _tenantUow.Repository<Load>().AddAsync(load);
