@@ -33,7 +33,6 @@ import {
   SearchableQuery,
   SubscriptionPaymentDto,
   SubscriptionPlanDto,
-  TenantDto,
   TruckDriverDto,
   TruckDto,
   TruckStatsDto,
@@ -45,9 +44,10 @@ import {
   UpdatePaymentCommand,
   UpdatePayrollCommand,
   UpdateTruckCommand,
-  UserDto,
 } from "./models";
 import {PaymentMethodApi} from "./payment-method.api";
+import {TenantApi} from "./tenant.api";
+import {UserApi} from "./user.api";
 
 @Injectable({providedIn: "root"})
 export class ApiService extends ApiBase {
@@ -56,24 +56,8 @@ export class ApiService extends ApiBase {
   }
 
   public readonly paymentMethodApi = new PaymentMethodApi(this.apiUrl, this.http);
-
-  // #region Tenant API
-
-  getTenant(tenantId: string): Observable<Result<TenantDto>> {
-    const url = `/tenants/${tenantId}`;
-    return this.get(url);
-  }
-
-  // #endregion
-
-  // #region User API
-
-  getUsers(query?: SearchableQuery): Observable<PagedResult<UserDto>> {
-    const url = `/users?${this.stringfySearchableQuery(query)}`;
-    return this.get(url);
-  }
-
-  // #endregion
+  public readonly tenantApi = new TenantApi(this.apiUrl, this.http);
+  public readonly userApi = new UserApi(this.apiUrl, this.http);
 
   // #region Load API
 

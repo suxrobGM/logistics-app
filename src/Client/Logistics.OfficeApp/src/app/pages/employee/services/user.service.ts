@@ -18,7 +18,7 @@ export class UserService {
   }
 
   searchUser(searchQuery: string): Observable<UserDto[] | undefined> {
-    const users$ = this.apiService.getUsers({search: searchQuery});
+    const users$ = this.apiService.userApi.getUsers({search: searchQuery});
     return users$.pipe(map((i) => i.data));
   }
 

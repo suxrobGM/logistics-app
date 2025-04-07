@@ -102,7 +102,7 @@ export class TenantService {
    * @param tenantId The tenant ID
    */
   private fetchTenantData(tenantId: string): void {
-    this.apiService.getTenant(tenantId).subscribe((result) => {
+    this.apiService.tenantApi.getTenant(tenantId).subscribe((result) => {
       if (!result.success || !result.data) {
         return;
       }
