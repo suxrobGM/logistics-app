@@ -13,9 +13,9 @@ public static class AddressExtensions
         
         if (!string.IsNullOrEmpty(address.Line2))
         {
-            return $"{address.Line1}, {address.Line2}, {address.City}, {address.Region} {address.ZipCode}";
+            return $"{address.Line1}, {address.Line2}, {address.City}, {address.State} {address.ZipCode}";
         }
         
-        return $"{address.Line1}, {address.City}, {address.Region} {address.ZipCode}";
+        return $"{address.Line1}, {address.City}, {address.State} {address.ZipCode}";
     }
 }

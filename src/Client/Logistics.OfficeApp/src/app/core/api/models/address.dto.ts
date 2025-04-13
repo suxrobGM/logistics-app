@@ -3,6 +3,6 @@ export interface AddressDto {
   line2?: string | null;
   city: string;
   zipCode: string;
-  region: string;
+  state: string;
   country: string;
 }

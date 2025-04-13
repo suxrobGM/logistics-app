@@ -6,7 +6,7 @@ public class AddressDto
     public string? Line2 { get; set; }
     public required string City { get; set; }
     public required string ZipCode { get; set; }
-    public required string Region { get; set; }
+    public required string State { get; set; }
     public required string Country { get; set; }
 
     public static AddressDto Empty() => new()
@@ -15,7 +15,7 @@ public class AddressDto
         Line2 = string.Empty,
         City = string.Empty,
         ZipCode = string.Empty,
-        Region = string.Empty,
+        State = string.Empty,
         Country = string.Empty
     };
 }

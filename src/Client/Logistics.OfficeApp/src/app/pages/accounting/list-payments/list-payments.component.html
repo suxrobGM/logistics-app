@@ -68,9 +68,9 @@
               Billing Address
               <p-sortIcon field="billingAddress"></p-sortIcon>
             </th>
-            <th pSortableColumn="comment">
-              Comment
-              <p-sortIcon field="comment"></p-sortIcon>
+            <th pSortableColumn="notes">
+              Notes
+              <p-sortIcon field="notes"></p-sortIcon>
             </th>
           </tr>
         </ng-template>
@@ -92,8 +92,8 @@
             >
               {{ payment.billingAddress | address }}
             </td>
-            <td [pTooltip]="payment.comment" [showDelay]="500" tooltipPosition="bottom">
-              {{ payment.comment }}
+            <td [pTooltip]="payment.notes" [showDelay]="500" tooltipPosition="bottom">
+              {{ payment.notes }}
             </td>
           </tr>
         </ng-template>

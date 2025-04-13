@@ -77,7 +77,7 @@ export class AddressAutocompleteComponent implements ControlValueAccessor, OnIni
     const addressObj: AddressDto = {
       line1: street,
       city: city,
-      region: region,
+      state: region,
       zipCode: zipCode,
       country: country,
     };

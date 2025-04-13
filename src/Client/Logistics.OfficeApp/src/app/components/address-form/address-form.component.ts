@@ -25,11 +25,11 @@ import {ValidationSummaryComponent} from "../validation-summary/validation-summa
   ],
 })
 export class AddressFormComponent implements ControlValueAccessor {
-  public readonly form: FormGroup<AddressForm>;
+  readonly form: FormGroup<AddressForm>;
   private onTouched?: () => void;
   private onChanged?: (value: AddressDto | null) => void;
 
-  public readonly address = input<AddressDto>();
+  readonly address = input<AddressDto>();
   readonly addressChange = output<AddressDto | null>();
 
   constructor() {
@@ -37,7 +37,7 @@ export class AddressFormComponent implements ControlValueAccessor {
       addressLine1: new FormControl("", {validators: Validators.required, nonNullable: true}),
       addressLine2: new FormControl(null),
       city: new FormControl("", {validators: Validators.required, nonNullable: true}),
-      region: new FormControl("", {validators: Validators.required, nonNullable: true}),
+      state: new FormControl("", {validators: Validators.required, nonNullable: true}),
       zipCode: new FormControl("", {validators: Validators.required, nonNullable: true}),
       country: new FormControl("", {validators: Validators.required, nonNullable: true}),
     });
@@ -46,7 +46,7 @@ export class AddressFormComponent implements ControlValueAccessor {
       if (
         !values.addressLine1 ||
         !values.city ||
-        !values.region ||
+        !values.state ||
         !values.zipCode ||
         !values.country
       ) {
@@ -57,7 +57,7 @@ export class AddressFormComponent implements ControlValueAccessor {
         line1: values.addressLine1,
         line2: values.addressLine2,
         city: values.city,
-        region: values.region,
+        state: values.state,
         zipCode: values.zipCode,
         country: values.country,
       };
@@ -79,7 +79,7 @@ export class AddressFormComponent implements ControlValueAccessor {
         addressLine1: value.line1,
         addressLine2: value.line2 ?? null,
         city: value.city,
-        region: value.region,
+        state: value.state,
         zipCode: value.zipCode,
         country: value.country,
       },
@@ -108,7 +108,7 @@ interface AddressForm {
   addressLine1: FormControl<string>;
   addressLine2: FormControl<string | null>;
   city: FormControl<string>;
-  region: FormControl<string>;
+  state: FormControl<string>;
   zipCode: FormControl<string>;
   country: FormControl<string>;
 }

@@ -7,7 +7,7 @@ export interface SubscriptionDto {
   plan?: SubscriptionPlanDto;
   startDate: Date;
   endDate?: Date;
-  nextPaymentDate?: Date;
+  nextBillingDate?: Date;
   trialEndDate?: Date;
   stripeSubscriptionId?: string;
   stripeCustomerId?: string;

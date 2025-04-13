@@ -109,7 +109,7 @@ public class LocationTracker : ILocationTracker
                     Line1 = placemark.SubThoroughfare,
                     Line2 = placemark.Thoroughfare,
                     City = placemark.Locality,
-                    Region = placemark.AdminArea,
+                    State = placemark.AdminArea,
                     ZipCode = placemark.PostalCode,
                     Country = placemark.CountryName
                 };

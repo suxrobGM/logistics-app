@@ -21,7 +21,7 @@
 
         @if (isActiveSubscription()) {
           <div class="col-6 fw-bold">Next Billing Date:</div>
-          <div class="col-6">{{ subscription.nextPaymentDate | date }}</div>
+          <div class="col-6">{{ subscription.nextBillingDate | date }}</div>
         }
 
         <div class="col-6 fw-bold">Status:</div>

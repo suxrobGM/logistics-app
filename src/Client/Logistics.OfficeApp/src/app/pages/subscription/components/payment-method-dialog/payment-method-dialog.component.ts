@@ -24,6 +24,7 @@ import {
   usBankAccountTypeOptions,
 } from "@/core/api/models";
 import {TenantService} from "@/core/services";
+import {PaymentMethodValidators} from "@/core/validators";
 
 @Component({
   selector: "app-payment-method-dialog",
@@ -59,18 +60,15 @@ export class PaymentMethodDialogComponent {
     const companyAddress = this.tenantService.getTenantData()?.companyAddress;
 
     this.form = new FormGroup<PaymentMethodForm>({
-      methodType: new FormControl(
-        {value: null, disabled: !this.isEditMode()},
-        {
-          validators: !this.isEditMode() ? Validators.required : null,
-          nonNullable: true,
-        }
-      ),
+      methodType: new FormControl(PaymentMethodType.Card, {
+        validators: Validators.required,
+        nonNullable: true,
+      }),
       cardBrand: new FormControl(null),
       cardFundingType: new FormControl<CardFundingType | null>(null),
       cardHolderName: new FormControl(null),
       cardNumber: new FormControl(""),
-      cardExpirationDate: new FormControl(""),
+      cardExpirationDate: new FormControl("", {validators: PaymentMethodValidators.cardExpDate}),
       cardCvc: new FormControl(null),
       billingAddress: new FormControl(companyAddress ?? null, {
         validators: Validators.required,
@@ -86,7 +84,7 @@ export class PaymentMethodDialogComponent {
   }
 
   isEditMode(): boolean {
-    return this.paymentMethodId != null;
+    return this.paymentMethodId() != null;
   }
 
   getDialogTitle(): string {
@@ -123,6 +121,9 @@ export class PaymentMethodDialogComponent {
       accountType: formValue.bankAccountType!,
       swiftCode: formValue.swiftCode!,
     };
+
+    console.log("isEditMode", this.isEditMode(), this.paymentMethodId());
+    console.log("payload", payload);
 
     if (this.isEditMode()) {
       (payload as UpdatePaymentMethodCommand).id = this.paymentMethodId()!;
