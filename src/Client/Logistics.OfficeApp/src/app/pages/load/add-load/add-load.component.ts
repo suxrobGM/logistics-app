@@ -19,7 +19,7 @@ import {ApiService} from "@/core/api";
 import {AddressDto, CreateLoadCommand, CustomerDto} from "@/core/api/models";
 import {AuthService} from "@/core/auth";
 import {ToastService} from "@/core/services";
-import {Converters} from "@/core/utils";
+import {Converters} from "@/core/utilities";
 import {SearchCustomerComponent, SearchTruckComponent} from "../components";
 import {TruckData} from "../shared";
 

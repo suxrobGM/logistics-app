@@ -10,7 +10,7 @@ import {ApiService} from "@/core/api";
 import {PaymentDto} from "@/core/api/models";
 import {PaymentFor, PaymentForEnum, PaymentMethodType, PaymentMethodTypeEnum} from "@/core/enums";
 import {AddressPipe} from "@/core/pipes";
-import {PredefinedDateRanges} from "@/core/utils";
+import {PredefinedDateRanges} from "@/core/utilities";
 
 @Component({
   selector: "app-list-payments",

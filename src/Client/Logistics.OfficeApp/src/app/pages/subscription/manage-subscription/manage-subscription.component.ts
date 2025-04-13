@@ -10,8 +10,9 @@ import {InputNumberModule} from "primeng/inputnumber";
 import {TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {ApiService} from "@/core/api";
-import {PaymentMethodDto, SubscriptionDto, SubscriptionStatus} from "@/core/api/models";
+import {SubscriptionDto, SubscriptionStatus} from "@/core/api/models";
 import {TenantService, ToastService} from "@/core/services";
+import {Labels, SeverityLevel} from "@/core/utilities";
 import {BillingHistoryComponent, PaymentMethodsCardComponent} from "../components";
 
 @Component({
@@ -35,7 +36,6 @@ export class ManageSubscriptionComponent {
   readonly subscription: SubscriptionDto;
   readonly isLoading = signal(false);
   readonly isCancelled = signal(false);
-  readonly paymentMethods = signal<PaymentMethodDto[]>([]);
 
   constructor(
     private readonly tenantService: TenantService,
@@ -52,30 +52,12 @@ export class ManageSubscriptionComponent {
     this.subscription = subscription;
   }
 
-  getSubStatusSeverity(): "success" | "warn" | "danger" | "info" {
-    switch (this.subscription.status) {
-      case SubscriptionStatus.Active:
-        return "success";
-      case SubscriptionStatus.Inactive:
-        return "warn";
-      case SubscriptionStatus.Cancelled:
-        return "danger";
-      default:
-        return "info";
-    }
+  getSubStatusSeverity(): SeverityLevel {
+    return Labels.subscriptionStatusSeverity(this.subscription);
   }
 
   getSubStatusLabel(): string {
-    switch (this.subscription.status) {
-      case SubscriptionStatus.Active:
-        return "Active";
-      case SubscriptionStatus.Inactive:
-        return "Inactive";
-      case SubscriptionStatus.Cancelled:
-        return "Cancelled";
-      default:
-        return "Unknown";
-    }
+    return Labels.subscriptionStatus(this.subscription);
   }
 
   confirmCancelSubscription(): void {

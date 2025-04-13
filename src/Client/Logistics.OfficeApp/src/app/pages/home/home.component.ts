@@ -13,7 +13,7 @@ import {globalConfig} from "@/configs";
 import {ApiService} from "@/core/api";
 import {DailyGrossesDto, LoadDto} from "@/core/api/models";
 import {AddressPipe, DistanceUnitPipe} from "@/core/pipes";
-import {Converters, DateUtils} from "@/core/utils";
+import {Converters, DateUtils} from "@/core/utilities";
 import {NotificationsPanelComponent} from "./components";
 
 @Component({

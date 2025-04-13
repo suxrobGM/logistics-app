@@ -5,7 +5,7 @@ import {ChartModule} from "primeng/chart";
 import {SkeletonModule} from "primeng/skeleton";
 import {ApiService} from "@/core/api";
 import {MonthlyGrossesDto} from "@/core/api/models";
-import {Converters, DateUtils} from "@/core/utils";
+import {Converters, DateUtils} from "@/core/utilities";
 import {RangeCalendarComponent} from "../range-calendar/range-calendar.component";
 
 @Component({

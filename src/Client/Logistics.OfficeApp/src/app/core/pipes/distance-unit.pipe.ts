@@ -1,5 +1,5 @@
 import {Pipe, PipeTransform} from "@angular/core";
-import {DistanceUnitTypes, Converters} from "@/core/utils";
+import {Converters, DistanceUnitTypes} from "@/core/utilities";
 
 @Pipe({
   name: "distanceUnit",

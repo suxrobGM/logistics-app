@@ -12,7 +12,7 @@ import {ApiService} from "@/core/api";
 import {AddressDto, InvoiceDto, PayrollDto, ProcessPaymentCommand} from "@/core/api/models";
 import {PaymentMethodType, PaymentMethodTypeEnum, PaymentStatus} from "@/core/enums";
 import {ToastService} from "@/core/services";
-import {RegexPatterns} from "@/core/utils";
+import {RegexPatterns} from "@/core/utilities";
 import {InvoiceDetailsComponent, PayrollDetailsComponent} from "../components";
 
 @Component({

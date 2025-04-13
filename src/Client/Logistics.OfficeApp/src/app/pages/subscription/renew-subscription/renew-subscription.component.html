@@ -1,1 +1,44 @@
-<p>renew works!</p>
+<h1 class="text-center">Renew subscription</h1>
+<hr class="w-100" />
+
+<div class="d-flex flex-column gap-2">
+  <!-- Current Plan Card -->
+  <div class="col-12">
+    <p-card header="Current Plan">
+      <div class="row">
+        <div class="col-6 fw-bold">Plan Name:</div>
+        <div class="col-6">{{ subscription.plan?.name }}</div>
+
+        <div class="col-6 fw-bold">Price per Employee:</div>
+        <div class="col-6">{{ subscription.plan?.price | currency }}</div>
+
+        @if (subscription.endDate) {
+          <div class="col-6 fw-bold">End Date:</div>
+          <div class="col-6">{{ subscription.endDate | date }}</div>
+        }
+
+        <div class="col-6 fw-bold">Status:</div>
+        <div class="col-6">
+          <p-tag [severity]="getSubStatusSeverity()" styleClass="text-center">
+            {{ getSubStatusLabel() }}
+          </p-tag>
+        </div>
+      </div>
+
+      <!-- <ng-template pTemplate="footer">
+        <div class="d-flex gap-2">
+          <p-button
+            [routerLink]="'/subscription/plans'"
+            label="Change Plan"
+            icon="pi pi-credit-card"
+          ></p-button>
+        </div>
+      </ng-template> -->
+    </p-card>
+  </div>
+
+  <!-- Payment Methods Card -->
+  <div class="col-12">
+    <app-payment-methods-card></app-payment-methods-card>
+  </div>
+</div>

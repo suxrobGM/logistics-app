@@ -9,7 +9,7 @@ import {PaymentStatusTagComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {InvoiceDto} from "@/core/api/models";
 import {PaymentStatus} from "@/core/enums";
-import {PredefinedDateRanges} from "@/core/utils";
+import {PredefinedDateRanges} from "@/core/utilities";
 
 @Component({
   selector: "app-list-invoices",

@@ -4,7 +4,7 @@ import {CommonModule} from "@angular/common";
 import {Component, OnInit, input, model, output, signal} from "@angular/core";
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {AddressDto} from "@/core/api/models";
-import {Converters} from "@/core/utils";
+import {Converters} from "@/core/utilities";
 
 @Component({
   selector: "app-address-autocomplete",

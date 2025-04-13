@@ -26,8 +26,8 @@ import {
   SalaryTypeEnum,
 } from "@/core/enums";
 import {ToastService} from "@/core/services";
-import {PredefinedDateRanges} from "@/core/utils";
-import {DateUtils} from "@/core/utils";
+import {PredefinedDateRanges} from "@/core/utilities";
+import {DateUtils} from "@/core/utilities";
 
 @Component({
   selector: "app-edit-payroll",

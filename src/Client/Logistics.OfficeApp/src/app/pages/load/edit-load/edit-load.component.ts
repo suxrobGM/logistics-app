@@ -22,7 +22,7 @@ import {ApiService} from "@/core/api";
 import {AddressDto, CustomerDto, UpdateLoadCommand} from "@/core/api/models";
 import {EnumType, LoadStatus, LoadStatusEnum} from "@/core/enums";
 import {ToastService} from "@/core/services";
-import {Converters} from "@/core/utils";
+import {Converters} from "@/core/utilities";
 import {SearchCustomerComponent, SearchTruckComponent} from "../components";
 import {TruckData, TruckHelper} from "../shared";
 

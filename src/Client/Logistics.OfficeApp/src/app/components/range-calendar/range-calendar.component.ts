@@ -1,9 +1,9 @@
-import {Component, Input, OnChanges, output} from "@angular/core";
 import {CommonModule} from "@angular/common";
+import {Component, Input, OnChanges, output} from "@angular/core";
 import {FormsModule} from "@angular/forms";
-import {CalendarModule} from "primeng/calendar";
 import {ButtonModule} from "primeng/button";
-import {DateUtils} from "@/core/utils";
+import {CalendarModule} from "primeng/calendar";
+import {DateUtils} from "@/core/utilities";
 
 @Component({
   selector: "app-range-calendar",
