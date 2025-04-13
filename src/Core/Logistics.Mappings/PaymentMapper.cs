@@ -12,11 +12,12 @@ public static class PaymentMapper
             Id = entity.Id,
             Amount = entity.Amount,
             CreatedDate = entity.CreatedDate,
-            Comment = entity.Comment,
+            Notes = entity.Notes,
             Method = entity.Method,
             PaymentDate = entity.PaymentDate,
             PaymentFor = entity.PaymentFor,
             Status = entity.Status,
+            SubscriptionId = entity.SubscriptionId,
         };
         
         if (entity.BillingAddress.IsNotNull())

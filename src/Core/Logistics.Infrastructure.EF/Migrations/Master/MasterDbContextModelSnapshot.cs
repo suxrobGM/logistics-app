@@ -186,72 +186,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     b.ToTable("Subscriptions", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionPayment", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<decimal>("Amount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int?>("Method")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("PaymentDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("StripeInvoiceId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("StripePaymentIntentId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SubscriptionId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.ComplexProperty<Dictionary<string, object>>("BillingAddress", "Logistics.Domain.Entities.SubscriptionPayment.BillingAddress#Address", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<string>("City")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Country")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Line1")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Line2")
-                                .HasColumnType("text");
-
-                            b1.Property<string>("State")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("ZipCode")
-                                .IsRequired()
-                                .HasColumnType("text");
-                        });
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubscriptionId");
-
-                    b.ToTable("SubscriptionPayments", (string)null);
-                });
-
             modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionPlan", b =>
                 {
                     b.Property<string>("Id")
@@ -585,7 +519,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Cvv")
+                    b.Property<string>("Cvc")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -683,17 +617,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     b.Navigation("Tenant");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionPayment", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.Subscription", "Subscription")
-                        .WithMany("Payments")
-                        .HasForeignKey("SubscriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Subscription");
-                });
-
             modelBuilder.Entity("Logistics.Domain.Entities.User", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Tenant", "Tenant")
@@ -749,11 +672,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
             modelBuilder.Entity("Logistics.Domain.Entities.AppRole", b =>
                 {
                     b.Navigation("Claims");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.Subscription", b =>
-                {
-                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionPlan", b =>

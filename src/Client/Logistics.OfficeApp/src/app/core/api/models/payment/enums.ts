@@ -32,7 +32,7 @@ export enum CardBrand {
 export const pymentMethodTypeOptions: SelectOption<PaymentMethodType>[] = [
   {label: "Credit/Debit Card", value: PaymentMethodType.Card},
   {label: "US Bank Account", value: PaymentMethodType.UsBankAccount},
-  {label: "International Bank", value: PaymentMethodType.InternationalBankAccount},
+  //{label: "International Bank", value: PaymentMethodType.InternationalBankAccount},
 ] as const;
 
 export const cardBrandOptions: SelectOption<CardBrand>[] = [

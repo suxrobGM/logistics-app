@@ -27,7 +27,7 @@ public class FilterPaymentsByInterval : BaseSpecification<Payment>
             "method" => i => i.Method,
             "amount" => i => i.Amount,
             "status" => i => i.Status,
-            "comment" => i => i.Comment!,
+            "notes" => i => i.Notes!,
             "paymentfor" => i => i.PaymentFor,
             "billingaddress" => i => i.BillingAddress,
             _ => i => i.CreatedDate

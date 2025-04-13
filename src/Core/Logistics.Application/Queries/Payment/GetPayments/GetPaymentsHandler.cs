@@ -20,7 +20,16 @@ internal sealed class GetPaymentsHandler : RequestHandler<GetPaymentsQuery, Page
         CancellationToken cancellationToken)
     {
         var totalItems = await _tenantUow.Repository<Payment>().CountAsync();
-        var specification = new FilterPaymentsByInterval(req.OrderBy, req.StartDate, req.EndDate, req.Page, req.PageSize);
+        ISpecification<Payment> specification;
+
+        if (!string.IsNullOrEmpty(req.SubscriptionId))
+        {
+            specification =  new GetPaymentsBySubscriptionId(req.SubscriptionId, req.OrderBy, req.Page, req.PageSize);
+        }
+        else
+        {
+            specification =  new FilterPaymentsByInterval(req.OrderBy, req.StartDate, req.EndDate, req.Page, req.PageSize);
+        }
         
         var payments = _tenantUow.Repository<Payment>()
             .ApplySpecification(specification)

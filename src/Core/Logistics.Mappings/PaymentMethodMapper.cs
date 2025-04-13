@@ -15,7 +15,7 @@ public static class PaymentMethodMapper
                 Id = cardPaymentMethod.Id,
                 CardBrand = cardPaymentMethod.CardBrand,
                 CardNumber = $"**** **** **** {cardPaymentMethod.CardNumber[^4..]}",
-                Cvv = "***",
+                Cvc = "***",
                 ExpMonth = cardPaymentMethod.ExpMonth,
                 ExpYear = cardPaymentMethod.ExpYear,
                 FundingType = cardPaymentMethod.FundingType,

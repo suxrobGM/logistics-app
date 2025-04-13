@@ -66,26 +66,37 @@ export abstract class ApiBase {
   }
 
   protected stringfySearchableQuery(query?: SearchableQuery): string {
-    const search = query?.search ?? "";
-    const orderBy = query?.orderBy ?? "";
-    const page = query?.page ?? 1;
-    const pageSize = query?.pageSize ?? 10;
-    return `search=${search}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
+    const {search = "", orderBy = "", page = 1, pageSize = 10} = query || {};
+    return new URLSearchParams({
+      search,
+      orderBy,
+      page: page.toString(),
+      pageSize: pageSize.toString(),
+    }).toString();
   }
 
-  protected stringfyPagedIntervalQuery(query?: PagedIntervalQuery): string {
-    const startDate = query?.startDate.toJSON() ?? new Date().toJSON();
-    const endDate = query?.endDate?.toJSON();
-    const orderBy = query?.orderBy ?? "";
-    const page = query?.page ?? 1;
-    const pageSize = query?.pageSize ?? 10;
-    let queryStr = `startDate=${startDate}&orderBy=${orderBy}&page=${page}&pageSize=${pageSize}`;
+  protected stringfyPagedIntervalQuery(
+    query?: PagedIntervalQuery,
+    additionalParams: Record<string, string | undefined> = {}
+  ): string {
+    const {startDate = new Date(), endDate, orderBy = "", page = 1, pageSize = 10} = query || {};
 
-    if (endDate) {
-      queryStr += `&endDate=${endDate}`;
-    }
+    // Filter out undefined values from additionalParams
+    const filteredAdditionalParams = Object.fromEntries(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      Object.entries(additionalParams).filter(([_, value]) => value !== undefined)
+    );
 
-    return queryStr;
+    const params = new URLSearchParams({
+      startDate: startDate.toJSON(),
+      orderBy,
+      page: page.toString(),
+      pageSize: pageSize.toString(),
+      ...filteredAdditionalParams,
+    });
+
+    if (endDate) params.set("endDate", endDate.toJSON());
+    return params.toString();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

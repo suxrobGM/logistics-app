@@ -56,7 +56,7 @@ export class ProcessPaymentComponent implements OnInit {
       cardholderName: new FormControl(null),
       cardNumber: new FormControl(null),
       cardExpirationDate: new FormControl(null),
-      cardCvv: new FormControl(null),
+      cardCvc: new FormControl(null),
       billingAddress: new FormControl(null, {validators: Validators.required}),
       bankName: new FormControl(null),
       bankAccountNumber: new FormControl(null),
@@ -102,7 +102,7 @@ export class ProcessPaymentComponent implements OnInit {
       billingAddress: this.form.value.billingAddress!,
       cardholderName: this.form.value.cardholderName!,
       cardNumber: this.form.value.cardNumber!,
-      cardCvv: this.form.value.cardCvv!,
+      cardCvc: this.form.value.cardCvc!,
       cardExpirationDate: this.form.value.cardExpirationDate!,
       bankName: this.form.value.bankName!,
       bankAccountNumber: this.form.value.bankAccountNumber!,
@@ -199,7 +199,7 @@ interface PaymentForm {
   cardholderName: FormControl<string | null>;
   cardNumber: FormControl<string | null>;
   cardExpirationDate: FormControl<string | null>;
-  cardCvv: FormControl<string | null>;
+  cardCvc: FormControl<string | null>;
   billingAddress: FormControl<AddressDto | null>;
   bankName: FormControl<string | null>;
   bankAccountNumber: FormControl<string | null>;

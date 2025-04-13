@@ -12,8 +12,15 @@ public class Payment : Entity, ITenantEntity
     public PaymentFor PaymentFor { get; set; }
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     public DateTime? PaymentDate { get; set; }
-    public string? Comment { get; set; }
+    public string? Notes { get; set; }
     public Address BillingAddress { get; set; } = Address.NullAddress;
+    public string? StripeInvoiceId { get; set; }
+    public string? StripePaymentIntentId { get; set; }
+    
+    /// <summary>
+    /// The ID of the subscription associated with this payment, if applicable.
+    /// </summary>
+    public string? SubscriptionId { get; set; }
 
     public void SetStatus(PaymentStatus status)
     {

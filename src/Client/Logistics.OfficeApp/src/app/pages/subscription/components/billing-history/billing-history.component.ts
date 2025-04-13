@@ -3,7 +3,7 @@ import {Component, model, signal} from "@angular/core";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {ApiService} from "@/core/api";
-import {SubscriptionPaymentDto} from "@/core/api/models";
+import {PaymentDto} from "@/core/api/models";
 import {AddressPipe} from "@/core/pipes";
 import {TenantService} from "@/core/services";
 
@@ -13,7 +13,7 @@ import {TenantService} from "@/core/services";
   imports: [CommonModule, TableModule, TagModule, AddressPipe],
 })
 export class BillingHistoryComponent {
-  readonly payments = signal<SubscriptionPaymentDto[]>([]);
+  readonly payments = signal<PaymentDto[]>([]);
   readonly isLoading = signal(false);
   readonly totalRecords = signal(0);
   readonly first = model(0);
@@ -32,11 +32,12 @@ export class BillingHistoryComponent {
     const subscriptionId = this.tenantService.getTenantData()?.subscription?.id;
 
     this.apiService
-      .getSubscriptionPayments({
+      .getPayments({
         subscriptionId: subscriptionId,
         orderBy: sortField,
         page: page,
         pageSize: rows,
+        startDate: new Date(),
       })
       .subscribe((result) => {
         if (result.success && result.data) {

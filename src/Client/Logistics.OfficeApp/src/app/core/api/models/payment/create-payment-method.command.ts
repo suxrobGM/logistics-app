@@ -15,7 +15,7 @@ export interface CreatePaymentMethodCommand {
   cardHolderName?: string;
   cardBrand?: string;
   cardNumber?: string;
-  cvv?: string;
+  cvc?: string;
   expMonth?: number;
   expYear?: number;
   fundingType?: CardFundingType;

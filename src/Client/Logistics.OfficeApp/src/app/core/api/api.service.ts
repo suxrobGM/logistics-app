@@ -16,8 +16,8 @@ import {
   CustomerDto,
   DailyGrossesDto,
   EmployeeDto,
+  GetPaymentsQuery,
   GetPayrollsQuery,
-  GetSubscriptionPaymentsQuery,
   InvoiceDto,
   LoadDto,
   MonthlyGrossesDto,
@@ -31,7 +31,6 @@ import {
   Result,
   RoleDto,
   SearchableQuery,
-  SubscriptionPaymentDto,
   SubscriptionPlanDto,
   TruckDriverDto,
   TruckDto,
@@ -168,7 +167,7 @@ export class ApiService extends ApiBase {
   // #region Tenant Role API
 
   getRoles(query?: SearchableQuery): Observable<PagedResult<RoleDto>> {
-    const url = `/tenant-roles?${this.stringfySearchableQuery(query)}`;
+    const url = `/roles/tenant?${this.stringfySearchableQuery(query)}`;
     return this.get(url);
   }
 
@@ -272,9 +271,12 @@ export class ApiService extends ApiBase {
     return this.get(url);
   }
 
-  getPayments(query?: PagedIntervalQuery): Observable<PagedResult<PaymentDto>> {
-    const url = `/payments?${this.stringfyPagedIntervalQuery(query)}`;
-    return this.get(url);
+  getPayments(query?: GetPaymentsQuery): Observable<PagedResult<PaymentDto>> {
+    const queryStr = this.stringfyPagedIntervalQuery(query, {
+      subscriptionId: query?.subscriptionId,
+    });
+
+    return this.get(`/payments?${queryStr}`);
   }
 
   processPayment(command: ProcessPaymentCommand): Observable<Result> {
@@ -371,22 +373,6 @@ export class ApiService extends ApiBase {
 
   getSubscriptionPlans(): Observable<Result<SubscriptionPlanDto[]>> {
     return this.get("/subscriptions/plans");
-  }
-
-  getSubscriptionPayment(
-    subscriptionId: string,
-    paymentId: string
-  ): Observable<Result<SubscriptionPaymentDto>> {
-    const url = `/subscriptions/${subscriptionId}/payments/${paymentId}`;
-    return this.get(url);
-  }
-
-  getSubscriptionPayments(
-    query: GetSubscriptionPaymentsQuery
-  ): Observable<PagedResult<SubscriptionPaymentDto>> {
-    const queryStr = this.stringfySearchableQuery(query);
-    const url = `/subscriptions/${query.subscriptionId}/payments?${queryStr}`;
-    return this.get(url);
   }
 
   cancelSubscription(command: CancelSubscriptionCommand): Observable<Result> {

@@ -1,7 +1,9 @@
 ﻿using Logistics.Domain.Entities;
 using Stripe;
+using PaymentMethod = Logistics.Domain.Entities.PaymentMethod;
 using StripeCustomer = Stripe.Customer;
 using StripeSubscription = Stripe.Subscription;
+using StripePaymentMethod = Stripe.PaymentMethod;
 
 namespace Logistics.Application.Services;
 
@@ -70,4 +72,30 @@ public interface IStripeService
     /// <param name="plan"> Subscription plan to be updated.</param>
     /// <returns>Stripe price and product object.</returns>
     Task<(Product Product, Price ActivePrice)> UpdateSubscriptionPlanAsync(SubscriptionPlan plan);
+    
+    /// <summary>
+    /// Adds a new payment method to the Stripe customer.
+    /// </summary>
+    /// <param name="paymentMethod">Payment method entity to add.</param>
+    /// <returns>Stripe PaymentMethod object.</returns>
+    Task<StripePaymentMethod> AddPaymentMethodAsync(PaymentMethod paymentMethod);
+
+    /// <summary>
+    /// Updates an existing payment method in Stripe.
+    /// </summary>
+    /// <param name="paymentMethod">Payment method entity to update.</param>
+    /// <returns>Updated Stripe PaymentMethod object.</returns>
+    Task<StripePaymentMethod> UpdatePaymentMethodAsync(PaymentMethod paymentMethod);
+
+    /// <summary>
+    /// Removes a payment method from Stripe.
+    /// </summary>
+    /// <param name="paymentMethod">Payment method entity to remove.</param>
+    Task RemovePaymentMethodAsync(PaymentMethod paymentMethod);
+
+    /// <summary>
+    /// Sets the default payment method for a customer.
+    /// </summary>
+    /// <param name="paymentMethod">Payment method entity to set as default.</param>
+    Task SetDefaultPaymentMethodAsync(PaymentMethod paymentMethod);
 }

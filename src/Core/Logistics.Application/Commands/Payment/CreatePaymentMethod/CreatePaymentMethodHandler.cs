@@ -1,4 +1,5 @@
-﻿using Logistics.Domain.Entities;
+﻿using Logistics.Application.Services;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Consts;
 using Logistics.Shared.Models;
@@ -9,13 +10,16 @@ namespace Logistics.Application.Commands;
 internal sealed class CreatePaymentMethodHandler : RequestHandler<CreatePaymentMethodCommand, Result>
 {
     private readonly IMasterUnityOfWork _masterUow;
+    private readonly IStripeService _stripeService;
     private readonly ILogger<CreatePaymentMethodHandler> _logger;
 
     public CreatePaymentMethodHandler(
-        IMasterUnityOfWork masterUow, 
+        IMasterUnityOfWork masterUow,
+        IStripeService stripeService,
         ILogger<CreatePaymentMethodHandler> logger)
     {
         _masterUow = masterUow;
+        _stripeService = stripeService;
         _logger = logger;
     }
 
@@ -63,7 +67,7 @@ internal sealed class CreatePaymentMethodHandler : RequestHandler<CreatePaymentM
             TenantId = tenant.Id,
             CardBrand = command.CardBrand!,
             CardNumber = command.CardNumber!,
-            Cvv = command.Cvv!,
+            Cvc = command.Cvc!,
             ExpMonth = command.ExpMonth!.Value,
             ExpYear = command.ExpYear!.Value,
             FundingType = command.FundingType!.Value,
@@ -72,6 +76,7 @@ internal sealed class CreatePaymentMethodHandler : RequestHandler<CreatePaymentM
             CardHolderName = command.CardHolderName!,
         };
         
+        await _stripeService.AddPaymentMethodAsync(paymentMethod);
         await _masterUow.Repository<CardPaymentMethod>().AddAsync(paymentMethod);
         _logger.LogInformation(
             "Created card payment method for tenant {TenantId} with last 4 digits {Last4}",
@@ -96,6 +101,7 @@ internal sealed class CreatePaymentMethodHandler : RequestHandler<CreatePaymentM
             IsDefault = setDefault,
         };
         
+        await _stripeService.AddPaymentMethodAsync(paymentMethod);
         await _masterUow.Repository<UsBankAccountPaymentMethod>().AddAsync(paymentMethod);
         _logger.LogInformation(
             "Created US bank account payment method for tenant {TenantId} with last 4 digits {Last4}",
@@ -117,6 +123,8 @@ internal sealed class CreatePaymentMethodHandler : RequestHandler<CreatePaymentM
             BillingAddress = command.BillingAddress,
             IsDefault = setDefault,
         };
+        
+        // TODO: Stripe does not support international bank accounts yet
         
         await _masterUow.Repository<BankAccountPaymentMethod>().AddAsync(paymentMethod);
         _logger.LogInformation(

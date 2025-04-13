@@ -4,5 +4,5 @@ export interface CreatePaymentCommand {
   method: PaymentMethodType;
   amount: number;
   paymentFor: PaymentFor;
-  comment?: string;
+  notes?: string;
 }

@@ -43,9 +43,9 @@ internal sealed class UpdatePaymentHandler : RequestHandler<UpdatePaymentCommand
         {
             payment.BillingAddress = req.BillingAddress;
         }
-        if (!string.IsNullOrEmpty(req.Comment) && payment.Comment != req.Comment)
+        if (!string.IsNullOrEmpty(req.Notes) && payment.Notes != req.Notes)
         {
-            payment.Comment = req.Comment;
+            payment.Notes = req.Notes;
         }
         
         _tenantUow.Repository<Payment>().Update(payment);

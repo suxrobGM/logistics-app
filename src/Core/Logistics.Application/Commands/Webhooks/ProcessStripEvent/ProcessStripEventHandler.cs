@@ -6,7 +6,6 @@ using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Stripe;
-using Subscription = Logistics.Domain.Entities.Subscription;
 using StripeInvoice = Stripe.Invoice;
 
 namespace Logistics.Application.Commands;
@@ -53,26 +52,17 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
 
     private async Task<Result> HandleInvoicePaid(StripeInvoice stripeInvoice)
     {
-        var subsRepository = _masterUow.Repository<Subscription>();
-        var subsPaymentRepository = _masterUow.Repository<SubscriptionPayment>();
-        var subscription = await subsRepository.GetAsync(i => i.StripeSubscriptionId == stripeInvoice.Subscription.Id);
-
-        if (subscription is null)
-        {
-            return Result.Fail($"Could not find a subscription with Stripe ID '{stripeInvoice.Subscription.Id}'");
-        }
+        var paymentRepository = _masterUow.Repository<Payment>();
         
-        var payment = new SubscriptionPayment
+        var payment = new Payment
         {
             Amount = stripeInvoice.AmountPaid / 100m, // Convert from cents
             Status = PaymentStatus.Paid,
             PaymentDate = DateTime.UtcNow,
             StripeInvoiceId = stripeInvoice.Id,
-            Subscription = subscription,
-            SubscriptionId = subscription.Id
         };
         
-        await subsPaymentRepository.AddAsync(payment);
+        await paymentRepository.AddAsync(payment);
         await _masterUow.SaveChangesAsync();
         return Result.Succeed();
     }

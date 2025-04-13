@@ -74,12 +74,6 @@ public class MasterDbContext : IdentityDbContext<
                 .OnDelete(DeleteBehavior.SetNull);
         });
         
-        builder.Entity<SubscriptionPayment>(entity =>
-        {
-            entity.ToTable("SubscriptionPayments");
-            entity.Property(i => i.Amount).HasPrecision(18, 2);
-        });
-        
         builder.Entity<SubscriptionPlan>(entity =>
         {
             entity.ToTable("SubscriptionPlans");
@@ -97,10 +91,6 @@ public class MasterDbContext : IdentityDbContext<
             entity.HasOne(i => i.Tenant)
                 .WithOne(i => i.Subscription)
                 .HasForeignKey<Subscription>(i => i.TenantId);
-
-            entity.HasMany(i => i.Payments)
-                .WithOne(i => i.Subscription)
-                .HasForeignKey(i => i.SubscriptionId);
         });
 
         builder.Entity<PaymentMethod>(entity =>

@@ -69,6 +69,8 @@ export class SidebarComponent {
       if (!tenantData?.subscription) {
         this.navItems.set(sidebarNavItems.filter((item) => item.label !== "Subscription"));
       }
+
+      this.companyName.set(tenantData?.companyName ?? null);
     });
   }
 

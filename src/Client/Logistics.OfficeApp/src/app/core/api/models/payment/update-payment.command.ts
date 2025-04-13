@@ -6,5 +6,5 @@ export interface UpdatePaymentCommand {
   amount?: number;
   paymentFor?: PaymentFor;
   status?: PaymentStatus;
-  comment?: string;
+  notes?: string;
 }

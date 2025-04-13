@@ -1,5 +1,8 @@
 ﻿namespace Logistics.Domain.Entities;
 
+/// <summary>
+/// International Bank Account Payment Method
+/// </summary>
 public class BankAccountPaymentMethod : PaymentMethod
 {
     public required string AccountNumber { get; set; }

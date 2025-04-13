@@ -17,8 +17,6 @@ public class Subscription : Entity
     public DateTime? TrialEndDate { get; set; }
     public string? StripeSubscriptionId { get; set; }
     public string? StripeCustomerId { get; set; }
-    
-    public virtual List<SubscriptionPayment> Payments { get; set; } = [];
 
     public static Subscription Create(Tenant tenant, SubscriptionPlan plan)
     {

@@ -1,6 +1,5 @@
 export * from "./create-payment.command";
 export * from "./payment.dto";
-export * from "./subscription-payment.dto";
 export * from "./update-payment.command";
 export * from "./process-payment.command";
 export * from "./payment-method.dto";
@@ -9,3 +8,4 @@ export * from "./update-payment-method.command";
 export * from "./delete-payment-method.command";
 export * from "./set-default-payment-method.command copy";
 export * from "./enums";
+export * from "./get-payments.query";

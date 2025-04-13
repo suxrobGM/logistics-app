@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.EF.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20250407003339_Version_0001")]
+    [Migration("20250413010136_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -289,14 +289,14 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)");
 
-                    b.Property<string>("Comment")
-                        .HasColumnType("text");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int?>("Method")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("PaymentDate")
                         .HasColumnType("timestamp with time zone");
@@ -306,6 +306,15 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
+
+                    b.Property<string>("StripeInvoiceId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StripePaymentIntentId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SubscriptionId")
+                        .HasColumnType("text");
 
                     b.ComplexProperty<Dictionary<string, object>>("BillingAddress", "Logistics.Domain.Entities.Payment.BillingAddress#Address", b1 =>
                         {

@@ -16,7 +16,7 @@ internal sealed class ProcessPaymentValidator : AbstractValidator<ProcessPayment
             RuleFor(i => i.CardholderName).NotEmpty();
             RuleFor(i => i.CardNumber).NotEmpty().Matches(RegexPatterns.CreditCardNumber);
             RuleFor(i => i.CardExpirationDate).NotEmpty().Matches(RegexPatterns.CardExpirationDate);
-            RuleFor(i => i.CardCvv).NotEmpty().Matches(RegexPatterns.CardCvv);
+            RuleFor(i => i.CardCvv).NotEmpty().Matches(RegexPatterns.CardCvc);
         });
         
         When(i => i.PaymentMethod == PaymentMethodType.UsBankAccount, () =>

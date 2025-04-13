@@ -168,7 +168,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     CardHolderName = table.Column<string>(type: "text", nullable: true),
                     CardBrand = table.Column<string>(type: "text", nullable: true),
                     CardNumber = table.Column<string>(type: "text", nullable: true),
-                    Cvv = table.Column<string>(type: "text", nullable: true),
+                    Cvc = table.Column<string>(type: "text", nullable: true),
                     ExpMonth = table.Column<int>(type: "integer", nullable: true),
                     ExpYear = table.Column<int>(type: "integer", nullable: true),
                     FundingType = table.Column<int>(type: "integer", nullable: true),
@@ -307,37 +307,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "SubscriptionPayments",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    Method = table.Column<int>(type: "integer", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    PaymentDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    StripeInvoiceId = table.Column<string>(type: "text", nullable: true),
-                    StripePaymentIntentId = table.Column<string>(type: "text", nullable: true),
-                    SubscriptionId = table.Column<string>(type: "text", nullable: false),
-                    BillingAddress_City = table.Column<string>(type: "text", nullable: false),
-                    BillingAddress_Country = table.Column<string>(type: "text", nullable: false),
-                    BillingAddress_Line1 = table.Column<string>(type: "text", nullable: false),
-                    BillingAddress_Line2 = table.Column<string>(type: "text", nullable: true),
-                    BillingAddress_State = table.Column<string>(type: "text", nullable: false),
-                    BillingAddress_ZipCode = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SubscriptionPayments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SubscriptionPayments_Subscriptions_SubscriptionId",
-                        column: x => x.SubscriptionId,
-                        principalTable: "Subscriptions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -391,11 +360,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 column: "TenantId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SubscriptionPayments_SubscriptionId",
-                table: "SubscriptionPayments",
-                column: "SubscriptionId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Subscriptions_PlanId",
                 table: "Subscriptions",
                 column: "PlanId");
@@ -432,16 +396,13 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 name: "PaymentMethods");
 
             migrationBuilder.DropTable(
-                name: "SubscriptionPayments");
+                name: "Subscriptions");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "Subscriptions");
 
             migrationBuilder.DropTable(
                 name: "SubscriptionPlans");

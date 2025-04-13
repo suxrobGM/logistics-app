@@ -12,5 +12,6 @@ public class PaymentDto
     public PaymentStatus Status { get; set; }
     public PaymentFor PaymentFor { get; set; }
     public AddressDto? BillingAddress { get; set; }
-    public string? Comment { get; set; }
+    public string? Notes { get; set; }
+    public string? SubscriptionId { get; set; }
 }

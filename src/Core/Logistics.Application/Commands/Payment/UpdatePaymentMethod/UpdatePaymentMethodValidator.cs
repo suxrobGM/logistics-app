@@ -16,7 +16,7 @@ internal sealed class UpdatePaymentMethodValidator : AbstractValidator<UpdatePay
             RuleFor(i => i.FundingType).IsInEnum();
             RuleFor(i => i.CardHolderName).NotEmpty();
             RuleFor(i => i.CardNumber).NotEmpty().Matches(RegexPatterns.CreditCardNumber);
-            RuleFor(i => i.Cvv).NotEmpty().Matches(RegexPatterns.CardCvv);
+            RuleFor(i => i.Cvc).NotEmpty().Matches(RegexPatterns.CardCvc);
             RuleFor(i => i.CardBrand).NotEmpty();
             RuleFor(i => i.ExpMonth).NotEmpty().GreaterThan(0).LessThanOrEqualTo(12);
             RuleFor(i => i.ExpYear).NotEmpty().GreaterThanOrEqualTo(currentYear)

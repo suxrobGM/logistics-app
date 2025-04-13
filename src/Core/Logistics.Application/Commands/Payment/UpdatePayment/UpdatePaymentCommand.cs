@@ -13,5 +13,5 @@ public class UpdatePaymentCommand : IRequest<Result>
     public PaymentStatus? Status { get; set; }
     public PaymentFor? PaymentFor { get; set; }
     public Address? BillingAddress { get; set; }
-    public string? Comment { get; set; }
+    public string? Notes { get; set; }
 }

@@ -10,5 +10,5 @@ export interface PaymentDto {
   status: PaymentStatus;
   paymentFor: PaymentFor;
   billingAddress?: AddressDto;
-  comment?: string;
+  notes?: string;
 }

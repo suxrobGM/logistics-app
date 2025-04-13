@@ -23,7 +23,7 @@ internal sealed class CreatePaymentHandler : RequestHandler<CreatePaymentCommand
             Method = req.Method,
             PaymentFor = req.PaymentFor,
             BillingAddress = req.BillingAddress ?? Address.NullAddress,
-            Comment = req.Comment
+            Notes = req.Notes
         };
         
         await _tenantUow.Repository<Payment>().AddAsync(payment);

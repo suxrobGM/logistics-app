@@ -1,4 +1,5 @@
-﻿using Logistics.Application.Utilities;
+﻿using Logistics.Application.Services;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Consts;
@@ -10,13 +11,16 @@ namespace Logistics.Application.Commands;
 internal sealed class UpdatePaymentMethodHandler : RequestHandler<UpdatePaymentMethodCommand, Result>
 {
     private readonly IMasterUnityOfWork _masterUow;
+    private readonly IStripeService _stripeService;
     private readonly ILogger<UpdatePaymentMethodHandler> _logger;
 
     public UpdatePaymentMethodHandler(
-        IMasterUnityOfWork masterUow, 
+        IMasterUnityOfWork masterUow,
+        IStripeService stripeService,
         ILogger<UpdatePaymentMethodHandler> logger)
     {
         _masterUow = masterUow;
+        _stripeService = stripeService;
         _logger = logger;
     }
 
@@ -51,12 +55,14 @@ internal sealed class UpdatePaymentMethodHandler : RequestHandler<UpdatePaymentM
         
         paymentMethod.CardBrand = PropertyUpdater.UpdateIfChanged(command.CardBrand, paymentMethod.CardBrand);
         paymentMethod.CardNumber = PropertyUpdater.UpdateIfChanged(command.CardNumber, paymentMethod.CardNumber);
-        paymentMethod.Cvv = PropertyUpdater.UpdateIfChanged(command.Cvv, paymentMethod.Cvv);
+        paymentMethod.Cvc = PropertyUpdater.UpdateIfChanged(command.Cvc, paymentMethod.Cvc);
         paymentMethod.ExpMonth = PropertyUpdater.UpdateIfChanged(command.ExpMonth, paymentMethod.ExpMonth);
         paymentMethod.ExpYear = PropertyUpdater.UpdateIfChanged(command.ExpYear, paymentMethod.ExpYear);
         paymentMethod.FundingType = PropertyUpdater.UpdateIfChanged(command.FundingType, paymentMethod.FundingType);
         paymentMethod.BillingAddress = PropertyUpdater.UpdateIfChanged(command.BillingAddress, paymentMethod.BillingAddress);
         paymentMethod.CardHolderName = PropertyUpdater.UpdateIfChanged(command.CardHolderName, paymentMethod.CardHolderName);
+
+        await _stripeService.UpdatePaymentMethodAsync(paymentMethod);
         
         _masterUow.Repository<CardPaymentMethod>().Update(paymentMethod);
         await _masterUow.SaveChangesAsync();

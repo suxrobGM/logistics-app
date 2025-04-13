@@ -71,7 +71,7 @@ export class PaymentMethodDialogComponent {
       cardHolderName: new FormControl(null),
       cardNumber: new FormControl(""),
       cardExpirationDate: new FormControl(""),
-      cardCvv: new FormControl(null),
+      cardCvc: new FormControl(null),
       billingAddress: new FormControl(companyAddress ?? null, {
         validators: Validators.required,
       }),
@@ -113,7 +113,7 @@ export class PaymentMethodDialogComponent {
       cardNumber: formValue.cardNumber!,
       expMonth: expMonth ? parseInt(expMonth, 10) : undefined,
       expYear: expYear ? parseInt(expYear, 10) : undefined,
-      cvv: formValue.cardCvv!,
+      cvc: formValue.cardCvc!,
       billingAddress: formValue.billingAddress!,
       bankName: formValue.bankName!,
       accountNumber: formValue.bankAccountNumber!,
@@ -157,7 +157,7 @@ interface PaymentMethodForm {
   cardHolderName: FormControl<string | null>;
   cardNumber: FormControl<string | null>;
   cardExpirationDate: FormControl<string | null>;
-  cardCvv: FormControl<string | null>;
+  cardCvc: FormControl<string | null>;
   billingAddress: FormControl<AddressDto | null>;
   bankName: FormControl<string | null>;
   bankAccountNumber: FormControl<string | null>;

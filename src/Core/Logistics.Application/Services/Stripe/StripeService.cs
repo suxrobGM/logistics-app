@@ -1,10 +1,13 @@
 ﻿using Logistics.Domain.Entities;
 using Logistics.Domain.Utilities;
+using Logistics.Shared.Consts;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Stripe;
+using PaymentMethod = Logistics.Domain.Entities.PaymentMethod;
 using StripeCustomer = Stripe.Customer;
 using StripeSubscription = Stripe.Subscription;
+using StripePaymentMethod = Stripe.PaymentMethod;
 
 namespace Logistics.Application.Services;
 
@@ -17,7 +20,9 @@ internal class StripeService : IStripeService
         _logger = logger;
         StripeConfiguration.ApiKey = options.Value.SecretKey;
     }
-    
+
+    #region Customer API
+
     public Task<StripeCustomer> GetCustomerAsync(string stripeCustomerId)
     {
         var options = new CustomerGetOptions
@@ -33,15 +38,7 @@ internal class StripeService : IStripeService
         var options = new CustomerCreateOptions();
         options.Email = tenant.BillingEmail;
         options.Name = tenant.CompanyName;
-        options.Address = new AddressOptions
-        {
-            Line1 = tenant.CompanyAddress.Line1,
-            Line2 = tenant.CompanyAddress.Line2 ?? "",
-            City = tenant.CompanyAddress.City,
-            State = tenant.CompanyAddress.State,
-            PostalCode = tenant.CompanyAddress.ZipCode,
-            Country = tenant.CompanyAddress.Country
-        };
+        options.Address = MapAddressOptions(tenant.CompanyAddress);
         options.Metadata = new Dictionary<string, string> { { "tenant_id", tenant.Id } };
         
         var customer = await new CustomerService().CreateAsync(options);
@@ -60,15 +57,7 @@ internal class StripeService : IStripeService
         var options = new CustomerUpdateOptions();
         options.Email = tenant.BillingEmail;
         options.Name = tenant.CompanyName;
-        options.Address = new AddressOptions
-        {
-            Line1 = tenant.CompanyAddress.Line1,
-            Line2 = tenant.CompanyAddress.Line2 ?? "",
-            City = tenant.CompanyAddress.City,
-            State = tenant.CompanyAddress.State,
-            PostalCode = tenant.CompanyAddress.ZipCode,
-            Country = tenant.CompanyAddress.Country
-        };
+        options.Address = MapAddressOptions(tenant.CompanyAddress);
         options.Metadata = new Dictionary<string, string> { { "tenant_id", tenant.Id } };
         
         return new CustomerService().UpdateAsync(tenant.StripeCustomerId, options);
@@ -79,6 +68,11 @@ internal class StripeService : IStripeService
         var options = new CustomerDeleteOptions();
         return new CustomerService().DeleteAsync(stripeCustomerId, options);
     }
+
+    #endregion
+
+    
+    #region Subscription API
 
     public async Task<StripeSubscription> CreateSubscriptionAsync(SubscriptionPlan plan, Tenant tenant, int employeeCount)
     {
@@ -145,6 +139,11 @@ internal class StripeService : IStripeService
         await new SubscriptionItemService().UpdateAsync(item.Id, options);
         _logger.LogInformation("Updated Stripe subscription {StripeSubscriptionId} with new quantity {EmployeeCount}", stripeSubscriptionId, employeeCount);
     }
+
+    #endregion
+
+
+    #region Subscription Plan API
 
     public async Task<(Product Product, Price Price)> CreateSubscriptionPlanAsync(SubscriptionPlan plan)
     {
@@ -266,4 +265,176 @@ internal class StripeService : IStripeService
 
         return (product, activePrice);
     }
+
+    #endregion
+
+
+    #region Payment Method API
+
+    public async Task<StripePaymentMethod> AddPaymentMethodAsync(PaymentMethod paymentMethod)
+    {
+        if (paymentMethod.Tenant.StripeCustomerId == null)
+            throw new ArgumentException("Tenant must have a StripeCustomerId");
+
+        var paymentMethodService = new PaymentMethodService();
+        var options = new PaymentMethodCreateOptions
+        {
+            Type = GetStripePaymentMethodType(paymentMethod.Type)
+        };
+
+        switch (paymentMethod)
+        {
+            case CardPaymentMethod card:
+                options.Card = MapCardPaymentMethod(card);
+                break;
+            case UsBankAccountPaymentMethod usBank:
+                options.UsBankAccount = MapUsBankPaymentMethod(usBank);
+                break;
+            case BankAccountPaymentMethod:
+                throw new NotSupportedException("International bank accounts are not supported");
+            default:
+                throw new ArgumentException("Unsupported payment method type");
+        }
+
+        options.BillingDetails = CreateBillingDetails(paymentMethod);
+        var stripePaymentMethod = await paymentMethodService.CreateAsync(options);
+
+        await paymentMethodService.AttachAsync(stripePaymentMethod.Id, 
+            new PaymentMethodAttachOptions { Customer = paymentMethod.Tenant.StripeCustomerId });
+
+        if (paymentMethod.IsDefault)
+        {
+            await SetDefaultPaymentMethodAsync(paymentMethod);
+        }
+
+        paymentMethod.StripePaymentMethodId = stripePaymentMethod.Id;
+        _logger.LogInformation("Added Stripe payment method {PaymentMethodId}", stripePaymentMethod.Id);
+        return stripePaymentMethod;
+    }
+
+    public async Task<StripePaymentMethod> UpdatePaymentMethodAsync(PaymentMethod paymentMethod)
+    {
+        if (string.IsNullOrEmpty(paymentMethod.StripePaymentMethodId))
+            throw new ArgumentException("Payment method must have a Stripe ID");
+
+        var service = new PaymentMethodService();
+        var options = new PaymentMethodUpdateOptions
+        {
+            BillingDetails = CreateBillingDetails(paymentMethod)
+        };
+
+        switch (paymentMethod)
+        {
+            case CardPaymentMethod card:
+                options.Card = MapCardPaymentMethod(card);
+                break;
+            case UsBankAccountPaymentMethod usBank:
+                options.UsBankAccount = MapUsBankPaymentMethod(usBank);
+                break;
+        }
+
+        var updatedMethod = await service.UpdateAsync(paymentMethod.StripePaymentMethodId, options);
+        _logger.LogInformation("Updated Stripe payment method {PaymentMethodId}", paymentMethod.StripePaymentMethodId);
+        return updatedMethod;
+    }
+
+    public async Task RemovePaymentMethodAsync(PaymentMethod paymentMethod)
+    {
+        if (string.IsNullOrEmpty(paymentMethod.StripePaymentMethodId))
+            throw new ArgumentException("Payment method must have a Stripe ID");
+
+        await new PaymentMethodService().DetachAsync(paymentMethod.StripePaymentMethodId);
+        _logger.LogInformation("Removed Stripe payment method {PaymentMethodId}", paymentMethod.StripePaymentMethodId);
+    }
+
+    public async Task SetDefaultPaymentMethodAsync(PaymentMethod paymentMethod)
+    {
+        if (string.IsNullOrEmpty(paymentMethod.Tenant.StripeCustomerId))
+            throw new ArgumentException("Tenant must have a StripeCustomerId");
+
+        if (string.IsNullOrEmpty(paymentMethod.StripePaymentMethodId))
+            throw new ArgumentException("Payment method must have a StripePaymentMethodId");
+
+        await new CustomerService().UpdateAsync(paymentMethod.Tenant.StripeCustomerId, new CustomerUpdateOptions
+        {
+            InvoiceSettings = new CustomerInvoiceSettingsOptions 
+            { 
+                DefaultPaymentMethod = paymentMethod.StripePaymentMethodId 
+            }
+        });
+        
+        _logger.LogInformation("Set default Stripe payment method for tenant {TenantId}, Stripe payment method ID {StripePaymentMethodId}", 
+            paymentMethod.Tenant.Id, paymentMethod.StripePaymentMethodId);
+    }
+
+    #endregion
+    
+
+    #region Helpers
+    
+    private string GetStripePaymentMethodType(PaymentMethodType type)
+    {
+        return type switch
+        {
+            PaymentMethodType.Card => "card",
+            PaymentMethodType.UsBankAccount => "us_bank_account",
+            _ => throw new ArgumentException($"Unsupported type: {type}")
+        };
+    }
+
+    private static PaymentMethodBillingDetailsOptions CreateBillingDetails(PaymentMethod paymentMethod)
+    {
+        return new PaymentMethodBillingDetailsOptions
+        {
+            Name = GetPaymentMethodHolderName(paymentMethod),
+            Address = MapAddressOptions(paymentMethod.BillingAddress)
+        };
+    }
+
+    private static string GetPaymentMethodHolderName(PaymentMethod paymentMethod)
+    {
+        return paymentMethod switch
+        {
+            CardPaymentMethod card => card.CardHolderName,
+            UsBankAccountPaymentMethod usBank => usBank.AccountHolderName,
+            _ => string.Empty
+        };
+    }
+
+    private static AddressOptions MapAddressOptions(Logistics.Domain.ValueObjects.Address address)
+    {
+        return new AddressOptions
+        {
+            Line1 = address.Line1,
+            Line2 = address.Line2 ?? "",
+            City = address.City,
+            State = address.State,
+            PostalCode = address.ZipCode,
+            Country = address.Country
+        };
+    }
+
+    private static PaymentMethodCardOptions MapCardPaymentMethod(CardPaymentMethod card)
+    {
+        return new PaymentMethodCardOptions
+        {
+            Number = card.CardNumber,
+            ExpMonth = card.ExpMonth,
+            ExpYear = card.ExpYear,
+            Cvc = card.Cvc
+        };
+    }
+
+    private static PaymentMethodUsBankAccountOptions MapUsBankPaymentMethod(UsBankAccountPaymentMethod usBank)
+    {
+        return new PaymentMethodUsBankAccountOptions
+        {
+            AccountNumber = usBank.AccountNumber,
+            RoutingNumber = usBank.RoutingNumber,
+            AccountHolderType = usBank.AccountHolderType.ToString().ToLower(),
+            AccountType = usBank.AccountType.ToString().ToLower()
+        };
+    }
+    
+    #endregion
 }

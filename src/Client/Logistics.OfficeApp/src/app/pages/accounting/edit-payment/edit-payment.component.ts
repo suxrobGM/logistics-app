@@ -50,7 +50,7 @@ export class EditPaymentComponent implements OnInit {
     private readonly router: Router
   ) {
     this.form = new FormGroup<PaymentForm>({
-      comment: new FormControl<string>("", {validators: Validators.required, nonNullable: true}),
+      notes: new FormControl<string>("", {validators: Validators.required, nonNullable: true}),
       paymentMethod: new FormControl<PaymentMethodType>(PaymentMethodType.BankAccount, {
         validators: Validators.required,
         nonNullable: true,
@@ -107,7 +107,7 @@ export class EditPaymentComponent implements OnInit {
           paymentFor: payment.paymentFor,
           paymentStatus: payment.status,
           amount: payment.amount,
-          comment: payment.comment,
+          notes: payment.notes,
         });
       }
 
@@ -122,7 +122,7 @@ export class EditPaymentComponent implements OnInit {
       amount: this.form.value.amount!,
       method: this.form.value.paymentMethod!,
       paymentFor: this.form.value.paymentFor!,
-      comment: this.form.value.comment,
+      notes: this.form.value.notes,
     };
 
     this.apiService.createPayment(command).subscribe((result) => {
@@ -143,7 +143,7 @@ export class EditPaymentComponent implements OnInit {
       amount: this.form.value.amount,
       method: this.form.value.paymentMethod,
       paymentFor: this.form.value.paymentFor,
-      comment: this.form.value.comment,
+      notes: this.form.value.notes,
       status: this.form.value.paymentStatus,
     };
 
@@ -163,5 +163,5 @@ interface PaymentForm {
   amount: FormControl<number>;
   paymentFor: FormControl<PaymentFor>;
   paymentStatus: FormControl<PaymentStatus>;
-  comment: FormControl<string>;
+  notes: FormControl<string>;
 }

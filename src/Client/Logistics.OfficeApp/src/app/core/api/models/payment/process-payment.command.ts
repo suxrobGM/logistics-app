@@ -7,7 +7,7 @@ export interface ProcessPaymentCommand {
   cardholderName?: string;
   cardNumber?: string;
   cardExpirationDate?: string;
-  cardCvv?: string;
+  cardCvc?: string;
   bankName?: string;
   bankAccountNumber?: string;
   bankRoutingNumber?: string;
