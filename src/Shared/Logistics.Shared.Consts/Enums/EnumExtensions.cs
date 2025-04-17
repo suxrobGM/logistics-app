@@ -15,7 +15,7 @@ public static class EnumExtensions
         }
         
         var descAttribute = Attribute.GetCustomAttribute(fieldInfo, typeof(DescriptionAttribute)) as DescriptionAttribute;
-            
+
         // Return the description, if it exists; otherwise, return the enum name
         return descAttribute == null ? enumValue.ToString() : descAttribute.Description;
     }
