@@ -24,23 +24,12 @@
         <hr />
 
         <div class="mb-3">
-          <label for="cardBrand" class="form-label">Card Brand Type</label>
-          <p-select formControlName="cardBrand" [options]="cardBrands" class="w-100"></p-select>
-        </div>
-        <div class="mb-3">
-          <label for="cardFundingType" class="form-label">Card Funding Type</label>
-          <p-select
-            formControlName="cardFundingType"
-            [options]="cardFundingTypes"
-            class="w-100"
-          ></p-select>
-        </div>
-        <div class="mb-3">
           <label for="cardHolderName" class="form-label">Cardholder Name</label>
           <input
             id="cardHolderName"
             formControlName="cardHolderName"
-            class="form-control"
+            pInputText
+            class="w-100"
             placeholder="ex. John Smith"
           />
         </div>
@@ -49,7 +38,7 @@
           <p-inputMask
             id="cardNumber"
             formControlName="cardNumber"
-            styleClass="form-control"
+            styleClass="w-100"
             mask="9999 9999 9999 9999"
             placeholder="1234 0000 0000 0000"
           />
@@ -60,14 +49,22 @@
             <p-inputMask
               id="cardExpirationDate"
               formControlName="cardExpirationDate"
-              styleClass="form-control"
+              styleClass="w-100"
               mask="99/2099"
               placeholder="MM/YYYY"
             />
           </div>
           <div class="col-6">
             <label for="cardCvc" class="form-label">CVC</label>
-            <input id="cardCvc" formControlName="cardCvc" class="form-control" placeholder="123" />
+            <input
+              id="cardCvc"
+              formControlName="cardCvc"
+              pInputText
+              pKeyFilter="int"
+              maxlength="4"
+              class="w-100"
+              placeholder="123"
+            />
           </div>
         </div>
       } @else if (form.get("methodType")?.value === 1) {
@@ -78,7 +75,8 @@
           <label for="bankName" class="form-label">Bank Name</label>
           <input
             formControlName="bankName"
-            class="form-control"
+            pInputText
+            class="w-100"
             placeholder="ex. Bank of America"
           />
         </div>
@@ -94,7 +92,9 @@
           <label for="bankAccountNumber" class="form-label">Account Number</label>
           <input
             formControlName="bankAccountNumber"
-            class="form-control"
+            pInputText
+            pKeyFilter="int"
+            class="w-100"
             placeholder="ex. 1234567891011"
           />
         </div>
@@ -102,7 +102,9 @@
           <label for="bankRoutingNumber" class="form-label">Routing Number</label>
           <input
             formControlName="bankRoutingNumber"
-            class="form-control"
+            pInputText
+            pKeyFilter="int"
+            class="w-100"
             placeholder="ex. 123456789"
           />
         </div>
@@ -118,7 +120,8 @@
           <label for="bankAccountHolderName" class="form-label">Account Holder Name</label>
           <input
             formControlName="bankAccountHolderName"
-            class="form-control"
+            pInputText
+            class="w-100"
             placeholder="ex. John Smith"
           />
         </div>
@@ -130,7 +133,8 @@
           <label for="bankName" class="form-label">Bank Name</label>
           <input
             formControlName="bankName"
-            class="form-control"
+            pInputText
+            class="w-100"
             placeholder="ex. Bank of America"
           />
         </div>
@@ -138,19 +142,21 @@
           <label for="bankAccountNumber" class="form-label">Account Number</label>
           <input
             formControlName="bankAccountNumber"
-            class="form-control"
+            pInputText
+            class="w-100"
             placeholder="ex. 1234567891011"
           />
         </div>
         <div class="mb-3">
           <label for="swiftCode" class="form-label">SWIFT Code</label>
-          <input formControlName="swiftCode" class="form-control" placeholder="ex. ABCD1234" />
+          <input formControlName="swiftCode" pInputText class="w-100" placeholder="ex. ABCD1234" />
         </div>
         <div class="mb-3">
           <label for="bankAccountHolderName" class="form-label">Account Holder Name</label>
           <input
             formControlName="bankAccountHolderName"
-            class="form-control"
+            pInputText
+            class="w-100"
             placeholder="ex. John Smith"
           />
         </div>

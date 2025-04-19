@@ -102,7 +102,7 @@ internal class TenantService : ITenantService
     /// </summary>
     /// <param name="tenant">Tenant to check</param>
     /// <exception cref="SubscriptionExpiredException"></exception>
-    private void CheckSubscription(Tenant? tenant)
+    private static void CheckSubscription(Tenant? tenant)
     {
         if (tenant?.Subscription is null)
             return;

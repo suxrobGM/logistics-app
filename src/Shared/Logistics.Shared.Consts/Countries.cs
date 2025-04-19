@@ -12,7 +12,7 @@ public static class Countries
         new("Antigua and Barbuda", "AG"),
         new("Anguilla", "AI"),
         new("Albania", "AL"),
-        new("Armenia", "AR"),
+        new("Armenia", "AM"),
         new("Angola", "AO"),
         new("Antarctica", "AQ"),
         new("Argentina", "AR"),
@@ -127,7 +127,6 @@ public static class Countries
         new("Democratic People's Republic of Korea", "KP"),
         new("Republic of Korea", "KR"),
         new("Kuwait", "KW"),
-        new("Cayman Islands", "KY"),
         new("Kazakhstan", "KZ"),
         new("Laos", "LA"),
         new("Lebanon", "LB"),
@@ -210,7 +209,6 @@ public static class Countries
         new("Somalia", "SO"),
         new("Suriname", "SR"),
         new("South Sudan", "SS"),
-        new("São Tomé and Príncipe", "ST"),
         new("El Salvador", "SV"),
         new("Sint Maarten", "SX"),
         new("Sao Tome and Principe", "ST"),
@@ -258,6 +256,19 @@ public static class Countries
     public static Country? GetCountryByCode(string code)
     {
         CodeLookup.TryGetValue(code, out var country);
+        return country;
+    }
+
+    /// <summary>
+    /// Finds a country by its name or code.
+    /// </summary>
+    /// <param name="countryName">The name or code of the country.</param>
+    /// <returns>The country object if found; otherwise, null.</returns>
+    public static Country? FindCountry(string countryName)
+    {
+        var country = GetCountryByCode(countryName) ?? 
+                      AllCountries.FirstOrDefault(c => c.DisplayName.Equals(countryName, StringComparison.OrdinalIgnoreCase));
+
         return country;
     }
 }

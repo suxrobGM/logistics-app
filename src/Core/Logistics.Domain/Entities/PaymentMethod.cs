@@ -4,13 +4,11 @@ using Logistics.Shared.Consts;
 
 namespace Logistics.Domain.Entities;
 
-public abstract class PaymentMethod : Entity
+public abstract class PaymentMethod : Entity, ITenantEntity
 {
     public required PaymentMethodType Type { get; set; }
     public string? StripePaymentMethodId { get; set; }
     public bool IsDefault { get; set; }
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     public required Address BillingAddress { get; set; }
-    public required string TenantId { get; set; }
-    public virtual required Tenant Tenant { get; set; }
 }

@@ -6,6 +6,5 @@ internal sealed class GetPaymentMethodsValidator : AbstractValidator<GetPaymentM
 {
     public GetPaymentMethodsValidator()
     {
-        RuleFor(i => i.TenantId).NotEmpty();
     }
 }

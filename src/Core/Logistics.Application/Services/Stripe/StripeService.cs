@@ -271,9 +271,9 @@ internal class StripeService : IStripeService
 
     #region Payment Method API
 
-    public async Task<StripePaymentMethod> AddPaymentMethodAsync(PaymentMethod paymentMethod)
+    public async Task<StripePaymentMethod> AddPaymentMethodAsync(PaymentMethod paymentMethod, Tenant tenant)
     {
-        if (paymentMethod.Tenant.StripeCustomerId == null)
+        if (string.IsNullOrEmpty(tenant.StripeCustomerId))
             throw new ArgumentException("Tenant must have a StripeCustomerId");
 
         var paymentMethodService = new PaymentMethodService();
@@ -300,11 +300,11 @@ internal class StripeService : IStripeService
         var stripePaymentMethod = await paymentMethodService.CreateAsync(options);
 
         await paymentMethodService.AttachAsync(stripePaymentMethod.Id, 
-            new PaymentMethodAttachOptions { Customer = paymentMethod.Tenant.StripeCustomerId });
+            new PaymentMethodAttachOptions { Customer = tenant.StripeCustomerId });
 
         if (paymentMethod.IsDefault)
         {
-            await SetDefaultPaymentMethodAsync(paymentMethod);
+            await SetDefaultPaymentMethodAsync(paymentMethod, tenant);
         }
 
         paymentMethod.StripePaymentMethodId = stripePaymentMethod.Id;
@@ -347,15 +347,15 @@ internal class StripeService : IStripeService
         _logger.LogInformation("Removed Stripe payment method {PaymentMethodId}", paymentMethod.StripePaymentMethodId);
     }
 
-    public async Task SetDefaultPaymentMethodAsync(PaymentMethod paymentMethod)
+    public async Task SetDefaultPaymentMethodAsync(PaymentMethod paymentMethod, Tenant tenant)
     {
-        if (string.IsNullOrEmpty(paymentMethod.Tenant.StripeCustomerId))
+        if (string.IsNullOrEmpty(tenant.StripeCustomerId))
             throw new ArgumentException("Tenant must have a StripeCustomerId");
 
         if (string.IsNullOrEmpty(paymentMethod.StripePaymentMethodId))
             throw new ArgumentException("Payment method must have a StripePaymentMethodId");
 
-        await new CustomerService().UpdateAsync(paymentMethod.Tenant.StripeCustomerId, new CustomerUpdateOptions
+        await new CustomerService().UpdateAsync(tenant.StripeCustomerId, new CustomerUpdateOptions
         {
             InvoiceSettings = new CustomerInvoiceSettingsOptions 
             { 
@@ -364,7 +364,7 @@ internal class StripeService : IStripeService
         });
         
         _logger.LogInformation("Set default Stripe payment method for tenant {TenantId}, Stripe payment method ID {StripePaymentMethodId}", 
-            paymentMethod.Tenant.Id, paymentMethod.StripePaymentMethodId);
+            tenant.Id, paymentMethod.StripePaymentMethodId);
     }
 
     #endregion
@@ -403,6 +403,9 @@ internal class StripeService : IStripeService
 
     private static AddressOptions MapAddressOptions(Logistics.Domain.ValueObjects.Address address)
     {
+        var country = Countries.FindCountry(address.Country) ??
+                      throw new InvalidOperationException($"Country {address.Country} not found");
+        
         return new AddressOptions
         {
             Line1 = address.Line1,
@@ -410,7 +413,7 @@ internal class StripeService : IStripeService
             City = address.City,
             State = address.State,
             PostalCode = address.ZipCode,
-            Country = address.Country
+            Country = country.Code // Stripe requires the 2-letter country code
         };
     }
 

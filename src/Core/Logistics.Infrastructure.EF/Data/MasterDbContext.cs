@@ -92,22 +92,5 @@ public class MasterDbContext : IdentityDbContext<
                 .WithOne(i => i.Subscription)
                 .HasForeignKey<Subscription>(i => i.TenantId);
         });
-
-        builder.Entity<PaymentMethod>(entity =>
-        {
-            entity.ToTable("PaymentMethods")
-                .HasDiscriminator(pm => pm.Type)
-                .HasValue<CardPaymentMethod>(PaymentMethodType.Card)
-                .HasValue<UsBankAccountPaymentMethod>(PaymentMethodType.UsBankAccount)
-                .HasValue<BankAccountPaymentMethod>(PaymentMethodType.InternationalBankAccount);
-
-            entity.HasOne(i => i.Tenant)
-                .WithMany(i => i.PaymentMethods)
-                .HasForeignKey(i => i.TenantId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasIndex(i => i.StripePaymentMethodId);
-            entity.HasIndex(i => i.TenantId);
-        });
     }
 }

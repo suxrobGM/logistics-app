@@ -1,10 +1,5 @@
 import {AddressDto} from "../address.dto";
-import {
-  CardFundingType,
-  PaymentMethodType,
-  UsBankAccountHolderType,
-  UsBankAccountType,
-} from "./enums";
+import {PaymentMethodType, UsBankAccountHolderType, UsBankAccountType} from "./enums";
 
 export interface PaymentMethodDto {
   id: string;
@@ -14,12 +9,10 @@ export interface PaymentMethodDto {
 
   // Card-specific
   cardHolderName?: string;
-  cardBrand?: string;
   cardNumber?: string;
   cvc?: string;
   expMonth?: number;
   expYear?: number;
-  fundingType?: CardFundingType;
 
   // US Bank account-specific
   accountNumber?: string;

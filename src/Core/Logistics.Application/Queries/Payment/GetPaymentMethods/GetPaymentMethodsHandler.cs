@@ -8,20 +8,20 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetPaymentMethodsHandler : RequestHandler<GetPaymentMethodsQuery, Result<PaymentMethodDto[]>>
 {
-    private readonly IMasterUnityOfWork _masterUow;
+    private readonly ITenantUnityOfWork _tenantUow;
 
-    public GetPaymentMethodsHandler(IMasterUnityOfWork masterUow)
+    public GetPaymentMethodsHandler(ITenantUnityOfWork tenantUow)
     {
-        _masterUow = masterUow;
+        _tenantUow = tenantUow;
     }
 
     protected override Task<Result<PaymentMethodDto[]>> HandleValidated(
         GetPaymentMethodsQuery req, 
         CancellationToken cancellationToken)
     {
-        var specification = new GetPaymentMethodsByTenant(req.TenantId!, req.OrderBy);
+        var specification = new GetTenantPaymentMethods(req.OrderBy);
         
-        var payments = _masterUow.Repository<PaymentMethod>()
+        var payments = _tenantUow.Repository<PaymentMethod>()
             .ApplySpecification(specification)
             .Select(i => i.ToDto())
             .ToArray();

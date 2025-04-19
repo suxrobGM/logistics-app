@@ -5,20 +5,18 @@ import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {DialogModule} from "primeng/dialog";
 import {InputMaskModule} from "primeng/inputmask";
+import {InputTextModule} from "primeng/inputtext";
+import {KeyFilterModule} from "primeng/keyfilter";
 import {SelectModule} from "primeng/select";
 import {AddressFormComponent, ValidationSummaryComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {
   AddressDto,
-  CardBrand,
-  CardFundingType,
   CreatePaymentMethodCommand,
   PaymentMethodType,
   UpdatePaymentMethodCommand,
   UsBankAccountHolderType,
   UsBankAccountType,
-  cardBrandOptions,
-  cardFundingTypeOptions,
   pymentMethodTypeOptions,
   usBankAccountHolderTypeOptions,
   usBankAccountTypeOptions,
@@ -40,6 +38,8 @@ import {PaymentMethodValidators} from "@/core/validators";
     AddressFormComponent,
     SelectModule,
     InputMaskModule,
+    InputTextModule,
+    KeyFilterModule,
   ],
 })
 export class PaymentMethodDialogComponent {
@@ -48,8 +48,6 @@ export class PaymentMethodDialogComponent {
   readonly paymentMethodId = input<string | null | undefined>(null);
   readonly form: FormGroup<PaymentMethodForm>;
   readonly pymentMethodTypes = pymentMethodTypeOptions;
-  readonly cardBrands = cardBrandOptions;
-  readonly cardFundingTypes = cardFundingTypeOptions;
   readonly usBankAccountHolderTypes = usBankAccountHolderTypeOptions;
   readonly usBankAccountTypes = usBankAccountTypeOptions;
 
@@ -64,8 +62,6 @@ export class PaymentMethodDialogComponent {
         validators: Validators.required,
         nonNullable: true,
       }),
-      cardBrand: new FormControl(null),
-      cardFundingType: new FormControl<CardFundingType | null>(null),
       cardHolderName: new FormControl(null),
       cardNumber: new FormControl(""),
       cardExpirationDate: new FormControl("", {validators: PaymentMethodValidators.cardExpDate}),
@@ -103,10 +99,7 @@ export class PaymentMethodDialogComponent {
     const expYear = formValue.cardExpirationDate?.split("/")[1];
 
     const payload: CreatePaymentMethodCommand | UpdatePaymentMethodCommand = {
-      tenantId: this.tenantService.getTenantId()!,
       type: formValue.methodType!,
-      cardBrand: formValue.cardBrand!,
-      fundingType: formValue.cardFundingType!,
       cardHolderName: formValue.cardHolderName!,
       cardNumber: formValue.cardNumber!,
       expMonth: expMonth ? parseInt(expMonth, 10) : undefined,
@@ -128,7 +121,7 @@ export class PaymentMethodDialogComponent {
     if (this.isEditMode()) {
       (payload as UpdatePaymentMethodCommand).id = this.paymentMethodId()!;
 
-      this.apiService.paymentMethodApi
+      this.apiService.paymentApi
         .updatePaymentMethod(payload as UpdatePaymentMethodCommand)
         .subscribe((result) => {
           if (result.success) {
@@ -138,7 +131,7 @@ export class PaymentMethodDialogComponent {
           this.isLoading.set(false);
         });
     } else {
-      this.apiService.paymentMethodApi
+      this.apiService.paymentApi
         .createPaymentMethod(payload as CreatePaymentMethodCommand)
         .subscribe((result) => {
           if (result.success) {
@@ -153,8 +146,6 @@ export class PaymentMethodDialogComponent {
 
 interface PaymentMethodForm {
   methodType: FormControl<PaymentMethodType | null>;
-  cardBrand: FormControl<CardBrand | null>;
-  cardFundingType: FormControl<CardFundingType | null>;
   cardHolderName: FormControl<string | null>;
   cardNumber: FormControl<string | null>;
   cardExpirationDate: FormControl<string | null>;

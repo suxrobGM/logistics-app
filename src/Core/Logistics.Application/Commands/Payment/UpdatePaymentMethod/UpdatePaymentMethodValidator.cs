@@ -7,17 +7,14 @@ internal sealed class UpdatePaymentMethodValidator : AbstractValidator<UpdatePay
 {
     public UpdatePaymentMethodValidator()
     {
-        RuleFor(i => i.TenantId).NotEmpty();
         RuleFor(i => i.Type).IsInEnum();
         
         When(i => i.Type == PaymentMethodType.Card, () =>
         {
             var currentYear = DateTime.UtcNow.Year;
-            RuleFor(i => i.FundingType).IsInEnum();
             RuleFor(i => i.CardHolderName).NotEmpty();
             RuleFor(i => i.CardNumber).NotEmpty().Matches(RegexPatterns.CreditCardNumber);
             RuleFor(i => i.Cvc).NotEmpty().Matches(RegexPatterns.CardCvc);
-            RuleFor(i => i.CardBrand).NotEmpty();
             RuleFor(i => i.ExpMonth).NotEmpty().GreaterThan(0).LessThanOrEqualTo(12);
             RuleFor(i => i.ExpYear).NotEmpty().GreaterThanOrEqualTo(currentYear)
                 .WithMessage($"Expiration year must be greater than or equal to {currentYear}");

@@ -10,9 +10,9 @@ import {RadioButtonModule} from "primeng/radiobutton";
 import {AddressFormComponent, ValidationSummaryComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {AddressDto, InvoiceDto, PayrollDto, ProcessPaymentCommand} from "@/core/api/models";
+import {REGEX_PATTERNS} from "@/core/constants";
 import {PaymentMethodType, PaymentMethodTypeEnum, PaymentStatus} from "@/core/enums";
 import {ToastService} from "@/core/services";
-import {RegexPatterns} from "@/core/utilities";
 import {InvoiceDetailsComponent, PayrollDetailsComponent} from "../components";
 
 @Component({
@@ -134,13 +134,13 @@ export class ProcessPaymentComponent implements OnInit {
       cardholderName?.setValidators([Validators.required]);
       cardNumber?.setValidators([
         Validators.required,
-        Validators.pattern(RegexPatterns.CREDIT_CARD_NUMBER),
+        Validators.pattern(REGEX_PATTERNS.cardNumber),
       ]);
       cardExpireDate?.setValidators([
         Validators.required,
-        Validators.pattern(RegexPatterns.CARD_EXPIRATION_DATE),
+        Validators.pattern(REGEX_PATTERNS.cardExpDate),
       ]);
-      cardCvv?.setValidators([Validators.required, Validators.pattern(RegexPatterns.CARD_CVV)]);
+      cardCvv?.setValidators([Validators.required, Validators.pattern(REGEX_PATTERNS.cardCvc)]);
       bankName?.clearValidators();
       bankAccountNumber?.clearValidators();
       bankRoutingNumber?.clearValidators();
@@ -149,7 +149,7 @@ export class ProcessPaymentComponent implements OnInit {
       bankAccountNumber?.setValidators([Validators.required]);
       bankRoutingNumber?.setValidators([
         Validators.required,
-        Validators.pattern(RegexPatterns.ROUTING_NUMBER),
+        Validators.pattern(REGEX_PATTERNS.usBankRoutingNumber),
       ]);
       cardholderName?.clearValidators();
       cardNumber?.clearValidators();

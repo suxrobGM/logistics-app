@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.EF.Migrations.Master
 {
     [DbContext(typeof(MasterDbContext))]
-    [Migration("20250413010128_Version_0001")]
+    [Migration("20250419214518_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -81,68 +81,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.PaymentMethod", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDefault")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("StripePaymentMethodId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
-                    b.ComplexProperty<Dictionary<string, object>>("BillingAddress", "Logistics.Domain.Entities.PaymentMethod.BillingAddress#Address", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<string>("City")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Country")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Line1")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Line2")
-                                .HasColumnType("text");
-
-                            b1.Property<string>("State")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("ZipCode")
-                                .IsRequired()
-                                .HasColumnType("text");
-                        });
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StripePaymentMethodId");
-
-                    b.HasIndex("TenantId");
-
-                    b.ToTable("PaymentMethods", (string)null);
-
-                    b.HasDiscriminator<int>("Type");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Subscription", b =>
@@ -483,102 +421,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.BankAccountPaymentMethod", b =>
-                {
-                    b.HasBaseType("Logistics.Domain.Entities.PaymentMethod");
-
-                    b.Property<string>("AccountHolderName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("AccountNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("BankName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("SwiftCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasDiscriminator().HasValue(2);
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.CardPaymentMethod", b =>
-                {
-                    b.HasBaseType("Logistics.Domain.Entities.PaymentMethod");
-
-                    b.Property<string>("CardBrand")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("CardHolderName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("CardNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Cvc")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("ExpMonth")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ExpYear")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("FundingType")
-                        .HasColumnType("integer");
-
-                    b.HasDiscriminator().HasValue(0);
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.UsBankAccountPaymentMethod", b =>
-                {
-                    b.HasBaseType("Logistics.Domain.Entities.PaymentMethod");
-
-                    b.Property<string>("AccountHolderName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("AccountHolderType")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("AccountNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("AccountType")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("BankName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoutingNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.ToTable("PaymentMethods", t =>
-                        {
-                            t.Property("AccountHolderName")
-                                .HasColumnName("UsBankAccountPaymentMethod_AccountHolderName");
-
-                            t.Property("AccountNumber")
-                                .HasColumnName("UsBankAccountPaymentMethod_AccountNumber");
-
-                            t.Property("BankName")
-                                .HasColumnName("UsBankAccountPaymentMethod_BankName");
-                        });
-
-                    b.HasDiscriminator().HasValue(1);
-                });
-
             modelBuilder.Entity("Logistics.Domain.Entities.AppRoleClaim", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.AppRole", "Role")
@@ -588,17 +430,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                         .IsRequired();
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.PaymentMethod", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.Tenant", "Tenant")
-                        .WithMany("PaymentMethods")
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Subscription", b =>
@@ -684,8 +515,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
 
             modelBuilder.Entity("Logistics.Domain.Entities.Tenant", b =>
                 {
-                    b.Navigation("PaymentMethods");
-
                     b.Navigation("Subscription");
 
                     b.Navigation("Users");

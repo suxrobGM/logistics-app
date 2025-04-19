@@ -77,8 +77,9 @@ public interface IStripeService
     /// Adds a new payment method to the Stripe customer.
     /// </summary>
     /// <param name="paymentMethod">Payment method entity to add.</param>
+    /// <param name="tenant">Tenant entity.</param>
     /// <returns>Stripe PaymentMethod object.</returns>
-    Task<StripePaymentMethod> AddPaymentMethodAsync(PaymentMethod paymentMethod);
+    Task<StripePaymentMethod> AddPaymentMethodAsync(PaymentMethod paymentMethod, Tenant tenant);
 
     /// <summary>
     /// Updates an existing payment method in Stripe.
@@ -97,5 +98,6 @@ public interface IStripeService
     /// Sets the default payment method for a customer.
     /// </summary>
     /// <param name="paymentMethod">Payment method entity to set as default.</param>
-    Task SetDefaultPaymentMethodAsync(PaymentMethod paymentMethod);
+    /// <param name="tenant">Tenant entity.</param>
+    Task SetDefaultPaymentMethodAsync(PaymentMethod paymentMethod, Tenant tenant);
 }

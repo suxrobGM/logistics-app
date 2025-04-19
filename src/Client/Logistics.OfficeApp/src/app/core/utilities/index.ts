@@ -4,5 +4,5 @@ export * from "./converters";
 export * from "./number.utils";
 export * from "./date-range";
 export * from "./predefined-date-ranges";
-export * from "./regex-patterns";
 export * from "./labels";
+export * from "./select.utils";

@@ -3,13 +3,10 @@ using Logistics.Domain.Entities;
 
 namespace Logistics.Domain.Specifications;
 
-public class GetPaymentMethodsByTenant : BaseSpecification<PaymentMethod>
+public class GetTenantPaymentMethods : BaseSpecification<PaymentMethod>
 {
-    public GetPaymentMethodsByTenant(
-        string tenantId,
-        string? orderBy)
+    public GetTenantPaymentMethods(string? orderBy)
     {
-        Criteria = i => i.TenantId == tenantId;
         ApplyOrderBy(orderBy);
     }
     

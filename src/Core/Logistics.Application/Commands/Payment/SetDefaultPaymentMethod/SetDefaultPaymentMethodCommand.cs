@@ -6,5 +6,4 @@ namespace Logistics.Application.Commands;
 public class SetDefaultPaymentMethodCommand : IRequest<Result>
 {
     public string PaymentMethodId { get; set; } = null!;
-    public string TenantId { get; set; } = null!;
 }

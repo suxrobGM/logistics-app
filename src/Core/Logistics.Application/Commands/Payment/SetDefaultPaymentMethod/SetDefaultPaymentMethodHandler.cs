@@ -8,16 +8,16 @@ namespace Logistics.Application.Commands;
 
 internal sealed class SetDefaultPaymentMethodHandler : RequestHandler<SetDefaultPaymentMethodCommand, Result>
 {
-    private readonly IMasterUnityOfWork _masterUow;
+    private readonly ITenantUnityOfWork _tenantUow;
     private readonly IStripeService _stripeService;
     private readonly ILogger<SetDefaultPaymentMethodHandler> _logger;
 
     public SetDefaultPaymentMethodHandler(
-        IMasterUnityOfWork masterUow,
+        ITenantUnityOfWork tenantUow,
         IStripeService stripeService,
         ILogger<SetDefaultPaymentMethodHandler> logger)
     {
-        _masterUow = masterUow;
+        _tenantUow = tenantUow;
         _stripeService = stripeService;
         _logger = logger;
     }
@@ -25,19 +25,14 @@ internal sealed class SetDefaultPaymentMethodHandler : RequestHandler<SetDefault
     protected override async Task<Result> HandleValidated(
         SetDefaultPaymentMethodCommand req, CancellationToken cancellationToken)
     {
-        // var tenant = await _masterUow.Repository<Tenant>().GetByIdAsync(req.TenantId);
-        //
-        // if (tenant is null)
-        // {
-        //     return Result.Fail($"Tenant with id {req.TenantId} not found");
-        // }
+        var tenant = _tenantUow.GetCurrentTenant();
         
         // Load all payment methods for the tenant
-        var paymentMethods = await _masterUow.Repository<PaymentMethod>().GetListAsync(i => i.TenantId == req.TenantId);
+        var paymentMethods = await _tenantUow.Repository<PaymentMethod>().GetListAsync();
 
         if (paymentMethods.Count == 0)
         {
-            return Result.Fail($"No payment methods found for tenant {req.TenantId}");
+            return Result.Fail($"No payment methods found for tenant {tenant.Id}");
         }
         
         // Set all payment methods to not default
@@ -50,17 +45,17 @@ internal sealed class SetDefaultPaymentMethodHandler : RequestHandler<SetDefault
         var paymentMethodToSetDefault = paymentMethods.FirstOrDefault(i => i.Id == req.PaymentMethodId);
         if (paymentMethodToSetDefault is null)
         {
-            return Result.Fail($"Payment method with ID {req.PaymentMethodId} not found for tenant {req.TenantId}");
+            return Result.Fail($"Payment method with ID {req.PaymentMethodId} not found for tenant {tenant.Id}");
         }
         
         paymentMethodToSetDefault.IsDefault = true;
 
-        await _stripeService.SetDefaultPaymentMethodAsync(paymentMethodToSetDefault);
-        _masterUow.Repository<PaymentMethod>().Update(paymentMethodToSetDefault);
-        await _masterUow.SaveChangesAsync();
+        await _stripeService.SetDefaultPaymentMethodAsync(paymentMethodToSetDefault, tenant);
+        _tenantUow.Repository<PaymentMethod>().Update(paymentMethodToSetDefault);
+        await _tenantUow.SaveChangesAsync();
         
         _logger.LogInformation("Set payment method with ID {Id} as default for tenant {TenantId}", 
-            paymentMethodToSetDefault.Id, paymentMethodToSetDefault.TenantId);
+            paymentMethodToSetDefault.Id, tenant.Id);
         return Result.Succeed();
     }
 }

@@ -6,7 +6,6 @@ internal sealed class SetDefaultPaymentMethodValidator : AbstractValidator<SetDe
 {
     public SetDefaultPaymentMethodValidator()
     {
-        RuleFor(i => i.TenantId).NotEmpty();
         RuleFor(i => i.PaymentMethodId).NotEmpty();
     }
 }

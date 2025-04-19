@@ -3,6 +3,7 @@ using Logistics.Domain.Services;
 using Logistics.Infrastructure.EF.Helpers;
 using Logistics.Infrastructure.EF.Interceptors;
 using Logistics.Infrastructure.EF.Options;
+using Logistics.Shared.Consts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -149,6 +150,17 @@ public class TenantDbContext : DbContext
             //     .WithMany(m => m.DeliveredLoads)
             //     .HasForeignKey(m => m.AssignedDriverId);
                 //.OnDelete(DeleteBehavior.SetNull);
+        });
+        
+        builder.Entity<PaymentMethod>(entity =>
+        {
+            entity.ToTable("PaymentMethods")
+                .HasDiscriminator(pm => pm.Type)
+                .HasValue<CardPaymentMethod>(PaymentMethodType.Card)
+                .HasValue<UsBankAccountPaymentMethod>(PaymentMethodType.UsBankAccount)
+                .HasValue<BankAccountPaymentMethod>(PaymentMethodType.InternationalBankAccount);
+
+            entity.HasIndex(i => i.StripePaymentMethodId);
         });
     }
 }

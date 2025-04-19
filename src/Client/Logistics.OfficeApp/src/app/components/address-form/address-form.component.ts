@@ -8,14 +8,26 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
+import {InputTextModule} from "primeng/inputtext";
+import {KeyFilterModule} from "primeng/keyfilter";
+import {SelectModule} from "primeng/select";
 import {AddressDto} from "@/core/api/models";
+import {COUNTRIES_OPTIONS, DEFAULT_COUNTRY_OPTION, US_STATES_OPTIONS} from "@/core/constants";
+import {findOption} from "@/core/utilities";
 import {ValidationSummaryComponent} from "../validation-summary/validation-summary.component";
 
 @Component({
   selector: "app-address-form",
   standalone: true,
   templateUrl: "./address-form.component.html",
-  imports: [CommonModule, ReactiveFormsModule, ValidationSummaryComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ValidationSummaryComponent,
+    SelectModule,
+    InputTextModule,
+    KeyFilterModule,
+  ],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -26,6 +38,8 @@ import {ValidationSummaryComponent} from "../validation-summary/validation-summa
 })
 export class AddressFormComponent implements ControlValueAccessor {
   readonly form: FormGroup<AddressForm>;
+  readonly usStates = US_STATES_OPTIONS;
+  readonly countries = COUNTRIES_OPTIONS;
   private onTouched?: () => void;
   private onChanged?: (value: AddressDto | null) => void;
 
@@ -39,34 +53,13 @@ export class AddressFormComponent implements ControlValueAccessor {
       city: new FormControl("", {validators: Validators.required, nonNullable: true}),
       state: new FormControl("", {validators: Validators.required, nonNullable: true}),
       zipCode: new FormControl("", {validators: Validators.required, nonNullable: true}),
-      country: new FormControl("", {validators: Validators.required, nonNullable: true}),
+      country: new FormControl(
+        {value: DEFAULT_COUNTRY_OPTION.value, disabled: true},
+        {validators: Validators.required, nonNullable: true}
+      ),
     });
 
-    this.form.valueChanges.subscribe((values) => {
-      if (
-        !values.addressLine1 ||
-        !values.city ||
-        !values.state ||
-        !values.zipCode ||
-        !values.country
-      ) {
-        return;
-      }
-
-      const address: AddressDto = {
-        line1: values.addressLine1,
-        line2: values.addressLine2,
-        city: values.city,
-        state: values.state,
-        zipCode: values.zipCode,
-        country: values.country,
-      };
-
-      if (this.onChanged) {
-        this.onChanged(address);
-        this.addressChange.emit(address);
-      }
-    });
+    this.form.valueChanges.subscribe((values) => this.handleFormValueChange(values));
   }
 
   writeValue(value: AddressDto | null): void {
@@ -74,14 +67,17 @@ export class AddressFormComponent implements ControlValueAccessor {
       return;
     }
 
+    const usStateOption = findOption(US_STATES_OPTIONS, value.state);
+    const countryOption = findOption(COUNTRIES_OPTIONS, value.country);
+
     this.form.setValue(
       {
         addressLine1: value.line1,
         addressLine2: value.line2 ?? null,
         city: value.city,
-        state: value.state,
+        state: usStateOption?.value ?? "",
         zipCode: value.zipCode,
-        country: value.country,
+        country: countryOption?.value ?? DEFAULT_COUNTRY_OPTION.value,
       },
       {emitEvent: false}
     );
@@ -97,10 +93,35 @@ export class AddressFormComponent implements ControlValueAccessor {
 
   setDisabledState(isDisabled: boolean): void {
     if (isDisabled) {
-      this.form.disable();
-    } else {
-      this.form.enable();
+      this.form.disable({emitEvent: false});
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private handleFormValueChange(values: any): void {
+    if (
+      !values.addressLine1 ||
+      !values.city ||
+      !values.state ||
+      !values.zipCode ||
+      !values.country
+    ) {
+      return;
+    }
+
+    const countryOption = findOption(COUNTRIES_OPTIONS, values.country);
+
+    const address: AddressDto = {
+      line1: values.addressLine1,
+      line2: values.addressLine2,
+      city: values.city,
+      state: values.state,
+      zipCode: values.zipCode,
+      country: countryOption?.label ?? DEFAULT_COUNTRY_OPTION.label,
+    };
+
+    this.onChanged?.(address);
+    this.addressChange?.emit(address);
   }
 }
 

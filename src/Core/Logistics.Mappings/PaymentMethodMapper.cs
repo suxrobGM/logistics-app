@@ -13,12 +13,10 @@ public static class PaymentMethodMapper
             CardPaymentMethod cardPaymentMethod => new PaymentMethodDto()
             {
                 Id = cardPaymentMethod.Id,
-                CardBrand = cardPaymentMethod.CardBrand,
                 CardNumber = $"**** **** **** {cardPaymentMethod.CardNumber[^4..]}",
                 Cvc = "***",
                 ExpMonth = cardPaymentMethod.ExpMonth,
                 ExpYear = cardPaymentMethod.ExpYear,
-                FundingType = cardPaymentMethod.FundingType,
                 IsDefault = cardPaymentMethod.IsDefault,
                 Type = PaymentMethodType.Card,
                 CardHolderName = cardPaymentMethod.CardHolderName,

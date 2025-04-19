@@ -44,7 +44,7 @@ import {
   UpdatePayrollCommand,
   UpdateTruckCommand,
 } from "./models";
-import {PaymentMethodApi} from "./payment-method.api";
+import {PaymentApi} from "./payment.api";
 import {TenantApi} from "./tenant.api";
 import {UserApi} from "./user.api";
 
@@ -54,7 +54,7 @@ export class ApiService extends ApiBase {
     super(globalConfig.apiHost, httpClient);
   }
 
-  public readonly paymentMethodApi = new PaymentMethodApi(this.apiUrl, this.http);
+  public readonly paymentApi = new PaymentApi(this.apiUrl, this.http);
   public readonly tenantApi = new TenantApi(this.apiUrl, this.http);
   public readonly userApi = new UserApi(this.apiUrl, this.http);
 

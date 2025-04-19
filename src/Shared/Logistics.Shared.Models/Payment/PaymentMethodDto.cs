@@ -11,12 +11,10 @@ public record PaymentMethodDto
 
     // Card-specific
     public string? CardHolderName { get; set; }
-    public string? CardBrand { get; set; }
     public string? CardNumber { get; set; } // Masked card number
     public string? Cvc { get; set; } // Masked CVC
     public int? ExpMonth { get; set; }
     public int? ExpYear { get; set; }
-    public CardFundingType FundingType { get; set; }
 
     // US Bank account-specific
     public string? AccountNumber { get; set; }

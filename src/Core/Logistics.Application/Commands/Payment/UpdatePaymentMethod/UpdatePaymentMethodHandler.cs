@@ -10,16 +10,16 @@ namespace Logistics.Application.Commands;
 
 internal sealed class UpdatePaymentMethodHandler : RequestHandler<UpdatePaymentMethodCommand, Result>
 {
-    private readonly IMasterUnityOfWork _masterUow;
+    private readonly ITenantUnityOfWork _tenantUow;
     private readonly IStripeService _stripeService;
     private readonly ILogger<UpdatePaymentMethodHandler> _logger;
 
     public UpdatePaymentMethodHandler(
-        IMasterUnityOfWork masterUow,
+        ITenantUnityOfWork tenantUow,
         IStripeService stripeService,
         ILogger<UpdatePaymentMethodHandler> logger)
     {
-        _masterUow = masterUow;
+        _tenantUow = tenantUow;
         _stripeService = stripeService;
         _logger = logger;
     }
@@ -27,45 +27,36 @@ internal sealed class UpdatePaymentMethodHandler : RequestHandler<UpdatePaymentM
     protected override async Task<Result> HandleValidated(
         UpdatePaymentMethodCommand req, CancellationToken cancellationToken)
     {
-        var tenant = await _masterUow.Repository<Tenant>().GetByIdAsync(req.TenantId);
-
-        if (tenant is null)
-        {
-            return Result.Fail(
-                $"Tenant with id {req.TenantId} not found");
-        }
-
         return req.Type switch
         {
-            PaymentMethodType.Card => await UpdateCardPaymentMethod(req, tenant),
-            PaymentMethodType.UsBankAccount => await UpdateUsBankAccountPaymentMethod(req, tenant),
-            PaymentMethodType.InternationalBankAccount => await UpdateInternationalBankAccountPaymentMethod(req, tenant),
+            PaymentMethodType.Card => await UpdateCardPaymentMethod(req),
+            PaymentMethodType.UsBankAccount => await UpdateUsBankAccountPaymentMethod(req),
+            PaymentMethodType.InternationalBankAccount => await UpdateInternationalBankAccountPaymentMethod(req),
             _ => Result.Fail($"Unsupported payment method type: {req.Type}")
         };
     }
     
-    private async Task<Result> UpdateCardPaymentMethod(UpdatePaymentMethodCommand command, Tenant tenant)
+    private async Task<Result> UpdateCardPaymentMethod(UpdatePaymentMethodCommand command)
     {
-        var paymentMethod = await _masterUow.Repository<CardPaymentMethod>().GetByIdAsync(command.Id);
+        var tenant = _tenantUow.GetCurrentTenant();
+        var paymentMethod = await _tenantUow.Repository<CardPaymentMethod>().GetByIdAsync(command.Id);
         
         if (paymentMethod is null)
         {
             return Result.Fail($"Payment method with id {command.Id} not found");
         }
         
-        paymentMethod.CardBrand = PropertyUpdater.UpdateIfChanged(command.CardBrand, paymentMethod.CardBrand);
         paymentMethod.CardNumber = PropertyUpdater.UpdateIfChanged(command.CardNumber, paymentMethod.CardNumber);
         paymentMethod.Cvc = PropertyUpdater.UpdateIfChanged(command.Cvc, paymentMethod.Cvc);
         paymentMethod.ExpMonth = PropertyUpdater.UpdateIfChanged(command.ExpMonth, paymentMethod.ExpMonth);
         paymentMethod.ExpYear = PropertyUpdater.UpdateIfChanged(command.ExpYear, paymentMethod.ExpYear);
-        paymentMethod.FundingType = PropertyUpdater.UpdateIfChanged(command.FundingType, paymentMethod.FundingType);
         paymentMethod.BillingAddress = PropertyUpdater.UpdateIfChanged(command.BillingAddress, paymentMethod.BillingAddress);
         paymentMethod.CardHolderName = PropertyUpdater.UpdateIfChanged(command.CardHolderName, paymentMethod.CardHolderName);
 
         await _stripeService.UpdatePaymentMethodAsync(paymentMethod);
         
-        _masterUow.Repository<CardPaymentMethod>().Update(paymentMethod);
-        await _masterUow.SaveChangesAsync();
+        _tenantUow.Repository<CardPaymentMethod>().Update(paymentMethod);
+        await _tenantUow.SaveChangesAsync();
         
         _logger.LogInformation(
             "Updated card payment method for tenant {TenantId} with last 4 digits {Last4}",
@@ -73,9 +64,10 @@ internal sealed class UpdatePaymentMethodHandler : RequestHandler<UpdatePaymentM
         return Result.Succeed();
     }
     
-    private async Task<Result> UpdateUsBankAccountPaymentMethod(UpdatePaymentMethodCommand command, Tenant tenant)
+    private async Task<Result> UpdateUsBankAccountPaymentMethod(UpdatePaymentMethodCommand command)
     {
-        var paymentMethod = await _masterUow.Repository<UsBankAccountPaymentMethod>().GetByIdAsync(command.Id);
+        var tenant = _tenantUow.GetCurrentTenant();
+        var paymentMethod = await _tenantUow.Repository<UsBankAccountPaymentMethod>().GetByIdAsync(command.Id);
         
         if (paymentMethod is null)
         {
@@ -90,8 +82,8 @@ internal sealed class UpdatePaymentMethodHandler : RequestHandler<UpdatePaymentM
         paymentMethod.AccountType = PropertyUpdater.UpdateIfChanged(command.AccountType, paymentMethod.AccountType);
         paymentMethod.BillingAddress = PropertyUpdater.UpdateIfChanged(command.BillingAddress, paymentMethod.BillingAddress);
         
-        _masterUow.Repository<UsBankAccountPaymentMethod>().Update(paymentMethod);
-        await _masterUow.SaveChangesAsync();
+        _tenantUow.Repository<UsBankAccountPaymentMethod>().Update(paymentMethod);
+        await _tenantUow.SaveChangesAsync();
         
         _logger.LogInformation(
             "Updated US bank account payment method for tenant {TenantId} with last 4 digits {Last4}",
@@ -99,9 +91,10 @@ internal sealed class UpdatePaymentMethodHandler : RequestHandler<UpdatePaymentM
         return Result.Succeed();
     }
     
-    private async Task<Result> UpdateInternationalBankAccountPaymentMethod(UpdatePaymentMethodCommand command, Tenant tenant)
+    private async Task<Result> UpdateInternationalBankAccountPaymentMethod(UpdatePaymentMethodCommand command)
     {
-        var paymentMethod = await _masterUow.Repository<BankAccountPaymentMethod>().GetByIdAsync(command.Id);
+        var tenant = _tenantUow.GetCurrentTenant();
+        var paymentMethod = await _tenantUow.Repository<BankAccountPaymentMethod>().GetByIdAsync(command.Id);
         
         if (paymentMethod is null)
         {
@@ -114,8 +107,8 @@ internal sealed class UpdatePaymentMethodHandler : RequestHandler<UpdatePaymentM
         paymentMethod.SwiftCode = PropertyUpdater.UpdateIfChanged(command.SwiftCode, paymentMethod.SwiftCode);
         paymentMethod.BillingAddress = PropertyUpdater.UpdateIfChanged(command.BillingAddress, paymentMethod.BillingAddress);
         
-        _masterUow.Repository<BankAccountPaymentMethod>().Update(paymentMethod);
-        await _masterUow.SaveChangesAsync();
+        _tenantUow.Repository<BankAccountPaymentMethod>().Update(paymentMethod);
+        await _tenantUow.SaveChangesAsync();
         
         _logger.LogInformation(
             "Updated international bank account payment method for tenant {TenantId} with last 4 digits {Last4}",

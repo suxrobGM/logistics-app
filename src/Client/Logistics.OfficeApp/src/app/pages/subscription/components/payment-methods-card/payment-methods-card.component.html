@@ -9,12 +9,6 @@
           @switch (paymentMethod.type) {
             <!-- Card -->
             @case (0) {
-              <div class="col-6 fw-bold">Card Brand:</div>
-              <div class="col-6">{{ paymentMethod.cardBrand }}</div>
-
-              <div class="col-6 fw-bold">Card Funding Type:</div>
-              <div class="col-6">{{ getCardFundingTypeLabel(paymentMethod) }}</div>
-
               <div class="col-6 fw-bold">Cardholder Name:</div>
               <div class="col-6">{{ paymentMethod.cardHolderName }}</div>
 

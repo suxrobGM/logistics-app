@@ -6,7 +6,6 @@ import {CardModule} from "primeng/card";
 import {DialogModule} from "primeng/dialog";
 import {ApiService} from "@/core/api";
 import {
-  CardFundingType,
   DeletePaymentMethodCommand,
   PaymentMethodDto,
   PaymentMethodType,
@@ -48,7 +47,7 @@ export class PaymentMethodsCardComponent implements OnInit {
   getMethodLabel(method: PaymentMethodDto): string {
     switch (method.type) {
       case PaymentMethodType.Card:
-        return `${method.cardBrand} ending in ${method.cardNumber?.substring(method.cardNumber.length - 4)}`;
+        return `Card ending in ${method.cardNumber?.substring(method.cardNumber.length - 4)}`;
       case PaymentMethodType.UsBankAccount:
         return `${method.bankName ?? "US Bank"} - ${method.accountHolderName}`;
       case PaymentMethodType.InternationalBankAccount:
@@ -58,30 +57,16 @@ export class PaymentMethodsCardComponent implements OnInit {
     }
   }
 
-  getCardFundingTypeLabel(method: PaymentMethodDto): string {
-    switch (method.fundingType) {
-      case CardFundingType.Credit:
-        return "Credit";
-      case CardFundingType.Debit:
-        return "Debit";
-      case CardFundingType.Prepaid:
-        return "Prepaid";
-      default:
-        return "Unknown";
-    }
-  }
-
   setDefaultPaymentMethod(method: PaymentMethodDto): void {
     this.confirmationService.confirm({
       message: `Are you sure you want to set ${this.getMethodLabel(method)} as your default payment method?`,
       accept: () => {
         this.isLoading.set(true);
         const command: SetDefaultPaymentMethodCommand = {
-          tenantId: this.tenantService.getTenantId()!,
           paymentMethodId: method.id,
         };
 
-        this.apiService.paymentMethodApi.setDefaultPaymentMethod(command).subscribe((result) => {
+        this.apiService.paymentApi.setDefaultPaymentMethod(command).subscribe((result) => {
           if (result.success) {
             this.toastService.showSuccess("Default payment method updated successfully.");
             this.fetchPaymentMethods();
@@ -101,11 +86,10 @@ export class PaymentMethodsCardComponent implements OnInit {
       accept: () => {
         this.isLoading.set(true);
         const command: DeletePaymentMethodCommand = {
-          tenantId: this.tenantService.getTenantId()!,
           paymentMethodId: method.id,
         };
 
-        this.apiService.paymentMethodApi.deletePaymentMethod(command).subscribe((result) => {
+        this.apiService.paymentApi.deletePaymentMethod(command).subscribe((result) => {
           if (result.success) {
             this.toastService.showSuccess("Payment method deleted successfully.");
             this.fetchPaymentMethods();
@@ -128,7 +112,7 @@ export class PaymentMethodsCardComponent implements OnInit {
 
     this.isLoading.set(true);
 
-    this.apiService.paymentMethodApi.getPaymentMethods(tenantId).subscribe((result) => {
+    this.apiService.paymentApi.getPaymentMethods().subscribe((result) => {
       if (result.success) {
         // Move the default payment method to the top of the list
         result.data!.sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));

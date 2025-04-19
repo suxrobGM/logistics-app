@@ -69,4 +69,17 @@ public static class USStates
         CodeLookup.TryGetValue(code, out var state);
         return state;
     }
+    
+    /// <summary>
+    /// Finds a state by its name or code.
+    /// </summary>
+    /// <param name="stateName">The name or code of the state.</param>
+    /// <returns>The country object if found; otherwise, null.</returns>
+    public static State? FindState(string stateName)
+    {
+        var state = GetStateByCode(stateName) ?? 
+                      AllStates.FirstOrDefault(c => c.DisplayName.Equals(stateName, StringComparison.OrdinalIgnoreCase));
+
+        return state;
+    }
 }

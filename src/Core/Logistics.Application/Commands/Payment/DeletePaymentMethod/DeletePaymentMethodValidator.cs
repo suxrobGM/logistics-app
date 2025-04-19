@@ -7,6 +7,5 @@ internal sealed class DeletePaymentMethodValidator : AbstractValidator<DeletePay
     public DeletePaymentMethodValidator()
     {
         RuleFor(i => i.Id).NotEmpty();
-        RuleFor(i => i.TenantId).NotEmpty();
     }
 }
