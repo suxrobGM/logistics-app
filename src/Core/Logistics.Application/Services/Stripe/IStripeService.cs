@@ -100,4 +100,13 @@ public interface IStripeService
     /// <param name="paymentMethod">Payment method entity to set as default.</param>
     /// <param name="tenant">Tenant entity.</param>
     Task SetDefaultPaymentMethodAsync(PaymentMethod paymentMethod, Tenant tenant);
+
+    /// <summary>
+    /// Creates a new SetupIntent for the given tenant.
+    /// SetupIntents are used to set up future payments without an immediate charge.
+    /// For example, this can be used to save a payment method for future use.
+    /// </summary>
+    /// <param name="tenant">Tenant for which the SetupIntent is to be created.</param>
+    /// <returns>Stripe SetupIntent object.</returns>
+    Task<SetupIntent> CreateSetupIntentAsync(Tenant tenant);
 }

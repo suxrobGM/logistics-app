@@ -1,5 +1,5 @@
-import {EmployeeDto} from "../employee/employee.dto";
-import {PaymentDto} from "../payment/payment.dto";
+import {EmployeeDto} from "../employee/employee.model";
+import {PaymentDto} from "../payment/payment.model";
 
 export interface PayrollDto {
   id: string;

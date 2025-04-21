@@ -1,11 +1,9 @@
-import {AddressDto} from "../address.dto";
+import {AddressDto} from "../address.model";
 import {PaymentMethodType, UsBankAccountHolderType, UsBankAccountType} from "./enums";
 
-export interface UpdatePaymentMethodCommand {
-  id: string;
+export interface CreatePaymentMethodCommand {
   type: PaymentMethodType;
-  isDefault?: boolean;
-  billingAddress?: AddressDto;
+  billingAddress: AddressDto;
 
   // Card-specific
   cardHolderName?: string;

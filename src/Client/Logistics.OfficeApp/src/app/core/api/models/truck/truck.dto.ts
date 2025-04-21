@@ -1,6 +1,6 @@
-import {AddressDto} from "../address.dto";
-import {EmployeeDto} from "../employee/employee.dto";
-import {LoadDto} from "../load/load.dto";
+import {AddressDto} from "../address.model";
+import {EmployeeDto} from "../employee/employee.model";
+import {LoadDto} from "../load/load.model";
 
 export interface TruckDto {
   id: string;

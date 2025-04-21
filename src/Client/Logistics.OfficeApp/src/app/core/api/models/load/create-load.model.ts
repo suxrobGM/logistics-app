@@ -1,8 +1,6 @@
-import {LoadStatus} from "@/core/enums";
-import {AddressDto} from "../address.dto";
+import {AddressDto} from "../address.model";
 
-export interface UpdateLoadCommand {
-  id: string;
+export interface CreateLoadCommand {
   name?: string;
   originAddress: AddressDto;
   originAddressLat: number;
@@ -14,6 +12,5 @@ export interface UpdateLoadCommand {
   distance: number;
   assignedDispatcherId: string;
   assignedTruckId: string;
-  customerId?: string;
-  status?: LoadStatus;
+  customerId: string;
 }

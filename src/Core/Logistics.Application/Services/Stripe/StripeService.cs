@@ -13,6 +13,8 @@ namespace Logistics.Application.Services;
 
 internal class StripeService : IStripeService
 {
+    private const string TenantIdMetadataKey = "tenant_id";
+    private const string PlanIdMetadataKey = "plan_id";
     private readonly ILogger<StripeService> _logger;
     
     public StripeService(IOptions<StripeOptions> options, ILogger<StripeService> logger)
@@ -39,7 +41,7 @@ internal class StripeService : IStripeService
         options.Email = tenant.BillingEmail;
         options.Name = tenant.CompanyName;
         options.Address = MapAddressOptions(tenant.CompanyAddress);
-        options.Metadata = new Dictionary<string, string> { { "tenant_id", tenant.Id } };
+        options.Metadata = new Dictionary<string, string> { { TenantIdMetadataKey, tenant.Id } };
         
         var customer = await new CustomerService().CreateAsync(options);
         _logger.LogInformation("Created Stripe customer for tenant {TenantId}", tenant.Id);
@@ -58,7 +60,7 @@ internal class StripeService : IStripeService
         options.Email = tenant.BillingEmail;
         options.Name = tenant.CompanyName;
         options.Address = MapAddressOptions(tenant.CompanyAddress);
-        options.Metadata = new Dictionary<string, string> { { "tenant_id", tenant.Id } };
+        options.Metadata = new Dictionary<string, string> { { TenantIdMetadataKey, tenant.Id } };
         
         return new CustomerService().UpdateAsync(tenant.StripeCustomerId, options);
     }
@@ -94,8 +96,8 @@ internal class StripeService : IStripeService
         ];
         options.Metadata = new Dictionary<string, string>
         {
-            { "tenant_id", tenant.Id },
-            { "plan_id", plan.Id }
+            { TenantIdMetadataKey, tenant.Id },
+            { PlanIdMetadataKey, plan.Id }
         };
         options.PaymentBehavior = "default_incomplete"; // For trials or manual confirmation
         options.BillingCycleAnchor = plan.BillingCycleAnchor;
@@ -155,7 +157,7 @@ internal class StripeService : IStripeService
             Description = plan.Description,
             Metadata = new Dictionary<string, string>
             {
-                ["plan_id"] = plan.Id
+                [PlanIdMetadataKey] = plan.Id
             }
         });
         
@@ -176,7 +178,7 @@ internal class StripeService : IStripeService
             },
             Metadata = new Dictionary<string, string>
             {
-                ["plan_id"] = plan.Id
+                [PlanIdMetadataKey] = plan.Id
             }
         });
         
@@ -218,7 +220,7 @@ internal class StripeService : IStripeService
             Description = plan.Description,
             Metadata = new Dictionary<string, string> 
             {
-                ["plan_id"] = plan.Id
+                [PlanIdMetadataKey] = plan.Id
             }
         });
         
@@ -254,7 +256,7 @@ internal class StripeService : IStripeService
                 },
                 Metadata = new Dictionary<string, string>
                 {
-                    ["plan_id"] = plan.Id,
+                    [PlanIdMetadataKey] = plan.Id,
                 }
             });
 
@@ -368,7 +370,35 @@ internal class StripeService : IStripeService
     }
 
     #endregion
-    
+
+    #region Setup Intent API
+
+    public async Task<SetupIntent> CreateSetupIntentAsync(Tenant tenant)
+    {
+        if (string.IsNullOrEmpty(tenant.StripeCustomerId))
+            throw new ArgumentException("Tenant must have a StripeCustomerId");
+
+        var options = new SetupIntentCreateOptions
+        {
+            Customer = tenant.StripeCustomerId,
+            Usage = "off_session",
+            AutomaticPaymentMethods = new SetupIntentAutomaticPaymentMethodsOptions
+            {
+                Enabled = true
+            },
+            Metadata = new Dictionary<string, string>
+            {
+                [TenantIdMetadataKey] = tenant.Id
+            }
+        };
+
+        var setupIntentService = new SetupIntentService();
+        var setupIntent = await setupIntentService.CreateAsync(options);
+        _logger.LogInformation("Created SetupIntent for tenant {TenantId}", tenant.Id);
+        return setupIntent;
+    }
+
+    #endregion
 
     #region Helpers
     

@@ -1,5 +1,5 @@
 import {PaymentFor, PaymentMethodType, PaymentStatus} from "@/core/enums";
-import {AddressDto} from "../address.dto";
+import {AddressDto} from "../address.model";
 
 export interface PaymentDto {
   id: string;

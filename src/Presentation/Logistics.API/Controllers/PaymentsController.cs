@@ -19,6 +19,8 @@ public class PaymentsController : ControllerBase
         _mediator = mediator;
     }
 
+    #region Payments
+
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Result<PaymentDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
@@ -79,6 +81,10 @@ public class PaymentsController : ControllerBase
         var result = await _mediator.Send(new DeleteCustomerCommand {Id = id});
         return result.Success ? Ok(result) : BadRequest(result);
     }
+
+    #endregion
+
+    
     
     #region Payment Methods
     
@@ -107,6 +113,16 @@ public class PaymentsController : ControllerBase
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.Create)]
     public async Task<IActionResult> CreatePaymentMethod([FromBody] CreatePaymentMethodCommand request)
+    {
+        var result = await _mediator.Send(request);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+    
+    [HttpPost("methods/setup-intent")]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Payments.Create)]
+    public async Task<IActionResult> CreateSetupIntent([FromBody] CreateSetupIntentCommand request)
     {
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);

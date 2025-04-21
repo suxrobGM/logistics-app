@@ -1,4 +1,4 @@
-import {Result} from "./result";
+import {Result} from "./result.model";
 
 export interface PagedResult<T> extends Result<T[]> {
   totalItems: number;

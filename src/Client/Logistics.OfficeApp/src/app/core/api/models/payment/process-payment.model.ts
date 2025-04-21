@@ -1,5 +1,5 @@
 import {PaymentMethodType} from "@/core/enums";
-import {AddressDto} from "../address.dto";
+import {AddressDto} from "../address.model";
 
 export interface ProcessPaymentCommand {
   paymentId: string;

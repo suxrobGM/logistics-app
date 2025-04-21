@@ -7,6 +7,7 @@ import {
   PaymentMethodDto,
   Result,
   SetDefaultPaymentMethodCommand,
+  SetupIntentDto,
   UpdatePaymentMethodCommand,
 } from "./models";
 
@@ -43,5 +44,9 @@ export class PaymentApi extends ApiBase {
 
   deletePaymentMethod(command: DeletePaymentMethodCommand): Observable<Result> {
     return this.delete<Result>(`/payments/methods/${command.paymentMethodId}`);
+  }
+
+  createSetupIntent(): Observable<Result<SetupIntentDto>> {
+    return this.post<Result<SetupIntentDto>, object>("/payments/methods/setup-intent", {});
   }
 }

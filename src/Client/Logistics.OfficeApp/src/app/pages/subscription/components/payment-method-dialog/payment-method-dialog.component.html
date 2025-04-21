@@ -1,7 +1,8 @@
 <p-dialog
   [header]="getDialogTitle()"
   [(visible)]="showDialog"
-  modal="true"
+  [modal]="true"
+  (onShow)="mountStripeCard()"
   [style]="{width: '50vw'}"
 >
   <form class="row gx-5" [formGroup]="form" (ngSubmit)="submit()">
@@ -33,7 +34,7 @@
             placeholder="ex. John Smith"
           />
         </div>
-        <div class="mb-3">
+        <!-- <div class="mb-3">
           <label for="cardNumber" class="form-label">Card Number</label>
           <p-inputMask
             id="cardNumber"
@@ -66,6 +67,10 @@
               placeholder="123"
             />
           </div>
+        </div> -->
+
+        <div class="mb-3">
+          <app-stripe-card #stripeCard></app-stripe-card>
         </div>
       } @else if (form.get("methodType")?.value === 1) {
         <h5>US bank account details</h5>

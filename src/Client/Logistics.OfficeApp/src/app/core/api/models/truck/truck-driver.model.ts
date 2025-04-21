@@ -1,4 +1,4 @@
-import {EmployeeDto} from "../employee/employee.dto";
+import {EmployeeDto} from "../employee/employee.model";
 import {TruckDto} from "./truck.dto";
 
 export interface TruckDriverDto {

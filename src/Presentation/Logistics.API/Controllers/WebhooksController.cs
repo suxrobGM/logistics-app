@@ -1,11 +1,13 @@
 ﻿using Logistics.Application.Commands;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Logistics.API.Controllers;
 
 [Route("webhooks")]
 [ApiController]
+[AllowAnonymous]
 public class WebhooksController : ControllerBase
 {
     private readonly IMediator _mediator;

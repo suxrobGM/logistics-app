@@ -31,7 +31,12 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
     {
         try
         {
-            var stripeEvent = EventUtility.ConstructEvent(req.RequestBodyJson, req.StripeSignature, _stripeWebhookSecret);
+            var stripeEvent = EventUtility.ConstructEvent(
+                req.RequestBodyJson, 
+                req.StripeSignature, 
+                _stripeWebhookSecret, 
+                throwOnApiVersionMismatch: false);
+            
             _logger.LogInformation("Received Stripe event: {Type}", stripeEvent.Type);
 
             switch (stripeEvent.Type)
@@ -39,6 +44,7 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
                 case EventTypes.InvoicePaid:
                     var invoice = stripeEvent.Data.Object as StripeInvoice;
                     return await HandleInvoicePaid(invoice!);
+                //case EventTypes.SetupIntentCreated
             }
         
             return Result.Succeed();

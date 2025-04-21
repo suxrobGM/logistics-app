@@ -1,6 +1,7 @@
 import {CommonModule} from "@angular/common";
-import {Component, input, model, signal} from "@angular/core";
+import {Component, input, model, signal, viewChild} from "@angular/core";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {StripeCardNumberElement} from "@stripe/stripe-js";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {DialogModule} from "primeng/dialog";
@@ -8,7 +9,7 @@ import {InputMaskModule} from "primeng/inputmask";
 import {InputTextModule} from "primeng/inputtext";
 import {KeyFilterModule} from "primeng/keyfilter";
 import {SelectModule} from "primeng/select";
-import {AddressFormComponent, ValidationSummaryComponent} from "@/components";
+import {AddressFormComponent, StripeCardComponent, ValidationSummaryComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {
   AddressDto,
@@ -21,8 +22,7 @@ import {
   usBankAccountHolderTypeOptions,
   usBankAccountTypeOptions,
 } from "@/core/api/models";
-import {TenantService} from "@/core/services";
-import {PaymentMethodValidators} from "@/core/validators";
+import {StripeService, TenantService} from "@/core/services";
 
 @Component({
   selector: "app-payment-method-dialog",
@@ -40,20 +40,27 @@ import {PaymentMethodValidators} from "@/core/validators";
     InputMaskModule,
     InputTextModule,
     KeyFilterModule,
+    StripeCardComponent,
   ],
 })
 export class PaymentMethodDialogComponent {
   readonly showDialog = model(false);
   readonly isLoading = signal(false);
   readonly paymentMethodId = input<string | null | undefined>(null);
+  readonly stripeCard = viewChild.required<StripeCardComponent>("stripeCard");
   readonly form: FormGroup<PaymentMethodForm>;
-  readonly pymentMethodTypes = pymentMethodTypeOptions;
+  readonly pymentMethodTypes = pymentMethodTypeOptions.filter(
+    (i) => i.value === PaymentMethodType.Card
+  );
   readonly usBankAccountHolderTypes = usBankAccountHolderTypeOptions;
   readonly usBankAccountTypes = usBankAccountTypeOptions;
 
+  private stripeCardNumberElement: StripeCardNumberElement | null = null;
+
   constructor(
     private readonly apiService: ApiService,
-    private readonly tenantService: TenantService
+    private readonly tenantService: TenantService,
+    private readonly stripeService: StripeService
   ) {
     const companyAddress = this.tenantService.getTenantData()?.companyAddress;
 
@@ -63,9 +70,6 @@ export class PaymentMethodDialogComponent {
         nonNullable: true,
       }),
       cardHolderName: new FormControl(null),
-      cardNumber: new FormControl(""),
-      cardExpirationDate: new FormControl("", {validators: PaymentMethodValidators.cardExpDate}),
-      cardCvc: new FormControl(null),
       billingAddress: new FormControl(companyAddress ?? null, {
         validators: Validators.required,
       }),
@@ -88,23 +92,16 @@ export class PaymentMethodDialogComponent {
   }
 
   submit(): void {
-    if (this.form.invalid) {
+    if (this.form.invalid || !this.stripeCardNumberElement) {
       return;
     }
 
     this.isLoading.set(true);
-
     const formValue = this.form.getRawValue();
-    const expMonth = formValue.cardExpirationDate?.split("/")[0];
-    const expYear = formValue.cardExpirationDate?.split("/")[1];
 
     const payload: CreatePaymentMethodCommand | UpdatePaymentMethodCommand = {
       type: formValue.methodType!,
       cardHolderName: formValue.cardHolderName!,
-      cardNumber: formValue.cardNumber!,
-      expMonth: expMonth ? parseInt(expMonth, 10) : undefined,
-      expYear: expYear ? parseInt(expYear, 10) : undefined,
-      cvc: formValue.cardCvc!,
       billingAddress: formValue.billingAddress!,
       bankName: formValue.bankName!,
       accountNumber: formValue.bankAccountNumber!,
@@ -118,38 +115,46 @@ export class PaymentMethodDialogComponent {
     console.log("isEditMode", this.isEditMode(), this.paymentMethodId());
     console.log("payload", payload);
 
-    if (this.isEditMode()) {
-      (payload as UpdatePaymentMethodCommand).id = this.paymentMethodId()!;
+    this.stripeService.confirmCardSetup(
+      this.stripeCardNumberElement,
+      formValue.cardHolderName!,
+      formValue.billingAddress!
+    );
 
-      this.apiService.paymentApi
-        .updatePaymentMethod(payload as UpdatePaymentMethodCommand)
-        .subscribe((result) => {
-          if (result.success) {
-            this.showDialog.set(false);
-          }
+    // if (this.isEditMode()) {
+    //   (payload as UpdatePaymentMethodCommand).id = this.paymentMethodId()!;
 
-          this.isLoading.set(false);
-        });
-    } else {
-      this.apiService.paymentApi
-        .createPaymentMethod(payload as CreatePaymentMethodCommand)
-        .subscribe((result) => {
-          if (result.success) {
-            this.showDialog.set(false);
-          }
+    //   this.apiService.paymentApi
+    //     .updatePaymentMethod(payload as UpdatePaymentMethodCommand)
+    //     .subscribe((result) => {
+    //       if (result.success) {
+    //         this.showDialog.set(false);
+    //       }
 
-          this.isLoading.set(false);
-        });
-    }
+    //       this.isLoading.set(false);
+    //     });
+    // } else {
+    //   this.apiService.paymentApi
+    //     .createPaymentMethod(payload as CreatePaymentMethodCommand)
+    //     .subscribe((result) => {
+    //       if (result.success) {
+    //         this.showDialog.set(false);
+    //       }
+
+    //       this.isLoading.set(false);
+    //     });
+    // }
+  }
+
+  async mountStripeCard(): Promise<void> {
+    const {cardNumber} = await this.stripeCard().mountElements();
+    this.stripeCardNumberElement = cardNumber;
   }
 }
 
 interface PaymentMethodForm {
   methodType: FormControl<PaymentMethodType | null>;
   cardHolderName: FormControl<string | null>;
-  cardNumber: FormControl<string | null>;
-  cardExpirationDate: FormControl<string | null>;
-  cardCvc: FormControl<string | null>;
   billingAddress: FormControl<AddressDto | null>;
   bankName: FormControl<string | null>;
   bankAccountNumber: FormControl<string | null>;

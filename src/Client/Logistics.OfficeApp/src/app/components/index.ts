@@ -7,3 +7,4 @@ export * from "./trucks-map/trucks-map.component";
 export * from "./validation-summary/validation-summary.component";
 export * from "./address-form/address-form.component";
 export * from "./payment-status-tag/payment-status-tag.component";
+export * from "./stripe-card/stripe-card.component";

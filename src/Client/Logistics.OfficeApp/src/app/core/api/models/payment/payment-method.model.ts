@@ -1,4 +1,4 @@
-import {AddressDto} from "../address.dto";
+import {AddressDto} from "../address.model";
 import {PaymentMethodType, UsBankAccountHolderType, UsBankAccountType} from "./enums";
 
 export interface PaymentMethodDto {

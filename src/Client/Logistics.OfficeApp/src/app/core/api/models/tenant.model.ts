@@ -1,4 +1,4 @@
-import {AddressDto} from "./address.dto";
+import {AddressDto} from "./address.model";
 import {SubscriptionDto} from "./subscription";
 
 export interface TenantDto {
