@@ -12,14 +12,17 @@ import {ApiService} from "../api";
 import {AddressDto} from "../api/models";
 import {COUNTRIES_OPTIONS} from "../constants";
 import {findOption} from "../utilities";
+import {TenantService} from "./tenant.service";
 
 @Injectable({providedIn: "root"})
 export class StripeService {
   private stripe: Stripe | null = null;
   private elements: StripeElements | null = null;
-  private clientSecret: string | null = null;
 
-  constructor(private readonly apiService: ApiService) {}
+  constructor(
+    private readonly apiService: ApiService,
+    private readonly tenantService: TenantService
+  ) {}
 
   /**
    * Creates and returns a Stripe Elements instance with a setup intent client secret.
@@ -31,14 +34,7 @@ export class StripeService {
     }
 
     const stripe = await this.getStripe();
-    const result = await firstValueFrom(this.apiService.paymentApi.createSetupIntent());
-
-    if (!result.success) {
-      throw new Error("Failed to create setup intent");
-    }
-
-    this.clientSecret = result.data!.clientSecret;
-    this.elements = stripe.elements({clientSecret: this.clientSecret});
+    this.elements = stripe.elements();
     return this.elements;
   }
 
@@ -54,15 +50,16 @@ export class StripeService {
     cardHolderName: string,
     billingAddress: AddressDto
   ): Promise<SetupIntentResult> {
-    if (!this.clientSecret) {
-      throw new Error("Client secret is not set, call getElements() first");
-    }
+    const clientSecret = await this.getClientSecret();
 
     const stripe = await this.getStripe();
     const countryOption = findOption(COUNTRIES_OPTIONS, billingAddress.country);
 
-    return stripe.confirmCardSetup(this.clientSecret, {
+    return stripe.confirmCardSetup(clientSecret, {
       payment_method: {
+        metadata: {
+          tenant_id: this.tenantService.getTenantId(),
+        },
         card: cardElement,
         billing_details: {
           name: cardHolderName,
@@ -77,6 +74,22 @@ export class StripeService {
         },
       },
     });
+  }
+
+  /**
+   * Creates a setup intent and returns the client secret.
+   * @returns A promise that resolves to the client secret.
+   * @throws An error if the setup intent creation fails.
+   */
+  async getClientSecret(): Promise<string> {
+    const result = await firstValueFrom(this.apiService.paymentApi.createSetupIntent());
+
+    if (!result.success) {
+      throw new Error("Failed to create setup intent");
+    }
+
+    const clientSecret = result.data!.clientSecret;
+    return clientSecret;
   }
 
   /**

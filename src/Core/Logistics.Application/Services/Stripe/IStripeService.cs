@@ -72,14 +72,6 @@ public interface IStripeService
     /// <param name="plan"> Subscription plan to be updated.</param>
     /// <returns>Stripe price and product object.</returns>
     Task<(Product Product, Price ActivePrice)> UpdateSubscriptionPlanAsync(SubscriptionPlan plan);
-    
-    /// <summary>
-    /// Adds a new payment method to the Stripe customer.
-    /// </summary>
-    /// <param name="paymentMethod">Payment method entity to add.</param>
-    /// <param name="tenant">Tenant entity.</param>
-    /// <returns>Stripe PaymentMethod object.</returns>
-    Task<StripePaymentMethod> AddPaymentMethodAsync(PaymentMethod paymentMethod, Tenant tenant);
 
     /// <summary>
     /// Updates an existing payment method in Stripe.

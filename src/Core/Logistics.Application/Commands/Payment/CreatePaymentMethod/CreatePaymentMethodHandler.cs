@@ -64,7 +64,7 @@ internal sealed class CreatePaymentMethodHandler : RequestHandler<CreatePaymentM
             CardHolderName = command.CardHolderName!,
         };
         
-        await _stripeService.AddPaymentMethodAsync(paymentMethod, tenant);
+        //await _stripeService.AddPaymentMethodAsync(paymentMethod, tenant);
         await _tenantUow.Repository<CardPaymentMethod>().AddAsync(paymentMethod);
         _logger.LogInformation(
             "Created card payment method for tenant {TenantId} with last 4 digits {Last4}",
@@ -88,7 +88,7 @@ internal sealed class CreatePaymentMethodHandler : RequestHandler<CreatePaymentM
             IsDefault = setDefault,
         };
         
-        await _stripeService.AddPaymentMethodAsync(paymentMethod, tenant);
+        //await _stripeService.AddPaymentMethodAsync(paymentMethod, tenant);
         await _tenantUow.Repository<UsBankAccountPaymentMethod>().AddAsync(paymentMethod);
         _logger.LogInformation(
             "Created US bank account payment method for tenant {TenantId} with last 4 digits {Last4}",

@@ -15,7 +15,7 @@
         <label for="methodType" class="form-label">Payment Type</label>
         <p-select
           formControlName="methodType"
-          [options]="pymentMethodTypes"
+          [options]="pymentMethodTypes()"
           class="w-100"
         ></p-select>
       </div>
@@ -34,40 +34,6 @@
             placeholder="ex. John Smith"
           />
         </div>
-        <!-- <div class="mb-3">
-          <label for="cardNumber" class="form-label">Card Number</label>
-          <p-inputMask
-            id="cardNumber"
-            formControlName="cardNumber"
-            styleClass="w-100"
-            mask="9999 9999 9999 9999"
-            placeholder="1234 0000 0000 0000"
-          />
-        </div>
-        <div class="row mb-3">
-          <div class="col-6">
-            <label for="cardExpirationDate" class="form-label">Expiration Date</label>
-            <p-inputMask
-              id="cardExpirationDate"
-              formControlName="cardExpirationDate"
-              styleClass="w-100"
-              mask="99/2099"
-              placeholder="MM/YYYY"
-            />
-          </div>
-          <div class="col-6">
-            <label for="cardCvc" class="form-label">CVC</label>
-            <input
-              id="cardCvc"
-              formControlName="cardCvc"
-              pInputText
-              pKeyFilter="int"
-              maxlength="4"
-              class="w-100"
-              placeholder="123"
-            />
-          </div>
-        </div> -->
 
         <div class="mb-3">
           <app-stripe-card #stripeCard></app-stripe-card>

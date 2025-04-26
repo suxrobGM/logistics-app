@@ -54,7 +54,6 @@ internal sealed class UpdatePaymentMethodHandler : RequestHandler<UpdatePaymentM
         paymentMethod.CardHolderName = PropertyUpdater.UpdateIfChanged(command.CardHolderName, paymentMethod.CardHolderName);
 
         await _stripeService.UpdatePaymentMethodAsync(paymentMethod);
-        
         _tenantUow.Repository<CardPaymentMethod>().Update(paymentMethod);
         await _tenantUow.SaveChangesAsync();
         

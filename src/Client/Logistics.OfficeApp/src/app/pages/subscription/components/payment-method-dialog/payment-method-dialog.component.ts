@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, input, model, signal, viewChild} from "@angular/core";
+import {Component, computed, input, model, signal, viewChild} from "@angular/core";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {StripeCardNumberElement} from "@stripe/stripe-js";
 import {ButtonModule} from "primeng/button";
@@ -10,12 +10,9 @@ import {InputTextModule} from "primeng/inputtext";
 import {KeyFilterModule} from "primeng/keyfilter";
 import {SelectModule} from "primeng/select";
 import {AddressFormComponent, StripeCardComponent, ValidationSummaryComponent} from "@/components";
-import {ApiService} from "@/core/api";
 import {
   AddressDto,
-  CreatePaymentMethodCommand,
   PaymentMethodType,
-  UpdatePaymentMethodCommand,
   UsBankAccountHolderType,
   UsBankAccountType,
   pymentMethodTypeOptions,
@@ -23,6 +20,12 @@ import {
   usBankAccountTypeOptions,
 } from "@/core/api/models";
 import {StripeService, TenantService} from "@/core/services";
+
+const enabledPaymentTypes = [
+  PaymentMethodType.Card,
+  PaymentMethodType.UsBankAccount,
+  //PaymentMethodType.InternationalBankAccount,
+];
 
 @Component({
   selector: "app-payment-method-dialog",
@@ -46,19 +49,23 @@ import {StripeService, TenantService} from "@/core/services";
 export class PaymentMethodDialogComponent {
   readonly showDialog = model(false);
   readonly isLoading = signal(false);
+  readonly availablePaymentMethods = input<PaymentMethodType[]>(enabledPaymentTypes);
   readonly paymentMethodId = input<string | null | undefined>(null);
   readonly stripeCard = viewChild.required<StripeCardComponent>("stripeCard");
-  readonly form: FormGroup<PaymentMethodForm>;
-  readonly pymentMethodTypes = pymentMethodTypeOptions.filter(
-    (i) => i.value === PaymentMethodType.Card
+
+  readonly pymentMethodTypes = computed(() =>
+    this.availablePaymentMethods()
+      .map((type) => pymentMethodTypeOptions.find((option) => option.value === type))
+      .filter(Boolean)
   );
+
+  readonly form: FormGroup<PaymentMethodForm>;
   readonly usBankAccountHolderTypes = usBankAccountHolderTypeOptions;
   readonly usBankAccountTypes = usBankAccountTypeOptions;
 
   private stripeCardNumberElement: StripeCardNumberElement | null = null;
 
   constructor(
-    private readonly apiService: ApiService,
     private readonly tenantService: TenantService,
     private readonly stripeService: StripeService
   ) {
@@ -91,7 +98,7 @@ export class PaymentMethodDialogComponent {
     return this.isEditMode() ? "Edit Payment Method" : "Add Payment Method";
   }
 
-  submit(): void {
+  async submit(): Promise<void> {
     if (this.form.invalid || !this.stripeCardNumberElement) {
       return;
     }
@@ -99,51 +106,14 @@ export class PaymentMethodDialogComponent {
     this.isLoading.set(true);
     const formValue = this.form.getRawValue();
 
-    const payload: CreatePaymentMethodCommand | UpdatePaymentMethodCommand = {
-      type: formValue.methodType!,
-      cardHolderName: formValue.cardHolderName!,
-      billingAddress: formValue.billingAddress!,
-      bankName: formValue.bankName!,
-      accountNumber: formValue.bankAccountNumber!,
-      routingNumber: formValue.bankRoutingNumber!,
-      accountHolderName: formValue.bankAccountHolderName!,
-      accountHolderType: formValue.bankAccountHolderType!,
-      accountType: formValue.bankAccountType!,
-      swiftCode: formValue.swiftCode!,
-    };
-
-    console.log("isEditMode", this.isEditMode(), this.paymentMethodId());
-    console.log("payload", payload);
-
-    this.stripeService.confirmCardSetup(
+    await this.stripeService.confirmCardSetup(
       this.stripeCardNumberElement,
       formValue.cardHolderName!,
       formValue.billingAddress!
     );
 
-    // if (this.isEditMode()) {
-    //   (payload as UpdatePaymentMethodCommand).id = this.paymentMethodId()!;
-
-    //   this.apiService.paymentApi
-    //     .updatePaymentMethod(payload as UpdatePaymentMethodCommand)
-    //     .subscribe((result) => {
-    //       if (result.success) {
-    //         this.showDialog.set(false);
-    //       }
-
-    //       this.isLoading.set(false);
-    //     });
-    // } else {
-    //   this.apiService.paymentApi
-    //     .createPaymentMethod(payload as CreatePaymentMethodCommand)
-    //     .subscribe((result) => {
-    //       if (result.success) {
-    //         this.showDialog.set(false);
-    //       }
-
-    //       this.isLoading.set(false);
-    //     });
-    // }
+    this.isLoading.set(false);
+    this.showDialog.set(false);
   }
 
   async mountStripeCard(): Promise<void> {

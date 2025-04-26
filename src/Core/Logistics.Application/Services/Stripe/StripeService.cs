@@ -1,6 +1,5 @@
 ﻿using Logistics.Domain.Entities;
 using Logistics.Domain.Utilities;
-using Logistics.Shared.Consts;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Stripe;
@@ -13,8 +12,6 @@ namespace Logistics.Application.Services;
 
 internal class StripeService : IStripeService
 {
-    private const string TenantIdMetadataKey = "tenant_id";
-    private const string PlanIdMetadataKey = "plan_id";
     private readonly ILogger<StripeService> _logger;
     
     public StripeService(IOptions<StripeOptions> options, ILogger<StripeService> logger)
@@ -40,8 +37,8 @@ internal class StripeService : IStripeService
         var options = new CustomerCreateOptions();
         options.Email = tenant.BillingEmail;
         options.Name = tenant.CompanyName;
-        options.Address = MapAddressOptions(tenant.CompanyAddress);
-        options.Metadata = new Dictionary<string, string> { { TenantIdMetadataKey, tenant.Id } };
+        options.Address = tenant.CompanyAddress.ToStripeAddressOptions();
+        options.Metadata = new Dictionary<string, string> { { StripeMetadataKeys.TenantId, tenant.Id } };
         
         var customer = await new CustomerService().CreateAsync(options);
         _logger.LogInformation("Created Stripe customer for tenant {TenantId}", tenant.Id);
@@ -59,8 +56,8 @@ internal class StripeService : IStripeService
         var options = new CustomerUpdateOptions();
         options.Email = tenant.BillingEmail;
         options.Name = tenant.CompanyName;
-        options.Address = MapAddressOptions(tenant.CompanyAddress);
-        options.Metadata = new Dictionary<string, string> { { TenantIdMetadataKey, tenant.Id } };
+        options.Address = tenant.CompanyAddress.ToStripeAddressOptions();
+        options.Metadata = new Dictionary<string, string> { { StripeMetadataKeys.TenantId, tenant.Id } };
         
         return new CustomerService().UpdateAsync(tenant.StripeCustomerId, options);
     }
@@ -72,7 +69,6 @@ internal class StripeService : IStripeService
     }
 
     #endregion
-
     
     #region Subscription API
 
@@ -96,8 +92,8 @@ internal class StripeService : IStripeService
         ];
         options.Metadata = new Dictionary<string, string>
         {
-            { TenantIdMetadataKey, tenant.Id },
-            { PlanIdMetadataKey, plan.Id }
+            { StripeMetadataKeys.TenantId, tenant.Id },
+            { StripeMetadataKeys.PlanId, plan.Id }
         };
         options.PaymentBehavior = "default_incomplete"; // For trials or manual confirmation
         options.BillingCycleAnchor = plan.BillingCycleAnchor;
@@ -144,7 +140,6 @@ internal class StripeService : IStripeService
 
     #endregion
 
-
     #region Subscription Plan API
 
     public async Task<(Product Product, Price Price)> CreateSubscriptionPlanAsync(SubscriptionPlan plan)
@@ -157,7 +152,7 @@ internal class StripeService : IStripeService
             Description = plan.Description,
             Metadata = new Dictionary<string, string>
             {
-                [PlanIdMetadataKey] = plan.Id
+                [StripeMetadataKeys.PlanId] = plan.Id
             }
         });
         
@@ -178,7 +173,7 @@ internal class StripeService : IStripeService
             },
             Metadata = new Dictionary<string, string>
             {
-                [PlanIdMetadataKey] = plan.Id
+                [StripeMetadataKeys.PlanId] = plan.Id
             }
         });
         
@@ -189,7 +184,7 @@ internal class StripeService : IStripeService
             {
                 Metadata = new Dictionary<string, string>
                 {
-                    ["billing_cycle_anchor"] = billingCycleAnchorStr
+                    [StripeMetadataKeys.BillingCycleAnchor] = billingCycleAnchorStr
                 }
             });
             
@@ -220,7 +215,7 @@ internal class StripeService : IStripeService
             Description = plan.Description,
             Metadata = new Dictionary<string, string> 
             {
-                [PlanIdMetadataKey] = plan.Id
+                [StripeMetadataKeys.PlanId] = plan.Id
             }
         });
         
@@ -256,7 +251,7 @@ internal class StripeService : IStripeService
                 },
                 Metadata = new Dictionary<string, string>
                 {
-                    [PlanIdMetadataKey] = plan.Id,
+                    [StripeMetadataKeys.PlanId] = plan.Id,
                 }
             });
 
@@ -270,49 +265,7 @@ internal class StripeService : IStripeService
 
     #endregion
 
-
     #region Payment Method API
-
-    public async Task<StripePaymentMethod> AddPaymentMethodAsync(PaymentMethod paymentMethod, Tenant tenant)
-    {
-        if (string.IsNullOrEmpty(tenant.StripeCustomerId))
-            throw new ArgumentException("Tenant must have a StripeCustomerId");
-
-        var paymentMethodService = new PaymentMethodService();
-        var options = new PaymentMethodCreateOptions
-        {
-            Type = GetStripePaymentMethodType(paymentMethod.Type)
-        };
-
-        switch (paymentMethod)
-        {
-            case CardPaymentMethod card:
-                options.Card = MapCardPaymentMethod(card);
-                break;
-            case UsBankAccountPaymentMethod usBank:
-                options.UsBankAccount = MapUsBankPaymentMethod(usBank);
-                break;
-            case BankAccountPaymentMethod:
-                throw new NotSupportedException("International bank accounts are not supported");
-            default:
-                throw new ArgumentException("Unsupported payment method type");
-        }
-
-        options.BillingDetails = CreateBillingDetails(paymentMethod);
-        var stripePaymentMethod = await paymentMethodService.CreateAsync(options);
-
-        await paymentMethodService.AttachAsync(stripePaymentMethod.Id, 
-            new PaymentMethodAttachOptions { Customer = tenant.StripeCustomerId });
-
-        if (paymentMethod.IsDefault)
-        {
-            await SetDefaultPaymentMethodAsync(paymentMethod, tenant);
-        }
-
-        paymentMethod.StripePaymentMethodId = stripePaymentMethod.Id;
-        _logger.LogInformation("Added Stripe payment method {PaymentMethodId}", stripePaymentMethod.Id);
-        return stripePaymentMethod;
-    }
 
     public async Task<StripePaymentMethod> UpdatePaymentMethodAsync(PaymentMethod paymentMethod)
     {
@@ -388,7 +341,7 @@ internal class StripeService : IStripeService
             },
             Metadata = new Dictionary<string, string>
             {
-                [TenantIdMetadataKey] = tenant.Id
+                [StripeMetadataKeys.TenantId] = tenant.Id
             }
         };
 
@@ -399,25 +352,15 @@ internal class StripeService : IStripeService
     }
 
     #endregion
-
-    #region Helpers
     
-    private string GetStripePaymentMethodType(PaymentMethodType type)
-    {
-        return type switch
-        {
-            PaymentMethodType.Card => "card",
-            PaymentMethodType.UsBankAccount => "us_bank_account",
-            _ => throw new ArgumentException($"Unsupported type: {type}")
-        };
-    }
+    #region Helpers
 
     private static PaymentMethodBillingDetailsOptions CreateBillingDetails(PaymentMethod paymentMethod)
     {
         return new PaymentMethodBillingDetailsOptions
         {
             Name = GetPaymentMethodHolderName(paymentMethod),
-            Address = MapAddressOptions(paymentMethod.BillingAddress)
+            Address = paymentMethod.BillingAddress.ToStripeAddressOptions()
         };
     }
 
@@ -428,22 +371,6 @@ internal class StripeService : IStripeService
             CardPaymentMethod card => card.CardHolderName,
             UsBankAccountPaymentMethod usBank => usBank.AccountHolderName,
             _ => string.Empty
-        };
-    }
-
-    private static AddressOptions MapAddressOptions(Logistics.Domain.ValueObjects.Address address)
-    {
-        var country = Countries.FindCountry(address.Country) ??
-                      throw new InvalidOperationException($"Country {address.Country} not found");
-        
-        return new AddressOptions
-        {
-            Line1 = address.Line1,
-            Line2 = address.Line2 ?? "",
-            City = address.City,
-            State = address.State,
-            PostalCode = address.ZipCode,
-            Country = country.Code // Stripe requires the 2-letter country code
         };
     }
 
