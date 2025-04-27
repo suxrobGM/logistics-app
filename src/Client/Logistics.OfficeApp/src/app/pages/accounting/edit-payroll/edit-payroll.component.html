@@ -50,7 +50,7 @@
           </p>
           <p>
             <strong>Employee's Salary:</strong>
-            @if (selectedEmployee.salaryType === salaryType.ShareOfGross) {
+            @if (selectedEmployee.salaryType === "share_of_gross") {
               {{ selectedEmployee.salary | percent }}
             } @else {
               {{ selectedEmployee.salary | currency }}
@@ -62,28 +62,26 @@
         @if (isEditMode()) {
           <div class="mb-3">
             <label for="paymentStatus" class="form-label">Payment Status</label>
-            <p-dropdown
+            <p-select
               formControlName="paymentStatus"
               styleClass="w-100"
               [options]="paymentStatuses"
-              optionLabel="description"
             >
-            </p-dropdown>
+            </p-select>
           </div>
 
-          @if (form.get("paymentStatus")?.value?.value === paymentStatus.Paid) {
+          @if (form.get("paymentStatus")?.value === "paid") {
             <h4>Payment details</h4>
             <hr />
 
             <div class="mb-3">
               <label for="paymentMethod" class="form-label">Payment Method</label>
-              <p-dropdown
+              <p-select
                 formControlName="paymentMethod"
                 styleClass="w-100"
                 [options]="paymentMethods"
-                optionLabel="description"
               >
-              </p-dropdown>
+              </p-select>
             </div>
 
             <h5>Billing address</h5>

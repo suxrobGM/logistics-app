@@ -6,8 +6,12 @@ import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {ApiService} from "@/core/api";
-import {AddressDto, InvoiceDto} from "@/core/api/models";
-import {PaymentMethodType, PaymentMethodTypeEnum, PaymentStatus} from "@/core/enums";
+import {
+  AddressDto,
+  InvoiceDto,
+  PaymentMethodType,
+  paymentMethodTypeOptions,
+} from "@/core/api/models";
 import {AddressPipe} from "@/core/pipes";
 import {TenantService} from "@/core/services";
 
@@ -27,7 +31,6 @@ import {TenantService} from "@/core/services";
 })
 export class ViewInvoiceComponent implements OnInit {
   private id?: string;
-  public paymentStatus = PaymentStatus;
   public isLoading = false;
   public companyName?: string;
   public companyAddress?: AddressDto;
@@ -54,7 +57,7 @@ export class ViewInvoiceComponent implements OnInit {
     if (enumValue == null) {
       return "N/A";
     }
-    return PaymentMethodTypeEnum.getValue(enumValue).description;
+    return paymentMethodTypeOptions.find((x) => x.value === enumValue)?.label ?? "N/A";
   }
 
   exportToPDF() {

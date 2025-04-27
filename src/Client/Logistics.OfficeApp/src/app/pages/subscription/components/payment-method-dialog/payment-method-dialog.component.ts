@@ -15,7 +15,7 @@ import {
   PaymentMethodType,
   UsBankAccountHolderType,
   UsBankAccountType,
-  pymentMethodTypeOptions,
+  paymentMethodTypeOptions,
   usBankAccountHolderTypeOptions,
   usBankAccountTypeOptions,
 } from "@/core/api/models";
@@ -55,7 +55,7 @@ export class PaymentMethodDialogComponent {
 
   readonly pymentMethodTypes = computed(() =>
     this.availablePaymentMethods()
-      .map((type) => pymentMethodTypeOptions.find((option) => option.value === type))
+      .map((type) => paymentMethodTypeOptions.find((option) => option.value === type))
       .filter(Boolean)
   );
 

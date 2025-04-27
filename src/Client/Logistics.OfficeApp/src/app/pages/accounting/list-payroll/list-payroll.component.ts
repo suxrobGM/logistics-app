@@ -8,14 +8,13 @@ import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {PaymentStatusTagComponent} from "@/components";
 import {ApiService} from "@/core/api";
-import {PayrollDto} from "@/core/api/models";
 import {
   PaymentMethodType,
-  PaymentMethodTypeEnum,
-  PaymentStatus,
+  PayrollDto,
   SalaryType,
-  SalaryTypeEnum,
-} from "@/core/enums";
+  paymentMethodTypeOptions,
+  salaryTypeOptions,
+} from "@/core/api/models";
 
 @Component({
   selector: "app-list-payroll",
@@ -34,8 +33,6 @@ import {
   ],
 })
 export class ListPayrollComponent {
-  public salaryType = SalaryType;
-  public paymentStatus = PaymentStatus;
   public payrolls: PayrollDto[] = [];
   public isLoading = false;
   public totalRecords = 0;
@@ -85,10 +82,10 @@ export class ListPayrollComponent {
       return "N/A";
     }
 
-    return PaymentMethodTypeEnum.getValue(enumValue).description;
+    return paymentMethodTypeOptions.find((x) => x.value === enumValue)?.label ?? "N/A";
   }
 
   getSalaryTypeDesc(enumValue: SalaryType): string {
-    return SalaryTypeEnum.getValue(enumValue).description;
+    return salaryTypeOptions.find((option) => option.value === enumValue)?.label ?? "N/A";
   }
 }

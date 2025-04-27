@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Logistics.HttpClient.Exceptions;
 using Logistics.HttpClient.Utils;
 
@@ -19,7 +20,8 @@ internal class GenericApiClient
 
         _serializerOptions = new JsonSerializerOptions
         {
-            PropertyNameCaseInsensitive = true
+            PropertyNameCaseInsensitive = true,
+            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
         };
 
         try
@@ -143,7 +145,7 @@ internal class GenericApiClient
     }
 
     public async Task<TRes> DeleteRequestAsync<TRes>(string endpoint,
-        IDictionary<string, string> queries = default!)
+        IDictionary<string, string> queries = null!)
         where TRes : new()
     {
         var content = await DeleteRequestAsync(endpoint, queries);
@@ -207,7 +209,7 @@ internal class GenericApiClient
         return content;
     }
 
-    private HttpContent GetJsonContent<T>(T data)
+    private StringContent GetJsonContent<T>(T data)
     {
         var jsonData = JsonSerializer.Serialize(data, _serializerOptions);
         return new StringContent(jsonData, Encoding.UTF8, "application/json");

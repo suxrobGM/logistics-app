@@ -4,19 +4,20 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/
 import {Router, RouterModule} from "@angular/router";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
-import {DropdownModule} from "primeng/dropdown";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {SelectModule} from "primeng/select";
 import {ValidationSummaryComponent} from "@/components";
 import {ApiService} from "@/core/api";
-import {CreatePaymentCommand, UpdatePaymentCommand} from "@/core/api/models";
 import {
+  CreatePaymentCommand,
   PaymentFor,
-  PaymentForEnum,
   PaymentMethodType,
-  PaymentMethodTypeEnum,
   PaymentStatus,
-  PaymentStatusEnum,
-} from "@/core/enums";
+  UpdatePaymentCommand,
+  paymentForOptions,
+  paymentMethodTypeOptions,
+  paymentStatusOptions,
+} from "@/core/api/models";
 import {ToastService} from "@/core/services";
 
 @Component({
@@ -31,18 +32,18 @@ import {ToastService} from "@/core/services";
     ProgressSpinnerModule,
     ReactiveFormsModule,
     RouterModule,
-    DropdownModule,
+    SelectModule,
     ValidationSummaryComponent,
   ],
 })
 export class EditPaymentComponent implements OnInit {
-  public readonly paymentStatuses = PaymentStatusEnum.toArray();
-  public readonly paymentMethods = PaymentMethodTypeEnum.toArray();
-  public readonly paymentForValues = PaymentForEnum.toArray();
-  public readonly title = signal("Edit payment");
-  public readonly id = input<string>("");
-  public readonly isLoading = signal(false);
-  public readonly form: FormGroup<PaymentForm>;
+  readonly title = signal("Edit payment");
+  readonly id = input<string>("");
+  readonly isLoading = signal(false);
+  readonly form: FormGroup<PaymentForm>;
+  readonly paymentStatuses = paymentStatusOptions;
+  readonly paymentMethods = paymentMethodTypeOptions;
+  readonly paymentForValues = paymentForOptions;
 
   constructor(
     private readonly apiService: ApiService,
@@ -51,7 +52,7 @@ export class EditPaymentComponent implements OnInit {
   ) {
     this.form = new FormGroup<PaymentForm>({
       notes: new FormControl<string>("", {validators: Validators.required, nonNullable: true}),
-      paymentMethod: new FormControl<PaymentMethodType>(PaymentMethodType.BankAccount, {
+      paymentMethod: new FormControl<PaymentMethodType>(PaymentMethodType.UsBankAccount, {
         validators: Validators.required,
         nonNullable: true,
       }),
@@ -59,7 +60,7 @@ export class EditPaymentComponent implements OnInit {
         validators: Validators.compose([Validators.required, Validators.min(0.01)]),
         nonNullable: true,
       }),
-      paymentFor: new FormControl<PaymentFor>(PaymentFor.Payroll, {
+      paymentFor: new FormControl<PaymentFor>(PaymentFor.EmployeePayroll, {
         validators: Validators.required,
         nonNullable: true,
       }),

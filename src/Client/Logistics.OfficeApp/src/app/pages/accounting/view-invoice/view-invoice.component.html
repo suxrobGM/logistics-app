@@ -19,13 +19,13 @@
     <p><strong>Method:</strong> {{ getPaymentMethodDesc(invoice.payment.method) }}</p>
     <p><strong>Amount:</strong> {{ invoice.payment.amount | currency }}</p>
 
-    @if (invoice.payment.status === paymentStatus.Paid) {
+    @if (invoice.payment.status === "paid") {
       <p><strong>Payment Date:</strong> {{ invoice.payment.paymentDate | date: "mediumDate" }}</p>
     }
 
     <p-button icon="bi bi-file-pdf" label="Export to PDF" (click)="exportToPDF()"> </p-button>
 
-    @if (invoice.payment.status === paymentStatus.Pending) {
+    @if (invoice.payment.status === "pending") {
       <p-button
         styleClass="ms-2"
         icon="bi bi-credit-card"

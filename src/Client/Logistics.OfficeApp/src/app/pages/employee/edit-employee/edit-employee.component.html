@@ -50,14 +50,8 @@
         </div>
         <div class="mb-3">
           <label for="salaryType" class="form-label">Salary Type</label>
-          <p-dropdown
-            formControlName="salaryType"
-            styleClass="w-100"
-            [options]="salaryTypes"
-            optionValue="value"
-            optionLabel="description"
-          >
-          </p-dropdown>
+          <p-select formControlName="salaryType" styleClass="w-100" [options]="salaryTypes">
+          </p-select>
         </div>
 
         <div class="mb-3">

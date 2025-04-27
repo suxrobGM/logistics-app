@@ -8,7 +8,6 @@ import {TooltipModule} from "primeng/tooltip";
 import {PaymentStatusTagComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {InvoiceDto} from "@/core/api/models";
-import {PaymentStatus} from "@/core/enums";
 import {PredefinedDateRanges} from "@/core/utilities";
 
 @Component({
@@ -29,7 +28,6 @@ import {PredefinedDateRanges} from "@/core/utilities";
   ],
 })
 export class ListInvoicesComponent {
-  public paymentStatus = PaymentStatus;
   public invoices: InvoiceDto[] = [];
   public isLoading = true;
   public totalRecords = 0;

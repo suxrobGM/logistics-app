@@ -29,14 +29,8 @@
         </div>
         <div class="mb-3">
           <label for="salaryType" class="form-label">Salary Type</label>
-          <p-dropdown
-            formControlName="salaryType"
-            styleClass="w-100"
-            [options]="salaryTypes"
-            optionValue="name"
-            optionLabel="description"
-          >
-          </p-dropdown>
+          <p-select formControlName="salaryType" styleClass="w-100" [options]="salaryTypes">
+          </p-select>
         </div>
         <div class="mb-3">
           <label for="salary" class="form-label">Salary</label>
@@ -68,7 +62,7 @@
         </div>
         <div class="mb-3">
           <label for="role" class="form-label">Role</label>
-          <p-dropdown
+          <p-select
             formControlName="role"
             styleClass="w-100"
             [options]="roles"
@@ -77,7 +71,7 @@
             [showClear]="true"
             (onClear)="clearSelctedRole()"
           >
-          </p-dropdown>
+          </p-select>
         </div>
 
         <div>

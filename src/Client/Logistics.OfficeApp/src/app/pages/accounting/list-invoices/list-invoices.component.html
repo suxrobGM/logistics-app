@@ -68,7 +68,7 @@
               ></app-payment-status-tag>
             </td>
             <td>
-              @if (invoice.payment.status === paymentStatus.Pending) {
+              @if (invoice.payment.status === "pending") {
                 <p-button
                   icon="bi bi-credit-card"
                   pTooltip="Make payment"

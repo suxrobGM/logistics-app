@@ -1,4 +1,6 @@
 ﻿using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Logistics.API.Authorization;
@@ -78,7 +80,13 @@ internal static class Setup
         {
             options.InvalidModelStateResponseFactory = context =>
                 new BadRequestObjectResult(Result.Fail(GetModelStateErrors(context.ModelState)));
-        });
+        })
+        .AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(
+                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) // Optional naming policy
+            );
+        });;
         
         services.AddCors(options =>
         {

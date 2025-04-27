@@ -1,7 +1,6 @@
 import {CommonModule} from "@angular/common";
-import {Component, Input} from "@angular/core";
-import {PayrollDto} from "@/core/api/models";
-import {SalaryType, SalaryTypeEnum} from "@/core/enums";
+import {Component, input} from "@angular/core";
+import {PayrollDto, SalaryType, salaryTypeOptions} from "@/core/api/models";
 
 @Component({
   selector: "app-payroll-details",
@@ -10,10 +9,10 @@ import {SalaryType, SalaryTypeEnum} from "@/core/enums";
   imports: [CommonModule],
 })
 export class PayrollDetailsComponent {
-  public salaryType = SalaryType;
-  @Input({required: true}) payroll!: PayrollDto;
+  readonly salaryType = SalaryType;
+  readonly payroll = input.required<PayrollDto>();
 
   getSalaryTypeDesc(enumValue: SalaryType): string {
-    return SalaryTypeEnum.getValue(enumValue).description;
+    return salaryTypeOptions.find((option) => option.value === enumValue)?.label ?? "Unknown";
   }
 }

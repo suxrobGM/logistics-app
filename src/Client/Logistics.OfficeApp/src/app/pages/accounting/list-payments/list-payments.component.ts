@@ -7,8 +7,13 @@ import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {PaymentStatusTagComponent} from "@/components";
 import {ApiService} from "@/core/api";
-import {PaymentDto} from "@/core/api/models";
-import {PaymentFor, PaymentForEnum, PaymentMethodType, PaymentMethodTypeEnum} from "@/core/enums";
+import {
+  PaymentDto,
+  PaymentFor,
+  PaymentMethodType,
+  paymentForOptions,
+  paymentMethodTypeOptions,
+} from "@/core/api/models";
 import {AddressPipe} from "@/core/pipes";
 import {PredefinedDateRanges} from "@/core/utilities";
 
@@ -81,10 +86,12 @@ export class ListPaymentsComponent {
       return "N/A";
     }
 
-    return PaymentMethodTypeEnum.getValue(enumValue).description;
+    return (
+      paymentMethodTypeOptions.find((option) => option.value === enumValue)?.label ?? "Unknown"
+    );
   }
 
   getPaymentForDesc(enumValue: PaymentFor): string {
-    return PaymentForEnum.getValue(enumValue).description;
+    return paymentForOptions.find((option) => option.value === enumValue)?.label ?? "Unknown";
   }
 }

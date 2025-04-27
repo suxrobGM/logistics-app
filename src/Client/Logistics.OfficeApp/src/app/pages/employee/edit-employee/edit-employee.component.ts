@@ -6,14 +6,14 @@ import {ConfirmationService} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
-import {DropdownModule} from "primeng/dropdown";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {SelectModule} from "primeng/select";
 import {ToastModule} from "primeng/toast";
 import {ValidationSummaryComponent} from "@/components";
 import {ApiService} from "@/core/api";
-import {EmployeeDto, UpdateEmployeeCommand} from "@/core/api/models";
+import {EmployeeDto, SalaryType, UpdateEmployeeCommand, salaryTypeOptions} from "@/core/api/models";
 import {AuthService} from "@/core/auth";
-import {SalaryType, SalaryTypeEnum, UserRole} from "@/core/enums";
+import {UserRole} from "@/core/enums";
 import {ToastService} from "@/core/services";
 import {NumberUtils} from "@/core/utilities";
 import {ChangeRoleDialogComponent} from "../components";
@@ -33,9 +33,9 @@ import {ChangeRoleDialogComponent} from "../components";
     ProgressSpinnerModule,
     ButtonModule,
     RouterLink,
-    DropdownModule,
     ReactiveFormsModule,
     ValidationSummaryComponent,
+    SelectModule,
   ],
   providers: [ConfirmationService],
 })
@@ -45,7 +45,7 @@ export class EditEmployeeComponent implements OnInit {
   public showUpdateDialog = false;
   public canChangeRole = false;
   public employee?: EmployeeDto;
-  public salaryTypes = SalaryTypeEnum.toArray();
+  public salaryTypes = salaryTypeOptions;
   public form: FormGroup<UpdateEmployeeForm>;
 
   constructor(

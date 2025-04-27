@@ -13,14 +13,8 @@
 
         <div class="mb-3">
           <label for="paymentMethod" class="form-label">Payment Method</label>
-          <p-dropdown
-            formControlName="status"
-            styleClass="w-100"
-            [options]="paymentMethods"
-            optionValue="value"
-            optionLabel="description"
-          >
-          </p-dropdown>
+          <p-select formControlName="status" styleClass="w-100" [options]="paymentMethods">
+          </p-select>
         </div>
         <div class="mb-3">
           <label for="amount" class="form-label">Amount</label>
@@ -28,27 +22,19 @@
         </div>
         <div class="mb-3">
           <label for="paymentFor" class="form-label">Payment For</label>
-          <p-dropdown
-            formControlName="paymentFor"
-            styleClass="w-100"
-            [options]="paymentForValues"
-            optionValue="value"
-            optionLabel="description"
-          >
-          </p-dropdown>
+          <p-select formControlName="paymentFor" styleClass="w-100" [options]="paymentForValues">
+          </p-select>
         </div>
 
         @if (isEditMode()) {
           <div class="mb-3">
             <label for="paymentStatus" class="form-label">Payment Status</label>
-            <p-dropdown
+            <p-select
               formControlName="paymentStatus"
               styleClass="w-100"
               [options]="paymentStatuses"
-              optionValue="value"
-              optionLabel="description"
             >
-            </p-dropdown>
+            </p-select>
           </div>
         }
 

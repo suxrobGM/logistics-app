@@ -8,7 +8,7 @@
         <div class="row mb-2">
           @switch (paymentMethod.type) {
             <!-- Card -->
-            @case (0) {
+            @case ("card") {
               <div class="col-6 fw-bold">Cardholder Name:</div>
               <div class="col-6">{{ paymentMethod.cardHolderName }}</div>
 
@@ -22,7 +22,7 @@
               <div class="col-6">{{ paymentMethod.expMonth }}/{{ paymentMethod.expYear }}</div>
             }
             <!-- US Bank Account -->
-            @case (1) {
+            @case ("us_bank_account") {
               <div class="col-6 fw-bold">Account Holder Type:</div>
               <div class="col-6">{{ paymentMethod.accountHolderType }}</div>
 
@@ -42,7 +42,7 @@
               <div class="col-6">{{ paymentMethod.accountType }}</div>
             }
             <!-- International Bank Account -->
-            @case (2) {
+            @case ("international_bank_account") {
               <div class="col-6 fw-bold">Account Holder:</div>
               <div class="col-6">{{ paymentMethod.accountHolderName }}</div>
 
@@ -102,5 +102,4 @@
 <app-payment-method-dialog
   [(showDialog)]="showDialog"
   [paymentMethodId]="selectedPaymentMethod()?.id"
-  [availablePaymentMethods]="[0]"
 ></app-payment-method-dialog>

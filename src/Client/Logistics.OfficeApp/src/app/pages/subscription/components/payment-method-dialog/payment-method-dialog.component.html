@@ -20,7 +20,7 @@
         ></p-select>
       </div>
 
-      @if (form.get("methodType")?.value === 0) {
+      @if (form.get("methodType")?.value === "card") {
         <h5>Credit/Debit card details</h5>
         <hr />
 
@@ -38,7 +38,7 @@
         <div class="mb-3">
           <app-stripe-card #stripeCard></app-stripe-card>
         </div>
-      } @else if (form.get("methodType")?.value === 1) {
+      } @else if (form.get("methodType")?.value === "us_bank_account") {
         <h5>US bank account details</h5>
         <hr />
 
@@ -96,7 +96,7 @@
             placeholder="ex. John Smith"
           />
         </div>
-      } @else if (form.get("methodType")?.value === 2) {
+      } @else if (form.get("methodType")?.value === "international_bank_account") {
         <h5>International bank account details</h5>
         <hr />
 

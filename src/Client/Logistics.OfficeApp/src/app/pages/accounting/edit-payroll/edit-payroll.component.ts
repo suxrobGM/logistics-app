@@ -6,25 +6,23 @@ import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete"
 import {ButtonModule} from "primeng/button";
 import {CalendarModule} from "primeng/calendar";
 import {CardModule} from "primeng/card";
-import {DropdownModule} from "primeng/dropdown";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {SelectModule} from "primeng/select";
 import {AddressFormComponent, ValidationSummaryComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {
   AddressDto,
   CreatePayrollCommand,
   EmployeeDto,
-  PayrollDto,
-  UpdatePayrollCommand,
-} from "@/core/api/models";
-import {
-  EnumType,
-  PaymentMethodTypeEnum,
+  PaymentMethodType,
   PaymentStatus,
-  PaymentStatusEnum,
+  PayrollDto,
   SalaryType,
-  SalaryTypeEnum,
-} from "@/core/enums";
+  UpdatePayrollCommand,
+  paymentMethodTypeOptions,
+  paymentStatusOptions,
+  salaryTypeOptions,
+} from "@/core/api/models";
 import {ToastService} from "@/core/services";
 import {PredefinedDateRanges} from "@/core/utilities";
 import {DateUtils} from "@/core/utilities";
@@ -38,20 +36,18 @@ import {DateUtils} from "@/core/utilities";
     CardModule,
     ValidationSummaryComponent,
     RouterModule,
-    DropdownModule,
     AutoCompleteModule,
     ProgressSpinnerModule,
     ReactiveFormsModule,
     CalendarModule,
     ButtonModule,
     AddressFormComponent,
+    SelectModule,
   ],
 })
 export class EditPayrollComponent implements OnInit {
-  public salaryType = SalaryType;
-  public paymentStatus = PaymentStatus;
-  public paymentStatuses = PaymentStatusEnum.toArray();
-  public paymentMethods = PaymentMethodTypeEnum.toArray();
+  public paymentStatuses = paymentStatusOptions;
+  public paymentMethods = paymentMethodTypeOptions;
   public title = "Edit payroll";
   public id: string | null = null;
   public isLoading = false;
@@ -81,7 +77,7 @@ export class EditPayrollComponent implements OnInit {
     });
 
     this.form.get("paymentStatus")?.valueChanges.subscribe((status) => {
-      this.setConditionalValidators(status?.value as PaymentStatus);
+      this.setConditionalValidators(status);
     });
   }
 
@@ -98,7 +94,7 @@ export class EditPayrollComponent implements OnInit {
     }
   }
 
-  tryCalculatePayroll() {
+  tryCalculatePayroll(): void {
     if (!DateUtils.isValidRange(this.form.value.dateRange) || !this.selectedEmployee) {
       return;
     }
@@ -106,7 +102,7 @@ export class EditPayrollComponent implements OnInit {
     this.calculatePayrollForEmployee(this.selectedEmployee);
   }
 
-  searchEmployee(event: {query: string}) {
+  searchEmployee(event: {query: string}): void {
     this.apiService.getEmployees({search: event.query}).subscribe((result) => {
       if (result.data) {
         this.suggestedEmployees = result.data;
@@ -114,11 +110,11 @@ export class EditPayrollComponent implements OnInit {
     });
   }
 
-  handleAutoCompleteSelectEvent(event: AutoCompleteSelectEvent) {
+  handleAutoCompleteSelectEvent(event: AutoCompleteSelectEvent): void {
     this.calculatePayrollForEmployee(event.value);
   }
 
-  calculatePayrollForEmployee(employee: EmployeeDto) {
+  calculatePayrollForEmployee(employee: EmployeeDto): void {
     if (!this.form.valid) {
       return;
     }
@@ -135,7 +131,7 @@ export class EditPayrollComponent implements OnInit {
     });
   }
 
-  submit() {
+  submit(): void {
     if (!this.form.valid) {
       return;
     }
@@ -152,10 +148,10 @@ export class EditPayrollComponent implements OnInit {
   }
 
   getSalaryTypeDesc(salaryType: SalaryType): string {
-    return SalaryTypeEnum.getValue(salaryType).description;
+    return salaryTypeOptions.find((option) => option.value === salaryType)?.label ?? "";
   }
 
-  private setConditionalValidators(paymentStatus: PaymentStatus | null) {
+  private setConditionalValidators(paymentStatus: PaymentStatus | null): void {
     if (!paymentStatus) {
       return;
     }
@@ -172,7 +168,7 @@ export class EditPayrollComponent implements OnInit {
     }
   }
 
-  private fetchPayroll() {
+  private fetchPayroll(): void {
     if (!this.id) {
       return;
     }
@@ -183,8 +179,8 @@ export class EditPayrollComponent implements OnInit {
         this.form.patchValue({
           employee: payroll.employee,
           dateRange: [new Date(payroll.startDate), new Date(payroll.endDate)],
-          paymentMethod: PaymentMethodTypeEnum.getValue(payroll.payment.method!),
-          paymentStatus: PaymentStatusEnum.getValue(payroll.payment.status),
+          paymentMethod: payroll.payment.method,
+          paymentStatus: payroll.payment.status,
           paymentBillingAddress: payroll.payment.billingAddress,
         });
 
@@ -242,7 +238,7 @@ export class EditPayrollComponent implements OnInit {
 interface PayrollForm {
   employee: FormControl<EmployeeDto | null>;
   dateRange: FormControl<Date[]>;
-  paymentStatus: FormControl<EnumType | null>;
-  paymentMethod: FormControl<EnumType | null>;
+  paymentStatus: FormControl<PaymentStatus | null>;
+  paymentMethod: FormControl<PaymentMethodType | null>;
   paymentBillingAddress: FormControl<AddressDto | null>;
 }

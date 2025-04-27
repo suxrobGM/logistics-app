@@ -6,13 +6,18 @@ import {AutoCompleteModule} from "primeng/autocomplete";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
-import {DropdownModule} from "primeng/dropdown";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {SelectModule} from "primeng/select";
 import {ToastModule} from "primeng/toast";
 import {ValidationSummaryComponent} from "@/components";
 import {ApiService} from "@/core/api";
-import {CreateEmployeeCommand, RoleDto, UserDto} from "@/core/api/models";
-import {SalaryType, SalaryTypeEnum} from "@/core/enums";
+import {
+  CreateEmployeeCommand,
+  RoleDto,
+  SalaryType,
+  UserDto,
+  salaryTypeOptions,
+} from "@/core/api/models";
 import {ToastService} from "@/core/services";
 import {UserService} from "../services";
 
@@ -30,7 +35,7 @@ import {UserService} from "../services";
     FormsModule,
     ReactiveFormsModule,
     AutoCompleteModule,
-    DropdownModule,
+    SelectModule,
     ButtonModule,
     RouterLink,
     ValidationSummaryComponent,
@@ -41,7 +46,7 @@ export class AddEmployeeComponent implements OnInit {
   public suggestedUsers: UserDto[] = [];
   public form: FormGroup<CreateEmployeeForm>;
   public roles: RoleDto[] = [];
-  public salaryTypes = SalaryTypeEnum.toArray();
+  public salaryTypes = salaryTypeOptions;
   public isLoading = false;
 
   constructor(

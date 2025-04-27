@@ -1,7 +1,7 @@
-import {Component, input} from "@angular/core";
 import {CommonModule} from "@angular/common";
-import {PaymentStatus, PaymentStatusEnum} from "@/core/enums";
+import {Component, input} from "@angular/core";
 import {TagModule} from "primeng/tag";
+import {PaymentStatus, paymentStatusOptions} from "@/core/api/models";
 
 @Component({
   selector: "app-payment-status-tag",
@@ -13,7 +13,7 @@ export class PaymentStatusTagComponent {
   public readonly paymentStatus = input.required<PaymentStatus>();
 
   getPaymentStatusDesc(enumValue: PaymentStatus): string {
-    return PaymentStatusEnum.getValue(enumValue).description;
+    return paymentStatusOptions.find((option) => option.value === enumValue)?.label ?? "Unknown";
   }
 
   getPaymentStatusTagSeverity(paymentStatus: PaymentStatus): "success" | "warn" {

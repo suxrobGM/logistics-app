@@ -48,17 +48,17 @@
                     <div class="field-checkbox">
                       <p-radioButton
                         formControlName="paymentMethod"
-                        [inputId]="paymentMethod.description"
+                        [inputId]="paymentMethod.value"
                         [value]="paymentMethod.value"
                       ></p-radioButton>
-                      <label [for]="paymentMethod.description" class="ms-2">{{
-                        paymentMethod.description
+                      <label [for]="paymentMethod.value" class="ms-2">{{
+                        paymentMethod.label
                       }}</label>
                     </div>
                   }
                 </div>
 
-                @if (form.get("paymentMethod")?.value === paymentMethod.CreditCard) {
+                @if (form.get("paymentMethod")?.value === "card") {
                   <h5>Credit/Debit card details</h5>
                   <hr />
 
@@ -102,7 +102,7 @@
                       />
                     </div>
                   </div>
-                } @else if (form.get("paymentMethod")?.value === paymentMethod.BankAccount) {
+                } @else if (form.get("paymentMethod")?.value === "us_bank_account") {
                   <h5>Bank account details</h5>
                   <hr />
 

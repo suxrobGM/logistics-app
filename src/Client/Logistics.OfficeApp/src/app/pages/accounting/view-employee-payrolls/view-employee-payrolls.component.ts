@@ -8,15 +8,14 @@ import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {PaymentStatusTagComponent} from "@/components";
 import {ApiService} from "@/core/api";
-import {EmployeeDto, PayrollDto} from "@/core/api/models";
 import {
+  EmployeeDto,
   PaymentMethodType,
-  PaymentMethodTypeEnum,
-  PaymentStatus,
+  PayrollDto,
   SalaryType,
-  SalaryTypeEnum,
-} from "@/core/enums";
-import {ToastService} from "@/core/services";
+  paymentMethodTypeOptions,
+  salaryTypeOptions,
+} from "@/core/api/models";
 
 @Component({
   selector: "app-view-employee-payrolls",
@@ -35,8 +34,6 @@ import {ToastService} from "@/core/services";
 })
 export class ViewEmployeePayrollsComponent implements OnInit {
   private employeeId!: string;
-  public salaryType = SalaryType;
-  public paymentStatus = PaymentStatus;
   public payrolls: PayrollDto[] = [];
   public employee?: EmployeeDto;
   public isLoadingEmployee = false;
@@ -46,8 +43,7 @@ export class ViewEmployeePayrollsComponent implements OnInit {
 
   constructor(
     private readonly apiService: ApiService,
-    private readonly route: ActivatedRoute,
-    private readonly toastService: ToastService
+    private readonly route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -87,11 +83,13 @@ export class ViewEmployeePayrollsComponent implements OnInit {
       return "N/A";
     }
 
-    return PaymentMethodTypeEnum.getValue(enumValue).description;
+    return (
+      paymentMethodTypeOptions.find((option) => option.value === enumValue)?.label ?? "Unknown"
+    );
   }
 
   getSalaryTypeDesc(enumValue: SalaryType): string {
-    return SalaryTypeEnum.getValue(enumValue).description;
+    return salaryTypeOptions.find((option) => option.value === enumValue)?.label ?? "Unknown";
   }
 
   private fetchEmployee() {

@@ -1,8 +1,8 @@
 import {Injectable} from "@angular/core";
 import {EventTypes, OidcSecurityService, PublicEventsService} from "angular-auth-oidc-client";
 import {Observable, filter, map} from "rxjs";
-import {UserRoleEnum} from "@/core/enums";
 import {TenantService} from "@/core/services";
+import {userRoleOptions} from "../enums";
 import {UserData} from "./user-data";
 
 @Injectable({providedIn: "root"})
@@ -104,6 +104,7 @@ export class AuthService {
       return null;
     }
 
-    return UserRoleEnum.getValue(roleValue).description;
+    const roleDesc = userRoleOptions.find((option) => option.value === roleValue);
+    return roleDesc?.label ?? null;
   }
 }

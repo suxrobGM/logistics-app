@@ -89,13 +89,8 @@
         </div>
         <div class="mb-3">
           <label for="status" class="form-label">Status</label>
-          <p-dropdown
-            formControlName="status"
-            styleClass="w-100"
-            [options]="loadStatuses"
-            optionLabel="description"
-          >
-          </p-dropdown>
+          <p-select formControlName="status" styleClass="w-100" [options]="loadStatuses">
+          </p-select>
         </div>
 
         <p-button

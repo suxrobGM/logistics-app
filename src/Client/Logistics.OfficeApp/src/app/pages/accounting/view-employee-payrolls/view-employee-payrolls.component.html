@@ -55,7 +55,7 @@
           <h6>Salary:</h6>
         </div>
         <div class="col-8">
-          @if (employee.salaryType === salaryType.ShareOfGross) {
+          @if (employee.salaryType === "share_of_gross") {
             {{ employee.salary | percent }}
           } @else {
             {{ employee.salary | currency }}
@@ -114,7 +114,7 @@
             </td>
             <td>{{ getPaymentMethodDesc(payroll.payment.method) }}</td>
             <td class="overflow-visible">
-              @if (payroll.payment.status === paymentStatus.Pending) {
+              @if (payroll.payment.status === "pending") {
                 <p-button
                   icon="bi bi-credit-card"
                   pTooltip="Make payment"

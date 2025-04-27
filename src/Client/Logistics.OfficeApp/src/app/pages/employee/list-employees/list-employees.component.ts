@@ -8,8 +8,7 @@ import {InputTextModule} from "primeng/inputtext";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {ApiService} from "@/core/api";
-import {EmployeeDto} from "@/core/api/models";
-import {SalaryType, SalaryTypeEnum} from "@/core/enums";
+import {EmployeeDto, SalaryType, salaryTypeOptions} from "@/core/api/models";
 
 @Component({
   selector: "app-list-employees",
@@ -77,6 +76,6 @@ export class ListEmployeeComponent {
   }
 
   getSalaryTypeDesc(enumValue: SalaryType): string {
-    return SalaryTypeEnum.getValue(enumValue).description;
+    return salaryTypeOptions.find((option) => option.value === enumValue)?.label ?? "N/A";
   }
 }

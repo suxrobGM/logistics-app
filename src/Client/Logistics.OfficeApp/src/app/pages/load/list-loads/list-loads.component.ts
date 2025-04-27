@@ -12,8 +12,7 @@ import {TagModule} from "primeng/tag";
 import {TooltipModule} from "primeng/tooltip";
 import {PaymentStatusTagComponent} from "@/components";
 import {ApiService} from "@/core/api";
-import {LoadDto} from "@/core/api/models";
-import {LoadStatus, LoadStatusEnum} from "@/core/enums";
+import {LoadDto, LoadStatus, loadStatusOptions} from "@/core/api/models";
 import {AddressPipe, DistanceUnitPipe} from "@/core/pipes";
 
 @Component({
@@ -86,7 +85,7 @@ export class ListLoadComponent {
   }
 
   getLoadStatusDesc(enumValue: LoadStatus): string {
-    return LoadStatusEnum.getValue(enumValue).description;
+    return loadStatusOptions.find((option) => option.value === enumValue)?.label ?? "";
   }
 
   getLoadStatusSeverity(status: LoadStatus): "success" | "info" {

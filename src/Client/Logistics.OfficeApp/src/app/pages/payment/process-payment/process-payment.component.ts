@@ -9,9 +9,16 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {RadioButtonModule} from "primeng/radiobutton";
 import {AddressFormComponent, ValidationSummaryComponent} from "@/components";
 import {ApiService} from "@/core/api";
-import {AddressDto, InvoiceDto, PayrollDto, ProcessPaymentCommand} from "@/core/api/models";
+import {
+  AddressDto,
+  InvoiceDto,
+  PaymentMethodType,
+  PaymentStatus,
+  PayrollDto,
+  ProcessPaymentCommand,
+  paymentMethodTypeOptions,
+} from "@/core/api/models";
 import {REGEX_PATTERNS} from "@/core/constants";
-import {PaymentMethodType, PaymentMethodTypeEnum, PaymentStatus} from "@/core/enums";
 import {ToastService} from "@/core/services";
 import {InvoiceDetailsComponent, PayrollDetailsComponent} from "../components";
 
@@ -35,7 +42,7 @@ import {InvoiceDetailsComponent, PayrollDetailsComponent} from "../components";
 })
 export class ProcessPaymentComponent implements OnInit {
   public paymentMethod = PaymentMethodType;
-  public paymentMethods = PaymentMethodTypeEnum.toArray();
+  public paymentMethods = paymentMethodTypeOptions;
   public title = "";
   public isLoading = false;
   public isPaymentCompleted = false;
@@ -49,7 +56,7 @@ export class ProcessPaymentComponent implements OnInit {
     private readonly route: ActivatedRoute
   ) {
     this.form = new FormGroup<PaymentForm>({
-      paymentMethod: new FormControl(PaymentMethodType.CreditCard, {
+      paymentMethod: new FormControl(PaymentMethodType.Card, {
         validators: Validators.required,
         nonNullable: true,
       }),
@@ -130,7 +137,7 @@ export class ProcessPaymentComponent implements OnInit {
     const bankAccountNumber = this.form.get("bankAccountNumber");
     const bankRoutingNumber = this.form.get("bankRoutingNumber");
 
-    if (paymentMethod === PaymentMethodType.CreditCard) {
+    if (paymentMethod === PaymentMethodType.Card) {
       cardholderName?.setValidators([Validators.required]);
       cardNumber?.setValidators([
         Validators.required,
@@ -144,7 +151,7 @@ export class ProcessPaymentComponent implements OnInit {
       bankName?.clearValidators();
       bankAccountNumber?.clearValidators();
       bankRoutingNumber?.clearValidators();
-    } else if (paymentMethod === PaymentMethodType.BankAccount) {
+    } else if (paymentMethod === PaymentMethodType.UsBankAccount) {
       bankName?.setValidators([Validators.required]);
       bankAccountNumber?.setValidators([Validators.required]);
       bankRoutingNumber?.setValidators([
