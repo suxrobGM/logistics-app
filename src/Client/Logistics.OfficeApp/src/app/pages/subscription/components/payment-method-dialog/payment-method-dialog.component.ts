@@ -165,11 +165,13 @@ export class PaymentMethodDialogComponent {
     }
 
     console.log("SetupIntent succeeded:", result.setupIntent);
+    const billingAddress = formValue.billingAddress!;
+    billingAddress.country = "US"; // Stripe requires US country for US bank accounts
 
     // Add US Bank account to the backend and wait for verification
     const payload: CreatePaymentMethodCommand = {
       type: PaymentMethodType.UsBankAccount,
-      billingAddress: formValue.billingAddress!,
+      billingAddress: billingAddress,
       accountHolderName: formValue.bankAccountHolderName!,
       accountNumber: `********${formValue.bankAccountNumber?.slice(-4)}`, // Masked for security
       routingNumber: formValue.bankRoutingNumber!,
