@@ -28,7 +28,6 @@ import {ToastService} from "@/core/services";
     ButtonModule,
     RouterLink,
   ],
-  providers: [ConfirmationService],
 })
 export class EditTruckComponent implements OnInit {
   public id: string | null;

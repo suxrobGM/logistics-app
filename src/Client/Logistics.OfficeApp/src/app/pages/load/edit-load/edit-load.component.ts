@@ -54,7 +54,6 @@ import {TruckData, TruckHelper} from "../shared";
     ValidationSummaryComponent,
     SelectModule,
   ],
-  providers: [ConfirmationService],
 })
 export class EditLoadComponent implements OnInit {
   public readonly accessToken = globalConfig.mapboxToken;

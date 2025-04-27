@@ -1,14 +1,15 @@
 import {Component, signal} from "@angular/core";
 import {RouterOutlet} from "@angular/router";
+import {ConfirmDialog} from "primeng/confirmdialog";
 import {ToastModule} from "primeng/toast";
-import {AuthService} from "@/core/auth";
 import {BreadcrumbComponent, SidebarComponent} from "@/components/layout";
+import {AuthService} from "@/core/auth";
 
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.scss",
-  imports: [BreadcrumbComponent, ToastModule, RouterOutlet, SidebarComponent],
+  imports: [BreadcrumbComponent, ToastModule, RouterOutlet, SidebarComponent, ConfirmDialog],
 })
 export class AppComponent {
   public readonly isAuthenticated = signal(false);

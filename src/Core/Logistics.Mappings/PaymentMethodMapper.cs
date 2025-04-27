@@ -20,7 +20,8 @@ public static class PaymentMethodMapper
                 IsDefault = cardPaymentMethod.IsDefault,
                 Type = PaymentMethodType.Card,
                 CardHolderName = cardPaymentMethod.CardHolderName,
-                BillingAddress = cardPaymentMethod.BillingAddress.ToDto()
+                BillingAddress = cardPaymentMethod.BillingAddress.ToDto(),
+                VerificationStatus = cardPaymentMethod.VerificationStatus
             },
             UsBankAccountPaymentMethod usBankAccountPaymentMethod => new PaymentMethodDto
             {
@@ -33,7 +34,8 @@ public static class PaymentMethodMapper
                 AccountType = usBankAccountPaymentMethod.AccountType,
                 IsDefault = usBankAccountPaymentMethod.IsDefault,
                 Type = PaymentMethodType.UsBankAccount,
-                BillingAddress = usBankAccountPaymentMethod.BillingAddress.ToDto()
+                BillingAddress = usBankAccountPaymentMethod.BillingAddress.ToDto(),
+                VerificationStatus = usBankAccountPaymentMethod.VerificationStatus
             },
             BankAccountPaymentMethod bankAccountPaymentMethod => new PaymentMethodDto
             {
@@ -44,7 +46,8 @@ public static class PaymentMethodMapper
                 SwiftCode = bankAccountPaymentMethod.SwiftCode,
                 IsDefault = bankAccountPaymentMethod.IsDefault,
                 Type = PaymentMethodType.InternationalBankAccount,
-                BillingAddress = bankAccountPaymentMethod.BillingAddress.ToDto()
+                BillingAddress = bankAccountPaymentMethod.BillingAddress.ToDto(),
+                VerificationStatus = bankAccountPaymentMethod.VerificationStatus
             },
             _ => throw new NotImplementedException($"Mapping for {entity.GetType().Name} is not implemented.")
         };

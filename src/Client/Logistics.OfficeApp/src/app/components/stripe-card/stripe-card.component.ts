@@ -1,5 +1,5 @@
-import {Component, OnDestroy, output} from "@angular/core";
-import {StripeCardNumberElement, StripeElements} from "@stripe/stripe-js";
+import {AfterViewInit, Component, ElementRef, OnDestroy, output, viewChild} from "@angular/core";
+import {StripeCardNumberElement, StripeElementBase} from "@stripe/stripe-js";
 import {StripeService} from "@/core/services";
 
 interface StripeCardElementsReady {
@@ -10,46 +10,51 @@ interface StripeCardElementsReady {
   selector: "app-stripe-card",
   templateUrl: "./stripe-card.component.html",
 })
-export class StripeCardComponent implements OnDestroy {
-  readonly ready = output<StripeCardElementsReady>();
-  private elements?: StripeElements;
-  private mounted = false;
+export class StripeCardComponent implements OnDestroy, AfterViewInit {
+  public readonly ready = output<StripeCardElementsReady>();
+  private readonly cardNumberElement = viewChild.required<ElementRef>("cardNumber");
+  private readonly cardExpiryElement = viewChild.required<ElementRef>("cardExpiry");
+  private readonly cardCvcElement = viewChild.required<ElementRef>("cardCvc");
+  private readonly mountedElements: StripeElementBase[] = [];
 
   constructor(private readonly stripeService: StripeService) {}
 
+  ngAfterViewInit(): void {
+    this.mountElements();
+  }
+
   ngOnDestroy(): void {
-    this.elements?.getElement("card")?.unmount();
-    this.elements?.getElement("cardExpiry")?.unmount();
-    this.elements?.getElement("cardCvc")?.unmount();
-    this.mounted = false;
+    this.unmountElements();
   }
 
   /**
    * Mounts the Stripe Elements to the DOM.
-   * @returns A promise that resolves to the mounted elements.
    */
-  async mountElements(): Promise<StripeCardElementsReady> {
-    if (this.mounted) {
-      return {
-        cardNumber: this.elements!.getElement("cardNumber")!,
-      };
+  private async mountElements(): Promise<void> {
+    if (this.mountedElements.length > 0) {
+      console.log("Stripe Elements already mounted");
+      return;
     }
 
-    this.elements = await this.stripeService.getElements();
-    const cardNumber = this.elements.create("cardNumber");
-    const cardExpiry = this.elements.create("cardExpiry");
-    const cardCvc = this.elements.create("cardCvc");
-    cardNumber.mount("#card-number");
-    cardExpiry.mount("#card-expiry");
-    cardCvc.mount("#card-cvc");
-    this.mounted = true;
+    const elements = await this.stripeService.getElements();
+    const cardNumber = elements.getElement("cardNumber") ?? elements.create("cardNumber");
+    const cardExpiry = elements.getElement("cardExpiry") ?? elements.create("cardExpiry");
+    const cardCvc = elements.getElement("cardCvc") ?? elements.create("cardCvc");
 
-    this.ready.emit({
-      cardNumber,
-    });
+    cardNumber.mount(this.cardNumberElement().nativeElement);
+    cardExpiry.mount(this.cardExpiryElement().nativeElement);
+    cardCvc.mount(this.cardCvcElement().nativeElement);
 
-    return {
-      cardNumber,
-    };
+    this.mountedElements.push(cardNumber, cardExpiry, cardCvc);
+    this.ready.emit({cardNumber});
+    console.log("Mounted Stripe Elements");
+  }
+
+  private async unmountElements(): Promise<void> {
+    for (const element of this.mountedElements) {
+      element.unmount();
+    }
+    this.mountedElements.splice(0, this.mountedElements.length);
+    console.log("Unmounted Stripe Elements");
   }
 }

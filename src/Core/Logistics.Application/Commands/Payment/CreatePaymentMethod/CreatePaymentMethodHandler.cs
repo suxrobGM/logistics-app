@@ -62,6 +62,7 @@ internal sealed class CreatePaymentMethodHandler : RequestHandler<CreatePaymentM
             BillingAddress = command.BillingAddress,
             IsDefault = setDefault,
             CardHolderName = command.CardHolderName!,
+            VerificationStatus = PaymentMethodVerificationStatus.Verified
         };
         
         //await _stripeService.AddPaymentMethodAsync(paymentMethod, tenant);
@@ -86,6 +87,7 @@ internal sealed class CreatePaymentMethodHandler : RequestHandler<CreatePaymentM
             AccountType = command.AccountType!.Value,
             BillingAddress = command.BillingAddress,
             IsDefault = setDefault,
+            VerificationStatus = PaymentMethodVerificationStatus.Pending
         };
         
         //await _stripeService.AddPaymentMethodAsync(paymentMethod, tenant);
@@ -108,6 +110,7 @@ internal sealed class CreatePaymentMethodHandler : RequestHandler<CreatePaymentM
             SwiftCode = command.SwiftCode!,
             BillingAddress = command.BillingAddress,
             IsDefault = setDefault,
+            VerificationStatus = PaymentMethodVerificationStatus.Verified
         };
         
         // TODO: Stripe does not support international bank accounts yet

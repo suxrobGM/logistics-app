@@ -11,4 +11,5 @@ public abstract class PaymentMethod : Entity, ITenantEntity
     public bool IsDefault { get; set; }
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     public required Address BillingAddress { get; set; }
+    public required PaymentMethodVerificationStatus VerificationStatus { get; set; }
 }

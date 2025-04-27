@@ -28,7 +28,6 @@ import {ToastService} from "@/core/services";
     ConfirmDialogModule,
     TooltipModule,
   ],
-  providers: [ConfirmationService],
 })
 export class ListCustomersComponent {
   public customers: CustomerDto[];

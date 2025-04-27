@@ -2,7 +2,6 @@
   [header]="getDialogTitle()"
   [(visible)]="showDialog"
   [modal]="true"
-  (onShow)="mountStripeCard()"
   [style]="{width: '50vw'}"
 >
   <form class="row gx-5" [formGroup]="form" (ngSubmit)="submit()">
@@ -36,7 +35,7 @@
         </div>
 
         <div class="mb-3">
-          <app-stripe-card #stripeCard></app-stripe-card>
+          <app-stripe-card (ready)="setCardNumberElement($event.cardNumber)"></app-stripe-card>
         </div>
       } @else if (form.get("methodType")?.value === "us_bank_account") {
         <h5>US bank account details</h5>

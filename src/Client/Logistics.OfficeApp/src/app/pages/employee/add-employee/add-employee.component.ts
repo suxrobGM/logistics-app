@@ -1,7 +1,6 @@
 import {Component, OnInit, ViewEncapsulation} from "@angular/core";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {RouterLink} from "@angular/router";
-import {ConfirmationService} from "primeng/api";
 import {AutoCompleteModule} from "primeng/autocomplete";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
@@ -40,7 +39,7 @@ import {UserService} from "../services";
     RouterLink,
     ValidationSummaryComponent,
   ],
-  providers: [UserService, ConfirmationService],
+  providers: [UserService],
 })
 export class AddEmployeeComponent implements OnInit {
   public suggestedUsers: UserDto[] = [];

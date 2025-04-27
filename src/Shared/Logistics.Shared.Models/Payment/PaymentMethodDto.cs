@@ -6,6 +6,7 @@ public record PaymentMethodDto
 {
     public required string Id { get; set; }
     public PaymentMethodType Type { get; set; }
+    public PaymentMethodVerificationStatus VerificationStatus { get; set; }
     public bool IsDefault { get; set; }
     public required AddressDto BillingAddress { get; set; }
 

@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, computed, input, model, signal, viewChild} from "@angular/core";
+import {Component, computed, input, model, signal} from "@angular/core";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {StripeCardNumberElement} from "@stripe/stripe-js";
 import {ButtonModule} from "primeng/button";
@@ -19,7 +19,7 @@ import {
   usBankAccountHolderTypeOptions,
   usBankAccountTypeOptions,
 } from "@/core/api/models";
-import {StripeService, TenantService} from "@/core/services";
+import {StripeService, TenantService, ToastService} from "@/core/services";
 
 const enabledPaymentTypes = [
   PaymentMethodType.Card,
@@ -51,7 +51,6 @@ export class PaymentMethodDialogComponent {
   readonly isLoading = signal(false);
   readonly availablePaymentMethods = input<PaymentMethodType[]>(enabledPaymentTypes);
   readonly paymentMethodId = input<string | null | undefined>(null);
-  readonly stripeCard = viewChild.required<StripeCardComponent>("stripeCard");
 
   readonly pymentMethodTypes = computed(() =>
     this.availablePaymentMethods()
@@ -67,7 +66,8 @@ export class PaymentMethodDialogComponent {
 
   constructor(
     private readonly tenantService: TenantService,
-    private readonly stripeService: StripeService
+    private readonly stripeService: StripeService,
+    private readonly toastService: ToastService
   ) {
     const companyAddress = this.tenantService.getTenantData()?.companyAddress;
 
@@ -107,7 +107,7 @@ export class PaymentMethodDialogComponent {
     const formValue = this.form.getRawValue();
 
     if (formValue.methodType === PaymentMethodType.Card) {
-      this.addCard();
+      await this.addCard();
     } else if (formValue.methodType === PaymentMethodType.UsBankAccount) {
       await this.addUsBankAccount();
     }
@@ -123,11 +123,16 @@ export class PaymentMethodDialogComponent {
     this.isLoading.set(true);
     const formValue = this.form.getRawValue();
 
-    await this.stripeService.confirmCardSetup(
+    const result = await this.stripeService.confirmCardSetup(
       this.stripeCardNumberElement,
       formValue.cardHolderName!,
       formValue.billingAddress!
     );
+
+    if (result.error) {
+      this.toastService.showError("Failed to add card.");
+      console.error(result.error);
+    }
     this.isLoading.set(false);
   }
 
@@ -135,7 +140,7 @@ export class PaymentMethodDialogComponent {
     this.isLoading.set(true);
     const formValue = this.form.getRawValue();
 
-    await this.stripeService.confirmUsBankSetup(
+    const result = await this.stripeService.confirmUsBankSetup(
       {
         accountHolderName: formValue.bankAccountHolderName!,
         accountNumber: formValue.bankAccountNumber!,
@@ -146,12 +151,19 @@ export class PaymentMethodDialogComponent {
       },
       formValue.billingAddress!
     );
+
+    if (result.error) {
+      this.toastService.showError("Failed to add US bank account.");
+      console.error(result.error);
+    } else {
+      console.log("SetupIntent succeeded:", result.setupIntent);
+    }
+
     this.isLoading.set(false);
   }
 
-  async mountStripeCard(): Promise<void> {
-    const {cardNumber} = await this.stripeCard().mountElements();
-    this.stripeCardNumberElement = cardNumber;
+  setCardNumberElement(element: StripeCardNumberElement): void {
+    this.stripeCardNumberElement = element;
   }
 }
 

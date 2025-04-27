@@ -65,7 +65,8 @@ public static class StripeObjectMapper
                 ExpMonth = (int)stripePaymentMethod.Card.ExpMonth,
                 ExpYear = (int)stripePaymentMethod.Card.ExpYear,
                 BillingAddress = stripePaymentMethod.BillingDetails.Address.ToAddressEntity(),
-                StripePaymentMethodId = stripePaymentMethod.Id
+                StripePaymentMethodId = stripePaymentMethod.Id,
+                VerificationStatus = PaymentMethodVerificationStatus.Verified,
             };
         }
         
@@ -81,7 +82,8 @@ public static class StripeObjectMapper
                 AccountHolderType = GetAccountHolderType(stripePaymentMethod.UsBankAccount.AccountHolderType),
                 AccountType = GetAccountType(stripePaymentMethod.UsBankAccount.AccountType),
                 BillingAddress = stripePaymentMethod.BillingDetails.Address.ToAddressEntity(),
-                StripePaymentMethodId = stripePaymentMethod.Id
+                StripePaymentMethodId = stripePaymentMethod.Id,
+                VerificationStatus = PaymentMethodVerificationStatus.Verified
             };
         }
         
