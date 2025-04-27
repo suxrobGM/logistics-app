@@ -22,7 +22,7 @@ internal sealed class GetTenantsHandler : RequestHandler<GetTenantsQuery, PagedR
 
         var items = _masterUow.Repository<Domain.Entities.Tenant>()
             .ApplySpecification(spec)
-            .Select(i => i.ToDto(req.IncludeConnectionStrings))
+            .Select(i => i.ToDto(req.IncludeConnectionStrings, null))
             .ToArray();
         
         return PagedResult<TenantDto>.Succeed(items, totalItems, req.PageSize);

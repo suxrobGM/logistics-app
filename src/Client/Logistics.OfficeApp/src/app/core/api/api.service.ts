@@ -4,7 +4,6 @@ import {Observable} from "rxjs";
 import {globalConfig} from "@/configs";
 import {ApiBase} from "./api-base";
 import {
-  CancelSubscriptionCommand,
   CompanyStatsDto,
   CreateCustomerCommand,
   CreateEmployeeCommand,
@@ -31,7 +30,6 @@ import {
   Result,
   RoleDto,
   SearchableQuery,
-  SubscriptionPlanDto,
   TruckDriverDto,
   TruckDto,
   TruckStatsDto,
@@ -45,6 +43,7 @@ import {
   UpdateTruckCommand,
 } from "./models";
 import {PaymentApi} from "./payment.api";
+import {SubscriptionApi} from "./subscription.api";
 import {TenantApi} from "./tenant.api";
 import {UserApi} from "./user.api";
 
@@ -57,6 +56,7 @@ export class ApiService extends ApiBase {
   public readonly paymentApi = new PaymentApi(this.apiUrl, this.http);
   public readonly tenantApi = new TenantApi(this.apiUrl, this.http);
   public readonly userApi = new UserApi(this.apiUrl, this.http);
+  public readonly subscriptionApi = new SubscriptionApi(this.apiUrl, this.http);
 
   // #region Load API
 
@@ -365,18 +365,6 @@ export class ApiService extends ApiBase {
   deletePayroll(payrollId: string): Observable<Result> {
     const url = `/payrolls/${payrollId}`;
     return this.delete(url);
-  }
-
-  // #endregion
-
-  // #region Subscription API
-
-  getSubscriptionPlans(): Observable<Result<SubscriptionPlanDto[]>> {
-    return this.get("/subscriptions/plans");
-  }
-
-  cancelSubscription(command: CancelSubscriptionCommand): Observable<Result> {
-    return this.put(`/subscriptions/${command.id}/cancel`, command);
   }
 
   // #endregion

@@ -30,6 +30,13 @@ export enum PaymentStatus {
   Cancelled = "cancelled",
 }
 
+export enum PaymentMethodVerificationStatus {
+  Unverified = "unverified",
+  Pending = "pending",
+  Failed = "failed",
+  Verified = "verified",
+}
+
 export const paymentStatusOptions: SelectOption<PaymentStatus>[] = [
   {label: "Pending", value: PaymentStatus.Pending},
   {label: "Paid", value: PaymentStatus.Paid},

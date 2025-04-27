@@ -1,9 +1,15 @@
 import {AddressDto} from "../address.model";
-import {PaymentMethodType, UsBankAccountHolderType, UsBankAccountType} from "./enums";
+import {
+  PaymentMethodType,
+  PaymentMethodVerificationStatus,
+  UsBankAccountHolderType,
+  UsBankAccountType,
+} from "./enums";
 
 export interface PaymentMethodDto {
   id: string;
   type: PaymentMethodType;
+  verificationStatus: PaymentMethodVerificationStatus;
   isDefault: boolean;
   billingAddress: AddressDto;
 

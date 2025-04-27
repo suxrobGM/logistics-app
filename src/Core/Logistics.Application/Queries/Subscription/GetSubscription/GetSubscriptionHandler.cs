@@ -17,14 +17,14 @@ internal sealed class GetSubscriptionHandler : RequestHandler<GetSubscriptionQue
     protected override async Task<Result<SubscriptionDto>> HandleValidated(
         GetSubscriptionQuery req, CancellationToken cancellationToken)
     {
-        var entity = await _masterUow.Repository<Subscription>().GetAsync(i => i.Id == req.Id);
+        var subscription = await _masterUow.Repository<Subscription>().GetAsync(i => i.Id == req.Id);
 
-        if (entity is null)
+        if (subscription is null)
         {
             return Result<SubscriptionDto>.Fail($"Could not find a subscription with ID '{req.Id}'");
         }
-
-        var dto = entity.ToDto();
+        
+        var dto = subscription.ToDto();
         return Result<SubscriptionDto>.Succeed(dto);
     }
 }

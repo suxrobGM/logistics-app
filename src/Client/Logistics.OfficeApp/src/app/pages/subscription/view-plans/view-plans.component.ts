@@ -20,7 +20,7 @@ export class ViewPlansComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.apiService.getSubscriptionPlans().subscribe((result) => {
+    this.apiService.subscriptionApi.getSubscriptionPlans().subscribe((result) => {
       if (result.success && result.data) {
         this.subscriptionPlans.set(result.data);
       }

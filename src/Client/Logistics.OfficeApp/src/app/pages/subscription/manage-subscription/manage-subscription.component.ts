@@ -34,6 +34,7 @@ import {BillingHistoryComponent, PaymentMethodsCardComponent} from "../component
 })
 export class ManageSubscriptionComponent {
   readonly subscription: SubscriptionDto;
+  readonly employeeCount: number;
   readonly isLoading = signal(false);
   readonly isCancelled = signal(false);
 
@@ -43,13 +44,14 @@ export class ManageSubscriptionComponent {
     private readonly confirmationService: ConfirmationService,
     private readonly toastService: ToastService
   ) {
-    const subscription = this.tenantService.getTenantData()?.subscription;
+    const tenantData = this.tenantService.getTenantData();
 
-    if (!subscription) {
+    if (!tenantData?.subscription) {
       throw new Error("Subscription not found");
     }
 
-    this.subscription = subscription;
+    this.subscription = tenantData.subscription;
+    this.employeeCount = tenantData.employeeCount ?? 0;
   }
 
   getSubStatusSeverity(): SeverityLevel {
@@ -77,14 +79,16 @@ export class ManageSubscriptionComponent {
       accept: () => {
         this.isLoading.set(true);
 
-        this.apiService.cancelSubscription({id: this.subscription.id}).subscribe((result) => {
-          if (result.success) {
-            this.toastService.showSuccess("Subscription cancelled successfully");
-            this.isCancelled.set(true);
-          }
+        this.apiService.subscriptionApi
+          .cancelSubscription({id: this.subscription.id})
+          .subscribe((result) => {
+            if (result.success) {
+              this.toastService.showSuccess("Subscription cancelled successfully");
+              this.isCancelled.set(true);
+            }
 
-          this.isLoading.set(false);
-        });
+            this.isLoading.set(false);
+          });
       },
     });
   }
@@ -95,5 +99,9 @@ export class ManageSubscriptionComponent {
 
   isActiveSubscription(): boolean {
     return this.subscription.status === SubscriptionStatus.Active;
+  }
+
+  calcTotalSubscriptionCost(subscription: SubscriptionDto): number {
+    return (subscription.plan?.price ?? 0) * this.employeeCount;
   }
 }

@@ -16,4 +16,7 @@ public class TenantDto
     public string? ConnectionString { get; set; }
     
     public SubscriptionDto? Subscription { get; set; }
+    
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? EmployeeCount { get; set; }
 }

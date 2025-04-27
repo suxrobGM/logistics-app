@@ -23,8 +23,11 @@ internal sealed class GetTenantHandler : RequestHandler<GetTenantQuery, Result<T
         {
             return Result<TenantDto>.Fail($"Could not find a tenant with ID or Name: {req.Id} or {req.Name}");
         }
+        
+        // Count the number of employees belonging to the tenant
+        var employeeCount = await _masterUow.Repository<User>().CountAsync(i => i.TenantId == tenantEntity.Id);
 
-        var tenantDto = tenantEntity.ToDto(req.IncludeConnectionString);
+        var tenantDto = tenantEntity.ToDto(req.IncludeConnectionString, employeeCount);
         return Result<TenantDto>.Succeed(tenantDto);
     }
 }

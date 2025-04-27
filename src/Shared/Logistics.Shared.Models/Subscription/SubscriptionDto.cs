@@ -1,4 +1,5 @@
-﻿using Logistics.Shared.Consts;
+﻿using System.Text.Json.Serialization;
+using Logistics.Shared.Consts;
 
 namespace Logistics.Shared.Models;
 

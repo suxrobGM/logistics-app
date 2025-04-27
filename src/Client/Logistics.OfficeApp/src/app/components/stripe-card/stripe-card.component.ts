@@ -12,9 +12,9 @@ interface StripeCardElementsReady {
 })
 export class StripeCardComponent implements OnDestroy, AfterViewInit {
   public readonly ready = output<StripeCardElementsReady>();
-  private readonly cardNumberElement = viewChild.required<ElementRef>("cardNumber");
-  private readonly cardExpiryElement = viewChild.required<ElementRef>("cardExpiry");
-  private readonly cardCvcElement = viewChild.required<ElementRef>("cardCvc");
+  private readonly cardNumberElement = viewChild.required<ElementRef<HTMLElement>>("cardNumber");
+  private readonly cardExpiryElement = viewChild.required<ElementRef<HTMLElement>>("cardExpiry");
+  private readonly cardCvcElement = viewChild.required<ElementRef<HTMLElement>>("cardCvc");
   private readonly mountedElements: StripeElementBase[] = [];
 
   constructor(private readonly stripeService: StripeService) {}

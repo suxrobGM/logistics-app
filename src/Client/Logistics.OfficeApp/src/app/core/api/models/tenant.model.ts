@@ -8,4 +8,5 @@ export interface TenantDto {
   dotNumber?: string;
   companyAddress: AddressDto;
   subscription: SubscriptionDto | null;
+  employeeCount?: number;
 }
