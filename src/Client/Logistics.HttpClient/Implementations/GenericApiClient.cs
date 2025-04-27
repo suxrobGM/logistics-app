@@ -21,7 +21,7 @@ internal class GenericApiClient
         _serializerOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
-            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower) }
         };
 
         try

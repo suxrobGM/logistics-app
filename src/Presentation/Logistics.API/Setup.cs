@@ -84,7 +84,7 @@ internal static class Setup
         .AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.Converters.Add(
-                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) // Optional naming policy
+                new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower) // Optional naming policy
             );
         });;
         

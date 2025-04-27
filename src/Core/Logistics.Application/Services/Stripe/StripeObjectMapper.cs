@@ -73,7 +73,7 @@ public static class StripeObjectMapper
         {
             return new UsBankAccountPaymentMethod
             {
-                Type = PaymentMethodType.InternationalBankAccount,
+                Type = PaymentMethodType.UsBankAccount,
                 AccountHolderName = stripePaymentMethod.BillingDetails.Name,
                 AccountNumber = $"********{stripePaymentMethod.UsBankAccount.Last4}",
                 RoutingNumber = stripePaymentMethod.UsBankAccount.RoutingNumber,

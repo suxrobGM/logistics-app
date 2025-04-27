@@ -12,15 +12,15 @@ interface StripeCardElementsReady {
 })
 export class StripeCardComponent implements OnDestroy {
   readonly ready = output<StripeCardElementsReady>();
-  private elements!: StripeElements;
+  private elements?: StripeElements;
   private mounted = false;
 
   constructor(private readonly stripeService: StripeService) {}
 
   ngOnDestroy(): void {
-    this.elements.getElement("card")?.unmount();
-    this.elements.getElement("cardExpiry")?.unmount();
-    this.elements.getElement("cardCvc")?.unmount();
+    this.elements?.getElement("card")?.unmount();
+    this.elements?.getElement("cardExpiry")?.unmount();
+    this.elements?.getElement("cardCvc")?.unmount();
     this.mounted = false;
   }
 
@@ -31,7 +31,7 @@ export class StripeCardComponent implements OnDestroy {
   async mountElements(): Promise<StripeCardElementsReady> {
     if (this.mounted) {
       return {
-        cardNumber: this.elements.getElement("cardNumber")!,
+        cardNumber: this.elements!.getElement("cardNumber")!,
       };
     }
 

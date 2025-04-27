@@ -4,7 +4,6 @@ import {Router, RouterLink} from "@angular/router";
 import {AutoCompleteModule} from "primeng/autocomplete";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
-import {DropdownModule} from "primeng/dropdown";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {ToastModule} from "primeng/toast";
 import {
@@ -26,8 +25,7 @@ import {TruckData} from "../shared";
 @Component({
   selector: "app-add-load",
   templateUrl: "./add-load.component.html",
-  styleUrls: ["./add-load.component.scss"],
-  standalone: true,
+  styleUrl: "./add-load.component.scss",
   imports: [
     ToastModule,
     CardModule,
@@ -35,7 +33,6 @@ import {TruckData} from "../shared";
     FormsModule,
     ReactiveFormsModule,
     AutoCompleteModule,
-    DropdownModule,
     ButtonModule,
     RouterLink,
     AddressAutocompleteComponent,

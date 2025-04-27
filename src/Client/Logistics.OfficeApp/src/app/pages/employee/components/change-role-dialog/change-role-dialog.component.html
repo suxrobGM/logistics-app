@@ -5,7 +5,7 @@
   [resizable]="true"
   (onHide)="close()"
 >
-  @if (loading) {
+  @if (loading()) {
     <p-progressSpinner></p-progressSpinner>
   }
 
@@ -17,17 +17,17 @@
   <form [formGroup]="form" (ngSubmit)="submit()">
     <div class="mb-3">
       <label for="role" class="form-label">Select Role</label>
-      <p-dropdown
+      <p-select
         formControlName="role"
         styleClass="w-100"
         appendTo="body"
-        [options]="roles"
+        [options]="roles()"
         optionValue="name"
         optionLabel="displayName"
         [showClear]="true"
         (onClear)="clearSelctedRole()"
       >
-      </p-dropdown>
+      </p-select>
     </div>
     <p-button type="submit" icon="bi bi-pencil-square" label="Change Role" [disabled]="loading">
     </p-button>
@@ -36,7 +36,7 @@
       styleClass="p-button-danger ms-2"
       icon="bi bi bi-trash"
       label="Remove Role"
-      [disabled]="loading"
+      [disabled]="loading()"
       (click)="removeRoles()"
     >
     </p-button>

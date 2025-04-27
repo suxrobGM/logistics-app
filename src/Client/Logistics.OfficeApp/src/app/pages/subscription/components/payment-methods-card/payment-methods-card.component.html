@@ -1,6 +1,6 @@
 <p-card header="Payment Methods">
-  @for (paymentMethod of paymentMethods(); track paymentMethod.id) {
-    <div class="d-flex flex-column gap-3">
+  <div class="d-flex flex-column gap-3">
+    @for (paymentMethod of paymentMethods(); track paymentMethod.id) {
       <p-card
         [header]="getMethodLabel(paymentMethod)"
         [subheader]="paymentMethod.isDefault ? 'Default' : ''"
@@ -63,18 +63,22 @@
 
         <ng-template pTemplate="footer">
           <div class="d-flex gap-2">
-            <p-button
-              label="Set as Default"
-              icon="pi pi-check"
-              size="small"
-              [disabled]="isLoading() || paymentMethod.isDefault"
-              (click)="setDefaultPaymentMethod(paymentMethod)"
-            ></p-button>
+            @if (!paymentMethod.isDefault) {
+              <p-button
+                label="Set as Default"
+                icon="pi pi-check"
+                size="small"
+                [disabled]="isLoading() || paymentMethod.isDefault"
+                (click)="setDefaultPaymentMethod(paymentMethod)"
+              ></p-button>
+            }
+
             <p-button
               label="Update Payment Method"
               icon="pi pi-wallet"
               size="small"
               [disabled]="isLoading()"
+              (onClick)="updatePaymentMethod(paymentMethod)"
             ></p-button>
             <p-button
               label="Delete Payment Method"
@@ -87,14 +91,14 @@
           </div>
         </ng-template>
       </p-card>
-    </div>
-  }
-
+    }
+  </div>
   <p-button
     label="Add Payment Method"
     icon="pi pi-plus"
     [disabled]="isLoading()"
     (click)="showDialog.set(true)"
+    styleClass="mt-3"
   >
   </p-button>
 </p-card>

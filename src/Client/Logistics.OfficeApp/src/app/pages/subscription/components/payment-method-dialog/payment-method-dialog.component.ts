@@ -99,7 +99,24 @@ export class PaymentMethodDialogComponent {
   }
 
   async submit(): Promise<void> {
-    if (this.form.invalid || !this.stripeCardNumberElement) {
+    if (this.form.invalid) {
+      return;
+    }
+
+    this.isLoading.set(true);
+    const formValue = this.form.getRawValue();
+
+    if (formValue.methodType === PaymentMethodType.Card) {
+      this.addCard();
+    } else if (formValue.methodType === PaymentMethodType.UsBankAccount) {
+      await this.addUsBankAccount();
+    }
+
+    this.showDialog.set(false);
+  }
+
+  async addCard(): Promise<void> {
+    if (!this.stripeCardNumberElement) {
       return;
     }
 
@@ -111,9 +128,25 @@ export class PaymentMethodDialogComponent {
       formValue.cardHolderName!,
       formValue.billingAddress!
     );
-
     this.isLoading.set(false);
-    this.showDialog.set(false);
+  }
+
+  async addUsBankAccount(): Promise<void> {
+    this.isLoading.set(true);
+    const formValue = this.form.getRawValue();
+
+    await this.stripeService.confirmUsBankSetup(
+      {
+        accountHolderName: formValue.bankAccountHolderName!,
+        accountNumber: formValue.bankAccountNumber!,
+        routingNumber: formValue.bankRoutingNumber!,
+        accountHolderType: formValue.bankAccountHolderType!,
+        accountType: formValue.bankAccountType!,
+        bankName: formValue.bankName!,
+      },
+      formValue.billingAddress!
+    );
+    this.isLoading.set(false);
   }
 
   async mountStripeCard(): Promise<void> {

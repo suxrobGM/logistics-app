@@ -57,6 +57,11 @@ export class PaymentMethodsCardComponent implements OnInit {
     }
   }
 
+  updatePaymentMethod(method: PaymentMethodDto): void {
+    this.selectedPaymentMethod.set(method);
+    this.showDialog.set(true);
+  }
+
   setDefaultPaymentMethod(method: PaymentMethodDto): void {
     this.confirmationService.confirm({
       message: `Are you sure you want to set ${this.getMethodLabel(method)} as your default payment method?`,
@@ -116,6 +121,8 @@ export class PaymentMethodsCardComponent implements OnInit {
       if (result.success) {
         // Move the default payment method to the top of the list
         result.data!.sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
+        console.log("Payment methods:", result.data);
+
         this.paymentMethods.set(result.data!);
       }
 

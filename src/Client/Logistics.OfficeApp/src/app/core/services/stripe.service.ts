@@ -1,5 +1,6 @@
 import {Injectable} from "@angular/core";
 import {
+  Address,
   SetupIntentResult,
   Stripe,
   StripeCardNumberElement,
@@ -11,6 +12,7 @@ import {environment} from "src/environments/environment";
 import {ApiService} from "../api";
 import {AddressDto} from "../api/models";
 import {COUNTRIES_OPTIONS} from "../constants";
+import {UsBankAccount} from "../types";
 import {findOption} from "../utilities";
 import {TenantService} from "./tenant.service";
 
@@ -51,9 +53,9 @@ export class StripeService {
     billingAddress: AddressDto
   ): Promise<SetupIntentResult> {
     const clientSecret = await this.getClientSecret();
-
     const stripe = await this.getStripe();
     const countryOption = findOption(COUNTRIES_OPTIONS, billingAddress.country);
+    billingAddress.country = countryOption?.value ?? "US"; // 2-letter country code
 
     return stripe.confirmCardSetup(clientSecret, {
       payment_method: {
@@ -63,14 +65,38 @@ export class StripeService {
         card: cardElement,
         billing_details: {
           name: cardHolderName,
-          address: {
-            line1: billingAddress.line1,
-            line2: billingAddress.line2,
-            city: billingAddress.city,
-            state: billingAddress.state,
-            postal_code: billingAddress.zipCode,
-            country: countryOption?.value, // 2-letter country code
-          },
+          address: this.mapAddress(billingAddress),
+        },
+      },
+    });
+  }
+
+  /**
+   * Confirms the US bank account setup using the provided account and billing address.
+   * @param account The US bank account information.
+   * @param billingAddress The billing address of the account holder.
+   * @returns A promise that resolves to the SetupIntentResult.
+   */
+  async confirmUsBankSetup(
+    account: UsBankAccount,
+    billingAddress: AddressDto
+  ): Promise<SetupIntentResult> {
+    const clientSecret = await this.getClientSecret();
+    const stripe = await this.getStripe();
+
+    return stripe.confirmUsBankAccountSetup(clientSecret, {
+      payment_method: {
+        metadata: {
+          tenant_id: this.tenantService.getTenantId(),
+        },
+        us_bank_account: {
+          account_holder_type: account.accountHolderType,
+          account_number: account.accountNumber,
+          routing_number: account.routingNumber,
+        },
+        billing_details: {
+          name: account.accountHolderName,
+          address: this.mapAddress(billingAddress),
         },
       },
     });
@@ -108,5 +134,17 @@ export class StripeService {
     }
 
     return this.stripe;
+  }
+
+  private mapAddress(dto: AddressDto): Address {
+    const countryOption = findOption(COUNTRIES_OPTIONS, dto.country);
+    return {
+      city: dto.city,
+      country: countryOption?.value ?? "US", // 2-letter country code
+      line1: dto.line1,
+      line2: dto.line2!,
+      postal_code: dto.zipCode,
+      state: dto.state,
+    };
   }
 }
