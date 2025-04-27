@@ -8,7 +8,9 @@ namespace Logistics.Application.Commands;
 public class CreatePaymentMethodCommand : IRequest<Result>
 {
     public PaymentMethodType Type { get; set; }
+    public PaymentMethodVerificationStatus? VerificationStatus { get; set; }
     public Address BillingAddress { get; set; } = null!;
+    public string? StripePaymentMethodId { get; set; }
 
     // Card-specific
     public string? CardHolderName { get; set; }
@@ -24,6 +26,7 @@ public class CreatePaymentMethodCommand : IRequest<Result>
     public string? RoutingNumber { get; set; }
     public UsBankAccountHolderType? AccountHolderType { get; set; }
     public UsBankAccountType? AccountType { get; set; }
+    public string? VerificationUrl { get; set; }
 
     // International Bank Account
     public string? SwiftCode { get; set; }

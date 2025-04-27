@@ -1,10 +1,28 @@
 <p-card header="Payment Methods">
   <div class="d-flex flex-column gap-3">
     @for (paymentMethod of paymentMethods(); track paymentMethod.id) {
-      <p-card
-        [header]="getMethodLabel(paymentMethod)"
-        [subheader]="paymentMethod.isDefault ? 'Default' : ''"
-      >
+      <p-card>
+        <ng-template #title>
+          <span>{{ getMethodLabel(paymentMethod) }}</span>
+          @if (paymentMethod.isDefault) {
+            <p-tag severity="success" value="Default" styleClass="ms-2" />
+          }
+        </ng-template>
+
+        <ng-template #subtitle>
+          @switch (paymentMethod.verificationStatus) {
+            @case ("verified") {
+              <p-tag severity="success" value="Verified" />
+            }
+            @case ("unverified") {
+              <p-tag severity="danger" value="Unverified" />
+            }
+            @case ("pending") {
+              <p-tag severity="warn" value="Verification Pending" />
+            }
+          }
+        </ng-template>
+
         <div class="row mb-2">
           @switch (paymentMethod.type) {
             <!-- Card -->
@@ -40,6 +58,15 @@
 
               <div class="col-6 fw-bold">Account Type:</div>
               <div class="col-6">{{ paymentMethod.accountType }}</div>
+
+              @if (
+                paymentMethod.verificationStatus !== "verified" && paymentMethod.verificationUrl
+              ) {
+                <div class="col-6 fw-bold">Verification URL:</div>
+                <div class="col-6">
+                  <a [href]="paymentMethod.verificationUrl" target="_blank">Click here to verify</a>
+                </div>
+              }
             }
             <!-- International Bank Account -->
             @case ("international_bank_account") {
@@ -68,24 +95,17 @@
                 label="Set as Default"
                 icon="pi pi-check"
                 size="small"
-                [disabled]="isLoading() || paymentMethod.isDefault"
+                [disabled]="isLoading()"
                 (click)="setDefaultPaymentMethod(paymentMethod)"
               ></p-button>
             }
 
             <p-button
-              label="Update Payment Method"
-              icon="pi pi-wallet"
-              size="small"
-              [disabled]="isLoading()"
-              (onClick)="updatePaymentMethod(paymentMethod)"
-            ></p-button>
-            <p-button
-              label="Delete Payment Method"
+              label="Delete"
               icon="pi pi-times"
               severity="danger"
               size="small"
-              [disabled]="isLoading() || paymentMethod.isDefault"
+              [disabled]="isLoading()"
               (click)="deletePaymentMethod(paymentMethod)"
             ></p-button>
           </div>
@@ -96,6 +116,7 @@
   <p-button
     label="Add Payment Method"
     icon="pi pi-plus"
+    size="small"
     [disabled]="isLoading()"
     (click)="showDialog.set(true)"
     styleClass="mt-3"
@@ -105,5 +126,5 @@
 
 <app-payment-method-dialog
   [(showDialog)]="showDialog"
-  [paymentMethodId]="selectedPaymentMethod()?.id"
+  (paymentMethodAdded)="fetchPaymentMethods()"
 ></app-payment-method-dialog>

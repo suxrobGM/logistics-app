@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, computed, input, model, signal} from "@angular/core";
+import {Component, computed, input, model, output, signal} from "@angular/core";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {StripeCardNumberElement} from "@stripe/stripe-js";
 import {ButtonModule} from "primeng/button";
@@ -10,9 +10,12 @@ import {InputTextModule} from "primeng/inputtext";
 import {KeyFilterModule} from "primeng/keyfilter";
 import {SelectModule} from "primeng/select";
 import {AddressFormComponent, StripeCardComponent, ValidationSummaryComponent} from "@/components";
+import {ApiService} from "@/core/api";
 import {
   AddressDto,
+  CreatePaymentMethodCommand,
   PaymentMethodType,
+  PaymentMethodVerificationStatus,
   UsBankAccountHolderType,
   UsBankAccountType,
   paymentMethodTypeOptions,
@@ -50,7 +53,7 @@ export class PaymentMethodDialogComponent {
   readonly showDialog = model(false);
   readonly isLoading = signal(false);
   readonly availablePaymentMethods = input<PaymentMethodType[]>(enabledPaymentTypes);
-  readonly paymentMethodId = input<string | null | undefined>(null);
+  readonly paymentMethodAdded = output<void>();
 
   readonly pymentMethodTypes = computed(() =>
     this.availablePaymentMethods()
@@ -65,6 +68,7 @@ export class PaymentMethodDialogComponent {
   private stripeCardNumberElement: StripeCardNumberElement | null = null;
 
   constructor(
+    private readonly apiService: ApiService,
     private readonly tenantService: TenantService,
     private readonly stripeService: StripeService,
     private readonly toastService: ToastService
@@ -88,14 +92,6 @@ export class PaymentMethodDialogComponent {
       bankAccountHolderType: new FormControl<UsBankAccountHolderType | null>(null),
       swiftCode: new FormControl(null),
     });
-  }
-
-  isEditMode(): boolean {
-    return this.paymentMethodId() != null;
-  }
-
-  getDialogTitle(): string {
-    return this.isEditMode() ? "Edit Payment Method" : "Add Payment Method";
   }
 
   async submit(): Promise<void> {
@@ -132,7 +128,16 @@ export class PaymentMethodDialogComponent {
     if (result.error) {
       this.toastService.showError("Failed to add card.");
       console.error(result.error);
+    } else {
+      console.log("SetupIntent succeeded:", result.setupIntent);
+      this.toastService.showSuccess("Card added successfully.");
+
+      // Wait a little bit to handle backend the stripe webhook
+      setTimeout(() => {
+        this.paymentMethodAdded.emit();
+      }, 1000);
     }
+
     this.isLoading.set(false);
   }
 
@@ -155,11 +160,41 @@ export class PaymentMethodDialogComponent {
     if (result.error) {
       this.toastService.showError("Failed to add US bank account.");
       console.error(result.error);
-    } else {
-      console.log("SetupIntent succeeded:", result.setupIntent);
+      this.isLoading.set(false);
+      return;
     }
 
-    this.isLoading.set(false);
+    console.log("SetupIntent succeeded:", result.setupIntent);
+
+    // Add US Bank account to the backend and wait for verification
+    const payload: CreatePaymentMethodCommand = {
+      type: PaymentMethodType.UsBankAccount,
+      billingAddress: formValue.billingAddress!,
+      accountHolderName: formValue.bankAccountHolderName!,
+      accountNumber: `********${formValue.bankAccountNumber?.slice(-4)}`, // Masked for security
+      routingNumber: formValue.bankRoutingNumber!,
+      accountHolderType: formValue.bankAccountHolderType!,
+      accountType: formValue.bankAccountType!,
+      bankName: formValue.bankName!,
+      stripePaymentMethodId: result.setupIntent.payment_method?.toString(),
+      verificationStatus:
+        result.setupIntent.next_action?.type === "verify_with_microdeposits"
+          ? PaymentMethodVerificationStatus.Pending
+          : PaymentMethodVerificationStatus.Unverified,
+      verificationUrl:
+        result.setupIntent.next_action?.verify_with_microdeposits?.hosted_verification_url,
+    };
+
+    this.apiService.paymentApi.createPaymentMethod(payload).subscribe((result) => {
+      if (result.success) {
+        this.toastService.showSuccess(
+          "US Bank account added successfully. Now you need to verify it."
+        );
+        this.paymentMethodAdded.emit();
+      }
+
+      this.isLoading.set(false);
+    });
   }
 
   setCardNumberElement(element: StripeCardNumberElement): void {

@@ -14,10 +14,10 @@
         <div class="col-6 fw-bold">Price per Employee:</div>
         <div class="col-6">{{ subscription.plan?.price | currency }}</div>
 
-        <div class="col-6 fw-bold">Number of employees:</div>
+        <div class="col-6 fw-bold">Number of Employees:</div>
         <div class="col-6">{{ employeeCount }}</div>
 
-        <div class="col-6 fw-bold">Total price:</div>
+        <div class="col-6 fw-bold">Total Price:</div>
         <div class="col-6">{{ calcTotalSubscriptionCost(subscription) | currency }}</div>
 
         @if (subscription.endDate) {
@@ -43,12 +43,14 @@
           <p-button
             [routerLink]="'/subscription/plans'"
             label="Change Plan"
+            size="small"
             icon="pi pi-credit-card"
           ></p-button>
           <p-button
             label="Cancel Subscription"
             icon="pi pi-times"
             severity="danger"
+            size="small"
             [disabled]="isLoading() || isCancelled() || isSubscriptionCancelled()"
             (click)="confirmCancelSubscription()"
           ></p-button>

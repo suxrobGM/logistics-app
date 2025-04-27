@@ -24,6 +24,7 @@ public record PaymentMethodDto
     public string? RoutingNumber { get; set; }
     public UsBankAccountHolderType AccountHolderType { get; set; }
     public UsBankAccountType? AccountType { get; set; }
+    public string? VerificationUrl { get; set; } // Stripe verification URL for ACH verification
 
     // International Bank Account
     public string? SwiftCode { get; set; }

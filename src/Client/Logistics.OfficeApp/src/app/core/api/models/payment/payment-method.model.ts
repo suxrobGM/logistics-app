@@ -27,6 +27,7 @@ export interface PaymentMethodDto {
   routingNumber?: string;
   accountHolderType?: UsBankAccountHolderType;
   accountType?: UsBankAccountType;
+  verificationUrl?: string;
 
   // International Bank Account
   swiftCode?: string;

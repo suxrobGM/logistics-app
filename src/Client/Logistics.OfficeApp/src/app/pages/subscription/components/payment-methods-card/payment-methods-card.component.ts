@@ -4,6 +4,7 @@ import {ConfirmationService} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {DialogModule} from "primeng/dialog";
+import {TagModule} from "primeng/tag";
 import {ApiService} from "@/core/api";
 import {
   DeletePaymentMethodCommand,
@@ -24,6 +25,7 @@ import {PaymentMethodDialogComponent} from "../payment-method-dialog/payment-met
     ButtonModule,
     DialogModule,
     AddressPipe,
+    TagModule,
     PaymentMethodDialogComponent,
   ],
 })
@@ -64,7 +66,7 @@ export class PaymentMethodsCardComponent implements OnInit {
 
   setDefaultPaymentMethod(method: PaymentMethodDto): void {
     this.confirmationService.confirm({
-      message: `Are you sure you want to set ${this.getMethodLabel(method)} as your default payment method?`,
+      message: `Are you sure you want to set '${this.getMethodLabel(method)}' as your default payment method?`,
       accept: () => {
         this.isLoading.set(true);
         const command: SetDefaultPaymentMethodCommand = {
@@ -87,7 +89,7 @@ export class PaymentMethodsCardComponent implements OnInit {
 
   deletePaymentMethod(method: PaymentMethodDto): void {
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete ${this.getMethodLabel(method)}?`,
+      message: `Are you sure you want to delete '${this.getMethodLabel(method)}'?`,
       accept: () => {
         this.isLoading.set(true);
         const command: DeletePaymentMethodCommand = {
@@ -108,7 +110,7 @@ export class PaymentMethodsCardComponent implements OnInit {
     });
   }
 
-  private fetchPaymentMethods(): void {
+  fetchPaymentMethods(): void {
     const tenantId = this.tenantService.getTenantId();
 
     if (!tenantId) {
@@ -121,9 +123,8 @@ export class PaymentMethodsCardComponent implements OnInit {
       if (result.success) {
         // Move the default payment method to the top of the list
         result.data!.sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
-        console.log("Payment methods:", result.data);
-
         this.paymentMethods.set(result.data!);
+        console.log("Payment methods fetched successfully:", result.data);
       }
 
       this.isLoading.set(false);

@@ -1,9 +1,16 @@
 import {AddressDto} from "../address.model";
-import {PaymentMethodType, UsBankAccountHolderType, UsBankAccountType} from "./enums";
+import {
+  PaymentMethodType,
+  PaymentMethodVerificationStatus,
+  UsBankAccountHolderType,
+  UsBankAccountType,
+} from "./enums";
 
 export interface CreatePaymentMethodCommand {
   type: PaymentMethodType;
   billingAddress: AddressDto;
+  verificationStatus?: PaymentMethodVerificationStatus;
+  stripePaymentMethodId?: string;
 
   // Card-specific
   cardHolderName?: string;
@@ -19,6 +26,7 @@ export interface CreatePaymentMethodCommand {
   routingNumber?: string;
   accountHolderType?: UsBankAccountHolderType;
   accountType?: UsBankAccountType;
+  verificationUrl?: string;
 
   // International Bank Account
   swiftCode?: string;

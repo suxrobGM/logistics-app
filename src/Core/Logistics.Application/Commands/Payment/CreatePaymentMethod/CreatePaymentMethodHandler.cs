@@ -62,7 +62,8 @@ internal sealed class CreatePaymentMethodHandler : RequestHandler<CreatePaymentM
             BillingAddress = command.BillingAddress,
             IsDefault = setDefault,
             CardHolderName = command.CardHolderName!,
-            VerificationStatus = PaymentMethodVerificationStatus.Verified
+            VerificationStatus = PaymentMethodVerificationStatus.Verified,
+            StripePaymentMethodId = command.StripePaymentMethodId
         };
         
         //await _stripeService.AddPaymentMethodAsync(paymentMethod, tenant);
@@ -87,7 +88,9 @@ internal sealed class CreatePaymentMethodHandler : RequestHandler<CreatePaymentM
             AccountType = command.AccountType!.Value,
             BillingAddress = command.BillingAddress,
             IsDefault = setDefault,
-            VerificationStatus = PaymentMethodVerificationStatus.Pending
+            VerificationStatus = command.VerificationStatus ?? PaymentMethodVerificationStatus.Unverified,
+            VerificationUrl = command.VerificationUrl,
+            StripePaymentMethodId = command.StripePaymentMethodId
         };
         
         //await _stripeService.AddPaymentMethodAsync(paymentMethod, tenant);

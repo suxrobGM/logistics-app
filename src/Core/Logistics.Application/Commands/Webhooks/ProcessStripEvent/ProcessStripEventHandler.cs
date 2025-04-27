@@ -44,11 +44,11 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
             switch (stripeEvent.Type)
             {
                 case EventTypes.InvoicePaid:
-                    var invoice = stripeEvent.Data.Object as StripeInvoice;
-                    return await HandleInvoicePaid(invoice!);
+                    return await HandleInvoicePaid((stripeEvent.Data.Object as StripeInvoice)!);
                 case EventTypes.PaymentMethodAttached:
-                    var paymentMethod = stripeEvent.Data.Object as StripePaymentMethod;
-                    return await HandlePaymentAttached(paymentMethod!);
+                    return await HandlePaymentMethodAttached((stripeEvent.Data.Object as StripePaymentMethod)!);
+                case EventTypes.PaymentMethodDetached:
+                    return await HandlePaymentMethodDetached((stripeEvent.Data.Object as StripePaymentMethod)!);
             }
         
             return Result.Succeed();
@@ -87,7 +87,7 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
         return Result.Succeed();
     }
 
-    private async Task<Result> HandlePaymentAttached(StripePaymentMethod stripePaymentMethod)
+    private async Task<Result> HandlePaymentMethodAttached(StripePaymentMethod stripePaymentMethod)
     {
         if (!stripePaymentMethod.Metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
         {
@@ -96,11 +96,72 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
         
         _tenantUow.SetCurrentTenantById(tenantId);
         var paymentMethod = stripePaymentMethod.ToPaymentMethodEntity();
-        await _tenantUow.Repository<PaymentMethod>().AddAsync(paymentMethod);
-        await _tenantUow.SaveChangesAsync();
+
+        if (paymentMethod is UsBankAccountPaymentMethod usBankAccountPaymentMethod)
+        {
+            await UpdateOrAddUsBankAccount(usBankAccountPaymentMethod);
+        }
+        else
+        {
+            await _tenantUow.Repository<PaymentMethod>().AddAsync(paymentMethod);
+        }
         
+        await _tenantUow.SaveChangesAsync();
         _logger.LogInformation("Attached payment method {PaymentMethodType} {StripePaymentMethodId} to tenant {TenantId}",
             paymentMethod.Type, paymentMethod.StripePaymentMethodId, tenantId);
         return Result.Succeed();
+    }
+
+    private async Task<Result> HandlePaymentMethodDetached(StripePaymentMethod stripePaymentMethod)
+    {
+        if (!stripePaymentMethod.Metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
+        {
+            return Result.Fail($"{StripeMetadataKeys.TenantId} not found in payment method metadata.");
+        }
+        
+        _tenantUow.SetCurrentTenantById(tenantId);
+        var paymentMethod = await _tenantUow.Repository<PaymentMethod>()
+            .GetAsync(pm => pm.StripePaymentMethodId == stripePaymentMethod.Id);
+        
+        if (paymentMethod is null)
+        {
+            return Result.Fail($"Payment method {stripePaymentMethod.Id} not found for tenant {tenantId}.");
+        }
+        
+        _tenantUow.Repository<PaymentMethod>().Delete(paymentMethod);
+        await _tenantUow.SaveChangesAsync();
+        
+        _logger.LogInformation("Detached payment method {PaymentMethodType} {StripePaymentMethodId} from tenant {TenantId}",
+            paymentMethod.Type, paymentMethod.StripePaymentMethodId, tenantId);
+        return Result.Succeed();
+    }
+
+    /// <summary>
+    /// Checks if the US bank account payment method is already in the database and updates its verification status.
+    /// Otherwise, it adds the payment method to the database.
+    /// </summary>
+    /// <param name="paymentMethod">The US bank account payment method to handle.</param>
+    private async Task UpdateOrAddUsBankAccount(UsBankAccountPaymentMethod paymentMethod)
+    {
+        var existingPaymentMethod = await _tenantUow.Repository<PaymentMethod>()
+            .GetAsync(pm => pm.StripePaymentMethodId == paymentMethod.StripePaymentMethodId);
+        
+        if (existingPaymentMethod is not UsBankAccountPaymentMethod usBankAccountPaymentMethod)
+        {
+            await _tenantUow.Repository<PaymentMethod>().AddAsync(paymentMethod);
+            return;
+        }
+
+        // Update the existing payment method with verified details
+        usBankAccountPaymentMethod.BankName = paymentMethod.BankName;
+        usBankAccountPaymentMethod.AccountNumber = usBankAccountPaymentMethod.AccountNumber;
+        usBankAccountPaymentMethod.RoutingNumber = paymentMethod.RoutingNumber;
+        usBankAccountPaymentMethod.AccountHolderType = paymentMethod.AccountHolderType;
+        usBankAccountPaymentMethod.AccountType = paymentMethod.AccountType;
+        usBankAccountPaymentMethod.VerificationStatus = PaymentMethodVerificationStatus.Verified;
+        
+        _tenantUow.Repository<PaymentMethod>().Update(usBankAccountPaymentMethod);
+        _logger.LogInformation("Verified US bank account payment method {StripePaymentMethodId} for tenant {TenantId}",
+            paymentMethod.StripePaymentMethodId, _tenantUow.GetCurrentTenant().Id);
     }
 }

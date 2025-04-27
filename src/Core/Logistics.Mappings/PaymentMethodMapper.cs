@@ -35,7 +35,8 @@ public static class PaymentMethodMapper
                 IsDefault = usBankAccountPaymentMethod.IsDefault,
                 Type = PaymentMethodType.UsBankAccount,
                 BillingAddress = usBankAccountPaymentMethod.BillingAddress.ToDto(),
-                VerificationStatus = usBankAccountPaymentMethod.VerificationStatus
+                VerificationStatus = usBankAccountPaymentMethod.VerificationStatus,
+                VerificationUrl = usBankAccountPaymentMethod.VerificationUrl
             },
             BankAccountPaymentMethod bankAccountPaymentMethod => new PaymentMethodDto
             {

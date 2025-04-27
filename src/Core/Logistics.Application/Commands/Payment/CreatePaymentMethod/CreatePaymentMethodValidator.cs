@@ -8,6 +8,7 @@ internal sealed class CreatePaymentMethodValidator : AbstractValidator<CreatePay
     public CreatePaymentMethodValidator()
     {
         RuleFor(i => i.Type).IsInEnum();
+        RuleFor(i => i.VerificationStatus).IsInEnum();
         RuleFor(i => i.BillingAddress).NotEmpty();
         
         When(i => i.Type == PaymentMethodType.Card, () =>
