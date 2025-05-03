@@ -1,0 +1,17 @@
+[Unit]
+Description=Logistics Identity Service
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/logistics-id
+ExecStart=/var/www/logistics-id/Logistics.IdentityServer
+Restart=always
+RestartSec=30
+Environment=ASPNETCORE_URLS=http://*:7001
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
+
+[Install]
+WantedBy=multi-user.target

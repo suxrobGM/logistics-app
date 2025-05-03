@@ -9,14 +9,7 @@ public abstract class RequestHandler<TRequest, TResponse> : IRequestHandler<TReq
 {
     public Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken)
     {
-        try
-        {
-            return HandleValidated(request, cancellationToken);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return Task.FromResult(new TResponse { Error = ex.Message });
-        }
+        return HandleValidated(request, cancellationToken);
     }
 
     protected abstract Task<TResponse> HandleValidated(TRequest req, CancellationToken cancellationToken);

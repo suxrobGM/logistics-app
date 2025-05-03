@@ -32,11 +32,6 @@ export class TenantService {
   setTenantId(tenantId: string): void {
     this.tenantId = tenantId;
     this.setTenantCookie(tenantId);
-
-    // Clear existing data and notify subscribers
-    this.tenantData = null;
-    this.tenantDataChangedSource.next(null);
-
     this.fetchTenantData(tenantId);
   }
 
@@ -79,7 +74,7 @@ export class TenantService {
     return this.tenantData?.subscription?.status === SubscriptionStatus.Active;
   }
 
-  private setTenantCookie(tenantId: string) {
+  private setTenantCookie(tenantId: string): void {
     if (!tenantId) {
       return;
     }
@@ -109,7 +104,7 @@ export class TenantService {
 
       this.tenantData = result.data;
       this.tenantDataChangedSource.next(result.data);
-      console.log("Tenant data:", result.data);
+      console.log("Fetched tenant data:", result.data);
     });
   }
 }

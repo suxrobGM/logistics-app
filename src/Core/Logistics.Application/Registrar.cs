@@ -59,15 +59,19 @@ public static class Registrar
         
         services.AddSignalR();
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), includeInternalTypes: true);
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Registrar).Assembly));
+        services.AddMediatR(cfg =>
+        {
+            cfg.RegisterServicesFromAssembly(typeof(Registrar).Assembly);
+            cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
+            cfg.AddOpenBehavior(typeof(UnhandledExceptionBehaviour<,>));
+            cfg.AddOpenBehavior(typeof(ValidationBehaviour<,>));
+        });
         
         services.AddSingleton<IPushNotificationService, PushNotificationService>();
         services.AddSingleton<IStripeService, StripeService>();
         services.AddSingleton<LiveTrackingHubContext>();
         services.AddScoped<IPayrollService, PayrollService>();
         services.AddScoped<INotificationService, NotificationService>();
-        // services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
         return services;
     }
 }

@@ -6,7 +6,6 @@ namespace Logistics.Application.Behaviours;
 
 public sealed class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
-    where TResponse : IResult, new()
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 
@@ -27,7 +26,7 @@ public sealed class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior
         var validationResults = await Task.WhenAll(_validators.Select(v => v.ValidateAsync(context, cancellationToken)));
         var failures = validationResults.SelectMany(r => r.Errors).Where(f => f != null).ToList();
 
-        if (failures.Any())
+        if (failures.Count != 0)
             throw new ValidationException(failures);
         
         return await next();

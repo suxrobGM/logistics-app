@@ -66,7 +66,7 @@ export class SidebarComponent {
     });
 
     this.tenantService.tenantDataChanged$.subscribe((tenantData) => {
-      if (!tenantData?.subscription) {
+      if (!this.tenantService.isSubscriptionActive()) {
         this.navItems.set(sidebarNavItems.filter((item) => item.label !== "Subscription"));
       }
 
