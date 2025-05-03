@@ -4,6 +4,7 @@ using PaymentMethod = Logistics.Domain.Entities.PaymentMethod;
 using StripeCustomer = Stripe.Customer;
 using StripeSubscription = Stripe.Subscription;
 using StripePaymentMethod = Stripe.PaymentMethod;
+using Subscription = Logistics.Domain.Entities.Subscription;
 
 namespace Logistics.Application.Services;
 
@@ -58,6 +59,12 @@ public interface IStripeService
     /// <param name="stripeSubscriptionId">Stripe subscription ID.</param>
     /// <param name="employeeCount">New number of employees in the tenant company.</param>
     Task UpdateSubscriptionQuantityAsync(string stripeSubscriptionId, int employeeCount);
+
+    Task<StripeSubscription?> RenewSubscriptionAsync(
+        Subscription? subEntity,
+        SubscriptionPlan plan,
+        Tenant tenant,
+        int employeeCount);
     
     /// <summary>
     /// Create a new subscription plan in Stripe.

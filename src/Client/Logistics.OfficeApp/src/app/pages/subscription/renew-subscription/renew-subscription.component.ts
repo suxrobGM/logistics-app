@@ -31,7 +31,8 @@ import {PaymentMethodsCardComponent} from "../components";
   templateUrl: "./renew-subscription.component.html",
 })
 export class RenewSubscriptionComponent {
-  readonly subscription: SubscriptionDto;
+  readonly employeeCount = signal(0);
+  readonly subscription = signal<SubscriptionDto | null>(null);
   readonly isLoading = signal(false);
   readonly isCancelled = signal(false);
 
@@ -39,20 +40,31 @@ export class RenewSubscriptionComponent {
     private readonly tenantService: TenantService,
     private readonly apiService: ApiService
   ) {
-    const subscription = this.tenantService.getTenantData()?.subscription;
+    const tenantData = this.tenantService.getTenantData();
+    this.subscription.set(tenantData?.subscription ?? null);
+    this.employeeCount.set(tenantData?.employeeCount ?? 0);
 
-    if (!subscription) {
-      throw new Error("Subscription not found");
-    }
-
-    this.subscription = subscription;
+    this.tenantService.tenantDataChanged$.subscribe((tenantData) => {
+      this.subscription.set(tenantData?.subscription ?? null);
+      this.employeeCount.set(tenantData?.employeeCount ?? 0);
+    });
   }
 
   getSubStatusSeverity(): SeverityLevel {
-    return Labels.subscriptionStatusSeverity(this.subscription);
+    if (!this.subscription()) {
+      return "info";
+    }
+    return Labels.subscriptionStatusSeverity(this.subscription()!);
   }
 
   getSubStatusLabel(): string {
-    return Labels.subscriptionStatus(this.subscription);
+    if (!this.subscription()) {
+      return "Unknown";
+    }
+    return Labels.subscriptionStatus(this.subscription()!);
+  }
+
+  calcTotalSubscriptionCost(): number {
+    return (this.subscription()?.plan?.price ?? 0) * this.employeeCount();
   }
 }

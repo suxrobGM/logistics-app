@@ -97,15 +97,34 @@ internal class TenantService : ITenantService
     }
     
     /// <summary>
+    /// Check if the request should bypass subscription validation.
+    /// </summary>
+    /// <returns>
+    ///  True if the request should bypass subscription validation, false otherwise.
+    /// </returns>
+    private bool ShouldBypass()
+    {
+        if (_httpContext is null)
+        {
+            return false;
+        }
+        
+        var isPaymentMethodsApi = _httpContext.Request.Path.Value.StartsWith("/payments/methods");
+        return isPaymentMethodsApi;
+    }
+    
+    /// <summary>
     /// Check if the tenant has an active subscription. Throws <see cref="SubscriptionExpiredException"/> if not.
     /// If tenant subscription is null, it is free and considered active.
     /// </summary>
     /// <param name="tenant">Tenant to check</param>
     /// <exception cref="SubscriptionExpiredException"></exception>
-    private static void CheckSubscription(Tenant? tenant)
+    private void CheckSubscription(Tenant? tenant)
     {
-        if (tenant?.Subscription is null)
+        if (tenant?.Subscription is null || ShouldBypass())
+        {
             return;
+        }
         
         if (tenant.Subscription.Status != SubscriptionStatus.Active)
         {

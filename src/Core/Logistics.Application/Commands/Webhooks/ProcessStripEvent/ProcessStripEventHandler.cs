@@ -7,23 +7,28 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Stripe;
 using PaymentMethod = Logistics.Domain.Entities.PaymentMethod;
+using Subscription = Logistics.Domain.Entities.Subscription;
 using StripeInvoice = Stripe.Invoice;
 using StripePaymentMethod = Stripe.PaymentMethod;
+using StripeSubscription = Stripe.Subscription;
 
 namespace Logistics.Application.Commands;
 
 internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEventCommand, Result>
 {
     private readonly ITenantUnityOfWork _tenantUow;
+    private readonly IMasterUnityOfWork _masterUow;
     private readonly string _stripeWebhookSecret;
     private readonly ILogger<ProcessStripEventHandler> _logger;
 
     public ProcessStripEventHandler(
         ITenantUnityOfWork tenantUow,
+        IMasterUnityOfWork masterUow,
         IOptions<StripeOptions> stripeOptions,
         ILogger<ProcessStripEventHandler> logger)
     {
         _tenantUow = tenantUow;
+        _masterUow = masterUow;
         _logger = logger;
         _stripeWebhookSecret = stripeOptions.Value.WebhookSecret ?? throw new ArgumentNullException(nameof(stripeOptions));
     }
@@ -49,6 +54,10 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
                     return await HandlePaymentMethodAttached((stripeEvent.Data.Object as StripePaymentMethod)!);
                 case EventTypes.PaymentMethodDetached:
                     return await HandlePaymentMethodDetached((stripeEvent.Data.Object as StripePaymentMethod)!);
+                case EventTypes.CustomerSubscriptionCreated:
+                    return await HandleSubscriptionCreated((stripeEvent.Data.Object as StripeSubscription)!);
+                case EventTypes.CustomerSubscriptionDeleted:
+                    return await HandleSubscriptionDeleted((stripeEvent.Data.Object as StripeSubscription)!);
             }
         
             return Result.Succeed();
@@ -59,10 +68,91 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
             return Result.Fail(ex.Message);
         }
     }
+    
+    private async Task<Result> HandleSubscriptionCreated(StripeSubscription stripeSubscription)
+    {
+        var metadata = stripeSubscription.Metadata;
+        if (!metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
+        {
+            return Result.Fail($"{StripeMetadataKeys.TenantId} not found in subscription metadata.");
+        }
+        
+        if (!metadata.TryGetValue(StripeMetadataKeys.PlanId, out var planId))
+        {
+            return Result.Fail($"{StripeMetadataKeys.PlanId} not found in subscription metadata.");
+        }
+
+        var tenant = await _masterUow.Repository<Tenant>().GetByIdAsync(tenantId);
+        
+        if (tenant is null)
+        {
+            return Result.Fail($"Could not find a tenant with ID '{tenantId}'");
+        }
+        
+        var subscriptionPlan = await _masterUow.Repository<SubscriptionPlan>().GetByIdAsync(planId);
+
+        if (subscriptionPlan is null)
+        {
+            return Result.Fail($"Could not find a subscription plan with ID '{planId}'");
+        }
+
+        if (tenant.Subscription is not null)
+        {
+            tenant.Subscription.Status = SubscriptionStatus.Active;
+            tenant.Subscription.StripeSubscriptionId = stripeSubscription.Id;
+            tenant.Subscription.StartDate = stripeSubscription.StartDate;
+            tenant.Subscription.NextBillingDate = stripeSubscription.CurrentPeriodEnd;
+            tenant.Subscription.TrialEndDate = stripeSubscription.TrialEnd;
+            
+            _masterUow.Repository<Subscription>().Update(tenant.Subscription);
+            _logger.LogInformation("Updated existing subscription {StripeSubscriptionId} for tenant {TenantId}",
+                stripeSubscription.Id, tenantId);
+        }
+        else
+        {
+            var newSubscription = Subscription.Create(tenant, subscriptionPlan);
+            newSubscription.StripeSubscriptionId = stripeSubscription.Id;
+            newSubscription.StartDate = stripeSubscription.StartDate;
+            newSubscription.NextBillingDate = stripeSubscription.CurrentPeriodEnd;
+            newSubscription.TrialEndDate = stripeSubscription.TrialEnd;
+            
+            await _masterUow.Repository<Subscription>().AddAsync(newSubscription);
+            _logger.LogInformation("Created new subscription {StripeSubscriptionId} for tenant {TenantId}",
+                stripeSubscription.Id, tenantId);
+        }
+        
+        await _masterUow.SaveChangesAsync();
+        return Result.Succeed();
+    }
+    
+    private async Task<Result> HandleSubscriptionDeleted(StripeSubscription stripeSubscription)
+    {
+        if (!stripeSubscription.Metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
+        {
+            return Result.Fail($"{StripeMetadataKeys.TenantId} not found in subscription metadata.");
+        }
+        
+        var subscription = await _masterUow.Repository<Subscription>()
+            .GetAsync(s => s.StripeSubscriptionId == stripeSubscription.Id);
+        
+        if (subscription is null)
+        {
+            return Result.Fail($"Subscription {stripeSubscription.Id} not found for tenant {tenantId}.");
+        }
+
+        subscription.Status = SubscriptionStatus.Cancelled;
+        _masterUow.Repository<Subscription>().Update(subscription);
+        await _masterUow.SaveChangesAsync();
+        
+        _logger.LogInformation("Cancelled subscription {StripeSubscriptionId} for tenant {TenantId}",
+            stripeSubscription.Id, tenantId);
+        return Result.Succeed();
+    }
 
     private async Task<Result> HandleInvoicePaid(StripeInvoice stripeInvoice)
     {
-        if (!stripeInvoice.Metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
+        var customerMetadata = stripeInvoice.Customer.Metadata;
+        if (!customerMetadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
         {
             return Result.Fail($"{StripeMetadataKeys.TenantId} not found in invoice metadata.");
         }

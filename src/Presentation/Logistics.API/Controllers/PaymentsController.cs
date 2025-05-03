@@ -85,7 +85,6 @@ public class PaymentsController : ControllerBase
     #endregion
 
     
-    
     #region Payment Methods
     
     [HttpGet("methods/{id}")]

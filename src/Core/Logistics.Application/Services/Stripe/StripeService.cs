@@ -7,6 +7,7 @@ using PaymentMethod = Logistics.Domain.Entities.PaymentMethod;
 using StripeCustomer = Stripe.Customer;
 using StripeSubscription = Stripe.Subscription;
 using StripePaymentMethod = Stripe.PaymentMethod;
+using Subscription = Logistics.Domain.Entities.Subscription;
 
 namespace Logistics.Application.Services;
 
@@ -136,6 +137,75 @@ internal class StripeService : IStripeService
         var options = new SubscriptionItemUpdateOptions { Quantity = employeeCount };
         await new SubscriptionItemService().UpdateAsync(item.Id, options);
         _logger.LogInformation("Updated Stripe subscription {StripeSubscriptionId} with new quantity {EmployeeCount}", stripeSubscriptionId, employeeCount);
+    }
+    
+    public async Task<StripeSubscription?> RenewSubscriptionAsync(
+        Subscription? subEntity,
+        SubscriptionPlan plan,
+        Tenant tenant,
+        int employeeCount)
+    {
+        if (string.IsNullOrEmpty(tenant.StripeCustomerId))
+            throw new ArgumentException("Tenant must have a StripeCustomerId");
+
+        var subSvc  = new SubscriptionService();
+        var invSvc  = new InvoiceService();
+        
+        // Never had a Stripe subscription → create new one
+        if (subEntity is null || string.IsNullOrEmpty(subEntity.StripeSubscriptionId))
+        {
+            _logger.LogInformation("Tenant {TenantId} is creating first subscription", tenant.Id);
+            return await CreateSubscriptionAsync(plan, tenant, employeeCount);
+        }
+
+        // Pull the live object so we know the exact Stripe state
+        var stripeSub = await subSvc.GetAsync(subEntity.StripeSubscriptionId);
+        
+        // Had subscription, but it was set to cancel at period end → re‑activate
+        if (stripeSub.CancelAtPeriodEnd ||
+            stripeSub.Status is "canceled" or "incomplete_expired")
+        {
+            _logger.LogInformation("Re‑activating Stripe subscription {SubscriptionId}", stripeSub.Id);
+
+            var updOpts = new SubscriptionUpdateOptions
+            {
+                CancelAtPeriodEnd = false,
+                BillingCycleAnchor = SubscriptionBillingCycleAnchor.Now,
+                ProrationBehavior = "none",
+                Items =
+                [
+                    new SubscriptionItemOptions
+                    {
+                        Id = stripeSub.Items.Data[0].Id,
+                        Price = plan.StripePriceId,
+                        Quantity = employeeCount
+                    }
+                ]
+            };
+            updOpts.AddExpand("latest_invoice.payment_intent");
+
+            stripeSub = await subSvc.UpdateAsync(stripeSub.Id, updOpts);
+            return stripeSub;
+        }
+        
+        // Subscription already active → charge now by issuing an invoice
+        _logger.LogInformation("Tenant {TenantId} already active – issuing invoice", tenant.Id);
+
+        var invoice = await invSvc.CreateAsync(new InvoiceCreateOptions
+        {
+            Customer      = tenant.StripeCustomerId,
+            Subscription  = stripeSub.Id,
+            AutoAdvance   = true // finalises automatically
+        });
+
+        // finalise immediately if AutoAdvance was false
+        if (invoice.Status == "draft")
+        {
+            await invSvc.FinalizeInvoiceAsync(invoice.Id);
+        }
+
+        // nothing new to return – but method stays symmetrical
+        return stripeSub;
     }
 
     #endregion
