@@ -16,19 +16,22 @@ namespace Logistics.Application.Commands;
 
 internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEventCommand, Result>
 {
+    private readonly string _stripeWebhookSecret;
     private readonly ITenantUnityOfWork _tenantUow;
     private readonly IMasterUnityOfWork _masterUow;
-    private readonly string _stripeWebhookSecret;
+    private readonly IStripeService _stripeService;
     private readonly ILogger<ProcessStripEventHandler> _logger;
 
     public ProcessStripEventHandler(
         ITenantUnityOfWork tenantUow,
         IMasterUnityOfWork masterUow,
+        IStripeService stripeService,
         IOptions<StripeOptions> stripeOptions,
         ILogger<ProcessStripEventHandler> logger)
     {
         _tenantUow = tenantUow;
         _masterUow = masterUow;
+        _stripeService = stripeService;
         _logger = logger;
         _stripeWebhookSecret = stripeOptions.Value.WebhookSecret ?? throw new ArgumentNullException(nameof(stripeOptions));
     }
@@ -56,19 +59,24 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
                     return await HandlePaymentMethodDetached((stripeEvent.Data.Object as StripePaymentMethod)!);
                 case EventTypes.CustomerSubscriptionCreated:
                     return await HandleSubscriptionCreated((stripeEvent.Data.Object as StripeSubscription)!);
+                case EventTypes.CustomerSubscriptionUpdated:
+                    return await HandleSubscriptionUpdated((stripeEvent.Data.Object as StripeSubscription)!);
                 case EventTypes.CustomerSubscriptionDeleted:
                     return await HandleSubscriptionDeleted((stripeEvent.Data.Object as StripeSubscription)!);
             }
         
             return Result.Succeed();
         }
-        catch (StripeException ex)
+        catch (Exception ex)
         {
             _logger.LogError(ex, "Stripe error: {Message}", ex.Message);
             return Result.Fail(ex.Message);
         }
     }
+
     
+    #region Subscription Handlers
+
     private async Task<Result> HandleSubscriptionCreated(StripeSubscription stripeSubscription)
     {
         var metadata = stripeSubscription.Metadata;
@@ -125,6 +133,34 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
         return Result.Succeed();
     }
     
+    private async Task<Result> HandleSubscriptionUpdated(StripeSubscription stripeSubscription)
+    {
+        var metadata = stripeSubscription.Metadata;
+        if (!metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
+        {
+            return Result.Fail($"{StripeMetadataKeys.TenantId} not found in subscription metadata.");
+        }
+        
+        var subscription = await _masterUow.Repository<Subscription>()
+            .GetAsync(s => s.StripeSubscriptionId == stripeSubscription.Id);
+        
+        if (subscription is null)
+        {
+            return Result.Fail($"Subscription {stripeSubscription.Id} not found for tenant {tenantId}.");
+        }
+        
+        subscription.Status = stripeSubscription.CancelAtPeriodEnd ? SubscriptionStatus.Cancelled : SubscriptionStatus.Active;
+        subscription.NextBillingDate = stripeSubscription.CurrentPeriodEnd;
+        subscription.TrialEndDate = stripeSubscription.TrialEnd;
+        
+        _masterUow.Repository<Subscription>().Update(subscription);
+        await _masterUow.SaveChangesAsync();
+        
+        _logger.LogInformation("Updated subscription {StripeSubscriptionId} for tenant {TenantId}",
+            stripeSubscription.Id, tenantId);
+        return Result.Succeed();
+    }
+    
     private async Task<Result> HandleSubscriptionDeleted(StripeSubscription stripeSubscription)
     {
         if (!stripeSubscription.Metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
@@ -140,7 +176,7 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
             return Result.Fail($"Subscription {stripeSubscription.Id} not found for tenant {tenantId}.");
         }
 
-        subscription.Status = SubscriptionStatus.Cancelled;
+        subscription.Status = SubscriptionStatus.Inactive;
         _masterUow.Repository<Subscription>().Update(subscription);
         await _masterUow.SaveChangesAsync();
         
@@ -149,10 +185,15 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
         return Result.Succeed();
     }
 
+    #endregion
+
+
+    #region Invoice Handlers
+
     private async Task<Result> HandleInvoicePaid(StripeInvoice stripeInvoice)
     {
-        var customerMetadata = stripeInvoice.Customer.Metadata;
-        if (!customerMetadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
+        var customer = await _stripeService.GetCustomerAsync(stripeInvoice.CustomerId);
+        if (!customer.Metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
         {
             return Result.Fail($"{StripeMetadataKeys.TenantId} not found in invoice metadata.");
         }
@@ -165,7 +206,6 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
             Status = PaymentStatus.Paid,
             PaymentDate = DateTime.UtcNow,
             StripeInvoiceId = stripeInvoice.Id,
-            StripePaymentIntentId = stripeInvoice.PaymentIntent.Id,
             BillingAddress = stripeInvoice.CustomerAddress.ToAddressEntity(),
         };
         
@@ -176,6 +216,11 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
             tenantId, payment.Amount, stripeInvoice.Id);
         return Result.Succeed();
     }
+
+    #endregion
+
+
+    #region Payment Method Handlers
 
     private async Task<Result> HandlePaymentMethodAttached(StripePaymentMethod stripePaymentMethod)
     {
@@ -254,4 +299,6 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
         _logger.LogInformation("Verified US bank account payment method {StripePaymentMethodId} for tenant {TenantId}",
             paymentMethod.StripePaymentMethodId, _tenantUow.GetCurrentTenant().Id);
     }
+
+    #endregion
 }

@@ -71,7 +71,23 @@ export class TenantService {
       return true;
     }
 
-    return this.tenantData?.subscription?.status === SubscriptionStatus.Active;
+    return (
+      this.tenantData?.subscription?.status === SubscriptionStatus.Active ||
+      this.tenantData?.subscription?.status === SubscriptionStatus.Cancelled
+    );
+  }
+
+  /**
+   * Refetch tenant data from the server.
+   * Sets the tenantData to updated data.
+   * Emits the updated tenant data to the tenantDataChanged$ observable.
+   */
+  public refetchTenantData(): void {
+    if (!this.tenantId) {
+      return;
+    }
+
+    this.fetchTenantData(this.tenantId);
   }
 
   private setTenantCookie(tenantId: string): void {

@@ -1,6 +1,6 @@
 import {CommonModule} from "@angular/common";
 import {Component, signal} from "@angular/core";
-import {RouterModule} from "@angular/router";
+import {Router, RouterModule} from "@angular/router";
 import {ConfirmationService} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
@@ -42,7 +42,8 @@ export class ManageSubscriptionComponent {
     private readonly tenantService: TenantService,
     private readonly apiService: ApiService,
     private readonly confirmationService: ConfirmationService,
-    private readonly toastService: ToastService
+    private readonly toastService: ToastService,
+    private readonly router: Router
   ) {
     const tenantData = this.tenantService.getTenantData();
 
@@ -85,6 +86,8 @@ export class ManageSubscriptionComponent {
             if (result.success) {
               this.toastService.showSuccess("Subscription cancelled successfully");
               this.isCancelled.set(true);
+              this.tenantService.refetchTenantData();
+              this.router.navigateByUrl("/");
             }
 
             this.isLoading.set(false);

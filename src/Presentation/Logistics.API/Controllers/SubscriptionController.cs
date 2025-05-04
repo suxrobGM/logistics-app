@@ -11,11 +11,11 @@ namespace Logistics.API.Controllers;
 
 [Route("subscriptions")]
 [ApiController]
-public class SubscriptionsController : ControllerBase
+public class SubscriptionController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public SubscriptionsController(IMediator mediator)
+    public SubscriptionController(IMediator mediator)
     {
         _mediator = mediator;
     }
@@ -56,6 +56,16 @@ public class SubscriptionsController : ControllerBase
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CancelSubscription(string id, [FromBody] CancelSubscriptionCommand request)
+    {
+        request.Id = id;
+        var result = await _mediator.Send(request);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+    
+    [HttpPut("{id}/renew")]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> RenewSubscription(string id, [FromBody] RenewSubscriptionCommand request)
     {
         request.Id = id;
         var result = await _mediator.Send(request);

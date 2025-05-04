@@ -110,7 +110,8 @@ internal class TenantService : ITenantService
         }
         
         var isPaymentMethodsApi = _httpContext.Request.Path.Value.StartsWith("/payments/methods");
-        return isPaymentMethodsApi;
+        var isSubscriptionApi = _httpContext.Request.Path.Value.StartsWith("/subscriptions");
+        return isPaymentMethodsApi || isSubscriptionApi;
     }
     
     /// <summary>
@@ -126,10 +127,12 @@ internal class TenantService : ITenantService
             return;
         }
         
-        if (tenant.Subscription.Status != SubscriptionStatus.Active)
+        if (tenant.Subscription.Status is SubscriptionStatus.Active or SubscriptionStatus.Cancelled)
         {
-            throw new SubscriptionExpiredException(
-                $"Tenant '{tenant.Name}' does not have an active subscription");
+            return;
         }
+        
+        throw new SubscriptionExpiredException(
+            $"Tenant '{tenant.Name}' does not have an active subscription");
     }
 }

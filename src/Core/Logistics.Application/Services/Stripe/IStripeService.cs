@@ -43,8 +43,9 @@ public interface IStripeService
     /// <param name="plan">Subscription plan.</param>
     /// <param name="tenant">Tenant entity.</param>
     /// <param name="employeeCount">Number of employees in the tenant company to calculate the subscription price.</param>
+    /// <param name="trial">Whether to create a trial subscription (true) or not (false). Default is false.</param>
     /// <returns>Stripe subscription object.</returns>
-    Task<StripeSubscription> CreateSubscriptionAsync(SubscriptionPlan plan, Tenant tenant, int employeeCount);
+    Task<StripeSubscription> CreateSubscriptionAsync(SubscriptionPlan plan, Tenant tenant, int employeeCount, bool trial = false);
     
     /// <summary>
     /// Cancels a subscription immediately or at period end
@@ -60,7 +61,15 @@ public interface IStripeService
     /// <param name="employeeCount">New number of employees in the tenant company.</param>
     Task UpdateSubscriptionQuantityAsync(string stripeSubscriptionId, int employeeCount);
 
-    Task<StripeSubscription?> RenewSubscriptionAsync(
+    /// <summary>
+    /// Renew an existing subscription or create a new one if it doesn't exist in Stripe.
+    /// </summary>
+    /// <param name="subEntity">Subscription entity to be renewed.</param>
+    /// <param name="plan">Subscription plan to be used for renewal.</param>
+    /// <param name="tenant">Tenant entity.</param>
+    /// <param name="employeeCount">Number of employees in the tenant company to calculate the subscription price.</param>
+    /// <returns>Stripe subscription object.</returns>
+    Task<StripeSubscription> RenewSubscriptionAsync(
         Subscription? subEntity,
         SubscriptionPlan plan,
         Tenant tenant,

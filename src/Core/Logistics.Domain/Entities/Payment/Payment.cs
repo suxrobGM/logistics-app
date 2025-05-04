@@ -4,7 +4,7 @@ using Logistics.Shared.Consts;
 
 namespace Logistics.Domain.Entities;
 
-public class Payment : Entity, ITenantEntity
+public class Payment : Entity, ITenantEntity // TODO: Rename to Invoice and create subclasss for each payment type
 {
     public decimal Amount { get; set; }
     public PaymentStatus Status { get; set; }
@@ -15,7 +15,7 @@ public class Payment : Entity, ITenantEntity
     public string? Notes { get; set; }
     public Address BillingAddress { get; set; } = Address.NullAddress;
     public string? StripeInvoiceId { get; set; }
-    public string? StripePaymentIntentId { get; set; }
+    public string? StripePaymentIntentId { get; set; } // TODO: remove this field
     
     /// <summary>
     /// The ID of the subscription associated with this payment, if applicable.

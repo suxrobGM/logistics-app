@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {ConfirmationService, MessageService} from "primeng/api";
+import {Confirmation, ConfirmationService, MessageService} from "primeng/api";
 
 @Injectable({providedIn: "root"})
 export class ToastService {
@@ -41,12 +41,10 @@ export class ToastService {
    * @param onAccept The callback function to be executed when the accept button is clicked.
    * @param onReject The callback function to be executed when the reject button is clicked.
    */
-  confrimAction(message: string, onAccept: () => void, onReject?: () => void) {
+  confrimAction(options: Confirmation) {
     this.confirmService.confirm({
       key: "confirmDialog",
-      message,
-      accept: onAccept,
-      reject: onReject,
+      ...options,
     });
   }
 }

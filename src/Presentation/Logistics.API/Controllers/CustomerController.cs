@@ -8,66 +8,65 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Logistics.API.Controllers;
 
-[Route("users")]
+[Route("customers")]
 [ApiController]
-public class UsersController : ControllerBase
+public class CustomerController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public UsersController(IMediator mediator)
+    public CustomerController(IMediator mediator)
     {
         _mediator = mediator;
     }
 
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(Result<UserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<CustomerDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Users.View)]
+    [Authorize(Policy = Permissions.Customers.View)]
     public async Task<IActionResult> GetById(string id)
     {
-        var result = await _mediator.Send(new GetUserByIdQuery {UserId = id});
+        var result = await _mediator.Send(new GetCustomerByIdQuery {Id = id});
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(PagedResult<UserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PagedResult<CustomerDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Users.View)]
-    public async Task<IActionResult> GetList([FromQuery] GetUsersQuery query)
+    [Authorize(Policy = Permissions.Customers.View)]
+    public async Task<IActionResult> GetList([FromQuery] GetCustomersQuery query)
     {
         var result = await _mediator.Send(query);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpGet("{id}/tenant")]
-    [ProducesResponseType(typeof(Result<TenantDto>), StatusCodes.Status200OK)]
+    [HttpPost]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Users.View)]
-    public async Task<IActionResult> GetUserCurrentTenant(string id)
+    [Authorize(Policy = Permissions.Customers.Create)]
+    public async Task<IActionResult> Create([FromBody] CreateCustomerCommand request)
     {
-        var result = await _mediator.Send(new GetUserCurrentTenantQuery() { UserId = id });
+        var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Users.View)]
-    public async Task<IActionResult> Update(string id, [FromBody] UpdateUserCommand request)
+    [Authorize(Policy = Permissions.Customers.Edit)]
+    public async Task<IActionResult> Update(string id, [FromBody] UpdateCustomerCommand request)
     {
         request.Id = id;
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
-
-    [HttpPost("{id}/remove-role")]
+    
+    [HttpDelete("{id}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Users.Edit)]
-    public async Task<IActionResult> RemoveRole(string id, [FromBody] RemoveRoleFromUserCommand request)
+    [Authorize(Policy = Permissions.Customers.Delete)]
+    public async Task<IActionResult> Delete(string id)
     {
-        request.UserId = id;
-        var result = await _mediator.Send(request);
+        var result = await _mediator.Send(new DeleteCustomerCommand {Id = id});
         return result.Success ? Ok(result) : BadRequest(result);
     }
 }

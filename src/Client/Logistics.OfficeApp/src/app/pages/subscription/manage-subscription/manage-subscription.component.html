@@ -54,6 +54,15 @@
             [disabled]="isLoading() || isCancelled() || isSubscriptionCancelled()"
             (click)="confirmCancelSubscription()"
           ></p-button>
+
+          @if (isSubscriptionCancelled()) {
+            <p-button
+              label="Renew"
+              icon="pi pi-credit-card"
+              size="small"
+              [routerLink]="'/subscription/renew'"
+            ></p-button>
+          }
         </div>
       </ng-template>
     </p-card>

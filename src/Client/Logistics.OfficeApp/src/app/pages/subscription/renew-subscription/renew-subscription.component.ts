@@ -1,6 +1,6 @@
 import {CommonModule} from "@angular/common";
 import {Component, signal} from "@angular/core";
-import {RouterModule} from "@angular/router";
+import {Router, RouterModule} from "@angular/router";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
@@ -10,7 +10,7 @@ import {TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {ApiService} from "@/core/api";
 import {SubscriptionDto} from "@/core/api/models";
-import {TenantService} from "@/core/services";
+import {TenantService, ToastService} from "@/core/services";
 import {Labels, SeverityLevel} from "@/core/utilities";
 import {PaymentMethodsCardComponent} from "../components";
 
@@ -34,11 +34,12 @@ export class RenewSubscriptionComponent {
   readonly employeeCount = signal(0);
   readonly subscription = signal<SubscriptionDto | null>(null);
   readonly isLoading = signal(false);
-  readonly isCancelled = signal(false);
 
   constructor(
     private readonly tenantService: TenantService,
-    private readonly apiService: ApiService
+    private readonly apiService: ApiService,
+    private readonly router: Router,
+    private readonly toastService: ToastService
   ) {
     const tenantData = this.tenantService.getTenantData();
     this.subscription.set(tenantData?.subscription ?? null);
@@ -66,5 +67,31 @@ export class RenewSubscriptionComponent {
 
   calcTotalSubscriptionCost(): number {
     return (this.subscription()?.plan?.price ?? 0) * this.employeeCount();
+  }
+
+  confirmRenewSubscription(): void {
+    this.toastService.confrimAction({
+      message:
+        "Are you sure you want to renew the subscription? By renewing the subscription, you agree to the terms and conditions.",
+      accept: () => {
+        this.renewSubscription();
+      },
+    });
+  }
+
+  private renewSubscription(): void {
+    this.isLoading.set(true);
+
+    this.apiService.subscriptionApi
+      .renewSubscription({id: this.subscription()!.id})
+      .subscribe((result) => {
+        if (result.success) {
+          this.tenantService.refetchTenantData();
+          this.toastService.showSuccess("Subscription renewed successfully", "Renew Subscription");
+          this.router.navigateByUrl("/");
+        }
+
+        this.isLoading.set(false);
+      });
   }
 }

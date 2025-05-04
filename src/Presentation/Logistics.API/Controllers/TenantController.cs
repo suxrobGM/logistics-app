@@ -12,11 +12,11 @@ namespace Logistics.API.Controllers;
 
 [Route("tenants")]
 [ApiController]
-public class TenantsController : ControllerBase
+public class TenantController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public TenantsController(IMediator mediator)
+    public TenantController(IMediator mediator)
     {
         _mediator = mediator;
     }

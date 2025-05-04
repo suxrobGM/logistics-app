@@ -5,57 +5,55 @@ using Logistics.Shared.Consts.Policies;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using GetTruckQuery = Logistics.Application.Queries.GetTruckQuery;
 
 namespace Logistics.API.Controllers;
 
-[Route("trucks")]
+[Route("payrolls")]
 [ApiController]
-public class TrucksController : ControllerBase
+public class PayrollController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public TrucksController(IMediator mediator)
+    public PayrollController(IMediator mediator)
     {
         _mediator = mediator;
     }
 
-    [HttpGet("{truckOrDriverId}")]
-    [ProducesResponseType(typeof(Result<TruckDto>), StatusCodes.Status200OK)]
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(Result<PayrollDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Trucks.View)]
-    public async Task<IActionResult> GetById(string truckOrDriverId, [FromQuery] GetTruckQuery request)
+    [Authorize(Policy = Permissions.Payrolls.View)]
+    public async Task<IActionResult> GetById(string id)
     {
-        request.TruckOrDriverId = truckOrDriverId;
+        var result = await _mediator.Send(new GetPayrollByIdQuery {Id = id});
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+    
+    [HttpGet("calculate")]
+    [ProducesResponseType(typeof(Result<PayrollDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Payrolls.View)]
+    public async Task<IActionResult> CalculateEmployeePayroll([FromQuery] CalculatePayrollQuery request)
+    {
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(PagedResult<TruckDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PagedResult<PayrollDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Trucks.View)]
-    public async Task<IActionResult> GetList([FromQuery] GetTrucksQuery query)
+    [Authorize(Policy = Permissions.Payrolls.View)]
+    public async Task<IActionResult> GetList([FromQuery] GetPayrollsQuery query)
     {
         var result = await _mediator.Send(query);
         return result.Success ? Ok(result) : BadRequest(result);
     }
     
-    [HttpGet("drivers")]
-    [ProducesResponseType(typeof(PagedResult<TruckDriversDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Trucks.View)]
-    public async Task<IActionResult> GetTruckDrivers([FromQuery] GetTruckDriversQuery query)
-    {
-        var result = await _mediator.Send(query);
-        return result.Success ? Ok(result) : BadRequest(result);
-    }
-
     [HttpPost]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Trucks.Create)]
-    public async Task<IActionResult> Create([FromBody] CreateTruckCommand request)
+    [Authorize(Policy = Permissions.Payrolls.Create)]
+    public async Task<IActionResult> Create([FromBody] CreatePayrollCommand request)
     {
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
@@ -64,21 +62,21 @@ public class TrucksController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Trucks.Edit)]
-    public async Task<IActionResult> Update(string id, [FromBody] UpdateTruckCommand request)
+    [Authorize(Policy = Permissions.Payrolls.Edit)]
+    public async Task<IActionResult> Update(string id, [FromBody] UpdatePayrollCommand request)
     {
         request.Id = id;
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
-
+    
     [HttpDelete("{id}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Trucks.Delete)]
+    [Authorize(Policy = Permissions.Payrolls.Delete)]
     public async Task<IActionResult> Delete(string id)
     {
-        var result = await _mediator.Send(new DeleteTruckCommand {Id = id});
+        var result = await _mediator.Send(new DeletePayrollCommand {Id = id});
         return result.Success ? Ok(result) : BadRequest(result);
     }
 }

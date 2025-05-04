@@ -11,11 +11,11 @@ namespace Logistics.API.Controllers;
 
 [Route("stats")]
 [ApiController]
-public class StatsController : ControllerBase
+public class StatController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public StatsController(IMediator mediator)
+    public StatController(IMediator mediator)
     {
         _mediator = mediator;
     }

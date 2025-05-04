@@ -8,11 +8,11 @@ namespace Logistics.API.Controllers;
 [Route("webhooks")]
 [ApiController]
 [AllowAnonymous]
-public class WebhooksController : ControllerBase
+public class WebhookController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public WebhooksController(IMediator mediator)
+    public WebhookController(IMediator mediator)
     {
         _mediator = mediator;
     }

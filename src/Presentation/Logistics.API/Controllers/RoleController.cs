@@ -9,11 +9,11 @@ namespace Logistics.API.Controllers;
 
 [Route("roles")]
 [ApiController]
-public class RolesController : ControllerBase
+public class RoleController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public RolesController(IMediator mediator)
+    public RoleController(IMediator mediator)
     {
         _mediator = mediator;
     }

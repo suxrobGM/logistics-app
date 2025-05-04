@@ -10,11 +10,11 @@ namespace Logistics.API.Controllers;
 
 [Route("payments")]
 [ApiController]
-public class PaymentsController : ControllerBase
+public class PaymentController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public PaymentsController(IMediator mediator)
+    public PaymentController(IMediator mediator)
     {
         _mediator = mediator;
     }

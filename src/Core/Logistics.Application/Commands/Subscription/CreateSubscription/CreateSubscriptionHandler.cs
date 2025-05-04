@@ -51,7 +51,7 @@ internal sealed class CreateSubscriptionHandler : RequestHandler<CreateSubscript
         }
 
         var subscription = Subscription.Create(tenant, subscriptionPlan);
-        var stripeSubscription = await _stripeService.CreateSubscriptionAsync(subscriptionPlan, tenant, tenantEmployeeCount);
+        var stripeSubscription = await _stripeService.CreateSubscriptionAsync(subscriptionPlan, tenant, tenantEmployeeCount, true);
         subscription.StripeSubscriptionId = stripeSubscription.Id;
 
         await _masterUow.Repository<Subscription>().AddAsync(subscription);

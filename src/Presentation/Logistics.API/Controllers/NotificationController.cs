@@ -10,11 +10,11 @@ namespace Logistics.API.Controllers;
 
 [Route("notifications")]
 [ApiController]
-public class NotificationsController : ControllerBase
+public class NotificationController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public NotificationsController(IMediator mediator)
+    public NotificationController(IMediator mediator)
     {
         _mediator = mediator;
     }

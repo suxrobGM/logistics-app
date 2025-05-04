@@ -10,11 +10,11 @@ namespace Logistics.API.Controllers;
 
 [Route("drivers")]
 [ApiController]
-public class DriversController : ControllerBase
+public class DriverController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public DriversController(IMediator mediator)
+    public DriverController(IMediator mediator)
     {
         _mediator = mediator;
     }
