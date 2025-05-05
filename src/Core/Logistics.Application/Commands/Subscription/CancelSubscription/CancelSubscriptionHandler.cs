@@ -27,6 +27,7 @@ internal sealed class CancelSubscriptionHandler : RequestHandler<CancelSubscript
         CancelSubscriptionCommand req, CancellationToken cancellationToken)
     {
         var subscription = await _masterUow.Repository<Subscription>().GetByIdAsync(req.Id);
+        SubscriptionStatus? status = null;
 
         if (subscription is null)
         {
@@ -36,10 +37,11 @@ internal sealed class CancelSubscriptionHandler : RequestHandler<CancelSubscript
         if (!string.IsNullOrEmpty(subscription.StripeSubscriptionId))
         {
             _logger.LogInformation("Cancelling stripe subscription {StripeSubscriptionId}", subscription.StripeSubscriptionId);
-            await _stripeService.CancelSubscriptionAsync(subscription.StripeSubscriptionId, false);
+            var stripeSubscription = await _stripeService.CancelSubscriptionAsync(subscription.StripeSubscriptionId, false);
+            status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
         }
 
-        subscription.Status = SubscriptionStatus.Cancelled;
+        subscription.Status = status ?? SubscriptionStatus.Cancelled;
         
         _masterUow.Repository<Subscription>().Update(subscription);
         await _masterUow.SaveChangesAsync();

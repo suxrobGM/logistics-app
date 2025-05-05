@@ -18,11 +18,17 @@ public class Subscription : Entity
     public string? StripeSubscriptionId { get; set; }
     public string? StripeCustomerId { get; set; }
 
-    public static Subscription Create(Tenant tenant, SubscriptionPlan plan)
+    /// <summary>
+    /// Creates a new trial subscription for a tenant with the specified plan
+    /// </summary>
+    /// <param name="tenant">Tenant entity</param>
+    /// <param name="plan">Subscription plan</param>
+    /// <returns>A new subscription object with trial status</returns>
+    public static Subscription CreateTrial(Tenant tenant, SubscriptionPlan plan)
     {
         return new Subscription
         {
-            Status = SubscriptionStatus.Active,
+            Status = SubscriptionStatus.Trialing,
             NextBillingDate = SubscriptionUtils.GetNextBillingDate(plan.Interval, plan.IntervalCount),
             TrialEndDate = SubscriptionUtils.GetTrialEndDate(plan.TrialPeriod),
             TenantId = tenant.Id,

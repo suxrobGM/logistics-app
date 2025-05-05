@@ -106,7 +106,7 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
 
         if (tenant.Subscription is not null)
         {
-            tenant.Subscription.Status = SubscriptionStatus.Active;
+            tenant.Subscription.Status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
             tenant.Subscription.StripeSubscriptionId = stripeSubscription.Id;
             tenant.Subscription.StartDate = stripeSubscription.StartDate;
             tenant.Subscription.NextBillingDate = stripeSubscription.CurrentPeriodEnd;
@@ -118,7 +118,7 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
         }
         else
         {
-            var newSubscription = Subscription.Create(tenant, subscriptionPlan);
+            var newSubscription = Subscription.CreateTrial(tenant, subscriptionPlan);
             newSubscription.StripeSubscriptionId = stripeSubscription.Id;
             newSubscription.StartDate = stripeSubscription.StartDate;
             newSubscription.NextBillingDate = stripeSubscription.CurrentPeriodEnd;
@@ -149,7 +149,8 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
             return Result.Fail($"Subscription {stripeSubscription.Id} not found for tenant {tenantId}.");
         }
         
-        subscription.Status = stripeSubscription.CancelAtPeriodEnd ? SubscriptionStatus.Cancelled : SubscriptionStatus.Active;
+        subscription.Status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
+        subscription.StartDate = stripeSubscription.StartDate;
         subscription.NextBillingDate = stripeSubscription.CurrentPeriodEnd;
         subscription.TrialEndDate = stripeSubscription.TrialEnd;
         
@@ -176,7 +177,8 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
             return Result.Fail($"Subscription {stripeSubscription.Id} not found for tenant {tenantId}.");
         }
 
-        subscription.Status = SubscriptionStatus.Inactive;
+        subscription.Status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
+        subscription.EndDate = stripeSubscription.EndedAt;
         _masterUow.Repository<Subscription>().Update(subscription);
         await _masterUow.SaveChangesAsync();
         

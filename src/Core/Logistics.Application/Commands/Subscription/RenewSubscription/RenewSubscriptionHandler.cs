@@ -1,7 +1,6 @@
 ﻿using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Shared.Consts;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -26,27 +25,26 @@ internal sealed class RenewSubscriptionHandler : RequestHandler<RenewSubscriptio
     protected override async Task<Result> HandleValidated(
         RenewSubscriptionCommand req, CancellationToken cancellationToken)
     {
-        var subEntity = await _masterUow.Repository<Subscription>().GetByIdAsync(req.Id);
+        var subscription = await _masterUow.Repository<Subscription>().GetByIdAsync(req.Id);
 
-        if (subEntity is null)
+        if (subscription is null)
         {
             return Result.Fail($"Could not find a subscription with ID '{req.Id}'");
         }
         
-        var employeeCount = await _masterUow.Repository<User>().CountAsync(i => i.TenantId == subEntity.TenantId);
+        var employeeCount = await _masterUow.Repository<User>().CountAsync(i => i.TenantId == subscription.TenantId);
 
-        _logger.LogInformation("Renewing stripe subscription {StripeSubscriptionId}", subEntity.StripeSubscriptionId);
-        var subStripe = await _stripeService.RenewSubscriptionAsync(subEntity, subEntity.Plan, subEntity.Tenant, employeeCount);
-
-        subEntity.StripeSubscriptionId = subStripe.Id;
-        subEntity.Status = SubscriptionStatus.Active;
-        subEntity.StartDate = subStripe.StartDate;
-        subEntity.NextBillingDate = subStripe.CurrentPeriodEnd;
-        subEntity.TrialEndDate = subStripe.TrialEnd;
+        _logger.LogInformation("Renewing stripe subscription {StripeSubscriptionId}", subscription.StripeSubscriptionId);
+        var stripeSubscription = await _stripeService.RenewSubscriptionAsync(subscription, subscription.Plan, subscription.Tenant, employeeCount);
+        subscription.StripeSubscriptionId = stripeSubscription.Id;
+        subscription.Status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
+        subscription.StartDate = stripeSubscription.StartDate;
+        subscription.NextBillingDate = stripeSubscription.CurrentPeriodEnd;
+        subscription.TrialEndDate = stripeSubscription.TrialEnd;
         
-        _masterUow.Repository<Subscription>().Update(subEntity);
+        _masterUow.Repository<Subscription>().Update(subscription);
         await _masterUow.SaveChangesAsync();
-        _logger.LogInformation("Renewed subscription {SubscriptionId}", subEntity.Id);
+        _logger.LogInformation("Renewed subscription {SubscriptionId}", subscription.Id);
         return Result.Succeed();
     }
 }

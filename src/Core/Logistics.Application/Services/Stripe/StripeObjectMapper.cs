@@ -90,7 +90,7 @@ public static class StripeObjectMapper
         throw new NotSupportedException("Unsupported payment method type.");
     }
 
-    private static UsBankAccountHolderType GetAccountHolderType(string accountHolderType)
+    public static UsBankAccountHolderType GetAccountHolderType(string accountHolderType)
     {
         return accountHolderType switch
         {
@@ -100,13 +100,29 @@ public static class StripeObjectMapper
         };
     }
 
-    private static UsBankAccountType GetAccountType(string accountType)
+    public static UsBankAccountType GetAccountType(string accountType)
     {
         return accountType switch
         {
             "checking" => UsBankAccountType.Checking,
             "savings" => UsBankAccountType.Savings,
             _ => throw new ArgumentOutOfRangeException(nameof(accountType), accountType)
+        };
+    }
+
+    public static SubscriptionStatus GetSubscriptionStatus(string stripeSubscriptionStatus)
+    {
+        return stripeSubscriptionStatus switch
+        {
+            "active" => SubscriptionStatus.Active,
+            "past_due" => SubscriptionStatus.PastDue,
+            "canceled" => SubscriptionStatus.Cancelled,
+            "incomplete" => SubscriptionStatus.Incomplete,
+            "incomplete_expired" => SubscriptionStatus.IncompleteExpired,
+            "trialing" => SubscriptionStatus.Trialing,
+            "unpaid" => SubscriptionStatus.Unpaid,
+            "paused" => SubscriptionStatus.Paused,
+            _ => throw new ArgumentOutOfRangeException(nameof(stripeSubscriptionStatus), stripeSubscriptionStatus)
         };
     }
 }

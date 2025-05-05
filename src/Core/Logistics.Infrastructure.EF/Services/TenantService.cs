@@ -127,12 +127,12 @@ internal class TenantService : ITenantService
             return;
         }
         
-        if (tenant.Subscription.Status is SubscriptionStatus.Active or SubscriptionStatus.Cancelled)
+        if (tenant.Subscription.Status is SubscriptionStatus.Active or SubscriptionStatus.Trialing)
         {
             return;
         }
         
         throw new SubscriptionExpiredException(
-            $"Tenant '{tenant.Name}' does not have an active subscription");
+            $"Tenant '{tenant.Name}' does not have an active subscription. The current status is '{tenant.Subscription.Status}'");
     }
 }

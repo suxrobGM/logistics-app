@@ -73,7 +73,7 @@ export class TenantService {
 
     return (
       this.tenantData?.subscription?.status === SubscriptionStatus.Active ||
-      this.tenantData?.subscription?.status === SubscriptionStatus.Cancelled
+      this.tenantData?.subscription?.status === SubscriptionStatus.Trialing
     );
   }
 

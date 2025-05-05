@@ -2,40 +2,47 @@ import {SubscriptionDto, SubscriptionStatus} from "../api/models";
 
 export type SeverityLevel = "success" | "warn" | "danger" | "info";
 
-export abstract class Labels {
+export const Labels = {
   /**
    * Get the severity of the subscription status.
    * @param subscription The subscription object.
    * @returns The severity of the subscription status.
    */
-  static subscriptionStatusSeverity(subscription: SubscriptionDto): SeverityLevel {
+  subscriptionStatusSeverity(subscription: SubscriptionDto): SeverityLevel {
     switch (subscription.status) {
       case SubscriptionStatus.Active:
+      case SubscriptionStatus.Trialing:
         return "success";
-      case SubscriptionStatus.Inactive:
-        return "warn";
-      case SubscriptionStatus.Cancelled:
-        return "danger";
       default:
-        return "info";
+        return "danger";
     }
-  }
+  },
 
   /**
    * Get the label of the subscription status.
    * @param subscription The subscription object.
    * @returns The label of the subscription status.
    */
-  static subscriptionStatus(subscription: SubscriptionDto): string {
+  subscriptionStatus(subscription: SubscriptionDto): string {
     switch (subscription.status) {
       case SubscriptionStatus.Active:
         return "Active";
-      case SubscriptionStatus.Inactive:
-        return "Inactive";
+      case SubscriptionStatus.Incomplete:
+        return "Incomplete";
+      case SubscriptionStatus.Trialing:
+        return "Trialing";
+      case SubscriptionStatus.PastDue:
+        return "Past Due";
+      case SubscriptionStatus.Unpaid:
+        return "Unpaid";
+      case SubscriptionStatus.IncompleteExpired:
+        return "Incomplete Expired";
+      case SubscriptionStatus.Paused:
+        return "Paused";
       case SubscriptionStatus.Cancelled:
         return "Cancelled";
       default:
         return "Unknown";
     }
-  }
-}
+  },
+} as const;

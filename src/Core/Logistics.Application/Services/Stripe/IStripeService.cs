@@ -52,14 +52,16 @@ public interface IStripeService
     /// </summary>
     /// <param name="stripeSubscriptionId">Stripe subscription ID</param>
     /// <param name="cancelImmediately">Whether to cancel immediately (true) or at period end (false)</param>
-    Task CancelSubscriptionAsync(string stripeSubscriptionId, bool cancelImmediately = true);
+    /// <returns>Stripe subscription item object.</returns>
+    Task<StripeSubscription> CancelSubscriptionAsync(string stripeSubscriptionId, bool cancelImmediately = true);
     
     /// <summary>
     /// Update the quantity of the subscription in Stripe.
     /// </summary>
     /// <param name="stripeSubscriptionId">Stripe subscription ID.</param>
     /// <param name="employeeCount">New number of employees in the tenant company.</param>
-    Task UpdateSubscriptionQuantityAsync(string stripeSubscriptionId, int employeeCount);
+    /// <returns>Stripe subscription item object.</returns>
+    Task<SubscriptionItem> UpdateSubscriptionQuantityAsync(string stripeSubscriptionId, int employeeCount);
 
     /// <summary>
     /// Renew an existing subscription or create a new one if it doesn't exist in Stripe.

@@ -110,38 +110,40 @@ internal class StripeService : IStripeService
         return subscription;
     }
 
-    public async Task CancelSubscriptionAsync(string stripeSubscriptionId, bool cancelImmediately = true)
+    public async Task<StripeSubscription> CancelSubscriptionAsync(string stripeSubscriptionId, bool cancelImmediately = true)
     {
         var service = new SubscriptionService();
+        StripeSubscription stripeSubscription;
         
         if (cancelImmediately)
         {
             // Immediate cancellation with proration
-            await service.CancelAsync(stripeSubscriptionId, new SubscriptionCancelOptions
+            stripeSubscription = await service.CancelAsync(stripeSubscriptionId, new SubscriptionCancelOptions
             {
                 InvoiceNow = true,
                 Prorate = true
             });
             _logger.LogInformation("Canceled immediately Stripe subscription {StripeSubscriptionId}", stripeSubscriptionId);
+            return stripeSubscription;
         }
-        else
+        
+        // Schedule cancellation at period end
+        stripeSubscription = await service.UpdateAsync(stripeSubscriptionId, new SubscriptionUpdateOptions
         {
-            // Schedule cancellation at period end
-            await service.UpdateAsync(stripeSubscriptionId, new SubscriptionUpdateOptions
-            {
-                CancelAtPeriodEnd = true
-            });
-            _logger.LogInformation("Canceled at period end Stripe subscription {StripeSubscriptionId}", stripeSubscriptionId);
-        }
+            CancelAtPeriodEnd = true
+        });
+        _logger.LogInformation("Canceled at period end Stripe subscription {StripeSubscriptionId}", stripeSubscriptionId);
+        return stripeSubscription;
     }
 
-    public async Task UpdateSubscriptionQuantityAsync(string stripeSubscriptionId, int employeeCount)
+    public async Task<SubscriptionItem> UpdateSubscriptionQuantityAsync(string stripeSubscriptionId, int employeeCount)
     {
         var subscription = await new SubscriptionService().GetAsync(stripeSubscriptionId);
         var item = subscription.Items.Data[0]; // Assuming single item per subscription
         var options = new SubscriptionItemUpdateOptions { Quantity = employeeCount };
-        await new SubscriptionItemService().UpdateAsync(item.Id, options);
+        var stripeSubscriptionItem = await new SubscriptionItemService().UpdateAsync(item.Id, options);
         _logger.LogInformation("Updated Stripe subscription {StripeSubscriptionId} with new quantity {EmployeeCount}", stripeSubscriptionId, employeeCount);
+        return stripeSubscriptionItem;
     }
     
     public async Task<StripeSubscription> RenewSubscriptionAsync(

@@ -50,7 +50,7 @@ internal sealed class CreateSubscriptionHandler : RequestHandler<CreateSubscript
             return Result.Fail($"Could not find a subscription plan with ID '{req.TenantId}'");
         }
 
-        var subscription = Subscription.Create(tenant, subscriptionPlan);
+        var subscription = Subscription.CreateTrial(tenant, subscriptionPlan);
         var stripeSubscription = await _stripeService.CreateSubscriptionAsync(subscriptionPlan, tenant, tenantEmployeeCount, true);
         subscription.StripeSubscriptionId = stripeSubscription.Id;
 
