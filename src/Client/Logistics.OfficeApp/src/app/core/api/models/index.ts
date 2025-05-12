@@ -6,6 +6,7 @@ export * from "./paged-interval-query.model";
 export * from "./tenant.model";
 export * from "./user.model";
 export * from "./address.model";
+export * from "./money.model";
 
 export * from "./subscription";
 export * from "./load";
