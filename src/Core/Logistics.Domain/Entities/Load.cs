@@ -7,7 +7,7 @@ namespace Logistics.Domain.Entities;
 
 public class Load : Entity, ITenantEntity
 {
-    public ulong RefId { get; set; } = 1000;
+    public long Number { get; set; }
     public string? Name { get; set; }
     
     public required Address OriginAddress { get; set; }
@@ -30,14 +30,13 @@ public class Load : Entity, ITenantEntity
     public string? CustomerId { get; set; }
     public virtual Customer? Customer { get; set; }
     
-    public string? InvoiceId { get; set; }
-    public virtual Invoice? Invoice { get; set; }
-    
     public string? AssignedTruckId { get; set; }
     public virtual Truck? AssignedTruck { get; set; }
     
     public string? AssignedDispatcherId { get; set; }
     public virtual Employee? AssignedDispatcher { get; set; }
+
+    public virtual List<LoadInvoice> Invoices { get; set; } = [];
 
     public void SetStatus(LoadStatus status)
     {
@@ -81,7 +80,6 @@ public class Load : Entity, ITenantEntity
     }
 
     public static Load Create(
-        ulong refId,
         decimal deliveryCost,
         Address originAddress,
         double originLatitude,
@@ -95,7 +93,6 @@ public class Load : Entity, ITenantEntity
     {
         var load = new Load
         {
-            RefId = refId,
             DeliveryCost = deliveryCost,
             OriginAddress = originAddress,
             OriginAddressLat = originLatitude,
@@ -109,31 +106,29 @@ public class Load : Entity, ITenantEntity
         };
 
         var invoice = CreateInvoice(load);
-        load.Invoice = invoice;
-        load.InvoiceId = invoice.Id;
-        load.DomainEvents.Add(new NewLoadCreatedEvent(refId));
+        load.Invoices.Add(invoice);
+        load.DomainEvents.Add(new NewLoadCreatedEvent(load.Id));
         return load;
     }
 
-    private static Invoice CreateInvoice(Load load)
+    private static LoadInvoice CreateInvoice(Load load)
     {
         var payment = new Payment
         {
             Amount = load.DeliveryCost,
             Status = PaymentStatus.Pending,
-            PaymentFor = PaymentFor.Invoice
         };
 
-        var invoice = new Invoice
+        var invoice = new LoadInvoice
         {
+            Total = load.DeliveryCost,
             CustomerId = load.CustomerId!,
             Customer = load.Customer!,
             LoadId = load.Id,
             Load = load,
-            PaymentId = payment.Id,
-            Payment = payment
         };
 
+        invoice.ApplyPayment(payment);
         return invoice;
     }
 }

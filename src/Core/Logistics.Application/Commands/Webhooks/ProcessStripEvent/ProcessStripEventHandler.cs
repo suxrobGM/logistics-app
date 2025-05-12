@@ -1,6 +1,7 @@
 ﻿using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.ValueObjects;
 using Logistics.Shared.Consts;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
@@ -202,12 +203,12 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
         
         _tenantUow.SetCurrentTenantById(tenantId);
         
+        var amount = stripeInvoice.AmountPaid / 100m; // Convert from cents
+        
         var payment = new Payment
         {
-            Amount = stripeInvoice.AmountPaid / 100m, // Convert from cents
+            Amount = new Money {Amount = amount, Currency = stripeInvoice.Currency},
             Status = PaymentStatus.Paid,
-            PaymentDate = DateTime.UtcNow,
-            StripeInvoiceId = stripeInvoice.Id,
             BillingAddress = stripeInvoice.CustomerAddress.ToAddressEntity(),
         };
         

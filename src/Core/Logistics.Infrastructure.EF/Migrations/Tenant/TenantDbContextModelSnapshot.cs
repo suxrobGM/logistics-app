@@ -26,6 +26,38 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Logistics.Domain.Core.AuditableEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("CreatedBy");
+
+                    b.Property<DateTimeOffset?>("LastModifiedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AuditableEntity");
+
+                    b.UseTptMappingStrategy();
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Customer", b =>
                 {
                     b.Property<string>("Id")
@@ -100,29 +132,61 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<string>("Id")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("CustomerId")
-                        .IsRequired()
+                    b.Property<string>("CreatedBy")
                         .HasColumnType("text");
 
-                    b.Property<string>("LoadId")
-                        .IsRequired()
+                    b.Property<DateTime?>("DueDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("LastModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("LastModifiedBy")
                         .HasColumnType("text");
 
-                    b.Property<string>("PaymentId")
-                        .IsRequired()
+                    b.Property<string>("Notes")
                         .HasColumnType("text");
+
+                    b.Property<long>("Number")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Number"));
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("StripeInvoiceId")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.ComplexProperty<Dictionary<string, object>>("Total", "Logistics.Domain.Entities.Invoice.Total#Money", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("numeric");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("text");
+                        });
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("PaymentId")
+                    b.HasIndex("Number")
                         .IsUnique();
 
                     b.ToTable("Invoices", (string)null);
+
+                    b.HasDiscriminator<int>("Type");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Load", b =>
@@ -164,11 +228,14 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<double>("Distance")
                         .HasColumnType("double precision");
 
-                    b.Property<string>("InvoiceId")
-                        .HasColumnType("text");
-
                     b.Property<string>("Name")
                         .HasColumnType("text");
+
+                    b.Property<long>("Number")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Number"));
 
                     b.Property<double?>("OriginAddressLat")
                         .HasColumnType("double precision");
@@ -178,9 +245,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
                     b.Property<DateTime?>("PickUpDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<decimal>("RefId")
-                        .HasColumnType("numeric(20,0)");
 
                     b.ComplexProperty<Dictionary<string, object>>("DestinationAddress", "Logistics.Domain.Entities.Load.DestinationAddress#Address", b1 =>
                         {
@@ -246,10 +310,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("InvoiceId")
-                        .IsUnique();
-
-                    b.HasIndex("RefId")
+                    b.HasIndex("Number")
                         .IsUnique();
 
                     b.ToTable("Loads", (string)null);
@@ -275,75 +336,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.HasKey("Id");
 
                     b.ToTable("Notifications", (string)null);
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.Payment", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<decimal>("Amount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int?>("Method")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("PaymentDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("PaymentFor")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("StripeInvoiceId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("StripePaymentIntentId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SubscriptionId")
-                        .HasColumnType("text");
-
-                    b.ComplexProperty<Dictionary<string, object>>("BillingAddress", "Logistics.Domain.Entities.Payment.BillingAddress#Address", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<string>("City")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Country")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Line1")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Line2")
-                                .HasColumnType("text");
-
-                            b1.Property<string>("State")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("ZipCode")
-                                .IsRequired()
-                                .HasColumnType("text");
-                        });
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.PaymentMethod", b =>
@@ -405,33 +397,152 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Payroll", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.Subscription", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
 
-                    b.Property<string>("EmployeeId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("EndDate")
+                    b.Property<DateTime?>("EndDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("PaymentId")
+                    b.Property<DateTime?>("NextBillingDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PlanId")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("StripeCustomerId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StripeSubscriptionId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("TrialEndDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployeeId");
+                    b.HasIndex("PlanId");
 
-                    b.HasIndex("PaymentId")
+                    b.HasIndex("TenantId")
                         .IsUnique();
 
-                    b.ToTable("Payrolls", (string)null);
+                    b.ToTable("Subscription");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionPlan", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("BillingCycleAnchor")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Interval")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("IntervalCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("StripePriceId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StripeProductId")
+                        .HasColumnType("text");
+
+                    b.Property<int>("TrialPeriod")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SubscriptionPlan");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.Tenant", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("BillingEmail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CompanyName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ConnectionString")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DotNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("StripeCustomerId")
+                        .HasColumnType("text");
+
+                    b.ComplexProperty<Dictionary<string, object>>("CompanyAddress", "Logistics.Domain.Entities.Tenant.CompanyAddress#Address", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Country")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Line1")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Line2")
+                                .HasColumnType("text");
+
+                            b1.Property<string>("State")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("ZipCode")
+                                .IsRequired()
+                                .HasColumnType("text");
+                        });
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tenant");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.TenantRole", b =>
@@ -525,6 +636,198 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.HasKey("Id");
 
                     b.ToTable("Trucks", (string)null);
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.User", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("LastModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TenantId")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("User");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.Payment", b =>
+                {
+                    b.HasBaseType("Logistics.Domain.Core.AuditableEntity");
+
+                    b.Property<string>("InvoiceId")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Method")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.ComplexProperty<Dictionary<string, object>>("Amount", "Logistics.Domain.Entities.Payment.Amount#Money", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("numeric");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("text");
+                        });
+
+                    b.ComplexProperty<Dictionary<string, object>>("BillingAddress", "Logistics.Domain.Entities.Payment.BillingAddress#Address", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Country")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Line1")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Line2")
+                                .HasColumnType("text");
+
+                            b1.Property<string>("State")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("ZipCode")
+                                .IsRequired()
+                                .HasColumnType("text");
+                        });
+
+                    b.HasIndex("InvoiceId");
+
+                    b.ToTable("Payments", (string)null);
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.LoadInvoice", b =>
+                {
+                    b.HasBaseType("Logistics.Domain.Entities.Invoice");
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LoadId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("LoadId");
+
+                    b.HasDiscriminator().HasValue(0);
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.PayrollInvoice", b =>
+                {
+                    b.HasBaseType("Logistics.Domain.Entities.Invoice");
+
+                    b.Property<string>("EmployeeId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("PeriodEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("PeriodStart")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasDiscriminator().HasValue(2);
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionInvoice", b =>
+                {
+                    b.HasBaseType("Logistics.Domain.Entities.Invoice");
+
+                    b.Property<DateTime>("BillingPeriodEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("BillingPeriodStart")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SubscriptionId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasIndex("SubscriptionId");
+
+                    b.HasDiscriminator().HasValue(1);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.BankAccountPaymentMethod", b =>
@@ -648,25 +951,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Invoice", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.Customer", "Customer")
-                        .WithMany("Invoices")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Logistics.Domain.Entities.Payment", "Payment")
-                        .WithOne()
-                        .HasForeignKey("Logistics.Domain.Entities.Invoice", "PaymentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Payment");
-                });
-
             modelBuilder.Entity("Logistics.Domain.Entities.Load", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Employee", "AssignedDispatcher")
@@ -682,36 +966,30 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .WithMany()
                         .HasForeignKey("CustomerId");
 
-                    b.HasOne("Logistics.Domain.Entities.Invoice", "Invoice")
-                        .WithOne("Load")
-                        .HasForeignKey("Logistics.Domain.Entities.Load", "InvoiceId");
-
                     b.Navigation("AssignedDispatcher");
 
                     b.Navigation("AssignedTruck");
 
                     b.Navigation("Customer");
-
-                    b.Navigation("Invoice");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Payroll", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.Subscription", b =>
                 {
-                    b.HasOne("Logistics.Domain.Entities.Employee", "Employee")
-                        .WithMany("PayrollPayments")
-                        .HasForeignKey("EmployeeId")
+                    b.HasOne("Logistics.Domain.Entities.SubscriptionPlan", "Plan")
+                        .WithMany("Subscriptions")
+                        .HasForeignKey("PlanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Logistics.Domain.Entities.Payment", "Payment")
-                        .WithOne()
-                        .HasForeignKey("Logistics.Domain.Entities.Payroll", "PaymentId")
+                    b.HasOne("Logistics.Domain.Entities.Tenant", "Tenant")
+                        .WithOne("Subscription")
+                        .HasForeignKey("Logistics.Domain.Entities.Subscription", "TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Employee");
+                    b.Navigation("Plan");
 
-                    b.Navigation("Payment");
+                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.TenantRoleClaim", b =>
@@ -725,6 +1003,69 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.User", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Tenant", "Tenant")
+                        .WithMany("Users")
+                        .HasForeignKey("TenantId");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.Payment", b =>
+                {
+                    b.HasOne("Logistics.Domain.Core.AuditableEntity", null)
+                        .WithOne()
+                        .HasForeignKey("Logistics.Domain.Entities.Payment", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Logistics.Domain.Entities.Invoice", null)
+                        .WithMany("Payments")
+                        .HasForeignKey("InvoiceId");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.LoadInvoice", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Customer", "Customer")
+                        .WithMany("Invoices")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Logistics.Domain.Entities.Load", "Load")
+                        .WithMany("Invoices")
+                        .HasForeignKey("LoadId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Load");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.PayrollInvoice", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Employee", "Employee")
+                        .WithMany("PayrollInvoices")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionInvoice", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Subscription", "Subscription")
+                        .WithMany("Invoices")
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subscription");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Customer", b =>
                 {
                     b.Navigation("Invoices");
@@ -736,13 +1077,34 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
                     b.Navigation("EmployeeRoles");
 
-                    b.Navigation("PayrollPayments");
+                    b.Navigation("PayrollInvoices");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Invoice", b =>
                 {
-                    b.Navigation("Load")
-                        .IsRequired();
+                    b.Navigation("Payments");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.Load", b =>
+                {
+                    b.Navigation("Invoices");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.Subscription", b =>
+                {
+                    b.Navigation("Invoices");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionPlan", b =>
+                {
+                    b.Navigation("Subscriptions");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.Tenant", b =>
+                {
+                    b.Navigation("Subscription");
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.TenantRole", b =>

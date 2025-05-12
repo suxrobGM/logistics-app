@@ -228,16 +228,9 @@ internal class PopulateFakeData
         if (!trucks.Any())
             throw new InvalidOperationException("Empty list of trucks");
         
-        var loadsDb = await _tenantUow.Repository<Load>().GetListAsync();
 
-        for (ulong i = 1; i <= 100; i++)
+        for (long i = 1; i <= 100; i++)
         {
-            var refId = 1000 + i;
-            var existingLoad = loadsDb.FirstOrDefault(m => m.RefId == refId);
-
-            if (existingLoad != null)
-                continue;
-
             var truck = _random.Pick(trucks);
             var customer = _random.Pick(customers);
             var dispatcher = _random.Pick(companyEmployees.Dispatchers);
@@ -248,7 +241,7 @@ internal class PopulateFakeData
     }
 
     private async Task AddLoadAsync(
-        ulong index,
+        long index,
         Truck truck,
         Employee dispatcher,
         Customer customer)
@@ -281,7 +274,6 @@ internal class PopulateFakeData
         };
             
         var load = Load.Create(
-            1000 + index,
             deliveryCost,
             originAddress, 
             originLat,
@@ -298,9 +290,6 @@ internal class PopulateFakeData
         load.PickUpDate = dispatchedDate.AddDays(1);
         load.DeliveryDate = dispatchedDate.AddDays(2);
         load.Distance = _random.Next(16093, 321869);
-        load.Invoice!.Payment.SetStatus(PaymentStatus.Paid);
-        load.Invoice.Payment.Method = PaymentMethodType.Card;
-        load.Invoice.Payment.BillingAddress = originAddress;
 
         await _tenantUow.Repository<Load>().AddAsync(load);
         _logger.LogInformation("Added a load {Name}", load.Name);

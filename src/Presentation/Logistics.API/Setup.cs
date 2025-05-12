@@ -86,6 +86,7 @@ internal static class Setup
             options.JsonSerializerOptions.Converters.Add(
                 new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower) // Optional naming policy
             );
+            options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         });;
         
         services.AddCors(options =>

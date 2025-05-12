@@ -14,7 +14,7 @@ public class SearchLoads : BaseSpecification<Load>
             Criteria = i =>
                 (i.Name != null && i.Name.Contains(search)) ||
                 (i.Customer != null && i.Customer.Name.Contains(search)) ||
-                i.RefId.ToString().Contains(search) ||
+                i.Number.ToString().Contains(search) ||
                 i.OriginAddress.Line1.Contains(search) || 
                 (i.OriginAddress.Line2 != null && i.OriginAddress.Line2.Contains(search)) ||
                 i.DestinationAddress.Line1.Contains(search) ||
@@ -37,10 +37,9 @@ public class SearchLoads : BaseSpecification<Load>
             "dispatcheddate" => i => i.DispatchedDate,
             "pickupdate" => i => i.PickUpDate,
             "deliverydate" => i => i.DeliveryDate,
-            "invoicepaymentstatus" => i => i.Invoice!.Payment.Status,
             "assignedtruck" => i => i.AssignedTruck!.TruckNumber,
             "assigneddispatcher" => i => i.AssignedDispatcher!.FirstName,
-            _ => i => i.RefId
+            _ => i => i.Number
         };
     }
 }

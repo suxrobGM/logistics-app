@@ -1,5 +1,4 @@
 ﻿using Logistics.Shared.Consts;
-using Logistics.Shared.Models;
 
 namespace Logistics.DriverApp.Models;
 
@@ -21,11 +20,11 @@ public class ActiveLoad : ObservableRecipient
         set => SetProperty(ref _id, value);
     }
 
-    private ulong _refId;
-    public ulong RefId
+    private long _number;
+    public long Number
     {
-        get => _refId;
-        set => SetProperty(ref _refId, value);
+        get => _number;
+        set => SetProperty(ref _number, value);
     }
     
     private string? _name;
@@ -171,7 +170,7 @@ public class ActiveLoad : ObservableRecipient
     public void UpdateFromDto(LoadDto loadDto)
     {
         Id = loadDto.Id;
-        RefId = loadDto.RefId;
+        Number = loadDto.Number;
         Name = loadDto.Name;
         OriginAddress = loadDto.OriginAddress;
         OriginAddressLat = loadDto.OriginAddressLat;

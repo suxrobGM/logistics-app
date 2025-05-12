@@ -43,16 +43,7 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resu
             return Result.Fail($"Could not find the customer with ID '{req.CustomerId}'");
         }
         
-        var latestLoad = _tenantUow.Repository<Load>().Query().OrderBy(i => i.RefId).LastOrDefault();
-        ulong refId = 1000;
-
-        if (latestLoad is not null)
-        {
-            refId = latestLoad.RefId + 1;
-        }
-        
         var load = Load.Create(
-            refId,
             req.DeliveryCost,
             req.OriginAddress!,
             req.OriginAddressLat,

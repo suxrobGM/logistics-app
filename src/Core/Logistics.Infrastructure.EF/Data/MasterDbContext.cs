@@ -1,4 +1,5 @@
 ﻿using Logistics.Domain.Entities;
+using Logistics.Infrastructure.EF.Data.Configurations;
 using Logistics.Infrastructure.EF.Helpers;
 using Logistics.Infrastructure.EF.Interceptors;
 using Logistics.Infrastructure.EF.Options;
@@ -23,16 +24,19 @@ public class MasterDbContext : IdentityDbContext<
     >, 
     IDataProtectionKeyContext
 {
-    private readonly DispatchDomainEventsInterceptor? _dispatchDomainEventsInterceptor;
+    private readonly DispatchDomainEventsInterceptor? _dispatchDomain;
+    private readonly AuditableEntitySaveChangesInterceptor? _auditableEntity;
     private readonly string _connectionString;
     private readonly ILogger<MasterDbContext>? _logger;
 
     public MasterDbContext(
         MasterDbContextOptions options,
-        DispatchDomainEventsInterceptor? dispatchDomainEventsInterceptor = null,
+        DispatchDomainEventsInterceptor? dispatchDomain = null,
+        AuditableEntitySaveChangesInterceptor? auditableEntity = null,
         ILogger<MasterDbContext>? logger = null)
     {
-        _dispatchDomainEventsInterceptor = dispatchDomainEventsInterceptor;
+        _dispatchDomain = dispatchDomain;
+        _auditableEntity = auditableEntity;
         _connectionString = options.ConnectionString ?? ConnectionStrings.LocalMaster;
         _logger = logger;
     }
@@ -41,9 +45,13 @@ public class MasterDbContext : IdentityDbContext<
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        if (_dispatchDomainEventsInterceptor is not null)
+        if (_dispatchDomain is not null)
         {
-            options.AddInterceptors(_dispatchDomainEventsInterceptor);
+            options.AddInterceptors(_dispatchDomain);
+        }
+        if (_auditableEntity is not null)
+        {
+            options.AddInterceptors(_auditableEntity);
         }
 
         if (!options.IsConfigured)
@@ -56,6 +64,8 @@ public class MasterDbContext : IdentityDbContext<
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        
+        builder.ApplyConfiguration(new AuditableEntityConfiguration());
         builder.Entity<Tenant>().ToTable("Tenants");
 
         builder.Entity<AppRole>(entity =>

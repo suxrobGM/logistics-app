@@ -18,6 +18,8 @@ public class Subscription : Entity
     public string? StripeSubscriptionId { get; set; }
     public string? StripeCustomerId { get; set; }
 
+    public virtual List<SubscriptionInvoice> Invoices { get; set; } = [];
+
     /// <summary>
     /// Creates a new trial subscription for a tenant with the specified plan
     /// </summary>

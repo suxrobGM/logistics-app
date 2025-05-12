@@ -43,7 +43,7 @@ public class InvoicesController : ControllerBase
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Invoices.Create)]
-    public async Task<IActionResult> Create([FromBody] CreateInvoiceCommand request)
+    public async Task<IActionResult> Create([FromBody] CreateLoadInvoiceCommand request)
     {
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
@@ -69,4 +69,49 @@ public class InvoicesController : ControllerBase
         var result = await _mediator.Send(new DeleteInvoiceCommand {Id = id});
         return result.Success ? Ok(result) : BadRequest(result);
     }
+
+    #region Payroll Invoice
+
+    [HttpGet("payrolls/calculate")]
+    [ProducesResponseType(typeof(Result<PayrollDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Payrolls.View)]
+    public async Task<IActionResult> CalculateEmployeePayroll([FromQuery] CalculatePayrollQuery request)
+    {
+        var result = await _mediator.Send(request);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpGet("payrolls")]
+    [ProducesResponseType(typeof(PagedResult<PayrollDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Payrolls.View)]
+    public async Task<IActionResult> GetPayrollInvoicesList([FromQuery] GetPayrollInvoicesQuery query)
+    {
+        var result = await _mediator.Send(query);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+    
+    [HttpPost("payrolls")]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Payrolls.Create)]
+    public async Task<IActionResult> CreatePayrollInvoice([FromBody] CreatePayrollInvoiceCommand request)
+    {
+        var result = await _mediator.Send(request);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpPut("payrolls/{id}")]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Payrolls.Edit)]
+    public async Task<IActionResult> UpdatePayrollInvoice(string id, [FromBody] UpdatePayrollInvoiceCommand request)
+    {
+        request.Id = id;
+        var result = await _mediator.Send(request);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+
+    #endregion
 }

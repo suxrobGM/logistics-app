@@ -14,7 +14,7 @@ internal static class PushNotificationExtensions
         {
             await pushNotificationService.SendNotificationAsync(
                 "Received a load",
-                $"A new load #{load.RefId} has been assigned to you", 
+                $"A new load #{load.Number} has been assigned to you", 
                 driver.DeviceToken!,
                 new Dictionary<string, string> {{"loadId", load.Id}});
         }
@@ -41,7 +41,7 @@ internal static class PushNotificationExtensions
         {
             await pushNotificationService.SendNotificationAsync(
                 "Confirm load status",
-                $"You can confirm the {loadStatusText} date of load #{load.RefId}", 
+                $"You can confirm the {loadStatusText} date of load #{load.Number}", 
                 driver.DeviceToken!,
                 new Dictionary<string, string> {{"loadId", load.Id}});
         }
@@ -55,7 +55,7 @@ internal static class PushNotificationExtensions
         {
             await pushNotificationService.SendNotificationAsync(
                 "Load update",
-                $"A load #{load.RefId} details has been updated check details", 
+                $"A load #{load.Number} details has been updated check details", 
                 driver.DeviceToken!,
                 new Dictionary<string, string> {{"loadId", load.Id}});
         }
@@ -74,7 +74,7 @@ internal static class PushNotificationExtensions
         {
             await pushNotificationService.SendNotificationAsync(
                 "Load update",
-                $"A load #{load.RefId} has been removed from you", 
+                $"A load #{load.Number} has been removed from you", 
                 driver.DeviceToken!,
                 new Dictionary<string, string> {{"loadId", load.Id}});
         }

@@ -46,7 +46,7 @@ internal sealed class ConfirmLoadStatusHandler : RequestHandler<ConfirmLoadStatu
     {
         const string title = "Load updates";
         var driverName = load.AssignedTruck?.Drivers.FirstOrDefault(i => i.Id == driverId)?.GetFullName();
-        var message = $"Driver {driverName} confirmed the load #{load.RefId} status to '{load.GetStatus()}'";
+        var message = $"Driver {driverName} confirmed the load #{load.Number} status to '{load.GetStatus()}'";
         await _notificationService.SendNotificationAsync(title, message);
     }
 }

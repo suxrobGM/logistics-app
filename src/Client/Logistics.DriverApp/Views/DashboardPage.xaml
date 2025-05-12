@@ -78,7 +78,7 @@
 
                                     <HorizontalStackLayout Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
                                         <Label Text="#" FontAttributes="Bold" />
-                                        <Label FontAttributes="Bold" Text="{Binding RefId}" />
+                                        <Label FontAttributes="Bold" Text="{Binding Number}" />
                                         <Label FontAttributes="Bold" Margin="10,0,0,0" Text="{Binding Name}" />
                                     </HorizontalStackLayout>
 

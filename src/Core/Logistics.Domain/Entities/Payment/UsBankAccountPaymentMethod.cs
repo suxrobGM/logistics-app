@@ -4,6 +4,7 @@ namespace Logistics.Domain.Entities;
 
 public class UsBankAccountPaymentMethod : PaymentMethod
 {
+    public override PaymentMethodType Type { get; set; } = PaymentMethodType.UsBankAccount;
     public required string BankName { get; set; }
     public required string AccountHolderName { get; set; }
     public required string AccountNumber { get; set; }

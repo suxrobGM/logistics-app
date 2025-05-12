@@ -22,7 +22,7 @@
                 <StackLayout Spacing="8">
                     <HorizontalStackLayout>
                         <Label Text="ID: " FontAttributes="Bold" />
-                        <Label Text="{Binding Load.RefId}" />
+                        <Label Text="{Binding Load.Number}" />
                     </HorizontalStackLayout>
                     <HorizontalStackLayout>
                         <Label Text="Name: " FontAttributes="Bold" />

@@ -1,4 +1,5 @@
 ﻿using Logistics.Domain.Entities;
+using Logistics.Shared.Consts;
 using Logistics.Shared.Models;
 
 namespace Logistics.Mappings;
@@ -7,14 +8,54 @@ public static class InvoiceMapper
 {
     public static InvoiceDto ToDto(this Invoice entity)
     {
-        return new InvoiceDto
+        return entity switch
         {
-            Id = entity.Id,
-            LoadRef = entity.Load.RefId,
-            LoadId = entity.LoadId,
-            CreatedDate = entity.CreateDate,
-            Customer = entity.Customer.ToDto(),
-            Payment = entity.Payment.ToDto()
+            LoadInvoice loadInvoice => new InvoiceDto()
+            {
+                Id = loadInvoice.Id,
+                Type = InvoiceType.Load,
+                Number = loadInvoice.Number,
+                Status = loadInvoice.Status,
+                Total = loadInvoice.Total.ToDto(),
+                DueDate = loadInvoice.DueDate,
+                Notes = loadInvoice.Notes,
+                StripeInvoiceId = loadInvoice.StripeInvoiceId,
+                Payments = loadInvoice.Payments.Select(i => i.ToDto()),
+                LoadId = loadInvoice.LoadId,
+                LoadNumber = loadInvoice.Load.Number,
+                CustomerId = loadInvoice.CustomerId
+            },
+            SubscriptionInvoice subscriptionInvoice => new InvoiceDto
+            {
+                Id = subscriptionInvoice.Id,
+                Type = InvoiceType.Load,
+                Number = subscriptionInvoice.Number,
+                Status = subscriptionInvoice.Status,
+                Total = subscriptionInvoice.Total.ToDto(),
+                DueDate = subscriptionInvoice.DueDate,
+                Notes = subscriptionInvoice.Notes,
+                StripeInvoiceId = subscriptionInvoice.StripeInvoiceId,
+                Payments = subscriptionInvoice.Payments.Select(i => i.ToDto()),
+                SubscriptionId = subscriptionInvoice.SubscriptionId,
+                BillingPeriodStart = subscriptionInvoice.BillingPeriodStart,
+                BillingPeriodEnd = subscriptionInvoice.BillingPeriodEnd
+            },
+            PayrollInvoice payrollInvoice => new InvoiceDto
+            {
+                Id = payrollInvoice.Id,
+                Type = InvoiceType.Load,
+                Number = payrollInvoice.Number,
+                Status = payrollInvoice.Status,
+                Total = payrollInvoice.Total.ToDto(),
+                DueDate = payrollInvoice.DueDate,
+                Notes = payrollInvoice.Notes,
+                StripeInvoiceId = payrollInvoice.StripeInvoiceId,
+                Payments = payrollInvoice.Payments.Select(i => i.ToDto()),
+                EmployeeId = payrollInvoice.EmployeeId,
+                PeriodStart = payrollInvoice.PeriodStart,
+                PeriodEnd = payrollInvoice.PeriodEnd
+            },
+            _ => throw new NotImplementedException($"Mapping for {entity.GetType().Name} is not implemented.")
         };
     }
 }

@@ -25,7 +25,7 @@ internal sealed class ProcessPaymentHandler : RequestHandler<ProcessPaymentComma
         }
 
         // TODO: Add payment verification from external provider
-        payment.SetStatus(PaymentStatus.Paid);
+        payment.Status = PaymentStatus.Paid;
         _tenantUow.Repository<Payment>().Update(payment);
         await _tenantUow.SaveChangesAsync();
         return Result.Succeed();

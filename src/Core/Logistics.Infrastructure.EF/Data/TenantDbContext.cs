@@ -1,5 +1,6 @@
 ﻿using Logistics.Domain.Entities;
 using Logistics.Domain.Services;
+using Logistics.Infrastructure.EF.Data.Configurations;
 using Logistics.Infrastructure.EF.Helpers;
 using Logistics.Infrastructure.EF.Interceptors;
 using Logistics.Infrastructure.EF.Options;
@@ -11,17 +12,20 @@ namespace Logistics.Infrastructure.EF.Data;
 
 public class TenantDbContext : DbContext
 {
-    private readonly DispatchDomainEventsInterceptor? _dispatchDomainEventsInterceptor;
+    private readonly DispatchDomainEventsInterceptor? _dispatchDomain;
+    private readonly AuditableEntitySaveChangesInterceptor? _auditableEntity;
     private readonly string _connectionString;
     private readonly ILogger<TenantDbContext>? _logger;
 
     public TenantDbContext(
         TenantDbContextOptions? tenantDbContextOptions = null, 
         ITenantService? tenantService = null,
-        DispatchDomainEventsInterceptor? dispatchDomainEventsInterceptor = null,
+        DispatchDomainEventsInterceptor? dispatchDomain = null,
+        AuditableEntitySaveChangesInterceptor? auditableEntity = null,
         ILogger<TenantDbContext>? logger = null)
     {
-        _dispatchDomainEventsInterceptor = dispatchDomainEventsInterceptor;
+        _dispatchDomain = dispatchDomain;
+        _auditableEntity = auditableEntity;
         _connectionString = tenantDbContextOptions?.ConnectionString ?? ConnectionStrings.LocalDefaultTenant;
         TenantService = tenantService;
         _logger = logger;
@@ -31,9 +35,13 @@ public class TenantDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        if (_dispatchDomainEventsInterceptor is not null)
+        if (_dispatchDomain is not null)
         {
-            options.AddInterceptors(_dispatchDomainEventsInterceptor);
+            options.AddInterceptors(_dispatchDomain);
+        }
+        if (_auditableEntity is not null)
+        {
+            options.AddInterceptors(_auditableEntity);
         }
 
         if (!options.IsConfigured)
@@ -55,62 +63,70 @@ public class TenantDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-
+        
+        builder.ApplyConfiguration(new AuditableEntityConfiguration());
         builder.Entity<TenantRoleClaim>().ToTable("RoleClaims");
         builder.Entity<Notification>().ToTable("Notifications");
         builder.Entity<Customer>().ToTable("Customers");
         
-        builder.Entity<Payment>(entity =>
+        builder.Entity<Payment>(cfg =>
         {
-            entity.ToTable("Payments");
-            entity.Property(i => i.Amount).HasPrecision(18, 2);
+            cfg.ToTable("Payments");
         });
-
-        builder.Entity<Invoice>(entity =>
+        
+        // ── Invoice (TPH)
+        builder.Entity<Invoice>(cfg =>
         {
-            entity.ToTable("Invoices");
-
-            entity.HasOne(i => i.Load)
-                .WithOne(i => i.Invoice)
-                .HasForeignKey<Load>(i => i.InvoiceId);
+            cfg.ToTable("Invoices")
+                .HasDiscriminator(i => i.Type)
+                .HasValue<LoadInvoice>(InvoiceType.Load)
+                .HasValue<SubscriptionInvoice>(InvoiceType.Subscription)
+                .HasValue<PayrollInvoice>(InvoiceType.Payroll);
             
-            entity.HasOne(i => i.Customer)
-                .WithMany(i => i.Invoices)
-                .HasForeignKey(i => i.CustomerId);
+            cfg.Property(i => i.Number)
+                .UseIdentityAlwaysColumn()
+                .IsRequired();
 
-            entity.HasOne(i => i.Payment)
-                .WithOne()
-                .HasForeignKey<Invoice>(i => i.PaymentId);
+            cfg.HasIndex(i => i.Number)
+                .IsUnique();
+
+            // Payments (1-many)
+            // cfg.HasMany<Payment>()
+            //     .WithOne(p => p.Invoice)
+            //     .HasForeignKey(p => p.InvoiceId);
         });
 
-        builder.Entity<Payroll>(entity =>
-        {
-            entity.ToTable("Payrolls");
+        // Fine-tune derived types for LoadInvoice, SubscriptionInvoice, and PayrollInvoice
+        builder.Entity<LoadInvoice>()
+            .HasOne(i => i.Load)
+            .WithMany(l => l.Invoices)
+            .HasForeignKey(i => i.LoadId);
 
-            entity.HasOne(i => i.Payment)
-                .WithOne()
-                .HasForeignKey<Payroll>(i => i.PaymentId);
-            
-            entity.HasOne(i => i.Employee)
-                .WithMany(i => i.PayrollPayments)
-                .HasForeignKey(i => i.EmployeeId);
-        });
+        builder.Entity<SubscriptionInvoice>()
+            .HasOne(i => i.Subscription)
+            .WithMany(s => s.Invoices)
+            .HasForeignKey(i => i.SubscriptionId);
 
-        builder.Entity<TenantRole>(entity =>
+        builder.Entity<PayrollInvoice>()
+            .HasOne(i => i.Employee)
+            .WithMany(e => e.PayrollInvoices)
+            .HasForeignKey(i => i.EmployeeId);
+
+        builder.Entity<TenantRole>(cfg =>
         {
-            entity.ToTable("Roles");
-            entity.HasMany(i => i.Claims)
+            cfg.ToTable("Roles");
+            cfg.HasMany(i => i.Claims)
                 .WithOne(i => i.Role)
                 .HasForeignKey(i => i.RoleId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        builder.Entity<Employee>(entity =>
+        builder.Entity<Employee>(cfg =>
         {
-            entity.ToTable("Employees");
-            entity.Property(i => i.Salary).HasPrecision(18, 2);
+            cfg.ToTable("Employees");
+            cfg.Property(i => i.Salary).HasPrecision(18, 2);
             
-            entity.HasMany(i => i.Roles)
+            cfg.HasMany(i => i.Roles)
                 .WithMany(i => i.Employees)
                 .UsingEntity<EmployeeTenantRole>(
                     l => l.HasOne<TenantRole>(i => i.Role).WithMany(i => i.EmployeeRoles),
@@ -118,30 +134,36 @@ public class TenantDbContext : DbContext
                     c => c.ToTable("EmployeeRoles"));
         });
 
-        builder.Entity<Truck>(entity =>
+        builder.Entity<Truck>(cfg =>
         {
-            entity.ToTable("Trucks");
+            cfg.ToTable("Trucks");
 
-            entity.HasMany(i => i.Drivers)
+            cfg.HasMany(i => i.Drivers)
                 .WithOne(i => i.Truck)
                 .HasForeignKey(i => i.TruckId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            entity.HasMany(i => i.Loads)
+            cfg.HasMany(i => i.Loads)
                 .WithOne(i => i.AssignedTruck)
                 .HasForeignKey(i => i.AssignedTruckId)
                 .OnDelete(DeleteBehavior.SetNull);
         });
 
-        builder.Entity<Load>(entity =>
+        builder.Entity<Load>(cfg =>
         {
-            entity.ToTable("Loads");
+            cfg.ToTable("Loads");
             //entity.OwnsOne(m => m.SourceAddress);
             //entity.OwnsOne(m => m.DestinationAddress);
-            entity.Property(i => i.DeliveryCost).HasPrecision(18, 2);
-            entity.HasIndex(i => i.RefId).IsUnique();
+            cfg.Property(i => i.DeliveryCost).HasPrecision(18, 2);
+            
+            cfg.Property(i => i.Number)
+                .UseIdentityAlwaysColumn()
+                .IsRequired();
 
-            entity.HasOne(i => i.AssignedDispatcher)
+            cfg.HasIndex(i => i.Number)
+                .IsUnique();
+
+            cfg.HasOne(i => i.AssignedDispatcher)
                 .WithMany(i => i.DispatchedLoads)
                 .HasForeignKey(i => i.AssignedDispatcherId);
                 //.OnDelete(DeleteBehavior.SetNull);
@@ -152,15 +174,15 @@ public class TenantDbContext : DbContext
                 //.OnDelete(DeleteBehavior.SetNull);
         });
         
-        builder.Entity<PaymentMethod>(entity =>
+        builder.Entity<PaymentMethod>(cfg =>
         {
-            entity.ToTable("PaymentMethods")
+            cfg.ToTable("PaymentMethods")
                 .HasDiscriminator(pm => pm.Type)
                 .HasValue<CardPaymentMethod>(PaymentMethodType.Card)
                 .HasValue<UsBankAccountPaymentMethod>(PaymentMethodType.UsBankAccount)
                 .HasValue<BankAccountPaymentMethod>(PaymentMethodType.InternationalBankAccount);
 
-            entity.HasIndex(i => i.StripePaymentMethodId);
+            cfg.HasIndex(i => i.StripePaymentMethodId);
         });
     }
 }

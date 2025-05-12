@@ -13,4 +13,10 @@ public enum PaymentMethodType
     
     [Description("International Bank Account"), EnumMember(Value = "international_bank_account")] 
     InternationalBankAccount,
+    
+    [Description("Cash"), EnumMember(Value = "cash")]
+    Cash,
+    
+    [Description("Check"), EnumMember(Value = "check")]
+    Check,
 }

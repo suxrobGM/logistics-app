@@ -13,7 +13,7 @@ public class FilterPaymentsByInterval : BaseSpecification<Payment>
         int pageSize)
     {
         Criteria = i =>
-            i.CreatedDate >= startPeriod && i.CreatedDate <= endPeriod;
+            i.CreatedAt >= startPeriod && i.CreatedAt <= endPeriod;
         
         ApplyOrderBy(orderBy);
         ApplyPaging(page, pageSize);
@@ -23,14 +23,11 @@ public class FilterPaymentsByInterval : BaseSpecification<Payment>
     {
         return propertyName switch
         {
-            "paymentdate" => i => i.PaymentDate,
             "method" => i => i.Method,
             "amount" => i => i.Amount,
             "status" => i => i.Status,
-            "notes" => i => i.Notes!,
-            "paymentfor" => i => i.PaymentFor,
             "billingaddress" => i => i.BillingAddress,
-            _ => i => i.CreatedDate
+            _ => i => i.CreatedAt
         };
     }
 }

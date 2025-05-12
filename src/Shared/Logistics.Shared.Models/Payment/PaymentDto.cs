@@ -2,16 +2,12 @@
 
 namespace Logistics.Shared.Models;
 
-public class PaymentDto
+public record PaymentDto
 {
-    public string Id { get; set; } = default!;
-    public DateTime CreatedDate { get; set; }
-    public DateTime? PaymentDate { get; set; }
+    public string Id { get; set; } = null!;
+    public DateTimeOffset CreatedAt { get; set; }
     public PaymentMethodType? Method { get; set; }
-    public decimal Amount { get; set; }
+    public MoneyDto Amount { get; set; } = null!;
     public PaymentStatus Status { get; set; }
-    public PaymentFor PaymentFor { get; set; }
     public AddressDto? BillingAddress { get; set; }
-    public string? Notes { get; set; }
-    public string? SubscriptionId { get; set; }
 }

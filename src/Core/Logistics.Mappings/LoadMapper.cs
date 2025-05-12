@@ -10,7 +10,7 @@ public static class LoadMapper
         var dto = new LoadDto
         {
             Id = entity.Id,
-            RefId = entity.RefId,
+            Number = entity.Number,
             Name = entity.Name,
             OriginAddress = entity.OriginAddress.ToDto(),
             OriginAddressLat = entity.OriginAddressLat,
@@ -32,7 +32,7 @@ public static class LoadMapper
             AssignedTruckNumber = entity.AssignedTruck?.TruckNumber,
             AssignedTruckDriversName = entity.AssignedTruck?.Drivers.Select(i => i.GetFullName()),
             Customer = entity.Customer?.ToDto(),
-            Invoice = entity.Invoice?.ToDto()
+            Invoices = entity.Invoices.Select(i => i.ToDto()),
         };
         
         if (entity.AssignedTruck?.CurrentLocation?.IsNotNull() ?? false)

@@ -23,13 +23,9 @@ internal sealed class UpdateInvoiceHandler : RequestHandler<UpdateInvoiceCommand
             return Result.Fail($"Could not find an invoice with ID '{req.Id}'");
         }
         
-        if (req.PaymentMethod.HasValue && invoice.Payment.Method != req.PaymentMethod)
+        if (req.InvoiceStatus.HasValue && invoice.Status != req.InvoiceStatus)
         {
-            invoice.Payment.Method = req.PaymentMethod.Value;
-        }
-        if (req.PaymentAmount.HasValue && invoice.Payment.Amount != req.PaymentAmount)
-        {
-            invoice.Payment.Amount = req.PaymentAmount.Value;
+            invoice.Status = req.InvoiceStatus.Value;
         }
         
         _tenantUow.Repository<Invoice>().Update(invoice);

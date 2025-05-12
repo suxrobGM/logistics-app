@@ -4,10 +4,10 @@ namespace Logistics.Domain.Events;
 
 public class NewLoadCreatedEvent : IDomainEvent
 {
-    public NewLoadCreatedEvent(ulong loadRefId)
+    public NewLoadCreatedEvent(string loadId)
     {
-        LoadRefId = loadRefId;
+        LoadId = loadId;
     }
     
-    public ulong LoadRefId { get; }
+    public string LoadId { get; }
 }

@@ -30,21 +30,21 @@ public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
 
     private void UpdateEntities(DbContext? context)
     {
-        if (context == null) 
+        if (context is null) 
             return;
 
-        foreach (var entry in context.ChangeTracker.Entries<AuditableEntity>())
+        foreach (var entry in context.ChangeTracker.Entries<IAuditableEntity>())
         {
             if (entry.State is EntityState.Added)
             {
+                entry.Entity.CreatedAt = DateTimeOffset.UtcNow;
                 entry.Entity.CreatedBy = _httpContext.GetUserId();
-                entry.Entity.Created = DateTime.UtcNow;
             } 
 
             if (entry.State is EntityState.Modified || entry.HasChangedOwnedEntities())
             {
+                entry.Entity.LastModifiedAt = DateTimeOffset.UtcNow;
                 entry.Entity.LastModifiedBy = _httpContext.GetUserId();
-                entry.Entity.LastModified = DateTime.UtcNow;
             }
         }
     }

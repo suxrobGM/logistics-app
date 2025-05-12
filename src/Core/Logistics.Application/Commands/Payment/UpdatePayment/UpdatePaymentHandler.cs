@@ -22,18 +22,14 @@ internal sealed class UpdatePaymentHandler : RequestHandler<UpdatePaymentCommand
         {
             return Result.Fail($"Could not find a payment with ID '{req.Id}'");
         }
-
-        if (req.PaymentFor.HasValue && payment.PaymentFor != req.PaymentFor)
-        {
-            payment.PaymentFor = req.PaymentFor.Value;
-        }
+        
         if (req.Method.HasValue && payment.Method != req.Method)
         {
             payment.Method = req.Method.Value;
         }
         if (req.Status.HasValue && payment.Status != req.Status)
         {
-            payment.SetStatus(req.Status.Value);
+            payment.Status = req.Status.Value;
         }
         if (req.Amount.HasValue && payment.Amount != req.Amount)
         {
@@ -42,10 +38,6 @@ internal sealed class UpdatePaymentHandler : RequestHandler<UpdatePaymentCommand
         if (req.BillingAddress != null && payment.BillingAddress != req.BillingAddress)
         {
             payment.BillingAddress = req.BillingAddress;
-        }
-        if (!string.IsNullOrEmpty(req.Notes) && payment.Notes != req.Notes)
-        {
-            payment.Notes = req.Notes;
         }
         
         _tenantUow.Repository<Payment>().Update(payment);

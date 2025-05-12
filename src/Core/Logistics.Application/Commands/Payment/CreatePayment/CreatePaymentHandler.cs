@@ -21,9 +21,7 @@ internal sealed class CreatePaymentHandler : RequestHandler<CreatePaymentCommand
         {
             Amount = req.Amount,
             Method = req.Method,
-            PaymentFor = req.PaymentFor,
             BillingAddress = req.BillingAddress ?? Address.NullAddress,
-            Notes = req.Notes
         };
         
         await _tenantUow.Repository<Payment>().AddAsync(payment);

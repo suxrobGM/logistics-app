@@ -29,8 +29,8 @@ public class Employee : Entity, ITenantEntity
     /// <summary>
     /// Dispatched loads by dispatchers
     /// </summary>
-    public virtual List<Load> DispatchedLoads { get; } = new();
-    public virtual List<Payroll> PayrollPayments { get; set; } = new();
+    public virtual List<Load> DispatchedLoads { get; } = [];
+    public virtual List<PayrollInvoice> PayrollInvoices { get; set; } = [];
 
     /// <summary>
     /// User tenant roles
@@ -41,7 +41,10 @@ public class Employee : Entity, ITenantEntity
 
     public string GetFullName() => $"{FirstName} {LastName}";
 
-    public static Employee CreateEmployeeFromUser(User user, decimal salary = 0, SalaryType salaryType = SalaryType.None)
+    public static Employee CreateEmployeeFromUser(
+        User user, 
+        decimal salary = 0, 
+        SalaryType salaryType = SalaryType.None)
     {
         var newEmployee = new Employee
         {

@@ -10,14 +10,10 @@ public static class PaymentMapper
         var dto = new PaymentDto
         {
             Id = entity.Id,
-            Amount = entity.Amount,
-            CreatedDate = entity.CreatedDate,
-            Notes = entity.Notes,
+            Amount = entity.Amount.ToDto(),
+            CreatedAt = entity.CreatedAt,
             Method = entity.Method,
-            PaymentDate = entity.PaymentDate,
-            PaymentFor = entity.PaymentFor,
             Status = entity.Status,
-            SubscriptionId = entity.SubscriptionId,
         };
         
         if (entity.BillingAddress.IsNotNull())

@@ -23,6 +23,7 @@ public static class Registrar
     {
         services.AddDomainLayer();
         services.AddScoped<DispatchDomainEventsInterceptor>();
+        services.AddScoped<AuditableEntitySaveChangesInterceptor>();
         return new InfrastructureBuilder(services, configuration);
     }
 }

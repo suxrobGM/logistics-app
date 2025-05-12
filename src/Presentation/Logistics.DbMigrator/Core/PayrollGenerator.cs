@@ -38,7 +38,7 @@ public class PayrollGenerator
     
     private async Task ProcessPayrolls(Employee[] employees, List<(DateTime StartDate, DateTime EndDate)> dateRanges)
     {
-        var payrollRepository = _tenantUow.Repository<Payroll>();
+        var payrollRepository = _tenantUow.Repository<PayrollInvoice>();
         foreach (var range in dateRanges)
         {
             foreach (var employee in employees)
@@ -60,21 +60,21 @@ public class PayrollGenerator
         }
     } 
     
-    private async Task<bool> IsPayrollExisting(
-        ITenantRepository<Payroll, string> payrollRepository,
+    private static async Task<bool> IsPayrollExisting(
+        ITenantRepository<PayrollInvoice, string> payrollRepository,
         string employeeId,
         DateTime startDate,
         DateTime endDate)
     {
         var payroll = await payrollRepository.GetAsync(p =>
             p.EmployeeId == employeeId &&
-            p.StartDate >= startDate &&
-            p.EndDate <= endDate);
+            p.PeriodStart >= startDate &&
+            p.PeriodEnd <= endDate);
 
         return payroll != null;
     }
     
-    private static Payroll CreatePayroll(Employee employee, DateTime startDate, DateTime endDate)
+    private static PayrollInvoice CreatePayroll(Employee employee, DateTime startDate, DateTime endDate)
     {
         var billingAddress = new Address
         {
@@ -85,24 +85,26 @@ public class PayrollGenerator
             Country = "United States"
         };
         
+        var amount = CalculateSalary(employee, startDate, endDate);
+        
         var payment = new Payment
         {
-            Amount = CalculateSalary(employee, startDate, endDate),
-            PaymentFor = PaymentFor.Payroll,
+            Amount = amount,
             Method = PaymentMethodType.Card,
             Status = PaymentStatus.Paid,
-            PaymentDate = DateTime.UtcNow,
             BillingAddress = billingAddress
         };
-        
-        var payroll = new Payroll
+
+        var payroll = new PayrollInvoice
         {
-            StartDate = startDate,
-            EndDate = endDate,
+            Total = amount,
+            PeriodStart = startDate,
+            PeriodEnd = endDate,
+            EmployeeId = employee.Id,
             Employee = employee,
-            Payment = payment
         };
 
+        payroll.ApplyPayment(payment);
         return payroll;
     }
 

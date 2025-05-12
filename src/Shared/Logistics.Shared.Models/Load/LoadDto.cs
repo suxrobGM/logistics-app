@@ -5,7 +5,7 @@ namespace Logistics.Shared.Models;
 public class LoadDto
 {
     public string Id { get; set; } = default!;
-    public ulong RefId { get; set; }
+    public long Number { get; set; }
     public string? Name { get; set; }
     public required AddressDto OriginAddress { get; set; }
     public double? OriginAddressLat { get; set; }
@@ -26,7 +26,8 @@ public class LoadDto
     public string? AssignedTruckId { get; set; }
     public string? AssignedTruckNumber { get; set; }
     public AddressDto? CurrentLocation { get; set; }
-    public InvoiceDto? Invoice { get; set; }
+    
     public CustomerDto? Customer { get; set; }
     public IEnumerable<string>? AssignedTruckDriversName { get; set; }
+    public IEnumerable<InvoiceDto> Invoices { get; set; } = [];
 }

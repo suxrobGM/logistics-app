@@ -15,5 +15,11 @@ public enum PaymentStatus
     Failed,
     
     [Description("Cancelled"), EnumMember(Value = "cancelled")]
-    Cancelled
+    Cancelled,
+    
+    [Description("Refunded"), EnumMember(Value = "refunded")]
+    Refunded,
+    
+    [Description("Partially Refunded"), EnumMember(Value = "partially_refunded")]
+    PartiallyRefunded,
 }
