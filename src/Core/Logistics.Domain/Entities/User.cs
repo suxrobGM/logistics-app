@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.Domain.Entities;
 
-public class User : IdentityUser, IEntity<string>, IAuditableEntity
+public class User : IdentityUser, IEntity<string>, IMasterEntity, IAuditableEntity
 {
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;

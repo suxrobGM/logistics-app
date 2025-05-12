@@ -3,7 +3,7 @@ using Logistics.Domain.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
-public class Tenant : Entity
+public class Tenant : Entity, IMasterEntity
 {
     public required string Name { get; set; }
     public string? CompanyName { get; set; }

@@ -4,7 +4,7 @@ using Logistics.Shared.Consts;
 
 namespace Logistics.Domain.Entities;
 
-public class Payment : AuditableEntity, ITenantEntity
+public class Payment : AuditableEntity, IMasterEntity, ITenantEntity
 {
     public Money Amount { get; set; } = Money.Zero();
     public PaymentStatus Status { get; set; }

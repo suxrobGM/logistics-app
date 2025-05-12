@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.Domain.Entities;
 
-public class AppRole : IdentityRole<string>, IEntity<string>
+public class AppRole : IdentityRole<string>, IEntity<string>, IMasterEntity
 {
     public AppRole(string name): base(name)
     {

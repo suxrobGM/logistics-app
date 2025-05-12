@@ -4,7 +4,7 @@ using Logistics.Shared.Consts;
 
 namespace Logistics.Domain.Entities;
 
-public class Subscription : Entity
+public class Subscription : Entity, IMasterEntity
 {
     public SubscriptionStatus Status { get; set; }
     public required string TenantId { get; set; }

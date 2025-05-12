@@ -1,0 +1,31 @@
+﻿using Logistics.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Logistics.Infrastructure.EF.Data.Configurations;
+
+public class LoadEntityConfiguration : IEntityTypeConfiguration<Load>
+{
+    public void Configure(EntityTypeBuilder<Load> builder)
+    {
+        builder.ToTable("Loads");
+            
+        builder.ComplexProperty(i => i.DeliveryCost, money =>
+        {
+            money.Property(m => m.Amount).HasPrecision(18, 2);
+            money.Property(m => m.Currency).HasMaxLength(3);
+        });
+            
+        builder.Property(i => i.Number)
+            .UseIdentityAlwaysColumn()
+            .IsRequired();
+
+        builder.HasIndex(i => i.Number)
+            .IsUnique();
+
+        builder.HasOne(i => i.AssignedDispatcher)
+            .WithMany(i => i.DispatchedLoads)
+            .HasForeignKey(i => i.AssignedDispatcherId);
+            //.OnDelete(DeleteBehavior.SetNull);
+    }
+}

@@ -4,7 +4,7 @@ using Logistics.Shared.Consts;
 
 namespace Logistics.Domain.Entities;
 
-public abstract class Invoice : Entity, ITenantEntity, IAuditableEntity
+public abstract class Invoice : Entity, IMasterEntity, ITenantEntity, IAuditableEntity
 {
     public long Number { get; set; }
     public abstract InvoiceType Type { get; set; }

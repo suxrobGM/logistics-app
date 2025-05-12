@@ -6,7 +6,7 @@ namespace Logistics.Infrastructure.EF.Persistence;
 
 internal class MasterRepository<TEntity, TKey> : 
     Repository<MasterDbContext, TEntity, TKey>, IMasterRepository<TEntity, TKey>
-    where TEntity : class, IEntity<TKey>
+    where TEntity : class, IEntity<TKey>, IMasterEntity
 {
     public MasterRepository(MasterDbContext masterDbContext) : base(masterDbContext)
     {

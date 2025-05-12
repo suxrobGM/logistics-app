@@ -18,7 +18,7 @@ public class Load : Entity, ITenantEntity
     public double? DestinationAddressLat { get; set; }
     public double? DestinationAddressLong { get; set; }
     
-    public decimal DeliveryCost { get; set; }
+    public required Money DeliveryCost { get; set; }
     public double Distance { get; set; }
     public bool CanConfirmPickUp { get; set; }
     public bool CanConfirmDelivery { get; set; }

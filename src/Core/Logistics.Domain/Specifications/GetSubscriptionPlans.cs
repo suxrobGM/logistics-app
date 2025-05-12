@@ -21,7 +21,7 @@ public class GetSubscriptionPlans : BaseSpecification<SubscriptionPlan>
             "name" => i => i.Name,
             "description" => i => i.Description,
             "price" => i => i.Price,
-            _ => i => i.CreatedDate
+            _ => i => i.CreatedAt
         };
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Logistics.Domain.Core;
+using Logistics.Domain.ValueObjects;
 using Logistics.Shared.Consts;
 
 namespace Logistics.Domain.Entities;
@@ -10,7 +11,7 @@ public class Employee : Entity, ITenantEntity
     public string? LastName { get; set; }
     public string? PhoneNumber { get; set; }
     
-    public decimal Salary { get; set; }
+    public required Money Salary { get; set; }
     public SalaryType SalaryType { get; set; }
     
     /// <summary>

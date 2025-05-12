@@ -13,21 +13,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "AuditableEntity",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    LastModifiedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AuditableEntity", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Customers",
                 columns: table => new
                 {
@@ -113,15 +98,18 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     Id = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
-                    Price = table.Column<decimal>(type: "numeric", nullable: false),
-                    Currency = table.Column<string>(type: "text", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     StripePriceId = table.Column<string>(type: "text", nullable: true),
                     StripeProductId = table.Column<string>(type: "text", nullable: true),
                     Interval = table.Column<int>(type: "integer", nullable: false),
                     IntervalCount = table.Column<int>(type: "integer", nullable: false),
                     BillingCycleAnchor = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    TrialPeriod = table.Column<int>(type: "integer", nullable: false)
+                    TrialPeriod = table.Column<int>(type: "integer", nullable: false),
+                    Price_Amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    Price_Currency = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    LastModifiedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -269,11 +257,12 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     FirstName = table.Column<string>(type: "text", nullable: true),
                     LastName = table.Column<string>(type: "text", nullable: true),
                     PhoneNumber = table.Column<string>(type: "text", nullable: true),
-                    Salary = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     SalaryType = table.Column<int>(type: "integer", nullable: false),
                     JoinedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DeviceToken = table.Column<string>(type: "text", nullable: true),
-                    TruckId = table.Column<string>(type: "text", nullable: true)
+                    TruckId = table.Column<string>(type: "text", nullable: true),
+                    Salary_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    Salary_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -322,7 +311,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     OriginAddressLong = table.Column<double>(type: "double precision", nullable: true),
                     DestinationAddressLat = table.Column<double>(type: "double precision", nullable: true),
                     DestinationAddressLong = table.Column<double>(type: "double precision", nullable: true),
-                    DeliveryCost = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Distance = table.Column<double>(type: "double precision", nullable: false),
                     CanConfirmPickUp = table.Column<bool>(type: "boolean", nullable: false),
                     CanConfirmDelivery = table.Column<bool>(type: "boolean", nullable: false),
@@ -332,6 +320,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     CustomerId = table.Column<string>(type: "text", nullable: true),
                     AssignedTruckId = table.Column<string>(type: "text", nullable: true),
                     AssignedDispatcherId = table.Column<string>(type: "text", nullable: true),
+                    DeliveryCost_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    DeliveryCost_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
                     DestinationAddress_City = table.Column<string>(type: "text", nullable: false),
                     DestinationAddress_Country = table.Column<string>(type: "text", nullable: false),
                     DestinationAddress_Line1 = table.Column<string>(type: "text", nullable: false),
@@ -382,8 +372,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
                     LastModifiedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     LastModifiedBy = table.Column<string>(type: "text", nullable: true),
-                    Total_Amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    Total_Currency = table.Column<string>(type: "text", nullable: false),
+                    Total_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    Total_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
                     LoadId = table.Column<string>(type: "text", nullable: true),
                     CustomerId = table.Column<string>(type: "text", nullable: true),
                     EmployeeId = table.Column<string>(type: "text", nullable: true),
@@ -430,24 +420,22 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     Status = table.Column<int>(type: "integer", nullable: false),
                     Method = table.Column<int>(type: "integer", nullable: false),
                     InvoiceId = table.Column<string>(type: "text", nullable: true),
-                    Amount_Amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    Amount_Currency = table.Column<string>(type: "text", nullable: false),
+                    Amount_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    Amount_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
                     BillingAddress_City = table.Column<string>(type: "text", nullable: false),
                     BillingAddress_Country = table.Column<string>(type: "text", nullable: false),
                     BillingAddress_Line1 = table.Column<string>(type: "text", nullable: false),
                     BillingAddress_Line2 = table.Column<string>(type: "text", nullable: true),
                     BillingAddress_State = table.Column<string>(type: "text", nullable: false),
-                    BillingAddress_ZipCode = table.Column<string>(type: "text", nullable: false)
+                    BillingAddress_ZipCode = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    LastModifiedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Payments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Payments_AuditableEntity_Id",
-                        column: x => x.Id,
-                        principalTable: "AuditableEntity",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Payments_Invoices_InvoiceId",
                         column: x => x.InvoiceId,
@@ -515,7 +503,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
             migrationBuilder.CreateIndex(
                 name: "IX_PaymentMethods_StripePaymentMethodId",
                 table: "PaymentMethods",
-                column: "StripePaymentMethodId");
+                column: "StripePaymentMethodId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payments_InvoiceId",
@@ -564,9 +553,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             migrationBuilder.DropTable(
                 name: "User");
-
-            migrationBuilder.DropTable(
-                name: "AuditableEntity");
 
             migrationBuilder.DropTable(
                 name: "Invoices");

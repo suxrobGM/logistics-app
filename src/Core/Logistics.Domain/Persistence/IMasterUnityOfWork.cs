@@ -4,9 +4,9 @@ namespace Logistics.Domain.Persistence;
 
 public interface IMasterUnityOfWork : IDisposable
 {
-    IMasterRepository<TEntity, string> Repository<TEntity>() where TEntity : class, IEntity<string>;
+    IMasterRepository<TEntity, string> Repository<TEntity>() where TEntity : class, IEntity<string>, IMasterEntity;
     
-    IMasterRepository<TEntity, TKey> Repository<TEntity, TKey>() where TEntity : class, IEntity<TKey>;
+    IMasterRepository<TEntity, TKey> Repository<TEntity, TKey>() where TEntity : class, IEntity<TKey>, IMasterEntity;
     
     /// <summary>
     /// Save changes to database

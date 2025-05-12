@@ -4,8 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Logistics.Infrastructure.EF.Data.Configurations;
 
-internal sealed class AuditableEntityConfiguration
-    : IEntityTypeConfiguration<AuditableEntity>
+internal sealed class AuditableEntityConfiguration : IEntityTypeConfiguration<AuditableEntity>
 {
     public void Configure(EntityTypeBuilder<AuditableEntity> builder)
     {

@@ -1,9 +1,10 @@
 ﻿using Logistics.Domain.Core;
+using Logistics.Domain.ValueObjects;
 using Logistics.Shared.Consts;
 
 namespace Logistics.Domain.Entities;
 
-public class SubscriptionPlan : Entity
+public class SubscriptionPlan : AuditableEntity, IMasterEntity
 {
     public required string Name { get; set; }
     public string? Description { get; set; }
@@ -11,9 +12,7 @@ public class SubscriptionPlan : Entity
     /// <summary>
     /// Subscription price per employee
     /// </summary>
-    public decimal Price { get; set; }
-    public string Currency { get; set; } = "USD";
-    public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+    public required Money Price { get; set; }
     public string? StripePriceId { get; set; }
     public string? StripeProductId { get; set; }
     

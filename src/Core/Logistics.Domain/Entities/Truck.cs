@@ -23,12 +23,12 @@ public class Truck : Entity, ITenantEntity
     /// </summary>
     public double? CurrentLocationLong { get; set; }
 
-    public virtual List<Employee> Drivers { get; set; } = new();
-    public virtual List<Load> Loads { get; } = new();
+    public virtual List<Employee> Drivers { get; set; } = [];
+    public virtual List<Load> Loads { get; } = [];
 
     public static Truck Create(string truckNumber, Employee driver)
     {
-        return Create(truckNumber, new []{driver});
+        return Create(truckNumber, [driver]);
     }
     
     public static Truck Create(string truckNumber, IEnumerable<Employee> drivers)
@@ -47,6 +47,8 @@ public class Truck : Entity, ITenantEntity
     /// </summary>
     public float GetDriversShareRatio()
     {
-        return Drivers.Where(i => i.SalaryType == SalaryType.ShareOfGross).Sum(i => (float)i.Salary);
+        return (float)Drivers
+            .Where(i => i.SalaryType == SalaryType.ShareOfGross)
+            .Sum(i => i.Salary.Amount);
     }
 }

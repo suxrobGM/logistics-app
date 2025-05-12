@@ -230,7 +230,7 @@ internal class StripeService : IStripeService
         {
             Product = product.Id,
             UnitAmountDecimal = plan.Price * 100,
-            Currency = plan.Currency.ToLower(),
+            Currency = plan.Price.Currency.ToLower(),
             Recurring = new PriceRecurringOptions
             {
                 Interval = plan.Interval.ToString().ToLower(),
@@ -291,7 +291,7 @@ internal class StripeService : IStripeService
         var priceService = new PriceService();
         var existingPrice = await priceService.GetAsync(plan.StripePriceId);
         var priceChanged = existingPrice.UnitAmountDecimal != plan.Price * 100;
-        var currencyChanged = !existingPrice.Currency.Equals(plan.Currency, StringComparison.OrdinalIgnoreCase);
+        var currencyChanged = !existingPrice.Currency.Equals(plan.Price.Currency, StringComparison.OrdinalIgnoreCase);
         
         // Check if billing cycle changed
         var billingChanged =
@@ -308,7 +308,7 @@ internal class StripeService : IStripeService
             {
                 Product = plan.StripeProductId,
                 UnitAmountDecimal = plan.Price * 100,
-                Currency = plan.Currency.ToLower(),
+                Currency = plan.Price.Currency.ToLower(),
                 Recurring = new PriceRecurringOptions
                 {
                     Interval = plan.Interval.ToString().ToLower(),

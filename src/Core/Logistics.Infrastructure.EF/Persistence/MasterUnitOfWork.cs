@@ -16,13 +16,13 @@ internal class MasterUnitOfWork : IMasterUnityOfWork
     }
 
     public IMasterRepository<TEntity, string> Repository<TEntity>() 
-        where TEntity : class, IEntity<string>
+        where TEntity : class, IEntity<string>, IMasterEntity
     {
         return Repository<TEntity, string>();
     }
 
     public IMasterRepository<TEntity, TKey> Repository<TEntity, TKey>() 
-        where TEntity : class, IEntity<TKey>
+        where TEntity : class, IEntity<TKey>, IMasterEntity
     {
         var type = typeof(TEntity).Name;
 
