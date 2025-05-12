@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using Logistics.Shared.Models;
 using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services.Authentication;
 
@@ -104,7 +103,7 @@ public class StatsPageViewModel : BaseViewModel
     {
 	    IsLoading = true;
 	    var driverUserId = _authService.User!.Id!;
-	    var result = await _apiClient.GetDriverStatsAsync(driverUserId);
+	    var result = await _apiClient.GetDriverStatsAsync(driverUserId.Value);
 
 	    if (!result.Success)
 	    {
@@ -124,7 +123,7 @@ public class StatsPageViewModel : BaseViewModel
 
         var result = await _apiClient.GetDailyGrossesAsync(new GetDailyGrossesQuery
         {
-	        UserId = driverUserId,
+	        UserId = driverUserId.Value,
 	        StartDate = ChartDateRange.StartDate,
 	        EndDate = ChartDateRange.EndDate
         });

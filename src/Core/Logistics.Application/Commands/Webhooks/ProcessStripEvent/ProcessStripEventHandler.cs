@@ -91,14 +91,14 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
             return Result.Fail($"{StripeMetadataKeys.PlanId} not found in subscription metadata.");
         }
 
-        var tenant = await _masterUow.Repository<Tenant>().GetByIdAsync(tenantId);
+        var tenant = await _masterUow.Repository<Tenant>().GetByIdAsync(Guid.Parse(tenantId));
         
         if (tenant is null)
         {
             return Result.Fail($"Could not find a tenant with ID '{tenantId}'");
         }
         
-        var subscriptionPlan = await _masterUow.Repository<SubscriptionPlan>().GetByIdAsync(planId);
+        var subscriptionPlan = await _masterUow.Repository<SubscriptionPlan>().GetByIdAsync(Guid.Parse(planId));
 
         if (subscriptionPlan is null)
         {

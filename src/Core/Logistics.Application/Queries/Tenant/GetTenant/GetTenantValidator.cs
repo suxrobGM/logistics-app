@@ -12,6 +12,6 @@ internal sealed class GetTenantValidator : AbstractValidator<GetTenantQuery>
     
     private static bool HaveIdOrName(GetTenantQuery query)
     {
-        return !string.IsNullOrEmpty(query.Id) || !string.IsNullOrEmpty(query.Name);
+        return query.Id.HasValue || !string.IsNullOrEmpty(query.Name);
     }
 }

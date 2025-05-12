@@ -13,6 +13,6 @@ public interface IApiClient :
     ISubscriptionApi
 {
     string? AccessToken { get; set; }
-    string? TenantId { get; set; }
+    Guid? TenantId { get; set; }
     public event EventHandler<string>? OnErrorResponse;
 }

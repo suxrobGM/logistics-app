@@ -4,7 +4,7 @@ namespace Logistics.Shared.Models;
 
 public record InvoiceDto
 {
-    public string Id { get; set; } = null!;
+    public Guid Id { get; set; }
   
     public long Number { get; set; }
     public InvoiceType Type { get; set; }
@@ -23,16 +23,16 @@ public record InvoiceDto
     
     // LoadInvoice fields
     public long LoadNumber { get; set; }
-    public string? LoadId { get; set; }
-    public string? CustomerId { get; set; }
+    public Guid? LoadId { get; set; }
+    public Guid? CustomerId { get; set; }
     
     // PayrollInvoice fields
-    public string? EmployeeId { get; set; }
+    public Guid? EmployeeId { get; set; }
     public DateTime? PeriodStart { get; set; }
     public DateTime? PeriodEnd { get; set; }
     
     // SubscriptionInvoice fields
-    public string? SubscriptionId { get; set; }
+    public Guid? SubscriptionId { get; set; }
     public DateTime? BillingPeriodStart { get; set; }
     public DateTime? BillingPeriodEnd { get; set; }
 }

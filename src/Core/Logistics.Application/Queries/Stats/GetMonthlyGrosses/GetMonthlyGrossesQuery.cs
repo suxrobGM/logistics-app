@@ -5,6 +5,6 @@ namespace Logistics.Application.Queries;
 
 public class GetMonthlyGrossesQuery : IntervalQuery, IRequest<Result<MonthlyGrossesDto>>
 {
-    public string? TruckId { get; set; }
-    public string? UserId { get; set; }
+    public Guid? TruckId { get; set; }
+    public Guid? UserId { get; set; }
 }

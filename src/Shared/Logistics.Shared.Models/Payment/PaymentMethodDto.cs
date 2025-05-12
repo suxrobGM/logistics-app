@@ -4,7 +4,7 @@ namespace Logistics.Shared.Models;
 
 public record PaymentMethodDto
 {
-    public required string Id { get; set; }
+    public Guid Id { get; set; }
     public PaymentMethodType Type { get; set; }
     public PaymentMethodVerificationStatus VerificationStatus { get; set; }
     public bool IsDefault { get; set; }

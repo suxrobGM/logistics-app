@@ -34,7 +34,8 @@ internal class NotificationService : INotificationService
 
         if (changes > 0)
         {
-            await _notificationHub.Clients.Group(tenantId).ReceiveNotification(notification.ToDto());
+            await _notificationHub.Clients.Group(tenantId.ToString())
+                .ReceiveNotification(notification.ToDto());
         }
     }
 }

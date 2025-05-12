@@ -5,5 +5,5 @@ namespace Logistics.Application.Queries;
 
 public sealed class GetSubscriptionQuery : IRequest<Result<SubscriptionDto>>
 {
-    public string Id { get; set; } = null!;
+    public Guid Id { get; set; }
 }

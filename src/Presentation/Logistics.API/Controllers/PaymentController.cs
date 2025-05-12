@@ -21,11 +21,11 @@ public class PaymentController : ControllerBase
 
     #region Payments
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(Result<PaymentDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.View)]
-    public async Task<IActionResult> GetById(string id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         var result = await _mediator.Send(new GetPaymentQuery {Id = id});
         return result.Success ? Ok(result) : BadRequest(result);
@@ -61,22 +61,22 @@ public class PaymentController : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.Edit)]
-    public async Task<IActionResult> Update(string id, [FromBody] UpdatePaymentCommand request)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdatePaymentCommand request)
     {
         request.Id = id;
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
     
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.Delete)]
-    public async Task<IActionResult> Delete(string id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         var result = await _mediator.Send(new DeleteCustomerCommand {Id = id});
         return result.Success ? Ok(result) : BadRequest(result);
@@ -87,11 +87,11 @@ public class PaymentController : ControllerBase
     
     #region Payment Methods
     
-    [HttpGet("methods/{id}")]
+    [HttpGet("methods/{id:guid}")]
     [ProducesResponseType(typeof(Result<PaymentMethodDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.View)]
-    public async Task<IActionResult> GetPaymentMethodById(string id)
+    public async Task<IActionResult> GetPaymentMethodById(Guid id)
     {
         var result = await _mediator.Send(new GetPaymentMethodQuery {Id = id});
         return result.Success ? Ok(result) : BadRequest(result);
@@ -147,11 +147,11 @@ public class PaymentController : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
     
-    [HttpDelete("methods/{id}")]
+    [HttpDelete("methods/{id:guid}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.Edit)]
-    public async Task<IActionResult> DeletePaymentMethod(string id)
+    public async Task<IActionResult> DeletePaymentMethod(Guid id)
     {
         var result = await _mediator.Send(new DeletePaymentMethodCommand {Id = id});
         return result.Success ? Ok(result) : BadRequest(result);

@@ -48,11 +48,11 @@ public class AccountPageViewModel : BaseViewModel
     {
         var userId = _authService.User?.Id;
 
-        if (string.IsNullOrEmpty(userId))
+        if (userId is null)
             return;
         
         IsLoading = true;
-        var result = await _apiClient.GetUserAsync(userId);
+        var result = await _apiClient.GetUserAsync(userId.Value);
 
         if (result.Success)
         {

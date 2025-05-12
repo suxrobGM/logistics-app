@@ -60,11 +60,11 @@ public class StatController : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
     
-    [HttpGet("driver/{userId}")]
+    [HttpGet("driver/{userId:guid}")]
     [ProducesResponseType(typeof(PagedResult<DriverStatsDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Stats.View)]
-    public async Task<IActionResult> GetDriverStatsList(string userId, [FromQuery] GetDriverStatsQuery request)
+    public async Task<IActionResult> GetDriverStatsList(Guid userId, [FromQuery] GetDriverStatsQuery request)
     {
         request.UserId = userId;
         var result = await _mediator.Send(request);

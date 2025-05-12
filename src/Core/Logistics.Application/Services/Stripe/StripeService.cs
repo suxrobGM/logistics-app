@@ -39,7 +39,7 @@ internal class StripeService : IStripeService
         options.Email = tenant.BillingEmail;
         options.Name = tenant.CompanyName;
         options.Address = tenant.CompanyAddress.ToStripeAddressOptions();
-        options.Metadata = new Dictionary<string, string> { { StripeMetadataKeys.TenantId, tenant.Id } };
+        options.Metadata = new Dictionary<string, string> { { StripeMetadataKeys.TenantId, tenant.Id.ToString() } };
         
         var customer = await new CustomerService().CreateAsync(options);
         _logger.LogInformation("Created Stripe customer for tenant {TenantId}", tenant.Id);
@@ -58,7 +58,7 @@ internal class StripeService : IStripeService
         options.Email = tenant.BillingEmail;
         options.Name = tenant.CompanyName;
         options.Address = tenant.CompanyAddress.ToStripeAddressOptions();
-        options.Metadata = new Dictionary<string, string> { { StripeMetadataKeys.TenantId, tenant.Id } };
+        options.Metadata = new Dictionary<string, string> { { StripeMetadataKeys.TenantId, tenant.Id.ToString() } };
         
         return new CustomerService().UpdateAsync(tenant.StripeCustomerId, options);
     }
@@ -93,8 +93,8 @@ internal class StripeService : IStripeService
         ];
         options.Metadata = new Dictionary<string, string>
         {
-            { StripeMetadataKeys.TenantId, tenant.Id },
-            { StripeMetadataKeys.PlanId, plan.Id }
+            { StripeMetadataKeys.TenantId, tenant.Id.ToString() },
+            { StripeMetadataKeys.PlanId, plan.Id.ToString() }
         };
         
         options.BillingCycleAnchor = plan.BillingCycleAnchor;
@@ -218,7 +218,7 @@ internal class StripeService : IStripeService
             Description = plan.Description,
             Metadata = new Dictionary<string, string>
             {
-                [StripeMetadataKeys.PlanId] = plan.Id
+                [StripeMetadataKeys.PlanId] = plan.Id.ToString()
             }
         });
         
@@ -239,7 +239,7 @@ internal class StripeService : IStripeService
             },
             Metadata = new Dictionary<string, string>
             {
-                [StripeMetadataKeys.PlanId] = plan.Id
+                [StripeMetadataKeys.PlanId] = plan.Id.ToString()
             }
         });
         
@@ -281,7 +281,7 @@ internal class StripeService : IStripeService
             Description = plan.Description,
             Metadata = new Dictionary<string, string> 
             {
-                [StripeMetadataKeys.PlanId] = plan.Id
+                [StripeMetadataKeys.PlanId] = plan.Id.ToString()
             }
         });
         
@@ -317,7 +317,7 @@ internal class StripeService : IStripeService
                 },
                 Metadata = new Dictionary<string, string>
                 {
-                    [StripeMetadataKeys.PlanId] = plan.Id,
+                    [StripeMetadataKeys.PlanId] = plan.Id.ToString(),
                 }
             });
 
@@ -407,7 +407,7 @@ internal class StripeService : IStripeService
             },
             Metadata = new Dictionary<string, string>
             {
-                [StripeMetadataKeys.TenantId] = tenant.Id
+                [StripeMetadataKeys.TenantId] = tenant.Id.ToString()
             }
         };
 

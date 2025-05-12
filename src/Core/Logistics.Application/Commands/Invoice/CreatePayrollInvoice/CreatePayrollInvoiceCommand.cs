@@ -7,5 +7,5 @@ public class CreatePayrollInvoiceCommand : IRequest<Result>
 {
     public DateTime PeriodStart { get; set; }
     public DateTime PeriodEnd { get; set; }
-    public string EmployeeId { get; set; } = null!;
+    public Guid EmployeeId { get; set; }
 }

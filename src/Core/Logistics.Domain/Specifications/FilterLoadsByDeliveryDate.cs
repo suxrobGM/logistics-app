@@ -6,11 +6,11 @@ namespace Logistics.Domain.Specifications;
 public class FilterLoadsByDeliveryDate : BaseSpecification<Load>
 {
     public FilterLoadsByDeliveryDate(
-        string? truckId,
+        Guid? truckId,
         DateTime startPeriod,
         DateTime endPeriod)
     {
-        if (!string.IsNullOrEmpty(truckId))
+        if (truckId.HasValue)
         {
             Criteria = i =>
                 i.AssignedTruckId == truckId &&

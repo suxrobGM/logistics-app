@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.EF.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20250512152428_Version_0001")]
+    [Migration("20250512163921_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -31,8 +31,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.Customer", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -45,8 +46,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<string>("DeviceToken")
                         .HasColumnType("text");
@@ -69,8 +71,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<int>("SalaryType")
                         .HasColumnType("integer");
 
-                    b.Property<string>("TruckId")
-                        .HasColumnType("text");
+                    b.Property<Guid?>("TruckId")
+                        .HasColumnType("uuid");
 
                     b.ComplexProperty<Dictionary<string, object>>("Salary", "Logistics.Domain.Entities.Employee.Salary#Money", b1 =>
                         {
@@ -95,11 +97,11 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.EmployeeTenantRole", b =>
                 {
-                    b.Property<string>("EmployeeId")
-                        .HasColumnType("text");
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("RoleId")
-                        .HasColumnType("text");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("EmployeeId", "RoleId");
 
@@ -110,8 +112,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.Invoice", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -174,14 +177,15 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.Load", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("AssignedDispatcherId")
-                        .HasColumnType("text");
+                    b.Property<Guid?>("AssignedDispatcherId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("AssignedTruckId")
-                        .HasColumnType("text");
+                    b.Property<Guid?>("AssignedTruckId")
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("CanConfirmDelivery")
                         .HasColumnType("boolean");
@@ -189,8 +193,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<bool>("CanConfirmPickUp")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("CustomerId")
-                        .HasColumnType("text");
+                    b.Property<Guid?>("CustomerId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("DeliveryDate")
                         .HasColumnType("timestamp with time zone");
@@ -311,8 +315,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.Notification", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
@@ -333,8 +338,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.Payment", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -342,8 +348,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
 
-                    b.Property<string>("InvoiceId")
-                        .HasColumnType("text");
+                    b.Property<Guid?>("InvoiceId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("LastModifiedAt")
                         .HasColumnType("timestamp with time zone");
@@ -408,8 +414,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.PaymentMethod", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
@@ -468,8 +475,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.Subscription", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("timestamp with time zone");
@@ -477,9 +485,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<DateTime?>("NextBillingDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("PlanId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("PlanId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
@@ -493,9 +500,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<string>("StripeSubscriptionId")
                         .HasColumnType("text");
 
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("TrialEndDate")
                         .HasColumnType("timestamp with time zone");
@@ -512,8 +518,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionPlan", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("BillingCycleAnchor")
                         .HasColumnType("timestamp with time zone");
@@ -571,8 +578,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.Tenant", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<string>("BillingEmail")
                         .IsRequired()
@@ -630,8 +638,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.TenantRole", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<string>("DisplayName")
                         .HasColumnType("text");
@@ -651,8 +660,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.TenantRoleClaim", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<string>("ClaimType")
                         .IsRequired()
@@ -662,9 +672,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -675,8 +684,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<double?>("CurrentLocationLat")
                         .HasColumnType("double precision");
@@ -723,8 +733,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.User", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
@@ -782,8 +793,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
-                    b.Property<string>("TenantId")
-                        .HasColumnType("text");
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
@@ -802,13 +813,11 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 {
                     b.HasBaseType("Logistics.Domain.Entities.Invoice");
 
-                    b.Property<string>("CustomerId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("LoadId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("LoadId")
+                        .HasColumnType("uuid");
 
                     b.HasIndex("CustomerId");
 
@@ -821,9 +830,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 {
                     b.HasBaseType("Logistics.Domain.Entities.Invoice");
 
-                    b.Property<string>("EmployeeId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("PeriodEnd")
                         .HasColumnType("timestamp with time zone");
@@ -846,9 +854,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<DateTime>("BillingPeriodStart")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("SubscriptionId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("SubscriptionId")
+                        .HasColumnType("uuid");
 
                     b.HasIndex("SubscriptionId");
 

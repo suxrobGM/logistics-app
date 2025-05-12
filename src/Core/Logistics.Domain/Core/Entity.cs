@@ -2,9 +2,9 @@
 
 namespace Logistics.Domain.Core;
 
-public abstract class Entity : IEntity<string>
+public abstract class Entity : IEntity<Guid>
 {
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public Guid Id { get; set; } = Guid.NewGuid();
 
     [NotMapped] 
     public List<IDomainEvent> DomainEvents { get; } = [];

@@ -16,7 +16,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 name: "AspNetRoles",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     DisplayName = table.Column<string>(type: "text", nullable: true),
                     Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -45,7 +45,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 name: "SubscriptionPlans",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
                     StripePriceId = table.Column<string>(type: "text", nullable: true),
@@ -70,7 +70,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 name: "Tenants",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     CompanyName = table.Column<string>(type: "text", nullable: true),
                     ConnectionString = table.Column<string>(type: "text", nullable: false),
@@ -95,7 +95,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    RoleId = table.Column<string>(type: "text", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uuid", nullable: false),
                     ClaimType = table.Column<string>(type: "text", nullable: true),
                     ClaimValue = table.Column<string>(type: "text", nullable: true)
                 },
@@ -114,10 +114,10 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 name: "AspNetUsers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     FirstName = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: false),
-                    TenantId = table.Column<string>(type: "text", nullable: true),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
                     LastModifiedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
@@ -152,10 +152,10 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 name: "Subscriptions",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
-                    TenantId = table.Column<string>(type: "text", nullable: false),
-                    PlanId = table.Column<string>(type: "text", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PlanId = table.Column<Guid>(type: "uuid", nullable: false),
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     NextBillingDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -186,7 +186,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     ClaimType = table.Column<string>(type: "text", nullable: true),
                     ClaimValue = table.Column<string>(type: "text", nullable: true)
                 },
@@ -208,7 +208,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     LoginProvider = table.Column<string>(type: "text", nullable: false),
                     ProviderKey = table.Column<string>(type: "text", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "text", nullable: true),
-                    UserId = table.Column<string>(type: "text", nullable: false)
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -225,8 +225,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    RoleId = table.Column<string>(type: "text", nullable: false)
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -249,7 +249,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     LoginProvider = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Value = table.Column<string>(type: "text", nullable: true)
@@ -269,7 +269,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 name: "Invoices",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Number = table.Column<long>(type: "bigint", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
@@ -283,7 +283,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                     Discriminator = table.Column<string>(type: "character varying(21)", maxLength: 21, nullable: false),
                     Total_Amount = table.Column<decimal>(type: "numeric", nullable: false),
                     Total_Currency = table.Column<string>(type: "text", nullable: false),
-                    SubscriptionId = table.Column<string>(type: "text", nullable: true),
+                    SubscriptionId = table.Column<Guid>(type: "uuid", nullable: true),
                     BillingPeriodStart = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     BillingPeriodEnd = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
@@ -302,10 +302,10 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
                 name: "Payments",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     Method = table.Column<int>(type: "integer", nullable: false),
-                    InvoiceId = table.Column<string>(type: "text", nullable: true),
+                    InvoiceId = table.Column<Guid>(type: "uuid", nullable: true),
                     Amount_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Amount_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
                     BillingAddress_City = table.Column<string>(type: "text", nullable: false),

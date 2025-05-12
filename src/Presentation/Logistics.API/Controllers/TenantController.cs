@@ -32,7 +32,7 @@ public class TenantController : ControllerBase
         var includeConnectionString = HttpContext.User.HasOneTheseRoles(AppRoles.SuperAdmin, AppRoles.Admin);
         var result = await _mediator.Send(new GetTenantQuery
         {
-            Id = identifier,
+            Id = Guid.TryParse(identifier, out var id) ? id : null,
             Name = identifier,
             IncludeConnectionString = includeConnectionString
         });
@@ -65,22 +65,22 @@ public class TenantController : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Tenants.Edit)]
-    public async Task<IActionResult> UpdateTenant(string id, [FromBody] UpdateTenantCommand request)
+    public async Task<IActionResult> UpdateTenant(Guid id, [FromBody] UpdateTenantCommand request)
     {
         request.Id = id;
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Tenants.Delete)]
-    public async Task<IActionResult> DeleteTenant(string id)
+    public async Task<IActionResult> DeleteTenant(Guid id)
     {
         var result = await _mediator.Send(new DeleteTenantCommand {Id = id});
         return result.Success ? Ok(result) : BadRequest(result);

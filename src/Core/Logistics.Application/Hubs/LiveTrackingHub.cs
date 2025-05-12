@@ -38,7 +38,9 @@ public class LiveTrackingHub : Hub<ILiveTrackingHubClient>
 
     public async Task SendGeolocationData(TruckGeolocationDto truckGeolocation)
     {
-        await Clients.Group(truckGeolocation.TenantId).ReceiveGeolocationData(truckGeolocation);
+        await Clients
+            .Group(truckGeolocation.TenantId.ToString())
+            .ReceiveGeolocationData(truckGeolocation);
         _hubContext.UpdateGeolocationData(Context.ConnectionId, truckGeolocation);
     }
     

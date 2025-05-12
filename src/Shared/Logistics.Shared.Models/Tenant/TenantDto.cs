@@ -2,9 +2,9 @@
 
 namespace Logistics.Shared.Models;
 
-public class TenantDto
+public record TenantDto
 {
-    public string? Id { get; set; }
+    public Guid? Id { get; set; }
     public string? Name { get; set; }
     public string? CompanyName { get; set; }
     public string? BillingEmail { get; set; }

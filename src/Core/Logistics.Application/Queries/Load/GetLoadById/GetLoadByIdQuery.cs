@@ -5,5 +5,5 @@ namespace Logistics.Application.Queries;
 
 public class GetLoadByIdQuery : IRequest<Result<LoadDto>>
 {
-    public string Id { get; set; } = null!;
+    public Guid Id { get; set; }
 }

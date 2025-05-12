@@ -1,11 +1,10 @@
-﻿using System.Text.Json.Serialization;
-using Logistics.Shared.Consts;
+﻿using Logistics.Shared.Consts;
 
 namespace Logistics.Shared.Models;
 
-public class SubscriptionDto
+public record SubscriptionDto
 {
-    public string? Id { get; set; }
+    public Guid? Id { get; set; }
     public SubscriptionStatus Status { get; set; }
     public TenantDto? Tenant { get; set; }
     public SubscriptionPlanDto? Plan { get; set; }

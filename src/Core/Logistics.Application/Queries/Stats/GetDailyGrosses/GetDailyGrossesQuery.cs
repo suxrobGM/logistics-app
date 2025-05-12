@@ -5,6 +5,6 @@ namespace Logistics.Application.Queries;
 
 public class GetDailyGrossesQuery : IntervalQuery, IRequest<Result<DailyGrossesDto>>
 {
-    public string? TruckId { get; set; }
-    public string? UserId { get; set; }
+    public Guid? TruckId { get; set; }
+    public Guid? UserId { get; set; }
 }

@@ -20,9 +20,9 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrosse
     {
         var truckId = req.TruckId;
         
-        if (!string.IsNullOrEmpty(req.UserId))
+        if (req.UserId.HasValue)
         {
-            var driver = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
+            var driver = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId.Value);
 
             if (driver is null)
             {

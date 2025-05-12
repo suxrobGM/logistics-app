@@ -42,7 +42,7 @@ internal sealed class ConfirmLoadStatusHandler : RequestHandler<ConfirmLoadStatu
         return Result.Succeed();
     }
 
-    private async Task SendNotificationAsync(Load load, string driverId)
+    private async Task SendNotificationAsync(Load load, Guid driverId)
     {
         const string title = "Load updates";
         var driverName = load.AssignedTruck?.Drivers.FirstOrDefault(i => i.Id == driverId)?.GetFullName();

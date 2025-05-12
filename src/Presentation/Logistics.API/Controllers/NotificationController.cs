@@ -29,11 +29,11 @@ public class NotificationController : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
     
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Notifications.Edit)]
-    public async Task<IActionResult> Update(string id, [FromBody] UpdateNotificationCommand request)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateNotificationCommand request)
     {
         request.Id = id;
         var result = await _mediator.Send(request);

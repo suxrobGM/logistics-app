@@ -4,7 +4,7 @@ namespace Logistics.Shared.Models;
 
 public class LoadDto
 {
-    public string Id { get; set; } = default!;
+    public Guid Id { get; set; }
     public long Number { get; set; }
     public string? Name { get; set; }
     public required AddressDto OriginAddress { get; set; }
@@ -21,9 +21,9 @@ public class LoadDto
     public bool CanConfirmPickUp { get; set; }
     public bool CanConfirmDelivery { get; set; }
     public LoadStatus Status { get; set; }
-    public string? AssignedDispatcherId { get; set; }
+    public Guid? AssignedDispatcherId { get; set; }
     public string? AssignedDispatcherName { get; set; }
-    public string? AssignedTruckId { get; set; }
+    public Guid? AssignedTruckId { get; set; }
     public string? AssignedTruckNumber { get; set; }
     public AddressDto? CurrentLocation { get; set; }
     

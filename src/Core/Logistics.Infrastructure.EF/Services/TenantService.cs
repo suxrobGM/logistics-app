@@ -91,9 +91,17 @@ internal class TenantService : ITenantService
                 "Tenant ID must be specified in the 'X-Tenant' header or 'tenant' claim");
         }
 
-        var normalizedId = tenantId.Trim().ToLowerInvariant();
+        // Check if the tenantId is a valid Guid then find by Id
+        if (Guid.TryParse(tenantId, out var tenantGuid))
+        {
+            return _masterDbContext.Set<Tenant>()
+                .FirstOrDefault(t => t.Id == tenantGuid);
+        }
+
+        // Otherwise, find by Name
+        var normalizedName = tenantId.Trim().ToLowerInvariant();
         return _masterDbContext.Set<Tenant>()
-            .FirstOrDefault(t => t.Id == normalizedId || t.Name == normalizedId);
+            .FirstOrDefault(t => t.Name == normalizedName);
     }
     
     /// <summary>

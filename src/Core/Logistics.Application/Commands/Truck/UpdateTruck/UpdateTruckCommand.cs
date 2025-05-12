@@ -5,7 +5,7 @@ namespace Logistics.Application.Commands;
 
 public class UpdateTruckCommand : IRequest<Result>
 {
-    public string Id { get; set; } = null!;
+    public Guid Id { get; set; }
     public string? TruckNumber { get; set; }
-    public string[]? DriverIds { get; set; }
+    public Guid[]? DriverIds { get; set; }
 }

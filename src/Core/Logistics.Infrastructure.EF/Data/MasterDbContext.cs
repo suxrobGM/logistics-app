@@ -14,12 +14,12 @@ namespace Logistics.Infrastructure.EF.Data;
 public class MasterDbContext : IdentityDbContext<
     User, 
     AppRole, 
-    string, 
-    IdentityUserClaim<string>, 
-    IdentityUserRole<string>, 
-    IdentityUserLogin<string>, 
+    Guid, 
+    IdentityUserClaim<Guid>, 
+    IdentityUserRole<Guid>, 
+    IdentityUserLogin<Guid>, 
     AppRoleClaim, 
-    IdentityUserToken<string>>,
+    IdentityUserToken<Guid>>,
     IDataProtectionKeyContext
 {
     private readonly DispatchDomainEventsInterceptor? _dispatchDomain;

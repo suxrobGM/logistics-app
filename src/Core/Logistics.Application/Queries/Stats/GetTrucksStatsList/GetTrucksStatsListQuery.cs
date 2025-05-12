@@ -5,5 +5,4 @@ namespace Logistics.Application.Queries;
 
 public class GetTrucksStatsListQuery : PagedIntervalQuery, IRequest<PagedResult<TruckStatsDto>>
 {
-    
 }

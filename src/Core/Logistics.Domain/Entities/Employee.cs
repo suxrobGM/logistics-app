@@ -24,7 +24,7 @@ public class Employee : Entity, ITenantEntity
     /// </summary>
     public string? DeviceToken { get; set; }
     
-    public string? TruckId { get; set; }
+    public Guid? TruckId { get; set; }
     public virtual Truck? Truck { get; set; }
 
     /// <summary>

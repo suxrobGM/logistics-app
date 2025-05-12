@@ -19,21 +19,21 @@ public class DriverController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet("{userId}")]
+    [HttpGet("{userId:guid}")]
     [ProducesResponseType(typeof(Result<EmployeeDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Drivers.View)]
-    public async Task<IActionResult> GetById(string userId)
+    public async Task<IActionResult> GetById(Guid userId)
     {
         var result = await _mediator.Send(new GetEmployeeByIdQuery {UserId = userId});
         return result.Success ? Ok(result) : BadRequest(result);
     }
     
-    [HttpPost("{userId}/device-token")]
+    [HttpPost("{userId:guid}/device-token")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Drivers.Edit)]
-    public async Task<IActionResult> SetDeviceToken(string userId, [FromBody] SetDriverDeviceTokenCommand request)
+    public async Task<IActionResult> SetDeviceToken(Guid userId, [FromBody] SetDriverDeviceTokenCommand request)
     {
         request.UserId = userId;
         var result = await _mediator.Send(request);

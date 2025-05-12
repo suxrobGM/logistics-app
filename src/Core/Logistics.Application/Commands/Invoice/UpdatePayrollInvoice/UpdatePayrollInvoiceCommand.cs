@@ -1,14 +1,12 @@
-﻿using Logistics.Domain.ValueObjects;
-using Logistics.Shared.Models;
-using Logistics.Shared.Consts;
+﻿using Logistics.Shared.Models;
 using MediatR;
 
 namespace Logistics.Application.Commands;
 
 public class UpdatePayrollInvoiceCommand : IRequest<Result>
 {
-    public string Id { get; set; } = null!;
+    public Guid Id { get; set; }
     public DateTime? PeriodStart { get; set; }
     public DateTime? PeriodEnd { get; set; }
-    public string? EmployeeId { get; set; }
+    public Guid? EmployeeId { get; set; }
 }

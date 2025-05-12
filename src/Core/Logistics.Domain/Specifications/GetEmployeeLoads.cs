@@ -4,7 +4,7 @@ namespace Logistics.Domain.Specifications;
 
 public class GetEmployeeLoads : BaseSpecification<Load>
 {
-    public GetEmployeeLoads(string userId)
+    public GetEmployeeLoads(Guid userId)
     {
         Criteria = i => i.AssignedDispatcherId == userId; // || i..AssignedDriverId == userId;
     }

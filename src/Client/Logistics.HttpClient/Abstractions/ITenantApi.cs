@@ -8,5 +8,5 @@ public interface ITenantApi
     Task<PagedResult<TenantDto>> GetTenantsAsync(SearchableQuery query);
     Task<Result> CreateTenantAsync(CreateTenant command);
     Task<Result> UpdateTenantAsync(UpdateTenant command);
-    Task<Result> DeleteTenantAsync(string id);
+    Task<Result> DeleteTenantAsync(Guid id);
 }

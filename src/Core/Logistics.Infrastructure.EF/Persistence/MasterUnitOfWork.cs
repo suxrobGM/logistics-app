@@ -15,10 +15,10 @@ internal class MasterUnitOfWork : IMasterUnityOfWork
         _masterDbContext = masterDbContext;
     }
 
-    public IMasterRepository<TEntity, string> Repository<TEntity>() 
-        where TEntity : class, IEntity<string>, IMasterEntity
+    public IMasterRepository<TEntity, Guid> Repository<TEntity>() 
+        where TEntity : class, IEntity<Guid>, IMasterEntity
     {
-        return Repository<TEntity, string>();
+        return Repository<TEntity, Guid>();
     }
 
     public IMasterRepository<TEntity, TKey> Repository<TEntity, TKey>() 

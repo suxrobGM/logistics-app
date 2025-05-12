@@ -6,6 +6,6 @@ namespace Logistics.Application.Commands;
 
 public class UpdateInvoiceCommand : IRequest<Result>
 {
-    public string Id { get; set; } = null!;
+    public Guid Id { get; set; }
     public InvoiceStatus? InvoiceStatus { get; set; }
 }

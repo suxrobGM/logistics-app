@@ -2,20 +2,20 @@
 
 public class GetDailyGrossesQuery : IntervalQuery
 {
-    public string? TruckId { get; set; }
-    public string? UserId { get; set; }
+    public Guid? TruckId { get; set; }
+    public Guid? UserId { get; set; }
     
     public override IDictionary<string, string> ToDictionary()
     {
         var dict = base.ToDictionary();
 
-        if (!string.IsNullOrEmpty(TruckId))
+        if (TruckId.HasValue)
         {
-            dict.Add("truckId", TruckId);
+            dict.Add("truckId", TruckId.Value.ToString());
         }
-        if (!string.IsNullOrEmpty(UserId))
+        if (UserId.HasValue)
         {
-            dict.Add("userId", UserId);
+            dict.Add("userId", UserId.Value.ToString());
         }
 
         return dict;

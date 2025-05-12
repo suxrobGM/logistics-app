@@ -5,7 +5,7 @@ namespace Logistics.Domain.Specifications;
 
 public class GetEmployeesById : BaseSpecification<Employee>
 {
-    public GetEmployeesById(string[] userIds)
+    public GetEmployeesById(Guid[] userIds)
     {
         Criteria = i => userIds.Contains(i.Id);
         ApplyOrderBy("Id");

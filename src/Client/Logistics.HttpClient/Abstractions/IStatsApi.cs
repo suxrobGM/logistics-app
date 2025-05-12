@@ -6,5 +6,5 @@ public interface IStatsApi
 {
     Task<Result<DailyGrossesDto>> GetDailyGrossesAsync(GetDailyGrossesQuery query);
     Task<Result<MonthlyGrossesDto>> GetMonthlyGrossesAsync(GetMonthlyGrossesQuery query);
-    Task<Result<DriverStatsDto>> GetDriverStatsAsync(string userId);
+    Task<Result<DriverStatsDto>> GetDriverStatsAsync(Guid userId);
 }

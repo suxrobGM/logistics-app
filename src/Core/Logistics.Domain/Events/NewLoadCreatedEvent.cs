@@ -4,10 +4,10 @@ namespace Logistics.Domain.Events;
 
 public class NewLoadCreatedEvent : IDomainEvent
 {
-    public NewLoadCreatedEvent(string loadId)
+    public NewLoadCreatedEvent(Guid loadId)
     {
         LoadId = loadId;
     }
     
-    public string LoadId { get; }
+    public Guid LoadId { get; }
 }

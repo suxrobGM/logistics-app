@@ -39,21 +39,21 @@ public class UserController : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpGet("{id}/tenant")]
+    [HttpGet("{id:guid}/tenant")]
     [ProducesResponseType(typeof(Result<TenantDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Users.View)]
-    public async Task<IActionResult> GetUserCurrentTenant(string id)
+    public async Task<IActionResult> GetUserCurrentTenant(Guid id)
     {
         var result = await _mediator.Send(new GetUserCurrentTenantQuery() { UserId = id });
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Users.View)]
-    public async Task<IActionResult> Update(string id, [FromBody] UpdateUserCommand request)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUserCommand request)
     {
         request.Id = id;
         var result = await _mediator.Send(request);

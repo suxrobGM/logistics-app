@@ -28,17 +28,19 @@ internal sealed class GetTruckHandler : RequestHandler<GetTruckQuery, Result<Tru
         return Result<TruckDto>.Succeed(truckDto);
     }
 
-    private async Task<Truck?> TryGetTruck(string? truckOrDriverId)
+    private async Task<Truck?> TryGetTruck(Guid? truckOrDriverId)
     {
-        if (string.IsNullOrEmpty(truckOrDriverId))
+        if (!truckOrDriverId.HasValue)
+        {
             return null;
+        }
 
         var truckRepository = _tenantUow.Repository<Truck>();
         var truck = await truckRepository.GetAsync(i => i.Id == truckOrDriverId);
-        return truck ?? await GetTruckFromDriver(truckOrDriverId);
+        return truck ?? await GetTruckFromDriver(truckOrDriverId.Value);
     }
 
-    private async Task<Truck?> GetTruckFromDriver(string userId)
+    private async Task<Truck?> GetTruckFromDriver(Guid userId)
     {
         var employeeRepository = _tenantUow.Repository<Employee>();
         var driver = await employeeRepository.GetByIdAsync(userId);

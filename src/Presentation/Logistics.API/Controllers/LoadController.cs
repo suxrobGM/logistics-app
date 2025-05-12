@@ -20,11 +20,11 @@ public class LoadController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(Result<LoadDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Loads.View)]
-    public async Task<IActionResult> GetById(string id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         var result = await _mediator.Send(new GetLoadByIdQuery {Id = id});
         return result.Success ? Ok(result) : BadRequest(result);
@@ -50,22 +50,22 @@ public class LoadController : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Loads.Edit)]
-    public async Task<IActionResult> Update(string id, [FromBody] UpdateLoadCommand request)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateLoadCommand request)
     {
         request.Id = id;
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Loads.Delete)]
-    public async Task<IActionResult> Delete(string id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         var result = await _mediator.Send(new DeleteLoadCommand {Id = id});
         return result.Success ? Ok(result) : BadRequest(result);

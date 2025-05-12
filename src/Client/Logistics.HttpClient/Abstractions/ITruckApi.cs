@@ -8,5 +8,5 @@ public interface ITruckApi
     Task<PagedResult<TruckDto>> GetTrucksAsync(SearchableQuery query, bool includeLoads = false);
     Task<Result> CreateTruckAsync(CreateTruck command);
     Task<Result> UpdateTruckAsync(UpdateTruck command);
-    Task<Result> DeleteTruckAsync(string id);
+    Task<Result> DeleteTruckAsync(Guid id);
 }

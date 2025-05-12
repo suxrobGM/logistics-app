@@ -7,7 +7,7 @@ namespace Logistics.Application.Commands;
 
 public class UpdatePaymentCommand : IRequest<Result>
 {
-    public string Id { get; set; } = null!;
+    public Guid Id { get; set; }
     public PaymentMethodType? Method { get; set; }
     public decimal? Amount { get; set; }
     public PaymentStatus? Status { get; set; }

@@ -23,7 +23,7 @@ internal sealed class SetTruckGeolocationHandler : RequestHandler<SetTruckGeoloc
     protected override async Task<Result> HandleValidated(
         SetTruckGeolocationCommand req, CancellationToken cancellationToken)
     {
-        _tenantUow.SetCurrentTenantById(req.GeolocationData.TenantId);
+        _tenantUow.SetCurrentTenantById(req.GeolocationData.TenantId.ToString());
         var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(req.GeolocationData.TruckId);
 
         if (truck is null)

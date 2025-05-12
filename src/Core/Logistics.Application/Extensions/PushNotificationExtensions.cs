@@ -16,7 +16,7 @@ internal static class PushNotificationExtensions
                 "Received a load",
                 $"A new load #{load.Number} has been assigned to you", 
                 driver.DeviceToken!,
-                new Dictionary<string, string> {{"loadId", load.Id}});
+                new Dictionary<string, string> {{"loadId", load.Id.ToString()}});
         }
     }
     
@@ -43,7 +43,7 @@ internal static class PushNotificationExtensions
                 "Confirm load status",
                 $"You can confirm the {loadStatusText} date of load #{load.Number}", 
                 driver.DeviceToken!,
-                new Dictionary<string, string> {{"loadId", load.Id}});
+                new Dictionary<string, string> {{"loadId", load.Id.ToString()}});
         }
     }
     
@@ -57,7 +57,7 @@ internal static class PushNotificationExtensions
                 "Load update",
                 $"A load #{load.Number} details has been updated check details", 
                 driver.DeviceToken!,
-                new Dictionary<string, string> {{"loadId", load.Id}});
+                new Dictionary<string, string> {{"loadId", load.Id.ToString()}});
         }
     }
     
@@ -76,7 +76,7 @@ internal static class PushNotificationExtensions
                 "Load update",
                 $"A load #{load.Number} has been removed from you", 
                 driver.DeviceToken!,
-                new Dictionary<string, string> {{"loadId", load.Id}});
+                new Dictionary<string, string> {{"loadId", load.Id.ToString()}});
         }
     }
 }

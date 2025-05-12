@@ -6,8 +6,8 @@ namespace Logistics.Application.Commands;
 
 public class CreateLoadInvoiceCommand : IRequest<Result>
 {
-    public string CustomerId { get; set; } = null!;
-    public string LoadId { get; set; } = null!;
+    public Guid CustomerId { get; set; }
+    public Guid LoadId { get; set; }
     public PaymentMethodType PaymentMethod { get; set; }
     public decimal PaymentAmount { get; set; }
 }

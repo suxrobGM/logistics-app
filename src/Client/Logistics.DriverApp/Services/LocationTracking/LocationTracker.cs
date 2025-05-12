@@ -1,6 +1,5 @@
 ﻿using Logistics.HttpClient.Options;
 using Logistics.DriverApp.Services.Authentication;
-using Logistics.Shared.Models;
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace Logistics.DriverApp.Services.LocationTracking;
@@ -45,9 +44,9 @@ public class LocationTracker : ILocationTracker
     {
         try
         {
-            if (string.IsNullOrEmpty(options.TruckId) || string.IsNullOrEmpty(options.TenantId))
+            if (!options.TruckId.HasValue || !options.TenantId.HasValue)
             {
-                return default;
+                return null;
             }
         
             await ConnectAsync();
@@ -55,16 +54,16 @@ public class LocationTracker : ILocationTracker
 
             if (location is null)
             {
-                return default;
+                return null;
             }
 
             var address = await GetAddressFromGeocodeAsync(location.Latitude, location.Longitude);
             
             var geolocationData = new TruckGeolocationDto
             {
-                TruckId = options.TruckId,
+                TruckId = options.TruckId.Value,
                 TruckNumber = options.TruckNumber,
-                TenantId = options.TenantId,
+                TenantId = options.TenantId.Value,
                 DriversName = options.DriversName,
                 Latitude = location.Latitude,
                 Longitude = location.Longitude,

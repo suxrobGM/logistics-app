@@ -28,12 +28,12 @@ internal sealed class GetLoadsHandler : RequestHandler<GetLoadsQuery, PagedResul
         {
             baseQuery = baseQuery.Where(i => i.DeliveryDate == null);
         }
-        if (!string.IsNullOrEmpty(req.UserId))
+        if (req.UserId.HasValue)
         {
             baseQuery = baseQuery.Where(i => i.AssignedTruck != null &&
-                                             i.AssignedTruck.Drivers.Select(emp => emp.Id).Contains(req.UserId));
+                                             i.AssignedTruck.Drivers.Select(emp => emp.Id).Contains(req.UserId.Value));
         }
-        if (!string.IsNullOrEmpty(req.TruckId))
+        if (req.TruckId.HasValue)
         {
             baseQuery = baseQuery.Where(i => i.AssignedTruckId == req.TruckId);
         }

@@ -2,7 +2,7 @@
 
 public interface ITenantService
 {
-    Task<string?> GetTenantIdFromCacheAsync();
-    Task SaveTenantIdAsync(string tenantId);
+    Task<Guid?> GetTenantIdFromCacheAsync();
+    Task SaveTenantIdAsync(Guid tenantId);
     void ClearCache();
 }

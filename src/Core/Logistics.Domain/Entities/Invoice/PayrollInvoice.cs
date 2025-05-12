@@ -5,7 +5,7 @@ namespace Logistics.Domain.Entities;
 public class PayrollInvoice : Invoice
 {
     public override InvoiceType Type { get; set; } = InvoiceType.Payroll;
-    public required string EmployeeId { get; set; }
+    public required Guid EmployeeId { get; set; }
     public virtual Employee Employee { get; set; } = null!;
     
     /// <summary>

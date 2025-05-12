@@ -11,7 +11,7 @@ public partial class EditSubscriptionPlan : PageBase
     #region Parameters
 
     [Parameter]
-    public string? Id { get; set; }
+    public Guid? Id { get; set; }
 
     [Parameter] 
     public bool EditMode { get; set; } = true;
@@ -34,7 +34,7 @@ public partial class EditSubscriptionPlan : PageBase
             return;
         }
         
-        var subscriptionPlan = await CallApiAsync(api => api.GetSubscriptionPlanAsync(Id!));
+        var subscriptionPlan = await CallApiAsync(api => api.GetSubscriptionPlanAsync(Id!.Value));
 
         if (subscriptionPlan is not null)
         {

@@ -6,7 +6,7 @@ namespace Logistics.Domain.Specifications;
 public class FilterPayrollsByEmployeeId : BaseSpecification<PayrollInvoice>
 {
     public FilterPayrollsByEmployeeId(
-        string employeeId,
+        Guid employeeId,
         string? orderBy,
         int page,
         int pageSize)

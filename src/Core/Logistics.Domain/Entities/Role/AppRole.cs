@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.Domain.Entities;
 
-public class AppRole : IdentityRole<string>, IEntity<string>, IMasterEntity
+public class AppRole : IdentityRole<Guid>, IEntity<Guid>, IMasterEntity
 {
     public AppRole(string name): base(name)
     {
@@ -13,7 +13,7 @@ public class AppRole : IdentityRole<string>, IEntity<string>, IMasterEntity
         DisplayName = base.Name;
     }
 
-    public override string Id { get; set; } = Guid.NewGuid().ToString();
+    public override Guid Id { get; set; } = Guid.NewGuid();
     public string? DisplayName { get; set; }
     
     public virtual HashSet<AppRoleClaim> Claims { get; } = new(new AppRoleClaimComparer());

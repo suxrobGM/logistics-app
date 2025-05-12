@@ -3,7 +3,7 @@ using Logistics.Domain.Core;
 
 namespace Logistics.Domain.Specifications;
 
-public abstract class BaseSpecification<T> : ISpecification<T> where T : IEntity<string>
+public abstract class BaseSpecification<T> : ISpecification<T> where T : IEntity<Guid>
 {
     public Expression<Func<T, bool>>? Criteria { get; protected set; }
     public Expression<Func<T, object?>>? OrderBy { get; private set; }

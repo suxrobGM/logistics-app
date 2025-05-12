@@ -6,7 +6,7 @@ namespace Logistics.Application.Commands;
 
 public class ProcessPaymentCommand : IRequest<Result>
 {
-    public string PaymentId { get; set; } = null!;
+    public Guid PaymentId { get; set; }
     public PaymentMethodType PaymentMethod { get; set; }
     public string? CardholderName { get; set; }
     public string? CardNumber { get; set; }

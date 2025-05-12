@@ -20,11 +20,11 @@ public class TruckController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet("{truckOrDriverId}")]
+    [HttpGet("{truckOrDriverId:guid}")]
     [ProducesResponseType(typeof(Result<TruckDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Trucks.View)]
-    public async Task<IActionResult> GetById(string truckOrDriverId, [FromQuery] GetTruckQuery request)
+    public async Task<IActionResult> GetById(Guid truckOrDriverId, [FromQuery] GetTruckQuery request)
     {
         request.TruckOrDriverId = truckOrDriverId;
         var result = await _mediator.Send(request);
@@ -61,22 +61,22 @@ public class TruckController : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Trucks.Edit)]
-    public async Task<IActionResult> Update(string id, [FromBody] UpdateTruckCommand request)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateTruckCommand request)
     {
         request.Id = id;
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Trucks.Delete)]
-    public async Task<IActionResult> Delete(string id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         var result = await _mediator.Send(new DeleteTruckCommand {Id = id});
         return result.Success ? Ok(result) : BadRequest(result);

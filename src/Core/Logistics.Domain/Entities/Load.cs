@@ -27,13 +27,13 @@ public class Load : Entity, ITenantEntity
     public DateTime? PickUpDate { get; set; }
     public DateTime? DeliveryDate { get; set; }
 
-    public string? CustomerId { get; set; }
+    public Guid? CustomerId { get; set; }
     public virtual Customer? Customer { get; set; }
     
-    public string? AssignedTruckId { get; set; }
+    public Guid? AssignedTruckId { get; set; }
     public virtual Truck? AssignedTruck { get; set; }
     
-    public string? AssignedDispatcherId { get; set; }
+    public Guid? AssignedDispatcherId { get; set; }
     public virtual Employee? AssignedDispatcher { get; set; }
 
     public virtual List<LoadInvoice> Invoices { get; set; } = [];
@@ -100,8 +100,11 @@ public class Load : Entity, ITenantEntity
             DestinationAddress = destinationAddress,
             DestinationAddressLat = destinationLatitude,
             DestinationAddressLong = destinationLongitude,
+            AssignedTruckId = assignedTruck.Id,
             AssignedTruck = assignedTruck,
+            AssignedDispatcherId = assignedDispatcher.Id,
             AssignedDispatcher = assignedDispatcher,
+            CustomerId = customer.Id,
             Customer = customer
         };
 
@@ -122,7 +125,7 @@ public class Load : Entity, ITenantEntity
         var invoice = new LoadInvoice
         {
             Total = load.DeliveryCost,
-            CustomerId = load.CustomerId!,
+            CustomerId = load.CustomerId!.Value,
             Customer = load.Customer!,
             LoadId = load.Id,
             Load = load,

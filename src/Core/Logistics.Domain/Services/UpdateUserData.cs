@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Domain.Services;
 
-public record UpdateUserData(string Id)
+public record UpdateUserData(Guid Id)
 {
     public string? FirstName { get; set; }
     public string? LastName { get; set; }

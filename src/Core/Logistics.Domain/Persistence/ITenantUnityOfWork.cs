@@ -12,8 +12,8 @@ public interface ITenantUnityOfWork : IDisposable
     /// </summary>
     /// <typeparam name="TEntity">Type of entity</typeparam>
     /// <returns>Repository for the specified entity</returns>
-    ITenantRepository<TEntity, string> Repository<TEntity>() 
-        where TEntity : class, IEntity<string>, ITenantEntity;
+    ITenantRepository<TEntity, Guid> Repository<TEntity>() 
+        where TEntity : class, IEntity<Guid>, ITenantEntity;
     
     /// <summary>
     /// Get repository for the specified entity with TKey primary key.

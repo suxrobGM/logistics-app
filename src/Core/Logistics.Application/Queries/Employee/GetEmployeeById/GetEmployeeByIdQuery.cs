@@ -5,5 +5,5 @@ namespace Logistics.Application.Queries;
 
 public class GetEmployeeByIdQuery : IRequest<Result<EmployeeDto>>
 {
-    public string UserId { get; set; } = null!;
+    public Guid UserId { get; set; }
 }

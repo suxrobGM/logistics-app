@@ -6,33 +6,33 @@ public class TenantService : ITenantService
 {
     private const string TenantIdKey = "tenant_id";
     private readonly IAuthService _authService;
-    private string? _currentTenantId;
+    private Guid? _currentTenantId;
 
     public TenantService(IAuthService authService)
     {
         _authService = authService;
     }
 
-    public async Task<string?> GetTenantIdFromCacheAsync()
+    public async Task<Guid?> GetTenantIdFromCacheAsync()
     {
         var cachedTenantId = await SecureStorage.Default.GetAsync(TenantIdKey);
         var validTenantId = _authService.User?.TenantId;
 
-        if (string.IsNullOrEmpty(cachedTenantId) || string.IsNullOrEmpty(validTenantId))
+        if (!Guid.TryParse(cachedTenantId, out var cachedTenantGuid) || !validTenantId.HasValue)
         {
             return null;
         }
 
-        return validTenantId == cachedTenantId ? cachedTenantId : null;
+        return validTenantId == cachedTenantGuid ? cachedTenantGuid : null;
     }
 
-    public Task SaveTenantIdAsync(string tenantId)
+    public Task SaveTenantIdAsync(Guid tenantId)
     {
         if (_currentTenantId == tenantId)
             return Task.CompletedTask;
         
         _currentTenantId = tenantId;
-        return SecureStorage.Default.SetAsync(TenantIdKey, tenantId);
+        return SecureStorage.Default.SetAsync(TenantIdKey, tenantId.ToString());
     }
 
     public void ClearCache()

@@ -13,7 +13,7 @@ public class TenantRoleClaim : Entity, ITenantEntity
     public string ClaimType { get; set; }
     public string ClaimValue { get; set; }
 
-    public string RoleId { get; set; } = null!;
+    public Guid RoleId { get; set; }
     public virtual TenantRole Role { get; set; } = null!;
 }
 

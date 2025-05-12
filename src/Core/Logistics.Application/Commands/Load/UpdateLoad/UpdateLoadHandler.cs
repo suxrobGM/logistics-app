@@ -61,7 +61,7 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resu
                 return;
             }
 
-            var customer = await _tenantUow.Repository<Customer>().GetByIdAsync(req.CustomerId);
+            var customer = await _tenantUow.Repository<Customer>().GetByIdAsync(req.CustomerId.Value);
             if (customer is null)
             {
                 throw new InvalidOperationException($"Could not find a customer with ID '{req.CustomerId}'");
@@ -80,7 +80,7 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resu
                 return null;
             }
 
-            var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(req.AssignedTruckId);
+            var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(req.AssignedTruckId.Value);
             if (truck is null)
             {
                 throw new InvalidOperationException($"Could not find a truck with ID '{req.AssignedTruckId}'");
@@ -103,7 +103,7 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resu
                 return;
             }
 
-            var dispatcher = await _tenantUow.Repository<Employee>().GetByIdAsync(req.AssignedDispatcherId);
+            var dispatcher = await _tenantUow.Repository<Employee>().GetByIdAsync(req.AssignedDispatcherId.Value);
             if (dispatcher is null)
             {
                 throw new InvalidOperationException($"Could not find a dispatcher with ID '{req.AssignedDispatcherId}'");

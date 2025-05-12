@@ -5,5 +5,5 @@ namespace Logistics.Application.Queries;
 
 public class GetInvoiceByIdQuery : IRequest<Result<InvoiceDto>>
 {
-    public string Id { get; set; } = null!;
+    public Guid Id { get; set; }
 }

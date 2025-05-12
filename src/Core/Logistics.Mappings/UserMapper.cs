@@ -12,7 +12,7 @@ public static class UserMapper
             Id = entity.Id,
             FirstName = entity.FirstName,
             LastName = entity.LastName,
-            Roles = roles ?? Array.Empty<string>(),
+            Roles = roles ?? [],
             Email = entity.Email,
             PhoneNumber = entity.PhoneNumber,
             TenantId = entity.TenantId,

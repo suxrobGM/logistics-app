@@ -110,10 +110,10 @@ public class LoginPageViewModel : BaseViewModel
 
             Messenger.Send(new UserLoggedInMessage(_authService.User!));
             
-            if (!string.IsNullOrEmpty(tenantId))
+            if (tenantId.HasValue)
             {
                 _apiClient.TenantId = tenantId;
-                await _tenantService.SaveTenantIdAsync(tenantId);
+                await _tenantService.SaveTenantIdAsync(tenantId.Value);
                 await Shell.Current.GoToAsync("//DashboardPage");
             }
             else

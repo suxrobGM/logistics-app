@@ -5,6 +5,6 @@ namespace Logistics.Application.Commands;
 
 public class CreateSubscriptionCommand : IRequest<Result>
 {
-    public string TenantId { get; set; } = null!;
-    public string PlanId { get; set; } = null!;
+    public Guid TenantId { get; set; }
+    public Guid PlanId { get; set; }
 }

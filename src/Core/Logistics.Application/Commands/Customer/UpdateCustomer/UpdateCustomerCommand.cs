@@ -5,6 +5,6 @@ namespace Logistics.Application.Commands;
 
 public class UpdateCustomerCommand : IRequest<Result>
 {
-    public string Id { get; set; } = null!;
+    public Guid Id { get; set; }
     public string Name { get; set; } = null!;
 }

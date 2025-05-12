@@ -5,6 +5,6 @@ namespace Logistics.Application.Commands;
 
 public class RemoveRoleFromEmployeeCommand : IRequest<Result>
 {
-    public string UserId { get; set; } = null!;
+    public Guid UserId { get; set; }
     public string Role { get; set; } = null!;
 }

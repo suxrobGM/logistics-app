@@ -33,7 +33,7 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
     protected override async Task<ClaimsIdentity> GenerateClaimsAsync(User user)
     {
         var claimsIdentity = await base.GenerateClaimsAsync(user);
-        var tenantId = _httpContext.GetTenantId() ?? user.TenantId;
+        var tenantId = _httpContext.GetTenantId() ?? user.TenantId.ToString();
 
         AddProfileClaims(claimsIdentity, user);
         await AddAppRoleClaimsAsync(claimsIdentity, user);

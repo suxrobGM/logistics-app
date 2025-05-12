@@ -105,7 +105,7 @@ internal class PayrollService : IPayrollService
         return payroll;
     }
     
-    private async Task<bool> IsPayrollExisting(string employeeId, DateTime startDate, DateTime endDate)
+    private async Task<bool> IsPayrollExisting(Guid employeeId, DateTime startDate, DateTime endDate)
     {
         var payroll = await _tenantUow.Repository<PayrollInvoice>().GetAsync(p =>
             p.EmployeeId == employeeId &&

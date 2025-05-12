@@ -23,9 +23,9 @@ internal sealed class UpdatePayrollInvoiceHandler : RequestHandler<UpdatePayroll
             return Result.Fail($"Could not find a payroll with ID '{req.Id}'");
         }
         
-        if (!string.IsNullOrEmpty(req.EmployeeId) && req.EmployeeId != payroll.EmployeeId)
+        if (req.EmployeeId.HasValue && req.EmployeeId != payroll.EmployeeId)
         {
-            var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId);
+            var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId.Value);
 
             if (employee is null)
             {

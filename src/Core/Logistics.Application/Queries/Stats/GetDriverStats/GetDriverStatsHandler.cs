@@ -19,14 +19,14 @@ internal sealed class GetDriverStatsHandler : RequestHandler<GetDriverStatsQuery
         GetDriverStatsQuery req, CancellationToken cancellationToken)
     {
         var driverStats = new DriverStatsDto();
-        var driver = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId!);
+        var driver = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
 
         if (driver is null)
         {
             return Result<DriverStatsDto>.Fail($"Could not find driver with the user ID '{req.UserId}'");
         }
 
-        if (string.IsNullOrEmpty(driver.TruckId))
+        if (driver.TruckId.HasValue)
         {
             return Result<DriverStatsDto>.Fail("Driver does not have an assigned truck");
         }

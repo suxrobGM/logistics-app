@@ -125,7 +125,7 @@ public class AuthService : IAuthService
             switch (claim.Type)
             {
                 case JwtClaimTypes.Subject:
-                    userIdentity.Id = claim.Value;
+                    userIdentity.Id = Guid.Parse(claim.Value);
                     break;
                 case JwtClaimTypes.GivenName:
                     userIdentity.FirstName = claim.Value;
@@ -140,7 +140,7 @@ public class AuthService : IAuthService
                     userIdentity.Permissions.Add(claim.Value);
                     break;
                 case CustomClaimTypes.Tenant:
-                    userIdentity.TenantId = claim.Value;
+                    userIdentity.TenantId = Guid.Parse(claim.Value);
                     break;
             }
         }

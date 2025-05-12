@@ -6,7 +6,6 @@ using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.Authentication;
 using Logistics.DriverApp.Services.LocationTracking;
-using Logistics.Shared.Models;
 using Plugin.Firebase.CloudMessaging;
 using Plugin.Firebase.CloudMessaging.EventArgs;
 
@@ -29,7 +28,7 @@ public class DashboardPageViewModel : BaseViewModel
         _authService = authService;
         _locationTrackerBackgroundService = locationTrackerBackgroundService;
         _cache = cache;
-        OpenLoadPageCommand = new AsyncRelayCommand<string?>(OpenLoadPageAsync);
+        OpenLoadPageCommand = new AsyncRelayCommand<Guid?>(OpenLoadPageAsync);
         CrossFirebaseCloudMessaging.Current.NotificationReceived += HandleLoadNotificationReceived;
         
         Messenger.Register<TenantIdChangedMessage>(this, async (_, _) =>
@@ -43,7 +42,7 @@ public class DashboardPageViewModel : BaseViewModel
     
     #region Commands
 
-    public IAsyncRelayCommand<string?> OpenLoadPageCommand { get; }
+    public IAsyncRelayCommand<Guid?> OpenLoadPageCommand { get; }
 
     #endregion
 
@@ -87,9 +86,9 @@ public class DashboardPageViewModel : BaseViewModel
     private void TryStartLocationTrackerService()
     {
         var tenantId = _authService.User?.TenantId;
-        var truckId = _cache.Get<string>(CacheKeys.TruckId);
+        var truckId = _cache.Get<Guid?>(CacheKeys.TruckId);
 
-        if (string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(truckId))
+        if (!tenantId.HasValue || !truckId.HasValue)
         {
             return;
         }
@@ -103,9 +102,9 @@ public class DashboardPageViewModel : BaseViewModel
         });
     }
 
-    private async Task OpenLoadPageAsync(string? loadId)
+    private async Task OpenLoadPageAsync(Guid? loadId)
     {
-        if (string.IsNullOrEmpty(loadId))
+        if (!loadId.HasValue)
         {
             return;
         }
@@ -126,7 +125,7 @@ public class DashboardPageViewModel : BaseViewModel
         IsLoading = true;
         var driverId = _authService.User?.Id;
 
-        if (string.IsNullOrEmpty(driverId))
+        if (!driverId.HasValue)
         {
             await PopupHelpers.ShowErrorAsync("Failed to load driver data, try again");
             IsLoading = false;
@@ -135,7 +134,7 @@ public class DashboardPageViewModel : BaseViewModel
         
         var result = await _apiClient.GetTruckAsync(new GetTruckQuery
         {
-            TruckOrDriverId = driverId,
+            TruckOrDriverId = driverId.Value,
             IncludeLoads = true,
             OnlyActiveLoads = true,
         });
@@ -161,7 +160,7 @@ public class DashboardPageViewModel : BaseViewModel
     {
         IsLoading = true;
         var driverId = _authService.User?.Id!;
-        var result = await _apiClient.GetDriverActiveLoadsAsync(driverId);
+        var result = await _apiClient.GetDriverActiveLoadsAsync(driverId.Value);
 
         if (!result.Success)
         {

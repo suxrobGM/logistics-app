@@ -19,11 +19,11 @@ public class InvoicesController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(Result<InvoiceDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Invoices.View)]
-    public async Task<IActionResult> GetById(string id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         var result = await _mediator.Send(new GetInvoiceByIdQuery {Id = id});
         return result.Success ? Ok(result) : BadRequest(result);
@@ -49,22 +49,22 @@ public class InvoicesController : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Invoices.Edit)]
-    public async Task<IActionResult> Update(string id, [FromBody] UpdateInvoiceCommand request)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateInvoiceCommand request)
     {
         request.Id = id;
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
     
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Invoices.Delete)]
-    public async Task<IActionResult> Delete(string id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         var result = await _mediator.Send(new DeleteInvoiceCommand {Id = id});
         return result.Success ? Ok(result) : BadRequest(result);
@@ -102,11 +102,11 @@ public class InvoicesController : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPut("payrolls/{id}")]
+    [HttpPut("payrolls/{id:guid}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payrolls.Edit)]
-    public async Task<IActionResult> UpdatePayrollInvoice(string id, [FromBody] UpdatePayrollInvoiceCommand request)
+    public async Task<IActionResult> UpdatePayrollInvoice(Guid id, [FromBody] UpdatePayrollInvoiceCommand request)
     {
         request.Id = id;
         var result = await _mediator.Send(request);

@@ -13,8 +13,8 @@ public class ActiveLoad : ObservableRecipient
         UpdateFromDto(loadDto);
     }
 
-    private string? _id;
-    public string? Id
+    private Guid? _id;
+    public Guid? Id
     {
         get => _id;
         set => SetProperty(ref _id, value);
@@ -132,8 +132,8 @@ public class ActiveLoad : ObservableRecipient
         set => SetProperty(ref _canConfirmDelivery, value);
     }
 
-    private string? _assignedDispatcherId;
-    public string? AssignedDispatcherId 
+    private Guid? _assignedDispatcherId;
+    public Guid? AssignedDispatcherId 
     {
         get => _assignedDispatcherId;
         set => SetProperty(ref _assignedDispatcherId, value);
@@ -146,8 +146,8 @@ public class ActiveLoad : ObservableRecipient
         set => SetProperty(ref _assignedDispatcherName, value);
     }
 
-    private string? _assignedTruckId;
-    public string? AssignedTruckId 
+    private Guid? _assignedTruckId;
+    public Guid? AssignedTruckId 
     {
         get => _assignedTruckId;
         set => SetProperty(ref _assignedTruckId, value);

@@ -32,7 +32,7 @@ public partial class ListSubscriptions : PageBase
         StateHasChanged();
     }
     
-    private async Task DeleteSubscription(string id)
+    private async Task DeleteSubscription(Guid id)
     {
         var confirm = await DialogService.Confirm(
             "Are you sure you want to delete this subscription? The Stripe subscription will be cancelled immediately.");
@@ -44,7 +44,7 @@ public partial class ListSubscriptions : PageBase
         }
     }
 
-    private async Task CancelSubscription(string id)
+    private async Task CancelSubscription(Guid id)
     {
         var confirm = await DialogService.Confirm(
             "Are you sure you want to cancel this subscription? The subscription will be cancelled at the end of the billing period.");

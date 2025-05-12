@@ -6,6 +6,6 @@ public class GetDrivers : BaseSpecification<Employee>
 {
     public GetDrivers()
     {
-        Criteria = i => !string.IsNullOrEmpty(i.TruckId);
+        Criteria = i => i.TruckId.HasValue;
     }
 }

@@ -11,7 +11,7 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
     private readonly IApiClient _apiClient;
     private readonly IAuthService _authService;
     private readonly IMapsService _mapsService;
-    private string? _lastLoadId;
+    private Guid? _lastLoadId;
 
     public LoadPageViewModel(
         IApiClient apiClient,
@@ -78,13 +78,13 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
 
     private async Task FetchLoadAsync()
     {
-        if (string.IsNullOrEmpty(_lastLoadId) || _lastLoadId == Load?.Id)
+        if (!_lastLoadId.HasValue || _lastLoadId == Load?.Id)
         {
             return;
         }
         
         IsLoading = true;
-        var result = await _apiClient.GetLoadAsync(_lastLoadId);
+        var result = await _apiClient.GetLoadAsync(_lastLoadId.Value);
         
         if (!result.Success)
         {
@@ -104,7 +104,7 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
             return;
         
         IsLoading = true;
-        Result? result = default;
+        Result? result = null;
 
         switch (status)
         {

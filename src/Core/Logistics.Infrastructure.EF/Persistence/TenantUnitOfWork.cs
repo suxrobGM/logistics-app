@@ -16,10 +16,10 @@ internal class TenantUnitOfWork : ITenantUnityOfWork
         _tenantDbContext = tenantDbContext;
     }
 
-    public ITenantRepository<TEntity, string> Repository<TEntity>() 
-        where TEntity : class, IEntity<string>, ITenantEntity
+    public ITenantRepository<TEntity, Guid> Repository<TEntity>() 
+        where TEntity : class, IEntity<Guid>, ITenantEntity
     {
-        return Repository<TEntity, string>();
+        return Repository<TEntity, Guid>();
     }
 
     public ITenantRepository<TEntity, TKey> Repository<TEntity, TKey>() 

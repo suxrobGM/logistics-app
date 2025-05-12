@@ -2,7 +2,7 @@
 
 public class TruckDto
 {
-    public string? Id { get; set; }
+    public Guid? Id { get; set; }
     public string? TruckNumber { get; set; }
     public AddressDto? CurrentLocation { get; set; }
     public double? CurrentLocationLat { get; set; }

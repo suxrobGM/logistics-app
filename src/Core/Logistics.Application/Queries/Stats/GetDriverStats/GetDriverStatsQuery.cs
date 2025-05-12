@@ -5,5 +5,5 @@ namespace Logistics.Application.Queries;
 
 public class GetDriverStatsQuery : IRequest<Result<DriverStatsDto>>
 {
-    public string? UserId { get; set; }
+    public Guid UserId { get; set; }
 }

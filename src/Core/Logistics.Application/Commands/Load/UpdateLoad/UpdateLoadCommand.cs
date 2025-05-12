@@ -7,7 +7,7 @@ namespace Logistics.Application.Commands;
 
 public class UpdateLoadCommand : IRequest<Result>
 {
-    public required string Id { get; set; }
+    public Guid Id { get; set; }
     public string? Name { get; set; }
     public Address? OriginAddress { get; set; }
     public double? OriginAddressLat { get; set; }
@@ -17,8 +17,8 @@ public class UpdateLoadCommand : IRequest<Result>
     public double? DestinationAddressLong { get; set; }
     public decimal? DeliveryCost { get; set; }
     public double? Distance { get; set; }
-    public string? AssignedDispatcherId { get; set; }
-    public string? AssignedTruckId { get; set; }
-    public string? CustomerId { get; set; }
+    public Guid? AssignedDispatcherId { get; set; }
+    public Guid? AssignedTruckId { get; set; }
+    public Guid? CustomerId { get; set; }
     public LoadStatus? Status { get; set; }
 }

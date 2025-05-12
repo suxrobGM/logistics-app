@@ -7,9 +7,9 @@ namespace Logistics.Domain.Entities;
 public class Subscription : Entity, IMasterEntity
 {
     public SubscriptionStatus Status { get; set; }
-    public required string TenantId { get; set; }
+    public required Guid TenantId { get; set; }
     public virtual required Tenant Tenant { get; set; }
-    public required string PlanId { get; set; }
+    public required Guid PlanId { get; set; }
     public virtual required SubscriptionPlan Plan { get; set; }
     public DateTime StartDate { get; set; } = DateTime.UtcNow;
     public DateTime? EndDate { get; set; }

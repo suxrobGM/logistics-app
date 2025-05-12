@@ -9,7 +9,7 @@ public static class QueryableExtensions
     public static IQueryable<TEntity> ApplySpecification<TEntity>(
         this IQueryable<TEntity> queryable,
         ISpecification<TEntity> specification)
-        where TEntity : class, IEntity<string>
+        where TEntity : class, IEntity<Guid>
     {
         var query = queryable;
         if (specification.Criteria is not null)

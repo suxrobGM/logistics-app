@@ -1,8 +1,8 @@
 ﻿namespace Logistics.Shared.Models;
 
-public class GetTruckQuery
+public record GetTruckQuery
 {
-    public string? TruckOrDriverId { get; set; }
+    public Guid? TruckOrDriverId { get; set; }
     public bool IncludeLoads { get; set; }
     public bool OnlyActiveLoads { get; set; }
 
@@ -14,9 +14,9 @@ public class GetTruckQuery
             { "onlyActiveLoads", OnlyActiveLoads.ToString() }
         };
 
-        if (!string.IsNullOrEmpty(TruckOrDriverId))
+        if (TruckOrDriverId.HasValue)
         {
-            dict.Add("truckOrDriverId", TruckOrDriverId);
+            dict.Add("truckOrDriverId", TruckOrDriverId.Value.ToString());
         }
 
         return dict;

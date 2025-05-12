@@ -5,5 +5,5 @@ namespace Logistics.Application.Queries;
 
 public class GetUserCurrentTenantQuery : IRequest<Result<TenantDto>>
 {
-    public required string UserId { get; set; }
+    public Guid UserId { get; set; }
 }

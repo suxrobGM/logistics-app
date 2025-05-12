@@ -154,7 +154,7 @@ internal class PopulateFakeData
     }
 
     private async Task<Employee> TryAddEmployeeAsync(
-        string tenantId, 
+        Guid tenantId, 
         User user,
         decimal salary,
         SalaryType salaryType,

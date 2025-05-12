@@ -23,9 +23,9 @@ internal sealed class GetPayrollInvoicesHandler : RequestHandler<GetPayrollInvoi
         BaseSpecification<PayrollInvoice> specification;
         var payrollRepository = _tenantUow.Repository<PayrollInvoice>();
 
-        if (!string.IsNullOrEmpty(req.EmployeeId))
+        if (req.EmployeeId.HasValue)
         {
-            specification = new FilterPayrollsByEmployeeId(req.EmployeeId, req.OrderBy, req.Page, req.PageSize);
+            specification = new FilterPayrollsByEmployeeId(req.EmployeeId.Value, req.OrderBy, req.Page, req.PageSize);
             totalItems = await payrollRepository.CountAsync(i => i.EmployeeId == req.EmployeeId);
         }
         else

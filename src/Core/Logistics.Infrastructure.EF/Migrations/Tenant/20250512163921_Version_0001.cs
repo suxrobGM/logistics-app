@@ -16,7 +16,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "Customers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -28,7 +28,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "Notifications",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: true),
                     Message = table.Column<string>(type: "text", nullable: true),
                     IsRead = table.Column<bool>(type: "boolean", nullable: false),
@@ -43,7 +43,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "PaymentMethods",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
                     StripePaymentMethodId = table.Column<string>(type: "text", nullable: true),
                     IsDefault = table.Column<bool>(type: "boolean", nullable: false),
@@ -81,7 +81,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "Roles",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     DisplayName = table.Column<string>(type: "text", nullable: true),
                     NormalizedName = table.Column<string>(type: "text", nullable: false)
@@ -95,7 +95,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "SubscriptionPlan",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
                     StripePriceId = table.Column<string>(type: "text", nullable: true),
@@ -120,7 +120,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "Tenant",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     CompanyName = table.Column<string>(type: "text", nullable: true),
                     ConnectionString = table.Column<string>(type: "text", nullable: false),
@@ -143,7 +143,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "Trucks",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     TruckNumber = table.Column<string>(type: "text", nullable: false),
                     CurrentLocationLat = table.Column<double>(type: "double precision", nullable: true),
                     CurrentLocationLong = table.Column<double>(type: "double precision", nullable: true),
@@ -163,10 +163,10 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "RoleClaims",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ClaimType = table.Column<string>(type: "text", nullable: false),
                     ClaimValue = table.Column<string>(type: "text", nullable: false),
-                    RoleId = table.Column<string>(type: "text", nullable: false)
+                    RoleId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -183,10 +183,10 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "Subscription",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
-                    TenantId = table.Column<string>(type: "text", nullable: false),
-                    PlanId = table.Column<string>(type: "text", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PlanId = table.Column<Guid>(type: "uuid", nullable: false),
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     NextBillingDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -215,10 +215,10 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "User",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     FirstName = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: false),
-                    TenantId = table.Column<string>(type: "text", nullable: true),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
                     LastModifiedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
@@ -252,7 +252,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "Employees",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: true),
                     FirstName = table.Column<string>(type: "text", nullable: true),
                     LastName = table.Column<string>(type: "text", nullable: true),
@@ -260,7 +260,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     SalaryType = table.Column<int>(type: "integer", nullable: false),
                     JoinedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DeviceToken = table.Column<string>(type: "text", nullable: true),
-                    TruckId = table.Column<string>(type: "text", nullable: true),
+                    TruckId = table.Column<Guid>(type: "uuid", nullable: true),
                     Salary_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Salary_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false)
                 },
@@ -279,8 +279,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "EmployeeRoles",
                 columns: table => new
                 {
-                    EmployeeId = table.Column<string>(type: "text", nullable: false),
-                    RoleId = table.Column<string>(type: "text", nullable: false)
+                    EmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -303,7 +303,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "Loads",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Number = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     Name = table.Column<string>(type: "text", nullable: true),
@@ -317,9 +317,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     DispatchedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     PickUpDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     DeliveryDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CustomerId = table.Column<string>(type: "text", nullable: true),
-                    AssignedTruckId = table.Column<string>(type: "text", nullable: true),
-                    AssignedDispatcherId = table.Column<string>(type: "text", nullable: true),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: true),
+                    AssignedTruckId = table.Column<Guid>(type: "uuid", nullable: true),
+                    AssignedDispatcherId = table.Column<Guid>(type: "uuid", nullable: true),
                     DeliveryCost_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     DeliveryCost_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
                     DestinationAddress_City = table.Column<string>(type: "text", nullable: false),
@@ -360,7 +360,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "Invoices",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Number = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     Type = table.Column<int>(type: "integer", nullable: false),
@@ -374,12 +374,12 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     LastModifiedBy = table.Column<string>(type: "text", nullable: true),
                     Total_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Total_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
-                    LoadId = table.Column<string>(type: "text", nullable: true),
-                    CustomerId = table.Column<string>(type: "text", nullable: true),
-                    EmployeeId = table.Column<string>(type: "text", nullable: true),
+                    LoadId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: true),
+                    EmployeeId = table.Column<Guid>(type: "uuid", nullable: true),
                     PeriodStart = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     PeriodEnd = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    SubscriptionId = table.Column<string>(type: "text", nullable: true),
+                    SubscriptionId = table.Column<Guid>(type: "uuid", nullable: true),
                     BillingPeriodStart = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     BillingPeriodEnd = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
@@ -416,10 +416,10 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "Payments",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     Method = table.Column<int>(type: "integer", nullable: false),
-                    InvoiceId = table.Column<string>(type: "text", nullable: true),
+                    InvoiceId = table.Column<Guid>(type: "uuid", nullable: true),
                     Amount_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Amount_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
                     BillingAddress_City = table.Column<string>(type: "text", nullable: false),

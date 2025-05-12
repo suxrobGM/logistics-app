@@ -84,14 +84,14 @@
                         ButtonStyle="ButtonStyle.Danger"
                         Icon="delete"
                         Size="ButtonSize.Small" 
-                        Click="() => DeleteSubscription(subscription.Id!)"
+                        Click="() => DeleteSubscription(subscription.Id!.Value)"
                         MouseEnter="@(args => ShowTooltip(args, "Delete Subscription"))">
                     </RadzenButton>
                     <RadzenButton
                         ButtonStyle="ButtonStyle.Warning"
                         Icon="cancel"
                         Size="ButtonSize.Small"
-                        Click="() => CancelSubscription(subscription.Id!)"
+                        Click="() => CancelSubscription(subscription.Id!.Value)"
                         MouseEnter="@(args => ShowTooltip(args, "Cancel Subscription"))">
                     </RadzenButton>
                 </RadzenStack>

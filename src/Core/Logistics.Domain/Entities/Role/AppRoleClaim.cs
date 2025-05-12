@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.Domain.Entities;
 
-public class AppRoleClaim : IdentityRoleClaim<string>, IEntity<int>, IMasterEntity
+public class AppRoleClaim : IdentityRoleClaim<Guid>, IEntity<int>, IMasterEntity
 {
     //public new string Id { get; set; } = Guid.NewGuid().ToString();
     public virtual AppRole Role { get; set; } = null!;

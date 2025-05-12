@@ -42,9 +42,9 @@ internal sealed class UpdateUserHandler : RequestHandler<UpdateUserCommand, Resu
             user.PhoneNumber = req.PhoneNumber;
         }
         
-        if (!string.IsNullOrEmpty(req.TenantId))
+        if (req.TenantId.HasValue)
         {
-            await UpdateTenantEmployeeDataAsync(req.TenantId, user);
+            await UpdateTenantEmployeeDataAsync(req.TenantId.Value, user);
         }
         
         _masterUow.Repository<User>().Update(user);
@@ -53,9 +53,9 @@ internal sealed class UpdateUserHandler : RequestHandler<UpdateUserCommand, Resu
         return Result.Succeed();
     }
 
-    private async Task UpdateTenantEmployeeDataAsync(string tenantId, User user)
+    private async Task UpdateTenantEmployeeDataAsync(Guid tenantId, User user)
     {
-        _tenantUow.SetCurrentTenantById(tenantId);
+        _tenantUow.SetCurrentTenantById(tenantId.ToString());
         var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(user.Id);
 
         if (employee is null)

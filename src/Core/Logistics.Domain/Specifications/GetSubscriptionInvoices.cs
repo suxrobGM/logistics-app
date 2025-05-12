@@ -6,7 +6,7 @@ namespace Logistics.Domain.Specifications;
 public class GetSubscriptionInvoices : BaseSpecification<SubscriptionInvoice>
 {
     public GetSubscriptionInvoices(
-        string subscriptionId,
+        Guid subscriptionId,
         string? orderBy,
         int page,
         int pageSize)

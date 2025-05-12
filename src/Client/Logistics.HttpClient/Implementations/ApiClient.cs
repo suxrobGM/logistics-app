@@ -8,7 +8,7 @@ namespace Logistics.HttpClient.Implementations;
 internal class ApiClient : GenericApiClient, IApiClient
 {
     private string? _accessToken;
-    private string? _tenantId;
+    private Guid? _tenantId;
     
     public ApiClient(ApiClientOptions options) : base(options.Host!)
     {
@@ -33,13 +33,13 @@ internal class ApiClient : GenericApiClient, IApiClient
         }
     }
 
-    public string? TenantId 
+    public Guid? TenantId 
     {
         get => _tenantId;
         set
         {
             _tenantId = value;
-            SetRequestHeader("X-Tenant", _tenantId);
+            SetRequestHeader("X-Tenant", _tenantId?.ToString());
         }
     }
     
@@ -54,12 +54,13 @@ internal class ApiClient : GenericApiClient, IApiClient
         var token = handler.ReadJwtToken(accessToken);
         var tenantId = token?.Claims?.FirstOrDefault(i => i.Type == "tenant")?.Value;
         
-        if (string.IsNullOrEmpty(tenantId) || TenantId == tenantId)
+        
+        if (!Guid.TryParse(tenantId, out var tenantGuid) || TenantId == tenantGuid)
         {
             return;
         } 
 
-        TenantId = tenantId;
+        TenantId = tenantGuid;
         SetRequestHeader("X-Tenant", tenantId);
     }
 
@@ -152,7 +153,7 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Load API
     
-    public Task<Result<LoadDto>> GetLoadAsync(string id)
+    public Task<Result<LoadDto>> GetLoadAsync(Guid id)
     {
         return MakeGetRequestAsync<Result<LoadDto>>($"loads/{id}");
     }
@@ -162,11 +163,11 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakeGetRequestAsync<PagedResult<LoadDto>>("loads", query.ToDictionary());
     }
     
-    public Task<Result<ICollection<LoadDto>>> GetDriverActiveLoadsAsync(string userId)
+    public Task<Result<ICollection<LoadDto>>> GetDriverActiveLoadsAsync(Guid userId)
     {
         var query = new Dictionary<string, string>
         {
-            { "userId", userId },
+            { "userId", userId.ToString() },
             { "onlyActiveLoads", "true" },
             { "loadAllPage", "true" }
         };
@@ -183,7 +184,7 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakePutRequestAsync<Result, UpdateLoad>($"loads/{command.Id}", command);
     }
 
-    public Task<Result> DeleteLoadAsync(string id)
+    public Task<Result> DeleteLoadAsync(Guid id)
     {
         return MakeDeleteRequestAsync<Result>($"loads/{id}");
     }
@@ -216,7 +217,7 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakePutRequestAsync<Result, UpdateTruck>($"trucks/{command.Id}", command);
     }
 
-    public Task<Result> DeleteTruckAsync(string id)
+    public Task<Result> DeleteTruckAsync(Guid id)
     {
         return MakeDeleteRequestAsync<Result>($"trucks/{id}");
     }
@@ -226,7 +227,7 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Employee API
 
-    public Task<Result<EmployeeDto>> GetEmployeeAsync(string userId)
+    public Task<Result<EmployeeDto>> GetEmployeeAsync(Guid userId)
     {
         return MakeGetRequestAsync<Result<EmployeeDto>>($"employees/{userId}");
     }
@@ -246,7 +247,7 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakePutRequestAsync<Result, UpdateEmployee>($"employees/{command.UserId}", command);
     }
     
-    public Task<Result> DeleteEmployeeAsync(string userId)
+    public Task<Result> DeleteEmployeeAsync(Guid userId)
     {
         return MakeDeleteRequestAsync<Result>($"employees/{userId}");
     }
@@ -276,7 +277,7 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakePutRequestAsync<Result, UpdateTenant>($"tenants/{command.Id}", command);
     }
 
-    public Task<Result> DeleteTenantAsync(string id)
+    public Task<Result> DeleteTenantAsync(Guid id)
     {
         return MakeDeleteRequestAsync<Result>($"tenants/{id}");
     }
@@ -286,7 +287,7 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region User API
 
-    public Task<Result<UserDto>> GetUserAsync(string userId)
+    public Task<Result<UserDto>> GetUserAsync(Guid userId)
     {
         return MakeGetRequestAsync<Result<UserDto>>($"users/{userId}");
     }
@@ -301,7 +302,7 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakePutRequestAsync<Result, UpdateUser>($"users/{command.UserId}", command);
     }
 
-    public Task<Result<TenantDto>> GetUserCurrentTenant(string userId)
+    public Task<Result<TenantDto>> GetUserCurrentTenant(Guid userId)
     {
         return MakeGetRequestAsync<Result<TenantDto>>($"users/{userId}/tenant");
     }
@@ -341,7 +342,7 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakeGetRequestAsync<Result<MonthlyGrossesDto>>("stats/monthly-grosses", query.ToDictionary());
     }
 
-    public Task<Result<DriverStatsDto>> GetDriverStatsAsync(string userId)
+    public Task<Result<DriverStatsDto>> GetDriverStatsAsync(Guid userId)
     {
         return MakeGetRequestAsync<Result<DriverStatsDto>>($"stats/driver/{userId}");  
     }
@@ -351,12 +352,12 @@ internal class ApiClient : GenericApiClient, IApiClient
     
     #region Subscriptions API
 
-    public Task<Result<SubscriptionDto>> GetSubscriptionAsync(string id)
+    public Task<Result<SubscriptionDto>> GetSubscriptionAsync(Guid id)
     {
         return MakeGetRequestAsync<Result<SubscriptionDto>>($"subscriptions/{id}");
     }
 
-    public Task<Result<SubscriptionPlanDto>> GetSubscriptionPlanAsync(string planId)
+    public Task<Result<SubscriptionPlanDto>> GetSubscriptionPlanAsync(Guid planId)
     {
         return MakeGetRequestAsync<Result<SubscriptionPlanDto>>($"subscriptions/plans/{planId}");
     }
@@ -381,7 +382,7 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakePutRequestAsync<Result, UpdateSubscriptionPlan>($"subscriptions/plans/{command.Id}", command);
     }
 
-    public Task<Result> DeleteSubscriptionPlanAsync(string id)
+    public Task<Result> DeleteSubscriptionPlanAsync(Guid id)
     {
         return MakeDeleteRequestAsync<Result>($"subscriptions/plans/{id}");
     }
@@ -391,7 +392,7 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakePostRequestAsync<Result, CreateSubscription>("subscriptions", command);
     }
 
-    public Task<Result> DeleteSubscriptionAsync(string id)
+    public Task<Result> DeleteSubscriptionAsync(Guid id)
     {
         return MakeDeleteRequestAsync<Result>($"subscriptions/{id}");
     }

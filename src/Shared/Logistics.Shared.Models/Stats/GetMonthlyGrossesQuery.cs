@@ -1,6 +1,3 @@
 ﻿namespace Logistics.Shared.Models;
 
-public class GetMonthlyGrossesQuery : GetDailyGrossesQuery
-{
-    
-}
+public class GetMonthlyGrossesQuery : GetDailyGrossesQuery;

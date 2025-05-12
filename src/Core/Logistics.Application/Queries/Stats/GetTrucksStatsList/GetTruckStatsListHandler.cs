@@ -34,7 +34,7 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
             .GroupBy(load => load.AssignedTruckId!)
             .Select(group => new TruckStats
             {
-                TruckId = group.Key,
+                TruckId = group.Key!.Value,
                 TruckNumber = group.First().AssignedTruck!.TruckNumber,
                 Gross = group.Sum(load => load.DeliveryCost),
                 Distance = group.Sum(load => load.Distance),
@@ -77,11 +77,11 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
 
     private record TruckStats
     {
-        public required string TruckId { get; set; }
+        public required Guid TruckId { get; set; }
         public required string TruckNumber { get; set; }
         public required decimal Gross { get; set; }
         public required double Distance { get; set; }
         public required decimal DriverShare { get; set; }
-        public IEnumerable<Employee> Drivers { get; set; } = Array.Empty<Employee>();
+        public IEnumerable<Employee> Drivers { get; set; } = [];
     }
 }

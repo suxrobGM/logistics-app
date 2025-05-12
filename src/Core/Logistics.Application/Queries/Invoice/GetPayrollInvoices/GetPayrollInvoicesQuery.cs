@@ -8,5 +8,5 @@ public class GetPayrollInvoicesQuery : SearchableQuery, IRequest<PagedResult<Inv
     /// <summary>
     /// Filter payrolls by Employee ID
     /// </summary>
-    public string? EmployeeId { get; set; }
+    public Guid? EmployeeId { get; set; }
 }

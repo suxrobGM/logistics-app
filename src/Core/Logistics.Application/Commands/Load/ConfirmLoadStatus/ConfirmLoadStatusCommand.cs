@@ -6,7 +6,7 @@ namespace Logistics.Application.Commands;
 
 public class ConfirmLoadStatusCommand : IRequest<Result>
 {
-    public string DriverId { get; set; } = null!;
-    public string LoadId { get; set; } = null!;
+    public Guid DriverId { get; set; }
+    public Guid LoadId { get; set; }
     public LoadStatus? LoadStatus { get; set; }
 }

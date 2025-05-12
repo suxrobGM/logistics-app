@@ -5,6 +5,6 @@ namespace Logistics.Application.Commands;
 
 public class UpdateNotificationCommand : IRequest<Result>
 {
-    public string Id { get; set; } = null!;
+    public Guid Id { get; set; }
     public bool? IsRead { get; set; }
 }
