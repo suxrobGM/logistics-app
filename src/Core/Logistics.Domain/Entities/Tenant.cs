@@ -7,7 +7,7 @@ public class Tenant : Entity, IMasterEntity
 {
     public required string Name { get; set; }
     public string? CompanyName { get; set; }
-    public Address CompanyAddress { get; set; } = Address.NullAddress;
+    public required Address CompanyAddress { get; set; }
     public required string ConnectionString { get; set; }
     public required string BillingEmail { get; set; }
     public string? DotNumber { get; set; }

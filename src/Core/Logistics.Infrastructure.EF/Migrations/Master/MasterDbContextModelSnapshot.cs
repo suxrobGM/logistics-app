@@ -680,13 +680,11 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
 
             modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionInvoice", b =>
                 {
-                    b.HasOne("Logistics.Domain.Entities.Subscription", "Subscription")
+                    b.HasOne("Logistics.Domain.Entities.Subscription", null)
                         .WithMany("Invoices")
                         .HasForeignKey("SubscriptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.AppRole", b =>

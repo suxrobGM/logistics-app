@@ -1,6 +1,7 @@
 ﻿using Logistics.Domain.Entities;
 using Logistics.Domain.Exceptions;
 using Logistics.Domain.Services;
+using Logistics.Domain.ValueObjects;
 using Logistics.Infrastructure.EF.Data;
 using Logistics.Infrastructure.EF.Options;
 using Logistics.Shared.Consts;
@@ -63,6 +64,14 @@ internal class TenantService : ITenantService
         {
             Name = "default",
             BillingEmail = "test@gmail.com",
+            CompanyAddress = new Address
+            {
+                Line1 = "123 Main St",
+                City = "Anytown",
+                State = "CA",
+                ZipCode = "12345",
+                Country = "United States",
+            },
             ConnectionString = _dbContextOptions?.ConnectionString ?? ConnectionStrings.LocalDefaultTenant,
         };
     }

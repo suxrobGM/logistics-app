@@ -45,9 +45,9 @@ internal sealed class InvoiceEntityConfiguration : IEntityTypeConfiguration<Invo
     {
         public void Configure(EntityTypeBuilder<SubscriptionInvoice> builder)
         {
-            builder.HasOne(i => i.Subscription)
-                .WithMany(s => s.Invoices)
-                .HasForeignKey(i => i.SubscriptionId);
+            // builder.HasOne(i => i.Subscription)
+            //     .WithMany(s => s.Invoices)
+            //     .HasForeignKey(i => i.SubscriptionId);
         }
     }
     

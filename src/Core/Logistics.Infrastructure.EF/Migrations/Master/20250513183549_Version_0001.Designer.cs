@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.EF.Migrations.Master
 {
     [DbContext(typeof(MasterDbContext))]
-    [Migration("20250512163913_Version_0001")]
+    [Migration("20250513183549_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -683,13 +683,11 @@ namespace Logistics.Infrastructure.EF.Migrations.Master
 
             modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionInvoice", b =>
                 {
-                    b.HasOne("Logistics.Domain.Entities.Subscription", "Subscription")
+                    b.HasOne("Logistics.Domain.Entities.Subscription", null)
                         .WithMany("Invoices")
                         .HasForeignKey("SubscriptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.AppRole", b =>
