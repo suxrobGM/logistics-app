@@ -1,11 +1,42 @@
-import {CustomerDto} from "../customer/customer.model";
+import {CustomerDto} from "../customer";
+import {EmployeeDto} from "../employee";
+import {MoneyDto} from "../money.model";
 import {PaymentDto} from "../payment/payment.model";
+import {InvoiceStatus, InvoiceType} from "./enums";
 
 export interface InvoiceDto {
   id: string;
-  loadId: string;
-  loadRef: number;
-  createdDate: string;
-  customer: CustomerDto;
-  payment: PaymentDto;
+
+  number: number;
+  type: InvoiceType;
+  status: InvoiceStatus;
+  createdDate: Date;
+
+  /**
+   * Total inclusive of tax & discounts.
+   */
+  total: MoneyDto;
+
+  notes?: string;
+  dueDate?: Date; // ISO 8601 date string
+  stripeInvoiceId?: string;
+
+  payments: PaymentDto[];
+
+  // LoadInvoice fields
+  loadNumber: number;
+  loadId?: string;
+  customerId?: string;
+  customer?: CustomerDto;
+
+  // PayrollInvoice fields
+  employeeId?: string;
+  employee?: EmployeeDto;
+  periodStart?: string;
+  periodEnd?: string;
+
+  // SubscriptionInvoice fields
+  subscriptionId?: string;
+  billingPeriodStart?: string;
+  billingPeriodEnd?: string;
 }

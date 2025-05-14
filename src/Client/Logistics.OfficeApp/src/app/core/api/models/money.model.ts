@@ -1,4 +1,4 @@
-export interface Money {
+export interface MoneyDto {
   amount: number;
   currency: string;
 }

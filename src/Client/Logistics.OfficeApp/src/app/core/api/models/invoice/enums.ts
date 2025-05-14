@@ -1,3 +1,5 @@
+import {SelectOption} from "@/core/types";
+
 export enum InvoiceType {
   Load = "load",
   Subscription = "subscription",
@@ -12,3 +14,18 @@ export enum InvoiceStatus {
   PartiallyPaid = "partially_paid",
   Cancelled = "cancelled",
 }
+
+export const invoiceStatusOptions: SelectOption<InvoiceStatus>[] = [
+  {label: "Draft", value: InvoiceStatus.Draft},
+  {label: "Issued", value: InvoiceStatus.Issued},
+  {label: "Paid", value: InvoiceStatus.Paid},
+  {label: "Partially Paid", value: InvoiceStatus.PartiallyPaid},
+  {label: "Cancelled", value: InvoiceStatus.Cancelled},
+] as const;
+
+export const invoiceTypeOptions: SelectOption<InvoiceType>[] = [
+  {label: "Load", value: InvoiceType.Load},
+  {label: "Subscription", value: InvoiceType.Subscription},
+  {label: "Payroll", value: InvoiceType.Payroll},
+  {label: "Other", value: InvoiceType.Other},
+] as const;

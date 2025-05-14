@@ -7,9 +7,8 @@ namespace Logistics.Application.Commands;
 
 public class CreatePaymentCommand : IRequest<Result>
 {
-    public PaymentMethodType Method { get; set; }
+    public Guid PaymentMethodId { get; set; }
     public decimal Amount { get; set; }
-    public PaymentFor PaymentFor { get; set; }
     public Address? BillingAddress { get; set; }
-    public string? Notes { get; set; }
+    public string? Description { get; set; }
 }

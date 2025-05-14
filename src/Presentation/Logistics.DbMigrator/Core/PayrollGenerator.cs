@@ -1,6 +1,5 @@
 ﻿using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.ValueObjects;
 using Logistics.Shared.Consts;
 
 namespace Logistics.DbMigrator.Core;
@@ -50,7 +49,7 @@ public class PayrollGenerator
                     continue;
                 }
                 
-                var payroll = CreatePayroll(employee, range.StartDate, range.EndDate);
+                var payroll = CreatePayrollInvoice(employee, range.StartDate, range.EndDate);
                 await payrollRepository.AddAsync(payroll);
                 
                 _logger.LogInformation(
@@ -74,37 +73,20 @@ public class PayrollGenerator
         return payroll != null;
     }
     
-    private static PayrollInvoice CreatePayroll(Employee employee, DateTime startDate, DateTime endDate)
+    private static PayrollInvoice CreatePayrollInvoice(Employee employee, DateTime startDate, DateTime endDate)
     {
-        var billingAddress = new Address
-        {
-            Line1 = "40 Crescent Ave",
-            City = "Boston",
-            State = "Massachusetts",
-            ZipCode = "02125",
-            Country = "United States"
-        };
-        
         var amount = CalculateSalary(employee, startDate, endDate);
-        
-        var payment = new Payment
-        {
-            Amount = amount,
-            Method = PaymentMethodType.Card,
-            Status = PaymentStatus.Paid,
-            BillingAddress = billingAddress
-        };
 
         var payroll = new PayrollInvoice
         {
             Total = amount,
+            Status = InvoiceStatus.Paid,
             PeriodStart = startDate,
             PeriodEnd = endDate,
             EmployeeId = employee.Id,
             Employee = employee,
         };
-
-        payroll.ApplyPayment(payment);
+        
         return payroll;
     }
 

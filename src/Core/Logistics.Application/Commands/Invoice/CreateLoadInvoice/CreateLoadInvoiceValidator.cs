@@ -8,6 +8,7 @@ internal sealed class CreateLoadInvoiceValidator : AbstractValidator<CreateLoadI
     {
         RuleFor(i => i.CustomerId).NotEmpty();
         RuleFor(i => i.LoadId).NotEmpty();
+        RuleFor(i => i.PaymentMethodId).NotEmpty();
         RuleFor(i => i.PaymentAmount).GreaterThan(0M);
     }
 }

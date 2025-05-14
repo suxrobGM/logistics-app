@@ -9,6 +9,7 @@ public record InvoiceDto
     public long Number { get; set; }
     public InvoiceType Type { get; set; }
     public InvoiceStatus Status { get; set; }
+    public DateTime CreatedDate { get; set; }
     
     /// <summary>
     /// Total inclusive of tax & discounts.
@@ -25,9 +26,11 @@ public record InvoiceDto
     public long LoadNumber { get; set; }
     public Guid? LoadId { get; set; }
     public Guid? CustomerId { get; set; }
+    public CustomerDto? Customer { get; set; }
     
     // PayrollInvoice fields
     public Guid? EmployeeId { get; set; }
+    public EmployeeDto? Employee { get; set; }
     public DateTime? PeriodStart { get; set; }
     public DateTime? PeriodEnd { get; set; }
     

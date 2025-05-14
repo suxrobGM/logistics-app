@@ -16,6 +16,7 @@ public static class InvoiceMapper
                 Type = InvoiceType.Load,
                 Number = loadInvoice.Number,
                 Status = loadInvoice.Status,
+                CreatedDate = loadInvoice.CreatedAt.UtcDateTime,
                 Total = loadInvoice.Total.ToDto(),
                 DueDate = loadInvoice.DueDate,
                 Notes = loadInvoice.Notes,
@@ -23,7 +24,8 @@ public static class InvoiceMapper
                 Payments = loadInvoice.Payments.Select(i => i.ToDto()),
                 LoadId = loadInvoice.LoadId,
                 LoadNumber = loadInvoice.Load.Number,
-                CustomerId = loadInvoice.CustomerId
+                CustomerId = loadInvoice.CustomerId,
+                Customer = loadInvoice.Customer.ToDto()
             },
             SubscriptionInvoice subscriptionInvoice => new InvoiceDto
             {
@@ -52,6 +54,7 @@ public static class InvoiceMapper
                 StripeInvoiceId = payrollInvoice.StripeInvoiceId,
                 Payments = payrollInvoice.Payments.Select(i => i.ToDto()),
                 EmployeeId = payrollInvoice.EmployeeId,
+                Employee = payrollInvoice.Employee.ToDto(),
                 PeriodStart = payrollInvoice.PeriodStart,
                 PeriodEnd = payrollInvoice.PeriodEnd
             },

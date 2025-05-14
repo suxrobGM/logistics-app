@@ -1,0 +1,88 @@
+<div class="d-flex align-items-center">
+  <h1>Load Invoices</h1>
+  <!-- <button pButton pRipple
+    class="p-button-lg p-button-rounded p-button-text text-black ms-2"
+    icon="bi bi-plus-square-fill"
+    pTooltip="Add a new invoice"
+    routerLink="/accounting/invoices/add">
+  </button> -->
+</div>
+<hr class="w-100" />
+
+<p-card>
+  <div class="row">
+    <div class="col-12">
+      <p-table
+        [value]="invoices()"
+        responsiveLayout="scroll"
+        [lazy]="true"
+        [paginator]="true"
+        [showCurrentPageReport]="true"
+        (onLazyLoad)="load($event)"
+        [rows]="10"
+        [(first)]="first"
+        [totalRecords]="totalRecords()"
+        [loading]="isLoading()"
+        [rowsPerPageOptions]="[10, 25, 50]"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="loadNumber">
+              Load Number
+              <p-sortIcon field="loadNumber"></p-sortIcon>
+            </th>
+            <th pSortableColumn="customerName">
+              Customer
+              <p-sortIcon field="customerName"></p-sortIcon>
+            </th>
+            <th pSortableColumn="total">
+              Invoice Total
+              <p-sortIcon field="total"></p-sortIcon>
+            </th>
+            <th pSortableColumn="createdDate">
+              Invoice Date
+              <p-sortIcon field="createdDate"></p-sortIcon>
+            </th>
+            <th pSortableColumn="status">
+              Invoice Status
+              <p-sortIcon field="status"></p-sortIcon>
+            </th>
+            <th>Action</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-invoice>
+          <tr>
+            <td>{{ invoice.loadNumber }}</td>
+            <td>{{ invoice.customer.name }}</td>
+            <td>{{ invoice.total.amount | currency }}</td>
+            <td>{{ invoice.createdDate | date: "mediumDate" }}</td>
+            <td>{{ invoice.status }}</td>
+            <td>
+              <app-invoice-status-tag [status]="invoice.status"></app-invoice-status-tag>
+            </td>
+            <td>
+              <!-- @if (invoice.status === "pending") {
+                <p-button
+                  icon="bi bi-credit-card"
+                  pTooltip="Make payment"
+                  tooltipPosition="bottom"
+                  [routerLink]="['/payment/invoice', invoice.id]"
+                >
+                </p-button>
+              } -->
+
+              <p-button
+                styleClass="ms-2"
+                icon="bi bi-card-list"
+                pTooltip="View details"
+                [routerLink]="['/invoices/payrolls/:id/view', invoice.id]"
+              >
+              </p-button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</p-card>

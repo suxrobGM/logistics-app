@@ -23,7 +23,6 @@ public class FilterPaymentsByInterval : BaseSpecification<Payment>
     {
         return propertyName switch
         {
-            "method" => i => i.Method,
             "amount" => i => i.Amount,
             "status" => i => i.Status,
             "billingaddress" => i => i.BillingAddress,

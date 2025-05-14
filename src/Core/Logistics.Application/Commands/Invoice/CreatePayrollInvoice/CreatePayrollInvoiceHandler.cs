@@ -28,7 +28,7 @@ internal sealed class CreatePayrollInvoiceHandler : RequestHandler<CreatePayroll
             return Result.Fail($"Could not find an employer with ID '{req.EmployeeId}'");
         }
 
-        var payroll = _payrollService.CreatePayroll(employee, req.PeriodStart, req.PeriodEnd);
+        var payroll = _payrollService.CreatePayrollInvoice(employee, req.PeriodStart, req.PeriodEnd);
         await _tenantUow.Repository<PayrollInvoice>().AddAsync(payroll);
         await _tenantUow.SaveChangesAsync();
         return Result.Succeed();

@@ -1,0 +1,91 @@
+<div class="d-flex align-items-center">
+  <h1>Payments History</h1>
+  <!-- <p-button
+    styleClass="text-black ms-2"
+    icon="bi bi-plus-square-fill"
+    size="large"
+    [rounded]="true"
+    [text]="true"
+    pTooltip="Add a new payment"
+    [routerLink]="['/payments/add']"
+  >
+  </p-button> -->
+</div>
+<hr class="w-100" />
+
+<p-card>
+  <div class="row">
+    <div class="col-12">
+      <p-table
+        [value]="payments()"
+        responsiveLayout="scroll"
+        [lazy]="true"
+        [paginator]="true"
+        [showCurrentPageReport]="true"
+        (onLazyLoad)="load($event)"
+        [rows]="10"
+        [(first)]="first"
+        [totalRecords]="totalRecords()"
+        [loading]="isLoading"
+        [rowsPerPageOptions]="[10, 25, 50]"
+      >
+        <!-- <ng-template pTemplate="caption">
+          <div class="d-flex">
+            <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" placeholder="Search" (input)="search($event)" />
+            </span>
+          </div>
+        </ng-template> -->
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="createdDate">
+              Created Date
+              <p-sortIcon field="createdDate"></p-sortIcon>
+            </th>
+            <th pSortableColumn="method">
+              Method
+              <p-sortIcon field="method"></p-sortIcon>
+            </th>
+            <th pSortableColumn="amount">
+              Amount
+              <p-sortIcon field="amount"></p-sortIcon>
+            </th>
+            <th pSortableColumn="status">
+              Status
+              <p-sortIcon field="status"></p-sortIcon>
+            </th>
+            <th pSortableColumn="billingAddress">
+              Billing Address
+              <p-sortIcon field="billingAddress"></p-sortIcon>
+            </th>
+            <th pSortableColumn="description">
+              Description
+              <p-sortIcon field="description"></p-sortIcon>
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-payment>
+          <tr>
+            <td>{{ payment.createdDate | date: "mediumDate" }}</td>
+            <td>{{ getPaymentMethodDesc(payment.method) }}</td>
+            <td>{{ payment.amount.amount | currency }}</td>
+            <td>
+              <app-payment-status-tag [paymentStatus]="payment.status"></app-payment-status-tag>
+            </td>
+            <td
+              [pTooltip]="payment.billingAddress | address"
+              [showDelay]="500"
+              tooltipPosition="bottom"
+            >
+              {{ payment.billingAddress | address }}
+            </td>
+            <td>{{ payment.description }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</p-card>

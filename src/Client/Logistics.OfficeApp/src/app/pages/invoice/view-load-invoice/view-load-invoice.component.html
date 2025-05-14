@@ -1,0 +1,33 @@
+<h1 class="text-center">Invoice Details</h1>
+<hr class="w-100" />
+
+<p-card class="col-12 col-sm-6">
+  @if (isLoading()) {
+    <p-progressSpinner></p-progressSpinner>
+  }
+
+  @if (invoice()) {
+    <h2>{{ companyName() }}</h2>
+    <p>{{ companyAddress() | address }}</p>
+    <hr />
+
+    <p><strong>Load Number:</strong> {{ invoice()?.loadNumber }}</p>
+    <p><strong>Date:</strong> {{ invoice()?.createdDate | date: "mediumDate" }}</p>
+    <p><strong>Customer:</strong> {{ invoice()?.customer?.name }}</p>
+    <p><strong>Amount:</strong> {{ invoice()?.total?.amount | currency }}</p>
+    <p><strong>Status:</strong> {{ invoice()?.status }}</p>
+
+    <p-button icon="bi bi-file-pdf" label="Export to PDF" (click)="exportToPdf()"> </p-button>
+
+    <!-- @if (invoice.payment.status === "pending") {
+      <p-button
+        styleClass="ms-2"
+        icon="bi bi-credit-card"
+        label="Make payment"
+        severity="info"
+        [routerLink]="['/payment/invoice', invoice.id]"
+      >
+      </p-button>
+    } -->
+  }
+</p-card>

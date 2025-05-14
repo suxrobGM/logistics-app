@@ -11,9 +11,11 @@ public static class PaymentMapper
         {
             Id = entity.Id,
             Amount = entity.Amount.ToDto(),
-            CreatedAt = entity.CreatedAt,
-            Method = entity.Method,
+            CreatedDate = entity.CreatedAt.UtcDateTime,
+            MethodId = entity.MethodId,
+            TenantId = entity.TenantId,
             Status = entity.Status,
+            Description = entity.Description,
         };
         
         if (entity.BillingAddress.IsNotNull())

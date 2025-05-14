@@ -37,13 +37,13 @@ internal class PayrollService : IPayrollService
 
             foreach (var employee in employees)
             {
-                var isPayrollExisting = await IsPayrollExisting(employee.Id, previousMonthStart, previousMonthEnd);
+                var isPayrollExisting = await IsPayrollInvoiceExisting(employee.Id, previousMonthStart, previousMonthEnd);
                 if (isPayrollExisting)
                 {
                     continue;
                 }
 
-                var payroll = CreatePayroll(employee, previousMonthStart, previousMonthEnd);
+                var payroll = CreatePayrollInvoice(employee, previousMonthStart, previousMonthEnd);
                 await _tenantUow.Repository<PayrollInvoice>().AddAsync(payroll);
             }
 
@@ -67,13 +67,13 @@ internal class PayrollService : IPayrollService
 
             foreach (var employee in employees)
             {
-                var isPayrollExisting = await IsPayrollExisting(employee.Id, previousWeekStart, previousWeekEnd);
+                var isPayrollExisting = await IsPayrollInvoiceExisting(employee.Id, previousWeekStart, previousWeekEnd);
                 if (isPayrollExisting)
                 {
                     continue;
                 }
 
-                var payroll = CreatePayroll(employee, previousWeekStart, previousWeekEnd);
+                var payroll = CreatePayrollInvoice(employee, previousWeekStart, previousWeekEnd);
                 await _tenantUow.Repository<PayrollInvoice>().AddAsync(payroll);
             }
 
@@ -84,28 +84,25 @@ internal class PayrollService : IPayrollService
         }
     }
 
-    public PayrollInvoice CreatePayroll(Employee employee, DateTime startDate, DateTime endDate)
+    public PayrollInvoice CreatePayrollInvoice(Employee employee, DateTime startDate, DateTime endDate)
     {
-        var payment = new Payment
-        {
-            Amount = CalculateSalary(employee, startDate, endDate),
-            Method = PaymentMethodType.UsBankAccount
-        };
+        var invoiceAmount = CalculateSalary(employee, startDate, endDate);
         
-        var payroll = new PayrollInvoice
+        var payrollInvoice = new PayrollInvoice
         {
-            Total = payment.Amount,
+            Total = invoiceAmount,
+            Status = InvoiceStatus.Issued,
             PeriodStart = startDate,
             PeriodEnd = endDate,
             EmployeeId = employee.Id,
             Employee = employee,
         };
 
-        payroll.ApplyPayment(payment);
-        return payroll;
+        
+        return payrollInvoice;
     }
     
-    private async Task<bool> IsPayrollExisting(Guid employeeId, DateTime startDate, DateTime endDate)
+    private async Task<bool> IsPayrollInvoiceExisting(Guid employeeId, DateTime startDate, DateTime endDate)
     {
         var payroll = await _tenantUow.Repository<PayrollInvoice>().GetAsync(p =>
             p.EmployeeId == employeeId &&

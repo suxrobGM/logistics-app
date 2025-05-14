@@ -3,29 +3,21 @@ import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
 import {globalConfig} from "@/configs";
 import {ApiBase} from "./api-base";
+import {InvoiceApi} from "./invoice.api";
 import {
   CompanyStatsDto,
   CreateCustomerCommand,
   CreateEmployeeCommand,
-  CreateInvoiceCommand,
   CreateLoadCommand,
-  CreatePaymentCommand,
-  CreatePayrollCommand,
   CreateTruckCommand,
   CustomerDto,
   DailyGrossesDto,
   EmployeeDto,
-  GetPaymentsQuery,
-  GetPayrollsQuery,
-  InvoiceDto,
   LoadDto,
   MonthlyGrossesDto,
   NotificationDto,
   PagedIntervalQuery,
   PagedResult,
-  PaymentDto,
-  PayrollDto,
-  ProcessPaymentCommand,
   RemoveEmployeeRoleCommand,
   Result,
   RoleDto,
@@ -35,11 +27,8 @@ import {
   TruckStatsDto,
   UpdateCustomerCommand,
   UpdateEmployeeCommand,
-  UpdateInvoiceCommand,
   UpdateLoadCommand,
   UpdateNotificationCommand,
-  UpdatePaymentCommand,
-  UpdatePayrollCommand,
   UpdateTruckCommand,
 } from "./models";
 import {PaymentApi} from "./payment.api";
@@ -57,6 +46,7 @@ export class ApiService extends ApiBase {
   public readonly tenantApi = new TenantApi(this.apiUrl, this.http);
   public readonly userApi = new UserApi(this.apiUrl, this.http);
   public readonly subscriptionApi = new SubscriptionApi(this.apiUrl, this.http);
+  public readonly invoiceApi = new InvoiceApi(this.apiUrl, this.http);
 
   // #region Load API
 
@@ -259,111 +249,6 @@ export class ApiService extends ApiBase {
 
   deleteCustomer(customerId: string): Observable<Result> {
     const url = `/customers/${customerId}`;
-    return this.delete(url);
-  }
-
-  // #endregion
-
-  // #region Payments API
-
-  getPayment(id: string): Observable<Result<PaymentDto>> {
-    const url = `/payments/${id}`;
-    return this.get(url);
-  }
-
-  getPayments(query?: GetPaymentsQuery): Observable<PagedResult<PaymentDto>> {
-    const queryStr = this.stringfyPagedIntervalQuery(query, {
-      subscriptionId: query?.subscriptionId,
-    });
-
-    return this.get(`/payments?${queryStr}`);
-  }
-
-  processPayment(command: ProcessPaymentCommand): Observable<Result> {
-    const url = `/payments/process-payment`;
-    return this.post(url, command);
-  }
-
-  createPayment(command: CreatePaymentCommand): Observable<Result> {
-    const url = `/payments`;
-    return this.post(url, command);
-  }
-
-  updatePayment(command: UpdatePaymentCommand): Observable<Result> {
-    const url = `/payments/${command.id}`;
-    return this.put(url, command);
-  }
-
-  deletePayment(paymentId: string): Observable<Result> {
-    const url = `/payments/${paymentId}`;
-    return this.delete(url);
-  }
-
-  // #endregion
-
-  // #region Invoices API
-
-  getInvoice(id: string): Observable<Result<InvoiceDto>> {
-    const url = `/invoices/${id}`;
-    return this.get(url);
-  }
-
-  getInvoices(query?: PagedIntervalQuery): Observable<PagedResult<InvoiceDto>> {
-    const url = `/invoices?${this.stringfyPagedIntervalQuery(query)}`;
-    return this.get(url);
-  }
-
-  createInvoice(command: CreateInvoiceCommand): Observable<Result> {
-    const url = `/invoices`;
-    return this.post(url, command);
-  }
-
-  updateInvoice(command: UpdateInvoiceCommand): Observable<Result> {
-    const url = `/invoices/${command.id}`;
-    return this.put(url, command);
-  }
-
-  deleteInvoice(invoiceId: string): Observable<Result> {
-    const url = `/invoices/${invoiceId}`;
-    return this.delete(url);
-  }
-
-  // #endregion
-
-  // #region Payrolls API
-
-  getPayroll(id: string): Observable<Result<PayrollDto>> {
-    const url = `/payrolls/${id}`;
-    return this.get(url);
-  }
-
-  getPayrolls(query?: GetPayrollsQuery): Observable<PagedResult<PayrollDto>> {
-    let url = `/payrolls?${this.stringfySearchableQuery(query)}`;
-
-    if (query?.employeeId) {
-      url += `&employeeId=${query.employeeId}`;
-    }
-
-    return this.get(url);
-  }
-
-  calculateEmployeePayroll(query: CreatePayrollCommand): Observable<Result<PayrollDto>> {
-    const url = `/payrolls/calculate?employeeId=${query.employeeId}&startDate=${query.startDate.toJSON()}&endDate=${query.endDate.toJSON()}`;
-    return this.get(url);
-  }
-
-  createPayroll(command: CreatePayrollCommand): Observable<Result> {
-    const url = `/payrolls`;
-    return this.post(url, command);
-  }
-
-  updatePayroll(command: UpdatePayrollCommand): Observable<Result> {
-    const url = `/payrolls/${command.id}`;
-    return this.put(url, command);
-  }
-
-  deletePayroll(payrollId: string): Observable<Result> {
-    const url = `/payrolls/${payrollId}`;
     return this.delete(url);
   }
 

@@ -116,22 +116,15 @@ public class Load : Entity, ITenantEntity
 
     private static LoadInvoice CreateInvoice(Load load)
     {
-        var payment = new Payment
-        {
-            Amount = load.DeliveryCost,
-            Status = PaymentStatus.Pending,
-        };
-
         var invoice = new LoadInvoice
         {
             Total = load.DeliveryCost,
+            Status = InvoiceStatus.Issued,
             CustomerId = load.CustomerId!.Value,
             Customer = load.Customer!,
             LoadId = load.Id,
             Load = load,
         };
-
-        invoice.ApplyPayment(payment);
         return invoice;
     }
 }

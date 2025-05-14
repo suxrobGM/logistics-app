@@ -1,8 +1,6 @@
 ﻿using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.ValueObjects;
 using Logistics.Shared.Models;
-using Logistics.Shared.Consts;
 
 namespace Logistics.Application.Commands;
 
@@ -31,11 +29,22 @@ internal sealed class CreateLoadInvoiceHandler : RequestHandler<CreateLoadInvoic
         {
             return Result.Fail($"Could not find a customer with ID '{req.CustomerId}'");
         }
+        
+        var paymentMethod = await _tenantUow.Repository<PaymentMethod>().GetByIdAsync(req.PaymentMethodId);
+        
+        if (paymentMethod is null)
+        {
+            return Result.Fail($"Could not find a payment method with ID '{req.PaymentMethodId}'");
+        }
+        
+        var tenant = _tenantUow.GetCurrentTenant();
 
         var payment = new Payment
         {
-            Method = req.PaymentMethod,
-            Amount = req.PaymentAmount
+            MethodId = paymentMethod.Id,
+            TenantId = tenant.Id,
+            Amount = req.PaymentAmount,
+            BillingAddress = tenant.CompanyAddress
         };
         
         var invoice = new LoadInvoice

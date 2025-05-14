@@ -44,16 +44,15 @@ export const appRoutes: Routes = [
     },
   },
   {
-    path: "accounting",
-    loadChildren: () =>
-      import("./pages/accounting/accounting.routes").then((m) => m.accountingRoutes),
+    path: "payment",
+    loadChildren: () => import("./pages/payment/payment.routes").then((m) => m.paymentRoutes),
     data: {
       breadcrumb: "",
     },
   },
   {
-    path: "payment",
-    loadChildren: () => import("./pages/payment/payment.routes").then((m) => m.paymentRoutes),
+    path: "invoices",
+    loadChildren: () => import("./pages/invoice/invoice.routes").then((m) => m.invoiceRoutes),
     data: {
       breadcrumb: "",
     },

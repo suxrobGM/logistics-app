@@ -10,7 +10,6 @@ import {InputTextModule} from "primeng/inputtext";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {TooltipModule} from "primeng/tooltip";
-import {PaymentStatusTagComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {LoadDto, LoadStatus, loadStatusOptions} from "@/core/api/models";
 import {AddressPipe, DistanceUnitPipe} from "@/core/pipes";
@@ -30,7 +29,7 @@ import {AddressPipe, DistanceUnitPipe} from "@/core/pipes";
     SharedModule,
     InputTextModule,
     DistanceUnitPipe,
-    PaymentStatusTagComponent,
+    //InvoiceStatusTagComponent,
     AddressPipe,
     TagModule,
     InputGroupModule,

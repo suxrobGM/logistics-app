@@ -74,10 +74,10 @@
               Cost
               <p-sortIcon field="deliveryCost"></p-sortIcon>
             </th>
-            <th pSortableColumn="invoicePaymentStatus">
-              Invoice Payment Status
+            <!-- <th pSortableColumn="invoicePaymentStatus">
+              Invoice Status
               <p-sortIcon field="invoicePaymentStatus"></p-sortIcon>
-            </th>
+            </th> -->
             <th pSortableColumn="assignedTruck">
               Truck
               <p-sortIcon field="assignedTruck"></p-sortIcon>
@@ -136,11 +136,9 @@
             </td>
             <td>{{ load.distance | distanceUnit: "mi" }}</td>
             <td>{{ load.deliveryCost | currency }}</td>
-            <td>
-              <app-payment-status-tag
-                [paymentStatus]="load.invoice.payment.status"
-              ></app-payment-status-tag>
-            </td>
+            <!-- <td>
+              <app-invoice-status-tag [status]="load.invoice.status"></app-invoice-status-tag>
+            </td> -->
             <td>{{ load.assignedTruckNumber }}</td>
             <td>{{ load.assignedDispatcherName }}</td>
             <td class="overflow-visible">
@@ -162,9 +160,9 @@
               <p-button
                 styleClass="ms-2"
                 icon="bi bi-card-list"
-                pTooltip="View invoice details"
+                pTooltip="View invoices"
                 tooltipPosition="bottom"
-                [routerLink]="['/accounting/invoices/view', load.invoice.id]"
+                [routerLink]="['/invoices/loads/:loadId/view', load.id]"
               >
               </p-button>
             </td>

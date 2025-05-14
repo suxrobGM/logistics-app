@@ -6,8 +6,10 @@ namespace Logistics.Domain.Entities;
 
 public class Payment : AuditableEntity, IMasterEntity, ITenantEntity
 {
-    public Money Amount { get; set; } = Money.Zero();
+    public required Money Amount { get; set; }
     public PaymentStatus Status { get; set; }
-    public PaymentMethodType Method { get; set; }
-    public Address BillingAddress { get; set; } = Address.NullAddress;
+    public required Guid MethodId { get; set; }
+    public required Guid TenantId { get; set; }
+    public string? Description { get; set; }
+    public required Address BillingAddress { get; set; }
 }

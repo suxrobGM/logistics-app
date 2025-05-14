@@ -8,3 +8,4 @@ export * from "./validation-summary/validation-summary.component";
 export * from "./address-form/address-form.component";
 export * from "./payment-status-tag/payment-status-tag.component";
 export * from "./stripe-card/stripe-card.component";
+export * from "./invoice-status-tag/invoice-status-tag.component";

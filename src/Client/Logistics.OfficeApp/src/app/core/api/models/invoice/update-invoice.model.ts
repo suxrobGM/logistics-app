@@ -1,7 +1,6 @@
-import {PaymentMethodType} from "../payment";
+import {InvoiceStatus} from "./enums";
 
 export interface UpdateInvoiceCommand {
   id: string;
-  paymentMethod: PaymentMethodType;
-  paymentAmount: number;
+  invoiceStatus: InvoiceStatus;
 }

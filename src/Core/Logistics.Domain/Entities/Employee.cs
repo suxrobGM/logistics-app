@@ -11,8 +11,8 @@ public class Employee : Entity, ITenantEntity
     public string? LastName { get; set; }
     public string? PhoneNumber { get; set; }
     
-    public required Money Salary { get; set; }
-    public SalaryType SalaryType { get; set; }
+    public Money Salary { get; set; } = Money.Zero();
+    public SalaryType SalaryType { get; set; } = SalaryType.None;
     
     /// <summary>
     /// When employee joined to this tenant

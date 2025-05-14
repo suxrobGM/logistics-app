@@ -23,7 +23,7 @@ export class BillingHistoryComponent {
     private readonly tenantService: TenantService
   ) {}
 
-  load(event: TableLazyLoadEvent) {
+  load(event: TableLazyLoadEvent): void {
     this.isLoading.set(true);
     const first = event.first ?? 1;
     const rows = event.rows ?? 10;
@@ -31,7 +31,7 @@ export class BillingHistoryComponent {
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
     const subscriptionId = this.tenantService.getTenantData()?.subscription?.id;
 
-    this.apiService
+    this.apiService.paymentApi
       .getPayments({
         subscriptionId: subscriptionId,
         orderBy: sortField,

@@ -8,50 +8,50 @@ public static class PropertyUpdater
     /// <summary>
     /// Update the property if the source is not null or empty and is different from the current value.
     /// </summary>
-    /// <param name="source">The source value to update from.</param>
-    /// <param name="current">The current value from the database context.</param>
+    /// <param name="newValue">The source value to update from.</param>
+    /// <param name="previousValue">The current value from the database context.</param>
     /// <param name="transform">The transformation function to apply to the source value.</param>
     /// <returns>The updated value.</returns>
-    public static string UpdateIfChanged(string? source, string current, Func<string, string>? transform = null)
+    public static string UpdateIfChanged(string? newValue, string previousValue, Func<string, string>? transform = null)
     {
-        if (!string.IsNullOrEmpty(source) && source != current)
+        if (!string.IsNullOrEmpty(newValue) && newValue != previousValue)
         {
-            return transform != null ? transform(source) : source;
+            return transform != null ? transform(newValue) : newValue;
         }
-        return current;
+        return previousValue;
     }
     
     /// <summary>
     /// Update the property if the source is not null and is different from the current value.
     /// For non-string reference properties (objects).
     /// </summary>
-    /// <param name="source">The source value to update from.</param>
-    /// <param name="current">The current value from the database context.</param>
+    /// <param name="newValue">The source value to update from.</param>
+    /// <param name="previousValue">The current value from the database context.</param>
     /// <typeparam name="T">The type of the property.</typeparam>
     /// <returns>The updated value.</returns>
-    public static T UpdateIfChanged<T>(T? source, T current) where T : class?
+    public static T UpdateIfChanged<T>(T? newValue, T previousValue) where T : class?
     {
-        if (source != null && !EqualityComparer<T>.Default.Equals(source, current))
+        if (newValue != null && !EqualityComparer<T>.Default.Equals(newValue, previousValue))
         {
-            return source;
+            return newValue;
         }
-        return current;
+        return previousValue;
     }
     
     /// <summary>
     /// Update the property if the source is not null and is different from the current value.
     /// For non-string value properties (primitives, structs).
     /// </summary>
-    /// <param name="source">The source value to update from.</param>
-    /// <param name="current">The current value from the database context.</param>
+    /// <param name="newValue">The source value to update from.</param>
+    /// <param name="previousValue">The current value from the database context.</param>
     /// <typeparam name="T">The type of the property.</typeparam>
     /// <returns>The updated value.</returns>
-    public static T UpdateIfChanged<T>(T? source, T current) where T : struct
+    public static T UpdateIfChanged<T>(T? newValue, T previousValue) where T : struct
     {
-        if (source.HasValue && !EqualityComparer<T>.Default.Equals(source.Value, current))
+        if (newValue.HasValue && !EqualityComparer<T>.Default.Equals(newValue.Value, previousValue))
         {
-            return source.Value;
+            return newValue.Value;
         }
-        return current;
+        return previousValue;
     }
 }

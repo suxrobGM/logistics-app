@@ -204,10 +204,23 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
         _tenantUow.SetCurrentTenantById(tenantId);
         
         var amount = stripeInvoice.AmountPaid / 100m; // Convert from cents
+        var stripePaymentMethodId = stripeInvoice.DefaultPaymentMethodId;
+        
+        var paymentMethod = await _tenantUow.Repository<PaymentMethod>()
+            .GetAsync(pm => pm.StripePaymentMethodId == stripePaymentMethodId);
+        
+        if (paymentMethod is null)
+        {
+            return Result.Fail($"Payment method {stripePaymentMethodId} not found for tenant {tenantId}.");
+        }
+
+        var tenant = _tenantUow.GetCurrentTenant();
         
         var payment = new Payment
         {
             Amount = new Money {Amount = amount, Currency = stripeInvoice.Currency},
+            MethodId = paymentMethod.Id,
+            TenantId = tenant.Id,
             Status = PaymentStatus.Paid,
             BillingAddress = stripeInvoice.CustomerAddress.ToAddressEntity(),
         };
