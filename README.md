@@ -124,7 +124,7 @@ This work is licensed under a
 
 For commercial use, please contact me at **<suxrobgm@gmail.com>** or [Telegram](https://t.me/suxrobgm).
 
-## Office Web App Preview
+<!-- ## Office Web App Preview
 
 Here is a sneak peek into the Office Application:
 
@@ -146,4 +146,4 @@ Here is a sneak peek into the Office Application:
 ![Driver App](./docs/driver_app_4.jpg?raw=true)
 ![Driver App](./docs/driver_app_5.jpg?raw=true)
 ![Driver App](./docs/driver_app_6.jpg?raw=true)
-![Driver App](./docs/driver_app_7.jpg?raw=true)
+![Driver App](./docs/driver_app_7.jpg?raw=true) -->
