@@ -14,5 +14,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Logistics.Infrastructure.EF\Logistics.Infrastructure.EF.csproj" />
+    <ProjectReference Include="..\..\Logistics.Aspire\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj" />
   </ItemGroup>
 </Project>
