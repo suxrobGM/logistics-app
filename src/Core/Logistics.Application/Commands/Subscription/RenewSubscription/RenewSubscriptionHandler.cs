@@ -10,12 +10,12 @@ internal sealed class RenewSubscriptionHandler : RequestHandler<RenewSubscriptio
 {
     private readonly IMasterUnityOfWork _masterUow;
     private readonly IStripeService _stripeService;
-    private readonly ILogger<DeleteSubscriptionHandler> _logger;
+    private readonly ILogger<RenewSubscriptionHandler> _logger;
 
     public RenewSubscriptionHandler(
         IMasterUnityOfWork masterUow, 
         IStripeService stripeService, 
-        ILogger<DeleteSubscriptionHandler> logger)
+        ILogger<RenewSubscriptionHandler> logger)
     {
         _masterUow = masterUow;
         _stripeService = stripeService;
@@ -39,7 +39,7 @@ internal sealed class RenewSubscriptionHandler : RequestHandler<RenewSubscriptio
         subscription.StripeSubscriptionId = stripeSubscription.Id;
         subscription.Status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
         subscription.StartDate = stripeSubscription.StartDate;
-        subscription.NextBillingDate = stripeSubscription.CurrentPeriodEnd;
+        subscription.NextBillingDate = stripeSubscription.Items.Data.First().CurrentPeriodEnd;
         subscription.TrialEndDate = stripeSubscription.TrialEnd;
         
         _masterUow.Repository<Subscription>().Update(subscription);

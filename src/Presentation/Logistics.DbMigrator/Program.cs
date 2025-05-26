@@ -26,5 +26,4 @@ builder.Services.AddHostedService<MigrateDatabaseWorker>();
 builder.Services.AddHostedService<SeedDatabaseWorker>();
 builder.Services.AddHostedService<FakeDataWorker>();
 
-var host = builder.Build();
-host.Run();
+builder.Build().Run();

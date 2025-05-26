@@ -6,7 +6,7 @@ builder.Configuration.AddJsonFile("appsettings.local.json", optional: true, relo
 var stripeSecret = builder.Configuration["Stripe:SecretKey"];
 
 var postgres = builder.AddPostgres("postgres")
-    .WithPgAdmin()
+    .WithPgAdmin(c => c.WithImage("dpage/pgadmin4:latest"))
     .WithVolume("postgres-data", "/var/lib/postgresql/data");
 
 var masterDb = postgres.AddDatabase("master", "master_logistics");
@@ -46,7 +46,7 @@ builder.AddContainer("stripe-cli", "stripe/stripe-cli:latest")
     .WithEntrypoint("stripe")
     .WithArgs(
         "listen",
-        "--forward-to", "http://logisticsApi:7000/webhooks/stripe")
+        "--forward-to", "https://logisticsApi:7000/webhooks/stripe")
     .WaitFor(logisticsApi);
 
 builder.Build().Run();
