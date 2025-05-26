@@ -50,6 +50,8 @@ export class ViewLoadInvoicesComponent {
       .subscribe((result) => {
         if (result.success && result.data) {
           this.invoices.set(result.data);
+          console.log("Load Invoices:", result.data);
+
           this.totalRecords.set(result.totalItems);
         }
 

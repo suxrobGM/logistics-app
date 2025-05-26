@@ -30,17 +30,15 @@
         [rowsPerPageOptions]="[10, 25, 50]"
       >
         <ng-template pTemplate="caption">
-          <div class="d-flex">
-            <span class="p-input-icon-left">
-              <i class="pi pi-search"></i>
-              <input
-                pInputText
-                type="text"
-                placeholder="Search by employeer name"
-                (input)="search($event)"
-              />
-            </span>
-          </div>
+          <p-icon-field>
+            <p-inputicon class="pi pi-search" />
+            <input
+              pInputText
+              type="text"
+              placeholder="Search by employeer name"
+              (input)="search($event)"
+            />
+          </p-icon-field>
         </ng-template>
 
         <ng-template pTemplate="header">
@@ -73,7 +71,8 @@
         <ng-template pTemplate="body" let-invoice>
           <tr>
             <td>
-              {{ invoice.startDate | date: "MMM d" }} - {{ invoice.endDate | date: "mediumDate" }}
+              {{ invoice.periodStart | date: "MMM d" }} -
+              {{ invoice.periodEnd | date: "mediumDate" }}
             </td>
             <td>{{ invoice.employee.fullName }}</td>
             <td>{{ getSalaryTypeDesc(invoice.employee.salaryType) }}</td>
@@ -104,7 +103,7 @@
                 icon="bi bi-pencil"
                 pTooltip="Edit payroll invoice"
                 tooltipPosition="bottom"
-                [routerLink]="['/invoices/payrolls/:id/edit', invoice.id]"
+                [routerLink]="['/invoices/payrolls', invoice.id, 'edit']"
               >
               </p-button>
             </td>

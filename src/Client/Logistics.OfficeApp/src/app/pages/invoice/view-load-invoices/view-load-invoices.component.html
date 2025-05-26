@@ -49,7 +49,6 @@
             <td>{{ invoice.customer.name }}</td>
             <td>{{ invoice.total.amount | currency }}</td>
             <td>{{ invoice.createdDate | date: "mediumDate" }}</td>
-            <td>{{ invoice.status }}</td>
             <td>
               <app-invoice-status-tag [status]="invoice.status"></app-invoice-status-tag>
             </td>
@@ -68,7 +67,7 @@
                 styleClass="ms-2"
                 icon="bi bi-card-list"
                 pTooltip="View details"
-                [routerLink]="['/invoices/payrolls/:id/view', invoice.id]"
+                [routerLink]="['/invoices/loads', invoice.id, 'view']"
               >
               </p-button>
             </td>

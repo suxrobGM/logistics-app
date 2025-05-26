@@ -7,7 +7,7 @@ import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {InvoiceStatusTagComponent} from "@/components";
 import {ApiService} from "@/core/api";
-import {InvoiceDto} from "@/core/api/models";
+import {InvoiceDto, InvoiceType} from "@/core/api/models";
 
 @Component({
   selector: "app-list-load-invoices",
@@ -47,6 +47,7 @@ export class ListLoadInvoicesComponent {
         orderBy: sortField,
         page: page,
         pageSize: rows,
+        invoiceType: InvoiceType.Load,
       })
       .subscribe((result) => {
         if (result.success && result.data) {

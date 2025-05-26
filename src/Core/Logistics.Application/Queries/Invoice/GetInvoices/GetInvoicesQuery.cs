@@ -1,4 +1,5 @@
-﻿using Logistics.Shared.Models;
+﻿using Logistics.Shared.Consts;
+using Logistics.Shared.Models;
 using MediatR;
 
 namespace Logistics.Application.Queries;
@@ -19,4 +20,9 @@ public class GetInvoicesQuery : PagedQuery, IRequest<PagedResult<InvoiceDto>>
     /// Filter invoices by Employee Name
     /// </summary>
     public string? EmployeeName { get; set; }
+    
+    /// <summary>
+    /// Filter invoices by type, if you don't specify, all type of invoices will be returned
+    /// </summary>
+    public InvoiceType? InvoiceType { get; set; }
 }

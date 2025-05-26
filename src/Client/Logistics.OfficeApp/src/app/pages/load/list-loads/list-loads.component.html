@@ -17,7 +17,7 @@
   <div class="row">
     <div class="col-12">
       <p-table
-        [value]="loads"
+        [value]="loads()"
         responsiveLayout="scroll"
         [lazy]="true"
         [paginator]="true"
@@ -25,29 +25,21 @@
         (onLazyLoad)="load($event)"
         [rows]="10"
         [(first)]="first"
-        [totalRecords]="totalRecords"
-        [loading]="isLoading"
+        [totalRecords]="totalRecords()"
+        [loading]="isLoading()"
         [rowsPerPageOptions]="[10, 25, 50]"
       >
         <ng-template pTemplate="caption">
-          <p-input-group>
-            <p-inputgroup-addon>
-              <i class="pi pi-search"></i>
-            </p-inputgroup-addon>
-            <input
-              pInputText
-              type="text"
-              placeholder="Search"
-              (input)="search($event)"
-              [style]="{'flex-grow': '0', width: 'auto'}"
-            />
-          </p-input-group>
+          <p-icon-field>
+            <p-inputicon class="pi pi-search" />
+            <input pInputText type="text" placeholder="Search" (input)="search($event)" />
+          </p-icon-field>
         </ng-template>
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="refId">
-              ID
-              <p-sortIcon field="refId"></p-sortIcon>
+            <th pSortableColumn="number">
+              Number
+              <p-sortIcon field="number"></p-sortIcon>
             </th>
             <th pSortableColumn="name">
               Name
@@ -91,7 +83,7 @@
         </ng-template>
         <ng-template pTemplate="body" let-load>
           <tr>
-            <td>{{ load.refId }}</td>
+            <td>{{ load.number }}</td>
             <td [pTooltip]="load.name" [showDelay]="500" tooltipPosition="bottom">
               {{ load.name }}
             </td>
@@ -162,7 +154,7 @@
                 icon="bi bi-card-list"
                 pTooltip="View invoices"
                 tooltipPosition="bottom"
-                [routerLink]="['/invoices/loads/:loadId/view', load.id]"
+                [routerLink]="['/invoices/loads', load.id, 'view']"
               >
               </p-button>
             </td>

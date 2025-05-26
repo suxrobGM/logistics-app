@@ -2,24 +2,26 @@
 <hr class="w-100" />
 
 <p-card class="col-12 col-sm-6">
-  @if (isLoading()) {
+  @if (isLoading() || !invoice()) {
     <p-progressSpinner></p-progressSpinner>
   }
 
-  @if (invoice()) {
-    <h2>{{ companyName() }}</h2>
-    <p>{{ companyAddress() | address }}</p>
-    <hr />
+  <h2>{{ companyName() }}</h2>
+  <p>{{ companyAddress() | address }}</p>
+  <hr />
 
-    <p><strong>Load Number:</strong> {{ invoice()?.loadNumber }}</p>
-    <p><strong>Date:</strong> {{ invoice()?.createdDate | date: "mediumDate" }}</p>
-    <p><strong>Customer:</strong> {{ invoice()?.customer?.name }}</p>
-    <p><strong>Amount:</strong> {{ invoice()?.total?.amount | currency }}</p>
-    <p><strong>Status:</strong> {{ invoice()?.status }}</p>
+  <p><strong>Load Number:</strong> {{ invoice()!.loadNumber }}</p>
+  <p><strong>Date:</strong> {{ invoice()!.createdDate | date: "mediumDate" }}</p>
+  <p><strong>Customer:</strong> {{ invoice()!.customer!.name }}</p>
+  <p><strong>Amount:</strong> {{ invoice()!.total!.amount | currency }}</p>
+  <p>
+    <strong>Status:</strong>
+    <app-invoice-status-tag [status]="invoice()!.status"></app-invoice-status-tag>
+  </p>
 
-    <p-button icon="bi bi-file-pdf" label="Export to PDF" (click)="exportToPdf()"> </p-button>
+  <p-button icon="bi bi-file-pdf" label="Export to PDF" (click)="exportToPdf()"> </p-button>
 
-    <!-- @if (invoice.payment.status === "pending") {
+  <!-- @if (invoice.payment.status === "pending") {
       <p-button
         styleClass="ms-2"
         icon="bi bi-credit-card"
@@ -29,5 +31,4 @@
       >
       </p-button>
     } -->
-  }
 </p-card>

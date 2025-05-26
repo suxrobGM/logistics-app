@@ -3,12 +3,14 @@ import {Component, signal} from "@angular/core";
 import {RouterModule} from "@angular/router";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
+import {IconFieldModule} from "primeng/iconfield";
+import {InputIconModule} from "primeng/inputicon";
 import {InputTextModule} from "primeng/inputtext";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {InvoiceStatusTagComponent} from "@/components";
 import {ApiService} from "@/core/api";
-import {InvoiceDto, SalaryType, salaryTypeOptions} from "@/core/api/models";
+import {InvoiceDto, InvoiceType, SalaryType, salaryTypeOptions} from "@/core/api/models";
 
 @Component({
   selector: "app-list-payroll-invoices",
@@ -24,6 +26,8 @@ import {InvoiceDto, SalaryType, salaryTypeOptions} from "@/core/api/models";
     ButtonModule,
     TooltipModule,
     InvoiceStatusTagComponent,
+    IconFieldModule,
+    InputIconModule,
   ],
 })
 export class ListPayrollInvoiceComponent {
@@ -60,6 +64,7 @@ export class ListPayrollInvoiceComponent {
         orderBy: sortField,
         page: page,
         pageSize: rows,
+        invoiceType: InvoiceType.Payroll,
       })
       .subscribe((result) => {
         if (result.success && result.data) {

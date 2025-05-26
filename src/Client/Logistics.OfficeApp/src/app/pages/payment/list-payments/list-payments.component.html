@@ -30,12 +30,15 @@
         [rowsPerPageOptions]="[10, 25, 50]"
       >
         <!-- <ng-template pTemplate="caption">
-          <div class="d-flex">
-            <span class="p-input-icon-left">
-              <i class="pi pi-search"></i>
-              <input pInputText type="text" placeholder="Search" (input)="search($event)" />
-            </span>
-          </div>
+          <p-icon-field>
+            <p-inputicon class="pi pi-search" />
+            <input
+              pInputText
+              type="text"
+              placeholder="Search"
+              (input)="search($event)"
+            />
+          </p-icon-field>
         </ng-template> -->
 
         <ng-template pTemplate="header">

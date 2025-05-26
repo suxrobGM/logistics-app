@@ -1,11 +1,11 @@
 import {CommonModule} from "@angular/common";
-import {Component} from "@angular/core";
+import {Component, signal} from "@angular/core";
 import {RouterLink} from "@angular/router";
 import {SharedModule} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
-import {InputGroupModule} from "primeng/inputgroup";
-import {InputGroupAddonModule} from "primeng/inputgroupaddon";
+import {IconFieldModule} from "primeng/iconfield";
+import {InputIconModule} from "primeng/inputicon";
 import {InputTextModule} from "primeng/inputtext";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
@@ -32,35 +32,35 @@ import {AddressPipe, DistanceUnitPipe} from "@/core/pipes";
     //InvoiceStatusTagComponent,
     AddressPipe,
     TagModule,
-    InputGroupModule,
-    InputGroupAddonModule,
+    IconFieldModule,
+    InputIconModule,
   ],
 })
 export class ListLoadComponent {
-  public loadStatus = LoadStatus;
-  public loads: LoadDto[] = [];
-  public isLoading = false;
-  public totalRecords = 0;
-  public first = 0;
+  readonly loadStatus = LoadStatus;
+  readonly loads = signal<LoadDto[]>([]);
+  readonly isLoading = signal(false);
+  readonly totalRecords = signal(0);
+  readonly first = signal(0);
 
   constructor(private readonly apiService: ApiService) {}
 
-  search(event: Event) {
-    this.isLoading = true;
+  search(event: Event): void {
+    this.isLoading.set(true);
     const searchValue = (event.target as HTMLInputElement).value;
 
     this.apiService.getLoads({search: searchValue}, false).subscribe((result) => {
       if (result.success && result.data) {
-        this.loads = result.data;
-        this.totalRecords = result.totalItems;
+        this.loads.set(result.data);
+        this.totalRecords.set(result.totalItems);
       }
 
-      this.isLoading = false;
+      this.isLoading.set(false);
     });
   }
 
-  load(event: TableLazyLoadEvent) {
-    this.isLoading = true;
+  load(event: TableLazyLoadEvent): void {
+    this.isLoading.set(true);
     const first = event.first ?? 1;
     const rows = event.rows ?? 10;
     const page = first / rows + 1;
@@ -75,11 +75,13 @@ export class ListLoadComponent {
       .getLoads({orderBy: sortField, page: page, pageSize: rows}, false)
       .subscribe((result) => {
         if (result.success && result.data) {
-          this.loads = result.data;
-          this.totalRecords = result.totalItems;
+          this.loads.set(result.data);
+          console.log("Load data:", result.data);
+
+          this.totalRecords.set(result.totalItems);
         }
 
-        this.isLoading = false;
+        this.isLoading.set(false);
       });
   }
 

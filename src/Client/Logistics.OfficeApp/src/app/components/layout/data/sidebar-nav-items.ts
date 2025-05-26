@@ -32,19 +32,15 @@ export const sidebarNavItems: MenuItem[] = [
     route: "/customers",
   },
   {
-    label: "Accounting",
+    label: "Invoices",
     icon: "bi bi-journal-text h2",
     items: [
       {
-        label: "Payroll Invoices",
+        label: "Payroll",
         route: "/invoices/payrolls",
       },
       {
-        label: "Payments",
-        route: "/payments",
-      },
-      {
-        label: "Load Invoices",
+        label: "Load",
         route: "/invoices/loads",
       },
     ],
