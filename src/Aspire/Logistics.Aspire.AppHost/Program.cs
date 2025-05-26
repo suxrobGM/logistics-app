@@ -5,7 +5,7 @@ builder.Configuration.AddJsonFile("appsettings.local.json", optional: true, relo
 
 var stripeSecret = builder.Configuration["Stripe:SecretKey"];
 
-var postgres = builder.AddPostgres("postgres")
+var postgres = builder.AddPostgres("postgres", port: 5433)
     .WithPgAdmin(c => c.WithImage("dpage/pgadmin4:latest"))
     .WithVolume("postgres-data", "/var/lib/postgresql/data");
 
@@ -13,20 +13,20 @@ var masterDb = postgres.AddDatabase("master", "master_logistics");
 var tenantDb = postgres.AddDatabase("default-tenant", "default_logistics");
 
 // Runs the migrations for the master and tenant databases
-builder.AddProject<Projects.Logistics_DbMigrator>("migrator")
-       .WithReference(masterDb, "MasterDatabase")
-       .WithReference(tenantDb, "DefaultTenantDatabase")
-       .WaitFor(postgres);
+var migrator = builder.AddProject<Projects.Logistics_DbMigrator>("migrator")
+    .WithReference(masterDb, "MasterDatabase")
+    .WithReference(tenantDb, "DefaultTenantDatabase")
+    .WaitFor(postgres);
 
 var logisticsApi = builder.AddProject<Projects.Logistics_API>("api")
     .WithReference(masterDb, "MasterDatabase")
     .WithReference(tenantDb, "DefaultTenantDatabase")
-    .WaitFor(postgres);
+    .WaitFor(migrator);
 
 var identityServer = builder.AddProject<Projects.Logistics_IdentityServer>("identity-server")
     .WithReference(masterDb, "MasterDatabase")
     .WithReference(tenantDb, "DefaultTenantDatabase")
-    .WaitFor(postgres);
+    .WaitFor(migrator);
 
 builder.AddProject<Projects.Logistics_AdminApp>("admin-app")
     .WaitFor(logisticsApi)
@@ -46,7 +46,7 @@ builder.AddContainer("stripe-cli", "stripe/stripe-cli:latest")
     .WithEntrypoint("stripe")
     .WithArgs(
         "listen",
-        "--forward-to", "https://logisticsApi:7000/webhooks/stripe")
+        "--forward-to", "https://localhost:7000/webhooks/stripe")
     .WaitFor(logisticsApi);
 
 builder.Build().Run();

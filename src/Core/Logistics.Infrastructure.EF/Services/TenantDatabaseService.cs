@@ -37,10 +37,10 @@ public class TenantDatabaseService : ITenantDatabaseService
             throw new InvalidOperationException(
                 "The database name template is not defined in the TenantsDatabaseOptions appsettings.json file");
         }
-
+        
         var databaseName = Regex.Replace(_databaseOptions.DatabaseNameTemplate, "{tenant}", tenantName);
         var connectionString =
-            $"Server={_databaseOptions.DatabaseHost}; Database={databaseName}; Uid={_databaseOptions.DatabaseUserId}; Pwd={_databaseOptions.DatabasePassword}; TrustServerCertificate=true";
+            $"Host={_databaseOptions.DatabaseHost}; Database={databaseName}; Port=5432; Username={_databaseOptions.DatabaseUserId}; Password={_databaseOptions.DatabasePassword}";
         return connectionString;
     }
 
