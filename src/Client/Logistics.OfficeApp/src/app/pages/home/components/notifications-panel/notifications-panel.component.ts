@@ -11,9 +11,8 @@ import {NotificationService, ToastService} from "@/core/services";
 
 @Component({
   selector: "app-notifications-panel",
-  standalone: true,
   templateUrl: "./notifications-panel.component.html",
-  styleUrls: ["./notifications-panel.component.scss"],
+  styleUrl: "./notifications-panel.component.css",
   imports: [
     CommonModule,
     CardModule,

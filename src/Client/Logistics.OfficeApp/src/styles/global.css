@@ -1,6 +1,7 @@
 @import "bootstrap/dist/css/bootstrap.min.css";
-@import "primeicons/primeicons.css";
 @import "bootstrap-icons/font/bootstrap-icons.css";
+@import "primeicons/primeicons.css";
+@import "tailwindcss";
 
 body {
   background-color: #dae5f3 !important;

@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewEncapsulation} from "@angular/core";
+import {Component, OnInit} from "@angular/core";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {RouterLink} from "@angular/router";
 import {AutoCompleteModule} from "primeng/autocomplete";
@@ -23,9 +23,7 @@ import {UserService} from "../services";
 @Component({
   selector: "app-add-employee",
   templateUrl: "./add-employee.component.html",
-  styleUrls: ["./add-employee.component.scss"],
-  encapsulation: ViewEncapsulation.None,
-  standalone: true,
+  styleUrl: "./add-employee.component.css",
   imports: [
     ToastModule,
     ConfirmDialogModule,

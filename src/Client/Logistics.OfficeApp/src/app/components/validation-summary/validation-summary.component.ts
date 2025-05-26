@@ -1,13 +1,12 @@
-import {Component, OnInit, input} from "@angular/core";
 import {AsyncPipe, CommonModule} from "@angular/common";
+import {Component, OnInit, input} from "@angular/core";
 import {FormGroup} from "@angular/forms";
 import {BehaviorSubject} from "rxjs";
 
 @Component({
   selector: "app-validation-summary",
-  standalone: true,
   templateUrl: "./validation-summary.component.html",
-  styleUrls: ["./validation-summary.component.scss"],
+  styleUrl: "./validation-summary.component.css",
   imports: [CommonModule, AsyncPipe],
 })
 export class ValidationSummaryComponent implements OnInit {

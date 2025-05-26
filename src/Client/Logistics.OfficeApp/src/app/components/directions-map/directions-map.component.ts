@@ -1,13 +1,11 @@
-import {Component, Input, OnChanges, input, output} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
-import {NgxMapboxGLModule} from "ngx-mapbox-gl";
+import {Component, Input, OnChanges, input, output} from "@angular/core";
 import {GeoJSONSourceRaw, LngLatLike} from "mapbox-gl";
+import {NgxMapboxGLModule} from "ngx-mapbox-gl";
 
 @Component({
   selector: "app-directions-map",
-  standalone: true,
   templateUrl: "./directions-map.component.html",
-  styleUrls: ["./directions-map.component.scss"],
   imports: [NgxMapboxGLModule],
 })
 export class DirectionsMapComponent implements OnChanges {

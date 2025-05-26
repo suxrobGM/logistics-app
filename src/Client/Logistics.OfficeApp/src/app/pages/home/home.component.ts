@@ -19,8 +19,7 @@ import {NotificationsPanelComponent} from "./components";
 @Component({
   selector: "app-home",
   templateUrl: "./home.component.html",
-  styleUrls: ["./home.component.scss"],
-  standalone: true,
+  styleUrl: "./home.component.css",
   imports: [
     CardModule,
     SharedModule,

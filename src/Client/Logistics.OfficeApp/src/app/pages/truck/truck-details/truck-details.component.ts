@@ -13,8 +13,7 @@ import {LineChartDrawnEvent, TruckGrossesLinechartComponent} from "../components
 @Component({
   selector: "app-truck-details",
   templateUrl: "./truck-details.component.html",
-  styleUrls: ["./truck-details.component.scss"],
-  standalone: true,
+  styleUrl: "./truck-details.component.css",
   imports: [
     CommonModule,
     CardModule,

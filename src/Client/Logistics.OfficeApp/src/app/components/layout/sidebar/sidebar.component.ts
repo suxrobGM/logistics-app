@@ -14,7 +14,7 @@ import {PanelMenuComponent} from "../panel-menu";
 @Component({
   selector: "app-sidebar",
   templateUrl: "./sidebar.component.html",
-  styleUrl: "./sidebar.component.scss",
+  styleUrl: "./sidebar.component.css",
   imports: [
     CommonModule,
     TooltipModule,

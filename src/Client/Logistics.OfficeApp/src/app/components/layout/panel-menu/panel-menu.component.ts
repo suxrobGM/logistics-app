@@ -1,14 +1,14 @@
 import {Component, effect, input, model, output} from "@angular/core";
-import {PanelMenuModule} from "primeng/panelmenu";
 import {Router} from "@angular/router";
+import {PanelMenuModule} from "primeng/panelmenu";
 import {TooltipModule} from "primeng/tooltip";
 import {MenuItem} from "./types";
 
 @Component({
   selector: "app-panel-menu",
-  imports: [PanelMenuModule, TooltipModule],
   templateUrl: "./panel-menu.component.html",
-  styleUrl: "./panel-menu.component.scss",
+  styleUrl: "./panel-menu.component.css",
+  imports: [PanelMenuModule, TooltipModule],
 })
 export class PanelMenuComponent {
   readonly items = input.required<MenuItem[]>();

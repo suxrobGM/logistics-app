@@ -34,8 +34,7 @@ import {TruckData, TruckHelper} from "../shared";
 @Component({
   selector: "app-edit-load",
   templateUrl: "./edit-load.component.html",
-  styleUrls: ["./edit-load.component.scss"],
-  standalone: true,
+  styleUrl: "./edit-load.component.css",
   imports: [
     CommonModule,
     ToastModule,

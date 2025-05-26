@@ -1,14 +1,13 @@
 import {Component, signal} from "@angular/core";
 import {Router} from "@angular/router";
-import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {ButtonModule} from "primeng/button";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {AuthService} from "@/core/auth";
 
 @Component({
   selector: "app-login",
   templateUrl: "./login.component.html",
-  styleUrl: "./login.component.scss",
-  standalone: true,
+  styleUrl: "./login.component.css",
   imports: [ProgressSpinnerModule, ButtonModule],
 })
 export class LoginComponent {
