@@ -70,7 +70,7 @@ Follow these steps to get the project up and running:
 6. Run applications:
    Launch all the applications in the project using the respective `.cmd` scripts in the repository.
 
-7. Stipe CLI:
+7. Stipe CLI (Optional):
     - If you want to test the Stripe payment integration, you need to run the Stripe CLI.
     - First, get your Stripe secret key and publishable key from your [Stripe dashboard](https://dashboard.stripe.com/apikeys).
     - Update the Stripe keys in the [Web API appsettings.json](./src/Presentation/Logistics.API/appsettings.json) under the `StripeConfig:SecretKey` and `StripeConfig:PublishableKey` sections.
@@ -109,7 +109,7 @@ dotnet run --project src/Aspire/Logistics.Aspire.AppHost
 > Also, you need to update the [Web API appsettings.json](./src/Presentation/Logistics.API/appsettings.json) with the same Stripe keys under the `StripeConfig` section.
 
 The Aspire app will automatically build the necessary Docker images and start the containers for the Web API, Identity Server, Admin app, Stripe CLI, and Office app.
-It will be accessible at the `https://localhost:8100`.
+It will be accessible at the <https://localhost:8100>.
 
 ### Technical Stack
 
