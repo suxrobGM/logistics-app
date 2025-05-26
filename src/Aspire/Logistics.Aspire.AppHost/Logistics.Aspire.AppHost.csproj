@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
 	<Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0" />
 
 	<PropertyGroup>
@@ -11,16 +10,13 @@
 		<UserSecretsId>2cdf04d2-4eaa-4ecf-a7e4-e21427e5d5fa</UserSecretsId>
 	</PropertyGroup>
 
-
 	<ItemGroup>
 		<PackageReference Include="Aspire.Hosting.AppHost" Version="9.3.0" />
 		<PackageReference Include="Aspire.Hosting.NodeJs" Version="9.3.0" />
 		<PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.3.0" />
 		<PackageReference Include="CommunityToolkit.Aspire.Hosting.Bun" Version="9.4.0" />
-
 	</ItemGroup>
-
-
+	
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Client\Logistics.AdminApp\Logistics.AdminApp.csproj" />
 	  <ProjectReference Include="..\..\Presentation\Logistics.API\Logistics.API.csproj" />
@@ -28,5 +24,4 @@
 	  <ProjectReference Include="..\..\Presentation\Logistics.IdentityServer\Logistics.IdentityServer.csproj" />
 	  <ProjectReference Include="..\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj" />
 	</ItemGroup>
-
 </Project>

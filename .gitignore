@@ -5,7 +5,7 @@
 
 # Exclude production appsettings file
 appsettings.Production.json
-appsettings.local.json
+appsettings.[Ll]ocal.json
 
 # Exception for production appsettings files in the following projects
 !**/Logistics.AdminApp/wwwroot/appsettings.Production.json

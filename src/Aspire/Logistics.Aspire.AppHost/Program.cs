@@ -1,4 +1,9 @@
+using Microsoft.Extensions.Configuration;
+
 var builder = DistributedApplication.CreateBuilder(args);
+builder.Configuration.AddJsonFile("appsettings.local.json", optional: true, reloadOnChange: true);
+
+var stripeSecret = builder.Configuration["Stripe:SecretKey"];
 
 var postgres = builder.AddPostgres("postgres")
     .WithPgAdmin()
@@ -33,5 +38,15 @@ builder.AddBunApp("office-app", "../../Client/Logistics.OfficeApp", entryPoint: 
     .WithUrl("http://localhost:7003")
     .WaitFor(logisticsApi)
     .WaitFor(identityServer);
+
+// Listen for Stripe webhooks and forward them to the logistics API
+builder.AddContainer("stripe-cli", "stripe/stripe-cli:latest")
+    .WithEnvironment("STRIPE_API_KEY", stripeSecret)
+    .WithEnvironment("STRIPE_DEVICE_NAME", "aspire-dev")
+    .WithEntrypoint("stripe")
+    .WithArgs(
+        "listen",
+        "--forward-to", "http://logisticsApi:7000/webhooks/stripe")
+    .WaitFor(logisticsApi);
 
 builder.Build().Run();
