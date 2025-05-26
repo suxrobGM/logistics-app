@@ -7,7 +7,7 @@ import Aura from "@primeng/themes/aura";
 import {provideAuth} from "angular-auth-oidc-client";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {providePrimeNG} from "primeng/config";
-import {authConfig} from "@/configs";
+import {authConfig} from "@/core/auth";
 import {tenantInterceptor, tokenInterceptor} from "@/core/interceptors";
 import {appRoutes} from "./app.routes";
 

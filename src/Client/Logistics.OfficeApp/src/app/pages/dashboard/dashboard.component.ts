@@ -1,7 +1,7 @@
-import {Component} from "@angular/core";
 import {CommonModule} from "@angular/common";
-import {globalConfig} from "@/configs";
+import {Component} from "@angular/core";
 import {GrossesBarchartComponent, TrucksMapComponent} from "@/components";
+import {environment} from "@/env";
 import {CompanyStatsComponent, TruckStatsTableComponent} from "./components";
 
 @Component({
@@ -21,6 +21,6 @@ export class DashboardComponent {
   public readonly accessToken: string;
 
   constructor() {
-    this.accessToken = globalConfig.mapboxToken;
+    this.accessToken = environment.mapboxToken;
   }
 }

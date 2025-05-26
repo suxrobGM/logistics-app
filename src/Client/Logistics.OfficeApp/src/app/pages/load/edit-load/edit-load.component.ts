@@ -17,7 +17,6 @@ import {
   SelectedAddressEvent,
   ValidationSummaryComponent,
 } from "@/components";
-import {globalConfig} from "@/configs";
 import {ApiService} from "@/core/api";
 import {
   AddressDto,
@@ -28,6 +27,7 @@ import {
 } from "@/core/api/models";
 import {ToastService} from "@/core/services";
 import {Converters} from "@/core/utilities";
+import {environment} from "@/env";
 import {SearchCustomerComponent, SearchTruckComponent} from "../components";
 import {TruckData, TruckHelper} from "../shared";
 
@@ -56,7 +56,7 @@ import {TruckData, TruckHelper} from "../shared";
   ],
 })
 export class EditLoadComponent implements OnInit {
-  public readonly accessToken = globalConfig.mapboxToken;
+  public readonly accessToken = environment.mapboxToken;
   private distanceMeters = 0;
   public id!: string;
   public loadRefId!: number;

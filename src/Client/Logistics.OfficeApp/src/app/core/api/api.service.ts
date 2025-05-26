@@ -1,7 +1,7 @@
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
-import {globalConfig} from "@/configs";
+import {environment} from "@/env";
 import {ApiBase} from "./api-base";
 import {InvoiceApi} from "./invoice.api";
 import {
@@ -39,7 +39,7 @@ import {UserApi} from "./user.api";
 @Injectable({providedIn: "root"})
 export class ApiService extends ApiBase {
   constructor(httpClient: HttpClient) {
-    super(globalConfig.apiHost, httpClient);
+    super(environment.apiHost, httpClient);
   }
 
   public readonly paymentApi = new PaymentApi(this.apiUrl, this.http);
