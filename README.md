@@ -27,7 +27,8 @@ A live demo of the application is available at [https://logistics-office.suxrobg
 
 ## Development status
 
-I work on this project in my free time, so it is not actively maintained. However, I am open to collaboration and contributions. If you are interested in contributing to this project, please feel free to reach out to me at **<suxrobgm@gmail.com>** or [Telegram](https://t.me/suxrobgm).
+I am working on this project in my spare time, so I may not always be available. However, I am open to collaboration and contributions. 
+If you are interested in contributing to this project, please feel free to reach out to me at **<suxrobgm@gmail.com>** or [Telegram](https://t.me/suxrobgm).
 
 ## Getting Started
 
