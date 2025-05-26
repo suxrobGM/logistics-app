@@ -1,0 +1,28 @@
+.sidebar {
+  position: sticky;
+  width: 250px;
+  transition: width 0.3s ease;
+  overflow: hidden;
+  background-color: #c2d1dd;
+  background-image: url(https://www.gstatic.com/mobilesdk/190424_mobilesdk/nav_nachos@2x.png);
+  background-position: left 0 bottom 0;
+  background-repeat: no-repeat;
+  background-size: 256px 556px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+.sidebar.minimized {
+  width: 70px;
+}
+
+.nav-link {
+  border-radius: 0;
+  color: var(--p-neutral-800);
+  display: flex;
+  align-items: center;
+}

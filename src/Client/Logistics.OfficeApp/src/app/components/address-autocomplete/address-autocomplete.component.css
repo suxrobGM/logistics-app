@@ -1,0 +1,20 @@
+.popup {
+  position: absolute;
+  z-index: 100;
+  border: 1px solid #dee2e6;
+  background: white;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 0.25rem;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 0.25rem;
+  width: 100%;
+}
+
+.popup-item {
+  padding: 0.5rem;
+}
+
+.popup-item:hover {
+  background-color: #f8f9fa;
+}
