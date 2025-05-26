@@ -46,9 +46,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentatio
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Aspire", "Aspire", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.Aspire.AppHost", "src\Logistics.Aspire\Logistics.Aspire.AppHost\Logistics.Aspire.AppHost.csproj", "{A39B3C93-8DDF-97A7-3AD2-565F37CD9376}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.Aspire.AppHost", "src\Aspire\Logistics.Aspire.AppHost\Logistics.Aspire.AppHost.csproj", "{A39B3C93-8DDF-97A7-3AD2-565F37CD9376}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.Aspire.ServiceDefaults", "src\Logistics.Aspire\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj", "{DE4DA548-CC17-F589-18B0-3E9B49A705B1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.Aspire.ServiceDefaults", "src\Aspire\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj", "{DE4DA548-CC17-F589-18B0-3E9B49A705B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
