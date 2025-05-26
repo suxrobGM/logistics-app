@@ -13,9 +13,10 @@
 
 
 	<ItemGroup>
-		<PackageReference Include="Aspire.Hosting.AppHost" Version="9.2.1" />
-		<PackageReference Include="Aspire.Hosting.NodeJs" Version="9.2.1" />
-		<PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.2.1" />
+		<PackageReference Include="Aspire.Hosting.AppHost" Version="9.3.0" />
+		<PackageReference Include="Aspire.Hosting.NodeJs" Version="9.3.0" />
+		<PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.3.0" />
+		<PackageReference Include="CommunityToolkit.Aspire.Hosting.Bun" Version="9.4.0" />
 
 	</ItemGroup>
 
@@ -25,7 +26,6 @@
 	  <ProjectReference Include="..\..\Presentation\Logistics.API\Logistics.API.csproj" />
 	  <ProjectReference Include="..\..\Presentation\Logistics.DbMigrator\Logistics.DbMigrator.csproj" />
 	  <ProjectReference Include="..\..\Presentation\Logistics.IdentityServer\Logistics.IdentityServer.csproj" />
-	  <ProjectReference Include="..\..\Presentation\Logistics.MigrationWorker\Logistics.MigrationWorker.csproj" />
 	  <ProjectReference Include="..\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj" />
 	</ItemGroup>
 

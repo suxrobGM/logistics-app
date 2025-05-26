@@ -1,48 +1,37 @@
-
 var builder = DistributedApplication.CreateBuilder(args);
 
 var postgres = builder.AddPostgres("postgres")
     .WithPgAdmin()
     .WithVolume("postgres-data", "/var/lib/postgresql/data");
 
-var masterDb = postgres.AddDatabase("master");
-var tenantDb = postgres.AddDatabase("defaultTenant");
+var masterDb = postgres.AddDatabase("master", "master_logistics");
+var tenantDb = postgres.AddDatabase("default-tenant", "default_logistics");
 
-//uncomment the following line to enable the database migrator
-//builder.AddProject<Projects.Logistics_MigrationWorker>("dbMigrator")
-//        .WithReference(masterDb, "MasterDatabase")
-//        .WithReference(tenantDb, "DefaultTenantDatabase")
-//        .WaitFor(postgres);
+// Runs the migrations for the master and tenant databases
+builder.AddProject<Projects.Logistics_DbMigrator>("migrator")
+       .WithReference(masterDb, "MasterDatabase")
+       .WithReference(tenantDb, "DefaultTenantDatabase")
+       .WaitFor(postgres);
 
-
-//uncomment the following line to enable the database seeder
-//builder.AddProject<Projects.Logistics_DbMigrator>("dbSeeder")
-//       .WithReference(masterDb, "MasterDatabase")
-//       .WithReference(tenantDb, "DefaultTenantDatabase")
-//       .WaitFor(postgres);
-
-
-var logisticsApi = builder.AddProject<Projects.Logistics_API>("logisticsApi")
+var logisticsApi = builder.AddProject<Projects.Logistics_API>("api")
     .WithReference(masterDb, "MasterDatabase")
     .WithReference(tenantDb, "DefaultTenantDatabase")
     .WaitFor(postgres);
 
-var identityServer = builder.AddProject<Projects.Logistics_IdentityServer>("identityServer")
+var identityServer = builder.AddProject<Projects.Logistics_IdentityServer>("identity-server")
     .WithReference(masterDb, "MasterDatabase")
     .WithReference(tenantDb, "DefaultTenantDatabase")
     .WaitFor(postgres);
 
-builder.AddProject<Projects.Logistics_AdminApp>("adminApp")
+builder.AddProject<Projects.Logistics_AdminApp>("admin-app")
     .WaitFor(logisticsApi)
     .WaitFor(identityServer);
 
-builder.AddNpmApp("officeApp", "../../Client/Logistics.OfficeApp", "aspire")
+builder.AddBunApp("office-app", "../../Client/Logistics.OfficeApp", entryPoint: "start")
+    .WithBunPackageInstallation()
+    .WithHttpEndpoint()
+    .WithUrl("http://localhost:7003")
     .WaitFor(logisticsApi)
-    .WaitFor(identityServer)
-    .WithEndpoint(port: 7003, scheme: "http", env: "PORT");
-
-
+    .WaitFor(identityServer);
 
 builder.Build().Run();
-
-

@@ -1,5 +1,6 @@
-﻿using Logistics.DbMigrator.Core;
-using Logistics.DbMigrator.Extensions;
+﻿using Logistics.DbMigrator.Extensions;
+using Logistics.DbMigrator.Models;
+using Logistics.DbMigrator.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.ValueObjects;
@@ -7,75 +8,88 @@ using Logistics.Shared.Consts;
 using Logistics.Shared.Consts.Roles;
 using Microsoft.AspNetCore.Identity;
 
-namespace Logistics.DbMigrator.Data;
+namespace Logistics.DbMigrator.Workers;
 
-internal class PopulateFakeData
+internal class FakeDataWorker : IHostedService
 {
     private const string UserDefaultPassword = "Test12345#";
     private readonly DateTime _startDate = DateTime.UtcNow.AddMonths(-3);
     private readonly DateTime _endDate = DateTime.UtcNow.AddDays(-3); 
-    
     private readonly Random _random = new();
-    private readonly ILogger _logger;
-    private readonly IServiceProvider _serviceProvider;
-    private readonly ITenantUnityOfWork _tenantUow;
-    private readonly IMasterUnityOfWork _masterUow;
-    private readonly IConfiguration _configuration;
-    private readonly PayrollGenerator _payrollGenerator;
     
-    public PopulateFakeData(
-        ILogger logger,
-        IServiceProvider serviceProvider)
+    private readonly ILogger<FakeDataWorker> _logger;
+    private readonly IServiceScopeFactory _scopeFactory;
+    
+    public FakeDataWorker(
+        ILogger<FakeDataWorker> logger,
+        IServiceScopeFactory scopeFactory)
     {
         _logger = logger;
-        _serviceProvider = serviceProvider;
-        _tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
-        _masterUow = serviceProvider.GetRequiredService<IMasterUnityOfWork>();
-        _configuration = serviceProvider.GetRequiredService<IConfiguration>();
-        _payrollGenerator = new PayrollGenerator(_tenantUow, _startDate, _endDate, _logger);
+        _scopeFactory = scopeFactory;
     }
     
-    public async Task ExecuteAsync()
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
-        try
-        {
-            var populate = _configuration.GetValue<bool>("PopulateFakeData");
+        using var scope = _scopeFactory.CreateScope();
+        
+        var payrollService = scope.ServiceProvider.GetRequiredService<PayrollService>();
+        var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnityOfWork>();
+        var populateFakeDataEnabled = scope.ServiceProvider
+            .GetRequiredService<IConfiguration>()
+            .GetValue<bool>("PopulateFakeData");
 
-            if (!populate)
-            {
-                return;
-            }
-
-            _logger.LogInformation("Populating databases with fake data");
-            var users = await AddUsersAsync();
-            var employees = await AddEmployeesAsync(users);
-            var trucks = await AddTrucksAsync(employees.Drivers);
-            var customers = await AddCustomersAsync();
-            await AddLoadsAsync(employees, trucks, customers);
-            await AddNotificationsAsync();
-            await _payrollGenerator.GeneratePayrolls(employees);
-            _logger.LogInformation("Databases have been populated successfully");
-        }
-        catch (Exception ex)
+        if (!populateFakeDataEnabled)
         {
-            _logger.LogError("Thrown exception in PopulateData.ExecuteAsync(): {Exception}", ex);
+            _logger.LogInformation("PopulateFakeData is set to false. Skipping data population");
+            return;
         }
+        
+        // Don't populate fake data if there are already employees in the database
+        // In Aspire, this will be called multiple times, so we need to check if there are already employees
+        // to avoid duplicating data
+        var hasEmployees = tenantUow.Repository<Employee>().Query().Any();
+        
+        if (hasEmployees)
+        {
+            _logger.LogInformation("There are already employees in the database. Skipping data population");
+            return;
+        }
+        
+        _logger.LogInformation("Populating databases with fake data");
+        var users = await AddUsersAsync(scope.ServiceProvider);
+        var employees = await AddEmployeesAsync(scope.ServiceProvider, users);
+        var trucks = await AddTrucksAsync(scope.ServiceProvider, employees.Drivers);
+        var customers = await AddCustomersAsync(scope.ServiceProvider);
+        await AddLoadsAsync(scope.ServiceProvider, employees, trucks, customers);
+        await AddNotificationsAsync(scope.ServiceProvider);
+        
+        await payrollService.GeneratePayrolls(employees, _startDate, _endDate);
+        _logger.LogInformation("Databases have been populated successfully");
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
     }
     
-    private async Task<IList<User>> AddUsersAsync()
+    private async Task<IList<User>> AddUsersAsync(IServiceProvider serviceProvider)
     {
-        var userManager = _serviceProvider.GetRequiredService<UserManager<User>>();
-        var testUsers = _configuration.GetSection("Users").Get<User[]>();
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
+        
+        var testUsers = configuration.GetSection("Users").Get<User[]>();
         var usersList = new List<User>();
 
-        if (testUsers == null)
+        if (testUsers is null)
+        {
             return usersList;
+        }
         
         foreach (var fakeUser in testUsers)
         {
             var user = await userManager.FindByNameAsync(fakeUser.Email!);
 
-            if (user != null)
+            if (user is not null)
             {
                 usersList.Add(user);
                 continue;
@@ -107,64 +121,69 @@ internal class PopulateFakeData
         return usersList;
     }
 
-    private async Task<CompanyEmployees> AddEmployeesAsync(IList<User> users)
+    private async Task<CompanyEmployees> AddEmployeesAsync(IServiceProvider serviceProvider, IList<User> users)
     {
-        if (users.Count < 10)
-            throw new InvalidOperationException("Add at least 10 test users in the 'testData.json' under the `Users` section");
+        var masterUow = serviceProvider.GetRequiredService<IMasterUnityOfWork>();
+        var tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
         
-        var tenant = await _masterUow.Repository<Tenant>().GetAsync(i => i.Name == "default");
+        var tenant = await masterUow.Repository<Tenant>().GetAsync(i => i.Name == "default");
 
         if (tenant is null)
+        {
             throw new InvalidOperationException("Could not find the default tenant");
+        }
         
         var owner = users[0];
         var manager = users[1];
         var dispatchers = users.Skip(2).Take(3);
         var drivers = users.Skip(5);
 
-        var roles = await _tenantUow.Repository<TenantRole>().GetListAsync();
+        var roles = await tenantUow.Repository<TenantRole>().GetListAsync();
         var ownerRole = roles.First(i => i.Name == TenantRoles.Owner);
         var managerRole = roles.First(i => i.Name == TenantRoles.Manager);
         var dispatcherRole = roles.First(i => i.Name == TenantRoles.Dispatcher);
         var driverRole = roles.First(i => i.Name == TenantRoles.Driver);
 
-        var ownerEmployee = await TryAddEmployeeAsync(tenant.Id, owner, 0, SalaryType.None, ownerRole);
-        var managerEmployee = await TryAddEmployeeAsync(tenant.Id, manager, 5000, SalaryType.Monthly, managerRole);
+        var ownerEmployee = await TryAddEmployeeAsync(tenantUow, tenant.Id, owner, 0, SalaryType.None, ownerRole);
+        var managerEmployee = await TryAddEmployeeAsync(tenantUow, tenant.Id, manager, 5000, SalaryType.Monthly, managerRole);
         var employeesDto = new CompanyEmployees(ownerEmployee, managerEmployee);
 
         foreach (var dispatcher in dispatchers)
         {
-            var dispatcherEmployee = await TryAddEmployeeAsync(tenant.Id, dispatcher, 1000, SalaryType.Weekly, dispatcherRole);
+            var dispatcherEmployee = await TryAddEmployeeAsync(tenantUow, tenant.Id, dispatcher, 1000, SalaryType.Weekly, dispatcherRole);
             employeesDto.Dispatchers.Add(dispatcherEmployee);
             employeesDto.AllEmployees.Add(dispatcherEmployee);
         }
         
         foreach (var driver in drivers)
         {
-            var driverEmployee = await TryAddEmployeeAsync(tenant.Id, driver, 0.3M, SalaryType.ShareOfGross, driverRole);
+            var driverEmployee = await TryAddEmployeeAsync(tenantUow, tenant.Id, driver, 0.3M, SalaryType.ShareOfGross, driverRole);
             employeesDto.Drivers.Add(driverEmployee);
             employeesDto.AllEmployees.Add(driverEmployee);
         }
 
         employeesDto.AllEmployees.Add(ownerEmployee);
         employeesDto.AllEmployees.Add(managerEmployee);
-        await _tenantUow.SaveChangesAsync();
-        await _masterUow.SaveChangesAsync();
+        await tenantUow.SaveChangesAsync();
+        await masterUow.SaveChangesAsync();
         return employeesDto;
     }
 
     private async Task<Employee> TryAddEmployeeAsync(
+        ITenantUnityOfWork tenantUow,
         Guid tenantId, 
         User user,
         decimal salary,
         SalaryType salaryType,
         TenantRole role)
     {
-        var employeeRepository = _tenantUow.Repository<Employee>();
+        var employeeRepository = tenantUow.Repository<Employee>();
         var employee = await employeeRepository.GetByIdAsync(user.Id);
 
-        if (employee != null)
+        if (employee is not null)
+        {
             return employee;
+        }
 
         employee = Employee.CreateEmployeeFromUser(user, salary, salaryType);
         user.TenantId = tenantId;
@@ -174,11 +193,14 @@ internal class PopulateFakeData
         return employee;
     }
 
-    private async Task<IList<Customer>> AddCustomersAsync()
+    private async Task<IList<Customer>> AddCustomersAsync(IServiceProvider serviceProvider)
     {
-        var customers = _configuration.GetRequiredSection("Customers").Get<Customer[]>()!;
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        var tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
+        
+        var customers = configuration.GetRequiredSection("Customers").Get<Customer[]>()!;
         var customersList = new List<Customer>();
-        var customerRepository = _tenantUow.Repository<Customer>();
+        var customerRepository = tenantUow.Repository<Customer>();
 
         foreach (var customer in customers)
         {
@@ -192,15 +214,17 @@ internal class PopulateFakeData
             _logger.LogInformation("Added a customer '{CustomerName}'", customer.Name);
         }
 
-        await _tenantUow.SaveChangesAsync();
+        await tenantUow.SaveChangesAsync();
         return customersList;
     }
 
-    private async Task<IList<Truck>> AddTrucksAsync(IEnumerable<Employee> drivers)
+    private async Task<IList<Truck>> AddTrucksAsync(IServiceProvider serviceProvider, IEnumerable<Employee> drivers)
     {
+        var tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
+        
         var trucksList = new List<Truck>();
         var truckNumber = 101;
-        var truckRepository = _tenantUow.Repository<Truck>();
+        var truckRepository = tenantUow.Repository<Truck>();
 
         foreach (var driver in drivers)
         {
@@ -219,28 +243,34 @@ internal class PopulateFakeData
             _logger.LogInformation("Added a truck {Number}", truck.TruckNumber);
         }
 
-        await _tenantUow.SaveChangesAsync();
+        await tenantUow.SaveChangesAsync();
         return trucksList;
     }
 
-    private async Task AddLoadsAsync(CompanyEmployees companyEmployees, IList<Truck> trucks, IList<Customer> customers)
+    private async Task AddLoadsAsync(
+        IServiceProvider serviceProvider,
+        CompanyEmployees companyEmployees, 
+        IList<Truck> trucks, 
+        IList<Customer> customers)
     {
         if (!trucks.Any())
             throw new InvalidOperationException("Empty list of trucks");
         
+        var tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
 
         for (long i = 1; i <= 100; i++)
         {
             var truck = _random.Pick(trucks);
             var customer = _random.Pick(customers);
             var dispatcher = _random.Pick(companyEmployees.Dispatchers);
-            await AddLoadAsync(i, truck, dispatcher, customer);
+            await AddLoadAsync(tenantUow, i, truck, dispatcher, customer);
         }
 
-        await _tenantUow.SaveChangesAsync();
+        await tenantUow.SaveChangesAsync();
     }
 
     private async Task AddLoadAsync(
+        ITenantUnityOfWork tenantUow,
         long index,
         Truck truck,
         Employee dispatcher,
@@ -291,13 +321,15 @@ internal class PopulateFakeData
         load.DeliveryDate = dispatchedDate.AddDays(2);
         load.Distance = _random.Next(16093, 321869);
 
-        await _tenantUow.Repository<Load>().AddAsync(load);
+        await tenantUow.Repository<Load>().AddAsync(load);
         _logger.LogInformation("Added a load {Name}", load.Name);
     }
 
-    private async Task AddNotificationsAsync()
+    private async Task AddNotificationsAsync(IServiceProvider serviceProvider)
     {
-        var notificationRepository = _tenantUow.Repository<Notification>();
+        var tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
+        
+        var notificationRepository = tenantUow.Repository<Notification>();
         var notificationsCount = await notificationRepository.CountAsync();
 
         if (notificationsCount > 0)
@@ -311,13 +343,13 @@ internal class PopulateFakeData
             {
                 Title = $"Test notification {i}",
                 Message = $"Notification {i} description",
-                CreatedDate = DateTime.SpecifyKind(_random.Date(DateTime.UtcNow.AddMonths(-1), DateTime.UtcNow.AddDays(-1)), DateTimeKind.Utc),
+                CreatedDate = DateTime.SpecifyKind(_random.Date(DateTime.UtcNow.AddMonths(-1), DateTime.UtcNow.AddDays(-1)), DateTimeKind.Utc)
             };
 
             await notificationRepository.AddAsync(notification);
             _logger.LogInformation("Added a notification {Notification}", notification.Title);
         }
 
-        await _tenantUow.SaveChangesAsync();
+        await tenantUow.SaveChangesAsync();
     }
 }

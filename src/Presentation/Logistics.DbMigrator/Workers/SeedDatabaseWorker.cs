@@ -3,65 +3,42 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Services;
 using Logistics.Domain.ValueObjects;
-using Logistics.Infrastructure.EF.Data;
 using Logistics.Shared.Consts.Policies;
 using Logistics.Shared.Consts.Roles;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using CustomClaimTypes = Logistics.Shared.Consts.Claims.CustomClaimTypes;
 
-namespace Logistics.DbMigrator.Data;
+namespace Logistics.DbMigrator.Workers;
 
-internal class SeedData : BackgroundService
+internal class SeedDatabaseWorker : IHostedService
 {
     private const string UserDefaultPassword = "Test12345#";
-    private readonly ILogger<SeedData> _logger;
-    private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly ILogger<SeedDatabaseWorker> _logger;
+    private readonly IServiceScopeFactory _scopeFactory;
 
-    public SeedData(
-        ILogger<SeedData> logger,
-        IServiceScopeFactory serviceScopeFactory)
+    public SeedDatabaseWorker(
+        ILogger<SeedDatabaseWorker> logger,
+        IServiceScopeFactory scopeFactory)
     {
         _logger = logger;
-        _serviceScopeFactory = serviceScopeFactory;
+        _scopeFactory = scopeFactory;
     }
-
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
-        try
-        {
-            using var scope = _serviceScopeFactory.CreateScope();
-            var masterDbContext = scope.ServiceProvider.GetRequiredService<MasterDbContext>();
-            var tenantDbContext = scope.ServiceProvider.GetRequiredService<TenantDbContext>();
-
-            _logger.LogInformation("Initializing master database...");
-            await MigrateDatabaseAsync(masterDbContext);
-            _logger.LogInformation("Successfully initialized the master database");
-
-            _logger.LogInformation("Initializing tenant database...");
-            await MigrateDatabaseAsync(tenantDbContext);
-            _logger.LogInformation("Successfully initialized the tenant database");
+        using var scope = _scopeFactory.CreateScope();
             
-            _logger.LogInformation("Seeding data...");
-            await AddAppRolesAsync(scope.ServiceProvider);
-            await AddSuperAdminAsync(scope.ServiceProvider);
-            //await AddSubscriptionPlanAsync(scope.ServiceProvider);
-            await AddDefaultTenantAsync(scope.ServiceProvider);
-            _logger.LogInformation("Successfully seeded databases");
-
-            var populateTestData = new PopulateFakeData(_logger, scope.ServiceProvider);
-            await populateTestData.ExecuteAsync();
-            _logger.LogInformation("Finished all operations!");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError("Thrown exception in SeedData.ExecuteAsync(): {Exception}", ex);
-        }
+        _logger.LogInformation("Seeding databases...");
+        await AddAppRolesAsync(scope.ServiceProvider);
+        await AddSuperAdminAsync(scope.ServiceProvider);
+        //await AddSubscriptionPlanAsync(scope.ServiceProvider);
+        await AddDefaultTenantAsync(scope.ServiceProvider);
+        _logger.LogInformation("Successfully seeded databases");
     }
 
-    private async Task MigrateDatabaseAsync(DbContext databaseContext)
+    public Task StopAsync(CancellationToken cancellationToken)
     {
-        await databaseContext.Database.MigrateAsync();
+        return Task.CompletedTask;
     }
 
     private async Task AddAppRolesAsync(IServiceProvider serviceProvider)
@@ -85,7 +62,7 @@ internal class SeedData : BackgroundService
             }
             else
             {
-                // Add new role and its claims
+                // Add a new role and its claims
                 var result = await roleManager.CreateAsync(role);
                 if (result.Succeeded)
                 {
@@ -177,7 +154,7 @@ internal class SeedData : BackgroundService
             CompanyName = "Test Company",
             BillingEmail = "test@gmail.com",
             CompanyAddress = companyAddress,
-            ConnectionString = defaultTenantConnectionString,
+            ConnectionString = defaultTenantConnectionString
         };
 
         var existingTenant = await masterUow.Repository<Tenant>().GetAsync(i => i.Name == defaultTenant.Name);

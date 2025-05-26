@@ -1,34 +1,30 @@
-﻿using Logistics.Domain.Entities;
+﻿using Logistics.DbMigrator.Utils;
+using Logistics.DbMigrator.Models;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Consts;
 
-namespace Logistics.DbMigrator.Core;
+namespace Logistics.DbMigrator.Services;
 
-public class PayrollGenerator
+public class PayrollService
 {
     private readonly ITenantUnityOfWork _tenantUow;
-    private readonly ILogger _logger;
-    private readonly DateTime _startDate;
-    private readonly DateTime _endDate;
+    private readonly ILogger<PayrollService> _logger;
 
-    public PayrollGenerator(
+    public PayrollService(
         ITenantUnityOfWork tenantUow,
-        DateTime startDate,
-        DateTime endDate,
-        ILogger logger)
+        ILogger<PayrollService> logger)
     {
         _tenantUow = tenantUow;
-        _startDate = startDate;
-        _endDate = endDate;
         _logger = logger;
     }
 
-    public async Task GeneratePayrolls(CompanyEmployees companyEmployees)
+    public async Task GeneratePayrolls(CompanyEmployees companyEmployees, DateTime startDate, DateTime endDate)
     {
         var monthlyEmployees = companyEmployees.AllEmployees.Where(i => i.SalaryType is SalaryType.Monthly or SalaryType.ShareOfGross).ToArray();
         var weeklyEmployees = companyEmployees.AllEmployees.Where(i => i.SalaryType is SalaryType.Weekly).ToArray();
-        var monthlyRanges = DateRangeGenerator.GenerateMonthlyRanges(_startDate, _endDate);
-        var weeklyRanges = DateRangeGenerator.GenerateWeeklyRanges(_startDate, _endDate);
+        var monthlyRanges = DateRangeGenerator.GenerateMonthlyRanges(startDate, endDate);
+        var weeklyRanges = DateRangeGenerator.GenerateWeeklyRanges(startDate, endDate);
 
         await ProcessPayrolls(monthlyEmployees, monthlyRanges);
         await ProcessPayrolls(weeklyEmployees, weeklyRanges);
@@ -84,7 +80,7 @@ public class PayrollGenerator
             PeriodStart = startDate,
             PeriodEnd = endDate,
             EmployeeId = employee.Id,
-            Employee = employee,
+            Employee = employee
         };
         
         return payroll;

@@ -1,6 +1,6 @@
 ﻿using Logistics.Domain.Entities;
 
-namespace Logistics.DbMigrator.Core;
+namespace Logistics.DbMigrator.Models;
 
 public record CompanyEmployees(Employee Owner, Employee Manager)
 {

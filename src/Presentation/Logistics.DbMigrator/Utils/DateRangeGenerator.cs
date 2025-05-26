@@ -1,4 +1,4 @@
-﻿namespace Logistics.DbMigrator.Core;
+﻿namespace Logistics.DbMigrator.Utils;
 
 public static class DateRangeGenerator
 {
