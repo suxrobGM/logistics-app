@@ -12,10 +12,8 @@ import {AddressPipe} from "@/core/pipes";
 import {TenantService} from "@/core/services";
 
 @Component({
-  selector: "app-view-load-invoice",
-  standalone: true,
-  templateUrl: "./view-load-invoice.component.html",
-  styleUrls: [],
+  selector: "app-load-invoice-details",
+  templateUrl: "./load-invoice-details.component.html",
   imports: [
     CommonModule,
     CardModule,
@@ -26,7 +24,7 @@ import {TenantService} from "@/core/services";
     InvoiceStatusTagComponent,
   ],
 })
-export class ViewLoadInvoiceComponent implements OnInit {
+export class LoadInvoiceDetailsComponent implements OnInit {
   readonly id = input.required<string>();
   readonly isLoading = signal(false);
   readonly companyName = signal<string | null>(null);

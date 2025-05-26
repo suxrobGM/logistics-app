@@ -13,9 +13,8 @@ import {ApiService} from "@/core/api";
 import {InvoiceDto, InvoiceType, SalaryType, salaryTypeOptions} from "@/core/api/models";
 
 @Component({
-  selector: "app-list-payroll-invoices",
-  standalone: true,
-  templateUrl: "./list-payroll-invoices.component.html",
+  selector: "app-payroll-invoices-list",
+  templateUrl: "./payroll-invoices-list.component.html",
   styleUrls: [],
   imports: [
     CommonModule,
@@ -30,7 +29,7 @@ import {InvoiceDto, InvoiceType, SalaryType, salaryTypeOptions} from "@/core/api
     InputIconModule,
   ],
 })
-export class ListPayrollInvoiceComponent {
+export class PayrollInvoicesListComponent {
   readonly invoices = signal<InvoiceDto[]>([]);
   readonly isLoading = signal(false);
   readonly totalRecords = signal(0);

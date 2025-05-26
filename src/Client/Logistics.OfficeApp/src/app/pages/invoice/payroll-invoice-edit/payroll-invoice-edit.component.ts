@@ -25,9 +25,8 @@ import {PredefinedDateRanges} from "@/core/utilities";
 import {DateUtils} from "@/core/utilities";
 
 @Component({
-  selector: "app-edit-payroll-invoice",
-  standalone: true,
-  templateUrl: "./edit-payroll-invoice.component.html",
+  selector: "app-payroll-invoice-edit",
+  templateUrl: "./payroll-invoice-edit.component.html",
   imports: [
     CommonModule,
     CardModule,
@@ -42,7 +41,7 @@ import {DateUtils} from "@/core/utilities";
     SelectModule,
   ],
 })
-export class EditPayrollInvoiceComponent implements OnInit {
+export class PayrollInvoiceEditComponent implements OnInit {
   //readonly paymentStatusOptions = paymentStatusOptions;
   //readonly paymentMethodOptions = paymentMethodTypeOptions;
   readonly todayDate = new Date();

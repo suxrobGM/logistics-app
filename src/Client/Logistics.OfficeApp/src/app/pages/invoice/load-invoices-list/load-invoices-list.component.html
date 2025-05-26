@@ -1,10 +1,10 @@
 <div class="d-flex align-items-center">
-  <h1>Load Invoices</h1>
+  <h1>Load invoices</h1>
   <!-- <button pButton pRipple
     class="p-button-lg p-button-rounded p-button-text text-black ms-2"
     icon="bi bi-plus-square-fill"
     pTooltip="Add a new invoice"
-    routerLink="/accounting/invoices/add">
+    routerLink="/invoices/loads/add">
   </button> -->
 </div>
 <hr class="w-100" />
@@ -75,7 +75,7 @@
                 styleClass="ms-2"
                 icon="bi bi-card-list"
                 pTooltip="View details"
-                [routerLink]="['/invoices/loads', invoice.id, 'view']"
+                [routerLink]="['/invoices/loads', invoice.id]"
               >
               </p-button>
             </td>

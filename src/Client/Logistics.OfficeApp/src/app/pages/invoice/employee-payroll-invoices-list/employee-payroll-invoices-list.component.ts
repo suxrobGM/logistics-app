@@ -18,9 +18,8 @@ import {
 } from "@/core/api/models";
 
 @Component({
-  selector: "app-view-employee-payroll-invoices",
-  standalone: true,
-  templateUrl: "./view-employee-payroll-invoices.component.html",
+  selector: "app-employee-payroll-invoices-list",
+  templateUrl: "./employee-payroll-invoices-list.component.html",
   imports: [
     CommonModule,
     CardModule,
@@ -32,7 +31,7 @@ import {
     ProgressSpinnerModule,
   ],
 })
-export class ViewEmployeePayrollInvoicesComponent implements OnInit {
+export class EmployeePayrollInvoicesListComponent implements OnInit {
   readonly employeeId = input.required<string>();
   readonly invoices = signal<InvoiceDto[]>([]);
   readonly employee = signal<EmployeeDto | null>(null);
