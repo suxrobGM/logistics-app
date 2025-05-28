@@ -7,9 +7,7 @@ import {LiveTrackingService} from "@/core/services";
 
 @Component({
   selector: "app-trucks-map",
-  standalone: true,
   templateUrl: "./trucks-map.component.html",
-  styleUrls: [],
   imports: [CommonModule, GeolocationMapComponent],
 })
 export class TrucksMapComponent implements OnInit, OnDestroy {

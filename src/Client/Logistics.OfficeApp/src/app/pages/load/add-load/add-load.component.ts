@@ -13,19 +13,19 @@ import {
   SelectedAddressEvent,
   ValidationSummaryComponent,
 } from "@/components";
-import {globalConfig} from "@/configs";
 import {ApiService} from "@/core/api";
 import {AddressDto, CreateLoadCommand, CustomerDto} from "@/core/api/models";
 import {AuthService} from "@/core/auth";
 import {ToastService} from "@/core/services";
 import {Converters} from "@/core/utilities";
+import {environment} from "@/env";
 import {SearchCustomerComponent, SearchTruckComponent} from "../components";
 import {TruckData} from "../shared";
 
 @Component({
   selector: "app-add-load",
   templateUrl: "./add-load.component.html",
-  styleUrl: "./add-load.component.scss",
+  styleUrl: "./add-load.component.css",
   imports: [
     ToastModule,
     CardModule,
@@ -43,7 +43,7 @@ import {TruckData} from "../shared";
   ],
 })
 export class AddLoadComponent implements OnInit {
-  public readonly accessToken = globalConfig.mapboxToken;
+  public readonly accessToken = environment.mapboxToken;
   private distanceMeters = 0;
   public isLoading = false;
   public form: FormGroup<AddLoadForm>;

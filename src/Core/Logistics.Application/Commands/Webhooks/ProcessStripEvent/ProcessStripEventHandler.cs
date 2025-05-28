@@ -110,7 +110,7 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
             tenant.Subscription.Status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
             tenant.Subscription.StripeSubscriptionId = stripeSubscription.Id;
             tenant.Subscription.StartDate = stripeSubscription.StartDate;
-            tenant.Subscription.NextBillingDate = stripeSubscription.CurrentPeriodEnd;
+            tenant.Subscription.NextBillingDate = stripeSubscription.Items.Data.First().CurrentPeriodEnd;
             tenant.Subscription.TrialEndDate = stripeSubscription.TrialEnd;
             
             _masterUow.Repository<Subscription>().Update(tenant.Subscription);
@@ -122,7 +122,7 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
             var newSubscription = Subscription.CreateTrial(tenant, subscriptionPlan);
             newSubscription.StripeSubscriptionId = stripeSubscription.Id;
             newSubscription.StartDate = stripeSubscription.StartDate;
-            newSubscription.NextBillingDate = stripeSubscription.CurrentPeriodEnd;
+            newSubscription.NextBillingDate = stripeSubscription.Items.Data.First().CurrentPeriodEnd;
             newSubscription.TrialEndDate = stripeSubscription.TrialEnd;
             
             await _masterUow.Repository<Subscription>().AddAsync(newSubscription);
@@ -152,7 +152,7 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
         
         subscription.Status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
         subscription.StartDate = stripeSubscription.StartDate;
-        subscription.NextBillingDate = stripeSubscription.CurrentPeriodEnd;
+        subscription.NextBillingDate = stripeSubscription.Items.Data.First().CurrentPeriodEnd;
         subscription.TrialEndDate = stripeSubscription.TrialEnd;
         
         _masterUow.Repository<Subscription>().Update(subscription);

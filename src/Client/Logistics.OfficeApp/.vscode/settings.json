@@ -1,18 +1,12 @@
 {
   "editor.tabSize": 2,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "prettier.configPath": "./.prettierrc.js",
+  "prettier.configPath": "./prettier.config.js",
   "editor.formatOnSave": true,
   "files.exclude": {
     "**/node_modules": true,
     "**/.angular": true,
     "**/dist": true
-  },
-  "angular-schematics.schematicsDefaultOptions": {
-    "angular-*": {
-      "style": "scss",
-      "externalTemplate": true
-    }
   },
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"

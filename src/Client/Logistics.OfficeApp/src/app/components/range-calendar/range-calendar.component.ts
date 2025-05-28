@@ -7,9 +7,7 @@ import {DateUtils} from "@/core/utilities";
 
 @Component({
   selector: "app-range-calendar",
-  standalone: true,
   templateUrl: "./range-calendar.component.html",
-  styleUrls: [],
   imports: [CommonModule, CalendarModule, FormsModule, ButtonModule],
 })
 export class RangeCalendarComponent implements OnChanges {

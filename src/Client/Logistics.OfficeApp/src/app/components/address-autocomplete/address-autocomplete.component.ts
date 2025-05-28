@@ -8,9 +8,8 @@ import {Converters} from "@/core/utilities";
 
 @Component({
   selector: "app-address-autocomplete",
-  standalone: true,
   templateUrl: "./address-autocomplete.component.html",
-  styleUrls: ["./address-autocomplete.component.scss"],
+  styleUrl: "./address-autocomplete.component.css",
   imports: [CommonModule, FormsModule],
   providers: [
     {

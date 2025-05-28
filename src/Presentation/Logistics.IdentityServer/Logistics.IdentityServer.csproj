@@ -9,16 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="7.1.0" />
-	<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.1" />
+    <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="7.2.3" />
+	<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.5" />
 	<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
-	<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.1" />
+	<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.5" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Logistics.Application\Logistics.Application.csproj" />
     <ProjectReference Include="..\..\Core\Logistics.Infrastructure.EF\Logistics.Infrastructure.EF.csproj" />
-    <ProjectReference Include="..\..\Logistics.Aspire\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\..\Aspire\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj" />
   </ItemGroup>
 
   <ItemGroup>

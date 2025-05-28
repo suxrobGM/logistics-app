@@ -4,6 +4,8 @@ import {RouterLink} from "@angular/router";
 import {SharedModule} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
+import {IconFieldModule} from "primeng/iconfield";
+import {InputIconModule} from "primeng/inputicon";
 import {InputTextModule} from "primeng/inputtext";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
@@ -27,6 +29,8 @@ import {EmployeeDto, SalaryType, salaryTypeOptions} from "@/core/api/models";
     DatePipe,
     PercentPipe,
     CurrencyPipe,
+    IconFieldModule,
+    InputIconModule,
   ],
 })
 export class ListEmployeeComponent {

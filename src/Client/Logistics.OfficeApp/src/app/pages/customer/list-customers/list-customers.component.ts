@@ -5,6 +5,8 @@ import {ConfirmationService} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {IconFieldModule} from "primeng/iconfield";
+import {InputIconModule} from "primeng/inputicon";
 import {InputTextModule} from "primeng/inputtext";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
@@ -27,6 +29,8 @@ import {ToastService} from "@/core/services";
     InputTextModule,
     ConfirmDialogModule,
     TooltipModule,
+    IconFieldModule,
+    InputIconModule,
   ],
 })
 export class ListCustomersComponent {

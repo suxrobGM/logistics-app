@@ -1,5 +1,5 @@
-import {globalConfig} from "@/configs";
-import {HubConnection, HubConnectionBuilder, HttpTransportType} from "@microsoft/signalr";
+import {HttpTransportType, HubConnection, HubConnectionBuilder} from "@microsoft/signalr";
+import {environment} from "@/env";
 import {TenantService} from "./tenant.service";
 
 export abstract class BaseHubConnection {
@@ -12,7 +12,7 @@ export abstract class BaseHubConnection {
   ) {
     this.isConnected = false;
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl(`${globalConfig.apiHost}/hubs/${hubName}`, {
+      .withUrl(`${environment.apiHost}/hubs/${hubName}`, {
         skipNegotiation: true,
         transport: HttpTransportType.WebSockets,
       })

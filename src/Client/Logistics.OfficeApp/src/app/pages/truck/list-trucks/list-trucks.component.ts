@@ -4,6 +4,8 @@ import {RouterLink} from "@angular/router";
 import {SharedModule} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
+import {IconFieldModule} from "primeng/iconfield";
+import {InputIconModule} from "primeng/inputicon";
 import {InputTextModule} from "primeng/inputtext";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
@@ -14,8 +16,7 @@ import {AddressPipe} from "@/core/pipes";
 @Component({
   selector: "app-list-trucks",
   templateUrl: "./list-trucks.component.html",
-  styleUrls: ["./list-trucks.component.scss"],
-  standalone: true,
+  styleUrl: "./list-trucks.component.css",
   imports: [
     CommonModule,
     ButtonModule,
@@ -26,6 +27,8 @@ import {AddressPipe} from "@/core/pipes";
     SharedModule,
     InputTextModule,
     AddressPipe,
+    IconFieldModule,
+    InputIconModule,
   ],
 })
 export class ListTruckComponent {

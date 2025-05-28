@@ -49,7 +49,8 @@ public class TenantDbContext : DbContext
         {
             var tenantConnectionString = _connectionString;
             string? tenantName = null;
-
+            
+            // Configure the connection string based on the tenant data from the master database
             if (TenantService is not null)
             {
                 tenantConnectionString = TenantService.GetTenant().ConnectionString;

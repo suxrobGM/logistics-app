@@ -10,19 +10,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.17" />
-    <PackageReference Include="Hangfire.PostgreSql" Version="1.20.10" />
-    <PackageReference Include="Hangfire.SqlServer" Version="1.8.17" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.1" />
-    <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.4.0" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.20" />
+    <PackageReference Include="Hangfire.PostgreSql" Version="1.20.12" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.8.20" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
+    <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.11.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Logistics.Application\Logistics.Application.csproj" />
     <ProjectReference Include="..\..\Core\Logistics.Infrastructure.EF\Logistics.Infrastructure.EF.csproj" />
-    <ProjectReference Include="..\..\Logistics.Aspire\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\..\Aspire\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj" />
   </ItemGroup>
 
 </Project>

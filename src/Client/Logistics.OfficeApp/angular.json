@@ -7,8 +7,9 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "scss",
-          "standalone": true
+          "style": "none",
+          "standalone": true,
+          "skipTests": true
         }
       },
       "root": "",
@@ -24,9 +25,9 @@
             "index": "src/index.html",
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
-            "inlineStyleLanguage": "scss",
+            "inlineStyleLanguage": "css",
             "assets": ["src/assets"],
-            "styles": ["src/styles/global.scss", "node_modules/mapbox-gl/dist/mapbox-gl.css"],
+            "styles": ["src/styles/global.css", "node_modules/mapbox-gl/dist/mapbox-gl.css"],
             "browser": "src/main.ts"
           },
           "configurations": {
@@ -88,9 +89,9 @@
             "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
-            "inlineStyleLanguage": "scss",
+            "inlineStyleLanguage": "css",
             "assets": ["src/assets"],
-            "styles": ["src/styles/global.scss", "node_modules/mapbox-gl/dist/mapbox-gl.css"],
+            "styles": ["src/styles/global.css", "node_modules/mapbox-gl/dist/mapbox-gl.css"],
             "scripts": ["node_modules/chart.js/dist/chart.js"]
           }
         },

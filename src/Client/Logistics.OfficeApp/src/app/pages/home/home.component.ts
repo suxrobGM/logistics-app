@@ -9,18 +9,17 @@ import {SkeletonModule} from "primeng/skeleton";
 import {TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {TrucksMapComponent} from "@/components";
-import {globalConfig} from "@/configs";
 import {ApiService} from "@/core/api";
 import {DailyGrossesDto, LoadDto} from "@/core/api/models";
 import {AddressPipe, DistanceUnitPipe} from "@/core/pipes";
 import {Converters, DateUtils} from "@/core/utilities";
+import {environment} from "@/env";
 import {NotificationsPanelComponent} from "./components";
 
 @Component({
   selector: "app-home",
   templateUrl: "./home.component.html",
-  styleUrls: ["./home.component.scss"],
-  standalone: true,
+  styleUrl: "./home.component.css",
   imports: [
     CardModule,
     SharedModule,
@@ -38,7 +37,7 @@ import {NotificationsPanelComponent} from "./components";
   ],
 })
 export class HomeComponent implements OnInit {
-  public readonly accessToken = globalConfig.mapboxToken;
+  public readonly accessToken = environment.mapboxToken;
   public todayGross = 0;
   public weeklyGross = 0;
   public weeklyDistance = 0;

@@ -36,7 +36,7 @@ internal sealed class GetInvoicesHandler : RequestHandler<GetInvoicesQuery, Page
     {
         var totalItems = await _tenantUow.Repository<Invoice>().CountAsync();
         var invoicesDto = _tenantUow.Repository<Invoice>()
-            .ApplySpecification(new GetInvoices(req.OrderBy, req.Page, req.PageSize))
+            .ApplySpecification(new GetInvoices(req.InvoiceType, req.OrderBy, req.Page, req.PageSize))
             .Select(i => i.ToDto())
             .ToArray();
         

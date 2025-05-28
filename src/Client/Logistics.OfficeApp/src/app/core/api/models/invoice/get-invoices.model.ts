@@ -1,4 +1,5 @@
 import {PagedQuery} from "../paged-query.model";
+import {InvoiceType} from "./enums";
 
 export interface GetInvoicesQuery extends PagedQuery {
   /**
@@ -15,4 +16,9 @@ export interface GetInvoicesQuery extends PagedQuery {
    * Filter payrolls by Load ID
    */
   loadId?: string;
+
+  /**
+   * Filter invoices by type
+   */
+  invoiceType?: InvoiceType;
 }

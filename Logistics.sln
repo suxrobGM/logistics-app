@@ -44,13 +44,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{DA415F63-B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{B2BA47DC-8652-4F45-A323-C7B3DE6D1607}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.MigrationWorker", "src\Presentation\Logistics.MigrationWorker\Logistics.MigrationWorker.csproj", "{A57EE553-94E6-3190-4DD7-9BECF7F60D02}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Aspire", "Aspire", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.Aspire.AppHost", "src\Logistics.Aspire\Logistics.Aspire.AppHost\Logistics.Aspire.AppHost.csproj", "{A39B3C93-8DDF-97A7-3AD2-565F37CD9376}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.Aspire.AppHost", "src\Aspire\Logistics.Aspire.AppHost\Logistics.Aspire.AppHost.csproj", "{A39B3C93-8DDF-97A7-3AD2-565F37CD9376}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.Aspire.ServiceDefaults", "src\Logistics.Aspire\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj", "{DE4DA548-CC17-F589-18B0-3E9B49A705B1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.Aspire.ServiceDefaults", "src\Aspire\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj", "{DE4DA548-CC17-F589-18B0-3E9B49A705B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -224,18 +222,6 @@ Global
 		{81DAEA98-B520-4F4A-9FDF-FA378A7D6579}.Release|iPhone.Build.0 = Release|Any CPU
 		{81DAEA98-B520-4F4A-9FDF-FA378A7D6579}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{81DAEA98-B520-4F4A-9FDF-FA378A7D6579}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
-		{A57EE553-94E6-3190-4DD7-9BECF7F60D02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A57EE553-94E6-3190-4DD7-9BECF7F60D02}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A57EE553-94E6-3190-4DD7-9BECF7F60D02}.Debug|iPhone.ActiveCfg = Debug|Any CPU
-		{A57EE553-94E6-3190-4DD7-9BECF7F60D02}.Debug|iPhone.Build.0 = Debug|Any CPU
-		{A57EE553-94E6-3190-4DD7-9BECF7F60D02}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{A57EE553-94E6-3190-4DD7-9BECF7F60D02}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
-		{A57EE553-94E6-3190-4DD7-9BECF7F60D02}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A57EE553-94E6-3190-4DD7-9BECF7F60D02}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A57EE553-94E6-3190-4DD7-9BECF7F60D02}.Release|iPhone.ActiveCfg = Release|Any CPU
-		{A57EE553-94E6-3190-4DD7-9BECF7F60D02}.Release|iPhone.Build.0 = Release|Any CPU
-		{A57EE553-94E6-3190-4DD7-9BECF7F60D02}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{A57EE553-94E6-3190-4DD7-9BECF7F60D02}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{A39B3C93-8DDF-97A7-3AD2-565F37CD9376}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A39B3C93-8DDF-97A7-3AD2-565F37CD9376}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A39B3C93-8DDF-97A7-3AD2-565F37CD9376}.Debug|iPhone.ActiveCfg = Debug|Any CPU
@@ -278,7 +264,6 @@ Global
 		{EF45EFF1-E88C-4EB7-9505-C1A26377E118} = {D5694866-E7F1-4837-90DA-06CC062C35D4}
 		{999E7EC8-AE07-4FD9-8BF2-A1B92C7122F2} = {F47DBB17-4146-4B24-9E95-5CE0DF59BF35}
 		{81DAEA98-B520-4F4A-9FDF-FA378A7D6579} = {61325513-BB52-47A8-AFDD-755454AD71F8}
-		{A57EE553-94E6-3190-4DD7-9BECF7F60D02} = {B2BA47DC-8652-4F45-A323-C7B3DE6D1607}
 		{A39B3C93-8DDF-97A7-3AD2-565F37CD9376} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{DE4DA548-CC17-F589-18B0-3E9B49A705B1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection

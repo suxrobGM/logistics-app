@@ -4,17 +4,16 @@ import {ActivatedRoute, RouterLink} from "@angular/router";
 import {CardModule} from "primeng/card";
 import {SkeletonModule} from "primeng/skeleton";
 import {BarChartDrawnEvent, GeolocationMapComponent, GrossesBarchartComponent} from "@/components";
-import {globalConfig} from "@/configs";
 import {ApiService} from "@/core/api";
 import {DailyGrossesDto, MonthlyGrossesDto, TruckDto, TruckGeolocationDto} from "@/core/api/models";
 import {DistanceUnitPipe} from "@/core/pipes";
+import {environment} from "@/env";
 import {LineChartDrawnEvent, TruckGrossesLinechartComponent} from "../components";
 
 @Component({
   selector: "app-truck-details",
   templateUrl: "./truck-details.component.html",
-  styleUrls: ["./truck-details.component.scss"],
-  standalone: true,
+  styleUrl: "./truck-details.component.css",
   imports: [
     CommonModule,
     CardModule,
@@ -28,7 +27,7 @@ import {LineChartDrawnEvent, TruckGrossesLinechartComponent} from "../components
   ],
 })
 export class TruckDetailsComponent implements OnInit {
-  public readonly accessToken = globalConfig.mapboxToken;
+  public readonly accessToken = environment.mapboxToken;
   public id!: string;
   public isLoading = false;
   public truck?: TruckDto;

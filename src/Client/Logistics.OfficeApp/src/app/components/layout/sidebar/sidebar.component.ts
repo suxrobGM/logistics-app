@@ -6,15 +6,15 @@ import {PanelMenuModule} from "primeng/panelmenu";
 import {SplitButtonModule} from "primeng/splitbutton";
 import {TooltipModule} from "primeng/tooltip";
 import {sidebarNavItems} from "@/components/layout/data";
-import {globalConfig} from "@/configs";
 import {AuthService} from "@/core/auth";
 import {TenantService} from "@/core/services";
+import {environment} from "@/env";
 import {PanelMenuComponent} from "../panel-menu";
 
 @Component({
   selector: "app-sidebar",
   templateUrl: "./sidebar.component.html",
-  styleUrl: "./sidebar.component.scss",
+  styleUrl: "./sidebar.component.css",
   imports: [
     CommonModule,
     TooltipModule,
@@ -83,6 +83,6 @@ export class SidebarComponent {
   }
 
   openAccountUrl(): void {
-    window.open(`${globalConfig.idHost}/account/manage/profile`, "_blank");
+    window.open(`${environment.idHost}/account/manage/profile`, "_blank");
   }
 }

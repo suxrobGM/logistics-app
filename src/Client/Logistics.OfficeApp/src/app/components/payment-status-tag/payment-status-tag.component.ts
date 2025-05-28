@@ -5,7 +5,6 @@ import {PaymentStatus, paymentStatusOptions} from "@/core/api/models";
 
 @Component({
   selector: "app-payment-status-tag",
-  standalone: true,
   templateUrl: "./payment-status-tag.component.html",
   imports: [CommonModule, TagModule],
 })
