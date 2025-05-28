@@ -15,54 +15,65 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
     {
         _tenantUow = tenantUow;
     }
-    
+
     protected override async Task<PagedResult<TruckStatsDto>> HandleValidated(
         GetTrucksStatsListQuery req, CancellationToken cancellationToken)
     {
-        var orderBy = req.OrderBy ?? string.Empty;
-        var isDescendingOrder = false;
-        
-        if (orderBy.StartsWith('-'))
-        {
-            orderBy = orderBy[1..];
-            isDescendingOrder = true;
-        }
-        
-        var totalItems = await _tenantUow.Repository<Truck>().CountAsync();
-        var truckStatsQuery = _tenantUow.Repository<Load>()
-            .ApplySpecification(new FilterLoadsByDeliveryDate(null, req.StartDate, req.EndDate))
-            .GroupBy(load => load.AssignedTruckId!)
-            .Select(group => new TruckStats
-            {
-                TruckId = group.Key!.Value,
-                TruckNumber = group.First().AssignedTruck!.TruckNumber,
-                Gross = group.Sum(load => load.DeliveryCost),
-                Distance = group.Sum(load => load.Distance),
-                DriverShare = group.Sum(load => load.DeliveryCost) * (decimal)group.First().AssignedTruck!.GetDriversShareRatio(),
-                Drivers = group.First().AssignedTruck!.Drivers,
-            });
+        //var orderBy = req.OrderBy ?? string.Empty;
+        //var isDescendingOrder = false;
 
-        
-        truckStatsQuery = truckStatsQuery
-            .OrderBy(InitOrderBy(orderBy), isDescendingOrder)
-            .ApplyPaging(req.Page, req.PageSize);
+        //if (orderBy.StartsWith('-'))
+        //{
+        //    orderBy = orderBy[1..];
+        //    isDescendingOrder = true;
+        //}
 
-        var truckStatsDto = truckStatsQuery.ToArray()
-            .Select(result => new TruckStatsDto
-            {
-                TruckId = result.TruckId,
-                TruckNumber = result.TruckNumber,
-                StartDate = req.StartDate,
-                EndDate = req.EndDate,
-                Gross = result.Gross,
-                Distance = result.Distance,
-                DriverShare = result.DriverShare,
-                Drivers = result.Drivers.Select(i => i.ToDto())
-            });
-        
+        //var totalItems = await _tenantUow.Repository<Truck>().CountAsync();
+        //var truckStatsQuery = _tenantUow.Repository<Load>()
+        //    .ApplySpecification(new FilterLoadsByDeliveryDate(null, req.StartDate, req.EndDate))
+        //    .GroupBy(load => load.AssignedTruckId!)
+        //    .Select(group => new TruckStats
+        //    {
+        //        TruckId = group.Key!.Value,
+        //        TruckNumber = group.First().AssignedTruck!.TruckNumber,
+        //        Gross = group.Sum(load => load.DeliveryCost),
+        //        Distance = group.Sum(load => load.Distance),
+        //        DriverShare = group.Sum(load => load.DeliveryCost) * (decimal)group.First().AssignedTruck!.GetDriversShareRatio(),
+        //        Drivers = group.First().AssignedTruck!.Drivers,
+        //    });
+
+
+        //truckStatsQuery = truckStatsQuery
+        //    .OrderBy(InitOrderBy(orderBy), isDescendingOrder)
+        //    .ApplyPaging(req.Page, req.PageSize);
+
+        //var truckStatsDto = truckStatsQuery.ToArray()
+        //    .Select(result => new TruckStatsDto
+        //    {
+        //        TruckId = result.TruckId,
+        //        TruckNumber = result.TruckNumber,
+        //        StartDate = req.StartDate,
+        //        EndDate = req.EndDate,
+        //        Gross = result.Gross,
+        //        Distance = result.Distance,
+        //        DriverShare = result.DriverShare,
+        //        Drivers = result.Drivers.Select(i => i.ToDto())
+        //    });
+
+        FormattableString query = $@"
+    SELECT * FROM get_trucks_stats(
+        {req.StartDate}::timestamp,
+        {req.EndDate}::timestamp,
+        {req.Page},
+        {req.PageSize},
+        {req.OrderBy}
+    )";
+        var truckStatsDto = await _tenantUow.ExecuteRawSql<TruckStatsDto>(query);
+        var totalItems = truckStatsDto.FirstOrDefault()?.TotalItems ?? 0;
+
         return PagedResult<TruckStatsDto>.Succeed(truckStatsDto, totalItems, req.PageSize);
     }
-    
+
     private static Expression<Func<TruckStats, object>> InitOrderBy(string? propertyName)
     {
         propertyName = propertyName?.ToLower() ?? string.Empty;

@@ -49,8 +49,14 @@ internal class SeedData : BackgroundService
             await AddDefaultTenantAsync(scope.ServiceProvider);
             _logger.LogInformation("Successfully seeded databases");
 
+
+
+            var createSqlFunctions = new CreateSqlFunctions(_logger, scope.ServiceProvider);
+            await createSqlFunctions.ExecuteAsync();
+
             var populateTestData = new PopulateFakeData(_logger, scope.ServiceProvider);
             await populateTestData.ExecuteAsync();
+
             _logger.LogInformation("Finished all operations!");
         }
         catch (Exception ex)

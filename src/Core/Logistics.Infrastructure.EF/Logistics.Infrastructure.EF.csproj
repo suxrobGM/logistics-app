@@ -23,7 +23,8 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\Shared\Logistics.Shared.Consts\Logistics.Shared.Consts.csproj" />
-        <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj"/>
+        <ProjectReference Include="..\..\Shared\Logistics.Shared.Models\Logistics.Shared.Models.csproj" />
+        <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
