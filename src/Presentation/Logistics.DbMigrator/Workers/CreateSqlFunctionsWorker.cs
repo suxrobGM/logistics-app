@@ -2,23 +2,20 @@
 
 namespace Logistics.DbMigrator.Data;
 
-internal class CreateSqlFunctions
+internal class CreateSqlFunctionsWorker :IHostedService
 {
     private readonly ILogger _logger;
-    private readonly IServiceProvider _serviceProvider;
     private readonly ITenantUnityOfWork _tenantUow;
-    private readonly IMasterUnityOfWork _masterUow;
     private readonly IConfiguration _configuration;
-    public CreateSqlFunctions(ILogger logger, IServiceProvider serviceProvider)
+    public CreateSqlFunctionsWorker(ILogger logger, IServiceProvider serviceProvider)
     {
         _logger = logger;
-        _serviceProvider = serviceProvider;
         _tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
-        _masterUow = serviceProvider.GetRequiredService<IMasterUnityOfWork>();
         _configuration = serviceProvider.GetRequiredService<IConfiguration>();
     }
 
-    public async Task ExecuteAsync()
+
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
         try
         {
@@ -39,6 +36,11 @@ internal class CreateSqlFunctions
         {
             _logger.LogError("Thrown exception in PopulateData.ExecuteAsync(): {Exception}", ex);
         }
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
     }
 
     private async Task CreateCompanyStatsFunction()
