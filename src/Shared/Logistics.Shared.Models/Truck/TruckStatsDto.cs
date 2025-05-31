@@ -9,5 +9,6 @@ public record TruckStatsDto
     public double Distance { get; set; }
     public decimal Gross { get; set; }
     public decimal DriverShare { get; set; }
-    public IEnumerable<EmployeeDto> Drivers { get; set; } = [];
+    public List<EmployeeDto> Drivers { get; set; } = [];
+    public int TotalItems { get; set; }
 }

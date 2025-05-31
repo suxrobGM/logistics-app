@@ -1,3 +1,4 @@
+using Logistics.DbMigrator.Data;
 using Logistics.DbMigrator.Services;
 using Logistics.DbMigrator.Workers;
 using Logistics.Infrastructure.EF;
@@ -25,5 +26,6 @@ builder.Services.AddScoped<PayrollService>();
 builder.Services.AddHostedService<MigrateDatabaseWorker>();
 builder.Services.AddHostedService<SeedDatabaseWorker>();
 builder.Services.AddHostedService<FakeDataWorker>();
+builder.Services.AddHostedService<CreateSqlFunctionsWorker>();
 
 builder.Build().Run();
