@@ -2,7 +2,7 @@ import {CommonModule} from "@angular/common";
 import {Component, Input, input} from "@angular/core";
 import {MarkerComponent, NgxMapboxGLModule} from "ngx-mapbox-gl";
 import {TruckGeolocationDto} from "@/core/api/models";
-import {AddressPipe} from "@/core/pipes";
+import {AddressPipe} from "@/shared/pipes";
 
 @Component({
   selector: "app-geolocation-map",

@@ -5,10 +5,10 @@ import {ButtonModule} from "primeng/button";
 import {PanelMenuModule} from "primeng/panelmenu";
 import {SplitButtonModule} from "primeng/splitbutton";
 import {TooltipModule} from "primeng/tooltip";
-import {sidebarNavItems} from "@/components/layout/data";
 import {AuthService} from "@/core/auth";
 import {TenantService} from "@/core/services";
 import {environment} from "@/env";
+import {sidebarNavItems} from "@/shared/layout/data";
 import {PanelMenuComponent} from "../panel-menu";
 
 @Component({

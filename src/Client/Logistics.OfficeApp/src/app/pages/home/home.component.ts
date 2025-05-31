@@ -8,12 +8,12 @@ import {ChartModule} from "primeng/chart";
 import {SkeletonModule} from "primeng/skeleton";
 import {TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
-import {TrucksMapComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {DailyGrossesDto, LoadDto} from "@/core/api/models";
-import {AddressPipe, DistanceUnitPipe} from "@/core/pipes";
-import {Converters, DateUtils} from "@/core/utils";
 import {environment} from "@/env";
+import {TrucksMapComponent} from "@/shared/components";
+import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
+import {Converters, DateUtils} from "@/shared/utils";
 import {NotificationsPanelComponent} from "./components";
 
 @Component({

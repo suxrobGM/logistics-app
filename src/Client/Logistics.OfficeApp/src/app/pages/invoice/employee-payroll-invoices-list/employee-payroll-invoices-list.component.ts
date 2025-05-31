@@ -6,7 +6,6 @@ import {CardModule} from "primeng/card";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
-import {InvoiceStatusTagComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {
   EmployeeDto,
@@ -16,6 +15,7 @@ import {
   paymentMethodTypeOptions,
   salaryTypeOptions,
 } from "@/core/api/models";
+import {InvoiceStatusTagComponent} from "@/shared/components";
 
 @Component({
   selector: "app-employee-payroll-invoices-list",

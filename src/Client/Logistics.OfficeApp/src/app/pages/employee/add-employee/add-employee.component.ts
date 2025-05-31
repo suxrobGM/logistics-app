@@ -8,7 +8,6 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {SelectModule} from "primeng/select";
 import {ToastModule} from "primeng/toast";
-import {ValidationSummaryComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {
   CreateEmployeeCommand,
@@ -18,6 +17,7 @@ import {
   salaryTypeOptions,
 } from "@/core/api/models";
 import {ToastService} from "@/core/services";
+import {ValidationSummaryComponent} from "@/shared/components";
 import {UserService} from "../services";
 
 @Component({

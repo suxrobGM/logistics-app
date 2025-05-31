@@ -1,9 +1,9 @@
 import {CommonModule} from "@angular/common";
 import {Component, Input, OnDestroy, OnInit, input} from "@angular/core";
-import {GeolocationMapComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {TruckGeolocationDto} from "@/core/api/models";
 import {LiveTrackingService} from "@/core/services";
+import {GeolocationMapComponent} from "@/shared/components";
 
 @Component({
   selector: "app-trucks-map",

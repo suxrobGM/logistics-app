@@ -6,8 +6,8 @@ import {CardModule} from "primeng/card";
 import {DialogModule} from "primeng/dialog";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {NotificationDto} from "@/core/api/models";
-import {TimeAgoPipe} from "@/core/pipes";
 import {NotificationService, ToastService} from "@/core/services";
+import {TimeAgoPipe} from "@/shared/pipes";
 
 @Component({
   selector: "app-notifications-panel",

@@ -11,7 +11,7 @@ import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {ApiService} from "@/core/api";
 import {TruckDto} from "@/core/api/models";
-import {AddressPipe} from "@/core/pipes";
+import {AddressPipe} from "@/shared/pipes";
 
 @Component({
   selector: "app-list-trucks",

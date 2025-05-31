@@ -12,7 +12,7 @@ import {TagModule} from "primeng/tag";
 import {TooltipModule} from "primeng/tooltip";
 import {ApiService} from "@/core/api";
 import {LoadDto, LoadStatus, loadStatusOptions} from "@/core/api/models";
-import {AddressPipe, DistanceUnitPipe} from "@/core/pipes";
+import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
 
 @Component({
   selector: "app-list-loads",

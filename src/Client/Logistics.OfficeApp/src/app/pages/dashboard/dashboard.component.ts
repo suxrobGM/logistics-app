@@ -1,7 +1,7 @@
 import {CommonModule} from "@angular/common";
 import {Component} from "@angular/core";
-import {GrossesBarchartComponent, TrucksMapComponent} from "@/components";
 import {environment} from "@/env";
+import {GrossesBarchartComponent, TrucksMapComponent} from "@/shared/components";
 import {CompanyStatsComponent, TruckStatsTableComponent} from "./components";
 
 @Component({

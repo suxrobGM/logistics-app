@@ -9,7 +9,6 @@ import {InputMaskModule} from "primeng/inputmask";
 import {InputTextModule} from "primeng/inputtext";
 import {KeyFilterModule} from "primeng/keyfilter";
 import {SelectModule} from "primeng/select";
-import {AddressFormComponent, StripeCardComponent, ValidationSummaryComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {
   AddressDto,
@@ -23,6 +22,11 @@ import {
   usBankAccountTypeOptions,
 } from "@/core/api/models";
 import {StripeService, TenantService, ToastService} from "@/core/services";
+import {
+  AddressFormComponent,
+  StripeCardComponent,
+  ValidationSummaryComponent,
+} from "@/shared/components";
 
 const enabledPaymentTypes = [
   PaymentMethodType.Card,

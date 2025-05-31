@@ -8,9 +8,9 @@ import {InputIconModule} from "primeng/inputicon";
 import {InputTextModule} from "primeng/inputtext";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
-import {InvoiceStatusTagComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {InvoiceDto, InvoiceType, SalaryType, salaryTypeOptions} from "@/core/api/models";
+import {InvoiceStatusTagComponent} from "@/shared/components";
 
 @Component({
   selector: "app-payroll-invoices-list",

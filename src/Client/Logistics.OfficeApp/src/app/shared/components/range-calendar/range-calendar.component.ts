@@ -3,7 +3,7 @@ import {Component, Input, OnChanges, output} from "@angular/core";
 import {FormsModule} from "@angular/forms";
 import {ButtonModule} from "primeng/button";
 import {CalendarModule} from "primeng/calendar";
-import {DateUtils} from "@/core/utils";
+import {DateUtils} from "@/shared/utils";
 
 @Component({
   selector: "app-range-calendar",

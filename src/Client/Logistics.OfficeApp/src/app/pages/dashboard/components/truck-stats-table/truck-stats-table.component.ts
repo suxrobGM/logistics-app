@@ -5,11 +5,11 @@ import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
-import {RangeCalendarComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {PagedIntervalQuery, TruckStatsDto} from "@/core/api/models";
-import {DistanceUnitPipe} from "@/core/pipes";
-import {DateUtils} from "@/core/utils";
+import {RangeCalendarComponent} from "@/shared/components";
+import {DistanceUnitPipe} from "@/shared/pipes";
+import {DateUtils} from "@/shared/utils";
 
 @Component({
   selector: "app-truck-stats-table",

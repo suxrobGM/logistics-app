@@ -5,10 +5,10 @@ import {ActivatedRoute, Router, RouterModule} from "@angular/router";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {ValidationSummaryComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {UpdateCustomerCommand} from "@/core/api/models";
 import {ToastService} from "@/core/services";
+import {ValidationSummaryComponent} from "@/shared/components";
 
 @Component({
   selector: "app-edit-customer",

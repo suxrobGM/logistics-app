@@ -5,11 +5,11 @@ import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
-import {PaymentStatusTagComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {PaymentDto, PaymentMethodType, paymentMethodTypeOptions} from "@/core/api/models";
-import {AddressPipe} from "@/core/pipes";
-import {PredefinedDateRanges} from "@/core/utils";
+import {PaymentStatusTagComponent} from "@/shared/components";
+import {AddressPipe} from "@/shared/pipes";
+import {PredefinedDateRanges} from "@/shared/utils";
 
 @Component({
   selector: "app-list-payments",

@@ -10,13 +10,6 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {SelectModule} from "primeng/select";
 import {ToastModule} from "primeng/toast";
-import {
-  AddressAutocompleteComponent,
-  DirectionsMapComponent,
-  RouteChangedEvent,
-  SelectedAddressEvent,
-  ValidationSummaryComponent,
-} from "@/components";
 import {ApiService} from "@/core/api";
 import {
   AddressDto,
@@ -26,8 +19,15 @@ import {
   loadStatusOptions,
 } from "@/core/api/models";
 import {ToastService} from "@/core/services";
-import {Converters} from "@/core/utils";
 import {environment} from "@/env";
+import {
+  AddressAutocompleteComponent,
+  DirectionsMapComponent,
+  RouteChangedEvent,
+  SelectedAddressEvent,
+  ValidationSummaryComponent,
+} from "@/shared/components";
+import {Converters} from "@/shared/utils";
 import {SearchCustomerComponent, SearchTruckComponent} from "../components";
 import {TruckData, TruckHelper} from "../shared";
 

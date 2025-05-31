@@ -12,8 +12,8 @@ import {
   PaymentMethodType,
   SetDefaultPaymentMethodCommand,
 } from "@/core/api/models";
-import {AddressPipe} from "@/core/pipes";
 import {TenantService, ToastService} from "@/core/services";
+import {AddressPipe} from "@/shared/pipes";
 import {PaymentMethodDialogComponent} from "../payment-method-dialog/payment-method-dialog.component";
 
 @Component({

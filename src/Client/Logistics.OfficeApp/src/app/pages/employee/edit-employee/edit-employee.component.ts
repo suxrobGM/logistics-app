@@ -9,13 +9,13 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {SelectModule} from "primeng/select";
 import {ToastModule} from "primeng/toast";
-import {ValidationSummaryComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {EmployeeDto, SalaryType, UpdateEmployeeCommand, salaryTypeOptions} from "@/core/api/models";
 import {AuthService} from "@/core/auth";
 import {UserRole} from "@/core/enums";
 import {ToastService} from "@/core/services";
-import {NumberUtils} from "@/core/utils";
+import {ValidationSummaryComponent} from "@/shared/components";
+import {NumberUtils} from "@/shared/utils";
 import {ChangeRoleDialogComponent} from "../components";
 
 @Component({

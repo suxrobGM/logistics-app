@@ -5,11 +5,11 @@ import {jsPDF} from "jspdf";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {InvoiceStatusTagComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {AddressDto, InvoiceDto} from "@/core/api/models";
-import {AddressPipe} from "@/core/pipes";
 import {TenantService} from "@/core/services";
+import {InvoiceStatusTagComponent} from "@/shared/components";
+import {AddressPipe} from "@/shared/pipes";
 
 @Component({
   selector: "app-load-invoice-details",

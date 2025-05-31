@@ -1,4 +1,4 @@
-import {SelectOption} from "../types";
+import {SelectOption} from "../../core/types";
 
 /**
  * Finds an option by value or label in a list of options.

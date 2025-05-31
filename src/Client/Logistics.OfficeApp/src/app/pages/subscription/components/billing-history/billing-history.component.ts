@@ -4,8 +4,8 @@ import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {ApiService} from "@/core/api";
 import {PaymentDto} from "@/core/api/models";
-import {AddressPipe} from "@/core/pipes";
 import {TenantService} from "@/core/services";
+import {AddressPipe} from "@/shared/pipes";
 
 @Component({
   selector: "app-billing-history",

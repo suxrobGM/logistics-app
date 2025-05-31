@@ -12,7 +12,7 @@ import {TagModule} from "primeng/tag";
 import {ApiService} from "@/core/api";
 import {SubscriptionDto, SubscriptionStatus} from "@/core/api/models";
 import {TenantService, ToastService} from "@/core/services";
-import {Labels, SeverityLevel} from "@/core/utils";
+import {Labels, SeverityLevel} from "@/shared/utils";
 import {BillingHistoryComponent, PaymentMethodsCardComponent} from "../components";
 
 @Component({

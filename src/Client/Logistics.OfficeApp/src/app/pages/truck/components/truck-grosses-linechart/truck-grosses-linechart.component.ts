@@ -3,10 +3,10 @@ import {Component, OnInit, input, output} from "@angular/core";
 import {CardModule} from "primeng/card";
 import {ChartModule} from "primeng/chart";
 import {SkeletonModule} from "primeng/skeleton";
-import {RangeCalendarComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {DailyGrossesDto} from "@/core/api/models";
-import {Converters, DateUtils} from "@/core/utils";
+import {RangeCalendarComponent} from "@/shared/components";
+import {Converters, DateUtils} from "@/shared/utils";
 
 @Component({
   selector: "app-truck-grosses-linechart",
