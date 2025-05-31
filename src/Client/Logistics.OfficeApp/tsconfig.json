@@ -2,34 +2,36 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
-    "outDir": "./dist/out-tsc",
-    "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "esModuleInterop": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "sourceMap": true,
-    "declaration": false,
-    "experimentalDecorators": true,
     "skipLibCheck": true,
-    "moduleResolution": "node",
+    "isolatedModules": true,
+    "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES2022",
-    "module": "es2020",
-    "lib": ["es2020", "dom"],
+    "module": "preserve",
     "paths": {
       "@/*": ["./src/app/*"],
       "@/env": ["./src/environments/environment"]
-    },
-    "useDefineForClassFields": false
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
+    "typeCheckHostBindings": true,
     "strictTemplates": true
-  }
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }

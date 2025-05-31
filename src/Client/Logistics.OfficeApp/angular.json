@@ -17,18 +17,22 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular/build:application",
           "options": {
-            "outputPath": {
-              "base": "dist/logistics.office-app"
-            },
+            "browser": "src/main.ts",
             "index": "src/index.html",
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
-            "inlineStyleLanguage": "css",
-            "assets": ["src/assets"],
-            "styles": ["src/styles.css", "node_modules/mapbox-gl/dist/mapbox-gl.css"],
-            "browser": "src/main.ts"
+            "outputPath": {
+              "base": "dist/logistics.office-app"
+            },
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": ["src/styles.css", "node_modules/mapbox-gl/dist/mapbox-gl.css"]
           },
           "configurations": {
             "production": {
@@ -62,7 +66,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
               "buildTarget": "Logistics.OfficeApp:build:production"
@@ -77,20 +81,20 @@
           }
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "buildTarget": "Logistics.OfficeApp:build"
-          }
+          "builder": "@angular/build:extract-i18n"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
-            "main": "src/test.ts",
             "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
-            "inlineStyleLanguage": "css",
-            "assets": ["src/assets"],
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
             "styles": ["src/styles.css", "node_modules/mapbox-gl/dist/mapbox-gl.css"],
             "scripts": ["node_modules/chart.js/dist/chart.js"]
           }

@@ -8,7 +8,7 @@ import {
   loadStripe,
 } from "@stripe/stripe-js";
 import {firstValueFrom} from "rxjs";
-import {environment} from "src/environments/environment";
+import {environment} from "@/env";
 import {COUNTRIES_OPTIONS} from "@/shared/constants";
 import {UsBankAccount} from "@/shared/models";
 import {findOption} from "@/shared/utils";
