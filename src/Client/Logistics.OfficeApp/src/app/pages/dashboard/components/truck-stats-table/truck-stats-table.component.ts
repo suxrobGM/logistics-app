@@ -7,7 +7,7 @@ import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {ApiService} from "@/core/api";
 import {PagedIntervalQuery, TruckStatsDto} from "@/core/api/models";
-import {RangeCalendarComponent} from "@/shared/components";
+import {RangeCalendar} from "@/shared/components";
 import {DistanceUnitPipe} from "@/shared/pipes";
 import {DateUtils} from "@/shared/utils";
 
@@ -25,7 +25,7 @@ import {DateUtils} from "@/shared/utils";
     DistanceUnitPipe,
     CardModule,
     ButtonModule,
-    RangeCalendarComponent,
+    RangeCalendar,
     TooltipModule,
   ],
 })

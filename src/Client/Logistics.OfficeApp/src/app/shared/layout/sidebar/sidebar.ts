@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, signal} from "@angular/core";
+import {Component, inject, signal} from "@angular/core";
 import {MenuItem} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {PanelMenuModule} from "primeng/panelmenu";
@@ -9,22 +9,24 @@ import {AuthService} from "@/core/auth";
 import {TenantService} from "@/core/services";
 import {environment} from "@/env";
 import {sidebarNavItems} from "@/shared/layout/data";
-import {PanelMenuComponent} from "../panel-menu";
+import {PanelMenu} from "../panel-menu";
 
 @Component({
   selector: "app-sidebar",
-  templateUrl: "./sidebar.component.html",
-  styleUrl: "./sidebar.component.css",
+  templateUrl: "./sidebar.html",
+  styleUrl: "./sidebar.css",
   imports: [
     CommonModule,
     TooltipModule,
     ButtonModule,
     SplitButtonModule,
     PanelMenuModule,
-    PanelMenuComponent,
+    PanelMenu,
   ],
 })
-export class SidebarComponent {
+export class Sidebar {
+  private readonly authService = inject(AuthService);
+  private readonly tenantService = inject(TenantService);
   public readonly isOpened = signal(true);
   public readonly companyName = signal<string | null>(null);
   public readonly userRole = signal<string | null>(null);
@@ -32,10 +34,7 @@ export class SidebarComponent {
   public readonly navItems = signal<MenuItem[]>(sidebarNavItems);
   public readonly profileMenuItems: MenuItem[];
 
-  constructor(
-    private readonly authService: AuthService,
-    private readonly tenantService: TenantService
-  ) {
+  constructor() {
     this.profileMenuItems = [
       {
         label: "User name",
@@ -74,15 +73,15 @@ export class SidebarComponent {
     });
   }
 
-  toggle(): void {
+  protected toggle(): void {
     this.isOpened.set(!this.isOpened());
   }
 
-  logout(): void {
+  protected logout(): void {
     this.authService.logout();
   }
 
-  openAccountUrl(): void {
+  protected openAccountUrl(): void {
     window.open(`${environment.idHost}/account/manage/profile`, "_blank");
   }
 }

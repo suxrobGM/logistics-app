@@ -7,7 +7,7 @@ import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {ApiService} from "@/core/api";
 import {InvoiceDto, InvoiceType} from "@/core/api/models";
-import {InvoiceStatusTagComponent} from "@/shared/components";
+import {InvoiceStatusTag} from "@/shared/components";
 
 @Component({
   selector: "app-load-invoices-list",
@@ -21,7 +21,7 @@ import {InvoiceStatusTagComponent} from "@/shared/components";
     DatePipe,
     ButtonModule,
     TooltipModule,
-    InvoiceStatusTagComponent,
+    InvoiceStatusTag,
   ],
 })
 export class LoadInvoicesListComponent {

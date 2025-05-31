@@ -1,6 +1,6 @@
 <p-panelMenu [model]="items()" [styleClass]="styleClass()">
   <ng-template #item let-item>
-    <div class="p-panelmenu-header-link" (click)="handleClick($event, item)" aria-hidden="true">
+    <div class="p-panelmenu-header-link" (click)="toggleMenuItem($event, item)" aria-hidden="true">
       <span
         class="p-menuitem-icon"
         [class]="item.icon"
@@ -9,12 +9,11 @@
       ></span>
 
       @if (expanded()) {
-        <span class="p-menuitem-text">{{ item.label }}</span>
+      <span class="p-menuitem-text">{{ item.label }}</span>
 
-        @if (item.items) {
-          <span class="p-panelmenu-icon pi pi-fw pi-chevron-down"></span>
-        }
-      }
+      @if (item.items) {
+      <span class="p-panelmenu-icon pi pi-fw pi-chevron-down"></span>
+      } }
     </div>
   </ng-template>
 </p-panelMenu>

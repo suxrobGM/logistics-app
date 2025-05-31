@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, inject, signal} from "@angular/core";
 import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {MenuItem} from "primeng/api";
 import {BreadcrumbModule} from "primeng/breadcrumb";
@@ -6,28 +6,24 @@ import {filter} from "rxjs";
 
 @Component({
   selector: "app-breadcrumb",
-  templateUrl: "./breadcrumb.component.html",
-  styleUrl: "./breadcrumb.component.css",
+  templateUrl: "./breadcrumb.html",
+  styleUrl: "./breadcrumb.css",
   imports: [BreadcrumbModule],
 })
-export class BreadcrumbComponent implements OnInit {
-  public readonly home: MenuItem;
-  public menuItems: MenuItem[];
+export class Breadcrumb {
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  protected readonly home: MenuItem;
+  protected readonly menuItems = signal<MenuItem[]>([]);
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router
-  ) {
-    this.menuItems = [];
+  constructor() {
     this.home = {
       icon: "pi pi-home",
       routerLink: "/",
     };
-  }
 
-  public ngOnInit(): void {
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
-      this.menuItems = this.createBreadcrumbs(this.route.root);
+      this.menuItems.set(this.createBreadcrumbs(this.route.root));
     });
   }
 

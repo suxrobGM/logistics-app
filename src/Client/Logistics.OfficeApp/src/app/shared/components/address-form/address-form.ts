@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, forwardRef, input, output} from "@angular/core";
+import {Component, input, output} from "@angular/core";
 import {
   ControlValueAccessor,
   FormControl,
@@ -14,16 +14,16 @@ import {SelectModule} from "primeng/select";
 import {AddressDto} from "@/core/api/models";
 import {COUNTRIES_OPTIONS, DEFAULT_COUNTRY_OPTION, US_STATES_OPTIONS} from "@/core/constants";
 import {findOption} from "@/shared/utils";
-import {ValidationSummaryComponent} from "../validation-summary/validation-summary.component";
+import {ValidationSummary} from "../validation-summary/validation-summary";
 
 @Component({
   selector: "app-address-form",
   standalone: true,
-  templateUrl: "./address-form.component.html",
+  templateUrl: "./address-form.html",
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    ValidationSummaryComponent,
+    ValidationSummary,
     SelectModule,
     InputTextModule,
     KeyFilterModule,
@@ -31,13 +31,13 @@ import {ValidationSummaryComponent} from "../validation-summary/validation-summa
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => AddressFormComponent),
+      useExisting: AddressForm,
       multi: true,
     },
   ],
 })
-export class AddressFormComponent implements ControlValueAccessor {
-  readonly form: FormGroup<AddressForm>;
+export class AddressForm implements ControlValueAccessor {
+  readonly form: FormGroup<AddressFormType>;
   readonly usStates = US_STATES_OPTIONS;
   readonly countries = COUNTRIES_OPTIONS;
   private onTouched?: () => void;
@@ -47,7 +47,7 @@ export class AddressFormComponent implements ControlValueAccessor {
   readonly addressChange = output<AddressDto | null>();
 
   constructor() {
-    this.form = new FormGroup<AddressForm>({
+    this.form = new FormGroup<AddressFormType>({
       addressLine1: new FormControl("", {validators: Validators.required, nonNullable: true}),
       addressLine2: new FormControl(null),
       city: new FormControl("", {validators: Validators.required, nonNullable: true}),
@@ -125,7 +125,7 @@ export class AddressFormComponent implements ControlValueAccessor {
   }
 }
 
-interface AddressForm {
+interface AddressFormType {
   addressLine1: FormControl<string>;
   addressLine2: FormControl<string | null>;
   city: FormControl<string>;

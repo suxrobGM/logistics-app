@@ -7,10 +7,10 @@ import {DateUtils} from "@/shared/utils";
 
 @Component({
   selector: "app-range-calendar",
-  templateUrl: "./range-calendar.component.html",
+  templateUrl: "./range-calendar.html",
   imports: [CommonModule, CalendarModule, FormsModule, ButtonModule],
 })
-export class RangeCalendarComponent implements OnChanges {
+export class RangeCalendar implements OnChanges {
   public dates: Date[];
   public todayDate: Date;
 

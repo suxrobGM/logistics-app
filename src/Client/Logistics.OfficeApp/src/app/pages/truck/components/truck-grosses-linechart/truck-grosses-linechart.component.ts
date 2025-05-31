@@ -5,7 +5,7 @@ import {ChartModule} from "primeng/chart";
 import {SkeletonModule} from "primeng/skeleton";
 import {ApiService} from "@/core/api";
 import {DailyGrossesDto} from "@/core/api/models";
-import {RangeCalendarComponent} from "@/shared/components";
+import {RangeCalendar} from "@/shared/components";
 import {Converters, DateUtils} from "@/shared/utils";
 
 @Component({
@@ -13,7 +13,7 @@ import {Converters, DateUtils} from "@/shared/utils";
   standalone: true,
   templateUrl: "./truck-grosses-linechart.component.html",
   styleUrls: [],
-  imports: [CommonModule, CardModule, SkeletonModule, ChartModule, RangeCalendarComponent],
+  imports: [CommonModule, CardModule, SkeletonModule, ChartModule, RangeCalendar],
 })
 export class TruckGrossesLinechartComponent implements OnInit {
   public isLoading: boolean;

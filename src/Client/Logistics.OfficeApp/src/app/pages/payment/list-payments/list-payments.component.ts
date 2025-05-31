@@ -7,7 +7,7 @@ import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {ApiService} from "@/core/api";
 import {PaymentDto, PaymentMethodType, paymentMethodTypeOptions} from "@/core/api/models";
-import {PaymentStatusTagComponent} from "@/shared/components";
+import {PaymentStatusTag} from "@/shared/components";
 import {AddressPipe} from "@/shared/pipes";
 import {PredefinedDateRanges} from "@/shared/utils";
 
@@ -23,7 +23,7 @@ import {PredefinedDateRanges} from "@/shared/utils";
     TooltipModule,
     RouterModule,
     ButtonModule,
-    PaymentStatusTagComponent,
+    PaymentStatusTag,
     AddressPipe,
   ],
 })

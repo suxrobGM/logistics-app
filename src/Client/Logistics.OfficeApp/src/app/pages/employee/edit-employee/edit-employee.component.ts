@@ -14,7 +14,7 @@ import {EmployeeDto, SalaryType, UpdateEmployeeCommand, salaryTypeOptions} from 
 import {AuthService} from "@/core/auth";
 import {UserRole} from "@/core/enums";
 import {ToastService} from "@/core/services";
-import {ValidationSummaryComponent} from "@/shared/components";
+import {ValidationSummary} from "@/shared/components";
 import {NumberUtils} from "@/shared/utils";
 import {ChangeRoleDialogComponent} from "../components";
 
@@ -32,7 +32,7 @@ import {ChangeRoleDialogComponent} from "../components";
     ButtonModule,
     RouterLink,
     ReactiveFormsModule,
-    ValidationSummaryComponent,
+    ValidationSummary,
     SelectModule,
   ],
   providers: [ConfirmationService],

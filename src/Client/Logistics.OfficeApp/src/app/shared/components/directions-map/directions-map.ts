@@ -5,10 +5,10 @@ import {NgxMapboxGLModule} from "ngx-mapbox-gl";
 
 @Component({
   selector: "app-directions-map",
-  templateUrl: "./directions-map.component.html",
+  templateUrl: "./directions-map.html",
   imports: [NgxMapboxGLModule],
 })
-export class DirectionsMapComponent implements OnChanges {
+export class DirectionsMap implements OnChanges {
   public bounds?: [LngLatLike, LngLatLike] | null;
   public route?: GeoJSONSourceRaw | null;
   public startPoint?: GeoJSONSourceRaw | null;

@@ -22,11 +22,7 @@ import {
   usBankAccountTypeOptions,
 } from "@/core/api/models";
 import {StripeService, TenantService, ToastService} from "@/core/services";
-import {
-  AddressFormComponent,
-  StripeCardComponent,
-  ValidationSummaryComponent,
-} from "@/shared/components";
+import {AddressForm, StripeCard, ValidationSummary} from "@/shared/components";
 
 const enabledPaymentTypes = [
   PaymentMethodType.Card,
@@ -44,13 +40,13 @@ const enabledPaymentTypes = [
     DialogModule,
     FormsModule,
     ReactiveFormsModule,
-    ValidationSummaryComponent,
-    AddressFormComponent,
+    ValidationSummary,
+    AddressForm,
     SelectModule,
     InputMaskModule,
     InputTextModule,
     KeyFilterModule,
-    StripeCardComponent,
+    StripeCard,
   ],
 })
 export class PaymentMethodDialogComponent {

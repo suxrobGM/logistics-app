@@ -1,32 +1,25 @@
 import {CommonModule} from "@angular/common";
-import {Component, Input, OnDestroy, OnInit, input} from "@angular/core";
+import {Component, OnDestroy, inject, input, signal} from "@angular/core";
 import {ApiService} from "@/core/api";
 import {TruckGeolocationDto} from "@/core/api/models";
 import {LiveTrackingService} from "@/core/services";
-import {GeolocationMapComponent} from "@/shared/components";
+import {GeolocationMap} from "@/shared/components";
 
 @Component({
   selector: "app-trucks-map",
-  templateUrl: "./trucks-map.component.html",
-  imports: [CommonModule, GeolocationMapComponent],
+  templateUrl: "./trucks-map.html",
+  imports: [CommonModule, GeolocationMap],
 })
-export class TrucksMapComponent implements OnInit, OnDestroy {
-  public truckLocations: TruckGeolocationDto[];
+export class TrucksMap implements OnDestroy {
+  private readonly apiService = inject(ApiService);
+  private readonly liveTrackingService = inject(LiveTrackingService);
+  public readonly truckLocations = signal<TruckGeolocationDto[]>([]);
 
   public readonly accessToken = input.required<string>();
-  @Input() width: string;
-  @Input() height: string;
+  public readonly width = input("100%");
+  public readonly height = input("100%");
 
-  constructor(
-    private apiService: ApiService,
-    private liveTrackingService: LiveTrackingService
-  ) {
-    this.truckLocations = [];
-    this.width = "100%";
-    this.height = "100%";
-  }
-
-  ngOnInit(): void {
+  constructor() {
     this.fetchTrucksData();
     this.connectToLiveTracking();
   }
@@ -35,21 +28,25 @@ export class TrucksMapComponent implements OnInit, OnDestroy {
     this.liveTrackingService.disconnect();
   }
 
-  private connectToLiveTracking() {
+  private connectToLiveTracking(): void {
     this.liveTrackingService.connect();
 
     this.liveTrackingService.onReceiveGeolocationData = (data: TruckGeolocationDto) => {
-      const index = this.truckLocations.findIndex((loc) => loc.truckId === data.truckId);
+      const index = this.truckLocations().findIndex((loc) => loc.truckId === data.truckId);
 
       if (index !== -1) {
-        this.truckLocations[index] = data;
+        this.truckLocations.update((prev) => {
+          const updatedLocations = [...prev];
+          updatedLocations[index] = data;
+          return updatedLocations;
+        });
       } else {
-        this.truckLocations.push(data);
+        this.truckLocations.update((prev) => [...prev, data]);
       }
     };
   }
 
-  private fetchTrucksData() {
+  private fetchTrucksData(): void {
     this.apiService.getTrucks({pageSize: 100}).subscribe((result) => {
       if (!result.success || !result.data) {
         return;
@@ -70,7 +67,7 @@ export class TrucksMapComponent implements OnInit, OnDestroy {
         return [];
       });
 
-      this.truckLocations = truckLocations;
+      this.truckLocations.set(truckLocations);
     });
   }
 }

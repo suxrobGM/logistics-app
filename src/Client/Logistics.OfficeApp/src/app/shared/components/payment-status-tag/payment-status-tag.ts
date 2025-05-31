@@ -5,10 +5,10 @@ import {PaymentStatus, paymentStatusOptions} from "@/core/api/models";
 
 @Component({
   selector: "app-payment-status-tag",
-  templateUrl: "./payment-status-tag.component.html",
+  templateUrl: "./payment-status-tag.html",
   imports: [CommonModule, TagModule],
 })
-export class PaymentStatusTagComponent {
+export class PaymentStatusTag {
   public readonly paymentStatus = input.required<PaymentStatus>();
 
   getPaymentStatusDesc(enumValue: PaymentStatus): string {

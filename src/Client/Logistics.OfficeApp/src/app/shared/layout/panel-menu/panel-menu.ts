@@ -1,4 +1,4 @@
-import {Component, effect, input, model, output} from "@angular/core";
+import {Component, effect, inject, input, model, output} from "@angular/core";
 import {Router} from "@angular/router";
 import {PanelMenuModule} from "primeng/panelmenu";
 import {TooltipModule} from "primeng/tooltip";
@@ -6,17 +6,18 @@ import {MenuItem} from "./types";
 
 @Component({
   selector: "app-panel-menu",
-  templateUrl: "./panel-menu.component.html",
-  styleUrl: "./panel-menu.component.css",
+  templateUrl: "./panel-menu.html",
+  styleUrl: "./panel-menu.css",
   imports: [PanelMenuModule, TooltipModule],
 })
-export class PanelMenuComponent {
-  readonly items = input.required<MenuItem[]>();
-  readonly expanded = model<boolean>(false);
-  readonly itemClick = output<MenuItem>();
-  readonly styleClass = input<string>();
+export class PanelMenu {
+  private readonly router = inject(Router);
+  public readonly items = input.required<MenuItem[]>();
+  public readonly expanded = model<boolean>(false);
+  public readonly itemClick = output<MenuItem>();
+  public readonly styleClass = input<string>();
 
-  constructor(private readonly router: Router) {
+  constructor() {
     effect(() => {
       // Collapse all nested menus when the main menu is collapsed
       if (!this.expanded()) {
@@ -25,7 +26,7 @@ export class PanelMenuComponent {
     });
   }
 
-  handleClick(ev: MouseEvent, item: MenuItem): void {
+  protected toggleMenuItem(ev: MouseEvent, item: MenuItem): void {
     // Prevent default behavior if the item has children and expand the submenu
     if (!this.expanded() && item.items) {
       this.expanded.set(true);

@@ -12,11 +12,11 @@ import {AuthService} from "@/core/auth";
 import {ToastService} from "@/core/services";
 import {environment} from "@/env";
 import {
-  AddressAutocompleteComponent,
-  DirectionsMapComponent,
+  AddressAutocomplete,
+  DirectionsMap,
   RouteChangedEvent,
   SelectedAddressEvent,
-  ValidationSummaryComponent,
+  ValidationSummary,
 } from "@/shared/components";
 import {Converters} from "@/shared/utils";
 import {SearchCustomerComponent, SearchTruckComponent} from "../components";
@@ -35,11 +35,11 @@ import {TruckData} from "../shared";
     AutoCompleteModule,
     ButtonModule,
     RouterLink,
-    AddressAutocompleteComponent,
-    DirectionsMapComponent,
+    AddressAutocomplete,
+    DirectionsMap,
     SearchCustomerComponent,
     SearchTruckComponent,
-    ValidationSummaryComponent,
+    ValidationSummary,
   ],
 })
 export class AddLoadComponent implements OnInit {

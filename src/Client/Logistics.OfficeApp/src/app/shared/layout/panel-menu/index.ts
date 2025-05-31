@@ -1,2 +1,2 @@
-export * from "./panel-menu.component";
+export * from "./panel-menu";
 export * from "./types";

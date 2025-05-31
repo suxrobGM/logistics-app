@@ -1,7 +1,7 @@
 import {CommonModule} from "@angular/common";
 import {Component} from "@angular/core";
 import {environment} from "@/env";
-import {GrossesBarchartComponent, TrucksMapComponent} from "@/shared/components";
+import {GrossesBarchart, TrucksMap} from "@/shared/components";
 import {CompanyStatsComponent, TruckStatsTableComponent} from "./components";
 
 @Component({
@@ -12,9 +12,9 @@ import {CompanyStatsComponent, TruckStatsTableComponent} from "./components";
   imports: [
     CommonModule,
     TruckStatsTableComponent,
-    GrossesBarchartComponent,
+    GrossesBarchart,
     CompanyStatsComponent,
-    TrucksMapComponent,
+    TrucksMap,
   ],
 })
 export class DashboardComponent {

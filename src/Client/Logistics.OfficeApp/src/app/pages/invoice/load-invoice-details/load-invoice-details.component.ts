@@ -8,7 +8,7 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {ApiService} from "@/core/api";
 import {AddressDto, InvoiceDto} from "@/core/api/models";
 import {TenantService} from "@/core/services";
-import {InvoiceStatusTagComponent} from "@/shared/components";
+import {InvoiceStatusTag} from "@/shared/components";
 import {AddressPipe} from "@/shared/pipes";
 
 @Component({
@@ -21,7 +21,7 @@ import {AddressPipe} from "@/shared/pipes";
     ProgressSpinnerModule,
     RouterModule,
     AddressPipe,
-    InvoiceStatusTagComponent,
+    InvoiceStatusTag,
   ],
 })
 export class LoadInvoiceDetailsComponent implements OnInit {

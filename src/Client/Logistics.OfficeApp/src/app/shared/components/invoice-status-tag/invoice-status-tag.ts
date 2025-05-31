@@ -5,11 +5,10 @@ import {InvoiceStatus, invoiceStatusOptions} from "@/core/api/models";
 
 @Component({
   selector: "app-invoice-status-tag",
-  standalone: true,
-  templateUrl: "./invoice-status-tag.component.html",
+  templateUrl: "./invoice-status-tag.html",
   imports: [CommonModule, TagModule],
 })
-export class InvoiceStatusTagComponent {
+export class InvoiceStatusTag {
   public readonly status = input.required<InvoiceStatus>();
 
   getStatusDescription(): string {

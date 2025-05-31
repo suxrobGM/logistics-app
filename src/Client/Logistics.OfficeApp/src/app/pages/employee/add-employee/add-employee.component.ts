@@ -17,7 +17,7 @@ import {
   salaryTypeOptions,
 } from "@/core/api/models";
 import {ToastService} from "@/core/services";
-import {ValidationSummaryComponent} from "@/shared/components";
+import {ValidationSummary} from "@/shared/components";
 import {UserService} from "../services";
 
 @Component({
@@ -35,7 +35,7 @@ import {UserService} from "../services";
     SelectModule,
     ButtonModule,
     RouterLink,
-    ValidationSummaryComponent,
+    ValidationSummary,
   ],
   providers: [UserService],
 })

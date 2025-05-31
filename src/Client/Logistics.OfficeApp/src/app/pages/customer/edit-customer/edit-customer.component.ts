@@ -8,7 +8,7 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {ApiService} from "@/core/api";
 import {UpdateCustomerCommand} from "@/core/api/models";
 import {ToastService} from "@/core/services";
-import {ValidationSummaryComponent} from "@/shared/components";
+import {ValidationSummary} from "@/shared/components";
 
 @Component({
   selector: "app-edit-customer",
@@ -22,7 +22,7 @@ import {ValidationSummaryComponent} from "@/shared/components";
     ProgressSpinnerModule,
     ReactiveFormsModule,
     RouterModule,
-    ValidationSummaryComponent,
+    ValidationSummary,
   ],
 })
 export class EditCustomerComponent implements OnInit {

@@ -10,7 +10,7 @@ import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {ApiService} from "@/core/api";
 import {InvoiceDto, InvoiceType, SalaryType, salaryTypeOptions} from "@/core/api/models";
-import {InvoiceStatusTagComponent} from "@/shared/components";
+import {InvoiceStatusTag} from "@/shared/components";
 
 @Component({
   selector: "app-payroll-invoices-list",
@@ -24,7 +24,7 @@ import {InvoiceStatusTagComponent} from "@/shared/components";
     RouterModule,
     ButtonModule,
     TooltipModule,
-    InvoiceStatusTagComponent,
+    InvoiceStatusTag,
     IconFieldModule,
     InputIconModule,
   ],

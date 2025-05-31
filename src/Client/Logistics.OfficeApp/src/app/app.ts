@@ -3,13 +3,13 @@ import {RouterOutlet} from "@angular/router";
 import {ConfirmDialog} from "primeng/confirmdialog";
 import {ToastModule} from "primeng/toast";
 import {AuthService} from "@/core/auth";
-import {BreadcrumbComponent, SidebarComponent} from "@/shared/layout";
+import {Breadcrumb, Sidebar} from "@/shared/layout";
 
 @Component({
   selector: "app-root",
   templateUrl: "./app.html",
   styleUrl: "./app.css",
-  imports: [BreadcrumbComponent, ToastModule, RouterOutlet, SidebarComponent, ConfirmDialog],
+  imports: [Breadcrumb, ToastModule, RouterOutlet, Sidebar, ConfirmDialog],
 })
 export class App {
   protected readonly isAuthenticated = signal(false);

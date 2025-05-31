@@ -5,20 +5,19 @@ import {BehaviorSubject} from "rxjs";
 
 @Component({
   selector: "app-validation-summary",
-  templateUrl: "./validation-summary.component.html",
-  styleUrl: "./validation-summary.component.css",
+  templateUrl: "./validation-summary.html",
+  styleUrl: "./validation-summary.css",
   imports: [CommonModule, AsyncPipe],
 })
-export class ValidationSummaryComponent implements OnInit {
-  private formErrorsSubject = new BehaviorSubject<string[]>([]);
-  public formErrors$ = this.formErrorsSubject.asObservable();
+export class ValidationSummary implements OnInit {
+  private readonly formErrorsSubject = new BehaviorSubject<string[]>([]);
+  protected readonly formErrors$ = this.formErrorsSubject.asObservable();
 
   public readonly form = input.required<FormGroup>();
 
   ngOnInit(): void {
     this.form().valueChanges.subscribe(() => {
       const errors = this.calculateErrors();
-
       this.formErrorsSubject.next(errors);
     });
   }

@@ -8,9 +8,9 @@ interface StripeCardElementsReady {
 
 @Component({
   selector: "app-stripe-card",
-  templateUrl: "./stripe-card.component.html",
+  templateUrl: "./stripe-card.html",
 })
-export class StripeCardComponent implements OnDestroy, AfterViewInit {
+export class StripeCard implements OnDestroy, AfterViewInit {
   public readonly ready = output<StripeCardElementsReady>();
   private readonly cardNumberElement = viewChild.required<ElementRef<HTMLElement>>("cardNumber");
   private readonly cardExpiryElement = viewChild.required<ElementRef<HTMLElement>>("cardExpiry");

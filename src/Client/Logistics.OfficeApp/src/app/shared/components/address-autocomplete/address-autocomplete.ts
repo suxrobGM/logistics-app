@@ -8,22 +8,22 @@ import {Converters} from "@/shared/utils";
 
 @Component({
   selector: "app-address-autocomplete",
-  templateUrl: "./address-autocomplete.component.html",
-  styleUrl: "./address-autocomplete.component.css",
+  templateUrl: "./address-autocomplete.html",
+  styleUrl: "./address-autocomplete.css",
   imports: [CommonModule, FormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: AddressAutocompleteComponent,
+      useExisting: AddressAutocomplete,
       multi: true,
     },
   ],
 })
-export class AddressAutocompleteComponent implements ControlValueAccessor, OnInit {
+export class AddressAutocomplete implements ControlValueAccessor, OnInit {
   private isDisabled = false;
   private isTouched = false;
-  public readonly searchResults = signal<GeocodingFeature[]>([]);
-  public readonly addressString = model<string | null>(null);
+  protected readonly searchResults = signal<GeocodingFeature[]>([]);
+  protected readonly addressString = model<string | null>(null);
 
   public readonly accessToken = input.required<string>();
   public readonly field = input("");

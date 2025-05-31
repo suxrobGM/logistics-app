@@ -15,7 +15,7 @@ import {
   paymentMethodTypeOptions,
   salaryTypeOptions,
 } from "@/core/api/models";
-import {InvoiceStatusTagComponent} from "@/shared/components";
+import {InvoiceStatusTag} from "@/shared/components";
 
 @Component({
   selector: "app-employee-payroll-invoices-list",
@@ -27,7 +27,7 @@ import {InvoiceStatusTagComponent} from "@/shared/components";
     TableModule,
     ButtonModule,
     RouterModule,
-    InvoiceStatusTagComponent,
+    InvoiceStatusTag,
     ProgressSpinnerModule,
   ],
 })

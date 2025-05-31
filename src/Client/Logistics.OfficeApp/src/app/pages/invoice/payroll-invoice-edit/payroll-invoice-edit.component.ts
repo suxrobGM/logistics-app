@@ -20,7 +20,7 @@ import {
 } from "@/core/api/models";
 import {PreviewPayrollInvoicesQuery} from "@/core/api/models/invoice/preview-payroll-invoices.model";
 import {ToastService} from "@/core/services";
-import {ValidationSummaryComponent} from "@/shared/components";
+import {ValidationSummary} from "@/shared/components";
 import {PredefinedDateRanges} from "@/shared/utils";
 import {DateUtils} from "@/shared/utils";
 
@@ -30,14 +30,14 @@ import {DateUtils} from "@/shared/utils";
   imports: [
     CommonModule,
     CardModule,
-    ValidationSummaryComponent,
+    ValidationSummary,
     RouterModule,
     AutoCompleteModule,
     ProgressSpinnerModule,
     ReactiveFormsModule,
     CalendarModule,
     ButtonModule,
-    //AddressFormComponent,
+    //AddressForm,
     SelectModule,
   ],
 })

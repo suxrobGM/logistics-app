@@ -11,7 +11,7 @@ import {TooltipModule} from "primeng/tooltip";
 import {ApiService} from "@/core/api";
 import {DailyGrossesDto, LoadDto} from "@/core/api/models";
 import {environment} from "@/env";
-import {TrucksMapComponent} from "@/shared/components";
+import {TrucksMap} from "@/shared/components";
 import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
 import {Converters, DateUtils} from "@/shared/utils";
 import {NotificationsPanelComponent} from "./components";
@@ -31,7 +31,7 @@ import {NotificationsPanelComponent} from "./components";
     ChartModule,
     CurrencyPipe,
     DistanceUnitPipe,
-    TrucksMapComponent,
+    TrucksMap,
     NotificationsPanelComponent,
     AddressPipe,
   ],

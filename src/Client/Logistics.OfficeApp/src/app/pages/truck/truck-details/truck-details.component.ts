@@ -6,11 +6,7 @@ import {SkeletonModule} from "primeng/skeleton";
 import {ApiService} from "@/core/api";
 import {DailyGrossesDto, MonthlyGrossesDto, TruckDto, TruckGeolocationDto} from "@/core/api/models";
 import {environment} from "@/env";
-import {
-  BarChartDrawnEvent,
-  GeolocationMapComponent,
-  GrossesBarchartComponent,
-} from "@/shared/components";
+import {BarChartDrawnEvent, GeolocationMap, GrossesBarchart} from "@/shared/components";
 import {DistanceUnitPipe} from "@/shared/pipes";
 import {LineChartDrawnEvent, TruckGrossesLinechartComponent} from "../components";
 
@@ -25,9 +21,9 @@ import {LineChartDrawnEvent, TruckGrossesLinechartComponent} from "../components
     RouterLink,
     CurrencyPipe,
     DistanceUnitPipe,
-    GeolocationMapComponent,
+    GeolocationMap,
     TruckGrossesLinechartComponent,
-    GrossesBarchartComponent,
+    GrossesBarchart,
   ],
 })
 export class TruckDetailsComponent implements OnInit {
