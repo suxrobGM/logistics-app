@@ -11,7 +11,7 @@ import {TagModule} from "primeng/tag";
 import {ApiService} from "@/core/api";
 import {SubscriptionDto} from "@/core/api/models";
 import {TenantService, ToastService} from "@/core/services";
-import {Labels, SeverityLevel} from "@/core/utilities";
+import {Labels, SeverityLevel} from "@/core/utils";
 import {PaymentMethodsCardComponent} from "../components";
 
 @Component({

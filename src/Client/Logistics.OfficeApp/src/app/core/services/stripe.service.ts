@@ -13,7 +13,7 @@ import {ApiService} from "../api";
 import {AddressDto} from "../api/models";
 import {COUNTRIES_OPTIONS} from "../constants";
 import {UsBankAccount} from "../types";
-import {findOption} from "../utilities";
+import {findOption} from "../utils";
 import {TenantService} from "./tenant.service";
 
 @Injectable({providedIn: "root"})

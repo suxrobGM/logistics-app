@@ -6,7 +6,7 @@ import {SkeletonModule} from "primeng/skeleton";
 import {RangeCalendarComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {DailyGrossesDto} from "@/core/api/models";
-import {Converters, DateUtils} from "@/core/utilities";
+import {Converters, DateUtils} from "@/core/utils";
 
 @Component({
   selector: "app-truck-grosses-linechart",

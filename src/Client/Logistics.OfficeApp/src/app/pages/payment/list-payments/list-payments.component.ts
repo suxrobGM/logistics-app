@@ -9,7 +9,7 @@ import {PaymentStatusTagComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {PaymentDto, PaymentMethodType, paymentMethodTypeOptions} from "@/core/api/models";
 import {AddressPipe} from "@/core/pipes";
-import {PredefinedDateRanges} from "@/core/utilities";
+import {PredefinedDateRanges} from "@/core/utils";
 
 @Component({
   selector: "app-list-payments",

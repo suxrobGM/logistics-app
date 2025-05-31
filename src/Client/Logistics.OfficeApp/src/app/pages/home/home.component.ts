@@ -12,7 +12,7 @@ import {TrucksMapComponent} from "@/components";
 import {ApiService} from "@/core/api";
 import {DailyGrossesDto, LoadDto} from "@/core/api/models";
 import {AddressPipe, DistanceUnitPipe} from "@/core/pipes";
-import {Converters, DateUtils} from "@/core/utilities";
+import {Converters, DateUtils} from "@/core/utils";
 import {environment} from "@/env";
 import {NotificationsPanelComponent} from "./components";
 

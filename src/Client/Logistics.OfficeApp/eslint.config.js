@@ -1,6 +1,6 @@
+import eslint from "@eslint/js";
 import angular from "angular-eslint";
 import tseslint from "typescript-eslint";
-import eslint from "@eslint/js";
 
 export default tseslint.config(
   {
@@ -30,6 +30,7 @@ export default tseslint.config(
         },
       ],
       "@angular-eslint/template/click-events-have-key-events": ["off"],
+      "@angular-eslint/component-class-suffix": ["off"],
     },
   },
   {

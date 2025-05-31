@@ -21,8 +21,8 @@ import {
 } from "@/core/api/models";
 import {PreviewPayrollInvoicesQuery} from "@/core/api/models/invoice/preview-payroll-invoices.model";
 import {ToastService} from "@/core/services";
-import {PredefinedDateRanges} from "@/core/utilities";
-import {DateUtils} from "@/core/utilities";
+import {PredefinedDateRanges} from "@/core/utils";
+import {DateUtils} from "@/core/utils";
 
 @Component({
   selector: "app-payroll-invoice-edit",

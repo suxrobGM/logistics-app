@@ -15,7 +15,7 @@ import {EmployeeDto, SalaryType, UpdateEmployeeCommand, salaryTypeOptions} from 
 import {AuthService} from "@/core/auth";
 import {UserRole} from "@/core/enums";
 import {ToastService} from "@/core/services";
-import {NumberUtils} from "@/core/utilities";
+import {NumberUtils} from "@/core/utils";
 import {ChangeRoleDialogComponent} from "../components";
 
 @Component({

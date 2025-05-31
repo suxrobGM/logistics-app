@@ -26,7 +26,7 @@ import {
   loadStatusOptions,
 } from "@/core/api/models";
 import {ToastService} from "@/core/services";
-import {Converters} from "@/core/utilities";
+import {Converters} from "@/core/utils";
 import {environment} from "@/env";
 import {SearchCustomerComponent, SearchTruckComponent} from "../components";
 import {TruckData, TruckHelper} from "../shared";

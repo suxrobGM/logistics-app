@@ -1,4 +1,4 @@
-import {Component, signal} from "@angular/core";
+import {Component, inject, signal} from "@angular/core";
 import {RouterOutlet} from "@angular/router";
 import {ConfirmDialog} from "primeng/confirmdialog";
 import {ToastModule} from "primeng/toast";
@@ -7,17 +7,15 @@ import {AuthService} from "@/core/auth";
 
 @Component({
   selector: "app-root",
-  templateUrl: "./app.component.html",
-  styleUrl: "./app.component.css",
+  templateUrl: "./app.html",
+  styleUrl: "./app.css",
   imports: [BreadcrumbComponent, ToastModule, RouterOutlet, SidebarComponent, ConfirmDialog],
 })
-export class AppComponent {
-  public readonly isAuthenticated = signal(false);
+export class App {
+  protected readonly isAuthenticated = signal(false);
+  private readonly authService = inject(AuthService);
 
-  constructor(
-    private readonly authService: AuthService
-    //private readonly router: Router
-  ) {
+  constructor() {
     this.authService
       .checkAuth()
       .subscribe((isAuthenticated) => this.isAuthenticated.set(isAuthenticated));

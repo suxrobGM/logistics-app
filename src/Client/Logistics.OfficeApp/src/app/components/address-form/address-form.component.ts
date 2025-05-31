@@ -13,7 +13,7 @@ import {KeyFilterModule} from "primeng/keyfilter";
 import {SelectModule} from "primeng/select";
 import {AddressDto} from "@/core/api/models";
 import {COUNTRIES_OPTIONS, DEFAULT_COUNTRY_OPTION, US_STATES_OPTIONS} from "@/core/constants";
-import {findOption} from "@/core/utilities";
+import {findOption} from "@/core/utils";
 import {ValidationSummaryComponent} from "../validation-summary/validation-summary.component";
 
 @Component({
