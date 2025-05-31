@@ -27,7 +27,7 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "css",
             "assets": ["src/assets"],
-            "styles": ["src/styles/global.css", "node_modules/mapbox-gl/dist/mapbox-gl.css"],
+            "styles": ["src/styles.css", "node_modules/mapbox-gl/dist/mapbox-gl.css"],
             "browser": "src/main.ts"
           },
           "configurations": {
@@ -91,7 +91,7 @@
             "karmaConfig": "karma.conf.js",
             "inlineStyleLanguage": "css",
             "assets": ["src/assets"],
-            "styles": ["src/styles/global.css", "node_modules/mapbox-gl/dist/mapbox-gl.css"],
+            "styles": ["src/styles.css", "node_modules/mapbox-gl/dist/mapbox-gl.css"],
             "scripts": ["node_modules/chart.js/dist/chart.js"]
           }
         },

@@ -31,7 +31,6 @@
     "chart.js": "^4.4.7",
     "jspdf": "^2.5.2",
     "ngx-mapbox-gl": "^11.0.1",
-    "prettier": "^3.4.2",
     "primeicons": "^7.0.0",
     "primeng": "^19.0.5",
     "rxjs": "^7.8.1",
@@ -55,6 +54,7 @@
     "karma-jasmine": "^5.1.0",
     "karma-jasmine-html-reporter": "^2.1.0",
     "postcss": "^8.5.3",
+    "prettier": "^3.4.2",
     "tailwindcss": "^4.1.7",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.22.0"
