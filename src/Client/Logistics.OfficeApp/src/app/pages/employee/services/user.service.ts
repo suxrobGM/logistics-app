@@ -3,7 +3,7 @@ import {Observable, map} from "rxjs";
 import {ApiService} from "@/core/api";
 import {RoleDto, UserDto} from "@/core/api/models";
 import {AuthService} from "@/core/auth";
-import {UserRole} from "@/core/enums";
+import {UserRole} from "@/shared/models";
 
 @Injectable()
 export class UserService {

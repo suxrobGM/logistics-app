@@ -1,4 +1,4 @@
-import {SelectOption} from "@/core/types";
+import {SelectOption} from "@/shared/models";
 
 export enum InvoiceType {
   Load = "load",

@@ -1,6 +1,6 @@
 import {Routes} from "@angular/router";
 import {authGuard} from "@/core/auth";
-import {Permissions} from "@/core/enums";
+import {Permissions} from "@/shared/models";
 import {AddLoadComponent} from "./add-load/add-load.component";
 import {EditLoadComponent} from "./edit-load/edit-load.component";
 import {ListLoadComponent} from "./list-loads/list-loads.component";

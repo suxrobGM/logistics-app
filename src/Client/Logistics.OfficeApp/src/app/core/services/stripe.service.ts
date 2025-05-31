@@ -9,11 +9,11 @@ import {
 } from "@stripe/stripe-js";
 import {firstValueFrom} from "rxjs";
 import {environment} from "src/environments/environment";
-import {findOption} from "../../shared/utils";
+import {COUNTRIES_OPTIONS} from "@/shared/constants";
+import {UsBankAccount} from "@/shared/models";
+import {findOption} from "@/shared/utils";
 import {ApiService} from "../api";
 import {AddressDto} from "../api/models";
-import {COUNTRIES_OPTIONS} from "../constants";
-import {UsBankAccount} from "../types";
 import {TenantService} from "./tenant.service";
 
 @Injectable({providedIn: "root"})

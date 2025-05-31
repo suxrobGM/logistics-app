@@ -1,4 +1,4 @@
-import {SelectOption} from "../types";
+import {SelectOption} from "@/shared/models";
 
 export const US_STATES_OPTIONS: SelectOption[] = [
   {label: "Alabama", value: "AL"},

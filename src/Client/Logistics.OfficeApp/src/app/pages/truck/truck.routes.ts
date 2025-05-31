@@ -1,6 +1,6 @@
 import {Routes} from "@angular/router";
 import {authGuard} from "@/core/auth";
-import {Permissions} from "@/core/enums";
+import {Permissions} from "@/shared/models";
 import {EditTruckComponent} from "./edit-truck/edit-truck.component";
 import {ListTruckComponent} from "./list-trucks/list-trucks.component";
 import {TruckDetailsComponent} from "./truck-details/truck-details.component";

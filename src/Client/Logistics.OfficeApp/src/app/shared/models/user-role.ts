@@ -1,4 +1,4 @@
-import {SelectOption} from "../types";
+import {SelectOption} from "./select-option";
 
 export enum UserRole {
   AppSuperAdmin = "app.superadmin",

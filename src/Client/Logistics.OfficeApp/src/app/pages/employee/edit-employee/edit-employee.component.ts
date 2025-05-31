@@ -12,9 +12,9 @@ import {ToastModule} from "primeng/toast";
 import {ApiService} from "@/core/api";
 import {EmployeeDto, SalaryType, UpdateEmployeeCommand, salaryTypeOptions} from "@/core/api/models";
 import {AuthService} from "@/core/auth";
-import {UserRole} from "@/core/enums";
 import {ToastService} from "@/core/services";
 import {ValidationSummary} from "@/shared/components";
+import {UserRole} from "@/shared/models";
 import {NumberUtils} from "@/shared/utils";
 import {ChangeRoleDialogComponent} from "../components";
 

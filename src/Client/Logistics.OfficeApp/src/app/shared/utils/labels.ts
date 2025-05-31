@@ -1,4 +1,4 @@
-import {SubscriptionDto, SubscriptionStatus} from "../../core/api/models";
+import {SubscriptionDto, SubscriptionStatus} from "@/core/api/models";
 
 export type SeverityLevel = "success" | "warn" | "danger" | "info";
 

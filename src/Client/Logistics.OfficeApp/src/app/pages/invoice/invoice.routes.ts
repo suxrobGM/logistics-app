@@ -1,6 +1,6 @@
 import {Routes} from "@angular/router";
 import {authGuard} from "@/core/auth";
-import {Permissions} from "@/core/enums";
+import {Permissions} from "@/shared/models";
 import {EmployeePayrollInvoicesListComponent} from "./employee-payroll-invoices-list/employee-payroll-invoices-list.component";
 import {LoadInvoiceDetailsComponent} from "./load-invoice-details/load-invoice-details.component";
 import {LoadInvoicesListComponent} from "./load-invoices-list/load-invoices-list.component";
