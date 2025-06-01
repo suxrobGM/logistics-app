@@ -1,0 +1,116 @@
+CREATE OR REPLACE FUNCTION get_company_stats()
+RETURNS TABLE (
+    "OwnerName" TEXT,
+    "EmployeesCount" BIGINT,
+    "ManagersCount" BIGINT,
+    "DispatchersCount" BIGINT,
+    "DriversCount" BIGINT,
+    "TrucksCount" BIGINT,
+    "ThisWeekGross" NUMERIC,
+    "ThisWeekDistance" DOUBLE PRECISION,
+    "LastWeekGross" NUMERIC,
+    "LastWeekDistance" DOUBLE PRECISION,
+    "ThisMonthGross" NUMERIC,
+    "ThisMonthDistance" DOUBLE PRECISION,
+    "LastMonthGross" NUMERIC,
+    "LastMonthDistance" DOUBLE PRECISION,
+    "TotalGross" NUMERIC,
+    "TotalDistance" DOUBLE PRECISION
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    WITH "RoleIds" AS (
+        SELECT "Name", "Id" FROM "Roles"
+    ),
+    "EmployeeStats" AS (
+        SELECT 
+            (SELECT CONCAT("FirstName", ' ', "LastName") 
+             FROM "Employees" e
+             JOIN "EmployeeRoles" er ON e."Id" = er."EmployeeId"
+             WHERE er."RoleId" = (SELECT "Id" FROM "RoleIds" WHERE "Name" = 'tenant.owner')
+             LIMIT 1) AS "OwnerName",
+            COUNT(*) AS "EmployeesCount",
+            COUNT(*) FILTER (WHERE er."RoleId" = (SELECT "Id" FROM "RoleIds" WHERE "Name" = 'tenant.manager')) AS "ManagersCount",
+            COUNT(*) FILTER (WHERE er."RoleId" = (SELECT "Id" FROM "RoleIds" WHERE "Name" = 'tenant.dispatcher')) AS "DispatchersCount",
+            COUNT(*) FILTER (WHERE er."RoleId" = (SELECT "Id" FROM "RoleIds" WHERE "Name" = 'tenant.driver')) AS "DriversCount"
+        FROM "Employees" e
+        LEFT JOIN "EmployeeRoles" er ON e."Id" = er."EmployeeId"
+    ),
+    "TruckStats" AS (
+        SELECT COUNT(*) AS "TrucksCount"
+        FROM "Trucks"
+    ),
+    "DateRanges" AS (
+        SELECT 
+            CURRENT_DATE AT TIME ZONE 'UTC' AS "Now",
+            (CURRENT_DATE AT TIME ZONE 'UTC' - 
+             INTERVAL '1 day' * ((EXTRACT(DOW FROM CURRENT_DATE AT TIME ZONE 'UTC')::INT + 6) % 7)) AS "StartOfWeek",
+            (CURRENT_DATE AT TIME ZONE 'UTC' - 
+             INTERVAL '1 day' * (((EXTRACT(DOW FROM CURRENT_DATE AT TIME ZONE 'UTC')::INT + 6) % 7) + 7)) AS "LastWeekStart",
+            DATE_TRUNC('month', CURRENT_DATE AT TIME ZONE 'UTC') AS "StartOfMonth",
+            (DATE_TRUNC('month', CURRENT_DATE AT TIME ZONE 'UTC') - INTERVAL '1 month') AS "LastMonthStart"
+    ),
+    "LoadStats" AS (
+        SELECT 
+            COALESCE(SUM("DeliveryCost_Amount") FILTER (
+                WHERE "DeliveryDate" >= dr."StartOfWeek" 
+                AND "DeliveryDate" <= dr."Now"
+            ), 0) AS "ThisWeekGross",
+            COALESCE(SUM("Distance") FILTER (
+                WHERE "DeliveryDate" >= dr."StartOfWeek" 
+                AND "DeliveryDate" <= dr."Now"
+            ), 0) AS "ThisWeekDistance",
+            COALESCE(SUM("DeliveryCost_Amount") FILTER (
+                WHERE "DeliveryDate" >= dr."LastWeekStart" 
+                AND "DeliveryDate" < dr."StartOfWeek"
+            ), 0) AS "LastWeekGross",
+            COALESCE(SUM("Distance") FILTER (
+                WHERE "DeliveryDate" >= dr."LastWeekStart" 
+                AND "DeliveryDate" < dr."StartOfWeek"
+            ), 0) AS "LastWeekDistance",
+            COALESCE(SUM("DeliveryCost_Amount") FILTER (
+                WHERE "DeliveryDate" >= dr."StartOfMonth" 
+                AND "DeliveryDate" <= dr."Now"
+            ), 0) AS "ThisMonthGross",
+            COALESCE(SUM("Distance") FILTER (
+                WHERE "DeliveryDate" >= dr."StartOfMonth" 
+                AND "DeliveryDate" <= dr."Now"
+            ), 0) AS "ThisMonthDistance",
+            COALESCE(SUM("DeliveryCost_Amount") FILTER (
+                WHERE "DeliveryDate" >= dr."LastMonthStart" 
+                AND "DeliveryDate" < dr."StartOfMonth"
+            ), 0) AS "LastMonthGross",
+            COALESCE(SUM("Distance") FILTER (
+                WHERE "DeliveryDate" >= dr."LastMonthStart" 
+                AND "DeliveryDate" < dr."StartOfMonth"
+            ), 0) AS "LastMonthDistance",
+            COALESCE(SUM("DeliveryCost_Amount"), 0) AS "TotalGross",
+            COALESCE(SUM("Distance"), 0) AS "TotalDistance"
+        FROM "Loads" l
+        CROSS JOIN "DateRanges" dr
+        WHERE "DeliveryDate" IS NOT NULL
+    )
+    SELECT 
+        es."OwnerName",
+        es."EmployeesCount",
+        es."ManagersCount",
+        es."DispatchersCount",
+        es."DriversCount",
+        ts."TrucksCount",
+        ls."ThisWeekGross",
+        ls."ThisWeekDistance",
+        ls."LastWeekGross",
+        ls."LastWeekDistance",
+        ls."ThisMonthGross",
+        ls."ThisMonthDistance",
+        ls."LastMonthGross",
+        ls."LastMonthDistance",
+        ls."TotalGross",
+        ls."TotalDistance"
+    FROM "EmployeeStats" es
+    CROSS JOIN "TruckStats" ts
+    CROSS JOIN "LoadStats" ls;
+END;
+$$;
