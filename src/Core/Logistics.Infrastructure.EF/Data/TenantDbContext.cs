@@ -4,8 +4,10 @@ using Logistics.Infrastructure.EF.Data.Configurations;
 using Logistics.Infrastructure.EF.Helpers;
 using Logistics.Infrastructure.EF.Interceptors;
 using Logistics.Infrastructure.EF.Options;
+using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace Logistics.Infrastructure.EF.Data;
 
@@ -17,7 +19,7 @@ public class TenantDbContext : DbContext
     private readonly ILogger<TenantDbContext>? _logger;
 
     public TenantDbContext(
-        TenantDbContextOptions? tenantDbContextOptions = null, 
+        TenantDbContextOptions? tenantDbContextOptions = null,
         ITenantService? tenantService = null,
         DispatchDomainEventsInterceptor? dispatchDomain = null,
         AuditableEntitySaveChangesInterceptor? auditableEntity = null,
@@ -54,7 +56,7 @@ public class TenantDbContext : DbContext
                 tenantConnectionString = TenantService.GetTenant().ConnectionString;
                 tenantName = TenantService.GetTenant().Name;
             }
-            
+
             DbContextHelpers.ConfigurePostgreSql(tenantConnectionString, options);
             _logger?.LogInformation("Configured tenant database for '{TenantName}' with connection string: {ConnectionString}", tenantName, tenantConnectionString);
         }
@@ -63,7 +65,7 @@ public class TenantDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        
+
         //builder.ApplyConfiguration(new AuditableEntityConfiguration());
         builder.ApplyConfiguration(new InvoiceEntityConfiguration());
         builder.ApplyConfiguration(new InvoiceEntityConfiguration.LoadInvoiceEntityConfiguration());
@@ -75,9 +77,29 @@ public class TenantDbContext : DbContext
         builder.ApplyConfiguration(new EmployeeEntityConfiguration());
         builder.ApplyConfiguration(new TenantRoleEntityConfiguration());
         builder.ApplyConfiguration(new TruckEntityConfiguration());
-        
+
         builder.Entity<TenantRoleClaim>().ToTable("RoleClaims");
         builder.Entity<Notification>().ToTable("Notifications");
         builder.Entity<Customer>().ToTable("Customers");
+
+
+        builder.Entity<CompanyStatsDto>(entity =>
+        {
+            entity.HasNoKey();
+            entity.ToView(null);
+
+        });
+
+        builder.Entity<TruckStatsDto>(entity =>
+        {
+            entity.HasNoKey();
+            entity.ToView(null);
+
+            entity.Property(t => t.Drivers)
+                .HasColumnType("jsonb")
+                .HasConversion(
+                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                    v => JsonSerializer.Deserialize<List<EmployeeDto>>(v, (JsonSerializerOptions)null));
+        });
     }
 }

@@ -3,6 +3,7 @@ using Logistics.Domain.Core;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Infrastructure.EF.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Infrastructure.EF.Persistence;
 
@@ -81,5 +82,18 @@ internal class TenantUnitOfWork : ITenantUnityOfWork
         {
             throw new InvalidOperationException("The tenant service is null from the Tenant DB context");
         }
+    }
+
+    public async Task ExecuteRawSql(string sql)
+    {
+        await _tenantDbContext.Database.ExecuteSqlRawAsync(sql);
+    }
+    public Task<List<TSqlResponse>> ExecuteRawSql<TSqlResponse>(string sql) where TSqlResponse : class
+    {
+        return _tenantDbContext.Set<TSqlResponse>().FromSqlRaw(sql).ToListAsync();
+    }
+    public Task<List<TSqlResponse>> ExecuteRawSql<TSqlResponse>(FormattableString sql) where TSqlResponse : class
+    {
+        return _tenantDbContext.Set<TSqlResponse>().FromSqlInterpolated(sql).ToListAsync();
     }
 }

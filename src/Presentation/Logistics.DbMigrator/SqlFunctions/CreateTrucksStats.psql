@@ -1,0 +1,106 @@
+CREATE OR REPLACE FUNCTION get_trucks_stats(
+    start_date TIMESTAMP,
+    end_date TIMESTAMP,
+    page INTEGER,
+    page_size INTEGER,
+    order_by VARCHAR
+) RETURNS TABLE (
+    "TruckId" UUID,
+    "TruckNumber" TEXT,
+    "StartDate" TIMESTAMP,
+    "EndDate" TIMESTAMP,
+    "Gross" NUMERIC,
+    "Distance" double precision,
+    "DriverShare" NUMERIC,
+    "Drivers" JSONB,
+    "TotalItems" BIGINT
+) AS $$
+DECLARE
+    is_descending BOOLEAN := FALSE;
+    order_by_clause TEXT;
+    offset_val INTEGER := (page - 1) * page_size;
+    total_count BIGINT;
+BEGIN
+    -- Determine sort order and clean order_by
+    IF order_by LIKE '-%' THEN
+        is_descending := TRUE;
+        order_by := SUBSTRING(order_by FROM 2);
+    END IF;
+
+    -- Validate and set order by clause
+    order_by_clause := CASE 
+        WHEN order_by = 'TruckNumber' THEN '"TruckNumber"'
+        WHEN order_by = 'Gross' THEN '"Gross"'
+        WHEN order_by = 'Distance' THEN '"Distance"'
+        WHEN order_by = 'DriverShare' THEN '"DriverShare"'
+        ELSE '"TruckNumber"'
+    END;
+
+    -- Get total count of trucks
+    SELECT COUNT(*) INTO total_count FROM "Trucks";
+
+    -- Main query
+    RETURN QUERY
+    WITH TruckStats AS (
+        SELECT 
+            l."AssignedTruckId" AS "TruckId",
+            t."TruckNumber",
+            SUM(l."DeliveryCost_Amount") AS "Gross",
+            SUM(l."Distance") AS "Distance",
+            SUM(l."DeliveryCost_Amount") * COALESCE((
+                SELECT SUM(e."Salary_Amount")::DECIMAL
+                FROM "Employees" e
+                WHERE e."TruckId" = l."AssignedTruckId"
+                AND e."SalaryType" = 3
+            ), 0) AS "DriverShare",
+            JSONB_AGG(
+                JSONB_BUILD_OBJECT(
+                    'Id', e."Id",
+                    'Email', e."Email",
+                    'FirstName', e."FirstName",
+                    'LastName', e."LastName",
+                    'FullName', CONCAT(e."FirstName", ' ', e."LastName"),
+                    'PhoneNumber', e."PhoneNumber",
+                    'JoinedDate', e."JoinedDate",
+                    'TruckNumber', t."TruckNumber",
+                    'TruckId', e."TruckId",
+                    'Salary', e."Salary_Amount",
+                    'SalaryType', e."SalaryType",
+                    'Roles', COALESCE((
+                        SELECT JSONB_AGG(
+                            JSONB_BUILD_OBJECT(
+                                'Name', r."Name",
+                                'DisplayName', r."DisplayName"
+                            )
+                        )
+                        FROM "EmployeeRoles" er
+                        JOIN "Roles" r ON er."RoleId" = r."Id"
+                        WHERE er."EmployeeId" = e."Id"
+                    ), '[]'::JSONB)
+                )
+            ) AS "Drivers"
+        FROM "Loads" l
+        JOIN "Trucks" t ON l."AssignedTruckId" = t."Id"
+        LEFT JOIN "Employees" e ON e."TruckId" = l."AssignedTruckId"
+        WHERE l."DeliveryDate" IS NOT NULL
+        AND l."DeliveryDate" >= start_date
+        AND l."DeliveryDate" <= end_date
+        GROUP BY l."AssignedTruckId", t."TruckNumber"
+    )
+    SELECT 
+        ts."TruckId",
+        ts."TruckNumber",
+        start_date AS "StartDate",
+        end_date AS "EndDate",
+        ts."Gross",
+        ts."Distance",
+        ts."DriverShare",
+        ts."Drivers",
+        total_count AS "TotalItems"
+    FROM TruckStats ts
+    ORDER BY 
+        CASE WHEN is_descending THEN NULL ELSE order_by_clause END ASC,
+        CASE WHEN is_descending THEN order_by_clause ELSE NULL END DESC
+    OFFSET offset_val LIMIT page_size;
+END;
+$$ LANGUAGE plpgsql;
