@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import { Component, OnInit, input, output, inject } from "@angular/core";
+import {Component, OnInit, inject, input, output} from "@angular/core";
 import {CardModule} from "primeng/card";
 import {ChartModule} from "primeng/chart";
 import {SkeletonModule} from "primeng/skeleton";

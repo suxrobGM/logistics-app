@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import { Component, Input, forwardRef, output, inject } from "@angular/core";
+import {Component, Input, forwardRef, inject, output} from "@angular/core";
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
 import {ApiService} from "@/core/api";

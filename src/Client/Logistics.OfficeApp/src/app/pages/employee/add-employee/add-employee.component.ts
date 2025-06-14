@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import {Component, OnInit, inject} from "@angular/core";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {RouterLink} from "@angular/router";
 import {AutoCompleteModule} from "primeng/autocomplete";

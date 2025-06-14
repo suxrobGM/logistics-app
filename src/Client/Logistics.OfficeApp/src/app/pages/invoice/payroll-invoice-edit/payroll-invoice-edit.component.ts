@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import { Component, OnInit, computed, input, signal, inject } from "@angular/core";
+import {Component, OnInit, computed, inject, input, signal} from "@angular/core";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Router, RouterModule} from "@angular/router";
 import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";

@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import { Component, model, signal, inject } from "@angular/core";
+import {Component, inject, model, signal} from "@angular/core";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {ApiService} from "@/core/api";

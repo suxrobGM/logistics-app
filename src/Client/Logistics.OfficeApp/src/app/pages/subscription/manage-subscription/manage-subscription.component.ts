@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import { Component, signal, inject } from "@angular/core";
+import {Component, inject, signal} from "@angular/core";
 import {Router, RouterModule} from "@angular/router";
 import {ConfirmationService} from "primeng/api";
 import {ButtonModule} from "primeng/button";

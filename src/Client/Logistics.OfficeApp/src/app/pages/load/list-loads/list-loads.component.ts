@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import { Component, signal, inject } from "@angular/core";
+import {Component, inject, signal} from "@angular/core";
 import {RouterLink} from "@angular/router";
 import {SharedModule} from "primeng/api";
 import {ButtonModule} from "primeng/button";

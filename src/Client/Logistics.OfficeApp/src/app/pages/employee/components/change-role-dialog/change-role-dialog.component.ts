@@ -1,4 +1,4 @@
-import { Component, OnInit, input, model, signal, inject } from "@angular/core";
+import {Component, OnInit, inject, input, model, signal} from "@angular/core";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";

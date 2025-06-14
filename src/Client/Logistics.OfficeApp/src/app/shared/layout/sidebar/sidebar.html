@@ -2,7 +2,7 @@
   <a class="py-3 navbar-brand border-bottom">
     <img src="assets/images/logo.svg" class="img-fluid" height="40" alt="logo" />
     @if (isOpened()) {
-      <span class="h4">{{ companyName() }}</span>
+    <span class="h4">{{ companyName() }}</span>
     }
   </a>
 
@@ -23,18 +23,18 @@
   </ul>
 
   @if (userFullName()) {
-    <div class="d-flex flex-column border-top" [class.align-items-center]="!isOpened()">
-      @if (userRole() && isOpened()) {
-        <div class="px-3 py-2 text-left user-select-none">
-          Role: <span class="fw-bold">{{ userRole() }}</span>
-        </div>
-      }
-
-      <app-panel-menu
-        [items]="profileMenuItems"
-        [(expanded)]="isOpened"
-        class="w-100"
-      ></app-panel-menu>
+  <div class="d-flex flex-column border-top" [class.align-items-center]="!isOpened()">
+    @if (userRole() && isOpened()) {
+    <div class="px-3 py-2 text-left user-select-none">
+      Role: <span class="fw-bold">{{ userRole() }}</span>
     </div>
+    }
+
+    <app-panel-menu
+      [items]="profileMenuItems"
+      [(expanded)]="isOpened"
+      class="w-100"
+    ></app-panel-menu>
+  </div>
   }
 </div>

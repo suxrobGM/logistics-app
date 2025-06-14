@@ -1,5 +1,5 @@
 import {CurrencyPipe} from "@angular/common";
-import { Component, OnInit, inject } from "@angular/core";
+import {Component, OnInit, inject} from "@angular/core";
 import {RouterLink} from "@angular/router";
 import {SharedModule} from "primeng/api";
 import {ButtonModule} from "primeng/button";

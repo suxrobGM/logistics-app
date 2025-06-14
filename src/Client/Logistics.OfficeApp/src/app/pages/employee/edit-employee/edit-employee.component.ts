@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import { Component, OnInit, ViewEncapsulation, inject } from "@angular/core";
+import {Component, OnInit, ViewEncapsulation, inject} from "@angular/core";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {ConfirmationService} from "primeng/api";

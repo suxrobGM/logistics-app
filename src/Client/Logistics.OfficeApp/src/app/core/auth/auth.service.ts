@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import {Injectable, inject} from "@angular/core";
 import {EventTypes, OidcSecurityService, PublicEventsService} from "angular-auth-oidc-client";
 import {Observable, filter, map} from "rxjs";
 import {TenantService} from "@/core/services";

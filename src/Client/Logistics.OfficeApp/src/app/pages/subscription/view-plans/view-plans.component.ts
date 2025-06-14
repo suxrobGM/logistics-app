@@ -1,5 +1,5 @@
 import {CurrencyPipe} from "@angular/common";
-import { Component, OnInit, signal, inject } from "@angular/core";
+import {Component, OnInit, inject, signal} from "@angular/core";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ApiService} from "@/core/api";

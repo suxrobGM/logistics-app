@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import { Component, OnInit, input, signal, inject } from "@angular/core";
+import {Component, OnInit, inject, input, signal} from "@angular/core";
 import {RouterModule} from "@angular/router";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";

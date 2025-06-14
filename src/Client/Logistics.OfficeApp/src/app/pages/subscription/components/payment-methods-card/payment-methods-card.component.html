@@ -113,15 +113,17 @@
       </p-card>
     }
   </div>
-  <p-button label="Add Payment Method"
+  <p-button
+    label="Add Payment Method"
     icon="pi pi-plus"
     size="small"
     [disabled]="isLoading()"
     (click)="showDialog.set(true)"
     styleClass="mt-3"
-   />
+  />
 </p-card>
 
-<app-payment-method-dialog [(showDialog)]="showDialog"
+<app-payment-method-dialog
+  [(showDialog)]="showDialog"
   (paymentMethodAdded)="fetchPaymentMethods()"
- />
+/>

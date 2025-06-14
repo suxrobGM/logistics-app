@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import { Component, computed, input, model, output, signal, inject } from "@angular/core";
+import {Component, computed, inject, input, model, output, signal} from "@angular/core";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {StripeCardNumberElement} from "@stripe/stripe-js";
 import {ButtonModule} from "primeng/button";

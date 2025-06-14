@@ -1,5 +1,5 @@
 import {CommonModule, CurrencyPipe} from "@angular/common";
-import { Component, OnInit, inject } from "@angular/core";
+import {Component, OnInit, inject} from "@angular/core";
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {CardModule} from "primeng/card";
 import {SkeletonModule} from "primeng/skeleton";

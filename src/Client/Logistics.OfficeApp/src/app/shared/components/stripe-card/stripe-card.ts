@@ -1,4 +1,12 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, output, viewChild, inject } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  inject,
+  output,
+  viewChild,
+} from "@angular/core";
 import {StripeCardNumberElement, StripeElementBase} from "@stripe/stripe-js";
 import {StripeService} from "@/core/services";
 

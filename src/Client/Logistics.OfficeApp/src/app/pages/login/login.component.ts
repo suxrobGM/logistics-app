@@ -1,4 +1,4 @@
-import { Component, signal, inject } from "@angular/core";
+import {Component, inject, signal} from "@angular/core";
 import {Router} from "@angular/router";
 import {ButtonModule} from "primeng/button";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
