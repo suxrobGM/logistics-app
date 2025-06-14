@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, OnInit, computed, input, signal} from "@angular/core";
+import { Component, OnInit, computed, input, signal, inject } from "@angular/core";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Router, RouterModule} from "@angular/router";
 import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
@@ -42,6 +42,10 @@ import {DateUtils} from "@/shared/utils";
   ],
 })
 export class PayrollInvoiceEditComponent implements OnInit {
+  private readonly apiService = inject(ApiService);
+  private readonly toastService = inject(ToastService);
+  private readonly router = inject(Router);
+
   //readonly paymentStatusOptions = paymentStatusOptions;
   //readonly paymentMethodOptions = paymentMethodTypeOptions;
   readonly todayDate = new Date();
@@ -53,11 +57,7 @@ export class PayrollInvoiceEditComponent implements OnInit {
   readonly previewPayrollInvoice = signal<InvoiceDto | null>(null);
   readonly title = computed(() => (this.id() ? "Edit payroll" : "Add a new payroll"));
 
-  constructor(
-    private readonly apiService: ApiService,
-    private readonly toastService: ToastService,
-    private readonly router: Router
-  ) {
+  constructor() {
     const lastWeek = [
       PredefinedDateRanges.getLastWeek().startDate,
       PredefinedDateRanges.getLastWeek().endDate,

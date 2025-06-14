@@ -1,4 +1,4 @@
-import {Injectable} from "@angular/core";
+import {Injectable, inject} from "@angular/core";
 import {Observable, map} from "rxjs";
 import {ApiService} from "@/core/api";
 import {RoleDto, UserDto} from "@/core/api/models";
@@ -7,12 +7,13 @@ import {UserRole} from "@/shared/models";
 
 @Injectable()
 export class UserService {
+  private readonly apiService = inject(ApiService);
+
   private userRoles?: string[];
 
-  constructor(
-    authService: AuthService,
-    private apiService: ApiService
-  ) {
+  constructor() {
+    const authService = inject(AuthService);
+
     const user = authService.getUserData();
     this.userRoles = user?.roles;
   }

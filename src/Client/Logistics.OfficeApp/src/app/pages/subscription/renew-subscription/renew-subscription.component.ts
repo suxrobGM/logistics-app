@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, signal} from "@angular/core";
+import { Component, signal, inject } from "@angular/core";
 import {Router, RouterModule} from "@angular/router";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
@@ -31,16 +31,16 @@ import {PaymentMethodsCardComponent} from "../components";
   templateUrl: "./renew-subscription.component.html",
 })
 export class RenewSubscriptionComponent {
+  private readonly tenantService = inject(TenantService);
+  private readonly apiService = inject(ApiService);
+  private readonly router = inject(Router);
+  private readonly toastService = inject(ToastService);
+
   readonly employeeCount = signal(0);
   readonly subscription = signal<SubscriptionDto | null>(null);
   readonly isLoading = signal(false);
 
-  constructor(
-    private readonly tenantService: TenantService,
-    private readonly apiService: ApiService,
-    private readonly router: Router,
-    private readonly toastService: ToastService
-  ) {
+  constructor() {
     const tenantData = this.tenantService.getTenantData();
     this.subscription.set(tenantData?.subscription ?? null);
     this.employeeCount.set(tenantData?.employeeCount ?? 0);

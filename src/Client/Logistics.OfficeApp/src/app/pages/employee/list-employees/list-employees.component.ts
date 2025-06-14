@@ -1,5 +1,5 @@
 import {CommonModule, CurrencyPipe, DatePipe, PercentPipe} from "@angular/common";
-import {Component} from "@angular/core";
+import {Component, inject} from "@angular/core";
 import {RouterLink} from "@angular/router";
 import {SharedModule} from "primeng/api";
 import {ButtonModule} from "primeng/button";
@@ -34,12 +34,14 @@ import {EmployeeDto, SalaryType, salaryTypeOptions} from "@/core/api/models";
   ],
 })
 export class ListEmployeeComponent {
+  private readonly apiService = inject(ApiService);
+
   public employees: EmployeeDto[];
   public isLoading: boolean;
   public totalRecords: number;
   public first: number;
 
-  constructor(private apiService: ApiService) {
+  constructor() {
     this.employees = [];
     this.isLoading = false;
     this.totalRecords = 0;

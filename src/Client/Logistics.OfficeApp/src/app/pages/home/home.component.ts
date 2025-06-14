@@ -1,5 +1,5 @@
 import {CurrencyPipe} from "@angular/common";
-import {Component, OnInit} from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import {RouterLink} from "@angular/router";
 import {SharedModule} from "primeng/api";
 import {ButtonModule} from "primeng/button";
@@ -37,6 +37,8 @@ import {NotificationsPanelComponent} from "./components";
   ],
 })
 export class HomeComponent implements OnInit {
+  private readonly apiService = inject(ApiService);
+
   public readonly accessToken = environment.mapboxToken;
   public todayGross = 0;
   public weeklyGross = 0;
@@ -48,7 +50,7 @@ export class HomeComponent implements OnInit {
   public chartData: unknown;
   public chartOptions: unknown;
 
-  constructor(private readonly apiService: ApiService) {
+  constructor() {
     this.chartData = {
       labels: [],
       datasets: [

@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, signal} from "@angular/core";
+import { Component, signal, inject } from "@angular/core";
 import {RouterModule} from "@angular/router";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
@@ -28,12 +28,12 @@ import {PredefinedDateRanges} from "@/shared/utils";
   ],
 })
 export class ListPaymentsComponent {
+  private readonly apiService = inject(ApiService);
+
   readonly payments = signal<PaymentDto[]>([]);
   readonly isLoading = signal(false);
   readonly totalRecords = signal(0);
   readonly first = signal(0);
-
-  constructor(private readonly apiService: ApiService) {}
 
   // search(event: Event) {
   //   this.isLoading = true;

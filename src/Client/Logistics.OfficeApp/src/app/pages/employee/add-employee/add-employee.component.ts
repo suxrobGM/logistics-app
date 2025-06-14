@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {RouterLink} from "@angular/router";
 import {AutoCompleteModule} from "primeng/autocomplete";
@@ -40,17 +40,17 @@ import {UserService} from "../services";
   providers: [UserService],
 })
 export class AddEmployeeComponent implements OnInit {
+  private readonly apiService = inject(ApiService);
+  private readonly toastService = inject(ToastService);
+  private readonly userService = inject(UserService);
+
   public suggestedUsers: UserDto[] = [];
   public form: FormGroup<CreateEmployeeForm>;
   public roles: RoleDto[] = [];
   public salaryTypes = salaryTypeOptions;
   public isLoading = false;
 
-  constructor(
-    private readonly apiService: ApiService,
-    private readonly toastService: ToastService,
-    private readonly userService: UserService
-  ) {
+  constructor() {
     this.form = new FormGroup<CreateEmployeeForm>({
       user: new FormControl(null, {validators: Validators.required}),
       role: new FormControl(null),

@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, OnInit, model, signal} from "@angular/core";
+import { Component, OnInit, model, signal, inject } from "@angular/core";
 import {ConfirmationService} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
@@ -30,17 +30,15 @@ import {PaymentMethodDialogComponent} from "../payment-method-dialog/payment-met
   ],
 })
 export class PaymentMethodsCardComponent implements OnInit {
+  private readonly apiService = inject(ApiService);
+  private readonly tenantService = inject(TenantService);
+  private readonly confirmationService = inject(ConfirmationService);
+  private readonly toastService = inject(ToastService);
+
   readonly isLoading = signal(false);
   readonly paymentMethods = signal<PaymentMethodDto[]>([]);
   readonly showDialog = model(false);
   readonly selectedPaymentMethod = signal<PaymentMethodDto | null>(null);
-
-  constructor(
-    private readonly apiService: ApiService,
-    private readonly tenantService: TenantService,
-    private readonly confirmationService: ConfirmationService,
-    private readonly toastService: ToastService
-  ) {}
 
   ngOnInit(): void {
     this.fetchPaymentMethods();

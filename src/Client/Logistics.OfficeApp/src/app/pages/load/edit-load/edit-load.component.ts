@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, OnInit} from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ActivatedRoute, Router, RouterLink} from "@angular/router";
 import {ConfirmationService} from "primeng/api";
@@ -55,6 +55,12 @@ import {TruckData, TruckHelper} from "../shared";
   ],
 })
 export class EditLoadComponent implements OnInit {
+  private readonly apiService = inject(ApiService);
+  private readonly confirmationService = inject(ConfirmationService);
+  private readonly toastService = inject(ToastService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+
   public readonly accessToken = environment.mapboxToken;
   private distanceMeters = 0;
   public id!: string;
@@ -65,13 +71,7 @@ export class EditLoadComponent implements OnInit {
   public originCoords: [number, number] | null = null;
   public destinationCoords: [number, number] | null = null;
 
-  constructor(
-    private readonly apiService: ApiService,
-    private readonly confirmationService: ConfirmationService,
-    private readonly toastService: ToastService,
-    private readonly route: ActivatedRoute,
-    private readonly router: Router
-  ) {
+  constructor() {
     this.form = new FormGroup<EditLoadForm>({
       name: new FormControl(""),
       customer: new FormControl(null, {validators: Validators.required}),

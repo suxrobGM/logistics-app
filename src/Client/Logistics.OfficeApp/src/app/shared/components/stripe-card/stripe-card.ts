@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, output, viewChild} from "@angular/core";
+import { AfterViewInit, Component, ElementRef, OnDestroy, output, viewChild, inject } from "@angular/core";
 import {StripeCardNumberElement, StripeElementBase} from "@stripe/stripe-js";
 import {StripeService} from "@/core/services";
 
@@ -11,13 +11,13 @@ interface StripeCardElementsReady {
   templateUrl: "./stripe-card.html",
 })
 export class StripeCard implements OnDestroy, AfterViewInit {
+  private readonly stripeService = inject(StripeService);
+
   public readonly ready = output<StripeCardElementsReady>();
   private readonly cardNumberElement = viewChild.required<ElementRef<HTMLElement>>("cardNumber");
   private readonly cardExpiryElement = viewChild.required<ElementRef<HTMLElement>>("cardExpiry");
   private readonly cardCvcElement = viewChild.required<ElementRef<HTMLElement>>("cardCvc");
   private readonly mountedElements: StripeElementBase[] = [];
-
-  constructor(private readonly stripeService: StripeService) {}
 
   ngAfterViewInit(): void {
     this.mountElements();

@@ -1,5 +1,5 @@
 import {HttpClient} from "@angular/common/http";
-import {Component, Input, OnChanges, input, output} from "@angular/core";
+import {Component, Input, OnChanges, inject, input, output} from "@angular/core";
 import {GeoJSONSourceRaw, LngLatLike} from "mapbox-gl";
 import {NgxMapboxGLModule} from "ngx-mapbox-gl";
 
@@ -9,6 +9,8 @@ import {NgxMapboxGLModule} from "ngx-mapbox-gl";
   imports: [NgxMapboxGLModule],
 })
 export class DirectionsMap implements OnChanges {
+  private readonly http = inject(HttpClient);
+
   public bounds?: [LngLatLike, LngLatLike] | null;
   public route?: GeoJSONSourceRaw | null;
   public startPoint?: GeoJSONSourceRaw | null;
@@ -26,7 +28,7 @@ export class DirectionsMap implements OnChanges {
   @Input() height: string;
   public readonly routeChanged = output<RouteChangedEvent>();
 
-  constructor(private http: HttpClient) {
+  constructor() {
     this.zoom = this.defaultZoom = 3;
     this.center = this.defaultCenter = [-95, 35];
     this.isImageLoaded = false;

@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component} from "@angular/core";
+import {Component, inject} from "@angular/core";
 import {RouterLink} from "@angular/router";
 import {SharedModule} from "primeng/api";
 import {ButtonModule} from "primeng/button";
@@ -32,11 +32,13 @@ import {AddressPipe} from "@/shared/pipes";
   ],
 })
 export class ListTruckComponent {
+  private readonly apiService = inject(ApiService);
+
   public trucks: TruckDto[];
   public isLoading: boolean;
   public totalRecords: number;
 
-  constructor(private apiService: ApiService) {
+  constructor() {
     this.trucks = [];
     this.isLoading = false;
     this.totalRecords = 0;

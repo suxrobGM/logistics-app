@@ -1,4 +1,4 @@
-import {Injectable} from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import {Observable} from "rxjs";
 import {ApiService} from "@/core/api";
 import {NotificationDto, Result} from "@/core/api/models";
@@ -8,10 +8,11 @@ import {TenantService} from "./tenant.service";
 
 @Injectable({providedIn: "root"})
 export class NotificationService extends BaseHubConnection {
-  constructor(
-    private readonly apiService: ApiService,
-    tenantService: TenantService
-  ) {
+  private readonly apiService = inject(ApiService);
+
+  constructor() {
+    const tenantService = inject(TenantService);
+
     super("notification", tenantService);
   }
 

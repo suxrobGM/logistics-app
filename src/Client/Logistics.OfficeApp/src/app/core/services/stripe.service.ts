@@ -1,4 +1,4 @@
-import {Injectable} from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import {
   Address,
   SetupIntentResult,
@@ -18,13 +18,11 @@ import {TenantService} from "./tenant.service";
 
 @Injectable({providedIn: "root"})
 export class StripeService {
+  private readonly apiService = inject(ApiService);
+  private readonly tenantService = inject(TenantService);
+
   private stripe: Stripe | null = null;
   private elements: StripeElements | null = null;
-
-  constructor(
-    private readonly apiService: ApiService,
-    private readonly tenantService: TenantService
-  ) {}
 
   /**
    * Creates and returns a Stripe Elements instance with a setup intent client secret.

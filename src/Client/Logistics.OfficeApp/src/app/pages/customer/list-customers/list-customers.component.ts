@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component} from "@angular/core";
+import {Component, inject} from "@angular/core";
 import {RouterLink} from "@angular/router";
 import {ConfirmationService} from "primeng/api";
 import {ButtonModule} from "primeng/button";
@@ -34,16 +34,16 @@ import {ToastService} from "@/core/services";
   ],
 })
 export class ListCustomersComponent {
+  private readonly apiService = inject(ApiService);
+  private readonly toastService = inject(ToastService);
+  private readonly confirmationService = inject(ConfirmationService);
+
   public customers: CustomerDto[];
   public isLoading: boolean;
   public totalRecords: number;
   public first: number;
 
-  constructor(
-    private apiService: ApiService,
-    private toastService: ToastService,
-    private confirmationService: ConfirmationService
-  ) {
+  constructor() {
     this.customers = [];
     this.isLoading = false;
     this.totalRecords = 0;

@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, OnInit, input, signal} from "@angular/core";
+import { Component, OnInit, input, signal, inject } from "@angular/core";
 import {RouterModule} from "@angular/router";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
@@ -32,6 +32,8 @@ import {InvoiceStatusTag} from "@/shared/components";
   ],
 })
 export class EmployeePayrollInvoicesListComponent implements OnInit {
+  private readonly apiService = inject(ApiService);
+
   readonly employeeId = input.required<string>();
   readonly invoices = signal<InvoiceDto[]>([]);
   readonly employee = signal<EmployeeDto | null>(null);
@@ -39,8 +41,6 @@ export class EmployeePayrollInvoicesListComponent implements OnInit {
   readonly isLoadingPayrolls = signal(false);
   readonly totalRecords = signal(0);
   readonly first = signal(0);
-
-  constructor(private readonly apiService: ApiService) {}
 
   ngOnInit(): void {
     this.fetchEmployee();

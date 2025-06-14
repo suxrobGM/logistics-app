@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, inject} from "@angular/core";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ActivatedRoute, Router, RouterModule} from "@angular/router";
 import {ButtonModule} from "primeng/button";
@@ -26,17 +26,17 @@ import {ValidationSummary} from "@/shared/components";
   ],
 })
 export class EditCustomerComponent implements OnInit {
+  private readonly apiService = inject(ApiService);
+  private readonly toastService = inject(ToastService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+
   public title: string;
   public id: string | null;
   public form: FormGroup<CustomerForm>;
   public isLoading: boolean;
 
-  constructor(
-    private apiService: ApiService,
-    private toastService: ToastService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {
+  constructor() {
     this.title = "Edit customer";
     this.id = null;
     this.isLoading = false;

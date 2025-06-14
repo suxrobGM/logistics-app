@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, OnInit, ViewEncapsulation} from "@angular/core";
+import { Component, OnInit, ViewEncapsulation, inject } from "@angular/core";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {ConfirmationService} from "primeng/api";
@@ -38,6 +38,12 @@ import {ChangeRoleDialogComponent} from "../components";
   providers: [ConfirmationService],
 })
 export class EditEmployeeComponent implements OnInit {
+  private readonly authService = inject(AuthService);
+  private readonly apiService = inject(ApiService);
+  private readonly confirmationService = inject(ConfirmationService);
+  private readonly toastService = inject(ToastService);
+  private readonly route = inject(ActivatedRoute);
+
   public id!: string;
   public isLoading = false;
   public showUpdateDialog = false;
@@ -46,13 +52,7 @@ export class EditEmployeeComponent implements OnInit {
   public salaryTypes = salaryTypeOptions;
   public form: FormGroup<UpdateEmployeeForm>;
 
-  constructor(
-    private readonly authService: AuthService,
-    private readonly apiService: ApiService,
-    private readonly confirmationService: ConfirmationService,
-    private readonly toastService: ToastService,
-    private readonly route: ActivatedRoute
-  ) {
+  constructor() {
     this.form = new FormGroup<UpdateEmployeeForm>({
       salary: new FormControl<number>(0, {
         validators: Validators.compose([Validators.required, Validators.min(0)]),

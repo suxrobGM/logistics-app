@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, signal} from "@angular/core";
+import { Component, signal, inject } from "@angular/core";
 import {RouterLink} from "@angular/router";
 import {SharedModule} from "primeng/api";
 import {ButtonModule} from "primeng/button";
@@ -37,13 +37,13 @@ import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
   ],
 })
 export class ListLoadComponent {
+  private readonly apiService = inject(ApiService);
+
   readonly loadStatus = LoadStatus;
   readonly loads = signal<LoadDto[]>([]);
   readonly isLoading = signal(false);
   readonly totalRecords = signal(0);
   readonly first = signal(0);
-
-  constructor(private readonly apiService: ApiService) {}
 
   search(event: Event): void {
     this.isLoading.set(true);

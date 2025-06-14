@@ -1,11 +1,13 @@
-import {Injectable} from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import {TruckGeolocationDto} from "@/core/api/models";
 import {BaseHubConnection} from "./base-hub-connection";
 import {TenantService} from "./tenant.service";
 
 @Injectable({providedIn: "root"})
 export class LiveTrackingService extends BaseHubConnection {
-  constructor(tenantService: TenantService) {
+  constructor() {
+    const tenantService = inject(TenantService);
+
     super("live-tracking", tenantService);
   }
 

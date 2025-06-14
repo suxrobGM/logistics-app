@@ -1,5 +1,5 @@
 import {CommonModule, CurrencyPipe, DatePipe} from "@angular/common";
-import {Component} from "@angular/core";
+import {Component, inject} from "@angular/core";
 import {RouterLink} from "@angular/router";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
@@ -30,13 +30,15 @@ import {DateUtils} from "@/shared/utils";
   ],
 })
 export class TruckStatsTableComponent {
+  private readonly apiService = inject(ApiService);
+
   public isLoading: boolean;
   public truckStats: TruckStatsDto[];
   public totalRecords: number;
   public startDate: Date;
   public endDate: Date;
 
-  constructor(private apiService: ApiService) {
+  constructor() {
     this.isLoading = true;
     this.truckStats = [];
     this.totalRecords = 0;

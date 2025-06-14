@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, inject} from "@angular/core";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {ConfirmationService} from "primeng/api";
@@ -29,6 +29,11 @@ import {ToastService} from "@/core/services";
   ],
 })
 export class EditTruckComponent implements OnInit {
+  private readonly apiService = inject(ApiService);
+  private readonly confirmationService = inject(ConfirmationService);
+  private readonly toastService = inject(ToastService);
+  private readonly route = inject(ActivatedRoute);
+
   public id: string | null;
   public headerText: string;
   public isBusy: boolean;
@@ -36,12 +41,7 @@ export class EditTruckComponent implements OnInit {
   public form: FormGroup;
   public suggestedDrivers: EmployeeDto[];
 
-  constructor(
-    private apiService: ApiService,
-    private confirmationService: ConfirmationService,
-    private toastService: ToastService,
-    private route: ActivatedRoute
-  ) {
+  constructor() {
     this.id = null;
     this.suggestedDrivers = [];
     this.headerText = "Edit a truck";

@@ -1,4 +1,4 @@
-import {Component, signal} from "@angular/core";
+import { Component, signal, inject } from "@angular/core";
 import {Router} from "@angular/router";
 import {ButtonModule} from "primeng/button";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
@@ -11,13 +11,13 @@ import {AuthService} from "@/core/auth";
   imports: [ProgressSpinnerModule, ButtonModule],
 })
 export class LoginComponent {
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+
   public readonly isAuthenticated = signal(false);
   public readonly isLoading = signal(false);
 
-  constructor(
-    private readonly authService: AuthService,
-    private readonly router: Router
-  ) {
+  constructor() {
     this.authService.onCheckingAuth().subscribe(() => this.isLoading.set(true));
     this.authService.onCheckingAuthFinished().subscribe(() => {
       this.isLoading.set(false);

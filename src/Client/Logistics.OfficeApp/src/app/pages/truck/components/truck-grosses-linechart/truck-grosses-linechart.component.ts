@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, OnInit, input, output} from "@angular/core";
+import { Component, OnInit, input, output, inject } from "@angular/core";
 import {CardModule} from "primeng/card";
 import {ChartModule} from "primeng/chart";
 import {SkeletonModule} from "primeng/skeleton";
@@ -16,6 +16,8 @@ import {Converters, DateUtils} from "@/shared/utils";
   imports: [CommonModule, CardModule, SkeletonModule, ChartModule, RangeCalendar],
 })
 export class TruckGrossesLinechartComponent implements OnInit {
+  private apiService = inject(ApiService);
+
   public isLoading: boolean;
   public dailyGrosses?: DailyGrossesDto;
   public chartData: unknown;
@@ -26,7 +28,7 @@ export class TruckGrossesLinechartComponent implements OnInit {
   public readonly truckId = input.required<string>();
   public readonly chartDrawn = output<LineChartDrawnEvent>();
 
-  constructor(private apiService: ApiService) {
+  constructor() {
     this.isLoading = false;
     this.startDate = DateUtils.daysAgo(30);
     this.endDate = DateUtils.today();

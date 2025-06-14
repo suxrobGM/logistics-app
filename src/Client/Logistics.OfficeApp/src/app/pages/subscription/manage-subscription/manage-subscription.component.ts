@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, signal} from "@angular/core";
+import { Component, signal, inject } from "@angular/core";
 import {Router, RouterModule} from "@angular/router";
 import {ConfirmationService} from "primeng/api";
 import {ButtonModule} from "primeng/button";
@@ -33,18 +33,18 @@ import {BillingHistoryComponent, PaymentMethodsCardComponent} from "../component
   ],
 })
 export class ManageSubscriptionComponent {
+  private readonly tenantService = inject(TenantService);
+  private readonly apiService = inject(ApiService);
+  private readonly confirmationService = inject(ConfirmationService);
+  private readonly toastService = inject(ToastService);
+  private readonly router = inject(Router);
+
   readonly subscription: SubscriptionDto;
   readonly employeeCount: number;
   readonly isLoading = signal(false);
   readonly isCancelled = signal(false);
 
-  constructor(
-    private readonly tenantService: TenantService,
-    private readonly apiService: ApiService,
-    private readonly confirmationService: ConfirmationService,
-    private readonly toastService: ToastService,
-    private readonly router: Router
-  ) {
+  constructor() {
     const tenantData = this.tenantService.getTenantData();
 
     if (!tenantData?.subscription) {

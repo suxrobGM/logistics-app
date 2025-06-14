@@ -1,5 +1,5 @@
 import {HttpHeaders} from "@angular/common/http";
-import {Injectable} from "@angular/core";
+import {Injectable, inject} from "@angular/core";
 import {Subject} from "rxjs";
 import {ApiService} from "@/core/api";
 import {SubscriptionStatus, TenantDto} from "@/core/api/models";
@@ -7,6 +7,9 @@ import {CookieService} from "./cookie.service";
 
 @Injectable({providedIn: "root"})
 export class TenantService {
+  private readonly cookieService = inject(CookieService);
+  private readonly apiService = inject(ApiService);
+
   private tenantId: string | null = null;
   private tenantData: TenantDto | null = null;
   private readonly tenantDataChangedSource = new Subject<TenantDto | null>();
@@ -15,11 +18,6 @@ export class TenantService {
    * Observable that emits when the tenant data changes
    */
   public readonly tenantDataChanged$ = this.tenantDataChangedSource.asObservable();
-
-  constructor(
-    private readonly cookieService: CookieService,
-    private readonly apiService: ApiService
-  ) {}
 
   getTenantData(): TenantDto | null {
     return this.tenantData;

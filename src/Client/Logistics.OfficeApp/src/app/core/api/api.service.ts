@@ -1,5 +1,5 @@
 import {HttpClient} from "@angular/common/http";
-import {Injectable} from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import {Observable} from "rxjs";
 import {environment} from "@/env";
 import {ApiBase} from "./api-base";
@@ -38,7 +38,9 @@ import {UserApi} from "./user.api";
 
 @Injectable({providedIn: "root"})
 export class ApiService extends ApiBase {
-  constructor(httpClient: HttpClient) {
+  constructor() {
+    const httpClient = inject(HttpClient);
+
     super(environment.apiHost, httpClient);
   }
 

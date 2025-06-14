@@ -1,5 +1,5 @@
 import {CommonModule, CurrencyPipe} from "@angular/common";
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, inject} from "@angular/core";
 import {SharedModule} from "primeng/api";
 import {CardModule} from "primeng/card";
 import {ChartModule} from "primeng/chart";
@@ -24,11 +24,13 @@ import {Converters} from "@/shared/utils";
   ],
 })
 export class CompanyStatsComponent implements OnInit {
+  private readonly apiService = inject(ApiService);
+
   public isLoading: boolean;
   public rpm: number;
   public companyStats?: CompanyStatsDto;
 
-  constructor(private apiService: ApiService) {
+  constructor() {
     this.isLoading = false;
     this.rpm = 0;
   }

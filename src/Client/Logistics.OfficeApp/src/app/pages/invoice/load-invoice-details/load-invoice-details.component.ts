@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, OnInit, input, signal} from "@angular/core";
+import { Component, OnInit, input, signal, inject } from "@angular/core";
 import {RouterModule} from "@angular/router";
 import {jsPDF} from "jspdf";
 import {ButtonModule} from "primeng/button";
@@ -25,16 +25,14 @@ import {AddressPipe} from "@/shared/pipes";
   ],
 })
 export class LoadInvoiceDetailsComponent implements OnInit {
+  private readonly apiService = inject(ApiService);
+  private readonly tenantService = inject(TenantService);
+
   readonly id = input.required<string>();
   readonly isLoading = signal(false);
   readonly companyName = signal<string | null>(null);
   readonly companyAddress = signal<AddressDto | null>(null);
   readonly invoice = signal<InvoiceDto | null>(null);
-
-  constructor(
-    private readonly apiService: ApiService,
-    private readonly tenantService: TenantService
-  ) {}
 
   ngOnInit(): void {
     const tenantData = this.tenantService.getTenantData();

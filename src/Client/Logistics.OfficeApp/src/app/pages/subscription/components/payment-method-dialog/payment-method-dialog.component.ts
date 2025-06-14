@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, computed, input, model, output, signal} from "@angular/core";
+import { Component, computed, input, model, output, signal, inject } from "@angular/core";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {StripeCardNumberElement} from "@stripe/stripe-js";
 import {ButtonModule} from "primeng/button";
@@ -50,6 +50,11 @@ const enabledPaymentTypes = [
   ],
 })
 export class PaymentMethodDialogComponent {
+  private readonly apiService = inject(ApiService);
+  private readonly tenantService = inject(TenantService);
+  private readonly stripeService = inject(StripeService);
+  private readonly toastService = inject(ToastService);
+
   readonly showDialog = model(false);
   readonly isLoading = signal(false);
   readonly availablePaymentMethods = input<PaymentMethodType[]>(enabledPaymentTypes);
@@ -67,12 +72,7 @@ export class PaymentMethodDialogComponent {
 
   private stripeCardNumberElement: StripeCardNumberElement | null = null;
 
-  constructor(
-    private readonly apiService: ApiService,
-    private readonly tenantService: TenantService,
-    private readonly stripeService: StripeService,
-    private readonly toastService: ToastService
-  ) {
+  constructor() {
     const companyAddress = this.tenantService.getTenantData()?.companyAddress;
 
     this.form = new FormGroup<PaymentMethodForm>({

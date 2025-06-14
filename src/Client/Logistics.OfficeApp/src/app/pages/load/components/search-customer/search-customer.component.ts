@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, Input, forwardRef, output} from "@angular/core";
+import { Component, Input, forwardRef, output, inject } from "@angular/core";
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
 import {ApiService} from "@/core/api";
@@ -19,13 +19,13 @@ import {CustomerDto} from "@/core/api/models";
   ],
 })
 export class SearchCustomerComponent implements ControlValueAccessor {
+  private readonly apiService = inject(ApiService);
+
   private isDisabled = false;
   public suggestedCustomers: CustomerDto[] = [];
 
   @Input() selectedCustomer: CustomerDto | null = null;
   public readonly selectedCustomerChange = output<CustomerDto | null>();
-
-  constructor(private readonly apiService: ApiService) {}
 
   searchCustomer(event: {query: string}) {
     this.apiService.getCustomers({search: event.query}).subscribe((result) => {

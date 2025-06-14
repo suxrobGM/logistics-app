@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, model, signal} from "@angular/core";
+import { Component, model, signal, inject } from "@angular/core";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {ApiService} from "@/core/api";
@@ -13,15 +13,13 @@ import {AddressPipe} from "@/shared/pipes";
   imports: [CommonModule, TableModule, TagModule, AddressPipe],
 })
 export class BillingHistoryComponent {
+  private readonly apiService = inject(ApiService);
+  private readonly tenantService = inject(TenantService);
+
   readonly payments = signal<PaymentDto[]>([]);
   readonly isLoading = signal(false);
   readonly totalRecords = signal(0);
   readonly first = model(0);
-
-  constructor(
-    private readonly apiService: ApiService,
-    private readonly tenantService: TenantService
-  ) {}
 
   load(event: TableLazyLoadEvent): void {
     this.isLoading.set(true);

@@ -1,12 +1,10 @@
-import {Injectable} from "@angular/core";
+import {Injectable, inject} from "@angular/core";
 import {Confirmation, ConfirmationService, MessageService} from "primeng/api";
 
 @Injectable({providedIn: "root"})
 export class ToastService {
-  constructor(
-    private readonly messageService: MessageService,
-    private readonly confirmService: ConfirmationService
-  ) {}
+  private readonly messageService = inject(MessageService);
+  private readonly confirmService = inject(ConfirmationService);
 
   /**
    * Displays a success message toast notification with the given message and title.

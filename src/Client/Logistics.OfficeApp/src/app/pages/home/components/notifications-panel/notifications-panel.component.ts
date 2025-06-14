@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, Input, OnDestroy, OnInit} from "@angular/core";
+import {Component, Input, OnDestroy, OnInit, inject} from "@angular/core";
 import {BadgeModule} from "primeng/badge";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
@@ -24,6 +24,9 @@ import {TimeAgoPipe} from "@/shared/pipes";
   ],
 })
 export class NotificationsPanelComponent implements OnInit, OnDestroy {
+  private readonly notificationService = inject(NotificationService);
+  private readonly toastSerice = inject(ToastService);
+
   public notifications: NotificationDto[];
   public isLoading: boolean;
   public displayDialog: boolean;
@@ -31,10 +34,7 @@ export class NotificationsPanelComponent implements OnInit, OnDestroy {
 
   @Input() height: string;
 
-  constructor(
-    private notificationService: NotificationService,
-    private toastSerice: ToastService
-  ) {
+  constructor() {
     this.notifications = [];
     this.isLoading = false;
     this.displayDialog = false;

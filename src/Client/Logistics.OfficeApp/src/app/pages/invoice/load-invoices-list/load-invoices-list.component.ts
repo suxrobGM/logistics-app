@@ -1,5 +1,5 @@
 import {CommonModule, CurrencyPipe, DatePipe} from "@angular/common";
-import {Component, input, signal} from "@angular/core";
+import { Component, input, signal, inject } from "@angular/core";
 import {RouterModule} from "@angular/router";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
@@ -25,13 +25,13 @@ import {InvoiceStatusTag} from "@/shared/components";
   ],
 })
 export class LoadInvoicesListComponent {
+  private readonly apiService = inject(ApiService);
+
   readonly loadId = input<string>();
   readonly invoices = signal<InvoiceDto[]>([]);
   readonly isLoading = signal(true);
   readonly totalRecords = signal(0);
   readonly first = signal(0);
-
-  constructor(private readonly apiService: ApiService) {}
 
   load(event: TableLazyLoadEvent): void {
     this.isLoading.set(true);

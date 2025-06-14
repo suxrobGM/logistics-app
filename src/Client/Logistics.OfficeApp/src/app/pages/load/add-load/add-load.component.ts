@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Router, RouterLink} from "@angular/router";
 import {AutoCompleteModule} from "primeng/autocomplete";
@@ -43,6 +43,11 @@ import {TruckData} from "../shared";
   ],
 })
 export class AddLoadComponent implements OnInit {
+  private readonly authService = inject(AuthService);
+  private readonly apiService = inject(ApiService);
+  private readonly toastService = inject(ToastService);
+  private readonly router = inject(Router);
+
   public readonly accessToken = environment.mapboxToken;
   private distanceMeters = 0;
   public isLoading = false;
@@ -50,12 +55,7 @@ export class AddLoadComponent implements OnInit {
   public originCoords: [number, number] | null = null;
   public destinationCoords: [number, number] | null = null;
 
-  constructor(
-    private readonly authService: AuthService,
-    private readonly apiService: ApiService,
-    private readonly toastService: ToastService,
-    private readonly router: Router
-  ) {
+  constructor() {
     this.form = new FormGroup<AddLoadForm>({
       name: new FormControl(""),
       customer: new FormControl(null, {validators: Validators.required}),

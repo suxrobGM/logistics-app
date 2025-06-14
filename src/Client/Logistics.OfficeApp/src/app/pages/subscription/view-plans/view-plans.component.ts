@@ -1,5 +1,5 @@
 import {CurrencyPipe} from "@angular/common";
-import {Component, OnInit, signal} from "@angular/core";
+import { Component, OnInit, signal, inject } from "@angular/core";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ApiService} from "@/core/api";
@@ -12,12 +12,10 @@ import {TenantService} from "@/core/services";
   templateUrl: "./view-plans.component.html",
 })
 export class ViewPlansComponent implements OnInit {
-  readonly subscriptionPlans = signal<SubscriptionPlanDto[]>([]);
+  private readonly apiService = inject(ApiService);
+  private readonly tenantService = inject(TenantService);
 
-  constructor(
-    private readonly apiService: ApiService,
-    private readonly tenantService: TenantService
-  ) {}
+  readonly subscriptionPlans = signal<SubscriptionPlanDto[]>([]);
 
   ngOnInit(): void {
     this.apiService.subscriptionApi.getSubscriptionPlans().subscribe((result) => {

@@ -1,4 +1,4 @@
-import {Component, OnInit, input, model, signal} from "@angular/core";
+import { Component, OnInit, input, model, signal, inject } from "@angular/core";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
@@ -23,6 +23,10 @@ import {UserService} from "../../services";
   providers: [UserService],
 })
 export class ChangeRoleDialogComponent implements OnInit {
+  private readonly apiService = inject(ApiService);
+  private readonly userService = inject(UserService);
+  private readonly toastService = inject(ToastService);
+
   readonly roles = signal<RoleDto[]>([]);
   readonly loading = signal(false);
   readonly userId = input.required<string>();
@@ -30,11 +34,7 @@ export class ChangeRoleDialogComponent implements OnInit {
   readonly visible = model<boolean>(false);
   readonly form: FormGroup;
 
-  constructor(
-    private readonly apiService: ApiService,
-    private readonly userService: UserService,
-    private readonly toastService: ToastService
-  ) {
+  constructor() {
     this.form = new FormGroup({
       role: new FormControl("", Validators.required),
     });

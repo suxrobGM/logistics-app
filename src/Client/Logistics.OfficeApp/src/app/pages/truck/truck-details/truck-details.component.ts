@@ -1,5 +1,5 @@
 import {CommonModule, CurrencyPipe} from "@angular/common";
-import {Component, OnInit} from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {CardModule} from "primeng/card";
 import {SkeletonModule} from "primeng/skeleton";
@@ -27,6 +27,9 @@ import {LineChartDrawnEvent, TruckGrossesLinechartComponent} from "../components
   ],
 })
 export class TruckDetailsComponent implements OnInit {
+  private readonly apiService = inject(ApiService);
+  private readonly route = inject(ActivatedRoute);
+
   public readonly accessToken = environment.mapboxToken;
   public id!: string;
   public isLoading = false;
@@ -36,11 +39,6 @@ export class TruckDetailsComponent implements OnInit {
   public rpmCurrent = 0;
   public rpmAllTime = 0;
   public truckLocations: TruckGeolocationDto[] = [];
-
-  constructor(
-    private readonly apiService: ApiService,
-    private readonly route: ActivatedRoute
-  ) {}
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
