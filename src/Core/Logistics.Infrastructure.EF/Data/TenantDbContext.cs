@@ -81,13 +81,11 @@ public class TenantDbContext : DbContext
         builder.Entity<TenantRoleClaim>().ToTable("RoleClaims");
         builder.Entity<Notification>().ToTable("Notifications");
         builder.Entity<Customer>().ToTable("Customers");
-
-
+        
         builder.Entity<CompanyStatsDto>(entity =>
         {
             entity.HasNoKey();
             entity.ToView(null);
-
         });
 
         builder.Entity<TruckStatsDto>(entity =>
