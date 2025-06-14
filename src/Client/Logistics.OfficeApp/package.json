@@ -37,15 +37,17 @@
     "zone.js": "^0.15.0"
   },
   "devDependencies": {
+    "@angular-eslint/builder": "20.0.0",
     "@angular/build": "^20.0.2",
     "@angular/cli": "^20.0.2",
     "@angular/compiler-cli": "^20.0.3",
+    "@eslint/js": "^9.28.0",
     "@tailwindcss/postcss": "^4.1.7",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/jasmine": "^5.1.5",
     "@types/mapbox-gl": "^3.4.1",
-    "angular-eslint": "^19.0.2",
-    "eslint": "^9.19.0",
+    "angular-eslint": "20.0.0",
+    "eslint": "^9.28.0",
     "jasmine-core": "^5.5.0",
     "karma": "^6.4.4",
     "karma-chrome-launcher": "^3.2.0",
@@ -56,6 +58,6 @@
     "prettier": "^3.4.2",
     "tailwindcss": "^4.1.7",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.34.0"
+    "typescript-eslint": "8.33.1"
   }
 }

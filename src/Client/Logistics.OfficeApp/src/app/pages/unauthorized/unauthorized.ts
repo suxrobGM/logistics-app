@@ -4,7 +4,7 @@ import {TenantService} from "@/core/services";
 
 @Component({
   selector: "app-unauthorized",
-  templateUrl: "./unauthorized.component.html",
+  templateUrl: "./unauthorized.html",
   imports: [RouterModule],
 })
 export class UnauthorizedComponent {

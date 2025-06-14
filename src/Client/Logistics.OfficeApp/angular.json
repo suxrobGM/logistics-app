@@ -110,7 +110,7 @@
   },
   "cli": {
     "packageManager": "bun",
-    "schematicCollections": ["@angular-eslint/schematics"],
+    "schematicCollections": ["angular-eslint"],
     "analytics": false
   },
   "schematics": {
