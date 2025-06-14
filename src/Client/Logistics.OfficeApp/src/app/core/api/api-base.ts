@@ -5,14 +5,13 @@ import {ToastService} from "../services";
 import {PagedIntervalQuery, SearchableQuery} from "./models";
 
 export abstract class ApiBase {
-  private readonly headers = {"content-type": "application/json"};
+  private readonly http = inject(HttpClient);
   private readonly toastService = inject(ToastService);
-  protected readonly http: HttpClient;
+  private readonly headers = {"content-type": "application/json"};
   protected readonly apiUrl: string;
 
-  constructor(apiUrl: string, http: HttpClient) {
+  constructor(apiUrl: string) {
     this.apiUrl = apiUrl;
-    this.http = http;
   }
 
   /**

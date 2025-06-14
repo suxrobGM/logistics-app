@@ -1,5 +1,4 @@
-import {HttpClient} from "@angular/common/http";
-import {Injectable, inject} from "@angular/core";
+import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
 import {environment} from "@/env";
 import {ApiBase} from "./api-base";
@@ -39,16 +38,14 @@ import {UserApi} from "./user.api";
 @Injectable({providedIn: "root"})
 export class ApiService extends ApiBase {
   constructor() {
-    const httpClient = inject(HttpClient);
-
-    super(environment.apiHost, httpClient);
+    super(environment.apiHost);
   }
 
-  public readonly paymentApi = new PaymentApi(this.apiUrl, this.http);
-  public readonly tenantApi = new TenantApi(this.apiUrl, this.http);
-  public readonly userApi = new UserApi(this.apiUrl, this.http);
-  public readonly subscriptionApi = new SubscriptionApi(this.apiUrl, this.http);
-  public readonly invoiceApi = new InvoiceApi(this.apiUrl, this.http);
+  public readonly paymentApi = new PaymentApi(this.apiUrl);
+  public readonly tenantApi = new TenantApi(this.apiUrl);
+  public readonly userApi = new UserApi(this.apiUrl);
+  public readonly subscriptionApi = new SubscriptionApi(this.apiUrl);
+  public readonly invoiceApi = new InvoiceApi(this.apiUrl);
 
   // #region Load API
 

@@ -1,4 +1,3 @@
-import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {ApiBase} from "./api-base";
 import {
@@ -18,8 +17,8 @@ import {
 } from "./models";
 
 export class PaymentApi extends ApiBase {
-  constructor(apiUrl: string, http: HttpClient) {
-    super(apiUrl, http);
+  constructor(apiUrl: string) {
+    super(apiUrl);
   }
 
   getPayment(id: string): Observable<Result<PaymentDto>> {
