@@ -1,5 +1,4 @@
-<p-autoComplete
-  styleClass="w-100"
+<p-autoComplete styleClass="w-100"
   inputStyleClass="form-control"
   placeholder="Type a driver name or truck number"
   field="driversName"
@@ -9,5 +8,4 @@
   [(ngModel)]="selectedTruck"
   (completeMethod)="searchTruck($event)"
   (onSelect)="changeSelectedTruck($event)"
->
-</p-autoComplete>
+ />

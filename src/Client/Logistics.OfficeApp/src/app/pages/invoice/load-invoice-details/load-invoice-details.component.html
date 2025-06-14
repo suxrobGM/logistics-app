@@ -3,7 +3,7 @@
 
 <p-card class="col-12 col-sm-6">
   @if (isLoading() || !invoice()) {
-    <p-progressSpinner></p-progressSpinner>
+    <p-progressSpinner />
   }
 
   <h2>{{ companyName() }}</h2>
@@ -19,7 +19,7 @@
     <app-invoice-status-tag [status]="invoice()!.status"></app-invoice-status-tag>
   </p>
 
-  <p-button icon="bi bi-file-pdf" label="Export to PDF" (click)="exportToPdf()"> </p-button>
+  <p-button icon="bi bi-file-pdf" label="Export to PDF" (click)="exportToPdf()" />
 
   <!-- @if (invoice.payment.status === "pending") {
       <p-button
