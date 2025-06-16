@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Shared.Models;
 
-public class NotificationDto
+public record NotificationDto
 {
     public Guid? Id { get; set; }
     public string? Title { get; set; }

@@ -1,7 +1,8 @@
-﻿using Logistics.Domain.Core;
+﻿using Logistics.Application.Abstractions;
+using Logistics.Domain.Events;
 using Microsoft.Extensions.Logging;
 
-namespace Logistics.Domain.Events.Handlers;
+namespace Logistics.Application.Events;
 
 internal sealed class NewLoadCreatedHandler : IDomainEventHandler<NewLoadCreatedEvent>
 {

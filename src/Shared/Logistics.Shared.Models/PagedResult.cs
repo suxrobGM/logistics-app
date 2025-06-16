@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Shared.Models;
 
-public class PagedResult<T> : Result<IEnumerable<T>>
+public record PagedResult<T> : Result<IEnumerable<T>>
 {
     public PagedResult(): this(null, 0, 0)
     {

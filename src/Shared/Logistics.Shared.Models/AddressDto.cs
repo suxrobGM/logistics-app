@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Shared.Models;
 
-public class AddressDto
+public record AddressDto
 {
     public required string Line1 { get; set; }
     public string? Line2 { get; set; }

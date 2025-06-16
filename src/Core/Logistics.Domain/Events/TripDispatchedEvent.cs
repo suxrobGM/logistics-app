@@ -2,4 +2,4 @@
 
 namespace Logistics.Domain.Events;
 
-public record NewLoadCreatedEvent(Guid LoadId) : IDomainEvent;
+public record TripDispatchedEvent(Guid TripId) : IDomainEvent;

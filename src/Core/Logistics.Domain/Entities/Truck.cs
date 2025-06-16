@@ -25,6 +25,7 @@ public class Truck : Entity, ITenantEntity
 
     public virtual List<Employee> Drivers { get; set; } = [];
     public virtual List<Load> Loads { get; } = [];
+    public virtual List<Trip> Trips { get; } = [];
 
     public static Truck Create(string truckNumber, Employee driver)
     {

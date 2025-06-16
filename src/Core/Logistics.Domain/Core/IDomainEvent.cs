@@ -2,6 +2,7 @@
 
 namespace Logistics.Domain.Core;
 
-public interface IDomainEvent : INotification
-{
-}
+/// <summary>
+/// Marker interface for domain events
+/// </summary>
+public interface IDomainEvent : INotification;

@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Logistics.Shared.Models;
 
-public class Result : IResult
+public record Result : IResult
 {
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? Error { get; init; }
@@ -12,7 +12,7 @@ public class Result : IResult
     public static Result Fail(string error) => new() { Error = error };
 }
 
-public class Result<T> : Result
+public record Result<T> : Result
 {
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public virtual T? Data { get; init; }

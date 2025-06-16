@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Logistics.Domain;
 using Logistics.Infrastructure.EF.Builder;
 using Logistics.Infrastructure.EF.Interceptors;
 
@@ -21,7 +20,6 @@ public static class Registrar
         this IServiceCollection services, 
         IConfiguration configuration)
     {
-        services.AddDomainLayer();
         services.AddScoped<DispatchDomainEventsInterceptor>();
         services.AddScoped<AuditableEntitySaveChangesInterceptor>();
         return new InfrastructureBuilder(services, configuration);
