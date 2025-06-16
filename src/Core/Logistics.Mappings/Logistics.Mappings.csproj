@@ -13,7 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Mapster" Version="7.4.0" />
+      <PackageReference Include="Riok.Mapperly" Version="4.2.1" />
     </ItemGroup>
 
 </Project>

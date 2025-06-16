@@ -1,17 +1,13 @@
 ﻿using Logistics.Domain.Entities;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class CustomerMapper
+[Mapper]
+public static partial class CustomerMapper
 {
-    public static CustomerDto ToDto(this Customer entity)
-    {
-        return new CustomerDto
-        {
-            Id = entity.Id,
-            Name = entity.Name,
-            // Invoices = entity.Invoices.Select(i => i.ToDto())
-        };
-    }
+    [MapperIgnoreSource(nameof(Customer.Invoices))]
+    [MapperIgnoreSource(nameof(Customer.DomainEvents))]
+    public static partial CustomerDto ToDto(this Customer entity);
 }

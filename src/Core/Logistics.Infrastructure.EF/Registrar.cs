@@ -20,6 +20,9 @@ public static class Registrar
         this IServiceCollection services, 
         IConfiguration configuration)
     {
+        services.AddMediatR(cfg => 
+            cfg.RegisterServicesFromAssemblyContaining<DispatchDomainEventsInterceptor>());
+        
         services.AddScoped<DispatchDomainEventsInterceptor>();
         services.AddScoped<AuditableEntitySaveChangesInterceptor>();
         return new InfrastructureBuilder(services, configuration);

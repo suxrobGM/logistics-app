@@ -4,31 +4,25 @@ namespace Logistics.DbMigrator.Data;
 
 internal class CreateSqlFunctionsWorker :IHostedService
 {
-    private readonly ILogger _logger;
-    private readonly ITenantUnityOfWork _tenantUow;
-    private readonly IConfiguration _configuration;
-    public CreateSqlFunctionsWorker(ILogger logger, IServiceProvider serviceProvider)
+    private readonly ILogger<CreateSqlFunctionsWorker> _logger;
+    private readonly IServiceScopeFactory _scopeFactory;
+    
+    public CreateSqlFunctionsWorker(ILogger<CreateSqlFunctionsWorker> logger, IServiceScopeFactory scopeFactory)
     {
         _logger = logger;
-        _tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
-        _configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        _scopeFactory = scopeFactory;
     }
-
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         try
         {
-            var populate = _configuration.GetValue<bool>("PopulateFakeData");
-
-            if (!populate)
-            {
-                return;
-            }
-
+            using var scope = _scopeFactory.CreateScope();
+            var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnityOfWork>();
+            
             _logger.LogInformation("Creating Stored Procedures");
-            await CreateCompanyStatsFunction();
-            await CreateTrucksStatsFunction();
+            await CreateSqlFunction("CreateCompanyStats.psql", tenantUow);
+            await CreateSqlFunction("CreateTrucksStats.psql", tenantUow);
 
             _logger.LogInformation("Stored Procedures Created");
         }
@@ -43,16 +37,9 @@ internal class CreateSqlFunctionsWorker :IHostedService
         return Task.CompletedTask;
     }
 
-    private async Task CreateCompanyStatsFunction()
+    private static async Task CreateSqlFunction(string fileName, ITenantUnityOfWork tenantUow)
     {
-        var sql = await File.ReadAllTextAsync("SqlFunctions/CreateCompanyStats.psql");
-        await _tenantUow.ExecuteRawSql(sql);
+        var sql = await File.ReadAllTextAsync($"SqlFunctions/{fileName}");
+        await tenantUow.ExecuteRawSql(sql);
     }
-    private async Task CreateTrucksStatsFunction()
-    {
-        var sql = await File.ReadAllTextAsync("SqlFunctions/CreateTrucksStats.psql");
-        await _tenantUow.ExecuteRawSql(sql);
-    }
-
-
 }

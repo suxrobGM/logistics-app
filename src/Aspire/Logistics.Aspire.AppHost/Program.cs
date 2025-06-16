@@ -6,8 +6,9 @@ builder.Configuration.AddJsonFile("appsettings.local.json", optional: true, relo
 var stripeSecret = builder.Configuration["Stripe:SecretKey"];
 
 var postgres = builder.AddPostgres("postgres", port: 5433)
-    .WithPgAdmin(c => c.WithImage("dpage/pgadmin4:latest"))
-    .WithVolume("postgres-data", "/var/lib/postgresql/data");
+    .WithPgAdmin(config =>
+        config.WithImage("dpage/pgadmin4:latest").WithHostPort(5434))
+    .WithVolume("logistics-pg-data", "/var/lib/postgresql/data");
 
 var masterDb = postgres.AddDatabase("master", "master_logistics");
 var tenantDb = postgres.AddDatabase("default-tenant", "default_logistics");
