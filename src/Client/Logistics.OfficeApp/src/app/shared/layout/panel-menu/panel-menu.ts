@@ -1,4 +1,4 @@
-import {Component, effect, inject, input, model, output} from "@angular/core";
+import {Component, ViewEncapsulation, effect, inject, input, model, output} from "@angular/core";
 import {Router} from "@angular/router";
 import {PanelMenuModule} from "primeng/panelmenu";
 import {TooltipModule} from "primeng/tooltip";
@@ -9,6 +9,7 @@ import {MenuItem} from "./types";
   templateUrl: "./panel-menu.html",
   styleUrl: "./panel-menu.css",
   imports: [PanelMenuModule, TooltipModule],
+  encapsulation: ViewEncapsulation.None,
 })
 export class PanelMenu {
   private readonly router = inject(Router);

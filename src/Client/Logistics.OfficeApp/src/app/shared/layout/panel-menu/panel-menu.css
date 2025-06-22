@@ -1,4 +1,4 @@
-:host ::ng-deep {
+app-panel-menu {
   .p-panelmenu {
     gap: 0;
   }
