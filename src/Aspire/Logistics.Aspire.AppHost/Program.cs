@@ -5,6 +5,8 @@ builder.Configuration.AddJsonFile("appsettings.local.json", optional: true, relo
 
 var stripeSecret = builder.Configuration["Stripe:SecretKey"];
 
+builder.AddDockerComposeEnvironment("compose");
+
 var postgres = builder.AddPostgres("postgres", port: 5433)
     .WithPgAdmin(config =>
         config.WithImage("dpage/pgadmin4:latest").WithHostPort(5434))
