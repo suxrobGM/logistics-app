@@ -209,6 +209,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasColumnType("double precision");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<long>("Number")
@@ -535,10 +536,14 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<long>("Number")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Number"));
 
                     b.Property<DateTime>("PlannedStart")
                         .HasColumnType("timestamp with time zone");
@@ -552,91 +557,77 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<Guid>("TruckId")
                         .HasColumnType("uuid");
 
-                    b.ComplexProperty<Dictionary<string, object>>("DestinationAddress", "Logistics.Domain.Entities.Trip.DestinationAddress#Address", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<string>("City")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Country")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Line1")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Line2")
-                                .HasColumnType("text");
-
-                            b1.Property<string>("State")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("ZipCode")
-                                .IsRequired()
-                                .HasColumnType("text");
-                        });
-
-                    b.ComplexProperty<Dictionary<string, object>>("OriginAddress", "Logistics.Domain.Entities.Trip.OriginAddress#Address", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<string>("City")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Country")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Line1")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Line2")
-                                .HasColumnType("text");
-
-                            b1.Property<string>("State")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("ZipCode")
-                                .IsRequired()
-                                .HasColumnType("text");
-                        });
-
                     b.HasKey("Id");
 
                     b.HasIndex("TruckId");
 
-                    b.ToTable("Trip");
+                    b.ToTable("Trips", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.TripLoad", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.TripStop", b =>
                 {
+                    b.Property<Guid>("TripId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ArrivedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DepartedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("LoadId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("StopOrder")
-                        .HasColumnType("integer");
+                    b.Property<DateTime?>("Planned")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("TripId")
+                    b.Property<Guid?>("TripId1")
                         .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.ComplexProperty<Dictionary<string, object>>("Address", "Logistics.Domain.Entities.TripStop.Address#Address", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Country")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Line1")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Line2")
+                                .HasColumnType("text");
+
+                            b1.Property<string>("State")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("ZipCode")
+                                .IsRequired()
+                                .HasColumnType("text");
+                        });
+
+                    b.HasKey("TripId", "Order");
 
                     b.HasIndex("LoadId");
 
-                    b.HasIndex("TripId");
+                    b.HasIndex("TripId1");
 
-                    b.ToTable("TripLoad");
+                    b.ToTable("TripStops", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
@@ -1001,7 +992,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Navigation("Truck");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.TripLoad", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.TripStop", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Load", "Load")
                         .WithMany()
@@ -1010,10 +1001,14 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .IsRequired();
 
                     b.HasOne("Logistics.Domain.Entities.Trip", "Trip")
-                        .WithMany("Loads")
+                        .WithMany()
                         .HasForeignKey("TripId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("Logistics.Domain.Entities.Trip", null)
+                        .WithMany("Stops")
+                        .HasForeignKey("TripId1");
 
                     b.Navigation("Load");
 
@@ -1083,7 +1078,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.Trip", b =>
                 {
-                    b.Navigation("Loads");
+                    b.Navigation("Stops");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>

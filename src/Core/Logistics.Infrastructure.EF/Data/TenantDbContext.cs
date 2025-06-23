@@ -77,6 +77,8 @@ public class TenantDbContext : DbContext
         builder.ApplyConfiguration(new EmployeeEntityConfiguration());
         builder.ApplyConfiguration(new TenantRoleEntityConfiguration());
         builder.ApplyConfiguration(new TruckEntityConfiguration());
+        builder.ApplyConfiguration(new TripEntityConfiguration());
+        builder.ApplyConfiguration(new TripStopEntityConfiguration());
 
         builder.Entity<TenantRoleClaim>().ToTable("RoleClaims");
         builder.Entity<Notification>().ToTable("Notifications");

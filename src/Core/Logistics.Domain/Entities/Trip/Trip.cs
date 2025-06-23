@@ -10,11 +10,11 @@ public class Trip : Entity, ITenantEntity
     /// <summary>
     /// Sequential number of the trip, unique within the tenant.
     /// </summary>
-    public long Number { get; set; }
-    public string? Name { get; set; }
+    public long Number { get; private set; }
+    public required string Name { get; set; }
 
-    public required Address OriginAddress { get; set; }
-    public required Address DestinationAddress { get; set; }
+    public Address OriginAddress => Stops.OrderBy(s => s.Order).First().Address;
+    public Address DestinationAddress => Stops.OrderBy(s => s.Order).Last().Address;
     
     /// <summary>
     /// Total distance of the trip in kilometers.
@@ -28,60 +28,57 @@ public class Trip : Entity, ITenantEntity
     public TripStatus Status { get; private set; } = TripStatus.Planned;
 
     public Guid TruckId { get; set; }
-    public virtual Truck Truck { get; set; } = null!;
-
-    /// <summary>
-    /// Loads (cars) carried on this trip in stop order.
-    /// </summary>
-    public virtual List<TripLoad> Loads { get; } = [];
+    public virtual required Truck Truck { get; set; }
+    
+    public virtual List<TripStop> Stops { get; } = [];
+    
     
     #region Domain Behaviors
     
     public void Dispatch()
     {
         if (Status != TripStatus.Planned)
-            throw new InvalidOperationException($"Cannot dispatch trip in state {Status}");
+            throw new InvalidOperationException("Trip already dispatched");
 
         Status = TripStatus.Dispatched;
         ActualStart = DateTime.UtcNow;
         DomainEvents.Add(new TripDispatchedEvent(Id));
     }
 
-    public void MarkLoadPickedUp(Guid loadId)
+    public void MarkStopArrived(Guid stopId)
     {
-        var item = Loads.FirstOrDefault(tl => tl.LoadId == loadId)
-                   ?? throw new InvalidOperationException("Load not found in trip");
+        var stop = Stops.FirstOrDefault(s => s.Id == stopId)
+                   ?? throw new InvalidOperationException("Stop not found");
 
-        item.Load.SetStatus(LoadStatus.PickedUp);
-        RefreshStatus();
-    }
+        stop.ArrivedAt = DateTime.UtcNow;
 
-    public void MarkLoadDelivered(Guid loadId)
-    {
-        var item = Loads.FirstOrDefault(tl => tl.LoadId == loadId)
-                   ?? throw new InvalidOperationException("Load not found in trip");
+        // propagate to Load status
+        stop.Load.SetStatus(stop.Type == TripStopType.PickUp ? LoadStatus.PickedUp : LoadStatus.Delivered);
 
-        item.Load.SetStatus(LoadStatus.Delivered);
         RefreshStatus();
     }
 
     private void RefreshStatus()
     {
-        if (Loads.All(l => l.Load.DeliveryDate.HasValue))
+        if (Stops.All(s => s is { Type: TripStopType.DropOff, Load.DeliveryDate: not null }))
         {
             Status = TripStatus.Completed;
             CompletedAt = DateTime.UtcNow;
             DomainEvents.Add(new TripCompletedEvent(Id));
         }
-        else if (Loads.Any(l => l.Load.PickUpDate.HasValue))
+        else if (Stops.Any(s => s is { Type: TripStopType.PickUp, Load.PickUpDate: not null }))
         {
             Status = TripStatus.InTransit;
         }
     }
+    
+    public decimal CalcTotalRevenue() =>
+        Stops.Where(s => s.Type == TripStopType.DropOff)
+            .Sum(s => s.Load.DeliveryCost.Amount);
 
-    public decimal CalcTotalRevenue() => Loads.Sum(l => l.Load.DeliveryCost.Amount);
-
-    public decimal CalcDriversShare() => Loads.Sum(l => l.Load.CalcDriverShare());
+    public decimal CalcDriversShare() =>
+        Stops.Where(s => s.Type == TripStopType.DropOff)
+            .Sum(s => s.Load.CalcDriverShare());
     
     #endregion
 
@@ -89,37 +86,45 @@ public class Trip : Entity, ITenantEntity
     #region Factory Methods
 
     public static Trip Create(
-        Truck truck,
-        Address origin,
-        Address destination,
+        string name,
         DateTime plannedStart,
-        IEnumerable<(Load load, int stopOrder)> loads,
-        long number,
-        string? name = null)
+        Truck truck,
+        IEnumerable<Load>? loads = null)
     {
-        if (!loads.Any())
-            throw new ArgumentException("Trip must contain at least one load");
-
+        var loadsArr = loads?.ToArray() ?? [];
+        
         var trip = new Trip
         {
-            Number = number,
             Name = name,
-            OriginAddress = origin,
-            DestinationAddress = destination,
             TruckId = truck.Id,
             Truck = truck,
             PlannedStart = plannedStart,
-            Status = TripStatus.Planned,
-            TotalDistance = loads.Sum(l => l.load.Distance)
+            TotalDistance = loadsArr.Sum(l => l.Distance)
         };
 
-        foreach (var (load, order) in loads)
+        var order = 1;
+        
+        // Stops are created in the order of loads
+        foreach (var load in loadsArr)
         {
-            trip.Loads.Add(new TripLoad
+            trip.Stops.Add(new TripStop
             {
                 Trip = trip,
+                Order = order++,
+                Type = TripStopType.PickUp,
+                Address = load.OriginAddress,
                 Load = load,
-                StopOrder = order
+                LoadId = load.Id
+            });
+
+            trip.Stops.Add(new TripStop
+            {
+                Trip = trip,
+                Order = order++,
+                Type = TripStopType.DropOff,
+                Address = load.DestinationAddress,
+                Load = load,
+                LoadId = load.Id
             });
         }
 

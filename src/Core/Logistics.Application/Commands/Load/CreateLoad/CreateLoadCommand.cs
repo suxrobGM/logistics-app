@@ -6,7 +6,7 @@ namespace Logistics.Application.Commands;
 
 public class CreateLoadCommand : IRequest<Result>
 {
-    public string? Name { get; set; }
+    public string Name { get; set; } = null!;
     public Address? OriginAddress { get; set; }
     public double OriginAddressLat { get; set; }
     public double OriginAddressLong { get; set; }

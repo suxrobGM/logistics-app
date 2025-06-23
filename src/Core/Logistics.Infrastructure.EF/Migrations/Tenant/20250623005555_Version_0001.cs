@@ -159,6 +159,32 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 });
 
             migrationBuilder.CreateTable(
+                name: "Trips",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Number = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    TotalDistance = table.Column<double>(type: "double precision", nullable: false),
+                    PlannedStart = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ActualStart = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CompletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    TruckId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Trips", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Trips_Trucks_TruckId",
+                        column: x => x.TruckId,
+                        principalTable: "Trucks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "EmployeeRoles",
                 columns: table => new
                 {
@@ -189,7 +215,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Number = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
-                    Name = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: false),
                     OriginAddressLat = table.Column<double>(type: "double precision", nullable: true),
                     OriginAddressLong = table.Column<double>(type: "double precision", nullable: true),
                     DestinationAddressLat = table.Column<double>(type: "double precision", nullable: true),
@@ -287,6 +313,48 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         principalTable: "Loads",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TripStops",
+                columns: table => new
+                {
+                    TripId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Planned = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ArrivedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DepartedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LoadId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TripId1 = table.Column<Guid>(type: "uuid", nullable: true),
+                    Address_City = table.Column<string>(type: "text", nullable: false),
+                    Address_Country = table.Column<string>(type: "text", nullable: false),
+                    Address_Line1 = table.Column<string>(type: "text", nullable: false),
+                    Address_Line2 = table.Column<string>(type: "text", nullable: true),
+                    Address_State = table.Column<string>(type: "text", nullable: false),
+                    Address_ZipCode = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TripStops", x => new { x.TripId, x.Order });
+                    table.ForeignKey(
+                        name: "FK_TripStops_Loads_LoadId",
+                        column: x => x.LoadId,
+                        principalTable: "Loads",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TripStops_Trips_TripId",
+                        column: x => x.TripId,
+                        principalTable: "Trips",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TripStops_Trips_TripId1",
+                        column: x => x.TripId1,
+                        principalTable: "Trips",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -389,6 +457,21 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "IX_RoleClaims_RoleId",
                 table: "RoleClaims",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Trips_TruckId",
+                table: "Trips",
+                column: "TruckId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TripStops_LoadId",
+                table: "TripStops",
+                column: "LoadId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TripStops_TripId1",
+                table: "TripStops",
+                column: "TripId1");
         }
 
         /// <inheritdoc />
@@ -410,10 +493,16 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "RoleClaims");
 
             migrationBuilder.DropTable(
+                name: "TripStops");
+
+            migrationBuilder.DropTable(
                 name: "Invoices");
 
             migrationBuilder.DropTable(
                 name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "Trips");
 
             migrationBuilder.DropTable(
                 name: "Loads");

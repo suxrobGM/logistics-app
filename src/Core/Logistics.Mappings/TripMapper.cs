@@ -9,6 +9,6 @@ public static partial class TripMapper
 {
     [MapperIgnoreSource(nameof(Trip.DomainEvents))]
     [MapperIgnoreSource(nameof(Trip.Truck))]
-    [MapperIgnoreSource(nameof(Trip.Loads))]
+    [MapperIgnoreSource(nameof(Trip.Stops))]
     public static partial TripDto ToDto(this Trip entity);
 }

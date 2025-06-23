@@ -7,6 +7,7 @@ internal sealed class CreateLoadValidator : AbstractValidator<CreateLoadCommand>
 {
     public CreateLoadValidator()
     {
+        RuleFor(i => i.Name).NotEmpty();
         RuleFor(i => i.AssignedDispatcherId).NotEmpty();
         RuleFor(i => i.AssignedTruckId).NotEmpty();
         RuleFor(i => i.OriginAddress).NotEmpty();

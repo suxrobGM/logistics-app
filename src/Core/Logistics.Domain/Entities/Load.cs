@@ -7,8 +7,8 @@ namespace Logistics.Domain.Entities;
 
 public class Load : Entity, ITenantEntity
 {
-    public long Number { get; set; }
-    public string? Name { get; set; }
+    public long Number { get; private set; }
+    public required string Name { get; set; }
     
     public required Address OriginAddress { get; set; }
     public double? OriginAddressLat { get; set; }
@@ -84,6 +84,7 @@ public class Load : Entity, ITenantEntity
     }
 
     public static Load Create(
+        string name,
         decimal deliveryCost,
         Address originAddress,
         double originLatitude,
@@ -97,6 +98,7 @@ public class Load : Entity, ITenantEntity
     {
         var load = new Load
         {
+            Name = name,
             DeliveryCost = deliveryCost,
             OriginAddress = originAddress,
             OriginAddressLat = originLatitude,

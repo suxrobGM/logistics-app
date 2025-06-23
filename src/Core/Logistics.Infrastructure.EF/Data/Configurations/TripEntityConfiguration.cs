@@ -8,8 +8,15 @@ public class TripEntityConfiguration : IEntityTypeConfiguration<Trip>
 {
     public void Configure(EntityTypeBuilder<Trip> builder)
     {
-        builder.Navigation(t => t.Loads)
-            .UsePropertyAccessMode(PropertyAccessMode.Field)
-            .Metadata.SetField("Loads");   // so `OrderBy(tl => tl.StopOrder)` in queries
+        builder.ToTable("Trips");
+        
+        builder.Property(i => i.Number)
+            .UseIdentityAlwaysColumn()
+            .IsRequired();
+        
+        builder.HasMany(i => i.Stops)
+            .WithOne(i => i.Trip)
+            .HasForeignKey(i => i.TripId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

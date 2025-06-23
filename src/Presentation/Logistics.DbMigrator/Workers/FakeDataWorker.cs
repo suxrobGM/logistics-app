@@ -304,6 +304,7 @@ internal class FakeDataWorker : IHostedService
         };
             
         var load = Load.Create(
+            $"Test cargo {index}",
             deliveryCost,
             originAddress, 
             originLat,
@@ -315,7 +316,6 @@ internal class FakeDataWorker : IHostedService
             truck, 
             dispatcher);
         
-        load.Name = $"Test cargo {index}";
         load.DispatchedDate = dispatchedDate;
         load.PickUpDate = dispatchedDate.AddDays(1);
         load.DeliveryDate = dispatchedDate.AddDays(2);
