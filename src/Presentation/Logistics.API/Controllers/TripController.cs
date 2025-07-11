@@ -1,4 +1,5 @@
 ﻿using Logistics.Application.Commands;
+using Logistics.Application.Queries;
 using Logistics.Shared.Models;
 using Logistics.Shared.Consts.Policies;
 using MediatR;
@@ -16,6 +17,26 @@ public class TripController : ControllerBase
     public TripController(IMediator mediator)
     {
         _mediator = mediator;
+    }
+    
+    [HttpGet("{tripId:guid}")]
+    [ProducesResponseType(typeof(Result<TripDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Loads.View)]
+    public async Task<IActionResult> GetById(Guid tripId)
+    {
+        var result = await _mediator.Send(new GetTripQuery {TripId = tripId});
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(PagedResult<TripDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Loads.View)]
+    public async Task<IActionResult> GetList([FromQuery] GetTripsQuery query)
+    {
+        var result = await _mediator.Send(query);
+        return result.Success ? Ok(result) : BadRequest(result);
     }
 
     [HttpPost]

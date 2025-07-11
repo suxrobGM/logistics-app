@@ -52,7 +52,7 @@
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
 		<GoogleServicesJson Include="google-services.json" />
-		<PackageReference Include="Xamarin.AndroidX.Fragment.Ktx" Version="1.8.6.1" />
+		<PackageReference Include="Xamarin.AndroidX.Fragment.Ktx" Version="1.8.8" />
 	</ItemGroup>
 	
 	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0-ios'">
@@ -60,20 +60,20 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="CommunityToolkit.Maui" Version="11.2.0" />
+	  <PackageReference Include="CommunityToolkit.Maui" Version="12.1.0" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 	  <PackageReference Include="Duende.IdentityModel.OidcClient" Version="6.0.1" />
-	  <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.5" />
-	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.5" />
-	  <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.5" />
-	  <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.5" />
-	  <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.70" />
-	  <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.70" />
+	  <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.7" />
+	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.7" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.7" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.7" />
+	  <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.82" />
+	  <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.82" />
 	  <PackageReference Include="Plugin.Fingerprint" Version="2.1.5" />
-	  <PackageReference Include="Syncfusion.Maui.Charts" Version="29.2.5" />
-	  <PackageReference Include="Syncfusion.Maui.DataForm" Version="29.2.5" />
-	  <PackageReference Include="Syncfusion.Maui.DataGrid" Version="29.2.5" />
-	  <PackageReference Include="Syncfusion.Maui.Inputs" Version="29.2.5" />
+	  <PackageReference Include="Syncfusion.Maui.Charts" Version="30.1.39" />
+	  <PackageReference Include="Syncfusion.Maui.DataForm" Version="30.1.39" />
+	  <PackageReference Include="Syncfusion.Maui.DataGrid" Version="30.1.39" />
+	  <PackageReference Include="Syncfusion.Maui.Inputs" Version="30.1.39" />
 	  <PackageReference Include="Plugin.Firebase" Version="3.1.4" />
 	</ItemGroup>
 
