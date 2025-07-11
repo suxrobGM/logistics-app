@@ -6,20 +6,20 @@ namespace Logistics.Domain.Entities;
 
 public class Truck : Entity, ITenantEntity
 {
-    public required string TruckNumber { get; set; }
+    public required string Number { get; set; }
     
     /// <summary>
-    /// Truck last known location address
+    /// Truck's last known location address
     /// </summary>
     public Address CurrentLocation { get; set; } = Address.NullAddress;
     
     /// <summary>
-    /// Truck last known location latitude
+    /// Truck's last known location latitude
     /// </summary>
     public double? CurrentLocationLat { get; set; }
     
     /// <summary>
-    /// Truck last known location longitude
+    /// Truck's last known location longitude
     /// </summary>
     public double? CurrentLocationLong { get; set; }
 
@@ -36,7 +36,7 @@ public class Truck : Entity, ITenantEntity
     {
         var newTruck = new Truck
         {
-            TruckNumber = truckNumber
+            Number = truckNumber
         };
 
         newTruck.Drivers.AddRange(drivers);
@@ -44,7 +44,7 @@ public class Truck : Entity, ITenantEntity
     }
 
     /// <summary>
-    /// The total percentage of income that drivers can receive from total gross income. Value must be in range [0, 1]
+    /// The total percentage of income that drivers can receive from total gross income. Value must be in the range [0, 1]
     /// </summary>
     public float GetDriversShareRatio()
     {

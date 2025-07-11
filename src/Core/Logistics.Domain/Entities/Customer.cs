@@ -7,7 +7,7 @@ namespace Logistics.Domain.Entities;
 /// </summary>
 public class Customer : Entity, ITenantEntity
 {
-    public string Name { get; set; } = null!;
+    public required string Name { get; set; }
 
     public virtual List<LoadInvoice> Invoices { get; set; } = [];
 }

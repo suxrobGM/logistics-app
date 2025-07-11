@@ -39,11 +39,11 @@ import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
 export class ListLoadComponent {
   private readonly apiService = inject(ApiService);
 
-  readonly loadStatus = LoadStatus;
-  readonly loads = signal<LoadDto[]>([]);
-  readonly isLoading = signal(false);
-  readonly totalRecords = signal(0);
-  readonly first = signal(0);
+  protected readonly loadStatus = LoadStatus;
+  protected readonly loads = signal<LoadDto[]>([]);
+  protected readonly isLoading = signal(false);
+  protected readonly totalRecords = signal(0);
+  protected readonly first = signal(0);
 
   search(event: Event): void {
     this.isLoading.set(true);
@@ -68,7 +68,7 @@ export class ListLoadComponent {
 
     if (sortField === "") {
       // default sort property
-      sortField = "-dispatchedDate";
+      sortField = "-DispatchedDate";
     }
 
     this.apiService

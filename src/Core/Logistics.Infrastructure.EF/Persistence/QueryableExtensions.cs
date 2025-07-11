@@ -27,9 +27,22 @@ public static class QueryableExtensions
         // sorting
         if (spec.Sort is { } sort)
         {
-            query = sort.Descending
-                ? query.OrderByDescending(e => Microsoft.EntityFrameworkCore.EF.Property<object>(e, sort.Property))
-                : query.OrderBy (e => Microsoft.EntityFrameworkCore.EF.Property<object>(e, sort.Property));
+            if (PathHelper.IsSingleExactSegment<T>(sort.Property))
+            {
+                // fast path – one hop, perfect for EF.Property
+                query = sort.Descending
+                    ? query.OrderByDescending(e => Microsoft.EntityFrameworkCore.EF.Property<object>(e, sort.Property))
+                    : query.OrderBy(e => Microsoft.EntityFrameworkCore.EF.Property<object>(e, sort.Property));
+            }
+            else
+            {
+                // nested or owned-type member: build expression once, cache afterward
+                var selector = PathHelper.BuildSelector<T>(sort.Property);
+
+                query = sort.Descending
+                    ? query.OrderByDescending(selector)
+                    : query.OrderBy (selector);
+            }
         }
 
         // paging

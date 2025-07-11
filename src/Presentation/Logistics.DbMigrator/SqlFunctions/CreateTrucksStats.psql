@@ -29,11 +29,11 @@ BEGIN
 
     -- Validate and set order by clause
     order_by_clause := CASE 
-        WHEN order_by = 'TruckNumber' THEN '"TruckNumber"'
+        WHEN order_by = 'Truck.Number' THEN '"Number"'
         WHEN order_by = 'Gross' THEN '"Gross"'
         WHEN order_by = 'Distance' THEN '"Distance"'
         WHEN order_by = 'DriverShare' THEN '"DriverShare"'
-        ELSE '"TruckNumber"'
+        ELSE '"Number"'
     END;
 
     -- Get total count of trucks
@@ -44,7 +44,7 @@ BEGIN
     WITH TruckStats AS (
         SELECT 
             l."AssignedTruckId" AS "TruckId",
-            t."TruckNumber",
+            t."Number",
             SUM(l."DeliveryCost_Amount") AS "Gross",
             SUM(l."Distance") AS "Distance",
             SUM(l."DeliveryCost_Amount") * COALESCE((
@@ -85,7 +85,7 @@ BEGIN
         WHERE l."DeliveryDate" IS NOT NULL
         AND l."DeliveryDate" >= start_date
         AND l."DeliveryDate" <= end_date
-        GROUP BY l."AssignedTruckId", t."TruckNumber"
+        GROUP BY l."AssignedTruckId", t."Number"
     )
     SELECT 
         ts."TruckId",

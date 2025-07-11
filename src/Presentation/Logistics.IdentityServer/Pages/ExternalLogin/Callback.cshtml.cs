@@ -41,7 +41,7 @@ public class Callback : PageModel
     {
         // read external identity from the temporary cookie
         var result = await HttpContext.AuthenticateAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
-        if (result?.Succeeded != true)
+        if (result.Succeeded != true)
         {
             throw new Exception("External authentication error");
         }
@@ -71,7 +71,7 @@ public class Callback : PageModel
         {
             // this might be where you might initiate a custom workflow for user registration
             // in this sample we don't show how that would be done, as our sample implementation
-            // simply auto-provisions new external user
+            // simply auto-provisions a new external user
             user = await AutoProvisionUserAsync(provider, providerUserId, externalUser.Claims);
         }
 
@@ -111,55 +111,56 @@ public class Callback : PageModel
     private async Task<User> AutoProvisionUserAsync(string provider, string providerUserId, IEnumerable<Claim> claims)
     {
         var sub = Guid.NewGuid();
+        var claimsArr = claims.ToArray();
+        var firstName = claimsArr.FirstOrDefault(x => x.Type == JwtClaimTypes.GivenName)?.Value ??
+                        claimsArr.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value;
+        
+        var lastName = claimsArr.FirstOrDefault(x => x.Type == JwtClaimTypes.FamilyName)?.Value ??
+                       claimsArr.FirstOrDefault(x => x.Type == ClaimTypes.Surname)?.Value;
+        
+        var email = claimsArr.FirstOrDefault(x => x.Type == JwtClaimTypes.Email)?.Value ??
+                    claimsArr.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+        
+        var name = claimsArr.FirstOrDefault(x => x.Type == JwtClaimTypes.Name)?.Value ??
+                   claimsArr.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
 
         var user = new User
         {
             Id = sub,
+            FirstName = firstName ?? name ?? "",
+            LastName = lastName ?? "",
+            Email = email,
             UserName = sub.ToString(), // don't need a username, since the user will be using an external provider to login
         };
 
-        // email
-        var email = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.Email)?.Value ??
-                    claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-        if (email != null)
-        {
-            user.Email = email;
-        }
-
         // create a list of claims that we want to transfer into our store
         var filtered = new List<Claim>();
-
-        // user's display name
-        var name = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.Name)?.Value ??
-                   claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
+        
         if (name != null)
         {
             filtered.Add(new Claim(JwtClaimTypes.Name, name));
         }
         else
         {
-            var first = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.GivenName)?.Value ??
-                        claims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value;
-            var last = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.FamilyName)?.Value ??
-                       claims.FirstOrDefault(x => x.Type == ClaimTypes.Surname)?.Value;
-            if (first != null && last != null)
+
+            if (firstName != null && lastName != null)
             {
-                filtered.Add(new Claim(JwtClaimTypes.Name, first + " " + last));
+                filtered.Add(new Claim(JwtClaimTypes.Name, firstName + " " + lastName));
             }
-            else if (first != null)
+            else if (firstName != null)
             {
-                filtered.Add(new Claim(JwtClaimTypes.Name, first));
+                filtered.Add(new Claim(JwtClaimTypes.Name, firstName));
             }
-            else if (last != null)
+            else if (lastName != null)
             {
-                filtered.Add(new Claim(JwtClaimTypes.Name, last));
+                filtered.Add(new Claim(JwtClaimTypes.Name, lastName));
             }
         }
 
         var identityResult = await _userManager.CreateAsync(user);
         if (!identityResult.Succeeded) throw new Exception(identityResult.Errors.First().Description);
 
-        if (filtered.Any())
+        if (filtered.Count != 0)
         {
             identityResult = await _userManager.AddClaimsAsync(user, filtered);
             if (!identityResult.Succeeded) throw new Exception(identityResult.Errors.First().Description);
@@ -190,7 +191,7 @@ public class Callback : PageModel
         var idToken = externalResult.Properties.GetTokenValue("id_token");
         if (idToken != null)
         {
-            localSignInProps.StoreTokens(new[] { new AuthenticationToken { Name = "id_token", Value = idToken } });
+            localSignInProps.StoreTokens([new AuthenticationToken { Name = "id_token", Value = idToken }]);
         }
     }
 }

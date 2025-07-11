@@ -13,7 +13,7 @@ public abstract class Invoice : Entity, IMasterEntity, ITenantEntity, IAuditable
     /// <summary>
     /// Total inclusive of tax & discounts.
     /// </summary>
-    public required Money Total { get; set; } = Money.Zero();
+    public required Money Total { get; set; }
     
     public string? Notes { get; set; }
     public DateTime? DueDate { get; set; }

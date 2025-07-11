@@ -25,7 +25,7 @@ internal sealed class UpdateTruckHandler : RequestHandler<UpdateTruckCommand, Re
             return Result.Fail("Could not find the specified truck");
         }
         
-        var truckWithThisNumber = await truckRepository.GetAsync(i => i.TruckNumber == req.TruckNumber && 
+        var truckWithThisNumber = await truckRepository.GetAsync(i => i.Number == req.TruckNumber && 
                                                                              i.Id != truckEntity.Id);
         if (truckWithThisNumber is not null)
         {
@@ -44,7 +44,7 @@ internal sealed class UpdateTruckHandler : RequestHandler<UpdateTruckCommand, Re
 
         if (!string.IsNullOrEmpty(req.TruckNumber))
         {
-            truckEntity.TruckNumber = req.TruckNumber;
+            truckEntity.Number = req.TruckNumber;
         }
         
         truckRepository.Update(truckEntity);

@@ -17,7 +17,7 @@ internal sealed class CreateTruckHandler : RequestHandler<CreateTruckCommand, Re
     protected override async Task<Result> HandleValidated(
         CreateTruckCommand req, CancellationToken cancellationToken)
     {
-        var truckWithThisNumber = await _tenantUow.Repository<Truck>().GetAsync(i => i.TruckNumber == req.TruckNumber);
+        var truckWithThisNumber = await _tenantUow.Repository<Truck>().GetAsync(i => i.Number == req.TruckNumber);
 
         if (truckWithThisNumber is not null)
         {
@@ -33,7 +33,7 @@ internal sealed class CreateTruckHandler : RequestHandler<CreateTruckCommand, Re
             return Result.Fail("Could not find any drivers with specified IDs");
         }
 
-        var alreadyAssociatedDriver = drivers.FirstOrDefault(i => i.Truck != null && i.Truck.TruckNumber == req.TruckNumber);
+        var alreadyAssociatedDriver = drivers.FirstOrDefault(i => i.Truck != null && i.Truck.Number == req.TruckNumber);
 
         if (alreadyAssociatedDriver is not null)
         {

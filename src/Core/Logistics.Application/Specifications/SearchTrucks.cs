@@ -14,7 +14,7 @@ public sealed class SearchTrucks : BaseSpecification<Truck>
     {
         if (!string.IsNullOrEmpty(search))
         {
-            Criteria = i => i.TruckNumber.Contains(search);
+            Criteria = i => i.Number.Contains(search);
         }
         
         OrderBy(orderBy);

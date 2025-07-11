@@ -240,7 +240,7 @@ internal class FakeDataWorker : IHostedService
             truckNumber++;
             trucksList.Add(truck);
             await truckRepository.AddAsync(truck);
-            _logger.LogInformation("Added a truck {Number}", truck.TruckNumber);
+            _logger.LogInformation("Added a truck {Number}", truck.Number);
         }
 
         await tenantUow.SaveChangesAsync();

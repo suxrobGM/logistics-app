@@ -10,7 +10,7 @@ public static class TruckMapper
         var dto = new TruckDto
         {
             Id = entity.Id,
-            TruckNumber = entity.TruckNumber,
+            TruckNumber = entity.Number,
             CurrentLocationLat = entity.CurrentLocationLat,
             CurrentLocationLong = entity.CurrentLocationLong,
             Loads = loads,

@@ -1,12 +1,11 @@
-﻿using System.Linq.Expressions;
-using Logistics.Domain.Entities;
+﻿using Logistics.Domain.Entities;
 using Logistics.Domain.Specifications;
 
 namespace Logistics.Application.Specifications;
 
-public sealed class GetTrips : BaseSpecification<Trip>
+public sealed class GetTripsSpec : BaseSpecification<Trip>
 {
-    public GetTrips(
+    public GetTripsSpec(
         string? name,
         string? orderBy,
         int page,

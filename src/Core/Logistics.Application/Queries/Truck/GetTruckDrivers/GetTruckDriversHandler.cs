@@ -27,10 +27,10 @@ internal sealed class GetTruckDriversHandler : RequestHandler<GetTruckDriversQue
                 join driver in drivers on truck.Id equals driver.TruckId into teamDrivers
                 from teamDriver in teamDrivers.DefaultIfEmpty()
                 where teamDriver != null &&
-                      teamDriver.FirstName!.Contains(req.Search!) ||
-                      teamDriver.LastName!.Contains(req.Search!) ||
-                      teamDriver.Email!.Contains(req.Search!) ||
-                      truck.TruckNumber!.Contains(req.Search!)
+                      teamDriver.FirstName.Contains(req.Search) ||
+                      teamDriver.LastName.Contains(req.Search) ||
+                      teamDriver.Email.Contains(req.Search) ||
+                      truck.Number.Contains(req.Search)
                 select new
                 {
                     Truck = truck,

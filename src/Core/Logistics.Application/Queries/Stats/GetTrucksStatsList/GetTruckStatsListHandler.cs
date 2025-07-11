@@ -53,7 +53,7 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
                 .Select(group => new TruckStats
                 {
                     TruckId = group.Key!.Value,
-                    TruckNumber = group.First().AssignedTruck!.TruckNumber,
+                    TruckNumber = group.First().AssignedTruck!.Number,
                     Gross = group.Sum(load => load.DeliveryCost),
                     Distance = group.Sum(load => load.Distance),
                     DriverShare = group.Sum(load => load.DeliveryCost) * (decimal)group.First().AssignedTruck!.GetDriversShareRatio(),
