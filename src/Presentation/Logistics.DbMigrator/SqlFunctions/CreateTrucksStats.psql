@@ -62,7 +62,7 @@ BEGIN
                     'FullName', CONCAT(e."FirstName", ' ', e."LastName"),
                     'PhoneNumber', e."PhoneNumber",
                     'JoinedDate', e."JoinedDate",
-                    'TruckNumber', t."TruckNumber",
+                    'TruckNumber', t."Number",
                     'TruckId', e."TruckId",
                     'Salary', e."Salary_Amount",
                     'SalaryType', e."SalaryType",
