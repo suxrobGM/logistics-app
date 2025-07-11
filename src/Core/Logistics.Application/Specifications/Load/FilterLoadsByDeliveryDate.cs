@@ -1,7 +1,8 @@
 ﻿using System.Linq.Expressions;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Specifications;
 
-namespace Logistics.Domain.Specifications;
+namespace Logistics.Application.Specifications;
 
 public class FilterLoadsByDeliveryDate : BaseSpecification<Load>
 {
@@ -26,11 +27,11 @@ public class FilterLoadsByDeliveryDate : BaseSpecification<Load>
                 i.DeliveryDate <= endPeriod;
         }
         
-        ApplyOrderBy("DeliveryDate");
+        OrderBy("DeliveryDate");
     }
 
-    protected override Expression<Func<Load, object?>> CreateOrderByExpression(string propertyName)
-    {
-        return i => i.DeliveryDate;
-    }
+    // protected override Expression<Func<Load, object?>> CreateOrderByExpression(string propertyName)
+    // {
+    //     return i => i.DeliveryDate;
+    // }
 }

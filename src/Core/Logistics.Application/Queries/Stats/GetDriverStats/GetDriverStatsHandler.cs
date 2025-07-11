@@ -1,6 +1,6 @@
-﻿using Logistics.Domain.Entities;
+﻿using Logistics.Application.Specifications;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Specifications;
 using Logistics.Shared.Models;
 using Logistics.Shared.Consts;
 

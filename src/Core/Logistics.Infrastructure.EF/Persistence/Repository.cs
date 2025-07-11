@@ -19,7 +19,7 @@ public class Repository<TDbContext, TEntity, TEntityKey> : IRepository<TEntity, 
 
     public IQueryable<TEntity> ApplySpecification(ISpecification<TEntity> specification)
     {
-        return SpecificationEvaluator<TEntity, TEntityKey>.GetQuery(_dbContext.Set<TEntity>(), specification);
+        return _dbContext.Set<TEntity>().ApplySpecification(specification);
     }
 
     public IQueryable<TEntity> Query()
@@ -54,15 +54,15 @@ public class Repository<TDbContext, TEntity, TEntityKey> : IRepository<TEntity, 
             .ToListAsync();
     }
 
-    public Task<List<TEntity>> GetListAsync(ISpecification<TEntity>? specification = default)
+    public Task<List<TEntity>> GetListAsync(ISpecification<TEntity>? specification = null)
     {
         if (specification is null)
         {
             return _dbContext.Set<TEntity>().ToListAsync();
         }
 
-        return SpecificationEvaluator<TEntity, TEntityKey>
-            .GetQuery(_dbContext.Set<TEntity>(), specification)
+        return _dbContext.Set<TEntity>()
+            .ApplySpecification(specification)
             .ToListAsync();
     }
 

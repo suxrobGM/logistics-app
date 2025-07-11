@@ -1,6 +1,6 @@
-﻿using Logistics.Domain.Entities;
+﻿using Logistics.Application.Specifications;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Specifications;
 using Logistics.Shared.Models;
 using Logistics.Shared.Consts.Roles;
 
@@ -22,8 +22,7 @@ internal sealed class GetCompanyStatsHandler : RequestHandler<GetCompanyStatsQue
 
         try
         {
-            var query = "SELECT * FROM get_company_stats();";
-            var result = await _tenantUow.ExecuteRawSql<CompanyStatsDto>(query);
+            var result = await _tenantUow.ExecuteRawSql<CompanyStatsDto>("SELECT * FROM get_company_stats();");
             companyStats = result.FirstOrDefault() ?? new CompanyStatsDto();
         }
         catch

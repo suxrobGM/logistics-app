@@ -1,0 +1,45 @@
+﻿using Logistics.Domain.Specifications;
+using Microsoft.EntityFrameworkCore;
+
+namespace Logistics.Infrastructure.EF.Persistence;
+
+public static class QueryableExtensions
+{
+    /// <summary>
+    /// Maps one <see cref="ISpecification{T}"/> to an EF query.
+    /// </summary>
+    public static IQueryable<T> ApplySpecification<T>(
+        this IQueryable<T> query,
+        ISpecification<T> spec) where T : class
+    {
+        // filter
+        if (spec.Criteria is not null)
+        {
+            query = query.Where(spec.Criteria);
+        }
+
+        // includes
+        foreach (var include in spec.Includes)
+        {
+            query = query.Include(include);
+        }
+        
+        // sorting
+        if (spec.Sort is { } sort)
+        {
+            query = sort.Descending
+                ? query.OrderByDescending(e => Microsoft.EntityFrameworkCore.EF.Property<object>(e, sort.Property))
+                : query.OrderBy (e => Microsoft.EntityFrameworkCore.EF.Property<object>(e, sort.Property));
+        }
+
+        // paging
+        if (spec.Page is { Size: > 0 })
+        {
+            query = query
+                .Skip((spec.Page.Value.Number - 1) * spec.Page.Value.Size)
+                .Take(spec.Page.Value.Size);
+        }
+
+        return query;
+    }
+}

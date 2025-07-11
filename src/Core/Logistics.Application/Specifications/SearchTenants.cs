@@ -1,7 +1,8 @@
 ﻿using System.Linq.Expressions;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Specifications;
 
-namespace Logistics.Domain.Specifications;
+namespace Logistics.Application.Specifications;
 
 public class SearchTenants : BaseSpecification<Tenant>
 {
@@ -21,18 +22,18 @@ public class SearchTenants : BaseSpecification<Tenant>
                  i.CompanyName.Contains(search));
         }
         
-        ApplyOrderBy(orderBy);
+        OrderBy(orderBy);
         ApplyPaging(page, pageSize);
     }
     
-    protected override Expression<Func<Tenant, object?>> CreateOrderByExpression(string propertyName)
-    {
-        return propertyName switch
-        {
-            "companyname" => i => i.CompanyName,
-            "companyaddress" => i => i.CompanyAddress.Line1,
-            "subscriptionplan" => i => i.Subscription!.Plan.Name,
-            _ => i => i.Name
-        };
-    }
+    // protected override Expression<Func<Tenant, object?>> CreateOrderByExpression(string propertyName)
+    // {
+    //     return propertyName switch
+    //     {
+    //         "companyname" => i => i.CompanyName,
+    //         "companyaddress" => i => i.CompanyAddress.Line1,
+    //         "subscriptionplan" => i => i.Subscription!.Plan.Name,
+    //         _ => i => i.Name
+    //     };
+    // }
 }

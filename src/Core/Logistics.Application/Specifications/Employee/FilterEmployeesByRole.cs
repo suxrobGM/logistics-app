@@ -1,6 +1,7 @@
 ﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Specifications;
 
-namespace Logistics.Domain.Specifications;
+namespace Logistics.Application.Specifications;
 
 public class FilterEmployeesByRole : BaseSpecification<Employee>
 {

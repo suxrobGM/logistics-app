@@ -1,5 +1,5 @@
-﻿using Logistics.Domain.Persistence;
-using Logistics.Domain.Specifications;
+﻿using Logistics.Application.Specifications;
+using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
 

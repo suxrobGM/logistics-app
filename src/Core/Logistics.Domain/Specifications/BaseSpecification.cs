@@ -1,50 +1,49 @@
 ﻿using System.Linq.Expressions;
 using Logistics.Domain.Core;
+using Logistics.Domain.ValueObjects;
 
 namespace Logistics.Domain.Specifications;
 
 public abstract class BaseSpecification<T> : ISpecification<T> where T : IEntity<Guid>
 {
-    public Expression<Func<T, bool>>? Criteria { get; protected set; }
-    public Expression<Func<T, object?>>? OrderBy { get; private set; }
-    public Expression<Func<T, object>>? GroupBy { get; private set; }
-    public List<Expression<Func<T, object>>> Includes { get; } = new();
-    public List<string> IncludeStrings { get; } = new();
-    public int PageSize { get; private set; }
-    public int Page { get; private set; }
-    public bool IsPagingEnabled { get; private set; }
-    public bool IsDescending { get; private set; }
+    private readonly List<Expression<Func<T, object>>> _includes = [];
     
-    protected virtual Expression<Func<T, object?>> CreateOrderByExpression(string propertyName)
-    {
-        return i => i.Id;
-    }
+    protected BaseSpecification() { }
 
-    protected void ApplyPaging(int page, int pageSize)
-    {
-        Page = page;
-        PageSize = pageSize;
-        IsPagingEnabled = true;
-    }
+    protected BaseSpecification(Expression<Func<T, bool>> criteria)
+        => Criteria = criteria;
 
-    protected void ApplyOrderBy(string? orderByProperty)
-    {
-        var parsedOrderByProperty = ParseOrderByProperty(orderByProperty);
-        OrderBy = CreateOrderByExpression(parsedOrderByProperty);
-    }
+    public Expression<Func<T, bool>>? Criteria { get; protected init; }
+    public IReadOnlyList<Expression<Func<T, object>>> Includes => _includes.AsReadOnly();
+    
+    public Sort? Sort { get; private set; }
+    public Page? Page { get; private set; } = new();
+    
+    
+    #region Fluent helpers 
 
-    private string ParseOrderByProperty(string? orderByProperty)
+    protected void AddInclude(Expression<Func<T, object>> navigation)
+        => _includes.Add(navigation);
+
+    protected void OrderBy(string? orderBy)
     {
-        if (string.IsNullOrEmpty(orderByProperty))
+        if (string.IsNullOrWhiteSpace(orderBy))
         {
-            return string.Empty;
+            return;
         }
 
-        if (orderByProperty.StartsWith('-'))
-        {
-            IsDescending = true;
-            orderByProperty = orderByProperty[1..];
-        }
-        return orderByProperty.ToLower();
+        var desc  = orderBy[0] == '-';
+        var prop  = desc ? orderBy[1..] : orderBy;
+        Sort = new Sort(prop, desc);
     }
+
+    protected void ApplyPaging(int number, int size)
+    {
+        ArgumentOutOfRangeException.ThrowIfLessThan(number, 1);
+        ArgumentOutOfRangeException.ThrowIfLessThan(size, 1);
+
+        Page = new Page(number, size);
+    }
+
+    #endregion
 }

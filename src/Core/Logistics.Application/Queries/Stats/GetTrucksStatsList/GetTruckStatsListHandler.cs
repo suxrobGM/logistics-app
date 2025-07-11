@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
+using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Specifications;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
 
@@ -19,18 +19,19 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
     protected override async Task<PagedResult<TruckStatsDto>> HandleValidated(
         GetTrucksStatsListQuery req, CancellationToken cancellationToken)
     {
-        IEnumerable<TruckStatsDto> truckStatsDto = new List<TruckStatsDto>();
-        var totalItems = 0;
+        IEnumerable<TruckStatsDto> truckStatsDto;
+        int totalItems;
         try
         {
-            FormattableString query = $@"
-                SELECT * FROM get_trucks_stats(
-                    {req.StartDate}::timestamp,
-                    {req.EndDate}::timestamp,
-                    {req.Page},
-                    {req.PageSize},
-                    {req.OrderBy}
-                )";
+            var query = $"""
+                         SELECT * FROM get_trucks_stats(
+                             {req.StartDate}::timestamp,
+                             {req.EndDate}::timestamp,
+                             {req.Page},
+                             {req.PageSize},
+                             {req.OrderBy}
+                         )
+                         """;
             truckStatsDto = await _tenantUow.ExecuteRawSql<TruckStatsDto>(query);
             totalItems = truckStatsDto.FirstOrDefault()?.TotalItems ?? 0;
         }
