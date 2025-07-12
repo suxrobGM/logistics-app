@@ -65,8 +65,8 @@ export class TruckDetailsComponent implements OnInit {
 
         this.truckLocations = [
           {
-            latitude: this.truck.currentLocationLat!,
-            longitude: this.truck.currentLocationLong!,
+            latitude: this.truck.currentLocationLat,
+            longitude: this.truck.currentLocationLong,
             truckId: this.truck.id,
             truckNumber: this.truck.truckNumber,
             driversName: this.truck.drivers.map((driver) => driver.fullName).join(", "),

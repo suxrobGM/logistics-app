@@ -103,13 +103,13 @@ export abstract class DateUtils {
    * @param dates An array of two dates
    */
   static isValidRange(dates?: Date[]): boolean {
-    if (dates == null) {
+    if (dates == null || dates.length < 2) {
       return false;
     }
 
-    const areDatesNotNull = dates && dates.length >= 2 && dates[0] != null && dates[1] != null;
+    const areDatesNotNull = dates.length >= 2 && dates[0] != null && dates[1] != null;
     const areDatesValid = this.isValidDate(dates[0]) && this.isValidDate(dates[1]);
-    const isEndDateGreater = dates[1] > dates[0];
+    const isEndDateGreater = dates[1]! > dates[0]!;
     return areDatesNotNull && areDatesValid && isEndDateGreater;
   }
 

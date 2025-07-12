@@ -1,5 +1,5 @@
-<span class="fw-bold">{{ label }}</span>
-<p-calendar
+<span class="fw-bold">{{ label() }}</span>
+<p-date-picker
   class="ms-2"
   [(ngModel)]="dates"
   selectionMode="range"

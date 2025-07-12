@@ -4,8 +4,8 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/
 import {Router, RouterModule} from "@angular/router";
 import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
 import {ButtonModule} from "primeng/button";
-import {CalendarModule} from "primeng/calendar";
 import {CardModule} from "primeng/card";
+import {DatePicker} from "primeng/datepicker";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {SelectModule} from "primeng/select";
 import {ApiService} from "@/core/api";
@@ -35,10 +35,10 @@ import {DateUtils} from "@/shared/utils";
     AutoCompleteModule,
     ProgressSpinnerModule,
     ReactiveFormsModule,
-    CalendarModule,
     ButtonModule,
     //AddressForm,
     SelectModule,
+    DatePicker,
   ],
 })
 export class PayrollInvoiceEditComponent implements OnInit {

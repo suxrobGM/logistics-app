@@ -8,8 +8,6 @@ import {AddressPipe} from "@/shared/pipes";
 @Component({
   selector: "app-geolocation-map",
   templateUrl: "./geolocation-map.html",
-  styleUrls: [],
-  standalone: true,
   imports: [CommonModule, NgxMapboxGLModule, AddressPipe],
 })
 export class GeolocationMap {
