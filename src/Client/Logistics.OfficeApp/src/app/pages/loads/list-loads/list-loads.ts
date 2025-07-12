@@ -16,7 +16,7 @@ import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
 
 @Component({
   selector: "app-list-loads",
-  templateUrl: "./list-loads.component.html",
+  templateUrl: "./list-loads.html",
   styleUrls: [],
   standalone: true,
   imports: [
@@ -76,8 +76,6 @@ export class ListLoadComponent {
       .subscribe((result) => {
         if (result.success && result.data) {
           this.loads.set(result.data);
-          console.log("Load data:", result.data);
-
           this.totalRecords.set(result.totalItems);
         }
 

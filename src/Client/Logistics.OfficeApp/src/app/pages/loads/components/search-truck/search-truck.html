@@ -4,7 +4,7 @@
   placeholder="Type a driver name or truck number"
   field="driversName"
   [minLength]="2"
-  [suggestions]="suggestedTrucks"
+  [suggestions]="suggestedTrucks()"
   [forceSelection]="true"
   [(ngModel)]="selectedTruck"
   (completeMethod)="searchTruck($event)"

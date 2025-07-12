@@ -5,7 +5,6 @@ import {CardModule} from "primeng/card";
 import {SkeletonModule} from "primeng/skeleton";
 import {ApiService} from "@/core/api";
 import {DailyGrossesDto, MonthlyGrossesDto, TruckDto, TruckGeolocationDto} from "@/core/api/models";
-import {environment} from "@/env";
 import {BarChartDrawnEvent, GeolocationMap, GrossesBarchart} from "@/shared/components";
 import {DistanceUnitPipe} from "@/shared/pipes";
 import {LineChartDrawnEvent, TruckGrossesLinechartComponent} from "../components";
@@ -30,7 +29,6 @@ export class TruckDetailsComponent implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly route = inject(ActivatedRoute);
 
-  public readonly accessToken = environment.mapboxToken;
   public id!: string;
   public isLoading = false;
   public truck?: TruckDto;

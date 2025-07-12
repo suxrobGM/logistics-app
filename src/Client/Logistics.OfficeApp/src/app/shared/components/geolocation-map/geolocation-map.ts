@@ -2,6 +2,7 @@ import {CommonModule} from "@angular/common";
 import {Component, input, signal} from "@angular/core";
 import {MarkerComponent, NgxMapboxGLModule} from "ngx-mapbox-gl";
 import {TruckGeolocationDto} from "@/core/api/models";
+import {environment} from "@/env";
 import {AddressPipe} from "@/shared/pipes";
 
 @Component({
@@ -12,9 +13,9 @@ import {AddressPipe} from "@/shared/pipes";
   imports: [CommonModule, NgxMapboxGLModule, AddressPipe],
 })
 export class GeolocationMap {
+  protected readonly accessToken = environment.mapboxToken;
   protected readonly selectedMarker = signal<Marker | null>(null);
 
-  public readonly accessToken = input.required<string>();
   public readonly geolocationData = input<TruckGeolocationDto[]>([]);
   public readonly zoom = input<number>(3);
   public readonly center = input<[number, number]>([-95, 35]);

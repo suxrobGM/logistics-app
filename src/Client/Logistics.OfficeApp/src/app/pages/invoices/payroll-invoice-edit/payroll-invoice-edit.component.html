@@ -5,11 +5,11 @@
   <div class="col-12 col-md-6">
     <p-card>
       @if (isLoading()) {
-        <p-progressSpinner></p-progressSpinner>
+        <p-progressSpinner />
       }
 
       <form [formGroup]="form" (ngSubmit)="submit()">
-        <app-validation-summary [form]="form"></app-validation-summary>
+        <app-validation-summary [form]="form" />
 
         <div class="mb-3">
           <label for="dateRange" class="mb-2">Date range</label><br />

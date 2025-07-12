@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import {CommonModule} from "@angular/common";
-import {Component, Input, forwardRef, inject, output} from "@angular/core";
+import {Component, forwardRef, inject, model, output, signal} from "@angular/core";
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
 import {ApiService} from "@/core/api";
@@ -8,7 +9,7 @@ import {CustomerDto} from "@/core/api/models";
 @Component({
   selector: "app-search-customer",
   standalone: true,
-  templateUrl: "./search-customer.component.html",
+  templateUrl: "./search-customer.html",
   imports: [CommonModule, AutoCompleteModule, FormsModule],
   providers: [
     {
@@ -21,21 +22,19 @@ import {CustomerDto} from "@/core/api/models";
 export class SearchCustomerComponent implements ControlValueAccessor {
   private readonly apiService = inject(ApiService);
 
-  private isDisabled = false;
-  public suggestedCustomers: CustomerDto[] = [];
-
-  @Input() selectedCustomer: CustomerDto | null = null;
+  protected readonly suggestedCustomers = signal<CustomerDto[]>([]);
+  public readonly selectedCustomer = model<CustomerDto | null>(null);
   public readonly selectedCustomerChange = output<CustomerDto | null>();
 
-  searchCustomer(event: {query: string}) {
+  searchCustomer(event: {query: string}): void {
     this.apiService.getCustomers({search: event.query}).subscribe((result) => {
       if (result.data && result.data.length) {
-        this.suggestedCustomers = result.data;
+        this.suggestedCustomers.set(result.data);
       }
     });
   }
 
-  changeSelectedCustomer(event: AutoCompleteSelectEvent) {
+  changeSelectedCustomer(event: AutoCompleteSelectEvent): void {
     this.selectedCustomerChange.emit(event.value);
     this.onChange(event.value);
   }
@@ -47,7 +46,7 @@ export class SearchCustomerComponent implements ControlValueAccessor {
   private onTouched(): void {}
 
   writeValue(value: CustomerDto | null): void {
-    this.selectedCustomer = value;
+    this.selectedCustomer.set(value);
   }
 
   registerOnChange(fn: () => void): void {
@@ -59,7 +58,9 @@ export class SearchCustomerComponent implements ControlValueAccessor {
   }
 
   setDisabledState(isDisabled: boolean): void {
-    this.isDisabled = isDisabled;
+    if (isDisabled) {
+      this.selectedCustomer.set(null);
+    }
   }
 
   //#endregion

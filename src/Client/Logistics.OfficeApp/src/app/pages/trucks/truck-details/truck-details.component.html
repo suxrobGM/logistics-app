@@ -89,17 +89,14 @@
   </p-card>
 
   <div class="col-12 col-sm-6 map-container">
-    <app-geolocation-map [accessToken]="accessToken" [geolocationData]="truckLocations">
-    </app-geolocation-map>
+    <app-geolocation-map [geolocationData]="truckLocations" />
   </div>
 </div>
 
 <div class="mt-3">
-  <app-truck-grosses-linechart [truckId]="id" (chartDrawn)="onLineChartDrawn($event)">
-  </app-truck-grosses-linechart>
+  <app-truck-grosses-linechart [truckId]="id" (chartDrawn)="onLineChartDrawn($event)" />
 </div>
 
 <div class="mt-3">
-  <app-grosses-barchart class="mt-3" [truckId]="id" (chartDrawn)="onBarChartDrawn($event)">
-  </app-grosses-barchart>
+  <app-grosses-barchart class="mt-3" [truckId]="id" (chartDrawn)="onBarChartDrawn($event)" />
 </div>

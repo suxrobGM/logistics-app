@@ -1,16 +1,24 @@
-import {Component, OnInit, inject} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {Component, inject, input, signal} from "@angular/core";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Router, RouterLink} from "@angular/router";
+import {ConfirmationService} from "primeng/api";
 import {AutoCompleteModule} from "primeng/autocomplete";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {SelectModule} from "primeng/select";
 import {ToastModule} from "primeng/toast";
 import {ApiService} from "@/core/api";
-import {AddressDto, CreateLoadCommand, CustomerDto} from "@/core/api/models";
-import {AuthService} from "@/core/auth";
+import {
+  AddressDto,
+  CustomerDto,
+  LoadStatus,
+  UpdateLoadCommand,
+  loadStatusOptions,
+} from "@/core/api/models";
 import {ToastService} from "@/core/services";
-import {environment} from "@/env";
 import {
   AddressAutocomplete,
   DirectionsMap,
@@ -20,14 +28,16 @@ import {
 } from "@/shared/components";
 import {Converters} from "@/shared/utils";
 import {SearchCustomerComponent, SearchTruckComponent} from "../components";
-import {TruckData} from "../shared";
+import {TruckData, TruckHelper} from "../shared";
 
 @Component({
-  selector: "app-add-load",
-  templateUrl: "./add-load.component.html",
-  styleUrl: "./add-load.component.css",
+  selector: "app-edit-load",
+  templateUrl: "./edit-load.html",
+  styleUrl: "./edit-load.css",
   imports: [
+    CommonModule,
     ToastModule,
+    ConfirmDialogModule,
     CardModule,
     ProgressSpinnerModule,
     FormsModule,
@@ -40,23 +50,27 @@ import {TruckData} from "../shared";
     SearchCustomerComponent,
     SearchTruckComponent,
     ValidationSummary,
+    SelectModule,
   ],
 })
-export class AddLoadComponent implements OnInit {
-  private readonly authService = inject(AuthService);
+export class EditLoadComponent {
   private readonly apiService = inject(ApiService);
+  private readonly confirmationService = inject(ConfirmationService);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
-  public readonly accessToken = environment.mapboxToken;
   private distanceMeters = 0;
-  public isLoading = false;
-  public form: FormGroup<AddLoadForm>;
-  public originCoords: [number, number] | null = null;
-  public destinationCoords: [number, number] | null = null;
+  protected readonly loadStatuses = loadStatusOptions;
+  protected readonly form: FormGroup<EditLoadForm>;
+  protected readonly id = input.required<string>();
+
+  protected readonly loadNumber = signal<number>(0);
+  protected readonly isLoading = signal(false);
+  protected readonly originCoords = signal<[number, number] | null>(null);
+  protected readonly destinationCoords = signal<[number, number] | null>(null);
 
   constructor() {
-    this.form = new FormGroup<AddLoadForm>({
+    this.form = new FormGroup<EditLoadForm>({
       name: new FormControl(""),
       customer: new FormControl(null, {validators: Validators.required}),
       orgAddress: new FormControl(null, {validators: Validators.required, nonNullable: true}),
@@ -68,6 +82,10 @@ export class AddLoadComponent implements OnInit {
         {value: 0, disabled: true},
         {validators: Validators.required, nonNullable: true}
       ),
+      status: new FormControl(LoadStatus.Dispatched, {
+        validators: Validators.required,
+        nonNullable: true,
+      }),
       assignedTruck: new FormControl(null, {validators: Validators.required}),
       assignedDispatcherId: new FormControl("", {
         validators: Validators.required,
@@ -78,39 +96,45 @@ export class AddLoadComponent implements OnInit {
         {validators: Validators.required, nonNullable: true}
       ),
     });
+
+    this.fetchLoad();
   }
 
-  ngOnInit(): void {
-    this.fetchCurrentDispatcher();
+  confirmToDelete(): void {
+    this.confirmationService.confirm({
+      message: "Are you sure that you want to delete this load?",
+      accept: () => this.deleteLoad(),
+    });
   }
 
-  updateOrigin(eventData: SelectedAddressEvent) {
-    this.originCoords = eventData.center;
+  updateOrigin(eventData: SelectedAddressEvent): void {
+    this.originCoords.set(eventData.center);
     this.form.patchValue({
       orgCoords: eventData.center,
     });
   }
 
-  updateDestination(eventData: SelectedAddressEvent) {
-    this.destinationCoords = eventData.center;
+  updateDestination(eventData: SelectedAddressEvent): void {
+    this.destinationCoords.set(eventData.center);
     this.form.patchValue({
       dstCoords: eventData.center,
     });
   }
 
-  updateDistance(eventData: RouteChangedEvent) {
+  updateDistance(eventData: RouteChangedEvent): void {
     this.distanceMeters = eventData.distance;
     const distanceMiles = Converters.metersTo(this.distanceMeters, "mi");
     this.form.patchValue({distance: distanceMiles});
   }
 
-  createLoad() {
+  updateLoad(): void {
     if (!this.form.valid) {
       return;
     }
 
-    this.isLoading = true;
-    const command: CreateLoadCommand = {
+    this.isLoading.set(true);
+    const command: UpdateLoadCommand = {
+      id: this.id(),
       name: this.form.value.name!,
       originAddress: this.form.value.orgAddress!,
       originAddressLong: this.form.value.orgCoords![0],
@@ -122,32 +146,71 @@ export class AddLoadComponent implements OnInit {
       distance: this.distanceMeters,
       assignedDispatcherId: this.form.value.assignedDispatcherId!,
       assignedTruckId: this.form.value.assignedTruck!.truckId,
-      customerId: this.form.value.customer!.id,
+      customerId: this.form.value.customer?.id,
+      status: this.form.value.status,
     };
 
-    this.apiService.createLoad(command).subscribe((result) => {
+    this.apiService.updateLoad(command).subscribe((result) => {
       if (result.success) {
-        this.toastService.showSuccess("A new load has been created successfully");
-        this.router.navigateByUrl("/loads");
+        this.toastService.showSuccess("Load has been updated successfully");
       }
 
-      this.isLoading = false;
+      this.isLoading.set(false);
     });
   }
 
-  private fetchCurrentDispatcher() {
-    const userData = this.authService.getUserData();
+  private deleteLoad(): void {
+    this.isLoading.set(true);
+    this.apiService.deleteLoad(this.id()).subscribe((result) => {
+      if (result.success) {
+        this.toastService.showSuccess("A load has been deleted successfully");
+        this.router.navigateByUrl("/loads");
+      }
 
-    if (userData) {
+      this.isLoading.set(false);
+    });
+  }
+
+  private fetchLoad(): void {
+    this.isLoading.set(true);
+
+    this.apiService.getLoad(this.id()).subscribe((result) => {
+      if (!result.success || !result.data) {
+        return;
+      }
+
+      const load = result.data;
+
       this.form.patchValue({
-        assignedDispatcherId: userData.id,
-        assignedDispatcherName: userData.getFullName(),
+        name: load.name,
+        customer: load.customer,
+        orgAddress: load.originAddress,
+        orgCoords: [load.originAddressLong, load.originAddressLat],
+        dstAddress: load.destinationAddress,
+        dstCoords: [load.destinationAddressLong, load.destinationAddressLat],
+        deliveryCost: load.deliveryCost,
+        distance: Converters.metersTo(load.distance, "mi"),
+        status: load.status,
+        assignedDispatcherId: load.assignedDispatcherId,
+        assignedDispatcherName: load.assignedDispatcherName,
+        assignedTruck: {
+          truckId: load.assignedTruckId!,
+          driversName: TruckHelper.formatDriversName(
+            load.assignedTruckNumber!,
+            load.assignedTruckDriversName!
+          ),
+        },
       });
-    }
+
+      this.loadNumber.set(load.number);
+      this.originCoords.set([load.originAddressLong, load.originAddressLat]);
+      this.destinationCoords.set([load.destinationAddressLong, load.destinationAddressLat]);
+      this.isLoading.set(false);
+    });
   }
 }
 
-interface AddLoadForm {
+interface EditLoadForm {
   name: FormControl<string | null>;
   customer: FormControl<CustomerDto | null>;
   orgAddress: FormControl<AddressDto | null>;
@@ -156,6 +219,7 @@ interface AddLoadForm {
   dstCoords: FormControl<[number, number]>;
   deliveryCost: FormControl<number>;
   distance: FormControl<number>;
+  status: FormControl<LoadStatus>;
   assignedTruck: FormControl<TruckData | null>;
   assignedDispatcherId: FormControl<string>;
   assignedDispatcherName: FormControl<string>;

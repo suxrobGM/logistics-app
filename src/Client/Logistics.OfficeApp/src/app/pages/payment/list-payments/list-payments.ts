@@ -14,7 +14,7 @@ import {PredefinedDateRanges} from "@/shared/utils";
 @Component({
   selector: "app-list-payments",
   standalone: true,
-  templateUrl: "./list-payments.component.html",
+  templateUrl: "./list-payments.html",
   styleUrls: [],
   imports: [
     CommonModule,

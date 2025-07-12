@@ -6,8 +6,8 @@ import {AuthService} from "@/core/auth";
 
 @Component({
   selector: "app-login",
-  templateUrl: "./login.component.html",
-  styleUrl: "./login.component.css",
+  templateUrl: "./login.html",
+  styleUrl: "./login.css",
   imports: [ProgressSpinnerModule, ButtonModule],
 })
 export class LoginComponent {

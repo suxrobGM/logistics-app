@@ -1,38 +1,38 @@
 <mgl-map
-  [accessToken]="accessToken()"
+  [accessToken]="accessToken"
   [style]="'mapbox://styles/mapbox/streets-v11'"
-  [zoom]="[zoom]"
-  [center]="center"
-  [fitBounds]="bounds!"
+  [zoom]="[zoom()]"
+  [center]="center()"
+  [fitBounds]="bounds()!"
   [fitBoundsOptions]="{padding: 50}"
-  [style.width]="width"
-  [style.height]="height"
+  [style.width]="width()"
+  [style.height]="height()"
 >
   <mgl-image
     id="custom-marker"
     url="https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png"
-    (imageLoaded)="isImageLoaded = true"
+    (imageLoaded)="imageLoaded.set(true)"
   />
 
   <!-- Route Layer -->
-  @if (route) {
+  @if (route()) {
   <mgl-layer
     id="routeLayer"
     type="line"
-    [source]="route"
+    [source]="route()!"
     [paint]="{
-        'line-color': '#28a745',
-        'line-width': 8,
-      }"
+          'line-color': '#28a745',
+          'line-width': 8,
+        }"
   />
   }
 
   <!-- Start Point Symbol Layer -->
-  @if (startPoint && isImageLoaded) {
+  @if (startPoint() && imageLoaded()) {
   <mgl-layer
     id="startPointLayer"
     type="symbol"
-    [source]="startPoint"
+    [source]="startPoint()!"
     [layout]="{
         'icon-image': 'custom-marker',
       }"
@@ -40,11 +40,11 @@
   }
 
   <!-- End Point Symbol Layer -->
-  @if (endPoint && isImageLoaded) {
+  @if (endPoint() && imageLoaded()) {
   <mgl-layer
     id="endPointLayer"
     type="symbol"
-    [source]="endPoint"
+    [source]="endPoint()!"
     [layout]="{
         'icon-image': 'custom-marker',
       }"

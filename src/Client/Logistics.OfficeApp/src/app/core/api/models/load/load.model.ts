@@ -5,7 +5,7 @@ import {LoadStatus} from "./enums";
 
 export interface LoadDto {
   id: string;
-  refId: number;
+  number: number;
   name?: string;
   originAddress: AddressDto;
   originAddressLat: number;

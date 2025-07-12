@@ -10,11 +10,11 @@
     [(ngModel)]="addressString"
   />
 
-  @if (searchResults.length) {
+  @if (searchResults().length) {
   <div class="popup">
     @for (result of searchResults(); track result.id) {
     <div class="popup-item" (click)="handleClickAddress(result)" role="presentation">
-      {{ result.place_name }}
+      {{ result.properties.full_address }}
     </div>
     }
   </div>

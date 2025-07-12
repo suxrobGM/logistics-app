@@ -1,9 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import {CommonModule} from "@angular/common";
-import {Component, OnInit, input, model, output, signal} from "@angular/core";
+import {HttpClient, HttpParams} from "@angular/common/http";
+import {Component, inject, input, model, output, signal} from "@angular/core";
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
+import {catchError} from "rxjs";
 import {AddressDto} from "@/core/api/models";
+import {environment} from "@/env";
+import {GeoPoint, MapboxGeocodingFeature, MapboxGeocodingResponse} from "@/shared/types/mapbox";
 import {Converters} from "@/shared/utils";
 
 @Component({
@@ -19,13 +23,14 @@ import {Converters} from "@/shared/utils";
     },
   ],
 })
-export class AddressAutocomplete implements ControlValueAccessor, OnInit {
+export class AddressAutocomplete implements ControlValueAccessor {
+  private readonly http = inject(HttpClient);
   private isDisabled = false;
   private isTouched = false;
-  protected readonly searchResults = signal<GeocodingFeature[]>([]);
+  private readonly accessToken = environment.mapboxToken;
+  protected readonly searchResults = signal<MapboxGeocodingFeature[]>([]);
   protected readonly addressString = model<string | null>(null);
 
-  public readonly accessToken = input.required<string>();
   public readonly field = input("");
   public readonly placeholder = input("Type address...");
   public readonly country = input("us");
@@ -34,16 +39,18 @@ export class AddressAutocomplete implements ControlValueAccessor, OnInit {
   public readonly addressChange = output<AddressDto>();
   public readonly selectedAddress = output<SelectedAddressEvent>();
 
-  ngOnInit(): void {
+  constructor() {
     this.setAddressString(this.address());
   }
 
-  async handleAddressInputChange(event: Event): Promise<void> {
+  handleAddressInputChange(event: Event): void {
     if (this.isDisabled) {
       return;
     }
 
     const query = (event.target as HTMLInputElement)?.value;
+
+    console.log("Searching for address:", query);
 
     if (!query) {
       this.markAsTouched();
@@ -51,27 +58,37 @@ export class AddressAutocomplete implements ControlValueAccessor, OnInit {
       return;
     }
 
-    const response = await fetch(
-      `https://api.mapbox.com/search/geocode/v6/forward?q=${query}&access_token=${this.accessToken()}&country=${this.country()}&types=address`
-    );
+    const params = new HttpParams()
+      .set("q", query)
+      .set("access_token", this.accessToken)
+      .set("country", this.country())
+      .set("types", "address");
 
-    const responseData = (await response.json()) as GeocodingResponse;
-    this.searchResults.set(responseData.features);
+    this.http
+      .get<MapboxGeocodingResponse>("https://api.mapbox.com/search/geocode/v6/forward", {params})
+      .pipe(
+        catchError(() => {
+          console.error("Error fetching address data");
+          this.searchResults.set([]);
+          return [];
+        })
+      )
+      .subscribe((data) => {
+        console.log("Address search response:", data);
+        this.searchResults.set(data.features || []);
+      });
   }
 
-  handleClickAddress(geocodingFeature: GeocodingFeature): void {
+  handleClickAddress(geocodingFeature: MapboxGeocodingFeature): void {
     if (this.isDisabled) {
       return;
     }
 
-    const street = geocodingFeature.place_name.substring(
-      0,
-      geocodingFeature.place_name.indexOf(",")
-    );
-    const city = geocodingFeature.context.find((i) => i.id.startsWith("place"))?.text ?? "";
-    const region = geocodingFeature.context.find((i) => i.id.startsWith("region"))?.text ?? "";
-    const zipCode = geocodingFeature.context.find((i) => i.id.startsWith("postcode"))?.text ?? "";
-    const country = geocodingFeature.context.find((i) => i.id.startsWith("country"))?.text ?? "";
+    const street = geocodingFeature.properties.context.address.name;
+    const city = geocodingFeature.properties.context.place.name;
+    const region = geocodingFeature.properties.context.region.name;
+    const zipCode = geocodingFeature.properties.context.postcode.name;
+    const country = geocodingFeature.properties.context.country.name;
 
     const addressObj: AddressDto = {
       line1: street,
@@ -85,7 +102,7 @@ export class AddressAutocomplete implements ControlValueAccessor, OnInit {
     this.addressChange.emit(addressObj);
     this.selectedAddress.emit({
       address: addressObj,
-      center: geocodingFeature.center,
+      center: geocodingFeature.geometry.coordinates,
     });
 
     this.searchResults.set([]);
@@ -142,26 +159,7 @@ export class AddressAutocomplete implements ControlValueAccessor, OnInit {
   // #endregion
 }
 
-interface GeocodingResponse {
-  type: string;
-  query: string[];
-  features: GeocodingFeature[];
-}
-
-interface GeocodingFeature {
-  id: string;
-  address: string;
-  place_name: string;
-  center: [number, number];
-  context: FeatureContext[];
-}
-
-interface FeatureContext {
-  id: string;
-  text: string;
-}
-
 export interface SelectedAddressEvent {
   address: AddressDto;
-  center: [number, number];
+  center: GeoPoint;
 }

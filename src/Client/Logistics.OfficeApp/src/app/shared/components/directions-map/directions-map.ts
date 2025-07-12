@@ -1,77 +1,70 @@
 import {HttpClient} from "@angular/common/http";
-import {Component, Input, OnChanges, inject, input, output} from "@angular/core";
+import {Component, effect, inject, input, model, output, signal} from "@angular/core";
 import {GeoJSONSourceRaw, LngLatLike} from "mapbox-gl";
 import {NgxMapboxGLModule} from "ngx-mapbox-gl";
+import {environment} from "@/env";
+import {GeoPoint, MapboxDirectionsResponse} from "@/shared/types/mapbox";
 
 @Component({
   selector: "app-directions-map",
   templateUrl: "./directions-map.html",
   imports: [NgxMapboxGLModule],
 })
-export class DirectionsMap implements OnChanges {
+export class DirectionsMap {
+  protected readonly accessToken = environment.mapboxToken;
+  private readonly defaultCenter: GeoPoint = [-95, 35];
+  private readonly defaultZoom = 3;
+
   private readonly http = inject(HttpClient);
 
-  public bounds?: [LngLatLike, LngLatLike] | null;
-  public route?: GeoJSONSourceRaw | null;
-  public startPoint?: GeoJSONSourceRaw | null;
-  public endPoint?: GeoJSONSourceRaw | null;
-  public isImageLoaded: boolean;
-  private defaultCenter: [number, number];
-  private defaultZoom: number;
+  protected readonly bounds = signal<[LngLatLike, LngLatLike] | null>(null);
+  protected readonly route = signal<GeoJSONSourceRaw | null>(null);
+  protected readonly startPoint = signal<GeoJSONSourceRaw | null>(null);
+  protected readonly endPoint = signal<GeoJSONSourceRaw | null>(null);
+  protected readonly imageLoaded = signal(false);
 
-  public readonly accessToken = input.required<string>();
-  @Input() center: [number, number];
-  @Input() zoom: number;
-  public readonly start = input<[number, number] | null>();
-  public readonly end = input<[number, number] | null>();
-  @Input() width: string;
-  @Input() height: string;
+  public readonly center = model<GeoPoint>(this.defaultCenter);
+  public readonly zoom = model<number>(this.defaultZoom);
+  public readonly start = input<GeoPoint | null>(null);
+  public readonly end = input<GeoPoint | null>(null);
+  public readonly width = input<string>("100%");
+  public readonly height = input<string>("100%");
   public readonly routeChanged = output<RouteChangedEvent>();
 
   constructor() {
-    this.zoom = this.defaultZoom = 3;
-    this.center = this.defaultCenter = [-95, 35];
-    this.isImageLoaded = false;
-    this.route = null;
-    this.startPoint = null;
-    this.endPoint = null;
-    this.bounds = null;
-    this.width = "100%";
-    this.height = "100%";
+    effect(() => {
+      if (this.start() || this.end()) {
+        this.drawMarkers();
+        this.drawRoute();
+      } else {
+        this.clearRoutes();
+      }
+    });
   }
 
-  ngOnChanges() {
-    if (!this.start() && !this.end()) {
-      this.clearRoutes();
-    } else {
-      this.drawMarkers();
-      this.drawRoute();
-    }
-  }
-
-  private drawRoute() {
+  private drawRoute(): void {
     const start = this.start();
     const end = this.end();
     if (!start || !end) {
       return;
     }
 
-    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?geometries=geojson&access_token=${this.accessToken()}`;
+    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?geometries=geojson&access_token=${this.accessToken}`;
 
-    this.http.get<ResponseData>(url).subscribe((data) => {
+    this.http.get<MapboxDirectionsResponse>(url).subscribe((data) => {
       if (data.code !== "Ok") {
         return;
       }
 
-      this.route = {
+      this.route.set({
         type: "geojson",
         data: {
           type: "Feature",
           geometry: data.routes[0].geometry,
           properties: {},
         },
-      };
-      this.bounds = [this.start() as LngLatLike, this.end() as LngLatLike];
+      });
+      this.bounds.set([this.start() as LngLatLike, this.end() as LngLatLike]);
       this.routeChanged.emit({
         origin: this.start()!,
         destination: this.end()!,
@@ -80,15 +73,15 @@ export class DirectionsMap implements OnChanges {
     });
   }
 
-  private drawMarkers() {
+  private drawMarkers(): void {
     const start = this.start();
     if (start) {
-      this.startPoint = this.getPointSource(start);
-      this.center = start;
+      this.startPoint.set(this.getPointSource(start));
+      this.center.set(start);
     }
     const end = this.end();
     if (end) {
-      this.endPoint = this.getPointSource(end);
+      this.endPoint.set(this.getPointSource(end));
     }
   }
 
@@ -106,28 +99,13 @@ export class DirectionsMap implements OnChanges {
     };
   }
 
-  private clearRoutes() {
-    this.route = null;
-    this.startPoint = null;
-    this.endPoint = null;
-    this.center = this.defaultCenter;
-    this.zoom = this.defaultZoom;
+  private clearRoutes(): void {
+    this.route.set(null);
+    this.startPoint.set(null);
+    this.endPoint.set(null);
+    this.center.set(this.defaultCenter);
+    this.zoom.set(this.defaultZoom);
   }
-}
-
-interface ResponseData {
-  code: string;
-  routes: RouteData[];
-}
-
-interface RouteData {
-  duration: number;
-  distance: number;
-  weight_name: string;
-  weight: number;
-  duration_typical: number;
-  weight_typical: number;
-  geometry: GeoJSON.Geometry;
 }
 
 export interface RouteChangedEvent {
