@@ -13,9 +13,8 @@ import {GeolocationMap} from "@/shared/components";
 export class TrucksMap implements OnDestroy {
   private readonly apiService = inject(ApiService);
   private readonly liveTrackingService = inject(LiveTrackingService);
-  public readonly truckLocations = signal<TruckGeolocationDto[]>([]);
 
-  public readonly accessToken = input.required<string>();
+  protected readonly truckLocations = signal<TruckGeolocationDto[]>([]);
   public readonly width = input("100%");
   public readonly height = input("100%");
 

@@ -1,8 +1,8 @@
 <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" />
 <app-change-role-dialog
   [(visible)]="showUpdateDialog"
-  [userId]="id"
-  [currentRoles]="employee?.roles"
+  [userId]="id()!"
+  [currentRoles]="employee()?.roles ?? []"
 />
 
 <h1 class="text-center">Edit Employee</h1>
@@ -11,8 +11,8 @@
 <div class="row justify-content-center">
   <div class="col-12 col-md-6">
     <p-card>
-      @if (isLoading) {
-        <p-progressSpinner />
+      @if (isLoading()) {
+      <p-progressSpinner />
       }
 
       <form [formGroup]="form" (ngSubmit)="updateEmployee()">
@@ -25,7 +25,7 @@
             type="text"
             class="form-control"
             [disabled]="true"
-            [value]="employee?.email"
+            [value]="employee()?.email"
           />
         </div>
         <div class="mb-3">
@@ -35,7 +35,7 @@
             type="text"
             class="form-control"
             [disabled]="true"
-            [value]="employee?.firstName"
+            [value]="employee()?.firstName"
           />
         </div>
         <div class="mb-3">
@@ -45,7 +45,7 @@
             type="text"
             class="form-control"
             [disabled]="true"
-            [value]="employee?.lastName"
+            [value]="employee()?.lastName"
           />
         </div>
         <div class="mb-3">
@@ -57,29 +57,29 @@
         <div class="mb-3">
           <label for="salary" class="form-label">Salary</label>
           @if (isShareOfGrossSalary()) {
-            <div class="input-group">
-              <span class="input-group-text">%</span>
-              <input
-                id="salary"
-                formControlName="salary"
-                type="number"
-                class="form-control"
-                [min]="0"
-                [max]="100"
-              />
-            </div>
+          <div class="input-group">
+            <span class="input-group-text">%</span>
+            <input
+              id="salary"
+              formControlName="salary"
+              type="number"
+              class="form-control"
+              [min]="0"
+              [max]="100"
+            />
+          </div>
           } @else {
-            <div class="input-group">
-              <span class="input-group-text">$$</span>
-              <input
-                id="salary"
-                formControlName="salary"
-                type="number"
-                class="form-control"
-                [min]="0"
-                [disabled]="isNoneSalary()"
-              />
-            </div>
+          <div class="input-group">
+            <span class="input-group-text">$$</span>
+            <input
+              id="salary"
+              formControlName="salary"
+              type="number"
+              class="form-control"
+              [min]="0"
+              [disabled]="isNoneSalary()"
+            />
+          </div>
           }
         </div>
 
@@ -96,16 +96,19 @@
             <p-button
               type="button"
               label="Change"
-              [disabled]="!canChangeRole"
+              [disabled]="!canChangeRole()"
               (click)="openUpdateDialog()"
-            >
-            </p-button>
+            />
           </div>
         </div>
 
         <div class="mt-3">
-          <p-button type="submit" icon="bi bi-pencil-square" label="Save" [disabled]="isLoading">
-          </p-button>
+          <p-button
+            type="submit"
+            icon="bi bi-pencil-square"
+            label="Save"
+            [disabled]="isLoading()"
+          />
           <p-button
             type="button"
             styleClass="p-button-danger ms-2"
@@ -113,16 +116,14 @@
             label="Delete"
             [disabled]="isLoading"
             (click)="confirmToDelete()"
-          >
-          </p-button>
+          />
           <p-button
             type="button"
             class="ms-2"
             icon="bi bi-arrow-left-square"
             label="Back to list"
             [routerLink]="['/employees']"
-          >
-          </p-button>
+          />
         </div>
       </form>
     </p-card>

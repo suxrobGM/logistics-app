@@ -1,5 +1,5 @@
 import {CommonModule, CurrencyPipe, DatePipe} from "@angular/common";
-import {Component, inject} from "@angular/core";
+import {Component, inject, signal} from "@angular/core";
 import {RouterLink} from "@angular/router";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
@@ -13,9 +13,7 @@ import {DateUtils} from "@/shared/utils";
 
 @Component({
   selector: "app-truck-stats-table",
-  standalone: true,
-  templateUrl: "./truck-stats-table.component.html",
-  styleUrls: [],
+  templateUrl: "./truck-stats-table.html",
   imports: [
     CommonModule,
     CurrencyPipe,
@@ -32,34 +30,26 @@ import {DateUtils} from "@/shared/utils";
 export class TruckStatsTableComponent {
   private readonly apiService = inject(ApiService);
 
-  public isLoading: boolean;
-  public truckStats: TruckStatsDto[];
-  public totalRecords: number;
-  public startDate: Date;
-  public endDate: Date;
+  protected readonly isLoading = signal(false);
+  protected readonly truckStats = signal<TruckStatsDto[]>([]);
+  protected readonly totalRecords = signal(0);
+  protected readonly startDate = signal<Date>(DateUtils.daysAgo(30));
+  protected readonly endDate = signal<Date>(DateUtils.today());
 
-  constructor() {
-    this.isLoading = true;
-    this.truckStats = [];
-    this.totalRecords = 0;
-    this.startDate = DateUtils.daysAgo(30);
-    this.endDate = DateUtils.today();
-  }
-
-  reloadTable() {
+  protected reloadTable(): void {
     this.fetchTrucksStats({first: 0, rows: 10});
   }
 
-  fetchTrucksStats(event: TableLazyLoadEvent) {
-    this.isLoading = true;
+  protected fetchTrucksStats(event: TableLazyLoadEvent): void {
+    this.isLoading.set(true);
     const first = event.first ?? 1;
     const rows = event.rows ?? 10;
     const page = first / rows + 1;
     const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
 
     const query: PagedIntervalQuery = {
-      startDate: this.startDate,
-      endDate: this.endDate,
+      startDate: this.startDate(),
+      endDate: this.endDate(),
       orderBy: sortField,
       page: page,
       pageSize: rows,
@@ -67,11 +57,11 @@ export class TruckStatsTableComponent {
 
     this.apiService.getTrucksStats(query).subscribe((result) => {
       if (result.success && result.data) {
-        this.truckStats = result.data;
-        this.totalRecords = result.totalItems;
+        this.truckStats.set(result.data);
+        this.totalRecords.set(result.totalItems);
       }
 
-      this.isLoading = false;
+      this.isLoading.set(false);
     });
   }
 }

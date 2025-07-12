@@ -5,7 +5,7 @@ import {RoleDto, UserDto} from "@/core/api/models";
 import {AuthService} from "@/core/auth";
 import {UserRole} from "@/shared/models";
 
-@Injectable()
+@Injectable({providedIn: "root"})
 export class UserService {
   private readonly apiService = inject(ApiService);
 

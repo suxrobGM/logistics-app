@@ -1,5 +1,5 @@
 import {CommonModule, CurrencyPipe, DatePipe, PercentPipe} from "@angular/common";
-import {Component, inject} from "@angular/core";
+import {Component, inject, signal} from "@angular/core";
 import {RouterLink} from "@angular/router";
 import {SharedModule} from "primeng/api";
 import {ButtonModule} from "primeng/button";
@@ -14,9 +14,7 @@ import {EmployeeDto, SalaryType, salaryTypeOptions} from "@/core/api/models";
 
 @Component({
   selector: "app-list-employees",
-  templateUrl: "./list-employees.component.html",
-  styleUrls: [],
-  standalone: true,
+  templateUrl: "./list-employees.html",
   imports: [
     CommonModule,
     ButtonModule,
@@ -36,34 +34,27 @@ import {EmployeeDto, SalaryType, salaryTypeOptions} from "@/core/api/models";
 export class ListEmployeeComponent {
   private readonly apiService = inject(ApiService);
 
-  public employees: EmployeeDto[];
-  public isLoading: boolean;
-  public totalRecords: number;
-  public first: number;
+  protected readonly employees = signal<EmployeeDto[]>([]);
+  protected readonly isLoading = signal(false);
+  protected readonly totalRecords = signal(0);
+  protected readonly first = signal(0);
 
-  constructor() {
-    this.employees = [];
-    this.isLoading = false;
-    this.totalRecords = 0;
-    this.first = 0;
-  }
-
-  search(event: Event) {
-    this.isLoading = true;
+  search(event: Event): void {
+    this.isLoading.set(true);
     const searchValue = (event.target as HTMLInputElement).value;
 
     this.apiService.getEmployees({search: searchValue}).subscribe((result) => {
       if (result.success && result.data) {
-        this.employees = result.data;
-        this.totalRecords = result.totalItems;
+        this.employees.set(result.data);
+        this.totalRecords.set(result.totalItems);
       }
 
-      this.isLoading = false;
+      this.isLoading.set(false);
     });
   }
 
-  load(event: TableLazyLoadEvent) {
-    this.isLoading = true;
+  load(event: TableLazyLoadEvent): void {
+    this.isLoading.set(true);
     const first = event.first ?? 1;
     const rows = event.rows ?? 10;
     const page = first / rows + 1;
@@ -73,11 +64,11 @@ export class ListEmployeeComponent {
       .getEmployees({orderBy: sortField, page: page, pageSize: rows})
       .subscribe((result) => {
         if (result.success && result.data) {
-          this.employees = result.data;
-          this.totalRecords = result.totalItems;
+          this.employees.set(result.data);
+          this.totalRecords.set(result.totalItems);
         }
 
-        this.isLoading = false;
+        this.isLoading.set(false);
       });
   }
 

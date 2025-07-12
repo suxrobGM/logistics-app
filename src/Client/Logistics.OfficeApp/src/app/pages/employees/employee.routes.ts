@@ -1,9 +1,9 @@
 import {Routes} from "@angular/router";
 import {authGuard} from "@/core/auth";
 import {Permissions} from "@/shared/models";
-import {AddEmployeeComponent} from "./add-employee/add-employee.component";
-import {EditEmployeeComponent} from "./edit-employee/edit-employee.component";
-import {ListEmployeeComponent} from "./list-employees/list-employees.component";
+import {AddEmployeeComponent} from "./add-employee/add-employee";
+import {EditEmployeeComponent} from "./edit-employee/edit-employee";
+import {ListEmployeeComponent} from "./list-employees/list-employees";
 
 export const employeeRoutes: Routes = [
   {

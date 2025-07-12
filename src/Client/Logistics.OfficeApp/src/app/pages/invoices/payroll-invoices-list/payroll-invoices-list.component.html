@@ -7,7 +7,7 @@
     [rounded]="true"
     [text]="true"
     pTooltip="Add a new payroll invoice"
-    [routerLink]="['/invoices/payrolls/add']"
+    [routerLink]="['/invoices/payroll/add']"
   >
   </p-button>
 </div>
@@ -46,23 +46,23 @@
             <th>Period</th>
             <th pSortableColumn="Employee.FirstName">
               Employee
-              <p-sortIcon field="Employee.FirstName"></p-sortIcon>
+              <p-sortIcon field="Employee.FirstName" />
             </th>
             <th pSortableColumn="Employee.SalaryType">
               Employee Salary Type
-              <p-sortIcon field="Employee.SalaryType"></p-sortIcon>
+              <p-sortIcon field="Employee.SalaryType" />
             </th>
             <th pSortableColumn="Employee.Salary">
               Employee Salary
-              <p-sortIcon field="Employee.Salary"></p-sortIcon>
+              <p-sortIcon field="Employee.Salary" />
             </th>
             <th pSortableColumn="Total">
               Invoice Total
-              <p-sortIcon field="Total"></p-sortIcon>
+              <p-sortIcon field="Total" />
             </th>
             <th pSortableColumn="Status">
               Invoice Status
-              <p-sortIcon field="Status"></p-sortIcon>
+              <p-sortIcon field="Status" />
             </th>
             <th>Action</th>
           </tr>

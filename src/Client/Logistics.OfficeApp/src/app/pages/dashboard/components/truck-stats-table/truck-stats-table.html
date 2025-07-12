@@ -1,8 +1,8 @@
 <p-card>
   <ng-template pTemplate="header">
     <h4 class="ps-3 py-2">
-      Truck statistics for <span class="text-danger">{{ startDate | date: "shortDate" }}</span> -
-      <span class="text-danger">{{ endDate | date: "shortDate" }}</span>
+      Truck statistics for <span class="text-danger">{{ startDate() | date: "shortDate" }}</span> -
+      <span class="text-danger">{{ endDate() | date: "shortDate" }}</span>
     </h4>
     <hr class="w-100 m-0" />
   </ng-template>
@@ -16,34 +16,34 @@
   </div>
 
   <p-table
-    [value]="truckStats"
+    [value]="truckStats()"
     responsiveLayout="scroll"
     [lazy]="true"
     [paginator]="true"
     [showCurrentPageReport]="true"
     (onLazyLoad)="fetchTrucksStats($event)"
     [rows]="10"
-    [totalRecords]="totalRecords"
-    [loading]="isLoading"
+    [totalRecords]="totalRecords()"
+    [loading]="isLoading()"
     [rowsPerPageOptions]="[10, 25, 50]"
   >
     <ng-template pTemplate="header">
       <tr>
         <th pSortableColumn="TruckNumber">
           Truck Number
-          <p-sortIcon field="TruckNumber"></p-sortIcon>
+          <p-sortIcon field="TruckNumber" />
         </th>
         <th pSortableColumn="Gross">
           Gross
-          <p-sortIcon field="Gross"></p-sortIcon>
+          <p-sortIcon field="Gross" />
         </th>
         <th pSortableColumn="DriverShare">
           Driver Share
-          <p-sortIcon field="DriverShare"></p-sortIcon>
+          <p-sortIcon field="DriverShare" />
         </th>
         <th pSortableColumn="Distance">
           Traveled Distance (mi)
-          <p-sortIcon field="Distance"></p-sortIcon>
+          <p-sortIcon field="Distance" />
         </th>
         <th>Drivers</th>
         <th>
@@ -53,42 +53,31 @@
     </ng-template>
     <ng-template pTemplate="body" let-truckStats>
       <tr>
+        <td>{{ truckStats().truckNumber }}</td>
+        <td>{{ truckStats().gross | currency }}</td>
+        <td>{{ truckStats().driverShare | currency }}</td>
+        <td>{{ truckStats().distance | distanceUnit: "mi" }}</td>
         <td>
-          {{ truckStats.truckNumber }}
-        </td>
-        <td>
-          {{ truckStats.gross | currency }}
-        </td>
-        <td>
-          {{ truckStats.driverShare | currency }}
-        </td>
-        <td>
-          {{ truckStats.distance | distanceUnit: "mi" }}
-        </td>
-        <td>
-          @for (driver of truckStats.drivers; track driver.id) {
-            <span>
-              {{ driver.fullName }}
-              @if (truckStats.drivers.length > 1) {
-                <span>,</span>
-              }
-            </span>
+          @for (driver of truckStats().drivers; track driver.id) {
+          <span>
+            {{ driver.fullName }} @if (truckStats().drivers.length > 1) {
+            <span>,</span>
+            }
+          </span>
           }
         </td>
         <td class="overflow-visible">
           <p-button
             icon="bi bi-journal-text"
             pTooltip="View details"
-            [routerLink]="['/trucks/view', truckStats.truckId]"
-          >
-          </p-button>
+            [routerLink]="['/trucks/view', truckStats().truckId]"
+          />
           <p-button
             class="ms-2"
             icon="bi bi-pencil"
             pTooltip="Edit"
-            [routerLink]="['/trucks/edit', truckStats.truckId]"
-          >
-          </p-button>
+            [routerLink]="['/trucks/edit', truckStats().truckId]"
+          />
         </td>
       </tr>
     </ng-template>

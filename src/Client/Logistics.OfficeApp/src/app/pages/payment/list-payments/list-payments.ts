@@ -13,9 +13,7 @@ import {PredefinedDateRanges} from "@/shared/utils";
 
 @Component({
   selector: "app-list-payments",
-  standalone: true,
   templateUrl: "./list-payments.html",
-  styleUrls: [],
   imports: [
     CommonModule,
     CardModule,
@@ -30,10 +28,10 @@ import {PredefinedDateRanges} from "@/shared/utils";
 export class ListPaymentsComponent {
   private readonly apiService = inject(ApiService);
 
-  readonly payments = signal<PaymentDto[]>([]);
-  readonly isLoading = signal(false);
-  readonly totalRecords = signal(0);
-  readonly first = signal(0);
+  protected readonly payments = signal<PaymentDto[]>([]);
+  protected readonly isLoading = signal(false);
+  protected readonly totalRecords = signal(0);
+  protected readonly first = signal(0);
 
   // search(event: Event) {
   //   this.isLoading = true;

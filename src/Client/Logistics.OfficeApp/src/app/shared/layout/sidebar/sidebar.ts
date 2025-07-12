@@ -8,8 +8,8 @@ import {TooltipModule} from "primeng/tooltip";
 import {AuthService} from "@/core/auth";
 import {TenantService} from "@/core/services";
 import {environment} from "@/env";
-import {sidebarNavItems} from "@/shared/layout/data";
 import {PanelMenu} from "../panel-menu";
+import {sidebarItems} from "./sidebar-items";
 
 @Component({
   selector: "app-sidebar",
@@ -31,7 +31,7 @@ export class Sidebar {
   public readonly companyName = signal<string | null>(null);
   public readonly userRole = signal<string | null>(null);
   public readonly userFullName = signal<string | null>(null);
-  public readonly navItems = signal<MenuItem[]>(sidebarNavItems);
+  public readonly navItems = signal<MenuItem[]>(sidebarItems);
   public readonly profileMenuItems: MenuItem[];
 
   constructor() {
@@ -66,7 +66,7 @@ export class Sidebar {
 
     this.tenantService.tenantDataChanged$.subscribe((tenantData) => {
       if (!this.tenantService.isSubscriptionActive()) {
-        this.navItems.set(sidebarNavItems.filter((item) => item.label !== "Subscription"));
+        this.navItems.set(sidebarItems.filter((item) => item.label !== "Subscription"));
       }
 
       this.companyName.set(tenantData?.companyName ?? null);

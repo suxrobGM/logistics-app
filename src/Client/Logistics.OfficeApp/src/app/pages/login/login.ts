@@ -14,8 +14,8 @@ export class LoginComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
-  public readonly isAuthenticated = signal(false);
-  public readonly isLoading = signal(false);
+  protected readonly isAuthenticated = signal(false);
+  protected readonly isLoading = signal(false);
 
   constructor() {
     this.authService.onCheckingAuth().subscribe(() => this.isLoading.set(true));
@@ -30,12 +30,12 @@ export class LoginComponent {
     });
   }
 
-  login() {
+  login(): void {
     this.isLoading.set(true);
     this.authService.login();
   }
 
-  private redirectToHome() {
+  private redirectToHome(): void {
     if (this.isAuthenticated()) {
       this.router.navigateByUrl("/home");
     }

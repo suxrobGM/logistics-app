@@ -1,5 +1,5 @@
 import {CommonModule, CurrencyPipe} from "@angular/common";
-import {Component, OnInit, inject} from "@angular/core";
+import {Component, inject, signal} from "@angular/core";
 import {SharedModule} from "primeng/api";
 import {CardModule} from "primeng/card";
 import {ChartModule} from "primeng/chart";
@@ -10,9 +10,7 @@ import {Converters} from "@/shared/utils";
 
 @Component({
   selector: "app-company-stats",
-  standalone: true,
-  templateUrl: "./company-stats.component.html",
-  styleUrls: [],
+  templateUrl: "./company-stats.html",
   imports: [
     CommonModule,
     CurrencyPipe,
@@ -23,23 +21,18 @@ import {Converters} from "@/shared/utils";
     ChartModule,
   ],
 })
-export class CompanyStatsComponent implements OnInit {
+export class CompanyStatsComponent {
   private readonly apiService = inject(ApiService);
 
-  public isLoading: boolean;
-  public rpm: number;
-  public companyStats?: CompanyStatsDto;
+  protected readonly isLoading = signal(false);
+  protected readonly rpm = signal(0);
+  protected readonly companyStats = signal<CompanyStatsDto | null>(null);
 
   constructor() {
-    this.isLoading = false;
-    this.rpm = 0;
-  }
-
-  ngOnInit(): void {
     this.fetchCompanyStats();
   }
 
-  calcRpm(gross?: number, distance?: number): number {
+  protected calcRpm(gross?: number, distance?: number): number {
     if (gross == null || distance == null) {
       return 0;
     }
@@ -48,16 +41,16 @@ export class CompanyStatsComponent implements OnInit {
   }
 
   private fetchCompanyStats() {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     this.apiService.getCompanyStats().subscribe((result) => {
       if (result.success && result.data) {
         const stats = result.data;
-        this.companyStats = result.data;
-        this.rpm = stats.totalGross / Converters.metersTo(stats.totalDistance, "mi");
+        this.companyStats.set(result.data);
+        this.rpm.set(stats.totalGross / Converters.metersTo(stats.totalDistance, "mi"));
       }
 
-      this.isLoading = false;
+      this.isLoading.set(false);
     });
   }
 }

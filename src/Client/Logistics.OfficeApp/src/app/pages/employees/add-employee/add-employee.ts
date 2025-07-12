@@ -1,4 +1,4 @@
-import {Component, OnInit, inject} from "@angular/core";
+import {Component, inject, signal} from "@angular/core";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {RouterLink} from "@angular/router";
 import {AutoCompleteModule} from "primeng/autocomplete";
@@ -22,8 +22,8 @@ import {UserService} from "../services";
 
 @Component({
   selector: "app-add-employee",
-  templateUrl: "./add-employee.component.html",
-  styleUrl: "./add-employee.component.css",
+  templateUrl: "./add-employee.html",
+  styleUrl: "./add-employee.css",
   imports: [
     ToastModule,
     ConfirmDialogModule,
@@ -37,18 +37,18 @@ import {UserService} from "../services";
     RouterLink,
     ValidationSummary,
   ],
-  providers: [UserService],
 })
-export class AddEmployeeComponent implements OnInit {
+export class AddEmployeeComponent {
+  protected readonly form: FormGroup<CreateEmployeeForm>;
+  protected readonly salaryTypes = salaryTypeOptions;
+
   private readonly apiService = inject(ApiService);
   private readonly toastService = inject(ToastService);
   private readonly userService = inject(UserService);
 
-  public suggestedUsers: UserDto[] = [];
-  public form: FormGroup<CreateEmployeeForm>;
-  public roles: RoleDto[] = [];
-  public salaryTypes = salaryTypeOptions;
-  public isLoading = false;
+  protected readonly suggestedUsers = signal<UserDto[]>([]);
+  protected readonly roles = signal<RoleDto[]>([]);
+  protected readonly isLoading = signal<boolean>(false);
 
   constructor() {
     this.form = new FormGroup<CreateEmployeeForm>({
@@ -60,27 +60,25 @@ export class AddEmployeeComponent implements OnInit {
         nonNullable: true,
       }),
     });
-  }
 
-  ngOnInit(): void {
     this.fetchRoles();
   }
 
-  searchUser(event: {query: string}) {
+  searchUser(event: {query: string}): void {
     this.userService.searchUser(event.query).subscribe((users) => {
       if (users) {
-        this.suggestedUsers = users;
+        this.suggestedUsers.set(users);
       }
     });
   }
 
-  clearSelctedRole() {
+  clearSelectedRole(): void {
     this.form.patchValue({
       role: null,
     });
   }
 
-  submit() {
+  submit(): void {
     if (!this.form.valid) {
       return;
     }
@@ -99,34 +97,34 @@ export class AddEmployeeComponent implements OnInit {
       salaryType: this.form.value.salaryType ?? SalaryType.None,
     };
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.apiService.createEmployee(newEmployee).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess("New employee has been added successfully");
         this.form.reset();
       }
 
-      this.isLoading = false;
+      this.isLoading.set(false);
     });
   }
 
-  isShareOfGrossSalary() {
+  isShareOfGrossSalary(): boolean {
     return this.form.value.salaryType === SalaryType.ShareOfGross;
   }
 
-  isNoneSalary() {
+  isNoneSalary(): boolean {
     return this.form.value.salaryType === SalaryType.None;
   }
 
-  private fetchRoles() {
-    this.isLoading = true;
+  private fetchRoles(): void {
+    this.isLoading.set(true);
 
     this.userService.fetchRoles().subscribe((roles) => {
       if (roles) {
-        this.roles = roles;
+        this.roles.set(roles);
       }
 
-      this.isLoading = false;
+      this.isLoading.set(false);
     });
   }
 }

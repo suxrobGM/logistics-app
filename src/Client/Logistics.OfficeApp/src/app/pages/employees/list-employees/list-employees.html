@@ -17,7 +17,7 @@
   <div class="row">
     <div class="col-12">
       <p-table
-        [value]="employees"
+        [value]="employees()"
         responsiveLayout="scroll"
         [lazy]="true"
         [paginator]="true"
@@ -25,8 +25,8 @@
         (onLazyLoad)="load($event)"
         [rows]="10"
         [(first)]="first"
-        [totalRecords]="totalRecords"
-        [loading]="isLoading"
+        [totalRecords]="totalRecords()"
+        [loading]="isLoading()"
         [rowsPerPageOptions]="[10, 25, 50]"
       >
         <ng-template pTemplate="caption">
@@ -39,28 +39,28 @@
           <tr>
             <th pSortableColumn="FirstName">
               Name
-              <p-sortIcon field="FirstName"></p-sortIcon>
+              <p-sortIcon field="FirstName" />
             </th>
             <th pSortableColumn="Email">
               Email
-              <p-sortIcon field="Email"></p-sortIcon>
+              <p-sortIcon field="Email" />
             </th>
             <th pSortableColumn="PhoneNumber">
               Phone Number
-              <p-sortIcon field="PhoneNumber"></p-sortIcon>
+              <p-sortIcon field="PhoneNumber" />
             </th>
             <th pSortableColumn="Salary">
               Salary
-              <p-sortIcon field="Salary"></p-sortIcon>
+              <p-sortIcon field="Salary" />
             </th>
             <th pSortableColumn="SalaryType">
               Salary Type
-              <p-sortIcon field="SalaryType"></p-sortIcon>
+              <p-sortIcon field="SalaryType" />
             </th>
             <th>Role</th>
             <th pSortableColumn="JoinedDate">
               Joined Date
-              <p-sortIcon field="JoinedDate"></p-sortIcon>
+              <p-sortIcon field="JoinedDate" />
             </th>
             <th>Action</th>
           </tr>
@@ -71,11 +71,8 @@
             <td>{{ employee.email }}</td>
             <td>{{ employee.phoneNumber }}</td>
             <td>
-              @if (employee.salaryType === 3) {
-                {{ employee.salary | percent }}
-              } @else {
-                {{ employee.salary | currency }}
-              }
+              @if (employee.salaryType === 3) { {{ employee.salary | percent }} } @else { {{
+              employee.salary | currency }} }
             </td>
             <td>{{ getSalaryTypeDesc(employee.salaryType) }}</td>
             <td>{{ employee.roles[0]?.displayName }}</td>
@@ -86,16 +83,14 @@
                 pTooltip="Edit employee details"
                 tooltipPosition="bottom"
                 [routerLink]="['/employees/edit', employee.id]"
-              >
-              </p-button>
+              />
               <p-button
                 styleClass="ms-2"
                 icon="bi bi-file-earmark-ruled"
                 pTooltip="View employee payrolls"
                 tooltipPosition="bottom"
                 [routerLink]="['/invoices/payroll/employee', employee.id]"
-              >
-              </p-button>
+              />
             </td>
           </tr>
         </ng-template>

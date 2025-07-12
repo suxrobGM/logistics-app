@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, inject} from "@angular/core";
+import {Component, inject, signal} from "@angular/core";
 import {RouterLink} from "@angular/router";
 import {ConfirmationService} from "primeng/api";
 import {ButtonModule} from "primeng/button";
@@ -16,9 +16,7 @@ import {ToastService} from "@/core/services";
 
 @Component({
   selector: "app-list-customers",
-  standalone: true,
-  templateUrl: "./list-customers.component.html",
-  styleUrls: [],
+  templateUrl: "./list-customers.html",
   imports: [
     CommonModule,
     ButtonModule,
@@ -38,34 +36,27 @@ export class ListCustomersComponent {
   private readonly toastService = inject(ToastService);
   private readonly confirmationService = inject(ConfirmationService);
 
-  public customers: CustomerDto[];
-  public isLoading: boolean;
-  public totalRecords: number;
-  public first: number;
+  protected readonly customers = signal<CustomerDto[]>([]);
+  protected readonly isLoading = signal<boolean>(false);
+  protected readonly totalRecords = signal<number>(0);
+  protected readonly first = signal<number>(0);
 
-  constructor() {
-    this.customers = [];
-    this.isLoading = false;
-    this.totalRecords = 0;
-    this.first = 0;
-  }
-
-  search(event: Event) {
-    this.isLoading = true;
+  search(event: Event): void {
+    this.isLoading.set(true);
     const searchValue = (event.target as HTMLInputElement).value;
 
     this.apiService.getCustomers({search: searchValue}).subscribe((result) => {
       if (result.success && result.data) {
-        this.customers = result.data;
-        this.totalRecords = result.totalItems;
+        this.customers.set(result.data);
+        this.totalRecords.set(result.totalItems);
       }
 
-      this.isLoading = false;
+      this.isLoading.set(false);
     });
   }
 
-  load(event: TableLazyLoadEvent) {
-    this.isLoading = true;
+  load(event: TableLazyLoadEvent): void {
+    this.isLoading.set(true);
     const first = event.first ?? 1;
     const rows = event.rows ?? 10;
     const page = first / rows + 1;
@@ -75,35 +66,31 @@ export class ListCustomersComponent {
       .getCustomers({orderBy: sortField, page: page, pageSize: rows})
       .subscribe((result) => {
         if (result.success && result.data) {
-          this.customers = result.data;
-          this.totalRecords = result.totalItems;
+          this.customers.set(result.data);
+          this.totalRecords.set(result.totalItems);
         }
 
-        this.isLoading = false;
+        this.isLoading.set(false);
       });
   }
 
-  confirmToDelete(id: string) {
+  confirmToDelete(id: string): void {
     this.confirmationService.confirm({
       message: "Are you sure that you want to delete this customer?",
       accept: () => this.deleteCustomer(id),
     });
   }
 
-  deleteCustomer(id: string) {
-    this.isLoading = true;
+  deleteCustomer(id: string): void {
+    this.isLoading.set(true);
 
     this.apiService.deleteCustomer(id).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess("The customer has been deleted successfully");
-        const index = this.customers.findIndex((i) => i.id === id);
-
-        if (index !== -1) {
-          this.customers.splice(index);
-        }
+        this.customers.update((customers) => customers.filter((c) => c.id !== id));
       }
 
-      this.isLoading = false;
+      this.isLoading.set(false);
     });
   }
 }

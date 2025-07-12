@@ -1,6 +1,6 @@
 import {MenuItem} from "@/shared/layout/panel-menu";
 
-export const sidebarNavItems: MenuItem[] = [
+export const sidebarItems: MenuItem[] = [
   {
     label: "Home",
     icon: "bi bi-house-door h2",
@@ -37,7 +37,7 @@ export const sidebarNavItems: MenuItem[] = [
     items: [
       {
         label: "Payroll",
-        route: "/invoices/payrolls",
+        route: "/invoices/payroll",
       },
       {
         label: "Load",

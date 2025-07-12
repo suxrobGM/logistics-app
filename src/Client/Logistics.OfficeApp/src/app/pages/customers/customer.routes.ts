@@ -1,8 +1,8 @@
 import {Routes} from "@angular/router";
 import {authGuard} from "@/core/auth";
 import {Permissions} from "@/shared/models";
-import {EditCustomerComponent} from "./edit-customer/edit-customer.component";
-import {ListCustomersComponent} from "./list-customers/list-customers.component";
+import {EditCustomerComponent} from "./edit-customer/edit-customer";
+import {ListCustomersComponent} from "./list-customers/list-customers";
 
 export const customerRoutes: Routes = [
   {

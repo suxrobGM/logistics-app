@@ -1,7 +1,7 @@
 import {CommonModule} from "@angular/common";
-import {Component, OnInit, ViewEncapsulation, inject} from "@angular/core";
+import {Component, OnInit, inject, input, signal} from "@angular/core";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {ActivatedRoute, RouterLink} from "@angular/router";
+import {RouterLink} from "@angular/router";
 import {ConfirmationService} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
@@ -20,8 +20,8 @@ import {ChangeRoleDialogComponent} from "../components";
 
 @Component({
   selector: "app-edit-employee",
-  templateUrl: "./edit-employee.component.html",
-  styleUrl: "./edit-employee.component.css",
+  templateUrl: "./edit-employee.html",
+  styleUrl: "./edit-employee.css",
   imports: [
     ToastModule,
     ConfirmDialogModule,
@@ -35,22 +35,21 @@ import {ChangeRoleDialogComponent} from "../components";
     ValidationSummary,
     SelectModule,
   ],
-  providers: [ConfirmationService],
 })
 export class EditEmployeeComponent implements OnInit {
+  protected readonly form: FormGroup<UpdateEmployeeForm>;
+  protected readonly salaryTypes = salaryTypeOptions;
+
   private readonly authService = inject(AuthService);
   private readonly apiService = inject(ApiService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly toastService = inject(ToastService);
-  private readonly route = inject(ActivatedRoute);
 
-  public id!: string;
-  public isLoading = false;
-  public showUpdateDialog = false;
-  public canChangeRole = false;
-  public employee?: EmployeeDto;
-  public salaryTypes = salaryTypeOptions;
-  public form: FormGroup<UpdateEmployeeForm>;
+  protected readonly id = input<string>();
+  protected readonly isLoading = signal(false);
+  protected readonly showUpdateDialog = signal(false);
+  protected readonly canChangeRole = signal(false);
+  protected readonly employee = signal<EmployeeDto | null>(null);
 
   constructor() {
     this.form = new FormGroup<UpdateEmployeeForm>({
@@ -85,14 +84,10 @@ export class EditEmployeeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      this.id = params["id"];
-    });
-
     this.fetchEmployee();
   }
 
-  updateEmployee() {
+  updateEmployee(): void {
     if (!this.form.valid) {
       return;
     }
@@ -101,22 +96,22 @@ export class EditEmployeeComponent implements OnInit {
     const salary = this.form.value.salary;
 
     const command: UpdateEmployeeCommand = {
-      userId: this.id,
+      userId: this.id()!,
       salary: salaryType === SalaryType.ShareOfGross ? NumberUtils.toRatio(salary ?? 0) : salary,
       salaryType: salaryType,
     };
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.apiService.updateEmployee(command).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess("The employee data has been successfully saved");
       }
 
-      this.isLoading = false;
+      this.isLoading.set(false);
     });
   }
 
-  confirmToDelete() {
+  confirmToDelete(): void {
     this.confirmationService.confirm({
       message: "Are you sure that you want to delete this employee from the company?",
       // accept: () => this.deleteLoad()
@@ -124,15 +119,17 @@ export class EditEmployeeComponent implements OnInit {
   }
 
   getEmployeeRoleNames(): string {
-    const roleNames = this.employee?.roles?.map((i) => i.displayName).join(",");
+    const roleNames = this.employee()
+      ?.roles?.map((i) => i.displayName)
+      .join(",");
     return roleNames ? roleNames : "";
   }
 
-  openUpdateDialog() {
-    this.showUpdateDialog = true;
+  openUpdateDialog(): void {
+    this.showUpdateDialog.set(true);
   }
 
-  isShareOfGrossSalary() {
+  isShareOfGrossSalary(): boolean {
     return this.form.value.salaryType === SalaryType.ShareOfGross;
   }
 
@@ -140,13 +137,13 @@ export class EditEmployeeComponent implements OnInit {
     return this.form.value.salaryType === SalaryType.None;
   }
 
-  private fetchEmployee() {
-    this.isLoading = true;
+  private fetchEmployee(): void {
+    this.isLoading.set(true);
 
-    this.apiService.getEmployee(this.id).subscribe((result) => {
+    this.apiService.getEmployee(this.id()!).subscribe((result) => {
       if (result.success && result.data) {
-        this.employee = result.data;
-        const employeeRoles = this.employee.roles?.map((i) => i.name);
+        this.employee.set(result.data);
+        const employeeRoles = this.employee()?.roles?.map((i) => i.name);
         const user = this.authService.getUserData();
         this.evaluateCanChangeRole(user?.roles, employeeRoles);
 
@@ -160,33 +157,33 @@ export class EditEmployeeComponent implements OnInit {
         });
       }
 
-      this.isLoading = false;
+      this.isLoading.set(false);
     });
   }
 
   private evaluateCanChangeRole(userRoles?: string[], employeeRoles?: string[]) {
     if (!userRoles) {
-      this.canChangeRole = false;
+      this.canChangeRole.set(false);
       return;
     }
 
     if (!employeeRoles || employeeRoles.length < 1) {
-      this.canChangeRole = true;
+      this.canChangeRole.set(true);
       return;
     }
 
     const employeeRole = employeeRoles[0];
 
     if (userRoles.includes(UserRole.AppSuperAdmin) || userRoles.includes(UserRole.AppAdmin)) {
-      this.canChangeRole = true;
+      this.canChangeRole.set(true);
     } else if (userRoles.includes(UserRole.Owner) && employeeRole !== UserRole.Owner) {
-      this.canChangeRole = true;
+      this.canChangeRole.set(true);
     } else if (
       userRoles.includes(UserRole.Manager) &&
       employeeRole !== UserRole.Owner &&
       employeeRole !== UserRole.Manager
     ) {
-      this.canChangeRole = true;
+      this.canChangeRole.set(true);
     }
   }
 }

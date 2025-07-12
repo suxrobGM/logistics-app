@@ -8,7 +8,7 @@
         <h4 class="ps-3 py-2">Trucks</h4>
         <hr class="w-100 m-0" />
       </ng-template>
-      <app-trucks-map [accessToken]="accessToken" height="700px"> </app-trucks-map>
+      <app-trucks-map height="700px" />
     </p-card>
   </div>
 
@@ -19,7 +19,7 @@
         <hr class="w-100 m-0" />
       </ng-template>
 
-      <p-table [value]="loads" responsiveLayout="scroll" [loading]="isLoadingLoadsData">
+      <p-table [value]="loads()" responsiveLayout="scroll" [loading]="isLoadingLoadsData()">
         <ng-template pTemplate="header">
           <tr>
             <th>ID</th>
@@ -30,9 +30,7 @@
         <ng-template pTemplate="body" let-load>
           <tr>
             <td>
-              <a [routerLink]="['/loads/edit', load.id]">
-                {{ load.refId }}
-              </a>
+              <a [routerLink]="['/loads/edit', load.id]"> {{ load.number }} </a>
             </td>
             <td [pTooltip]="load.currentLocation" [showDelay]="500" tooltipPosition="bottom">
               {{ load.currentLocation | address }}
@@ -47,8 +45,8 @@
         <ng-template pTemplate="footer">
           <tr>
             <td colspan="4" class="text-start">
-              <p-button label="Add" [routerLink]="['/loads/add']"> </p-button>
-              <p-button class="ms-2" label="View all loads" [routerLink]="['/loads']"> </p-button>
+              <p-button label="Add" [routerLink]="['/loads/add']" />
+              <p-button class="ms-2" label="View all loads" [routerLink]="['/loads']" />
             </td>
           </tr>
         </ng-template>
@@ -65,48 +63,48 @@
         <hr class="w-100 m-0" />
       </ng-template>
 
-      @if (isLoadingChartData) {
-        <div class="row">
-          <div class="col-12 col-md-4">
-            <p-skeleton height="3rem"></p-skeleton>
-          </div>
-          <div class="col-12 col-md-4">
-            <p-skeleton height="3rem"></p-skeleton>
-          </div>
-          <div class="col-12 col-md-4">
-            <p-skeleton height="3rem"></p-skeleton>
-          </div>
+      @if (isLoadingChartData()) {
+      <div class="row">
+        <div class="col-12 col-md-4">
+          <p-skeleton height="3rem" />
         </div>
+        <div class="col-12 col-md-4">
+          <p-skeleton height="3rem" />
+        </div>
+        <div class="col-12 col-md-4">
+          <p-skeleton height="3rem" />
+        </div>
+      </div>
       } @else {
-        <div class="row">
-          <div class="col-12 col-md-4 px-3">
-            <span class="text-secondary text-uppercase">Total Gross:</span><br />
-            <span class="fw-bold fs-3">{{ weeklyGross | currency }}</span>
-          </div>
-          <div class="col-12 col-md-4 px-3">
-            <span class="text-secondary text-uppercase">Billed Miles:</span><br />
-            <span class="fw-bold fs-3">{{ weeklyDistance | distanceUnit: "mi" }}</span>
-          </div>
-          <div class="col-12 col-md-4 px-3">
-            <span class="text-secondary text-uppercase">Rate Per Mile:</span><br />
-            <span class="fw-bold fs-3">{{ weeklyRpm | currency }}</span>
-          </div>
+      <div class="row">
+        <div class="col-12 col-md-4 px-3">
+          <span class="text-secondary text-uppercase">Total Gross:</span><br />
+          <span class="fw-bold fs-3">{{ weeklyGross() | currency }}</span>
         </div>
+        <div class="col-12 col-md-4 px-3">
+          <span class="text-secondary text-uppercase">Billed Miles:</span><br />
+          <span class="fw-bold fs-3">{{ weeklyDistance() | distanceUnit: "mi" }}</span>
+        </div>
+        <div class="col-12 col-md-4 px-3">
+          <span class="text-secondary text-uppercase">Rate Per Mile:</span><br />
+          <span class="fw-bold fs-3">{{ weeklyRpm() | currency }}</span>
+        </div>
+      </div>
       }
 
       <ng-template #data>
         <div class="row">
           <div class="col-12 col-md-4 px-3">
             <span class="text-secondary text-uppercase">Total Gross:</span><br />
-            <span class="fw-bold fs-3">{{ weeklyGross | currency }}</span>
+            <span class="fw-bold fs-3">{{ weeklyGross() | currency }}</span>
           </div>
           <div class="col-12 col-md-4 px-3">
             <span class="text-secondary text-uppercase">Billed Miles:</span><br />
-            <span class="fw-bold fs-3">{{ weeklyDistance | distanceUnit: "mi" }}</span>
+            <span class="fw-bold fs-3">{{ weeklyDistance() | distanceUnit: "mi" }}</span>
           </div>
           <div class="col-12 col-md-4 px-3">
             <span class="text-secondary text-uppercase">Rate Per Mile:</span><br />
-            <span class="fw-bold fs-3">{{ weeklyRpm | currency }}</span>
+            <span class="fw-bold fs-3">{{ weeklyRpm() | currency }}</span>
           </div>
         </div>
       </ng-template>
@@ -122,32 +120,32 @@
         <hr class="w-100 m-0" />
       </ng-template>
 
-      @if (isLoadingChartData) {
-        <div class="row">
-          <div class="col-12">
-            <p-skeleton height="20vh"></p-skeleton>
-          </div>
+      @if (isLoadingChartData()) {
+      <div class="row">
+        <div class="col-12">
+          <p-skeleton height="20vh" />
         </div>
+      </div>
       } @else {
-        <div class="row">
-          <div class="col-12 col-md-3 mb-2">
-            <span class="fw-bold">Today Gross:</span><br />
-            <span class="fw-bold fs-3">{{ todayGross | currency }}</span>
-          </div>
-          <div class="col-12 col-md-9">
-            <p-chart
-              type="line"
-              [data]="chartData"
-              [options]="chartOptions"
-              width="40vw"
-              height="20vh"
-            ></p-chart>
-          </div>
+      <div class="row">
+        <div class="col-12 col-md-3 mb-2">
+          <span class="fw-bold">Today Gross:</span><br />
+          <span class="fw-bold fs-3">{{ todayGross() | currency }}</span>
         </div>
+        <div class="col-12 col-md-9">
+          <p-chart
+            type="line"
+            [data]="chartData()"
+            [options]="chartOptions()"
+            width="40vw"
+            height="20vh"
+          />
+        </div>
+      </div>
       }
     </p-card>
   </div>
   <div class="col-12 col-xl-5">
-    <app-notifications-panel height="400px"></app-notifications-panel>
+    <app-notifications-panel height="400px" />
   </div>
 </div>

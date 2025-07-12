@@ -39,44 +39,44 @@
           <tr>
             <th pSortableColumn="Number">
               Number
-              <p-sortIcon field="Number"></p-sortIcon>
+              <p-sortIcon field="Number" />
             </th>
             <th pSortableColumn="Name">
               Name
-              <p-sortIcon field="Name"></p-sortIcon>
+              <p-sortIcon field="Name" />
             </th>
             <th pSortableColumn="Customer.Name">
               Customer
-              <p-sortIcon field="Customer.Name"></p-sortIcon>
+              <p-sortIcon field="Customer.Name" />
             </th>
             <th pSortableColumn="OriginAddress.Line1">
               Origin
-              <p-sortIcon field="OriginAddress.Line1"></p-sortIcon>
+              <p-sortIcon field="OriginAddress.Line1" />
             </th>
             <th pSortableColumn="DestinationAddress.Line1">
               Destination
-              <p-sortIcon field="DestinationAddress.Line1"></p-sortIcon>
+              <p-sortIcon field="DestinationAddress.Line1" />
             </th>
             <th>Status</th>
             <th pSortableColumn="Distance">
               Distance (mi)
-              <p-sortIcon field="Distance"></p-sortIcon>
+              <p-sortIcon field="Distance" />
             </th>
             <th pSortableColumn="DeliveryCost.Amount">
               Cost
-              <p-sortIcon field="DeliveryCost.Amount"></p-sortIcon>
+              <p-sortIcon field="DeliveryCost.Amount" />
             </th>
             <!-- <th pSortableColumn="invoicePaymentStatus">
               Invoice Status
-              <p-sortIcon field="invoicePaymentStatus"></p-sortIcon>
+              <p-sortIcon field="invoicePaymentStatus" />
             </th> -->
             <th pSortableColumn="AssignedTruck.Number">
               Truck
-              <p-sortIcon field="AssignedTruck.Number"></p-sortIcon>
+              <p-sortIcon field="AssignedTruck.Number" />
             </th>
             <th pSortableColumn="AssignedDispatcher.Name">
               Dispatcher
-              <p-sortIcon field="AssignedDispatcher.Name"></p-sortIcon>
+              <p-sortIcon field="AssignedDispatcher.Name" />
             </th>
             <th>Action</th>
           </tr>
@@ -113,17 +113,10 @@
               </p-tag>
 
               <div class="fst-italic">
-                @switch (load.status) {
-                  @case (loadStatus.Dispatched) {
-                    {{ load.dispatchedDate | date: "mediumDate" }}
-                  }
-                  @case (loadStatus.PickedUp) {
-                    {{ load.pickUpDate | date: "mediumDate" }}
-                  }
-                  @case (loadStatus.Delivered) {
-                    {{ load.deliveryDate | date: "mediumDate" }}
-                  }
-                }
+                @switch (load.status) { @case (loadStatus.Dispatched) { {{ load.dispatchedDate |
+                date: "mediumDate" }} } @case (loadStatus.PickedUp) { {{ load.pickUpDate | date:
+                "mediumDate" }} } @case (loadStatus.Delivered) { {{ load.deliveryDate | date:
+                "mediumDate" }} } }
               </div>
             </td>
             <td>{{ load.distance | distanceUnit: "mi" }}</td>

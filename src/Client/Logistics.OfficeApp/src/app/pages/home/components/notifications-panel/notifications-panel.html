@@ -1,0 +1,52 @@
+<p-card>
+  <ng-template pTemplate="header">
+    <div class="flex p-3 gap-3">
+      <p-overlaybadge [value]="getUnreadNotificationsCount()">
+        <i class="bi bi-bell h4"></i>
+      </p-overlaybadge>
+      <span class="text-lg font-bold">Notifications</span>
+    </div>
+    <hr class="w-100 m-0" />
+  </ng-template>
+
+  <div class="notification-list" [style]="{maxHeight: height()}">
+    @if (isLoading()) {
+    <p-progressSpinner />
+    } @else { @for (notification of notifications(); track notification.id) {
+    <div
+      class="notification-item my-1 border-bottom"
+      [class.bg-lighter]="!notification.isRead"
+      (click)="showNotification(notification)"
+      role="presentation"
+    >
+      <h5>{{ notification.title }}</h5>
+      <div class="row">
+        <div class="col-10">{{ notification.message }}</div>
+        <div class="col-2">
+          <small class="text-muted">{{ notification.createdDate | timeAgo }}</small>
+        </div>
+      </div>
+    </div>
+    } @empty {
+    <p class="p-3 text-muted">No notifications.</p>
+    } }
+  </div>
+</p-card>
+
+<p-dialog
+  [(visible)]="showDialog"
+  [modal]="true"
+  [style]="{width: '50vw'}"
+  [closable]="false"
+  [dismissableMask]="true"
+>
+  <ng-template #header>
+    <span>{{ selectedNotification()?.title }}</span>
+  </ng-template>
+
+  <p>{{ selectedNotification()?.message }}</p>
+
+  <ng-template #footer>
+    <p-button label="Close" icon="pi pi-check" (click)="closeDialog()" />
+  </ng-template>
+</p-dialog>

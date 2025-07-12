@@ -1,4 +1,4 @@
-import {Component, OnInit, inject, input, model, signal} from "@angular/core";
+import {Component, inject, input, model, signal} from "@angular/core";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
@@ -11,7 +11,7 @@ import {UserService} from "../../services";
 
 @Component({
   selector: "app-change-role-dialog",
-  templateUrl: "./change-role-dialog.component.html",
+  templateUrl: "./change-role-dialog.html",
   imports: [
     DialogModule,
     ProgressSpinnerModule,
@@ -20,31 +20,30 @@ import {UserService} from "../../services";
     ButtonModule,
     SelectModule,
   ],
-  providers: [UserService],
 })
-export class ChangeRoleDialogComponent implements OnInit {
+export class ChangeRoleDialogComponent {
+  protected readonly form: FormGroup;
+
   private readonly apiService = inject(ApiService);
   private readonly userService = inject(UserService);
   private readonly toastService = inject(ToastService);
 
-  readonly roles = signal<RoleDto[]>([]);
-  readonly loading = signal(false);
-  readonly userId = input.required<string>();
-  readonly currentRoles = input<RoleDto[] | undefined>([]);
-  readonly visible = model<boolean>(false);
-  readonly form: FormGroup;
+  public readonly userId = input.required<string>();
+  public readonly currentRoles = input<RoleDto[]>([]);
+  public readonly visible = model<boolean>(false);
+
+  protected readonly roles = signal<RoleDto[]>([]);
+  protected readonly isLoading = signal(false);
 
   constructor() {
     this.form = new FormGroup({
       role: new FormControl("", Validators.required),
     });
-  }
 
-  ngOnInit(): void {
     this.fetchRoles();
   }
 
-  submit() {
+  submit(): void {
     const role = this.form.value.role;
 
     if (role === "") {
@@ -57,51 +56,51 @@ export class ChangeRoleDialogComponent implements OnInit {
       role: role,
     };
 
-    this.loading.set(true);
+    this.isLoading.set(true);
     this.apiService.updateEmployee(updateEmployee).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess(`Successfully changed employee's role`);
       }
 
-      this.loading.set(false);
+      this.isLoading.set(false);
     });
   }
 
-  close() {
+  close(): void {
     this.visible.set(false);
     //this.visibleChange.emit(false);
-    this.clearSelctedRole();
+    this.clearSelectedRole();
   }
 
-  clearSelctedRole() {
+  clearSelectedRole(): void {
     this.form.patchValue({
       role: {name: "", displayName: " "},
     });
   }
 
-  removeRoles() {
+  removeRoles(): void {
     this.currentRoles()?.forEach((role) => {
       this.removeRole(role.name);
     });
   }
 
-  private removeRole(roleName: string) {
+  private removeRole(roleName: string): void {
     const removeRole: RemoveEmployeeRoleCommand = {
       userId: this.userId(),
       role: roleName,
     };
 
-    this.loading.set(true);
+    this.isLoading.set(true);
     this.apiService.removeRoleFromEmployee(removeRole).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess(`Removed ${roleName} role from the employee`);
       }
 
-      this.loading.set(false);
+      this.isLoading.set(false);
     });
   }
 
-  private fetchRoles() {
+  private fetchRoles(): void {
     this.userService.fetchRoles().subscribe((roles) => {
       if (roles) {
         this.roles.set(roles);

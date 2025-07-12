@@ -1,5 +1,5 @@
 import {CurrencyPipe} from "@angular/common";
-import {Component, OnInit, inject} from "@angular/core";
+import {Component, inject, signal} from "@angular/core";
 import {RouterLink} from "@angular/router";
 import {SharedModule} from "primeng/api";
 import {ButtonModule} from "primeng/button";
@@ -10,16 +10,33 @@ import {TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {ApiService} from "@/core/api";
 import {DailyGrossesDto, LoadDto} from "@/core/api/models";
-import {environment} from "@/env";
 import {TrucksMap} from "@/shared/components";
 import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
 import {Converters, DateUtils} from "@/shared/utils";
 import {NotificationsPanelComponent} from "./components";
 
+const chartInitialData = {
+  labels: [],
+  datasets: [
+    {
+      label: "Daily Gross",
+      data: [],
+    },
+  ],
+};
+
+const chartOptions = {
+  plugins: {
+    legend: {
+      display: false,
+    },
+  },
+};
+
 @Component({
   selector: "app-home",
-  templateUrl: "./home.component.html",
-  styleUrl: "./home.component.css",
+  templateUrl: "./home.html",
+  styleUrl: "./home.css",
   imports: [
     CardModule,
     SharedModule,
@@ -36,76 +53,58 @@ import {NotificationsPanelComponent} from "./components";
     AddressPipe,
   ],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
   private readonly apiService = inject(ApiService);
 
-  public readonly accessToken = environment.mapboxToken;
-  public todayGross = 0;
-  public weeklyGross = 0;
-  public weeklyDistance = 0;
-  public weeklyRpm = 0;
-  public isLoadingLoadsData = false;
-  public isLoadingChartData = false;
-  public loads: LoadDto[] = [];
-  public chartData: unknown;
-  public chartOptions: unknown;
+  protected readonly todayGross = signal(0);
+  protected readonly weeklyGross = signal(0);
+  protected readonly weeklyDistance = signal(0);
+  protected readonly weeklyRpm = signal(0);
+  protected readonly isLoadingLoadsData = signal(false);
+  protected readonly isLoadingChartData = signal(false);
+  protected readonly loads = signal<LoadDto[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  protected readonly chartData = signal<Record<string, any>>(chartInitialData);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  protected readonly chartOptions = signal<Record<string, any>>(chartOptions);
 
   constructor() {
-    this.chartData = {
-      labels: [],
-      datasets: [
-        {
-          label: "Daily Gross",
-          data: [],
-        },
-      ],
-    };
-    this.chartOptions = {
-      plugins: {
-        legend: {
-          display: false,
-        },
-      },
-    };
-  }
-
-  ngOnInit() {
     this.fetchActiveLoads();
     this.fetchLastTenDaysGross();
   }
 
-  private fetchActiveLoads() {
-    this.isLoadingLoadsData = true;
+  private fetchActiveLoads(): void {
+    this.isLoadingLoadsData.set(true);
 
     this.apiService.getLoads({orderBy: "-DispatchedDate"}, true).subscribe((result) => {
       if (result.success && result.data) {
-        this.loads = result.data;
+        this.loads.set(result.data);
       }
 
-      this.isLoadingLoadsData = false;
+      this.isLoadingLoadsData.set(false);
     });
   }
 
-  private fetchLastTenDaysGross() {
-    this.isLoadingChartData = true;
+  private fetchLastTenDaysGross(): void {
+    this.isLoadingChartData.set(true);
     const oneWeekAgo = DateUtils.daysAgo(7);
 
     this.apiService.getDailyGrosses(oneWeekAgo).subscribe((result) => {
       if (result.success && result.data) {
         const grosses = result.data;
 
-        this.weeklyGross = grosses.totalGross;
-        this.weeklyDistance = grosses.totalDistance;
-        this.weeklyRpm = this.weeklyGross / Converters.metersTo(this.weeklyDistance, "mi");
+        this.weeklyGross.set(grosses.totalGross);
+        this.weeklyDistance.set(grosses.totalDistance);
+        this.weeklyRpm.set(this.weeklyGross() / Converters.metersTo(this.weeklyDistance(), "mi"));
         this.drawChart(grosses);
         this.calcTodayGross(grosses);
       }
 
-      this.isLoadingChartData = false;
+      this.isLoadingChartData.set(false);
     });
   }
 
-  private drawChart(grosses: DailyGrossesDto) {
+  private drawChart(grosses: DailyGrossesDto): void {
     const labels: string[] = [];
     const data: number[] = [];
 
@@ -114,7 +113,7 @@ export class HomeComponent implements OnInit {
       data.push(i.gross);
     });
 
-    this.chartData = {
+    this.chartData.set({
       labels: labels,
       datasets: [
         {
@@ -126,10 +125,10 @@ export class HomeComponent implements OnInit {
           backgroundColor: "#88a5d3",
         },
       ],
-    };
+    });
   }
 
-  private calcTodayGross(grosses: DailyGrossesDto) {
+  private calcTodayGross(grosses: DailyGrossesDto): void {
     const today = new Date();
     let totalGross = 0;
 
@@ -137,6 +136,6 @@ export class HomeComponent implements OnInit {
       .filter((i) => DateUtils.dayOfMonth(i.date) === today.getDate())
       .forEach((i) => (totalGross += i.gross));
 
-    this.todayGross = totalGross;
+    this.todayGross.set(totalGross);
   }
 }

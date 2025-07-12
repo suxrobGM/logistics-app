@@ -10,8 +10,7 @@
     [text]="true"
     pTooltip="Add a new customer"
     [routerLink]="['/customers/add']"
-  >
-  </p-button>
+  />
 </div>
 <hr class="w-100" />
 
@@ -19,7 +18,7 @@
   <div class="row">
     <div class="col-12">
       <p-table
-        [value]="customers"
+        [value]="customers()"
         responsiveLayout="scroll"
         [lazy]="true"
         [paginator]="true"
@@ -27,8 +26,8 @@
         (onLazyLoad)="load($event)"
         [rows]="10"
         [(first)]="first"
-        [totalRecords]="totalRecords"
-        [loading]="isLoading"
+        [totalRecords]="totalRecords()"
+        [loading]="isLoading()"
         [rowsPerPageOptions]="[10, 25, 50]"
       >
         <ng-template pTemplate="caption">
@@ -41,16 +40,14 @@
           <tr>
             <th pSortableColumn="Name">
               Name
-              <p-sortIcon field="Name"></p-sortIcon>
+              <p-sortIcon field="Name" />
             </th>
             <th class="text-center">Action</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-customer>
           <tr>
-            <td>
-              {{ customer.name }}
-            </td>
+            <td>{{ customer.name }}</td>
             <td class="text-center">
               <!-- <button pButton 
                 class="p-button-raised"
@@ -62,15 +59,13 @@
                 icon="bi bi-pencil"
                 pTooltip="Edit Cutomer"
                 [routerLink]="['/customers/edit', customer.id]"
-              >
-              </p-button>
+              />
               <p-button
                 styleClass="ms-2 p-button-danger"
                 icon="bi bi-trash"
                 pTooltip="Delete Customer"
                 (click)="confirmToDelete(customer.id)"
-              >
-              </p-button>
+              />
             </td>
           </tr>
         </ng-template>

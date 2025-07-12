@@ -1,1 +1,1 @@
-export {ChangeRoleDialogComponent} from "./change-role-dialog/change-role-dialog.component";
+export * from "./change-role-dialog/change-role-dialog";
