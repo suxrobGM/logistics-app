@@ -6,7 +6,7 @@ public record TripDto
 {
     public Guid Id { get; set; }
     public long Number { get; set; }
-    public string? Name { get; set; }
+    public required string Name { get; set; }
 
     public required AddressDto OriginAddress { get; set; }
     public required AddressDto DestinationAddress { get; set; }

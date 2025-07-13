@@ -131,6 +131,43 @@ public class Trip : Entity, ITenantEntity
         trip.DomainEvents.Add(new NewTripCreatedEvent(trip.Id));
         return trip;
     }
+    
+    public void UpdateTripLoads(IEnumerable<Load> loads)
+    {
+        if (Status != TripStatus.Planned)
+            throw new InvalidOperationException("Cannot update loads for a trip that is not planned");
+
+        // Clear existing stops
+        Stops.Clear();
+        var loadsArray = loads.ToArray();
+        
+        // Recreate stops based on new loads
+        var order = 1;
+        foreach (var load in loadsArray)
+        {
+            Stops.Add(new TripStop
+            {
+                Trip = this,
+                Order = order++,
+                Type = TripStopType.PickUp,
+                Address = load.OriginAddress,
+                Load = load,
+                LoadId = load.Id
+            });
+
+            Stops.Add(new TripStop
+            {
+                Trip = this,
+                Order = order++,
+                Type = TripStopType.DropOff,
+                Address = load.DestinationAddress,
+                Load = load,
+                LoadId = load.Id
+            });
+        }
+
+        TotalDistance = loadsArray.Sum(l => l.Distance);
+    }
 
     #endregion
 }

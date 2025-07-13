@@ -33,6 +33,7 @@ import {
 import {PaymentApi} from "./payment.api";
 import {SubscriptionApi} from "./subscription.api";
 import {TenantApi} from "./tenant.api";
+import {TripApi} from "./trip.api";
 import {UserApi} from "./user.api";
 
 @Injectable({providedIn: "root"})
@@ -46,6 +47,7 @@ export class ApiService extends ApiBase {
   public readonly userApi = new UserApi(this.apiUrl);
   public readonly subscriptionApi = new SubscriptionApi(this.apiUrl);
   public readonly invoiceApi = new InvoiceApi(this.apiUrl);
+  public readonly tripApi = new TripApi(this.apiUrl);
 
   // #region Load API
 

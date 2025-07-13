@@ -48,6 +48,17 @@ public class TripController : ControllerBase
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
+    
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Loads.Edit)]
+    public async Task<IActionResult> UpdateTrip(Guid id, [FromBody] UpdateTripCommand request)
+    {
+        request.TripId = id;
+        var result = await _mediator.Send(request);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
 
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]

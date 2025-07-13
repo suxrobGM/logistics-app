@@ -19,7 +19,7 @@ internal sealed class GetTripsHandler : RequestHandler<GetTripsQuery, PagedResul
         GetTripsQuery req, CancellationToken cancellationToken)
     {
         var totalItems = await _tenantUow.Repository<Trip>().CountAsync();
-        var spec = new GetTripsSpec(req.Name, req.OrderBy, req.Page, req.PageSize);
+        var spec = new GetTripsSpec(req.Name, req.Status, req.TruckNumber, req.OrderBy, req.Page, req.PageSize);
 
         var items = _tenantUow.Repository<Trip>()
             .ApplySpecification(spec)

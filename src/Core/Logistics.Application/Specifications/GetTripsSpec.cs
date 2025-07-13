@@ -1,5 +1,6 @@
 ﻿using Logistics.Domain.Entities;
 using Logistics.Domain.Specifications;
+using Logistics.Shared.Consts;
 
 namespace Logistics.Application.Specifications;
 
@@ -7,6 +8,8 @@ public sealed class GetTripsSpec : BaseSpecification<Trip>
 {
     public GetTripsSpec(
         string? name,
+        TripStatus? status,
+        string? truckNumber,
         string? orderBy,
         int page,
         int pageSize)
@@ -14,6 +17,16 @@ public sealed class GetTripsSpec : BaseSpecification<Trip>
         if (!string.IsNullOrEmpty(name))
         {
             Criteria = i => i.Name.Contains(name);
+        }
+        
+        if (status.HasValue)
+        {
+            Criteria = Criteria.AndAlso(i => i.Status == status.Value);
+        }
+        
+        if (!string.IsNullOrEmpty(truckNumber))
+        {
+            Criteria = Criteria.AndAlso(i => i.Truck.Number == truckNumber);
         }
         
         OrderBy(orderBy);
