@@ -59,11 +59,12 @@
         <td>{{ truckStats().distance | distanceUnit: "mi" }}</td>
         <td>
           @for (driver of truckStats().drivers; track driver.id) {
-          <span>
-            {{ driver.fullName }} @if (truckStats().drivers.length > 1) {
-            <span>,</span>
-            }
-          </span>
+            <span>
+              {{ driver.fullName }}
+              @if (truckStats().drivers.length > 1) {
+                <span>,</span>
+              }
+            </span>
           }
         </td>
         <td class="overflow-visible">

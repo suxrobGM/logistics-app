@@ -113,10 +113,17 @@
               </p-tag>
 
               <div class="fst-italic">
-                @switch (load.status) { @case (loadStatus.Dispatched) { {{ load.dispatchedDate |
-                date: "mediumDate" }} } @case (loadStatus.PickedUp) { {{ load.pickUpDate | date:
-                "mediumDate" }} } @case (loadStatus.Delivered) { {{ load.deliveryDate | date:
-                "mediumDate" }} } }
+                @switch (load.status) {
+                  @case (loadStatus.Dispatched) {
+                    {{ load.dispatchedDate | date: "mediumDate" }}
+                  }
+                  @case (loadStatus.PickedUp) {
+                    {{ load.pickUpDate | date: "mediumDate" }}
+                  }
+                  @case (loadStatus.Delivered) {
+                    {{ load.deliveryDate | date: "mediumDate" }}
+                  }
+                }
               </div>
             </td>
             <td>{{ load.distance | distanceUnit: "mi" }}</td>

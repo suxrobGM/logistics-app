@@ -71,8 +71,11 @@
             <td>{{ employee.email }}</td>
             <td>{{ employee.phoneNumber }}</td>
             <td>
-              @if (employee.salaryType === 3) { {{ employee.salary | percent }} } @else { {{
-              employee.salary | currency }} }
+              @if (employee.salaryType === 3) {
+                {{ employee.salary | percent }}
+              } @else {
+                {{ employee.salary | currency }}
+              }
             </td>
             <td>{{ getSalaryTypeDesc(employee.salaryType) }}</td>
             <td>{{ employee.roles[0]?.displayName }}</td>

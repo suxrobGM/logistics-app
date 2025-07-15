@@ -11,25 +11,27 @@
 
   <div class="notification-list" [style]="{maxHeight: height()}">
     @if (isLoading()) {
-    <p-progressSpinner />
-    } @else { @for (notification of notifications(); track notification.id) {
-    <div
-      class="notification-item my-1 border-bottom"
-      [class.bg-lighter]="!notification.isRead"
-      (click)="showNotification(notification)"
-      role="presentation"
-    >
-      <h5>{{ notification.title }}</h5>
-      <div class="row">
-        <div class="col-10">{{ notification.message }}</div>
-        <div class="col-2">
-          <small class="text-muted">{{ notification.createdDate | timeAgo }}</small>
+      <p-progressSpinner />
+    } @else {
+      @for (notification of notifications(); track notification.id) {
+        <div
+          class="notification-item my-1 border-bottom"
+          [class.bg-lighter]="!notification.isRead"
+          (click)="showNotification(notification)"
+          role="presentation"
+        >
+          <h5>{{ notification.title }}</h5>
+          <div class="row">
+            <div class="col-10">{{ notification.message }}</div>
+            <div class="col-2">
+              <small class="text-muted">{{ notification.createdDate | timeAgo }}</small>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    } @empty {
-    <p class="p-3 text-muted">No notifications.</p>
-    } }
+      } @empty {
+        <p class="p-3 text-muted">No notifications.</p>
+      }
+    }
   </div>
 </p-card>
 

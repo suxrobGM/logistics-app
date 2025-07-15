@@ -9,11 +9,12 @@
       ></span>
 
       @if (expanded()) {
-      <span class="p-menuitem-text">{{ item.label }}</span>
+        <span class="p-menuitem-text">{{ item.label }}</span>
 
-      @if (item.items) {
-      <span class="p-panelmenu-icon pi pi-fw pi-chevron-down"></span>
-      } }
+        @if (item.items) {
+          <span class="p-panelmenu-icon pi pi-fw pi-chevron-down"></span>
+        }
+      }
     </div>
   </ng-template>
 </p-panelMenu>

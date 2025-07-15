@@ -17,6 +17,14 @@ const config = {
   importOrderSeparation: false,
   importOrderSortSpecifiers: true,
   importOrderSideEffects: false,
+  overrides: [
+    {
+      files: "*.html",
+      options: {
+        parser: "angular",
+      },
+    },
+  ],
 };
 
 export default config;

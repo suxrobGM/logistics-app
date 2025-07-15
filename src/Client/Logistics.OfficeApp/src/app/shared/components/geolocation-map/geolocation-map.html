@@ -6,26 +6,28 @@
   [style.width]="width()"
   [style.height]="height()"
 >
-  @for (geoData of geolocationData(); track geoData.truckId) { @if (geoData.latitude &&
-  geoData.longitude) {
-  <mgl-marker #marker [lngLat]="[geoData.longitude, geoData.latitude]">
-    <div class="text-center" (click)="onSelectMarker(geoData, marker)" role="presentation">
-      <div class="bg-dark text-light rounded">{{ geoData.truckNumber }}</div>
-      <div class="text-danger">
-        <i class="bi bi-geo-alt-fill h4"></i>
-      </div>
-    </div>
-  </mgl-marker>
-  } } @if (selectedMarker()) {
-  <mgl-popup [marker]="selectedMarker()!.component">
-    <span> <strong>Truck:</strong> {{ selectedMarker()!.data.truckNumber }} </span><br />
-    <span> <strong>Drivers:</strong> {{ selectedMarker()!.data.driversName }} </span><br />
-    @if (selectedMarker()!.data.currentAddress) {
-    <span>
-      <strong>Address:</strong>
-      {{ selectedMarker()!.data.currentAddress | address }}
-    </span>
+  @for (geoData of geolocationData(); track geoData.truckId) {
+    @if (geoData.latitude && geoData.longitude) {
+      <mgl-marker #marker [lngLat]="[geoData.longitude, geoData.latitude]">
+        <div class="text-center" (click)="onSelectMarker(geoData, marker)" role="presentation">
+          <div class="bg-dark text-light rounded">{{ geoData.truckNumber }}</div>
+          <div class="text-danger">
+            <i class="bi bi-geo-alt-fill h4"></i>
+          </div>
+        </div>
+      </mgl-marker>
     }
-  </mgl-popup>
+  }
+  @if (selectedMarker()) {
+    <mgl-popup [marker]="selectedMarker()!.component">
+      <span> <strong>Truck:</strong> {{ selectedMarker()!.data.truckNumber }} </span><br />
+      <span> <strong>Drivers:</strong> {{ selectedMarker()!.data.driversName }} </span><br />
+      @if (selectedMarker()!.data.currentAddress) {
+        <span>
+          <strong>Address:</strong>
+          {{ selectedMarker()!.data.currentAddress | address }}
+        </span>
+      }
+    </mgl-popup>
   }
 </mgl-map>

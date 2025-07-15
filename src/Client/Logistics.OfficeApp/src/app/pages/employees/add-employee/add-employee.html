@@ -7,7 +7,7 @@
   <div class="col-12 col-md-6">
     <p-card>
       @if (isLoading()) {
-      <p-progressSpinner />
+        <p-progressSpinner />
       }
 
       <form [formGroup]="form" (ngSubmit)="submit()">
@@ -33,29 +33,29 @@
         <div class="mb-3">
           <label for="salary" class="form-label">Salary</label>
           @if (isShareOfGrossSalary()) {
-          <div class="input-group">
-            <span class="input-group-text">%</span>
-            <input
-              id="salary"
-              formControlName="salary"
-              type="number"
-              class="form-control"
-              [min]="0"
-              [max]="100"
-            />
-          </div>
+            <div class="input-group">
+              <span class="input-group-text">%</span>
+              <input
+                id="salary"
+                formControlName="salary"
+                type="number"
+                class="form-control"
+                [min]="0"
+                [max]="100"
+              />
+            </div>
           } @else {
-          <div class="input-group">
-            <span class="input-group-text">$$</span>
-            <input
-              id="salary"
-              formControlName="salary"
-              type="number"
-              class="form-control"
-              [min]="0"
-              [disabled]="isNoneSalary()"
-            />
-          </div>
+            <div class="input-group">
+              <span class="input-group-text">$$</span>
+              <input
+                id="salary"
+                formControlName="salary"
+                type="number"
+                class="form-control"
+                [min]="0"
+                [disabled]="isNoneSalary()"
+              />
+            </div>
           }
         </div>
         <div class="mb-3">

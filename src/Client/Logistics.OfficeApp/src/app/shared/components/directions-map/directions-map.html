@@ -16,38 +16,38 @@
 
   <!-- Route Layer -->
   @if (route()) {
-  <mgl-layer
-    id="routeLayer"
-    type="line"
-    [source]="route()!"
-    [paint]="{
-          'line-color': '#28a745',
-          'line-width': 8,
-        }"
-  />
+    <mgl-layer
+      id="routeLayer"
+      type="line"
+      [source]="route()!"
+      [paint]="{
+        'line-color': '#28a745',
+        'line-width': 8,
+      }"
+    />
   }
 
   <!-- Start Point Symbol Layer -->
   @if (startPoint() && imageLoaded()) {
-  <mgl-layer
-    id="startPointLayer"
-    type="symbol"
-    [source]="startPoint()!"
-    [layout]="{
+    <mgl-layer
+      id="startPointLayer"
+      type="symbol"
+      [source]="startPoint()!"
+      [layout]="{
         'icon-image': 'custom-marker',
       }"
-  />
+    />
   }
 
   <!-- End Point Symbol Layer -->
   @if (endPoint() && imageLoaded()) {
-  <mgl-layer
-    id="endPointLayer"
-    type="symbol"
-    [source]="endPoint()!"
-    [layout]="{
+    <mgl-layer
+      id="endPointLayer"
+      type="symbol"
+      [source]="endPoint()!"
+      [layout]="{
         'icon-image': 'custom-marker',
       }"
-  />
+    />
   }
 </mgl-map>

@@ -11,12 +11,12 @@
   />
 
   @if (searchResults().length) {
-  <div class="popup">
-    @for (result of searchResults(); track result.id) {
-    <div class="popup-item" (click)="handleClickAddress(result)" role="presentation">
-      {{ result.properties.full_address }}
+    <div class="popup">
+      @for (result of searchResults(); track result.id) {
+        <div class="popup-item" (click)="handleClickAddress(result)" role="presentation">
+          {{ result.properties.full_address }}
+        </div>
+      }
     </div>
-    }
-  </div>
   }
 </div>

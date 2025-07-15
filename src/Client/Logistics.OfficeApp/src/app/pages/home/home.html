@@ -64,32 +64,32 @@
       </ng-template>
 
       @if (isLoadingChartData()) {
-      <div class="row">
-        <div class="col-12 col-md-4">
-          <p-skeleton height="3rem" />
+        <div class="row">
+          <div class="col-12 col-md-4">
+            <p-skeleton height="3rem" />
+          </div>
+          <div class="col-12 col-md-4">
+            <p-skeleton height="3rem" />
+          </div>
+          <div class="col-12 col-md-4">
+            <p-skeleton height="3rem" />
+          </div>
         </div>
-        <div class="col-12 col-md-4">
-          <p-skeleton height="3rem" />
-        </div>
-        <div class="col-12 col-md-4">
-          <p-skeleton height="3rem" />
-        </div>
-      </div>
       } @else {
-      <div class="row">
-        <div class="col-12 col-md-4 px-3">
-          <span class="text-secondary text-uppercase">Total Gross:</span><br />
-          <span class="fw-bold fs-3">{{ weeklyGross() | currency }}</span>
+        <div class="row">
+          <div class="col-12 col-md-4 px-3">
+            <span class="text-secondary text-uppercase">Total Gross:</span><br />
+            <span class="fw-bold fs-3">{{ weeklyGross() | currency }}</span>
+          </div>
+          <div class="col-12 col-md-4 px-3">
+            <span class="text-secondary text-uppercase">Billed Miles:</span><br />
+            <span class="fw-bold fs-3">{{ weeklyDistance() | distanceUnit: "mi" }}</span>
+          </div>
+          <div class="col-12 col-md-4 px-3">
+            <span class="text-secondary text-uppercase">Rate Per Mile:</span><br />
+            <span class="fw-bold fs-3">{{ weeklyRpm() | currency }}</span>
+          </div>
         </div>
-        <div class="col-12 col-md-4 px-3">
-          <span class="text-secondary text-uppercase">Billed Miles:</span><br />
-          <span class="fw-bold fs-3">{{ weeklyDistance() | distanceUnit: "mi" }}</span>
-        </div>
-        <div class="col-12 col-md-4 px-3">
-          <span class="text-secondary text-uppercase">Rate Per Mile:</span><br />
-          <span class="fw-bold fs-3">{{ weeklyRpm() | currency }}</span>
-        </div>
-      </div>
       }
 
       <ng-template #data>
@@ -121,27 +121,27 @@
       </ng-template>
 
       @if (isLoadingChartData()) {
-      <div class="row">
-        <div class="col-12">
-          <p-skeleton height="20vh" />
+        <div class="row">
+          <div class="col-12">
+            <p-skeleton height="20vh" />
+          </div>
         </div>
-      </div>
       } @else {
-      <div class="row">
-        <div class="col-12 col-md-3 mb-2">
-          <span class="fw-bold">Today Gross:</span><br />
-          <span class="fw-bold fs-3">{{ todayGross() | currency }}</span>
+        <div class="row">
+          <div class="col-12 col-md-3 mb-2">
+            <span class="fw-bold">Today Gross:</span><br />
+            <span class="fw-bold fs-3">{{ todayGross() | currency }}</span>
+          </div>
+          <div class="col-12 col-md-9">
+            <p-chart
+              type="line"
+              [data]="chartData()"
+              [options]="chartOptions()"
+              width="40vw"
+              height="20vh"
+            />
+          </div>
         </div>
-        <div class="col-12 col-md-9">
-          <p-chart
-            type="line"
-            [data]="chartData()"
-            [options]="chartOptions()"
-            width="40vw"
-            height="20vh"
-          />
-        </div>
-      </div>
       }
     </p-card>
   </div>
