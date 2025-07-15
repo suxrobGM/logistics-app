@@ -1,13 +1,13 @@
 <div class="vh-100 vw-100">
   <div class="row justify-content-center align-items-center h-100">
     @if (!isAuthenticated() && !isLoading()) {
-      <div class="col-12 col-md-4">
+      <div class="col-md-4 col-12">
         <h2>Click login button to sign in and get access to the website</h2>
         <p-button icon="bi bi-box-arrow-in-right" label="Login" (click)="login()"> </p-button>
       </div>
     }
     @if (isLoading()) {
-      <div class="col-12 d-flex justify-content-center">
+      <div class="d-flex justify-content-center col-12">
         <div class="h5 fw-bold align-self-center">Authenticating...</div>
         <p-progressSpinner class="ms-2"></p-progressSpinner>
       </div>

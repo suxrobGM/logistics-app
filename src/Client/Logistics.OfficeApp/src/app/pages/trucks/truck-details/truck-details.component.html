@@ -1,86 +1,86 @@
 <h1 class="text-center">Truck Details</h1>
 <hr class="w-100" />
 
-<div class="row mt-3 g-3">
-  <p-card class="col-12 col-sm-6">
+<div class="row g-3 mt-3">
+  <p-card class="col-sm-6 col-12">
     @if (isLoading) {
       <div class="row mb-3">
-        <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <div class="col-md-6 mb-md-0 col-12 mb-2">
           <p-skeleton styleClass="my-2" height="3rem" />
         </div>
-        <div class="col-12 col-md-6 mb-2 mb-md-0">
-          <p-skeleton styleClass="my-2" height="3rem" />
-        </div>
-      </div>
-
-      <div class="row mb-3">
-        <div class="col-12 col-md-6 mb-2 mb-md-0">
-          <p-skeleton styleClass="my-2" height="3rem" />
-        </div>
-        <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <div class="col-md-6 mb-md-0 col-12 mb-2">
           <p-skeleton styleClass="my-2" height="3rem" />
         </div>
       </div>
 
       <div class="row mb-3">
-        <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <div class="col-md-6 mb-md-0 col-12 mb-2">
           <p-skeleton styleClass="my-2" height="3rem" />
         </div>
-        <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <div class="col-md-6 mb-md-0 col-12 mb-2">
           <p-skeleton styleClass="my-2" height="3rem" />
         </div>
       </div>
 
       <div class="row mb-3">
-        <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <div class="col-md-6 mb-md-0 col-12 mb-2">
           <p-skeleton styleClass="my-2" height="3rem" />
         </div>
-        <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <div class="col-md-6 mb-md-0 col-12 mb-2">
+          <p-skeleton styleClass="my-2" height="3rem" />
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-6 mb-md-0 col-12 mb-2">
+          <p-skeleton styleClass="my-2" height="3rem" />
+        </div>
+        <div class="col-md-6 mb-md-0 col-12 mb-2">
           <p-skeleton styleClass="my-2" height="3rem" />
         </div>
       </div>
     } @else {
       <div class="row mb-3">
-        <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <div class="col-md-6 mb-md-0 col-12 mb-2">
           <span class="fw-bold">Drivers: </span><br />
           @for (driver of truck?.drivers; track driver.id) {
             <span class="me-1">{{ driver.fullName }}</span>
           }
         </div>
-        <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <div class="col-md-6 mb-md-0 col-12 mb-2">
           <span class="fw-bold">Truck Number: </span><br />
           <a [routerLink]="['/trucks/edit', truck?.id]">{{ truck?.truckNumber }}</a>
         </div>
       </div>
 
       <div class="row mb-3">
-        <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <div class="col-md-6 mb-md-0 col-12 mb-2">
           <span class="fw-bold">Total Gross this year: </span><br />
           <span>{{ monthlyGrosses?.totalGross | currency }}</span>
         </div>
-        <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <div class="col-md-6 mb-md-0 col-12 mb-2">
           <span class="fw-bold">Total Gross last 30 days: </span><br />
           <span>{{ dailyGrosses?.totalGross | currency }}</span>
         </div>
       </div>
 
       <div class="row mb-3">
-        <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <div class="col-md-6 mb-md-0 col-12 mb-2">
           <span class="fw-bold">Total distance this year: </span><br />
           <span>{{ monthlyGrosses?.totalDistance | distanceUnit: "mi" }} mi</span>
         </div>
-        <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <div class="col-md-6 mb-md-0 col-12 mb-2">
           <span class="fw-bold">Total distance last 30 days: </span><br />
           <span>{{ dailyGrosses?.totalDistance | distanceUnit: "mi" }} mi</span>
         </div>
       </div>
 
       <div class="row mb-3">
-        <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <div class="col-md-6 mb-md-0 col-12 mb-2">
           <span class="fw-bold">RPM this year: </span><br />
           <span>{{ rpmAllTime | currency }}</span>
         </div>
-        <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <div class="col-md-6 mb-md-0 col-12 mb-2">
           <span class="fw-bold">RPM last 30 days: </span><br />
           <span>{{ rpmCurrent | currency }}</span>
         </div>
@@ -88,7 +88,7 @@
     }
   </p-card>
 
-  <div class="col-12 col-sm-6 map-container">
+  <div class="col-sm-6 map-container col-12">
     <app-geolocation-map [geolocationData]="truckLocations" />
   </div>
 </div>

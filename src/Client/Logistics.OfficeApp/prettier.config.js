@@ -11,7 +11,7 @@ const config = {
   jsxSingleQuote: false, // "" for react props, like in html
   bracketSameLine: false, // pretty JSX
   endOfLine: "lf", // 'lf' for linux, 'crlf' for windows, we need to use 'lf' for git
-  plugins: ["@trivago/prettier-plugin-sort-imports"],
+  plugins: ["@trivago/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"],
   importOrderParserPlugins: ["typescript", "decorators"],
   importOrder: ["^(angular/(.*)$)|^(angular$)", "<THIRD_PARTY_MODULES>", "^@/(.*)$", "^[./]"],
   importOrderSeparation: false,

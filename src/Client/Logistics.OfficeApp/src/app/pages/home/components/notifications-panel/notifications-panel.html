@@ -1,12 +1,12 @@
 <p-card>
   <ng-template pTemplate="header">
-    <div class="flex p-3 gap-3">
+    <div class="flex gap-3 p-3">
       <p-overlaybadge [value]="getUnreadNotificationsCount()">
         <i class="bi bi-bell h4"></i>
       </p-overlaybadge>
       <span class="text-lg font-bold">Notifications</span>
     </div>
-    <hr class="w-100 m-0" />
+    <hr class="m-0 w-100" />
   </ng-template>
 
   <div class="notification-list" [style]="{maxHeight: height()}">
@@ -15,7 +15,7 @@
     } @else {
       @for (notification of notifications(); track notification.id) {
         <div
-          class="notification-item my-1 border-bottom"
+          class="notification-item border-bottom my-1"
           [class.bg-lighter]="!notification.isRead"
           (click)="showNotification(notification)"
           role="presentation"
@@ -29,7 +29,7 @@
           </div>
         </div>
       } @empty {
-        <p class="p-3 text-muted">No notifications.</p>
+        <p class="text-muted p-3">No notifications.</p>
       }
     }
   </div>

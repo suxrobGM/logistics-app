@@ -2,21 +2,21 @@
 <hr class="w-100" />
 
 <div class="row g-3 mt-3">
-  <div class="col-12 col-xl-7">
+  <div class="col-xl-7 col-12">
     <p-card>
       <ng-template pTemplate="header">
-        <h4 class="ps-3 py-2">Trucks</h4>
-        <hr class="w-100 m-0" />
+        <h4 class="py-2 ps-3">Trucks</h4>
+        <hr class="m-0 w-100" />
       </ng-template>
       <app-trucks-map height="700px" />
     </p-card>
   </div>
 
-  <div class="col-12 col-xl-5">
+  <div class="col-xl-5 col-12">
     <p-card styleClass="h-100">
       <ng-template pTemplate="header">
-        <h4 class="ps-3 py-2">Active loads</h4>
-        <hr class="w-100 m-0" />
+        <h4 class="py-2 ps-3">Active loads</h4>
+        <hr class="m-0 w-100" />
       </ng-template>
 
       <p-table [value]="loads()" responsiveLayout="scroll" [loading]="isLoadingLoadsData()">
@@ -59,33 +59,33 @@
   <div class="col-12">
     <p-card>
       <ng-template pTemplate="header">
-        <h4 class="ps-3 py-2">Weekly Report</h4>
-        <hr class="w-100 m-0" />
+        <h4 class="py-2 ps-3">Weekly Report</h4>
+        <hr class="m-0 w-100" />
       </ng-template>
 
       @if (isLoadingChartData()) {
         <div class="row">
-          <div class="col-12 col-md-4">
+          <div class="col-md-4 col-12">
             <p-skeleton height="3rem" />
           </div>
-          <div class="col-12 col-md-4">
+          <div class="col-md-4 col-12">
             <p-skeleton height="3rem" />
           </div>
-          <div class="col-12 col-md-4">
+          <div class="col-md-4 col-12">
             <p-skeleton height="3rem" />
           </div>
         </div>
       } @else {
         <div class="row">
-          <div class="col-12 col-md-4 px-3">
+          <div class="col-md-4 col-12 px-3">
             <span class="text-secondary text-uppercase">Total Gross:</span><br />
             <span class="fw-bold fs-3">{{ weeklyGross() | currency }}</span>
           </div>
-          <div class="col-12 col-md-4 px-3">
+          <div class="col-md-4 col-12 px-3">
             <span class="text-secondary text-uppercase">Billed Miles:</span><br />
             <span class="fw-bold fs-3">{{ weeklyDistance() | distanceUnit: "mi" }}</span>
           </div>
-          <div class="col-12 col-md-4 px-3">
+          <div class="col-md-4 col-12 px-3">
             <span class="text-secondary text-uppercase">Rate Per Mile:</span><br />
             <span class="fw-bold fs-3">{{ weeklyRpm() | currency }}</span>
           </div>
@@ -94,15 +94,15 @@
 
       <ng-template #data>
         <div class="row">
-          <div class="col-12 col-md-4 px-3">
+          <div class="col-md-4 col-12 px-3">
             <span class="text-secondary text-uppercase">Total Gross:</span><br />
             <span class="fw-bold fs-3">{{ weeklyGross() | currency }}</span>
           </div>
-          <div class="col-12 col-md-4 px-3">
+          <div class="col-md-4 col-12 px-3">
             <span class="text-secondary text-uppercase">Billed Miles:</span><br />
             <span class="fw-bold fs-3">{{ weeklyDistance() | distanceUnit: "mi" }}</span>
           </div>
-          <div class="col-12 col-md-4 px-3">
+          <div class="col-md-4 col-12 px-3">
             <span class="text-secondary text-uppercase">Rate Per Mile:</span><br />
             <span class="fw-bold fs-3">{{ weeklyRpm() | currency }}</span>
           </div>
@@ -113,11 +113,11 @@
 </div>
 
 <div class="row g-3 mt-3">
-  <div class="col-12 col-xl-7">
+  <div class="col-xl-7 col-12">
     <p-card>
       <ng-template pTemplate="header">
-        <h4 class="ps-3 py-2">Daily Gross</h4>
-        <hr class="w-100 m-0" />
+        <h4 class="py-2 ps-3">Daily Gross</h4>
+        <hr class="m-0 w-100" />
       </ng-template>
 
       @if (isLoadingChartData()) {
@@ -128,11 +128,11 @@
         </div>
       } @else {
         <div class="row">
-          <div class="col-12 col-md-3 mb-2">
+          <div class="col-md-3 col-12 mb-2">
             <span class="fw-bold">Today Gross:</span><br />
             <span class="fw-bold fs-3">{{ todayGross() | currency }}</span>
           </div>
-          <div class="col-12 col-md-9">
+          <div class="col-md-9 col-12">
             <p-chart
               type="line"
               [data]="chartData()"
@@ -145,7 +145,7 @@
       }
     </p-card>
   </div>
-  <div class="col-12 col-xl-5">
+  <div class="col-xl-5 col-12">
     <app-notifications-panel height="400px" />
   </div>
 </div>
