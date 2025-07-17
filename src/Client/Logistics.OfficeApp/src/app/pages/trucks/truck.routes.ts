@@ -25,7 +25,7 @@ export const truckRoutes: Routes = [
     },
   },
   {
-    path: "edit/:id",
+    path: ":id/edit",
     component: EditTruckComponent,
     canActivate: [authGuard],
     data: {
@@ -34,7 +34,7 @@ export const truckRoutes: Routes = [
     },
   },
   {
-    path: "view/:id",
+    path: ":id",
     component: TruckDetailsComponent,
     canActivate: [authGuard],
     data: {

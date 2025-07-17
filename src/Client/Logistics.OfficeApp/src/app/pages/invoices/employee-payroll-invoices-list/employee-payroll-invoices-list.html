@@ -8,8 +8,7 @@
     [text]="true"
     pTooltip="Add a new payroll invoice"
     [routerLink]="['/invoices/payroll/add']"
-  >
-  </p-button>
+  />
 </div>
 <hr class="w-100" />
 
@@ -104,7 +103,7 @@
             </td>
             <td>{{ invoice.total.amount | currency }}</td>
             <td>
-              <app-invoice-status-tag [status]="invoice.status"></app-invoice-status-tag>
+              <app-invoice-status-tag [status]="invoice.status" />
             </td>
             <td>{{ getPaymentMethodDesc(invoice.payment.method) }}</td>
             <td class="overflow-visible">
@@ -114,8 +113,7 @@
                   pTooltip="Make payment"
                   tooltipPosition="bottom"
                   [routerLink]="['/payment/payroll', invoice.id]"
-                >
-                </p-button>
+                />
               } -->
 
               <p-button
@@ -124,8 +122,7 @@
                 pTooltip="Edit payroll"
                 tooltipPosition="bottom"
                 [routerLink]="['/invoices/payroll', invoice.id, 'edit']"
-              >
-              </p-button>
+              />
             </td>
           </tr>
         </ng-template>

@@ -13,7 +13,7 @@ import {AddressPipe} from "@/shared/pipes";
 
 @Component({
   selector: "app-load-invoice-details",
-  templateUrl: "./load-invoice-details.component.html",
+  templateUrl: "./load-invoice-details.html",
   imports: [
     CommonModule,
     CardModule,

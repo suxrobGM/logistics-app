@@ -38,10 +38,7 @@ export class EditTruckComponent implements OnInit {
   protected readonly id = input<string | null>(null);
   protected readonly isLoading = signal(false);
   protected readonly suggestedDrivers = signal<EmployeeDto[]>([]);
-  protected readonly headerText = computed(() =>
-    this.editMode() ? "Edit a truck" : "Add a new truck"
-  );
-  protected readonly editMode = computed(() => this.id() !== null);
+  protected readonly title = computed(() => (this.id() ? "Edit a truck" : "Add a new truck"));
 
   constructor() {
     this.form = new FormGroup({
@@ -74,7 +71,7 @@ export class EditTruckComponent implements OnInit {
       return;
     }
 
-    if (this.editMode()) {
+    if (this.id()) {
       this.updateTruck();
     } else {
       this.createTruck();

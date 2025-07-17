@@ -3,13 +3,13 @@
     @if (!isAuthenticated() && !isLoading()) {
       <div class="w-full px-4 md:w-1/3">
         <h2 class="mb-4 text-2xl">Click login button to sign in and get access to the website</h2>
-        <p-button icon="bi bi-box-arrow-in-right" label="Login" (click)="login()"> </p-button>
+        <p-button icon="bi bi-box-arrow-in-right" label="Login" (click)="login()" />
       </div>
     }
     @if (isLoading()) {
       <div class="flex w-full justify-center">
         <div class="self-center text-xl font-bold">Authenticating...</div>
-        <p-progress-spinner class="ml-2"></p-progress-spinner>
+        <p-progress-spinner class="ml-2" />
       </div>
     }
   </div>

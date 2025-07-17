@@ -8,7 +8,7 @@
 
   <ul class="nav flex-column mb-auto">
     <li>
-      <app-panel-menu [items]="navItems()" [(expanded)]="isOpened"></app-panel-menu>
+      <app-panel-menu [items]="navItems()" [(expanded)]="isOpened" />
     </li>
     <li>
       <a class="nav-link border-bottom">
@@ -30,11 +30,7 @@
         </div>
       }
 
-      <app-panel-menu
-        [items]="profileMenuItems"
-        [(expanded)]="isOpened"
-        class="w-100"
-      ></app-panel-menu>
+      <app-panel-menu [items]="profileMenuItems" [(expanded)]="isOpened" class="w-100" />
     </div>
   }
 </div>

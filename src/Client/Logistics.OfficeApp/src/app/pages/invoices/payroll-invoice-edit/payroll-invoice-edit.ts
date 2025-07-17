@@ -26,7 +26,7 @@ import {DateUtils} from "@/shared/utils";
 
 @Component({
   selector: "app-payroll-invoice-edit",
-  templateUrl: "./payroll-invoice-edit.component.html",
+  templateUrl: "./payroll-invoice-edit.html",
   imports: [
     CommonModule,
     CardModule,
@@ -48,14 +48,14 @@ export class PayrollInvoiceEditComponent implements OnInit {
 
   //readonly paymentStatusOptions = paymentStatusOptions;
   //readonly paymentMethodOptions = paymentMethodTypeOptions;
-  readonly todayDate = new Date();
-  readonly form: FormGroup<PayrollForm>;
-  readonly id = input<string>();
-  readonly isLoading = signal(false);
-  readonly suggestedEmployees = signal<EmployeeDto[]>([]);
-  readonly selectedEmployee = signal<EmployeeDto | null>(null);
-  readonly previewPayrollInvoice = signal<InvoiceDto | null>(null);
-  readonly title = computed(() => (this.id() ? "Edit payroll" : "Add a new payroll"));
+  protected readonly todayDate = new Date();
+  protected readonly form: FormGroup<PayrollForm>;
+  protected readonly id = input<string>();
+  protected readonly isLoading = signal(false);
+  protected readonly suggestedEmployees = signal<EmployeeDto[]>([]);
+  protected readonly selectedEmployee = signal<EmployeeDto | null>(null);
+  protected readonly previewPayrollInvoice = signal<InvoiceDto | null>(null);
+  protected readonly title = computed(() => (this.id() ? "Edit payroll" : "Add a new payroll"));
 
   constructor() {
     const lastWeek = [

@@ -3,7 +3,6 @@ import {AddressDto} from "@/core/api/models";
 
 @Pipe({
   name: "address",
-  standalone: true,
 })
 export class AddressPipe implements PipeTransform {
   /**

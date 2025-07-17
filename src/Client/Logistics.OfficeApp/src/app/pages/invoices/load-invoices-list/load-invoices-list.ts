@@ -11,7 +11,7 @@ import {InvoiceStatusTag} from "@/shared/components";
 
 @Component({
   selector: "app-load-invoices-list",
-  templateUrl: "./load-invoices-list.component.html",
+  templateUrl: "./load-invoices-list.html",
   imports: [
     CommonModule,
     RouterModule,
@@ -27,11 +27,11 @@ import {InvoiceStatusTag} from "@/shared/components";
 export class LoadInvoicesListComponent {
   private readonly apiService = inject(ApiService);
 
-  readonly loadId = input<string>();
-  readonly invoices = signal<InvoiceDto[]>([]);
-  readonly isLoading = signal(true);
-  readonly totalRecords = signal(0);
-  readonly first = signal(0);
+  protected readonly loadId = input<string>();
+  protected readonly invoices = signal<InvoiceDto[]>([]);
+  protected readonly isLoading = signal(true);
+  protected readonly totalRecords = signal(0);
+  protected readonly first = signal(0);
 
   load(event: TableLazyLoadEvent): void {
     this.isLoading.set(true);

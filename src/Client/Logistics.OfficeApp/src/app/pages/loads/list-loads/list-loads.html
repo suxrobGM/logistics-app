@@ -8,8 +8,7 @@
     [text]="true"
     pTooltip="Add a new load"
     [routerLink]="['/loads/add']"
-  >
-  </p-button>
+  />
 </div>
 <hr class="w-100" />
 
@@ -139,24 +138,21 @@
                 pTooltip="Edit load details"
                 tooltipPosition="bottom"
                 [routerLink]="['/loads/edit', load.id]"
-              >
-              </p-button>
+              />
               <p-button
                 styleClass="ms-2"
                 icon="bi bi-truck"
                 pTooltip="View truck details"
                 tooltipPosition="bottom"
-                [routerLink]="['/trucks/view', load.assignedTruckId]"
-              >
-              </p-button>
+                [routerLink]="['/trucks', load.assignedTruckId]"
+              />
               <p-button
                 styleClass="ms-2"
                 icon="bi bi-card-list"
                 pTooltip="View invoices"
                 tooltipPosition="bottom"
                 [routerLink]="['/invoices/loads', load.id, 'view']"
-              >
-              </p-button>
+              />
             </td>
           </tr>
         </ng-template>

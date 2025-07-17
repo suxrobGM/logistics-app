@@ -1,11 +1,11 @@
 import {Routes} from "@angular/router";
 import {authGuard} from "@/core/auth";
 import {Permissions} from "@/shared/models";
-import {EmployeePayrollInvoicesListComponent} from "./employee-payroll-invoices-list/employee-payroll-invoices-list.component";
-import {LoadInvoiceDetailsComponent} from "./load-invoice-details/load-invoice-details.component";
-import {LoadInvoicesListComponent} from "./load-invoices-list/load-invoices-list.component";
-import {PayrollInvoiceEditComponent} from "./payroll-invoice-edit/payroll-invoice-edit.component";
-import {PayrollInvoicesListComponent} from "./payroll-invoices-list/payroll-invoices-list.component";
+import {EmployeePayrollInvoicesListComponent} from "./employee-payroll-invoices-list/employee-payroll-invoices-list";
+import {LoadInvoiceDetailsComponent} from "./load-invoice-details/load-invoice-details";
+import {LoadInvoicesListComponent} from "./load-invoices-list/load-invoices-list";
+import {PayrollInvoiceEditComponent} from "./payroll-invoice-edit/payroll-invoice-edit";
+import {PayrollInvoicesListComponent} from "./payroll-invoices-list/payroll-invoices-list";
 
 export const invoiceRoutes: Routes = [
   {

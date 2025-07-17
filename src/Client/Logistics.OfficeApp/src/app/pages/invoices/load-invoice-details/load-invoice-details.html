@@ -16,7 +16,7 @@
   <p><strong>Amount:</strong> {{ invoice()!.total!.amount | currency }}</p>
   <p>
     <strong>Status:</strong>
-    <app-invoice-status-tag [status]="invoice()!.status"></app-invoice-status-tag>
+    <app-invoice-status-tag [status]="invoice()!.status" />
   </p>
 
   <p-button icon="bi bi-file-pdf" label="Export to PDF" (click)="exportToPdf()" />
@@ -28,7 +28,6 @@
         label="Make payment"
         severity="info"
         [routerLink]="['/payment/invoice', invoice.id]"
-      >
-      </p-button>
+      />
     } -->
 </p-card>

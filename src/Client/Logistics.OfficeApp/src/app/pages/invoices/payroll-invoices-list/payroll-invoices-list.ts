@@ -14,7 +14,7 @@ import {InvoiceStatusTag} from "@/shared/components";
 
 @Component({
   selector: "app-payroll-invoices-list",
-  templateUrl: "./payroll-invoices-list.component.html",
+  templateUrl: "./payroll-invoices-list.html",
   styleUrls: [],
   imports: [
     CommonModule,
@@ -32,10 +32,10 @@ import {InvoiceStatusTag} from "@/shared/components";
 export class PayrollInvoicesListComponent {
   private readonly apiService = inject(ApiService);
 
-  readonly invoices = signal<InvoiceDto[]>([]);
-  readonly isLoading = signal(false);
-  readonly totalRecords = signal(0);
-  readonly first = signal(0);
+  protected readonly invoices = signal<InvoiceDto[]>([]);
+  protected readonly isLoading = signal(false);
+  protected readonly totalRecords = signal(0);
+  protected readonly first = signal(0);
 
   search(event: Event): void {
     this.isLoading.set(true);

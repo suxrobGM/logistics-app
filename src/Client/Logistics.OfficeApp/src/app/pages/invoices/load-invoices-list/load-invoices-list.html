@@ -58,7 +58,7 @@
             <td>{{ invoice.total.amount | currency }}</td>
             <td>{{ invoice.createdDate | date: "mediumDate" }}</td>
             <td>
-              <app-invoice-status-tag [status]="invoice.status"></app-invoice-status-tag>
+              <app-invoice-status-tag [status]="invoice.status" />
             </td>
             <td>
               <!-- @if (invoice.status === "pending") {
@@ -67,8 +67,7 @@
                   pTooltip="Make payment"
                   tooltipPosition="bottom"
                   [routerLink]="['/payment/invoice', invoice.id]"
-                >
-                </p-button>
+                />
               } -->
 
               <p-button
@@ -76,8 +75,7 @@
                 icon="bi bi-card-list"
                 pTooltip="View details"
                 [routerLink]="['/invoices/loads', invoice.id]"
-              >
-              </p-button>
+              />
             </td>
           </tr>
         </ng-template>

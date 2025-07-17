@@ -3,7 +3,6 @@ import {Converters, DistanceUnitTypes} from "@/shared/utils";
 
 @Pipe({
   name: "distanceUnit",
-  standalone: true,
 })
 export class DistanceUnitPipe implements PipeTransform {
   /**

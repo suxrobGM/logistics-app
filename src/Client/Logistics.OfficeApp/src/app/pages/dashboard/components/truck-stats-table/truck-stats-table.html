@@ -71,13 +71,13 @@
           <p-button
             icon="bi bi-journal-text"
             pTooltip="View details"
-            [routerLink]="['/trucks/view', truckStats().truckId]"
+            [routerLink]="['/trucks', truckStats().truckId]"
           />
           <p-button
             class="ms-2"
             icon="bi bi-pencil"
             pTooltip="Edit"
-            [routerLink]="['/trucks/edit', truckStats().truckId]"
+            [routerLink]="['/trucks', truckStats().truckId, 'edit']"
           />
         </td>
       </tr>

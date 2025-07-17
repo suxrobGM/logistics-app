@@ -1,7 +1,7 @@
 <p-toast key="notification" position="top-right" />
 <p-confirm-dialog header="Confirmation" icon="pi pi-exclamation-triangle" />
 
-<h1 class="text-center">{{ headerText() }}</h1>
+<h1 class="text-center">{{ title() }}</h1>
 <hr class="w-100" />
 
 <div class="row justify-content-center">
@@ -46,7 +46,7 @@
             label="Save"
             [disabled]="isLoading()"
           />
-          @if (editMode()) {
+          @if (id()) {
             <p-button
               type="button"
               styleClass="p-button-danger mt-3 ms-2"

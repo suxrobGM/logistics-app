@@ -19,7 +19,7 @@ import {InvoiceStatusTag} from "@/shared/components";
 
 @Component({
   selector: "app-employee-payroll-invoices-list",
-  templateUrl: "./employee-payroll-invoices-list.component.html",
+  templateUrl: "./employee-payroll-invoices-list.html",
   imports: [
     CommonModule,
     CardModule,
@@ -34,19 +34,19 @@ import {InvoiceStatusTag} from "@/shared/components";
 export class EmployeePayrollInvoicesListComponent implements OnInit {
   private readonly apiService = inject(ApiService);
 
-  readonly employeeId = input.required<string>();
-  readonly invoices = signal<InvoiceDto[]>([]);
-  readonly employee = signal<EmployeeDto | null>(null);
-  readonly isLoadingEmployee = signal(false);
-  readonly isLoadingPayrolls = signal(false);
-  readonly totalRecords = signal(0);
-  readonly first = signal(0);
+  protected readonly employeeId = input.required<string>();
+  protected readonly invoices = signal<InvoiceDto[]>([]);
+  protected readonly employee = signal<EmployeeDto | null>(null);
+  protected readonly isLoadingEmployee = signal(false);
+  protected readonly isLoadingPayrolls = signal(false);
+  protected readonly totalRecords = signal(0);
+  protected readonly first = signal(0);
 
   ngOnInit(): void {
     this.fetchEmployee();
   }
 
-  load(event: TableLazyLoadEvent): void {
+  protected load(event: TableLazyLoadEvent): void {
     this.isLoadingPayrolls.set(true);
     const first = event.first ?? 1;
     const rows = event.rows ?? 10;
@@ -70,7 +70,7 @@ export class EmployeePayrollInvoicesListComponent implements OnInit {
       });
   }
 
-  getPaymentMethodDesc(enumValue?: PaymentMethodType): string {
+  protected getPaymentMethodDesc(enumValue?: PaymentMethodType): string {
     if (enumValue == null) {
       return "N/A";
     }
@@ -80,7 +80,7 @@ export class EmployeePayrollInvoicesListComponent implements OnInit {
     );
   }
 
-  getSalaryTypeDesc(enumValue: SalaryType): string {
+  protected getSalaryTypeDesc(enumValue: SalaryType): string {
     return salaryTypeOptions.find((option) => option.value === enumValue)?.label ?? "Unknown";
   }
 
