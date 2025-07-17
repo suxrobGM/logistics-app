@@ -65,7 +65,7 @@ export class Sidebar {
     });
 
     this.tenantService.tenantDataChanged$.subscribe((tenantData) => {
-      if (!this.tenantService.isSubscriptionActive()) {
+      if (tenantData?.subscription == null || !this.tenantService.isSubscriptionActive()) {
         this.navItems.set(sidebarItems.filter((item) => item.label !== "Subscription"));
       }
 

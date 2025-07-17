@@ -5,7 +5,7 @@
   placeholder="Type a customer name"
   [minLength]="2"
   [forceSelection]="true"
-  field="name"
+  optionLabel="name"
   [(ngModel)]="selectedCustomer"
   (completeMethod)="searchCustomer($event)"
   (onSelect)="changeSelectedCustomer($event)"

@@ -21,7 +21,6 @@
           "options": {
             "browser": "src/main.ts",
             "index": "src/index.html",
-            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "outputPath": {
               "base": "dist/logistics.office-app"
@@ -86,7 +85,6 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "assets": [

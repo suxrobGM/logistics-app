@@ -1,5 +1,9 @@
 import {provideHttpClient, withInterceptors} from "@angular/common/http";
-import {ApplicationConfig, importProvidersFrom} from "@angular/core";
+import {
+  ApplicationConfig,
+  importProvidersFrom,
+  provideZonelessChangeDetection,
+} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
 import {provideAnimationsAsync} from "@angular/platform-browser/animations/async";
 import {provideRouter, withComponentInputBinding} from "@angular/router";
@@ -15,6 +19,7 @@ import {appRoutes} from "./app.routes";
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideZonelessChangeDetection(),
     provideAuth({config: authConfig}),
     provideRouter(appRoutes, withComponentInputBinding()),
     importProvidersFrom(BrowserModule),
@@ -28,6 +33,7 @@ export const appConfig: ApplicationConfig = {
     provideMapboxGL({
       accessToken: environment.mapboxToken,
     }),
+
     MessageService,
     ConfirmationService,
   ],
