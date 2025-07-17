@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, inject} from "@angular/core";
+import {Component, inject, signal} from "@angular/core";
 import {RouterLink} from "@angular/router";
 import {SharedModule} from "primeng/api";
 import {ButtonModule} from "primeng/button";
@@ -15,7 +15,7 @@ import {AddressPipe} from "@/shared/pipes";
 
 @Component({
   selector: "app-list-trucks",
-  templateUrl: "./list-trucks.component.html",
+  templateUrl: "./list-trucks.html",
   imports: [
     CommonModule,
     ButtonModule,
@@ -33,32 +33,26 @@ import {AddressPipe} from "@/shared/pipes";
 export class ListTruckComponent {
   private readonly apiService = inject(ApiService);
 
-  public trucks: TruckDto[];
-  public isLoading: boolean;
-  public totalRecords: number;
+  protected readonly trucks = signal<TruckDto[]>([]);
+  protected readonly isLoading = signal(false);
+  protected readonly totalRecords = signal(0);
 
-  constructor() {
-    this.trucks = [];
-    this.isLoading = false;
-    this.totalRecords = 0;
-  }
-
-  search(event: Event) {
-    this.isLoading = true;
+  search(event: Event): void {
+    this.isLoading.set(true);
     const searchValue = (event.target as HTMLInputElement).value;
 
     this.apiService.getTrucks({search: searchValue}).subscribe((result) => {
       if (result.success && result.data) {
-        this.trucks = result.data;
-        this.totalRecords = result.totalItems;
+        this.trucks.set(result.data);
+        this.totalRecords.set(result.totalItems);
       }
 
-      this.isLoading = false;
+      this.isLoading.set(false);
     });
   }
 
-  load(event: TableLazyLoadEvent) {
-    this.isLoading = true;
+  load(event: TableLazyLoadEvent): void {
+    this.isLoading.set(true);
     const first = event.first ?? 1;
     const rows = event.rows ?? 10;
     const page = first / rows + 1;
@@ -68,11 +62,11 @@ export class ListTruckComponent {
       .getTrucks({orderBy: sortField, page: page, pageSize: rows})
       .subscribe((result) => {
         if (result.success && result.data) {
-          this.trucks = result.data;
-          this.totalRecords = result.totalItems;
+          this.trucks.set(result.data);
+          this.totalRecords.set(result.totalItems);
         }
 
-        this.isLoading = false;
+        this.isLoading.set(false);
       });
   }
 }

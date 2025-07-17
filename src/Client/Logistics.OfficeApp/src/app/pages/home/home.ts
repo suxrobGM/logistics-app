@@ -1,5 +1,5 @@
 import {CurrencyPipe} from "@angular/common";
-import {Component, inject, signal} from "@angular/core";
+import {Component, OnInit, inject, signal} from "@angular/core";
 import {RouterLink} from "@angular/router";
 import {SharedModule} from "primeng/api";
 import {ButtonModule} from "primeng/button";
@@ -53,7 +53,7 @@ const chartOptions = {
     AddressPipe,
   ],
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   private readonly apiService = inject(ApiService);
 
   protected readonly todayGross = signal(0);
@@ -63,12 +63,10 @@ export class HomeComponent {
   protected readonly isLoadingLoadsData = signal(false);
   protected readonly isLoadingChartData = signal(false);
   protected readonly loads = signal<LoadDto[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  protected readonly chartData = signal<Record<string, any>>(chartInitialData);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  protected readonly chartOptions = signal<Record<string, any>>(chartOptions);
+  protected readonly chartData = signal<Record<string, unknown>>(chartInitialData);
+  protected readonly chartOptions = signal<Record<string, unknown>>(chartOptions);
 
-  constructor() {
+  ngOnInit(): void {
     this.fetchActiveLoads();
     this.fetchLastTenDaysGross();
   }

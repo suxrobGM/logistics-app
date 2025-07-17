@@ -1,13 +1,13 @@
 <p-toast key="notification" position="top-right" />
 <p-confirm-dialog header="Confirmation" icon="pi pi-exclamation-triangle" />
 
-<h1 class="text-center">{{ headerText }}</h1>
+<h1 class="text-center">{{ headerText() }}</h1>
 <hr class="w-100" />
 
 <div class="row justify-content-center">
   <div class="col-md-6 col-12">
     <p-card>
-      @if (isBusy) {
+      @if (isLoading()) {
         <p-progress-spinner />
       }
       <form [formGroup]="form" (ngSubmit)="submit()">
@@ -30,9 +30,10 @@
             inputStyleClass="form-control"
             placeholder="Type a driver name"
             field="fullName"
+            optionLabel="fullName"
             [minLength]="2"
             [multiple]="true"
-            [suggestions]="suggestedDrivers"
+            [suggestions]="suggestedDrivers()"
             (completeMethod)="searchDriver($event)"
           />
         </div>
@@ -43,15 +44,15 @@
             class="mt-3"
             icon="bi bi-pencil-square"
             label="Save"
-            [disabled]="isBusy"
+            [disabled]="isLoading()"
           />
-          @if (editMode) {
+          @if (editMode()) {
             <p-button
               type="button"
               styleClass="p-button-danger mt-3 ms-2"
               icon="bi bi bi-trash"
               label="Delete"
-              [disabled]="isBusy"
+              [disabled]="isLoading()"
               (click)="confirmToDelete()"
             />
           }

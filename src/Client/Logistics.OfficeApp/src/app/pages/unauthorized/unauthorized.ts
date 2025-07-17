@@ -22,7 +22,7 @@ export class UnauthorizedComponent {
     });
   }
 
-  getReasonMessage(): string {
+  protected getReasonMessage(): string {
     if (this.reason() === "subscription") {
       return "Your subscription is not active. Please renew it.";
     }

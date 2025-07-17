@@ -1,6 +1,6 @@
-import {Component, OnInit, inject} from "@angular/core";
+import {Component, OnInit, computed, inject, input, signal} from "@angular/core";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {ActivatedRoute, RouterLink} from "@angular/router";
+import {Router, RouterLink} from "@angular/router";
 import {ConfirmationService} from "primeng/api";
 import {AutoCompleteModule} from "primeng/autocomplete";
 import {ButtonModule} from "primeng/button";
@@ -14,7 +14,7 @@ import {ToastService} from "@/core/services";
 
 @Component({
   selector: "app-edit-truck",
-  templateUrl: "./edit-truck.component.html",
+  templateUrl: "./edit-truck.html",
   imports: [
     ToastModule,
     ConfirmDialogModule,
@@ -31,21 +31,19 @@ export class EditTruckComponent implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly toastService = inject(ToastService);
-  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
-  public id: string | null;
-  public headerText: string;
-  public isBusy: boolean;
-  public editMode: boolean;
-  public form: FormGroup;
-  public suggestedDrivers: EmployeeDto[];
+  protected readonly form: FormGroup;
+
+  protected readonly id = input<string | null>(null);
+  protected readonly isLoading = signal(false);
+  protected readonly suggestedDrivers = signal<EmployeeDto[]>([]);
+  protected readonly headerText = computed(() =>
+    this.editMode() ? "Edit a truck" : "Add a new truck"
+  );
+  protected readonly editMode = computed(() => this.id() !== null);
 
   constructor() {
-    this.id = null;
-    this.suggestedDrivers = [];
-    this.headerText = "Edit a truck";
-    this.isBusy = false;
-    this.editMode = true;
     this.form = new FormGroup({
       truckNumber: new FormControl(0, Validators.required),
       drivers: new FormControl([], Validators.required),
@@ -53,28 +51,22 @@ export class EditTruckComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      this.id = params["id"];
-    });
+    const id = this.id();
 
-    if (!this.id) {
-      this.editMode = false;
-      this.headerText = "Add a new truck";
-      return;
+    if (id) {
+      this.fetchTruck(id);
     }
-
-    this.fetchTruck(this.id);
   }
 
-  searchDriver(event: {query: string}) {
+  protected searchDriver(event: {query: string}): void {
     this.apiService.getDrivers({search: event.query}).subscribe((result) => {
       if (result.success && result.data) {
-        this.suggestedDrivers = result.data;
+        this.suggestedDrivers.set(result.data);
       }
     });
   }
 
-  submit() {
+  protected submit(): void {
     const drivers = this.form.value.drivers as EmployeeDto[];
 
     if (drivers.length === 0) {
@@ -82,24 +74,26 @@ export class EditTruckComponent implements OnInit {
       return;
     }
 
-    if (this.editMode) {
+    if (this.editMode()) {
       this.updateTruck();
     } else {
       this.createTruck();
     }
   }
 
-  confirmToDelete() {
+  protected confirmToDelete(): void {
     this.confirmationService.confirm({
       message: "Are you sure that you want to delete this truck?",
       accept: () => this.deleteTruck(),
     });
   }
 
-  private fetchTruck(id: string) {
+  private fetchTruck(id: string): void {
     this.apiService.getTruck(id).subscribe((result) => {
       if (result.success && result.data) {
         const truck = result.data;
+        console.log("Fetched Truck:", truck);
+
         this.form.patchValue({
           truckNumber: truck.truckNumber,
           drivers: truck.drivers,
@@ -108,8 +102,8 @@ export class EditTruckComponent implements OnInit {
     });
   }
 
-  private createTruck() {
-    this.isBusy = true;
+  private createTruck(): void {
+    this.isLoading.set(true);
     const drivers = this.form.value.drivers as EmployeeDto[];
 
     const command: CreateTruckCommand = {
@@ -120,19 +114,19 @@ export class EditTruckComponent implements OnInit {
     this.apiService.createTruck(command).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess("A new truck has been created successfully");
-        this.resetForm();
+        this.router.navigateByUrl("/trucks");
       }
 
-      this.isBusy = false;
+      this.isLoading.set(false);
     });
   }
 
-  private updateTruck() {
-    this.isBusy = true;
+  private updateTruck(): void {
+    this.isLoading.set(true);
     const drivers = this.form.value.drivers as EmployeeDto[];
 
     const updateTruckCommand: UpdateTruckCommand = {
-      id: this.id!,
+      id: this.id()!,
       truckNumber: this.form.value.truckNumber,
       driverIds: drivers.map((i) => i.id),
     };
@@ -142,29 +136,23 @@ export class EditTruckComponent implements OnInit {
         this.toastService.showSuccess("Truck has been updated successfully");
       }
 
-      this.isBusy = false;
+      this.isLoading.set(false);
     });
   }
 
-  private deleteTruck() {
-    if (!this.id) {
+  private deleteTruck(): void {
+    if (!this.id()) {
       return;
     }
 
-    this.isBusy = true;
-    this.apiService.deleteTruck(this.id).subscribe((result) => {
+    this.isLoading.set(true);
+    this.apiService.deleteTruck(this.id()!).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess("A truck has been deleted successfully");
-        this.resetForm();
+        this.router.navigateByUrl("/trucks");
       }
 
-      this.isBusy = false;
+      this.isLoading.set(false);
     });
-  }
-
-  private resetForm() {
-    this.editMode = false;
-    this.headerText = "Add a new truck";
-    this.id = null;
   }
 }

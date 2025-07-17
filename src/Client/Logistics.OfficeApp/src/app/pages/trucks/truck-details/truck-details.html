@@ -3,7 +3,7 @@
 
 <div class="row g-3 mt-3">
   <p-card class="col-sm-6 col-12">
-    @if (isLoading) {
+    @if (isLoading()) {
       <div class="row mb-3">
         <div class="col-md-6 mb-md-0 col-12 mb-2">
           <p-skeleton styleClass="my-2" height="3rem" />
@@ -43,60 +43,60 @@
       <div class="row mb-3">
         <div class="col-md-6 mb-md-0 col-12 mb-2">
           <span class="fw-bold">Drivers: </span><br />
-          @for (driver of truck?.drivers; track driver.id) {
+          @for (driver of truck()?.drivers; track driver.id) {
             <span class="me-1">{{ driver.fullName }}</span>
           }
         </div>
         <div class="col-md-6 mb-md-0 col-12 mb-2">
           <span class="fw-bold">Truck Number: </span><br />
-          <a [routerLink]="['/trucks/edit', truck?.id]">{{ truck?.truckNumber }}</a>
+          <a [routerLink]="['/trucks/edit', truck()?.id]">{{ truck()?.truckNumber }}</a>
         </div>
       </div>
 
       <div class="row mb-3">
         <div class="col-md-6 mb-md-0 col-12 mb-2">
           <span class="fw-bold">Total Gross this year: </span><br />
-          <span>{{ monthlyGrosses?.totalGross | currency }}</span>
+          <span>{{ monthlyGrosses()?.totalGross | currency }}</span>
         </div>
         <div class="col-md-6 mb-md-0 col-12 mb-2">
           <span class="fw-bold">Total Gross last 30 days: </span><br />
-          <span>{{ dailyGrosses?.totalGross | currency }}</span>
+          <span>{{ dailyGrosses()?.totalGross | currency }}</span>
         </div>
       </div>
 
       <div class="row mb-3">
         <div class="col-md-6 mb-md-0 col-12 mb-2">
           <span class="fw-bold">Total distance this year: </span><br />
-          <span>{{ monthlyGrosses?.totalDistance | distanceUnit: "mi" }} mi</span>
+          <span>{{ monthlyGrosses()?.totalDistance | distanceUnit: "mi" }} mi</span>
         </div>
         <div class="col-md-6 mb-md-0 col-12 mb-2">
           <span class="fw-bold">Total distance last 30 days: </span><br />
-          <span>{{ dailyGrosses?.totalDistance | distanceUnit: "mi" }} mi</span>
+          <span>{{ dailyGrosses()?.totalDistance | distanceUnit: "mi" }} mi</span>
         </div>
       </div>
 
       <div class="row mb-3">
         <div class="col-md-6 mb-md-0 col-12 mb-2">
           <span class="fw-bold">RPM this year: </span><br />
-          <span>{{ rpmAllTime | currency }}</span>
+          <span>{{ rpmAllTime() | currency }}</span>
         </div>
         <div class="col-md-6 mb-md-0 col-12 mb-2">
           <span class="fw-bold">RPM last 30 days: </span><br />
-          <span>{{ rpmCurrent | currency }}</span>
+          <span>{{ rpmCurrent() | currency }}</span>
         </div>
       </div>
     }
   </p-card>
 
   <div class="col-sm-6 map-container col-12">
-    <app-geolocation-map [geolocationData]="truckLocations" />
+    <app-geolocation-map [geolocationData]="truckLocations()" />
   </div>
 </div>
 
 <div class="mt-3">
-  <app-truck-grosses-linechart [truckId]="id" (chartDrawn)="onLineChartDrawn($event)" />
+  <app-truck-grosses-linechart [truckId]="id()!" (chartDrawn)="onLineChartDrawn($event)" />
 </div>
 
 <div class="mt-3">
-  <app-grosses-barchart class="mt-3" [truckId]="id" (chartDrawn)="onBarChartDrawn($event)" />
+  <app-grosses-barchart class="mt-3" [truckId]="id()!" (chartDrawn)="onBarChartDrawn($event)" />
 </div>
