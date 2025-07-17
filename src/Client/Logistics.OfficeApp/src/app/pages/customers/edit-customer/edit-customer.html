@@ -5,7 +5,7 @@
   <div class="col-md-6 col-12">
     <p-card>
       @if (isLoading()) {
-        <p-progressSpinner />
+        <p-progress-spinner />
       }
 
       <form [formGroup]="form" (ngSubmit)="submit()">

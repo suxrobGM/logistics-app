@@ -23,7 +23,6 @@ import {UserService} from "../services";
 @Component({
   selector: "app-add-employee",
   templateUrl: "./add-employee.html",
-  styleUrl: "./add-employee.css",
   imports: [
     ToastModule,
     ConfirmDialogModule,

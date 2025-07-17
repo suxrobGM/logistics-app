@@ -25,7 +25,6 @@ import {TruckData} from "../shared";
 @Component({
   selector: "app-add-load",
   templateUrl: "./add-load.html",
-  styleUrl: "./add-load.css",
   imports: [
     ToastModule,
     CardModule,

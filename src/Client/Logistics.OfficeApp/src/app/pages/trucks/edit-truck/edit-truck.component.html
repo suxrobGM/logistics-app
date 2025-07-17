@@ -1,5 +1,5 @@
 <p-toast key="notification" position="top-right" />
-<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" />
+<p-confirm-dialog header="Confirmation" icon="pi pi-exclamation-triangle" />
 
 <h1 class="text-center">{{ headerText }}</h1>
 <hr class="w-100" />
@@ -8,7 +8,7 @@
   <div class="col-md-6 col-12">
     <p-card>
       @if (isBusy) {
-        <p-progressSpinner />
+        <p-progress-spinner />
       }
       <form [formGroup]="form" (ngSubmit)="submit()">
         <div class="mb-3">

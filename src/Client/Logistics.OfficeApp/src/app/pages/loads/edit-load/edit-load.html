@@ -1,5 +1,5 @@
 <p-toast key="notification" position="top-right" />
-<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" />
+<p-confirm-dialog header="Confirmation" icon="pi pi-exclamation-triangle" />
 
 <h1>Edit a load #{{ loadNumber() }}</h1>
 <hr class="w-100" />
@@ -8,7 +8,7 @@
   <div class="row">
     <div class="col-md-6 col-12">
       @if (isLoading()) {
-        <p-progressSpinner />
+        <p-progress-spinner />
       }
       <form [formGroup]="form" (ngSubmit)="updateLoad()">
         <app-validation-summary [form]="form" />

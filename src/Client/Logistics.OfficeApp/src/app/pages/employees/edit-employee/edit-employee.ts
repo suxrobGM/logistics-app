@@ -21,7 +21,6 @@ import {ChangeRoleDialogComponent} from "../components";
 @Component({
   selector: "app-edit-employee",
   templateUrl: "./edit-employee.html",
-  styleUrl: "./edit-employee.css",
   imports: [
     ToastModule,
     ConfirmDialogModule,

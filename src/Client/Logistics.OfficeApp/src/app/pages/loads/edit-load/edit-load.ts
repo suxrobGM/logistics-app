@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, inject, input, signal} from "@angular/core";
+import {Component, OnInit, inject, input, signal} from "@angular/core";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Router, RouterLink} from "@angular/router";
 import {ConfirmationService} from "primeng/api";
@@ -33,7 +33,6 @@ import {TruckData, TruckHelper} from "../shared";
 @Component({
   selector: "app-edit-load",
   templateUrl: "./edit-load.html",
-  styleUrl: "./edit-load.css",
   imports: [
     CommonModule,
     ToastModule,
@@ -53,7 +52,7 @@ import {TruckData, TruckHelper} from "../shared";
     SelectModule,
   ],
 })
-export class EditLoadComponent {
+export class EditLoadComponent implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly toastService = inject(ToastService);
@@ -62,7 +61,7 @@ export class EditLoadComponent {
   private distanceMeters = 0;
   protected readonly loadStatuses = loadStatusOptions;
   protected readonly form: FormGroup<EditLoadForm>;
-  protected readonly id = input.required<string>();
+  protected readonly id = input<string>();
 
   protected readonly loadNumber = signal<number>(0);
   protected readonly isLoading = signal(false);
@@ -96,7 +95,9 @@ export class EditLoadComponent {
         {validators: Validators.required, nonNullable: true}
       ),
     });
+  }
 
+  ngOnInit(): void {
     this.fetchLoad();
   }
 
@@ -134,7 +135,7 @@ export class EditLoadComponent {
 
     this.isLoading.set(true);
     const command: UpdateLoadCommand = {
-      id: this.id(),
+      id: this.id()!,
       name: this.form.value.name!,
       originAddress: this.form.value.orgAddress!,
       originAddressLong: this.form.value.orgCoords![0],
@@ -161,7 +162,7 @@ export class EditLoadComponent {
 
   private deleteLoad(): void {
     this.isLoading.set(true);
-    this.apiService.deleteLoad(this.id()).subscribe((result) => {
+    this.apiService.deleteLoad(this.id()!).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess("A load has been deleted successfully");
         this.router.navigateByUrl("/loads");
@@ -174,7 +175,7 @@ export class EditLoadComponent {
   private fetchLoad(): void {
     this.isLoading.set(true);
 
-    this.apiService.getLoad(this.id()).subscribe((result) => {
+    this.apiService.getLoad(this.id()!).subscribe((result) => {
       if (!result.success || !result.data) {
         return;
       }

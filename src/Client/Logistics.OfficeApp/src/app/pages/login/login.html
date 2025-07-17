@@ -1,15 +1,15 @@
-<div class="vh-100 vw-100">
-  <div class="row justify-content-center align-items-center h-100">
+<div class="h-screen w-screen">
+  <div class="flex h-full items-center justify-center">
     @if (!isAuthenticated() && !isLoading()) {
-      <div class="col-md-4 col-12">
-        <h2>Click login button to sign in and get access to the website</h2>
+      <div class="w-full px-4 md:w-1/3">
+        <h2 class="mb-4 text-2xl">Click login button to sign in and get access to the website</h2>
         <p-button icon="bi bi-box-arrow-in-right" label="Login" (click)="login()"> </p-button>
       </div>
     }
     @if (isLoading()) {
-      <div class="d-flex justify-content-center col-12">
-        <div class="h5 fw-bold align-self-center">Authenticating...</div>
-        <p-progressSpinner class="ms-2"></p-progressSpinner>
+      <div class="flex w-full justify-center">
+        <div class="self-center text-xl font-bold">Authenticating...</div>
+        <p-progress-spinner class="ml-2"></p-progress-spinner>
       </div>
     }
   </div>

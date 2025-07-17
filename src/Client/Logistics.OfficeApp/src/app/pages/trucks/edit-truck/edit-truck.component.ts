@@ -15,7 +15,6 @@ import {ToastService} from "@/core/services";
 @Component({
   selector: "app-edit-truck",
   templateUrl: "./edit-truck.component.html",
-  styleUrl: "./edit-truck.component.css",
   imports: [
     ToastModule,
     ConfirmDialogModule,

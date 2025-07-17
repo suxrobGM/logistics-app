@@ -16,7 +16,6 @@ import {AddressPipe} from "@/shared/pipes";
 @Component({
   selector: "app-list-trucks",
   templateUrl: "./list-trucks.component.html",
-  styleUrl: "./list-trucks.component.css",
   imports: [
     CommonModule,
     ButtonModule,

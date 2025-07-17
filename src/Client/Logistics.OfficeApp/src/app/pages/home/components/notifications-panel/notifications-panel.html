@@ -11,7 +11,7 @@
 
   <div class="notification-list" [style]="{maxHeight: height()}">
     @if (isLoading()) {
-      <p-progressSpinner />
+      <p-progress-spinner />
     } @else {
       @for (notification of notifications(); track notification.id) {
         <div
