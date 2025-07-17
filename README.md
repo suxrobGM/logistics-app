@@ -1,4 +1,4 @@
-# Logistics TMS 🚚: Automated Transport Management Solution
+# Logistics TMS: Automated Fleet Management Solution
 
 [![Build Status](https://github.com/suxrobgm/logistics-app/actions/workflows/build.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/build.yml)
 [![Deployment](https://github.com/suxrobgm/logistics-app/actions/workflows/deploy-ssh.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/deploy-ssh.yml)
@@ -11,13 +11,13 @@
 
 > **Logistics TMS** is a multi‑tenant platform that automates every step of your transport workflow – from quoting and dispatching to real‑time GPS tracking, invoicing and payroll. Built with modern, cloud‑native technologies and a clean Domain‑Driven‑Design architecture, it scales from a single fleet to nationwide operations.
 
-## 📑 Table of Contents
+## Table of Contents
 
 1. [Overview](#overview)
-    - [Current Features](#current-features)
-    - [Planned Features](#planned-features)
+   - [Current Features](#current-features)
+   - [Planned Features](#planned-features)
 2. [Live Demo](#live-demo)
-    - [Test Credentials](#test-credentials)
+   - [Test Credentials](#test-credentials)
 3. [Architecture](#architecture)
 4. [Getting Started](#getting-started)
    - [Prerequisites](#prerequisites)
@@ -32,22 +32,22 @@
 8. [Contact](#contact)
 9. [Screenshots](#screenshots)
 
-
 ## Overview
+
 Logistics TMS is **purpose‑built for trucking fleets that specialise in moving large intermodal containers and finished vehicles**. Whether you are shuttling 40‑foot high‑cubes from the port to inland depots or running multi‑deck car carriers across state lines, the platform gives dispatchers, drivers, and customers a single source of truth.
 
 Logistics TMS targets trucking companies that want to **replace error‑prone Excel workflows with an end‑to‑end digital system**—automating load planning, invoicing, payroll, and more. The platform is composed of:
 
 | Layer         | Apps & Services                                                                       |
-|---------------|---------------------------------------------------------------------------------------|
-| **Front‑end** | *Admin Web*, *Office Web*, *Driver Mobile*                                            |
-| **Back‑end**  | *Logistics API* (REST), *Identity Server* (OIDC/OAuth 2.0), *Real‑Time Hub* (SignalR) |
+| ------------- | ------------------------------------------------------------------------------------- |
+| **Front‑end** | _Admin Web_, _Office Web_, _Driver Mobile_                                            |
+| **Back‑end**  | _Logistics API_ (REST), _Identity Server_ (OIDC/OAuth 2.0), _Real‑Time Hub_ (SignalR) |
 | **Data**      | Multi‑tenant PostgreSQL (one master + tenant shards)                                  |
 
 All services are container‑ready and can be orchestrated on Kubernetes or run locally with .NET [Aspire](https://learn.microsoft.com/dotnet/aspire/).
 
-
 ### Current Features
+
 - **Multi-Tenant Architecture**: Separate databases for each company, allowing for isolated data management.
 - **Role-Based Access Control**: Different roles for users, including super admin, owner, manager, dispatcher, and driver.
 - **Applications**:
@@ -67,13 +67,13 @@ All services are container‑ready and can be orchestrated on Kubernetes or run 
 - **Invoicing**: Generate and manage invoices for loads.
 
 ### Planned Features
+
 - **Trip Management**: Manage trips, including start and end locations for trucks.
 - **Document Management**: Upload and manage documents related to loads.
 - **Reporting**: Generate detailed reports on loads, drivers, and financials.
 - **Mobile App Enhancements**: Improve the driver mobile app with additional features like route optimization and offline capabilities.
 - **Integration with Third-Party Services**: Integrate with other logistics and transportation services for enhanced functionality.
 - **AI-Powered Features**: Implement AI-driven features for load optimization, route planning, and predictive analytics.
-
 
 ## Live Demo
 
@@ -82,7 +82,7 @@ A live demo of the application is available at [https://logistics-office.suxrobg
 ### Test Credentials
 
 | Role        | E‑mail            | Password     | Access                 |
-|-------------|-------------------|--------------|------------------------|
+| ----------- | ----------------- | ------------ | ---------------------- |
 | Owner       | `Test1@gmail.com` | `Test12345#` | Office Web App         |
 | Manager     | `Test2@gmail.com` | `Test12345#` | Office Web App         |
 | Dispatcher  | `Test3@gmail.com` | `Test12345#` | Office Web App         |
@@ -97,13 +97,14 @@ A live demo of the application is available at [https://logistics-office.suxrobg
 ### Prerequisites
 
 To run the Logistics TMS application locally, you need to have the following prerequisites installed on your machine:
-   - [Download](https://dotnet.microsoft.com/en-us/download/dotnet/9.0) and install the .NET 9 SDK.
-   - Install Bun runtime to run an Angular project. Follow [these](https://bun.sh/docs/installation) instructions.
-   - Download and install the PostgreSQL database from [here](https://www.postgresql.org/download/).
-   - (Optional) Install Docker to run the application in containers. Follow [these](https://docs.docker.com/get-docker/) instructions.
-   
+
+- [Download](https://dotnet.microsoft.com/en-us/download/dotnet/9.0) and install the .NET 9 SDK.
+- Install Bun runtime to run an Angular project. Follow [these](https://bun.sh/docs/installation) instructions.
+- Download and install the PostgreSQL database from [here](https://www.postgresql.org/download/).
+- (Optional) Install Docker to run the application in containers. Follow [these](https://docs.docker.com/get-docker/) instructions.
+
 > [!NOTE]
-> If you prefer to run the application in containers, you can skip the steps related to installing dependencies and configuring the database connection strings. 
+> If you prefer to run the application in containers, you can skip the steps related to installing dependencies and configuring the database connection strings.
 > Instead, you can use the .NET Aspire app to run the application in containers in a single command.
 > To do this, follow the instructions in the [Running with Docker](#running-with-docker) section below.
 
@@ -115,7 +116,7 @@ To run the Logistics TMS application locally, you need to have the following pre
    git clone https://github.com/suxrobgm/logistics-app.git
    cd logistics-app
    ```
-   
+
 2. Install Angular app dependencies:
 
    ```
@@ -135,11 +136,12 @@ To run the Logistics TMS application locally, you need to have the following pre
    Launch all the applications in the project using the respective `.cmd` scripts in the repository.
 
 6. Stipe CLI (Optional):
-    - If you want to test the Stripe payment integration, you need to run the Stripe CLI.
-    - First, get your Stripe secret key and publishable key from your [Stripe dashboard](https://dashboard.stripe.com/apikeys).
-    - Update the Stripe keys in the [Web API appsettings.json](./src/Presentation/Logistics.API/appsettings.json) under the `StripeConfig:SecretKey` and `StripeConfig:PublishableKey` sections.
-    - The Stripe CLI is already included in the project, and you can run it using the provided [listen-stripe-webhook.cmd](./scripts/listen-stripe-webhook.cmd) script.
-    - After running the script, Stripe will provide you a webhook secret key, which you need to update in the [Web API appsettings.json](./src/Presentation/Logistics.API/appsettings.json) under the `StripeConfig:WebhookSecret` section.
+
+   - If you want to test the Stripe payment integration, you need to run the Stripe CLI.
+   - First, get your Stripe secret key and publishable key from your [Stripe dashboard](https://dashboard.stripe.com/apikeys).
+   - Update the Stripe keys in the [Web API appsettings.json](./src/Presentation/Logistics.API/appsettings.json) under the `StripeConfig:SecretKey` and `StripeConfig:PublishableKey` sections.
+   - The Stripe CLI is already included in the project, and you can run it using the provided [listen-stripe-webhook.cmd](./scripts/listen-stripe-webhook.cmd) script.
+   - After running the script, Stripe will provide you a webhook secret key, which you need to update in the [Web API appsettings.json](./src/Presentation/Logistics.API/appsettings.json) under the `StripeConfig:WebhookSecret` section.
 
 7. Access the applications:
    Use the following local URLs to access the apps:
@@ -150,13 +152,16 @@ To run the Logistics TMS application locally, you need to have the following pre
    - Office app: <https://127.0.0.1:7003>
 
 8. Login to the applications:
-  Use the test credentials in the [Test Credentials](#test-credentials) section to log in to the applications. 
-  See the access column in the table to determine which app you can access with each role.
+   Use the test credentials in the [Test Credentials](#test-credentials) section to log in to the applications.
+   See the access column in the table to determine which app you can access with each role.
 
 #### Running with Docker
+
 To run the application in Docker containers, follow these steps:
+
 1. Ensure you have Docker installed and running on your machine.
 2. Open a terminal and run the following command to build and run the Docker containers:
+
 ```shell
 dotnet run --project src/Aspire/Logistics.Aspire.AppHost
 ```
@@ -205,7 +210,9 @@ It will be accessible at the <https://localhost:8100>.
 - Specification Pattern
 
 ### Architecture
+
 The Logistics TMS application follows a Domain-Driven Design architecture with a focus on separation of concerns and modularity. The architecture consists of the following layers:
+
 - **Presentation Layer**: Contains API host, Identity Server, and Database Migrator projects.
 - **Application Layer**: Contains the core business logic, including services, commands, and queries.
 - **Domain Layer**: Contains the domain entities, value objects, and domain events.
@@ -214,6 +221,7 @@ The Logistics TMS application follows a Domain-Driven Design architecture with a
 - **Aspire App**: The .NET Aspire app orchestrates the entire applications and services, allowing for easy deployment and telemetry.
 
 #### Architecture Diagram
+
 ![Architecture Diagram](./docs/project_architecture.jpg?raw=true)
 
 ## Contributing
@@ -229,6 +237,7 @@ Pull requests are welcome – whether it is a bug‑fix, new feature, or doc twe
 If you would like to discuss a larger change, open an issue first or ping me directly.
 
 ## License
+
 This project is distributed under the [Creative Commons Attribution-NonCommercial 4.0 International License][cc-by-nc] license.
 
 [![CC BY-NC 4.0][cc-by-nc-image]][cc-by-nc]
@@ -236,7 +245,9 @@ This project is distributed under the [Creative Commons Attribution-NonCommercia
 For commercial licensing, please contact me.
 
 ## Contact
+
 Created with passion by **Sukhrob Ilyosbekov**.
+
 - E‑mail: [suxrobgm@gmail.com](mailto:suxrobgm@gmail.com)
 - Telegram: [@suxrobgm](https://t.me/suxrobgm)
 
