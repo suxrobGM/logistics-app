@@ -1,17 +1,14 @@
-import {CommonModule} from "@angular/common";
 import {Component, input, signal} from "@angular/core";
-import {MarkerComponent, NgxMapboxGLModule} from "ngx-mapbox-gl";
+import {MapComponent, MarkerComponent, PopupComponent} from "ngx-mapbox-gl";
 import {TruckGeolocationDto} from "@/core/api/models";
-import {environment} from "@/env";
 import {AddressPipe} from "@/shared/pipes";
 
 @Component({
   selector: "app-geolocation-map",
   templateUrl: "./geolocation-map.html",
-  imports: [CommonModule, NgxMapboxGLModule, AddressPipe],
+  imports: [AddressPipe, MapComponent, MarkerComponent, PopupComponent],
 })
 export class GeolocationMap {
-  protected readonly accessToken = environment.mapboxToken;
   protected readonly selectedMarker = signal<Marker | null>(null);
 
   public readonly geolocationData = input<TruckGeolocationDto[]>([]);
@@ -20,7 +17,7 @@ export class GeolocationMap {
   public readonly width = input("100%");
   public readonly height = input("100%");
 
-  onSelectMarker(geoData: TruckGeolocationDto, markerComponent: MarkerComponent): void {
+  protected onSelectMarker(geoData: TruckGeolocationDto, markerComponent: MarkerComponent): void {
     this.selectedMarker.set({
       component: markerComponent,
       data: geoData,

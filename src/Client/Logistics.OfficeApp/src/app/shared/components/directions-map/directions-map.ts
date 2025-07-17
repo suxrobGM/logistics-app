@@ -1,14 +1,14 @@
 import {HttpClient} from "@angular/common/http";
 import {Component, effect, inject, input, model, output, signal} from "@angular/core";
-import {GeoJSONSourceRaw, LngLatLike} from "mapbox-gl";
-import {NgxMapboxGLModule} from "ngx-mapbox-gl";
+import {GeoJSONSourceSpecification, LngLatLike} from "mapbox-gl";
+import {ImageComponent, LayerComponent, MapComponent} from "ngx-mapbox-gl";
 import {environment} from "@/env";
 import {GeoPoint, MapboxDirectionsResponse} from "@/shared/types/mapbox";
 
 @Component({
   selector: "app-directions-map",
   templateUrl: "./directions-map.html",
-  imports: [NgxMapboxGLModule],
+  imports: [MapComponent, ImageComponent, LayerComponent],
 })
 export class DirectionsMap {
   protected readonly accessToken = environment.mapboxToken;
@@ -18,9 +18,9 @@ export class DirectionsMap {
   private readonly http = inject(HttpClient);
 
   protected readonly bounds = signal<[LngLatLike, LngLatLike] | null>(null);
-  protected readonly route = signal<GeoJSONSourceRaw | null>(null);
-  protected readonly startPoint = signal<GeoJSONSourceRaw | null>(null);
-  protected readonly endPoint = signal<GeoJSONSourceRaw | null>(null);
+  protected readonly route = signal<GeoJSONSourceSpecification | null>(null);
+  protected readonly startPoint = signal<GeoJSONSourceSpecification | null>(null);
+  protected readonly endPoint = signal<GeoJSONSourceSpecification | null>(null);
   protected readonly imageLoaded = signal(false);
 
   public readonly center = model<GeoPoint>(this.defaultCenter);
@@ -85,7 +85,7 @@ export class DirectionsMap {
     }
   }
 
-  private getPointSource(coords: number[]): GeoJSONSourceRaw {
+  private getPointSource(coords: number[]): GeoJSONSourceSpecification {
     return {
       type: "geojson",
       data: {

@@ -18,7 +18,6 @@ import {ValidationSummary} from "../validation-summary/validation-summary";
 
 @Component({
   selector: "app-address-form",
-  standalone: true,
   templateUrl: "./address-form.html",
   imports: [
     CommonModule,

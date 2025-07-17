@@ -32,7 +32,7 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.css", "node_modules/mapbox-gl/dist/mapbox-gl.css"]
+            "styles": ["src/styles.css", "mapbox-gl/dist/mapbox-gl.css"]
           },
           "configurations": {
             "production": {
@@ -95,8 +95,7 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.css", "node_modules/mapbox-gl/dist/mapbox-gl.css"],
-            "scripts": ["node_modules/chart.js/dist/chart.js"]
+            "styles": ["src/styles.css", "mapbox-gl/dist/mapbox-gl.css"]
           }
         },
         "lint": {
