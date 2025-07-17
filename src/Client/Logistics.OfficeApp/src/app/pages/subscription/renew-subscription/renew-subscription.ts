@@ -16,6 +16,7 @@ import {PaymentMethodsCardComponent} from "../components";
 
 @Component({
   selector: "app-renew-subscription",
+  templateUrl: "./renew-subscription.html",
   imports: [
     CommonModule,
     CardModule,
@@ -28,7 +29,6 @@ import {PaymentMethodsCardComponent} from "../components";
     RouterModule,
     PaymentMethodsCardComponent,
   ],
-  templateUrl: "./renew-subscription.component.html",
 })
 export class RenewSubscriptionComponent {
   private readonly tenantService = inject(TenantService);
@@ -36,9 +36,9 @@ export class RenewSubscriptionComponent {
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
 
-  readonly employeeCount = signal(0);
-  readonly subscription = signal<SubscriptionDto | null>(null);
-  readonly isLoading = signal(false);
+  protected readonly employeeCount = signal(0);
+  protected readonly subscription = signal<SubscriptionDto | null>(null);
+  protected readonly isLoading = signal(false);
 
   constructor() {
     const tenantData = this.tenantService.getTenantData();

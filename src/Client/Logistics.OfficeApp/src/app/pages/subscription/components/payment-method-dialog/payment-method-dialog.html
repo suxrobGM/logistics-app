@@ -14,7 +14,7 @@
         <label for="methodType" class="form-label">Payment Type</label>
         <p-select
           formControlName="methodType"
-          [options]="pymentMethodTypes()"
+          [options]="paymentMethodTypes()"
           class="w-100"
         ></p-select>
       </div>
@@ -35,7 +35,7 @@
         </div>
 
         <div class="mb-3">
-          <app-stripe-card (ready)="setCardNumberElement($event.cardNumber)"></app-stripe-card>
+          <app-stripe-card (ready)="setCardNumberElement($event.cardNumber)" />
         </div>
       } @else if (form.get("methodType")?.value === "us_bank_account") {
         <h5>US bank account details</h5>
@@ -84,7 +84,7 @@
             formControlName="bankAccountHolderType"
             [options]="usBankAccountHolderTypes"
             class="w-100"
-          ></p-select>
+          />
         </div>
         <div class="mb-3">
           <label for="bankAccountHolderName" class="form-label">Account Holder Name</label>
@@ -136,12 +136,12 @@
     <div class="col-12">
       <h5>Billing address</h5>
       <hr />
-      <app-address-form formControlName="billingAddress"></app-address-form>
+      <app-address-form formControlName="billingAddress" />
     </div>
 
     <div class="d-flex gap-2">
-      <p-button type="submit" label="Save" icon="pi pi-check" [loading]="isLoading()"></p-button>
-      <p-button label="Cancel" icon="pi pi-times" (click)="showDialog.set(false)"></p-button>
+      <p-button type="submit" label="Save" icon="pi pi-check" [loading]="isLoading()" />
+      <p-button label="Cancel" icon="pi pi-times" (click)="showDialog.set(false)" />
     </div>
   </form>
 </p-dialog>

@@ -1,3 +1,3 @@
-export * from "./billing-history/billing-history.component";
-export * from "./payment-method-dialog/payment-method-dialog.component";
-export * from "./payment-methods-card/payment-methods-card.component";
+export * from "./billing-history/billing-history";
+export * from "./payment-method-dialog/payment-method-dialog";
+export * from "./payment-methods-card/payment-methods-card";

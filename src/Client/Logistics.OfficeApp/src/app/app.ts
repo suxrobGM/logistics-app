@@ -8,7 +8,6 @@ import {Breadcrumb, Sidebar} from "@/shared/layout";
 @Component({
   selector: "app-root",
   templateUrl: "./app.html",
-  styleUrl: "./app.css",
   imports: [Breadcrumb, ToastModule, RouterOutlet, Sidebar, ConfirmDialog],
 })
 export class App {

@@ -14,11 +14,11 @@ import {
 } from "@/core/api/models";
 import {TenantService, ToastService} from "@/core/services";
 import {AddressPipe} from "@/shared/pipes";
-import {PaymentMethodDialogComponent} from "../payment-method-dialog/payment-method-dialog.component";
+import {PaymentMethodDialogComponent} from "../payment-method-dialog/payment-method-dialog";
 
 @Component({
   selector: "app-payment-methods-card",
-  templateUrl: "./payment-methods-card.component.html",
+  templateUrl: "./payment-methods-card.html",
   imports: [
     CommonModule,
     CardModule,
@@ -35,10 +35,10 @@ export class PaymentMethodsCardComponent implements OnInit {
   private readonly confirmationService = inject(ConfirmationService);
   private readonly toastService = inject(ToastService);
 
-  readonly isLoading = signal(false);
-  readonly paymentMethods = signal<PaymentMethodDto[]>([]);
-  readonly showDialog = model(false);
-  readonly selectedPaymentMethod = signal<PaymentMethodDto | null>(null);
+  protected readonly isLoading = signal(false);
+  protected readonly paymentMethods = signal<PaymentMethodDto[]>([]);
+  protected readonly showDialog = model(false);
+  protected readonly selectedPaymentMethod = signal<PaymentMethodDto | null>(null);
 
   ngOnInit(): void {
     this.fetchPaymentMethods();

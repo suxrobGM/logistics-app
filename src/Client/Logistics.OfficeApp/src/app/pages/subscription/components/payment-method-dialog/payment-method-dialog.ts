@@ -32,7 +32,7 @@ const enabledPaymentTypes = [
 
 @Component({
   selector: "app-payment-method-dialog",
-  templateUrl: "./payment-method-dialog.component.html",
+  templateUrl: "./payment-method-dialog.html",
   imports: [
     CommonModule,
     CardModule,
@@ -55,20 +55,20 @@ export class PaymentMethodDialogComponent {
   private readonly stripeService = inject(StripeService);
   private readonly toastService = inject(ToastService);
 
-  readonly showDialog = model(false);
-  readonly isLoading = signal(false);
-  readonly availablePaymentMethods = input<PaymentMethodType[]>(enabledPaymentTypes);
-  readonly paymentMethodAdded = output<void>();
+  public readonly showDialog = model(false);
+  public readonly availablePaymentMethods = input<PaymentMethodType[]>(enabledPaymentTypes);
+  public readonly paymentMethodAdded = output<void>();
+  protected readonly isLoading = signal(false);
 
-  readonly pymentMethodTypes = computed(() =>
+  protected readonly paymentMethodTypes = computed(() =>
     this.availablePaymentMethods()
       .map((type) => paymentMethodTypeOptions.find((option) => option.value === type))
       .filter(Boolean)
   );
 
-  readonly form: FormGroup<PaymentMethodForm>;
-  readonly usBankAccountHolderTypes = usBankAccountHolderTypeOptions;
-  readonly usBankAccountTypes = usBankAccountTypeOptions;
+  protected readonly form: FormGroup<PaymentMethodForm>;
+  protected readonly usBankAccountHolderTypes = usBankAccountHolderTypeOptions;
+  protected readonly usBankAccountTypes = usBankAccountTypeOptions;
 
   private stripeCardNumberElement: StripeCardNumberElement | null = null;
 

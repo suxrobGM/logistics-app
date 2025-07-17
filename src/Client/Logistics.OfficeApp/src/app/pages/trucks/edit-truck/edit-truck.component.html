@@ -24,7 +24,7 @@
         </div> -->
         <div class="mb-3">
           <label for="drivers" class="form-label">Drivers</label>
-          <p-autoComplete
+          <p-auto-complete
             formControlName="drivers"
             styleClass="w-100"
             inputStyleClass="form-control"
@@ -34,8 +34,7 @@
             [multiple]="true"
             [suggestions]="suggestedDrivers"
             (completeMethod)="searchDriver($event)"
-          >
-          </p-autoComplete>
+          />
         </div>
 
         <div>
@@ -45,8 +44,7 @@
             icon="bi bi-pencil-square"
             label="Save"
             [disabled]="isBusy"
-          >
-          </p-button>
+          />
           @if (editMode) {
             <p-button
               type="button"
@@ -55,8 +53,7 @@
               label="Delete"
               [disabled]="isBusy"
               (click)="confirmToDelete()"
-            >
-            </p-button>
+            />
           }
           <p-button
             type="button"
@@ -64,8 +61,7 @@
             icon="bi bi-arrow-left-square"
             label="Back to list"
             [routerLink]="['/trucks']"
-          >
-          </p-button>
+          />
         </div>
       </form>
     </p-card>

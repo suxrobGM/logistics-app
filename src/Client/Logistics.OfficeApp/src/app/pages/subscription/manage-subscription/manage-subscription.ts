@@ -17,7 +17,7 @@ import {BillingHistoryComponent, PaymentMethodsCardComponent} from "../component
 
 @Component({
   selector: "app-manage-subscription",
-  templateUrl: "./manage-subscription.component.html",
+  templateUrl: "./manage-subscription.html",
   imports: [
     CommonModule,
     CardModule,
@@ -39,10 +39,10 @@ export class ManageSubscriptionComponent {
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
-  readonly subscription: SubscriptionDto;
-  readonly employeeCount: number;
-  readonly isLoading = signal(false);
-  readonly isCancelled = signal(false);
+  protected readonly subscription: SubscriptionDto;
+  protected readonly employeeCount: number;
+  protected readonly isLoading = signal(false);
+  protected readonly isCancelled = signal(false);
 
   constructor() {
     const tenantData = this.tenantService.getTenantData();

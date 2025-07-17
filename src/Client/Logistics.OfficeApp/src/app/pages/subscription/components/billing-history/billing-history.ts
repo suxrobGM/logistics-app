@@ -9,19 +9,19 @@ import {AddressPipe} from "@/shared/pipes";
 
 @Component({
   selector: "app-billing-history",
-  templateUrl: "./billing-history.component.html",
+  templateUrl: "./billing-history.html",
   imports: [CommonModule, TableModule, TagModule, AddressPipe],
 })
 export class BillingHistoryComponent {
   private readonly apiService = inject(ApiService);
   private readonly tenantService = inject(TenantService);
 
-  readonly payments = signal<PaymentDto[]>([]);
-  readonly isLoading = signal(false);
-  readonly totalRecords = signal(0);
-  readonly first = model(0);
+  protected readonly payments = signal<PaymentDto[]>([]);
+  protected readonly isLoading = signal(false);
+  protected readonly totalRecords = signal(0);
+  protected readonly first = model(0);
 
-  load(event: TableLazyLoadEvent): void {
+  protected load(event: TableLazyLoadEvent): void {
     this.isLoading.set(true);
     const first = event.first ?? 1;
     const rows = event.rows ?? 10;

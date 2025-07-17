@@ -36,14 +36,14 @@
             [routerLink]="'/subscription/plans'"
             label="Change Plan"
             icon="pi pi-credit-card"
-          ></p-button> -->
+          /> -->
           <p-button
             label="Renew"
             icon="pi pi-credit-card"
             [disabled]="isLoading()"
             [loading]="isLoading()"
             (click)="confirmRenewSubscription()"
-          ></p-button>
+          />
         </div>
       </ng-template>
     </p-card>
@@ -51,6 +51,6 @@
 
   <!-- Payment Methods Card -->
   <div class="col-12">
-    <app-payment-methods-card></app-payment-methods-card>
+    <app-payment-methods-card />
   </div>
 </div>

@@ -1,8 +1,8 @@
 import {Routes} from "@angular/router";
 import {authGuard} from "@/core/auth";
-import {ManageSubscriptionComponent} from "./manage-subscription/manage-subscription.component";
-import {RenewSubscriptionComponent} from "./renew-subscription/renew-subscription.component";
-import {ViewPlansComponent} from "./view-plans/view-plans.component";
+import {ManageSubscriptionComponent} from "./manage-subscription/manage-subscription";
+import {RenewSubscriptionComponent} from "./renew-subscription/renew-subscription";
+import {ViewPlansComponent} from "./view-plans/view-plans";
 
 export const subscriptionRoutes: Routes = [
   {

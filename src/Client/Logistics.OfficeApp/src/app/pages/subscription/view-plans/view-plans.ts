@@ -8,14 +8,14 @@ import {TenantService} from "@/core/services";
 
 @Component({
   selector: "app-view-plans",
+  templateUrl: "./view-plans.html",
   imports: [CardModule, CurrencyPipe, ButtonModule],
-  templateUrl: "./view-plans.component.html",
 })
 export class ViewPlansComponent implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly tenantService = inject(TenantService);
 
-  readonly subscriptionPlans = signal<SubscriptionPlanDto[]>([]);
+  protected readonly subscriptionPlans = signal<SubscriptionPlanDto[]>([]);
 
   ngOnInit(): void {
     this.apiService.subscriptionApi.getSubscriptionPlans().subscribe((result) => {
@@ -25,7 +25,7 @@ export class ViewPlansComponent implements OnInit {
     });
   }
 
-  isCurrentPlan(plan: SubscriptionPlanDto): boolean {
+  protected isCurrentPlan(plan: SubscriptionPlanDto): boolean {
     const currentPlanId = this.tenantService.getTenantData()?.subscription?.plan?.id;
     return currentPlanId === plan.id;
   }
