@@ -63,6 +63,10 @@ export const appRoutes: Routes = [
       import("./pages/subscription/subscription.routes").then((m) => m.subscriptionRoutes),
   },
   {
+    path: "trips",
+    loadChildren: () => import("./pages/trips/trip.routes").then((m) => m.tripRoutes),
+  },
+  {
     path: "",
     component: LoginComponent,
   },

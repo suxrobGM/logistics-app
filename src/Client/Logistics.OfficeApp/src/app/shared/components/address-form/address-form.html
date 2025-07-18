@@ -2,15 +2,15 @@
   <app-validation-summary [form]="form" />
   <div class="mb-3">
     <label for="addressLine1" class="form-label">Address Line 1:</label>
-    <input pInputText id="addressLine1" formControlName="addressLine1" class="w-100" />
+    <input pInputText id="addressLine1" formControlName="addressLine1" class="w-full" />
   </div>
   <div class="mb-3">
     <label for="addressLine2" class="form-label">Address Line 2 (optional):</label>
-    <input pInputText id="addressLine2" formControlName="addressLine2" class="w-100" />
+    <input pInputText id="addressLine2" formControlName="addressLine2" class="w-full" />
   </div>
   <div class="mb-3">
     <label for="city" class="form-label">City:</label>
-    <input pInputText id="city" formControlName="city" class="w-100" />
+    <input pInputText id="city" formControlName="city" class="w-full" />
   </div>
   <div class="mb-3">
     <label for="state" class="form-label">State:</label>
@@ -18,12 +18,12 @@
       formControlName="state"
       [options]="usStates"
       placeholder="Select a state"
-      class="w-100"
+      class="w-full"
     />
   </div>
   <div class="mb-3">
     <label for="zipCode" class="form-label">Zip Code:</label>
-    <input pInputText id="zipCode" formControlName="zipCode" class="w-100" pKeyFilter="int" />
+    <input pInputText id="zipCode" formControlName="zipCode" class="w-full" pKeyFilter="int" />
   </div>
   <div class="mb-3">
     <label for="country" class="form-label">Country:</label>
@@ -31,7 +31,7 @@
       formControlName="country"
       [options]="countries"
       placeholder="Select a country"
-      class="w-100"
+      class="w-full"
     />
   </div>
 </form>

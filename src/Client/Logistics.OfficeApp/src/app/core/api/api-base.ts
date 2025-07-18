@@ -24,7 +24,7 @@ export abstract class ApiBase {
       const sortProperty = this.parseSortProperty("name", -1); // returns "-name"
     ``` 
    */
-  parseSortProperty(sortField?: string | null, sortOrder?: number | null): string {
+  formatSortField(sortField?: string | null, sortOrder?: number | null): string {
     if (!sortOrder) {
       sortOrder = 1;
     }
@@ -81,12 +81,14 @@ export abstract class ApiBase {
 
     const params = new URLSearchParams();
     for (const [key, value] of Object.entries(query)) {
-      if (value !== undefined) {
-        if (value instanceof Date) {
-          params.set(key, value.toJSON());
-        } else {
-          params.set(key, value.toString());
-        }
+      if (value === undefined) {
+        continue;
+      }
+
+      if (value instanceof Date) {
+        params.set(key, value.toJSON());
+      } else {
+        params.set(key, value.toString());
       }
     }
     return params.toString();
@@ -94,9 +96,10 @@ export abstract class ApiBase {
 
   protected stringfySearchableQuery(query?: SearchableQuery): string {
     const {search = "", orderBy = "", page = 1, pageSize = 10} = query || {};
+
     return new URLSearchParams({
       search,
-      orderBy,
+      orderBy: orderBy,
       page: page.toString(),
       pageSize: pageSize.toString(),
     }).toString();
@@ -116,7 +119,7 @@ export abstract class ApiBase {
 
     const params = new URLSearchParams({
       startDate: startDate.toJSON(),
-      orderBy,
+      orderBy: orderBy,
       page: page.toString(),
       pageSize: pageSize.toString(),
       ...filteredAdditionalParams,

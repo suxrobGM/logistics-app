@@ -13,7 +13,7 @@
     <li>
       <a class="nav-link border-bottom">
         <i
-          [class]="isOpened() ? 'bi bi-arrow-left h2' : 'bi bi-arrow-right h2'"
+          [class]="isOpened() ? 'pi pi-arrow-left text-3xl!' : 'pi pi-arrow-right text-3xl!'"
           (click)="toggle()"
           [pTooltip]="isOpened() ? 'Minimize menu' : 'Maximize menu'"
           role="presentation"
@@ -23,14 +23,14 @@
   </ul>
 
   @if (userFullName()) {
-    <div class="d-flex flex-column border-top" [class.align-items-center]="!isOpened()">
+    <div class="flex-column border-top flex" [class.items-center]="!isOpened()">
       @if (userRole() && isOpened()) {
         <div class="user-select-none px-3 py-2 text-left">
           Role: <span class="fw-bold">{{ userRole() }}</span>
         </div>
       }
 
-      <app-panel-menu [items]="profileMenuItems" [(expanded)]="isOpened" class="w-100" />
+      <app-panel-menu [items]="profileMenuItems" [(expanded)]="isOpened" class="w-full" />
     </div>
   }
 </div>

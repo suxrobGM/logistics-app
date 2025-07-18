@@ -1,8 +1,8 @@
-<div class="d-flex align-items-center">
+<div class="flex items-center">
   <h1>List Trucks</h1>
   <p-button
     styleClass="text-black ms-2"
-    icon="bi bi-plus-square-fill"
+    icon="pi pi-plus-circle"
     size="large"
     [rounded]="true"
     [text]="true"
@@ -10,7 +10,7 @@
     [routerLink]="['/trucks/add']"
   />
 </div>
-<hr class="w-100" />
+<hr class="w-full" />
 
 <p-card>
   <div class="row">
@@ -71,7 +71,7 @@
               />
               <p-button
                 class="ms-2"
-                icon="bi bi-pencil"
+                icon="pi pi-pen-to-square"
                 pTooltip="Edit truck"
                 [routerLink]="['/trucks', truck.id, 'edit']"
               />

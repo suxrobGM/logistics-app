@@ -1,0 +1,109 @@
+<div class="flex items-center">
+  <h1>Trips</h1>
+  <p-button
+    styleClass="text-black ms-2"
+    icon="pi pi-plus-circle"
+    size="large"
+    [rounded]="true"
+    [text]="true"
+    pTooltip="Add a new trip"
+    [routerLink]="['/trips/add']"
+  />
+</div>
+<hr class="w-full" />
+
+<p-card>
+  <p-table
+    [value]="data()"
+    responsiveLayout="scroll"
+    [lazy]="true"
+    [paginator]="true"
+    [showCurrentPageReport]="true"
+    (onLazyLoad)="onLazyLoad($event)"
+    [rows]="10"
+    [(first)]="first"
+    [totalRecords]="totalRecords()"
+    [loading]="isLoading()"
+    [rowsPerPageOptions]="[10, 25, 50]"
+  >
+    <ng-template pTemplate="caption">
+      <p-icon-field>
+        <p-inputicon class="pi pi-search" />
+        <input pInputText type="text" placeholder="Search" (input)="onSearch($event)" />
+      </p-icon-field>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="Truck.Number">
+          Truck Number
+          <p-sortIcon field="Truck.Number" />
+        </th>
+        <th pSortableColumn="Name">
+          Name
+          <p-sortIcon field="Name" />
+        </th>
+        <th pSortableColumn="Number">
+          Number
+          <p-sortIcon field="Number" />
+        </th>
+        <th pSortableColumn="OriginAddress.Line1">
+          Origin
+          <p-sortIcon field="OriginAddress.Line1" />
+        </th>
+        <th pSortableColumn="DestinationAddress.Line1">
+          Destination
+          <p-sortIcon field="DestinationAddress.Line1" />
+        </th>
+        <th pSortableColumn="TotalDistance">
+          Total Distance
+          <p-sortIcon field="TotalDistance" />
+        </th>
+        <th pSortableColumn="PlannedStart">
+          Planned Start Date
+          <p-sortIcon field="PlannedStart" />
+        </th>
+        <th pSortableColumn="ActualStart">
+          Actual Start Date
+          <p-sortIcon field="ActualStart" />
+        </th>
+        <th pSortableColumn="CompletedAt">
+          Completed Date
+          <p-sortIcon field="CompletedAt" />
+        </th>
+        <th pSortableColumn="Status">
+          Status
+          <p-sortIcon field="Status" />
+        </th>
+        <th>Action</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-trip>
+      <tr>
+        <td>{{ trip.truckNumber }}</td>
+        <td>{{ trip.name }}</td>
+        <td>{{ trip.number }}</td>
+        <td>{{ trip.origin }}</td>
+        <td>{{ trip.destination }}</td>
+        <td>{{ trip.totalDistance | distanceUnit: "mi" }}</td>
+        <td>{{ trip.plannedStart | date: "mediumDate" }}</td>
+        <td>{{ trip.actualStart | date: "mediumDate" }}</td>
+        <td>{{ trip.completedAt | date: "mediumDate" }}</td>
+        <td>{{ trip.status }}</td>
+        <td class="flex gap-2 overflow-visible">
+          <p-button
+            icon="pi pi-pen-to-square"
+            pTooltip="Edit trip details"
+            tooltipPosition="bottom"
+            [routerLink]="['/trips', trip.id, 'edit']"
+          />
+          <p-button
+            icon="pi pi-file-o"
+            pTooltip="View trip details"
+            tooltipPosition="bottom"
+            [routerLink]="['/trips', trip.id]"
+          />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-card>

@@ -64,7 +64,7 @@ export class ListLoadComponent {
     const first = event.first ?? 1;
     const rows = event.rows ?? 10;
     const page = first / rows + 1;
-    let sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
+    let sortField = this.apiService.formatSortField(event.sortField as string, event.sortOrder);
 
     if (sortField === "") {
       // default sort property
@@ -92,6 +92,6 @@ export class ListLoadComponent {
   }
 
   getLoadStatusIcon(status: LoadStatus): string {
-    return status === LoadStatus.Delivered ? "bi bi-check" : "bi bi-truck";
+    return status === LoadStatus.Delivered ? "bi bi-check" : "pi pi-truck";
   }
 }

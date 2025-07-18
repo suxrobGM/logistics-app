@@ -1,9 +1,9 @@
 <p-confirm-dialog header="Confirmation" icon="pi pi-exclamation-triangle" />
 
 <h1 class="text-center">Manage subscription</h1>
-<hr class="w-100" />
+<hr class="w-full" />
 
-<div class="d-flex flex-column gap-2">
+<div class="flex-column flex gap-2">
   <!-- Current Plan Card -->
   <div class="col-12">
     <p-card header="Current Plan">
@@ -39,7 +39,7 @@
       </div>
 
       <ng-template pTemplate="footer">
-        <div class="d-flex gap-2">
+        <div class="flex gap-2">
           <p-button
             [routerLink]="'/subscription/plans'"
             label="Change Plan"

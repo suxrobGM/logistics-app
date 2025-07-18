@@ -1,8 +1,8 @@
-<div class="d-flex align-items-center">
+<div class="flex items-center">
   <h1>List Employees</h1>
   <p-button
     styleClass="text-black ms-2"
-    icon="bi bi-plus-square-fill"
+    icon="pi pi-plus-circle"
     size="large"
     [rounded]="true"
     [text]="true"
@@ -10,18 +10,18 @@
     [routerLink]="['/employees/add']"
   />
 </div>
-<hr class="w-100" />
+<hr class="w-full" />
 
 <p-card>
   <div class="row">
     <div class="col-12">
       <p-table
-        [value]="employees()"
+        [value]="data()"
         responsiveLayout="scroll"
         [lazy]="true"
         [paginator]="true"
         [showCurrentPageReport]="true"
-        (onLazyLoad)="load($event)"
+        (onLazyLoad)="onLazyLoad($event)"
         [rows]="10"
         [(first)]="first"
         [totalRecords]="totalRecords()"
@@ -31,7 +31,7 @@
         <ng-template pTemplate="caption">
           <p-icon-field>
             <p-inputicon class="pi pi-search" />
-            <input pInputText type="text" placeholder="Search" (input)="search($event)" />
+            <input pInputText type="text" placeholder="Search" (input)="onSearch($event)" />
           </p-icon-field>
         </ng-template>
         <ng-template pTemplate="header">
@@ -81,14 +81,14 @@
             <td>{{ employee.joinedDate | date: "mediumDate" }}</td>
             <td class="overflow-visible">
               <p-button
-                icon="bi bi-pencil"
+                icon="pi pi-pen-to-square"
                 pTooltip="Edit employee details"
                 tooltipPosition="bottom"
                 [routerLink]="['/employees/edit', employee.id]"
               />
               <p-button
                 styleClass="ms-2"
-                icon="bi bi-file-earmark-ruled"
+                icon="pi pi-file-o"
                 pTooltip="View employee payrolls"
                 tooltipPosition="bottom"
                 [routerLink]="['/invoices/payroll/employee', employee.id]"

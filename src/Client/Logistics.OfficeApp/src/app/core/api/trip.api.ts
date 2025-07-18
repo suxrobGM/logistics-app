@@ -18,7 +18,7 @@ export class TripApi extends ApiBase {
     return this.get(`/trips/${id}`);
   }
 
-  getTrips(query?: GetTripsQuery): Observable<Result<PagedResult<TripDto>>> {
+  getTrips(query?: GetTripsQuery): Observable<PagedResult<TripDto>> {
     return this.get(`/trips?${this.stringfyQuery(query)}`);
   }
 

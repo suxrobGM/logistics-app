@@ -1,12 +1,12 @@
 <h1>Overview</h1>
-<hr class="w-100" />
+<hr class="w-full" />
 
 <div class="row g-3 mt-3">
   <div class="col-xl-7 col-12">
     <p-card>
       <ng-template pTemplate="header">
         <h4 class="py-2 ps-3">Trucks</h4>
-        <hr class="m-0 w-100" />
+        <hr class="m-0 w-full" />
       </ng-template>
       <app-trucks-map height="700px" />
     </p-card>
@@ -16,7 +16,7 @@
     <p-card styleClass="h-100">
       <ng-template pTemplate="header">
         <h4 class="py-2 ps-3">Active loads</h4>
-        <hr class="m-0 w-100" />
+        <hr class="m-0 w-full" />
       </ng-template>
 
       <p-table [value]="loads()" responsiveLayout="scroll" [loading]="isLoadingLoadsData()">
@@ -60,7 +60,7 @@
     <p-card>
       <ng-template pTemplate="header">
         <h4 class="py-2 ps-3">Weekly Report</h4>
-        <hr class="m-0 w-100" />
+        <hr class="m-0 w-full" />
       </ng-template>
 
       @if (isLoadingChartData()) {
@@ -117,7 +117,7 @@
     <p-card>
       <ng-template pTemplate="header">
         <h4 class="py-2 ps-3">Daily Gross</h4>
-        <hr class="m-0 w-100" />
+        <hr class="m-0 w-full" />
       </ng-template>
 
       @if (isLoadingChartData()) {

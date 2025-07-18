@@ -56,7 +56,7 @@ export class ListTruckComponent {
     const first = event.first ?? 1;
     const rows = event.rows ?? 10;
     const page = first / rows + 1;
-    const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
+    const sortField = this.apiService.formatSortField(event.sortField as string, event.sortOrder);
 
     this.apiService
       .getTrucks({orderBy: sortField, page: page, pageSize: rows})

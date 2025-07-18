@@ -1,7 +1,7 @@
 <p-confirm-dialog header="Confirmation" icon="pi pi-exclamation-triangle" />
 
 <h1 class="text-center">Add a new employee</h1>
-<hr class="w-100" />
+<hr class="w-full" />
 
 <div class="row justify-content-center">
   <div class="col-md-6 col-12">
@@ -17,7 +17,7 @@
           <label for="name" class="form-label">User Name</label>
           <p-auto-complete
             formControlName="user"
-            styleClass="w-100"
+            styleClass="w-full"
             inputStyleClass="form-control"
             placeholder="Type user name"
             optionLabel="userName"
@@ -28,7 +28,7 @@
         </div>
         <div class="mb-3">
           <label for="salaryType" class="form-label">Salary Type</label>
-          <p-select formControlName="salaryType" styleClass="w-100" [options]="salaryTypes" />
+          <p-select formControlName="salaryType" styleClass="w-full" [options]="salaryTypes" />
         </div>
         <div class="mb-3">
           <label for="salary" class="form-label">Salary</label>
@@ -62,7 +62,7 @@
           <label for="role" class="form-label">Role</label>
           <p-select
             formControlName="role"
-            styleClass="w-100"
+            styleClass="w-full"
             [options]="roles()"
             optionValue="name"
             optionLabel="displayName"
@@ -75,7 +75,7 @@
           <p-button
             type="submit"
             class="mt-3"
-            icon="bi bi-pencil-square"
+            icon="pi pi-pen-to-square-square"
             label="Add"
             [disabled]="isLoading()"
           />

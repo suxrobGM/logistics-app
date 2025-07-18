@@ -3,37 +3,46 @@ import {MenuItem} from "@/shared/layout/panel-menu";
 export const sidebarItems: MenuItem[] = [
   {
     label: "Home",
-    icon: "bi bi-house-door h2",
+    icon: "pi pi-home text-3xl!",
     route: "/home",
   },
   {
     label: "Dashboard",
-    icon: "bi bi-speedometer2 h2",
+    icon: "pi pi-chart-bar text-3xl!",
     route: "/dashboard",
   },
   {
     label: "Loads",
-    icon: "bi bi-database h2",
-    route: "/loads",
+    icon: "pi pi-server text-3xl!",
+    items: [
+      {
+        label: "All Loads",
+        route: "/loads",
+      },
+      {
+        label: "Trips",
+        route: "/trips",
+      },
+    ],
   },
   {
     label: "Trucks",
-    icon: "bi bi-truck h2",
+    icon: "pi pi-truck text-3xl!",
     route: "/trucks",
   },
   {
     label: "Employees",
-    icon: "bi bi-people h2",
+    icon: "pi pi-users text-3xl!",
     route: "/employees",
   },
   {
     label: "Customers",
-    icon: "bi bi-building h2",
+    icon: "pi pi-shop text-3xl!",
     route: "/customers",
   },
   {
     label: "Invoices",
-    icon: "bi bi-journal-text h2",
+    icon: "pi pi-receipt text-3xl!",
     items: [
       {
         label: "Payroll",
@@ -47,7 +56,7 @@ export const sidebarItems: MenuItem[] = [
   },
   {
     label: "Subscription",
-    icon: "bi bi-credit-card h2",
+    icon: "pi pi-credit-card text-3xl!",
     route: "/subscription/manage",
   },
 ] as const;

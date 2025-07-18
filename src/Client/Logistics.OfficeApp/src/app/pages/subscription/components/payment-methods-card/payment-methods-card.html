@@ -1,5 +1,5 @@
 <p-card header="Payment Methods">
-  <div class="d-flex flex-column gap-3">
+  <div class="flex-column flex gap-3">
     @for (paymentMethod of paymentMethods(); track paymentMethod.id) {
       <p-card>
         <ng-template #title>
@@ -89,7 +89,7 @@
         </div>
 
         <ng-template pTemplate="footer">
-          <div class="d-flex gap-2">
+          <div class="flex gap-2">
             @if (!paymentMethod.isDefault) {
               <p-button
                 label="Set as Default"

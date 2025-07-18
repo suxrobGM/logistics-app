@@ -4,7 +4,7 @@
       Truck statistics for <span class="text-danger">{{ startDate() | date: "shortDate" }}</span> -
       <span class="text-danger">{{ endDate() | date: "shortDate" }}</span>
     </h4>
-    <hr class="m-0 w-100" />
+    <hr class="m-0 w-full" />
   </ng-template>
 
   <div class="mb-2">
@@ -75,7 +75,7 @@
           />
           <p-button
             class="ms-2"
-            icon="bi bi-pencil"
+            icon="pi pi-pen-to-square"
             pTooltip="Edit"
             [routerLink]="['/trucks', truckStats().truckId, 'edit']"
           />

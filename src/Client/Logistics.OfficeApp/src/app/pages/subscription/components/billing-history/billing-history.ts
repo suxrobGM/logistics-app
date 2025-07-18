@@ -26,7 +26,7 @@ export class BillingHistoryComponent {
     const first = event.first ?? 1;
     const rows = event.rows ?? 10;
     const page = first / rows + 1;
-    const sortField = this.apiService.parseSortProperty(event.sortField as string, event.sortOrder);
+    const sortField = this.apiService.formatSortField(event.sortField as string, event.sortOrder);
     const subscriptionId = this.tenantService.getTenantData()?.subscription?.id;
 
     this.apiService.paymentApi

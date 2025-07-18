@@ -9,3 +9,4 @@ export * from "./address-form/address-form";
 export * from "./payment-status-tag/payment-status-tag";
 export * from "./stripe-card/stripe-card";
 export * from "./invoice-status-tag/invoice-status-tag";
+export * from "./base-table/base-table";
