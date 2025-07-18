@@ -92,6 +92,6 @@ export class ListLoadComponent {
   }
 
   getLoadStatusIcon(status: LoadStatus): string {
-    return status === LoadStatus.Delivered ? "bi bi-check" : "pi pi-truck";
+    return status === LoadStatus.Delivered ? "pi pi-check" : "pi pi-truck";
   }
 }

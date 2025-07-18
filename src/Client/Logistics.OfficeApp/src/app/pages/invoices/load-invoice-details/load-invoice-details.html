@@ -19,12 +19,12 @@
     <app-invoice-status-tag [status]="invoice()!.status" />
   </p>
 
-  <p-button icon="bi bi-file-pdf" label="Export to PDF" (click)="exportToPdf()" />
+  <p-button icon="pi pi-file-pdf" label="Export to PDF" (click)="exportToPdf()" />
 
   <!-- @if (invoice.payment.status === "pending") {
       <p-button
         styleClass="ms-2"
-        icon="bi bi-credit-card"
+        icon="pi pi-credit-card"
         label="Make payment"
         severity="info"
         [routerLink]="['/payment/invoice', invoice.id]"
