@@ -1,5 +1,5 @@
 import {Observable} from "rxjs";
-import {ApiBase} from "./api-base";
+import {ApiBase} from "../api-base";
 import {
   CreateTripCommand,
   GetTripsQuery,
@@ -7,13 +7,9 @@ import {
   Result,
   TripDto,
   UpdateTripCommand,
-} from "./models";
+} from "../models";
 
-export class TripApi extends ApiBase {
-  constructor(apiUrl: string) {
-    super(apiUrl);
-  }
-
+export class TripApiService extends ApiBase {
   getTrip(id: string): Observable<Result<TripDto>> {
     return this.get(`/trips/${id}`);
   }

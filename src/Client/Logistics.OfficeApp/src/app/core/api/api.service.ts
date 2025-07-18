@@ -1,8 +1,6 @@
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
-import {environment} from "@/env";
 import {ApiBase} from "./api-base";
-import {InvoiceApi} from "./invoice.api";
 import {
   CompanyStatsDto,
   CreateCustomerCommand,
@@ -30,24 +28,23 @@ import {
   UpdateNotificationCommand,
   UpdateTruckCommand,
 } from "./models";
-import {PaymentApi} from "./payment.api";
-import {SubscriptionApi} from "./subscription.api";
-import {TenantApi} from "./tenant.api";
-import {TripApi} from "./trip.api";
-import {UserApi} from "./user.api";
+import {
+  InvoiceApiService,
+  PaymentApiService,
+  SubscriptionApiService,
+  TenantApiService,
+  TripApiService,
+  UserApiService,
+} from "./services";
 
-@Injectable({providedIn: "root"})
+@Injectable()
 export class ApiService extends ApiBase {
-  constructor() {
-    super(environment.apiHost);
-  }
-
-  public readonly paymentApi = new PaymentApi(this.apiUrl);
-  public readonly tenantApi = new TenantApi(this.apiUrl);
-  public readonly userApi = new UserApi(this.apiUrl);
-  public readonly subscriptionApi = new SubscriptionApi(this.apiUrl);
-  public readonly invoiceApi = new InvoiceApi(this.apiUrl);
-  public readonly tripApi = new TripApi(this.apiUrl);
+  public readonly paymentApi = new PaymentApiService();
+  public readonly tenantApi = new TenantApiService();
+  public readonly userApi = new UserApiService();
+  public readonly subscriptionApi = new SubscriptionApiService();
+  public readonly invoiceApi = new InvoiceApiService();
+  public readonly tripApi = new TripApiService();
 
   // #region Load API
 

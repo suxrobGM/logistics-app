@@ -1,4 +1,3 @@
-import {provideHttpClient, withInterceptors} from "@angular/common/http";
 import {
   ApplicationConfig,
   importProvidersFrom,
@@ -12,9 +11,11 @@ import {provideAuth} from "angular-auth-oidc-client";
 import {provideMapboxGL} from "ngx-mapbox-gl";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {providePrimeNG} from "primeng/config";
+import {provideApi} from "@/core/api";
 import {authConfig} from "@/core/auth";
-import {tenantInterceptor, tokenInterceptor} from "@/core/interceptors";
+import {tenantInterceptor} from "@/core/interceptors";
 import {environment} from "@/env";
+import {getAccessToken} from "@/shared/utils";
 import {appRoutes} from "./app.routes";
 
 export const appConfig: ApplicationConfig = {
@@ -24,15 +25,13 @@ export const appConfig: ApplicationConfig = {
     provideRouter(appRoutes, withComponentInputBinding()),
     importProvidersFrom(BrowserModule),
     provideAnimationsAsync(),
-    provideHttpClient(withInterceptors([tenantInterceptor, tokenInterceptor])),
-    providePrimeNG({
-      theme: {
-        preset: Aura,
-      },
+    provideApi({
+      baseUrl: environment.apiBaseUrl,
+      interceptors: [tenantInterceptor],
+      tokenGetter: getAccessToken,
     }),
-    provideMapboxGL({
-      accessToken: environment.mapboxToken,
-    }),
+    providePrimeNG({theme: {preset: Aura}}),
+    provideMapboxGL({accessToken: environment.mapboxToken}),
 
     MessageService,
     ConfirmationService,

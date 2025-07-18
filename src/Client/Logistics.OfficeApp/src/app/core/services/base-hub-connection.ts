@@ -12,7 +12,7 @@ export abstract class BaseHubConnection {
   ) {
     this.isConnected = false;
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl(`${environment.apiHost}/hubs/${hubName}`, {
+      .withUrl(`${environment.apiBaseUrl}/hubs/${hubName}`, {
         skipNegotiation: true,
         transport: HttpTransportType.WebSockets,
       })

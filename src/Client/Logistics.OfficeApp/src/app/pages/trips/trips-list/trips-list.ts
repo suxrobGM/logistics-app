@@ -15,6 +15,7 @@ import {DistanceUnitPipe} from "@/shared/pipes";
 
 @Component({
   selector: "app-trips-list",
+  templateUrl: "./trips-list.html",
   imports: [
     Button,
     RouterLink,
@@ -26,7 +27,6 @@ import {DistanceUnitPipe} from "@/shared/pipes";
     DistanceUnitPipe,
     InputText,
   ],
-  templateUrl: "./trips-list.html",
 })
 export class TripsList extends BaseTableComponent<TripDto> {
   private readonly apiService = inject(ApiService);

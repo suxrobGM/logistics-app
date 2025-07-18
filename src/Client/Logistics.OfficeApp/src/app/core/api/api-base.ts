@@ -2,17 +2,15 @@ import {HttpClient} from "@angular/common/http";
 import {inject} from "@angular/core";
 import {Observable, catchError, of} from "rxjs";
 import {ToastService} from "../services";
+import {API_CONFIG} from "./api.provider";
 import {PagedIntervalQuery, SearchableQuery} from "./models";
 
 export abstract class ApiBase {
   private readonly http = inject(HttpClient);
   private readonly toastService = inject(ToastService);
+  private readonly apiConfig = inject(API_CONFIG);
   private readonly headers = {"content-type": "application/json"};
-  protected readonly apiUrl: string;
-
-  constructor(apiUrl: string) {
-    this.apiUrl = apiUrl;
-  }
+  protected readonly apiUrl = this.apiConfig.baseUrl;
 
   /**
    * Utility function to parse the sort property from the query string.

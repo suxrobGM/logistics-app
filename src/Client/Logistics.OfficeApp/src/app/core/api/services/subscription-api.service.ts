@@ -1,17 +1,13 @@
 import {Observable} from "rxjs";
-import {ApiBase} from "./api-base";
+import {ApiBase} from "../api-base";
 import {
   CancelSubscriptionCommand,
   RenewSubscriptionCommand,
   Result,
   SubscriptionPlanDto,
-} from "./models";
+} from "../models";
 
-export class SubscriptionApi extends ApiBase {
-  constructor(apiUrl: string) {
-    super(apiUrl);
-  }
-
+export class SubscriptionApiService extends ApiBase {
   getSubscriptionPlans(): Observable<Result<SubscriptionPlanDto[]>> {
     return this.get("/subscriptions/plans");
   }

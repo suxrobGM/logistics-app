@@ -2,7 +2,7 @@ import {OpenIdConfiguration} from "angular-auth-oidc-client";
 import {environment} from "@/env";
 
 export const authConfig: OpenIdConfiguration = {
-  authority: environment.idHost,
+  authority: environment.idBaseUrl,
   postLoginRoute: "/",
   // forbiddenRoute: '/forbidden',
   unauthorizedRoute: "/unauthorized",

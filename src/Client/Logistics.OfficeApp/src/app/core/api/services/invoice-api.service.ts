@@ -1,5 +1,5 @@
 import {Observable} from "rxjs";
-import {ApiBase} from "./api-base";
+import {ApiBase} from "../api-base";
 import {
   CreateLoadInvoiceCommand,
   CreatePayrollInvoiceCommand,
@@ -10,13 +10,9 @@ import {
   Result,
   UpdateInvoiceCommand,
   UpdatePayrollInvoiceCommand,
-} from "./models";
+} from "../models";
 
-export class InvoiceApi extends ApiBase {
-  constructor(apiUrl: string) {
-    super(apiUrl);
-  }
-
+export class InvoiceApiService extends ApiBase {
   getInvoice(id: string): Observable<Result<InvoiceDto>> {
     return this.get(`/invoices/${id}`);
   }

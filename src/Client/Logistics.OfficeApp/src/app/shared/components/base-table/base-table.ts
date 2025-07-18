@@ -16,8 +16,9 @@ export interface TableQueryParams {
 }
 
 /**
- * Base class for tables that need to handle pagination and loading state.
- * This class provides a `fetch` method that can be called to load data.
+ * Base class for components that display data in a table format using PrimeNG Table component.
+ * This class provides methods for querying data, handling pagination, sorting, and searching.
+ * It should be extended by specific table components to implement the `query` method.
  */
 @Component({
   template: "",

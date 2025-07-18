@@ -81,7 +81,6 @@ export class AuthService {
         }
 
         console.log("User data:", this.userData);
-        //console.log("Access token:", response.accessToken);
         return response.isAuthenticated;
       })
     );

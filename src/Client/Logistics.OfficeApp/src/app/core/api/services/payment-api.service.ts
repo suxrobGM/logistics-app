@@ -1,5 +1,5 @@
 import {Observable} from "rxjs";
-import {ApiBase} from "./api-base";
+import {ApiBase} from "../api-base";
 import {
   CreatePaymentCommand,
   CreatePaymentMethodCommand,
@@ -14,13 +14,9 @@ import {
   SetupIntentDto,
   UpdatePaymentCommand,
   UpdatePaymentMethodCommand,
-} from "./models";
+} from "../models";
 
-export class PaymentApi extends ApiBase {
-  constructor(apiUrl: string) {
-    super(apiUrl);
-  }
-
+export class PaymentApiService extends ApiBase {
   getPayment(id: string): Observable<Result<PaymentDto>> {
     return this.get(`/payments/${id}`);
   }
