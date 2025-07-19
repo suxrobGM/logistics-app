@@ -37,6 +37,10 @@ import {
   UserApiService,
 } from "./services";
 
+/**
+ * Facade service that provides access to various API services.
+ * This service aggregates multiple API services for easier access throughout the application.
+ */
 @Injectable()
 export class ApiService extends ApiBase {
   public readonly paymentApi = new PaymentApiService();

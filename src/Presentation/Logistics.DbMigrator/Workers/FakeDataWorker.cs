@@ -60,7 +60,8 @@ internal class FakeDataWorker : IHostedService
         var employees = await AddEmployeesAsync(scope.ServiceProvider, users);
         var trucks = await AddTrucksAsync(scope.ServiceProvider, employees.Drivers);
         var customers = await AddCustomersAsync(scope.ServiceProvider);
-        await AddLoadsAsync(scope.ServiceProvider, employees, trucks, customers);
+        await AddGeneralFreightLoadsAsync(scope.ServiceProvider, employees, trucks, customers);
+        await AddCarHaulerTripsAsync(scope.ServiceProvider, employees, trucks, customers);
         await AddNotificationsAsync(scope.ServiceProvider);
         
         await payrollService.GeneratePayrolls(employees, _startDate, _endDate);
@@ -236,18 +237,19 @@ internal class FakeDataWorker : IHostedService
                 continue;
             }
 
-            truck = Truck.Create(truckNumber.ToString(), driver);
+            var truckType = _random.Pick([TruckType.CarHauler, TruckType.DryVan]);
+            truck = Truck.Create(truckNumber.ToString(), truckType, driver);
             truckNumber++;
             trucksList.Add(truck);
             await truckRepository.AddAsync(truck);
-            _logger.LogInformation("Added a truck {Number}", truck.Number);
+            _logger.LogInformation("Added a truck with number {Number}, and type {Type}", truck.Number, truck.Type);
         }
 
         await tenantUow.SaveChangesAsync();
         return trucksList;
     }
 
-    private async Task AddLoadsAsync(
+    private async Task AddGeneralFreightLoadsAsync(
         IServiceProvider serviceProvider,
         CompanyEmployees companyEmployees, 
         IList<Truck> trucks, 
@@ -257,34 +259,36 @@ internal class FakeDataWorker : IHostedService
             throw new InvalidOperationException("Empty list of trucks");
         
         var tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
+        var dryVanTrucks = trucks
+            .Where(i => i.Type == TruckType.DryVan)
+            .ToList();
 
         for (long i = 1; i <= 100; i++)
         {
-            var truck = _random.Pick(trucks);
+            var truck = _random.Pick(dryVanTrucks);
             var customer = _random.Pick(customers);
             var dispatcher = _random.Pick(companyEmployees.Dispatchers);
-            await AddLoadAsync(tenantUow, i, truck, dispatcher, customer);
+            var load = BuildRandomLoad(i, LoadType.GeneralFreight, truck, dispatcher, customer);
+            await tenantUow.Repository<Load>().AddAsync(load);
+            _logger.LogInformation("Added Load {LoadName} for Truck {TruckNumber}", load.Name, truck.Number);
         }
 
         await tenantUow.SaveChangesAsync();
     }
-
-    private async Task AddLoadAsync(
-        ITenantUnityOfWork tenantUow,
+    
+    private Load BuildRandomLoad(
         long index,
+        LoadType loadType,
         Truck truck,
         Employee dispatcher,
         Customer customer)
     {
+        const double originLat = 42.319090, originLng = -71.054680;
+        const double destLat   = 42.357820, destLng   = -71.060810;
+
         var dispatchedDate = _random.Date(_startDate, _endDate);
         dispatchedDate = DateTime.SpecifyKind(dispatchedDate, DateTimeKind.Utc);
-        
-        const double originLat = 42.319090;
-        const double originLng = -71.054680;
-        const double destLat = 42.357820;
-        const double destLng = -71.060810;
-        var deliveryCost = _random.Next(1000, 3000);
-        
+
         var originAddress = new Address
         {
             Line1 = "40 Crescent Ave",
@@ -293,7 +297,7 @@ internal class FakeDataWorker : IHostedService
             ZipCode = "02125",
             Country = "United States"
         };
-        
+
         var destinationAddress = new Address
         {
             Line1 = "73 Tremont St",
@@ -302,28 +306,77 @@ internal class FakeDataWorker : IHostedService
             ZipCode = "02108",
             Country = "United States"
         };
-            
+
+        var deliveryCost = _random.Next(1_000, 3_000);
+        var loadName = loadType == LoadType.Vehicle
+            ? "Car Hauler Load"
+            : "Dry Van Load";
+
         var load = Load.Create(
-            $"Test cargo {index}",
+            $"{loadName} {index}",
+            loadType,
             deliveryCost,
-            originAddress, 
-            originLat,
-            originLng,
-            destinationAddress, 
-            destLat,
-            destLng,
+            originAddress,  originLat, originLng,
+            destinationAddress, destLat, destLng,
             customer,
-            truck, 
+            truck,
             dispatcher);
-        
+
         load.DispatchedDate = dispatchedDate;
         load.PickUpDate = dispatchedDate.AddDays(1);
         load.DeliveryDate = dispatchedDate.AddDays(2);
-        load.Distance = _random.Next(16093, 321869);
-
-        await tenantUow.Repository<Load>().AddAsync(load);
-        _logger.LogInformation("Added a load {Name}", load.Name);
+        load.Distance = _random.Next(16_093, 321_869);   // 10–200 mi
+        return load;
     }
+    
+    private async Task AddCarHaulerTripsAsync(
+        IServiceProvider serviceProvider,
+        CompanyEmployees employees,
+        IList<Truck> trucks,
+        IList<Customer> customers)
+    {
+        var tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
+        var tripRepo = tenantUow.Repository<Trip>();
+        var loadRepo = tenantUow.Repository<Load>();
+
+        long tripNr = 1;
+
+        for (var i = 0; i < 30; i++) // ➜ 30 test trips
+        {
+            var truck = _random.Pick(trucks);
+            var dispatcher = _random.Pick(employees.Dispatchers);
+            var customer = _random.Pick(customers);
+
+            var planned = _random.Date(_startDate, _endDate);
+            planned = DateTime.SpecifyKind(planned, DateTimeKind.Utc);
+
+            // create 1-4 loads that belong to this trip
+            var loadsCount = _random.Next(1, 5);
+            var loads = new List<Load>();
+
+            for (var j = 0; j < loadsCount; j++)
+            {
+                var load = BuildRandomLoad(i * 10 + j + 1, LoadType.Vehicle, truck, dispatcher, customer);
+                loads.Add(load);
+                await loadRepo.AddAsync(load); // persist each load
+            }
+
+            // Trip factory builds stops automatically
+            var trip = Trip.Create(
+                name: $"Trip {tripNr}",
+                plannedStart: planned,
+                truck: truck,
+                loads: loads);
+
+            tripNr++;
+            await tripRepo.AddAsync(trip);
+
+            _logger.LogInformation("Added Trip {TripName} with {Count} loads", trip.Name, loadsCount);
+        }
+
+        await tenantUow.SaveChangesAsync();
+    }
+
 
     private async Task AddNotificationsAsync(IServiceProvider serviceProvider)
     {

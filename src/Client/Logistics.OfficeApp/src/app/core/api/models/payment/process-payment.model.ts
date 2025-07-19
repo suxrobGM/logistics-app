@@ -1,4 +1,4 @@
-import {AddressDto} from "../address.model";
+import {AddressDto} from "../address.dto";
 import {PaymentMethodType} from "./enums";
 
 export interface ProcessPaymentCommand {

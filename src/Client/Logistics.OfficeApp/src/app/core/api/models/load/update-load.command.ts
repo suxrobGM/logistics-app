@@ -1,9 +1,10 @@
-import {AddressDto} from "../address.model";
-import {LoadStatus} from "./enums";
+import {AddressDto} from "../address.dto";
+import {LoadStatus, LoadType} from "./enums";
 
 export interface UpdateLoadCommand {
   id: string;
   name?: string;
+  loadType?: LoadType;
   originAddress: AddressDto;
   originAddressLat: number;
   originAddressLong: number;

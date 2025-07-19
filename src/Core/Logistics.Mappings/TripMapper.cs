@@ -8,7 +8,7 @@ namespace Logistics.Mappings;
 public static partial class TripMapper
 {
     [MapperIgnoreSource(nameof(Trip.DomainEvents))]
-    [MapperIgnoreSource(nameof(Trip.Truck))]
     [MapperIgnoreSource(nameof(Trip.Stops))]
+    [MapProperty(nameof(Trip.Truck.Number), nameof(TripDto.TruckNumber))]
     public static partial TripDto ToDto(this Trip entity);
 }

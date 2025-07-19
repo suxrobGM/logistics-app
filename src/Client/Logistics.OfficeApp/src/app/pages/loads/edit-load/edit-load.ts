@@ -15,8 +15,10 @@ import {
   AddressDto,
   CustomerDto,
   LoadStatus,
+  LoadType,
   UpdateLoadCommand,
   loadStatusOptions,
+  loadTypeOptions,
 } from "@/core/api/models";
 import {ToastService} from "@/core/services";
 import {
@@ -60,9 +62,10 @@ export class EditLoadComponent implements OnInit {
 
   private distanceMeters = 0;
   protected readonly loadStatuses = loadStatusOptions;
+  protected readonly loadTypes = loadTypeOptions;
   protected readonly form: FormGroup<EditLoadForm>;
-  protected readonly id = input<string>();
 
+  protected readonly id = input<string>();
   protected readonly loadNumber = signal<number>(0);
   protected readonly isLoading = signal(false);
   protected readonly originCoords = signal<[number, number] | null>(null);
@@ -70,7 +73,11 @@ export class EditLoadComponent implements OnInit {
 
   constructor() {
     this.form = new FormGroup<EditLoadForm>({
-      name: new FormControl(""),
+      name: new FormControl("", {validators: Validators.required, nonNullable: true}),
+      loadType: new FormControl<LoadType>(LoadType.GeneralFreight, {
+        validators: Validators.required,
+        nonNullable: true,
+      }),
       customer: new FormControl(null, {validators: Validators.required}),
       orgAddress: new FormControl(null, {validators: Validators.required, nonNullable: true}),
       orgCoords: new FormControl([0, 0], {validators: Validators.required, nonNullable: true}),
@@ -137,6 +144,7 @@ export class EditLoadComponent implements OnInit {
     const command: UpdateLoadCommand = {
       id: this.id()!,
       name: this.form.value.name!,
+      loadType: this.form.value.loadType!,
       originAddress: this.form.value.orgAddress!,
       originAddressLong: this.form.value.orgCoords![0],
       originAddressLat: this.form.value.orgCoords![1],
@@ -184,6 +192,7 @@ export class EditLoadComponent implements OnInit {
 
       this.form.patchValue({
         name: load.name,
+        loadType: load.type,
         customer: load.customer,
         orgAddress: load.originAddress,
         orgCoords: [load.originAddressLong, load.originAddressLat],
@@ -212,7 +221,8 @@ export class EditLoadComponent implements OnInit {
 }
 
 interface EditLoadForm {
-  name: FormControl<string | null>;
+  name: FormControl<string>;
+  loadType: FormControl<LoadType>;
   customer: FormControl<CustomerDto | null>;
   orgAddress: FormControl<AddressDto | null>;
   orgCoords: FormControl<[number, number]>;

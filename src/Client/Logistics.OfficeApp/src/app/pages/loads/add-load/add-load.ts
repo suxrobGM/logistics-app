@@ -5,12 +5,18 @@ import {AutoCompleteModule} from "primeng/autocomplete";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {Select} from "primeng/select";
 import {ToastModule} from "primeng/toast";
 import {ApiService} from "@/core/api";
-import {AddressDto, CreateLoadCommand, CustomerDto} from "@/core/api/models";
+import {
+  AddressDto,
+  CreateLoadCommand,
+  CustomerDto,
+  LoadType,
+  loadTypeOptions,
+} from "@/core/api/models";
 import {AuthService} from "@/core/auth";
 import {ToastService} from "@/core/services";
-import {environment} from "@/env";
 import {
   AddressAutocomplete,
   DirectionsMap,
@@ -39,6 +45,7 @@ import {TruckData} from "../shared";
     SearchCustomerComponent,
     SearchTruckComponent,
     ValidationSummary,
+    Select,
   ],
 })
 export class AddLoadComponent implements OnInit {
@@ -48,8 +55,8 @@ export class AddLoadComponent implements OnInit {
   private readonly router = inject(Router);
 
   private distanceMeters = 0;
-  protected readonly accessToken = environment.mapboxToken;
   protected readonly form: FormGroup<AddLoadForm>;
+  protected readonly loadTypes = loadTypeOptions;
 
   protected readonly isLoading = signal(false);
   protected readonly originCoords = signal<[number, number] | null>(null);
@@ -57,7 +64,11 @@ export class AddLoadComponent implements OnInit {
 
   constructor() {
     this.form = new FormGroup<AddLoadForm>({
-      name: new FormControl(""),
+      name: new FormControl("", {validators: Validators.required, nonNullable: true}),
+      loadType: new FormControl<LoadType>(LoadType.GeneralFreight, {
+        validators: Validators.required,
+        nonNullable: true,
+      }),
       customer: new FormControl(null, {validators: Validators.required}),
       orgAddress: new FormControl(null, {validators: Validators.required, nonNullable: true}),
       orgCoords: new FormControl([0, 0], {validators: Validators.required, nonNullable: true}),
@@ -112,6 +123,7 @@ export class AddLoadComponent implements OnInit {
     this.isLoading.set(true);
     const command: CreateLoadCommand = {
       name: this.form.value.name!,
+      loadType: this.form.value.loadType!,
       originAddress: this.form.value.orgAddress!,
       originAddressLong: this.form.value.orgCoords![0],
       originAddressLat: this.form.value.orgCoords![1],
@@ -148,7 +160,8 @@ export class AddLoadComponent implements OnInit {
 }
 
 interface AddLoadForm {
-  name: FormControl<string | null>;
+  name: FormControl<string>;
+  loadType: FormControl<LoadType>;
   customer: FormControl<CustomerDto | null>;
   orgAddress: FormControl<AddressDto | null>;
   orgCoords: FormControl<[number, number]>;

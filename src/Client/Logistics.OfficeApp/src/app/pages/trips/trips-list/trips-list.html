@@ -79,16 +79,16 @@
     </ng-template>
     <ng-template pTemplate="body" let-trip>
       <tr>
-        <td>{{ trip.truckNumber }}</td>
-        <td>{{ trip.name }}</td>
-        <td>{{ trip.number }}</td>
-        <td>{{ trip.origin }}</td>
-        <td>{{ trip.destination }}</td>
-        <td>{{ trip.totalDistance | distanceUnit: "mi" }}</td>
+        <td class="text-center">{{ trip.truckNumber }}</td>
+        <td class="text-center">{{ trip.name }}</td>
+        <td class="text-center">{{ trip.number }}</td>
+        <td>{{ trip.originAddress | address }}</td>
+        <td>{{ trip.destinationAddress | address }}</td>
+        <td class="text-center">{{ trip.totalDistance | distanceUnit: "mi" }}</td>
         <td>{{ trip.plannedStart | date: "mediumDate" }}</td>
         <td>{{ trip.actualStart | date: "mediumDate" }}</td>
         <td>{{ trip.completedAt | date: "mediumDate" }}</td>
-        <td>{{ trip.status }}</td>
+        <td class="text-center">{{ trip.status }}</td>
         <td class="flex gap-2 overflow-visible">
           <p-button
             icon="pi pi-pen-to-square"

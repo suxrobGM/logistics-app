@@ -1,4 +1,4 @@
-import {PagedIntervalQuery} from "../paged-interval-query.model";
+import {PagedIntervalQuery} from "../paged-interval.query";
 
 export interface GetPaymentsQuery extends PagedIntervalQuery {
   /**

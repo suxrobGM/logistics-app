@@ -1,4 +1,5 @@
 ﻿using Logistics.Application.Specifications;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -42,10 +43,9 @@ internal sealed class UpdateTruckHandler : RequestHandler<UpdateTruckCommand, Re
                 truckEntity.Drivers = drivers;
         }
 
-        if (!string.IsNullOrEmpty(req.TruckNumber))
-        {
-            truckEntity.Number = req.TruckNumber;
-        }
+        truckEntity.Number = PropertyUpdater.UpdateIfChanged(req.TruckNumber, truckEntity.Number);
+        truckEntity.Type = PropertyUpdater.UpdateIfChanged(req.TruckType, truckEntity.Type);
+        truckEntity.Status = PropertyUpdater.UpdateIfChanged(req.TruckStatus, truckEntity.Status);
         
         truckRepository.Update(truckEntity);
         await _tenantUow.SaveChangesAsync();

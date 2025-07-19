@@ -12,6 +12,7 @@ public static class LoadMapper
             Id = entity.Id,
             Number = entity.Number,
             Name = entity.Name,
+            Type = entity.Type,
             OriginAddress = entity.OriginAddress.ToDto(),
             OriginAddressLat = entity.OriginAddressLat,
             OriginAddressLong = entity.OriginAddressLong,
@@ -25,7 +26,7 @@ public static class LoadMapper
             Distance = entity.Distance,
             CanConfirmPickUp = entity.CanConfirmPickUp,
             CanConfirmDelivery = entity.CanConfirmDelivery,
-            Status = entity.GetStatus(),
+            Status = entity.Status,
             AssignedDispatcherId = entity.AssignedDispatcherId,
             AssignedDispatcherName = entity.AssignedDispatcher?.GetFullName(),
             AssignedTruckId = entity.AssignedTruckId,
@@ -35,7 +36,7 @@ public static class LoadMapper
             Invoices = entity.Invoices.Select(i => i.ToDto()),
         };
         
-        if (entity.AssignedTruck?.CurrentLocation?.IsNotNull() ?? false)
+        if (entity.AssignedTruck?.CurrentLocation.IsNotNull() ?? false)
         {
             dto.CurrentLocation = entity.AssignedTruck.CurrentLocation.ToDto();
         }

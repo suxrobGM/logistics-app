@@ -8,6 +8,10 @@ public class Truck : Entity, ITenantEntity
 {
     public required string Number { get; set; }
     
+    public required TruckType Type { get; set; }
+    
+    public TruckStatus Status { get; set; } = TruckStatus.Available;
+    
     /// <summary>
     /// Truck's last known location address
     /// </summary>
@@ -27,16 +31,17 @@ public class Truck : Entity, ITenantEntity
     public virtual List<Load> Loads { get; } = [];
     public virtual List<Trip> Trips { get; } = [];
 
-    public static Truck Create(string truckNumber, Employee driver)
+    public static Truck Create(string truckNumber, TruckType type, Employee driver)
     {
-        return Create(truckNumber, [driver]);
+        return Create(truckNumber, type, [driver]);
     }
     
-    public static Truck Create(string truckNumber, IEnumerable<Employee> drivers)
+    public static Truck Create(string truckNumber, TruckType type, IEnumerable<Employee> drivers)
     {
         var newTruck = new Truck
         {
-            Number = truckNumber
+            Number = truckNumber,
+            Type = type,
         };
 
         newTruck.Drivers.AddRange(drivers);

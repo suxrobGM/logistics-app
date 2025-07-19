@@ -1,4 +1,5 @@
 ﻿using Logistics.Domain.ValueObjects;
+using Logistics.Shared.Consts;
 using Logistics.Shared.Models;
 using MediatR;
 
@@ -7,6 +8,7 @@ namespace Logistics.Application.Commands;
 public class CreateLoadCommand : IRequest<Result>
 {
     public string Name { get; set; } = null!;
+    public LoadType Type { get; set; }
     public Address? OriginAddress { get; set; }
     public double OriginAddressLat { get; set; }
     public double OriginAddressLong { get; set; }

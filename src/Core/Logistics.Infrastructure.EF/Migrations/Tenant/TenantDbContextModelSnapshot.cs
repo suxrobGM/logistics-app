@@ -230,6 +230,12 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<DateTime?>("PickUpDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
                     b.ComplexProperty<Dictionary<string, object>>("DeliveryCost", "Logistics.Domain.Entities.Load.DeliveryCost#Money", b1 =>
                         {
                             b1.IsRequired();
@@ -650,6 +656,12 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<string>("Number")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
 
                     b.ComplexProperty<Dictionary<string, object>>("CurrentLocation", "Logistics.Domain.Entities.Truck.CurrentLocation#Address", b1 =>
                         {

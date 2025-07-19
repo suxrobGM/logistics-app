@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.EF.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20250711215134_Version_0001")]
+    [Migration("20250719034558_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -232,6 +232,12 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
                     b.Property<DateTime?>("PickUpDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
 
                     b.ComplexProperty<Dictionary<string, object>>("DeliveryCost", "Logistics.Domain.Entities.Load.DeliveryCost#Money", b1 =>
                         {
@@ -653,6 +659,12 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<string>("Number")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
 
                     b.ComplexProperty<Dictionary<string, object>>("CurrentLocation", "Logistics.Domain.Entities.Truck.CurrentLocation#Address", b1 =>
                         {

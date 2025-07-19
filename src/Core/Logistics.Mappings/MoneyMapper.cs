@@ -1,25 +1,12 @@
 ﻿using Logistics.Domain.ValueObjects;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class MoneyMapper
+[Mapper]
+public static partial class MoneyMapper
 {
-    public static MoneyDto ToDto(this Money entity)
-    {
-        return new MoneyDto
-        {
-            Amount = entity.Amount,
-            Currency = entity.Currency,
-        };
-    }
-
-    public static Money ToEntity(this MoneyDto dto)
-    {
-        return new Money 
-        {
-            Amount = dto.Amount,
-            Currency = dto.Currency,
-        };
-    }
+    public static partial MoneyDto ToDto(this Money entity);
+    public static partial Money ToEntity(this MoneyDto dto);
 }

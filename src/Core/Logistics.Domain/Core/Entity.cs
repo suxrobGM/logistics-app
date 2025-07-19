@@ -6,6 +6,6 @@ public abstract class Entity : IEntity<Guid>
 {
     public Guid Id { get; set; } = Guid.NewGuid();
 
-    [NotMapped] 
+    [NotMapped]
     public List<IDomainEvent> DomainEvents { get; } = [];
 }

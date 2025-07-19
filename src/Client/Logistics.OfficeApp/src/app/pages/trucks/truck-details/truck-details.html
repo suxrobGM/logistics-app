@@ -49,7 +49,7 @@
         </div>
         <div class="col-md-6 mb-md-0 col-12 mb-2">
           <span class="fw-bold">Truck Number: </span><br />
-          <a [routerLink]="['/trucks/edit', truck()?.id]">{{ truck()?.truckNumber }}</a>
+          <a [routerLink]="['/trucks', truck()?.id, 'edit']">{{ truck()?.number }}</a>
         </div>
       </div>
 

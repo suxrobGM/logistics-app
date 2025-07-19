@@ -28,6 +28,20 @@ export interface ApiConfig {
   interceptors?: HttpInterceptorFn[];
 }
 
+/**
+ * Provides the API service with the given configuration.
+ * This function sets up the HTTP client with the specified interceptors and provides the API service.
+ * @param config The configuration for the API service.
+ * @returns An array of providers for the API service.
+ * @example
+ * ```ts
+ * provideApi({
+ *   baseUrl: 'https://api.example.com',
+ *   withCredentials: true,
+ *   tokenGetter: () => sessionStorage.getItem('access_token'),
+ *   interceptors: [customInterceptor],
+ * });
+ */
 export function provideApi(config: ApiConfig = {}): (Provider | EnvironmentProviders)[] {
   return [
     provideHttpClient(withInterceptors([tokenAuthInterceptor, ...(config.interceptors || [])])),

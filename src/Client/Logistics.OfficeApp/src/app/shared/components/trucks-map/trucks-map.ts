@@ -58,7 +58,7 @@ export class TrucksMap implements OnDestroy {
               latitude: truck.currentLocationLat!,
               longitude: truck.currentLocationLong!,
               truckId: truck.id,
-              truckNumber: truck.truckNumber,
+              truckNumber: truck.number,
               driversName: truck.drivers.map((driver) => driver.fullName).join(", "),
             },
           ];

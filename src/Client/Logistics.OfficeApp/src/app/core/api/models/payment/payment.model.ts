@@ -1,5 +1,5 @@
-import {AddressDto} from "../address.model";
-import {MoneyDto} from "../money.model";
+import {AddressDto} from "../address.dto";
+import {MoneyDto} from "../money.dto";
 import {PaymentStatus} from "./enums";
 
 //import {PaymentMethodDto} from "./payment-method.model";

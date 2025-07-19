@@ -1,7 +1,9 @@
-import {AddressDto} from "../address.model";
+import {AddressDto} from "../address.dto";
+import {LoadType} from "./enums";
 
 export interface CreateLoadCommand {
-  name?: string;
+  name: string;
+  loadType: LoadType;
   originAddress: AddressDto;
   originAddressLat: number;
   originAddressLong: number;

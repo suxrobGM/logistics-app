@@ -153,9 +153,15 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resu
             updated = true;
         }
         
-        if (req.Status.HasValue && req.Status != load.GetStatus())
+        if (req.Status.HasValue && req.Status != load.Status)
         {
             load.SetStatus(req.Status.Value);
+            updated = true;
+        }
+        
+        if (req.Type.HasValue && req.Type != load.Type)
+        {
+            load.Type = req.Type.Value;
             updated = true;
         }
 

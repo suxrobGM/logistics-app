@@ -70,7 +70,7 @@ export class TruckDetailsComponent implements OnInit {
             latitude: truck.currentLocationLat,
             longitude: truck.currentLocationLong,
             truckId: truck.id,
-            truckNumber: truck.truckNumber,
+            truckNumber: truck.number,
             driversName: truck.drivers.map((driver) => driver.fullName).join(", "),
           },
         ]);

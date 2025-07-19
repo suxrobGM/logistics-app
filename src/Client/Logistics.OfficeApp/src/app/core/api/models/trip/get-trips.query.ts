@@ -1,4 +1,4 @@
-import {SearchableQuery} from "../searchable-query.model";
+import {SearchableQuery} from "../searchable.query";
 import {TripStatus} from "./enums";
 
 export interface GetTripsQuery extends SearchableQuery {

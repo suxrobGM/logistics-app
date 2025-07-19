@@ -21,6 +21,7 @@ public class LoadDto
     public bool CanConfirmPickUp { get; set; }
     public bool CanConfirmDelivery { get; set; }
     public LoadStatus Status { get; set; }
+    public LoadType Type { get; set; }
     public Guid? AssignedDispatcherId { get; set; }
     public string? AssignedDispatcherName { get; set; }
     public Guid? AssignedTruckId { get; set; }

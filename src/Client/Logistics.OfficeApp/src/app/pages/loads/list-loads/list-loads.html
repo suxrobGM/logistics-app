@@ -44,6 +44,10 @@
               Name
               <p-sortIcon field="Name" />
             </th>
+            <th pSortableColumn="Type">
+              Type
+              <p-sortIcon field="Type" />
+            </th>
             <th pSortableColumn="Customer.Name">
               Customer
               <p-sortIcon field="Customer.Name" />
@@ -86,6 +90,7 @@
             <td [pTooltip]="load.name" [showDelay]="500" tooltipPosition="bottom">
               {{ load.name }}
             </td>
+            <td>{{ load.type }}</td>
             <td [pTooltip]="load.customer.name" [showDelay]="500" tooltipPosition="bottom">
               {{ load.customer.name }}
             </td>

@@ -7,8 +7,12 @@ namespace Logistics.Domain.Entities;
 
 public class Load : Entity, ITenantEntity
 {
-    public long Number { get; private set; }
+    public long Number { get; init; }
     public required string Name { get; set; }
+    
+    public required LoadType Type { get; set; }
+    
+    public LoadStatus Status { get; set; } = LoadStatus.Dispatched;
     
     public required Address OriginAddress { get; set; }
     public double? OriginAddressLat { get; set; }
@@ -66,16 +70,8 @@ public class Load : Entity, ITenantEntity
             default:
                 throw new ArgumentOutOfRangeException(nameof(status), status, null);
         }
-    }
-
-    public LoadStatus GetStatus()
-    {
-        if (DeliveryDate.HasValue)
-        {
-            return LoadStatus.Delivered;
-        }
-
-        return PickUpDate.HasValue ? LoadStatus.PickedUp : LoadStatus.Dispatched;
+        
+        Status = status;
     }
 
     public decimal CalcDriverShare()
@@ -85,6 +81,7 @@ public class Load : Entity, ITenantEntity
 
     public static Load Create(
         string name,
+        LoadType type,
         decimal deliveryCost,
         Address originAddress,
         double originLatitude,
@@ -99,6 +96,7 @@ public class Load : Entity, ITenantEntity
         var load = new Load
         {
             Name = name,
+            Type = type,
             DeliveryCost = deliveryCost,
             OriginAddress = originAddress,
             OriginAddressLat = originLatitude,

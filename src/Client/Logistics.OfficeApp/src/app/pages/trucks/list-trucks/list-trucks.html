@@ -13,72 +13,82 @@
 <hr class="w-full" />
 
 <p-card>
-  <div class="row">
-    <div class="col-12">
-      <p-table
-        [value]="trucks()"
-        responsiveLayout="scroll"
-        [lazy]="true"
-        [paginator]="true"
-        [showCurrentPageReport]="true"
-        (onLazyLoad)="load($event)"
-        [rows]="10"
-        [totalRecords]="totalRecords()"
-        [loading]="isLoading()"
-        [rowsPerPageOptions]="[10, 25, 50]"
-      >
-        <ng-template pTemplate="caption">
-          <p-icon-field>
-            <p-inputicon class="pi pi-search" />
-            <input pInputText type="text" placeholder="Search" (input)="search($event)" />
-          </p-icon-field>
-        </ng-template>
-        <ng-template pTemplate="header">
-          <tr>
-            <th class="text-center" pSortableColumn="truckNumber">
-              Number
-              <p-sortIcon field="truckNumber" />
-            </th>
-            <th class="text-center">Current Location</th>
-            <th class="text-center">Drivers</th>
-            <th class="text-center">Action</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-truck>
-          <tr>
-            <td class="text-center">
-              {{ truck.truckNumber }}
-            </td>
-            <td class="text-center" [pTooltip]="truck.currentLocation" [showDelay]="500">
-              {{ truck.currentLocation | address }}
-            </td>
-            <td class="text-center">
-              @for (driver of truck.drivers; track driver.id) {
-                <span>
-                  {{ driver.fullName }}
-                  @if (truck.drivers.length > 1) {
-                    <span>,</span>
-                  }
-                </span>
+  <p-table
+    [value]="trucks()"
+    responsiveLayout="scroll"
+    [lazy]="true"
+    [paginator]="true"
+    [showCurrentPageReport]="true"
+    (onLazyLoad)="load($event)"
+    [rows]="10"
+    [totalRecords]="totalRecords()"
+    [loading]="isLoading()"
+    [rowsPerPageOptions]="[10, 25, 50]"
+  >
+    <ng-template pTemplate="caption">
+      <p-icon-field>
+        <p-inputicon class="pi pi-search" />
+        <input pInputText type="text" placeholder="Search" (input)="search($event)" />
+      </p-icon-field>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="text-center" pSortableColumn="Number">
+          Number
+          <p-sortIcon field="Number" />
+        </th>
+        <th class="text-center" pSortableColumn="Type">
+          Type
+          <p-sortIcon field="Type" />
+        </th>
+        <th class="text-center" pSortableColumn="Status">
+          Status
+          <p-sortIcon field="Status" />
+        </th>
+        <th class="text-center">Current Location</th>
+        <th class="text-center">Drivers</th>
+        <th class="text-center">Action</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-truck>
+      <tr>
+        <td class="text-center">
+          {{ truck.number }}
+        </td>
+        <td class="text-center">
+          {{ truck.type }}
+        </td>
+        <td class="text-center">
+          {{ truck.status }}
+        </td>
+        <td class="text-center" [pTooltip]="truck.currentLocation" [showDelay]="500">
+          {{ truck.currentLocation | address }}
+        </td>
+        <td class="text-center">
+          @for (driver of truck.drivers; track driver.id) {
+            <span>
+              {{ driver.fullName }}
+              @if (truck.drivers.length > 1) {
+                <span>,</span>
               }
-            </td>
+            </span>
+          }
+        </td>
 
-            <td class="text-center">
-              <p-button
-                icon="pi pi-book"
-                pTooltip="View details"
-                [routerLink]="['/trucks', truck.id]"
-              />
-              <p-button
-                class="ms-2"
-                icon="pi pi-pen-to-square"
-                pTooltip="Edit truck"
-                [routerLink]="['/trucks', truck.id, 'edit']"
-              />
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </div>
-  </div>
+        <td class="text-center">
+          <p-button
+            icon="pi pi-book"
+            pTooltip="View details"
+            [routerLink]="['/trucks', truck.id]"
+          />
+          <p-button
+            class="ms-2"
+            icon="pi pi-pen-to-square"
+            pTooltip="Edit truck"
+            [routerLink]="['/trucks', truck.id, 'edit']"
+          />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 </p-card>

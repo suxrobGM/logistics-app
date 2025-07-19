@@ -12,7 +12,7 @@ export class TruckHelper {
         return result.data.map((truckDriver) => ({
           truckId: truckDriver.truck.id,
           driversName: TruckHelper.formatDriversName(
-            truckDriver.truck.truckNumber,
+            truckDriver.truck.number,
             truckDriver.drivers.map((i) => i.fullName)
           ),
         }));

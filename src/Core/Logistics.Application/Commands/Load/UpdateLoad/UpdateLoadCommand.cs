@@ -9,6 +9,7 @@ public class UpdateLoadCommand : IRequest<Result>
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }
+    public LoadType? Type { get; set; }
     public Address? OriginAddress { get; set; }
     public double? OriginAddressLat { get; set; }
     public double? OriginAddressLong { get; set; }

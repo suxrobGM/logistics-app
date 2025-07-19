@@ -1,4 +1,4 @@
-import {AddressDto} from "../address.model";
+import {AddressDto} from "../address.dto";
 import {TripStatus} from "./enums";
 
 export interface TripDto {
@@ -13,4 +13,5 @@ export interface TripDto {
   completedAt?: Date;
   status: TripStatus;
   truckId: string;
+  truckNumber: string;
 }

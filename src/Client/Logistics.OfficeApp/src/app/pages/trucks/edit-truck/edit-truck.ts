@@ -92,7 +92,7 @@ export class EditTruckComponent implements OnInit {
         console.log("Fetched Truck:", truck);
 
         this.form.patchValue({
-          truckNumber: truck.truckNumber,
+          truckNumber: truck.number,
           drivers: truck.drivers,
         });
       }
@@ -105,6 +105,7 @@ export class EditTruckComponent implements OnInit {
 
     const command: CreateTruckCommand = {
       truckNumber: this.form.value.truckNumber,
+      truckType: this.form.value.truckType,
       driverIds: drivers.map((i) => i.id),
     };
 
@@ -125,6 +126,7 @@ export class EditTruckComponent implements OnInit {
     const updateTruckCommand: UpdateTruckCommand = {
       id: this.id()!,
       truckNumber: this.form.value.truckNumber,
+      truckType: this.form.value.truckType,
       driverIds: drivers.map((i) => i.id),
     };
 

@@ -1,12 +1,13 @@
-import {AddressDto} from "../address.model";
+import {AddressDto} from "../address.dto";
 import {CustomerDto} from "../customer";
 import {InvoiceDto} from "../invoice";
-import {LoadStatus} from "./enums";
+import {LoadStatus, LoadType} from "./enums";
 
 export interface LoadDto {
   id: string;
   number: number;
-  name?: string;
+  name: string;
+  type: LoadType;
   originAddress: AddressDto;
   originAddressLat: number;
   originAddressLong: number;

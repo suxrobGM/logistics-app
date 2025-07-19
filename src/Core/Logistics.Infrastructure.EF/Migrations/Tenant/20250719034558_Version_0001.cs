@@ -97,6 +97,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Number = table.Column<string>(type: "text", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
                     CurrentLocationLat = table.Column<double>(type: "double precision", nullable: true),
                     CurrentLocationLong = table.Column<double>(type: "double precision", nullable: true),
                     CurrentLocation_City = table.Column<string>(type: "text", nullable: false),
@@ -216,6 +218,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     Number = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
                     OriginAddressLat = table.Column<double>(type: "double precision", nullable: true),
                     OriginAddressLong = table.Column<double>(type: "double precision", nullable: true),
                     DestinationAddressLat = table.Column<double>(type: "double precision", nullable: true),

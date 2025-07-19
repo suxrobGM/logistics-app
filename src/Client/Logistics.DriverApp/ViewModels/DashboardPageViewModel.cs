@@ -148,7 +148,7 @@ public class DashboardPageViewModel : BaseViewModel
 
         var truck = result.Data!;
         var teammates = truck.Drivers.Where(i => i.Id != driverId).Select(i => i.FullName);
-        TruckNumber = truck.TruckNumber;
+        TruckNumber = truck.Number;
         TeammatesName = string.Join(", ", teammates); 
         _cache.Set(CacheKeys.TruckId, truck.Id);
 

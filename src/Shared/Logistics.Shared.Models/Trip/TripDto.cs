@@ -21,4 +21,5 @@ public record TripDto
     public DateTime? CompletedAt { get; set; }
     public TripStatus Status { get; set; }
     public Guid TruckId { get; set; }
+    public string? TruckNumber { get; set; }
 }

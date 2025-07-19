@@ -45,6 +45,7 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resu
         
         var load = Load.Create(
             req.Name,
+            req.Type,
             req.DeliveryCost,
             req.OriginAddress!,
             req.OriginAddressLat,

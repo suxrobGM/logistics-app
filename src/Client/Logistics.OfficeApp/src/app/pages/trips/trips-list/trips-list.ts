@@ -11,7 +11,7 @@ import {Observable} from "rxjs";
 import {ApiService} from "@/core/api";
 import {PagedResult, TripDto} from "@/core/api/models";
 import {BaseTableComponent, TableQueryParams} from "@/shared/components";
-import {DistanceUnitPipe} from "@/shared/pipes";
+import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
 
 @Component({
   selector: "app-trips-list",
@@ -26,6 +26,7 @@ import {DistanceUnitPipe} from "@/shared/pipes";
     DatePipe,
     DistanceUnitPipe,
     InputText,
+    AddressPipe,
   ],
 })
 export class TripsList extends BaseTableComponent<TripDto> {

@@ -23,6 +23,10 @@
           />
         </div>
         <div class="mb-3">
+          <label for="loadType">Load Type</label>
+          <p-select formControlName="loadType" styleClass="w-full" [options]="loadTypes" />
+        </div>
+        <div class="mb-3">
           <label for="customer" class="form-label">Customer</label>
           <app-search-customer formControlName="customer" />
         </div>

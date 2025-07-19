@@ -1,4 +1,4 @@
-import {PagedQuery} from "../paged-query.model";
+import {PagedQuery} from "../paged.query";
 import {InvoiceType} from "./enums";
 
 export interface GetInvoicesQuery extends PagedQuery {

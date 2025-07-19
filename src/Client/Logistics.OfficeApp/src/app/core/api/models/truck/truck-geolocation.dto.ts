@@ -1,4 +1,4 @@
-import {AddressDto} from "../address.model";
+import {AddressDto} from "../address.dto";
 
 export interface TruckGeolocationDto {
   truckId: string;
