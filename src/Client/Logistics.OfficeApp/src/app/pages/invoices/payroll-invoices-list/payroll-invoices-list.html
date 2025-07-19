@@ -13,81 +13,79 @@
 <hr class="w-full" />
 
 <p-card>
-  <div class="row">
-    <div class="col-12">
-      <p-table
-        [value]="invoices()"
-        responsiveLayout="scroll"
-        [lazy]="true"
-        [paginator]="true"
-        [showCurrentPageReport]="true"
-        (onLazyLoad)="load($event)"
-        [rows]="10"
-        [(first)]="first"
-        [totalRecords]="totalRecords()"
-        [loading]="isLoading()"
-        [rowsPerPageOptions]="[10, 25, 50]"
-      >
-        <ng-template pTemplate="caption">
-          <p-icon-field>
-            <p-inputicon class="pi pi-search" />
-            <input
-              pInputText
-              type="text"
-              placeholder="Search by employeer name"
-              (input)="search($event)"
-            />
-          </p-icon-field>
-        </ng-template>
+  <p-table
+    [value]="invoices()"
+    responsiveLayout="scroll"
+    [lazy]="true"
+    [paginator]="true"
+    [showCurrentPageReport]="true"
+    (onLazyLoad)="load($event)"
+    [rows]="10"
+    [(first)]="first"
+    [totalRecords]="totalRecords()"
+    [loading]="isLoading()"
+    [rowsPerPageOptions]="[10, 25, 50]"
+  >
+    <ng-template pTemplate="caption">
+      <p-icon-field>
+        <p-inputicon class="pi pi-search" />
+        <input
+          pInputText
+          type="text"
+          placeholder="Search by employeer name"
+          (input)="search($event)"
+        />
+      </p-icon-field>
+    </ng-template>
 
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Period</th>
-            <th pSortableColumn="Employee.FirstName">
-              Employee
-              <p-sortIcon field="Employee.FirstName" />
-            </th>
-            <th pSortableColumn="Employee.SalaryType">
-              Employee Salary Type
-              <p-sortIcon field="Employee.SalaryType" />
-            </th>
-            <th pSortableColumn="Employee.Salary">
-              Employee Salary
-              <p-sortIcon field="Employee.Salary" />
-            </th>
-            <th pSortableColumn="Total">
-              Invoice Total
-              <p-sortIcon field="Total" />
-            </th>
-            <th pSortableColumn="Status">
-              Invoice Status
-              <p-sortIcon field="Status" />
-            </th>
-            <th>Action</th>
-          </tr>
-        </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Period</th>
+        <th pSortableColumn="Employee.FirstName">
+          Employee
+          <p-sortIcon field="Employee.FirstName" />
+        </th>
+        <th pSortableColumn="Employee.SalaryType">
+          Employee Salary Type
+          <p-sortIcon field="Employee.SalaryType" />
+        </th>
+        <th pSortableColumn="Employee.Salary">
+          Employee Salary
+          <p-sortIcon field="Employee.Salary" />
+        </th>
+        <th pSortableColumn="Total">
+          Invoice Total
+          <p-sortIcon field="Total" />
+        </th>
+        <th pSortableColumn="Status">
+          Invoice Status
+          <p-sortIcon field="Status" />
+        </th>
+        <th>Action</th>
+      </tr>
+    </ng-template>
 
-        <ng-template pTemplate="body" let-invoice>
-          <tr>
-            <td>
-              {{ invoice.periodStart | date: "MMM d" }} -
-              {{ invoice.periodEnd | date: "mediumDate" }}
-            </td>
-            <td>{{ invoice.employee.fullName }}</td>
-            <td>{{ getSalaryTypeDesc(invoice.employee.salaryType) }}</td>
-            <td>
-              @if (invoice.employee.salaryType === "share_of_gross") {
-                {{ invoice.employee.salary | percent }}
-              } @else {
-                {{ invoice.employee.salary | currency }}
-              }
-            </td>
-            <td>{{ invoice.total.amount | currency }}</td>
-            <td>
-              <app-invoice-status-tag [status]="invoice.status"></app-invoice-status-tag>
-            </td>
-            <td class="overflow-visible">
-              <!-- @if (invoice.payment.status === "pending") {
+    <ng-template pTemplate="body" let-invoice>
+      <tr>
+        <td>
+          {{ invoice.periodStart | date: "MMM d" }} -
+          {{ invoice.periodEnd | date: "mediumDate" }}
+        </td>
+        <td>{{ invoice.employee.fullName }}</td>
+        <td>{{ getSalaryTypeDesc(invoice.employee.salaryType) }}</td>
+        <td>
+          @if (invoice.employee.salaryType === "share_of_gross") {
+            {{ invoice.employee.salary | percent }}
+          } @else {
+            {{ invoice.employee.salary | currency }}
+          }
+        </td>
+        <td>{{ invoice.total.amount | currency }}</td>
+        <td>
+          <app-invoice-status-tag [status]="invoice.status"></app-invoice-status-tag>
+        </td>
+        <td class="overflow-visible">
+          <!-- @if (invoice.payment.status === "pending") {
                 <p-button
                   icon="pi pi-credit-card"
                   pTooltip="Make payment"
@@ -96,17 +94,15 @@
                 />
               } -->
 
-              <p-button
-                class="ms-2"
-                icon="pi pi-pen-to-square"
-                pTooltip="Edit payroll invoice"
-                tooltipPosition="bottom"
-                [routerLink]="['/invoices/payroll', invoice.id, 'edit']"
-              />
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </div>
-  </div>
+          <p-button
+            class="ms-2"
+            icon="pi pi-pen-to-square"
+            pTooltip="Edit payroll invoice"
+            tooltipPosition="bottom"
+            [routerLink]="['/invoices/payroll', invoice.id, 'edit']"
+          />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 </p-card>

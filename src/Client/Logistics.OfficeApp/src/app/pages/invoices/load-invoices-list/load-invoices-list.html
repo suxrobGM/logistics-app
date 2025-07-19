@@ -10,58 +10,56 @@
 <hr class="w-full" />
 
 <p-card>
-  <div class="row">
-    <div class="col-12">
-      <p-table
-        [value]="invoices()"
-        responsiveLayout="scroll"
-        [lazy]="true"
-        [paginator]="true"
-        [showCurrentPageReport]="true"
-        (onLazyLoad)="load($event)"
-        [rows]="10"
-        [(first)]="first"
-        [totalRecords]="totalRecords()"
-        [loading]="isLoading()"
-        [rowsPerPageOptions]="[10, 25, 50]"
-      >
-        <ng-template pTemplate="header">
-          <tr>
-            <th pSortableColumn="Number">
-              Load Number
-              <p-sortIcon field="Number" />
-            </th>
-            <th pSortableColumn="Customer.Name">
-              Customer
-              <p-sortIcon field="Customer.Name" />
-            </th>
-            <th pSortableColumn="Total">
-              Invoice Total
-              <p-sortIcon field="Total" />
-            </th>
-            <th pSortableColumn="CreatedDate">
-              Invoice Date
-              <p-sortIcon field="CreatedDate" />
-            </th>
-            <th pSortableColumn="Status">
-              Invoice Status
-              <p-sortIcon field="Status" />
-            </th>
-            <th>Action</th>
-          </tr>
-        </ng-template>
+  <p-table
+    [value]="invoices()"
+    responsiveLayout="scroll"
+    [lazy]="true"
+    [paginator]="true"
+    [showCurrentPageReport]="true"
+    (onLazyLoad)="load($event)"
+    [rows]="10"
+    [(first)]="first"
+    [totalRecords]="totalRecords()"
+    [loading]="isLoading()"
+    [rowsPerPageOptions]="[10, 25, 50]"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="Number">
+          Load Number
+          <p-sortIcon field="Number" />
+        </th>
+        <th pSortableColumn="Customer.Name">
+          Customer
+          <p-sortIcon field="Customer.Name" />
+        </th>
+        <th pSortableColumn="Total">
+          Invoice Total
+          <p-sortIcon field="Total" />
+        </th>
+        <th pSortableColumn="CreatedDate">
+          Invoice Date
+          <p-sortIcon field="CreatedDate" />
+        </th>
+        <th pSortableColumn="Status">
+          Invoice Status
+          <p-sortIcon field="Status" />
+        </th>
+        <th>Action</th>
+      </tr>
+    </ng-template>
 
-        <ng-template pTemplate="body" let-invoice>
-          <tr>
-            <td>{{ invoice.loadNumber }}</td>
-            <td>{{ invoice.customer.name }}</td>
-            <td>{{ invoice.total.amount | currency }}</td>
-            <td>{{ invoice.createdDate | date: "mediumDate" }}</td>
-            <td>
-              <app-invoice-status-tag [status]="invoice.status" />
-            </td>
-            <td>
-              <!-- @if (invoice.status === "pending") {
+    <ng-template pTemplate="body" let-invoice>
+      <tr>
+        <td>{{ invoice.loadNumber }}</td>
+        <td>{{ invoice.customer.name }}</td>
+        <td>{{ invoice.total.amount | currency }}</td>
+        <td>{{ invoice.createdDate | date: "mediumDate" }}</td>
+        <td>
+          <app-invoice-status-tag [status]="invoice.status" />
+        </td>
+        <td>
+          <!-- @if (invoice.status === "pending") {
                 <p-button
                   icon="pi pi-credit-card"
                   pTooltip="Make payment"
@@ -70,16 +68,14 @@
                 />
               } -->
 
-              <p-button
-                styleClass="ms-2"
-                icon="pi pi-book"
-                pTooltip="View details"
-                [routerLink]="['/invoices/loads', invoice.id]"
-              />
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </div>
-  </div>
+          <p-button
+            styleClass="ms-2"
+            icon="pi pi-book"
+            pTooltip="View details"
+            [routerLink]="['/invoices/loads', invoice.id]"
+          />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 </p-card>

@@ -66,48 +66,46 @@
 }
 
 <p-card>
-  <div class="row">
-    <div class="col-12">
-      <p-table
-        [value]="invoices()"
-        responsiveLayout="scroll"
-        [lazy]="true"
-        [paginator]="true"
-        [showCurrentPageReport]="true"
-        (onLazyLoad)="load($event)"
-        [rows]="10"
-        [(first)]="first"
-        [totalRecords]="totalRecords()"
-        [loading]="isLoadingPayrolls()"
-        [rowsPerPageOptions]="[10, 25, 50]"
-      >
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Period</th>
-            <th pSortableColumn="PaymentAmount">
-              Invoice Amount
-              <p-sortIcon field="PaymentAmount" />
-            </th>
-            <th pSortableColumn="PaymentStatus">
-              Invoice Status
-              <p-sortIcon field="PaymentStatus" />
-            </th>
-            <th>Action</th>
-          </tr>
-        </ng-template>
+  <p-table
+    [value]="invoices()"
+    responsiveLayout="scroll"
+    [lazy]="true"
+    [paginator]="true"
+    [showCurrentPageReport]="true"
+    (onLazyLoad)="load($event)"
+    [rows]="10"
+    [(first)]="first"
+    [totalRecords]="totalRecords()"
+    [loading]="isLoadingPayrolls()"
+    [rowsPerPageOptions]="[10, 25, 50]"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Period</th>
+        <th pSortableColumn="PaymentAmount">
+          Invoice Amount
+          <p-sortIcon field="PaymentAmount" />
+        </th>
+        <th pSortableColumn="PaymentStatus">
+          Invoice Status
+          <p-sortIcon field="PaymentStatus" />
+        </th>
+        <th>Action</th>
+      </tr>
+    </ng-template>
 
-        <ng-template pTemplate="body" let-invoice>
-          <tr>
-            <td>
-              {{ invoice.startDate | date: "MMM d" }} - {{ invoice.endDate | date: "mediumDate" }}
-            </td>
-            <td>{{ invoice.total.amount | currency }}</td>
-            <td>
-              <app-invoice-status-tag [status]="invoice.status" />
-            </td>
-            <td>{{ getPaymentMethodDesc(invoice.payment.method) }}</td>
-            <td class="overflow-visible">
-              <!-- @if (invoice.status === "pending") {
+    <ng-template pTemplate="body" let-invoice>
+      <tr>
+        <td>
+          {{ invoice.startDate | date: "MMM d" }} - {{ invoice.endDate | date: "mediumDate" }}
+        </td>
+        <td>{{ invoice.total.amount | currency }}</td>
+        <td>
+          <app-invoice-status-tag [status]="invoice.status" />
+        </td>
+        <td>{{ getPaymentMethodDesc(invoice.payment.method) }}</td>
+        <td class="overflow-visible">
+          <!-- @if (invoice.status === "pending") {
                 <p-button
                   icon="pi pi-credit-card"
                   pTooltip="Make payment"
@@ -116,17 +114,15 @@
                 />
               } -->
 
-              <p-button
-                class="ms-2"
-                icon="pi pi-pen-to-square"
-                pTooltip="Edit payroll"
-                tooltipPosition="bottom"
-                [routerLink]="['/invoices/payroll', invoice.id, 'edit']"
-              />
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </div>
-  </div>
+          <p-button
+            class="ms-2"
+            icon="pi pi-pen-to-square"
+            pTooltip="Edit payroll"
+            tooltipPosition="bottom"
+            [routerLink]="['/invoices/payroll', invoice.id, 'edit']"
+          />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 </p-card>
