@@ -1,4 +1,5 @@
 import {AddressDto} from "../address.dto";
+import {LoadDto} from "../load";
 import {TripStatus} from "./enums";
 
 export interface TripDto {
@@ -14,4 +15,5 @@ export interface TripDto {
   status: TripStatus;
   truckId: string;
   truckNumber: string;
+  loads: LoadDto[];
 }

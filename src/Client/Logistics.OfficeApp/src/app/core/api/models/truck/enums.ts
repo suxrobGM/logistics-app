@@ -11,7 +11,7 @@ export enum TruckStatus {
 export enum TruckType {
   Flatbed = "flatbed",
   Reefer = "reefer",
-  DryVan = "dry_van",
+  FreightTruck = "freight_truck",
   Tanker = "tanker",
   BoxTruck = "box_truck",
   CarHauler = "car_hauler",

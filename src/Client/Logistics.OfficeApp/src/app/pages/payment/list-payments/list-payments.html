@@ -26,7 +26,7 @@
     [loading]="isLoading"
     [rowsPerPageOptions]="[10, 25, 50]"
   >
-    <!-- <ng-template pTemplate="caption">
+    <!-- <ng-template #caption>
           <p-icon-field>
             <p-inputicon class="pi pi-search" />
             <input
@@ -38,7 +38,7 @@
           </p-icon-field>
         </ng-template> -->
 
-    <ng-template pTemplate="header">
+    <ng-template #header>
       <tr>
         <th pSortableColumn="CreatedDate">
           Created Date
@@ -67,7 +67,7 @@
       </tr>
     </ng-template>
 
-    <ng-template pTemplate="body" let-payment>
+    <ng-template #body let-payment>
       <tr>
         <td>{{ payment.createdDate | date: "mediumDate" }}</td>
         <td>{{ getPaymentMethodDesc(payment.method) }}</td>

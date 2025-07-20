@@ -159,7 +159,7 @@ export class EditLoadComponent implements OnInit {
       status: this.form.value.status,
     };
 
-    this.apiService.updateLoad(command).subscribe((result) => {
+    this.apiService.loadApi.updateLoad(command).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess("Load has been updated successfully");
       }
@@ -170,7 +170,7 @@ export class EditLoadComponent implements OnInit {
 
   private deleteLoad(): void {
     this.isLoading.set(true);
-    this.apiService.deleteLoad(this.id()!).subscribe((result) => {
+    this.apiService.loadApi.deleteLoad(this.id()!).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess("A load has been deleted successfully");
         this.router.navigateByUrl("/loads");
@@ -183,7 +183,7 @@ export class EditLoadComponent implements OnInit {
   private fetchLoad(): void {
     this.isLoading.set(true);
 
-    this.apiService.getLoad(this.id()!).subscribe((result) => {
+    this.apiService.loadApi.getLoad(this.id()!).subscribe((result) => {
       if (!result.success || !result.data) {
         return;
       }

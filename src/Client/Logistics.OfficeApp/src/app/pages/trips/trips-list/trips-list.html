@@ -25,14 +25,17 @@
     [totalRecords]="totalRecords()"
     [loading]="isLoading()"
     [rowsPerPageOptions]="[10, 25, 50]"
+    [rowGroupMode]="'subheader'"
+    [groupRowsBy]="'load.tripId'"
+    [sortField]="'PlannedStart'"
   >
-    <ng-template pTemplate="caption">
+    <ng-template #caption>
       <p-icon-field>
         <p-inputicon class="pi pi-search" />
         <input pInputText type="text" placeholder="Search" (input)="onSearch($event)" />
       </p-icon-field>
     </ng-template>
-    <ng-template pTemplate="header">
+    <ng-template #header>
       <tr>
         <th pSortableColumn="Truck.Number">
           Truck Number
@@ -77,7 +80,28 @@
         <th>Action</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-trip>
+    <ng-template #groupheader let-trip let-expanded="expanded">
+      <tr class="bg-primary-50 text-primary-900 font-semibold">
+        <td colspan="12" class="px-3 py-2">
+          <p-button
+            [pRowToggler]="trip"
+            class="mr-2 text-sm no-underline"
+            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+            variant="text"
+            severity="secondary"
+          />
+
+          Trip #{{ trip.tripNumber }} <span>— {{ trip.tripName }}</span>
+
+          <p-tag
+            class="ml-3 py-1 text-xs"
+            [value]="trip.tripStatus"
+            [severity]="tripStatusColor(trip.tripStatus)"
+          />
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #body let-trip>
       <tr>
         <td class="text-center">{{ trip.truckNumber }}</td>
         <td class="text-center">{{ trip.name }}</td>

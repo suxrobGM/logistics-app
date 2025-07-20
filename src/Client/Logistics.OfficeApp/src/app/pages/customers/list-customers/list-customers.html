@@ -28,13 +28,13 @@
     [loading]="isLoading()"
     [rowsPerPageOptions]="[10, 25, 50]"
   >
-    <ng-template pTemplate="caption">
+    <ng-template #caption>
       <p-icon-field>
         <p-inputicon class="pi pi-search" />
         <input pInputText type="text" placeholder="Search" (input)="search($event)" />
       </p-icon-field>
     </ng-template>
-    <ng-template pTemplate="header">
+    <ng-template #header>
       <tr>
         <th pSortableColumn="Name">
           Name
@@ -43,7 +43,7 @@
         <th class="text-center">Action</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-customer>
+    <ng-template #body let-customer>
       <tr>
         <td>{{ customer.name }}</td>
         <td class="text-center">

@@ -34,6 +34,7 @@ public static class LoadMapper
             AssignedTruckDriversName = entity.AssignedTruck?.Drivers.Select(i => i.GetFullName()),
             Customer = entity.Customer?.ToDto(),
             Invoices = entity.Invoices.Select(i => i.ToDto()),
+            TripId = entity.TripStop?.Trip.Id,
         };
         
         if (entity.AssignedTruck?.CurrentLocation.IsNotNull() ?? false)

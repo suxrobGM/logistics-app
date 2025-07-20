@@ -11,7 +11,7 @@
   [loading]="isLoading()"
   [rowsPerPageOptions]="[10, 25, 50]"
 >
-  <ng-template pTemplate="header">
+  <ng-template #header>
     <tr>
       <th>Date</th>
       <th>Amount</th>
@@ -20,7 +20,7 @@
       <!-- <th>Invoice</th> -->
     </tr>
   </ng-template>
-  <ng-template pTemplate="body" let-payment>
+  <ng-template #body let-payment>
     <tr>
       <td>{{ payment.paymentDate | date }}</td>
       <td>{{ payment.amount | currency }}</td>

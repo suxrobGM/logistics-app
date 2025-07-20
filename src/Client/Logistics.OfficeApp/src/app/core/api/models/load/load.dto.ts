@@ -28,4 +28,5 @@ export interface LoadDto {
   currentLocation?: string;
   customer?: CustomerDto;
   invoice?: InvoiceDto;
+  tripId?: string;
 }

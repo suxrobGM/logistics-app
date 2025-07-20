@@ -8,10 +8,25 @@ import {PagedResult} from "@/core/api/models";
  * Parameters for querying the table data.
  */
 export interface TableQueryParams {
-  page: number; // 0-based
+  /**
+   * Zero-based page index.
+   */
+  page: number;
+  /**
+   * Number of items per page.
+   */
   size: number;
+  /**
+   * Field to sort by.
+   */
   sortField?: string;
+  /**
+   * Sort order: 1 for ascending, -1 for descending.
+   */
   sortOrder?: 1 | -1;
+  /**
+   * Search term to filter the data.
+   */
   search?: string;
 }
 

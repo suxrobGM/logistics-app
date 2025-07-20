@@ -1,5 +1,5 @@
 <p-card>
-  <ng-template pTemplate="header">
+  <ng-template #header>
     <h4 class="py-2 ps-3">
       Truck statistics for <span class="text-danger">{{ startDate() | date: "shortDate" }}</span> -
       <span class="text-danger">{{ endDate() | date: "shortDate" }}</span>
@@ -27,7 +27,7 @@
     [loading]="isLoading()"
     [rowsPerPageOptions]="[10, 25, 50]"
   >
-    <ng-template pTemplate="header">
+    <ng-template #header>
       <tr>
         <th pSortableColumn="TruckNumber">
           Truck Number
@@ -51,7 +51,7 @@
         </th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-truckStats>
+    <ng-template #body let-truckStats>
       <tr>
         <td>{{ truckStats().truckNumber }}</td>
         <td>{{ truckStats().gross | currency }}</td>

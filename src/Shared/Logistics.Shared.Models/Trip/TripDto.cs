@@ -22,4 +22,6 @@ public record TripDto
     public TripStatus Status { get; set; }
     public Guid TruckId { get; set; }
     public string? TruckNumber { get; set; }
+    
+    public IEnumerable<LoadDto> Loads { get; set; } = [];
 }

@@ -14,25 +14,28 @@
 
 <p-card>
   <p-table
-    [value]="loads()"
+    [value]="data()"
+    dataKey="id"
     responsiveLayout="scroll"
     [lazy]="true"
     [paginator]="true"
     [showCurrentPageReport]="true"
-    (onLazyLoad)="load($event)"
+    (onLazyLoad)="onLazyLoad($event)"
     [rows]="10"
     [(first)]="first"
     [totalRecords]="totalRecords()"
     [loading]="isLoading()"
     [rowsPerPageOptions]="[10, 25, 50]"
   >
-    <ng-template pTemplate="caption">
-      <p-icon-field>
-        <p-inputicon class="pi pi-search" />
-        <input pInputText type="text" placeholder="Search" (input)="search($event)" />
-      </p-icon-field>
+    <ng-template #caption>
+      <div class="align-items-center flex gap-2">
+        <p-icon-field>
+          <p-inputicon class="pi pi-search" />
+          <input pInputText type="text" placeholder="Search" (input)="onSearch($event)" />
+        </p-icon-field>
+      </div>
     </ng-template>
-    <ng-template pTemplate="header">
+    <ng-template #header>
       <tr>
         <th pSortableColumn="Number">
           Number
@@ -67,10 +70,6 @@
           Cost
           <p-sortIcon field="DeliveryCost.Amount" />
         </th>
-        <!-- <th pSortableColumn="invoicePaymentStatus">
-              Invoice Status
-              <p-sortIcon field="invoicePaymentStatus" />
-            </th> -->
         <th pSortableColumn="AssignedTruck.Number">
           Truck
           <p-sortIcon field="AssignedTruck.Number" />
@@ -82,7 +81,7 @@
         <th>Action</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-load>
+    <ng-template #body let-load>
       <tr>
         <td>{{ load.number }}</td>
         <td [pTooltip]="load.name" [showDelay]="500" tooltipPosition="bottom">
@@ -107,10 +106,9 @@
             [icon]="getLoadStatusIcon(load.status)"
             [value]="getLoadStatusDesc(load.status)"
             [severity]="getLoadStatusSeverity(load.status)"
-          >
-          </p-tag>
+          />
 
-          <div class="fst-italic">
+          <div class="italic">
             @switch (load.status) {
               @case (loadStatus.Dispatched) {
                 {{ load.dispatchedDate | date: "mediumDate" }}
@@ -126,12 +124,9 @@
         </td>
         <td>{{ load.distance | distanceUnit: "mi" }}</td>
         <td>{{ load.deliveryCost | currency }}</td>
-        <!-- <td>
-              <app-invoice-status-tag [status]="load.invoice.status"></app-invoice-status-tag>
-            </td> -->
         <td>{{ load.assignedTruckNumber }}</td>
         <td>{{ load.assignedDispatcherName }}</td>
-        <td class="overflow-visible">
+        <td class="flex gap-2 overflow-visible">
           <p-button
             icon="pi pi-pen-to-square"
             pTooltip="Edit load details"
@@ -139,18 +134,16 @@
             [routerLink]="['/loads/edit', load.id]"
           />
           <p-button
-            styleClass="ms-2"
             icon="pi pi-truck"
             pTooltip="View truck details"
             tooltipPosition="bottom"
             [routerLink]="['/trucks', load.assignedTruckId]"
           />
           <p-button
-            styleClass="ms-2"
             icon="pi pi-book"
             pTooltip="View invoices"
             tooltipPosition="bottom"
-            [routerLink]="['/invoices/loads', load.id, 'view']"
+            [routerLink]="['/invoices/loads', load.id]"
           />
         </td>
       </tr>

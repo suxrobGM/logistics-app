@@ -19,7 +19,7 @@
   </div>
 } @else {
   <p-card styleClass="mb-3">
-    <ng-template pTemplate="header">
+    <ng-template #header>
       <h4 class="py-2 ps-3">Payroll details</h4>
       <hr class="m-0 w-full" />
     </ng-template>
@@ -79,7 +79,7 @@
     [loading]="isLoadingPayrolls()"
     [rowsPerPageOptions]="[10, 25, 50]"
   >
-    <ng-template pTemplate="header">
+    <ng-template #header>
       <tr>
         <th>Period</th>
         <th pSortableColumn="PaymentAmount">
@@ -94,7 +94,7 @@
       </tr>
     </ng-template>
 
-    <ng-template pTemplate="body" let-invoice>
+    <ng-template #body let-invoice>
       <tr>
         <td>
           {{ invoice.startDate | date: "MMM d" }} - {{ invoice.endDate | date: "mediumDate" }}

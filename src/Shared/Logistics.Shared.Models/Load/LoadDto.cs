@@ -27,8 +27,10 @@ public class LoadDto
     public Guid? AssignedTruckId { get; set; }
     public string? AssignedTruckNumber { get; set; }
     public AddressDto? CurrentLocation { get; set; }
-    
     public CustomerDto? Customer { get; set; }
+    
+    public Guid? TripId { get; set; }
+    
     public IEnumerable<string>? AssignedTruckDriversName { get; set; }
     public IEnumerable<InvoiceDto> Invoices { get; set; } = [];
 }

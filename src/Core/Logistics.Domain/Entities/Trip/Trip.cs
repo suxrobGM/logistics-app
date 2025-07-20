@@ -1,4 +1,5 @@
-﻿using Logistics.Domain.Core;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Logistics.Domain.Core;
 using Logistics.Domain.Events;
 using Logistics.Domain.ValueObjects;
 using Logistics.Shared.Consts;
@@ -31,6 +32,12 @@ public class Trip : Entity, ITenantEntity
     public virtual required Truck Truck { get; set; }
     
     public virtual List<TripStop> Stops { get; } = [];
+    
+    /// <summary>
+    /// Gets all unique loads associated with the trip.
+    /// </summary>
+    [NotMapped]
+    public IReadOnlyList<Load> Loads => Stops.Select(s => s.Load).Distinct(new LoadComparer()).ToArray();
     
     
     #region Domain Behaviors

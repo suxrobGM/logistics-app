@@ -23,7 +23,7 @@
     [loading]="isLoading()"
     [rowsPerPageOptions]="[10, 25, 50]"
   >
-    <ng-template pTemplate="header">
+    <ng-template #header>
       <tr>
         <th pSortableColumn="Number">
           Load Number
@@ -49,7 +49,7 @@
       </tr>
     </ng-template>
 
-    <ng-template pTemplate="body" let-invoice>
+    <ng-template #body let-invoice>
       <tr>
         <td>{{ invoice.loadNumber }}</td>
         <td>{{ invoice.customer.name }}</td>

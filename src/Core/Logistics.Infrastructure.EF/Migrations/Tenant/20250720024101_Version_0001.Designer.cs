@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.EF.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20250719034558_Version_0001")]
+    [Migration("20250720024101_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -236,6 +236,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<Guid?>("TripStopId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
@@ -318,6 +321,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.HasIndex("CustomerId");
 
                     b.HasIndex("Number")
+                        .IsUnique();
+
+                    b.HasIndex("TripStopId")
                         .IsUnique();
 
                     b.ToTable("Loads", (string)null);
@@ -580,11 +586,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.TripStop", b =>
                 {
-                    b.Property<Guid>("TripId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("ArrivedAt")
                         .HasColumnType("timestamp with time zone");
@@ -592,16 +596,16 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<DateTime?>("DepartedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("LoadId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("Planned")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("TripId1")
+                    b.Property<Guid>("TripId")
                         .HasColumnType("uuid");
 
                     b.Property<int>("Type")
@@ -635,11 +639,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                                 .HasColumnType("text");
                         });
 
-                    b.HasKey("TripId", "Order");
+                    b.HasKey("Id");
 
-                    b.HasIndex("LoadId");
-
-                    b.HasIndex("TripId1");
+                    b.HasIndex("TripId");
 
                     b.ToTable("TripStops", (string)null);
                 });
@@ -976,11 +978,17 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .WithMany()
                         .HasForeignKey("CustomerId");
 
+                    b.HasOne("Logistics.Domain.Entities.TripStop", "TripStop")
+                        .WithOne("Load")
+                        .HasForeignKey("Logistics.Domain.Entities.Load", "TripStopId");
+
                     b.Navigation("AssignedDispatcher");
 
                     b.Navigation("AssignedTruck");
 
                     b.Navigation("Customer");
+
+                    b.Navigation("TripStop");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Payment", b =>
@@ -1014,23 +1022,10 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.TripStop", b =>
                 {
-                    b.HasOne("Logistics.Domain.Entities.Load", "Load")
-                        .WithMany()
-                        .HasForeignKey("LoadId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Logistics.Domain.Entities.Trip", "Trip")
-                        .WithMany()
-                        .HasForeignKey("TripId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Logistics.Domain.Entities.Trip", null)
                         .WithMany("Stops")
-                        .HasForeignKey("TripId1");
-
-                    b.Navigation("Load");
+                        .HasForeignKey("TripId")
+                        .IsRequired();
 
                     b.Navigation("Trip");
                 });
@@ -1099,6 +1094,12 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
             modelBuilder.Entity("Logistics.Domain.Entities.Trip", b =>
                 {
                     b.Navigation("Stops");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.TripStop", b =>
+                {
+                    b.Navigation("Load")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>

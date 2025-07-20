@@ -211,6 +211,35 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 });
 
             migrationBuilder.CreateTable(
+                name: "TripStops",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    TripId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Planned = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ArrivedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DepartedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LoadId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Address_City = table.Column<string>(type: "text", nullable: false),
+                    Address_Country = table.Column<string>(type: "text", nullable: false),
+                    Address_Line1 = table.Column<string>(type: "text", nullable: false),
+                    Address_Line2 = table.Column<string>(type: "text", nullable: true),
+                    Address_State = table.Column<string>(type: "text", nullable: false),
+                    Address_ZipCode = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TripStops", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TripStops_Trips_TripId",
+                        column: x => x.TripId,
+                        principalTable: "Trips",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Loads",
                 columns: table => new
                 {
@@ -230,6 +259,7 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     DispatchedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     PickUpDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     DeliveryDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    TripStopId = table.Column<Guid>(type: "uuid", nullable: true),
                     CustomerId = table.Column<Guid>(type: "uuid", nullable: true),
                     AssignedTruckId = table.Column<Guid>(type: "uuid", nullable: true),
                     AssignedDispatcherId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -260,6 +290,11 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         name: "FK_Loads_Employees_AssignedDispatcherId",
                         column: x => x.AssignedDispatcherId,
                         principalTable: "Employees",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Loads_TripStops_TripStopId",
+                        column: x => x.TripStopId,
+                        principalTable: "TripStops",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Loads_Trucks_AssignedTruckId",
@@ -317,48 +352,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         principalTable: "Loads",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TripStops",
-                columns: table => new
-                {
-                    TripId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Order = table.Column<int>(type: "integer", nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false),
-                    Planned = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ArrivedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DepartedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LoadId = table.Column<Guid>(type: "uuid", nullable: false),
-                    TripId1 = table.Column<Guid>(type: "uuid", nullable: true),
-                    Address_City = table.Column<string>(type: "text", nullable: false),
-                    Address_Country = table.Column<string>(type: "text", nullable: false),
-                    Address_Line1 = table.Column<string>(type: "text", nullable: false),
-                    Address_Line2 = table.Column<string>(type: "text", nullable: true),
-                    Address_State = table.Column<string>(type: "text", nullable: false),
-                    Address_ZipCode = table.Column<string>(type: "text", nullable: false),
-                    Id = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TripStops", x => new { x.TripId, x.Order });
-                    table.ForeignKey(
-                        name: "FK_TripStops_Loads_LoadId",
-                        column: x => x.LoadId,
-                        principalTable: "Loads",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TripStops_Trips_TripId",
-                        column: x => x.TripId,
-                        principalTable: "Trips",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_TripStops_Trips_TripId1",
-                        column: x => x.TripId1,
-                        principalTable: "Trips",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -447,6 +440,12 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Loads_TripStopId",
+                table: "Loads",
+                column: "TripStopId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PaymentMethods_StripePaymentMethodId",
                 table: "PaymentMethods",
                 column: "StripePaymentMethodId",
@@ -468,14 +467,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 column: "TruckId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TripStops_LoadId",
+                name: "IX_TripStops_TripId",
                 table: "TripStops",
-                column: "LoadId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TripStops_TripId1",
-                table: "TripStops",
-                column: "TripId1");
+                column: "TripId");
         }
 
         /// <inheritdoc />
@@ -497,16 +491,10 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "RoleClaims");
 
             migrationBuilder.DropTable(
-                name: "TripStops");
-
-            migrationBuilder.DropTable(
                 name: "Invoices");
 
             migrationBuilder.DropTable(
                 name: "Roles");
-
-            migrationBuilder.DropTable(
-                name: "Trips");
 
             migrationBuilder.DropTable(
                 name: "Loads");
@@ -516,6 +504,12 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             migrationBuilder.DropTable(
                 name: "Employees");
+
+            migrationBuilder.DropTable(
+                name: "TripStops");
+
+            migrationBuilder.DropTable(
+                name: "Trips");
 
             migrationBuilder.DropTable(
                 name: "Trucks");

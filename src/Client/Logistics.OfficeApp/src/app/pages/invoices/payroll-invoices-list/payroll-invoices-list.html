@@ -26,7 +26,7 @@
     [loading]="isLoading()"
     [rowsPerPageOptions]="[10, 25, 50]"
   >
-    <ng-template pTemplate="caption">
+    <ng-template #caption>
       <p-icon-field>
         <p-inputicon class="pi pi-search" />
         <input
@@ -38,7 +38,7 @@
       </p-icon-field>
     </ng-template>
 
-    <ng-template pTemplate="header">
+    <ng-template #header>
       <tr>
         <th>Period</th>
         <th pSortableColumn="Employee.FirstName">
@@ -65,7 +65,7 @@
       </tr>
     </ng-template>
 
-    <ng-template pTemplate="body" let-invoice>
+    <ng-template #body let-invoice>
       <tr>
         <td>
           {{ invoice.periodStart | date: "MMM d" }} -

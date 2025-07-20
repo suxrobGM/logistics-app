@@ -237,7 +237,7 @@ internal class FakeDataWorker : IHostedService
                 continue;
             }
 
-            var truckType = _random.Pick([TruckType.CarHauler, TruckType.DryVan]);
+            var truckType = _random.Pick([TruckType.CarHauler, TruckType.FreightTruck]);
             truck = Truck.Create(truckNumber.ToString(), truckType, driver);
             truckNumber++;
             trucksList.Add(truck);
@@ -260,7 +260,7 @@ internal class FakeDataWorker : IHostedService
         
         var tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
         var dryVanTrucks = trucks
-            .Where(i => i.Type == TruckType.DryVan)
+            .Where(i => i.Type == TruckType.FreightTruck)
             .ToList();
 
         for (long i = 1; i <= 100; i++)
@@ -310,7 +310,7 @@ internal class FakeDataWorker : IHostedService
         var deliveryCost = _random.Next(1_000, 3_000);
         var loadName = loadType == LoadType.Vehicle
             ? "Car Hauler Load"
-            : "Dry Van Load";
+            : "Freight Truck Load";
 
         var load = Load.Create(
             $"{loadName} {index}",

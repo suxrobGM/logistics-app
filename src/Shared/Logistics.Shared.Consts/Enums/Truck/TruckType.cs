@@ -6,7 +6,7 @@ namespace Logistics.Shared.Consts;
 public enum TruckType
 {
     [Description("Flatbed"), EnumMember(Value = "flatbed")] Flatbed,
-    [Description("Dry Van"), EnumMember(Value = "dry_van")] DryVan,
+    [Description("Freight Truck"), EnumMember(Value = "freight_truck")] FreightTruck,
     [Description("Reefer"), EnumMember(Value = "reefer")] Reefer,
     [Description("Tanker"), EnumMember(Value = "tanker")] Tanker,
     [Description("Box Truck"), EnumMember(Value = "box_truck")] BoxTruck,

@@ -9,11 +9,15 @@ public class TripStopEntityConfiguration : IEntityTypeConfiguration<TripStop>
     public void Configure(EntityTypeBuilder<TripStop> builder)
     {
         builder.ToTable("TripStops");
-        builder.HasKey(i => new { i.TripId, i.Order });
 
         builder.HasOne(i => i.Trip)
-            .WithMany()
+            .WithMany(i => i.Stops)
             .HasForeignKey(i => i.TripId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.ClientSetNull);
+        
+        builder.HasOne(i => i.Load)
+            .WithOne(i => i.TripStop)
+            .HasForeignKey<Load>(i => i.TripStopId)
+            .OnDelete(DeleteBehavior.ClientSetNull);
     }
 }

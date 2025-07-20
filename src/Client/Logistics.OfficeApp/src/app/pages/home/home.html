@@ -4,7 +4,7 @@
 <div class="row g-3 mt-3">
   <div class="col-xl-7 col-12">
     <p-card>
-      <ng-template pTemplate="header">
+      <ng-template #header>
         <h4 class="py-2 ps-3">Trucks</h4>
         <hr class="m-0 w-full" />
       </ng-template>
@@ -14,20 +14,20 @@
 
   <div class="col-xl-5 col-12">
     <p-card styleClass="h-100">
-      <ng-template pTemplate="header">
+      <ng-template #header>
         <h4 class="py-2 ps-3">Active loads</h4>
         <hr class="m-0 w-full" />
       </ng-template>
 
       <p-table [value]="loads()" responsiveLayout="scroll" [loading]="isLoadingLoadsData()">
-        <ng-template pTemplate="header">
+        <ng-template #header>
           <tr>
             <th>ID</th>
             <th>Current Location</th>
             <th>Truck</th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-load>
+        <ng-template #body let-load>
           <tr>
             <td>
               <a [routerLink]="['/loads/edit', load.id]"> {{ load.number }} </a>
@@ -58,7 +58,7 @@
 <div class="row g-3 mt-3">
   <div class="col-12">
     <p-card>
-      <ng-template pTemplate="header">
+      <ng-template #header>
         <h4 class="py-2 ps-3">Weekly Report</h4>
         <hr class="m-0 w-full" />
       </ng-template>
@@ -115,7 +115,7 @@
 <div class="row g-3 mt-3">
   <div class="col-xl-7 col-12">
     <p-card>
-      <ng-template pTemplate="header">
+      <ng-template #header>
         <h4 class="py-2 ps-3">Daily Gross</h4>
         <hr class="m-0 w-full" />
       </ng-template>

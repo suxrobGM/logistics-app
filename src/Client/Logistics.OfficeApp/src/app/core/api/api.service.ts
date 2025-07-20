@@ -5,12 +5,10 @@ import {
   CompanyStatsDto,
   CreateCustomerCommand,
   CreateEmployeeCommand,
-  CreateLoadCommand,
   CreateTruckCommand,
   CustomerDto,
   DailyGrossesDto,
   EmployeeDto,
-  LoadDto,
   MonthlyGrossesDto,
   NotificationDto,
   PagedIntervalQuery,
@@ -24,12 +22,12 @@ import {
   TruckStatsDto,
   UpdateCustomerCommand,
   UpdateEmployeeCommand,
-  UpdateLoadCommand,
   UpdateNotificationCommand,
   UpdateTruckCommand,
 } from "./models";
 import {
   InvoiceApiService,
+  LoadApiService,
   PaymentApiService,
   SubscriptionApiService,
   TenantApiService,
@@ -49,39 +47,7 @@ export class ApiService extends ApiBase {
   public readonly subscriptionApi = new SubscriptionApiService();
   public readonly invoiceApi = new InvoiceApiService();
   public readonly tripApi = new TripApiService();
-
-  // #region Load API
-
-  getLoad(id: string): Observable<Result<LoadDto>> {
-    const url = `/loads/${id}`;
-    return this.get(url);
-  }
-
-  getLoads(query?: SearchableQuery, onlyActiveLoads = false): Observable<PagedResult<LoadDto>> {
-    let url = `/loads?${this.stringfySearchableQuery(query)}`;
-
-    if (onlyActiveLoads) {
-      url += "&onlyActiveLoads=true";
-    }
-    return this.get(url);
-  }
-
-  createLoad(command: CreateLoadCommand): Observable<Result> {
-    const url = `/loads`;
-    return this.post(url, command);
-  }
-
-  updateLoad(command: UpdateLoadCommand): Observable<Result> {
-    const url = `/loads/${command.id}`;
-    return this.put(url, command);
-  }
-
-  deleteLoad(loadId: string): Observable<Result> {
-    const url = `/loads/${loadId}`;
-    return this.delete(url);
-  }
-
-  // #endregion
+  public readonly loadApi = new LoadApiService();
 
   // #region Truck API
 

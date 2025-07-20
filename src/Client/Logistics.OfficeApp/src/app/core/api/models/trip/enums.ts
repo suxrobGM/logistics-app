@@ -3,4 +3,5 @@ export enum TripStatus {
   Dispatched = "dispatched",
   InTransit = "in_transit",
   Cancelled = "cancelled",
+  Completed = "completed",
 }

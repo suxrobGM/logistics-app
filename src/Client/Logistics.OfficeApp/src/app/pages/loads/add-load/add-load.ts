@@ -137,7 +137,7 @@ export class AddLoadComponent implements OnInit {
       customerId: this.form.value.customer!.id,
     };
 
-    this.apiService.createLoad(command).subscribe((result) => {
+    this.apiService.loadApi.createLoad(command).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess("A new load has been created successfully");
         this.router.navigateByUrl("/loads");
