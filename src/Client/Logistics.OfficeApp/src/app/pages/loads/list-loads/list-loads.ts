@@ -13,8 +13,8 @@ import {TagModule} from "primeng/tag";
 import {TooltipModule} from "primeng/tooltip";
 import {Observable} from "rxjs";
 import {ApiService} from "@/core/api";
-import {LoadDto, LoadStatus, PagedResult, loadStatusOptions} from "@/core/api/models";
-import {BaseTableComponent, TableQueryParams} from "@/shared/components";
+import {LoadDto, LoadStatus, PagedResult} from "@/core/api/models";
+import {BaseTableComponent, LoadStatusTag, TableQueryParams} from "@/shared/components";
 import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
 
 @Component({
@@ -36,6 +36,7 @@ import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
     IconFieldModule,
     InputIconModule,
     FormsModule,
+    LoadStatusTag,
   ],
 })
 export class ListLoadComponent extends BaseTableComponent<LoadDto> {
@@ -53,17 +54,5 @@ export class ListLoadComponent extends BaseTableComponent<LoadDto> {
       orderBy: sortField || "-DispatchedDate",
       search: params.search,
     });
-  }
-
-  getLoadStatusDesc(enumValue: LoadStatus): string {
-    return loadStatusOptions.find((option) => option.value === enumValue)?.label ?? "";
-  }
-
-  getLoadStatusSeverity(status: LoadStatus): "success" | "info" {
-    return status === LoadStatus.Delivered ? "success" : "info";
-  }
-
-  getLoadStatusIcon(status: LoadStatus): string {
-    return status === LoadStatus.Delivered ? "pi pi-check" : "pi pi-truck";
   }
 }

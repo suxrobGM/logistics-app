@@ -1,4 +1,4 @@
-import {DatePipe} from "@angular/common";
+import {CurrencyPipe, DatePipe} from "@angular/common";
 import {Component, inject} from "@angular/core";
 import {RouterLink} from "@angular/router";
 import {Button} from "primeng/button";
@@ -7,11 +7,10 @@ import {IconField} from "primeng/iconfield";
 import {InputIcon} from "primeng/inputicon";
 import {InputText} from "primeng/inputtext";
 import {TableModule} from "primeng/table";
-import {Tag} from "primeng/tag";
 import {Observable, map} from "rxjs";
 import {ApiService} from "@/core/api";
 import {PagedResult, TripDto, TripStatus} from "@/core/api/models";
-import {BaseTableComponent, TableQueryParams} from "@/shared/components";
+import {BaseTableComponent, LoadStatusTag, TableQueryParams} from "@/shared/components";
 import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
 
 @Component({
@@ -28,7 +27,8 @@ import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
     DistanceUnitPipe,
     InputText,
     AddressPipe,
-    Tag,
+    CurrencyPipe,
+    LoadStatusTag,
   ],
 })
 export class TripsList extends BaseTableComponent<TripDto> {

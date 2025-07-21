@@ -11,11 +11,14 @@ import {PaymentStatus, paymentStatusOptions} from "@/core/api/models";
 export class PaymentStatusTag {
   public readonly paymentStatus = input.required<PaymentStatus>();
 
-  getPaymentStatusDesc(enumValue: PaymentStatus): string {
-    return paymentStatusOptions.find((option) => option.value === enumValue)?.label ?? "Unknown";
+  getPaymentStatusDesc(): string {
+    return (
+      paymentStatusOptions.find((option) => option.value === this.paymentStatus())?.label ??
+      "Unknown"
+    );
   }
 
-  getPaymentStatusTagSeverity(paymentStatus: PaymentStatus): "success" | "warn" {
-    return paymentStatus === PaymentStatus.Paid ? "success" : "warn";
+  getPaymentStatusTagSeverity(): "success" | "warn" {
+    return this.paymentStatus() === PaymentStatus.Paid ? "success" : "warn";
   }
 }

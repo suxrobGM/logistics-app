@@ -33,13 +33,6 @@ public class Trip : Entity, ITenantEntity
     
     public virtual List<TripStop> Stops { get; } = [];
     
-    /// <summary>
-    /// Gets all unique loads associated with the trip.
-    /// </summary>
-    [NotMapped]
-    public IReadOnlyList<Load> Loads => Stops.Select(s => s.Load).Distinct(new LoadComparer()).ToArray();
-    
-    
     #region Domain Behaviors
     
     public void Dispatch()
@@ -86,6 +79,12 @@ public class Trip : Entity, ITenantEntity
     public decimal CalcDriversShare() =>
         Stops.Where(s => s.Type == TripStopType.DropOff)
             .Sum(s => s.Load.CalcDriverShare());
+
+    /// <summary>
+    /// Gets all unique loads associated with the trip.
+    /// </summary>
+    public IReadOnlyList<Load> GetLoads() =>
+        Stops.Select(s => s.Load).Where(i => i is not null).Distinct(new LoadComparer()).ToArray();
     
     #endregion
 

@@ -30,6 +30,8 @@ public class LoadDto
     public CustomerDto? Customer { get; set; }
     
     public Guid? TripId { get; set; }
+    public long? TripNumber { get; set; }
+    public string? TripName { get; set; }
     
     public IEnumerable<string>? AssignedTruckDriversName { get; set; }
     public IEnumerable<InvoiceDto> Invoices { get; set; } = [];

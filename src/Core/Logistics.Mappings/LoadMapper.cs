@@ -1,10 +1,13 @@
 ﻿using Logistics.Domain.Entities;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class LoadMapper
+[Mapper]
+public static partial class LoadMapper
 {
+    [UserMapping(Default = true)]
     public static LoadDto ToDto(this Load entity)
     {
         var dto = new LoadDto
@@ -35,6 +38,8 @@ public static class LoadMapper
             Customer = entity.Customer?.ToDto(),
             Invoices = entity.Invoices.Select(i => i.ToDto()),
             TripId = entity.TripStop?.Trip.Id,
+            TripName = entity.TripStop?.Trip.Name,
+            TripNumber = entity.TripStop?.Trip.Number,
         };
         
         if (entity.AssignedTruck?.CurrentLocation.IsNotNull() ?? false)
@@ -43,4 +48,18 @@ public static class LoadMapper
         }
         return dto;
     }
+    
+    [MapperIgnoreSource(nameof(Load.DomainEvents))]
+    [MapperIgnoreSource(nameof(Load.Invoices))]
+    [MapperIgnoreSource(nameof(Load.AssignedDispatcher))]
+    [MapperIgnoreSource(nameof(Load.AssignedDispatcherId))]
+    [MapperIgnoreSource(nameof(Load.AssignedTruck))]
+    [MapperIgnoreSource(nameof(Load.AssignedTruckId))]
+    [MapperIgnoreSource(nameof(Load.TripStop))]
+    [MapperIgnoreSource(nameof(Load.Type))]
+    [MapperIgnoreSource(nameof(Load.OriginAddressLat))]
+    [MapperIgnoreSource(nameof(Load.OriginAddressLong))]
+    [MapperIgnoreSource(nameof(Load.DestinationAddressLat))]
+    [MapperIgnoreSource(nameof(Load.DestinationAddressLong))]
+    public static partial TripLoadDto ToTripLoadDto(this Load load);
 }

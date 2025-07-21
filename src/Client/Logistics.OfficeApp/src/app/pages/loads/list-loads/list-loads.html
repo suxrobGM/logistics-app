@@ -70,6 +70,10 @@
           Cost
           <p-sortIcon field="DeliveryCost.Amount" />
         </th>
+        <th pSortableColumn="TripStop.Trip.Number">
+          Trip
+          <p-sortIcon field="TripStop.Trip.Number" />
+        </th>
         <th pSortableColumn="AssignedTruck.Number">
           Truck
           <p-sortIcon field="AssignedTruck.Number" />
@@ -102,11 +106,7 @@
           {{ load.destinationAddress | address }}
         </td>
         <td>
-          <p-tag
-            [icon]="getLoadStatusIcon(load.status)"
-            [value]="getLoadStatusDesc(load.status)"
-            [severity]="getLoadStatusSeverity(load.status)"
-          />
+          <app-load-status-tag [status]="load.status" />
 
           <div class="italic">
             @switch (load.status) {
@@ -124,6 +124,7 @@
         </td>
         <td>{{ load.distance | distanceUnit: "mi" }}</td>
         <td>{{ load.deliveryCost | currency }}</td>
+        <td>{{ load.tripNumber }} - {{ load.tripName }}</td>
         <td>{{ load.assignedTruckNumber }}</td>
         <td>{{ load.assignedDispatcherName }}</td>
         <td class="flex gap-2 overflow-visible">

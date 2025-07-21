@@ -29,4 +29,6 @@ export interface LoadDto {
   customer?: CustomerDto;
   invoice?: InvoiceDto;
   tripId?: string;
+  tripNumber?: number;
+  tripName?: string;
 }
