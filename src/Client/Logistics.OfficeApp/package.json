@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "ng": "ng",
+    "dev": "bun run start",
     "start": "ng serve --port 7003",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",

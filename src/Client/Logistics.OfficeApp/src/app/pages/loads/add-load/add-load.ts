@@ -4,6 +4,10 @@ import {Router, RouterLink} from "@angular/router";
 import {AutoCompleteModule} from "primeng/autocomplete";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
+import {InputGroupModule} from "primeng/inputgroup";
+import {InputGroupAddonModule} from "primeng/inputgroupaddon";
+import {InputNumberModule} from "primeng/inputnumber";
+import {InputTextModule} from "primeng/inputtext";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {Select} from "primeng/select";
 import {ToastModule} from "primeng/toast";
@@ -20,6 +24,7 @@ import {ToastService} from "@/core/services";
 import {
   AddressAutocomplete,
   DirectionsMap,
+  FormField,
   RouteChangedEvent,
   SelectedAddressEvent,
   ValidationSummary,
@@ -46,6 +51,11 @@ import {TruckData} from "../shared";
     SearchTruckComponent,
     ValidationSummary,
     Select,
+    InputGroupModule,
+    InputGroupAddonModule,
+    InputNumberModule,
+    InputTextModule,
+    FormField,
   ],
 })
 export class AddLoadComponent implements OnInit {

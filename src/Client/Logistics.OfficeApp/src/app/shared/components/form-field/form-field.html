@@ -1,0 +1,33 @@
+<div class="mb-3 flex flex-col">
+  @if (label()) {
+    <div class="mb-2 flex items-center gap-1 text-sm font-medium">
+      @if (required()) {
+        <span class="text-red-600">*</span>
+      }
+      <label class="text-gray-700" [for]="for()">{{ label() }}</label>
+    </div>
+  }
+
+  <ng-content></ng-content>
+
+  @if (hint() && !isFieldInvalid()) {
+    <div class="text-sm text-gray-500">
+      {{ hint() }}
+    </div>
+  }
+
+  @if (isFieldInvalid()) {
+    <div class="text-red-600">
+      @let errors = control()?.errors;
+      @if (errors?.["required"]) {
+        This field is required.
+      }
+      @if (errors?.["minlength"]) {
+        Minimum length is {{ errors?.["minlength"]?.requiredLength }} characters.
+      }
+      @if (errors?.["maxlength"]) {
+        Maximum length is {{ errors?.["maxlength"]?.requiredLength }} characters.
+      }
+    </div>
+  }
+</div>

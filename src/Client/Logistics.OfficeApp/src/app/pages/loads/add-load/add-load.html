@@ -4,88 +4,61 @@
 <hr class="w-full" />
 
 <p-card>
-  <div class="row">
-    <div class="col-md-6 col-12">
+  <div class="flex flex-col gap-6 md:flex-row">
+    <div class="w-full md:w-1/2">
       @if (isLoading()) {
         <p-progress-spinner />
       }
       <form [formGroup]="form" (ngSubmit)="createLoad()">
         <app-validation-summary [form]="form" />
-        <div class="mb-3">
-          <label for="name" class="form-label">Name</label>
-          <input
-            id="name"
-            formControlName="name"
-            type="text"
-            class="form-control"
-            placeholder="Load name"
-          />
-        </div>
-        <div class="mb-3">
-          <label for="loadType">Load Type</label>
-          <p-select formControlName="loadType" styleClass="w-full" [options]="loadTypes" />
-        </div>
-        <div class="mb-3">
-          <label for="customer" class="form-label">Customer</label>
+        <app-form-field label="Name" for="name" [required]="true">
+          <input pInputText id="name" formControlName="name" type="text" placeholder="Load name" />
+        </app-form-field>
+        <app-form-field label="Load Type" for="loadType" [required]="true">
+          <p-select formControlName="loadType" [options]="loadTypes" />
+        </app-form-field>
+        <app-form-field label="Customer" for="customer" [required]="true">
           <app-search-customer formControlName="customer" />
-        </div>
-        <div class="mb-3">
-          <label for="orgAddress" class="form-label">Origin Address</label>
+        </app-form-field>
+        <app-form-field label="Origin Address" for="orgAddress" [required]="true">
           <app-address-autocomplete
             field="orgAddress"
             formControlName="orgAddress"
             [forceSelection]="true"
             (selectedAddress)="updateOrigin($event)"
           />
-        </div>
-        <div class="mb-3">
-          <label for="dstAddress" class="form-label">Destination Address</label>
+        </app-form-field>
+        <app-form-field label="Destination Address" for="dstAddress" [required]="true">
           <app-address-autocomplete
             field="dstAddress"
             formControlName="dstAddress"
             [forceSelection]="true"
             (selectedAddress)="updateDestination($event)"
           />
-        </div>
-        <div class="mb-3">
-          <label for="deliveryCost" class="form-label">Delivery Cost</label>
-          <div class="input-group">
-            <span class="input-group-text">$$</span>
-            <input
-              id="deliveryCost"
-              formControlName="deliveryCost"
-              type="number"
-              class="form-control"
-              min="0"
-            />
-          </div>
-        </div>
-        <div class="mb-3">
-          <label for="distance" class="form-label">Estimated Distance</label>
-          <div class="input-group">
-            <span class="input-group-text">mi</span>
-            <input
-              id="distance"
-              formControlName="distance"
-              type="number"
-              class="form-control"
-              min="0"
-            />
-          </div>
-        </div>
-        <div class="mb-3">
-          <label for="dispatcherName" class="form-label">Assigned Dispatcher</label>
+        </app-form-field>
+        <app-form-field label="Delivery Cost" for="deliveryCost" [required]="true">
+          <p-inputgroup>
+            <p-inputgroup-addon>$$</p-inputgroup-addon>
+            <p-input-number id="deliveryCost" formControlName="deliveryCost" [min]="0" />
+          </p-inputgroup>
+        </app-form-field>
+        <app-form-field label="Estimated Distance" for="distance">
+          <p-inputgroup>
+            <p-inputgroup-addon>mi</p-inputgroup-addon>
+            <p-input-number id="distance" formControlName="distance" [min]="0" />
+          </p-inputgroup>
+        </app-form-field>
+        <app-form-field label="Assigned Dispatcher" for="dispatcherName">
           <input
+            pInputText
             id="dispatcherName"
             formControlName="assignedDispatcherName"
             type="text"
-            class="form-control"
           />
-        </div>
-        <div class="mb-3">
-          <label for="assignedTruck" class="form-label">Assigned Truck</label>
+        </app-form-field>
+        <app-form-field label="Assigned Truck" for="assignedTruck" [required]="true">
           <app-search-truck formControlName="assignedTruck" />
-        </div>
+        </app-form-field>
 
         <div class="flex gap-2">
           <p-button
@@ -103,7 +76,7 @@
         </div>
       </form>
     </div>
-    <div class="col-md-6 col-12">
+    <div class="w-full md:w-1/2">
       <app-directions-map
         [start]="originCoords()"
         [end]="destinationCoords()"

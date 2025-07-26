@@ -24,6 +24,7 @@ import {ToastService} from "@/core/services";
 import {
   AddressAutocomplete,
   DirectionsMap,
+  FormField,
   RouteChangedEvent,
   SelectedAddressEvent,
   ValidationSummary,
@@ -52,6 +53,7 @@ import {TruckData, TruckHelper} from "../shared";
     SearchTruckComponent,
     ValidationSummary,
     SelectModule,
+    FormField,
   ],
 })
 export class EditLoadComponent implements OnInit {
