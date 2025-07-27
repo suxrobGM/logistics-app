@@ -462,6 +462,12 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Trips_Number",
+                table: "Trips",
+                column: "Number",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Trips_TruckId",
                 table: "Trips",
                 column: "TruckId");

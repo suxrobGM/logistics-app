@@ -37,8 +37,7 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resu
             await AssignDispatcherIfUpdated(req, loadEntity);
             await UpdateCustomerIfUpdated(req, loadEntity);
             var updatedDetails = UpdateLoadDetails(req, loadEntity);
-
-            _tenantUow.Repository<Load>().Update(loadEntity);
+            
             var changes = await _tenantUow.SaveChangesAsync();
 
             if (changes > 0)

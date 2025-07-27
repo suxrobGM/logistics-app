@@ -46,7 +46,6 @@ internal sealed class UpdateTripHandler : RequestHandler<UpdateTripCommand, Resu
             trip.UpdateTripLoads(loads);
         }
 
-        _tenantUow.Repository<Trip>().Update(trip);
         await _tenantUow.SaveChangesAsync();
         return Result.Succeed();
     }

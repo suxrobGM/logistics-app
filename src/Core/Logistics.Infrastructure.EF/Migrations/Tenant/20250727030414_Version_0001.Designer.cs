@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.EF.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20250720024101_Version_0001")]
+    [Migration("20250727030414_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -578,6 +578,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Number")
+                        .IsUnique();
 
                     b.HasIndex("TruckId");
 

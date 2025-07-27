@@ -8,7 +8,6 @@ import {CustomerDto} from "@/core/api/models";
 
 @Component({
   selector: "app-search-customer",
-  standalone: true,
   templateUrl: "./search-customer.html",
   imports: [CommonModule, AutoCompleteModule, FormsModule],
   providers: [

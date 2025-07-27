@@ -576,6 +576,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Number")
+                        .IsUnique();
+
                     b.HasIndex("TruckId");
 
                     b.ToTable("Trips", (string)null);

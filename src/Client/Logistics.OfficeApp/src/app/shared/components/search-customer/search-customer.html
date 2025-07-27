@@ -1,11 +1,11 @@
 <p-auto-complete
-  [suggestions]="suggestedCustomers()"
   styleClass="w-full"
   inputStyleClass="form-control"
   placeholder="Type a customer name"
   [minLength]="2"
   [forceSelection]="true"
   optionLabel="name"
+  [suggestions]="suggestedCustomers()"
   [(ngModel)]="selectedCustomer"
   (completeMethod)="searchCustomer($event)"
   (onSelect)="changeSelectedCustomer($event)"

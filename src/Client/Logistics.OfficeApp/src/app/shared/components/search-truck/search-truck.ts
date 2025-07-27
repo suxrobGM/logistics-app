@@ -4,11 +4,14 @@ import {Component, forwardRef, inject, model, output, signal} from "@angular/cor
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
 import {ApiService} from "@/core/api";
-import {TruckData, TruckHelper} from "../../shared";
+
+export interface SearchTruckData {
+  driversName: string;
+  truckId: string;
+}
 
 @Component({
   selector: "app-search-truck",
-  standalone: true,
   templateUrl: "./search-truck.html",
   imports: [CommonModule, AutoCompleteModule, FormsModule],
   providers: [
@@ -22,9 +25,9 @@ import {TruckData, TruckHelper} from "../../shared";
 export class SearchTruckComponent implements ControlValueAccessor {
   private readonly apiService = inject(ApiService);
 
-  protected readonly suggestedTrucks = signal<TruckData[]>([]);
-  public readonly selectedTruck = model<TruckData | null>(null);
-  public readonly selectedTruckChange = output<TruckData | null>();
+  protected readonly suggestedTrucks = signal<SearchTruckData[]>([]);
+  public readonly selectedTruck = model<SearchTruckData | null>(null);
+  public readonly selectedTruckChange = output<SearchTruckData | null>();
 
   searchTruck(event: {query: string}): void {
     this.apiService.getTruckDrivers({search: event.query}).subscribe((result) => {
@@ -35,7 +38,7 @@ export class SearchTruckComponent implements ControlValueAccessor {
       this.suggestedTrucks.set(
         result.data.map((truckDriver) => ({
           truckId: truckDriver.truck.id,
-          driversName: TruckHelper.formatDriversName(
+          driversName: this.formatDriversName(
             truckDriver.truck.number,
             truckDriver.drivers.map((i) => i.fullName)
           ),
@@ -49,13 +52,18 @@ export class SearchTruckComponent implements ControlValueAccessor {
     this.onChange(event.value);
   }
 
+  private formatDriversName(truckNumber: string, driversName: string[]): string {
+    const formattedDriversName = driversName.join(",");
+    return `${truckNumber} - ${formattedDriversName}`;
+  }
+
   //#region Implementation Reactive forms
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private onChange(value: TruckData | null): void {}
+  private onChange(value: SearchTruckData | null): void {}
   private onTouched(): void {}
 
-  writeValue(value: TruckData | null): void {
+  writeValue(value: SearchTruckData | null): void {
     this.selectedTruck.set(value);
   }
 

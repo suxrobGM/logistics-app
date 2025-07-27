@@ -12,3 +12,6 @@ export * from "./invoice-status-tag/invoice-status-tag";
 export * from "./base-table/base-table";
 export * from "./load-status-tag/load-status-tag";
 export * from "./form-field/form-field";
+export * from "./search-customer/search-customer";
+export * from "./search-truck/search-truck";
+export * from "./load-form/load-form";

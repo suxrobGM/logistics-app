@@ -7,7 +7,7 @@ namespace Logistics.Domain.Entities;
 
 public class Load : Entity, ITenantEntity
 {
-    public long Number { get; init; }
+    public long Number { get; private set; }
     public required string Name { get; set; }
     
     public required LoadType Type { get; set; }
@@ -35,8 +35,8 @@ public class Load : Entity, ITenantEntity
     public DateTime? PickUpDate { get; set; }
     public DateTime? DeliveryDate { get; set; }
     
-    public Guid? TripStopId { get; private set; } 
-    public virtual TripStop? TripStop   { get; private set; }
+    public Guid? TripStopId { get; set; } 
+    public virtual TripStop? TripStop   { get; set; }
 
     public Guid? CustomerId { get; set; }
     public virtual Customer? Customer { get; set; }

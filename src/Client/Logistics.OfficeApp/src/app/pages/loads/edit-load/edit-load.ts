@@ -1,37 +1,16 @@
 import {CommonModule} from "@angular/common";
 import {Component, OnInit, inject, input, signal} from "@angular/core";
-import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {Router, RouterLink} from "@angular/router";
+import {Router} from "@angular/router";
 import {ConfirmationService} from "primeng/api";
-import {AutoCompleteModule} from "primeng/autocomplete";
-import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {SelectModule} from "primeng/select";
 import {ToastModule} from "primeng/toast";
 import {ApiService} from "@/core/api";
-import {
-  AddressDto,
-  CustomerDto,
-  LoadStatus,
-  LoadType,
-  UpdateLoadCommand,
-  loadStatusOptions,
-  loadTypeOptions,
-} from "@/core/api/models";
+import {UpdateLoadCommand} from "@/core/api/models";
 import {ToastService} from "@/core/services";
-import {
-  AddressAutocomplete,
-  DirectionsMap,
-  FormField,
-  RouteChangedEvent,
-  SelectedAddressEvent,
-  ValidationSummary,
-} from "@/shared/components";
+import {LoadFormComponent, LoadFormValue} from "@/shared/components";
 import {Converters} from "@/shared/utils";
-import {SearchCustomerComponent, SearchTruckComponent} from "../components";
-import {TruckData, TruckHelper} from "../shared";
 
 @Component({
   selector: "app-edit-load",
@@ -42,18 +21,7 @@ import {TruckData, TruckHelper} from "../shared";
     ConfirmDialogModule,
     CardModule,
     ProgressSpinnerModule,
-    FormsModule,
-    ReactiveFormsModule,
-    AutoCompleteModule,
-    ButtonModule,
-    RouterLink,
-    AddressAutocomplete,
-    DirectionsMap,
-    SearchCustomerComponent,
-    SearchTruckComponent,
-    ValidationSummary,
-    SelectModule,
-    FormField,
+    LoadFormComponent,
   ],
 })
 export class EditLoadComponent implements OnInit {
@@ -62,49 +30,11 @@ export class EditLoadComponent implements OnInit {
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
-  private distanceMeters = 0;
-  protected readonly loadStatuses = loadStatusOptions;
-  protected readonly loadTypes = loadTypeOptions;
-  protected readonly form: FormGroup<EditLoadForm>;
-
   protected readonly id = input<string>();
-  protected readonly loadNumber = signal<number>(0);
-  protected readonly isLoading = signal(false);
-  protected readonly originCoords = signal<[number, number] | null>(null);
-  protected readonly destinationCoords = signal<[number, number] | null>(null);
 
-  constructor() {
-    this.form = new FormGroup<EditLoadForm>({
-      name: new FormControl("", {validators: Validators.required, nonNullable: true}),
-      loadType: new FormControl<LoadType>(LoadType.GeneralFreight, {
-        validators: Validators.required,
-        nonNullable: true,
-      }),
-      customer: new FormControl(null, {validators: Validators.required}),
-      orgAddress: new FormControl(null, {validators: Validators.required, nonNullable: true}),
-      orgCoords: new FormControl([0, 0], {validators: Validators.required, nonNullable: true}),
-      dstAddress: new FormControl(null, {validators: Validators.required, nonNullable: true}),
-      dstCoords: new FormControl([0, 0], {validators: Validators.required, nonNullable: true}),
-      deliveryCost: new FormControl(0, {validators: Validators.required, nonNullable: true}),
-      distance: new FormControl(
-        {value: 0, disabled: true},
-        {validators: Validators.required, nonNullable: true}
-      ),
-      status: new FormControl(LoadStatus.Dispatched, {
-        validators: Validators.required,
-        nonNullable: true,
-      }),
-      assignedTruck: new FormControl(null, {validators: Validators.required}),
-      assignedDispatcherId: new FormControl("", {
-        validators: Validators.required,
-        nonNullable: true,
-      }),
-      assignedDispatcherName: new FormControl(
-        {value: "", disabled: true},
-        {validators: Validators.required, nonNullable: true}
-      ),
-    });
-  }
+  protected readonly isLoading = signal(false);
+  protected readonly initialData = signal<Partial<LoadFormValue> | null>(null);
+  protected readonly loadNumber = signal<number>(0);
 
   ngOnInit(): void {
     this.fetchLoad();
@@ -117,56 +47,29 @@ export class EditLoadComponent implements OnInit {
     });
   }
 
-  updateOrigin(eventData: SelectedAddressEvent): void {
-    this.originCoords.set(eventData.center);
-    this.form.patchValue({
-      orgCoords: eventData.center,
-    });
-  }
-
-  updateDestination(eventData: SelectedAddressEvent): void {
-    this.destinationCoords.set(eventData.center);
-    this.form.patchValue({
-      dstCoords: eventData.center,
-    });
-  }
-
-  updateDistance(eventData: RouteChangedEvent): void {
-    this.distanceMeters = eventData.distance;
-    const distanceMiles = Converters.metersTo(this.distanceMeters, "mi");
-    this.form.patchValue({distance: distanceMiles});
-  }
-
-  updateLoad(): void {
-    if (!this.form.valid) {
-      return;
-    }
-
-    this.isLoading.set(true);
+  update(formValue: LoadFormValue): void {
     const command: UpdateLoadCommand = {
       id: this.id()!,
-      name: this.form.value.name!,
-      loadType: this.form.value.loadType!,
-      originAddress: this.form.value.orgAddress!,
-      originAddressLong: this.form.value.orgCoords![0],
-      originAddressLat: this.form.value.orgCoords![1],
-      destinationAddress: this.form.value.dstAddress!,
-      destinationAddressLong: this.form.value.dstCoords![0],
-      destinationAddressLat: this.form.value.dstCoords![1],
-      deliveryCost: this.form.value.deliveryCost!,
-      distance: this.distanceMeters,
-      assignedDispatcherId: this.form.value.assignedDispatcherId!,
-      assignedTruckId: this.form.value.assignedTruck!.truckId,
-      customerId: this.form.value.customer?.id,
-      status: this.form.value.status,
+      name: formValue.name!,
+      loadType: formValue.loadType!,
+      originAddress: formValue.orgAddress!,
+      originAddressLong: formValue.orgCoords![0],
+      originAddressLat: formValue.orgCoords![1],
+      destinationAddress: formValue.dstAddress!,
+      destinationAddressLong: formValue.dstCoords![0],
+      destinationAddressLat: formValue.dstCoords![1],
+      deliveryCost: formValue.deliveryCost!,
+      distance: formValue.distance,
+      assignedDispatcherId: formValue.assignedDispatcherId!,
+      assignedTruckId: formValue.assignedTruck!.truckId,
+      customerId: formValue.customer?.id,
+      status: formValue.status,
     };
 
     this.apiService.loadApi.updateLoad(command).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess("Load has been updated successfully");
       }
-
-      this.isLoading.set(false);
     });
   }
 
@@ -192,7 +95,7 @@ export class EditLoadComponent implements OnInit {
 
       const load = result.data;
 
-      this.form.patchValue({
+      this.initialData.set({
         name: load.name,
         loadType: load.type,
         customer: load.customer,
@@ -207,33 +110,22 @@ export class EditLoadComponent implements OnInit {
         assignedDispatcherName: load.assignedDispatcherName,
         assignedTruck: {
           truckId: load.assignedTruckId!,
-          driversName: TruckHelper.formatDriversName(
+          driversName: this.formatDriversName(
             load.assignedTruckNumber!,
             load.assignedTruckDriversName!
           ),
         },
       });
 
+      console.log("load", load);
+
       this.loadNumber.set(load.number);
-      this.originCoords.set([load.originAddressLong, load.originAddressLat]);
-      this.destinationCoords.set([load.destinationAddressLong, load.destinationAddressLat]);
       this.isLoading.set(false);
     });
   }
-}
 
-interface EditLoadForm {
-  name: FormControl<string>;
-  loadType: FormControl<LoadType>;
-  customer: FormControl<CustomerDto | null>;
-  orgAddress: FormControl<AddressDto | null>;
-  orgCoords: FormControl<[number, number]>;
-  dstAddress: FormControl<AddressDto | null>;
-  dstCoords: FormControl<[number, number]>;
-  deliveryCost: FormControl<number>;
-  distance: FormControl<number>;
-  status: FormControl<LoadStatus>;
-  assignedTruck: FormControl<TruckData | null>;
-  assignedDispatcherId: FormControl<string>;
-  assignedDispatcherName: FormControl<string>;
+  private formatDriversName(truckNumber: string, driversName: string[]): string {
+    const formattedDriversName = driversName.join(",");
+    return `${truckNumber} - ${formattedDriversName}`;
+  }
 }
