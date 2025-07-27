@@ -18,14 +18,14 @@ public class Truck : Entity, ITenantEntity
     public Address CurrentLocation { get; set; } = Address.NullAddress;
     
     /// <summary>
-    /// Truck's last known location latitude
-    /// </summary>
-    public double? CurrentLocationLat { get; set; }
-    
-    /// <summary>
     /// Truck's last known location longitude
     /// </summary>
     public double? CurrentLocationLong { get; set; }
+    
+    /// <summary>
+    /// Truck's last known location latitude
+    /// </summary>
+    public double? CurrentLocationLat { get; set; }
 
     public virtual List<Employee> Drivers { get; set; } = [];
     public virtual List<Load> Loads { get; } = [];

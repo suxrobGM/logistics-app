@@ -1,7 +1,8 @@
 import {Routes} from "@angular/router";
 import {authGuard} from "@/core/auth";
-import {TripDetails} from "./trip-details/trip-details";
-import {TripEdit} from "./trip-edit/trip-edit";
+import {TripAddPage} from "./trip-add/trip-add";
+import {TripDetailsPage} from "./trip-details/trip-details";
+import {TripEditPage} from "./trip-edit/trip-edit";
 import {TripsList} from "./trips-list/trips-list";
 
 export const tripRoutes: Routes = [
@@ -15,14 +16,14 @@ export const tripRoutes: Routes = [
   },
   {
     path: "add",
-    component: TripEdit,
+    component: TripAddPage,
     data: {
       breadcrumb: "Add Trip",
     },
   },
   {
     path: ":tripId/edit",
-    component: TripEdit,
+    component: TripEditPage,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Edit Trip",
@@ -30,7 +31,7 @@ export const tripRoutes: Routes = [
   },
   {
     path: ":tripId",
-    component: TripDetails,
+    component: TripDetailsPage,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Trip Details",

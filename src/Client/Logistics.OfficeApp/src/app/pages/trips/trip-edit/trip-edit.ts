@@ -1,8 +1,11 @@
-import {Component} from "@angular/core";
+import {Component, input} from "@angular/core";
+import {CardModule} from "primeng/card";
 
 @Component({
   selector: "app-trip-edit",
   templateUrl: "./trip-edit.html",
-  imports: [],
+  imports: [CardModule],
 })
-export class TripEdit {}
+export class TripEditPage {
+  protected readonly tripId = input<string>();
+}

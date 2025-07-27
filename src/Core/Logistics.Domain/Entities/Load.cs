@@ -15,12 +15,12 @@ public class Load : Entity, ITenantEntity
     public LoadStatus Status { get; set; } = LoadStatus.Dispatched;
     
     public required Address OriginAddress { get; set; }
-    public double? OriginAddressLat { get; set; }
     public double? OriginAddressLong { get; set; }
+    public double? OriginAddressLat { get; set; }
     
     public required Address DestinationAddress { get; set; }
-    public double? DestinationAddressLat { get; set; }
     public double? DestinationAddressLong { get; set; }
+    public double? DestinationAddressLat { get; set; }
     
     public required Money DeliveryCost { get; set; }
     

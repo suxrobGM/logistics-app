@@ -5,3 +5,8 @@ export enum TripStatus {
   Cancelled = "cancelled",
   Completed = "completed",
 }
+
+export enum TripStopType {
+  PickUp = "pick_up",
+  DropOff = "drop_off",
+}

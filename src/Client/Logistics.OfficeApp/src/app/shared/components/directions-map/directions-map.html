@@ -8,46 +8,52 @@
   [style.height]="height()"
 >
   <mgl-image
-    id="custom-marker"
+    id="stop-pin"
     url="https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png"
     (imageLoaded)="imageLoaded.set(true)"
   />
 
-  <!-- Route Layer -->
-  @if (route()) {
+  <!-- one layer per segment -->
+  @for (segment of segments(); track segment.layerId; let i = $index) {
     <mgl-layer
-      id="routeLayer"
+      [id]="segment.layerId"
       type="line"
-      [source]="route()!"
-      [paint]="{
-        'line-color': '#28a745',
-        'line-width': 8,
-      }"
+      [source]="segment.source"
+      [paint]="{'line-color': segmentColors[i % segmentColors.length], 'line-width': 6}"
     />
   }
 
+  <!-- <mgl-layer
+    id="stop-bubbles"
+    type="circle"
+    [source]="stopsSource()!"
+    [paint]="{
+      'circle-radius': 12,
+      'circle-color': '#ffffff',
+      'circle-stroke-color': '#000',
+      'circle-stroke-width': 1,
+    }"
+  /> -->
+
   <!-- all stop points -->
   @if (stopsSource() && imageLoaded()) {
-    <!-- symbols for first / last -->
     <mgl-layer
-      id="stopSymbols"
+      id="stop-labels"
       type="symbol"
       [source]="stopsSource()!"
       [layout]="{
-        'icon-image': ['case', ['==', ['get', 'kind'], 'edge'], 'custom-marker', ''],
+        'icon-image': 'stop-pin',
+        'icon-offset': [0, -15],
+        'text-field': ['get', 'label'],
+        'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+        'text-size': 16,
+        'text-offset': [0, -1.9],
+        'text-anchor': 'top',
       }"
-    />
-    <!-- circles for middle points -->
-    <mgl-layer
-      id="midCircles"
-      type="circle"
-      [source]="stopsSource()!"
-      [filter]="['==', ['get', 'kind'], 'mid']"
       [paint]="{
-        'circle-radius': 6,
-        'circle-color': '#0074D9',
-        'circle-stroke-width': 2,
-        'circle-stroke-color': '#fff',
+        'text-color': '#000',
+        'text-halo-color': '#fff',
+        'text-halo-width': 1,
       }"
     />
   }

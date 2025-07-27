@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using Logistics.Domain.Core;
+﻿using Logistics.Domain.Core;
 using Logistics.Domain.Events;
 using Logistics.Domain.ValueObjects;
 using Logistics.Shared.Consts;
@@ -107,32 +106,8 @@ public class Trip : Entity, ITenantEntity
             PlannedStart = plannedStart,
             TotalDistance = loadsArr.Sum(l => l.Distance)
         };
-
-        var order = 1;
         
-        // Stops are created in the order of loads
-        foreach (var load in loadsArr)
-        {
-            trip.Stops.Add(new TripStop
-            {
-                Trip = trip,
-                Order = order++,
-                Type = TripStopType.PickUp,
-                Address = load.OriginAddress,
-                Load = load,
-                LoadId = load.Id
-            });
-
-            trip.Stops.Add(new TripStop
-            {
-                Trip = trip,
-                Order = order++,
-                Type = TripStopType.DropOff,
-                Address = load.DestinationAddress,
-                Load = load,
-                LoadId = load.Id
-            });
-        }
+        AddStops(trip, loadsArr);
 
         trip.DomainEvents.Add(new NewTripCreatedEvent(trip.Id));
         return trip;
@@ -145,34 +120,49 @@ public class Trip : Entity, ITenantEntity
 
         // Clear existing stops
         Stops.Clear();
-        var loadsArray = loads.ToArray();
+        var loadsArr = loads.ToArray();
         
         // Recreate stops based on new loads
+        AddStops(this, loadsArr);
+
+        TotalDistance = loadsArr.Sum(l => l.Distance);
+    }
+
+    /// <summary>
+    /// Adds stops to the given trip for each provided load, creating both pick-up and drop-off stops.
+    /// </summary>
+    /// <param name="trip">The trip to which the stops will be added.</param>
+    /// <param name="loads">The collection of loads for which stops will be created.</param>
+    private static void AddStops(Trip trip, IEnumerable<Load> loads)
+    {
+        // Stops are created in the order of loads
         var order = 1;
-        foreach (var load in loadsArray)
+        foreach (var load in loads)
         {
-            Stops.Add(new TripStop
+            trip.Stops.Add(new TripStop
             {
-                Trip = this,
+                Trip = trip,
                 Order = order++,
                 Type = TripStopType.PickUp,
                 Address = load.OriginAddress,
+                AddressLong = load.OriginAddressLong,
+                AddressLat = load.OriginAddressLat,
                 Load = load,
                 LoadId = load.Id
             });
 
-            Stops.Add(new TripStop
+            trip.Stops.Add(new TripStop
             {
-                Trip = this,
+                Trip = trip,
                 Order = order++,
                 Type = TripStopType.DropOff,
                 Address = load.DestinationAddress,
+                AddressLong = load.DestinationAddressLong,
+                AddressLat = load.DestinationAddressLat,
                 Load = load,
                 LoadId = load.Id
             });
         }
-
-        TotalDistance = loadsArray.Sum(l => l.Distance);
     }
 
     #endregion

@@ -9,8 +9,8 @@ public record TripStopDto
     public TripStopType Type { get; set; }
 
     public required AddressDto Address { get; set; }
-    public double? AddressLat { get; set; }
     public double? AddressLong { get; set; }
+    public double? AddressLat { get; set; }
     
     public DateTime? Planned { get; set; }
     public DateTime? ArrivedAt { get; set; }
