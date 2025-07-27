@@ -20,7 +20,7 @@ import {
 import {AuthService} from "@/core/auth";
 import {
   AddressAutocomplete,
-  DirectionsMap,
+  DirectionMap,
   FormField,
   RouteChangedEvent,
   SearchCustomerComponent,
@@ -65,7 +65,7 @@ export interface LoadFormValue {
     Select,
     RouterLink,
     AddressAutocomplete,
-    DirectionsMap,
+    DirectionMap,
     ValidationSummary,
     FormField,
     SearchCustomerComponent,

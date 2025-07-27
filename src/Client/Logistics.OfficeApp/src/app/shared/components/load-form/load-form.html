@@ -101,7 +101,7 @@
   </div>
 
   <div class="w-full md:w-1/2">
-    <app-directions-map
+    <app-direction-map
       [stops]="[originCoords(), destinationCoords()]"
       (routeChanged)="updateDistance($event)"
     />

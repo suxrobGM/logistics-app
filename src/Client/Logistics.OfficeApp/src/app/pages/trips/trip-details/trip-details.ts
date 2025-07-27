@@ -8,7 +8,7 @@ import {TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {ApiService} from "@/core/api";
 import {TripDto, TripStatus, TripStopType} from "@/core/api/models";
-import {DirectionsMap, LoadStatusTag} from "@/shared/components";
+import {DirectionMap, LoadStatusTag} from "@/shared/components";
 import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
 
 @Component({
@@ -21,7 +21,7 @@ import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
     TagModule,
     TableModule,
     ButtonModule,
-    DirectionsMap,
+    DirectionMap,
     DistanceUnitPipe,
     LoadStatusTag,
     AddressPipe,

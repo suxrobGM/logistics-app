@@ -1,6 +1,6 @@
 export * from "./geolocation-map/geolocation-map";
 export * from "./address-autocomplete/address-autocomplete";
-export * from "./directions-map/directions-map";
+export * from "./direction-map/direction-map";
 export * from "./grosses-barchart/grosses-barchart";
 export * from "./range-calendar/range-calendar";
 export * from "./trucks-map/trucks-map";

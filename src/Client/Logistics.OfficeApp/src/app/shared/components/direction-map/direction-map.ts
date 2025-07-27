@@ -12,11 +12,11 @@ interface Segment {
 }
 
 @Component({
-  selector: "app-directions-map",
-  templateUrl: "./directions-map.html",
+  selector: "app-direction-map",
+  templateUrl: "./direction-map.html",
   imports: [MapComponent, ImageComponent, LayerComponent],
 })
-export class DirectionsMap {
+export class DirectionMap {
   protected readonly accessToken = environment.mapboxToken;
   private readonly defaultCenter: GeoPoint = [-95, 35];
   private readonly defaultZoom = 3;

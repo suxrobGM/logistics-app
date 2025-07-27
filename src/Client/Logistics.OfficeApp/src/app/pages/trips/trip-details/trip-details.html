@@ -7,13 +7,13 @@
   </ng-template>
   <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
     @if (isLoading() || !trip()) {
-      <p-skeleton class="h-96 w-full" />
-      <p-skeleton class="h-96 w-full" />
-      <p-skeleton class="h-96 w-full" />
+      <p-skeleton class="h-96!" />
+      <p-skeleton class="h-96!" />
+      <p-skeleton class="h-96!" />
     } @else {
       @let tripDetails = trip()!;
 
-      <app-directions-map class="w-full" [stops]="tripStopCoords()" [height]="'300px'" />
+      <app-direction-map [stops]="tripStopCoords()" [height]="'500px'" />
 
       <!-- Summary card -->
       <div>
@@ -28,7 +28,7 @@
 
       <!-- Stops table -->
       <div class="col-span-full">
-        <h5>Stops</h5>
+        <h5 class="mb-3 font-semibold">Stops</h5>
         <p-table
           [value]="tripDetails.stops"
           [dataKey]="'id'"
@@ -59,6 +59,7 @@
 
       <!-- Loads table -->
       <div class="col-span-full">
+        <h5 class="mb-3 font-semibold">Loads</h5>
         <p-table [value]="tripDetails.loads" [dataKey]="'id'" responsiveLayout="scroll">
           <ng-template #header>
             <tr>
