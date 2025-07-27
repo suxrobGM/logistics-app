@@ -23,5 +23,7 @@ public record TripDto
     public Guid TruckId { get; set; }
     public string? TruckNumber { get; set; }
     
+    public IEnumerable<TripStopDto> Stops { get; set; } = [];
+    
     public IEnumerable<TripLoadDto> Loads { get; set; } = [];
 }

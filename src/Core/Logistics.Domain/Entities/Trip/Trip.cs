@@ -13,9 +13,6 @@ public class Trip : Entity, ITenantEntity
     /// </summary>
     public long Number { get; private set; }
     public required string Name { get; set; }
-
-    public Address OriginAddress => Stops.OrderBy(s => s.Order).First().Address;
-    public Address DestinationAddress => Stops.OrderBy(s => s.Order).Last().Address;
     
     /// <summary>
     /// Total distance of the trip in kilometers.
@@ -34,6 +31,15 @@ public class Trip : Entity, ITenantEntity
     public virtual List<TripStop> Stops { get; } = [];
     
     #region Domain Behaviors
+    
+    /// <summary>
+    /// Gets all unique loads associated with the trip.
+    /// </summary>
+    public IReadOnlyList<Load> GetLoads() =>
+        Stops.Select(s => s.Load).Where(i => i is not null).Distinct(new LoadComparer()).ToArray();
+    
+    public Address GetOriginAddress() => Stops.OrderBy(s => s.Order).First().Address;
+    public Address GetDestinationAddress() => Stops.OrderBy(s => s.Order).Last().Address;
     
     public void Dispatch()
     {
@@ -79,12 +85,6 @@ public class Trip : Entity, ITenantEntity
     public decimal CalcDriversShare() =>
         Stops.Where(s => s.Type == TripStopType.DropOff)
             .Sum(s => s.Load.CalcDriverShare());
-
-    /// <summary>
-    /// Gets all unique loads associated with the trip.
-    /// </summary>
-    public IReadOnlyList<Load> GetLoads() =>
-        Stops.Select(s => s.Load).Where(i => i is not null).Distinct(new LoadComparer()).ToArray();
     
     #endregion
 

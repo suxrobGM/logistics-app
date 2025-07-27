@@ -78,14 +78,10 @@ export class LoadFormComponent implements OnInit {
 
   private readonly authService = inject(AuthService);
 
-  /** `'create'` (default) or `'edit'`; controls status-field + Delete-btn visibility */
   public readonly mode = input.required<"create" | "edit">();
-
-  /** Prefill the form when editing */
   public readonly initial = input<Partial<LoadFormValue> | null>(null);
   public readonly isLoading = input(false);
 
-  /** Emits *valid* form data in its raw shape – parent decides how to map to API */
   public readonly save = output<LoadFormValue>();
   public readonly remove = output<void>();
 
