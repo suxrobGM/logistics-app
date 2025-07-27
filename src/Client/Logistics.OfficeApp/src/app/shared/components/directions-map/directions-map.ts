@@ -1,5 +1,6 @@
 import {HttpClient} from "@angular/common/http";
 import {Component, effect, inject, input, model, output, signal} from "@angular/core";
+import {bbox as turfBbox} from "@turf/turf";
 import {GeoJSONSourceSpecification, LngLatLike} from "mapbox-gl";
 import {ImageComponent, LayerComponent, MapComponent} from "ngx-mapbox-gl";
 import {environment} from "@/env";
@@ -17,92 +18,81 @@ export class DirectionsMap {
 
   private readonly http = inject(HttpClient);
 
-  protected readonly bounds = signal<[LngLatLike, LngLatLike] | null>(null);
+  /*–– state ––*/
   protected readonly route = signal<GeoJSONSourceSpecification | null>(null);
-  protected readonly startPoint = signal<GeoJSONSourceSpecification | null>(null);
-  protected readonly endPoint = signal<GeoJSONSourceSpecification | null>(null);
+  protected readonly stopsSource = signal<GeoJSONSourceSpecification | null>(null);
+  protected readonly bounds = signal<[LngLatLike, LngLatLike] | null>(null);
   protected readonly imageLoaded = signal(false);
 
+  /*–– camera ––*/
   public readonly center = model<GeoPoint>(this.defaultCenter);
   public readonly zoom = model<number>(this.defaultZoom);
-  public readonly start = input<GeoPoint | null>(null);
-  public readonly end = input<GeoPoint | null>(null);
+
+  /*–– inputs ––*/
+  public readonly stops = input<GeoPoint[]>([]);
   public readonly width = input<string>("100%");
   public readonly height = input<string>("100%");
+
+  /*–– outputs ––*/
   public readonly routeChanged = output<RouteChangedEvent>();
 
   constructor() {
-    effect(() => {
-      if (this.start() || this.end()) {
-        this.drawMarkers();
-        this.drawRoute();
-      } else {
-        this.clearRoutes();
-      }
-    });
+    effect(() => this.draw());
   }
 
-  private drawRoute(): void {
-    const start = this.start();
-    const end = this.end();
-    if (!start || !end) {
-      return;
+  private draw(): void {
+    const pts = this.stops();
+
+    if (!pts || pts.length < 2) {
+      return this.clear();
     }
 
-    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?geometries=geojson&access_token=${this.accessToken}`;
+    // geojson for points
+    this.stopsSource.set(this.buildStopsSource(pts));
 
-    this.http.get<MapboxDirectionsResponse>(url).subscribe((data) => {
-      if (data.code !== "Ok") {
+    // polyline – Mapbox Directions with waypoints
+    const coords = pts.map((p) => `${p[0]},${p[1]}`).join(";");
+    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${coords}?geometries=geojson&access_token=${this.accessToken}`;
+
+    this.http.get<MapboxDirectionsResponse>(url).subscribe((rsp) => {
+      if (rsp.code !== "Ok") {
         return;
       }
 
       this.route.set({
         type: "geojson",
-        data: {
-          type: "Feature",
-          geometry: data.routes[0].geometry,
-          properties: {},
-        },
+        data: {type: "Feature", geometry: rsp.routes[0].geometry, properties: {}},
       });
-      this.bounds.set([this.start() as LngLatLike, this.end() as LngLatLike]);
+
+      const [minX, minY, maxX, maxY] = turfBbox(rsp.routes[0].geometry);
+      this.bounds.set([
+        [minX, minY],
+        [maxX, maxY],
+      ]);
+      this.center.set([(minX + maxX) / 2, (minY + maxY) / 2]);
+
       this.routeChanged.emit({
-        origin: this.start()!,
-        destination: this.end()!,
-        distance: data.routes[0].distance,
+        origin: pts[0],
+        destination: pts[pts.length - 1],
+        distance: rsp.routes[0].distance,
       });
     });
   }
 
-  private drawMarkers(): void {
-    const start = this.start();
-    if (start) {
-      this.startPoint.set(this.getPointSource(start));
-      this.center.set(start);
-    }
-    const end = this.end();
-    if (end) {
-      this.endPoint.set(this.getPointSource(end));
-    }
+  private buildStopsSource(pts: GeoPoint[]): GeoJSONSourceSpecification {
+    const feats = pts.map((c, i) => ({
+      type: "Feature",
+      geometry: {type: "Point", coordinates: c},
+      properties: {kind: i === 0 || i === pts.length - 1 ? "edge" : "mid"},
+    }));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return {type: "geojson", data: {type: "FeatureCollection", features: feats as any[]}};
   }
 
-  private getPointSource(coords: number[]): GeoJSONSourceSpecification {
-    return {
-      type: "geojson",
-      data: {
-        type: "Feature",
-        geometry: {
-          type: "Point",
-          coordinates: coords,
-        },
-        properties: {},
-      },
-    };
-  }
-
-  private clearRoutes(): void {
+  private clear() {
     this.route.set(null);
-    this.startPoint.set(null);
-    this.endPoint.set(null);
+    this.stopsSource.set(null);
+    this.bounds.set(null);
     this.center.set(this.defaultCenter);
     this.zoom.set(this.defaultZoom);
   }

@@ -117,8 +117,6 @@ export class EditLoadComponent implements OnInit {
         },
       });
 
-      console.log("load", load);
-
       this.loadNumber.set(load.number);
       this.isLoading.set(false);
     });

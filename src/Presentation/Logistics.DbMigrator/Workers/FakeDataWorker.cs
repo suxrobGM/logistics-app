@@ -1,6 +1,7 @@
 ﻿using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Models;
 using Logistics.DbMigrator.Services;
+using Logistics.DbMigrator.Utils;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.ValueObjects;
@@ -19,6 +20,17 @@ internal class FakeDataWorker : IHostedService
     
     private readonly ILogger<FakeDataWorker> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
+    
+    private readonly (Address addr, double lat, double lng)[] _routePoints =
+    [
+        (new Address { Line1 = "233 S Wacker Dr", City = "Chicago",  State="IL", ZipCode="60606", Country="USA" }, 41.8781, -87.6298),
+        (new Address { Line1 = "1 Monument Cir",   City = "Indianapolis", State="IN", ZipCode="46204", Country="USA" }, 39.7684, -86.1581),
+        (new Address { Line1 = "100 N Capitol Ave",City = "Lansing", State="MI", ZipCode="48933", Country="USA" }, 42.7325, -84.5555),
+        (new Address { Line1 = "600 Woodward Ave", City = "Detroit", State="MI", ZipCode="48226", Country="USA" }, 42.3314, -83.0458),
+        (new Address { Line1 = "151 W Jefferson",  City = "Louisville", State="KY", ZipCode="40202", Country="USA" }, 38.2527, -85.7585),
+        (new Address { Line1 = "600 Commerce St",  City = "Nashville",  State="TN", ZipCode="37203", Country="USA" }, 36.1627, -86.7816),
+        (new Address { Line1 = "1100 Congress Ave",City = "Austin",     State="TX", ZipCode="78701", Country="USA" }, 30.2672, -97.7431)
+    ];
     
     public FakeDataWorker(
         ILogger<FakeDataWorker> logger,
@@ -268,7 +280,10 @@ internal class FakeDataWorker : IHostedService
             var truck = _random.Pick(dryVanTrucks);
             var customer = _random.Pick(customers);
             var dispatcher = _random.Pick(companyEmployees.Dispatchers);
-            var load = BuildRandomLoad(i, LoadType.GeneralFreight, truck, dispatcher, customer);
+            var origin = _random.Pick(_routePoints);
+            var dest = _random.Pick(_routePoints.Where(p => p != origin).ToArray());
+            
+            var load = BuildLoad(i, origin, dest, LoadType.GeneralFreight, truck, dispatcher, customer);
             await tenantUow.Repository<Load>().AddAsync(load);
             _logger.LogInformation("Added Load {LoadName} for Truck {TruckNumber}", load.Name, truck.Number);
         }
@@ -276,56 +291,36 @@ internal class FakeDataWorker : IHostedService
         await tenantUow.SaveChangesAsync();
     }
     
-    private Load BuildRandomLoad(
-        long index,
-        LoadType loadType,
+    private Load BuildLoad(
+        long seq,
+        (Address addr, double lat, double lng) origin,
+        (Address addr, double lat, double lng) dest,
+        LoadType type,
         Truck truck,
         Employee dispatcher,
         Customer customer)
     {
-        const double originLat = 42.319090, originLng = -71.054680;
-        const double destLat   = 42.357820, destLng   = -71.060810;
-
-        var dispatchedDate = _random.Date(_startDate, _endDate);
-        dispatchedDate = DateTime.SpecifyKind(dispatchedDate, DateTimeKind.Utc);
-
-        var originAddress = new Address
-        {
-            Line1 = "40 Crescent Ave",
-            City = "Boston",
-            State = "Massachusetts",
-            ZipCode = "02125",
-            Country = "United States"
-        };
-
-        var destinationAddress = new Address
-        {
-            Line1 = "73 Tremont St",
-            City = "Boston",
-            State = "Massachusetts",
-            ZipCode = "02108",
-            Country = "United States"
-        };
-
+        var dispatched = _random.UtcDate(_startDate, _endDate);
         var deliveryCost = _random.Next(1_000, 3_000);
-        var loadName = loadType == LoadType.Vehicle
-            ? "Car Hauler Load"
-            : "Freight Truck Load";
 
         var load = Load.Create(
-            $"{loadName} {index}",
-            loadType,
+            $"{(type == LoadType.Vehicle ? "Car" : "Freight")} Load {seq}",
+            type,
             deliveryCost,
-            originAddress,  originLat, originLng,
-            destinationAddress, destLat, destLng,
+            origin.addr,
+            origin.lat,
+            origin.lng,
+            dest.addr,
+            dest.lat,
+            dest.lng,
             customer,
             truck,
             dispatcher);
 
-        load.DispatchedDate = dispatchedDate;
-        load.PickUpDate = dispatchedDate.AddDays(1);
-        load.DeliveryDate = dispatchedDate.AddDays(2);
-        load.Distance = _random.Next(16_093, 321_869);   // 10–200 mi
+        load.DispatchedDate = dispatched;
+        load.PickUpDate = dispatched.AddHours(6);
+        load.DeliveryDate = dispatched.AddHours(30);
+        load.Distance = MathUtils.Haversine(origin.lat, origin.lng, dest.lat, dest.lng);
         return load;
     }
     
@@ -338,40 +333,47 @@ internal class FakeDataWorker : IHostedService
         var tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
         var tripRepo = tenantUow.Repository<Trip>();
         var loadRepo = tenantUow.Repository<Load>();
+        
+        var carHaulerTrucks = trucks.Where(t => t.Type == TruckType.CarHauler).ToList();
+        if (carHaulerTrucks.Count == 0) return;
 
-        long tripNr = 1;
-
-        for (var i = 0; i < 30; i++) // ➜ 30 test trips
+        for (var tripIdx = 0; tripIdx < 30; tripIdx++)
         {
-            var truck = _random.Pick(trucks);
+            var truck = _random.Pick(carHaulerTrucks);
             var dispatcher = _random.Pick(employees.Dispatchers);
             var customer = _random.Pick(customers);
 
-            var planned = _random.Date(_startDate, _endDate);
-            planned = DateTime.SpecifyKind(planned, DateTimeKind.Utc);
-
-            // create 1-4 loads that belong to this trip
-            var loadsCount = _random.Next(1, 5);
+            // choose a random start position but leave at least 2 cities ahead
+            var loadsCount = _random.Next(2, 5); // 2-4 loads
+            var maxStart   = _routePoints.Length - (loadsCount + 1); // need n+1 stops
+            var startIndex = _random.Next(0, maxStart + 1);
             var loads = new List<Load>();
 
-            for (var j = 0; j < loadsCount; j++)
+            for (var leg = 0; leg < loadsCount; leg++)
             {
-                var load = BuildRandomLoad(i * 10 + j + 1, LoadType.Vehicle, truck, dispatcher, customer);
+                var origin = _routePoints[startIndex + leg];
+                var dest = _routePoints[startIndex + leg + 1];
+                var load = BuildLoad(
+                    tripIdx * 10 + leg + 1,
+                    origin,
+                    dest,
+                    LoadType.Vehicle,
+                    truck,
+                    dispatcher,
+                    customer);
+                
                 loads.Add(load);
-                await loadRepo.AddAsync(load); // persist each load
+                await loadRepo.AddAsync(load);
             }
 
-            // Trip factory builds stops automatically
             var trip = Trip.Create(
-                name: $"Trip {tripNr}",
-                plannedStart: planned,
-                truck: truck,
-                loads: loads);
+                $"Trip {tripIdx + 1}",
+                _random.UtcDate(_startDate, _endDate),
+                truck,
+                loads);
 
-            tripNr++;
             await tripRepo.AddAsync(trip);
-
-            _logger.LogInformation("Added Trip {TripName} with {Count} loads", trip.Name, loadsCount);
+            _logger.LogInformation("Added Trip {Trip} with {Cnt} chained loads", trip.Name, loadsCount);
         }
 
         await tenantUow.SaveChangesAsync();
@@ -396,7 +398,7 @@ internal class FakeDataWorker : IHostedService
             {
                 Title = $"Test notification {i}",
                 Message = $"Notification {i} description",
-                CreatedDate = DateTime.SpecifyKind(_random.Date(DateTime.UtcNow.AddMonths(-1), DateTime.UtcNow.AddDays(-1)), DateTimeKind.Utc)
+                CreatedDate = DateTime.SpecifyKind(_random.UtcDate(DateTime.UtcNow.AddMonths(-1), DateTime.UtcNow.AddDays(-1)), DateTimeKind.Utc)
             };
 
             await notificationRepository.AddAsync(notification);

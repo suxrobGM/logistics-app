@@ -590,10 +590,13 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("ArrivedAt")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<double?>("AddressLat")
+                        .HasColumnType("double precision");
 
-                    b.Property<DateTime?>("DepartedAt")
+                    b.Property<double?>("AddressLong")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime?>("ArrivedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("LoadId")

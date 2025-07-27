@@ -26,26 +26,28 @@
     />
   }
 
-  <!-- Start Point Symbol Layer -->
-  @if (startPoint() && imageLoaded()) {
+  <!-- all stop points -->
+  @if (stopsSource() && imageLoaded()) {
+    <!-- symbols for first / last -->
     <mgl-layer
-      id="startPointLayer"
+      id="stopSymbols"
       type="symbol"
-      [source]="startPoint()!"
+      [source]="stopsSource()!"
       [layout]="{
-        'icon-image': 'custom-marker',
+        'icon-image': ['case', ['==', ['get', 'kind'], 'edge'], 'custom-marker', ''],
       }"
     />
-  }
-
-  <!-- End Point Symbol Layer -->
-  @if (endPoint() && imageLoaded()) {
+    <!-- circles for middle points -->
     <mgl-layer
-      id="endPointLayer"
-      type="symbol"
-      [source]="endPoint()!"
-      [layout]="{
-        'icon-image': 'custom-marker',
+      id="midCircles"
+      type="circle"
+      [source]="stopsSource()!"
+      [filter]="['==', ['get', 'kind'], 'mid']"
+      [paint]="{
+        'circle-radius': 6,
+        'circle-color': '#0074D9',
+        'circle-stroke-width': 2,
+        'circle-stroke-color': '#fff',
       }"
     />
   }

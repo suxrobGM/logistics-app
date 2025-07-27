@@ -8,9 +8,10 @@ public static class RandomExtensions
         return list[rndIndex];
     }
     
-    public static DateTime Date(this Random random, DateTime minDate, DateTime maxDate)
+    public static DateTime UtcDate(this Random random, DateTime from, DateTime to)
     {
-        var ticks = random.NextInt64(minDate.Ticks, maxDate.Ticks);
-        return new DateTime(ticks);
+        var spanSec = (long)(to - from).TotalSeconds;
+        var date = from.AddSeconds(random.NextInt64(spanSec));
+        return DateTime.SpecifyKind(date, DateTimeKind.Utc);
     }
 }

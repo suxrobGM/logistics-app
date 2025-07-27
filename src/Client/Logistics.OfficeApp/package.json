@@ -26,6 +26,7 @@
     "@microsoft/signalr": "^8.0.7",
     "@primeuix/themes": "^1.2.1",
     "@stripe/stripe-js": "^7.1.0",
+    "@turf/turf": "^7.2.0",
     "angular-auth-oidc-client": "^19.0.1",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.7",

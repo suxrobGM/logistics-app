@@ -84,7 +84,8 @@
             type="button"
             icon="pi pi-trash"
             label="Delete"
-            [disabled]="isLoading() || !form.dirty"
+            severity="danger"
+            [disabled]="isLoading()"
             (click)="askRemove()"
           />
 
@@ -101,8 +102,7 @@
 
   <div class="w-full md:w-1/2">
     <app-directions-map
-      [start]="originCoords()"
-      [end]="destinationCoords()"
+      [stops]="[originCoords(), destinationCoords()]"
       (routeChanged)="updateDistance($event)"
     />
   </div>

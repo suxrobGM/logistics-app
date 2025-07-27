@@ -85,8 +85,8 @@ export class LoadFormComponent implements OnInit {
   public readonly save = output<LoadFormValue>();
   public readonly remove = output<void>();
 
-  protected readonly originCoords = signal<[number, number] | null>(null);
-  protected readonly destinationCoords = signal<[number, number] | null>(null);
+  protected readonly originCoords = signal<[number, number]>([0, 0]);
+  protected readonly destinationCoords = signal<[number, number]>([0, 0]);
 
   protected readonly form = new FormGroup({
     name: new FormControl("", {validators: [Validators.required], nonNullable: true}),

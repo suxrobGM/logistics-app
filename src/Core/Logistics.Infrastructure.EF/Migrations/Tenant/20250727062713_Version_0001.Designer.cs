@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.EF.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20250727030414_Version_0001")]
+    [Migration("20250727062713_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -593,10 +593,13 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("ArrivedAt")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<double?>("AddressLat")
+                        .HasColumnType("double precision");
 
-                    b.Property<DateTime?>("DepartedAt")
+                    b.Property<double?>("AddressLong")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime?>("ArrivedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("LoadId")
