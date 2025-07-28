@@ -6,9 +6,7 @@ namespace Logistics.Application.Specifications;
 
 public class SearchLoads : BaseSpecification<Load>
 {
-    public SearchLoads(
-        string? search,
-        string? orderBy)
+    public SearchLoads(string? search, string? orderBy)
     {
         if (!string.IsNullOrEmpty(search))
         {

@@ -1,2 +1,2 @@
-export * from "./add-load-dialog/add-load-dialog";
+export * from "./load-dialog/load-dialog";
 export * from "./trip-form/trip-form";

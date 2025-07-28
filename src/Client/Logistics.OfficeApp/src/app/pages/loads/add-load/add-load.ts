@@ -20,7 +20,7 @@ export class AddLoadComponent {
 
   protected readonly isLoading = signal(false);
 
-  create(formValue: LoadFormValue): void {
+  protected create(formValue: LoadFormValue): void {
     this.isLoading.set(true);
     const command: CreateLoadCommand = {
       name: formValue.name,

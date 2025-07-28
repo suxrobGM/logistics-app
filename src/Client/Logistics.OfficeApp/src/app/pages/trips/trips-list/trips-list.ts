@@ -53,7 +53,7 @@ export class TripsList extends BaseTableComponent<TripDto> {
       );
   }
 
-  tripStatusColor(status?: TripStatus | null): string | null {
+  protected tripStatusColor(status?: TripStatus | null): string | null {
     switch (status) {
       case TripStatus.Dispatched:
         return "info";

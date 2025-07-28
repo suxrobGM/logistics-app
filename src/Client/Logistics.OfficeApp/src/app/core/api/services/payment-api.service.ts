@@ -48,7 +48,7 @@ export class PaymentApiService extends ApiBase {
   //#region Payment Methods
 
   getPaymentMethod(id: string): Observable<Result<PaymentMethodDto>> {
-    return this.get<Result<PaymentMethodDto>>(`/payments/methods/${id}`);
+    return this.get(`/payments/methods/${id}`);
   }
 
   getPaymentMethods(orderBy?: string): Observable<Result<PaymentMethodDto[]>> {
@@ -58,27 +58,27 @@ export class PaymentApiService extends ApiBase {
       query = `?orderBy=${orderBy}`;
     }
 
-    return this.get<Result<PaymentMethodDto[]>>(`/payments/methods${query}`);
+    return this.get(`/payments/methods${query}`);
   }
 
   createPaymentMethod(command: CreatePaymentMethodCommand): Observable<Result> {
-    return this.post<Result, CreatePaymentMethodCommand>(`/payments/methods`, command);
+    return this.post(`/payments/methods`, command);
   }
 
   updatePaymentMethod(command: UpdatePaymentMethodCommand): Observable<Result> {
-    return this.put<Result, UpdatePaymentMethodCommand>(`/payments/methods/${command.id}`, command);
+    return this.put(`/payments/methods/${command.id}`, command);
   }
 
   setDefaultPaymentMethod(command: SetDefaultPaymentMethodCommand): Observable<Result> {
-    return this.put<Result, SetDefaultPaymentMethodCommand>(`/payments/methods/default`, command);
+    return this.put(`/payments/methods/default`, command);
   }
 
   deletePaymentMethod(command: DeletePaymentMethodCommand): Observable<Result> {
-    return this.delete<Result>(`/payments/methods/${command.paymentMethodId}`);
+    return this.delete(`/payments/methods/${command.paymentMethodId}`);
   }
 
   createSetupIntent(): Observable<Result<SetupIntentDto>> {
-    return this.post<Result<SetupIntentDto>, object>("/payments/methods/setup-intent", {});
+    return this.post("/payments/methods/setup-intent", {});
   }
 
   //#endregion

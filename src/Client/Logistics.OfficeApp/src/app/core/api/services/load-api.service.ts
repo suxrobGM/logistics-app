@@ -2,40 +2,31 @@ import {Observable} from "rxjs";
 import {ApiBase} from "../api-base";
 import {
   CreateLoadCommand,
+  GetLoadsQuery,
   LoadDto,
   PagedResult,
   Result,
-  SearchableQuery,
   UpdateLoadCommand,
 } from "../models";
 
 export class LoadApiService extends ApiBase {
   getLoad(id: string): Observable<Result<LoadDto>> {
-    const url = `/loads/${id}`;
-    return this.get(url);
+    return this.get(`/loads/${id}`);
   }
 
-  getLoads(query?: SearchableQuery, onlyActiveLoads = false): Observable<PagedResult<LoadDto>> {
-    let url = `/loads?${this.stringfyQuery(query)}`;
-
-    if (onlyActiveLoads) {
-      url += "&onlyActiveLoads=true";
-    }
-    return this.get(url);
+  getLoads(query?: GetLoadsQuery): Observable<PagedResult<LoadDto>> {
+    return this.get(`/loads?${this.stringfyQuery(query)}`);
   }
 
   createLoad(command: CreateLoadCommand): Observable<Result> {
-    const url = `/loads`;
-    return this.post(url, command);
+    return this.post("/loads", command);
   }
 
   updateLoad(command: UpdateLoadCommand): Observable<Result> {
-    const url = `/loads/${command.id}`;
-    return this.put(url, command);
+    return this.put(`/loads/${command.id}`, command);
   }
 
   deleteLoad(loadId: string): Observable<Result> {
-    const url = `/loads/${loadId}`;
-    return this.delete(url);
+    return this.delete(`/loads/${loadId}`);
   }
 }

@@ -74,13 +74,15 @@ export class HomeComponent implements OnInit {
   private fetchActiveLoads(): void {
     this.isLoadingLoadsData.set(true);
 
-    this.apiService.loadApi.getLoads({orderBy: "-DispatchedDate"}, true).subscribe((result) => {
-      if (result.success && result.data) {
-        this.loads.set(result.data);
-      }
+    this.apiService.loadApi
+      .getLoads({orderBy: "-DispatchedDate", onlyActiveLoads: true})
+      .subscribe((result) => {
+        if (result.success && result.data) {
+          this.loads.set(result.data);
+        }
 
-      this.isLoadingLoadsData.set(false);
-    });
+        this.isLoadingLoadsData.set(false);
+      });
   }
 
   private fetchLastTenDaysGross(): void {

@@ -56,7 +56,7 @@ export class DirectionMap {
   private async draw(): Promise<void> {
     const pts = this.stops();
 
-    if (!pts || pts.length < 2) {
+    if (!pts || pts.length < 2 || !this.coordsAreValid(pts)) {
       return this.clear();
     }
 
@@ -113,6 +113,7 @@ export class DirectionMap {
     b: GeoPoint
   ): Promise<GeoJSONSourceSpecification> {
     const coords = `${a[0]},${a[1]};${b[0]},${b[1]}`;
+
     const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${coords}?geometries=geojson&access_token=${this.accessToken}`;
     const response = await firstValueFrom(this.http.get<MapboxDirectionsResponse>(url));
 
@@ -128,6 +129,33 @@ export class DirectionMap {
     this.bounds.set(null);
     this.center.set(this.defaultCenter);
     this.zoom.set(this.defaultZoom);
+  }
+
+  /**
+   * Validates if the given point is a valid GeoPoint.
+   * A valid GeoPoint is an array of two numbers: [longitude, latitude].
+   * Longitude must be between -180 and 180, latitude must be between -90 and 90.
+   * @param point The point to validate.
+   * @returns True if the point is valid, false otherwise.
+   */
+  private isValidPoint(point: GeoPoint): boolean {
+    return (
+      Array.isArray(point) &&
+      point.length === 2 &&
+      typeof point[0] === "number" &&
+      typeof point[1] === "number" &&
+      point[0] >= -180 && // longitude
+      point[0] <= 180 &&
+      point[0] !== 0 &&
+      point[1] >= -90 && // latitude
+      point[1] <= 90 &&
+      point[1] !== 0
+    );
+  }
+
+  /** Ensures every stop is within valid longitude/latitude bounds. */
+  private coordsAreValid(pts: GeoPoint[]): boolean {
+    return pts.every((pt) => this.isValidPoint(pt));
   }
 }
 

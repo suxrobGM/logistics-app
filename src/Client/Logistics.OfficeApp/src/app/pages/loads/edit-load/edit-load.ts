@@ -115,9 +115,4 @@ export class EditLoadComponent implements OnInit {
       this.isLoading.set(false);
     });
   }
-
-  private formatDriversName(truckNumber: string, driversName: string[]): string {
-    const formattedDriversName = driversName.join(",");
-    return `${truckNumber} - ${formattedDriversName}`;
-  }
 }

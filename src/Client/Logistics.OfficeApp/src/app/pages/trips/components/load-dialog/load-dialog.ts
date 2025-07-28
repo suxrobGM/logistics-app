@@ -1,4 +1,4 @@
-import {Component, inject, model, signal} from "@angular/core";
+import {Component, computed, inject, input, model, signal} from "@angular/core";
 import {DialogModule} from "primeng/dialog";
 import {ApiService} from "@/core/api";
 import {CreateLoadCommand} from "@/core/api/models";
@@ -6,18 +6,22 @@ import {ToastService} from "@/core/services";
 import {LoadFormComponent, LoadFormValue} from "@/shared/components";
 
 @Component({
-  selector: "app-add-load-dialog",
+  selector: "app-load-dialog",
+  templateUrl: "./load-dialog.html",
   imports: [DialogModule, LoadFormComponent],
-  templateUrl: "./add-load-dialog.html",
 })
-export class AddLoadDialog {
+export class LoadDialog {
   private readonly apiService = inject(ApiService);
   private readonly toastService = inject(ToastService);
 
   public readonly visible = model(false);
+  public readonly assignedTruckId = input<string>();
   protected readonly isLoading = signal(false);
+  protected readonly initialLoad = computed(() =>
+    this.assignedTruckId() ? {assignedTruckId: this.assignedTruckId()} : null
+  );
 
-  create(formValue: LoadFormValue): void {
+  protected create(formValue: LoadFormValue): void {
     this.isLoading.set(true);
     const command: CreateLoadCommand = {
       name: formValue.name,
