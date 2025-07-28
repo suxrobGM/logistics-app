@@ -1,1 +1,64 @@
-<p>trip-form works!</p>
+<div class="flex flex-col gap-6 md:flex-row">
+  <div class="w-full md:w-1/2">
+    @if (isLoading()) {
+      <p-progress-spinner />
+    }
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <app-validation-summary [form]="form" />
+
+      <app-form-field label="Trip Name" for="name" [required]="true">
+        <input pInputText id="name" formControlName="name" type="text" placeholder="Trip name" />
+      </app-form-field>
+
+      <app-form-field label="Trip Cost" for="tripCost" [required]="true">
+        <p-inputgroup>
+          <p-inputgroup-addon>$$</p-inputgroup-addon>
+          <p-input-number id="deliveryCost" formControlName="deliveryCost" [min]="0" />
+        </p-inputgroup>
+      </app-form-field>
+
+      <app-form-field label="Estimated Distance" for="distance">
+        <p-inputgroup>
+          <p-inputgroup-addon>mi</p-inputgroup-addon>
+          <p-input-number id="distance" formControlName="distance" [min]="0" />
+        </p-inputgroup>
+      </app-form-field>
+
+      <app-form-field label="Assigned Truck" for="truck" [required]="true">
+        <app-search-truck formControlName="truck" />
+      </app-form-field>
+
+      <!-- action buttons -->
+      <div class="flex gap-2">
+        <p-button
+          type="submit"
+          icon="pi pi-pen-to-square-square"
+          [label]="mode() === 'create' ? 'Add' : 'Save'"
+          [disabled]="isLoading() || !form.valid"
+        />
+
+        @if (mode() === "edit") {
+          <p-button
+            type="button"
+            icon="pi pi-trash"
+            label="Delete"
+            severity="danger"
+            [disabled]="isLoading()"
+          />
+
+          <p-button
+            type="button"
+            icon="pi pi-arrow-left"
+            label="Back to list"
+            [routerLink]="['/trips']"
+          />
+        }
+      </div>
+    </form>
+  </div>
+
+  <div class="w-full md:w-1/2">
+    <app-direction-map />
+  </div>
+</div>

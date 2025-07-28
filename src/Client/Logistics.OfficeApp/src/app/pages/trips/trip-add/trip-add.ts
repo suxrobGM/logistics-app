@@ -1,9 +1,12 @@
-import {Component} from "@angular/core";
+import {Component, signal} from "@angular/core";
 import {CardModule} from "primeng/card";
+import {TripForm} from "../components";
 
 @Component({
   selector: "app-trip-add",
   templateUrl: "./trip-add.html",
-  imports: [CardModule],
+  imports: [CardModule, TripForm],
 })
-export class TripAddPage {}
+export class TripAddPage {
+  protected readonly isLoading = signal(false);
+}

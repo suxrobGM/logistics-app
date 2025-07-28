@@ -3,47 +3,5 @@
 @import "tailwindcss";
 
 body {
-  background-color: #dae5f3 !important;
-}
-
-.p-datatable .p-datatable-tbody > tr > td {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 150px;
-}
-
-.p-panelmenu .p-panelmenu-header .p-panelmenu-header-content .p-panelmenu-header-action {
-  color: #212529;
-}
-
-.p-panelmenu .p-panelmenu-header-action {
-  text-decoration: none;
-}
-
-.p-breadcrumb .p-menuitem-link {
-  text-decoration: none;
-}
-
-ol,
-ul {
-  padding-left: 0;
-}
-
-dl,
-ol,
-ul {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-tbody,
-td,
-tfoot,
-th,
-thead,
-tr {
-  border: 1px solid #dee2e6;
-  border-width: 1px 0 2px 0;
-  text-align: center;
+  background-color: #dae5f3;
 }
