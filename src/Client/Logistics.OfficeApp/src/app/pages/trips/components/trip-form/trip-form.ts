@@ -1,3 +1,4 @@
+import {CurrencyPipe} from "@angular/common";
 import {Component, computed, effect, input, output} from "@angular/core";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {RouterLink} from "@angular/router";
@@ -8,21 +9,22 @@ import {InputGroupAddon} from "primeng/inputgroupaddon";
 import {InputNumber} from "primeng/inputnumber";
 import {InputTextModule} from "primeng/inputtext";
 import {ProgressSpinner} from "primeng/progressspinner";
-import {TripStopDto} from "@/core/api/models";
+import {TableModule} from "primeng/table";
+import {TripLoadDto, TripStopDto} from "@/core/api/models";
 import {
   DirectionMap,
   FormField,
+  LoadStatusTag,
   SearchTruckComponent,
   ValidationSummary,
 } from "@/shared/components";
+import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
 import {GeoPoint} from "@/shared/types/mapbox";
 import {LoadDialog} from "../load-dialog/load-dialog";
 
 export interface TripFormValue {
   name: string;
   plannedStart?: Date;
-  deliveryCost?: number;
-  distance?: number;
   truckId: string;
 }
 
@@ -44,12 +46,18 @@ export interface TripFormValue {
     InputTextModule,
     LoadDialog,
     DatePicker,
+    TableModule,
+    LoadStatusTag,
+    AddressPipe,
+    DistanceUnitPipe,
+    CurrencyPipe,
   ],
 })
 export class TripForm {
   public readonly mode = input.required<"create" | "edit">();
   public readonly initial = input<Partial<TripFormValue> | null>(null);
   public readonly isLoading = input(false);
+  public readonly loads = input<TripLoadDto[]>([]);
   public readonly stops = input<TripStopDto[]>([]);
 
   public readonly save = output<TripFormValue>();
@@ -62,8 +70,6 @@ export class TripForm {
   protected readonly form = new FormGroup({
     name: new FormControl<string>("", {validators: [Validators.required], nonNullable: true}),
     plannedStart: new FormControl<Date | null>(null),
-    deliveryCost: new FormControl<number>({disabled: true, value: 0}),
-    distance: new FormControl<number>({disabled: true, value: 0}),
     truckId: new FormControl<string>("", {
       validators: [Validators.required],
       nonNullable: true,

@@ -3,7 +3,7 @@ import {Router} from "@angular/router";
 import {ConfirmationService} from "primeng/api";
 import {CardModule} from "primeng/card";
 import {ApiService} from "@/core/api";
-import {TripStopDto} from "@/core/api/models";
+import {TripLoadDto, TripStopDto} from "@/core/api/models";
 import {ToastService} from "@/core/services";
 import {TripForm, TripFormValue} from "../components";
 
@@ -20,6 +20,7 @@ export class TripEditPage implements OnInit {
 
   protected readonly tripId = input<string>();
 
+  protected readonly tripLoads = signal<TripLoadDto[]>([]);
   protected readonly tripStops = signal<TripStopDto[]>([]);
   protected readonly tripNumber = signal<number | null>(null);
   protected readonly isLoading = signal(false);
@@ -52,11 +53,12 @@ export class TripEditPage implements OnInit {
         this.initialData.set({
           name: trip.name,
           plannedStart: new Date(trip.plannedStart),
-          deliveryCost: trip.loads.reduce((sum, load) => sum + (load.deliveryCost || 0), 0),
-          distance: trip.loads.reduce((sum, load) => sum + (load.distance || 0), 0),
+          //deliveryCost: trip.loads.reduce((sum, load) => sum + (load.deliveryCost || 0), 0),
+          //distance: trip.loads.reduce((sum, load) => sum + (load.distance || 0), 0),
           truckId: trip.truckId,
         });
 
+        this.tripLoads.set(trip.loads);
         this.tripStops.set(trip.stops);
         this.tripNumber.set(trip.number);
       }

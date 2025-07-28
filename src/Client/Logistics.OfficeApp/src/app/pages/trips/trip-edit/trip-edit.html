@@ -5,8 +5,9 @@
   <app-trip-form
     [mode]="'edit'"
     [initial]="initialData()"
-    [isLoading]="isLoading()"
     [stops]="tripStops()"
+    [loads]="tripLoads()"
+    [isLoading]="isLoading()"
     (remove)="confirmToDelete()"
   />
 </p-card>
