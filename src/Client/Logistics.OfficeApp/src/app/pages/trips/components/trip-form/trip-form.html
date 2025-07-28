@@ -25,8 +25,8 @@
         </p-inputgroup>
       </app-form-field>
 
-      <app-form-field label="Assigned Truck" for="truck" [required]="true">
-        <app-search-truck formControlName="truck" />
+      <app-form-field label="Assigned Truck" for="truckId" [required]="true">
+        <app-search-truck formControlName="truckId" />
       </app-form-field>
 
       <!-- action buttons -->
@@ -62,3 +62,5 @@
     <app-direction-map />
   </div>
 </div>
+
+<app-add-load-dialog />

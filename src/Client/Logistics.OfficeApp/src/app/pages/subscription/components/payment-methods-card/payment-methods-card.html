@@ -88,7 +88,7 @@
           <div class="col-6">{{ paymentMethod.billingAddress | address }}</div>
         </div>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <div class="flex gap-2">
             @if (!paymentMethod.isDefault) {
               <p-button

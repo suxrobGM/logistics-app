@@ -16,7 +16,7 @@
           <div class="col-6">{{ subscriptionPlan.description }}</div>
         </div>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           @if (isCurrentPlan(subscriptionPlan)) {
             <p-button label="Current Plan" icon="pi pi-check" disabled />
           } @else {

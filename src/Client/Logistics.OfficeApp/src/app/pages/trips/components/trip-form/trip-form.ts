@@ -5,6 +5,7 @@ import {ButtonModule} from "primeng/button";
 import {InputGroupModule} from "primeng/inputgroup";
 import {InputGroupAddon} from "primeng/inputgroupaddon";
 import {InputNumber} from "primeng/inputnumber";
+import {InputTextModule} from "primeng/inputtext";
 import {ProgressSpinner} from "primeng/progressspinner";
 import {
   DirectionMap,
@@ -12,10 +13,13 @@ import {
   SearchTruckComponent,
   ValidationSummary,
 } from "@/shared/components";
+import {AddLoadDialog} from "../add-load-dialog/add-load-dialog";
 
 export interface TripFormValue {
   name: string;
   plannedDate?: Date;
+  deliveryCost?: number;
+  distance?: number;
   truckId: string;
   loads: string[];
 }
@@ -35,6 +39,8 @@ export interface TripFormValue {
     ButtonModule,
     DirectionMap,
     RouterLink,
+    InputTextModule,
+    AddLoadDialog,
   ],
 })
 export class TripForm {
@@ -48,14 +54,16 @@ export class TripForm {
   protected readonly form = new FormGroup({
     name: new FormControl<string>("", {validators: [Validators.required], nonNullable: true}),
     plannedDate: new FormControl<Date | null>(null),
-    truckId: new FormControl<string | null>(null, {
+    deliveryCost: new FormControl<number>(0),
+    distance: new FormControl<number>(0),
+    truckId: new FormControl<string>("", {
       validators: [Validators.required],
       nonNullable: true,
     }),
     loads: new FormControl<string[]>([]),
   });
 
-  protected submit() {
+  protected submit(): void {
     if (this.form.invalid) {
       return;
     }
