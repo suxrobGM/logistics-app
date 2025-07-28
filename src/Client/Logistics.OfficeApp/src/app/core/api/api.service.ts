@@ -5,7 +5,6 @@ import {
   CompanyStatsDto,
   CreateCustomerCommand,
   CreateEmployeeCommand,
-  CreateTruckCommand,
   CustomerDto,
   DailyGrossesDto,
   EmployeeDto,
@@ -17,13 +16,10 @@ import {
   Result,
   RoleDto,
   SearchableQuery,
-  TruckDriverDto,
-  TruckDto,
   TruckStatsDto,
   UpdateCustomerCommand,
   UpdateEmployeeCommand,
   UpdateNotificationCommand,
-  UpdateTruckCommand,
 } from "./models";
 import {
   InvoiceApiService,
@@ -32,6 +28,7 @@ import {
   SubscriptionApiService,
   TenantApiService,
   TripApiService,
+  TruckApiService,
   UserApiService,
 } from "./services";
 
@@ -48,40 +45,7 @@ export class ApiService extends ApiBase {
   public readonly invoiceApi = new InvoiceApiService();
   public readonly tripApi = new TripApiService();
   public readonly loadApi = new LoadApiService();
-
-  // #region Truck API
-
-  getTruck(truckId: string): Observable<Result<TruckDto>> {
-    const url = `/trucks/${truckId}`;
-    return this.get(url);
-  }
-
-  getTrucks(query?: SearchableQuery): Observable<PagedResult<TruckDto>> {
-    const url = `/trucks?${this.stringfySearchableQuery(query)}`;
-    return this.get(url);
-  }
-
-  getTruckDrivers(query?: SearchableQuery): Observable<PagedResult<TruckDriverDto>> {
-    const url = `/trucks/drivers?${this.stringfySearchableQuery(query)}`;
-    return this.get(url);
-  }
-
-  createTruck(command: CreateTruckCommand): Observable<Result> {
-    const url = `/trucks`;
-    return this.post(url, command);
-  }
-
-  updateTruck(command: UpdateTruckCommand): Observable<Result> {
-    const url = `/trucks/${command.id}`;
-    return this.put(url, command);
-  }
-
-  deleteTruck(truckId: string): Observable<Result> {
-    const url = `/trucks/${truckId}`;
-    return this.delete(url);
-  }
-
-  // #endregion
+  public readonly truckApi = new TruckApiService();
 
   // #region Employee API
 

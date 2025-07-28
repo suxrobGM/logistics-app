@@ -16,7 +16,8 @@ public static class TruckMapper
             CurrentLocationLat = entity.CurrentLocationLat,
             CurrentLocationLong = entity.CurrentLocationLong,
             Loads = loads,
-            Drivers = entity.Drivers.Select(i => i.ToDto())
+            MainDriver = entity.MainDriver?.ToDto(),
+            SecondaryDriver = entity.SecondaryDriver?.ToDto(),
         };
 
         if (entity.CurrentLocation.IsNotNull())

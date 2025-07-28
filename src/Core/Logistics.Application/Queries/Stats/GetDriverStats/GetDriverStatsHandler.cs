@@ -26,7 +26,10 @@ internal sealed class GetDriverStatsHandler : RequestHandler<GetDriverStatsQuery
             return Result<DriverStatsDto>.Fail($"Could not find driver with the user ID '{req.UserId}'");
         }
 
-        if (driver.TruckId.HasValue)
+        var assignedTruck = await _tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == driver.Id
+                                                                               || i.SecondaryDriverId == driver.Id);
+
+        if (assignedTruck is null)
         {
             return Result<DriverStatsDto>.Fail("Driver does not have an assigned truck");
         }
@@ -39,10 +42,10 @@ internal sealed class GetDriverStatsHandler : RequestHandler<GetDriverStatsQuery
         var lastMonthStart = startOfMonth.AddMonths(-1);
         
         var loadsRepository = _tenantUow.Repository<Load>();
-        var thisWeekLoads = loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(driver.TruckId, startOfWeek, now));
-        var lastWeekLoads = loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(driver.TruckId, lastWeekStart, startOfWeek));
-        var thisMonthLoads = loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(driver.TruckId, startOfMonth, now));
-        var lastMonthLoads = loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(driver.TruckId, lastMonthStart, startOfMonth));
+        var thisWeekLoads = loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(assignedTruck.Id, startOfWeek, now));
+        var lastWeekLoads = loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(assignedTruck.Id, lastWeekStart, startOfWeek));
+        var thisMonthLoads = loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(assignedTruck.Id, startOfMonth, now));
+        var lastMonthLoads = loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(assignedTruck.Id, lastMonthStart, startOfMonth));
 
         driverStats.ThisWeekGross = thisWeekLoads.Sum(l => l.DeliveryCost);
         driverStats.ThisWeekShare = driverStats.ThisWeekGross * driverIncomePercentage;

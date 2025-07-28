@@ -1,7 +1,9 @@
-import {TruckType} from "./enums";
+import {TruckStatus, TruckType} from "./enums";
 
 export interface CreateTruckCommand {
   truckNumber: string;
   truckType: TruckType;
-  driverIds: string[];
+  truckStatus: TruckStatus;
+  mainDriverId?: string;
+  secondaryDriverId?: string;
 }

@@ -5,5 +5,6 @@ export interface UpdateTruckCommand {
   truckNumber?: string;
   truckType?: TruckType;
   truckStatus?: TruckStatus;
-  driverIds?: string[];
+  mainDriverId?: string;
+  secondaryDriverId?: string;
 }

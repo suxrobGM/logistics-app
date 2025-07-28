@@ -22,14 +22,15 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrosse
         
         if (req.UserId.HasValue)
         {
-            var driver = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId.Value);
+            var truck = await _tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == req.UserId.Value ||
+                                                                           i.SecondaryDriverId == req.UserId.Value);
 
-            if (driver is null)
+            if (truck is null)
             {
-                return Result<MonthlyGrossesDto>.Fail($"Could not find user with ID '{req.UserId}'");
+                return Result<MonthlyGrossesDto>.Fail($"Could not find a truck with driver ID '{req.UserId}'");
             }
             
-            truckId = driver.TruckId;
+            truckId = truck.Id;
         }
         
         var spec = new FilterLoadsByDeliveryDate(truckId, req.StartDate, req.EndDate);

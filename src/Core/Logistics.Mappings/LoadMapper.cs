@@ -34,7 +34,7 @@ public static partial class LoadMapper
             AssignedDispatcherName = entity.AssignedDispatcher?.GetFullName(),
             AssignedTruckId = entity.AssignedTruckId,
             AssignedTruckNumber = entity.AssignedTruck?.Number,
-            AssignedTruckDriversName = entity.AssignedTruck?.Drivers.Select(i => i.GetFullName()),
+            AssignedTruckDriversName = entity.AssignedTruck?.GetDriversNames(),
             Customer = entity.Customer?.ToDto(),
             Invoices = entity.Invoices.Select(i => i.ToDto()),
             TripId = entity.TripStop?.Trip.Id,

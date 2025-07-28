@@ -7,6 +7,7 @@ import {IconField} from "primeng/iconfield";
 import {InputIcon} from "primeng/inputicon";
 import {InputText} from "primeng/inputtext";
 import {TableModule} from "primeng/table";
+import {TooltipModule} from "primeng/tooltip";
 import {Observable, map} from "rxjs";
 import {ApiService} from "@/core/api";
 import {PagedResult, TripDto, TripStatus} from "@/core/api/models";
@@ -29,6 +30,7 @@ import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
     AddressPipe,
     CurrencyPipe,
     LoadStatusTag,
+    TooltipModule,
   ],
 })
 export class TripsList extends BaseTableComponent<TripDto> {

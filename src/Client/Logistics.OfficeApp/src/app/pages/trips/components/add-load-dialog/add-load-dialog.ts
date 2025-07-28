@@ -31,7 +31,7 @@ export class AddLoadDialog {
       deliveryCost: formValue.deliveryCost!,
       distance: formValue.distance,
       assignedDispatcherId: formValue.assignedDispatcherId!,
-      assignedTruckId: formValue.assignedTruck!.truckId,
+      assignedTruckId: formValue.assignedTruckId!,
       customerId: formValue.customer!.id,
     };
 

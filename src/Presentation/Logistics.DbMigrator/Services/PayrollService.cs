@@ -69,7 +69,7 @@ public class PayrollService
         return payroll != null;
     }
     
-    private static PayrollInvoice CreatePayrollInvoice(Employee employee, DateTime startDate, DateTime endDate)
+    private PayrollInvoice CreatePayrollInvoice(Employee employee, DateTime startDate, DateTime endDate)
     {
         var amount = CalculateSalary(employee, startDate, endDate);
 
@@ -86,19 +86,25 @@ public class PayrollService
         return payroll;
     }
 
-    private static decimal CalculateSalary(Employee employee, DateTime startDate, DateTime endDate)
+    private decimal CalculateSalary(Employee employee, DateTime startDate, DateTime endDate)
     {
-        if (employee is { SalaryType: SalaryType.ShareOfGross, Truck: not null })
-        {
-            var totalDeliveredLoadsGross = employee.Truck.Loads
-                .Where(i => i.DeliveryDate.HasValue && 
-                            i.DeliveryDate.Value >= startDate && 
-                            i.DeliveryDate.Value <= endDate)
-                .Sum(i => i.DeliveryCost);
+        // Fixed amount (weekly / monthly) – nothing changed
+        if (employee.SalaryType is not SalaryType.ShareOfGross)
+            return employee.Salary;
 
-            return totalDeliveredLoadsGross * employee.Salary;
-        }
-        
-        return employee.Salary;
+        // Share-of-gross: sum every load that was delivered in the period
+        // by ANY truck where this employee was the main OR secondary driver.
+        var totalGross = _tenantUow.Repository<Truck>()
+            .Query()                                                // IQueryable<Truck>
+            .Where(t => (t.MainDriverId == employee.Id ||
+                         t.SecondaryDriverId == employee.Id))
+            .SelectMany(t => t.Loads.Where(l =>
+                l.DeliveryDate.HasValue &&
+                l.DeliveryDate.Value >= startDate &&
+                l.DeliveryDate.Value <= endDate))
+            .Sum(l => l.DeliveryCost.Amount);
+
+        // `employee.Salary` stores the share ratio (e.g. 0.25 for 25 %)
+        return totalGross * employee.Salary;
     }
 }

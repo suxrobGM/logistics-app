@@ -11,6 +11,7 @@ public class TruckDto
     public AddressDto? CurrentLocation { get; set; }
     public double? CurrentLocationLat { get; set; }
     public double? CurrentLocationLong { get; set; }
-    public IEnumerable<EmployeeDto> Drivers { get; set; } = [];
+    public EmployeeDto? MainDriver { get; set; }
+    public EmployeeDto? SecondaryDriver { get; set; }
     public IEnumerable<LoadDto> Loads { get; set; } = [];
 }

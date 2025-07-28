@@ -8,7 +8,8 @@ export interface TruckDto {
   number: string;
   type: TruckType;
   status: TruckStatus;
-  drivers: EmployeeDto[];
+  mainDriver?: EmployeeDto;
+  secondaryDriver?: EmployeeDto;
   currentLocation?: AddressDto;
   currentLocationLat?: number;
   currentLocationLong?: number;

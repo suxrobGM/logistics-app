@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.EF.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20250727081000_Version_0001")]
+    [Migration("20250728043832_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -74,9 +74,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<int>("SalaryType")
                         .HasColumnType("integer");
 
-                    b.Property<Guid?>("TruckId")
-                        .HasColumnType("uuid");
-
                     b.ComplexProperty<Dictionary<string, object>>("Salary", "Logistics.Domain.Entities.Employee.Salary#Money", b1 =>
                         {
                             b1.IsRequired();
@@ -92,8 +89,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         });
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TruckId");
 
                     b.ToTable("Employees", (string)null);
                 });
@@ -664,9 +659,15 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Property<double?>("CurrentLocationLong")
                         .HasColumnType("double precision");
 
+                    b.Property<Guid?>("MainDriverId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Number")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<Guid?>("SecondaryDriverId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -703,6 +704,13 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         });
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MainDriverId");
+
+                    b.HasIndex("Number")
+                        .IsUnique();
+
+                    b.HasIndex("SecondaryDriverId");
 
                     b.ToTable("Trucks", (string)null);
                 });
@@ -940,16 +948,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.HasDiscriminator().HasValue(1);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.Truck", "Truck")
-                        .WithMany("Drivers")
-                        .HasForeignKey("TruckId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Truck");
-                });
-
             modelBuilder.Entity("Logistics.Domain.Entities.EmployeeTenantRole", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Employee", "Employee")
@@ -1036,6 +1034,23 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     b.Navigation("Trip");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Employee", "MainDriver")
+                        .WithMany()
+                        .HasForeignKey("MainDriverId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Logistics.Domain.Entities.Employee", "SecondaryDriver")
+                        .WithMany()
+                        .HasForeignKey("SecondaryDriverId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("MainDriver");
+
+                    b.Navigation("SecondaryDriver");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.LoadInvoice", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Customer", "Customer")
@@ -1110,8 +1125,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
                 {
-                    b.Navigation("Drivers");
-
                     b.Navigation("Loads");
 
                     b.Navigation("Trips");

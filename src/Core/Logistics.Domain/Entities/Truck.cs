@@ -26,26 +26,41 @@ public class Truck : Entity, ITenantEntity
     /// Truck's last known location latitude
     /// </summary>
     public double? CurrentLocationLat { get; set; }
+    
+    /// <summary>
+    /// The main assigned driver for the truck
+    /// </summary>
+    public virtual Employee? MainDriver { get; set; }
+    public Guid? MainDriverId { get; set; }
 
-    public virtual List<Employee> Drivers { get; set; } = [];
+    /// <summary>
+    /// The secondary (backup/co) driver for the truck
+    /// </summary>
+    public virtual Employee? SecondaryDriver { get; set; }
+    public Guid? SecondaryDriverId { get; set; }
+
+    //public virtual List<Employee> Drivers { get; set; } = [];
     public virtual List<Load> Loads { get; } = [];
     public virtual List<Trip> Trips { get; } = [];
 
-    public static Truck Create(string truckNumber, TruckType type, Employee driver)
+    public static Truck Create(string truckNumber, TruckType type, Employee mainDriver, Employee? secondaryDriver = null)
     {
-        return Create(truckNumber, type, [driver]);
-    }
-    
-    public static Truck Create(string truckNumber, TruckType type, IEnumerable<Employee> drivers)
-    {
-        var newTruck = new Truck
+        return new Truck
         {
             Number = truckNumber,
             Type = type,
+            MainDriver = mainDriver,
+            SecondaryDriver = secondaryDriver
         };
+    }
+    
+    public IEnumerable<string> GetDriversNames()
+    {
+        if (MainDriver is { } mainDriver)
+            yield return mainDriver.GetFullName();
 
-        newTruck.Drivers.AddRange(drivers);
-        return newTruck;
+        if (SecondaryDriver is { } secondaryDriver)
+            yield return secondaryDriver.GetFullName();
     }
 
     /// <summary>
@@ -53,8 +68,14 @@ public class Truck : Entity, ITenantEntity
     /// </summary>
     public float GetDriversShareRatio()
     {
-        return (float)Drivers
-            .Where(i => i.SalaryType == SalaryType.ShareOfGross)
-            .Sum(i => i.Salary.Amount);
+        float ratio = 0;
+
+        if (MainDriver?.SalaryType == SalaryType.ShareOfGross)
+            ratio += (float)MainDriver.Salary.Amount;
+
+        if (SecondaryDriver?.SalaryType == SalaryType.ShareOfGross)
+            ratio += (float)SecondaryDriver.Salary.Amount;
+
+        return ratio;
     }
 }

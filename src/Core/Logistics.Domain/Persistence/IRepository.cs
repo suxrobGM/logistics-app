@@ -63,7 +63,7 @@ public interface IRepository<TEntity, in TEntityKey> where TEntity : class, IEnt
     void Update(TEntity entity);
 
     /// <summary>
-    /// Deletes entity object from database.
+    /// Deletes an entity object from the database.
     /// </summary>
     /// <param name="entity">Entity object</param>
     void Delete(TEntity? entity);

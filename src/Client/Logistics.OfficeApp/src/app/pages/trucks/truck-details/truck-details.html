@@ -43,8 +43,10 @@
       <div class="row mb-3">
         <div class="col-md-6 mb-md-0 col-12 mb-2">
           <span class="fw-bold">Drivers: </span><br />
-          @for (driver of truck()?.drivers; track driver.id) {
-            <span class="me-1">{{ driver.fullName }}</span>
+          <span class="me-1">{{ truck()?.mainDriver?.fullName }}</span>
+
+          @if (truck()?.secondaryDriver) {
+            <span class="me-1">and {{ truck()?.secondaryDriver?.fullName }}</span>
           }
         </div>
         <div class="col-md-6 mb-md-0 col-12 mb-2">

@@ -46,7 +46,7 @@ export class TrucksMap implements OnDestroy {
   }
 
   private fetchTrucksData(): void {
-    this.apiService.getTrucks({pageSize: 100}).subscribe((result) => {
+    this.apiService.truckApi.getTrucks({pageSize: 100}).subscribe((result) => {
       if (!result.success || !result.data) {
         return;
       }
@@ -59,7 +59,9 @@ export class TrucksMap implements OnDestroy {
               longitude: truck.currentLocationLong!,
               truckId: truck.id,
               truckNumber: truck.number,
-              driversName: truck.drivers.map((driver) => driver.fullName).join(", "),
+              driversName: [truck.mainDriver?.fullName, truck.secondaryDriver?.fullName]
+                .filter(Boolean)
+                .join(", "),
             },
           ];
         }

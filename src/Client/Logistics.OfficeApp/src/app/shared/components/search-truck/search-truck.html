@@ -1,12 +1,20 @@
 <p-auto-complete
-  styleClass="w-full"
-  inputStyleClass="form-control"
   placeholder="Type a driver name or truck number"
-  optionLabel="driversName"
+  optionLabel="number"
   [minLength]="2"
   [suggestions]="suggestedTrucks()"
   [forceSelection]="true"
   [(ngModel)]="selectedTruck"
   (completeMethod)="searchTruck($event)"
   (onSelect)="changeSelectedTruck($event)"
-/>
+>
+  <ng-template #item let-truck>
+    <div class="flex items-center gap-2">
+      <span class="font-bold">{{ truck.number }} - </span>
+      <span class="text-sm text-gray-500">{{ truck.mainDriver.fullName }}</span>
+      @if (truck.secondaryDriver) {
+        <span class="text-sm text-gray-500">and {{ truck.secondaryDriver.fullName }}</span>
+      }
+    </div>
+  </ng-template>
+</p-auto-complete>

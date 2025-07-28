@@ -4,12 +4,13 @@ import {Component, forwardRef, inject, model, output, signal} from "@angular/cor
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
 import {ApiService} from "@/core/api";
+import {TruckDto} from "@/core/api/models";
 
-export interface SearchTruckData {
-  driversName: string;
-  truckId: string;
-}
-
+/**
+ * Component for searching and selecting a truck.
+ * This component uses an autocomplete input to allow users to search for trucks by name or number.
+ * It accepts a truck ID or a TruckDto object as input and emits the selected truck.
+ */
 @Component({
   selector: "app-search-truck",
   templateUrl: "./search-truck.html",
@@ -25,45 +26,45 @@ export interface SearchTruckData {
 export class SearchTruckComponent implements ControlValueAccessor {
   private readonly apiService = inject(ApiService);
 
-  protected readonly suggestedTrucks = signal<SearchTruckData[]>([]);
-  public readonly selectedTruck = model<SearchTruckData | null>(null);
-  public readonly selectedTruckChange = output<SearchTruckData | null>();
+  protected readonly suggestedTrucks = signal<TruckDto[]>([]);
+  public readonly selectedTruck = model<TruckDto | null>(null);
+  public readonly selectedTruckChange = output<TruckDto | null>();
 
-  searchTruck(event: {query: string}): void {
-    this.apiService.getTruckDrivers({search: event.query}).subscribe((result) => {
+  protected searchTruck(event: {query: string}): void {
+    this.apiService.truckApi.getTrucks({search: event.query}).subscribe((result) => {
       if (!result.data) {
         return;
       }
 
-      this.suggestedTrucks.set(
-        result.data.map((truckDriver) => ({
-          truckId: truckDriver.truck.id,
-          driversName: this.formatDriversName(
-            truckDriver.truck.number,
-            truckDriver.drivers.map((i) => i.fullName)
-          ),
-        }))
-      );
+      this.suggestedTrucks.set(result.data);
     });
   }
 
-  changeSelectedTruck(event: AutoCompleteSelectEvent): void {
+  protected changeSelectedTruck(event: AutoCompleteSelectEvent): void {
     this.selectedTruckChange.emit(event.value);
     this.onChange(event.value);
   }
 
-  private formatDriversName(truckNumber: string, driversName: string[]): string {
-    const formattedDriversName = driversName.join(",");
-    return `${truckNumber} - ${formattedDriversName}`;
+  private fetchTruckById(id: string): void {
+    this.apiService.truckApi.getTruck(id).subscribe((result) => {
+      if (result.success && result.data) {
+        this.selectedTruck.set(result.data);
+      }
+    });
   }
 
   //#region Implementation Reactive forms
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private onChange(value: SearchTruckData | null): void {}
+  private onChange(value: TruckDto | null): void {}
   private onTouched(): void {}
 
-  writeValue(value: SearchTruckData | null): void {
+  writeValue(value: TruckDto | string | null): void {
+    if (typeof value === "string") {
+      this.fetchTruckById(value);
+      return;
+    }
+
     this.selectedTruck.set(value);
   }
 

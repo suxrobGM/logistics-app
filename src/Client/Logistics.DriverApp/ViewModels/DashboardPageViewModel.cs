@@ -147,9 +147,16 @@ public class DashboardPageViewModel : BaseViewModel
         }
 
         var truck = result.Data!;
-        var teammates = truck.Drivers.Where(i => i.Id != driverId).Select(i => i.FullName);
+        var teammateNames = new List<string>();
+
+        if (truck.MainDriver is not null && truck.MainDriver.Id != driverId)
+            teammateNames.Add(truck.MainDriver.FullName!);
+
+        if (truck.SecondaryDriver is not null && truck.SecondaryDriver.Id != driverId)
+            teammateNames.Add(truck.SecondaryDriver.FullName!);
+        
         TruckNumber = truck.Number;
-        TeammatesName = string.Join(", ", teammates); 
+        TeammatesName = string.Join(", ", teammateNames); 
         _cache.Set(CacheKeys.TruckId, truck.Id);
 
         AddActiveLoads(truck.Loads);

@@ -1,19 +1,19 @@
 CREATE OR REPLACE FUNCTION get_trucks_stats(
-    start_date TIMESTAMP,
-    end_date TIMESTAMP,
-    page INTEGER,
-    page_size INTEGER,
-    order_by VARCHAR
+    start_date  TIMESTAMP,
+    end_date    TIMESTAMP,
+    page        INTEGER,
+    page_size   INTEGER,
+    order_by    VARCHAR
 ) RETURNS TABLE (
-    "TruckId" UUID,
+    "TruckId"     UUID,
     "TruckNumber" TEXT,
-    "StartDate" TIMESTAMP,
-    "EndDate" TIMESTAMP,
-    "Gross" NUMERIC,
-    "Distance" double precision,
+    "StartDate"   TIMESTAMP,
+    "EndDate"     TIMESTAMP,
+    "Gross"       NUMERIC,
+    "Distance"    DOUBLE PRECISION,
     "DriverShare" NUMERIC,
-    "Drivers" JSONB,
-    "TotalItems" BIGINT
+    "Drivers"     JSONB,
+    "TotalItems"  BIGINT
 ) AS $$
 DECLARE
     is_descending BOOLEAN := FALSE;
@@ -21,73 +21,78 @@ DECLARE
     offset_val INTEGER := (page - 1) * page_size;
     total_count BIGINT;
 BEGIN
-    -- Determine sort order and clean order_by
+    /* ─── 1.  Sort-column parsing ─────────────────────────────────────────── */
     IF order_by LIKE '-%' THEN
         is_descending := TRUE;
-        order_by := SUBSTRING(order_by FROM 2);
+        order_by      := SUBSTRING(order_by FROM 2);
     END IF;
 
-    -- Validate and set order by clause
-    order_by_clause := CASE 
-        WHEN order_by = 'Truck.Number' THEN '"Number"'
-        WHEN order_by = 'Gross' THEN '"Gross"'
-        WHEN order_by = 'Distance' THEN '"Distance"'
-        WHEN order_by = 'DriverShare' THEN '"DriverShare"'
-        ELSE '"Number"'
+    order_by_clause := CASE order_by
+        WHEN 'Truck.Number' THEN '"TruckNumber"'
+        WHEN 'Gross'        THEN '"Gross"'
+        WHEN 'Distance'     THEN '"Distance"'
+        WHEN 'DriverShare'  THEN '"DriverShare"'
+        ELSE '"TruckNumber"'
     END;
 
-    -- Get total count of trucks
+    /* ─── 2.  Total truck count (for paging UI) ───────────────────────────── */
     SELECT COUNT(*) INTO total_count FROM "Trucks";
 
-    -- Main query
+    /* ─── 3.  Main query ──────────────────────────────────────────────────── */
     RETURN QUERY
     WITH TruckStats AS (
-        SELECT 
-            l."AssignedTruckId" AS "TruckId",
-            t."Number",
-            SUM(l."DeliveryCost_Amount") AS "Gross",
-            SUM(l."Distance") AS "Distance",
+        SELECT
+            l."AssignedTruckId"                       AS "TruckId",
+            t."Number"                                AS "TruckNumber",
+            SUM(l."DeliveryCost_Amount")              AS "Gross",
+            SUM(l."Distance")                         AS "Distance",
+
+            /* driver-share = gross * Σ salary(% of gross) for both drivers */
             SUM(l."DeliveryCost_Amount") * COALESCE((
-                SELECT SUM(e."Salary_Amount")::DECIMAL
-                FROM "Employees" e
-                WHERE e."TruckId" = l."AssignedTruckId"
-                AND e."SalaryType" = 3
-            ), 0) AS "DriverShare",
+                    SELECT SUM(e2."Salary_Amount")::DECIMAL
+                    FROM "Employees" e2
+                    WHERE e2."Id" IN (t."MainDriverId", t."SecondaryDriverId")
+                      AND e2."SalaryType" = 3           /* 3 = ShareOfGross */
+                ), 0)  AS "DriverShare",
+
+            /* Flatten main + secondary drivers into JSONB */
             JSONB_AGG(
                 JSONB_BUILD_OBJECT(
-                    'Id', e."Id",
-                    'Email', e."Email",
+                    'Id',        e."Id",
+                    'Email',     e."Email",
                     'FirstName', e."FirstName",
-                    'LastName', e."LastName",
-                    'FullName', CONCAT(e."FirstName", ' ', e."LastName"),
+                    'LastName',  e."LastName",
+                    'FullName',  CONCAT(e."FirstName", ' ', e."LastName"),
                     'PhoneNumber', e."PhoneNumber",
                     'JoinedDate', e."JoinedDate",
                     'TruckNumber', t."Number",
-                    'TruckId', e."TruckId",
-                    'Salary', e."Salary_Amount",
+                    'TruckId',    t."Id",
+                    'Salary',     e."Salary_Amount",
                     'SalaryType', e."SalaryType",
                     'Roles', COALESCE((
                         SELECT JSONB_AGG(
-                            JSONB_BUILD_OBJECT(
-                                'Name', r."Name",
-                                'DisplayName', r."DisplayName"
-                            )
-                        )
+                                   JSONB_BUILD_OBJECT(
+                                       'Name',        r."Name",
+                                       'DisplayName', r."DisplayName"))
                         FROM "EmployeeRoles" er
-                        JOIN "Roles" r ON er."RoleId" = r."Id"
+                        JOIN "Roles" r ON r."Id" = er."RoleId"
                         WHERE er."EmployeeId" = e."Id"
                     ), '[]'::JSONB)
                 )
             ) AS "Drivers"
-        FROM "Loads" l
-        JOIN "Trucks" t ON l."AssignedTruckId" = t."Id"
-        LEFT JOIN "Employees" e ON e."TruckId" = l."AssignedTruckId"
+        FROM "Loads"  l
+        JOIN "Trucks" t ON t."Id" = l."AssignedTruckId"
+
+        /* join employees via driver IDs */
+        LEFT JOIN "Employees" e ON e."Id" = t."MainDriverId" OR e."Id" = t."SecondaryDriverId"
+
         WHERE l."DeliveryDate" IS NOT NULL
-        AND l."DeliveryDate" >= start_date
-        AND l."DeliveryDate" <= end_date
-        GROUP BY l."AssignedTruckId", t."Number"
+          AND l."DeliveryDate" >= start_date
+          AND l."DeliveryDate" <= end_date
+        GROUP BY l."AssignedTruckId", t."Number", t."Id"
     )
-    SELECT 
+
+    SELECT
         ts."TruckId",
         ts."TruckNumber",
         start_date AS "StartDate",
@@ -98,9 +103,9 @@ BEGIN
         ts."Drivers",
         total_count AS "TotalItems"
     FROM TruckStats ts
-    ORDER BY 
+    ORDER BY
         CASE WHEN is_descending THEN NULL ELSE order_by_clause END ASC,
         CASE WHEN is_descending THEN order_by_clause ELSE NULL END DESC
-    OFFSET offset_val LIMIT page_size;
+    OFFSET offset_val LIMIT  page_size;
 END;
 $$ LANGUAGE plpgsql;

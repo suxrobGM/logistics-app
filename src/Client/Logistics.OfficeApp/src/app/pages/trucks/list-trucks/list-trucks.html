@@ -46,7 +46,7 @@
           <p-sortIcon field="Status" />
         </th>
         <th class="text-center">Current Location</th>
-        <th class="text-center">Drivers</th>
+        <th class="text-center">Driver(s)</th>
         <th class="text-center">Action</th>
       </tr>
     </ng-template>
@@ -65,13 +65,9 @@
           {{ truck.currentLocation | address }}
         </td>
         <td class="text-center">
-          @for (driver of truck.drivers; track driver.id) {
-            <span>
-              {{ driver.fullName }}
-              @if (truck.drivers.length > 1) {
-                <span>,</span>
-              }
-            </span>
+          <span>{{ truck.mainDriver?.fullName }}</span>
+          @if (truck.secondaryDriver) {
+            <span class="ms-1">and {{ truck.secondaryDriver?.fullName }}</span>
           }
         </td>
 

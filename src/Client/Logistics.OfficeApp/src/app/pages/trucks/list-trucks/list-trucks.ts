@@ -37,11 +37,11 @@ export class ListTruckComponent {
   protected readonly isLoading = signal(false);
   protected readonly totalRecords = signal(0);
 
-  search(event: Event): void {
+  protected search(event: Event): void {
     this.isLoading.set(true);
     const searchValue = (event.target as HTMLInputElement).value;
 
-    this.apiService.getTrucks({search: searchValue}).subscribe((result) => {
+    this.apiService.truckApi.getTrucks({search: searchValue}).subscribe((result) => {
       if (result.success && result.data) {
         this.trucks.set(result.data);
         this.totalRecords.set(result.totalItems);
@@ -51,14 +51,14 @@ export class ListTruckComponent {
     });
   }
 
-  load(event: TableLazyLoadEvent): void {
+  protected load(event: TableLazyLoadEvent): void {
     this.isLoading.set(true);
     const first = event.first ?? 1;
     const rows = event.rows ?? 10;
     const page = first / rows + 1;
     const sortField = this.apiService.formatSortField(event.sortField as string, event.sortOrder);
 
-    this.apiService
+    this.apiService.truckApi
       .getTrucks({orderBy: sortField, page: page, pageSize: rows})
       .subscribe((result) => {
         if (result.success && result.data) {

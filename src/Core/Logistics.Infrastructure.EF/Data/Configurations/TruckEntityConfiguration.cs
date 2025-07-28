@@ -9,10 +9,18 @@ public class TruckEntityConfiguration : IEntityTypeConfiguration<Truck>
     public void Configure(EntityTypeBuilder<Truck> builder)
     {
         builder.ToTable("Trucks");
+        
+        builder.HasIndex(i => i.Number)
+            .IsUnique();
 
-        builder.HasMany(i => i.Drivers)
-            .WithOne(i => i.Truck)
-            .HasForeignKey(i => i.TruckId)
+        builder.HasOne(i => i.MainDriver)
+            .WithMany()
+            .HasForeignKey(i => i.MainDriverId)
+            .OnDelete(DeleteBehavior.SetNull);
+        
+        builder.HasOne(i => i.SecondaryDriver)
+            .WithMany()
+            .HasForeignKey(i => i.SecondaryDriverId)
             .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasMany(i => i.Loads)

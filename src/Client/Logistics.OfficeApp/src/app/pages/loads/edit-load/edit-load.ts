@@ -61,7 +61,7 @@ export class EditLoadComponent implements OnInit {
       deliveryCost: formValue.deliveryCost!,
       distance: formValue.distance,
       assignedDispatcherId: formValue.assignedDispatcherId!,
-      assignedTruckId: formValue.assignedTruck!.truckId,
+      assignedTruckId: formValue.assignedTruckId!,
       customerId: formValue.customer?.id,
       status: formValue.status,
     };
@@ -108,13 +108,7 @@ export class EditLoadComponent implements OnInit {
         status: load.status,
         assignedDispatcherId: load.assignedDispatcherId,
         assignedDispatcherName: load.assignedDispatcherName,
-        assignedTruck: {
-          truckId: load.assignedTruckId!,
-          driversName: this.formatDriversName(
-            load.assignedTruckNumber!,
-            load.assignedTruckDriversName!
-          ),
-        },
+        assignedTruckId: load.assignedTruckId,
       });
 
       this.loadNumber.set(load.number);

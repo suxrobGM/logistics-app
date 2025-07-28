@@ -25,7 +25,6 @@ import {
   RouteChangedEvent,
   SearchCustomerComponent,
   SearchTruckComponent,
-  SearchTruckData,
   SelectedAddressEvent,
   ValidationSummary,
 } from "@/shared/components";
@@ -45,7 +44,7 @@ export interface LoadFormValue {
   deliveryCost: number;
   distance: number; // miles, read-only for users
   status?: LoadStatus; // only present in edit-mode
-  assignedTruck: SearchTruckData | null;
+  assignedTruckId: string;
   assignedDispatcherId: string;
   assignedDispatcherName: string;
 }
@@ -115,8 +114,9 @@ export class LoadFormComponent implements OnInit {
     distance: new FormControl({value: 0, disabled: true}, {nonNullable: true}),
     // only visible/patched when mode === 'edit'
     status: new FormControl<LoadStatus | null>(null),
-    assignedTruck: new FormControl<SearchTruckData | null>(null, {
+    assignedTruckId: new FormControl("", {
       validators: [Validators.required],
+      nonNullable: true,
     }),
     assignedDispatcherId: new FormControl("", {
       validators: [Validators.required],

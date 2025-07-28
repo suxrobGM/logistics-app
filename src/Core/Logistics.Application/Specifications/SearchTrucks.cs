@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using Logistics.Domain.Entities;
+﻿using Logistics.Domain.Entities;
 using Logistics.Domain.Specifications;
 
 namespace Logistics.Application.Specifications;
@@ -14,19 +13,15 @@ public sealed class SearchTrucks : BaseSpecification<Truck>
     {
         if (!string.IsNullOrEmpty(search))
         {
-            Criteria = i => i.Number.Contains(search);
+            Criteria = i => i.Number.Contains(search) ||
+                            i.MainDriver != null && (i.MainDriver.FirstName.Contains(search) ||
+                                                     i.MainDriver.LastName.Contains(search)) ||
+                            (i.SecondaryDriver != null &&
+                             (i.SecondaryDriver.FirstName.Contains(search) ||
+                              i.SecondaryDriver.LastName.Contains(search)));
         }
         
         OrderBy(orderBy);
         ApplyPaging(page, pageSize);
     }
-    
-    // protected override Expression<Func<Truck, object?>> CreateOrderByExpression(string propertyName)
-    // {
-    //     return propertyName switch
-    //     {
-    //         // "driverincomepercentage" => i => i.DriverIncomePercentage,
-    //         _ => i => i.TruckNumber
-    //     };
-    // }
 }

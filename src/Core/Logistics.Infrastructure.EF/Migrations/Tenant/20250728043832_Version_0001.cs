@@ -25,6 +25,26 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 });
 
             migrationBuilder.CreateTable(
+                name: "Employees",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    FirstName = table.Column<string>(type: "text", nullable: false),
+                    LastName = table.Column<string>(type: "text", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    SalaryType = table.Column<int>(type: "integer", nullable: false),
+                    JoinedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DeviceToken = table.Column<string>(type: "text", nullable: true),
+                    Salary_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    Salary_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Employees", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Notifications",
                 columns: table => new
                 {
@@ -101,6 +121,8 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                     Status = table.Column<int>(type: "integer", nullable: false),
                     CurrentLocationLong = table.Column<double>(type: "double precision", nullable: true),
                     CurrentLocationLat = table.Column<double>(type: "double precision", nullable: true),
+                    MainDriverId = table.Column<Guid>(type: "uuid", nullable: true),
+                    SecondaryDriverId = table.Column<Guid>(type: "uuid", nullable: true),
                     CurrentLocation_City = table.Column<string>(type: "text", nullable: false),
                     CurrentLocation_Country = table.Column<string>(type: "text", nullable: false),
                     CurrentLocation_Line1 = table.Column<string>(type: "text", nullable: false),
@@ -111,6 +133,42 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Trucks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Trucks_Employees_MainDriverId",
+                        column: x => x.MainDriverId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Trucks_Employees_SecondaryDriverId",
+                        column: x => x.SecondaryDriverId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmployeeRoles",
+                columns: table => new
+                {
+                    EmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeeRoles", x => new { x.EmployeeId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_EmployeeRoles_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EmployeeRoles_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -131,33 +189,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Employees",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    FirstName = table.Column<string>(type: "text", nullable: false),
-                    LastName = table.Column<string>(type: "text", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
-                    SalaryType = table.Column<int>(type: "integer", nullable: false),
-                    JoinedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DeviceToken = table.Column<string>(type: "text", nullable: true),
-                    TruckId = table.Column<Guid>(type: "uuid", nullable: true),
-                    Salary_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    Salary_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Employees", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Employees_Trucks_TruckId",
-                        column: x => x.TruckId,
-                        principalTable: "Trucks",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -182,30 +213,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                         name: "FK_Trips_Trucks_TruckId",
                         column: x => x.TruckId,
                         principalTable: "Trucks",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EmployeeRoles",
-                columns: table => new
-                {
-                    EmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RoleId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EmployeeRoles", x => new { x.EmployeeId, x.RoleId });
-                    table.ForeignKey(
-                        name: "FK_EmployeeRoles_Employees_EmployeeId",
-                        column: x => x.EmployeeId,
-                        principalTable: "Employees",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_EmployeeRoles_Roles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -394,11 +401,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Employees_TruckId",
-                table: "Employees",
-                column: "TruckId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Invoices_CustomerId",
                 table: "Invoices",
                 column: "CustomerId");
@@ -477,6 +479,22 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "IX_TripStops_TripId",
                 table: "TripStops",
                 column: "TripId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Trucks_MainDriverId",
+                table: "Trucks",
+                column: "MainDriverId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Trucks_Number",
+                table: "Trucks",
+                column: "Number",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Trucks_SecondaryDriverId",
+                table: "Trucks",
+                column: "SecondaryDriverId");
         }
 
         /// <inheritdoc />
@@ -510,9 +528,6 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
                 name: "Customers");
 
             migrationBuilder.DropTable(
-                name: "Employees");
-
-            migrationBuilder.DropTable(
                 name: "TripStops");
 
             migrationBuilder.DropTable(
@@ -520,6 +535,9 @@ namespace Logistics.Infrastructure.EF.Migrations.Tenant
 
             migrationBuilder.DropTable(
                 name: "Trucks");
+
+            migrationBuilder.DropTable(
+                name: "Employees");
         }
     }
 }

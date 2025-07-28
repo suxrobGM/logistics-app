@@ -31,7 +31,7 @@ internal sealed class GetLoadsHandler : RequestHandler<GetLoadsQuery, PagedResul
         if (req.UserId.HasValue)
         {
             baseQuery = baseQuery.Where(i => i.AssignedTruck != null &&
-                                             i.AssignedTruck.Drivers.Select(emp => emp.Id).Contains(req.UserId.Value));
+                (i.AssignedTruck.MainDriverId == req.UserId || i.AssignedTruck.SecondaryDriverId == req.UserId));
         }
         if (req.TruckId.HasValue)
         {

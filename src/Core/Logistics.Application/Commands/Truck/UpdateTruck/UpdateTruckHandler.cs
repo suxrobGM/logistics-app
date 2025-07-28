@@ -1,5 +1,4 @@
-﻿using Logistics.Application.Specifications;
-using Logistics.Application.Utilities;
+﻿using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -19,36 +18,76 @@ internal sealed class UpdateTruckHandler : RequestHandler<UpdateTruckCommand, Re
         UpdateTruckCommand req, CancellationToken cancellationToken)
     {
         var truckRepository = _tenantUow.Repository<Truck>();
-        var truckEntity = await truckRepository.GetByIdAsync(req.Id);
+        var truck = await truckRepository.GetByIdAsync(req.Id);
 
-        if (truckEntity is null)
+        if (truck is null)
         {
-            return Result.Fail("Could not find the specified truck");
+            return Result.Fail($"Could not find a truck with ID {req.Id}");
         }
         
-        var truckWithThisNumber = await truckRepository.GetAsync(i => i.Number == req.TruckNumber && 
-                                                                             i.Id != truckEntity.Id);
-        if (truckWithThisNumber is not null)
+        var numberTaken  = truckRepository.Query().Any(i => i.Number == req.TruckNumber && 
+                                                               i.Id != truck.Id);
+        if (numberTaken)
         {
-            return Result.Fail("Already exists truck with this number");
+            return Result.Fail($"Already exists truck with number {req.TruckNumber}");
         }
         
-        if (req.DriverIds != null)
+        // Update drivers
+        if (await SetDriverAsync(truck, req.MainDriverId,true) is { } fail1)
         {
-            var drivers = _tenantUow.Repository<Employee>()
-                .ApplySpecification(new GetEmployeesById(req.DriverIds))
-                .ToList();
-            
-            if (drivers.Count != 0)
-                truckEntity.Drivers = drivers;
+            return fail1;
+        }
+        if (await SetDriverAsync(truck, req.SecondaryDriverId,false) is { } fail2)
+        {
+            return fail2;
         }
 
-        truckEntity.Number = PropertyUpdater.UpdateIfChanged(req.TruckNumber, truckEntity.Number);
-        truckEntity.Type = PropertyUpdater.UpdateIfChanged(req.TruckType, truckEntity.Type);
-        truckEntity.Status = PropertyUpdater.UpdateIfChanged(req.TruckStatus, truckEntity.Status);
+        truck.Number = PropertyUpdater.UpdateIfChanged(req.TruckNumber, truck.Number);
+        truck.Type = PropertyUpdater.UpdateIfChanged(req.TruckType, truck.Type);
+        truck.Status = PropertyUpdater.UpdateIfChanged(req.TruckStatus, truck.Status);
         
-        truckRepository.Update(truckEntity);
         await _tenantUow.SaveChangesAsync();
         return Result.Succeed();
+    }
+    
+    /// <summary>
+    /// Assigns (or clears) a driver and returns a failure <see cref="Result"/>
+    /// if the supplied ID doesn’t exist.  Returns <c>null</c> on success.
+    /// </summary>
+    private async Task<Result?> SetDriverAsync(Truck truck, Guid? newDriverId, bool isMain)
+    {
+        var currentId = isMain ? truck.MainDriverId : truck.SecondaryDriverId;
+        if (newDriverId == currentId) // nothing to change
+        {
+            return null;
+        }        
+        
+        if (newDriverId is null)
+        {
+            if (isMain)
+            {
+                truck.MainDriver = null;
+            }
+            else
+            {
+                truck.SecondaryDriver = null;
+            }
+            return null;
+        }
+
+        var driver = await _tenantUow.Repository<Employee>().GetByIdAsync(newDriverId.Value);
+        if (driver is null)
+            return Result.Fail($"Could not find a driver with ID {newDriverId}");
+
+        if (isMain)
+        {
+            truck.MainDriver = driver;
+        }
+        else
+        {
+            truck.SecondaryDriver = driver;
+        }
+
+        return null;
     }
 }

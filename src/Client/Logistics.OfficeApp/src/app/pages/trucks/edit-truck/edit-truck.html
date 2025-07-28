@@ -4,43 +4,68 @@
 <h1 class="text-center">{{ title() }}</h1>
 <hr class="w-full" />
 
-<div class="row justify-content-center">
-  <div class="col-md-6 col-12">
+<div class="flex flex-col justify-center gap-6 md:flex-row">
+  <div class="w-full md:w-1/2">
     <p-card>
       @if (isLoading()) {
         <p-progress-spinner />
       }
       <form [formGroup]="form" (ngSubmit)="submit()">
-        <div class="mb-3">
-          <label for="truckNumber" class="form-label">Truck Number</label>
-          <input formControlName="truckNumber" id="truckNumber" class="form-control" />
-        </div>
-        <!-- <div class="mb-3">
-          <label for="driverIncomePercentage" class="form-label">Driver Income Percentage</label>
+        <app-form-field label="Truck Number" for="truckNumber" [required]="true">
+          <input pInputText formControlName="truckNumber" id="truckNumber" />
+        </app-form-field>
+        <app-form-field label="Truck Type" for="truckType" [required]="true">
+          <p-select
+            formControlName="truckType"
+            [options]="truckTypes"
+            placeholder="Select a truck type"
+          />
+        </app-form-field>
+        <app-form-field label="Truck Status" for="truckStatus" [required]="true">
+          <p-select
+            formControlName="truckStatus"
+            [options]="truckStatuses"
+            placeholder="Select a truck status"
+          />
+        </app-form-field>
+
+        <!-- <app-form-field for="driverIncomePercentage" label="Driver Income Percentage">
           <div class="input-group">
             <span class="input-group-text">%</span>
             <input formControlName="driverIncomePercentage" id="driverIncomePercentage" class="form-control" type="number" min="0" max="100" />
           </div>
-        </div> -->
-        <div class="mb-3">
-          <label for="drivers" class="form-label">Drivers</label>
+        </app-form-field> -->
+
+        <app-form-field label="Main Driver" for="mainDriver" [required]="true">
           <p-auto-complete
-            formControlName="drivers"
+            formControlName="mainDriver"
             styleClass="w-full"
             inputStyleClass="form-control"
             placeholder="Type a driver name"
             optionLabel="fullName"
             [minLength]="2"
-            [multiple]="true"
             [suggestions]="suggestedDrivers()"
             (completeMethod)="searchDriver($event)"
           />
-        </div>
+        </app-form-field>
+
+        <app-form-field label="Secondary Driver" for="secondaryDriver">
+          <p-auto-complete
+            formControlName="secondaryDriver"
+            styleClass="w-full"
+            inputStyleClass="form-control"
+            placeholder="Type a driver name"
+            optionLabel="fullName"
+            [minLength]="2"
+            [suggestions]="suggestedDrivers()"
+            (completeMethod)="searchDriver($event)"
+          />
+        </app-form-field>
 
         <div class="flex gap-2">
           <p-button
             type="submit"
-            icon="pi pi-pen-to-square-square"
+            icon="pi pi-pen-to-square"
             label="Save"
             [disabled]="isLoading()"
           />

@@ -10,5 +10,6 @@ public class UpdateTruckCommand : IRequest<Result>
     public string? TruckNumber { get; set; }
     public TruckType? TruckType { get; set; }
     public TruckStatus? TruckStatus { get; set; }
-    public Guid[]? DriverIds { get; set; }
+    public Guid? MainDriverId { get; set; }
+    public Guid? SecondaryDriverId { get; set; }
 }

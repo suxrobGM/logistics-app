@@ -6,11 +6,22 @@ import {AutoCompleteModule} from "primeng/autocomplete";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {InputTextModule} from "primeng/inputtext";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {SelectModule} from "primeng/select";
 import {ToastModule} from "primeng/toast";
 import {ApiService} from "@/core/api";
-import {CreateTruckCommand, EmployeeDto, UpdateTruckCommand} from "@/core/api/models";
+import {
+  CreateTruckCommand,
+  EmployeeDto,
+  TruckStatus,
+  TruckType,
+  UpdateTruckCommand,
+  truckStatusOptions,
+  truckTypeOptions,
+} from "@/core/api/models";
 import {ToastService} from "@/core/services";
+import {FormField} from "@/shared/components";
 
 @Component({
   selector: "app-edit-truck",
@@ -25,27 +36,41 @@ import {ToastService} from "@/core/services";
     AutoCompleteModule,
     ButtonModule,
     RouterLink,
+    FormField,
+    InputTextModule,
+    SelectModule,
   ],
 })
 export class EditTruckComponent implements OnInit {
+  protected readonly truckTypes = truckTypeOptions;
+  protected readonly truckStatuses = truckStatusOptions;
+
   private readonly apiService = inject(ApiService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
-
-  protected readonly form: FormGroup;
 
   protected readonly id = input<string | null>(null);
   protected readonly isLoading = signal(false);
   protected readonly suggestedDrivers = signal<EmployeeDto[]>([]);
   protected readonly title = computed(() => (this.id() ? "Edit a truck" : "Add a new truck"));
 
-  constructor() {
-    this.form = new FormGroup({
-      truckNumber: new FormControl(0, Validators.required),
-      drivers: new FormControl([], Validators.required),
-    });
-  }
+  protected readonly form = new FormGroup({
+    truckNumber: new FormControl<string>("", {
+      validators: [Validators.required],
+      nonNullable: true,
+    }),
+    truckType: new FormControl<TruckType>(TruckType.FreightTruck, {
+      validators: [Validators.required],
+      nonNullable: true,
+    }),
+    truckStatus: new FormControl<TruckStatus>(TruckStatus.Available, {
+      validators: [Validators.required],
+      nonNullable: true,
+    }),
+    mainDriver: new FormControl<EmployeeDto | null>(null),
+    secondaryDriver: new FormControl<EmployeeDto | null>(null),
+  });
 
   ngOnInit(): void {
     const id = this.id();
@@ -64,13 +89,6 @@ export class EditTruckComponent implements OnInit {
   }
 
   protected submit(): void {
-    const drivers = this.form.value.drivers as EmployeeDto[];
-
-    if (drivers.length === 0) {
-      this.toastService.showError("Select a driver");
-      return;
-    }
-
     if (this.id()) {
       this.updateTruck();
     } else {
@@ -86,14 +104,16 @@ export class EditTruckComponent implements OnInit {
   }
 
   private fetchTruck(id: string): void {
-    this.apiService.getTruck(id).subscribe((result) => {
+    this.apiService.truckApi.getTruck(id).subscribe((result) => {
       if (result.success && result.data) {
         const truck = result.data;
-        console.log("Fetched Truck:", truck);
 
         this.form.patchValue({
           truckNumber: truck.number,
-          drivers: truck.drivers,
+          truckStatus: truck.status,
+          truckType: truck.type,
+          mainDriver: truck.mainDriver,
+          secondaryDriver: truck.secondaryDriver,
         });
       }
     });
@@ -101,15 +121,16 @@ export class EditTruckComponent implements OnInit {
 
   private createTruck(): void {
     this.isLoading.set(true);
-    const drivers = this.form.value.drivers as EmployeeDto[];
 
     const command: CreateTruckCommand = {
-      truckNumber: this.form.value.truckNumber,
-      truckType: this.form.value.truckType,
-      driverIds: drivers.map((i) => i.id),
+      truckNumber: this.form.value.truckNumber!,
+      truckType: this.form.value.truckType!,
+      truckStatus: this.form.value.truckStatus!,
+      mainDriverId: this.form.value.mainDriver?.id,
+      secondaryDriverId: this.form.value.secondaryDriver?.id,
     };
 
-    this.apiService.createTruck(command).subscribe((result) => {
+    this.apiService.truckApi.createTruck(command).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess("A new truck has been created successfully");
         this.router.navigateByUrl("/trucks");
@@ -121,16 +142,17 @@ export class EditTruckComponent implements OnInit {
 
   private updateTruck(): void {
     this.isLoading.set(true);
-    const drivers = this.form.value.drivers as EmployeeDto[];
 
     const updateTruckCommand: UpdateTruckCommand = {
       id: this.id()!,
       truckNumber: this.form.value.truckNumber,
       truckType: this.form.value.truckType,
-      driverIds: drivers.map((i) => i.id),
+      truckStatus: this.form.value.truckStatus,
+      mainDriverId: this.form.value.mainDriver?.id,
+      secondaryDriverId: this.form.value.secondaryDriver?.id,
     };
 
-    this.apiService.updateTruck(updateTruckCommand).subscribe((result) => {
+    this.apiService.truckApi.updateTruck(updateTruckCommand).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess("Truck has been updated successfully");
       }
@@ -145,7 +167,7 @@ export class EditTruckComponent implements OnInit {
     }
 
     this.isLoading.set(true);
-    this.apiService.deleteTruck(this.id()!).subscribe((result) => {
+    this.apiService.truckApi.deleteTruck(this.id()!).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess("A truck has been deleted successfully");
         this.router.navigateByUrl("/trucks");

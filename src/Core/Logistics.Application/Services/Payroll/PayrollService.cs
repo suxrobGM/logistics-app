@@ -112,34 +112,34 @@ internal class PayrollService : IPayrollService
         return payroll != null;
     }
 
-    private static decimal CalculateSalary(Employee employee, DateTime startDate, DateTime endDate)
+    private decimal CalculateSalary(Employee employee, DateTime startDate, DateTime endDate)
     {
-        if (employee is { SalaryType: SalaryType.ShareOfGross, Truck: not null })
+        // Share-of-gross: sum every load that was delivered in the period
+        // by ANY truck where this employee was the main OR secondary driver.
+        if (employee.SalaryType == SalaryType.ShareOfGross)
         {
-            var totalDeliveredLoadsGross = employee.Truck.Loads
-                .Where(i => i.DeliveryDate.HasValue && 
-                            i.DeliveryDate.Value >= startDate && 
-                            i.DeliveryDate.Value <= endDate)
-                .Sum(i => i.DeliveryCost);
+            var totalGross = _tenantUow.Repository<Truck>()
+                .Query()
+                .Where(t => t.MainDriverId == employee.Id ||
+                            t.SecondaryDriverId == employee.Id)
+                .SelectMany(t => t.Loads.Where(l =>
+                    l.DeliveryDate.HasValue &&
+                    l.DeliveryDate.Value >= startDate &&
+                    l.DeliveryDate.Value <= endDate))
+                .Sum(l => l.DeliveryCost.Amount);
 
-            return totalDeliveredLoadsGross * employee.Salary;
-        }
-        
-        // Calculate salary for employees paid weekly.
-        if (employee.SalaryType is SalaryType.Weekly)
-        {
-            var numberOfWeeks = CountWeeks(startDate, endDate);
-            return numberOfWeeks * employee.Salary;
-        }
-
-        // Calculate salary for employees paid monthly.
-        if (employee.SalaryType is SalaryType.Monthly)
-        {
-            var numberOfMonths = CountMonths(startDate, endDate);
-            return numberOfMonths * employee.Salary;
+            return totalGross * employee.Salary;  // Salary holds the share ratio (0-1)
         }
 
-        // Default return for other salary types (e.g., a fixed salary not dependent on date range).
+        // Weekly
+        if (employee.SalaryType == SalaryType.Weekly)
+            return CountWeeks(startDate, endDate) * employee.Salary;
+
+        // Monthly
+        if (employee.SalaryType == SalaryType.Monthly)
+            return CountMonths(startDate, endDate) * employee.Salary;
+
+        // Fallback – fixed amount
         return employee.Salary;
     }
     

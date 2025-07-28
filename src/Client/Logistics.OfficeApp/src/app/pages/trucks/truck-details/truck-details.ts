@@ -60,7 +60,7 @@ export class TruckDetailsComponent implements OnInit {
 
     this.isLoading.set(true);
 
-    this.apiService.getTruck(id).subscribe((result) => {
+    this.apiService.truckApi.getTruck(id).subscribe((result) => {
       if (result.success && result.data) {
         const truck = result.data;
         this.truck.set(truck);
@@ -71,7 +71,9 @@ export class TruckDetailsComponent implements OnInit {
             longitude: truck.currentLocationLong,
             truckId: truck.id,
             truckNumber: truck.number,
-            driversName: truck.drivers.map((driver) => driver.fullName).join(", "),
+            driversName: [truck.mainDriver?.fullName, truck.secondaryDriver?.fullName]
+              .filter(Boolean)
+              .join(", "),
           },
         ]);
       }

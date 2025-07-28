@@ -8,6 +8,6 @@ internal sealed class CreateTruckValidator : AbstractValidator<CreateTruckComman
     {
         RuleFor(i => i.TruckNumber).NotEmpty();
         RuleFor(i => i.TruckType).NotEmpty().IsInEnum();
-        RuleFor(i => i.DriversIds).NotEmpty();
+        RuleFor(i => i.MainDriverId).NotEmpty();
     }
 }

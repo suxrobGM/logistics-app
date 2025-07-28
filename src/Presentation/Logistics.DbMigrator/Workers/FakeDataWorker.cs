@@ -241,16 +241,8 @@ internal class FakeDataWorker : IHostedService
 
         foreach (var driver in drivers)
         {
-            var truck = driver.Truck;
-            
-            if (truck != null)
-            {
-                trucksList.Add(truck);
-                continue;
-            }
-
             var truckType = _random.Pick([TruckType.CarHauler, TruckType.FreightTruck]);
-            truck = Truck.Create(truckNumber.ToString(), truckType, driver);
+            var truck = Truck.Create(truckNumber.ToString(), truckType, driver);
             truckNumber++;
             trucksList.Add(truck);
             await truckRepository.AddAsync(truck);

@@ -34,7 +34,7 @@ export class AddLoadComponent {
       deliveryCost: formValue.deliveryCost!,
       distance: formValue.distance,
       assignedDispatcherId: formValue.assignedDispatcherId!,
-      assignedTruckId: formValue.assignedTruck!.truckId,
+      assignedTruckId: formValue.assignedTruckId!,
       customerId: formValue.customer!.id,
     };
 

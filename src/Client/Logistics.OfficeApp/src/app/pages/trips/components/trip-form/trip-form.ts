@@ -6,7 +6,6 @@ import {InputGroupModule} from "primeng/inputgroup";
 import {InputGroupAddon} from "primeng/inputgroupaddon";
 import {InputNumber} from "primeng/inputnumber";
 import {ProgressSpinner} from "primeng/progressspinner";
-import {TruckDto} from "@/core/api/models";
 import {
   DirectionMap,
   FormField,
@@ -17,7 +16,7 @@ import {
 export interface TripFormValue {
   name: string;
   plannedDate?: Date;
-  truck: TruckDto;
+  truckId: string;
   loads: string[];
 }
 
@@ -49,7 +48,7 @@ export class TripForm {
   protected readonly form = new FormGroup({
     name: new FormControl<string>("", {validators: [Validators.required], nonNullable: true}),
     plannedDate: new FormControl<Date | null>(null),
-    truck: new FormControl<TruckDto | null>(null, {
+    truckId: new FormControl<string | null>(null, {
       validators: [Validators.required],
       nonNullable: true,
     }),

@@ -10,8 +10,6 @@ public class EmployeeDto
     public string? Email { get; set; }
     public string? PhoneNumber { get; set; }
     public string? FullName { get; set; }
-    public string? TruckNumber { get; set; }
-    public Guid? TruckId { get; set; }
     public string? LastKnownLocation { get; set; }
     public double? LastKnownLocationLat { get; set; }
     public double? LastKnownLocationLng { get; set; }
