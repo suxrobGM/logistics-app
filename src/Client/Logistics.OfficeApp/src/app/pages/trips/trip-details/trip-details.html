@@ -20,6 +20,7 @@
           <p><b>Planned&nbsp;start:</b> {{ tripDetails.plannedStart | date: "medium" }}</p>
           <p><b>Actual&nbsp;start:</b> {{ tripDetails.actualStart | date: "medium" }}</p>
           <p><b>Completed&nbsp;at:</b> {{ tripDetails.completedAt | date: "medium" }}</p>
+          <p><b>Status:</b> {{ tripDetails.status }}</p>
           <p><b>Truck:</b> {{ tripDetails.truckNumber }}</p>
           <p><b>Total&nbsp;distance:</b> {{ tripDetails.totalDistance | distanceUnit: "mi" }} mi</p>
           <p><b>Loads:</b> {{ tripDetails.loads.length }}</p>

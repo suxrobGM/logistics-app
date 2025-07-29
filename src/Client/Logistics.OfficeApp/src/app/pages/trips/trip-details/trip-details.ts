@@ -7,7 +7,7 @@ import {SkeletonModule} from "primeng/skeleton";
 import {TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {ApiService} from "@/core/api";
-import {TripDto, TripStatus, TripStopType} from "@/core/api/models";
+import {TripDto, TripStopType} from "@/core/api/models";
 import {DirectionMap, LoadStatusTag} from "@/shared/components";
 import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
 
@@ -51,21 +51,6 @@ export class TripDetailsPage implements OnInit {
         ?.stops.sort((a, b) => a.order - b.order)
         .map((s) => [s.addressLong, s.addressLat]) || []
     );
-  }
-
-  protected statusSeverity(): string | null {
-    switch (this.trip()?.status) {
-      case TripStatus.Completed:
-        return "success";
-      case TripStatus.InTransit:
-        return "info";
-      case TripStatus.Planned:
-        return "warning";
-      case TripStatus.Cancelled:
-        return "danger";
-      default:
-        return null;
-    }
   }
 
   protected stopLabel(tripStopType: TripStopType): string {
