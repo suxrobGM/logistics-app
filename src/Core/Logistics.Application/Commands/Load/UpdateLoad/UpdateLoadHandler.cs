@@ -114,7 +114,7 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resu
         }
     }
 
-    private bool UpdateLoadDetails(UpdateLoadCommand req, Load load)
+    private static bool UpdateLoadDetails(UpdateLoadCommand req, Load load)
     {
         var updated = false;
 

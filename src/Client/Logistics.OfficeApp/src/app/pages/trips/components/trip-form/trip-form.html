@@ -14,20 +14,6 @@
       <p-date-picker formControlName="plannedStart" [showIcon]="true" />
     </app-form-field>
 
-    <!-- <app-form-field label="Trip Cost" for="tripCost" [required]="true">
-        <p-inputgroup>
-          <p-inputgroup-addon>$$</p-inputgroup-addon>
-          <p-input-number id="deliveryCost" formControlName="deliveryCost" [min]="0" />
-        </p-inputgroup>
-      </app-form-field>
-
-      <app-form-field label="Estimated Distance" for="distance">
-        <p-inputgroup>
-          <p-inputgroup-addon>mi</p-inputgroup-addon>
-          <p-input-number id="distance" formControlName="distance" [min]="0" />
-        </p-inputgroup>
-      </app-form-field> -->
-
     <app-form-field label="Assigned Truck" for="truckId" [required]="true">
       <app-search-truck formControlName="truckId" />
     </app-form-field>
@@ -68,8 +54,16 @@
   <app-direction-map [stops]="stopCoords()" />
 
   <div class="col-span-full">
-    <h5 class="mb-3 font-semibold">Loads</h5>
-    <p-table [value]="loads()" [dataKey]="'id'" responsiveLayout="scroll">
+    <h5 class="mb-3 font-semibold">Assigned Loads</h5>
+    <p-table [value]="loads()" [dataKey]="'id'" responsiveLayout="scroll" [loading]="isLoading()">
+      <ng-template #caption>
+        <p-button
+          icon="pi pi-plus"
+          label="Add Load"
+          [routerLink]="'/loads/add'"
+          variant="outlined"
+        />
+      </ng-template>
       <ng-template #header>
         <tr>
           <th pSortableColumn="number">Load Number <p-sortIcon field="number" /></th>
@@ -84,6 +78,7 @@
           <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
           <th pSortableColumn="distance">Distance (mi) <p-sortIcon field="distance" /></th>
           <th pSortableColumn="deliveryCost">Delivery Cost <p-sortIcon field="deliveryCost" /></th>
+          <th>Actions</th>
         </tr>
       </ng-template>
       <ng-template #body let-load>
@@ -96,6 +91,32 @@
           <td><app-load-status-tag [status]="load.status" /></td>
           <td>{{ load.distance | distanceUnit: "mi" }}</td>
           <td>{{ load.deliveryCost | currency }}</td>
+          <td>
+            <div class="flex gap-2">
+              <p-button
+                icon="pi pi-pencil"
+                [routerLink]="['/loads', load.id, 'edit']"
+                variant="outlined"
+              />
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                (click)="askRemoveLoad(load.id)"
+                variant="outlined"
+              />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template #footer>
+        <tr>
+          <td colspan="6" class="font-bold">Totals</td>
+          <td>
+            {{ totalDistance() | distanceUnit: "mi" }}
+          </td>
+          <td>
+            {{ totalCost() | currency }}
+          </td>
         </tr>
       </ng-template>
     </p-table>

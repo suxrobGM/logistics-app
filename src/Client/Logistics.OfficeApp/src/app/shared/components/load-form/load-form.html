@@ -15,6 +15,18 @@
         <p-select formControlName="loadType" [options]="loadTypes" />
       </app-form-field>
 
+      @if (initial()?.tripNumber && initial()?.tripId) {
+        <app-form-field label="Trip" for="tripNumber">
+          <input
+            pInputText
+            id="tripNumber"
+            formControlName="tripNumber"
+            type="text"
+            placeholder="Trip"
+          />
+        </app-form-field>
+      }
+
       <app-form-field label="Customer" for="customer" [required]="true">
         <app-search-customer formControlName="customer" />
       </app-form-field>

@@ -16,10 +16,13 @@ export class LoadDialog {
 
   public readonly visible = model(false);
   public readonly assignedTruckId = input<string>();
+  public readonly tripId = input<string>();
+
   protected readonly isLoading = signal(false);
-  protected readonly initialLoad = computed(() =>
-    this.assignedTruckId() ? {assignedTruckId: this.assignedTruckId()} : null
-  );
+  protected readonly initialLoad = computed(() => ({
+    assignedTruckId: this.assignedTruckId(),
+    tripId: this.tripId(),
+  }));
 
   protected create(formValue: LoadFormValue): void {
     this.isLoading.set(true);

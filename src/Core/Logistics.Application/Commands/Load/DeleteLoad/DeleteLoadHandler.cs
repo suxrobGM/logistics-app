@@ -23,14 +23,13 @@ internal sealed class DeleteLoadHandler : RequestHandler<DeleteLoadCommand, Resu
         DeleteLoadCommand req, CancellationToken cancellationToken)
     {
         var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.Id);
-        var truck = load?.AssignedTruck;
         
         _tenantUow.Repository<Load>().Delete(load);
         var changes = await _tenantUow.SaveChangesAsync();
         
         if (load is not null && changes > 0)
         {
-            await _pushNotificationService.SendRemovedLoadNotificationAsync(load, truck);
+            await _pushNotificationService.SendRemovedLoadNotificationAsync(load);
         }
         
         return Result.Succeed();

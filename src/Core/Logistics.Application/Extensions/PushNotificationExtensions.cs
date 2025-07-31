@@ -6,13 +6,13 @@ namespace Logistics.Application.Extensions;
 
 internal static class PushNotificationExtensions
 {
-    public static Task SendNewLoadNotificationAsync(this IPushNotificationService pushNotificationService, Load load, Truck truck)
+    public static Task SendNewLoadNotificationAsync(this IPushNotificationService pushNotificationService, Load load, Truck? truck = null)
     {
         return pushNotificationService.SendToDriversAsync(
-            truck.GetActiveDrivers(),
             "Received a load",
             $"A new load #{load.Number} has been assigned to you",
-            load);
+            load,
+            truck);
     }
     
     public static Task SendConfirmLoadStatusNotificationAsync(this IPushNotificationService pushNotificationService, Load load, LoadStatus loadStatus)
@@ -29,33 +29,27 @@ internal static class PushNotificationExtensions
         };
 
         return pushNotificationService.SendToDriversAsync(
-            truck.GetActiveDrivers(),
             "Confirm load status",
             $"You can confirm the {statusText} date of load #{load.Number}",
             load);
     }
     
-    public static Task SendUpdatedLoadNotificationAsync(this IPushNotificationService pushNotificationService, Load load, Truck truck)
+    public static Task SendUpdatedLoadNotificationAsync(this IPushNotificationService pushNotificationService, Load load, Truck? truck = null)
     {
         return pushNotificationService.SendToDriversAsync(
-            truck.GetActiveDrivers(),
             "Load update",
             $"Load #{load.Number} details have been updated. Check details.",
-            load);
+            load,
+            truck);
     }
     
-    public static Task SendRemovedLoadNotificationAsync(this IPushNotificationService pushNotificationService, Load load, Truck? truck)
+    public static Task SendRemovedLoadNotificationAsync(this IPushNotificationService pushNotificationService, Load load, Truck? truck = null)
     {
-        if (truck is null)
-        {
-            return Task.CompletedTask;
-        }
-
         return pushNotificationService.SendToDriversAsync(
-            truck.GetActiveDrivers(),
             "Load update",
             $"Load #{load.Number} has been removed from you",
-            load);
+            load,
+            truck);
     }
 
     #region Helpers
@@ -77,14 +71,20 @@ internal static class PushNotificationExtensions
     /// </summary>
     private static async Task SendToDriversAsync(
         this IPushNotificationService svc,
-        IEnumerable<Employee> drivers,
         string title,
         string body,
-        Load load)
+        Load load,
+        Truck? truck = null)
     {
+        var assignedTruck = truck ?? load.AssignedTruck;
+        if (assignedTruck is null)
+        {
+            return;
+        }
+        
         var data = new Dictionary<string, string> { ["loadId"] = load.Id.ToString() };
 
-        foreach (var driver in drivers)
+        foreach (var driver in assignedTruck.GetActiveDrivers())
         {
             await svc.SendNotificationAsync(title, body, driver.DeviceToken!, data);
         }

@@ -3,7 +3,6 @@ using FluentValidation;
 using Logistics.Application.Behaviours;
 using Logistics.Application.Hubs;
 using Logistics.Application.Services;
-using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -72,6 +71,7 @@ public static class Registrar
         services.AddSingleton<LiveTrackingHubContext>();
         services.AddScoped<IPayrollService, PayrollService>();
         services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<ILoadService, LoadService>();
         return services;
     }
 }

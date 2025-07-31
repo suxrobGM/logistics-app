@@ -43,10 +43,12 @@ export interface LoadFormValue {
   dstCoords: [number, number];
   deliveryCost: number;
   distance: number; // miles, read-only for users
-  status?: LoadStatus; // only present in edit-mode
+  status?: LoadStatus | null; // only present in edit-mode
   assignedTruckId: string;
   assignedDispatcherId: string;
   assignedDispatcherName: string;
+  tripId?: string | null;
+  tripNumber?: number | null;
 }
 
 @Component({
@@ -123,6 +125,8 @@ export class LoadFormComponent implements OnInit {
       nonNullable: true,
     }),
     assignedDispatcherName: new FormControl({value: "", disabled: true}, {nonNullable: true}),
+    tripId: new FormControl<string | null>({value: null, disabled: true}),
+    tripNumber: new FormControl<number | null>({value: null, disabled: true}),
   });
 
   constructor() {
@@ -139,29 +143,29 @@ export class LoadFormComponent implements OnInit {
     }
   }
 
-  updateOrigin(e: SelectedAddressEvent) {
+  protected updateOrigin(e: SelectedAddressEvent) {
     this.originCoords.set(e.center);
     this.form.patchValue({orgCoords: e.center});
   }
 
-  updateDestination(e: SelectedAddressEvent) {
+  protected updateDestination(e: SelectedAddressEvent) {
     this.destinationCoords.set(e.center);
     this.form.patchValue({dstCoords: e.center});
   }
 
-  updateDistance(e: RouteChangedEvent) {
+  protected updateDistance(e: RouteChangedEvent) {
     const miles = Converters.metersTo(e.distance, "mi");
     this.form.patchValue({distance: miles});
   }
 
-  submit(): void {
+  protected submit(): void {
     if (this.form.invalid) {
       return;
     }
     this.save.emit(this.form.getRawValue() as LoadFormValue);
   }
 
-  askRemove(): void {
+  protected askRemove(): void {
     this.remove.emit();
   }
 
