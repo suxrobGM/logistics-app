@@ -5,7 +5,7 @@ builder.Configuration.AddJsonFile("appsettings.local.json", optional: true, relo
 
 var stripeSecret = builder.Configuration["Stripe:SecretKey"];
 
-builder.AddDockerComposeEnvironment("compose");
+//builder.AddDockerComposeEnvironment("compose");
 
 var postgres = builder.AddPostgres("postgres", port: 5433)
     .WithPgAdmin(config =>
@@ -15,7 +15,7 @@ var postgres = builder.AddPostgres("postgres", port: 5433)
 var masterDb = postgres.AddDatabase("master", "master_logistics");
 var tenantDb = postgres.AddDatabase("default-tenant", "default_logistics");
 
-// Runs the migrations for the master and tenant databases
+// Runs the migrations for the "master" and tenant databases
 var migrator = builder.AddProject<Projects.Logistics_DbMigrator>("migrator")
     .WithReference(masterDb, "MasterDatabase")
     .WithReference(tenantDb, "DefaultTenantDatabase")

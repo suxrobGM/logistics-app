@@ -67,13 +67,13 @@
 	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.7" />
 	  <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.7" />
 	  <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.7" />
-	  <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.82" />
-	  <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.82" />
+	  <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.90" />
+	  <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.90" />
 	  <PackageReference Include="Plugin.Fingerprint" Version="2.1.5" />
-	  <PackageReference Include="Syncfusion.Maui.Charts" Version="30.1.39" />
-	  <PackageReference Include="Syncfusion.Maui.DataForm" Version="30.1.39" />
-	  <PackageReference Include="Syncfusion.Maui.DataGrid" Version="30.1.39" />
-	  <PackageReference Include="Syncfusion.Maui.Inputs" Version="30.1.39" />
+	  <PackageReference Include="Syncfusion.Maui.Charts" Version="30.1.42" />
+	  <PackageReference Include="Syncfusion.Maui.DataForm" Version="30.1.42" />
+	  <PackageReference Include="Syncfusion.Maui.DataGrid" Version="30.1.42" />
+	  <PackageReference Include="Syncfusion.Maui.Inputs" Version="30.1.42" />
 	  <PackageReference Include="Plugin.Firebase" Version="3.1.4" />
 	</ItemGroup>
 

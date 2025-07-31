@@ -10,7 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.7" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.7" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.12.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.13.0" />
   </ItemGroup>
 
   <ItemGroup>
