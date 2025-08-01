@@ -6,7 +6,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.Enums.Roles;
+using Logistics.Shared.Identity.Roles;
 using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.DbMigrator.Workers;

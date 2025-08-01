@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Logistics.Domain.Primitives.Enums.Policies;
+namespace Logistics.Shared.Identity.Policies;
 
 public static class Permissions
 {

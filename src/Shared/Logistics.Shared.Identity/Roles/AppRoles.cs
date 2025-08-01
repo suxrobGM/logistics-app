@@ -1,4 +1,4 @@
-﻿namespace Logistics.Domain.Primitives.Enums.Roles;
+﻿namespace Logistics.Shared.Identity.Roles;
 
 public static class AppRoles
 {

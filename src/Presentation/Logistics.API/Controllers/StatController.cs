@@ -1,6 +1,6 @@
 ﻿using Logistics.Application.Queries;
 using Logistics.Shared.Models;
-using Logistics.Domain.Primitives.Enums.Policies;
+using Logistics.Shared.Identity.Policies;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

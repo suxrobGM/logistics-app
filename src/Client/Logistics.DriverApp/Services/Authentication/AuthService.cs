@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using Duende.IdentityModel;
 using Duende.IdentityModel.OidcClient;
-using Logistics.Domain.Primitives.Enums.Claims;
+using Logistics.Shared.Identity.Claims;
 using IBrowser = Duende.IdentityModel.OidcClient.Browser.IBrowser;
 using Result = Duende.IdentityModel.OidcClient.Result;
 

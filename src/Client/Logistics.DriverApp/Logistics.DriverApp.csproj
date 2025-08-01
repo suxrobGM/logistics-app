@@ -78,6 +78,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\Shared\Logistics.Shared.Identity\Logistics.Shared.Identity.csproj" />
 	  <ProjectReference Include="..\Logistics.HttpClient\Logistics.HttpClient.csproj" />
 	</ItemGroup>
 

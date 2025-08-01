@@ -1,4 +1,4 @@
-﻿namespace Logistics.Domain.Primitives.Enums.Claims;
+﻿namespace Logistics.Shared.Identity.Claims;
 
 public static class CustomClaimTypes
 {

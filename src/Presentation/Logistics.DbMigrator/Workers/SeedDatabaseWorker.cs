@@ -3,10 +3,10 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Services;
 using Logistics.Domain.Primitives.ValueObjects;
-using Logistics.Domain.Primitives.Enums.Policies;
-using Logistics.Domain.Primitives.Enums.Roles;
+using Logistics.Shared.Identity.Policies;
+using Logistics.Shared.Identity.Roles;
 using Microsoft.AspNetCore.Identity;
-using CustomClaimTypes = Logistics.Domain.Primitives.Enums.Claims.CustomClaimTypes;
+using CustomClaimTypes = Logistics.Shared.Identity.Claims.CustomClaimTypes;
 
 namespace Logistics.DbMigrator.Workers;
 

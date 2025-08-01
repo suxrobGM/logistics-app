@@ -1,5 +1,5 @@
 ﻿using Logistics.Shared.Models;
-using Logistics.Domain.Primitives.Enums.Policies;
+using Logistics.Shared.Identity.Policies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 

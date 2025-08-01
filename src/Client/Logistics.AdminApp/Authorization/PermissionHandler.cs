@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Primitives.Enums.Claims;
+﻿using Logistics.Shared.Identity.Claims;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Logistics.AdminApp.Authorization;
