@@ -1,6 +1,6 @@
 ﻿using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
-using Logistics.Shared.Consts;
+using Logistics.Domain.Primitives.Enums;
 using MediatR;
 
 namespace Logistics.Application.Commands;

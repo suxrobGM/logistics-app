@@ -1,6 +1,6 @@
 ﻿using Logistics.Domain.Entities;
 using Logistics.Domain.Specifications;
-using Logistics.Shared.Consts;
+using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Specifications;
 

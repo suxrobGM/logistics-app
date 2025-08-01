@@ -1,4 +1,4 @@
-﻿namespace Logistics.Shared.Consts;
+﻿namespace Logistics.Domain.Primitives.Enums;
 
 /// <summary>
 /// US State

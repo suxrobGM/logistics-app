@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Logistics.Application.Constants;
 using Logistics.Shared;
-using Logistics.Shared.Consts;
+using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Commands;
 

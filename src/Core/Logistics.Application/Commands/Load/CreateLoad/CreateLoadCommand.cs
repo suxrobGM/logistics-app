@@ -1,5 +1,5 @@
 ﻿using Logistics.Domain.Primitives.ValueObjects;
-using Logistics.Shared.Consts;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using MediatR;
 

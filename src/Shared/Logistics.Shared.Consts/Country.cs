@@ -1,4 +1,4 @@
-﻿namespace Logistics.Shared.Consts;
+﻿namespace Logistics.Domain.Primitives.Enums;
 
 /// <summary>
 /// Represents a country with its display name and code.

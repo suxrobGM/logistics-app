@@ -1,4 +1,4 @@
-﻿using Logistics.Shared.Consts;
+﻿using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Components;
 

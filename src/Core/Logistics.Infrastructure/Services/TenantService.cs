@@ -4,8 +4,8 @@ using Logistics.Domain.Services;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Infrastructure.Data;
 using Logistics.Infrastructure.Options;
-using Logistics.Shared.Consts;
-using Logistics.Shared.Consts.Claims;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Enums.Claims;
 using Microsoft.AspNetCore.Http;
 
 namespace Logistics.Infrastructure.Services;

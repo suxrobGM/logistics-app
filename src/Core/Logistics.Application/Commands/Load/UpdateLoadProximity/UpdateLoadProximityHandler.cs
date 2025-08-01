@@ -3,7 +3,7 @@ using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
-using Logistics.Shared.Consts;
+using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Commands;
 

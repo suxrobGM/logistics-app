@@ -1,5 +1,5 @@
 ﻿using Logistics.Domain.Entities;
-using Logistics.Shared.Consts;
+using Logistics.Domain.Primitives.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

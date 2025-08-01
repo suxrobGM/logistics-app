@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\Logistics.Domain.Primitives\Logistics.Domain.Primitives.csproj" />
     <ProjectReference Include="..\Logistics.Shared.Consts\Logistics.Shared.Consts.csproj" />
   </ItemGroup>
 

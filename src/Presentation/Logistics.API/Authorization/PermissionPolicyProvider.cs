@@ -1,4 +1,4 @@
-﻿using Logistics.Shared.Consts.Policies;
+﻿using Logistics.Domain.Primitives.Enums.Policies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 

@@ -5,12 +5,12 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Options;
 using Logistics.Domain.Services;
 using Logistics.Infrastructure.Data;
-using Logistics.Shared.Consts.Policies;
-using Logistics.Shared.Consts.Roles;
+using Logistics.Domain.Primitives.Enums.Policies;
+using Logistics.Domain.Primitives.Enums.Roles;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
-using CustomClaimTypes = Logistics.Shared.Consts.Claims.CustomClaimTypes;
+using CustomClaimTypes = Logistics.Domain.Primitives.Enums.Claims.CustomClaimTypes;
 
 namespace Logistics.Infrastructure.Services;
 

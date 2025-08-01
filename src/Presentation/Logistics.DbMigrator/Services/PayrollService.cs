@@ -2,7 +2,7 @@
 using Logistics.DbMigrator.Models;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Shared.Consts;
+using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.DbMigrator.Services;
 

@@ -1,4 +1,4 @@
-﻿using Logistics.Shared.Consts;
+﻿using Logistics.Domain.Primitives.Enums;
 using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.Authentication;

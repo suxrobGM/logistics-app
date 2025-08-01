@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.Serialization;
 
-namespace Logistics.Shared.Consts;
+namespace Logistics.Domain.Primitives.Enums;
 /// <summary>
 /// incomplete, incomplete_expired, trialing, active, past_due, canceled, unpaid, or paused
 /// </summary>

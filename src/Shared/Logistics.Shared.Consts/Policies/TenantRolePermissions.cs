@@ -1,4 +1,4 @@
-﻿namespace Logistics.Shared.Consts.Policies;
+﻿namespace Logistics.Domain.Primitives.Enums.Policies;
 
 public static class TenantRolePermissions
 {

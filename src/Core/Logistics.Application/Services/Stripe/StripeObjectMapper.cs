@@ -1,5 +1,5 @@
 ﻿using Logistics.Domain.Entities;
-using Logistics.Shared.Consts;
+using Logistics.Domain.Primitives.Enums;
 using Stripe;
 using AddressValueObject = Logistics.Domain.Primitives.ValueObjects.Address;
 using PaymentMethod = Logistics.Domain.Entities.PaymentMethod;

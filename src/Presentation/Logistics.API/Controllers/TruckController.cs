@@ -1,7 +1,7 @@
 ﻿using Logistics.Application.Commands;
 using Logistics.Application.Queries;
 using Logistics.Shared.Models;
-using Logistics.Shared.Consts.Policies;
+using Logistics.Domain.Primitives.Enums.Policies;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
