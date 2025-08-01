@@ -1,4 +1,4 @@
-using Logistics.Infrastructure.EF.Data;
+using Logistics.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.DbMigrator.Workers;
