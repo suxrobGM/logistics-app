@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.ValueObjects;
+﻿using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Consts;
 
 namespace Logistics.Application.Services;

@@ -1,7 +1,7 @@
 ﻿using Logistics.Domain.Entities;
 using Logistics.Shared.Consts;
 using Stripe;
-using AddressValueObject = Logistics.Domain.ValueObjects.Address;
+using AddressValueObject = Logistics.Domain.Primitives.ValueObjects.Address;
 using PaymentMethod = Logistics.Domain.Entities.PaymentMethod;
 using StripePaymentMethod = Stripe.PaymentMethod;
 using StripeAddress = Stripe.Address;

@@ -1,7 +1,7 @@
 ﻿using Logistics.Domain.Entities;
 using Logistics.Domain.Exceptions;
 using Logistics.Domain.Services;
-using Logistics.Domain.ValueObjects;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Infrastructure.Data;
 using Logistics.Infrastructure.Options;
 using Logistics.Shared.Consts;

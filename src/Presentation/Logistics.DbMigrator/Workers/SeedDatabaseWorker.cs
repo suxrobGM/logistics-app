@@ -2,7 +2,7 @@ using System.Security.Claims;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Services;
-using Logistics.Domain.ValueObjects;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Consts.Policies;
 using Logistics.Shared.Consts.Roles;
 using Microsoft.AspNetCore.Identity;

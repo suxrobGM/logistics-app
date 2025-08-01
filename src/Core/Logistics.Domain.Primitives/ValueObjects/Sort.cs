@@ -1,4 +1,4 @@
-﻿namespace Logistics.Domain.ValueObjects;
+﻿namespace Logistics.Domain.Primitives.ValueObjects;
 
 /// <summary>
 /// Represents a sorting option for queries.

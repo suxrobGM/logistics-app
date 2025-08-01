@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Logistics.Shared.Consts;
+using Logistics.Application.Constants;
 
 namespace Logistics.Application.Commands;
 

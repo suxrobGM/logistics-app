@@ -1,6 +1,6 @@
-﻿namespace Logistics.Shared.Consts;
+﻿namespace Logistics.Application.Constants;
 
-public static class LoadConsts
+public static class LoadConstants
 {
     public const decimal MinDeliveryCost = 0;
     public const decimal MaxDeliveryCost = 1000000;

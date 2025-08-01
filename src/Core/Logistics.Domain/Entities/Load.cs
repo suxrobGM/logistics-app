@@ -1,7 +1,7 @@
 ﻿using Logistics.Domain.Core;
 using Logistics.Shared.Consts;
 using Logistics.Domain.Events;
-using Logistics.Domain.ValueObjects;
+using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 

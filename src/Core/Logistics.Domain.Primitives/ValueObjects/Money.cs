@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Logistics.Domain.ValueObjects;
+namespace Logistics.Domain.Primitives.ValueObjects;
 
 [ComplexType]
 public record Money

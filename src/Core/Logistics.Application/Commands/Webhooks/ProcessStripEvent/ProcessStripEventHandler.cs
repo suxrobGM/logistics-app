@@ -1,7 +1,7 @@
 ﻿using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.ValueObjects;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Consts;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;

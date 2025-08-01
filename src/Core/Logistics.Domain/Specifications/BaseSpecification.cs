@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Logistics.Domain.Core;
-using Logistics.Domain.ValueObjects;
+using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Specifications;
 
