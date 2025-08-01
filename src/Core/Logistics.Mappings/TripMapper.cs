@@ -1,4 +1,5 @@
 ﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 using Riok.Mapperly.Abstractions;
 
@@ -19,6 +20,6 @@ public static partial class TripMapper
     private static IEnumerable<TripLoadDto> MapLoads(Trip trip) =>
         trip.GetLoads().Select(LoadMapper.ToTripLoadDto);
 
-    private static AddressDto MapOriginAddress(Trip trip) => trip.GetOriginAddress().ToDto();
-    private static AddressDto MapDestinationAddress(Trip trip) => trip.GetDestinationAddress().ToDto();
+    private static Address MapOriginAddress(Trip trip) => trip.GetOriginAddress();
+    private static Address MapDestinationAddress(Trip trip) => trip.GetDestinationAddress();
 }

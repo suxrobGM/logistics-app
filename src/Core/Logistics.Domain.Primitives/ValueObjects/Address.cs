@@ -16,12 +16,12 @@ public record Address
         Country = "NULL"
     };
     
-    public required string Line1 { get; init; }
-    public string? Line2 { get; init; }
-    public required string City { get; init; }
-    public required string ZipCode { get; init; }
-    public required string State { get; init; }
-    public required string Country { get; init; }
+    public required string Line1 { get; set; }
+    public string? Line2 { get; set; }
+    public required string City { get; set; }
+    public required string ZipCode { get; set; }
+    public required string State { get; set; }
+    public required string Country { get; set; }
 
     public bool IsNull() => this == NullAddress;
     public bool IsNotNull() => !IsNull();

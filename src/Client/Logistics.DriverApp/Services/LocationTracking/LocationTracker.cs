@@ -1,4 +1,5 @@
-﻿using Logistics.HttpClient.Options;
+﻿using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.HttpClient.Options;
 using Logistics.DriverApp.Services.Authentication;
 using Microsoft.AspNetCore.SignalR.Client;
 
@@ -94,7 +95,7 @@ public class LocationTracker : ILocationTracker
         }
     }
 
-    private static async Task<AddressDto?> GetAddressFromGeocodeAsync(double latitude, double longitude)
+    private static async Task<Address?> GetAddressFromGeocodeAsync(double latitude, double longitude)
     {
         try
         {
@@ -103,7 +104,7 @@ public class LocationTracker : ILocationTracker
         
             if (placemark != null)
             {
-                return new AddressDto
+                return new Address
                 {
                     Line1 = placemark.SubThoroughfare,
                     Line2 = placemark.Thoroughfare,

@@ -22,7 +22,7 @@ public static class TruckMapper
 
         if (entity.CurrentLocation.IsNotNull())
         {
-            dto.CurrentLocation = entity.CurrentLocation.ToDto();
+            dto.CurrentLocation = entity.CurrentLocation;
         }
         return dto;
     }

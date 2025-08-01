@@ -1,4 +1,5 @@
 ﻿using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Shared.Models;
 
@@ -14,7 +15,7 @@ public record InvoiceDto
     /// <summary>
     /// Total inclusive of tax & discounts.
     /// </summary>
-    public MoneyDto Total { get; set; } = null!;
+    public Money Total { get; set; } = null!;
     
     public string? Notes { get; set; }
     public DateTime? DueDate { get; set; }

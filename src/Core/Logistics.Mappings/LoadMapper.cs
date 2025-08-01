@@ -16,10 +16,10 @@ public static partial class LoadMapper
             Number = entity.Number,
             Name = entity.Name,
             Type = entity.Type,
-            OriginAddress = entity.OriginAddress.ToDto(),
+            OriginAddress = entity.OriginAddress,
             OriginAddressLat = entity.OriginAddressLat,
             OriginAddressLong = entity.OriginAddressLong,
-            DestinationAddress = entity.DestinationAddress.ToDto(),
+            DestinationAddress = entity.DestinationAddress,
             DestinationAddressLat = entity.DestinationAddressLat,
             DestinationAddressLong = entity.DestinationAddressLong,
             DispatchedDate = entity.DispatchedDate,
@@ -44,7 +44,7 @@ public static partial class LoadMapper
         
         if (entity.AssignedTruck?.CurrentLocation.IsNotNull() ?? false)
         {
-            dto.CurrentLocation = entity.AssignedTruck.CurrentLocation.ToDto();
+            dto.CurrentLocation = entity.AssignedTruck.CurrentLocation;
         }
         return dto;
     }

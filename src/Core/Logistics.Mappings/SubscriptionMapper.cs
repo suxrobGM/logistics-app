@@ -31,7 +31,7 @@ public static class SubscriptionMapper
             CompanyName = entity.CompanyName,
             BillingEmail = entity.BillingEmail,
             DotNumber = entity.DotNumber,
-            CompanyAddress = entity.CompanyAddress.ToDto(),
+            CompanyAddress = entity.CompanyAddress,
         };
     }
 }

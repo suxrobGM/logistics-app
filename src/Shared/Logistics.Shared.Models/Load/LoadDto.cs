@@ -1,4 +1,5 @@
 ﻿using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Shared.Models;
 
@@ -7,10 +8,10 @@ public class LoadDto
     public Guid Id { get; set; }
     public long Number { get; set; }
     public string? Name { get; set; }
-    public required AddressDto OriginAddress { get; set; }
+    public required Address OriginAddress { get; set; }
     public double? OriginAddressLat { get; set; }
     public double? OriginAddressLong { get; set; }
-    public required AddressDto DestinationAddress { get; set; }
+    public required Address DestinationAddress { get; set; }
     public double? DestinationAddressLat { get; set; }
     public double? DestinationAddressLong { get; set; }
     public decimal DeliveryCost { get; set; }
@@ -26,7 +27,7 @@ public class LoadDto
     public string? AssignedDispatcherName { get; set; }
     public Guid? AssignedTruckId { get; set; }
     public string? AssignedTruckNumber { get; set; }
-    public AddressDto? CurrentLocation { get; set; }
+    public Address? CurrentLocation { get; set; }
     public CustomerDto? Customer { get; set; }
     
     public Guid? TripId { get; set; }

@@ -1,4 +1,5 @@
 ﻿using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.DriverApp.Models;
 
@@ -34,8 +35,8 @@ public class ActiveLoad : ObservableRecipient
         set => SetProperty(ref _name, value);
     }
 
-    private AddressDto? _originAddress;
-    public AddressDto? OriginAddress 
+    private Address? _originAddress;
+    public Address? OriginAddress 
     {
         get => _originAddress;
         set => SetProperty(ref _originAddress, value);
@@ -55,8 +56,8 @@ public class ActiveLoad : ObservableRecipient
         set => SetProperty(ref _originAddressLong, value);
     }
 
-    private AddressDto? _destinationAddress;
-    public AddressDto? DestinationAddress 
+    private Address? _destinationAddress;
+    public Address? DestinationAddress 
     {
         get => _destinationAddress;
         set => SetProperty(ref _destinationAddress, value);

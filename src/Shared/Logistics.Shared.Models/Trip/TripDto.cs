@@ -1,4 +1,5 @@
 ﻿using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Shared.Models;
 
@@ -8,8 +9,8 @@ public record TripDto
     public long Number { get; set; }
     public required string Name { get; set; }
 
-    public required AddressDto OriginAddress { get; set; }
-    public required AddressDto DestinationAddress { get; set; }
+    public required Address OriginAddress { get; set; }
+    public required Address DestinationAddress { get; set; }
     
     /// <summary>
     /// Total distance of the trip in kilometers.

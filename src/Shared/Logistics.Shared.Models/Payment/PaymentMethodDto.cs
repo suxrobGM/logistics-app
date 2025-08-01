@@ -1,4 +1,5 @@
 ﻿using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Shared.Models;
 
@@ -8,7 +9,7 @@ public record PaymentMethodDto
     public PaymentMethodType Type { get; set; }
     public PaymentMethodVerificationStatus VerificationStatus { get; set; }
     public bool IsDefault { get; set; }
-    public required AddressDto BillingAddress { get; set; }
+    public required Address BillingAddress { get; set; }
 
     // Card-specific
     public string? CardHolderName { get; set; }

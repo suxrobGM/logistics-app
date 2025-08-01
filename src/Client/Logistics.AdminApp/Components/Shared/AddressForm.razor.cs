@@ -1,13 +1,13 @@
-﻿using Logistics.Shared.Models;
+﻿using Logistics.Domain.Primitives.ValueObjects;
 using Microsoft.AspNetCore.Components;
 
 namespace Logistics.AdminApp.Components.Shared;
 
 public partial class AddressForm
 {
-    [Parameter] 
-    public AddressDto Address { get; set; } = AddressDto.Empty();
+    [Parameter, EditorRequired] 
+    public required Address Address { get; set; }
     
     [Parameter]
-    public EventCallback<AddressDto> AddressChanged { get; set; }
+    public EventCallback<Address> AddressChanged { get; set; }
 }

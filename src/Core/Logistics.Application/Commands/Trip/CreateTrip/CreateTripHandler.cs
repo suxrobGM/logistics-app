@@ -53,8 +53,8 @@ internal sealed class CreateTripHandler : RequestHandler<CreateTripCommand, Resu
                 var createLoadParameters = new CreateLoadParameters(
                     newLoad.Name,
                     newLoad.Type,
-                    (newLoad.OriginAddress.ToEntity(), newLoad.OriginAddressLong, newLoad.OriginAddressLat),
-                    (newLoad.DestinationAddress.ToEntity(), newLoad.DestinationAddressLong, newLoad.DestinationAddressLat),
+                    (newLoad.OriginAddress, newLoad.OriginAddressLong, newLoad.OriginAddressLat),
+                    (newLoad.DestinationAddress, newLoad.DestinationAddressLong, newLoad.DestinationAddressLat),
                     newLoad.DeliveryCost,
                     newLoad.Distance,
                     newLoad.Customer.Id,

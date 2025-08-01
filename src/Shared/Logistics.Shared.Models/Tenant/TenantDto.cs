@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Shared.Models;
 
@@ -9,7 +10,7 @@ public record TenantDto
     public string? CompanyName { get; set; }
     public string? BillingEmail { get; set; }
     public string? DotNumber { get; set; }
-    public AddressDto CompanyAddress { get; set; } = AddressDto.Empty();
+    public Address? CompanyAddress { get; set; }
     public string? StripeCustomerId { get; set; }
     
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]

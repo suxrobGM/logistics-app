@@ -14,7 +14,7 @@ public static class TenantMapper
             CompanyName = entity.CompanyName,
             BillingEmail = entity.BillingEmail,
             DotNumber = entity.DotNumber,
-            CompanyAddress = entity.CompanyAddress.ToDto(),
+            CompanyAddress = entity.CompanyAddress,
             ConnectionString = includeConnectionString ? entity.ConnectionString : null,
             StripeCustomerId = entity.StripeCustomerId,
             Subscription = entity.Subscription?.ToDto(),

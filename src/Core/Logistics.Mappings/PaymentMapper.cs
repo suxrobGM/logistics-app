@@ -10,7 +10,7 @@ public static class PaymentMapper
         var dto = new PaymentDto
         {
             Id = entity.Id,
-            Amount = entity.Amount.ToDto(),
+            Amount = entity.Amount,
             CreatedDate = entity.CreatedAt.UtcDateTime,
             MethodId = entity.MethodId,
             TenantId = entity.TenantId,
@@ -20,7 +20,7 @@ public static class PaymentMapper
         
         if (entity.BillingAddress.IsNotNull())
         {
-            dto.BillingAddress = entity.BillingAddress.ToDto();
+            dto.BillingAddress = entity.BillingAddress;
         }
         return dto;
     }
