@@ -1,5 +1,6 @@
 ﻿using Logistics.Application.Extensions;
 using Logistics.Application.Services;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -22,27 +23,36 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resu
     protected override async Task<Result> HandleValidated(
         UpdateLoadCommand req, CancellationToken cancellationToken)
     {
-        var loadEntity = await _tenantUow.Repository<Load>().GetByIdAsync(req.Id);
+        var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.Id);
         
-        if (loadEntity is null)
+        if (load is null)
         {
             return Result.Fail("Could not find the specified load");
         }
 
         try
         {
-            var oldTruck = loadEntity.AssignedTruck;
-            var newTruck = await AssignTruckIfUpdated(req, loadEntity);
+            var oldTruck = load.AssignedTruck;
+            var newTruck = await AssignTruckIfUpdated(req, load);
 
-            await AssignDispatcherIfUpdated(req, loadEntity);
-            await UpdateCustomerIfUpdated(req, loadEntity);
-            var updatedDetails = UpdateLoadDetails(req, loadEntity);
+            await AssignDispatcherIfUpdated(req, load);
+            await UpdateCustomerIfUpdated(req, load);
+            
+            load.Name = PropertyUpdater.UpdateIfChanged(req.Name, load.Name);
+            load.OriginAddress = PropertyUpdater.UpdateIfChanged(req.OriginAddress, load.OriginAddress);
+            load.OriginLocation = PropertyUpdater.UpdateIfChanged(req.OriginLocation, load.OriginLocation);
+            load.DestinationAddress = PropertyUpdater.UpdateIfChanged(req.DestinationAddress, load.DestinationAddress);
+            load.DestinationLocation = PropertyUpdater.UpdateIfChanged(req.DestinationLocation, load.DestinationLocation);
+            load.DeliveryCost = PropertyUpdater.UpdateIfChanged(req.DeliveryCost, load.DeliveryCost.Amount);
+            load.Distance = PropertyUpdater.UpdateIfChanged(req.Distance, load.Distance);
+            load.Status = PropertyUpdater.UpdateIfChanged(req.Status, load.Status);
+            load.Type = PropertyUpdater.UpdateIfChanged(req.Type, load.Type);
             
             var changes = await _tenantUow.SaveChangesAsync();
 
             if (changes > 0)
             {
-                await NotifyTrucksAboutUpdates(updatedDetails, oldTruck, newTruck, loadEntity);
+                await NotifyTrucksAboutUpdates(oldTruck, newTruck, load);
             }
             
             return Result.Succeed();
@@ -114,62 +124,9 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resu
         }
     }
 
-    private static bool UpdateLoadDetails(UpdateLoadCommand req, Load load)
+    private async Task NotifyTrucksAboutUpdates(Truck? oldTruck, Truck? newTruck, Load loadEntity)
     {
-        var updated = false;
-
-        if (req.Name is not null && req.Name != load.Name)
-        {
-            load.Name = req.Name;
-            updated = true;
-        }
-
-        if (req.OriginAddress != null && req.OriginAddress != load.OriginAddress)
-        {
-            load.OriginAddress = req.OriginAddress;
-            load.OriginAddressLat = req.OriginAddressLat;
-            load.OriginAddressLong = req.OriginAddressLong;
-            updated = true;
-        }
-
-        if (req.DestinationAddress != null && req.DestinationAddress != load.DestinationAddress)
-        {
-            load.DestinationAddress = req.DestinationAddress;
-            load.DestinationAddressLat = req.DestinationAddressLat;
-            load.DestinationAddressLong = req.DestinationAddressLong;
-            updated = true;
-        }
-        
-        if (req.DeliveryCost.HasValue && req.DeliveryCost != load.DeliveryCost)
-        {
-            load.DeliveryCost = req.DeliveryCost.Value;
-            updated = true;
-        }
-        
-        if (req.Distance.HasValue && req.Distance != load.Distance)
-        {
-            load.Distance = req.Distance.Value;
-            updated = true;
-        }
-        
-        if (req.Status.HasValue && req.Status != load.Status)
-        {
-            load.SetStatus(req.Status.Value);
-            updated = true;
-        }
-        
-        if (req.Type.HasValue && req.Type != load.Type)
-        {
-            load.Type = req.Type.Value;
-            updated = true;
-        }
-
-        return updated;
-    }
-
-    private async Task NotifyTrucksAboutUpdates(bool detailsUpdated, Truck? oldTruck, Truck? newTruck, Load loadEntity)
-    {
-        if (detailsUpdated && oldTruck != null)
+        if (oldTruck != null)
         {
             // send updates to the old truck
             await _pushNotificationService.SendUpdatedLoadNotificationAsync(loadEntity, oldTruck);

@@ -55,8 +55,8 @@ export class TrucksMap implements OnDestroy {
         if (truck.currentLocation) {
           return [
             {
-              latitude: truck.currentLocationLat!,
-              longitude: truck.currentLocationLong!,
+              latitude: truck.currentLocation.latitude,
+              longitude: truck.currentLocation.longitude,
               truckId: truck.id,
               truckNumber: truck.number,
               driversName: [truck.mainDriver?.fullName, truck.secondaryDriver?.fullName]

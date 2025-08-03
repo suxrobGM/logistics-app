@@ -31,19 +31,19 @@
         <app-search-customer formControlName="customer" />
       </app-form-field>
 
-      <app-form-field label="Origin Address" for="orgAddress" [required]="true">
+      <app-form-field label="Origin Address" for="originAddress" [required]="true">
         <app-address-autocomplete
-          field="orgAddress"
-          formControlName="orgAddress"
+          field="originAddress"
+          formControlName="originAddress"
           [forceSelection]="true"
           (selectedAddress)="updateOrigin($event)"
         />
       </app-form-field>
 
-      <app-form-field label="Destination Address" for="dstAddress" [required]="true">
+      <app-form-field label="Destination Address" for="destinationAddress" [required]="true">
         <app-address-autocomplete
-          field="dstAddress"
-          formControlName="dstAddress"
+          field="destinationAddress"
+          formControlName="destinationAddress"
           [forceSelection]="true"
           (selectedAddress)="updateDestination($event)"
         />

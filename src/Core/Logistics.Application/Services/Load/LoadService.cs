@@ -43,11 +43,9 @@ internal sealed class LoadService : ILoadService
             parameters.Type,
             parameters.DeliveryCost,
             parameters.Origin.address,
-            parameters.Origin.lat,
-            parameters.Origin.@long,
+            parameters.Origin.location,
             parameters.Destination.address,
-            parameters.Destination.lat,
-            parameters.Destination.@long,
+            parameters.Destination.location,
             customer,
             truck, 
             dispatcher);

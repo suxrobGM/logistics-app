@@ -11,11 +11,9 @@ public class UpdateLoadCommand : IRequest<Result>
     public string? Name { get; set; }
     public LoadType? Type { get; set; }
     public Address? OriginAddress { get; set; }
-    public double? OriginAddressLat { get; set; }
-    public double? OriginAddressLong { get; set; }
+    public GeoPoint? OriginLocation { get; set; }   
     public Address? DestinationAddress { get; set; }
-    public double? DestinationAddressLat { get; set; }
-    public double? DestinationAddressLong { get; set; }
+    public GeoPoint? DestinationLocation { get; set; }
     public decimal? DeliveryCost { get; set; }
     public double? Distance { get; set; }
     public Guid? AssignedDispatcherId { get; set; }

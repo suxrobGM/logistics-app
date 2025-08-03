@@ -13,11 +13,9 @@ internal sealed class CreateLoadValidator : AbstractValidator<CreateLoadCommand>
         RuleFor(i => i.AssignedDispatcherId).NotEmpty();
         RuleFor(i => i.AssignedTruckId).NotEmpty();
         RuleFor(i => i.OriginAddress).NotEmpty();
-        RuleFor(i => i.OriginAddressLat).NotEmpty().InclusiveBetween(-90, 90);
-        RuleFor(i => i.OriginAddressLong).NotEmpty().InclusiveBetween(-180, 180);
+        RuleFor(i => i.OriginLocation).NotEmpty();
         RuleFor(i => i.DestinationAddress).NotEmpty();
-        RuleFor(i => i.DestinationAddressLat).NotEmpty().InclusiveBetween(-90, 90);
-        RuleFor(i => i.DestinationAddressLong).NotEmpty().InclusiveBetween(-180, 180);
+        RuleFor(i => i.DestinationLocation).NotEmpty();
         RuleFor(i => i.Distance).GreaterThan(0);
         RuleFor(i => i.DeliveryCost)
             .GreaterThan(LoadConstants.MinDeliveryCost)

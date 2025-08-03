@@ -31,8 +31,8 @@ public static class QueryableExtensions
             {
                 // fast path – one hop, perfect for EF.Property
                 query = sort.Descending
-                    ? query.OrderByDescending(e => Microsoft.EntityFrameworkCore.EF.Property<object>(e, sort.Property))
-                    : query.OrderBy(e => Microsoft.EntityFrameworkCore.EF.Property<object>(e, sort.Property));
+                    ? query.OrderByDescending(e => EF.Property<object>(e, sort.Property))
+                    : query.OrderBy(e => EF.Property<object>(e, sort.Property));
             }
             else
             {

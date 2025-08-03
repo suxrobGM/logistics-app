@@ -15,12 +15,10 @@ public class Load : Entity, ITenantEntity
     public LoadStatus Status { get; set; } = LoadStatus.Dispatched;
     
     public required Address OriginAddress { get; set; }
-    public double? OriginAddressLong { get; set; }
-    public double? OriginAddressLat { get; set; }
+    public required GeoPoint OriginLocation { get; set; }
     
     public required Address DestinationAddress { get; set; }
-    public double? DestinationAddressLong { get; set; }
-    public double? DestinationAddressLat { get; set; }
+    public required GeoPoint DestinationLocation { get; set; }
     
     public required Money DeliveryCost { get; set; }
     
@@ -87,11 +85,9 @@ public class Load : Entity, ITenantEntity
         LoadType type,
         decimal deliveryCost,
         Address originAddress,
-        double? originLatitude,
-        double? originLongitude,
+        GeoPoint originLocation,
         Address destinationAddress,
-        double? destinationLatitude,
-        double? destinationLongitude,
+        GeoPoint destinationLocation,
         Customer customer,
         Truck assignedTruck, 
         Employee assignedDispatcher)
@@ -102,11 +98,9 @@ public class Load : Entity, ITenantEntity
             Type = type,
             DeliveryCost = deliveryCost,
             OriginAddress = originAddress,
-            OriginAddressLat = originLatitude,
-            OriginAddressLong = originLongitude,
+            OriginLocation = originLocation,
             DestinationAddress = destinationAddress,
-            DestinationAddressLat = destinationLatitude,
-            DestinationAddressLong = destinationLongitude,
+            DestinationLocation = destinationLocation,
             AssignedTruckId = assignedTruck.Id,
             AssignedTruck = assignedTruck,
             AssignedDispatcherId = assignedDispatcher.Id,

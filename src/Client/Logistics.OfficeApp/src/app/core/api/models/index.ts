@@ -7,6 +7,7 @@ export * from "./tenant.dto";
 export * from "./user.dto";
 export * from "./address.dto";
 export * from "./money.dto";
+export * from "./geo-point.dto";
 
 export * from "./subscription";
 export * from "./load";

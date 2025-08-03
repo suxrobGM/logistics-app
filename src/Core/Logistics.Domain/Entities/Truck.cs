@@ -15,17 +15,13 @@ public class Truck : Entity, ITenantEntity
     /// <summary>
     /// Truck's last known location address
     /// </summary>
-    public Address CurrentLocation { get; set; } = Address.NullAddress;
+    public required Address CurrentAddress { get; set; }
     
     /// <summary>
     /// Truck's last known location longitude
     /// </summary>
-    public double? CurrentLocationLong { get; set; }
+    public required GeoPoint CurrentLocation { get; set; }
     
-    /// <summary>
-    /// Truck's last known location latitude
-    /// </summary>
-    public double? CurrentLocationLat { get; set; }
     
     /// <summary>
     /// The main assigned driver for the truck
@@ -50,7 +46,9 @@ public class Truck : Entity, ITenantEntity
             Number = truckNumber,
             Type = type,
             MainDriver = mainDriver,
-            SecondaryDriver = secondaryDriver
+            SecondaryDriver = secondaryDriver,
+            CurrentAddress = Address.NullAddress,
+            CurrentLocation = GeoPoint.NullGeoPoint
         };
     }
     

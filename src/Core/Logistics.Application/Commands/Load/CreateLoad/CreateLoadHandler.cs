@@ -25,8 +25,8 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resu
             var createLoadParameters = new CreateLoadParameters(
                 req.Name,
                 req.Type,
-                (req.OriginAddress!, req.OriginAddressLong, req.OriginAddressLat),
-                (req.DestinationAddress!, req.DestinationAddressLong, req.DestinationAddressLat),
+                (req.OriginAddress, req.OriginLocation),
+                (req.DestinationAddress, req.DestinationLocation),
                 req.DeliveryCost,
                 req.Distance,
                 req.CustomerId,

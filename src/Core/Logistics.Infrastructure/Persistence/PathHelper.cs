@@ -19,7 +19,7 @@ internal static class PathHelper
 
             var parameter = Expression.Parameter(rootType, "x");
             Expression body = parameter;
-            Type current = rootType;
+            var current = rootType;
 
             foreach (var segment in rawPath.Split('.', StringSplitOptions.RemoveEmptyEntries))
             {

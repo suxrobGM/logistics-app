@@ -9,11 +9,9 @@ public class LoadDto
     public long Number { get; set; }
     public string? Name { get; set; }
     public required Address OriginAddress { get; set; }
-    public double? OriginAddressLat { get; set; }
-    public double? OriginAddressLong { get; set; }
+    public required GeoPoint OriginLocation { get; set; }
     public required Address DestinationAddress { get; set; }
-    public double? DestinationAddressLat { get; set; }
-    public double? DestinationAddressLong { get; set; }
+    public required GeoPoint DestinationLocation { get; set; }
     public decimal DeliveryCost { get; set; }
     public double Distance { get; set; }
     public DateTime DispatchedDate { get; set; }
@@ -27,7 +25,8 @@ public class LoadDto
     public string? AssignedDispatcherName { get; set; }
     public Guid? AssignedTruckId { get; set; }
     public string? AssignedTruckNumber { get; set; }
-    public Address? CurrentLocation { get; set; }
+    public Address? CurrentAddress { get; set; }
+    public GeoPoint? CurrentLocation { get; set; }
     public CustomerDto? Customer { get; set; }
     
     public Guid? TripId { get; set; }

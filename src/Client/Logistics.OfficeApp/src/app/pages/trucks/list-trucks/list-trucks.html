@@ -61,8 +61,8 @@
         <td class="text-center">
           {{ truck.status }}
         </td>
-        <td class="text-center" [pTooltip]="truck.currentLocation" [showDelay]="500">
-          {{ truck.currentLocation | address }}
+        <td class="text-center" [pTooltip]="formatAddress(truck.currentAddress)" [showDelay]="500">
+          {{ truck.currentAddress | address }}
         </td>
         <td class="text-center">
           <span>{{ truck.mainDriver?.fullName }}</span>

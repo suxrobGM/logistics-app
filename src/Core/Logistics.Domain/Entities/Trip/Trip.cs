@@ -145,8 +145,7 @@ public class Trip : Entity, ITenantEntity
                 Order = order++,
                 Type = TripStopType.PickUp,
                 Address = load.OriginAddress,
-                AddressLong = load.OriginAddressLong,
-                AddressLat = load.OriginAddressLat,
+                Location = load.OriginLocation,
                 Load = load,
                 LoadId = load.Id
             });
@@ -157,8 +156,7 @@ public class Trip : Entity, ITenantEntity
                 Order = order++,
                 Type = TripStopType.DropOff,
                 Address = load.DestinationAddress,
-                AddressLong = load.DestinationAddressLong,
-                AddressLat = load.DestinationAddressLat,
+                Location = load.DestinationLocation,
                 Load = load,
                 LoadId = load.Id
             });

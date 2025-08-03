@@ -6,8 +6,8 @@ namespace Logistics.Application.Services;
 public record CreateLoadParameters(
     string Name,
     LoadType Type,
-    (Address address, double? @long, double? lat) Origin,
-    (Address address, double? @long, double? lat) Destination,
+    (Address address, GeoPoint location) Origin,
+    (Address address, GeoPoint location) Destination,
     decimal DeliveryCost,
     double Distance,
     Guid CustomerId,

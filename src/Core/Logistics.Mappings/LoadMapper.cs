@@ -17,11 +17,9 @@ public static partial class LoadMapper
             Name = entity.Name,
             Type = entity.Type,
             OriginAddress = entity.OriginAddress,
-            OriginAddressLat = entity.OriginAddressLat,
-            OriginAddressLong = entity.OriginAddressLong,
+            OriginLocation = entity.OriginLocation,
             DestinationAddress = entity.DestinationAddress,
-            DestinationAddressLat = entity.DestinationAddressLat,
-            DestinationAddressLong = entity.DestinationAddressLong,
+            DestinationLocation = entity.DestinationLocation,
             DispatchedDate = entity.DispatchedDate,
             PickUpDate = entity.PickUpDate,
             DeliveryDate = entity.DeliveryDate,
@@ -42,8 +40,9 @@ public static partial class LoadMapper
             TripNumber = entity.TripStop?.Trip.Number,
         };
         
-        if (entity.AssignedTruck?.CurrentLocation.IsNotNull() ?? false)
+        if (entity.AssignedTruck?.CurrentAddress.IsNotNull() ?? false)
         {
+            dto.CurrentAddress = entity.AssignedTruck.CurrentAddress;
             dto.CurrentLocation = entity.AssignedTruck.CurrentLocation;
         }
         return dto;
@@ -57,9 +56,7 @@ public static partial class LoadMapper
     [MapperIgnoreSource(nameof(Load.AssignedTruckId))]
     [MapperIgnoreSource(nameof(Load.TripStop))]
     [MapperIgnoreSource(nameof(Load.Type))]
-    [MapperIgnoreSource(nameof(Load.OriginAddressLat))]
-    [MapperIgnoreSource(nameof(Load.OriginAddressLong))]
-    [MapperIgnoreSource(nameof(Load.DestinationAddressLat))]
-    [MapperIgnoreSource(nameof(Load.DestinationAddressLong))]
+    [MapperIgnoreSource(nameof(Load.OriginLocation))]
+    [MapperIgnoreSource(nameof(Load.DestinationLocation))]
     public static partial TripLoadDto ToTripLoadDto(this Load load);
 }

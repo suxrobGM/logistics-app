@@ -6,8 +6,11 @@
   [style.height]="height()"
 >
   @for (geoData of geolocationData(); track geoData.truckId) {
-    @if (geoData.latitude && geoData.longitude) {
-      <mgl-marker #marker [lngLat]="[geoData.longitude, geoData.latitude]">
+    @if (geoData.currentLocation) {
+      <mgl-marker
+        #marker
+        [lngLat]="[geoData.currentLocation.longitude, geoData.currentLocation.latitude]"
+      >
         <div class="text-center" (click)="onSelectMarker(geoData, marker)" role="presentation">
           <div class="bg-dark text-light rounded">{{ geoData.truckNumber }}</div>
           <div class="text-danger">

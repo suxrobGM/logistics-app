@@ -9,7 +9,7 @@ import {SkeletonModule} from "primeng/skeleton";
 import {TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {ApiService} from "@/core/api";
-import {DailyGrossesDto, LoadDto} from "@/core/api/models";
+import {AddressDto, DailyGrossesDto, LoadDto} from "@/core/api/models";
 import {TrucksMap} from "@/shared/components";
 import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
 import {Converters, DateUtils} from "@/shared/utils";
@@ -52,9 +52,11 @@ const chartOptions = {
     NotificationsPanelComponent,
     AddressPipe,
   ],
+  providers: [AddressPipe],
 })
 export class HomeComponent implements OnInit {
   private readonly apiService = inject(ApiService);
+  private readonly addressPipe = inject(AddressPipe);
 
   protected readonly todayGross = signal(0);
   protected readonly weeklyGross = signal(0);
@@ -69,6 +71,10 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.fetchActiveLoads();
     this.fetchLastTenDaysGross();
+  }
+
+  protected formatAddress(addressObj: AddressDto): string {
+    return this.addressPipe.transform(addressObj) || "No address provided";
   }
 
   private fetchActiveLoads(): void {

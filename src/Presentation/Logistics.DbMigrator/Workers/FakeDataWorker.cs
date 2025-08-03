@@ -21,15 +21,15 @@ internal class FakeDataWorker : IHostedService
     private readonly ILogger<FakeDataWorker> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
     
-    private readonly (Address addr, double lat, double lng)[] _routePoints =
+    private readonly (Address addr, double lng, double lat)[] _routePoints =
     [
-        (new Address { Line1 = "233 S Wacker Dr", City = "Chicago",  State="IL", ZipCode="60606", Country="USA" }, 41.8781, -87.6298),
-        (new Address { Line1 = "1 Monument Cir",   City = "Indianapolis", State="IN", ZipCode="46204", Country="USA" }, 39.7684, -86.1581),
-        (new Address { Line1 = "100 N Capitol Ave",City = "Lansing", State="MI", ZipCode="48933", Country="USA" }, 42.7325, -84.5555),
-        (new Address { Line1 = "600 Woodward Ave", City = "Detroit", State="MI", ZipCode="48226", Country="USA" }, 42.3314, -83.0458),
-        (new Address { Line1 = "151 W Jefferson",  City = "Louisville", State="KY", ZipCode="40202", Country="USA" }, 38.2527, -85.7585),
-        (new Address { Line1 = "600 Commerce St",  City = "Nashville",  State="TN", ZipCode="37203", Country="USA" }, 36.1627, -86.7816),
-        (new Address { Line1 = "1100 Congress Ave",City = "Austin",     State="TX", ZipCode="78701", Country="USA" }, 30.2672, -97.7431)
+        (new Address { Line1 = "233 S Wacker Dr", City = "Chicago",  State="IL", ZipCode="60606", Country="USA" }, -87.6298, 41.8781),
+        (new Address { Line1 = "1 Monument Cir",   City = "Indianapolis", State="IN", ZipCode="46204", Country="USA" }, -86.1581, 39.7684),
+        (new Address { Line1 = "100 N Capitol Ave",City = "Lansing", State="MI", ZipCode="48933", Country="USA" }, -84.5555, 42.7325),
+        (new Address { Line1 = "600 Woodward Ave", City = "Detroit", State="MI", ZipCode="48226", Country="USA" }, -83.0458, 42.3314),
+        (new Address { Line1 = "151 W Jefferson",  City = "Louisville", State="KY", ZipCode="40202", Country="USA" }, -85.7585, 38.2527),
+        (new Address { Line1 = "600 Commerce St",  City = "Nashville",  State="TN", ZipCode="37203", Country="USA" }, -86.7816, 36.1627),
+        (new Address { Line1 = "1100 Congress Ave",City = "Austin",     State="TX", ZipCode="78701", Country="USA" }, -97.7431, 30.2672)
     ];
     
     public FakeDataWorker(
@@ -285,8 +285,8 @@ internal class FakeDataWorker : IHostedService
     
     private Load BuildLoad(
         long seq,
-        (Address addr, double lat, double lng) origin,
-        (Address addr, double lat, double lng) dest,
+        (Address addr, double lng, double lat) origin,
+        (Address addr, double lng, double lat) dest,
         LoadType type,
         Truck truck,
         Employee dispatcher,
@@ -294,17 +294,17 @@ internal class FakeDataWorker : IHostedService
     {
         var dispatched = _random.UtcDate(_startDate, _endDate);
         var deliveryCost = _random.Next(1_000, 3_000);
+        var originLocation = new GeoPoint(origin.lng, origin.lat);
+        var destLocation = new GeoPoint(dest.lng, dest.lat);
 
         var load = Load.Create(
             $"{(type == LoadType.Vehicle ? "Car" : "Freight")} Load {seq}",
             type,
             deliveryCost,
             origin.addr,
-            origin.lat,
-            origin.lng,
+            originLocation,
             dest.addr,
-            dest.lat,
-            dest.lng,
+            destLocation,
             customer,
             truck,
             dispatcher);

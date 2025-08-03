@@ -32,8 +32,12 @@
             <td>
               <a [routerLink]="['/loads/edit', load.id]"> {{ load.number }} </a>
             </td>
-            <td [pTooltip]="load.currentLocation" [showDelay]="500" tooltipPosition="bottom">
-              {{ load.currentLocation | address }}
+            <td
+              [pTooltip]="formatAddress(load.currentAddress)"
+              [showDelay]="500"
+              tooltipPosition="bottom"
+            >
+              {{ load.currentAddress | address }}
             </td>
             <td>
               <a [routerLink]="['/trucks/details', load.assignedTruckId]">

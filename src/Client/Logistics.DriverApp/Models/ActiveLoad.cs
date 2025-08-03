@@ -174,11 +174,11 @@ public class ActiveLoad : ObservableRecipient
         Number = loadDto.Number;
         Name = loadDto.Name;
         OriginAddress = loadDto.OriginAddress;
-        OriginAddressLat = loadDto.OriginAddressLat;
-        OriginAddressLong = loadDto.OriginAddressLong;
+        OriginAddressLong = loadDto.OriginLocation.Longitude;
+        OriginAddressLat = loadDto.OriginLocation.Latitude;
         DestinationAddress = loadDto.DestinationAddress;
-        DestinationAddressLat = loadDto.DestinationAddressLat;
-        DestinationAddressLong = loadDto.DestinationAddressLong;
+        DestinationAddressLong = loadDto.DestinationLocation.Longitude;
+        DestinationAddressLat = loadDto.DestinationLocation.Latitude;
         DeliveryCost = loadDto.DeliveryCost;
         Distance = loadDto.Distance;
         DispatchedDate = loadDto.DispatchedDate;

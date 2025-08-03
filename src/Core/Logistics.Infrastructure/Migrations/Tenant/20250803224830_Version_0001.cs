@@ -119,16 +119,16 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     Number = table.Column<string>(type: "text", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
-                    CurrentLocationLong = table.Column<double>(type: "double precision", nullable: true),
-                    CurrentLocationLat = table.Column<double>(type: "double precision", nullable: true),
                     MainDriverId = table.Column<Guid>(type: "uuid", nullable: true),
                     SecondaryDriverId = table.Column<Guid>(type: "uuid", nullable: true),
-                    CurrentLocation_City = table.Column<string>(type: "text", nullable: false),
-                    CurrentLocation_Country = table.Column<string>(type: "text", nullable: false),
-                    CurrentLocation_Line1 = table.Column<string>(type: "text", nullable: false),
-                    CurrentLocation_Line2 = table.Column<string>(type: "text", nullable: true),
-                    CurrentLocation_State = table.Column<string>(type: "text", nullable: false),
-                    CurrentLocation_ZipCode = table.Column<string>(type: "text", nullable: false)
+                    CurrentAddress_City = table.Column<string>(type: "text", nullable: false),
+                    CurrentAddress_Country = table.Column<string>(type: "text", nullable: false),
+                    CurrentAddress_Line1 = table.Column<string>(type: "text", nullable: false),
+                    CurrentAddress_Line2 = table.Column<string>(type: "text", nullable: true),
+                    CurrentAddress_State = table.Column<string>(type: "text", nullable: false),
+                    CurrentAddress_ZipCode = table.Column<string>(type: "text", nullable: false),
+                    CurrentLocation_Latitude = table.Column<double>(type: "double precision", nullable: false),
+                    CurrentLocation_Longitude = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -225,8 +225,6 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     TripId = table.Column<Guid>(type: "uuid", nullable: false),
                     Order = table.Column<int>(type: "integer", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
-                    AddressLong = table.Column<double>(type: "double precision", nullable: true),
-                    AddressLat = table.Column<double>(type: "double precision", nullable: true),
                     Planned = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ArrivedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     LoadId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -235,7 +233,9 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     Address_Line1 = table.Column<string>(type: "text", nullable: false),
                     Address_Line2 = table.Column<string>(type: "text", nullable: true),
                     Address_State = table.Column<string>(type: "text", nullable: false),
-                    Address_ZipCode = table.Column<string>(type: "text", nullable: false)
+                    Address_ZipCode = table.Column<string>(type: "text", nullable: false),
+                    Location_Latitude = table.Column<double>(type: "double precision", nullable: false),
+                    Location_Longitude = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -257,10 +257,6 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     Name = table.Column<string>(type: "text", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
-                    OriginAddressLong = table.Column<double>(type: "double precision", nullable: true),
-                    OriginAddressLat = table.Column<double>(type: "double precision", nullable: true),
-                    DestinationAddressLong = table.Column<double>(type: "double precision", nullable: true),
-                    DestinationAddressLat = table.Column<double>(type: "double precision", nullable: true),
                     Distance = table.Column<double>(type: "double precision", nullable: false),
                     CanConfirmPickUp = table.Column<bool>(type: "boolean", nullable: false),
                     CanConfirmDelivery = table.Column<bool>(type: "boolean", nullable: false),
@@ -279,12 +275,16 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     DestinationAddress_Line2 = table.Column<string>(type: "text", nullable: true),
                     DestinationAddress_State = table.Column<string>(type: "text", nullable: false),
                     DestinationAddress_ZipCode = table.Column<string>(type: "text", nullable: false),
+                    DestinationLocation_Latitude = table.Column<double>(type: "double precision", nullable: false),
+                    DestinationLocation_Longitude = table.Column<double>(type: "double precision", nullable: false),
                     OriginAddress_City = table.Column<string>(type: "text", nullable: false),
                     OriginAddress_Country = table.Column<string>(type: "text", nullable: false),
                     OriginAddress_Line1 = table.Column<string>(type: "text", nullable: false),
                     OriginAddress_Line2 = table.Column<string>(type: "text", nullable: true),
                     OriginAddress_State = table.Column<string>(type: "text", nullable: false),
-                    OriginAddress_ZipCode = table.Column<string>(type: "text", nullable: false)
+                    OriginAddress_ZipCode = table.Column<string>(type: "text", nullable: false),
+                    OriginLocation_Latitude = table.Column<double>(type: "double precision", nullable: false),
+                    OriginLocation_Longitude = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {

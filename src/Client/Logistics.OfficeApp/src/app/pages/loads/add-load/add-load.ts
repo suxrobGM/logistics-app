@@ -22,20 +22,19 @@ export class AddLoadComponent {
 
   protected create(formValue: LoadFormValue): void {
     this.isLoading.set(true);
+
     const command: CreateLoadCommand = {
       name: formValue.name,
       loadType: formValue.loadType,
-      originAddress: formValue.orgAddress!,
-      originAddressLong: formValue.orgCoords![0],
-      originAddressLat: formValue.orgCoords![1],
-      destinationAddress: formValue.dstAddress!,
-      destinationAddressLong: formValue.dstCoords![0],
-      destinationAddressLat: formValue.dstCoords![1],
-      deliveryCost: formValue.deliveryCost!,
+      originAddress: formValue.originAddress,
+      originLocation: formValue.originLocation,
+      destinationAddress: formValue.destinationAddress,
+      destinationLocation: formValue.destinationLocation,
+      deliveryCost: formValue.deliveryCost,
       distance: formValue.distance,
-      assignedDispatcherId: formValue.assignedDispatcherId!,
-      assignedTruckId: formValue.assignedTruckId!,
-      customerId: formValue.customer!.id,
+      assignedDispatcherId: formValue.assignedDispatcherId,
+      assignedTruckId: formValue.assignedTruckId,
+      customerId: formValue.customer.id,
     };
 
     this.apiService.loadApi.createLoad(command).subscribe((result) => {

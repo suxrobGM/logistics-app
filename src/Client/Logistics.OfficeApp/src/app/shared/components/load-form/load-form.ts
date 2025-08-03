@@ -12,6 +12,7 @@ import {ToastModule} from "primeng/toast";
 import {
   AddressDto,
   CustomerDto,
+  GeoPointDto,
   LoadStatus,
   LoadType,
   loadStatusOptions,
@@ -28,6 +29,7 @@ import {
   SelectedAddressEvent,
   ValidationSummary,
 } from "@/shared/components";
+import {GeoPoint} from "@/shared/types/mapbox";
 import {Converters} from "@/shared/utils";
 
 /**
@@ -37,10 +39,10 @@ export interface LoadFormValue {
   name: string;
   loadType: LoadType;
   customer: CustomerDto;
-  orgAddress: AddressDto;
-  orgCoords: [number, number];
-  dstAddress: AddressDto;
-  dstCoords: [number, number];
+  originAddress: AddressDto;
+  originLocation: GeoPointDto;
+  destinationAddress: AddressDto;
+  destinationLocation: GeoPointDto;
   deliveryCost: number;
   distance: number; // miles, read-only for users
   status?: LoadStatus | null; // only present in edit-mode
@@ -76,6 +78,7 @@ export interface LoadFormValue {
 export class LoadFormComponent implements OnInit {
   protected readonly loadTypes = loadTypeOptions;
   protected readonly loadStatuses = loadStatusOptions;
+  private readonly dummyLocation: GeoPointDto = {longitude: 0, latitude: 0};
 
   private readonly authService = inject(AuthService);
 
@@ -86,8 +89,8 @@ export class LoadFormComponent implements OnInit {
   public readonly save = output<LoadFormValue>();
   public readonly remove = output<void>();
 
-  protected readonly originCoords = signal<[number, number]>([0, 0]);
-  protected readonly destinationCoords = signal<[number, number]>([0, 0]);
+  protected readonly originCoords = signal<GeoPoint>([0, 0]);
+  protected readonly destinationCoords = signal<GeoPoint>([0, 0]);
 
   protected readonly form = new FormGroup({
     name: new FormControl("", {validators: [Validators.required], nonNullable: true}),
@@ -96,19 +99,19 @@ export class LoadFormComponent implements OnInit {
       nonNullable: true,
     }),
     customer: new FormControl<CustomerDto | null>(null, {validators: [Validators.required]}),
-    orgAddress: new FormControl<AddressDto | null>(null, {
+    originAddress: new FormControl<AddressDto | null>(null, {
       validators: [Validators.required],
       nonNullable: true,
     }),
-    orgCoords: new FormControl<[number, number]>([0, 0], {
+    originLocation: new FormControl<GeoPointDto>(this.dummyLocation, {
       validators: [Validators.required],
       nonNullable: true,
     }),
-    dstAddress: new FormControl<AddressDto | null>(null, {
+    destinationAddress: new FormControl<AddressDto | null>(null, {
       validators: [Validators.required],
       nonNullable: true,
     }),
-    dstCoords: new FormControl<[number, number]>([0, 0], {
+    destinationLocation: new FormControl<GeoPointDto>(this.dummyLocation, {
       validators: [Validators.required],
       nonNullable: true,
     }),
@@ -143,17 +146,17 @@ export class LoadFormComponent implements OnInit {
     }
   }
 
-  protected updateOrigin(e: SelectedAddressEvent) {
+  protected updateOrigin(e: SelectedAddressEvent): void {
     this.originCoords.set(e.center);
-    this.form.patchValue({orgCoords: e.center});
+    this.form.patchValue({originLocation: {longitude: e.center[0], latitude: e.center[1]}});
   }
 
-  protected updateDestination(e: SelectedAddressEvent) {
+  protected updateDestination(e: SelectedAddressEvent): void {
     this.destinationCoords.set(e.center);
-    this.form.patchValue({dstCoords: e.center});
+    this.form.patchValue({destinationLocation: {longitude: e.center[0], latitude: e.center[1]}});
   }
 
-  protected updateDistance(e: RouteChangedEvent) {
+  protected updateDistance(e: RouteChangedEvent): void {
     const miles = Converters.metersTo(e.distance, "mi");
     this.form.patchValue({distance: miles});
   }
@@ -169,20 +172,23 @@ export class LoadFormComponent implements OnInit {
     this.remove.emit();
   }
 
-  private patch(src: Partial<LoadFormValue>) {
+  private patch(src: Partial<LoadFormValue>): void {
     this.form.patchValue({
       ...src,
     });
 
-    if (src.orgCoords) {
-      this.originCoords.set(src.orgCoords);
+    if (src.originLocation) {
+      this.originCoords.set([src.originLocation.longitude, src.originLocation.latitude]);
     }
-    if (src.dstCoords) {
-      this.destinationCoords.set(src.dstCoords);
+    if (src.destinationLocation) {
+      this.destinationCoords.set([
+        src.destinationLocation.longitude,
+        src.destinationLocation.latitude,
+      ]);
     }
   }
 
-  private setCurrentDispatcher() {
+  private setCurrentDispatcher(): void {
     const userData = this.authService.getUserData();
 
     if (userData) {

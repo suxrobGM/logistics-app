@@ -13,17 +13,12 @@ public static class TruckMapper
             Number = entity.Number,
             Type = entity.Type,
             Status = entity.Status,
-            CurrentLocationLat = entity.CurrentLocationLat,
-            CurrentLocationLong = entity.CurrentLocationLong,
+            CurrentLocation = entity.CurrentLocation,
+            CurrentAddress = entity.CurrentAddress,
             Loads = loads,
             MainDriver = entity.MainDriver?.ToDto(),
             SecondaryDriver = entity.SecondaryDriver?.ToDto(),
         };
-
-        if (entity.CurrentLocation.IsNotNull())
-        {
-            dto.CurrentLocation = entity.CurrentLocation;
-        }
         return dto;
     }
 }

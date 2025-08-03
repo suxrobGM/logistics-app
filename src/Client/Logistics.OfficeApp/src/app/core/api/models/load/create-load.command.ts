@@ -1,15 +1,14 @@
 import {AddressDto} from "../address.dto";
+import {GeoPointDto} from "../geo-point.dto";
 import {LoadType} from "./enums";
 
 export interface CreateLoadCommand {
   name: string;
   loadType: LoadType;
   originAddress: AddressDto;
-  originAddressLat: number;
-  originAddressLong: number;
+  originLocation: GeoPointDto;
   destinationAddress: AddressDto;
-  destinationAddressLat: number;
-  destinationAddressLong: number;
+  destinationLocation: GeoPointDto;
   deliveryCost: number;
   distance: number;
   assignedDispatcherId: string;

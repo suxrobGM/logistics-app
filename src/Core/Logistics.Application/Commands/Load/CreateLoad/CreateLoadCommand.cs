@@ -9,12 +9,10 @@ public class CreateLoadCommand : IRequest<Result>
 {
     public string Name { get; set; } = null!;
     public LoadType Type { get; set; }
-    public Address? OriginAddress { get; set; }
-    public double OriginAddressLat { get; set; }
-    public double OriginAddressLong { get; set; }
-    public Address? DestinationAddress { get; set; }
-    public double DestinationAddressLat { get; set; }
-    public double DestinationAddressLong { get; set; }
+    public Address OriginAddress { get; set; } = null!;
+    public GeoPoint OriginLocation { get; set; } = null!;
+    public Address DestinationAddress { get; set; } = null!;
+    public GeoPoint DestinationLocation { get; set; } = null!;
     public decimal DeliveryCost { get; set; }
     public double Distance { get; set; }
     public Guid AssignedDispatcherId { get; set; }

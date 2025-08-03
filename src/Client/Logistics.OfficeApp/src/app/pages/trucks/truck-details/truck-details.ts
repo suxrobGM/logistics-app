@@ -67,8 +67,7 @@ export class TruckDetailsComponent implements OnInit {
 
         this.truckLocations.set([
           {
-            latitude: truck.currentLocationLat,
-            longitude: truck.currentLocationLong,
+            currentLocation: truck.currentLocation,
             truckId: truck.id,
             truckNumber: truck.number,
             driversName: [truck.mainDriver?.fullName, truck.secondaryDriver?.fullName]

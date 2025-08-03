@@ -10,7 +10,7 @@ import {InputTextModule} from "primeng/inputtext";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {ApiService} from "@/core/api";
-import {TruckDto} from "@/core/api/models";
+import {AddressDto, TruckDto} from "@/core/api/models";
 import {AddressPipe} from "@/shared/pipes";
 
 @Component({
@@ -29,9 +29,11 @@ import {AddressPipe} from "@/shared/pipes";
     IconFieldModule,
     InputIconModule,
   ],
+  providers: [AddressPipe],
 })
 export class ListTruckComponent {
   private readonly apiService = inject(ApiService);
+  private readonly addressPipe = inject(AddressPipe);
 
   protected readonly trucks = signal<TruckDto[]>([]);
   protected readonly isLoading = signal(false);
@@ -68,5 +70,9 @@ export class ListTruckComponent {
 
         this.isLoading.set(false);
       });
+  }
+
+  protected formatAddress(address: AddressDto): string {
+    return this.addressPipe.transform(address) || "No address provided";
   }
 }

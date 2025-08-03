@@ -66,8 +66,7 @@ public class LocationTracker : ILocationTracker
                 TruckNumber = options.TruckNumber,
                 TenantId = options.TenantId.Value,
                 DriversName = options.DriversName,
-                Latitude = location.Latitude,
-                Longitude = location.Longitude,
+                CurrentLocation = new GeoPoint(location.Longitude, location.Latitude),
                 CurrentAddress = address
             };
             await _hubConnection.InvokeAsync("SendGeolocationData", geolocationData);
