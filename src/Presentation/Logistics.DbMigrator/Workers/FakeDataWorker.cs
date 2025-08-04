@@ -1,7 +1,6 @@
 ﻿using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Models;
 using Logistics.DbMigrator.Services;
-using Logistics.DbMigrator.Utils;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.ValueObjects;
@@ -312,7 +311,7 @@ internal class FakeDataWorker : IHostedService
         load.DispatchedDate = dispatched;
         load.PickUpDate = dispatched.AddHours(6);
         load.DeliveryDate = dispatched.AddHours(30);
-        load.Distance = MathUtils.Haversine(origin.lat, origin.lng, dest.lat, dest.lng);
+        load.Status = LoadStatus.Delivered;
         return load;
     }
     

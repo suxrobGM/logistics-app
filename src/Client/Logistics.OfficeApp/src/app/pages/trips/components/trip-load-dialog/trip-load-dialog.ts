@@ -1,13 +1,13 @@
 import {Component, computed, input, model, output} from "@angular/core";
+import {AccordionModule} from "primeng/accordion";
 import {DialogModule} from "primeng/dialog";
-import {TabsModule} from "primeng/tabs";
 import {CreateTripLoadCommand, LoadDto} from "@/core/api/models";
 import {LoadFormComponent, LoadFormValue, SearchLoadComponent} from "@/shared/components";
 
 @Component({
   selector: "app-trip-load-dialog",
   templateUrl: "./trip-load-dialog.html",
-  imports: [DialogModule, LoadFormComponent, TabsModule, SearchLoadComponent],
+  imports: [DialogModule, LoadFormComponent, SearchLoadComponent, AccordionModule],
 })
 export class TripLoadDialog {
   public readonly visible = model(false);

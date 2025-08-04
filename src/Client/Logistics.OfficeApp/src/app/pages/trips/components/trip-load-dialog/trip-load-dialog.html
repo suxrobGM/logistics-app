@@ -1,5 +1,11 @@
-<p-dialog header="Add Load" [modal]="true" [(visible)]="visible" [style]="{width: '25rem'}">
-  <p-tabs value="0">
+<p-dialog
+  header="Add a new load to this trip"
+  [modal]="true"
+  [(visible)]="visible"
+  [style]="{width: '65vw'}"
+>
+  <!-- TODO: There is a bug in PrimeNG 20 Tabs component, it throws an error related to DI, when PrimeNG fixes it then use Tabs instead of accordion -->
+  <!-- <p-tabs value="0">
     <p-tablist>
       <p-tab value="0">Existing Load</p-tab>
       <p-tab value="1">New Load</p-tab>
@@ -13,5 +19,22 @@
     <p-tabpanel value="1">
       <app-load-form [initial]="initialLoad()" [mode]="'create'" (save)="createLoad($event)" />
     </p-tabpanel>
-  </p-tabpanels>
+  </p-tabpanels> -->
+
+  <p-accordion value="0">
+    <p-accordion-panel value="0">
+      <p-accordion-header>Use existing load to attach to this trip</p-accordion-header>
+      <p-accordion-content>
+        <app-search-load (selectedLoadChange)="onPickExisting($event)" />
+        <small class="text-gray-500">Only undelivered loads are listed.</small>
+      </p-accordion-content>
+    </p-accordion-panel>
+
+    <p-accordion-panel value="1">
+      <p-accordion-header>Create a new load for this trip</p-accordion-header>
+      <p-accordion-content>
+        <app-load-form [initial]="initialLoad()" [mode]="'create'" (save)="createLoad($event)" />
+      </p-accordion-content>
+    </p-accordion-panel>
+  </p-accordion>
 </p-dialog>

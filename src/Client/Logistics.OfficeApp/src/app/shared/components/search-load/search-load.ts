@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import {CommonModule} from "@angular/common";
-import {Component, forwardRef, inject, model, output, signal} from "@angular/core";
+import {Component, forwardRef, inject, input, model, output, signal} from "@angular/core";
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
 import {ApiService} from "@/core/api";
@@ -28,12 +28,13 @@ export class SearchLoadComponent implements ControlValueAccessor {
 
   protected readonly suggestedLoads = signal<LoadDto[]>([]);
 
+  public readonly filterActiveLoads = input(false);
   public readonly selectedLoad = model<LoadDto | null>(null);
-  public readonly selectedLoadsChange = output<LoadDto | null>();
+  public readonly selectedLoadChange = output<LoadDto | null>();
 
   protected searchLoad(event: {query: string}): void {
     this.apiService.loadApi
-      .getLoads({search: event.query, onlyActiveLoads: true})
+      .getLoads({search: event.query, onlyActiveLoads: this.filterActiveLoads()})
       .subscribe((result) => {
         if (!result.data) {
           return;
@@ -44,7 +45,7 @@ export class SearchLoadComponent implements ControlValueAccessor {
   }
 
   protected changeSelectedLoad(event: AutoCompleteSelectEvent): void {
-    this.selectedLoadsChange.emit(event.value);
+    this.selectedLoadChange.emit(event.value);
     this.onChange(event.value);
   }
 

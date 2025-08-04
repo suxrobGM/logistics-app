@@ -109,6 +109,7 @@ public class Load : Entity, ITenantEntity
             Customer = customer
         };
 
+        load.Distance = load.OriginLocation.DistanceTo(load.DestinationLocation);
         var invoice = CreateInvoice(load);
         load.Invoices.Add(invoice);
         load.DomainEvents.Add(new NewLoadCreatedEvent(load.Id));

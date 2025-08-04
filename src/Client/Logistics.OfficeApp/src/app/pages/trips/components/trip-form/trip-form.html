@@ -54,9 +54,9 @@
   <app-direction-map [stops]="stopCoords()" />
 
   <div class="col-span-full">
-    <h5 class="mb-3 font-semibold">Assigned Loads</h5>
     <p-table [value]="loads()" [dataKey]="'id'" responsiveLayout="scroll" [loading]="isLoading()">
       <ng-template #caption>
+        <h5 class="mb-3 font-semibold">Assigned Loads</h5>
         <p-button
           icon="pi pi-plus"
           label="Add Load"
@@ -81,6 +81,7 @@
           <th>Actions</th>
         </tr>
       </ng-template>
+
       <ng-template #body let-load>
         <tr>
           <td>{{ load.number }}</td>
@@ -108,6 +109,7 @@
           </td>
         </tr>
       </ng-template>
+
       <ng-template #footer>
         <tr>
           <td colspan="6" class="font-bold">Totals</td>
