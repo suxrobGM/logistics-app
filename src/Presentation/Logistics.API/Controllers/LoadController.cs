@@ -5,7 +5,9 @@ using Logistics.Shared.Identity.Policies;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using CreateLoadCommand = Logistics.Application.Commands.CreateLoadCommand;
 using GetLoadsQuery = Logistics.Application.Queries.GetLoadsQuery;
+using UpdateLoadCommand = Logistics.Application.Commands.UpdateLoadCommand;
 
 namespace Logistics.API.Controllers;
 

@@ -32,7 +32,7 @@ internal sealed class LoadService : ILoadService
         
         var customer = await _tenantUow.Repository<Customer>().GetByIdAsync(parameters.CustomerId);
 
-        if (customer is null)
+        if (customer is not null)
         {
             throw new InvalidOperationException(
                 $"Could not find the customer with ID '{parameters.CustomerId}'");

@@ -2,7 +2,7 @@
 
 namespace Logistics.Shared.Models;
 
-public record UpdateLoad
+public record UpdateLoadCommand
 {
     public string? Id { get; set; }
     public string? Name { get; set; }

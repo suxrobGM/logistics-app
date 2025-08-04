@@ -9,4 +9,24 @@
   [(ngModel)]="selectedCustomer"
   (completeMethod)="searchCustomer($event)"
   (onSelect)="changeSelectedCustomer($event)"
-/>
+>
+  <ng-template #footer>
+    <span class="text-sm text-gray-500">
+      Not found?
+      <p-button
+        class="font-semibold"
+        label="Add a new customer"
+        (click)="customerDialogVisible.set(true)"
+      />
+    </span>
+  </ng-template>
+</p-auto-complete>
+
+<p-dialog
+  header="Create Customer"
+  [modal]="true"
+  [(visible)]="customerDialogVisible"
+  [style]="{width: '25rem'}"
+>
+  <app-customer-form [mode]="'create'" (save)="createCustomer($event)" />
+</p-dialog>

@@ -1,7 +1,6 @@
 import {CommonModule} from "@angular/common";
 import {Component, OnInit, inject, input, signal} from "@angular/core";
 import {Router} from "@angular/router";
-import {ConfirmationService} from "primeng/api";
 import {CardModule} from "primeng/card";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
@@ -26,7 +25,6 @@ import {Converters} from "@/shared/utils";
 })
 export class EditLoadComponent implements OnInit {
   private readonly apiService = inject(ApiService);
-  private readonly confirmationService = inject(ConfirmationService);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
@@ -37,17 +35,14 @@ export class EditLoadComponent implements OnInit {
   protected readonly loadNumber = signal<number>(0);
 
   ngOnInit(): void {
-    this.fetchLoad();
+    const loadId = this.id();
+
+    if (loadId) {
+      this.fetchLoad(loadId);
+    }
   }
 
-  confirmToDelete(): void {
-    this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this load?",
-      accept: () => this.deleteLoad(),
-    });
-  }
-
-  update(formValue: LoadFormValue): void {
+  protected updateLoad(formValue: LoadFormValue): void {
     const command: UpdateLoadCommand = {
       id: this.id()!,
       name: formValue.name!,
@@ -71,7 +66,7 @@ export class EditLoadComponent implements OnInit {
     });
   }
 
-  private deleteLoad(): void {
+  protected deleteLoad(): void {
     this.isLoading.set(true);
     this.apiService.loadApi.deleteLoad(this.id()!).subscribe((result) => {
       if (result.success) {
@@ -83,10 +78,10 @@ export class EditLoadComponent implements OnInit {
     });
   }
 
-  private fetchLoad(): void {
+  private fetchLoad(loadId: string): void {
     this.isLoading.set(true);
 
-    this.apiService.loadApi.getLoad(this.id()!).subscribe((result) => {
+    this.apiService.loadApi.getLoad(loadId).subscribe((result) => {
       if (!result.success || !result.data) {
         return;
       }

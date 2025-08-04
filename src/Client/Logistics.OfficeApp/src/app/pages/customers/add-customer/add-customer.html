@@ -1,14 +1,12 @@
-<h1 class="text-center">Edit customer</h1>
+<h1 class="text-center">Add a new customer</h1>
 <hr class="w-full" />
 
 <div class="flex flex-col justify-center gap-6 md:flex-row">
   <p-card class="w-full md:w-1/2">
     <app-customer-form
-      [mode]="'edit'"
-      [initial]="initialData()"
+      [mode]="'create'"
       [isLoading]="isLoading()"
-      (save)="updateCustomer($event)"
-      (remove)="deleteCustomer()"
+      (save)="createCustomer($event)"
     />
   </p-card>
 </div>

@@ -1,6 +1,3 @@
-<p-toast key="notification" position="top-right" />
-<p-confirm-dialog header="Confirmation" icon="pi pi-exclamation-triangle" />
-
 <h1>Edit a load #{{ loadNumber() }}</h1>
 <hr class="w-full" />
 
@@ -9,7 +6,7 @@
     [mode]="'edit'"
     [initial]="initialData()"
     [isLoading]="isLoading()"
-    (save)="update($event)"
-    (remove)="confirmToDelete()"
+    (save)="updateLoad($event)"
+    (remove)="deleteLoad()"
   />
 </p-card>

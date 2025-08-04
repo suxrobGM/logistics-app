@@ -1,0 +1,17 @@
+<p-dialog header="Add Load" [modal]="true" [(visible)]="visible" [style]="{width: '25rem'}">
+  <p-tabs value="0">
+    <p-tablist>
+      <p-tab value="0">Existing Load</p-tab>
+      <p-tab value="1">New Load</p-tab>
+    </p-tablist>
+  </p-tabs>
+  <p-tabpanels>
+    <p-tabpanel value="0">
+      <app-search-load (selectedLoadsChange)="onPickExisting($event)" />
+      <small class="text-gray-500">Only undelivered loads are listed.</small>
+    </p-tabpanel>
+    <p-tabpanel value="1">
+      <app-load-form [initial]="initialLoad()" [mode]="'create'" (save)="createLoad($event)" />
+    </p-tabpanel>
+  </p-tabpanels>
+</p-dialog>

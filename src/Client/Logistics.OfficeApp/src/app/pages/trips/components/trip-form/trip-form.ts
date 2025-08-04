@@ -20,7 +20,7 @@ import {
 } from "@/shared/components";
 import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
 import {GeoPoint} from "@/shared/types/mapbox";
-import {LoadDialog} from "../load-dialog/load-dialog";
+import {TripLoadDialog} from "../trip-load-dialog/trip-load-dialog";
 
 export interface TripFormValue {
   name: string;
@@ -42,7 +42,7 @@ export interface TripFormValue {
     DirectionMap,
     RouterLink,
     InputTextModule,
-    LoadDialog,
+    TripLoadDialog,
     DatePicker,
     TableModule,
     LoadStatusTag,
@@ -63,6 +63,8 @@ export class TripForm {
 
   public readonly save = output<TripFormValue>();
   public readonly remove = output<void>();
+
+  protected readonly tripLoadDialogVisible = model(false);
 
   protected readonly totalDistance = computed(() =>
     this.loads().reduce((total, load) => total + load.distance, 0)
@@ -93,8 +95,11 @@ export class TripForm {
     });
   }
 
-  protected askRemove(): void {
-    this.remove.emit();
+  protected askRemoveTrip(): void {
+    this.confirmationService.confirm({
+      message: "Are you sure that you want to delete this trip?",
+      accept: () => this.remove.emit(),
+    });
   }
 
   protected askRemoveLoad(loadId: string): void {

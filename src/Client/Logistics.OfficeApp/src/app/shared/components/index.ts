@@ -16,3 +16,4 @@ export * from "./search-customer/search-customer";
 export * from "./search-truck/search-truck";
 export * from "./load-form/load-form";
 export * from "./search-load/search-load";
+export * from "./customer-form/customer-form";

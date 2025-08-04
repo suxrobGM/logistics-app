@@ -1,10 +1,11 @@
 ﻿using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mappings;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class CreateCustomerHandler : RequestHandler<CreateCustomerCommand, Result>
+internal sealed class CreateCustomerHandler : RequestHandler<CreateCustomerCommand, Result<CustomerDto>>
 {
     private readonly ITenantUnityOfWork _tenantUow;
 
@@ -13,18 +14,22 @@ internal sealed class CreateCustomerHandler : RequestHandler<CreateCustomerComma
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result> HandleValidated(
+    protected override async Task<Result<CustomerDto>> HandleValidated(
         CreateCustomerCommand req, CancellationToken cancellationToken)
     {
         var existingCustomer = await _tenantUow.Repository<Customer>().GetAsync(i => i.Name == req.Name);
 
         if (existingCustomer is not null)
         {
-            return Result.Fail($"A customer named '{req.Name}' already exists");
+            return Result<CustomerDto>.Fail($"A customer named '{req.Name}' already exists");
         }
-        
-        await _tenantUow.Repository<Customer>().AddAsync(new Customer {Name = req.Name});
+
+        var newCustomer = new Customer
+        {
+            Name = req.Name
+        };
+        await _tenantUow.Repository<Customer>().AddAsync(newCustomer);
         await _tenantUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result<CustomerDto>.Succeed(newCustomer.ToDto());
     }
 }

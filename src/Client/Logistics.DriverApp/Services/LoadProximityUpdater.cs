@@ -43,7 +43,7 @@ public class LoadProximityUpdater : ILoadProximityUpdater
             if (originDistance < 0.5 && !load.CanConfirmPickUp && load.Status != LoadStatus.PickedUp)
             {
                 load.CanConfirmPickUp = true;
-                await _apiClient.UpdateLoadProximity(new UpdateLoadProximity
+                await _apiClient.UpdateLoadProximity(new UpdateLoadProximityCommand
                 {
                     LoadId = load.Id,
                     CanConfirmPickUp = true
@@ -53,7 +53,7 @@ public class LoadProximityUpdater : ILoadProximityUpdater
             if (destDistance < 0.5 && !load.CanConfirmDelivery && load.Status != LoadStatus.Delivered)
             {
                 load.CanConfirmDelivery = true;
-                await _apiClient.UpdateLoadProximity(new UpdateLoadProximity
+                await _apiClient.UpdateLoadProximity(new UpdateLoadProximityCommand
                 {
                     LoadId = load.Id,
                     CanConfirmDelivery = true

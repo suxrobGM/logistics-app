@@ -2,7 +2,6 @@
 import {CommonModule} from "@angular/common";
 import {Component, forwardRef, inject, model, output, signal} from "@angular/core";
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
-import {RouterLink} from "@angular/router";
 import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
 import {ApiService} from "@/core/api";
 import {LoadDto} from "@/core/api/models";
@@ -11,12 +10,11 @@ import {LoadStatusTag} from "../load-status-tag/load-status-tag";
 /**
  * Component for searching and selecting loads.
  * It uses the AutoComplete component from PrimeNG to provide suggestions based on user input.
- *
  */
 @Component({
   selector: "app-search-load",
   templateUrl: "./search-load.html",
-  imports: [CommonModule, AutoCompleteModule, FormsModule, LoadStatusTag, RouterLink],
+  imports: [CommonModule, AutoCompleteModule, FormsModule, LoadStatusTag],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -29,17 +27,20 @@ export class SearchLoadComponent implements ControlValueAccessor {
   private readonly apiService = inject(ApiService);
 
   protected readonly suggestedLoads = signal<LoadDto[]>([]);
+
   public readonly selectedLoad = model<LoadDto | null>(null);
   public readonly selectedLoadsChange = output<LoadDto | null>();
 
   protected searchLoad(event: {query: string}): void {
-    this.apiService.loadApi.getLoads({search: event.query}).subscribe((result) => {
-      if (!result.data) {
-        return;
-      }
+    this.apiService.loadApi
+      .getLoads({search: event.query, onlyActiveLoads: true})
+      .subscribe((result) => {
+        if (!result.data) {
+          return;
+        }
 
-      this.suggestedLoads.set(result.data);
-    });
+        this.suggestedLoads.set(result.data);
+      });
   }
 
   protected changeSelectedLoad(event: AutoCompleteSelectEvent): void {

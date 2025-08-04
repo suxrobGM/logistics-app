@@ -40,7 +40,7 @@ public class CustomerController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<CustomerDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Customers.Create)]
     public async Task<IActionResult> Create([FromBody] CreateCustomerCommand request)

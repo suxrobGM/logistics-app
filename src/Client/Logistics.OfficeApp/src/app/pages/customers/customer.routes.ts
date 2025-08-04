@@ -1,6 +1,7 @@
 import {Routes} from "@angular/router";
 import {authGuard} from "@/core/auth";
 import {Permissions} from "@/shared/models";
+import {AddCustomerComponent} from "./add-customer/add-customer";
 import {EditCustomerComponent} from "./edit-customer/edit-customer";
 import {ListCustomersComponent} from "./list-customers/list-customers";
 
@@ -16,7 +17,7 @@ export const customerRoutes: Routes = [
   },
   {
     path: "add",
-    component: EditCustomerComponent,
+    component: AddCustomerComponent,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Add",

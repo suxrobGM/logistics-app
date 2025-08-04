@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Shared.Models;
 
-public record UpdateLoadProximity
+public record UpdateLoadProximityCommand
 {
     public Guid? LoadId { get; set; }
     public bool? CanConfirmPickUp { get; set; }

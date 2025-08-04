@@ -174,14 +174,14 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakeGetRequestAsync<Result<ICollection<LoadDto>>>("loads", query);
     }
 
-    public Task<Result> CreateLoadAsync(CreateLoad command)
+    public Task<Result> CreateLoadAsync(CreateLoadCommand command)
     {
-        return MakePostRequestAsync<Result, CreateLoad>("loads", command);
+        return MakePostRequestAsync<Result, CreateLoadCommand>("loads", command);
     }
     
-    public Task<Result> UpdateLoadAsync(UpdateLoad command)
+    public Task<Result> UpdateLoadAsync(UpdateLoadCommand command)
     {
-        return MakePutRequestAsync<Result, UpdateLoad>($"loads/{command.Id}", command);
+        return MakePutRequestAsync<Result, UpdateLoadCommand>($"loads/{command.Id}", command);
     }
 
     public Task<Result> DeleteLoadAsync(Guid id)
@@ -322,9 +322,9 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakePostRequestAsync<Result, ConfirmLoadStatus>("drivers/confirm-load-status", command);
     }
 
-    public Task<Result> UpdateLoadProximity(UpdateLoadProximity command)
+    public Task<Result> UpdateLoadProximity(UpdateLoadProximityCommand command)
     {
-        return MakePostRequestAsync<Result, UpdateLoadProximity>("drivers/update-load-proximity", command);
+        return MakePostRequestAsync<Result, UpdateLoadProximityCommand>("drivers/update-load-proximity", command);
     }
 
     #endregion

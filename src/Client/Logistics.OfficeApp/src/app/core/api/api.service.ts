@@ -3,9 +3,7 @@ import {Observable} from "rxjs";
 import {ApiBase} from "./api-base";
 import {
   CompanyStatsDto,
-  CreateCustomerCommand,
   CreateEmployeeCommand,
-  CustomerDto,
   DailyGrossesDto,
   EmployeeDto,
   MonthlyGrossesDto,
@@ -17,11 +15,11 @@ import {
   RoleDto,
   SearchableQuery,
   TruckStatsDto,
-  UpdateCustomerCommand,
   UpdateEmployeeCommand,
   UpdateNotificationCommand,
 } from "./models";
 import {
+  CustomerApiService,
   InvoiceApiService,
   LoadApiService,
   PaymentApiService,
@@ -46,6 +44,7 @@ export class ApiService extends ApiBase {
   public readonly tripApi = new TripApiService();
   public readonly loadApi = new LoadApiService();
   public readonly truckApi = new TruckApiService();
+  public readonly customerApi = new CustomerApiService();
 
   // #region Employee API
 
@@ -153,35 +152,6 @@ export class ApiService extends ApiBase {
   updateNotification(commad: UpdateNotificationCommand): Observable<Result> {
     const url = `/notifications/${commad.id}`;
     return this.put(url, commad);
-  }
-
-  // #endregion
-
-  // #region Customers API
-
-  getCustomer(id: string): Observable<Result<CustomerDto>> {
-    const url = `/customers/${id}`;
-    return this.get(url);
-  }
-
-  getCustomers(query?: SearchableQuery): Observable<PagedResult<CustomerDto>> {
-    const url = `/customers?${this.stringfySearchableQuery(query)}`;
-    return this.get(url);
-  }
-
-  createCustomer(command: CreateCustomerCommand): Observable<Result> {
-    const url = `/customers`;
-    return this.post(url, command);
-  }
-
-  updateCustomer(command: UpdateCustomerCommand): Observable<Result> {
-    const url = `/customers/${command.id}`;
-    return this.put(url, command);
-  }
-
-  deleteCustomer(customerId: string): Observable<Result> {
-    const url = `/customers/${customerId}`;
-    return this.delete(url);
   }
 
   // #endregion

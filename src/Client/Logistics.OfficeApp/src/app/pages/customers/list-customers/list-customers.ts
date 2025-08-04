@@ -41,11 +41,11 @@ export class ListCustomersComponent {
   protected readonly totalRecords = signal<number>(0);
   protected readonly first = signal<number>(0);
 
-  search(event: Event): void {
+  protected search(event: Event): void {
     this.isLoading.set(true);
     const searchValue = (event.target as HTMLInputElement).value;
 
-    this.apiService.getCustomers({search: searchValue}).subscribe((result) => {
+    this.apiService.customerApi.getCustomers({search: searchValue}).subscribe((result) => {
       if (result.success && result.data) {
         this.customers.set(result.data);
         this.totalRecords.set(result.totalItems);
@@ -55,14 +55,14 @@ export class ListCustomersComponent {
     });
   }
 
-  load(event: TableLazyLoadEvent): void {
+  protected load(event: TableLazyLoadEvent): void {
     this.isLoading.set(true);
     const first = event.first ?? 1;
     const rows = event.rows ?? 10;
     const page = first / rows + 1;
     const sortField = this.apiService.formatSortField(event.sortField as string, event.sortOrder);
 
-    this.apiService
+    this.apiService.customerApi
       .getCustomers({orderBy: sortField, page: page, pageSize: rows})
       .subscribe((result) => {
         if (result.success && result.data) {
@@ -74,17 +74,17 @@ export class ListCustomersComponent {
       });
   }
 
-  confirmToDelete(id: string): void {
+  protected confirmToDelete(id: string): void {
     this.confirmationService.confirm({
       message: "Are you sure that you want to delete this customer?",
       accept: () => this.deleteCustomer(id),
     });
   }
 
-  deleteCustomer(id: string): void {
+  protected deleteCustomer(id: string): void {
     this.isLoading.set(true);
 
-    this.apiService.deleteCustomer(id).subscribe((result) => {
+    this.apiService.customerApi.deleteCustomer(id).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess("The customer has been deleted successfully");
         this.customers.update((customers) => customers.filter((c) => c.id !== id));

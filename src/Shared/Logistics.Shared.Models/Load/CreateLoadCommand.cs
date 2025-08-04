@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Shared.Models;
 
-public record CreateLoad
+public record CreateLoadCommand
 {
     public string? Name { get; set; }
     public string? SourceAddress { get; set; }
