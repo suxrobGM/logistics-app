@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Shared.Models;
 
-public record CreateTenant
+public record CreateTenantCommand
 {
     public string? Name { get; set; }
     public string? CompanyName { get; set; }

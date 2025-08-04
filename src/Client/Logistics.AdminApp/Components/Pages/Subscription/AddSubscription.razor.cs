@@ -39,7 +39,7 @@ public partial class AddSubscription : PageBase
 
     private async Task SubmitAsync(SubscriptionDto model)
     {
-        var success = await CallApiAsync(api => api.CreateSubscriptionAsync(new CreateSubscription
+        var success = await CallApiAsync(api => api.CreateSubscriptionAsync(new CreateSubscriptionCommand
         {
             Status = SubscriptionStatus.Active, // model.Status,
             PlanId = model.Plan?.Id,

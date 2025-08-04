@@ -46,7 +46,7 @@ public partial class EditSubscriptionPlan : PageBase
     {
         if (EditMode)
         {
-            var success = await CallApiAsync(api => api.UpdateSubscriptionPlanAsync(new UpdateSubscriptionPlan
+            var success = await CallApiAsync(api => api.UpdateSubscriptionPlanAsync(new UpdateSubscriptionPlanCommand
             {
                 Id = model.Id,
                 Name = model.Name,
@@ -64,7 +64,7 @@ public partial class EditSubscriptionPlan : PageBase
         }
         else
         {
-            var success = await CallApiAsync(api => api.CreateSubscriptionPlanAsync(new CreateSubscriptionPlan
+            var success = await CallApiAsync(api => api.CreateSubscriptionPlanAsync(new CreateSubscriptionPlanCommand
             {
                 Name = model.Name,
                 Description = model.Description,

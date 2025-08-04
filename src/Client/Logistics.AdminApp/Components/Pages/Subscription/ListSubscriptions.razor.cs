@@ -51,7 +51,7 @@ public partial class ListSubscriptions : PageBase
         
         if (confirm.HasValue && confirm.Value)
         {
-            await CallApiAsync(api => api.CancelSubscriptionAsync(new CancelSubscription {Id = id}));
+            await CallApiAsync(api => api.CancelSubscriptionAsync(new CancelSubscriptionCommand {Id = id}));
             await LoadData(new LoadDataArgs());
         }
     }

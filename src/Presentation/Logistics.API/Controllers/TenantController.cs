@@ -7,6 +7,8 @@ using Logistics.Shared.Identity.Roles;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using CreateTenantCommand = Logistics.Application.Commands.CreateTenantCommand;
+using UpdateTenantCommand = Logistics.Application.Commands.UpdateTenantCommand;
 
 namespace Logistics.API.Controllers;
 

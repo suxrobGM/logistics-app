@@ -54,7 +54,7 @@ public partial class EditTenant : PageBase
         
         if (EditMode)
         {
-            var success = await CallApiAsync(api => api.UpdateTenantAsync(new UpdateTenant
+            var success = await CallApiAsync(api => api.UpdateTenantAsync(new UpdateTenantCommand
             {
                 Id = _tenant.Id,
                 CompanyName = _tenant.CompanyName
@@ -69,7 +69,7 @@ public partial class EditTenant : PageBase
         }
         else
         {
-            var success = await CallApiAsync(api => api.CreateTenantAsync(new CreateTenant
+            var success = await CallApiAsync(api => api.CreateTenantAsync(new CreateTenantCommand
             {
                 Name = _tenant.Name,
                 CompanyName = _tenant.CompanyName

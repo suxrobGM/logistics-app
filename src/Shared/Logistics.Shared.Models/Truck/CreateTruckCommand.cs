@@ -1,8 +1,7 @@
 ﻿namespace Logistics.Shared.Models;
 
-public record UpdateTruck
+public record CreateTruckCommand
 {
-    public string? Id { get; set; }
     public int? TruckNumber { get; set; }
     public string? DriverId { get; set; }
 }

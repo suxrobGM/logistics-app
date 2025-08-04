@@ -2,7 +2,7 @@
 
 namespace Logistics.Shared.Models;
 
-public class CreateSubscription
+public class CreateSubscriptionCommand
 {
     public SubscriptionStatus Status { get; set; }
     public Guid? TenantId { get; set; }

@@ -2,7 +2,7 @@
 
 namespace Logistics.Shared.Models;
 
-public class CreateSubscriptionPlan
+public class CreateSubscriptionPlanCommand
 {
     public string? Name { get; set; }
     public string? Description { get; set; }

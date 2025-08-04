@@ -5,7 +5,9 @@ using Logistics.Shared.Identity.Policies;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using CreateTruckCommand = Logistics.Application.Commands.CreateTruckCommand;
 using GetTruckQuery = Logistics.Application.Queries.GetTruckQuery;
+using UpdateTruckCommand = Logistics.Application.Commands.UpdateTruckCommand;
 
 namespace Logistics.API.Controllers;
 

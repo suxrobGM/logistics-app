@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Shared.Models;
 
-public class CancelSubscription
+public class CancelSubscriptionCommand
 {
     public Guid Id { get; set; }
 }

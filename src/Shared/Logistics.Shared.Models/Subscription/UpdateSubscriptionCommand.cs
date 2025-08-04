@@ -2,7 +2,7 @@
 
 namespace Logistics.Shared.Models;
 
-public class UpdateSubscription
+public class UpdateSubscriptionCommand
 {
     public string? Id { get; set; }
     public SubscriptionStatus? Status { get; set; }

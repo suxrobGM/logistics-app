@@ -3,7 +3,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Shared.Models;
 
-public record CreateTripLoadDto
+public record CreateTripLoadCommand
 {
     public string? Name { get; set; }
     

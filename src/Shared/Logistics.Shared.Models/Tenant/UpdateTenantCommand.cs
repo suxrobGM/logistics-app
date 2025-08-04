@@ -1,6 +1,6 @@
 ﻿namespace Logistics.Shared.Models;
 
-public record UpdateTenant
+public record UpdateTenantCommand
 {
     public Guid? Id { get; set; }
     public string? CompanyName { get; set; }
