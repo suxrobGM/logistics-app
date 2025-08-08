@@ -1,6 +1,5 @@
 ﻿using Logistics.Domain.Specifications;
 using Microsoft.EntityFrameworkCore;
-
 namespace Logistics.Infrastructure.Persistence;
 
 public static class QueryableExtensions

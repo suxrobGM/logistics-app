@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Services;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
@@ -72,6 +72,7 @@ public class TenantDbContext : DbContext
         builder.ApplyConfiguration(new InvoiceEntityConfiguration.SubscriptionInvoiceEntityConfiguration());
         builder.ApplyConfiguration(new InvoiceEntityConfiguration.PayrollInvoiceEntityConfiguration());
         builder.ApplyConfiguration(new LoadEntityConfiguration());
+        builder.ApplyConfiguration(new LoadDocumentEntityConfiguration());
         builder.ApplyConfiguration(new PaymentEntityConfiguration());
         builder.ApplyConfiguration(new PaymentMethodEntityConfiguration());
         builder.ApplyConfiguration(new EmployeeEntityConfiguration());
