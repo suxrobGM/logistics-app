@@ -6,6 +6,7 @@ using Hangfire.PostgreSql;
 using Logistics.API.Authorization;
 using Logistics.API.Jobs;
 using Logistics.API.Middlewares;
+using Logistics.API.Extensions;
 using Logistics.Application;
 using Logistics.Application.Hubs;
 using Logistics.Infrastructure;
@@ -121,31 +122,7 @@ internal static class Setup
         app.UseHttpsRedirection();
         app.UseCors(app.Environment.IsDevelopment() ? "AnyCors" : "DefaultCors");
         
-        // Serve static files for local blob storage with tenant isolation
-        var storageType = app.Configuration.GetValue<string>("BlobStorage:Type")?.ToLowerInvariant();
-        if (storageType is "file" or "local" or null)
-        {
-            var uploadsPath = app.Configuration.GetValue<string>("FileBlobStorage:RootPath") ?? "wwwroot/uploads";
-            var uploadsDirectory = Path.Combine(app.Environment.ContentRootPath, uploadsPath);
-            
-            if (!Directory.Exists(uploadsDirectory))
-            {
-                Directory.CreateDirectory(uploadsDirectory);
-            }
-            
-            // Serve tenant-specific files with path like /uploads/{tenantId}/container/file
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(uploadsDirectory),
-                RequestPath = "/uploads",
-                OnPrepareResponse = context =>
-                {
-                    // Add security headers for file downloads
-                    context.Context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
-                    context.Context.Response.Headers.Append("X-Frame-Options", "DENY");
-                }
-            });
-        }
+        app.UseLocalStorageStaticFiles();
 
         app.UseAuthentication();
         app.UseAuthorization();
