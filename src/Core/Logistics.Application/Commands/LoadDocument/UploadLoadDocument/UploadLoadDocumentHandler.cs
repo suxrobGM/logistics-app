@@ -1,10 +1,8 @@
-using Logistics.Application.Extensions;
+using Logistics.Domain.Constants;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Services;
-using Logistics.Infrastructure.Services;
 using Logistics.Shared.Models;
-using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Commands;
 
@@ -12,16 +10,13 @@ internal sealed class UploadLoadDocumentHandler : RequestHandler<UploadLoadDocum
 {
     private readonly ITenantUnityOfWork _tenantUow;
     private readonly IBlobStorageService _blobStorageService;
-    private readonly AzureBlobStorageOptions _storageOptions;
 
     public UploadLoadDocumentHandler(
         ITenantUnityOfWork tenantUow,
-        IBlobStorageService blobStorageService,
-        IOptions<AzureBlobStorageOptions> storageOptions)
+        IBlobStorageService blobStorageService)
     {
         _tenantUow = tenantUow;
         _blobStorageService = blobStorageService;
-        _storageOptions = storageOptions.Value;
     }
 
     protected override async Task<Result<Guid>> HandleValidated(
@@ -50,7 +45,7 @@ internal sealed class UploadLoadDocumentHandler : RequestHandler<UploadLoadDocum
 
             // Upload to blob storage
             var blobUri = await _blobStorageService.UploadAsync(
-                _storageOptions.DefaultContainer,
+                BlobConstants.DocumentsContainerName,
                 blobPath,
                 req.FileContent,
                 req.ContentType,
@@ -63,7 +58,7 @@ internal sealed class UploadLoadDocumentHandler : RequestHandler<UploadLoadDocum
                 req.ContentType,
                 req.FileSizeBytes,
                 blobPath,
-                _storageOptions.DefaultContainer,
+                BlobConstants.DocumentsContainerName,
                 req.Type,
                 req.LoadId,
                 req.UploadedById,
@@ -79,7 +74,7 @@ internal sealed class UploadLoadDocumentHandler : RequestHandler<UploadLoadDocum
             }
 
             // If database save failed, clean up blob
-            await _blobStorageService.DeleteAsync(_storageOptions.DefaultContainer, blobPath, cancellationToken);
+            await _blobStorageService.DeleteAsync(BlobConstants.DocumentsContainerName, blobPath, cancellationToken);
             return Result<Guid>.Fail("Failed to save document information to database");
         }
         catch (Exception ex)

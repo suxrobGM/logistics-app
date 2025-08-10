@@ -1,4 +1,5 @@
 using Logistics.Domain.Entities;
+using Logistics.Domain.Primitives.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -44,7 +45,7 @@ public class LoadDocumentEntityConfiguration : IEntityTypeConfiguration<LoadDocu
         builder.Property(d => d.Status)
             .IsRequired()
             .HasConversion<string>()
-            .HasDefaultValue(Shared.Consts.DocumentStatus.Active);
+            .HasDefaultValue(DocumentStatus.Active);
 
         builder.Property(d => d.Description)
             .HasMaxLength(1000);

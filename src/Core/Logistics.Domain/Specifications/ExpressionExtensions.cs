@@ -6,6 +6,10 @@ public static class ExpressionExtensions
 {
     /// <summary>
     /// Combines two predicate expressions: left AND right.
+    /// If either expression is null, it returns the other one.
+    /// For example, if left is "x => x.Age > 18" and right is "x => x.IsActive",
+    /// the result will be "x => x.Age > 18 && x.IsActive".
+    /// If both expressions are null, it returns null.
     /// </summary>
     /// <param name="left">The first expression.</param>
     /// <param name="right">The second expression.</param>

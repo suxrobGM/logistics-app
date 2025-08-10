@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Identity.Policies;
 
 namespace Logistics.API.Controllers;
@@ -161,6 +162,6 @@ public class LoadDocumentController : ControllerBase
 public class UploadDocumentRequest
 {
     public required IFormFile File { get; set; }
-    public required Shared.Consts.DocumentType Type { get; set; }
+    public required DocumentType Type { get; set; }
     public string? Description { get; set; }
 }

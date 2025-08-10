@@ -5,21 +5,15 @@ namespace Logistics.Domain.Specifications;
 
 public interface ISpecification<T>
 {
-    // Expression<Func<T, bool>>? Criteria { get; }
-    // Expression<Func<T, object>>? GroupBy { get; }
-    // Expression<Func<T, object?>>? OrderBy { get; }
-    // IReadOnlyList<Expression<Func<T, object>>> Includes { get; }
-    //
-    // bool IsDescending { get; }
-    //
-    // // Paging is performed only if PageSize > 0
-    // int Page { get; }
-    // int PageSize { get; }
-    
-    // business or query filter
+    /// <summary>
+    /// Criteria or predicate to filter the entities.
+    /// If null, no filtering will be applied.
+    /// </summary>
     Expression<Func<T, bool>>? Criteria { get; }
 
-    // navigation properties to eager-load
+    /// <summary>
+    /// Related entities to include in the query results.
+    /// </summary>
     IReadOnlyList<Expression<Func<T, object>>> Includes { get; }
     
     /// <summary>

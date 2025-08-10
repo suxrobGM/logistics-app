@@ -1,8 +1,7 @@
-using Logistics.Application.Extensions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Services;
-using Logistics.Shared.Consts;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
@@ -30,7 +29,7 @@ internal sealed class DeleteLoadDocumentHandler : RequestHandler<DeleteLoadDocum
             return Result.Fail($"Could not find document with ID '{req.DocumentId}'");
         }
 
-        // Check if document is already deleted
+        // Check if the document is already deleted
         if (document.Status == DocumentStatus.Deleted)
         {
             return Result.Fail("Document is already deleted");

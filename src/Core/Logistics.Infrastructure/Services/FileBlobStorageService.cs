@@ -27,7 +27,7 @@ public class FileBlobStorageService : IBlobStorageService
             EnsureDirectoryExists(fileDirectory);
         }
 
-        using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+        await using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
         await content.CopyToAsync(fileStream, cancellationToken);
 
         // Store metadata alongside the file
@@ -106,7 +106,7 @@ public class FileBlobStorageService : IBlobStorageService
         return Path.Combine(containerPath, blobName);
     }
 
-    private string GetMetadataPath(string filePath)
+    private static string GetMetadataPath(string filePath)
     {
         return $"{filePath}.metadata";
     }

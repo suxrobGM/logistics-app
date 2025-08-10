@@ -27,48 +27,48 @@ public class Repository<TDbContext, TEntity, TEntityKey> : IRepository<TEntity, 
         return _dbContext.Set<TEntity>();
     }
     
-    public Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null)
+    public Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null, CancellationToken ct = default)
     {
         if (predicate is null)
         {
-            return _dbContext.Set<TEntity>().CountAsync();
+            return _dbContext.Set<TEntity>().CountAsync(cancellationToken: ct);
         }
         
-        return _dbContext.Set<TEntity>().CountAsync(predicate);
+        return _dbContext.Set<TEntity>().CountAsync(predicate, ct);
     }
 
-    public Task<TEntity?> GetByIdAsync(TEntityKey id)
+    public Task<TEntity?> GetByIdAsync(TEntityKey id, CancellationToken ct = default)
     {
         return _dbContext.Set<TEntity>().FindAsync(id).AsTask();
     }
 
-    public Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate)
+    public Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken ct = default)
     {
-        return _dbContext.Set<TEntity>().FirstOrDefaultAsync(predicate);
+        return _dbContext.Set<TEntity>().FirstOrDefaultAsync(predicate, ct);
     }
 
-    public Task<List<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate)
+    public Task<List<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken ct = default)
     {
         return _dbContext.Set<TEntity>()
             .Where(predicate)
-            .ToListAsync();
+            .ToListAsync(ct);
     }
 
-    public Task<List<TEntity>> GetListAsync(ISpecification<TEntity>? specification = null)
+    public Task<List<TEntity>> GetListAsync(ISpecification<TEntity>? specification = null, CancellationToken ct = default)
     {
         if (specification is null)
         {
-            return _dbContext.Set<TEntity>().ToListAsync();
+            return _dbContext.Set<TEntity>().ToListAsync(ct);
         }
 
         return _dbContext.Set<TEntity>()
             .ApplySpecification(specification)
-            .ToListAsync();
+            .ToListAsync(ct);
     }
 
-    public Task AddAsync(TEntity entity)
+    public Task AddAsync(TEntity entity, CancellationToken ct = default)
     {
-        return _dbContext.Set<TEntity>().AddAsync(entity).AsTask();
+        return _dbContext.Set<TEntity>().AddAsync(entity, ct).AsTask();
     }
 
     public void Update(TEntity entity)

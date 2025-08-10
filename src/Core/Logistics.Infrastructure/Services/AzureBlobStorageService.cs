@@ -2,21 +2,20 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Logistics.Domain.Services;
 using Microsoft.Extensions.Options;
-using AzureBlobProperties = Azure.Storage.Blobs.Models.BlobProperties;
 
 namespace Logistics.Infrastructure.Services;
 
 public class AzureBlobStorageService : IBlobStorageService
 {
     private readonly BlobServiceClient _blobServiceClient;
-    private readonly AzureBlobStorageOptions _options;
     private readonly ITenantService _tenantService;
+    private readonly AzureBlobStorageOptions _options;
 
     public AzureBlobStorageService(BlobServiceClient blobServiceClient, IOptions<AzureBlobStorageOptions> options, ITenantService tenantService)
     {
         _blobServiceClient = blobServiceClient;
-        _options = options.Value;
         _tenantService = tenantService;
+        _options = options.Value;
     }
 
     public async Task<string> UploadAsync(string containerName, string blobName, Stream content, string contentType, CancellationToken cancellationToken = default)

@@ -1,7 +1,6 @@
-using Logistics.Application.Extensions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Shared.Consts;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
@@ -25,14 +24,14 @@ internal sealed class UpdateLoadDocumentHandler : RequestHandler<UpdateLoadDocum
             return Result.Fail($"Could not find document with ID '{req.DocumentId}'");
         }
 
-        // Check if document is deleted
+        // Check if the document is deleted
         if (document.Status == DocumentStatus.Deleted)
         {
             return Result.Fail("Cannot update deleted document");
         }
 
         // Verify updater exists
-        var updater = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UpdatedById);
+        var updater = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UpdatedById, cancellationToken);
         if (updater is null)
         {
             return Result.Fail($"Could not find employee with ID '{req.UpdatedById}'");

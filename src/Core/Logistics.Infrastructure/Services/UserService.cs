@@ -45,7 +45,6 @@ public class UserService : IUserService
             await UpdateTenantEmployeeDataAsync(userData.TenantId, user);
         }
         
-        userRepository.Update(user);
         await _masterUow.SaveChangesAsync();
     }
 
@@ -64,7 +63,6 @@ public class UserService : IUserService
         employee.LastName = user.LastName;
         employee.Email = user.Email;
         employee.PhoneNumber = user.PhoneNumber;
-        employeeRepository.Update(employee);
         await _tenantUow.SaveChangesAsync();
     }
 }

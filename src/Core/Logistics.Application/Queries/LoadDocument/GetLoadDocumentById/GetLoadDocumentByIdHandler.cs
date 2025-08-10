@@ -1,8 +1,7 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Shared.Consts;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Queries;
 
@@ -20,11 +19,8 @@ internal sealed class GetLoadDocumentByIdHandler : RequestHandler<GetLoadDocumen
     {
         try
         {
-            var document = await _tenantUow.Repository<LoadDocument>()
-                .Query()
-                .Include(d => d.Load)
-                .Include(d => d.UploadedBy)
-                .FirstOrDefaultAsync(d => d.Id == req.DocumentId, cancellationToken);
+            var document = await  _tenantUow.Repository<LoadDocument>()
+                .GetAsync(d => d.Id == req.DocumentId, cancellationToken);
 
             if (document is null)
             {

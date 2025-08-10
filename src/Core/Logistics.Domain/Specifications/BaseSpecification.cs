@@ -25,6 +25,13 @@ public abstract class BaseSpecification<T> : ISpecification<T> where T : IEntity
     protected void AddInclude(Expression<Func<T, object>> navigation)
         => _includes.Add(navigation);
 
+    /// <summary>
+    /// Sets the order by expression for the results.
+    /// If the orderBy string starts with a '-', it will be treated as descending order.
+    /// Otherwise, it will be treated as an ascending order.
+    /// If the orderBy string is null or empty, no ordering will be applied.
+    /// </summary>
+    /// <param name="orderBy">Property name to order by. Prefix with '-' for descending order.</param>
     protected void OrderBy(string? orderBy)
     {
         if (string.IsNullOrWhiteSpace(orderBy))

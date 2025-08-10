@@ -1,8 +1,7 @@
+using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Shared.Consts;
 using Logistics.Shared.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Queries;
 
@@ -19,7 +18,7 @@ internal sealed class GetLoadDocumentsHandler : RequestHandler<GetLoadDocumentsQ
         GetLoadDocumentsQuery req, CancellationToken cancellationToken)
     {
         // Verify load exists
-        var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.LoadId);
+        var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.LoadId, cancellationToken);
         if (load is null)
         {
             return Result<IEnumerable<LoadDocumentDto>>.Fail($"Could not find load with ID '{req.LoadId}'");
@@ -27,37 +26,10 @@ internal sealed class GetLoadDocumentsHandler : RequestHandler<GetLoadDocumentsQ
 
         try
         {
-            var query = _tenantUow.Repository<LoadDocument>()
-                .Query()
-                .Where(d => d.LoadId == req.LoadId);
+            var loadDocuments = _tenantUow.Repository<LoadDocument>()
+                .ApplySpecification(new FilterDocumentsByType(req.Type, req.Status));
 
-            // Filter by status
-            if (!req.IncludeDeleted)
-            {
-                query = query.Where(d => d.Status != DocumentStatus.Deleted);
-            }
-
-            if (req.Status.HasValue)
-            {
-                query = query.Where(d => d.Status == req.Status.Value);
-            }
-
-            // Filter by type
-            if (req.Type.HasValue)
-            {
-                query = query.Where(d => d.Type == req.Type.Value);
-            }
-
-            // Include related entities
-            query = query
-                .Include(d => d.Load)
-                .Include(d => d.UploadedBy);
-
-            var documents = await query
-                .OrderByDescending(d => d.CreatedAt)
-                .ToListAsync(cancellationToken);
-
-            var documentDtos = documents.Select(d => new LoadDocumentDto
+            var documentDtos = loadDocuments.Select(d => new LoadDocumentDto
             {
                 Id = d.Id,
                 FileName = d.FileName,
@@ -75,7 +47,7 @@ internal sealed class GetLoadDocumentsHandler : RequestHandler<GetLoadDocumentsQ
                 UploadedById = d.UploadedById,
                 UploadedByName = $"{d.UploadedBy.FirstName} {d.UploadedBy.LastName}".Trim(),
                 UploadedByEmail = d.UploadedBy.Email
-            });
+            }).ToList();
 
             return Result<IEnumerable<LoadDocumentDto>>.Succeed(documentDtos);
         }
