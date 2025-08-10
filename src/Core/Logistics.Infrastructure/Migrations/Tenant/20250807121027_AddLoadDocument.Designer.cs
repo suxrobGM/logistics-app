@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Logistics.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    partial class TenantDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250807121027_AddLoadDocument")]
+    partial class AddLoadDocument
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,6 +74,9 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.Property<int>("SalaryType")
                         .HasColumnType("integer");
 
+                    b.Property<Guid?>("TruckId")
+                        .HasColumnType("uuid");
+
                     b.ComplexProperty<Dictionary<string, object>>("Salary", "Logistics.Domain.Entities.Employee.Salary#Money", b1 =>
                         {
                             b1.IsRequired();
@@ -86,6 +92,8 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                         });
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TruckId");
 
                     b.ToTable("Employees", (string)null);
                 });
@@ -194,6 +202,12 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.Property<DateTime?>("DeliveryDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<double?>("DestinationAddressLat")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("DestinationAddressLong")
+                        .HasColumnType("double precision");
+
                     b.Property<DateTime>("DispatchedDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -209,6 +223,12 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                         .HasColumnType("bigint");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Number"));
+
+                    b.Property<double?>("OriginAddressLat")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("OriginAddressLong")
+                        .HasColumnType("double precision");
 
                     b.Property<DateTime?>("PickUpDate")
                         .HasColumnType("timestamp with time zone");
@@ -264,17 +284,6 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                                 .HasColumnType("text");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("DestinationLocation", "Logistics.Domain.Entities.Load.DestinationLocation#GeoPoint", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<double>("Latitude")
-                                .HasColumnType("double precision");
-
-                            b1.Property<double>("Longitude")
-                                .HasColumnType("double precision");
-                        });
-
                     b.ComplexProperty<Dictionary<string, object>>("OriginAddress", "Logistics.Domain.Entities.Load.OriginAddress#Address", b1 =>
                         {
                             b1.IsRequired();
@@ -301,17 +310,6 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                             b1.Property<string>("ZipCode")
                                 .IsRequired()
                                 .HasColumnType("text");
-                        });
-
-                    b.ComplexProperty<Dictionary<string, object>>("OriginLocation", "Logistics.Domain.Entities.Load.OriginLocation#GeoPoint", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<double>("Latitude")
-                                .HasColumnType("double precision");
-
-                            b1.Property<double>("Longitude")
-                                .HasColumnType("double precision");
                         });
 
                     b.HasKey("Id");
@@ -660,9 +658,6 @@ namespace Logistics.Infrastructure.Migrations.Tenant
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Number")
-                        .IsUnique();
-
                     b.HasIndex("TruckId");
 
                     b.ToTable("Trips", (string)null);
@@ -675,6 +670,9 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ArrivedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DepartedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("LoadId")
@@ -720,17 +718,6 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                                 .HasColumnType("text");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("Location", "Logistics.Domain.Entities.TripStop.Location#GeoPoint", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<double>("Latitude")
-                                .HasColumnType("double precision");
-
-                            b1.Property<double>("Longitude")
-                                .HasColumnType("double precision");
-                        });
-
                     b.HasKey("Id");
 
                     b.HasIndex("TripId");
@@ -744,15 +731,15 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("MainDriverId")
-                        .HasColumnType("uuid");
+                    b.Property<double?>("CurrentLocationLat")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("CurrentLocationLong")
+                        .HasColumnType("double precision");
 
                     b.Property<string>("Number")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<Guid?>("SecondaryDriverId")
-                        .HasColumnType("uuid");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -760,7 +747,7 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
-                    b.ComplexProperty<Dictionary<string, object>>("CurrentAddress", "Logistics.Domain.Entities.Truck.CurrentAddress#Address", b1 =>
+                    b.ComplexProperty<Dictionary<string, object>>("CurrentLocation", "Logistics.Domain.Entities.Truck.CurrentLocation#Address", b1 =>
                         {
                             b1.IsRequired();
 
@@ -788,25 +775,7 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                                 .HasColumnType("text");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("CurrentLocation", "Logistics.Domain.Entities.Truck.CurrentLocation#GeoPoint", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<double>("Latitude")
-                                .HasColumnType("double precision");
-
-                            b1.Property<double>("Longitude")
-                                .HasColumnType("double precision");
-                        });
-
                     b.HasKey("Id");
-
-                    b.HasIndex("MainDriverId");
-
-                    b.HasIndex("Number")
-                        .IsUnique();
-
-                    b.HasIndex("SecondaryDriverId");
 
                     b.ToTable("Trucks", (string)null);
                 });
@@ -1044,6 +1013,16 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.HasDiscriminator().HasValue(1);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Truck", "Truck")
+                        .WithMany("Drivers")
+                        .HasForeignKey("TruckId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Truck");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.EmployeeTenantRole", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Employee", "Employee")
@@ -1149,23 +1128,6 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.Navigation("Trip");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.Employee", "MainDriver")
-                        .WithMany()
-                        .HasForeignKey("MainDriverId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Logistics.Domain.Entities.Employee", "SecondaryDriver")
-                        .WithMany()
-                        .HasForeignKey("SecondaryDriverId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("MainDriver");
-
-                    b.Navigation("SecondaryDriver");
-                });
-
             modelBuilder.Entity("Logistics.Domain.Entities.LoadInvoice", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Customer", "Customer")
@@ -1242,6 +1204,8 @@ namespace Logistics.Infrastructure.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>
                 {
+                    b.Navigation("Drivers");
+
                     b.Navigation("Loads");
 
                     b.Navigation("Trips");
