@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -14,10 +15,9 @@ internal sealed class CreateCustomerHandler : RequestHandler<CreateCustomerComma
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result<CustomerDto>> HandleValidated(
-        CreateCustomerCommand req, CancellationToken ct)
+    public override async Task<Result<CustomerDto>> Handle(CreateCustomerCommand req, CancellationToken ct)
     {
-        var existingCustomer = await _tenantUow.Repository<Customer>().GetAsync(i => i.Name == req.Name);
+        var existingCustomer = await _tenantUow.Repository<Customer>().GetAsync(i => i.Name == req.Name, ct);
 
         if (existingCustomer is not null)
         {
@@ -28,8 +28,8 @@ internal sealed class CreateCustomerHandler : RequestHandler<CreateCustomerComma
         {
             Name = req.Name
         };
-        await _tenantUow.Repository<Customer>().AddAsync(newCustomer);
-        await _tenantUow.SaveChangesAsync();
+        await _tenantUow.Repository<Customer>().AddAsync(newCustomer, ct);
+        await _tenantUow.SaveChangesAsync(ct);
         return Result<CustomerDto>.Succeed(newCustomer.ToDto());
     }
 }

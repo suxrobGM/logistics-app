@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -14,8 +15,7 @@ internal sealed class GetCustomerByIdHandler : RequestHandler<GetCustomerByIdQue
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result<CustomerDto>> HandleValidated(
-        GetCustomerByIdQuery req, CancellationToken ct)
+    public override async Task<Result<CustomerDto>> Handle(GetCustomerByIdQuery req, CancellationToken ct)
     {
         var customerEntity = await _tenantUow.Repository<Customer>().GetByIdAsync(req.Id);
 

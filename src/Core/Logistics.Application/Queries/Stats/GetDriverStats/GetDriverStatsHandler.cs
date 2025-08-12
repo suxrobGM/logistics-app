@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -15,7 +16,7 @@ internal sealed class GetDriverStatsHandler : RequestHandler<GetDriverStatsQuery
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result<DriverStatsDto>> HandleValidated(
+    public override async Task<Result<DriverStatsDto>> Handle(
         GetDriverStatsQuery req, CancellationToken ct)
     {
         var driverStats = new DriverStatsDto();

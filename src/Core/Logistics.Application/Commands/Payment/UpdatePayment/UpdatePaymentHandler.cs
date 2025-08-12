@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -14,7 +15,7 @@ internal sealed class UpdatePaymentHandler : RequestHandler<UpdatePaymentCommand
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         UpdatePaymentCommand req, CancellationToken ct)
     {
         var payment = await _tenantUow.Repository<Payment>().GetByIdAsync(req.Id);

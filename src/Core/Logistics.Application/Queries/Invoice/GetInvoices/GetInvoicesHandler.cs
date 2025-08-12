@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -16,7 +17,7 @@ internal sealed class GetInvoicesHandler : RequestHandler<GetInvoicesQuery, Page
         _tenantUow = tenantUow;
     }
 
-    protected override Task<PagedResult<InvoiceDto>> HandleValidated(
+    public override Task<PagedResult<InvoiceDto>> Handle(
         GetInvoicesQuery req,
         CancellationToken ct)
     {

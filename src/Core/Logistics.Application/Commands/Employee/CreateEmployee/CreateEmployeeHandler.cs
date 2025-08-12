@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -21,7 +22,7 @@ internal sealed class CreateEmployeeHandler : RequestHandler<CreateEmployeeComma
         _notificationService = notificationService;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         CreateEmployeeCommand req, CancellationToken ct)
     {
         var existingEmployee = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);

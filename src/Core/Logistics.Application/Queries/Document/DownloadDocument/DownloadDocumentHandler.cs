@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -20,8 +21,7 @@ internal sealed class
         _blobStorage = blobStorageService;
     }
 
-    protected override async Task<Result<DocumentDownloadDto>> HandleValidated(
-        DownloadDocumentQuery req, CancellationToken ct)
+    public override async Task<Result<DocumentDownloadDto>> Handle(DownloadDocumentQuery req, CancellationToken ct)
     {
         var document = await _tenantUow.Repository<Document>().GetByIdAsync(req.DocumentId, ct);
         if (document is null)

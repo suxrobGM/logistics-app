@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -22,7 +23,7 @@ internal sealed class DeleteTenantHandler : RequestHandler<DeleteTenantCommand, 
         _stripeService = stripeService;
     }
 
-    protected override async Task<Result> HandleValidated(DeleteTenantCommand req, CancellationToken ct)
+    public override async Task<Result> Handle(DeleteTenantCommand req, CancellationToken ct)
     {
         var tenant = await _masterRepository.Repository<Tenant>().GetByIdAsync(req.Id);
 

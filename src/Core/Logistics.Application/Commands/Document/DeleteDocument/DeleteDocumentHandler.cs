@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -19,7 +20,7 @@ internal sealed class DeleteDocumentHandler : RequestHandler<DeleteDocumentComma
         _blobStorageService = blobStorageService;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         DeleteDocumentCommand req, CancellationToken ct)
     {
         // Get the document

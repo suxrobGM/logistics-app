@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -15,7 +16,7 @@ internal sealed class GetCompanyStatsHandler : RequestHandler<GetCompanyStatsQue
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result<CompanyStatsDto>> HandleValidated(
+    public override async Task<Result<CompanyStatsDto>> Handle(
         GetCompanyStatsQuery req, CancellationToken ct)
     {
         var companyStats = new CompanyStatsDto();

@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -14,7 +15,7 @@ internal sealed class GetSubscriptionPlanHandler : RequestHandler<GetSubscriptio
         _masterUow = masterUow;
     }
 
-    protected override async Task<Result<SubscriptionPlanDto>> HandleValidated(
+    public override async Task<Result<SubscriptionPlanDto>> Handle(
         GetSubscriptionPlanQuery req, CancellationToken ct)
     {
         var entity = await _masterUow.Repository<SubscriptionPlan>().GetAsync(i => i.Id == req.Id);

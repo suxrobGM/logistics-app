@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -18,7 +19,7 @@ internal sealed class DeleteEmployeeHandler : RequestHandler<DeleteEmployeeComma
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         DeleteEmployeeCommand req, CancellationToken ct)
     {
         var tenant = _tenantUow.GetCurrentTenant();

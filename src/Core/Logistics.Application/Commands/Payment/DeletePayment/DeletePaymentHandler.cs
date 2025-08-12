@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -13,7 +14,7 @@ internal sealed class DeletePaymentHandler : RequestHandler<DeletePaymentCommand
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         DeletePaymentCommand req, CancellationToken ct)
     {
         var payment = await _tenantUow.Repository<Payment>().GetByIdAsync(req.Id);

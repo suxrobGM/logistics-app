@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -18,7 +19,7 @@ internal sealed class SetTruckGeolocationHandler : RequestHandler<SetTruckGeoloc
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         SetTruckGeolocationCommand req, CancellationToken ct)
     {
         _tenantUow.SetCurrentTenantById(req.GeolocationData.TenantId.ToString());

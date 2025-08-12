@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -14,7 +15,7 @@ internal sealed class UpdateTruckHandler : RequestHandler<UpdateTruckCommand, Re
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         UpdateTruckCommand req, CancellationToken ct)
     {
         var truckRepository = _tenantUow.Repository<Truck>();

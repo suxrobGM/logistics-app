@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -14,7 +15,7 @@ internal sealed class ProcessPaymentHandler : RequestHandler<ProcessPaymentComma
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         ProcessPaymentCommand req, CancellationToken ct)
     {
         var payment = await _tenantUow.Repository<Payment>().GetByIdAsync(req.PaymentId);

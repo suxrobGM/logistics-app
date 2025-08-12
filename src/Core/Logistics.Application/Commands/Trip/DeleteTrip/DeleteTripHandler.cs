@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -18,7 +19,7 @@ internal sealed class DeleteTripHandler : RequestHandler<DeleteTripCommand, Resu
         _pushNotificationService = pushNotificationService;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         DeleteTripCommand req, CancellationToken ct)
     {
         var trip = await _tenantUow.Repository<Trip>().GetByIdAsync(req.Id);

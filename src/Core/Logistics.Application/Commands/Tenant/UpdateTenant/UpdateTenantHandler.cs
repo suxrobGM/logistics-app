@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
@@ -19,7 +20,7 @@ internal sealed class UpdateTenantHandler : RequestHandler<UpdateTenantCommand, 
         _stripeService = stripeService;
     }
 
-    protected override async Task<Result> HandleValidated(UpdateTenantCommand req, CancellationToken ct)
+    public override async Task<Result> Handle(UpdateTenantCommand req, CancellationToken ct)
     {
         var tenant = await _masterUow.Repository<Tenant>().GetByIdAsync(req.Id);
 

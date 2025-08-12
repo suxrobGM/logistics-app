@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.ValueObjects;
@@ -19,7 +20,7 @@ internal sealed class CreateTenantHandler : RequestHandler<CreateTenantCommand, 
         _masterUow = masterUow;
     }
 
-    protected override async Task<Result> HandleValidated(CreateTenantCommand req, CancellationToken ct)
+    public override async Task<Result> Handle(CreateTenantCommand req, CancellationToken ct)
     {
         var tenantName = req.Name.Trim().ToLower();
         var tenant = new Tenant

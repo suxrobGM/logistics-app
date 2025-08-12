@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -15,7 +16,7 @@ internal sealed class GetUsersHandler : RequestHandler<GetUsersQuery, PagedResul
         _masterUow = masterUow;
     }
 
-    protected override async Task<PagedResult<UserDto>> HandleValidated(
+    public override async Task<PagedResult<UserDto>> Handle(
         GetUsersQuery req,
         CancellationToken ct)
     {

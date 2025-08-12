@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -13,7 +14,7 @@ internal sealed class DeleteTruckHandler : RequestHandler<DeleteTruckCommand, Re
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         DeleteTruckCommand req, CancellationToken ct)
     {
         var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(req.Id);

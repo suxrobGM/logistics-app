@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -22,7 +23,7 @@ internal sealed class CreateSubscriptionPlanHandler : RequestHandler<CreateSubsc
         _logger = logger;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         CreateSubscriptionPlanCommand req, CancellationToken ct)
     {
         var subscriptionPlan = new SubscriptionPlan

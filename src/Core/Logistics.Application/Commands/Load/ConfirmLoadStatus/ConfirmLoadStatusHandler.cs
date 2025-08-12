@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -18,7 +19,7 @@ internal sealed class ConfirmLoadStatusHandler : RequestHandler<ConfirmLoadStatu
         _notificationService = notificationService;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         ConfirmLoadStatusCommand req, CancellationToken ct)
     {
         var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.LoadId);

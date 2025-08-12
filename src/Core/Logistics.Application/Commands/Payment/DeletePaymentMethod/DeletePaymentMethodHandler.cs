@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -22,7 +23,7 @@ internal sealed class DeletePaymentMethodHandler : RequestHandler<DeletePaymentM
         _logger = logger;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         DeletePaymentMethodCommand req, CancellationToken ct)
     {
         var paymentMethod = await _tenantUow.Repository<PaymentMethod>().GetByIdAsync(req.Id);

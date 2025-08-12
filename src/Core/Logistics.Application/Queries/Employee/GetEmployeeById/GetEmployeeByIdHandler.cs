@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -14,10 +15,10 @@ internal sealed class GetEmployeeByIdHandler : RequestHandler<GetEmployeeByIdQue
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result<EmployeeDto>> HandleValidated(
+    public override async Task<Result<EmployeeDto>> Handle(
         GetEmployeeByIdQuery req, CancellationToken ct)
     {
-        var employeeEntity = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
+        var employeeEntity = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId, ct);
 
         if (employeeEntity is null)
         {

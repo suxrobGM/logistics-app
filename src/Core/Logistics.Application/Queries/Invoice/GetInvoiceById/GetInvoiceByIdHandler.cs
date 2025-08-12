@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -14,10 +15,10 @@ internal sealed class GetInvoiceByIdHandler : RequestHandler<GetInvoiceByIdQuery
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result<InvoiceDto>> HandleValidated(
+    public override async Task<Result<InvoiceDto>> Handle(
         GetInvoiceByIdQuery req, CancellationToken ct)
     {
-        var invoiceEntity = await _tenantUow.Repository<Invoice>().GetByIdAsync(req.Id);
+        var invoiceEntity = await _tenantUow.Repository<Invoice>().GetByIdAsync(req.Id, ct);
 
         if (invoiceEntity is null)
         {

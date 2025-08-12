@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Extensions;
 using Logistics.Application.Services;
 using Logistics.Application.Utilities;
@@ -20,7 +21,7 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resu
         _pushNotificationService = pushNotificationService;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         UpdateLoadCommand req, CancellationToken ct)
     {
         var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.Id);

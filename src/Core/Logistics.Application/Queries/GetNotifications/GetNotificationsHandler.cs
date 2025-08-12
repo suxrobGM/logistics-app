@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -14,13 +15,13 @@ internal sealed class GetNotificationsHandler : RequestHandler<GetNotificationsQ
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result<NotificationDto[]>> HandleValidated(
+    public override async Task<Result<NotificationDto[]>> Handle(
         GetNotificationsQuery req,
         CancellationToken ct)
     {
         var notificationsList =
             await _tenantUow.Repository<Notification>()
-                .GetListAsync(i => i.CreatedDate >= req.StartDate && i.CreatedDate <= req.EndDate);
+                .GetListAsync(i => i.CreatedDate >= req.StartDate && i.CreatedDate <= req.EndDate, ct);
 
         var notificationsDto = notificationsList
             .Select(i => i.ToDto())

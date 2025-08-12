@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -15,7 +16,7 @@ internal sealed class GetTripsHandler : RequestHandler<GetTripsQuery, PagedResul
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<PagedResult<TripDto>> HandleValidated(
+    public override async Task<PagedResult<TripDto>> Handle(
         GetTripsQuery req, CancellationToken ct)
     {
         var totalItems = await _tenantUow.Repository<Trip>().CountAsync();

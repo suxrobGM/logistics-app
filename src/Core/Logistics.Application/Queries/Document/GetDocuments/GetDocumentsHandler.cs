@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -16,7 +17,7 @@ internal sealed class
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result<IEnumerable<DocumentDto>>> HandleValidated(
+    public override async Task<Result<IEnumerable<DocumentDto>>> Handle(
         GetDocumentsQuery req, CancellationToken ct)
     {
         // Verify the owner exists

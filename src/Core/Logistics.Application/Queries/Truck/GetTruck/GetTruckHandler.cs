@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -14,7 +15,7 @@ internal sealed class GetTruckHandler : RequestHandler<GetTruckQuery, Result<Tru
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result<TruckDto>> HandleValidated(
+    public override async Task<Result<TruckDto>> Handle(
         GetTruckQuery req, CancellationToken ct)
     {
         var truckEntity = await TryGetTruck(req.TruckOrDriverId);

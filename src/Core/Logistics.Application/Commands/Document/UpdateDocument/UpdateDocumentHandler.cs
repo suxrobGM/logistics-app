@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -14,7 +15,7 @@ internal sealed class UpdateDocumentHandler : RequestHandler<UpdateDocumentComma
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         UpdateDocumentCommand req, CancellationToken ct)
     {
         var document = await _tenantUow.Repository<Document>().GetByIdAsync(req.DocumentId, ct);

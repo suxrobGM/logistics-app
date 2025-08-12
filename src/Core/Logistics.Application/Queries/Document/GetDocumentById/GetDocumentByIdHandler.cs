@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -15,8 +16,7 @@ internal sealed class GetDocumentByIdHandler : RequestHandler<GetDocumentByIdQue
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result<DocumentDto>> HandleValidated(
-        GetDocumentByIdQuery req, CancellationToken ct)
+    public override async Task<Result<DocumentDto>> Handle(GetDocumentByIdQuery req, CancellationToken ct)
     {
         // Query the base type; EF will materialize derived type (TPH)
         var document = await _tenantUow.Repository<Document>()

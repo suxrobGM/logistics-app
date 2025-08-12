@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -17,7 +18,7 @@ internal sealed class GetRolePermissionsHandler :
         _tenantUow = tenantUow;
     }
 
-    protected override Task<Result<PermissionDto[]>> HandleValidated(
+    public override Task<Result<PermissionDto[]>> Handle(
         GetRolePermissionsQuery req, CancellationToken ct)
     {
         if (req.RoleName.StartsWith("app"))

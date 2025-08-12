@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -15,7 +16,7 @@ internal sealed class GetTenantRolesHandler : RequestHandler<GetTenantRolesQuery
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<PagedResult<RoleDto>> HandleValidated(
+    public override async Task<PagedResult<RoleDto>> Handle(
         GetTenantRolesQuery req, CancellationToken ct)
     {
         var totalItems = await _tenantUow.Repository<TenantRole>().CountAsync();

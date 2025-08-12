@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
@@ -23,7 +24,7 @@ internal sealed class UpdateSubscriptionPlanHandler : RequestHandler<UpdateSubsc
         _logger = logger;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         UpdateSubscriptionPlanCommand req, CancellationToken ct)
     {
         var subscriptionPlan = await _masterUow.Repository<SubscriptionPlan>().GetByIdAsync(req.Id);

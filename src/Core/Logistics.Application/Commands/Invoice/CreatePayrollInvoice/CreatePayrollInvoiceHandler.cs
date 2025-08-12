@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -18,7 +19,7 @@ internal sealed class CreatePayrollInvoiceHandler : RequestHandler<CreatePayroll
         _payrollService = payrollService;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         CreatePayrollInvoiceCommand req, CancellationToken ct)
     {
         var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId);

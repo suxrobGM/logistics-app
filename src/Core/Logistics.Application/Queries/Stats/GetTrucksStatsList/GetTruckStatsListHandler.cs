@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
 
@@ -12,7 +13,7 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<PagedResult<TruckStatsDto>> HandleValidated(
+    public override async Task<PagedResult<TruckStatsDto>> Handle(
         GetTrucksStatsListQuery req, CancellationToken ct)
     {
         var query = $"""

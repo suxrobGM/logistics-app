@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -15,7 +16,7 @@ internal sealed class GetPaymentMethodsHandler : RequestHandler<GetPaymentMethod
         _tenantUow = tenantUow;
     }
 
-    protected override Task<Result<PaymentMethodDto[]>> HandleValidated(
+    public override Task<Result<PaymentMethodDto[]>> Handle(
         GetPaymentMethodsQuery req,
         CancellationToken ct)
     {

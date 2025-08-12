@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -14,7 +15,7 @@ internal sealed class GetPaymentHandler : RequestHandler<GetPaymentQuery, Result
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result<PaymentDto>> HandleValidated(
+    public override async Task<Result<PaymentDto>> Handle(
         GetPaymentQuery req, CancellationToken ct)
     {
         var paymentEntity = await _tenantUow.Repository<Payment>().GetByIdAsync(req.Id);

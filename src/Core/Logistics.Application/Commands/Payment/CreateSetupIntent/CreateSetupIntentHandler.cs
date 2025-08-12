@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -21,8 +22,7 @@ internal sealed class CreateSetupIntentHandler : RequestHandler<CreateSetupInten
         _logger = logger;
     }
 
-    protected override async Task<Result<SetupIntentDto>> HandleValidated(
-        CreateSetupIntentCommand req, CancellationToken ct)
+    public override async Task<Result<SetupIntentDto>> Handle(CreateSetupIntentCommand req, CancellationToken ct)
     {
         var tenant = _tenantUow.GetCurrentTenant();
 

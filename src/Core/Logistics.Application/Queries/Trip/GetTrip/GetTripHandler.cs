@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -14,7 +15,7 @@ internal sealed class GetTripHandler : RequestHandler<GetTripQuery, Result<TripD
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result<TripDto>> HandleValidated(
+    public override async Task<Result<TripDto>> Handle(
         GetTripQuery req, CancellationToken ct)
     {
         var trip = await _tenantUow.Repository<Trip>().GetByIdAsync(req.TripId);

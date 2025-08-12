@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -13,7 +14,7 @@ internal sealed class CreateTruckHandler : RequestHandler<CreateTruckCommand, Re
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         CreateTruckCommand req, CancellationToken ct)
     {
         var truckWithThisNumber = await _tenantUow.Repository<Truck>().GetAsync(i => i.Number == req.TruckNumber);

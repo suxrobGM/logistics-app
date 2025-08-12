@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -14,7 +15,7 @@ internal sealed class GetTenantHandler : RequestHandler<GetTenantQuery, Result<T
         _masterUow = masterUow;
     }
 
-    protected override async Task<Result<TenantDto>> HandleValidated(
+    public override async Task<Result<TenantDto>> Handle(
         GetTenantQuery req, CancellationToken ct)
     {
         var tenantEntity = await _masterUow.Repository<Tenant>().GetAsync(i => i.Id == req.Id || i.Name == req.Name);

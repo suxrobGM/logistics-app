@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -16,7 +17,7 @@ internal sealed class
         _masterUow = masterUow;
     }
 
-    protected override async Task<PagedResult<SubscriptionPlanDto>> HandleValidated(
+    public override async Task<PagedResult<SubscriptionPlanDto>> Handle(
         GetSubscriptionPlansQuery req, CancellationToken ct)
     {
         var totalItems = await _masterUow.Repository<SubscriptionPlan>().CountAsync();

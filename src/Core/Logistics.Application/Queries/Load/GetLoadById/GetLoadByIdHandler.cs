@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -14,7 +15,7 @@ internal sealed class GetLoadByIdHandler : RequestHandler<GetLoadByIdQuery, Resu
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result<LoadDto>> HandleValidated(
+    public override async Task<Result<LoadDto>> Handle(
         GetLoadByIdQuery req, CancellationToken ct)
     {
         var loadEntity = await _tenantUow.Repository<Load>().GetByIdAsync(req.Id);

@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Extensions;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
@@ -19,7 +20,7 @@ internal sealed class DeleteLoadHandler : RequestHandler<DeleteLoadCommand, Resu
         _pushNotificationService = pushNotificationService;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         DeleteLoadCommand req, CancellationToken ct)
     {
         var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.Id);

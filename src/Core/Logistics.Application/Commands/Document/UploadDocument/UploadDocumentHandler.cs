@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Constants;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -24,8 +25,7 @@ internal sealed class UploadDocumentHandler : RequestHandler<UploadDocumentComma
         _logger = logger;
     }
 
-    protected override async Task<Result<Guid>> HandleValidated(
-        UploadDocumentCommand req, CancellationToken ct)
+    public override async Task<Result<Guid>> Handle(UploadDocumentCommand req, CancellationToken ct)
     {
         switch (req.OwnerType)
         {

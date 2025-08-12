@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -23,7 +24,7 @@ internal sealed class CreatePaymentMethodHandler : RequestHandler<CreatePaymentM
         _logger = logger;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         CreatePaymentMethodCommand req, CancellationToken ct)
     {
         // If there are no payment methods for the tenant, set the first one as default

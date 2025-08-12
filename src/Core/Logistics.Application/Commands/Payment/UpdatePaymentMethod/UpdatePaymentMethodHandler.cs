@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
@@ -24,7 +25,7 @@ internal sealed class UpdatePaymentMethodHandler : RequestHandler<UpdatePaymentM
         _logger = logger;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         UpdatePaymentMethodCommand req, CancellationToken ct)
     {
         return req.Type switch

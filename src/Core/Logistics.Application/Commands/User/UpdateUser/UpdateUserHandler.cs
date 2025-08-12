@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -17,7 +18,7 @@ internal sealed class UpdateUserHandler : RequestHandler<UpdateUserCommand, Resu
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         UpdateUserCommand req, CancellationToken ct)
     {
         var user = await _masterUow.Repository<User>().GetByIdAsync(req.Id);

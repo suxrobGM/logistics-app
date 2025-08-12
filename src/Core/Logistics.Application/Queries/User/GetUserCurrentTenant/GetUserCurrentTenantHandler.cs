@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -15,7 +16,7 @@ internal sealed class GetUserCurrentTenantHandler :
         _masterUow = masterUow;
     }
 
-    protected override async Task<Result<TenantDto>> HandleValidated(
+    public override async Task<Result<TenantDto>> Handle(
         GetUserCurrentTenantQuery req,
         CancellationToken ct)
     {

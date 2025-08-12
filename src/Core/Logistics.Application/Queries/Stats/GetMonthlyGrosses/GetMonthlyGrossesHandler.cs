@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Extensions;
@@ -15,7 +16,7 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrosse
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result<MonthlyGrossesDto>> HandleValidated(
+    public override async Task<Result<MonthlyGrossesDto>> Handle(
         GetMonthlyGrossesQuery req, CancellationToken ct)
     {
         var truckId = req.TruckId;

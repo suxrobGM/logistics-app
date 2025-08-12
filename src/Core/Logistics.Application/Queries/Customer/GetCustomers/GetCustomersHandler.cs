@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -15,11 +16,9 @@ internal sealed class GetCustomersHandler : RequestHandler<GetCustomersQuery, Pa
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<PagedResult<CustomerDto>> HandleValidated(
-        GetCustomersQuery req,
-        CancellationToken ct)
+    public override async Task<PagedResult<CustomerDto>> Handle(GetCustomersQuery req, CancellationToken ct)
     {
-        var totalItems = await _tenantUow.Repository<Customer>().CountAsync();
+        var totalItems = await _tenantUow.Repository<Customer>().CountAsync(ct: ct);
         var specification = new SearchCustomers(req.Search, req.OrderBy, req.Page, req.PageSize);
 
         var customers = _tenantUow.Repository<Customer>()

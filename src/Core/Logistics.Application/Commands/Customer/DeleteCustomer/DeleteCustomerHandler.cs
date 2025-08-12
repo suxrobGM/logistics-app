@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -13,10 +14,9 @@ internal sealed class DeleteCustomerHandler : RequestHandler<DeleteCustomerComma
         _tenantUow = tenantUow;
     }
 
-    protected override async Task<Result> HandleValidated(
-        DeleteCustomerCommand req, CancellationToken ct)
+    public override async Task<Result> Handle(DeleteCustomerCommand req, CancellationToken ct)
     {
-        var customer = await _tenantUow.Repository<Customer>().GetByIdAsync(req.Id);
+        var customer = await _tenantUow.Repository<Customer>().GetByIdAsync(req.Id, ct);
 
         if (customer is null)
         {
@@ -24,7 +24,7 @@ internal sealed class DeleteCustomerHandler : RequestHandler<DeleteCustomerComma
         }
 
         _tenantUow.Repository<Customer>().Delete(customer);
-        await _tenantUow.SaveChangesAsync();
+        await _tenantUow.SaveChangesAsync(ct);
         return Result.Succeed();
     }
 }

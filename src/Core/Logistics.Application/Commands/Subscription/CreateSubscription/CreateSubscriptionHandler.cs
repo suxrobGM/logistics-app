@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -25,7 +26,7 @@ internal sealed class CreateSubscriptionHandler : RequestHandler<CreateSubscript
         _logger = logger;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         CreateSubscriptionCommand req, CancellationToken ct)
     {
         var tenant = await _masterUow.Repository<Tenant>().GetByIdAsync(req.TenantId);

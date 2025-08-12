@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -38,7 +39,7 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
             stripeOptions.Value.WebhookSecret ?? throw new ArgumentNullException(nameof(stripeOptions));
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         ProcessStripEventCommand req, CancellationToken ct)
     {
         try

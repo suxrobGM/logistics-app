@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Extensions;
 using Logistics.Application.Services;
 using Logistics.Shared.Models;
@@ -17,7 +18,7 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resu
         _pushNotificationService = pushNotificationService;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         CreateLoadCommand req, CancellationToken ct)
     {
         try

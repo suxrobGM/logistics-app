@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -25,7 +26,7 @@ internal sealed class CreateTripHandler : RequestHandler<CreateTripCommand, Resu
         _logger = logger;
     }
 
-    protected override async Task<Result> HandleValidated(
+    public override async Task<Result> Handle(
         CreateTripCommand req, CancellationToken ct)
     {
         var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId);
