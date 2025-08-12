@@ -8,13 +8,13 @@ namespace Logistics.Application.Commands;
 
 internal sealed class DeleteTenantHandler : RequestHandler<DeleteTenantCommand, Result>
 {
-    private readonly IMasterUnityOfWork _masterRepository;
+    private readonly IMasterUnitOfWork _masterRepository;
     private readonly IStripeService _stripeService;
     private readonly ITenantDatabaseService _tenantDatabase;
 
     public DeleteTenantHandler(
         ITenantDatabaseService tenantDatabase,
-        IMasterUnityOfWork masterRepository,
+        IMasterUnitOfWork masterRepository,
         IStripeService stripeService)
     {
         _tenantDatabase = tenantDatabase;
@@ -26,14 +26,22 @@ internal sealed class DeleteTenantHandler : RequestHandler<DeleteTenantCommand, 
     {
         var tenant = await _masterRepository.Repository<Tenant>().GetByIdAsync(req.Id);
 
-        if (tenant is null) return Result.Fail($"Could not find a tenant with ID '{req.Id}'");
+        if (tenant is null)
+        {
+            return Result.Fail($"Could not find a tenant with ID '{req.Id}'");
+        }
 
         var isDeleted = await _tenantDatabase.DeleteDatabaseAsync(tenant.ConnectionString!);
 
-        if (!isDeleted) return Result.Fail("Could not delete the tenant's database");
+        if (!isDeleted)
+        {
+            return Result.Fail("Could not delete the tenant's database");
+        }
 
         if (!string.IsNullOrEmpty(tenant.StripeCustomerId))
+        {
             await _stripeService.DeleteCustomerAsync(tenant.StripeCustomerId);
+        }
 
         _masterRepository.Repository<Tenant>().Delete(tenant);
         await _masterRepository.SaveChangesAsync();

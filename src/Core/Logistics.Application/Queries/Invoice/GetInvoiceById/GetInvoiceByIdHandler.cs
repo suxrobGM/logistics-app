@@ -7,9 +7,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetInvoiceByIdHandler : RequestHandler<GetInvoiceByIdQuery, Result<InvoiceDto>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public GetInvoiceByIdHandler(ITenantUnityOfWork tenantUow)
+    public GetInvoiceByIdHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
@@ -19,7 +19,10 @@ internal sealed class GetInvoiceByIdHandler : RequestHandler<GetInvoiceByIdQuery
     {
         var invoiceEntity = await _tenantUow.Repository<Invoice>().GetByIdAsync(req.Id);
 
-        if (invoiceEntity is null) return Result<InvoiceDto>.Fail($"Could not find an invoice with ID {req.Id}");
+        if (invoiceEntity is null)
+        {
+            return Result<InvoiceDto>.Fail($"Could not find an invoice with ID {req.Id}");
+        }
 
         var invoiceDto = invoiceEntity.ToDto();
         return Result<InvoiceDto>.Succeed(invoiceDto);

@@ -2,7 +2,6 @@ using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
-
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
@@ -12,10 +11,10 @@ internal sealed class CreateTripHandler : RequestHandler<CreateTripCommand, Resu
     private readonly ILoadService _loadService;
     private readonly ILogger<CreateTripHandler> _logger;
     private readonly IPushNotificationService _pushNotificationService;
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
     public CreateTripHandler(
-        ITenantUnityOfWork tenantUow,
+        ITenantUnitOfWork tenantUow,
         ILoadService loadService,
         IPushNotificationService pushNotificationService,
         ILogger<CreateTripHandler> logger)
@@ -31,7 +30,10 @@ internal sealed class CreateTripHandler : RequestHandler<CreateTripCommand, Resu
     {
         var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId);
 
-        if (truck is null) return Result.Fail($"Could not find the truck with ID '{req.TruckId}'");
+        if (truck is null)
+        {
+            return Result.Fail($"Could not find the truck with ID '{req.TruckId}'");
+        }
 
         var existingLoads = await GetExistingLoadsAsync(req, truck);
         var newLoads = await CreateNewLoads(req);
@@ -54,7 +56,10 @@ internal sealed class CreateTripHandler : RequestHandler<CreateTripCommand, Resu
     /// </summary>
     private async Task<IEnumerable<Load>> CreateNewLoads(CreateTripCommand command)
     {
-        if (command.NewLoads is null || !command.NewLoads.Any()) return [];
+        if (command.NewLoads is null || !command.NewLoads.Any())
+        {
+            return [];
+        }
 
         var loads = new List<Load>();
         var newLoadsCount = 0;
@@ -88,7 +93,10 @@ internal sealed class CreateTripHandler : RequestHandler<CreateTripCommand, Resu
     /// </summary>
     private async Task<List<Load>> GetExistingLoadsAsync(CreateTripCommand command, Truck truck)
     {
-        if (command.ExistingLoadIds is null || !command.ExistingLoadIds.Any()) return [];
+        if (command.ExistingLoadIds is null || !command.ExistingLoadIds.Any())
+        {
+            return [];
+        }
 
         var loads = await _tenantUow.Repository<Load>().GetListAsync(i => command.ExistingLoadIds.Contains(i.Id));
 

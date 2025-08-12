@@ -6,9 +6,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class CreatePaymentHandler : RequestHandler<CreatePaymentCommand, Result>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public CreatePaymentHandler(ITenantUnityOfWork tenantUow)
+    public CreatePaymentHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
@@ -19,7 +19,9 @@ internal sealed class CreatePaymentHandler : RequestHandler<CreatePaymentCommand
         var paymentMethod = await _tenantUow.Repository<PaymentMethod>().GetByIdAsync(req.PaymentMethodId);
 
         if (paymentMethod is null)
+        {
             return Result.Fail($"Could not find a payment method with ID '{req.PaymentMethodId}'");
+        }
 
         var tenant = _tenantUow.GetCurrentTenant();
 

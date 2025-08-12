@@ -7,9 +7,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class UpdateEmployeeHandler : RequestHandler<UpdateEmployeeCommand, Result>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public UpdateEmployeeHandler(ITenantUnityOfWork tenantUow)
+    public UpdateEmployeeHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
@@ -20,7 +20,10 @@ internal sealed class UpdateEmployeeHandler : RequestHandler<UpdateEmployeeComma
         var employeeEntity = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
         var tenantRole = await _tenantUow.Repository<TenantRole>().GetAsync(i => i.Name == req.Role);
 
-        if (employeeEntity is null) return Result.Fail("Could not find the specified user");
+        if (employeeEntity is null)
+        {
+            return Result.Fail("Could not find the specified user");
+        }
 
         if (tenantRole is not null)
         {
@@ -29,9 +32,14 @@ internal sealed class UpdateEmployeeHandler : RequestHandler<UpdateEmployeeComma
         }
 
         if (req.SalaryType.HasValue && employeeEntity.SalaryType != req.SalaryType)
+        {
             employeeEntity.SalaryType = req.SalaryType.Value;
+        }
+
         if (req.Salary.HasValue && employeeEntity.Salary != req.Salary)
+        {
             employeeEntity.Salary = req.SalaryType == SalaryType.None ? 0 : req.Salary.Value;
+        }
 
         _tenantUow.Repository<Employee>().Update(employeeEntity);
         await _tenantUow.SaveChangesAsync();

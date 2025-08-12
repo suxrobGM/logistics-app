@@ -7,9 +7,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetLoadByIdHandler : RequestHandler<GetLoadByIdQuery, Result<LoadDto>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public GetLoadByIdHandler(ITenantUnityOfWork tenantUow)
+    public GetLoadByIdHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
@@ -19,7 +19,10 @@ internal sealed class GetLoadByIdHandler : RequestHandler<GetLoadByIdQuery, Resu
     {
         var loadEntity = await _tenantUow.Repository<Load>().GetByIdAsync(req.Id);
 
-        if (loadEntity is null) return Result<LoadDto>.Fail($"Could not find a load with ID '{req.Id}'");
+        if (loadEntity is null)
+        {
+            return Result<LoadDto>.Fail($"Could not find a load with ID '{req.Id}'");
+        }
 
         var loadDto = loadEntity.ToDto();
         return Result<LoadDto>.Succeed(loadDto);

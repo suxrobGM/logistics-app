@@ -6,9 +6,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class UpdateNotificationHandler : RequestHandler<UpdateNotificationCommand, Result>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public UpdateNotificationHandler(ITenantUnityOfWork tenantUow)
+    public UpdateNotificationHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
@@ -18,9 +18,15 @@ internal sealed class UpdateNotificationHandler : RequestHandler<UpdateNotificat
     {
         var notification = await _tenantUow.Repository<Notification>().GetByIdAsync(req.Id);
 
-        if (notification is null) return Result.Fail($"Could not find a notification with ID '{req.Id}'");
+        if (notification is null)
+        {
+            return Result.Fail($"Could not find a notification with ID '{req.Id}'");
+        }
 
-        if (req.IsRead.HasValue && notification.IsRead != req.IsRead) notification.IsRead = req.IsRead.Value;
+        if (req.IsRead.HasValue && notification.IsRead != req.IsRead)
+        {
+            notification.IsRead = req.IsRead.Value;
+        }
 
         _tenantUow.Repository<Notification>().Update(notification);
         await _tenantUow.SaveChangesAsync();

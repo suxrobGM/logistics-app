@@ -8,10 +8,10 @@ namespace Logistics.Application.Queries;
 internal sealed class GetRolePermissionsHandler :
     RequestHandler<GetRolePermissionsQuery, Result<PermissionDto[]>>
 {
-    private readonly IMasterUnityOfWork _masterUow;
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly IMasterUnitOfWork _masterUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public GetRolePermissionsHandler(IMasterUnityOfWork masterUow, ITenantUnityOfWork tenantUow)
+    public GetRolePermissionsHandler(IMasterUnitOfWork masterUow, ITenantUnitOfWork tenantUow)
     {
         _masterUow = masterUow;
         _tenantUow = tenantUow;
@@ -20,8 +20,15 @@ internal sealed class GetRolePermissionsHandler :
     protected override Task<Result<PermissionDto[]>> HandleValidated(
         GetRolePermissionsQuery req, CancellationToken ct)
     {
-        if (req.RoleName.StartsWith("app")) return GetAppRolePermissions(req);
-        if (req.RoleName.StartsWith("tenant")) return GetTenantRolePermissions(req);
+        if (req.RoleName.StartsWith("app"))
+        {
+            return GetAppRolePermissions(req);
+        }
+
+        if (req.RoleName.StartsWith("tenant"))
+        {
+            return GetTenantRolePermissions(req);
+        }
 
         return Task.FromResult(Result<PermissionDto[]>.Fail($"Invalid role name '{req.RoleName}'"));
     }
@@ -30,7 +37,10 @@ internal sealed class GetRolePermissionsHandler :
     {
         var role = await _masterUow.Repository<AppRole>().GetAsync(i => i.Name == req.RoleName);
 
-        if (role is null) return Result<PermissionDto[]>.Fail($"Could not find a role with name '{req.RoleName}'");
+        if (role is null)
+        {
+            return Result<PermissionDto[]>.Fail($"Could not find a role with name '{req.RoleName}'");
+        }
 
         var permissions = await _masterUow.Repository<AppRoleClaim, int>().GetListAsync(i => i.RoleId == role.Id);
         var permissionsDto = permissions.Select(i => i.ToDto()).ToArray();
@@ -41,7 +51,10 @@ internal sealed class GetRolePermissionsHandler :
     {
         var role = await _tenantUow.Repository<TenantRole>().GetAsync(i => i.Name == req.RoleName);
 
-        if (role is null) return Result<PermissionDto[]>.Fail($"Could not find a role with name '{req.RoleName}'");
+        if (role is null)
+        {
+            return Result<PermissionDto[]>.Fail($"Could not find a role with name '{req.RoleName}'");
+        }
 
         var permissions = await _tenantUow.Repository<TenantRoleClaim>().GetListAsync(i => i.RoleId == role.Id);
         var permissionsDto = permissions.Select(i => i.ToDto()).ToArray();

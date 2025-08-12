@@ -6,9 +6,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class DeleteInvoiceHandler : RequestHandler<DeleteInvoiceCommand, Result>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public DeleteInvoiceHandler(ITenantUnityOfWork tenantUow)
+    public DeleteInvoiceHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
@@ -18,7 +18,10 @@ internal sealed class DeleteInvoiceHandler : RequestHandler<DeleteInvoiceCommand
     {
         var invoice = await _tenantUow.Repository<Invoice>().GetByIdAsync(req.Id);
 
-        if (invoice is null) return Result.Fail($"Could not find an invoice with ID {req.Id}");
+        if (invoice is null)
+        {
+            return Result.Fail($"Could not find an invoice with ID {req.Id}");
+        }
 
         _tenantUow.Repository<Invoice>().Delete(invoice);
         await _tenantUow.SaveChangesAsync();

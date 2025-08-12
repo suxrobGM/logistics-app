@@ -6,12 +6,12 @@ namespace Logistics.Infrastructure.Services;
 
 public class UserService : IUserService
 {
-    private readonly IMasterUnityOfWork _masterUow;
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly IMasterUnitOfWork _masterUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
     public UserService(
-        IMasterUnityOfWork masterUow,
-        ITenantUnityOfWork tenantUow)
+        IMasterUnitOfWork masterUow,
+        ITenantUnitOfWork tenantUow)
     {
         _masterUow = masterUow;
         _tenantUow = tenantUow;
@@ -23,7 +23,9 @@ public class UserService : IUserService
         var user = await userRepository.GetByIdAsync(userData.Id);
 
         if (user is null)
+        {
             return;
+        }
 
         if (!string.IsNullOrEmpty(userData.FirstName))
         {

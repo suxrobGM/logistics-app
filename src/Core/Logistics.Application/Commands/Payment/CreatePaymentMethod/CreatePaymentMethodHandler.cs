@@ -3,7 +3,6 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
-
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
@@ -12,10 +11,10 @@ internal sealed class CreatePaymentMethodHandler : RequestHandler<CreatePaymentM
 {
     private readonly ILogger<CreatePaymentMethodHandler> _logger;
     private readonly IStripeService _stripeService;
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
     public CreatePaymentMethodHandler(
-        ITenantUnityOfWork tenantUow,
+        ITenantUnitOfWork tenantUow,
         IStripeService stripeService,
         ILogger<CreatePaymentMethodHandler> logger)
     {

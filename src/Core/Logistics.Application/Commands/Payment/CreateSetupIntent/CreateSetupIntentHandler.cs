@@ -1,7 +1,6 @@
 using Logistics.Application.Services;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
-
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
@@ -10,10 +9,10 @@ internal sealed class CreateSetupIntentHandler : RequestHandler<CreateSetupInten
 {
     private readonly ILogger<CreateSetupIntentHandler> _logger;
     private readonly IStripeService _stripeService;
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
     public CreateSetupIntentHandler(
-        ITenantUnityOfWork tenantUow,
+        ITenantUnitOfWork tenantUow,
         IStripeService stripeService,
         ILogger<CreateSetupIntentHandler> logger)
     {

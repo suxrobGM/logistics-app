@@ -1,7 +1,6 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
-
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
@@ -9,10 +8,10 @@ namespace Logistics.Application.Commands;
 internal sealed class SetTruckGeolocationHandler : RequestHandler<SetTruckGeolocationCommand, Result>
 {
     private readonly ILogger<SetTruckGeolocationHandler> _logger;
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
     public SetTruckGeolocationHandler(
-        ITenantUnityOfWork tenantUow,
+        ITenantUnitOfWork tenantUow,
         ILogger<SetTruckGeolocationHandler> logger)
     {
         _logger = logger;

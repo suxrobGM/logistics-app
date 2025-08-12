@@ -6,9 +6,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class UpdateInvoiceHandler : RequestHandler<UpdateInvoiceCommand, Result>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public UpdateInvoiceHandler(ITenantUnityOfWork tenantUow)
+    public UpdateInvoiceHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
@@ -18,9 +18,15 @@ internal sealed class UpdateInvoiceHandler : RequestHandler<UpdateInvoiceCommand
     {
         var invoice = await _tenantUow.Repository<Invoice>().GetByIdAsync(req.Id);
 
-        if (invoice is null) return Result.Fail($"Could not find an invoice with ID '{req.Id}'");
+        if (invoice is null)
+        {
+            return Result.Fail($"Could not find an invoice with ID '{req.Id}'");
+        }
 
-        if (req.InvoiceStatus.HasValue && invoice.Status != req.InvoiceStatus) invoice.Status = req.InvoiceStatus.Value;
+        if (req.InvoiceStatus.HasValue && invoice.Status != req.InvoiceStatus)
+        {
+            invoice.Status = req.InvoiceStatus.Value;
+        }
 
         _tenantUow.Repository<Invoice>().Update(invoice);
         await _tenantUow.SaveChangesAsync();

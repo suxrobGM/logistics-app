@@ -6,9 +6,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class UpdatePayrollInvoiceHandler : RequestHandler<UpdatePayrollInvoiceCommand, Result>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public UpdatePayrollInvoiceHandler(ITenantUnityOfWork tenantUow)
+    public UpdatePayrollInvoiceHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
@@ -18,13 +18,19 @@ internal sealed class UpdatePayrollInvoiceHandler : RequestHandler<UpdatePayroll
     {
         var payroll = await _tenantUow.Repository<PayrollInvoice>().GetByIdAsync(req.Id);
 
-        if (payroll is null) return Result.Fail($"Could not find a payroll with ID '{req.Id}'");
+        if (payroll is null)
+        {
+            return Result.Fail($"Could not find a payroll with ID '{req.Id}'");
+        }
 
         if (req.EmployeeId.HasValue && req.EmployeeId != payroll.EmployeeId)
         {
             var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId.Value);
 
-            if (employee is null) return Result.Fail($"Could not find an employer with ID '{req.EmployeeId}'");
+            if (employee is null)
+            {
+                return Result.Fail($"Could not find an employer with ID '{req.EmployeeId}'");
+            }
 
             payroll.Employee = employee;
         }

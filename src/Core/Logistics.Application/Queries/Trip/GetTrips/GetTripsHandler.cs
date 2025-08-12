@@ -8,9 +8,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetTripsHandler : RequestHandler<GetTripsQuery, PagedResult<TripDto>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public GetTripsHandler(ITenantUnityOfWork tenantUow)
+    public GetTripsHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }

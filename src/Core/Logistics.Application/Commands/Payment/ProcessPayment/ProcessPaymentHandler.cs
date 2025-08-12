@@ -7,9 +7,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class ProcessPaymentHandler : RequestHandler<ProcessPaymentCommand, Result>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public ProcessPaymentHandler(ITenantUnityOfWork tenantUow)
+    public ProcessPaymentHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
@@ -19,7 +19,10 @@ internal sealed class ProcessPaymentHandler : RequestHandler<ProcessPaymentComma
     {
         var payment = await _tenantUow.Repository<Payment>().GetByIdAsync(req.PaymentId);
 
-        if (payment is null) return Result.Fail($"Could not find a payment with ID '{req.PaymentId}'");
+        if (payment is null)
+        {
+            return Result.Fail($"Could not find a payment with ID '{req.PaymentId}'");
+        }
 
         // TODO: Add payment verification from external provider
         payment.Status = PaymentStatus.Paid;

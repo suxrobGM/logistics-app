@@ -1,14 +1,11 @@
 using System.Security.Claims;
-
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Domain.Services;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Identity.Roles;
-
 using Microsoft.AspNetCore.Identity;
-
 using CustomClaimTypes = Logistics.Shared.Identity.Claims.CustomClaimTypes;
 
 namespace Logistics.DbMigrator.Workers;
@@ -101,7 +98,9 @@ internal class SeedDatabaseWorker : IHostedService
 
             var result = await userManager.CreateAsync(superAdmin, UserDefaultPassword);
             if (!result.Succeeded)
+            {
                 throw new Exception(result.Errors.First().Description);
+            }
 
             _logger.LogInformation("Created the super admin '{Admin}'", superAdmin.UserName);
         }
@@ -117,7 +116,7 @@ internal class SeedDatabaseWorker : IHostedService
 
     private async Task AddSubscriptionPlanAsync(IServiceProvider serviceProvider)
     {
-        var masterUow = serviceProvider.GetRequiredService<IMasterUnityOfWork>();
+        var masterUow = serviceProvider.GetRequiredService<IMasterUnitOfWork>();
         var standardPlan = new SubscriptionPlan
         {
             Name = "Standard",
@@ -138,7 +137,7 @@ internal class SeedDatabaseWorker : IHostedService
     private async Task AddDefaultTenantAsync(IServiceProvider serviceProvider)
     {
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-        var masterUow = serviceProvider.GetRequiredService<IMasterUnityOfWork>();
+        var masterUow = serviceProvider.GetRequiredService<IMasterUnitOfWork>();
         var databaseProvider = serviceProvider.GetRequiredService<ITenantDatabaseService>();
         var defaultTenantConnectionString = configuration.GetConnectionString("DefaultTenantDatabase")
                                             ?? databaseProvider.GenerateConnectionString("default");
@@ -167,7 +166,8 @@ internal class SeedDatabaseWorker : IHostedService
             await masterUow.Repository<Tenant>().AddAsync(defaultTenant);
             await masterUow.SaveChangesAsync();
             await databaseProvider.CreateDatabaseAsync(defaultTenant.ConnectionString);
-            _logger.LogInformation("Added default tenant with connection string: {ConnectionString}", defaultTenant.ConnectionString);
+            _logger.LogInformation("Added default tenant with connection string: {ConnectionString}",
+                defaultTenant.ConnectionString);
         }
     }
 

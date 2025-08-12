@@ -4,7 +4,6 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Services;
 using Logistics.Shared.Models;
-
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
@@ -13,10 +12,10 @@ internal sealed class UploadDocumentHandler : RequestHandler<UploadDocumentComma
 {
     private readonly IBlobStorageService _blobStorage;
     private readonly ILogger<UploadDocumentHandler> _logger;
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
     public UploadDocumentHandler(
-        ITenantUnityOfWork tenantUow,
+        ITenantUnitOfWork tenantUow,
         IBlobStorageService blobStorageService,
         ILogger<UploadDocumentHandler> logger)
     {
@@ -32,18 +31,26 @@ internal sealed class UploadDocumentHandler : RequestHandler<UploadDocumentComma
         {
             case DocumentOwnerType.Load:
                 if (await _tenantUow.Repository<Load>().GetByIdAsync(req.OwnerId, ct) is null)
+                {
                     return Result<Guid>.Fail($"Could not find load with ID '{req.OwnerId}'");
+                }
+
                 break;
 
             case DocumentOwnerType.Employee:
                 if (await _tenantUow.Repository<Employee>().GetByIdAsync(req.OwnerId, ct) is null)
+                {
                     return Result<Guid>.Fail($"Could not find employee with ID '{req.OwnerId}'");
+                }
+
                 break;
         }
 
         // Verify uploader exists
         if (await _tenantUow.Repository<Employee>().GetByIdAsync(req.UploadedById, ct) is null)
+        {
             return Result<Guid>.Fail($"Could not find employee with ID '{req.UploadedById}'");
+        }
 
         try
         {
@@ -99,7 +106,9 @@ internal sealed class UploadDocumentHandler : RequestHandler<UploadDocumentComma
 
             var changes = await _tenantUow.SaveChangesAsync();
             if (changes > 0)
+            {
                 return Result<Guid>.Succeed(newId);
+            }
 
             // rollback blob if DB save failed
             await _blobStorage.DeleteAsync(BlobConstants.DocumentsContainerName, blobPath, ct);

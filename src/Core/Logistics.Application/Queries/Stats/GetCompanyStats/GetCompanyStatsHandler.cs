@@ -8,9 +8,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetCompanyStatsHandler : RequestHandler<GetCompanyStatsQuery, Result<CompanyStatsDto>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public GetCompanyStatsHandler(ITenantUnityOfWork tenantUow)
+    public GetCompanyStatsHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }

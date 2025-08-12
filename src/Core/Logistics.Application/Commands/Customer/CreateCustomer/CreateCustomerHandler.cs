@@ -7,9 +7,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class CreateCustomerHandler : RequestHandler<CreateCustomerCommand, Result<CustomerDto>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public CreateCustomerHandler(ITenantUnityOfWork tenantUow)
+    public CreateCustomerHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
@@ -20,7 +20,9 @@ internal sealed class CreateCustomerHandler : RequestHandler<CreateCustomerComma
         var existingCustomer = await _tenantUow.Repository<Customer>().GetAsync(i => i.Name == req.Name);
 
         if (existingCustomer is not null)
+        {
             return Result<CustomerDto>.Fail($"A customer named '{req.Name}' already exists");
+        }
 
         var newCustomer = new Customer
         {

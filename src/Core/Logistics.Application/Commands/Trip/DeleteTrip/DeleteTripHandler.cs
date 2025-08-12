@@ -8,10 +8,10 @@ namespace Logistics.Application.Commands;
 internal sealed class DeleteTripHandler : RequestHandler<DeleteTripCommand, Result>
 {
     private readonly IPushNotificationService _pushNotificationService;
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
     public DeleteTripHandler(
-        ITenantUnityOfWork tenantUow,
+        ITenantUnitOfWork tenantUow,
         IPushNotificationService pushNotificationService)
     {
         _tenantUow = tenantUow;

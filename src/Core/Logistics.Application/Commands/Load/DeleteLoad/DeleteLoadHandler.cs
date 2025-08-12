@@ -9,10 +9,10 @@ namespace Logistics.Application.Commands;
 internal sealed class DeleteLoadHandler : RequestHandler<DeleteLoadCommand, Result>
 {
     private readonly IPushNotificationService _pushNotificationService;
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
     public DeleteLoadHandler(
-        ITenantUnityOfWork tenantUow,
+        ITenantUnitOfWork tenantUow,
         IPushNotificationService pushNotificationService)
     {
         _tenantUow = tenantUow;
@@ -27,7 +27,10 @@ internal sealed class DeleteLoadHandler : RequestHandler<DeleteLoadCommand, Resu
         _tenantUow.Repository<Load>().Delete(load);
         var changes = await _tenantUow.SaveChangesAsync();
 
-        if (load is not null && changes > 0) await _pushNotificationService.SendRemovedLoadNotificationAsync(load);
+        if (load is not null && changes > 0)
+        {
+            await _pushNotificationService.SendRemovedLoadNotificationAsync(load);
+        }
 
         return Result.Succeed();
     }

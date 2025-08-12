@@ -1,20 +1,19 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Services;
 
 internal class PayrollService : IPayrollService
 {
-    private readonly IMasterUnityOfWork _masterUow;
-    private readonly ITenantUnityOfWork _tenantUow;
     private readonly ILogger<PayrollService> _logger;
+    private readonly IMasterUnitOfWork _masterUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
     public PayrollService(
-        IMasterUnityOfWork masterUow,
-        ITenantUnityOfWork tenantUow,
+        IMasterUnitOfWork masterUow,
+        ITenantUnitOfWork tenantUow,
         ILogger<PayrollService> logger)
     {
         _masterUow = masterUow;
@@ -30,7 +29,8 @@ internal class PayrollService : IPayrollService
         {
             _tenantUow.SetCurrentTenant(tenant);
 
-            var previousMonthStart = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(-1);
+            var previousMonthStart =
+                new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(-1);
             var previousMonthEnd = previousMonthStart.AddMonths(1).AddDays(-1);
             var employees = await _tenantUow.Repository<Employee>().GetListAsync(e =>
                 e.SalaryType == SalaryType.Monthly ||
@@ -38,7 +38,8 @@ internal class PayrollService : IPayrollService
 
             foreach (var employee in employees)
             {
-                var isPayrollExisting = await IsPayrollInvoiceExisting(employee.Id, previousMonthStart, previousMonthEnd);
+                var isPayrollExisting =
+                    await IsPayrollInvoiceExisting(employee.Id, previousMonthStart, previousMonthEnd);
                 if (isPayrollExisting)
                 {
                     continue;
@@ -64,7 +65,8 @@ internal class PayrollService : IPayrollService
             _tenantUow.SetCurrentTenant(tenant);
             var previousWeekStart = StartOfPreviousWeek(DateTime.UtcNow);
             var previousWeekEnd = previousWeekStart.AddDays(6);
-            var employees = await _tenantUow.Repository<Employee>().GetListAsync(e => e.SalaryType == SalaryType.Weekly);
+            var employees =
+                await _tenantUow.Repository<Employee>().GetListAsync(e => e.SalaryType == SalaryType.Weekly);
 
             foreach (var employee in employees)
             {
@@ -96,7 +98,7 @@ internal class PayrollService : IPayrollService
             PeriodStart = startDate,
             PeriodEnd = endDate,
             EmployeeId = employee.Id,
-            Employee = employee,
+            Employee = employee
         };
 
 
@@ -129,16 +131,20 @@ internal class PayrollService : IPayrollService
                     l.DeliveryDate.Value <= endDate))
                 .Sum(l => l.DeliveryCost.Amount);
 
-            return totalGross * employee.Salary;  // Salary holds the share ratio (0-1)
+            return totalGross * employee.Salary; // Salary holds the share ratio (0-1)
         }
 
         // Weekly
         if (employee.SalaryType == SalaryType.Weekly)
+        {
             return CountWeeks(startDate, endDate) * employee.Salary;
+        }
 
         // Monthly
         if (employee.SalaryType == SalaryType.Monthly)
+        {
             return CountMonths(startDate, endDate) * employee.Salary;
+        }
 
         // Fallback – fixed amount
         return employee.Salary;

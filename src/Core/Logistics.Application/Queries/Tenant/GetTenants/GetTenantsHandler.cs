@@ -8,9 +8,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetTenantsHandler : RequestHandler<GetTenantsQuery, PagedResult<TenantDto>>
 {
-    private readonly IMasterUnityOfWork _masterUow;
+    private readonly IMasterUnitOfWork _masterUow;
 
-    public GetTenantsHandler(IMasterUnityOfWork masterUow)
+    public GetTenantsHandler(IMasterUnitOfWork masterUow)
     {
         _masterUow = masterUow;
     }

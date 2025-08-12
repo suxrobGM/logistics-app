@@ -4,7 +4,6 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
-
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
@@ -13,10 +12,10 @@ internal sealed class UpdatePaymentMethodHandler : RequestHandler<UpdatePaymentM
 {
     private readonly ILogger<UpdatePaymentMethodHandler> _logger;
     private readonly IStripeService _stripeService;
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
     public UpdatePaymentMethodHandler(
-        ITenantUnityOfWork tenantUow,
+        ITenantUnitOfWork tenantUow,
         IStripeService stripeService,
         ILogger<UpdatePaymentMethodHandler> logger)
     {
@@ -42,7 +41,10 @@ internal sealed class UpdatePaymentMethodHandler : RequestHandler<UpdatePaymentM
         var tenant = _tenantUow.GetCurrentTenant();
         var paymentMethod = await _tenantUow.Repository<CardPaymentMethod>().GetByIdAsync(command.Id);
 
-        if (paymentMethod is null) return Result.Fail($"Payment method with id {command.Id} not found");
+        if (paymentMethod is null)
+        {
+            return Result.Fail($"Payment method with id {command.Id} not found");
+        }
 
         paymentMethod.CardNumber = PropertyUpdater.UpdateIfChanged(command.CardNumber, paymentMethod.CardNumber);
         paymentMethod.Cvc = PropertyUpdater.UpdateIfChanged(command.Cvc, paymentMethod.Cvc);
@@ -68,7 +70,10 @@ internal sealed class UpdatePaymentMethodHandler : RequestHandler<UpdatePaymentM
         var tenant = _tenantUow.GetCurrentTenant();
         var paymentMethod = await _tenantUow.Repository<UsBankAccountPaymentMethod>().GetByIdAsync(command.Id);
 
-        if (paymentMethod is null) return Result.Fail($"Payment method with id {command.Id} not found");
+        if (paymentMethod is null)
+        {
+            return Result.Fail($"Payment method with id {command.Id} not found");
+        }
 
         paymentMethod.AccountNumber =
             PropertyUpdater.UpdateIfChanged(command.AccountNumber, paymentMethod.AccountNumber);
@@ -97,7 +102,10 @@ internal sealed class UpdatePaymentMethodHandler : RequestHandler<UpdatePaymentM
         var tenant = _tenantUow.GetCurrentTenant();
         var paymentMethod = await _tenantUow.Repository<BankAccountPaymentMethod>().GetByIdAsync(command.Id);
 
-        if (paymentMethod is null) return Result.Fail($"Payment method with id {command.Id} not found");
+        if (paymentMethod is null)
+        {
+            return Result.Fail($"Payment method with id {command.Id} not found");
+        }
 
         paymentMethod.AccountNumber =
             PropertyUpdater.UpdateIfChanged(command.AccountNumber, paymentMethod.AccountNumber);

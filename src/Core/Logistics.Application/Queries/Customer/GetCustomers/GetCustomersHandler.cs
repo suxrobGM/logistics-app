@@ -8,9 +8,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetCustomersHandler : RequestHandler<GetCustomersQuery, PagedResult<CustomerDto>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public GetCustomersHandler(ITenantUnityOfWork tenantUow)
+    public GetCustomersHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }

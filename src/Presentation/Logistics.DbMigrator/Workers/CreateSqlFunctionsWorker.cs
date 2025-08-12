@@ -18,7 +18,7 @@ internal class CreateSqlFunctionsWorker : IHostedService
         try
         {
             using var scope = _scopeFactory.CreateScope();
-            var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnityOfWork>();
+            var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
 
             _logger.LogInformation("Creating Stored Procedures");
             await CreateSqlFunction("CreateCompanyStats.psql", tenantUow);
@@ -37,7 +37,7 @@ internal class CreateSqlFunctionsWorker : IHostedService
         return Task.CompletedTask;
     }
 
-    private static async Task CreateSqlFunction(string fileName, ITenantUnityOfWork tenantUow)
+    private static async Task CreateSqlFunction(string fileName, ITenantUnitOfWork tenantUow)
     {
         var sql = await File.ReadAllTextAsync($"SqlFunctions/{fileName}");
         await tenantUow.ExecuteRawSql(sql);

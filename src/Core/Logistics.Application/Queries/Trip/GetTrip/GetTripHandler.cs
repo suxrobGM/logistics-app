@@ -7,9 +7,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetTripHandler : RequestHandler<GetTripQuery, Result<TripDto>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public GetTripHandler(ITenantUnityOfWork tenantUow)
+    public GetTripHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
@@ -19,7 +19,10 @@ internal sealed class GetTripHandler : RequestHandler<GetTripQuery, Result<TripD
     {
         var trip = await _tenantUow.Repository<Trip>().GetByIdAsync(req.TripId);
 
-        if (trip is null) return Result<TripDto>.Fail($"Could not find a trip with ID '{req.TripId}'");
+        if (trip is null)
+        {
+            return Result<TripDto>.Fail($"Could not find a trip with ID '{req.TripId}'");
+        }
 
         var tripeDto = trip.ToDto();
         return Result<TripDto>.Succeed(tripeDto);

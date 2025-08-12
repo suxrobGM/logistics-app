@@ -7,9 +7,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetSubscriptionPlanHandler : RequestHandler<GetSubscriptionPlanQuery, Result<SubscriptionPlanDto>>
 {
-    private readonly IMasterUnityOfWork _masterUow;
+    private readonly IMasterUnitOfWork _masterUow;
 
-    public GetSubscriptionPlanHandler(IMasterUnityOfWork masterUow)
+    public GetSubscriptionPlanHandler(IMasterUnitOfWork masterUow)
     {
         _masterUow = masterUow;
     }
@@ -20,7 +20,9 @@ internal sealed class GetSubscriptionPlanHandler : RequestHandler<GetSubscriptio
         var entity = await _masterUow.Repository<SubscriptionPlan>().GetAsync(i => i.Id == req.Id);
 
         if (entity is null)
+        {
             return Result<SubscriptionPlanDto>.Fail($"Could not find a subscription plan with ID '{req.Id}'");
+        }
 
         var dto = entity.ToDto();
         return Result<SubscriptionPlanDto>.Succeed(dto);

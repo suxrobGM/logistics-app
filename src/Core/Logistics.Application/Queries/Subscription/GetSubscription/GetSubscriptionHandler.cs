@@ -7,9 +7,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetSubscriptionHandler : RequestHandler<GetSubscriptionQuery, Result<SubscriptionDto>>
 {
-    private readonly IMasterUnityOfWork _masterUow;
+    private readonly IMasterUnitOfWork _masterUow;
 
-    public GetSubscriptionHandler(IMasterUnityOfWork masterUow)
+    public GetSubscriptionHandler(IMasterUnitOfWork masterUow)
     {
         _masterUow = masterUow;
     }
@@ -20,7 +20,9 @@ internal sealed class GetSubscriptionHandler : RequestHandler<GetSubscriptionQue
         var subscription = await _masterUow.Repository<Subscription>().GetAsync(i => i.Id == req.Id);
 
         if (subscription is null)
+        {
             return Result<SubscriptionDto>.Fail($"Could not find a subscription with ID '{req.Id}'");
+        }
 
         var dto = subscription.ToDto();
         return Result<SubscriptionDto>.Succeed(dto);

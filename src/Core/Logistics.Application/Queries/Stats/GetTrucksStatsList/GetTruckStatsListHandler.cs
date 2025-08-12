@@ -5,9 +5,9 @@ namespace Logistics.Application.Queries;
 
 public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, PagedResult<TruckStatsDto>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public GetTruckStatsListHandler(ITenantUnityOfWork tenantUow)
+    public GetTruckStatsListHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }

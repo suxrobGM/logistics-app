@@ -8,9 +8,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetEmployeesHandler : RequestHandler<GetEmployeesQuery, PagedResult<EmployeeDto>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public GetEmployeesHandler(ITenantUnityOfWork tenantUow)
+    public GetEmployeesHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }

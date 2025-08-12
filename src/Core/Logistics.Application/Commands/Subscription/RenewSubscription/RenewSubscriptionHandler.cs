@@ -2,7 +2,6 @@ using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
-
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
@@ -10,11 +9,11 @@ namespace Logistics.Application.Commands;
 internal sealed class RenewSubscriptionHandler : RequestHandler<RenewSubscriptionCommand, Result>
 {
     private readonly ILogger<RenewSubscriptionHandler> _logger;
-    private readonly IMasterUnityOfWork _masterUow;
+    private readonly IMasterUnitOfWork _masterUow;
     private readonly IStripeService _stripeService;
 
     public RenewSubscriptionHandler(
-        IMasterUnityOfWork masterUow,
+        IMasterUnitOfWork masterUow,
         IStripeService stripeService,
         ILogger<RenewSubscriptionHandler> logger)
     {
@@ -28,7 +27,10 @@ internal sealed class RenewSubscriptionHandler : RequestHandler<RenewSubscriptio
     {
         var subscription = await _masterUow.Repository<Subscription>().GetByIdAsync(req.Id);
 
-        if (subscription is null) return Result.Fail($"Could not find a subscription with ID '{req.Id}'");
+        if (subscription is null)
+        {
+            return Result.Fail($"Could not find a subscription with ID '{req.Id}'");
+        }
 
         var employeeCount = await _masterUow.Repository<User>().CountAsync(i => i.TenantId == subscription.TenantId);
 

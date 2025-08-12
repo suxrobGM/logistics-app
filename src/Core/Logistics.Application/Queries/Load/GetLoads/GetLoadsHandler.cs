@@ -8,9 +8,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetLoadsHandler : RequestHandler<GetLoadsQuery, PagedResult<LoadDto>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public GetLoadsHandler(ITenantUnityOfWork tenantUow)
+    public GetLoadsHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
@@ -24,16 +24,33 @@ internal sealed class GetLoadsHandler : RequestHandler<GetLoadsQuery, PagedResul
 
         var baseQuery = _tenantUow.Repository<Load>().ApplySpecification(spec);
 
-        if (req.OnlyActiveLoads) baseQuery = baseQuery.Where(i => i.DeliveryDate == null);
+        if (req.OnlyActiveLoads)
+        {
+            baseQuery = baseQuery.Where(i => i.DeliveryDate == null);
+        }
+
         if (req.UserId.HasValue)
+        {
             baseQuery = baseQuery.Where(i => i.AssignedTruck != null &&
                                              (i.AssignedTruck.MainDriverId == req.UserId ||
                                               i.AssignedTruck.SecondaryDriverId == req.UserId));
-        if (req.TruckId.HasValue) baseQuery = baseQuery.Where(i => i.AssignedTruckId == req.TruckId);
+        }
+
+        if (req.TruckId.HasValue)
+        {
+            baseQuery = baseQuery.Where(i => i.AssignedTruckId == req.TruckId);
+        }
+
         if (req is { StartDate: not null, EndDate: not null })
+        {
             baseQuery = baseQuery.Where(i => i.DispatchedDate >= req.StartDate &&
                                              i.DispatchedDate <= req.EndDate);
-        if (!req.LoadAllPages) baseQuery = baseQuery.ApplyPaging(req.Page, req.PageSize);
+        }
+
+        if (!req.LoadAllPages)
+        {
+            baseQuery = baseQuery.ApplyPaging(req.Page, req.PageSize);
+        }
 
         var loads = baseQuery.Select(i => i.ToDto()).ToArray();
         return PagedResult<LoadDto>.Succeed(loads, totalItems, req.PageSize);

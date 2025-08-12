@@ -6,7 +6,6 @@ using Logistics.Infrastructure.Data;
 using Logistics.Infrastructure.Options;
 using Logistics.Infrastructure.Persistence;
 using Logistics.Infrastructure.Services;
-
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,16 +28,16 @@ internal class InfrastructureBuilder : IInfrastructureBuilder
     public IInfrastructureBuilder AddIdentity(Action<IdentityBuilder>? configure = null)
     {
         var identityBuilder = _services.AddIdentityCore<User>(options =>
-        {
-            options.Password.RequiredLength = 8;
-            options.Password.RequireUppercase = false;
-            options.Password.RequireNonAlphanumeric = false;
-            options.User.AllowedUserNameCharacters =
-                "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789_.@";
-            options.User.RequireUniqueEmail = true;
-        })
-        .AddRoles<AppRole>()
-        .AddEntityFrameworkStores<MasterDbContext>();
+            {
+                options.Password.RequiredLength = 8;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.User.AllowedUserNameCharacters =
+                    "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789_.@";
+                options.User.RequireUniqueEmail = true;
+            })
+            .AddRoles<AppRole>()
+            .AddEntityFrameworkStores<MasterDbContext>();
 
         configure?.Invoke(identityBuilder);
         return this;
@@ -54,7 +53,8 @@ internal class InfrastructureBuilder : IInfrastructureBuilder
 
         _services.AddSingleton(options);
         _services.AddDbContext<MasterDbContext>();
-        _services.AddScoped<IMasterUnityOfWork, MasterUnitOfWork>();
+        _services.AddScoped<IMasterUnitOfWork, MasterUnitOfWork>();
+        _services.AddScoped(typeof(MasterRepository<,>));
         _services.AddScoped<ITenantService, TenantService>();
         _services.AddScoped<IUserService, UserService>();
         _logger?.LogInformation("Added master database with connection string: {ConnectionString}", connectionString);
@@ -79,8 +79,10 @@ internal class InfrastructureBuilder : IInfrastructureBuilder
         options.ConnectionString = connectionString;
         _services.AddSingleton(options);
         _services.AddDbContext<TenantDbContext>();
-        _services.AddScoped<ITenantUnityOfWork, TenantUnitOfWork>();
-        _logger?.LogInformation("Added default tenant database with connection string: {ConnectionString}", connectionString);
+        _services.AddScoped<ITenantUnitOfWork, TenantUnitOfWork>();
+        _services.AddScoped(typeof(TenantRepository<,>));
+        _logger?.LogInformation("Added default tenant database with connection string: {ConnectionString}",
+            connectionString);
         return this;
     }
 

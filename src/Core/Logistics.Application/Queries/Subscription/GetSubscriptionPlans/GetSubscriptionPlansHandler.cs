@@ -9,9 +9,9 @@ namespace Logistics.Application.Queries;
 internal sealed class
     GetSubscriptionPlansHandler : RequestHandler<GetSubscriptionPlansQuery, PagedResult<SubscriptionPlanDto>>
 {
-    private readonly IMasterUnityOfWork _masterUow;
+    private readonly IMasterUnitOfWork _masterUow;
 
-    public GetSubscriptionPlansHandler(IMasterUnityOfWork masterUow)
+    public GetSubscriptionPlansHandler(IMasterUnitOfWork masterUow)
     {
         _masterUow = masterUow;
     }

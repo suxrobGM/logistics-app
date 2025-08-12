@@ -9,9 +9,9 @@ namespace Logistics.Application.Queries;
 internal sealed class
     GetDocumentsHandler : RequestHandler<GetDocumentsQuery, Result<IEnumerable<DocumentDto>>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public GetDocumentsHandler(ITenantUnityOfWork tenantUow)
+    public GetDocumentsHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
@@ -24,12 +24,18 @@ internal sealed class
         {
             case DocumentOwnerType.Load when req.OwnerId is not null:
                 if (await _tenantUow.Repository<Load>().GetByIdAsync(req.OwnerId.Value, ct) is null)
+                {
                     return Result<IEnumerable<DocumentDto>>.Fail($"Could not find load with ID '{req.OwnerId}'");
+                }
+
                 break;
 
             case DocumentOwnerType.Employee when req.OwnerId is not null:
                 if (await _tenantUow.Repository<Employee>().GetByIdAsync(req.OwnerId.Value, ct) is null)
+                {
                     return Result<IEnumerable<DocumentDto>>.Fail($"Could not find employee with ID '{req.OwnerId}'");
+                }
+
                 break;
         }
 

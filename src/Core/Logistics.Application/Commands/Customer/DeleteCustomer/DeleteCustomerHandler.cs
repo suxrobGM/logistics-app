@@ -6,9 +6,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class DeleteCustomerHandler : RequestHandler<DeleteCustomerCommand, Result>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public DeleteCustomerHandler(ITenantUnityOfWork tenantUow)
+    public DeleteCustomerHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
@@ -18,7 +18,10 @@ internal sealed class DeleteCustomerHandler : RequestHandler<DeleteCustomerComma
     {
         var customer = await _tenantUow.Repository<Customer>().GetByIdAsync(req.Id);
 
-        if (customer is null) return Result.Fail($"Could not find a customer with ID {req.Id}");
+        if (customer is null)
+        {
+            return Result.Fail($"Could not find a customer with ID {req.Id}");
+        }
 
         _tenantUow.Repository<Customer>().Delete(customer);
         await _tenantUow.SaveChangesAsync();

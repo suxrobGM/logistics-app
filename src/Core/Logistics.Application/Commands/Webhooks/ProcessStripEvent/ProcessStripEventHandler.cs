@@ -4,12 +4,9 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
-
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-
 using Stripe;
-
 using PaymentMethod = Logistics.Domain.Entities.PaymentMethod;
 using StripeInvoice = Stripe.Invoice;
 using StripePaymentMethod = Stripe.PaymentMethod;
@@ -21,14 +18,14 @@ namespace Logistics.Application.Commands;
 internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEventCommand, Result>
 {
     private readonly ILogger<ProcessStripEventHandler> _logger;
-    private readonly IMasterUnityOfWork _masterUow;
+    private readonly IMasterUnitOfWork _masterUow;
     private readonly IStripeService _stripeService;
     private readonly string _stripeWebhookSecret;
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
     public ProcessStripEventHandler(
-        ITenantUnityOfWork tenantUow,
-        IMasterUnityOfWork masterUow,
+        ITenantUnitOfWork tenantUow,
+        IMasterUnitOfWork masterUow,
         IStripeService stripeService,
         IOptions<StripeOptions> stripeOptions,
         ILogger<ProcessStripEventHandler> logger)
@@ -86,7 +83,9 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
     {
         var customer = await _stripeService.GetCustomerAsync(stripeInvoice.CustomerId);
         if (!customer.Metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
+        {
             return Result.Fail($"{StripeMetadataKeys.TenantId} not found in invoice metadata.");
+        }
 
         _tenantUow.SetCurrentTenantById(tenantId);
 
@@ -97,7 +96,9 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
             .GetAsync(pm => pm.StripePaymentMethodId == stripePaymentMethodId);
 
         if (paymentMethod is null)
+        {
             return Result.Fail($"Payment method {stripePaymentMethodId} not found for tenant {tenantId}.");
+        }
 
         var tenant = _tenantUow.GetCurrentTenant();
 
@@ -127,18 +128,28 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
     {
         var metadata = stripeSubscription.Metadata;
         if (!metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
+        {
             return Result.Fail($"{StripeMetadataKeys.TenantId} not found in subscription metadata.");
+        }
 
         if (!metadata.TryGetValue(StripeMetadataKeys.PlanId, out var planId))
+        {
             return Result.Fail($"{StripeMetadataKeys.PlanId} not found in subscription metadata.");
+        }
 
         var tenant = await _masterUow.Repository<Tenant>().GetByIdAsync(Guid.Parse(tenantId));
 
-        if (tenant is null) return Result.Fail($"Could not find a tenant with ID '{tenantId}'");
+        if (tenant is null)
+        {
+            return Result.Fail($"Could not find a tenant with ID '{tenantId}'");
+        }
 
         var subscriptionPlan = await _masterUow.Repository<SubscriptionPlan>().GetByIdAsync(Guid.Parse(planId));
 
-        if (subscriptionPlan is null) return Result.Fail($"Could not find a subscription plan with ID '{planId}'");
+        if (subscriptionPlan is null)
+        {
+            return Result.Fail($"Could not find a subscription plan with ID '{planId}'");
+        }
 
         if (tenant.Subscription is not null)
         {
@@ -173,13 +184,17 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
     {
         var metadata = stripeSubscription.Metadata;
         if (!metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
+        {
             return Result.Fail($"{StripeMetadataKeys.TenantId} not found in subscription metadata.");
+        }
 
         var subscription = await _masterUow.Repository<Subscription>()
             .GetAsync(s => s.StripeSubscriptionId == stripeSubscription.Id);
 
         if (subscription is null)
+        {
             return Result.Fail($"Subscription {stripeSubscription.Id} not found for tenant {tenantId}.");
+        }
 
         subscription.Status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
         subscription.StartDate = stripeSubscription.StartDate;
@@ -197,13 +212,17 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
     private async Task<Result> HandleSubscriptionDeleted(StripeSubscription stripeSubscription)
     {
         if (!stripeSubscription.Metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
+        {
             return Result.Fail($"{StripeMetadataKeys.TenantId} not found in subscription metadata.");
+        }
 
         var subscription = await _masterUow.Repository<Subscription>()
             .GetAsync(s => s.StripeSubscriptionId == stripeSubscription.Id);
 
         if (subscription is null)
+        {
             return Result.Fail($"Subscription {stripeSubscription.Id} not found for tenant {tenantId}.");
+        }
 
         subscription.Status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
         subscription.EndDate = stripeSubscription.EndedAt;
@@ -223,15 +242,21 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
     private async Task<Result> HandlePaymentMethodAttached(StripePaymentMethod stripePaymentMethod)
     {
         if (!stripePaymentMethod.Metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
+        {
             return Result.Fail($"{StripeMetadataKeys.TenantId} not found in payment method metadata.");
+        }
 
         _tenantUow.SetCurrentTenantById(tenantId);
         var paymentMethod = stripePaymentMethod.ToPaymentMethodEntity();
 
         if (paymentMethod is UsBankAccountPaymentMethod usBankAccountPaymentMethod)
+        {
             await UpdateOrAddUsBankAccount(usBankAccountPaymentMethod);
+        }
         else
+        {
             await _tenantUow.Repository<PaymentMethod>().AddAsync(paymentMethod);
+        }
 
         await _tenantUow.SaveChangesAsync();
         _logger.LogInformation(
@@ -243,14 +268,18 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
     private async Task<Result> HandlePaymentMethodDetached(StripePaymentMethod stripePaymentMethod)
     {
         if (!stripePaymentMethod.Metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
+        {
             return Result.Fail($"{StripeMetadataKeys.TenantId} not found in payment method metadata.");
+        }
 
         _tenantUow.SetCurrentTenantById(tenantId);
         var paymentMethod = await _tenantUow.Repository<PaymentMethod>()
             .GetAsync(pm => pm.StripePaymentMethodId == stripePaymentMethod.Id);
 
         if (paymentMethod is null)
+        {
             return Result.Fail($"Payment method {stripePaymentMethod.Id} not found for tenant {tenantId}.");
+        }
 
         _tenantUow.Repository<PaymentMethod>().Delete(paymentMethod);
         await _tenantUow.SaveChangesAsync();

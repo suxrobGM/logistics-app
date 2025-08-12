@@ -8,9 +8,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetTenantRolesHandler : RequestHandler<GetTenantRolesQuery, PagedResult<RoleDto>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public GetTenantRolesHandler(ITenantUnityOfWork tenantUow)
+    public GetTenantRolesHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }

@@ -6,9 +6,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class DeleteSubscriptionPlanHandler : RequestHandler<DeleteSubscriptionPlanCommand, Result>
 {
-    private readonly IMasterUnityOfWork _masterUow;
+    private readonly IMasterUnitOfWork _masterUow;
 
-    public DeleteSubscriptionPlanHandler(IMasterUnityOfWork masterUow)
+    public DeleteSubscriptionPlanHandler(IMasterUnitOfWork masterUow)
     {
         _masterUow = masterUow;
     }
@@ -18,7 +18,10 @@ internal sealed class DeleteSubscriptionPlanHandler : RequestHandler<DeleteSubsc
     {
         var subscriptionPlan = await _masterUow.Repository<SubscriptionPlan>().GetByIdAsync(req.Id);
 
-        if (subscriptionPlan is null) return Result.Fail($"Could not find a subscription plan with ID '{req.Id}'");
+        if (subscriptionPlan is null)
+        {
+            return Result.Fail($"Could not find a subscription plan with ID '{req.Id}'");
+        }
 
         _masterUow.Repository<SubscriptionPlan>().Delete(subscriptionPlan);
         await _masterUow.SaveChangesAsync();

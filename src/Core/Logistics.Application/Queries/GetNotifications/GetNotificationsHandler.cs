@@ -7,9 +7,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetNotificationsHandler : RequestHandler<GetNotificationsQuery, Result<NotificationDto[]>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public GetNotificationsHandler(ITenantUnityOfWork tenantUow)
+    public GetNotificationsHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }

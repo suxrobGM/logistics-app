@@ -6,7 +6,6 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Identity.Roles;
-
 using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.DbMigrator.Workers;
@@ -14,23 +13,31 @@ namespace Logistics.DbMigrator.Workers;
 internal class FakeDataWorker : IHostedService
 {
     private const string UserDefaultPassword = "Test12345#";
-    private readonly DateTime _startDate = DateTime.UtcNow.AddMonths(-3);
     private readonly DateTime _endDate = DateTime.UtcNow.AddDays(-3);
-    private readonly Random _random = new();
 
     private readonly ILogger<FakeDataWorker> _logger;
-    private readonly IServiceScopeFactory _scopeFactory;
+    private readonly Random _random = new();
 
     private readonly (Address addr, double lng, double lat)[] _routePoints =
     [
-        (new Address { Line1 = "233 S Wacker Dr", City = "Chicago",  State="IL", ZipCode="60606", Country="USA" }, -87.6298, 41.8781),
-        (new Address { Line1 = "1 Monument Cir",   City = "Indianapolis", State="IN", ZipCode="46204", Country="USA" }, -86.1581, 39.7684),
-        (new Address { Line1 = "100 N Capitol Ave",City = "Lansing", State="MI", ZipCode="48933", Country="USA" }, -84.5555, 42.7325),
-        (new Address { Line1 = "600 Woodward Ave", City = "Detroit", State="MI", ZipCode="48226", Country="USA" }, -83.0458, 42.3314),
-        (new Address { Line1 = "151 W Jefferson",  City = "Louisville", State="KY", ZipCode="40202", Country="USA" }, -85.7585, 38.2527),
-        (new Address { Line1 = "600 Commerce St",  City = "Nashville",  State="TN", ZipCode="37203", Country="USA" }, -86.7816, 36.1627),
-        (new Address { Line1 = "1100 Congress Ave",City = "Austin",     State="TX", ZipCode="78701", Country="USA" }, -97.7431, 30.2672)
+        (new Address { Line1 = "233 S Wacker Dr", City = "Chicago", State = "IL", ZipCode = "60606", Country = "USA" },
+            -87.6298, 41.8781),
+        (new Address { Line1 = "1 Monument Cir", City = "Indianapolis", State = "IN", ZipCode = "46204", Country = "USA" },
+            -86.1581, 39.7684),
+        (new Address { Line1 = "100 N Capitol Ave", City = "Lansing", State = "MI", ZipCode = "48933", Country = "USA" },
+            -84.5555, 42.7325),
+        (new Address { Line1 = "600 Woodward Ave", City = "Detroit", State = "MI", ZipCode = "48226", Country = "USA" },
+            -83.0458, 42.3314),
+        (new Address { Line1 = "151 W Jefferson", City = "Louisville", State = "KY", ZipCode = "40202", Country = "USA" },
+            -85.7585, 38.2527),
+        (new Address { Line1 = "600 Commerce St", City = "Nashville", State = "TN", ZipCode = "37203", Country = "USA" },
+            -86.7816, 36.1627),
+        (new Address { Line1 = "1100 Congress Ave", City = "Austin", State = "TX", ZipCode = "78701", Country = "USA" },
+            -97.7431, 30.2672)
     ];
+
+    private readonly IServiceScopeFactory _scopeFactory;
+    private readonly DateTime _startDate = DateTime.UtcNow.AddMonths(-3);
 
     public FakeDataWorker(
         ILogger<FakeDataWorker> logger,
@@ -45,7 +52,7 @@ internal class FakeDataWorker : IHostedService
         using var scope = _scopeFactory.CreateScope();
 
         var payrollService = scope.ServiceProvider.GetRequiredService<PayrollService>();
-        var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnityOfWork>();
+        var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
         var populateFakeDataEnabled = scope.ServiceProvider
             .GetRequiredService<IConfiguration>()
             .GetValue<bool>("PopulateFakeData");
@@ -121,7 +128,9 @@ internal class FakeDataWorker : IHostedService
             {
                 var result = await userManager.CreateAsync(user, UserDefaultPassword);
                 if (!result.Succeeded)
+                {
                     throw new Exception(result.Errors.First().Description);
+                }
 
                 usersList.Add(user);
             }
@@ -136,8 +145,8 @@ internal class FakeDataWorker : IHostedService
 
     private async Task<CompanyEmployees> AddEmployeesAsync(IServiceProvider serviceProvider, IList<User> users)
     {
-        var masterUow = serviceProvider.GetRequiredService<IMasterUnityOfWork>();
-        var tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
+        var masterUow = serviceProvider.GetRequiredService<IMasterUnitOfWork>();
+        var tenantUow = serviceProvider.GetRequiredService<ITenantUnitOfWork>();
 
         var tenant = await masterUow.Repository<Tenant>().GetAsync(i => i.Name == "default");
 
@@ -158,19 +167,22 @@ internal class FakeDataWorker : IHostedService
         var driverRole = roles.First(i => i.Name == TenantRoles.Driver);
 
         var ownerEmployee = await TryAddEmployeeAsync(tenantUow, tenant.Id, owner, 0, SalaryType.None, ownerRole);
-        var managerEmployee = await TryAddEmployeeAsync(tenantUow, tenant.Id, manager, 5000, SalaryType.Monthly, managerRole);
+        var managerEmployee =
+            await TryAddEmployeeAsync(tenantUow, tenant.Id, manager, 5000, SalaryType.Monthly, managerRole);
         var employeesDto = new CompanyEmployees(ownerEmployee, managerEmployee);
 
         foreach (var dispatcher in dispatchers)
         {
-            var dispatcherEmployee = await TryAddEmployeeAsync(tenantUow, tenant.Id, dispatcher, 1000, SalaryType.Weekly, dispatcherRole);
+            var dispatcherEmployee = await TryAddEmployeeAsync(tenantUow, tenant.Id, dispatcher, 1000,
+                SalaryType.Weekly, dispatcherRole);
             employeesDto.Dispatchers.Add(dispatcherEmployee);
             employeesDto.AllEmployees.Add(dispatcherEmployee);
         }
 
         foreach (var driver in drivers)
         {
-            var driverEmployee = await TryAddEmployeeAsync(tenantUow, tenant.Id, driver, 0.3M, SalaryType.ShareOfGross, driverRole);
+            var driverEmployee =
+                await TryAddEmployeeAsync(tenantUow, tenant.Id, driver, 0.3M, SalaryType.ShareOfGross, driverRole);
             employeesDto.Drivers.Add(driverEmployee);
             employeesDto.AllEmployees.Add(driverEmployee);
         }
@@ -183,7 +195,7 @@ internal class FakeDataWorker : IHostedService
     }
 
     private async Task<Employee> TryAddEmployeeAsync(
-        ITenantUnityOfWork tenantUow,
+        ITenantUnitOfWork tenantUow,
         Guid tenantId,
         User user,
         decimal salary,
@@ -209,7 +221,7 @@ internal class FakeDataWorker : IHostedService
     private async Task<IList<Customer>> AddCustomersAsync(IServiceProvider serviceProvider)
     {
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-        var tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
+        var tenantUow = serviceProvider.GetRequiredService<ITenantUnitOfWork>();
 
         var customers = configuration.GetRequiredSection("Customers").Get<Customer[]>()!;
         var customersList = new List<Customer>();
@@ -221,7 +233,9 @@ internal class FakeDataWorker : IHostedService
             customersList.Add(customer);
 
             if (existingCustomer is not null)
+            {
                 continue;
+            }
 
             await customerRepository.AddAsync(customer);
             _logger.LogInformation("Added a customer '{CustomerName}'", customer.Name);
@@ -233,7 +247,7 @@ internal class FakeDataWorker : IHostedService
 
     private async Task<IList<Truck>> AddTrucksAsync(IServiceProvider serviceProvider, IEnumerable<Employee> drivers)
     {
-        var tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
+        var tenantUow = serviceProvider.GetRequiredService<ITenantUnitOfWork>();
 
         var trucksList = new List<Truck>();
         var truckNumber = 101;
@@ -260,9 +274,11 @@ internal class FakeDataWorker : IHostedService
         IList<Customer> customers)
     {
         if (!trucks.Any())
+        {
             throw new InvalidOperationException("Empty list of trucks");
+        }
 
-        var tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
+        var tenantUow = serviceProvider.GetRequiredService<ITenantUnitOfWork>();
         var dryVanTrucks = trucks
             .Where(i => i.Type == TruckType.FreightTruck)
             .ToList();
@@ -322,13 +338,15 @@ internal class FakeDataWorker : IHostedService
         IList<Truck> trucks,
         IList<Customer> customers)
     {
-        var tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
+        var tenantUow = serviceProvider.GetRequiredService<ITenantUnitOfWork>();
         var tripRepo = tenantUow.Repository<Trip>();
         var loadRepo = tenantUow.Repository<Load>();
 
         var carHaulerTrucks = trucks.Where(t => t.Type == TruckType.CarHauler).ToList();
         if (carHaulerTrucks.Count == 0)
+        {
             return;
+        }
 
         for (var tripIdx = 0; tripIdx < 30; tripIdx++)
         {
@@ -375,7 +393,7 @@ internal class FakeDataWorker : IHostedService
 
     private async Task AddNotificationsAsync(IServiceProvider serviceProvider)
     {
-        var tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
+        var tenantUow = serviceProvider.GetRequiredService<ITenantUnitOfWork>();
 
         var notificationRepository = tenantUow.Repository<Notification>();
         var notificationsCount = await notificationRepository.CountAsync();
@@ -391,7 +409,9 @@ internal class FakeDataWorker : IHostedService
             {
                 Title = $"Test notification {i}",
                 Message = $"Notification {i} description",
-                CreatedDate = DateTime.SpecifyKind(_random.UtcDate(DateTime.UtcNow.AddMonths(-1), DateTime.UtcNow.AddDays(-1)), DateTimeKind.Utc)
+                CreatedDate =
+                    DateTime.SpecifyKind(_random.UtcDate(DateTime.UtcNow.AddMonths(-1), DateTime.UtcNow.AddDays(-1)),
+                        DateTimeKind.Utc)
             };
 
             await notificationRepository.AddAsync(notification);

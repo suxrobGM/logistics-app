@@ -8,9 +8,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrossesQuery, Result<MonthlyGrossesDto>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public GetMonthlyGrossesHandler(ITenantUnityOfWork tenantUow)
+    public GetMonthlyGrossesHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
@@ -26,7 +26,9 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrosse
                                                                            i.SecondaryDriverId == req.UserId.Value);
 
             if (truck is null)
+            {
                 return Result<MonthlyGrossesDto>.Fail($"Could not find a truck with driver ID '{req.UserId}'");
+            }
 
             truckId = truck.Id;
         }
@@ -45,7 +47,9 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrosse
             var key = (date.Year, date.Month);
 
             if (!dict.ContainsKey(key))
+            {
                 continue;
+            }
 
             dict[key].Distance += load.Distance;
             dict[key].Gross += load.DeliveryCost;

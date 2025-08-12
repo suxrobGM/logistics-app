@@ -9,10 +9,10 @@ namespace Logistics.Application.Commands;
 internal sealed class DeleteDocumentHandler : RequestHandler<DeleteDocumentCommand, Result>
 {
     private readonly IBlobStorageService _blobStorageService;
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
     public DeleteDocumentHandler(
-        ITenantUnityOfWork tenantUow,
+        ITenantUnitOfWork tenantUow,
         IBlobStorageService blobStorageService)
     {
         _tenantUow = tenantUow;
@@ -24,10 +24,16 @@ internal sealed class DeleteDocumentHandler : RequestHandler<DeleteDocumentComma
     {
         // Get the document
         var document = await _tenantUow.Repository<LoadDocument>().GetByIdAsync(req.DocumentId, ct);
-        if (document is null) return Result.Fail($"Could not find document with ID '{req.DocumentId}'");
+        if (document is null)
+        {
+            return Result.Fail($"Could not find document with ID '{req.DocumentId}'");
+        }
 
         // Check if the document is already deleted
-        if (document.Status == DocumentStatus.Deleted) return Result.Fail("Document is already deleted");
+        if (document.Status == DocumentStatus.Deleted)
+        {
+            return Result.Fail("Document is already deleted");
+        }
 
         try
         {

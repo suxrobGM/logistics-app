@@ -8,9 +8,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetDriverStatsHandler : RequestHandler<GetDriverStatsQuery, Result<DriverStatsDto>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public GetDriverStatsHandler(ITenantUnityOfWork tenantUow)
+    public GetDriverStatsHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
@@ -22,12 +22,17 @@ internal sealed class GetDriverStatsHandler : RequestHandler<GetDriverStatsQuery
         var driver = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
 
         if (driver is null)
+        {
             return Result<DriverStatsDto>.Fail($"Could not find driver with the user ID '{req.UserId}'");
+        }
 
         var assignedTruck = await _tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == driver.Id
                                                                                || i.SecondaryDriverId == driver.Id);
 
-        if (assignedTruck is null) return Result<DriverStatsDto>.Fail("Driver does not have an assigned truck");
+        if (assignedTruck is null)
+        {
+            return Result<DriverStatsDto>.Fail("Driver does not have an assigned truck");
+        }
 
         var driverIncomePercentage = driver.SalaryType == SalaryType.ShareOfGross ? driver.Salary : 0;
         var now = DateTime.UtcNow;

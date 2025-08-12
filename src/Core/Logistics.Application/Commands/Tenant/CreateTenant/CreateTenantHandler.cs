@@ -8,12 +8,12 @@ namespace Logistics.Application.Commands;
 
 internal sealed class CreateTenantHandler : RequestHandler<CreateTenantCommand, Result>
 {
-    private readonly IMasterUnityOfWork _masterUow;
+    private readonly IMasterUnitOfWork _masterUow;
     private readonly ITenantDatabaseService _tenantDatabase;
 
     public CreateTenantHandler(
         ITenantDatabaseService tenantDatabase,
-        IMasterUnityOfWork masterUow)
+        IMasterUnitOfWork masterUow)
     {
         _tenantDatabase = tenantDatabase;
         _masterUow = masterUow;
@@ -35,10 +35,15 @@ internal sealed class CreateTenantHandler : RequestHandler<CreateTenantCommand, 
         var existingTenant = await _masterUow.Repository<Tenant>().GetAsync(i => i.Name == tenant.Name);
 
         if (existingTenant is not null)
+        {
             return Result.Fail($"Tenant name '{tenant.Name}' is already taken, please chose another name");
+        }
 
         var created = await _tenantDatabase.CreateDatabaseAsync(tenant.ConnectionString);
-        if (!created) return Result.Fail("Could not create the tenant's database");
+        if (!created)
+        {
+            return Result.Fail("Could not create the tenant's database");
+        }
 
         await _masterUow.Repository<Tenant>().AddAsync(tenant);
         await _masterUow.SaveChangesAsync();

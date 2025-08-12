@@ -2,7 +2,6 @@ using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
-
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
@@ -11,10 +10,10 @@ internal sealed class DeletePaymentMethodHandler : RequestHandler<DeletePaymentM
 {
     private readonly ILogger<DeletePaymentMethodHandler> _logger;
     private readonly IStripeService _stripeService;
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
     public DeletePaymentMethodHandler(
-        ITenantUnityOfWork tenantUow,
+        ITenantUnitOfWork tenantUow,
         IStripeService stripeService,
         ILogger<DeletePaymentMethodHandler> logger)
     {
@@ -28,7 +27,10 @@ internal sealed class DeletePaymentMethodHandler : RequestHandler<DeletePaymentM
     {
         var paymentMethod = await _tenantUow.Repository<PaymentMethod>().GetByIdAsync(req.Id);
 
-        if (paymentMethod is null) return Result.Fail($"Could not find a payment with ID {req.Id}");
+        if (paymentMethod is null)
+        {
+            return Result.Fail($"Could not find a payment with ID {req.Id}");
+        }
 
         await _stripeService.RemovePaymentMethodAsync(paymentMethod);
         _tenantUow.Repository<PaymentMethod>().Delete(paymentMethod);

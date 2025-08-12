@@ -1,101 +1,59 @@
-using System.Collections;
-
 using Logistics.Domain.Core;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Infrastructure.Data;
-
-using Microsoft.EntityFrameworkCore;
+using Logistics.Infrastructure.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Logistics.Infrastructure.Persistence;
 
-internal class TenantUnitOfWork : ITenantUnityOfWork
+internal sealed class TenantUnitOfWork
+    : UnitOfWork<ITenantEntity>, ITenantUnitOfWork
 {
-    private readonly TenantDbContext _tenantDbContext;
-    private readonly Hashtable _repositories = new();
+    private readonly TenantDbContext _db;
+    private readonly IServiceProvider _services;
 
-    public TenantUnitOfWork(TenantDbContext tenantDbContext)
+    public TenantUnitOfWork(TenantDbContext db, IServiceProvider services) : base(db)
     {
-        _tenantDbContext = tenantDbContext;
+        _db = db;
+        _services = services;
     }
 
-    public ITenantRepository<TEntity, Guid> Repository<TEntity>()
+    // Strongly typed repos (hide base with 'new')
+    public new ITenantRepository<TEntity, Guid> Repository<TEntity>()
         where TEntity : class, IEntity<Guid>, ITenantEntity
     {
-        return Repository<TEntity, Guid>();
+        return (ITenantRepository<TEntity, Guid>)base.Repository<TEntity>();
     }
 
-    public ITenantRepository<TEntity, TKey> Repository<TEntity, TKey>()
+    public new ITenantRepository<TEntity, TKey> Repository<TEntity, TKey>()
         where TEntity : class, IEntity<TKey>, ITenantEntity
     {
-        var type = typeof(TEntity).Name;
-
-        if (!_repositories.ContainsKey(type))
-        {
-            var repositoryType = typeof(TenantRepository<,>);
-
-            var repositoryInstance =
-                Activator.CreateInstance(repositoryType
-                    .MakeGenericType(typeof(TEntity), typeof(TKey)),
-                    _tenantDbContext);
-
-            _repositories.Add(type, repositoryInstance);
-        }
-
-        if (_repositories[type] is not TenantRepository<TEntity, TKey> repository)
-        {
-            throw new InvalidOperationException("Could not create a tenant repository");
-        }
-
-        return repository;
+        return (ITenantRepository<TEntity, TKey>)base.Repository<TEntity, TKey>();
     }
 
-    public Task<int> SaveChangesAsync()
-    {
-        return _tenantDbContext.SaveChangesAsync();
-    }
-
-    public void Dispose()
-    {
-        _tenantDbContext.Dispose();
-    }
-
+    // Tenant context operations
     public Tenant GetCurrentTenant()
     {
-        ThrowIfTenantServiceIsNull();
-        return _tenantDbContext.TenantService!.GetTenant();
+        var tenantService = _services.GetRequiredService<TenantService>();
+        return tenantService.GetTenant();
     }
 
     public void SetCurrentTenantById(string tenantId)
     {
-        ThrowIfTenantServiceIsNull();
-        _tenantDbContext.TenantService!.SetTenantById(tenantId);
+        var tenantService = _services.GetRequiredService<TenantService>();
+        tenantService.SetTenantById(tenantId);
     }
 
     public void SetCurrentTenant(Tenant tenant)
     {
-        ThrowIfTenantServiceIsNull();
-        _tenantDbContext.TenantService!.SetTenant(tenant);
+        var tenantService = _services.GetRequiredService<TenantService>();
+        tenantService.SetTenant(tenant);
     }
 
-    private void ThrowIfTenantServiceIsNull()
+    protected override IRepository<TEntity, TKey> CreateRepository<TEntity, TKey>()
     {
-        if (_tenantDbContext.TenantService is null)
-        {
-            throw new InvalidOperationException("The tenant service is null from the Tenant DB context");
-        }
-    }
-
-    public async Task ExecuteRawSql(string sql)
-    {
-        await _tenantDbContext.Database.ExecuteSqlRawAsync(sql);
-    }
-    public Task<List<TSqlResponse>> ExecuteRawSql<TSqlResponse>(string sql) where TSqlResponse : class
-    {
-        return _tenantDbContext.Set<TSqlResponse>().FromSqlRaw(sql).ToListAsync();
-    }
-    public Task<List<TSqlResponse>> ExecuteRawSql<TSqlResponse>(FormattableString sql) where TSqlResponse : class
-    {
-        return _tenantDbContext.Set<TSqlResponse>().FromSqlInterpolated(sql).ToListAsync();
+        // TenantRepository<TEntity, TKey>(TenantDbContext db)
+        return ActivatorUtilities.CreateInstance<TenantRepository<TEntity, TKey>>(_services, _db);
     }
 }

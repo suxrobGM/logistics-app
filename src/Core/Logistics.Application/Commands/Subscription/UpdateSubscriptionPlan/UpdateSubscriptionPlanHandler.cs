@@ -3,7 +3,6 @@ using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
-
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
@@ -11,11 +10,11 @@ namespace Logistics.Application.Commands;
 internal sealed class UpdateSubscriptionPlanHandler : RequestHandler<UpdateSubscriptionPlanCommand, Result>
 {
     private readonly ILogger<UpdateSubscriptionPlanHandler> _logger;
-    private readonly IMasterUnityOfWork _masterUow;
+    private readonly IMasterUnitOfWork _masterUow;
     private readonly IStripeService _stripeService;
 
     public UpdateSubscriptionPlanHandler(
-        IMasterUnityOfWork masterUow,
+        IMasterUnitOfWork masterUow,
         IStripeService stripeService,
         ILogger<UpdateSubscriptionPlanHandler> logger)
     {
@@ -29,7 +28,10 @@ internal sealed class UpdateSubscriptionPlanHandler : RequestHandler<UpdateSubsc
     {
         var subscriptionPlan = await _masterUow.Repository<SubscriptionPlan>().GetByIdAsync(req.Id);
 
-        if (subscriptionPlan is null) return Result.Fail($"Could not find a subscription plan with ID '{req.Id}'");
+        if (subscriptionPlan is null)
+        {
+            return Result.Fail($"Could not find a subscription plan with ID '{req.Id}'");
+        }
 
         subscriptionPlan.Name = PropertyUpdater.UpdateIfChanged(req.Name, subscriptionPlan.Name);
         subscriptionPlan.Description = PropertyUpdater.UpdateIfChanged(req.Description, subscriptionPlan.Description);

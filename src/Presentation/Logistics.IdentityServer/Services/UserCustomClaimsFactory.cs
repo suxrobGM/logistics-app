@@ -1,13 +1,11 @@
 #nullable enable
-using System.Security.Claims;
 
+using System.Security.Claims;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.IdentityServer.Extensions;
-
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-
 using CustomClaimTypes = Logistics.Shared.Identity.Claims.CustomClaimTypes;
 
 namespace Logistics.IdentityServer.Services;
@@ -16,15 +14,15 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
 {
     private readonly HttpContext _httpContext;
     private readonly RoleManager<AppRole> _roleManager;
+    private readonly ITenantUnitOfWork _tenantUow;
     private readonly UserManager<User> _userManager;
-    private readonly ITenantUnityOfWork _tenantUow;
 
     public UserCustomClaimsFactory(
         UserManager<User> userManager,
         RoleManager<AppRole> roleManager,
         IOptions<IdentityOptions> options,
         IHttpContextAccessor httpContextAccessor,
-        ITenantUnityOfWork tenantUow)
+        ITenantUnitOfWork tenantUow)
         : base(userManager, roleManager, options)
     {
         _httpContext = httpContextAccessor.HttpContext!;
@@ -95,6 +93,7 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
         {
             claimsIdentity.AddClaim(new Claim("given_name", user.FirstName));
         }
+
         if (!string.IsNullOrEmpty(user.LastName))
         {
             claimsIdentity.AddClaim(new Claim("family_name", user.LastName));

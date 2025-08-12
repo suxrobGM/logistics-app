@@ -8,9 +8,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetUsersHandler : RequestHandler<GetUsersQuery, PagedResult<UserDto>>
 {
-    private readonly IMasterUnityOfWork _masterUow;
+    private readonly IMasterUnitOfWork _masterUow;
 
-    public GetUsersHandler(IMasterUnityOfWork masterUow)
+    public GetUsersHandler(IMasterUnitOfWork masterUow)
     {
         _masterUow = masterUow;
     }

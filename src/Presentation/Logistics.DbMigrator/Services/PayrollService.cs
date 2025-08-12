@@ -8,11 +8,11 @@ namespace Logistics.DbMigrator.Services;
 
 public class PayrollService
 {
-    private readonly ITenantUnityOfWork _tenantUow;
     private readonly ILogger<PayrollService> _logger;
+    private readonly ITenantUnitOfWork _tenantUow;
 
     public PayrollService(
-        ITenantUnityOfWork tenantUow,
+        ITenantUnitOfWork tenantUow,
         ILogger<PayrollService> logger)
     {
         _tenantUow = tenantUow;
@@ -21,7 +21,8 @@ public class PayrollService
 
     public async Task GeneratePayrolls(CompanyEmployees companyEmployees, DateTime startDate, DateTime endDate)
     {
-        var monthlyEmployees = companyEmployees.AllEmployees.Where(i => i.SalaryType is SalaryType.Monthly or SalaryType.ShareOfGross).ToArray();
+        var monthlyEmployees = companyEmployees.AllEmployees
+            .Where(i => i.SalaryType is SalaryType.Monthly or SalaryType.ShareOfGross).ToArray();
         var weeklyEmployees = companyEmployees.AllEmployees.Where(i => i.SalaryType is SalaryType.Weekly).ToArray();
         var monthlyRanges = DateRangeGenerator.GenerateMonthlyRanges(startDate, endDate);
         var weeklyRanges = DateRangeGenerator.GenerateWeeklyRanges(startDate, endDate);
@@ -38,7 +39,8 @@ public class PayrollService
         {
             foreach (var employee in employees)
             {
-                var isPayrollExisting = await IsPayrollExisting(payrollRepository, employee.Id, range.StartDate, range.EndDate);
+                var isPayrollExisting =
+                    await IsPayrollExisting(payrollRepository, employee.Id, range.StartDate, range.EndDate);
 
                 if (isPayrollExisting)
                 {
@@ -90,14 +92,16 @@ public class PayrollService
     {
         // Fixed amount (weekly / monthly) – nothing changed
         if (employee.SalaryType is not SalaryType.ShareOfGross)
+        {
             return employee.Salary;
+        }
 
         // Share-of-gross: sum every load that was delivered in the period
         // by ANY truck where this employee was the main OR secondary driver.
         var totalGross = _tenantUow.Repository<Truck>()
-            .Query()                                                // IQueryable<Truck>
-            .Where(t => (t.MainDriverId == employee.Id ||
-                         t.SecondaryDriverId == employee.Id))
+            .Query() // IQueryable<Truck>
+            .Where(t => t.MainDriverId == employee.Id ||
+                        t.SecondaryDriverId == employee.Id)
             .SelectMany(t => t.Loads.Where(l =>
                 l.DeliveryDate.HasValue &&
                 l.DeliveryDate.Value >= startDate &&

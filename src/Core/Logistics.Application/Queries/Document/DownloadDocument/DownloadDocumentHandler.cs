@@ -10,10 +10,10 @@ internal sealed class
     DownloadDocumentHandler : RequestHandler<DownloadDocumentQuery, Result<DocumentDownloadDto>>
 {
     private readonly IBlobStorageService _blobStorage;
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
     public DownloadDocumentHandler(
-        ITenantUnityOfWork tenantUow,
+        ITenantUnitOfWork tenantUow,
         IBlobStorageService blobStorageService)
     {
         _tenantUow = tenantUow;
@@ -25,21 +25,29 @@ internal sealed class
     {
         var document = await _tenantUow.Repository<Document>().GetByIdAsync(req.DocumentId, ct);
         if (document is null)
+        {
             return Result<DocumentDownloadDto>.Fail($"Could not find document with ID '{req.DocumentId}'");
+        }
 
         if (document.Status == DocumentStatus.Deleted)
+        {
             return Result<DocumentDownloadDto>.Fail("Document has been deleted");
+        }
 
         // Verify requester exists (audit)
         var requester = await _tenantUow.Repository<Employee>().GetByIdAsync(req.RequestedById, ct);
         if (requester is null)
+        {
             return Result<DocumentDownloadDto>.Fail($"Could not find employee with ID '{req.RequestedById}'");
+        }
 
         try
         {
             var exists = await _blobStorage.ExistsAsync(document.BlobContainer, document.BlobPath, ct);
             if (!exists)
+            {
                 return Result<DocumentDownloadDto>.Fail("Document file not found in storage");
+            }
 
             var stream = await _blobStorage.DownloadAsync(document.BlobContainer, document.BlobPath, ct);
 

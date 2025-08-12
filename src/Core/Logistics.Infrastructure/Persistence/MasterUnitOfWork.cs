@@ -1,59 +1,38 @@
-using System.Collections;
-
 using Logistics.Domain.Core;
 using Logistics.Domain.Persistence;
 using Logistics.Infrastructure.Data;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Logistics.Infrastructure.Persistence;
 
-internal class MasterUnitOfWork : IMasterUnityOfWork
+internal sealed class MasterUnitOfWork
+    : UnitOfWork<IMasterEntity>, IMasterUnitOfWork
 {
-    private readonly MasterDbContext _masterDbContext;
-    private readonly Hashtable _repositories = new();
+    private readonly MasterDbContext _db;
+    private readonly IServiceProvider _services;
 
-    public MasterUnitOfWork(MasterDbContext masterDbContext)
+    public MasterUnitOfWork(MasterDbContext db, IServiceProvider services) : base(db)
     {
-        _masterDbContext = masterDbContext;
+        _db = db;
+        _services = services;
     }
 
-    public IMasterRepository<TEntity, Guid> Repository<TEntity>()
+    // Strongly typed repos (hide base with 'new')
+    public new IMasterRepository<TEntity, Guid> Repository<TEntity>()
         where TEntity : class, IEntity<Guid>, IMasterEntity
     {
-        return Repository<TEntity, Guid>();
+        return (IMasterRepository<TEntity, Guid>)base.Repository<TEntity>();
     }
 
-    public IMasterRepository<TEntity, TKey> Repository<TEntity, TKey>()
+    public new IMasterRepository<TEntity, TKey> Repository<TEntity, TKey>()
         where TEntity : class, IEntity<TKey>, IMasterEntity
     {
-        var type = typeof(TEntity).Name;
-
-        if (!_repositories.ContainsKey(type))
-        {
-            var repositoryType = typeof(MasterRepository<,>);
-
-            var repositoryInstance =
-                Activator.CreateInstance(repositoryType
-                    .MakeGenericType(typeof(TEntity), typeof(TKey)),
-                    _masterDbContext);
-
-            _repositories.Add(type, repositoryInstance);
-        }
-
-        if (_repositories[type] is not MasterRepository<TEntity, TKey> repository)
-        {
-            throw new InvalidOperationException("Could not create a master repository");
-        }
-
-        return repository;
+        return (IMasterRepository<TEntity, TKey>)base.Repository<TEntity, TKey>();
     }
 
-    public Task<int> SaveChangesAsync()
+    protected override IRepository<TEntity, TKey> CreateRepository<TEntity, TKey>()
     {
-        return _masterDbContext.SaveChangesAsync();
-    }
-
-    public void Dispose()
-    {
-        _masterDbContext.Dispose();
+        // MasterRepository<TEntity, TKey>(MasterDbContext db)
+        return ActivatorUtilities.CreateInstance<MasterRepository<TEntity, TKey>>(_services, _db);
     }
 }

@@ -5,9 +5,9 @@ namespace Logistics.Application.Services;
 
 internal sealed class LoadService : ILoadService
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public LoadService(ITenantUnityOfWork tenantUow)
+    public LoadService(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
@@ -58,6 +58,7 @@ internal sealed class LoadService : ILoadService
         {
             await _tenantUow.SaveChangesAsync();
         }
+
         return load;
     }
 }

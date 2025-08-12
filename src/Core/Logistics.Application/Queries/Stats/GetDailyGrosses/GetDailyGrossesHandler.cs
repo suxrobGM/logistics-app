@@ -8,9 +8,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQuery, Result<DailyGrossesDto>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public GetDailyGrossesHandler(ITenantUnityOfWork tenantUow)
+    public GetDailyGrossesHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
@@ -26,7 +26,9 @@ internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQue
                                                                            i.SecondaryDriverId == req.UserId.Value);
 
             if (truck is null)
+            {
                 return Result<DailyGrossesDto>.Fail($"Could not find a truck with driver ID '{req.UserId}'");
+            }
 
             truckId = truck.Id;
         }
@@ -46,7 +48,9 @@ internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQue
             var key = (date.Year, date.Month, date.Day);
 
             if (!dict.ContainsKey(key))
+            {
                 continue;
+            }
 
             dict[key].Gross += load.DeliveryCost;
             dict[key].Distance += load.Distance;

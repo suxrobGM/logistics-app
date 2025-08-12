@@ -9,10 +9,10 @@ namespace Logistics.Application.Queries;
 internal sealed class PreviewPayrollInvoiceHandler : RequestHandler<PreviewPayrollInvoiceQuery, Result<InvoiceDto>>
 {
     private readonly IPayrollService _payrollService;
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
     public PreviewPayrollInvoiceHandler(
-        ITenantUnityOfWork tenantUow,
+        ITenantUnitOfWork tenantUow,
         IPayrollService payrollService)
     {
         _tenantUow = tenantUow;
@@ -24,7 +24,10 @@ internal sealed class PreviewPayrollInvoiceHandler : RequestHandler<PreviewPayro
     {
         var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId);
 
-        if (employee is null) return Result<InvoiceDto>.Fail($"Could not find an employer with ID '{req.EmployeeId}'");
+        if (employee is null)
+        {
+            return Result<InvoiceDto>.Fail($"Could not find an employer with ID '{req.EmployeeId}'");
+        }
 
         var payrollInvoice = _payrollService.CreatePayrollInvoice(employee, req.PeriodStart, req.PeriodEnd);
         var payrollInvoiceDto = payrollInvoice.ToDto();

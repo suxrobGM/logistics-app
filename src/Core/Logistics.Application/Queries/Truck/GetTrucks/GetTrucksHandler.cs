@@ -8,9 +8,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetTrucksHandler : RequestHandler<GetTrucksQuery, PagedResult<TruckDto>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public GetTrucksHandler(ITenantUnityOfWork tenantUow)
+    public GetTrucksHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }

@@ -2,7 +2,6 @@ using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
-
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
@@ -10,13 +9,13 @@ namespace Logistics.Application.Commands;
 internal sealed class CreateSubscriptionHandler : RequestHandler<CreateSubscriptionCommand, Result>
 {
     private readonly ILogger<CreateSubscriptionHandler> _logger;
-    private readonly IMasterUnityOfWork _masterUow;
+    private readonly IMasterUnitOfWork _masterUow;
     private readonly IStripeService _stripeService;
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
     public CreateSubscriptionHandler(
-        IMasterUnityOfWork masterUow,
-        ITenantUnityOfWork tenantUow,
+        IMasterUnitOfWork masterUow,
+        ITenantUnitOfWork tenantUow,
         IStripeService stripeService,
         ILogger<CreateSubscriptionHandler> logger)
     {
@@ -31,17 +30,25 @@ internal sealed class CreateSubscriptionHandler : RequestHandler<CreateSubscript
     {
         var tenant = await _masterUow.Repository<Tenant>().GetByIdAsync(req.TenantId);
 
-        if (tenant is null) return Result.Fail($"Could not find a tenant with ID '{req.TenantId}'");
+        if (tenant is null)
+        {
+            return Result.Fail($"Could not find a tenant with ID '{req.TenantId}'");
+        }
 
         _tenantUow.SetCurrentTenant(tenant);
         var tenantEmployeeCount = await _tenantUow.Repository<Employee>().CountAsync();
 
-        if (tenant.StripeCustomerId is null) await CreateStripeCustomerAsync(tenant);
+        if (tenant.StripeCustomerId is null)
+        {
+            await CreateStripeCustomerAsync(tenant);
+        }
 
         var subscriptionPlan = await _masterUow.Repository<SubscriptionPlan>().GetByIdAsync(req.PlanId);
 
         if (subscriptionPlan is null)
+        {
             return Result.Fail($"Could not find a subscription plan with ID '{req.TenantId}'");
+        }
 
         var subscription = Subscription.CreateTrial(tenant, subscriptionPlan);
         var stripeSubscription =

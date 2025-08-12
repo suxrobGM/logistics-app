@@ -3,7 +3,6 @@ using Logistics.Infrastructure.Data.Extensions;
 using Logistics.Infrastructure.Helpers;
 using Logistics.Infrastructure.Interceptors;
 using Logistics.Infrastructure.Options;
-
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -44,8 +43,15 @@ public class MasterDbContext : IdentityDbContext<
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        if (_dispatchDomain is not null) options.AddInterceptors(_dispatchDomain);
-        if (_auditableEntity is not null) options.AddInterceptors(_auditableEntity);
+        if (_dispatchDomain is not null)
+        {
+            options.AddInterceptors(_dispatchDomain);
+        }
+
+        if (_auditableEntity is not null)
+        {
+            options.AddInterceptors(_auditableEntity);
+        }
 
         if (!options.IsConfigured)
         {
@@ -59,6 +65,8 @@ public class MasterDbContext : IdentityDbContext<
     {
         base.OnModelCreating(builder);
 
+        // Scan and apply all configurations from the /Data/Configurations folder
+        // for entities implementing IMasterEntity
         builder.ApplyMasterConfigurationsFromAssemblyContaining<MasterDbContext>();
 
         // Prune entity types that are only relevant for the master database

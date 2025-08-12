@@ -9,9 +9,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetInvoicesHandler : RequestHandler<GetInvoicesQuery, PagedResult<InvoiceDto>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public GetInvoicesHandler(ITenantUnityOfWork tenantUow)
+    public GetInvoicesHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
@@ -20,9 +20,15 @@ internal sealed class GetInvoicesHandler : RequestHandler<GetInvoicesQuery, Page
         GetInvoicesQuery req,
         CancellationToken ct)
     {
-        if (req.LoadId.HasValue) return GetLoadInvoices(req);
+        if (req.LoadId.HasValue)
+        {
+            return GetLoadInvoices(req);
+        }
 
-        if (req.EmployeeId.HasValue || !string.IsNullOrEmpty(req.EmployeeName)) return GetPayrollInvoices(req);
+        if (req.EmployeeId.HasValue || !string.IsNullOrEmpty(req.EmployeeName))
+        {
+            return GetPayrollInvoices(req);
+        }
 
         return GetAllInvoices(req);
     }

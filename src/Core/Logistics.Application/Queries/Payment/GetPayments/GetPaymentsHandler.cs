@@ -8,9 +8,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetPaymentsHandler : RequestHandler<GetPaymentsQuery, PagedResult<PaymentDto>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public GetPaymentsHandler(ITenantUnityOfWork tenantUow)
+    public GetPaymentsHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }

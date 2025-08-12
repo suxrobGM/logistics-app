@@ -6,9 +6,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class DeleteTruckHandler : RequestHandler<DeleteTruckCommand, Result>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public DeleteTruckHandler(ITenantUnityOfWork tenantUow)
+    public DeleteTruckHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }

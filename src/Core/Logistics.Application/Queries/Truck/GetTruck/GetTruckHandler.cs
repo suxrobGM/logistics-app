@@ -7,9 +7,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetTruckHandler : RequestHandler<GetTruckQuery, Result<TruckDto>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public GetTruckHandler(ITenantUnityOfWork tenantUow)
+    public GetTruckHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
@@ -20,7 +20,9 @@ internal sealed class GetTruckHandler : RequestHandler<GetTruckQuery, Result<Tru
         var truckEntity = await TryGetTruck(req.TruckOrDriverId);
 
         if (truckEntity is null)
+        {
             return Result<TruckDto>.Fail($"Could not find a truck with ID '{req.TruckOrDriverId}'");
+        }
 
         var truckDto = ConvertToDto(truckEntity, req.IncludeLoads, req.OnlyActiveLoads);
         return Result<TruckDto>.Succeed(truckDto);
@@ -28,7 +30,10 @@ internal sealed class GetTruckHandler : RequestHandler<GetTruckQuery, Result<Tru
 
     private async Task<Truck?> TryGetTruck(Guid? truckOrDriverId)
     {
-        if (!truckOrDriverId.HasValue) return null;
+        if (!truckOrDriverId.HasValue)
+        {
+            return null;
+        }
 
         var truck = await _tenantUow.Repository<Truck>().GetAsync(i => i.Id == truckOrDriverId);
         return truck ?? await GetTruckFromDriver(truckOrDriverId.Value);
@@ -44,10 +49,15 @@ internal sealed class GetTruckHandler : RequestHandler<GetTruckQuery, Result<Tru
         var truckDto = truckEntity.ToDto(new List<LoadDto>());
 
         if (!includeLoads)
+        {
             return truckDto;
+        }
 
         var loads = truckEntity.Loads.Select(l => l.ToDto());
-        if (onlyActiveLoads) loads = loads.Where(l => l.DeliveryDate == null);
+        if (onlyActiveLoads)
+        {
+            loads = loads.Where(l => l.DeliveryDate == null);
+        }
 
         truckDto.Loads = loads.ToArray();
         return truckDto;

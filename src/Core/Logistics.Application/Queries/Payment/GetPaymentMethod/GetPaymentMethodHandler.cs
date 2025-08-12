@@ -7,9 +7,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetPaymentMethodHandler : RequestHandler<GetPaymentMethodQuery, Result<PaymentMethodDto>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
+    private readonly ITenantUnitOfWork _tenantUow;
 
-    public GetPaymentMethodHandler(ITenantUnityOfWork tenantUow)
+    public GetPaymentMethodHandler(ITenantUnitOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
@@ -20,7 +20,9 @@ internal sealed class GetPaymentMethodHandler : RequestHandler<GetPaymentMethodQ
         var paymentMethodEntity = await _tenantUow.Repository<PaymentMethod>().GetByIdAsync(req.Id);
 
         if (paymentMethodEntity is null)
+        {
             return Result<PaymentMethodDto>.Fail($"Could not find a payment method with ID {req.Id}");
+        }
 
         var paymentMethodDto = paymentMethodEntity.ToDto();
         return Result<PaymentMethodDto>.Succeed(paymentMethodDto);

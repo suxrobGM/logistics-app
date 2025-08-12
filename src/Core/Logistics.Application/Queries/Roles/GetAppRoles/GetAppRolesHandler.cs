@@ -8,9 +8,9 @@ namespace Logistics.Application.Queries;
 
 internal sealed class GetAppRolesHandler : RequestHandler<GetAppRolesQuery, PagedResult<RoleDto>>
 {
-    private readonly IMasterUnityOfWork _masterUow;
+    private readonly IMasterUnitOfWork _masterUow;
 
-    public GetAppRolesHandler(IMasterUnityOfWork masterUow)
+    public GetAppRolesHandler(IMasterUnitOfWork masterUow)
     {
         _masterUow = masterUow;
     }

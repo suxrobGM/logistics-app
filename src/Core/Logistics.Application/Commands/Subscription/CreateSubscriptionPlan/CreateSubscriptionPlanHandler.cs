@@ -2,7 +2,6 @@ using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
-
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
@@ -10,11 +9,11 @@ namespace Logistics.Application.Commands;
 internal sealed class CreateSubscriptionPlanHandler : RequestHandler<CreateSubscriptionPlanCommand, Result>
 {
     private readonly ILogger<CreateSubscriptionPlanHandler> _logger;
-    private readonly IMasterUnityOfWork _masterUow;
+    private readonly IMasterUnitOfWork _masterUow;
     private readonly IStripeService _stripeService;
 
     public CreateSubscriptionPlanHandler(
-        IMasterUnityOfWork masterUow,
+        IMasterUnitOfWork masterUow,
         IStripeService stripeService,
         ILogger<CreateSubscriptionPlanHandler> logger)
     {
