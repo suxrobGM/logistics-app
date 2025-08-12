@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class UpdateTruckHandler : RequestHandler<UpdateTruckCommand, Result>
+internal sealed class UpdateTruckHandler : IAppRequestHandler<UpdateTruckCommand, Result>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -15,7 +15,7 @@ internal sealed class UpdateTruckHandler : RequestHandler<UpdateTruckCommand, Re
         _tenantUow = tenantUow;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         UpdateTruckCommand req, CancellationToken ct)
     {
         var truckRepository = _tenantUow.Repository<Truck>();

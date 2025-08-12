@@ -6,7 +6,8 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetSubscriptionPlanHandler : RequestHandler<GetSubscriptionPlanQuery, Result<SubscriptionPlanDto>>
+internal sealed class
+    GetSubscriptionPlanHandler : IAppRequestHandler<GetSubscriptionPlanQuery, Result<SubscriptionPlanDto>>
 {
     private readonly IMasterUnitOfWork _masterUow;
 
@@ -15,7 +16,7 @@ internal sealed class GetSubscriptionPlanHandler : RequestHandler<GetSubscriptio
         _masterUow = masterUow;
     }
 
-    public override async Task<Result<SubscriptionPlanDto>> Handle(
+    public async Task<Result<SubscriptionPlanDto>> Handle(
         GetSubscriptionPlanQuery req, CancellationToken ct)
     {
         var entity = await _masterUow.Repository<SubscriptionPlan>().GetAsync(i => i.Id == req.Id);

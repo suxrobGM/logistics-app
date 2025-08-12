@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class DeleteEmployeeHandler : RequestHandler<DeleteEmployeeCommand, Result>
+internal sealed class DeleteEmployeeHandler : IAppRequestHandler<DeleteEmployeeCommand, Result>
 {
     private readonly IMasterUnitOfWork _masterUow;
     private readonly ITenantUnitOfWork _tenantUow;
@@ -19,7 +19,7 @@ internal sealed class DeleteEmployeeHandler : RequestHandler<DeleteEmployeeComma
         _tenantUow = tenantUow;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         DeleteEmployeeCommand req, CancellationToken ct)
     {
         var tenant = _tenantUow.GetCurrentTenant();

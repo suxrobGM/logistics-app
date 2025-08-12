@@ -1,10 +1,8 @@
-using Logistics.Shared.Models;
-
-using MediatR;
+using Logistics.Application.Abstractions;
 
 namespace Logistics.Application.Commands;
 
-public class UpdateNotificationCommand : IRequest<Result>
+public class UpdateNotificationCommand : IAppRequest
 {
     public Guid Id { get; set; }
     public bool? IsRead { get; set; }

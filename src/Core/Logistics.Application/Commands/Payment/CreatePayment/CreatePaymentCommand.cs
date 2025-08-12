@@ -1,11 +1,9 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Primitives.ValueObjects;
-using Logistics.Shared.Models;
-
-using MediatR;
 
 namespace Logistics.Application.Commands;
 
-public class CreatePaymentCommand : IRequest<Result>
+public class CreatePaymentCommand : IAppRequest
 {
     public Guid PaymentMethodId { get; set; }
     public decimal Amount { get; set; }

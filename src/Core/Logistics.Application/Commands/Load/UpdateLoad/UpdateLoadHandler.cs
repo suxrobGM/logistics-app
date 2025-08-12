@@ -8,7 +8,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Result>
+internal sealed class UpdateLoadHandler : IAppRequestHandler<UpdateLoadCommand, Result>
 {
     private readonly IPushNotificationService _pushNotificationService;
     private readonly ITenantUnitOfWork _tenantUow;
@@ -21,7 +21,7 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resu
         _pushNotificationService = pushNotificationService;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         UpdateLoadCommand req, CancellationToken ct)
     {
         var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.Id);

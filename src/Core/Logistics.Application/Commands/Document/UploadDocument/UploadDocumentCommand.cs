@@ -1,11 +1,10 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
-using MediatR;
-
 namespace Logistics.Application.Commands;
 
-public class UploadDocumentCommand : IRequest<Result<Guid>>
+public class UploadDocumentCommand : IAppRequest<Result<Guid>>
 {
     public DocumentOwnerType OwnerType { get; set; }
     public Guid OwnerId { get; set; }

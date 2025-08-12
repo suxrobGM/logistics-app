@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class UpdateDocumentHandler : RequestHandler<UpdateDocumentCommand, Result>
+internal sealed class UpdateDocumentHandler : IAppRequestHandler<UpdateDocumentCommand, Result>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -15,7 +15,7 @@ internal sealed class UpdateDocumentHandler : RequestHandler<UpdateDocumentComma
         _tenantUow = tenantUow;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         UpdateDocumentCommand req, CancellationToken ct)
     {
         var document = await _tenantUow.Repository<Document>().GetByIdAsync(req.DocumentId, ct);

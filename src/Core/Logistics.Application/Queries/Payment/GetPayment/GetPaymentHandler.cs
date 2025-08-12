@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetPaymentHandler : RequestHandler<GetPaymentQuery, Result<PaymentDto>>
+internal sealed class GetPaymentHandler : IAppRequestHandler<GetPaymentQuery, Result<PaymentDto>>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -15,7 +15,7 @@ internal sealed class GetPaymentHandler : RequestHandler<GetPaymentQuery, Result
         _tenantUow = tenantUow;
     }
 
-    public override async Task<Result<PaymentDto>> Handle(
+    public async Task<Result<PaymentDto>> Handle(
         GetPaymentQuery req, CancellationToken ct)
     {
         var paymentEntity = await _tenantUow.Repository<Payment>().GetByIdAsync(req.Id);

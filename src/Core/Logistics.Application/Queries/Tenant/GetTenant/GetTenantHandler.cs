@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetTenantHandler : RequestHandler<GetTenantQuery, Result<TenantDto>>
+internal sealed class GetTenantHandler : IAppRequestHandler<GetTenantQuery, Result<TenantDto>>
 {
     private readonly IMasterUnitOfWork _masterUow;
 
@@ -15,7 +15,7 @@ internal sealed class GetTenantHandler : RequestHandler<GetTenantQuery, Result<T
         _masterUow = masterUow;
     }
 
-    public override async Task<Result<TenantDto>> Handle(
+    public async Task<Result<TenantDto>> Handle(
         GetTenantQuery req, CancellationToken ct)
     {
         var tenantEntity = await _masterUow.Repository<Tenant>().GetAsync(i => i.Id == req.Id || i.Name == req.Name);

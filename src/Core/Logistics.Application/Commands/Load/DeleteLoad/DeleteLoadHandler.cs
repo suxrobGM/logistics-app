@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class DeleteLoadHandler : RequestHandler<DeleteLoadCommand, Result>
+internal sealed class DeleteLoadHandler : IAppRequestHandler<DeleteLoadCommand, Result>
 {
     private readonly IPushNotificationService _pushNotificationService;
     private readonly ITenantUnitOfWork _tenantUow;
@@ -20,7 +20,7 @@ internal sealed class DeleteLoadHandler : RequestHandler<DeleteLoadCommand, Resu
         _pushNotificationService = pushNotificationService;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         DeleteLoadCommand req, CancellationToken ct)
     {
         var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.Id);

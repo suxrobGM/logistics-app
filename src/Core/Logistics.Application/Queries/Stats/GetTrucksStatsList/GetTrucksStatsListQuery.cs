@@ -1,9 +1,8 @@
+using Logistics.Application.Abstractions;
 using Logistics.Shared.Models;
-
-using MediatR;
 
 namespace Logistics.Application.Queries;
 
-public class GetTrucksStatsListQuery : PagedIntervalQuery, IRequest<PagedResult<TruckStatsDto>>
+public class GetTrucksStatsListQuery : PagedIntervalQuery, IAppRequest<PagedResult<TruckStatsDto>>
 {
 }

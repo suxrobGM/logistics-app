@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class UploadDocumentHandler : RequestHandler<UploadDocumentCommand, Result<Guid>>
+internal sealed class UploadDocumentHandler : IAppRequestHandler<UploadDocumentCommand, Result<Guid>>
 {
     private readonly IBlobStorageService _blobStorage;
     private readonly ILogger<UploadDocumentHandler> _logger;
@@ -25,7 +25,7 @@ internal sealed class UploadDocumentHandler : RequestHandler<UploadDocumentComma
         _logger = logger;
     }
 
-    public override async Task<Result<Guid>> Handle(UploadDocumentCommand req, CancellationToken ct)
+    public async Task<Result<Guid>> Handle(UploadDocumentCommand req, CancellationToken ct)
     {
         switch (req.OwnerType)
         {

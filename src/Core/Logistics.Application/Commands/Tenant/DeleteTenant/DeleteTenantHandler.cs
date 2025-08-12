@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class DeleteTenantHandler : RequestHandler<DeleteTenantCommand, Result>
+internal sealed class DeleteTenantHandler : IAppRequestHandler<DeleteTenantCommand, Result>
 {
     private readonly IMasterUnitOfWork _masterRepository;
     private readonly IStripeService _stripeService;
@@ -23,7 +23,7 @@ internal sealed class DeleteTenantHandler : RequestHandler<DeleteTenantCommand, 
         _stripeService = stripeService;
     }
 
-    public override async Task<Result> Handle(DeleteTenantCommand req, CancellationToken ct)
+    public async Task<Result> Handle(DeleteTenantCommand req, CancellationToken ct)
     {
         var tenant = await _masterRepository.Repository<Tenant>().GetByIdAsync(req.Id);
 

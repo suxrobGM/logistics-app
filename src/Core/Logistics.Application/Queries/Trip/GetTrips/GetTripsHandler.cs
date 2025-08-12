@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetTripsHandler : RequestHandler<GetTripsQuery, PagedResult<TripDto>>
+internal sealed class GetTripsHandler : IAppRequestHandler<GetTripsQuery, PagedResult<TripDto>>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -16,7 +16,7 @@ internal sealed class GetTripsHandler : RequestHandler<GetTripsQuery, PagedResul
         _tenantUow = tenantUow;
     }
 
-    public override async Task<PagedResult<TripDto>> Handle(
+    public async Task<PagedResult<TripDto>> Handle(
         GetTripsQuery req, CancellationToken ct)
     {
         var totalItems = await _tenantUow.Repository<Trip>().CountAsync();

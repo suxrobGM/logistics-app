@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetDriverStatsHandler : RequestHandler<GetDriverStatsQuery, Result<DriverStatsDto>>
+internal sealed class GetDriverStatsHandler : IAppRequestHandler<GetDriverStatsQuery, Result<DriverStatsDto>>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -16,7 +16,7 @@ internal sealed class GetDriverStatsHandler : RequestHandler<GetDriverStatsQuery
         _tenantUow = tenantUow;
     }
 
-    public override async Task<Result<DriverStatsDto>> Handle(
+    public async Task<Result<DriverStatsDto>> Handle(
         GetDriverStatsQuery req, CancellationToken ct)
     {
         var driverStats = new DriverStatsDto();

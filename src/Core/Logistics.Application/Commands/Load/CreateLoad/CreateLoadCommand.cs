@@ -1,12 +1,10 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
-using Logistics.Shared.Models;
-
-using MediatR;
 
 namespace Logistics.Application.Commands;
 
-public class CreateLoadCommand : IRequest<Result>
+public class CreateLoadCommand : IAppRequest
 {
     public string Name { get; set; } = null!;
     public LoadType Type { get; set; }

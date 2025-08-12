@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class DeleteSubscriptionHandler : RequestHandler<DeleteSubscriptionCommand, Result>
+internal sealed class DeleteSubscriptionHandler : IAppRequestHandler<DeleteSubscriptionCommand, Result>
 {
     private readonly ILogger<DeleteSubscriptionHandler> _logger;
     private readonly IMasterUnitOfWork _masterUow;
@@ -23,7 +23,7 @@ internal sealed class DeleteSubscriptionHandler : RequestHandler<DeleteSubscript
         _logger = logger;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         DeleteSubscriptionCommand req, CancellationToken ct)
     {
         var subscription = await _masterUow.Repository<Subscription>().GetByIdAsync(req.Id);

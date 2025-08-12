@@ -5,7 +5,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class DeleteSubscriptionPlanHandler : RequestHandler<DeleteSubscriptionPlanCommand, Result>
+internal sealed class DeleteSubscriptionPlanHandler : IAppRequestHandler<DeleteSubscriptionPlanCommand, Result>
 {
     private readonly IMasterUnitOfWork _masterUow;
 
@@ -14,7 +14,7 @@ internal sealed class DeleteSubscriptionPlanHandler : RequestHandler<DeleteSubsc
         _masterUow = masterUow;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         DeleteSubscriptionPlanCommand req, CancellationToken ct)
     {
         var subscriptionPlan = await _masterUow.Repository<SubscriptionPlan>().GetByIdAsync(req.Id);

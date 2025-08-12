@@ -8,7 +8,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class UpdateLoadProximityHandler : RequestHandler<UpdateLoadProximityCommand, Result>
+internal sealed class UpdateLoadProximityHandler : IAppRequestHandler<UpdateLoadProximityCommand, Result>
 {
     private readonly IPushNotificationService _pushNotificationService;
     private readonly ITenantUnitOfWork _tenantUow;
@@ -21,7 +21,7 @@ internal sealed class UpdateLoadProximityHandler : RequestHandler<UpdateLoadProx
         _pushNotificationService = pushNotificationService;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         UpdateLoadProximityCommand req, CancellationToken ct)
     {
         var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.LoadId);

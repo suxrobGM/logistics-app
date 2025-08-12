@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Queries;
 
 internal sealed class GetRolePermissionsHandler :
-    RequestHandler<GetRolePermissionsQuery, Result<PermissionDto[]>>
+    IAppRequestHandler<GetRolePermissionsQuery, Result<PermissionDto[]>>
 {
     private readonly IMasterUnitOfWork _masterUow;
     private readonly ITenantUnitOfWork _tenantUow;
@@ -18,8 +18,7 @@ internal sealed class GetRolePermissionsHandler :
         _tenantUow = tenantUow;
     }
 
-    public override Task<Result<PermissionDto[]>> Handle(
-        GetRolePermissionsQuery req, CancellationToken ct)
+    public Task<Result<PermissionDto[]>> Handle(GetRolePermissionsQuery req, CancellationToken ct)
     {
         if (req.RoleName.StartsWith("app"))
         {

@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class DeletePaymentMethodHandler : RequestHandler<DeletePaymentMethodCommand, Result>
+internal sealed class DeletePaymentMethodHandler : IAppRequestHandler<DeletePaymentMethodCommand, Result>
 {
     private readonly ILogger<DeletePaymentMethodHandler> _logger;
     private readonly IStripeService _stripeService;
@@ -23,7 +23,7 @@ internal sealed class DeletePaymentMethodHandler : RequestHandler<DeletePaymentM
         _logger = logger;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         DeletePaymentMethodCommand req, CancellationToken ct)
     {
         var paymentMethod = await _tenantUow.Repository<PaymentMethod>().GetByIdAsync(req.Id);

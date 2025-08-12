@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetPaymentMethodsHandler : RequestHandler<GetPaymentMethodsQuery, Result<PaymentMethodDto[]>>
+internal sealed class GetPaymentMethodsHandler : IAppRequestHandler<GetPaymentMethodsQuery, Result<PaymentMethodDto[]>>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -16,9 +16,7 @@ internal sealed class GetPaymentMethodsHandler : RequestHandler<GetPaymentMethod
         _tenantUow = tenantUow;
     }
 
-    public override Task<Result<PaymentMethodDto[]>> Handle(
-        GetPaymentMethodsQuery req,
-        CancellationToken ct)
+    public Task<Result<PaymentMethodDto[]>> Handle(GetPaymentMethodsQuery req, CancellationToken ct)
     {
         var specification = new GetTenantPaymentMethods(req.OrderBy);
 

@@ -1,10 +1,9 @@
+using Logistics.Application.Abstractions;
 using Logistics.Shared.Models;
-
-using MediatR;
 
 namespace Logistics.Application.Queries;
 
-public class GetRolePermissionsQuery : IRequest<Result<PermissionDto[]>>
+public class GetRolePermissionsQuery : IAppRequest<Result<PermissionDto[]>>
 {
     public string RoleName { get; set; } = null!;
 }

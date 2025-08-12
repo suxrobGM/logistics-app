@@ -1,11 +1,9 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Shared.Models;
-
-using MediatR;
 
 namespace Logistics.Application.Commands;
 
-public class UpdateSubscriptionPlanCommand : IRequest<Result>
+public class UpdateSubscriptionPlanCommand : IAppRequest
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }

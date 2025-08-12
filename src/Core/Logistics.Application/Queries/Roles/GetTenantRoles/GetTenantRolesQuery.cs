@@ -1,9 +1,8 @@
+using Logistics.Application.Abstractions;
 using Logistics.Shared.Models;
-
-using MediatR;
 
 namespace Logistics.Application.Queries;
 
-public class GetTenantRolesQuery : SearchableQuery, IRequest<PagedResult<RoleDto>>
+public class GetTenantRolesQuery : SearchableQuery, IAppRequest<PagedResult<RoleDto>>
 {
 }

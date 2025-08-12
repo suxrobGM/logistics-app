@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetDocumentByIdHandler : RequestHandler<GetDocumentByIdQuery, Result<DocumentDto>>
+internal sealed class GetDocumentByIdHandler : IAppRequestHandler<GetDocumentByIdQuery, Result<DocumentDto>>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -16,7 +16,7 @@ internal sealed class GetDocumentByIdHandler : RequestHandler<GetDocumentByIdQue
         _tenantUow = tenantUow;
     }
 
-    public override async Task<Result<DocumentDto>> Handle(GetDocumentByIdQuery req, CancellationToken ct)
+    public async Task<Result<DocumentDto>> Handle(GetDocumentByIdQuery req, CancellationToken ct)
     {
         // Query the base type; EF will materialize derived type (TPH)
         var document = await _tenantUow.Repository<Document>()

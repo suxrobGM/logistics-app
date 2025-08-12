@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class CreateTenantHandler : RequestHandler<CreateTenantCommand, Result>
+internal sealed class CreateTenantHandler : IAppRequestHandler<CreateTenantCommand, Result>
 {
     private readonly IMasterUnitOfWork _masterUow;
     private readonly ITenantDatabaseService _tenantDatabase;
@@ -20,7 +20,7 @@ internal sealed class CreateTenantHandler : RequestHandler<CreateTenantCommand, 
         _masterUow = masterUow;
     }
 
-    public override async Task<Result> Handle(CreateTenantCommand req, CancellationToken ct)
+    public async Task<Result> Handle(CreateTenantCommand req, CancellationToken ct)
     {
         var tenantName = req.Name.Trim().ToLower();
         var tenant = new Tenant

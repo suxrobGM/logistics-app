@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class UpdateSubscriptionPlanHandler : RequestHandler<UpdateSubscriptionPlanCommand, Result>
+internal sealed class UpdateSubscriptionPlanHandler : IAppRequestHandler<UpdateSubscriptionPlanCommand, Result>
 {
     private readonly ILogger<UpdateSubscriptionPlanHandler> _logger;
     private readonly IMasterUnitOfWork _masterUow;
@@ -24,7 +24,7 @@ internal sealed class UpdateSubscriptionPlanHandler : RequestHandler<UpdateSubsc
         _logger = logger;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         UpdateSubscriptionPlanCommand req, CancellationToken ct)
     {
         var subscriptionPlan = await _masterUow.Repository<SubscriptionPlan>().GetByIdAsync(req.Id);

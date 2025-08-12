@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class CreateSetupIntentHandler : RequestHandler<CreateSetupIntentCommand, Result<SetupIntentDto>>
+internal sealed class CreateSetupIntentHandler : IAppRequestHandler<CreateSetupIntentCommand, Result<SetupIntentDto>>
 {
     private readonly ILogger<CreateSetupIntentHandler> _logger;
     private readonly IStripeService _stripeService;
@@ -22,7 +22,7 @@ internal sealed class CreateSetupIntentHandler : RequestHandler<CreateSetupInten
         _logger = logger;
     }
 
-    public override async Task<Result<SetupIntentDto>> Handle(CreateSetupIntentCommand req, CancellationToken ct)
+    public async Task<Result<SetupIntentDto>> Handle(CreateSetupIntentCommand req, CancellationToken ct)
     {
         var tenant = _tenantUow.GetCurrentTenant();
 

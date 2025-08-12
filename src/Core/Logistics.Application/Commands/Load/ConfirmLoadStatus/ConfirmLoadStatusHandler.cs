@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class ConfirmLoadStatusHandler : RequestHandler<ConfirmLoadStatusCommand, Result>
+internal sealed class ConfirmLoadStatusHandler : IAppRequestHandler<ConfirmLoadStatusCommand, Result>
 {
     private readonly INotificationService _notificationService;
     private readonly ITenantUnitOfWork _tenantUow;
@@ -19,7 +19,7 @@ internal sealed class ConfirmLoadStatusHandler : RequestHandler<ConfirmLoadStatu
         _notificationService = notificationService;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         ConfirmLoadStatusCommand req, CancellationToken ct)
     {
         var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.LoadId);

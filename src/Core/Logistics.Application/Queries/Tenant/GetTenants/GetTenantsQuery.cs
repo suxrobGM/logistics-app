@@ -1,13 +1,10 @@
 using System.Text.Json.Serialization;
-
+using Logistics.Application.Abstractions;
 using Logistics.Shared.Models;
-
-using MediatR;
 
 namespace Logistics.Application.Queries;
 
-public sealed class GetTenantsQuery : SearchableQuery, IRequest<PagedResult<TenantDto>>
+public sealed class GetTenantsQuery : SearchableQuery, IAppRequest<PagedResult<TenantDto>>
 {
-    [JsonIgnore]
-    public bool IncludeConnectionStrings { get; set; }
+    [JsonIgnore] public bool IncludeConnectionStrings { get; set; }
 }

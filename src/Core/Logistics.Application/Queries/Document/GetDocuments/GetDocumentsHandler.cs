@@ -8,7 +8,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Queries;
 
 internal sealed class
-    GetDocumentsHandler : RequestHandler<GetDocumentsQuery, Result<IEnumerable<DocumentDto>>>
+    GetDocumentsHandler : IAppRequestHandler<GetDocumentsQuery, Result<IEnumerable<DocumentDto>>>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -17,7 +17,7 @@ internal sealed class
         _tenantUow = tenantUow;
     }
 
-    public override async Task<Result<IEnumerable<DocumentDto>>> Handle(
+    public async Task<Result<IEnumerable<DocumentDto>>> Handle(
         GetDocumentsQuery req, CancellationToken ct)
     {
         // Verify the owner exists

@@ -16,7 +16,7 @@ using Subscription = Logistics.Domain.Entities.Subscription;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEventCommand, Result>
+internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStripEventCommand, Result>
 {
     private readonly ILogger<ProcessStripEventHandler> _logger;
     private readonly IMasterUnitOfWork _masterUow;
@@ -39,7 +39,7 @@ internal sealed class ProcessStripEventHandler : RequestHandler<ProcessStripEven
             stripeOptions.Value.WebhookSecret ?? throw new ArgumentNullException(nameof(stripeOptions));
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         ProcessStripEventCommand req, CancellationToken ct)
     {
         try

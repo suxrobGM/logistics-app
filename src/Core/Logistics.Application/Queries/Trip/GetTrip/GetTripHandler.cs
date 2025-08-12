@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetTripHandler : RequestHandler<GetTripQuery, Result<TripDto>>
+internal sealed class GetTripHandler : IAppRequestHandler<GetTripQuery, Result<TripDto>>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -15,7 +15,7 @@ internal sealed class GetTripHandler : RequestHandler<GetTripQuery, Result<TripD
         _tenantUow = tenantUow;
     }
 
-    public override async Task<Result<TripDto>> Handle(
+    public async Task<Result<TripDto>> Handle(
         GetTripQuery req, CancellationToken ct)
     {
         var trip = await _tenantUow.Repository<Trip>().GetByIdAsync(req.TripId);

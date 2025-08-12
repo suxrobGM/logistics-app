@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetAppRolesHandler : RequestHandler<GetAppRolesQuery, PagedResult<RoleDto>>
+internal sealed class GetAppRolesHandler : IAppRequestHandler<GetAppRolesQuery, PagedResult<RoleDto>>
 {
     private readonly IMasterUnitOfWork _masterUow;
 
@@ -16,7 +16,7 @@ internal sealed class GetAppRolesHandler : RequestHandler<GetAppRolesQuery, Page
         _masterUow = masterUow;
     }
 
-    public override async Task<PagedResult<RoleDto>> Handle(
+    public async Task<PagedResult<RoleDto>> Handle(
         GetAppRolesQuery req, CancellationToken ct)
     {
         var totalItems = await _masterUow.Repository<AppRole>().CountAsync();

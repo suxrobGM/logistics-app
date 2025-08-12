@@ -1,12 +1,10 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
-using Logistics.Shared.Models;
-
-using MediatR;
 
 namespace Logistics.Application.Commands;
 
-public class UpdateLoadCommand : IRequest<Result>
+public class UpdateLoadCommand : IAppRequest
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }

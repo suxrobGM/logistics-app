@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, PagedResult<TruckStatsDto>>
+public class GetTruckStatsListHandler : IAppRequestHandler<GetTrucksStatsListQuery, PagedResult<TruckStatsDto>>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -13,7 +13,7 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
         _tenantUow = tenantUow;
     }
 
-    public override async Task<PagedResult<TruckStatsDto>> Handle(
+    public async Task<PagedResult<TruckStatsDto>> Handle(
         GetTrucksStatsListQuery req, CancellationToken ct)
     {
         var query = $"""

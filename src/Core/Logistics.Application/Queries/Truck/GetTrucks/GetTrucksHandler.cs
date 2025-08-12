@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetTrucksHandler : RequestHandler<GetTrucksQuery, PagedResult<TruckDto>>
+internal sealed class GetTrucksHandler : IAppRequestHandler<GetTrucksQuery, PagedResult<TruckDto>>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -16,7 +16,7 @@ internal sealed class GetTrucksHandler : RequestHandler<GetTrucksQuery, PagedRes
         _tenantUow = tenantUow;
     }
 
-    public override async Task<PagedResult<TruckDto>> Handle(
+    public async Task<PagedResult<TruckDto>> Handle(
         GetTrucksQuery req,
         CancellationToken ct)
     {

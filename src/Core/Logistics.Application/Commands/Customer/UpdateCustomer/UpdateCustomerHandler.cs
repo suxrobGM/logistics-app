@@ -5,7 +5,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class UpdateCustomerHandler : RequestHandler<UpdateCustomerCommand, Result>
+internal sealed class UpdateCustomerHandler : IAppRequestHandler<UpdateCustomerCommand, Result>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -14,7 +14,7 @@ internal sealed class UpdateCustomerHandler : RequestHandler<UpdateCustomerComma
         _tenantUow = tenantUow;
     }
 
-    public override async Task<Result> Handle(UpdateCustomerCommand req, CancellationToken ct)
+    public async Task<Result> Handle(UpdateCustomerCommand req, CancellationToken ct)
     {
         var customerEntity = await _tenantUow.Repository<Customer>().GetByIdAsync(req.Id, ct);
 

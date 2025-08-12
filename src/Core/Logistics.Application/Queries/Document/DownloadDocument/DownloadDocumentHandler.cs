@@ -8,7 +8,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Queries;
 
 internal sealed class
-    DownloadDocumentHandler : RequestHandler<DownloadDocumentQuery, Result<DocumentDownloadDto>>
+    DownloadDocumentHandler : IAppRequestHandler<DownloadDocumentQuery, Result<DocumentDownloadDto>>
 {
     private readonly IBlobStorageService _blobStorage;
     private readonly ITenantUnitOfWork _tenantUow;
@@ -21,7 +21,7 @@ internal sealed class
         _blobStorage = blobStorageService;
     }
 
-    public override async Task<Result<DocumentDownloadDto>> Handle(DownloadDocumentQuery req, CancellationToken ct)
+    public async Task<Result<DocumentDownloadDto>> Handle(DownloadDocumentQuery req, CancellationToken ct)
     {
         var document = await _tenantUow.Repository<Document>().GetByIdAsync(req.DocumentId, ct);
         if (document is null)

@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class CreatePayrollInvoiceHandler : RequestHandler<CreatePayrollInvoiceCommand, Result>
+internal sealed class CreatePayrollInvoiceHandler : IAppRequestHandler<CreatePayrollInvoiceCommand, Result>
 {
     private readonly IPayrollService _payrollService;
     private readonly ITenantUnitOfWork _tenantUow;
@@ -19,7 +19,7 @@ internal sealed class CreatePayrollInvoiceHandler : RequestHandler<CreatePayroll
         _payrollService = payrollService;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         CreatePayrollInvoiceCommand req, CancellationToken ct)
     {
         var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId);

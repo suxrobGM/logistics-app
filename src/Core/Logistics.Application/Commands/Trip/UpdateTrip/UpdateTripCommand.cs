@@ -1,10 +1,8 @@
-using Logistics.Shared.Models;
-
-using MediatR;
+using Logistics.Application.Abstractions;
 
 namespace Logistics.Application.Commands;
 
-public class UpdateTripCommand : IRequest<Result>
+public class UpdateTripCommand : IAppRequest
 {
     public Guid TripId { get; set; }
     public string? Name { get; set; }

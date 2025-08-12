@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class CreateSubscriptionPlanHandler : RequestHandler<CreateSubscriptionPlanCommand, Result>
+internal sealed class CreateSubscriptionPlanHandler : IAppRequestHandler<CreateSubscriptionPlanCommand, Result>
 {
     private readonly ILogger<CreateSubscriptionPlanHandler> _logger;
     private readonly IMasterUnitOfWork _masterUow;
@@ -23,7 +23,7 @@ internal sealed class CreateSubscriptionPlanHandler : RequestHandler<CreateSubsc
         _logger = logger;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         CreateSubscriptionPlanCommand req, CancellationToken ct)
     {
         var subscriptionPlan = new SubscriptionPlan

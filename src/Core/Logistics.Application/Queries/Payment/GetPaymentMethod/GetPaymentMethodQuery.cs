@@ -1,10 +1,9 @@
+using Logistics.Application.Abstractions;
 using Logistics.Shared.Models;
-
-using MediatR;
 
 namespace Logistics.Application.Queries;
 
-public class GetPaymentMethodQuery : IRequest<Result<PaymentMethodDto>>
+public class GetPaymentMethodQuery : IAppRequest<Result<PaymentMethodDto>>
 {
     public Guid Id { get; set; }
 }

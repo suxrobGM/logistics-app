@@ -5,7 +5,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class UpdateNotificationHandler : RequestHandler<UpdateNotificationCommand, Result>
+internal sealed class UpdateNotificationHandler : IAppRequestHandler<UpdateNotificationCommand, Result>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -14,7 +14,7 @@ internal sealed class UpdateNotificationHandler : RequestHandler<UpdateNotificat
         _tenantUow = tenantUow;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         UpdateNotificationCommand req, CancellationToken ct)
     {
         var notification = await _tenantUow.Repository<Notification>().GetByIdAsync(req.Id);

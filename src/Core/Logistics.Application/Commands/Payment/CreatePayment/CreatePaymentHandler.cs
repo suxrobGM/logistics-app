@@ -5,7 +5,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class CreatePaymentHandler : RequestHandler<CreatePaymentCommand, Result>
+internal sealed class CreatePaymentHandler : IAppRequestHandler<CreatePaymentCommand, Result>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -14,7 +14,7 @@ internal sealed class CreatePaymentHandler : RequestHandler<CreatePaymentCommand
         _tenantUow = tenantUow;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         CreatePaymentCommand req, CancellationToken ct)
     {
         var paymentMethod = await _tenantUow.Repository<PaymentMethod>().GetByIdAsync(req.PaymentMethodId);

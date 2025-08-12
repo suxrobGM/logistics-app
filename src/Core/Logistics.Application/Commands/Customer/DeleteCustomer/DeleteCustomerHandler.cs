@@ -5,7 +5,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class DeleteCustomerHandler : RequestHandler<DeleteCustomerCommand, Result>
+internal sealed class DeleteCustomerHandler : IAppRequestHandler<DeleteCustomerCommand, Result>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -14,7 +14,7 @@ internal sealed class DeleteCustomerHandler : RequestHandler<DeleteCustomerComma
         _tenantUow = tenantUow;
     }
 
-    public override async Task<Result> Handle(DeleteCustomerCommand req, CancellationToken ct)
+    public async Task<Result> Handle(DeleteCustomerCommand req, CancellationToken ct)
     {
         var customer = await _tenantUow.Repository<Customer>().GetByIdAsync(req.Id, ct);
 

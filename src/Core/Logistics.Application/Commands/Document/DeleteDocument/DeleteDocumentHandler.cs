@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class DeleteDocumentHandler : RequestHandler<DeleteDocumentCommand, Result>
+internal sealed class DeleteDocumentHandler : IAppRequestHandler<DeleteDocumentCommand, Result>
 {
     private readonly IBlobStorageService _blobStorageService;
     private readonly ITenantUnitOfWork _tenantUow;
@@ -20,7 +20,7 @@ internal sealed class DeleteDocumentHandler : RequestHandler<DeleteDocumentComma
         _blobStorageService = blobStorageService;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         DeleteDocumentCommand req, CancellationToken ct)
     {
         // Get the document

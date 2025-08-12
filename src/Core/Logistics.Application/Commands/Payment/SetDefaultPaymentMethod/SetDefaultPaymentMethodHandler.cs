@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class SetDefaultPaymentMethodHandler : RequestHandler<SetDefaultPaymentMethodCommand, Result>
+internal sealed class SetDefaultPaymentMethodHandler : IAppRequestHandler<SetDefaultPaymentMethodCommand, Result>
 {
     private readonly ILogger<SetDefaultPaymentMethodHandler> _logger;
     private readonly IStripeService _stripeService;
@@ -23,7 +23,7 @@ internal sealed class SetDefaultPaymentMethodHandler : RequestHandler<SetDefault
         _logger = logger;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         SetDefaultPaymentMethodCommand req, CancellationToken ct)
     {
         var tenant = _tenantUow.GetCurrentTenant();

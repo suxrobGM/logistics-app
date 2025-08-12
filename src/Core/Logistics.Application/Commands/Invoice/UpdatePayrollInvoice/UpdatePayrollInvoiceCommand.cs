@@ -1,10 +1,8 @@
-using Logistics.Shared.Models;
-
-using MediatR;
+using Logistics.Application.Abstractions;
 
 namespace Logistics.Application.Commands;
 
-public class UpdatePayrollInvoiceCommand : IRequest<Result>
+public class UpdatePayrollInvoiceCommand : IAppRequest
 {
     public Guid Id { get; set; }
     public Guid? EmployeeId { get; set; }

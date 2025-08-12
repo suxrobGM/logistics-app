@@ -5,7 +5,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class CreateTruckHandler : RequestHandler<CreateTruckCommand, Result>
+internal sealed class CreateTruckHandler : IAppRequestHandler<CreateTruckCommand, Result>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -14,7 +14,7 @@ internal sealed class CreateTruckHandler : RequestHandler<CreateTruckCommand, Re
         _tenantUow = tenantUow;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         CreateTruckCommand req, CancellationToken ct)
     {
         var truckWithThisNumber = await _tenantUow.Repository<Truck>().GetAsync(i => i.Number == req.TruckNumber);

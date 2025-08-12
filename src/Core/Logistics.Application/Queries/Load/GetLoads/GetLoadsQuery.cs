@@ -1,10 +1,9 @@
+using Logistics.Application.Abstractions;
 using Logistics.Shared.Models;
-
-using MediatR;
 
 namespace Logistics.Application.Queries;
 
-public class GetLoadsQuery : SearchableQuery, IRequest<PagedResult<LoadDto>>
+public class GetLoadsQuery : SearchableQuery, IAppRequest<PagedResult<LoadDto>>
 {
     public bool LoadAllPages { get; set; }
     public bool OnlyActiveLoads { get; set; }

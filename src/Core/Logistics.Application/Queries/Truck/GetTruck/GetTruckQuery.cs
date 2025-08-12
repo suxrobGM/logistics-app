@@ -1,10 +1,9 @@
+using Logistics.Application.Abstractions;
 using Logistics.Shared.Models;
-
-using MediatR;
 
 namespace Logistics.Application.Queries;
 
-public class GetTruckQuery : IRequest<Result<TruckDto>>
+public class GetTruckQuery : IAppRequest<Result<TruckDto>>
 {
     public Guid? TruckOrDriverId { get; set; }
     public bool IncludeLoads { get; set; }

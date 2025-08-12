@@ -1,10 +1,8 @@
-using Logistics.Shared.Models;
-
-using MediatR;
+using Logistics.Application.Abstractions;
 
 namespace Logistics.Application.Commands;
 
-public class ProcessStripEventCommand : IRequest<Result>
+public class ProcessStripEventCommand : IAppRequest
 {
     public string? RequestBodyJson { get; set; }
     public string? StripeSignature { get; set; }

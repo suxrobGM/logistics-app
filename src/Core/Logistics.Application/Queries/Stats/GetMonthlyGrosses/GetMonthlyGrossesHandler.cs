@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrossesQuery, Result<MonthlyGrossesDto>>
+internal sealed class GetMonthlyGrossesHandler : IAppRequestHandler<GetMonthlyGrossesQuery, Result<MonthlyGrossesDto>>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -16,7 +16,7 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrosse
         _tenantUow = tenantUow;
     }
 
-    public override async Task<Result<MonthlyGrossesDto>> Handle(
+    public async Task<Result<MonthlyGrossesDto>> Handle(
         GetMonthlyGrossesQuery req, CancellationToken ct)
     {
         var truckId = req.TruckId;

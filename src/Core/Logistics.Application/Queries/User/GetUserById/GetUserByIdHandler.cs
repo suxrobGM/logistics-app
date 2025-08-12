@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetUserByIdHandler : RequestHandler<GetUserByIdQuery, Result<UserDto>>
+internal sealed class GetUserByIdHandler : IAppRequestHandler<GetUserByIdQuery, Result<UserDto>>
 {
     private readonly UserManager<User> _userManager;
 
@@ -15,7 +15,7 @@ internal sealed class GetUserByIdHandler : RequestHandler<GetUserByIdQuery, Resu
         _userManager = userManager;
     }
 
-    public override async Task<Result<UserDto>> Handle(
+    public async Task<Result<UserDto>> Handle(
         GetUserByIdQuery req, CancellationToken ct)
     {
         var userEntity = await _userManager.FindByIdAsync(req.UserId);

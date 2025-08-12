@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class UpdateTripHandler : RequestHandler<UpdateTripCommand, Result>
+internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, Result>
 {
     private readonly IPushNotificationService _pushNotificationService;
     private readonly ITenantUnitOfWork _tenantUow;
@@ -20,7 +20,7 @@ internal sealed class UpdateTripHandler : RequestHandler<UpdateTripCommand, Resu
         _pushNotificationService = pushNotificationService;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         UpdateTripCommand req, CancellationToken ct)
     {
         List<Load> loads = [];

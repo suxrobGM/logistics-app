@@ -5,7 +5,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class RemoveEmployeeRoleHandler : RequestHandler<RemoveRoleFromEmployeeCommand, Result>
+internal sealed class RemoveEmployeeRoleHandler : IAppRequestHandler<RemoveRoleFromEmployeeCommand, Result>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -14,7 +14,7 @@ internal sealed class RemoveEmployeeRoleHandler : RequestHandler<RemoveRoleFromE
         _tenantUow = tenantUow;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         RemoveRoleFromEmployeeCommand req, CancellationToken ct)
     {
         req.Role = req.Role.ToLower();

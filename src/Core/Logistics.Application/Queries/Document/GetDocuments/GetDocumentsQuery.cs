@@ -1,11 +1,10 @@
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
-using MediatR;
-
 namespace Logistics.Application.Queries;
 
-public class GetDocumentsQuery : IRequest<Result<IEnumerable<DocumentDto>>>
+public class GetDocumentsQuery : IAppRequest<Result<IEnumerable<DocumentDto>>>
 {
     /// <summary>
     ///     Filter by document owner type and ID.

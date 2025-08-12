@@ -1,9 +1,8 @@
+using Logistics.Application.Abstractions;
 using Logistics.Shared.Models;
-
-using MediatR;
 
 namespace Logistics.Application.Queries;
 
-public class GetCustomersQuery : SearchableQuery, IRequest<PagedResult<CustomerDto>>
+public class GetCustomersQuery : SearchableQuery, IAppRequest<PagedResult<CustomerDto>>
 {
 }

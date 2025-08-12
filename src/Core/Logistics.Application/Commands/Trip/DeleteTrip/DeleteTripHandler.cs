@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class DeleteTripHandler : RequestHandler<DeleteTripCommand, Result>
+internal sealed class DeleteTripHandler : IAppRequestHandler<DeleteTripCommand, Result>
 {
     private readonly IPushNotificationService _pushNotificationService;
     private readonly ITenantUnitOfWork _tenantUow;
@@ -19,7 +19,7 @@ internal sealed class DeleteTripHandler : RequestHandler<DeleteTripCommand, Resu
         _pushNotificationService = pushNotificationService;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         DeleteTripCommand req, CancellationToken ct)
     {
         var trip = await _tenantUow.Repository<Trip>().GetByIdAsync(req.Id);

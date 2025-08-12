@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetNotificationsHandler : RequestHandler<GetNotificationsQuery, Result<NotificationDto[]>>
+internal sealed class GetNotificationsHandler : IAppRequestHandler<GetNotificationsQuery, Result<NotificationDto[]>>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -15,7 +15,7 @@ internal sealed class GetNotificationsHandler : RequestHandler<GetNotificationsQ
         _tenantUow = tenantUow;
     }
 
-    public override async Task<Result<NotificationDto[]>> Handle(
+    public async Task<Result<NotificationDto[]>> Handle(
         GetNotificationsQuery req,
         CancellationToken ct)
     {

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class RemoveRoleFromUserHandler : RequestHandler<RemoveRoleFromUserCommand, Result>
+internal sealed class RemoveRoleFromUserHandler : IAppRequestHandler<RemoveRoleFromUserCommand, Result>
 {
     private readonly RoleManager<AppRole> _roleManager;
     private readonly UserManager<User> _userManager;
@@ -18,7 +18,7 @@ internal sealed class RemoveRoleFromUserHandler : RequestHandler<RemoveRoleFromU
         _roleManager = roleManager;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         RemoveRoleFromUserCommand req, CancellationToken ct)
     {
         req.Role = req.Role?.ToLower();

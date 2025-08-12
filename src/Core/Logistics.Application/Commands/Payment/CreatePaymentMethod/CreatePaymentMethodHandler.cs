@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class CreatePaymentMethodHandler : RequestHandler<CreatePaymentMethodCommand, Result>
+internal sealed class CreatePaymentMethodHandler : IAppRequestHandler<CreatePaymentMethodCommand, Result>
 {
     private readonly ILogger<CreatePaymentMethodHandler> _logger;
     private readonly IStripeService _stripeService;
@@ -24,7 +24,7 @@ internal sealed class CreatePaymentMethodHandler : RequestHandler<CreatePaymentM
         _logger = logger;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         CreatePaymentMethodCommand req, CancellationToken ct)
     {
         // If there are no payment methods for the tenant, set the first one as default

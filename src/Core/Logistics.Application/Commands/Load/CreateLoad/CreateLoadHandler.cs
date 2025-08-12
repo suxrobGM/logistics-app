@@ -5,7 +5,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Result>
+internal sealed class CreateLoadHandler : IAppRequestHandler<CreateLoadCommand, Result>
 {
     private readonly ILoadService _loadService;
     private readonly IPushNotificationService _pushNotificationService;
@@ -18,7 +18,7 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resu
         _pushNotificationService = pushNotificationService;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         CreateLoadCommand req, CancellationToken ct)
     {
         try

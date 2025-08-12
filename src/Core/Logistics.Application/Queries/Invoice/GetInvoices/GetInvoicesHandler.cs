@@ -8,7 +8,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetInvoicesHandler : RequestHandler<GetInvoicesQuery, PagedResult<InvoiceDto>>
+internal sealed class GetInvoicesHandler : IAppRequestHandler<GetInvoicesQuery, PagedResult<InvoiceDto>>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -17,9 +17,7 @@ internal sealed class GetInvoicesHandler : RequestHandler<GetInvoicesQuery, Page
         _tenantUow = tenantUow;
     }
 
-    public override Task<PagedResult<InvoiceDto>> Handle(
-        GetInvoicesQuery req,
-        CancellationToken ct)
+    public Task<PagedResult<InvoiceDto>> Handle(GetInvoicesQuery req, CancellationToken ct)
     {
         if (req.LoadId.HasValue)
         {

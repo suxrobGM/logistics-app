@@ -1,10 +1,8 @@
-using Logistics.Shared.Models;
-
-using MediatR;
+using Logistics.Application.Abstractions;
 
 namespace Logistics.Application.Commands;
 
-public class DeleteDocumentCommand : IRequest<Result>
+public class DeleteDocumentCommand : IAppRequest
 {
     public Guid DocumentId { get; set; }
 }

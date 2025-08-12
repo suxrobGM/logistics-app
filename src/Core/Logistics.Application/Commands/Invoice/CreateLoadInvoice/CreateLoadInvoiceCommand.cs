@@ -1,10 +1,8 @@
-using Logistics.Shared.Models;
-
-using MediatR;
+using Logistics.Application.Abstractions;
 
 namespace Logistics.Application.Commands;
 
-public class CreateLoadInvoiceCommand : IRequest<Result>
+public class CreateLoadInvoiceCommand : IAppRequest
 {
     public Guid CustomerId { get; set; }
     public Guid LoadId { get; set; }

@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class UpdateTenantHandler : RequestHandler<UpdateTenantCommand, Result>
+internal sealed class UpdateTenantHandler : IAppRequestHandler<UpdateTenantCommand, Result>
 {
     private readonly IMasterUnitOfWork _masterUow;
     private readonly IStripeService _stripeService;
@@ -20,7 +20,7 @@ internal sealed class UpdateTenantHandler : RequestHandler<UpdateTenantCommand, 
         _stripeService = stripeService;
     }
 
-    public override async Task<Result> Handle(UpdateTenantCommand req, CancellationToken ct)
+    public async Task<Result> Handle(UpdateTenantCommand req, CancellationToken ct)
     {
         var tenant = await _masterUow.Repository<Tenant>().GetByIdAsync(req.Id);
 

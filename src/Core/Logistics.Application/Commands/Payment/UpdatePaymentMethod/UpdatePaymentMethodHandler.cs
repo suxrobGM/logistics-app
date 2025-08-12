@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class UpdatePaymentMethodHandler : RequestHandler<UpdatePaymentMethodCommand, Result>
+internal sealed class UpdatePaymentMethodHandler : IAppRequestHandler<UpdatePaymentMethodCommand, Result>
 {
     private readonly ILogger<UpdatePaymentMethodHandler> _logger;
     private readonly IStripeService _stripeService;
@@ -25,7 +25,7 @@ internal sealed class UpdatePaymentMethodHandler : RequestHandler<UpdatePaymentM
         _logger = logger;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         UpdatePaymentMethodCommand req, CancellationToken ct)
     {
         return req.Type switch

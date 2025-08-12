@@ -1,10 +1,9 @@
+using Logistics.Application.Abstractions;
 using Logistics.Shared.Models;
-
-using MediatR;
 
 namespace Logistics.Application.Commands;
 
-public class CreateTripCommand : IRequest<Result>
+public class CreateTripCommand : IAppRequest
 {
     public string Name { get; set; } = null!;
     public DateTime PlannedStart { get; set; }

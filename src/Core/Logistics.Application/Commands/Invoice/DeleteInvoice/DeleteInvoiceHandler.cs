@@ -5,7 +5,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class DeleteInvoiceHandler : RequestHandler<DeleteInvoiceCommand, Result>
+internal sealed class DeleteInvoiceHandler : IAppRequestHandler<DeleteInvoiceCommand, Result>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -14,7 +14,7 @@ internal sealed class DeleteInvoiceHandler : RequestHandler<DeleteInvoiceCommand
         _tenantUow = tenantUow;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         DeleteInvoiceCommand req, CancellationToken ct)
     {
         var invoice = await _tenantUow.Repository<Invoice>().GetByIdAsync(req.Id);

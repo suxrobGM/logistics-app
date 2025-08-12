@@ -1,10 +1,9 @@
+using Logistics.Application.Abstractions;
 using Logistics.Shared.Models;
-
-using MediatR;
 
 namespace Logistics.Application.Queries;
 
-public class GetLoadByIdQuery : IRequest<Result<LoadDto>>
+public class GetLoadByIdQuery : IAppRequest<Result<LoadDto>>
 {
     public Guid Id { get; set; }
 }

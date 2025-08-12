@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetUsersHandler : RequestHandler<GetUsersQuery, PagedResult<UserDto>>
+internal sealed class GetUsersHandler : IAppRequestHandler<GetUsersQuery, PagedResult<UserDto>>
 {
     private readonly IMasterUnitOfWork _masterUow;
 
@@ -16,7 +16,7 @@ internal sealed class GetUsersHandler : RequestHandler<GetUsersQuery, PagedResul
         _masterUow = masterUow;
     }
 
-    public override async Task<PagedResult<UserDto>> Handle(
+    public async Task<PagedResult<UserDto>> Handle(
         GetUsersQuery req,
         CancellationToken ct)
     {

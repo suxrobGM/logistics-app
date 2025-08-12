@@ -5,7 +5,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class SetDriverDeviceTokenHandler : RequestHandler<SetDriverDeviceTokenCommand, Result>
+internal sealed class SetDriverDeviceTokenHandler : IAppRequestHandler<SetDriverDeviceTokenCommand, Result>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -14,7 +14,7 @@ internal sealed class SetDriverDeviceTokenHandler : RequestHandler<SetDriverDevi
         _tenantUow = tenantUow;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         SetDriverDeviceTokenCommand req, CancellationToken ct)
     {
         var driver = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);

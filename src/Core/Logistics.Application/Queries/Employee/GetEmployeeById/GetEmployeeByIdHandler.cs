@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetEmployeeByIdHandler : RequestHandler<GetEmployeeByIdQuery, Result<EmployeeDto>>
+internal sealed class GetEmployeeByIdHandler : IAppRequestHandler<GetEmployeeByIdQuery, Result<EmployeeDto>>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -15,7 +15,7 @@ internal sealed class GetEmployeeByIdHandler : RequestHandler<GetEmployeeByIdQue
         _tenantUow = tenantUow;
     }
 
-    public override async Task<Result<EmployeeDto>> Handle(
+    public async Task<Result<EmployeeDto>> Handle(
         GetEmployeeByIdQuery req, CancellationToken ct)
     {
         var employeeEntity = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId, ct);

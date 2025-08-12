@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class SetTruckGeolocationHandler : RequestHandler<SetTruckGeolocationCommand, Result>
+internal sealed class SetTruckGeolocationHandler : IAppRequestHandler<SetTruckGeolocationCommand, Result>
 {
     private readonly ILogger<SetTruckGeolocationHandler> _logger;
     private readonly ITenantUnitOfWork _tenantUow;
@@ -19,7 +19,7 @@ internal sealed class SetTruckGeolocationHandler : RequestHandler<SetTruckGeoloc
         _tenantUow = tenantUow;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         SetTruckGeolocationCommand req, CancellationToken ct)
     {
         _tenantUow.SetCurrentTenantById(req.GeolocationData.TenantId.ToString());

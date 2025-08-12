@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetCompanyStatsHandler : RequestHandler<GetCompanyStatsQuery, Result<CompanyStatsDto>>
+internal sealed class GetCompanyStatsHandler : IAppRequestHandler<GetCompanyStatsQuery, Result<CompanyStatsDto>>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -16,7 +16,7 @@ internal sealed class GetCompanyStatsHandler : RequestHandler<GetCompanyStatsQue
         _tenantUow = tenantUow;
     }
 
-    public override async Task<Result<CompanyStatsDto>> Handle(
+    public async Task<Result<CompanyStatsDto>> Handle(
         GetCompanyStatsQuery req, CancellationToken ct)
     {
         var companyStats = new CompanyStatsDto();

@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class CreateTripHandler : RequestHandler<CreateTripCommand, Result>
+internal sealed class CreateTripHandler : IAppRequestHandler<CreateTripCommand, Result>
 {
     private readonly ILoadService _loadService;
     private readonly ILogger<CreateTripHandler> _logger;
@@ -26,7 +26,7 @@ internal sealed class CreateTripHandler : RequestHandler<CreateTripCommand, Resu
         _logger = logger;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         CreateTripCommand req, CancellationToken ct)
     {
         var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId);

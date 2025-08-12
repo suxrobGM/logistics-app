@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class CreateEmployeeHandler : RequestHandler<CreateEmployeeCommand, Result>
+internal sealed class CreateEmployeeHandler : IAppRequestHandler<CreateEmployeeCommand, Result>
 {
     private readonly IMasterUnitOfWork _masterUow;
     private readonly INotificationService _notificationService;
@@ -22,7 +22,7 @@ internal sealed class CreateEmployeeHandler : RequestHandler<CreateEmployeeComma
         _notificationService = notificationService;
     }
 
-    public override async Task<Result> Handle(
+    public async Task<Result> Handle(
         CreateEmployeeCommand req, CancellationToken ct)
     {
         var existingEmployee = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);

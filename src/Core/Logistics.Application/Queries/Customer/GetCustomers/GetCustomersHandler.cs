@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetCustomersHandler : RequestHandler<GetCustomersQuery, PagedResult<CustomerDto>>
+internal sealed class GetCustomersHandler : IAppRequestHandler<GetCustomersQuery, PagedResult<CustomerDto>>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 
@@ -16,7 +16,7 @@ internal sealed class GetCustomersHandler : RequestHandler<GetCustomersQuery, Pa
         _tenantUow = tenantUow;
     }
 
-    public override async Task<PagedResult<CustomerDto>> Handle(GetCustomersQuery req, CancellationToken ct)
+    public async Task<PagedResult<CustomerDto>> Handle(GetCustomersQuery req, CancellationToken ct)
     {
         var totalItems = await _tenantUow.Repository<Customer>().CountAsync(ct: ct);
         var specification = new SearchCustomers(req.Search, req.OrderBy, req.Page, req.PageSize);

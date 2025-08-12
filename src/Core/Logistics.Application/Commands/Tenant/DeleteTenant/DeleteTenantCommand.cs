@@ -1,10 +1,8 @@
-using Logistics.Shared.Models;
-
-using MediatR;
+using Logistics.Application.Abstractions;
 
 namespace Logistics.Application.Commands;
 
-public class DeleteTenantCommand : IRequest<Result>
+public class DeleteTenantCommand : IAppRequest
 {
     public Guid Id { get; set; }
 }
