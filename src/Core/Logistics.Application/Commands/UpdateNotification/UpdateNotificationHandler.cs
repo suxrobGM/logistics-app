@@ -31,6 +31,6 @@ internal sealed class UpdateNotificationHandler : IAppRequestHandler<UpdateNotif
 
         _tenantUow.Repository<Notification>().Update(notification);
         await _tenantUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

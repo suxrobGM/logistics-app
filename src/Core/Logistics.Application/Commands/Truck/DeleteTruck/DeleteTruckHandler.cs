@@ -20,6 +20,6 @@ internal sealed class DeleteTruckHandler : IAppRequestHandler<DeleteTruckCommand
         var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(req.Id);
         _tenantUow.Repository<Truck>().Delete(truck);
         await _tenantUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

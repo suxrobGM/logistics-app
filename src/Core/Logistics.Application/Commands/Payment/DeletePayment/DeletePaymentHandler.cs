@@ -27,6 +27,6 @@ internal sealed class DeletePaymentHandler : IAppRequestHandler<DeletePaymentCom
 
         _tenantUow.Repository<Payment>().Delete(payment);
         await _tenantUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

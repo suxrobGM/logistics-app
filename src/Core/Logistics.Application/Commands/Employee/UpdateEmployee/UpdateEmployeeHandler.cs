@@ -44,6 +44,6 @@ internal sealed class UpdateEmployeeHandler : IAppRequestHandler<UpdateEmployeeC
 
         _tenantUow.Repository<Employee>().Update(employeeEntity);
         await _tenantUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

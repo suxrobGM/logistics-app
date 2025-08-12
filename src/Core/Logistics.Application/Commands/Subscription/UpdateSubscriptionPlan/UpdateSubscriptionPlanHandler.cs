@@ -46,6 +46,6 @@ internal sealed class UpdateSubscriptionPlanHandler : IAppRequestHandler<UpdateS
         _masterUow.Repository<SubscriptionPlan>().Update(subscriptionPlan);
         await _masterUow.SaveChangesAsync();
         _logger.LogInformation("Updated subscription plan {SubscriptionPlanId}", subscriptionPlan.Id);
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

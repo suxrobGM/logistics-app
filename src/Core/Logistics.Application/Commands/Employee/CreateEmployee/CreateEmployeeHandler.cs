@@ -58,6 +58,6 @@ internal sealed class CreateEmployeeHandler : IAppRequestHandler<CreateEmployeeC
 
         await _notificationService.SendNotificationAsync("New Employee",
             $"A new employee '{employee.GetFullName()}' has joined. Role is '{tenantRole?.DisplayName}'");
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

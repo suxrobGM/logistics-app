@@ -25,6 +25,6 @@ internal sealed class GetCustomerByIdHandler : IAppRequestHandler<GetCustomerByI
         }
 
         var customerDto = customerEntity.ToDto();
-        return Result<CustomerDto>.Succeed(customerDto);
+        return Result<CustomerDto>.Ok(customerDto);
     }
 }

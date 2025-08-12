@@ -31,6 +31,6 @@ internal sealed class UpdateInvoiceHandler : IAppRequestHandler<UpdateInvoiceCom
 
         _tenantUow.Repository<Invoice>().Update(invoice);
         await _tenantUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

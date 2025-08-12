@@ -47,6 +47,6 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
         }
 
         await _tenantUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

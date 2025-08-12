@@ -42,6 +42,6 @@ internal sealed class CreateSubscriptionPlanHandler : IAppRequestHandler<CreateS
         subscriptionPlan.StripePriceId = price.Id;
         await _masterUow.Repository<SubscriptionPlan>().AddAsync(subscriptionPlan);
         await _masterUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

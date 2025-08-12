@@ -26,6 +26,6 @@ internal sealed class DeleteTripHandler : IAppRequestHandler<DeleteTripCommand, 
 
         _tenantUow.Repository<Trip>().Delete(trip);
         await _tenantUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

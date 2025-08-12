@@ -44,7 +44,7 @@ internal sealed class GetRolePermissionsHandler :
 
         var permissions = await _masterUow.Repository<AppRoleClaim, int>().GetListAsync(i => i.RoleId == role.Id);
         var permissionsDto = permissions.Select(i => i.ToDto()).ToArray();
-        return Result<PermissionDto[]>.Succeed(permissionsDto);
+        return Result<PermissionDto[]>.Ok(permissionsDto);
     }
 
     private async Task<Result<PermissionDto[]>> GetTenantRolePermissions(GetRolePermissionsQuery req)
@@ -58,6 +58,6 @@ internal sealed class GetRolePermissionsHandler :
 
         var permissions = await _tenantUow.Repository<TenantRoleClaim>().GetListAsync(i => i.RoleId == role.Id);
         var permissionsDto = permissions.Select(i => i.ToDto()).ToArray();
-        return Result<PermissionDto[]>.Succeed(permissionsDto);
+        return Result<PermissionDto[]>.Ok(permissionsDto);
     }
 }

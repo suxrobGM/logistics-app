@@ -60,7 +60,7 @@ internal sealed class CreateSubscriptionHandler : IAppRequestHandler<CreateSubsc
         await _masterUow.SaveChangesAsync();
         _logger.LogInformation("Created Subscription for tenant {TenantId}, employee count: {EmployeeCount}", tenant.Id,
             tenantEmployeeCount);
-        return Result.Succeed();
+        return Result.Ok();
     }
 
     private async Task CreateStripeCustomerAsync(Tenant tenant)

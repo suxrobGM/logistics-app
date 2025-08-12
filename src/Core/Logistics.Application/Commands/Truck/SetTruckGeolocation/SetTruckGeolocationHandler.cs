@@ -29,13 +29,13 @@ internal sealed class SetTruckGeolocationHandler : IAppRequestHandler<SetTruckGe
         {
             _logger.LogWarning("Could not find a truck with ID {TruckId}, skipped saving geolocation data",
                 req.GeolocationData.TruckId);
-            return Result.Succeed();
+            return Result.Ok();
         }
 
         truck.CurrentAddress = req.GeolocationData.CurrentAddress;
         truck.CurrentLocation = req.GeolocationData.CurrentLocation;
         _tenantUow.Repository<Truck>().Update(truck);
         await _tenantUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

@@ -26,6 +26,6 @@ internal sealed class DeleteSubscriptionPlanHandler : IAppRequestHandler<DeleteS
 
         _masterUow.Repository<SubscriptionPlan>().Delete(subscriptionPlan);
         await _masterUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

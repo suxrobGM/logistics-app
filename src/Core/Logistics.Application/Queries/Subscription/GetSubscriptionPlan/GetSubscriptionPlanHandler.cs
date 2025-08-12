@@ -27,6 +27,6 @@ internal sealed class
         }
 
         var dto = entity.ToDto();
-        return Result<SubscriptionPlanDto>.Succeed(dto);
+        return Result<SubscriptionPlanDto>.Ok(dto);
     }
 }

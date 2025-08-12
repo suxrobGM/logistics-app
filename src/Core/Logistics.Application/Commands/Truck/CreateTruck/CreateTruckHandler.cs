@@ -42,6 +42,6 @@ internal sealed class CreateTruckHandler : IAppRequestHandler<CreateTruckCommand
         var truckEntity = Truck.Create(req.TruckNumber, req.TruckType, driver);
         await _tenantUow.Repository<Truck>().AddAsync(truckEntity);
         await _tenantUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

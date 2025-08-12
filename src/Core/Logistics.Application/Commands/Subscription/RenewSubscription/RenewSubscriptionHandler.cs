@@ -49,6 +49,6 @@ internal sealed class RenewSubscriptionHandler : IAppRequestHandler<RenewSubscri
         _masterUow.Repository<Subscription>().Update(subscription);
         await _masterUow.SaveChangesAsync();
         _logger.LogInformation("Renewed subscription {SubscriptionId}", subscription.Id);
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

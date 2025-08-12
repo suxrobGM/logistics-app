@@ -43,6 +43,6 @@ internal sealed class DeleteSubscriptionHandler : IAppRequestHandler<DeleteSubsc
         _masterUow.Repository<Subscription>().Delete(subscription);
         await _masterUow.SaveChangesAsync();
         _logger.LogInformation("Deleted subscription {SubscriptionId}", subscription.Id);
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

@@ -60,7 +60,7 @@ internal sealed class
                 FileContent = stream
             };
 
-            return Result<DocumentDownloadDto>.Succeed(dto);
+            return Result<DocumentDownloadDto>.Ok(dto);
         }
         catch (Exception ex)
         {

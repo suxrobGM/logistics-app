@@ -26,6 +26,6 @@ internal sealed class GetEmployeeByIdHandler : IAppRequestHandler<GetEmployeeByI
         }
 
         var employeeDto = employeeEntity.ToDto();
-        return Result<EmployeeDto>.Succeed(employeeDto);
+        return Result<EmployeeDto>.Ok(employeeDto);
     }
 }

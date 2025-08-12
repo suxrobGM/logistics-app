@@ -26,6 +26,6 @@ internal sealed class GetPaymentMethodHandler : IAppRequestHandler<GetPaymentMet
         }
 
         var paymentMethodDto = paymentMethodEntity.ToDto();
-        return Result<PaymentMethodDto>.Succeed(paymentMethodDto);
+        return Result<PaymentMethodDto>.Ok(paymentMethodDto);
     }
 }

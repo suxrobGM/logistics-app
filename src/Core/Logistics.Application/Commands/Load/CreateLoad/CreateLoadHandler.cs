@@ -37,7 +37,7 @@ internal sealed class CreateLoadHandler : IAppRequestHandler<CreateLoadCommand, 
             var newLoad = await _loadService.CreateLoadAsync(createLoadParameters);
 
             await _pushNotificationService.SendNewLoadNotificationAsync(newLoad);
-            return Result.Succeed();
+            return Result.Ok();
         }
         catch (InvalidOperationException e)
         {

@@ -28,6 +28,6 @@ internal sealed class GetUserByIdHandler : IAppRequestHandler<GetUserByIdQuery, 
         var userRoles = await _userManager.GetRolesAsync(userEntity);
 
         var user = userEntity.ToDto(userRoles);
-        return Result<UserDto>.Succeed(user);
+        return Result<UserDto>.Ok(user);
     }
 }

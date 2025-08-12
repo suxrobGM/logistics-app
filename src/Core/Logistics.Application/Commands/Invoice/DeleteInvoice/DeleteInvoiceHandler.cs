@@ -26,6 +26,6 @@ internal sealed class DeleteInvoiceHandler : IAppRequestHandler<DeleteInvoiceCom
 
         _tenantUow.Repository<Invoice>().Delete(invoice);
         await _tenantUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

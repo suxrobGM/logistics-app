@@ -28,6 +28,6 @@ internal sealed class GetNotificationsHandler : IAppRequestHandler<GetNotificati
             .OrderByDescending(i => i.CreatedDate)
             .ToArray();
 
-        return Result<NotificationDto[]>.Succeed(notificationsDto);
+        return Result<NotificationDto[]>.Ok(notificationsDto);
     }
 }

@@ -26,6 +26,6 @@ internal sealed class GetLoadByIdHandler : IAppRequestHandler<GetLoadByIdQuery, 
         }
 
         var loadDto = loadEntity.ToDto();
-        return Result<LoadDto>.Succeed(loadDto);
+        return Result<LoadDto>.Ok(loadDto);
     }
 }

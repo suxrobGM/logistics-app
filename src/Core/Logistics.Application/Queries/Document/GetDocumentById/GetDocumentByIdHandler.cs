@@ -33,6 +33,6 @@ internal sealed class GetDocumentByIdHandler : IAppRequestHandler<GetDocumentByI
         }
 
         var dto = document.ToDto();
-        return Result<DocumentDto>.Succeed(dto);
+        return Result<DocumentDto>.Ok(dto);
     }
 }

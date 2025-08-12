@@ -52,6 +52,6 @@ internal sealed class UpdateLoadProximityHandler : IAppRequestHandler<UpdateLoad
             await _pushNotificationService.SendConfirmLoadStatusNotificationAsync(load, loadStatus.Value);
         }
 
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

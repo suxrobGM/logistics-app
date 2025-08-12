@@ -107,7 +107,7 @@ internal sealed class UploadDocumentHandler : IAppRequestHandler<UploadDocumentC
             var changes = await _tenantUow.SaveChangesAsync();
             if (changes > 0)
             {
-                return Result<Guid>.Succeed(newId);
+                return Result<Guid>.Ok(newId);
             }
 
             // rollback blob if DB save failed

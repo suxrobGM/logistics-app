@@ -46,7 +46,7 @@ internal sealed class CreatePaymentMethodHandler : IAppRequestHandler<CreatePaym
         }
 
         await _tenantUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 
     private async Task CreateCardPaymentMethod(

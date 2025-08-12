@@ -26,6 +26,6 @@ internal sealed class UpdateCustomerHandler : IAppRequestHandler<UpdateCustomerC
         customerEntity.Name = req.Name;
         _tenantUow.Repository<Customer>().Update(customerEntity);
         await _tenantUow.SaveChangesAsync(ct);
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

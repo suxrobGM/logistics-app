@@ -46,6 +46,6 @@ internal sealed class DeleteTenantHandler : IAppRequestHandler<DeleteTenantComma
 
         _masterRepository.Repository<Tenant>().Delete(tenant);
         await _masterRepository.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

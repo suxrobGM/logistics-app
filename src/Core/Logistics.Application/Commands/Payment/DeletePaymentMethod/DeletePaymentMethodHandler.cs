@@ -37,6 +37,6 @@ internal sealed class DeletePaymentMethodHandler : IAppRequestHandler<DeletePaym
         _tenantUow.Repository<PaymentMethod>().Delete(paymentMethod);
         await _tenantUow.SaveChangesAsync();
         _logger.LogInformation("Deleted payment method with ID {Id}", paymentMethod.Id);
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

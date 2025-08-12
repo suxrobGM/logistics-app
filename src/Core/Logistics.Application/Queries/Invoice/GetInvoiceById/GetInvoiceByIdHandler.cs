@@ -26,6 +26,6 @@ internal sealed class GetInvoiceByIdHandler : IAppRequestHandler<GetInvoiceByIdQ
         }
 
         var invoiceDto = invoiceEntity.ToDto();
-        return Result<InvoiceDto>.Succeed(invoiceDto);
+        return Result<InvoiceDto>.Ok(invoiceDto);
     }
 }

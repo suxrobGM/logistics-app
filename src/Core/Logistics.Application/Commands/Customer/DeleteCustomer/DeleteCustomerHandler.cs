@@ -25,6 +25,6 @@ internal sealed class DeleteCustomerHandler : IAppRequestHandler<DeleteCustomerC
 
         _tenantUow.Repository<Customer>().Delete(customer);
         await _tenantUow.SaveChangesAsync(ct);
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

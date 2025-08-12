@@ -68,7 +68,7 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
                     return await HandleSubscriptionDeleted((stripeEvent.Data.Object as StripeSubscription)!);
             }
 
-            return Result.Succeed();
+            return Result.Ok();
         }
         catch (Exception ex)
         {
@@ -117,7 +117,7 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
 
         _logger.LogInformation("Added payment for tenant {TenantId} with amount {Amount}, invoice ID {StripeInvoiceId}",
             tenantId, payment.Amount, stripeInvoice.Id);
-        return Result.Succeed();
+        return Result.Ok();
     }
 
     #endregion
@@ -178,7 +178,7 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
         }
 
         await _masterUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 
     private async Task<Result> HandleSubscriptionUpdated(StripeSubscription stripeSubscription)
@@ -207,7 +207,7 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
 
         _logger.LogInformation("Updated subscription {StripeSubscriptionId} for tenant {TenantId}",
             stripeSubscription.Id, tenantId);
-        return Result.Succeed();
+        return Result.Ok();
     }
 
     private async Task<Result> HandleSubscriptionDeleted(StripeSubscription stripeSubscription)
@@ -232,7 +232,7 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
 
         _logger.LogInformation("Cancelled subscription {StripeSubscriptionId} for tenant {TenantId}",
             stripeSubscription.Id, tenantId);
-        return Result.Succeed();
+        return Result.Ok();
     }
 
     #endregion
@@ -263,7 +263,7 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
         _logger.LogInformation(
             "Attached payment method {PaymentMethodType} {StripePaymentMethodId} to tenant {TenantId}",
             paymentMethod.Type, paymentMethod.StripePaymentMethodId, tenantId);
-        return Result.Succeed();
+        return Result.Ok();
     }
 
     private async Task<Result> HandlePaymentMethodDetached(StripePaymentMethod stripePaymentMethod)
@@ -288,7 +288,7 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
         _logger.LogInformation(
             "Detached payment method {PaymentMethodType} {StripePaymentMethodId} from tenant {TenantId}",
             paymentMethod.Type, paymentMethod.StripePaymentMethodId, tenantId);
-        return Result.Succeed();
+        return Result.Ok();
     }
 
     /// <summary>

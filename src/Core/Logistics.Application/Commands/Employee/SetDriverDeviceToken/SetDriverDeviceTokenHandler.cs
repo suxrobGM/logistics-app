@@ -26,12 +26,12 @@ internal sealed class SetDriverDeviceTokenHandler : IAppRequestHandler<SetDriver
 
         if (!string.IsNullOrEmpty(driver.DeviceToken) && driver.DeviceToken == req.DeviceToken)
         {
-            return Result.Succeed();
+            return Result.Ok();
         }
 
         driver.DeviceToken = req.DeviceToken;
         _tenantUow.Repository<Employee>().Update(driver);
         await _tenantUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

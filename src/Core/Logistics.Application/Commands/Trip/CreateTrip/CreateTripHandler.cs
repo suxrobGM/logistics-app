@@ -49,7 +49,7 @@ internal sealed class CreateTripHandler : IAppRequestHandler<CreateTripCommand, 
         _logger.LogInformation(
             "Created trip '{TripName}' with ID '{TripId}' for truck '{TruckId}'",
             trip.Name, trip.Id, req.TruckId);
-        return Result.Succeed();
+        return Result.Ok();
     }
 
     /// <summary>

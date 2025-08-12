@@ -51,7 +51,7 @@ internal sealed class UpdateUserHandler : IAppRequestHandler<UpdateUserCommand, 
         _masterUow.Repository<User>().Update(user);
         await _masterUow.SaveChangesAsync();
         await _tenantUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 
     private async Task UpdateTenantEmployeeDataAsync(Guid tenantId, User user)

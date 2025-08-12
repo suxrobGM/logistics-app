@@ -33,6 +33,6 @@ internal sealed class DeleteLoadHandler : IAppRequestHandler<DeleteLoadCommand, 
             await _pushNotificationService.SendRemovedLoadNotificationAsync(load);
         }
 
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

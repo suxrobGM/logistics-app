@@ -32,6 +32,6 @@ internal sealed class CreateSetupIntentHandler : IAppRequestHandler<CreateSetupI
         {
             ClientSecret = setupIntent.ClientSecret
         };
-        return Result<SetupIntentDto>.Succeed(dto);
+        return Result<SetupIntentDto>.Ok(dto);
     }
 }

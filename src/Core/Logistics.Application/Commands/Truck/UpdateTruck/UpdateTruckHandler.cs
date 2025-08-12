@@ -49,7 +49,7 @@ internal sealed class UpdateTruckHandler : IAppRequestHandler<UpdateTruckCommand
         truck.Status = PropertyUpdater.UpdateIfChanged(req.TruckStatus, truck.Status);
 
         await _tenantUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 
     /// <summary>

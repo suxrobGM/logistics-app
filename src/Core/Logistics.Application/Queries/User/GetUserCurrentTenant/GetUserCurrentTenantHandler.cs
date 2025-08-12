@@ -33,6 +33,6 @@ internal sealed class GetUserCurrentTenantHandler :
         }
 
         var tenantDto = user.Tenant.ToDto();
-        return Result<TenantDto>.Succeed(tenantDto);
+        return Result<TenantDto>.Ok(tenantDto);
     }
 }

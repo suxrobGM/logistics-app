@@ -47,7 +47,7 @@ internal sealed class DeleteDocumentHandler : IAppRequestHandler<DeleteDocumentC
             if (changes > 0)
             {
                 _ = DeleteDocumentBackground(document, ct);
-                return Result.Succeed();
+                return Result.Ok();
             }
 
             return Result.Fail("Failed to delete document");

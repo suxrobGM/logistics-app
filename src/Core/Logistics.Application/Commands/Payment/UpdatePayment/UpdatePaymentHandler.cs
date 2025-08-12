@@ -39,14 +39,14 @@ internal sealed class UpdatePaymentHandler : IAppRequestHandler<UpdatePaymentCom
 
         _tenantUow.Repository<Payment>().Update(payment);
         await _tenantUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 
     private async Task<Result> TryUpdatePaymentMethod(Payment payment, Guid? paymentMethodId)
     {
         if (!paymentMethodId.HasValue || payment.MethodId == paymentMethodId)
         {
-            return Result.Succeed();
+            return Result.Ok();
         }
 
         var paymentMethod = await _tenantUow.Repository<PaymentMethod>()
@@ -58,6 +58,6 @@ internal sealed class UpdatePaymentHandler : IAppRequestHandler<UpdatePaymentCom
         }
 
         payment.MethodId = paymentMethod.Id;
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

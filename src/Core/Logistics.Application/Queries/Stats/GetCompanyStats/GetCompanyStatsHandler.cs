@@ -84,6 +84,6 @@ internal sealed class GetCompanyStatsHandler : IAppRequestHandler<GetCompanyStat
             companyStats.TotalGross = totalStats?.TotalGross ?? 0;
         }
 
-        return Result<CompanyStatsDto>.Succeed(companyStats);
+        return Result<CompanyStatsDto>.Ok(companyStats);
     }
 }

@@ -57,6 +57,6 @@ internal sealed class SetDefaultPaymentMethodHandler : IAppRequestHandler<SetDef
 
         _logger.LogInformation("Set payment method with ID {Id} as default for tenant {TenantId}",
             paymentMethodToSetDefault.Id, tenant.Id);
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

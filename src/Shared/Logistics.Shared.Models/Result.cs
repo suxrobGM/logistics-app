@@ -20,7 +20,7 @@ public record Result : IResult
     /// <summary>
     ///     Creates a successful result.
     /// </summary>
-    public static Result Succeed()
+    public static Result Ok()
     {
         return new Result();
     }
@@ -53,7 +53,7 @@ public record Result<T> : Result
     /// <summary>
     ///     Creates a successful result with the specified data payload.
     /// </summary>
-    public static Result<T> Succeed(T result)
+    public static Result<T> Ok(T result)
     {
         return new Result<T> { Data = result };
     }

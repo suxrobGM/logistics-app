@@ -25,6 +25,6 @@ internal sealed class GetPaymentMethodsHandler : IAppRequestHandler<GetPaymentMe
             .Select(i => i.ToDto())
             .ToArray();
 
-        return Task.FromResult(Result<PaymentMethodDto[]>.Succeed(payments));
+        return Task.FromResult(Result<PaymentMethodDto[]>.Ok(payments));
     }
 }

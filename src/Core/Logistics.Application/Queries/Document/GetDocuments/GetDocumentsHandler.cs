@@ -73,6 +73,6 @@ internal sealed class
             dtos = docs.Select(d => d.ToDto()).ToList();
         }
 
-        return Result<IEnumerable<DocumentDto>>.Succeed(dtos);
+        return Result<IEnumerable<DocumentDto>>.Ok(dtos);
     }
 }

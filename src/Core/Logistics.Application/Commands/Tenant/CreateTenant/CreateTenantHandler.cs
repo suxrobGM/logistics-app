@@ -48,6 +48,6 @@ internal sealed class CreateTenantHandler : IAppRequestHandler<CreateTenantComma
 
         await _masterUow.Repository<Tenant>().AddAsync(tenant);
         await _masterUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

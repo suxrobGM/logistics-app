@@ -62,6 +62,6 @@ internal sealed class GetDailyGrossesHandler : IAppRequestHandler<GetDailyGrosse
         {
             Data = dict.Values
         };
-        return Result<DailyGrossesDto>.Succeed(dailyGrosses);
+        return Result<DailyGrossesDto>.Ok(dailyGrosses);
     }
 }

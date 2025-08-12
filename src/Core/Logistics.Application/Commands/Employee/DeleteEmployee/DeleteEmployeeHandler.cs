@@ -52,6 +52,6 @@ internal sealed class DeleteEmployeeHandler : IAppRequestHandler<DeleteEmployeeC
         _tenantUow.Repository<Employee>().Delete(employee);
         await _tenantUow.SaveChangesAsync();
         await _masterUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

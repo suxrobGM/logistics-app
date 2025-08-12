@@ -37,6 +37,6 @@ internal sealed class RemoveRoleFromUserHandler : IAppRequestHandler<RemoveRoleF
         }
 
         await _userManager.RemoveFromRoleAsync(user, appRole.Name!);
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

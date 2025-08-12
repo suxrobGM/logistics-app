@@ -14,6 +14,6 @@ public class DefaultController : ControllerBase
     [AllowAnonymous]
     public IActionResult Get()
     {
-        return Ok(Result<string>.Succeed("Logistics API is running"));
+        return Ok(Result<string>.Ok("Logistics API is running"));
     }
 }

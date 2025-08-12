@@ -63,7 +63,7 @@ internal sealed class UpdatePaymentMethodHandler : IAppRequestHandler<UpdatePaym
         _logger.LogInformation(
             "Updated card payment method for tenant {TenantId} with last 4 digits {Last4}",
             tenant.Id, command.CardNumber![^4..]);
-        return Result.Succeed();
+        return Result.Ok();
     }
 
     private async Task<Result> UpdateUsBankAccountPaymentMethod(UpdatePaymentMethodCommand command)
@@ -95,7 +95,7 @@ internal sealed class UpdatePaymentMethodHandler : IAppRequestHandler<UpdatePaym
         _logger.LogInformation(
             "Updated US bank account payment method for tenant {TenantId} with last 4 digits {Last4}",
             tenant.Id, command.AccountNumber![^4..]);
-        return Result.Succeed();
+        return Result.Ok();
     }
 
     private async Task<Result> UpdateInternationalBankAccountPaymentMethod(UpdatePaymentMethodCommand command)
@@ -123,6 +123,6 @@ internal sealed class UpdatePaymentMethodHandler : IAppRequestHandler<UpdatePaym
         _logger.LogInformation(
             "Updated international bank account payment method for tenant {TenantId} with last 4 digits {Last4}",
             tenant.Id, command.AccountNumber![^4..]);
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

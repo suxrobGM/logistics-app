@@ -29,6 +29,6 @@ internal sealed class GetTenantHandler : IAppRequestHandler<GetTenantQuery, Resu
         var employeeCount = await _masterUow.Repository<User>().CountAsync(i => i.TenantId == tenantEntity.Id);
 
         var tenantDto = tenantEntity.ToDto(req.IncludeConnectionString, employeeCount);
-        return Result<TenantDto>.Succeed(tenantDto);
+        return Result<TenantDto>.Ok(tenantDto);
     }
 }

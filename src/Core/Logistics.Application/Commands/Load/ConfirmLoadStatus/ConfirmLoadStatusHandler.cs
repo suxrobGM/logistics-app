@@ -40,7 +40,7 @@ internal sealed class ConfirmLoadStatusHandler : IAppRequestHandler<ConfirmLoadS
             await SendNotificationAsync(load);
         }
 
-        return Result.Succeed();
+        return Result.Ok();
     }
 
     private async Task SendNotificationAsync(Load load)

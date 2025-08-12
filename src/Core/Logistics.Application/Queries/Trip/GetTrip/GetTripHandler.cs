@@ -26,6 +26,6 @@ internal sealed class GetTripHandler : IAppRequestHandler<GetTripQuery, Result<T
         }
 
         var tripeDto = trip.ToDto();
-        return Result<TripDto>.Succeed(tripeDto);
+        return Result<TripDto>.Ok(tripeDto);
     }
 }

@@ -37,6 +37,6 @@ internal sealed class CreatePaymentHandler : IAppRequestHandler<CreatePaymentCom
 
         await _tenantUow.Repository<Payment>().AddAsync(payment);
         await _tenantUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

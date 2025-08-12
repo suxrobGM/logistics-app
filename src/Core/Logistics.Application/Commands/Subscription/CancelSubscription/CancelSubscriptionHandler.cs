@@ -49,6 +49,6 @@ internal sealed class CancelSubscriptionHandler : IAppRequestHandler<CancelSubsc
         _masterUow.Repository<Subscription>().Update(subscription);
         await _masterUow.SaveChangesAsync();
         _logger.LogInformation("Cancelled subscription {SubscriptionId}", subscription.Id);
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

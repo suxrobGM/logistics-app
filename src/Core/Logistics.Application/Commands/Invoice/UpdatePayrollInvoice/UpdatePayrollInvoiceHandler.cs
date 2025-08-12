@@ -46,6 +46,6 @@ internal sealed class UpdatePayrollInvoiceHandler : IAppRequestHandler<UpdatePay
 
         _tenantUow.Repository<PayrollInvoice>().Update(payroll);
         await _tenantUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

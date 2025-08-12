@@ -32,6 +32,6 @@ internal sealed class PreviewPayrollInvoiceHandler : IAppRequestHandler<PreviewP
 
         var payrollInvoice = _payrollService.CreatePayrollInvoice(employee, req.PeriodStart, req.PeriodEnd);
         var payrollInvoiceDto = payrollInvoice.ToDto();
-        return Result<InvoiceDto>.Succeed(payrollInvoiceDto);
+        return Result<InvoiceDto>.Ok(payrollInvoiceDto);
     }
 }

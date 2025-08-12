@@ -66,6 +66,6 @@ internal sealed class GetDriverStatsHandler : IAppRequestHandler<GetDriverStatsQ
         driverStats.LastMonthGross = lastMonthLoads.Sum(l => l.DeliveryCost);
         driverStats.LastMonthShare = driverStats.LastMonthGross * driverIncomePercentage;
         driverStats.LastMonthDistance = lastMonthLoads.Sum(l => l.Distance);
-        return Result<DriverStatsDto>.Succeed(driverStats);
+        return Result<DriverStatsDto>.Ok(driverStats);
     }
 }

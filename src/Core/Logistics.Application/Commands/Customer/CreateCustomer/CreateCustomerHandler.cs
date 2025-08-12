@@ -30,6 +30,6 @@ internal sealed class CreateCustomerHandler : IAppRequestHandler<CreateCustomerC
         };
         await _tenantUow.Repository<Customer>().AddAsync(newCustomer, ct);
         await _tenantUow.SaveChangesAsync(ct);
-        return Result<CustomerDto>.Succeed(newCustomer.ToDto());
+        return Result<CustomerDto>.Ok(newCustomer.ToDto());
     }
 }

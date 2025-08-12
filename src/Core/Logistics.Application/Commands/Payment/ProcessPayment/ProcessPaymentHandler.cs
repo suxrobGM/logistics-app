@@ -29,6 +29,6 @@ internal sealed class ProcessPaymentHandler : IAppRequestHandler<ProcessPaymentC
         payment.Status = PaymentStatus.Paid;
         _tenantUow.Repository<Payment>().Update(payment);
         await _tenantUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

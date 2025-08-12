@@ -58,6 +58,6 @@ internal sealed class CreateLoadInvoiceHandler : IAppRequestHandler<CreateLoadIn
         invoice.ApplyPayment(payment);
         await _tenantUow.Repository<Invoice>().AddAsync(invoice);
         await _tenantUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 }

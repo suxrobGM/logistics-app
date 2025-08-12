@@ -26,6 +26,6 @@ internal sealed class GetSubscriptionHandler : IAppRequestHandler<GetSubscriptio
         }
 
         var dto = subscription.ToDto();
-        return Result<SubscriptionDto>.Succeed(dto);
+        return Result<SubscriptionDto>.Ok(dto);
     }
 }

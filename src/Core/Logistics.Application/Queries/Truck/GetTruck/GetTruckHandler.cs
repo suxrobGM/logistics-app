@@ -26,7 +26,7 @@ internal sealed class GetTruckHandler : IAppRequestHandler<GetTruckQuery, Result
         }
 
         var truckDto = ConvertToDto(truckEntity, req.IncludeLoads, req.OnlyActiveLoads);
-        return Result<TruckDto>.Succeed(truckDto);
+        return Result<TruckDto>.Ok(truckDto);
     }
 
     private async Task<Truck?> TryGetTruck(Guid? truckOrDriverId)

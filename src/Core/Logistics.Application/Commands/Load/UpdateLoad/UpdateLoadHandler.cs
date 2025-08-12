@@ -57,7 +57,7 @@ internal sealed class UpdateLoadHandler : IAppRequestHandler<UpdateLoadCommand, 
                 await NotifyTrucksAboutUpdates(oldTruck, newTruck, load);
             }
 
-            return Result.Succeed();
+            return Result.Ok();
         }
         catch (InvalidOperationException ex)
         {

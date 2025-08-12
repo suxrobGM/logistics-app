@@ -61,6 +61,6 @@ internal sealed class GetMonthlyGrossesHandler : IAppRequestHandler<GetMonthlyGr
         {
             Data = dict.Values
         };
-        return Result<MonthlyGrossesDto>.Succeed(monthlyGrosses);
+        return Result<MonthlyGrossesDto>.Ok(monthlyGrosses);
     }
 }

@@ -26,6 +26,6 @@ internal sealed class GetPaymentHandler : IAppRequestHandler<GetPaymentQuery, Re
         }
 
         var paymentDto = paymentEntity.ToDto();
-        return Result<PaymentDto>.Succeed(paymentDto);
+        return Result<PaymentDto>.Ok(paymentDto);
     }
 }

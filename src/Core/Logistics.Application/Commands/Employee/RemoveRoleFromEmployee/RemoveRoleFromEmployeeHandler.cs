@@ -34,6 +34,6 @@ internal sealed class RemoveEmployeeRoleHandler : IAppRequestHandler<RemoveRoleF
 
         employee.Roles.Remove(tenantRole);
         await _tenantUow.SaveChangesAsync();
-        return Result.Succeed();
+        return Result.Ok();
     }
 }
