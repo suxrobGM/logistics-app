@@ -7,8 +7,8 @@ namespace Logistics.Application.Commands;
 
 internal sealed class ConfirmLoadStatusHandler : RequestHandler<ConfirmLoadStatusCommand, Result>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
     private readonly INotificationService _notificationService;
+    private readonly ITenantUnityOfWork _tenantUow;
 
     public ConfirmLoadStatusHandler(
         ITenantUnityOfWork tenantUow,
@@ -19,14 +19,11 @@ internal sealed class ConfirmLoadStatusHandler : RequestHandler<ConfirmLoadStatu
     }
 
     protected override async Task<Result> HandleValidated(
-        ConfirmLoadStatusCommand req, CancellationToken cancellationToken)
+        ConfirmLoadStatusCommand req, CancellationToken ct)
     {
         var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.LoadId);
 
-        if (load is null)
-        {
-            return Result.Fail($"Could not find load with ID '{req.LoadId}'");
-        }
+        if (load is null) return Result.Fail($"Could not find load with ID '{req.LoadId}'");
 
         var loadStatus = req.LoadStatus!.Value;
         load.SetStatus(loadStatus);
@@ -34,10 +31,7 @@ internal sealed class ConfirmLoadStatusHandler : RequestHandler<ConfirmLoadStatu
         _tenantUow.Repository<Load>().Update(load);
         var changes = await _tenantUow.SaveChangesAsync();
 
-        if (changes > 0)
-        {
-            await SendNotificationAsync(load);
-        }
+        if (changes > 0) await SendNotificationAsync(load);
 
         return Result.Succeed();
     }

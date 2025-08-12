@@ -17,7 +17,7 @@ internal sealed class GetUsersHandler : RequestHandler<GetUsersQuery, PagedResul
 
     protected override async Task<PagedResult<UserDto>> HandleValidated(
         GetUsersQuery req,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var totalItems = await _masterUow.Repository<User>().CountAsync();
 

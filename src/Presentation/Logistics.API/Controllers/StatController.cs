@@ -12,24 +12,17 @@ using GetMonthlyGrossesQuery = Logistics.Application.Queries.GetMonthlyGrossesQu
 
 namespace Logistics.API.Controllers;
 
-[Route("stats")]
 [ApiController]
-public class StatController : ControllerBase
+[Route("stats")]
+public class StatController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public StatController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [HttpGet("daily-grosses")]
     [ProducesResponseType(typeof(Result<DailyGrossesDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Stats.View)]
     public async Task<IActionResult> GetDailyGrosses([FromQuery] GetDailyGrossesQuery request)
     {
-        var result = await _mediator.Send(request);
+        var result = await mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -39,7 +32,7 @@ public class StatController : ControllerBase
     [Authorize(Policy = Permissions.Stats.View)]
     public async Task<IActionResult> GetMonthlyGrosses([FromQuery] GetMonthlyGrossesQuery request)
     {
-        var result = await _mediator.Send(request);
+        var result = await mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -49,7 +42,7 @@ public class StatController : ControllerBase
     [Authorize(Policy = Permissions.Stats.View)]
     public async Task<IActionResult> GetCompanyStats([FromQuery] GetCompanyStatsQuery request)
     {
-        var result = await _mediator.Send(request);
+        var result = await mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -59,7 +52,7 @@ public class StatController : ControllerBase
     [Authorize(Policy = Permissions.Stats.View)]
     public async Task<IActionResult> GetTrucksStatsList([FromQuery] GetTrucksStatsListQuery request)
     {
-        var result = await _mediator.Send(request);
+        var result = await mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -70,7 +63,7 @@ public class StatController : ControllerBase
     public async Task<IActionResult> GetDriverStatsList(Guid userId, [FromQuery] GetDriverStatsQuery request)
     {
         request.UserId = userId;
-        var result = await _mediator.Send(request);
+        var result = await mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 }

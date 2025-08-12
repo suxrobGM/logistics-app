@@ -16,7 +16,7 @@ internal sealed class GetTripsHandler : RequestHandler<GetTripsQuery, PagedResul
     }
 
     protected override async Task<PagedResult<TripDto>> HandleValidated(
-        GetTripsQuery req, CancellationToken cancellationToken)
+        GetTripsQuery req, CancellationToken ct)
     {
         var totalItems = await _tenantUow.Repository<Trip>().CountAsync();
         var spec = new GetTripsSpec(req.Name, req.Status, req.TruckNumber, req.OrderBy, req.Page, req.PageSize);

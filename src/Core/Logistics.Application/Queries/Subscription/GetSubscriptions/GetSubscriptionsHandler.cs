@@ -16,7 +16,7 @@ internal sealed class GetSubscriptionsHandler : RequestHandler<GetSubscriptionsQ
     }
 
     protected override async Task<PagedResult<SubscriptionDto>> HandleValidated(
-        GetSubscriptionsQuery req, CancellationToken cancellationToken)
+        GetSubscriptionsQuery req, CancellationToken ct)
     {
         var totalItems = await _masterUow.Repository<Subscription>().CountAsync();
         var spec = new GetSubscriptions(req.OrderBy, req.Page, req.PageSize);

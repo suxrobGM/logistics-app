@@ -17,7 +17,7 @@ internal sealed class GetPaymentsHandler : RequestHandler<GetPaymentsQuery, Page
 
     protected override async Task<PagedResult<PaymentDto>> HandleValidated(
         GetPaymentsQuery req,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var totalItems = await _tenantUow.Repository<Payment>().CountAsync();
 

@@ -14,14 +14,11 @@ internal sealed class DeletePaymentHandler : RequestHandler<DeletePaymentCommand
     }
 
     protected override async Task<Result> HandleValidated(
-        DeletePaymentCommand req, CancellationToken cancellationToken)
+        DeletePaymentCommand req, CancellationToken ct)
     {
         var payment = await _tenantUow.Repository<Payment>().GetByIdAsync(req.Id);
 
-        if (payment is null)
-        {
-            return Result.Fail($"Could not find a payment with ID {req.Id}");
-        }
+        if (payment is null) return Result.Fail($"Could not find a payment with ID {req.Id}");
 
 
         _tenantUow.Repository<Payment>().Delete(payment);

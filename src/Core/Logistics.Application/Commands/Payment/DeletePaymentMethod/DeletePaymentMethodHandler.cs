@@ -9,9 +9,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class DeletePaymentMethodHandler : RequestHandler<DeletePaymentMethodCommand, Result>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
-    private readonly IStripeService _stripeService;
     private readonly ILogger<DeletePaymentMethodHandler> _logger;
+    private readonly IStripeService _stripeService;
+    private readonly ITenantUnityOfWork _tenantUow;
 
     public DeletePaymentMethodHandler(
         ITenantUnityOfWork tenantUow,
@@ -24,14 +24,11 @@ internal sealed class DeletePaymentMethodHandler : RequestHandler<DeletePaymentM
     }
 
     protected override async Task<Result> HandleValidated(
-        DeletePaymentMethodCommand req, CancellationToken cancellationToken)
+        DeletePaymentMethodCommand req, CancellationToken ct)
     {
         var paymentMethod = await _tenantUow.Repository<PaymentMethod>().GetByIdAsync(req.Id);
 
-        if (paymentMethod is null)
-        {
-            return Result.Fail($"Could not find a payment with ID {req.Id}");
-        }
+        if (paymentMethod is null) return Result.Fail($"Could not find a payment with ID {req.Id}");
 
         await _stripeService.RemovePaymentMethodAsync(paymentMethod);
         _tenantUow.Repository<PaymentMethod>().Delete(paymentMethod);

@@ -8,8 +8,8 @@ namespace Logistics.Application.Commands;
 internal sealed class CreateEmployeeHandler : RequestHandler<CreateEmployeeCommand, Result>
 {
     private readonly IMasterUnityOfWork _masterUow;
-    private readonly ITenantUnityOfWork _tenantUow;
     private readonly INotificationService _notificationService;
+    private readonly ITenantUnityOfWork _tenantUow;
 
     public CreateEmployeeHandler(
         IMasterUnityOfWork masterUow,
@@ -22,21 +22,15 @@ internal sealed class CreateEmployeeHandler : RequestHandler<CreateEmployeeComma
     }
 
     protected override async Task<Result> HandleValidated(
-        CreateEmployeeCommand req, CancellationToken cancellationToken)
+        CreateEmployeeCommand req, CancellationToken ct)
     {
         var existingEmployee = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
 
-        if (existingEmployee is not null)
-        {
-            return Result.Fail("Employee already exists");
-        }
+        if (existingEmployee is not null) return Result.Fail("Employee already exists");
 
         var user = await _masterUow.Repository<User>().GetByIdAsync(req.UserId);
 
-        if (user is null)
-        {
-            return Result.Fail("Could not find the specified user");
-        }
+        if (user is null) return Result.Fail("Could not find the specified user");
 
         var tenantRole = await _tenantUow.Repository<TenantRole>().GetAsync(i => i.Name == req.Role);
         var tenant = _tenantUow.GetCurrentTenant();
@@ -44,10 +38,7 @@ internal sealed class CreateEmployeeHandler : RequestHandler<CreateEmployeeComma
         user.Tenant = tenant;
         var employee = Employee.CreateEmployeeFromUser(user, req.Salary, req.SalaryType);
 
-        if (tenantRole is not null)
-        {
-            employee.Roles.Add(tenantRole);
-        }
+        if (tenantRole is not null) employee.Roles.Add(tenantRole);
 
         await _tenantUow.Repository<Employee>().AddAsync(employee);
         _masterUow.Repository<User>().Update(user);

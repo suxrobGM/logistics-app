@@ -87,30 +87,36 @@ namespace Logistics.Infrastructure.Migrations.Master
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("character varying(21)");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("CreatedBy");
 
                     b.Property<DateTime?>("DueDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTimeOffset?>("LastModifiedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
 
                     b.Property<string>("Notes")
                         .HasColumnType("text");
 
                     b.Property<long>("Number")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Number"));
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -126,18 +132,23 @@ namespace Logistics.Infrastructure.Migrations.Master
                             b1.IsRequired();
 
                             b1.Property<decimal>("Amount")
-                                .HasColumnType("numeric");
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasMaxLength(3)
+                                .HasColumnType("character varying(3)");
                         });
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Number")
+                        .IsUnique();
+
                     b.ToTable("Invoices", (string)null);
 
-                    b.HasDiscriminator().HasValue("Invoice");
+                    b.HasDiscriminator<int>("Type");
 
                     b.UseTphMappingStrategy();
                 });
@@ -149,10 +160,15 @@ namespace Logistics.Infrastructure.Migrations.Master
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("CreatedBy");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -161,10 +177,13 @@ namespace Logistics.Infrastructure.Migrations.Master
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("LastModifiedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
 
                     b.Property<Guid>("MethodId")
                         .HasColumnType("uuid");
@@ -277,10 +296,15 @@ namespace Logistics.Infrastructure.Migrations.Master
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("CreatedBy");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -292,10 +316,13 @@ namespace Logistics.Infrastructure.Migrations.Master
                         .HasColumnType("integer");
 
                     b.Property<DateTimeOffset?>("LastModifiedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -403,10 +430,15 @@ namespace Logistics.Infrastructure.Migrations.Master
                         .HasColumnType("text");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("CreatedBy");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -420,10 +452,13 @@ namespace Logistics.Infrastructure.Migrations.Master
                         .HasColumnType("text");
 
                     b.Property<DateTimeOffset?>("LastModifiedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -577,6 +612,35 @@ namespace Logistics.Infrastructure.Migrations.Master
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.LoadInvoice", b =>
+                {
+                    b.HasBaseType("Logistics.Domain.Entities.Invoice");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("LoadId")
+                        .HasColumnType("uuid");
+
+                    b.HasDiscriminator().HasValue(0);
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.PayrollInvoice", b =>
+                {
+                    b.HasBaseType("Logistics.Domain.Entities.Invoice");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("PeriodEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("PeriodStart")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasDiscriminator().HasValue(2);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionInvoice", b =>
                 {
                     b.HasBaseType("Logistics.Domain.Entities.Invoice");
@@ -590,9 +654,7 @@ namespace Logistics.Infrastructure.Migrations.Master
                     b.Property<Guid>("SubscriptionId")
                         .HasColumnType("uuid");
 
-                    b.HasIndex("SubscriptionId");
-
-                    b.HasDiscriminator().HasValue("SubscriptionInvoice");
+                    b.HasDiscriminator().HasValue(1);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.AppRoleClaim", b =>
@@ -684,15 +746,6 @@ namespace Logistics.Infrastructure.Migrations.Master
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionInvoice", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.Subscription", null)
-                        .WithMany("Invoices")
-                        .HasForeignKey("SubscriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Logistics.Domain.Entities.AppRole", b =>
                 {
                     b.Navigation("Claims");
@@ -701,11 +754,6 @@ namespace Logistics.Infrastructure.Migrations.Master
             modelBuilder.Entity("Logistics.Domain.Entities.Invoice", b =>
                 {
                     b.Navigation("Payments");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.Subscription", b =>
-                {
-                    b.Navigation("Invoices");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionPlan", b =>

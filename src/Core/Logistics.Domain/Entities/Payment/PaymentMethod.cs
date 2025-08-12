@@ -6,7 +6,7 @@ namespace Logistics.Domain.Entities;
 
 public abstract class PaymentMethod : Entity, ITenantEntity
 {
-    public abstract PaymentMethodType Type { get; set; }
+    public abstract PaymentMethodType Type { get; protected set; }
     public string? StripePaymentMethodId { get; set; }
     public bool IsDefault { get; set; }
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;

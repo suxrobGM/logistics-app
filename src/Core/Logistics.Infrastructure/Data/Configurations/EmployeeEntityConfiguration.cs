@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Logistics.Infrastructure.Data.Configurations;
 
-public class EmployeeEntityConfiguration : IEntityTypeConfiguration<Employee>
+internal sealed class EmployeeEntityConfiguration : IEntityTypeConfiguration<Employee>
 {
     public void Configure(EntityTypeBuilder<Employee> builder)
     {

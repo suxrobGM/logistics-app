@@ -17,7 +17,7 @@ internal sealed class GetEmployeesHandler : RequestHandler<GetEmployeesQuery, Pa
 
     protected override async Task<PagedResult<EmployeeDto>> HandleValidated(
         GetEmployeesQuery req,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var totalItems = await _tenantUow.Repository<Employee>().CountAsync();
         var specification = new SearchEmployees(req.Search, req.Role, req.OrderBy, req.Page, req.PageSize);

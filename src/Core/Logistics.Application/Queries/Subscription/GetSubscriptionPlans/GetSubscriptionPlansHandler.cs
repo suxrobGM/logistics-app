@@ -6,7 +6,8 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetSubscriptionPlansHandler : RequestHandler<GetSubscriptionPlansQuery, PagedResult<SubscriptionPlanDto>>
+internal sealed class
+    GetSubscriptionPlansHandler : RequestHandler<GetSubscriptionPlansQuery, PagedResult<SubscriptionPlanDto>>
 {
     private readonly IMasterUnityOfWork _masterUow;
 
@@ -16,7 +17,7 @@ internal sealed class GetSubscriptionPlansHandler : RequestHandler<GetSubscripti
     }
 
     protected override async Task<PagedResult<SubscriptionPlanDto>> HandleValidated(
-        GetSubscriptionPlansQuery req, CancellationToken cancellationToken)
+        GetSubscriptionPlansQuery req, CancellationToken ct)
     {
         var totalItems = await _masterUow.Repository<SubscriptionPlan>().CountAsync();
         var spec = new GetSubscriptionPlans(req.OrderBy, req.Page, req.PageSize);

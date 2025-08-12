@@ -14,7 +14,7 @@ internal sealed class DeleteTruckHandler : RequestHandler<DeleteTruckCommand, Re
     }
 
     protected override async Task<Result> HandleValidated(
-        DeleteTruckCommand req, CancellationToken cancellationToken)
+        DeleteTruckCommand req, CancellationToken ct)
     {
         var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(req.Id);
         _tenantUow.Repository<Truck>().Delete(truck);

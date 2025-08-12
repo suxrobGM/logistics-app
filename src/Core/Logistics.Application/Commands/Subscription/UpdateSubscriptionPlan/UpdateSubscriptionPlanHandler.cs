@@ -10,9 +10,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class UpdateSubscriptionPlanHandler : RequestHandler<UpdateSubscriptionPlanCommand, Result>
 {
+    private readonly ILogger<UpdateSubscriptionPlanHandler> _logger;
     private readonly IMasterUnityOfWork _masterUow;
     private readonly IStripeService _stripeService;
-    private readonly ILogger<UpdateSubscriptionPlanHandler> _logger;
 
     public UpdateSubscriptionPlanHandler(
         IMasterUnityOfWork masterUow,
@@ -25,21 +25,19 @@ internal sealed class UpdateSubscriptionPlanHandler : RequestHandler<UpdateSubsc
     }
 
     protected override async Task<Result> HandleValidated(
-        UpdateSubscriptionPlanCommand req, CancellationToken cancellationToken)
+        UpdateSubscriptionPlanCommand req, CancellationToken ct)
     {
         var subscriptionPlan = await _masterUow.Repository<SubscriptionPlan>().GetByIdAsync(req.Id);
 
-        if (subscriptionPlan is null)
-        {
-            return Result.Fail($"Could not find a subscription plan with ID '{req.Id}'");
-        }
+        if (subscriptionPlan is null) return Result.Fail($"Could not find a subscription plan with ID '{req.Id}'");
 
         subscriptionPlan.Name = PropertyUpdater.UpdateIfChanged(req.Name, subscriptionPlan.Name);
         subscriptionPlan.Description = PropertyUpdater.UpdateIfChanged(req.Description, subscriptionPlan.Description);
         subscriptionPlan.Price = PropertyUpdater.UpdateIfChanged(req.Price, subscriptionPlan.Price.Amount);
         subscriptionPlan.TrialPeriod = PropertyUpdater.UpdateIfChanged(req.TrialPeriod, subscriptionPlan.TrialPeriod);
         subscriptionPlan.Interval = PropertyUpdater.UpdateIfChanged(req.Interval, subscriptionPlan.Interval);
-        subscriptionPlan.IntervalCount = PropertyUpdater.UpdateIfChanged(req.IntervalCount, subscriptionPlan.IntervalCount);
+        subscriptionPlan.IntervalCount =
+            PropertyUpdater.UpdateIfChanged(req.IntervalCount, subscriptionPlan.IntervalCount);
 
         await _stripeService.UpdateSubscriptionPlanAsync(subscriptionPlan);
         _masterUow.Repository<SubscriptionPlan>().Update(subscriptionPlan);

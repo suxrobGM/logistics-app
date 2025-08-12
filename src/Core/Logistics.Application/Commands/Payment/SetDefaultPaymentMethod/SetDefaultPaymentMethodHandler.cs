@@ -9,9 +9,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class SetDefaultPaymentMethodHandler : RequestHandler<SetDefaultPaymentMethodCommand, Result>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
-    private readonly IStripeService _stripeService;
     private readonly ILogger<SetDefaultPaymentMethodHandler> _logger;
+    private readonly IStripeService _stripeService;
+    private readonly ITenantUnityOfWork _tenantUow;
 
     public SetDefaultPaymentMethodHandler(
         ITenantUnityOfWork tenantUow,
@@ -24,30 +24,22 @@ internal sealed class SetDefaultPaymentMethodHandler : RequestHandler<SetDefault
     }
 
     protected override async Task<Result> HandleValidated(
-        SetDefaultPaymentMethodCommand req, CancellationToken cancellationToken)
+        SetDefaultPaymentMethodCommand req, CancellationToken ct)
     {
         var tenant = _tenantUow.GetCurrentTenant();
 
         // Load all payment methods for the tenant
         var paymentMethods = await _tenantUow.Repository<PaymentMethod>().GetListAsync();
 
-        if (paymentMethods.Count == 0)
-        {
-            return Result.Fail($"No payment methods found for tenant {tenant.Id}");
-        }
+        if (paymentMethods.Count == 0) return Result.Fail($"No payment methods found for tenant {tenant.Id}");
 
         // Set all payment methods to not default
-        foreach (var paymentMethod in paymentMethods)
-        {
-            paymentMethod.IsDefault = false;
-        }
+        foreach (var paymentMethod in paymentMethods) paymentMethod.IsDefault = false;
 
         // Set the specified payment method to default using the already loaded entity
         var paymentMethodToSetDefault = paymentMethods.FirstOrDefault(i => i.Id == req.PaymentMethodId);
         if (paymentMethodToSetDefault is null)
-        {
             return Result.Fail($"Payment method with ID {req.PaymentMethodId} not found for tenant {tenant.Id}");
-        }
 
         paymentMethodToSetDefault.IsDefault = true;
 

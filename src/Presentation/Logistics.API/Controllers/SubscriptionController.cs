@@ -15,17 +15,10 @@ using UpdateSubscriptionPlanCommand = Logistics.Application.Commands.UpdateSubsc
 
 namespace Logistics.API.Controllers;
 
-[Route("subscriptions")]
 [ApiController]
-public class SubscriptionController : ControllerBase
+[Route("subscriptions")]
+public class SubscriptionController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public SubscriptionController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     #region Subscriptions
 
     [HttpGet("{id:guid}")]
@@ -34,7 +27,7 @@ public class SubscriptionController : ControllerBase
     [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
     public async Task<IActionResult> GetSubscriptionById(Guid id)
     {
-        var result = await _mediator.Send(new GetSubscriptionQuery { Id = id });
+        var result = await mediator.Send(new GetSubscriptionQuery { Id = id });
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -44,7 +37,7 @@ public class SubscriptionController : ControllerBase
     [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
     public async Task<IActionResult> GetSubscriptions([FromQuery] GetSubscriptionsQuery request)
     {
-        var result = await _mediator.Send(request);
+        var result = await mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -54,7 +47,7 @@ public class SubscriptionController : ControllerBase
     [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
     public async Task<IActionResult> CreateSubscription([FromBody] CreateSubscriptionCommand request)
     {
-        var result = await _mediator.Send(request);
+        var result = await mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -64,7 +57,7 @@ public class SubscriptionController : ControllerBase
     public async Task<IActionResult> CancelSubscription(Guid id, [FromBody] CancelSubscriptionCommand request)
     {
         request.Id = id;
-        var result = await _mediator.Send(request);
+        var result = await mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -74,7 +67,7 @@ public class SubscriptionController : ControllerBase
     public async Task<IActionResult> RenewSubscription(Guid id, [FromBody] RenewSubscriptionCommand request)
     {
         request.Id = id;
-        var result = await _mediator.Send(request);
+        var result = await mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -84,7 +77,7 @@ public class SubscriptionController : ControllerBase
     [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
     public async Task<IActionResult> DeleteSubscription(Guid id)
     {
-        var result = await _mediator.Send(new DeleteSubscriptionCommand { Id = id });
+        var result = await mediator.Send(new DeleteSubscriptionCommand { Id = id });
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -98,7 +91,7 @@ public class SubscriptionController : ControllerBase
     //[Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
     public async Task<IActionResult> GetSubscriptionPlanById(Guid id)
     {
-        var result = await _mediator.Send(new GetSubscriptionPlanQuery { Id = id });
+        var result = await mediator.Send(new GetSubscriptionPlanQuery { Id = id });
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -108,7 +101,7 @@ public class SubscriptionController : ControllerBase
     //[Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
     public async Task<IActionResult> GetSubscriptionPlans([FromQuery] GetSubscriptionPlansQuery request)
     {
-        var result = await _mediator.Send(request);
+        var result = await mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -118,7 +111,7 @@ public class SubscriptionController : ControllerBase
     [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
     public async Task<IActionResult> CreateSubscriptionPlan([FromBody] CreateSubscriptionPlanCommand request)
     {
-        var result = await _mediator.Send(request);
+        var result = await mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -129,7 +122,7 @@ public class SubscriptionController : ControllerBase
     public async Task<IActionResult> UpdateSubscriptionPlan(Guid id, [FromBody] UpdateSubscriptionPlanCommand request)
     {
         request.Id = id;
-        var result = await _mediator.Send(request);
+        var result = await mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -139,7 +132,7 @@ public class SubscriptionController : ControllerBase
     [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
     public async Task<IActionResult> DeleteSubscriptionPlan(Guid id)
     {
-        var result = await _mediator.Send(new DeleteSubscriptionPlanCommand { Id = id });
+        var result = await mediator.Send(new DeleteSubscriptionPlanCommand { Id = id });
         return result.Success ? Ok(result) : BadRequest(result);
     }
 

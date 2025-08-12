@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Logistics.Infrastructure.Data.Configurations;
 
-public class AppRoleEntityConfiguration : IEntityTypeConfiguration<AppRole>
+internal sealed class AppRoleEntityConfiguration : IEntityTypeConfiguration<AppRole>
 {
     public void Configure(EntityTypeBuilder<AppRole> builder)
     {

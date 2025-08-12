@@ -15,14 +15,12 @@ internal sealed class CreateCustomerHandler : RequestHandler<CreateCustomerComma
     }
 
     protected override async Task<Result<CustomerDto>> HandleValidated(
-        CreateCustomerCommand req, CancellationToken cancellationToken)
+        CreateCustomerCommand req, CancellationToken ct)
     {
         var existingCustomer = await _tenantUow.Repository<Customer>().GetAsync(i => i.Name == req.Name);
 
         if (existingCustomer is not null)
-        {
             return Result<CustomerDto>.Fail($"A customer named '{req.Name}' already exists");
-        }
 
         var newCustomer = new Customer
         {

@@ -1,5 +1,5 @@
 using Logistics.Domain.Entities;
-using Logistics.Infrastructure.Data.Configurations;
+using Logistics.Infrastructure.Data.Extensions;
 using Logistics.Infrastructure.Helpers;
 using Logistics.Infrastructure.Interceptors;
 using Logistics.Infrastructure.Options;
@@ -13,19 +13,19 @@ using Microsoft.Extensions.Logging;
 namespace Logistics.Infrastructure.Data;
 
 public class MasterDbContext : IdentityDbContext<
-    User,
-    AppRole,
-    Guid,
-    IdentityUserClaim<Guid>,
-    IdentityUserRole<Guid>,
-    IdentityUserLogin<Guid>,
-    AppRoleClaim,
-    IdentityUserToken<Guid>>,
+        User,
+        AppRole,
+        Guid,
+        IdentityUserClaim<Guid>,
+        IdentityUserRole<Guid>,
+        IdentityUserLogin<Guid>,
+        AppRoleClaim,
+        IdentityUserToken<Guid>>,
     IDataProtectionKeyContext
 {
-    private readonly DispatchDomainEventsInterceptor? _dispatchDomain;
     private readonly AuditableEntitySaveChangesInterceptor? _auditableEntity;
     private readonly string _connectionString;
+    private readonly DispatchDomainEventsInterceptor? _dispatchDomain;
     private readonly ILogger<MasterDbContext>? _logger;
 
     public MasterDbContext(
@@ -44,19 +44,14 @@ public class MasterDbContext : IdentityDbContext<
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        if (_dispatchDomain is not null)
-        {
-            options.AddInterceptors(_dispatchDomain);
-        }
-        if (_auditableEntity is not null)
-        {
-            options.AddInterceptors(_auditableEntity);
-        }
+        if (_dispatchDomain is not null) options.AddInterceptors(_dispatchDomain);
+        if (_auditableEntity is not null) options.AddInterceptors(_auditableEntity);
 
         if (!options.IsConfigured)
         {
             DbContextHelpers.ConfigurePostgreSql(_connectionString, options);
-            _logger?.LogInformation("Configured master database with connection string: {ConnectionString}", _connectionString);
+            _logger?.LogInformation("Configured master database with connection string: {ConnectionString}",
+                _connectionString);
         }
     }
 
@@ -64,14 +59,10 @@ public class MasterDbContext : IdentityDbContext<
     {
         base.OnModelCreating(builder);
 
-        //builder.ApplyConfiguration(new AuditableEntityConfiguration());
-        builder.ApplyConfiguration(new AppRoleEntityConfiguration());
-        builder.ApplyConfiguration(new UserEntityConfiguration());
-        builder.ApplyConfiguration(new SubscriptionEntityConfiguration());
-        builder.ApplyConfiguration(new SubscriptionPlanEntityConfiguration());
-        builder.ApplyConfiguration(new PaymentEntityConfiguration());
+        builder.ApplyMasterConfigurationsFromAssemblyContaining<MasterDbContext>();
 
-        builder.Entity<Tenant>().ToTable("Tenants");
-        builder.Entity<Invoice>().ToTable("Invoices");
+        // Prune entity types that are only relevant for the master database
+        // It avoids issues with tenant-specific entities being included in the master context and migration errors
+        builder.PruneTenantOnlyTypesForMaster();
     }
 }

@@ -14,14 +14,11 @@ internal sealed class DeleteInvoiceHandler : RequestHandler<DeleteInvoiceCommand
     }
 
     protected override async Task<Result> HandleValidated(
-        DeleteInvoiceCommand req, CancellationToken cancellationToken)
+        DeleteInvoiceCommand req, CancellationToken ct)
     {
         var invoice = await _tenantUow.Repository<Invoice>().GetByIdAsync(req.Id);
 
-        if (invoice is null)
-        {
-            return Result.Fail($"Could not find an invoice with ID {req.Id}");
-        }
+        if (invoice is null) return Result.Fail($"Could not find an invoice with ID {req.Id}");
 
         _tenantUow.Repository<Invoice>().Delete(invoice);
         await _tenantUow.SaveChangesAsync();

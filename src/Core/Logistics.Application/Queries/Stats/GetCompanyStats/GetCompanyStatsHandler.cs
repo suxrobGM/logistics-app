@@ -16,7 +16,7 @@ internal sealed class GetCompanyStatsHandler : RequestHandler<GetCompanyStatsQue
     }
 
     protected override async Task<Result<CompanyStatsDto>> HandleValidated(
-        GetCompanyStatsQuery req, CancellationToken cancellationToken)
+        GetCompanyStatsQuery req, CancellationToken ct)
     {
         var companyStats = new CompanyStatsDto();
 
@@ -34,13 +34,17 @@ internal sealed class GetCompanyStatsHandler : RequestHandler<GetCompanyStatsQue
             var driverRoleId = rolesDict[TenantRoles.Driver].Id;
 
             var employeeRepository = _tenantUow.Repository<Employee>();
-            var ownerEmployee = await employeeRepository.GetAsync(e => e.EmployeeRoles.Any(er => er.RoleId == ownerRoleId));
+            var ownerEmployee =
+                await employeeRepository.GetAsync(e => e.EmployeeRoles.Any(er => er.RoleId == ownerRoleId));
 
             companyStats.OwnerName = ownerEmployee?.GetFullName();
             companyStats.EmployeesCount = await employeeRepository.CountAsync();
-            companyStats.ManagersCount = await employeeRepository.CountAsync(e => e.EmployeeRoles.Any(er => er.RoleId == managerRoleId));
-            companyStats.DispatchersCount = await employeeRepository.CountAsync(e => e.EmployeeRoles.Any(er => er.RoleId == dispatcherRoleId));
-            companyStats.DriversCount = await employeeRepository.CountAsync(e => e.EmployeeRoles.Any(er => er.RoleId == driverRoleId));
+            companyStats.ManagersCount =
+                await employeeRepository.CountAsync(e => e.EmployeeRoles.Any(er => er.RoleId == managerRoleId));
+            companyStats.DispatchersCount =
+                await employeeRepository.CountAsync(e => e.EmployeeRoles.Any(er => er.RoleId == dispatcherRoleId));
+            companyStats.DriversCount =
+                await employeeRepository.CountAsync(e => e.EmployeeRoles.Any(er => er.RoleId == driverRoleId));
             companyStats.TrucksCount = await _tenantUow.Repository<Truck>().CountAsync();
 
             var now = DateTime.UtcNow;
@@ -50,10 +54,14 @@ internal sealed class GetCompanyStatsHandler : RequestHandler<GetCompanyStatsQue
             var lastMonthStart = startOfMonth.AddMonths(-1);
 
             var loadsRepository = _tenantUow.Repository<Load>();
-            var thisWeekLoads = loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(null, startOfWeek, now));
-            var lastWeekLoads = loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(null, lastWeekStart, startOfWeek));
-            var thisMonthLoads = loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(null, startOfMonth, now));
-            var lastMonthLoads = loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(null, lastMonthStart, startOfMonth));
+            var thisWeekLoads =
+                loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(null, startOfWeek, now));
+            var lastWeekLoads =
+                loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(null, lastWeekStart, startOfWeek));
+            var thisMonthLoads =
+                loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(null, startOfMonth, now));
+            var lastMonthLoads =
+                loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(null, lastMonthStart, startOfMonth));
 
             companyStats.ThisWeekGross = thisWeekLoads.Sum(l => l.DeliveryCost);
             companyStats.ThisWeekDistance = thisWeekLoads.Sum(l => l.Distance);
@@ -65,8 +73,7 @@ internal sealed class GetCompanyStatsHandler : RequestHandler<GetCompanyStatsQue
             companyStats.LastMonthDistance = lastMonthLoads.Sum(l => l.Distance);
 
             var totalStats = loadsRepository.Query()
-                .GroupBy(_ => 1).
-                Select(i => new
+                .GroupBy(_ => 1).Select(i => new
                 {
                     TotalDistance = i.Sum(m => m.Distance),
                     TotalGross = i.Sum(m => m.DeliveryCost)

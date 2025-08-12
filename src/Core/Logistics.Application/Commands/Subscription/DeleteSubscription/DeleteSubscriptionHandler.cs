@@ -9,9 +9,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class DeleteSubscriptionHandler : RequestHandler<DeleteSubscriptionCommand, Result>
 {
+    private readonly ILogger<DeleteSubscriptionHandler> _logger;
     private readonly IMasterUnityOfWork _masterUow;
     private readonly IStripeService _stripeService;
-    private readonly ILogger<DeleteSubscriptionHandler> _logger;
 
     public DeleteSubscriptionHandler(
         IMasterUnityOfWork masterUow,
@@ -24,18 +24,16 @@ internal sealed class DeleteSubscriptionHandler : RequestHandler<DeleteSubscript
     }
 
     protected override async Task<Result> HandleValidated(
-        DeleteSubscriptionCommand req, CancellationToken cancellationToken)
+        DeleteSubscriptionCommand req, CancellationToken ct)
     {
         var subscription = await _masterUow.Repository<Subscription>().GetByIdAsync(req.Id);
 
-        if (subscription is null)
-        {
-            return Result.Fail($"Could not find a subscription with ID '{req.Id}'");
-        }
+        if (subscription is null) return Result.Fail($"Could not find a subscription with ID '{req.Id}'");
 
         if (!string.IsNullOrEmpty(subscription.StripeSubscriptionId))
         {
-            _logger.LogInformation("Cancelling stripe subscription {StripeSubscriptionId}", subscription.StripeSubscriptionId);
+            _logger.LogInformation("Cancelling stripe subscription {StripeSubscriptionId}",
+                subscription.StripeSubscriptionId);
             await _stripeService.CancelSubscriptionAsync(subscription.StripeSubscriptionId);
         }
 

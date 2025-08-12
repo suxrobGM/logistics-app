@@ -18,7 +18,7 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resu
     }
 
     protected override async Task<Result> HandleValidated(
-        CreateLoadCommand req, CancellationToken cancellationToken)
+        CreateLoadCommand req, CancellationToken ct)
     {
         try
         {

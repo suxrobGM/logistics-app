@@ -41,6 +41,92 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.ToTable("Customers", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.Document", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("BlobContainer")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("BlobPath")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("CreatedBy");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<long>("FileSizeBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("LastModifiedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
+
+                    b.Property<string>("OriginalFileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("OwnerType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("Active");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UploadedById")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UploadedById");
+
+                    b.ToTable("Documents", (string)null);
+
+                    b.HasDiscriminator<string>("OwnerType");
+
+                    b.UseTphMappingStrategy();
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
                 {
                     b.Property<Guid>("Id")
@@ -112,19 +198,27 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("CreatedBy");
 
                     b.Property<DateTime?>("DueDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTimeOffset?>("LastModifiedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
 
                     b.Property<string>("Notes")
                         .HasColumnType("text");
@@ -331,85 +425,6 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.ToTable("Loads", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.LoadDocument", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("BlobContainer")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("BlobPath")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<long>("FileSizeBytes")
-                        .HasColumnType("bigint");
-
-                    b.Property<Guid>("LoadId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("OriginalFileName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("text")
-                        .HasDefaultValue("Active");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UploadedById")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedAt");
-
-                    b.HasIndex("LoadId");
-
-                    b.HasIndex("Status");
-
-                    b.HasIndex("Type");
-
-                    b.HasIndex("UploadedById");
-
-                    b.HasIndex("LoadId", "Status", "Type");
-
-                    b.ToTable("LoadDocuments", (string)null);
-                });
-
             modelBuilder.Entity("Logistics.Domain.Entities.Notification", b =>
                 {
                     b.Property<Guid>("Id")
@@ -442,10 +457,15 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("CreatedBy");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -454,10 +474,13 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("LastModifiedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
 
                     b.Property<Guid>("MethodId")
                         .HasColumnType("uuid");
@@ -901,6 +924,30 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.ToView(null, (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.EmployeeDocument", b =>
+                {
+                    b.HasBaseType("Logistics.Domain.Entities.Document");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasDiscriminator().HasValue("Employee");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.LoadDocument", b =>
+                {
+                    b.HasBaseType("Logistics.Domain.Entities.Document");
+
+                    b.Property<Guid>("LoadId")
+                        .HasColumnType("uuid");
+
+                    b.HasIndex("LoadId");
+
+                    b.HasDiscriminator().HasValue("Load");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.LoadInvoice", b =>
                 {
                     b.HasBaseType("Logistics.Domain.Entities.Invoice");
@@ -1044,6 +1091,17 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.HasDiscriminator().HasValue(1);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.Document", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Employee", "UploadedBy")
+                        .WithMany()
+                        .HasForeignKey("UploadedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("UploadedBy");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.EmployeeTenantRole", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Employee", "Employee")
@@ -1089,25 +1147,6 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.Navigation("Customer");
 
                     b.Navigation("TripStop");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.LoadDocument", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.Load", "Load")
-                        .WithMany("Documents")
-                        .HasForeignKey("LoadId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Logistics.Domain.Entities.Employee", "UploadedBy")
-                        .WithMany()
-                        .HasForeignKey("UploadedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Load");
-
-                    b.Navigation("UploadedBy");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Payment", b =>
@@ -1166,6 +1205,28 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.Navigation("SecondaryDriver");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.EmployeeDocument", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Employee", "Employee")
+                        .WithMany("Documents")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.LoadDocument", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Load", "Load")
+                        .WithMany("Documents")
+                        .HasForeignKey("LoadId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Load");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.LoadInvoice", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Customer", "Customer")
@@ -1204,6 +1265,8 @@ namespace Logistics.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
                 {
                     b.Navigation("DispatchedLoads");
+
+                    b.Navigation("Documents");
 
                     b.Navigation("EmployeeRoles");
 

@@ -10,9 +10,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class CancelSubscriptionHandler : RequestHandler<CancelSubscriptionCommand, Result>
 {
+    private readonly ILogger<DeleteSubscriptionHandler> _logger;
     private readonly IMasterUnityOfWork _masterUow;
     private readonly IStripeService _stripeService;
-    private readonly ILogger<DeleteSubscriptionHandler> _logger;
 
     public CancelSubscriptionHandler(
         IMasterUnityOfWork masterUow,
@@ -25,20 +25,19 @@ internal sealed class CancelSubscriptionHandler : RequestHandler<CancelSubscript
     }
 
     protected override async Task<Result> HandleValidated(
-        CancelSubscriptionCommand req, CancellationToken cancellationToken)
+        CancelSubscriptionCommand req, CancellationToken ct)
     {
         var subscription = await _masterUow.Repository<Subscription>().GetByIdAsync(req.Id);
         SubscriptionStatus? status = null;
 
-        if (subscription is null)
-        {
-            return Result.Fail($"Could not find a subscription with ID '{req.Id}'");
-        }
+        if (subscription is null) return Result.Fail($"Could not find a subscription with ID '{req.Id}'");
 
         if (!string.IsNullOrEmpty(subscription.StripeSubscriptionId))
         {
-            _logger.LogInformation("Cancelling stripe subscription {StripeSubscriptionId}", subscription.StripeSubscriptionId);
-            var stripeSubscription = await _stripeService.CancelSubscriptionAsync(subscription.StripeSubscriptionId, false);
+            _logger.LogInformation("Cancelling stripe subscription {StripeSubscriptionId}",
+                subscription.StripeSubscriptionId);
+            var stripeSubscription =
+                await _stripeService.CancelSubscriptionAsync(subscription.StripeSubscriptionId, false);
             status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
         }
 

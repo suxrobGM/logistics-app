@@ -18,17 +18,11 @@ internal sealed class GetInvoicesHandler : RequestHandler<GetInvoicesQuery, Page
 
     protected override Task<PagedResult<InvoiceDto>> HandleValidated(
         GetInvoicesQuery req,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        if (req.LoadId.HasValue)
-        {
-            return GetLoadInvoices(req);
-        }
+        if (req.LoadId.HasValue) return GetLoadInvoices(req);
 
-        if (req.EmployeeId.HasValue || !string.IsNullOrEmpty(req.EmployeeName))
-        {
-            return GetPayrollInvoices(req);
-        }
+        if (req.EmployeeId.HasValue || !string.IsNullOrEmpty(req.EmployeeName)) return GetPayrollInvoices(req);
 
         return GetAllInvoices(req);
     }

@@ -15,14 +15,11 @@ internal sealed class ProcessPaymentHandler : RequestHandler<ProcessPaymentComma
     }
 
     protected override async Task<Result> HandleValidated(
-        ProcessPaymentCommand req, CancellationToken cancellationToken)
+        ProcessPaymentCommand req, CancellationToken ct)
     {
         var payment = await _tenantUow.Repository<Payment>().GetByIdAsync(req.PaymentId);
 
-        if (payment is null)
-        {
-            return Result.Fail($"Could not find a payment with ID '{req.PaymentId}'");
-        }
+        if (payment is null) return Result.Fail($"Could not find a payment with ID '{req.PaymentId}'");
 
         // TODO: Add payment verification from external provider
         payment.Status = PaymentStatus.Paid;

@@ -15,14 +15,12 @@ internal sealed class GetEmployeeByIdHandler : RequestHandler<GetEmployeeByIdQue
     }
 
     protected override async Task<Result<EmployeeDto>> HandleValidated(
-        GetEmployeeByIdQuery req, CancellationToken cancellationToken)
+        GetEmployeeByIdQuery req, CancellationToken ct)
     {
         var employeeEntity = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
 
         if (employeeEntity is null)
-        {
             return Result<EmployeeDto>.Fail($"Could not find the specified employee with ID {req.UserId}");
-        }
 
         var employeeDto = employeeEntity.ToDto();
         return Result<EmployeeDto>.Succeed(employeeDto);

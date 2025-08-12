@@ -13,5 +13,5 @@ public abstract class RequestHandler<TRequest, TResponse> : IRequestHandler<TReq
         return HandleValidated(request, cancellationToken);
     }
 
-    protected abstract Task<TResponse> HandleValidated(TRequest req, CancellationToken cancellationToken);
+    protected abstract Task<TResponse> HandleValidated(TRequest req, CancellationToken ct);
 }

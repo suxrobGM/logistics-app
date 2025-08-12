@@ -13,7 +13,7 @@ public class GetTruckStatsListHandler : RequestHandler<GetTrucksStatsListQuery, 
     }
 
     protected override async Task<PagedResult<TruckStatsDto>> HandleValidated(
-        GetTrucksStatsListQuery req, CancellationToken cancellationToken)
+        GetTrucksStatsListQuery req, CancellationToken ct)
     {
         var query = $"""
                      SELECT * FROM get_trucks_stats(

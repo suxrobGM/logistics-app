@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Logistics.Infrastructure.Data.Configurations;
 
-public class LoadEntityConfiguration : IEntityTypeConfiguration<Load>
+internal sealed class LoadEntityConfiguration : IEntityTypeConfiguration<Load>
 {
     public void Configure(EntityTypeBuilder<Load> builder)
     {

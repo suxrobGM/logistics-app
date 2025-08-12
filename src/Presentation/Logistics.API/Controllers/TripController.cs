@@ -10,24 +10,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Logistics.API.Controllers;
 
-[Route("trips")]
 [ApiController]
-public class TripController : ControllerBase
+[Route("trips")]
+public class TripController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public TripController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [HttpGet("{tripId:guid}")]
     [ProducesResponseType(typeof(Result<TripDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Loads.View)]
     public async Task<IActionResult> GetById(Guid tripId)
     {
-        var result = await _mediator.Send(new GetTripQuery { TripId = tripId });
+        var result = await mediator.Send(new GetTripQuery { TripId = tripId });
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -37,7 +30,7 @@ public class TripController : ControllerBase
     [Authorize(Policy = Permissions.Loads.View)]
     public async Task<IActionResult> GetList([FromQuery] GetTripsQuery query)
     {
-        var result = await _mediator.Send(query);
+        var result = await mediator.Send(query);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -47,7 +40,7 @@ public class TripController : ControllerBase
     [Authorize(Policy = Permissions.Loads.Create)]
     public async Task<IActionResult> CreateTrip([FromBody] CreateTripCommand request)
     {
-        var result = await _mediator.Send(request);
+        var result = await mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -58,7 +51,7 @@ public class TripController : ControllerBase
     public async Task<IActionResult> UpdateTrip(Guid id, [FromBody] UpdateTripCommand request)
     {
         request.TripId = id;
-        var result = await _mediator.Send(request);
+        var result = await mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -68,7 +61,7 @@ public class TripController : ControllerBase
     [Authorize(Policy = Permissions.Loads.Delete)]
     public async Task<IActionResult> DeleteTrip(Guid id)
     {
-        var result = await _mediator.Send(new DeleteTripCommand { Id = id });
+        var result = await mediator.Send(new DeleteTripCommand { Id = id });
         return result.Success ? Ok(result) : BadRequest(result);
     }
 }

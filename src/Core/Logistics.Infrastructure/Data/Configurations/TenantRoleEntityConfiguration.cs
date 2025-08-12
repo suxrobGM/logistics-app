@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Logistics.Infrastructure.Data.Configurations;
 
-public class TenantRoleEntityConfiguration : IEntityTypeConfiguration<TenantRole>
+internal sealed class TenantRoleEntityConfiguration : IEntityTypeConfiguration<TenantRole>
 {
     public void Configure(EntityTypeBuilder<TenantRole> builder)
     {

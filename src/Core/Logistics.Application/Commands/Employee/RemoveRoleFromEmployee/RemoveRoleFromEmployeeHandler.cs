@@ -14,22 +14,16 @@ internal sealed class RemoveEmployeeRoleHandler : RequestHandler<RemoveRoleFromE
     }
 
     protected override async Task<Result> HandleValidated(
-        RemoveRoleFromEmployeeCommand req, CancellationToken cancellationToken)
+        RemoveRoleFromEmployeeCommand req, CancellationToken ct)
     {
         req.Role = req.Role.ToLower();
         var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
 
-        if (employee is null)
-        {
-            return Result.Fail("Could not find the specified user");
-        }
+        if (employee is null) return Result.Fail("Could not find the specified user");
 
         var tenantRole = await _tenantUow.Repository<TenantRole>().GetAsync(i => i.Name == req.Role);
 
-        if (tenantRole is null)
-        {
-            return Result.Fail("Could not find the specified role name");
-        }
+        if (tenantRole is null) return Result.Fail("Could not find the specified role name");
 
         employee.Roles.Remove(tenantRole);
         await _tenantUow.SaveChangesAsync();

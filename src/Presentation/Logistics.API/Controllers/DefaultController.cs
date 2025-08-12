@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Logistics.API.Controllers;
 
-[Route("")]
 [ApiController]
+[Route("")]
 public class DefaultController : ControllerBase
 {
     [HttpGet]

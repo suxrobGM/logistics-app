@@ -15,14 +15,11 @@ internal sealed class GetLoadByIdHandler : RequestHandler<GetLoadByIdQuery, Resu
     }
 
     protected override async Task<Result<LoadDto>> HandleValidated(
-        GetLoadByIdQuery req, CancellationToken cancellationToken)
+        GetLoadByIdQuery req, CancellationToken ct)
     {
         var loadEntity = await _tenantUow.Repository<Load>().GetByIdAsync(req.Id);
 
-        if (loadEntity is null)
-        {
-            return Result<LoadDto>.Fail($"Could not find a load with ID '{req.Id}'");
-        }
+        if (loadEntity is null) return Result<LoadDto>.Fail($"Could not find a load with ID '{req.Id}'");
 
         var loadDto = loadEntity.ToDto();
         return Result<LoadDto>.Succeed(loadDto);

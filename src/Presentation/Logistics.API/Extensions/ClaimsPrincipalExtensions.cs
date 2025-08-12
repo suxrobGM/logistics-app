@@ -13,4 +13,10 @@ public static class ClaimsPrincipalExtensions
     {
         return userIdentity.Claims.FirstOrDefault(i => i.Type == ClaimTypes.Role)?.Value;
     }
+
+    public static Guid GetUserId(this ClaimsPrincipal userIdentity)
+    {
+        var userIdClaim = userIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        return Guid.TryParse(userIdClaim, out var userId) ? userId : Guid.Empty;
+    }
 }

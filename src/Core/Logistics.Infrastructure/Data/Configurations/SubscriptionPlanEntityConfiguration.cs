@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Logistics.Infrastructure.Data.Configurations;
 
-public class SubscriptionPlanEntityConfiguration : IEntityTypeConfiguration<SubscriptionPlan>
+internal sealed class SubscriptionPlanEntityConfiguration : IEntityTypeConfiguration<SubscriptionPlan>
 {
     public void Configure(EntityTypeBuilder<SubscriptionPlan> builder)
     {

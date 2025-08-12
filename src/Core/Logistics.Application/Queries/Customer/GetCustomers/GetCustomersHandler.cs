@@ -17,7 +17,7 @@ internal sealed class GetCustomersHandler : RequestHandler<GetCustomersQuery, Pa
 
     protected override async Task<PagedResult<CustomerDto>> HandleValidated(
         GetCustomersQuery req,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var totalItems = await _tenantUow.Repository<Customer>().CountAsync();
         var specification = new SearchCustomers(req.Search, req.OrderBy, req.Page, req.PageSize);

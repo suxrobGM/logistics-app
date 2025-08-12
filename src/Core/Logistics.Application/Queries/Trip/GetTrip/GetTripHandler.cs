@@ -15,14 +15,11 @@ internal sealed class GetTripHandler : RequestHandler<GetTripQuery, Result<TripD
     }
 
     protected override async Task<Result<TripDto>> HandleValidated(
-        GetTripQuery req, CancellationToken cancellationToken)
+        GetTripQuery req, CancellationToken ct)
     {
         var trip = await _tenantUow.Repository<Trip>().GetByIdAsync(req.TripId);
 
-        if (trip is null)
-        {
-            return Result<TripDto>.Fail($"Could not find a trip with ID '{req.TripId}'");
-        }
+        if (trip is null) return Result<TripDto>.Fail($"Could not find a trip with ID '{req.TripId}'");
 
         var tripeDto = trip.ToDto();
         return Result<TripDto>.Succeed(tripeDto);

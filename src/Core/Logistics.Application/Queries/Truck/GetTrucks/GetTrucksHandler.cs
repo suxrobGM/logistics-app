@@ -17,7 +17,7 @@ internal sealed class GetTrucksHandler : RequestHandler<GetTrucksQuery, PagedRes
 
     protected override async Task<PagedResult<TruckDto>> HandleValidated(
         GetTrucksQuery req,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var totalItems = await _tenantUow.Repository<Truck>().CountAsync();
         var spec = new SearchTrucks(req.Search, req.OrderBy, req.Page, req.PageSize);

@@ -8,8 +8,8 @@ namespace Logistics.Application.Commands;
 
 internal sealed class SetTruckGeolocationHandler : RequestHandler<SetTruckGeolocationCommand, Result>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
     private readonly ILogger<SetTruckGeolocationHandler> _logger;
+    private readonly ITenantUnityOfWork _tenantUow;
 
     public SetTruckGeolocationHandler(
         ITenantUnityOfWork tenantUow,
@@ -20,14 +20,15 @@ internal sealed class SetTruckGeolocationHandler : RequestHandler<SetTruckGeoloc
     }
 
     protected override async Task<Result> HandleValidated(
-        SetTruckGeolocationCommand req, CancellationToken cancellationToken)
+        SetTruckGeolocationCommand req, CancellationToken ct)
     {
         _tenantUow.SetCurrentTenantById(req.GeolocationData.TenantId.ToString());
         var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(req.GeolocationData.TruckId);
 
         if (truck is null)
         {
-            _logger.LogWarning("Could not find a truck with ID {TruckId}, skipped saving geolocation data", req.GeolocationData.TruckId);
+            _logger.LogWarning("Could not find a truck with ID {TruckId}, skipped saving geolocation data",
+                req.GeolocationData.TruckId);
             return Result.Succeed();
         }
 

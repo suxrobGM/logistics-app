@@ -9,10 +9,10 @@ namespace Logistics.Application.Commands;
 
 internal sealed class CreateTripHandler : RequestHandler<CreateTripCommand, Result>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
     private readonly ILoadService _loadService;
-    private readonly IPushNotificationService _pushNotificationService;
     private readonly ILogger<CreateTripHandler> _logger;
+    private readonly IPushNotificationService _pushNotificationService;
+    private readonly ITenantUnityOfWork _tenantUow;
 
     public CreateTripHandler(
         ITenantUnityOfWork tenantUow,
@@ -27,14 +27,11 @@ internal sealed class CreateTripHandler : RequestHandler<CreateTripCommand, Resu
     }
 
     protected override async Task<Result> HandleValidated(
-        CreateTripCommand req, CancellationToken cancellationToken)
+        CreateTripCommand req, CancellationToken ct)
     {
         var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId);
 
-        if (truck is null)
-        {
-            return Result.Fail($"Could not find the truck with ID '{req.TruckId}'");
-        }
+        if (truck is null) return Result.Fail($"Could not find the truck with ID '{req.TruckId}'");
 
         var existingLoads = await GetExistingLoadsAsync(req, truck);
         var newLoads = await CreateNewLoads(req);
@@ -53,14 +50,11 @@ internal sealed class CreateTripHandler : RequestHandler<CreateTripCommand, Resu
     }
 
     /// <summary>
-    /// Creates new loads based on the provided command.
+    ///     Creates new loads based on the provided command.
     /// </summary>
     private async Task<IEnumerable<Load>> CreateNewLoads(CreateTripCommand command)
     {
-        if (command.NewLoads is null || !command.NewLoads.Any())
-        {
-            return [];
-        }
+        if (command.NewLoads is null || !command.NewLoads.Any()) return [];
 
         var loads = new List<Load>();
         var newLoadsCount = 0;
@@ -89,15 +83,12 @@ internal sealed class CreateTripHandler : RequestHandler<CreateTripCommand, Resu
     }
 
     /// <summary>
-    /// Retrieves existing loads based on the provided command and assigns them to the specified truck.
-    /// Clears the trip stop to avoid conflicts with the new trip.
+    ///     Retrieves existing loads based on the provided command and assigns them to the specified truck.
+    ///     Clears the trip stop to avoid conflicts with the new trip.
     /// </summary>
     private async Task<List<Load>> GetExistingLoadsAsync(CreateTripCommand command, Truck truck)
     {
-        if (command.ExistingLoadIds is null || !command.ExistingLoadIds.Any())
-        {
-            return [];
-        }
+        if (command.ExistingLoadIds is null || !command.ExistingLoadIds.Any()) return [];
 
         var loads = await _tenantUow.Repository<Load>().GetListAsync(i => command.ExistingLoadIds.Contains(i.Id));
 

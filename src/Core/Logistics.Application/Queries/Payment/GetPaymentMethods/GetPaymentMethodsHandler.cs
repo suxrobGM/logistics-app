@@ -17,7 +17,7 @@ internal sealed class GetPaymentMethodsHandler : RequestHandler<GetPaymentMethod
 
     protected override Task<Result<PaymentMethodDto[]>> HandleValidated(
         GetPaymentMethodsQuery req,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var specification = new GetTenantPaymentMethods(req.OrderBy);
 

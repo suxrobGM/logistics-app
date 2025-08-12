@@ -14,14 +14,11 @@ internal sealed class DeleteCustomerHandler : RequestHandler<DeleteCustomerComma
     }
 
     protected override async Task<Result> HandleValidated(
-        DeleteCustomerCommand req, CancellationToken cancellationToken)
+        DeleteCustomerCommand req, CancellationToken ct)
     {
         var customer = await _tenantUow.Repository<Customer>().GetByIdAsync(req.Id);
 
-        if (customer is null)
-        {
-            return Result.Fail($"Could not find a customer with ID {req.Id}");
-        }
+        if (customer is null) return Result.Fail($"Could not find a customer with ID {req.Id}");
 
         _tenantUow.Repository<Customer>().Delete(customer);
         await _tenantUow.SaveChangesAsync();

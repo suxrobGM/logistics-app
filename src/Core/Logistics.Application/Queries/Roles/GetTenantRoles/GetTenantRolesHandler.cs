@@ -16,7 +16,7 @@ internal sealed class GetTenantRolesHandler : RequestHandler<GetTenantRolesQuery
     }
 
     protected override async Task<PagedResult<RoleDto>> HandleValidated(
-        GetTenantRolesQuery req, CancellationToken cancellationToken)
+        GetTenantRolesQuery req, CancellationToken ct)
     {
         var totalItems = await _tenantUow.Repository<TenantRole>().CountAsync();
 

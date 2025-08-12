@@ -11,9 +11,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class UpdatePaymentMethodHandler : RequestHandler<UpdatePaymentMethodCommand, Result>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
-    private readonly IStripeService _stripeService;
     private readonly ILogger<UpdatePaymentMethodHandler> _logger;
+    private readonly IStripeService _stripeService;
+    private readonly ITenantUnityOfWork _tenantUow;
 
     public UpdatePaymentMethodHandler(
         ITenantUnityOfWork tenantUow,
@@ -26,7 +26,7 @@ internal sealed class UpdatePaymentMethodHandler : RequestHandler<UpdatePaymentM
     }
 
     protected override async Task<Result> HandleValidated(
-        UpdatePaymentMethodCommand req, CancellationToken cancellationToken)
+        UpdatePaymentMethodCommand req, CancellationToken ct)
     {
         return req.Type switch
         {
@@ -42,17 +42,16 @@ internal sealed class UpdatePaymentMethodHandler : RequestHandler<UpdatePaymentM
         var tenant = _tenantUow.GetCurrentTenant();
         var paymentMethod = await _tenantUow.Repository<CardPaymentMethod>().GetByIdAsync(command.Id);
 
-        if (paymentMethod is null)
-        {
-            return Result.Fail($"Payment method with id {command.Id} not found");
-        }
+        if (paymentMethod is null) return Result.Fail($"Payment method with id {command.Id} not found");
 
         paymentMethod.CardNumber = PropertyUpdater.UpdateIfChanged(command.CardNumber, paymentMethod.CardNumber);
         paymentMethod.Cvc = PropertyUpdater.UpdateIfChanged(command.Cvc, paymentMethod.Cvc);
         paymentMethod.ExpMonth = PropertyUpdater.UpdateIfChanged(command.ExpMonth, paymentMethod.ExpMonth);
         paymentMethod.ExpYear = PropertyUpdater.UpdateIfChanged(command.ExpYear, paymentMethod.ExpYear);
-        paymentMethod.BillingAddress = PropertyUpdater.UpdateIfChanged(command.BillingAddress, paymentMethod.BillingAddress);
-        paymentMethod.CardHolderName = PropertyUpdater.UpdateIfChanged(command.CardHolderName, paymentMethod.CardHolderName);
+        paymentMethod.BillingAddress =
+            PropertyUpdater.UpdateIfChanged(command.BillingAddress, paymentMethod.BillingAddress);
+        paymentMethod.CardHolderName =
+            PropertyUpdater.UpdateIfChanged(command.CardHolderName, paymentMethod.CardHolderName);
 
         await _stripeService.UpdatePaymentMethodAsync(paymentMethod);
         _tenantUow.Repository<CardPaymentMethod>().Update(paymentMethod);
@@ -69,18 +68,20 @@ internal sealed class UpdatePaymentMethodHandler : RequestHandler<UpdatePaymentM
         var tenant = _tenantUow.GetCurrentTenant();
         var paymentMethod = await _tenantUow.Repository<UsBankAccountPaymentMethod>().GetByIdAsync(command.Id);
 
-        if (paymentMethod is null)
-        {
-            return Result.Fail($"Payment method with id {command.Id} not found");
-        }
+        if (paymentMethod is null) return Result.Fail($"Payment method with id {command.Id} not found");
 
-        paymentMethod.AccountNumber = PropertyUpdater.UpdateIfChanged(command.AccountNumber, paymentMethod.AccountNumber);
+        paymentMethod.AccountNumber =
+            PropertyUpdater.UpdateIfChanged(command.AccountNumber, paymentMethod.AccountNumber);
         paymentMethod.BankName = PropertyUpdater.UpdateIfChanged(command.BankName, paymentMethod.BankName);
-        paymentMethod.RoutingNumber = PropertyUpdater.UpdateIfChanged(command.RoutingNumber, paymentMethod.RoutingNumber);
-        paymentMethod.AccountHolderType = PropertyUpdater.UpdateIfChanged(command.AccountHolderType, paymentMethod.AccountHolderType);
-        paymentMethod.AccountHolderName = PropertyUpdater.UpdateIfChanged(command.AccountHolderName, paymentMethod.AccountHolderName);
+        paymentMethod.RoutingNumber =
+            PropertyUpdater.UpdateIfChanged(command.RoutingNumber, paymentMethod.RoutingNumber);
+        paymentMethod.AccountHolderType =
+            PropertyUpdater.UpdateIfChanged(command.AccountHolderType, paymentMethod.AccountHolderType);
+        paymentMethod.AccountHolderName =
+            PropertyUpdater.UpdateIfChanged(command.AccountHolderName, paymentMethod.AccountHolderName);
         paymentMethod.AccountType = PropertyUpdater.UpdateIfChanged(command.AccountType, paymentMethod.AccountType);
-        paymentMethod.BillingAddress = PropertyUpdater.UpdateIfChanged(command.BillingAddress, paymentMethod.BillingAddress);
+        paymentMethod.BillingAddress =
+            PropertyUpdater.UpdateIfChanged(command.BillingAddress, paymentMethod.BillingAddress);
 
         _tenantUow.Repository<UsBankAccountPaymentMethod>().Update(paymentMethod);
         await _tenantUow.SaveChangesAsync();
@@ -96,16 +97,16 @@ internal sealed class UpdatePaymentMethodHandler : RequestHandler<UpdatePaymentM
         var tenant = _tenantUow.GetCurrentTenant();
         var paymentMethod = await _tenantUow.Repository<BankAccountPaymentMethod>().GetByIdAsync(command.Id);
 
-        if (paymentMethod is null)
-        {
-            return Result.Fail($"Payment method with id {command.Id} not found");
-        }
+        if (paymentMethod is null) return Result.Fail($"Payment method with id {command.Id} not found");
 
-        paymentMethod.AccountNumber = PropertyUpdater.UpdateIfChanged(command.AccountNumber, paymentMethod.AccountNumber);
+        paymentMethod.AccountNumber =
+            PropertyUpdater.UpdateIfChanged(command.AccountNumber, paymentMethod.AccountNumber);
         paymentMethod.BankName = PropertyUpdater.UpdateIfChanged(command.BankName, paymentMethod.BankName);
-        paymentMethod.AccountHolderName = PropertyUpdater.UpdateIfChanged(command.AccountHolderName, paymentMethod.AccountHolderName);
+        paymentMethod.AccountHolderName =
+            PropertyUpdater.UpdateIfChanged(command.AccountHolderName, paymentMethod.AccountHolderName);
         paymentMethod.SwiftCode = PropertyUpdater.UpdateIfChanged(command.SwiftCode, paymentMethod.SwiftCode);
-        paymentMethod.BillingAddress = PropertyUpdater.UpdateIfChanged(command.BillingAddress, paymentMethod.BillingAddress);
+        paymentMethod.BillingAddress =
+            PropertyUpdater.UpdateIfChanged(command.BillingAddress, paymentMethod.BillingAddress);
 
         _tenantUow.Repository<BankAccountPaymentMethod>().Update(paymentMethod);
         await _tenantUow.SaveChangesAsync();

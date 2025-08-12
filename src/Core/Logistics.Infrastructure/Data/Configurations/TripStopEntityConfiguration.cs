@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Logistics.Infrastructure.Data.Configurations;
 
-public class TripStopEntityConfiguration : IEntityTypeConfiguration<TripStop>
+internal sealed class TripStopEntityConfiguration : IEntityTypeConfiguration<TripStop>
 {
     public void Configure(EntityTypeBuilder<TripStop> builder)
     {

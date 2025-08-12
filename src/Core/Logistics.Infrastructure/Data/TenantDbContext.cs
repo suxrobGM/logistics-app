@@ -1,8 +1,7 @@
 using System.Text.Json;
 
-using Logistics.Domain.Entities;
 using Logistics.Domain.Services;
-using Logistics.Infrastructure.Data.Configurations;
+using Logistics.Infrastructure.Data.Extensions;
 using Logistics.Infrastructure.Helpers;
 using Logistics.Infrastructure.Interceptors;
 using Logistics.Infrastructure.Options;
@@ -15,9 +14,9 @@ namespace Logistics.Infrastructure.Data;
 
 public class TenantDbContext : DbContext
 {
-    private readonly DispatchDomainEventsInterceptor? _dispatchDomain;
     private readonly AuditableEntitySaveChangesInterceptor? _auditableEntity;
     private readonly string _connectionString;
+    private readonly DispatchDomainEventsInterceptor? _dispatchDomain;
     private readonly ILogger<TenantDbContext>? _logger;
 
     public TenantDbContext(
@@ -38,14 +37,8 @@ public class TenantDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        if (_dispatchDomain is not null)
-        {
-            options.AddInterceptors(_dispatchDomain);
-        }
-        if (_auditableEntity is not null)
-        {
-            options.AddInterceptors(_auditableEntity);
-        }
+        if (_dispatchDomain is not null) options.AddInterceptors(_dispatchDomain);
+        if (_auditableEntity is not null) options.AddInterceptors(_auditableEntity);
 
         if (!options.IsConfigured)
         {
@@ -60,7 +53,9 @@ public class TenantDbContext : DbContext
             }
 
             DbContextHelpers.ConfigurePostgreSql(tenantConnectionString, options);
-            _logger?.LogInformation("Configured tenant database for '{TenantName}' with connection string: {ConnectionString}", tenantName, tenantConnectionString);
+            _logger?.LogInformation(
+                "Configured tenant database for '{TenantName}' with connection string: {ConnectionString}", tenantName,
+                tenantConnectionString);
         }
     }
 
@@ -69,23 +64,25 @@ public class TenantDbContext : DbContext
         base.OnModelCreating(builder);
 
         //builder.ApplyConfiguration(new AuditableEntityConfiguration());
-        builder.ApplyConfiguration(new InvoiceEntityConfiguration());
-        builder.ApplyConfiguration(new InvoiceEntityConfiguration.LoadInvoiceEntityConfiguration());
-        builder.ApplyConfiguration(new InvoiceEntityConfiguration.SubscriptionInvoiceEntityConfiguration());
-        builder.ApplyConfiguration(new InvoiceEntityConfiguration.PayrollInvoiceEntityConfiguration());
-        builder.ApplyConfiguration(new LoadEntityConfiguration());
-        builder.ApplyConfiguration(new LoadDocumentEntityConfiguration());
-        builder.ApplyConfiguration(new PaymentEntityConfiguration());
-        builder.ApplyConfiguration(new PaymentMethodEntityConfiguration());
-        builder.ApplyConfiguration(new EmployeeEntityConfiguration());
-        builder.ApplyConfiguration(new TenantRoleEntityConfiguration());
-        builder.ApplyConfiguration(new TruckEntityConfiguration());
-        builder.ApplyConfiguration(new TripEntityConfiguration());
-        builder.ApplyConfiguration(new TripStopEntityConfiguration());
+        // builder.ApplyConfiguration(new InvoiceEntityConfiguration());
+        // builder.ApplyConfiguration(new InvoiceEntityConfiguration.LoadInvoiceEntityConfiguration());
+        // builder.ApplyConfiguration(new InvoiceEntityConfiguration.SubscriptionInvoiceEntityConfiguration());
+        // builder.ApplyConfiguration(new InvoiceEntityConfiguration.PayrollInvoiceEntityConfiguration());
+        // builder.ApplyConfiguration(new LoadEntityConfiguration());
+        // builder.ApplyConfiguration(new DocumentEntityConfiguration());
+        // builder.ApplyConfiguration(new PaymentEntityConfiguration());
+        // builder.ApplyConfiguration(new PaymentMethodEntityConfiguration());
+        // builder.ApplyConfiguration(new EmployeeEntityConfiguration());
+        // builder.ApplyConfiguration(new TenantRoleEntityConfiguration());
+        // builder.ApplyConfiguration(new TruckEntityConfiguration());
+        // builder.ApplyConfiguration(new TripEntityConfiguration());
+        // builder.ApplyConfiguration(new TripStopEntityConfiguration());
 
-        builder.Entity<TenantRoleClaim>().ToTable("RoleClaims");
-        builder.Entity<Notification>().ToTable("Notifications");
-        builder.Entity<Customer>().ToTable("Customers");
+        builder.ApplyTenantConfigurationsFromAssemblyContaining<TenantDbContext>();
+
+        //builder.Entity<TenantRoleClaim>().ToTable("RoleClaims");
+        //builder.Entity<Notification>().ToTable("Notifications");
+        //builder.Entity<Customer>().ToTable("Customers");
 
         builder.Entity<CompanyStatsDto>(entity =>
         {

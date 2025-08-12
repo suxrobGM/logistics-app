@@ -4,24 +4,20 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
-public abstract class Invoice : Entity, IMasterEntity, ITenantEntity, IAuditableEntity
+public abstract class Invoice : AuditableEntity, IMasterEntity, ITenantEntity, IAuditableEntity
 {
     public long Number { get; set; }
     public abstract InvoiceType Type { get; set; }
     public InvoiceStatus Status { get; set; }
 
     /// <summary>
-    /// Total inclusive of tax & discounts.
+    ///     Total inclusive of tax & discounts.
     /// </summary>
     public required Money Total { get; set; }
 
     public string? Notes { get; set; }
     public DateTime? DueDate { get; set; }
     public string? StripeInvoiceId { get; set; }
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
-    public string? CreatedBy { get; set; }
-    public DateTimeOffset? LastModifiedAt { get; set; }
-    public string? LastModifiedBy { get; set; }
 
     public virtual List<Payment> Payments { get; set; } = [];
 

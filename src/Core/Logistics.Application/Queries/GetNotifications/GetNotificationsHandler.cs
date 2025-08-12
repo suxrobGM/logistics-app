@@ -16,10 +16,11 @@ internal sealed class GetNotificationsHandler : RequestHandler<GetNotificationsQ
 
     protected override async Task<Result<NotificationDto[]>> HandleValidated(
         GetNotificationsQuery req,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var notificationsList =
-            await _tenantUow.Repository<Notification>().GetListAsync(i => i.CreatedDate >= req.StartDate && i.CreatedDate <= req.EndDate);
+            await _tenantUow.Repository<Notification>()
+                .GetListAsync(i => i.CreatedDate >= req.StartDate && i.CreatedDate <= req.EndDate);
 
         var notificationsDto = notificationsList
             .Select(i => i.ToDto())

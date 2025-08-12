@@ -15,21 +15,15 @@ internal sealed class UpdatePaymentHandler : RequestHandler<UpdatePaymentCommand
     }
 
     protected override async Task<Result> HandleValidated(
-        UpdatePaymentCommand req, CancellationToken cancellationToken)
+        UpdatePaymentCommand req, CancellationToken ct)
     {
         var payment = await _tenantUow.Repository<Payment>().GetByIdAsync(req.Id);
 
-        if (payment is null)
-        {
-            return Result.Fail($"Could not find a payment with ID '{req.Id}'");
-        }
+        if (payment is null) return Result.Fail($"Could not find a payment with ID '{req.Id}'");
 
         var updateResult = await TryUpdatePaymentMethod(payment, req.PaymentMethodId);
 
-        if (!updateResult.Success)
-        {
-            return updateResult;
-        }
+        if (!updateResult.Success) return updateResult;
 
         payment.Status = PropertyUpdater.UpdateIfChanged(req.Status, payment.Status);
         payment.Amount = PropertyUpdater.UpdateIfChanged(req.Amount, payment.Amount.Amount);
@@ -43,18 +37,12 @@ internal sealed class UpdatePaymentHandler : RequestHandler<UpdatePaymentCommand
 
     private async Task<Result> TryUpdatePaymentMethod(Payment payment, Guid? paymentMethodId)
     {
-        if (!paymentMethodId.HasValue || payment.MethodId == paymentMethodId)
-        {
-            return Result.Succeed();
-        }
+        if (!paymentMethodId.HasValue || payment.MethodId == paymentMethodId) return Result.Succeed();
 
         var paymentMethod = await _tenantUow.Repository<PaymentMethod>()
             .GetByIdAsync(paymentMethodId.Value);
 
-        if (paymentMethod is null)
-        {
-            return Result.Fail($"Could not find a payment method with ID '{paymentMethodId}'");
-        }
+        if (paymentMethod is null) return Result.Fail($"Could not find a payment method with ID '{paymentMethodId}'");
 
         payment.MethodId = paymentMethod.Id;
         return Result.Succeed();

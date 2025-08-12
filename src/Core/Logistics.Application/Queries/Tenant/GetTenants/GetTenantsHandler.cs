@@ -1,4 +1,5 @@
 using Logistics.Application.Specifications;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
@@ -15,12 +16,12 @@ internal sealed class GetTenantsHandler : RequestHandler<GetTenantsQuery, PagedR
     }
 
     protected override async Task<PagedResult<TenantDto>> HandleValidated(
-        GetTenantsQuery req, CancellationToken cancellationToken)
+        GetTenantsQuery req, CancellationToken ct)
     {
-        var totalItems = await _masterUow.Repository<Domain.Entities.Tenant>().CountAsync();
+        var totalItems = await _masterUow.Repository<Tenant>().CountAsync();
         var spec = new SearchTenants(req.Search, req.OrderBy, req.Page, req.PageSize);
 
-        var items = _masterUow.Repository<Domain.Entities.Tenant>()
+        var items = _masterUow.Repository<Tenant>()
             .ApplySpecification(spec)
             .Select(i => i.ToDto(req.IncludeConnectionStrings, null))
             .ToArray();

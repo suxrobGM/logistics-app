@@ -9,9 +9,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class CreateSubscriptionPlanHandler : RequestHandler<CreateSubscriptionPlanCommand, Result>
 {
+    private readonly ILogger<CreateSubscriptionPlanHandler> _logger;
     private readonly IMasterUnityOfWork _masterUow;
     private readonly IStripeService _stripeService;
-    private readonly ILogger<CreateSubscriptionPlanHandler> _logger;
 
     public CreateSubscriptionPlanHandler(
         IMasterUnityOfWork masterUow,
@@ -24,7 +24,7 @@ internal sealed class CreateSubscriptionPlanHandler : RequestHandler<CreateSubsc
     }
 
     protected override async Task<Result> HandleValidated(
-        CreateSubscriptionPlanCommand req, CancellationToken cancellationToken)
+        CreateSubscriptionPlanCommand req, CancellationToken ct)
     {
         var subscriptionPlan = new SubscriptionPlan
         {

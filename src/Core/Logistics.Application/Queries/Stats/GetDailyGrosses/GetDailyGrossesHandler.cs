@@ -16,7 +16,7 @@ internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQue
     }
 
     protected override async Task<Result<DailyGrossesDto>> HandleValidated(
-        GetDailyGrossesQuery req, CancellationToken cancellationToken)
+        GetDailyGrossesQuery req, CancellationToken ct)
     {
         var truckId = req.TruckId;
 
@@ -26,9 +26,7 @@ internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQue
                                                                            i.SecondaryDriverId == req.UserId.Value);
 
             if (truck is null)
-            {
                 return Result<DailyGrossesDto>.Fail($"Could not find a truck with driver ID '{req.UserId}'");
-            }
 
             truckId = truck.Id;
         }

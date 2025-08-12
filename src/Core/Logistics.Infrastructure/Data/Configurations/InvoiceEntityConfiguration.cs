@@ -11,8 +11,9 @@ internal sealed class InvoiceEntityConfiguration : IEntityTypeConfiguration<Invo
     // Invoice (TPH)
     public void Configure(EntityTypeBuilder<Invoice> builder)
     {
-        builder.ToTable("Invoices")
-            .HasDiscriminator(i => i.Type)
+        builder.ToTable("Invoices");
+
+        builder.HasDiscriminator(i => i.Type)
             .HasValue<LoadInvoice>(InvoiceType.Load)
             .HasValue<SubscriptionInvoice>(InvoiceType.Subscription)
             .HasValue<PayrollInvoice>(InvoiceType.Payroll);
@@ -30,36 +31,39 @@ internal sealed class InvoiceEntityConfiguration : IEntityTypeConfiguration<Invo
             money.Property(m => m.Currency).HasMaxLength(3);
         });
     }
+}
 
-    // Fine-tune derived types for LoadInvoice, SubscriptionInvoice, and PayrollInvoice
-    public sealed class LoadInvoiceEntityConfiguration : IEntityTypeConfiguration<LoadInvoice>
-    {
-        public void Configure(EntityTypeBuilder<LoadInvoice> builder)
-        {
-            builder.HasOne(i => i.Load)
-                .WithMany(l => l.Invoices)
-                .HasForeignKey(i => i.LoadId);
-        }
-    }
+#region Derived Types Configuration
 
-    public sealed class SubscriptionInvoiceEntityConfiguration : IEntityTypeConfiguration<SubscriptionInvoice>
+// Fine-tune derived types for LoadInvoice, SubscriptionInvoice, and PayrollInvoice
+public sealed class LoadInvoiceEntityConfiguration : IEntityTypeConfiguration<LoadInvoice>
+{
+    public void Configure(EntityTypeBuilder<LoadInvoice> builder)
     {
-        public void Configure(EntityTypeBuilder<SubscriptionInvoice> builder)
-        {
-            // builder.HasOne(i => i.Subscription)
-            //     .WithMany(s => s.Invoices)
-            //     .HasForeignKey(i => i.SubscriptionId);
-        }
-    }
-
-    public sealed class PayrollInvoiceEntityConfiguration : IEntityTypeConfiguration<PayrollInvoice>
-    {
-        public void Configure(EntityTypeBuilder<PayrollInvoice> builder)
-        {
-            builder.HasOne(i => i.Employee)
-                .WithMany(e => e.PayrollInvoices)
-                .HasForeignKey(i => i.EmployeeId);
-        }
+        builder.HasOne(i => i.Load)
+            .WithMany(l => l.Invoices)
+            .HasForeignKey(i => i.LoadId);
     }
 }
 
+public sealed class SubscriptionInvoiceEntityConfiguration : IEntityTypeConfiguration<SubscriptionInvoice>
+{
+    public void Configure(EntityTypeBuilder<SubscriptionInvoice> builder)
+    {
+        // builder.HasOne(i => i.Subscription)
+        //     .WithMany(s => s.Invoices)
+        //     .HasForeignKey(i => i.SubscriptionId);
+    }
+}
+
+public sealed class PayrollInvoiceEntityConfiguration : IEntityTypeConfiguration<PayrollInvoice>
+{
+    public void Configure(EntityTypeBuilder<PayrollInvoice> builder)
+    {
+        builder.HasOne(i => i.Employee)
+            .WithMany(e => e.PayrollInvoices)
+            .HasForeignKey(i => i.EmployeeId);
+    }
+}
+
+#endregion

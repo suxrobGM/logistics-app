@@ -4,7 +4,7 @@ namespace Logistics.Domain.Entities;
 
 public class UsBankAccountPaymentMethod : PaymentMethod
 {
-    public override PaymentMethodType Type { get; set; } = PaymentMethodType.UsBankAccount;
+    public override PaymentMethodType Type { get; protected set; } = PaymentMethodType.UsBankAccount;
     public required string BankName { get; set; }
     public required string AccountHolderName { get; set; }
     public required string AccountNumber { get; set; }
@@ -13,7 +13,7 @@ public class UsBankAccountPaymentMethod : PaymentMethod
     public UsBankAccountType AccountType { get; set; }
 
     /// <summary>
-    /// Stripe verification URL for ACH verification
+    ///     Stripe verification URL for ACH verification
     /// </summary>
     public string? VerificationUrl { get; set; }
 }

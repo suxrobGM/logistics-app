@@ -16,7 +16,7 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrosse
     }
 
     protected override async Task<Result<MonthlyGrossesDto>> HandleValidated(
-        GetMonthlyGrossesQuery req, CancellationToken cancellationToken)
+        GetMonthlyGrossesQuery req, CancellationToken ct)
     {
         var truckId = req.TruckId;
 
@@ -26,9 +26,7 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrosse
                                                                            i.SecondaryDriverId == req.UserId.Value);
 
             if (truck is null)
-            {
                 return Result<MonthlyGrossesDto>.Fail($"Could not find a truck with driver ID '{req.UserId}'");
-            }
 
             truckId = truck.Id;
         }

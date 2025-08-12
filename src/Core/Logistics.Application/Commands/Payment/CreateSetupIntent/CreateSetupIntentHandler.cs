@@ -8,9 +8,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class CreateSetupIntentHandler : RequestHandler<CreateSetupIntentCommand, Result<SetupIntentDto>>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
-    private readonly IStripeService _stripeService;
     private readonly ILogger<CreateSetupIntentHandler> _logger;
+    private readonly IStripeService _stripeService;
+    private readonly ITenantUnityOfWork _tenantUow;
 
     public CreateSetupIntentHandler(
         ITenantUnityOfWork tenantUow,
@@ -23,7 +23,7 @@ internal sealed class CreateSetupIntentHandler : RequestHandler<CreateSetupInten
     }
 
     protected override async Task<Result<SetupIntentDto>> HandleValidated(
-        CreateSetupIntentCommand req, CancellationToken cancellationToken)
+        CreateSetupIntentCommand req, CancellationToken ct)
     {
         var tenant = _tenantUow.GetCurrentTenant();
 

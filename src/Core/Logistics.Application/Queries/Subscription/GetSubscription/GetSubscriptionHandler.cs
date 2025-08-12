@@ -15,14 +15,12 @@ internal sealed class GetSubscriptionHandler : RequestHandler<GetSubscriptionQue
     }
 
     protected override async Task<Result<SubscriptionDto>> HandleValidated(
-        GetSubscriptionQuery req, CancellationToken cancellationToken)
+        GetSubscriptionQuery req, CancellationToken ct)
     {
         var subscription = await _masterUow.Repository<Subscription>().GetAsync(i => i.Id == req.Id);
 
         if (subscription is null)
-        {
             return Result<SubscriptionDto>.Fail($"Could not find a subscription with ID '{req.Id}'");
-        }
 
         var dto = subscription.ToDto();
         return Result<SubscriptionDto>.Succeed(dto);

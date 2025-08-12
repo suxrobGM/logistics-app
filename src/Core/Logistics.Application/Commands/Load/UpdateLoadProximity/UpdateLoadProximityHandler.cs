@@ -21,14 +21,11 @@ internal sealed class UpdateLoadProximityHandler : RequestHandler<UpdateLoadProx
     }
 
     protected override async Task<Result> HandleValidated(
-        UpdateLoadProximityCommand req, CancellationToken cancellationToken)
+        UpdateLoadProximityCommand req, CancellationToken ct)
     {
         var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.LoadId);
 
-        if (load is null)
-        {
-            return Result.Fail($"Could not find load with ID '{req.LoadId}'");
-        }
+        if (load is null) return Result.Fail($"Could not find load with ID '{req.LoadId}'");
 
         LoadStatus? loadStatus = null;
         if (req.CanConfirmPickUp.HasValue && req.CanConfirmPickUp != load.CanConfirmPickUp)
@@ -36,6 +33,7 @@ internal sealed class UpdateLoadProximityHandler : RequestHandler<UpdateLoadProx
             load.CanConfirmPickUp = req.CanConfirmPickUp.Value;
             loadStatus = LoadStatus.PickedUp;
         }
+
         if (req.CanConfirmDelivery.HasValue && req.CanConfirmDelivery != load.CanConfirmDelivery)
         {
             load.CanConfirmDelivery = req.CanConfirmDelivery.Value;
@@ -46,9 +44,7 @@ internal sealed class UpdateLoadProximityHandler : RequestHandler<UpdateLoadProx
         var changes = await _tenantUow.SaveChangesAsync();
 
         if (loadStatus.HasValue && changes > 0)
-        {
             await _pushNotificationService.SendConfirmLoadStatusNotificationAsync(load, loadStatus.Value);
-        }
         return Result.Succeed();
     }
 }

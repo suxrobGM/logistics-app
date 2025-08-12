@@ -12,24 +12,17 @@ using UpdateLoadProximityCommand = Logistics.Application.Commands.UpdateLoadProx
 
 namespace Logistics.API.Controllers;
 
-[Route("drivers")]
 [ApiController]
-public class DriverController : ControllerBase
+[Route("drivers")]
+public class DriverController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public DriverController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [HttpGet("{userId:guid}")]
     [ProducesResponseType(typeof(Result<EmployeeDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Drivers.View)]
     public async Task<IActionResult> GetById(Guid userId)
     {
-        var result = await _mediator.Send(new GetEmployeeByIdQuery { UserId = userId });
+        var result = await mediator.Send(new GetEmployeeByIdQuery { UserId = userId });
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -40,7 +33,7 @@ public class DriverController : ControllerBase
     public async Task<IActionResult> SetDeviceToken(Guid userId, [FromBody] SetDriverDeviceTokenCommand request)
     {
         request.UserId = userId;
-        var result = await _mediator.Send(request);
+        var result = await mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -50,7 +43,7 @@ public class DriverController : ControllerBase
     [Authorize(Policy = Permissions.Drivers.Edit)]
     public async Task<IActionResult> ConfirmLoadStatus([FromBody] ConfirmLoadStatusCommand request)
     {
-        var result = await _mediator.Send(request);
+        var result = await mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -60,7 +53,7 @@ public class DriverController : ControllerBase
     [Authorize(Policy = Permissions.Drivers.Edit)]
     public async Task<IActionResult> UpdateLoadProximity([FromBody] UpdateLoadProximityCommand request)
     {
-        var result = await _mediator.Send(request);
+        var result = await mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 }

@@ -9,7 +9,7 @@ public interface IMasterUnityOfWork : IDisposable
     IMasterRepository<TEntity, TKey> Repository<TEntity, TKey>() where TEntity : class, IEntity<TKey>, IMasterEntity;
 
     /// <summary>
-    /// Save changes to database
+    ///     Save changes to the database
     /// </summary>
     /// <returns>Number of rows modified after save changes.</returns>
     Task<int> SaveChangesAsync();

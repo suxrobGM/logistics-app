@@ -16,14 +16,11 @@ internal sealed class GetUserByIdHandler : RequestHandler<GetUserByIdQuery, Resu
     }
 
     protected override async Task<Result<UserDto>> HandleValidated(
-        GetUserByIdQuery req, CancellationToken cancellationToken)
+        GetUserByIdQuery req, CancellationToken ct)
     {
         var userEntity = await _userManager.FindByIdAsync(req.UserId);
 
-        if (userEntity is null)
-        {
-            return Result<UserDto>.Fail($"Could not find an user with ID '{req.UserId}'");
-        }
+        if (userEntity is null) return Result<UserDto>.Fail($"Could not find an user with ID '{req.UserId}'");
 
         var userRoles = await _userManager.GetRolesAsync(userEntity);
 

@@ -16,7 +16,7 @@ internal sealed class GetAppRolesHandler : RequestHandler<GetAppRolesQuery, Page
     }
 
     protected override async Task<PagedResult<RoleDto>> HandleValidated(
-        GetAppRolesQuery req, CancellationToken cancellationToken)
+        GetAppRolesQuery req, CancellationToken ct)
     {
         var totalItems = await _masterUow.Repository<AppRole>().CountAsync();
 

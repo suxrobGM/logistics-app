@@ -14,14 +14,11 @@ internal sealed class DeleteSubscriptionPlanHandler : RequestHandler<DeleteSubsc
     }
 
     protected override async Task<Result> HandleValidated(
-        DeleteSubscriptionPlanCommand req, CancellationToken cancellationToken)
+        DeleteSubscriptionPlanCommand req, CancellationToken ct)
     {
         var subscriptionPlan = await _masterUow.Repository<SubscriptionPlan>().GetByIdAsync(req.Id);
 
-        if (subscriptionPlan is null)
-        {
-            return Result.Fail($"Could not find a subscription plan with ID '{req.Id}'");
-        }
+        if (subscriptionPlan is null) return Result.Fail($"Could not find a subscription plan with ID '{req.Id}'");
 
         _masterUow.Repository<SubscriptionPlan>().Delete(subscriptionPlan);
         await _masterUow.SaveChangesAsync();

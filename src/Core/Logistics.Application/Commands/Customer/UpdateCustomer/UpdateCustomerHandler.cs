@@ -14,14 +14,11 @@ internal sealed class UpdateCustomerHandler : RequestHandler<UpdateCustomerComma
     }
 
     protected override async Task<Result> HandleValidated(
-        UpdateCustomerCommand req, CancellationToken cancellationToken)
+        UpdateCustomerCommand req, CancellationToken ct)
     {
         var customerEntity = await _tenantUow.Repository<Customer>().GetByIdAsync(req.Id);
 
-        if (customerEntity is null)
-        {
-            return Result.Fail($"Could not find a customer with ID '{req.Id}'");
-        }
+        if (customerEntity is null) return Result.Fail($"Could not find a customer with ID '{req.Id}'");
 
         customerEntity.Name = req.Name;
         _tenantUow.Repository<Customer>().Update(customerEntity);

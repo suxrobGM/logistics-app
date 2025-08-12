@@ -9,9 +9,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class RenewSubscriptionHandler : RequestHandler<RenewSubscriptionCommand, Result>
 {
+    private readonly ILogger<RenewSubscriptionHandler> _logger;
     private readonly IMasterUnityOfWork _masterUow;
     private readonly IStripeService _stripeService;
-    private readonly ILogger<RenewSubscriptionHandler> _logger;
 
     public RenewSubscriptionHandler(
         IMasterUnityOfWork masterUow,
@@ -24,19 +24,19 @@ internal sealed class RenewSubscriptionHandler : RequestHandler<RenewSubscriptio
     }
 
     protected override async Task<Result> HandleValidated(
-        RenewSubscriptionCommand req, CancellationToken cancellationToken)
+        RenewSubscriptionCommand req, CancellationToken ct)
     {
         var subscription = await _masterUow.Repository<Subscription>().GetByIdAsync(req.Id);
 
-        if (subscription is null)
-        {
-            return Result.Fail($"Could not find a subscription with ID '{req.Id}'");
-        }
+        if (subscription is null) return Result.Fail($"Could not find a subscription with ID '{req.Id}'");
 
         var employeeCount = await _masterUow.Repository<User>().CountAsync(i => i.TenantId == subscription.TenantId);
 
-        _logger.LogInformation("Renewing stripe subscription {StripeSubscriptionId}", subscription.StripeSubscriptionId);
-        var stripeSubscription = await _stripeService.RenewSubscriptionAsync(subscription, subscription.Plan, subscription.Tenant, employeeCount);
+        _logger.LogInformation("Renewing stripe subscription {StripeSubscriptionId}",
+            subscription.StripeSubscriptionId);
+        var stripeSubscription =
+            await _stripeService.RenewSubscriptionAsync(subscription, subscription.Plan, subscription.Tenant,
+                employeeCount);
         subscription.StripeSubscriptionId = stripeSubscription.Id;
         subscription.Status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
         subscription.StartDate = stripeSubscription.StartDate;

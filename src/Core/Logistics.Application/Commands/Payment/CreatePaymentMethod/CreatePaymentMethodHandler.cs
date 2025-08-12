@@ -10,9 +10,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class CreatePaymentMethodHandler : RequestHandler<CreatePaymentMethodCommand, Result>
 {
-    private readonly ITenantUnityOfWork _tenantUow;
-    private readonly IStripeService _stripeService;
     private readonly ILogger<CreatePaymentMethodHandler> _logger;
+    private readonly IStripeService _stripeService;
+    private readonly ITenantUnityOfWork _tenantUow;
 
     public CreatePaymentMethodHandler(
         ITenantUnityOfWork tenantUow,
@@ -25,7 +25,7 @@ internal sealed class CreatePaymentMethodHandler : RequestHandler<CreatePaymentM
     }
 
     protected override async Task<Result> HandleValidated(
-        CreatePaymentMethodCommand req, CancellationToken cancellationToken)
+        CreatePaymentMethodCommand req, CancellationToken ct)
     {
         // If there are no payment methods for the tenant, set the first one as default
         var paymentMethodsCount = await _tenantUow.Repository<PaymentMethod>().CountAsync();
@@ -55,7 +55,6 @@ internal sealed class CreatePaymentMethodHandler : RequestHandler<CreatePaymentM
         var tenant = _tenantUow.GetCurrentTenant();
         var paymentMethod = new CardPaymentMethod
         {
-            Type = PaymentMethodType.Card,
             CardNumber = command.CardNumber!.Replace(" ", ""),
             Cvc = command.Cvc!,
             ExpMonth = command.ExpMonth!.Value,
@@ -80,7 +79,6 @@ internal sealed class CreatePaymentMethodHandler : RequestHandler<CreatePaymentM
         var tenant = _tenantUow.GetCurrentTenant();
         var paymentMethod = new UsBankAccountPaymentMethod
         {
-            Type = PaymentMethodType.UsBankAccount,
             AccountNumber = command.AccountNumber!.Replace(" ", ""),
             AccountHolderName = command.AccountHolderName!,
             BankName = command.BankName!,
@@ -105,9 +103,8 @@ internal sealed class CreatePaymentMethodHandler : RequestHandler<CreatePaymentM
         CreatePaymentMethodCommand command, bool setDefault = false)
     {
         var tenant = _tenantUow.GetCurrentTenant();
-        var paymentMethod = new BankAccountPaymentMethod()
+        var paymentMethod = new BankAccountPaymentMethod
         {
-            Type = PaymentMethodType.InternationalBankAccount,
             AccountNumber = command.AccountNumber!,
             AccountHolderName = command.AccountHolderName!,
             BankName = command.BankName!,

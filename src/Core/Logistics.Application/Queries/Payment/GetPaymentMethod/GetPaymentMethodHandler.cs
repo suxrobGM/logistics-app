@@ -15,14 +15,12 @@ internal sealed class GetPaymentMethodHandler : RequestHandler<GetPaymentMethodQ
     }
 
     protected override async Task<Result<PaymentMethodDto>> HandleValidated(
-        GetPaymentMethodQuery req, CancellationToken cancellationToken)
+        GetPaymentMethodQuery req, CancellationToken ct)
     {
         var paymentMethodEntity = await _tenantUow.Repository<PaymentMethod>().GetByIdAsync(req.Id);
 
         if (paymentMethodEntity is null)
-        {
             return Result<PaymentMethodDto>.Fail($"Could not find a payment method with ID {req.Id}");
-        }
 
         var paymentMethodDto = paymentMethodEntity.ToDto();
         return Result<PaymentMethodDto>.Succeed(paymentMethodDto);
