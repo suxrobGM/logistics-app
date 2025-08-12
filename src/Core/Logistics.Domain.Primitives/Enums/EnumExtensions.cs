@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace Logistics.Domain.Primitives.Enums;
 
@@ -13,7 +13,7 @@ public static class EnumExtensions
         {
             return enumValue.ToString();
         }
-        
+
         var descAttribute = Attribute.GetCustomAttribute(fieldInfo, typeof(DescriptionAttribute)) as DescriptionAttribute;
 
         // Return the description, if it exists; otherwise, return the enum name

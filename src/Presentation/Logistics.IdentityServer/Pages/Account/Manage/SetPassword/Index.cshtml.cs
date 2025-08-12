@@ -1,7 +1,8 @@
+using Logistics.Domain.Entities;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Logistics.Domain.Entities;
 
 namespace Logistics.IdentityServer.Pages.Account.Manage.SetPassword
 {

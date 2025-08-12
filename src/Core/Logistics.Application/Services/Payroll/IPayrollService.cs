@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 
 namespace Logistics.Application.Services;
 
@@ -6,7 +6,7 @@ public interface IPayrollService
 {
     Task GenerateMonthlyPayrollsAsync();
     Task GenerateWeeklyPayrollsAsync();
-    
+
     /// <summary>
     /// Creates a payroll invoice for the given employee and date range.
     /// </summary>

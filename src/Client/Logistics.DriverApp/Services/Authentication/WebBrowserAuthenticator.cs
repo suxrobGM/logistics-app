@@ -1,5 +1,6 @@
-﻿using Duende.IdentityModel.Client;
+using Duende.IdentityModel.Client;
 using Duende.IdentityModel.OidcClient.Browser;
+
 using IBrowser = Duende.IdentityModel.OidcClient.Browser.IBrowser;
 
 namespace Logistics.DriverApp.Services.Authentication;

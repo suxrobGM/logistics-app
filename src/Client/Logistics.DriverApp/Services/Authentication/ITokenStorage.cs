@@ -1,4 +1,4 @@
-﻿namespace Logistics.DriverApp.Services.Authentication;
+namespace Logistics.DriverApp.Services.Authentication;
 
 /// <summary>
 /// A storage mechanism for storing the access token and refresh token.
@@ -10,7 +10,7 @@ public interface ITokenStorage
     /// </summary>
     /// <returns>The <see cref="TokenInfo"/> data if found from the cache otherwise null</returns>
     Task<TokenInfo?> GetTokenAsync();
-    
+
     /// <summary>
     /// Saves access token, access token expiration and refresh tokens to the secure cache.
     /// </summary>
@@ -18,7 +18,7 @@ public interface ITokenStorage
     /// <param name="accessTokenExpiration">Access Token Expiration</param>
     /// <param name="refreshToken">Refresh Token</param>
     Task SaveTokenAsync(string accessToken, DateTimeOffset accessTokenExpiration, string refreshToken);
-    
+
     /// <summary>
     /// Clears all tokens from the secure cache
     /// </summary>

@@ -1,4 +1,4 @@
-﻿namespace Logistics.Shared.Identity.Roles;
+namespace Logistics.Shared.Identity.Roles;
 
 public static class AppRoles
 {

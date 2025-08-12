@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Specifications;
+using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -25,7 +25,7 @@ internal sealed class GetSubscriptionPlansHandler : RequestHandler<GetSubscripti
             .ApplySpecification(spec)
             .Select(i => i.ToDto())
             .ToArray();
-        
+
         return PagedResult<SubscriptionPlanDto>.Succeed(items, totalItems, req.PageSize);
     }
 }

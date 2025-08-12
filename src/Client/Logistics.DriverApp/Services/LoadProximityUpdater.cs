@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging;
+
 using Logistics.Domain.Primitives.Enums;
 using Logistics.DriverApp.Messages;
 using Logistics.DriverApp.Models;
@@ -18,7 +19,7 @@ public class LoadProximityUpdater : ILoadProximityUpdater
     public async Task UpdateLoadProximitiesAsync(Location currentLocation)
     {
         var activeLoadsMessage = WeakReferenceMessenger.Default.Send<ActiveLoadsRequestMessage>();
-        
+
         foreach (var load in activeLoadsMessage.Response)
         {
             await UpdateLoadProximityAsync(load, currentLocation);

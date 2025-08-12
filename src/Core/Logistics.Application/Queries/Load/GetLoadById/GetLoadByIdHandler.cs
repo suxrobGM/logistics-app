@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
@@ -23,7 +23,7 @@ internal sealed class GetLoadByIdHandler : RequestHandler<GetLoadByIdQuery, Resu
         {
             return Result<LoadDto>.Fail($"Could not find a load with ID '{req.Id}'");
         }
-        
+
         var loadDto = loadEntity.ToDto();
         return Result<LoadDto>.Succeed(loadDto);
     }

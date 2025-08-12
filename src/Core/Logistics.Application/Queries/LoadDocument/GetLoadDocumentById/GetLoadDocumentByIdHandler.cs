@@ -19,7 +19,7 @@ internal sealed class GetLoadDocumentByIdHandler : RequestHandler<GetLoadDocumen
     {
         try
         {
-            var document = await  _tenantUow.Repository<LoadDocument>()
+            var document = await _tenantUow.Repository<LoadDocument>()
                 .GetAsync(d => d.Id == req.DocumentId, cancellationToken);
 
             if (document is null)
@@ -43,8 +43,8 @@ internal sealed class GetLoadDocumentByIdHandler : RequestHandler<GetLoadDocumen
                 Type = document.Type,
                 Status = document.Status,
                 Description = document.Description,
-                CreatedAt = document.CreatedAt,
-                UpdatedAt = document.UpdatedAt,
+                CreatedAt = document.CreatedAt.UtcDateTime,
+                UpdatedAt = document.LastModifiedAt?.UtcDateTime,
                 LoadId = document.LoadId,
                 LoadName = document.Load.Name,
                 LoadNumber = document.Load.Number,

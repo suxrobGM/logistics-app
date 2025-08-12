@@ -1,4 +1,4 @@
-﻿namespace Logistics.DriverApp.Models;
+namespace Logistics.DriverApp.Models;
 
 public static class PredefinedDateRanges
 {
@@ -9,7 +9,7 @@ public static class PredefinedDateRanges
     public static readonly DateRange Past90Days = GetPast90Days();
     public static readonly DateRange ThisYear = GetThisYear();
     public static readonly DateRange LastYear = GetLastYear();
-    
+
     private static DateRange GetThisWeek()
     {
         var start = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);

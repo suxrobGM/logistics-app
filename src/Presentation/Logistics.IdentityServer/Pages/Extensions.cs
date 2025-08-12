@@ -1,4 +1,5 @@
 using Duende.IdentityServer.Models;
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

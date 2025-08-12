@@ -1,5 +1,6 @@
-﻿using Logistics.HttpClient.Implementations;
+using Logistics.HttpClient.Implementations;
 using Logistics.HttpClient.Options;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

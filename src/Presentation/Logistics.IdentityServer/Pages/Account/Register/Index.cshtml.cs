@@ -1,7 +1,9 @@
-﻿using System.Text;
+using System.Text;
 using System.Text.Encodings.Web;
+
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

@@ -1,6 +1,6 @@
-﻿using Logistics.Application;
 using Logistics.Domain.Entities;
 using Logistics.Shared.Models;
+
 using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.Application.Commands;
@@ -17,7 +17,7 @@ internal sealed class RemoveRoleFromUserHandler : RequestHandler<RemoveRoleFromU
         _userManager = userManager;
         _roleManager = roleManager;
     }
-    
+
     protected override async Task<Result> HandleValidated(
         RemoveRoleFromUserCommand req, CancellationToken cancellationToken)
     {
@@ -28,7 +28,7 @@ internal sealed class RemoveRoleFromUserHandler : RequestHandler<RemoveRoleFromU
             return Result.Fail("Could not find the specified user");
 
         var appRole = await _roleManager.FindByNameAsync(req.Role!);
-        
+
         if (appRole == null)
             return Result.Fail("Could not find the specified role name");
 

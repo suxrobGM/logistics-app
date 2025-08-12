@@ -1,4 +1,4 @@
-﻿namespace Logistics.DriverApp.Controls;
+namespace Logistics.DriverApp.Controls;
 
 public partial class Separator : ContentView
 {

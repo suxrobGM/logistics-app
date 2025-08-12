@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
 
@@ -22,12 +22,12 @@ internal sealed class UpdateNotificationHandler : RequestHandler<UpdateNotificat
         {
             return Result.Fail($"Could not find a notification with ID '{req.Id}'");
         }
-        
+
         if (req.IsRead.HasValue && notification.IsRead != req.IsRead)
         {
             notification.IsRead = req.IsRead.Value;
         }
-        
+
         _tenantUow.Repository<Notification>().Update(notification);
         await _tenantUow.SaveChangesAsync();
         return Result.Succeed();

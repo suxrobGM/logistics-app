@@ -1,9 +1,12 @@
-﻿using Duende.IdentityModel.OidcClient;
+using Duende.IdentityModel.OidcClient;
+
 using Logistics.DriverApp.Extensions;
 using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.Authentication;
 using Logistics.DriverApp.Services.LocationTracking;
+
 using Microsoft.Extensions.Configuration;
+
 using Syncfusion.Licensing;
 
 #if ANDROID
@@ -21,17 +24,17 @@ public static class Setup
         var services = builder.Services;
         var configuration = builder.BuildConfiguration();
         SyncfusionLicenseProvider.RegisterLicense(configuration.GetValue<string>("SyncfusionKey"));
-        
-        var oidcOptions = configuration.GetSection("Oidc").Get<OidcClientOptions>() 
+
+        var oidcOptions = configuration.GetSection("Oidc").Get<OidcClientOptions>()
                           ?? throw new NullReferenceException("Could not get Oidc form the appsettings.json file");
-        
+
         services.AddSingleton(oidcOptions);
         services.AddApiHttpClient(configuration);
         services.AddSingleton<ITokenStorage, TokenStorage>();
         services.AddSingleton<ITenantService, TenantService>();
         services.AddSingleton<IMapsService, GoogleMapsService>();
         services.AddSingleton<ICache, InMemoryCache>();
-        
+
         services.AddScoped<AppShellViewModel>();
         services.AddScoped<DashboardPageViewModel>();
         services.AddScoped<AccountPageViewModel>();
@@ -39,7 +42,7 @@ public static class Setup
         services.AddScoped<StatsPageViewModel>();
         services.AddScoped<LoadPageViewModel>();
         services.AddScoped<PastLoadsPageViewModel>();
-        
+
         services.AddScoped<Duende.IdentityModel.OidcClient.Browser.IBrowser, WebBrowserAuthenticator>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ILoadProximityUpdater, LoadProximityUpdater>();

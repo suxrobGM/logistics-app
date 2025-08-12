@@ -1,4 +1,4 @@
-﻿namespace Logistics.HttpClient.Exceptions;
+namespace Logistics.HttpClient.Exceptions;
 
 internal class ErrorData
 {

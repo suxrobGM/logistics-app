@@ -1,4 +1,4 @@
-﻿namespace Logistics.Domain.Services;
+namespace Logistics.Domain.Services;
 
 public interface IUserService
 {

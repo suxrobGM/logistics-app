@@ -1,7 +1,8 @@
-﻿using Logistics.Application.Services;
+using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
+
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
@@ -13,8 +14,8 @@ internal sealed class RenewSubscriptionHandler : RequestHandler<RenewSubscriptio
     private readonly ILogger<RenewSubscriptionHandler> _logger;
 
     public RenewSubscriptionHandler(
-        IMasterUnityOfWork masterUow, 
-        IStripeService stripeService, 
+        IMasterUnityOfWork masterUow,
+        IStripeService stripeService,
         ILogger<RenewSubscriptionHandler> logger)
     {
         _masterUow = masterUow;
@@ -31,7 +32,7 @@ internal sealed class RenewSubscriptionHandler : RequestHandler<RenewSubscriptio
         {
             return Result.Fail($"Could not find a subscription with ID '{req.Id}'");
         }
-        
+
         var employeeCount = await _masterUow.Repository<User>().CountAsync(i => i.TenantId == subscription.TenantId);
 
         _logger.LogInformation("Renewing stripe subscription {StripeSubscriptionId}", subscription.StripeSubscriptionId);
@@ -41,7 +42,7 @@ internal sealed class RenewSubscriptionHandler : RequestHandler<RenewSubscriptio
         subscription.StartDate = stripeSubscription.StartDate;
         subscription.NextBillingDate = stripeSubscription.Items.Data.First().CurrentPeriodEnd;
         subscription.TrialEndDate = stripeSubscription.TrialEnd;
-        
+
         _masterUow.Repository<Subscription>().Update(subscription);
         await _masterUow.SaveChangesAsync();
         _logger.LogInformation("Renewed subscription {SubscriptionId}", subscription.Id);

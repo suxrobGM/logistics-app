@@ -1,4 +1,5 @@
-﻿using Logistics.Domain.Core;
+using Logistics.Domain.Core;
+
 using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.Domain.Entities;
@@ -13,10 +14,14 @@ internal class AppRoleClaimComparer : IEqualityComparer<AppRoleClaim>
 {
     public bool Equals(AppRoleClaim? x, AppRoleClaim? y)
     {
-        if (ReferenceEquals(x, y)) return true;
-        if (ReferenceEquals(x, null)) return false;
-        if (ReferenceEquals(y, null)) return false;
-        if (x.GetType() != y.GetType()) return false;
+        if (ReferenceEquals(x, y))
+            return true;
+        if (ReferenceEquals(x, null))
+            return false;
+        if (ReferenceEquals(y, null))
+            return false;
+        if (x.GetType() != y.GetType())
+            return false;
         return x.ClaimValue == y.ClaimValue && x.ClaimType == y.ClaimType;
     }
 

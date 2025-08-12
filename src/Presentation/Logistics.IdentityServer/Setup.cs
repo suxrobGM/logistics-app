@@ -1,14 +1,17 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity;
 using Duende.IdentityServer;
-using Serilog;
+
 using Logistics.Application;
 using Logistics.Domain.Entities;
-using Logistics.Infrastructure;
 using Logistics.IdentityServer.Services;
+using Logistics.Infrastructure;
 using Logistics.Infrastructure.Builder;
 using Logistics.Infrastructure.Data;
+
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Identity;
+
+using Serilog;
 using Serilog.Extensions.Logging;
 
 namespace Logistics.IdentityServer;
@@ -19,10 +22,10 @@ internal static class Setup
     {
         var services = builder.Services;
         var configuration = builder.Configuration;
-        
+
         var microsoftLogger = new SerilogLoggerFactory(Log.Logger)
             .CreateLogger<IInfrastructureBuilder>();
-        
+
         services.AddRazorPages();
         services.AddApplicationLayer(configuration);
         services.AddInfrastructureLayer(configuration)
@@ -36,9 +39,9 @@ internal static class Setup
                     .AddClaimsPrincipalFactory<UserCustomClaimsFactory>()
                     .AddDefaultTokenProviders();
             });
-        
+
         AddAuthSchemes(services);
-        
+
         services.AddDataProtection()
             .PersistKeysToDbContext<MasterDbContext>();
 
@@ -69,7 +72,7 @@ internal static class Setup
                 options.ClientId = "copy client ID from Google here";
                 options.ClientSecret = "copy client secret from Google here";
             });
-        
+
         services.AddCors(options =>
         {
             options.AddPolicy("DefaultCors", cors =>
@@ -79,7 +82,7 @@ internal static class Setup
                     .AllowAnyHeader()
                     .AllowAnyMethod();
             });
-            
+
             options.AddPolicy("AnyCors", cors =>
             {
                 cors.AllowAnyOrigin()
@@ -99,12 +102,12 @@ internal static class Setup
         {
             app.UseDeveloperExceptionPage();
         }
-        
+
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseRouting();
         app.UseCors(app.Environment.IsDevelopment() ? "AnyCors" : "DefaultCors");
-        
+
         app.UseIdentityServer();
         app.UseAuthorization();
         app.MapRazorPages().RequireAuthorization();

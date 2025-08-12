@@ -1,6 +1,8 @@
-﻿using Logistics.AdminApp.Extensions;
+using Logistics.AdminApp.Extensions;
 using Logistics.Shared.Models;
+
 using Microsoft.AspNetCore.Components;
+
 using Radzen;
 
 namespace Logistics.AdminApp.Components.Pages.Subscription;
@@ -9,16 +11,16 @@ public partial class ListSubscriptionPlans : PageBase
 {
     private IEnumerable<SubscriptionPlanDto>? _subscriptionPlans;
     private int _totalRecords = 10;
-    
-    
+
+
     #region Injectable services
 
     [Inject]
     private NavigationManager Navigation { get; set; } = null!;
 
     #endregion
-    
-    
+
+
     private async void LoadData(LoadDataArgs e)
     {
         var orderBy = e.GetOrderBy();

@@ -1,6 +1,7 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
+
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;

@@ -1,5 +1,6 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Mail;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -23,7 +24,7 @@ internal sealed class SmtpEmailSender : IEmailSender
         ArgumentException.ThrowIfNullOrEmpty(_options.UserName);
         ArgumentException.ThrowIfNullOrEmpty(_options.Password);
     }
-    
+
     public async Task<bool> SendEmailAsync(string recipient, string subject, string htmlBody)
     {
         ArgumentException.ThrowIfNullOrEmpty(recipient);
@@ -58,7 +59,7 @@ internal sealed class SmtpEmailSender : IEmailSender
         catch (Exception ex)
         {
             _logger.LogWarning(
-                "Could not send email to {Mail}, subject: \'{Subject}\'. \nThrown exception: {Exception}", 
+                "Could not send email to {Mail}, subject: \'{Subject}\'. \nThrown exception: {Exception}",
                 recipient, subject, ex.ToString());
             return false;
         }

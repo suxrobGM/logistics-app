@@ -1,10 +1,13 @@
-﻿using Logistics.Application.Commands;
+using Logistics.Application.Commands;
 using Logistics.Application.Queries;
-using Logistics.Shared.Models;
 using Logistics.Shared.Identity.Policies;
+using Logistics.Shared.Models;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using CreateTruckCommand = Logistics.Application.Commands.CreateTruckCommand;
 using GetTruckQuery = Logistics.Application.Queries.GetTruckQuery;
 using UpdateTruckCommand = Logistics.Application.Commands.UpdateTruckCommand;
@@ -70,7 +73,7 @@ public class TruckController : ControllerBase
     [Authorize(Policy = Permissions.Trucks.Delete)]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var result = await _mediator.Send(new DeleteTruckCommand {Id = id});
+        var result = await _mediator.Send(new DeleteTruckCommand { Id = id });
         return result.Success ? Ok(result) : BadRequest(result);
     }
 }

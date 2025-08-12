@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Specifications;
+using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -24,7 +24,7 @@ internal sealed class GetAppRolesHandler : RequestHandler<GetAppRolesQuery, Page
             .ApplySpecification(new SearchAppRoles(req.Search, req.Page, req.PageSize))
             .Select(i => i.ToDto())
             .ToArray();
-        
+
         return PagedResult<RoleDto>.Succeed(rolesDto, totalItems, req.PageSize);
     }
 }

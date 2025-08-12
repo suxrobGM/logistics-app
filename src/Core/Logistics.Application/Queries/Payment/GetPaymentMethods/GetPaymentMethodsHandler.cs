@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Specifications;
+using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -16,16 +16,16 @@ internal sealed class GetPaymentMethodsHandler : RequestHandler<GetPaymentMethod
     }
 
     protected override Task<Result<PaymentMethodDto[]>> HandleValidated(
-        GetPaymentMethodsQuery req, 
+        GetPaymentMethodsQuery req,
         CancellationToken cancellationToken)
     {
         var specification = new GetTenantPaymentMethods(req.OrderBy);
-        
+
         var payments = _tenantUow.Repository<PaymentMethod>()
             .ApplySpecification(specification)
             .Select(i => i.ToDto())
             .ToArray();
-        
+
         return Task.FromResult(Result<PaymentMethodDto[]>.Succeed(payments));
     }
 }

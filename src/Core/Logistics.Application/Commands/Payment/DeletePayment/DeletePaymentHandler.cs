@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
 
@@ -22,8 +22,8 @@ internal sealed class DeletePaymentHandler : RequestHandler<DeletePaymentCommand
         {
             return Result.Fail($"Could not find a payment with ID {req.Id}");
         }
-            
-        
+
+
         _tenantUow.Repository<Payment>().Delete(payment);
         await _tenantUow.SaveChangesAsync();
         return Result.Succeed();

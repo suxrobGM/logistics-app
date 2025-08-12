@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
 
@@ -22,12 +22,12 @@ internal sealed class UpdateInvoiceHandler : RequestHandler<UpdateInvoiceCommand
         {
             return Result.Fail($"Could not find an invoice with ID '{req.Id}'");
         }
-        
+
         if (req.InvoiceStatus.HasValue && invoice.Status != req.InvoiceStatus)
         {
             invoice.Status = req.InvoiceStatus.Value;
         }
-        
+
         _tenantUow.Repository<Invoice>().Update(invoice);
         await _tenantUow.SaveChangesAsync();
         return Result.Succeed();

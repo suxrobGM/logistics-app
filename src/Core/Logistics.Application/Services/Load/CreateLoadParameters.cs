@@ -1,5 +1,5 @@
-﻿using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Application.Services;
 
@@ -11,6 +11,6 @@ public record CreateLoadParameters(
     decimal DeliveryCost,
     double Distance,
     Guid CustomerId,
-    Guid TruckId, 
+    Guid TruckId,
     Guid DispatcherId
 );

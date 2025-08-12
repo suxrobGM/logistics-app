@@ -1,12 +1,15 @@
-﻿using Logistics.API.Extensions;
+using Logistics.API.Extensions;
 using Logistics.Application.Commands;
 using Logistics.Application.Queries;
-using Logistics.Shared.Models;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Identity.Roles;
+using Logistics.Shared.Models;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using CreateTenantCommand = Logistics.Application.Commands.CreateTenantCommand;
 using UpdateTenantCommand = Logistics.Application.Commands.UpdateTenantCommand;
 
@@ -84,7 +87,7 @@ public class TenantController : ControllerBase
     [Authorize(Policy = Permissions.Tenants.Delete)]
     public async Task<IActionResult> DeleteTenant(Guid id)
     {
-        var result = await _mediator.Send(new DeleteTenantCommand {Id = id});
+        var result = await _mediator.Send(new DeleteTenantCommand { Id = id });
         return result.Success ? Ok(result) : BadRequest(result);
     }
 

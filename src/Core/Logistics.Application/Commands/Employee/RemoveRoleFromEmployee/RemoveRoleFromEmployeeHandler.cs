@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
 
@@ -12,7 +12,7 @@ internal sealed class RemoveEmployeeRoleHandler : RequestHandler<RemoveRoleFromE
     {
         _tenantUow = tenantUow;
     }
-    
+
     protected override async Task<Result> HandleValidated(
         RemoveRoleFromEmployeeCommand req, CancellationToken cancellationToken)
     {
@@ -30,7 +30,7 @@ internal sealed class RemoveEmployeeRoleHandler : RequestHandler<RemoveRoleFromE
         {
             return Result.Fail("Could not find the specified role name");
         }
-        
+
         employee.Roles.Remove(tenantRole);
         await _tenantUow.SaveChangesAsync();
         return Result.Succeed();

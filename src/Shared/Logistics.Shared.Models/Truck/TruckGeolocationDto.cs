@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Shared.Models;
 

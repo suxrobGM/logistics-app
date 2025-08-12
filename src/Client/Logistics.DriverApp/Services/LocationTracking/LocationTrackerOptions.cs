@@ -1,4 +1,4 @@
-﻿namespace Logistics.DriverApp.Services.LocationTracking;
+namespace Logistics.DriverApp.Services.LocationTracking;
 
 public class LocationTrackerOptions
 {

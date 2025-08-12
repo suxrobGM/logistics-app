@@ -1,8 +1,9 @@
+using Logistics.Domain.Entities;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Logistics.Domain.Entities;
 
 namespace Logistics.IdentityServer.Pages.Account.LoginWith2fa;
 
@@ -25,7 +26,7 @@ public class LoginWith2faModel : PageModel
 
     public string ReturnUrl { get; set; }
 
-   
+
 
     public async Task<IActionResult> OnGetAsync(bool rememberMe, string returnUrl = null)
     {

@@ -1,4 +1,5 @@
-﻿using Logistics.Shared.Models;
+using Logistics.Shared.Models;
+
 using MediatR;
 
 namespace Logistics.Application.Commands;
@@ -9,6 +10,6 @@ public class SetTruckGeolocationCommand : IRequest<Result>
     {
         GeolocationData = geolocationData;
     }
-    
+
     public TruckGeolocationDto GeolocationData { get; set; }
 }

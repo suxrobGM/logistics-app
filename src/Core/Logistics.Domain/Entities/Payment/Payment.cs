@@ -1,6 +1,6 @@
-﻿using Logistics.Domain.Core;
-using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Domain.Core;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 

@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Extensions;
+using Logistics.Application.Extensions;
 using Logistics.Application.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
@@ -24,7 +24,7 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resu
         UpdateLoadCommand req, CancellationToken cancellationToken)
     {
         var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.Id);
-        
+
         if (load is null)
         {
             return Result.Fail("Could not find the specified load");
@@ -37,7 +37,7 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resu
 
             await AssignDispatcherIfUpdated(req, load);
             await UpdateCustomerIfUpdated(req, load);
-            
+
             load.Name = PropertyUpdater.UpdateIfChanged(req.Name, load.Name);
             load.OriginAddress = PropertyUpdater.UpdateIfChanged(req.OriginAddress, load.OriginAddress);
             load.OriginLocation = PropertyUpdater.UpdateIfChanged(req.OriginLocation, load.OriginLocation);
@@ -47,14 +47,14 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resu
             load.Distance = PropertyUpdater.UpdateIfChanged(req.Distance, load.Distance);
             load.Status = PropertyUpdater.UpdateIfChanged(req.Status, load.Status);
             load.Type = PropertyUpdater.UpdateIfChanged(req.Type, load.Type);
-            
+
             var changes = await _tenantUow.SaveChangesAsync();
 
             if (changes > 0)
             {
                 await NotifyTrucksAboutUpdates(oldTruck, newTruck, load);
             }
-            
+
             return Result.Succeed();
         }
         catch (InvalidOperationException ex)
@@ -99,7 +99,7 @@ internal sealed class UpdateLoadHandler : RequestHandler<UpdateLoadCommand, Resu
         {
             return null;
         }
-        
+
         loadEntity.AssignedTruck = truck;
         return truck;
 

@@ -1,4 +1,5 @@
-﻿using Logistics.Shared.Identity.Policies;
+using Logistics.Shared.Identity.Policies;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 
@@ -10,9 +11,9 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
     {
         FallbackPolicyProvider = new DefaultAuthorizationPolicyProvider(options);
     }
-    
+
     public DefaultAuthorizationPolicyProvider FallbackPolicyProvider { get; }
-    
+
     public Task<AuthorizationPolicy?> GetPolicyAsync(string policyName)
     {
         if (policyName.StartsWith(nameof(Permissions)))

@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Specifications;
+using Logistics.Application.Specifications;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
@@ -24,7 +24,7 @@ internal sealed class GetTenantsHandler : RequestHandler<GetTenantsQuery, PagedR
             .ApplySpecification(spec)
             .Select(i => i.ToDto(req.IncludeConnectionStrings, null))
             .ToArray();
-        
+
         return PagedResult<TenantDto>.Succeed(items, totalItems, req.PageSize);
     }
 }

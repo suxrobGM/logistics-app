@@ -1,7 +1,9 @@
-using Duende.IdentityModel;
-using Microsoft.AspNetCore.Authentication;
 using System.Text;
 using System.Text.Json;
+
+using Duende.IdentityModel;
+
+using Microsoft.AspNetCore.Authentication;
 
 namespace Logistics.IdentityServer.Pages.Diagnostics;
 

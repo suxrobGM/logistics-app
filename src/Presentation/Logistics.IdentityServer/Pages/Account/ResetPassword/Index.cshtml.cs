@@ -1,13 +1,12 @@
-using Duende.IdentityServer.Models;
+using System.Text;
+
+using Logistics.Domain.Entities;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-using System.Xml.Linq;
-using Logistics.Domain.Entities;
 
 namespace Logistics.IdentityServer.Pages.Account.ResetPassword;
 
@@ -24,7 +23,7 @@ public class ResetPasswordModel : PageModel
     [BindProperty]
     public InputModel Input { get; set; }
 
-   
+
     public IActionResult OnGet(string code = null)
     {
         if (code == null)

@@ -1,11 +1,14 @@
 using System.Security.Claims;
+
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Services;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Domain.Services;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Identity.Roles;
+
 using Microsoft.AspNetCore.Identity;
+
 using CustomClaimTypes = Logistics.Shared.Identity.Claims.CustomClaimTypes;
 
 namespace Logistics.DbMigrator.Workers;
@@ -23,11 +26,11 @@ internal class SeedDatabaseWorker : IHostedService
         _logger = logger;
         _scopeFactory = scopeFactory;
     }
-    
+
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         using var scope = _scopeFactory.CreateScope();
-            
+
         _logger.LogInformation("Seeding databases...");
         await AddAppRolesAsync(scope.ServiceProvider);
         await AddSuperAdminAsync(scope.ServiceProvider);
@@ -84,7 +87,7 @@ internal class SeedDatabaseWorker : IHostedService
         var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
         var adminData = configuration.GetRequiredSection("SuperAdmin").Get<User>()!;
         var superAdmin = await userManager.FindByEmailAsync(adminData.Email!);
-        
+
         if (superAdmin is null)
         {
             superAdmin = new User
@@ -104,7 +107,7 @@ internal class SeedDatabaseWorker : IHostedService
         }
 
         var hasSuperAdminRole = await userManager.IsInRoleAsync(superAdmin, AppRoles.SuperAdmin);
-        
+
         if (!hasSuperAdminRole)
         {
             await userManager.AddToRoleAsync(superAdmin, AppRoles.SuperAdmin);
@@ -137,7 +140,7 @@ internal class SeedDatabaseWorker : IHostedService
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
         var masterUow = serviceProvider.GetRequiredService<IMasterUnityOfWork>();
         var databaseProvider = serviceProvider.GetRequiredService<ITenantDatabaseService>();
-        var defaultTenantConnectionString = configuration.GetConnectionString("DefaultTenantDatabase") 
+        var defaultTenantConnectionString = configuration.GetConnectionString("DefaultTenantDatabase")
                                             ?? databaseProvider.GenerateConnectionString("default");
         var companyAddress = new Address
         {
@@ -184,7 +187,7 @@ internal class SeedDatabaseWorker : IHostedService
         if (!allClaims.Any(i => i.Type == claim.Type && i.Value == claim.Value))
         {
             var result = await roleManager.AddClaimAsync(role, claim);
-            
+
             if (result.Succeeded)
             {
                 _logger.LogInformation("Added claim '{ClaimType}' - '{ClaimValue}' to the role '{Role}'", claim.Type,
@@ -197,7 +200,7 @@ internal class SeedDatabaseWorker : IHostedService
             }
         }
     }
-    
+
     private static IEnumerable<string> GetPermissionsBasedOnRole(string roleName)
     {
         // This method returns the specific permissions based on the role name.

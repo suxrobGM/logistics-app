@@ -1,12 +1,14 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
+
 using Logistics.Domain.Core;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Specifications;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Infrastructure.Persistence;
 
-public class Repository<TDbContext, TEntity, TEntityKey> : IRepository<TEntity, TEntityKey> 
+public class Repository<TDbContext, TEntity, TEntityKey> : IRepository<TEntity, TEntityKey>
     where TEntity : class, IEntity<TEntityKey>
     where TDbContext : DbContext
 {
@@ -26,14 +28,14 @@ public class Repository<TDbContext, TEntity, TEntityKey> : IRepository<TEntity, 
     {
         return _dbContext.Set<TEntity>();
     }
-    
+
     public Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null, CancellationToken ct = default)
     {
         if (predicate is null)
         {
             return _dbContext.Set<TEntity>().CountAsync(cancellationToken: ct);
         }
-        
+
         return _dbContext.Set<TEntity>().CountAsync(predicate, ct);
     }
 

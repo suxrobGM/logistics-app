@@ -1,4 +1,5 @@
-﻿using Logistics.Shared.Models;
+using Logistics.Shared.Models;
+
 using Microsoft.AspNetCore.Components;
 
 namespace Logistics.AdminApp.Components.Pages.Subscription;
@@ -6,26 +7,26 @@ namespace Logistics.AdminApp.Components.Pages.Subscription;
 public partial class EditSubscriptionPlan : PageBase
 {
     private SubscriptionPlanDto _subscriptionPlan = new();
-    
-    
+
+
     #region Parameters
 
     [Parameter]
     public Guid? Id { get; set; }
 
-    [Parameter] 
+    [Parameter]
     public bool EditMode { get; set; } = true;
 
     #endregion
-    
+
 
     #region Injectable services
 
-    [Inject] 
+    [Inject]
     private NavigationManager Navigation { get; set; } = null!;
 
     #endregion
-    
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -33,7 +34,7 @@ public partial class EditSubscriptionPlan : PageBase
         {
             return;
         }
-        
+
         var subscriptionPlan = await CallApiAsync(api => api.GetSubscriptionPlanAsync(Id!.Value));
 
         if (subscriptionPlan is not null)

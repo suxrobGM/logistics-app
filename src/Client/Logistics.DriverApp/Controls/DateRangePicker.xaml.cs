@@ -1,4 +1,4 @@
-﻿namespace Logistics.DriverApp.Controls;
+namespace Logistics.DriverApp.Controls;
 
 public partial class DateRangePicker : ContentView
 {
@@ -6,8 +6,8 @@ public partial class DateRangePicker : ContentView
     {
         InitializeComponent();
     }
-    
-    public static readonly BindableProperty StartDateProperty = 
+
+    public static readonly BindableProperty StartDateProperty =
         BindableProperty.Create(nameof(StartDate), typeof(DateTime), typeof(DateRangePicker), DateTime.Today.AddDays(-1), defaultBindingMode: BindingMode.TwoWay, propertyChanged: OnStartDateChanged);
 
     public static readonly BindableProperty EndDateProperty =

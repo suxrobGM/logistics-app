@@ -1,8 +1,9 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Infrastructure.Data.Configurations;
 using Logistics.Infrastructure.Helpers;
 using Logistics.Infrastructure.Interceptors;
 using Logistics.Infrastructure.Options;
+
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -12,13 +13,13 @@ using Microsoft.Extensions.Logging;
 namespace Logistics.Infrastructure.Data;
 
 public class MasterDbContext : IdentityDbContext<
-    User, 
-    AppRole, 
-    Guid, 
-    IdentityUserClaim<Guid>, 
-    IdentityUserRole<Guid>, 
-    IdentityUserLogin<Guid>, 
-    AppRoleClaim, 
+    User,
+    AppRole,
+    Guid,
+    IdentityUserClaim<Guid>,
+    IdentityUserRole<Guid>,
+    IdentityUserLogin<Guid>,
+    AppRoleClaim,
     IdentityUserToken<Guid>>,
     IDataProtectionKeyContext
 {
@@ -38,7 +39,7 @@ public class MasterDbContext : IdentityDbContext<
         _connectionString = options.ConnectionString ?? ConnectionStrings.LocalMaster;
         _logger = logger;
     }
-    
+
     public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
@@ -62,14 +63,14 @@ public class MasterDbContext : IdentityDbContext<
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        
+
         //builder.ApplyConfiguration(new AuditableEntityConfiguration());
         builder.ApplyConfiguration(new AppRoleEntityConfiguration());
         builder.ApplyConfiguration(new UserEntityConfiguration());
         builder.ApplyConfiguration(new SubscriptionEntityConfiguration());
         builder.ApplyConfiguration(new SubscriptionPlanEntityConfiguration());
         builder.ApplyConfiguration(new PaymentEntityConfiguration());
-        
+
         builder.Entity<Tenant>().ToTable("Tenants");
         builder.Entity<Invoice>().ToTable("Invoices");
     }

@@ -1,4 +1,4 @@
-﻿using Radzen;
+using Radzen;
 
 namespace Logistics.AdminApp.Extensions;
 
@@ -33,11 +33,11 @@ public static class LoadDataArgsExtensions
             case 0:
                 return string.Empty;
             default:
-            {
-                var sortProperty = splitStr[0];
-                var orderSpecifier = splitStr[1];
-                return orderSpecifier == "desc" ? $"-{sortProperty}" : sortProperty;
-            }
+                {
+                    var sortProperty = splitStr[0];
+                    var orderSpecifier = splitStr[1];
+                    return orderSpecifier == "desc" ? $"-{sortProperty}" : sortProperty;
+                }
         }
     }
 }

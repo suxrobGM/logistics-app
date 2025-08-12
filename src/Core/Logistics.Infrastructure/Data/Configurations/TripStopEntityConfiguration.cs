@@ -1,4 +1,5 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,7 +15,7 @@ public class TripStopEntityConfiguration : IEntityTypeConfiguration<TripStop>
             .WithMany(i => i.Stops)
             .HasForeignKey(i => i.TripId)
             .OnDelete(DeleteBehavior.ClientSetNull);
-        
+
         builder.HasOne(i => i.Load)
             .WithOne(i => i.TripStop)
             .HasForeignKey<Load>(i => i.TripStopId)

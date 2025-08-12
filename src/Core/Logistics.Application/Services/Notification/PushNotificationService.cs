@@ -1,6 +1,8 @@
-﻿using FirebaseAdmin;
+using FirebaseAdmin;
 using FirebaseAdmin.Messaging;
+
 using Google.Apis.Auth.OAuth2;
+
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Services;
@@ -26,16 +28,16 @@ public class PushNotificationService : IPushNotificationService
             _firebaseApp = null;
         }
     }
-    
+
     public async Task SendNotificationAsync(
-        string title, 
-        string body, 
-        string deviceToken, 
+        string title,
+        string body,
+        string deviceToken,
         IReadOnlyDictionary<string, string>? data = null)
     {
         if (_firebaseApp is null)
             return;
-        
+
         try
         {
             var message = new Message

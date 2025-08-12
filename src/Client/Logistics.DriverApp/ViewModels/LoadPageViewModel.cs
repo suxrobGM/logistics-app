@@ -1,8 +1,7 @@
-﻿using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.Authentication;
-using Logistics.Shared.Models;
 
 namespace Logistics.DriverApp.ViewModels;
 
@@ -25,7 +24,7 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
         ConfirmDeliveryCommand = new AsyncRelayCommand(() => ConfirmLoadStatusAsync(LoadStatus.Delivered));
     }
 
-    
+
     #region Commands
 
     public IAsyncRelayCommand ConfirmPickUpCommand { get; }
@@ -33,7 +32,7 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
 
     #endregion
 
-    
+
     #region Bindable properties
 
     private ActiveLoad? _load;
@@ -52,7 +51,7 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
 
     #endregion
 
-    
+
     protected override async Task OnAppearingAsync()
     {
         await FetchLoadAsync();
@@ -82,10 +81,10 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
         {
             return;
         }
-        
+
         IsLoading = true;
         var result = await _apiClient.GetLoadAsync(_lastLoadId.Value);
-        
+
         if (!result.Success)
         {
             await PopupHelpers.ShowErrorAsync("Failed to fetch the load data, try later");
@@ -102,7 +101,7 @@ public class LoadPageViewModel : BaseViewModel, IQueryAttributable
     {
         if (Load is null)
             return;
-        
+
         IsLoading = true;
         Result? result = null;
 

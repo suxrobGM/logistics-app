@@ -1,4 +1,4 @@
-﻿namespace Logistics.Shared.Identity.Policies;
+namespace Logistics.Shared.Identity.Policies;
 
 public static class TenantRolePermissions
 {
@@ -21,7 +21,7 @@ public static class TenantRolePermissions
             return list;
         }
     }
-    
+
     public static IEnumerable<string> Manager
     {
         get
@@ -41,7 +41,7 @@ public static class TenantRolePermissions
             return list;
         }
     }
-    
+
     public static IEnumerable<string> Dispatcher
     {
         get
@@ -58,7 +58,7 @@ public static class TenantRolePermissions
             return list;
         }
     }
-    
+
     public static IEnumerable<string> Driver
     {
         get

@@ -1,4 +1,4 @@
-﻿namespace Logistics.DriverApp.Models;
+namespace Logistics.DriverApp.Models;
 
 public class DateRange
 {
@@ -8,7 +8,7 @@ public class DateRange
         StartDate = startDate;
         EndDate = endDate;
     }
-    
+
     public string DisplayName { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }

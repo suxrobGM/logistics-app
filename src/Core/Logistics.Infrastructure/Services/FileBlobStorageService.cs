@@ -1,4 +1,5 @@
 using Logistics.Domain.Services;
+
 using Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.Services;
@@ -21,7 +22,7 @@ public class FileBlobStorageService : IBlobStorageService
 
         var filePath = Path.Combine(containerPath, blobName);
         var fileDirectory = Path.GetDirectoryName(filePath);
-        
+
         if (!string.IsNullOrEmpty(fileDirectory))
         {
             EnsureDirectoryExists(fileDirectory);
@@ -39,7 +40,7 @@ public class FileBlobStorageService : IBlobStorageService
     public async Task<Stream> DownloadAsync(string containerName, string blobName, CancellationToken cancellationToken = default)
     {
         var filePath = GetFilePath(containerName, blobName);
-        
+
         if (!File.Exists(filePath))
         {
             throw new FileNotFoundException($"File not found: {blobName}");
@@ -76,7 +77,7 @@ public class FileBlobStorageService : IBlobStorageService
     public async Task<BlobFileProperties> GetPropertiesAsync(string containerName, string blobName, CancellationToken cancellationToken = default)
     {
         var filePath = GetFilePath(containerName, blobName);
-        
+
         if (!File.Exists(filePath))
         {
             throw new FileNotFoundException($"File not found: {blobName}");
@@ -115,12 +116,12 @@ public class FileBlobStorageService : IBlobStorageService
     {
         var tenant = _tenantService.GetTenant();
         var tenantId = tenant.Id.ToString();
-        
+
         if (!string.IsNullOrEmpty(_options.BaseUrl))
         {
             return $"{_options.BaseUrl.TrimEnd('/')}/{tenantId}/{containerName}/{blobName}";
         }
-        
+
         return $"file:///{tenantId}/{containerName}/{blobName}";
     }
 
@@ -155,7 +156,7 @@ public class FileBlobStorageService : IBlobStorageService
     private async Task<FileMetadata> LoadMetadataAsync(string filePath)
     {
         var metadataPath = GetMetadataPath(filePath);
-        
+
         if (!File.Exists(metadataPath))
         {
             // Fallback to file info if metadata doesn't exist
@@ -181,7 +182,7 @@ public class FileBlobStorageService : IBlobStorageService
 public class FileBlobStorageOptions
 {
     public const string SectionName = "FileBlobStorage";
-    
+
     public string RootPath { get; set; } = "wwwroot/uploads";
     public string? BaseUrl { get; set; }
 }

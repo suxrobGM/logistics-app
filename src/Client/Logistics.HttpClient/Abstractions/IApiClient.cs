@@ -1,13 +1,13 @@
-﻿using Logistics.HttpClient.Abstractions;
+using Logistics.HttpClient.Abstractions;
 
 namespace Logistics.HttpClient;
 
-public interface IApiClient : 
-    ILoadApi, 
-    ITruckApi, 
-    IEmployeeApi, 
-    ITenantApi, 
-    IUserApi, 
+public interface IApiClient :
+    ILoadApi,
+    ITruckApi,
+    IEmployeeApi,
+    ITenantApi,
+    IUserApi,
     IDriverApi,
     IStatsApi,
     ISubscriptionApi

@@ -1,5 +1,7 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
+
 using Logistics.Domain.Core;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -30,7 +32,7 @@ public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
 
     private void UpdateEntities(DbContext? context)
     {
-        if (context is null) 
+        if (context is null)
             return;
 
         foreach (var entry in context.ChangeTracker.Entries<IAuditableEntity>())
@@ -39,7 +41,7 @@ public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
             {
                 entry.Entity.CreatedAt = DateTimeOffset.UtcNow;
                 entry.Entity.CreatedBy = _httpContext.GetUserId();
-            } 
+            }
 
             if (entry.State is EntityState.Modified || entry.HasChangedOwnedEntities())
             {
@@ -54,9 +56,9 @@ public static class Extensions
 {
     public static bool HasChangedOwnedEntities(this EntityEntry entry)
     {
-        return entry.References.Any(r => 
-            r.TargetEntry != null && 
-            r.TargetEntry.Metadata.IsOwned() && 
+        return entry.References.Any(r =>
+            r.TargetEntry != null &&
+            r.TargetEntry.Metadata.IsOwned() &&
             r.TargetEntry.State is EntityState.Modified);
     }
 

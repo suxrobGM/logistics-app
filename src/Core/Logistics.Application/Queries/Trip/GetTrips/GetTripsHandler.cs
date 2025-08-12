@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Specifications;
+using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -25,7 +25,7 @@ internal sealed class GetTripsHandler : RequestHandler<GetTripsQuery, PagedResul
             .ApplySpecification(spec)
             .Select(trip => trip.ToDto())
             .ToArray();
-        
+
         return PagedResult<TripDto>.Succeed(items, totalItems, req.PageSize);
     }
 }

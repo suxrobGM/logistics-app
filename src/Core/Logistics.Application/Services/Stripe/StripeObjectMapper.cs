@@ -1,10 +1,12 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+
 using Stripe;
+
 using AddressValueObject = Logistics.Domain.Primitives.ValueObjects.Address;
 using PaymentMethod = Logistics.Domain.Entities.PaymentMethod;
-using StripePaymentMethod = Stripe.PaymentMethod;
 using StripeAddress = Stripe.Address;
+using StripePaymentMethod = Stripe.PaymentMethod;
 
 namespace Logistics.Application.Services;
 
@@ -14,7 +16,7 @@ public static class StripeObjectMapper
     {
         // var country = Countries.FindCountry(address.Country) ??
         //               throw new InvalidOperationException($"Country {address.Country} not found");
-        
+
         return new AddressOptions
         {
             City = address.City,
@@ -25,7 +27,7 @@ public static class StripeObjectMapper
             State = address.State,
         };
     }
-    
+
     public static AddressValueObject ToAddressEntity(this StripeAddress stripeAddress)
     {
         return new AddressValueObject
@@ -38,7 +40,7 @@ public static class StripeObjectMapper
             State = stripeAddress.State,
         };
     }
-    
+
     public static AddressValueObject ToAddressEntity(this AddressOptions addressOptions)
     {
         return new AddressValueObject
@@ -51,7 +53,7 @@ public static class StripeObjectMapper
             State = addressOptions.State,
         };
     }
-    
+
     public static PaymentMethod ToPaymentMethodEntity(this StripePaymentMethod stripePaymentMethod)
     {
         if (stripePaymentMethod.Card is not null)
@@ -69,7 +71,7 @@ public static class StripeObjectMapper
                 VerificationStatus = PaymentMethodVerificationStatus.Verified,
             };
         }
-        
+
         if (stripePaymentMethod.UsBankAccount is not null)
         {
             return new UsBankAccountPaymentMethod
@@ -86,7 +88,7 @@ public static class StripeObjectMapper
                 VerificationStatus = PaymentMethodVerificationStatus.Verified
             };
         }
-        
+
         throw new NotSupportedException("Unsupported payment method type.");
     }
 

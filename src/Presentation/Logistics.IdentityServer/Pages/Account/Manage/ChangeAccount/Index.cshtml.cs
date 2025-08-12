@@ -1,5 +1,6 @@
 using Logistics.Domain.Entities;
 using Logistics.IdentityServer.Pages.Account.Manage.ChangePassword;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

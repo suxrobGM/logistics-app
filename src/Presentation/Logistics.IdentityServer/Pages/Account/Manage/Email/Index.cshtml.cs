@@ -1,11 +1,13 @@
+using System.Text;
+using System.Text.Encodings.Web;
+
+using Logistics.Application.Services;
+using Logistics.Domain.Entities;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using System.Text.Encodings.Web;
-using System.Text;
-using Logistics.Application.Services;
-using Logistics.Domain.Entities;
 
 namespace Logistics.IdentityServer.Pages.Account.Manage.Email;
 

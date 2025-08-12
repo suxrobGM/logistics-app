@@ -1,9 +1,8 @@
-﻿using Logistics.Application;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Services;
 using Logistics.Shared.Models;
+
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
@@ -15,8 +14,8 @@ internal sealed class DeleteSubscriptionHandler : RequestHandler<DeleteSubscript
     private readonly ILogger<DeleteSubscriptionHandler> _logger;
 
     public DeleteSubscriptionHandler(
-        IMasterUnityOfWork masterUow, 
-        IStripeService stripeService, 
+        IMasterUnityOfWork masterUow,
+        IStripeService stripeService,
         ILogger<DeleteSubscriptionHandler> logger)
     {
         _masterUow = masterUow;
@@ -39,7 +38,7 @@ internal sealed class DeleteSubscriptionHandler : RequestHandler<DeleteSubscript
             _logger.LogInformation("Cancelling stripe subscription {StripeSubscriptionId}", subscription.StripeSubscriptionId);
             await _stripeService.CancelSubscriptionAsync(subscription.StripeSubscriptionId);
         }
-        
+
         _masterUow.Repository<Subscription>().Delete(subscription);
         await _masterUow.SaveChangesAsync();
         _logger.LogInformation("Deleted subscription {SubscriptionId}", subscription.Id);

@@ -1,8 +1,9 @@
-﻿using Logistics.Application.Services;
+using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
@@ -14,8 +15,8 @@ internal sealed class CancelSubscriptionHandler : RequestHandler<CancelSubscript
     private readonly ILogger<DeleteSubscriptionHandler> _logger;
 
     public CancelSubscriptionHandler(
-        IMasterUnityOfWork masterUow, 
-        IStripeService stripeService, 
+        IMasterUnityOfWork masterUow,
+        IStripeService stripeService,
         ILogger<DeleteSubscriptionHandler> logger)
     {
         _masterUow = masterUow;
@@ -42,7 +43,7 @@ internal sealed class CancelSubscriptionHandler : RequestHandler<CancelSubscript
         }
 
         subscription.Status = status ?? SubscriptionStatus.Cancelled;
-        
+
         _masterUow.Repository<Subscription>().Update(subscription);
         await _masterUow.SaveChangesAsync();
         _logger.LogInformation("Cancelled subscription {SubscriptionId}", subscription.Id);

@@ -1,4 +1,5 @@
-﻿using Logistics.Domain.Core;
+using Logistics.Domain.Core;
+
 using MediatR;
 
 namespace Logistics.Application.Abstractions;

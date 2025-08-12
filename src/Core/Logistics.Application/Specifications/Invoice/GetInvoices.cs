@@ -1,7 +1,6 @@
-﻿using System.Linq.Expressions;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Specifications;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Specifications;
 
 namespace Logistics.Application.Specifications;
 
@@ -17,11 +16,11 @@ public sealed class GetInvoices : BaseSpecification<Invoice>
         {
             Criteria = i => i.Type == filterByType;
         }
-        
+
         OrderBy(orderBy);
         ApplyPaging(page, pageSize);
     }
-    
+
     // protected override Expression<Func<Invoice, object?>> CreateOrderByExpression(string propertyName)
     // {
     //     return propertyName switch

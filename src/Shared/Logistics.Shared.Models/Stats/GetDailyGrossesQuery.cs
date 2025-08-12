@@ -1,10 +1,10 @@
-﻿namespace Logistics.Shared.Models;
+namespace Logistics.Shared.Models;
 
 public class GetDailyGrossesQuery : IntervalQuery
 {
     public Guid? TruckId { get; set; }
     public Guid? UserId { get; set; }
-    
+
     public override IDictionary<string, string> ToDictionary()
     {
         var dict = base.ToDictionary();

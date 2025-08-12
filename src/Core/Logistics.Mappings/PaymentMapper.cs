@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Shared.Models;
 
 namespace Logistics.Mappings;
@@ -17,7 +17,7 @@ public static class PaymentMapper
             Status = entity.Status,
             Description = entity.Description,
         };
-        
+
         if (entity.BillingAddress.IsNotNull())
         {
             dto.BillingAddress = entity.BillingAddress;

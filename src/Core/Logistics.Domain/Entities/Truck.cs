@@ -1,28 +1,28 @@
-﻿using Logistics.Domain.Core;
-using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Domain.Core;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
 public class Truck : Entity, ITenantEntity
 {
     public required string Number { get; set; }
-    
+
     public required TruckType Type { get; set; }
-    
+
     public TruckStatus Status { get; set; } = TruckStatus.Available;
-    
+
     /// <summary>
     /// Truck's last known location address
     /// </summary>
     public required Address CurrentAddress { get; set; }
-    
+
     /// <summary>
     /// Truck's last known location longitude
     /// </summary>
     public required GeoPoint CurrentLocation { get; set; }
-    
-    
+
+
     /// <summary>
     /// The main assigned driver for the truck
     /// </summary>
@@ -51,7 +51,7 @@ public class Truck : Entity, ITenantEntity
             CurrentLocation = GeoPoint.NullGeoPoint
         };
     }
-    
+
     public IEnumerable<string> GetDriversNames()
     {
         if (MainDriver is { } mainDriver)

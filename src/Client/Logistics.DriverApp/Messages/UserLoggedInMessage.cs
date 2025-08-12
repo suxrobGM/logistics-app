@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Messaging.Messages;
+using CommunityToolkit.Mvvm.Messaging.Messages;
+
 using Logistics.DriverApp.Services.Authentication;
 
 namespace Logistics.DriverApp.Messages;

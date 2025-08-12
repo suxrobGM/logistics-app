@@ -1,4 +1,5 @@
-﻿using Logistics.Shared.Models;
+using Logistics.Shared.Models;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

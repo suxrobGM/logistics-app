@@ -1,10 +1,11 @@
 using Logistics.Infrastructure.Data;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.DbMigrator.Workers;
 
 public class MigrateDatabaseWorker(
-    IServiceScopeFactory scopeFactory, 
+    IServiceScopeFactory scopeFactory,
     ILogger<MigrateDatabaseWorker> logger) : IHostedService
 {
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -17,7 +18,7 @@ public class MigrateDatabaseWorker(
         logger.LogInformation("Applying migrations to Master database...");
         await masterDb.Database.MigrateAsync(cancellationToken);
         logger.LogInformation("Migration applied to Master database");
-        
+
         logger.LogInformation("Applying migrations to Tenant database...");
         await tenantDb.Database.MigrateAsync(cancellationToken);
         logger.LogInformation("Migration applied to Tenant database");

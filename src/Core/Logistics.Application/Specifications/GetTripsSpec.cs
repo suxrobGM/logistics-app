@@ -1,6 +1,6 @@
-﻿using Logistics.Domain.Entities;
-using Logistics.Domain.Specifications;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Specifications;
 
 namespace Logistics.Application.Specifications;
 
@@ -18,21 +18,21 @@ public sealed class GetTripsSpec : BaseSpecification<Trip>
         {
             Criteria = i => i.Name.Contains(name);
         }
-        
+
         if (status.HasValue)
         {
             Criteria = Criteria.AndAlso(i => i.Status == status.Value);
         }
-        
+
         if (!string.IsNullOrEmpty(truckNumber))
         {
             Criteria = Criteria.AndAlso(i => i.Truck.Number == truckNumber);
         }
-        
+
         OrderBy(orderBy);
         ApplyPaging(page, pageSize);
     }
-    
+
     // protected override Expression<Func<Trip, object?>> CreateOrderByExpression(string propertyName)
     // {
     //     return propertyName switch

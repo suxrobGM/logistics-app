@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Specifications;
+using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Extensions;
 using Logistics.Domain.Persistence;
@@ -19,7 +19,7 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrosse
         GetMonthlyGrossesQuery req, CancellationToken cancellationToken)
     {
         var truckId = req.TruckId;
-        
+
         if (req.UserId.HasValue)
         {
             var truck = await _tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == req.UserId.Value ||
@@ -29,26 +29,26 @@ internal sealed class GetMonthlyGrossesHandler : RequestHandler<GetMonthlyGrosse
             {
                 return Result<MonthlyGrossesDto>.Fail($"Could not find a truck with driver ID '{req.UserId}'");
             }
-            
+
             truckId = truck.Id;
         }
-        
+
         var spec = new FilterLoadsByDeliveryDate(truckId, req.StartDate, req.EndDate);
         var months = req.StartDate.MonthsBetween(req.EndDate);
         var filteredLoads = _tenantUow.Repository<Load>().ApplySpecification(spec).ToArray();
 
         var dict = months.ToDictionary(
-            k => (k.Year, k.Month), 
+            k => (k.Year, k.Month),
             m => new MonthlyGrossDto(m.Year, m.Month));
 
         foreach (var load in filteredLoads)
         {
             var date = load.DeliveryDate!.Value;
             var key = (date.Year, date.Month);
-            
-            if (!dict.ContainsKey(key)) 
+
+            if (!dict.ContainsKey(key))
                 continue;
-            
+
             dict[key].Distance += load.Distance;
             dict[key].Gross += load.DeliveryCost;
             dict[key].DriverShare += load.CalcDriverShare();

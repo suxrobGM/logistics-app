@@ -1,15 +1,19 @@
-﻿using System.Data.Common;
+using System.Data.Common;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
+
 using Logistics.Domain.Entities;
 using Logistics.Domain.Options;
 using Logistics.Domain.Services;
 using Logistics.Infrastructure.Data;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Identity.Roles;
-using Microsoft.Extensions.Logging;
+
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+
 using Npgsql;
+
 using CustomClaimTypes = Logistics.Shared.Identity.Claims.CustomClaimTypes;
 
 namespace Logistics.Infrastructure.Services;
@@ -37,7 +41,7 @@ public class TenantDatabaseService : ITenantDatabaseService
             throw new InvalidOperationException(
                 "The database name template is not defined in the TenantsDatabaseOptions appsettings.json file");
         }
-        
+
         var databaseName = Regex.Replace(_databaseOptions.DatabaseNameTemplate, "{tenant}", tenantName);
         var connectionString =
             $"Host={_databaseOptions.DatabaseHost}; Database={databaseName}; Port=5432; Username={_databaseOptions.DatabaseUserId}; Password={_databaseOptions.DatabasePassword}";
@@ -136,13 +140,13 @@ public class TenantDatabaseService : ITenantDatabaseService
             {
                 var claim = new Claim(CustomClaimTypes.Permission, permission);
                 role.Claims.Add(new TenantRoleClaim(claim.Type, claim.Value));
-                
+
                 _logger.LogInformation("Added claim '{ClaimType}' - '{ClaimValue}' to the tenant role '{Role}'",
                     claim.Type, claim.Value, role.Name);
             }
         }
     }
-    
+
     private static IEnumerable<string> GetPermissionsBasedOnRole(string roleName)
     {
         return roleName switch

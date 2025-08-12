@@ -1,4 +1,4 @@
-﻿namespace Logistics.Application.Constants;
+namespace Logistics.Application.Constants;
 
 public static class TenantConstants
 {

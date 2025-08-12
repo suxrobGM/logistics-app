@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
 
@@ -22,7 +22,7 @@ internal sealed class DeleteCustomerHandler : RequestHandler<DeleteCustomerComma
         {
             return Result.Fail($"Could not find a customer with ID {req.Id}");
         }
-        
+
         _tenantUow.Repository<Customer>().Delete(customer);
         await _tenantUow.SaveChangesAsync();
         return Result.Succeed();

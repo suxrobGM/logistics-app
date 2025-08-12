@@ -1,4 +1,4 @@
-﻿namespace Logistics.Infrastructure;
+namespace Logistics.Infrastructure;
 
 internal static class ConnectionStrings
 {

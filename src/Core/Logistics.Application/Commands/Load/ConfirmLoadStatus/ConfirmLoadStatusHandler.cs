@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Services;
+using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -30,7 +30,7 @@ internal sealed class ConfirmLoadStatusHandler : RequestHandler<ConfirmLoadStatu
 
         var loadStatus = req.LoadStatus!.Value;
         load.SetStatus(loadStatus);
-        
+
         _tenantUow.Repository<Load>().Update(load);
         var changes = await _tenantUow.SaveChangesAsync();
 
@@ -38,7 +38,7 @@ internal sealed class ConfirmLoadStatusHandler : RequestHandler<ConfirmLoadStatu
         {
             await SendNotificationAsync(load);
         }
-        
+
         return Result.Succeed();
     }
 

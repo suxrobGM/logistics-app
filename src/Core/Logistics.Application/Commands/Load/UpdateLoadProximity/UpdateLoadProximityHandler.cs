@@ -1,9 +1,9 @@
-﻿using Logistics.Application.Extensions;
+using Logistics.Application.Extensions;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Shared.Models;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
@@ -29,7 +29,7 @@ internal sealed class UpdateLoadProximityHandler : RequestHandler<UpdateLoadProx
         {
             return Result.Fail($"Could not find load with ID '{req.LoadId}'");
         }
-        
+
         LoadStatus? loadStatus = null;
         if (req.CanConfirmPickUp.HasValue && req.CanConfirmPickUp != load.CanConfirmPickUp)
         {
@@ -41,10 +41,10 @@ internal sealed class UpdateLoadProximityHandler : RequestHandler<UpdateLoadProx
             load.CanConfirmDelivery = req.CanConfirmDelivery.Value;
             loadStatus = LoadStatus.Delivered;
         }
-        
+
         _tenantUow.Repository<Load>().Update(load);
         var changes = await _tenantUow.SaveChangesAsync();
-        
+
         if (loadStatus.HasValue && changes > 0)
         {
             await _pushNotificationService.SendConfirmLoadStatusNotificationAsync(load, loadStatus.Value);

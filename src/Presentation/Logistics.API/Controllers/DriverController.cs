@@ -1,10 +1,13 @@
-﻿using Logistics.Application.Commands;
+using Logistics.Application.Commands;
 using Logistics.Application.Queries;
-using Logistics.Shared.Models;
 using Logistics.Shared.Identity.Policies;
+using Logistics.Shared.Models;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using UpdateLoadProximityCommand = Logistics.Application.Commands.UpdateLoadProximityCommand;
 
 namespace Logistics.API.Controllers;
@@ -26,10 +29,10 @@ public class DriverController : ControllerBase
     [Authorize(Policy = Permissions.Drivers.View)]
     public async Task<IActionResult> GetById(Guid userId)
     {
-        var result = await _mediator.Send(new GetEmployeeByIdQuery {UserId = userId});
+        var result = await _mediator.Send(new GetEmployeeByIdQuery { UserId = userId });
         return result.Success ? Ok(result) : BadRequest(result);
     }
-    
+
     [HttpPost("{userId:guid}/device-token")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
@@ -40,7 +43,7 @@ public class DriverController : ControllerBase
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
-    
+
     [HttpPost("confirm-load-status")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
@@ -50,7 +53,7 @@ public class DriverController : ControllerBase
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
-    
+
     [HttpPost("update-load-proximity")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]

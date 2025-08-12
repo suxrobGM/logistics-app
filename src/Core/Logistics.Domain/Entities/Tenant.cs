@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Core;
+using Logistics.Domain.Core;
 using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
@@ -12,9 +12,9 @@ public class Tenant : Entity, IMasterEntity
     public required string BillingEmail { get; set; }
     public string? DotNumber { get; set; }
     public string? StripeCustomerId { get; set; }
-    
+
     public virtual Subscription? Subscription { get; set; }
-    
+
     /// <summary>
     /// Users that belong to this tenant
     /// </summary>

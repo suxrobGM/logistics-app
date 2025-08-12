@@ -1,4 +1,3 @@
-﻿using System.Linq.Expressions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Specifications;
 
@@ -14,7 +13,7 @@ public class GetSubscriptionPlans : BaseSpecification<SubscriptionPlan>
         OrderBy(orderBy);
         ApplyPaging(page, pageSize);
     }
-    
+
     // protected override Expression<Func<SubscriptionPlan, object?>> CreateOrderByExpression(string propertyName)
     // {
     //     return propertyName switch

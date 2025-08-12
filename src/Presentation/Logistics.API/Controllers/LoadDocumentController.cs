@@ -1,12 +1,15 @@
+using System.Security.Claims;
+
 using Logistics.Application.Commands;
 using Logistics.Application.Queries;
-using Logistics.Shared.Models;
-using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Identity.Policies;
+using Logistics.Shared.Models;
+
+using MediatR;
+
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Logistics.API.Controllers;
 
@@ -39,13 +42,13 @@ public class LoadDocumentController : ControllerBase
     public async Task<IActionResult> GetDocumentById(Guid loadId, Guid documentId)
     {
         var result = await _mediator.Send(new GetLoadDocumentByIdQuery { DocumentId = documentId });
-        
+
         // Verify document belongs to the specified load
         if (result.Success && result.Data?.LoadId != loadId)
         {
             return BadRequest(Result.Fail("Document does not belong to the specified load"));
         }
-        
+
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -95,10 +98,10 @@ public class LoadDocumentController : ControllerBase
             return BadRequest(Result.Fail("User not authenticated"));
         }
 
-        var result = await _mediator.Send(new DownloadLoadDocumentQuery 
-        { 
+        var result = await _mediator.Send(new DownloadLoadDocumentQuery
+        {
             DocumentId = documentId,
-            RequestedById = userId 
+            RequestedById = userId
         });
 
         if (!result.Success || result.Data == null)
@@ -126,7 +129,7 @@ public class LoadDocumentController : ControllerBase
 
         request.DocumentId = documentId;
         request.UpdatedById = userId;
-        
+
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
@@ -143,12 +146,12 @@ public class LoadDocumentController : ControllerBase
             return BadRequest(Result.Fail("User not authenticated"));
         }
 
-        var result = await _mediator.Send(new DeleteLoadDocumentCommand 
-        { 
+        var result = await _mediator.Send(new DeleteLoadDocumentCommand
+        {
             DocumentId = documentId,
-            RequestedById = userId 
+            RequestedById = userId
         });
-        
+
         return result.Success ? Ok(result) : BadRequest(result);
     }
 

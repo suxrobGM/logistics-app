@@ -1,4 +1,4 @@
-﻿namespace Logistics.DriverApp.ViewModels;
+namespace Logistics.DriverApp.ViewModels;
 
 public abstract class BaseViewModel : ObservableRecipient
 {
@@ -17,15 +17,15 @@ public abstract class BaseViewModel : ObservableRecipient
     public IAsyncRelayCommand DisappearingCommand { get; }
 
     #endregion
-    
-    
+
+
     #region Bindable properties
 
     private bool _isLoading;
     public bool IsLoading
     {
         get => _isLoading;
-        set 
+        set
         {
             SetProperty(ref _isLoading, value);
             IsLoadingChanged?.Invoke(this, _isLoading);
@@ -33,7 +33,7 @@ public abstract class BaseViewModel : ObservableRecipient
     }
 
     #endregion
-    
+
 
     protected virtual Task OnInitializedAsync()
     {
@@ -44,7 +44,7 @@ public abstract class BaseViewModel : ObservableRecipient
     {
         return Task.CompletedTask;
     }
-    
+
     protected virtual Task OnDisappearingAsync()
     {
         return Task.CompletedTask;
@@ -53,7 +53,7 @@ public abstract class BaseViewModel : ObservableRecipient
     private async Task HandleInitializeCommandAsync()
     {
         await OnAppearingAsync();
-        
+
         if (_isInitialized)
             return;
 

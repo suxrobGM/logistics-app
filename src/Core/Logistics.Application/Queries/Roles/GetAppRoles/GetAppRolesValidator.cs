@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 
 namespace Logistics.Application.Queries;
 
@@ -8,7 +8,7 @@ internal sealed class GetAppRolesValidator : AbstractValidator<GetAppRolesQuery>
     {
         RuleFor(i => i.Page)
             .GreaterThanOrEqualTo(0);
-        
+
         RuleFor(i => i.PageSize)
             .GreaterThanOrEqualTo(1);
     }

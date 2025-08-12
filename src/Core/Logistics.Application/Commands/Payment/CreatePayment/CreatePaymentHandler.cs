@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
 
@@ -17,14 +17,14 @@ internal sealed class CreatePaymentHandler : RequestHandler<CreatePaymentCommand
         CreatePaymentCommand req, CancellationToken cancellationToken)
     {
         var paymentMethod = await _tenantUow.Repository<PaymentMethod>().GetByIdAsync(req.PaymentMethodId);
-        
+
         if (paymentMethod is null)
         {
             return Result.Fail($"Could not find a payment method with ID '{req.PaymentMethodId}'");
         }
-        
+
         var tenant = _tenantUow.GetCurrentTenant();
-        
+
         var payment = new Payment
         {
             Amount = req.Amount,
@@ -33,7 +33,7 @@ internal sealed class CreatePaymentHandler : RequestHandler<CreatePaymentCommand
             BillingAddress = req.BillingAddress!,
             Description = req.Description,
         };
-        
+
         await _tenantUow.Repository<Payment>().AddAsync(payment);
         await _tenantUow.SaveChangesAsync();
         return Result.Succeed();

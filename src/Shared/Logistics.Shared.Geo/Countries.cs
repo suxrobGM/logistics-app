@@ -1,9 +1,9 @@
-﻿namespace Logistics.Shared.Geo;
+namespace Logistics.Shared.Geo;
 
 public static class Countries
 {
     private static readonly Dictionary<string, Country> CodeLookup;
-    
+
     public static readonly Country[] AllCountries =
     [
         new("Andorra", "AD"),
@@ -35,7 +35,7 @@ public static class Countries
         new("Brunei Darussalam", "BN"),
         new("Bolivia", "BO"),
         new("Bonaire, Sint Eustatius and Saba", "BQ"),
-        new("Brazil", "BR"),    
+        new("Brazil", "BR"),
         new("Bahamas", "BS"),
         new("Bhutan", "BT"),
         new("Bouvet Island", "BV"),
@@ -54,7 +54,7 @@ public static class Countries
         new("Cameroon", "CM"),
         new("China", "CN"),
         new("Colombia", "CO"),
-        new("Costa Rica", "CR"),    
+        new("Costa Rica", "CR"),
         new("Cuba", "CU"),
         new("Cape Verde", "CV"),
         new("Cayman Islands", "KY"),
@@ -247,12 +247,12 @@ public static class Countries
         new("Zambia", "ZM"),
         new("Zimbabwe", "ZW"),
     ];
-    
+
     static Countries()
     {
         CodeLookup = AllCountries.ToDictionary(country => country.Code, StringComparer.OrdinalIgnoreCase);
     }
-    
+
     public static Country? GetCountryByCode(string code)
     {
         CodeLookup.TryGetValue(code, out var country);
@@ -266,7 +266,7 @@ public static class Countries
     /// <returns>The country object if found; otherwise, null.</returns>
     public static Country? FindCountry(string countryName)
     {
-        var country = GetCountryByCode(countryName) ?? 
+        var country = GetCountryByCode(countryName) ??
                       AllCountries.FirstOrDefault(c => c.DisplayName.Equals(countryName, StringComparison.OrdinalIgnoreCase));
 
         return country;

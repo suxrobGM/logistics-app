@@ -1,4 +1,5 @@
-﻿using Logistics.Infrastructure.Options;
+using Logistics.Infrastructure.Options;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 

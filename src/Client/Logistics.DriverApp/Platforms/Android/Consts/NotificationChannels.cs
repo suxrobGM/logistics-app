@@ -1,4 +1,4 @@
-﻿namespace Logistics.DriverApp.Platforms.Android.Consts;
+namespace Logistics.DriverApp.Platforms.Android.Consts;
 
 public static class NotificationChannels
 {

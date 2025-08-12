@@ -1,4 +1,4 @@
-﻿namespace Logistics.Domain.Core;
+namespace Logistics.Domain.Core;
 
 /// <summary>
 /// Marker interface for tenant database entities.

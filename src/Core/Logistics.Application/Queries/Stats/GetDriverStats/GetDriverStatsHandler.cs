@@ -1,8 +1,8 @@
-﻿using Logistics.Application.Specifications;
+using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Shared.Models;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
@@ -40,7 +40,7 @@ internal sealed class GetDriverStatsHandler : RequestHandler<GetDriverStatsQuery
         var lastWeekStart = startOfWeek.AddDays(-7);
         var startOfMonth = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
         var lastMonthStart = startOfMonth.AddMonths(-1);
-        
+
         var loadsRepository = _tenantUow.Repository<Load>();
         var thisWeekLoads = loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(assignedTruck.Id, startOfWeek, now));
         var lastWeekLoads = loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(assignedTruck.Id, lastWeekStart, startOfWeek));

@@ -7,10 +7,10 @@ public enum DocumentStatus
 {
     [Description("Active"), EnumMember(Value = "active")]
     Active,
-    
+
     [Description("Archived"), EnumMember(Value = "archived")]
     Archived,
-    
+
     [Description("Deleted"), EnumMember(Value = "deleted")]
     Deleted
 }

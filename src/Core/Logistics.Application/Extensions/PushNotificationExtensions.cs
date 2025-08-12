@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Services;
+using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 
@@ -14,16 +14,17 @@ internal static class PushNotificationExtensions
             load,
             truck);
     }
-    
+
     public static Task SendConfirmLoadStatusNotificationAsync(this IPushNotificationService pushNotificationService, Load load, LoadStatus loadStatus)
     {
         var truck = load.AssignedTruck;
-        if (truck is null) return Task.CompletedTask;
+        if (truck is null)
+            return Task.CompletedTask;
 
         var statusText = loadStatus switch
         {
-            LoadStatus.PickedUp   => "picked up",
-            LoadStatus.Delivered  => "delivered",
+            LoadStatus.PickedUp => "picked up",
+            LoadStatus.Delivered => "delivered",
             LoadStatus.Dispatched => "dispatched",
             _ => throw new ArgumentOutOfRangeException(nameof(loadStatus), loadStatus, null)
         };
@@ -33,7 +34,7 @@ internal static class PushNotificationExtensions
             $"You can confirm the {statusText} date of load #{load.Number}",
             load);
     }
-    
+
     public static Task SendUpdatedLoadNotificationAsync(this IPushNotificationService pushNotificationService, Load load, Truck? truck = null)
     {
         return pushNotificationService.SendToDriversAsync(
@@ -42,7 +43,7 @@ internal static class PushNotificationExtensions
             load,
             truck);
     }
-    
+
     public static Task SendRemovedLoadNotificationAsync(this IPushNotificationService pushNotificationService, Load load, Truck? truck = null)
     {
         return pushNotificationService.SendToDriversAsync(
@@ -65,7 +66,7 @@ internal static class PushNotificationExtensions
         if (truck.SecondaryDriver is { DeviceToken: { Length: > 0 } } driver)
             yield return driver;
     }
-    
+
     /// <summary>
     /// Sends the same push payload to each supplied driver.
     /// </summary>
@@ -81,7 +82,7 @@ internal static class PushNotificationExtensions
         {
             return;
         }
-        
+
         var data = new Dictionary<string, string> { ["loadId"] = load.Id.ToString() };
 
         foreach (var driver in assignedTruck.GetActiveDrivers())

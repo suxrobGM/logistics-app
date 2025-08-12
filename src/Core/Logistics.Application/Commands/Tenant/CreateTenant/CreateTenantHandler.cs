@@ -1,7 +1,7 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Services;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Domain.Services;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
@@ -33,7 +33,7 @@ internal sealed class CreateTenantHandler : RequestHandler<CreateTenantCommand, 
         };
 
         var existingTenant = await _masterUow.Repository<Tenant>().GetAsync(i => i.Name == tenant.Name);
-        
+
         if (existingTenant is not null)
         {
             return Result.Fail($"Tenant name '{tenant.Name}' is already taken, please chose another name");

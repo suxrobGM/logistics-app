@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
 
@@ -36,7 +36,7 @@ internal sealed class CreateTruckHandler : RequestHandler<CreateTruckCommand, Re
         {
             return Result.Fail($"Driver '{driver.GetFullName()}' is already associated with the truck number '{req.TruckNumber}'");
         }
-        
+
         var truckEntity = Truck.Create(req.TruckNumber, req.TruckType, driver);
         await _tenantUow.Repository<Truck>().AddAsync(truckEntity);
         await _tenantUow.SaveChangesAsync();

@@ -4,14 +4,14 @@ namespace Logistics.DriverApp.Views;
 
 public partial class AccountPage
 {
-	public AccountPage()
-	{
-		InitializeComponent();
-	}
+    public AccountPage()
+    {
+        InitializeComponent();
+    }
 
     private void SfDataForm_GenerateDataFormItem(object sender, GenerateDataFormItemEventArgs e)
     {
-        if (e.DataFormItem.FieldName == "PhoneNumber" && 
+        if (e.DataFormItem.FieldName == "PhoneNumber" &&
             e.DataFormItem is DataFormMaskedTextItem phoneNumberMasked)
         {
             phoneNumberMasked.Keyboard = Keyboard.Numeric;

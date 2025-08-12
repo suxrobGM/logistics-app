@@ -1,4 +1,3 @@
-﻿using System.Linq.Expressions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Specifications;
 
@@ -15,11 +14,11 @@ public class FilterPaymentsByInterval : BaseSpecification<Payment>
     {
         Criteria = i =>
             i.CreatedAt >= startPeriod && i.CreatedAt <= endPeriod;
-        
+
         OrderBy(orderBy);
         ApplyPaging(page, pageSize);
     }
-    
+
     // protected override Expression<Func<Payment, object?>> CreateOrderByExpression(string propertyName)
     // {
     //     return propertyName switch

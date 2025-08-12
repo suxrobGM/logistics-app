@@ -1,4 +1,5 @@
-﻿using Microsoft.Maui.LifecycleEvents;
+using Microsoft.Maui.LifecycleEvents;
+
 using Plugin.Firebase.Bundled.Shared;
 using Plugin.Firebase.Crashlytics;
 
@@ -17,10 +18,12 @@ public static class FirebaseExtensions
         var firebaseSettings = new CrossFirebaseSettings(
             isCloudMessagingEnabled: true,
             isCrashlyticsEnabled: true);
-        
-        builder.ConfigureLifecycleEvents(events => {
+
+        builder.ConfigureLifecycleEvents(events =>
+        {
 #if IOS
-            events.AddiOS(iOS => iOS.FinishedLaunching((_,_) => {
+            events.AddiOS(iOS => iOS.FinishedLaunching((_, _) =>
+            {
                 CrossFirebase.Initialize(firebaseSettings);
                 return false;
             }));
@@ -29,7 +32,7 @@ public static class FirebaseExtensions
                 CrossFirebase.Initialize(activity, firebaseSettings)));
 #endif
         });
-        
+
         CrossFirebaseCrashlytics.Current.SetCrashlyticsCollectionEnabled(true);
         return builder;
     }

@@ -1,10 +1,12 @@
-﻿using Logistics.Shared.Models;
+using Logistics.Shared.Models;
+
 using MediatR;
+
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Behaviours;
 
-public sealed class UnhandledExceptionBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> 
+public sealed class UnhandledExceptionBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
     where TResponse : IResult, new()
 {

@@ -1,6 +1,7 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Services;
@@ -28,11 +29,11 @@ internal class PayrollService : IPayrollService
         foreach (var tenant in tenants)
         {
             _tenantUow.SetCurrentTenant(tenant);
-            
+
             var previousMonthStart = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(-1);
             var previousMonthEnd = previousMonthStart.AddMonths(1).AddDays(-1);
-            var employees = await _tenantUow.Repository<Employee>().GetListAsync(e => 
-                e.SalaryType == SalaryType.Monthly || 
+            var employees = await _tenantUow.Repository<Employee>().GetListAsync(e =>
+                e.SalaryType == SalaryType.Monthly ||
                 e.SalaryType == SalaryType.ShareOfGross);
 
             foreach (var employee in employees)
@@ -87,7 +88,7 @@ internal class PayrollService : IPayrollService
     public PayrollInvoice CreatePayrollInvoice(Employee employee, DateTime startDate, DateTime endDate)
     {
         var invoiceAmount = CalculateSalary(employee, startDate, endDate);
-        
+
         var payrollInvoice = new PayrollInvoice
         {
             Total = invoiceAmount,
@@ -98,10 +99,10 @@ internal class PayrollService : IPayrollService
             Employee = employee,
         };
 
-        
+
         return payrollInvoice;
     }
-    
+
     private async Task<bool> IsPayrollInvoiceExisting(Guid employeeId, DateTime startDate, DateTime endDate)
     {
         var payroll = await _tenantUow.Repository<PayrollInvoice>().GetAsync(p =>
@@ -142,14 +143,14 @@ internal class PayrollService : IPayrollService
         // Fallback – fixed amount
         return employee.Salary;
     }
-    
+
     private static int CountWeeks(DateTime startDate, DateTime endDate)
     {
         // Assuming a week starts on Sunday and ends on Saturday.
         var days = (endDate - startDate).Days + 1; // +1 to include the start day in the count
         var fullWeeks = days / 7;
         var remainingDays = days % 7;
-    
+
         // Check if the remaining days form a week when combined with the start and end dates.
         if (remainingDays > 0)
         {
@@ -161,23 +162,23 @@ internal class PayrollService : IPayrollService
                 fullWeeks++;
             }
         }
-    
+
         return fullWeeks;
     }
 
     private static int CountMonths(DateTime startDate, DateTime endDate)
     {
         var months = (endDate.Year - startDate.Year) * 12 + endDate.Month - startDate.Month;
-    
+
         // If endDate is in a month but before the start date day, then reduce a month.
         if (endDate.Day < startDate.Day)
         {
             months--;
         }
-    
+
         return months + 1; // +1 to include the starting month
     }
-    
+
     private static DateTime StartOfPreviousWeek(DateTime date)
     {
         var daysToSubtract = (int)date.DayOfWeek + 7;

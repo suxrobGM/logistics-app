@@ -1,4 +1,4 @@
-﻿namespace Logistics.Domain.Exceptions;
+namespace Logistics.Domain.Exceptions;
 
 [Serializable]
 public class SubscriptionExpiredException : Exception

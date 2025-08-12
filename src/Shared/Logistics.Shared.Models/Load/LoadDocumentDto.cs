@@ -14,12 +14,12 @@ public class LoadDocumentDto
     public string? Description { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
-    
+
     // Load information
     public Guid LoadId { get; set; }
     public string? LoadName { get; set; }
     public long? LoadNumber { get; set; }
-    
+
     // Uploader information
     public Guid UploadedById { get; set; }
     public string? UploadedByName { get; set; }

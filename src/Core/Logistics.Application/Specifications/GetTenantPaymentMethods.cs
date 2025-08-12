@@ -1,4 +1,3 @@
-﻿using System.Linq.Expressions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Specifications;
 
@@ -10,7 +9,7 @@ public class GetTenantPaymentMethods : BaseSpecification<PaymentMethod>
     {
         OrderBy(orderBy);
     }
-    
+
     // protected override Expression<Func<PaymentMethod, object?>> CreateOrderByExpression(string propertyName)
     // {
     //     return propertyName switch

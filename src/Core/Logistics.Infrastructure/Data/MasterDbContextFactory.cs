@@ -1,4 +1,5 @@
-﻿using Logistics.Infrastructure.Options;
+using Logistics.Infrastructure.Options;
+
 using Microsoft.EntityFrameworkCore.Design;
 
 namespace Logistics.Infrastructure.Data;

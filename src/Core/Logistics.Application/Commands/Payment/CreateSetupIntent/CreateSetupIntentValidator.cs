@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 
 namespace Logistics.Application.Commands;
 
@@ -6,6 +6,6 @@ internal sealed class CreateSetupIntentValidator : AbstractValidator<CreateSetup
 {
     public CreateSetupIntentValidator()
     {
-        
+
     }
 }

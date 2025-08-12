@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Specifications;
+using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -16,7 +16,7 @@ internal sealed class GetLoadsHandler : RequestHandler<GetLoadsQuery, PagedResul
     }
 
     protected override async Task<PagedResult<LoadDto>> HandleValidated(
-        GetLoadsQuery req, 
+        GetLoadsQuery req,
         CancellationToken cancellationToken)
     {
         var totalItems = await _tenantUow.Repository<Load>().CountAsync();
@@ -39,14 +39,14 @@ internal sealed class GetLoadsHandler : RequestHandler<GetLoadsQuery, PagedResul
         }
         if (req is { StartDate: not null, EndDate: not null })
         {
-            baseQuery = baseQuery.Where(i => i.DispatchedDate >= req.StartDate && 
+            baseQuery = baseQuery.Where(i => i.DispatchedDate >= req.StartDate &&
                                              i.DispatchedDate <= req.EndDate);
         }
         if (!req.LoadAllPages)
         {
             baseQuery = baseQuery.ApplyPaging(req.Page, req.PageSize);
         }
-        
+
         var loads = baseQuery.Select(i => i.ToDto()).ToArray();
         return PagedResult<LoadDto>.Succeed(loads, totalItems, req.PageSize);
     }

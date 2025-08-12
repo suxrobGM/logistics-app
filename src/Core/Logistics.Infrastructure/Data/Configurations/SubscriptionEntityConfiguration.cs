@@ -1,4 +1,5 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,7 +10,7 @@ public class SubscriptionEntityConfiguration : IEntityTypeConfiguration<Subscrip
     public void Configure(EntityTypeBuilder<Subscription> builder)
     {
         builder.ToTable("Subscriptions");
-            
+
         builder.HasOne(i => i.Tenant)
             .WithOne(i => i.Subscription)
             .HasForeignKey<Subscription>(i => i.TenantId);

@@ -1,9 +1,9 @@
-﻿namespace Logistics.DriverApp.Services;
+namespace Logistics.DriverApp.Services;
 
 public class InMemoryCache : ICache
 {
     private readonly Dictionary<string, object?> _cache = new();
-    
+
     public void Set<T>(string key, T? value)
     {
         _cache.Add(key, value);
@@ -15,7 +15,7 @@ public class InMemoryCache : ICache
         {
             return value == default ? default : (T)value;
         }
-        
+
         return default;
     }
 

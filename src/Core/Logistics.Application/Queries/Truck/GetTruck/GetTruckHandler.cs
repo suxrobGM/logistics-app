@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
@@ -34,7 +34,7 @@ internal sealed class GetTruckHandler : RequestHandler<GetTruckQuery, Result<Tru
         {
             return null;
         }
-        
+
         var truck = await _tenantUow.Repository<Truck>().GetAsync(i => i.Id == truckOrDriverId);
         return truck ?? await GetTruckFromDriver(truckOrDriverId.Value);
     }
@@ -48,15 +48,15 @@ internal sealed class GetTruckHandler : RequestHandler<GetTruckQuery, Result<Tru
     {
         var truckDto = truckEntity.ToDto(new List<LoadDto>());
 
-        if (!includeLoads) 
+        if (!includeLoads)
             return truckDto;
-        
+
         var loads = truckEntity.Loads.Select(l => l.ToDto());
         if (onlyActiveLoads)
         {
             loads = loads.Where(l => l.DeliveryDate == null);
         }
-        
+
         truckDto.Loads = loads.ToArray();
         return truckDto;
     }

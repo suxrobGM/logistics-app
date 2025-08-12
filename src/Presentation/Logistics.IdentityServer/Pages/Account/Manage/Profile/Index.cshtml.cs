@@ -1,5 +1,6 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Services;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -45,7 +46,7 @@ public partial class ProfileModel : PageModel
     public async Task<IActionResult> OnPostAsync()
     {
         var user = await _userManager.GetUserAsync(User);
-        
+
         if (user == null)
         {
             return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
@@ -80,7 +81,7 @@ public partial class ProfileModel : PageModel
         StatusMessage = "Your profile has been updated";
         return RedirectToPage();
     }
-    
+
     private async Task LoadAsync(User user)
     {
         var userName = await _userManager.GetUserNameAsync(user);

@@ -1,4 +1,4 @@
-﻿namespace Logistics.Shared.Geo;
+namespace Logistics.Shared.Geo;
 
 /// <summary>
 /// US State

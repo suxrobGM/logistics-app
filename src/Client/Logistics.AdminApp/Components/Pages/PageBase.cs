@@ -1,7 +1,9 @@
-﻿using Logistics.HttpClient;
+using Logistics.HttpClient;
 using Logistics.Shared.Models;
+
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+
 using Radzen;
 
 namespace Logistics.AdminApp.Components.Pages;
@@ -13,12 +15,12 @@ public abstract class PageBase : ComponentBase
     [Inject]
     private IApiClient ApiClient { get; set; } = null!;
 
-    [Inject] 
+    [Inject]
     private IAccessTokenProvider AccessTokenProvider { get; set; } = null!;
 
-    [Inject] 
+    [Inject]
     private NotificationService NotificationService { get; set; } = null!;
-    
+
     [Inject]
     private TooltipService TooltipService { get; set; } = null!;
 
@@ -43,7 +45,7 @@ public abstract class PageBase : ComponentBase
         {
             return;
         }
-        
+
         storage = value;
         StateHasChanged();
     }
@@ -62,11 +64,11 @@ public abstract class PageBase : ComponentBase
     {
         TooltipService.Open(element, message, options);
     }
-    
+
     protected async Task<bool> CallApiAsync(Func<IApiClient, Task<Result>> apiFunction)
     {
         IsLoading = true;
-        
+
         await TrySetAccessTokenAsync();
         var apiResult = await apiFunction(ApiClient);
         IsLoading = false;
@@ -76,14 +78,14 @@ public abstract class PageBase : ComponentBase
     protected async Task<T?> CallApiAsync<T>(Func<IApiClient, Task<Result<T>>> apiFunction)
     {
         IsLoading = true;
-        
+
         await TrySetAccessTokenAsync();
         var apiResult = await apiFunction(ApiClient);
         HandleError(apiResult);
         IsLoading = false;
         return apiResult.Data;
     }
-    
+
     protected async Task<PagedData<T>?> CallApiAsync<T>(Func<IApiClient, Task<PagedResult<T>>> apiFunction)
     {
         IsLoading = true;

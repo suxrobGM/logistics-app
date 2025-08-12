@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using Logistics.Shared.Models;
+using FluentValidation;
 
 namespace Logistics.Application.Commands;
 

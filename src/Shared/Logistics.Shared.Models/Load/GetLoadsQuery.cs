@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Logistics.Shared.Models;
+using System.Globalization;
 
 namespace Logistics.Shared.Models;
 
@@ -32,7 +31,7 @@ public class GetLoadsQuery : SearchableQuery
         {
             queryDict.Add("filterActiveLoads", FilterActiveLoads.Value.ToString());
         }
-        
+
         return queryDict;
     }
 }

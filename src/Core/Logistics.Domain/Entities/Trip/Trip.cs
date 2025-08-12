@@ -1,7 +1,7 @@
-﻿using Logistics.Domain.Core;
+using Logistics.Domain.Core;
 using Logistics.Domain.Events;
-using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
@@ -12,7 +12,7 @@ public class Trip : Entity, ITenantEntity
     /// </summary>
     public long Number { get; private set; }
     public required string Name { get; set; }
-    
+
     /// <summary>
     /// Total distance of the trip in kilometers.
     /// </summary>
@@ -26,20 +26,20 @@ public class Trip : Entity, ITenantEntity
 
     public Guid TruckId { get; set; }
     public virtual required Truck Truck { get; set; }
-    
+
     public virtual List<TripStop> Stops { get; } = [];
-    
+
     #region Domain Behaviors
-    
+
     /// <summary>
     /// Gets all unique loads associated with the trip.
     /// </summary>
     public IReadOnlyList<Load> GetLoads() =>
         Stops.Select(s => s.Load).Where(i => i is not null).Distinct(new LoadComparer()).ToArray();
-    
+
     public Address GetOriginAddress() => Stops.OrderBy(s => s.Order).First().Address;
     public Address GetDestinationAddress() => Stops.OrderBy(s => s.Order).Last().Address;
-    
+
     public void Dispatch()
     {
         if (Status != TripStatus.Planned)
@@ -76,7 +76,7 @@ public class Trip : Entity, ITenantEntity
             Status = TripStatus.InTransit;
         }
     }
-    
+
     public decimal CalcTotalRevenue() =>
         Stops.Where(s => s.Type == TripStopType.DropOff)
             .Sum(s => s.Load.DeliveryCost.Amount);
@@ -84,7 +84,7 @@ public class Trip : Entity, ITenantEntity
     public decimal CalcDriversShare() =>
         Stops.Where(s => s.Type == TripStopType.DropOff)
             .Sum(s => s.Load.CalcDriverShare());
-    
+
     #endregion
 
 
@@ -97,7 +97,7 @@ public class Trip : Entity, ITenantEntity
         IEnumerable<Load>? loads = null)
     {
         var loadsArr = loads?.ToArray() ?? [];
-        
+
         var trip = new Trip
         {
             Name = name,
@@ -106,13 +106,13 @@ public class Trip : Entity, ITenantEntity
             PlannedStart = plannedStart,
             TotalDistance = loadsArr.Sum(l => l.Distance)
         };
-        
+
         AddStops(trip, loadsArr);
 
         trip.DomainEvents.Add(new NewTripCreatedEvent(trip.Id));
         return trip;
     }
-    
+
     public void UpdateTripLoads(IEnumerable<Load> loads)
     {
         if (Status != TripStatus.Planned)
@@ -121,7 +121,7 @@ public class Trip : Entity, ITenantEntity
         // Clear existing stops
         Stops.Clear();
         var loadsArr = loads.ToArray();
-        
+
         // Recreate stops based on new loads
         AddStops(this, loadsArr);
 

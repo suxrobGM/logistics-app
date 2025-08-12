@@ -1,4 +1,4 @@
-﻿namespace Logistics.Domain.Primitives.ValueObjects;
+namespace Logistics.Domain.Primitives.ValueObjects;
 
 /// <summary>
 /// Represents a page in a paginated result set.

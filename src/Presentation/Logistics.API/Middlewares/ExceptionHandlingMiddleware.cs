@@ -1,5 +1,6 @@
-﻿using System.Text;
+using System.Text;
 using System.Text.Json;
+
 using FluentValidation;
 
 namespace Logistics.API.Middlewares;
@@ -8,15 +9,15 @@ public class ExceptionHandlingMiddleware
 {
     private readonly ILogger<ExceptionHandlingMiddleware> _logger;
     private readonly RequestDelegate _next;
-    
+
     public ExceptionHandlingMiddleware(
-        RequestDelegate next, 
+        RequestDelegate next,
         ILogger<ExceptionHandlingMiddleware> logger)
     {
         _next = next;
         _logger = logger;
     }
-    
+
     public async Task InvokeAsync(HttpContext context)
     {
         try
@@ -34,7 +35,7 @@ public class ExceptionHandlingMiddleware
             }
         }
     }
-    
+
     private static async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
     {
         var statusCode = GetStatusCode(exception);
@@ -56,7 +57,7 @@ public class ExceptionHandlingMiddleware
             _ => StatusCodes.Status500InternalServerError
         };
     }
-        
+
     private static string GetErrors(Exception exception)
     {
         var strBuilder = new StringBuilder();
@@ -72,7 +73,7 @@ public class ExceptionHandlingMiddleware
         {
             strBuilder.Append(exception.Message);
         }
-        
+
         return strBuilder.ToString();
     }
 }
@@ -82,5 +83,5 @@ public static class ExceptionHandlingMiddlewareExtensions
     public static IApplicationBuilder UseCustomExceptionHandler(this IApplicationBuilder builder)
     {
         return builder.UseMiddleware<ExceptionHandlingMiddleware>();
-    } 
+    }
 }

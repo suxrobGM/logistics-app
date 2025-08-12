@@ -1,4 +1,4 @@
-﻿namespace Logistics.DriverApp.Services.Authentication;
+namespace Logistics.DriverApp.Services.Authentication;
 
 internal static class InsecureHttpsClient
 {

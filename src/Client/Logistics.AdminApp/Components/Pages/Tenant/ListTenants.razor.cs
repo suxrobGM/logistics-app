@@ -1,6 +1,8 @@
-﻿using Logistics.AdminApp.Extensions;
+using Logistics.AdminApp.Extensions;
 using Logistics.Shared.Models;
+
 using Microsoft.AspNetCore.Components;
+
 using Radzen;
 
 namespace Logistics.AdminApp.Components.Pages.Tenant;
@@ -9,10 +11,10 @@ public partial class ListTenants : PageBase
 {
     private IEnumerable<TenantDto>? _tenants;
     private int _totalRecords = 10;
-    
+
     #region Injectable services
 
-    [Inject] 
+    [Inject]
     private NavigationManager Navigation { get; set; } = default!;
 
     #endregion

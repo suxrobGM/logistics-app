@@ -1,4 +1,4 @@
-﻿namespace Logistics.Domain.Options;
+namespace Logistics.Domain.Options;
 
 public record TenantsDatabaseOptions
 {

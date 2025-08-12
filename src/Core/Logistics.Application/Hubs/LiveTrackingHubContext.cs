@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
+
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Hubs;
@@ -22,7 +23,7 @@ public class LiveTrackingHubContext
     {
         _connectedClients.AddOrUpdate(connectionId, truckGeolocationDto, (_, _) => truckGeolocationDto);
     }
-    
+
     public void RemoveClient(string connectionId)
     {
         _connectedClients.TryRemove(connectionId, out _);

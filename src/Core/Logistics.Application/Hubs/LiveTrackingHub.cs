@@ -1,6 +1,8 @@
-﻿using Logistics.Application.Commands;
+using Logistics.Application.Commands;
 using Logistics.Shared.Models;
+
 using MediatR;
+
 using Microsoft.AspNetCore.SignalR;
 
 namespace Logistics.Application.Hubs;
@@ -11,13 +13,13 @@ public class LiveTrackingHub : Hub<ILiveTrackingHubClient>
     private readonly LiveTrackingHubContext _hubContext;
 
     public LiveTrackingHub(
-        IMediator mediator, 
+        IMediator mediator,
         LiveTrackingHubContext hubContext)
     {
         _mediator = mediator;
         _hubContext = hubContext;
     }
-    
+
     public override Task OnConnectedAsync()
     {
         _hubContext.AddClient(Context.ConnectionId, null);
@@ -27,12 +29,12 @@ public class LiveTrackingHub : Hub<ILiveTrackingHubClient>
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         var geolocationData = _hubContext.GetGeolocationData(Context.ConnectionId);
-        
+
         if (geolocationData != null)
         {
             await _mediator.Send(new SetTruckGeolocationCommand(geolocationData));
         }
-        
+
         _hubContext.RemoveClient(Context.ConnectionId);
     }
 
@@ -43,7 +45,7 @@ public class LiveTrackingHub : Hub<ILiveTrackingHubClient>
             .ReceiveGeolocationData(truckGeolocation);
         _hubContext.UpdateGeolocationData(Context.ConnectionId, truckGeolocation);
     }
-    
+
     public async Task RegisterTenant(string tenantId)
     {
         await Groups.AddToGroupAsync(Context.ConnectionId, tenantId);

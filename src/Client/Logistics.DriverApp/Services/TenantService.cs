@@ -1,4 +1,4 @@
-﻿using Logistics.DriverApp.Services.Authentication;
+using Logistics.DriverApp.Services.Authentication;
 
 namespace Logistics.DriverApp.Services;
 
@@ -30,7 +30,7 @@ public class TenantService : ITenantService
     {
         if (_currentTenantId == tenantId)
             return Task.CompletedTask;
-        
+
         _currentTenantId = tenantId;
         return SecureStorage.Default.SetAsync(TenantIdKey, tenantId.ToString());
     }

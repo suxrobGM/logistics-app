@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Specifications;
+using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -16,7 +16,7 @@ internal sealed class GetUsersHandler : RequestHandler<GetUsersQuery, PagedResul
     }
 
     protected override async Task<PagedResult<UserDto>> HandleValidated(
-        GetUsersQuery req, 
+        GetUsersQuery req,
         CancellationToken cancellationToken)
     {
         var totalItems = await _masterUow.Repository<User>().CountAsync();
@@ -25,7 +25,7 @@ internal sealed class GetUsersHandler : RequestHandler<GetUsersQuery, PagedResul
             .ApplySpecification(new SearchUsers(req.Search, req.OrderBy, req.Page, req.PageSize))
             .Select(i => i.ToDto(null))
             .ToArray();
-        
+
         return PagedResult<UserDto>.Succeed(users, totalItems, req.PageSize);
     }
 }

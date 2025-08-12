@@ -1,14 +1,18 @@
+using System.Security.Claims;
+
+using Duende.IdentityModel;
 using Duende.IdentityServer;
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Services;
-using Duende.IdentityModel;
+
+using Logistics.Domain.Entities;
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Security.Claims;
-using Logistics.Domain.Entities;
+
 using ClaimTypes = System.Security.Claims.ClaimTypes;
 
 namespace Logistics.IdentityServer.Pages.ExternalLogin;
@@ -114,13 +118,13 @@ public class Callback : PageModel
         var claimsArr = claims.ToArray();
         var firstName = claimsArr.FirstOrDefault(x => x.Type == JwtClaimTypes.GivenName)?.Value ??
                         claimsArr.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value;
-        
+
         var lastName = claimsArr.FirstOrDefault(x => x.Type == JwtClaimTypes.FamilyName)?.Value ??
                        claimsArr.FirstOrDefault(x => x.Type == ClaimTypes.Surname)?.Value;
-        
+
         var email = claimsArr.FirstOrDefault(x => x.Type == JwtClaimTypes.Email)?.Value ??
                     claimsArr.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-        
+
         var name = claimsArr.FirstOrDefault(x => x.Type == JwtClaimTypes.Name)?.Value ??
                    claimsArr.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
 
@@ -135,7 +139,7 @@ public class Callback : PageModel
 
         // create a list of claims that we want to transfer into our store
         var filtered = new List<Claim>();
-        
+
         if (name != null)
         {
             filtered.Add(new Claim(JwtClaimTypes.Name, name));
@@ -158,16 +162,19 @@ public class Callback : PageModel
         }
 
         var identityResult = await _userManager.CreateAsync(user);
-        if (!identityResult.Succeeded) throw new Exception(identityResult.Errors.First().Description);
+        if (!identityResult.Succeeded)
+            throw new Exception(identityResult.Errors.First().Description);
 
         if (filtered.Count != 0)
         {
             identityResult = await _userManager.AddClaimsAsync(user, filtered);
-            if (!identityResult.Succeeded) throw new Exception(identityResult.Errors.First().Description);
+            if (!identityResult.Succeeded)
+                throw new Exception(identityResult.Errors.First().Description);
         }
 
         identityResult = await _userManager.AddLoginAsync(user, new UserLoginInfo(provider, providerUserId, provider));
-        if (!identityResult.Succeeded) throw new Exception(identityResult.Errors.First().Description);
+        if (!identityResult.Succeeded)
+            throw new Exception(identityResult.Errors.First().Description);
 
         return user;
     }

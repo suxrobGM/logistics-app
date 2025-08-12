@@ -1,5 +1,6 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -54,8 +55,6 @@ public class LoadDocumentEntityConfiguration : IEntityTypeConfiguration<LoadDocu
             .IsRequired()
             .HasDefaultValueSql("NOW()");
 
-        builder.Property(d => d.UpdatedAt);
-
         // Relationships
         builder.HasOne(d => d.Load)
             .WithMany(l => l.Documents)
@@ -69,10 +68,8 @@ public class LoadDocumentEntityConfiguration : IEntityTypeConfiguration<LoadDocu
 
         // Indexes
         builder.HasIndex(d => d.LoadId);
-        builder.HasIndex(d => d.UploadedById);
         builder.HasIndex(d => d.Status);
         builder.HasIndex(d => d.Type);
-        builder.HasIndex(d => d.CreatedAt);
 
         // Composite index for efficient queries
         builder.HasIndex(d => new { d.LoadId, d.Status, d.Type });

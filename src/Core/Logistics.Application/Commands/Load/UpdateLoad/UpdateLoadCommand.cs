@@ -1,6 +1,7 @@
-﻿using Logistics.Domain.Primitives.ValueObjects;
-using Logistics.Shared.Models;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Shared.Models;
+
 using MediatR;
 
 namespace Logistics.Application.Commands;
@@ -11,7 +12,7 @@ public class UpdateLoadCommand : IRequest<Result>
     public string? Name { get; set; }
     public LoadType? Type { get; set; }
     public Address? OriginAddress { get; set; }
-    public GeoPoint? OriginLocation { get; set; }   
+    public GeoPoint? OriginLocation { get; set; }
     public Address? DestinationAddress { get; set; }
     public GeoPoint? DestinationLocation { get; set; }
     public decimal? DeliveryCost { get; set; }

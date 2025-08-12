@@ -1,10 +1,13 @@
-﻿using Logistics.Application.Commands;
+using Logistics.Application.Commands;
 using Logistics.Application.Queries;
-using Logistics.Shared.Models;
 using Logistics.Shared.Identity.Policies;
+using Logistics.Shared.Models;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using CreateLoadCommand = Logistics.Application.Commands.CreateLoadCommand;
 using GetLoadsQuery = Logistics.Application.Queries.GetLoadsQuery;
 using UpdateLoadCommand = Logistics.Application.Commands.UpdateLoadCommand;
@@ -28,7 +31,7 @@ public class LoadController : ControllerBase
     [Authorize(Policy = Permissions.Loads.View)]
     public async Task<IActionResult> GetById(Guid id)
     {
-        var result = await _mediator.Send(new GetLoadByIdQuery {Id = id});
+        var result = await _mediator.Send(new GetLoadByIdQuery { Id = id });
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -69,7 +72,7 @@ public class LoadController : ControllerBase
     [Authorize(Policy = Permissions.Loads.Delete)]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var result = await _mediator.Send(new DeleteLoadCommand {Id = id});
+        var result = await _mediator.Send(new DeleteLoadCommand { Id = id });
         return result.Success ? Ok(result) : BadRequest(result);
     }
 }

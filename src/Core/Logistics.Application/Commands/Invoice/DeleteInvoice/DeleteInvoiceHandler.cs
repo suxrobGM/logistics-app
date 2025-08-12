@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
 
@@ -22,7 +22,7 @@ internal sealed class DeleteInvoiceHandler : RequestHandler<DeleteInvoiceCommand
         {
             return Result.Fail($"Could not find an invoice with ID {req.Id}");
         }
-        
+
         _tenantUow.Repository<Invoice>().Delete(invoice);
         await _tenantUow.SaveChangesAsync();
         return Result.Succeed();

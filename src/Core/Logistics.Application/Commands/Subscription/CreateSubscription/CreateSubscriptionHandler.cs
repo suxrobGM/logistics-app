@@ -1,7 +1,8 @@
-﻿using Logistics.Application.Services;
+using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
+
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
@@ -14,8 +15,8 @@ internal sealed class CreateSubscriptionHandler : RequestHandler<CreateSubscript
     private readonly ILogger<CreateSubscriptionHandler> _logger;
 
     public CreateSubscriptionHandler(
-        IMasterUnityOfWork masterUow, 
-        ITenantUnityOfWork tenantUow, 
+        IMasterUnityOfWork masterUow,
+        ITenantUnityOfWork tenantUow,
         IStripeService stripeService,
         ILogger<CreateSubscriptionHandler> logger)
     {
@@ -29,20 +30,20 @@ internal sealed class CreateSubscriptionHandler : RequestHandler<CreateSubscript
         CreateSubscriptionCommand req, CancellationToken cancellationToken)
     {
         var tenant = await _masterUow.Repository<Tenant>().GetByIdAsync(req.TenantId);
-        
+
         if (tenant is null)
         {
             return Result.Fail($"Could not find a tenant with ID '{req.TenantId}'");
         }
-        
+
         _tenantUow.SetCurrentTenant(tenant);
         var tenantEmployeeCount = await _tenantUow.Repository<Employee>().CountAsync();
-        
+
         if (tenant.StripeCustomerId is null)
         {
             await CreateStripeCustomerAsync(tenant);
         }
-        
+
         var subscriptionPlan = await _masterUow.Repository<SubscriptionPlan>().GetByIdAsync(req.PlanId);
 
         if (subscriptionPlan is null)
@@ -59,7 +60,7 @@ internal sealed class CreateSubscriptionHandler : RequestHandler<CreateSubscript
         _logger.LogInformation("Created Subscription for tenant {TenantId}, employee count: {EmployeeCount}", tenant.Id, tenantEmployeeCount);
         return Result.Succeed();
     }
-    
+
     private async Task CreateStripeCustomerAsync(Tenant tenant)
     {
         var stripeCustomer = await _stripeService.CreateCustomerAsync(tenant);

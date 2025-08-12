@@ -1,7 +1,8 @@
-﻿using Logistics.Application.Hubs;
+using Logistics.Application.Hubs;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+
 using Microsoft.AspNetCore.SignalR;
 
 namespace Logistics.Application.Services;
@@ -27,7 +28,7 @@ internal class NotificationService : INotificationService
             Title = title,
             Message = message
         };
-        
+
         var notificationRepository = _tenantUow.Repository<Notification>();
         await notificationRepository.AddAsync(notification);
         var changes = await _tenantUow.SaveChangesAsync();

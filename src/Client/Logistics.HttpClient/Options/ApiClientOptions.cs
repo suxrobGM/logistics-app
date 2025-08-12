@@ -1,4 +1,4 @@
-﻿namespace Logistics.HttpClient.Options;
+namespace Logistics.HttpClient.Options;
 
 public class ApiClientOptions
 {

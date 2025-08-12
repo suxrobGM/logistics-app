@@ -1,7 +1,8 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using Logistics.Shared.Models;
+using System.IdentityModel.Tokens.Jwt;
+
 using Logistics.HttpClient.Exceptions;
 using Logistics.HttpClient.Options;
+using Logistics.Shared.Models;
 
 namespace Logistics.HttpClient.Implementations;
 
@@ -9,7 +10,7 @@ internal class ApiClient : GenericApiClient, IApiClient
 {
     private string? _accessToken;
     private Guid? _tenantId;
-    
+
     public ApiClient(ApiClientOptions options) : base(options.Host!)
     {
         AccessToken = options.AccessToken;
@@ -33,7 +34,7 @@ internal class ApiClient : GenericApiClient, IApiClient
         }
     }
 
-    public Guid? TenantId 
+    public Guid? TenantId
     {
         get => _tenantId;
         set
@@ -42,23 +43,23 @@ internal class ApiClient : GenericApiClient, IApiClient
             SetRequestHeader("X-Tenant", _tenantId?.ToString());
         }
     }
-    
+
     private void SetTenantIdFromAccessToken(string? accessToken)
     {
         if (string.IsNullOrEmpty(accessToken))
         {
             return;
         }
-        
+
         var handler = new JwtSecurityTokenHandler();
         var token = handler.ReadJwtToken(accessToken);
         var tenantId = token?.Claims?.FirstOrDefault(i => i.Type == "tenant")?.Value;
-        
-        
+
+
         if (!Guid.TryParse(tenantId, out var tenantGuid) || TenantId == tenantGuid)
         {
             return;
-        } 
+        }
 
         TenantId = tenantGuid;
         SetRequestHeader("X-Tenant", tenantId);
@@ -152,7 +153,7 @@ internal class ApiClient : GenericApiClient, IApiClient
 
 
     #region Load API
-    
+
     public Task<Result<LoadDto>> GetLoadAsync(Guid id)
     {
         return MakeGetRequestAsync<Result<LoadDto>>($"loads/{id}");
@@ -162,7 +163,7 @@ internal class ApiClient : GenericApiClient, IApiClient
     {
         return MakeGetRequestAsync<PagedResult<LoadDto>>("loads", query.ToDictionary());
     }
-    
+
     public Task<Result<ICollection<LoadDto>>> GetDriverActiveLoadsAsync(Guid userId)
     {
         var query = new Dictionary<string, string>
@@ -178,7 +179,7 @@ internal class ApiClient : GenericApiClient, IApiClient
     {
         return MakePostRequestAsync<Result, CreateLoadCommand>("loads", command);
     }
-    
+
     public Task<Result> UpdateLoadAsync(UpdateLoadCommand command)
     {
         return MakePutRequestAsync<Result, UpdateLoadCommand>($"loads/{command.Id}", command);
@@ -246,7 +247,7 @@ internal class ApiClient : GenericApiClient, IApiClient
     {
         return MakePutRequestAsync<Result, UpdateEmployeeCommand>($"employees/{command.UserId}", command);
     }
-    
+
     public Task<Result> DeleteEmployeeAsync(Guid userId)
     {
         return MakeDeleteRequestAsync<Result>($"employees/{userId}");
@@ -311,7 +312,7 @@ internal class ApiClient : GenericApiClient, IApiClient
 
 
     #region Driver API
-    
+
     public Task<Result> SetDeviceTokenAsync(SetDeviceToken command)
     {
         return MakePostRequestAsync<Result, SetDeviceToken>($"drivers/{command.UserId}/device-token", command);
@@ -344,12 +345,12 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     public Task<Result<DriverStatsDto>> GetDriverStatsAsync(Guid userId)
     {
-        return MakeGetRequestAsync<Result<DriverStatsDto>>($"stats/driver/{userId}");  
+        return MakeGetRequestAsync<Result<DriverStatsDto>>($"stats/driver/{userId}");
     }
 
     #endregion
 
-    
+
     #region Subscriptions API
 
     public Task<Result<SubscriptionDto>> GetSubscriptionAsync(Guid id)
@@ -396,7 +397,7 @@ internal class ApiClient : GenericApiClient, IApiClient
     {
         return MakeDeleteRequestAsync<Result>($"subscriptions/{id}");
     }
-    
+
     public Task<Result> CancelSubscriptionAsync(CancelSubscriptionCommand command)
     {
         return MakePutRequestAsync<Result, CancelSubscriptionCommand>($"subscriptions/{command.Id}/cancel", command);

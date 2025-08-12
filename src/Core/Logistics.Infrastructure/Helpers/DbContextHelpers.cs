@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Infrastructure.Helpers;
 
@@ -23,7 +23,7 @@ internal static class DbContextHelpers
     //         o.EnableRetryOnFailure(8, TimeSpan.FromSeconds(15), null);
     //     }).UseLazyLoadingProxies();
     // }
-    
+
     public static void ConfigurePostgreSql(string connectionString, DbContextOptionsBuilder options)
     {
         options.UseNpgsql(connectionString, o =>

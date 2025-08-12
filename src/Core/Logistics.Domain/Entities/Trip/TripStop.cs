@@ -1,6 +1,6 @@
-﻿using Logistics.Domain.Core;
-using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Domain.Core;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
@@ -17,12 +17,12 @@ public class TripStop : Entity, ITenantEntity
 
     public required Address Address { get; set; }
     public required GeoPoint Location { get; set; }
-    
+
     public DateTime? Planned { get; set; }
     public DateTime? ArrivedAt { get; set; }
-    
+
     public Guid LoadId { get; set; }
-    
+
     /// <summary>
     /// The specific load handled at this stop.
     /// </summary>

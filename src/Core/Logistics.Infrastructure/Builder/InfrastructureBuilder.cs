@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Services;
@@ -6,6 +6,7 @@ using Logistics.Infrastructure.Data;
 using Logistics.Infrastructure.Options;
 using Logistics.Infrastructure.Persistence;
 using Logistics.Infrastructure.Services;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,13 +19,13 @@ internal class InfrastructureBuilder : IInfrastructureBuilder
     private readonly IConfiguration _configuration;
     private readonly IServiceCollection _services;
     private ILogger<IInfrastructureBuilder>? _logger;
-    
+
     internal InfrastructureBuilder(IServiceCollection services, IConfiguration configuration)
     {
         _configuration = configuration;
         _services = services;
     }
-    
+
     public IInfrastructureBuilder AddIdentity(Action<IdentityBuilder>? configure = null)
     {
         var identityBuilder = _services.AddIdentityCore<User>(options =>
@@ -38,7 +39,7 @@ internal class InfrastructureBuilder : IInfrastructureBuilder
         })
         .AddRoles<AppRole>()
         .AddEntityFrameworkStores<MasterDbContext>();
-        
+
         configure?.Invoke(identityBuilder);
         return this;
     }
@@ -50,7 +51,7 @@ internal class InfrastructureBuilder : IInfrastructureBuilder
 
         var connectionString = _configuration.GetConnectionString(options.DbConnectionSection);
         options.ConnectionString = connectionString;
-        
+
         _services.AddSingleton(options);
         _services.AddDbContext<MasterDbContext>();
         _services.AddScoped<IMasterUnityOfWork, MasterUnitOfWork>();
@@ -82,7 +83,7 @@ internal class InfrastructureBuilder : IInfrastructureBuilder
         _logger?.LogInformation("Added default tenant database with connection string: {ConnectionString}", connectionString);
         return this;
     }
-    
+
     public IInfrastructureBuilder UseLogger(ILogger<IInfrastructureBuilder> logger)
     {
         _logger = logger;

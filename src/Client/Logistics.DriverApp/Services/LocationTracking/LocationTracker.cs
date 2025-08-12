@@ -1,6 +1,7 @@
-﻿using Logistics.Domain.Primitives.ValueObjects;
-using Logistics.HttpClient.Options;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.DriverApp.Services.Authentication;
+using Logistics.HttpClient.Options;
+
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace Logistics.DriverApp.Services.LocationTracking;
@@ -27,7 +28,7 @@ public class LocationTracker : ILocationTracker
     {
         if (_isConnected)
             return;
-        
+
         await _hubConnection.StartAsync();
         _isConnected = true;
     }
@@ -36,7 +37,7 @@ public class LocationTracker : ILocationTracker
     {
         if (!_isConnected)
             return;
-        
+
         await _hubConnection.DisposeAsync();
         _isConnected = false;
     }
@@ -49,7 +50,7 @@ public class LocationTracker : ILocationTracker
             {
                 return null;
             }
-        
+
             await ConnectAsync();
             var location = await GetCurrentLocationAsync();
 
@@ -59,7 +60,7 @@ public class LocationTracker : ILocationTracker
             }
 
             var address = await GetAddressFromGeocodeAsync(location.Latitude, location.Longitude);
-            
+
             var geolocationData = new TruckGeolocationDto
             {
                 TruckId = options.TruckId.Value,
@@ -78,7 +79,7 @@ public class LocationTracker : ILocationTracker
             return default;
         }
     }
-    
+
     private static async Task<Location?> GetCurrentLocationAsync()
     {
         try
@@ -100,7 +101,7 @@ public class LocationTracker : ILocationTracker
         {
             var placemarks = await Geocoding.Default.GetPlacemarksAsync(latitude, longitude);
             var placemark = placemarks.FirstOrDefault();
-        
+
             if (placemark != null)
             {
                 return new Address

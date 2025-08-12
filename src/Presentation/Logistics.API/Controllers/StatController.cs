@@ -1,9 +1,12 @@
-﻿using Logistics.Application.Queries;
-using Logistics.Shared.Models;
+using Logistics.Application.Queries;
 using Logistics.Shared.Identity.Policies;
+using Logistics.Shared.Models;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using GetDailyGrossesQuery = Logistics.Application.Queries.GetDailyGrossesQuery;
 using GetMonthlyGrossesQuery = Logistics.Application.Queries.GetMonthlyGrossesQuery;
 
@@ -29,7 +32,7 @@ public class StatController : ControllerBase
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
-    
+
     [HttpGet("monthly-grosses")]
     [ProducesResponseType(typeof(Result<MonthlyGrossesDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
@@ -49,7 +52,7 @@ public class StatController : ControllerBase
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
-    
+
     [HttpGet("trucks")]
     [ProducesResponseType(typeof(PagedResult<TruckStatsDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
@@ -59,7 +62,7 @@ public class StatController : ControllerBase
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
-    
+
     [HttpGet("driver/{userId:guid}")]
     [ProducesResponseType(typeof(PagedResult<DriverStatsDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]

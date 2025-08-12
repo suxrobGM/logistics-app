@@ -1,5 +1,6 @@
-﻿using Duende.IdentityModel;
+using Duende.IdentityModel;
 using Duende.IdentityServer.Models;
+
 using Logistics.Shared.Identity.Claims;
 
 namespace Logistics.IdentityServer;
@@ -17,7 +18,7 @@ public static class Config
                 Name = "roles",
                 DisplayName = "Identity roles",
                 UserClaims = {
-                    CustomClaimTypes.Role, 
+                    CustomClaimTypes.Role,
                     CustomClaimTypes.Permission
                 }
             },
@@ -31,7 +32,7 @@ public static class Config
             }
         ];
     }
-    
+
     public static IEnumerable<ApiScope> ApiScopes()
     {
         return
@@ -43,7 +44,7 @@ public static class Config
                 UserClaims = {
                     JwtClaimTypes.GivenName,
                     JwtClaimTypes.FamilyName,
-                    CustomClaimTypes.Role, 
+                    CustomClaimTypes.Role,
                     CustomClaimTypes.Permission
                 }
             },
@@ -54,8 +55,8 @@ public static class Config
                 UserClaims = {
                     JwtClaimTypes.GivenName,
                     JwtClaimTypes.FamilyName,
-                    CustomClaimTypes.Role, 
-                    CustomClaimTypes.Permission, 
+                    CustomClaimTypes.Role,
+                    CustomClaimTypes.Permission,
                     CustomClaimTypes.Tenant
                 }
             }
@@ -77,8 +78,8 @@ public static class Config
                 UserClaims = {
                     JwtClaimTypes.GivenName,
                     JwtClaimTypes.FamilyName,
-                    CustomClaimTypes.Role, 
-                    CustomClaimTypes.Permission, 
+                    CustomClaimTypes.Role,
+                    CustomClaimTypes.Permission,
                     CustomClaimTypes.Tenant
                 }
             }

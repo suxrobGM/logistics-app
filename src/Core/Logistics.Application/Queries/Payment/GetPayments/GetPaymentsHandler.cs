@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Specifications;
+using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -16,19 +16,19 @@ internal sealed class GetPaymentsHandler : RequestHandler<GetPaymentsQuery, Page
     }
 
     protected override async Task<PagedResult<PaymentDto>> HandleValidated(
-        GetPaymentsQuery req, 
+        GetPaymentsQuery req,
         CancellationToken cancellationToken)
     {
         var totalItems = await _tenantUow.Repository<Payment>().CountAsync();
 
         var specification =
             new FilterPaymentsByInterval(req.OrderBy, req.StartDate, req.EndDate, req.Page, req.PageSize);
-        
+
         var payments = _tenantUow.Repository<Payment>()
             .ApplySpecification(specification)
             .Select(i => i.ToDto())
             .ToArray();
-        
+
         return PagedResult<PaymentDto>.Succeed(payments, totalItems, req.PageSize);
     }
 }

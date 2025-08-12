@@ -1,5 +1,3 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using Logistics.DriverApp.Messages;
 using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.Authentication;
 
@@ -24,7 +22,7 @@ public class AppShellViewModel : BaseViewModel
     }
 
     public IAsyncRelayCommand SignOutCommand { get; }
-    
+
 
     private async Task SignOutAsync()
     {

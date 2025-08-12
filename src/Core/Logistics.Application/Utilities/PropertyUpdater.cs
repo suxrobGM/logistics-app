@@ -1,4 +1,4 @@
-﻿namespace Logistics.Application.Utilities;
+namespace Logistics.Application.Utilities;
 
 /// <summary>
 /// A utility class to update properties based on the source value.
@@ -20,7 +20,7 @@ public static class PropertyUpdater
         }
         return previousValue;
     }
-    
+
     /// <summary>
     /// Update the property if the source is not null and is different from the current value.
     /// For non-string reference properties (objects).
@@ -37,7 +37,7 @@ public static class PropertyUpdater
         }
         return previousValue;
     }
-    
+
     /// <summary>
     /// Update the property if the source is not null and is different from the current value.
     /// For non-string value properties (primitives, structs).

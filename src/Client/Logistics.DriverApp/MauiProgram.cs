@@ -1,5 +1,7 @@
-﻿using CommunityToolkit.Maui;
+using CommunityToolkit.Maui;
+
 using Logistics.DriverApp.Extensions;
+
 using Syncfusion.Maui.Core.Hosting;
 
 namespace Logistics.DriverApp;

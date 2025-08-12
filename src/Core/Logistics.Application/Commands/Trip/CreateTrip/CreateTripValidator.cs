@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using Logistics.Domain.Primitives.Enums;
+using FluentValidation;
 
 namespace Logistics.Application.Commands;
 
@@ -9,7 +8,7 @@ internal sealed class CreateTripValidator : AbstractValidator<CreateTripCommand>
     {
         RuleFor(i => i.Name).NotEmpty();
         RuleFor(i => i.TruckId).NotEmpty();
-        
+
         RuleFor(i => i.PlannedStart)
             .NotEmpty()
             .GreaterThan(DateTime.UtcNow)

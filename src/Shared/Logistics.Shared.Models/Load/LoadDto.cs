@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Shared.Models;
@@ -28,11 +28,11 @@ public class LoadDto
     public Address? CurrentAddress { get; set; }
     public GeoPoint? CurrentLocation { get; set; }
     public CustomerDto? Customer { get; set; }
-    
+
     public Guid? TripId { get; set; }
     public long? TripNumber { get; set; }
     public string? TripName { get; set; }
-    
+
     public IEnumerable<string>? AssignedTruckDriversName { get; set; }
     public IEnumerable<InvoiceDto> Invoices { get; set; } = [];
 }

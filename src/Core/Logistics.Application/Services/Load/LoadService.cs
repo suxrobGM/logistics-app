@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 
 namespace Logistics.Application.Services;
@@ -6,12 +6,12 @@ namespace Logistics.Application.Services;
 internal sealed class LoadService : ILoadService
 {
     private readonly ITenantUnityOfWork _tenantUow;
-    
+
     public LoadService(ITenantUnityOfWork tenantUow)
     {
         _tenantUow = tenantUow;
     }
-    
+
     public async Task<Load> CreateLoadAsync(CreateLoadParameters parameters, bool saveChanges = true)
     {
         var dispatcher = await _tenantUow.Repository<Employee>().GetByIdAsync(parameters.DispatcherId);
@@ -29,7 +29,7 @@ internal sealed class LoadService : ILoadService
             throw new InvalidOperationException(
                 $"Could not find the truck with ID '{parameters.TruckId}'");
         }
-        
+
         var customer = await _tenantUow.Repository<Customer>().GetByIdAsync(parameters.CustomerId);
 
         if (customer is not null)
@@ -37,7 +37,7 @@ internal sealed class LoadService : ILoadService
             throw new InvalidOperationException(
                 $"Could not find the customer with ID '{parameters.CustomerId}'");
         }
-        
+
         var load = Load.Create(
             parameters.Name,
             parameters.Type,
@@ -47,13 +47,13 @@ internal sealed class LoadService : ILoadService
             parameters.Destination.address,
             parameters.Destination.location,
             customer,
-            truck, 
+            truck,
             dispatcher);
-        
+
         load.Distance = parameters.Distance;
 
         await _tenantUow.Repository<Load>().AddAsync(load);
-        
+
         if (saveChanges)
         {
             await _tenantUow.SaveChangesAsync();

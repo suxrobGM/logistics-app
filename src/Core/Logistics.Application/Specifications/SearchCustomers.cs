@@ -1,4 +1,3 @@
-﻿using System.Linq.Expressions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Specifications;
 
@@ -7,7 +6,7 @@ namespace Logistics.Application.Specifications;
 public class SearchCustomers : BaseSpecification<Customer>
 {
     public SearchCustomers(
-        string? search, 
+        string? search,
         string? orderBy,
         int page,
         int pageSize)
@@ -16,11 +15,11 @@ public class SearchCustomers : BaseSpecification<Customer>
         {
             Criteria = i => i.Name.Contains(search);
         }
-        
+
         OrderBy(orderBy);
         ApplyPaging(page, pageSize);
     }
-    
+
     // protected override Expression<Func<Customer, object?>> CreateOrderByExpression(string propertyName)
     // {
     //     return propertyName switch

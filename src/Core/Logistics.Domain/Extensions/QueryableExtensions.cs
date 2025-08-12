@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 
 namespace Logistics.Domain.Persistence;
 
@@ -18,7 +18,7 @@ public static class QueryableExtensions
     {
         return descending ? query.OrderByDescending(keySelector) : query.OrderBy(keySelector);
     }
-        
+
     /// <summary>
     /// Applies paging to the queryable source based on the specified page and page size.
     /// The page is 1-based, meaning that page 1 corresponds to the first set of results.

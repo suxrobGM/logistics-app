@@ -1,6 +1,7 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
+
 using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
@@ -16,7 +17,7 @@ public static partial class TripMapper
     [MapPropertyFromSource(nameof(TripDto.DestinationAddress), Use = nameof(MapDestinationAddress))]
     [MapPropertyFromSource(nameof(TripDto.Loads), Use = nameof(MapLoads))]
     public static partial TripDto ToDto(this Trip entity);
-    
+
     private static IEnumerable<TripLoadDto> MapLoads(Trip trip) =>
         trip.GetLoads().Select(LoadMapper.ToTripLoadDto);
 

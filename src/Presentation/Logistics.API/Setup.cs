@@ -1,23 +1,27 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+
 using Hangfire;
 using Hangfire.PostgreSql;
+
 using Logistics.API.Authorization;
+using Logistics.API.Extensions;
 using Logistics.API.Jobs;
 using Logistics.API.Middlewares;
-using Logistics.API.Extensions;
 using Logistics.Application;
 using Logistics.Application.Hubs;
 using Logistics.Infrastructure;
 using Logistics.Infrastructure.Builder;
 using Logistics.Shared.Models;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.IdentityModel.Tokens;
+
 using Serilog;
 using Serilog.Extensions.Logging;
 
@@ -29,25 +33,25 @@ internal static class Setup
     {
         var services = builder.Services;
         var configuration = builder.Configuration;
-        
+
         var microsoftLogger = new SerilogLoggerFactory(Log.Logger)
             .CreateLogger<IInfrastructureBuilder>();
-        
+
         services.AddApplicationLayer(configuration);
         services.AddInfrastructureLayer(configuration)
             .UseLogger(microsoftLogger)
             .AddMasterDatabase()
             .AddTenantDatabase()
             .AddIdentity();
-        
+
         services.AddHttpContextAccessor();
         services.AddAuthorization();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-        
+
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
         services.AddScoped<IAuthorizationHandler, PermissionHandler>();
-        
+
         services.AddHangfireServer();
         services.AddHangfire(config => config
             .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
@@ -55,7 +59,7 @@ internal static class Setup
             .UseRecommendedSerializerSettings()
             .UsePostgreSqlStorage(c =>
                 c.UseNpgsqlConnection(configuration.GetConnectionString("MasterDatabase"))));
-        
+
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
@@ -88,8 +92,9 @@ internal static class Setup
                 new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower) // Optional naming policy
             );
             options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-        });;
-        
+        });
+        ;
+
         services.AddCors(options =>
         {
             options.AddPolicy("DefaultCors", cors =>
@@ -112,16 +117,16 @@ internal static class Setup
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
         app.UseSerilogRequestLogging();
-        
+
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-        
+
         app.UseHttpsRedirection();
         app.UseCors(app.Environment.IsDevelopment() ? "AnyCors" : "DefaultCors");
-        
+
         app.UseLocalStorageStaticFiles();
 
         app.UseAuthentication();
@@ -130,7 +135,7 @@ internal static class Setup
 
         app.UseCustomExceptionHandler();
         app.MapControllers();
-        
+
         // SignalR Hubs
         app.MapHub<LiveTrackingHub>("/hubs/live-tracking");
         app.MapHub<NotificationHub>("/hubs/notification");

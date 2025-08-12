@@ -1,7 +1,9 @@
+using System.Reflection;
+
 using Duende.IdentityServer.Hosting;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Reflection;
 
 namespace Logistics.IdentityServer.Pages.Home;
 

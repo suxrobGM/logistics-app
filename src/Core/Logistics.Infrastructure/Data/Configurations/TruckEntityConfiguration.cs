@@ -1,4 +1,5 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,7 +10,7 @@ public class TruckEntityConfiguration : IEntityTypeConfiguration<Truck>
     public void Configure(EntityTypeBuilder<Truck> builder)
     {
         builder.ToTable("Trucks");
-        
+
         builder.HasIndex(i => i.Number)
             .IsUnique();
 
@@ -17,7 +18,7 @@ public class TruckEntityConfiguration : IEntityTypeConfiguration<Truck>
             .WithMany()
             .HasForeignKey(i => i.MainDriverId)
             .OnDelete(DeleteBehavior.SetNull);
-        
+
         builder.HasOne(i => i.SecondaryDriver)
             .WithMany()
             .HasForeignKey(i => i.SecondaryDriverId)

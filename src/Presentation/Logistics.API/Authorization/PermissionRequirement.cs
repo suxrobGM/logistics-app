@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Logistics.API.Authorization;
 
@@ -8,6 +8,6 @@ internal class PermissionRequirement : IAuthorizationRequirement
     {
         Permission = permission;
     }
-    
+
     public string Permission { get; }
 }

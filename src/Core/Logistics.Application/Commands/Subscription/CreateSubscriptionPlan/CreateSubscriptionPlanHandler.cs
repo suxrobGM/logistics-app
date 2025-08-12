@@ -1,7 +1,8 @@
-﻿using Logistics.Application.Services;
+using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
+
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
@@ -13,8 +14,8 @@ internal sealed class CreateSubscriptionPlanHandler : RequestHandler<CreateSubsc
     private readonly ILogger<CreateSubscriptionPlanHandler> _logger;
 
     public CreateSubscriptionPlanHandler(
-        IMasterUnityOfWork masterUow, 
-        IStripeService stripeService, 
+        IMasterUnityOfWork masterUow,
+        IStripeService stripeService,
         ILogger<CreateSubscriptionPlanHandler> logger)
     {
         _masterUow = masterUow;
@@ -36,7 +37,7 @@ internal sealed class CreateSubscriptionPlanHandler : RequestHandler<CreateSubsc
         };
 
         var (product, price) = await _stripeService.CreateSubscriptionPlanAsync(subscriptionPlan);
-        
+
         subscriptionPlan.StripeProductId = product.Id;
         subscriptionPlan.StripePriceId = price.Id;
         await _masterUow.Repository<SubscriptionPlan>().AddAsync(subscriptionPlan);

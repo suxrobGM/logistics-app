@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Domain.Entities;
 
@@ -11,7 +11,7 @@ public class UsBankAccountPaymentMethod : PaymentMethod
     public required string RoutingNumber { get; set; }
     public UsBankAccountHolderType AccountHolderType { get; set; }
     public UsBankAccountType AccountType { get; set; }
-    
+
     /// <summary>
     /// Stripe verification URL for ACH verification
     /// </summary>

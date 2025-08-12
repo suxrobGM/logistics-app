@@ -1,8 +1,10 @@
-﻿using Logistics.Application.Commands;
+using Logistics.Application.Commands;
 using Logistics.Application.Queries;
-using Logistics.Shared.Models;
 using Logistics.Shared.Identity.Policies;
+using Logistics.Shared.Models;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,7 +27,7 @@ public class InvoicesController : ControllerBase
     [Authorize(Policy = Permissions.Invoices.View)]
     public async Task<IActionResult> GetById(Guid id)
     {
-        var result = await _mediator.Send(new GetInvoiceByIdQuery {Id = id});
+        var result = await _mediator.Send(new GetInvoiceByIdQuery { Id = id });
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
@@ -49,19 +51,19 @@ public class InvoicesController : ControllerBase
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
-    
+
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Invoices.Delete)]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var result = await _mediator.Send(new DeleteInvoiceCommand {Id = id});
+        var result = await _mediator.Send(new DeleteInvoiceCommand { Id = id });
         return result.Success ? Ok(result) : BadRequest(result);
     }
-    
+
     #region Load Invoice
-    
+
     [HttpPost("loads")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
@@ -71,11 +73,11 @@ public class InvoicesController : ControllerBase
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
-    
+
     #endregion
 
     #region Payroll Invoice
-    
+
     [HttpGet("payrolls/preview")]
     [ProducesResponseType(typeof(Result<PayrollDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
@@ -85,7 +87,7 @@ public class InvoicesController : ControllerBase
         var result = await _mediator.Send(request);
         return result.Success ? Ok(result) : BadRequest(result);
     }
-    
+
     [HttpPost("payrolls")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]

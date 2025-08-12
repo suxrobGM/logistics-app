@@ -1,4 +1,4 @@
-﻿namespace Logistics.Shared.Identity.Policies;
+namespace Logistics.Shared.Identity.Policies;
 
 public static class AppRolePermissions
 {
@@ -6,7 +6,7 @@ public static class AppRolePermissions
 
     public static IEnumerable<string> Admin
     {
-        get 
+        get
         {
             var list = new List<string>();
             list.AddRange(GetBasicPermissions());
@@ -27,7 +27,7 @@ public static class AppRolePermissions
             return list;
         }
     }
-    
+
     public static IEnumerable<string> Manager
     {
         get

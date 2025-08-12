@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+using FluentValidation;
+
 using Logistics.Application.Constants;
 using Logistics.Domain.Primitives.Enums;
 
@@ -9,7 +10,7 @@ internal sealed class UpdatePaymentMethodValidator : AbstractValidator<UpdatePay
     public UpdatePaymentMethodValidator()
     {
         RuleFor(i => i.Type).IsInEnum();
-        
+
         When(i => i.Type == PaymentMethodType.Card, () =>
         {
             var currentYear = DateTime.UtcNow.Year;
@@ -30,7 +31,7 @@ internal sealed class UpdatePaymentMethodValidator : AbstractValidator<UpdatePay
             RuleFor(i => i.AccountHolderType).IsInEnum();
             RuleFor(i => i.AccountType).IsInEnum();
         });
-        
+
         When(i => i.Type == PaymentMethodType.InternationalBankAccount, () =>
         {
             RuleFor(i => i.SwiftCode).NotEmpty();

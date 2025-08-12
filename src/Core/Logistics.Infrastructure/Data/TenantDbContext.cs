@@ -1,13 +1,15 @@
+using System.Text.Json;
+
 using Logistics.Domain.Entities;
 using Logistics.Domain.Services;
-using Logistics.Shared.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System.Text.Json;
 using Logistics.Infrastructure.Data.Configurations;
 using Logistics.Infrastructure.Helpers;
 using Logistics.Infrastructure.Interceptors;
 using Logistics.Infrastructure.Options;
+using Logistics.Shared.Models;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.Data;
 
@@ -49,7 +51,7 @@ public class TenantDbContext : DbContext
         {
             var tenantConnectionString = _connectionString;
             string? tenantName = null;
-            
+
             // Configure the connection string based on the tenant data from the master database
             if (TenantService is not null)
             {
@@ -84,7 +86,7 @@ public class TenantDbContext : DbContext
         builder.Entity<TenantRoleClaim>().ToTable("RoleClaims");
         builder.Entity<Notification>().ToTable("Notifications");
         builder.Entity<Customer>().ToTable("Customers");
-        
+
         builder.Entity<CompanyStatsDto>(entity =>
         {
             entity.HasNoKey();

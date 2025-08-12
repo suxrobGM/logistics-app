@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
+
 using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services.Authentication;
 
@@ -6,73 +7,73 @@ namespace Logistics.DriverApp.ViewModels;
 
 public class StatsPageViewModel : BaseViewModel
 {
-	private readonly IAuthService _authService;
-	private readonly IApiClient _apiClient;
+    private readonly IAuthService _authService;
+    private readonly IApiClient _apiClient;
 
-	public StatsPageViewModel(
-		IAuthService authService,
-		IApiClient apiClient)
-	{
-		_authService = authService;
-		_apiClient = apiClient;
-		_dateFormat = "{0:MMMM yyyy}";
+    public StatsPageViewModel(
+        IAuthService authService,
+        IApiClient apiClient)
+    {
+        _authService = authService;
+        _apiClient = apiClient;
+        _dateFormat = "{0:MMMM yyyy}";
 
         RefreshChartCommand = new AsyncRelayCommand(FetchChartDataAsync, () => !IsLoading);
-		IsLoadingChanged += (_, _) => RefreshChartCommand.NotifyCanExecuteChanged();
-		
-		ChartData = new ObservableCollection<IGrossChartData>();
-		ChartDateRanges = new List<DateRange>()
-		{
-			PredefinedDateRanges.ThisWeek,
-			PredefinedDateRanges.LastWeek,
-			PredefinedDateRanges.ThisMonth,
-			PredefinedDateRanges.LastMonth,
-			PredefinedDateRanges.Past90Days,
-			PredefinedDateRanges.ThisYear,
-			PredefinedDateRanges.LastYear
+        IsLoadingChanged += (_, _) => RefreshChartCommand.NotifyCanExecuteChanged();
+
+        ChartData = new ObservableCollection<IGrossChartData>();
+        ChartDateRanges = new List<DateRange>()
+        {
+            PredefinedDateRanges.ThisWeek,
+            PredefinedDateRanges.LastWeek,
+            PredefinedDateRanges.ThisMonth,
+            PredefinedDateRanges.LastMonth,
+            PredefinedDateRanges.Past90Days,
+            PredefinedDateRanges.ThisYear,
+            PredefinedDateRanges.LastYear
         };
 
         _chartDateRange = PredefinedDateRanges.ThisYear;
-		//ChartBrushes = new List<Brush>
-		//{
-		//    new SolidColorBrush(Color.FromRgb(236, 64, 122)),
-		//    new SolidColorBrush(Color.FromRgb(136, 165, 211))
-		//};
-	}
+        //ChartBrushes = new List<Brush>
+        //{
+        //    new SolidColorBrush(Color.FromRgb(236, 64, 122)),
+        //    new SolidColorBrush(Color.FromRgb(136, 165, 211))
+        //};
+    }
 
 
-	#region Commands
+    #region Commands
 
-	public IAsyncRelayCommand RefreshChartCommand { get; }
+    public IAsyncRelayCommand RefreshChartCommand { get; }
 
-	#endregion
+    #endregion
 
 
     #region Bindable properties
 
-	// public IList<Brush> ChartBrushes { get; }
+    // public IList<Brush> ChartBrushes { get; }
     public ObservableCollection<IGrossChartData> ChartData { get; }
     public List<DateRange> ChartDateRanges { get; }
 
-	private string _dateFormat;
-	public string DateFormat
-	{
-		get => _dateFormat;
-		set => SetProperty(ref _dateFormat, value);
-	}
-    
+    private string _dateFormat;
+    public string DateFormat
+    {
+        get => _dateFormat;
+        set => SetProperty(ref _dateFormat, value);
+    }
+
     private DateRange _chartDateRange;
     public DateRange ChartDateRange
     {
-	    get => _chartDateRange;
-	    set => SetProperty(ref _chartDateRange, value);
+        get => _chartDateRange;
+        set => SetProperty(ref _chartDateRange, value);
     }
-    
+
     private DriverStatsDto? _driverStats;
     public DriverStatsDto? DriverStats
     {
-	    get => _driverStats;
-	    set => SetProperty(ref _driverStats, value);
+        get => _driverStats;
+        set => SetProperty(ref _driverStats, value);
     }
 
     #endregion
@@ -80,94 +81,94 @@ public class StatsPageViewModel : BaseViewModel
 
     protected override async Task OnInitializedAsync()
     {
-		await FetchDriverStatsAsync();
-		await FetchChartDataAsync();
+        await FetchDriverStatsAsync();
+        await FetchChartDataAsync();
     }
 
     private async Task FetchChartDataAsync()
     {
-	    if (ChartDateRange == PredefinedDateRanges.ThisYear || 
-	        ChartDateRange == PredefinedDateRanges.LastYear)
-	    {
-			DateFormat = "{0:MMMM yyyy}";
+        if (ChartDateRange == PredefinedDateRanges.ThisYear ||
+            ChartDateRange == PredefinedDateRanges.LastYear)
+        {
+            DateFormat = "{0:MMMM yyyy}";
             await FetchTruckMonthlyGrossesAsync();
-	    }
-	    else
-	    {
-			DateFormat = "{0:MM/dd/yyyy}";
+        }
+        else
+        {
+            DateFormat = "{0:MM/dd/yyyy}";
             await FetchTruckDailyGrossesAsync();
-	    }
+        }
     }
 
     private async Task FetchDriverStatsAsync()
     {
-	    IsLoading = true;
-	    var driverUserId = _authService.User!.Id!;
-	    var result = await _apiClient.GetDriverStatsAsync(driverUserId.Value);
+        IsLoading = true;
+        var driverUserId = _authService.User!.Id!;
+        var result = await _apiClient.GetDriverStatsAsync(driverUserId.Value);
 
-	    if (!result.Success)
-	    {
-		    await PopupHelpers.ShowErrorAsync("Failed to fetch driver's stats, try again");
-		    IsLoading = false;
-		    return;
-	    }
+        if (!result.Success)
+        {
+            await PopupHelpers.ShowErrorAsync("Failed to fetch driver's stats, try again");
+            IsLoading = false;
+            return;
+        }
 
-	    DriverStats = result.Data!;
-	    IsLoading = false;
+        DriverStats = result.Data!;
+        IsLoading = false;
     }
 
     private async Task FetchTruckDailyGrossesAsync()
-	{
+    {
         IsLoading = true;
         var driverUserId = _authService.User!.Id!;
 
         var result = await _apiClient.GetDailyGrossesAsync(new GetDailyGrossesQuery
         {
-	        UserId = driverUserId.Value,
-	        StartDate = ChartDateRange.StartDate,
-	        EndDate = ChartDateRange.EndDate
+            UserId = driverUserId.Value,
+            StartDate = ChartDateRange.StartDate,
+            EndDate = ChartDateRange.EndDate
         });
 
         if (!result.Success)
         {
-	        await PopupHelpers.ShowErrorAsync("Failed to load driver chart data, try again");
-	        IsLoading = false;
-	        return;
+            await PopupHelpers.ShowErrorAsync("Failed to load driver chart data, try again");
+            IsLoading = false;
+            return;
         }
 
         AddChartDataToList(result.Data!.Data);
         IsLoading = false;
-	}
-    
+    }
+
     private async Task FetchTruckMonthlyGrossesAsync()
     {
-	    IsLoading = true;
-	    var driverUserId = _authService.User!.Id!;
+        IsLoading = true;
+        var driverUserId = _authService.User!.Id!;
 
-	    var result = await _apiClient.GetMonthlyGrossesAsync(new GetMonthlyGrossesQuery
-	    {
-		    UserId = driverUserId,
-		    StartDate = ChartDateRange.StartDate,
-		    EndDate = ChartDateRange.EndDate
-	    });
+        var result = await _apiClient.GetMonthlyGrossesAsync(new GetMonthlyGrossesQuery
+        {
+            UserId = driverUserId,
+            StartDate = ChartDateRange.StartDate,
+            EndDate = ChartDateRange.EndDate
+        });
 
-	    if (!result.Success)
-	    {
-		    await PopupHelpers.ShowErrorAsync("Failed to load driver chart data, try again");
-		    IsLoading = false;
-		    return;
-	    }
-	    
+        if (!result.Success)
+        {
+            await PopupHelpers.ShowErrorAsync("Failed to load driver chart data, try again");
+            IsLoading = false;
+            return;
+        }
+
         AddChartDataToList(result.Data!.Data);
-	    IsLoading = false;
+        IsLoading = false;
     }
 
     private void AddChartDataToList(IEnumerable<IGrossChartData> grossesChart)
     {
-	    ChartData.Clear();
-	    foreach (var monthlyGross in grossesChart)
-	    {
-		    ChartData.Add(monthlyGross);
-	    }
+        ChartData.Clear();
+        foreach (var monthlyGross in grossesChart)
+        {
+            ChartData.Add(monthlyGross);
+        }
     }
 }

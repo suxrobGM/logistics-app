@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Specifications;
+using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -36,10 +36,10 @@ internal sealed class DeleteEmployeeHandler : RequestHandler<DeleteEmployeeComma
         {
             user.Tenant = null;
         }
-        
+
         var employeeLoads = _tenantUow.Repository<Load>().ApplySpecification(new GetEmployeeLoads(employee.Id));
         // var truck = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == employee.Id);
-        
+
         foreach (var load in employeeLoads)
         {
             if (load.AssignedDispatcherId == employee.Id)
@@ -47,7 +47,7 @@ internal sealed class DeleteEmployeeHandler : RequestHandler<DeleteEmployeeComma
                 load.AssignedDispatcher = null;
             }
         }
-        
+
         _tenantUow.Repository<Employee>().Delete(employee);
         await _tenantUow.SaveChangesAsync();
         await _masterUow.SaveChangesAsync();

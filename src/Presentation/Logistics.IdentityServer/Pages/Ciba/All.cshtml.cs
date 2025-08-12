@@ -1,9 +1,11 @@
+using System.ComponentModel.DataAnnotations;
+
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.ComponentModel.DataAnnotations;
 
 namespace Logistics.IdentityServer.Pages.Ciba;
 
@@ -15,7 +17,7 @@ public class AllModel : PageModel
 
     [BindProperty, Required]
     public string Id { get; set; }
-    
+
     [BindProperty, Required]
     public string Button { get; set; }
 

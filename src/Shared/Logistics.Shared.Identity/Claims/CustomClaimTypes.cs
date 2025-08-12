@@ -1,4 +1,4 @@
-﻿namespace Logistics.Shared.Identity.Claims;
+namespace Logistics.Shared.Identity.Claims;
 
 public static class CustomClaimTypes
 {

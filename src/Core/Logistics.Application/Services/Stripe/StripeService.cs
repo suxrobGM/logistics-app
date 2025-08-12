@@ -1,12 +1,15 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Utilities;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+
 using Stripe;
+
 using PaymentMethod = Logistics.Domain.Entities.PaymentMethod;
 using StripeCustomer = Stripe.Customer;
-using StripeSubscription = Stripe.Subscription;
 using StripePaymentMethod = Stripe.PaymentMethod;
+using StripeSubscription = Stripe.Subscription;
 using Subscription = Logistics.Domain.Entities.Subscription;
 
 namespace Logistics.Application.Services;
@@ -14,7 +17,7 @@ namespace Logistics.Application.Services;
 internal class StripeService : IStripeService
 {
     private readonly ILogger<StripeService> _logger;
-    
+
     public StripeService(IOptions<StripeOptions> options, ILogger<StripeService> logger)
     {
         _logger = logger;
@@ -31,7 +34,7 @@ internal class StripeService : IStripeService
         };
         return new CustomerService().GetAsync(stripeCustomerId, options);
     }
-    
+
     public async Task<StripeCustomer> CreateCustomerAsync(Tenant tenant)
     {
         // ReSharper disable once UseObjectOrCollectionInitializer
@@ -40,12 +43,12 @@ internal class StripeService : IStripeService
         options.Name = tenant.CompanyName;
         options.Address = tenant.CompanyAddress.ToStripeAddressOptions();
         options.Metadata = new Dictionary<string, string> { { StripeMetadataKeys.TenantId, tenant.Id.ToString() } };
-        
+
         var customer = await new CustomerService().CreateAsync(options);
         _logger.LogInformation("Created Stripe customer for tenant {TenantId}", tenant.Id);
         return customer;
     }
-    
+
     public Task<StripeCustomer> UpdateCustomerAsync(Tenant tenant)
     {
         if (tenant.StripeCustomerId is null)
@@ -59,7 +62,7 @@ internal class StripeService : IStripeService
         options.Name = tenant.CompanyName;
         options.Address = tenant.CompanyAddress.ToStripeAddressOptions();
         options.Metadata = new Dictionary<string, string> { { StripeMetadataKeys.TenantId, tenant.Id.ToString() } };
-        
+
         return new CustomerService().UpdateAsync(tenant.StripeCustomerId, options);
     }
 
@@ -70,7 +73,7 @@ internal class StripeService : IStripeService
     }
 
     #endregion
-    
+
     #region Subscription API
 
     public async Task<StripeSubscription> CreateSubscriptionAsync(SubscriptionPlan plan, Tenant tenant, int employeeCount, bool trial = false)
@@ -96,15 +99,15 @@ internal class StripeService : IStripeService
             { StripeMetadataKeys.TenantId, tenant.Id.ToString() },
             { StripeMetadataKeys.PlanId, plan.Id.ToString() }
         };
-        
+
         options.BillingCycleAnchor = plan.BillingCycleAnchor;
-        
+
         if (trial)
         {
             options.PaymentBehavior = "default_incomplete"; // For trials or manual confirmation
             options.TrialEnd = SubscriptionUtils.GetTrialEndDate(plan.TrialPeriod);
         }
-        
+
         var subscription = await new SubscriptionService().CreateAsync(options);
         _logger.LogInformation("Created Stripe subscription for tenant {TenantId}", tenant.Id);
         return subscription;
@@ -114,7 +117,7 @@ internal class StripeService : IStripeService
     {
         var service = new SubscriptionService();
         StripeSubscription stripeSubscription;
-        
+
         if (cancelImmediately)
         {
             // Immediate cancellation with proration
@@ -126,7 +129,7 @@ internal class StripeService : IStripeService
             _logger.LogInformation("Canceled immediately Stripe subscription {StripeSubscriptionId}", stripeSubscriptionId);
             return stripeSubscription;
         }
-        
+
         // Schedule cancellation at period end
         stripeSubscription = await service.UpdateAsync(stripeSubscriptionId, new SubscriptionUpdateOptions
         {
@@ -145,7 +148,7 @@ internal class StripeService : IStripeService
         _logger.LogInformation("Updated Stripe subscription {StripeSubscriptionId} with new quantity {EmployeeCount}", stripeSubscriptionId, employeeCount);
         return stripeSubscriptionItem;
     }
-    
+
     public async Task<StripeSubscription> RenewSubscriptionAsync(
         Subscription? subEntity,
         SubscriptionPlan plan,
@@ -155,18 +158,18 @@ internal class StripeService : IStripeService
         if (string.IsNullOrEmpty(tenant.StripeCustomerId))
             throw new ArgumentException("Tenant must have a StripeCustomerId");
 
-        var subSvc  = new SubscriptionService();
-        var invSvc  = new InvoiceService();
-        
+        var subSvc = new SubscriptionService();
+        var invSvc = new InvoiceService();
+
         // Never had a Stripe subscription → create new one
         if (subEntity is null || string.IsNullOrEmpty(subEntity.StripeSubscriptionId))
         {
             _logger.LogInformation("Tenant {TenantId} is creating first subscription", tenant.Id);
             return await CreateSubscriptionAsync(plan, tenant, employeeCount);
         }
-        
+
         var stripeSub = await subSvc.GetAsync(subEntity.StripeSubscriptionId);
-        
+
         // Scheduled to cancel but NOT canceled yet -> reactivate
         if (stripeSub.CancelAtPeriodEnd && stripeSub.Status != "canceled")
         {
@@ -176,11 +179,11 @@ internal class StripeService : IStripeService
                 BillingCycleAnchor = SubscriptionBillingCycleAnchor.Now,
                 ProrationBehavior = "none"
             });
-            
+
             _logger.LogInformation("Tenant {TenantId} reactivated subscription", tenant.Id);
             return upd;
         }
-        
+
         // already canceled or incomplete_expired -> start fresh
         if (stripeSub.Status is "canceled" or "incomplete_expired")
         {
@@ -200,7 +203,7 @@ internal class StripeService : IStripeService
         {
             await invSvc.FinalizeInvoiceAsync(invoice.Id);
         }
-        
+
         return stripeSub;
     }
 
@@ -221,7 +224,7 @@ internal class StripeService : IStripeService
                 [StripeMetadataKeys.PlanId] = plan.Id.ToString()
             }
         });
-        
+
         _logger.LogInformation("Created Stripe product for plan {PlanId}", plan.Id);
 
         // 2. Create Price linked to the Product
@@ -242,7 +245,7 @@ internal class StripeService : IStripeService
                 [StripeMetadataKeys.PlanId] = plan.Id.ToString()
             }
         });
-        
+
         if (plan.BillingCycleAnchor.HasValue)
         {
             var billingCycleAnchorStr = plan.BillingCycleAnchor.Value.ToString("O");
@@ -253,7 +256,7 @@ internal class StripeService : IStripeService
                     [StripeMetadataKeys.BillingCycleAnchor] = billingCycleAnchorStr
                 }
             });
-            
+
             _logger.LogInformation("Updated Stripe price for plan {PlanId} with billing cycle anchor {BillingCycleAnchor}", plan.Id, billingCycleAnchorStr);
         }
 
@@ -279,12 +282,12 @@ internal class StripeService : IStripeService
         {
             Name = plan.Name,
             Description = plan.Description,
-            Metadata = new Dictionary<string, string> 
+            Metadata = new Dictionary<string, string>
             {
                 [StripeMetadataKeys.PlanId] = plan.Id.ToString()
             }
         });
-        
+
         _logger.LogInformation("Updated Stripe product for plan {PlanId}", plan.Id);
 
         // Check if price needs update
@@ -292,7 +295,7 @@ internal class StripeService : IStripeService
         var existingPrice = await priceService.GetAsync(plan.StripePriceId);
         var priceChanged = existingPrice.UnitAmountDecimal != plan.Price * 100;
         var currencyChanged = !existingPrice.Currency.Equals(plan.Price.Currency, StringComparison.OrdinalIgnoreCase);
-        
+
         // Check if billing cycle changed
         var billingChanged =
             !existingPrice.Recurring.Interval.Equals(plan.Interval.ToString(),
@@ -300,7 +303,7 @@ internal class StripeService : IStripeService
             existingPrice.Recurring.IntervalCount != plan.IntervalCount;
 
         var activePrice = existingPrice;
-        
+
         // Create a new price if any of the price, currency, or billing cycle has changed
         if (priceChanged || currencyChanged || billingChanged)
         {
@@ -378,13 +381,13 @@ internal class StripeService : IStripeService
 
         await new CustomerService().UpdateAsync(tenant.StripeCustomerId, new CustomerUpdateOptions
         {
-            InvoiceSettings = new CustomerInvoiceSettingsOptions 
-            { 
-                DefaultPaymentMethod = paymentMethod.StripePaymentMethodId 
+            InvoiceSettings = new CustomerInvoiceSettingsOptions
+            {
+                DefaultPaymentMethod = paymentMethod.StripePaymentMethodId
             }
         });
-        
-        _logger.LogInformation("Set default Stripe payment method for tenant {TenantId}, Stripe payment method ID {StripePaymentMethodId}", 
+
+        _logger.LogInformation("Set default Stripe payment method for tenant {TenantId}, Stripe payment method ID {StripePaymentMethodId}",
             tenant.Id, paymentMethod.StripePaymentMethodId);
     }
 
@@ -418,7 +421,7 @@ internal class StripeService : IStripeService
     }
 
     #endregion
-    
+
     #region Helpers
 
     private static PaymentMethodBillingDetailsOptions CreateBillingDetails(PaymentMethod paymentMethod)
@@ -461,6 +464,6 @@ internal class StripeService : IStripeService
             AccountType = usBank.AccountType.ToString().ToLower()
         };
     }
-    
+
     #endregion
 }

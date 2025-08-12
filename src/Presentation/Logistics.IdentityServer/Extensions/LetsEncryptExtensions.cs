@@ -1,4 +1,4 @@
-﻿namespace Logistics.IdentityServer.Extensions;
+namespace Logistics.IdentityServer.Extensions;
 
 public static class LetsEncryptExtensions
 {

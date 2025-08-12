@@ -1,8 +1,10 @@
-﻿using System.Collections;
+using System.Collections;
+
 using Logistics.Domain.Core;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Infrastructure.Data;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Infrastructure.Persistence;
@@ -17,13 +19,13 @@ internal class TenantUnitOfWork : ITenantUnityOfWork
         _tenantDbContext = tenantDbContext;
     }
 
-    public ITenantRepository<TEntity, Guid> Repository<TEntity>() 
+    public ITenantRepository<TEntity, Guid> Repository<TEntity>()
         where TEntity : class, IEntity<Guid>, ITenantEntity
     {
         return Repository<TEntity, Guid>();
     }
 
-    public ITenantRepository<TEntity, TKey> Repository<TEntity, TKey>() 
+    public ITenantRepository<TEntity, TKey> Repository<TEntity, TKey>()
         where TEntity : class, IEntity<TKey>, ITenantEntity
     {
         var type = typeof(TEntity).Name;
@@ -34,7 +36,7 @@ internal class TenantUnitOfWork : ITenantUnityOfWork
 
             var repositoryInstance =
                 Activator.CreateInstance(repositoryType
-                    .MakeGenericType(typeof(TEntity), typeof(TKey)), 
+                    .MakeGenericType(typeof(TEntity), typeof(TKey)),
                     _tenantDbContext);
 
             _repositories.Add(type, repositoryInstance);
@@ -44,7 +46,7 @@ internal class TenantUnitOfWork : ITenantUnityOfWork
         {
             throw new InvalidOperationException("Could not create a tenant repository");
         }
-        
+
         return repository;
     }
 
@@ -52,12 +54,12 @@ internal class TenantUnitOfWork : ITenantUnityOfWork
     {
         return _tenantDbContext.SaveChangesAsync();
     }
-    
+
     public void Dispose()
     {
         _tenantDbContext.Dispose();
     }
-    
+
     public Tenant GetCurrentTenant()
     {
         ThrowIfTenantServiceIsNull();
@@ -75,7 +77,7 @@ internal class TenantUnitOfWork : ITenantUnityOfWork
         ThrowIfTenantServiceIsNull();
         _tenantDbContext.TenantService!.SetTenant(tenant);
     }
-    
+
     private void ThrowIfTenantServiceIsNull()
     {
         if (_tenantDbContext.TenantService is null)

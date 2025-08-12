@@ -1,8 +1,11 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+
 using Duende.IdentityModel;
 using Duende.IdentityModel.OidcClient;
+
 using Logistics.Shared.Identity.Claims;
+
 using IBrowser = Duende.IdentityModel.OidcClient.Browser.IBrowser;
 using Result = Duende.IdentityModel.OidcClient.Result;
 
@@ -14,7 +17,7 @@ public class AuthService : IAuthService
     private readonly ITokenStorage _tokenStorage;
 
     public AuthService(
-        OidcClientOptions options, 
+        OidcClientOptions options,
         IBrowser browser,
         ITokenStorage tokenStorage)
     {
@@ -31,10 +34,10 @@ public class AuthService : IAuthService
         _tokenStorage = tokenStorage;
         Options = options;
     }
-    
+
     public UserInfo? User { get; private set; }
     public OidcClientOptions Options { get; }
-    
+
     public async Task<bool> CanAutoLoginAsync()
     {
         var tokenInfo = await _tokenStorage.GetTokenAsync();
@@ -67,19 +70,19 @@ public class AuthService : IAuthService
         {
             User = ParseUserData(loginResult.AccessToken);
         }
-        
+
         return loginResult;
     }
 
     private async Task<AuthResult> PerformLoginAsync()
     {
         var loginResult = await _oidcClient.LoginAsync();
-        
+
         if (!loginResult.IsError)
         {
             await _tokenStorage.SaveTokenAsync(loginResult.AccessToken, loginResult.AccessTokenExpiration, loginResult.RefreshToken);
         }
-        
+
         return new AuthResult()
         {
             Error = loginResult.Error,
@@ -91,12 +94,12 @@ public class AuthService : IAuthService
     private async Task<AuthResult> RefreshAccessTokenAsync(string refreshToken)
     {
         var refreshTokenResult = await _oidcClient.RefreshTokenAsync(refreshToken);
-        
+
         if (!refreshTokenResult.IsError)
         {
             await _tokenStorage.SaveTokenAsync(refreshTokenResult.AccessToken, refreshTokenResult.AccessTokenExpiration, refreshTokenResult.RefreshToken);
         }
-        
+
         return new AuthResult()
         {
             Error = refreshTokenResult.Error,
@@ -119,7 +122,7 @@ public class AuthService : IAuthService
         var handler = new JwtSecurityTokenHandler();
         var jwtSecurityToken = handler.ReadToken(accessToken) as JwtSecurityToken;
         var claims = jwtSecurityToken?.Claims.ToList() ?? new List<Claim>();
-        
+
         foreach (var claim in claims)
         {
             switch (claim.Type)
@@ -146,12 +149,12 @@ public class AuthService : IAuthService
         }
         return userIdentity;
     }
-    
+
     private static bool IsAccessTokenExpired(TokenInfo? tokenInfo)
     {
         if (tokenInfo is null)
             return false;
-            
+
         var accessTokenExpiration = tokenInfo.AccessTokenExpiration;
         return accessTokenExpiration.UtcDateTime <= DateTime.UtcNow;
     }

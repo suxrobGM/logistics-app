@@ -1,11 +1,11 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetUserCurrentTenantHandler : 
+internal sealed class GetUserCurrentTenantHandler :
     RequestHandler<GetUserCurrentTenantQuery, Result<TenantDto>>
 {
     private readonly IMasterUnityOfWork _masterUow;
@@ -16,7 +16,7 @@ internal sealed class GetUserCurrentTenantHandler :
     }
 
     protected override async Task<Result<TenantDto>> HandleValidated(
-        GetUserCurrentTenantQuery req, 
+        GetUserCurrentTenantQuery req,
         CancellationToken cancellationToken)
     {
         var user = await _masterUow.Repository<User>().GetByIdAsync(req.UserId);

@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Maui.Behaviors;
+using CommunityToolkit.Maui.Behaviors;
 
 namespace Logistics.DriverApp.Views;
 
@@ -19,6 +19,6 @@ public abstract class BaseContentPage<TViewModel> : ContentPage where TViewModel
             Command = (BindingContext as TViewModel)?.DisappearingCommand
         });
     }
-    
+
     public TViewModel ViewModel { get; }
 }

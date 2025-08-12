@@ -1,4 +1,4 @@
-﻿namespace Logistics.Shared.Models;
+namespace Logistics.Shared.Models;
 
 public class PagedQuery
 {
@@ -11,11 +11,11 @@ public class PagedQuery
         Page = page;
         PageSize = pageSize;
     }
-    
+
     public string? OrderBy { get; set; }
     public int Page { get; set; }
     public int PageSize { get; set; }
-    
+
     public virtual IDictionary<string, string> ToDictionary()
     {
         var queryDict = new Dictionary<string, string>

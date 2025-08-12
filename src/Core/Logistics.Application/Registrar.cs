@@ -1,8 +1,11 @@
-﻿using System.Reflection;
+using System.Reflection;
+
 using FluentValidation;
+
 using Logistics.Application.Behaviours;
 using Logistics.Application.Hubs;
 using Logistics.Application.Services;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -44,7 +47,7 @@ public static class Registrar
             });
             services.AddSingleton<ICaptchaService, GoogleRecaptchaService>();
         }
-        
+
         if (stripeOptions is not null)
         {
             services.Configure<StripeOptions>(options =>
@@ -55,7 +58,7 @@ public static class Registrar
             });
             services.AddSingleton<IStripeService, StripeService>();
         }
-        
+
         services.AddSignalR();
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), includeInternalTypes: true);
         services.AddMediatR(cfg =>
@@ -65,7 +68,7 @@ public static class Registrar
             cfg.AddOpenBehavior(typeof(UnhandledExceptionBehaviour<,>));
             cfg.AddOpenBehavior(typeof(ValidationBehaviour<,>));
         });
-        
+
         services.AddSingleton<IPushNotificationService, PushNotificationService>();
         services.AddSingleton<IStripeService, StripeService>();
         services.AddSingleton<LiveTrackingHubContext>();

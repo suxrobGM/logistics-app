@@ -1,20 +1,22 @@
-﻿using Android.App;
+using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+
 using Logistics.DriverApp.Platforms.Android.Consts;
+
 using Plugin.Fingerprint;
 using Plugin.Firebase.CloudMessaging;
 
 namespace Logistics.DriverApp.Platforms.Android;
 
-[Activity(Theme = "@style/Maui.SplashTheme", 
-    MainLauncher = true, 
-    ConfigurationChanges = ConfigChanges.ScreenSize | 
-        ConfigChanges.Orientation | 
-        ConfigChanges.UiMode | 
-        ConfigChanges.ScreenLayout | 
-        ConfigChanges.SmallestScreenSize | 
+[Activity(Theme = "@style/Maui.SplashTheme",
+    MainLauncher = true,
+    ConfigurationChanges = ConfigChanges.ScreenSize |
+        ConfigChanges.Orientation |
+        ConfigChanges.UiMode |
+        ConfigChanges.ScreenLayout |
+        ConfigChanges.SmallestScreenSize |
         ConfigChanges.Density
 )]
 public class MainActivity : MauiAppCompatActivity

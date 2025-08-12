@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Services;
+using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -22,7 +22,7 @@ internal sealed class DeleteTripHandler : RequestHandler<DeleteTripCommand, Resu
         DeleteTripCommand req, CancellationToken cancellationToken)
     {
         var trip = await _tenantUow.Repository<Trip>().GetByIdAsync(req.Id);
-        
+
         _tenantUow.Repository<Trip>().Delete(trip);
         await _tenantUow.SaveChangesAsync();
         return Result.Succeed();

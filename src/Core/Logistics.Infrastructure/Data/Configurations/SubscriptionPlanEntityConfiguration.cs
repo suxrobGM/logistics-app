@@ -1,4 +1,5 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,7 +10,7 @@ public class SubscriptionPlanEntityConfiguration : IEntityTypeConfiguration<Subs
     public void Configure(EntityTypeBuilder<SubscriptionPlan> builder)
     {
         builder.ToTable("SubscriptionPlans");
-            
+
         builder.ComplexProperty(i => i.Price, money =>
         {
             money.Property(m => m.Amount).HasPrecision(18, 2);

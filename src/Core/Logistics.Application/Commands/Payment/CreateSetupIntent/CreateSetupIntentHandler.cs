@@ -1,6 +1,7 @@
-﻿using Logistics.Application.Services;
+using Logistics.Application.Services;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
+
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
@@ -12,8 +13,8 @@ internal sealed class CreateSetupIntentHandler : RequestHandler<CreateSetupInten
     private readonly ILogger<CreateSetupIntentHandler> _logger;
 
     public CreateSetupIntentHandler(
-        ITenantUnityOfWork tenantUow, 
-        IStripeService stripeService, 
+        ITenantUnityOfWork tenantUow,
+        IStripeService stripeService,
         ILogger<CreateSetupIntentHandler> logger)
     {
         _tenantUow = tenantUow;
@@ -27,7 +28,7 @@ internal sealed class CreateSetupIntentHandler : RequestHandler<CreateSetupInten
         var tenant = _tenantUow.GetCurrentTenant();
 
         var setupIntent = await _stripeService.CreateSetupIntentAsync(tenant);
-        
+
         var dto = new SetupIntentDto
         {
             ClientSecret = setupIntent.ClientSecret

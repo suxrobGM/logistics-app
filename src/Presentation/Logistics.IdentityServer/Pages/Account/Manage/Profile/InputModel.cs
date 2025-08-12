@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Logistics.IdentityServer.Pages.Account.Manage.Profile;
 
@@ -8,7 +8,7 @@ public class InputModel
     [Display(Name = "Phone number")]
     public string PhoneNumber { get; set; }
 
-    [Display(Name ="First name")]
+    [Display(Name = "First name")]
     [Required]
     [StringLength(50, ErrorMessage = "The first name must contains more than 2 characters", MinimumLength = 2)]
     [DataType(DataType.Text)]

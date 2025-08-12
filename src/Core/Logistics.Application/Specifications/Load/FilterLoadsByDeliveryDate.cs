@@ -1,4 +1,3 @@
-﻿using System.Linq.Expressions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Specifications;
 
@@ -15,18 +14,18 @@ public class FilterLoadsByDeliveryDate : BaseSpecification<Load>
         {
             Criteria = i =>
                 i.AssignedTruckId == truckId &&
-                i.DeliveryDate.HasValue && 
-                i.DeliveryDate >= startPeriod && 
+                i.DeliveryDate.HasValue &&
+                i.DeliveryDate >= startPeriod &&
                 i.DeliveryDate <= endPeriod;
         }
         else
         {
             Criteria = i =>
-                i.DeliveryDate.HasValue && 
-                i.DeliveryDate >= startPeriod && 
+                i.DeliveryDate.HasValue &&
+                i.DeliveryDate >= startPeriod &&
                 i.DeliveryDate <= endPeriod;
         }
-        
+
         OrderBy("DeliveryDate");
     }
 

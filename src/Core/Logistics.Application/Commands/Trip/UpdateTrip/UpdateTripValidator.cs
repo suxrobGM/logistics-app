@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using Logistics.Domain.Primitives.Enums;
+using FluentValidation;
 
 namespace Logistics.Application.Commands;
 

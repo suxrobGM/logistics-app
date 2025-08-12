@@ -1,8 +1,10 @@
-﻿using Logistics.Application.Commands;
+using Logistics.Application.Commands;
 using Logistics.Application.Queries;
-using Logistics.Shared.Models;
 using Logistics.Shared.Identity.Policies;
+using Logistics.Shared.Models;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,7 +27,7 @@ public class UserController : ControllerBase
     [Authorize(Policy = Permissions.Users.View)]
     public async Task<IActionResult> GetById(string id)
     {
-        var result = await _mediator.Send(new GetUserByIdQuery {UserId = id});
+        var result = await _mediator.Send(new GetUserByIdQuery { UserId = id });
         return result.Success ? Ok(result) : BadRequest(result);
     }
 

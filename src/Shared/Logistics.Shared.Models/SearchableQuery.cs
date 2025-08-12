@@ -1,4 +1,4 @@
-﻿namespace Logistics.Shared.Models;
+namespace Logistics.Shared.Models;
 
 public class SearchableQuery : PagedQuery
 {
@@ -6,12 +6,12 @@ public class SearchableQuery : PagedQuery
         string? search = null,
         string? orderBy = null,
         int page = 1,
-        int pageSize = 10) 
+        int pageSize = 10)
         : base(orderBy, page, pageSize)
     {
         Search = search;
     }
-    
+
     public string? Search { get; init; }
 
     public override IDictionary<string, string> ToDictionary()
@@ -22,7 +22,7 @@ public class SearchableQuery : PagedQuery
         {
             queryDict.Add("search", Search);
         }
-        
+
         return queryDict;
     }
 }

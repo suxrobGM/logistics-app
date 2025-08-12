@@ -1,5 +1,6 @@
-﻿using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Events;
+
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Events;

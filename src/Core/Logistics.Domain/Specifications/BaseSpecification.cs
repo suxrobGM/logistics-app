@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
+
 using Logistics.Domain.Core;
 using Logistics.Domain.Primitives.ValueObjects;
 
@@ -7,7 +8,7 @@ namespace Logistics.Domain.Specifications;
 public abstract class BaseSpecification<T> : ISpecification<T> where T : IEntity<Guid>
 {
     private readonly List<Expression<Func<T, object>>> _includes = [];
-    
+
     protected BaseSpecification() { }
 
     protected BaseSpecification(Expression<Func<T, bool>> criteria)
@@ -15,11 +16,11 @@ public abstract class BaseSpecification<T> : ISpecification<T> where T : IEntity
 
     public Expression<Func<T, bool>>? Criteria { get; protected init; }
     public IReadOnlyList<Expression<Func<T, object>>> Includes => _includes.AsReadOnly();
-    
+
     public Sort? Sort { get; private set; }
     public Page? Page { get; private set; } = new();
-    
-    
+
+
     #region Fluent helpers 
 
     protected void AddInclude(Expression<Func<T, object>> navigation)
@@ -39,8 +40,8 @@ public abstract class BaseSpecification<T> : ISpecification<T> where T : IEntity
             return;
         }
 
-        var desc  = orderBy[0] == '-';
-        var prop  = desc ? orderBy[1..] : orderBy;
+        var desc = orderBy[0] == '-';
+        var prop = desc ? orderBy[1..] : orderBy;
         Sort = new Sort(prop, desc);
     }
 

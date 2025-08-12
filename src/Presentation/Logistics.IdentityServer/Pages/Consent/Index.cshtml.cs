@@ -1,9 +1,10 @@
+using Duende.IdentityModel;
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Extensions;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Validation;
-using Duende.IdentityModel;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -53,7 +54,8 @@ public class Index : PageModel
     {
         // validate return url is still valid
         var request = await _interaction.GetAuthorizationContextAsync(Input.ReturnUrl);
-        if (request == null) return RedirectToPage("/Home/Error/Index");
+        if (request == null)
+            return RedirectToPage("/Home/Error/Index");
 
         ConsentResponse grantedConsent = null;
 

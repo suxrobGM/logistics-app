@@ -1,4 +1,4 @@
-﻿namespace Logistics.Infrastructure.Options;
+namespace Logistics.Infrastructure.Options;
 
 public record TenantDbContextOptions
 {

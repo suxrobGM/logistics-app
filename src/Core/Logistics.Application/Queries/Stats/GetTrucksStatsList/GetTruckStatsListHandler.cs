@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Persistence;
+using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;

@@ -1,7 +1,9 @@
-﻿using Logistics.Application.Queries;
-using Logistics.Shared.Models;
+using Logistics.Application.Queries;
 using Logistics.Shared.Identity.Policies;
+using Logistics.Shared.Models;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,7 +29,7 @@ public class RoleController : ControllerBase
         var result = await _mediator.Send(query);
         return result.Success ? Ok(result) : BadRequest(result);
     }
-    
+
     [HttpGet("tenant")]
     [ProducesResponseType(typeof(PagedResult<RoleDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
@@ -37,13 +39,13 @@ public class RoleController : ControllerBase
         var result = await _mediator.Send(query);
         return result.Success ? Ok(result) : BadRequest(result);
     }
-    
+
     [HttpGet("{roleName}/permissions")]
     [ProducesResponseType(typeof(Result<PermissionDto[]>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetPermissions(string roleName)
     {
-        var result = await _mediator.Send(new GetRolePermissionsQuery {RoleName = roleName});
+        var result = await _mediator.Send(new GetRolePermissionsQuery { RoleName = roleName });
         return result.Success ? Ok(result) : BadRequest(result);
     }
 }

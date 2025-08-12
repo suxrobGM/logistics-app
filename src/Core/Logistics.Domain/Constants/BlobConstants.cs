@@ -1,4 +1,4 @@
-﻿namespace Logistics.Domain.Constants;
+namespace Logistics.Domain.Constants;
 
 public static class BlobConstants
 {

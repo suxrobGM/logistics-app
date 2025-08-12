@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Specifications;
 
@@ -17,7 +17,7 @@ public class FilterDocumentsByType : BaseSpecification<LoadDocument>
         {
             Criteria = Criteria.AndAlso(d => d.Status == status);
         }
-        
+
         OrderBy($"-{nameof(LoadDocument.CreatedAt)}");
     }
 }

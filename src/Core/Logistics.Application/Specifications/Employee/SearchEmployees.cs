@@ -1,4 +1,3 @@
-﻿using System.Linq.Expressions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Specifications;
 
@@ -29,12 +28,12 @@ public class SearchEmployees : BaseSpecification<Employee>
                 ? e => e.Roles.Any(r => r.Name.Contains(roleName))
                 : Criteria.AndAlso(e => e.Roles.Any(r => r.Name.Contains(roleName)));
         }
-            
-        
+
+
         OrderBy(orderBy);
         ApplyPaging(page, pageSize);
     }
-    
+
     // protected override Expression<Func<Employee, object?>> CreateOrderByExpression(string propertyName)
     // {
     //     return propertyName switch

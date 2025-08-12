@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace Logistics.DriverApp.Extensions;
 
@@ -12,7 +12,7 @@ public static class ConfigurationExtensions
 
             if (config == null)
                 return configurationBuilder;
-            
+
             configurationBuilder.AddJsonStream(config);
             return configurationBuilder;
         }

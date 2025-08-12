@@ -1,4 +1,4 @@
-﻿namespace Logistics.DriverApp.Services;
+namespace Logistics.DriverApp.Services;
 
 public interface ICache
 {

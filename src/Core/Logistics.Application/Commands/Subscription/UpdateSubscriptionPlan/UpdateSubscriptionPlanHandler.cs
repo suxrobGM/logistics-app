@@ -1,8 +1,9 @@
-﻿using Logistics.Application.Services;
+using Logistics.Application.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
+
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
@@ -14,8 +15,8 @@ internal sealed class UpdateSubscriptionPlanHandler : RequestHandler<UpdateSubsc
     private readonly ILogger<UpdateSubscriptionPlanHandler> _logger;
 
     public UpdateSubscriptionPlanHandler(
-        IMasterUnityOfWork masterUow, 
-        IStripeService stripeService, 
+        IMasterUnityOfWork masterUow,
+        IStripeService stripeService,
         ILogger<UpdateSubscriptionPlanHandler> logger)
     {
         _masterUow = masterUow;
@@ -39,7 +40,7 @@ internal sealed class UpdateSubscriptionPlanHandler : RequestHandler<UpdateSubsc
         subscriptionPlan.TrialPeriod = PropertyUpdater.UpdateIfChanged(req.TrialPeriod, subscriptionPlan.TrialPeriod);
         subscriptionPlan.Interval = PropertyUpdater.UpdateIfChanged(req.Interval, subscriptionPlan.Interval);
         subscriptionPlan.IntervalCount = PropertyUpdater.UpdateIfChanged(req.IntervalCount, subscriptionPlan.IntervalCount);
-        
+
         await _stripeService.UpdateSubscriptionPlanAsync(subscriptionPlan);
         _masterUow.Repository<SubscriptionPlan>().Update(subscriptionPlan);
         await _masterUow.SaveChangesAsync();

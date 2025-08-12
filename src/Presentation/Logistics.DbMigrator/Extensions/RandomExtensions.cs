@@ -1,4 +1,4 @@
-﻿namespace Logistics.DbMigrator.Extensions;
+namespace Logistics.DbMigrator.Extensions;
 
 public static class RandomExtensions
 {
@@ -7,7 +7,7 @@ public static class RandomExtensions
         var rndIndex = random.Next(list.Count);
         return list[rndIndex];
     }
-    
+
     public static DateTime UtcDate(this Random random, DateTime from, DateTime to)
     {
         var spanSec = (long)(to - from).TotalSeconds;

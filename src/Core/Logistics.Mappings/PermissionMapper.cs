@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Shared.Models;
 
 namespace Logistics.Mappings;
@@ -12,7 +12,7 @@ public static class PermissionMapper
             Name = entity.ClaimValue
         };
     }
-    
+
     public static PermissionDto ToDto(this TenantRoleClaim entity)
     {
         return new PermissionDto()

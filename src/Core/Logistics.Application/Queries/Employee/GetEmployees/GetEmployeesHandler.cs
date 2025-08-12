@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Specifications;
+using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -16,7 +16,7 @@ internal sealed class GetEmployeesHandler : RequestHandler<GetEmployeesQuery, Pa
     }
 
     protected override async Task<PagedResult<EmployeeDto>> HandleValidated(
-        GetEmployeesQuery req, 
+        GetEmployeesQuery req,
         CancellationToken cancellationToken)
     {
         var totalItems = await _tenantUow.Repository<Employee>().CountAsync();
@@ -25,7 +25,7 @@ internal sealed class GetEmployeesHandler : RequestHandler<GetEmployeesQuery, Pa
         var employeeDto = _tenantUow.Repository<Employee>().ApplySpecification(specification)
             .Select(employeeEntity => employeeEntity.ToDto())
             .ToArray();
-        
+
         return PagedResult<EmployeeDto>.Succeed(employeeDto, totalItems, req.PageSize);
     }
 }

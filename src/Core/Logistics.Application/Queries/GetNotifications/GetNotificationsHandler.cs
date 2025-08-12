@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
@@ -15,7 +15,7 @@ internal sealed class GetNotificationsHandler : RequestHandler<GetNotificationsQ
     }
 
     protected override async Task<Result<NotificationDto[]>> HandleValidated(
-        GetNotificationsQuery req, 
+        GetNotificationsQuery req,
         CancellationToken cancellationToken)
     {
         var notificationsList =
@@ -25,7 +25,7 @@ internal sealed class GetNotificationsHandler : RequestHandler<GetNotificationsQ
             .Select(i => i.ToDto())
             .OrderByDescending(i => i.CreatedDate)
             .ToArray();
-        
+
         return Result<NotificationDto[]>.Succeed(notificationsDto);
     }
 }

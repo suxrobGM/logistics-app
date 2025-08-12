@@ -1,9 +1,11 @@
+using Logistics.AdminApp.Authorization;
+using Logistics.AdminApp.Components;
+using Logistics.HttpClient;
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Logistics.AdminApp.Components;
-using Logistics.AdminApp.Authorization;
-using Logistics.HttpClient;
-using Microsoft.AspNetCore.Authorization;
+
 using Radzen;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);

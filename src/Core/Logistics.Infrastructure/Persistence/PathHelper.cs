@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -6,7 +6,7 @@ namespace Logistics.Infrastructure.Persistence;
 
 internal static class PathHelper
 {
-    private static readonly ConcurrentDictionary<(Type,string), LambdaExpression> Cache = new();
+    private static readonly ConcurrentDictionary<(Type, string), LambdaExpression> Cache = new();
 
     /// <summary>
     /// Return an x => x.Foo.Bar selector for the given dotted path.
@@ -48,7 +48,7 @@ internal static class PathHelper
         {
             return false;
         }
-        
+
         return typeof(T).GetProperty(path,
             BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase) is not null;
     }

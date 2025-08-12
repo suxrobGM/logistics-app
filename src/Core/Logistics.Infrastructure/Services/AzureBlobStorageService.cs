@@ -1,6 +1,8 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+
 using Logistics.Domain.Services;
+
 using Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.Services;
@@ -88,7 +90,7 @@ public class AzureBlobStorageService : IBlobStorageService
     {
         var tenant = _tenantService.GetTenant();
         var tenantId = tenant.Id.ToString().ToLowerInvariant().Replace("-", "");
-        
+
         // Azure container names must be lowercase and can't contain hyphens
         // So we create a tenant-specific container name
         return $"tenant{tenantId}-{containerName}".ToLowerInvariant();
@@ -105,7 +107,7 @@ public class AzureBlobStorageService : IBlobStorageService
 public class AzureBlobStorageOptions
 {
     public const string SectionName = "AzureBlobStorage";
-    
+
     public string ConnectionString { get; set; } = string.Empty;
     public string DefaultContainer { get; set; } = "documents";
 }

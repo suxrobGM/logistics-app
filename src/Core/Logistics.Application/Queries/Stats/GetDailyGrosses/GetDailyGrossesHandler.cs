@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Specifications;
+using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Extensions;
 using Logistics.Domain.Persistence;
@@ -14,12 +14,12 @@ internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQue
     {
         _tenantUow = tenantUow;
     }
-    
+
     protected override async Task<Result<DailyGrossesDto>> HandleValidated(
         GetDailyGrossesQuery req, CancellationToken cancellationToken)
     {
         var truckId = req.TruckId;
-        
+
         if (req.UserId.HasValue)
         {
             var truck = await _tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == req.UserId.Value ||
@@ -29,17 +29,17 @@ internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQue
             {
                 return Result<DailyGrossesDto>.Fail($"Could not find a truck with driver ID '{req.UserId}'");
             }
-            
+
             truckId = truck.Id;
         }
-        
+
         var spec = new FilterLoadsByDeliveryDate(truckId, req.StartDate, req.EndDate);
-        
+
         var days = req.StartDate.DaysBetween(req.EndDate);
         var dict = days.ToDictionary(
-            k => (k.Year, k.Month, k.Day), 
+            k => (k.Year, k.Month, k.Day),
             m => new DailyGrossDto(m.Year, m.Month, m.Day));
-        
+
         var filteredLoads = _tenantUow.Repository<Load>().ApplySpecification(spec).ToArray();
 
         foreach (var load in filteredLoads)
@@ -47,9 +47,9 @@ internal sealed class GetDailyGrossesHandler : RequestHandler<GetDailyGrossesQue
             var date = load.DeliveryDate!.Value;
             var key = (date.Year, date.Month, date.Day);
 
-            if (!dict.ContainsKey(key)) 
+            if (!dict.ContainsKey(key))
                 continue;
-            
+
             dict[key].Gross += load.DeliveryCost;
             dict[key].Distance += load.Distance;
             dict[key].DriverShare += load.CalcDriverShare();

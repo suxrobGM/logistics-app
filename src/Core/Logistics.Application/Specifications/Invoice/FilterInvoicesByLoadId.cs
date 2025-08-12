@@ -1,4 +1,3 @@
-﻿using System.Linq.Expressions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Specifications;
 
@@ -16,7 +15,7 @@ public sealed class FilterInvoicesByLoadId : BaseSpecification<LoadInvoice>
         OrderBy(orderBy);
         ApplyPaging(page, pageSize);
     }
-    
+
     // protected override Expression<Func<LoadInvoice, object?>> CreateOrderByExpression(string propertyName)
     // {
     //     return propertyName switch

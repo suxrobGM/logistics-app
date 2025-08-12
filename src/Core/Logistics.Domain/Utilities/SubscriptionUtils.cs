@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Domain.Utilities;
 
@@ -21,7 +21,7 @@ public static class SubscriptionUtils
             _ => throw new ArgumentOutOfRangeException(nameof(period), period, null)
         };
     }
-    
+
     /// <summary>
     /// Gets the number of trial days based on the trial period.
     /// </summary>
@@ -39,7 +39,7 @@ public static class SubscriptionUtils
             _ => throw new ArgumentOutOfRangeException(nameof(period), period, null)
         };
     }
-    
+
     /// <summary>
     /// Calculates the next billing date based on the start date, billing interval, and interval count.
     /// The start date is set to the current UTC date and time.

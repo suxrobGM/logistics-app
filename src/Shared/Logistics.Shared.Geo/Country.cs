@@ -1,4 +1,4 @@
-﻿namespace Logistics.Shared.Geo;
+namespace Logistics.Shared.Geo;
 
 /// <summary>
 /// Represents a country with its display name and code.

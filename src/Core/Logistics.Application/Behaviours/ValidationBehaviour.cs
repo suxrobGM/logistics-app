@@ -1,5 +1,5 @@
-﻿using FluentValidation;
-using Logistics.Shared.Models;
+using FluentValidation;
+
 using MediatR;
 
 namespace Logistics.Application.Behaviours;
@@ -15,20 +15,20 @@ public sealed class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior
     }
 
     public async Task<TResponse> Handle(
-        TRequest request, 
-        RequestHandlerDelegate<TResponse> next, 
+        TRequest request,
+        RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
-        if (!_validators.Any()) 
+        if (!_validators.Any())
             return await next();
-        
+
         var context = new ValidationContext<TRequest>(request);
         var validationResults = await Task.WhenAll(_validators.Select(v => v.ValidateAsync(context, cancellationToken)));
         var failures = validationResults.SelectMany(r => r.Errors).Where(f => f != null).ToList();
 
         if (failures.Count != 0)
             throw new ValidationException(failures);
-        
+
         return await next();
     }
 }

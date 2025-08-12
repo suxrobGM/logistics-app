@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Shared.Models;
 
 namespace Logistics.Mappings;
@@ -13,7 +13,7 @@ public static class RoleMapper
             DisplayName = entity.DisplayName
         };
     }
-    
+
     public static RoleDto ToDto(this TenantRole entity)
     {
         return new RoleDto()

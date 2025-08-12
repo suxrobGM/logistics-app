@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Logistics.Domain.Primitives.ValueObjects;
@@ -15,7 +15,7 @@ public record GeoPoint
     /// It is intended to represent an uninitialized or default state.
     /// </summary>
     public static readonly GeoPoint NullGeoPoint = new(0, 0);
-    
+
     /// <summary>
     /// Initializes a new instance of the <see cref="GeoPoint"/> class with specified longitude and latitude.
     /// Longitude should be between -180 and 180, and latitude should be between -90 and 90.
@@ -30,21 +30,21 @@ public record GeoPoint
         ArgumentOutOfRangeException.ThrowIfGreaterThan(longitude, 180);
         ArgumentOutOfRangeException.ThrowIfLessThan(latitude, -90);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(latitude, 90);
-        
+
         Longitude = longitude;
         Latitude = latitude;
     }
-    
+
     /// <summary>
     /// Longitude coordinate of the point. Value should be between -180 and 180.
     /// </summary>
     public double Longitude { get; set; }
-    
+
     /// <summary>
     /// Latitude coordinate of the point. Value should be between -90 and 90.
     /// </summary>
     public double Latitude { get; set; }
-    
+
     /// <summary>
     /// Computes the great-circle distance to another point (metres) using
     /// the Haversine formula.

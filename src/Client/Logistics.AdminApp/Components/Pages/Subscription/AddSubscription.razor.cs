@@ -1,5 +1,6 @@
-﻿using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+
 using Microsoft.AspNetCore.Components;
 
 namespace Logistics.AdminApp.Components.Pages.Subscription;
@@ -9,15 +10,15 @@ public partial class AddSubscription : PageBase
     private SubscriptionDto _subscription = new();
     private IEnumerable<SubscriptionPlanDto>? _subscriptionPlans;
     private IEnumerable<TenantDto>? _tenants;
-    
+
 
     #region Injectable services
 
-    [Inject] 
+    [Inject]
     private NavigationManager Navigation { get; set; } = null!;
 
     #endregion
-    
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -30,7 +31,7 @@ public partial class AddSubscription : PageBase
         var pagedData = await CallApiAsync(api => api.GetSubscriptionPlansAsync(new PagedQuery { PageSize = 100 }));
         _subscriptionPlans = pagedData?.Items;
     }
-    
+
     private async Task FetchTenantsAsync()
     {
         var pagedData = await CallApiAsync(api => api.GetTenantsAsync(new SearchableQuery { PageSize = 100 }));

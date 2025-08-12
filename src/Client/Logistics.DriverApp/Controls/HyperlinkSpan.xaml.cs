@@ -2,9 +2,9 @@ namespace Logistics.DriverApp.Controls;
 
 public partial class HyperlinkSpan
 {
-	public HyperlinkSpan()
-	{
-		InitializeComponent();
+    public HyperlinkSpan()
+    {
+        InitializeComponent();
 
         TextDecorations = TextDecorations.Underline;
         TextColor = Colors.Blue;
@@ -19,7 +19,7 @@ public partial class HyperlinkSpan
 
     public string Url
     {
-        get => (string)GetValue(UrlProperty); 
+        get => (string)GetValue(UrlProperty);
         set => SetValue(UrlProperty, value);
     }
 }

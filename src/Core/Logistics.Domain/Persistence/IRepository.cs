@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
+
 using Logistics.Domain.Core;
 using Logistics.Domain.Specifications;
 
@@ -24,7 +25,7 @@ public interface IRepository<TEntity, in TEntityKey> where TEntity : class, IEnt
     /// </summary>
     /// <returns></returns>
     IQueryable<TEntity> Query();
-    
+
     /// <summary>
     /// Asynchronously counts the number of entities.
     /// </summary>
@@ -32,7 +33,7 @@ public interface IRepository<TEntity, in TEntityKey> where TEntity : class, IEnt
     /// <param name="ct">Cancellation token</param>
     /// <returns>Number of elements that satisfies the specified condition</returns>
     Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null, CancellationToken ct = default);
-    
+
     /// <summary>
     /// Gets an entity object by ID.
     /// </summary>
@@ -56,7 +57,7 @@ public interface IRepository<TEntity, in TEntityKey> where TEntity : class, IEnt
     /// <param name="ct">Cancellation token</param>
     /// <returns>List of entity objects</returns>
     Task<List<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken ct = default);
-    
+
     /// <summary>
     /// Gets a list of the entity objects
     /// </summary>

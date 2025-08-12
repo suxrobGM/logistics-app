@@ -1,4 +1,3 @@
-﻿using System.Linq.Expressions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Specifications;
 
@@ -13,7 +12,7 @@ public class FilterInvoicesByEmployeeName : BaseSpecification<PayrollInvoice>
         int pageSize)
     {
         Criteria = i =>
-            !string.IsNullOrEmpty(i.Employee.FirstName) && i.Employee.FirstName.Contains(employeeName) || 
+            !string.IsNullOrEmpty(i.Employee.FirstName) && i.Employee.FirstName.Contains(employeeName) ||
             !string.IsNullOrEmpty(i.Employee.LastName) && i.Employee.LastName.Contains(employeeName);
 
         OrderBy(orderBy);

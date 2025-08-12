@@ -1,11 +1,12 @@
-﻿using Logistics.DbMigrator.Extensions;
+using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Models;
 using Logistics.DbMigrator.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Identity.Roles;
+
 using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.DbMigrator.Workers;
@@ -14,12 +15,12 @@ internal class FakeDataWorker : IHostedService
 {
     private const string UserDefaultPassword = "Test12345#";
     private readonly DateTime _startDate = DateTime.UtcNow.AddMonths(-3);
-    private readonly DateTime _endDate = DateTime.UtcNow.AddDays(-3); 
+    private readonly DateTime _endDate = DateTime.UtcNow.AddDays(-3);
     private readonly Random _random = new();
-    
+
     private readonly ILogger<FakeDataWorker> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
-    
+
     private readonly (Address addr, double lng, double lat)[] _routePoints =
     [
         (new Address { Line1 = "233 S Wacker Dr", City = "Chicago",  State="IL", ZipCode="60606", Country="USA" }, -87.6298, 41.8781),
@@ -30,7 +31,7 @@ internal class FakeDataWorker : IHostedService
         (new Address { Line1 = "600 Commerce St",  City = "Nashville",  State="TN", ZipCode="37203", Country="USA" }, -86.7816, 36.1627),
         (new Address { Line1 = "1100 Congress Ave",City = "Austin",     State="TX", ZipCode="78701", Country="USA" }, -97.7431, 30.2672)
     ];
-    
+
     public FakeDataWorker(
         ILogger<FakeDataWorker> logger,
         IServiceScopeFactory scopeFactory)
@@ -38,11 +39,11 @@ internal class FakeDataWorker : IHostedService
         _logger = logger;
         _scopeFactory = scopeFactory;
     }
-    
+
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         using var scope = _scopeFactory.CreateScope();
-        
+
         var payrollService = scope.ServiceProvider.GetRequiredService<PayrollService>();
         var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnityOfWork>();
         var populateFakeDataEnabled = scope.ServiceProvider
@@ -54,18 +55,18 @@ internal class FakeDataWorker : IHostedService
             _logger.LogInformation("PopulateFakeData is set to false. Skipping data population");
             return;
         }
-        
+
         // Don't populate fake data if there are already employees in the database
         // In Aspire, this will be called multiple times, so we need to check if there are already employees
         // to avoid duplicating data
         var hasEmployees = tenantUow.Repository<Employee>().Query().Any();
-        
+
         if (hasEmployees)
         {
             _logger.LogInformation("There are already employees in the database. Skipping data population");
             return;
         }
-        
+
         _logger.LogInformation("Populating databases with fake data");
         var users = await AddUsersAsync(scope.ServiceProvider);
         var employees = await AddEmployeesAsync(scope.ServiceProvider, users);
@@ -74,7 +75,7 @@ internal class FakeDataWorker : IHostedService
         await AddGeneralFreightLoadsAsync(scope.ServiceProvider, employees, trucks, customers);
         await AddCarHaulerTripsAsync(scope.ServiceProvider, employees, trucks, customers);
         await AddNotificationsAsync(scope.ServiceProvider);
-        
+
         await payrollService.GeneratePayrolls(employees, _startDate, _endDate);
         _logger.LogInformation("Databases have been populated successfully");
     }
@@ -83,12 +84,12 @@ internal class FakeDataWorker : IHostedService
     {
         return Task.CompletedTask;
     }
-    
+
     private async Task<IList<User>> AddUsersAsync(IServiceProvider serviceProvider)
     {
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
         var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
-        
+
         var testUsers = configuration.GetSection("Users").Get<User[]>();
         var usersList = new List<User>();
 
@@ -96,7 +97,7 @@ internal class FakeDataWorker : IHostedService
         {
             return usersList;
         }
-        
+
         foreach (var fakeUser in testUsers)
         {
             var user = await userManager.FindByNameAsync(fakeUser.Email!);
@@ -106,7 +107,7 @@ internal class FakeDataWorker : IHostedService
                 usersList.Add(user);
                 continue;
             }
-            
+
             user = new User
             {
                 UserName = fakeUser.Email,
@@ -115,13 +116,13 @@ internal class FakeDataWorker : IHostedService
                 Email = fakeUser.Email,
                 EmailConfirmed = true
             };
-            
+
             try
             {
                 var result = await userManager.CreateAsync(user, UserDefaultPassword);
                 if (!result.Succeeded)
                     throw new Exception(result.Errors.First().Description);
-                
+
                 usersList.Add(user);
             }
             finally
@@ -129,7 +130,7 @@ internal class FakeDataWorker : IHostedService
                 _logger.LogInformation("Created an user {FirstName} {LastName}", fakeUser.FirstName, fakeUser.LastName);
             }
         }
-        
+
         return usersList;
     }
 
@@ -137,14 +138,14 @@ internal class FakeDataWorker : IHostedService
     {
         var masterUow = serviceProvider.GetRequiredService<IMasterUnityOfWork>();
         var tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
-        
+
         var tenant = await masterUow.Repository<Tenant>().GetAsync(i => i.Name == "default");
 
         if (tenant is null)
         {
             throw new InvalidOperationException("Could not find the default tenant");
         }
-        
+
         var owner = users[0];
         var manager = users[1];
         var dispatchers = users.Skip(2).Take(3);
@@ -166,7 +167,7 @@ internal class FakeDataWorker : IHostedService
             employeesDto.Dispatchers.Add(dispatcherEmployee);
             employeesDto.AllEmployees.Add(dispatcherEmployee);
         }
-        
+
         foreach (var driver in drivers)
         {
             var driverEmployee = await TryAddEmployeeAsync(tenantUow, tenant.Id, driver, 0.3M, SalaryType.ShareOfGross, driverRole);
@@ -183,7 +184,7 @@ internal class FakeDataWorker : IHostedService
 
     private async Task<Employee> TryAddEmployeeAsync(
         ITenantUnityOfWork tenantUow,
-        Guid tenantId, 
+        Guid tenantId,
         User user,
         decimal salary,
         SalaryType salaryType,
@@ -209,7 +210,7 @@ internal class FakeDataWorker : IHostedService
     {
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
         var tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
-        
+
         var customers = configuration.GetRequiredSection("Customers").Get<Customer[]>()!;
         var customersList = new List<Customer>();
         var customerRepository = tenantUow.Repository<Customer>();
@@ -218,7 +219,7 @@ internal class FakeDataWorker : IHostedService
         {
             var existingCustomer = await customerRepository.GetAsync(i => i.Name == customer.Name);
             customersList.Add(customer);
-            
+
             if (existingCustomer is not null)
                 continue;
 
@@ -233,7 +234,7 @@ internal class FakeDataWorker : IHostedService
     private async Task<IList<Truck>> AddTrucksAsync(IServiceProvider serviceProvider, IEnumerable<Employee> drivers)
     {
         var tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
-        
+
         var trucksList = new List<Truck>();
         var truckNumber = 101;
         var truckRepository = tenantUow.Repository<Truck>();
@@ -254,13 +255,13 @@ internal class FakeDataWorker : IHostedService
 
     private async Task AddGeneralFreightLoadsAsync(
         IServiceProvider serviceProvider,
-        CompanyEmployees companyEmployees, 
-        IList<Truck> trucks, 
+        CompanyEmployees companyEmployees,
+        IList<Truck> trucks,
         IList<Customer> customers)
     {
         if (!trucks.Any())
             throw new InvalidOperationException("Empty list of trucks");
-        
+
         var tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
         var dryVanTrucks = trucks
             .Where(i => i.Type == TruckType.FreightTruck)
@@ -273,7 +274,7 @@ internal class FakeDataWorker : IHostedService
             var dispatcher = _random.Pick(companyEmployees.Dispatchers);
             var origin = _random.Pick(_routePoints);
             var dest = _random.Pick(_routePoints.Where(p => p != origin).ToArray());
-            
+
             var load = BuildLoad(i, origin, dest, LoadType.GeneralFreight, truck, dispatcher, customer);
             await tenantUow.Repository<Load>().AddAsync(load);
             _logger.LogInformation("Added Load {LoadName} for Truck {TruckNumber}", load.Name, truck.Number);
@@ -281,7 +282,7 @@ internal class FakeDataWorker : IHostedService
 
         await tenantUow.SaveChangesAsync();
     }
-    
+
     private Load BuildLoad(
         long seq,
         (Address addr, double lng, double lat) origin,
@@ -314,7 +315,7 @@ internal class FakeDataWorker : IHostedService
         load.Status = LoadStatus.Delivered;
         return load;
     }
-    
+
     private async Task AddCarHaulerTripsAsync(
         IServiceProvider serviceProvider,
         CompanyEmployees employees,
@@ -324,9 +325,10 @@ internal class FakeDataWorker : IHostedService
         var tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
         var tripRepo = tenantUow.Repository<Trip>();
         var loadRepo = tenantUow.Repository<Load>();
-        
+
         var carHaulerTrucks = trucks.Where(t => t.Type == TruckType.CarHauler).ToList();
-        if (carHaulerTrucks.Count == 0) return;
+        if (carHaulerTrucks.Count == 0)
+            return;
 
         for (var tripIdx = 0; tripIdx < 30; tripIdx++)
         {
@@ -336,7 +338,7 @@ internal class FakeDataWorker : IHostedService
 
             // choose a random start position but leave at least 2 cities ahead
             var loadsCount = _random.Next(2, 5); // 2-4 loads
-            var maxStart   = _routePoints.Length - (loadsCount + 1); // need n+1 stops
+            var maxStart = _routePoints.Length - (loadsCount + 1); // need n+1 stops
             var startIndex = _random.Next(0, maxStart + 1);
             var loads = new List<Load>();
 
@@ -352,7 +354,7 @@ internal class FakeDataWorker : IHostedService
                     truck,
                     dispatcher,
                     customer);
-                
+
                 loads.Add(load);
                 await loadRepo.AddAsync(load);
             }
@@ -374,7 +376,7 @@ internal class FakeDataWorker : IHostedService
     private async Task AddNotificationsAsync(IServiceProvider serviceProvider)
     {
         var tenantUow = serviceProvider.GetRequiredService<ITenantUnityOfWork>();
-        
+
         var notificationRepository = tenantUow.Repository<Notification>();
         var notificationsCount = await notificationRepository.CountAsync();
 
@@ -382,7 +384,7 @@ internal class FakeDataWorker : IHostedService
         {
             return;
         }
-        
+
         for (var i = 1; i <= 10; i++)
         {
             var notification = new Notification

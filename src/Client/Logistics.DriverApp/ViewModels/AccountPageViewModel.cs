@@ -1,4 +1,4 @@
-﻿using Logistics.DriverApp.Models;
+using Logistics.DriverApp.Models;
 using Logistics.DriverApp.Services.Authentication;
 
 namespace Logistics.DriverApp.ViewModels;
@@ -9,7 +9,7 @@ public class AccountPageViewModel : BaseViewModel
     private readonly IApiClient _apiClient;
 
     public AccountPageViewModel(
-        IAuthService authService, 
+        IAuthService authService,
         IApiClient apiClient)
     {
         _authService = authService;
@@ -37,7 +37,7 @@ public class AccountPageViewModel : BaseViewModel
     }
 
     #endregion
-    
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -50,7 +50,7 @@ public class AccountPageViewModel : BaseViewModel
 
         if (userId is null)
             return;
-        
+
         IsLoading = true;
         var result = await _apiClient.GetUserAsync(userId.Value);
 
@@ -65,7 +65,7 @@ public class AccountPageViewModel : BaseViewModel
                 PhoneNumber = user.PhoneNumber
             };
         }
-        
+
         IsLoading = false;
     }
 

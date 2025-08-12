@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Core;
+using Logistics.Domain.Core;
 using Logistics.Domain.Entities;
 
 namespace Logistics.Domain.Persistence;
@@ -61,7 +61,7 @@ public interface ITenantUnityOfWork : IDisposable
     /// </summary>
     /// <param name="sql">sql query</param>
     Task<List<TSqlResponse>> ExecuteRawSql<TSqlResponse>(string sql) where TSqlResponse : class;
-    
+
     /// <summary>
     /// returns data based on sql query and parameters
     /// </summary>

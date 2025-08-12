@@ -1,4 +1,4 @@
-﻿namespace Logistics.Domain.Core;
+namespace Logistics.Domain.Core;
 
 public interface IEntity<TKey>
 {

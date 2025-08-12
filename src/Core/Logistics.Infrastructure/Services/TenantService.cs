@@ -1,11 +1,12 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Exceptions;
-using Logistics.Domain.Services;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Domain.Services;
 using Logistics.Infrastructure.Data;
 using Logistics.Infrastructure.Options;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Identity.Claims;
+
 using Microsoft.AspNetCore.Http;
 
 namespace Logistics.Infrastructure.Services;
@@ -18,7 +19,7 @@ internal class TenantService : ITenantService
     private Tenant? _currentTenant;
 
     public TenantService(
-        MasterDbContext masterDbContext, 
+        MasterDbContext masterDbContext,
         TenantDbContextOptions? dbContextContextOptions = null,
         IHttpContextAccessor? contextAccessor = null)
     {
@@ -41,7 +42,7 @@ internal class TenantService : ITenantService
         var tenantId = GetTenantIdFromHttpContext();
         _currentTenant = FetchCurrentTenant(tenantId);
         CheckSubscription(_currentTenant);
-        
+
         return _currentTenant ?? throw new InvalidTenantException(
             $"Could not find tenant with ID/name '{tenantId}'");
     }
@@ -84,7 +85,7 @@ internal class TenantService : ITenantService
 
         tenantId = _httpContext.User.Claims
             .FirstOrDefault(c => c.Type == CustomClaimTypes.Tenant)?.Value;
-        
+
         if (!string.IsNullOrEmpty(tenantId))
             return tenantId;
 
@@ -112,7 +113,7 @@ internal class TenantService : ITenantService
         return _masterDbContext.Set<Tenant>()
             .FirstOrDefault(t => t.Name == normalizedName);
     }
-    
+
     /// <summary>
     /// Check if the request should bypass subscription validation.
     /// </summary>
@@ -125,12 +126,12 @@ internal class TenantService : ITenantService
         {
             return false;
         }
-        
+
         var isPaymentMethodsApi = _httpContext.Request.Path.Value.StartsWith("/payments/methods");
         var isSubscriptionApi = _httpContext.Request.Path.Value.StartsWith("/subscriptions");
         return isPaymentMethodsApi || isSubscriptionApi;
     }
-    
+
     /// <summary>
     /// Check if the tenant has an active subscription. Throws <see cref="SubscriptionExpiredException"/> if not.
     /// If tenant subscription is null, it is free and considered active.
@@ -143,12 +144,12 @@ internal class TenantService : ITenantService
         {
             return;
         }
-        
+
         if (tenant.Subscription.Status is SubscriptionStatus.Active or SubscriptionStatus.Trialing)
         {
             return;
         }
-        
+
         throw new SubscriptionExpiredException(
             $"Tenant '{tenant.Name}' does not have an active subscription. The current status is '{tenant.Subscription.Status}'");
     }

@@ -1,5 +1,7 @@
-﻿using Logistics.Domain.Core;
+using Logistics.Domain.Core;
+
 using MediatR;
+
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -13,7 +15,7 @@ public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
     {
         _mediator = mediator;
     }
-    
+
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {
         var context = eventData.Context;
@@ -21,7 +23,7 @@ public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
         {
             DispatchDomainEvents(context.ChangeTracker).GetAwaiter().GetResult();
         }
-        
+
         return base.SavingChanges(eventData, result);
     }
 
@@ -29,15 +31,15 @@ public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
     {
         var response = await base.SavingChangesAsync(eventData, result, cancellationToken);
         var context = eventData.Context;
-        
+
         if (context is not null)
         {
             await DispatchDomainEvents(context.ChangeTracker, cancellationToken);
-        } 
-        
+        }
+
         return response;
     }
-    
+
     private async Task DispatchDomainEvents(ChangeTracker changeTracker, CancellationToken cancellationToken = default)
     {
         var domainEventEntities = changeTracker.Entries<Entity>()
@@ -51,7 +53,7 @@ public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
             {
                 await _mediator.Publish(entityDomainEvent, cancellationToken);
             }
-            
+
             entity.DomainEvents.Clear();
         }
     }

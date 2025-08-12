@@ -1,4 +1,4 @@
-﻿using Logistics.DriverApp.Services.LocationTracking;
+using Logistics.DriverApp.Services.LocationTracking;
 
 namespace Logistics.DriverApp.Platforms.iOS.Services;
 

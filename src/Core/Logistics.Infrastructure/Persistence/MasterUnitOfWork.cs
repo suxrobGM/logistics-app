@@ -1,4 +1,5 @@
-﻿using System.Collections;
+using System.Collections;
+
 using Logistics.Domain.Core;
 using Logistics.Domain.Persistence;
 using Logistics.Infrastructure.Data;
@@ -15,13 +16,13 @@ internal class MasterUnitOfWork : IMasterUnityOfWork
         _masterDbContext = masterDbContext;
     }
 
-    public IMasterRepository<TEntity, Guid> Repository<TEntity>() 
+    public IMasterRepository<TEntity, Guid> Repository<TEntity>()
         where TEntity : class, IEntity<Guid>, IMasterEntity
     {
         return Repository<TEntity, Guid>();
     }
 
-    public IMasterRepository<TEntity, TKey> Repository<TEntity, TKey>() 
+    public IMasterRepository<TEntity, TKey> Repository<TEntity, TKey>()
         where TEntity : class, IEntity<TKey>, IMasterEntity
     {
         var type = typeof(TEntity).Name;
@@ -32,7 +33,7 @@ internal class MasterUnitOfWork : IMasterUnityOfWork
 
             var repositoryInstance =
                 Activator.CreateInstance(repositoryType
-                    .MakeGenericType(typeof(TEntity), typeof(TKey)), 
+                    .MakeGenericType(typeof(TEntity), typeof(TKey)),
                     _masterDbContext);
 
             _repositories.Add(type, repositoryInstance);
@@ -42,7 +43,7 @@ internal class MasterUnitOfWork : IMasterUnityOfWork
         {
             throw new InvalidOperationException("Could not create a master repository");
         }
-        
+
         return repository;
     }
 
@@ -50,7 +51,7 @@ internal class MasterUnitOfWork : IMasterUnityOfWork
     {
         return _masterDbContext.SaveChangesAsync();
     }
-    
+
     public void Dispose()
     {
         _masterDbContext.Dispose();

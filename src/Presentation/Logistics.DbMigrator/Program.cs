@@ -2,6 +2,7 @@ using Logistics.DbMigrator.Data;
 using Logistics.DbMigrator.Services;
 using Logistics.DbMigrator.Workers;
 using Logistics.Infrastructure;
+
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()

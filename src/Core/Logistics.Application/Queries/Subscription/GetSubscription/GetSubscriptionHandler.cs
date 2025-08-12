@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
@@ -23,7 +23,7 @@ internal sealed class GetSubscriptionHandler : RequestHandler<GetSubscriptionQue
         {
             return Result<SubscriptionDto>.Fail($"Could not find a subscription with ID '{req.Id}'");
         }
-        
+
         var dto = subscription.ToDto();
         return Result<SubscriptionDto>.Succeed(dto);
     }

@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Extensions;
+using Logistics.Application.Extensions;
 using Logistics.Application.Services;
 using Logistics.Shared.Models;
 
@@ -32,9 +32,9 @@ internal sealed class CreateLoadHandler : RequestHandler<CreateLoadCommand, Resu
                 req.CustomerId,
                 req.AssignedTruckId,
                 req.AssignedDispatcherId);
-            
+
             var newLoad = await _loadService.CreateLoadAsync(createLoadParameters);
-            
+
             await _pushNotificationService.SendNewLoadNotificationAsync(newLoad);
             return Result.Succeed();
         }

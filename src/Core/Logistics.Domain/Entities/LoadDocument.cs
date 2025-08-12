@@ -4,7 +4,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Domain.Entities;
 
-public class LoadDocument : Entity, ITenantEntity
+public class LoadDocument : AuditableEntity, ITenantEntity
 {
     public required string FileName { get; set; }
     public required string OriginalFileName { get; set; }
@@ -15,13 +15,11 @@ public class LoadDocument : Entity, ITenantEntity
     public required DocumentType Type { get; set; }
     public DocumentStatus Status { get; set; } = DocumentStatus.Active;
     public string? Description { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime? UpdatedAt { get; set; }
-    
+
     // Navigation properties
     public Guid LoadId { get; set; }
     public virtual Load Load { get; set; } = null!;
-    
+
     public Guid UploadedById { get; set; }
     public virtual Employee UploadedBy { get; set; } = null!;
 
@@ -60,17 +58,15 @@ public class LoadDocument : Entity, ITenantEntity
     public void UpdateStatus(DocumentStatus status)
     {
         Status = status;
-        UpdatedAt = DateTime.UtcNow;
-        
+        LastModifiedAt = DateTime.UtcNow;
+
         if (status == DocumentStatus.Deleted)
-        {
             DomainEvents.Add(new LoadDocumentDeletedEvent(Id, LoadId));
-        }
     }
 
     public void UpdateDescription(string? description)
     {
         Description = description;
-        UpdatedAt = DateTime.UtcNow;
+        LastModifiedAt = DateTime.UtcNow;
     }
 }

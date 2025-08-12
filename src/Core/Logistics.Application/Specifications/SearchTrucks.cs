@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Specifications;
 
 namespace Logistics.Application.Specifications;
@@ -20,7 +20,7 @@ public sealed class SearchTrucks : BaseSpecification<Truck>
                              (i.SecondaryDriver.FirstName.Contains(search) ||
                               i.SecondaryDriver.LastName.Contains(search)));
         }
-        
+
         OrderBy(orderBy);
         ApplyPaging(page, pageSize);
     }

@@ -1,4 +1,5 @@
-﻿using Logistics.Domain.Specifications;
+using Logistics.Domain.Specifications;
+
 using Microsoft.EntityFrameworkCore;
 namespace Logistics.Infrastructure.Persistence;
 
@@ -22,7 +23,7 @@ public static class QueryableExtensions
         {
             query = query.Include(include);
         }
-        
+
         // sorting
         if (spec.Sort is { } sort)
         {
@@ -40,7 +41,7 @@ public static class QueryableExtensions
 
                 query = sort.Descending
                     ? query.OrderByDescending(selector)
-                    : query.OrderBy (selector);
+                    : query.OrderBy(selector);
             }
         }
 

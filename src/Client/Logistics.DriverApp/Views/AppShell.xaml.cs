@@ -1,4 +1,4 @@
-﻿namespace Logistics.DriverApp.Views;
+namespace Logistics.DriverApp.Views;
 
 public partial class AppShell
 {

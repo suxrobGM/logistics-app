@@ -43,7 +43,7 @@ internal sealed class UpdateLoadDocumentHandler : RequestHandler<UpdateLoadDocum
             if (req.Type.HasValue)
             {
                 document.Type = req.Type.Value;
-                document.UpdatedAt = DateTime.UtcNow;
+                document.LastModifiedAt = DateTime.UtcNow;
             }
 
             if (req.Description != null)
@@ -54,8 +54,8 @@ internal sealed class UpdateLoadDocumentHandler : RequestHandler<UpdateLoadDocum
             // Save changes
             var changes = await _tenantUow.SaveChangesAsync();
 
-            return changes > 0 
-                ? Result.Succeed() 
+            return changes > 0
+                ? Result.Succeed()
                 : Result.Fail("No changes were made to the document");
         }
         catch (Exception ex)

@@ -1,4 +1,5 @@
-﻿using Logistics.Domain.Core;
+using Logistics.Domain.Core;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

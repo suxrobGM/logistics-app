@@ -1,4 +1,4 @@
-﻿namespace Logistics.Shared.Models;
+namespace Logistics.Shared.Models;
 
 public record MonthlyGrossDto : IGrossChartData
 {
@@ -10,7 +10,7 @@ public record MonthlyGrossDto : IGrossChartData
     {
         Date = GetLastDayOfMonth(year, month);
     }
-    
+
     private static DateTime GetLastDayOfMonth(int year, int month)
     {
         // Create a DateTime for the first day of the desired month

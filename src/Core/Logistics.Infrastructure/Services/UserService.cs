@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Services;
 
@@ -44,7 +44,7 @@ public class UserService : IUserService
         {
             await UpdateTenantEmployeeDataAsync(userData.TenantId, user);
         }
-        
+
         await _masterUow.SaveChangesAsync();
     }
 

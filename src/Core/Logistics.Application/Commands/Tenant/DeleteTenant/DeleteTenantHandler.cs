@@ -1,4 +1,3 @@
-﻿using Logistics.Application;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -43,7 +42,7 @@ internal sealed class DeleteTenantHandler : RequestHandler<DeleteTenantCommand, 
         {
             await _stripeService.DeleteCustomerAsync(tenant.StripeCustomerId);
         }
-        
+
         _masterRepository.Repository<Tenant>().Delete(tenant);
         await _masterRepository.SaveChangesAsync();
         return Result.Succeed();

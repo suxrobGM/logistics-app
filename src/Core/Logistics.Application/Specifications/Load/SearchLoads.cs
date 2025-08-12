@@ -1,4 +1,3 @@
-﻿using System.Linq.Expressions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Specifications;
 
@@ -14,7 +13,7 @@ public class SearchLoads : BaseSpecification<Load>
                 (i.Name != null && i.Name.Contains(search)) ||
                 (i.Customer != null && i.Customer.Name.Contains(search)) ||
                 i.Number.ToString().Contains(search) ||
-                i.OriginAddress.Line1.Contains(search) || 
+                i.OriginAddress.Line1.Contains(search) ||
                 (i.OriginAddress.Line2 != null && i.OriginAddress.Line2.Contains(search)) ||
                 i.DestinationAddress.Line1.Contains(search) ||
                 (i.DestinationAddress.Line2 != null && i.DestinationAddress.Line2.Contains(search));

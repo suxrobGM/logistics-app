@@ -1,7 +1,9 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging;
+
 using Logistics.DriverApp.Messages;
 using Logistics.DriverApp.Services;
 using Logistics.DriverApp.Services.Authentication;
+
 using Plugin.Fingerprint;
 using Plugin.Fingerprint.Abstractions;
 
@@ -27,27 +29,27 @@ public class LoginPageViewModel : BaseViewModel
         IsLoadingChanged += HandleIsLoadingChanged;
     }
 
-    
+
     #region Commands
 
     public IAsyncRelayCommand BiometricLoginCommand { get; }
-    
+
     public IAsyncRelayCommand SignInCommand { get; }
     public IAsyncRelayCommand OpenSignUpCommand { get; }
 
     #endregion
-    
+
 
     protected override async Task OnInitializedAsync()
     {
         var canAutoLogin = await _authService.CanAutoLoginAsync();
-    
+
         if (canAutoLogin)
         {
             await LoginAsync(); // try auto login
         }
     }
-    
+
     private async Task BiometricLoginAsync()
     {
         IsLoading = true;
@@ -70,9 +72,9 @@ public class LoginPageViewModel : BaseViewModel
             var request = new AuthenticationRequestConfiguration(
                 "Biometric Login",
                 "Authenticate to access your account");
-            
+
             var result = await CrossFingerprint.Current.AuthenticateAsync(request);
-            
+
             if (result.Authenticated)
             {
                 await LoginAsync(); // Proceed with existing login flow
@@ -98,7 +100,7 @@ public class LoginPageViewModel : BaseViewModel
         try
         {
             var result = await _authService.LoginAsync();
-            
+
             if (result.IsError)
             {
                 await PopupHelpers.ShowErrorAsync(result.ErrorDescription);
@@ -109,7 +111,7 @@ public class LoginPageViewModel : BaseViewModel
             var tenantId = await _tenantService.GetTenantIdFromCacheAsync() ?? _authService.User?.TenantId;
 
             Messenger.Send(new UserLoggedInMessage(_authService.User!));
-            
+
             if (tenantId.HasValue)
             {
                 _apiClient.TenantId = tenantId;

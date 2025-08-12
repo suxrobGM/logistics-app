@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Services;
+using Logistics.Application.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -27,7 +27,7 @@ internal sealed class UpdateTenantHandler : RequestHandler<UpdateTenantCommand, 
         {
             return Result.Fail($"Could not find a tenant with ID '{req.Id}'");
         }
-        
+
         tenant.Name = PropertyUpdater.UpdateIfChanged(req.Name, tenant.Name, s => s.Trim().ToLower());
         tenant.CompanyName = PropertyUpdater.UpdateIfChanged(req.CompanyName, tenant.CompanyName);
         tenant.CompanyAddress = PropertyUpdater.UpdateIfChanged(req.CompanyAddress, tenant.CompanyAddress);
@@ -39,7 +39,7 @@ internal sealed class UpdateTenantHandler : RequestHandler<UpdateTenantCommand, 
         {
             await _stripeService.UpdateCustomerAsync(tenant);
         }
-        
+
         _masterUow.Repository<Tenant>().Update(tenant);
         await _masterUow.SaveChangesAsync();
         return Result.Succeed();
