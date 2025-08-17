@@ -30,7 +30,14 @@ export const appConfig: ApplicationConfig = {
       interceptors: [tenantInterceptor],
       tokenGetter: getAccessToken,
     }),
-    providePrimeNG({theme: {preset: Aura}}),
+    providePrimeNG({
+      theme: {
+        preset: Aura,
+        options: {
+          darkModeSelector: false, // force light only
+        },
+      },
+    }),
     provideMapboxGL({accessToken: environment.mapboxToken}),
 
     MessageService,
