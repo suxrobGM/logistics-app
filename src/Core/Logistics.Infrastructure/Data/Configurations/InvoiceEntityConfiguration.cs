@@ -1,6 +1,5 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -31,39 +30,39 @@ internal sealed class InvoiceEntityConfiguration : IEntityTypeConfiguration<Invo
             money.Property(m => m.Currency).HasMaxLength(3);
         });
     }
-}
 
-#region Derived Types Configuration
+    #region Derived Types Configuration
 
-// Fine-tune derived types for LoadInvoice, SubscriptionInvoice, and PayrollInvoice
-public sealed class LoadInvoiceEntityConfiguration : IEntityTypeConfiguration<LoadInvoice>
-{
-    public void Configure(EntityTypeBuilder<LoadInvoice> builder)
+    // Fine-tune derived types for LoadInvoice, SubscriptionInvoice, and PayrollInvoice
+    public sealed class LoadInvoiceEntityConfiguration : IEntityTypeConfiguration<LoadInvoice>
     {
-        builder.HasOne(i => i.Load)
-            .WithMany(l => l.Invoices)
-            .HasForeignKey(i => i.LoadId);
+        public void Configure(EntityTypeBuilder<LoadInvoice> builder)
+        {
+            builder.HasOne(i => i.Load)
+                .WithMany(l => l.Invoices)
+                .HasForeignKey(i => i.LoadId);
+        }
     }
-}
 
-public sealed class SubscriptionInvoiceEntityConfiguration : IEntityTypeConfiguration<SubscriptionInvoice>
-{
-    public void Configure(EntityTypeBuilder<SubscriptionInvoice> builder)
+    public sealed class SubscriptionInvoiceEntityConfiguration : IEntityTypeConfiguration<SubscriptionInvoice>
     {
-        // builder.HasOne(i => i.Subscription)
-        //     .WithMany(s => s.Invoices)
-        //     .HasForeignKey(i => i.SubscriptionId);
+        public void Configure(EntityTypeBuilder<SubscriptionInvoice> builder)
+        {
+            // builder.HasOne(i => i.Subscription)
+            //     .WithMany(s => s.Invoices)
+            //     .HasForeignKey(i => i.SubscriptionId);
+        }
     }
-}
 
-public sealed class PayrollInvoiceEntityConfiguration : IEntityTypeConfiguration<PayrollInvoice>
-{
-    public void Configure(EntityTypeBuilder<PayrollInvoice> builder)
+    public sealed class PayrollInvoiceEntityConfiguration : IEntityTypeConfiguration<PayrollInvoice>
     {
-        builder.HasOne(i => i.Employee)
-            .WithMany(e => e.PayrollInvoices)
-            .HasForeignKey(i => i.EmployeeId);
+        public void Configure(EntityTypeBuilder<PayrollInvoice> builder)
+        {
+            builder.HasOne(i => i.Employee)
+                .WithMany(e => e.PayrollInvoices)
+                .HasForeignKey(i => i.EmployeeId);
+        }
     }
-}
 
-#endregion
+    #endregion
+}

@@ -46,7 +46,7 @@ internal sealed class UpdateDocumentHandler : IAppRequestHandler<UpdateDocumentC
             document.UpdateDescription(req.Description);
         }
 
-        await _tenantUow.SaveChangesAsync();
+        await _tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
 }

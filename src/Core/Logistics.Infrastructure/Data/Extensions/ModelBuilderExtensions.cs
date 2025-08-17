@@ -140,8 +140,7 @@ internal static class ModelBuilderExtensions
                 var isTenantOnly = typeof(ITenantEntity).IsAssignableFrom(navEntityType)
                                    && !typeof(IMasterEntity).IsAssignableFrom(navEntityType);
 
-                if (isTenantOnly)
-                    // Ignore this navigation in the Master model.
+                if (isTenantOnly) // Ignore this navigation in the Master model.
                 {
                     hostEntity.Ignore(prop.Name);
                 }
