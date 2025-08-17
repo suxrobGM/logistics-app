@@ -29,22 +29,15 @@ internal sealed class CreateSubscriptionHandler : IAppRequestHandler<CreateSubsc
     public async Task<Result> Handle(
         CreateSubscriptionCommand req, CancellationToken ct)
     {
-        var tenant = await _masterUow.Repository<Tenant>().GetByIdAsync(req.TenantId);
-
-        if (tenant is null)
-        {
-            return Result.Fail($"Could not find a tenant with ID '{req.TenantId}'");
-        }
-
-        _tenantUow.SetCurrentTenant(tenant);
-        var tenantEmployeeCount = await _tenantUow.Repository<Employee>().CountAsync();
+        var tenant = await _tenantUow.SetCurrentTenantByIdAsync(req.TenantId);
+        var tenantEmployeeCount = await _tenantUow.Repository<Employee>().CountAsync(ct: ct);
 
         if (tenant.StripeCustomerId is null)
         {
             await CreateStripeCustomerAsync(tenant);
         }
 
-        var subscriptionPlan = await _masterUow.Repository<SubscriptionPlan>().GetByIdAsync(req.PlanId);
+        var subscriptionPlan = await _masterUow.Repository<SubscriptionPlan>().GetByIdAsync(req.PlanId, ct);
 
         if (subscriptionPlan is null)
         {
@@ -56,8 +49,8 @@ internal sealed class CreateSubscriptionHandler : IAppRequestHandler<CreateSubsc
             await _stripeService.CreateSubscriptionAsync(subscriptionPlan, tenant, tenantEmployeeCount, true);
         subscription.StripeSubscriptionId = stripeSubscription.Id;
 
-        await _masterUow.Repository<Subscription>().AddAsync(subscription);
-        await _masterUow.SaveChangesAsync();
+        await _masterUow.Repository<Subscription>().AddAsync(subscription, ct);
+        await _masterUow.SaveChangesAsync(ct);
         _logger.LogInformation("Created Subscription for tenant {TenantId}, employee count: {EmployeeCount}", tenant.Id,
             tenantEmployeeCount);
         return Result.Ok();

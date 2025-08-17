@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -21,43 +22,32 @@ internal sealed class UpdateUserHandler : IAppRequestHandler<UpdateUserCommand, 
     public async Task<Result> Handle(
         UpdateUserCommand req, CancellationToken ct)
     {
-        var user = await _masterUow.Repository<User>().GetByIdAsync(req.Id);
+        var user = await _masterUow.Repository<User>().GetByIdAsync(req.Id, ct);
 
         if (user is null)
         {
             return Result.Fail("Could not find the specified user");
         }
 
-        if (!string.IsNullOrEmpty(req.FirstName))
-        {
-            user.FirstName = req.FirstName;
-        }
-
-        if (!string.IsNullOrEmpty(req.LastName))
-        {
-            user.LastName = req.LastName;
-        }
-
-        if (!string.IsNullOrEmpty(req.PhoneNumber))
-        {
-            user.PhoneNumber = req.PhoneNumber;
-        }
+        user.FirstName = PropertyUpdater.UpdateIfChanged(req.FirstName, user.FirstName);
+        user.LastName = PropertyUpdater.UpdateIfChanged(req.LastName, user.LastName);
+        user.PhoneNumber = PropertyUpdater.UpdateIfChanged(req.PhoneNumber, user.PhoneNumber);
 
         if (req.TenantId.HasValue)
         {
-            await UpdateTenantEmployeeDataAsync(req.TenantId.Value, user);
+            await UpdateTenantEmployeeDataAsync(req.TenantId.Value, user, ct);
         }
 
         _masterUow.Repository<User>().Update(user);
-        await _masterUow.SaveChangesAsync();
-        await _tenantUow.SaveChangesAsync();
+        await _masterUow.SaveChangesAsync(ct);
+        await _tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
 
-    private async Task UpdateTenantEmployeeDataAsync(Guid tenantId, User user)
+    private async Task UpdateTenantEmployeeDataAsync(Guid tenantId, User user, CancellationToken ct = default)
     {
-        _tenantUow.SetCurrentTenantById(tenantId.ToString());
-        var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(user.Id);
+        await _tenantUow.SetCurrentTenantByIdAsync(tenantId);
+        var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(user.Id, ct);
 
         if (employee is null)
         {
@@ -68,6 +58,5 @@ internal sealed class UpdateUserHandler : IAppRequestHandler<UpdateUserCommand, 
         employee.LastName = user.LastName;
         employee.Email = user.Email;
         employee.PhoneNumber = user.PhoneNumber;
-        _tenantUow.Repository<Employee>().Update(employee);
     }
 }

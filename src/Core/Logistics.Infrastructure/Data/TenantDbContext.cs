@@ -1,12 +1,10 @@
 using System.Text.Json;
-
-using Logistics.Domain.Services;
+using Logistics.Domain.Entities;
 using Logistics.Infrastructure.Data.Extensions;
 using Logistics.Infrastructure.Helpers;
 using Logistics.Infrastructure.Interceptors;
 using Logistics.Infrastructure.Options;
 using Logistics.Shared.Models;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -15,46 +13,55 @@ namespace Logistics.Infrastructure.Data;
 public class TenantDbContext : DbContext
 {
     private readonly AuditableEntitySaveChangesInterceptor? _auditableEntity;
-    private readonly string _connectionString;
+
+    // Default fallback connection string for local development and testing
+    private readonly string _defaultConnectionString;
+
     private readonly DispatchDomainEventsInterceptor? _dispatchDomain;
     private readonly ILogger<TenantDbContext>? _logger;
-    private readonly ITenantService? _tenantService;
 
     public TenantDbContext(
         TenantDbContextOptions? tenantDbContextOptions = null,
-        ITenantService? tenantService = null,
         DispatchDomainEventsInterceptor? dispatchDomain = null,
         AuditableEntitySaveChangesInterceptor? auditableEntity = null,
         ILogger<TenantDbContext>? logger = null)
     {
         _dispatchDomain = dispatchDomain;
         _auditableEntity = auditableEntity;
-        _connectionString = tenantDbContextOptions?.ConnectionString ?? ConnectionStrings.LocalDefaultTenant;
-        _tenantService = tenantService;
         _logger = logger;
+
+        _defaultConnectionString = tenantDbContextOptions?.ConnectionString
+                                   ?? ConnectionStrings.LocalDefaultTenant;
+    }
+
+    /// <summary>
+    ///     Switch the underlying connection to a tenant-specific database.
+    ///     Call this BEFORE the first query or SaveChanges.
+    /// </summary>
+    /// <param name="tenant">The tenant to switch to, containing the connection string. </param>
+    public void SwitchToTenant(Tenant tenant)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(tenant.ConnectionString);
+        Database.SetConnectionString(tenant.ConnectionString); // EF Core runtime retargeting
+        _logger?.LogInformation("Switched tenant database to '{TenantName}'.", tenant.Name);
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        if (_dispatchDomain is not null) options.AddInterceptors(_dispatchDomain);
-        if (_auditableEntity is not null) options.AddInterceptors(_auditableEntity);
+        if (_dispatchDomain is not null)
+        {
+            options.AddInterceptors(_dispatchDomain);
+        }
+
+        if (_auditableEntity is not null)
+        {
+            options.AddInterceptors(_auditableEntity);
+        }
 
         if (!options.IsConfigured)
         {
-            var tenantConnectionString = _connectionString;
-            string? tenantName = null;
-
-            // Configure the connection string based on the tenant data from the master database
-            if (_tenantService is not null)
-            {
-                tenantConnectionString = _tenantService.GetTenant().ConnectionString;
-                tenantName = _tenantService.GetTenant().Name;
-            }
-
-            DbContextHelpers.ConfigurePostgreSql(tenantConnectionString, options);
-            _logger?.LogInformation(
-                "Configured tenant database for '{TenantName}' with connection string: {ConnectionString}", tenantName,
-                tenantConnectionString);
+            DbContextHelpers.ConfigurePostgreSql(_defaultConnectionString, options);
+            _logger?.LogInformation("Configured tenant database with default connection string.");
         }
     }
 

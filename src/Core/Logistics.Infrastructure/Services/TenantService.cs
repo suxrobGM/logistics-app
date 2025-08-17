@@ -6,17 +6,19 @@ using Logistics.Domain.Services;
 using Logistics.Infrastructure.Data;
 using Logistics.Infrastructure.Options;
 using Logistics.Shared.Identity.Claims;
-
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Infrastructure.Services;
 
 internal class TenantService : ITenantService
 {
+    private const string TenantHeader = "X-Tenant";
+
     private readonly TenantDbContextOptions? _dbContextOptions;
-    private readonly MasterDbContext _masterDbContext;
     private readonly HttpContext? _httpContext;
-    private Tenant? _currentTenant;
+    private readonly MasterDbContext _masterDbContext;
+    private Tenant? _cachedTenant;
 
     public TenantService(
         MasterDbContext masterDbContext,
@@ -28,39 +30,80 @@ internal class TenantService : ITenantService
         _masterDbContext = masterDbContext ?? throw new ArgumentNullException(nameof(masterDbContext));
     }
 
-    public Tenant GetTenant()
+    public Tenant GetCurrentTenant()
     {
-        if (_currentTenant is not null)
-            return _currentTenant;
+        return GetCurrentTenantAsync().GetAwaiter().GetResult();
+    }
 
-        if (_httpContext is null)
+    public Task<Tenant?> FindTenantByIdAsync(string tenantId)
+    {
+        return FindTenantAsync(tenantId);
+    }
+
+    public async Task<Tenant> GetCurrentTenantAsync(CancellationToken ct = default)
+    {
+        if (_cachedTenant is not null)
         {
-            _currentTenant = CreateDefaultTenant();
-            return _currentTenant;
+            return _cachedTenant;
         }
 
-        var tenantId = GetTenantIdFromHttpContext();
-        _currentTenant = FetchCurrentTenant(tenantId);
-        CheckSubscription(_currentTenant);
+        // No HttpContext (e.g., background worker): return default/local tenant
+        if (_httpContext is null)
+        {
+            return _cachedTenant = CreateDefaultTenant();
+        }
 
-        return _currentTenant ?? throw new InvalidTenantException(
-            $"Could not find tenant with ID/name '{tenantId}'");
+        var tenantId = ResolveTenantIdFromHttpContext();
+        var tenant = await FindTenantAsync(tenantId, ct);
+
+        CheckSubscription(tenant);
+
+        return _cachedTenant = tenant ?? throw new InvalidTenantException(
+            $"Could not find tenant with ID/name '{tenantId}'.");
     }
 
-    public Tenant? SetTenantById(string tenantId)
+    private async Task<Tenant?> FindTenantAsync(string tenantId, CancellationToken ct = default)
     {
-        var tenant = FetchCurrentTenant(tenantId);
-        _currentTenant = tenant;
-        return _currentTenant;
+        ArgumentNullException.ThrowIfNull(tenantId);
+
+        if (Guid.TryParse(tenantId, out var guid))
+        {
+            return await _masterDbContext
+                .Set<Tenant>()
+                .FirstOrDefaultAsync(t => t.Id == guid, ct);
+        }
+
+        var normalized = tenantId.Trim().ToLowerInvariant();
+        return await _masterDbContext
+            .Set<Tenant>()
+            .FirstOrDefaultAsync(t => t.Name == normalized, ct);
     }
 
-    public void SetTenant(Tenant tenant)
+    private string ResolveTenantIdFromHttpContext()
     {
-        _currentTenant = tenant;
+        // 1) Header
+        var headerValue = _httpContext!.Request.Headers[TenantHeader].FirstOrDefault();
+        if (!string.IsNullOrWhiteSpace(headerValue))
+        {
+            return headerValue;
+        }
+
+        // 2) Claim
+        var claimValue = _httpContext.User.Claims
+            .FirstOrDefault(c => c.Type == CustomClaimTypes.Tenant)?.Value;
+
+        if (!string.IsNullOrWhiteSpace(claimValue))
+        {
+            return claimValue;
+        }
+
+        throw new InvalidTenantException(
+            $"Tenant ID must be specified in the '{TenantHeader}' header or '{CustomClaimTypes.Tenant}' claim.");
     }
 
     private Tenant CreateDefaultTenant()
     {
+        // Safe defaults for non-HTTP scenarios (jobs, migrations, etc.)
         return new Tenant
         {
             Name = "default",
@@ -71,86 +114,43 @@ internal class TenantService : ITenantService
                 City = "Anytown",
                 State = "CA",
                 ZipCode = "12345",
-                Country = "United States",
+                Country = "United States"
             },
-            ConnectionString = _dbContextOptions?.ConnectionString ?? ConnectionStrings.LocalDefaultTenant,
+            ConnectionString = _dbContextOptions?.ConnectionString
+                               ?? ConnectionStrings.LocalDefaultTenant
         };
     }
 
-    private string GetTenantIdFromHttpContext()
-    {
-        var tenantId = _httpContext!.Request.Headers["X-Tenant"].FirstOrDefault();
-        if (!string.IsNullOrEmpty(tenantId))
-            return tenantId;
-
-        tenantId = _httpContext.User.Claims
-            .FirstOrDefault(c => c.Type == CustomClaimTypes.Tenant)?.Value;
-
-        if (!string.IsNullOrEmpty(tenantId))
-            return tenantId;
-
-        throw new InvalidTenantException(
-            "Tenant ID must be specified in the 'X-Tenant' header or 'tenant' claim");
-    }
-
-    private Tenant? FetchCurrentTenant(string? tenantId)
-    {
-        if (string.IsNullOrWhiteSpace(tenantId))
-        {
-            throw new InvalidTenantException(
-                "Tenant ID must be specified in the 'X-Tenant' header or 'tenant' claim");
-        }
-
-        // Check if the tenantId is a valid Guid then find by Id
-        if (Guid.TryParse(tenantId, out var tenantGuid))
-        {
-            return _masterDbContext.Set<Tenant>()
-                .FirstOrDefault(t => t.Id == tenantGuid);
-        }
-
-        // Otherwise, find by Name
-        var normalizedName = tenantId.Trim().ToLowerInvariant();
-        return _masterDbContext.Set<Tenant>()
-            .FirstOrDefault(t => t.Name == normalizedName);
-    }
-
     /// <summary>
-    /// Check if the request should bypass subscription validation.
+    ///     Subscriptions are skipped for specific endpoints (e.g., onboarding & billing setup).
     /// </summary>
-    /// <returns>
-    ///  True if the request should bypass subscription validation, false otherwise.
-    /// </returns>
-    private bool ShouldBypass()
+    private bool ShouldBypassSubscriptionCheck()
     {
-        if (_httpContext is null)
+        var path = _httpContext?.Request.Path;
+
+        if (!path.HasValue)
         {
             return false;
         }
 
-        var isPaymentMethodsApi = _httpContext.Request.Path.Value.StartsWith("/payments/methods");
-        var isSubscriptionApi = _httpContext.Request.Path.Value.StartsWith("/subscriptions");
-        return isPaymentMethodsApi || isSubscriptionApi;
+        return path.Value.Value.StartsWith("/payments/methods", StringComparison.OrdinalIgnoreCase)
+               || path.Value.Value.StartsWith("/subscriptions", StringComparison.OrdinalIgnoreCase);
     }
 
-    /// <summary>
-    /// Check if the tenant has an active subscription. Throws <see cref="SubscriptionExpiredException"/> if not.
-    /// If tenant subscription is null, it is free and considered active.
-    /// </summary>
-    /// <param name="tenant">Tenant to check</param>
-    /// <exception cref="SubscriptionExpiredException"></exception>
     private void CheckSubscription(Tenant? tenant)
     {
-        if (tenant?.Subscription is null || ShouldBypass())
+        if (tenant?.Subscription is null || ShouldBypassSubscriptionCheck())
         {
             return;
         }
 
-        if (tenant.Subscription.Status is SubscriptionStatus.Active or SubscriptionStatus.Trialing)
+        var status = tenant.Subscription.Status;
+        if (status is SubscriptionStatus.Active or SubscriptionStatus.Trialing)
         {
             return;
         }
 
         throw new SubscriptionExpiredException(
-            $"Tenant '{tenant.Name}' does not have an active subscription. The current status is '{tenant.Subscription.Status}'");
+            $"Tenant '{tenant.Name}' does not have an active subscription. Current status: '{status}'.");
     }
 }

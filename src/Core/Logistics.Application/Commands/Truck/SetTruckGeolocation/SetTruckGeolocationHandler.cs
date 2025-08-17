@@ -22,8 +22,8 @@ internal sealed class SetTruckGeolocationHandler : IAppRequestHandler<SetTruckGe
     public async Task<Result> Handle(
         SetTruckGeolocationCommand req, CancellationToken ct)
     {
-        _tenantUow.SetCurrentTenantById(req.GeolocationData.TenantId.ToString());
-        var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(req.GeolocationData.TruckId);
+        await _tenantUow.SetCurrentTenantByIdAsync(req.GeolocationData.TenantId);
+        var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(req.GeolocationData.TruckId, ct);
 
         if (truck is null)
         {
@@ -34,8 +34,7 @@ internal sealed class SetTruckGeolocationHandler : IAppRequestHandler<SetTruckGe
 
         truck.CurrentAddress = req.GeolocationData.CurrentAddress;
         truck.CurrentLocation = req.GeolocationData.CurrentLocation;
-        _tenantUow.Repository<Truck>().Update(truck);
-        await _tenantUow.SaveChangesAsync();
+        await _tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
 }

@@ -88,7 +88,12 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
             return Result.Fail($"{StripeMetadataKeys.TenantId} not found in invoice metadata.");
         }
 
-        _tenantUow.SetCurrentTenantById(tenantId);
+        if (!Guid.TryParse(tenantId, out var parsedTenantId))
+        {
+            return Result.Fail($"Invalid tenant ID format: {tenantId}");
+        }
+
+        await _tenantUow.SetCurrentTenantByIdAsync(parsedTenantId);
 
         var amount = stripeInvoice.AmountPaid / 100m; // Convert from cents
         var stripePaymentMethodId = stripeInvoice.DefaultPaymentMethodId;
@@ -247,7 +252,12 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
             return Result.Fail($"{StripeMetadataKeys.TenantId} not found in payment method metadata.");
         }
 
-        _tenantUow.SetCurrentTenantById(tenantId);
+        if (!Guid.TryParse(tenantId, out var parsedTenantId))
+        {
+            return Result.Fail($"Invalid tenant ID format: {tenantId}");
+        }
+
+        await _tenantUow.SetCurrentTenantByIdAsync(parsedTenantId);
         var paymentMethod = stripePaymentMethod.ToPaymentMethodEntity();
 
         if (paymentMethod is UsBankAccountPaymentMethod usBankAccountPaymentMethod)
@@ -273,7 +283,12 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
             return Result.Fail($"{StripeMetadataKeys.TenantId} not found in payment method metadata.");
         }
 
-        _tenantUow.SetCurrentTenantById(tenantId);
+        if (!Guid.TryParse(tenantId, out var parsedTenantId))
+        {
+            return Result.Fail($"Invalid tenant ID format: {tenantId}");
+        }
+
+        await _tenantUow.SetCurrentTenantByIdAsync(parsedTenantId);
         var paymentMethod = await _tenantUow.Repository<PaymentMethod>()
             .GetAsync(pm => pm.StripePaymentMethodId == stripePaymentMethod.Id);
 

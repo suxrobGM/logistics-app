@@ -34,20 +34,20 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
     protected override async Task<ClaimsIdentity> GenerateClaimsAsync(User user)
     {
         var claimsIdentity = await base.GenerateClaimsAsync(user);
-        var tenantId = _httpContext.GetTenantId() ?? user.TenantId.ToString();
+        var tenantId = _httpContext.GetTenantId() ?? user.TenantId;
 
         AddProfileClaims(claimsIdentity, user);
         await AddAppRoleClaimsAsync(claimsIdentity, user);
 
-        if (string.IsNullOrEmpty(tenantId))
+        if (tenantId is null)
         {
             return claimsIdentity;
         }
 
-        _tenantUow.SetCurrentTenantById(tenantId);
+        await _tenantUow.SetCurrentTenantByIdAsync(tenantId.Value);
         var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(user.Id);
 
-        claimsIdentity.AddClaim(new Claim(CustomClaimTypes.Tenant, tenantId));
+        claimsIdentity.AddClaim(new Claim(CustomClaimTypes.Tenant, tenantId.Value.ToString()));
         await AddTenantRoleClaimsAsync(claimsIdentity, employee);
         return claimsIdentity;
     }

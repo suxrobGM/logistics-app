@@ -1,5 +1,6 @@
+using System.Text;
+using System.Text.Json;
 using Logistics.Domain.Services;
-
 using Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.Services;
@@ -15,7 +16,8 @@ public class FileBlobStorageService : IBlobStorageService
         _tenantService = tenantService;
     }
 
-    public async Task<string> UploadAsync(string containerName, string blobName, Stream content, string contentType, CancellationToken cancellationToken = default)
+    public async Task<string> UploadAsync(string containerName, string blobName, Stream content, string contentType,
+        CancellationToken cancellationToken = default)
     {
         var containerPath = GetContainerPath(containerName);
         EnsureDirectoryExists(containerPath);
@@ -37,7 +39,8 @@ public class FileBlobStorageService : IBlobStorageService
         return GetFileUri(containerName, blobName);
     }
 
-    public async Task<Stream> DownloadAsync(string containerName, string blobName, CancellationToken cancellationToken = default)
+    public async Task<Stream> DownloadAsync(string containerName, string blobName,
+        CancellationToken cancellationToken = default)
     {
         var filePath = GetFilePath(containerName, blobName);
 
@@ -68,13 +71,15 @@ public class FileBlobStorageService : IBlobStorageService
         await Task.CompletedTask;
     }
 
-    public async Task<bool> ExistsAsync(string containerName, string blobName, CancellationToken cancellationToken = default)
+    public async Task<bool> ExistsAsync(string containerName, string blobName,
+        CancellationToken cancellationToken = default)
     {
         var filePath = GetFilePath(containerName, blobName);
         return await Task.FromResult(File.Exists(filePath));
     }
 
-    public async Task<BlobFileProperties> GetPropertiesAsync(string containerName, string blobName, CancellationToken cancellationToken = default)
+    public async Task<BlobFileProperties> GetPropertiesAsync(string containerName, string blobName,
+        CancellationToken cancellationToken = default)
     {
         var filePath = GetFilePath(containerName, blobName);
 
@@ -96,7 +101,7 @@ public class FileBlobStorageService : IBlobStorageService
 
     private string GetContainerPath(string containerName)
     {
-        var tenant = _tenantService.GetTenant();
+        var tenant = _tenantService.GetCurrentTenant();
         var tenantId = tenant.Id.ToString();
         return Path.Combine(_options.RootPath, tenantId, containerName);
     }
@@ -114,7 +119,7 @@ public class FileBlobStorageService : IBlobStorageService
 
     private string GetFileUri(string containerName, string blobName)
     {
-        var tenant = _tenantService.GetTenant();
+        var tenant = _tenantService.GetCurrentTenant();
         var tenantId = tenant.Id.ToString();
 
         if (!string.IsNullOrEmpty(_options.BaseUrl))
@@ -136,7 +141,7 @@ public class FileBlobStorageService : IBlobStorageService
     private static string GenerateETag(FileInfo fileInfo)
     {
         var hash = $"{fileInfo.Length}-{fileInfo.LastWriteTime.Ticks}";
-        return Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(hash));
+        return Convert.ToBase64String(Encoding.UTF8.GetBytes(hash));
     }
 
     private async Task StoreMetadataAsync(string filePath, string contentType, long contentLength)
@@ -149,7 +154,7 @@ public class FileBlobStorageService : IBlobStorageService
             CreatedAt = DateTime.UtcNow
         };
 
-        var json = System.Text.Json.JsonSerializer.Serialize(metadata);
+        var json = JsonSerializer.Serialize(metadata);
         await File.WriteAllTextAsync(metadataPath, json);
     }
 
@@ -170,7 +175,7 @@ public class FileBlobStorageService : IBlobStorageService
         }
 
         var json = await File.ReadAllTextAsync(metadataPath);
-        return System.Text.Json.JsonSerializer.Deserialize<FileMetadata>(json) ?? new FileMetadata
+        return JsonSerializer.Deserialize<FileMetadata>(json) ?? new FileMetadata
         {
             ContentType = "application/octet-stream",
             ContentLength = 0,

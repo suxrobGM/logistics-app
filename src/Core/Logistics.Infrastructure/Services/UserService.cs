@@ -42,17 +42,17 @@ public class UserService : IUserService
             user.PhoneNumber = userData.PhoneNumber;
         }
 
-        if (!string.IsNullOrEmpty(userData.TenantId))
+        if (userData.TenantId.HasValue)
         {
-            await UpdateTenantEmployeeDataAsync(userData.TenantId, user);
+            await UpdateTenantEmployeeDataAsync(userData.TenantId.Value, user);
         }
 
         await _masterUow.SaveChangesAsync();
     }
 
-    private async Task UpdateTenantEmployeeDataAsync(string tenantId, User user)
+    private async Task UpdateTenantEmployeeDataAsync(Guid tenantId, User user)
     {
-        _tenantUow.SetCurrentTenantById(tenantId);
+        await _tenantUow.SetCurrentTenantByIdAsync(tenantId);
         var employeeRepository = _tenantUow.Repository<Employee>();
         var employee = await employeeRepository.GetByIdAsync(user.Id);
 
