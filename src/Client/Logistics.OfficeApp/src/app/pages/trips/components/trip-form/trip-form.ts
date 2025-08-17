@@ -8,9 +8,10 @@ import {DatePicker} from "primeng/datepicker";
 import {InputGroupModule} from "primeng/inputgroup";
 import {InputTextModule} from "primeng/inputtext";
 import {ProgressSpinner} from "primeng/progressspinner";
+import {StepperModule} from "primeng/stepper";
 import {TableModule} from "primeng/table";
 import {ApiService} from "@/core/api";
-import {TripLoadDto, TripStopDto} from "@/core/api/models";
+import {CreateTripLoadCommand, LoadDto, TripLoadDto, TripStopDto} from "@/core/api/models";
 import {
   DirectionMap,
   FormField,
@@ -24,8 +25,10 @@ import {TripLoadDialog} from "../trip-load-dialog/trip-load-dialog";
 
 export interface TripFormValue {
   name: string;
-  plannedStart?: Date;
+  plannedStart: Date;
   truckId: string;
+  newLoads?: CreateTripLoadCommand[];
+  existingLoadIds?: string[];
 }
 
 @Component({
@@ -49,11 +52,21 @@ export interface TripFormValue {
     AddressPipe,
     DistanceUnitPipe,
     CurrencyPipe,
+    StepperModule,
   ],
 })
 export class TripForm {
+  private readonly existingLoadIds: string[] = [];
+  private readonly newLoads: CreateTripLoadCommand[] = [];
+
+  //#region Injected services
+
   private readonly confirmationService = inject(ConfirmationService);
   private readonly apiService = inject(ApiService);
+
+  //#endregion
+
+  //#region Public properties
 
   public readonly mode = input.required<"create" | "edit">();
   public readonly initial = input<Partial<TripFormValue> | null>(null);
@@ -63,6 +76,10 @@ export class TripForm {
 
   public readonly save = output<TripFormValue>();
   public readonly remove = output<void>();
+
+  //#endregion
+
+  //#region UI properties
 
   protected readonly tripLoadDialogVisible = model(false);
 
@@ -76,14 +93,23 @@ export class TripForm {
     this.stops().map((stop) => [stop.addressLong, stop.addressLat] as GeoPoint)
   );
 
+  //#endregion
+
+  //#region Form
+
   protected readonly form = new FormGroup({
     name: new FormControl<string>("", {validators: [Validators.required], nonNullable: true}),
-    plannedStart: new FormControl<Date | null>(null),
+    plannedStart: new FormControl<Date>(new Date(), {
+      validators: [Validators.required],
+      nonNullable: true,
+    }),
     truckId: new FormControl<string>("", {
       validators: [Validators.required],
       nonNullable: true,
     }),
   });
+
+  //#endregion
 
   constructor() {
     effect(() => {
@@ -109,12 +135,20 @@ export class TripForm {
     });
   }
 
+  protected onLoadPicked(load: LoadDto): void {
+    this.existingLoadIds.push(load.id);
+  }
+
+  protected onNewLoadCreate(load: CreateTripLoadCommand): void {
+    this.newLoads.push(load);
+  }
+
   protected submit(): void {
     if (this.form.invalid) {
       return;
     }
 
-    this.save.emit(this.form.getRawValue() as TripFormValue);
+    this.save.emit(this.form.getRawValue() satisfies TripFormValue);
   }
 
   private patch(src: Partial<TripFormValue>): void {

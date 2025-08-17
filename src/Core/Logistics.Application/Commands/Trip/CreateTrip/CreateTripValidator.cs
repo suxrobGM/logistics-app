@@ -10,8 +10,33 @@ internal sealed class CreateTripValidator : AbstractValidator<CreateTripCommand>
         RuleFor(i => i.TruckId).NotEmpty();
 
         RuleFor(i => i.PlannedStart)
-            .NotEmpty()
-            .GreaterThan(DateTime.UtcNow)
+            .Must(dt => dt > DateTime.UtcNow)
             .WithMessage("Planned start time must be in the future.");
+
+        // Either NewLoads OR ExistingLoadIds (but not both), and whichever is present must be non-empty
+        RuleFor(x => x)
+            .Must(ExactlyOneSourceSelected)
+            .WithMessage("Specify either NewLoads or ExistingLoadIds, but not both.");
+
+        When(x => x.NewLoads is not null, () =>
+        {
+            RuleFor(x => x.NewLoads!)
+                .Must(l => l.Any())
+                .WithMessage("NewLoads cannot be empty when provided.");
+        });
+
+        When(x => x.ExistingLoadIds is not null, () =>
+        {
+            RuleFor(x => x.ExistingLoadIds!)
+                .Must(l => l.Any())
+                .WithMessage("ExistingLoadIds cannot be empty when provided.");
+        });
+    }
+
+    private static bool ExactlyOneSourceSelected(CreateTripCommand x)
+    {
+        var hasNew = x.NewLoads?.Any() == true;
+        var hasExisting = x.ExistingLoadIds?.Any() == true;
+        return hasNew ^ hasExisting; // XOR
     }
 }

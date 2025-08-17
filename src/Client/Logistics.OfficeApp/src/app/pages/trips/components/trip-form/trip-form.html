@@ -1,131 +1,196 @@
-<div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-  @if (isLoading()) {
-    <p-progress-spinner />
-  }
+@if (isLoading()) {
+  <p-progress-spinner />
+}
 
-  <form [formGroup]="form" (ngSubmit)="submit()">
-    <app-validation-summary [form]="form" />
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <p-stepper [value]="1" [linear]="true">
+    <p-step-list>
+      <p-step [value]="1">Basic Info</p-step>
+      <p-step [value]="2">Loads</p-step>
+      <p-step [value]="3">Review</p-step>
+    </p-step-list>
+    <p-step-panels>
+      <p-step-panel [value]="1">
+        <ng-template #content let-activateCallback="activateCallback">
+          <!-- Basic info form-->
+          <div class="flex flex-col">
+            <app-validation-summary [form]="form" />
 
-    <app-form-field label="Trip Name" for="name" [required]="true">
-      <input pInputText id="name" formControlName="name" type="text" placeholder="Trip name" />
-    </app-form-field>
+            <app-form-field label="Trip Name" for="name" [required]="true">
+              <input
+                pInputText
+                id="name"
+                formControlName="name"
+                type="text"
+                placeholder="Trip name"
+              />
+            </app-form-field>
 
-    <app-form-field label="Planned Start Date" for="plannedStart">
-      <p-date-picker formControlName="plannedStart" [showIcon]="true" />
-    </app-form-field>
+            <app-form-field label="Planned Start Date" for="plannedStart">
+              <p-date-picker formControlName="plannedStart" [showIcon]="true" />
+            </app-form-field>
 
-    <app-form-field label="Assigned Truck" for="truckId" [required]="true">
-      <app-search-truck formControlName="truckId" />
-    </app-form-field>
+            <app-form-field label="Assigned Truck" for="truckId" [required]="true">
+              <app-search-truck formControlName="truckId" />
+            </app-form-field>
 
-    <!-- <app-form-field label="Loads" for="loads">
-        <app-search-load formControlName="loads" />
-      </app-form-field> -->
-
-    <!-- action buttons -->
-    <div class="flex gap-2">
-      <p-button
-        type="submit"
-        icon="pi pi-pen-to-square-square"
-        [label]="mode() === 'create' ? 'Add' : 'Save'"
-        [disabled]="isLoading() || !form.valid"
-      />
-
-      @if (mode() === "edit") {
-        <p-button
-          type="button"
-          icon="pi pi-trash"
-          label="Delete"
-          severity="danger"
-          (click)="askRemoveTrip()"
-          [disabled]="isLoading()"
-        />
-
-        <p-button
-          type="button"
-          icon="pi pi-arrow-left"
-          label="Back to list"
-          [routerLink]="['/trips']"
-        />
-      }
-    </div>
-  </form>
-
-  <app-direction-map [stops]="stopCoords()" />
-
-  <div class="col-span-full">
-    <p-table [value]="loads()" [dataKey]="'id'" responsiveLayout="scroll" [loading]="isLoading()">
-      <ng-template #caption>
-        <h5 class="mb-3 font-semibold">Assigned Loads</h5>
-        <p-button
-          icon="pi pi-plus"
-          label="Add Load"
-          variant="outlined"
-          (click)="tripLoadDialogVisible.set(true)"
-        />
-      </ng-template>
-      <ng-template #header>
-        <tr>
-          <th pSortableColumn="number">Load Number <p-sortIcon field="number" /></th>
-          <th pSortableColumn="name">Load Name <p-sortIcon field="name" /></th>
-          <th pSortableColumn="customer.name">Customer <p-sortIcon field="customer.name" /></th>
-          <th pSortableColumn="originAddress.line1">
-            Origin <p-sortIcon field="originAddress.line1" />
-          </th>
-          <th pSortableColumn="destinationAddress.line1">
-            Destination <p-sortIcon field="destinationAddress.line1" />
-          </th>
-          <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
-          <th pSortableColumn="distance">Distance (mi) <p-sortIcon field="distance" /></th>
-          <th pSortableColumn="deliveryCost">Delivery Cost <p-sortIcon field="deliveryCost" /></th>
-          <th>Actions</th>
-        </tr>
-      </ng-template>
-
-      <ng-template #body let-load>
-        <tr>
-          <td>{{ load.number }}</td>
-          <td>{{ load.name }}</td>
-          <td>{{ load.customer.name }}</td>
-          <td>{{ load.originAddress | address }}</td>
-          <td>{{ load.destinationAddress | address }}</td>
-          <td><app-load-status-tag [status]="load.status" /></td>
-          <td>{{ load.distance | distanceUnit: "mi" }}</td>
-          <td>{{ load.deliveryCost | currency }}</td>
-          <td>
-            <div class="flex gap-2">
+            <div class="flex justify-between pt-6">
               <p-button
-                icon="pi pi-pencil"
-                [routerLink]="['/loads', load.id, 'edit']"
-                variant="outlined"
+                type="button"
+                icon="pi pi-arrow-left"
+                label="Back to list"
+                severity="secondary"
+                [routerLink]="['/trips']"
               />
               <p-button
-                icon="pi pi-trash"
-                severity="danger"
-                (click)="askRemoveLoad(load.id)"
-                variant="outlined"
+                type="button"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                label="Next"
+                (click)="activateCallback(2)"
               />
             </div>
-          </td>
-        </tr>
-      </ng-template>
+          </div>
+        </ng-template>
+      </p-step-panel>
+      <p-step-panel [value]="2">
+        <ng-template #content let-activateCallback="activateCallback">
+          <div class="flex flex-col">
+            <!-- Loads table -->
+            <p-table [value]="loads()" [dataKey]="'id'" [scrollable]="true" [loading]="isLoading()">
+              <ng-template #caption>
+                <h5 class="mb-3 font-semibold">Assigned Loads</h5>
+                <p-button
+                  icon="pi pi-plus"
+                  label="Add Load"
+                  variant="outlined"
+                  (click)="tripLoadDialogVisible.set(true)"
+                />
+              </ng-template>
+              <ng-template #header>
+                <tr>
+                  <th pSortableColumn="number">Load Number <p-sortIcon field="number" /></th>
+                  <th pSortableColumn="name">Load Name <p-sortIcon field="name" /></th>
+                  <th pSortableColumn="customer.name">
+                    Customer <p-sortIcon field="customer.name" />
+                  </th>
+                  <th pSortableColumn="originAddress.line1">
+                    Origin <p-sortIcon field="originAddress.line1" />
+                  </th>
+                  <th pSortableColumn="destinationAddress.line1">
+                    Destination <p-sortIcon field="destinationAddress.line1" />
+                  </th>
+                  <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
+                  <th pSortableColumn="distance">Distance (mi) <p-sortIcon field="distance" /></th>
+                  <th pSortableColumn="deliveryCost">
+                    Delivery Cost <p-sortIcon field="deliveryCost" />
+                  </th>
+                  <th>Actions</th>
+                </tr>
+              </ng-template>
 
-      <ng-template #footer>
-        <tr>
-          <td colspan="6" class="font-bold">Totals</td>
-          <td>
-            {{ totalDistance() | distanceUnit: "mi" }}
-          </td>
-          <td>
-            {{ totalCost() | currency }}
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </div>
-</div>
+              <ng-template #body let-load>
+                <tr>
+                  <td>{{ load.number }}</td>
+                  <td>{{ load.name }}</td>
+                  <td>{{ load.customer.name }}</td>
+                  <td>{{ load.originAddress | address }}</td>
+                  <td>{{ load.destinationAddress | address }}</td>
+                  <td><app-load-status-tag [status]="load.status" /></td>
+                  <td>{{ load.distance | distanceUnit: "mi" }}</td>
+                  <td>{{ load.deliveryCost | currency }}</td>
+                  <td>
+                    <div class="flex gap-2">
+                      <p-button
+                        icon="pi pi-pencil"
+                        [routerLink]="['/loads', load.id, 'edit']"
+                        variant="outlined"
+                      />
+                      <p-button
+                        icon="pi pi-trash"
+                        severity="danger"
+                        (click)="askRemoveLoad(load.id)"
+                        variant="outlined"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+
+              <ng-template #footer>
+                <tr>
+                  <td colspan="6" class="font-bold">Totals</td>
+                  <td>
+                    {{ totalDistance() | distanceUnit: "mi" }}
+                  </td>
+                  <td>
+                    {{ totalCost() | currency }}
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+
+            <div class="flex justify-between pt-6">
+              <p-button
+                type="button"
+                label="Back"
+                severity="secondary"
+                icon="pi pi-arrow-left"
+                (onClick)="activateCallback(1)"
+              />
+              <p-button
+                type="button"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                label="Next"
+                (click)="activateCallback(3)"
+              />
+            </div>
+          </div>
+        </ng-template>
+      </p-step-panel>
+      <p-step-panel [value]="3">
+        <ng-template #content let-activateCallback="activateCallback">
+          <div class="flex flex-col">
+            <app-direction-map [stops]="stopCoords()" />
+
+            <!-- action buttons -->
+            <div class="flex justify-between pt-6">
+              <p-button
+                type="button"
+                label="Back"
+                severity="secondary"
+                icon="pi pi-arrow-left"
+                (onClick)="activateCallback(2)"
+              />
+              <p-button
+                type="submit"
+                icon="pi pi-pen-to-square-square"
+                [label]="mode() === 'create' ? 'Create' : 'Update'"
+                [disabled]="isLoading() || !form.valid"
+              />
+
+              @if (mode() === "edit") {
+                <p-button
+                  type="button"
+                  icon="pi pi-trash"
+                  label="Delete"
+                  severity="danger"
+                  (click)="askRemoveTrip()"
+                  [disabled]="isLoading()"
+                />
+              }
+            </div>
+          </div>
+        </ng-template>
+      </p-step-panel>
+    </p-step-panels>
+  </p-stepper>
+</form>
 
 <app-trip-load-dialog
   [assignedTruckId]="form.get('truckId')?.value"
   [(visible)]="tripLoadDialogVisible"
+  (picked)="onLoadPicked($event)"
+  (created)="onNewLoadCreate($event)"
 />

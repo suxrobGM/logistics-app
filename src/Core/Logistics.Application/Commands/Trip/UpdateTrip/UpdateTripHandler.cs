@@ -27,10 +27,10 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
 
         if (req.Loads is not null)
         {
-            loads = await _tenantUow.Repository<Load>().GetListAsync(i => req.Loads.Contains(i.Id));
+            loads = await _tenantUow.Repository<Load>().GetListAsync(i => req.Loads.Contains(i.Id), ct);
         }
 
-        var trip = await _tenantUow.Repository<Trip>().GetByIdAsync(req.TripId);
+        var trip = await _tenantUow.Repository<Trip>().GetByIdAsync(req.TripId, ct);
 
         if (trip is null)
         {
@@ -46,7 +46,7 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
             trip.UpdateTripLoads(loads);
         }
 
-        await _tenantUow.SaveChangesAsync();
+        await _tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
 }

@@ -7,7 +7,7 @@ public record TripLoadDto
 {
     public Guid Id { get; set; }
     public long Number { get; set; }
-    public string? Name { get; set; }
+    public required string Name { get; set; }
     public LoadStatus Status { get; set; }
     public double Distance { get; set; }
     public decimal DeliveryCost { get; set; }

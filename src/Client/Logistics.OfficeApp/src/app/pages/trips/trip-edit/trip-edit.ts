@@ -3,7 +3,7 @@ import {Router} from "@angular/router";
 import {ConfirmationService} from "primeng/api";
 import {CardModule} from "primeng/card";
 import {ApiService} from "@/core/api";
-import {TripLoadDto, TripStopDto} from "@/core/api/models";
+import {TripLoadDto, TripStopDto, UpdateTripCommand} from "@/core/api/models";
 import {ToastService} from "@/core/services";
 import {TripForm, TripFormValue} from "../components";
 
@@ -35,6 +35,21 @@ export class TripEditPage implements OnInit {
       message: "Are you sure that you want to delete this trip?",
       accept: () => this.deleteTrip(),
     });
+  }
+
+  protected updateTrip(formValues: TripFormValue): void {
+    //this.isLoading.set(true);
+    // const command: UpdateTripCommand = {
+    //   ...formValues,
+    //   existingLoadIds: this.existingLoadIds,
+    // };
+    // this.apiService.tripApi.updateTrip(this.tripId(), command).subscribe((result) => {
+    //   if (result.success) {
+    //     this.toastService.showSuccess("Trip updated successfully");
+    //     this.fetchTrip();
+    //   }
+    //   this.isLoading.set(false);
+    // });
   }
 
   private fetchTrip(): void {

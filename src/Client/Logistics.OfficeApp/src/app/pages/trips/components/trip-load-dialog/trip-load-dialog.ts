@@ -16,7 +16,7 @@ export class TripLoadDialog {
   /**
    * When user creates a new load, this event is emitted with the created load data.
    */
-  public readonly create = output<CreateTripLoadCommand>();
+  public readonly created = output<CreateTripLoadCommand>();
 
   /**
    * When user picks an existing load, this event is emitted with the selected load data.
@@ -37,7 +37,7 @@ export class TripLoadDialog {
   }
 
   protected createLoad(formValue: LoadFormValue): void {
-    this.create.emit({
+    this.created.emit({
       name: formValue.name,
       originAddress: formValue.originAddress!,
       originLocation: formValue.originLocation,

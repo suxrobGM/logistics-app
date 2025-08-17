@@ -85,34 +85,6 @@ public class Trip : Entity, ITenantEntity
         Stops.Where(s => s.Type == TripStopType.DropOff)
             .Sum(s => s.Load.CalcDriverShare());
 
-    #endregion
-
-
-    #region Factory Methods
-
-    public static Trip Create(
-        string name,
-        DateTime plannedStart,
-        Truck truck,
-        IEnumerable<Load>? loads = null)
-    {
-        var loadsArr = loads?.ToArray() ?? [];
-
-        var trip = new Trip
-        {
-            Name = name,
-            TruckId = truck.Id,
-            Truck = truck,
-            PlannedStart = plannedStart,
-            TotalDistance = loadsArr.Sum(l => l.Distance)
-        };
-
-        AddStops(trip, loadsArr);
-
-        trip.DomainEvents.Add(new NewTripCreatedEvent(trip.Id));
-        return trip;
-    }
-
     public void UpdateTripLoads(IEnumerable<Load> loads)
     {
         if (Status != TripStatus.Planned)
@@ -161,6 +133,39 @@ public class Trip : Entity, ITenantEntity
                 LoadId = load.Id
             });
         }
+    }
+
+    public void RemoveLoad(Guid loadId)
+    {
+
+    }
+
+    #endregion
+
+
+    #region Factory Methods
+
+    public static Trip Create(
+        string name,
+        DateTime plannedStart,
+        Truck truck,
+        IEnumerable<Load>? loads = null)
+    {
+        var loadsArr = loads?.ToArray() ?? [];
+
+        var trip = new Trip
+        {
+            Name = name,
+            TruckId = truck.Id,
+            Truck = truck,
+            PlannedStart = plannedStart,
+            TotalDistance = loadsArr.Sum(l => l.Distance)
+        };
+
+        AddStops(trip, loadsArr);
+
+        trip.DomainEvents.Add(new NewTripCreatedEvent(trip.Id));
+        return trip;
     }
 
     #endregion

@@ -61,4 +61,11 @@ internal sealed class LoadService : ILoadService
 
         return load;
     }
+
+    public async Task DeleteLoadAsync(Guid loadId)
+    {
+        var load = await _tenantUow.Repository<Load>().GetByIdAsync(loadId);
+        _tenantUow.Repository<Load>().Delete(load);
+        await _tenantUow.SaveChangesAsync();
+    }
 }

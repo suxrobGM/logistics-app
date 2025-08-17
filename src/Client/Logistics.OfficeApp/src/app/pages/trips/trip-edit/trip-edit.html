@@ -9,5 +9,6 @@
     [loads]="tripLoads()"
     [isLoading]="isLoading()"
     (remove)="confirmToDelete()"
+    (save)="updateTrip($event)"
   />
 </p-card>

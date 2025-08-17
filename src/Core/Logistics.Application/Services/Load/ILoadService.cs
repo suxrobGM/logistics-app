@@ -17,4 +17,10 @@ public interface ILoadService
     /// <returns>Load entity</returns>
     /// <exception cref="InvalidOperationException">Thrown when the load creation fails</exception>
     Task<Load> CreateLoadAsync(CreateLoadParameters parameters, bool saveChanges = true);
+
+    /// <summary>
+    /// Deletes the specified load.
+    /// </summary>
+    /// <param name="loadId">Load ID to delete</param>
+    Task DeleteLoadAsync(Guid loadId);
 }

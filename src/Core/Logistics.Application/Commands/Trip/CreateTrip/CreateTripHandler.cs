@@ -26,10 +26,9 @@ internal sealed class CreateTripHandler : IAppRequestHandler<CreateTripCommand, 
         _logger = logger;
     }
 
-    public async Task<Result> Handle(
-        CreateTripCommand req, CancellationToken ct)
+    public async Task<Result> Handle(CreateTripCommand req, CancellationToken ct)
     {
-        var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId);
+        var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId, ct);
 
         if (truck is null)
         {
@@ -44,8 +43,8 @@ internal sealed class CreateTripHandler : IAppRequestHandler<CreateTripCommand, 
 
         var trip = Trip.Create(req.Name, req.PlannedStart, truck, loads);
 
-        await _tenantUow.Repository<Trip>().AddAsync(trip);
-        await _tenantUow.SaveChangesAsync();
+        await _tenantUow.Repository<Trip>().AddAsync(trip, ct);
+        await _tenantUow.SaveChangesAsync(ct);
         _logger.LogInformation(
             "Created trip '{TripName}' with ID '{TripId}' for truck '{TruckId}'",
             trip.Name, trip.Id, req.TruckId);
