@@ -31,10 +31,6 @@ export class TripFormStepBasic {
 
   protected readonly form = new FormGroup({
     name: new FormControl<string>("", {validators: [Validators.required], nonNullable: true}),
-    plannedStart: new FormControl<Date>(new Date(), {
-      validators: [Validators.required],
-      nonNullable: true,
-    }),
     truckId: new FormControl<string>("", {
       validators: [Validators.required],
       nonNullable: true,
@@ -46,13 +42,10 @@ export class TripFormStepBasic {
       const initialData = this.initialData();
 
       if (initialData) {
-        console.log("Initial data:", initialData);
-
         this.form.patchValue(initialData);
       }
 
       if (this.disabled()) {
-        this.form.get("plannedStart")?.disable();
         this.form.get("truckId")?.disable();
       } else {
         this.form.enable();

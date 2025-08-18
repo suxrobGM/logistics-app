@@ -10,6 +10,7 @@ import {ApiService} from "@/core/api";
 import {TripDto, TripStopType} from "@/core/api/models";
 import {DirectionMap, LoadStatusTag, LoadTypeTag, TripStatusTag} from "@/shared/components";
 import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
+import {GeoPoint} from "@/shared/types/mapbox";
 
 @Component({
   selector: "app-trip-details",
@@ -47,16 +48,16 @@ export class TripDetailsPage implements OnInit {
    * @param stops Trip stops to extract coordinates from.
    * @returns Array of coordinates in the format [longitude, latitude].
    */
-  protected tripStopCoords(): [number, number][] {
+  protected tripStopCoords(): GeoPoint[] {
     return (
       this.trip()
         ?.stops.sort((a, b) => a.order - b.order)
-        .map((s) => [s.addressLong, s.addressLat]) || []
+        .map((s) => [s.location.longitude, s.location.latitude] as GeoPoint) ?? []
     );
   }
 
   protected stopLabel(tripStopType: TripStopType): string {
-    return tripStopType === TripStopType.PickUp ? "Pick-up" : "Drop-off";
+    return tripStopType === TripStopType.PickUp ? "Pick Up" : "Drop Off";
   }
 
   private fetchTrip(): void {

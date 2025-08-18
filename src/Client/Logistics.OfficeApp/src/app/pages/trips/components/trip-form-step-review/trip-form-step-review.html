@@ -1,5 +1,5 @@
 <div class="flex flex-col gap-4">
-  <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+  <div class="grid grid-cols-1 gap-4 px-1 md:grid-cols-3">
     <p-card>
       <div class="flex items-center justify-between">
         <div>
@@ -46,7 +46,41 @@
     </p-card>
   </div>
 
-  <app-direction-map [stops]="stopCoords()" height="500px" [zoom]="4" />
+  <!-- Trip Stops table -->
+  <p-card class="px-1">
+    <ng-template #header>
+      <div class="align-items-center flex gap-2 p-3 pb-0">
+        <h5>Stops</h5>
+      </div>
+    </ng-template>
+
+    <p-table
+      [value]="stops()"
+      [dataKey]="'id'"
+      sortField="order"
+      sortMode="single"
+      [paginator]="false"
+    >
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="order">#<p-sortIcon field="order" /></th>
+          <th>Type</th>
+          <th>Address</th>
+          <th>Arrived</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-tripStop>
+        <tr>
+          <td>{{ tripStop.order }}</td>
+          <td>{{ stopLabel(tripStop.type) }}</td>
+          <td>{{ tripStop.address | address }}</td>
+          <td>{{ tripStop.arrivedAt | date: "short" }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+
+  <app-direction-map [stops]="stopCoords()" height="700px" [zoom]="4" />
 
   <div class="flex justify-between pt-6">
     <p-button
