@@ -1,5 +1,4 @@
 using Logistics.Domain.Core;
-
 using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.Domain.Entities;
@@ -14,8 +13,8 @@ public class User : IdentityUser<Guid>, IEntity<Guid>, IMasterEntity, IAuditable
 
     public DateTimeOffset CreatedAt { get; set; } = DateTime.UtcNow;
     public string? CreatedBy { get; set; }
-    public DateTimeOffset? LastModifiedAt { get; set; }
-    public string? LastModifiedBy { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
+    public string? UpdatedBy { get; set; }
 
     public string GetFullName()
     {

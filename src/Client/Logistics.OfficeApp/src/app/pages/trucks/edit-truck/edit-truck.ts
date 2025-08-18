@@ -1,7 +1,6 @@
 import {Component, OnInit, computed, inject, input, signal} from "@angular/core";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Router, RouterLink} from "@angular/router";
-import {ConfirmationService} from "primeng/api";
 import {AutoCompleteModule} from "primeng/autocomplete";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
@@ -46,7 +45,6 @@ export class EditTruckComponent implements OnInit {
   protected readonly truckStatuses = truckStatusOptions;
 
   private readonly apiService = inject(ApiService);
-  private readonly confirmationService = inject(ConfirmationService);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
@@ -97,7 +95,7 @@ export class EditTruckComponent implements OnInit {
   }
 
   protected confirmToDelete(): void {
-    this.confirmationService.confirm({
+    this.toastService.confirm({
       message: "Are you sure that you want to delete this truck?",
       accept: () => this.deleteTruck(),
     });

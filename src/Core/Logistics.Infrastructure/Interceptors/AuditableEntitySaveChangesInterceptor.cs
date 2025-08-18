@@ -1,7 +1,5 @@
 using System.Security.Claims;
-
 using Logistics.Domain.Core;
-
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -24,7 +22,8 @@ public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
         return base.SavingChanges(eventData, result);
     }
 
-    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
+    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData,
+        InterceptionResult<int> result, CancellationToken cancellationToken = default)
     {
         UpdateEntities(eventData.Context);
         return base.SavingChangesAsync(eventData, result, cancellationToken);
@@ -33,7 +32,9 @@ public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
     private void UpdateEntities(DbContext? context)
     {
         if (context is null)
+        {
             return;
+        }
 
         foreach (var entry in context.ChangeTracker.Entries<IAuditableEntity>())
         {
@@ -45,8 +46,8 @@ public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
 
             if (entry.State is EntityState.Modified || entry.HasChangedOwnedEntities())
             {
-                entry.Entity.LastModifiedAt = DateTimeOffset.UtcNow;
-                entry.Entity.LastModifiedBy = _httpContext.GetUserId();
+                entry.Entity.UpdatedAt = DateTimeOffset.UtcNow;
+                entry.Entity.UpdatedBy = _httpContext.GetUserId();
             }
         }
     }

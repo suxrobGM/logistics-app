@@ -2,7 +2,6 @@ import {CommonModule} from "@angular/common";
 import {Component, OnInit, inject, input, signal} from "@angular/core";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {RouterLink} from "@angular/router";
-import {ConfirmationService} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
@@ -41,7 +40,6 @@ export class EditEmployeeComponent implements OnInit {
 
   private readonly authService = inject(AuthService);
   private readonly apiService = inject(ApiService);
-  private readonly confirmationService = inject(ConfirmationService);
   private readonly toastService = inject(ToastService);
 
   protected readonly id = input<string>();
@@ -111,7 +109,7 @@ export class EditEmployeeComponent implements OnInit {
   }
 
   confirmToDelete(): void {
-    this.confirmationService.confirm({
+    this.toastService.confirm({
       message: "Are you sure that you want to delete this employee from the company?",
       // accept: () => this.deleteLoad()
     });

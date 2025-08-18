@@ -11,6 +11,7 @@ import {TooltipModule} from "primeng/tooltip";
 import {Observable, map} from "rxjs";
 import {ApiService} from "@/core/api";
 import {PagedResult, TripDto, TripStatus} from "@/core/api/models";
+import {ToastService} from "@/core/services";
 import {BaseTableComponent, LoadStatusTag, TableQueryParams} from "@/shared/components";
 import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
 
@@ -35,6 +36,7 @@ import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
 })
 export class TripsList extends BaseTableComponent<TripDto> {
   private readonly apiService = inject(ApiService);
+  private readonly toastService = inject(ToastService);
 
   protected query(params: TableQueryParams): Observable<PagedResult<TripDto>> {
     const orderBy = this.apiService.formatSortField(params.sortField, params.sortOrder);
@@ -68,5 +70,21 @@ export class TripsList extends BaseTableComponent<TripDto> {
       default:
         return null;
     }
+  }
+
+  protected askRemoveTrip(tripId: string): void {
+    this.toastService.confirm({
+      message: "Are you sure that you want to delete this trip?",
+      accept: () => this.deleteTrip(tripId),
+    });
+  }
+
+  private deleteTrip(tripId: string): void {
+    this.apiService.tripApi.deleteTrip(tripId).subscribe((result) => {
+      if (result.success) {
+        this.toastService.showSuccess("Trip deleted successfully");
+        this.data.update((trips) => trips.filter((trip) => trip.id !== tripId));
+      }
+    });
   }
 }

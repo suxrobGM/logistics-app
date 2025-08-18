@@ -115,6 +115,13 @@
             tooltipPosition="bottom"
             [routerLink]="['/trips', trip.id]"
           />
+          <p-button
+            icon="pi pi-trash"
+            pTooltip="Delete trip"
+            tooltipPosition="bottom"
+            severity="danger"
+            (click)="askRemoveTrip(trip.id)"
+          />
         </td>
       </tr>
     </ng-template>

@@ -1,7 +1,6 @@
 import {Component, OnInit, effect, inject, input, output, signal} from "@angular/core";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {RouterLink} from "@angular/router";
-import {ConfirmationService} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {InputGroupModule} from "primeng/inputgroup";
 import {InputGroupAddonModule} from "primeng/inputgroupaddon";
@@ -20,6 +19,7 @@ import {
   loadTypeOptions,
 } from "@/core/api/models";
 import {AuthService} from "@/core/auth";
+import {ToastService} from "@/core/services";
 import {
   AddressAutocomplete,
   DirectionMap,
@@ -82,7 +82,7 @@ export class LoadFormComponent implements OnInit {
   private readonly dummyLocation: GeoPointDto = {longitude: 0, latitude: 0};
 
   private readonly authService = inject(AuthService);
-  private readonly confirmationService = inject(ConfirmationService);
+  private readonly toastService = inject(ToastService);
 
   public readonly mode = input.required<"create" | "edit">();
   public readonly initial = input<Partial<LoadFormValue> | null>(null);
@@ -171,7 +171,7 @@ export class LoadFormComponent implements OnInit {
   }
 
   protected askRemove(): void {
-    this.confirmationService.confirm({
+    this.toastService.confirm({
       message: "Are you sure that you want to delete this load?",
       accept: () => this.remove.emit(),
     });

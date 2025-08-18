@@ -22,5 +22,5 @@ public sealed record DocumentDto
     public Guid? EmployeeId { get; init; }
 
     public DateTime CreatedAt { get; init; }
-    public DateTime? LastModifiedAt { get; init; }
+    public DateTime? UpdatedAt { get; init; }
 }

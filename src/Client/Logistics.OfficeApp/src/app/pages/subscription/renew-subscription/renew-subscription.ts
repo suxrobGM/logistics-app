@@ -70,7 +70,7 @@ export class RenewSubscriptionComponent {
   }
 
   confirmRenewSubscription(): void {
-    this.toastService.confrimAction({
+    this.toastService.confirm({
       message:
         "Are you sure you want to renew the subscription? By renewing the subscription, you agree to the terms and conditions.",
       accept: () => {

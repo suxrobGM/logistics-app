@@ -9,5 +9,5 @@ public class CreateTripCommand : IAppRequest
     public DateTime PlannedStart { get; set; }
     public Guid TruckId { get; set; }
     public IEnumerable<CreateTripLoadCommand>? NewLoads { get; set; }
-    public IEnumerable<Guid>? ExistingLoadIds { get; set; }
+    public IEnumerable<Guid>? AttachLoadIds { get; set; }
 }

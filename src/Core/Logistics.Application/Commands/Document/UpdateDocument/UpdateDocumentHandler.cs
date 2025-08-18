@@ -38,7 +38,7 @@ internal sealed class UpdateDocumentHandler : IAppRequestHandler<UpdateDocumentC
         if (req.Type.HasValue)
         {
             document.Type = req.Type.Value;
-            document.LastModifiedAt = DateTime.UtcNow;
+            document.UpdatedAt = DateTime.UtcNow;
         }
 
         if (req.Description != null)

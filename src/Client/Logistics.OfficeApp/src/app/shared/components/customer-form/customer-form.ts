@@ -1,10 +1,10 @@
 import {Component, effect, inject, input, output} from "@angular/core";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {RouterLink} from "@angular/router";
-import {ConfirmationService} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {InputTextModule} from "primeng/inputtext";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {ToastService} from "@/core/services";
 import {FormField} from "../form-field/form-field";
 import {ValidationSummary} from "../validation-summary/validation-summary";
 
@@ -26,7 +26,7 @@ export interface CustomerFormValue {
   ],
 })
 export class CustomerForm {
-  private readonly confirmationService = inject(ConfirmationService);
+  private readonly toastService = inject(ToastService);
 
   public readonly mode = input.required<"create" | "edit">();
   public readonly initial = input<Partial<CustomerFormValue> | null>(null);
@@ -55,7 +55,7 @@ export class CustomerForm {
   }
 
   protected askRemove(): void {
-    this.confirmationService.confirm({
+    this.toastService.confirm({
       message: "Are you sure that you want to delete this customer?",
       accept: () => this.remove.emit(),
     });

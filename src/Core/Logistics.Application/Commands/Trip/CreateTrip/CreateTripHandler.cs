@@ -76,7 +76,7 @@ internal sealed class CreateTripHandler : IAppRequestHandler<CreateTripCommand, 
                 command.TruckId,
                 newLoad.AssignedDispatcherId);
 
-            var newLoadEntity = await _loadService.CreateLoadAsync(createLoadParameters);
+            var newLoadEntity = await _loadService.CreateLoadAsync(createLoadParameters, false);
             loads.Add(newLoadEntity);
             newLoadsCount++;
         }
@@ -93,12 +93,12 @@ internal sealed class CreateTripHandler : IAppRequestHandler<CreateTripCommand, 
     /// </summary>
     private async Task<List<Load>> GetExistingLoadsAsync(CreateTripCommand command, Truck truck)
     {
-        if (command.ExistingLoadIds is null || !command.ExistingLoadIds.Any())
+        if (command.AttachLoadIds is null || !command.AttachLoadIds.Any())
         {
             return [];
         }
 
-        var loads = await _tenantUow.Repository<Load>().GetListAsync(i => command.ExistingLoadIds.Contains(i.Id));
+        var loads = await _tenantUow.Repository<Load>().GetListAsync(i => command.AttachLoadIds.Contains(i.Id));
 
         foreach (var load in loads)
         {

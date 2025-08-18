@@ -95,7 +95,7 @@ public class AzureBlobStorageService : IBlobStorageService
         var tenant = _tenantService.GetCurrentTenant();
         var tenantId = tenant.Id.ToString().ToLowerInvariant().Replace("-", "");
 
-        // Azure container names must be lowercase and can't contain hyphens
+        // Azure container names must be lowercase and can't contain hyphens,
         // So we create a tenant-specific container name
         return $"tenant{tenantId}-{containerName}".ToLowerInvariant();
     }

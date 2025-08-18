@@ -85,15 +85,6 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.Property<long>("FileSizeBytes")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("LastModifiedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("LastModifiedAt");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("LastModifiedBy");
-
                     b.Property<string>("OriginalFileName")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -112,6 +103,15 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
 
                     b.Property<Guid>("UploadedById")
                         .HasColumnType("uuid");
@@ -211,15 +211,6 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.Property<DateTime?>("DueDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTimeOffset?>("LastModifiedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("LastModifiedAt");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("LastModifiedBy");
-
                     b.Property<string>("Notes")
                         .HasColumnType("text");
 
@@ -237,6 +228,15 @@ namespace Logistics.Infrastructure.Migrations.Tenant
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
 
                     b.ComplexProperty<Dictionary<string, object>>("Total", "Logistics.Domain.Entities.Invoice.Total#Money", b1 =>
                         {
@@ -473,15 +473,6 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.Property<Guid?>("InvoiceId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset?>("LastModifiedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("LastModifiedAt");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("LastModifiedBy");
-
                     b.Property<Guid>("MethodId")
                         .HasColumnType("uuid");
 
@@ -490,6 +481,15 @@ namespace Logistics.Infrastructure.Migrations.Tenant
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
 
                     b.ComplexProperty<Dictionary<string, object>>("Amount", "Logistics.Domain.Entities.Payment.Amount#Money", b1 =>
                         {

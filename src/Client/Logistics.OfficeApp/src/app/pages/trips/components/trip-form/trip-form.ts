@@ -2,7 +2,6 @@ import {CurrencyPipe} from "@angular/common";
 import {Component, computed, effect, inject, input, model, output} from "@angular/core";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {RouterLink} from "@angular/router";
-import {ConfirmationService} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {DatePicker} from "primeng/datepicker";
 import {InputGroupModule} from "primeng/inputgroup";
@@ -10,8 +9,10 @@ import {InputTextModule} from "primeng/inputtext";
 import {ProgressSpinner} from "primeng/progressspinner";
 import {StepperModule} from "primeng/stepper";
 import {TableModule} from "primeng/table";
+import {TooltipModule} from "primeng/tooltip";
 import {ApiService} from "@/core/api";
 import {CreateTripLoadCommand, LoadDto, TripLoadDto, TripStopDto} from "@/core/api/models";
+import {ToastService} from "@/core/services";
 import {
   DirectionMap,
   FormField,
@@ -28,7 +29,8 @@ export interface TripFormValue {
   plannedStart: Date;
   truckId: string;
   newLoads?: CreateTripLoadCommand[];
-  existingLoadIds?: string[];
+  attachLoadIds?: string[];
+  detachLoadIds?: string[];
 }
 
 @Component({
@@ -53,16 +55,18 @@ export interface TripFormValue {
     DistanceUnitPipe,
     CurrencyPipe,
     StepperModule,
+    TooltipModule,
   ],
 })
 export class TripForm {
-  private readonly existingLoadIds: string[] = [];
+  private readonly attachLoadIds: string[] = [];
+  private readonly detachLoadIds: string[] = [];
   private readonly newLoads: CreateTripLoadCommand[] = [];
 
   //#region Injected services
 
-  private readonly confirmationService = inject(ConfirmationService);
   private readonly apiService = inject(ApiService);
+  private readonly toastService = inject(ToastService);
 
   //#endregion
 
@@ -116,30 +120,20 @@ export class TripForm {
       const initialData = this.initial();
 
       if (initialData) {
-        this.patch(initialData);
+        this.form.patchValue({...initialData});
       }
     });
   }
 
-  protected askRemoveTrip(): void {
-    this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this trip?",
-      accept: () => this.remove.emit(),
-    });
+  protected attachLoad(load: LoadDto): void {
+    this.attachLoadIds.push(load.id);
   }
 
-  protected askRemoveLoad(loadId: string): void {
-    this.confirmationService.confirm({
-      message: "Are you sure that you want to delete this load?",
-      accept: () => this.deleteLoad(loadId),
-    });
+  protected detachLoad(load: TripLoadDto): void {
+    this.detachLoadIds.push(load.id);
   }
 
-  protected onLoadPicked(load: LoadDto): void {
-    this.existingLoadIds.push(load.id);
-  }
-
-  protected onNewLoadCreate(load: CreateTripLoadCommand): void {
+  protected addNewLoad(load: CreateTripLoadCommand): void {
     this.newLoads.push(load);
   }
 
@@ -149,17 +143,5 @@ export class TripForm {
     }
 
     this.save.emit(this.form.getRawValue() satisfies TripFormValue);
-  }
-
-  private patch(src: Partial<TripFormValue>): void {
-    this.form.patchValue({...src});
-  }
-
-  private deleteLoad(loadId: string): void {
-    this.apiService.loadApi.deleteLoad(loadId).subscribe((result) => {
-      if (result.success) {
-        this.loads.update((loads) => loads.filter((load) => load.id !== loadId));
-      }
-    });
   }
 }

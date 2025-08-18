@@ -1,6 +1,5 @@
 import {Component, OnInit, inject, input, signal} from "@angular/core";
 import {Router} from "@angular/router";
-import {ConfirmationService} from "primeng/api";
 import {CardModule} from "primeng/card";
 import {ApiService} from "@/core/api";
 import {TripLoadDto, TripStopDto, UpdateTripCommand} from "@/core/api/models";
@@ -14,7 +13,6 @@ import {TripForm, TripFormValue} from "../components";
 })
 export class TripEditPage implements OnInit {
   private readonly toastService = inject(ToastService);
-  private readonly confirmationService = inject(ConfirmationService);
   private readonly apiService = inject(ApiService);
   private readonly router = inject(Router);
 
@@ -31,25 +29,32 @@ export class TripEditPage implements OnInit {
   }
 
   protected confirmToDelete(): void {
-    this.confirmationService.confirm({
+    this.toastService.confirm({
       message: "Are you sure that you want to delete this trip?",
       accept: () => this.deleteTrip(),
     });
   }
 
   protected updateTrip(formValues: TripFormValue): void {
-    //this.isLoading.set(true);
-    // const command: UpdateTripCommand = {
-    //   ...formValues,
-    //   existingLoadIds: this.existingLoadIds,
-    // };
-    // this.apiService.tripApi.updateTrip(this.tripId(), command).subscribe((result) => {
-    //   if (result.success) {
-    //     this.toastService.showSuccess("Trip updated successfully");
-    //     this.fetchTrip();
-    //   }
-    //   this.isLoading.set(false);
-    // });
+    const tripId = this.tripId();
+
+    if (!tripId) {
+      return;
+    }
+
+    this.isLoading.set(true);
+    const command: UpdateTripCommand = {
+      ...formValues,
+      tripId: tripId,
+    };
+
+    this.apiService.tripApi.updateTrip(command).subscribe((result) => {
+      if (result.success) {
+        this.toastService.showSuccess("Trip updated successfully");
+        this.fetchTrip();
+      }
+      this.isLoading.set(false);
+    });
   }
 
   private fetchTrip(): void {

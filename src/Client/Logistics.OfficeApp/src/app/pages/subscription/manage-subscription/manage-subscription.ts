@@ -1,7 +1,6 @@
 import {CommonModule} from "@angular/common";
 import {Component, inject, signal} from "@angular/core";
 import {Router, RouterModule} from "@angular/router";
-import {ConfirmationService} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
@@ -35,7 +34,6 @@ import {BillingHistoryComponent, PaymentMethodsCardComponent} from "../component
 export class ManageSubscriptionComponent {
   private readonly tenantService = inject(TenantService);
   private readonly apiService = inject(ApiService);
-  private readonly confirmationService = inject(ConfirmationService);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
@@ -64,7 +62,7 @@ export class ManageSubscriptionComponent {
   }
 
   confirmCancelSubscription(): void {
-    this.confirmationService.confirm({
+    this.toastService.confirm({
       message:
         "Are you sure you want to cancel your subscription? Your subscription will be cancelled at the end of the billing cycle.",
       header: "Cancel Subscription",

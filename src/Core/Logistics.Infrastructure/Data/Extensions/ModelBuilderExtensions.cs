@@ -29,14 +29,14 @@ internal static class ModelBuilderExtensions
                 .HasColumnName("CreatedAt")
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-            entity.Property(nameof(AuditableEntity.LastModifiedAt))
+            entity.Property(nameof(AuditableEntity.UpdatedAt))
                 .HasColumnName("LastModifiedAt");
 
             entity.Property(nameof(AuditableEntity.CreatedBy))
                 .HasColumnName("CreatedBy")
                 .HasMaxLength(50);
 
-            entity.Property(nameof(AuditableEntity.LastModifiedBy))
+            entity.Property(nameof(AuditableEntity.UpdatedBy))
                 .HasColumnName("LastModifiedBy")
                 .HasMaxLength(50);
         }

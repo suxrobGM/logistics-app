@@ -25,9 +25,9 @@ internal sealed class CreateTripValidator : AbstractValidator<CreateTripCommand>
                 .WithMessage("NewLoads cannot be empty when provided.");
         });
 
-        When(x => x.ExistingLoadIds is not null, () =>
+        When(x => x.AttachLoadIds is not null, () =>
         {
-            RuleFor(x => x.ExistingLoadIds!)
+            RuleFor(x => x.AttachLoadIds!)
                 .Must(l => l.Any())
                 .WithMessage("ExistingLoadIds cannot be empty when provided.");
         });
@@ -36,7 +36,7 @@ internal sealed class CreateTripValidator : AbstractValidator<CreateTripCommand>
     private static bool ExactlyOneSourceSelected(CreateTripCommand x)
     {
         var hasNew = x.NewLoads?.Any() == true;
-        var hasExisting = x.ExistingLoadIds?.Any() == true;
+        var hasExisting = x.AttachLoadIds?.Any() == true;
         return hasNew ^ hasExisting; // XOR
     }
 }

@@ -28,14 +28,14 @@ public abstract class Document : AuditableEntity, ITenantEntity
     public void UpdateStatus(DocumentStatus status)
     {
         Status = status;
-        LastModifiedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
         OnStatusChanged(status);
     }
 
     public void UpdateDescription(string? description)
     {
         Description = description;
-        LastModifiedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
     }
 
     protected abstract void OnStatusChanged(DocumentStatus newStatus);

@@ -8,13 +8,14 @@ namespace Logistics.Domain.Entities;
 public class Trip : Entity, ITenantEntity
 {
     /// <summary>
-    /// Sequential number of the trip, unique within the tenant.
+    ///     Sequential number of the trip, unique within the tenant.
     /// </summary>
     public long Number { get; private set; }
+
     public required string Name { get; set; }
 
     /// <summary>
-    /// Total distance of the trip in kilometers.
+    ///     Total distance of the trip in kilometers.
     /// </summary>
     public double TotalDistance { get; private set; }
 
@@ -29,21 +30,60 @@ public class Trip : Entity, ITenantEntity
 
     public virtual List<TripStop> Stops { get; } = [];
 
+
+    #region Factory Methods
+
+    public static Trip Create(
+        string name,
+        DateTime plannedStart,
+        Truck truck,
+        IEnumerable<Load>? loads = null)
+    {
+        var loadsArr = loads?.ToArray() ?? [];
+
+        var trip = new Trip
+        {
+            Name = name,
+            TruckId = truck.Id,
+            Truck = truck,
+            PlannedStart = plannedStart,
+            TotalDistance = loadsArr.Sum(l => l.Distance)
+        };
+
+        AddStops(trip, loadsArr);
+
+        trip.DomainEvents.Add(new NewTripCreatedEvent(trip.Id));
+        return trip;
+    }
+
+    #endregion
+
     #region Domain Behaviors
 
     /// <summary>
-    /// Gets all unique loads associated with the trip.
+    ///     Gets all unique loads associated with the trip.
     /// </summary>
-    public IReadOnlyList<Load> GetLoads() =>
-        Stops.Select(s => s.Load).Where(i => i is not null).Distinct(new LoadComparer()).ToArray();
+    public IReadOnlyList<Load> GetLoads()
+    {
+        return Stops.Select(s => s.Load).Where(i => i is not null).Distinct(new LoadComparer()).ToArray();
+    }
 
-    public Address GetOriginAddress() => Stops.OrderBy(s => s.Order).First().Address;
-    public Address GetDestinationAddress() => Stops.OrderBy(s => s.Order).Last().Address;
+    public Address GetOriginAddress()
+    {
+        return Stops.OrderBy(s => s.Order).First().Address;
+    }
+
+    public Address GetDestinationAddress()
+    {
+        return Stops.OrderBy(s => s.Order).Last().Address;
+    }
 
     public void Dispatch()
     {
         if (Status != TripStatus.Planned)
+        {
             throw new InvalidOperationException("Trip already dispatched");
+        }
 
         Status = TripStatus.Dispatched;
         ActualStart = DateTime.UtcNow;
@@ -77,18 +117,29 @@ public class Trip : Entity, ITenantEntity
         }
     }
 
-    public decimal CalcTotalRevenue() =>
-        Stops.Where(s => s.Type == TripStopType.DropOff)
+    public decimal CalcTotalRevenue()
+    {
+        return Stops.Where(s => s.Type == TripStopType.DropOff)
             .Sum(s => s.Load.DeliveryCost.Amount);
+    }
 
-    public decimal CalcDriversShare() =>
-        Stops.Where(s => s.Type == TripStopType.DropOff)
+    public decimal CalcDriversShare()
+    {
+        return Stops.Where(s => s.Type == TripStopType.DropOff)
             .Sum(s => s.Load.CalcDriverShare());
+    }
 
+    /// <summary>
+    ///     Updates the trip loads. Clears existing stops and recreates them based on the new loads.
+    /// </summary>
+    /// <param name="loads">The new collection of loads to be associated with the trip.</param>
+    /// <exception cref="InvalidOperationException">Thrown if the trip status is not 'Planned'.</exception>
     public void UpdateTripLoads(IEnumerable<Load> loads)
     {
         if (Status != TripStatus.Planned)
+        {
             throw new InvalidOperationException("Cannot update loads for a trip that is not planned");
+        }
 
         // Clear existing stops
         Stops.Clear();
@@ -101,7 +152,7 @@ public class Trip : Entity, ITenantEntity
     }
 
     /// <summary>
-    /// Adds stops to the given trip for each provided load, creating both pick-up and drop-off stops.
+    ///     Adds stops to the given trip for each provided load, creating both pick-up and drop-off stops.
     /// </summary>
     /// <param name="trip">The trip to which the stops will be added.</param>
     /// <param name="loads">The collection of loads for which stops will be created.</param>
@@ -135,37 +186,65 @@ public class Trip : Entity, ITenantEntity
         }
     }
 
+    /// <summary>
+    ///     Removes the load from the trip.
+    /// </summary>
+    /// <param name="loadId">The ID of the load to be removed.</param>
+    /// <exception cref="InvalidOperationException">Thrown if the trip status is not 'Planned'.</exception>
     public void RemoveLoad(Guid loadId)
     {
+        if (Status != TripStatus.Planned)
+        {
+            throw new InvalidOperationException("Cannot modify loads unless trip is Planned.");
+        }
 
+        var toRemove = Stops.Where(s => s.LoadId == loadId).ToList();
+        if (toRemove.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var s in toRemove)
+        {
+            Stops.Remove(s);
+        }
+
+        // Re-number orders
+        var order = 1;
+        foreach (var s in Stops.OrderBy(x => x.Order))
+        {
+            s.Order = order++;
+        }
+
+        TotalDistance = GetLoads().Sum(l => l.Distance);
     }
 
-    #endregion
-
-
-    #region Factory Methods
-
-    public static Trip Create(
-        string name,
-        DateTime plannedStart,
-        Truck truck,
-        IEnumerable<Load>? loads = null)
+    /// <summary>
+    ///     Adds a load to the trip.
+    /// </summary>
+    /// <param name="load">The load to be added.</param>
+    /// <exception cref="InvalidOperationException">Thrown if the trip status is not 'Planned'.</exception>
+    public void AddLoad(Load load)
     {
-        var loadsArr = loads?.ToArray() ?? [];
-
-        var trip = new Trip
+        if (Status != TripStatus.Planned)
         {
-            Name = name,
-            TruckId = truck.Id,
-            Truck = truck,
-            PlannedStart = plannedStart,
-            TotalDistance = loadsArr.Sum(l => l.Distance)
-        };
+            throw new InvalidOperationException("Cannot modify loads unless trip is Planned.");
+        }
 
-        AddStops(trip, loadsArr);
+        var order = (Stops.Count == 0 ? 0 : Stops.Max(s => s.Order)) + 1;
 
-        trip.DomainEvents.Add(new NewTripCreatedEvent(trip.Id));
-        return trip;
+        Stops.Add(new TripStop
+        {
+            Trip = this, Order = order++, Type = TripStopType.PickUp, Address = load.OriginAddress,
+            Location = load.OriginLocation, Load = load, LoadId = load.Id
+        });
+        Stops.Add(new TripStop
+        {
+            Trip = this, Order = order, Type = TripStopType.DropOff, Address = load.DestinationAddress,
+            Location = load.DestinationLocation, Load = load, LoadId = load.Id
+        });
+
+        TotalDistance = GetLoads().Sum(l => l.Distance);
     }
 
     #endregion

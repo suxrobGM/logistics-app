@@ -4,5 +4,5 @@ export interface CreateTripCommand {
   name: string;
   plannedStart: Date;
   newLoads?: CreateTripLoadCommand[];
-  existingLoadIds?: string[];
+  attachLoadIds?: string[];
 }

@@ -1,7 +1,6 @@
 import {CommonModule} from "@angular/common";
 import {Component, inject, signal} from "@angular/core";
 import {RouterLink} from "@angular/router";
-import {ConfirmationService} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
@@ -34,7 +33,6 @@ import {ToastService} from "@/core/services";
 export class ListCustomersComponent {
   private readonly apiService = inject(ApiService);
   private readonly toastService = inject(ToastService);
-  private readonly confirmationService = inject(ConfirmationService);
 
   protected readonly customers = signal<CustomerDto[]>([]);
   protected readonly isLoading = signal<boolean>(false);
@@ -75,7 +73,7 @@ export class ListCustomersComponent {
   }
 
   protected confirmToDelete(id: string): void {
-    this.confirmationService.confirm({
+    this.toastService.confirm({
       message: "Are you sure that you want to delete this customer?",
       accept: () => this.deleteCustomer(id),
     });

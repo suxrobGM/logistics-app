@@ -1,6 +1,5 @@
 import {CommonModule} from "@angular/common";
 import {Component, OnInit, inject, model, signal} from "@angular/core";
-import {ConfirmationService} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {DialogModule} from "primeng/dialog";
@@ -32,7 +31,6 @@ import {PaymentMethodDialogComponent} from "../payment-method-dialog/payment-met
 export class PaymentMethodsCardComponent implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly tenantService = inject(TenantService);
-  private readonly confirmationService = inject(ConfirmationService);
   private readonly toastService = inject(ToastService);
 
   protected readonly isLoading = signal(false);
@@ -63,7 +61,7 @@ export class PaymentMethodsCardComponent implements OnInit {
   }
 
   setDefaultPaymentMethod(method: PaymentMethodDto): void {
-    this.confirmationService.confirm({
+    this.toastService.confirm({
       message: `Are you sure you want to set '${this.getMethodLabel(method)}' as your default payment method?`,
       accept: () => {
         this.isLoading.set(true);
@@ -86,7 +84,7 @@ export class PaymentMethodsCardComponent implements OnInit {
   }
 
   deletePaymentMethod(method: PaymentMethodDto): void {
-    this.confirmationService.confirm({
+    this.toastService.confirm({
       message: `Are you sure you want to delete '${this.getMethodLabel(method)}'?`,
       accept: () => {
         this.isLoading.set(true);

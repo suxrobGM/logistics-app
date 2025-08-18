@@ -8,12 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="MediatR.Contracts" Version="2.0.1" />
-      <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="9.0.7" />
+        <PackageReference Include="MediatR.Contracts" Version="2.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="9.0.7"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Logistics.Domain.Primitives\Logistics.Domain.Primitives.csproj" />
+        <ProjectReference Include="..\Logistics.Domain.Primitives\Logistics.Domain.Primitives.csproj"/>
     </ItemGroup>
 
 </Project>

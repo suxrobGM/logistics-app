@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Migrations.Master
 {
     [DbContext(typeof(MasterDbContext))]
-    [Migration("20250812060117_Version_0001")]
+    [Migration("20250818013204_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -103,15 +103,6 @@ namespace Logistics.Infrastructure.Migrations.Master
                     b.Property<DateTime?>("DueDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTimeOffset?>("LastModifiedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("LastModifiedAt");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("LastModifiedBy");
-
                     b.Property<string>("Notes")
                         .HasColumnType("text");
 
@@ -129,6 +120,15 @@ namespace Logistics.Infrastructure.Migrations.Master
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
 
                     b.ComplexProperty<Dictionary<string, object>>("Total", "Logistics.Domain.Entities.Invoice.Total#Money", b1 =>
                         {
@@ -179,15 +179,6 @@ namespace Logistics.Infrastructure.Migrations.Master
                     b.Property<Guid?>("InvoiceId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset?>("LastModifiedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("LastModifiedAt");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("LastModifiedBy");
-
                     b.Property<Guid>("MethodId")
                         .HasColumnType("uuid");
 
@@ -196,6 +187,15 @@ namespace Logistics.Infrastructure.Migrations.Master
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
 
                     b.ComplexProperty<Dictionary<string, object>>("Amount", "Logistics.Domain.Entities.Payment.Amount#Money", b1 =>
                         {
@@ -318,15 +318,6 @@ namespace Logistics.Infrastructure.Migrations.Master
                     b.Property<int>("IntervalCount")
                         .HasColumnType("integer");
 
-                    b.Property<DateTimeOffset?>("LastModifiedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("LastModifiedAt");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("LastModifiedBy");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -339,6 +330,15 @@ namespace Logistics.Infrastructure.Migrations.Master
 
                     b.Property<int>("TrialPeriod")
                         .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
 
                     b.ComplexProperty<Dictionary<string, object>>("Price", "Logistics.Domain.Entities.SubscriptionPlan.Price#Money", b1 =>
                         {
@@ -454,15 +454,6 @@ namespace Logistics.Infrastructure.Migrations.Master
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTimeOffset?>("LastModifiedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("LastModifiedAt");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("LastModifiedBy");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -498,6 +489,15 @@ namespace Logistics.Infrastructure.Migrations.Master
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)

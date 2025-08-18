@@ -103,13 +103,15 @@
                     <div class="flex gap-2">
                       <p-button
                         icon="pi pi-pencil"
+                        pTooltip="Edit load"
                         [routerLink]="['/loads', load.id, 'edit']"
                         variant="outlined"
                       />
                       <p-button
-                        icon="pi pi-trash"
+                        icon="pi pi-times"
                         severity="danger"
-                        (click)="askRemoveLoad(load.id)"
+                        pTooltip="Detach load"
+                        (click)="detachLoad(load)"
                         variant="outlined"
                       />
                     </div>
@@ -169,17 +171,6 @@
                 [label]="mode() === 'create' ? 'Create' : 'Update'"
                 [disabled]="isLoading() || !form.valid"
               />
-
-              @if (mode() === "edit") {
-                <p-button
-                  type="button"
-                  icon="pi pi-trash"
-                  label="Delete"
-                  severity="danger"
-                  (click)="askRemoveTrip()"
-                  [disabled]="isLoading()"
-                />
-              }
             </div>
           </div>
         </ng-template>
@@ -191,6 +182,6 @@
 <app-trip-load-dialog
   [assignedTruckId]="form.get('truckId')?.value"
   [(visible)]="tripLoadDialogVisible"
-  (picked)="onLoadPicked($event)"
-  (created)="onNewLoadCreate($event)"
+  (picked)="attachLoad($event)"
+  (created)="addNewLoad($event)"
 />
