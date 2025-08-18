@@ -7,54 +7,102 @@
   [style.width]="width()"
   [style.height]="height()"
 >
-  <mgl-image
-    id="stop-pin"
+  <mgl-geojson-source id="waypoints-src" [data]="waypointsData()!" />
+  <mgl-geojson-source id="segment-highlight-src" [data]="segmentHighlight()!" />
+  <mgl-geojson-source id="waypoint-highlight-src" [data]="waypointHighlight()!" />
+
+  <!-- <mgl-image
+    id="waypoint-pin"
     url="https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png"
-    (imageLoaded)="imageLoaded.set(true)"
-  />
+  /> -->
 
-  <!-- one layer per segment -->
-  @for (segment of segments(); track segment.layerId; let i = $index) {
-    <mgl-layer
-      [id]="segment.layerId"
-      type="line"
-      [source]="segment.source"
-      [paint]="{'line-color': segmentColors[i % segmentColors.length], 'line-width': 6}"
-    />
-  }
-
-  <!-- <mgl-layer
-    id="stop-bubbles"
+  <mgl-layer
+    id="waypoint-bubbles"
     type="circle"
-    [source]="stopsSource()!"
+    source="waypoints-src"
     [paint]="{
       'circle-radius': 12,
       'circle-color': '#ffffff',
       'circle-stroke-color': '#000',
       'circle-stroke-width': 1,
     }"
-  /> -->
+  />
 
-  <!-- all stop points -->
-  @if (stopsSource() && imageLoaded()) {
+  <mgl-layer
+    id="waypoint-labels"
+    type="symbol"
+    source="waypoints-src"
+    [layout]="{
+      'icon-offset': [0, -15],
+      'text-field': ['get', 'label'],
+      'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+      'text-size': 16,
+      'text-offset': [0, -0.6],
+      'text-anchor': 'top',
+    }"
+    [paint]="{
+      'text-color': '#000',
+      'text-halo-color': '#fff',
+      'text-halo-width': 1,
+    }"
+    (layerClick)="onWaypointClick($event)"
+  />
+
+  <!-- one layer per segment -->
+  @for (segment of segments(); track segment.layerId; let i = $index) {
+    <mgl-geojson-source [id]="segment.layerId" [data]="segment.data" />
+
     <mgl-layer
-      id="stop-labels"
-      type="symbol"
-      [source]="stopsSource()!"
-      [layout]="{
-        'icon-image': 'stop-pin',
-        'icon-offset': [0, -15],
-        'text-field': ['get', 'label'],
-        'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
-        'text-size': 16,
-        'text-offset': [0, -1.9],
-        'text-anchor': 'top',
-      }"
+      [id]="segment.layerId"
+      type="line"
+      before="waypoint-bubbles"
+      [source]="segment.layerId"
       [paint]="{
-        'text-color': '#000',
-        'text-halo-color': '#fff',
-        'text-halo-width': 1,
+        'line-color': segmentColors[i % segmentColors.length],
+        'line-width': 5,
+        'line-opacity': 0.8,
       }"
+      (layerClick)="onSegmentClick($event, segment)"
+    />
+
+    <!-- wide, almost invisible hit area for clicks -->
+    <mgl-layer
+      [id]="segment.layerId + '-hit'"
+      type="line"
+      before="waypoint-bubbles"
+      [source]="segment.layerId"
+      [paint]="{
+        'line-color': '#000000',
+        'line-opacity': 0.001,
+        'line-width': ['interpolate', ['linear'], ['zoom'], 3, 16, 8, 24, 12, 32, 16, 40],
+      }"
+      (layerClick)="onSegmentClick($event, segment)"
+      (layerMouseEnter)="setCursor('pointer', $event)"
+      (layerMouseLeave)="setCursor('', $event)"
     />
   }
+
+  <mgl-layer
+    id="segment-highlight"
+    type="line"
+    source="segment-highlight-src"
+    before="waypoint-bubbles"
+    [paint]="{
+      'line-color': highlightColor(),
+      'line-width': 9,
+      'line-opacity': 0.95,
+    }"
+  />
+
+  <mgl-layer
+    id="waypoint-highlight"
+    type="circle"
+    source="waypoint-highlight-src"
+    [paint]="{
+      'circle-radius': 9,
+      'circle-color': highlightColor(),
+      'circle-stroke-color': '#ffffff',
+      'circle-stroke-width': 2,
+    }"
+  />
 </mgl-map>

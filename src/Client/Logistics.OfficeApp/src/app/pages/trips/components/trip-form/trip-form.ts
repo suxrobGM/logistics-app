@@ -1,4 +1,4 @@
-import {Component, computed, input, output, signal} from "@angular/core";
+import {Component, input, output, signal} from "@angular/core";
 import {ButtonModule} from "primeng/button";
 import {InputGroupModule} from "primeng/inputgroup";
 import {InputTextModule} from "primeng/inputtext";
@@ -8,7 +8,6 @@ import {TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {TooltipModule} from "primeng/tooltip";
 import {CreateTripLoadCommand, TripLoadDto, TripStopDto} from "@/core/api/models";
-import {GeoPoint} from "@/shared/types/mapbox";
 import {BasicStepData, TripFormStepBasic} from "../trip-form-step-basic/trip-form-step-basic";
 import {LoadsStepData, TripFormStepLoads} from "../trip-form-step-loads/trip-form-step-loads";
 import {TripFormStepReview} from "../trip-form-step-review/trip-form-step-review";
@@ -22,7 +21,7 @@ export interface TripFormValue {
   initialLoads?: TripLoadDto[];
   initialStops?: TripStopDto[];
 
-  stopCoords?: GeoPoint[];
+  stops?: TripStopDto[];
   totalDistance?: number;
   totalCost?: number;
   totalLoads?: number;
@@ -48,14 +47,6 @@ export interface TripFormValue {
 export class TripForm {
   protected readonly formValue = signal<TripFormValue | null>(null);
   protected readonly activeStep = signal(1);
-
-  protected readonly stopCoords = computed(
-    () =>
-      this.formValue()?.stopCoords ??
-      this.initialData()?.initialStops?.map(
-        (stop) => [stop.addressLong, stop.addressLat] as GeoPoint
-      )
-  );
 
   public readonly mode = input.required<"create" | "edit">();
   public readonly disabled = input<boolean>(false);

@@ -2,7 +2,7 @@
 import {CommonModule} from "@angular/common";
 import {Component, forwardRef, inject, model, output, signal} from "@angular/core";
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
-import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
+import {AutoComplete, AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
 import {Button} from "primeng/button";
 import {Dialog} from "primeng/dialog";
 import {ApiService} from "@/core/api";
@@ -27,22 +27,40 @@ export class SearchCustomerComponent implements ControlValueAccessor {
   private readonly toastService = inject(ToastService);
 
   protected readonly suggestedCustomers = signal<CustomerDto[]>([]);
+  protected readonly lastQuery = signal<string>("");
+
   public readonly selectedCustomer = model<CustomerDto | null>(null);
   public readonly selectedCustomerChange = output<CustomerDto | null>();
 
   protected readonly customerDialogVisible = model<boolean>(false);
 
   protected searchCustomer(event: {query: string}): void {
-    this.apiService.customerApi.getCustomers({search: event.query}).subscribe((result) => {
-      if (result.data && result.data.length) {
-        this.suggestedCustomers.set(result.data);
-      }
+    const q = event.query?.trim() ?? "";
+    this.lastQuery.set(q);
+
+    if (q.length < 2) {
+      this.suggestedCustomers.set([]);
+      return;
+    }
+
+    this.apiService.customerApi.getCustomers({search: q}).subscribe({
+      next: (result) => {
+        const items = result.data ?? [];
+        this.suggestedCustomers.set(items); // [] triggers the "empty" template
+      },
+      error: () => this.suggestedCustomers.set([]),
     });
   }
 
   protected changeSelectedCustomer(event: AutoCompleteSelectEvent): void {
     this.selectedCustomerChange.emit(event.value);
     this.onChange(event.value);
+  }
+
+  protected openCreateCustomer(autoComplete: AutoComplete): void {
+    // close the suggestions panel before opening dialog
+    autoComplete.hide();
+    this.customerDialogVisible.set(true);
   }
 
   protected createCustomer(formValue: CustomerFormValue): void {

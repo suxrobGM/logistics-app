@@ -28,6 +28,7 @@ import {
   TripApiService,
   TruckApiService,
   UserApiService,
+  ReportApiService,
 } from "./services";
 
 /**
@@ -45,6 +46,7 @@ export class ApiService extends ApiBase {
   public readonly loadApi = new LoadApiService();
   public readonly truckApi = new TruckApiService();
   public readonly customerApi = new CustomerApiService();
+  public readonly reportApi = new ReportApiService();
 
   // #region Employee API
 

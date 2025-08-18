@@ -43,14 +43,12 @@ export class AddressAutocomplete implements ControlValueAccessor {
     this.setAddressString(this.address());
   }
 
-  handleAddressInputChange(event: Event): void {
+  protected handleAddressInputChange(event: Event): void {
     if (this.isDisabled) {
       return;
     }
 
     const query = (event.target as HTMLInputElement)?.value;
-
-    console.log("Searching for address:", query);
 
     if (!query) {
       this.markAsTouched();
@@ -68,18 +66,16 @@ export class AddressAutocomplete implements ControlValueAccessor {
       .get<MapboxGeocodingResponse>("https://api.mapbox.com/search/geocode/v6/forward", {params})
       .pipe(
         catchError(() => {
-          console.error("Error fetching address data");
           this.searchResults.set([]);
           return [];
         })
       )
       .subscribe((data) => {
-        console.log("Address search response:", data);
         this.searchResults.set(data.features || []);
       });
   }
 
-  handleClickAddress(geocodingFeature: MapboxGeocodingFeature): void {
+  protected handleClickAddress(geocodingFeature: MapboxGeocodingFeature): void {
     if (this.isDisabled) {
       return;
     }
@@ -111,7 +107,7 @@ export class AddressAutocomplete implements ControlValueAccessor {
     this.markAsTouched();
   }
 
-  handleInputFocusOut(event: FocusEvent): void {
+  protected handleInputFocusOut(event: FocusEvent): void {
     // Delay the execution to allow click event to be processed (in case an address is clicked from the list)
     setTimeout(() => {
       if (this.forceSelection() && this.searchResults.length) {

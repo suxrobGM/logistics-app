@@ -1,4 +1,5 @@
 <p-auto-complete
+  #autoComplete
   class="w-full"
   inputStyleClass="w-full"
   placeholder="Type a customer name"
@@ -11,15 +12,20 @@
   (completeMethod)="searchCustomer($event)"
   (onSelect)="changeSelectedCustomer($event)"
 >
-  <ng-template #footer>
-    <span class="text-sm text-gray-500">
-      Not found?
+  <ng-template #empty>
+    <div class="flex items-center justify-between gap-2 p-2">
+      <span class="text-sm text-gray-500">
+        No customers matching <b>"{{ lastQuery() }}"</b>
+      </span>
+
       <p-button
-        class="font-semibold"
-        label="Add a new customer"
-        (click)="customerDialogVisible.set(true)"
+        label="Add new customer"
+        size="small"
+        severity="secondary"
+        variant="text"
+        (click)="openCreateCustomer(autoComplete)"
       />
-    </span>
+    </div>
   </ng-template>
 </p-auto-complete>
 

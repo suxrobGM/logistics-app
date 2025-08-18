@@ -1,0 +1,84 @@
+<h1 class="text-center">Add a new employee</h1>
+<hr class="w-full" />
+
+<div class="row justify-content-center">
+  <div class="col-md-6 col-12">
+    <p-card>
+      @if (isLoading()) {
+        <p-progress-spinner />
+      }
+
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <app-validation-summary [form]="form" />
+
+        <div class="mb-3">
+          <label for="name" class="form-label">User Name</label>
+          <p-auto-complete
+            formControlName="user"
+            styleClass="w-full"
+            inputStyleClass="form-control"
+            placeholder="Type user name"
+            optionLabel="userName"
+            [minLength]="3"
+            [suggestions]="suggestedUsers()"
+            (completeMethod)="searchUser($event)"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="salaryType" class="form-label">Salary Type</label>
+          <p-select formControlName="salaryType" styleClass="w-full" [options]="salaryTypes" />
+        </div>
+        <div class="mb-3">
+          <label for="salary" class="form-label">Salary</label>
+          @if (isShareOfGrossSalary()) {
+            <div class="input-group">
+              <span class="input-group-text">%</span>
+              <input
+                id="salary"
+                formControlName="salary"
+                type="number"
+                class="form-control"
+                [min]="0"
+                [max]="100"
+              />
+            </div>
+          } @else {
+            <div class="input-group">
+              <span class="input-group-text">$$</span>
+              <input
+                id="salary"
+                formControlName="salary"
+                type="number"
+                class="form-control"
+                [min]="0"
+                [disabled]="isNoneSalary()"
+              />
+            </div>
+          }
+        </div>
+        <div class="mb-3">
+          <label for="role" class="form-label">Role</label>
+          <p-select
+            formControlName="role"
+            styleClass="w-full"
+            [options]="roles()"
+            optionValue="name"
+            optionLabel="displayName"
+            [showClear]="true"
+            (onClear)="clearSelectedRole()"
+          />
+        </div>
+
+        <div class="flex gap-2">
+          <p-button type="submit" icon="pi pi-pencil" label="Add" [disabled]="isLoading()" />
+          <p-button
+            type="button"
+            icon="pi pi-arrow-left"
+            label="Back to list"
+            [routerLink]="['/employees']"
+          />
+        </div>
+      </form>
+    </p-card>
+  </div>
+</div>

@@ -1,14 +1,14 @@
 import {Routes} from "@angular/router";
 import {authGuard} from "@/core/auth";
 import {Permissions} from "@/shared/models";
-import {AddCustomerComponent} from "./add-customer/add-customer";
-import {EditCustomerComponent} from "./edit-customer/edit-customer";
-import {ListCustomersComponent} from "./list-customers/list-customers";
+import {CustomerAddComponent} from "./customer-add/customer-add";
+import {CustomerEditComponent} from "./customer-edit/customer-edit";
+import {CustomersListComponent} from "./customers-list/customers-list";
 
 export const customerRoutes: Routes = [
   {
     path: "",
-    component: ListCustomersComponent,
+    component: CustomersListComponent,
     canActivate: [authGuard],
     data: {
       breadcrumb: "",
@@ -17,7 +17,7 @@ export const customerRoutes: Routes = [
   },
   {
     path: "add",
-    component: AddCustomerComponent,
+    component: CustomerAddComponent,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Add",
@@ -25,8 +25,8 @@ export const customerRoutes: Routes = [
     },
   },
   {
-    path: "edit/:id",
-    component: EditCustomerComponent,
+    path: ":id/edit",
+    component: CustomerEditComponent,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Edit",

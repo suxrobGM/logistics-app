@@ -1,0 +1,59 @@
+<h2>Loads Report</h2>
+
+<form class="filters" (submit)="$event.preventDefault(); load();">
+  <label>
+    From
+    <input type="date" [(ngModel)]="from" name="from">
+  </label>
+  <label>
+    To
+    <input type="date" [(ngModel)]="to" name="to">
+  </label>
+  <label>
+    Search
+    <input type="text" [(ngModel)]="search" name="search" placeholder="Name/Truck/Customer">
+  </label>
+  <button type="submit">Filter</button>
+  <button type="button" (click)="reset()">Reset</button>
+  <button type="button" (click)="export('csv')">Export CSV</button>
+  <button type="button" (click)="export('xlsx')">Export Excel</button>
+  <button type="button" (click)="export('pdf')">Export PDF</button>
+  <button type="button" (click)="export('docx')">Export Word</button>
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Name</th>
+      <th>Status</th>
+      <th>Created</th>
+      <th>Delivered</th>
+      <th>Truck</th>
+      <th>Customer</th>
+      <th>Revenue</th>
+      <th>Distance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let i of items()">
+      <td>{{ i.number }}</td>
+      <td>{{ i.name }}</td>
+      <td>{{ i.status }}</td>
+      <td>{{ i.createdAt | date:'yyyy-MM-dd' }}</td>
+      <td>{{ i.deliveredAt | date:'yyyy-MM-dd' }}</td>
+      <td>{{ i.truckNumber }}</td>
+      <td>{{ i.customerName }}</td>
+      <td>{{ i.deliveryCost }}</td>
+      <td>{{ i.distance }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="totals">
+  <div>Total Count: {{ totalCount() }}</div>
+  <div>Total Revenue: {{ totalRevenue() }}</div>
+  <div>Total Distance: {{ totalDistance() }}</div>
+  
+</div>
+

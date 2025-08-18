@@ -1,0 +1,65 @@
+<div class="flex items-center">
+  <h1>Drivers Report</h1>
+</div>
+
+<div class="mb-3 mt-5 flex gap-2">
+  <div class="flex gap-2 items-center">
+    <label for="search" style="font-weight: bolder;">Search</label>
+    <input
+      pInputText
+      id="search"
+      type="text"
+      [(ngModel)]="search" 
+      (change)="onSearch($event)"
+      name="search"
+    />
+  </div>
+  <app-range-calendar
+    [(startDate)]="startDate"
+    [(endDate)]="endDate"
+    (applyButtonClick)="filterByDate()"
+  >
+</app-range-calendar>
+</div>
+
+<p-table
+  [value]="data()"
+  [loading]="isLoading()"
+  [tableStyle]="{'min-width': '50rem'}"
+  styleClass="p-datatable-sm"
+  [showLoader]="true"
+  [lazy]="true"
+  [paginator]="true"
+  [showCurrentPageReport]="true"
+  (onLazyLoad)="onLazyLoad($event)"
+  [rows]="10"
+  [(first)]="first"
+  [totalRecords]="totalRecords()"
+  [loading]="isLoading()"
+  [rowsPerPageOptions]="[10, 25, 50]"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      
+      <th>Id </th>
+      <th>Name</th>
+      <th>Total Distance</th>
+      <th>Loads  Dilvered</th>
+      <th>Total Earnings</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-driver>
+    <tr>
+      <td>{{driver.driverId}}</td>
+      <td>{{driver.driverName}}</td>
+      <td>{{driver.distanceDriven}}</td>
+      <td>{{driver.loadsDelivered}}</td>
+      <td>${{driver.grossEarnings}}</td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="8" class="text-center">No drivers found</td>
+    </tr>
+  </ng-template>
+</p-table>

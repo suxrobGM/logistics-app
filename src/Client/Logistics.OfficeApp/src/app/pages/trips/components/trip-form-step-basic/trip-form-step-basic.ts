@@ -3,7 +3,7 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/
 import {RouterLink} from "@angular/router";
 import {Button} from "primeng/button";
 import {InputTextModule} from "primeng/inputtext";
-import {TripDto} from "@/core/api/models";
+import {TripDto, TruckDto} from "@/core/api/models";
 import {FormField, SearchTruckComponent, ValidationSummary} from "@/shared/components";
 
 export interface BasicStepData {
@@ -31,11 +31,7 @@ export class TripFormStepBasic {
 
   protected readonly form = new FormGroup({
     name: new FormControl<string>("", {validators: [Validators.required], nonNullable: true}),
-    plannedStart: new FormControl<Date>(new Date(), {
-      validators: [Validators.required],
-      nonNullable: true,
-    }),
-    truckId: new FormControl<string>("", {
+    truck: new FormControl<TruckDto | string | null>(null, {
       validators: [Validators.required],
       nonNullable: true,
     }),
@@ -46,13 +42,10 @@ export class TripFormStepBasic {
       const initialData = this.initialData();
 
       if (initialData) {
-        console.log("Initial data:", initialData);
-
         this.form.patchValue(initialData);
       }
 
       if (this.disabled()) {
-        this.form.get("plannedStart")?.disable();
         this.form.get("truckId")?.disable();
       } else {
         this.form.enable();
@@ -64,7 +57,7 @@ export class TripFormStepBasic {
     if (this.form.valid) {
       this.next.emit({
         name: this.form.value.name ?? this.initialData()?.name ?? "",
-        truckId: this.form.value.truckId ?? this.initialData()?.truckId ?? "",
+        truckId: (this.form.value.truck as TruckDto)?.id ?? this.initialData()?.truckId ?? "",
       });
     }
   }

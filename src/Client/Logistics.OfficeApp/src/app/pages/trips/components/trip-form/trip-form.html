@@ -47,7 +47,7 @@
           [totalLoads]="formValue()?.totalLoads ?? 0"
           [totalCost]="formValue()?.totalCost ?? 0"
           [totalDistance]="formValue()?.totalDistance ?? 0"
-          [stopCoords]="formValue()?.stopCoords ?? []"
+          [stops]="formValue()?.stops ?? initialData()?.initialStops ?? []"
           (back)="activateCallback(2)"
           (save)="processReviewStep()"
         />

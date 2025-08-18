@@ -6,7 +6,7 @@ import {API_CONFIG} from "./api.provider";
 import {PagedIntervalQuery, SearchableQuery} from "./models";
 
 export abstract class ApiBase {
-  private readonly http = inject(HttpClient);
+  public readonly http = inject(HttpClient);
   private readonly toastService = inject(ToastService);
   private readonly apiConfig = inject(API_CONFIG);
   private readonly headers = {"content-type": "application/json"};
@@ -34,9 +34,9 @@ export abstract class ApiBase {
     return sortOrder <= -1 ? `-${sortField}` : sortField;
   }
 
-  protected get<TResponse>(endpoint: string): Observable<TResponse> {
+  protected get<TResponse>(endpoint: string, query? : {}): Observable<TResponse> {
     return this.http
-      .get<TResponse>(this.apiUrl + endpoint)
+      .get<TResponse>(this.apiUrl + endpoint, query ? query : undefined)
       .pipe(catchError((err) => this.handleError(err)));
   }
 

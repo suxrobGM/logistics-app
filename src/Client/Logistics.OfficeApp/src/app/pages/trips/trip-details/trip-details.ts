@@ -7,9 +7,11 @@ import {SkeletonModule} from "primeng/skeleton";
 import {TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {ApiService} from "@/core/api";
-import {TripDto, TripStopType} from "@/core/api/models";
+import {TripDto, TripStopDto, TripStopType} from "@/core/api/models";
 import {DirectionMap, LoadStatusTag, LoadTypeTag, TripStatusTag} from "@/shared/components";
+import {RouteSegmentClickEvent, WaypointClickEvent} from "@/shared/components/direction-map/types";
 import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
+import {GeoPoint} from "@/shared/types/mapbox";
 
 @Component({
   selector: "app-trip-details",
@@ -37,9 +39,20 @@ export class TripDetailsPage implements OnInit {
 
   protected readonly isLoading = signal<boolean>(false);
   protected readonly trip = signal<TripDto | null>(null);
+  protected readonly selectedStop = signal<TripStopDto | null>(null);
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.fetchTrip();
+  }
+
+  protected onRouteSegmentClick(e: RouteSegmentClickEvent) {
+    const stop = this.trip()?.stops.find((s) => s.id === e.fromWaypoint.id);
+    this.selectedStop.set(stop ?? null);
+  }
+
+  protected onWaypointClick(e: WaypointClickEvent) {
+    const stop = this.trip()?.stops.find((s) => s.id === e.waypoint.id);
+    this.selectedStop.set(stop ?? null);
   }
 
   /**
@@ -47,21 +60,20 @@ export class TripDetailsPage implements OnInit {
    * @param stops Trip stops to extract coordinates from.
    * @returns Array of coordinates in the format [longitude, latitude].
    */
-  protected tripStopCoords(): [number, number][] {
+  protected tripStopCoords(): GeoPoint[] {
     return (
       this.trip()
         ?.stops.sort((a, b) => a.order - b.order)
-        .map((s) => [s.addressLong, s.addressLat]) || []
+        .map((s) => [s.location.longitude, s.location.latitude] as GeoPoint) ?? []
     );
   }
 
   protected stopLabel(tripStopType: TripStopType): string {
-    return tripStopType === TripStopType.PickUp ? "Pick-up" : "Drop-off";
+    return tripStopType === TripStopType.PickUp ? "Pick Up" : "Drop Off";
   }
 
   private fetchTrip(): void {
     const id = this.tripId();
-    console.log("Fetching trip with ID:", id);
 
     if (!id) {
       return;
@@ -70,8 +82,6 @@ export class TripDetailsPage implements OnInit {
     this.isLoading.set(true);
     this.apiService.tripApi.getTrip(id).subscribe((result) => {
       if (result.success && result.data) {
-        console.log("Trip data:", result.data);
-
         this.trip.set(result.data);
       }
 

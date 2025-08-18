@@ -1,11 +1,13 @@
 import {CurrencyPipe, DatePipe} from "@angular/common";
-import {Component, inject} from "@angular/core";
-import {RouterLink} from "@angular/router";
+import {Component, inject, signal} from "@angular/core";
+import {Router, RouterLink} from "@angular/router";
+import {MenuItem} from "primeng/api";
 import {Button} from "primeng/button";
 import {Card} from "primeng/card";
 import {IconField} from "primeng/iconfield";
 import {InputIcon} from "primeng/inputicon";
 import {InputText} from "primeng/inputtext";
+import {MenuModule} from "primeng/menu";
 import {TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {Observable, map} from "rxjs";
@@ -40,13 +42,38 @@ import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
     TooltipModule,
     TripStatusTag,
     LoadTypeTag,
+    MenuModule,
   ],
 })
 export class TripsList extends BaseTableComponent<TripDto> {
-  protected readonly tripStatus = TripStatus;
-
   private readonly apiService = inject(ApiService);
   private readonly toastService = inject(ToastService);
+  private readonly router = inject(Router);
+
+  protected readonly tripStatus = TripStatus;
+  protected readonly actionMenuItems: MenuItem[];
+  protected readonly selectedRow = signal<TripDto | null>(null);
+
+  constructor() {
+    super();
+    this.actionMenuItems = [
+      {
+        label: "View trip details",
+        icon: "pi pi-eye",
+        command: () => this.router.navigate(["/trips", this.selectedRow()!.id]),
+      },
+      {
+        label: "Edit trip details",
+        icon: "pi pi-pen-to-square",
+        command: () => this.router.navigate(["/trips", this.selectedRow()!.id, "edit"]),
+      },
+      {
+        label: "Delete trip",
+        icon: "pi pi-trash",
+        command: () => this.askRemoveTrip(this.selectedRow()!),
+      },
+    ];
+  }
 
   protected query(params: TableQueryParams): Observable<PagedResult<TripDto>> {
     const orderBy = this.apiService.formatSortField(params.sortField, params.sortOrder);

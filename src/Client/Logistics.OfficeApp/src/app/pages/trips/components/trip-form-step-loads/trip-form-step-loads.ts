@@ -9,10 +9,15 @@ import {InputTextModule} from "primeng/inputtext";
 import {Table, TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {TooltipModule} from "primeng/tooltip";
-import {CreateTripLoadCommand, LoadStatus, TripLoadDto} from "@/core/api/models";
+import {
+  CreateTripLoadCommand,
+  LoadStatus,
+  TripLoadDto,
+  TripStopDto,
+  TripStopType,
+} from "@/core/api/models";
 import {LoadFormValue, LoadStatusTag} from "@/shared/components";
 import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
-import {GeoPoint} from "@/shared/types/mapbox";
 import {TripLoadDialog} from "../trip-load-dialog/trip-load-dialog";
 
 interface TableRow extends TripLoadDto {
@@ -24,7 +29,7 @@ export interface LoadsStepData {
   newLoads: CreateTripLoadCommand[];
   attachedLoads: TripLoadDto[];
   detachedLoads: TripLoadDto[];
-  stopCoords: GeoPoint[];
+  stops: TripStopDto[];
   totalDistance: number;
   totalCost: number;
   totalLoads: number;
@@ -95,6 +100,7 @@ export class TripFormStepLoads {
 
   protected attachLoad(load: TripLoadDto): void {
     this.attachedLoads.push(load);
+    this.tripLoadDialogVisible.set(false);
   }
 
   protected detachLoad(load: TripLoadDto): void {
@@ -130,6 +136,8 @@ export class TripFormStepLoads {
         pendingDetach: false,
       } as TableRow,
     ]);
+
+    this.tripLoadDialogVisible.set(false);
   }
 
   protected removeNewLoad(load: TripLoadDto): void {
@@ -145,7 +153,7 @@ export class TripFormStepLoads {
       newLoads: this.newLoads,
       attachedLoads: this.attachedLoads,
       detachedLoads: this.detachedLoads,
-      stopCoords: this.buildStopCoords(),
+      stops: this.buildStops(),
       totalDistance: distance,
       totalCost: cost,
       totalLoads: loads,
@@ -156,18 +164,41 @@ export class TripFormStepLoads {
     this.dataTable()?.filterGlobal((event.target as HTMLInputElement).value, "contains");
   }
 
-  private buildStopCoords(): GeoPoint[] {
-    const coords: GeoPoint[] = [];
+  private buildStops(): TripStopDto[] {
+    const stops: TripStopDto[] = [];
+    let order = 1;
 
     for (const row of this.rows()) {
-      if (row.pendingDetach) {
-        continue;
-      }
+      if (row.pendingDetach) continue;
 
-      coords.push([row.originLocation.longitude, row.originLocation.latitude]);
-      coords.push([row.destinationLocation.longitude, row.destinationLocation.latitude]);
+      // Pick-up
+      stops.push({
+        id: crypto.randomUUID(),
+        order: order++,
+        type: TripStopType.PickUp,
+        address: row.originAddress,
+        location: {
+          longitude: row.originLocation.longitude,
+          latitude: row.originLocation.latitude,
+        },
+        loadId: row.id,
+      });
+
+      // Drop-off
+      stops.push({
+        id: crypto.randomUUID(),
+        order: order++,
+        type: TripStopType.DropOff,
+        address: row.destinationAddress,
+        location: {
+          longitude: row.destinationLocation.longitude,
+          latitude: row.destinationLocation.latitude,
+        },
+        loadId: row.id,
+      });
     }
-    return coords;
+
+    return stops;
   }
 
   private calcTotals(): {distance: number; cost: number; loads: number} {

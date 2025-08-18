@@ -15,6 +15,7 @@ import {
   GeoPointDto,
   LoadStatus,
   LoadType,
+  TruckDto,
   loadStatusOptions,
   loadTypeOptions,
 } from "@/core/api/models";
@@ -24,13 +25,12 @@ import {
   AddressAutocomplete,
   DirectionMap,
   FormField,
-  RouteChangedEvent,
   SearchCustomerComponent,
   SearchTruckComponent,
   SelectedAddressEvent,
   ValidationSummary,
 } from "@/shared/components";
-import {GeoPoint} from "@/shared/types/mapbox";
+import {RouteChangeEvent, Waypoint} from "@/shared/components/direction-map/types";
 import {Converters} from "@/shared/utils";
 
 /**
@@ -91,8 +91,14 @@ export class LoadFormComponent implements OnInit {
   public readonly save = output<LoadFormValue>();
   public readonly remove = output<void>();
 
-  protected readonly originCoords = signal<GeoPoint>([0, 0]);
-  protected readonly destinationCoords = signal<GeoPoint>([0, 0]);
+  protected readonly originCoords = signal<Waypoint>({
+    id: "origin",
+    location: {longitude: 0, latitude: 0},
+  });
+  protected readonly destinationCoords = signal<Waypoint>({
+    id: "destination",
+    location: {longitude: 0, latitude: 0},
+  });
 
   protected readonly form = new FormGroup({
     name: new FormControl("", {validators: [Validators.required], nonNullable: true}),
@@ -121,7 +127,7 @@ export class LoadFormComponent implements OnInit {
     distance: new FormControl({value: 0, disabled: true}, {nonNullable: true}),
     // only visible/patched when mode === 'edit'
     status: new FormControl<LoadStatus | null>(null),
-    assignedTruckId: new FormControl("", {
+    assignedTruck: new FormControl<TruckDto | string | null>(null, {
       validators: [Validators.required],
       nonNullable: true,
     }),
@@ -136,9 +142,17 @@ export class LoadFormComponent implements OnInit {
 
   constructor() {
     effect(() => {
-      if (this.initial()) {
-        this.patch(this.initial()!);
+      const initialData = this.initial();
+      if (!initialData) {
+        return;
       }
+
+      // Prevent overwriting user changes if the form is dirty in edit-mode
+      if (this.mode() === "edit" && this.form.dirty) {
+        return;
+      }
+
+      this.patch(initialData);
     });
   }
 
@@ -149,16 +163,28 @@ export class LoadFormComponent implements OnInit {
   }
 
   protected updateOrigin(e: SelectedAddressEvent): void {
-    this.originCoords.set(e.center);
+    this.originCoords.set({
+      id: "origin",
+      location: {
+        longitude: e.center[0],
+        latitude: e.center[1],
+      },
+    });
     this.form.patchValue({originLocation: {longitude: e.center[0], latitude: e.center[1]}});
   }
 
   protected updateDestination(e: SelectedAddressEvent): void {
-    this.destinationCoords.set(e.center);
+    this.destinationCoords.set({
+      id: "destination",
+      location: {
+        longitude: e.center[0],
+        latitude: e.center[1],
+      },
+    });
     this.form.patchValue({destinationLocation: {longitude: e.center[0], latitude: e.center[1]}});
   }
 
-  protected updateDistance(e: RouteChangedEvent): void {
+  protected updateDistance(e: RouteChangeEvent): void {
     const miles = Converters.metersTo(e.distance, "mi");
     this.form.patchValue({distance: miles});
   }
@@ -167,7 +193,16 @@ export class LoadFormComponent implements OnInit {
     if (this.form.invalid) {
       return;
     }
-    this.save.emit(this.form.getRawValue() as LoadFormValue);
+
+    const formRawValue = this.form.getRawValue();
+
+    const formValue: LoadFormValue = {
+      ...formRawValue,
+      distance: Converters.toMeters(formRawValue.distance, "mi"),
+      assignedTruckId: (formRawValue.assignedTruck as TruckDto).id,
+    } as LoadFormValue;
+
+    this.save.emit(formValue);
   }
 
   protected askRemove(): void {
@@ -180,16 +215,26 @@ export class LoadFormComponent implements OnInit {
   private patch(src: Partial<LoadFormValue>): void {
     this.form.patchValue({
       ...src,
+      assignedTruck: src.assignedTruckId, // Set ID instead of object, then component will fetch the object
     });
 
     if (src.originLocation) {
-      this.originCoords.set([src.originLocation.longitude, src.originLocation.latitude]);
+      this.originCoords.set({
+        id: "origin",
+        location: {
+          longitude: src.originLocation.longitude,
+          latitude: src.originLocation.latitude,
+        },
+      });
     }
     if (src.destinationLocation) {
-      this.destinationCoords.set([
-        src.destinationLocation.longitude,
-        src.destinationLocation.latitude,
-      ]);
+      this.destinationCoords.set({
+        id: "destination",
+        location: {
+          longitude: src.destinationLocation.longitude,
+          latitude: src.destinationLocation.latitude,
+        },
+      });
     }
   }
 

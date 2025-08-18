@@ -62,5 +62,6 @@ public static partial class LoadMapper
     [MapperIgnoreSource(nameof(Load.DestinationLocation))]
     [MapProperty(nameof(Load.OriginLocation), nameof(TripLoadDto.OriginLocation))]
     [MapProperty(nameof(Load.DestinationLocation), nameof(TripLoadDto.DestinationLocation))]
+    [MapProperty(nameof(Load.Type), nameof(TripLoadDto.Type))]
     public static partial TripLoadDto ToTripLoadDto(this Load load);
 }

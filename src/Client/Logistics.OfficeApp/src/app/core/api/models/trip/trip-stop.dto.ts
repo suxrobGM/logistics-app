@@ -1,4 +1,5 @@
 import {AddressDto} from "../address.dto";
+import {GeoPointDto} from "../geo-point.dto";
 import {TripStopType} from "./enums";
 
 export interface TripStopDto {
@@ -6,8 +7,7 @@ export interface TripStopDto {
   order: number;
   type: TripStopType;
   address: AddressDto;
-  addressLong: number;
-  addressLat: number;
+  location: GeoPointDto;
   arrivedAt?: Date;
   loadId: string;
 }

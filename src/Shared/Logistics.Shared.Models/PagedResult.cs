@@ -16,8 +16,8 @@ public record PagedResult<T> : Result<IEnumerable<T>>
     public int TotalItems { get; set; }
     public int TotalPages { get; set; }
 
-    public static PagedResult<T> Succeed(IEnumerable<T>? items, int totalItems, int totalPages) =>
-        new(items, totalItems, totalPages);
+    public static PagedResult<T> Succeed(IEnumerable<T>? items, int totalItems, int pageSize) =>
+        new(items, totalItems, pageSize);
 
     public new static PagedResult<T> Fail(string error) =>
         new(null, 0, 0) { Error = error };

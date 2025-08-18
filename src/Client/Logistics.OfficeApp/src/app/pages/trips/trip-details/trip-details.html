@@ -12,7 +12,13 @@
         <p-skeleton class="h-96!" />
       } @else {
         @let tripDetails = trip()!;
-        <app-direction-map [stops]="tripStopCoords()" [height]="'500px'" />
+        <app-direction-map
+          [waypoints]="trip()!.stops"
+          height="500px"
+          [selectedWaypoint]="selectedStop()"
+          (routeSegmentClick)="onRouteSegmentClick($event)"
+          (waypointClick)="onWaypointClick($event)"
+        />
 
         <!-- Summary card -->
         <div>
@@ -63,10 +69,12 @@
 
       <p-table
         [value]="tripDetails.stops"
-        [dataKey]="'id'"
+        dataKey="id"
         sortField="order"
         sortMode="single"
+        selectionMode="single"
         [paginator]="false"
+        [(selection)]="selectedStop"
       >
         <ng-template #header>
           <tr>
@@ -77,7 +85,7 @@
           </tr>
         </ng-template>
         <ng-template #body let-tripStop>
-          <tr>
+          <tr [pSelectableRow]="tripStop">
             <td>{{ tripStop.order }}</td>
             <td>{{ stopLabel(tripStop.type) }}</td>
             <td>{{ tripStop.address | address }}</td>

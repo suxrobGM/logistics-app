@@ -73,7 +73,7 @@
       </tr>
     </ng-template>
     <ng-template #body let-trip let-expanded="expanded">
-      <tr>
+      <tr (click)="selectedRow.set(trip)">
         <td>
           <p-button
             [pRowToggler]="trip"
@@ -105,28 +105,7 @@
         </td>
 
         <td>
-          <div class="flex gap-2">
-            <p-button
-              icon="pi pi-pen-to-square"
-              pTooltip="Edit trip details"
-              tooltipPosition="bottom"
-              [routerLink]="['/trips', trip.id, 'edit']"
-            />
-            <p-button
-              icon="pi pi-file-o"
-              pTooltip="View trip details"
-              tooltipPosition="bottom"
-              [routerLink]="['/trips', trip.id]"
-            />
-            <p-button
-              icon="pi pi-trash"
-              pTooltip="Delete trip"
-              tooltipPosition="bottom"
-              severity="danger"
-              [disabled]="trip.status !== 'planned'"
-              (click)="askRemoveTrip(trip)"
-            />
-          </div>
+          <p-button icon="pi pi-ellipsis-v" (click)="menu.toggle($event)" severity="secondary" />
         </td>
       </tr>
     </ng-template>
@@ -177,3 +156,6 @@
     </ng-template>
   </p-table>
 </p-card>
+
+<!-- Reusable context menu for the actions button -->
+<p-menu #menu [model]="actionMenuItems" [popup]="true" />

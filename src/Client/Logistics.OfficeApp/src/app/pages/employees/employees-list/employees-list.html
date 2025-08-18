@@ -1,0 +1,104 @@
+<div class="flex items-center">
+  <h1>List Employees</h1>
+  <p-button
+    styleClass="text-black ms-2"
+    icon="pi pi-plus-circle"
+    size="large"
+    [rounded]="true"
+    [text]="true"
+    pTooltip="Add a new employee"
+    [routerLink]="['/employees/add']"
+  />
+</div>
+<hr class="w-full" />
+
+<p-card>
+  <p-table
+    [value]="data()"
+    responsiveLayout="scroll"
+    [lazy]="true"
+    [paginator]="true"
+    [showCurrentPageReport]="true"
+    (onLazyLoad)="onLazyLoad($event)"
+    [rows]="10"
+    [(first)]="first"
+    [totalRecords]="totalRecords()"
+    [loading]="isLoading()"
+    [rowsPerPageOptions]="[10, 25, 50]"
+  >
+    <ng-template #caption>
+      <p-icon-field>
+        <p-inputicon class="pi pi-search" />
+        <input pInputText type="text" placeholder="Search" (input)="onSearch($event)" />
+      </p-icon-field>
+    </ng-template>
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="FirstName">
+          Name
+          <p-sortIcon field="FirstName" />
+        </th>
+        <th pSortableColumn="Email">
+          Email
+          <p-sortIcon field="Email" />
+        </th>
+        <th pSortableColumn="PhoneNumber">
+          Phone Number
+          <p-sortIcon field="PhoneNumber" />
+        </th>
+        <th pSortableColumn="Salary">
+          Salary
+          <p-sortIcon field="Salary" />
+        </th>
+        <th pSortableColumn="SalaryType">
+          Salary Type
+          <p-sortIcon field="SalaryType" />
+        </th>
+        <th>Role</th>
+        <th pSortableColumn="JoinedDate">
+          Joined Date
+          <p-sortIcon field="JoinedDate" />
+        </th>
+        <th>Action</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-employee>
+      <tr>
+        <td>{{ employee.fullName }}</td>
+        <td>{{ employee.email }}</td>
+        <td>{{ employee.phoneNumber }}</td>
+        <td>
+          @if (employee.salaryType === "share_of_gross") {
+            {{ employee.salary | percent }}
+          } @else if (employee.salaryType === "hourly") {
+            {{ employee.salary | currency }}/hr
+          } @else if (employee.salaryType === "rate_per_mile") {
+            {{ employee.salary | currency }}/mi
+          } @else if (employee.salaryType === "rate_per_kilometer") {
+            {{ employee.salary | currency }}/km
+          } @else {
+            {{ employee.salary | currency }}
+          }
+        </td>
+        <td>{{ getSalaryTypeDesc(employee.salaryType) }}</td>
+        <td>{{ employee.roles[0]?.displayName }}</td>
+        <td>{{ employee.joinedDate | date: "mediumDate" }}</td>
+        <td class="overflow-visible">
+          <p-button
+            icon="pi pi-pen-to-square"
+            pTooltip="Edit employee details"
+            tooltipPosition="bottom"
+            [routerLink]="['/employees', employee.id, 'edit']"
+          />
+          <p-button
+            styleClass="ms-2"
+            icon="pi pi-file-o"
+            pTooltip="View employee payrolls"
+            tooltipPosition="bottom"
+            [routerLink]="['/invoices/payroll/employee', employee.id]"
+          />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-card>
