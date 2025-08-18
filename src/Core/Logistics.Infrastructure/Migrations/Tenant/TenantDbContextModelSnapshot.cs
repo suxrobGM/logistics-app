@@ -749,9 +749,6 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("Planned")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<Guid>("TripId")
                         .HasColumnType("uuid");
 
