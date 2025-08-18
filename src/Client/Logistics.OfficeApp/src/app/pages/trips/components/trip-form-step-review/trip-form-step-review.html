@@ -4,16 +4,16 @@
       <div class="flex items-center justify-between">
         <div>
           <div class="text-sm opacity-70">Trip</div>
-          <div class="text-lg font-semibold">{{ tripName || "—" }}</div>
+          <div class="text-lg font-semibold">{{ tripName() || "—" }}</div>
         </div>
         <i class="pi pi-flag text-2xl opacity-60"></i>
       </div>
       <div class="mt-2 text-sm">
         Planned:
-        <span>{{ plannedStart() | date: "medium" }}</span
-        ><br />
+        <span>{{ plannedStart() | date: "medium" }}</span>
+        <br />
         Truck:
-        <span class="font-medium">{{ truckId || "—" }}</span>
+        <span class="font-medium">{{ truckId() || "—" }}</span>
       </div>
     </p-card>
 
@@ -22,10 +22,10 @@
         <div>
           <div class="text-sm opacity-70">Loads</div>
           <div class="text-lg font-semibold">
-            {{ totalCount() }}
-            <span class="text-xs font-normal opacity-70"
-              >(+{{ newCount() }} new, -{{ pendingDetachCount() }} pending)</span
-            >
+            {{ totalLoads() }}
+            <span class="text-xs font-normal opacity-70">
+              (+{{ newLoadsCount() }} new, -{{ pendingDetachLoadsCount() }} pending)
+            </span>
           </div>
         </div>
         <i class="pi pi-box text-2xl opacity-60"></i>
@@ -36,8 +36,12 @@
       <div class="flex items-center justify-between">
         <div>
           <div class="text-sm opacity-70">Totals</div>
-          <div class="text-lg font-semibold">
-            {{ totalDistance() | distanceUnit: "mi" }} • {{ totalCost() | currency }}
+          <div>
+            Distance:
+            <span class="font-semibold">{{ totalDistance() | distanceUnit: "mi" }} mi</span>
+          </div>
+          <div>
+            Cost: <span class="font-semibold">{{ totalCost() | currency }}</span>
           </div>
         </div>
         <i class="pi pi-chart-line text-2xl opacity-60"></i>
@@ -45,13 +49,7 @@
     </p-card>
   </div>
 
-  @for (warning of warnings(); track $index) {
-    <p-message class="w-full" severity="warn" icon="pi pi-exclamation-triangle">
-      {{ warning }}
-    </p-message>
-  }
-
-  <app-direction-map [stops]="stopCoords()" />
+  <app-direction-map [stops]="stopCoords()" height="500px" [zoom]="4" />
 
   <div class="flex justify-between pt-6">
     <p-button

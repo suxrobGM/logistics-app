@@ -1,6 +1,5 @@
 using Logistics.Domain.Entities;
 using Logistics.Shared.Models;
-
 using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
@@ -38,7 +37,7 @@ public static partial class LoadMapper
             Invoices = entity.Invoices.Select(i => i.ToDto()),
             TripId = entity.TripStop?.Trip.Id,
             TripName = entity.TripStop?.Trip.Name,
-            TripNumber = entity.TripStop?.Trip.Number,
+            TripNumber = entity.TripStop?.Trip.Number
         };
 
         if (entity.AssignedTruck?.CurrentAddress.IsNotNull() ?? false)
@@ -46,6 +45,7 @@ public static partial class LoadMapper
             dto.CurrentAddress = entity.AssignedTruck.CurrentAddress;
             dto.CurrentLocation = entity.AssignedTruck.CurrentLocation;
         }
+
         return dto;
     }
 
@@ -59,5 +59,7 @@ public static partial class LoadMapper
     [MapperIgnoreSource(nameof(Load.Type))]
     [MapperIgnoreSource(nameof(Load.OriginLocation))]
     [MapperIgnoreSource(nameof(Load.DestinationLocation))]
+    [MapProperty(nameof(Load.OriginLocation), nameof(TripLoadDto.OriginLocation))]
+    [MapProperty(nameof(Load.DestinationLocation), nameof(TripLoadDto.DestinationLocation))]
     public static partial TripLoadDto ToTripLoadDto(this Load load);
 }

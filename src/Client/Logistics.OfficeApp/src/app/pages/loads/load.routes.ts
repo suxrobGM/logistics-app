@@ -25,7 +25,7 @@ export const loadRoutes: Routes = [
     },
   },
   {
-    path: "edit/:id",
+    path: ":id/edit",
     component: EditLoadComponent,
     canActivate: [authGuard],
     data: {

@@ -12,7 +12,7 @@ public class Load : Entity, ITenantEntity
 
     public required LoadType Type { get; set; }
 
-    public LoadStatus Status { get; set; } = LoadStatus.Dispatched;
+    public LoadStatus Status { get; private set; } = LoadStatus.Dispatched;
 
     public required Address OriginAddress { get; set; }
     public required GeoPoint OriginLocation { get; set; }
@@ -49,7 +49,7 @@ public class Load : Entity, ITenantEntity
     public virtual List<LoadInvoice> Invoices { get; set; } = [];
     public virtual List<LoadDocument> Documents { get; set; } = [];
 
-    public void SetStatus(LoadStatus status)
+    public void UpdateStatus(LoadStatus status)
     {
         switch (status)
         {

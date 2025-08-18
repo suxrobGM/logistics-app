@@ -31,23 +31,30 @@ export class DirectionMap {
 
   private readonly http = inject(HttpClient);
 
-  /*–– state ––*/
+  //#region States
+
   protected readonly segments = signal<Segment[]>([]);
   protected readonly stopsSource = signal<GeoJSONSourceSpecification | null>(null);
   protected readonly bounds = signal<[LngLatLike, LngLatLike] | null>(null);
   protected readonly imageLoaded = signal(false);
 
-  /*-- 2 way bindings --*/
+  //#endregion
+
+  //#region Inputs
+
   public readonly center = model<GeoPoint>(this.defaultCenter);
   public readonly zoom = model<number>(this.defaultZoom);
-
-  /*–– inputs ––*/
   public readonly stops = input<GeoPoint[]>([]);
   public readonly width = input<string>("100%");
   public readonly height = input<string>("100%");
 
-  /*–– outputs ––*/
+  //#endregion
+
+  //#region Outputs
+
   public readonly routeChanged = output<RouteChangedEvent>();
+
+  //#endregion
 
   constructor() {
     effect(() => this.draw());

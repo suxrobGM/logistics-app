@@ -16,7 +16,7 @@
   <p-table
     [value]="data()"
     dataKey="id"
-    responsiveLayout="scroll"
+    [scrollable]="true"
     [lazy]="true"
     [paginator]="true"
     [showCurrentPageReport]="true"
@@ -132,7 +132,7 @@
             icon="pi pi-pen-to-square"
             pTooltip="Edit load details"
             tooltipPosition="bottom"
-            [routerLink]="['/loads/edit', load.id]"
+            [routerLink]="['/loads', load.id, 'edit']"
           />
           <p-button
             icon="pi pi-truck"

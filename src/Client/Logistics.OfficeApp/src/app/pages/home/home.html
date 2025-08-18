@@ -30,7 +30,7 @@
         <ng-template #body let-load>
           <tr>
             <td>
-              <a [routerLink]="['/loads/edit', load.id]"> {{ load.number }} </a>
+              <a [routerLink]="['/loads', load.id, 'edit']"> {{ load.number }} </a>
             </td>
             <td
               [pTooltip]="formatAddress(load.currentAddress)"

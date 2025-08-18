@@ -1,8 +1,8 @@
-import {Component, computed, input, model, output, signal} from "@angular/core";
+import {Component, computed, input, output, signal} from "@angular/core";
 import {ButtonModule} from "primeng/button";
 import {InputGroupModule} from "primeng/inputgroup";
 import {InputTextModule} from "primeng/inputtext";
-import {ProgressSpinner} from "primeng/progressspinner";
+import {MessageModule} from "primeng/message";
 import {StepperModule} from "primeng/stepper";
 import {TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
@@ -22,13 +22,17 @@ export interface TripFormValue {
   detachedLoadIds?: string[];
   initialLoads?: TripLoadDto[];
   initialStops?: TripStopDto[];
+
+  stopCoords?: GeoPoint[];
+  totalDistance?: number;
+  totalCost?: number;
+  totalLoads?: number;
 }
 
 @Component({
   selector: "app-trip-form",
   templateUrl: "./trip-form.html",
   imports: [
-    ProgressSpinner,
     InputGroupModule,
     ButtonModule,
     InputTextModule,
@@ -39,21 +43,24 @@ export interface TripFormValue {
     TripFormStepReview,
     TripFormStepBasic,
     TripFormStepLoads,
+    MessageModule,
   ],
 })
 export class TripForm {
   protected readonly formValue = signal<TripFormValue | null>(null);
   protected readonly activeStep = signal(1);
 
-  protected readonly stopCoords = computed(() =>
-    this.stops().map((stop) => [stop.addressLong, stop.addressLat] as GeoPoint)
+  protected readonly stopCoords = computed(
+    () =>
+      this.formValue()?.stopCoords ??
+      this.initialData()?.initialStops?.map(
+        (stop) => [stop.addressLong, stop.addressLat] as GeoPoint
+      )
   );
 
   public readonly mode = input.required<"create" | "edit">();
+  public readonly disabled = input<boolean>(false);
   public readonly initialData = input<Partial<TripFormValue> | null>(null);
-  public readonly isLoading = input(false);
-  public readonly loads = model<TripLoadDto[]>([]);
-  public readonly stops = input<TripStopDto[]>([]);
 
   public readonly save = output<TripFormValue>();
 
@@ -70,7 +77,7 @@ export class TripForm {
   protected processLoadsStep(stepData: LoadsStepData): void {
     this.formValue.update((prev) => ({
       ...prev!,
-      newLoads: stepData.newLoads,
+      ...stepData,
       attachedLoadIds: stepData.attachedLoads.map((load) => load.id),
       detachLoadIds: stepData.detachedLoads.map((load) => load.id),
     }));

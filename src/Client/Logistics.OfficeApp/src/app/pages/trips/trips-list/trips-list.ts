@@ -12,7 +12,12 @@ import {Observable, map} from "rxjs";
 import {ApiService} from "@/core/api";
 import {PagedResult, TripDto, TripStatus} from "@/core/api/models";
 import {ToastService} from "@/core/services";
-import {BaseTableComponent, LoadStatusTag, TableQueryParams} from "@/shared/components";
+import {
+  BaseTableComponent,
+  LoadStatusTag,
+  TableQueryParams,
+  TripStatusTag,
+} from "@/shared/components";
 import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
 
 @Component({
@@ -32,6 +37,7 @@ import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
     CurrencyPipe,
     LoadStatusTag,
     TooltipModule,
+    TripStatusTag,
   ],
 })
 export class TripsList extends BaseTableComponent<TripDto> {
@@ -72,10 +78,15 @@ export class TripsList extends BaseTableComponent<TripDto> {
     }
   }
 
-  protected askRemoveTrip(tripId: string): void {
+  protected askRemoveTrip(trip: TripDto): void {
+    if (trip.status !== TripStatus.Planned) {
+      this.toastService.showError("Only planned trips can be deleted");
+      return;
+    }
+
     this.toastService.confirm({
       message: "Are you sure that you want to delete this trip?",
-      accept: () => this.deleteTrip(tripId),
+      accept: () => this.deleteTrip(trip.id),
     });
   }
 

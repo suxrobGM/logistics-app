@@ -10,6 +10,7 @@
   [(ngModel)]="selectedTruck"
   (completeMethod)="searchTruck($event)"
   (onSelect)="changeSelectedTruck($event)"
+  [disabled]="disabled()"
 >
   <ng-template #item let-truck>
     <div class="flex items-center gap-2">

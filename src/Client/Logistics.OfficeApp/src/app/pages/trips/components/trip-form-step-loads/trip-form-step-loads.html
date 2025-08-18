@@ -1,23 +1,7 @@
 <div class="flex flex-col gap-4">
-  <div class="flex flex-wrap items-center justify-between gap-3">
-    <div class="flex items-center gap-2">
-      <h5 class="m-0 font-semibold">Assigned Loads</h5>
-      <p-tag [value]="getAssignedLoadsCount()" severity="info" />
-    </div>
-
-    <div class="flex items-center gap-2">
-      <span class="p-input-icon-left">
-        <i class="pi pi-search"></i>
-        <input pInputText type="text" placeholder="Search loads" (input)="applyFilter($event)" />
-      </span>
-
-      <p-button
-        icon="pi pi-plus"
-        label="Add Load"
-        variant="outlined"
-        (click)="tripLoadDialogVisible.set(true)"
-      />
-    </div>
+  <div class="flex items-center gap-2">
+    <h4 class="m-0 font-semibold">Assigned Loads</h4>
+    <p-tag [value]="getAssignedLoadsCount()" severity="info" />
   </div>
 
   <p-table
@@ -35,38 +19,55 @@
       </div>
     </ng-template>
 
+    <ng-template #caption>
+      <div class="align-items-center flex gap-2">
+        <p-icon-field>
+          <p-inputicon class="pi pi-search" />
+          <input pInputText type="text" placeholder="Search loads" (input)="applyFilter($event)" />
+        </p-icon-field>
+
+        <p-button
+          icon="pi pi-plus"
+          label="Add Load"
+          variant="outlined"
+          [disabled]="disabled()"
+          (click)="tripLoadDialogVisible.set(true)"
+        />
+      </div>
+    </ng-template>
+
     <ng-template #header>
       <tr>
-        <th pSortableColumn="number" class="w-32"># <p-sortIcon field="number" /></th>
+        <th pSortableColumn="number"># <p-sortIcon field="number" /></th>
         <th pSortableColumn="name">Load <p-sortIcon field="name" /></th>
         <th pSortableColumn="customerName">Customer <p-sortIcon field="customerName" /></th>
         <th pSortableColumn="origin">Origin <p-sortIcon field="origin" /></th>
         <th pSortableColumn="destination">Destination <p-sortIcon field="destination" /></th>
-        <th pSortableColumn="status" class="w-40">Status <p-sortIcon field="status" /></th>
-        <th pSortableColumn="distance" class="w-32 text-right">
+        <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
+        <th pSortableColumn="distance" class="text-right">
           Distance (mi) <p-sortIcon field="distance" />
         </th>
         <th pSortableColumn="deliveryCost" class="w-40 text-right">
           Delivery Cost <p-sortIcon field="deliveryCost" />
         </th>
-        <th class="w-52">Actions</th>
+        <th>Actions</th>
       </tr>
     </ng-template>
 
     <ng-template #body let-row>
       <tr [class.opacity-70]="row.pendingDetach">
         <td>{{ row.number ?? "—" }}</td>
-        <td class="flex items-center gap-2">
+        <td>
           <span>{{ row.name }}</span>
           @if (row.kind === "new") {
-            <p-tag value="New" severity="success" />
+            <p-tag class="ml-2" value="New" severity="success" />
           } @else if (row.pendingDetach) {
-            <p-tag value="Will detach" severity="danger" />
+            <p-tag class="ml-2" value="Will detach" severity="danger" />
           }
         </td>
-        <td>{{ row.customerName ?? "—" }}</td>
-        <td>{{ row.origin | address }}</td>
-        <td>{{ row.destination | address }}</td>
+        <td>{{ row.customer?.name ?? "—" }}</td>
+        <td>{{ row.originAddress | address }}</td>
+        <td>{{ row.destinationAddress | address }}</td>
         <td>
           @if (row.kind === "existing") {
             <app-load-status-tag [status]="row.status" />
@@ -82,25 +83,29 @@
               <p-button
                 icon="pi pi-pencil"
                 pTooltip="Edit load"
-                [routerLink]="['/loads', row.id, 'edit']"
+                tooltipPosition="bottom"
                 variant="outlined"
-                [disabled]="row.pendingDetach"
+                [routerLink]="['/loads', row.id, 'edit']"
+                [disabled]="row.pendingDetach || disabled()"
               />
               @if (row.pendingDetach) {
                 <p-button
-                  *ngIf="row.pendingDetach"
                   icon="pi pi-undo"
                   pTooltip="Undo detach"
-                  (click)="undoDetachLoad(row)"
+                  tooltipPosition="bottom"
                   variant="outlined"
+                  (click)="undoDetachLoad(row)"
+                  [disabled]="disabled()"
                 />
               } @else {
                 <p-button
                   icon="pi pi-times"
                   severity="danger"
                   pTooltip="Detach"
-                  (click)="detachLoad(row)"
+                  tooltipPosition="bottom"
                   variant="outlined"
+                  (click)="detachLoad(row)"
+                  [disabled]="disabled()"
                 />
               }
             } @else {
@@ -108,8 +113,9 @@
                 icon="pi pi-times"
                 severity="danger"
                 pTooltip="Remove new load"
-                (click)="removeNewLoad(row)"
                 variant="outlined"
+                (click)="removeNewLoad(row)"
+                [disabled]="disabled()"
               />
             }
           </div>

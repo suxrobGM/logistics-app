@@ -2,7 +2,7 @@ import {Component, OnInit, inject, input, signal} from "@angular/core";
 import {Router} from "@angular/router";
 import {CardModule} from "primeng/card";
 import {ApiService} from "@/core/api";
-import {TripLoadDto, TripStopDto, UpdateTripCommand} from "@/core/api/models";
+import {TripStatus, UpdateTripCommand} from "@/core/api/models";
 import {ToastService} from "@/core/services";
 import {TripForm, TripFormValue} from "../components";
 
@@ -17,9 +17,8 @@ export class TripEditPage implements OnInit {
   private readonly router = inject(Router);
 
   protected readonly tripId = input<string>();
+  protected readonly disabledForEditing = signal(false);
 
-  protected readonly tripLoads = signal<TripLoadDto[]>([]);
-  protected readonly tripStops = signal<TripStopDto[]>([]);
   protected readonly tripNumber = signal<number | null>(null);
   protected readonly isLoading = signal(false);
   protected readonly initialData = signal<Partial<TripFormValue> | null>(null);
@@ -76,10 +75,11 @@ export class TripEditPage implements OnInit {
           //deliveryCost: trip.loads.reduce((sum, load) => sum + (load.deliveryCost || 0), 0),
           //distance: trip.loads.reduce((sum, load) => sum + (load.distance || 0), 0),
           truckId: trip.truckId,
+          initialLoads: trip.loads,
+          initialStops: trip.stops,
         });
 
-        this.tripLoads.set(trip.loads);
-        this.tripStops.set(trip.stops);
+        this.disabledForEditing.set(trip.status !== TripStatus.Planned);
         this.tripNumber.set(trip.number);
       }
 

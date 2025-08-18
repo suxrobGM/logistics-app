@@ -325,10 +325,11 @@ internal class FakeDataWorker : IHostedService
             truck,
             dispatcher);
 
+        load.UpdateStatus(LoadStatus.Delivered);
+
         load.DispatchedDate = dispatched;
         load.PickUpDate = dispatched.AddHours(6);
         load.DeliveryDate = dispatched.AddHours(30);
-        load.Status = LoadStatus.Delivered;
         return load;
     }
 
@@ -382,6 +383,12 @@ internal class FakeDataWorker : IHostedService
                 _random.UtcDate(_startDate, _endDate),
                 truck,
                 loads);
+
+            // mark trip completed
+            foreach (var stop in trip.Stops)
+            {
+                trip.MarkStopArrived(stop.Id);
+            }
 
             await tripRepo.AddAsync(trip);
             _logger.LogInformation("Added Trip {Trip} with {Cnt} chained loads", trip.Name, loadsCount);

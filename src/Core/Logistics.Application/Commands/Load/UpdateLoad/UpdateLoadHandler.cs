@@ -21,10 +21,9 @@ internal sealed class UpdateLoadHandler : IAppRequestHandler<UpdateLoadCommand, 
         _pushNotificationService = pushNotificationService;
     }
 
-    public async Task<Result> Handle(
-        UpdateLoadCommand req, CancellationToken ct)
+    public async Task<Result> Handle(UpdateLoadCommand req, CancellationToken ct)
     {
-        var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.Id);
+        var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.Id, ct);
 
         if (load is null)
         {
@@ -47,10 +46,14 @@ internal sealed class UpdateLoadHandler : IAppRequestHandler<UpdateLoadCommand, 
                 PropertyUpdater.UpdateIfChanged(req.DestinationLocation, load.DestinationLocation);
             load.DeliveryCost = PropertyUpdater.UpdateIfChanged(req.DeliveryCost, load.DeliveryCost.Amount);
             load.Distance = PropertyUpdater.UpdateIfChanged(req.Distance, load.Distance);
-            load.Status = PropertyUpdater.UpdateIfChanged(req.Status, load.Status);
             load.Type = PropertyUpdater.UpdateIfChanged(req.Type, load.Type);
 
-            var changes = await _tenantUow.SaveChangesAsync();
+            if (req.Status.HasValue)
+            {
+                load.UpdateStatus(req.Status.Value);
+            }
+
+            var changes = await _tenantUow.SaveChangesAsync(ct);
 
             if (changes > 0)
             {

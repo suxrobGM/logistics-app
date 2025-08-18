@@ -34,7 +34,7 @@ export class AddLoadComponent {
       distance: formValue.distance,
       assignedDispatcherId: formValue.assignedDispatcherId,
       assignedTruckId: formValue.assignedTruckId,
-      customerId: formValue.customer.id,
+      customerId: formValue.customer?.id,
     };
 
     this.apiService.loadApi.createLoad(command).subscribe((result) => {

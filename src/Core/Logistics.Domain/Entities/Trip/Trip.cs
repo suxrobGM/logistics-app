@@ -98,20 +98,20 @@ public class Trip : Entity, ITenantEntity
         stop.ArrivedAt = DateTime.UtcNow;
 
         // propagate to Load status
-        stop.Load.SetStatus(stop.Type == TripStopType.PickUp ? LoadStatus.PickedUp : LoadStatus.Delivered);
+        stop.Load.UpdateStatus(stop.Type == TripStopType.PickUp ? LoadStatus.PickedUp : LoadStatus.Delivered);
 
         RefreshStatus();
     }
 
     private void RefreshStatus()
     {
-        if (Stops.All(s => s is { Type: TripStopType.DropOff, Load.DeliveryDate: not null }))
+        if (Stops.All(s => s is { Type: TripStopType.DropOff, Load.Status: LoadStatus.Delivered }))
         {
             Status = TripStatus.Completed;
             CompletedAt = DateTime.UtcNow;
             DomainEvents.Add(new TripCompletedEvent(Id));
         }
-        else if (Stops.Any(s => s is { Type: TripStopType.PickUp, Load.PickUpDate: not null }))
+        else if (Stops.Any(s => s is { Type: TripStopType.PickUp, Load.Status: LoadStatus.PickedUp }))
         {
             Status = TripStatus.InTransit;
         }

@@ -100,28 +100,31 @@
         <td>{{ trip.plannedStart | date: "mediumDate" }}</td>
         <td>{{ trip.actualStart | date: "mediumDate" }}</td>
         <td>{{ trip.completedAt | date: "mediumDate" }}</td>
-        <td class="text-center">{{ trip.status }}</td>
+        <td class="text-center"><app-trip-status-tag [status]="trip.status" /></td>
 
-        <td class="flex gap-2">
-          <p-button
-            icon="pi pi-pen-to-square"
-            pTooltip="Edit trip details"
-            tooltipPosition="bottom"
-            [routerLink]="['/trips', trip.id, 'edit']"
-          />
-          <p-button
-            icon="pi pi-file-o"
-            pTooltip="View trip details"
-            tooltipPosition="bottom"
-            [routerLink]="['/trips', trip.id]"
-          />
-          <p-button
-            icon="pi pi-trash"
-            pTooltip="Delete trip"
-            tooltipPosition="bottom"
-            severity="danger"
-            (click)="askRemoveTrip(trip.id)"
-          />
+        <td>
+          <div class="flex gap-2">
+            <p-button
+              icon="pi pi-pen-to-square"
+              pTooltip="Edit trip details"
+              tooltipPosition="bottom"
+              [routerLink]="['/trips', trip.id, 'edit']"
+            />
+            <p-button
+              icon="pi pi-file-o"
+              pTooltip="View trip details"
+              tooltipPosition="bottom"
+              [routerLink]="['/trips', trip.id]"
+            />
+            <p-button
+              icon="pi pi-trash"
+              pTooltip="Delete trip"
+              tooltipPosition="bottom"
+              severity="danger"
+              [disabled]="trip.status !== 'planned'"
+              (click)="askRemoveTrip(trip)"
+            />
+          </div>
         </td>
       </tr>
     </ng-template>

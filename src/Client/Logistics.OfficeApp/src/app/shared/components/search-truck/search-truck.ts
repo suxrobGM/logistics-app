@@ -27,6 +27,8 @@ export class SearchTruckComponent implements ControlValueAccessor {
   private readonly apiService = inject(ApiService);
 
   protected readonly suggestedTrucks = signal<TruckDto[]>([]);
+  protected readonly disabled = signal<boolean>(false);
+
   public readonly selectedTruck = model<TruckDto | null>(null);
   public readonly selectedTruckChange = output<TruckDto | null>();
 
@@ -82,9 +84,7 @@ export class SearchTruckComponent implements ControlValueAccessor {
   }
 
   setDisabledState(isDisabled: boolean): void {
-    if (isDisabled) {
-      this.selectedTruck.set(null);
-    }
+    this.disabled.set(isDisabled);
   }
 
   //#endregion

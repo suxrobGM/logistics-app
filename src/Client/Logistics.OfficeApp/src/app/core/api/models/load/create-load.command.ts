@@ -13,5 +13,5 @@ export interface CreateLoadCommand {
   distance: number;
   assignedDispatcherId: string;
   assignedTruckId: string;
-  customerId: string;
+  customerId?: string;
 }
