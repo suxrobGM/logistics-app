@@ -1,5 +1,5 @@
 export enum TripStatus {
-  Planned = "planned",
+  Draft = "draft",
   Dispatched = "dispatched",
   InTransit = "in_transit",
   Cancelled = "cancelled",

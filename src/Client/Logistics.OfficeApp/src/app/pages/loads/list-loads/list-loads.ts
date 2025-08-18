@@ -14,7 +14,12 @@ import {TooltipModule} from "primeng/tooltip";
 import {Observable} from "rxjs";
 import {ApiService} from "@/core/api";
 import {LoadDto, LoadStatus, PagedResult} from "@/core/api/models";
-import {BaseTableComponent, LoadStatusTag, TableQueryParams} from "@/shared/components";
+import {
+  BaseTableComponent,
+  LoadStatusTag,
+  LoadTypeTag,
+  TableQueryParams,
+} from "@/shared/components";
 import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
 
 @Component({
@@ -37,6 +42,7 @@ import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
     InputIconModule,
     FormsModule,
     LoadStatusTag,
+    LoadTypeTag,
   ],
 })
 export class ListLoadComponent extends BaseTableComponent<LoadDto> {

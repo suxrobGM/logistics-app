@@ -8,7 +8,7 @@ import {TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {ApiService} from "@/core/api";
 import {TripDto, TripStopType} from "@/core/api/models";
-import {DirectionMap, LoadStatusTag, TripStatusTag} from "@/shared/components";
+import {DirectionMap, LoadStatusTag, LoadTypeTag, TripStatusTag} from "@/shared/components";
 import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
 
 @Component({
@@ -27,6 +27,7 @@ import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
     AddressPipe,
     SkeletonModule,
     TripStatusTag,
+    LoadTypeTag,
   ],
 })
 export class TripDetailsPage implements OnInit {

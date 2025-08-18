@@ -91,7 +91,7 @@
         <td [pTooltip]="load.name" [showDelay]="500" tooltipPosition="bottom">
           {{ load.name }}
         </td>
-        <td>{{ load.type }}</td>
+        <td><app-load-type-tag [type]="load.type" /></td>
         <td [pTooltip]="load.customer.name" [showDelay]="500" tooltipPosition="bottom">
           {{ load.customer.name }}
         </td>

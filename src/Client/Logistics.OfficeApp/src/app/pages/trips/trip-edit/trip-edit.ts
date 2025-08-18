@@ -76,7 +76,7 @@ export class TripEditPage implements OnInit {
           initialStops: trip.stops,
         });
 
-        this.disabledForEditing.set(trip.status !== TripStatus.Planned);
+        this.disabledForEditing.set(trip.status !== TripStatus.Draft);
         this.tripNumber.set(trip.number);
       }
 

@@ -229,7 +229,6 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     TripId = table.Column<Guid>(type: "uuid", nullable: false),
                     Order = table.Column<int>(type: "integer", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
-                    Planned = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ArrivedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     LoadId = table.Column<Guid>(type: "uuid", nullable: false),
                     Address_City = table.Column<string>(type: "text", nullable: false),

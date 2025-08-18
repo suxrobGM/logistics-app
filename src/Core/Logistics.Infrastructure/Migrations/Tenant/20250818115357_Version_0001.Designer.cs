@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20250818112713_Version_0001")]
+    [Migration("20250818115357_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -751,9 +751,6 @@ namespace Logistics.Infrastructure.Migrations.Tenant
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
-
-                    b.Property<DateTime?>("Planned")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("TripId")
                         .HasColumnType("uuid");

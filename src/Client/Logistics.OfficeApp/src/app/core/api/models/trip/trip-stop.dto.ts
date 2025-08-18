@@ -8,7 +8,6 @@ export interface TripStopDto {
   address: AddressDto;
   addressLong: number;
   addressLat: number;
-  planned?: Date;
   arrivedAt?: Date;
   loadId: string;
 }
