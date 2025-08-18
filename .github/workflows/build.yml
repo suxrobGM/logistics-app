@@ -22,8 +22,8 @@ jobs:
         with:
           dotnet-version: 9.0.x
 
-      - name: Install dependencies
-        run: dotnet restore
+      #- name: Install dependencies
+      #  run: dotnet restore
 
       #- name: Verify formatting
       #  run: dotnet format --verify-no-changes --no-restore
@@ -71,8 +71,8 @@ jobs:
           dotnet workload install ios
           dotnet workload install maui
 
-      - name: Install dependencies
-        run: dotnet restore
+      #- name: Install dependencies
+      #  run: dotnet restore
 
       #- name: Verify formatting
       #  run: dotnet format --verify-no-changes --no-restore
