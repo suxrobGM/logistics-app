@@ -14,23 +14,18 @@ public class FilterLoadsByDeliveryDate : BaseSpecification<Load>
         {
             Criteria = i =>
                 i.AssignedTruckId == truckId &&
-                i.DeliveryDate.HasValue &&
-                i.DeliveryDate >= startPeriod &&
-                i.DeliveryDate <= endPeriod;
+                i.DeliveredAt.HasValue &&
+                i.DeliveredAt >= startPeriod &&
+                i.DeliveredAt <= endPeriod;
         }
         else
         {
             Criteria = i =>
-                i.DeliveryDate.HasValue &&
-                i.DeliveryDate >= startPeriod &&
-                i.DeliveryDate <= endPeriod;
+                i.DeliveredAt.HasValue &&
+                i.DeliveredAt >= startPeriod &&
+                i.DeliveredAt <= endPeriod;
         }
 
-        OrderBy("DeliveryDate");
+        OrderBy(nameof(Load.DeliveredAt));
     }
-
-    // protected override Expression<Func<Load, object?>> CreateOrderByExpression(string propertyName)
-    // {
-    //     return i => i.DeliveryDate;
-    // }
 }

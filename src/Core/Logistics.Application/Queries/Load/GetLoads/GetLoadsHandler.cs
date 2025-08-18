@@ -27,7 +27,7 @@ internal sealed class GetLoadsHandler : IAppRequestHandler<GetLoadsQuery, PagedR
 
         if (req.OnlyActiveLoads)
         {
-            baseQuery = baseQuery.Where(i => i.DeliveryDate == null);
+            baseQuery = baseQuery.Where(i => i.DeliveredAt == null);
         }
 
         if (req.UserId.HasValue)
@@ -44,8 +44,8 @@ internal sealed class GetLoadsHandler : IAppRequestHandler<GetLoadsQuery, PagedR
 
         if (req is { StartDate: not null, EndDate: not null })
         {
-            baseQuery = baseQuery.Where(i => i.DispatchedDate >= req.StartDate &&
-                                             i.DispatchedDate <= req.EndDate);
+            baseQuery = baseQuery.Where(i => i.DispatchedAt >= req.StartDate &&
+                                             i.DispatchedAt <= req.EndDate);
         }
 
         if (!req.LoadAllPages)

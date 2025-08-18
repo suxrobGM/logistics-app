@@ -50,7 +50,7 @@ internal sealed class UpdateLoadHandler : IAppRequestHandler<UpdateLoadCommand, 
 
             if (req.Status.HasValue)
             {
-                load.UpdateStatus(req.Status.Value);
+                load.UpdateStatus(req.Status.Value, true);
             }
 
             var changes = await _tenantUow.SaveChangesAsync(ct);

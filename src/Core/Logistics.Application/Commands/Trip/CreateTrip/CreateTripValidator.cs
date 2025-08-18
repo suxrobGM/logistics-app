@@ -9,10 +9,6 @@ internal sealed class CreateTripValidator : AbstractValidator<CreateTripCommand>
         RuleFor(i => i.Name).NotEmpty();
         RuleFor(i => i.TruckId).NotEmpty();
 
-        RuleFor(i => i.PlannedStart)
-            .Must(dt => dt > DateTime.UtcNow)
-            .WithMessage("Planned start time must be in the future.");
-
         // Either NewLoads OR ExistingLoadIds (but not both), and whichever is present must be non-empty
         RuleFor(x => x)
             .Must(ExactlyOneSourceSelected)

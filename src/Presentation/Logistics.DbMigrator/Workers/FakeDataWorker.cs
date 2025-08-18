@@ -325,11 +325,11 @@ internal class FakeDataWorker : IHostedService
             truck,
             dispatcher);
 
-        load.UpdateStatus(LoadStatus.Delivered);
+        // Simulate load dispatching and delivery
+        load.Dispatch();
+        load.ConfirmPickup();
+        load.ConfirmDelivery();
 
-        load.DispatchedDate = dispatched;
-        load.PickUpDate = dispatched.AddHours(6);
-        load.DeliveryDate = dispatched.AddHours(30);
         return load;
     }
 
@@ -378,11 +378,9 @@ internal class FakeDataWorker : IHostedService
                 await loadRepo.AddAsync(load);
             }
 
-            var trip = Trip.Create(
-                $"Trip {tripIdx + 1}",
-                _random.UtcDate(_startDate, _endDate),
-                truck,
-                loads);
+            var trip = Trip.Create($"Trip {tripIdx + 1}", truck, loads);
+
+            trip.Dispatch();
 
             // mark trip completed
             foreach (var stop in trip.Stops)

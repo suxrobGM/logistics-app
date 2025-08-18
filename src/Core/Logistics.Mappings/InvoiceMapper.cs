@@ -10,13 +10,13 @@ public static class InvoiceMapper
     {
         return entity switch
         {
-            LoadInvoice loadInvoice => new InvoiceDto()
+            LoadInvoice loadInvoice => new InvoiceDto
             {
                 Id = loadInvoice.Id,
                 Type = InvoiceType.Load,
                 Number = loadInvoice.Number,
                 Status = loadInvoice.Status,
-                CreatedDate = loadInvoice.CreatedAt.UtcDateTime,
+                CreatedDate = loadInvoice.CreatedAt,
                 Total = loadInvoice.Total,
                 DueDate = loadInvoice.DueDate,
                 Notes = loadInvoice.Notes,

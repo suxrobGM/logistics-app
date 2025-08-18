@@ -42,7 +42,7 @@ public class Employee : Entity, ITenantEntity
 
     public string GetFullName()
     {
-        return $"{FirstName} {LastName}";
+        return string.Join(" ", FirstName, LastName);
     }
 
     public static Employee CreateEmployeeFromUser(
@@ -53,7 +53,7 @@ public class Employee : Entity, ITenantEntity
         var newEmployee = new Employee
         {
             Id = user.Id,
-            Email = user.Email,
+            Email = user.Email!,
             FirstName = user.FirstName,
             LastName = user.LastName,
             PhoneNumber = user.PhoneNumber,

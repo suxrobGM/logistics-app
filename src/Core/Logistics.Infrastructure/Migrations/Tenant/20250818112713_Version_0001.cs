@@ -200,11 +200,15 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
                     TotalDistance = table.Column<double>(type: "double precision", nullable: false),
-                    PlannedStart = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ActualStart = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DispatchedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CompletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CancelledAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false),
-                    TruckId = table.Column<Guid>(type: "uuid", nullable: false)
+                    TruckId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    LastModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -260,9 +264,10 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     Distance = table.Column<double>(type: "double precision", nullable: false),
                     CanConfirmPickUp = table.Column<bool>(type: "boolean", nullable: false),
                     CanConfirmDelivery = table.Column<bool>(type: "boolean", nullable: false),
-                    DispatchedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    PickUpDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DeliveryDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DispatchedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    PickedUpAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeliveredAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CancelledAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     TripStopId = table.Column<Guid>(type: "uuid", nullable: true),
                     CustomerId = table.Column<Guid>(type: "uuid", nullable: true),
                     AssignedTruckId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -284,7 +289,11 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     OriginAddress_State = table.Column<string>(type: "text", nullable: false),
                     OriginAddress_ZipCode = table.Column<string>(type: "text", nullable: false),
                     OriginLocation_Latitude = table.Column<double>(type: "double precision", nullable: false),
-                    OriginLocation_Longitude = table.Column<double>(type: "double precision", nullable: false)
+                    OriginLocation_Longitude = table.Column<double>(type: "double precision", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    LastModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -330,9 +339,9 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     UploadedById = table.Column<Guid>(type: "uuid", nullable: false),
                     EmployeeId = table.Column<Guid>(type: "uuid", nullable: true),
                     LoadId = table.Column<Guid>(type: "uuid", nullable: true),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    LastModifiedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     LastModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
                 },
                 constraints: table =>
@@ -380,9 +389,9 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     SubscriptionId = table.Column<Guid>(type: "uuid", nullable: true),
                     BillingPeriodStart = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     BillingPeriodEnd = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    LastModifiedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     LastModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
                 },
                 constraints: table =>
@@ -426,9 +435,9 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     BillingAddress_Line2 = table.Column<string>(type: "text", nullable: true),
                     BillingAddress_State = table.Column<string>(type: "text", nullable: false),
                     BillingAddress_ZipCode = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    LastModifiedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     LastModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
                 },
                 constraints: table =>

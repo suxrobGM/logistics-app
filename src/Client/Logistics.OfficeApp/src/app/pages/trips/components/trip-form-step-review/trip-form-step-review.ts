@@ -1,5 +1,5 @@
-import {CurrencyPipe, DatePipe} from "@angular/common";
-import {Component, effect, input, output} from "@angular/core";
+import {CurrencyPipe} from "@angular/common";
+import {Component, input, output} from "@angular/core";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {DirectionMap} from "@/shared/components";
@@ -9,11 +9,10 @@ import {GeoPoint} from "@/shared/types/mapbox";
 @Component({
   selector: "app-trip-form-step-review",
   templateUrl: "./trip-form-step-review.html",
-  imports: [CardModule, DirectionMap, ButtonModule, DistanceUnitPipe, CurrencyPipe, DatePipe],
+  imports: [CardModule, DirectionMap, ButtonModule, DistanceUnitPipe, CurrencyPipe],
 })
 export class TripFormStepReview {
   public readonly tripName = input<string>();
-  public readonly plannedStart = input<Date>();
   public readonly truckId = input<string>();
 
   public readonly totalLoads = input<number>(0);
@@ -26,10 +25,4 @@ export class TripFormStepReview {
 
   public readonly back = output<void>();
   public readonly save = output<void>();
-
-  constructor() {
-    effect(() => {
-      console.log("stop coords", this.stopCoords());
-    });
-  }
 }

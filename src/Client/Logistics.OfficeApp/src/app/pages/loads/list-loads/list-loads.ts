@@ -51,7 +51,7 @@ export class ListLoadComponent extends BaseTableComponent<LoadDto> {
     return this.apiService.loadApi.getLoads({
       page: params.page + 1,
       pageSize: params.size,
-      orderBy: sortField || "-DispatchedDate",
+      orderBy: sortField || "-DispatchedAt",
       search: params.search,
     });
   }

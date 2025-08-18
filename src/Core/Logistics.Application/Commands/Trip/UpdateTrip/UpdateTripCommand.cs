@@ -7,7 +7,6 @@ public class UpdateTripCommand : IAppRequest
 {
     public Guid TripId { get; set; }
     public string? Name { get; set; }
-    public DateTime? PlannedStart { get; set; }
     public Guid? TruckId { get; set; }
 
     public IEnumerable<CreateTripLoadCommand>? NewLoads { get; set; }

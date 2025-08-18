@@ -5,14 +5,23 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
-public class Load : Entity, ITenantEntity
+public class Load : AuditableEntity, ITenantEntity
 {
+    private static readonly Dictionary<LoadStatus, LoadStatus[]> Allowed = new()
+    {
+        [LoadStatus.Draft] = [LoadStatus.Dispatched, LoadStatus.Cancelled],
+        [LoadStatus.Dispatched] = [LoadStatus.PickedUp, LoadStatus.Cancelled],
+        [LoadStatus.PickedUp] = [LoadStatus.Delivered, LoadStatus.Cancelled],
+        [LoadStatus.Delivered] = [],
+        [LoadStatus.Cancelled] = []
+    };
+
     public long Number { get; private set; }
     public required string Name { get; set; }
 
     public required LoadType Type { get; set; }
 
-    public LoadStatus Status { get; private set; } = LoadStatus.Dispatched;
+    public LoadStatus Status { get; private set; } = LoadStatus.Draft;
 
     public required Address OriginAddress { get; set; }
     public required GeoPoint OriginLocation { get; set; }
@@ -30,9 +39,10 @@ public class Load : Entity, ITenantEntity
     public bool CanConfirmPickUp { get; set; }
     public bool CanConfirmDelivery { get; set; }
 
-    public DateTime DispatchedDate { get; set; } = DateTime.UtcNow;
-    public DateTime? PickUpDate { get; set; }
-    public DateTime? DeliveryDate { get; set; }
+    public DateTime? DispatchedAt { get; private set; }
+    public DateTime? PickedUpAt { get; private set; }
+    public DateTime? DeliveredAt { get; private set; }
+    public DateTime? CancelledAt { get; private set; }
 
     public Guid? TripStopId { get; set; }
     public virtual TripStop? TripStop { get; set; }
@@ -49,32 +59,93 @@ public class Load : Entity, ITenantEntity
     public virtual List<LoadInvoice> Invoices { get; set; } = [];
     public virtual List<LoadDocument> Documents { get; set; } = [];
 
-    public void UpdateStatus(LoadStatus status)
+    public bool CanTransitionTo(LoadStatus next)
     {
-        switch (status)
+        return Allowed.TryGetValue(Status, out var nexts) && nexts.Contains(next);
+    }
+
+    /// <summary>
+    ///     Enforces valid status transitions and sets timestamps/flags accordingly.
+    /// </summary>
+    /// <param name="newStatus">Target status.</param>
+    /// <param name="force">
+    ///     If true, bypass transition validation (useful for data import/seeding). Still applies timestamp/flag logic.
+    /// </param>
+    /// <exception cref="InvalidOperationException">Thrown for invalid transitions when <paramref name="force" /> is false.</exception>
+    public void UpdateStatus(LoadStatus newStatus, bool force = false)
+    {
+        if (newStatus == Status)
         {
-            case LoadStatus.Dispatched:
-                DispatchedDate = DateTime.UtcNow;
-                CanConfirmDelivery = false;
-                CanConfirmPickUp = false;
-                PickUpDate = null;
-                DeliveryDate = null;
-                break;
-            case LoadStatus.PickedUp:
-                PickUpDate = DateTime.UtcNow;
-                CanConfirmDelivery = false;
-                DeliveryDate = null;
-                break;
-            case LoadStatus.Delivered:
-                DeliveryDate = DateTime.UtcNow;
-                CanConfirmDelivery = false;
-                CanConfirmPickUp = false;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(status), status, null);
+            return;
         }
 
-        Status = status;
+        if (!force && !CanTransitionTo(newStatus))
+        {
+            throw new InvalidOperationException($"Cannot change load status from '{Status}' to '{newStatus}'.");
+        }
+
+        switch (newStatus)
+        {
+            case LoadStatus.Draft:
+                // Typically should not revert to Draft; only allowed when force == true.
+                CanConfirmPickUp = false;
+                CanConfirmDelivery = false;
+                break;
+
+            case LoadStatus.Dispatched:
+                DispatchedAt ??= DateTime.UtcNow;
+                CanConfirmPickUp = true;
+                CanConfirmDelivery = false;
+                // When (re)dispatching, future milestones are unset
+                PickedUpAt = null;
+                DeliveredAt = null;
+                CancelledAt = null;
+                break;
+
+            case LoadStatus.PickedUp:
+                PickedUpAt ??= DateTime.UtcNow;
+                CanConfirmPickUp = false;
+                CanConfirmDelivery = true;
+                break;
+
+            case LoadStatus.Delivered:
+                DeliveredAt ??= DateTime.UtcNow;
+                CanConfirmPickUp = false;
+                CanConfirmDelivery = false;
+                break;
+
+            case LoadStatus.Cancelled:
+                CancelledAt ??= DateTime.UtcNow;
+                CanConfirmPickUp = false;
+                CanConfirmDelivery = false;
+                break;
+
+            default:
+                throw new ArgumentOutOfRangeException(nameof(newStatus), newStatus, null);
+        }
+
+        Status = newStatus;
+    }
+
+    // Convenience wrappers for common actions
+    public void Dispatch()
+    {
+        UpdateStatus(LoadStatus.Dispatched);
+    }
+
+    public void ConfirmPickup()
+    {
+        UpdateStatus(LoadStatus.PickedUp);
+    }
+
+    public void ConfirmDelivery()
+    {
+        UpdateStatus(LoadStatus.Delivered);
+    }
+
+    public void Cancel()
+    {
+        UpdateStatus(LoadStatus.Cancelled);
     }
 
     public decimal CalcDriverShare()
@@ -130,38 +201,5 @@ public class Load : Entity, ITenantEntity
             Load = load
         };
         return invoice;
-    }
-}
-
-internal class LoadComparer : IEqualityComparer<Load>
-{
-    public bool Equals(Load? x, Load? y)
-    {
-        if (ReferenceEquals(x, y))
-        {
-            return true;
-        }
-
-        if (ReferenceEquals(x, null))
-        {
-            return false;
-        }
-
-        if (ReferenceEquals(y, null))
-        {
-            return false;
-        }
-
-        if (x.GetType() != y.GetType())
-        {
-            return false;
-        }
-
-        return x.Number == y.Number && x.Name == y.Name;
-    }
-
-    public int GetHashCode(Load? obj)
-    {
-        return HashCode.Combine(obj?.Number, obj?.Name);
     }
 }

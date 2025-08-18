@@ -68,8 +68,14 @@
         <td>{{ employee.email }}</td>
         <td>{{ employee.phoneNumber }}</td>
         <td>
-          @if (employee.salaryType === 3) {
+          @if (employee.salaryType === "share_of_gross") {
             {{ employee.salary | percent }}
+          } @else if (employee.salaryType === "hourly") {
+            {{ employee.salary | currency }}/hr
+          } @else if (employee.salaryType === "rate_per_mile") {
+            {{ employee.salary | currency }}/mi
+          } @else if (employee.salaryType === "rate_per_kilometer") {
+            {{ employee.salary | currency }}/km
           } @else {
             {{ employee.salary | currency }}
           }

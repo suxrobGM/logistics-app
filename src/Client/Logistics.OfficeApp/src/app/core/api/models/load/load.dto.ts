@@ -16,9 +16,11 @@ export interface LoadDto {
   deliveryCost: number;
   distance: number;
   status: LoadStatus;
-  dispatchedDate: string;
-  pickUpDate: string;
-  deliveryDate: string;
+  createdAt: Date;
+  dispatchedAt?: Date;
+  pickedUpAt?: Date;
+  deliveredAt?: Date;
+  cancelledAt?: Date;
   assignedDispatcherId: string;
   assignedDispatcherName?: string;
   assignedTruckId: string;

@@ -5,7 +5,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
-public class Trip : Entity, ITenantEntity
+public class Trip : AuditableEntity, ITenantEntity
 {
     /// <summary>
     ///     Sequential number of the trip, unique within the tenant.
@@ -19,11 +19,11 @@ public class Trip : Entity, ITenantEntity
     /// </summary>
     public double TotalDistance { get; private set; }
 
-    public DateTime PlannedStart { get; set; }
-    public DateTime? ActualStart { get; private set; }
+    public DateTime? DispatchedAt { get; private set; }
     public DateTime? CompletedAt { get; private set; }
+    public DateTime? CancelledAt { get; private set; }
 
-    public TripStatus Status { get; private set; } = TripStatus.Planned;
+    public TripStatus Status { get; private set; } = TripStatus.Draft;
 
     public Guid TruckId { get; set; }
     public virtual required Truck Truck { get; set; }
@@ -35,7 +35,6 @@ public class Trip : Entity, ITenantEntity
 
     public static Trip Create(
         string name,
-        DateTime plannedStart,
         Truck truck,
         IEnumerable<Load>? loads = null)
     {
@@ -46,7 +45,6 @@ public class Trip : Entity, ITenantEntity
             Name = name,
             TruckId = truck.Id,
             Truck = truck,
-            PlannedStart = plannedStart,
             TotalDistance = loadsArr.Sum(l => l.Distance)
         };
 
@@ -80,14 +78,32 @@ public class Trip : Entity, ITenantEntity
 
     public void Dispatch()
     {
-        if (Status != TripStatus.Planned)
+        if (Status != TripStatus.Draft)
         {
             throw new InvalidOperationException("Trip already dispatched");
         }
 
         Status = TripStatus.Dispatched;
-        ActualStart = DateTime.UtcNow;
+        DispatchedAt = DateTime.UtcNow;
         DomainEvents.Add(new TripDispatchedEvent(Id));
+    }
+
+    public void Cancel()
+    {
+        if (Status == TripStatus.Completed)
+        {
+            throw new InvalidOperationException("Cannot cancel a completed trip");
+        }
+
+        Status = TripStatus.Cancelled;
+        CancelledAt = DateTime.UtcNow;
+
+        // Mark all stops as canceled
+        foreach (var stop in Stops)
+        {
+            stop.ArrivedAt = null; // Reset arrival time
+            stop.Load.Cancel();
+        }
     }
 
     public void MarkStopArrived(Guid stopId)
@@ -98,20 +114,27 @@ public class Trip : Entity, ITenantEntity
         stop.ArrivedAt = DateTime.UtcNow;
 
         // propagate to Load status
-        stop.Load.UpdateStatus(stop.Type == TripStopType.PickUp ? LoadStatus.PickedUp : LoadStatus.Delivered);
+        stop.Load.UpdateStatus(stop.Type == TripStopType.PickUp ? LoadStatus.PickedUp : LoadStatus.Delivered, true);
 
         RefreshStatus();
     }
 
     private void RefreshStatus()
     {
-        if (Stops.All(s => s is { Type: TripStopType.DropOff, Load.Status: LoadStatus.Delivered }))
+        var allDropOffsDelivered = Stops
+            .Where(s => s.Type == TripStopType.DropOff)
+            .All(s => s.Load.Status == LoadStatus.Delivered);
+
+        var anyPickupDone = Stops
+            .Any(s => s is { Type: TripStopType.PickUp, Load.Status: LoadStatus.PickedUp });
+
+        if (allDropOffsDelivered)
         {
             Status = TripStatus.Completed;
             CompletedAt = DateTime.UtcNow;
             DomainEvents.Add(new TripCompletedEvent(Id));
         }
-        else if (Stops.Any(s => s is { Type: TripStopType.PickUp, Load.Status: LoadStatus.PickedUp }))
+        else if (anyPickupDone)
         {
             Status = TripStatus.InTransit;
         }
@@ -133,12 +156,12 @@ public class Trip : Entity, ITenantEntity
     ///     Updates the trip loads. Clears existing stops and recreates them based on the new loads.
     /// </summary>
     /// <param name="loads">The new collection of loads to be associated with the trip.</param>
-    /// <exception cref="InvalidOperationException">Thrown if the trip status is not 'Planned'.</exception>
+    /// <exception cref="InvalidOperationException">Thrown if the trip status is not 'Draft'.</exception>
     public void UpdateTripLoads(IEnumerable<Load> loads)
     {
-        if (Status != TripStatus.Planned)
+        if (Status != TripStatus.Draft)
         {
-            throw new InvalidOperationException("Cannot update loads for a trip that is not planned");
+            throw new InvalidOperationException("Cannot update loads for a trip that is not draft.");
         }
 
         // Clear existing stops
@@ -190,12 +213,12 @@ public class Trip : Entity, ITenantEntity
     ///     Removes the load from the trip.
     /// </summary>
     /// <param name="loadId">The ID of the load to be removed.</param>
-    /// <exception cref="InvalidOperationException">Thrown if the trip status is not 'Planned'.</exception>
+    /// <exception cref="InvalidOperationException">Thrown if the trip status is not 'Draft'.</exception>
     public void RemoveLoad(Guid loadId)
     {
-        if (Status != TripStatus.Planned)
+        if (Status != TripStatus.Draft)
         {
-            throw new InvalidOperationException("Cannot modify loads unless trip is Planned.");
+            throw new InvalidOperationException("Cannot modify loads unless trip is Draft.");
         }
 
         var toRemove = Stops.Where(s => s.LoadId == loadId).ToList();
@@ -223,12 +246,12 @@ public class Trip : Entity, ITenantEntity
     ///     Adds a load to the trip.
     /// </summary>
     /// <param name="load">The load to be added.</param>
-    /// <exception cref="InvalidOperationException">Thrown if the trip status is not 'Planned'.</exception>
+    /// <exception cref="InvalidOperationException">Thrown if the trip status is not 'Draft'.</exception>
     public void AddLoad(Load load)
     {
-        if (Status != TripStatus.Planned)
+        if (Status != TripStatus.Draft)
         {
-            throw new InvalidOperationException("Cannot modify loads unless trip is Planned.");
+            throw new InvalidOperationException("Cannot modify loads unless trip is Draft.");
         }
 
         var order = (Stops.Count == 0 ? 0 : Stops.Max(s => s.Order)) + 1;

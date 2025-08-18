@@ -10,9 +10,10 @@ export interface TripDto {
   originAddress: AddressDto;
   destinationAddress: AddressDto;
   totalDistance: number;
-  plannedStart: Date;
-  actualStart?: Date;
+  createdAt: Date;
+  dispatchedAt?: Date;
   completedAt?: Date;
+  cancelledAt?: Date;
   status: TripStatus;
   truckId: string;
   truckNumber: string;

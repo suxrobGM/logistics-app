@@ -14,9 +14,11 @@ public class LoadDto
     public required GeoPoint DestinationLocation { get; set; }
     public decimal DeliveryCost { get; set; }
     public double Distance { get; set; }
-    public DateTime DispatchedDate { get; set; }
-    public DateTime? PickUpDate { get; set; }
-    public DateTime? DeliveryDate { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? DispatchedAt { get; set; }
+    public DateTime? PickedUpAt { get; set; }
+    public DateTime? DeliveredAt { get; set; }
+    public DateTime? CancelledAt { get; set; }
     public bool CanConfirmPickUp { get; set; }
     public bool CanConfirmDelivery { get; set; }
     public LoadStatus Status { get; set; }

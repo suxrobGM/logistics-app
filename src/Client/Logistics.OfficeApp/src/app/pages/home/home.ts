@@ -81,7 +81,7 @@ export class HomeComponent implements OnInit {
     this.isLoadingLoadsData.set(true);
 
     this.apiService.loadApi
-      .getLoads({orderBy: "-DispatchedDate", onlyActiveLoads: true})
+      .getLoads({orderBy: "-DispatchedAt", onlyActiveLoads: true})
       .subscribe((result) => {
         if (result.success && result.data) {
           this.loads.set(result.data);

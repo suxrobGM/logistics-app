@@ -5,8 +5,8 @@ namespace Logistics.Domain.Core;
 /// </summary>
 public interface IAuditableEntity
 {
-    DateTimeOffset CreatedAt { get; set; }
+    DateTime CreatedAt { get; set; }
     string? CreatedBy { get; set; }
-    DateTimeOffset? UpdatedAt { get; set; }
+    DateTime? UpdatedAt { get; set; }
     string? UpdatedBy { get; set; }
 }

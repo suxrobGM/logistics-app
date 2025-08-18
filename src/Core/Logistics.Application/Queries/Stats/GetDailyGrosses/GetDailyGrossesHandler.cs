@@ -45,7 +45,7 @@ internal sealed class GetDailyGrossesHandler : IAppRequestHandler<GetDailyGrosse
 
         foreach (var load in filteredLoads)
         {
-            var date = load.DeliveryDate!.Value;
+            var date = load.DeliveredAt!.Value;
             var key = (date.Year, date.Month, date.Day);
 
             if (!dict.ContainsKey(key))

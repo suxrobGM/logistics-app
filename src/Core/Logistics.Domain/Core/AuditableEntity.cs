@@ -6,20 +6,20 @@ namespace Logistics.Domain.Core;
 /// </summary>
 public abstract class AuditableEntity : Entity, IAuditableEntity
 {
-    public DateTimeOffset CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public string? CreatedBy { get; set; }
-    public DateTimeOffset? UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
     public string? UpdatedBy { get; set; }
 
     public void SetCreated(string? userId)
     {
-        CreatedAt = DateTimeOffset.UtcNow;
+        CreatedAt = DateTime.UtcNow;
         CreatedBy = userId;
     }
 
     public void SetUpdated(string? userId)
     {
-        UpdatedAt = DateTimeOffset.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
         UpdatedBy = userId;
     }
 }

@@ -71,9 +71,6 @@ export class TripEditPage implements OnInit {
 
         this.initialData.set({
           name: trip.name,
-          plannedStart: new Date(trip.plannedStart),
-          //deliveryCost: trip.loads.reduce((sum, load) => sum + (load.deliveryCost || 0), 0),
-          //distance: trip.loads.reduce((sum, load) => sum + (load.distance || 0), 0),
           truckId: trip.truckId,
           initialLoads: trip.loads,
           initialStops: trip.stops,

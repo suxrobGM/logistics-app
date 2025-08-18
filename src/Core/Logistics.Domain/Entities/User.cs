@@ -11,9 +11,9 @@ public class User : IdentityUser<Guid>, IEntity<Guid>, IMasterEntity, IAuditable
     public Guid? TenantId { get; set; }
     public virtual Tenant? Tenant { get; set; }
 
-    public DateTimeOffset CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public string? CreatedBy { get; set; }
-    public DateTimeOffset? UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
     public string? UpdatedBy { get; set; }
 
     public string GetFullName()

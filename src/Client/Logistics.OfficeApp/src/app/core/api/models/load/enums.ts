@@ -1,9 +1,11 @@
 import {SelectOption} from "@/shared/models";
 
 export enum LoadStatus {
+  Draft = "draft",
   Dispatched = "dispatched",
   PickedUp = "picked_up",
   Delivered = "delivered",
+  Cancelled = "cancelled",
 }
 
 export enum LoadType {
@@ -18,9 +20,11 @@ export enum LoadType {
 }
 
 export const loadStatusOptions: SelectOption<LoadStatus>[] = [
+  {label: "Draft", value: LoadStatus.Draft},
   {label: "Dispatched", value: LoadStatus.Dispatched},
   {label: "Picked Up", value: LoadStatus.PickedUp},
   {label: "Delivered", value: LoadStatus.Delivered},
+  {label: "Cancelled", value: LoadStatus.Cancelled},
 ] as const;
 
 export const loadTypeOptions: SelectOption<LoadType>[] = [

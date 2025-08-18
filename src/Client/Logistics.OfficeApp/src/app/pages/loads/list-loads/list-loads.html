@@ -111,13 +111,13 @@
           <div class="italic">
             @switch (load.status) {
               @case (loadStatus.Dispatched) {
-                {{ load.dispatchedDate | date: "mediumDate" }}
+                {{ load.dispatchedAt | date: "mediumDate" }}
               }
               @case (loadStatus.PickedUp) {
-                {{ load.pickUpDate | date: "mediumDate" }}
+                {{ load.pickedUpAt | date: "mediumDate" }}
               }
               @case (loadStatus.Delivered) {
-                {{ load.deliveryDate | date: "mediumDate" }}
+                {{ load.deliveredAt | date: "mediumDate" }}
               }
             }
           </div>

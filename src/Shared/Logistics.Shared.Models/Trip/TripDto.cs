@@ -13,13 +13,14 @@ public record TripDto
     public required Address DestinationAddress { get; set; }
 
     /// <summary>
-    /// Total distance of the trip in kilometers.
+    ///     Total distance of the trip in kilometers.
     /// </summary>
     public double TotalDistance { get; set; }
 
-    public DateTime PlannedStart { get; set; }
-    public DateTime? ActualStart { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? DispatchedAt { get; set; }
     public DateTime? CompletedAt { get; set; }
+    public DateTime? CancelledAt { get; set; }
     public TripStatus Status { get; set; }
     public Guid TruckId { get; set; }
     public string? TruckNumber { get; set; }

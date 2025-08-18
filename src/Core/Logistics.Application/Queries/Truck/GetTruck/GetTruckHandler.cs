@@ -57,7 +57,7 @@ internal sealed class GetTruckHandler : IAppRequestHandler<GetTruckQuery, Result
         var loads = truckEntity.Loads.Select(l => l.ToDto());
         if (onlyActiveLoads)
         {
-            loads = loads.Where(l => l.DeliveryDate == null);
+            loads = loads.Where(l => l.DeliveredAt == null);
         }
 
         truckDto.Loads = loads.ToArray();

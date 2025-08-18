@@ -29,13 +29,24 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
             return Result.Fail($"Trip '{req.TripId}' not found.");
         }
 
-        if (trip.Status != TripStatus.Planned)
+        // Update only name if trip status is not draft
+        if (trip.Status != TripStatus.Draft && !string.IsNullOrEmpty(req.Name))
         {
-            return Result.Fail("Only trips in 'Planned' status can be updated.");
+            trip.Name = req.Name;
+            await _uow.SaveChangesAsync(ct);
+            return Result.Ok();
+        }
+
+        if (trip.Status != TripStatus.Draft)
+        {
+            return Result.Fail("Only trips in 'Draft' status can be updated.");
         }
 
         // Basic fields
-        ApplyTripFields(trip, req);
+        if (!string.IsNullOrWhiteSpace(req.Name))
+        {
+            trip.Name = req.Name!;
+        }
 
         // Truck swap (if requested)
         if (req.TruckId is { } newTruckId && newTruckId != trip.TruckId)
@@ -77,27 +88,14 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
         await _uow.SaveChangesAsync(ct);
 
         _log.LogInformation(
-            "Updated trip '{TripId}'. Name='{Name}', PlannedStart='{PlannedStart:u}', Truck='{TruckId}'. Loads={LoadCount} (attached {Attached}, created {Created}, removed {Removed})",
-            trip.Id, trip.Name, trip.PlannedStart, trip.TruckId, loadsMap.Count, attachedCount, createdCount,
+            "Updated trip '{TripId}'. Name='{Name}', Truck='{TruckId}'. Loads={LoadCount} (attached {Attached}, created {Created}, removed {Removed})",
+            trip.Id, trip.Name, trip.TruckId, loadsMap.Count, attachedCount, createdCount,
             removedCount);
 
         return Result.Ok();
     }
 
-    private static void ApplyTripFields(Trip trip, UpdateTripCommand req)
-    {
-        if (!string.IsNullOrWhiteSpace(req.Name))
-        {
-            trip.Name = req.Name!;
-        }
-
-        if (req.PlannedStart is not null)
-        {
-            trip.PlannedStart = req.PlannedStart.Value;
-        }
-    }
-
-    private int RemoveLoads(Dictionary<Guid, Load> loadsMap, IEnumerable<Guid>? loadIds)
+    private static int RemoveLoads(Dictionary<Guid, Load> loadsMap, IEnumerable<Guid>? loadIds)
     {
         if (loadIds is null)
         {

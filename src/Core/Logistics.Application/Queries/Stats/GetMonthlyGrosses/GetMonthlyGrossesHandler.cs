@@ -44,7 +44,7 @@ internal sealed class GetMonthlyGrossesHandler : IAppRequestHandler<GetMonthlyGr
 
         foreach (var load in filteredLoads)
         {
-            var date = load.DeliveryDate!.Value;
+            var date = load.DeliveredAt!.Value;
             var key = (date.Year, date.Month);
 
             if (!dict.ContainsKey(key))

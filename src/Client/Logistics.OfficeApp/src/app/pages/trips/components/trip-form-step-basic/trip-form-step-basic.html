@@ -6,10 +6,6 @@
       <input pInputText id="name" formControlName="name" type="text" placeholder="Trip name" />
     </app-form-field>
 
-    <app-form-field label="Planned Start Date" for="plannedStart">
-      <p-date-picker formControlName="plannedStart" [showIcon]="true" />
-    </app-form-field>
-
     <app-form-field label="Assigned Truck" for="truckId" [required]="true">
       <app-search-truck formControlName="truckId" />
     </app-form-field>

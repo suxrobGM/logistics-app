@@ -19,8 +19,7 @@ internal sealed class ConfirmLoadStatusHandler : IAppRequestHandler<ConfirmLoadS
         _notificationService = notificationService;
     }
 
-    public async Task<Result> Handle(
-        ConfirmLoadStatusCommand req, CancellationToken ct)
+    public async Task<Result> Handle(ConfirmLoadStatusCommand req, CancellationToken ct)
     {
         var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.LoadId, ct);
 
@@ -30,9 +29,8 @@ internal sealed class ConfirmLoadStatusHandler : IAppRequestHandler<ConfirmLoadS
         }
 
         var loadStatus = req.LoadStatus!.Value;
-        load.UpdateStatus(loadStatus);
+        load.UpdateStatus(loadStatus, true);
 
-        _tenantUow.Repository<Load>().Update(load);
         var changes = await _tenantUow.SaveChangesAsync(ct);
 
         if (changes > 0)

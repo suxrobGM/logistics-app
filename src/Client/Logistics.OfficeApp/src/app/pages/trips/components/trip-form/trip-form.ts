@@ -15,7 +15,6 @@ import {TripFormStepReview} from "../trip-form-step-review/trip-form-step-review
 
 export interface TripFormValue {
   name: string;
-  plannedStart: Date;
   truckId: string;
   newLoads?: CreateTripLoadCommand[];
   attachedLoadIds?: string[];
@@ -67,7 +66,6 @@ export class TripForm {
   protected processBasicStep(stepData: BasicStepData): void {
     this.formValue.set({
       name: stepData.name,
-      plannedStart: stepData.plannedStart,
       truckId: stepData.truckId,
     });
 

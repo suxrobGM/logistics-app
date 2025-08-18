@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Migrations.Master
 {
     [DbContext(typeof(MasterDbContext))]
-    [Migration("20250818013204_Version_0001")]
+    [Migration("20250818112705_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -89,7 +89,7 @@ namespace Logistics.Infrastructure.Migrations.Master
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("CreatedAt")
@@ -121,7 +121,7 @@ namespace Logistics.Infrastructure.Migrations.Master
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
-                    b.Property<DateTimeOffset?>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("LastModifiedAt");
 
@@ -162,7 +162,7 @@ namespace Logistics.Infrastructure.Migrations.Master
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("CreatedAt")
@@ -188,7 +188,7 @@ namespace Logistics.Infrastructure.Migrations.Master
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset?>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("LastModifiedAt");
 
@@ -298,7 +298,7 @@ namespace Logistics.Infrastructure.Migrations.Master
                     b.Property<DateTime?>("BillingCycleAnchor")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("CreatedAt")
@@ -331,7 +331,7 @@ namespace Logistics.Infrastructure.Migrations.Master
                     b.Property<int>("TrialPeriod")
                         .HasColumnType("integer");
 
-                    b.Property<DateTimeOffset?>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("LastModifiedAt");
 
@@ -432,7 +432,7 @@ namespace Logistics.Infrastructure.Migrations.Master
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("CreatedAt")
@@ -490,7 +490,7 @@ namespace Logistics.Infrastructure.Migrations.Master
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTimeOffset?>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("LastModifiedAt");
 

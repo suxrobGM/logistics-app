@@ -2,14 +2,12 @@ import {Component, effect, input, output} from "@angular/core";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {RouterLink} from "@angular/router";
 import {Button} from "primeng/button";
-import {DatePicker} from "primeng/datepicker";
 import {InputTextModule} from "primeng/inputtext";
 import {TripDto} from "@/core/api/models";
 import {FormField, SearchTruckComponent, ValidationSummary} from "@/shared/components";
 
 export interface BasicStepData {
   name: string;
-  plannedStart: Date;
   truckId: string;
 }
 
@@ -19,7 +17,6 @@ export interface BasicStepData {
   imports: [
     ValidationSummary,
     FormField,
-    DatePicker,
     SearchTruckComponent,
     Button,
     RouterLink,
@@ -64,13 +61,9 @@ export class TripFormStepBasic {
   }
 
   protected goToNextStep(): void {
-    console.log("form valid:", this.form.valid);
-
     if (this.form.valid) {
       this.next.emit({
         name: this.form.value.name ?? this.initialData()?.name ?? "",
-        plannedStart:
-          this.form.value.plannedStart ?? this.initialData()?.plannedStart ?? new Date(),
         truckId: this.form.value.truckId ?? this.initialData()?.truckId ?? "",
       });
     }

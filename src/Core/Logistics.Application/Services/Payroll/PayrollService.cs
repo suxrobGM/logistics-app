@@ -126,9 +126,9 @@ internal class PayrollService : IPayrollService
                 .Where(t => t.MainDriverId == employee.Id ||
                             t.SecondaryDriverId == employee.Id)
                 .SelectMany(t => t.Loads.Where(l =>
-                    l.DeliveryDate.HasValue &&
-                    l.DeliveryDate.Value >= startDate &&
-                    l.DeliveryDate.Value <= endDate))
+                    l.DeliveredAt.HasValue &&
+                    l.DeliveredAt.Value >= startDate &&
+                    l.DeliveredAt.Value <= endDate))
                 .Sum(l => l.DeliveryCost.Amount);
 
             return totalGross * employee.Salary; // Salary holds the share ratio (0-1)

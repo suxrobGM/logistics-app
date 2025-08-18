@@ -41,7 +41,7 @@ internal sealed class CreateTripHandler : IAppRequestHandler<CreateTripCommand, 
         // List of all loads for the trip
         var loads = new List<Load>([.. existingLoads, .. newLoads]);
 
-        var trip = Trip.Create(req.Name, req.PlannedStart, truck, loads);
+        var trip = Trip.Create(req.Name, truck, loads);
 
         await _tenantUow.Repository<Trip>().AddAsync(trip, ct);
         await _tenantUow.SaveChangesAsync(ct);
