@@ -23,9 +23,10 @@ public class Load : Entity, ITenantEntity
     public required Money DeliveryCost { get; set; }
 
     /// <summary>
-    /// Total distance of the load in kilometers.
+    ///     Total distance of the load in kilometers.
     /// </summary>
     public double Distance { get; set; }
+
     public bool CanConfirmPickUp { get; set; }
     public bool CanConfirmDelivery { get; set; }
 
@@ -89,7 +90,7 @@ public class Load : Entity, ITenantEntity
         GeoPoint originLocation,
         Address destinationAddress,
         GeoPoint destinationLocation,
-        Customer customer,
+        Customer? customer,
         Truck assignedTruck,
         Employee assignedDispatcher)
     {
@@ -106,7 +107,7 @@ public class Load : Entity, ITenantEntity
             AssignedTruck = assignedTruck,
             AssignedDispatcherId = assignedDispatcher.Id,
             AssignedDispatcher = assignedDispatcher,
-            CustomerId = customer.Id,
+            CustomerId = customer?.Id,
             Customer = customer
         };
 
@@ -126,7 +127,7 @@ public class Load : Entity, ITenantEntity
             CustomerId = load.CustomerId!.Value,
             Customer = load.Customer!,
             LoadId = load.Id,
-            Load = load,
+            Load = load
         };
         return invoice;
     }
@@ -137,13 +138,25 @@ internal class LoadComparer : IEqualityComparer<Load>
     public bool Equals(Load? x, Load? y)
     {
         if (ReferenceEquals(x, y))
+        {
             return true;
+        }
+
         if (ReferenceEquals(x, null))
+        {
             return false;
+        }
+
         if (ReferenceEquals(y, null))
+        {
             return false;
+        }
+
         if (x.GetType() != y.GetType())
+        {
             return false;
+        }
+
         return x.Number == y.Number && x.Name == y.Name;
     }
 

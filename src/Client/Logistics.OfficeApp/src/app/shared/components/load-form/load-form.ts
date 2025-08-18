@@ -38,8 +38,8 @@ import {Converters} from "@/shared/utils";
  */
 export interface LoadFormValue {
   name: string;
-  loadType: LoadType;
-  customer: CustomerDto;
+  type: LoadType;
+  customer?: CustomerDto | null;
   originAddress: AddressDto;
   originLocation: GeoPointDto;
   destinationAddress: AddressDto;
@@ -96,7 +96,7 @@ export class LoadFormComponent implements OnInit {
 
   protected readonly form = new FormGroup({
     name: new FormControl("", {validators: [Validators.required], nonNullable: true}),
-    loadType: new FormControl(LoadType.GeneralFreight, {
+    type: new FormControl(LoadType.GeneralFreight, {
       validators: [Validators.required],
       nonNullable: true,
     }),

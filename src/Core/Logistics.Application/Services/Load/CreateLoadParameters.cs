@@ -10,7 +10,7 @@ public record CreateLoadParameters(
     (Address address, GeoPoint location) Destination,
     decimal DeliveryCost,
     double Distance,
-    Guid CustomerId,
+    Guid? CustomerId,
     Guid TruckId,
     Guid DispatcherId
 );

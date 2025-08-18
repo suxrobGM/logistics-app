@@ -1,0 +1,71 @@
+<div class="flex flex-col gap-4">
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <p-card>
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-sm opacity-70">Trip</div>
+          <div class="text-lg font-semibold">{{ tripName || "—" }}</div>
+        </div>
+        <i class="pi pi-flag text-2xl opacity-60"></i>
+      </div>
+      <div class="mt-2 text-sm">
+        Planned:
+        <span>{{ plannedStart() | date: "medium" }}</span
+        ><br />
+        Truck:
+        <span class="font-medium">{{ truckId || "—" }}</span>
+      </div>
+    </p-card>
+
+    <p-card>
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-sm opacity-70">Loads</div>
+          <div class="text-lg font-semibold">
+            {{ totalCount() }}
+            <span class="text-xs font-normal opacity-70"
+              >(+{{ newCount() }} new, -{{ pendingDetachCount() }} pending)</span
+            >
+          </div>
+        </div>
+        <i class="pi pi-box text-2xl opacity-60"></i>
+      </div>
+    </p-card>
+
+    <p-card>
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-sm opacity-70">Totals</div>
+          <div class="text-lg font-semibold">
+            {{ totalDistance() | distanceUnit: "mi" }} • {{ totalCost() | currency }}
+          </div>
+        </div>
+        <i class="pi pi-chart-line text-2xl opacity-60"></i>
+      </div>
+    </p-card>
+  </div>
+
+  @for (warning of warnings(); track $index) {
+    <p-message class="w-full" severity="warn" icon="pi pi-exclamation-triangle">
+      {{ warning }}
+    </p-message>
+  }
+
+  <app-direction-map [stops]="stopCoords()" />
+
+  <div class="flex justify-between pt-6">
+    <p-button
+      type="button"
+      label="Back"
+      severity="secondary"
+      icon="pi pi-arrow-left"
+      (click)="back.emit()"
+    />
+    <p-button
+      type="button"
+      icon="pi pi-pen-to-square"
+      [label]="mode() === 'create' ? 'Create' : 'Update'"
+      (click)="save.emit()"
+    />
+  </div>
+</div>

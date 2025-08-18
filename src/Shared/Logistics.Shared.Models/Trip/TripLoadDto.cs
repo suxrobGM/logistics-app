@@ -13,5 +13,5 @@ public record TripLoadDto
     public decimal DeliveryCost { get; set; }
     public required Address OriginAddress { get; set; }
     public required Address DestinationAddress { get; set; }
-    public required CustomerDto Customer { get; set; }
+    public CustomerDto? Customer { get; set; }
 }

@@ -12,5 +12,5 @@ export interface CreateTripLoadCommand {
   distance: number;
   type: LoadType;
   assignedDispatcherId: string;
-  customerId: string;
+  customerId?: string;
 }

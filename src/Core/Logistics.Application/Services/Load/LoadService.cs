@@ -30,12 +30,11 @@ internal sealed class LoadService : ILoadService
                 $"Could not find the truck with ID '{parameters.TruckId}'");
         }
 
-        var customer = await _tenantUow.Repository<Customer>().GetByIdAsync(parameters.CustomerId);
+        Customer? customer = null;
 
-        if (customer is not null)
+        if (parameters.CustomerId.HasValue)
         {
-            throw new InvalidOperationException(
-                $"Could not find the customer with ID '{parameters.CustomerId}'");
+            customer = await _tenantUow.Repository<Customer>().GetByIdAsync(parameters.CustomerId.Value);
         }
 
         var load = Load.Create(

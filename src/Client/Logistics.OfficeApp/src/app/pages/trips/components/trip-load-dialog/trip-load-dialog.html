@@ -25,7 +25,7 @@
     <p-accordion-panel value="0">
       <p-accordion-header>Use existing load to attach to this trip</p-accordion-header>
       <p-accordion-content>
-        <app-search-load (selectedLoadChange)="onPickExisting($event)" />
+        <app-search-load (selectedLoadChange)="pickLoad($event)" />
         <small class="text-gray-500">Only undelivered loads are listed.</small>
       </p-accordion-content>
     </p-accordion-panel>

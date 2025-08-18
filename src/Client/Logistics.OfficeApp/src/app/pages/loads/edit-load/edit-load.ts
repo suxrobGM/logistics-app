@@ -46,7 +46,7 @@ export class EditLoadComponent implements OnInit {
     const command: UpdateLoadCommand = {
       id: this.id()!,
       name: formValue.name!,
-      loadType: formValue.loadType!,
+      loadType: formValue.type!,
       originAddress: formValue.originAddress!,
       originLocation: formValue.originLocation,
       destinationAddress: formValue.destinationAddress!,
@@ -90,7 +90,7 @@ export class EditLoadComponent implements OnInit {
 
       this.initialData.set({
         name: load.name,
-        loadType: load.type,
+        type: load.type,
         customer: load.customer,
         originAddress: load.originAddress,
         originLocation: load.originLocation,

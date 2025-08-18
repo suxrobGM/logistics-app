@@ -17,5 +17,5 @@ public record CreateTripLoadCommand
     public double Distance { get; set; }
     public LoadType Type { get; set; }
     public Guid AssignedDispatcherId { get; set; }
-    public Guid CustomerId { get; set; }
+    public Guid? CustomerId { get; set; }
 }

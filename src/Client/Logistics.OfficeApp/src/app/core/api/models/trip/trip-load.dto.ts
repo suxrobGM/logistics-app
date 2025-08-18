@@ -11,5 +11,5 @@ export interface TripLoadDto {
   deliveryCost: number;
   originAddress: AddressDto;
   destinationAddress: AddressDto;
-  customer: CustomerDto;
+  customer?: CustomerDto | null;
 }
