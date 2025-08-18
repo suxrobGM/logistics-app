@@ -53,7 +53,7 @@
   @if (trip()) {
     @let tripDetails = trip()!;
 
-    <!-- Stops table -->
+    <!-- Trip Stops table -->
     <p-card>
       <ng-template #header>
         <div class="align-items-center flex gap-2 p-3 pb-0">
@@ -73,7 +73,6 @@
             <th pSortableColumn="order">#<p-sortIcon field="order" /></th>
             <th>Type</th>
             <th>Address</th>
-            <th>Planned</th>
             <th>Arrived</th>
           </tr>
         </ng-template>
@@ -82,7 +81,6 @@
             <td>{{ tripStop.order }}</td>
             <td>{{ stopLabel(tripStop.type) }}</td>
             <td>{{ tripStop.address | address }}</td>
-            <td>{{ tripStop.planned | date: "short" }}</td>
             <td>{{ tripStop.arrivedAt | date: "short" }}</td>
           </tr>
         </ng-template>
@@ -102,6 +100,7 @@
           <tr>
             <th pSortableColumn="number">Load Number <p-sortIcon field="number" /></th>
             <th pSortableColumn="name">Load Name <p-sortIcon field="name" /></th>
+            <th pSortableColumn="type">Load Type <p-sortIcon field="type" /></th>
             <th pSortableColumn="customer.name">Customer <p-sortIcon field="customer.name" /></th>
             <th pSortableColumn="originAddress.line1">
               Origin <p-sortIcon field="originAddress.line1" />
@@ -120,6 +119,7 @@
           <tr>
             <td>{{ load.number }}</td>
             <td>{{ load.name }}</td>
+            <td><app-load-type-tag [type]="load.type" /></td>
             <td>{{ load.customer.name }}</td>
             <td>{{ load.originAddress | address }}</td>
             <td>{{ load.destinationAddress | address }}</td>

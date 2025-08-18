@@ -18,8 +18,8 @@ export class TripStatusTag {
 
   protected readonly label = computed(() => {
     switch (this.normalized()) {
-      case TripStatus.Planned:
-        return "Planned";
+      case TripStatus.Draft:
+        return "Draft";
       case TripStatus.Dispatched:
         return "Dispatched";
       case TripStatus.InTransit:
@@ -43,7 +43,7 @@ export class TripStatusTag {
         return "warning";
       case TripStatus.Dispatched:
         return "info";
-      case TripStatus.Planned:
+      case TripStatus.Draft:
         return "info";
       default:
         return "info";
@@ -55,8 +55,8 @@ export class TripStatusTag {
       return undefined;
     }
     switch (this.normalized()) {
-      case TripStatus.Planned:
-        return "pi pi-calendar";
+      case TripStatus.Draft:
+        return "pi pi-pencil";
       case TripStatus.Dispatched:
         return "pi pi-send";
       case TripStatus.InTransit:

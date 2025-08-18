@@ -18,7 +18,6 @@ public class TripStop : Entity, ITenantEntity
     public required Address Address { get; set; }
     public required GeoPoint Location { get; set; }
 
-    public DateTime? Planned { get; set; }
     public DateTime? ArrivedAt { get; set; }
 
     public Guid LoadId { get; set; }

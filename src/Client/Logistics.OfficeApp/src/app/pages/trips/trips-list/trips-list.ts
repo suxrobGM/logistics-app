@@ -15,6 +15,7 @@ import {ToastService} from "@/core/services";
 import {
   BaseTableComponent,
   LoadStatusTag,
+  LoadTypeTag,
   TableQueryParams,
   TripStatusTag,
 } from "@/shared/components";
@@ -38,9 +39,12 @@ import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
     LoadStatusTag,
     TooltipModule,
     TripStatusTag,
+    LoadTypeTag,
   ],
 })
 export class TripsList extends BaseTableComponent<TripDto> {
+  protected readonly tripStatus = TripStatus;
+
   private readonly apiService = inject(ApiService);
   private readonly toastService = inject(ToastService);
 
@@ -61,26 +65,9 @@ export class TripsList extends BaseTableComponent<TripDto> {
       );
   }
 
-  protected tripStatusColor(status?: TripStatus | null): string | null {
-    switch (status) {
-      case TripStatus.Dispatched:
-        return "info";
-      case TripStatus.Completed:
-        return "success";
-      case TripStatus.InTransit:
-        return "info";
-      case TripStatus.Planned:
-        return "warning";
-      case TripStatus.Cancelled:
-        return "danger";
-      default:
-        return null;
-    }
-  }
-
   protected askRemoveTrip(trip: TripDto): void {
-    if (trip.status !== TripStatus.Planned) {
-      this.toastService.showError("Only planned trips can be deleted");
+    if (trip.status !== TripStatus.Draft) {
+      this.toastService.showError("Only draft trips can be deleted");
       return;
     }
 

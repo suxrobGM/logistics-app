@@ -65,14 +65,6 @@
           Created Date
           <p-sortIcon field="CreatedAt" />
         </th>
-        <th pSortableColumn="DispatchedAt">
-          Dispatched Date
-          <p-sortIcon field="DispatchedAt" />
-        </th>
-        <th pSortableColumn="CompletedAt">
-          Completed Date
-          <p-sortIcon field="CompletedAt" />
-        </th>
         <th pSortableColumn="Status">
           Status
           <p-sortIcon field="Status" />
@@ -98,9 +90,19 @@
         <td>{{ trip.destinationAddress | address }}</td>
         <td class="text-center">{{ trip.totalDistance | distanceUnit: "mi" }}</td>
         <td>{{ trip.createdAt | date: "mediumDate" }}</td>
-        <td>{{ trip.dispatchedAt | date: "mediumDate" }}</td>
-        <td>{{ trip.completedAt | date: "mediumDate" }}</td>
-        <td class="text-center"><app-trip-status-tag [status]="trip.status" /></td>
+        <td>
+          <app-trip-status-tag [status]="trip.status" />
+          <div class="italic">
+            @switch (trip.status) {
+              @case (tripStatus.Dispatched) {
+                {{ trip.dispatchedAt | date: "mediumDate" }}
+              }
+              @case (tripStatus.Completed) {
+                {{ trip.completedAt | date: "mediumDate" }}
+              }
+            }
+          </div>
+        </td>
 
         <td>
           <div class="flex gap-2">
@@ -138,6 +140,7 @@
                 <tr>
                   <th pSortableColumn="number">Load Number <p-sortIcon field="number" /></th>
                   <th pSortableColumn="name">Load Name <p-sortIcon field="name" /></th>
+                  <th pSortableColumn="type">Load Type <p-sortIcon field="type" /></th>
                   <th pSortableColumn="customer.name">
                     Customer <p-sortIcon field="customer.name" />
                   </th>
@@ -158,6 +161,7 @@
                 <tr>
                   <td>{{ load.number }}</td>
                   <td>{{ load.name }}</td>
+                  <td><app-load-type-tag [type]="load.type" /></td>
                   <td>{{ load.customer.name }}</td>
                   <td>{{ load.originAddress | address }}</td>
                   <td>{{ load.destinationAddress | address }}</td>

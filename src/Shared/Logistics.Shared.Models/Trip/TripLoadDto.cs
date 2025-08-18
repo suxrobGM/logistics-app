@@ -9,6 +9,7 @@ public record TripLoadDto
     public long Number { get; set; }
     public required string Name { get; set; }
     public LoadStatus Status { get; set; }
+    public LoadType Type { get; set; }
     public double Distance { get; set; }
     public decimal DeliveryCost { get; set; }
     public required Address OriginAddress { get; set; }
