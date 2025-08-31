@@ -12,7 +12,7 @@
         <p-skeleton class="h-96!" />
       } @else {
         @let tripDetails = trip()!;
-        <app-direction-map [stops]="tripStopCoords()" [height]="'500px'" />
+        <app-direction-map [waypoints]="trip()!.stops" [height]="'500px'" />
 
         <!-- Summary card -->
         <div>

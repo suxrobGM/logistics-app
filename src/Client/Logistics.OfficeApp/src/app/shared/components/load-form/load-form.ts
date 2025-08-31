@@ -24,13 +24,12 @@ import {
   AddressAutocomplete,
   DirectionMap,
   FormField,
-  RouteChangedEvent,
   SearchCustomerComponent,
   SearchTruckComponent,
   SelectedAddressEvent,
   ValidationSummary,
 } from "@/shared/components";
-import {GeoPoint} from "@/shared/types/mapbox";
+import {RouteChangeEvent, Waypoint} from "@/shared/components/direction-map/types";
 import {Converters} from "@/shared/utils";
 
 /**
@@ -91,8 +90,14 @@ export class LoadFormComponent implements OnInit {
   public readonly save = output<LoadFormValue>();
   public readonly remove = output<void>();
 
-  protected readonly originCoords = signal<GeoPoint>([0, 0]);
-  protected readonly destinationCoords = signal<GeoPoint>([0, 0]);
+  protected readonly originCoords = signal<Waypoint>({
+    id: "origin",
+    location: {longitude: 0, latitude: 0},
+  });
+  protected readonly destinationCoords = signal<Waypoint>({
+    id: "destination",
+    location: {longitude: 0, latitude: 0},
+  });
 
   protected readonly form = new FormGroup({
     name: new FormControl("", {validators: [Validators.required], nonNullable: true}),
@@ -149,16 +154,28 @@ export class LoadFormComponent implements OnInit {
   }
 
   protected updateOrigin(e: SelectedAddressEvent): void {
-    this.originCoords.set(e.center);
+    this.originCoords.set({
+      id: "origin",
+      location: {
+        longitude: e.center[0],
+        latitude: e.center[1],
+      },
+    });
     this.form.patchValue({originLocation: {longitude: e.center[0], latitude: e.center[1]}});
   }
 
   protected updateDestination(e: SelectedAddressEvent): void {
-    this.destinationCoords.set(e.center);
+    this.destinationCoords.set({
+      id: "destination",
+      location: {
+        longitude: e.center[0],
+        latitude: e.center[1],
+      },
+    });
     this.form.patchValue({destinationLocation: {longitude: e.center[0], latitude: e.center[1]}});
   }
 
-  protected updateDistance(e: RouteChangedEvent): void {
+  protected updateDistance(e: RouteChangeEvent): void {
     const miles = Converters.metersTo(e.distance, "mi");
     this.form.patchValue({distance: miles});
   }
@@ -183,13 +200,22 @@ export class LoadFormComponent implements OnInit {
     });
 
     if (src.originLocation) {
-      this.originCoords.set([src.originLocation.longitude, src.originLocation.latitude]);
+      this.originCoords.set({
+        id: "origin",
+        location: {
+          longitude: src.originLocation.longitude,
+          latitude: src.originLocation.latitude,
+        },
+      });
     }
     if (src.destinationLocation) {
-      this.destinationCoords.set([
-        src.destinationLocation.longitude,
-        src.destinationLocation.latitude,
-      ]);
+      this.destinationCoords.set({
+        id: "destination",
+        location: {
+          longitude: src.destinationLocation.longitude,
+          latitude: src.destinationLocation.latitude,
+        },
+      });
     }
   }
 

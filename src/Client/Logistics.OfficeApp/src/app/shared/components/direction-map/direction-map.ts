@@ -1,26 +1,31 @@
 import {HttpClient} from "@angular/common/http";
 import {Component, effect, inject, input, model, output, signal} from "@angular/core";
-import {GeoJSONSourceSpecification, LngLatLike} from "mapbox-gl";
-import {ImageComponent, LayerComponent, MapComponent} from "ngx-mapbox-gl";
+import type {LineString} from "geojson";
+import type {LngLatLike, MapMouseEvent} from "mapbox-gl";
+import {GeoJSONSourceComponent, LayerComponent, MapComponent} from "ngx-mapbox-gl";
 import {firstValueFrom} from "rxjs";
+import {GeoPointDto} from "@/core/api/models";
 import {environment} from "@/env";
-import {GeoPoint, MapboxDirectionsResponse} from "@/shared/types/mapbox";
-
-interface Segment {
-  layerId: string;
-  source: GeoJSONSourceSpecification;
-}
+import {MapboxDirectionsResponse} from "@/shared/types/mapbox";
+import type {
+  RouteChangeEvent,
+  RouteSegmentClickEvent,
+  SegmentFeature,
+  SegmentLayer,
+  Waypoint,
+  WaypointClickEvent,
+  WaypointFeature,
+} from "./types";
 
 @Component({
   selector: "app-direction-map",
   templateUrl: "./direction-map.html",
-  imports: [MapComponent, ImageComponent, LayerComponent],
+  imports: [MapComponent, LayerComponent, GeoJSONSourceComponent],
 })
 export class DirectionMap {
   protected readonly accessToken = environment.mapboxToken;
-  private readonly defaultCenter: GeoPoint = [-95, 35];
+  private readonly defaultCenter: LngLatLike = {lng: -95, lat: 35};
   private readonly defaultZoom = 3;
-  private renderId = 0;
   protected readonly segmentColors = [
     "#28a745", // green
     "#0074D9", // blue
@@ -31,81 +36,120 @@ export class DirectionMap {
 
   private readonly http = inject(HttpClient);
 
-  //#region States
-
-  protected readonly segments = signal<Segment[]>([]);
-  protected readonly stopsSource = signal<GeoJSONSourceSpecification | null>(null);
+  // States
+  protected readonly segments = signal<SegmentLayer[]>([]);
+  protected readonly waypointsData = signal<WaypointFeature | null>(null);
+  protected readonly waypointHighlight = signal<WaypointFeature | null>(null); // prettier-ignore
+  protected readonly segmentHighlight = signal<SegmentFeature | null>(null);
   protected readonly bounds = signal<[LngLatLike, LngLatLike] | null>(null);
-  protected readonly imageLoaded = signal(false);
 
-  //#endregion
+  /** The center coordinates of the map. Default is [-95, 35]. */
+  public readonly center = model<LngLatLike>(this.defaultCenter);
 
-  //#region Inputs
-
-  public readonly center = model<GeoPoint>(this.defaultCenter);
+  /** The zoom level of the map. Default is 3. */
   public readonly zoom = model<number>(this.defaultZoom);
-  public readonly stops = input<GeoPoint[]>([]);
+
+  /** Array of stop coordinates in order. */
+  public readonly waypoints = input<Waypoint[]>([]);
+
+  /** Selected waypoint for highlighting. */
+  public readonly selectedWaypoint = input<Waypoint | null>(null);
+
+  /** Color used for highlights. */
+  public readonly highlightColor = input<string>("#111");
+
+  /** The width of the map container. Default is 100%. */
   public readonly width = input<string>("100%");
+
+  /** The height of the map container. Default is 100%. */
   public readonly height = input<string>("100%");
 
-  //#endregion
+  /** Emitted when the route changes. */
+  public readonly routeChange = output<RouteChangeEvent>();
 
-  //#region Outputs
-
-  public readonly routeChanged = output<RouteChangedEvent>();
-
-  //#endregion
+  public readonly routeSegmentClick = output<RouteSegmentClickEvent>();
+  public readonly waypointClick = output<WaypointClickEvent>();
 
   constructor() {
     effect(() => this.draw());
+
+    // respond to selectedWaypoint changes
+    effect(() => {
+      const wp = this.selectedWaypoint();
+      if (!wp) {
+        return this.clearHighlight();
+      }
+      this.selectSegmentByWaypoint(wp.id);
+    });
   }
 
+  protected setCursor(cursor: string, evt: MapMouseEvent): void {
+    evt.target.getCanvas().style.cursor = cursor;
+  }
+
+  protected onSegmentClick(_evt: MapMouseEvent, seg: SegmentLayer): void {
+    this.applySegmentHighlight(seg);
+
+    this.routeSegmentClick.emit({
+      fromWaypoint: seg.fromWaypoint,
+      toWaypoint: seg.toWaypoint,
+    });
+  }
+
+  protected onWaypointClick(evt: MapMouseEvent): void {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const waypointId = (evt.features?.[0] as any)?.properties?.id as string | undefined;
+    const waypoint = this.waypoints().find((w) => w.id === waypointId);
+
+    if (!waypoint) {
+      return;
+    }
+    this.waypointClick.emit({waypoint});
+    this.selectSegmentByWaypoint(waypoint.id);
+  }
+
+  /**
+   * Draws the direction map.
+   */
   private async draw(): Promise<void> {
-    const pts = this.stops();
+    const pts = this.waypoints();
 
     if (!pts || pts.length < 2 || !this.coordsAreValid(pts)) {
       return this.clear();
     }
 
-    // build stop FeatureCollection with labels
-    this.stopsSource.set({
-      type: "geojson",
-      data: {
-        type: "FeatureCollection",
-        features: pts.map((p, i) => ({
-          type: "Feature",
-          geometry: {type: "Point", coordinates: p},
-          properties: {label: (i + 1).toString()},
-        })),
-      },
-    });
+    // build waypoint FeatureCollection with labels
+    this.waypointsData.set(this.toWaypointFC(pts));
 
     // build one LineString per leg
-    const segSources: Segment[] = [];
-    const cycle = ++this.renderId;
-
+    const segs: SegmentLayer[] = [];
     for (let i = 0; i < pts.length - 1; i++) {
-      const segment = await this.buildDirectionsSegment(pts[i], pts[i + 1]);
+      const from = pts[i];
+      const to = pts[i + 1];
+      const feature = await this.buildDirectionsSegment(from.location, to.location);
 
-      segSources.push({
-        layerId: `seg-${cycle}-${i}`,
-        source: segment,
+      segs.push({
+        layerId: `seg-${from.id}-${to.id}`,
+        data: feature,
+        fromWaypoint: from,
+        toWaypoint: to,
       });
     }
-    this.segments.set(segSources);
+    this.segments.set(segs);
 
-    // fit bounds
-    const minX = Math.min(...pts.map((p) => p[0]));
-    const minY = Math.min(...pts.map((p) => p[1]));
-    const maxX = Math.max(...pts.map((p) => p[0]));
-    const maxY = Math.max(...pts.map((p) => p[1]));
-    this.bounds.set([
-      [minX, minY],
-      [maxX, maxY],
-    ]);
-    this.center.set([(minX + maxX) / 2, (minY + maxY) / 2]);
+    // Fit bounds & center
+    this.fitAndCenter(pts);
 
-    this.routeChanged.emit({origin: pts[0], destination: pts.at(-1)!, distance: 0});
+    // Emit route distance (sum of legs)
+    const distance = segs.reduce((sum, s) => sum + (s.data.properties?.distance ?? 0), 0);
+    this.routeChange.emit({
+      origin: pts[0].location,
+      destination: pts.at(-1)!.location,
+      distance,
+    });
+
+    // Clear any previous selection
+    this.clearHighlight();
   }
 
   /**
@@ -115,27 +159,112 @@ export class DirectionMap {
    * @param index Index of the segment in the route.
    * @returns A GeoJSONSourceSpecification for the segment.
    */
-  private async buildDirectionsSegment(
-    a: GeoPoint,
-    b: GeoPoint
-  ): Promise<GeoJSONSourceSpecification> {
-    const coords = `${a[0]},${a[1]};${b[0]},${b[1]}`;
+  private async buildDirectionsSegment(a: GeoPointDto, b: GeoPointDto): Promise<SegmentFeature> {
+    const coords = `${a.longitude},${a.latitude};${b.longitude},${b.latitude}`;
 
     const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${coords}?geometries=geojson&access_token=${this.accessToken}`;
-    const response = await firstValueFrom(this.http.get<MapboxDirectionsResponse>(url));
+    const res = await firstValueFrom(this.http.get<MapboxDirectionsResponse>(url));
 
     return {
-      type: "geojson",
-      data: {type: "Feature", geometry: response.routes[0].geometry, properties: {}},
+      type: "Feature",
+      geometry: res.routes?.[0]?.geometry as LineString,
+      properties: {distance: res.routes?.[0]?.distance},
     };
   }
 
+  /**
+   * Fits the map to the given waypoints.
+   * @param waypoints Array of waypoints.
+   */
+  private fitAndCenter(waypoints: Waypoint[]): void {
+    // Calculate bounds
+    const xs = waypoints.map((p) => p.location.longitude);
+    const ys = waypoints.map((p) => p.location.latitude);
+    const minX = Math.min(...xs);
+    const minY = Math.min(...ys);
+    const maxX = Math.max(...xs);
+    const maxY = Math.max(...ys);
+
+    this.bounds.set([
+      [minX, minY],
+      [maxX, maxY],
+    ]);
+
+    this.center.set({
+      lng: (minX + maxX) / 2,
+      lat: (minY + maxY) / 2,
+    });
+  }
+
+  /** Prefer segment that STARTS at id; if none, take the one that ENDS at id (for last waypoint). */
+  private selectSegmentByWaypoint(waypointId: string): void {
+    const segs = this.segments();
+    const byFrom = segs.find((s) => s.fromWaypoint.id === waypointId);
+    const seg = byFrom ?? segs.find((s) => s.toWaypoint.id === waypointId);
+    if (!seg) {
+      return;
+    }
+    this.applySegmentHighlight(seg);
+  }
+
+  private applySegmentHighlight(seg: SegmentLayer): void {
+    // highlight segment
+    this.segmentHighlight.set(seg.data);
+
+    // highlight endpoints
+    const all = this.waypointsData()?.features ?? [];
+    const selected = all.filter(
+      (f) => f.properties?.id === seg.fromWaypoint.id || f.properties?.id === seg.toWaypoint.id
+    );
+
+    // const selectedWaypoints = selected.map((f) => ({
+    //   id: f.properties?.id,
+    //   location: {
+    //     longitude: f.geometry.coordinates[0],
+    //     latitude: f.geometry.coordinates[1],
+    //   },
+    // }));
+
+    // this.fitAndCenter(selectedWaypoints);
+
+    this.waypointHighlight.set({
+      type: "FeatureCollection",
+      features: selected,
+    });
+  }
+
+  private clearHighlight(): void {
+    this.segmentHighlight.set(null);
+    this.waypointHighlight.set(null);
+  }
+
+  /**
+   * Clears the map and resets all state.
+   */
   private clear(): void {
     this.segments.set([]);
-    this.stopsSource.set(null);
+    this.waypointsData.set(null);
+    this.waypointHighlight.set(null);
+    this.segmentHighlight.set(null);
     this.bounds.set(null);
     this.center.set(this.defaultCenter);
     this.zoom.set(this.defaultZoom);
+  }
+
+  /**
+   * Converts an array of waypoints to a FeatureCollection.
+   * @param pts Array of waypoints.
+   * @returns A FeatureCollection representing the waypoints.
+   */
+  private toWaypointFC(pts: Waypoint[]): WaypointFeature {
+    return {
+      type: "FeatureCollection",
+      features: pts.map((p, i) => ({
+        type: "Feature",
+        geometry: {type: "Point", coordinates: [p.location.longitude, p.location.latitude]},
+        properties: {id: p.id, label: String(i + 1)},
+      })),
+    };
   }
 
   /**
@@ -145,29 +274,13 @@ export class DirectionMap {
    * @param point The point to validate.
    * @returns True if the point is valid, false otherwise.
    */
-  private isValidPoint(point: GeoPoint): boolean {
-    return (
-      Array.isArray(point) &&
-      point.length === 2 &&
-      typeof point[0] === "number" &&
-      typeof point[1] === "number" &&
-      point[0] >= -180 && // longitude
-      point[0] <= 180 &&
-      point[0] !== 0 &&
-      point[1] >= -90 && // latitude
-      point[1] <= 90 &&
-      point[1] !== 0
-    );
+  private isValidPoint(point: Waypoint): boolean {
+    const {longitude, latitude} = point.location;
+    return longitude >= -180 && longitude <= 180 && latitude >= -90 && latitude <= 90;
   }
 
-  /** Ensures every stop is within valid longitude/latitude bounds. */
-  private coordsAreValid(pts: GeoPoint[]): boolean {
+  /** Ensures every waypoint is within valid longitude/latitude bounds. */
+  private coordsAreValid(pts: Waypoint[]): boolean {
     return pts.every((pt) => this.isValidPoint(pt));
   }
-}
-
-export interface RouteChangedEvent {
-  origin: number[];
-  destination: number[];
-  distance: number;
 }

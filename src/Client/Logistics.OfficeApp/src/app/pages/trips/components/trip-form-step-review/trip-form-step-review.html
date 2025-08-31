@@ -57,9 +57,11 @@
     <p-table
       [value]="stops()"
       [dataKey]="'id'"
-      sortField="order"
-      sortMode="single"
+      [sortField]="'order'"
+      [sortMode]="'single'"
       [paginator]="false"
+      [selectionMode]="'single'"
+      [(selection)]="selectedStop"
     >
       <ng-template #header>
         <tr>
@@ -70,7 +72,7 @@
         </tr>
       </ng-template>
       <ng-template #body let-tripStop>
-        <tr>
+        <tr [pSelectableRow]="tripStop">
           <td>{{ tripStop.order }}</td>
           <td>{{ stopLabel(tripStop.type) }}</td>
           <td>{{ tripStop.address | address }}</td>
@@ -80,7 +82,14 @@
     </p-table>
   </p-card>
 
-  <app-direction-map [stops]="stopCoords()" height="700px" [zoom]="4" />
+  <app-direction-map
+    [waypoints]="stops()"
+    height="700px"
+    [zoom]="4"
+    [selectedWaypoint]="selectedStop()"
+    (routeSegmentClick)="onRouteSegmentClick($event)"
+    (waypointClick)="onWaypointClick($event)"
+  />
 
   <div class="flex justify-between pt-6">
     <p-button
