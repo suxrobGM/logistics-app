@@ -15,8 +15,8 @@ import {EmployeeDto, PagedResult, SalaryType, salaryTypeOptions} from "@/core/ap
 import {BaseTableComponent, TableQueryParams} from "@/shared/components";
 
 @Component({
-  selector: "app-list-employees",
-  templateUrl: "./list-employees.html",
+  selector: "app-employees-list",
+  templateUrl: "./employees-list.html",
   imports: [
     CommonModule,
     ButtonModule,
@@ -33,7 +33,7 @@ import {BaseTableComponent, TableQueryParams} from "@/shared/components";
     InputIconModule,
   ],
 })
-export class ListEmployeeComponent extends BaseTableComponent<EmployeeDto> {
+export class EmployeeListComponent extends BaseTableComponent<EmployeeDto> {
   private readonly apiService = inject(ApiService);
 
   protected override query(params: TableQueryParams): Observable<PagedResult<EmployeeDto>> {

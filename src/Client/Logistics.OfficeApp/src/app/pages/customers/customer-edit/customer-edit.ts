@@ -9,11 +9,11 @@ import {ToastService} from "@/core/services";
 import {CustomerForm, CustomerFormValue} from "@/shared/components";
 
 @Component({
-  selector: "app-edit-customer",
-  templateUrl: "./edit-customer.html",
+  selector: "app-customer-edit",
+  templateUrl: "./customer-edit.html",
   imports: [CommonModule, CardModule, ButtonModule, RouterModule, CustomerForm],
 })
-export class EditCustomerComponent implements OnInit {
+export class CustomerEditComponent implements OnInit {
   private readonly apiService = inject(ApiService);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);

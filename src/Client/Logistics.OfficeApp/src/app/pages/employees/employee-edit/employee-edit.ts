@@ -18,8 +18,8 @@ import {NumberUtils} from "@/shared/utils";
 import {ChangeRoleDialogComponent} from "../components";
 
 @Component({
-  selector: "app-edit-employee",
-  templateUrl: "./edit-employee.html",
+  selector: "app-employee-edit",
+  templateUrl: "./employee-edit.html",
   imports: [
     ToastModule,
     ConfirmDialogModule,
@@ -34,7 +34,7 @@ import {ChangeRoleDialogComponent} from "../components";
     SelectModule,
   ],
 })
-export class EditEmployeeComponent implements OnInit {
+export class EmployeeEditComponent implements OnInit {
   protected readonly form: FormGroup<UpdateEmployeeForm>;
   protected readonly salaryTypes = salaryTypeOptions;
 

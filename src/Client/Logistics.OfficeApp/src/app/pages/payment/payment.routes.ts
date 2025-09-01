@@ -1,12 +1,12 @@
 import {Routes} from "@angular/router";
 import {authGuard} from "@/core/auth";
 import {Permissions} from "@/shared/models";
-import {ListPaymentsComponent} from "./list-payments/list-payments";
+import {PaymentsListComponent} from "./payments-list/payments-list";
 
 export const paymentRoutes: Routes = [
   {
     path: "",
-    component: ListPaymentsComponent,
+    component: PaymentsListComponent,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Payments",

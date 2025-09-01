@@ -23,8 +23,8 @@ import {ToastService} from "@/core/services";
 import {FormField} from "@/shared/components";
 
 @Component({
-  selector: "app-edit-truck",
-  templateUrl: "./edit-truck.html",
+  selector: "app-truck-edit",
+  templateUrl: "./truck-edit.html",
   imports: [
     ToastModule,
     ConfirmDialogModule,
@@ -40,7 +40,7 @@ import {FormField} from "@/shared/components";
     SelectModule,
   ],
 })
-export class EditTruckComponent implements OnInit {
+export class TruckEditComponent implements OnInit {
   protected readonly truckTypes = truckTypeOptions;
   protected readonly truckStatuses = truckStatusOptions;
 

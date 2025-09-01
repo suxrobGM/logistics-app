@@ -9,11 +9,11 @@ import {ToastService} from "@/core/services";
 import {CustomerForm, CustomerFormValue} from "@/shared/components";
 
 @Component({
-  selector: "app-add-customer",
-  templateUrl: "./add-customer.html",
+  selector: "app-customer-add",
+  templateUrl: "./customer-add.html",
   imports: [CommonModule, CardModule, ButtonModule, RouterModule, CustomerForm],
 })
-export class AddCustomerComponent {
+export class CustomerAddComponent {
   private readonly apiService = inject(ApiService);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);

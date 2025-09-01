@@ -1,21 +1,21 @@
 import {CommonModule} from "@angular/common";
 import {Component, inject, signal} from "@angular/core";
 import {RouterLink} from "@angular/router";
-import {SharedModule} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {IconFieldModule} from "primeng/iconfield";
 import {InputIconModule} from "primeng/inputicon";
 import {InputTextModule} from "primeng/inputtext";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {TooltipModule} from "primeng/tooltip";
 import {ApiService} from "@/core/api";
-import {AddressDto, TruckDto} from "@/core/api/models";
-import {AddressPipe} from "@/shared/pipes";
+import {CustomerDto} from "@/core/api/models";
+import {ToastService} from "@/core/services";
 
 @Component({
-  selector: "app-list-trucks",
-  templateUrl: "./list-trucks.html",
+  selector: "app-customers-list",
+  templateUrl: "./customers-list.html",
   imports: [
     CommonModule,
     ButtonModule,
@@ -23,29 +23,29 @@ import {AddressPipe} from "@/shared/pipes";
     RouterLink,
     CardModule,
     TableModule,
-    SharedModule,
     InputTextModule,
-    AddressPipe,
+    ConfirmDialogModule,
+    TooltipModule,
     IconFieldModule,
     InputIconModule,
   ],
-  providers: [AddressPipe],
 })
-export class ListTruckComponent {
+export class CustomersListComponent {
   private readonly apiService = inject(ApiService);
-  private readonly addressPipe = inject(AddressPipe);
+  private readonly toastService = inject(ToastService);
 
-  protected readonly trucks = signal<TruckDto[]>([]);
-  protected readonly isLoading = signal(false);
-  protected readonly totalRecords = signal(0);
+  protected readonly customers = signal<CustomerDto[]>([]);
+  protected readonly isLoading = signal<boolean>(false);
+  protected readonly totalRecords = signal<number>(0);
+  protected readonly first = signal<number>(0);
 
   protected search(event: Event): void {
     this.isLoading.set(true);
     const searchValue = (event.target as HTMLInputElement).value;
 
-    this.apiService.truckApi.getTrucks({search: searchValue}).subscribe((result) => {
+    this.apiService.customerApi.getCustomers({search: searchValue}).subscribe((result) => {
       if (result.success && result.data) {
-        this.trucks.set(result.data);
+        this.customers.set(result.data);
         this.totalRecords.set(result.totalItems);
       }
 
@@ -60,11 +60,11 @@ export class ListTruckComponent {
     const page = first / rows + 1;
     const sortField = this.apiService.formatSortField(event.sortField as string, event.sortOrder);
 
-    this.apiService.truckApi
-      .getTrucks({orderBy: sortField, page: page, pageSize: rows})
+    this.apiService.customerApi
+      .getCustomers({orderBy: sortField, page: page, pageSize: rows})
       .subscribe((result) => {
         if (result.success && result.data) {
-          this.trucks.set(result.data);
+          this.customers.set(result.data);
           this.totalRecords.set(result.totalItems);
         }
 
@@ -72,7 +72,23 @@ export class ListTruckComponent {
       });
   }
 
-  protected formatAddress(address: AddressDto): string {
-    return this.addressPipe.transform(address) || "No address provided";
+  protected confirmToDelete(id: string): void {
+    this.toastService.confirm({
+      message: "Are you sure that you want to delete this customer?",
+      accept: () => this.deleteCustomer(id),
+    });
+  }
+
+  protected deleteCustomer(id: string): void {
+    this.isLoading.set(true);
+
+    this.apiService.customerApi.deleteCustomer(id).subscribe((result) => {
+      if (result.success) {
+        this.toastService.showSuccess("The customer has been deleted successfully");
+        this.customers.update((customers) => customers.filter((c) => c.id !== id));
+      }
+
+      this.isLoading.set(false);
+    });
   }
 }

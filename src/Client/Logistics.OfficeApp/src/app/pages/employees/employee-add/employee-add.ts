@@ -21,8 +21,8 @@ import {ValidationSummary} from "@/shared/components";
 import {UserService} from "../services";
 
 @Component({
-  selector: "app-add-employee",
-  templateUrl: "./add-employee.html",
+  selector: "app-employee-add",
+  templateUrl: "./employee-add.html",
   imports: [
     ToastModule,
     ConfirmDialogModule,
@@ -37,7 +37,7 @@ import {UserService} from "../services";
     ValidationSummary,
   ],
 })
-export class AddEmployeeComponent {
+export class EmployeeAddComponent {
   protected readonly form: FormGroup<CreateEmployeeForm>;
   protected readonly salaryTypes = salaryTypeOptions;
 

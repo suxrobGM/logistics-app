@@ -12,8 +12,8 @@ import {AddressPipe} from "@/shared/pipes";
 import {PredefinedDateRanges} from "@/shared/utils";
 
 @Component({
-  selector: "app-list-payments",
-  templateUrl: "./list-payments.html",
+  selector: "app-payments-list",
+  templateUrl: "./payments-list.html",
   imports: [
     CommonModule,
     CardModule,
@@ -25,7 +25,7 @@ import {PredefinedDateRanges} from "@/shared/utils";
     AddressPipe,
   ],
 })
-export class ListPaymentsComponent {
+export class PaymentsListComponent {
   private readonly apiService = inject(ApiService);
 
   protected readonly payments = signal<PaymentDto[]>([]);
