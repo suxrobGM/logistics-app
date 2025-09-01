@@ -1,14 +1,14 @@
 import {Routes} from "@angular/router";
 import {authGuard} from "@/core/auth";
 import {Permissions} from "@/shared/models";
-import {AddLoadComponent} from "./add-load/add-load";
-import {EditLoadComponent} from "./edit-load/edit-load";
-import {ListLoadComponent} from "./list-loads/list-loads";
+import {LoadAddComponent} from "./load-add/load-add";
+import {LoadEditComponent} from "./load-edit/load-edit";
+import {LoadsListComponent} from "./loads-list/loads-list";
 
 export const loadRoutes: Routes = [
   {
     path: "",
-    component: ListLoadComponent,
+    component: LoadsListComponent,
     canActivate: [authGuard],
     data: {
       breadcrumb: "",
@@ -17,7 +17,7 @@ export const loadRoutes: Routes = [
   },
   {
     path: "add",
-    component: AddLoadComponent,
+    component: LoadAddComponent,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Add",
@@ -26,7 +26,7 @@ export const loadRoutes: Routes = [
   },
   {
     path: ":id/edit",
-    component: EditLoadComponent,
+    component: LoadEditComponent,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Edit",

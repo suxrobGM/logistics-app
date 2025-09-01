@@ -142,9 +142,17 @@ export class LoadFormComponent implements OnInit {
 
   constructor() {
     effect(() => {
-      if (this.initial()) {
-        this.patch(this.initial()!);
+      const initialData = this.initial();
+      if (!initialData) {
+        return;
       }
+
+      // Prevent overwriting user changes if the form is dirty in edit-mode
+      if (this.mode() === "edit" && this.form.dirty) {
+        return;
+      }
+
+      this.patch(initialData);
     });
   }
 

@@ -47,8 +47,8 @@ public class Load : AuditableEntity, ITenantEntity
     public Guid? TripStopId { get; set; }
     public virtual TripStop? TripStop { get; set; }
 
-    public Guid? CustomerId { get; set; }
-    public virtual Customer? Customer { get; set; }
+    public Guid CustomerId { get; set; }
+    public virtual required Customer Customer { get; set; }
 
     public Guid? AssignedTruckId { get; set; }
     public virtual Truck? AssignedTruck { get; set; }
@@ -161,7 +161,7 @@ public class Load : AuditableEntity, ITenantEntity
         GeoPoint originLocation,
         Address destinationAddress,
         GeoPoint destinationLocation,
-        Customer? customer,
+        Customer customer,
         Truck assignedTruck,
         Employee assignedDispatcher)
     {
@@ -178,7 +178,7 @@ public class Load : AuditableEntity, ITenantEntity
             AssignedTruck = assignedTruck,
             AssignedDispatcherId = assignedDispatcher.Id,
             AssignedDispatcher = assignedDispatcher,
-            CustomerId = customer?.Id,
+            CustomerId = customer.Id,
             Customer = customer
         };
 
@@ -195,8 +195,8 @@ public class Load : AuditableEntity, ITenantEntity
         {
             Total = load.DeliveryCost,
             Status = InvoiceStatus.Issued,
-            CustomerId = load.CustomerId!.Value,
-            Customer = load.Customer!,
+            CustomerId = load.CustomerId,
+            Customer = load.Customer,
             LoadId = load.Id,
             Load = load
         };

@@ -1,13 +1,14 @@
 import {CommonModule} from "@angular/common";
 import {Component, inject, signal} from "@angular/core";
 import {FormsModule} from "@angular/forms";
-import {RouterLink} from "@angular/router";
-import {SharedModule} from "primeng/api";
+import {Router, RouterLink} from "@angular/router";
+import {MenuItem, SharedModule} from "primeng/api";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {IconFieldModule} from "primeng/iconfield";
 import {InputIconModule} from "primeng/inputicon";
 import {InputTextModule} from "primeng/inputtext";
+import {MenuModule} from "primeng/menu";
 import {TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {TooltipModule} from "primeng/tooltip";
@@ -23,9 +24,8 @@ import {
 import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
 
 @Component({
-  selector: "app-list-loads",
-  templateUrl: "./list-loads.html",
-  standalone: true,
+  selector: "app-loads-list",
+  templateUrl: "./loads-list.html",
   imports: [
     CommonModule,
     ButtonModule,
@@ -43,13 +43,38 @@ import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
     FormsModule,
     LoadStatusTag,
     LoadTypeTag,
+    MenuModule,
   ],
 })
-export class ListLoadComponent extends BaseTableComponent<LoadDto> {
+export class LoadsListComponent extends BaseTableComponent<LoadDto> {
+  private readonly router = inject(Router);
   private readonly apiService = inject(ApiService);
 
+  protected readonly actionMenuItems: MenuItem[];
   protected readonly loadStatus = LoadStatus;
+  protected readonly selectedRow = signal<LoadDto | null>(null);
   protected readonly groupByTrip = signal(false);
+
+  constructor() {
+    super();
+    this.actionMenuItems = [
+      {
+        label: "Edit load details",
+        icon: "pi pi-pen-to-square",
+        command: () => this.router.navigateByUrl(`/loads/${this.selectedRow()!.id}/edit`),
+      },
+      {
+        label: "View truck details",
+        icon: "pi pi-truck",
+        command: () => this.router.navigateByUrl(`/trucks/${this.selectedRow()!.assignedTruckId}`),
+      },
+      {
+        label: "View invoices",
+        icon: "pi pi-book",
+        command: () => this.router.navigateByUrl(`/invoices/loads/${this.selectedRow()!.id}`),
+      },
+    ];
+  }
 
   protected override query(params: TableQueryParams): Observable<PagedResult<LoadDto>> {
     const sortField = this.apiService.formatSortField(params.sortField, params.sortOrder);

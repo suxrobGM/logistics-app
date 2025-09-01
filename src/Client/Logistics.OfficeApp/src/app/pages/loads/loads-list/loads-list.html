@@ -86,7 +86,7 @@
       </tr>
     </ng-template>
     <ng-template #body let-load>
-      <tr>
+      <tr (click)="selectedRow.set(load)">
         <td>{{ load.number }}</td>
         <td [pTooltip]="load.name" [showDelay]="500" tooltipPosition="bottom">
           {{ load.name }}
@@ -127,27 +127,13 @@
         <td>{{ load.tripNumber }} - {{ load.tripName }}</td>
         <td>{{ load.assignedTruckNumber }}</td>
         <td>{{ load.assignedDispatcherName }}</td>
-        <td class="flex gap-2 overflow-visible">
-          <p-button
-            icon="pi pi-pen-to-square"
-            pTooltip="Edit load details"
-            tooltipPosition="bottom"
-            [routerLink]="['/loads', load.id, 'edit']"
-          />
-          <p-button
-            icon="pi pi-truck"
-            pTooltip="View truck details"
-            tooltipPosition="bottom"
-            [routerLink]="['/trucks', load.assignedTruckId]"
-          />
-          <p-button
-            icon="pi pi-book"
-            pTooltip="View invoices"
-            tooltipPosition="bottom"
-            [routerLink]="['/invoices/loads', load.id]"
-          />
+        <td>
+          <p-button icon="pi pi-ellipsis-v" (click)="menu.toggle($event)" severity="secondary" />
         </td>
       </tr>
     </ng-template>
   </p-table>
 </p-card>
+
+<!-- Reusable context menu for the actions button -->
+<p-menu #menu [model]="actionMenuItems" [popup]="true" />

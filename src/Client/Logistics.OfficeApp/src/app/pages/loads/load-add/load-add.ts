@@ -9,11 +9,11 @@ import {ToastService} from "@/core/services";
 import {LoadFormComponent, LoadFormValue} from "@/shared/components";
 
 @Component({
-  selector: "app-add-load",
-  templateUrl: "./add-load.html",
+  selector: "app-load-add",
+  templateUrl: "./load-add.html",
   imports: [ToastModule, CardModule, ProgressSpinnerModule, LoadFormComponent],
 })
-export class AddLoadComponent {
+export class LoadAddComponent {
   private readonly apiService = inject(ApiService);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);

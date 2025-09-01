@@ -45,19 +45,13 @@ export class TripFormStepReview {
     return tripStopType === TripStopType.PickUp ? "Pick Up" : "Drop Off";
   }
 
-  protected onRouteSegmentClick(event: RouteSegmentClickEvent) {
-    const stop = this.stops().find((s) => s.id === event.fromWaypoint.id);
-
-    if (stop) {
-      this.selectedStop.set(stop);
-    }
+  protected onRouteSegmentClick(e: RouteSegmentClickEvent) {
+    const stop = this.stops().find((s) => s.id === e.fromWaypoint.id);
+    this.selectedStop.set(stop ?? null);
   }
 
-  protected onWaypointClick(event: WaypointClickEvent) {
-    const stop = this.stops().find((s) => s.id === event.waypoint.id);
-
-    if (stop) {
-      this.selectedStop.set(stop);
-    }
+  protected onWaypointClick(e: WaypointClickEvent) {
+    const stop = this.stops().find((s) => s.id === e.waypoint.id);
+    this.selectedStop.set(stop ?? null);
   }
 }

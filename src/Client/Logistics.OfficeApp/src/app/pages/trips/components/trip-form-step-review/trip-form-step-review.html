@@ -56,11 +56,11 @@
 
     <p-table
       [value]="stops()"
-      [dataKey]="'id'"
-      [sortField]="'order'"
-      [sortMode]="'single'"
+      dataKey="id"
+      sortField="order"
+      sortMode="single"
+      selectionMode="single"
       [paginator]="false"
-      [selectionMode]="'single'"
       [(selection)]="selectedStop"
     >
       <ng-template #header>

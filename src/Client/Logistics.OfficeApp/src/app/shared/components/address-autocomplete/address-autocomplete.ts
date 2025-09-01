@@ -50,8 +50,6 @@ export class AddressAutocomplete implements ControlValueAccessor {
 
     const query = (event.target as HTMLInputElement)?.value;
 
-    console.log("Searching for address:", query);
-
     if (!query) {
       this.markAsTouched();
       this.searchResults.set([]);
@@ -68,13 +66,11 @@ export class AddressAutocomplete implements ControlValueAccessor {
       .get<MapboxGeocodingResponse>("https://api.mapbox.com/search/geocode/v6/forward", {params})
       .pipe(
         catchError(() => {
-          console.error("Error fetching address data");
           this.searchResults.set([]);
           return [];
         })
       )
       .subscribe((data) => {
-        console.log("Address search response:", data);
         this.searchResults.set(data.features || []);
       });
   }

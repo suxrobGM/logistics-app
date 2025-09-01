@@ -1,5 +1,4 @@
 using FluentValidation;
-
 using Logistics.Application.Constants;
 
 namespace Logistics.Application.Commands;
@@ -9,7 +8,7 @@ internal sealed class CreateLoadValidator : AbstractValidator<CreateLoadCommand>
     public CreateLoadValidator()
     {
         RuleFor(i => i.Name).NotEmpty();
-        //RuleFor(i => i.Type).NotEmpty().IsInEnum();
+        RuleFor(i => i.Type).IsInEnum();
         RuleFor(i => i.AssignedDispatcherId).NotEmpty();
         RuleFor(i => i.AssignedTruckId).NotEmpty();
         RuleFor(i => i.OriginAddress).NotEmpty();

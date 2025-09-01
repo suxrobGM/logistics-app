@@ -100,6 +100,7 @@ export class TripFormStepLoads {
 
   protected attachLoad(load: TripLoadDto): void {
     this.attachedLoads.push(load);
+    this.tripLoadDialogVisible.set(false);
   }
 
   protected detachLoad(load: TripLoadDto): void {
@@ -135,6 +136,8 @@ export class TripFormStepLoads {
         pendingDetach: false,
       } as TableRow,
     ]);
+
+    this.tripLoadDialogVisible.set(false);
   }
 
   protected removeNewLoad(load: TripLoadDto): void {
