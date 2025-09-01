@@ -24,7 +24,7 @@ import type {
 })
 export class DirectionMap {
   protected readonly accessToken = environment.mapboxToken;
-  private readonly defaultCenter: LngLatLike = {lng: -95, lat: 35};
+  private readonly defaultCenter: LngLatLike = [-95, 35];
   private readonly defaultZoom = 3;
   protected readonly segmentColors = [
     "#28a745", // green
@@ -276,6 +276,12 @@ export class DirectionMap {
    */
   private isValidPoint(point: Waypoint): boolean {
     const {longitude, latitude} = point.location;
+
+    // Ignore zero coordinates
+    if (longitude === 0 && latitude === 0) {
+      return false;
+    }
+
     return longitude >= -180 && longitude <= 180 && latitude >= -90 && latitude <= 90;
   }
 

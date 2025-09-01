@@ -46,7 +46,7 @@ export class EditLoadComponent implements OnInit {
     const command: UpdateLoadCommand = {
       id: this.id()!,
       name: formValue.name!,
-      loadType: formValue.type!,
+      type: formValue.type!,
       originAddress: formValue.originAddress!,
       originLocation: formValue.originLocation,
       destinationAddress: formValue.destinationAddress!,

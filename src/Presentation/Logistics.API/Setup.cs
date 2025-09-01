@@ -1,10 +1,8 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-
 using Hangfire;
 using Hangfire.PostgreSql;
-
 using Logistics.API.Authorization;
 using Logistics.API.Extensions;
 using Logistics.API.Jobs;
@@ -14,14 +12,12 @@ using Logistics.Application.Hubs;
 using Logistics.Infrastructure;
 using Logistics.Infrastructure.Builder;
 using Logistics.Shared.Models;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.IdentityModel.Tokens;
-
 using Serilog;
 using Serilog.Extensions.Logging;
 
@@ -69,31 +65,30 @@ internal static class Setup
                     ValidateAudience = true,
                     ValidateIssuer = true,
                     ValidIssuer = configuration["IdentityServer:Authority"],
-                    ValidAudience = configuration["IdentityServer:Audience"],
+                    ValidAudience = configuration["IdentityServer:Audience"]
                 };
             });
 
         services.AddControllers(configure =>
-        {
-            var policy = new AuthorizationPolicyBuilder()
-                            .RequireAuthenticatedUser()
-                            .Build();
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
 
-            configure.Filters.Add(new AuthorizeFilter(policy));
-        })
-        .ConfigureApiBehaviorOptions(options =>
-        {
-            options.InvalidModelStateResponseFactory = context =>
-                new BadRequestObjectResult(Result.Fail(GetModelStateErrors(context.ModelState)));
-        })
-        .AddJsonOptions(options =>
-        {
-            options.JsonSerializerOptions.Converters.Add(
-                new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower) // Optional naming policy
-            );
-            options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-        });
-        ;
+                configure.Filters.Add(new AuthorizeFilter(policy));
+            })
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                options.InvalidModelStateResponseFactory = context =>
+                    new BadRequestObjectResult(Result.Fail(GetModelStateErrors(context.ModelState)));
+            })
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(
+                    new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower) // Optional naming policy
+                );
+                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            });
 
         services.AddCors(options =>
         {

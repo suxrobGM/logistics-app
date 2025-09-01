@@ -5,7 +5,7 @@ import {LoadStatus, LoadType} from "./enums";
 export interface UpdateLoadCommand {
   id: string;
   name?: string;
-  loadType?: LoadType;
+  type?: LoadType;
   originAddress: AddressDto;
   originLocation: GeoPointDto;
   destinationAddress: AddressDto;

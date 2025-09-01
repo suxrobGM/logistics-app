@@ -11,12 +11,7 @@
     </app-form-field>
 
     <div class="flex gap-2">
-      <p-button
-        type="submit"
-        icon="pi pi-pen-to-square-square"
-        label="Save"
-        [disabled]="isLoading()"
-      />
+      <p-button type="submit" icon="pi pi-pencil" label="Save" [disabled]="isLoading()" />
 
       @if (mode() === "edit") {
         <p-button

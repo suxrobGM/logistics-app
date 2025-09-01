@@ -4,7 +4,7 @@ import {LoadType} from "./enums";
 
 export interface CreateLoadCommand {
   name: string;
-  loadType: LoadType;
+  type: LoadType;
   originAddress: AddressDto;
   originLocation: GeoPointDto;
   destinationAddress: AddressDto;

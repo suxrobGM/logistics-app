@@ -36,6 +36,25 @@ export abstract class Converters {
 
     return Number.parseFloat(convertedValue.toFixed(2));
   }
+
+  /**
+   * Converts a distance value to meters.
+   * @param value Distance value
+   * @param unit Unit of the distance value
+   * @returns Distance value in meters
+   */
+  static toMeters(value: number, unit: DistanceUnitTypes): number {
+    switch (unit) {
+      case "km":
+        return value / 0.001;
+      case "mi":
+        return value / 0.000621371;
+      case "yd":
+        return value / 1.09361;
+      default:
+        return value;
+    }
+  }
 }
 
 export type DistanceUnitTypes = "m" | "km" | "mi" | "yd";

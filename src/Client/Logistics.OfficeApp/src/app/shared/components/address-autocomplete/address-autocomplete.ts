@@ -43,7 +43,7 @@ export class AddressAutocomplete implements ControlValueAccessor {
     this.setAddressString(this.address());
   }
 
-  handleAddressInputChange(event: Event): void {
+  protected handleAddressInputChange(event: Event): void {
     if (this.isDisabled) {
       return;
     }
@@ -79,7 +79,7 @@ export class AddressAutocomplete implements ControlValueAccessor {
       });
   }
 
-  handleClickAddress(geocodingFeature: MapboxGeocodingFeature): void {
+  protected handleClickAddress(geocodingFeature: MapboxGeocodingFeature): void {
     if (this.isDisabled) {
       return;
     }
@@ -111,7 +111,7 @@ export class AddressAutocomplete implements ControlValueAccessor {
     this.markAsTouched();
   }
 
-  handleInputFocusOut(event: FocusEvent): void {
+  protected handleInputFocusOut(event: FocusEvent): void {
     // Delay the execution to allow click event to be processed (in case an address is clicked from the list)
     setTimeout(() => {
       if (this.forceSelection() && this.searchResults.length) {

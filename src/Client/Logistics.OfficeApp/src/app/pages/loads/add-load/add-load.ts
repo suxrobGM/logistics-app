@@ -25,7 +25,7 @@ export class AddLoadComponent {
 
     const command: CreateLoadCommand = {
       name: formValue.name,
-      loadType: formValue.type,
+      type: formValue.type,
       originAddress: formValue.originAddress,
       originLocation: formValue.originLocation,
       destinationAddress: formValue.destinationAddress,

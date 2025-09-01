@@ -72,8 +72,8 @@
         />
       </app-form-field>
 
-      <app-form-field label="Assigned Truck" for="assignedTruckId" [required]="true">
-        <app-search-truck formControlName="assignedTruckId" />
+      <app-form-field label="Assigned Truck" for="assignedTruck" [required]="true">
+        <app-search-truck formControlName="assignedTruck" />
       </app-form-field>
 
       @if (mode() === "edit") {
@@ -86,8 +86,8 @@
       <div class="flex gap-2">
         <p-button
           type="submit"
-          icon="pi pi-pen-to-square-square"
-          [label]="mode() === 'create' ? 'Add' : 'Save'"
+          icon="pi pi-pencil"
+          [label]="mode() === 'create' ? 'Create' : 'Update'"
           [disabled]="isLoading() || !form.valid"
         />
 

@@ -15,6 +15,7 @@ import {
   GeoPointDto,
   LoadStatus,
   LoadType,
+  TruckDto,
   loadStatusOptions,
   loadTypeOptions,
 } from "@/core/api/models";
@@ -126,7 +127,7 @@ export class LoadFormComponent implements OnInit {
     distance: new FormControl({value: 0, disabled: true}, {nonNullable: true}),
     // only visible/patched when mode === 'edit'
     status: new FormControl<LoadStatus | null>(null),
-    assignedTruckId: new FormControl("", {
+    assignedTruck: new FormControl<TruckDto | string | null>(null, {
       validators: [Validators.required],
       nonNullable: true,
     }),
@@ -184,7 +185,16 @@ export class LoadFormComponent implements OnInit {
     if (this.form.invalid) {
       return;
     }
-    this.save.emit(this.form.getRawValue() as LoadFormValue);
+
+    const formRawValue = this.form.getRawValue();
+
+    const formValue: LoadFormValue = {
+      ...formRawValue,
+      distance: Converters.toMeters(formRawValue.distance, "mi"),
+      assignedTruckId: (formRawValue.assignedTruck as TruckDto).id,
+    } as LoadFormValue;
+
+    this.save.emit(formValue);
   }
 
   protected askRemove(): void {
@@ -197,6 +207,7 @@ export class LoadFormComponent implements OnInit {
   private patch(src: Partial<LoadFormValue>): void {
     this.form.patchValue({
       ...src,
+      assignedTruck: src.assignedTruckId, // Set ID instead of object, then component will fetch the object
     });
 
     if (src.originLocation) {
