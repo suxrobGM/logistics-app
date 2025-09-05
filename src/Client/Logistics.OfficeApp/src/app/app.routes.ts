@@ -8,6 +8,11 @@ export const appRoutes: Routes = [
     path: "home",
     loadChildren: () => import("./pages/home/home.routes").then((m) => m.homeRoutes),
   },
+   {
+    path: "reports",
+    loadChildren: () => import("./pages/reports/reports.routes").then(m => m.reportsRoutes),
+    data: { breadcrumb: "Reports" }
+  },
   {
     path: "dashboard",
     loadChildren: () => import("./pages/dashboard/dashboard.routes").then((m) => m.dashboardRoutes),

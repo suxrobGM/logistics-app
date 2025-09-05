@@ -1,0 +1,118 @@
+<div class="container my-4">
+
+  <!-- Range Calendar -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <app-range-calendar
+        [(startDate)]="startDate"
+        [(endDate)]="endDate"
+        (applyButtonClick)="filter()">
+      </app-range-calendar>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="row text-center mb-4">
+    <div class="col-12 col-md-6 col-lg-3 mb-3">
+      <p-card>
+        <h3>Total Loads</h3>
+        <p>{{ data()?.totalLoads || 0 }}</p>
+      </p-card>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3 mb-3">
+      <p-card>
+        <h3>Total Revenue</h3>
+        <p>{{ data()?.totalRevenue || 0 | currency:'USD' }}</p>
+      </p-card>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3 mb-3">
+      <p-card>
+        <h3>Total Distance</h3>
+        <p>{{ data()?.totalDistance || 0 }} km</p>
+      </p-card>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3 mb-3">
+      <p-card>
+        <h3>Cancellation Rate</h3>
+        <p>{{ data()?.cancellationRate || 0 | number:'1.2-2' }} %</p>
+      </p-card>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="row mb-4">
+    <div class="col-12 col-lg-6 mb-3">
+      <p-card>
+        <h3 class="text-center">Loads by Status</h3>
+        <p-chart 
+          type="pie" 
+          [data]="chartData()" 
+          class="w-100" 
+          [height]="'300'" 
+          [width]="'100%'">
+        </p-chart>
+      </p-card>
+    </div>
+    <div class="col-12 col-lg-6 mb-3">
+      <p-card header="Loads by Type">
+        <p-chart 
+          type="bar" 
+          [data]="typeChartData" 
+          [options]="typeChartOptions"
+          width="100%"
+          height="300px">
+        </p-chart>
+      </p-card>
+    </div>
+  </div>
+
+  <!-- Tables -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <p-card header="Status Breakdown">
+        <p-table [value]="data()?.statusBreakdown || []" [paginator]="true" [rows]="5">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Status</th>
+              <th>Count</th>
+              <th>Revenue</th>
+              <th>Percentage</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-item>
+            <tr>
+              <td>{{item.status}}</td>
+              <td>{{item.count}}</td>
+              <td>{{item.totalRevenue | currency}}</td>
+              <td>{{(item.count / (data()?.totalLoads ?? 1)) | number:'1.2-2'}}%</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-12">
+      <p-card header="Types Breakdown">
+        <p-table [value]="data()?.typeBreakdown || []" [paginator]="true" [rows]="5">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Type</th>
+              <th>Count</th>
+              <th>Revenue</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-item>
+            <tr>
+              <td>{{item.type}}</td>
+              <td>{{item.count}}</td>
+              <td>{{item.totalRevenue | currency}}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,111 @@
+<div class="container my-4">
+
+  <!-- Range Calendar -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <app-range-calendar
+        [(startDate)]="startDate"
+        [(endDate)]="endDate"
+        (applyButtonClick)="filter()">
+      </app-range-calendar>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="row text-center mb-4">
+    <div class="col-12 col-md-6 col-lg-3 mb-3">
+      <p-card>
+        <h3>Total Invoiced</h3>
+        <p>{{ data()?.totalInvoiced || 0 | currency }}</p>
+      </p-card>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3 mb-3">
+      <p-card>
+        <h3>Total Paid</h3>
+        <p>{{ data()?.totalPaid || 0 | currency }}</p>
+      </p-card>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3 mb-3">
+      <p-card>
+        <h3>Total Due</h3>
+        <p>{{ data()?.totalDue || 0 | currency }}</p>
+      </p-card>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3 mb-3">
+      <p-card>
+        <h3>Collection Rate</h3>
+        <p>{{ data()?.collectionRate || 0 | number:'1.0-2' }}%</p>
+      </p-card>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="row mb-4">
+    <div class="col-12  mb-3  mx-auto">
+      <p-card>
+        <h3 class="text-center">Invoice Status Distribution</h3>
+        <p-chart 
+          type="pie" 
+          [data]="chartData()" 
+          [options]="chartOptions"
+          class="w-100"
+          [height]="'300'"
+          [width]="'100%'">
+        </p-chart>
+      </p-card>
+    </div>
+
+  </div>
+  <div class="row mb-4">
+    <div class="col-12">
+      <p-card>
+        <h3 class="text-center">Payment Trends</h3>
+        <p-table [value]="data()?.paymentTrends || []" [paginator]="true" [rows]="5" responsiveLayout="scroll">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Period</th>
+              <th>Invoiced</th>
+              <th>Paid</th>
+              <th>Collection Rate</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-trend>
+            <tr>
+              <td>{{ trend.period }}</td>
+              <td>{{ trend.invoiced | currency }}</td>
+              <td>{{ trend.paid | currency }}</td>
+              <td>{{ trend.collectionRate | number:'1.0-2' }}%</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+    </div>
+  </div>
+
+  <!-- Top Customers Table -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <p-card header="Top Customers">
+        <p-table [value]="data()?.topCustomers || []" [paginator]="true" [rows]="5" responsiveLayout="scroll">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Customer</th>
+              <th>Total Invoiced</th>
+              <th>Total Paid</th>
+              <th>Invoices</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-customer>
+            <tr>
+              <td>{{ customer.customerName }}</td>
+              <td>{{ customer.totalInvoiced | currency }}</td>
+              <td>{{ customer.totalPaid | currency }}</td>
+              <td>{{ customer.invoiceCount }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+    </div>
+  </div>
+
+</div>
