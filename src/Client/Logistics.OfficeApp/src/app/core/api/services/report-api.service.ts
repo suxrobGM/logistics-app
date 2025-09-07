@@ -7,7 +7,7 @@ import {
 } from "../models";
 import { FinancialsReportDto } from "../models/report/financials-report.dto";
 import { LoadsReportDto } from "../models/report/loads-report.dto";
-import { DriverReportDto } from "../models/report/drivers-report.dto";
+import { DriverReportDto, DriverDashboardDto } from "../models/report/drivers-report.dto";
 import { SearchableIntervalQuery } from "../models/searchable-interval.query";
 
 export class ReportApiService extends ApiBase {
@@ -19,5 +19,8 @@ export class ReportApiService extends ApiBase {
   }
   getFinancialsReport(query?: PagedIntervalQuery): Observable<Result<FinancialsReportDto>> {
     return this.get(`/reports/financials?${this.stringfyPagedIntervalQuery(query)}`);
+  }
+  getDriverDashboard(query?: PagedIntervalQuery): Observable<Result<DriverDashboardDto>> {
+    return this.get(`/reports/drivers/dashboard?${this.stringfyPagedIntervalQuery(query)}`);
   }
 }

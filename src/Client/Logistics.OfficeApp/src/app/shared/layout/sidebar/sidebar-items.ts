@@ -38,6 +38,10 @@ export const sidebarItems: MenuItem[] = [
         route: "/reports/drivers",
       },
       {
+        label: "Drivers Detailed",
+        route: "/reports/drivers/detailed",
+      },
+      {
         label: "Financials",
         route: "/reports/financials",
       },

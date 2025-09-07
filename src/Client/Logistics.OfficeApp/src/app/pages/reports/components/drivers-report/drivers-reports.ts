@@ -11,13 +11,14 @@ import { Observable } from "rxjs";
 import { ApiService } from "@/core/api";
 import { DatePickerModule } from 'primeng/datepicker';
 import { DateUtils } from "@/shared/utils";
-
+import { CurrencyPipe, DecimalPipe } from '@angular/common';
+import { TagModule } from 'primeng/tag';
 
 @Component({
   selector: "app-drivers-report",
   templateUrl: "./drivers-report.html",
   standalone: true,
-  imports: [FormsModule, ButtonModule, CardModule, InputTextModule, TableModule, DatePickerModule, RangeCalendar],
+  imports: [FormsModule, ButtonModule, CardModule, InputTextModule, TableModule, DatePickerModule, RangeCalendar, CurrencyPipe, DecimalPipe, TagModule],
 })
 export class DriversReportComponent extends BaseTableComponent<DriverReportDto>
 { 
@@ -43,6 +44,24 @@ export class DriversReportComponent extends BaseTableComponent<DriverReportDto>
   }
   protected filterByDate() : void {
     this.fetch({page: 0, size: 10});
+  }
+
+  protected getPerformanceLevel(efficiency: number): string {
+    if (efficiency >= 2.0) return 'Excellent';
+    if (efficiency >= 1.5) return 'Good';
+    if (efficiency >= 1.0) return 'Average';
+    return 'Below Average';
+  }
+
+  protected getPerformanceSeverity(efficiency: number): string {
+    if (efficiency >= 2.0) return 'success';
+    if (efficiency >= 1.5) return 'info';
+    if (efficiency >= 1.0) return 'warning';
+    return 'danger';
+  }
+
+  protected getDriverTypeSeverity(isMainDriver: boolean): string {
+    return isMainDriver ? 'success' : 'info';
   }
 }
 

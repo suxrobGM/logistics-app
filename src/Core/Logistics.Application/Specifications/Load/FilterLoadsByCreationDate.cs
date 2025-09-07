@@ -9,13 +9,15 @@ namespace Logistics.Application.Specifications
         {
             if (startDate.HasValue && startDate != default)
             {
+                var from = DateTime.SpecifyKind(startDate.Value, DateTimeKind.Utc);
                 Criteria = l =>
-                    l.CreatedAt >= startDate;
+                    l.CreatedAt >= from;
             }
             if (endDate.HasValue && endDate != default)
             {
+                var to = DateTime.SpecifyKind(endDate.Value, DateTimeKind.Utc);
                 Criteria = l =>
-                    l.CreatedAt <= endDate;
+                    l.CreatedAt <= to;
             }
         }
     }

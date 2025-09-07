@@ -15,12 +15,12 @@ internal sealed class DriversReportHandler(ITenantUnitOfWork tenantUow) : IAppRe
 
         if (req.StartDate != default)
         {
-            var from = req.StartDate;
+            var from = DateTime.SpecifyKind(req.StartDate, DateTimeKind.Utc);
             loads = loads.Where(l => l.CreatedAt >= from);
         }
         if (req.EndDate != default)
         {
-            var to = req.EndDate;
+            var to = DateTime.SpecifyKind(req.EndDate, DateTimeKind.Utc);
             loads = loads.Where(l => l.CreatedAt <= to);
         }
 
@@ -64,8 +64,21 @@ internal sealed class DriversReportHandler(ITenantUnitOfWork tenantUow) : IAppRe
                         l.Status == Domain.Primitives.Enums.LoadStatus.Delivered)
                     .Select(l => l.DeliveryCost.Amount)
                     .Sum(),
-
-
+                TruckNumber = trucks.FirstOrDefault(t => t.Id == x.TruckId)!.Number,
+                IsMainDriver = trucks.FirstOrDefault(t => t.Id == x.TruckId && t.MainDriverId == x.DriverId) != null
+            })
+            .Select(d => new DriverReportDto
+            {
+                DriverId = d.DriverId,
+                DriverName = d.DriverName,
+                LoadsDelivered = d.LoadsDelivered,
+                DistanceDriven = d.DistanceDriven,
+                GrossEarnings = d.GrossEarnings,
+                TruckNumber = d.TruckNumber,
+                IsMainDriver = d.IsMainDriver,
+                AverageDistancePerLoad = d.LoadsDelivered > 0 ? d.DistanceDriven / d.LoadsDelivered : 0,
+                AverageEarningsPerLoad = d.LoadsDelivered > 0 ? d.GrossEarnings / d.LoadsDelivered : 0,
+                Efficiency = d.LoadsDelivered > 0 ? d.LoadsDelivered / 30.0 : 0 // Assuming 30 days period
             });
 
         if (!string.IsNullOrWhiteSpace(req.Search))

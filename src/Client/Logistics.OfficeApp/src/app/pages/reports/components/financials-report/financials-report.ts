@@ -12,33 +12,10 @@ import { Observable } from "rxjs";
 import { ChartModule } from "primeng/chart";
 import { BaseReportComponent, ReportQueryParams } from "@/shared/components/base-report/base-report";
 import { FinancialsReportDto } from "@/core/api/models/report/financials-report.dto";
-
-// =======================
-// Chart Constants
-// =======================
-const CHART_LABELS = ["Fully Paid", "Partially Paid", "Unpaid"];
-const CHART_BACKGROUND_COLORS = ["#4caf50", "#ff9800", "#f44336"];
-const CHART_HOVER_BACKGROUND_COLORS = ["#66bb6a", "#ffb74d", "#e57373"];
-
-const INITIAL_CHART_DATA = {
-  labels: CHART_LABELS,
-  datasets: [
-    {
-      data: [1, 1, 1],
-      backgroundColor: CHART_BACKGROUND_COLORS,
-      hoverBackgroundColor: CHART_HOVER_BACKGROUND_COLORS,
-    },
-  ],
-};
-
-const CHART_OPTIONS = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: "bottom",
-    },
-  },
-};
+import { CurrencyPipe, DecimalPipe } from '@angular/common';
+import { SkeletonModule } from 'primeng/skeleton';
+import { TagModule } from 'primeng/tag';
+import { FINANCIALS_CHART_BACKGROUND_COLORS, FINANCIALS_CHART_HOVER_BACKGROUND_COLORS, FINANCIALS_CHART_LABELS, FINANCIAL_METRICS_CHART_OPTIONS, INVOICE_STATUS_CHART_OPTIONS, REVENUE_TREND_CHART_OPTIONS } from "@/shared/constants/financials-chart.options";
 
 @Component({
   selector: "app-financials-report",
@@ -53,16 +30,23 @@ const CHART_OPTIONS = {
     TableModule,
     ChartModule,
     RangeCalendar,
-  ],
+    CurrencyPipe,
+    DecimalPipe,
+    SkeletonModule,
+    TagModule
+],
 })
 export class FinancialsReportComponent
   extends BaseReportComponent<FinancialsReportDto>
   implements OnInit
 {
-  protected readonly chartOptions = CHART_OPTIONS;
-  protected readonly chartData = signal<Record<string, unknown>>(
-    INITIAL_CHART_DATA
-  );
+  protected readonly InvoiceStatusChartData = signal<any>({});
+  protected readonly revenueTrendChartData = signal<any>({});
+  protected readonly financialMetricsChartData = signal<any>({});
+  
+  protected readonly InvoiceStatusChartOptions = INVOICE_STATUS_CHART_OPTIONS;
+  protected revenueTrendChartOptions: any = REVENUE_TREND_CHART_OPTIONS;
+  protected financialMetricsChartOptions: any = FINANCIAL_METRICS_CHART_OPTIONS;
 
   ngOnInit(): void {
     this.fetch({ startDate: this.startDate(), endDate: this.endDate() });
@@ -78,14 +62,15 @@ export class FinancialsReportComponent
   }
 
   protected override drawChart(result: FinancialsReportDto): void {
+
     const hasData =
       result.fullyPaidInvoices +
       result.partiallyPaidInvoices +
       result.unpaidInvoices;
 
     if (hasData > 0) {
-      this.chartData.set({
-        labels: CHART_LABELS,
+      this.InvoiceStatusChartData.set({
+        labels: FINANCIALS_CHART_LABELS,
         datasets: [
           {
             data: [
@@ -93,15 +78,80 @@ export class FinancialsReportComponent
               result.partiallyPaidInvoices,
               result.unpaidInvoices,
             ],
-            backgroundColor: CHART_BACKGROUND_COLORS,
-            hoverBackgroundColor: CHART_HOVER_BACKGROUND_COLORS,
+            backgroundColor: FINANCIALS_CHART_BACKGROUND_COLORS,
+            hoverBackgroundColor: FINANCIALS_CHART_HOVER_BACKGROUND_COLORS,
           },
         ],
       });
-    } else {
-      if (this.chartData() !== INITIAL_CHART_DATA) {
-        this.chartData.set(INITIAL_CHART_DATA);
-      }
+    }
+    // Revenue Trends Chart
+    const revenueTrends = result.revenueTrends ?? [];
+    if (revenueTrends.length > 0) {
+      this.revenueTrendChartData.set({
+        labels: revenueTrends.map(t => t.period),
+        datasets: [
+          {
+            label: 'Revenue',
+            data: revenueTrends.map(t => t.revenue),
+            borderColor: '#2563eb',
+            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+            tension: 0.4,
+            yAxisID: 'y'
+          },
+          {
+            label: 'Profit',
+            data: revenueTrends.map(t => t.profit),
+            borderColor: '#16a34a',
+            backgroundColor: 'rgba(22, 163, 74, 0.1)',
+            tension: 0.4,
+            yAxisID: 'y'
+          },
+          {
+            label: 'Expenses',
+            data: revenueTrends.map(t => t.expenses),
+            borderColor: '#ef4444',
+            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+            tension: 0.4,
+            yAxisID: 'y'
+          }
+        ]
+      });
+
+    }
+
+    // Financial Metrics Chart
+    const financialMetrics = result.financialMetrics ?? [];
+    if (financialMetrics.length > 0) {
+      this.financialMetricsChartData.set({
+        labels: financialMetrics.map(m => m.metric),
+        datasets: [
+          {
+            label: 'Value',
+            data: financialMetrics.map(m => m.value),
+            backgroundColor: financialMetrics.map(m => m.trend >= 0 ? '#16a34a' : '#ef4444'),
+            borderColor: financialMetrics.map(m => m.trend >= 0 ? '#16a34a' : '#ef4444'),
+            borderWidth: 1
+          }
+        ]
+      });
+
+    }
+  }
+
+  protected getMetricSeverity(trend: number): string {
+    return trend >= 0 ? 'success' : 'danger';
+  }
+
+  protected getCategorySeverity(category: string): string {
+    switch (category.toLowerCase()) {
+      case 'revenue':
+        return 'success';
+      case 'performance':
+        return 'info';
+      case 'risk':
+        return 'danger';
+      default:
+        return 'secondary';
     }
   }
 }
