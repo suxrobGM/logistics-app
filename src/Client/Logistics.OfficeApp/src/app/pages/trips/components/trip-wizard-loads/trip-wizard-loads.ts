@@ -13,6 +13,7 @@ import {
 import {FormsModule} from "@angular/forms";
 import {RouterLink} from "@angular/router";
 import {ButtonModule} from "primeng/button";
+import {Dialog} from "primeng/dialog";
 import {IconField} from "primeng/iconfield";
 import {InputIcon} from "primeng/inputicon";
 import {InputTextModule} from "primeng/inputtext";
@@ -23,21 +24,21 @@ import {ApiService} from "@/core/api";
 import {
   CreateTripLoadCommand,
   LoadStatus,
+  LoadType,
   OptimizeTripStopsCommand,
   TripLoadDto,
   TripStopDto,
   TripStopType,
 } from "@/core/api/models";
-import {LoadFormValue, LoadStatusTag} from "@/shared/components";
+import {LoadFormComponent, LoadFormValue, LoadStatusTag} from "@/shared/components";
 import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
-import {TripLoadDialog} from "../trip-load-dialog/trip-load-dialog";
 
 interface TableRow extends TripLoadDto {
   kind: "existing" | "new";
   pendingDetach?: boolean;
 }
 
-export interface LoadsStepData {
+export interface TripWizardLoadsData {
   newLoads: CreateTripLoadCommand[];
   attachedLoads: TripLoadDto[];
   detachedLoads: TripLoadDto[];
@@ -54,8 +55,8 @@ interface NewLoad extends CreateTripLoadCommand {
 }
 
 @Component({
-  selector: "app-trip-form-step-loads",
-  templateUrl: "./trip-form-step-loads.html",
+  selector: "app-trip-wizard-loads",
+  templateUrl: "./trip-wizard-loads.html",
   imports: [
     FormsModule,
     ButtonModule,
@@ -67,10 +68,11 @@ interface NewLoad extends CreateTripLoadCommand {
     CurrencyPipe,
     LoadStatusTag,
     RouterLink,
-    TripLoadDialog,
     InputTextModule,
     IconField,
     InputIcon,
+    Dialog,
+    LoadFormComponent,
   ],
 })
 export class TripFormStepLoads {
@@ -80,15 +82,17 @@ export class TripFormStepLoads {
   private readonly attachedLoads: TripLoadDto[] = [];
   private readonly detachedLoads: TripLoadDto[] = [];
 
-  public readonly stepData = input<LoadsStepData | null>(null);
-  public readonly disabled = input<boolean>(false);
-
-  public readonly back = output<void>();
-  public readonly next = output<LoadsStepData>();
-
   protected readonly dataTable = viewChild<Table<TableRow>>("dataTable");
   protected readonly tripLoadDialogVisible = model(false);
   protected readonly rows = signal<TableRow[]>([]);
+
+  protected readonly initialLoadData = computed(
+    () =>
+      ({
+        assignedTruckId: this.stepData()?.truckId,
+        type: LoadType.Vehicle,
+      }) satisfies Partial<LoadFormValue>
+  );
 
   protected readonly totalDistance = computed(() =>
     this.rows().reduce((total, load) => total + load.distance, 0)
@@ -96,6 +100,12 @@ export class TripFormStepLoads {
   protected readonly totalCost = computed(() =>
     this.rows().reduce((total, load) => total + load.deliveryCost, 0)
   );
+
+  public readonly stepData = input<TripWizardLoadsData | null>(null);
+  public readonly disabled = input<boolean>(false);
+
+  public readonly back = output<void>();
+  public readonly next = output<TripWizardLoadsData>();
 
   constructor() {
     effect(() => {
@@ -190,7 +200,7 @@ export class TripFormStepLoads {
     this.dataTable()?.filterGlobal((event.target as HTMLInputElement).value, "contains");
   }
 
-  private initRowsFromStepData(stepData: LoadsStepData): void {
+  private initRowsFromStepData(stepData: TripWizardLoadsData): void {
     const existingLoads =
       stepData.attachedLoads?.map(
         (load) =>

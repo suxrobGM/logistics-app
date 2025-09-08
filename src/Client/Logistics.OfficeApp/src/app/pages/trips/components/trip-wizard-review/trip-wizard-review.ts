@@ -11,7 +11,7 @@ import type {
 } from "@/shared/components/direction-map/types";
 import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
 
-export interface ReviewStepData {
+export interface TripWizardReviewData {
   tripName: string;
   truckId: string;
   totalLoads: number;
@@ -23,8 +23,8 @@ export interface ReviewStepData {
 }
 
 @Component({
-  selector: "app-trip-form-step-review",
-  templateUrl: "./trip-form-step-review.html",
+  selector: "app-trip-wizard-review",
+  templateUrl: "./trip-wizard-review.html",
   imports: [
     CardModule,
     DirectionMap,
@@ -36,8 +36,8 @@ export interface ReviewStepData {
     DatePipe,
   ],
 })
-export class TripFormStepReview {
-  public readonly stepData = input<ReviewStepData | null>(null);
+export class TripWizardReview {
+  public readonly stepData = input<TripWizardReviewData | null>(null);
   public readonly saveButtonLabel = input<string>("Create");
 
   public readonly back = output<void>();

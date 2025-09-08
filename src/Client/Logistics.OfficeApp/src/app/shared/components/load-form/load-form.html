@@ -116,6 +116,7 @@
     <app-direction-map
       [waypoints]="[originCoords(), destinationCoords()]"
       (routeChange)="updateDistance($event)"
+      [height]="mapHeight()"
     />
   </div>
 </div>

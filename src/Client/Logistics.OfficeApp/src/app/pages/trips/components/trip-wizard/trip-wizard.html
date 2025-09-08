@@ -17,7 +17,7 @@
     <p-step-panel [value]="1">
       <ng-template #content let-activateCallback="activateCallback">
         <!-- Basic info form-->
-        <app-trip-form-step-basic
+        <app-trip-wizard-basic
           [stepData]="step1Data()"
           [disabled]="disabled()"
           (next)="processStep1($event)"
@@ -27,7 +27,7 @@
     <p-step-panel [value]="2">
       <ng-template #content let-activateCallback="activateCallback">
         <!-- Loads table -->
-        <app-trip-form-step-loads
+        <app-trip-wizard-loads
           [stepData]="step2Data()"
           [disabled]="disabled()"
           (back)="activateCallback(1)"
@@ -38,7 +38,7 @@
     <p-step-panel [value]="3">
       <ng-template #content let-activateCallback="activateCallback">
         <!-- Review step -->
-        <app-trip-form-step-review
+        <app-trip-wizard-review
           [saveButtonLabel]="mode() === 'create' ? 'Create' : 'Update'"
           [stepData]="step3Data()"
           (back)="activateCallback(2)"

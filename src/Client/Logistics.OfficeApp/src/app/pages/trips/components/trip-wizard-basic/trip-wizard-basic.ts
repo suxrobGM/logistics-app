@@ -7,15 +7,15 @@ import {TruckDto, TruckType} from "@/core/api/models";
 import {ToastService} from "@/core/services";
 import {FormField, SearchTruckComponent, ValidationSummary} from "@/shared/components";
 
-export interface BasicStepData {
+export interface TripWizardBasicData {
   tripName: string;
   truckId: string;
   truckVehicleCapacity: number;
 }
 
 @Component({
-  selector: "app-trip-form-step-basic",
-  templateUrl: "./trip-form-step-basic.html",
+  selector: "app-trip-wizard-basic",
+  templateUrl: "./trip-wizard-basic.html",
   imports: [
     ValidationSummary,
     FormField,
@@ -26,12 +26,12 @@ export interface BasicStepData {
     InputTextModule,
   ],
 })
-export class TripFormStepBasic {
+export class TripWizardBasic {
   private readonly toastService = inject(ToastService);
 
-  public readonly stepData = input<BasicStepData | null>(null);
+  public readonly stepData = input<TripWizardBasicData | null>(null);
   public readonly disabled = input<boolean>(false);
-  public readonly next = output<BasicStepData>();
+  public readonly next = output<TripWizardBasicData>();
 
   protected readonly form = new FormGroup({
     tripName: new FormControl<string>("", {validators: [Validators.required], nonNullable: true}),

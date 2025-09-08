@@ -4,12 +4,12 @@ import {CardModule} from "primeng/card";
 import {ApiService} from "@/core/api";
 import {CreateTripCommand} from "@/core/api/models";
 import {ToastService} from "@/core/services";
-import {TripForm, TripFormValue} from "../components";
+import {TripWizard, TripWizardValue} from "../components";
 
 @Component({
   selector: "app-trip-add",
   templateUrl: "./trip-add.html",
-  imports: [CardModule, TripForm],
+  imports: [CardModule, TripWizard],
 })
 export class TripAddPage {
   private readonly router = inject(Router);
@@ -18,7 +18,7 @@ export class TripAddPage {
 
   protected readonly isLoading = signal(false);
 
-  protected createTrip(formValue: TripFormValue): void {
+  protected createTrip(formValue: TripWizardValue): void {
     this.isLoading.set(true);
 
     const command: CreateTripCommand = {

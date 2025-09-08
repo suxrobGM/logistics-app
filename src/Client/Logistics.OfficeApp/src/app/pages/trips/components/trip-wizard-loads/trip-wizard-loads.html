@@ -159,9 +159,19 @@
   </div>
 </div>
 
-<app-trip-load-dialog
-  [assignedTruckId]="stepData()?.truckId"
-  [(visible)]="tripLoadDialogVisible"
-  (picked)="attachLoad($event)"
-  (created)="addNewLoad($event)"
-/>
+<!-- Initialize dialog component only when it's visible to avoid unnecessary mapbox rendering on background -->
+@if (tripLoadDialogVisible()) {
+  <p-dialog
+    header="Add a new load to this trip"
+    [modal]="true"
+    [(visible)]="tripLoadDialogVisible"
+    [style]="{width: '70vw'}"
+  >
+    <app-load-form
+      [initial]="initialLoadData()"
+      [mode]="'create'"
+      [canChangeAssignedTruck]="false"
+      (save)="addNewLoad($event)"
+    />
+  </p-dialog>
+}

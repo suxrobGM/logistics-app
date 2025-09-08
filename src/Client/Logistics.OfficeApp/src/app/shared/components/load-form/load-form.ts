@@ -84,14 +84,6 @@ export class LoadFormComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
 
-  public readonly mode = input.required<"create" | "edit">();
-  public readonly canChangeAssignedTruck = input<boolean>(true);
-  public readonly initial = input<Partial<LoadFormValue> | null>(null);
-  public readonly isLoading = input(false);
-
-  public readonly save = output<LoadFormValue>();
-  public readonly remove = output<void>();
-
   protected readonly originCoords = signal<Waypoint>({
     id: "origin",
     location: {longitude: 0, latitude: 0},
@@ -100,6 +92,15 @@ export class LoadFormComponent implements OnInit {
     id: "destination",
     location: {longitude: 0, latitude: 0},
   });
+
+  public readonly mode = input.required<"create" | "edit">();
+  public readonly canChangeAssignedTruck = input<boolean>(true);
+  public readonly initial = input<Partial<LoadFormValue> | null>(null);
+  public readonly isLoading = input(false);
+  public readonly mapHeight = input<string>("100%");
+
+  public readonly save = output<LoadFormValue>();
+  public readonly remove = output<void>();
 
   protected readonly form = new FormGroup({
     name: new FormControl("", {validators: [Validators.required], nonNullable: true}),

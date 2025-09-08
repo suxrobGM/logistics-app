@@ -8,18 +8,18 @@ import {TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {TooltipModule} from "primeng/tooltip";
 import {TripLoadDto, TripStopDto} from "@/core/api/models";
-import {BasicStepData, TripFormStepBasic} from "../trip-form-step-basic/trip-form-step-basic";
-import {LoadsStepData, TripFormStepLoads} from "../trip-form-step-loads/trip-form-step-loads";
-import {ReviewStepData, TripFormStepReview} from "../trip-form-step-review/trip-form-step-review";
+import {TripWizardBasic, TripWizardBasicData} from "../trip-wizard-basic/trip-wizard-basic";
+import {TripFormStepLoads, TripWizardLoadsData} from "../trip-wizard-loads/trip-wizard-loads";
+import {TripWizardReview, TripWizardReviewData} from "../trip-wizard-review/trip-wizard-review";
 
-export interface TripFormValue extends BasicStepData, LoadsStepData {
+export interface TripWizardValue extends TripWizardBasicData, TripWizardLoadsData {
   initialLoads?: TripLoadDto[];
   initialStops?: TripStopDto[];
 }
 
 @Component({
-  selector: "app-trip-form",
-  templateUrl: "./trip-form.html",
+  selector: "app-trip-wizard",
+  templateUrl: "./trip-wizard.html",
   imports: [
     InputGroupModule,
     ButtonModule,
@@ -28,23 +28,23 @@ export interface TripFormValue extends BasicStepData, LoadsStepData {
     StepperModule,
     TooltipModule,
     TagModule,
-    TripFormStepReview,
-    TripFormStepBasic,
+    TripWizardReview,
+    TripWizardBasic,
     TripFormStepLoads,
     MessageModule,
   ],
 })
-export class TripForm {
-  protected readonly step1Data = signal<BasicStepData | null>(null);
-  protected readonly step2Data = signal<LoadsStepData | null>(null);
-  protected readonly step3Data = signal<ReviewStepData | null>(null);
+export class TripWizard {
+  protected readonly step1Data = signal<TripWizardBasicData | null>(null);
+  protected readonly step2Data = signal<TripWizardLoadsData | null>(null);
+  protected readonly step3Data = signal<TripWizardReviewData | null>(null);
   protected readonly activeStep = signal(1);
 
   public readonly mode = input.required<"create" | "edit">();
   public readonly disabled = input<boolean>(false);
-  public readonly initialData = input<Partial<TripFormValue> | null>(null);
+  public readonly initialData = input<Partial<TripWizardValue> | null>(null);
 
-  public readonly save = output<TripFormValue>();
+  public readonly save = output<TripWizardValue>();
 
   constructor() {
     // Initialize step data
@@ -73,7 +73,7 @@ export class TripForm {
     });
   }
 
-  protected processStep1(stepData: BasicStepData): void {
+  protected processStep1(stepData: TripWizardBasicData): void {
     console.log("basic step data", stepData);
     this.step1Data.set(stepData);
     this.step2Data.update((data) => ({
@@ -84,7 +84,7 @@ export class TripForm {
     this.activeStep.set(2);
   }
 
-  protected processStep2(stepData: LoadsStepData): void {
+  protected processStep2(stepData: TripWizardLoadsData): void {
     // Set data for the last review step
     this.step2Data.set(stepData);
     this.step3Data.set({

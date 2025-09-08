@@ -4,12 +4,12 @@ import {CardModule} from "primeng/card";
 import {ApiService} from "@/core/api";
 import {TripStatus, UpdateTripCommand} from "@/core/api/models";
 import {ToastService} from "@/core/services";
-import {TripForm, TripFormValue} from "../components";
+import {TripWizard, TripWizardValue} from "../components";
 
 @Component({
   selector: "app-trip-edit",
   templateUrl: "./trip-edit.html",
-  imports: [CardModule, TripForm],
+  imports: [CardModule, TripWizard],
 })
 export class TripEditPage implements OnInit {
   private readonly toastService = inject(ToastService);
@@ -21,7 +21,7 @@ export class TripEditPage implements OnInit {
 
   protected readonly tripNumber = signal<number | null>(null);
   protected readonly isLoading = signal(false);
-  protected readonly initialData = signal<Partial<TripFormValue> | null>(null);
+  protected readonly initialData = signal<Partial<TripWizardValue> | null>(null);
 
   ngOnInit(): void {
     this.fetchTrip();
@@ -34,7 +34,7 @@ export class TripEditPage implements OnInit {
     });
   }
 
-  protected updateTrip(formValues: TripFormValue): void {
+  protected updateTrip(formValues: TripWizardValue): void {
     const tripId = this.tripId();
 
     if (!tripId) {
