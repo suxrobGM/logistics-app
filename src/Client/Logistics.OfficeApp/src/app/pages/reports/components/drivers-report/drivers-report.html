@@ -1,0 +1,129 @@
+<div class="container-fluid p-4">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3 mb-1">Drivers Report</h1>
+      <p class="text-muted mb-0">Detailed driver performance and statistics</p>
+    </div>
+    <div class="d-flex gap-2 align-items-center">
+      <div class="d-flex gap-2 align-items-center">
+        <label for="search" class="form-label mb-0 fw-medium">Search:</label>
+        <input
+          pInputText
+          id="search"
+          type="text"
+          [(ngModel)]="search" 
+          (change)="onSearch($event)"
+          name="search"
+          placeholder="Search drivers..."
+          class="form-control"
+          style="width: 200px;"
+        />
+      </div>
+      <app-range-calendar
+        [(startDate)]="startDate"
+        [(endDate)]="endDate"
+        (applyButtonClick)="filterByDate()"
+      >
+      </app-range-calendar>
+    </div>
+  </div>
+
+  <!-- Drivers Table -->
+  <p-card class="border-0 shadow-sm p-2">
+    <ng-template pTemplate="header">
+      <div class="d-flex align-items-center">
+        <i class="pi pi-users text-primary me-2"></i>
+        <h5 class="mb-0">Driver Performance Details</h5>
+      </div>
+    </ng-template>
+    
+    <p-table
+      [value]="data()"
+      [loading]="isLoading()"
+      [tableStyle]="{'min-width': '50rem'}"
+      styleClass="p-datatable-sm"
+      [showLoader]="true"
+      [lazy]="true"
+      [paginator]="true"
+      [showCurrentPageReport]="true"
+      (onLazyLoad)="onLazyLoad($event)"
+      [rows]="10"
+      [(first)]="first"
+      [totalRecords]="totalRecords()"
+      [loading]="isLoading()"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      responsiveLayout="scroll"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Driver</th>
+          <th>Truck</th>
+          <th>Type</th>
+          <th>Loads Delivered</th>
+          <th>Distance Driven</th>
+          <th>Total Earnings</th>
+          <th>Avg per Load</th>
+          <th>Efficiency</th>
+          <th>Performance</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-driver>
+        <tr>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-2">
+                <i class="pi pi-user text-primary"></i>
+              </div>
+              <div>
+                <div class="fw-medium">{{ driver.driverName }}</div>
+                <small class="text-muted">ID: {{ driver.driverId }}</small>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="badge bg-secondary">{{ driver.truckNumber }}</span>
+          </td>
+          <td>
+            <p-tag 
+              [value]="driver.isMainDriver ? 'Main Driver' : 'Secondary Driver'" 
+              [severity]="getDriverTypeSeverity(driver.isMainDriver)">
+            </p-tag>
+          </td>
+          <td>
+            <span class="fw-medium">{{ driver.loadsDelivered | number }}</span>
+          </td>
+          <td>
+            <span class="fw-medium">{{ driver.distanceDriven | number:'1.0-0' }} km</span>
+          </td>
+          <td>
+            <span class="fw-medium text-success">{{ driver.grossEarnings | currency:'USD':'symbol':'1.0-0' }}</span>
+          </td>
+          <td>
+            <span class="text-muted">{{ driver.averageEarningsPerLoad | currency:'USD':'symbol':'1.0-0' }}</span>
+          </td>
+          <td>
+            <span class="fw-medium">{{ driver.efficiency | number:'1.1-1' }} loads/day</span>
+          </td>
+          <td>
+            <p-tag 
+              [value]="getPerformanceLevel(driver.efficiency)" 
+              [severity]="getPerformanceSeverity(driver.efficiency)">
+            </p-tag>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="9" class="text-center py-4">
+            <div class="d-flex flex-column align-items-center">
+              <i class="pi pi-users text-muted" style="font-size: 3rem;"></i>
+              <h6 class="text-muted mt-2">No drivers found</h6>
+              <p class="text-muted mb-0">Try adjusting your search criteria or date range</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</div>
