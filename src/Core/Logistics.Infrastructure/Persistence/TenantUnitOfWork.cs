@@ -1,7 +1,7 @@
+using Logistics.Application.Services;
 using Logistics.Domain.Core;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Services;
 using Logistics.Infrastructure.Data;
 using Microsoft.Extensions.DependencyInjection;
 

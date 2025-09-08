@@ -1,16 +1,15 @@
+using Logistics.Application.Services;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Services;
-
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Logistics.IdentityServer.Pages.Account.Manage.Profile;
 
-public partial class ProfileModel : PageModel
+public class ProfileModel : PageModel
 {
-    private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
+    private readonly UserManager<User> _userManager;
     private readonly IUserService _userService;
 
     public ProfileModel(
@@ -25,11 +24,9 @@ public partial class ProfileModel : PageModel
 
     public string Username { get; set; }
 
-    [TempData]
-    public string StatusMessage { get; set; }
+    [TempData] public string StatusMessage { get; set; }
 
-    [BindProperty]
-    public InputModel Input { get; set; }
+    [BindProperty] public InputModel Input { get; set; }
 
     public async Task<IActionResult> OnGetAsync()
     {
@@ -58,7 +55,7 @@ public partial class ProfileModel : PageModel
             return Page();
         }
 
-        await _userService.UpdateUserAsync(new UpdateUserData(user.Id)
+        await _userService.UpdateUserAsync(new UpdateUserParams(user.Id)
         {
             FirstName = Input.FirstName,
             LastName = Input.LastName,
@@ -92,7 +89,7 @@ public partial class ProfileModel : PageModel
         {
             PhoneNumber = phoneNumber,
             FirstName = user.FirstName,
-            LastName = user.LastName,
+            LastName = user.LastName
         };
     }
 }

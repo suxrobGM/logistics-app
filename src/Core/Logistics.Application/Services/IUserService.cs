@@ -1,6 +1,11 @@
-namespace Logistics.Domain.Services;
+namespace Logistics.Application.Services;
 
-public record UpdateUserData(Guid Id)
+public interface IUserService
+{
+    Task UpdateUserAsync(UpdateUserParams userParams);
+}
+
+public record UpdateUserParams(Guid Id)
 {
     public string? FirstName { get; set; }
     public string? LastName { get; set; }

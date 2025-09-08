@@ -1,9 +1,9 @@
-namespace Logistics.Domain.Services;
+namespace Logistics.Application.Services;
 
 public interface IBlobStorageService
 {
     /// <summary>
-    /// Upload a file to blob storage
+    ///     Upload a file to blob storage
     /// </summary>
     /// <param name="containerName">Container name</param>
     /// <param name="blobName">Blob name/path</param>
@@ -11,10 +11,11 @@ public interface IBlobStorageService
     /// <param name="contentType">Content type</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The blob URI</returns>
-    Task<string> UploadAsync(string containerName, string blobName, Stream content, string contentType, CancellationToken cancellationToken = default);
+    Task<string> UploadAsync(string containerName, string blobName, Stream content, string contentType,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Download a file from blob storage
+    ///     Download a file from blob storage
     /// </summary>
     /// <param name="containerName">Container name</param>
     /// <param name="blobName">Blob name/path</param>
@@ -23,7 +24,7 @@ public interface IBlobStorageService
     Task<Stream> DownloadAsync(string containerName, string blobName, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Delete a file from blob storage
+    ///     Delete a file from blob storage
     /// </summary>
     /// <param name="containerName">Container name</param>
     /// <param name="blobName">Blob name/path</param>
@@ -31,7 +32,7 @@ public interface IBlobStorageService
     Task DeleteAsync(string containerName, string blobName, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Check if a blob exists
+    ///     Check if a blob exists
     /// </summary>
     /// <param name="containerName">Container name</param>
     /// <param name="blobName">Blob name/path</param>
@@ -40,13 +41,14 @@ public interface IBlobStorageService
     Task<bool> ExistsAsync(string containerName, string blobName, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Get blob properties
+    ///     Get blob properties
     /// </summary>
     /// <param name="containerName">Container name</param>
     /// <param name="blobName">Blob name/path</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Blob properties</returns>
-    Task<BlobFileProperties> GetPropertiesAsync(string containerName, string blobName, CancellationToken cancellationToken = default);
+    Task<BlobFileProperties> GetPropertiesAsync(string containerName, string blobName,
+        CancellationToken cancellationToken = default);
 }
 
 public record BlobFileProperties(

@@ -2,7 +2,6 @@ using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Services;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;

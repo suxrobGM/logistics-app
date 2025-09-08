@@ -1,6 +1,6 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using Logistics.Domain.Services;
+using Logistics.Application.Services;
 using Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.Services;

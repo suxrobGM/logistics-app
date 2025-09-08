@@ -1,6 +1,6 @@
+using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Services;
 
 namespace Logistics.Infrastructure.Services;
 
@@ -17,34 +17,34 @@ public class UserService : IUserService
         _tenantUow = tenantUow;
     }
 
-    public async Task UpdateUserAsync(UpdateUserData userData)
+    public async Task UpdateUserAsync(UpdateUserParams userParams)
     {
         var userRepository = _masterUow.Repository<User>();
-        var user = await userRepository.GetByIdAsync(userData.Id);
+        var user = await userRepository.GetByIdAsync(userParams.Id);
 
         if (user is null)
         {
             return;
         }
 
-        if (!string.IsNullOrEmpty(userData.FirstName))
+        if (!string.IsNullOrEmpty(userParams.FirstName))
         {
-            user.FirstName = userData.FirstName;
+            user.FirstName = userParams.FirstName;
         }
 
-        if (!string.IsNullOrEmpty(userData.LastName))
+        if (!string.IsNullOrEmpty(userParams.LastName))
         {
-            user.LastName = userData.LastName;
+            user.LastName = userParams.LastName;
         }
 
-        if (!string.IsNullOrEmpty(userData.PhoneNumber))
+        if (!string.IsNullOrEmpty(userParams.PhoneNumber))
         {
-            user.PhoneNumber = userData.PhoneNumber;
+            user.PhoneNumber = userParams.PhoneNumber;
         }
 
-        if (userData.TenantId.HasValue)
+        if (userParams.TenantId.HasValue)
         {
-            await UpdateTenantEmployeeDataAsync(userData.TenantId.Value, user);
+            await UpdateTenantEmployeeDataAsync(userParams.TenantId.Value, user);
         }
 
         await _masterUow.SaveChangesAsync();

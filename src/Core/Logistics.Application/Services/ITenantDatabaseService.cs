@@ -1,4 +1,4 @@
-namespace Logistics.Domain.Services;
+namespace Logistics.Application.Services;
 
 public interface ITenantDatabaseService
 {

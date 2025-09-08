@@ -1,6 +1,6 @@
 using System.Text;
 using System.Text.Json;
-using Logistics.Domain.Services;
+using Logistics.Application.Services;
 using Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.Services;

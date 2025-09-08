@@ -1,7 +1,7 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Exceptions;
 
-namespace Logistics.Domain.Services;
+namespace Logistics.Application.Services;
 
 /// <summary>
 ///     Service to manage tenant-related operations.

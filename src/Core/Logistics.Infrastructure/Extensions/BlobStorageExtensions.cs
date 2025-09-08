@@ -1,16 +1,15 @@
 using Azure.Storage.Blobs;
-
-using Logistics.Domain.Services;
+using Logistics.Application.Services;
 using Logistics.Infrastructure.Services;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Logistics.Infrastructure.Extensions;
+
 public static class BlobStorageExtensions
 {
     /// <summary>
-    /// Add Azure Blob Storage service
+    ///     Add Azure Blob Storage service
     /// </summary>
     public static IServiceCollection AddAzureBlobStorage(this IServiceCollection services, IConfiguration configuration)
     {
@@ -28,7 +27,7 @@ public static class BlobStorageExtensions
     }
 
     /// <summary>
-    /// Add File System Blob Storage service
+    ///     Add File System Blob Storage service
     /// </summary>
     public static IServiceCollection AddFileBlobStorage(this IServiceCollection services, IConfiguration configuration)
     {
@@ -40,7 +39,7 @@ public static class BlobStorageExtensions
     }
 
     /// <summary>
-    /// Add Blob Storage service based on configuration
+    ///     Add Blob Storage service based on configuration
     /// </summary>
     public static IServiceCollection AddBlobStorage(this IServiceCollection services, IConfiguration configuration)
     {
