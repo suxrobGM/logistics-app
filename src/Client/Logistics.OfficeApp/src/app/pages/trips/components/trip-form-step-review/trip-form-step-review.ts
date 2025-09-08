@@ -11,6 +11,17 @@ import type {
 } from "@/shared/components/direction-map/types";
 import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
 
+export interface ReviewStepData {
+  tripName: string;
+  truckId: string;
+  totalLoads: number;
+  newLoadsCount: number;
+  pendingDetachLoadsCount: number;
+  totalDistance: number;
+  totalCost: number;
+  stops: TripStopDto[];
+}
+
 @Component({
   selector: "app-trip-form-step-review",
   templateUrl: "./trip-form-step-review.html",
@@ -26,15 +37,8 @@ import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
   ],
 })
 export class TripFormStepReview {
-  public readonly tripName = input<string>();
-  public readonly truckId = input<string>();
-  public readonly totalLoads = input<number>(0);
-  public readonly newLoadsCount = input<number>(0);
-  public readonly pendingDetachLoadsCount = input<number>(0);
-  public readonly totalDistance = input<number>(0);
-  public readonly totalCost = input<number>(0);
-  public readonly stops = input<TripStopDto[]>([]);
-  public readonly mode = input<"create" | "edit">("create");
+  public readonly stepData = input<ReviewStepData | null>(null);
+  public readonly saveButtonLabel = input<string>("Create");
 
   public readonly back = output<void>();
   public readonly save = output<void>();
@@ -46,12 +50,12 @@ export class TripFormStepReview {
   }
 
   protected onRouteSegmentClick(e: RouteSegmentClickEvent) {
-    const stop = this.stops().find((s) => s.id === e.fromWaypoint.id);
+    const stop = this.stepData()?.stops.find((s) => s.id === e.fromWaypoint.id);
     this.selectedStop.set(stop ?? null);
   }
 
   protected onWaypointClick(e: WaypointClickEvent) {
-    const stop = this.stops().find((s) => s.id === e.waypoint.id);
+    const stop = this.stepData()?.stops.find((s) => s.id === e.waypoint.id);
     this.selectedStop.set(stop ?? null);
   }
 }

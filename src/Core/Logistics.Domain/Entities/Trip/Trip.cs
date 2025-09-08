@@ -17,7 +17,7 @@ public class Trip : AuditableEntity, ITenantEntity
     /// <summary>
     ///     Total distance of the trip in kilometers.
     /// </summary>
-    public double TotalDistance { get; private set; }
+    public double TotalDistance { get; set; }
 
     public DateTime? DispatchedAt { get; private set; }
     public DateTime? CompletedAt { get; private set; }

@@ -21,10 +21,18 @@
 
     <ng-template #caption>
       <div class="align-items-center flex gap-2">
-        <p-icon-field>
-          <p-inputicon class="pi pi-search" />
-          <input pInputText type="text" placeholder="Search loads" (input)="applyFilter($event)" />
-        </p-icon-field>
+        <!-- Display search bar when there are loads -->
+        @if (rows().length) {
+          <p-icon-field>
+            <p-inputicon class="pi pi-search" />
+            <input
+              pInputText
+              type="text"
+              placeholder="Search loads"
+              (input)="applyFilter($event)"
+            />
+          </p-icon-field>
+        }
 
         <p-button
           icon="pi pi-plus"
@@ -152,7 +160,7 @@
 </div>
 
 <app-trip-load-dialog
-  [assignedTruckId]="truckId()"
+  [assignedTruckId]="stepData()?.truckId"
   [(visible)]="tripLoadDialogVisible"
   (picked)="attachLoad($event)"
   (created)="addNewLoad($event)"

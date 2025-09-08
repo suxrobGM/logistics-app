@@ -13,17 +13,19 @@ internal sealed class CreateTripHandler : IAppRequestHandler<CreateTripCommand, 
     private readonly ILogger<CreateTripHandler> _logger;
     private readonly IPushNotificationService _pushNotificationService;
     private readonly ITenantUnitOfWork _tenantUow;
+    private readonly ITripOptimizer _tripOptimizer;
 
     public CreateTripHandler(
         ITenantUnitOfWork tenantUow,
         ILoadService loadService,
         IPushNotificationService pushNotificationService,
-        ILogger<CreateTripHandler> logger)
+        ILogger<CreateTripHandler> logger, ITripOptimizer tripOptimizer)
     {
         _tenantUow = tenantUow;
         _loadService = loadService;
         _pushNotificationService = pushNotificationService;
         _logger = logger;
+        _tripOptimizer = tripOptimizer;
     }
 
     public async Task<Result> Handle(CreateTripCommand req, CancellationToken ct)

@@ -82,7 +82,7 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
 
         var createdCount = created.Count;
 
-        // Rebuild stops from final set
+        // Rebuild stops from a final set
         trip.UpdateTripLoads(loadsMap.Values);
 
         await _uow.SaveChangesAsync(ct);

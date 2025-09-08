@@ -118,6 +118,7 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Number = table.Column<string>(type: "text", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
+                    VehicleCapacity = table.Column<int>(type: "integer", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     MainDriverId = table.Column<Guid>(type: "uuid", nullable: true),
                     SecondaryDriverId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -226,9 +227,9 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
                     TripId = table.Column<Guid>(type: "uuid", nullable: false),
                     Order = table.Column<int>(type: "integer", nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false),
                     ArrivedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     LoadId = table.Column<Guid>(type: "uuid", nullable: false),
                     Address_City = table.Column<string>(type: "text", nullable: false),
@@ -268,7 +269,7 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     DeliveredAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CancelledAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     TripStopId = table.Column<Guid>(type: "uuid", nullable: true),
-                    CustomerId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
                     AssignedTruckId = table.Column<Guid>(type: "uuid", nullable: true),
                     AssignedDispatcherId = table.Column<Guid>(type: "uuid", nullable: true),
                     DeliveryCost_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
@@ -301,7 +302,8 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                         name: "FK_Loads_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Loads_Employees_AssignedDispatcherId",
                         column: x => x.AssignedDispatcherId,

@@ -7,6 +7,7 @@ import {TruckStatus, TruckType} from "./enums";
 export interface TruckDto {
   id: string;
   number: string;
+  vehicleCapacity: number;
   type: TruckType;
   status: TruckStatus;
   mainDriver?: EmployeeDto;

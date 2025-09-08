@@ -56,6 +56,7 @@ export class SearchTruckComponent implements ControlValueAccessor {
     this.apiService.truckApi.getTruck(id).subscribe((result) => {
       if (result.success && result.data) {
         this.selectedTruck.set(result.data);
+        this.onChange(result.data);
       }
     });
   }

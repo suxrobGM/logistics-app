@@ -1,5 +1,15 @@
 import {CurrencyPipe} from "@angular/common";
-import {Component, computed, effect, input, model, output, signal, viewChild} from "@angular/core";
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  model,
+  output,
+  signal,
+  viewChild,
+} from "@angular/core";
 import {FormsModule} from "@angular/forms";
 import {RouterLink} from "@angular/router";
 import {ButtonModule} from "primeng/button";
@@ -9,9 +19,11 @@ import {InputTextModule} from "primeng/inputtext";
 import {Table, TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {TooltipModule} from "primeng/tooltip";
+import {ApiService} from "@/core/api";
 import {
   CreateTripLoadCommand,
   LoadStatus,
+  OptimizeTripStopsCommand,
   TripLoadDto,
   TripStopDto,
   TripStopType,
@@ -33,6 +45,8 @@ export interface LoadsStepData {
   totalDistance: number;
   totalCost: number;
   totalLoads: number;
+  truckId: string;
+  truckVehicleCapacity: number;
 }
 
 interface NewLoad extends CreateTripLoadCommand {
@@ -60,12 +74,13 @@ interface NewLoad extends CreateTripLoadCommand {
   ],
 })
 export class TripFormStepLoads {
+  private readonly apiService = inject(ApiService);
+
   private readonly newLoads: NewLoad[] = [];
   private readonly attachedLoads: TripLoadDto[] = [];
   private readonly detachedLoads: TripLoadDto[] = [];
 
-  public readonly truckId = input<string>();
-  public readonly initialData = input<TripLoadDto[] | null>(null);
+  public readonly stepData = input<LoadsStepData | null>(null);
   public readonly disabled = input<boolean>(false);
 
   public readonly back = output<void>();
@@ -84,12 +99,11 @@ export class TripFormStepLoads {
 
   constructor() {
     effect(() => {
-      const initialData = this.initialData();
+      const stepData = this.stepData();
+      console.log("loads step data", stepData);
 
-      if (initialData) {
-        this.rows.set(
-          initialData.map((load) => ({...load, kind: "existing", pendingDetach: false}))
-        );
+      if (stepData) {
+        this.initRowsFromStepData(stepData);
       }
     });
   }
@@ -123,6 +137,7 @@ export class TripFormStepLoads {
     this.newLoads.push({
       ...load,
       id: tempId,
+      customerId: load.customer?.id ?? "",
     });
 
     this.rows.update((rows) => [
@@ -132,7 +147,7 @@ export class TripFormStepLoads {
         kind: "new",
         id: tempId,
         number: 0,
-        status: LoadStatus.Dispatched,
+        status: LoadStatus.Draft,
         pendingDetach: false,
       } as TableRow,
     ]);
@@ -148,20 +163,58 @@ export class TripFormStepLoads {
 
   protected goToNextStep(): void {
     const {distance, cost, loads} = this.calcTotals();
+    const stops = this.buildStops();
 
-    this.next.emit({
-      newLoads: this.newLoads,
-      attachedLoads: this.attachedLoads,
-      detachedLoads: this.detachedLoads,
-      stops: this.buildStops(),
-      totalDistance: distance,
-      totalCost: cost,
-      totalLoads: loads,
+    const optimizeTripStopsCommand: OptimizeTripStopsCommand = {
+      maxVehicles: this.stepData()!.truckVehicleCapacity!,
+      stops: stops,
+    };
+
+    // Optimize routes
+    this.apiService.tripApi.optimizeTripStops(optimizeTripStopsCommand).subscribe((result) => {
+      this.next.emit({
+        newLoads: this.newLoads,
+        attachedLoads: this.attachedLoads,
+        detachedLoads: this.detachedLoads,
+        stops: result.data?.orderedStops ?? stops,
+        totalDistance: result.data?.totalDistance ?? distance,
+        totalCost: cost,
+        totalLoads: loads,
+        truckId: this.stepData()!.truckId!,
+        truckVehicleCapacity: this.stepData()!.truckVehicleCapacity!,
+      });
     });
   }
 
   protected applyFilter(event: Event): void {
     this.dataTable()?.filterGlobal((event.target as HTMLInputElement).value, "contains");
+  }
+
+  private initRowsFromStepData(stepData: LoadsStepData): void {
+    const existingLoads =
+      stepData.attachedLoads?.map(
+        (load) =>
+          ({
+            ...load,
+            kind: "existing",
+            pendingDetach: false,
+          }) satisfies TableRow
+      ) ?? [];
+
+    const newLoads =
+      stepData.newLoads?.map(
+        (load) =>
+          ({
+            ...load,
+            id: crypto.randomUUID(),
+            number: 0,
+            status: LoadStatus.Draft,
+            kind: "new",
+            pendingDetach: false,
+          }) satisfies TableRow
+      ) ?? [];
+
+    this.rows.set([...existingLoads, ...newLoads]);
   }
 
   private buildStops(): TripStopDto[] {
@@ -206,12 +259,12 @@ export class TripFormStepLoads {
     let cost = 0;
     let loads = 0;
 
-    for (const r of this.rows()) {
-      if (r.pendingDetach) {
+    for (const row of this.rows()) {
+      if (row.pendingDetach) {
         continue;
       }
-      distance += r.distance ?? 0;
-      cost += r.deliveryCost ?? 0;
+      distance += row.distance ?? 0;
+      cost += row.deliveryCost ?? 0;
       loads++;
     }
     return {distance, cost, loads};

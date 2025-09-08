@@ -15,6 +15,7 @@ public static class TruckMapper
             Status = entity.Status,
             CurrentLocation = entity.CurrentLocation,
             CurrentAddress = entity.CurrentAddress,
+            VehicleCapacity = entity.VehicleCapacity,
             Loads = loads,
             MainDriver = entity.MainDriver?.ToDto(),
             SecondaryDriver = entity.SecondaryDriver?.ToDto(),

@@ -18,9 +18,7 @@ export abstract class ApiBase {
    * @param sortOrder Sort order (1 for ascending, -1 for descending)
    * @returns The parsed sort property string.
    * @example
-    ```typescript
-      const sortProperty = this.parseSortProperty("name", -1); // returns "-name"
-    ``` 
+   * const sortProperty = this.parseSortProperty("name", -1); // returns "-name"
    */
   formatSortField(sortField?: string | null, sortOrder?: number | null): string {
     if (!sortOrder) {

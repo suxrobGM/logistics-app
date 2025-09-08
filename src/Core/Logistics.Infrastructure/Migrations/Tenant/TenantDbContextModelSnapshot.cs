@@ -18,7 +18,7 @@ namespace Logistics.Infrastructure.Migrations.Tenant
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.7")
+                .HasAnnotation("ProductVersion", "9.0.8")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true)
@@ -296,7 +296,7 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                         .HasColumnType("character varying(50)")
                         .HasColumnName("CreatedBy");
 
-                    b.Property<Guid?>("CustomerId")
+                    b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("DeliveredAt")
@@ -823,6 +823,9 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
+                    b.Property<int>("VehicleCapacity")
+                        .HasColumnType("integer");
+
                     b.ComplexProperty<Dictionary<string, object>>("CurrentAddress", "Logistics.Domain.Entities.Truck.CurrentAddress#Address", b1 =>
                         {
                             b1.IsRequired();
@@ -1174,7 +1177,9 @@ namespace Logistics.Infrastructure.Migrations.Tenant
 
                     b.HasOne("Logistics.Domain.Entities.Customer", "Customer")
                         .WithMany()
-                        .HasForeignKey("CustomerId");
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Logistics.Domain.Entities.TripStop", "TripStop")
                         .WithOne("Load")

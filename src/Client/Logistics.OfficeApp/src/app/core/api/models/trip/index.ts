@@ -6,3 +6,5 @@ export * from "./update-trip.command";
 export * from "./trip-stop.dto";
 export * from "./trip-load.dto";
 export * from "./create-trip-load.command";
+export * from "./optimize-trip-stops.command";
+export * from "./optimized-trip-stops.dto";

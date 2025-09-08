@@ -1,4 +1,5 @@
 import {Component, inject, signal} from "@angular/core";
+import {Router} from "@angular/router";
 import {CardModule} from "primeng/card";
 import {ApiService} from "@/core/api";
 import {CreateTripCommand} from "@/core/api/models";
@@ -11,6 +12,7 @@ import {TripForm, TripFormValue} from "../components";
   imports: [CardModule, TripForm],
 })
 export class TripAddPage {
+  private readonly router = inject(Router);
   private readonly apiService = inject(ApiService);
   private readonly toastService = inject(ToastService);
 
@@ -21,11 +23,13 @@ export class TripAddPage {
 
     const command: CreateTripCommand = {
       ...formValue,
+      name: formValue.tripName,
     };
 
     this.apiService.tripApi.createTrip(command).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess("Trip created successfully");
+        this.router.navigate(["/trips"]);
       }
 
       this.isLoading.set(false);

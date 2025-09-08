@@ -14,4 +14,10 @@ public record TripStopDto
     public DateTime? ArrivedAt { get; set; }
 
     public Guid LoadId { get; set; }
+    public Guid TripId { get; set; }
+
+    public int GetDemand()
+    {
+        return Type is TripStopType.PickUp ? 1 : -1;
+    }
 }

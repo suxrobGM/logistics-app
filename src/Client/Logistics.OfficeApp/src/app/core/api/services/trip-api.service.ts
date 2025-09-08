@@ -3,6 +3,8 @@ import {ApiBase} from "../api-base";
 import {
   CreateTripCommand,
   GetTripsQuery,
+  OptimizeTripStopsCommand,
+  OptimizedTripStopsDto,
   PagedResult,
   Result,
   TripDto,
@@ -28,5 +30,9 @@ export class TripApiService extends ApiBase {
 
   deleteTrip(tripId: string): Observable<Result> {
     return this.delete(`/trips/${tripId}`);
+  }
+
+  optimizeTripStops(command: OptimizeTripStopsCommand): Observable<Result<OptimizedTripStopsDto>> {
+    return this.post("/trips/optimize", command);
   }
 }

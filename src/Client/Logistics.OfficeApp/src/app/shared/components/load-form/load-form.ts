@@ -39,7 +39,7 @@ import {Converters} from "@/shared/utils";
 export interface LoadFormValue {
   name: string;
   type: LoadType;
-  customer?: CustomerDto | null;
+  customer: CustomerDto;
   originAddress: AddressDto;
   originLocation: GeoPointDto;
   destinationAddress: AddressDto;
@@ -85,6 +85,7 @@ export class LoadFormComponent implements OnInit {
   private readonly toastService = inject(ToastService);
 
   public readonly mode = input.required<"create" | "edit">();
+  public readonly canChangeAssignedTruck = input<boolean>(true);
   public readonly initial = input<Partial<LoadFormValue> | null>(null);
   public readonly isLoading = input(false);
 
@@ -106,7 +107,10 @@ export class LoadFormComponent implements OnInit {
       validators: [Validators.required],
       nonNullable: true,
     }),
-    customer: new FormControl<CustomerDto | null>(null, {validators: [Validators.required]}),
+    customer: new FormControl<CustomerDto | null>(null, {
+      validators: [Validators.required],
+      nonNullable: true,
+    }),
     originAddress: new FormControl<AddressDto | null>(null, {
       validators: [Validators.required],
       nonNullable: true,
@@ -127,10 +131,13 @@ export class LoadFormComponent implements OnInit {
     distance: new FormControl({value: 0, disabled: true}, {nonNullable: true}),
     // only visible/patched when mode === 'edit'
     status: new FormControl<LoadStatus | null>(null),
-    assignedTruck: new FormControl<TruckDto | string | null>(null, {
-      validators: [Validators.required],
-      nonNullable: true,
-    }),
+    assignedTruck: new FormControl<TruckDto | string | null>(
+      {value: null, disabled: this.canChangeAssignedTruck()},
+      {
+        validators: [Validators.required],
+        nonNullable: true,
+      }
+    ),
     assignedDispatcherId: new FormControl("", {
       validators: [Validators.required],
       nonNullable: true,
@@ -190,6 +197,8 @@ export class LoadFormComponent implements OnInit {
   }
 
   protected submit(): void {
+    console.log("form errors", this.form.errors);
+
     if (this.form.invalid) {
       return;
     }

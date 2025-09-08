@@ -42,6 +42,16 @@ public class TripController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
+    [HttpPost("optimize")]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permissions.Loads.View)]
+    public async Task<IActionResult> OptimizeTripStops([FromBody] OptimizeTripStopsCommand request)
+    {
+        var result = await mediator.Send(request);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+
     [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]

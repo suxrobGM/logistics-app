@@ -2,8 +2,14 @@
   <form [formGroup]="form" (ngSubmit)="goToNextStep()">
     <app-validation-summary [form]="form" />
 
-    <app-form-field label="Trip Name" for="name" [required]="true">
-      <input pInputText id="name" formControlName="name" type="text" placeholder="Trip name" />
+    <app-form-field label="Trip Name" for="tripName" [required]="true">
+      <input
+        pInputText
+        id="tripName"
+        formControlName="tripName"
+        type="text"
+        placeholder="Trip name"
+      />
     </app-form-field>
 
     <app-form-field label="Assigned Truck" for="truck" [required]="true">

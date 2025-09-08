@@ -1,4 +1,4 @@
-import {Component, input, output, signal} from "@angular/core";
+import {Component, effect, input, output, signal} from "@angular/core";
 import {ButtonModule} from "primeng/button";
 import {InputGroupModule} from "primeng/inputgroup";
 import {InputTextModule} from "primeng/inputtext";
@@ -7,24 +7,14 @@ import {StepperModule} from "primeng/stepper";
 import {TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {TooltipModule} from "primeng/tooltip";
-import {CreateTripLoadCommand, TripLoadDto, TripStopDto} from "@/core/api/models";
+import {TripLoadDto, TripStopDto} from "@/core/api/models";
 import {BasicStepData, TripFormStepBasic} from "../trip-form-step-basic/trip-form-step-basic";
 import {LoadsStepData, TripFormStepLoads} from "../trip-form-step-loads/trip-form-step-loads";
-import {TripFormStepReview} from "../trip-form-step-review/trip-form-step-review";
+import {ReviewStepData, TripFormStepReview} from "../trip-form-step-review/trip-form-step-review";
 
-export interface TripFormValue {
-  name: string;
-  truckId: string;
-  newLoads?: CreateTripLoadCommand[];
-  attachedLoadIds?: string[];
-  detachedLoadIds?: string[];
+export interface TripFormValue extends BasicStepData, LoadsStepData {
   initialLoads?: TripLoadDto[];
   initialStops?: TripStopDto[];
-
-  stops?: TripStopDto[];
-  totalDistance?: number;
-  totalCost?: number;
-  totalLoads?: number;
 }
 
 @Component({
@@ -45,7 +35,9 @@ export interface TripFormValue {
   ],
 })
 export class TripForm {
-  protected readonly formValue = signal<TripFormValue | null>(null);
+  protected readonly step1Data = signal<BasicStepData | null>(null);
+  protected readonly step2Data = signal<LoadsStepData | null>(null);
+  protected readonly step3Data = signal<ReviewStepData | null>(null);
   protected readonly activeStep = signal(1);
 
   public readonly mode = input.required<"create" | "edit">();
@@ -54,32 +46,63 @@ export class TripForm {
 
   public readonly save = output<TripFormValue>();
 
-  protected processBasicStep(stepData: BasicStepData): void {
-    this.formValue.set({
-      name: stepData.name,
-      truckId: stepData.truckId,
-    });
+  constructor() {
+    // Initialize step data
+    effect(() => {
+      const initialData = this.initialData();
 
+      if (initialData) {
+        this.step1Data.set({
+          tripName: initialData.tripName ?? "",
+          truckId: initialData.truckId ?? "",
+          truckVehicleCapacity: initialData.truckVehicleCapacity ?? 0,
+        });
+
+        this.step2Data.set({
+          newLoads: initialData.newLoads ?? [],
+          attachedLoads: initialData.initialLoads ?? [],
+          detachedLoads: initialData.detachedLoads ?? [],
+          stops: initialData.initialStops ?? [],
+          totalDistance: initialData.totalDistance ?? 0,
+          totalCost: initialData.totalCost ?? 0,
+          totalLoads: initialData.totalLoads ?? 0,
+          truckId: initialData.truckId ?? "",
+          truckVehicleCapacity: initialData.truckVehicleCapacity ?? 0,
+        });
+      }
+    });
+  }
+
+  protected processStep1(stepData: BasicStepData): void {
+    console.log("basic step data", stepData);
+    this.step1Data.set(stepData);
+    this.step2Data.update((data) => ({
+      ...data!,
+      truckId: stepData.truckId,
+      truckVehicleCapacity: stepData.truckVehicleCapacity,
+    }));
     this.activeStep.set(2);
   }
 
-  protected processLoadsStep(stepData: LoadsStepData): void {
-    this.formValue.update((prev) => ({
-      ...prev!,
+  protected processStep2(stepData: LoadsStepData): void {
+    // Set data for the last review step
+    this.step2Data.set(stepData);
+    this.step3Data.set({
+      ...this.step1Data()!,
       ...stepData,
-      attachedLoadIds: stepData.attachedLoads.map((load) => load.id),
-      detachLoadIds: stepData.detachedLoads.map((load) => load.id),
-    }));
-
+      newLoadsCount: stepData.newLoads?.length ?? 0,
+      pendingDetachLoadsCount: stepData.detachedLoads?.length ?? 0,
+    });
     this.activeStep.set(3);
   }
 
-  protected processReviewStep(): void {
-    const formValue = this.formValue();
-    if (!formValue) {
-      return;
-    }
+  protected processStep3(): void {
+    // All steps data except for step 3, since step 3 is review step so do not need to include it
+    const allStepsData = {
+      ...this.step1Data()!,
+      ...this.step2Data()!,
+    };
 
-    this.save.emit(formValue);
+    this.save.emit(allStepsData);
   }
 }

@@ -13,8 +13,7 @@ public static class BlobStorageExtensions
     /// </summary>
     public static IServiceCollection AddAzureBlobStorage(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<AzureBlobStorageOptions>(options =>
-            configuration.GetSection(AzureBlobStorageOptions.SectionName).Bind(options));
+        services.Configure<AzureBlobStorageOptions>(configuration.GetSection(AzureBlobStorageOptions.SectionName));
 
         services.AddSingleton(provider =>
         {
@@ -31,8 +30,7 @@ public static class BlobStorageExtensions
     /// </summary>
     public static IServiceCollection AddFileBlobStorage(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<FileBlobStorageOptions>(options =>
-            configuration.GetSection(FileBlobStorageOptions.SectionName).Bind(options));
+        services.Configure<FileBlobStorageOptions>(configuration.GetSection(FileBlobStorageOptions.SectionName));
 
         services.AddScoped<IBlobStorageService, FileBlobStorageService>();
         return services;

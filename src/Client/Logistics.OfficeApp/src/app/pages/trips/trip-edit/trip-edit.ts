@@ -44,6 +44,7 @@ export class TripEditPage implements OnInit {
     this.isLoading.set(true);
     const command: UpdateTripCommand = {
       ...formValues,
+      name: formValues.tripName,
       tripId: tripId,
     };
 
@@ -70,7 +71,7 @@ export class TripEditPage implements OnInit {
         const trip = result.data;
 
         this.initialData.set({
-          name: trip.name,
+          tripName: trip.name,
           truckId: trip.truckId,
           initialLoads: trip.loads,
           initialStops: trip.stops,

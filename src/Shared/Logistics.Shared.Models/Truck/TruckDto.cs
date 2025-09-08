@@ -7,6 +7,7 @@ public class TruckDto
 {
     public Guid? Id { get; set; }
     public string? Number { get; set; }
+    public int VehicleCapacity { get; set; }
     public TruckType Type { get; set; }
     public TruckStatus Status { get; set; }
     public Address? CurrentAddress { get; set; }

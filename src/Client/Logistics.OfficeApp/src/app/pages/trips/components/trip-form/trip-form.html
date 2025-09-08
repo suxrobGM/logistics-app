@@ -18,9 +18,9 @@
       <ng-template #content let-activateCallback="activateCallback">
         <!-- Basic info form-->
         <app-trip-form-step-basic
-          [initialData]="initialData()"
+          [stepData]="step1Data()"
           [disabled]="disabled()"
-          (next)="processBasicStep($event)"
+          (next)="processStep1($event)"
         />
       </ng-template>
     </p-step-panel>
@@ -28,11 +28,10 @@
       <ng-template #content let-activateCallback="activateCallback">
         <!-- Loads table -->
         <app-trip-form-step-loads
-          [truckId]="formValue()?.truckId"
-          [initialData]="initialData()?.initialLoads ?? null"
+          [stepData]="step2Data()"
           [disabled]="disabled()"
           (back)="activateCallback(1)"
-          (next)="processLoadsStep($event)"
+          (next)="processStep2($event)"
         />
       </ng-template>
     </p-step-panel>
@@ -40,16 +39,10 @@
       <ng-template #content let-activateCallback="activateCallback">
         <!-- Review step -->
         <app-trip-form-step-review
-          [mode]="mode()"
-          [tripName]="formValue()?.name"
-          [truckId]="formValue()?.truckId"
-          [newLoadsCount]="formValue()?.newLoads?.length ?? 0"
-          [totalLoads]="formValue()?.totalLoads ?? 0"
-          [totalCost]="formValue()?.totalCost ?? 0"
-          [totalDistance]="formValue()?.totalDistance ?? 0"
-          [stops]="formValue()?.stops ?? initialData()?.initialStops ?? []"
+          [saveButtonLabel]="mode() === 'create' ? 'Create' : 'Update'"
+          [stepData]="step3Data()"
           (back)="activateCallback(2)"
-          (save)="processReviewStep()"
+          (save)="processStep3()"
         />
       </ng-template>
     </p-step-panel>

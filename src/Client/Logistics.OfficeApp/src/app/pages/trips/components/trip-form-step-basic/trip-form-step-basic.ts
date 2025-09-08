@@ -1,14 +1,16 @@
-import {Component, effect, input, output} from "@angular/core";
+import {Component, effect, inject, input, output} from "@angular/core";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {RouterLink} from "@angular/router";
 import {Button} from "primeng/button";
 import {InputTextModule} from "primeng/inputtext";
-import {TripDto, TruckDto} from "@/core/api/models";
+import {TruckDto, TruckType} from "@/core/api/models";
+import {ToastService} from "@/core/services";
 import {FormField, SearchTruckComponent, ValidationSummary} from "@/shared/components";
 
 export interface BasicStepData {
-  name: string;
+  tripName: string;
   truckId: string;
+  truckVehicleCapacity: number;
 }
 
 @Component({
@@ -25,12 +27,14 @@ export interface BasicStepData {
   ],
 })
 export class TripFormStepBasic {
-  public readonly initialData = input<Partial<TripDto> | null>(null);
+  private readonly toastService = inject(ToastService);
+
+  public readonly stepData = input<BasicStepData | null>(null);
   public readonly disabled = input<boolean>(false);
   public readonly next = output<BasicStepData>();
 
   protected readonly form = new FormGroup({
-    name: new FormControl<string>("", {validators: [Validators.required], nonNullable: true}),
+    tripName: new FormControl<string>("", {validators: [Validators.required], nonNullable: true}),
     truck: new FormControl<TruckDto | string | null>(null, {
       validators: [Validators.required],
       nonNullable: true,
@@ -39,12 +43,17 @@ export class TripFormStepBasic {
 
   constructor() {
     effect(() => {
-      const initialData = this.initialData();
+      const stepData = this.stepData();
 
-      if (initialData) {
-        this.form.patchValue(initialData);
+      // Initialize form from step data
+      if (stepData) {
+        this.form.patchValue({
+          tripName: stepData.tripName ?? "",
+          truck: stepData.truckId ?? null,
+        });
       }
 
+      // Enable or disable form controls based on the disabled input
       if (this.disabled()) {
         this.form.get("truckId")?.disable();
       } else {
@@ -54,11 +63,24 @@ export class TripFormStepBasic {
   }
 
   protected goToNextStep(): void {
-    if (this.form.valid) {
-      this.next.emit({
-        name: this.form.value.name ?? this.initialData()?.name ?? "",
-        truckId: (this.form.value.truck as TruckDto)?.id ?? this.initialData()?.truckId ?? "",
-      });
+    if (!this.form.valid) {
+      return;
     }
+
+    const truckType = (this.form.value.truck as TruckDto)?.type;
+
+    if (truckType !== TruckType.CarHauler) {
+      this.toastService.showError("The selected truck is not a car hauler truck.");
+      return;
+    }
+
+    this.next.emit({
+      tripName: this.form.value.tripName ?? this.stepData()?.tripName ?? "",
+      truckId: (this.form.value.truck as TruckDto)?.id ?? this.stepData()?.truckId ?? "",
+      truckVehicleCapacity:
+        (this.form.value.truck as TruckDto)?.vehicleCapacity ??
+        this.stepData()?.truckVehicleCapacity ??
+        0,
+    });
   }
 }

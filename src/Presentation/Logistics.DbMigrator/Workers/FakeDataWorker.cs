@@ -257,6 +257,8 @@ internal class FakeDataWorker : IHostedService
         {
             var truckType = _random.Pick([TruckType.CarHauler, TruckType.FreightTruck]);
             var truck = Truck.Create(truckNumber.ToString(), truckType, driver);
+            truck.VehicleCapacity = truckType == TruckType.CarHauler ? 7 : 0;
+
             truckNumber++;
             trucksList.Add(truck);
             await truckRepository.AddAsync(truck);

@@ -21,7 +21,7 @@
     </p-tabpanel>
   </p-tabpanels> -->
 
-  <p-accordion value="0">
+  <!-- <p-accordion value="0">
     <p-accordion-panel value="0">
       <p-accordion-header>Use existing load to attach to this trip</p-accordion-header>
       <p-accordion-content>
@@ -36,5 +36,12 @@
         <app-load-form [initial]="initialLoad()" [mode]="'create'" (save)="createLoad($event)" />
       </p-accordion-content>
     </p-accordion-panel>
-  </p-accordion>
+  </p-accordion> -->
+
+  <app-load-form
+    [initial]="initialLoad()"
+    [mode]="'create'"
+    (save)="createLoad($event)"
+    [canChangeAssignedTruck]="false"
+  />
 </p-dialog>
