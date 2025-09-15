@@ -26,6 +26,28 @@ export const sidebarItems: MenuItem[] = [
     ],
   },
   {
+    label: "Reports",
+    icon: "pi pi-chart-line text-3xl!",
+    items: [
+      {
+        label: "Loads",
+        route: "/reports/loads",
+      },
+      {
+        label: "Drivers",
+        route: "/reports/drivers",
+      },
+      {
+        label: "Drivers Detailed",
+        route: "/reports/drivers/detailed",
+      },
+      {
+        label: "Financials",
+        route: "/reports/financials",
+      },
+    ],
+  },
+  {
     label: "Trucks",
     icon: "pi pi-truck text-3xl!",
     route: "/trucks",

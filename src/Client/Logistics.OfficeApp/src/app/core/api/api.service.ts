@@ -29,6 +29,7 @@ import {
   TruckApiService,
   UserApiService,
 } from "./services";
+import { ReportApiService } from "./services/report-api.service";
 
 /**
  * Facade service that provides access to various API services.
@@ -43,6 +44,7 @@ export class ApiService extends ApiBase {
   public readonly invoiceApi = new InvoiceApiService();
   public readonly tripApi = new TripApiService();
   public readonly loadApi = new LoadApiService();
+  public readonly reportApi = new ReportApiService();
   public readonly truckApi = new TruckApiService();
   public readonly customerApi = new CustomerApiService();
 
