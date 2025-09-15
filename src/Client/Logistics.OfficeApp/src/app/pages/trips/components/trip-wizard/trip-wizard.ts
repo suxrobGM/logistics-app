@@ -74,7 +74,6 @@ export class TripWizard {
   }
 
   protected processStep1(stepData: TripWizardBasicData): void {
-    console.log("basic step data", stepData);
     this.step1Data.set(stepData);
     this.step2Data.update((data) => ({
       ...data!,
@@ -92,6 +91,7 @@ export class TripWizard {
       ...stepData,
       newLoadsCount: stepData.newLoads?.length ?? 0,
       pendingDetachLoadsCount: stepData.detachedLoads?.length ?? 0,
+      truckVehicleCapacity: stepData.truckVehicleCapacity,
     });
     this.activeStep.set(3);
   }

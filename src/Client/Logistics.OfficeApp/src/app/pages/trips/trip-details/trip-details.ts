@@ -1,5 +1,5 @@
 import {CommonModule} from "@angular/common";
-import {Component, OnInit, inject, input, signal} from "@angular/core";
+import {Component, OnInit, computed, inject, input, signal} from "@angular/core";
 import {RouterLink} from "@angular/router";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
@@ -11,7 +11,6 @@ import {TripDto, TripStopDto, TripStopType} from "@/core/api/models";
 import {DirectionMap, LoadStatusTag, LoadTypeTag, TripStatusTag} from "@/shared/components";
 import {RouteSegmentClickEvent, WaypointClickEvent} from "@/shared/components/direction-map/types";
 import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
-import {GeoPoint} from "@/shared/types/mapbox";
 
 @Component({
   selector: "app-trip-details",
@@ -41,6 +40,10 @@ export class TripDetailsPage implements OnInit {
   protected readonly trip = signal<TripDto | null>(null);
   protected readonly selectedStop = signal<TripStopDto | null>(null);
 
+  protected readonly sortedStops = computed<TripStopDto[]>(() => {
+    return (this.trip()?.stops ?? []).slice().sort((a, b) => a.order - b.order);
+  });
+
   ngOnInit(): void {
     this.fetchTrip();
   }
@@ -53,19 +56,6 @@ export class TripDetailsPage implements OnInit {
   protected onWaypointClick(e: WaypointClickEvent) {
     const stop = this.trip()?.stops.find((s) => s.id === e.waypoint.id);
     this.selectedStop.set(stop ?? null);
-  }
-
-  /**
-   * Returns the coordinates of the trip stops in the order they are defined.
-   * @param stops Trip stops to extract coordinates from.
-   * @returns Array of coordinates in the format [longitude, latitude].
-   */
-  protected tripStopCoords(): GeoPoint[] {
-    return (
-      this.trip()
-        ?.stops.sort((a, b) => a.order - b.order)
-        .map((s) => [s.location.longitude, s.location.latitude] as GeoPoint) ?? []
-    );
   }
 
   protected stopLabel(tripStopType: TripStopType): string {

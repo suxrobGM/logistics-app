@@ -22,8 +22,11 @@ export class TripAddPage {
     this.isLoading.set(true);
 
     const command: CreateTripCommand = {
-      ...formValue,
       name: formValue.tripName,
+      truckId: formValue.truckId,
+      newLoads: formValue.newLoads,
+      attachedLoadIds: formValue.attachedLoads?.map((l) => l.id),
+      optimizedStops: formValue.stops,
     };
 
     this.apiService.tripApi.createTrip(command).subscribe((result) => {

@@ -3,6 +3,7 @@ import {GeoPointDto} from "../geo-point.dto";
 import {LoadType} from "../load";
 
 export interface CreateTripLoadCommand {
+  tempId?: string; // Temporary ID for mapping optimized stops
   name: string;
   originAddress: AddressDto;
   originLocation: GeoPointDto;

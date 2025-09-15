@@ -36,7 +36,8 @@ public class Trip : AuditableEntity, ITenantEntity
     public static Trip Create(
         string name,
         Truck truck,
-        IEnumerable<Load>? loads = null)
+        IEnumerable<Load>? loads = null,
+        IEnumerable<TripStop>? optimizedStops = null)
     {
         var loadsArr = loads?.ToArray() ?? [];
 
@@ -48,7 +49,20 @@ public class Trip : AuditableEntity, ITenantEntity
             TotalDistance = loadsArr.Sum(l => l.Distance)
         };
 
-        AddStops(trip, loadsArr);
+        if (optimizedStops is not null)
+        {
+            // Ensure Trip reference is set for each stop
+            foreach (var stop in optimizedStops)
+            {
+                stop.Trip = trip;
+                stop.TripId = trip.Id;
+                trip.Stops.Add(stop);
+            }
+        }
+        else
+        {
+            AddStops(trip, loadsArr);
+        }
 
         trip.DomainEvents.Add(new NewTripCreatedEvent(trip.Id));
         return trip;
@@ -156,20 +170,34 @@ public class Trip : AuditableEntity, ITenantEntity
     ///     Updates the trip loads. Clears existing stops and recreates them based on the new loads.
     /// </summary>
     /// <param name="loads">The new collection of loads to be associated with the trip.</param>
+    /// <param name="optimizedStops">Optional optimized stops with preserved order.</param>
     /// <exception cref="InvalidOperationException">Thrown if the trip status is not 'Draft'.</exception>
-    public void UpdateTripLoads(IEnumerable<Load> loads)
+    public void UpdateTripLoads(IEnumerable<Load> loads, IEnumerable<TripStop>? optimizedStops = null)
     {
         if (Status != TripStatus.Draft)
         {
             throw new InvalidOperationException("Cannot update loads for a trip that is not draft.");
         }
 
-        // Clear existing stops
+        // Clear existing stops from the collection
         Stops.Clear();
         var loadsArr = loads.ToArray();
 
-        // Recreate stops based on new loads
-        AddStops(this, loadsArr);
+        if (optimizedStops != null)
+        {
+            // Use the optimized stops if provided and ensure Trip reference is set
+            foreach (var stop in optimizedStops)
+            {
+                stop.Trip = this;
+                stop.TripId = Id;
+                Stops.Add(stop);
+            }
+        }
+        else
+        {
+            // Recreate stops based on new loads with default ordering
+            AddStops(this, loadsArr);
+        }
 
         TotalDistance = loadsArr.Sum(l => l.Distance);
     }

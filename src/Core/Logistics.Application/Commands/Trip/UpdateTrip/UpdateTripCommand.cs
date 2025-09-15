@@ -10,6 +10,7 @@ public class UpdateTripCommand : IAppRequest
     public Guid? TruckId { get; set; }
 
     public IEnumerable<CreateTripLoadCommand>? NewLoads { get; set; }
-    public IEnumerable<Guid>? AttachLoadIds { get; set; }
-    public IEnumerable<Guid>? DetachLoadIds { get; set; }
+    public IEnumerable<Guid>? AttachedLoadIds { get; set; }
+    public IEnumerable<Guid>? DetachedLoadIds { get; set; }
+    public IEnumerable<TripStopDto>? OptimizedStops { get; set; }
 }

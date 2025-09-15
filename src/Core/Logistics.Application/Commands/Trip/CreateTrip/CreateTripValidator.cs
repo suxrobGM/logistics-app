@@ -9,10 +9,10 @@ internal sealed class CreateTripValidator : AbstractValidator<CreateTripCommand>
         RuleFor(i => i.Name).NotEmpty();
         RuleFor(i => i.TruckId).NotEmpty();
 
-        // Either NewLoads OR ExistingLoadIds (but not both), and whichever is present must be non-empty
+        // Either NewLoads OR AttachedLoadIds (but not both), and whichever is present must be non-empty
         RuleFor(x => x)
             .Must(ExactlyOneSourceSelected)
-            .WithMessage("Specify either NewLoads or ExistingLoadIds, but not both.");
+            .WithMessage("Specify either NewLoads or AttachedLoadIds, but not both.");
 
         When(x => x.NewLoads is not null, () =>
         {
@@ -21,18 +21,18 @@ internal sealed class CreateTripValidator : AbstractValidator<CreateTripCommand>
                 .WithMessage("NewLoads cannot be empty when provided.");
         });
 
-        When(x => x.AttachLoadIds is not null, () =>
+        When(x => x.AttachedLoadIds is not null, () =>
         {
-            RuleFor(x => x.AttachLoadIds!)
+            RuleFor(x => x.AttachedLoadIds!)
                 .Must(l => l.Any())
-                .WithMessage("ExistingLoadIds cannot be empty when provided.");
+                .WithMessage("AttachedLoadIds cannot be empty when provided.");
         });
     }
 
     private static bool ExactlyOneSourceSelected(CreateTripCommand x)
     {
         var hasNew = x.NewLoads?.Any() == true;
-        var hasExisting = x.AttachLoadIds?.Any() == true;
+        var hasExisting = x.AttachedLoadIds?.Any() == true;
         return hasNew ^ hasExisting; // XOR
     }
 }

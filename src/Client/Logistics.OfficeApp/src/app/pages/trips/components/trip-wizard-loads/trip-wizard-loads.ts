@@ -39,9 +39,9 @@ interface TableRow extends TripLoadDto {
 }
 
 export interface TripWizardLoadsData {
-  newLoads: CreateTripLoadCommand[];
-  attachedLoads: TripLoadDto[];
-  detachedLoads: TripLoadDto[];
+  newLoads?: CreateTripLoadCommand[] | null;
+  attachedLoads?: TripLoadDto[] | null;
+  detachedLoads?: TripLoadDto[] | null;
   stops: TripStopDto[];
   totalDistance: number;
   totalCost: number;
@@ -78,13 +78,14 @@ interface NewLoad extends CreateTripLoadCommand {
 export class TripFormStepLoads {
   private readonly apiService = inject(ApiService);
 
-  private readonly newLoads: NewLoad[] = [];
-  private readonly attachedLoads: TripLoadDto[] = [];
-  private readonly detachedLoads: TripLoadDto[] = [];
+  private newLoads: NewLoad[] | null = null;
+  private attachedLoads: TripLoadDto[] | null = null;
+  private detachedLoads: TripLoadDto[] | null = null;
 
   protected readonly dataTable = viewChild<Table<TableRow>>("dataTable");
   protected readonly tripLoadDialogVisible = model(false);
   protected readonly rows = signal<TableRow[]>([]);
+  protected readonly optimizedStops = signal<TripStopDto[] | null>(null);
 
   protected readonly initialLoadData = computed(
     () =>
@@ -114,6 +115,9 @@ export class TripFormStepLoads {
 
       if (stepData) {
         this.initRowsFromStepData(stepData);
+        if (stepData.stops) {
+          this.optimizedStops.set(stepData.stops);
+        }
       }
     });
   }
@@ -123,11 +127,13 @@ export class TripFormStepLoads {
   }
 
   protected attachLoad(load: TripLoadDto): void {
+    this.attachedLoads = this.attachedLoads ?? [];
     this.attachedLoads.push(load);
     this.tripLoadDialogVisible.set(false);
   }
 
   protected detachLoad(load: TripLoadDto): void {
+    this.detachedLoads = this.detachedLoads ?? [];
     this.detachedLoads.push(load);
 
     this.rows.update((rows) =>
@@ -136,6 +142,10 @@ export class TripFormStepLoads {
   }
 
   protected undoDetachLoad(load: TripLoadDto): void {
+    if (!this.detachedLoads) {
+      return;
+    }
+
     this.detachedLoads.splice(this.detachedLoads.indexOf(load), 1);
     this.rows.update((rows) =>
       rows.map((row) => (row.id === load.id ? {...row, pendingDetach: false} : row))
@@ -143,10 +153,13 @@ export class TripFormStepLoads {
   }
 
   protected addNewLoad(load: LoadFormValue): void {
+    this.newLoads = this.newLoads ?? [];
+
     const tempId = crypto.randomUUID();
     this.newLoads.push({
       ...load,
       id: tempId,
+      tempId: tempId, // Add tempId for mapping on the backend
       customerId: load.customer?.id ?? "",
     });
 
@@ -155,7 +168,7 @@ export class TripFormStepLoads {
       {
         ...load,
         kind: "new",
-        id: tempId,
+        id: tempId, // Use tempId as the row ID so it can be matched later
         number: 0,
         status: LoadStatus.Draft,
         pendingDetach: false,
@@ -166,6 +179,10 @@ export class TripFormStepLoads {
   }
 
   protected removeNewLoad(load: TripLoadDto): void {
+    if (!this.newLoads) {
+      return;
+    }
+
     const existingLoadIndex = this.newLoads.findIndex((l) => l.id === load.id);
     this.newLoads.splice(existingLoadIndex, 1);
     this.rows.update((rows) => rows.filter((row) => row.id !== load.id));
@@ -173,6 +190,23 @@ export class TripFormStepLoads {
 
   protected goToNextStep(): void {
     const {distance, cost, loads} = this.calcTotals();
+
+    // If we already have optimized stops, use them
+    if (this.optimizedStops()) {
+      this.next.emit({
+        newLoads: this.newLoads,
+        attachedLoads: this.attachedLoads,
+        detachedLoads: this.detachedLoads,
+        stops: this.optimizedStops()!,
+        totalDistance: distance,
+        totalCost: cost,
+        totalLoads: loads,
+        truckId: this.stepData()!.truckId!,
+        truckVehicleCapacity: this.stepData()!.truckVehicleCapacity!,
+      });
+      return;
+    }
+
     const stops = this.buildStops();
 
     const optimizeTripStopsCommand: OptimizeTripStopsCommand = {
@@ -234,6 +268,9 @@ export class TripFormStepLoads {
     for (const row of this.rows()) {
       if (row.pendingDetach) continue;
 
+      // For new loads, the row.id is already the tempId; for existing loads, use the actual ID
+      const loadId = row.id;
+
       // Pick-up
       stops.push({
         id: crypto.randomUUID(),
@@ -244,7 +281,7 @@ export class TripFormStepLoads {
           longitude: row.originLocation.longitude,
           latitude: row.originLocation.latitude,
         },
-        loadId: row.id,
+        loadId: loadId,
       });
 
       // Drop-off
@@ -257,7 +294,7 @@ export class TripFormStepLoads {
           longitude: row.destinationLocation.longitude,
           latitude: row.destinationLocation.latitude,
         },
-        loadId: row.id,
+        loadId: loadId,
       });
     }
 

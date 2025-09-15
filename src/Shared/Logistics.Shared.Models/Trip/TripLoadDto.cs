@@ -16,5 +16,5 @@ public record TripLoadDto
     public required GeoPoint OriginLocation { get; set; }
     public required Address DestinationAddress { get; set; }
     public required GeoPoint DestinationLocation { get; set; }
-    public CustomerDto? Customer { get; set; }
+    public required CustomerDto Customer { get; set; }
 }

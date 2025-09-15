@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20250908053552_Version_0001")]
+    [Migration("20250915085224_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -327,9 +327,6 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<Guid?>("TripStopId")
-                        .HasColumnType("uuid");
-
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
@@ -443,9 +440,6 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.HasIndex("CustomerId");
 
                     b.HasIndex("Number")
-                        .IsUnique();
-
-                    b.HasIndex("TripStopId")
                         .IsUnique();
 
                     b.ToTable("Loads", (string)null);
@@ -798,6 +792,8 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                         });
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LoadId");
 
                     b.HasIndex("TripId");
 
@@ -1184,17 +1180,11 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Logistics.Domain.Entities.TripStop", "TripStop")
-                        .WithOne("Load")
-                        .HasForeignKey("Logistics.Domain.Entities.Load", "TripStopId");
-
                     b.Navigation("AssignedDispatcher");
 
                     b.Navigation("AssignedTruck");
 
                     b.Navigation("Customer");
-
-                    b.Navigation("TripStop");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Payment", b =>
@@ -1228,10 +1218,19 @@ namespace Logistics.Infrastructure.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.TripStop", b =>
                 {
+                    b.HasOne("Logistics.Domain.Entities.Load", "Load")
+                        .WithMany("TripStops")
+                        .HasForeignKey("LoadId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Logistics.Domain.Entities.Trip", "Trip")
                         .WithMany("Stops")
                         .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Load");
 
                     b.Navigation("Trip");
                 });
@@ -1331,6 +1330,8 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.Navigation("Documents");
 
                     b.Navigation("Invoices");
+
+                    b.Navigation("TripStops");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.TenantRole", b =>
@@ -1343,12 +1344,6 @@ namespace Logistics.Infrastructure.Migrations.Tenant
             modelBuilder.Entity("Logistics.Domain.Entities.Trip", b =>
                 {
                     b.Navigation("Stops");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.TripStop", b =>
-                {
-                    b.Navigation("Load")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Truck", b =>

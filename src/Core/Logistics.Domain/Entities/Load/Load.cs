@@ -44,9 +44,6 @@ public class Load : AuditableEntity, ITenantEntity
     public DateTime? DeliveredAt { get; private set; }
     public DateTime? CancelledAt { get; private set; }
 
-    public Guid? TripStopId { get; set; }
-    public virtual TripStop? TripStop { get; set; }
-
     public Guid CustomerId { get; set; }
     public virtual required Customer Customer { get; set; }
 
@@ -58,6 +55,7 @@ public class Load : AuditableEntity, ITenantEntity
 
     public virtual List<LoadInvoice> Invoices { get; set; } = [];
     public virtual List<LoadDocument> Documents { get; set; } = [];
+    public virtual ICollection<TripStop> TripStops { get; } = [];
 
     public bool CanTransitionTo(LoadStatus next)
     {

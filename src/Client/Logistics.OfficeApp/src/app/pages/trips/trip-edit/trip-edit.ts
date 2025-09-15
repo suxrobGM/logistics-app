@@ -43,9 +43,13 @@ export class TripEditPage implements OnInit {
 
     this.isLoading.set(true);
     const command: UpdateTripCommand = {
-      ...formValues,
-      name: formValues.tripName,
       tripId: tripId,
+      name: formValues.tripName,
+      truckId: formValues.truckId,
+      newLoads: formValues.newLoads,
+      attachedLoadIds: formValues.attachedLoads?.map((l) => l.id),
+      detachedLoadIds: formValues.detachedLoads?.map((l) => l.id),
+      optimizedStops: formValues.stops,
     };
 
     this.apiService.tripApi.updateTrip(command).subscribe((result) => {

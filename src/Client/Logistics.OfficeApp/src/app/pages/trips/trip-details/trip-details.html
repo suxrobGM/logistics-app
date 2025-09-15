@@ -12,8 +12,9 @@
         <p-skeleton class="h-96!" />
       } @else {
         @let tripDetails = trip()!;
+
         <app-direction-map
-          [waypoints]="trip()!.stops"
+          [waypoints]="sortedStops()"
           height="500px"
           [selectedWaypoint]="selectedStop()"
           (routeSegmentClick)="onRouteSegmentClick($event)"

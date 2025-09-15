@@ -56,11 +56,20 @@
     <ng-template #header>
       <div class="align-items-center flex gap-2 p-3 pb-0">
         <h5>Stops</h5>
+        <p-button
+          type="button"
+          icon="pi pi-route"
+          label="Re-optimize Route"
+          variant="outlined"
+          [loading]="isOptimizing()"
+          [disabled]="isOptimizing()"
+          (click)="reOptimizeRoute()"
+        />
       </div>
     </ng-template>
 
     <p-table
-      [value]="stepData()?.stops ?? []"
+      [value]="optimizedStops() ?? []"
       dataKey="id"
       sortField="order"
       sortMode="single"
@@ -88,7 +97,7 @@
   </p-card>
 
   <app-direction-map
-    [waypoints]="stepData()?.stops ?? []"
+    [waypoints]="optimizedStops() ?? []"
     height="700px"
     [zoom]="4"
     [selectedWaypoint]="selectedStop()"

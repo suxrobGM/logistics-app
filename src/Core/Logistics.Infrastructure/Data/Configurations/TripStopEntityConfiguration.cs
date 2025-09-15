@@ -1,5 +1,4 @@
 using Logistics.Domain.Entities;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,11 +13,11 @@ internal sealed class TripStopEntityConfiguration : IEntityTypeConfiguration<Tri
         builder.HasOne(i => i.Trip)
             .WithMany(i => i.Stops)
             .HasForeignKey(i => i.TripId)
-            .OnDelete(DeleteBehavior.ClientSetNull);
+            .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne(i => i.Load)
-            .WithOne(i => i.TripStop)
-            .HasForeignKey<Load>(i => i.TripStopId)
-            .OnDelete(DeleteBehavior.ClientSetNull);
+        builder.HasOne(ts => ts.Load)
+            .WithMany(l => l.TripStops)
+            .HasForeignKey(ts => ts.LoadId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

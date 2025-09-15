@@ -61,12 +61,12 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
             trip.Truck = newTruck;
         }
 
-        // Compose final load set
-        var loadsMap = trip.GetLoads().ToDictionary(l => l.Id);
+        // Compose a final load set
+        var loadMap = trip.GetLoads().ToDictionary(l => l.Id);
 
-        var removedCount = RemoveLoads(loadsMap, req.DetachLoadIds);
+        var removedCount = RemoveLoads(loadMap, req.DetachedLoadIds);
 
-        var attachResult = await AttachExistingLoadsAsync(loadsMap, req.AttachLoadIds, trip, ct);
+        var attachResult = await AttachExistingLoadsAsync(loadMap, req.AttachedLoadIds, trip, ct);
         if (!attachResult.Success)
         {
             return Result.Fail(attachResult.Error!);
@@ -77,19 +77,33 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
         var created = await CreateNewLoadsAsync(req.NewLoads, trip.TruckId);
         foreach (var l in created)
         {
-            loadsMap[l.Id] = l;
+            loadMap[l.Id] = l;
         }
 
         var createdCount = created.Count;
 
+        // Remove existing stops from the repository to avoid EF tracking issues
+        var existingStops = trip.Stops.ToList();
+        foreach (var existingStop in existingStops)
+        {
+            _uow.Repository<TripStop>().Delete(existingStop);
+        }
+
+        // Convert optimized stops DTOs to domain entities if provided
+        List<TripStop>? optimizedStops = null;
+        if (req.OptimizedStops != null && req.OptimizedStops.Any())
+        {
+            optimizedStops = ConvertOptimizedStopsToDomain(req.OptimizedStops, loadMap, trip);
+        }
+
         // Rebuild stops from a final set
-        trip.UpdateTripLoads(loadsMap.Values);
+        trip.UpdateTripLoads(loadMap.Values, optimizedStops);
 
         await _uow.SaveChangesAsync(ct);
 
         _log.LogInformation(
             "Updated trip '{TripId}'. Name='{Name}', Truck='{TruckId}'. Loads={LoadCount} (attached {Attached}, created {Created}, removed {Removed})",
-            trip.Id, trip.Name, trip.TruckId, loadsMap.Count, attachedCount, createdCount,
+            trip.Id, trip.Name, trip.TruckId, loadMap.Count, attachedCount, createdCount,
             removedCount);
 
         return Result.Ok();
@@ -142,7 +156,6 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
 
             load.AssignedTruckId = trip.TruckId;
             load.AssignedTruck = trip.Truck;
-            load.TripStop = null; // clear previous association
 
             map[load.Id] = load;
             count++;
@@ -179,5 +192,41 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
         }
 
         return result;
+    }
+
+    /// <summary>
+    ///     Converts optimized stop DTOs to domain TripStop entities.
+    /// </summary>
+    private List<TripStop> ConvertOptimizedStopsToDomain(
+        IEnumerable<TripStopDto> optimizedStops,
+        Dictionary<Guid, Load> loadMap,
+        Trip trip)
+    {
+        var tripStops = new List<TripStop>();
+
+        foreach (var stopDto in optimizedStops)
+        {
+            if (!loadMap.TryGetValue(stopDto.LoadId, out var load))
+            {
+                _log.LogWarning("Load with ID '{LoadId}' not found for optimized stop", stopDto.LoadId);
+                continue;
+            }
+
+            var tripStop = new TripStop
+            {
+                Order = stopDto.Order,
+                Type = stopDto.Type,
+                Address = stopDto.Address,
+                Location = stopDto.Location,
+                Load = load,
+                LoadId = load.Id,
+                Trip = trip,
+                TripId = trip.Id
+            };
+
+            tripStops.Add(tripStop);
+        }
+
+        return tripStops;
     }
 }

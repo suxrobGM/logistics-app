@@ -36,9 +36,9 @@ public static partial class LoadMapper
             AssignedTruckDriversName = entity.AssignedTruck?.GetDriversNames(),
             Customer = entity.Customer?.ToDto(),
             Invoices = entity.Invoices.Select(i => i.ToDto()),
-            TripId = entity.TripStop?.Trip.Id,
-            TripName = entity.TripStop?.Trip.Name,
-            TripNumber = entity.TripStop?.Trip.Number
+            TripId = entity.TripStops.FirstOrDefault()?.Trip.Id,
+            TripName = entity.TripStops.FirstOrDefault()?.Trip.Name,
+            TripNumber = entity.TripStops.FirstOrDefault()?.Trip.Number
         };
 
         if (entity.AssignedTruck?.CurrentAddress.IsNotNull() ?? false)
@@ -56,7 +56,7 @@ public static partial class LoadMapper
     [MapperIgnoreSource(nameof(Load.AssignedDispatcherId))]
     [MapperIgnoreSource(nameof(Load.AssignedTruck))]
     [MapperIgnoreSource(nameof(Load.AssignedTruckId))]
-    [MapperIgnoreSource(nameof(Load.TripStop))]
+    [MapperIgnoreSource(nameof(Load.TripStops))]
     [MapperIgnoreSource(nameof(Load.Type))]
     [MapperIgnoreSource(nameof(Load.OriginLocation))]
     [MapperIgnoreSource(nameof(Load.DestinationLocation))]
