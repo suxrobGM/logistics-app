@@ -60,6 +60,20 @@ export abstract class ApiBase {
       .pipe(catchError((err) => this.handleError(err)));
   }
 
+  /** Multipart/form-data POST helper */
+  protected postFormData<TResponse>(endpoint: string, formData: FormData): Observable<TResponse> {
+    return this.http
+      .post<TResponse>(this.apiUrl + endpoint, formData)
+      .pipe(catchError((err) => this.handleError(err)));
+  }
+
+  /** Download blob helper */
+  protected getBlob(endpoint: string): Observable<Blob> {
+    return this.http
+      .get(this.apiUrl + endpoint, {responseType: "blob"})
+      .pipe(catchError((err) => this.handleError(err)));
+  }
+
   /**
    * Converts a query object to a query string.
    * @param query The query object to convert.

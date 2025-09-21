@@ -7,6 +7,7 @@ import {InputGroupAddonModule} from "primeng/inputgroupaddon";
 import {InputNumberModule} from "primeng/inputnumber";
 import {InputTextModule} from "primeng/inputtext";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {DividerModule} from "primeng/divider";
 import {Select} from "primeng/select";
 import {ToastModule} from "primeng/toast";
 import {
@@ -20,7 +21,6 @@ import {
   loadTypeOptions,
 } from "@/core/api/models";
 import {AuthService} from "@/core/auth";
-import {ToastService} from "@/core/services";
 import {
   AddressAutocomplete,
   DirectionMap,
@@ -32,6 +32,7 @@ import {
 } from "@/shared/components";
 import {RouteChangeEvent, Waypoint} from "@/shared/components/direction-map/types";
 import {Converters} from "@/shared/utils";
+import { ToastService } from "@/core/services";
 
 /**
  * Form value interface for the Load Form.
@@ -74,6 +75,7 @@ export interface LoadFormValue {
     FormField,
     SearchCustomerComponent,
     SearchTruckComponent,
+    DividerModule
   ],
 })
 export class LoadFormComponent implements OnInit {

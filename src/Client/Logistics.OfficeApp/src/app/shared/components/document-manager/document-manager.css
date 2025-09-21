@@ -1,0 +1,32 @@
+
+.document-manager {
+  margin-bottom: 1rem;
+}
+
+.upload-card {
+  transition: all 0.2s ease;
+}
+
+.upload-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.upload-icon {
+  transition: all 0.2s ease;
+}
+
+.upload-card:hover .upload-icon {
+  background-color: var(--p-primary-color);
+  color: white;
+}
+
+.p-datatable-sm .p-datatable-tbody > tr > td {
+  padding: 0.5rem 0.75rem;
+}
+
+.p-datatable-sm .p-datatable-thead > tr > th {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+}

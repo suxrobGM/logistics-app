@@ -1,0 +1,27 @@
+<div class="load-documents-page">
+  <div class="page-header mb-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900 mb-2">Load Documents</h1>
+        <p class="text-gray-600">Manage documents for load ID: {{ loadId() }}</p>
+      </div>
+      <p-button 
+        icon="pi pi-arrow-left" 
+        label="Back to Loads" 
+        [routerLink]="['/loads']"
+        severity="secondary"
+        [outlined]="true"
+      />
+    </div>
+  </div>
+
+  <app-document-manager 
+    [loadId]="loadId()" 
+    [types]="loadDocTypes" 
+    class="w-full"
+  />
+</div>
+
+
+
+
