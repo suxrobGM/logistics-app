@@ -9,7 +9,6 @@ import {DocumentType} from "@/core/api/models";
 @Component({
   selector: "app-employee-documents",
   templateUrl: "./employee-documents.html",
-  styleUrls: ["./employee-documents.css"],
   imports: [CardModule, ToastModule, RouterLink, DocumentManagerComponent, ButtonModule],
 })
 export class EmployeeDocumentsPage implements OnInit {

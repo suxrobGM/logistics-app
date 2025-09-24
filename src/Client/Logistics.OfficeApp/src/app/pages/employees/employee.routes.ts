@@ -37,10 +37,10 @@ export const employeeRoutes: Routes = [
   {
     path: ":id/documents",
     component: EmployeeDocumentsPage,
-    canActivate: [authGuard],
+    // canActivate: [authGuard],
     data: {
       breadcrumb: "Documents",
-      permission: Permissions.Employees.Edit,
+      // permission: Permissions.Employees.Edit,
     },
   },
 ];

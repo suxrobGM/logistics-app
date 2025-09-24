@@ -9,7 +9,6 @@ import {DocumentType} from "@/core/api/models";
 @Component({
   selector: "app-load-documents",
   templateUrl: "./load-documents.html", 
-  styleUrls: ["./load-documents.css"],
   imports: [CardModule, ToastModule, RouterLink, DocumentManagerComponent, ButtonModule],
 })
 export class LoadDocumentsPage implements OnInit {

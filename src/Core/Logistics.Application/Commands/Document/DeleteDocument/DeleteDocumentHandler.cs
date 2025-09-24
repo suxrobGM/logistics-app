@@ -24,7 +24,14 @@ internal sealed class DeleteDocumentHandler : IAppRequestHandler<DeleteDocumentC
         DeleteDocumentCommand req, CancellationToken ct)
     {
         // Get the document
-        var document = await _tenantUow.Repository<LoadDocument>().GetByIdAsync(req.DocumentId, ct);
+
+        Document? document = await _tenantUow.Repository<LoadDocument>().GetByIdAsync(req.DocumentId, ct);
+
+        if (document == null)
+        {
+            document = await _tenantUow.Repository<EmployeeDocument>().GetByIdAsync(req.DocumentId, ct);
+        }
+
         if (document is null)
         {
             return Result.Fail($"Could not find document with ID '{req.DocumentId}'");
@@ -58,7 +65,7 @@ internal sealed class DeleteDocumentHandler : IAppRequestHandler<DeleteDocumentC
         }
     }
 
-    private Task DeleteDocumentBackground(LoadDocument document, CancellationToken cancellationToken)
+    private Task DeleteDocumentBackground(Document document, CancellationToken cancellationToken)
     {
         return Task.Run(async () =>
         {

@@ -1,4 +1,4 @@
-<div class="document-manager">
+<div class="document-manager mb-4">
   <!-- Upload Section -->
   <p-card class="mb-4 p-2">
     <ng-template #header>
@@ -9,10 +9,10 @@
     </ng-template>
     
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      @for (type of types; track type) {
-        <div class="upload-card p-4 border border-gray-200 rounded-lg hover:border-primary transition-colors">
+      @for (type of types(); track type) {
+        <div class="group upload-card p-4 border border-gray-200 rounded-lg hover:border-primary transition-all duration-200 hover:shadow-md">
           <div class="flex flex-col items-center gap-3">
-            <div class="upload-icon w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+            <div class="upload-icon w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center group transition-all duration-200 hover:shadow-md">
               <i class="pi pi-file text-gray-600"></i>
             </div>
             <div class="text-center">
