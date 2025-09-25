@@ -4,6 +4,7 @@ import {Permissions} from "@/shared/models";
 import {LoadAddComponent} from "./load-add/load-add";
 import {LoadEditComponent} from "./load-edit/load-edit";
 import {LoadsListComponent} from "./loads-list/loads-list";
+import {LoadDocumentsPage} from "./load-documents/load-documents";
 
 export const loadRoutes: Routes = [
   {
@@ -30,6 +31,15 @@ export const loadRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "Edit",
+      permission: Permissions.Loads.Edit,
+    },
+  },
+  {
+    path: ":id/documents",
+    component: LoadDocumentsPage,
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: "Documents",
       permission: Permissions.Loads.Edit,
     },
   },

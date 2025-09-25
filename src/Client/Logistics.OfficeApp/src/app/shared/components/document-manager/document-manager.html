@@ -1,0 +1,169 @@
+<div class="document-manager mb-4">
+  <!-- Upload Section -->
+  <p-card class="mb-4 p-2">
+    <ng-template #header>
+      <div class="flex items-center gap-2">
+        <i class="pi pi-upload text-primary"></i>
+        <h3 class="m-0 text-lg font-semibold">Upload Documents</h3>
+      </div>
+    </ng-template>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      @for (type of types(); track type) {
+        <div class="group upload-card p-4 border border-gray-200 rounded-lg hover:border-primary transition-all duration-200 hover:shadow-md">
+          <div class="flex flex-col items-center gap-3">
+            <div class="upload-icon w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center group transition-all duration-200 hover:shadow-md">
+              <i class="pi pi-file text-gray-600"></i>
+            </div>
+            <div class="text-center">
+              <h4 class="font-medium text-sm mb-1">{{ getTypeLabel(type) }}</h4>
+              <p class="text-xs text-gray-500 mb-3">Max 50MB</p>
+            </div>
+            <div class="w-full">
+              <input 
+                type="file" 
+                class="hidden" 
+                [id]="'file-' + type"
+                (change)="onFileChange($event, type)"
+                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.txt"
+              />
+              <label 
+                [for]="'file-' + type" 
+                class="w-full bg-primary text-white px-3 py-2 rounded text-sm cursor-pointer hover:bg-primary-dark transition-colors flex items-center justify-center gap-2"
+              >
+                <i class="pi pi-plus text-xs"></i>
+                Choose File
+              </label>
+            </div>
+            @if (uploadProgress()[type] > 0) {
+              <div class="w-full">
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    class="bg-primary h-2 rounded-full transition-all duration-300" 
+                    [style.width.%]="uploadProgress()[type]"
+                  ></div>
+                </div>
+                <p class="text-xs text-center mt-1">{{ uploadProgress()[type] }}%</p>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </p-card>
+
+  <p-divider></p-divider>
+
+  <!-- Documents List -->
+  <p-card class="p-2">
+    <ng-template #header>
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i class="pi pi-folder text-primary"></i>
+          <h3 class="m-0 text-lg font-semibold">Documents</h3>
+          <p-tag [value]="rows().length.toString()" severity="info" />
+        </div>
+        <p-button 
+          icon="pi pi-refresh" 
+          [text]="true" 
+          (click)="refresh()" 
+          [loading]="isLoading()"
+          pTooltip="Refresh"
+        />
+      </div>
+    </ng-template>
+
+    @if (isLoading()) {
+      <div class="flex justify-center py-8">
+        <p-progress-spinner />
+      </div>
+    } @else {
+      <p-table 
+        [value]="rows()" 
+        [dataKey]="'id'" 
+        [scrollable]="true"
+        styleClass="p-datatable-sm"
+      >
+        <ng-template #header>
+          <tr>
+            <th class="w-8">Type</th>
+            <th>File Name</th>
+            <th class="w-24">Status</th>
+            <th class="w-24">Size</th>
+            <th class="w-32">Uploaded</th>
+            <th class="w-24">Actions</th>
+          </tr>
+        </ng-template>
+        
+        <ng-template #body let-doc>
+          <tr class="hover:bg-gray-50">
+            <td>
+              <div class="flex items-center gap-2">
+                <i class="pi pi-file text-gray-500"></i>
+                <span class="text-sm font-medium">{{ getTypeLabel(doc.type) }}</span>
+              </div>
+            </td>
+            <td>
+              <div class="flex flex-col">
+                <span class="font-medium text-sm">{{ doc.fileName }}</span>
+                @if (doc.description) {
+                  <span class="text-xs text-gray-500">{{ doc.description }}</span>
+                }
+              </div>
+            </td>
+            <td>
+              <p-tag 
+                [value]="doc.status" 
+                [severity]="statusSeverity(doc.status)" 
+                styleClass="text-xs"
+              />
+            </td>
+            <td>
+              <span class="text-sm text-gray-600">{{ formatFileSize(doc.fileSizeBytes) }}</span>
+            </td>
+            <td>
+              <span class="text-sm text-gray-600">{{ doc.createdAt | date:'short' }}</span>
+            </td>
+            <td>
+              <div class="flex gap-1">
+                <p-button 
+                  icon="pi pi-download" 
+                  size="small"
+                  [text]="true"
+                  severity="info"
+                  (click)="download(doc)"
+                  pTooltip="Download"
+                />
+                <p-button 
+                  icon="pi pi-trash" 
+                  size="small"
+                  [text]="true"
+                  severity="danger"
+                  (click)="delete(doc)"
+                  pTooltip="Delete"
+                />
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        
+        <ng-template #empty>
+          <tr>
+            <td colspan="6" class="text-center py-8">
+              <div class="flex flex-col items-center gap-3 text-gray-500">
+                <i class="pi pi-folder-open text-4xl"></i>
+                <div>
+                  <p class="font-medium">No documents found</p>
+                  <p class="text-sm">Upload documents using the form above</p>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+  </p-card>
+</div>
+
+
+

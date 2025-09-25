@@ -20,6 +20,7 @@ import {
 } from "./models";
 import {
   CustomerApiService,
+  DocumentApiService,
   InvoiceApiService,
   LoadApiService,
   PaymentApiService,
@@ -47,6 +48,7 @@ export class ApiService extends ApiBase {
   public readonly reportApi = new ReportApiService();
   public readonly truckApi = new TruckApiService();
   public readonly customerApi = new CustomerApiService();
+  public readonly documentApi = new DocumentApiService();
 
   // #region Employee API
 

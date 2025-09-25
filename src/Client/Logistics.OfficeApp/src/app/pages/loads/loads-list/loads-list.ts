@@ -64,6 +64,11 @@ export class LoadsListComponent extends BaseTableComponent<LoadDto> {
         command: () => this.router.navigateByUrl(`/loads/${this.selectedRow()!.id}/edit`),
       },
       {
+        label: "Manage documents",
+        icon: "pi pi-paperclip",
+        command: () => this.router.navigateByUrl(`/loads/${this.selectedRow()!.id}/documents`),
+      },
+      {
         label: "View truck details",
         icon: "pi pi-truck",
         command: () => this.router.navigateByUrl(`/trucks/${this.selectedRow()!.assignedTruckId}`),

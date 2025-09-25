@@ -1,0 +1,11 @@
+
+.p-datatable-sm .p-datatable-tbody > tr > td {
+  padding: 0.5rem 0.75rem;
+}
+
+.p-datatable-sm .p-datatable-thead > tr > th {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+}

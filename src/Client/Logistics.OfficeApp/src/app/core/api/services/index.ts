@@ -7,3 +7,4 @@ export * from "./user-api.service";
 export * from "./load-api.service";
 export * from "./truck-api.service";
 export * from "./customer-api.service";
+export * from "./document-api.service";
