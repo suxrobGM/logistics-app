@@ -25,12 +25,7 @@ internal sealed class DeleteDocumentHandler : IAppRequestHandler<DeleteDocumentC
     {
         // Get the document
 
-        Document? document = await _tenantUow.Repository<LoadDocument>().GetByIdAsync(req.DocumentId, ct);
-
-        if (document == null)
-        {
-            document = await _tenantUow.Repository<EmployeeDocument>().GetByIdAsync(req.DocumentId, ct);
-        }
+        Document? document = await _tenantUow.Repository<Document>().GetByIdAsync(req.DocumentId, ct);
 
         if (document is null)
         {
