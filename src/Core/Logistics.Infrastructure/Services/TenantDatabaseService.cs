@@ -48,6 +48,7 @@ public class TenantDatabaseService : ITenantDatabaseService
     {
         try
         {
+            _context.Database.SetConnectionString(connectionString);
             await _context.Database.MigrateAsync();
             await AddTenantRoles();
             return true;
