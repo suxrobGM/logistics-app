@@ -93,7 +93,7 @@ export class PayrollInvoiceEditComponent implements OnInit {
   }
 
   searchEmployee(event: { query: string }): void {
-    this.apiService.getEmployees({ search: event.query }).subscribe((result) => {
+    this.apiService.employeeApi.getEmployees({ search: event.query }).subscribe((result) => {
       if (result.data) {
         this.suggestedEmployees.set(result.data);
       }

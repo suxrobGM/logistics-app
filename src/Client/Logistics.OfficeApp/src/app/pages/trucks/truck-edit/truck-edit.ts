@@ -85,7 +85,7 @@ export class TruckEditComponent implements OnInit {
   }
 
   protected searchDriver(event: { query: string }): void {
-    this.apiService.getDrivers({ search: event.query }).subscribe((result) => {
+    this.apiService.employeeApi.getDrivers({ search: event.query }).subscribe((result) => {
       if (result.success && result.data) {
         this.suggestedDrivers.set(result.data);
       }

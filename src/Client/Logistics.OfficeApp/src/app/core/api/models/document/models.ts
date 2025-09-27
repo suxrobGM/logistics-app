@@ -1,4 +1,5 @@
 import { PagedResult } from "../paged-result";
+import { DocumentOwnerType, DocumentStatus, DocumentType } from "./enums";
 
 export interface DocumentDto {
   id: string;
@@ -39,28 +40,3 @@ export interface GetDocumentsQuery {
 }
 
 export type PagedDocuments = PagedResult<DocumentDto>;
-
-export enum DocumentOwnerType {
-  Load = "Load",
-  Employee = "Employee",
-}
-
-export enum DocumentStatus {
-  Active = "Active",
-  Archived = "Archived",
-  Deleted = "Deleted",
-}
-
-export enum DocumentType {
-  BillOfLading = "BillOfLading",
-  ProofOfDelivery = "ProofOfDelivery",
-  Invoice = "Invoice",
-  Receipt = "Receipt",
-  Contract = "Contract",
-  InsuranceCertificate = "InsuranceCertificate",
-  Photo = "Photo",
-  DriverLicense = "DriverLicense",
-  VehicleRegistration = "VehicleRegistration",
-  IdentityDocument = "IdentityDocument",
-  Other = "Other",
-}

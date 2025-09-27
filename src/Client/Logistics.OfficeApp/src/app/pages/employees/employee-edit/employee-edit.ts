@@ -104,7 +104,7 @@ export class EmployeeEditComponent implements OnInit {
     };
 
     this.isLoading.set(true);
-    this.apiService.updateEmployee(command).subscribe((result) => {
+    this.apiService.employeeApi.updateEmployee(command).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess("The employee data has been successfully saved");
       }
@@ -142,7 +142,7 @@ export class EmployeeEditComponent implements OnInit {
   private fetchEmployee(): void {
     this.isLoading.set(true);
 
-    this.apiService.getEmployee(this.id()!).subscribe((result) => {
+    this.apiService.employeeApi.getEmployee(this.id()!).subscribe((result) => {
       if (result.success && result.data) {
         this.employee.set(result.data);
         const employeeRoles = this.employee()?.roles?.map((i) => i.name);

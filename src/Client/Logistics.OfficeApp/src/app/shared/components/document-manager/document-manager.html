@@ -39,6 +39,7 @@
                 Choose File
               </label>
             </div>
+
             @if (uploadProgress()[type] > 0) {
               <div class="w-full">
                 <div class="h-2 w-full rounded-full bg-gray-200">
@@ -82,7 +83,7 @@
         <p-progress-spinner />
       </div>
     } @else {
-      <p-table [value]="rows()" [dataKey]="'id'" [scrollable]="true" styleClass="p-datatable-sm">
+      <p-table [value]="rows()" [dataKey]="'id'" [scrollable]="true" class="p-datatable-sm">
         <ng-template #header>
           <tr>
             <th class="w-8">Type</th>
@@ -111,11 +112,7 @@
               </div>
             </td>
             <td>
-              <p-tag
-                [value]="doc.status"
-                [severity]="statusSeverity(doc.status)"
-                styleClass="text-xs"
-              />
+              <p-tag [value]="doc.status" [severity]="statusSeverity(doc.status)" class="text-xs" />
             </td>
             <td>
               <span class="text-sm text-gray-600">{{ formatFileSize(doc.fileSizeBytes) }}</span>

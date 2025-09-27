@@ -63,7 +63,7 @@ export class ChangeRoleDialogComponent {
     };
 
     this.isLoading.set(true);
-    this.apiService.updateEmployee(updateEmployee).subscribe((result) => {
+    this.apiService.employeeApi.updateEmployee(updateEmployee).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess(`Successfully changed employee's role`);
       }
@@ -97,7 +97,7 @@ export class ChangeRoleDialogComponent {
     };
 
     this.isLoading.set(true);
-    this.apiService.removeRoleFromEmployee(removeRole).subscribe((result) => {
+    this.apiService.employeeApi.removeRoleFromEmployee(removeRole).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess(`Removed ${roleName} role from the employee`);
       }

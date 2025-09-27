@@ -43,7 +43,7 @@ export class CompanyStatsComponent {
   private fetchCompanyStats() {
     this.isLoading.set(true);
 
-    this.apiService.getCompanyStats().subscribe((result) => {
+    this.apiService.statsApi.getCompanyStats().subscribe((result) => {
       if (result.success && result.data) {
         const stats = result.data;
         this.companyStats.set(result.data);

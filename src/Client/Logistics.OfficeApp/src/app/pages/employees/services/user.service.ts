@@ -25,7 +25,7 @@ export class UserService {
 
   fetchRoles(): Observable<RoleDto[]> {
     const dummyRole: RoleDto = { name: "", displayName: " " };
-    const roles$ = this.apiService.getRoles();
+    const roles$ = this.apiService.roleApi.getRoles();
 
     return roles$.pipe(
       map((result) => {

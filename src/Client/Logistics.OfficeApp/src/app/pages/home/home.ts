@@ -95,7 +95,7 @@ export class HomeComponent implements OnInit {
     this.isLoadingChartData.set(true);
     const oneWeekAgo = DateUtils.daysAgo(7);
 
-    this.apiService.getDailyGrosses(oneWeekAgo).subscribe((result) => {
+    this.apiService.statsApi.getDailyGrosses(oneWeekAgo).subscribe((result) => {
       if (result.success && result.data) {
         const grosses = result.data;
 

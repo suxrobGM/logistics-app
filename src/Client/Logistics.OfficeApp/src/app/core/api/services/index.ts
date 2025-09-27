@@ -8,3 +8,8 @@ export * from "./load-api.service";
 export * from "./truck-api.service";
 export * from "./customer-api.service";
 export * from "./document-api.service";
+export * from "./employee-api.service";
+export * from "./report-api.service";
+export * from "./role-api.service";
+export * from "./stats-api.service";
+export * from "./notification-api.service";

@@ -1,15 +1,5 @@
 import { CommonModule } from "@angular/common";
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  inject,
-  input,
-  output,
-  signal,
-} from "@angular/core";
+import { Component, OnInit, inject, input, output, signal } from "@angular/core";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -25,14 +15,16 @@ import {
   DocumentOwnerType,
   DocumentStatus,
   DocumentType,
+  GetDocumentsQuery,
   UploadDocumentRequest,
 } from "@/core/api/models";
 import { ToastService } from "@/core/services";
-import { downloadBlobFile } from "@/shared/utils/file-download.utils";
+import { downloadBlobFile } from "@/shared/utils";
 
 @Component({
   selector: "app-document-manager",
-  standalone: true,
+  templateUrl: "./document-manager.html",
+  styleUrl: "./document-manager.css",
   imports: [
     CommonModule,
     ButtonModule,
@@ -45,8 +37,6 @@ import { downloadBlobFile } from "@/shared/utils/file-download.utils";
     ProgressSpinnerModule,
     TooltipModule,
   ],
-  templateUrl: "./document-manager.html",
-  styleUrls: ["./document-manager.css"],
 })
 export class DocumentManagerComponent implements OnInit {
   private readonly api = inject(ApiService);
@@ -60,7 +50,7 @@ export class DocumentManagerComponent implements OnInit {
 
   protected readonly isLoading = signal(false);
   protected readonly rows = signal<DocumentDto[]>([]);
-  protected readonly uploadProgress = signal<{ [key: string]: number }>({});
+  protected readonly uploadProgress = signal<Record<string, number>>({});
 
   ngOnInit(): void {
     this.refresh();
@@ -68,15 +58,10 @@ export class DocumentManagerComponent implements OnInit {
 
   protected refresh(): void {
     this.isLoading.set(true);
-    const query: any = {};
-
-    if (this.employeeId()) {
-      query.ownerType = DocumentOwnerType.Employee;
-      query.ownerId = this.employeeId();
-    } else if (this.loadId()) {
-      query.ownerType = DocumentOwnerType.Load;
-      query.ownerId = this.loadId();
-    }
+    const query: GetDocumentsQuery = {
+      ownerType: this.employeeId() ? DocumentOwnerType.Employee : DocumentOwnerType.Load,
+      ownerId: this.employeeId() || this.loadId() || "",
+    };
 
     this.api.documentApi.getDocuments(query).subscribe((result) => {
       if (result.success) {
@@ -174,14 +159,18 @@ export class DocumentManagerComponent implements OnInit {
   }
 
   protected formatFileSize(bytes: number): string {
-    if (bytes === 0) return "0 Bytes";
+    if (bytes === 0) {
+      return "0 Bytes";
+    }
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   }
 
+  // Get a user-friendly label for the document type
+  // Remove underscores and capitalize words from the enum value
   protected getTypeLabel(type: DocumentType): string {
-    return type.replace(/([A-Z])/g, " $1").trim();
+    return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   }
 }

@@ -87,7 +87,7 @@ export class EmployeePayrollInvoicesListComponent implements OnInit {
   private fetchEmployee(): void {
     this.isLoadingEmployee.set(true);
 
-    this.apiService.getEmployee(this.employeeId()).subscribe((result) => {
+    this.apiService.employeeApi.getEmployee(this.employeeId()).subscribe((result) => {
       if (result.data) {
         this.employee.set(result.data);
       }

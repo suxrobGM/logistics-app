@@ -2,7 +2,6 @@ import { Observable } from "rxjs";
 import { ApiBase } from "../api-base";
 import {
   DocumentDto,
-  DocumentOwnerType,
   GetDocumentsQuery,
   UpdateDocumentCommand,
   UploadDocumentRequest,

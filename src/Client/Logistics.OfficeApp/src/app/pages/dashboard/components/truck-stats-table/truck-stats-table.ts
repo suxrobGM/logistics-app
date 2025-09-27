@@ -55,7 +55,7 @@ export class TruckStatsTableComponent {
       pageSize: rows,
     };
 
-    this.apiService.getTrucksStats(query).subscribe((result) => {
+    this.apiService.statsApi.getTrucksStats(query).subscribe((result) => {
       if (result.success && result.data) {
         this.truckStats.set(result.data);
         this.totalRecords.set(result.totalItems);

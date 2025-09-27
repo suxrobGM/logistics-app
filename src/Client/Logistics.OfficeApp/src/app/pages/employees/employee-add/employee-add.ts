@@ -103,7 +103,7 @@ export class EmployeeAddComponent {
     };
 
     this.isLoading.set(true);
-    this.apiService.createEmployee(newEmployee).subscribe((result) => {
+    this.apiService.employeeApi.createEmployee(newEmployee).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess("New employee has been added successfully");
         this.form.reset();

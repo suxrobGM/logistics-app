@@ -52,7 +52,7 @@ export class TruckGrossesLinechartComponent implements OnInit {
   protected fetchDailyGrosses(): void {
     this.isLoading.set(true);
 
-    this.apiService
+    this.apiService.statsApi
       .getDailyGrosses(this.startDate(), this.endDate(), this.truckId())
       .subscribe((result) => {
         if (result.success && result.data) {

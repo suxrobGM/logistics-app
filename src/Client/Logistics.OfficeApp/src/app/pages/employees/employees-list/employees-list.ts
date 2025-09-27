@@ -39,7 +39,7 @@ export class EmployeeListComponent extends BaseTableComponent<EmployeeDto> {
   protected override query(params: TableQueryParams): Observable<PagedResult<EmployeeDto>> {
     const orderBy = this.apiService.formatSortField(params.sortField, params.sortOrder);
 
-    return this.apiService.getEmployees({
+    return this.apiService.employeeApi.getEmployees({
       page: params.page + 1,
       pageSize: params.size,
       orderBy: orderBy,
