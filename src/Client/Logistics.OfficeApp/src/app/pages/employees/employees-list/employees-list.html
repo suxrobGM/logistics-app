@@ -97,6 +97,13 @@
             tooltipPosition="bottom"
             [routerLink]="['/invoices/payroll/employee', employee.id]"
           />
+          <p-button
+            styleClass="ms-2"
+            icon="pi pi-paperclip"
+            pTooltip="Manage documents"
+            tooltipPosition="bottom"
+            [routerLink]="[`/employees/${employee.id}/documents`]"
+          />
         </td>
       </tr>
     </ng-template>
