@@ -1,15 +1,21 @@
-import {CommonModule} from "@angular/common";
-import {Component, computed, inject, input, model, output, signal} from "@angular/core";
-import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {StripeCardNumberElement} from "@stripe/stripe-js";
-import {ButtonModule} from "primeng/button";
-import {CardModule} from "primeng/card";
-import {DialogModule} from "primeng/dialog";
-import {InputMaskModule} from "primeng/inputmask";
-import {InputTextModule} from "primeng/inputtext";
-import {KeyFilterModule} from "primeng/keyfilter";
-import {SelectModule} from "primeng/select";
-import {ApiService} from "@/core/api";
+import { CommonModule } from "@angular/common";
+import { Component, computed, inject, input, model, output, signal } from "@angular/core";
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
+import { StripeCardNumberElement } from "@stripe/stripe-js";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { DialogModule } from "primeng/dialog";
+import { InputMaskModule } from "primeng/inputmask";
+import { InputTextModule } from "primeng/inputtext";
+import { KeyFilterModule } from "primeng/keyfilter";
+import { SelectModule } from "primeng/select";
+import { ApiService } from "@/core/api";
 import {
   AddressDto,
   CreatePaymentMethodCommand,
@@ -21,8 +27,8 @@ import {
   usBankAccountHolderTypeOptions,
   usBankAccountTypeOptions,
 } from "@/core/api/models";
-import {StripeService, TenantService, ToastService} from "@/core/services";
-import {AddressForm, StripeCard, ValidationSummary} from "@/shared/components";
+import { StripeService, TenantService, ToastService } from "@/core/services";
+import { AddressForm, StripeCard, ValidationSummary } from "@/shared/components";
 
 const enabledPaymentTypes = [
   PaymentMethodType.Card,
@@ -63,7 +69,7 @@ export class PaymentMethodDialogComponent {
   protected readonly paymentMethodTypes = computed(() =>
     this.availablePaymentMethods()
       .map((type) => paymentMethodTypeOptions.find((option) => option.value === type))
-      .filter(Boolean)
+      .filter(Boolean),
   );
 
   protected readonly form: FormGroup<PaymentMethodForm>;
@@ -122,7 +128,7 @@ export class PaymentMethodDialogComponent {
     const result = await this.stripeService.confirmCardSetup(
       this.stripeCardNumberElement,
       formValue.cardHolderName!,
-      formValue.billingAddress!
+      formValue.billingAddress!,
     );
 
     if (result.error) {
@@ -154,7 +160,7 @@ export class PaymentMethodDialogComponent {
         accountType: formValue.bankAccountType!,
         bankName: formValue.bankName!,
       },
-      formValue.billingAddress!
+      formValue.billingAddress!,
     );
 
     if (result.error) {
@@ -190,7 +196,7 @@ export class PaymentMethodDialogComponent {
     this.apiService.paymentApi.createPaymentMethod(payload).subscribe((result) => {
       if (result.success) {
         this.toastService.showSuccess(
-          "US Bank account added successfully. Now you need to verify it."
+          "US Bank account added successfully. Now you need to verify it.",
         );
         this.paymentMethodAdded.emit();
       }

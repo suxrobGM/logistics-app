@@ -1,8 +1,8 @@
-import {CustomerDto} from "../customer";
-import {EmployeeDto} from "../employee";
-import {MoneyDto} from "../money.dto";
-import {PaymentDto} from "../payment/payment.model";
-import {InvoiceStatus, InvoiceType} from "./enums";
+import { CustomerDto } from "../customer";
+import { EmployeeDto } from "../employee";
+import { MoneyDto } from "../money.dto";
+import { PaymentDto } from "../payment/payment.model";
+import { InvoiceStatus, InvoiceType } from "./enums";
 
 export interface InvoiceDto {
   id: string;

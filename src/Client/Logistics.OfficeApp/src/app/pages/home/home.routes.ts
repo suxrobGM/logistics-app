@@ -1,7 +1,7 @@
-import {Routes} from "@angular/router";
-import {authGuard} from "@/core/auth";
-import {Permissions} from "@/shared/models";
-import {HomeComponent} from "./home";
+import { Routes } from "@angular/router";
+import { authGuard } from "@/core/auth";
+import { Permissions } from "@/shared/models";
+import { HomeComponent } from "./home";
 
 export const homeRoutes: Routes = [
   {

@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import {CommonModule} from "@angular/common";
-import {HttpClient, HttpParams} from "@angular/common/http";
-import {Component, inject, input, model, output, signal} from "@angular/core";
-import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
-import {catchError} from "rxjs";
-import {AddressDto} from "@/core/api/models";
-import {environment} from "@/env";
-import {GeoPoint, MapboxGeocodingFeature, MapboxGeocodingResponse} from "@/shared/types/mapbox";
-import {Converters} from "@/shared/utils";
+import { CommonModule } from "@angular/common";
+import { HttpClient, HttpParams } from "@angular/common/http";
+import { Component, inject, input, model, output, signal } from "@angular/core";
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { catchError } from "rxjs";
+import { AddressDto } from "@/core/api/models";
+import { environment } from "@/env";
+import { GeoPoint, MapboxGeocodingFeature, MapboxGeocodingResponse } from "@/shared/types/mapbox";
+import { Converters } from "@/shared/utils";
 
 @Component({
   selector: "app-address-autocomplete",
@@ -63,12 +63,12 @@ export class AddressAutocomplete implements ControlValueAccessor {
       .set("types", "address");
 
     this.http
-      .get<MapboxGeocodingResponse>("https://api.mapbox.com/search/geocode/v6/forward", {params})
+      .get<MapboxGeocodingResponse>("https://api.mapbox.com/search/geocode/v6/forward", { params })
       .pipe(
         catchError(() => {
           this.searchResults.set([]);
           return [];
-        })
+        }),
       )
       .subscribe((data) => {
         this.searchResults.set(data.features || []);

@@ -1,15 +1,21 @@
-import {Component, OnInit, computed, inject, input, signal} from "@angular/core";
-import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {Router, RouterLink} from "@angular/router";
-import {AutoCompleteModule} from "primeng/autocomplete";
-import {ButtonModule} from "primeng/button";
-import {CardModule} from "primeng/card";
-import {ConfirmDialogModule} from "primeng/confirmdialog";
-import {InputTextModule} from "primeng/inputtext";
-import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {SelectModule} from "primeng/select";
-import {ToastModule} from "primeng/toast";
-import {ApiService} from "@/core/api";
+import { Component, OnInit, computed, inject, input, signal } from "@angular/core";
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
+import { Router, RouterLink } from "@angular/router";
+import { AutoCompleteModule } from "primeng/autocomplete";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { ConfirmDialogModule } from "primeng/confirmdialog";
+import { InputTextModule } from "primeng/inputtext";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { SelectModule } from "primeng/select";
+import { ToastModule } from "primeng/toast";
+import { ApiService } from "@/core/api";
 import {
   CreateTruckCommand,
   EmployeeDto,
@@ -19,8 +25,8 @@ import {
   truckStatusOptions,
   truckTypeOptions,
 } from "@/core/api/models";
-import {ToastService} from "@/core/services";
-import {FormField} from "@/shared/components";
+import { ToastService } from "@/core/services";
+import { FormField } from "@/shared/components";
 
 @Component({
   selector: "app-truck-edit",
@@ -78,8 +84,8 @@ export class TruckEditComponent implements OnInit {
     }
   }
 
-  protected searchDriver(event: {query: string}): void {
-    this.apiService.getDrivers({search: event.query}).subscribe((result) => {
+  protected searchDriver(event: { query: string }): void {
+    this.apiService.getDrivers({ search: event.query }).subscribe((result) => {
       if (result.success && result.data) {
         this.suggestedDrivers.set(result.data);
       }

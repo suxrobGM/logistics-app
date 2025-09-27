@@ -1,14 +1,14 @@
-import {Component, OnInit, inject, signal} from "@angular/core";
-import {ActivatedRoute, RouterLink} from "@angular/router";
-import {CardModule} from "primeng/card";
-import {ToastModule} from "primeng/toast";
-import {ButtonModule} from "primeng/button";
-import {DocumentManagerComponent} from "@/shared/components/document-manager/document-manager";
-import {DocumentType} from "@/core/api/models";
+import { Component, OnInit, inject, signal } from "@angular/core";
+import { ActivatedRoute, RouterLink } from "@angular/router";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { ToastModule } from "primeng/toast";
+import { DocumentType } from "@/core/api/models";
+import { DocumentManagerComponent } from "@/shared/components/document-manager/document-manager";
 
 @Component({
   selector: "app-load-documents",
-  templateUrl: "./load-documents.html", 
+  templateUrl: "./load-documents.html",
   imports: [CardModule, ToastModule, RouterLink, DocumentManagerComponent, ButtonModule],
 })
 export class LoadDocumentsPage implements OnInit {
@@ -30,7 +30,3 @@ export class LoadDocumentsPage implements OnInit {
     if (id) this.loadId.set(id);
   }
 }
-
-
-
-

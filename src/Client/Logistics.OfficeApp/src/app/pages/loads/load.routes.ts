@@ -1,10 +1,10 @@
-import {Routes} from "@angular/router";
-import {authGuard} from "@/core/auth";
-import {Permissions} from "@/shared/models";
-import {LoadAddComponent} from "./load-add/load-add";
-import {LoadEditComponent} from "./load-edit/load-edit";
-import {LoadsListComponent} from "./loads-list/loads-list";
-import {LoadDocumentsPage} from "./load-documents/load-documents";
+import { Routes } from "@angular/router";
+import { authGuard } from "@/core/auth";
+import { Permissions } from "@/shared/models";
+import { LoadAddComponent } from "./load-add/load-add";
+import { LoadDocumentsPage } from "./load-documents/load-documents";
+import { LoadEditComponent } from "./load-edit/load-edit";
+import { LoadsListComponent } from "./loads-list/loads-list";
 
 export const loadRoutes: Routes = [
   {

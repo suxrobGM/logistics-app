@@ -1,6 +1,6 @@
-import {AddressDto} from "../address.dto";
-import {GeoPointDto} from "../geo-point.dto";
-import {LoadType} from "./enums";
+import { AddressDto } from "../address.dto";
+import { GeoPointDto } from "../geo-point.dto";
+import { LoadType } from "./enums";
 
 export interface CreateLoadCommand {
   name: string;

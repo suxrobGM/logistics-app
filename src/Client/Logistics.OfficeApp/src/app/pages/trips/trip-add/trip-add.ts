@@ -1,10 +1,10 @@
-import {Component, inject, signal} from "@angular/core";
-import {Router} from "@angular/router";
-import {CardModule} from "primeng/card";
-import {ApiService} from "@/core/api";
-import {CreateTripCommand} from "@/core/api/models";
-import {ToastService} from "@/core/services";
-import {TripWizard, TripWizardValue} from "../components";
+import { Component, inject, signal } from "@angular/core";
+import { Router } from "@angular/router";
+import { CardModule } from "primeng/card";
+import { ApiService } from "@/core/api";
+import { CreateTripCommand } from "@/core/api/models";
+import { ToastService } from "@/core/services";
+import { TripWizard, TripWizardValue } from "../components";
 
 @Component({
   selector: "app-trip-add",

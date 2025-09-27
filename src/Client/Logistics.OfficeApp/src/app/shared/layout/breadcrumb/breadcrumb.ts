@@ -1,8 +1,8 @@
-import {Component, inject, signal} from "@angular/core";
-import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
-import {MenuItem} from "primeng/api";
-import {BreadcrumbModule} from "primeng/breadcrumb";
-import {filter} from "rxjs";
+import { Component, inject, signal } from "@angular/core";
+import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
+import { MenuItem } from "primeng/api";
+import { BreadcrumbModule } from "primeng/breadcrumb";
+import { filter } from "rxjs";
 
 @Component({
   selector: "app-breadcrumb",
@@ -41,7 +41,7 @@ export class Breadcrumb {
       const label = child.snapshot.data["breadcrumb"] as string;
 
       if (label) {
-        items.push({label, routerLink: url});
+        items.push({ label, routerLink: url });
       }
 
       this.createBreadcrumbs(child, url, items);

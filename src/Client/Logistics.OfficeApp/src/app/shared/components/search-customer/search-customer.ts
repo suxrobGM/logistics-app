@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import {CommonModule} from "@angular/common";
-import {Component, forwardRef, inject, model, output, signal} from "@angular/core";
-import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
-import {AutoComplete, AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
-import {Button} from "primeng/button";
-import {Dialog} from "primeng/dialog";
-import {ApiService} from "@/core/api";
-import {CustomerDto} from "@/core/api/models";
-import {ToastService} from "@/core/services";
-import {CustomerForm, CustomerFormValue} from "../customer-form/customer-form";
+import { CommonModule } from "@angular/common";
+import { Component, forwardRef, inject, model, output, signal } from "@angular/core";
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { AutoComplete, AutoCompleteModule, AutoCompleteSelectEvent } from "primeng/autocomplete";
+import { Button } from "primeng/button";
+import { Dialog } from "primeng/dialog";
+import { ApiService } from "@/core/api";
+import { CustomerDto } from "@/core/api/models";
+import { ToastService } from "@/core/services";
+import { CustomerForm, CustomerFormValue } from "../customer-form/customer-form";
 
 @Component({
   selector: "app-search-customer",
@@ -34,7 +34,7 @@ export class SearchCustomerComponent implements ControlValueAccessor {
 
   protected readonly customerDialogVisible = model<boolean>(false);
 
-  protected searchCustomer(event: {query: string}): void {
+  protected searchCustomer(event: { query: string }): void {
     const q = event.query?.trim() ?? "";
     this.lastQuery.set(q);
 
@@ -43,7 +43,7 @@ export class SearchCustomerComponent implements ControlValueAccessor {
       return;
     }
 
-    this.apiService.customerApi.getCustomers({search: q}).subscribe({
+    this.apiService.customerApi.getCustomers({ search: q }).subscribe({
       next: (result) => {
         const items = result.data ?? [];
         this.suggestedCustomers.set(items); // [] triggers the "empty" template

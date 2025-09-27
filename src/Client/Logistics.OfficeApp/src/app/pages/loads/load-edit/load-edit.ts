@@ -1,15 +1,15 @@
-import {CommonModule} from "@angular/common";
-import {Component, OnInit, inject, input, signal} from "@angular/core";
-import {Router} from "@angular/router";
-import {CardModule} from "primeng/card";
-import {ConfirmDialogModule} from "primeng/confirmdialog";
-import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {ToastModule} from "primeng/toast";
-import {ApiService} from "@/core/api";
-import {UpdateLoadCommand} from "@/core/api/models";
-import {ToastService} from "@/core/services";
-import {LoadFormComponent, LoadFormValue} from "@/shared/components";
-import {Converters} from "@/shared/utils";
+import { CommonModule } from "@angular/common";
+import { Component, OnInit, inject, input, signal } from "@angular/core";
+import { Router } from "@angular/router";
+import { CardModule } from "primeng/card";
+import { ConfirmDialogModule } from "primeng/confirmdialog";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { ToastModule } from "primeng/toast";
+import { ApiService } from "@/core/api";
+import { UpdateLoadCommand } from "@/core/api/models";
+import { ToastService } from "@/core/services";
+import { LoadFormComponent, LoadFormValue } from "@/shared/components";
+import { Converters } from "@/shared/utils";
 
 @Component({
   selector: "app-load-edit",

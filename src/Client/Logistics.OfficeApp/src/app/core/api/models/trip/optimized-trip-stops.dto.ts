@@ -1,4 +1,4 @@
-import {TripStopDto} from "./trip-stop.dto";
+import { TripStopDto } from "./trip-stop.dto";
 
 export interface OptimizedTripStopsDto {
   totalDistance: number;

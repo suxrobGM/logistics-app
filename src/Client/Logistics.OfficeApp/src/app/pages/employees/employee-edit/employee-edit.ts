@@ -1,21 +1,26 @@
-import {CommonModule} from "@angular/common";
-import {Component, OnInit, inject, input, signal} from "@angular/core";
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {RouterLink} from "@angular/router";
-import {ButtonModule} from "primeng/button";
-import {CardModule} from "primeng/card";
-import {ConfirmDialogModule} from "primeng/confirmdialog";
-import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {SelectModule} from "primeng/select";
-import {ToastModule} from "primeng/toast";
-import {ApiService} from "@/core/api";
-import {EmployeeDto, SalaryType, UpdateEmployeeCommand, salaryTypeOptions} from "@/core/api/models";
-import {AuthService} from "@/core/auth";
-import {ToastService} from "@/core/services";
-import {ValidationSummary} from "@/shared/components";
-import {UserRole} from "@/shared/models";
-import {NumberUtils} from "@/shared/utils";
-import {ChangeRoleDialogComponent} from "../components";
+import { CommonModule } from "@angular/common";
+import { Component, OnInit, inject, input, signal } from "@angular/core";
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { RouterLink } from "@angular/router";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { ConfirmDialogModule } from "primeng/confirmdialog";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { SelectModule } from "primeng/select";
+import { ToastModule } from "primeng/toast";
+import { ApiService } from "@/core/api";
+import {
+  EmployeeDto,
+  SalaryType,
+  UpdateEmployeeCommand,
+  salaryTypeOptions,
+} from "@/core/api/models";
+import { AuthService } from "@/core/auth";
+import { ToastService } from "@/core/services";
+import { ValidationSummary } from "@/shared/components";
+import { UserRole } from "@/shared/models";
+import { NumberUtils } from "@/shared/utils";
+import { ChangeRoleDialogComponent } from "../components";
 
 @Component({
   selector: "app-employee-edit",

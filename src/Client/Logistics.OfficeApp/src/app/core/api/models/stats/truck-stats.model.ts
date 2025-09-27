@@ -1,4 +1,4 @@
-import {EmployeeDto} from "../employee/employee.model";
+import { EmployeeDto } from "../employee/employee.model";
 
 export interface TruckStatsDto {
   truckId: string;

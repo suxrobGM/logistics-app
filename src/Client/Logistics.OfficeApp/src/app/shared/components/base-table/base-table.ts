@@ -1,8 +1,8 @@
-import {Component, DestroyRef, inject, signal} from "@angular/core";
-import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
-import {TableLazyLoadEvent} from "primeng/table";
-import {Observable, finalize} from "rxjs";
-import {PagedResult} from "@/core/api/models";
+import { Component, DestroyRef, inject, signal } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { TableLazyLoadEvent } from "primeng/table";
+import { Observable, finalize } from "rxjs";
+import { PagedResult } from "@/core/api/models";
 
 /**
  * Parameters for querying the table data.
@@ -75,13 +75,13 @@ export abstract class BaseTableComponent<T> {
    * @param params - The parameters for pagination, sorting, and searching.
    */
   protected fetch(params: TableQueryParams): void {
-    const {page = 0, size = 10, sortField = "", sortOrder = 1, search} = params;
+    const { page = 0, size = 10, sortField = "", sortOrder = 1, search } = params;
     this.isLoading.set(true);
 
-    this.query({page, size, sortField, sortOrder, search})
+    this.query({ page, size, sortField, sortOrder, search })
       .pipe(
         finalize(() => this.isLoading.set(false)),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((r) => {
         this.data.set(r.data || []);
@@ -113,6 +113,6 @@ export abstract class BaseTableComponent<T> {
    */
   public onSearch(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
-    this.fetch({search: value, page: 0, size: 10});
+    this.fetch({ search: value, page: 0, size: 10 });
   }
 }

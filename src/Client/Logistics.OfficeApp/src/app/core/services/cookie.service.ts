@@ -1,6 +1,6 @@
-import {Injectable} from "@angular/core";
+import { Injectable } from "@angular/core";
 
-@Injectable({providedIn: "root"})
+@Injectable({ providedIn: "root" })
 export class CookieService {
   getCookie(name: string): string {
     const cookies = document.cookie.split(";");
@@ -16,7 +16,7 @@ export class CookieService {
   }
 
   deleteCookie(cookieName: string) {
-    this.setCookie({name: cookieName, value: "", expireDays: -1});
+    this.setCookie({ name: cookieName, value: "", expireDays: -1 });
   }
 
   /**
@@ -32,7 +32,7 @@ export class CookieService {
   setCookie(cookie: Cookie) {
     const date = new Date();
     date.setTime(
-      date.getTime() + (cookie.expireDays ? cookie.expireDays : 1) * 24 * 60 * 60 * 1000
+      date.getTime() + (cookie.expireDays ? cookie.expireDays : 1) * 24 * 60 * 60 * 1000,
     );
     const path = cookie.path && cookie.path.length > 0 ? cookie.path : "/";
     const expires =

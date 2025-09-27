@@ -1,7 +1,13 @@
-import {Observable} from "rxjs";
-import {ApiBase} from "../api-base";
-import {DocumentDto, GetDocumentsQuery, UpdateDocumentCommand, UploadDocumentRequest, DocumentOwnerType} from "../models";
-import {Result} from "../models";
+import { Observable } from "rxjs";
+import { ApiBase } from "../api-base";
+import {
+  DocumentDto,
+  DocumentOwnerType,
+  GetDocumentsQuery,
+  UpdateDocumentCommand,
+  UploadDocumentRequest,
+} from "../models";
+import { Result } from "../models";
 
 export class DocumentApiService extends ApiBase {
   getDocument(id: string): Observable<Result<DocumentDto>> {
@@ -36,4 +42,3 @@ export class DocumentApiService extends ApiBase {
     return this.getBlob(`/documents/${documentId}/download`);
   }
 }
-

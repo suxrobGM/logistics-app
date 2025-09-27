@@ -34,7 +34,7 @@ export function findValueFromEnum(enumLike: EnumLike, enumValue: string | number
     }
   }
 
-  return {value: "", description: ""};
+  return { value: "", description: "" };
 }
 
 type GetValueFn = (enumValue: string | number) => EnumType;

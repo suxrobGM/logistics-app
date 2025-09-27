@@ -1,5 +1,5 @@
-import {Observable} from "rxjs";
-import {ApiBase} from "../api-base";
+import { Observable } from "rxjs";
+import { ApiBase } from "../api-base";
 import {
   CreateLoadInvoiceCommand,
   CreatePayrollInvoiceCommand,

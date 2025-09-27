@@ -1,16 +1,16 @@
-import {CurrencyPipe, DatePipe} from "@angular/common";
-import {Component, effect, inject, input, output, signal} from "@angular/core";
-import {ButtonModule} from "primeng/button";
-import {CardModule} from "primeng/card";
-import {TableModule} from "primeng/table";
-import {ApiService} from "@/core/api";
-import {OptimizeTripStopsCommand, TripStopDto, TripStopType} from "@/core/api/models";
-import {DirectionMap} from "@/shared/components";
+import { CurrencyPipe, DatePipe } from "@angular/common";
+import { Component, effect, inject, input, output, signal } from "@angular/core";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { TableModule } from "primeng/table";
+import { ApiService } from "@/core/api";
+import { OptimizeTripStopsCommand, TripStopDto, TripStopType } from "@/core/api/models";
+import { DirectionMap } from "@/shared/components";
 import type {
   RouteSegmentClickEvent,
   WaypointClickEvent,
 } from "@/shared/components/direction-map/types";
-import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
+import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
 
 export interface TripWizardReviewData {
   tripName: string;

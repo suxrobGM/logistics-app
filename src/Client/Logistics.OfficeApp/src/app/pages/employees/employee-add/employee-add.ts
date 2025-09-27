@@ -1,14 +1,20 @@
-import {Component, inject, signal} from "@angular/core";
-import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {RouterLink} from "@angular/router";
-import {AutoCompleteModule} from "primeng/autocomplete";
-import {ButtonModule} from "primeng/button";
-import {CardModule} from "primeng/card";
-import {ConfirmDialogModule} from "primeng/confirmdialog";
-import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {SelectModule} from "primeng/select";
-import {ToastModule} from "primeng/toast";
-import {ApiService} from "@/core/api";
+import { Component, inject, signal } from "@angular/core";
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
+import { RouterLink } from "@angular/router";
+import { AutoCompleteModule } from "primeng/autocomplete";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { ConfirmDialogModule } from "primeng/confirmdialog";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { SelectModule } from "primeng/select";
+import { ToastModule } from "primeng/toast";
+import { ApiService } from "@/core/api";
 import {
   CreateEmployeeCommand,
   RoleDto,
@@ -16,9 +22,9 @@ import {
   UserDto,
   salaryTypeOptions,
 } from "@/core/api/models";
-import {ToastService} from "@/core/services";
-import {ValidationSummary} from "@/shared/components";
-import {UserService} from "../services";
+import { ToastService } from "@/core/services";
+import { ValidationSummary } from "@/shared/components";
+import { UserService } from "../services";
 
 @Component({
   selector: "app-employee-add",
@@ -51,9 +57,9 @@ export class EmployeeAddComponent {
 
   constructor() {
     this.form = new FormGroup<CreateEmployeeForm>({
-      user: new FormControl(null, {validators: Validators.required}),
+      user: new FormControl(null, { validators: Validators.required }),
       role: new FormControl(null),
-      salary: new FormControl<number>(0, {validators: Validators.required, nonNullable: true}),
+      salary: new FormControl<number>(0, { validators: Validators.required, nonNullable: true }),
       salaryType: new FormControl<SalaryType>(SalaryType.None, {
         validators: Validators.required,
         nonNullable: true,
@@ -63,7 +69,7 @@ export class EmployeeAddComponent {
     this.fetchRoles();
   }
 
-  searchUser(event: {query: string}): void {
+  searchUser(event: { query: string }): void {
     this.userService.searchUser(event.query).subscribe((users) => {
       if (users) {
         this.suggestedUsers.set(users);

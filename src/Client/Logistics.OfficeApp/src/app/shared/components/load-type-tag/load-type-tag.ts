@@ -1,7 +1,7 @@
-import {Component, input} from "@angular/core";
-import {Tag} from "primeng/tag";
-import {TooltipModule} from "primeng/tooltip";
-import {LoadType} from "@/core/api/models";
+import { Component, input } from "@angular/core";
+import { Tag } from "primeng/tag";
+import { TooltipModule } from "primeng/tooltip";
+import { LoadType } from "@/core/api/models";
 
 interface TypeInfo {
   label: string;
@@ -10,7 +10,7 @@ interface TypeInfo {
 }
 
 const TYPE_INFO: Record<LoadType, TypeInfo> = {
-  [LoadType.GeneralFreight]: {label: "General Freight", severity: "info", icon: "pi pi-box"},
+  [LoadType.GeneralFreight]: { label: "General Freight", severity: "info", icon: "pi pi-box" },
   [LoadType.RefrigeratedGoods]: {
     label: "Refrigerated",
     severity: "primary",
@@ -21,11 +21,11 @@ const TYPE_INFO: Record<LoadType, TypeInfo> = {
     severity: "danger",
     icon: "pi pi-exclamation-triangle",
   },
-  [LoadType.OversizeHeavy]: {label: "Oversize / Heavy", severity: "warning", icon: "pi pi-truck"},
-  [LoadType.Liquid]: {label: "Liquid / Tanker", severity: "primary", icon: "pi pi-sliders-h"},
-  [LoadType.Bulk]: {label: "Bulk", severity: "secondary", icon: "pi pi-inbox"},
-  [LoadType.Vehicle]: {label: "Vehicle / Car", severity: "success", icon: "pi pi-car"},
-  [LoadType.Livestock]: {label: "Livestock", severity: "success", icon: "pi pi-paw"},
+  [LoadType.OversizeHeavy]: { label: "Oversize / Heavy", severity: "warning", icon: "pi pi-truck" },
+  [LoadType.Liquid]: { label: "Liquid / Tanker", severity: "primary", icon: "pi pi-sliders-h" },
+  [LoadType.Bulk]: { label: "Bulk", severity: "secondary", icon: "pi pi-inbox" },
+  [LoadType.Vehicle]: { label: "Vehicle / Car", severity: "success", icon: "pi pi-car" },
+  [LoadType.Livestock]: { label: "Livestock", severity: "success", icon: "pi pi-paw" },
 };
 
 @Component({
@@ -56,7 +56,7 @@ export class LoadTypeTag {
 
     // fallback for unknown values
     const v = typeof this.type() === "string" ? this.type() : String(this.type());
-    return {label: this.titleCase(v.replace(/_/g, " ")), severity: "secondary"};
+    return { label: this.titleCase(v.replace(/_/g, " ")), severity: "secondary" };
   }
 
   private normalize(v: LoadType | string | undefined | null): LoadType | null {

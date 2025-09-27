@@ -1,4 +1,4 @@
-import {SalaryType} from "./enums";
+import { SalaryType } from "./enums";
 
 export interface UpdateEmployeeCommand {
   userId: string;

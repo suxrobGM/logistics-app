@@ -1,15 +1,15 @@
-import {CommonModule, CurrencyPipe, DatePipe} from "@angular/common";
-import {Component, inject, signal} from "@angular/core";
-import {RouterLink} from "@angular/router";
-import {ButtonModule} from "primeng/button";
-import {CardModule} from "primeng/card";
-import {TableLazyLoadEvent, TableModule} from "primeng/table";
-import {TooltipModule} from "primeng/tooltip";
-import {ApiService} from "@/core/api";
-import {PagedIntervalQuery, TruckStatsDto} from "@/core/api/models";
-import {RangeCalendar} from "@/shared/components";
-import {DistanceUnitPipe} from "@/shared/pipes";
-import {DateUtils} from "@/shared/utils";
+import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
+import { Component, inject, signal } from "@angular/core";
+import { RouterLink } from "@angular/router";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { TableLazyLoadEvent, TableModule } from "primeng/table";
+import { TooltipModule } from "primeng/tooltip";
+import { ApiService } from "@/core/api";
+import { PagedIntervalQuery, TruckStatsDto } from "@/core/api/models";
+import { RangeCalendar } from "@/shared/components";
+import { DistanceUnitPipe } from "@/shared/pipes";
+import { DateUtils } from "@/shared/utils";
 
 @Component({
   selector: "app-truck-stats-table",
@@ -37,7 +37,7 @@ export class TruckStatsTableComponent {
   protected readonly endDate = signal<Date>(DateUtils.today());
 
   protected reloadTable(): void {
-    this.fetchTrucksStats({first: 0, rows: 10});
+    this.fetchTrucksStats({ first: 0, rows: 10 });
   }
 
   protected fetchTrucksStats(event: TableLazyLoadEvent): void {

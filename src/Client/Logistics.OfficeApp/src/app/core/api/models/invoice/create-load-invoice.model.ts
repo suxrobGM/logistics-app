@@ -1,4 +1,4 @@
-import {PaymentMethodType} from "../payment";
+import { PaymentMethodType } from "../payment";
 
 export interface CreateLoadInvoiceCommand {
   loadId: string;

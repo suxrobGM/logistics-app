@@ -1,17 +1,17 @@
-import {CommonModule} from "@angular/common";
-import {Component, inject, signal} from "@angular/core";
-import {RouterLink} from "@angular/router";
-import {ButtonModule} from "primeng/button";
-import {CardModule} from "primeng/card";
-import {ConfirmDialogModule} from "primeng/confirmdialog";
-import {IconFieldModule} from "primeng/iconfield";
-import {InputIconModule} from "primeng/inputicon";
-import {InputTextModule} from "primeng/inputtext";
-import {TableLazyLoadEvent, TableModule} from "primeng/table";
-import {TooltipModule} from "primeng/tooltip";
-import {ApiService} from "@/core/api";
-import {CustomerDto} from "@/core/api/models";
-import {ToastService} from "@/core/services";
+import { CommonModule } from "@angular/common";
+import { Component, inject, signal } from "@angular/core";
+import { RouterLink } from "@angular/router";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { ConfirmDialogModule } from "primeng/confirmdialog";
+import { IconFieldModule } from "primeng/iconfield";
+import { InputIconModule } from "primeng/inputicon";
+import { InputTextModule } from "primeng/inputtext";
+import { TableLazyLoadEvent, TableModule } from "primeng/table";
+import { TooltipModule } from "primeng/tooltip";
+import { ApiService } from "@/core/api";
+import { CustomerDto } from "@/core/api/models";
+import { ToastService } from "@/core/services";
 
 @Component({
   selector: "app-customers-list",
@@ -43,7 +43,7 @@ export class CustomersListComponent {
     this.isLoading.set(true);
     const searchValue = (event.target as HTMLInputElement).value;
 
-    this.apiService.customerApi.getCustomers({search: searchValue}).subscribe((result) => {
+    this.apiService.customerApi.getCustomers({ search: searchValue }).subscribe((result) => {
       if (result.success && result.data) {
         this.customers.set(result.data);
         this.totalRecords.set(result.totalItems);
@@ -61,7 +61,7 @@ export class CustomersListComponent {
     const sortField = this.apiService.formatSortField(event.sortField as string, event.sortOrder);
 
     this.apiService.customerApi
-      .getCustomers({orderBy: sortField, page: page, pageSize: rows})
+      .getCustomers({ orderBy: sortField, page: page, pageSize: rows })
       .subscribe((result) => {
         if (result.success && result.data) {
           this.customers.set(result.data);

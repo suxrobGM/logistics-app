@@ -8,15 +8,16 @@
     <app-range-calendar
       [(startDate)]="startDate"
       [(endDate)]="endDate"
-      (applyButtonClick)="filter()">
+      (applyButtonClick)="filter()"
+    >
     </app-range-calendar>
   </div>
 
   @if (isLoading()) {
     <!-- Loading State -->
     <div class="row">
-      @for (item of [1,2,3,4]; track item) {
-        <div class="col-12 col-md-6 col-lg-3 mb-4">
+      @for (item of [1, 2, 3, 4]; track item) {
+        <div class="col-md-6 col-lg-3 col-12 mb-4">
           <p-skeleton height="120px"></p-skeleton>
         </div>
       }
@@ -24,7 +25,7 @@
   } @else {
     <!-- Key Financial Metrics Cards -->
     <div class="row mb-4">
-      <div class="col-12 col-md-6 col-lg-3 mb-3">
+      <div class="col-md-6 col-lg-3 col-12 mb-3">
         <p-card class="h-100 border-0 shadow-sm">
           <div class="d-flex align-items-center">
             <div class="flex-shrink-0">
@@ -32,9 +33,11 @@
                 <i class="pi pi-file-export text-primary fs-4"></i>
               </div>
             </div>
-            <div class="flex-grow-1 ms-3">
+            <div class="ms-3 flex-grow-1">
               <h6 class="text-muted mb-1">Total Invoiced</h6>
-              <h4 class="mb-0">{{ data()?.totalInvoiced || 0 | currency:'USD':'symbol':'1.0-0' }}</h4>
+              <h4 class="mb-0">
+                {{ data()?.totalInvoiced || 0 | currency: "USD" : "symbol" : "1.0-0" }}
+              </h4>
               <small class="text-success">
                 <i class="pi pi-arrow-up"></i> +15.3% vs last period
               </small>
@@ -42,8 +45,8 @@
           </div>
         </p-card>
       </div>
-      
-      <div class="col-12 col-md-6 col-lg-3 mb-3">
+
+      <div class="col-md-6 col-lg-3 col-12 mb-3">
         <p-card class="h-100 border-0 shadow-sm">
           <div class="d-flex align-items-center">
             <div class="flex-shrink-0">
@@ -51,9 +54,11 @@
                 <i class="pi pi-check-circle text-success fs-4"></i>
               </div>
             </div>
-            <div class="flex-grow-1 ms-3">
+            <div class="ms-3 flex-grow-1">
               <h6 class="text-muted mb-1">Total Paid</h6>
-              <h4 class="mb-0">{{ data()?.totalPaid || 0 | currency:'USD':'symbol':'1.0-0' }}</h4>
+              <h4 class="mb-0">
+                {{ data()?.totalPaid || 0 | currency: "USD" : "symbol" : "1.0-0" }}
+              </h4>
               <small class="text-success">
                 <i class="pi pi-arrow-up"></i> +12.7% vs last period
               </small>
@@ -61,8 +66,8 @@
           </div>
         </p-card>
       </div>
-      
-      <div class="col-12 col-md-6 col-lg-3 mb-3">
+
+      <div class="col-md-6 col-lg-3 col-12 mb-3">
         <p-card class="h-100 border-0 shadow-sm">
           <div class="d-flex align-items-center">
             <div class="flex-shrink-0">
@@ -70,18 +75,21 @@
                 <i class="pi pi-clock text-warning fs-4"></i>
               </div>
             </div>
-            <div class="flex-grow-1 ms-3">
+            <div class="ms-3 flex-grow-1">
               <h6 class="text-muted mb-1">Outstanding</h6>
-              <h4 class="mb-0">{{ data()?.totalDue || 0 | currency:'USD':'symbol':'1.0-0' }}</h4>
+              <h4 class="mb-0">
+                {{ data()?.totalDue || 0 | currency: "USD" : "symbol" : "1.0-0" }}
+              </h4>
               <small class="text-warning">
-                <i class="pi pi-exclamation-triangle"></i> {{ data()?.overdueInvoices || 0 }} overdue
+                <i class="pi pi-exclamation-triangle"></i>
+                {{ data()?.overdueInvoices || 0 }} overdue
               </small>
             </div>
           </div>
         </p-card>
       </div>
-      
-      <div class="col-12 col-md-6 col-lg-3 mb-3">
+
+      <div class="col-md-6 col-lg-3 col-12 mb-3">
         <p-card class="h-100 border-0 shadow-sm">
           <div class="d-flex align-items-center">
             <div class="flex-shrink-0">
@@ -89,9 +97,9 @@
                 <i class="pi pi-percentage text-info fs-4"></i>
               </div>
             </div>
-            <div class="flex-grow-1 ms-3">
+            <div class="ms-3 flex-grow-1">
               <h6 class="text-muted mb-1">Collection Rate</h6>
-              <h4 class="mb-0">{{ data()?.collectionRate || 0 | number:'1.1-1' }}%</h4>
+              <h4 class="mb-0">{{ data()?.collectionRate || 0 | number: "1.1-1" }}%</h4>
               <small class="text-success">
                 <i class="pi pi-arrow-up"></i> +2.1% vs last period
               </small>
@@ -104,7 +112,7 @@
     <!-- Financial Metrics -->
     <div class="row mb-4">
       <div class="col-12">
-        <p-card class="border-0 shadow-sm p-2">
+        <p-card class="border-0 p-2 shadow-sm">
           <ng-template pTemplate="header">
             <div class="d-flex align-items-center">
               <i class="pi pi-chart-line text-primary me-2"></i>
@@ -113,23 +121,25 @@
           </ng-template>
           <div class="row">
             @for (metric of data()?.financialMetrics || []; track metric.metric) {
-              <div class="col-12 col-md-6 col-lg-3 mb-3">
-                <div class="d-flex align-items-center p-3 bg-light rounded">
+              <div class="col-md-6 col-lg-3 col-12 mb-3">
+                <div class="d-flex align-items-center bg-light rounded p-3">
                   <div class="flex-grow-1">
                     <div class="d-flex align-items-center mb-1">
-                      <h6 class="mb-0 me-2">{{ metric.metric }}</h6>
-                      <p-tag 
-                        [value]="metric.category" 
+                      <h6 class="me-2 mb-0">{{ metric.metric }}</h6>
+                      <p-tag
+                        [value]="metric.category"
                         [severity]="getCategorySeverity(metric.category)"
-                        styleClass="p-tag-sm">
+                        styleClass="p-tag-sm"
+                      >
                       </p-tag>
                     </div>
-                    <h4 class="mb-0">{{ metric.value | currency:'USD':'symbol':'1.0-0' }}</h4>
+                    <h4 class="mb-0">{{ metric.value | currency: "USD" : "symbol" : "1.0-0" }}</h4>
                   </div>
                   <div class="flex-shrink-0">
-                    <p-tag 
-                      [value]="(metric.trend >= 0 ? '+' : '') + metric.trend + '%'" 
-                      [severity]="getMetricSeverity(metric.trend)">
+                    <p-tag
+                      [value]="(metric.trend >= 0 ? '+' : '') + metric.trend + '%'"
+                      [severity]="getMetricSeverity(metric.trend)"
+                    >
                     </p-tag>
                   </div>
                 </div>
@@ -142,36 +152,38 @@
 
     <!-- Charts Row 1 -->
     <div class="row mb-4">
-      <div class="col-12 col-lg-6 mb-4">
-        <p-card class="h-100 border-0 shadow-sm p-2">
+      <div class="col-lg-6 col-12 mb-4">
+        <p-card class="h-100 border-0 p-2 shadow-sm">
           <ng-template pTemplate="header">
             <div class="d-flex align-items-center">
               <i class="pi pi-chart-pie text-primary me-2"></i>
               <h5 class="mb-0">Invoice Status Distribution</h5>
             </div>
           </ng-template>
-          <p-chart 
-            type="pie" 
-            [data]="InvoiceStatusChartData()" 
+          <p-chart
+            type="pie"
+            [data]="InvoiceStatusChartData()"
             [options]="InvoiceStatusChartOptions"
-            style="height: 300px;">
+            style="height: 300px"
+          >
           </p-chart>
         </p-card>
       </div>
-      
-      <div class="col-12 col-lg-6 mb-4">
-        <p-card class="h-100 border-0 shadow-sm p-2 d-flex justify-content-between">
+
+      <div class="col-lg-6 col-12 mb-4">
+        <p-card class="d-flex justify-content-between h-100 border-0 p-2 shadow-sm">
           <ng-template pTemplate="header">
             <div class="d-flex align-items-center">
               <i class="pi pi-chart-bar text-primary me-2"></i>
               <h5 class="mb-0">Financial Metrics</h5>
             </div>
           </ng-template>
-          <p-chart 
-            type="bar" 
-            [data]="financialMetricsChartData()" 
+          <p-chart
+            type="bar"
+            [data]="financialMetricsChartData()"
             [options]="financialMetricsChartOptions"
-            style="height: 300px;">
+            style="height: 300px"
+          >
           </p-chart>
         </p-card>
       </div>
@@ -180,18 +192,19 @@
     <!-- Revenue Trends Chart -->
     <div class="row mb-4">
       <div class="col-12">
-        <p-card class="border-0 shadow-sm p-2">
+        <p-card class="border-0 p-2 shadow-sm">
           <ng-template pTemplate="header">
             <div class="d-flex align-items-center">
               <i class="pi pi-chart-line text-primary me-2"></i>
               <h5 class="mb-0">Revenue & Profit Trends</h5>
             </div>
           </ng-template>
-          <p-chart 
-            type="line" 
-            [data]="revenueTrendChartData()" 
+          <p-chart
+            type="line"
+            [data]="revenueTrendChartData()"
             [options]="revenueTrendChartOptions"
-            style="height: 400px;">
+            style="height: 400px"
+          >
           </p-chart>
         </p-card>
       </div>
@@ -199,15 +212,20 @@
 
     <!-- Data Tables -->
     <div class="row">
-      <div class="col-12 col-lg-6 mb-4">
-        <p-card class="h-100 border-0 shadow-sm p-2">
+      <div class="col-lg-6 col-12 mb-4">
+        <p-card class="h-100 border-0 p-2 shadow-sm">
           <ng-template pTemplate="header">
             <div class="d-flex align-items-center">
               <i class="pi pi-table text-primary me-2"></i>
               <h5 class="mb-0">Payment Trends</h5>
             </div>
           </ng-template>
-          <p-table [value]="data()?.paymentTrends || []" [paginator]="true" [rows]="5" responsiveLayout="scroll">
+          <p-table
+            [value]="data()?.paymentTrends || []"
+            [paginator]="true"
+            [rows]="5"
+            responsiveLayout="scroll"
+          >
             <ng-template pTemplate="header">
               <tr>
                 <th>Period</th>
@@ -219,11 +237,20 @@
             <ng-template pTemplate="body" let-trend>
               <tr>
                 <td>{{ trend.period }}</td>
-                <td>{{ trend.invoiced | currency:'USD':'symbol':'1.0-0' }}</td>
-                <td>{{ trend.paid | currency:'USD':'symbol':'1.0-0' }}</td>
+                <td>{{ trend.invoiced | currency: "USD" : "symbol" : "1.0-0" }}</td>
+                <td>{{ trend.paid | currency: "USD" : "symbol" : "1.0-0" }}</td>
                 <td>
-                  <span class="fw-medium" [class]="trend.collectionRate >= 80 ? 'text-success' : trend.collectionRate >= 60 ? 'text-warning' : 'text-danger'">
-                    {{ trend.collectionRate | number:'1.1-1' }}%
+                  <span
+                    class="fw-medium"
+                    [class]="
+                      trend.collectionRate >= 80
+                        ? 'text-success'
+                        : trend.collectionRate >= 60
+                          ? 'text-warning'
+                          : 'text-danger'
+                    "
+                  >
+                    {{ trend.collectionRate | number: "1.1-1" }}%
                   </span>
                 </td>
               </tr>
@@ -231,16 +258,21 @@
           </p-table>
         </p-card>
       </div>
-      
-      <div class="col-12 col-lg-6 mb-4">
-        <p-card class="h-100 border-0 shadow-sm p-2">
+
+      <div class="col-lg-6 col-12 mb-4">
+        <p-card class="h-100 border-0 p-2 shadow-sm">
           <ng-template pTemplate="header">
             <div class="d-flex align-items-center">
               <i class="pi pi-users text-primary me-2"></i>
               <h5 class="mb-0">Top Customers</h5>
             </div>
           </ng-template>
-          <p-table [value]="data()?.topCustomers || []" [paginator]="true" [rows]="5" responsiveLayout="scroll">
+          <p-table
+            [value]="data()?.topCustomers || []"
+            [paginator]="true"
+            [rows]="5"
+            responsiveLayout="scroll"
+          >
             <ng-template pTemplate="header">
               <tr>
                 <th>Customer</th>
@@ -253,14 +285,14 @@
               <tr>
                 <td>
                   <div class="d-flex align-items-center">
-                    <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-2">
+                    <div class="bg-primary bg-opacity-10 rounded-circle me-2 p-2">
                       <i class="pi pi-user text-primary"></i>
                     </div>
                     <span class="fw-medium">{{ customer.customerName }}</span>
                   </div>
                 </td>
-                <td>{{ customer.totalInvoiced | currency:'USD':'symbol':'1.0-0' }}</td>
-                <td>{{ customer.totalPaid | currency:'USD':'symbol':'1.0-0' }}</td>
+                <td>{{ customer.totalInvoiced | currency: "USD" : "symbol" : "1.0-0" }}</td>
+                <td>{{ customer.totalPaid | currency: "USD" : "symbol" : "1.0-0" }}</td>
                 <td>
                   <span class="badge bg-secondary">{{ customer.invoiceCount }}</span>
                 </td>

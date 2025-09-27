@@ -1,13 +1,13 @@
-import {CommonModule, CurrencyPipe, DatePipe} from "@angular/common";
-import {Component, inject, input, signal} from "@angular/core";
-import {RouterModule} from "@angular/router";
-import {ButtonModule} from "primeng/button";
-import {CardModule} from "primeng/card";
-import {TableLazyLoadEvent, TableModule} from "primeng/table";
-import {TooltipModule} from "primeng/tooltip";
-import {ApiService} from "@/core/api";
-import {InvoiceDto, InvoiceType} from "@/core/api/models";
-import {InvoiceStatusTag} from "@/shared/components";
+import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
+import { Component, inject, input, signal } from "@angular/core";
+import { RouterModule } from "@angular/router";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { TableLazyLoadEvent, TableModule } from "primeng/table";
+import { TooltipModule } from "primeng/tooltip";
+import { ApiService } from "@/core/api";
+import { InvoiceDto, InvoiceType } from "@/core/api/models";
+import { InvoiceStatusTag } from "@/shared/components";
 
 @Component({
   selector: "app-load-invoices-list",

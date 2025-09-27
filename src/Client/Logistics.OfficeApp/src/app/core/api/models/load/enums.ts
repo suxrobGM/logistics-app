@@ -1,4 +1,4 @@
-import {SelectOption} from "@/shared/models";
+import { SelectOption } from "@/shared/models";
 
 export enum LoadStatus {
   Draft = "draft",
@@ -20,20 +20,20 @@ export enum LoadType {
 }
 
 export const loadStatusOptions: SelectOption<LoadStatus>[] = [
-  {label: "Draft", value: LoadStatus.Draft},
-  {label: "Dispatched", value: LoadStatus.Dispatched},
-  {label: "Picked Up", value: LoadStatus.PickedUp},
-  {label: "Delivered", value: LoadStatus.Delivered},
-  {label: "Cancelled", value: LoadStatus.Cancelled},
+  { label: "Draft", value: LoadStatus.Draft },
+  { label: "Dispatched", value: LoadStatus.Dispatched },
+  { label: "Picked Up", value: LoadStatus.PickedUp },
+  { label: "Delivered", value: LoadStatus.Delivered },
+  { label: "Cancelled", value: LoadStatus.Cancelled },
 ] as const;
 
 export const loadTypeOptions: SelectOption<LoadType>[] = [
-  {label: "General Freight", value: LoadType.GeneralFreight},
-  {label: "Refrigerated Goods", value: LoadType.RefrigeratedGoods},
-  {label: "Hazardous Materials", value: LoadType.HazardousMaterials},
-  {label: "Oversize/Heavy", value: LoadType.OversizeHeavy},
-  {label: "Liquid", value: LoadType.Liquid},
-  {label: "Bulk", value: LoadType.Bulk},
-  {label: "Vehicle/Car", value: LoadType.Vehicle},
-  {label: "Livestock", value: LoadType.Livestock},
+  { label: "General Freight", value: LoadType.GeneralFreight },
+  { label: "Refrigerated Goods", value: LoadType.RefrigeratedGoods },
+  { label: "Hazardous Materials", value: LoadType.HazardousMaterials },
+  { label: "Oversize/Heavy", value: LoadType.OversizeHeavy },
+  { label: "Liquid", value: LoadType.Liquid },
+  { label: "Bulk", value: LoadType.Bulk },
+  { label: "Vehicle/Car", value: LoadType.Vehicle },
+  { label: "Livestock", value: LoadType.Livestock },
 ] as const;

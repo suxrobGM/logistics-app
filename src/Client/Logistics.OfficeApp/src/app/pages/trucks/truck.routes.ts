@@ -1,9 +1,9 @@
-import {Routes} from "@angular/router";
-import {authGuard} from "@/core/auth";
-import {Permissions} from "@/shared/models";
-import {TruckDetailsComponent} from "./truck-details/truck-details";
-import {TruckEditComponent} from "./truck-edit/truck-edit";
-import {TrucksListComponent} from "./trucks-list/trucks-list";
+import { Routes } from "@angular/router";
+import { authGuard } from "@/core/auth";
+import { Permissions } from "@/shared/models";
+import { TruckDetailsComponent } from "./truck-details/truck-details";
+import { TruckEditComponent } from "./truck-edit/truck-edit";
+import { TrucksListComponent } from "./trucks-list/trucks-list";
 
 export const truckRoutes: Routes = [
   {

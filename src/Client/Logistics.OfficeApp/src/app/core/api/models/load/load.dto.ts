@@ -1,8 +1,8 @@
-import {AddressDto} from "../address.dto";
-import {CustomerDto} from "../customer";
-import {GeoPointDto} from "../geo-point.dto";
-import {InvoiceDto} from "../invoice";
-import {LoadStatus, LoadType} from "./enums";
+import { AddressDto } from "../address.dto";
+import { CustomerDto } from "../customer";
+import { GeoPointDto } from "../geo-point.dto";
+import { InvoiceDto } from "../invoice";
+import { LoadStatus, LoadType } from "./enums";
 
 export interface LoadDto {
   id: string;

@@ -1,11 +1,10 @@
-import {CommonModule} from "@angular/common";
-import {Component} from "@angular/core";
-import {RouterLink, RouterOutlet} from "@angular/router";
+import { CommonModule } from "@angular/common";
+import { Component } from "@angular/core";
+import { RouterLink, RouterOutlet } from "@angular/router";
 
 @Component({
   selector: "app-reports-layout",
-  templateUrl : "./reports.layout.html",
+  templateUrl: "./reports.layout.html",
   imports: [CommonModule, RouterOutlet],
 })
 export class ReportsLayoutComponent {}
-

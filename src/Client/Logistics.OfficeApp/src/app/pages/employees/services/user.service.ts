@@ -1,11 +1,11 @@
-import {Injectable, inject} from "@angular/core";
-import {Observable, map} from "rxjs";
-import {ApiService} from "@/core/api";
-import {RoleDto, UserDto} from "@/core/api/models";
-import {AuthService} from "@/core/auth";
-import {UserRole} from "@/shared/models";
+import { Injectable, inject } from "@angular/core";
+import { Observable, map } from "rxjs";
+import { ApiService } from "@/core/api";
+import { RoleDto, UserDto } from "@/core/api/models";
+import { AuthService } from "@/core/auth";
+import { UserRole } from "@/shared/models";
 
-@Injectable({providedIn: "root"})
+@Injectable({ providedIn: "root" })
 export class UserService {
   private readonly apiService = inject(ApiService);
 
@@ -19,12 +19,12 @@ export class UserService {
   }
 
   searchUser(searchQuery: string): Observable<UserDto[] | undefined> {
-    const users$ = this.apiService.userApi.getUsers({search: searchQuery});
+    const users$ = this.apiService.userApi.getUsers({ search: searchQuery });
     return users$.pipe(map((i) => i.data));
   }
 
   fetchRoles(): Observable<RoleDto[]> {
-    const dummyRole: RoleDto = {name: "", displayName: " "};
+    const dummyRole: RoleDto = { name: "", displayName: " " };
     const roles$ = this.apiService.getRoles();
 
     return roles$.pipe(
@@ -44,7 +44,7 @@ export class UserService {
         }
 
         return [dummyRole];
-      })
+      }),
     );
   }
 }

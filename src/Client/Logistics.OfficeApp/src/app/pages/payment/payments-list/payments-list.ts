@@ -1,15 +1,15 @@
-import {CommonModule} from "@angular/common";
-import {Component, inject, signal} from "@angular/core";
-import {RouterModule} from "@angular/router";
-import {ButtonModule} from "primeng/button";
-import {CardModule} from "primeng/card";
-import {TableLazyLoadEvent, TableModule} from "primeng/table";
-import {TooltipModule} from "primeng/tooltip";
-import {ApiService} from "@/core/api";
-import {PaymentDto, PaymentMethodType, paymentMethodTypeOptions} from "@/core/api/models";
-import {PaymentStatusTag} from "@/shared/components";
-import {AddressPipe} from "@/shared/pipes";
-import {PredefinedDateRanges} from "@/shared/utils";
+import { CommonModule } from "@angular/common";
+import { Component, inject, signal } from "@angular/core";
+import { RouterModule } from "@angular/router";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { TableLazyLoadEvent, TableModule } from "primeng/table";
+import { TooltipModule } from "primeng/tooltip";
+import { ApiService } from "@/core/api";
+import { PaymentDto, PaymentMethodType, paymentMethodTypeOptions } from "@/core/api/models";
+import { PaymentStatusTag } from "@/shared/components";
+import { AddressPipe } from "@/shared/pipes";
+import { PredefinedDateRanges } from "@/shared/utils";
 
 @Component({
   selector: "app-payments-list",

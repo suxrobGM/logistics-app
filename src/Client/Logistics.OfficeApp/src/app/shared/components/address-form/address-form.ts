@@ -1,5 +1,5 @@
-import {CommonModule} from "@angular/common";
-import {Component, input, output} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Component, input, output } from "@angular/core";
 import {
   ControlValueAccessor,
   FormControl,
@@ -8,13 +8,13 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import {InputTextModule} from "primeng/inputtext";
-import {KeyFilterModule} from "primeng/keyfilter";
-import {SelectModule} from "primeng/select";
-import {AddressDto} from "@/core/api/models";
-import {COUNTRIES_OPTIONS, DEFAULT_COUNTRY_OPTION, US_STATES_OPTIONS} from "@/shared/constants";
-import {findOption} from "@/shared/utils";
-import {ValidationSummary} from "../validation-summary/validation-summary";
+import { InputTextModule } from "primeng/inputtext";
+import { KeyFilterModule } from "primeng/keyfilter";
+import { SelectModule } from "primeng/select";
+import { AddressDto } from "@/core/api/models";
+import { COUNTRIES_OPTIONS, DEFAULT_COUNTRY_OPTION, US_STATES_OPTIONS } from "@/shared/constants";
+import { findOption } from "@/shared/utils";
+import { ValidationSummary } from "../validation-summary/validation-summary";
 
 @Component({
   selector: "app-address-form",
@@ -47,14 +47,14 @@ export class AddressForm implements ControlValueAccessor {
 
   constructor() {
     this.form = new FormGroup<AddressFormType>({
-      addressLine1: new FormControl("", {validators: Validators.required, nonNullable: true}),
+      addressLine1: new FormControl("", { validators: Validators.required, nonNullable: true }),
       addressLine2: new FormControl(null),
-      city: new FormControl("", {validators: Validators.required, nonNullable: true}),
-      state: new FormControl("", {validators: Validators.required, nonNullable: true}),
-      zipCode: new FormControl("", {validators: Validators.required, nonNullable: true}),
+      city: new FormControl("", { validators: Validators.required, nonNullable: true }),
+      state: new FormControl("", { validators: Validators.required, nonNullable: true }),
+      zipCode: new FormControl("", { validators: Validators.required, nonNullable: true }),
       country: new FormControl(
-        {value: DEFAULT_COUNTRY_OPTION.value, disabled: true},
-        {validators: Validators.required, nonNullable: true}
+        { value: DEFAULT_COUNTRY_OPTION.value, disabled: true },
+        { validators: Validators.required, nonNullable: true },
       ),
     });
 
@@ -78,7 +78,7 @@ export class AddressForm implements ControlValueAccessor {
         zipCode: value.zipCode,
         country: countryOption?.value ?? DEFAULT_COUNTRY_OPTION.value,
       },
-      {emitEvent: false}
+      { emitEvent: false },
     );
   }
 
@@ -92,7 +92,7 @@ export class AddressForm implements ControlValueAccessor {
 
   setDisabledState(isDisabled: boolean): void {
     if (isDisabled) {
-      this.form.disable({emitEvent: false});
+      this.form.disable({ emitEvent: false });
     }
   }
 

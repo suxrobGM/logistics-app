@@ -10,7 +10,7 @@ export interface MapboxGeocodingResponse {
 export interface MapboxGeocodingFeature {
   id: string;
   type: string;
-  geometry: {type: string; coordinates: GeoPoint};
+  geometry: { type: string; coordinates: GeoPoint };
   properties: GeocodingFeatureProperties;
 }
 
@@ -19,17 +19,17 @@ interface GeocodingFeatureProperties {
   full_address: string;
   name: string;
   context: GeocodingFeatureContext;
-  coordinates: {longitude: number; latitude: number; accuracy: string};
+  coordinates: { longitude: number; latitude: number; accuracy: string };
 }
 
 interface GeocodingFeatureContext {
-  address: {name: string; street_name: string; address_number: string};
-  country: {name: string; country_code: string; country_code_alpha_3: string};
-  district: {name: string};
-  place: {name: string; alternate: {name: string}[]};
-  postcode: {name: string};
-  region: {name: string; region_code: string};
-  street: {name: string};
+  address: { name: string; street_name: string; address_number: string };
+  country: { name: string; country_code: string; country_code_alpha_3: string };
+  district: { name: string };
+  place: { name: string; alternate: { name: string }[] };
+  postcode: { name: string };
+  region: { name: string; region_code: string };
+  street: { name: string };
 }
 
 /**

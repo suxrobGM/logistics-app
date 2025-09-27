@@ -1,4 +1,4 @@
-import {InvoiceDto} from "../invoice";
+import { InvoiceDto } from "../invoice";
 
 export interface CustomerDto {
   id: string;

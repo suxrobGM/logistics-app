@@ -1,15 +1,15 @@
-import {HttpClient} from "@angular/common/http";
-import {inject} from "@angular/core";
-import {Observable, catchError, of} from "rxjs";
-import {ToastService} from "../services";
-import {API_CONFIG} from "./api.provider";
-import {PagedIntervalQuery, SearchableQuery} from "./models";
+import { HttpClient } from "@angular/common/http";
+import { inject } from "@angular/core";
+import { Observable, catchError, of } from "rxjs";
+import { ToastService } from "../services";
+import { API_CONFIG } from "./api.provider";
+import { PagedIntervalQuery, SearchableQuery } from "./models";
 
 export abstract class ApiBase {
   private readonly http = inject(HttpClient);
   private readonly toastService = inject(ToastService);
   private readonly apiConfig = inject(API_CONFIG);
-  private readonly headers = {"content-type": "application/json"};
+  private readonly headers = { "content-type": "application/json" };
   protected readonly apiUrl = this.apiConfig.baseUrl;
 
   /**
@@ -42,7 +42,7 @@ export abstract class ApiBase {
     const bodyJson = JSON.stringify(body);
 
     return this.http
-      .post<TResponse>(this.apiUrl + endpoint, bodyJson, {headers: this.headers})
+      .post<TResponse>(this.apiUrl + endpoint, bodyJson, { headers: this.headers })
       .pipe(catchError((err) => this.handleError(err)));
   }
 
@@ -50,7 +50,7 @@ export abstract class ApiBase {
     const bodyJson = JSON.stringify(body);
 
     return this.http
-      .put<TResponse>(this.apiUrl + endpoint, bodyJson, {headers: this.headers})
+      .put<TResponse>(this.apiUrl + endpoint, bodyJson, { headers: this.headers })
       .pipe(catchError((err) => this.handleError(err)));
   }
 
@@ -70,7 +70,7 @@ export abstract class ApiBase {
   /** Download blob helper */
   protected getBlob(endpoint: string): Observable<Blob> {
     return this.http
-      .get(this.apiUrl + endpoint, {responseType: "blob"})
+      .get(this.apiUrl + endpoint, { responseType: "blob" })
       .pipe(catchError((err) => this.handleError(err)));
   }
 
@@ -105,7 +105,7 @@ export abstract class ApiBase {
   }
 
   protected stringfySearchableQuery(query?: SearchableQuery): string {
-    const {search = "", orderBy = "", page = 1, pageSize = 10} = query || {};
+    const { search = "", orderBy = "", page = 1, pageSize = 10 } = query || {};
 
     return new URLSearchParams({
       search,
@@ -117,14 +117,14 @@ export abstract class ApiBase {
 
   protected stringfyPagedIntervalQuery(
     query?: PagedIntervalQuery,
-    additionalParams: Record<string, string | undefined> = {}
+    additionalParams: Record<string, string | undefined> = {},
   ): string {
-    const {startDate = new Date(), endDate, orderBy = "", page = 1, pageSize = 10} = query || {};
+    const { startDate = new Date(), endDate, orderBy = "", page = 1, pageSize = 10 } = query || {};
 
     // Filter out undefined values from additionalParams
     const filteredAdditionalParams = Object.fromEntries(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      Object.entries(additionalParams).filter(([_, value]) => value !== undefined)
+      Object.entries(additionalParams).filter(([_, value]) => value !== undefined),
     );
 
     const params = new URLSearchParams({
@@ -145,6 +145,6 @@ export abstract class ApiBase {
 
     this.toastService.showError(errorMessage);
     console.error(errorMessage ?? responseData);
-    return of({error: errorMessage, success: false});
+    return of({ error: errorMessage, success: false });
   }
 }

@@ -1,15 +1,15 @@
-import {CommonModule} from "@angular/common";
-import {Component, OnInit, inject, input, signal} from "@angular/core";
-import {RouterModule} from "@angular/router";
-import {jsPDF} from "jspdf";
-import {ButtonModule} from "primeng/button";
-import {CardModule} from "primeng/card";
-import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {ApiService} from "@/core/api";
-import {AddressDto, InvoiceDto} from "@/core/api/models";
-import {TenantService} from "@/core/services";
-import {InvoiceStatusTag} from "@/shared/components";
-import {AddressPipe} from "@/shared/pipes";
+import { CommonModule } from "@angular/common";
+import { Component, OnInit, inject, input, signal } from "@angular/core";
+import { RouterModule } from "@angular/router";
+import { jsPDF } from "jspdf";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { ApiService } from "@/core/api";
+import { AddressDto, InvoiceDto } from "@/core/api/models";
+import { TenantService } from "@/core/services";
+import { InvoiceStatusTag } from "@/shared/components";
+import { AddressPipe } from "@/shared/pipes";
 
 @Component({
   selector: "app-load-invoice-details",
@@ -53,7 +53,7 @@ export class LoadInvoiceDetailsComponent implements OnInit {
     // Adding 'Invoice' text centered
     const middleOfPage = doc.internal.pageSize.getWidth() / 2;
     doc.setFontSize(18); // Larger font size
-    doc.text("Invoice", middleOfPage, 10, {align: "center"});
+    doc.text("Invoice", middleOfPage, 10, { align: "center" });
 
     // Reverting to normal font for the rest of the text
     doc.setFont("helvetica", "normal");

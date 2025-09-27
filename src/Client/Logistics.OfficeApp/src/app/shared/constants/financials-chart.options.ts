@@ -8,30 +8,30 @@ export const FINANCIAL_METRICS_CHART_OPTIONS = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
-    legend: { display: false }
+    legend: { display: false },
   },
   scales: {
-    y: { beginAtZero: true }
-  }
+    y: { beginAtZero: true },
+  },
 };
 
 export const REVENUE_TREND_CHART_OPTIONS = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
-    legend: { position: 'top' },
+    legend: { position: "top" },
   },
   scales: {
     y: {
-      type: 'linear',
+      type: "linear",
       display: true,
-      position: 'left',
+      position: "left",
       title: {
         display: true,
-        text: 'Amount ($)'
-      }
-    }
-  }
+        text: "Amount ($)",
+      },
+    },
+  },
 };
 
 export const INVOICE_STATUS_CHART_OPTIONS = {
@@ -40,14 +40,14 @@ export const INVOICE_STATUS_CHART_OPTIONS = {
   aspectRatio: 1,
   plugins: {
     legend: {
-      position: 'bottom',
-      labels: { usePointStyle: true, boxWidth: 8 }
+      position: "bottom",
+      labels: { usePointStyle: true, boxWidth: 8 },
     },
     tooltip: {
       callbacks: {
-        label: (ctx: any) => `${ctx.label}: ${ctx.parsed}`
-      }
-    }
+        label: (ctx: any) => `${ctx.label}: ${ctx.parsed}`,
+      },
+    },
   },
-  layout: { padding: 0 }
+  layout: { padding: 0 },
 };

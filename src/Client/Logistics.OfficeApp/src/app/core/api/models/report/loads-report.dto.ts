@@ -1,4 +1,3 @@
-
 export interface StatusDto {
   status: string;
   count: number;

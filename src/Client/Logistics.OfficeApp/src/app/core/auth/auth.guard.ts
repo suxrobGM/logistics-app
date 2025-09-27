@@ -1,8 +1,8 @@
-import {inject} from "@angular/core";
-import {CanActivateFn, Router} from "@angular/router";
-import {map} from "rxjs";
-import {AuthService, UserData} from "@/core/auth";
-import {TenantService} from "../services";
+import { inject } from "@angular/core";
+import { CanActivateFn, Router } from "@angular/router";
+import { map } from "rxjs";
+import { AuthService, UserData } from "@/core/auth";
+import { TenantService } from "../services";
 
 export const authGuard: CanActivateFn = (route) => {
   const authService = inject(AuthService);
@@ -27,6 +27,6 @@ export const authGuard: CanActivateFn = (route) => {
       }
 
       return router.parseUrl("/unauthorized");
-    })
+    }),
   );
 };

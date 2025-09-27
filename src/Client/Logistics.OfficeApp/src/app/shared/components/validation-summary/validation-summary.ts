@@ -1,7 +1,7 @@
-import {AsyncPipe, CommonModule} from "@angular/common";
-import {Component, OnInit, input} from "@angular/core";
-import {FormGroup} from "@angular/forms";
-import {BehaviorSubject} from "rxjs";
+import { AsyncPipe, CommonModule } from "@angular/common";
+import { Component, OnInit, input } from "@angular/core";
+import { FormGroup } from "@angular/forms";
+import { BehaviorSubject } from "rxjs";
 
 @Component({
   selector: "app-validation-summary",

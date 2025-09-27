@@ -1,12 +1,12 @@
-import {Component, effect, inject, input, output} from "@angular/core";
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {RouterLink} from "@angular/router";
-import {ButtonModule} from "primeng/button";
-import {InputTextModule} from "primeng/inputtext";
-import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {ToastService} from "@/core/services";
-import {FormField} from "../form-field/form-field";
-import {ValidationSummary} from "../validation-summary/validation-summary";
+import { Component, effect, inject, input, output } from "@angular/core";
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { RouterLink } from "@angular/router";
+import { ButtonModule } from "primeng/button";
+import { InputTextModule } from "primeng/inputtext";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { ToastService } from "@/core/services";
+import { FormField } from "../form-field/form-field";
+import { ValidationSummary } from "../validation-summary/validation-summary";
 
 export interface CustomerFormValue {
   name: string;
@@ -36,7 +36,7 @@ export class CustomerForm {
   public readonly remove = output<void>();
 
   protected readonly form = new FormGroup({
-    name: new FormControl("", {validators: Validators.required, nonNullable: true}),
+    name: new FormControl("", { validators: Validators.required, nonNullable: true }),
   });
 
   constructor() {

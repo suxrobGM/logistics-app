@@ -1,19 +1,18 @@
 import { DestroyRef, inject, signal } from "@angular/core";
-import { ApiService } from "@/core/api";
-import { ToastService } from "@/core/services";
-import { finalize, Observable } from "rxjs";
-import { Result } from "@/core/api/models";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { Observable, finalize } from "rxjs";
+import { ApiService } from "@/core/api";
+import { Result } from "@/core/api/models";
+import { ToastService } from "@/core/services";
 import { DateUtils } from "@/shared/utils";
 
 export interface ReportQueryParams {
   startDate: Date;
   endDate?: Date;
-  search? : string;
+  search?: string;
 }
 
-export abstract class BaseReportComponent<T>{
-  
+export abstract class BaseReportComponent<T> {
   private readonly destroyRef = inject(DestroyRef);
   protected readonly isLoading = signal(false);
   protected readonly data = signal<T | null>(null);
@@ -27,13 +26,13 @@ export abstract class BaseReportComponent<T>{
   protected abstract drawChart(result: T): void;
 
   protected fetch(params: ReportQueryParams): void {
-    const {startDate = DateUtils.today(), endDate = DateUtils.today()} = params;
+    const { startDate = DateUtils.today(), endDate = DateUtils.today() } = params;
     this.isLoading.set(true);
 
-    this.query({startDate, endDate})
+    this.query({ startDate, endDate })
       .pipe(
         finalize(() => this.isLoading.set(false)),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((r) => {
         if (r.data) {
@@ -42,7 +41,7 @@ export abstract class BaseReportComponent<T>{
         }
       });
   }
-  filter() : void {
-    this.fetch({startDate: this.startDate(), endDate: this.endDate(), search : this.search()});
+  filter(): void {
+    this.fetch({ startDate: this.startDate(), endDate: this.endDate(), search: this.search() });
   }
 }

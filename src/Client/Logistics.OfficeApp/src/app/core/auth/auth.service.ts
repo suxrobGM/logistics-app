@@ -1,11 +1,11 @@
-import {Injectable, inject} from "@angular/core";
-import {EventTypes, OidcSecurityService, PublicEventsService} from "angular-auth-oidc-client";
-import {Observable, filter, map} from "rxjs";
-import {TenantService} from "@/core/services";
-import {userRoleOptions} from "../../shared/models";
-import {UserData} from "./user-data";
+import { Injectable, inject } from "@angular/core";
+import { EventTypes, OidcSecurityService, PublicEventsService } from "angular-auth-oidc-client";
+import { Observable, filter, map } from "rxjs";
+import { TenantService } from "@/core/services";
+import { userRoleOptions } from "../../shared/models";
+import { UserData } from "./user-data";
 
-@Injectable({providedIn: "root"})
+@Injectable({ providedIn: "root" })
 export class AuthService {
   private readonly oidcService = inject(OidcSecurityService);
   private readonly eventService = inject(PublicEventsService);
@@ -18,7 +18,7 @@ export class AuthService {
    * @returns An observable that emits a boolean value indicating whether the user is authenticated
    */
   onAuthenticated(): Observable<boolean> {
-    return this.oidcService.isAuthenticated$.pipe(map(({isAuthenticated}) => isAuthenticated));
+    return this.oidcService.isAuthenticated$.pipe(map(({ isAuthenticated }) => isAuthenticated));
   }
 
   /**
@@ -27,13 +27,13 @@ export class AuthService {
    */
   onUserDataChanged(): Observable<UserData | null> {
     return this.oidcService.userData$.pipe(
-      map(({userData}) => {
+      map(({ userData }) => {
         if (userData) {
           this.userData = new UserData(userData);
         }
 
         return this.userData;
-      })
+      }),
     );
   }
 
@@ -43,7 +43,7 @@ export class AuthService {
   onCheckingAuth(): Observable<void> {
     return this.eventService.registerForEvents().pipe(
       filter((notifaction) => notifaction.type === EventTypes.CheckingAuth),
-      map(() => void 0)
+      map(() => void 0),
     );
   }
 
@@ -53,7 +53,7 @@ export class AuthService {
   onCheckingAuthFinished(): Observable<void> {
     return this.eventService.registerForEvents().pipe(
       filter((notifaction) => notifaction.type === EventTypes.CheckingAuthFinished),
-      map(() => void 0)
+      map(() => void 0),
     );
   }
 
@@ -82,7 +82,7 @@ export class AuthService {
 
         console.log("User data:", this.userData);
         return response.isAuthenticated;
-      })
+      }),
     );
   }
 

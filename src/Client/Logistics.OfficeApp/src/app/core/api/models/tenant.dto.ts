@@ -1,5 +1,5 @@
-import {AddressDto} from "./address.dto";
-import {SubscriptionDto} from "./subscription";
+import { AddressDto } from "./address.dto";
+import { SubscriptionDto } from "./subscription";
 
 export interface TenantDto {
   id: string;

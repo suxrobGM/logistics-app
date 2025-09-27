@@ -1,4 +1,4 @@
-import {AbstractControl, ValidationErrors} from "@angular/forms";
+import { AbstractControl, ValidationErrors } from "@angular/forms";
 
 export abstract class PaymentMethodValidators {
   /**
@@ -16,7 +16,7 @@ export abstract class PaymentMethodValidators {
 
     // Validate month
     if (month < 1 || month > 12) {
-      return {invalidMonth: true};
+      return { invalidMonth: true };
     }
 
     const currentYear = new Date().getFullYear();
@@ -24,7 +24,7 @@ export abstract class PaymentMethodValidators {
 
     // Validate expiration
     if (year < currentYear || (year === currentYear && month < currentMonth)) {
-      return {expired: true};
+      return { expired: true };
     }
 
     return null;

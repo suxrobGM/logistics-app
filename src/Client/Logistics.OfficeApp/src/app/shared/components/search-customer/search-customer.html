@@ -33,7 +33,7 @@
   header="Create Customer"
   [modal]="true"
   [(visible)]="customerDialogVisible"
-  [style]="{width: '25rem'}"
+  [style]="{ width: '25rem' }"
 >
   <app-customer-form [mode]="'create'" (save)="createCustomer($event)" />
 </p-dialog>

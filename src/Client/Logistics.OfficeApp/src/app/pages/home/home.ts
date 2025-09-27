@@ -1,19 +1,19 @@
-import {CurrencyPipe} from "@angular/common";
-import {Component, OnInit, inject, signal} from "@angular/core";
-import {RouterLink} from "@angular/router";
-import {SharedModule} from "primeng/api";
-import {ButtonModule} from "primeng/button";
-import {CardModule} from "primeng/card";
-import {ChartModule} from "primeng/chart";
-import {SkeletonModule} from "primeng/skeleton";
-import {TableModule} from "primeng/table";
-import {TooltipModule} from "primeng/tooltip";
-import {ApiService} from "@/core/api";
-import {AddressDto, DailyGrossesDto, LoadDto} from "@/core/api/models";
-import {TrucksMap} from "@/shared/components";
-import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
-import {Converters, DateUtils} from "@/shared/utils";
-import {NotificationsPanelComponent} from "./components";
+import { CurrencyPipe } from "@angular/common";
+import { Component, OnInit, inject, signal } from "@angular/core";
+import { RouterLink } from "@angular/router";
+import { SharedModule } from "primeng/api";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { ChartModule } from "primeng/chart";
+import { SkeletonModule } from "primeng/skeleton";
+import { TableModule } from "primeng/table";
+import { TooltipModule } from "primeng/tooltip";
+import { ApiService } from "@/core/api";
+import { AddressDto, DailyGrossesDto, LoadDto } from "@/core/api/models";
+import { TrucksMap } from "@/shared/components";
+import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
+import { Converters, DateUtils } from "@/shared/utils";
+import { NotificationsPanelComponent } from "./components";
 
 const chartInitialData = {
   labels: [],
@@ -81,7 +81,7 @@ export class HomeComponent implements OnInit {
     this.isLoadingLoadsData.set(true);
 
     this.apiService.loadApi
-      .getLoads({orderBy: "-DispatchedAt", onlyActiveLoads: true})
+      .getLoads({ orderBy: "-DispatchedAt", onlyActiveLoads: true })
       .subscribe((result) => {
         if (result.success && result.data) {
           this.loads.set(result.data);

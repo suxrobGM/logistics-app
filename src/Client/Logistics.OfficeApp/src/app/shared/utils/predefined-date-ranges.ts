@@ -1,4 +1,4 @@
-import {DateRange} from "./date-range";
+import { DateRange } from "./date-range";
 
 export abstract class PredefinedDateRanges {
   static getThisWeek(): DateRange {

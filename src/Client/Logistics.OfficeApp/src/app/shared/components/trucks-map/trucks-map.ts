@@ -1,9 +1,9 @@
-import {CommonModule} from "@angular/common";
-import {Component, OnDestroy, inject, input, signal} from "@angular/core";
-import {ApiService} from "@/core/api";
-import {TruckGeolocationDto} from "@/core/api/models";
-import {LiveTrackingService} from "@/core/services";
-import {GeolocationMap} from "@/shared/components";
+import { CommonModule } from "@angular/common";
+import { Component, OnDestroy, inject, input, signal } from "@angular/core";
+import { ApiService } from "@/core/api";
+import { TruckGeolocationDto } from "@/core/api/models";
+import { LiveTrackingService } from "@/core/services";
+import { GeolocationMap } from "@/shared/components";
 
 @Component({
   selector: "app-trucks-map",
@@ -46,7 +46,7 @@ export class TrucksMap implements OnDestroy {
   }
 
   private fetchTrucksData(): void {
-    this.apiService.truckApi.getTrucks({pageSize: 100}).subscribe((result) => {
+    this.apiService.truckApi.getTrucks({ pageSize: 100 }).subscribe((result) => {
       if (!result.success || !result.data) {
         return;
       }

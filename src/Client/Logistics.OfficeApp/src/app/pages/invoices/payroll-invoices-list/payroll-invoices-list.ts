@@ -1,16 +1,16 @@
-import {CommonModule} from "@angular/common";
-import {Component, inject, signal} from "@angular/core";
-import {RouterModule} from "@angular/router";
-import {ButtonModule} from "primeng/button";
-import {CardModule} from "primeng/card";
-import {IconFieldModule} from "primeng/iconfield";
-import {InputIconModule} from "primeng/inputicon";
-import {InputTextModule} from "primeng/inputtext";
-import {TableLazyLoadEvent, TableModule} from "primeng/table";
-import {TooltipModule} from "primeng/tooltip";
-import {ApiService} from "@/core/api";
-import {InvoiceDto, InvoiceType, SalaryType, salaryTypeOptions} from "@/core/api/models";
-import {InvoiceStatusTag} from "@/shared/components";
+import { CommonModule } from "@angular/common";
+import { Component, inject, signal } from "@angular/core";
+import { RouterModule } from "@angular/router";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { IconFieldModule } from "primeng/iconfield";
+import { InputIconModule } from "primeng/inputicon";
+import { InputTextModule } from "primeng/inputtext";
+import { TableLazyLoadEvent, TableModule } from "primeng/table";
+import { TooltipModule } from "primeng/tooltip";
+import { ApiService } from "@/core/api";
+import { InvoiceDto, InvoiceType, SalaryType, salaryTypeOptions } from "@/core/api/models";
+import { InvoiceStatusTag } from "@/shared/components";
 
 @Component({
   selector: "app-payroll-invoices-list",
@@ -41,7 +41,7 @@ export class PayrollInvoicesListComponent {
     this.isLoading.set(true);
     const searchValue = (event.target as HTMLInputElement).value;
 
-    this.apiService.invoiceApi.getInvoices({employeeName: searchValue}).subscribe((result) => {
+    this.apiService.invoiceApi.getInvoices({ employeeName: searchValue }).subscribe((result) => {
       if (result.success && result.data) {
         this.invoices.set(result.data);
         this.totalRecords.set(result.totalItems);

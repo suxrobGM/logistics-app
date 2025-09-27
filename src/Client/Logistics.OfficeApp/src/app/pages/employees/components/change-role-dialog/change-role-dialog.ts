@@ -1,13 +1,19 @@
-import {Component, inject, input, model, signal} from "@angular/core";
-import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {ButtonModule} from "primeng/button";
-import {DialogModule} from "primeng/dialog";
-import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {SelectModule} from "primeng/select";
-import {ApiService} from "@/core/api";
-import {RemoveEmployeeRoleCommand, RoleDto, UpdateEmployeeCommand} from "@/core/api/models";
-import {ToastService} from "@/core/services";
-import {UserService} from "../../services";
+import { Component, inject, input, model, signal } from "@angular/core";
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
+import { ButtonModule } from "primeng/button";
+import { DialogModule } from "primeng/dialog";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { SelectModule } from "primeng/select";
+import { ApiService } from "@/core/api";
+import { RemoveEmployeeRoleCommand, RoleDto, UpdateEmployeeCommand } from "@/core/api/models";
+import { ToastService } from "@/core/services";
+import { UserService } from "../../services";
 
 @Component({
   selector: "app-change-role-dialog",
@@ -74,7 +80,7 @@ export class ChangeRoleDialogComponent {
 
   clearSelectedRole(): void {
     this.form.patchValue({
-      role: {name: "", displayName: " "},
+      role: { name: "", displayName: " " },
     });
   }
 

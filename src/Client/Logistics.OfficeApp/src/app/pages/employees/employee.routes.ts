@@ -1,10 +1,10 @@
-import {Routes} from "@angular/router";
-import {authGuard} from "@/core/auth";
-import {Permissions} from "@/shared/models";
-import {EmployeeAddComponent} from "./employee-add/employee-add";
-import {EmployeeEditComponent} from "./employee-edit/employee-edit";
-import {EmployeeListComponent} from "./employees-list/employees-list";
-import {EmployeeDocumentsPage} from "./employee-documents/employee-documents";
+import { Routes } from "@angular/router";
+import { authGuard } from "@/core/auth";
+import { Permissions } from "@/shared/models";
+import { EmployeeAddComponent } from "./employee-add/employee-add";
+import { EmployeeDocumentsPage } from "./employee-documents/employee-documents";
+import { EmployeeEditComponent } from "./employee-edit/employee-edit";
+import { EmployeeListComponent } from "./employees-list/employees-list";
 
 export const employeeRoutes: Routes = [
   {

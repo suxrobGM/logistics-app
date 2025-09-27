@@ -1,15 +1,15 @@
-import {CommonModule} from "@angular/common";
-import {Component, inject, signal} from "@angular/core";
-import {MenuItem} from "primeng/api";
-import {ButtonModule} from "primeng/button";
-import {PanelMenuModule} from "primeng/panelmenu";
-import {SplitButtonModule} from "primeng/splitbutton";
-import {TooltipModule} from "primeng/tooltip";
-import {AuthService} from "@/core/auth";
-import {TenantService} from "@/core/services";
-import {environment} from "@/env";
-import {PanelMenu} from "../panel-menu";
-import {sidebarItems} from "./sidebar-items";
+import { CommonModule } from "@angular/common";
+import { Component, inject, signal } from "@angular/core";
+import { MenuItem } from "primeng/api";
+import { ButtonModule } from "primeng/button";
+import { PanelMenuModule } from "primeng/panelmenu";
+import { SplitButtonModule } from "primeng/splitbutton";
+import { TooltipModule } from "primeng/tooltip";
+import { AuthService } from "@/core/auth";
+import { TenantService } from "@/core/services";
+import { environment } from "@/env";
+import { PanelMenu } from "../panel-menu";
+import { sidebarItems } from "./sidebar-items";
 
 @Component({
   selector: "app-sidebar",

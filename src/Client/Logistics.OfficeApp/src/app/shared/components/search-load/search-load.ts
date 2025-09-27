@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import {CommonModule} from "@angular/common";
-import {Component, forwardRef, inject, input, model, output, signal} from "@angular/core";
-import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
-import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
-import {ApiService} from "@/core/api";
-import {LoadDto} from "@/core/api/models";
-import {LoadStatusTag} from "../load-status-tag/load-status-tag";
+import { CommonModule } from "@angular/common";
+import { Component, forwardRef, inject, input, model, output, signal } from "@angular/core";
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { AutoCompleteModule, AutoCompleteSelectEvent } from "primeng/autocomplete";
+import { ApiService } from "@/core/api";
+import { LoadDto } from "@/core/api/models";
+import { LoadStatusTag } from "../load-status-tag/load-status-tag";
 
 /**
  * Component for searching and selecting loads.
@@ -32,9 +32,9 @@ export class SearchLoadComponent implements ControlValueAccessor {
   public readonly selectedLoad = model<LoadDto | null>(null);
   public readonly selectedLoadChange = output<LoadDto | null>();
 
-  protected searchLoad(event: {query: string}): void {
+  protected searchLoad(event: { query: string }): void {
     this.apiService.loadApi
-      .getLoads({search: event.query, onlyActiveLoads: this.filterActiveLoads()})
+      .getLoads({ search: event.query, onlyActiveLoads: this.filterActiveLoads() })
       .subscribe((result) => {
         if (!result.data) {
           return;

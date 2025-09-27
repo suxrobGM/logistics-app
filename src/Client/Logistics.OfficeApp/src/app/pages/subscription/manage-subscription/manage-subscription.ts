@@ -1,18 +1,18 @@
-import {CommonModule} from "@angular/common";
-import {Component, inject, signal} from "@angular/core";
-import {Router, RouterModule} from "@angular/router";
-import {ButtonModule} from "primeng/button";
-import {CardModule} from "primeng/card";
-import {ConfirmDialogModule} from "primeng/confirmdialog";
-import {DialogModule} from "primeng/dialog";
-import {InputNumberModule} from "primeng/inputnumber";
-import {TableModule} from "primeng/table";
-import {TagModule} from "primeng/tag";
-import {ApiService} from "@/core/api";
-import {SubscriptionDto, SubscriptionStatus} from "@/core/api/models";
-import {TenantService, ToastService} from "@/core/services";
-import {Labels, SeverityLevel} from "@/shared/utils";
-import {BillingHistoryComponent, PaymentMethodsCardComponent} from "../components";
+import { CommonModule } from "@angular/common";
+import { Component, inject, signal } from "@angular/core";
+import { Router, RouterModule } from "@angular/router";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { ConfirmDialogModule } from "primeng/confirmdialog";
+import { DialogModule } from "primeng/dialog";
+import { InputNumberModule } from "primeng/inputnumber";
+import { TableModule } from "primeng/table";
+import { TagModule } from "primeng/tag";
+import { ApiService } from "@/core/api";
+import { SubscriptionDto, SubscriptionStatus } from "@/core/api/models";
+import { TenantService, ToastService } from "@/core/services";
+import { Labels, SeverityLevel } from "@/shared/utils";
+import { BillingHistoryComponent, PaymentMethodsCardComponent } from "../components";
 
 @Component({
   selector: "app-manage-subscription",
@@ -79,7 +79,7 @@ export class ManageSubscriptionComponent {
         this.isLoading.set(true);
 
         this.apiService.subscriptionApi
-          .cancelSubscription({id: this.subscription.id})
+          .cancelSubscription({ id: this.subscription.id })
           .subscribe((result) => {
             if (result.success) {
               this.toastService.showSuccess("Subscription cancelled successfully");

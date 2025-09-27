@@ -1,7 +1,7 @@
-import {AddressDto} from "../address.dto";
-import {TripStatus} from "./enums";
-import {TripLoadDto} from "./trip-load.dto";
-import {TripStopDto} from "./trip-stop.dto";
+import { AddressDto } from "../address.dto";
+import { TripStatus } from "./enums";
+import { TripLoadDto } from "./trip-load.dto";
+import { TripStopDto } from "./trip-stop.dto";
 
 export interface TripDto {
   id: string;

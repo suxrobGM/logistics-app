@@ -1,7 +1,7 @@
-import {CommonModule} from "@angular/common";
-import {Component, input} from "@angular/core";
-import {TagModule} from "primeng/tag";
-import {InvoiceStatus, invoiceStatusOptions} from "@/core/api/models";
+import { CommonModule } from "@angular/common";
+import { Component, input } from "@angular/core";
+import { TagModule } from "primeng/tag";
+import { InvoiceStatus, invoiceStatusOptions } from "@/core/api/models";
 
 @Component({
   selector: "app-invoice-status-tag",

@@ -7,8 +7,8 @@ import {
   output,
   viewChild,
 } from "@angular/core";
-import {StripeCardNumberElement, StripeElementBase} from "@stripe/stripe-js";
-import {StripeService} from "@/core/services";
+import { StripeCardNumberElement, StripeElementBase } from "@stripe/stripe-js";
+import { StripeService } from "@/core/services";
 
 interface StripeCardElementsReady {
   cardNumber: StripeCardNumberElement;
@@ -54,7 +54,7 @@ export class StripeCard implements OnDestroy, AfterViewInit {
     cardCvc.mount(this.cardCvcElement().nativeElement);
 
     this.mountedElements.push(cardNumber, cardExpiry, cardCvc);
-    this.ready.emit({cardNumber});
+    this.ready.emit({ cardNumber });
     console.log("Mounted Stripe Elements");
   }
 

@@ -1,19 +1,19 @@
-import {CommonModule} from "@angular/common";
-import {Component, OnInit, inject, model, signal} from "@angular/core";
-import {ButtonModule} from "primeng/button";
-import {CardModule} from "primeng/card";
-import {DialogModule} from "primeng/dialog";
-import {TagModule} from "primeng/tag";
-import {ApiService} from "@/core/api";
+import { CommonModule } from "@angular/common";
+import { Component, OnInit, inject, model, signal } from "@angular/core";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { DialogModule } from "primeng/dialog";
+import { TagModule } from "primeng/tag";
+import { ApiService } from "@/core/api";
 import {
   DeletePaymentMethodCommand,
   PaymentMethodDto,
   PaymentMethodType,
   SetDefaultPaymentMethodCommand,
 } from "@/core/api/models";
-import {TenantService, ToastService} from "@/core/services";
-import {AddressPipe} from "@/shared/pipes";
-import {PaymentMethodDialogComponent} from "../payment-method-dialog/payment-method-dialog";
+import { TenantService, ToastService } from "@/core/services";
+import { AddressPipe } from "@/shared/pipes";
+import { PaymentMethodDialogComponent } from "../payment-method-dialog/payment-method-dialog";
 
 @Component({
   selector: "app-payment-methods-card",

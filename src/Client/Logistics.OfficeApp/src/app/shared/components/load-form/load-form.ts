@@ -1,15 +1,15 @@
-import {Component, OnInit, effect, inject, input, output, signal} from "@angular/core";
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {RouterLink} from "@angular/router";
-import {ButtonModule} from "primeng/button";
-import {InputGroupModule} from "primeng/inputgroup";
-import {InputGroupAddonModule} from "primeng/inputgroupaddon";
-import {InputNumberModule} from "primeng/inputnumber";
-import {InputTextModule} from "primeng/inputtext";
-import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {DividerModule} from "primeng/divider";
-import {Select} from "primeng/select";
-import {ToastModule} from "primeng/toast";
+import { Component, OnInit, effect, inject, input, output, signal } from "@angular/core";
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { RouterLink } from "@angular/router";
+import { ButtonModule } from "primeng/button";
+import { DividerModule } from "primeng/divider";
+import { InputGroupModule } from "primeng/inputgroup";
+import { InputGroupAddonModule } from "primeng/inputgroupaddon";
+import { InputNumberModule } from "primeng/inputnumber";
+import { InputTextModule } from "primeng/inputtext";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { Select } from "primeng/select";
+import { ToastModule } from "primeng/toast";
 import {
   AddressDto,
   CustomerDto,
@@ -20,7 +20,8 @@ import {
   loadStatusOptions,
   loadTypeOptions,
 } from "@/core/api/models";
-import {AuthService} from "@/core/auth";
+import { AuthService } from "@/core/auth";
+import { ToastService } from "@/core/services";
 import {
   AddressAutocomplete,
   DirectionMap,
@@ -30,9 +31,8 @@ import {
   SelectedAddressEvent,
   ValidationSummary,
 } from "@/shared/components";
-import {RouteChangeEvent, Waypoint} from "@/shared/components/direction-map/types";
-import {Converters} from "@/shared/utils";
-import { ToastService } from "@/core/services";
+import { RouteChangeEvent, Waypoint } from "@/shared/components/direction-map/types";
+import { Converters } from "@/shared/utils";
 
 /**
  * Form value interface for the Load Form.
@@ -75,24 +75,24 @@ export interface LoadFormValue {
     FormField,
     SearchCustomerComponent,
     SearchTruckComponent,
-    DividerModule
+    DividerModule,
   ],
 })
 export class LoadFormComponent implements OnInit {
   protected readonly loadTypes = loadTypeOptions;
   protected readonly loadStatuses = loadStatusOptions;
-  private readonly dummyLocation: GeoPointDto = {longitude: 0, latitude: 0};
+  private readonly dummyLocation: GeoPointDto = { longitude: 0, latitude: 0 };
 
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
 
   protected readonly originCoords = signal<Waypoint>({
     id: "origin",
-    location: {longitude: 0, latitude: 0},
+    location: { longitude: 0, latitude: 0 },
   });
   protected readonly destinationCoords = signal<Waypoint>({
     id: "destination",
-    location: {longitude: 0, latitude: 0},
+    location: { longitude: 0, latitude: 0 },
   });
 
   public readonly mode = input.required<"create" | "edit">();
@@ -105,7 +105,7 @@ export class LoadFormComponent implements OnInit {
   public readonly remove = output<void>();
 
   protected readonly form = new FormGroup({
-    name: new FormControl("", {validators: [Validators.required], nonNullable: true}),
+    name: new FormControl("", { validators: [Validators.required], nonNullable: true }),
     type: new FormControl(LoadType.GeneralFreight, {
       validators: [Validators.required],
       nonNullable: true,
@@ -130,24 +130,24 @@ export class LoadFormComponent implements OnInit {
       validators: [Validators.required],
       nonNullable: true,
     }),
-    deliveryCost: new FormControl(0, {validators: [Validators.required], nonNullable: true}),
-    distance: new FormControl({value: 0, disabled: true}, {nonNullable: true}),
+    deliveryCost: new FormControl(0, { validators: [Validators.required], nonNullable: true }),
+    distance: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
     // only visible/patched when mode === 'edit'
     status: new FormControl<LoadStatus | null>(null),
     assignedTruck: new FormControl<TruckDto | string | null>(
-      {value: null, disabled: this.canChangeAssignedTruck()},
+      { value: null, disabled: this.canChangeAssignedTruck() },
       {
         validators: [Validators.required],
         nonNullable: true,
-      }
+      },
     ),
     assignedDispatcherId: new FormControl("", {
       validators: [Validators.required],
       nonNullable: true,
     }),
-    assignedDispatcherName: new FormControl({value: "", disabled: true}, {nonNullable: true}),
-    tripId: new FormControl<string | null>({value: null, disabled: true}),
-    tripNumber: new FormControl<number | null>({value: null, disabled: true}),
+    assignedDispatcherName: new FormControl({ value: "", disabled: true }, { nonNullable: true }),
+    tripId: new FormControl<string | null>({ value: null, disabled: true }),
+    tripNumber: new FormControl<number | null>({ value: null, disabled: true }),
   });
 
   constructor() {
@@ -180,7 +180,7 @@ export class LoadFormComponent implements OnInit {
         latitude: e.center[1],
       },
     });
-    this.form.patchValue({originLocation: {longitude: e.center[0], latitude: e.center[1]}});
+    this.form.patchValue({ originLocation: { longitude: e.center[0], latitude: e.center[1] } });
   }
 
   protected updateDestination(e: SelectedAddressEvent): void {
@@ -191,12 +191,14 @@ export class LoadFormComponent implements OnInit {
         latitude: e.center[1],
       },
     });
-    this.form.patchValue({destinationLocation: {longitude: e.center[0], latitude: e.center[1]}});
+    this.form.patchValue({
+      destinationLocation: { longitude: e.center[0], latitude: e.center[1] },
+    });
   }
 
   protected updateDistance(e: RouteChangeEvent): void {
     const miles = Converters.metersTo(e.distance, "mi");
-    this.form.patchValue({distance: miles});
+    this.form.patchValue({ distance: miles });
   }
 
   protected submit(): void {

@@ -1,6 +1,6 @@
-import {Observable} from "rxjs";
-import {ApiBase} from "../api-base";
-import {Result, TenantDto} from "../models";
+import { Observable } from "rxjs";
+import { ApiBase } from "../api-base";
+import { Result, TenantDto } from "../models";
 
 export class TenantApiService extends ApiBase {
   getTenant(tenantId: string): Observable<Result<TenantDto>> {

@@ -1,11 +1,11 @@
-import {Component, effect, inject, input, output} from "@angular/core";
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {RouterLink} from "@angular/router";
-import {Button} from "primeng/button";
-import {InputTextModule} from "primeng/inputtext";
-import {TruckDto, TruckType} from "@/core/api/models";
-import {ToastService} from "@/core/services";
-import {FormField, SearchTruckComponent, ValidationSummary} from "@/shared/components";
+import { Component, effect, inject, input, output } from "@angular/core";
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { RouterLink } from "@angular/router";
+import { Button } from "primeng/button";
+import { InputTextModule } from "primeng/inputtext";
+import { TruckDto, TruckType } from "@/core/api/models";
+import { ToastService } from "@/core/services";
+import { FormField, SearchTruckComponent, ValidationSummary } from "@/shared/components";
 
 export interface TripWizardBasicData {
   tripName: string;
@@ -34,7 +34,7 @@ export class TripWizardBasic {
   public readonly next = output<TripWizardBasicData>();
 
   protected readonly form = new FormGroup({
-    tripName: new FormControl<string>("", {validators: [Validators.required], nonNullable: true}),
+    tripName: new FormControl<string>("", { validators: [Validators.required], nonNullable: true }),
     truck: new FormControl<TruckDto | string | null>(null, {
       validators: [Validators.required],
       nonNullable: true,

@@ -1,8 +1,8 @@
-import {Component, ViewEncapsulation, effect, inject, input, model, output} from "@angular/core";
-import {Router} from "@angular/router";
-import {PanelMenuModule} from "primeng/panelmenu";
-import {TooltipModule} from "primeng/tooltip";
-import {MenuItem} from "./types";
+import { Component, ViewEncapsulation, effect, inject, input, model, output } from "@angular/core";
+import { Router } from "@angular/router";
+import { PanelMenuModule } from "primeng/panelmenu";
+import { TooltipModule } from "primeng/tooltip";
+import { MenuItem } from "./types";
 
 @Component({
   selector: "app-panel-menu",

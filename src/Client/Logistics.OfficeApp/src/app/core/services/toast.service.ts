@@ -1,11 +1,11 @@
-import {Injectable, inject} from "@angular/core";
-import {Confirmation, ConfirmationService, MessageService} from "primeng/api";
+import { Injectable, inject } from "@angular/core";
+import { Confirmation, ConfirmationService, MessageService } from "primeng/api";
 
 /**
  * ToastService is a service for displaying toast notifications and confirmation dialogs.
  * It uses PrimeNG's MessageService and ConfirmationService to show messages and confirmations.
  */
-@Injectable({providedIn: "root"})
+@Injectable({ providedIn: "root" })
 export class ToastService {
   private readonly messageService = inject(MessageService);
   private readonly confirmService = inject(ConfirmationService);

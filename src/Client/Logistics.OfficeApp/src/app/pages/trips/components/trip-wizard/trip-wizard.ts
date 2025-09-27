@@ -1,16 +1,16 @@
-import {Component, effect, input, output, signal} from "@angular/core";
-import {ButtonModule} from "primeng/button";
-import {InputGroupModule} from "primeng/inputgroup";
-import {InputTextModule} from "primeng/inputtext";
-import {MessageModule} from "primeng/message";
-import {StepperModule} from "primeng/stepper";
-import {TableModule} from "primeng/table";
-import {TagModule} from "primeng/tag";
-import {TooltipModule} from "primeng/tooltip";
-import {TripLoadDto, TripStopDto} from "@/core/api/models";
-import {TripWizardBasic, TripWizardBasicData} from "../trip-wizard-basic/trip-wizard-basic";
-import {TripFormStepLoads, TripWizardLoadsData} from "../trip-wizard-loads/trip-wizard-loads";
-import {TripWizardReview, TripWizardReviewData} from "../trip-wizard-review/trip-wizard-review";
+import { Component, effect, input, output, signal } from "@angular/core";
+import { ButtonModule } from "primeng/button";
+import { InputGroupModule } from "primeng/inputgroup";
+import { InputTextModule } from "primeng/inputtext";
+import { MessageModule } from "primeng/message";
+import { StepperModule } from "primeng/stepper";
+import { TableModule } from "primeng/table";
+import { TagModule } from "primeng/tag";
+import { TooltipModule } from "primeng/tooltip";
+import { TripLoadDto, TripStopDto } from "@/core/api/models";
+import { TripWizardBasic, TripWizardBasicData } from "../trip-wizard-basic/trip-wizard-basic";
+import { TripFormStepLoads, TripWizardLoadsData } from "../trip-wizard-loads/trip-wizard-loads";
+import { TripWizardReview, TripWizardReviewData } from "../trip-wizard-review/trip-wizard-review";
 
 export interface TripWizardValue extends TripWizardBasicData, TripWizardLoadsData {
   initialLoads?: TripLoadDto[];

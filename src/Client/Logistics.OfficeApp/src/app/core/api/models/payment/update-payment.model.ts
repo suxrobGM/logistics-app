@@ -1,4 +1,4 @@
-import {PaymentFor, PaymentMethodType, PaymentStatus} from "./enums";
+import { PaymentFor, PaymentMethodType, PaymentStatus } from "./enums";
 
 export interface UpdatePaymentCommand {
   id: string;

@@ -1,12 +1,12 @@
-import {DatePipe} from "@angular/common";
-import {Component, OnInit, inject, input, model, output, signal} from "@angular/core";
-import {CardModule} from "primeng/card";
-import {ChartModule} from "primeng/chart";
-import {SkeletonModule} from "primeng/skeleton";
-import {ApiService} from "@/core/api";
-import {DailyGrossesDto} from "@/core/api/models";
-import {RangeCalendar} from "@/shared/components";
-import {Converters, DateUtils} from "@/shared/utils";
+import { DatePipe } from "@angular/common";
+import { Component, OnInit, inject, input, model, output, signal } from "@angular/core";
+import { CardModule } from "primeng/card";
+import { ChartModule } from "primeng/chart";
+import { SkeletonModule } from "primeng/skeleton";
+import { ApiService } from "@/core/api";
+import { DailyGrossesDto } from "@/core/api/models";
+import { RangeCalendar } from "@/shared/components";
+import { Converters, DateUtils } from "@/shared/utils";
 
 const chartInitialData = {
   labels: [],
@@ -62,7 +62,7 @@ export class TruckGrossesLinechartComponent implements OnInit {
             dailyGrosses.totalGross / Converters.metersTo(dailyGrosses.totalDistance, "mi");
 
           this.drawChart(dailyGrosses);
-          this.chartDrawn.emit({dailyGrosses: dailyGrosses, rpm: rpm});
+          this.chartDrawn.emit({ dailyGrosses: dailyGrosses, rpm: rpm });
         }
 
         this.isLoading.set(false);

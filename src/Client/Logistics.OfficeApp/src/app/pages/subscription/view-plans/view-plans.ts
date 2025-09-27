@@ -1,10 +1,10 @@
-import {CurrencyPipe} from "@angular/common";
-import {Component, OnInit, inject, signal} from "@angular/core";
-import {ButtonModule} from "primeng/button";
-import {CardModule} from "primeng/card";
-import {ApiService} from "@/core/api";
-import {SubscriptionPlanDto} from "@/core/api/models";
-import {TenantService} from "@/core/services";
+import { CurrencyPipe } from "@angular/common";
+import { Component, OnInit, inject, signal } from "@angular/core";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { ApiService } from "@/core/api";
+import { SubscriptionPlanDto } from "@/core/api/models";
+import { TenantService } from "@/core/services";
 
 @Component({
   selector: "app-view-plans",

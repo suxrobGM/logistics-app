@@ -1,5 +1,5 @@
-import {AddressDto} from "../address.dto";
-import {PaymentMethodType} from "./enums";
+import { AddressDto } from "../address.dto";
+import { PaymentMethodType } from "./enums";
 
 export interface ProcessPaymentCommand {
   paymentId: string;

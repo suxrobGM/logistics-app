@@ -1,7 +1,7 @@
-import {Routes} from "@angular/router";
-import {authGuard} from "@/core/auth";
-import {Permissions} from "@/shared/models";
-import {DashboardComponent} from "./dashboard";
+import { Routes } from "@angular/router";
+import { authGuard } from "@/core/auth";
+import { Permissions } from "@/shared/models";
+import { DashboardComponent } from "./dashboard";
 
 export const dashboardRoutes: Routes = [
   {

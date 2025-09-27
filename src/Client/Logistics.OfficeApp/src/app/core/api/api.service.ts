@@ -1,6 +1,6 @@
-import {Injectable} from "@angular/core";
-import {Observable} from "rxjs";
-import {ApiBase} from "./api-base";
+import { Injectable } from "@angular/core";
+import { Observable } from "rxjs";
+import { ApiBase } from "./api-base";
 import {
   CompanyStatsDto,
   CreateEmployeeCommand,
@@ -108,7 +108,7 @@ export class ApiService extends ApiBase {
   getDailyGrosses(
     startDate: Date,
     endDate?: Date,
-    truckId?: string
+    truckId?: string,
   ): Observable<Result<DailyGrossesDto>> {
     let url = `/stats/daily-grosses?startDate=${startDate.toJSON()}`;
 
@@ -125,7 +125,7 @@ export class ApiService extends ApiBase {
   getMonthlyGrosses(
     startDate: Date,
     endDate?: Date,
-    truckId?: string
+    truckId?: string,
   ): Observable<Result<MonthlyGrossesDto>> {
     let url = `/stats/monthly-grosses?startDate=${startDate.toJSON()}`;
 

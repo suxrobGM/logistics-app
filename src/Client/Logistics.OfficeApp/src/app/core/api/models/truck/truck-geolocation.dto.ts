@@ -1,5 +1,5 @@
-import {AddressDto} from "../address.dto";
-import {GeoPointDto} from "../geo-point.dto";
+import { AddressDto } from "../address.dto";
+import { GeoPointDto } from "../geo-point.dto";
 
 export interface TruckGeolocationDto {
   truckId: string;

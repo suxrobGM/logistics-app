@@ -7,29 +7,33 @@
         <h3 class="m-0 text-lg font-semibold">Upload Documents</h3>
       </div>
     </ng-template>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       @for (type of types(); track type) {
-        <div class="group upload-card p-4 border border-gray-200 rounded-lg hover:border-primary transition-all duration-200 hover:shadow-md">
+        <div
+          class="group upload-card hover:border-primary rounded-lg border border-gray-200 p-4 transition-all duration-200 hover:shadow-md"
+        >
           <div class="flex flex-col items-center gap-3">
-            <div class="upload-icon w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center group transition-all duration-200 hover:shadow-md">
+            <div
+              class="upload-icon group flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 transition-all duration-200 hover:shadow-md"
+            >
               <i class="pi pi-file text-gray-600"></i>
             </div>
             <div class="text-center">
-              <h4 class="font-medium text-sm mb-1">{{ getTypeLabel(type) }}</h4>
-              <p class="text-xs text-gray-500 mb-3">Max 50MB</p>
+              <h4 class="mb-1 text-sm font-medium">{{ getTypeLabel(type) }}</h4>
+              <p class="mb-3 text-xs text-gray-500">Max 50MB</p>
             </div>
             <div class="w-full">
-              <input 
-                type="file" 
-                class="hidden" 
+              <input
+                type="file"
+                class="hidden"
                 [id]="'file-' + type"
                 (change)="onFileChange($event, type)"
                 accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.txt"
               />
-              <label 
-                [for]="'file-' + type" 
-                class="w-full bg-primary text-white px-3 py-2 rounded text-sm cursor-pointer hover:bg-primary-dark transition-colors flex items-center justify-center gap-2"
+              <label
+                [for]="'file-' + type"
+                class="bg-primary hover:bg-primary-dark flex w-full cursor-pointer items-center justify-center gap-2 rounded px-3 py-2 text-sm text-white transition-colors"
               >
                 <i class="pi pi-plus text-xs"></i>
                 Choose File
@@ -37,13 +41,13 @@
             </div>
             @if (uploadProgress()[type] > 0) {
               <div class="w-full">
-                <div class="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    class="bg-primary h-2 rounded-full transition-all duration-300" 
+                <div class="h-2 w-full rounded-full bg-gray-200">
+                  <div
+                    class="bg-primary h-2 rounded-full transition-all duration-300"
                     [style.width.%]="uploadProgress()[type]"
                   ></div>
                 </div>
-                <p class="text-xs text-center mt-1">{{ uploadProgress()[type] }}%</p>
+                <p class="mt-1 text-center text-xs">{{ uploadProgress()[type] }}%</p>
               </div>
             }
           </div>
@@ -63,10 +67,10 @@
           <h3 class="m-0 text-lg font-semibold">Documents</h3>
           <p-tag [value]="rows().length.toString()" severity="info" />
         </div>
-        <p-button 
-          icon="pi pi-refresh" 
-          [text]="true" 
-          (click)="refresh()" 
+        <p-button
+          icon="pi pi-refresh"
+          [text]="true"
+          (click)="refresh()"
           [loading]="isLoading()"
           pTooltip="Refresh"
         />
@@ -78,12 +82,7 @@
         <p-progress-spinner />
       </div>
     } @else {
-      <p-table 
-        [value]="rows()" 
-        [dataKey]="'id'" 
-        [scrollable]="true"
-        styleClass="p-datatable-sm"
-      >
+      <p-table [value]="rows()" [dataKey]="'id'" [scrollable]="true" styleClass="p-datatable-sm">
         <ng-template #header>
           <tr>
             <th class="w-8">Type</th>
@@ -94,7 +93,7 @@
             <th class="w-24">Actions</th>
           </tr>
         </ng-template>
-        
+
         <ng-template #body let-doc>
           <tr class="hover:bg-gray-50">
             <td>
@@ -105,16 +104,16 @@
             </td>
             <td>
               <div class="flex flex-col">
-                <span class="font-medium text-sm">{{ doc.fileName }}</span>
+                <span class="text-sm font-medium">{{ doc.fileName }}</span>
                 @if (doc.description) {
                   <span class="text-xs text-gray-500">{{ doc.description }}</span>
                 }
               </div>
             </td>
             <td>
-              <p-tag 
-                [value]="doc.status" 
-                [severity]="statusSeverity(doc.status)" 
+              <p-tag
+                [value]="doc.status"
+                [severity]="statusSeverity(doc.status)"
                 styleClass="text-xs"
               />
             </td>
@@ -122,20 +121,20 @@
               <span class="text-sm text-gray-600">{{ formatFileSize(doc.fileSizeBytes) }}</span>
             </td>
             <td>
-              <span class="text-sm text-gray-600">{{ doc.createdAt | date:'short' }}</span>
+              <span class="text-sm text-gray-600">{{ doc.createdAt | date: "short" }}</span>
             </td>
             <td>
               <div class="flex gap-1">
-                <p-button 
-                  icon="pi pi-download" 
+                <p-button
+                  icon="pi pi-download"
                   size="small"
                   [text]="true"
                   severity="info"
                   (click)="download(doc)"
                   pTooltip="Download"
                 />
-                <p-button 
-                  icon="pi pi-trash" 
+                <p-button
+                  icon="pi pi-trash"
                   size="small"
                   [text]="true"
                   severity="danger"
@@ -146,10 +145,10 @@
             </td>
           </tr>
         </ng-template>
-        
+
         <ng-template #empty>
           <tr>
-            <td colspan="6" class="text-center py-8">
+            <td colspan="6" class="py-8 text-center">
               <div class="flex flex-col items-center gap-3 text-gray-500">
                 <i class="pi pi-folder-open text-4xl"></i>
                 <div>
@@ -164,6 +163,3 @@
     }
   </p-card>
 </div>
-
-
-

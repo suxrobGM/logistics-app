@@ -1,12 +1,12 @@
-import {CommonModule} from "@angular/common";
-import {Component, inject, signal} from "@angular/core";
-import {Router, RouterModule} from "@angular/router";
-import {ButtonModule} from "primeng/button";
-import {CardModule} from "primeng/card";
-import {ApiService} from "@/core/api";
-import {CreateCustomerCommand} from "@/core/api/models";
-import {ToastService} from "@/core/services";
-import {CustomerForm, CustomerFormValue} from "@/shared/components";
+import { CommonModule } from "@angular/common";
+import { Component, inject, signal } from "@angular/core";
+import { Router, RouterModule } from "@angular/router";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { ApiService } from "@/core/api";
+import { CreateCustomerCommand } from "@/core/api/models";
+import { ToastService } from "@/core/services";
+import { CustomerForm, CustomerFormValue } from "@/shared/components";
 
 @Component({
   selector: "app-customer-add",

@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import {CommonModule} from "@angular/common";
-import {Component, forwardRef, inject, model, output, signal} from "@angular/core";
-import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
-import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
-import {ApiService} from "@/core/api";
-import {TruckDto} from "@/core/api/models";
+import { CommonModule } from "@angular/common";
+import { Component, forwardRef, inject, model, output, signal } from "@angular/core";
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { AutoCompleteModule, AutoCompleteSelectEvent } from "primeng/autocomplete";
+import { ApiService } from "@/core/api";
+import { TruckDto } from "@/core/api/models";
 
 /**
  * Component for searching and selecting a truck.
@@ -32,8 +32,8 @@ export class SearchTruckComponent implements ControlValueAccessor {
   public readonly selectedTruck = model<TruckDto | null>(null);
   public readonly selectedTruckChange = output<TruckDto | null>();
 
-  protected searchTruck(event: {query: string}): void {
-    this.apiService.truckApi.getTrucks({search: event.query}).subscribe((result) => {
+  protected searchTruck(event: { query: string }): void {
+    this.apiService.truckApi.getTrucks({ search: event.query }).subscribe((result) => {
       if (!result.data) {
         return;
       }

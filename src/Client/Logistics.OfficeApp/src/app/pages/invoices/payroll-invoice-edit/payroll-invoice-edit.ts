@@ -1,14 +1,14 @@
-import {CommonModule} from "@angular/common";
-import {Component, OnInit, computed, inject, input, signal} from "@angular/core";
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {Router, RouterModule} from "@angular/router";
-import {AutoCompleteModule, AutoCompleteSelectEvent} from "primeng/autocomplete";
-import {ButtonModule} from "primeng/button";
-import {CardModule} from "primeng/card";
-import {DatePicker} from "primeng/datepicker";
-import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {SelectModule} from "primeng/select";
-import {ApiService} from "@/core/api";
+import { CommonModule } from "@angular/common";
+import { Component, OnInit, computed, inject, input, signal } from "@angular/core";
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { Router, RouterModule } from "@angular/router";
+import { AutoCompleteModule, AutoCompleteSelectEvent } from "primeng/autocomplete";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { DatePicker } from "primeng/datepicker";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { SelectModule } from "primeng/select";
+import { ApiService } from "@/core/api";
 import {
   CreatePayrollInvoiceCommand,
   EmployeeDto,
@@ -18,11 +18,11 @@ import {
   UpdatePayrollInvoiceCommand,
   salaryTypeOptions,
 } from "@/core/api/models";
-import {PreviewPayrollInvoicesQuery} from "@/core/api/models/invoice/preview-payroll-invoices.model";
-import {ToastService} from "@/core/services";
-import {ValidationSummary} from "@/shared/components";
-import {PredefinedDateRanges} from "@/shared/utils";
-import {DateUtils} from "@/shared/utils";
+import { PreviewPayrollInvoicesQuery } from "@/core/api/models/invoice/preview-payroll-invoices.model";
+import { ToastService } from "@/core/services";
+import { ValidationSummary } from "@/shared/components";
+import { PredefinedDateRanges } from "@/shared/utils";
+import { DateUtils } from "@/shared/utils";
 
 @Component({
   selector: "app-payroll-invoice-edit",
@@ -64,8 +64,8 @@ export class PayrollInvoiceEditComponent implements OnInit {
     ];
 
     this.form = new FormGroup<PayrollForm>({
-      employee: new FormControl(null, {validators: Validators.required}),
-      dateRange: new FormControl(lastWeek, {validators: Validators.required, nonNullable: true}),
+      employee: new FormControl(null, { validators: Validators.required }),
+      dateRange: new FormControl(lastWeek, { validators: Validators.required, nonNullable: true }),
       //paymentStatus: new FormControl(null),
       //paymentMethod: new FormControl(null),
       //paymentBillingAddress: new FormControl(null),
@@ -92,8 +92,8 @@ export class PayrollInvoiceEditComponent implements OnInit {
     this.fetchPreviewPayrollInvoice(employeeId);
   }
 
-  searchEmployee(event: {query: string}): void {
-    this.apiService.getEmployees({search: event.query}).subscribe((result) => {
+  searchEmployee(event: { query: string }): void {
+    this.apiService.getEmployees({ search: event.query }).subscribe((result) => {
       if (result.data) {
         this.suggestedEmployees.set(result.data);
       }
@@ -160,7 +160,7 @@ export class PayrollInvoiceEditComponent implements OnInit {
     }
 
     this.isLoading.set(true);
-    this.apiService.invoiceApi.getInvoice(invoiceId).subscribe(({data: invoice}) => {
+    this.apiService.invoiceApi.getInvoice(invoiceId).subscribe(({ data: invoice }) => {
       if (invoice) {
         this.form.patchValue({
           employee: invoice.employee,

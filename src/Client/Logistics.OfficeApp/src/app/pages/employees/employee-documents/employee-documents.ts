@@ -1,10 +1,10 @@
-import {Component, OnInit, inject, signal} from "@angular/core";
-import {ActivatedRoute, RouterLink} from "@angular/router";
-import {CardModule} from "primeng/card";
-import {ToastModule} from "primeng/toast";
-import {ButtonModule} from "primeng/button";
+import { Component, OnInit, inject, signal } from "@angular/core";
+import { ActivatedRoute, RouterLink } from "@angular/router";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { ToastModule } from "primeng/toast";
+import { DocumentType } from "@/core/api/models";
 import { DocumentManagerComponent } from "@/shared/components/document-manager/document-manager";
-import {DocumentType} from "@/core/api/models";
 
 @Component({
   selector: "app-employee-documents",
@@ -28,7 +28,3 @@ export class EmployeeDocumentsPage implements OnInit {
     if (id) this.employeeId.set(id);
   }
 }
-
-
-
-

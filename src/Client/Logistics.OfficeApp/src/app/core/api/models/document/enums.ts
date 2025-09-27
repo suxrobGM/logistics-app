@@ -1,4 +1,1 @@
-export {DocumentStatus, DocumentType} from "./models";
-
-
-
+export { DocumentStatus, DocumentType } from "./models";

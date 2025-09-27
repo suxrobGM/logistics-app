@@ -1,11 +1,11 @@
-import {HttpHeaders} from "@angular/common/http";
-import {Injectable, inject} from "@angular/core";
-import {Subject} from "rxjs";
-import {ApiService} from "@/core/api";
-import {SubscriptionStatus, TenantDto} from "@/core/api/models";
-import {CookieService} from "./cookie.service";
+import { HttpHeaders } from "@angular/common/http";
+import { Injectable, inject } from "@angular/core";
+import { Subject } from "rxjs";
+import { ApiService } from "@/core/api";
+import { SubscriptionStatus, TenantDto } from "@/core/api/models";
+import { CookieService } from "./cookie.service";
 
-@Injectable({providedIn: "root"})
+@Injectable({ providedIn: "root" })
 export class TenantService {
   private readonly cookieService = inject(CookieService);
   private readonly apiService = inject(ApiService);

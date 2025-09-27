@@ -1,4 +1,4 @@
-import {SelectOption} from "./select-option";
+import { SelectOption } from "./select-option";
 
 export enum UserRole {
   AppSuperAdmin = "app.superadmin",
@@ -10,10 +10,10 @@ export enum UserRole {
 }
 
 export const userRoleOptions: SelectOption<UserRole>[] = [
-  {label: "Super Admin", value: UserRole.AppSuperAdmin},
-  {label: "Admin", value: UserRole.AppAdmin},
-  {label: "Owner", value: UserRole.Owner},
-  {label: "Manager", value: UserRole.Manager},
-  {label: "Dispatcher", value: UserRole.Dispatcher},
-  {label: "Driver", value: UserRole.Driver},
+  { label: "Super Admin", value: UserRole.AppSuperAdmin },
+  { label: "Admin", value: UserRole.AppAdmin },
+  { label: "Owner", value: UserRole.Owner },
+  { label: "Manager", value: UserRole.Manager },
+  { label: "Dispatcher", value: UserRole.Dispatcher },
+  { label: "Driver", value: UserRole.Driver },
 ] as const;

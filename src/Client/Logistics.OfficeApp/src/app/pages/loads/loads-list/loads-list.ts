@@ -1,27 +1,27 @@
-import {CommonModule} from "@angular/common";
-import {Component, inject, signal} from "@angular/core";
-import {FormsModule} from "@angular/forms";
-import {Router, RouterLink} from "@angular/router";
-import {MenuItem, SharedModule} from "primeng/api";
-import {ButtonModule} from "primeng/button";
-import {CardModule} from "primeng/card";
-import {IconFieldModule} from "primeng/iconfield";
-import {InputIconModule} from "primeng/inputicon";
-import {InputTextModule} from "primeng/inputtext";
-import {MenuModule} from "primeng/menu";
-import {TableModule} from "primeng/table";
-import {TagModule} from "primeng/tag";
-import {TooltipModule} from "primeng/tooltip";
-import {Observable} from "rxjs";
-import {ApiService} from "@/core/api";
-import {LoadDto, LoadStatus, PagedResult} from "@/core/api/models";
+import { CommonModule } from "@angular/common";
+import { Component, inject, signal } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { Router, RouterLink } from "@angular/router";
+import { MenuItem, SharedModule } from "primeng/api";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { IconFieldModule } from "primeng/iconfield";
+import { InputIconModule } from "primeng/inputicon";
+import { InputTextModule } from "primeng/inputtext";
+import { MenuModule } from "primeng/menu";
+import { TableModule } from "primeng/table";
+import { TagModule } from "primeng/tag";
+import { TooltipModule } from "primeng/tooltip";
+import { Observable } from "rxjs";
+import { ApiService } from "@/core/api";
+import { LoadDto, LoadStatus, PagedResult } from "@/core/api/models";
 import {
   BaseTableComponent,
   LoadStatusTag,
   LoadTypeTag,
   TableQueryParams,
 } from "@/shared/components";
-import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
+import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
 
 @Component({
   selector: "app-loads-list",

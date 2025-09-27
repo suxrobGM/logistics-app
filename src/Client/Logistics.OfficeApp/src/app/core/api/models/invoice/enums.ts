@@ -1,4 +1,4 @@
-import {SelectOption} from "@/shared/models";
+import { SelectOption } from "@/shared/models";
 
 export enum InvoiceType {
   Load = "load",
@@ -16,16 +16,16 @@ export enum InvoiceStatus {
 }
 
 export const invoiceStatusOptions: SelectOption<InvoiceStatus>[] = [
-  {label: "Draft", value: InvoiceStatus.Draft},
-  {label: "Issued", value: InvoiceStatus.Issued},
-  {label: "Paid", value: InvoiceStatus.Paid},
-  {label: "Partially Paid", value: InvoiceStatus.PartiallyPaid},
-  {label: "Cancelled", value: InvoiceStatus.Cancelled},
+  { label: "Draft", value: InvoiceStatus.Draft },
+  { label: "Issued", value: InvoiceStatus.Issued },
+  { label: "Paid", value: InvoiceStatus.Paid },
+  { label: "Partially Paid", value: InvoiceStatus.PartiallyPaid },
+  { label: "Cancelled", value: InvoiceStatus.Cancelled },
 ] as const;
 
 export const invoiceTypeOptions: SelectOption<InvoiceType>[] = [
-  {label: "Load", value: InvoiceType.Load},
-  {label: "Subscription", value: InvoiceType.Subscription},
-  {label: "Payroll", value: InvoiceType.Payroll},
-  {label: "Other", value: InvoiceType.Other},
+  { label: "Load", value: InvoiceType.Load },
+  { label: "Subscription", value: InvoiceType.Subscription },
+  { label: "Payroll", value: InvoiceType.Payroll },
+  { label: "Other", value: InvoiceType.Other },
 ] as const;

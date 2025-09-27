@@ -3,10 +3,10 @@ const config = {
   printWidth: 100, // max 100 chars in line, code is easy to read
   useTabs: false, // use spaces instead of tabs
   tabWidth: 2, // "visual width" of of the "tab"
-  trailingComma: "es5", // add trailing commas in objects, arrays, etc.
+  trailingComma: "all", // add trailing commas in objects, arrays, etc.
   semi: true, // add ; when needed
   singleQuote: false, // use double quotes
-  bracketSpacing: false, // import {some} ... instead of import { some } ...
+  bracketSpacing: true, // import { some } from 'module' instead of import {some} from 'module'
   arrowParens: "always", // braces even for single param in arrow functions (a) => { }
   jsxSingleQuote: false, // "" for react props, like in html
   bracketSameLine: false, // pretty JSX

@@ -1,4 +1,4 @@
-import {PagedResult} from "../paged-result";
+import { PagedResult } from "../paged-result";
 
 export interface DocumentDto {
   id: string;
@@ -64,6 +64,3 @@ export enum DocumentType {
   IdentityDocument = "IdentityDocument",
   Other = "Other",
 }
-
-
-

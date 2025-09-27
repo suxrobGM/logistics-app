@@ -1,9 +1,9 @@
-import {Component, inject, signal} from "@angular/core";
-import {RouterOutlet} from "@angular/router";
-import {ConfirmDialog} from "primeng/confirmdialog";
-import {ToastModule} from "primeng/toast";
-import {AuthService} from "@/core/auth";
-import {Breadcrumb, Sidebar} from "@/shared/layout";
+import { Component, inject, signal } from "@angular/core";
+import { RouterOutlet } from "@angular/router";
+import { ConfirmDialog } from "primeng/confirmdialog";
+import { ToastModule } from "primeng/toast";
+import { AuthService } from "@/core/auth";
+import { Breadcrumb, Sidebar } from "@/shared/layout";
 
 @Component({
   selector: "app-root",

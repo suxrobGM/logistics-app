@@ -1,16 +1,19 @@
-import {CommonModule} from "@angular/common";
-import {Component, OnInit, computed, inject, input, signal} from "@angular/core";
-import {RouterLink} from "@angular/router";
-import {ButtonModule} from "primeng/button";
-import {CardModule} from "primeng/card";
-import {SkeletonModule} from "primeng/skeleton";
-import {TableModule} from "primeng/table";
-import {TagModule} from "primeng/tag";
-import {ApiService} from "@/core/api";
-import {TripDto, TripStopDto, TripStopType} from "@/core/api/models";
-import {DirectionMap, LoadStatusTag, LoadTypeTag, TripStatusTag} from "@/shared/components";
-import {RouteSegmentClickEvent, WaypointClickEvent} from "@/shared/components/direction-map/types";
-import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
+import { CommonModule } from "@angular/common";
+import { Component, OnInit, computed, inject, input, signal } from "@angular/core";
+import { RouterLink } from "@angular/router";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { SkeletonModule } from "primeng/skeleton";
+import { TableModule } from "primeng/table";
+import { TagModule } from "primeng/tag";
+import { ApiService } from "@/core/api";
+import { TripDto, TripStopDto, TripStopType } from "@/core/api/models";
+import { DirectionMap, LoadStatusTag, LoadTypeTag, TripStatusTag } from "@/shared/components";
+import {
+  RouteSegmentClickEvent,
+  WaypointClickEvent,
+} from "@/shared/components/direction-map/types";
+import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
 
 @Component({
   selector: "app-trip-details",

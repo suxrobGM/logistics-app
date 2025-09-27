@@ -1,4 +1,4 @@
-import {UserIdentity} from "./user-identity";
+import { UserIdentity } from "./user-identity";
 
 export class UserData {
   public readonly id: string;

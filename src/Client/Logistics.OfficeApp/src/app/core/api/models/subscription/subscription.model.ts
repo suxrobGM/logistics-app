@@ -1,5 +1,5 @@
-import {SubscriptionStatus} from "./enums";
-import {SubscriptionPlanDto} from "./subscription-plan.model";
+import { SubscriptionStatus } from "./enums";
+import { SubscriptionPlanDto } from "./subscription-plan.model";
 
 export interface SubscriptionDto {
   id: string;

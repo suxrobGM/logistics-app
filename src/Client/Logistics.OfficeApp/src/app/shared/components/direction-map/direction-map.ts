@@ -1,12 +1,12 @@
-import {HttpClient} from "@angular/common/http";
-import {Component, effect, inject, input, model, output, signal} from "@angular/core";
-import type {LineString} from "geojson";
-import type {LngLatLike, MapMouseEvent} from "mapbox-gl";
-import {GeoJSONSourceComponent, LayerComponent, MapComponent} from "ngx-mapbox-gl";
-import {firstValueFrom} from "rxjs";
-import {GeoPointDto} from "@/core/api/models";
-import {environment} from "@/env";
-import {MapboxDirectionsResponse} from "@/shared/types/mapbox";
+import { HttpClient } from "@angular/common/http";
+import { Component, effect, inject, input, model, output, signal } from "@angular/core";
+import type { LineString } from "geojson";
+import type { LngLatLike, MapMouseEvent } from "mapbox-gl";
+import { GeoJSONSourceComponent, LayerComponent, MapComponent } from "ngx-mapbox-gl";
+import { firstValueFrom } from "rxjs";
+import { GeoPointDto } from "@/core/api/models";
+import { environment } from "@/env";
+import { MapboxDirectionsResponse } from "@/shared/types/mapbox";
 import type {
   RouteChangeEvent,
   RouteSegmentClickEvent,
@@ -104,7 +104,7 @@ export class DirectionMap {
     if (!waypoint) {
       return;
     }
-    this.waypointClick.emit({waypoint});
+    this.waypointClick.emit({ waypoint });
     this.selectSegmentByWaypoint(waypoint.id);
   }
 
@@ -168,7 +168,7 @@ export class DirectionMap {
     return {
       type: "Feature",
       geometry: res.routes?.[0]?.geometry as LineString,
-      properties: {distance: res.routes?.[0]?.distance},
+      properties: { distance: res.routes?.[0]?.distance },
     };
   }
 
@@ -214,7 +214,7 @@ export class DirectionMap {
     // highlight endpoints
     const all = this.waypointsData()?.features ?? [];
     const selected = all.filter(
-      (f) => f.properties?.id === seg.fromWaypoint.id || f.properties?.id === seg.toWaypoint.id
+      (f) => f.properties?.id === seg.fromWaypoint.id || f.properties?.id === seg.toWaypoint.id,
     );
 
     // const selectedWaypoints = selected.map((f) => ({
@@ -261,8 +261,8 @@ export class DirectionMap {
       type: "FeatureCollection",
       features: pts.map((p, i) => ({
         type: "Feature",
-        geometry: {type: "Point", coordinates: [p.location.longitude, p.location.latitude]},
-        properties: {id: p.id, label: String(i + 1)},
+        geometry: { type: "Point", coordinates: [p.location.longitude, p.location.latitude] },
+        properties: { id: p.id, label: String(i + 1) },
       })),
     };
   }
@@ -275,7 +275,7 @@ export class DirectionMap {
    * @returns True if the point is valid, false otherwise.
    */
   private isValidPoint(point: Waypoint): boolean {
-    const {longitude, latitude} = point.location;
+    const { longitude, latitude } = point.location;
 
     // Ignore zero coordinates
     if (longitude === 0 && latitude === 0) {

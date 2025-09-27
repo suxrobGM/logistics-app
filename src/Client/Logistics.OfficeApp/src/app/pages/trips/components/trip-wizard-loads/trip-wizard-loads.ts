@@ -1,4 +1,4 @@
-import {CurrencyPipe} from "@angular/common";
+import { CurrencyPipe } from "@angular/common";
 import {
   Component,
   computed,
@@ -10,17 +10,17 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
-import {FormsModule} from "@angular/forms";
-import {RouterLink} from "@angular/router";
-import {ButtonModule} from "primeng/button";
-import {Dialog} from "primeng/dialog";
-import {IconField} from "primeng/iconfield";
-import {InputIcon} from "primeng/inputicon";
-import {InputTextModule} from "primeng/inputtext";
-import {Table, TableModule} from "primeng/table";
-import {TagModule} from "primeng/tag";
-import {TooltipModule} from "primeng/tooltip";
-import {ApiService} from "@/core/api";
+import { FormsModule } from "@angular/forms";
+import { RouterLink } from "@angular/router";
+import { ButtonModule } from "primeng/button";
+import { Dialog } from "primeng/dialog";
+import { IconField } from "primeng/iconfield";
+import { InputIcon } from "primeng/inputicon";
+import { InputTextModule } from "primeng/inputtext";
+import { Table, TableModule } from "primeng/table";
+import { TagModule } from "primeng/tag";
+import { TooltipModule } from "primeng/tooltip";
+import { ApiService } from "@/core/api";
 import {
   CreateTripLoadCommand,
   LoadStatus,
@@ -30,8 +30,8 @@ import {
   TripStopDto,
   TripStopType,
 } from "@/core/api/models";
-import {LoadFormComponent, LoadFormValue, LoadStatusTag} from "@/shared/components";
-import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
+import { LoadFormComponent, LoadFormValue, LoadStatusTag } from "@/shared/components";
+import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
 
 interface TableRow extends TripLoadDto {
   kind: "existing" | "new";
@@ -92,14 +92,14 @@ export class TripFormStepLoads {
       ({
         assignedTruckId: this.stepData()?.truckId,
         type: LoadType.Vehicle,
-      }) satisfies Partial<LoadFormValue>
+      }) satisfies Partial<LoadFormValue>,
   );
 
   protected readonly totalDistance = computed(() =>
-    this.rows().reduce((total, load) => total + load.distance, 0)
+    this.rows().reduce((total, load) => total + load.distance, 0),
   );
   protected readonly totalCost = computed(() =>
-    this.rows().reduce((total, load) => total + load.deliveryCost, 0)
+    this.rows().reduce((total, load) => total + load.deliveryCost, 0),
   );
 
   public readonly stepData = input<TripWizardLoadsData | null>(null);
@@ -137,7 +137,7 @@ export class TripFormStepLoads {
     this.detachedLoads.push(load);
 
     this.rows.update((rows) =>
-      rows.map((row) => (row.id === load.id ? {...row, pendingDetach: true} : row))
+      rows.map((row) => (row.id === load.id ? { ...row, pendingDetach: true } : row)),
     );
   }
 
@@ -148,7 +148,7 @@ export class TripFormStepLoads {
 
     this.detachedLoads.splice(this.detachedLoads.indexOf(load), 1);
     this.rows.update((rows) =>
-      rows.map((row) => (row.id === load.id ? {...row, pendingDetach: false} : row))
+      rows.map((row) => (row.id === load.id ? { ...row, pendingDetach: false } : row)),
     );
   }
 
@@ -189,7 +189,7 @@ export class TripFormStepLoads {
   }
 
   protected goToNextStep(): void {
-    const {distance, cost, loads} = this.calcTotals();
+    const { distance, cost, loads } = this.calcTotals();
 
     // If we already have optimized stops, use them
     if (this.optimizedStops()) {
@@ -242,7 +242,7 @@ export class TripFormStepLoads {
             ...load,
             kind: "existing",
             pendingDetach: false,
-          }) satisfies TableRow
+          }) satisfies TableRow,
       ) ?? [];
 
     const newLoads =
@@ -255,7 +255,7 @@ export class TripFormStepLoads {
             status: LoadStatus.Draft,
             kind: "new",
             pendingDetach: false,
-          }) satisfies TableRow
+          }) satisfies TableRow,
       ) ?? [];
 
     this.rows.set([...existingLoads, ...newLoads]);
@@ -301,7 +301,7 @@ export class TripFormStepLoads {
     return stops;
   }
 
-  private calcTotals(): {distance: number; cost: number; loads: number} {
+  private calcTotals(): { distance: number; cost: number; loads: number } {
     let distance = 0;
     let cost = 0;
     let loads = 0;
@@ -314,6 +314,6 @@ export class TripFormStepLoads {
       cost += row.deliveryCost ?? 0;
       loads++;
     }
-    return {distance, cost, loads};
+    return { distance, cost, loads };
   }
 }

@@ -1,7 +1,7 @@
-import {HttpEvent, HttpHandlerFn, HttpRequest} from "@angular/common/http";
-import {inject} from "@angular/core";
-import {Observable} from "rxjs";
-import {API_CONFIG} from "../api.provider";
+import { HttpEvent, HttpHandlerFn, HttpRequest } from "@angular/common/http";
+import { inject } from "@angular/core";
+import { Observable } from "rxjs";
+import { API_CONFIG } from "../api.provider";
 
 /**
  * Interceptor to add the Bearer token to the request headers.
@@ -12,19 +12,19 @@ import {API_CONFIG} from "../api.provider";
  */
 export function tokenAuthInterceptor(
   req: HttpRequest<unknown>,
-  next: HttpHandlerFn
+  next: HttpHandlerFn,
 ): Observable<HttpEvent<unknown>> {
   const config = inject(API_CONFIG);
   const token = config.tokenGetter?.();
 
   if (token) {
     req = req.clone({
-      setHeaders: {Authorization: `Bearer ${token}`},
+      setHeaders: { Authorization: `Bearer ${token}` },
     });
   }
 
   if (config.withCredentials) {
-    req = req.clone({withCredentials: true});
+    req = req.clone({ withCredentials: true });
   }
   return next(req);
 }

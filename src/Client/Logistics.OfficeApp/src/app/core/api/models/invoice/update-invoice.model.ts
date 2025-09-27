@@ -1,4 +1,4 @@
-import {InvoiceStatus} from "./enums";
+import { InvoiceStatus } from "./enums";
 
 export interface UpdateInvoiceCommand {
   id: string;

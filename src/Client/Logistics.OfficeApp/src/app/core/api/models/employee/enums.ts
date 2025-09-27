@@ -1,4 +1,4 @@
-import {SelectOption} from "@/shared/models";
+import { SelectOption } from "@/shared/models";
 
 export enum SalaryType {
   None = "none",
@@ -11,11 +11,11 @@ export enum SalaryType {
 }
 
 export const salaryTypeOptions: SelectOption<SalaryType>[] = [
-  {label: "None", value: SalaryType.None},
-  {label: "Monthly", value: SalaryType.Monthly},
-  {label: "Weekly", value: SalaryType.Weekly},
-  {label: "Share of Gross", value: SalaryType.ShareOfGross},
-  {label: "Hourly", value: SalaryType.Hourly},
-  {label: "Rate Per Mile", value: SalaryType.RatePerMile},
-  {label: "Rate Per Kilometer", value: SalaryType.RatePerKilometer},
+  { label: "None", value: SalaryType.None },
+  { label: "Monthly", value: SalaryType.Monthly },
+  { label: "Weekly", value: SalaryType.Weekly },
+  { label: "Share of Gross", value: SalaryType.ShareOfGross },
+  { label: "Hourly", value: SalaryType.Hourly },
+  { label: "Rate Per Mile", value: SalaryType.RatePerMile },
+  { label: "Rate Per Kilometer", value: SalaryType.RatePerKilometer },
 ] as const;

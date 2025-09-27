@@ -1,9 +1,9 @@
-import {Routes} from "@angular/router";
-import {authGuard} from "@/core/auth";
-import {TripAddPage} from "./trip-add/trip-add";
-import {TripDetailsPage} from "./trip-details/trip-details";
-import {TripEditPage} from "./trip-edit/trip-edit";
-import {TripsList} from "./trips-list/trips-list";
+import { Routes } from "@angular/router";
+import { authGuard } from "@/core/auth";
+import { TripAddPage } from "./trip-add/trip-add";
+import { TripDetailsPage } from "./trip-details/trip-details";
+import { TripEditPage } from "./trip-edit/trip-edit";
+import { TripsList } from "./trips-list/trips-list";
 
 export const tripRoutes: Routes = [
   {

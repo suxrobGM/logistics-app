@@ -1,12 +1,12 @@
-import {CommonModule} from "@angular/common";
-import {Component, OnInit, inject, input, signal} from "@angular/core";
-import {RouterModule} from "@angular/router";
-import {ButtonModule} from "primeng/button";
-import {CardModule} from "primeng/card";
-import {ProgressSpinnerModule} from "primeng/progressspinner";
-import {TableLazyLoadEvent, TableModule} from "primeng/table";
-import {TooltipModule} from "primeng/tooltip";
-import {ApiService} from "@/core/api";
+import { CommonModule } from "@angular/common";
+import { Component, OnInit, inject, input, signal } from "@angular/core";
+import { RouterModule } from "@angular/router";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { TableLazyLoadEvent, TableModule } from "primeng/table";
+import { TooltipModule } from "primeng/tooltip";
+import { ApiService } from "@/core/api";
 import {
   EmployeeDto,
   InvoiceDto,
@@ -15,7 +15,7 @@ import {
   paymentMethodTypeOptions,
   salaryTypeOptions,
 } from "@/core/api/models";
-import {InvoiceStatusTag} from "@/shared/components";
+import { InvoiceStatusTag } from "@/shared/components";
 
 @Component({
   selector: "app-employee-payroll-invoices-list",

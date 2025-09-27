@@ -1,19 +1,19 @@
-import {CurrencyPipe, DatePipe} from "@angular/common";
-import {Component, inject, signal} from "@angular/core";
-import {Router, RouterLink} from "@angular/router";
-import {MenuItem} from "primeng/api";
-import {Button} from "primeng/button";
-import {Card} from "primeng/card";
-import {IconField} from "primeng/iconfield";
-import {InputIcon} from "primeng/inputicon";
-import {InputText} from "primeng/inputtext";
-import {MenuModule} from "primeng/menu";
-import {TableModule} from "primeng/table";
-import {TooltipModule} from "primeng/tooltip";
-import {Observable, map} from "rxjs";
-import {ApiService} from "@/core/api";
-import {PagedResult, TripDto, TripStatus} from "@/core/api/models";
-import {ToastService} from "@/core/services";
+import { CurrencyPipe, DatePipe } from "@angular/common";
+import { Component, inject, signal } from "@angular/core";
+import { Router, RouterLink } from "@angular/router";
+import { MenuItem } from "primeng/api";
+import { Button } from "primeng/button";
+import { Card } from "primeng/card";
+import { IconField } from "primeng/iconfield";
+import { InputIcon } from "primeng/inputicon";
+import { InputText } from "primeng/inputtext";
+import { MenuModule } from "primeng/menu";
+import { TableModule } from "primeng/table";
+import { TooltipModule } from "primeng/tooltip";
+import { Observable, map } from "rxjs";
+import { ApiService } from "@/core/api";
+import { PagedResult, TripDto, TripStatus } from "@/core/api/models";
+import { ToastService } from "@/core/services";
 import {
   BaseTableComponent,
   LoadStatusTag,
@@ -21,7 +21,7 @@ import {
   TableQueryParams,
   TripStatusTag,
 } from "@/shared/components";
-import {AddressPipe, DistanceUnitPipe} from "@/shared/pipes";
+import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
 
 @Component({
   selector: "app-trips-list",
@@ -88,7 +88,7 @@ export class TripsList extends BaseTableComponent<TripDto> {
         map((result) => {
           console.log("Trips data:", result.data);
           return result;
-        })
+        }),
       );
   }
 

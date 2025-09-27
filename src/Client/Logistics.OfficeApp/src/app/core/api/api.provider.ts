@@ -1,8 +1,8 @@
-import {HttpInterceptorFn, provideHttpClient, withInterceptors} from "@angular/common/http";
-import {EnvironmentProviders, Provider} from "@angular/core";
-import {InjectionToken} from "@angular/core";
-import {ApiService} from "./api.service";
-import {tokenAuthInterceptor} from "./interceptors/token-auth.interceptor";
+import { HttpInterceptorFn, provideHttpClient, withInterceptors } from "@angular/common/http";
+import { EnvironmentProviders, Provider } from "@angular/core";
+import { InjectionToken } from "@angular/core";
+import { ApiService } from "./api.service";
+import { tokenAuthInterceptor } from "./interceptors/token-auth.interceptor";
 
 /**
  * Configuration for the API service.
@@ -49,7 +49,7 @@ export function provideApi(config: ApiConfig = {}): (Provider | EnvironmentProvi
     ApiService,
 
     // expose the config object to the DI graph
-    {provide: API_CONFIG, useValue: config},
+    { provide: API_CONFIG, useValue: config },
   ];
 }
 

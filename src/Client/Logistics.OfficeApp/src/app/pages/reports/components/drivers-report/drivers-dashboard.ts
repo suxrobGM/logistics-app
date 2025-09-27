@@ -1,27 +1,47 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
-import { Card } from 'primeng/card';
-import { ChartModule } from 'primeng/chart';
-import { TableModule } from 'primeng/table';
-import { CurrencyPipe, DecimalPipe, PercentPipe } from '@angular/common';
-import { DriverDashboardDto } from '@/core/api/models/report/drivers-report.dto';
-import { RangeCalendar } from '@/shared/components';
-import { Observable } from 'rxjs';
-import { Result } from '@/core/api/models';
-import { BaseReportComponent, ReportQueryParams } from '@/shared/components/base-report/base-report';
-import { SkeletonModule } from 'primeng/skeleton';
-import { TagModule } from 'primeng/tag';
-import { ApiService } from '@/core/api';
-import { DRIVERS_CHART_PALETTE, DRIVERS_EFFICIENCY_CHART_OPTIONS, DRIVERS_PERFORMANCE_CHART_OPTIONS, DRIVERS_TREND_CHART_OPTIONS } from '@/shared/constants/drivers-chart.options';
+import { CurrencyPipe, DecimalPipe, PercentPipe } from "@angular/common";
+import { Component, OnInit, inject, signal } from "@angular/core";
+import { Card } from "primeng/card";
+import { ChartModule } from "primeng/chart";
+import { SkeletonModule } from "primeng/skeleton";
+import { TableModule } from "primeng/table";
+import { TagModule } from "primeng/tag";
+import { Observable } from "rxjs";
+import { ApiService } from "@/core/api";
+import { Result } from "@/core/api/models";
+import { DriverDashboardDto } from "@/core/api/models/report/drivers-report.dto";
+import { RangeCalendar } from "@/shared/components";
+import {
+  BaseReportComponent,
+  ReportQueryParams,
+} from "@/shared/components/base-report/base-report";
+import {
+  DRIVERS_CHART_PALETTE,
+  DRIVERS_EFFICIENCY_CHART_OPTIONS,
+  DRIVERS_PERFORMANCE_CHART_OPTIONS,
+  DRIVERS_TREND_CHART_OPTIONS,
+} from "@/shared/constants/drivers-chart.options";
 
 @Component({
-  selector: 'app-drivers-dashboard',
-  templateUrl: './drivers-dashboard.html',
-  imports: [Card, ChartModule, TableModule, CurrencyPipe, RangeCalendar, DecimalPipe, SkeletonModule, TagModule],
-  standalone: true
+  selector: "app-drivers-dashboard",
+  templateUrl: "./drivers-dashboard.html",
+  imports: [
+    Card,
+    ChartModule,
+    TableModule,
+    CurrencyPipe,
+    RangeCalendar,
+    DecimalPipe,
+    SkeletonModule,
+    TagModule,
+  ],
+  standalone: true,
 })
-export class DriversDashboardComponent extends BaseReportComponent<DriverDashboardDto> implements OnInit {
+export class DriversDashboardComponent
+  extends BaseReportComponent<DriverDashboardDto>
+  implements OnInit
+{
   protected override readonly apiService = inject(ApiService);
-  
+
   protected readonly trendChartData = signal<any>({});
   protected readonly efficiencyChartData = signal<any>({});
   protected readonly performanceChartData = signal<any>({});
@@ -37,7 +57,7 @@ export class DriversDashboardComponent extends BaseReportComponent<DriverDashboa
   protected override query(params: ReportQueryParams): Observable<Result<DriverDashboardDto>> {
     return this.apiService.reportApi.getDriverDashboard({
       startDate: params.startDate,
-      endDate: params.endDate
+      endDate: params.endDate,
     });
   }
 
@@ -46,43 +66,42 @@ export class DriversDashboardComponent extends BaseReportComponent<DriverDashboa
     const trends = result.driverTrends ?? [];
     if (trends.length > 0) {
       this.trendChartData.set({
-        labels: trends.map(t => t.period),
+        labels: trends.map((t) => t.period),
         datasets: [
           {
-            label: 'Active Drivers',
-            data: trends.map(t => t.activeDrivers),
-            borderColor: '#2563eb',
-            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+            label: "Active Drivers",
+            data: trends.map((t) => t.activeDrivers),
+            borderColor: "#2563eb",
+            backgroundColor: "rgba(37, 99, 235, 0.1)",
             tension: 0.4,
-            yAxisID: 'y'
+            yAxisID: "y",
           },
           {
-            label: 'Loads Delivered',
-            data: trends.map(t => t.loadsDelivered),
-            borderColor: '#16a34a',
-            backgroundColor: 'rgba(22, 163, 74, 0.1)',
+            label: "Loads Delivered",
+            data: trends.map((t) => t.loadsDelivered),
+            borderColor: "#16a34a",
+            backgroundColor: "rgba(22, 163, 74, 0.1)",
             tension: 0.4,
-            yAxisID: 'y1'
-          }
-        ]
+            yAxisID: "y1",
+          },
+        ],
       });
-
     }
 
     // Efficiency Metrics Chart
     const efficiencyMetrics = result.efficiencyMetrics ?? [];
     if (efficiencyMetrics.length > 0) {
       this.efficiencyChartData.set({
-        labels: efficiencyMetrics.map(m => m.metric),
+        labels: efficiencyMetrics.map((m) => m.metric),
         datasets: [
           {
-            label: 'Value',
-            data: efficiencyMetrics.map(m => m.value),
-            backgroundColor: efficiencyMetrics.map(m => m.trend >= 0 ? '#16a34a' : '#ef4444'),
-            borderColor: efficiencyMetrics.map(m => m.trend >= 0 ? '#16a34a' : '#ef4444'),
-            borderWidth: 1
-          }
-        ]
+            label: "Value",
+            data: efficiencyMetrics.map((m) => m.value),
+            backgroundColor: efficiencyMetrics.map((m) => (m.trend >= 0 ? "#16a34a" : "#ef4444")),
+            borderColor: efficiencyMetrics.map((m) => (m.trend >= 0 ? "#16a34a" : "#ef4444")),
+            borderWidth: 1,
+          },
+        ],
       });
     }
 
@@ -90,31 +109,31 @@ export class DriversDashboardComponent extends BaseReportComponent<DriverDashboa
     const topPerformers = result.topPerformers ?? [];
     if (topPerformers.length > 0) {
       this.performanceChartData.set({
-        labels: topPerformers.map(p => p.driverName),
+        labels: topPerformers.map((p) => p.driverName),
         datasets: [
           {
-            label: 'Earnings',
-            data: topPerformers.map(p => p.earnings),
+            label: "Earnings",
+            data: topPerformers.map((p) => p.earnings),
             backgroundColor: DRIVERS_CHART_PALETTE.slice(0, topPerformers.length),
             borderColor: DRIVERS_CHART_PALETTE.slice(0, topPerformers.length),
-            borderWidth: 1
-          }
-        ]
+            borderWidth: 1,
+          },
+        ],
       });
     }
   }
 
   protected getPerformanceLevel(efficiency: number): string {
-    if (efficiency >= 2.0) return 'Excellent';
-    if (efficiency >= 1.5) return 'Good';
-    if (efficiency >= 1.0) return 'Average';
-    return 'Below Average';
+    if (efficiency >= 2.0) return "Excellent";
+    if (efficiency >= 1.5) return "Good";
+    if (efficiency >= 1.0) return "Average";
+    return "Below Average";
   }
 
   protected getPerformanceSeverity(efficiency: number): string {
-    if (efficiency >= 2.0) return 'success';
-    if (efficiency >= 1.5) return 'info';
-    if (efficiency >= 1.0) return 'warning';
-    return 'danger';
+    if (efficiency >= 2.0) return "success";
+    if (efficiency >= 1.5) return "info";
+    if (efficiency >= 1.0) return "warning";
+    return "danger";
   }
 }

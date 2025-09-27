@@ -1,7 +1,7 @@
-import {AddressDto} from "../address.dto";
-import {CustomerDto} from "../customer";
-import {GeoPointDto} from "../geo-point.dto";
-import {LoadStatus, LoadType} from "../load";
+import { AddressDto } from "../address.dto";
+import { CustomerDto } from "../customer";
+import { GeoPointDto } from "../geo-point.dto";
+import { LoadStatus, LoadType } from "../load";
 
 export interface TripLoadDto {
   id: string;

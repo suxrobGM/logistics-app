@@ -1,6 +1,6 @@
-import {HttpTransportType, HubConnection, HubConnectionBuilder} from "@microsoft/signalr";
-import {environment} from "@/env";
-import {TenantService} from "./tenant.service";
+import { HttpTransportType, HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
+import { environment } from "@/env";
+import { TenantService } from "./tenant.service";
 
 export abstract class BaseHubConnection {
   protected readonly hubConnection: HubConnection;
@@ -8,7 +8,7 @@ export abstract class BaseHubConnection {
 
   constructor(
     private hubName: string,
-    private tenantService: TenantService
+    private tenantService: TenantService,
   ) {
     this.isConnected = false;
     this.hubConnection = new HubConnectionBuilder()

@@ -1,5 +1,5 @@
-import {AddressDto} from "../address.dto";
-import {PaymentMethodType, UsBankAccountHolderType, UsBankAccountType} from "./enums";
+import { AddressDto } from "../address.dto";
+import { PaymentMethodType, UsBankAccountHolderType, UsBankAccountType } from "./enums";
 
 export interface UpdatePaymentMethodCommand {
   id: string;

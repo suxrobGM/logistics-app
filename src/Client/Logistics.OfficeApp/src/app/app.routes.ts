@@ -1,17 +1,17 @@
-import {Routes} from "@angular/router";
-import {Error404Component} from "@/pages/error404";
-import {LoginComponent} from "@/pages/login";
-import {UnauthorizedComponent} from "@/pages/unauthorized";
+import { Routes } from "@angular/router";
+import { Error404Component } from "@/pages/error404";
+import { LoginComponent } from "@/pages/login";
+import { UnauthorizedComponent } from "@/pages/unauthorized";
 
 export const appRoutes: Routes = [
   {
     path: "home",
     loadChildren: () => import("./pages/home/home.routes").then((m) => m.homeRoutes),
   },
-   {
+  {
     path: "reports",
-    loadChildren: () => import("./pages/reports/reports.routes").then(m => m.reportsRoutes),
-    data: { breadcrumb: "Reports" }
+    loadChildren: () => import("./pages/reports/reports.routes").then((m) => m.reportsRoutes),
+    data: { breadcrumb: "Reports" },
   },
   {
     path: "dashboard",

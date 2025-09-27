@@ -1,4 +1,4 @@
-import {Injectable, inject} from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import {
   Address,
   SetupIntentResult,
@@ -7,16 +7,16 @@ import {
   StripeElements,
   loadStripe,
 } from "@stripe/stripe-js";
-import {firstValueFrom} from "rxjs";
-import {environment} from "@/env";
-import {COUNTRIES_OPTIONS} from "@/shared/constants";
-import {UsBankAccount} from "@/shared/models";
-import {findOption} from "@/shared/utils";
-import {ApiService} from "../api";
-import {AddressDto} from "../api/models";
-import {TenantService} from "./tenant.service";
+import { firstValueFrom } from "rxjs";
+import { environment } from "@/env";
+import { COUNTRIES_OPTIONS } from "@/shared/constants";
+import { UsBankAccount } from "@/shared/models";
+import { findOption } from "@/shared/utils";
+import { ApiService } from "../api";
+import { AddressDto } from "../api/models";
+import { TenantService } from "./tenant.service";
 
-@Injectable({providedIn: "root"})
+@Injectable({ providedIn: "root" })
 export class StripeService {
   private readonly apiService = inject(ApiService);
   private readonly tenantService = inject(TenantService);
@@ -48,7 +48,7 @@ export class StripeService {
   async confirmCardSetup(
     cardElement: StripeCardNumberElement,
     cardHolderName: string,
-    billingAddress: AddressDto
+    billingAddress: AddressDto,
   ): Promise<SetupIntentResult> {
     const clientSecret = await this.getClientSecret();
     const stripe = await this.getStripe();
@@ -77,7 +77,7 @@ export class StripeService {
    */
   async confirmUsBankSetup(
     account: UsBankAccount,
-    billingAddress: AddressDto
+    billingAddress: AddressDto,
   ): Promise<SetupIntentResult> {
     const clientSecret = await this.getClientSecret();
     const stripe = await this.getStripe();

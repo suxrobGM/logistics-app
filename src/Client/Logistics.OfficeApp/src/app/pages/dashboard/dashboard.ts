@@ -1,7 +1,7 @@
-import {CommonModule} from "@angular/common";
-import {Component} from "@angular/core";
-import {GrossesBarchart, TrucksMap} from "@/shared/components";
-import {CompanyStatsComponent, TruckStatsTableComponent} from "./components";
+import { CommonModule } from "@angular/common";
+import { Component } from "@angular/core";
+import { GrossesBarchart, TrucksMap } from "@/shared/components";
+import { CompanyStatsComponent, TruckStatsTableComponent } from "./components";
 
 @Component({
   selector: "app-dashboard",
