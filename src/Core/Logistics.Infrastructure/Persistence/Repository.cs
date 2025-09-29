@@ -1,9 +1,7 @@
 using System.Linq.Expressions;
-
 using Logistics.Domain.Core;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Specifications;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Infrastructure.Persistence;
@@ -33,7 +31,7 @@ public class Repository<TDbContext, TEntity, TEntityKey> : IRepository<TEntity, 
     {
         if (predicate is null)
         {
-            return _dbContext.Set<TEntity>().CountAsync(cancellationToken: ct);
+            return _dbContext.Set<TEntity>().CountAsync(ct);
         }
 
         return _dbContext.Set<TEntity>().CountAsync(predicate, ct);
@@ -56,7 +54,8 @@ public class Repository<TDbContext, TEntity, TEntityKey> : IRepository<TEntity, 
             .ToListAsync(ct);
     }
 
-    public Task<List<TEntity>> GetListAsync(ISpecification<TEntity>? specification = null, CancellationToken ct = default)
+    public Task<List<TEntity>> GetListAsync(ISpecification<TEntity>? specification = null,
+        CancellationToken ct = default)
     {
         if (specification is null)
         {
@@ -71,6 +70,11 @@ public class Repository<TDbContext, TEntity, TEntityKey> : IRepository<TEntity, 
     public Task AddAsync(TEntity entity, CancellationToken ct = default)
     {
         return _dbContext.Set<TEntity>().AddAsync(entity, ct).AsTask();
+    }
+
+    public Task AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken ct = default)
+    {
+        return _dbContext.Set<TEntity>().AddRangeAsync(entities, ct);
     }
 
     public void Update(TEntity entity)

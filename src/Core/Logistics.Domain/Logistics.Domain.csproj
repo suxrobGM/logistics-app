@@ -9,7 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="MediatR.Contracts" Version="2.0.1"/>
-        <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="9.0.7"/>
+        <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="9.0.9" />
     </ItemGroup>
 
     <ItemGroup>
