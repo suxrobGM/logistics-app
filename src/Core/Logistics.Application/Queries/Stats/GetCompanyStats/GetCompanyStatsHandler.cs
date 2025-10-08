@@ -64,20 +64,20 @@ internal sealed class GetCompanyStatsHandler : IAppRequestHandler<GetCompanyStat
             var lastMonthLoads =
                 loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(null, lastMonthStart, startOfMonth));
 
-            companyStats.ThisWeekGross = thisWeekLoads.Sum(l => l.DeliveryCost);
+            companyStats.ThisWeekGross = thisWeekLoads.Sum(l => l.DeliveryCost.Amount);
             companyStats.ThisWeekDistance = thisWeekLoads.Sum(l => l.Distance);
-            companyStats.LastWeekGross = lastWeekLoads.Sum(l => l.DeliveryCost);
+            companyStats.LastWeekGross = lastWeekLoads.Sum(l => l.DeliveryCost.Amount);
             companyStats.LastWeekDistance = lastWeekLoads.Sum(l => l.Distance);
-            companyStats.ThisMonthGross = thisMonthLoads.Sum(l => l.DeliveryCost);
+            companyStats.ThisMonthGross = thisMonthLoads.Sum(l => l.DeliveryCost.Amount);
             companyStats.ThisMonthDistance = thisMonthLoads.Sum(l => l.Distance);
-            companyStats.LastMonthGross = lastMonthLoads.Sum(l => l.DeliveryCost);
+            companyStats.LastMonthGross = lastMonthLoads.Sum(l => l.DeliveryCost.Amount);
             companyStats.LastMonthDistance = lastMonthLoads.Sum(l => l.Distance);
 
             var totalStats = loadsRepository.Query()
                 .GroupBy(_ => 1).Select(i => new
                 {
                     TotalDistance = i.Sum(m => m.Distance),
-                    TotalGross = i.Sum(m => m.DeliveryCost)
+                    TotalGross = i.Sum(m => m.DeliveryCost.Amount)
                 }).FirstOrDefault();
 
             companyStats.TotalDistance = totalStats?.TotalDistance ?? 0;

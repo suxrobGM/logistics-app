@@ -55,40 +55,42 @@ BEGIN
                       AND e2."SalaryType" = 3           /* 3 = ShareOfGross */
                 ), 0)  AS "DriverShare",
 
+            (
             /* Flatten main + secondary drivers into JSONB */
-            JSONB_AGG(
-                JSONB_BUILD_OBJECT(
-                    'Id',        e."Id",
-                    'Email',     e."Email",
-                    'FirstName', e."FirstName",
-                    'LastName',  e."LastName",
-                    'FullName',  CONCAT(e."FirstName", ' ', e."LastName"),
-                    'PhoneNumber', e."PhoneNumber",
-                    'JoinedDate', e."JoinedDate",
-                    'TruckNumber', t."Number",
-                    'TruckId',    t."Id",
-                    'Salary',     e."Salary_Amount",
-                    'SalaryType', e."SalaryType",
-                    'Roles', COALESCE((
-                        SELECT JSONB_AGG(
-                                   JSONB_BUILD_OBJECT(
-                                       'Name',        r."Name",
-                                       'DisplayName', r."DisplayName"))
-                        FROM "EmployeeRoles" er
-                        JOIN "Roles" r ON r."Id" = er."RoleId"
-                        WHERE er."EmployeeId" = e."Id"
-                    ), '[]'::JSONB)
-                )
+                select 
+                    JSONB_AGG(
+                        JSONB_BUILD_OBJECT(
+                            'Id',        e."Id",
+                            'Email',     e."Email",
+                            'FirstName', e."FirstName",
+                            'LastName',  e."LastName",
+                            'FullName',  CONCAT(e."FirstName", ' ', e."LastName"),
+                            'PhoneNumber', e."PhoneNumber",
+                            'JoinedDate', e."JoinedDate",
+                            'TruckNumber', t."Number",
+                            'TruckId',    t."Id",
+                            'Salary',     e."Salary_Amount",
+                            'SalaryType', e."SalaryType",
+                            'Roles', COALESCE((
+                                SELECT JSONB_AGG(
+                                           JSONB_BUILD_OBJECT(
+                                               'Name',        r."Name",
+                                               'DisplayName', r."DisplayName"))
+                                FROM "EmployeeRoles" er
+                                JOIN "Roles" r ON r."Id" = er."RoleId"
+                                WHERE er."EmployeeId" = e."Id"
+                            ), '[]'::JSONB)
+                        )
+                    ) 
+                    FROM "Employees" e 
+					WHERE e."Id" IN (t."MainDriverId", t."SecondaryDriverId")
             ) AS "Drivers"
         FROM "Loads"  l
         JOIN "Trucks" t ON t."Id" = l."AssignedTruckId"
 
-        /* join employees via driver IDs */
-        LEFT JOIN "Employees" e ON e."Id" = t."MainDriverId" OR e."Id" = t."SecondaryDriverId"
-
-        WHERE l."DeliveryDate" IS NOT NULL
-          AND l."DeliveryDate" >= start_date
-          AND l."DeliveryDate" <= end_date
+        WHERE l."DeliveredAt" IS NOT NULL
+          AND l."DeliveredAt" >= start_date
+          AND l."DeliveredAt" <= end_date
         GROUP BY l."AssignedTruckId", t."Number", t."Id"
     )
 

@@ -53,15 +53,15 @@
     </ng-template>
     <ng-template #body let-truckStats>
       <tr>
-        <td>{{ truckStats().truckNumber }}</td>
-        <td>{{ truckStats().gross | currency }}</td>
-        <td>{{ truckStats().driverShare | currency }}</td>
-        <td>{{ truckStats().distance | distanceUnit: "mi" }}</td>
+        <td>{{ truckStats.truckNumber }}</td>
+        <td>{{ truckStats.gross | currency }}</td>
+        <td>{{ truckStats.driverShare | currency }}</td>
+        <td>{{ truckStats.distance | distanceUnit: "mi" }}</td>
         <td>
-          @for (driver of truckStats().drivers; track driver.id) {
+          @for (driver of truckStats.drivers; track driver.id) {
             <span>
               {{ driver.fullName }}
-              @if (truckStats().drivers.length > 1) {
+              @if (truckStats.drivers.length > 1) {
                 <span>,</span>
               }
             </span>
@@ -71,13 +71,13 @@
           <p-button
             icon="pi pi-book"
             pTooltip="View details"
-            [routerLink]="['/trucks', truckStats().truckId]"
+            [routerLink]="['/trucks', truckStats.truckId]"
           />
           <p-button
             class="ms-2"
             icon="pi pi-pen-to-square"
             pTooltip="Edit"
-            [routerLink]="['/trucks', truckStats().truckId, 'edit']"
+            [routerLink]="['/trucks', truckStats.truckId, 'edit']"
           />
         </td>
       </tr>
