@@ -55,42 +55,42 @@ BEGIN
     "LoadStats" AS (
         SELECT 
             COALESCE(SUM("DeliveryCost_Amount") FILTER (
-                WHERE "DeliveryDate" >= dr."StartOfWeek" 
-                AND "DeliveryDate" <= dr."Now"
+                WHERE "DeliveredAt" >= dr."StartOfWeek" 
+                AND "DeliveredAt" <= dr."Now"
             ), 0) AS "ThisWeekGross",
             COALESCE(SUM("Distance") FILTER (
-                WHERE "DeliveryDate" >= dr."StartOfWeek" 
-                AND "DeliveryDate" <= dr."Now"
+                WHERE "DeliveredAt" >= dr."StartOfWeek" 
+                AND "DeliveredAt" <= dr."Now"
             ), 0) AS "ThisWeekDistance",
             COALESCE(SUM("DeliveryCost_Amount") FILTER (
-                WHERE "DeliveryDate" >= dr."LastWeekStart" 
-                AND "DeliveryDate" < dr."StartOfWeek"
+                WHERE "DeliveredAt" >= dr."LastWeekStart" 
+                AND "DeliveredAt" < dr."StartOfWeek"
             ), 0) AS "LastWeekGross",
             COALESCE(SUM("Distance") FILTER (
-                WHERE "DeliveryDate" >= dr."LastWeekStart" 
-                AND "DeliveryDate" < dr."StartOfWeek"
+                WHERE "DeliveredAt" >= dr."LastWeekStart" 
+                AND "DeliveredAt" < dr."StartOfWeek"
             ), 0) AS "LastWeekDistance",
             COALESCE(SUM("DeliveryCost_Amount") FILTER (
-                WHERE "DeliveryDate" >= dr."StartOfMonth" 
-                AND "DeliveryDate" <= dr."Now"
+                WHERE "DeliveredAt" >= dr."StartOfMonth" 
+                AND "DeliveredAt" <= dr."Now"
             ), 0) AS "ThisMonthGross",
             COALESCE(SUM("Distance") FILTER (
-                WHERE "DeliveryDate" >= dr."StartOfMonth" 
-                AND "DeliveryDate" <= dr."Now"
+                WHERE "DeliveredAt" >= dr."StartOfMonth" 
+                AND "DeliveredAt" <= dr."Now"
             ), 0) AS "ThisMonthDistance",
             COALESCE(SUM("DeliveryCost_Amount") FILTER (
-                WHERE "DeliveryDate" >= dr."LastMonthStart" 
-                AND "DeliveryDate" < dr."StartOfMonth"
+                WHERE "DeliveredAt" >= dr."LastMonthStart" 
+                AND "DeliveredAt" < dr."StartOfMonth"
             ), 0) AS "LastMonthGross",
             COALESCE(SUM("Distance") FILTER (
-                WHERE "DeliveryDate" >= dr."LastMonthStart" 
-                AND "DeliveryDate" < dr."StartOfMonth"
+                WHERE "DeliveredAt" >= dr."LastMonthStart" 
+                AND "DeliveredAt" < dr."StartOfMonth"
             ), 0) AS "LastMonthDistance",
             COALESCE(SUM("DeliveryCost_Amount"), 0) AS "TotalGross",
             COALESCE(SUM("Distance"), 0) AS "TotalDistance"
         FROM "Loads" l
         CROSS JOIN "DateRanges" dr
-        WHERE "DeliveryDate" IS NOT NULL
+        WHERE "DeliveredAt" IS NOT NULL
     )
     SELECT 
         es."OwnerName",

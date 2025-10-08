@@ -17,14 +17,14 @@ public class GetTruckStatsListHandler : IAppRequestHandler<GetTrucksStatsListQue
         GetTrucksStatsListQuery req, CancellationToken ct)
     {
         var query = $"""
-                     SELECT * FROM get_trucks_stats(
-                         {req.StartDate}::timestamp,
-                         {req.EndDate}::timestamp,
-                         {req.Page},
-                         {req.PageSize},
-                         {req.OrderBy}
-                     )
-                     """;
+            SELECT * FROM get_trucks_stats(
+                '{req.StartDate:yyyy-MM-dd HH:mm:ss}'::timestamp,
+                '{req.EndDate:yyyy-MM-dd HH:mm:ss}'::timestamp,
+                {req.Page},
+                {req.PageSize},
+                '{req.OrderBy}'
+            );
+        """;
         var truckStatsDto = await _tenantUow.ExecuteRawSql<TruckStatsDto>(query);
         var totalItems = truckStatsDto.FirstOrDefault()?.TotalItems ?? 0;
 
