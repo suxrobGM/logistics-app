@@ -21,8 +21,8 @@ export const reportsRoutes: Routes = [
       {
         path: "drivers",
         loadComponent: () =>
-          import("./components/drivers-report/drivers-dashboard").then(
-            (m) => m.DriversDashboardComponent,
+          import("./components/drivers-report/drivers-dashboard/drivers-report").then(
+            (m) => m.DriversReportComponent,
           ),
         canActivate: [authGuard],
         data: {
@@ -33,8 +33,8 @@ export const reportsRoutes: Routes = [
       {
         path: "drivers/detailed",
         loadComponent: () =>
-          import("./components/drivers-report/drivers-reports").then(
-            (m) => m.DriversReportComponent,
+          import("./components/drivers-report/drivers-detailed/drivers-detailed").then(
+            (m) => m.DriversDetailedComponent,
           ),
         canActivate: [authGuard],
         data: {

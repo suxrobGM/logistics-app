@@ -16,7 +16,7 @@ import { DateUtils } from "@/shared/utils";
 
 @Component({
   selector: "app-drivers-report",
-  templateUrl: "./drivers-report.html",
+  templateUrl: "./drivers-detailed.html",
   standalone: true,
   imports: [
     FormsModule,
@@ -31,7 +31,7 @@ import { DateUtils } from "@/shared/utils";
     TagModule,
   ],
 })
-export class DriversReportComponent extends BaseTableComponent<DriverReportDto> {
+export class DriversDetailedComponent extends BaseTableComponent<DriverReportDto> {
   protected readonly startDate = signal(DateUtils.thisYear());
   protected readonly endDate = signal(DateUtils.today());
   protected search: string = "";
