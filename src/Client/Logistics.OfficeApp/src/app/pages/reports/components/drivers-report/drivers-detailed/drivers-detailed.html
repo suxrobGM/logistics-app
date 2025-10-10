@@ -60,12 +60,29 @@
           <th>Driver</th>
           <th>Truck</th>
           <th>Type</th>
-          <th>Loads Delivered</th>
-          <th>Distance Driven</th>
-          <th>Total Earnings</th>
-          <th>Avg per Load</th>
-          <th>Efficiency</th>
-          <th>Performance</th>
+          <th pSortableColumn="LoadsDelivered">
+            Loads Delivered
+            <p-sortIcon field="LoadsDelivered" />
+          </th>
+          <th pSortableColumn="DistanceDriven">
+            Distance Driven
+            <p-sortIcon field="DistanceDriven" />
+          </th>
+          <th pSortableColumn="GrossEarnings">
+            Total Earnings
+            <p-sortIcon field="GrossEarnings" />
+          </th>
+          <th pSortableColumn="AverageEarningsPerLoad">
+            Avg per Load
+            <p-sortIcon field="AverageEarningsPerLoad" />
+          </th>
+          <th pSortableColumn="Efficiency">
+            Efficiency
+            <p-sortIcon field="Efficiency" />
+          </th>
+          <th>
+            Performance
+          </th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-driver>

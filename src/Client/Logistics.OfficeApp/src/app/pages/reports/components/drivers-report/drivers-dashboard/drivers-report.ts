@@ -22,8 +22,8 @@ import {
 } from "@/shared/constants/drivers-chart.options";
 
 @Component({
-  selector: "app-drivers-dashboard",
-  templateUrl: "./drivers-dashboard.html",
+  selector: "app-drivers-report",
+  templateUrl: "./drivers-report.html",
   imports: [
     Card,
     ChartModule,
@@ -36,7 +36,7 @@ import {
   ],
   standalone: true,
 })
-export class DriversDashboardComponent
+export class DriversReportComponent
   extends BaseReportComponent<DriverDashboardDto>
   implements OnInit
 {

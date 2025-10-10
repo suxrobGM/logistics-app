@@ -1,4 +1,6 @@
+using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
+using System.Text;
 
 namespace Logistics.Domain.Persistence;
 
@@ -17,6 +19,40 @@ public static class QueryableExtensions
         bool descending)
     {
         return descending ? query.OrderByDescending(keySelector) : query.OrderBy(keySelector);
+    }
+
+    /// <summary>
+    /// Shortcut for ordering a queryable source by a string.
+    /// </summary>
+    /// <param name="query">The queryable source to order.</param>
+    /// <param name="keySelector">the string to determine the order.</param>
+    public static IQueryable<T> OrderBy<T>(this IQueryable<T> query, string? orderBy)
+    {
+        if (!string.IsNullOrEmpty(orderBy))
+        {
+            var orderByQuery = CreateOrderQuery<T>(orderBy);
+            return DynamicQueryableExtensions.OrderBy(query, orderByQuery);
+        }
+        return query;
+    }
+    public static string CreateOrderQuery<T>(string orderBy)
+    {
+
+        var desc = orderBy[0] == '-';
+        var prop = desc ? orderBy[1..] : orderBy;
+
+        var orderByQueryBuilder = new StringBuilder();
+        var orderProps = typeof(T).GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+
+        var matched = orderProps
+            .Where(p => p.Name.Equals(prop.Trim(), StringComparison.InvariantCultureIgnoreCase))
+            .FirstOrDefault();
+
+        var dir = desc ? "descending" : "ascending";
+        orderByQueryBuilder.Append($"{matched?.Name.ToString()} {dir}");
+
+        var orderQuery = orderByQueryBuilder.ToString().Trim();
+        return orderQuery;
     }
 
     /// <summary>
