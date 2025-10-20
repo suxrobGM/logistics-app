@@ -3,6 +3,19 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Application.Services;
 
+/// <summary>
+///     Create load parameters.
+/// </summary>
+/// <param name="Name">Load name</param>
+/// <param name="Type">Load type</param>
+/// <param name="Origin">Load origin geo point and address</param>
+/// <param name="Destination">Load destination geo point and address</param>
+/// <param name="DeliveryCost">Delivery cost</param>
+/// <param name="Distance">Distance in meters</param>
+/// <param name="CustomerId">Customer ID</param>
+/// <param name="TruckId">Truck ID</param>
+/// <param name="DispatcherId">Dispatcher ID</param>
+/// <param name="TripId">Optionally specify trip ID</param>
 public record CreateLoadParameters(
     string Name,
     LoadType Type,
@@ -12,5 +25,6 @@ public record CreateLoadParameters(
     double Distance,
     Guid CustomerId,
     Guid TruckId,
-    Guid DispatcherId
+    Guid DispatcherId,
+    Guid? TripId = null
 );

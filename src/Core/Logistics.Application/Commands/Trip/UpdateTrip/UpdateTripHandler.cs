@@ -10,15 +10,15 @@ namespace Logistics.Application.Commands;
 
 internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, Result>
 {
-    private readonly ILoadService _loads;
-    private readonly ILogger<UpdateTripHandler> _log;
+    private readonly ILoadService _loadService;
+    private readonly ILogger<UpdateTripHandler> _logger;
     private readonly ITenantUnitOfWork _uow;
 
-    public UpdateTripHandler(ITenantUnitOfWork uow, ILoadService loads, ILogger<UpdateTripHandler> log)
+    public UpdateTripHandler(ITenantUnitOfWork uow, ILoadService loadService, ILogger<UpdateTripHandler> logger)
     {
         _uow = uow;
-        _loads = loads;
-        _log = log;
+        _loadService = loadService;
+        _logger = logger;
     }
 
     public async Task<Result> Handle(UpdateTripCommand req, CancellationToken ct)
@@ -29,26 +29,18 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
             return Result.Fail($"Trip '{req.TripId}' not found.");
         }
 
-        // Update only name if trip status is not draft
-        if (trip.Status != TripStatus.Draft && !string.IsNullOrEmpty(req.Name))
-        {
-            trip.Name = req.Name;
-            await _uow.SaveChangesAsync(ct);
-            return Result.Ok();
-        }
-
         if (trip.Status != TripStatus.Draft)
         {
             return Result.Fail("Only trips in 'Draft' status can be updated.");
         }
 
-        // Basic fields
-        if (!string.IsNullOrWhiteSpace(req.Name))
+        // Name field
+        if (!string.IsNullOrEmpty(req.Name) && trip.Name != req.Name)
         {
             trip.Name = req.Name!;
         }
 
-        // Truck swap (if requested)
+        // Truck swap
         if (req.TruckId is { } newTruckId && newTruckId != trip.TruckId)
         {
             var newTruck = await _uow.Repository<Truck>().GetByIdAsync(newTruckId, ct);
@@ -61,76 +53,61 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
             trip.Truck = newTruck;
         }
 
-        // Compose a final load set
-        var loadMap = trip.GetLoads().ToDictionary(l => l.Id);
+        // A map of current loads on the trip for easy access, key is the load ID and value is the load entity
+        var loadsMap = trip.GetLoads().ToDictionary(l => l.Id);
 
-        var removedCount = RemoveLoads(loadMap, req.DetachedLoadIds);
+        var removedCount = RemoveLoads(trip, loadsMap, req.DetachedLoadIds);
 
-        var attachResult = await AttachExistingLoadsAsync(loadMap, req.AttachedLoadIds, trip, ct);
+        var attachResult = await AttachExistingLoadsAsync(trip, loadsMap, req.AttachedLoadIds, ct);
         if (!attachResult.Success)
         {
             return Result.Fail(attachResult.Error!);
         }
 
         var attachedCount = attachResult.Data;
-
-        var created = await CreateNewLoadsAsync(req.NewLoads, trip.TruckId);
-        foreach (var l in created)
-        {
-            loadMap[l.Id] = l;
-        }
-
-        var createdCount = created.Count;
-
-        // Remove existing stops from the repository to avoid EF tracking issues
-        var existingStops = trip.Stops.ToList();
-        foreach (var existingStop in existingStops)
-        {
-            _uow.Repository<TripStop>().Delete(existingStop);
-        }
+        var createdCount = await CreateNewLoadsAsync(trip, loadsMap, req.NewLoads);
 
         // Convert optimized stops DTOs to domain entities if provided
-        List<TripStop>? optimizedStops = null;
         if (req.OptimizedStops != null && req.OptimizedStops.Any())
         {
-            optimizedStops = ConvertOptimizedStopsToDomain(req.OptimizedStops, loadMap, trip);
+            var optimizedStops = ConvertOptimizedStopsToDomain(trip, loadsMap, req.OptimizedStops);
+            trip.UpdateTripStops(optimizedStops);
         }
-
-        // Rebuild stops from a final set
-        trip.UpdateTripLoads(loadMap.Values, optimizedStops);
 
         await _uow.SaveChangesAsync(ct);
 
-        _log.LogInformation(
+        _logger.LogInformation(
             "Updated trip '{TripId}'. Name='{Name}', Truck='{TruckId}'. Loads={LoadCount} (attached {Attached}, created {Created}, removed {Removed})",
-            trip.Id, trip.Name, trip.TruckId, loadMap.Count, attachedCount, createdCount,
+            trip.Id, trip.Name, trip.TruckId, loadsMap.Count, attachedCount, createdCount,
             removedCount);
 
         return Result.Ok();
     }
 
-    private static int RemoveLoads(Dictionary<Guid, Load> loadsMap, IEnumerable<Guid>? loadIds)
+    private int RemoveLoads(Trip trip, Dictionary<Guid, Load> loadsMap, IEnumerable<Guid>? loadIdsToRemove)
     {
-        if (loadIds is null)
+        if (loadIdsToRemove is null)
         {
             return 0;
         }
 
         var before = loadsMap.Count;
-        foreach (var id in loadIds.Distinct())
+        foreach (var loadId in loadIdsToRemove.Distinct())
         {
-            //var load = loadsMap[id];
-            loadsMap.Remove(id);
-            //_uow.Repository<Load>().Delete(load);
+            if (loadsMap.Remove(loadId, out var load))
+            {
+                trip.RemoveLoad(loadId);
+                _uow.Repository<Load>().Delete(load);
+            }
         }
 
         return before - loadsMap.Count;
     }
 
     private async Task<Result<int>> AttachExistingLoadsAsync(
-        Dictionary<Guid, Load> map,
-        IEnumerable<Guid>? attachIds,
         Trip trip,
+        Dictionary<Guid, Load> loadsMap,
+        IEnumerable<Guid>? attachIds,
         CancellationToken ct)
     {
         var count = 0;
@@ -139,7 +116,7 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
             return Result<int>.Ok(count);
         }
 
-        var ids = attachIds.Distinct().Where(id => !map.ContainsKey(id)).ToArray();
+        var ids = attachIds.Distinct().Where(id => !loadsMap.ContainsKey(id)).ToArray();
         if (ids.Length == 0)
         {
             return Result<int>.Ok(count);
@@ -149,34 +126,49 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
 
         foreach (var load in toAttach)
         {
-            if (load.Status == LoadStatus.Delivered)
+            if (load.Status != LoadStatus.Draft)
             {
-                return Result<int>.Fail($"Load '{load.Id}' is already delivered and cannot be attached.");
+                return Result<int>.Fail(
+                    $"Only loads in 'Draft' status can be attached. Load '{load.Id}' is in '{load.Status}' status.");
             }
 
             load.AssignedTruckId = trip.TruckId;
             load.AssignedTruck = trip.Truck;
 
-            map[load.Id] = load;
+            // If the load already has trip stops, we need to remove them first from the previous trip
+            // to avoid duplicates. This can happen if the load was previously attached to another trip.
+            if (load.TripStops.Count > 0)
+            {
+                var previousTrip = await _uow.Repository<Trip>().GetByIdAsync(load.TripStops.First().TripId, ct);
+                previousTrip?.RemoveLoad(load.Id);
+            }
+
+            // Add the existing load to the new trip
+            trip.AddLoads([load]);
+
+            loadsMap[load.Id] = load;
             count++;
         }
 
         return Result<int>.Ok(count);
     }
 
-    private async Task<List<Load>> CreateNewLoadsAsync(
-        IEnumerable<CreateTripLoadCommand>? commands,
-        Guid truckId)
+    private async Task<int> CreateNewLoadsAsync(
+        Trip trip,
+        Dictionary<Guid, Load> loadsMap,
+        IEnumerable<CreateTripLoadCommand>? newLoadCommands)
     {
-        var result = new List<Load>();
-        if (commands is null)
+        if (newLoadCommands is null)
         {
-            return result;
+            return 0;
         }
 
-        foreach (var c in commands)
+        var createdCount = 0;
+        var loadParametersList = new List<CreateLoadParameters>();
+
+        foreach (var c in newLoadCommands)
         {
-            var p = new CreateLoadParameters(
+            var createLoadParameters = new CreateLoadParameters(
                 c.Name,
                 c.Type,
                 (c.OriginAddress, c.OriginLocation),
@@ -184,23 +176,30 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
                 c.DeliveryCost,
                 c.Distance,
                 c.CustomerId,
-                truckId,
-                c.AssignedDispatcherId);
+                trip.TruckId,
+                c.AssignedDispatcherId,
+                trip.Id);
 
-            var entity = await _loads.CreateLoadAsync(p, false);
-            result.Add(entity);
+            loadParametersList.Add(createLoadParameters);
+            createdCount++;
         }
 
-        return result;
+        var newLoads = await _loadService.CreateLoadsAsync(loadParametersList);
+        foreach (var load in newLoads)
+        {
+            loadsMap[load.Id] = load;
+        }
+
+        return createdCount;
     }
 
     /// <summary>
     ///     Converts optimized stop DTOs to domain TripStop entities.
     /// </summary>
     private List<TripStop> ConvertOptimizedStopsToDomain(
-        IEnumerable<TripStopDto> optimizedStops,
+        Trip trip,
         Dictionary<Guid, Load> loadMap,
-        Trip trip)
+        IEnumerable<TripStopDto> optimizedStops)
     {
         var tripStops = new List<TripStop>();
 
@@ -208,12 +207,19 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
         {
             if (!loadMap.TryGetValue(stopDto.LoadId, out var load))
             {
-                _log.LogWarning("Load with ID '{LoadId}' not found for optimized stop", stopDto.LoadId);
+                _logger.LogWarning("Load with ID '{LoadId}' not found for optimized stop", stopDto.LoadId);
                 continue;
             }
 
+            // Find the existing TripStop ID
+            var tripStopId = loadMap[stopDto.LoadId]
+                .TripStops
+                .First(s => s.LoadId == stopDto.LoadId && s.Type == stopDto.Type)
+                .Id;
+
             var tripStop = new TripStop
             {
+                Id = tripStopId,
                 Order = stopDto.Order,
                 Type = stopDto.Type,
                 Address = stopDto.Address,

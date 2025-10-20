@@ -86,6 +86,7 @@ export class TripWizard {
   protected processStep2(stepData: TripWizardLoadsData): void {
     // Set data for the last review step
     this.step2Data.set(stepData);
+
     this.step3Data.set({
       ...this.step1Data()!,
       ...stepData,
@@ -94,6 +95,14 @@ export class TripWizard {
       truckVehicleCapacity: stepData.truckVehicleCapacity,
     });
     this.activeStep.set(3);
+  }
+
+  protected updateStops(stops: TripStopDto[]): void {
+    // Update step2Data with the optimized stops from the review page
+    this.step2Data.update((data) => ({
+      ...data!,
+      stops: stops,
+    }));
   }
 
   protected processStep3(): void {

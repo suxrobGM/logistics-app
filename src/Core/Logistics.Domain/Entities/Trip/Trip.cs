@@ -167,39 +167,47 @@ public class Trip : AuditableEntity, ITenantEntity
     }
 
     /// <summary>
-    ///     Updates the trip loads. Clears existing stops and recreates them based on the new loads.
+    ///     Updates the trip stops based on the order of the provided optimized stops list.
     /// </summary>
-    /// <param name="loads">The new collection of loads to be associated with the trip.</param>
     /// <param name="optimizedStops">Optional optimized stops with preserved order.</param>
     /// <exception cref="InvalidOperationException">Thrown if the trip status is not 'Draft'.</exception>
-    public void UpdateTripLoads(IEnumerable<Load> loads, IEnumerable<TripStop>? optimizedStops = null)
+    public void UpdateTripStops(IEnumerable<TripStop> optimizedStops)
     {
         if (Status != TripStatus.Draft)
         {
             throw new InvalidOperationException("Cannot update loads for a trip that is not draft.");
         }
 
-        // Clear existing stops from the collection
-        Stops.Clear();
-        var loadsArr = loads.ToArray();
+        // Use optimized stops - complete replacement strategy
+        var optimizedStopsMap = optimizedStops.ToDictionary(s => s.Id, s => s);
+        var stops = Stops.ToList();
 
-        if (optimizedStops != null)
+        foreach (var stop in stops)
         {
-            // Use the optimized stops if provided and ensure Trip reference is set
-            foreach (var stop in optimizedStops)
+            // Just update the order number for existing stops instead of recreating them
+            if (optimizedStopsMap.TryGetValue(stop.Id, out var tripStop))
             {
-                stop.Trip = this;
-                stop.TripId = Id;
-                Stops.Add(stop);
+                stop.Order = tripStop.Order;
+            }
+            else
+            {
+                // Add a new stop that wasn't in the original trip
+                var newStop = new TripStop
+                {
+                    Trip = this,
+                    Order = stop.Order,
+                    Type = stop.Type,
+                    Address = stop.Address,
+                    Location = stop.Location,
+                    LoadId = stop.LoadId,
+                    Load = stop.Load
+                };
+
+                Stops.Add(newStop);
             }
         }
-        else
-        {
-            // Recreate stops based on new loads with default ordering
-            AddStops(this, loadsArr);
-        }
 
-        TotalDistance = loadsArr.Sum(l => l.Distance);
+        TotalDistance = GetLoads().Sum(l => l.Distance);
     }
 
     /// <summary>
@@ -207,31 +215,34 @@ public class Trip : AuditableEntity, ITenantEntity
     /// </summary>
     /// <param name="trip">The trip to which the stops will be added.</param>
     /// <param name="loads">The collection of loads for which stops will be created.</param>
-    private static void AddStops(Trip trip, IEnumerable<Load> loads)
+    /// <param name="startingOrder">The starting order number for the stops. Defaults to 1.</param>
+    private static void AddStops(Trip trip, IEnumerable<Load> loads, int startingOrder = 1)
     {
         // Stops are created in the order of loads
-        var order = 1;
+        var order = startingOrder;
         foreach (var load in loads)
         {
             trip.Stops.Add(new TripStop
             {
-                Trip = trip,
+                Trip = null!,
+                TripId = trip.Id,
                 Order = order++,
                 Type = TripStopType.PickUp,
                 Address = load.OriginAddress,
                 Location = load.OriginLocation,
-                Load = load,
+                Load = null!,
                 LoadId = load.Id
             });
 
             trip.Stops.Add(new TripStop
             {
-                Trip = trip,
+                Trip = null!,
+                TripId = trip.Id,
                 Order = order++,
                 Type = TripStopType.DropOff,
                 Address = load.DestinationAddress,
                 Location = load.DestinationLocation,
-                Load = load,
+                Load = null!,
                 LoadId = load.Id
             });
         }
@@ -271,30 +282,20 @@ public class Trip : AuditableEntity, ITenantEntity
     }
 
     /// <summary>
-    ///     Adds a load to the trip.
+    ///     Adds new loads to the trip, creating corresponding pick-up and drop-off stops.
     /// </summary>
-    /// <param name="load">The load to be added.</param>
+    /// <param name="loads">The collection of loads to be added.</param>
     /// <exception cref="InvalidOperationException">Thrown if the trip status is not 'Draft'.</exception>
-    public void AddLoad(Load load)
+    public void AddLoads(IEnumerable<Load> loads)
     {
         if (Status != TripStatus.Draft)
         {
             throw new InvalidOperationException("Cannot modify loads unless trip is Draft.");
         }
 
-        var order = (Stops.Count == 0 ? 0 : Stops.Max(s => s.Order)) + 1;
+        var order = (Stops.Count == 0 ? 1 : Stops.Max(s => s.Order)) + 1;
 
-        Stops.Add(new TripStop
-        {
-            Trip = this, Order = order++, Type = TripStopType.PickUp, Address = load.OriginAddress,
-            Location = load.OriginLocation, Load = load, LoadId = load.Id
-        });
-        Stops.Add(new TripStop
-        {
-            Trip = this, Order = order, Type = TripStopType.DropOff, Address = load.DestinationAddress,
-            Location = load.DestinationLocation, Load = load, LoadId = load.Id
-        });
-
+        AddStops(this, loads, order);
         TotalDistance = GetLoads().Sum(l => l.Distance);
     }
 

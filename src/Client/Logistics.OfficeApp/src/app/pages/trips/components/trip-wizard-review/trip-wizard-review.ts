@@ -50,6 +50,7 @@ export class TripWizardReview {
 
   public readonly back = output<void>();
   public readonly save = output<void>();
+  public readonly stopsUpdated = output<TripStopDto[]>();
 
   constructor() {
     effect(() => {
@@ -87,6 +88,9 @@ export class TripWizardReview {
     this.apiService.tripApi.optimizeTripStops(optimizeTripStopsCommand).subscribe((result) => {
       if (result.success && result.data) {
         this.optimizedStops.set(result.data.orderedStops);
+
+        // Emit the updated stops to the parent component
+        this.stopsUpdated.emit(result.data.orderedStops);
       }
       this.isOptimizing.set(false);
     });

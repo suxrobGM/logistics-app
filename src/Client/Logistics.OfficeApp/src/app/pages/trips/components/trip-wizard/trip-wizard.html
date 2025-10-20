@@ -43,6 +43,7 @@
           [stepData]="step3Data()"
           (back)="activateCallback(2)"
           (save)="processStep3()"
+          (stopsUpdated)="updateStops($event)"
         />
       </ng-template>
     </p-step-panel>

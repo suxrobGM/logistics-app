@@ -161,7 +161,8 @@ public class Load : AuditableEntity, ITenantEntity
         GeoPoint destinationLocation,
         Customer customer,
         Truck assignedTruck,
-        Employee assignedDispatcher)
+        Employee assignedDispatcher,
+        Trip? trip = null)
     {
         var load = new Load
         {
@@ -179,6 +180,14 @@ public class Load : AuditableEntity, ITenantEntity
             CustomerId = customer.Id,
             Customer = customer
         };
+
+        // Create trip stops directly in the load entity to avoid EF Core Concurrency issues
+        if (trip is not null)
+        {
+            var tripStops = CreateTripStops(trip, load);
+            load.TripStops.Add(tripStops[0]); // pick up stop
+            load.TripStops.Add(tripStops[1]); // drop off stop
+        }
 
         load.Distance = load.OriginLocation.DistanceTo(load.DestinationLocation);
         var invoice = CreateInvoice(load);
@@ -199,5 +208,44 @@ public class Load : AuditableEntity, ITenantEntity
             Load = load
         };
         return invoice;
+    }
+
+    /// <summary>
+    ///     Create trip stops in the linear order (pick up, drop off)
+    /// </summary>
+    /// <param name="trip">The trip to which the stops will be added.</param>
+    /// <param name="load">The load to be added.</param>
+    /// <returns>An array of two trip stops.</returns>
+    private static TripStop[] CreateTripStops(Trip trip, Load load)
+    {
+        // Stops are created in the order of loads
+        var startingOrder = trip.Stops.Count == 0 ? 1 : trip.Stops.Max(s => s.Order) + 1;
+        var tripStops = new TripStop[2];
+
+        tripStops[0] = new TripStop
+        {
+            Trip = trip,
+            TripId = trip.Id,
+            Order = startingOrder++,
+            Type = TripStopType.PickUp,
+            Address = load.OriginAddress,
+            Location = load.OriginLocation,
+            Load = load,
+            LoadId = load.Id
+        };
+
+        tripStops[1] = new TripStop
+        {
+            Trip = trip,
+            TripId = trip.Id,
+            Order = startingOrder,
+            Type = TripStopType.DropOff,
+            Address = load.DestinationAddress,
+            Location = load.DestinationLocation,
+            Load = load,
+            LoadId = load.Id
+        };
+
+        return tripStops;
     }
 }
