@@ -18,7 +18,7 @@ export interface TripWizardValue {
   truckId: string;
   truckVehicleCapacity: number;
   newLoads?: CreateTripLoadCommand[] | null;
-  attachedLoads?: TripLoadDto[] | null;
+  // attachedLoads removed - API doesn't support attaching existing loads
   detachedLoads?: TripLoadDto[] | null;
   stops: TripStopDto[];
   totalDistance: number;

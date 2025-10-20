@@ -189,22 +189,6 @@ public class Trip : AuditableEntity, ITenantEntity
             {
                 stop.Order = tripStop.Order;
             }
-            else
-            {
-                // Add a new stop that wasn't in the original trip
-                var newStop = new TripStop
-                {
-                    Trip = this,
-                    Order = stop.Order,
-                    Type = stop.Type,
-                    Address = stop.Address,
-                    Location = stop.Location,
-                    LoadId = stop.LoadId,
-                    Load = stop.Load
-                };
-
-                Stops.Add(newStop);
-            }
         }
 
         TotalDistance = GetLoads().Sum(l => l.Distance);

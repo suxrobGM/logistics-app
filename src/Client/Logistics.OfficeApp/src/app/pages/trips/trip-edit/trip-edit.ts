@@ -47,7 +47,7 @@ export class TripEditPage implements OnInit {
       name: formValues.tripName,
       truckId: formValues.truckId,
       newLoads: formValues.newLoads,
-      attachedLoadIds: formValues.attachedLoads?.map((l) => l.id),
+      // attachedLoadIds: formValue.attachedLoads?.map((l) => l.id),
       detachedLoadIds: formValues.detachedLoads?.map((l) => l.id),
       optimizedStops: formValues.stops,
     };

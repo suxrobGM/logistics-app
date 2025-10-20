@@ -37,7 +37,7 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
         // Name field
         if (!string.IsNullOrEmpty(req.Name) && trip.Name != req.Name)
         {
-            trip.Name = req.Name!;
+            trip.Name = req.Name;
         }
 
         // Truck swap
@@ -58,13 +58,14 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
 
         var removedCount = RemoveLoads(trip, loadsMap, req.DetachedLoadIds);
 
-        var attachResult = await AttachExistingLoadsAsync(trip, loadsMap, req.AttachedLoadIds, ct);
-        if (!attachResult.Success)
-        {
-            return Result.Fail(attachResult.Error!);
-        }
+        // Disabled the attach logic for now
+        // var attachResult = await AttachExistingLoadsAsync(trip, loadsMap, req.AttachedLoadIds, ct);
+        // if (!attachResult.Success)
+        // {
+        //     return Result.Fail(attachResult.Error!);
+        // }
 
-        var attachedCount = attachResult.Data;
+        var attachedCount = 0; // attachResult.Data;
         var createdCount = await CreateNewLoadsAsync(trip, loadsMap, req.NewLoads);
 
         // Convert optimized stops DTOs to domain entities if provided
@@ -91,13 +92,15 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
             return 0;
         }
 
+        var loadRepo = _uow.Repository<Load>();
+
         var before = loadsMap.Count;
         foreach (var loadId in loadIdsToRemove.Distinct())
         {
             if (loadsMap.Remove(loadId, out var load))
             {
                 trip.RemoveLoad(loadId);
-                _uow.Repository<Load>().Delete(load);
+                loadRepo.Delete(load);
             }
         }
 

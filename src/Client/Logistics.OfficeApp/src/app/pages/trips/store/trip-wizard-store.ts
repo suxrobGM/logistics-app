@@ -163,7 +163,8 @@ export const TripWizardStore = signalStore(
       truckId: store.truckId(),
       truckVehicleCapacity: store.truckVehicleCapacity(),
       newLoads: store.newLoads().length > 0 ? store.newLoads() : null,
-      attachedLoads: store.attachedLoads().length > 0 ? store.attachedLoads() : null,
+      // attachedLoads removed - API doesn't support attaching existing loads
+      // attachedLoads: store.attachedLoads().length > 0 ? store.attachedLoads() : null,
       detachedLoads: store.detachedLoads().length > 0 ? store.detachedLoads() : null,
       stops: store.stops(),
       totalDistance: store.totalDistance(),
@@ -253,12 +254,14 @@ export const TripWizardStore = signalStore(
       });
     },
 
-    attachExistingLoad(load: TripLoadDto): void {
-      patchState(store, {
-        attachedLoads: [...store.attachedLoads(), load],
-        stopsNeedRegeneration: true, // Mark stops as needing regeneration
-      });
-    },
+    // attachExistingLoad removed - API doesn't support attaching existing loads
+    // The attachedLoads state is only used for edit mode to show existing loads
+    // attachExistingLoad(load: TripLoadDto): void {
+    //   patchState(store, {
+    //     attachedLoads: [...store.attachedLoads(), load],
+    //     stopsNeedRegeneration: true, // Mark stops as needing regeneration
+    //   });
+    // },
 
     detachLoad(loadId: string): void {
       const load = store.tableRows().find((l) => l.id === loadId);
