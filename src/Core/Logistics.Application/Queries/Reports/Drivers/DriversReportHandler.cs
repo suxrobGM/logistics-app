@@ -88,11 +88,8 @@ internal sealed class DriversReportHandler(ITenantUnitOfWork tenantUow) : IAppRe
         }
 
         var totalCount = driverStats.Count();
-        var totalGross = driverStats.Sum(d => d.GrossEarnings);
-        var totalDistance = driverStats.Sum(d => d.DistanceDriven);
 
-        var items = driverStats
-            .OrderByDescending(d => req.OrderBy)
+        var items = driverStats.OrderBy(req.OrderBy)
             .Skip((req.Page - 1) * req.PageSize)
             .Take(req.PageSize)
             .ToList();

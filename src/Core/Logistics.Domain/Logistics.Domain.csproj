@@ -10,6 +10,7 @@
     <ItemGroup>
         <PackageReference Include="MediatR.Contracts" Version="2.0.1"/>
         <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="9.0.9" />
+		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.7" />
     </ItemGroup>
 
     <ItemGroup>
