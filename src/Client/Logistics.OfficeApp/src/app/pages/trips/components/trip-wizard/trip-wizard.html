@@ -7,7 +7,7 @@
   </div>
 }
 
-<p-stepper [linear]="true" [value]="activeStep()" (valueChange)="activeStep.set($event ?? 1)">
+<p-stepper [linear]="true" [value]="activeStep()" (valueChange)="store['goToStep']($event ?? 1)">
   <p-step-list>
     <p-step [value]="1">Basic Info</p-step>
     <p-step [value]="2">Loads</p-step>
@@ -15,35 +15,23 @@
   </p-step-list>
   <p-step-panels>
     <p-step-panel [value]="1">
-      <ng-template #content let-activateCallback="activateCallback">
+      <ng-template #content>
         <!-- Basic info form-->
-        <app-trip-wizard-basic
-          [stepData]="step1Data()"
-          [disabled]="disabled()"
-          (next)="processStep1($event)"
-        />
+        <app-trip-wizard-basic [disabled]="disabled()" />
       </ng-template>
     </p-step-panel>
     <p-step-panel [value]="2">
-      <ng-template #content let-activateCallback="activateCallback">
+      <ng-template #content>
         <!-- Loads table -->
-        <app-trip-wizard-loads
-          [stepData]="step2Data()"
-          [disabled]="disabled()"
-          (back)="activateCallback(1)"
-          (next)="processStep2($event)"
-        />
+        <app-trip-wizard-loads [disabled]="disabled()" />
       </ng-template>
     </p-step-panel>
     <p-step-panel [value]="3">
-      <ng-template #content let-activateCallback="activateCallback">
+      <ng-template #content>
         <!-- Review step -->
         <app-trip-wizard-review
           [saveButtonLabel]="mode() === 'create' ? 'Create' : 'Update'"
-          [stepData]="step3Data()"
-          (back)="activateCallback(2)"
           (save)="processStep3()"
-          (stopsUpdated)="updateStops($event)"
         />
       </ng-template>
     </p-step-panel>

@@ -102,7 +102,7 @@
                   pTooltip="Undo detach"
                   tooltipPosition="bottom"
                   variant="outlined"
-                  (click)="undoDetachLoad(row)"
+                  (click)="undoDetachLoad(row.id)"
                   [disabled]="disabled()"
                 />
               } @else {
@@ -112,7 +112,7 @@
                   pTooltip="Detach"
                   tooltipPosition="bottom"
                   variant="outlined"
-                  (click)="detachLoad(row)"
+                  (click)="detachLoad(row.id)"
                   [disabled]="disabled()"
                 />
               }
@@ -122,7 +122,7 @@
                 severity="danger"
                 pTooltip="Remove new load"
                 variant="outlined"
-                (click)="removeNewLoad(row)"
+                (click)="removeNewLoad(row.id)"
                 [disabled]="disabled()"
               />
             }
@@ -134,8 +134,8 @@
     <ng-template #footer>
       <tr>
         <td colspan="6" class="font-bold">Totals</td>
-        <td class="text-right">{{ totalDistance() | distanceUnit: "mi" }}</td>
-        <td class="text-right">{{ totalCost() | currency }}</td>
+        <td class="text-right">{{ store["totalDistanceFromLoads"]() | distanceUnit: "mi" }}</td>
+        <td class="text-right">{{ store["totalCostFromLoads"]() | currency }}</td>
         <td></td>
       </tr>
     </ng-template>
@@ -147,7 +147,7 @@
       label="Back"
       severity="secondary"
       icon="pi pi-arrow-left"
-      (click)="back.emit()"
+      (click)="goToPreviousStep()"
     />
     <p-button
       type="button"

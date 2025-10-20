@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, output } from "@angular/core";
+import { Component, effect, inject, input } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { Button } from "primeng/button";
@@ -6,12 +6,7 @@ import { InputTextModule } from "primeng/inputtext";
 import { TruckDto, TruckType } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { FormField, SearchTruckComponent, ValidationSummary } from "@/shared/components";
-
-export interface TripWizardBasicData {
-  tripName: string;
-  truckId: string;
-  truckVehicleCapacity: number;
-}
+import { TripWizardStore } from "../../store/trip-wizard-store";
 
 @Component({
   selector: "app-trip-wizard-basic",
@@ -28,10 +23,9 @@ export interface TripWizardBasicData {
 })
 export class TripWizardBasic {
   private readonly toastService = inject(ToastService);
+  protected readonly store = inject(TripWizardStore);
 
-  public readonly stepData = input<TripWizardBasicData | null>(null);
   public readonly disabled = input<boolean>(false);
-  public readonly next = output<TripWizardBasicData>();
 
   protected readonly form = new FormGroup({
     tripName: new FormControl<string>("", { validators: [Validators.required], nonNullable: true }),
@@ -42,20 +36,21 @@ export class TripWizardBasic {
   });
 
   constructor() {
+    // Initialize form from store
     effect(() => {
-      const stepData = this.stepData();
+      const tripName = this.store.tripName();
+      const truckId = this.store.truckId();
 
-      // Initialize form from step data
-      if (stepData) {
+      if (tripName || truckId) {
         this.form.patchValue({
-          tripName: stepData.tripName ?? "",
-          truck: stepData.truckId ?? null,
+          tripName: tripName || "",
+          truck: truckId || null,
         });
       }
 
       // Enable or disable form controls based on the disabled input
       if (this.disabled()) {
-        this.form.get("truckId")?.disable();
+        this.form.get("truck")?.disable();
       } else {
         this.form.enable();
       }
@@ -74,13 +69,14 @@ export class TripWizardBasic {
       return;
     }
 
-    this.next.emit({
-      tripName: this.form.value.tripName ?? this.stepData()?.tripName ?? "",
-      truckId: (this.form.value.truck as TruckDto)?.id ?? this.stepData()?.truckId ?? "",
-      truckVehicleCapacity:
-        (this.form.value.truck as TruckDto)?.vehicleCapacity ??
-        this.stepData()?.truckVehicleCapacity ??
-        0,
+    // Update store with basic info
+    this.store.setBasicInfo({
+      tripName: this.form.value.tripName ?? "",
+      truckId: (this.form.value.truck as TruckDto)?.id ?? "",
+      truckVehicleCapacity: (this.form.value.truck as TruckDto)?.vehicleCapacity ?? 0,
     });
+
+    // Navigate to next step
+    this.store.nextStep();
   }
 }

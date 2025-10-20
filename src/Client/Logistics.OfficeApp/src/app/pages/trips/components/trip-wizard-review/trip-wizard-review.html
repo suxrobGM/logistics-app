@@ -4,13 +4,13 @@
       <div class="flex items-center justify-between">
         <div>
           <div class="text-sm opacity-70">Trip</div>
-          <div class="text-lg font-semibold">{{ stepData()?.tripName ?? "—" }}</div>
+          <div class="text-lg font-semibold">{{ reviewData().tripName || "—" }}</div>
         </div>
         <i class="pi pi-flag text-2xl opacity-60"></i>
       </div>
       <div class="mt-2 text-sm">
         Truck:
-        <span class="font-medium">{{ stepData()?.truckId ?? "—" }}</span>
+        <span class="font-medium">{{ reviewData().truckId || "—" }}</span>
       </div>
     </p-card>
 
@@ -19,11 +19,9 @@
         <div>
           <div class="text-sm opacity-70">Loads</div>
           <div class="text-lg font-semibold">
-            {{ stepData()?.totalLoads ?? 0 }}
+            {{ reviewData().totalLoads }}
             <span class="text-xs font-normal opacity-70">
-              (+{{ stepData()?.newLoadsCount ?? 0 }} new, -{{
-                stepData()?.pendingDetachLoadsCount ?? 0
-              }}
+              (+{{ reviewData().newLoadsCount }} new, -{{ reviewData().pendingDetachLoadsCount }}
               pending)
             </span>
           </div>
@@ -38,12 +36,10 @@
           <div class="text-sm opacity-70">Totals</div>
           <div>
             Distance:
-            <span class="font-semibold"
-              >{{ stepData()?.totalDistance | distanceUnit: "mi" }} mi</span
-            >
+            <span class="font-semibold">{{ reviewData().totalDistance | distanceUnit: "mi" }} mi</span>
           </div>
           <div>
-            Cost: <span class="font-semibold">{{ stepData()?.totalCost | currency }}</span>
+            Cost: <span class="font-semibold">{{ reviewData().totalCost | currency }}</span>
           </div>
         </div>
         <i class="pi pi-chart-line text-2xl opacity-60"></i>
@@ -69,7 +65,7 @@
     </ng-template>
 
     <p-table
-      [value]="optimizedStops() ?? []"
+      [value]="reviewData().stops"
       dataKey="id"
       sortField="order"
       sortMode="single"
@@ -97,7 +93,7 @@
   </p-card>
 
   <app-direction-map
-    [waypoints]="optimizedStops() ?? []"
+    [waypoints]="reviewData().stops"
     height="700px"
     [zoom]="4"
     [selectedWaypoint]="selectedStop()"
@@ -111,7 +107,7 @@
       label="Back"
       severity="secondary"
       icon="pi pi-arrow-left"
-      (click)="back.emit()"
+      (click)="goToPreviousStep()"
     />
     <p-button
       type="button"
