@@ -24,12 +24,11 @@ import {
   FINANCIAL_METRICS_CHART_OPTIONS,
   INVOICE_STATUS_CHART_OPTIONS,
   REVENUE_TREND_CHART_OPTIONS,
-} from "@/shared/constants/financials-chart.options";
+} from "@/shared/constants";
 
 @Component({
   selector: "app-financials-report",
   templateUrl: "./financials-report.html",
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
@@ -49,13 +48,13 @@ export class FinancialsReportComponent
   extends BaseReportComponent<FinancialsReportDto>
   implements OnInit
 {
-  protected readonly InvoiceStatusChartData = signal<any>({});
-  protected readonly revenueTrendChartData = signal<any>({});
-  protected readonly financialMetricsChartData = signal<any>({});
+  protected readonly invoiceStatusChartData = signal<Record<string, unknown>>({});
+  protected readonly revenueTrendChartData = signal<Record<string, unknown>>({});
+  protected readonly financialMetricsChartData = signal<Record<string, unknown>>({});
 
-  protected readonly InvoiceStatusChartOptions = INVOICE_STATUS_CHART_OPTIONS;
-  protected revenueTrendChartOptions: any = REVENUE_TREND_CHART_OPTIONS;
-  protected financialMetricsChartOptions: any = FINANCIAL_METRICS_CHART_OPTIONS;
+  protected readonly invoiceStatusChartOptions = INVOICE_STATUS_CHART_OPTIONS;
+  protected revenueTrendChartOptions = REVENUE_TREND_CHART_OPTIONS;
+  protected financialMetricsChartOptions = FINANCIAL_METRICS_CHART_OPTIONS;
 
   ngOnInit(): void {
     this.fetch({ startDate: this.startDate(), endDate: this.endDate() });
@@ -72,7 +71,7 @@ export class FinancialsReportComponent
     const hasData = result.fullyPaidInvoices + result.partiallyPaidInvoices + result.unpaidInvoices;
 
     if (hasData > 0) {
-      this.InvoiceStatusChartData.set({
+      this.invoiceStatusChartData.set({
         labels: FINANCIALS_CHART_LABELS,
         datasets: [
           {
@@ -83,6 +82,7 @@ export class FinancialsReportComponent
         ],
       });
     }
+
     // Revenue Trends Chart
     const revenueTrends = result.revenueTrends ?? [];
     if (revenueTrends.length > 0) {

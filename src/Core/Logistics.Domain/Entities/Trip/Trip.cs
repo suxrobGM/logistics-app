@@ -208,25 +208,25 @@ public class Trip : AuditableEntity, ITenantEntity
         {
             trip.Stops.Add(new TripStop
             {
-                Trip = null!,
+                Trip = trip,
                 TripId = trip.Id,
                 Order = order++,
                 Type = TripStopType.PickUp,
                 Address = load.OriginAddress,
                 Location = load.OriginLocation,
-                Load = null!,
+                Load = load,
                 LoadId = load.Id
             });
 
             trip.Stops.Add(new TripStop
             {
-                Trip = null!,
+                Trip = trip,
                 TripId = trip.Id,
                 Order = order++,
                 Type = TripStopType.DropOff,
                 Address = load.DestinationAddress,
                 Location = load.DestinationLocation,
-                Load = null!,
+                Load = load,
                 LoadId = load.Id
             });
         }

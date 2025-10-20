@@ -1,4 +1,4 @@
-import { CurrencyPipe, DecimalPipe, PercentPipe } from "@angular/common";
+import { CurrencyPipe, DecimalPipe } from "@angular/common";
 import { Component, OnInit, inject, signal } from "@angular/core";
 import { Card } from "primeng/card";
 import { ChartModule } from "primeng/chart";
@@ -34,7 +34,6 @@ import {
     SkeletonModule,
     TagModule,
   ],
-  standalone: true,
 })
 export class DriversReportComponent
   extends BaseReportComponent<DriverDashboardDto>
@@ -42,13 +41,13 @@ export class DriversReportComponent
 {
   protected override readonly apiService = inject(ApiService);
 
-  protected readonly trendChartData = signal<any>({});
-  protected readonly efficiencyChartData = signal<any>({});
-  protected readonly performanceChartData = signal<any>({});
+  protected readonly trendChartData = signal<Record<string, unknown>>({});
+  protected readonly efficiencyChartData = signal<Record<string, unknown>>({});
+  protected readonly performanceChartData = signal<Record<string, unknown>>({});
 
-  protected trendChartOptions: any = DRIVERS_TREND_CHART_OPTIONS;
-  protected efficiencyChartOptions: any = DRIVERS_EFFICIENCY_CHART_OPTIONS;
-  protected performanceChartOptions: any = DRIVERS_PERFORMANCE_CHART_OPTIONS;
+  protected trendChartOptions = DRIVERS_TREND_CHART_OPTIONS;
+  protected efficiencyChartOptions = DRIVERS_EFFICIENCY_CHART_OPTIONS;
+  protected performanceChartOptions = DRIVERS_PERFORMANCE_CHART_OPTIONS;
 
   ngOnInit(): void {
     this.fetch({ startDate: this.startDate(), endDate: this.endDate() });

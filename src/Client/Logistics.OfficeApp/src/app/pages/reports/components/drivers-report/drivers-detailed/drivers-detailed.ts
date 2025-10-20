@@ -1,5 +1,5 @@
 import { CurrencyPipe, DecimalPipe } from "@angular/common";
-import { Component, OnInit, inject, model, signal } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -9,15 +9,14 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { Observable } from "rxjs";
 import { ApiService } from "@/core/api";
-import { PagedResult, Result } from "@/core/api/models";
+import { PagedResult } from "@/core/api/models";
 import { DriverReportDto } from "@/core/api/models/report/drivers-report.dto";
 import { BaseTableComponent, RangeCalendar, TableQueryParams } from "@/shared/components";
 import { DateUtils } from "@/shared/utils";
 
 @Component({
-  selector: "app-drivers-report",
+  selector: "app-drivers-detailed",
   templateUrl: "./drivers-detailed.html",
-  standalone: true,
   imports: [
     FormsModule,
     ButtonModule,
@@ -32,11 +31,10 @@ import { DateUtils } from "@/shared/utils";
   ],
 })
 export class DriversDetailedComponent extends BaseTableComponent<DriverReportDto> {
+  private readonly apiService = inject(ApiService);
+
   protected readonly startDate = signal(DateUtils.thisYear());
   protected readonly endDate = signal(DateUtils.today());
-  protected search: string = "";
-
-  private readonly apiService = inject(ApiService);
 
   protected override query(params: TableQueryParams): Observable<PagedResult<DriverReportDto>> {
     const orderBy = this.apiService.formatSortField(params.sortField, params.sortOrder);
@@ -47,7 +45,7 @@ export class DriversDetailedComponent extends BaseTableComponent<DriverReportDto
       orderBy: orderBy,
       search: params.search,
       startDate: this.startDate(),
-      endDate: this.endDate() || undefined,
+      endDate: this.endDate(),
     });
   }
   protected filterByDate(): void {

@@ -12,7 +12,6 @@
           pInputText
           id="search"
           type="text"
-          [(ngModel)]="search"
           (change)="onSearch($event)"
           name="search"
           placeholder="Search drivers..."
@@ -42,7 +41,7 @@
       [value]="data()"
       [loading]="isLoading()"
       [tableStyle]="{ 'min-width': '50rem' }"
-      styleClass="p-datatable-sm"
+      [size]="'small'"
       [showLoader]="true"
       [lazy]="true"
       [paginator]="true"
@@ -53,7 +52,6 @@
       [totalRecords]="totalRecords()"
       [loading]="isLoading()"
       [rowsPerPageOptions]="[10, 25, 50]"
-      responsiveLayout="scroll"
     >
       <ng-template pTemplate="header">
         <tr>
@@ -80,9 +78,7 @@
             Efficiency
             <p-sortIcon field="Efficiency" />
           </th>
-          <th>
-            Performance
-          </th>
+          <th>Performance</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-driver>

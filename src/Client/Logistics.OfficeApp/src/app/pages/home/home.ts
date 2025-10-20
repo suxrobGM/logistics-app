@@ -36,7 +36,6 @@ const chartOptions = {
 @Component({
   selector: "app-home",
   templateUrl: "./home.html",
-  styleUrl: "./home.css",
   imports: [
     CardModule,
     SharedModule,

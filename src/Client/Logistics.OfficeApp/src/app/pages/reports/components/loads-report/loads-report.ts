@@ -19,7 +19,7 @@ import {
   LOADS_PIE_OPTIONS,
   LOADS_TREND_CHART_OPTIONS,
   LOADS_TYPE_CHART_OPTIONS,
-} from "@/shared/constants/loads-chart.options";
+} from "@/shared/constants";
 
 @Component({
   selector: "app-loads-report",
@@ -34,20 +34,19 @@ import {
     SkeletonModule,
     TagModule,
   ],
-  standalone: true,
 })
 export class LoadsReportComponent extends BaseReportComponent<LoadsReportDto> implements OnInit {
   // signals
-  protected readonly chartData = signal<any>({});
-  protected readonly trendChartData = signal<any>({});
-  protected readonly performanceChartData = signal<any>({});
-  protected readonly typeChartData = signal<any>({});
+  protected readonly chartData = signal<Record<string, unknown>>({});
+  protected readonly trendChartData = signal<Record<string, unknown>>({});
+  protected readonly performanceChartData = signal<Record<string, unknown>>({});
+  protected readonly typeChartData = signal<Record<string, unknown>>({});
 
   // charts state
-  protected pieOptions: any = LOADS_PIE_OPTIONS;
-  protected typeChartOptions: any = LOADS_TYPE_CHART_OPTIONS;
-  protected trendChartOptions: any = LOADS_TREND_CHART_OPTIONS;
-  protected performanceChartOptions: any = LOADS_PERFORMANCE_CHART_OPTIONS;
+  protected pieOptions = LOADS_PIE_OPTIONS;
+  protected typeChartOptions = LOADS_TYPE_CHART_OPTIONS;
+  protected trendChartOptions = LOADS_TREND_CHART_OPTIONS;
+  protected performanceChartOptions = LOADS_PERFORMANCE_CHART_OPTIONS;
 
   ngOnInit(): void {
     this.fetch({ startDate: this.startDate(), endDate: this.endDate() });
