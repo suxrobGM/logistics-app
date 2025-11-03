@@ -30,21 +30,25 @@ class DashboardViewModel(
         viewModelScope.launch {
             _uiState.value = DashboardUiState.Loading
 
-            // Get driver ID first
-            userRepository.getCurrentDriver()
-                .onSuccess { driverId ->
-                    // Then get truck with active loads
-                    truckRepository.getTruckByDriver(driverId)
-                        .onSuccess { truck ->
-                            _uiState.value = DashboardUiState.Success(truck)
-                        }
-                        .onFailure { error ->
-                            _uiState.value = DashboardUiState.Error(error.message ?: "Failed to load truck")
-                        }
-                }
-                .onFailure { error ->
-                    _uiState.value = DashboardUiState.Error(error.message ?: "Failed to load driver")
-                }
+            try {
+                // Get driver ID first
+                userRepository.getCurrentDriver()
+                    .onSuccess { driverId ->
+                        // Then get truck with active loads
+                        truckRepository.getTruckByDriver(driverId)
+                            .onSuccess { truck ->
+                                _uiState.value = DashboardUiState.Success(truck)
+                            }
+                            .onFailure { error ->
+                                _uiState.value = DashboardUiState.Error(error.message ?: "Failed to load truck")
+                            }
+                    }
+                    .onFailure { error ->
+                        _uiState.value = DashboardUiState.Error(error.message ?: "Failed to load driver")
+                    }
+            } catch (e: Exception) {
+                _uiState.value = DashboardUiState.Error(e.message ?: "An error occurred")
+            }
         }
     }
 

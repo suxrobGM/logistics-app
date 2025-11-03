@@ -80,9 +80,10 @@ dependencies {
     // Navigation Compose
     implementation(libs.androidx.navigation.compose)
 
-    // Dependency Injection - Koin (KMP-compatible)
-    implementation(libs.koin.android)
+    // Dependency Injection - Koin
+    implementation(project.dependencies.platform(libs.koin.bom))
     implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.androidx.compose.navigation)
 
     // DataStore
     implementation(libs.androidx.datastore.preferences)
@@ -113,4 +114,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.espresso)
+
+    // Compose Tooling (for Previews)
+    debugImplementation(libs.compose.ui.tooling)
 }

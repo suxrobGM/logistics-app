@@ -1,24 +1,40 @@
 package com.jfleets.driver.presentation.ui.screens.dashboard
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.koinViewModel
 import com.jfleets.driver.presentation.ui.components.CardContainer
 import com.jfleets.driver.presentation.ui.components.ErrorView
 import com.jfleets.driver.presentation.ui.components.LoadCard
 import com.jfleets.driver.presentation.ui.components.LoadingIndicator
 import com.jfleets.driver.presentation.viewmodel.DashboardUiState
 import com.jfleets.driver.presentation.viewmodel.DashboardViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +58,7 @@ fun DashboardScreen(
                         viewModel.logout()
                         onLogout()
                     }) {
-                        Icon(Icons.Default.ExitToApp, "Logout")
+                        Icon(Icons.AutoMirrored.Filled.ExitToApp, "Logout")
                     }
                 }
             )
@@ -57,6 +73,7 @@ fun DashboardScreen(
                 is DashboardUiState.Loading -> {
                     LoadingIndicator()
                 }
+
                 is DashboardUiState.Success -> {
                     val truck = state.truck
                     LazyColumn(
@@ -121,6 +138,7 @@ fun DashboardScreen(
                         }
                     }
                 }
+
                 is DashboardUiState.Error -> {
                     ErrorView(
                         message = state.message,

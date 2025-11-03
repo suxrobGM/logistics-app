@@ -1,12 +1,15 @@
 package com.jfleets.driver.shared.platform
 
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlin.time.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.toNSDate
-import platform.Foundation.*
+import platform.Foundation.NSBundle
+import platform.Foundation.NSDateFormatter
+import platform.Foundation.NSDateFormatterMediumStyle
+import platform.Foundation.NSDateFormatterNoStyle
+import platform.Foundation.NSDateFormatterShortStyle
+import platform.Foundation.NSUserDefaults
 import platform.UIKit.UIDevice
+import kotlin.time.Instant
 
 actual class PlatformSettings {
     private val userDefaults = NSUserDefaults.standardUserDefaults
@@ -80,20 +83,8 @@ actual class AuthManager {
     }
 }
 
-actual fun getPlatformName(): String = UIDevice.currentDevice.systemName() + " " + UIDevice.currentDevice.systemVersion
-
-@OptIn(ExperimentalForeignApi::class)
-actual fun Double.formatCurrency(): String {
-    val formatter = NSNumberFormatter()
-    formatter.numberStyle = NSNumberFormatterCurrencyStyle
-    formatter.locale = NSLocale("en_US")
-    return formatter.stringFromNumber(NSNumber(this)) ?: "$${String.format("%.2f", this)}"
-}
-
-actual fun Double.formatDistance(): String {
-    val miles = this * 0.000621371
-    return String.format("%.1f mi", miles)
-}
+actual fun getPlatformName(): String =
+    UIDevice.currentDevice.systemName() + " " + UIDevice.currentDevice.systemVersion
 
 @OptIn(ExperimentalForeignApi::class)
 actual fun Instant.formatShort(): String {

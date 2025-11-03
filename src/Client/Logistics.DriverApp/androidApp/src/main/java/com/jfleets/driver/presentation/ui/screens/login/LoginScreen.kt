@@ -2,6 +2,7 @@ package com.jfleets.driver.presentation.ui.screens.login
 
 import android.app.Activity
 import android.content.Intent
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -19,6 +20,7 @@ import com.jfleets.driver.R
 import com.jfleets.driver.presentation.ui.components.LoadingIndicator
 import com.jfleets.driver.presentation.viewmodel.LoginUiState
 import com.jfleets.driver.presentation.viewmodel.LoginViewModel
+import kotlin.system.exitProcess
 
 @Composable
 fun LoginScreen(
@@ -46,6 +48,11 @@ fun LoginScreen(
             }
             else -> {}
         }
+    }
+
+    // Handle back button press - exit app from login screen
+    BackHandler {
+        (context as? Activity)?.finish()
     }
 
     Box(

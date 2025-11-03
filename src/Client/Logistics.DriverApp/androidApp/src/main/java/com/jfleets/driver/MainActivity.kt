@@ -3,11 +3,28 @@ package com.jfleets.driver
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -17,43 +34,19 @@ import com.jfleets.driver.data.repository.AuthRepository
 import com.jfleets.driver.presentation.navigation.AppNavigation
 import com.jfleets.driver.presentation.navigation.Screen
 import com.jfleets.driver.presentation.ui.theme.LogisticsDriverTheme
-import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
+import org.koin.compose.koinInject
 
 class MainActivity : ComponentActivity() {
 
-    private val authRepository: AuthRepository by inject()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
         setContent {
             LogisticsDriverTheme {
-                val navController = rememberNavController()
-                val scope = rememberCoroutineScope()
-                var isLoggedIn by remember { mutableStateOf<Boolean?>(null) }
-
-                // Check auth status
-                LaunchedEffect(Unit) {
-                    scope.launch {
-                        isLoggedIn = authRepository.isLoggedIn()
-                    }
-                }
-
-                // Show loading while checking auth
-                if (isLoggedIn == null) {
-                    Surface(color = MaterialTheme.colorScheme.background) {
-                        // Loading state
-                    }
-                } else {
-                    DriverAppScaffold(
-                        startDestination = if (isLoggedIn == true) {
-                            Screen.Dashboard.route
-                        } else {
-                            Screen.Login.route
-                        }
-                    )
-                }
+                // Always start with the app scaffold
+                DriverAppScaffold()
+                //TestScreen()
             }
         }
     }
@@ -61,15 +54,50 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DriverAppScaffold(startDestination: String) {
+fun TestScreen() {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Test Screen") }
+            )
+        }
+    ) { paddingValues ->
+        Text(
+            text = "This is a test screen.",
+            modifier = Modifier.padding(paddingValues)
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DriverAppScaffold() {
+    val authRepository: AuthRepository = koinInject()
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
+    var initialCheckDone by remember { mutableStateOf(false) }
+
+    // Check auth status once and navigate if logged in
+    LaunchedEffect(Unit) {
+        try {
+            val isLoggedIn = authRepository.isLoggedIn()
+            if (isLoggedIn) {
+                navController.navigate(Screen.Dashboard.route) {
+                    popUpTo(Screen.Login.route) { inclusive = true }
+                }
+            }
+        } catch (e: Exception) {
+            // Stay on login screen if check fails
+        } finally {
+            initialCheckDone = true
+        }
+    }
 
     val bottomNavItems = listOf(
         BottomNavItem("Dashboard", Screen.Dashboard.route, Icons.Default.Dashboard),
         BottomNavItem("Stats", Screen.Stats.route, Icons.Default.BarChart),
-        BottomNavItem("Past Loads", Screen.PastLoads.route, Icons.Default.List),
+        BottomNavItem("Past Loads", Screen.PastLoads.route, Icons.AutoMirrored.Filled.List),
         BottomNavItem("Account", Screen.Account.route, Icons.Default.AccountCircle),
         BottomNavItem("Settings", Screen.Settings.route, Icons.Default.Settings),
         BottomNavItem("About", Screen.About.route, Icons.Default.Info)
@@ -108,7 +136,7 @@ fun DriverAppScaffold(startDestination: String) {
     ) { innerPadding ->
         AppNavigation(
             navController = navController,
-            startDestination = startDestination,
+            startDestination = Screen.Login.route,
             modifier = Modifier.padding(innerPadding)
         )
     }

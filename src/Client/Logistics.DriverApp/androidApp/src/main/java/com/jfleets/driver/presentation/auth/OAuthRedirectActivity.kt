@@ -1,6 +1,5 @@
 package com.jfleets.driver.presentation.auth
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -17,9 +16,9 @@ class OAuthRedirectActivity : ComponentActivity() {
         val data = intent.data
         if (data != null) {
             // Return the intent data back to the calling activity
-            setResult(Activity.RESULT_OK, Intent().setData(data))
+            setResult(RESULT_OK, Intent().setData(data))
         } else {
-            setResult(Activity.RESULT_CANCELED)
+            setResult(RESULT_CANCELED)
         }
         finish()
     }

@@ -69,8 +69,11 @@ kotlin {
             implementation(libs.multiplatform.settings)
             implementation(libs.multiplatform.settings.noarg)
 
-            // Koin (bundles)
-            implementation(libs.bundles.koin.common)
+            // Koin
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
 
             // Voyager Navigation (bundles)
             implementation(libs.bundles.voyager.common)
@@ -89,7 +92,7 @@ kotlin {
             implementation(libs.androidx.datastore.preferences)
 
             // Koin Android
-            implementation(libs.koin.android)
+            // implementation(libs.koin.android)
         }
 
         iosMain.dependencies {

@@ -16,19 +16,6 @@ class LoginViewModel(
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
-    init {
-        checkAutoLogin()
-    }
-
-    private fun checkAutoLogin() {
-        viewModelScope.launch {
-            val isLoggedIn = authRepository.isLoggedIn()
-            if (isLoggedIn) {
-                _uiState.value = LoginUiState.Success
-            }
-        }
-    }
-
     fun getLoginIntent(): Intent {
         return authRepository.getLoginIntent()
     }

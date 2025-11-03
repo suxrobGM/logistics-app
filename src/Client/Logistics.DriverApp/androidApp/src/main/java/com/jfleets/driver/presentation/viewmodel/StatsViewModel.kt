@@ -4,15 +4,24 @@ package com.jfleets.driver.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jfleets.driver.shared.data.repository.StatsRepository
 import com.jfleets.driver.shared.domain.model.ChartData
 import com.jfleets.driver.shared.domain.model.DateRange
 import com.jfleets.driver.shared.domain.model.DriverStats
-import com.jfleets.driver.shared.data.repository.StatsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.datetime.*
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.atTime
+import kotlinx.datetime.minus
+import kotlinx.datetime.number
+import kotlinx.datetime.plus
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
 import kotlin.time.ExperimentalTime
@@ -59,11 +68,11 @@ class StatsViewModel(
 
             val result = if (range.useMonthly) {
                 val startDateTime = range.startDate.toLocalDateTime(TimeZone.currentSystemDefault())
-                val startMonth = startDateTime.monthNumber
+                val startMonth = startDateTime.month.number
                 val startYear = startDateTime.year
 
                 val endDateTime = range.endDate.toLocalDateTime(TimeZone.currentSystemDefault())
-                val endMonth = endDateTime.monthNumber
+                val endMonth = endDateTime.month.number
                 val endYear = endDateTime.year
 
                 statsRepository.getMonthlyGrosses(startMonth, startYear, endMonth, endYear)
@@ -76,7 +85,8 @@ class StatsViewModel(
                     _chartState.value = ChartUiState.Success(chartData)
                 }
                 .onFailure { error ->
-                    _chartState.value = ChartUiState.Error(error.message ?: "Failed to load chart data")
+                    _chartState.value =
+                        ChartUiState.Error(error.message ?: "Failed to load chart data")
                 }
         }
     }
