@@ -4,6 +4,9 @@ import kotlin.time.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
+import kotlin.math.abs
+import kotlin.math.pow
+import kotlin.math.round
 
 /**
  * Common extension functions for Kotlin Multiplatform
@@ -15,12 +18,12 @@ fun Double.toMiles(): Double = this * 0.000621371
 
 fun Double.formatDistance(): String {
     val miles = this.toMiles()
-    return String.format("%.1f mi", miles)
+    return "${miles.formatDecimal(1)} mi"
 }
 
 // Currency extensions
 fun Double.formatCurrency(): String {
-    return "$%.2f".format(this)
+    return "$${this.formatDecimal(2)}"
 }
 
 // Date extensions for kotlin.time.Instant
@@ -61,4 +64,19 @@ fun String.toTitleCase(): String {
     return this.lowercase()
         .split(" ")
         .joinToString(" ") { it.replaceFirstChar { char -> char.uppercase() } }
+}
+
+// KMP-compatible decimal formatting helper
+private fun Double.formatDecimal(decimalPlaces: Int): String {
+    val multiplier = 10.0.pow(decimalPlaces)
+    val rounded = round(this * multiplier) / multiplier
+
+    return buildString {
+        val intPart = rounded.toInt()
+        append(intPart)
+        append('.')
+
+        val fracPart = abs((rounded - intPart) * multiplier).toInt()
+        append(fracPart.toString().padStart(decimalPlaces, '0'))
+    }
 }
