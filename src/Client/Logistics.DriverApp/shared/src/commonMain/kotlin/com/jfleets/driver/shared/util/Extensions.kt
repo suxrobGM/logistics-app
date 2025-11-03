@@ -1,7 +1,8 @@
 package com.jfleets.driver.shared.util
 
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
 
 /**
@@ -22,19 +23,19 @@ fun Double.formatCurrency(): String {
     return "$%.2f".format(this)
 }
 
-// Date extensions for kotlinx.datetime.Instant
+// Date extensions for kotlin.time.Instant
 fun Instant.formatShort(): String {
     val localDateTime = this.toLocalDateTime(TimeZone.currentSystemDefault())
-    val month = getMonthAbbreviation(localDateTime.monthNumber)
-    return "$month ${localDateTime.dayOfMonth}, ${localDateTime.year}"
+    val month = getMonthAbbreviation(localDateTime.month.number)
+    return "$month ${localDateTime.day}, ${localDateTime.year}"
 }
 
 fun Instant.formatDateTime(): String {
     val localDateTime = this.toLocalDateTime(TimeZone.currentSystemDefault())
-    val month = getMonthAbbreviation(localDateTime.monthNumber)
+    val month = getMonthAbbreviation(localDateTime.month.number)
     val hour = localDateTime.hour.toString().padStart(2, '0')
     val minute = localDateTime.minute.toString().padStart(2, '0')
-    return "$month ${localDateTime.dayOfMonth}, ${localDateTime.year} $hour:$minute"
+    return "$month ${localDateTime.day}, ${localDateTime.year} $hour:$minute"
 }
 
 private fun getMonthAbbreviation(month: Int): String {

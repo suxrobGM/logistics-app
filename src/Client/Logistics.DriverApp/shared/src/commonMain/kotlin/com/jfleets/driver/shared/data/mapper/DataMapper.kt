@@ -2,7 +2,7 @@ package com.jfleets.driver.shared.data.mapper
 
 import com.jfleets.driver.shared.data.dto.*
 import com.jfleets.driver.shared.domain.model.*
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 fun LoadDto.toDomain(): Load {
     return Load(

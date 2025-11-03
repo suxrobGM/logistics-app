@@ -15,7 +15,7 @@ class AuthRepository(
         return authService.getAuthorizationIntent()
     }
 
-    suspend fun handleAuthorizationResponse(intent: Intent): kotlin.Result<Unit> = withContext(Dispatchers.IO) {
+    suspend fun handleAuthorizationResponse(intent: Intent): Result<Unit> = withContext(Dispatchers.IO) {
         try {
             val authResult = authService.handleAuthorizationResponse(intent)
             saveAuthResult(authResult)
@@ -23,23 +23,23 @@ class AuthRepository(
             // Fetch tenant ID
             fetchAndSaveTenantId()
 
-            kotlin.Result.success(Unit)
+            Result.success(Unit)
         } catch (e: Exception) {
-            kotlin.Result.failure(e)
+            Result.failure(e)
         }
     }
 
-    suspend fun refreshToken(): kotlin.Result<Unit> = withContext(Dispatchers.IO) {
+    suspend fun refreshToken(): Result<Unit> = withContext(Dispatchers.IO) {
         try {
             val refreshToken = tokenManager.getRefreshToken()
-                ?: return@withContext kotlin.Result.failure(Exception("No refresh token available"))
+                ?: return@withContext Result.failure(Exception("No refresh token available"))
 
             val authResult = authService.refreshAccessToken(refreshToken)
             saveAuthResult(authResult)
 
-            kotlin.Result.success(Unit)
+            Result.success(Unit)
         } catch (e: Exception) {
-            kotlin.Result.failure(e)
+            Result.failure(e)
         }
     }
 
@@ -67,7 +67,5 @@ class AuthRepository(
 
     private suspend fun fetchAndSaveTenantId() {
         // Tenant ID is already extracted from the JWT token in TokenManager
-        // This method is kept for consistency with the original app
-        // If you need to fetch it from API, implement it here
     }
 }

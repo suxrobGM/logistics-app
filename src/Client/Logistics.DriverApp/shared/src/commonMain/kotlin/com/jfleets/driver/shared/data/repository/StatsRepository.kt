@@ -7,7 +7,7 @@ import com.jfleets.driver.shared.data.mapper.toChartData
 import com.jfleets.driver.shared.data.mapper.toDomain
 import com.jfleets.driver.shared.domain.model.ChartData
 import com.jfleets.driver.shared.domain.model.DriverStats
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 

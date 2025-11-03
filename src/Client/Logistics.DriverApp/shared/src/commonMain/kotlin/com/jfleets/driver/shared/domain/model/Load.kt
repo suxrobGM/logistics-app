@@ -1,6 +1,6 @@
 package com.jfleets.driver.shared.domain.model
 
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 data class Load(
     val id: Double,

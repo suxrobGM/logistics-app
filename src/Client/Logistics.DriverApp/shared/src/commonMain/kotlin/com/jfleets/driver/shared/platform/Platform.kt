@@ -47,5 +47,5 @@ expect fun getPlatformName(): String
 // Formatting utilities
 expect fun Double.formatCurrency(): String
 expect fun Double.formatDistance(): String
-expect fun kotlinx.datetime.Instant.formatShort(): String
-expect fun kotlinx.datetime.Instant.formatDateTime(): String
+expect fun kotlin.time.Instant.formatShort(): String
+expect fun kotlin.time.Instant.formatDateTime(): String
