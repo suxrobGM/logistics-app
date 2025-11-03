@@ -30,6 +30,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        manifestPlaceholders["appAuthRedirectScheme"] = "com.jfleets.driver"
     }
 
     buildTypes {

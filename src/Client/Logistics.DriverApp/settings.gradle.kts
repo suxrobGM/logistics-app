@@ -15,7 +15,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Logistics Driver"
+rootProject.name = "LogisticsDriver"
 include(":androidApp")
 include(":shared")
 include(":iosApp")
