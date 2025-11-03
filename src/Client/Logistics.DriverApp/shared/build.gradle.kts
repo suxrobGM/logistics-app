@@ -1,17 +1,24 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.android.library)
-    alias(libs.plugins.compose)
-    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.compose.compiler)
 }
 
 kotlin {
     androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "17"
-            }
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+            freeCompilerArgs.add("-opt-in=kotlin.time.ExperimentalTime")
+        }
+    }
+
+    sourceSets.all {
+        languageSettings {
+            optIn("kotlin.time.ExperimentalTime")
         }
     }
 
@@ -41,6 +48,9 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
 
+            // DataStore
+            implementation(libs.androidx.datastore.core)
+
             // Ktor Client (bundles)
             implementation(libs.bundles.ktor.common)
 
@@ -64,6 +74,9 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime)
             implementation(libs.androidx.lifecycle.viewmodel)
 
+            // DataStore Android
+            implementation(libs.androidx.datastore.preferences)
+
             // Koin Android
             implementation(libs.koin.android)
         }
@@ -77,7 +90,7 @@ kotlin {
 
 android {
     namespace = "com.jfleets.driver.shared"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 26

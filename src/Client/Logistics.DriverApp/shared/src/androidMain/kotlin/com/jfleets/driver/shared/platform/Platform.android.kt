@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toLocalDateTime
 import java.text.NumberFormat
 import java.time.format.DateTimeFormatter
@@ -18,8 +17,13 @@ import java.util.*
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "driver_settings")
 
-actual class PlatformSettings(private val context: Context) {
-    private val dataStore = context.dataStore
+actual class PlatformSettings() {
+    private lateinit var context: Context
+    private val dataStore: DataStore<Preferences> by lazy { context.dataStore }
+
+    constructor(context: Context) : this() {
+        this.context = context
+    }
 
     actual suspend fun getString(key: String): String? {
         val prefKey = stringPreferencesKey(key)
@@ -102,13 +106,13 @@ actual fun Double.formatDistance(): String {
 
 actual fun Instant.formatShort(): String {
     val localDate = this.toLocalDateTime(TimeZone.currentSystemDefault()).date
-    val javaDate = this.toJavaInstant()
+    val javaInstant = java.time.Instant.ofEpochSecond(this.epochSeconds, this.nanosecondsOfSecond.toLong())
     val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy")
-    return formatter.format(javaDate)
+    return formatter.format(javaInstant)
 }
 
 actual fun Instant.formatDateTime(): String {
-    val javaDate = this.toJavaInstant()
+    val javaInstant = java.time.Instant.ofEpochSecond(this.epochSeconds, this.nanosecondsOfSecond.toLong())
     val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm")
-    return formatter.format(javaDate)
+    return formatter.format(javaInstant)
 }

@@ -8,9 +8,6 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 fun sharedModule(baseUrl: String) = module {
-    // Platform Settings
-    single { PlatformSettings() }
-
     // API Client
     single {
         ApiClient(

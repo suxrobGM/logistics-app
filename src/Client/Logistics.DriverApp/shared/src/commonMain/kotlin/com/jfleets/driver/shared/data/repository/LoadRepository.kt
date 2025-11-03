@@ -6,9 +6,10 @@ import com.jfleets.driver.shared.data.dto.UpdateLoadProximityCommand
 import com.jfleets.driver.shared.data.mapper.toDomain
 import com.jfleets.driver.shared.domain.model.Load
 import com.jfleets.driver.shared.domain.model.LoadStatus
-import kotlinx.datetime.Clock
+import kotlinx.datetime.Clock.System
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
 
 class LoadRepository(

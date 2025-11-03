@@ -15,8 +15,10 @@ import kotlinx.serialization.json.Json
 
 class ApiClient(
     private val baseUrl: String,
-    private val getAccessToken: suspend () -> String?,
-    private val getTenantId: suspend () -> String?
+    @PublishedApi
+    internal val getAccessToken: suspend () -> String?,
+    @PublishedApi
+    internal val getTenantId: suspend () -> String?
 ) {
     val client = HttpClient {
         install(ContentNegotiation) {
@@ -43,9 +45,9 @@ class ApiClient(
         }
     }
 
-    suspend fun <T> get(
+    suspend inline fun <reified T> get(
         endpoint: String,
-        block: HttpRequestBuilder.() -> Unit = {}
+        noinline block: HttpRequestBuilder.() -> Unit = {}
     ): T {
         val token = getAccessToken()
         val tenantId = getTenantId()
@@ -61,10 +63,10 @@ class ApiClient(
         }.body()
     }
 
-    suspend fun <T> post(
+    suspend inline fun <reified T> post(
         endpoint: String,
         body: Any? = null,
-        block: HttpRequestBuilder.() -> Unit = {}
+        noinline block: HttpRequestBuilder.() -> Unit = {}
     ): T {
         val token = getAccessToken()
         val tenantId = getTenantId()
@@ -83,10 +85,10 @@ class ApiClient(
         }.body()
     }
 
-    suspend fun <T> put(
+    suspend inline fun <reified T> put(
         endpoint: String,
         body: Any? = null,
-        block: HttpRequestBuilder.() -> Unit = {}
+        noinline block: HttpRequestBuilder.() -> Unit = {}
     ): T {
         val token = getAccessToken()
         val tenantId = getTenantId()
