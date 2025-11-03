@@ -17,22 +17,17 @@ import com.google.android.gms.location.*
 import com.jfleets.driver.MainActivity
 import com.jfleets.driver.R
 import com.jfleets.driver.data.local.PreferencesManager
-import com.jfleets.driver.data.repository.LoadRepository
-import com.jfleets.driver.util.calculateDistance
-import dagger.hilt.android.AndroidEntryPoint
+import com.jfleets.driver.shared.data.repository.LoadRepository
+import com.jfleets.driver.shared.util.calculateDistance
 import kotlinx.coroutines.*
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 import java.util.*
-import javax.inject.Inject
 
-@AndroidEntryPoint
 class LocationTrackingService : Service() {
 
-    @Inject
-    lateinit var preferencesManager: PreferencesManager
-
-    @Inject
-    lateinit var loadRepository: LoadRepository
+    private val preferencesManager: PreferencesManager by inject()
+    private val loadRepository: LoadRepository by inject()
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
@@ -147,9 +142,9 @@ class LocationTrackingService : Service() {
         try {
             // Get active loads
             val result = loadRepository.getActiveLoads()
-            if (result is com.jfleets.driver.util.Result.Success) {
-                val loads = result.data
+            val loads = result.getOrNull()
 
+            if (loads != null) {
                 loads.forEach { load ->
                     val originLat = load.originLatitude
                     val originLon = load.originLongitude
@@ -181,6 +176,10 @@ class LocationTrackingService : Service() {
                             Timber.d("Load ${load.id} proximity updated: origin=$nearOrigin, dest=$nearDestination")
                         }
                     }
+                }
+            } else {
+                result.exceptionOrNull()?.let { error: Throwable ->
+                    Timber.e(error, "Error getting active loads")
                 }
             }
         } catch (e: Exception) {

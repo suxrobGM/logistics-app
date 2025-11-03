@@ -3,19 +3,15 @@ package com.jfleets.driver.presentation.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jfleets.driver.data.model.Load
-import com.jfleets.driver.data.model.LoadStatus
-import com.jfleets.driver.data.repository.LoadRepository
-import com.jfleets.driver.util.Result
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.jfleets.driver.shared.domain.model.Load
+import com.jfleets.driver.shared.domain.model.LoadStatus
+import com.jfleets.driver.shared.data.repository.LoadRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class LoadDetailViewModel @Inject constructor(
+class LoadDetailViewModel(
     private val loadRepository: LoadRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -32,43 +28,37 @@ class LoadDetailViewModel @Inject constructor(
     private fun loadDetails() {
         viewModelScope.launch {
             _uiState.value = LoadDetailUiState.Loading
-            when (val result = loadRepository.getLoad(loadId)) {
-                is Result.Success -> {
-                    _uiState.value = LoadDetailUiState.Success(result.data)
+            loadRepository.getLoad(loadId)
+                .onSuccess { load ->
+                    _uiState.value = LoadDetailUiState.Success(load)
                 }
-                is Result.Error -> {
-                    _uiState.value = LoadDetailUiState.Error(result.message)
+                .onFailure { error ->
+                    _uiState.value = LoadDetailUiState.Error(error.message ?: "Failed to load details")
                 }
-                else -> {}
-            }
         }
     }
 
     fun confirmPickup() {
         viewModelScope.launch {
-            when (loadRepository.confirmPickup(loadId)) {
-                is Result.Success -> {
+            loadRepository.confirmPickup(loadId)
+                .onSuccess {
                     loadDetails() // Reload to get updated status
                 }
-                is Result.Error -> {
+                .onFailure { error ->
                     // Show error in UI
                 }
-                else -> {}
-            }
         }
     }
 
     fun confirmDelivery() {
         viewModelScope.launch {
-            when (loadRepository.confirmDelivery(loadId)) {
-                is Result.Success -> {
+            loadRepository.confirmDelivery(loadId)
+                .onSuccess {
                     loadDetails() // Reload to get updated status
                 }
-                is Result.Error -> {
+                .onFailure { error ->
                     // Show error in UI
                 }
-                else -> {}
-            }
         }
     }
 

@@ -9,20 +9,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.koinViewModel
 import com.jfleets.driver.presentation.ui.components.CardContainer
 import com.jfleets.driver.presentation.ui.components.ErrorView
 import com.jfleets.driver.presentation.ui.components.LoadingIndicator
 import com.jfleets.driver.presentation.viewmodel.ChartUiState
 import com.jfleets.driver.presentation.viewmodel.StatsUiState
 import com.jfleets.driver.presentation.viewmodel.StatsViewModel
-import com.jfleets.driver.util.formatCurrency
-import com.jfleets.driver.util.formatDistance
+import com.jfleets.driver.shared.util.formatCurrency
+import com.jfleets.driver.shared.util.formatDistance
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatsScreen(
-    viewModel: StatsViewModel = hiltViewModel()
+    viewModel: StatsViewModel = koinViewModel()
 ) {
     val statsState by viewModel.statsState.collectAsState()
     val chartState by viewModel.chartState.collectAsState()

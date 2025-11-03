@@ -11,7 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.koinViewModel
 import com.jfleets.driver.presentation.ui.components.ErrorView
 import com.jfleets.driver.presentation.ui.components.LoadCard
 import com.jfleets.driver.presentation.ui.components.LoadingIndicator
@@ -22,7 +22,7 @@ import com.jfleets.driver.presentation.viewmodel.PastLoadsViewModel
 @Composable
 fun PastLoadsScreen(
     onLoadClick: (Double) -> Unit,
-    viewModel: PastLoadsViewModel = hiltViewModel()
+    viewModel: PastLoadsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 

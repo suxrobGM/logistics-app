@@ -71,15 +71,21 @@ dependencies {
     // Core Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime)
+    implementation(libs.androidx.lifecycle.viewmodel)
+
+    // Compose
+    implementation(platform(libs.compose.bom))
     implementation(libs.bundles.androidx.compose)
 
-    // Dependency Injection - Koin
+    // Navigation Compose
+    implementation(libs.androidx.navigation.compose)
+
+    // Dependency Injection - Koin (KMP-compatible)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
 
-    // Voyager Navigation
-    implementation(libs.voyager.navigator)
-    implementation(libs.voyager.koin)
+    // DataStore
+    implementation(libs.androidx.datastore.preferences)
 
     // Firebase
     implementation(platform(libs.firebase.bom))
@@ -96,6 +102,9 @@ dependencies {
 
     // Utilities
     implementation(libs.timber)
+
+    // Kotlinx DateTime
+    implementation(libs.kotlinx.datetime)
 
     // Work Manager
     implementation(libs.androidx.work.runtime)

@@ -17,15 +17,12 @@ import com.jfleets.driver.data.repository.AuthRepository
 import com.jfleets.driver.presentation.navigation.AppNavigation
 import com.jfleets.driver.presentation.navigation.Screen
 import com.jfleets.driver.presentation.ui.theme.LogisticsDriverTheme
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject
-    lateinit var authRepository: AuthRepository
+    private val authRepository: AuthRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

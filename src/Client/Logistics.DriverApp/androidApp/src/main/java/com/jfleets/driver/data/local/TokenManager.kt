@@ -2,11 +2,8 @@ package com.jfleets.driver.data.local
 
 import com.auth0.android.jwt.JWT
 import com.jfleets.driver.data.model.UserInfo
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class TokenManager @Inject constructor(
+class TokenManager(
     private val preferencesManager: PreferencesManager
 ) {
     suspend fun saveTokens(

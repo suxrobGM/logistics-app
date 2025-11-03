@@ -117,3 +117,40 @@ data class GetMonthlyGrossesQuery(
     @SerialName("endMonth") val endMonth: Int,
     @SerialName("endYear") val endYear: Int
 )
+
+@Serializable
+data class GetTruckQuery(
+    @SerialName("driverId") val driverId: String? = null,
+    @SerialName("truckId") val truckId: String? = null
+)
+
+@Serializable
+data class EmployeeDto(
+    @SerialName("id") val id: String? = null,
+    @SerialName("firstName") val firstName: String? = null,
+    @SerialName("lastName") val lastName: String? = null,
+    @SerialName("email") val email: String? = null,
+    @SerialName("role") val role: String? = null,
+    @SerialName("userId") val userId: String? = null
+)
+
+// Auth DTOs
+@Serializable
+data class LoginRequest(
+    @SerialName("code") val code: String,
+    @SerialName("codeVerifier") val codeVerifier: String? = null
+)
+
+@Serializable
+data class TokenResponse(
+    @SerialName("access_token") val accessToken: String,
+    @SerialName("refresh_token") val refreshToken: String? = null,
+    @SerialName("id_token") val idToken: String? = null,
+    @SerialName("token_type") val tokenType: String,
+    @SerialName("expires_in") val expiresIn: Int
+)
+
+@Serializable
+data class RefreshTokenRequest(
+    @SerialName("refresh_token") val refreshToken: String
+)

@@ -2,34 +2,27 @@
 # You can control the set of applied configuration files using the
 # proguardFiles setting in build.gradle.
 
-# Retrofit
--keepattributes Signature, InnerClasses, EnclosingMethod
--keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations
--keepclassmembers,allowshrinking,allowobfuscation interface * {
-    @retrofit2.http.* <methods>;
+# Kotlin Serialization
+-keepattributes *Annotation*, InnerClasses
+-dontnote kotlinx.serialization.AnnotationsKt
+-keepclassmembers class kotlinx.serialization.json.** {
+    *** Companion;
 }
--dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
--dontwarn javax.annotation.**
--dontwarn kotlin.Unit
+-keepclasseswithmembers class kotlinx.serialization.json.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
 
-# OkHttp
--dontwarn okhttp3.**
--dontwarn okio.**
+# Ktor
+-keep class io.ktor.** { *; }
+-keep class kotlinx.coroutines.** { *; }
+-dontwarn kotlinx.atomicfu.**
+-dontwarn io.netty.**
+-dontwarn com.typesafe.**
+-dontwarn org.slf4j.**
 
-# Gson
--keepattributes Signature
--keepattributes *Annotation*
--dontwarn sun.misc.**
--keep class com.google.gson.** { *; }
+# Keep shared module models (now using kotlinx.serialization)
+-keep class com.jfleets.driver.shared.domain.model.** { *; }
+-keep class com.jfleets.driver.shared.data.dto.** { *; }
 
-# Keep data classes
+# Keep Android-specific models
 -keep class com.jfleets.driver.data.model.** { *; }
--keep class com.jfleets.driver.data.dto.** { *; }
-
-# SignalR
--keep class com.microsoft.signalr.** { *; }
-
-# Keep Hilt generated components
--keep class dagger.hilt.** { *; }
--keep class javax.inject.** { *; }
--keep class * extends dagger.hilt.android.internal.managers.ViewComponentManager$FragmentContextWrapper { *; }

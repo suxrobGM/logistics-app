@@ -2,18 +2,14 @@ package com.jfleets.driver.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jfleets.driver.data.model.Load
-import com.jfleets.driver.data.repository.LoadRepository
-import com.jfleets.driver.util.Result
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.jfleets.driver.shared.domain.model.Load
+import com.jfleets.driver.shared.data.repository.LoadRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class PastLoadsViewModel @Inject constructor(
+class PastLoadsViewModel(
     private val loadRepository: LoadRepository
 ) : ViewModel() {
 
@@ -27,15 +23,13 @@ class PastLoadsViewModel @Inject constructor(
     private fun loadPastLoads() {
         viewModelScope.launch {
             _uiState.value = PastLoadsUiState.Loading
-            when (val result = loadRepository.getPastLoads()) {
-                is Result.Success -> {
-                    _uiState.value = PastLoadsUiState.Success(result.data)
+            loadRepository.getPastLoads()
+                .onSuccess { loads ->
+                    _uiState.value = PastLoadsUiState.Success(loads)
                 }
-                is Result.Error -> {
-                    _uiState.value = PastLoadsUiState.Error(result.message)
+                .onFailure { error ->
+                    _uiState.value = PastLoadsUiState.Error(error.message ?: "Failed to load past loads")
                 }
-                else -> {}
-            }
         }
     }
 

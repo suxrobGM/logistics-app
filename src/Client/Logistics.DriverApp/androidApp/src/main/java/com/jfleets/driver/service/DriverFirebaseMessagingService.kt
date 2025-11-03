@@ -10,20 +10,17 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.jfleets.driver.MainActivity
 import com.jfleets.driver.R
-import com.jfleets.driver.data.repository.UserRepository
-import dagger.hilt.android.AndroidEntryPoint
+import com.jfleets.driver.shared.data.repository.UserRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import timber.log.Timber
-import javax.inject.Inject
 
-@AndroidEntryPoint
 class DriverFirebaseMessagingService : FirebaseMessagingService() {
 
-    @Inject
-    lateinit var userRepository: UserRepository
+    private val userRepository: UserRepository by inject()
 
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 

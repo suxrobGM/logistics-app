@@ -4,16 +4,12 @@ import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jfleets.driver.data.repository.AuthRepository
-import com.jfleets.driver.util.Result
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class LoginViewModel @Inject constructor(
+class LoginViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
@@ -40,15 +36,13 @@ class LoginViewModel @Inject constructor(
     fun handleAuthorizationResponse(intent: Intent) {
         viewModelScope.launch {
             _uiState.value = LoginUiState.Loading
-            when (val result = authRepository.handleAuthorizationResponse(intent)) {
-                is Result.Success -> {
+            authRepository.handleAuthorizationResponse(intent)
+                .onSuccess {
                     _uiState.value = LoginUiState.Success
                 }
-                is Result.Error -> {
-                    _uiState.value = LoginUiState.Error(result.message)
+                .onFailure { error ->
+                    _uiState.value = LoginUiState.Error(error.message ?: "Authentication failed")
                 }
-                else -> {}
-            }
         }
     }
 

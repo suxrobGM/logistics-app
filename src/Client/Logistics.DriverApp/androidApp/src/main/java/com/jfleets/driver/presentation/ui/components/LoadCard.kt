@@ -10,9 +10,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.jfleets.driver.data.model.Load
-import com.jfleets.driver.util.formatCurrency
-import com.jfleets.driver.util.formatDistance
+import com.jfleets.driver.shared.domain.model.Load
+import com.jfleets.driver.shared.util.formatCurrency
+import com.jfleets.driver.shared.util.formatDistance
 
 @Composable
 fun LoadCard(

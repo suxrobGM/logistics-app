@@ -3,18 +3,14 @@ package com.jfleets.driver.data.auth
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import dagger.hilt.android.qualifiers.ApplicationContext
 import net.openid.appauth.*
 import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-@Singleton
-class AuthService @Inject constructor(
-    @ApplicationContext private val context: Context
+class AuthService(
+    private val context: Context
 ) {
     companion object {
         private const val AUTHORITY = "https://10.0.2.2:7001"

@@ -17,7 +17,8 @@ import java.util.*
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "driver_settings")
 
-actual class PlatformSettings() {
+actual class PlatformSettings {
+    actual constructor()
     private lateinit var context: Context
     private val dataStore: DataStore<Preferences> by lazy { context.dataStore }
 

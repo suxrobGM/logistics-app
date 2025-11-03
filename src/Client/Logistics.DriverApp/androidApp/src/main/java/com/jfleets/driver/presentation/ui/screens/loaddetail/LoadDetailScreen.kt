@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.jfleets.driver.presentation.ui.screens.loaddetail
 
 import android.content.Intent
@@ -16,22 +18,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.jfleets.driver.data.model.LoadStatus
+import org.koin.androidx.compose.koinViewModel
+import com.jfleets.driver.shared.domain.model.LoadStatus
 import com.jfleets.driver.presentation.ui.components.CardContainer
 import com.jfleets.driver.presentation.ui.components.ErrorView
 import com.jfleets.driver.presentation.ui.components.LoadingIndicator
 import com.jfleets.driver.presentation.viewmodel.LoadDetailUiState
 import com.jfleets.driver.presentation.viewmodel.LoadDetailViewModel
-import com.jfleets.driver.util.formatCurrency
-import com.jfleets.driver.util.formatDistance
-import com.jfleets.driver.util.formatShort
+import com.jfleets.driver.shared.util.formatCurrency
+import com.jfleets.driver.shared.util.formatDistance
+import com.jfleets.driver.shared.util.formatShort
+import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoadDetailScreen(
     onNavigateBack: () -> Unit,
-    viewModel: LoadDetailViewModel = hiltViewModel()
+    viewModel: LoadDetailViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current

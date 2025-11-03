@@ -1,27 +1,21 @@
 package com.jfleets.driver.data.repository
 
 import android.content.Intent
-import com.jfleets.driver.data.api.TenantApiService
 import com.jfleets.driver.data.auth.AuthResult
 import com.jfleets.driver.data.auth.AuthService
 import com.jfleets.driver.data.local.TokenManager
-import com.jfleets.driver.util.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class AuthRepository @Inject constructor(
+class AuthRepository(
     private val authService: AuthService,
-    private val tokenManager: TokenManager,
-    private val tenantApiService: TenantApiService
+    private val tokenManager: TokenManager
 ) {
     fun getLoginIntent(): Intent {
         return authService.getAuthorizationIntent()
     }
 
-    suspend fun handleAuthorizationResponse(intent: Intent): Result<Unit> = withContext(Dispatchers.IO) {
+    suspend fun handleAuthorizationResponse(intent: Intent): kotlin.Result<Unit> = withContext(Dispatchers.IO) {
         try {
             val authResult = authService.handleAuthorizationResponse(intent)
             saveAuthResult(authResult)
@@ -29,23 +23,23 @@ class AuthRepository @Inject constructor(
             // Fetch tenant ID
             fetchAndSaveTenantId()
 
-            Result.Success(Unit)
+            kotlin.Result.success(Unit)
         } catch (e: Exception) {
-            Result.Error(e.message ?: "Authentication failed")
+            kotlin.Result.failure(e)
         }
     }
 
-    suspend fun refreshToken(): Result<Unit> = withContext(Dispatchers.IO) {
+    suspend fun refreshToken(): kotlin.Result<Unit> = withContext(Dispatchers.IO) {
         try {
             val refreshToken = tokenManager.getRefreshToken()
-                ?: return@withContext Result.Error("No refresh token available")
+                ?: return@withContext kotlin.Result.failure(Exception("No refresh token available"))
 
             val authResult = authService.refreshAccessToken(refreshToken)
             saveAuthResult(authResult)
 
-            Result.Success(Unit)
+            kotlin.Result.success(Unit)
         } catch (e: Exception) {
-            Result.Error(e.message ?: "Token refresh failed")
+            kotlin.Result.failure(e)
         }
     }
 

@@ -1,22 +1,23 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.jfleets.driver.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jfleets.driver.data.model.ChartData
-import com.jfleets.driver.data.model.DateRange
-import com.jfleets.driver.data.model.DriverStats
-import com.jfleets.driver.data.repository.StatsRepository
-import com.jfleets.driver.util.Result
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.jfleets.driver.shared.domain.model.ChartData
+import com.jfleets.driver.shared.domain.model.DateRange
+import com.jfleets.driver.shared.domain.model.DriverStats
+import com.jfleets.driver.shared.data.repository.StatsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.*
-import javax.inject.Inject
+import kotlinx.datetime.*
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
+import kotlin.time.ExperimentalTime
 
-@HiltViewModel
-class StatsViewModel @Inject constructor(
+class StatsViewModel(
     private val statsRepository: StatsRepository
 ) : ViewModel() {
 
@@ -37,15 +38,13 @@ class StatsViewModel @Inject constructor(
     private fun loadStats() {
         viewModelScope.launch {
             _statsState.value = StatsUiState.Loading
-            when (val result = statsRepository.getDriverStats()) {
-                is Result.Success -> {
-                    _statsState.value = StatsUiState.Success(result.data)
+            statsRepository.getDriverStats()
+                .onSuccess { stats ->
+                    _statsState.value = StatsUiState.Success(stats)
                 }
-                is Result.Error -> {
-                    _statsState.value = StatsUiState.Error(result.message)
+                .onFailure { error ->
+                    _statsState.value = StatsUiState.Error(error.message ?: "Failed to load stats")
                 }
-                else -> {}
-            }
         }
     }
 
@@ -59,72 +58,70 @@ class StatsViewModel @Inject constructor(
             _chartState.value = ChartUiState.Loading
 
             val result = if (range.useMonthly) {
-                val calendar = Calendar.getInstance()
-                calendar.time = range.startDate
-                val startMonth = calendar.get(Calendar.MONTH) + 1
-                val startYear = calendar.get(Calendar.YEAR)
+                val startDateTime = range.startDate.toLocalDateTime(TimeZone.currentSystemDefault())
+                val startMonth = startDateTime.monthNumber
+                val startYear = startDateTime.year
 
-                calendar.time = range.endDate
-                val endMonth = calendar.get(Calendar.MONTH) + 1
-                val endYear = calendar.get(Calendar.YEAR)
+                val endDateTime = range.endDate.toLocalDateTime(TimeZone.currentSystemDefault())
+                val endMonth = endDateTime.monthNumber
+                val endYear = endDateTime.year
 
                 statsRepository.getMonthlyGrosses(startMonth, startYear, endMonth, endYear)
             } else {
                 statsRepository.getDailyGrosses(range.startDate, range.endDate)
             }
 
-            when (result) {
-                is Result.Success -> {
-                    _chartState.value = ChartUiState.Success(result.data)
+            result
+                .onSuccess { chartData ->
+                    _chartState.value = ChartUiState.Success(chartData)
                 }
-                is Result.Error -> {
-                    _chartState.value = ChartUiState.Error(result.message)
+                .onFailure { error ->
+                    _chartState.value = ChartUiState.Error(error.message ?: "Failed to load chart data")
                 }
-                else -> {}
-            }
         }
     }
 
     fun getDateRanges(): List<DateRange> {
-        val calendar = Calendar.getInstance()
-        val today = calendar.time
+        val timeZone = TimeZone.currentSystemDefault()
+        val today = Clock.System.now()
+        val todayLocal = today.toLocalDateTime(timeZone).date
 
-        // This Week
-        calendar.set(Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek)
-        val thisWeekStart = calendar.time
+        // This Week (start from Sunday)
+        val thisWeekStart = todayLocal.minus(todayLocal.dayOfWeek.ordinal, DateTimeUnit.DAY)
+            .atStartOfDayIn(timeZone)
 
         // Last Week
-        calendar.add(Calendar.WEEK_OF_YEAR, -1)
-        val lastWeekStart = calendar.time
-        calendar.add(Calendar.DAY_OF_YEAR, 6)
-        val lastWeekEnd = calendar.time
+        val lastWeekStart = thisWeekStart.minus(7.days)
+        val lastWeekEnd = thisWeekStart.minus(1.days)
 
         // This Month
-        calendar.time = today
-        calendar.set(Calendar.DAY_OF_MONTH, 1)
-        val thisMonthStart = calendar.time
+        val thisMonthStart = LocalDate(todayLocal.year, todayLocal.month, 1)
+            .atStartOfDayIn(timeZone)
 
         // Last Month
-        calendar.add(Calendar.MONTH, -1)
-        val lastMonthStart = calendar.time
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
-        val lastMonthEnd = calendar.time
+        val lastMonthDate = todayLocal.minus(1, DateTimeUnit.MONTH)
+        val lastMonthStart = LocalDate(lastMonthDate.year, lastMonthDate.month, 1)
+            .atStartOfDayIn(timeZone)
+        // Calculate last day by going to first day of next month and subtracting one day
+        val lastMonthEnd = LocalDate(lastMonthDate.year, lastMonthDate.month, 1)
+            .plus(1, DateTimeUnit.MONTH)
+            .minus(1, DateTimeUnit.DAY)
+            .atTime(23, 59, 59)
+            .toInstant(timeZone)
 
         // Past 90 Days
-        calendar.time = today
-        calendar.add(Calendar.DAY_OF_YEAR, -90)
-        val past90DaysStart = calendar.time
+        val past90DaysStart = today.minus(90.days)
 
         // This Year
-        calendar.time = today
-        calendar.set(Calendar.DAY_OF_YEAR, 1)
-        val thisYearStart = calendar.time
+        val thisYearStart = LocalDate(todayLocal.year, 1, 1)
+            .atStartOfDayIn(timeZone)
 
         // Last Year
-        calendar.add(Calendar.YEAR, -1)
-        val lastYearStart = calendar.time
-        calendar.set(Calendar.DAY_OF_YEAR, calendar.getActualMaximum(Calendar.DAY_OF_YEAR))
-        val lastYearEnd = calendar.time
+        val lastYearStart = LocalDate(todayLocal.year - 1, 1, 1)
+            .atStartOfDayIn(timeZone)
+        val lastYearEnd = LocalDate(todayLocal.year - 1, 12, 31)
+            .atTime(23, 59, 59)
+            .toInstant(timeZone)
 
         return listOf(
             DateRange("This Week", thisWeekStart, today),
@@ -135,6 +132,10 @@ class StatsViewModel @Inject constructor(
             DateRange("This Year", thisYearStart, today, useMonthly = true),
             DateRange("Last Year", lastYearStart, lastYearEnd, useMonthly = true)
         )
+    }
+
+    private fun isLeapYear(year: Int): Boolean {
+        return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)
     }
 
     fun refresh() {
