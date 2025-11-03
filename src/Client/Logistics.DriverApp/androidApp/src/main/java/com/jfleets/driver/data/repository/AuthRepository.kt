@@ -1,0 +1,79 @@
+package com.jfleets.driver.data.repository
+
+import android.content.Intent
+import com.jfleets.driver.data.api.TenantApiService
+import com.jfleets.driver.data.auth.AuthResult
+import com.jfleets.driver.data.auth.AuthService
+import com.jfleets.driver.data.local.TokenManager
+import com.jfleets.driver.util.Result
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class AuthRepository @Inject constructor(
+    private val authService: AuthService,
+    private val tokenManager: TokenManager,
+    private val tenantApiService: TenantApiService
+) {
+    fun getLoginIntent(): Intent {
+        return authService.getAuthorizationIntent()
+    }
+
+    suspend fun handleAuthorizationResponse(intent: Intent): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val authResult = authService.handleAuthorizationResponse(intent)
+            saveAuthResult(authResult)
+
+            // Fetch tenant ID
+            fetchAndSaveTenantId()
+
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e.message ?: "Authentication failed")
+        }
+    }
+
+    suspend fun refreshToken(): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val refreshToken = tokenManager.getRefreshToken()
+                ?: return@withContext Result.Error("No refresh token available")
+
+            val authResult = authService.refreshAccessToken(refreshToken)
+            saveAuthResult(authResult)
+
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e.message ?: "Token refresh failed")
+        }
+    }
+
+    suspend fun logout() = withContext(Dispatchers.IO) {
+        tokenManager.clearTokens()
+    }
+
+    suspend fun isLoggedIn(): Boolean = withContext(Dispatchers.IO) {
+        val token = tokenManager.getAccessToken()
+        token != null && !tokenManager.isTokenExpired()
+    }
+
+    suspend fun isTokenExpired(): Boolean = withContext(Dispatchers.IO) {
+        tokenManager.isTokenExpired()
+    }
+
+    private suspend fun saveAuthResult(authResult: AuthResult) {
+        tokenManager.saveTokens(
+            accessToken = authResult.accessToken,
+            refreshToken = authResult.refreshToken,
+            idToken = authResult.idToken,
+            expiresIn = authResult.expiresIn
+        )
+    }
+
+    private suspend fun fetchAndSaveTenantId() {
+        // Tenant ID is already extracted from the JWT token in TokenManager
+        // This method is kept for consistency with the original app
+        // If you need to fetch it from API, implement it here
+    }
+}
