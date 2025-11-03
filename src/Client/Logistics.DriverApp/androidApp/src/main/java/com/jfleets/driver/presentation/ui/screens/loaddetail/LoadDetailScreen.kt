@@ -38,7 +38,7 @@ import com.jfleets.driver.presentation.ui.components.ErrorView
 import com.jfleets.driver.presentation.ui.components.LoadingIndicator
 import com.jfleets.driver.presentation.viewmodel.LoadDetailUiState
 import com.jfleets.driver.presentation.viewmodel.LoadDetailViewModel
-import com.jfleets.driver.shared.domain.model.LoadStatus
+import com.jfleets.driver.shared.model.LoadStatus
 import com.jfleets.driver.shared.util.formatCurrency
 import com.jfleets.driver.shared.util.formatDistance
 import com.jfleets.driver.shared.util.formatShort

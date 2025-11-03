@@ -5,9 +5,9 @@ package com.jfleets.driver.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jfleets.driver.shared.data.repository.StatsRepository
-import com.jfleets.driver.shared.domain.model.ChartData
-import com.jfleets.driver.shared.domain.model.DateRange
-import com.jfleets.driver.shared.domain.model.DriverStats
+import com.jfleets.driver.shared.model.ChartData
+import com.jfleets.driver.shared.model.DateRange
+import com.jfleets.driver.shared.model.DriverStats
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

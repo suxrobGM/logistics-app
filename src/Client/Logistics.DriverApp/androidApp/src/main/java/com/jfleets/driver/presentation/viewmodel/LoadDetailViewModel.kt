@@ -3,9 +3,8 @@ package com.jfleets.driver.presentation.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jfleets.driver.shared.domain.model.Load
-import com.jfleets.driver.shared.domain.model.LoadStatus
 import com.jfleets.driver.shared.data.repository.LoadRepository
+import com.jfleets.driver.shared.model.Load
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,7 +32,8 @@ class LoadDetailViewModel(
                     _uiState.value = LoadDetailUiState.Success(load)
                 }
                 .onFailure { error ->
-                    _uiState.value = LoadDetailUiState.Error(error.message ?: "Failed to load details")
+                    _uiState.value =
+                        LoadDetailUiState.Error(error.message ?: "Failed to load details")
                 }
         }
     }

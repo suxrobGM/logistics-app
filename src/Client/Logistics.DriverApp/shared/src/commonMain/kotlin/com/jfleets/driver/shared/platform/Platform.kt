@@ -1,5 +1,7 @@
 package com.jfleets.driver.shared.platform
 
+import kotlin.time.Instant
+
 // Platform-specific expect declarations
 
 expect class PlatformSettings() {
@@ -45,7 +47,5 @@ data class AuthResult(
 expect fun getPlatformName(): String
 
 // Formatting utilities
-expect fun Double.formatCurrency(): String
-expect fun Double.formatDistance(): String
-expect fun kotlin.time.Instant.formatShort(): String
-expect fun kotlin.time.Instant.formatDateTime(): String
+expect fun Instant.formatShort(): String
+expect fun Instant.formatDateTime(): String

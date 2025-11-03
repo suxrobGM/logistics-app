@@ -12,8 +12,8 @@ import com.jfleets.driver.presentation.viewmodel.LoadDetailViewModel
 import com.jfleets.driver.presentation.viewmodel.LoginViewModel
 import com.jfleets.driver.presentation.viewmodel.PastLoadsViewModel
 import com.jfleets.driver.presentation.viewmodel.StatsViewModel
-import com.jfleets.driver.shared.di.platformModule
-import com.jfleets.driver.shared.di.sharedModule
+import com.jfleets.driver.shared.platformModule
+import com.jfleets.driver.shared.sharedModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin

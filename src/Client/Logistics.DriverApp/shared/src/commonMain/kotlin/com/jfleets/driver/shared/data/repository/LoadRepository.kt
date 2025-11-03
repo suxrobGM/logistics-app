@@ -4,8 +4,8 @@ import com.jfleets.driver.shared.data.api.LoadApi
 import com.jfleets.driver.shared.data.dto.ConfirmLoadStatus
 import com.jfleets.driver.shared.data.dto.UpdateLoadProximityCommand
 import com.jfleets.driver.shared.data.mapper.toDomain
-import com.jfleets.driver.shared.domain.model.Load
-import com.jfleets.driver.shared.domain.model.LoadStatus
+import com.jfleets.driver.shared.model.Load
+import com.jfleets.driver.shared.model.LoadStatus
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock

@@ -5,11 +5,11 @@ import com.jfleets.driver.shared.data.dto.GetDailyGrossesQuery
 import com.jfleets.driver.shared.data.dto.GetMonthlyGrossesQuery
 import com.jfleets.driver.shared.data.mapper.toChartData
 import com.jfleets.driver.shared.data.mapper.toDomain
-import com.jfleets.driver.shared.domain.model.ChartData
-import com.jfleets.driver.shared.domain.model.DriverStats
-import kotlin.time.Instant
+import com.jfleets.driver.shared.model.ChartData
+import com.jfleets.driver.shared.model.DriverStats
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Instant
 
 class StatsRepository(
     private val statsApi: StatsApi

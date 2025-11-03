@@ -1,4 +1,4 @@
-package com.jfleets.driver.shared.domain.model
+package com.jfleets.driver.shared.model
 
 import kotlin.time.Instant
 

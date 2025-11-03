@@ -5,7 +5,7 @@ import com.jfleets.driver.shared.data.api.UserApi
 import com.jfleets.driver.shared.data.dto.DeviceTokenDto
 import com.jfleets.driver.shared.data.mapper.toDomain
 import com.jfleets.driver.shared.data.mapper.toUpdateDto
-import com.jfleets.driver.shared.domain.model.User
+import com.jfleets.driver.shared.model.User
 
 class UserRepository(
     private val userApi: UserApi,

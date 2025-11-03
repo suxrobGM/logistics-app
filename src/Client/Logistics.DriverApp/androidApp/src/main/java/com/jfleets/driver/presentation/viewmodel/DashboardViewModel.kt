@@ -3,10 +3,10 @@ package com.jfleets.driver.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jfleets.driver.data.local.PreferencesManager
-import com.jfleets.driver.shared.domain.model.Truck
 import com.jfleets.driver.data.repository.AuthRepository
 import com.jfleets.driver.shared.data.repository.TruckRepository
 import com.jfleets.driver.shared.data.repository.UserRepository
+import com.jfleets.driver.shared.model.Truck
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -40,11 +40,13 @@ class DashboardViewModel(
                                 _uiState.value = DashboardUiState.Success(truck)
                             }
                             .onFailure { error ->
-                                _uiState.value = DashboardUiState.Error(error.message ?: "Failed to load truck")
+                                _uiState.value =
+                                    DashboardUiState.Error(error.message ?: "Failed to load truck")
                             }
                     }
                     .onFailure { error ->
-                        _uiState.value = DashboardUiState.Error(error.message ?: "Failed to load driver")
+                        _uiState.value =
+                            DashboardUiState.Error(error.message ?: "Failed to load driver")
                     }
             } catch (e: Exception) {
                 _uiState.value = DashboardUiState.Error(e.message ?: "An error occurred")

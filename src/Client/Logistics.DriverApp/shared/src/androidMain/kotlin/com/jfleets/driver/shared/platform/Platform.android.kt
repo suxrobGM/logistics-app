@@ -8,17 +8,16 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlin.time.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import java.text.NumberFormat
 import java.time.format.DateTimeFormatter
-import java.util.*
+import kotlin.time.Instant
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "driver_settings")
 
 actual class PlatformSettings {
     actual constructor()
+
     private lateinit var context: Context
     private val dataStore: DataStore<Preferences> by lazy { context.dataStore }
 
@@ -95,25 +94,17 @@ actual class AuthManager {
 
 actual fun getPlatformName(): String = "Android"
 
-actual fun Double.formatCurrency(): String {
-    val format = NumberFormat.getCurrencyInstance(Locale.US)
-    return format.format(this)
-}
-
-actual fun Double.formatDistance(): String {
-    val miles = this * 0.000621371
-    return String.format("%.1f mi", miles)
-}
-
 actual fun Instant.formatShort(): String {
     val localDate = this.toLocalDateTime(TimeZone.currentSystemDefault()).date
-    val javaInstant = java.time.Instant.ofEpochSecond(this.epochSeconds, this.nanosecondsOfSecond.toLong())
+    val javaInstant =
+        java.time.Instant.ofEpochSecond(this.epochSeconds, this.nanosecondsOfSecond.toLong())
     val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy")
     return formatter.format(javaInstant)
 }
 
 actual fun Instant.formatDateTime(): String {
-    val javaInstant = java.time.Instant.ofEpochSecond(this.epochSeconds, this.nanosecondsOfSecond.toLong())
+    val javaInstant =
+        java.time.Instant.ofEpochSecond(this.epochSeconds, this.nanosecondsOfSecond.toLong())
     val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm")
     return formatter.format(javaInstant)
 }

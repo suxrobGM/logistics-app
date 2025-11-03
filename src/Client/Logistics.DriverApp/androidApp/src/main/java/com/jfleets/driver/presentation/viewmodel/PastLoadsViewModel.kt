@@ -2,8 +2,8 @@ package com.jfleets.driver.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jfleets.driver.shared.domain.model.Load
 import com.jfleets.driver.shared.data.repository.LoadRepository
+import com.jfleets.driver.shared.model.Load
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,7 +28,8 @@ class PastLoadsViewModel(
                     _uiState.value = PastLoadsUiState.Success(loads)
                 }
                 .onFailure { error ->
-                    _uiState.value = PastLoadsUiState.Error(error.message ?: "Failed to load past loads")
+                    _uiState.value =
+                        PastLoadsUiState.Error(error.message ?: "Failed to load past loads")
                 }
         }
     }

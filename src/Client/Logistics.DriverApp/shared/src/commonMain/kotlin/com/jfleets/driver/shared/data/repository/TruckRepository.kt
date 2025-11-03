@@ -2,7 +2,7 @@ package com.jfleets.driver.shared.data.repository
 
 import com.jfleets.driver.shared.data.api.TruckApi
 import com.jfleets.driver.shared.data.mapper.toDomain
-import com.jfleets.driver.shared.domain.model.Truck
+import com.jfleets.driver.shared.model.Truck
 
 class TruckRepository(
     private val truckApi: TruckApi

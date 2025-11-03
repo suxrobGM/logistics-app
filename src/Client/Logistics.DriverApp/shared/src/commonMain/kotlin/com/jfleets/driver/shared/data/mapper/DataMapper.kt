@@ -1,7 +1,20 @@
 package com.jfleets.driver.shared.data.mapper
 
-import com.jfleets.driver.shared.data.dto.*
-import com.jfleets.driver.shared.domain.model.*
+import com.jfleets.driver.shared.data.dto.DailyGrossDto
+import com.jfleets.driver.shared.data.dto.DriverDto
+import com.jfleets.driver.shared.data.dto.DriverStatsDto
+import com.jfleets.driver.shared.data.dto.LoadDto
+import com.jfleets.driver.shared.data.dto.MonthlyGrossDto
+import com.jfleets.driver.shared.data.dto.TruckDto
+import com.jfleets.driver.shared.data.dto.UpdateUser
+import com.jfleets.driver.shared.data.dto.UserDto
+import com.jfleets.driver.shared.model.ChartData
+import com.jfleets.driver.shared.model.Driver
+import com.jfleets.driver.shared.model.DriverStats
+import com.jfleets.driver.shared.model.Load
+import com.jfleets.driver.shared.model.LoadStatus
+import com.jfleets.driver.shared.model.Truck
+import com.jfleets.driver.shared.model.User
 import kotlin.time.Instant
 
 fun LoadDto.toDomain(): Load {
