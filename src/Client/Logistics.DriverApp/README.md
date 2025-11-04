@@ -72,7 +72,7 @@ Logistics.DriverApp/
 │   └── DriverApp.swift
 │
 ├── gradle/
-│   └── libs.versions.toml    # ✨ Centralized dependency versions
+│   └── libs.versions.toml    # Centralized dependency versions
 │
 └── build.gradle.kts
 ```
