@@ -2,10 +2,9 @@
 
 A cross-platform driver application built with **Kotlin Multiplatform (KMP)** and **Compose Multiplatform**, running on both **Android** and **iOS** from a single codebase.
 
-> 📱 **Cross-Platform**: Share ~80% of code between Android and iOS
-> 🚀 **Native Performance**: Compiled to native code for each platform
-> 🎨 **Modern UI**: Compose Multiplatform for consistent UX
-> 📦 **Version Catalog**: Centralized dependency management with `libs.versions.toml`
+> **Cross-Platform**: Share ~80% of code between Android and iOS
+> **Native Performance**: Compiled to native code for each platform
+> **Modern UI**: Compose Multiplatform for consistent UX
 
 **Migrated from**: .NET MAUI → Android (Kotlin/Jetpack Compose) → **KMP (Android + iOS)**
 
@@ -24,24 +23,24 @@ A cross-platform driver application built with **Kotlin Multiplatform (KMP)** an
 ## Tech Stack
 
 ### Shared (Cross-Platform)
-- **Kotlin Multiplatform**: 2.1.0
-- **Compose Multiplatform**: 1.7.1 (Shared UI)
-- **Ktor Client**: 3.0.2 (HTTP networking)
-- **Kotlinx Serialization**: 1.7.3
-- **Kotlinx Coroutines**: 1.9.0
-- **Kotlinx DateTime**: 0.6.1
-- **Koin**: 4.0.0 (Dependency Injection)
-- **Voyager**: 1.1.0 (Navigation)
-- **Multiplatform Settings**: 1.2.0
+- **Kotlin Multiplatform**
+- **Compose Multiplatform**
+- **Ktor Client**
+- **Kotlinx Serialization**
+- **Kotlinx Coroutines**
+- **Kotlinx DateTime**
+- **Koin**
+- **Voyager**
+- **Multiplatform Settings**
 
 ### Android Platform
 - **Min SDK**: 26 (Android 8.0)
-- **Target SDK**: 35 (Android 15)
+- **Target SDK**: 36 (Android 16)
 - **Firebase**: Cloud Messaging, Analytics
 - **Google Maps**: Maps Compose 6.2.1
-- **AppAuth**: 0.11.1 (OIDC)
+- **AppAuth**: OIDC
 - **DataStore**: Preferences storage
-- **Timber**: 5.0.1 (Logging)
+- **Timber**: Logging
 
 ### iOS Platform
 - **iOS Version**: 15.0+
@@ -54,7 +53,7 @@ A cross-platform driver application built with **Kotlin Multiplatform (KMP)** an
 ### KMP Architecture
 
 ```
-DriverAppKotlin/
+Logistics.DriverApp/
 ├── shared/                    # KMP Shared Module (~80% code sharing)
 │   ├── commonMain/            # Platform-independent code
 │   │   ├── domain/            # Business logic & models
@@ -78,39 +77,18 @@ DriverAppKotlin/
 └── build.gradle.kts
 ```
 
-## Dependency Management
-
-This project uses **Gradle Version Catalogs** for centralized dependency management.
-
-All versions are defined in [`gradle/libs.versions.toml`](gradle/libs.versions.toml):
-
-```kotlin
-// ✅ Modern approach (type-safe, centralized)
-dependencies {
-    implementation(libs.ktor.client.core)
-    implementation(libs.bundles.koin.common)
-}
-
-// ❌ Old approach (hardcoded versions)
-dependencies {
-    implementation("io.ktor:ktor-client-core:3.0.2")
-}
-```
-
-**See**: [QUICK_VERSION_CATALOG_GUIDE.md](QUICK_VERSION_CATALOG_GUIDE.md) for usage
-
 ## Setup Instructions
 
 ### Prerequisites
 
 1. **Development Tools**:
-   - Android Studio Hedgehog (2023.1.1) or later
-   - Xcode 15.0+ (macOS only)
+   - Android Studio Hedgehog
+   - Xcode (macOS only)
    - JDK 17
    - CocoaPods (iOS): `sudo gem install cocoapods`
 
 2. **Platform SDKs**:
-   - Android SDK (API 35)
+   - Android SDK (API 36)
    - iOS SDK (15.0+)
 
 ### Step 1: Clone and Build
@@ -151,30 +129,6 @@ cd DriverAppKotlin
 
 4. **Build and Run** in Xcode
 
-## Configuration
-
-### API Endpoints
-
-Update in `shared/src/commonMain/kotlin/.../di/SharedModule.kt`:
-
-```kotlin
-fun sharedModule(baseUrl: String = "https://your-api-server/") = module {
-    // ...
-}
-```
-
-### OIDC Authentication
-
-Update in Android/iOS platform-specific auth implementations.
-
-## Quick Links
-
-- 📖 **[KMP_README.md](KMP_README.md)** - Complete KMP setup guide
-- 📋 **[KMP_MIGRATION_SUMMARY.md](KMP_MIGRATION_SUMMARY.md)** - Migration details
-- ⚡ **[QUICK_START.md](QUICK_START.md)** - 5-minute setup
-- 📦 **[QUICK_VERSION_CATALOG_GUIDE.md](QUICK_VERSION_CATALOG_GUIDE.md)** - Dependency management
-- 🔄 **[VERSION_CATALOG_MIGRATION.md](VERSION_CATALOG_MIGRATION.md)** - Complete catalog docs
-
 ## Build & Run
 
 ### Android
@@ -200,49 +154,3 @@ cd iosApp && pod install
 # Open in Xcode
 open iosApp.xcworkspace
 ```
-
-## Testing
-
-```bash
-# Shared tests
-./gradlew :shared:allTests
-
-# Android tests
-./gradlew :androidApp:testDebugUnitTest
-
-# iOS tests (macOS)
-./gradlew :shared:iosSimulatorArm64Test
-```
-
-## Troubleshooting
-
-### "Unresolved reference: libs"
-1. Sync Gradle: `./gradlew --refresh-dependencies`
-2. Invalidate caches in Android Studio
-
-### Android: "Could not find shared module"
-```bash
-./gradlew :shared:build
-```
-
-### iOS: "Framework not found 'shared'"
-```bash
-./gradlew :shared:linkDebugFrameworkIosSimulatorArm64
-cd iosApp && pod install
-```
-
-## License
-
-[Your License Here]
-
-## Contributors
-
-[Your Name/Team]
-
----
-
-**Platform Support:**
-- ✅ Android (API 26+)
-- ✅ iOS (15.0+)
-- 🚧 Desktop (Future with Compose for Desktop)
-- 🚧 Web (Future with Compose for Web)
