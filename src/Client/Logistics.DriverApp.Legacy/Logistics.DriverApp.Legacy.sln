@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logistics.DriverApp", "Logistics.DriverApp.csproj", "{250DA758-B237-E358-CD1A-1BD553857683}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{250DA758-B237-E358-CD1A-1BD553857683}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{250DA758-B237-E358-CD1A-1BD553857683}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{250DA758-B237-E358-CD1A-1BD553857683}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{250DA758-B237-E358-CD1A-1BD553857683}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {671BB27E-32A1-4F50-969C-1A19541EAA5A}
+	EndGlobalSection
+EndGlobal

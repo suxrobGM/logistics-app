@@ -138,6 +138,7 @@ jwt-decode = { module = "com.auth0.android:jwtdecode", version.ref = "jwt-decode
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 # Testing
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 junit = { module = "junit:junit", version.ref = "junit" }
 androidx-test-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-test-junit" }
 androidx-test-espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "androidx-test-espresso" }

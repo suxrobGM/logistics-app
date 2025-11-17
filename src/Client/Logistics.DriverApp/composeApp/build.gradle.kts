@@ -2,8 +2,9 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.google.services)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.compose.compiler)
 }
@@ -39,7 +40,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "shared"
+            baseName = "ComposeApp"
             isStatic = true
         }
     }
@@ -69,8 +70,7 @@ kotlin {
             implementation(libs.multiplatform.settings)
             implementation(libs.multiplatform.settings.noarg)
 
-            // Koin
-            implementation(project.dependencies.platform(libs.koin.bom))
+            // Koin (multiplatform)
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
@@ -80,6 +80,11 @@ kotlin {
         }
 
         androidMain.dependencies {
+            // Compose
+            implementation(compose.preview)
+            implementation(libs.compose.bom)
+            implementation(libs.bundles.androidx.compose)
+
             // Android-specific Ktor
             implementation(libs.ktor.client.okhttp)
 
@@ -88,30 +93,103 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime)
             implementation(libs.androidx.lifecycle.viewmodel)
 
+            // Navigation Compose
+            implementation(libs.androidx.navigation.compose)
+
             // DataStore Android
             implementation(libs.androidx.datastore.preferences)
 
             // Koin Android
-            // implementation(libs.koin.android)
+            implementation(libs.koin.androidx.compose)
+            implementation(libs.koin.androidx.compose.navigation)
+
+            // Firebase
+            implementation(libs.firebase.bom)
+            implementation(libs.firebase.messaging)
+            implementation(libs.firebase.analytics)
+
+            // Google Play Services & Maps
+            implementation(libs.play.services.location)
+            implementation(libs.bundles.maps)
+
+            // Authentication
+            implementation(libs.appauth)
+            implementation(libs.jwt.decode)
+
+            // Utilities
+            implementation(libs.timber)
+
+            // Work Manager
+            implementation(libs.androidx.work.runtime)
         }
 
         iosMain.dependencies {
             // iOS-specific Ktor
             implementation(libs.ktor.client.darwin)
         }
+
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
     }
 }
 
 android {
-    namespace = "com.jfleets.driver.shared"
+    namespace = "com.jfleets.driver"
     compileSdk = 36
 
     defaultConfig {
+        applicationId = "com.jfleets.driver"
         minSdk = 26
+        targetSdk = 36
+        versionCode = 1
+        versionName = "1.0.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
+
+        manifestPlaceholders["appAuthRedirectScheme"] = "com.jfleets.driver"
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        debug {
+            isMinifyEnabled = false
+        }
     }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+}
+
+dependencies {
+    // Compose Tooling (for Previews)
+    debugImplementation(compose.uiTooling)
+    debugImplementation(libs.compose.ui.tooling)
+
+    // Testing
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.junit)
+    androidTestImplementation(libs.androidx.test.espresso)
 }

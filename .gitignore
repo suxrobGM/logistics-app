@@ -365,3 +365,5 @@ MigrationBackup/
 
 # Claude Code settings
 .claude/
+
+KotlinProject/
