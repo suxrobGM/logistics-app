@@ -8,6 +8,7 @@ import timber.log.Timber
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import androidx.core.net.toUri
 
 class AuthService(
     private val context: Context
@@ -21,8 +22,8 @@ class AuthService(
     }
 
     private val serviceConfig = AuthorizationServiceConfiguration(
-        Uri.parse("$AUTHORITY/connect/authorize"),
-        Uri.parse("$AUTHORITY/connect/token")
+        "$AUTHORITY/connect/authorize".toUri(),
+        "$AUTHORITY/connect/token".toUri()
     )
 
     private val authService = AuthorizationService(context)
@@ -32,7 +33,7 @@ class AuthService(
             serviceConfig,
             CLIENT_ID,
             ResponseTypeValues.CODE,
-            Uri.parse(REDIRECT_URI)
+            REDIRECT_URI.toUri()
         ).setScope(SCOPE)
 
         val authRequest = authRequestBuilder.build()
