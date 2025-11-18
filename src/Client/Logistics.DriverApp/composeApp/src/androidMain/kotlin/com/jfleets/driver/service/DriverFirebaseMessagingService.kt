@@ -10,7 +10,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.jfleets.driver.MainActivity
 import com.jfleets.driver.R
-import com.jfleets.driver.shared.data.repository.UserRepository
+import com.jfleets.driver.data.repository.UserRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -71,11 +71,13 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
                 // Trigger load refresh in the app
                 // You can use a broadcast receiver or shared flow to notify the app
             }
+
             "new_load" -> {
                 Timber.d("New load notification received")
                 val loadId = data["loadId"]
                 showNotification("New Load Assigned", "You have been assigned a new load")
             }
+
             else -> {
                 Timber.d("Unknown notification type")
             }

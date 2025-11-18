@@ -2,8 +2,8 @@ package com.jfleets.driver.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jfleets.driver.shared.data.repository.UserRepository
-import com.jfleets.driver.shared.model.User
+import com.jfleets.driver.data.repository.UserRepository
+import com.jfleets.driver.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

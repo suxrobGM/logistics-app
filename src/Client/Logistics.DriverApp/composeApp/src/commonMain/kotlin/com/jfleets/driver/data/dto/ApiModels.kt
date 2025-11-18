@@ -1,4 +1,4 @@
-package com.jfleets.driver.shared.data.dto
+package com.jfleets.driver.data.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

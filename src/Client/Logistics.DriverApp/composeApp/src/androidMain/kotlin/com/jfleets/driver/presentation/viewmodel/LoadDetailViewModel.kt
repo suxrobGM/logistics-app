@@ -3,8 +3,8 @@ package com.jfleets.driver.presentation.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jfleets.driver.shared.data.repository.LoadRepository
-import com.jfleets.driver.shared.model.Load
+import com.jfleets.driver.data.repository.LoadRepository
+import com.jfleets.driver.model.Load
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

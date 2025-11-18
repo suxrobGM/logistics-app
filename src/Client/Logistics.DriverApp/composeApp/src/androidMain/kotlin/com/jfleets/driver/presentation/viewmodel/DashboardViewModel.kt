@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jfleets.driver.data.local.PreferencesManager
 import com.jfleets.driver.data.repository.AuthRepository
-import com.jfleets.driver.shared.data.repository.TruckRepository
-import com.jfleets.driver.shared.data.repository.UserRepository
-import com.jfleets.driver.shared.model.Truck
+import com.jfleets.driver.data.repository.TruckRepository
+import com.jfleets.driver.data.repository.UserRepository
+import com.jfleets.driver.model.Truck
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

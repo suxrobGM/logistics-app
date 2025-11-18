@@ -21,8 +21,8 @@
 -dontwarn org.slf4j.**
 
 # Keep shared module models (now using kotlinx.serialization)
--keep class com.jfleets.driver.shared.domain.model.** { *; }
--keep class com.jfleets.driver.shared.data.dto.** { *; }
+-keep class com.jfleets.driver.domain.model.** { *; }
+-keep class com.jfleets.driver.data.dto.** { *; }
 
 # Keep Android-specific models
 -keep class com.jfleets.driver.data.model.** { *; }

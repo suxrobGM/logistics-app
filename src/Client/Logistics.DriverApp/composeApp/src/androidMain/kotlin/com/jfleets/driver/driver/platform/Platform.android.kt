@@ -1,4 +1,4 @@
-package com.jfleets.driver.shared.platform
+package com.jfleets.driver.platform
 
 import android.content.Context
 import androidx.datastore.core.DataStore

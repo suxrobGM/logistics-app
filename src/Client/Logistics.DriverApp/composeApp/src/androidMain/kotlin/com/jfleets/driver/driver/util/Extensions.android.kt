@@ -1,4 +1,4 @@
-package com.jfleets.driver.shared.util
+package com.jfleets.driver.util
 
 import android.location.Location
 

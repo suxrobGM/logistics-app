@@ -1,4 +1,4 @@
-package com.jfleets.driver.shared.platform
+package com.jfleets.driver.platform
 
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.datetime.toNSDate

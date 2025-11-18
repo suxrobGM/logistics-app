@@ -1,12 +1,12 @@
-package com.jfleets.driver.shared.util
+package com.jfleets.driver.util
 
-import kotlin.time.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.round
+import kotlin.time.Instant
 
 /**
  * Common extension functions for Kotlin Multiplatform

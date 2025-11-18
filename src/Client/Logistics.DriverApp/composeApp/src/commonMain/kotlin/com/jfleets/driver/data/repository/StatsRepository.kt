@@ -1,12 +1,12 @@
-package com.jfleets.driver.shared.data.repository
+package com.jfleets.driver.data.repository
 
-import com.jfleets.driver.shared.data.api.StatsApi
-import com.jfleets.driver.shared.data.dto.GetDailyGrossesQuery
-import com.jfleets.driver.shared.data.dto.GetMonthlyGrossesQuery
-import com.jfleets.driver.shared.data.mapper.toChartData
-import com.jfleets.driver.shared.data.mapper.toDomain
-import com.jfleets.driver.shared.model.ChartData
-import com.jfleets.driver.shared.model.DriverStats
+import com.jfleets.driver.data.api.StatsApi
+import com.jfleets.driver.data.dto.GetDailyGrossesQuery
+import com.jfleets.driver.data.dto.GetMonthlyGrossesQuery
+import com.jfleets.driver.data.mapper.toChartData
+import com.jfleets.driver.data.mapper.toDomain
+import com.jfleets.driver.model.ChartData
+import com.jfleets.driver.model.DriverStats
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Instant

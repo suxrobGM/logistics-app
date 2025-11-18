@@ -1,23 +1,45 @@
 package com.jfleets.driver.presentation.ui.screens.stats
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.koinViewModel
 import com.jfleets.driver.presentation.ui.components.CardContainer
 import com.jfleets.driver.presentation.ui.components.ErrorView
 import com.jfleets.driver.presentation.ui.components.LoadingIndicator
 import com.jfleets.driver.presentation.viewmodel.ChartUiState
 import com.jfleets.driver.presentation.viewmodel.StatsUiState
 import com.jfleets.driver.presentation.viewmodel.StatsViewModel
-import com.jfleets.driver.shared.util.formatCurrency
-import com.jfleets.driver.shared.util.formatDistance
+import com.jfleets.driver.util.formatCurrency
+import com.jfleets.driver.util.formatDistance
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,6 +68,7 @@ fun StatsScreen(
             is StatsUiState.Loading -> {
                 LoadingIndicator()
             }
+
             is StatsUiState.Success -> {
                 val stats = state.stats
                 LazyColumn(
@@ -130,6 +153,7 @@ fun StatsScreen(
                                         LoadingIndicator()
                                     }
                                 }
+
                                 is ChartUiState.Success -> {
                                     Column(modifier = Modifier.padding(16.dp)) {
                                         Text(
@@ -139,16 +163,21 @@ fun StatsScreen(
                                         // Note: For actual chart rendering, you would use a chart library
                                         // like MPAndroidChart or Compose Charts
                                         Text(
-                                            text = "Total Gross: ${chart.data.sumOf { it.gross }.formatCurrency()}",
+                                            text = "Total Gross: ${
+                                                chart.data.sumOf { it.gross }.formatCurrency()
+                                            }",
                                             style = MaterialTheme.typography.bodyMedium,
                                             modifier = Modifier.padding(top = 8.dp)
                                         )
                                         Text(
-                                            text = "Total Driver Share: ${chart.data.sumOf { it.driverShare }.formatCurrency()}",
+                                            text = "Total Driver Share: ${
+                                                chart.data.sumOf { it.driverShare }.formatCurrency()
+                                            }",
                                             style = MaterialTheme.typography.bodyMedium
                                         )
                                     }
                                 }
+
                                 is ChartUiState.Error -> {
                                     Box(
                                         modifier = Modifier
@@ -166,6 +195,7 @@ fun StatsScreen(
                     }
                 }
             }
+
             is StatsUiState.Error -> {
                 ErrorView(
                     message = state.message,

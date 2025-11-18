@@ -1,8 +1,8 @@
-package com.jfleets.driver.shared.data.repository
+package com.jfleets.driver.data.repository
 
-import com.jfleets.driver.shared.data.api.TruckApi
-import com.jfleets.driver.shared.data.mapper.toDomain
-import com.jfleets.driver.shared.model.Truck
+import com.jfleets.driver.data.api.TruckApi
+import com.jfleets.driver.data.mapper.toDomain
+import com.jfleets.driver.model.Truck
 
 class TruckRepository(
     private val truckApi: TruckApi

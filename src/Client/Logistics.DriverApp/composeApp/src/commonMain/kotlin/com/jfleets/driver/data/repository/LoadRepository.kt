@@ -1,11 +1,11 @@
-package com.jfleets.driver.shared.data.repository
+package com.jfleets.driver.data.repository
 
-import com.jfleets.driver.shared.data.api.LoadApi
-import com.jfleets.driver.shared.data.dto.ConfirmLoadStatus
-import com.jfleets.driver.shared.data.dto.UpdateLoadProximityCommand
-import com.jfleets.driver.shared.data.mapper.toDomain
-import com.jfleets.driver.shared.model.Load
-import com.jfleets.driver.shared.model.LoadStatus
+import com.jfleets.driver.data.api.LoadApi
+import com.jfleets.driver.data.dto.ConfirmLoadStatus
+import com.jfleets.driver.data.dto.UpdateLoadProximityCommand
+import com.jfleets.driver.data.mapper.toDomain
+import com.jfleets.driver.model.Load
+import com.jfleets.driver.model.LoadStatus
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock

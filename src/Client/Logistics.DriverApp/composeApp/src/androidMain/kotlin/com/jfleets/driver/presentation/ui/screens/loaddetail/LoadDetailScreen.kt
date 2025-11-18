@@ -33,15 +33,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.jfleets.driver.model.LoadStatus
 import com.jfleets.driver.presentation.ui.components.CardContainer
 import com.jfleets.driver.presentation.ui.components.ErrorView
 import com.jfleets.driver.presentation.ui.components.LoadingIndicator
 import com.jfleets.driver.presentation.viewmodel.LoadDetailUiState
 import com.jfleets.driver.presentation.viewmodel.LoadDetailViewModel
-import com.jfleets.driver.shared.model.LoadStatus
-import com.jfleets.driver.shared.util.formatCurrency
-import com.jfleets.driver.shared.util.formatDistance
-import com.jfleets.driver.shared.util.formatShort
+import com.jfleets.driver.util.formatCurrency
+import com.jfleets.driver.util.formatDistance
+import com.jfleets.driver.util.formatShort
 import org.koin.androidx.compose.koinViewModel
 import kotlin.time.ExperimentalTime
 

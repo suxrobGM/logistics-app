@@ -31,13 +31,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.jfleets.driver.model.User
 import com.jfleets.driver.presentation.ui.components.CardContainer
 import com.jfleets.driver.presentation.ui.components.ErrorView
 import com.jfleets.driver.presentation.ui.components.LoadingIndicator
 import com.jfleets.driver.presentation.viewmodel.AccountUiState
 import com.jfleets.driver.presentation.viewmodel.AccountViewModel
 import com.jfleets.driver.presentation.viewmodel.SaveState
-import com.jfleets.driver.shared.model.User
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

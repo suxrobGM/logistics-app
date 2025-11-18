@@ -1,20 +1,20 @@
-package com.jfleets.driver.shared.data.mapper
+package com.jfleets.driver.data.mapper
 
-import com.jfleets.driver.shared.data.dto.DailyGrossDto
-import com.jfleets.driver.shared.data.dto.DriverDto
-import com.jfleets.driver.shared.data.dto.DriverStatsDto
-import com.jfleets.driver.shared.data.dto.LoadDto
-import com.jfleets.driver.shared.data.dto.MonthlyGrossDto
-import com.jfleets.driver.shared.data.dto.TruckDto
-import com.jfleets.driver.shared.data.dto.UpdateUser
-import com.jfleets.driver.shared.data.dto.UserDto
-import com.jfleets.driver.shared.model.ChartData
-import com.jfleets.driver.shared.model.Driver
-import com.jfleets.driver.shared.model.DriverStats
-import com.jfleets.driver.shared.model.Load
-import com.jfleets.driver.shared.model.LoadStatus
-import com.jfleets.driver.shared.model.Truck
-import com.jfleets.driver.shared.model.User
+import com.jfleets.driver.data.dto.DailyGrossDto
+import com.jfleets.driver.data.dto.DriverDto
+import com.jfleets.driver.data.dto.DriverStatsDto
+import com.jfleets.driver.data.dto.LoadDto
+import com.jfleets.driver.data.dto.MonthlyGrossDto
+import com.jfleets.driver.data.dto.TruckDto
+import com.jfleets.driver.data.dto.UpdateUser
+import com.jfleets.driver.data.dto.UserDto
+import com.jfleets.driver.model.ChartData
+import com.jfleets.driver.model.Driver
+import com.jfleets.driver.model.DriverStats
+import com.jfleets.driver.model.Load
+import com.jfleets.driver.model.LoadStatus
+import com.jfleets.driver.model.Truck
+import com.jfleets.driver.model.User
 import kotlin.time.Instant
 
 fun LoadDto.toDomain(): Load {
