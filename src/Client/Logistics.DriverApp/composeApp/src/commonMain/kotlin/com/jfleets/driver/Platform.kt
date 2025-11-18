@@ -1,4 +1,4 @@
-package com.jfleets.driver.platform
+package com.jfleets.driver
 
 import kotlin.time.Instant
 

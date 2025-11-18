@@ -10,7 +10,6 @@ import com.jfleets.driver.data.repository.LoadRepository
 import com.jfleets.driver.data.repository.StatsRepository
 import com.jfleets.driver.data.repository.TruckRepository
 import com.jfleets.driver.data.repository.UserRepository
-import com.jfleets.driver.platform.PlatformSettings
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
