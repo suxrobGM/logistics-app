@@ -1,0 +1,78 @@
+@startuml DriverApp High-Level Architecture
+
+skinparam packageStyle rectangle
+skinparam linetype ortho
+
+title DriverApp - High-Level Architecture
+
+' External Systems
+cloud "OAuth Server: IdentityServer" as OAuth
+
+cloud "Backend API: ASP.NET Core" as Backend {
+    [REST Services]
+    database "PostgreSQL" as DB
+}
+
+cloud "Google Services" as Google {
+    [Firebase (FCM)]
+    [Google Maps]
+    [Location Services]
+}
+
+' Mobile Application
+package "DriverApp\n(Kotlin Multiplatform)" {
+
+    package "Presentation Layer" #LightBlue {
+        [UI Screens\n(Compose)]
+        [ViewModels\n(MVVM)]
+    }
+
+    package "Domain Layer" #LightGreen {
+        [Business Models]
+    }
+
+    package "Data Layer" #LightYellow {
+        [API Client\n(Ktor)]
+        [Local Storage\n(DataStore)]
+        [Auth Service]
+    }
+
+    package "Background Services" #LightCoral {
+        [Location Tracking]
+        [Push Notifications]
+    }
+}
+
+' Internal Flow
+[UI Screens\n(Compose)] --> [ViewModels\n(MVVM)]
+[ViewModels\n(MVVM)] --> [Business Models]
+[ViewModels\n(MVVM)] --> [API Client\n(Ktor)]
+[API Client\n(Ktor)] --> [Business Models]
+[Auth Service] --> [Local Storage\n(DataStore)]
+[Location Tracking] --> [API Client\n(Ktor)]
+
+' External Connections
+[Auth Service] --> OAuth : OAuth2 + PKCE
+[API Client\n(Ktor)] --> Backend : HTTPS/REST\nJWT Auth
+[REST Services] --> DB
+[Location Tracking] --> Google : GPS Updates
+[UI Screens\n(Compose)] --> Google : Maps/Directions
+[Push Notifications] <-- Google : FCM
+
+note right of "DriverApp\n(Kotlin Multiplatform)"
+    <b>Architecture Pattern:</b>
+    Clean Architecture + MVVM
+
+    <b>Platform:</b>
+    Android & iOS (Shared Code)
+end note
+
+note bottom of Backend
+    <b>Communication:</b>
+    HTTPS/REST
+    JSON
+    JWT Bearer Tokens
+    Multi-tenant Headers
+end note
+
+@enduml

@@ -1,0 +1,98 @@
+@startuml Business Models
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+title DriverApp - Business Models
+
+' Core Entities
+class Load {
+    + id: String
+    + referenceNumber: String
+    + origin: String
+    + destination: String
+    + cost: Double
+    + distance: Double
+    + status: LoadStatus
+    + truckId: String?
+    + dispatchedAt: Instant?
+    + pickedUpAt: Instant?
+    + deliveredAt: Instant?
+}
+
+enum LoadStatus {
+    DISPATCHED
+    PICKED_UP
+    DELIVERED
+    CANCELLED
+}
+
+class Truck {
+    + id: String
+    + unitNumber: String
+    + year: Int
+    + make: String
+    + model: String
+    + drivers: List<Driver>
+    + activeLoads: List<Load>
+}
+
+class Driver {
+    + id: String
+    + userId: String
+    + licenseNumber: String
+    + licenseState: String
+    + licenseExpiration: Instant
+}
+
+class User {
+    + id: String
+    + tenantId: String
+    + firstName: String
+    + lastName: String
+    + email: String
+    + phoneNumber: String?
+}
+
+class DriverStats {
+    + weeklyEarnings: Double
+    + monthlyEarnings: Double
+    + dailyGrosses: List<ChartData>
+    + monthlyGrosses: List<ChartData>
+}
+
+class ChartData {
+    + label: String
+    + value: Double
+}
+
+' Relationships
+Load --> LoadStatus : has status
+Truck "1" *-- "many" Driver : assigned to
+Truck "1" *-- "many" Load : carries
+Driver "1" -- "1" User : linked to
+DriverStats "1" *-- "many" ChartData : contains
+
+note right of Load
+    <b>Lifecycle:</b>
+    DISPATCHED → PICKED_UP → DELIVERED
+
+    Represents a shipment/job
+    assigned to a truck and driver
+end note
+
+note bottom of Truck
+    <b>Equipment Entity</b>
+
+    Can have multiple drivers
+    Holds currently active loads
+end note
+
+note left of DriverStats
+    <b>Performance Metrics</b>
+
+    Tracks earnings over time
+    Used for charts and analytics
+end note
+
+@enduml
