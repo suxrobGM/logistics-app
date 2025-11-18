@@ -71,6 +71,7 @@ kotlin {
             implementation(libs.multiplatform.settings.noarg)
 
             // Koin (multiplatform)
+            implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
@@ -82,7 +83,7 @@ kotlin {
         androidMain.dependencies {
             // Compose
             implementation(compose.preview)
-            implementation(libs.compose.bom)
+            implementation(project.dependencies.platform(libs.compose.bom))
             implementation(libs.bundles.androidx.compose)
 
             // Android-specific Ktor
@@ -104,7 +105,7 @@ kotlin {
             implementation(libs.koin.androidx.compose.navigation)
 
             // Firebase
-            implementation(libs.firebase.bom)
+            implementation(project.dependencies.platform(libs.firebase.bom))
             implementation(libs.firebase.messaging)
             implementation(libs.firebase.analytics)
 
