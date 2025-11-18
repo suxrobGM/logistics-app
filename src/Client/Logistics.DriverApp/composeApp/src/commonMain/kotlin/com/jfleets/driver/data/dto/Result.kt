@@ -5,23 +5,19 @@ import kotlinx.serialization.Serializable
 
 /**
  * Non-generic operation result without a payload.
- * Use [Result] when you need to return data on success.
  */
 @Serializable
-open class Result {
+data class Result(
     @SerialName("error")
     val error: String? = null
-
+) {
     @SerialName("success")
     val success: Boolean
         get() = error.isNullOrEmpty()
 
     companion object {
         fun ok(): Result = Result()
-        fun fail(error: String): Result = Result().apply {
-            // Note: Since error is val, we'd need to handle this differently
-            // The C# version uses init, Kotlin uses constructor or data class
-        }
+        fun fail(error: String): Result = Result(error = error)
     }
 }
 
@@ -65,7 +61,7 @@ data class PagedResult<T>(
         get() = error.isNullOrEmpty()
 
     companion object {
-        fun <T> succeed(items: List<T>?, totalItems: Int, totalPages: Int): PagedResult<T> =
+        fun <T> ok(items: List<T>?, totalItems: Int, totalPages: Int): PagedResult<T> =
             PagedResult(data = items, totalItems = totalItems, totalPages = totalPages)
 
         fun <T> fail(error: String): PagedResult<T> =

@@ -1,5 +1,7 @@
 package com.jfleets.driver.data.api
 
+import com.jfleets.driver.data.dto.ApiResult
+import com.jfleets.driver.data.dto.Result
 import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -60,19 +62,16 @@ class ApiClient(
         endpoint: String,
         noinline block: HttpRequestBuilder.() -> Unit = {}
     ): T {
-        val token = getAccessToken()
-        val tenantId = getTenantId()
+        return executeRequest {
+            val token = getAccessToken()
+            val tenantId = getTenantId()
 
-        val response = client.get(endpoint) {
-            if (token != null) {
-                header("Authorization", "Bearer $token")
+            client.get(endpoint) {
+                if (token != null) header("Authorization", "Bearer $token")
+                if (tenantId != null) header("X-Tenant", tenantId)
+                block()
             }
-            if (tenantId != null) {
-                header("X-Tenant", tenantId)
-            }
-            block()
         }
-        return response.requireSuccess(endpoint)
     }
 
     suspend inline fun <reified T> post(
@@ -80,22 +79,17 @@ class ApiClient(
         body: Any? = null,
         noinline block: HttpRequestBuilder.() -> Unit = {}
     ): T {
-        val token = getAccessToken()
-        val tenantId = getTenantId()
+        return executeRequest {
+            val token = getAccessToken()
+            val tenantId = getTenantId()
 
-        val response = client.post(endpoint) {
-            if (token != null) {
-                header("Authorization", "Bearer $token")
+            client.post(endpoint) {
+                if (token != null) header("Authorization", "Bearer $token")
+                if (tenantId != null) header("X-Tenant", tenantId)
+                if (body != null) setBody(body)
+                block()
             }
-            if (tenantId != null) {
-                header("X-Tenant", tenantId)
-            }
-            if (body != null) {
-                setBody(body)
-            }
-            block()
         }
-        return response.requireSuccess(endpoint)
     }
 
     suspend inline fun <reified T> put(
@@ -103,29 +97,44 @@ class ApiClient(
         body: Any? = null,
         noinline block: HttpRequestBuilder.() -> Unit = {}
     ): T {
-        val token = getAccessToken()
-        val tenantId = getTenantId()
+        return executeRequest {
+            val token = getAccessToken()
+            val tenantId = getTenantId()
 
-        val response = client.put(endpoint) {
-            if (token != null) {
-                header("Authorization", "Bearer $token")
+            client.put(endpoint) {
+                if (token != null) header("Authorization", "Bearer $token")
+                if (tenantId != null) header("X-Tenant", tenantId)
+                if (body != null) setBody(body)
+                block()
             }
-            if (tenantId != null) {
-                header("X-Tenant", tenantId)
-            }
-            if (body != null) {
-                setBody(body)
-            }
-            block()
         }
-        return response.requireSuccess(endpoint)
     }
-}
 
-suspend inline fun <reified T> HttpResponse.requireSuccess(endpoint: String): T {
-    if (!status.isSuccess()) {
-        val errorText = runCatching { bodyAsText() }.getOrElse { "" }
-        throw ApiException(status.value, endpoint, errorText)
+    @PublishedApi
+    internal suspend inline fun <reified T> executeRequest(
+        crossinline request: suspend () -> HttpResponse
+    ): T {
+        return try {
+            val response = request()
+
+            if (!response.status.isSuccess()) {
+                val errorText = runCatching { response.bodyAsText() }.getOrElse { "Request failed" }
+                return createErrorResult("HTTP ${response.status.value}: $errorText")
+            }
+
+            response.body()
+        } catch (e: Exception) {
+            createErrorResult(e.message ?: "Unknown error occurred")
+        }
     }
-    return body()
+
+    @PublishedApi
+    internal inline fun <reified T> createErrorResult(errorMsg: String): T {
+        // Try Result first (for non-generic operations), then ApiResult
+        return try {
+            Result.fail(errorMsg) as T
+        } catch (_: ClassCastException) {
+            ApiResult.fail<Any>(errorMsg) as T
+        }
+    }
 }
