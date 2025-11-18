@@ -1,4 +1,4 @@
-package com.jfleets.driver.presentation.ui.screens.account
+package com.jfleets.driver.presentation.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,6 +38,7 @@ import com.jfleets.driver.presentation.ui.components.LoadingIndicator
 import com.jfleets.driver.presentation.viewmodel.AccountUiState
 import com.jfleets.driver.presentation.viewmodel.AccountViewModel
 import com.jfleets.driver.presentation.viewmodel.SaveState
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,7 +69,7 @@ fun AccountScreen(
     LaunchedEffect(saveState) {
         if (saveState is SaveState.Success) {
             // Show success message and reset after a delay
-            kotlinx.coroutines.delay(2000)
+            delay(2000)
             viewModel.resetSaveState()
         }
     }

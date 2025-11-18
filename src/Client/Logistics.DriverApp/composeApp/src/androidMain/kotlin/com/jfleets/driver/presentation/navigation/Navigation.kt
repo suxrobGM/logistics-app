@@ -7,14 +7,14 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.jfleets.driver.presentation.ui.screens.about.AboutScreen
-import com.jfleets.driver.presentation.ui.screens.account.AccountScreen
-import com.jfleets.driver.presentation.ui.screens.dashboard.DashboardScreen
-import com.jfleets.driver.presentation.ui.screens.loaddetail.LoadDetailScreen
-import com.jfleets.driver.presentation.ui.screens.login.LoginScreen
-import com.jfleets.driver.presentation.ui.screens.pastloads.PastLoadsScreen
-import com.jfleets.driver.presentation.ui.screens.settings.SettingsScreen
-import com.jfleets.driver.presentation.ui.screens.stats.StatsScreen
+import com.jfleets.driver.presentation.ui.screens.AboutScreen
+import com.jfleets.driver.presentation.ui.screens.AccountScreen
+import com.jfleets.driver.presentation.ui.screens.DashboardScreen
+import com.jfleets.driver.presentation.ui.screens.LoadDetailScreen
+import com.jfleets.driver.presentation.ui.screens.LoginScreen
+import com.jfleets.driver.presentation.ui.screens.PastLoadsScreen
+import com.jfleets.driver.presentation.ui.screens.SettingsScreen
+import com.jfleets.driver.presentation.ui.screens.StatsScreen
 
 @Composable
 fun AppNavigation(

@@ -1,26 +1,33 @@
-package com.jfleets.driver.presentation.ui.screens.login
+package com.jfleets.driver.presentation.ui.screens
 
 import android.app.Activity
-import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.koinViewModel
-import com.jfleets.driver.R
 import com.jfleets.driver.presentation.ui.components.LoadingIndicator
 import com.jfleets.driver.presentation.viewmodel.LoginUiState
 import com.jfleets.driver.presentation.viewmodel.LoginViewModel
-import kotlin.system.exitProcess
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LoginScreen(
@@ -46,6 +53,7 @@ fun LoginScreen(
                 onLoginSuccess()
                 viewModel.resetState()
             }
+
             else -> {}
         }
     }
@@ -65,6 +73,7 @@ fun LoginScreen(
             is LoginUiState.Loading -> {
                 LoadingIndicator(message = "Authenticating...")
             }
+
             is LoginUiState.Error -> {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -92,6 +101,7 @@ fun LoginScreen(
                     }
                 }
             }
+
             else -> {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,

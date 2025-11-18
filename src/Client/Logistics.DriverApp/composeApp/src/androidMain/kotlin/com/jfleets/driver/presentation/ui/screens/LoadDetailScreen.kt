@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalTime::class)
 
-package com.jfleets.driver.presentation.ui.screens.loaddetail
+package com.jfleets.driver.presentation.ui.screens
 
 import android.content.Intent
 import android.net.Uri

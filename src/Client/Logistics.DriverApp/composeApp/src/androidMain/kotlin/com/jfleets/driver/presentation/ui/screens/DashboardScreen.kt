@@ -1,4 +1,4 @@
-package com.jfleets.driver.presentation.ui.screens.dashboard
+package com.jfleets.driver.presentation.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
