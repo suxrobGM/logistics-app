@@ -14,7 +14,6 @@ import com.jfleets.driver.data.dto.TruckDto
 import com.jfleets.driver.data.dto.UpdateLoadProximityCommand
 import com.jfleets.driver.data.dto.UpdateUser
 import com.jfleets.driver.data.dto.UserDto
-import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -30,8 +29,11 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
@@ -76,7 +78,7 @@ class ApiClient(
         val token = getAccessToken()
         val tenantId = getTenantId()
 
-        return client.get(endpoint) {
+        val response = client.get(endpoint) {
             if (token != null) {
                 header("Authorization", "Bearer $token")
             }
@@ -84,7 +86,8 @@ class ApiClient(
                 header("X-Tenant", tenantId)
             }
             block()
-        }.body()
+        }
+        return response.requireSuccess(endpoint)
     }
 
     suspend inline fun <reified T> post(
@@ -95,7 +98,7 @@ class ApiClient(
         val token = getAccessToken()
         val tenantId = getTenantId()
 
-        return client.post(endpoint) {
+        val response = client.post(endpoint) {
             if (token != null) {
                 header("Authorization", "Bearer $token")
             }
@@ -106,7 +109,8 @@ class ApiClient(
                 setBody(body)
             }
             block()
-        }.body()
+        }
+        return response.requireSuccess(endpoint)
     }
 
     suspend inline fun <reified T> put(
@@ -117,7 +121,7 @@ class ApiClient(
         val token = getAccessToken()
         val tenantId = getTenantId()
 
-        return client.put(endpoint) {
+        val response = client.put(endpoint) {
             if (token != null) {
                 header("Authorization", "Bearer $token")
             }
@@ -128,7 +132,8 @@ class ApiClient(
                 setBody(body)
             }
             block()
-        }.body()
+        }
+        return response.requireSuccess(endpoint)
     }
 }
 
@@ -170,8 +175,8 @@ class TruckApi(private val client: ApiClient) {
 }
 
 class UserApi(private val client: ApiClient) {
-    suspend fun getCurrentUser(): UserDto {
-        return client.get("api/users/me")
+    suspend fun getUser(userId: String): UserDto {
+        return client.get("api/users/$userId")
     }
 
     suspend fun updateUser(id: String, user: UpdateUser) {
@@ -180,8 +185,8 @@ class UserApi(private val client: ApiClient) {
 }
 
 class DriverApi(private val client: ApiClient) {
-    suspend fun getCurrentDriver(): DriverDto {
-        return client.get("api/drivers/me")
+    suspend fun getDriver(userId: String): DriverDto {
+        return client.get("api/drivers/$userId")
     }
 
     suspend fun sendDeviceToken(token: DeviceTokenDto) {
@@ -201,4 +206,12 @@ class StatsApi(private val client: ApiClient) {
     suspend fun getMonthlyGrosses(query: GetMonthlyGrossesQuery): List<MonthlyGrossDto> {
         return client.post("api/stats/monthly-grosses", query)
     }
+}
+
+suspend inline fun <reified T> HttpResponse.requireSuccess(endpoint: String): T {
+    if (!status.isSuccess()) {
+        val errorText = runCatching { bodyAsText() }.getOrElse { "" }
+        throw ApiException(status.value, endpoint, errorText)
+    }
+    return body()
 }

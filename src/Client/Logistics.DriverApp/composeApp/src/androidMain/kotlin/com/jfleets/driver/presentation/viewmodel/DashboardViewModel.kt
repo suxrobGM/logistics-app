@@ -31,8 +31,14 @@ class DashboardViewModel(
             _uiState.value = DashboardUiState.Loading
 
             try {
+                val userId = preferencesManager.getUserId()
+                if (userId.isNullOrEmpty()) {
+                    _uiState.value = DashboardUiState.Error("User ID not available")
+                    return@launch
+                }
+
                 // Get driver ID first
-                userRepository.getCurrentDriver()
+                userRepository.getCurrentDriver(userId)
                     .onSuccess { driverId ->
                         // Then get truck with active loads
                         truckRepository.getTruckByDriver(driverId)

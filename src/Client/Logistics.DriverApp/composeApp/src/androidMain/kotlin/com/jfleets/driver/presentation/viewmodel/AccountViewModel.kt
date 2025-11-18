@@ -2,6 +2,7 @@ package com.jfleets.driver.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jfleets.driver.data.local.PreferencesManager
 import com.jfleets.driver.data.repository.UserRepository
 import com.jfleets.driver.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,7 +11,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class AccountViewModel(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val preferencesManager: PreferencesManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AccountUiState>(AccountUiState.Loading)
@@ -26,7 +28,13 @@ class AccountViewModel(
     private fun loadUser() {
         viewModelScope.launch {
             _uiState.value = AccountUiState.Loading
-            userRepository.getCurrentUser()
+            val userId = preferencesManager.getUserId()
+            if (userId.isNullOrEmpty()) {
+                _uiState.value = AccountUiState.Error("User ID not available")
+                return@launch
+            }
+
+            userRepository.getCurrentUser(userId)
                 .onSuccess { user ->
                     _uiState.value = AccountUiState.Success(user)
                 }

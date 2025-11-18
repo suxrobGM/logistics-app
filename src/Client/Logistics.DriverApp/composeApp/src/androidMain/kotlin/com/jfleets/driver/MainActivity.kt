@@ -18,14 +18,11 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -37,35 +34,14 @@ import com.jfleets.driver.presentation.ui.theme.LogisticsDriverTheme
 import org.koin.compose.koinInject
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         setContent {
             LogisticsDriverTheme {
-                // Always start with the app scaffold
                 DriverAppScaffold()
-                //TestScreen()
             }
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TestScreen() {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Test Screen") }
-            )
-        }
-    ) { paddingValues ->
-        Text(
-            text = "This is a test screen.",
-            modifier = Modifier.padding(paddingValues)
-        )
     }
 }
 
@@ -76,7 +52,6 @@ fun DriverAppScaffold() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    var initialCheckDone by remember { mutableStateOf(false) }
 
     // Check auth status once and navigate if logged in
     LaunchedEffect(Unit) {
@@ -87,10 +62,8 @@ fun DriverAppScaffold() {
                     popUpTo(Screen.Login.route) { inclusive = true }
                 }
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             // Stay on login screen if check fails
-        } finally {
-            initialCheckDone = true
         }
     }
 
@@ -145,5 +118,5 @@ fun DriverAppScaffold() {
 data class BottomNavItem(
     val label: String,
     val route: String,
-    val icon: androidx.compose.ui.graphics.vector.ImageVector
+    val icon: ImageVector
 )

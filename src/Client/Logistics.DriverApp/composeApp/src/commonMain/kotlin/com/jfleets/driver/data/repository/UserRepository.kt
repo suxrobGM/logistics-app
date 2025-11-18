@@ -11,9 +11,9 @@ class UserRepository(
     private val userApi: UserApi,
     private val driverApi: DriverApi
 ) {
-    suspend fun getCurrentUser(): Result<User> {
+    suspend fun getCurrentUser(userId: String): Result<User> {
         return try {
-            val dto = userApi.getCurrentUser()
+            val dto = userApi.getUser(userId)
             Result.success(dto.toDomain())
         } catch (e: Exception) {
             Result.failure(e)
@@ -29,9 +29,9 @@ class UserRepository(
         }
     }
 
-    suspend fun getCurrentDriver(): Result<String> {
+    suspend fun getCurrentDriver(userId: String): Result<String> {
         return try {
-            val dto = driverApi.getCurrentDriver()
+            val dto = driverApi.getDriver(userId)
             Result.success(dto.id ?: "")
         } catch (e: Exception) {
             Result.failure(e)
