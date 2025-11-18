@@ -151,7 +151,8 @@ android {
             useSupportLibrary = true
         }
 
-        manifestPlaceholders["appAuthRedirectScheme"] = "com.jfleets.driver"
+        // Must match AuthService.REDIRECT_URI scheme so AppAuth can receive callbacks.
+        manifestPlaceholders["appAuthRedirectScheme"] = "logistics-driver"
     }
 
     buildTypes {

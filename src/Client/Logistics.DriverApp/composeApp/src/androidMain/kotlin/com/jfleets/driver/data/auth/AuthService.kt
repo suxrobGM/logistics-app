@@ -2,13 +2,13 @@ package com.jfleets.driver.data.auth
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import androidx.core.net.toUri
+import com.jfleets.driver.BuildConfig
 import net.openid.appauth.*
 import timber.log.Timber
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
-import androidx.core.net.toUri
 
 class AuthService(
     private val context: Context
@@ -26,7 +26,16 @@ class AuthService(
         "$AUTHORITY/connect/token".toUri()
     )
 
-    private val authService = AuthorizationService(context)
+    private val appAuthConfig = AppAuthConfiguration.Builder()
+        .apply {
+            // Local dev identity server uses a self-signed certificate, so allow it only in debug.
+            if (BuildConfig.DEBUG && AUTHORITY.contains("10.0.2.2")) {
+                setConnectionBuilder(DebugTrustAllConnectionBuilder)
+            }
+        }
+        .build()
+
+    private val authService = AuthorizationService(context, appAuthConfig)
 
     fun getAuthorizationIntent(): Intent {
         val authRequestBuilder = AuthorizationRequest.Builder(
@@ -48,7 +57,8 @@ class AuthService(
             response != null -> {
                 // Exchange authorization code for tokens
                 val tokenRequest = response.createTokenExchangeRequest()
-                authService.performTokenRequest(tokenRequest) { tokenResponse, tokenException ->
+                val clientAuth = ClientSecretBasic(CLIENT_SECRET)
+                authService.performTokenRequest(tokenRequest, clientAuth) { tokenResponse, tokenException ->
                     when {
                         tokenResponse != null -> {
                             val result = AuthResult(

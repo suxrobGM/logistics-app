@@ -45,21 +45,6 @@
             </intent-filter>
         </activity>
 
-        <!-- OAuth Redirect Activity -->
-        <activity
-            android:name=".presentation.auth.OAuthRedirectActivity"
-            android:exported="true"
-            android:launchMode="singleTask">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data
-                    android:scheme="logistics-driver"
-                    android:host="callback" />
-            </intent-filter>
-        </activity>
-
         <!-- Location Tracking Service -->
         <service
             android:name=".service.LocationTrackingService"

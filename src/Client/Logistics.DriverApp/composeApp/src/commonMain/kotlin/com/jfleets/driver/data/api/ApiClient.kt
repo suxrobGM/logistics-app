@@ -42,7 +42,9 @@ class ApiClient(
     @PublishedApi
     internal val getTenantId: suspend () -> String?
 ) {
-    val client = HttpClient {
+    private val allowSelfSigned = baseUrl.contains("10.0.2.2")
+
+    val client = createPlatformHttpClient(allowSelfSigned) {
         install(ContentNegotiation) {
             json(Json {
                 prettyPrint = true
