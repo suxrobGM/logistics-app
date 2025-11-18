@@ -12,9 +12,7 @@ import kotlinx.coroutines.flow.map
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "driver_prefs")
 
-class PreferencesManager(
-    private val context: Context
-) {
+class PreferencesManager(context: Context) {
     private val dataStore = context.dataStore
 
     companion object {

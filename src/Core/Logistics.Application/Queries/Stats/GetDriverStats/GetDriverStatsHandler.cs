@@ -43,16 +43,14 @@ internal sealed class GetDriverStatsHandler : IAppRequestHandler<GetDriverStatsQ
         var lastMonthStart = startOfMonth.AddMonths(-1);
 
         var loadsRepository = _tenantUow.Repository<Load>();
-        var thisWeekLoads =
-            loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(assignedTruck.Id, startOfWeek, now));
-        var lastWeekLoads =
-            loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(assignedTruck.Id, lastWeekStart,
-                startOfWeek));
-        var thisMonthLoads =
-            loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(assignedTruck.Id, startOfMonth, now));
-        var lastMonthLoads =
-            loadsRepository.ApplySpecification(new FilterLoadsByDeliveryDate(assignedTruck.Id, lastMonthStart,
-                startOfMonth));
+        var thisWeekLoads = await loadsRepository.GetListAsync(
+            new FilterLoadsByDeliveryDate(assignedTruck.Id, startOfWeek, now), ct);
+        var lastWeekLoads = await loadsRepository.GetListAsync(
+            new FilterLoadsByDeliveryDate(assignedTruck.Id, lastWeekStart, startOfWeek), ct);
+        var thisMonthLoads = await loadsRepository.GetListAsync(
+            new FilterLoadsByDeliveryDate(assignedTruck.Id, startOfMonth, now), ct);
+        var lastMonthLoads = await loadsRepository.GetListAsync(
+            new FilterLoadsByDeliveryDate(assignedTruck.Id, lastMonthStart, startOfMonth), ct);
 
         driverStats.ThisWeekGross = thisWeekLoads.Sum(l => l.DeliveryCost);
         driverStats.ThisWeekShare = driverStats.ThisWeekGross * driverIncomePercentage;

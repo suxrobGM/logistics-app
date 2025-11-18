@@ -64,7 +64,7 @@ internal static class Setup
                 {
                     ValidateAudience = true,
                     ValidateIssuer = true,
-                    ValidIssuer = configuration["IdentityServer:Authority"],
+                    ValidIssuers = configuration.GetSection("IdentityServer:ValidIssuers").Get<string[]>(),
                     ValidAudience = configuration["IdentityServer:Audience"]
                 };
             });

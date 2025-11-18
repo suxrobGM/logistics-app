@@ -139,23 +139,23 @@ class ApiClient(
 
 class LoadApi(private val client: ApiClient) {
     suspend fun getLoad(id: Double): LoadDto {
-        return client.get("api/loads/$id")
+        return client.get("loads/$id")
     }
 
     suspend fun confirmLoadStatus(request: ConfirmLoadStatus) {
-        client.post<Unit>("api/loads/confirm-status", request)
+        client.post<Unit>("loads/confirm-status", request)
     }
 
     suspend fun updateLoadProximity(request: UpdateLoadProximityCommand) {
-        client.post<Unit>("api/loads/update-proximity", request)
+        client.post<Unit>("loads/update-proximity", request)
     }
 
     suspend fun getActiveLoads(): DriverActiveLoadsDto {
-        return client.get("api/loads/active")
+        return client.get("loads/active")
     }
 
     suspend fun getPastLoads(startDate: String, endDate: String): List<LoadDto> {
-        return client.get("api/loads/past") {
+        return client.get("loads/past") {
             parameter("startDate", startDate)
             parameter("endDate", endDate)
         }
@@ -164,47 +164,53 @@ class LoadApi(private val client: ApiClient) {
 
 class TruckApi(private val client: ApiClient) {
     suspend fun getTruckByDriver(driverId: String): TruckDto {
-        return client.get("api/trucks/driver") {
-            parameter("driverId", driverId)
-        }
+        return client.get("trucks/$driverId")
     }
 
     suspend fun getTruck(id: String): TruckDto {
-        return client.get("api/trucks/$id")
+        return client.get("trucks/$id")
     }
 }
 
 class UserApi(private val client: ApiClient) {
     suspend fun getUser(userId: String): UserDto {
-        return client.get("api/users/$userId")
+        return client.get("users/$userId")
     }
 
     suspend fun updateUser(id: String, user: UpdateUser) {
-        client.put<Unit>("api/users/$id", user)
+        client.put<Unit>("users/$id", user)
     }
 }
 
 class DriverApi(private val client: ApiClient) {
     suspend fun getDriver(userId: String): DriverDto {
-        return client.get("api/drivers/$userId")
+        return client.get("drivers/$userId")
     }
 
     suspend fun sendDeviceToken(token: DeviceTokenDto) {
-        client.post<Unit>("api/drivers/device-token", token)
+        client.post<Unit>("drivers/device-token", token)
     }
 }
 
 class StatsApi(private val client: ApiClient) {
-    suspend fun getDriverStats(): DriverStatsDto {
-        return client.get("api/stats/driver")
+    suspend fun getDriverStats(userId: String): DriverStatsDto {
+        return client.get("stats/driver/$userId")
     }
 
     suspend fun getDailyGrosses(query: GetDailyGrossesQuery): List<DailyGrossDto> {
-        return client.post("api/stats/daily-grosses", query)
+        return client.get("stats/daily-grosses") {
+            parameter("startDate", query.startDate)
+            parameter("endDate", query.endDate)
+        }
     }
 
     suspend fun getMonthlyGrosses(query: GetMonthlyGrossesQuery): List<MonthlyGrossDto> {
-        return client.post("api/stats/monthly-grosses", query)
+        return client.get("stats/monthly-grosses") {
+            parameter("startMonth", query.startMonth)
+            parameter("startYear", query.startYear)
+            parameter("endMonth", query.endMonth)
+            parameter("endYear", query.endYear)
+        }
     }
 }
 

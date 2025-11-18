@@ -25,7 +25,5 @@ public class FilterLoadsByDeliveryDate : BaseSpecification<Load>
                 i.DeliveredAt >= startPeriod &&
                 i.DeliveredAt <= endPeriod;
         }
-
-        OrderBy(nameof(Load.DeliveredAt));
     }
 }

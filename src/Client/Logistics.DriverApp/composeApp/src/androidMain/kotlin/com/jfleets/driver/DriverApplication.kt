@@ -34,11 +34,10 @@ class DriverApplication : Application() {
             androidLogger()
             androidContext(this@DriverApplication)
             modules(
+                // Android-specific module (must be loaded first to provide PreferencesManager)
+                androidModule,
                 // Shared KMP modules
-                sharedModule(baseUrl = "https://10.0.2.2:7000/"),
-                platformModule(),
-                // Android-specific module
-                androidModule
+                sharedModule(baseUrl = "https://10.0.2.2:7000/")
             )
         }
 

@@ -34,7 +34,11 @@ internal sealed class GetMonthlyGrossesHandler : IAppRequestHandler<GetMonthlyGr
             truckId = truck.Id;
         }
 
-        var spec = new FilterLoadsByDeliveryDate(truckId, req.StartDate, req.EndDate);
+        // Ensure dates are UTC for PostgreSQL compatibility
+        var startDate = DateTime.SpecifyKind(req.StartDate, DateTimeKind.Utc);
+        var endDate = DateTime.SpecifyKind(req.EndDate, DateTimeKind.Utc);
+
+        var spec = new FilterLoadsByDeliveryDate(truckId, startDate, endDate);
         var months = req.StartDate.MonthsBetween(req.EndDate);
         var filteredLoads = _tenantUow.Repository<Load>().ApplySpecification(spec).ToArray();
 

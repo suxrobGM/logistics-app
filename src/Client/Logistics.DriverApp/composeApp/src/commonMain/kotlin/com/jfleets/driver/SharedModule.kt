@@ -10,17 +10,25 @@ import com.jfleets.driver.data.repository.LoadRepository
 import com.jfleets.driver.data.repository.StatsRepository
 import com.jfleets.driver.data.repository.TruckRepository
 import com.jfleets.driver.data.repository.UserRepository
-import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
+
+expect fun getTokenProvider(): TokenProvider
+
+interface TokenProvider {
+    suspend fun getAccessToken(): String?
+    suspend fun getTenantId(): String?
+    suspend fun getUserId(): String?
+}
 
 fun sharedModule(baseUrl: String) = module {
     // API Client
     single {
+        val tokenProvider = getTokenProvider()
         ApiClient(
             baseUrl = baseUrl,
-            getAccessToken = { get<PlatformSettings>().getString("access_token") },
-            getTenantId = { get<PlatformSettings>().getString("tenant_id") }
+            getAccessToken = { tokenProvider.getAccessToken() },
+            getTenantId = { tokenProvider.getTenantId() }
         )
     }
 
@@ -37,5 +45,3 @@ fun sharedModule(baseUrl: String) = module {
     singleOf(::UserRepository)
     singleOf(::StatsRepository)
 }
-
-expect fun platformModule(): Module

@@ -4,6 +4,7 @@ package com.jfleets.driver.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jfleets.driver.data.local.PreferencesManager
 import com.jfleets.driver.data.repository.StatsRepository
 import com.jfleets.driver.model.ChartData
 import com.jfleets.driver.model.DateRange
@@ -27,7 +28,8 @@ import kotlin.time.Duration.Companion.days
 import kotlin.time.ExperimentalTime
 
 class StatsViewModel(
-    private val statsRepository: StatsRepository
+    private val statsRepository: StatsRepository,
+    private val preferencesManager: PreferencesManager
 ) : ViewModel() {
 
     private val _statsState = MutableStateFlow<StatsUiState>(StatsUiState.Loading)
@@ -47,13 +49,18 @@ class StatsViewModel(
     private fun loadStats() {
         viewModelScope.launch {
             _statsState.value = StatsUiState.Loading
-            statsRepository.getDriverStats()
-                .onSuccess { stats ->
-                    _statsState.value = StatsUiState.Success(stats)
-                }
-                .onFailure { error ->
-                    _statsState.value = StatsUiState.Error(error.message ?: "Failed to load stats")
-                }
+            val userId = preferencesManager.getUserId()
+
+            userId?.let {
+                statsRepository.getDriverStats(it)
+                    .onSuccess { stats ->
+                        _statsState.value = StatsUiState.Success(stats)
+                    }
+                    .onFailure { error ->
+                        _statsState.value =
+                            StatsUiState.Error(error.message ?: "Failed to load stats")
+                    }
+            }
         }
     }
 

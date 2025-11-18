@@ -14,9 +14,9 @@ import kotlin.time.Instant
 class StatsRepository(
     private val statsApi: StatsApi
 ) {
-    suspend fun getDriverStats(): Result<DriverStats> {
+    suspend fun getDriverStats(userId: String): Result<DriverStats> {
         return try {
-            val dto = statsApi.getDriverStats()
+            val dto = statsApi.getDriverStats(userId)
             Result.success(dto.toDomain())
         } catch (e: Exception) {
             Result.failure(e)

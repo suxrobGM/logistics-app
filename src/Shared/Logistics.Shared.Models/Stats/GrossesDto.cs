@@ -2,21 +2,19 @@ namespace Logistics.Shared.Models;
 
 public class GrossesDto<T> where T : IGrossChartData
 {
-    private IEnumerable<T> _data = new List<T>();
-
     public IEnumerable<T> Data
     {
-        get => _data;
+        get;
         set
         {
-            _data = value;
-            foreach (var data in _data)
+            field = value;
+            foreach (var data in field)
             {
                 TotalGross += data.Gross;
                 TotalDistance += data.Distance;
             }
         }
-    }
+    } = new List<T>();
 
     public decimal TotalGross { get; private set; }
     public double TotalDistance { get; private set; }

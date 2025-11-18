@@ -1,7 +1,18 @@
 package com.jfleets.driver
 
-import org.koin.dsl.module
+actual fun getTokenProvider(): TokenProvider {
+    // TODO: Implement iOS token provider when iOS support is added
+    return object : TokenProvider {
+        override suspend fun getAccessToken(): String? {
+            return null
+        }
 
-actual fun platformModule() = module {
-    single { PlatformSettings() }
+        override suspend fun getTenantId(): String? {
+            return null
+        }
+
+        override suspend fun getUserId(): String? {
+            return null
+        }
+    }
 }

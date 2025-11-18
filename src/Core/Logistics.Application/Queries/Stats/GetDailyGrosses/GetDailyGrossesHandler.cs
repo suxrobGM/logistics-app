@@ -34,7 +34,11 @@ internal sealed class GetDailyGrossesHandler : IAppRequestHandler<GetDailyGrosse
             truckId = truck.Id;
         }
 
-        var spec = new FilterLoadsByDeliveryDate(truckId, req.StartDate, req.EndDate);
+        // Ensure dates are UTC for PostgreSQL compatibility
+        var startDate = DateTime.SpecifyKind(req.StartDate, DateTimeKind.Utc);
+        var endDate = DateTime.SpecifyKind(req.EndDate, DateTimeKind.Utc);
+
+        var spec = new FilterLoadsByDeliveryDate(truckId, startDate, endDate);
 
         var days = req.StartDate.DaysBetween(req.EndDate);
         var dict = days.ToDictionary(
