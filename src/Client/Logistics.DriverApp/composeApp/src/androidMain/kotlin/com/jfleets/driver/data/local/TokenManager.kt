@@ -1,7 +1,7 @@
 package com.jfleets.driver.data.local
 
 import com.auth0.android.jwt.JWT
-import com.jfleets.driver.data.model.UserInfo
+import com.jfleets.driver.model.UserInfo
 
 class TokenManager(
     private val preferencesManager: PreferencesManager

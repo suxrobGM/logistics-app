@@ -1,4 +1,4 @@
-package com.jfleets.driver.data.model
+package com.jfleets.driver.model
 
 data class UserInfo(
     val userId: String,

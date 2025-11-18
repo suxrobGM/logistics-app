@@ -4,7 +4,17 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.net.toUri
 import com.jfleets.driver.BuildConfig
-import net.openid.appauth.*
+import com.jfleets.driver.data.security.DebugTrustAllConnectionBuilder
+import net.openid.appauth.AppAuthConfiguration
+import net.openid.appauth.AuthorizationException
+import net.openid.appauth.AuthorizationRequest
+import net.openid.appauth.AuthorizationResponse
+import net.openid.appauth.AuthorizationService
+import net.openid.appauth.AuthorizationServiceConfiguration
+import net.openid.appauth.ClientSecretBasic
+import net.openid.appauth.GrantTypeValues
+import net.openid.appauth.ResponseTypeValues
+import net.openid.appauth.TokenRequest
 import timber.log.Timber
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -49,95 +59,106 @@ class AuthService(
         return authService.getAuthorizationRequestIntent(authRequest)
     }
 
-    suspend fun handleAuthorizationResponse(intent: Intent): AuthResult = suspendCoroutine { continuation ->
-        val response = AuthorizationResponse.fromIntent(intent)
-        val exception = AuthorizationException.fromIntent(intent)
+    suspend fun handleAuthorizationResponse(intent: Intent): AuthResult =
+        suspendCoroutine { continuation ->
+            val response = AuthorizationResponse.fromIntent(intent)
+            val exception = AuthorizationException.fromIntent(intent)
 
-        when {
-            response != null -> {
-                // Exchange authorization code for tokens
-                val tokenRequest = response.createTokenExchangeRequest()
-                val clientAuth = ClientSecretBasic(CLIENT_SECRET)
-                authService.performTokenRequest(tokenRequest, clientAuth) { tokenResponse, tokenException ->
-                    when {
-                        tokenResponse != null -> {
-                            val result = AuthResult(
-                                accessToken = tokenResponse.accessToken ?: "",
-                                refreshToken = tokenResponse.refreshToken,
-                                idToken = tokenResponse.idToken,
-                                expiresIn = tokenResponse.accessTokenExpirationTime?.let {
-                                    ((it - System.currentTimeMillis()) / 1000).toInt()
-                                } ?: 3600
-                            )
-                            continuation.resume(result)
-                        }
-                        tokenException != null -> {
-                            Timber.e(tokenException, "Token exchange failed")
-                            continuation.resumeWithException(
-                                Exception("Token exchange failed: ${tokenException.message}")
-                            )
-                        }
-                        else -> {
-                            continuation.resumeWithException(
-                                Exception("Unknown error during token exchange")
-                            )
+            when {
+                response != null -> {
+                    // Exchange authorization code for tokens
+                    val tokenRequest = response.createTokenExchangeRequest()
+                    val clientAuth = ClientSecretBasic(CLIENT_SECRET)
+                    authService.performTokenRequest(
+                        tokenRequest,
+                        clientAuth
+                    ) { tokenResponse, tokenException ->
+                        when {
+                            tokenResponse != null -> {
+                                val result = AuthResult(
+                                    accessToken = tokenResponse.accessToken ?: "",
+                                    refreshToken = tokenResponse.refreshToken,
+                                    idToken = tokenResponse.idToken,
+                                    expiresIn = tokenResponse.accessTokenExpirationTime?.let {
+                                        ((it - System.currentTimeMillis()) / 1000).toInt()
+                                    } ?: 3600
+                                )
+                                continuation.resume(result)
+                            }
+
+                            tokenException != null -> {
+                                Timber.e(tokenException, "Token exchange failed")
+                                continuation.resumeWithException(
+                                    Exception("Token exchange failed: ${tokenException.message}")
+                                )
+                            }
+
+                            else -> {
+                                continuation.resumeWithException(
+                                    Exception("Unknown error during token exchange")
+                                )
+                            }
                         }
                     }
                 }
-            }
-            exception != null -> {
-                Timber.e(exception, "Authorization failed")
-                continuation.resumeWithException(
-                    Exception("Authorization failed: ${exception.message}")
-                )
-            }
-            else -> {
-                continuation.resumeWithException(
-                    Exception("No authorization response or exception found")
-                )
-            }
-        }
-    }
 
-    suspend fun refreshAccessToken(refreshToken: String): AuthResult = suspendCoroutine { continuation ->
-        val tokenRequest = TokenRequest.Builder(
-            serviceConfig,
-            CLIENT_ID
-        )
-            .setGrantType(GrantTypeValues.REFRESH_TOKEN)
-            .setRefreshToken(refreshToken)
-            .setScope(SCOPE)
-            .build()
-
-        val clientAuth = ClientSecretBasic(CLIENT_SECRET)
-
-        authService.performTokenRequest(tokenRequest, clientAuth) { tokenResponse, exception ->
-            when {
-                tokenResponse != null -> {
-                    val result = AuthResult(
-                        accessToken = tokenResponse.accessToken ?: "",
-                        refreshToken = tokenResponse.refreshToken ?: refreshToken,
-                        idToken = tokenResponse.idToken,
-                        expiresIn = tokenResponse.accessTokenExpirationTime?.let {
-                            ((it - System.currentTimeMillis()) / 1000).toInt()
-                        } ?: 3600
-                    )
-                    continuation.resume(result)
-                }
                 exception != null -> {
-                    Timber.e(exception, "Token refresh failed")
+                    Timber.e(exception, "Authorization failed")
                     continuation.resumeWithException(
-                        Exception("Token refresh failed: ${exception.message}")
+                        Exception("Authorization failed: ${exception.message}")
                     )
                 }
+
                 else -> {
                     continuation.resumeWithException(
-                        Exception("Unknown error during token refresh")
+                        Exception("No authorization response or exception found")
                     )
                 }
             }
         }
-    }
+
+    suspend fun refreshAccessToken(refreshToken: String): AuthResult =
+        suspendCoroutine { continuation ->
+            val tokenRequest = TokenRequest.Builder(
+                serviceConfig,
+                CLIENT_ID
+            )
+                .setGrantType(GrantTypeValues.REFRESH_TOKEN)
+                .setRefreshToken(refreshToken)
+                .setScope(SCOPE)
+                .build()
+
+            val clientAuth = ClientSecretBasic(CLIENT_SECRET)
+
+            authService.performTokenRequest(tokenRequest, clientAuth) { tokenResponse, exception ->
+                when {
+                    tokenResponse != null -> {
+                        val result = AuthResult(
+                            accessToken = tokenResponse.accessToken ?: "",
+                            refreshToken = tokenResponse.refreshToken ?: refreshToken,
+                            idToken = tokenResponse.idToken,
+                            expiresIn = tokenResponse.accessTokenExpirationTime?.let {
+                                ((it - System.currentTimeMillis()) / 1000).toInt()
+                            } ?: 3600
+                        )
+                        continuation.resume(result)
+                    }
+
+                    exception != null -> {
+                        Timber.e(exception, "Token refresh failed")
+                        continuation.resumeWithException(
+                            Exception("Token refresh failed: ${exception.message}")
+                        )
+                    }
+
+                    else -> {
+                        continuation.resumeWithException(
+                            Exception("Unknown error during token refresh")
+                        )
+                    }
+                }
+            }
+        }
 
     fun dispose() {
         authService.dispose()
