@@ -1,19 +1,5 @@
 package com.jfleets.driver.data.api
 
-import com.jfleets.driver.data.dto.ConfirmLoadStatus
-import com.jfleets.driver.data.dto.DailyGrossDto
-import com.jfleets.driver.data.dto.DeviceTokenDto
-import com.jfleets.driver.data.dto.DriverActiveLoadsDto
-import com.jfleets.driver.data.dto.DriverDto
-import com.jfleets.driver.data.dto.DriverStatsDto
-import com.jfleets.driver.data.dto.GetDailyGrossesQuery
-import com.jfleets.driver.data.dto.GetMonthlyGrossesQuery
-import com.jfleets.driver.data.dto.LoadDto
-import com.jfleets.driver.data.dto.MonthlyGrossDto
-import com.jfleets.driver.data.dto.TruckDto
-import com.jfleets.driver.data.dto.UpdateLoadProximityCommand
-import com.jfleets.driver.data.dto.UpdateUser
-import com.jfleets.driver.data.dto.UserDto
 import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -25,7 +11,6 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
 import io.ktor.client.request.header
-import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
@@ -134,83 +119,6 @@ class ApiClient(
             block()
         }
         return response.requireSuccess(endpoint)
-    }
-}
-
-class LoadApi(private val client: ApiClient) {
-    suspend fun getLoad(id: Double): LoadDto {
-        return client.get("loads/$id")
-    }
-
-    suspend fun confirmLoadStatus(request: ConfirmLoadStatus) {
-        client.post<Unit>("loads/confirm-status", request)
-    }
-
-    suspend fun updateLoadProximity(request: UpdateLoadProximityCommand) {
-        client.post<Unit>("loads/update-proximity", request)
-    }
-
-    suspend fun getActiveLoads(): DriverActiveLoadsDto {
-        return client.get("loads/active")
-    }
-
-    suspend fun getPastLoads(startDate: String, endDate: String): List<LoadDto> {
-        return client.get("loads/past") {
-            parameter("startDate", startDate)
-            parameter("endDate", endDate)
-        }
-    }
-}
-
-class TruckApi(private val client: ApiClient) {
-    suspend fun getTruckByDriver(driverId: String): TruckDto {
-        return client.get("trucks/$driverId")
-    }
-
-    suspend fun getTruck(id: String): TruckDto {
-        return client.get("trucks/$id")
-    }
-}
-
-class UserApi(private val client: ApiClient) {
-    suspend fun getUser(userId: String): UserDto {
-        return client.get("users/$userId")
-    }
-
-    suspend fun updateUser(id: String, user: UpdateUser) {
-        client.put<Unit>("users/$id", user)
-    }
-}
-
-class DriverApi(private val client: ApiClient) {
-    suspend fun getDriver(userId: String): DriverDto {
-        return client.get("drivers/$userId")
-    }
-
-    suspend fun sendDeviceToken(token: DeviceTokenDto) {
-        client.post<Unit>("drivers/device-token", token)
-    }
-}
-
-class StatsApi(private val client: ApiClient) {
-    suspend fun getDriverStats(userId: String): DriverStatsDto {
-        return client.get("stats/driver/$userId")
-    }
-
-    suspend fun getDailyGrosses(query: GetDailyGrossesQuery): List<DailyGrossDto> {
-        return client.get("stats/daily-grosses") {
-            parameter("startDate", query.startDate)
-            parameter("endDate", query.endDate)
-        }
-    }
-
-    suspend fun getMonthlyGrosses(query: GetMonthlyGrossesQuery): List<MonthlyGrossDto> {
-        return client.get("stats/monthly-grosses") {
-            parameter("startMonth", query.startMonth)
-            parameter("startYear", query.startYear)
-            parameter("endMonth", query.endMonth)
-            parameter("endYear", query.endYear)
-        }
     }
 }
 

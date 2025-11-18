@@ -21,8 +21,10 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.jfleets.driver.MainActivity
 import com.jfleets.driver.R
+import com.jfleets.driver.data.api.LoadApi
+import com.jfleets.driver.data.dto.UpdateLoadProximityCommand
 import com.jfleets.driver.data.local.PreferencesManager
-import com.jfleets.driver.data.repository.LoadRepository
+import com.jfleets.driver.data.mapper.toDomain
 import com.jfleets.driver.util.calculateDistance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +38,7 @@ import java.util.Locale
 class LocationTrackingService : Service() {
 
     private val preferencesManager: PreferencesManager by inject()
-    private val loadRepository: LoadRepository by inject()
+    private val loadApi: LoadApi by inject()
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
@@ -150,45 +152,45 @@ class LocationTrackingService : Service() {
     private suspend fun checkLoadProximity(location: android.location.Location) {
         try {
             // Get active loads
-            val result = loadRepository.getActiveLoads()
-            val loads = result.getOrNull()
+            val result = loadApi.getActiveLoads()
+            if (!result.success || result.data == null) {
+                Timber.e("Error getting active loads: ${result.error}")
+                return
+            }
 
-            if (loads != null) {
-                loads.forEach { load ->
-                    val originLat = load.originLatitude
-                    val originLon = load.originLongitude
-                    val destLat = load.destinationLatitude
-                    val destLon = load.destinationLongitude
+            val loads = result.data.loads?.map { it.toDomain() } ?: emptyList()
 
-                    if (originLat != null && originLon != null &&
-                        destLat != null && destLon != null
-                    ) {
-                        val distanceToOrigin = calculateDistance(
-                            location.latitude, location.longitude,
-                            originLat, originLon
+            loads.forEach { load ->
+                val originLat = load.originLatitude
+                val originLon = load.originLongitude
+                val destLat = load.destinationLatitude
+                val destLon = load.destinationLongitude
+
+                if (originLat != null && originLon != null &&
+                    destLat != null && destLon != null
+                ) {
+                    val distanceToOrigin = calculateDistance(
+                        location.latitude, location.longitude,
+                        originLat, originLon
+                    )
+                    val distanceToDest = calculateDistance(
+                        location.latitude, location.longitude,
+                        destLat, destLon
+                    )
+
+                    val nearOrigin = distanceToOrigin <= PROXIMITY_THRESHOLD
+                    val nearDestination = distanceToDest <= PROXIMITY_THRESHOLD
+
+                    // Update load proximity if near origin or destination
+                    if (nearOrigin || nearDestination) {
+                        val command = UpdateLoadProximityCommand(
+                            loadId = load.id,
+                            isNearOrigin = nearOrigin,
+                            isNearDestination = nearDestination
                         )
-                        val distanceToDest = calculateDistance(
-                            location.latitude, location.longitude,
-                            destLat, destLon
-                        )
-
-                        val nearOrigin = distanceToOrigin <= PROXIMITY_THRESHOLD
-                        val nearDestination = distanceToDest <= PROXIMITY_THRESHOLD
-
-                        // Update load proximity if near origin or destination
-                        if (nearOrigin || nearDestination) {
-                            loadRepository.updateLoadProximity(
-                                loadId = load.id,
-                                isNearOrigin = nearOrigin,
-                                isNearDestination = nearDestination
-                            )
-                            Timber.d("Load ${load.id} proximity updated: origin=$nearOrigin, dest=$nearDestination")
-                        }
+                        loadApi.updateLoadProximity(command)
+                        Timber.d("Load ${load.id} proximity updated: origin=$nearOrigin, dest=$nearDestination")
                     }
-                }
-            } else {
-                result.exceptionOrNull()?.let { error: Throwable ->
-                    Timber.e(error, "Error getting active loads")
                 }
             }
         } catch (e: Exception) {

@@ -2,10 +2,12 @@ package com.jfleets.driver.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jfleets.driver.data.api.DriverApi
+import com.jfleets.driver.data.api.TruckApi
+import com.jfleets.driver.data.dto.DeviceTokenDto
 import com.jfleets.driver.data.local.PreferencesManager
+import com.jfleets.driver.data.mapper.toDomain
 import com.jfleets.driver.data.repository.AuthRepository
-import com.jfleets.driver.data.repository.TruckRepository
-import com.jfleets.driver.data.repository.UserRepository
 import com.jfleets.driver.model.Truck
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,8 +15,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class DashboardViewModel(
-    private val truckRepository: TruckRepository,
-    private val userRepository: UserRepository,
+    private val truckApi: TruckApi,
+    private val driverApi: DriverApi,
     private val preferencesManager: PreferencesManager,
     private val authRepository: AuthRepository
 ) : ViewModel() {
@@ -38,22 +40,21 @@ class DashboardViewModel(
                 }
 
                 // Get driver ID first
-                userRepository.getCurrentDriver(userId)
-                    .onSuccess { driverId ->
-                        // Then get truck with active loads
-                        truckRepository.getTruckByDriver(driverId)
-                            .onSuccess { truck ->
-                                _uiState.value = DashboardUiState.Success(truck)
-                            }
-                            .onFailure { error ->
-                                _uiState.value =
-                                    DashboardUiState.Error(error.message ?: "Failed to load truck")
-                            }
-                    }
-                    .onFailure { error ->
-                        _uiState.value =
-                            DashboardUiState.Error(error.message ?: "Failed to load driver")
-                    }
+                val driverResult = driverApi.getDriver(userId)
+                if (!driverResult.success || driverResult.data == null) {
+                    _uiState.value = DashboardUiState.Error(driverResult.error ?: "Failed to load driver")
+                    return@launch
+                }
+
+                val driverId = driverResult.data.id ?: ""
+
+                // Then get truck with active loads
+                val truckResult = truckApi.getTruckByDriver(driverId)
+                if (truckResult.success && truckResult.data != null) {
+                    _uiState.value = DashboardUiState.Success(truckResult.data.toDomain())
+                } else {
+                    _uiState.value = DashboardUiState.Error(truckResult.error ?: "Failed to load truck")
+                }
             } catch (e: Exception) {
                 _uiState.value = DashboardUiState.Error(e.message ?: "An error occurred")
             }
@@ -62,7 +63,7 @@ class DashboardViewModel(
 
     fun sendDeviceToken(token: String) {
         viewModelScope.launch {
-            userRepository.sendDeviceToken(token)
+            driverApi.sendDeviceToken(DeviceTokenDto(token))
         }
     }
 

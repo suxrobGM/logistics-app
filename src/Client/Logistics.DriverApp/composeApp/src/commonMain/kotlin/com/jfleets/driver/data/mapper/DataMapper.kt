@@ -78,20 +78,24 @@ fun DriverStatsDto.toDomain(): DriverStats {
 }
 
 fun DailyGrossDto.toChartData(): ChartData {
-    val instant = this.date?.let { parseInstant(it) }
+    val instant = parseInstant(this.date)
     return ChartData(
-        label = instant?.toString()?.substring(0, 10) ?: "",
-        gross = this.gross ?: 0.0,
-        driverShare = this.driverShare ?: 0.0,
+        label = instant?.toString()?.substring(0, 10) ?: this.date,
+        gross = this.gross,
+        driverShare = this.driverShare,
         date = instant
     )
 }
 
 fun MonthlyGrossDto.toChartData(): ChartData {
+    val instant = parseInstant(this.date)
+    // Extract "YYYY-MM" portion for monthly label
+    val label = instant?.toString()?.take(7) ?: this.date
     return ChartData(
-        label = "${this.month ?: ""} ${this.year ?: ""}",
-        gross = this.gross ?: 0.0,
-        driverShare = this.driverShare ?: 0.0
+        label = label,
+        gross = this.gross,
+        driverShare = this.driverShare,
+        date = instant
     )
 }
 

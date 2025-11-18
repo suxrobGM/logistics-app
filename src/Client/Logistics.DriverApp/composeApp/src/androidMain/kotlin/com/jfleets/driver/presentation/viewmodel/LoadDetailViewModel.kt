@@ -3,15 +3,18 @@ package com.jfleets.driver.presentation.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jfleets.driver.data.repository.LoadRepository
+import com.jfleets.driver.data.api.LoadApi
+import com.jfleets.driver.data.dto.ConfirmLoadStatus
+import com.jfleets.driver.data.mapper.toDomain
 import com.jfleets.driver.model.Load
+import com.jfleets.driver.model.LoadStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class LoadDetailViewModel(
-    private val loadRepository: LoadRepository,
+    private val loadApi: LoadApi,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -27,38 +30,32 @@ class LoadDetailViewModel(
     private fun loadDetails() {
         viewModelScope.launch {
             _uiState.value = LoadDetailUiState.Loading
-            loadRepository.getLoad(loadId)
-                .onSuccess { load ->
-                    _uiState.value = LoadDetailUiState.Success(load)
-                }
-                .onFailure { error ->
-                    _uiState.value =
-                        LoadDetailUiState.Error(error.message ?: "Failed to load details")
-                }
+            val result = loadApi.getLoad(loadId)
+            if (result.success && result.data != null) {
+                _uiState.value = LoadDetailUiState.Success(result.data.toDomain())
+            } else {
+                _uiState.value = LoadDetailUiState.Error(result.error ?: "Failed to load details")
+            }
         }
     }
 
     fun confirmPickup() {
         viewModelScope.launch {
-            loadRepository.confirmPickup(loadId)
-                .onSuccess {
-                    loadDetails() // Reload to get updated status
-                }
-                .onFailure { error ->
-                    // Show error in UI
-                }
+            val request = ConfirmLoadStatus(loadId, LoadStatus.PICKED_UP.toApiString())
+            val result = loadApi.confirmLoadStatus(request)
+            if (result.success) {
+                loadDetails() // Reload to get updated status
+            }
         }
     }
 
     fun confirmDelivery() {
         viewModelScope.launch {
-            loadRepository.confirmDelivery(loadId)
-                .onSuccess {
-                    loadDetails() // Reload to get updated status
-                }
-                .onFailure { error ->
-                    // Show error in UI
-                }
+            val request = ConfirmLoadStatus(loadId, LoadStatus.DELIVERED.toApiString())
+            val result = loadApi.confirmLoadStatus(request)
+            if (result.success) {
+                loadDetails() // Reload to get updated status
+            }
         }
     }
 

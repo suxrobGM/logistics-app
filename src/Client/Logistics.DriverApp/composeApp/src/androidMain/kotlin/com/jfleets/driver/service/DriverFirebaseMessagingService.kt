@@ -10,7 +10,8 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.jfleets.driver.MainActivity
 import com.jfleets.driver.R
-import com.jfleets.driver.data.repository.UserRepository
+import com.jfleets.driver.data.api.DriverApi
+import com.jfleets.driver.data.dto.DeviceTokenDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -20,7 +21,7 @@ import timber.log.Timber
 
 class DriverFirebaseMessagingService : FirebaseMessagingService() {
 
-    private val userRepository: UserRepository by inject()
+    private val driverApi: DriverApi by inject()
 
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -36,7 +37,7 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
         // Send token to server
         serviceScope.launch {
             try {
-                userRepository.sendDeviceToken(token)
+                driverApi.sendDeviceToken(DeviceTokenDto(token))
                 Timber.d("Device token sent to server")
             } catch (e: Exception) {
                 Timber.e(e, "Failed to send device token")

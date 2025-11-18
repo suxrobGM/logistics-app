@@ -6,10 +6,6 @@ import com.jfleets.driver.data.api.LoadApi
 import com.jfleets.driver.data.api.StatsApi
 import com.jfleets.driver.data.api.TruckApi
 import com.jfleets.driver.data.api.UserApi
-import com.jfleets.driver.data.repository.LoadRepository
-import com.jfleets.driver.data.repository.StatsRepository
-import com.jfleets.driver.data.repository.TruckRepository
-import com.jfleets.driver.data.repository.UserRepository
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
@@ -38,10 +34,4 @@ fun sharedModule(baseUrl: String) = module {
     singleOf(::UserApi)
     singleOf(::DriverApi)
     singleOf(::StatsApi)
-
-    // Repositories
-    singleOf(::LoadRepository)
-    singleOf(::TruckRepository)
-    singleOf(::UserRepository)
-    singleOf(::StatsRepository)
 }

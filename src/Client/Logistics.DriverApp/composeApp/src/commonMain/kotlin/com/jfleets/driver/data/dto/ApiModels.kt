@@ -60,17 +60,32 @@ data class DriverStatsDto(
 
 @Serializable
 data class DailyGrossDto(
-    @SerialName("date") val date: String? = null,
-    @SerialName("gross") val gross: Double? = null,
-    @SerialName("driverShare") val driverShare: Double? = null
+    @SerialName("date") val date: String,
+    @SerialName("driverShare") val driverShare: Double,
+    @SerialName("gross") val gross: Double,
+    @SerialName("distance") val distance: Double
 )
 
 @Serializable
 data class MonthlyGrossDto(
-    @SerialName("month") val month: String? = null,
-    @SerialName("year") val year: Int? = null,
-    @SerialName("gross") val gross: Double? = null,
-    @SerialName("driverShare") val driverShare: Double? = null
+    @SerialName("date") val date: String,
+    @SerialName("driverShare") val driverShare: Double,
+    @SerialName("gross") val gross: Double,
+    @SerialName("distance") val distance: Double
+)
+
+@Serializable
+data class DailyGrossesDto(
+    @SerialName("data") val data: List<DailyGrossDto> = emptyList(),
+    @SerialName("totalGross") val totalGross: Double = 0.0,
+    @SerialName("totalDistance") val totalDistance: Double = 0.0
+)
+
+@Serializable
+data class MonthlyGrossesDto(
+    @SerialName("data") val data: List<MonthlyGrossDto> = emptyList(),
+    @SerialName("totalGross") val totalGross: Double = 0.0,
+    @SerialName("totalDistance") val totalDistance: Double = 0.0
 )
 
 @Serializable

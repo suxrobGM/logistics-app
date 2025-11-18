@@ -4,8 +4,10 @@ package com.jfleets.driver.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jfleets.driver.data.api.StatsApi
 import com.jfleets.driver.data.local.PreferencesManager
-import com.jfleets.driver.data.repository.StatsRepository
+import com.jfleets.driver.data.mapper.toChartData
+import com.jfleets.driver.data.mapper.toDomain
 import com.jfleets.driver.model.ChartData
 import com.jfleets.driver.model.DateRange
 import com.jfleets.driver.model.DriverStats
@@ -28,7 +30,7 @@ import kotlin.time.Duration.Companion.days
 import kotlin.time.ExperimentalTime
 
 class StatsViewModel(
-    private val statsRepository: StatsRepository,
+    private val statsApi: StatsApi,
     private val preferencesManager: PreferencesManager
 ) : ViewModel() {
 
@@ -52,14 +54,12 @@ class StatsViewModel(
             val userId = preferencesManager.getUserId()
 
             userId?.let {
-                statsRepository.getDriverStats(it)
-                    .onSuccess { stats ->
-                        _statsState.value = StatsUiState.Success(stats)
-                    }
-                    .onFailure { error ->
-                        _statsState.value =
-                            StatsUiState.Error(error.message ?: "Failed to load stats")
-                    }
+                val result = statsApi.getDriverStats(it)
+                if (result.success && result.data != null) {
+                    _statsState.value = StatsUiState.Success(result.data.toDomain())
+                } else {
+                    _statsState.value = StatsUiState.Error(result.error ?: "Failed to load stats")
+                }
             }
         }
     }
@@ -73,7 +73,7 @@ class StatsViewModel(
         viewModelScope.launch {
             _chartState.value = ChartUiState.Loading
 
-            val result = if (range.useMonthly) {
+            if (range.useMonthly) {
                 val startDateTime = range.startDate.toLocalDateTime(TimeZone.currentSystemDefault())
                 val startMonth = startDateTime.month.number
                 val startYear = startDateTime.year
@@ -82,19 +82,28 @@ class StatsViewModel(
                 val endMonth = endDateTime.month.number
                 val endYear = endDateTime.year
 
-                statsRepository.getMonthlyGrosses(startMonth, startYear, endMonth, endYear)
-            } else {
-                statsRepository.getDailyGrosses(range.startDate, range.endDate)
-            }
+                val result = statsApi.getMonthlyGrosses(startMonth, startYear, endMonth, endYear)
 
-            result
-                .onSuccess { chartData ->
+                if (result.success && result.data != null) {
+                    val chartData = result.data.data.map { it.toChartData() }
                     _chartState.value = ChartUiState.Success(chartData)
-                }
-                .onFailure { error ->
+                } else {
                     _chartState.value =
-                        ChartUiState.Error(error.message ?: "Failed to load chart data")
+                        ChartUiState.Error(result.error ?: "Failed to load chart data")
                 }
+            } else {
+                val startDate = range.startDate.toLocalDateTime(TimeZone.UTC).date.toString()
+                val endDate = range.endDate.toLocalDateTime(TimeZone.UTC).date.toString()
+
+                val result = statsApi.getDailyGrosses(startDate, endDate)
+                if (result.success && result.data != null) {
+                    val chartData = result.data.data.map { it.toChartData() }
+                    _chartState.value = ChartUiState.Success(chartData)
+                } else {
+                    _chartState.value =
+                        ChartUiState.Error(result.error ?: "Failed to load chart data")
+                }
+            }
         }
     }
 
