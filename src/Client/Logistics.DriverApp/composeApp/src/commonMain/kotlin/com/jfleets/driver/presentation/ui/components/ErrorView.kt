@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun ErrorView(
@@ -56,4 +57,13 @@ fun ErrorView(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun ErrorViewPreview() {
+    ErrorView(
+        message = "An unexpected error occurred. Please try again later.",
+        onRetry = {}
+    )
 }

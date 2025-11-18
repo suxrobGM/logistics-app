@@ -44,17 +44,6 @@ fun LogisticsDriverTheme(
         else -> LightColorScheme
     }
 
-//    val view = LocalView.current
-//    if (!view.isInEditMode) {
-//        SideEffect {
-//            val window = (view.context as Activity).window
-//            val insetsController = WindowCompat.getInsetsController(window, view)
-//
-//            // Set status bar icon color (dark icons for light theme, light icons for dark theme)
-//            insetsController.isAppearanceLightStatusBars = !darkTheme
-//        }
-//    }
-
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,

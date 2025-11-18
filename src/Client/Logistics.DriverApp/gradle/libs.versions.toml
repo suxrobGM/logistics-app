@@ -110,7 +110,6 @@ compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
-compose-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
 compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 
 # Navigation Compose
@@ -177,7 +176,6 @@ androidx-compose = [
     "compose-ui-graphics",
     "compose-ui-tooling-preview",
     "compose-material3",
-    "compose-material-icons-core",
     "compose-material-icons-extended"
 ]
 
