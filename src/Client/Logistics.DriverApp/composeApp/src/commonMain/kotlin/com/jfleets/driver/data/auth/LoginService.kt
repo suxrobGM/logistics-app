@@ -1,6 +1,7 @@
 package com.jfleets.driver.data.auth
 
 import com.jfleets.driver.data.local.PreferencesManager
+import com.jfleets.driver.util.currentTimeMillis
 
 class LoginService(
     private val oAuthService: OAuthService,
