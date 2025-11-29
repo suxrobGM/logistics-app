@@ -2,10 +2,10 @@ package com.jfleets.driver.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jfleets.driver.data.api.UserApi
+import com.jfleets.driver.api.UserApi
 import com.jfleets.driver.data.local.PreferencesManager
 import com.jfleets.driver.data.mapper.toDomain
-import com.jfleets.driver.data.mapper.toUpdateDto
+import com.jfleets.driver.data.mapper.toUpdateCommand
 import com.jfleets.driver.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,11 +36,16 @@ class AccountViewModel(
                 return@launch
             }
 
-            val result = userApi.getUser(userId)
-            if (result.success && result.data != null) {
-                _uiState.value = AccountUiState.Success(result.data.toDomain())
-            } else {
-                _uiState.value = AccountUiState.Error(result.error ?: "Failed to load user")
+            try {
+                val response = userApi.getUserById(userId)
+                val result = response.body()
+                if (result.success == true && result.data != null) {
+                    _uiState.value = AccountUiState.Success(result.data.toDomain())
+                } else {
+                    _uiState.value = AccountUiState.Error(result.error ?: "Failed to load user")
+                }
+            } catch (e: Exception) {
+                _uiState.value = AccountUiState.Error(e.message ?: "An error occurred")
             }
         }
     }
@@ -48,12 +53,17 @@ class AccountViewModel(
     fun updateUser(user: User) {
         viewModelScope.launch {
             _saveState.value = SaveState.Saving
-            val result = userApi.updateUser(user.id, user.toUpdateDto())
-            if (result.success) {
-                _saveState.value = SaveState.Success
-                _uiState.value = AccountUiState.Success(user)
-            } else {
-                _saveState.value = SaveState.Error(result.error ?: "Failed to update user")
+            try {
+                val response = userApi.updateUser(user.id, user.toUpdateCommand())
+                val result = response.body()
+                if (result.success == true) {
+                    _saveState.value = SaveState.Success
+                    _uiState.value = AccountUiState.Success(user)
+                } else {
+                    _saveState.value = SaveState.Error(result.error ?: "Failed to update user")
+                }
+            } catch (e: Exception) {
+                _saveState.value = SaveState.Error(e.message ?: "An error occurred")
             }
         }
     }

@@ -6,7 +6,7 @@ sealed class Screen(val route: String) {
     object Stats : Screen("stats")
     object PastLoads : Screen("past_loads")
     object LoadDetail : Screen("load_detail/{loadId}") {
-        fun createRoute(loadId: Double) = "load_detail/$loadId"
+        fun createRoute(loadId: String) = "load_detail/$loadId"
     }
     object Account : Screen("account")
     object Settings : Screen("settings")

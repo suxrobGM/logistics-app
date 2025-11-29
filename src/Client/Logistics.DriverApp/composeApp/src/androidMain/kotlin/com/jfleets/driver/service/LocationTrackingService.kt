@@ -21,8 +21,9 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.jfleets.driver.MainActivity
 import com.jfleets.driver.R
-import com.jfleets.driver.data.api.LoadApi
-import com.jfleets.driver.data.dto.UpdateLoadProximityCommand
+import com.jfleets.driver.api.DriverApi
+import com.jfleets.driver.api.LoadApi
+import com.jfleets.driver.api.models.UpdateLoadProximityCommand
 import com.jfleets.driver.data.local.PreferencesManager
 import com.jfleets.driver.data.mapper.toDomain
 import com.jfleets.driver.util.calculateDistance
@@ -39,6 +40,7 @@ class LocationTrackingService : Service() {
 
     private val preferencesManager: PreferencesManager by inject()
     private val loadApi: LoadApi by inject()
+    private val driverApi: DriverApi by inject()
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
@@ -153,13 +155,14 @@ class LocationTrackingService : Service() {
     private suspend fun checkLoadProximity(location: android.location.Location) {
         try {
             // Get active loads
-            val result = loadApi.getActiveLoads()
-            if (!result.success || result.data == null) {
+            val response = loadApi.getLoads(onlyActiveLoads = true)
+            val result = response.body()
+            if (result.success != true || result.data == null) {
                 Logger.e(TAG, "Error getting active loads: ${result.error}")
                 return
             }
 
-            val loads = result.data.loads?.map { it.toDomain() } ?: emptyList()
+            val loads = result.data.map { it.toDomain() }
 
             loads.forEach { load ->
                 val originLat = load.originLatitude
@@ -186,10 +189,10 @@ class LocationTrackingService : Service() {
                     if (nearOrigin || nearDestination) {
                         val command = UpdateLoadProximityCommand(
                             loadId = load.id,
-                            isNearOrigin = nearOrigin,
-                            isNearDestination = nearDestination
+                            canConfirmPickUp = nearOrigin,
+                            canConfirmDelivery = nearDestination
                         )
-                        loadApi.updateLoadProximity(command)
+                        driverApi.updateLoadProximity(command)
                         Logger.d(TAG, "Load ${load.id} proximity updated: origin=$nearOrigin, dest=$nearDestination")
                     }
                 }

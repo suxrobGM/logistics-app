@@ -1,9 +1,9 @@
 package com.jfleets.driver.model
 
-import kotlin.time.Instant
+import kotlinx.datetime.Instant
 
 data class Load(
-    val id: Double,
+    val id: String,
     val refId: Long?,
     val name: String,
     val sourceAddress: String,
@@ -30,12 +30,12 @@ enum class LoadStatus {
     CANCELLED;
 
     companion object {
-        fun fromString(status: String?): LoadStatus {
-            return when (status?.uppercase()) {
-                "DISPATCHED" -> DISPATCHED
-                "PICKEDUP", "PICKED_UP" -> PICKED_UP
-                "DELIVERED" -> DELIVERED
-                "CANCELLED" -> CANCELLED
+        fun fromApiStatus(status: com.jfleets.driver.api.models.LoadStatus?): LoadStatus {
+            return when (status) {
+                com.jfleets.driver.api.models.LoadStatus.DISPATCHED -> DISPATCHED
+                com.jfleets.driver.api.models.LoadStatus.PICKED_UP -> PICKED_UP
+                com.jfleets.driver.api.models.LoadStatus.DELIVERED -> DELIVERED
+                com.jfleets.driver.api.models.LoadStatus.CANCELLED -> CANCELLED
                 else -> DISPATCHED
             }
         }

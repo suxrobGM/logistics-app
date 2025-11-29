@@ -1,23 +1,22 @@
-@file:OptIn(ExperimentalTime::class)
-
 package com.jfleets.driver.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jfleets.driver.data.api.LoadApi
-import com.jfleets.driver.data.dto.ConfirmLoadStatus
+import com.jfleets.driver.api.DriverApi
+import com.jfleets.driver.api.LoadApi
+import com.jfleets.driver.api.models.ConfirmLoadStatusCommand
 import com.jfleets.driver.data.mapper.toDomain
 import com.jfleets.driver.model.Load
-import com.jfleets.driver.model.LoadStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlin.time.ExperimentalTime
+import com.jfleets.driver.api.models.LoadStatus as ApiLoadStatus
 
 class LoadDetailViewModel(
     private val loadApi: LoadApi,
-    private val loadId: Double
+    private val driverApi: DriverApi,
+    private val loadId: String
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LoadDetailUiState>(LoadDetailUiState.Loading)
@@ -30,31 +29,53 @@ class LoadDetailViewModel(
     private fun loadDetails() {
         viewModelScope.launch {
             _uiState.value = LoadDetailUiState.Loading
-            val result = loadApi.getLoad(loadId)
-            if (result.success && result.data != null) {
-                _uiState.value = LoadDetailUiState.Success(result.data.toDomain())
-            } else {
-                _uiState.value = LoadDetailUiState.Error(result.error ?: "Failed to load details")
+            try {
+                val response = loadApi.getLoadById(loadId)
+                val result = response.body()
+                if (result.success == true && result.data != null) {
+                    _uiState.value = LoadDetailUiState.Success(result.data.toDomain())
+                } else {
+                    _uiState.value =
+                        LoadDetailUiState.Error(result.error ?: "Failed to load details")
+                }
+            } catch (e: Exception) {
+                _uiState.value = LoadDetailUiState.Error(e.message ?: "An error occurred")
             }
         }
     }
 
     fun confirmPickup() {
         viewModelScope.launch {
-            val request = ConfirmLoadStatus(loadId, LoadStatus.PICKED_UP.toApiString())
-            val result = loadApi.confirmLoadStatus(request)
-            if (result.success) {
-                loadDetails() // Reload to get updated status
+            try {
+                val request = ConfirmLoadStatusCommand(
+                    loadId = loadId,
+                    loadStatus = ApiLoadStatus.PICKED_UP
+                )
+                val response = driverApi.confirmLoadStatus(request)
+                val result = response.body()
+                if (result.success == true) {
+                    loadDetails() // Reload to get updated status
+                }
+            } catch (e: Exception) {
+                // Handle error
             }
         }
     }
 
     fun confirmDelivery() {
         viewModelScope.launch {
-            val request = ConfirmLoadStatus(loadId, LoadStatus.DELIVERED.toApiString())
-            val result = loadApi.confirmLoadStatus(request)
-            if (result.success) {
-                loadDetails() // Reload to get updated status
+            try {
+                val request = ConfirmLoadStatusCommand(
+                    loadId = loadId,
+                    loadStatus = ApiLoadStatus.DELIVERED
+                )
+                val response = driverApi.confirmLoadStatus(request)
+                val result = response.body()
+                if (result.success == true) {
+                    loadDetails() // Reload to get updated status
+                }
+            } catch (e: Exception) {
+                // Handle error
             }
         }
     }

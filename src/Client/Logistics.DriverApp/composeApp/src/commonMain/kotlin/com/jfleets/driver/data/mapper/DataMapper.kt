@@ -1,13 +1,14 @@
 package com.jfleets.driver.data.mapper
 
-import com.jfleets.driver.data.dto.DailyGrossDto
-import com.jfleets.driver.data.dto.DriverDto
-import com.jfleets.driver.data.dto.DriverStatsDto
-import com.jfleets.driver.data.dto.LoadDto
-import com.jfleets.driver.data.dto.MonthlyGrossDto
-import com.jfleets.driver.data.dto.TruckDto
-import com.jfleets.driver.data.dto.UpdateUser
-import com.jfleets.driver.data.dto.UserDto
+import com.jfleets.driver.api.models.Address
+import com.jfleets.driver.api.models.DailyGrossDto
+import com.jfleets.driver.api.models.DriverStatsDto
+import com.jfleets.driver.api.models.EmployeeDto
+import com.jfleets.driver.api.models.LoadDto
+import com.jfleets.driver.api.models.MonthlyGrossDto
+import com.jfleets.driver.api.models.TruckDto
+import com.jfleets.driver.api.models.UpdateUserCommand
+import com.jfleets.driver.api.models.UserDto
 import com.jfleets.driver.model.ChartData
 import com.jfleets.driver.model.Driver
 import com.jfleets.driver.model.DriverStats
@@ -15,44 +16,51 @@ import com.jfleets.driver.model.Load
 import com.jfleets.driver.model.LoadStatus
 import com.jfleets.driver.model.Truck
 import com.jfleets.driver.model.User
-import kotlin.time.Instant
 
 fun LoadDto.toDomain(): Load {
     return Load(
-        id = this.id ?: 0.0,
-        refId = this.refId,
+        id = this.id ?: "",
+        refId = this.number,
         name = this.name ?: "",
-        sourceAddress = this.sourceAddress ?: "",
-        destinationAddress = this.destinationAddress ?: "",
+        sourceAddress = this.originAddress.toDisplayString(),
+        destinationAddress = this.destinationAddress.toDisplayString(),
         deliveryCost = this.deliveryCost ?: 0.0,
         distance = this.distance ?: 0.0,
         assignedDispatcherName = this.assignedDispatcherName,
-        status = LoadStatus.fromString(this.status),
-        createdDate = this.createdDate?.let { parseInstant(it) },
-        pickUpDate = this.pickUpDate?.let { parseInstant(it) },
-        deliveryDate = this.deliveryDate?.let { parseInstant(it) },
-        originLatitude = this.originLatitude,
-        originLongitude = this.originLongitude,
-        destinationLatitude = this.destinationLatitude,
-        destinationLongitude = this.destinationLongitude
+        status = LoadStatus.fromApiStatus(this.status),
+        createdDate = this.createdAt,
+        pickUpDate = this.pickedUpAt,
+        deliveryDate = this.deliveredAt,
+        originLatitude = this.originLocation.latitude,
+        originLongitude = this.originLocation.longitude,
+        destinationLatitude = this.destinationLocation.latitude,
+        destinationLongitude = this.destinationLocation.longitude,
+        canConfirmPickup = this.canConfirmPickUp ?: false,
+        canConfirmDelivery = this.canConfirmDelivery ?: false
     )
+}
+
+fun Address.toDisplayString(): String {
+    val parts = listOfNotNull(line1, line2, city, state, zipCode).filter { it.isNotBlank() }
+    return parts.joinToString(", ")
 }
 
 fun TruckDto.toDomain(): Truck {
+    val drivers = listOfNotNull(mainDriver, secondaryDriver).map { it.toDomain() }
     return Truck(
         id = this.id ?: "",
-        truckNumber = this.truckNumber ?: "",
-        drivers = this.drivers?.map { it.toDomain() } ?: emptyList(),
-        activeLoads = this.activeLoads?.map { it.toDomain() } ?: emptyList()
+        truckNumber = this.number ?: "",
+        drivers = drivers,
+        activeLoads = this.loads?.map { it.toDomain() } ?: emptyList()
     )
 }
 
-fun DriverDto.toDomain(): Driver {
+fun EmployeeDto.toDomain(): Driver {
     return Driver(
         id = this.id ?: "",
         firstName = this.firstName ?: "",
         lastName = this.lastName ?: "",
-        userId = this.userId
+        userId = null
     )
 }
 
@@ -68,50 +76,39 @@ fun UserDto.toDomain(): User {
 
 fun DriverStatsDto.toDomain(): DriverStats {
     return DriverStats(
-        weeklyGross = this.weeklyGross ?: 0.0,
-        weeklyIncome = this.weeklyIncome ?: 0.0,
-        weeklyDistance = this.weeklyDistance ?: 0.0,
-        monthlyGross = this.monthlyGross ?: 0.0,
-        monthlyIncome = this.monthlyIncome ?: 0.0,
-        monthlyDistance = this.monthlyDistance ?: 0.0
+        weeklyGross = this.thisWeekGross ?: 0.0,
+        weeklyIncome = this.thisWeekShare ?: 0.0,
+        weeklyDistance = this.thisWeekDistance ?: 0.0,
+        monthlyGross = this.thisMonthGross ?: 0.0,
+        monthlyIncome = this.thisMonthShare ?: 0.0,
+        monthlyDistance = this.thisMonthDistance ?: 0.0
     )
 }
 
 fun DailyGrossDto.toChartData(): ChartData {
-    val instant = parseInstant(this.date)
     return ChartData(
-        label = instant?.toString()?.substring(0, 10) ?: this.date,
-        gross = this.gross,
-        driverShare = this.driverShare,
-        date = instant
+        label = this.date?.toString()?.substring(0, 10) ?: "",
+        gross = this.gross ?: 0.0,
+        driverShare = this.driverShare ?: 0.0,
+        date = this.date
     )
 }
 
 fun MonthlyGrossDto.toChartData(): ChartData {
-    val instant = parseInstant(this.date)
-    // Extract "YYYY-MM" portion for monthly label
-    val label = instant?.toString()?.take(7) ?: this.date
+    val label = this.date?.toString()?.take(7) ?: ""
     return ChartData(
         label = label,
-        gross = this.gross,
-        driverShare = this.driverShare,
-        date = instant
+        gross = this.gross ?: 0.0,
+        driverShare = this.driverShare ?: 0.0,
+        date = this.date
     )
 }
 
-fun User.toUpdateDto(): UpdateUser {
-    return UpdateUser(
+fun User.toUpdateCommand(): UpdateUserCommand {
+    return UpdateUserCommand(
         id = this.id,
         firstName = this.firstName,
         lastName = this.lastName,
         phoneNumber = this.phoneNumber
     )
-}
-
-private fun parseInstant(dateString: String): Instant? {
-    return try {
-        Instant.parse(dateString)
-    } catch (e: Exception) {
-        null
-    }
 }

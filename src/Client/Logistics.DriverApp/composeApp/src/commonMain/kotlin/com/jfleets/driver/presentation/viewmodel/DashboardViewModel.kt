@@ -2,9 +2,9 @@ package com.jfleets.driver.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jfleets.driver.data.api.DriverApi
-import com.jfleets.driver.data.api.TruckApi
-import com.jfleets.driver.data.dto.DeviceTokenDto
+import com.jfleets.driver.api.DriverApi
+import com.jfleets.driver.api.TruckApi
+import com.jfleets.driver.api.models.SetDriverDeviceTokenCommand
 import com.jfleets.driver.data.local.PreferencesManager
 import com.jfleets.driver.data.mapper.toDomain
 import com.jfleets.driver.data.repository.AuthRepository
@@ -40,8 +40,9 @@ class DashboardViewModel(
                 }
 
                 // Get driver ID first
-                val driverResult = driverApi.getDriver(userId)
-                if (!driverResult.success || driverResult.data == null) {
+                val driverResponse = driverApi.getDriverByUserId(userId)
+                val driverResult = driverResponse.body()
+                if (driverResult.success != true || driverResult.data == null) {
                     _uiState.value = DashboardUiState.Error(driverResult.error ?: "Failed to load driver")
                     return@launch
                 }
@@ -49,8 +50,9 @@ class DashboardViewModel(
                 val driverId = driverResult.data.id ?: ""
 
                 // Then get truck with active loads
-                val truckResult = truckApi.getTruckByDriver(driverId)
-                if (truckResult.success && truckResult.data != null) {
+                val truckResponse = truckApi.getTruckById(driverId, includeLoads = true, onlyActiveLoads = true)
+                val truckResult = truckResponse.body()
+                if (truckResult.success == true && truckResult.data != null) {
                     _uiState.value = DashboardUiState.Success(truckResult.data.toDomain())
                 } else {
                     _uiState.value = DashboardUiState.Error(truckResult.error ?: "Failed to load truck")
@@ -63,7 +65,8 @@ class DashboardViewModel(
 
     fun sendDeviceToken(token: String) {
         viewModelScope.launch {
-            driverApi.sendDeviceToken(DeviceTokenDto(token))
+            val userId = preferencesManager.getUserId() ?: return@launch
+            driverApi.setDriverDeviceToken(userId, SetDriverDeviceTokenCommand(userId, token))
         }
     }
 

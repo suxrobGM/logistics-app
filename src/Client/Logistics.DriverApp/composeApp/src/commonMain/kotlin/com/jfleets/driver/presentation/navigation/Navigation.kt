@@ -7,7 +7,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.jfleets.driver.data.api.LoadApi
+import com.jfleets.driver.api.DriverApi
+import com.jfleets.driver.api.LoadApi
 import com.jfleets.driver.presentation.ui.screens.AboutScreen
 import com.jfleets.driver.presentation.ui.screens.AccountScreen
 import com.jfleets.driver.presentation.ui.screens.DashboardScreen
@@ -75,9 +76,10 @@ fun AppNavigation(
                 navArgument("loadId") { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val loadId = backStackEntry.arguments?.getString("loadId")?.toDoubleOrNull() ?: 0.0
+            val loadId = backStackEntry.arguments?.getString("loadId") ?: ""
             val loadApi: LoadApi = koinInject()
-            val viewModel = LoadDetailViewModel(loadApi, loadId)
+            val driverApi: DriverApi = koinInject()
+            val viewModel = LoadDetailViewModel(loadApi, driverApi, loadId)
 
             LoadDetailScreen(
                 onNavigateBack = { navController.popBackStack() },

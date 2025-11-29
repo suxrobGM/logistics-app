@@ -31,7 +31,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PastLoadsScreen(
-    onLoadClick: (Double) -> Unit,
+    onLoadClick: (String) -> Unit,
     viewModel: PastLoadsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()

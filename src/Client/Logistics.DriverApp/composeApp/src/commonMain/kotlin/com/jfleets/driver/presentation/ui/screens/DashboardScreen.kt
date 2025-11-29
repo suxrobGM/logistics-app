@@ -39,7 +39,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
-    onLoadClick: (Double) -> Unit,
+    onLoadClick: (String) -> Unit,
     onLogout: () -> Unit,
     viewModel: DashboardViewModel = koinViewModel()
 ) {

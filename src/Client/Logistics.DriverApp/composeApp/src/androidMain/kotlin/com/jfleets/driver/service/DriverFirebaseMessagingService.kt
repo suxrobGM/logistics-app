@@ -10,8 +10,9 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.jfleets.driver.MainActivity
 import com.jfleets.driver.R
-import com.jfleets.driver.data.api.DriverApi
-import com.jfleets.driver.data.dto.DeviceTokenDto
+import com.jfleets.driver.api.DriverApi
+import com.jfleets.driver.api.models.SetDriverDeviceTokenCommand
+import com.jfleets.driver.data.local.PreferencesManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -22,6 +23,7 @@ import com.jfleets.driver.util.Logger
 class DriverFirebaseMessagingService : FirebaseMessagingService() {
 
     private val driverApi: DriverApi by inject()
+    private val preferencesManager: PreferencesManager by inject()
 
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -38,8 +40,13 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
         // Send token to server
         serviceScope.launch {
             try {
-                driverApi.sendDeviceToken(DeviceTokenDto(token))
-                Logger.d(TAG, "Device token sent to server")
+                val userId = preferencesManager.getUserId()
+                if (userId != null) {
+                    driverApi.setDriverDeviceToken(userId, SetDriverDeviceTokenCommand(userId, token))
+                    Logger.d(TAG, "Device token sent to server")
+                } else {
+                    Logger.w(TAG, "User ID not available, cannot send device token")
+                }
             } catch (e: Exception) {
                 Logger.e(TAG, "Failed to send device token", e)
             }

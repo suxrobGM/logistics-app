@@ -88,7 +88,7 @@ fun LoadDetailScreen(
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Load #${load.refId ?: load.id.toInt()}",
+                                text = "Load #${load.refId ?: load.id}",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )

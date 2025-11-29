@@ -2,7 +2,7 @@ package com.jfleets.driver.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jfleets.driver.data.api.LoadApi
+import com.jfleets.driver.api.LoadApi
 import com.jfleets.driver.data.mapper.toDomain
 import com.jfleets.driver.model.Load
 import kotlinx.datetime.TimeZone
@@ -31,15 +31,22 @@ class PastLoadsViewModel(
 
             val now = Clock.System.now()
             val ninetyDaysAgo = now.minus(90.days)
-            val endDate = now.toLocalDateTime(TimeZone.UTC).date.toString()
-            val startDate = ninetyDaysAgo.toLocalDateTime(TimeZone.UTC).date.toString()
 
-            val result = loadApi.getPastLoads(startDate, endDate)
-            if (result.success && result.data != null) {
-                val loads = result.data.map { it.toDomain() }
-                _uiState.value = PastLoadsUiState.Success(loads)
-            } else {
-                _uiState.value = PastLoadsUiState.Error(result.error ?: "Failed to load past loads")
+            try {
+                val response = loadApi.getLoads(
+                    onlyActiveLoads = false,
+                    startDate = ninetyDaysAgo,
+                    endDate = now
+                )
+                val result = response.body()
+                if (result.success == true && result.data != null) {
+                    val loads = result.data.map { it.toDomain() }
+                    _uiState.value = PastLoadsUiState.Success(loads)
+                } else {
+                    _uiState.value = PastLoadsUiState.Error(result.error ?: "Failed to load past loads")
+                }
+            } catch (e: Exception) {
+                _uiState.value = PastLoadsUiState.Error(e.message ?: "An error occurred")
             }
         }
     }
