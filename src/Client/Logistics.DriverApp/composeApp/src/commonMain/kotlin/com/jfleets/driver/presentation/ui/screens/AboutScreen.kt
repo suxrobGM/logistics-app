@@ -47,7 +47,7 @@ fun AboutScreen() {
             )
             Spacer(modifier = Modifier.height(32.dp))
             Text(
-                text = "Built with Kotlin & Jetpack Compose",
+                text = "Built with Kotlin Multiplatform & Compose",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

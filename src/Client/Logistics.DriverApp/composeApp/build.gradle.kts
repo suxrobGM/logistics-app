@@ -55,6 +55,9 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
 
+            // JetBrains Compose Multiplatform (Lifecycle, ViewModel, Navigation)
+            implementation(libs.bundles.jetbrains.compose.multiplatform)
+
             // Kotlin Libraries
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
@@ -75,9 +78,6 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
-
-            // Voyager Navigation (bundles)
-            implementation(libs.bundles.voyager.common)
         }
 
         androidMain.dependencies {
@@ -89,20 +89,14 @@ kotlin {
             // Android-specific Ktor
             implementation(libs.ktor.client.okhttp)
 
-            // AndroidX
+            // AndroidX Core
             implementation(libs.androidx.core.ktx)
-            implementation(libs.androidx.lifecycle.runtime)
-            implementation(libs.androidx.lifecycle.viewmodel)
-
-            // Navigation Compose
-            implementation(libs.androidx.navigation.compose)
 
             // DataStore Android
             implementation(libs.androidx.datastore.preferences)
 
             // Koin Android
             implementation(libs.koin.androidx.compose)
-            implementation(libs.koin.androidx.compose.navigation)
 
             // Firebase
             implementation(project.dependencies.platform(libs.firebase.bom))

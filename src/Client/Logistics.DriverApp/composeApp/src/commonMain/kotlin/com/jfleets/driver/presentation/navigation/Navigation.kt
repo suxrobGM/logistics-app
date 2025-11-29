@@ -7,6 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.jfleets.driver.data.api.LoadApi
 import com.jfleets.driver.presentation.ui.screens.AboutScreen
 import com.jfleets.driver.presentation.ui.screens.AccountScreen
 import com.jfleets.driver.presentation.ui.screens.DashboardScreen
@@ -15,11 +16,14 @@ import com.jfleets.driver.presentation.ui.screens.LoginScreen
 import com.jfleets.driver.presentation.ui.screens.PastLoadsScreen
 import com.jfleets.driver.presentation.ui.screens.SettingsScreen
 import com.jfleets.driver.presentation.ui.screens.StatsScreen
+import com.jfleets.driver.presentation.viewmodel.LoadDetailViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun AppNavigation(
     navController: NavHostController,
     startDestination: String,
+    onOpenUrl: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -70,9 +74,15 @@ fun AppNavigation(
             arguments = listOf(
                 navArgument("loadId") { type = NavType.StringType }
             )
-        ) {
+        ) { backStackEntry ->
+            val loadId = backStackEntry.arguments?.getString("loadId")?.toDoubleOrNull() ?: 0.0
+            val loadApi: LoadApi = koinInject()
+            val viewModel = LoadDetailViewModel(loadApi, loadId)
+
             LoadDetailScreen(
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                onOpenMaps = onOpenUrl,
+                viewModel = viewModel
             )
         }
 

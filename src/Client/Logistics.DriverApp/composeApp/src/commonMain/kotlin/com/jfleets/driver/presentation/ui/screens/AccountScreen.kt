@@ -39,7 +39,7 @@ import com.jfleets.driver.presentation.viewmodel.AccountUiState
 import com.jfleets.driver.presentation.viewmodel.AccountViewModel
 import com.jfleets.driver.presentation.viewmodel.SaveState
 import kotlinx.coroutines.delay
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

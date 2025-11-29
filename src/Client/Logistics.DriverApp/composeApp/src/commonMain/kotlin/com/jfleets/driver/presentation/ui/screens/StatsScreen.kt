@@ -39,7 +39,7 @@ import com.jfleets.driver.presentation.viewmodel.StatsUiState
 import com.jfleets.driver.presentation.viewmodel.StatsViewModel
 import com.jfleets.driver.util.formatCurrency
 import com.jfleets.driver.util.formatDistance
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -160,8 +160,6 @@ fun StatsScreen(
                                             text = "Chart data available: ${chart.data.size} entries",
                                             style = MaterialTheme.typography.bodyMedium
                                         )
-                                        // Note: For actual chart rendering, you would use a chart library
-                                        // like MPAndroidChart or Compose Charts
                                         Text(
                                             text = "Total Gross: ${
                                                 chart.data.sumOf { it.gross }.formatCurrency()

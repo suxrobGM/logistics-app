@@ -34,7 +34,7 @@ import com.jfleets.driver.presentation.ui.components.LoadCard
 import com.jfleets.driver.presentation.ui.components.LoadingIndicator
 import com.jfleets.driver.presentation.viewmodel.DashboardUiState
 import com.jfleets.driver.presentation.viewmodel.DashboardViewModel
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

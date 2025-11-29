@@ -2,9 +2,13 @@ package com.jfleets.driver
 
 import android.app.Application
 import com.google.firebase.FirebaseApp
+import com.jfleets.driver.data.auth.AndroidLoginService
 import com.jfleets.driver.data.auth.AuthService
+import com.jfleets.driver.data.auth.LoginService
+import com.jfleets.driver.data.local.AndroidPreferencesManager
 import com.jfleets.driver.data.local.PreferencesManager
 import com.jfleets.driver.data.local.TokenManager
+import com.jfleets.driver.data.repository.AndroidAuthRepository
 import com.jfleets.driver.data.repository.AuthRepository
 import com.jfleets.driver.presentation.viewmodel.AccountViewModel
 import com.jfleets.driver.presentation.viewmodel.DashboardViewModel
@@ -17,6 +21,7 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import timber.log.Timber
 
@@ -53,13 +58,16 @@ class DriverApplication : Application() {
  * This module provides Android-only services and components
  */
 val androidModule = module {
-    // Local Storage
-    singleOf(::PreferencesManager)
+    // Local Storage - bind implementation to interface
+    singleOf(::AndroidPreferencesManager) bind PreferencesManager::class
     singleOf(::TokenManager)
 
-    // Authentication (Android-specific)
+    // Authentication (Android-specific) - bind implementation to interface
     singleOf(::AuthService)
-    singleOf(::AuthRepository)
+    singleOf(::AndroidAuthRepository) bind AuthRepository::class
+
+    // Login Service (Android-specific) - bind implementation to interface
+    singleOf(::AndroidLoginService) bind LoginService::class
 
     // ViewModels
     viewModelOf(::DashboardViewModel)

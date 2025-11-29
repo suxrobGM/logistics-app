@@ -1,6 +1,7 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.jfleets.driver.presentation.viewmodel
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jfleets.driver.data.api.LoadApi
@@ -12,13 +13,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlin.time.ExperimentalTime
 
 class LoadDetailViewModel(
     private val loadApi: LoadApi,
-    savedStateHandle: SavedStateHandle
+    private val loadId: Double
 ) : ViewModel() {
-
-    private val loadId: Double = savedStateHandle.get<String>("loadId")?.toDoubleOrNull() ?: 0.0
 
     private val _uiState = MutableStateFlow<LoadDetailUiState>(LoadDetailUiState.Loading)
     val uiState: StateFlow<LoadDetailUiState> = _uiState.asStateFlow()

@@ -2,8 +2,6 @@
 
 package com.jfleets.driver.presentation.ui.screens
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,9 +28,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.jfleets.driver.model.Load
 import com.jfleets.driver.model.LoadStatus
 import com.jfleets.driver.presentation.ui.components.CardContainer
 import com.jfleets.driver.presentation.ui.components.ErrorView
@@ -42,17 +40,16 @@ import com.jfleets.driver.presentation.viewmodel.LoadDetailViewModel
 import com.jfleets.driver.util.formatCurrency
 import com.jfleets.driver.util.formatDistance
 import com.jfleets.driver.util.formatShort
-import org.koin.androidx.compose.koinViewModel
 import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoadDetailScreen(
     onNavigateBack: () -> Unit,
-    viewModel: LoadDetailViewModel = koinViewModel()
+    onOpenMaps: (String) -> Unit,
+    viewModel: LoadDetailViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -145,8 +142,7 @@ fun LoadDetailScreen(
                         Button(
                             onClick = {
                                 val mapsUrl = viewModel.getGoogleMapsUrl(load)
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(mapsUrl))
-                                context.startActivity(intent)
+                                onOpenMaps(mapsUrl)
                             },
                             modifier = Modifier.fillMaxWidth()
                         ) {

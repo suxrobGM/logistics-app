@@ -160,10 +160,6 @@ class StatsViewModel(
         )
     }
 
-    private fun isLeapYear(year: Int): Boolean {
-        return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)
-    }
-
     fun refresh() {
         loadStats()
         loadChartData(_selectedRange.value)
