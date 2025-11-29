@@ -4472,17 +4472,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/DriverStatsDtoPagedResult"
+                  "$ref": "#/components/schemas/DriverStatsDtoResult"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DriverStatsDtoPagedResult"
+                  "$ref": "#/components/schemas/DriverStatsDtoResult"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DriverStatsDtoPagedResult"
+                  "$ref": "#/components/schemas/DriverStatsDtoResult"
                 }
               }
             }
@@ -7880,7 +7880,7 @@
         },
         "additionalProperties": false
       },
-      "DriverStatsDtoPagedResult": {
+      "DriverStatsDtoResult": {
         "type": "object",
         "properties": {
           "error": {
@@ -7892,19 +7892,7 @@
             "readOnly": true
           },
           "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DriverStatsDto"
-            },
-            "nullable": true
-          },
-          "totalItems": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
+            "$ref": "#/components/schemas/DriverStatsDto"
           }
         },
         "additionalProperties": false

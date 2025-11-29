@@ -9,6 +9,7 @@ import com.jfleets.driver.data.api.ApiFactory
 import org.koin.dsl.module
 
 fun commonModule(baseUrl: String) = module {
+    // Register ApiFactory as a singleton
     single { ApiFactory(baseUrl, get()) }
 
     // Generated API instances from ApiFactory

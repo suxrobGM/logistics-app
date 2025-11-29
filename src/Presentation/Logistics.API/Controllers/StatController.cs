@@ -57,10 +57,10 @@ public class StatController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("driver/{userId:guid}", Name = "GetDriverStats")]
-    [ProducesResponseType(typeof(PagedResult<DriverStatsDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<DriverStatsDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Stats.View)]
-    public async Task<IActionResult> GetDriverStatsList(Guid userId, [FromQuery] GetDriverStatsQuery request)
+    public async Task<IActionResult> GetDriverStats(Guid userId, [FromQuery] GetDriverStatsQuery request)
     {
         request.UserId = userId;
         var result = await mediator.Send(request);

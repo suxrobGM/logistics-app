@@ -56,8 +56,8 @@ class StatsViewModel(
                 try {
                     val response = statApi.getDriverStats(it)
                     val result = response.body()
-                    if (result.success == true && !result.data.isNullOrEmpty()) {
-                        _statsState.value = StatsUiState.Success(result.data.first().toDomain())
+                    if (result.success == true && result.data != null) {
+                        _statsState.value = StatsUiState.Success(result.data.toDomain())
                     } else {
                         _statsState.value = StatsUiState.Error(result.error ?: "Failed to load stats")
                     }

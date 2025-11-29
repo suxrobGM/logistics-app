@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Logistics.API.Authorization;
+using Logistics.API.Converters;
 using Logistics.API.Extensions;
 using Logistics.API.Jobs;
 using Logistics.API.Middlewares;
@@ -85,8 +86,9 @@ internal static class Setup
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.Converters.Add(
-                    new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower) // Optional naming policy
+                    new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower)
                 );
+                options.JsonSerializerOptions.Converters.Add(new Iso8601UtcDateTimeConverter());
                 options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             });
 
