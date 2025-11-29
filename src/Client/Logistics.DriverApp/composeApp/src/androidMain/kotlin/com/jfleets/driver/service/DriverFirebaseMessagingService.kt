@@ -17,7 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
-import timber.log.Timber
+import com.jfleets.driver.util.Logger
 
 class DriverFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -26,21 +26,22 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     companion object {
+        private const val TAG = "DriverFirebaseMsgService"
         private const val CHANNEL_ID = "logistics_driver_channel"
         private const val NOTIFICATION_ID = 2001
     }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Timber.d("New FCM token: $token")
+        Logger.d(TAG, "New FCM token: $token")
 
         // Send token to server
         serviceScope.launch {
             try {
                 driverApi.sendDeviceToken(DeviceTokenDto(token))
-                Timber.d("Device token sent to server")
+                Logger.d(TAG, "Device token sent to server")
             } catch (e: Exception) {
-                Timber.e(e, "Failed to send device token")
+                Logger.e(TAG, "Failed to send device token", e)
             }
         }
     }
@@ -48,7 +49,7 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
-        Timber.d("FCM message received from: ${message.from}")
+        Logger.d(TAG, "FCM message received from: ${message.from}")
 
         // Handle notification payload
         message.notification?.let { notification ->
@@ -59,7 +60,7 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
 
         // Handle data payload
         message.data.isNotEmpty().let {
-            Timber.d("Message data payload: ${message.data}")
+            Logger.d(TAG, "Message data payload: ${message.data}")
             handleDataPayload(message.data)
         }
     }
@@ -68,19 +69,19 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
         // Handle different notification types
         when (data["type"]) {
             "load_update" -> {
-                Timber.d("Load update notification received")
+                Logger.d(TAG, "Load update notification received")
                 // Trigger load refresh in the app
                 // You can use a broadcast receiver or shared flow to notify the app
             }
 
             "new_load" -> {
-                Timber.d("New load notification received")
+                Logger.d(TAG, "New load notification received")
                 val loadId = data["loadId"]
                 showNotification("New Load Assigned", "You have been assigned a new load")
             }
 
             else -> {
-                Timber.d("Unknown notification type")
+                Logger.d(TAG, "Unknown notification type")
             }
         }
     }

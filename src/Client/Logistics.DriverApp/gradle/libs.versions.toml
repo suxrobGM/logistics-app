@@ -45,9 +45,6 @@ maps-compose = "6.12.1"
 appauth = "0.11.1"
 jwt-decode = "2.0.2"
 
-# Utilities
-timber = "5.0.1"
-
 # Testing
 junit = "4.13.2"
 androidx-test-junit = "1.3.0"
@@ -126,9 +123,6 @@ maps-compose-utils = { module = "com.google.maps.android:maps-compose-utils", ve
 # Authentication
 appauth = { module = "net.openid:appauth", version.ref = "appauth" }
 jwt-decode = { module = "com.auth0.android:jwtdecode", version.ref = "jwt-decode" }
-
-# Utilities
-timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 # Testing
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

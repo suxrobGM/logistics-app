@@ -32,7 +32,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
-import timber.log.Timber
+import com.jfleets.driver.util.Logger
 import java.util.Locale
 
 class LocationTrackingService : Service() {
@@ -45,6 +45,7 @@ class LocationTrackingService : Service() {
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     companion object {
+        private const val TAG = "LocationTrackingService"
         private const val NOTIFICATION_ID = 1001
         private const val CHANNEL_ID = "location_tracking_channel"
         private const val UPDATE_INTERVAL = 30000L // 30 seconds
@@ -103,7 +104,7 @@ class LocationTrackingService : Service() {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            Timber.w("Location permission not granted")
+            Logger.w(TAG, "Location permission not granted")
             stopSelf()
             return
         }
@@ -118,7 +119,7 @@ class LocationTrackingService : Service() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.let { location ->
-                    Timber.d("Location update: ${location.latitude}, ${location.longitude}")
+                    Logger.d(TAG, "Location update: ${location.latitude}, ${location.longitude}")
                     handleLocationUpdate(location)
                 }
             }
@@ -139,12 +140,12 @@ class LocationTrackingService : Service() {
 
                 // Send location to server via SignalR
                 // TODO: Implement SignalR connection and send location
-                Timber.d("Location: $address")
+                Logger.d(TAG, "Location: $address")
 
                 // Check proximity to active loads
                 checkLoadProximity(location)
             } catch (e: Exception) {
-                Timber.e(e, "Error handling location update")
+                Logger.e(TAG, "Error handling location update", e)
             }
         }
     }
@@ -154,7 +155,7 @@ class LocationTrackingService : Service() {
             // Get active loads
             val result = loadApi.getActiveLoads()
             if (!result.success || result.data == null) {
-                Timber.e("Error getting active loads: ${result.error}")
+                Logger.e(TAG, "Error getting active loads: ${result.error}")
                 return
             }
 
@@ -189,12 +190,12 @@ class LocationTrackingService : Service() {
                             isNearDestination = nearDestination
                         )
                         loadApi.updateLoadProximity(command)
-                        Timber.d("Load ${load.id} proximity updated: origin=$nearOrigin, dest=$nearDestination")
+                        Logger.d(TAG, "Load ${load.id} proximity updated: origin=$nearOrigin, dest=$nearDestination")
                     }
                 }
             }
         } catch (e: Exception) {
-            Timber.e(e, "Error checking load proximity")
+            Logger.e(TAG, "Error checking load proximity", e)
         }
     }
 
@@ -218,7 +219,7 @@ class LocationTrackingService : Service() {
                 "Unknown location"
             }
         } catch (e: Exception) {
-            Timber.e(e, "Error getting address from location")
+            Logger.e(TAG, "Error getting address from location", e)
             "Unknown location"
         }
     }
@@ -227,6 +228,6 @@ class LocationTrackingService : Service() {
         super.onDestroy()
         fusedLocationClient.removeLocationUpdates(locationCallback)
         serviceScope.cancel()
-        Timber.d("LocationTrackingService destroyed")
+        Logger.d(TAG, "LocationTrackingService destroyed")
     }
 }

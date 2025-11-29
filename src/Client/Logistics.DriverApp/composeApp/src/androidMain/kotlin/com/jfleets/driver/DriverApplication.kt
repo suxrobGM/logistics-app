@@ -16,6 +16,7 @@ import com.jfleets.driver.presentation.viewmodel.LoadDetailViewModel
 import com.jfleets.driver.presentation.viewmodel.LoginViewModel
 import com.jfleets.driver.presentation.viewmodel.PastLoadsViewModel
 import com.jfleets.driver.presentation.viewmodel.StatsViewModel
+import com.jfleets.driver.util.Logger
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -23,16 +24,10 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import timber.log.Timber
 
 class DriverApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-
-        // Initialize Timber for logging
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        }
 
         // Initialize Koin for DI (KMP + Android)
         startKoin {
@@ -49,7 +44,7 @@ class DriverApplication : Application() {
         // Initialize Firebase
         FirebaseApp.initializeApp(this)
 
-        Timber.d("DriverApplication initialized")
+        Logger.d("DriverApplication", "DriverApplication initialized")
     }
 }
 

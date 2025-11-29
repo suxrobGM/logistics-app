@@ -111,9 +111,6 @@ kotlin {
             implementation(libs.appauth)
             implementation(libs.jwt.decode)
 
-            // Utilities
-            implementation(libs.timber)
-
             // Work Manager
             implementation(libs.androidx.work.runtime)
         }
