@@ -16,13 +16,12 @@ openApiGenerate {
     generatorName.set("kotlin")
     inputSpec.set("$projectDir/src/openapi/api-spec.json")
     outputDir.set(layout.buildDirectory.dir("generated/openapi").get().asFile.absolutePath)
-    packageName.set("com.jfleets.driver.api.generated")
-    apiPackage.set("com.jfleets.driver.api.generated.apis")
-    modelPackage.set("com.jfleets.driver.api.generated.models")
+    packageName.set("com.jfleets.driver")
+    apiPackage.set("com.jfleets.driver.api")
+    modelPackage.set("com.jfleets.driver.api.models")
     configOptions.set(
         mapOf(
             "library" to "multiplatform",
-            "serializationLibrary" to "kotlinx_serialization",
             "useCoroutines" to "true",
             "enumPropertyNaming" to "UPPERCASE",
             "dateLibrary" to "kotlinx-datetime"
@@ -52,6 +51,7 @@ kotlin {
     sourceSets.all {
         languageSettings {
             optIn("kotlin.time.ExperimentalTime")
+            optIn("io.ktor.util.InternalAPI")
         }
     }
 
@@ -68,7 +68,7 @@ kotlin {
 
     // Add generated OpenAPI sources to commonMain
     sourceSets.commonMain {
-        kotlin.srcDir(layout.buildDirectory.dir("generated/openapi/src/commonMain/kotlin"))
+        kotlin.srcDir(layout.buildDirectory.dir("generated/openapi/src/main/kotlin"))
     }
 
     sourceSets {
