@@ -6,25 +6,18 @@ import com.jfleets.driver.data.api.LoadApi
 import com.jfleets.driver.data.api.StatsApi
 import com.jfleets.driver.data.api.TruckApi
 import com.jfleets.driver.data.api.UserApi
+import com.jfleets.driver.data.local.PreferencesManager
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
-expect fun getTokenProvider(): TokenProvider
-
-interface TokenProvider {
-    suspend fun getAccessToken(): String?
-    suspend fun getTenantId(): String?
-    suspend fun getUserId(): String?
-}
-
-fun sharedModule(baseUrl: String) = module {
-    // API Client
+fun commonModule(baseUrl: String) = module {
+    // API Client - uses PreferencesManager directly
     single {
-        val tokenProvider = getTokenProvider()
+        val preferencesManager: PreferencesManager = get()
         ApiClient(
             baseUrl = baseUrl,
-            getAccessToken = { tokenProvider.getAccessToken() },
-            getTenantId = { tokenProvider.getTenantId() }
+            getAccessToken = { preferencesManager.getAccessToken() },
+            getTenantId = { preferencesManager.getTenantId() }
         )
     }
 

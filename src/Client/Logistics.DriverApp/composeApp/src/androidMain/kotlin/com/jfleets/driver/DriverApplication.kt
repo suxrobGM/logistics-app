@@ -42,7 +42,7 @@ class DriverApplication : Application() {
                 // Android-specific module (must be loaded first to provide PreferencesManager)
                 androidModule,
                 // Shared KMP modules
-                sharedModule(baseUrl = "https://10.0.2.2:7000/")
+                commonModule(baseUrl = "https://10.0.2.2:7000/")
             )
         }
 

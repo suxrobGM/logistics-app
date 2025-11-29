@@ -50,7 +50,7 @@ private fun initKoin() {
                 // iOS-specific module (must be loaded first to provide PreferencesManager)
                 iosModule,
                 // Shared KMP modules
-                sharedModule(baseUrl = "https://localhost:7000/")
+                commonModule(baseUrl = "https://localhost:7000/")
             )
         }
         koinInitialized = true
