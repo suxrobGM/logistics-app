@@ -116,9 +116,9 @@ public class PaymentController(IMediator mediator) : ControllerBase
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.Create)]
-    public async Task<IActionResult> CreateSetupIntent([FromBody] CreateSetupIntentCommand request)
+    public async Task<IActionResult> CreateSetupIntent()
     {
-        var result = await mediator.Send(request);
+        var result = await mediator.Send(new CreateSetupIntentCommand());
         return result.Success ? Ok(result) : BadRequest(result);
     }
 

@@ -51,7 +51,7 @@ kotlin {
     sourceSets.all {
         languageSettings {
             optIn("kotlin.time.ExperimentalTime")
-            optIn("io.ktor.util.InternalAPI")
+            optIn("io.ktor.utils.io.InternalAPI")
         }
     }
 

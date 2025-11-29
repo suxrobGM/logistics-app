@@ -3415,25 +3415,6 @@
           "Payment"
         ],
         "operationId": "CreateSetupIntent",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateSetupIntentCommand"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateSetupIntentCommand"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateSetupIntentCommand"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "OK",
@@ -7212,10 +7193,6 @@
             "format": "date-time"
           }
         },
-        "additionalProperties": false
-      },
-      "CreateSetupIntentCommand": {
-        "type": "object",
         "additionalProperties": false
       },
       "CreateSubscriptionCommand": {
