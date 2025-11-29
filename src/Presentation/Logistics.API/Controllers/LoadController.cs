@@ -18,7 +18,7 @@ namespace Logistics.API.Controllers;
 [Route("loads")]
 public class LoadController(IMediator mediator) : ControllerBase
 {
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id:guid}", Name = "GetLoadById")]
     [ProducesResponseType(typeof(Result<LoadDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Loads.View)]
@@ -28,7 +28,7 @@ public class LoadController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpGet]
+    [HttpGet(Name = "GetLoads")]
     [ProducesResponseType(typeof(PagedResult<LoadDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Loads.View)]
@@ -38,7 +38,7 @@ public class LoadController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPost]
+    [HttpPost(Name = "CreateLoad")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Loads.Create)]
@@ -48,7 +48,7 @@ public class LoadController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPut("{id:guid}")]
+    [HttpPut("{id:guid}", Name = "UpdateLoad")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Loads.Edit)]
@@ -59,7 +59,7 @@ public class LoadController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("{id:guid}", Name = "DeleteLoad")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Loads.Delete)]

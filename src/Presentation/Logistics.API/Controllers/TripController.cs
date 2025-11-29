@@ -12,7 +12,7 @@ namespace Logistics.API.Controllers;
 [Route("trips")]
 public class TripController(IMediator mediator) : ControllerBase
 {
-    [HttpGet("{tripId:guid}")]
+    [HttpGet("{tripId:guid}", Name = "GetTripById")]
     [ProducesResponseType(typeof(Result<TripDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Loads.View)]
@@ -22,7 +22,7 @@ public class TripController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpGet]
+    [HttpGet(Name = "GetTrips")]
     [ProducesResponseType(typeof(PagedResult<TripDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Loads.View)]
@@ -32,7 +32,7 @@ public class TripController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPost]
+    [HttpPost(Name = "CreateTrip")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Loads.Create)]
@@ -42,7 +42,7 @@ public class TripController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPost("optimize")]
+    [HttpPost("optimize", Name = "OptimizeTripStops")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Loads.View)]
@@ -52,7 +52,7 @@ public class TripController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPut("{id:guid}")]
+    [HttpPut("{id:guid}", Name = "UpdateTrip")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Loads.Edit)]
@@ -63,7 +63,7 @@ public class TripController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("{id:guid}", Name = "DeleteTrip")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Loads.Delete)]

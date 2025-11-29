@@ -10,6 +10,7 @@
         "tags": [
           "Customer"
         ],
+        "operationId": "GetCustomerById",
         "parameters": [
           {
             "name": "id",
@@ -68,6 +69,7 @@
         "tags": [
           "Customer"
         ],
+        "operationId": "UpdateCustomer",
         "parameters": [
           {
             "name": "id",
@@ -145,6 +147,7 @@
         "tags": [
           "Customer"
         ],
+        "operationId": "DeleteCustomer",
         "parameters": [
           {
             "name": "id",
@@ -205,6 +208,7 @@
         "tags": [
           "Customer"
         ],
+        "operationId": "GetCustomers",
         "parameters": [
           {
             "name": "Search",
@@ -284,6 +288,7 @@
         "tags": [
           "Customer"
         ],
+        "operationId": "CreateCustomer",
         "requestBody": {
           "content": {
             "application/json": {
@@ -352,6 +357,7 @@
         "tags": [
           "Default"
         ],
+        "operationId": "GetApiStatus",
         "responses": {
           "200": {
             "description": "OK",
@@ -381,6 +387,7 @@
         "tags": [
           "Document"
         ],
+        "operationId": "GetDocuments",
         "parameters": [
           {
             "name": "OwnerType",
@@ -461,6 +468,7 @@
         "tags": [
           "Document"
         ],
+        "operationId": "GetDocumentById",
         "parameters": [
           {
             "name": "documentId",
@@ -519,6 +527,7 @@
         "tags": [
           "Document"
         ],
+        "operationId": "UpdateDocument",
         "parameters": [
           {
             "name": "documentId",
@@ -596,6 +605,7 @@
         "tags": [
           "Document"
         ],
+        "operationId": "DeleteDocument",
         "parameters": [
           {
             "name": "documentId",
@@ -656,6 +666,7 @@
         "tags": [
           "Document"
         ],
+        "operationId": "UploadDocument",
         "requestBody": {
           "content": {
             "multipart/form-data": {
@@ -750,6 +761,7 @@
         "tags": [
           "Document"
         ],
+        "operationId": "DownloadDocument",
         "parameters": [
           {
             "name": "documentId",
@@ -813,6 +825,7 @@
         "tags": [
           "Driver"
         ],
+        "operationId": "GetDriverByUserId",
         "parameters": [
           {
             "name": "userId",
@@ -873,6 +886,7 @@
         "tags": [
           "Driver"
         ],
+        "operationId": "SetDriverDeviceToken",
         "parameters": [
           {
             "name": "userId",
@@ -952,6 +966,7 @@
         "tags": [
           "Driver"
         ],
+        "operationId": "ConfirmLoadStatus",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1020,6 +1035,7 @@
         "tags": [
           "Driver"
         ],
+        "operationId": "UpdateLoadProximity",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1088,6 +1104,7 @@
         "tags": [
           "Employee"
         ],
+        "operationId": "GetEmployeeById",
         "parameters": [
           {
             "name": "userId",
@@ -1146,6 +1163,7 @@
         "tags": [
           "Employee"
         ],
+        "operationId": "UpdateEmployee",
         "parameters": [
           {
             "name": "userId",
@@ -1223,6 +1241,7 @@
         "tags": [
           "Employee"
         ],
+        "operationId": "DeleteEmployee",
         "parameters": [
           {
             "name": "userId",
@@ -1283,6 +1302,7 @@
         "tags": [
           "Employee"
         ],
+        "operationId": "GetEmployees",
         "parameters": [
           {
             "name": "Role",
@@ -1369,6 +1389,7 @@
         "tags": [
           "Employee"
         ],
+        "operationId": "CreateEmployee",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1437,6 +1458,7 @@
         "tags": [
           "Employee"
         ],
+        "operationId": "RemoveRoleFromEmployee",
         "parameters": [
           {
             "name": "userId",
@@ -1516,6 +1538,7 @@
         "tags": [
           "Invoices"
         ],
+        "operationId": "GetInvoiceById",
         "parameters": [
           {
             "name": "id",
@@ -1574,6 +1597,7 @@
         "tags": [
           "Invoices"
         ],
+        "operationId": "UpdateInvoice",
         "parameters": [
           {
             "name": "id",
@@ -1651,6 +1675,7 @@
         "tags": [
           "Invoices"
         ],
+        "operationId": "DeleteInvoice",
         "parameters": [
           {
             "name": "id",
@@ -1711,6 +1736,7 @@
         "tags": [
           "Invoices"
         ],
+        "operationId": "GetInvoices",
         "parameters": [
           {
             "name": "LoadId",
@@ -1815,6 +1841,7 @@
         "tags": [
           "Invoices"
         ],
+        "operationId": "CreateLoadInvoice",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1883,6 +1910,7 @@
         "tags": [
           "Invoices"
         ],
+        "operationId": "PreviewPayrollInvoice",
         "parameters": [
           {
             "name": "EmployeeId",
@@ -1958,6 +1986,7 @@
         "tags": [
           "Invoices"
         ],
+        "operationId": "CreatePayrollInvoice",
         "requestBody": {
           "content": {
             "application/json": {
@@ -2026,6 +2055,7 @@
         "tags": [
           "Invoices"
         ],
+        "operationId": "UpdatePayrollInvoice",
         "parameters": [
           {
             "name": "id",
@@ -2105,6 +2135,7 @@
         "tags": [
           "Load"
         ],
+        "operationId": "GetLoadById",
         "parameters": [
           {
             "name": "id",
@@ -2163,6 +2194,7 @@
         "tags": [
           "Load"
         ],
+        "operationId": "UpdateLoad",
         "parameters": [
           {
             "name": "id",
@@ -2240,6 +2272,7 @@
         "tags": [
           "Load"
         ],
+        "operationId": "DeleteLoad",
         "parameters": [
           {
             "name": "id",
@@ -2300,6 +2333,7 @@
         "tags": [
           "Load"
         ],
+        "operationId": "GetLoads",
         "parameters": [
           {
             "name": "LoadAllPages",
@@ -2425,6 +2459,7 @@
         "tags": [
           "Load"
         ],
+        "operationId": "CreateLoad",
         "requestBody": {
           "content": {
             "application/json": {
@@ -2493,6 +2528,7 @@
         "tags": [
           "Notification"
         ],
+        "operationId": "GetNotifications",
         "parameters": [
           {
             "name": "StartDate",
@@ -2560,6 +2596,7 @@
         "tags": [
           "Notification"
         ],
+        "operationId": "UpdateNotification",
         "parameters": [
           {
             "name": "id",
@@ -2639,6 +2676,7 @@
         "tags": [
           "Payment"
         ],
+        "operationId": "GetPaymentById",
         "parameters": [
           {
             "name": "id",
@@ -2697,6 +2735,7 @@
         "tags": [
           "Payment"
         ],
+        "operationId": "UpdatePayment",
         "parameters": [
           {
             "name": "id",
@@ -2774,6 +2813,7 @@
         "tags": [
           "Payment"
         ],
+        "operationId": "DeletePayment",
         "parameters": [
           {
             "name": "id",
@@ -2834,6 +2874,7 @@
         "tags": [
           "Payment"
         ],
+        "operationId": "GetPayments",
         "parameters": [
           {
             "name": "StartDate",
@@ -2922,6 +2963,7 @@
         "tags": [
           "Payment"
         ],
+        "operationId": "CreatePayment",
         "requestBody": {
           "content": {
             "application/json": {
@@ -2990,6 +3032,7 @@
         "tags": [
           "Payment"
         ],
+        "operationId": "ProcessPayment",
         "requestBody": {
           "content": {
             "application/json": {
@@ -3058,6 +3101,7 @@
         "tags": [
           "Payment"
         ],
+        "operationId": "GetPaymentMethodById",
         "parameters": [
           {
             "name": "id",
@@ -3116,6 +3160,7 @@
         "tags": [
           "Payment"
         ],
+        "operationId": "DeletePaymentMethod",
         "parameters": [
           {
             "name": "id",
@@ -3176,6 +3221,7 @@
         "tags": [
           "Payment"
         ],
+        "operationId": "GetPaymentMethods",
         "parameters": [
           {
             "name": "OrderBy",
@@ -3232,6 +3278,7 @@
         "tags": [
           "Payment"
         ],
+        "operationId": "CreatePaymentMethod",
         "requestBody": {
           "content": {
             "application/json": {
@@ -3298,6 +3345,7 @@
         "tags": [
           "Payment"
         ],
+        "operationId": "UpdatePaymentMethod",
         "requestBody": {
           "content": {
             "application/json": {
@@ -3366,6 +3414,7 @@
         "tags": [
           "Payment"
         ],
+        "operationId": "CreateSetupIntent",
         "requestBody": {
           "content": {
             "application/json": {
@@ -3434,6 +3483,7 @@
         "tags": [
           "Payment"
         ],
+        "operationId": "SetDefaultPaymentMethod",
         "requestBody": {
           "content": {
             "application/json": {
@@ -3502,6 +3552,7 @@
         "tags": [
           "Report"
         ],
+        "operationId": "GetLoadsReport",
         "parameters": [
           {
             "name": "StartDate",
@@ -3592,6 +3643,7 @@
         "tags": [
           "Report"
         ],
+        "operationId": "GetDriversReport",
         "parameters": [
           {
             "name": "Search",
@@ -3689,6 +3741,7 @@
         "tags": [
           "Report"
         ],
+        "operationId": "GetFinancialsReport",
         "parameters": [
           {
             "name": "StartDate",
@@ -3779,6 +3832,7 @@
         "tags": [
           "Report"
         ],
+        "operationId": "GetDriverDashboard",
         "parameters": [
           {
             "name": "StartDate",
@@ -3869,6 +3923,7 @@
         "tags": [
           "Role"
         ],
+        "operationId": "GetAppRoles",
         "parameters": [
           {
             "name": "Search",
@@ -3950,6 +4005,7 @@
         "tags": [
           "Role"
         ],
+        "operationId": "GetTenantRoles",
         "parameters": [
           {
             "name": "Search",
@@ -4031,6 +4087,7 @@
         "tags": [
           "Role"
         ],
+        "operationId": "GetRolePermissions",
         "parameters": [
           {
             "name": "roleName",
@@ -4090,6 +4147,7 @@
         "tags": [
           "Stat"
         ],
+        "operationId": "GetDailyGrosses",
         "parameters": [
           {
             "name": "TruckId",
@@ -4173,6 +4231,7 @@
         "tags": [
           "Stat"
         ],
+        "operationId": "GetMonthlyGrosses",
         "parameters": [
           {
             "name": "TruckId",
@@ -4256,6 +4315,7 @@
         "tags": [
           "Stat"
         ],
+        "operationId": "GetCompanyStats",
         "parameters": [
           {
             "name": "request",
@@ -4314,6 +4374,7 @@
         "tags": [
           "Stat"
         ],
+        "operationId": "GetTrucksStats",
         "parameters": [
           {
             "name": "StartDate",
@@ -4404,6 +4465,7 @@
         "tags": [
           "Stat"
         ],
+        "operationId": "GetDriverStats",
         "parameters": [
           {
             "name": "userId",
@@ -4472,6 +4534,7 @@
         "tags": [
           "Subscription"
         ],
+        "operationId": "GetSubscriptionById",
         "parameters": [
           {
             "name": "id",
@@ -4530,6 +4593,7 @@
         "tags": [
           "Subscription"
         ],
+        "operationId": "DeleteSubscription",
         "parameters": [
           {
             "name": "id",
@@ -4590,6 +4654,7 @@
         "tags": [
           "Subscription"
         ],
+        "operationId": "GetSubscriptions",
         "parameters": [
           {
             "name": "Search",
@@ -4669,6 +4734,7 @@
         "tags": [
           "Subscription"
         ],
+        "operationId": "CreateSubscription",
         "requestBody": {
           "content": {
             "application/json": {
@@ -4737,6 +4803,7 @@
         "tags": [
           "Subscription"
         ],
+        "operationId": "CancelSubscription",
         "parameters": [
           {
             "name": "id",
@@ -4816,6 +4883,7 @@
         "tags": [
           "Subscription"
         ],
+        "operationId": "RenewSubscription",
         "parameters": [
           {
             "name": "id",
@@ -4895,6 +4963,7 @@
         "tags": [
           "Subscription"
         ],
+        "operationId": "GetSubscriptionPlanById",
         "parameters": [
           {
             "name": "id",
@@ -4953,6 +5022,7 @@
         "tags": [
           "Subscription"
         ],
+        "operationId": "UpdateSubscriptionPlan",
         "parameters": [
           {
             "name": "id",
@@ -5030,6 +5100,7 @@
         "tags": [
           "Subscription"
         ],
+        "operationId": "DeleteSubscriptionPlan",
         "parameters": [
           {
             "name": "id",
@@ -5090,6 +5161,7 @@
         "tags": [
           "Subscription"
         ],
+        "operationId": "GetSubscriptionPlans",
         "parameters": [
           {
             "name": "Search",
@@ -5169,6 +5241,7 @@
         "tags": [
           "Subscription"
         ],
+        "operationId": "CreateSubscriptionPlan",
         "requestBody": {
           "content": {
             "application/json": {
@@ -5237,6 +5310,7 @@
         "tags": [
           "Tenant"
         ],
+        "operationId": "GetTenantById",
         "parameters": [
           {
             "name": "identifier",
@@ -5296,6 +5370,7 @@
         "tags": [
           "Tenant"
         ],
+        "operationId": "GetTenants",
         "parameters": [
           {
             "name": "IncludeConnectionStrings",
@@ -5382,6 +5457,7 @@
         "tags": [
           "Tenant"
         ],
+        "operationId": "CreateTenant",
         "requestBody": {
           "content": {
             "application/json": {
@@ -5450,6 +5526,7 @@
         "tags": [
           "Tenant"
         ],
+        "operationId": "UpdateTenant",
         "parameters": [
           {
             "name": "id",
@@ -5527,6 +5604,7 @@
         "tags": [
           "Tenant"
         ],
+        "operationId": "DeleteTenant",
         "parameters": [
           {
             "name": "id",
@@ -5587,6 +5665,7 @@
         "tags": [
           "Trip"
         ],
+        "operationId": "GetTripById",
         "parameters": [
           {
             "name": "tripId",
@@ -5647,6 +5726,7 @@
         "tags": [
           "Trip"
         ],
+        "operationId": "GetTrips",
         "parameters": [
           {
             "name": "Name",
@@ -5740,6 +5820,7 @@
         "tags": [
           "Trip"
         ],
+        "operationId": "CreateTrip",
         "requestBody": {
           "content": {
             "application/json": {
@@ -5808,6 +5889,7 @@
         "tags": [
           "Trip"
         ],
+        "operationId": "OptimizeTripStops",
         "requestBody": {
           "content": {
             "application/json": {
@@ -5876,6 +5958,7 @@
         "tags": [
           "Trip"
         ],
+        "operationId": "UpdateTrip",
         "parameters": [
           {
             "name": "id",
@@ -5953,6 +6036,7 @@
         "tags": [
           "Trip"
         ],
+        "operationId": "DeleteTrip",
         "parameters": [
           {
             "name": "id",
@@ -6013,6 +6097,7 @@
         "tags": [
           "Truck"
         ],
+        "operationId": "GetTruckById",
         "parameters": [
           {
             "name": "truckOrDriverId",
@@ -6095,6 +6180,7 @@
         "tags": [
           "Truck"
         ],
+        "operationId": "GetTrucks",
         "parameters": [
           {
             "name": "IncludeLoads",
@@ -6181,6 +6267,7 @@
         "tags": [
           "Truck"
         ],
+        "operationId": "CreateTruck",
         "requestBody": {
           "content": {
             "application/json": {
@@ -6249,6 +6336,7 @@
         "tags": [
           "Truck"
         ],
+        "operationId": "UpdateTruck",
         "parameters": [
           {
             "name": "id",
@@ -6326,6 +6414,7 @@
         "tags": [
           "Truck"
         ],
+        "operationId": "DeleteTruck",
         "parameters": [
           {
             "name": "id",
@@ -6386,6 +6475,7 @@
         "tags": [
           "User"
         ],
+        "operationId": "GetUserById",
         "parameters": [
           {
             "name": "id",
@@ -6443,6 +6533,7 @@
         "tags": [
           "User"
         ],
+        "operationId": "UpdateUser",
         "parameters": [
           {
             "name": "id",
@@ -6522,6 +6613,7 @@
         "tags": [
           "User"
         ],
+        "operationId": "GetUsers",
         "parameters": [
           {
             "name": "Search",
@@ -6603,6 +6695,7 @@
         "tags": [
           "User"
         ],
+        "operationId": "GetUserCurrentTenant",
         "parameters": [
           {
             "name": "id",
@@ -6663,6 +6756,7 @@
         "tags": [
           "User"
         ],
+        "operationId": "RemoveRoleFromUser",
         "parameters": [
           {
             "name": "id",
@@ -6741,6 +6835,7 @@
         "tags": [
           "Webhook"
         ],
+        "operationId": "ProcessStripeWebhook",
         "responses": {
           "200": {
             "description": "OK"

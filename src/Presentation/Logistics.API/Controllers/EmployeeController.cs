@@ -17,7 +17,7 @@ namespace Logistics.API.Controllers;
 [Route("employees")]
 public class EmployeeController(IMediator mediator) : ControllerBase
 {
-    [HttpGet("{userId:guid}")]
+    [HttpGet("{userId:guid}", Name = "GetEmployeeById")]
     [ProducesResponseType(typeof(Result<EmployeeDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employees.View)]
@@ -27,7 +27,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpGet]
+    [HttpGet(Name = "GetEmployees")]
     [ProducesResponseType(typeof(PagedResult<EmployeeDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employees.View)]
@@ -37,7 +37,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPost]
+    [HttpPost(Name = "CreateEmployee")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employees.Create)]
@@ -47,7 +47,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPost("{userId:guid}/remove-role")]
+    [HttpPost("{userId:guid}/remove-role", Name = "RemoveRoleFromEmployee")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employees.Edit)]
@@ -58,7 +58,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPut("{userId:guid}")]
+    [HttpPut("{userId:guid}", Name = "UpdateEmployee")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employees.Edit)]
@@ -69,7 +69,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpDelete("{userId:guid}")]
+    [HttpDelete("{userId:guid}", Name = "DeleteEmployee")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employees.Delete)]

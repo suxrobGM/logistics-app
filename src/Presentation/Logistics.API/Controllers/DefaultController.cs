@@ -9,7 +9,7 @@ namespace Logistics.API.Controllers;
 [Route("")]
 public class DefaultController : ControllerBase
 {
-    [HttpGet]
+    [HttpGet(Name = "GetApiStatus")]
     [ProducesResponseType(typeof(Result<string>), StatusCodes.Status200OK)]
     [AllowAnonymous]
     public IActionResult Get()

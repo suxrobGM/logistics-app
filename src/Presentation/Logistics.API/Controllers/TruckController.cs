@@ -18,7 +18,7 @@ namespace Logistics.API.Controllers;
 [Route("trucks")]
 public class TruckController(IMediator mediator) : ControllerBase
 {
-    [HttpGet("{truckOrDriverId:guid}")]
+    [HttpGet("{truckOrDriverId:guid}", Name = "GetTruckById")]
     [ProducesResponseType(typeof(Result<TruckDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Trucks.View)]
@@ -29,7 +29,7 @@ public class TruckController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpGet]
+    [HttpGet(Name = "GetTrucks")]
     [ProducesResponseType(typeof(PagedResult<TruckDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Trucks.View)]
@@ -39,7 +39,7 @@ public class TruckController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPost]
+    [HttpPost(Name = "CreateTruck")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Trucks.Create)]
@@ -49,7 +49,7 @@ public class TruckController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPut("{id:guid}")]
+    [HttpPut("{id:guid}", Name = "UpdateTruck")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Trucks.Edit)]
@@ -60,7 +60,7 @@ public class TruckController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("{id:guid}", Name = "DeleteTruck")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Trucks.Delete)]

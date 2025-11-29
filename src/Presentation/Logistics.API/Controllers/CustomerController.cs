@@ -14,7 +14,7 @@ namespace Logistics.API.Controllers;
 [Route("customers")]
 public class CustomerController(IMediator mediator) : ControllerBase
 {
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id:guid}", Name = "GetCustomerById")]
     [ProducesResponseType(typeof(Result<CustomerDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Customers.View)]
@@ -24,7 +24,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpGet]
+    [HttpGet(Name = "GetCustomers")]
     [ProducesResponseType(typeof(PagedResult<CustomerDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Customers.View)]
@@ -34,7 +34,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPost]
+    [HttpPost(Name = "CreateCustomer")]
     [ProducesResponseType(typeof(Result<CustomerDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Customers.Create)]
@@ -44,7 +44,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPut("{id:guid}")]
+    [HttpPut("{id:guid}", Name = "UpdateCustomer")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Customers.Edit)]
@@ -55,7 +55,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("{id:guid}", Name = "DeleteCustomer")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Customers.Delete)]

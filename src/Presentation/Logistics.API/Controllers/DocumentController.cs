@@ -16,7 +16,7 @@ namespace Logistics.API.Controllers;
 public class DocumentController(IMediator mediator) : ControllerBase
 {
     // GET /documents/{owner}/{ownerId}
-    [HttpGet]
+    [HttpGet(Name = "GetDocuments")]
     [ProducesResponseType(typeof(Result<IEnumerable<DocumentDto>>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize]
@@ -27,7 +27,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
     }
 
     // GET /documents/{documentId}
-    [HttpGet("{documentId:guid}")]
+    [HttpGet("{documentId:guid}", Name = "GetDocumentById")]
     [ProducesResponseType(typeof(Result<DocumentDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize]
@@ -39,7 +39,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
     }
 
     // POST /documents/upload
-    [HttpPost("upload")]
+    [HttpPost("upload", Name = "UploadDocument")]
     [ProducesResponseType(typeof(Result<Guid>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize]
@@ -70,7 +70,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
     }
 
     // GET /documents/{documentId}/download
-    [HttpGet("{documentId:guid}/download")]
+    [HttpGet("{documentId:guid}/download", Name = "DownloadDocument")]
     [ProducesResponseType(typeof(FileStreamResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize]
@@ -91,7 +91,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
     }
 
     // PUT /documents/{documentId}
-    [HttpPut("{documentId:guid}")]
+    [HttpPut("{documentId:guid}", Name = "UpdateDocument")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize]
@@ -108,7 +108,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
     }
 
     // DELETE /documents/{documentId}
-    [HttpDelete("{documentId:guid}")]
+    [HttpDelete("{documentId:guid}", Name = "DeleteDocument")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize]

@@ -14,7 +14,7 @@ namespace Logistics.API.Controllers;
 [Route("notifications")]
 public class NotificationController(IMediator mediator) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet(Name = "GetNotifications")]
     [ProducesResponseType(typeof(Result<NotificationDto[]>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Notifications.View)]
@@ -24,7 +24,7 @@ public class NotificationController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPut("{id:guid}")]
+    [HttpPut("{id:guid}", Name = "UpdateNotification")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Notifications.Edit)]

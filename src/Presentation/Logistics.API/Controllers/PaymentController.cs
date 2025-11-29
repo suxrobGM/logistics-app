@@ -16,7 +16,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
 {
     #region Payments
 
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id:guid}", Name = "GetPaymentById")]
     [ProducesResponseType(typeof(Result<PaymentDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.View)]
@@ -26,7 +26,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpGet]
+    [HttpGet(Name = "GetPayments")]
     [ProducesResponseType(typeof(PagedResult<PaymentDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.View)]
@@ -36,7 +36,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPost]
+    [HttpPost(Name = "CreatePayment")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.Create)]
@@ -46,7 +46,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPost("process-payment")]
+    [HttpPost("process-payment", Name = "ProcessPayment")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [AllowAnonymous]
@@ -56,7 +56,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPut("{id:guid}")]
+    [HttpPut("{id:guid}", Name = "UpdatePayment")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.Edit)]
@@ -67,7 +67,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("{id:guid}", Name = "DeletePayment")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.Delete)]
@@ -82,7 +82,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
 
     #region Payment Methods
 
-    [HttpGet("methods/{id:guid}")]
+    [HttpGet("methods/{id:guid}", Name = "GetPaymentMethodById")]
     [ProducesResponseType(typeof(Result<PaymentMethodDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.View)]
@@ -92,7 +92,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpGet("methods")]
+    [HttpGet("methods", Name = "GetPaymentMethods")]
     [ProducesResponseType(typeof(PagedResult<PaymentMethodDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.View)]
@@ -102,7 +102,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPost("methods")]
+    [HttpPost("methods", Name = "CreatePaymentMethod")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.Create)]
@@ -112,7 +112,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPost("methods/setup-intent")]
+    [HttpPost("methods/setup-intent", Name = "CreateSetupIntent")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.Create)]
@@ -122,7 +122,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPut("methods")]
+    [HttpPut("methods", Name = "UpdatePaymentMethod")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.Edit)]
@@ -132,7 +132,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPut("methods/default")]
+    [HttpPut("methods/default", Name = "SetDefaultPaymentMethod")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.Edit)]
@@ -142,7 +142,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpDelete("methods/{id:guid}")]
+    [HttpDelete("methods/{id:guid}", Name = "DeletePaymentMethod")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.Edit)]

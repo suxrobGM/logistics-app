@@ -14,7 +14,7 @@ namespace Logistics.API.Controllers;
 [Route("users")]
 public class UserController(IMediator mediator) : ControllerBase
 {
-    [HttpGet("{id}")]
+    [HttpGet("{id}", Name = "GetUserById")]
     [ProducesResponseType(typeof(Result<UserDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Users.View)]
@@ -24,7 +24,7 @@ public class UserController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpGet]
+    [HttpGet(Name = "GetUsers")]
     [ProducesResponseType(typeof(PagedResult<UserDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Users.View)]
@@ -34,7 +34,7 @@ public class UserController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpGet("{id:guid}/tenant")]
+    [HttpGet("{id:guid}/tenant", Name = "GetUserCurrentTenant")]
     [ProducesResponseType(typeof(Result<TenantDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Users.View)]
@@ -44,7 +44,7 @@ public class UserController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPut("{id:guid}")]
+    [HttpPut("{id:guid}", Name = "UpdateUser")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Users.View)]
@@ -55,7 +55,7 @@ public class UserController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPost("{id}/remove-role")]
+    [HttpPost("{id}/remove-role", Name = "RemoveRoleFromUser")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Users.Edit)]

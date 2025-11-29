@@ -16,7 +16,7 @@ namespace Logistics.API.Controllers;
 [Route("drivers")]
 public class DriverController(IMediator mediator) : ControllerBase
 {
-    [HttpGet("{userId:guid}")]
+    [HttpGet("{userId:guid}", Name = "GetDriverByUserId")]
     [ProducesResponseType(typeof(Result<EmployeeDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Drivers.View)]
@@ -26,7 +26,7 @@ public class DriverController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPost("{userId:guid}/device-token")]
+    [HttpPost("{userId:guid}/device-token", Name = "SetDriverDeviceToken")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Drivers.Edit)]
@@ -37,7 +37,7 @@ public class DriverController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPost("confirm-load-status")]
+    [HttpPost("confirm-load-status", Name = "ConfirmLoadStatus")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Drivers.Edit)]
@@ -47,7 +47,7 @@ public class DriverController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPost("update-load-proximity")]
+    [HttpPost("update-load-proximity", Name = "UpdateLoadProximity")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Drivers.Edit)]

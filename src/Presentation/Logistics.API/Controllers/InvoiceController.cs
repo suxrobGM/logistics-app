@@ -14,7 +14,7 @@ namespace Logistics.API.Controllers;
 [Route("invoices")]
 public class InvoicesController(IMediator mediator) : ControllerBase
 {
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id:guid}", Name = "GetInvoiceById")]
     [ProducesResponseType(typeof(Result<InvoiceDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Invoices.View)]
@@ -24,7 +24,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpGet]
+    [HttpGet(Name = "GetInvoices")]
     [ProducesResponseType(typeof(PagedResult<InvoiceDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Invoices.View)]
@@ -34,7 +34,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPut("{id:guid}")]
+    [HttpPut("{id:guid}", Name = "UpdateInvoice")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Invoices.Edit)]
@@ -45,7 +45,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("{id:guid}", Name = "DeleteInvoice")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Invoices.Delete)]
@@ -57,7 +57,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
 
     #region Load Invoice
 
-    [HttpPost("loads")]
+    [HttpPost("loads", Name = "CreateLoadInvoice")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Invoices.Create)]
@@ -71,7 +71,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
 
     #region Payroll Invoice
 
-    [HttpGet("payrolls/preview")]
+    [HttpGet("payrolls/preview", Name = "PreviewPayrollInvoice")]
     [ProducesResponseType(typeof(Result<PayrollDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payrolls.View)]
@@ -81,7 +81,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPost("payrolls")]
+    [HttpPost("payrolls", Name = "CreatePayrollInvoice")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payrolls.Create)]
@@ -91,7 +91,7 @@ public class InvoicesController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpPut("payrolls/{id:guid}")]
+    [HttpPut("payrolls/{id:guid}", Name = "UpdatePayrollInvoice")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payrolls.Edit)]

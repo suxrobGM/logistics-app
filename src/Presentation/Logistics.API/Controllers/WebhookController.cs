@@ -12,7 +12,7 @@ namespace Logistics.API.Controllers;
 [Route("webhooks")]
 public class WebhookController(IMediator mediator) : ControllerBase
 {
-    [HttpPost("stripe")]
+    [HttpPost("stripe", Name = "ProcessStripeWebhook")]
     public async Task<IActionResult> Stripe()
     {
         var requestBodyJson = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();

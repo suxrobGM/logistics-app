@@ -13,7 +13,7 @@ namespace Logistics.API.Controllers;
 [Route("roles")]
 public class RoleController(IMediator mediator) : ControllerBase
 {
-    [HttpGet("app")]
+    [HttpGet("app", Name = "GetAppRoles")]
     [ProducesResponseType(typeof(PagedResult<RoleDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.AppRoles.View)]
@@ -23,7 +23,7 @@ public class RoleController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpGet("tenant")]
+    [HttpGet("tenant", Name = "GetTenantRoles")]
     [ProducesResponseType(typeof(PagedResult<RoleDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.TenantRoles.View)]
@@ -33,7 +33,7 @@ public class RoleController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpGet("{roleName}/permissions")]
+    [HttpGet("{roleName}/permissions", Name = "GetRolePermissions")]
     [ProducesResponseType(typeof(Result<PermissionDto[]>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetPermissions(string roleName)

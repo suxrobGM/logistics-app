@@ -17,7 +17,7 @@ namespace Logistics.API.Controllers;
 [Route("reports")]
 public class ReportController(IMediator mediator) : ControllerBase
 {
-    [HttpGet("loads")]
+    [HttpGet("loads", Name = "GetLoadsReport")]
     [ProducesResponseType(typeof(Result<LoadsReportDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Stats.View)]
@@ -28,7 +28,7 @@ public class ReportController(IMediator mediator) : ControllerBase
     }
 
 
-    [HttpGet("drivers")]
+    [HttpGet("drivers", Name = "GetDriversReport")]
     [ProducesResponseType(typeof(PagedResult<DriverReportDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Stats.View)]
@@ -38,7 +38,7 @@ public class ReportController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpGet("financials")]
+    [HttpGet("financials", Name = "GetFinancialsReport")]
     [ProducesResponseType(typeof(Result<FinancialsReportDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Stats.View)]
@@ -48,7 +48,7 @@ public class ReportController(IMediator mediator) : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
-    [HttpGet("drivers/dashboard")]
+    [HttpGet("drivers/dashboard", Name = "GetDriverDashboard")]
     [ProducesResponseType(typeof(Result<DriverDashboardDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Stats.View)]
