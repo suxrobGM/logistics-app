@@ -3,7 +3,6 @@ package com.jfleets.driver
 import android.app.Application
 import com.google.firebase.FirebaseApp
 import com.jfleets.driver.data.auth.LoginService
-import com.jfleets.driver.data.auth.OAuthService
 import com.jfleets.driver.data.local.AndroidPreferencesManager
 import com.jfleets.driver.data.local.PreferencesManager
 import com.jfleets.driver.data.repository.AndroidAuthRepository
@@ -56,8 +55,7 @@ class DriverApplication : Application() {
     private val androidModule = module {
         singleOf(::AndroidPreferencesManager) bind PreferencesManager::class
         singleOf(::AndroidAuthRepository) bind AuthRepository::class
-        single { OAuthService(IDENTITY_SERVER_URL) }
-        singleOf(::LoginService)
+        single { LoginService(IDENTITY_SERVER_URL, get()) }
 
         // ViewModels
         viewModelOf(::DashboardViewModel)

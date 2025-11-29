@@ -1,7 +1,6 @@
 package com.jfleets.driver
 
 import com.jfleets.driver.data.auth.LoginService
-import com.jfleets.driver.data.auth.OAuthService
 import com.jfleets.driver.data.local.IosPreferencesManager
 import com.jfleets.driver.data.local.PreferencesManager
 import com.jfleets.driver.data.repository.AuthRepository
@@ -20,11 +19,8 @@ val iosModule = module {
     // Local Storage - bind implementation to interface
     singleOf(::IosPreferencesManager) bind PreferencesManager::class
 
-    // OAuth Service for ROPC authentication (cross-platform)
-    single { OAuthService(IDENTITY_SERVER_URL) }
-
-    // Login Service (cross-platform ROPC)
-    singleOf(::LoginService)
+    // Login Service (ROPC authentication)
+    single { LoginService(IDENTITY_SERVER_URL, get()) }
 
     // Auth Repository for token management
     singleOf(::IosAuthRepository) bind AuthRepository::class

@@ -3,7 +3,7 @@ package com.jfleets.driver.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jfleets.driver.data.auth.LoginService
-import com.jfleets.driver.data.auth.OAuthException
+import com.jfleets.driver.data.auth.AuthException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -51,16 +51,14 @@ class LoginViewModel(
                 .onSuccess {
                     _uiState.value = LoginUiState.Success
                 }
-                .onFailure { error ->
-                    val message = when (error) {
-                        is OAuthException -> {
-                            when (error.error) {
-                                "invalid_grant" -> "Invalid username or password"
-                                "invalid_client" -> "Authentication configuration error"
-                                else -> error.message
-                            }
+                .onFailure { exception ->
+                    val message = when (exception) {
+                        is AuthException -> when (exception.error) {
+                            "invalid_grant" -> "Invalid username or password"
+                            "invalid_client" -> "Authentication configuration error"
+                            else -> exception.message
                         }
-                        else -> error.message ?: "Authentication failed"
+                        else -> exception.message ?: "Authentication failed"
                     }
                     _uiState.value = LoginUiState.Error(message)
                 }

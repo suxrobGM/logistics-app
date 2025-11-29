@@ -1,29 +1,160 @@
 package com.jfleets.driver.data.auth
 
+import com.jfleets.driver.data.api.createPlatformHttpClient
 import com.jfleets.driver.data.local.PreferencesManager
 import com.jfleets.driver.util.currentTimeMillis
+import com.jfleets.driver.util.decodeJwtPayload
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.DEFAULT
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.forms.submitForm
+import io.ktor.client.request.header
+import io.ktor.http.Parameters
+import io.ktor.http.isSuccess
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.utils.io.charsets.Charsets
+import io.ktor.utils.io.core.toByteArray
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
+
+@Serializable
+data class TokenResponse(
+    @SerialName("access_token") val accessToken: String,
+    @SerialName("refresh_token") val refreshToken: String? = null,
+    @SerialName("id_token") val idToken: String? = null,
+    @SerialName("expires_in") val expiresIn: Int,
+    @SerialName("token_type") val tokenType: String
+)
+
+@Serializable
+private data class TokenErrorResponse(
+    val error: String,
+    @SerialName("error_description") val errorDescription: String? = null
+)
 
 class LoginService(
-    private val oAuthService: OAuthService,
+    private val authorityUrl: String,
     private val preferencesManager: PreferencesManager
 ) {
+    companion object {
+        private const val CLIENT_ID = "logistics.driverapp"
+        private const val CLIENT_SECRET = "Super secret key 2"
+        private const val SCOPE = "openid profile offline_access roles tenant logistics.api.tenant"
+    }
+
+    private val allowSelfSigned = authorityUrl.contains("10.0.2.2")
+    private val tokenEndpoint = "${authorityUrl.trimEnd('/')}/connect/token"
+
+    private val httpClient: HttpClient by lazy { createHttpClient() }
+
+    private fun createHttpClient(): HttpClient {
+        return createPlatformHttpClient(allowSelfSigned) {
+            install(ContentNegotiation) {
+                json(Json {
+                    prettyPrint = true
+                    isLenient = true
+                    ignoreUnknownKeys = true
+                })
+            }
+
+            install(Logging) {
+                logger = Logger.DEFAULT
+                level = LogLevel.INFO
+            }
+
+            install(HttpTimeout) {
+                requestTimeoutMillis = 30000
+                connectTimeoutMillis = 30000
+            }
+        }
+    }
+
+    @OptIn(ExperimentalEncodingApi::class)
+    private fun createBasicAuthHeader(): String {
+        val credentials = "$CLIENT_ID:$CLIENT_SECRET"
+        val encoded = Base64.encode(credentials.toByteArray(Charsets.UTF_8))
+        return "Basic $encoded"
+    }
+
     suspend fun login(username: String, password: String): Result<Unit> {
-        return oAuthService.login(username, password).mapCatching { tokenResponse ->
-            saveTokens(tokenResponse)
+        return try {
+            val response = httpClient.submitForm(
+                url = tokenEndpoint,
+                formParameters = Parameters.build {
+                    append("grant_type", "password")
+                    append("username", username)
+                    append("password", password)
+                    append("scope", SCOPE)
+                }
+            ) {
+                header("Authorization", createBasicAuthHeader())
+            }
+
+            if (response.status.isSuccess()) {
+                val tokenResponse = response.body<TokenResponse>()
+                saveTokens(tokenResponse)
+                Result.success(Unit)
+            } else {
+                val errorResponse = try {
+                    response.body<TokenErrorResponse>()
+                } catch (e: Exception) {
+                    TokenErrorResponse("unknown_error", "Login failed with status ${response.status.value}")
+                }
+                Result.failure(
+                    AuthException(
+                        errorResponse.error,
+                        errorResponse.errorDescription ?: "Authentication failed"
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            Result.failure(AuthException("network_error", e.message ?: "Network error occurred"))
         }
     }
 
     suspend fun refreshToken(): Result<Unit> {
         val refreshToken = preferencesManager.getRefreshToken()
-            ?: return Result.failure(
-                OAuthException(
-                    "no_refresh_token",
-                    "No refresh token available"
-                )
-            )
+            ?: return Result.failure(AuthException("no_refresh_token", "No refresh token available"))
 
-        return oAuthService.refreshToken(refreshToken).mapCatching { tokenResponse ->
-            saveTokens(tokenResponse)
+        return try {
+            val response = httpClient.submitForm(
+                url = tokenEndpoint,
+                formParameters = Parameters.build {
+                    append("grant_type", "refresh_token")
+                    append("refresh_token", refreshToken)
+                    append("scope", SCOPE)
+                }
+            ) {
+                header("Authorization", createBasicAuthHeader())
+            }
+
+            if (response.status.isSuccess()) {
+                val tokenResponse = response.body<TokenResponse>()
+                saveTokens(tokenResponse)
+                Result.success(Unit)
+            } else {
+                val errorResponse = try {
+                    response.body<TokenErrorResponse>()
+                } catch (e: Exception) {
+                    TokenErrorResponse("unknown_error", "Token refresh failed with status ${response.status.value}")
+                }
+                Result.failure(
+                    AuthException(
+                        errorResponse.error,
+                        errorResponse.errorDescription ?: "Token refresh failed"
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            Result.failure(AuthException("network_error", e.message ?: "Network error occurred"))
         }
     }
 
@@ -47,63 +178,20 @@ class LoginService(
         try {
             val payload = decodeJwtPayload(accessToken)
 
-            // Extract user ID (sub claim)
             payload["sub"]?.let { userId ->
                 preferencesManager.saveUserId(userId)
             }
 
-            // Extract tenant ID
             payload["tenant"]?.let { tenantId ->
                 preferencesManager.saveTenantId(tenantId)
             }
         } catch (e: Exception) {
-            // Handle JWT parsing error
             e.printStackTrace()
         }
     }
-
-    private fun decodeJwtPayload(jwt: String): Map<String, String> {
-        val parts = jwt.split(".")
-        if (parts.size != 3) return emptyMap()
-
-        val payload = parts[1]
-        val decoded = decodeBase64Url(payload)
-        return parseJsonClaims(decoded)
-    }
-
-    @OptIn(kotlin.io.encoding.ExperimentalEncodingApi::class)
-    private fun decodeBase64Url(input: String): String {
-        // Add padding if necessary
-        val padded = when (input.length % 4) {
-            2 -> "$input=="
-            3 -> "$input="
-            else -> input
-        }
-        // Convert base64url to base64
-        val base64 = padded.replace('-', '+').replace('_', '/')
-        val decoded = kotlin.io.encoding.Base64.decode(base64)
-        return decoded.decodeToString()
-    }
-
-    private fun parseJsonClaims(json: String): Map<String, String> {
-        val result = mutableMapOf<String, String>()
-        // Simple JSON parsing for string values
-        val cleanJson = json.trim().removeSurrounding("{", "}")
-        val pairs = cleanJson.split(",")
-
-        for (pair in pairs) {
-            val keyValue = pair.split(":", limit = 2)
-            if (keyValue.size == 2) {
-                val key = keyValue[0].trim().removeSurrounding("\"")
-                val value = keyValue[1].trim().removeSurrounding("\"")
-                // Only store string values (not arrays or objects)
-                if (!value.startsWith("[") && !value.startsWith("{")) {
-                    result[key] = value
-                }
-            }
-        }
-        return result
-    }
 }
 
-
+class AuthException(
+    val error: String,
+    override val message: String
+) : Exception(message)
