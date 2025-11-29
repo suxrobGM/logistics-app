@@ -2,12 +2,10 @@ package com.jfleets.driver
 
 import android.app.Application
 import com.google.firebase.FirebaseApp
-import com.jfleets.driver.data.auth.AndroidLoginService
-import com.jfleets.driver.data.auth.AuthService
 import com.jfleets.driver.data.auth.LoginService
+import com.jfleets.driver.data.auth.OAuthService
 import com.jfleets.driver.data.local.AndroidPreferencesManager
 import com.jfleets.driver.data.local.PreferencesManager
-import com.jfleets.driver.data.local.TokenManager
 import com.jfleets.driver.data.repository.AndroidAuthRepository
 import com.jfleets.driver.data.repository.AuthRepository
 import com.jfleets.driver.presentation.viewmodel.AccountViewModel
@@ -26,6 +24,11 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 class DriverApplication : Application() {
+    companion object {
+        private const val API_BASE_URL = "https://10.0.2.2:7000/"
+        private const val IDENTITY_SERVER_URL = "https://10.0.2.2:7001/"
+    }
+
     override fun onCreate() {
         super.onCreate()
 
@@ -36,8 +39,7 @@ class DriverApplication : Application() {
             modules(
                 // Android-specific module (must be loaded first to provide PreferencesManager)
                 androidModule,
-                // Shared KMP modules
-                commonModule(baseUrl = "https://10.0.2.2:7000/")
+                commonModule(baseUrl = API_BASE_URL)
             )
         }
 
@@ -46,29 +48,23 @@ class DriverApplication : Application() {
 
         Logger.d("DriverApplication", "DriverApplication initialized")
     }
-}
 
-/**
- * Koin module for Android-specific dependencies
- * This module provides Android-only services and components
- */
-val androidModule = module {
-    // Local Storage - bind implementation to interface
-    singleOf(::AndroidPreferencesManager) bind PreferencesManager::class
-    singleOf(::TokenManager)
+    /**
+     * Koin module for Android-specific dependencies
+     * This module provides Android-only services and components
+     */
+    private val androidModule = module {
+        singleOf(::AndroidPreferencesManager) bind PreferencesManager::class
+        singleOf(::AndroidAuthRepository) bind AuthRepository::class
+        single { OAuthService(IDENTITY_SERVER_URL) }
+        singleOf(::LoginService)
 
-    // Authentication (Android-specific) - bind implementation to interface
-    singleOf(::AuthService)
-    singleOf(::AndroidAuthRepository) bind AuthRepository::class
-
-    // Login Service (Android-specific) - bind implementation to interface
-    singleOf(::AndroidLoginService) bind LoginService::class
-
-    // ViewModels
-    viewModelOf(::DashboardViewModel)
-    viewModelOf(::AccountViewModel)
-    viewModelOf(::LoadDetailViewModel)
-    viewModelOf(::PastLoadsViewModel)
-    viewModelOf(::StatsViewModel)
-    viewModelOf(::LoginViewModel)
+        // ViewModels
+        viewModelOf(::DashboardViewModel)
+        viewModelOf(::AccountViewModel)
+        viewModelOf(::LoadDetailViewModel)
+        viewModelOf(::PastLoadsViewModel)
+        viewModelOf(::StatsViewModel)
+        viewModelOf(::LoginViewModel)
+    }
 }

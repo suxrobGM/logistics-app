@@ -1,10 +1,13 @@
 package com.jfleets.driver.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.jfleets.driver.data.auth.LoginService
+import com.jfleets.driver.data.auth.OAuthException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class LoginViewModel(
     private val loginService: LoginService
@@ -13,14 +16,54 @@ class LoginViewModel(
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
-    fun startLogin() {
+    private val _username = MutableStateFlow("")
+    val username: StateFlow<String> = _username.asStateFlow()
+
+    private val _password = MutableStateFlow("")
+    val password: StateFlow<String> = _password.asStateFlow()
+
+    fun onUsernameChange(value: String) {
+        _username.value = value
+    }
+
+    fun onPasswordChange(value: String) {
+        _password.value = value
+    }
+
+    fun login() {
+        val currentUsername = _username.value.trim()
+        val currentPassword = _password.value
+
+        if (currentUsername.isBlank()) {
+            _uiState.value = LoginUiState.Error("Please enter your username")
+            return
+        }
+
+        if (currentPassword.isBlank()) {
+            _uiState.value = LoginUiState.Error("Please enter your password")
+            return
+        }
+
         _uiState.value = LoginUiState.Loading
-        loginService.startLogin { result ->
-            result.onSuccess {
-                _uiState.value = LoginUiState.Success
-            }.onFailure { error ->
-                _uiState.value = LoginUiState.Error(error.message ?: "Authentication failed")
-            }
+
+        viewModelScope.launch {
+            loginService.login(currentUsername, currentPassword)
+                .onSuccess {
+                    _uiState.value = LoginUiState.Success
+                }
+                .onFailure { error ->
+                    val message = when (error) {
+                        is OAuthException -> {
+                            when (error.error) {
+                                "invalid_grant" -> "Invalid username or password"
+                                "invalid_client" -> "Authentication configuration error"
+                                else -> error.message
+                            }
+                        }
+                        else -> error.message ?: "Authentication failed"
+                    }
+                    _uiState.value = LoginUiState.Error(message)
+                }
         }
     }
 
@@ -28,9 +71,10 @@ class LoginViewModel(
         _uiState.value = LoginUiState.Idle
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        loginService.cancelLogin()
+    fun clearForm() {
+        _username.value = ""
+        _password.value = ""
+        _uiState.value = LoginUiState.Idle
     }
 }
 

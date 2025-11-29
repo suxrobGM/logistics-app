@@ -1,30 +1,34 @@
 package com.jfleets.driver.data.repository
 
+import com.jfleets.driver.data.auth.LoginService
 import com.jfleets.driver.data.local.PreferencesManager
+import com.jfleets.driver.util.currentTimeMillis
 
 /**
  * iOS implementation of AuthRepository.
- * TODO: Implement using ASWebAuthenticationSession for OAuth 2.0 flow.
+ * Uses the cross-platform LoginService for ROPC authentication.
  */
 class IosAuthRepository(
+    private val loginService: LoginService,
     private val preferencesManager: PreferencesManager
 ) : AuthRepository {
 
     override suspend fun isLoggedIn(): Boolean {
-        return preferencesManager.getAccessToken() != null
+        val token = preferencesManager.getAccessToken()
+        return token != null && !isTokenExpired()
     }
 
     override suspend fun isTokenExpired(): Boolean {
         val expiry = preferencesManager.getTokenExpiry() ?: return true
-        return System.currentTimeMillis() > expiry
+        // Consider token expired 5 minutes before actual expiry
+        return currentTimeMillis() > (expiry - 300000)
     }
 
     override suspend fun refreshToken(): Result<Unit> {
-        // TODO: Implement token refresh for iOS
-        return Result.failure(Exception("Not implemented"))
+        return loginService.refreshToken()
     }
 
     override suspend fun logout() {
-        preferencesManager.clearAll()
+        loginService.logout()
     }
 }

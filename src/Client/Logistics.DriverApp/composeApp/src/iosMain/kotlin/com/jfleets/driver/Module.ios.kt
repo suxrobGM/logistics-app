@@ -1,7 +1,7 @@
 package com.jfleets.driver
 
-import com.jfleets.driver.data.auth.IosLoginService
 import com.jfleets.driver.data.auth.LoginService
+import com.jfleets.driver.data.auth.OAuthService
 import com.jfleets.driver.data.local.IosPreferencesManager
 import com.jfleets.driver.data.local.PreferencesManager
 import com.jfleets.driver.data.repository.AuthRepository
@@ -11,6 +11,8 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
+private const val IDENTITY_SERVER_URL = "https://localhost:7001/"
+
 /**
  * Koin module for iOS-specific dependencies
  */
@@ -18,11 +20,14 @@ val iosModule = module {
     // Local Storage - bind implementation to interface
     singleOf(::IosPreferencesManager) bind PreferencesManager::class
 
-    // Authentication - bind implementation to interface
-    singleOf(::IosAuthRepository) bind AuthRepository::class
+    // OAuth Service for ROPC authentication (cross-platform)
+    single { OAuthService(IDENTITY_SERVER_URL) }
 
-    // Login Service - bind implementation to interface
-    singleOf(::IosLoginService) bind LoginService::class
+    // Login Service (cross-platform ROPC)
+    singleOf(::LoginService)
+
+    // Auth Repository for token management
+    singleOf(::IosAuthRepository) bind AuthRepository::class
 
     // ViewModels
     singleOf(::LoginViewModel)

@@ -128,10 +128,6 @@ kotlin {
             // Google Play Services & Maps
             implementation(libs.play.services.location)
             implementation(libs.bundles.maps)
-
-            // Authentication
-            implementation(libs.appauth)
-            implementation(libs.jwt.decode)
         }
 
         iosMain.dependencies {
@@ -160,9 +156,6 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-
-        // Must match AuthService.REDIRECT_URI scheme so AppAuth can receive callbacks.
-        manifestPlaceholders["appAuthRedirectScheme"] = "logistics-driver"
     }
 
     buildTypes {
