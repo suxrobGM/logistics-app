@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -7,6 +8,26 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.openapi.generator)
+}
+
+// OpenAPI Generator Configuration
+openApiGenerate {
+    generatorName.set("kotlin")
+    inputSpec.set("$projectDir/src/openapi/api-spec.json")
+    outputDir.set(layout.buildDirectory.dir("generated/openapi").get().asFile.absolutePath)
+    packageName.set("com.jfleets.driver.api.generated")
+    apiPackage.set("com.jfleets.driver.api.generated.apis")
+    modelPackage.set("com.jfleets.driver.api.generated.models")
+    configOptions.set(
+        mapOf(
+            "library" to "multiplatform",
+            "serializationLibrary" to "kotlinx_serialization",
+            "useCoroutines" to "true",
+            "enumPropertyNaming" to "UPPERCASE",
+            "dateLibrary" to "kotlinx-datetime"
+        )
+    )
 }
 
 kotlin {
@@ -43,6 +64,11 @@ kotlin {
             baseName = "ComposeApp"
             isStatic = true
         }
+    }
+
+    // Add generated OpenAPI sources to commonMain
+    sourceSets.commonMain {
+        kotlin.srcDir(layout.buildDirectory.dir("generated/openapi/src/commonMain/kotlin"))
     }
 
     sourceSets {
@@ -177,4 +203,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.espresso)
+}
+
+// Ensure OpenAPI code is generated before Kotlin compilation
+tasks.withType<KotlinCompile>().configureEach {
+    dependsOn(tasks.named("openApiGenerate"))
 }
