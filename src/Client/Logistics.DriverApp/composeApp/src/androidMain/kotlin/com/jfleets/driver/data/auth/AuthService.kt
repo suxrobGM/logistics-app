@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.core.net.toUri
 import com.jfleets.driver.BuildConfig
 import com.jfleets.driver.data.security.DebugTrustAllConnectionBuilder
+import com.jfleets.driver.util.Logger
 import net.openid.appauth.AppAuthConfiguration
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationRequest
@@ -15,7 +16,6 @@ import net.openid.appauth.ClientSecretBasic
 import net.openid.appauth.GrantTypeValues
 import net.openid.appauth.ResponseTypeValues
 import net.openid.appauth.TokenRequest
-import timber.log.Timber
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -87,7 +87,11 @@ class AuthService(
                             }
 
                             tokenException != null -> {
-                                Timber.e(tokenException, "Token exchange failed")
+                                Logger.e(
+                                    AuthService::class.simpleName!!,
+                                    "Token exchange failed",
+                                    tokenException
+                                )
                                 continuation.resumeWithException(
                                     Exception("Token exchange failed: ${tokenException.message}")
                                 )
@@ -103,7 +107,7 @@ class AuthService(
                 }
 
                 exception != null -> {
-                    Timber.e(exception, "Authorization failed")
+                    Logger.e(AuthService::class.simpleName!!, "Authorization failed", exception)
                     continuation.resumeWithException(
                         Exception("Authorization failed: ${exception.message}")
                     )
@@ -145,7 +149,7 @@ class AuthService(
                     }
 
                     exception != null -> {
-                        Timber.e(exception, "Token refresh failed")
+                        Logger.e(AuthService::class.simpleName!!, "Token refresh failed", exception)
                         continuation.resumeWithException(
                             Exception("Token refresh failed: ${exception.message}")
                         )

@@ -51,6 +51,7 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
+            implementation(compose.materialIconsExtended)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
@@ -69,10 +70,6 @@ kotlin {
             // Ktor Client (bundles)
             implementation(libs.bundles.ktor.common)
 
-            // Multiplatform Settings
-            implementation(libs.multiplatform.settings)
-            implementation(libs.multiplatform.settings.noarg)
-
             // Koin (multiplatform)
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
@@ -81,10 +78,9 @@ kotlin {
         }
 
         androidMain.dependencies {
-            // Compose
+            // Android Compose (Activity integration only - UI provided by JetBrains Compose)
             implementation(compose.preview)
-            implementation(project.dependencies.platform(libs.compose.bom))
-            implementation(libs.bundles.androidx.compose)
+            implementation(libs.androidx.activity.compose)
 
             // Android-specific Ktor
             implementation(libs.ktor.client.okhttp)
@@ -110,9 +106,6 @@ kotlin {
             // Authentication
             implementation(libs.appauth)
             implementation(libs.jwt.decode)
-
-            // Work Manager
-            implementation(libs.androidx.work.runtime)
         }
 
         iosMain.dependencies {
@@ -177,9 +170,8 @@ android {
 }
 
 dependencies {
-    // Compose Tooling (for Previews)
+    // Compose Tooling (for Previews) - from JetBrains Compose
     debugImplementation(compose.uiTooling)
-    debugImplementation(libs.compose.ui.tooling)
 
     // Testing
     testImplementation(libs.junit)

@@ -15,6 +15,7 @@ expect object Logger {
 
 /**
  * Extension to log with a default tag based on class name.
+ * Usage: myObject.logD("Debug message")
  */
 inline fun <reified T> T.logD(message: String) {
     Logger.d(T::class.simpleName ?: "Unknown", message)
