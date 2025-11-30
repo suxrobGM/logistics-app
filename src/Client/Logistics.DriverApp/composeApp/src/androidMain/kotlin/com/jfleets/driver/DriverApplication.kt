@@ -2,16 +2,16 @@ package com.jfleets.driver
 
 import android.app.Application
 import com.google.firebase.FirebaseApp
-import com.jfleets.driver.data.local.AndroidPreferencesManager
-import com.jfleets.driver.presentation.viewmodel.AccountViewModel
-import com.jfleets.driver.presentation.viewmodel.DashboardViewModel
-import com.jfleets.driver.presentation.viewmodel.LoadDetailViewModel
-import com.jfleets.driver.presentation.viewmodel.LoginViewModel
-import com.jfleets.driver.presentation.viewmodel.PastLoadsViewModel
-import com.jfleets.driver.presentation.viewmodel.StatsViewModel
+import com.jfleets.driver.service.AndroidPreferencesManager
 import com.jfleets.driver.service.PreferencesManager
 import com.jfleets.driver.service.auth.AuthService
 import com.jfleets.driver.util.Logger
+import com.jfleets.driver.viewmodel.AccountViewModel
+import com.jfleets.driver.viewmodel.DashboardViewModel
+import com.jfleets.driver.viewmodel.LoadDetailViewModel
+import com.jfleets.driver.viewmodel.LoginViewModel
+import com.jfleets.driver.viewmodel.PastLoadsViewModel
+import com.jfleets.driver.viewmodel.StatsViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin

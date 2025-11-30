@@ -1,9 +1,9 @@
 package com.jfleets.driver
 
 import com.jfleets.driver.data.local.IosPreferencesManager
-import com.jfleets.driver.presentation.viewmodel.LoginViewModel
 import com.jfleets.driver.service.PreferencesManager
 import com.jfleets.driver.service.auth.AuthService
+import com.jfleets.driver.viewmodel.LoginViewModel
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module

@@ -1,9 +1,8 @@
 package com.jfleets.driver.service.auth
 
-class AuthConfig {
-    companion object {
-        const val CLIENT_ID = "logistics.driverapp"
-        const val CLIENT_SECRET = "Super secret key 2"
-        const val SCOPE = "openid profile offline_access roles tenant logistics.api.tenant"
-    }
+object AuthConfig {
+    const val CLIENT_ID = "logistics.driverapp"
+    const val CLIENT_SECRET = "Super secret key 2"
+    const val SCOPE = "openid profile offline_access roles tenant logistics.api.tenant"
+
 }

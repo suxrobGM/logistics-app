@@ -1,6 +1,6 @@
 package com.jfleets.driver.service.auth
 
-import com.jfleets.driver.data.api.createPlatformHttpClient
+import com.jfleets.driver.api.createPlatformHttpClient
 import com.jfleets.driver.service.PreferencesManager
 import com.jfleets.driver.util.decodeJwtPayload
 import io.ktor.client.HttpClient
@@ -57,7 +57,7 @@ class AuthService(
 
     @OptIn(ExperimentalEncodingApi::class)
     private fun createBasicAuthHeader(): String {
-        val credentials = "$AuthConfig.CLIENT_ID:$AuthConfig.CLIENT_SECRET"
+        val credentials = "${AuthConfig.CLIENT_ID}:${AuthConfig.CLIENT_SECRET}"
         val encoded = Base64.encode(credentials.toByteArray(Charsets.UTF_8))
         return "Basic $encoded"
     }

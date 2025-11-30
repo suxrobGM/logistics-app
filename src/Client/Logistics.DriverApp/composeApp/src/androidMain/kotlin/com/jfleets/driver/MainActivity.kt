@@ -30,10 +30,10 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.jfleets.driver.presentation.navigation.AppNavigation
-import com.jfleets.driver.presentation.navigation.Screen
-import com.jfleets.driver.presentation.ui.theme.LogisticsDriverTheme
+import com.jfleets.driver.navigation.AppNavigation
+import com.jfleets.driver.navigation.Screen
 import com.jfleets.driver.service.auth.AuthService
+import com.jfleets.driver.ui.theme.LogisticsDriverTheme
 import org.koin.compose.koinInject
 
 class MainActivity : ComponentActivity() {

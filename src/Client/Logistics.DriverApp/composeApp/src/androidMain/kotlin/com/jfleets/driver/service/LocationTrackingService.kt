@@ -24,7 +24,7 @@ import com.jfleets.driver.R
 import com.jfleets.driver.api.DriverApi
 import com.jfleets.driver.api.LoadApi
 import com.jfleets.driver.api.models.UpdateLoadProximityCommand
-import com.jfleets.driver.data.mapper.toDomain
+import com.jfleets.driver.model.toDomain
 import com.jfleets.driver.util.Logger
 import com.jfleets.driver.util.calculateDistance
 import kotlinx.coroutines.CoroutineScope
