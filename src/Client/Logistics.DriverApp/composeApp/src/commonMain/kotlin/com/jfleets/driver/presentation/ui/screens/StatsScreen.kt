@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -28,18 +29,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.jfleets.driver.presentation.ui.components.CardContainer
 import com.jfleets.driver.presentation.ui.components.ErrorView
 import com.jfleets.driver.presentation.ui.components.LoadingIndicator
+import com.jfleets.driver.presentation.ui.components.charts.BarChart
+import com.jfleets.driver.presentation.ui.components.charts.LineChart
 import com.jfleets.driver.presentation.viewmodel.ChartUiState
 import com.jfleets.driver.presentation.viewmodel.StatsUiState
 import com.jfleets.driver.presentation.viewmodel.StatsViewModel
 import com.jfleets.driver.util.formatCurrency
 import com.jfleets.driver.util.formatDistance
 import org.koin.compose.viewmodel.koinViewModel
+
+enum class ChartType(val label: String) {
+    BAR("Bar"),
+    LINE("Line")
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,6 +60,7 @@ fun StatsScreen(
     val selectedRange by viewModel.selectedRange.collectAsState()
     val dateRanges = remember { viewModel.getDateRanges() }
     var showRangePicker by remember { mutableStateOf(false) }
+    var selectedChartType by remember { mutableStateOf(ChartType.BAR) }
 
     Scaffold(
         topBar = {
@@ -124,23 +134,42 @@ fun StatsScreen(
                         }
                     }
 
-                    // Chart Section
+                    // Chart Section Header
                     item {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = "Performance Chart",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
-                            )
-                            TextButton(onClick = { showRangePicker = true }) {
-                                Text(selectedRange.name)
+                        Column {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "Performance Chart",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                TextButton(onClick = { showRangePicker = true }) {
+                                    Text(selectedRange.name)
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            // Chart type selector
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                ChartType.entries.forEach { chartType ->
+                                    FilterChip(
+                                        selected = selectedChartType == chartType,
+                                        onClick = { selectedChartType = chartType },
+                                        label = { Text(chartType.label) }
+                                    )
+                                }
                             }
                         }
                     }
 
+                    // Chart Content
                     item {
                         CardContainer {
                             when (val chart = chartState) {
@@ -148,7 +177,8 @@ fun StatsScreen(
                                     Box(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .height(250.dp)
+                                            .height(280.dp),
+                                        contentAlignment = Alignment.Center
                                     ) {
                                         LoadingIndicator()
                                     }
@@ -156,23 +186,56 @@ fun StatsScreen(
 
                                 is ChartUiState.Success -> {
                                     Column(modifier = Modifier.padding(16.dp)) {
-                                        Text(
-                                            text = "Chart data available: ${chart.data.size} entries",
-                                            style = MaterialTheme.typography.bodyMedium
-                                        )
-                                        Text(
-                                            text = "Total Gross: ${
-                                                chart.data.sumOf { it.gross }.formatCurrency()
-                                            }",
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            modifier = Modifier.padding(top = 8.dp)
-                                        )
-                                        Text(
-                                            text = "Total Driver Share: ${
-                                                chart.data.sumOf { it.driverShare }.formatCurrency()
-                                            }",
-                                            style = MaterialTheme.typography.bodyMedium
-                                        )
+                                        // Summary row
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(bottom = 16.dp),
+                                            horizontalArrangement = Arrangement.SpaceEvenly
+                                        ) {
+                                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                                Text(
+                                                    text = "Total Gross",
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                                Text(
+                                                    text = chart.data.sumOf { it.gross }.formatCurrency(),
+                                                    style = MaterialTheme.typography.titleMedium,
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = MaterialTheme.colorScheme.primary
+                                                )
+                                            }
+                                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                                Text(
+                                                    text = "Total Income",
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                                Text(
+                                                    text = chart.data.sumOf { it.driverShare }.formatCurrency(),
+                                                    style = MaterialTheme.typography.titleMedium,
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = MaterialTheme.colorScheme.secondary
+                                                )
+                                            }
+                                        }
+
+                                        // Chart display
+                                        when (selectedChartType) {
+                                            ChartType.BAR -> {
+                                                BarChart(
+                                                    data = chart.data,
+                                                    modifier = Modifier.fillMaxWidth()
+                                                )
+                                            }
+                                            ChartType.LINE -> {
+                                                LineChart(
+                                                    data = chart.data,
+                                                    modifier = Modifier.fillMaxWidth()
+                                                )
+                                            }
+                                        }
                                     }
                                 }
 
@@ -180,12 +243,21 @@ fun StatsScreen(
                                     Box(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(16.dp)
+                                            .height(200.dp)
+                                            .padding(16.dp),
+                                        contentAlignment = Alignment.Center
                                     ) {
-                                        Text(
-                                            text = chart.message,
-                                            color = MaterialTheme.colorScheme.error
-                                        )
+                                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                            Text(
+                                                text = chart.message,
+                                                color = MaterialTheme.colorScheme.error,
+                                                style = MaterialTheme.typography.bodyMedium
+                                            )
+                                            Spacer(modifier = Modifier.height(8.dp))
+                                            TextButton(onClick = { viewModel.refresh() }) {
+                                                Text("Retry")
+                                            }
+                                        }
                                     }
                                 }
                             }
