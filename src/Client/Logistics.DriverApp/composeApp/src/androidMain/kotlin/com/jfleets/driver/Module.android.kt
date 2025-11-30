@@ -1,5 +1,7 @@
 package com.jfleets.driver
 
+import android.content.Context
+import com.google.firebase.FirebaseApp
 import com.jfleets.driver.service.PreferencesManager
 import com.jfleets.driver.service.auth.AuthService
 import com.jfleets.driver.viewmodel.AccountViewModel
@@ -8,14 +10,39 @@ import com.jfleets.driver.viewmodel.LoadDetailViewModel
 import com.jfleets.driver.viewmodel.LoginViewModel
 import com.jfleets.driver.viewmodel.PastLoadsViewModel
 import com.jfleets.driver.viewmodel.StatsViewModel
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
+const val API_BASE_URL = "https://10.0.2.2:7000/"
 const val IDENTITY_SERVER_URL = "https://localhost:7001/"
 
+private var koinInitialized = false
 
-val androidModule = module {
+fun initKoin(context: Context) {
+    if (koinInitialized) {
+        return
+    }
+
+    startKoin {
+        androidLogger()
+        androidContext(context)
+        modules(
+            // Android-specific module (must be loaded first to provide PreferencesManager)
+            androidModule,
+            commonModule(baseUrl = API_BASE_URL)
+        )
+    }
+
+    // Initialize Firebase
+    FirebaseApp.initializeApp(context)
+    koinInitialized = true
+}
+
+private val androidModule = module {
     singleOf(::PreferencesManager)
     single { AuthService(IDENTITY_SERVER_URL, get()) }
 
