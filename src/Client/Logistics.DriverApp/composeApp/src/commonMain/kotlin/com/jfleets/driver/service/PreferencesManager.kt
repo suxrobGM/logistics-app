@@ -1,16 +1,13 @@
 package com.jfleets.driver.service
 
-import kotlinx.coroutines.flow.Flow
-
 /**
  * Multiplatform interface for storing user preferences and tokens.
  * Platform-specific implementations use DataStore (Android) and NSUserDefaults (iOS).
  */
-interface PreferencesManager {
+expect class PreferencesManager {
     // Access Token
     suspend fun saveAccessToken(token: String)
     suspend fun getAccessToken(): String?
-    val accessTokenFlow: Flow<String?>
 
     // Refresh Token
     suspend fun saveRefreshToken(token: String)
@@ -42,7 +39,4 @@ interface PreferencesManager {
 
     // Clear all data
     suspend fun clearAll()
-
-    // Check if user is logged in
-    suspend fun isLoggedIn(): Boolean
 }
