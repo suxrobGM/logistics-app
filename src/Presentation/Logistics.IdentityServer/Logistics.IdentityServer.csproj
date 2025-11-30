@@ -1,28 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-	<TargetFramework>net9.0</TargetFramework>
-	<ImplicitUsings>enable</ImplicitUsings>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
     <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
     <PublishSingleFile>true</PublishSingleFile>
     <LangVersion>default</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="7.3.2" />
-	<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.9" />
-	<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
-	<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.9" />
+    <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="7.3.2"/>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.0"/>
+    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0"/>
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.0"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Logistics.Application\Logistics.Application.csproj" />
-    <ProjectReference Include="..\..\Core\Logistics.Infrastructure\Logistics.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Aspire\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\..\Core\Logistics.Application\Logistics.Application.csproj"/>
+    <ProjectReference Include="..\..\Core\Logistics.Infrastructure\Logistics.Infrastructure.csproj"/>
+    <ProjectReference Include="..\..\Aspire\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="keys\" />
+    <Folder Include="keys\"/>
   </ItemGroup>
 
 </Project>

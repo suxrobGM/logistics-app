@@ -4,24 +4,21 @@ using System.Collections.Generic;
 using Logistics.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Logistics.Infrastructure.Migrations.Tenant
+namespace Logistics.Infrastructure.Data.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20250915085224_Version_0001")]
-    partial class Version_0001
+    partial class TenantDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.8")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true)
@@ -160,7 +157,7 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.Property<int>("SalaryType")
                         .HasColumnType("integer");
 
-                    b.ComplexProperty<Dictionary<string, object>>("Salary", "Logistics.Domain.Entities.Employee.Salary#Money", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Salary", "Logistics.Domain.Entities.Employee.Salary#Money", b1 =>
                         {
                             b1.IsRequired();
 
@@ -241,7 +238,7 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                         .HasColumnType("character varying(50)")
                         .HasColumnName("LastModifiedBy");
 
-                    b.ComplexProperty<Dictionary<string, object>>("Total", "Logistics.Domain.Entities.Invoice.Total#Money", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Total", "Logistics.Domain.Entities.Invoice.Total#Money", b1 =>
                         {
                             b1.IsRequired();
 
@@ -339,7 +336,7 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                         .HasColumnType("character varying(50)")
                         .HasColumnName("LastModifiedBy");
 
-                    b.ComplexProperty<Dictionary<string, object>>("DeliveryCost", "Logistics.Domain.Entities.Load.DeliveryCost#Money", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "DeliveryCost", "Logistics.Domain.Entities.Load.DeliveryCost#Money", b1 =>
                         {
                             b1.IsRequired();
 
@@ -353,7 +350,7 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                                 .HasColumnType("character varying(3)");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("DestinationAddress", "Logistics.Domain.Entities.Load.DestinationAddress#Address", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "DestinationAddress", "Logistics.Domain.Entities.Load.DestinationAddress#Address", b1 =>
                         {
                             b1.IsRequired();
 
@@ -381,7 +378,7 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                                 .HasColumnType("text");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("DestinationLocation", "Logistics.Domain.Entities.Load.DestinationLocation#GeoPoint", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "DestinationLocation", "Logistics.Domain.Entities.Load.DestinationLocation#GeoPoint", b1 =>
                         {
                             b1.IsRequired();
 
@@ -392,7 +389,7 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                                 .HasColumnType("double precision");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("OriginAddress", "Logistics.Domain.Entities.Load.OriginAddress#Address", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "OriginAddress", "Logistics.Domain.Entities.Load.OriginAddress#Address", b1 =>
                         {
                             b1.IsRequired();
 
@@ -420,7 +417,7 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                                 .HasColumnType("text");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("OriginLocation", "Logistics.Domain.Entities.Load.OriginLocation#GeoPoint", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "OriginLocation", "Logistics.Domain.Entities.Load.OriginLocation#GeoPoint", b1 =>
                         {
                             b1.IsRequired();
 
@@ -511,7 +508,7 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                         .HasColumnType("character varying(50)")
                         .HasColumnName("LastModifiedBy");
 
-                    b.ComplexProperty<Dictionary<string, object>>("Amount", "Logistics.Domain.Entities.Payment.Amount#Money", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Amount", "Logistics.Domain.Entities.Payment.Amount#Money", b1 =>
                         {
                             b1.IsRequired();
 
@@ -525,7 +522,7 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                                 .HasColumnType("character varying(3)");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("BillingAddress", "Logistics.Domain.Entities.Payment.BillingAddress#Address", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "BillingAddress", "Logistics.Domain.Entities.Payment.BillingAddress#Address", b1 =>
                         {
                             b1.IsRequired();
 
@@ -581,7 +578,7 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.Property<int>("VerificationStatus")
                         .HasColumnType("integer");
 
-                    b.ComplexProperty<Dictionary<string, object>>("BillingAddress", "Logistics.Domain.Entities.PaymentMethod.BillingAddress#Address", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "BillingAddress", "Logistics.Domain.Entities.PaymentMethod.BillingAddress#Address", b1 =>
                         {
                             b1.IsRequired();
 
@@ -752,7 +749,7 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
-                    b.ComplexProperty<Dictionary<string, object>>("Address", "Logistics.Domain.Entities.TripStop.Address#Address", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Address", "Logistics.Domain.Entities.TripStop.Address#Address", b1 =>
                         {
                             b1.IsRequired();
 
@@ -780,7 +777,7 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                                 .HasColumnType("text");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("Location", "Logistics.Domain.Entities.TripStop.Location#GeoPoint", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Location", "Logistics.Domain.Entities.TripStop.Location#GeoPoint", b1 =>
                         {
                             b1.IsRequired();
 
@@ -825,7 +822,7 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                     b.Property<int>("VehicleCapacity")
                         .HasColumnType("integer");
 
-                    b.ComplexProperty<Dictionary<string, object>>("CurrentAddress", "Logistics.Domain.Entities.Truck.CurrentAddress#Address", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "CurrentAddress", "Logistics.Domain.Entities.Truck.CurrentAddress#Address", b1 =>
                         {
                             b1.IsRequired();
 
@@ -853,7 +850,7 @@ namespace Logistics.Infrastructure.Migrations.Tenant
                                 .HasColumnType("text");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("CurrentLocation", "Logistics.Domain.Entities.Truck.CurrentLocation#GeoPoint", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "CurrentLocation", "Logistics.Domain.Entities.Truck.CurrentLocation#GeoPoint", b1 =>
                         {
                             b1.IsRequired();
 

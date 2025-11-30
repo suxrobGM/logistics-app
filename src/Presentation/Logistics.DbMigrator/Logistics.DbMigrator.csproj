@@ -1,14 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-Logistics.DbMigrator-82A1337E-CB55-438D-9286-5046D4E5149B</UserSecretsId>
     <LangVersion>default</LangVersion>
   </PropertyGroup>
-  <ItemGroup>
-    <None Remove="SqlFunctions\CreateCompanyStats.psql" />
-  </ItemGroup>
+  
   <ItemGroup>
     <Content Include="SqlFunctions\CreateCompanyStats.psql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -16,12 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
-    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0"/>
+    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Logistics.Infrastructure\Logistics.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Aspire\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\..\Core\Logistics.Infrastructure\Logistics.Infrastructure.csproj"/>
+    <ProjectReference Include="..\..\Aspire\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj"/>
   </ItemGroup>
 </Project>

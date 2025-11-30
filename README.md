@@ -177,7 +177,7 @@ It will be accessible at the <https://localhost:8100>.
 
 ### Tech Stack
 
-- .NET 9
+- .NET 10
 - ASP.NET Core
 - Entity Framework Core
 - Deunde Identity Server

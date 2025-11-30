@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Logistics.Infrastructure.Migrations.Tenant
+namespace Logistics.Infrastructure.Data.Migrations.Tenant
 {
     /// <inheritdoc />
     public partial class Version_0001 : Migration

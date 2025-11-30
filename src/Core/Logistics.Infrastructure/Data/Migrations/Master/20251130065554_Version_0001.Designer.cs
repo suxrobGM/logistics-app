@@ -4,21 +4,24 @@ using System.Collections.Generic;
 using Logistics.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Logistics.Infrastructure.Migrations.Master
+namespace Logistics.Infrastructure.Data.Migrations.Master
 {
     [DbContext(typeof(MasterDbContext))]
-    partial class MasterDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251130065554_Version_0001")]
+    partial class Version_0001
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.8")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true)
@@ -127,7 +130,7 @@ namespace Logistics.Infrastructure.Migrations.Master
                         .HasColumnType("character varying(50)")
                         .HasColumnName("LastModifiedBy");
 
-                    b.ComplexProperty<Dictionary<string, object>>("Total", "Logistics.Domain.Entities.Invoice.Total#Money", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Total", "Logistics.Domain.Entities.Invoice.Total#Money", b1 =>
                         {
                             b1.IsRequired();
 
@@ -194,7 +197,7 @@ namespace Logistics.Infrastructure.Migrations.Master
                         .HasColumnType("character varying(50)")
                         .HasColumnName("LastModifiedBy");
 
-                    b.ComplexProperty<Dictionary<string, object>>("Amount", "Logistics.Domain.Entities.Payment.Amount#Money", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Amount", "Logistics.Domain.Entities.Payment.Amount#Money", b1 =>
                         {
                             b1.IsRequired();
 
@@ -208,7 +211,7 @@ namespace Logistics.Infrastructure.Migrations.Master
                                 .HasColumnType("character varying(3)");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("BillingAddress", "Logistics.Domain.Entities.Payment.BillingAddress#Address", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "BillingAddress", "Logistics.Domain.Entities.Payment.BillingAddress#Address", b1 =>
                         {
                             b1.IsRequired();
 
@@ -337,7 +340,7 @@ namespace Logistics.Infrastructure.Migrations.Master
                         .HasColumnType("character varying(50)")
                         .HasColumnName("LastModifiedBy");
 
-                    b.ComplexProperty<Dictionary<string, object>>("Price", "Logistics.Domain.Entities.SubscriptionPlan.Price#Money", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Price", "Logistics.Domain.Entities.SubscriptionPlan.Price#Money", b1 =>
                         {
                             b1.IsRequired();
 
@@ -383,7 +386,7 @@ namespace Logistics.Infrastructure.Migrations.Master
                     b.Property<string>("StripeCustomerId")
                         .HasColumnType("text");
 
-                    b.ComplexProperty<Dictionary<string, object>>("CompanyAddress", "Logistics.Domain.Entities.Tenant.CompanyAddress#Address", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "CompanyAddress", "Logistics.Domain.Entities.Tenant.CompanyAddress#Address", b1 =>
                         {
                             b1.IsRequired();
 

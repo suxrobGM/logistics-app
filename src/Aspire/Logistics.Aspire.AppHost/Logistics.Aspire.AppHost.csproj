@@ -1,27 +1,27 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-	<Sdk Name="Aspire.AppHost.Sdk" Version="9.4.0" />
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Aspire.AppHost.Sdk" Version="13.0.1"/>
 
-	<PropertyGroup>
-		<OutputType>Exe</OutputType>
-		<TargetFramework>net9.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<IsAspireHost>true</IsAspireHost>
-		<UserSecretsId>2cdf04d2-4eaa-4ecf-a7e4-e21427e5d5fa</UserSecretsId>
-	</PropertyGroup>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAspireHost>true</IsAspireHost>
+    <UserSecretsId>2cdf04d2-4eaa-4ecf-a7e4-e21427e5d5fa</UserSecretsId>
+  </PropertyGroup>
+ 
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="13.0.1"/>
+    <PackageReference Include="Aspire.Hosting.NodeJs" Version="9.5.2"/>
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.0.1"/>
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.Bun" Version="9.8.0"/>
+  </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Aspire.Hosting.AppHost" Version="9.5.0" />
-		<PackageReference Include="Aspire.Hosting.NodeJs" Version="9.5.0" />
-		<PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.5.0" />
-		<PackageReference Include="CommunityToolkit.Aspire.Hosting.Bun" Version="9.8.0" />
-	</ItemGroup>
-	
-	<ItemGroup>
-	  <ProjectReference Include="..\..\Client\Logistics.AdminApp\Logistics.AdminApp.csproj" />
-	  <ProjectReference Include="..\..\Presentation\Logistics.API\Logistics.API.csproj" />
-	  <ProjectReference Include="..\..\Presentation\Logistics.DbMigrator\Logistics.DbMigrator.csproj" />
-	  <ProjectReference Include="..\..\Presentation\Logistics.IdentityServer\Logistics.IdentityServer.csproj" />
-	  <ProjectReference Include="..\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Client\Logistics.AdminApp\Logistics.AdminApp.csproj"/>
+    <ProjectReference Include="..\..\Presentation\Logistics.API\Logistics.API.csproj"/>
+    <ProjectReference Include="..\..\Presentation\Logistics.DbMigrator\Logistics.DbMigrator.csproj"/>
+    <ProjectReference Include="..\..\Presentation\Logistics.IdentityServer\Logistics.IdentityServer.csproj"/>
+    <ProjectReference Include="..\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj"/>
+  </ItemGroup>
 </Project>

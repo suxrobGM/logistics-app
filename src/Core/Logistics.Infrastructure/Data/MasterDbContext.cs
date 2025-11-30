@@ -65,9 +65,13 @@ public class MasterDbContext : IdentityDbContext<
     {
         base.OnModelCreating(builder);
 
+        // Issue with EF Core 10: Temporary solution to ignore IdentityPasskeyData entity
+        // until proper Passkey support is implemented
+        builder.Ignore<IdentityPasskeyData>();
+
         // Scan and apply all configurations from the /Data/Configurations folder
         // for entities implementing IMasterEntity
-        builder.ApplyMasterConfigurationsFromAssemblyContaining<MasterDbContext>();
+        builder.ApplyMasterConfigurationsFromAssembly<MasterDbContext>();
 
         // Prune entity types that are only relevant for the master database
         // It avoids issues with tenant-specific entities being included in the master context and migration errors

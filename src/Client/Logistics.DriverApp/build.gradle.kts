@@ -9,7 +9,3 @@ plugins {
     alias(libs.plugins.google.services) apply false
     alias(libs.plugins.openapi.generator) apply false
 }
-
-tasks.register("clean", Delete::class) {
-    delete(rootProject.layout.buildDirectory)
-}

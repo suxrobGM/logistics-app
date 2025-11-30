@@ -71,7 +71,7 @@ public class TenantDbContext : DbContext
 
         // Scan and apply all configurations from the /Data/Configurations folder
         // for entities implementing ITenantEntity
-        builder.ApplyTenantConfigurationsFromAssemblyContaining<TenantDbContext>();
+        builder.ApplyTenantConfigurationsFromAssembly<TenantDbContext>();
 
         builder.Entity<CompanyStatsDto>(entity =>
         {
