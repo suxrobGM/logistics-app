@@ -5,7 +5,7 @@ import com.jfleets.driver.api.LoadApi
 import com.jfleets.driver.api.StatApi
 import com.jfleets.driver.api.TruckApi
 import com.jfleets.driver.api.UserApi
-import com.jfleets.driver.data.local.PreferencesManager
+import com.jfleets.driver.service.PreferencesManager
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation

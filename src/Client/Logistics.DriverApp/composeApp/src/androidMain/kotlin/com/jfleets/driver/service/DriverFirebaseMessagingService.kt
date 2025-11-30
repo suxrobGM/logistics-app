@@ -12,13 +12,12 @@ import com.jfleets.driver.MainActivity
 import com.jfleets.driver.R
 import com.jfleets.driver.api.DriverApi
 import com.jfleets.driver.api.models.SetDriverDeviceTokenCommand
-import com.jfleets.driver.data.local.PreferencesManager
+import com.jfleets.driver.util.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
-import com.jfleets.driver.util.Logger
 
 class DriverFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -42,7 +41,10 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
             try {
                 val userId = preferencesManager.getUserId()
                 if (userId != null) {
-                    driverApi.setDriverDeviceToken(userId, SetDriverDeviceTokenCommand(userId, token))
+                    driverApi.setDriverDeviceToken(
+                        userId,
+                        SetDriverDeviceTokenCommand(userId, token)
+                    )
                     Logger.d(TAG, "Device token sent to server")
                 } else {
                     Logger.w(TAG, "User ID not available, cannot send device token")
@@ -83,7 +85,7 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
 
             "new_load" -> {
                 Logger.d(TAG, "New load notification received")
-                val loadId = data["loadId"]
+                data["loadId"]
                 showNotification("New Load Assigned", "You have been assigned a new load")
             }
 

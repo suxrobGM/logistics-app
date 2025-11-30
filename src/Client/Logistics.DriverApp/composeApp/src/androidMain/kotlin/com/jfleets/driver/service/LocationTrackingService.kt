@@ -24,8 +24,8 @@ import com.jfleets.driver.R
 import com.jfleets.driver.api.DriverApi
 import com.jfleets.driver.api.LoadApi
 import com.jfleets.driver.api.models.UpdateLoadProximityCommand
-import com.jfleets.driver.data.local.PreferencesManager
 import com.jfleets.driver.data.mapper.toDomain
+import com.jfleets.driver.util.Logger
 import com.jfleets.driver.util.calculateDistance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +33,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
-import com.jfleets.driver.util.Logger
 import java.util.Locale
 
 class LocationTrackingService : Service() {
@@ -193,7 +192,10 @@ class LocationTrackingService : Service() {
                             canConfirmDelivery = nearDestination
                         )
                         driverApi.updateLoadProximity(command)
-                        Logger.d(TAG, "Load ${load.id} proximity updated: origin=$nearOrigin, dest=$nearDestination")
+                        Logger.d(
+                            TAG,
+                            "Load ${load.id} proximity updated: origin=$nearOrigin, dest=$nearDestination"
+                        )
                     }
                 }
             }

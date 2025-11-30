@@ -24,10 +24,10 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.jfleets.driver.data.repository.AuthRepository
 import com.jfleets.driver.presentation.navigation.AppNavigation
 import com.jfleets.driver.presentation.navigation.Screen
 import com.jfleets.driver.presentation.ui.theme.LogisticsDriverTheme
+import com.jfleets.driver.service.auth.AuthService
 import org.koin.compose.koinInject
 import org.koin.core.context.startKoin
 import platform.Foundation.NSURL
@@ -60,7 +60,7 @@ private fun initKoin() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DriverApp() {
-    val authRepository: AuthRepository = koinInject()
+    val authService: AuthService = koinInject()
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -75,7 +75,7 @@ fun DriverApp() {
     // Check auth status once and navigate if logged in
     LaunchedEffect(Unit) {
         try {
-            val isLoggedIn = authRepository.isLoggedIn()
+            val isLoggedIn = authService.isLoggedIn()
             if (isLoggedIn) {
                 navController.navigate(Screen.Dashboard.route) {
                     popUpTo(Screen.Login.route) { inclusive = true }

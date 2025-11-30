@@ -1,5 +1,6 @@
 package com.jfleets.driver.data.local
 
+import com.jfleets.driver.service.PreferencesManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import platform.Foundation.NSUserDefaults

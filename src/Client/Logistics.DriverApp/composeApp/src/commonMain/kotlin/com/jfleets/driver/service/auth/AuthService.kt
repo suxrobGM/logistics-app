@@ -1,8 +1,7 @@
-package com.jfleets.driver.data.auth
+package com.jfleets.driver.service.auth
 
 import com.jfleets.driver.data.api.createPlatformHttpClient
-import com.jfleets.driver.data.local.PreferencesManager
-import com.jfleets.driver.util.currentTimeMillis
+import com.jfleets.driver.service.PreferencesManager
 import com.jfleets.driver.util.decodeJwtPayload
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -19,37 +18,16 @@ import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.charsets.Charsets
 import io.ktor.utils.io.core.toByteArray
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
-@Serializable
-data class TokenResponse(
-    @SerialName("access_token") val accessToken: String,
-    @SerialName("refresh_token") val refreshToken: String? = null,
-    @SerialName("id_token") val idToken: String? = null,
-    @SerialName("expires_in") val expiresIn: Int,
-    @SerialName("token_type") val tokenType: String
-)
 
-@Serializable
-private data class TokenErrorResponse(
-    val error: String,
-    @SerialName("error_description") val errorDescription: String? = null
-)
-
-class LoginService(
+class AuthService(
     private val authorityUrl: String,
     private val preferencesManager: PreferencesManager
 ) {
-    companion object {
-        private const val CLIENT_ID = "logistics.driverapp"
-        private const val CLIENT_SECRET = "Super secret key 2"
-        private const val SCOPE = "openid profile offline_access roles tenant logistics.api.tenant"
-    }
-
     private val allowSelfSigned = authorityUrl.contains("10.0.2.2")
     private val tokenEndpoint = "${authorityUrl.trimEnd('/')}/connect/token"
 
@@ -79,12 +57,13 @@ class LoginService(
 
     @OptIn(ExperimentalEncodingApi::class)
     private fun createBasicAuthHeader(): String {
-        val credentials = "$CLIENT_ID:$CLIENT_SECRET"
+        val credentials = "$AuthConfig.CLIENT_ID:$AuthConfig.CLIENT_SECRET"
         val encoded = Base64.encode(credentials.toByteArray(Charsets.UTF_8))
         return "Basic $encoded"
     }
 
     suspend fun login(username: String, password: String): Result<Unit> {
+
         return try {
             val response = httpClient.submitForm(
                 url = tokenEndpoint,
@@ -92,7 +71,7 @@ class LoginService(
                     append("grant_type", "password")
                     append("username", username)
                     append("password", password)
-                    append("scope", SCOPE)
+                    append("scope", AuthConfig.SCOPE)
                 }
             ) {
                 header("Authorization", createBasicAuthHeader())
@@ -106,7 +85,10 @@ class LoginService(
                 val errorResponse = try {
                     response.body<TokenErrorResponse>()
                 } catch (e: Exception) {
-                    TokenErrorResponse("unknown_error", "Login failed with status ${response.status.value}")
+                    TokenErrorResponse(
+                        "unknown_error",
+                        "Login failed with status ${response.status.value}"
+                    )
                 }
                 Result.failure(
                     AuthException(
@@ -120,9 +102,25 @@ class LoginService(
         }
     }
 
+    suspend fun isLoggedIn(): Boolean {
+        val token = preferencesManager.getAccessToken()
+        return token != null && !isTokenExpired()
+    }
+
+    suspend fun isTokenExpired(): Boolean {
+        val expiry = preferencesManager.getTokenExpiry() ?: return true
+        // Consider token expired 5 minutes before actual expiry
+        return Clock.System.now().toEpochMilliseconds() > (expiry - 300000)
+    }
+
     suspend fun refreshToken(): Result<Unit> {
         val refreshToken = preferencesManager.getRefreshToken()
-            ?: return Result.failure(AuthException("no_refresh_token", "No refresh token available"))
+            ?: return Result.failure(
+                AuthException(
+                    "no_refresh_token",
+                    "No refresh token available"
+                )
+            )
 
         return try {
             val response = httpClient.submitForm(
@@ -130,7 +128,7 @@ class LoginService(
                 formParameters = Parameters.build {
                     append("grant_type", "refresh_token")
                     append("refresh_token", refreshToken)
-                    append("scope", SCOPE)
+                    append("scope", AuthConfig.SCOPE)
                 }
             ) {
                 header("Authorization", createBasicAuthHeader())
@@ -144,7 +142,10 @@ class LoginService(
                 val errorResponse = try {
                     response.body<TokenErrorResponse>()
                 } catch (e: Exception) {
-                    TokenErrorResponse("unknown_error", "Token refresh failed with status ${response.status.value}")
+                    TokenErrorResponse(
+                        "unknown_error",
+                        "Token refresh failed with status ${response.status.value}"
+                    )
                 }
                 Result.failure(
                     AuthException(
@@ -167,7 +168,7 @@ class LoginService(
         tokenResponse.refreshToken?.let { preferencesManager.saveRefreshToken(it) }
         tokenResponse.idToken?.let { preferencesManager.saveIdToken(it) }
 
-        val expiryTime = currentTimeMillis() + (tokenResponse.expiresIn * 1000L)
+        val expiryTime = Clock.System.now().toEpochMilliseconds() + (tokenResponse.expiresIn * 1000L)
         preferencesManager.saveTokenExpiry(expiryTime)
 
         // Extract user info from token
@@ -190,8 +191,3 @@ class LoginService(
         }
     }
 }
-
-class AuthException(
-    val error: String,
-    override val message: String
-) : Exception(message)

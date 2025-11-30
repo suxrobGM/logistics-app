@@ -5,12 +5,12 @@ package com.jfleets.driver.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jfleets.driver.api.StatApi
-import com.jfleets.driver.data.local.PreferencesManager
 import com.jfleets.driver.data.mapper.toChartData
 import com.jfleets.driver.data.mapper.toDomain
 import com.jfleets.driver.model.ChartData
 import com.jfleets.driver.model.DateRange
 import com.jfleets.driver.model.DriverStats
+import com.jfleets.driver.service.PreferencesManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -59,7 +59,8 @@ class StatsViewModel(
                     if (result.success == true && result.data != null) {
                         _statsState.value = StatsUiState.Success(result.data.toDomain())
                     } else {
-                        _statsState.value = StatsUiState.Error(result.error ?: "Failed to load stats")
+                        _statsState.value =
+                            StatsUiState.Error(result.error ?: "Failed to load stats")
                     }
                 } catch (e: Exception) {
                     _statsState.value = StatsUiState.Error(e.message ?: "An error occurred")
@@ -89,7 +90,8 @@ class StatsViewModel(
                         val chartData = result.data.data?.map { it.toChartData() } ?: emptyList()
                         _chartState.value = ChartUiState.Success(chartData)
                     } else {
-                        _chartState.value = ChartUiState.Error(result.error ?: "Failed to load chart data")
+                        _chartState.value =
+                            ChartUiState.Error(result.error ?: "Failed to load chart data")
                     }
                 } else {
                     val response = statApi.getDailyGrosses(
@@ -102,7 +104,8 @@ class StatsViewModel(
                         val chartData = result.data.data?.map { it.toChartData() } ?: emptyList()
                         _chartState.value = ChartUiState.Success(chartData)
                     } else {
-                        _chartState.value = ChartUiState.Error(result.error ?: "Failed to load chart data")
+                        _chartState.value =
+                            ChartUiState.Error(result.error ?: "Failed to load chart data")
                     }
                 }
             } catch (e: Exception) {

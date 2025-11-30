@@ -2,17 +2,15 @@ package com.jfleets.driver
 
 import android.app.Application
 import com.google.firebase.FirebaseApp
-import com.jfleets.driver.data.auth.LoginService
 import com.jfleets.driver.data.local.AndroidPreferencesManager
-import com.jfleets.driver.data.local.PreferencesManager
-import com.jfleets.driver.data.repository.AndroidAuthRepository
-import com.jfleets.driver.data.repository.AuthRepository
 import com.jfleets.driver.presentation.viewmodel.AccountViewModel
 import com.jfleets.driver.presentation.viewmodel.DashboardViewModel
 import com.jfleets.driver.presentation.viewmodel.LoadDetailViewModel
 import com.jfleets.driver.presentation.viewmodel.LoginViewModel
 import com.jfleets.driver.presentation.viewmodel.PastLoadsViewModel
 import com.jfleets.driver.presentation.viewmodel.StatsViewModel
+import com.jfleets.driver.service.PreferencesManager
+import com.jfleets.driver.service.auth.AuthService
 import com.jfleets.driver.util.Logger
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -54,8 +52,7 @@ class DriverApplication : Application() {
      */
     private val androidModule = module {
         singleOf(::AndroidPreferencesManager) bind PreferencesManager::class
-        singleOf(::AndroidAuthRepository) bind AuthRepository::class
-        single { LoginService(IDENTITY_SERVER_URL, get()) }
+        single { AuthService(IDENTITY_SERVER_URL, get()) }
 
         // ViewModels
         viewModelOf(::DashboardViewModel)
