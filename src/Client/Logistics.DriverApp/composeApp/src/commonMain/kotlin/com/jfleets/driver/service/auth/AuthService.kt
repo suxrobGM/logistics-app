@@ -18,10 +18,10 @@ import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.charsets.Charsets
 import io.ktor.utils.io.core.toByteArray
-import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
+import kotlin.time.Clock
 
 
 class AuthService(
@@ -168,7 +168,8 @@ class AuthService(
         tokenResponse.refreshToken?.let { preferencesManager.saveRefreshToken(it) }
         tokenResponse.idToken?.let { preferencesManager.saveIdToken(it) }
 
-        val expiryTime = Clock.System.now().toEpochMilliseconds() + (tokenResponse.expiresIn * 1000L)
+        val expiryTime =
+            Clock.System.now().toEpochMilliseconds() + (tokenResponse.expiresIn * 1000L)
         preferencesManager.saveTokenExpiry(expiryTime)
 
         // Extract user info from token
