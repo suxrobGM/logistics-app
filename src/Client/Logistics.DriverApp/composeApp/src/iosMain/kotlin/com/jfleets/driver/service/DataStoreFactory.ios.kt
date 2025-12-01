@@ -2,6 +2,7 @@ package com.jfleets.driver.service
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
@@ -9,7 +10,8 @@ import platform.Foundation.NSUserDomainMask
 /**
  * Creates a DataStore instance for iOS using the documents directory.
  */
-fun createDataStore(): DataStore<Preferences> = createDataStore(
+@OptIn(ExperimentalForeignApi::class)
+fun createIosDataStore(): DataStore<Preferences> = createDataStore(
     producePath = {
         val documentDirectory = NSFileManager.defaultManager.URLForDirectory(
             directory = NSDocumentDirectory,

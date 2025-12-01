@@ -1,7 +1,7 @@
 package com.jfleets.driver
 
 import com.jfleets.driver.service.auth.AuthService
-import com.jfleets.driver.service.createDataStore
+import com.jfleets.driver.service.createIosDataStore
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 
@@ -29,7 +29,7 @@ fun initKoin() {
  */
 val iosModule = module {
     // DataStore instance (platform-specific creation)
-    single { createDataStore() }
+    single { createIosDataStore() }
 
     // Auth Service (ROPC authentication)
     single { AuthService(IDENTITY_SERVER_URL, get()) }
