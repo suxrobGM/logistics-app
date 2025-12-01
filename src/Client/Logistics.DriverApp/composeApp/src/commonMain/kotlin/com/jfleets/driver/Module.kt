@@ -6,9 +6,13 @@ import com.jfleets.driver.api.LoadApi
 import com.jfleets.driver.api.StatApi
 import com.jfleets.driver.api.TruckApi
 import com.jfleets.driver.api.UserApi
+import com.jfleets.driver.service.PreferencesManager
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 fun commonModule(baseUrl: String) = module {
+    singleOf(::PreferencesManager)
+
     // Register ApiFactory as a singleton
     single { ApiFactory(baseUrl, get()) }
 

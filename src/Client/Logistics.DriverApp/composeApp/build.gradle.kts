@@ -91,7 +91,8 @@ kotlin {
             implementation(libs.kotlinx.datetime)
 
             // DataStore
-            implementation(libs.androidx.datastore.core)
+            implementation(libs.androidx.datastore)
+            implementation(libs.androidx.datastore.preferences)
 
             // Ktor Client (bundles)
             implementation(libs.bundles.ktor.common)
@@ -104,8 +105,7 @@ kotlin {
         }
 
         androidMain.dependencies {
-            // Android Compose (Activity integration only - UI provided by JetBrains Compose)
-            implementation(compose.preview)
+            // Android Compose
             implementation(libs.androidx.activity.compose)
 
             // Android-specific Ktor
@@ -113,9 +113,6 @@ kotlin {
 
             // AndroidX Core
             implementation(libs.androidx.core.ktx)
-
-            // DataStore Android
-            implementation(libs.androidx.datastore.preferences)
 
             // Koin Android
             implementation(libs.koin.androidx.compose)
@@ -131,7 +128,6 @@ kotlin {
         }
 
         iosMain.dependencies {
-            // iOS-specific Ktor
             implementation(libs.ktor.client.darwin)
         }
 
@@ -189,7 +185,6 @@ android {
 }
 
 dependencies {
-    // Compose Tooling (for Previews) - from JetBrains Compose
     debugImplementation(compose.uiTooling)
 
     // Testing

@@ -1,9 +1,8 @@
 package com.jfleets.driver
 
-import com.jfleets.driver.service.PreferencesManager
 import com.jfleets.driver.service.auth.AuthService
+import com.jfleets.driver.service.createDataStore
 import org.koin.core.context.startKoin
-import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 const val API_BASE_URL = "https://localhost:7000/"
@@ -29,7 +28,8 @@ fun initKoin() {
  * Koin module for iOS-specific dependencies
  */
 val iosModule = module {
-    singleOf(::PreferencesManager)
+    // DataStore instance (platform-specific creation)
+    single { createDataStore() }
 
     // Auth Service (ROPC authentication)
     single { AuthService(IDENTITY_SERVER_URL, get()) }
