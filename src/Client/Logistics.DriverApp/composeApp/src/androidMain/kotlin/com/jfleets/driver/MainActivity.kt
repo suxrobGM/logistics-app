@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
+import com.jfleets.driver.permission.RequestStartupPermissions
 import com.jfleets.driver.ui.DriverApp
 
 class MainActivity : ComponentActivity() {
@@ -17,6 +18,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
+            // Request all startup permissions
+            RequestStartupPermissions()
+
             val context = LocalContext.current
             DriverApp(
                 onOpenUrl = { url ->
