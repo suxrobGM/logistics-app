@@ -27,14 +27,13 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     companion object {
-        private const val TAG = "DriverFirebaseMsgService"
         private const val CHANNEL_ID = "logistics_driver_channel"
         private const val NOTIFICATION_ID = 2001
     }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Logger.d(TAG, "New FCM token: $token")
+        Logger.d("New FCM token: $token")
 
         // Send token to server
         serviceScope.launch {
@@ -45,12 +44,12 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
                         userId,
                         SetDriverDeviceTokenCommand(userId, token)
                     )
-                    Logger.d(TAG, "Device token sent to server")
+                    Logger.d("Device token sent to server")
                 } else {
-                    Logger.w(TAG, "User ID not available, cannot send device token")
+                    Logger.w("User ID not available, cannot send device token")
                 }
             } catch (e: Exception) {
-                Logger.e(TAG, "Failed to send device token", e)
+                Logger.e("Failed to send device token", e)
             }
         }
     }
@@ -58,7 +57,7 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
-        Logger.d(TAG, "FCM message received from: ${message.from}")
+        Logger.d("FCM message received from: ${message.from}")
 
         // Handle notification payload
         message.notification?.let { notification ->
@@ -69,7 +68,7 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
 
         // Handle data payload
         message.data.isNotEmpty().let {
-            Logger.d(TAG, "Message data payload: ${message.data}")
+            Logger.d("Message data payload: ${message.data}")
             handleDataPayload(message.data)
         }
     }
@@ -78,19 +77,19 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
         // Handle different notification types
         when (data["type"]) {
             "load_update" -> {
-                Logger.d(TAG, "Load update notification received")
+                Logger.d("Load update notification received")
                 // Trigger load refresh in the app
                 // You can use a broadcast receiver or shared flow to notify the app
             }
 
             "new_load" -> {
-                Logger.d(TAG, "New load notification received")
+                Logger.d("New load notification received")
                 data["loadId"]
                 showNotification("New Load Assigned", "You have been assigned a new load")
             }
 
             else -> {
-                Logger.d(TAG, "Unknown notification type")
+                Logger.d("Unknown notification type")
             }
         }
     }

@@ -36,8 +36,6 @@ import org.koin.android.ext.android.inject
 import java.util.Locale
 
 class LocationTrackingService : Service() {
-
-    private val preferencesManager: PreferencesManager by inject()
     private val loadApi: LoadApi by inject()
     private val driverApi: DriverApi by inject()
 
@@ -46,7 +44,6 @@ class LocationTrackingService : Service() {
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     companion object {
-        private const val TAG = "LocationTrackingService"
         private const val NOTIFICATION_ID = 1001
         private const val CHANNEL_ID = "location_tracking_channel"
         private const val UPDATE_INTERVAL = 30000L // 30 seconds
@@ -105,7 +102,7 @@ class LocationTrackingService : Service() {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            Logger.w(TAG, "Location permission not granted")
+            Logger.w("Location permission not granted")
             stopSelf()
             return
         }
@@ -120,7 +117,7 @@ class LocationTrackingService : Service() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.let { location ->
-                    Logger.d(TAG, "Location update: ${location.latitude}, ${location.longitude}")
+                    Logger.d("Location update: ${location.latitude}, ${location.longitude}")
                     handleLocationUpdate(location)
                 }
             }
@@ -141,12 +138,12 @@ class LocationTrackingService : Service() {
 
                 // Send location to server via SignalR
                 // TODO: Implement SignalR connection and send location
-                Logger.d(TAG, "Location: $address")
+                Logger.d("Location: $address")
 
                 // Check proximity to active loads
                 checkLoadProximity(location)
             } catch (e: Exception) {
-                Logger.e(TAG, "Error handling location update", e)
+                Logger.e("Error handling location update", e)
             }
         }
     }
@@ -157,7 +154,7 @@ class LocationTrackingService : Service() {
             val response = loadApi.getLoads(onlyActiveLoads = true)
             val result = response.body()
             if (result.success != true || result.data == null) {
-                Logger.e(TAG, "Error getting active loads: ${result.error}")
+                Logger.e("Error getting active loads: ${result.error}")
                 return
             }
 
@@ -193,14 +190,13 @@ class LocationTrackingService : Service() {
                         )
                         driverApi.updateLoadProximity(command)
                         Logger.d(
-                            TAG,
                             "Load ${load.id} proximity updated: origin=$nearOrigin, dest=$nearDestination"
                         )
                     }
                 }
             }
         } catch (e: Exception) {
-            Logger.e(TAG, "Error checking load proximity", e)
+            Logger.e("Error checking load proximity", e)
         }
     }
 
@@ -224,7 +220,7 @@ class LocationTrackingService : Service() {
                 "Unknown location"
             }
         } catch (e: Exception) {
-            Logger.e(TAG, "Error getting address from location", e)
+            Logger.e("Error getting address from location", e)
             "Unknown location"
         }
     }
@@ -233,6 +229,6 @@ class LocationTrackingService : Service() {
         super.onDestroy()
         fusedLocationClient.removeLocationUpdates(locationCallback)
         serviceScope.cancel()
-        Logger.d(TAG, "LocationTrackingService destroyed")
+        Logger.d("LocationTrackingService destroyed")
     }
 }

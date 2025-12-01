@@ -11,8 +11,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import com.jfleets.driver.util.Logger
 
-private const val TAG = "PermissionHandler"
-
 /**
  * Composable that handles requesting a single permission.
  *
@@ -30,21 +28,18 @@ fun RequestPermission(
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        Logger.d(
-            TAG,
-            "${permission.displayName} permission ${if (isGranted) "granted" else "denied"}"
-        )
+        Logger.d("${permission.displayName} permission ${if (isGranted) "granted" else "denied"}")
         onResult(PermissionResult(permission, isGranted))
     }
 
     LaunchedEffect(permission) {
         if (!hasRequested && context.shouldRequestPermission(permission)) {
             hasRequested = true
-            Logger.d(TAG, "Requesting ${permission.displayName} permission")
+            Logger.d("Requesting ${permission.displayName} permission")
             launcher.launch(permission.permission)
         } else if (!hasRequested && context.isPermissionGranted(permission)) {
             hasRequested = true
-            Logger.d(TAG, "${permission.displayName} permission already granted")
+            Logger.d("${permission.displayName} permission already granted")
             onResult(PermissionResult(permission, true))
         }
     }

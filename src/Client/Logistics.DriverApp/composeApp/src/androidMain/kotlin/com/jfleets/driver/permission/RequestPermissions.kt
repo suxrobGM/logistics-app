@@ -11,8 +11,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import com.jfleets.driver.util.Logger
 
-private const val TAG = "PermissionHandler"
-
 /**
  * Composable that handles requesting multiple permissions.
  *
@@ -36,12 +34,8 @@ fun RequestPermissions(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { resultsMap ->
         val results = permissions.map { permission ->
-            val isGranted =
-                resultsMap[permission.permission] ?: context.isPermissionGranted(permission)
-            Logger.d(
-                TAG,
-                "${permission.displayName} permission ${if (isGranted) "granted" else "denied"}"
-            )
+            val isGranted = resultsMap[permission.permission] ?: context.isPermissionGranted(permission)
+            Logger.d("${permission.displayName} permission ${if (isGranted) "granted" else "denied"}")
             PermissionResult(permission, isGranted)
         }
         onAllResults(results)
@@ -51,7 +45,7 @@ fun RequestPermissions(
         if (!hasRequested) {
             hasRequested = true
             if (permissionsToRequest.isNotEmpty()) {
-                Logger.d(TAG, "Requesting ${permissionsToRequest.size} permissions")
+                Logger.d("Requesting ${permissionsToRequest.size} permissions")
                 launcher.launch(permissionsToRequest.map { it.permission }.toTypedArray())
             } else {
                 // All permissions already granted
