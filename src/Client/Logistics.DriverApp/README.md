@@ -2,155 +2,112 @@
 
 A cross-platform driver application built with **Kotlin Multiplatform (KMP)** and **Compose Multiplatform**, running on both **Android** and **iOS** from a single codebase.
 
-> **Cross-Platform**: Share ~80% of code between Android and iOS
+> **Cross-Platform**: Share ~90% of code between Android and iOS
 > **Native Performance**: Compiled to native code for each platform
 > **Modern UI**: Compose Multiplatform for consistent UX
 
-**Migrated from**: .NET MAUI → Android (Kotlin/Jetpack Compose) → **KMP (Android + iOS)**
+**Migrated from**: .NET MAUI → **KMP (Android + iOS)**
 
 ## Features
 
-- **Authentication**: OpenID Connect (OIDC) OAuth 2.0 flow with JWT tokens
+- **Authentication**: Login and secure session management using ROPC flow
 - **Dashboard**: View truck information and active loads
 - **Load Management**: View load details, confirm pickups and deliveries
 - **Statistics**: Driver performance metrics with interactive charts
 - **Past Loads**: Historical load data for the past 90 days
 - **Account Management**: Update user profile information
+- **Real-time Updates**: SignalR for live load status updates
 - **Real-time Location Tracking**: Background location service with proximity detection
 - **Push Notifications**: Firebase Cloud Messaging for load updates
 - **Maps Integration**: Google Maps for route visualization
 
 ## Tech Stack
 
-### Shared (Cross-Platform)
-- **Kotlin Multiplatform**
-- **Compose Multiplatform**
-- **Ktor Client**
-- **Kotlinx Serialization**
-- **Kotlinx Coroutines**
-- **Kotlinx DateTime**
-- **Koin**
-- **Voyager**
-- **Multiplatform Settings**
+### Core Technologies
+
+| Technology | Version |
+|------------|---------|
+| Kotlin | 2.2.21 |
+| Compose Multiplatform | 1.9.2 |
+| Ktor | 3.3.1 |
+| Koin | 4.1.0 |
+| Kotlinx Serialization | 1.9.0 |
+| Kotlinx Coroutines | 1.10.2 |
 
 ### Android Platform
+
 - **Min SDK**: 26 (Android 8.0)
 - **Target SDK**: 36 (Android 16)
-- **Firebase**: Cloud Messaging, Analytics
-- **Google Maps**: Maps Compose 6.2.1
-- **AppAuth**: OIDC
-- **DataStore**: Preferences storage
-- **Timber**: Logging
+- **Firebase BOM**: 34.5.0 (Cloud Messaging)
+- **Google Maps**: Maps Compose 6.12.1
+- **SignalR**: 10.0.0
 
 ### iOS Platform
+
 - **iOS Version**: 15.0+
 - **Xcode**: 15.0+
-- **CocoaPods**: Dependency management
+- **Ktor Darwin**: Native networking
 - **Swift Interop**: Native iOS integration
 
 ## Project Structure
 
-### KMP Architecture
-
-```
+```text
 Logistics.DriverApp/
-├── shared/                    # KMP Shared Module (~80% code sharing)
-│   ├── commonMain/            # Platform-independent code
-│   │   ├── domain/            # Business logic & models
-│   │   ├── data/              # API clients, repositories
-│   │   ├── presentation/      # Shared UI (Compose MP)
-│   │   └── platform/          # expect declarations
-│   ├── androidMain/           # Android-specific implementations
-│   └── iosMain/               # iOS-specific implementations
+├── composeApp/                     # KMP Application Module
+│   ├── src/
+│   │   ├── commonMain/             # Shared code (~90%)
+│   │   │   └── kotlin/com/jfleets/driver/
+│   │   │       ├── api/            # API clients & networking
+│   │   │       ├── model/          # Domain models
+│   │   │       ├── navigation/     # Navigation routes & graphs
+│   │   │       ├── permission/     # Permission handling
+│   │   │       ├── service/        # Business services
+│   │   │       ├── ui/             # Compose UI screens & components
+│   │   │       ├── util/           # Utilities & extensions
+│   │   │       ├── viewmodel/      # ViewModels (MVVM)
+│   │   │       └── Module.kt       # Koin DI module
+│   │   │
+│   │   ├── androidMain/            # Android-specific code
+│   │   │   └── kotlin/             # Platform implementations
+│   │   │
+│   │   ├── iosMain/                # iOS-specific code
+│   │   │   └── kotlin/             # Platform implementations
+│   │   │
+│   │   └── openapi/                # OpenAPI spec for code generation
+│   │       └── api-spec.json
+│   │
+│   └── build.gradle.kts
 │
-├── androidApp/                # Android Application
-│   ├── service/               # Android services (location, FCM)
-│   └── MainActivity.kt
+├── iosApp/                         # iOS Application
+│   ├── iosApp.xcodeproj/
+│   ├── iosApp/
+│   └── Configuration/
 │
-├── iosApp/                    # iOS Application
-│   ├── iosApp.xcodeproj
-│   └── DriverApp.swift
+├── docs/                           # Documentation
+│   ├── project-proposal.pdf
+│   └── uml/
 │
 ├── gradle/
-│   └── libs.versions.toml    # Centralized dependency versions
+│   └── libs.versions.toml          # Centralized dependency versions
 │
-└── build.gradle.kts
+├── build.gradle.kts
+└── settings.gradle.kts
 ```
 
-## Setup Instructions
+## Architecture
 
-### Prerequisites
+The app follows **Clean Architecture** with **MVVM** pattern:
 
-1. **Development Tools**:
-   - Android Studio Hedgehog
-   - Xcode (macOS only)
-   - JDK 17
-   - CocoaPods (iOS): `sudo gem install cocoapods`
+- **UI Layer**: Compose Multiplatform screens with Material 3
+- **ViewModel Layer**: State management with JetBrains Lifecycle ViewModel
+- **Service Layer**: Business logic and data orchestration
+- **API Layer**: Ktor-based HTTP clients with OpenAPI-generated models
+- **Navigation**: JetBrains Navigation Compose for type-safe navigation
 
-2. **Platform SDKs**:
-   - Android SDK (API 36)
-   - iOS SDK (15.0+)
+### Dependency Injection
 
-### Step 1: Clone and Build
+Koin is used for multiplatform DI, configured in `Module.kt` with platform-specific modules in `androidMain` and `iosMain`.
 
-```bash
-cd DriverAppKotlin
+### API Generation
 
-# Build the shared module
-./gradlew :shared:build
-
-# Build Android app
-./gradlew :androidApp:assembleDebug
-
-# Generate iOS framework (macOS only)
-./gradlew :shared:linkDebugFrameworkIosSimulatorArm64
-```
-
-### Step 2: Android Setup
-
-1. **Open** `androidApp` in Android Studio
-2. **Add** `google-services.json` to `androidApp/` folder
-3. **Update** API URLs in shared module (see Configuration below)
-4. **Run** on device or emulator
-
-### Step 3: iOS Setup (macOS Only)
-
-1. **Install CocoaPods dependencies**:
-   ```bash
-   cd iosApp
-   pod install
-   ```
-
-2. **Open** `iosApp.xcworkspace` in Xcode (not .xcodeproj!)
-
-3. **Add** Firebase config:
-   - Download `GoogleService-Info.plist` from Firebase Console
-   - Add to Xcode project
-
-4. **Build and Run** in Xcode
-
-## Build & Run
-
-### Android
-```bash
-# Debug
-./gradlew :androidApp:assembleDebug
-
-# Release
-./gradlew :androidApp:bundleRelease
-
-# Run
-./gradlew :androidApp:installDebug
-```
-
-### iOS (macOS only)
-```bash
-# Build framework
-./gradlew :shared:linkDebugFrameworkIosSimulatorArm64
-
-# Install pods
-cd iosApp && pod install
-
-# Open in Xcode
-open iosApp.xcworkspace
-```
+API clients and models are auto-generated from OpenAPI spec using the OpenAPI Generator Gradle plugin (v7.10.0).
