@@ -23,7 +23,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -33,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.jfleets.driver.api.models.LoadStatus
 import com.jfleets.driver.model.LocalUserSettings
 import com.jfleets.driver.model.toDisplayString
+import com.jfleets.driver.ui.components.AppTopBar
 import com.jfleets.driver.ui.components.CardContainer
 import com.jfleets.driver.ui.components.ErrorView
 import com.jfleets.driver.ui.components.LoadingIndicator
@@ -55,8 +55,8 @@ fun LoadDetailScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Load Details") },
+            AppTopBar(
+                title = "Load Details",
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")

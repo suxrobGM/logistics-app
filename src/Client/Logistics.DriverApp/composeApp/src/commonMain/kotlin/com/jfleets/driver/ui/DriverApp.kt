@@ -89,6 +89,11 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
                                 label = { Text(item.label) },
                                 selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
                                 onClick = {
+                                    // Ignore navigation if already on the destination
+                                    if (currentDestination?.route == item.route) {
+                                        return@NavigationBarItem
+                                    }
+
                                     navController.navigate(item.route) {
                                         popUpTo(navController.graph.findStartDestination().id) {
                                             saveState = true

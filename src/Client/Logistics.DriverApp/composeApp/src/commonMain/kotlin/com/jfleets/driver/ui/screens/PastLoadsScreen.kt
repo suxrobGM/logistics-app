@@ -15,12 +15,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.jfleets.driver.ui.components.AppTopBar
 import com.jfleets.driver.ui.components.ErrorView
 import com.jfleets.driver.ui.components.LoadCard
 import com.jfleets.driver.ui.components.LoadingIndicator
@@ -38,8 +38,8 @@ fun PastLoadsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Past Loads") },
+            AppTopBar(
+                title = "Past Loads",
                 actions = {
                     IconButton(onClick = { viewModel.refresh() }) {
                         Icon(Icons.Default.Refresh, "Refresh")

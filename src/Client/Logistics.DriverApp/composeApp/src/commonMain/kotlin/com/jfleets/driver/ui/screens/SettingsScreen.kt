@@ -16,7 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jfleets.driver.model.DistanceUnit
 import com.jfleets.driver.model.Language
+import com.jfleets.driver.ui.components.AppTopBar
 import com.jfleets.driver.ui.components.CardContainer
 import com.jfleets.driver.ui.components.settings.SelectableItem
 import com.jfleets.driver.ui.components.settings.SettingsItem
@@ -51,9 +51,7 @@ fun SettingsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Settings") }
-            )
+            AppTopBar(title = "Settings")
         }
     ) { paddingValues ->
         Column(
