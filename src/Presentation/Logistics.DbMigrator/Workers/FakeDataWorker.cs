@@ -10,12 +10,14 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.DbMigrator.Workers;
 
-internal class FakeDataWorker : IHostedService
+internal class FakeDataWorker(
+    ILogger<FakeDataWorker> logger,
+    IServiceScopeFactory scopeFactory)
+    : IHostedService
 {
     private const string UserDefaultPassword = "Test12345#";
-    private readonly DateTime _endDate = DateTime.UtcNow.AddDays(-3);
+    private readonly DateTime _endDate = DateTime.UtcNow.AddDays(-1);
 
-    private readonly ILogger<FakeDataWorker> _logger;
     private readonly Random _random = new();
 
     private readonly (Address addr, double lng, double lat)[] _routePoints =
@@ -36,20 +38,11 @@ internal class FakeDataWorker : IHostedService
             -97.7431, 30.2672)
     ];
 
-    private readonly IServiceScopeFactory _scopeFactory;
-    private readonly DateTime _startDate = DateTime.UtcNow.AddMonths(-3);
-
-    public FakeDataWorker(
-        ILogger<FakeDataWorker> logger,
-        IServiceScopeFactory scopeFactory)
-    {
-        _logger = logger;
-        _scopeFactory = scopeFactory;
-    }
+    private readonly DateTime _startDate = DateTime.UtcNow.AddMonths(-2);
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        using var scope = _scopeFactory.CreateScope();
+        using var scope = scopeFactory.CreateScope();
 
         var payrollService = scope.ServiceProvider.GetRequiredService<PayrollService>();
         var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
@@ -59,7 +52,7 @@ internal class FakeDataWorker : IHostedService
 
         if (!populateFakeDataEnabled)
         {
-            _logger.LogInformation("PopulateFakeData is set to false. Skipping data population");
+            logger.LogInformation("PopulateFakeData is set to false. Skipping data population");
             return;
         }
 
@@ -70,11 +63,11 @@ internal class FakeDataWorker : IHostedService
 
         if (hasEmployees)
         {
-            _logger.LogInformation("There are already employees in the database. Skipping data population");
+            logger.LogInformation("There are already employees in the database. Skipping data population");
             return;
         }
 
-        _logger.LogInformation("Populating databases with fake data");
+        logger.LogInformation("Populating databases with fake data");
         var users = await AddUsersAsync(scope.ServiceProvider);
         var employees = await AddEmployeesAsync(scope.ServiceProvider, users);
         var trucks = await AddTrucksAsync(scope.ServiceProvider, employees.Drivers);
@@ -84,7 +77,7 @@ internal class FakeDataWorker : IHostedService
         await AddNotificationsAsync(scope.ServiceProvider);
 
         await payrollService.GeneratePayrolls(employees, _startDate, _endDate);
-        _logger.LogInformation("Databases have been populated successfully");
+        logger.LogInformation("Databases have been populated successfully");
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
@@ -136,7 +129,7 @@ internal class FakeDataWorker : IHostedService
             }
             finally
             {
-                _logger.LogInformation("Created an user {FirstName} {LastName}", fakeUser.FirstName, fakeUser.LastName);
+                logger.LogInformation("Created an user {FirstName} {LastName}", fakeUser.FirstName, fakeUser.LastName);
             }
         }
 
@@ -214,7 +207,7 @@ internal class FakeDataWorker : IHostedService
         user.TenantId = tenantId;
         await employeeRepository.AddAsync(employee);
         employee.Roles.Add(role);
-        _logger.LogInformation("Added an employee {Name} with role {Role}", user.UserName, role.Name);
+        logger.LogInformation("Added an employee {Name} with role {Role}", user.UserName, role.Name);
         return employee;
     }
 
@@ -238,7 +231,7 @@ internal class FakeDataWorker : IHostedService
             }
 
             await customerRepository.AddAsync(customer);
-            _logger.LogInformation("Added a customer '{CustomerName}'", customer.Name);
+            logger.LogInformation("Added a customer '{CustomerName}'", customer.Name);
         }
 
         await tenantUow.SaveChangesAsync();
@@ -262,7 +255,7 @@ internal class FakeDataWorker : IHostedService
             truckNumber++;
             trucksList.Add(truck);
             await truckRepository.AddAsync(truck);
-            _logger.LogInformation("Added a truck with number {Number}, and type {Type}", truck.Number, truck.Type);
+            logger.LogInformation("Added a truck with number {Number}, and type {Type}", truck.Number, truck.Type);
         }
 
         await tenantUow.SaveChangesAsync();
@@ -295,7 +288,7 @@ internal class FakeDataWorker : IHostedService
 
             var load = BuildLoad(i, origin, dest, LoadType.GeneralFreight, truck, dispatcher, customer);
             await tenantUow.Repository<Load>().AddAsync(load);
-            _logger.LogInformation("Added Load {LoadName} for Truck {TruckNumber}", load.Name, truck.Number);
+            logger.LogInformation("Added Load {LoadName} for Truck {TruckNumber}", load.Name, truck.Number);
         }
 
         await tenantUow.SaveChangesAsync();
@@ -310,7 +303,9 @@ internal class FakeDataWorker : IHostedService
         Employee dispatcher,
         Customer customer)
     {
-        var dispatched = _random.UtcDate(_startDate, _endDate);
+        var dispatchedAt = _random.UtcDate(_startDate, _endDate);
+        var pickedUpAt = dispatchedAt.AddHours(_random.Next(1, 12));
+        var deliveredAt = pickedUpAt.AddHours(_random.Next(4, 48));
         var deliveryCost = _random.Next(1_000, 3_000);
         var originLocation = new GeoPoint(origin.lng, origin.lat);
         var destLocation = new GeoPoint(dest.lng, dest.lat);
@@ -327,10 +322,10 @@ internal class FakeDataWorker : IHostedService
             truck,
             dispatcher);
 
-        // Simulate load dispatching and delivery
-        load.Dispatch();
-        load.ConfirmPickup();
-        load.ConfirmDelivery();
+        // Simulate load dispatching and delivery with random dates
+        load.Dispatch(dispatchedAt);
+        load.ConfirmPickup(pickedUpAt);
+        load.ConfirmDelivery(deliveredAt);
 
         return load;
     }
@@ -391,7 +386,7 @@ internal class FakeDataWorker : IHostedService
             }
 
             await tripRepo.AddAsync(trip);
-            _logger.LogInformation("Added Trip {Trip} with {Cnt} chained loads", trip.Name, loadsCount);
+            logger.LogInformation("Added Trip {Trip} with {Cnt} chained loads", trip.Name, loadsCount);
         }
 
         await tenantUow.SaveChangesAsync();
@@ -422,7 +417,7 @@ internal class FakeDataWorker : IHostedService
             };
 
             await notificationRepository.AddAsync(notification);
-            _logger.LogInformation("Added a notification {Notification}", notification.Title);
+            logger.LogInformation("Added a notification {Notification}", notification.Title);
         }
 
         await tenantUow.SaveChangesAsync();

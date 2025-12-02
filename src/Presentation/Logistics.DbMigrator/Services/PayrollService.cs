@@ -6,19 +6,10 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.DbMigrator.Services;
 
-public class PayrollService
+public class PayrollService(
+    ITenantUnitOfWork tenantUow,
+    ILogger<PayrollService> logger)
 {
-    private readonly ILogger<PayrollService> _logger;
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public PayrollService(
-        ITenantUnitOfWork tenantUow,
-        ILogger<PayrollService> logger)
-    {
-        _tenantUow = tenantUow;
-        _logger = logger;
-    }
-
     public async Task GeneratePayrolls(CompanyEmployees companyEmployees, DateTime startDate, DateTime endDate)
     {
         var monthlyEmployees = companyEmployees.AllEmployees
@@ -29,12 +20,12 @@ public class PayrollService
 
         await ProcessPayrolls(monthlyEmployees, monthlyRanges);
         await ProcessPayrolls(weeklyEmployees, weeklyRanges);
-        await _tenantUow.SaveChangesAsync();
+        await tenantUow.SaveChangesAsync();
     }
 
     private async Task ProcessPayrolls(Employee[] employees, List<(DateTime StartDate, DateTime EndDate)> dateRanges)
     {
-        var payrollRepository = _tenantUow.Repository<PayrollInvoice>();
+        var payrollRepository = tenantUow.Repository<PayrollInvoice>();
         foreach (var range in dateRanges)
         {
             foreach (var employee in employees)
@@ -50,7 +41,7 @@ public class PayrollService
                 var payroll = CreatePayrollInvoice(employee, range.StartDate, range.EndDate);
                 await payrollRepository.AddAsync(payroll);
 
-                _logger.LogInformation(
+                logger.LogInformation(
                     "Generated payrolls for the employee '{EmployeeName}', date range: {StartDate} - {EndDate}",
                     employee.GetFullName(), range.StartDate.ToShortDateString(), range.EndDate.ToShortDateString());
             }
@@ -98,7 +89,7 @@ public class PayrollService
 
         // Share-of-gross: sum every load that was delivered in the period
         // by ANY truck where this employee was the main OR secondary driver.
-        var totalGross = _tenantUow.Repository<Truck>()
+        var totalGross = tenantUow.Repository<Truck>()
             .Query() // IQueryable<Truck>
             .Where(t => t.MainDriverId == employee.Id ||
                         t.SecondaryDriverId == employee.Id)

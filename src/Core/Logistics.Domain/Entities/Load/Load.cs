@@ -126,18 +126,30 @@ public class Load : AuditableEntity, ITenantEntity
     }
 
     // Convenience wrappers for common actions
-    public void Dispatch()
+    public void Dispatch(DateTime? at = null)
     {
+        if (at.HasValue)
+        {
+            DispatchedAt = at.Value;
+        }
         UpdateStatus(LoadStatus.Dispatched);
     }
 
-    public void ConfirmPickup()
+    public void ConfirmPickup(DateTime? at = null)
     {
+        if (at.HasValue)
+        {
+            PickedUpAt = at.Value;
+        }
         UpdateStatus(LoadStatus.PickedUp);
     }
 
-    public void ConfirmDelivery()
+    public void ConfirmDelivery(DateTime? at = null)
     {
+        if (at.HasValue)
+        {
+            DeliveredAt = at.Value;
+        }
         UpdateStatus(LoadStatus.Delivered);
     }
 

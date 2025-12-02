@@ -10,30 +10,23 @@ using CustomClaimTypes = Logistics.Shared.Identity.Claims.CustomClaimTypes;
 
 namespace Logistics.DbMigrator.Workers;
 
-internal class SeedDatabaseWorker : IHostedService
+internal class SeedDatabaseWorker(
+    ILogger<SeedDatabaseWorker> logger,
+    IServiceScopeFactory scopeFactory)
+    : IHostedService
 {
     private const string UserDefaultPassword = "Test12345#";
-    private readonly ILogger<SeedDatabaseWorker> _logger;
-    private readonly IServiceScopeFactory _scopeFactory;
-
-    public SeedDatabaseWorker(
-        ILogger<SeedDatabaseWorker> logger,
-        IServiceScopeFactory scopeFactory)
-    {
-        _logger = logger;
-        _scopeFactory = scopeFactory;
-    }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        using var scope = _scopeFactory.CreateScope();
+        using var scope = scopeFactory.CreateScope();
 
-        _logger.LogInformation("Seeding databases...");
+        logger.LogInformation("Seeding databases...");
         await AddAppRolesAsync(scope.ServiceProvider);
         await AddSuperAdminAsync(scope.ServiceProvider);
         //await AddSubscriptionPlanAsync(scope.ServiceProvider);
         await AddDefaultTenantAsync(scope.ServiceProvider);
-        _logger.LogInformation("Successfully seeded databases");
+        logger.LogInformation("Successfully seeded databases");
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
@@ -58,7 +51,7 @@ internal class SeedDatabaseWorker : IHostedService
             {
                 // Update existing role claims
                 await AddPermissions(roleManager, existingRole, GetPermissionsBasedOnRole(existingRole.Name!));
-                _logger.LogInformation("Updated app role '{Role}'", existingRole.Name);
+                logger.LogInformation("Updated app role '{Role}'", existingRole.Name);
             }
             else
             {
@@ -68,11 +61,11 @@ internal class SeedDatabaseWorker : IHostedService
                 {
                     await AddPermissions(roleManager, role, AppRolePermissions.GetBasicPermissions());
                     await AddPermissions(roleManager, role, GetPermissionsBasedOnRole(role.Name!));
-                    _logger.LogInformation("Added the '{RoleName}' role", role.Name);
+                    logger.LogInformation("Added the '{RoleName}' role", role.Name);
                 }
                 else
                 {
-                    _logger.LogError("Failed to add the '{RoleName}' role", role.Name);
+                    logger.LogError("Failed to add the '{RoleName}' role", role.Name);
                 }
             }
         }
@@ -102,7 +95,7 @@ internal class SeedDatabaseWorker : IHostedService
                 throw new Exception(result.Errors.First().Description);
             }
 
-            _logger.LogInformation("Created the super admin '{Admin}'", superAdmin.UserName);
+            logger.LogInformation("Created the super admin '{Admin}'", superAdmin.UserName);
         }
 
         var hasSuperAdminRole = await userManager.IsInRoleAsync(superAdmin, AppRoles.SuperAdmin);
@@ -110,7 +103,7 @@ internal class SeedDatabaseWorker : IHostedService
         if (!hasSuperAdminRole)
         {
             await userManager.AddToRoleAsync(superAdmin, AppRoles.SuperAdmin);
-            _logger.LogInformation("Added 'app.super_admin' role to the user '{Admin}'", superAdmin.UserName);
+            logger.LogInformation("Added 'app.super_admin' role to the user '{Admin}'", superAdmin.UserName);
         }
     }
 
@@ -130,7 +123,7 @@ internal class SeedDatabaseWorker : IHostedService
         {
             await masterUow.Repository<SubscriptionPlan>().AddAsync(standardPlan);
             await masterUow.SaveChangesAsync();
-            _logger.LogInformation("Added a subscription plan {PlanName}", standardPlan.Name);
+            logger.LogInformation("Added a subscription plan {PlanName}", standardPlan.Name);
         }
     }
 
@@ -166,7 +159,7 @@ internal class SeedDatabaseWorker : IHostedService
             await masterUow.Repository<Tenant>().AddAsync(defaultTenant);
             await masterUow.SaveChangesAsync();
             await databaseProvider.CreateDatabaseAsync(defaultTenant.ConnectionString);
-            _logger.LogInformation("Added default tenant with connection string: {ConnectionString}",
+            logger.LogInformation("Added default tenant with connection string: {ConnectionString}",
                 defaultTenant.ConnectionString);
         }
     }
@@ -190,12 +183,12 @@ internal class SeedDatabaseWorker : IHostedService
 
             if (result.Succeeded)
             {
-                _logger.LogInformation("Added claim '{ClaimType}' - '{ClaimValue}' to the role '{Role}'", claim.Type,
+                logger.LogInformation("Added claim '{ClaimType}' - '{ClaimValue}' to the role '{Role}'", claim.Type,
                     claim.Value, role.Name);
             }
             else
             {
-                _logger.LogError("Failed to add claim '{ClaimType}' - '{ClaimValue}' to the role '{Role}'", claim.Type,
+                logger.LogError("Failed to add claim '{ClaimType}' - '{ClaimValue}' to the role '{Role}'", claim.Type,
                     claim.Value, role.Name);
             }
         }

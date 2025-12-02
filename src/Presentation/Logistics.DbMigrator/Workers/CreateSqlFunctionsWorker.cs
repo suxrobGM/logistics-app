@@ -2,33 +2,27 @@ using Logistics.Domain.Persistence;
 
 namespace Logistics.DbMigrator.Data;
 
-internal class CreateSqlFunctionsWorker : IHostedService
+internal class CreateSqlFunctionsWorker(
+    ILogger<CreateSqlFunctionsWorker> logger,
+    IServiceScopeFactory scopeFactory)
+    : IHostedService
 {
-    private readonly ILogger<CreateSqlFunctionsWorker> _logger;
-    private readonly IServiceScopeFactory _scopeFactory;
-
-    public CreateSqlFunctionsWorker(ILogger<CreateSqlFunctionsWorker> logger, IServiceScopeFactory scopeFactory)
-    {
-        _logger = logger;
-        _scopeFactory = scopeFactory;
-    }
-
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         try
         {
-            using var scope = _scopeFactory.CreateScope();
+            using var scope = scopeFactory.CreateScope();
             var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
 
-            _logger.LogInformation("Creating Stored Procedures");
+            logger.LogInformation("Creating Stored Procedures");
             await CreateSqlFunction("CreateCompanyStats.psql", tenantUow);
             await CreateSqlFunction("CreateTrucksStats.psql", tenantUow);
 
-            _logger.LogInformation("Stored Procedures Created");
+            logger.LogInformation("Stored Procedures Created");
         }
         catch (Exception ex)
         {
-            _logger.LogError("Thrown exception in PopulateData.ExecuteAsync(): {Exception}", ex);
+            logger.LogError("Thrown exception in PopulateData.ExecuteAsync(): {Exception}", ex);
         }
     }
 
