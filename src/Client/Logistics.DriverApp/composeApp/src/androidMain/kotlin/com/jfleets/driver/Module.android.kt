@@ -1,6 +1,7 @@
 package com.jfleets.driver
 
 import android.content.Context
+import com.jfleets.driver.service.SignalRService
 import com.jfleets.driver.service.auth.AuthService
 import com.jfleets.driver.service.createAndroidDataStore
 import com.jfleets.driver.viewmodel.AccountViewModel
@@ -15,8 +16,9 @@ import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
-const val API_BASE_URL = "https://10.0.2.2:7000/"
-const val IDENTITY_SERVER_URL = "https://10.0.2.2:7001/"
+const val API_BASE_URL = "http://10.0.2.2:7000/"
+const val IDENTITY_SERVER_URL = "http://10.0.2.2:7001/"
+const val SIGNALR_HUB_URL = "http://10.0.2.2:7000/hubs/live-tracking"
 
 private var koinInitialized = false
 
@@ -39,12 +41,10 @@ fun initKoin(context: Context) {
 }
 
 private val androidModule = module {
-    // DataStore instance (platform-specific creation)
     single { createAndroidDataStore(get<Context>()) }
-
     single { AuthService(IDENTITY_SERVER_URL, get()) }
+    single { SignalRService(SIGNALR_HUB_URL, get()) }
 
-    // ViewModels
     viewModelOf(::DashboardViewModel)
     viewModelOf(::AccountViewModel)
     viewModelOf(::LoadDetailViewModel)

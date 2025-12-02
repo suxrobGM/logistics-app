@@ -1,17 +1,16 @@
 package com.jfleets.driver.service
 
-import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.location.Address
 import android.location.Geocoder
+import android.location.Location
 import android.os.Build
 import android.os.IBinder
 import android.os.Looper
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -25,6 +24,8 @@ import com.jfleets.driver.api.DriverApi
 import com.jfleets.driver.api.LoadApi
 import com.jfleets.driver.api.models.UpdateLoadProximityCommand
 import com.jfleets.driver.model.toDomain
+import com.jfleets.driver.permission.AppPermission
+import com.jfleets.driver.permission.isPermissionGranted
 import com.jfleets.driver.util.Logger
 import com.jfleets.driver.util.calculateDistance
 import kotlinx.coroutines.CoroutineScope
@@ -32,12 +33,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.android.ext.android.inject
 import java.util.Locale
+import kotlin.coroutines.resume
 
 class LocationTrackingService : Service() {
     private val loadApi: LoadApi by inject()
     private val driverApi: DriverApi by inject()
+    private val signalRService: SignalRService by inject()
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
@@ -56,7 +61,19 @@ class LocationTrackingService : Service() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, createNotification())
+        connectSignalR()
         startLocationUpdates()
+    }
+
+    private fun connectSignalR() {
+        serviceScope.launch {
+            try {
+                signalRService.connect()
+                Logger.d("SignalR connected in LocationTrackingService")
+            } catch (e: Exception) {
+                Logger.e("Failed to connect SignalR in LocationTrackingService", e)
+            }
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -97,11 +114,7 @@ class LocationTrackingService : Service() {
             .build()
 
     private fun startLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
+        if (!this.isPermissionGranted(AppPermission.FineLocation)) {
             Logger.w("Location permission not granted")
             stopSelf()
             return
@@ -130,15 +143,14 @@ class LocationTrackingService : Service() {
         )
     }
 
-    private fun handleLocationUpdate(location: android.location.Location) {
+    private fun handleLocationUpdate(location: Location) {
         serviceScope.launch {
             try {
                 // Get address from coordinates
                 val address = getAddressFromLocation(location.latitude, location.longitude)
 
                 // Send location to server via SignalR
-                // TODO: Implement SignalR connection and send location
-                Logger.d("Location: $address")
+                sendLocationViaSignalR(location, address)
 
                 // Check proximity to active loads
                 checkLoadProximity(location)
@@ -148,7 +160,23 @@ class LocationTrackingService : Service() {
         }
     }
 
-    private suspend fun checkLoadProximity(location: android.location.Location) {
+    private suspend fun sendLocationViaSignalR(
+        location: Location,
+        address: String
+    ) {
+        try {
+            val locationUpdate = LocationUpdate(
+                latitude = location.latitude,
+                longitude = location.longitude,
+                address = address
+            )
+            signalRService.sendLocationUpdate(locationUpdate)
+        } catch (e: Exception) {
+            Logger.e("Failed to send location via SignalR", e)
+        }
+    }
+
+    private suspend fun checkLoadProximity(location: Location) {
         try {
             // Get active loads
             val response = loadApi.getLoads(onlyActiveLoads = true)
@@ -200,18 +228,26 @@ class LocationTrackingService : Service() {
         }
     }
 
-    private fun getAddressFromLocation(latitude: Double, longitude: Double): String {
+    private suspend fun getAddressFromLocation(latitude: Double, longitude: Double): String {
         return try {
             val geocoder = Geocoder(this, Locale.getDefault())
-            val addresses = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                // For Android 13+, use the new async API
-                // For simplicity, we'll use the old synchronous API for now
-                @Suppress("DEPRECATION")
-                geocoder.getFromLocation(latitude, longitude, 1)
-            } else {
-                @Suppress("DEPRECATION")
-                geocoder.getFromLocation(latitude, longitude, 1)
-            }
+
+            val addresses: List<Address>? =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    // Android 13+ uses async API with GeocodeListener
+                    suspendCancellableCoroutine<List<Address>> { continuation ->
+                        geocoder.getFromLocation(
+                            latitude,
+                            longitude,
+                            1
+                        ) { result: MutableList<Address> ->
+                            continuation.resume(result)
+                        }
+                    }
+                } else {
+                    @Suppress("DEPRECATION")
+                    geocoder.getFromLocation(latitude, longitude, 1)
+                }
 
             if (!addresses.isNullOrEmpty()) {
                 val address = addresses[0]
@@ -227,7 +263,13 @@ class LocationTrackingService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+
         fusedLocationClient.removeLocationUpdates(locationCallback)
+
+        runBlocking {
+            signalRService.disconnect()
+        }
+
         serviceScope.cancel()
         Logger.d("LocationTrackingService destroyed")
     }

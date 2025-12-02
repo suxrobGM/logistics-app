@@ -52,22 +52,29 @@ sealed class AppPermission(
     )
 
     companion object {
-        /** Permissions to request at app startup */
-        val startupPermissions: List<AppPermission> = listOf(
-            PostNotifications,
-            FineLocation,
-            CoarseLocation,
-            BackgroundLocation,
-            Camera
-        )
+        /**
+         * Permissions to request at app startup.
+         * Note: BackgroundLocation must be requested separately AFTER foreground location is granted.
+         * Android silently denies all permissions if background location is requested with others.
+         */
+        val startupPermissions: List<AppPermission> by lazy {
+            listOf(
+                PostNotifications,
+                FineLocation,
+                CoarseLocation,
+                Camera
+            )
+        }
 
         /** All defined permissions */
-        val all: List<AppPermission> = listOf(
-            PostNotifications,
-            FineLocation,
-            CoarseLocation,
-            BackgroundLocation,
-            Camera
-        )
+        val all: List<AppPermission> by lazy {
+            listOf(
+                PostNotifications,
+                FineLocation,
+                CoarseLocation,
+                BackgroundLocation,
+                Camera
+            )
+        }
     }
 }

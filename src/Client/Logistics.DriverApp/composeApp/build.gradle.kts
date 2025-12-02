@@ -120,11 +120,13 @@ kotlin {
             // Firebase
             implementation(project.dependencies.platform(libs.firebase.bom))
             implementation(libs.firebase.messaging)
-            implementation(libs.firebase.analytics)
 
             // Google Play Services & Maps
             implementation(libs.play.services.location)
             implementation(libs.bundles.maps)
+
+            // SignalR Client
+            implementation(libs.signalr.client)
         }
 
         iosMain.dependencies {

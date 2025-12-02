@@ -38,6 +38,9 @@ play-services-location = "21.3.0"
 play-services-maps = "19.2.0"
 maps-compose = "6.12.1"
 
+# SignalR
+signalr = "10.0.0"
+
 # Testing
 junit = "4.13.2"
 androidx-test-junit = "1.3.0"
@@ -82,13 +85,15 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 # Firebase
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
-firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 
 # Google Play Services
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "play-services-location" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "play-services-maps" }
 maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "maps-compose" }
 maps-compose-utils = { module = "com.google.maps.android:maps-compose-utils", version.ref = "maps-compose" }
+
+# SignalR
+signalr-client = { module = "com.microsoft.signalr:signalr", version.ref = "signalr" }
 
 # Testing
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

@@ -20,7 +20,6 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class DriverFirebaseMessagingService : FirebaseMessagingService() {
-
     private val driverApi: DriverApi by inject()
     private val preferencesManager: PreferencesManager by inject()
 

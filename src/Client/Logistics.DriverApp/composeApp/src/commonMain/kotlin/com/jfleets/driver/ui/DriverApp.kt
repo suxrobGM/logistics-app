@@ -45,6 +45,7 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
         try {
             val isLoggedIn = authService.isLoggedIn()
             if (isLoggedIn) {
+                // Location tracking is started by MainActivity.onResume()
                 navController.navigate(Screen.Dashboard.route) {
                     popUpTo(Screen.Login.route) { inclusive = true }
                 }

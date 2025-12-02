@@ -27,14 +27,21 @@ fun RequestPermissions(
 
     // Filter to only permissions that need to be requested
     val permissionsToRequest = remember(permissions) {
-        permissions.filter { context.shouldRequestPermission(it) }
+        val toRequest = permissions.filter { permission ->
+            val shouldRequest = context.shouldRequestPermission(permission)
+            Logger.d("Permission ${permission.displayName}: shouldRequest=$shouldRequest")
+            shouldRequest
+        }
+        Logger.d("RequestPermissions: ${toRequest.size} permissions need to be requested")
+        toRequest
     }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { resultsMap ->
         val results = permissions.map { permission ->
-            val isGranted = resultsMap[permission.permission] ?: context.isPermissionGranted(permission)
+            val isGranted =
+                resultsMap[permission.permission] ?: context.isPermissionGranted(permission)
             Logger.d("${permission.displayName} permission ${if (isGranted) "granted" else "denied"}")
             PermissionResult(permission, isGranted)
         }

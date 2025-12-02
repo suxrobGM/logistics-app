@@ -49,7 +49,7 @@ builder.AddContainer("stripe-cli", "stripe/stripe-cli:latest")
     .WithEntrypoint("stripe")
     .WithArgs(
         "listen",
-        "--forward-to", "https://localhost:7000/webhooks/stripe")
+        "--forward-to", "http://localhost:7000/webhooks/stripe")
     .WaitFor(logisticsApi);
 
 builder.Build().Run();

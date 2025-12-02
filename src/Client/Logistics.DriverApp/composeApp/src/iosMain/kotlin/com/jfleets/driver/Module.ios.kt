@@ -1,12 +1,14 @@
 package com.jfleets.driver
 
+import com.jfleets.driver.service.SignalRService
 import com.jfleets.driver.service.auth.AuthService
 import com.jfleets.driver.service.createIosDataStore
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 
-const val API_BASE_URL = "https://localhost:7000/"
-const val IDENTITY_SERVER_URL = "https://localhost:7001/"
+const val API_BASE_URL = "http://localhost:7000/"
+const val IDENTITY_SERVER_URL = "http://localhost:7001/"
+const val SIGNALR_HUB_URL = "http://localhost:7000/hubs/live-tracking"
 
 private var koinInitialized = false
 
@@ -28,9 +30,7 @@ fun initKoin() {
  * Koin module for iOS-specific dependencies
  */
 val iosModule = module {
-    // DataStore instance (platform-specific creation)
     single { createIosDataStore() }
-
-    // Auth Service (ROPC authentication)
     single { AuthService(IDENTITY_SERVER_URL, get()) }
+    single { SignalRService(SIGNALR_HUB_URL, get()) }
 }

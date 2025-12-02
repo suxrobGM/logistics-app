@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.jfleets.driver.permission.RequestBackgroundLocationIfNeeded
 import com.jfleets.driver.ui.components.CardContainer
 import com.jfleets.driver.ui.components.ErrorView
 import com.jfleets.driver.ui.components.LoadCard
@@ -45,6 +46,9 @@ fun DashboardScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isRefreshing = uiState is DashboardUiState.Loading
+
+    // Request background location permission (only if foreground location already granted)
+    RequestBackgroundLocationIfNeeded()
 
     Scaffold(
         topBar = {

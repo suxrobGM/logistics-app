@@ -31,6 +31,7 @@ internal static class Setup
         var services = builder.Services;
         var configuration = builder.Configuration;
 
+
         var microsoftLogger = new SerilogLoggerFactory(Log.Logger)
             .CreateLogger<IInfrastructureBuilder>();
 
@@ -61,6 +62,13 @@ internal static class Setup
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
                 configuration.Bind("IdentityServer", options);
+
+                // Disable HTTPS requirement in development environment
+                if (builder.Environment.IsDevelopment())
+                {
+                    options.RequireHttpsMetadata = false;
+                }
+
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateAudience = true,

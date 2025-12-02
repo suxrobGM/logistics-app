@@ -39,6 +39,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.jfleets.driver.service.LocationTracker
 import com.jfleets.driver.ui.components.LoadingIndicator
 import com.jfleets.driver.viewmodel.LoginUiState
 import com.jfleets.driver.viewmodel.LoginViewModel
@@ -59,6 +60,8 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
     LaunchedEffect(uiState) {
         when (uiState) {
             is LoginUiState.Success -> {
+                // Start location tracking after successful login
+                LocationTracker.start()
                 onLoginSuccess()
                 viewModel.resetState()
             }
