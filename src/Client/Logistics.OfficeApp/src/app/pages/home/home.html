@@ -13,7 +13,7 @@
   </div>
 
   <div class="col-xl-5 col-12">
-    <p-card styleClass="h-100">
+    <p-card class="h-100">
       <ng-template #header>
         <h4 class="py-2 ps-3">Active loads</h4>
         <hr class="m-0 w-full" />
@@ -40,7 +40,7 @@
               {{ load.currentAddress | address }}
             </td>
             <td>
-              <a [routerLink]="['/trucks/details', load.assignedTruckId]">
+              <a [routerLink]="['/trucks', load.assignedTruckId]">
                 {{ load.assignedTruckNumber }}
               </a>
             </td>

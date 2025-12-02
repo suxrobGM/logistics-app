@@ -2,7 +2,6 @@ package com.jfleets.driver.service
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import com.jfleets.driver.util.Logger
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -19,11 +18,7 @@ actual object LocationTracker : KoinComponent {
 
         try {
             val intent = Intent(context, LocationTrackingService::class.java)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent)
-            } else {
-                context.startService(intent)
-            }
+            context.startForegroundService(intent)
             isServiceRunning = true
             Logger.d("Location tracking service started")
         } catch (e: Exception) {

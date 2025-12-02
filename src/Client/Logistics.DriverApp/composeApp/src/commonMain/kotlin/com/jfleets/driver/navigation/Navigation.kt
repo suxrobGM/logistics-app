@@ -77,12 +77,7 @@ fun AppNavigation(
             )
         ) { backStackEntry ->
             // Extract loadId from route arguments
-            val argsString = backStackEntry.arguments?.toString() ?: ""
-            val loadId = argsString
-                .substringAfter("loadId=", "")
-                .substringBefore(",")
-                .substringBefore("}")
-                .ifEmpty { "" }
+            val loadId = backStackEntry.savedStateHandle.get<String>("loadId") ?: ""
             val loadApi: LoadApi = koinInject()
             val driverApi: DriverApi = koinInject()
             val viewModel = LoadDetailViewModel(loadApi, driverApi, loadId)

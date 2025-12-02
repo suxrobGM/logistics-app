@@ -47,7 +47,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 
 @Composable
-fun LoginScreen(onLoginSuccess: () -> Unit) {
+fun LoginScreen(onLoginSuccess: () -> Unit = {}) {
     val viewModel: LoginViewModel = koinInject()
     val uiState by viewModel.uiState.collectAsState()
     val username by viewModel.username.collectAsState()
@@ -202,5 +202,5 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
 @Preview
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen(onLoginSuccess = {})
+    LoginScreen()
 }
