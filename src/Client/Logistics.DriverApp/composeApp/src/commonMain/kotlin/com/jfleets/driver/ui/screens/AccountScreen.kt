@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Save
@@ -28,13 +27,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.jfleets.driver.api.models.UserDto
 import com.jfleets.driver.ui.components.AppTopBar
 import com.jfleets.driver.ui.components.CardContainer
 import com.jfleets.driver.ui.components.ErrorView
 import com.jfleets.driver.ui.components.LoadingIndicator
+import com.jfleets.driver.ui.components.phone.PhoneNumberInput
 import com.jfleets.driver.viewmodel.AccountUiState
 import com.jfleets.driver.viewmodel.AccountViewModel
 import com.jfleets.driver.viewmodel.SaveState
@@ -139,14 +138,10 @@ fun AccountScreen(
                                 modifier = Modifier.fillMaxWidth()
                             )
                             Spacer(modifier = Modifier.height(16.dp))
-                            OutlinedTextField(
-                                value = phoneNumber,
-                                onValueChange = { phoneNumber = it },
-                                label = { Text("Phone Number") },
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Phone
-                                ),
-                                modifier = Modifier.fillMaxWidth()
+                            PhoneNumberInput(
+                                fullPhoneNumber = phoneNumber,
+                                onPhoneNumberChange = { phoneNumber = it },
+                                label = "Phone Number"
                             )
                         }
                     }
