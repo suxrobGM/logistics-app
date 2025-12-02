@@ -22,7 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.jfleets.driver.model.Load
 import com.jfleets.driver.util.formatCurrency
-import com.jfleets.driver.util.formatDistance
+import com.jfleets.driver.util.formatMiDistance
 
 @Composable
 fun LoadCard(
@@ -75,7 +75,7 @@ fun LoadCard(
                         color = MaterialTheme.colorScheme.primary
                     )
                     Chip(
-                        text = load.distance.formatDistance(),
+                        text = load.distance.formatMiDistance(),
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }

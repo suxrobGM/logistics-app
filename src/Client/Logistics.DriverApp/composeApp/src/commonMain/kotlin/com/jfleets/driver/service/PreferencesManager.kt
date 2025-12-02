@@ -5,7 +5,12 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.jfleets.driver.model.DistanceUnit
+import com.jfleets.driver.model.Language
+import com.jfleets.driver.model.UserSettings
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 
 /**
  * Cross-platform preferences manager using DataStore.
@@ -23,6 +28,8 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
         val TRUCK_NUMBER = stringPreferencesKey("truck_number")
         val TOKEN_EXPIRY = longPreferencesKey("token_expiry")
         val DRIVER_NAME = stringPreferencesKey("driver_name")
+        val DISTANCE_UNIT = stringPreferencesKey("distance_unit")
+        val LANGUAGE = stringPreferencesKey("language")
     }
 
     // Access Token
@@ -104,6 +111,48 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
 
     suspend fun getDriverName(): String? {
         return dataStore.data.first()[DRIVER_NAME]
+    }
+
+    // Distance Unit
+    suspend fun saveDistanceUnit(unit: DistanceUnit) {
+        dataStore.edit { prefs -> prefs[DISTANCE_UNIT] = unit.code }
+    }
+
+    suspend fun getDistanceUnit(): DistanceUnit {
+        val code = dataStore.data.first()[DISTANCE_UNIT]
+        return DistanceUnit.fromCode(code ?: DistanceUnit.MILES.code)
+    }
+
+    fun getDistanceUnitFlow(): Flow<DistanceUnit> {
+        return dataStore.data.map { prefs ->
+            DistanceUnit.fromCode(prefs[DISTANCE_UNIT] ?: DistanceUnit.MILES.code)
+        }
+    }
+
+    // Language
+    suspend fun saveLanguage(language: Language) {
+        dataStore.edit { prefs -> prefs[LANGUAGE] = language.code }
+    }
+
+    suspend fun getLanguage(): Language {
+        val code = dataStore.data.first()[LANGUAGE]
+        return Language.fromCode(code ?: Language.ENGLISH.code)
+    }
+
+    fun getLanguageFlow(): Flow<Language> {
+        return dataStore.data.map { prefs ->
+            Language.fromCode(prefs[LANGUAGE] ?: Language.ENGLISH.code)
+        }
+    }
+
+    // User Settings (combined)
+    fun getUserSettingsFlow(): Flow<UserSettings> {
+        return dataStore.data.map { prefs ->
+            UserSettings(
+                distanceUnit = DistanceUnit.fromCode(prefs[DISTANCE_UNIT] ?: DistanceUnit.MILES.code),
+                language = Language.fromCode(prefs[LANGUAGE] ?: Language.ENGLISH.code)
+            )
+        }
     }
 
     // Clear all data

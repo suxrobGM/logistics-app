@@ -39,7 +39,7 @@ import com.jfleets.driver.ui.components.LoadingIndicator
 import com.jfleets.driver.ui.components.charts.BarChart
 import com.jfleets.driver.ui.components.charts.LineChart
 import com.jfleets.driver.util.formatCurrency
-import com.jfleets.driver.util.formatDistance
+import com.jfleets.driver.util.formatMiDistance
 import com.jfleets.driver.viewmodel.ChartUiState
 import com.jfleets.driver.viewmodel.StatsUiState
 import com.jfleets.driver.viewmodel.StatsViewModel
@@ -106,7 +106,7 @@ fun StatsScreen(
                             ) {
                                 StatItem("Gross", stats.weeklyGross.formatCurrency())
                                 StatItem("Income", stats.weeklyIncome.formatCurrency())
-                                StatItem("Distance", stats.weeklyDistance.formatDistance())
+                                StatItem("Distance", stats.weeklyDistance.formatMiDistance())
                             }
                         }
                     }
@@ -129,7 +129,7 @@ fun StatsScreen(
                             ) {
                                 StatItem("Gross", stats.monthlyGross.formatCurrency())
                                 StatItem("Income", stats.monthlyIncome.formatCurrency())
-                                StatItem("Distance", stats.monthlyDistance.formatDistance())
+                                StatItem("Distance", stats.monthlyDistance.formatMiDistance())
                             }
                         }
                     }

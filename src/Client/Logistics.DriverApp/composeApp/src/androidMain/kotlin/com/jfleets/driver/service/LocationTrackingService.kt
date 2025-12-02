@@ -1,5 +1,6 @@
 package com.jfleets.driver.service
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -11,6 +12,7 @@ import android.location.Location
 import android.os.Build
 import android.os.IBinder
 import android.os.Looper
+import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -31,7 +33,6 @@ import com.jfleets.driver.permission.isPermissionGranted
 import com.jfleets.driver.service.realtime.SignalRService
 import com.jfleets.driver.service.realtime.TruckGeolocation
 import com.jfleets.driver.util.Logger
-import com.jfleets.driver.util.calculateDistance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -118,6 +119,7 @@ class LocationTrackingService : Service() {
             )
             .build()
 
+    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private fun startLocationUpdates() {
         if (!this.isPermissionGranted(AppPermission.FineLocation)) {
             Logger.w("Location permission not granted")
@@ -201,18 +203,20 @@ class LocationTrackingService : Service() {
                 val originLon = load.originLongitude
                 val destLat = load.destinationLatitude
                 val destLon = load.destinationLongitude
+                val originLocation = Location("").apply {
+                    latitude = originLat ?: 0.0
+                    longitude = originLon ?: 0.0
+                }
+                val destLocation = Location("").apply {
+                    latitude = destLat ?: 0.0
+                    longitude = destLon ?: 0.0
+                }
 
                 if (originLat != null && originLon != null &&
                     destLat != null && destLon != null
                 ) {
-                    val distanceToOrigin = calculateDistance(
-                        location.latitude, location.longitude,
-                        originLat, originLon
-                    )
-                    val distanceToDest = calculateDistance(
-                        location.latitude, location.longitude,
-                        destLat, destLon
-                    )
+                    val distanceToOrigin = location.distanceTo(originLocation)
+                    val distanceToDest = location.distanceTo(destLocation)
 
                     val nearOrigin = distanceToOrigin <= PROXIMITY_THRESHOLD
                     val nearDestination = distanceToDest <= PROXIMITY_THRESHOLD

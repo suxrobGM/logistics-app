@@ -35,7 +35,7 @@ import com.jfleets.driver.ui.components.CardContainer
 import com.jfleets.driver.ui.components.ErrorView
 import com.jfleets.driver.ui.components.LoadingIndicator
 import com.jfleets.driver.util.formatCurrency
-import com.jfleets.driver.util.formatDistance
+import com.jfleets.driver.util.formatMiDistance
 import com.jfleets.driver.util.formatShort
 import com.jfleets.driver.viewmodel.LoadDetailUiState
 import com.jfleets.driver.viewmodel.LoadDetailViewModel
@@ -106,7 +106,7 @@ fun LoadDetailScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 DetailRow("Cost", load.deliveryCost.formatCurrency())
-                                DetailRow("Distance", load.distance.formatDistance())
+                                DetailRow("Distance", load.distance.formatMiDistance())
                             }
                         }
                     }
