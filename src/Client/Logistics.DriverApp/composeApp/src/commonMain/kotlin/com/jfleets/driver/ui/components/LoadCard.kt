@@ -21,9 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.jfleets.driver.api.models.LoadDto
+import com.jfleets.driver.model.LocalUserSettings
 import com.jfleets.driver.model.toDisplayString
 import com.jfleets.driver.util.formatCurrency
-import com.jfleets.driver.util.formatMiDistance
+import com.jfleets.driver.util.formatDistance
 
 @Composable
 fun LoadCard(
@@ -31,6 +32,8 @@ fun LoadCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val userSettings = LocalUserSettings.current
+
     CardContainer(
         modifier = modifier
             .fillMaxWidth()
@@ -76,7 +79,7 @@ fun LoadCard(
                         color = MaterialTheme.colorScheme.primary
                     )
                     Chip(
-                        text = load.distance?.formatMiDistance() ?: "",
+                        text = load.distance?.formatDistance(userSettings.distanceUnit) ?: "",
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }

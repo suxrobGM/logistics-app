@@ -15,7 +15,9 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -23,8 +25,11 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.jfleets.driver.model.LocalUserSettings
+import com.jfleets.driver.model.UserSettings
 import com.jfleets.driver.navigation.AppNavigation
 import com.jfleets.driver.navigation.Screen
+import com.jfleets.driver.service.PreferencesManager
 import com.jfleets.driver.service.auth.AuthService
 import com.jfleets.driver.ui.theme.LogisticsDriverTheme
 import org.koin.compose.koinInject
@@ -35,7 +40,10 @@ import org.koin.compose.koinInject
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DriverApp(onOpenUrl: (String) -> Unit) {
-    val authService: AuthService = koinInject()
+    val authService = koinInject<AuthService>()
+    val preferencesManager = koinInject<PreferencesManager>()
+
+    val userSettings by preferencesManager.getUserSettingsFlow().collectAsState(UserSettings())
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -67,37 +75,39 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
     val showBottomBar = currentDestination?.route != Screen.Login.route &&
             !currentDestination?.route.orEmpty().startsWith("load_detail")
 
-    LogisticsDriverTheme {
-        Scaffold(
-            bottomBar = {
-                if (showBottomBar) {
-                    NavigationBar {
-                        bottomNavItems.forEach { item ->
-                            NavigationBarItem(
-                                icon = { Icon(item.icon, contentDescription = item.label) },
-                                label = { Text(item.label) },
-                                selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
-                                onClick = {
-                                    navController.navigate(item.route) {
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
+    CompositionLocalProvider(LocalUserSettings provides userSettings) {
+        LogisticsDriverTheme {
+            Scaffold(
+                bottomBar = {
+                    if (showBottomBar) {
+                        NavigationBar {
+                            bottomNavItems.forEach { item ->
+                                NavigationBarItem(
+                                    icon = { Icon(item.icon, contentDescription = item.label) },
+                                    label = { Text(item.label) },
+                                    selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                                    onClick = {
+                                        navController.navigate(item.route) {
+                                            popUpTo(navController.graph.findStartDestination().id) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
                                         }
-                                        launchSingleTop = true
-                                        restoreState = true
                                     }
-                                }
-                            )
+                                )
+                            }
                         }
                     }
                 }
+            ) { innerPadding ->
+                AppNavigation(
+                    navController = navController,
+                    startDestination = Screen.Login.route,
+                    onOpenUrl = onOpenUrl,
+                    modifier = Modifier.padding(innerPadding)
+                )
             }
-        ) { innerPadding ->
-            AppNavigation(
-                navController = navController,
-                startDestination = Screen.Login.route,
-                onOpenUrl = onOpenUrl,
-                modifier = Modifier.padding(innerPadding)
-            )
         }
     }
 }

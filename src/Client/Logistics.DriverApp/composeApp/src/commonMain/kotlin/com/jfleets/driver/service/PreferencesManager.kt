@@ -123,12 +123,6 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
         return DistanceUnit.fromCode(code ?: DistanceUnit.MILES.code)
     }
 
-    fun getDistanceUnitFlow(): Flow<DistanceUnit> {
-        return dataStore.data.map { prefs ->
-            DistanceUnit.fromCode(prefs[DISTANCE_UNIT] ?: DistanceUnit.MILES.code)
-        }
-    }
-
     // Language
     suspend fun saveLanguage(language: Language) {
         dataStore.edit { prefs -> prefs[LANGUAGE] = language.code }
@@ -139,17 +133,13 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
         return Language.fromCode(code ?: Language.ENGLISH.code)
     }
 
-    fun getLanguageFlow(): Flow<Language> {
-        return dataStore.data.map { prefs ->
-            Language.fromCode(prefs[LANGUAGE] ?: Language.ENGLISH.code)
-        }
-    }
-
     // User Settings (combined)
     fun getUserSettingsFlow(): Flow<UserSettings> {
         return dataStore.data.map { prefs ->
             UserSettings(
-                distanceUnit = DistanceUnit.fromCode(prefs[DISTANCE_UNIT] ?: DistanceUnit.MILES.code),
+                distanceUnit = DistanceUnit.fromCode(
+                    prefs[DISTANCE_UNIT] ?: DistanceUnit.MILES.code
+                ),
                 language = Language.fromCode(prefs[LANGUAGE] ?: Language.ENGLISH.code)
             )
         }

@@ -31,12 +31,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.jfleets.driver.api.models.LoadStatus
+import com.jfleets.driver.model.LocalUserSettings
 import com.jfleets.driver.model.toDisplayString
 import com.jfleets.driver.ui.components.CardContainer
 import com.jfleets.driver.ui.components.ErrorView
 import com.jfleets.driver.ui.components.LoadingIndicator
 import com.jfleets.driver.util.formatCurrency
-import com.jfleets.driver.util.formatMiDistance
+import com.jfleets.driver.util.formatDistance
 import com.jfleets.driver.util.formatShort
 import com.jfleets.driver.viewmodel.LoadDetailUiState
 import com.jfleets.driver.viewmodel.LoadDetailViewModel
@@ -49,6 +50,7 @@ fun LoadDetailScreen(
     onOpenMaps: (String) -> Unit,
     viewModel: LoadDetailViewModel
 ) {
+    val userSettings = LocalUserSettings.current
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
@@ -107,7 +109,7 @@ fun LoadDetailScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 DetailRow("Cost", load.deliveryCost?.formatCurrency() ?: "")
-                                DetailRow("Distance", load.distance?.formatMiDistance() ?: "")
+                                DetailRow("Distance", load.distance?.formatDistance(userSettings.distanceUnit) ?: "")
                             }
                         }
                     }

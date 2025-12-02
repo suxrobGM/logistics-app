@@ -1,5 +1,12 @@
 package com.jfleets.driver.model
 
+import androidx.compose.runtime.compositionLocalOf
+
+/**
+ * CompositionLocal for accessing user settings throughout the app.
+ */
+val LocalUserSettings = compositionLocalOf { UserSettings() }
+
 /**
  * Distance unit for displaying distances in the app.
  */

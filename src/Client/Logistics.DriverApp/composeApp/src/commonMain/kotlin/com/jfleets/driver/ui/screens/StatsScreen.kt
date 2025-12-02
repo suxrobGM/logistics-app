@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.jfleets.driver.model.ChartData
+import com.jfleets.driver.model.LocalUserSettings
 import com.jfleets.driver.model.toChartData
 import com.jfleets.driver.ui.components.CardContainer
 import com.jfleets.driver.ui.components.ErrorView
@@ -41,7 +42,7 @@ import com.jfleets.driver.ui.components.LoadingIndicator
 import com.jfleets.driver.ui.components.charts.BarChart
 import com.jfleets.driver.ui.components.charts.LineChart
 import com.jfleets.driver.util.formatCurrency
-import com.jfleets.driver.util.formatMiDistance
+import com.jfleets.driver.util.formatDistance
 import com.jfleets.driver.viewmodel.ChartUiState
 import com.jfleets.driver.viewmodel.StatsUiState
 import com.jfleets.driver.viewmodel.StatsViewModel
@@ -57,6 +58,7 @@ enum class ChartType(val label: String) {
 fun StatsScreen(
     viewModel: StatsViewModel = koinViewModel()
 ) {
+    val userSettings = LocalUserSettings.current
     val statsState by viewModel.statsState.collectAsState()
     val chartState by viewModel.chartState.collectAsState()
     val selectedRange by viewModel.selectedRange.collectAsState()
@@ -110,7 +112,7 @@ fun StatsScreen(
                                 StatItem("Income", stats.thisWeekShare?.formatCurrency() ?: "-")
                                 StatItem(
                                     "Distance",
-                                    stats.thisWeekDistance?.formatMiDistance() ?: "-"
+                                    stats.thisWeekDistance?.formatDistance(userSettings.distanceUnit) ?: "-"
                                 )
                             }
                         }
@@ -136,7 +138,7 @@ fun StatsScreen(
                                 StatItem("Income", stats.thisMonthShare?.formatCurrency() ?: "-")
                                 StatItem(
                                     "Distance",
-                                    stats.thisMonthDistance?.formatMiDistance() ?: "-"
+                                    stats.thisMonthDistance?.formatDistance(userSettings.distanceUnit) ?: "-"
                                 )
                             }
                         }
