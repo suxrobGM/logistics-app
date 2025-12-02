@@ -20,13 +20,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.jfleets.driver.model.Load
+import com.jfleets.driver.api.models.LoadDto
+import com.jfleets.driver.model.toDisplayString
 import com.jfleets.driver.util.formatCurrency
 import com.jfleets.driver.util.formatMiDistance
 
 @Composable
 fun LoadCard(
-    load: Load,
+    load: LoadDto,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -54,14 +55,14 @@ fun LoadCard(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = load.name,
+                    text = load.name ?: "",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "${load.sourceAddress} → ${load.destinationAddress}",
+                    text = "${load.originAddress.toDisplayString()} → ${load.destinationAddress.toDisplayString()}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2
@@ -71,11 +72,11 @@ fun LoadCard(
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Chip(
-                        text = load.deliveryCost.formatCurrency(),
+                        text = load.deliveryCost?.formatCurrency() ?: "",
                         color = MaterialTheme.colorScheme.primary
                     )
                     Chip(
-                        text = load.distance.formatMiDistance(),
+                        text = load.distance?.formatMiDistance() ?: "",
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }

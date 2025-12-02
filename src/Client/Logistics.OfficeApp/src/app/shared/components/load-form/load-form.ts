@@ -135,7 +135,7 @@ export class LoadFormComponent implements OnInit {
     // only visible/patched when mode === 'edit'
     status: new FormControl<LoadStatus | null>(null),
     assignedTruck: new FormControl<TruckDto | string | null>(
-      { value: null, disabled: this.canChangeAssignedTruck() },
+      { value: null, disabled: !this.canChangeAssignedTruck() },
       {
         validators: [Validators.required],
         nonNullable: true,

@@ -3,9 +3,8 @@ package com.jfleets.driver.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jfleets.driver.api.UserApi
-import com.jfleets.driver.model.User
-import com.jfleets.driver.model.toDomain
-import com.jfleets.driver.model.toUpdateCommand
+import com.jfleets.driver.api.models.UpdateUserCommand
+import com.jfleets.driver.api.models.UserDto
 import com.jfleets.driver.service.PreferencesManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,7 +39,7 @@ class AccountViewModel(
                 val response = userApi.getUserById(userId)
                 val result = response.body()
                 if (result.success == true && result.data != null) {
-                    _uiState.value = AccountUiState.Success(result.data.toDomain())
+                    _uiState.value = AccountUiState.Success(result.data)
                 } else {
                     _uiState.value = AccountUiState.Error(result.error ?: "Failed to load user")
                 }
@@ -50,11 +49,17 @@ class AccountViewModel(
         }
     }
 
-    fun updateUser(user: User) {
+    fun updateUser(user: UserDto) {
         viewModelScope.launch {
             _saveState.value = SaveState.Saving
             try {
-                val response = userApi.updateUser(user.id, user.toUpdateCommand())
+                val updateUserCommand = UpdateUserCommand(
+                    id = user.id,
+                    firstName = user.firstName,
+                    lastName = user.lastName,
+                    phoneNumber = user.phoneNumber
+                )
+                val response = userApi.updateUser(user.id!!, updateUserCommand)
                 val result = response.body()
                 if (result.success == true) {
                     _saveState.value = SaveState.Success
@@ -75,7 +80,7 @@ class AccountViewModel(
 
 sealed class AccountUiState {
     object Loading : AccountUiState()
-    data class Success(val user: User) : AccountUiState()
+    data class Success(val user: UserDto) : AccountUiState()
     data class Error(val message: String) : AccountUiState()
 }
 

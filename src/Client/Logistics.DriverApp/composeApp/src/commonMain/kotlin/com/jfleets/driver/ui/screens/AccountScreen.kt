@@ -31,7 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.jfleets.driver.model.User
+import com.jfleets.driver.api.models.UserDto
 import com.jfleets.driver.ui.components.CardContainer
 import com.jfleets.driver.ui.components.ErrorView
 import com.jfleets.driver.ui.components.LoadingIndicator
@@ -58,11 +58,11 @@ fun AccountScreen(
     LaunchedEffect(uiState) {
         if (uiState is AccountUiState.Success) {
             val user = (uiState as AccountUiState.Success).user
-            firstName = user.firstName
-            lastName = user.lastName
+            firstName = user.firstName ?: ""
+            lastName = user.lastName ?: ""
             phoneNumber = user.phoneNumber ?: ""
-            email = user.email
-            userId = user.id
+            email = user.email ?: ""
+            userId = user.id ?: ""
         }
     }
 
@@ -83,7 +83,7 @@ fun AccountScreen(
                         IconButton(
                             onClick = {
                                 viewModel.updateUser(
-                                    User(
+                                    UserDto(
                                         id = userId,
                                         email = email,
                                         firstName = firstName,

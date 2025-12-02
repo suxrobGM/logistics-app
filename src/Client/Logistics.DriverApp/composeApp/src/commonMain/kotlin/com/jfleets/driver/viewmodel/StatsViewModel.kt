@@ -5,11 +5,10 @@ package com.jfleets.driver.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jfleets.driver.api.StatApi
-import com.jfleets.driver.model.ChartData
+import com.jfleets.driver.api.models.DailyGrossDto
+import com.jfleets.driver.api.models.DriverStatsDto
+import com.jfleets.driver.api.models.MonthlyGrossDto
 import com.jfleets.driver.model.DateRange
-import com.jfleets.driver.model.DriverStats
-import com.jfleets.driver.model.toChartData
-import com.jfleets.driver.model.toDomain
 import com.jfleets.driver.service.PreferencesManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -57,7 +56,7 @@ class StatsViewModel(
                     val response = statApi.getDriverStats(it)
                     val result = response.body()
                     if (result.success == true && result.data != null) {
-                        _statsState.value = StatsUiState.Success(result.data.toDomain())
+                        _statsState.value = StatsUiState.Success(result.data)
                     } else {
                         _statsState.value =
                             StatsUiState.Error(result.error ?: "Failed to load stats")
@@ -87,8 +86,7 @@ class StatsViewModel(
                     val result = response.body()
 
                     if (result.success == true && result.data != null) {
-                        val chartData = result.data.data?.map { it.toChartData() } ?: emptyList()
-                        _chartState.value = ChartUiState.Success(chartData)
+                        _chartState.value = ChartUiState.MonthlySuccess(result.data.data ?: emptyList())
                     } else {
                         _chartState.value =
                             ChartUiState.Error(result.error ?: "Failed to load chart data")
@@ -101,8 +99,7 @@ class StatsViewModel(
                     val result = response.body()
 
                     if (result.success == true && result.data != null) {
-                        val chartData = result.data.data?.map { it.toChartData() } ?: emptyList()
-                        _chartState.value = ChartUiState.Success(chartData)
+                        _chartState.value = ChartUiState.DailySuccess(result.data.data ?: emptyList())
                     } else {
                         _chartState.value =
                             ChartUiState.Error(result.error ?: "Failed to load chart data")
@@ -175,12 +172,13 @@ class StatsViewModel(
 
 sealed class StatsUiState {
     object Loading : StatsUiState()
-    data class Success(val stats: DriverStats) : StatsUiState()
+    data class Success(val stats: DriverStatsDto) : StatsUiState()
     data class Error(val message: String) : StatsUiState()
 }
 
 sealed class ChartUiState {
     object Loading : ChartUiState()
-    data class Success(val data: List<ChartData>) : ChartUiState()
+    data class DailySuccess(val data: List<DailyGrossDto>) : ChartUiState()
+    data class MonthlySuccess(val data: List<MonthlyGrossDto>) : ChartUiState()
     data class Error(val message: String) : ChartUiState()
 }

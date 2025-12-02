@@ -27,7 +27,6 @@ import com.jfleets.driver.api.LoadApi
 import com.jfleets.driver.api.models.UpdateLoadProximityCommand
 import com.jfleets.driver.model.location.toAddressDto
 import com.jfleets.driver.model.location.toGeoPoint
-import com.jfleets.driver.model.toDomain
 import com.jfleets.driver.permission.AppPermission
 import com.jfleets.driver.permission.isPermissionGranted
 import com.jfleets.driver.service.realtime.SignalRService
@@ -196,13 +195,13 @@ class LocationTrackingService : Service() {
                 return
             }
 
-            val loads = result.data.map { it.toDomain() }
+            val loads = result.data
 
             loads.forEach { load ->
-                val originLat = load.originLatitude
-                val originLon = load.originLongitude
-                val destLat = load.destinationLatitude
-                val destLon = load.destinationLongitude
+                val originLat = load.originLocation.latitude
+                val originLon = load.originLocation.longitude
+                val destLat = load.destinationLocation.latitude
+                val destLon = load.destinationLocation.longitude
                 val originLocation = Location("").apply {
                     latitude = originLat ?: 0.0
                     longitude = originLon ?: 0.0

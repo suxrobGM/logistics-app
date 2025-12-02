@@ -28,6 +28,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.jfleets.driver.api.models.LoadDto
+import com.jfleets.driver.model.driversList
+import com.jfleets.driver.model.fullName
 import com.jfleets.driver.permission.RequestBackgroundLocationIfNeeded
 import com.jfleets.driver.ui.components.CardContainer
 import com.jfleets.driver.ui.components.ErrorView
@@ -90,14 +93,14 @@ fun DashboardScreen(
                             CardContainer {
                                 Column(modifier = Modifier.padding(16.dp)) {
                                     Text(
-                                        text = "Truck #${truck.truckNumber}",
+                                        text = "Truck #${truck.number}",
                                         style = MaterialTheme.typography.titleLarge,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
-                                    truck.drivers.forEach { driver ->
+                                    for (driver in truck.driversList) {
                                         Text(
-                                            text = "Driver: ${driver.fullName}",
+                                            text = "Driver: ${driver.fullName()}",
                                             style = MaterialTheme.typography.bodyMedium,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -116,7 +119,7 @@ fun DashboardScreen(
                             )
                         }
 
-                        if (truck.activeLoads.isEmpty()) {
+                        if (truck.loads == null || truck.loads.isEmpty()) {
                             item {
                                 CardContainer {
                                     Box(
@@ -133,10 +136,10 @@ fun DashboardScreen(
                                 }
                             }
                         } else {
-                            items(truck.activeLoads) { load ->
+                            items(truck.loads) { load: LoadDto ->
                                 LoadCard(
                                     load = load,
-                                    onClick = { onLoadClick(load.id) }
+                                    onClick = { onLoadClick(load.id!!) }
                                 )
                             }
                         }

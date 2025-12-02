@@ -5,9 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.jfleets.driver.api.DriverApi
 import com.jfleets.driver.api.TruckApi
 import com.jfleets.driver.api.models.SetDriverDeviceTokenCommand
-import com.jfleets.driver.model.Truck
-import com.jfleets.driver.model.employee.fullName
-import com.jfleets.driver.model.toDomain
+import com.jfleets.driver.api.models.TruckDto
+import com.jfleets.driver.model.fullName
 import com.jfleets.driver.service.PreferencesManager
 import com.jfleets.driver.service.auth.AuthService
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -61,7 +60,7 @@ class DashboardViewModel(
                     preferencesManager.saveDriverName(truckResult.data.mainDriver?.fullName() ?: "")
                     preferencesManager.saveTruckNumber(truckResult.data.number ?: "")
 
-                    _uiState.value = DashboardUiState.Success(truckResult.data.toDomain())
+                    _uiState.value = DashboardUiState.Success(truckResult.data)
                 } else {
                     _uiState.value =
                         DashboardUiState.Error(truckResult.error ?: "Failed to load truck")
@@ -92,6 +91,6 @@ class DashboardViewModel(
 
 sealed class DashboardUiState {
     object Loading : DashboardUiState()
-    data class Success(val truck: Truck) : DashboardUiState()
+    data class Success(val truck: TruckDto) : DashboardUiState()
     data class Error(val message: String) : DashboardUiState()
 }

@@ -5,13 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.jfleets.driver.api.DriverApi
 import com.jfleets.driver.api.LoadApi
 import com.jfleets.driver.api.models.ConfirmLoadStatusCommand
-import com.jfleets.driver.model.Load
-import com.jfleets.driver.model.toDomain
+import com.jfleets.driver.api.models.LoadDto
+import com.jfleets.driver.api.models.LoadStatus
+import com.jfleets.driver.model.getGoogleMapsUrl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import com.jfleets.driver.api.models.LoadStatus as ApiLoadStatus
 
 class LoadDetailViewModel(
     private val loadApi: LoadApi,
@@ -33,7 +33,7 @@ class LoadDetailViewModel(
                 val response = loadApi.getLoadById(loadId)
                 val result = response.body()
                 if (result.success == true && result.data != null) {
-                    _uiState.value = LoadDetailUiState.Success(result.data.toDomain())
+                    _uiState.value = LoadDetailUiState.Success(result.data)
                 } else {
                     _uiState.value =
                         LoadDetailUiState.Error(result.error ?: "Failed to load details")
@@ -49,7 +49,7 @@ class LoadDetailViewModel(
             try {
                 val request = ConfirmLoadStatusCommand(
                     loadId = loadId,
-                    loadStatus = ApiLoadStatus.PICKED_UP
+                    loadStatus = LoadStatus.PICKED_UP
                 )
                 val response = driverApi.confirmLoadStatus(request)
                 val result = response.body()
@@ -67,7 +67,7 @@ class LoadDetailViewModel(
             try {
                 val request = ConfirmLoadStatusCommand(
                     loadId = loadId,
-                    loadStatus = ApiLoadStatus.DELIVERED
+                    loadStatus = LoadStatus.DELIVERED
                 )
                 val response = driverApi.confirmLoadStatus(request)
                 val result = response.body()
@@ -84,15 +84,11 @@ class LoadDetailViewModel(
         loadDetails()
     }
 
-    fun getGoogleMapsUrl(load: Load): String {
-        val origin = "${load.originLatitude},${load.originLongitude}"
-        val destination = "${load.destinationLatitude},${load.destinationLongitude}"
-        return "https://www.google.com/maps/dir/?api=1&origin=$origin&destination=$destination&travelmode=driving"
-    }
+    fun getGoogleMapsUrl(load: LoadDto): String = load.getGoogleMapsUrl()
 }
 
 sealed class LoadDetailUiState {
     object Loading : LoadDetailUiState()
-    data class Success(val load: Load) : LoadDetailUiState()
+    data class Success(val load: LoadDto) : LoadDetailUiState()
     data class Error(val message: String) : LoadDetailUiState()
 }

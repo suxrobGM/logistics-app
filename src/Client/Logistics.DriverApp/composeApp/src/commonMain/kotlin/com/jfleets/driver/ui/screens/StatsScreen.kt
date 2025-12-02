@@ -33,6 +33,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.jfleets.driver.model.ChartData
+import com.jfleets.driver.model.toChartData
 import com.jfleets.driver.ui.components.CardContainer
 import com.jfleets.driver.ui.components.ErrorView
 import com.jfleets.driver.ui.components.LoadingIndicator
@@ -104,9 +106,12 @@ fun StatsScreen(
                                     .padding(16.dp),
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
-                                StatItem("Gross", stats.weeklyGross.formatCurrency())
-                                StatItem("Income", stats.weeklyIncome.formatCurrency())
-                                StatItem("Distance", stats.weeklyDistance.formatMiDistance())
+                                StatItem("Gross", stats.thisWeekGross?.formatCurrency() ?: "-")
+                                StatItem("Income", stats.thisWeekShare?.formatCurrency() ?: "-")
+                                StatItem(
+                                    "Distance",
+                                    stats.thisWeekDistance?.formatMiDistance() ?: "-"
+                                )
                             }
                         }
                     }
@@ -127,9 +132,12 @@ fun StatsScreen(
                                     .padding(16.dp),
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
-                                StatItem("Gross", stats.monthlyGross.formatCurrency())
-                                StatItem("Income", stats.monthlyIncome.formatCurrency())
-                                StatItem("Distance", stats.monthlyDistance.formatMiDistance())
+                                StatItem("Gross", stats.thisMonthGross?.formatCurrency() ?: "-")
+                                StatItem("Income", stats.thisMonthShare?.formatCurrency() ?: "-")
+                                StatItem(
+                                    "Distance",
+                                    stats.thisMonthDistance?.formatMiDistance() ?: "-"
+                                )
                             }
                         }
                     }
@@ -184,7 +192,13 @@ fun StatsScreen(
                                     }
                                 }
 
-                                is ChartUiState.Success -> {
+                                is ChartUiState.DailySuccess, is ChartUiState.MonthlySuccess -> {
+                                    val chartData: List<ChartData> = when (chart) {
+                                        is ChartUiState.DailySuccess -> chart.data.map { it.toChartData() }
+                                        is ChartUiState.MonthlySuccess -> chart.data.map { it.toChartData() }
+                                        else -> emptyList()
+                                    }
+
                                     Column(modifier = Modifier.padding(16.dp)) {
                                         // Summary row
                                         Row(
@@ -200,7 +214,7 @@ fun StatsScreen(
                                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                                 )
                                                 Text(
-                                                    text = chart.data.sumOf { it.gross }
+                                                    text = chartData.sumOf { it.gross }
                                                         .formatCurrency(),
                                                     style = MaterialTheme.typography.titleMedium,
                                                     fontWeight = FontWeight.Bold,
@@ -214,7 +228,7 @@ fun StatsScreen(
                                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                                 )
                                                 Text(
-                                                    text = chart.data.sumOf { it.driverShare }
+                                                    text = chartData.sumOf { it.driverShare }
                                                         .formatCurrency(),
                                                     style = MaterialTheme.typography.titleMedium,
                                                     fontWeight = FontWeight.Bold,
@@ -227,14 +241,14 @@ fun StatsScreen(
                                         when (selectedChartType) {
                                             ChartType.BAR -> {
                                                 BarChart(
-                                                    data = chart.data,
+                                                    data = chartData,
                                                     modifier = Modifier.fillMaxWidth()
                                                 )
                                             }
 
                                             ChartType.LINE -> {
                                                 LineChart(
-                                                    data = chart.data,
+                                                    data = chartData,
                                                     modifier = Modifier.fillMaxWidth()
                                                 )
                                             }

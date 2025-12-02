@@ -77,7 +77,7 @@ fun PastLoadsScreen(
                         items(state.loads) { load ->
                             LoadCard(
                                 load = load,
-                                onClick = { onLoadClick(load.id) }
+                                onClick = { onLoadClick(load.id!!) }
                             )
                         }
                     }

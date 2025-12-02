@@ -30,7 +30,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.jfleets.driver.model.LoadStatus
+import com.jfleets.driver.api.models.LoadStatus
+import com.jfleets.driver.model.toDisplayString
 import com.jfleets.driver.ui.components.CardContainer
 import com.jfleets.driver.ui.components.ErrorView
 import com.jfleets.driver.ui.components.LoadingIndicator
@@ -81,13 +82,13 @@ fun LoadDetailScreen(
                     CardContainer {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
-                                text = load.name,
+                                text = load.name ?: "",
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Load #${load.refId ?: load.id}",
+                                text = "Load #${load.number}",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -97,16 +98,16 @@ fun LoadDetailScreen(
                     // Route Information
                     CardContainer {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            DetailRow("Origin", load.sourceAddress)
+                            DetailRow("Origin", load.originAddress.toDisplayString())
                             Spacer(modifier = Modifier.height(8.dp))
-                            DetailRow("Destination", load.destinationAddress)
+                            DetailRow("Destination", load.destinationAddress.toDisplayString())
                             Spacer(modifier = Modifier.height(12.dp))
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                DetailRow("Cost", load.deliveryCost.formatCurrency())
-                                DetailRow("Distance", load.distance.formatMiDistance())
+                                DetailRow("Cost", load.deliveryCost?.formatCurrency() ?: "")
+                                DetailRow("Distance", load.distance?.formatMiDistance() ?: "")
                             }
                         }
                     }
@@ -114,41 +115,37 @@ fun LoadDetailScreen(
                     // Load Details
                     CardContainer {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            DetailRow("Status", load.status.name.replace("_", " "))
+                            DetailRow("Status", load.status?.name?.replace("_", " ") ?: "Unknown")
                             load.assignedDispatcherName?.let {
                                 Spacer(modifier = Modifier.height(8.dp))
                                 DetailRow("Dispatcher", it)
                             }
-                            load.createdDate?.let {
+                            load.createdAt?.let {
                                 Spacer(modifier = Modifier.height(8.dp))
                                 DetailRow("Created", it.formatShort())
                             }
-                            load.pickUpDate?.let {
+                            load.pickedUpAt?.let {
                                 Spacer(modifier = Modifier.height(8.dp))
                                 DetailRow("Picked Up", it.formatShort())
                             }
-                            load.deliveryDate?.let {
+                            load.deliveredAt?.let {
                                 Spacer(modifier = Modifier.height(8.dp))
                                 DetailRow("Delivered", it.formatShort())
                             }
                         }
                     }
 
-                    // Map Button
-                    if (load.originLatitude != null && load.originLongitude != null &&
-                        load.destinationLatitude != null && load.destinationLongitude != null
+                    // Map Button - always show since coordinates are required
+                    Button(
+                        onClick = {
+                            val mapsUrl = viewModel.getGoogleMapsUrl(load)
+                            onOpenMaps(mapsUrl)
+                        },
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Button(
-                            onClick = {
-                                val mapsUrl = viewModel.getGoogleMapsUrl(load)
-                                onOpenMaps(mapsUrl)
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Icon(Icons.Default.Map, "Map")
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text("View Route on Maps")
-                        }
+                        Icon(Icons.Default.Map, "Map")
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("View Route on Maps")
                     }
 
                     // Action Buttons
@@ -157,7 +154,7 @@ fun LoadDetailScreen(
                             Button(
                                 onClick = { viewModel.confirmPickup() },
                                 modifier = Modifier.fillMaxWidth(),
-                                enabled = load.canConfirmPickup
+                                enabled = load.canConfirmPickUp == true
                             ) {
                                 Text("Confirm Pick Up")
                             }
@@ -167,7 +164,7 @@ fun LoadDetailScreen(
                             Button(
                                 onClick = { viewModel.confirmDelivery() },
                                 modifier = Modifier.fillMaxWidth(),
-                                enabled = load.canConfirmDelivery
+                                enabled = load.canConfirmDelivery == true
                             ) {
                                 Text("Confirm Delivery")
                             }
