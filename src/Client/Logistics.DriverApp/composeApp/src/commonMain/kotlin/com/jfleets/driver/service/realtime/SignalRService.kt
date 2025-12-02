@@ -1,7 +1,6 @@
-package com.jfleets.driver.service
+package com.jfleets.driver.service.realtime
 
 import kotlinx.coroutines.flow.StateFlow
-import kotlin.time.Clock
 
 /**
  * Connection state for SignalR hub.
@@ -13,15 +12,6 @@ enum class SignalRConnectionState {
     RECONNECTING
 }
 
-/**
- * Location data to send to the server.
- */
-data class LocationUpdate(
-    val latitude: Double,
-    val longitude: Double,
-    val address: String? = null,
-    val timestamp: Long = Clock.System.now().toEpochMilliseconds()
-)
 
 /**
  * Cross-platform SignalR service for real-time communication with the backend.
@@ -49,7 +39,7 @@ expect class SignalRService {
      * Sends a location update to the server.
      * @param location The location data to send.
      */
-    suspend fun sendLocationUpdate(location: LocationUpdate)
+    suspend fun sendLocationUpdate(location: TruckGeolocation)
 
     /**
      * Checks if the connection is currently active.

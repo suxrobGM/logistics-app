@@ -1,5 +1,6 @@
 package com.jfleets.driver.service
 
+import com.jfleets.driver.service.realtime.SignalRConnectionState
 import com.jfleets.driver.util.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

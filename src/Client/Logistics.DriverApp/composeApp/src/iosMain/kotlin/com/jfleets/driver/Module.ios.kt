@@ -1,8 +1,8 @@
 package com.jfleets.driver
 
-import com.jfleets.driver.service.SignalRService
 import com.jfleets.driver.service.auth.AuthService
 import com.jfleets.driver.service.createIosDataStore
+import com.jfleets.driver.service.realtime.SignalRService
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 

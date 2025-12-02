@@ -20,7 +20,9 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
         val TENANT_ID = stringPreferencesKey("tenant_id")
         val USER_ID = stringPreferencesKey("user_id")
         val TRUCK_ID = stringPreferencesKey("truck_id")
+        val TRUCK_NUMBER = stringPreferencesKey("truck_number")
         val TOKEN_EXPIRY = longPreferencesKey("token_expiry")
+        val DRIVER_NAME = stringPreferencesKey("driver_name")
     }
 
     // Access Token
@@ -77,6 +79,15 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
         return dataStore.data.first()[TRUCK_ID]
     }
 
+    // Truck Number
+    suspend fun saveTruckNumber(truckNumber: String) {
+        dataStore.edit { prefs -> prefs[TRUCK_NUMBER] = truckNumber }
+    }
+
+    suspend fun getTruckNumber(): String? {
+        return dataStore.data.first()[TRUCK_NUMBER]
+    }
+
     // Token Expiry
     suspend fun saveTokenExpiry(expiry: Long) {
         dataStore.edit { prefs -> prefs[TOKEN_EXPIRY] = expiry }
@@ -84,6 +95,15 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
 
     suspend fun getTokenExpiry(): Long? {
         return dataStore.data.first()[TOKEN_EXPIRY]
+    }
+
+    // Driver Name
+    suspend fun saveDriverName(name: String) {
+        dataStore.edit { prefs -> prefs[DRIVER_NAME] = name }
+    }
+
+    suspend fun getDriverName(): String? {
+        return dataStore.data.first()[DRIVER_NAME]
     }
 
     // Clear all data

@@ -1,9 +1,9 @@
 package com.jfleets.driver
 
 import android.content.Context
-import com.jfleets.driver.service.SignalRService
 import com.jfleets.driver.service.auth.AuthService
 import com.jfleets.driver.service.createAndroidDataStore
+import com.jfleets.driver.service.realtime.SignalRService
 import com.jfleets.driver.viewmodel.AccountViewModel
 import com.jfleets.driver.viewmodel.DashboardViewModel
 import com.jfleets.driver.viewmodel.LoadDetailViewModel

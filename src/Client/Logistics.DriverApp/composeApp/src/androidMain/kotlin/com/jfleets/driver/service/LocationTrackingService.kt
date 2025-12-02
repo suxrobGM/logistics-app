@@ -23,9 +23,13 @@ import com.jfleets.driver.R
 import com.jfleets.driver.api.DriverApi
 import com.jfleets.driver.api.LoadApi
 import com.jfleets.driver.api.models.UpdateLoadProximityCommand
+import com.jfleets.driver.model.location.toAddressDto
+import com.jfleets.driver.model.location.toGeoPoint
 import com.jfleets.driver.model.toDomain
 import com.jfleets.driver.permission.AppPermission
 import com.jfleets.driver.permission.isPermissionGranted
+import com.jfleets.driver.service.realtime.SignalRService
+import com.jfleets.driver.service.realtime.TruckGeolocation
 import com.jfleets.driver.util.Logger
 import com.jfleets.driver.util.calculateDistance
 import kotlinx.coroutines.CoroutineScope
@@ -42,6 +46,7 @@ import kotlin.coroutines.resume
 class LocationTrackingService : Service() {
     private val loadApi: LoadApi by inject()
     private val driverApi: DriverApi by inject()
+    private val preferencesManager: PreferencesManager by inject()
     private val signalRService: SignalRService by inject()
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -162,13 +167,16 @@ class LocationTrackingService : Service() {
 
     private suspend fun sendLocationViaSignalR(
         location: Location,
-        address: String
+        address: Address?
     ) {
         try {
-            val locationUpdate = LocationUpdate(
-                latitude = location.latitude,
-                longitude = location.longitude,
-                address = address
+            val locationUpdate = TruckGeolocation(
+                currentLocation = location.toGeoPoint(),
+                truckId = preferencesManager.getTruckId() ?: "",
+                tenantId = preferencesManager.getTenantId() ?: "",
+                truckNumber = preferencesManager.getTruckNumber(),
+                driversName = preferencesManager.getDriverName(),
+                currentAddress = address.toAddressDto(),
             )
             signalRService.sendLocationUpdate(locationUpdate)
         } catch (e: Exception) {
@@ -228,7 +236,7 @@ class LocationTrackingService : Service() {
         }
     }
 
-    private suspend fun getAddressFromLocation(latitude: Double, longitude: Double): String {
+    private suspend fun getAddressFromLocation(latitude: Double, longitude: Double): Address? {
         return try {
             val geocoder = Geocoder(this, Locale.getDefault())
 
@@ -250,14 +258,14 @@ class LocationTrackingService : Service() {
                 }
 
             if (!addresses.isNullOrEmpty()) {
-                val address = addresses[0]
-                "${address.locality}, ${address.adminArea}"
+                addresses[0]
             } else {
-                "Unknown location"
+                Logger.w("No address found for location: $latitude, $longitude")
+                null
             }
         } catch (e: Exception) {
             Logger.e("Error getting address from location", e)
-            "Unknown location"
+            null
         }
     }
 

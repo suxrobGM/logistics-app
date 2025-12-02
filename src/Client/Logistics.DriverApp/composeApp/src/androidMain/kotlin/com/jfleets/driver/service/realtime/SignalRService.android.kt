@@ -1,5 +1,6 @@
-package com.jfleets.driver.service
+package com.jfleets.driver.service.realtime
 
+import com.jfleets.driver.service.PreferencesManager
 import com.jfleets.driver.util.Logger
 import com.microsoft.signalr.HubConnection
 import com.microsoft.signalr.HubConnectionBuilder
@@ -39,7 +40,6 @@ actual class SignalRService(
                     .build()
 
                 setupConnectionCallbacks()
-                setupServerHandlers()
 
                 hubConnection?.start()?.blockingAwait()
                 _connectionState.value = SignalRConnectionState.CONNECTED
@@ -63,18 +63,6 @@ actual class SignalRService(
         }
     }
 
-    private fun setupServerHandlers() {
-        // Handle messages from the server
-        hubConnection?.on("LocationAcknowledged", { message: String ->
-            Logger.d("Location acknowledged: $message")
-        }, String::class.java)
-
-        hubConnection?.on("ForceLocationUpdate", {
-            Logger.d("Server requested force location update")
-            // This could trigger a callback to the LocationTrackingService
-        })
-    }
-
     actual suspend fun disconnect() {
         withContext(Dispatchers.IO) {
             try {
@@ -88,7 +76,7 @@ actual class SignalRService(
         }
     }
 
-    actual suspend fun sendLocationUpdate(location: LocationUpdate) {
+    actual suspend fun sendLocationUpdate(location: TruckGeolocation) {
         if (hubConnection?.connectionState != HubConnectionState.CONNECTED) {
             Logger.w("Cannot send location update: SignalR not connected")
             return
@@ -97,13 +85,10 @@ actual class SignalRService(
         withContext(Dispatchers.IO) {
             try {
                 hubConnection?.send(
-                    "UpdateDriverLocation",
-                    location.latitude,
-                    location.longitude,
-                    location.address,
-                    location.timestamp
+                    "SendGeolocationData",
+                    location
                 )
-                Logger.d("Location sent: ${location.latitude}, ${location.longitude}")
+                Logger.d("Location sent: ${location.currentLocation.latitude}, ${location.currentLocation.longitude}")
             } catch (e: Exception) {
                 Logger.e("Failed to send location update", e)
             }

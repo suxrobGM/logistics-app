@@ -6,6 +6,7 @@ import com.jfleets.driver.api.DriverApi
 import com.jfleets.driver.api.TruckApi
 import com.jfleets.driver.api.models.SetDriverDeviceTokenCommand
 import com.jfleets.driver.model.Truck
+import com.jfleets.driver.model.employee.fullName
 import com.jfleets.driver.model.toDomain
 import com.jfleets.driver.service.PreferencesManager
 import com.jfleets.driver.service.auth.AuthService
@@ -40,8 +41,8 @@ class DashboardViewModel(
                 }
 
                 // Get driver ID first
-                val driverResponse = driverApi.getDriverByUserId(userId)
-                val driverResult = driverResponse.body()
+                val driverResult = driverApi.getDriverByUserId(userId).body()
+
                 if (driverResult.success != true || driverResult.data == null) {
                     _uiState.value =
                         DashboardUiState.Error(driverResult.error ?: "Failed to load driver")
@@ -51,10 +52,15 @@ class DashboardViewModel(
                 val driverId = driverResult.data.id ?: ""
 
                 // Then get truck with active loads
-                val truckResponse =
+                val truckResult =
                     truckApi.getTruckById(driverId, includeLoads = true, onlyActiveLoads = true)
-                val truckResult = truckResponse.body()
+                        .body()
+
                 if (truckResult.success == true && truckResult.data != null) {
+                    preferencesManager.saveTruckId(truckResult.data.id ?: "")
+                    preferencesManager.saveDriverName(truckResult.data.mainDriver?.fullName() ?: "")
+                    preferencesManager.saveTruckNumber(truckResult.data.number ?: "")
+
                     _uiState.value = DashboardUiState.Success(truckResult.data.toDomain())
                 } else {
                     _uiState.value =

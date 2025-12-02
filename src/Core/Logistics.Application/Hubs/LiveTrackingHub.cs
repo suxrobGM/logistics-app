@@ -1,41 +1,30 @@
 using Logistics.Application.Commands;
 using Logistics.Shared.Models;
-
 using MediatR;
-
 using Microsoft.AspNetCore.SignalR;
 
 namespace Logistics.Application.Hubs;
 
-public class LiveTrackingHub : Hub<ILiveTrackingHubClient>
+public class LiveTrackingHub(
+    IMediator mediator,
+    LiveTrackingHubContext hubContext) : Hub<ILiveTrackingHubClient>
 {
-    private readonly IMediator _mediator;
-    private readonly LiveTrackingHubContext _hubContext;
-
-    public LiveTrackingHub(
-        IMediator mediator,
-        LiveTrackingHubContext hubContext)
-    {
-        _mediator = mediator;
-        _hubContext = hubContext;
-    }
-
     public override Task OnConnectedAsync()
     {
-        _hubContext.AddClient(Context.ConnectionId, null);
+        hubContext.AddClient(Context.ConnectionId, null);
         return Task.CompletedTask;
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        var geolocationData = _hubContext.GetGeolocationData(Context.ConnectionId);
+        var geolocationData = hubContext.GetGeolocationData(Context.ConnectionId);
 
         if (geolocationData != null)
         {
-            await _mediator.Send(new SetTruckGeolocationCommand(geolocationData));
+            await mediator.Send(new SetTruckGeolocationCommand(geolocationData));
         }
 
-        _hubContext.RemoveClient(Context.ConnectionId);
+        hubContext.RemoveClient(Context.ConnectionId);
     }
 
     public async Task SendGeolocationData(TruckGeolocationDto truckGeolocation)
@@ -43,7 +32,7 @@ public class LiveTrackingHub : Hub<ILiveTrackingHubClient>
         await Clients
             .Group(truckGeolocation.TenantId.ToString())
             .ReceiveGeolocationData(truckGeolocation);
-        _hubContext.UpdateGeolocationData(Context.ConnectionId, truckGeolocation);
+        hubContext.UpdateGeolocationData(Context.ConnectionId, truckGeolocation);
     }
 
     public async Task RegisterTenant(string tenantId)
