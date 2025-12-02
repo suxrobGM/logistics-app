@@ -1,6 +1,5 @@
 package com.jfleets.driver.service.auth
 
-import com.jfleets.driver.api.createPlatformHttpClient
 import com.jfleets.driver.service.PreferencesManager
 import com.jfleets.driver.util.decodeJwtPayload
 import io.ktor.client.HttpClient
@@ -34,7 +33,7 @@ class AuthService(
     private val httpClient: HttpClient by lazy { createHttpClient() }
 
     private fun createHttpClient(): HttpClient {
-        return createPlatformHttpClient(allowSelfSigned) {
+        return HttpClient {
             install(ContentNegotiation) {
                 json(Json {
                     prettyPrint = true

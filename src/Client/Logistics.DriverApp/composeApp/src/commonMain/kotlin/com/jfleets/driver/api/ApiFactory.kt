@@ -20,7 +20,6 @@ class ApiFactory(
     private val baseUrl: String,
     private val preferencesManager: PreferencesManager
 ) {
-    private val allowSelfSigned = baseUrl.contains("10.0.2.2")
 
     private val httpClient: HttpClient by lazy { createHttpClient() }
 
@@ -31,7 +30,7 @@ class ApiFactory(
     val statApi: StatApi by lazy { StatApi(baseUrl, httpClient) }
 
     private fun createHttpClient(): HttpClient {
-        return createPlatformHttpClient(allowSelfSigned) {
+        return HttpClient {
             install(ContentNegotiation) {
                 json(Json {
                     prettyPrint = true

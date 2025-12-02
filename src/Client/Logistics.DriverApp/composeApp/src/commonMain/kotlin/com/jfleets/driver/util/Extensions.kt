@@ -8,11 +8,6 @@ import kotlin.math.pow
 import kotlin.math.round
 import kotlin.time.Instant
 
-/**
- * Common extension functions for Kotlin Multiplatform
- * These work on all platforms (Android, iOS, etc.)
- */
-
 // Distance extensions
 fun Double.toMiles(): Double = this * 0.000621371
 
@@ -33,14 +28,6 @@ fun Instant.formatShort(): String {
     return "$month ${localDateTime.day}, ${localDateTime.year}"
 }
 
-fun Instant.formatDateTime(): String {
-    val localDateTime = this.toLocalDateTime(TimeZone.currentSystemDefault())
-    val month = getMonthAbbreviation(localDateTime.month.number)
-    val hour = localDateTime.hour.toString().padStart(2, '0')
-    val minute = localDateTime.minute.toString().padStart(2, '0')
-    return "$month ${localDateTime.day}, ${localDateTime.year} $hour:$minute"
-}
-
 private fun getMonthAbbreviation(month: Int): String {
     return when (month) {
         1 -> "Jan"
@@ -57,13 +44,6 @@ private fun getMonthAbbreviation(month: Int): String {
         12 -> "Dec"
         else -> ""
     }
-}
-
-// String extensions
-fun String.toTitleCase(): String {
-    return this.lowercase()
-        .split(" ")
-        .joinToString(" ") { it.replaceFirstChar { char -> char.uppercase() } }
 }
 
 // KMP-compatible decimal formatting helper
