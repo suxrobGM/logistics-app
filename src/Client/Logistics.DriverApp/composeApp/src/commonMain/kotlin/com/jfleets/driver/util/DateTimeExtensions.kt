@@ -11,7 +11,7 @@ fun Instant.formatShort(): String {
     return "$month ${localDateTime.day}, ${localDateTime.year}"
 }
 
-private fun getMonthAbbreviation(month: Int): String {
+fun getMonthAbbreviation(month: Int): String {
     return when (month) {
         1 -> "Jan"
         2 -> "Feb"

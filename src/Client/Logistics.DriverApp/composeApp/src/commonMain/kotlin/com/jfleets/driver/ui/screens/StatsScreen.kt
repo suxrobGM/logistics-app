@@ -39,8 +39,8 @@ import com.jfleets.driver.ui.components.AppTopBar
 import com.jfleets.driver.ui.components.CardContainer
 import com.jfleets.driver.ui.components.ErrorView
 import com.jfleets.driver.ui.components.LoadingIndicator
-import com.jfleets.driver.ui.components.charts.BarChart
-import com.jfleets.driver.ui.components.charts.LineChart
+import com.jfleets.driver.ui.components.charts.bar.BarChart
+import com.jfleets.driver.ui.components.charts.line.LineChart
 import com.jfleets.driver.util.formatCurrency
 import com.jfleets.driver.util.formatDistance
 import com.jfleets.driver.viewmodel.ChartUiState
