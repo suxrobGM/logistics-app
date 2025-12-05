@@ -33,14 +33,14 @@ export class TripStatusTag {
     }
   });
 
-  protected readonly severity = computed<string>(() => {
+  protected readonly severity = computed<Tag["severity"]>(() => {
     switch (this.normalized()) {
       case TripStatus.Cancelled:
         return "danger";
       case TripStatus.Completed:
         return "success";
       case TripStatus.InTransit:
-        return "warning";
+        return "warn";
       case TripStatus.Dispatched:
         return "info";
       case TripStatus.Draft:

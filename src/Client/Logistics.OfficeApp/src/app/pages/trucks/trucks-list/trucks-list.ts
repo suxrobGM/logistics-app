@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { SharedModule } from "primeng/api";
@@ -17,7 +16,6 @@ import { AddressPipe } from "@/shared/pipes";
   selector: "app-trucks-list",
   templateUrl: "./trucks-list.html",
   imports: [
-    CommonModule,
     ButtonModule,
     TooltipModule,
     RouterLink,

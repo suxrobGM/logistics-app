@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { CommonModule } from "@angular/common";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Component, inject, input, model, output, signal } from "@angular/core";
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
@@ -14,7 +13,7 @@ import { Converters } from "@/shared/utils";
   selector: "app-address-autocomplete",
   templateUrl: "./address-autocomplete.html",
   styleUrl: "./address-autocomplete.css",
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

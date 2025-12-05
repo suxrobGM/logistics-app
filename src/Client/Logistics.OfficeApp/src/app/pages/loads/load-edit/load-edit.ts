@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { Component, OnInit, inject, input, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { CardModule } from "primeng/card";
@@ -14,14 +13,7 @@ import { Converters } from "@/shared/utils";
 @Component({
   selector: "app-load-edit",
   templateUrl: "./load-edit.html",
-  imports: [
-    CommonModule,
-    ToastModule,
-    ConfirmDialogModule,
-    CardModule,
-    ProgressSpinnerModule,
-    LoadFormComponent,
-  ],
+  imports: [ToastModule, ConfirmDialogModule, CardModule, ProgressSpinnerModule, LoadFormComponent],
 })
 export class LoadEditComponent implements OnInit {
   private readonly apiService = inject(ApiService);

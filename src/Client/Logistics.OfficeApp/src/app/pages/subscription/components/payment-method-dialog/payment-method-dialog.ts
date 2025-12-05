@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { Component, computed, inject, input, model, output, signal } from "@angular/core";
 import {
   FormControl,
@@ -40,7 +39,6 @@ const enabledPaymentTypes = [
   selector: "app-payment-method-dialog",
   templateUrl: "./payment-method-dialog.html",
   imports: [
-    CommonModule,
     CardModule,
     ButtonModule,
     DialogModule,

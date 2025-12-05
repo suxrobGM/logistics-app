@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { CommonModule } from "@angular/common";
 import { Component, forwardRef, inject, input, model, output, signal } from "@angular/core";
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { AutoCompleteModule, AutoCompleteSelectEvent } from "primeng/autocomplete";
@@ -14,7 +13,7 @@ import { LoadStatusTag } from "../load-status-tag/load-status-tag";
 @Component({
   selector: "app-search-load",
   templateUrl: "./search-load.html",
-  imports: [CommonModule, AutoCompleteModule, FormsModule, LoadStatusTag],
+  imports: [AutoCompleteModule, FormsModule, LoadStatusTag],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

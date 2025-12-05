@@ -8,7 +8,7 @@ import { ChartModule } from "primeng/chart";
 import { InputTextModule } from "primeng/inputtext";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
+import { Tag, TagModule } from "primeng/tag";
 import { Observable } from "rxjs";
 import { Result } from "@/core/api/models";
 import { FinancialsReportDto } from "@/core/api/models/report/financials-report.dto";
@@ -135,11 +135,11 @@ export class FinancialsReportComponent
     }
   }
 
-  protected getMetricSeverity(trend: number): string {
+  protected getMetricSeverity(trend: number): Tag["severity"] {
     return trend >= 0 ? "success" : "danger";
   }
 
-  protected getCategorySeverity(category: string): string {
+  protected getCategorySeverity(category: string): Tag["severity"] {
     switch (category.toLowerCase()) {
       case "revenue":
         return "success";

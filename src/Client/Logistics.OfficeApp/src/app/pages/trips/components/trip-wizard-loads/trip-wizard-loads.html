@@ -80,7 +80,7 @@
           @if (row.kind === "existing") {
             <app-load-status-tag [status]="row.status" />
           } @else {
-            <p-tag value="Draft" severity="warning" />
+            <p-tag value="Draft" severity="warn" />
           }
         </td>
         <td class="text-right">{{ row.distance | distanceUnit: "mi" }}</td>

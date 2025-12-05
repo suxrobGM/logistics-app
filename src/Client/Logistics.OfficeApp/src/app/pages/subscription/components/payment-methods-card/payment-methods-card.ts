@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { Component, OnInit, inject, model, signal } from "@angular/core";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -19,7 +18,6 @@ import { PaymentMethodDialogComponent } from "../payment-method-dialog/payment-m
   selector: "app-payment-methods-card",
   templateUrl: "./payment-methods-card.html",
   imports: [
-    CommonModule,
     CardModule,
     ButtonModule,
     DialogModule,

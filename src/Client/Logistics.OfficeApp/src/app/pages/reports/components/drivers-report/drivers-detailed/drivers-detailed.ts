@@ -6,7 +6,7 @@ import { CardModule } from "primeng/card";
 import { DatePickerModule } from "primeng/datepicker";
 import { InputTextModule } from "primeng/inputtext";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
+import { Tag, TagModule } from "primeng/tag";
 import { Observable } from "rxjs";
 import { ApiService } from "@/core/api";
 import { PagedResult } from "@/core/api/models";
@@ -59,14 +59,14 @@ export class DriversDetailedComponent extends BaseTableComponent<DriverReportDto
     return "Below Average";
   }
 
-  protected getPerformanceSeverity(efficiency: number): string {
+  protected getPerformanceSeverity(efficiency: number): Tag["severity"] {
     if (efficiency >= 2.0) return "success";
     if (efficiency >= 1.5) return "info";
-    if (efficiency >= 1.0) return "warning";
+    if (efficiency >= 1.0) return "warn";
     return "danger";
   }
 
-  protected getDriverTypeSeverity(isMainDriver: boolean): string {
+  protected getDriverTypeSeverity(isMainDriver: boolean): Tag["severity"] {
     return isMainDriver ? "success" : "info";
   }
 }

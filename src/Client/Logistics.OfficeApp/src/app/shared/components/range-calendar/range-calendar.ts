@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { Component, effect, input, model, output, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ButtonModule } from "primeng/button";
@@ -8,7 +7,7 @@ import { DateUtils } from "@/shared/utils";
 @Component({
   selector: "app-range-calendar",
   templateUrl: "./range-calendar.html",
-  imports: [CommonModule, DatePicker, FormsModule, ButtonModule],
+  imports: [DatePicker, FormsModule, ButtonModule],
 })
 export class RangeCalendar {
   protected readonly todayDate = DateUtils.today();

@@ -6,7 +6,7 @@ import { DividerModule } from "primeng/divider";
 import { FileUploadModule } from "primeng/fileupload";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
+import { Tag, TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
 import { TooltipModule } from "primeng/tooltip";
 import { ApiService } from "@/core/api";
@@ -145,12 +145,12 @@ export class DocumentManagerComponent implements OnInit {
     }
   }
 
-  protected statusSeverity(status: DocumentStatus): string {
+  protected statusSeverity(status: DocumentStatus): Tag["severity"] {
     switch (status) {
       case DocumentStatus.Active:
         return "success";
       case DocumentStatus.Archived:
-        return "warning";
+        return "warn";
       case DocumentStatus.Deleted:
         return "danger";
       default:

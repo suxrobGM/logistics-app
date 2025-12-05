@@ -4,7 +4,7 @@ import { Card } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
+import { Tag, TagModule } from "primeng/tag";
 import { Observable } from "rxjs";
 import { ApiService } from "@/core/api";
 import { Result } from "@/core/api/models";
@@ -129,10 +129,10 @@ export class DriversReportComponent
     return "Below Average";
   }
 
-  protected getPerformanceSeverity(efficiency: number): string {
+  protected getPerformanceSeverity(efficiency: number): Tag["severity"] {
     if (efficiency >= 2.0) return "success";
     if (efficiency >= 1.5) return "info";
-    if (efficiency >= 1.0) return "warning";
+    if (efficiency >= 1.0) return "warn";
     return "danger";
   }
 }

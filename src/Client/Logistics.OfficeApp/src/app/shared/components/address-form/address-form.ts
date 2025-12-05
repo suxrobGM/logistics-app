@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { Component, input, output } from "@angular/core";
 import {
   ControlValueAccessor,
@@ -19,14 +18,7 @@ import { ValidationSummary } from "../validation-summary/validation-summary";
 @Component({
   selector: "app-address-form",
   templateUrl: "./address-form.html",
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    ValidationSummary,
-    SelectModule,
-    InputTextModule,
-    KeyFilterModule,
-  ],
+  imports: [ReactiveFormsModule, ValidationSummary, SelectModule, InputTextModule, KeyFilterModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { CommonModule } from "@angular/common";
 import { Component, forwardRef, inject, model, output, signal } from "@angular/core";
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { AutoComplete, AutoCompleteModule, AutoCompleteSelectEvent } from "primeng/autocomplete";
@@ -13,7 +12,7 @@ import { CustomerForm, CustomerFormValue } from "../customer-form/customer-form"
 @Component({
   selector: "app-search-customer",
   templateUrl: "./search-customer.html",
-  imports: [CommonModule, AutoCompleteModule, FormsModule, Button, Dialog, CustomerForm],
+  imports: [AutoCompleteModule, FormsModule, Button, Dialog, CustomerForm],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

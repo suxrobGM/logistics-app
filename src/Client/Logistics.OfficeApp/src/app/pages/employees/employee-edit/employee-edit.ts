@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { Component, OnInit, inject, input, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
@@ -30,7 +29,6 @@ import { ChangeRoleDialogComponent } from "../components";
     ConfirmDialogModule,
     ChangeRoleDialogComponent,
     CardModule,
-    CommonModule,
     ProgressSpinnerModule,
     ButtonModule,
     RouterLink,

@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { Component, OnDestroy, inject, input, signal } from "@angular/core";
 import { ApiService } from "@/core/api";
 import { TruckGeolocationDto } from "@/core/api/models";
@@ -8,7 +7,7 @@ import { GeolocationMap } from "@/shared/components";
 @Component({
   selector: "app-trucks-map",
   templateUrl: "./trucks-map.html",
-  imports: [CommonModule, GeolocationMap],
+  imports: [GeolocationMap],
 })
 export class TrucksMap implements OnDestroy {
   private readonly apiService = inject(ApiService);

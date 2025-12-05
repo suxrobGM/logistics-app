@@ -1,12 +1,11 @@
-import { CommonModule } from "@angular/common";
 import { Component, input } from "@angular/core";
-import { TagModule } from "primeng/tag";
+import { Tag, TagModule } from "primeng/tag";
 import { PaymentStatus, paymentStatusOptions } from "@/core/api/models";
 
 @Component({
   selector: "app-payment-status-tag",
   templateUrl: "./payment-status-tag.html",
-  imports: [CommonModule, TagModule],
+  imports: [TagModule],
 })
 export class PaymentStatusTag {
   public readonly paymentStatus = input.required<PaymentStatus>();
@@ -18,7 +17,7 @@ export class PaymentStatusTag {
     );
   }
 
-  getPaymentStatusTagSeverity(): "success" | "warn" {
+  getPaymentStatusTagSeverity(): Tag["severity"] {
     return this.paymentStatus() === PaymentStatus.Paid ? "success" : "warn";
   }
 }

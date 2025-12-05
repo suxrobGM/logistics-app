@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { Component, OnInit, inject, input, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { ButtonModule } from "primeng/button";
@@ -11,7 +10,7 @@ import { CustomerForm, CustomerFormValue } from "@/shared/components";
 @Component({
   selector: "app-customer-edit",
   templateUrl: "./customer-edit.html",
-  imports: [CommonModule, CardModule, ButtonModule, RouterModule, CustomerForm],
+  imports: [CardModule, ButtonModule, RouterModule, CustomerForm],
 })
 export class CustomerEditComponent implements OnInit {
   private readonly apiService = inject(ApiService);

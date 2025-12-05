@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { ButtonModule } from "primeng/button";
@@ -17,7 +16,6 @@ import { ToastService } from "@/core/services";
   selector: "app-customers-list",
   templateUrl: "./customers-list.html",
   imports: [
-    CommonModule,
     ButtonModule,
     TooltipModule,
     RouterLink,

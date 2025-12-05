@@ -4,7 +4,7 @@ import { Card } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
+import { Tag, TagModule } from "primeng/tag";
 import { Observable } from "rxjs";
 import { Result } from "@/core/api/models";
 import { LoadsReportDto } from "@/core/api/models/report/loads-report.dto";
@@ -137,14 +137,14 @@ export class LoadsReportComponent extends BaseReportComponent<LoadsReportDto> im
     }
   }
 
-  protected getStatusSeverity(status: string): string {
+  protected getStatusSeverity(status: string): Tag["severity"] {
     switch (status.toLowerCase()) {
       case "delivered":
         return "success";
       case "in_transit":
         return "info";
       case "picked_up":
-        return "warning";
+        return "warn";
       case "cancelled":
         return "danger";
       default:
