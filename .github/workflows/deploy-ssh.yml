@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install Bun
         uses: oven-sh/setup-bun@v2
@@ -64,7 +64,7 @@ jobs:
       #     server-dir: ${{ env.OFFICE_APP_DEPLOY_PATH }}
 
       - name: Deploy to host via SSH
-        uses: appleboy/scp-action@v0.1.7
+        uses: appleboy/scp-action@v1.0.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -74,7 +74,7 @@ jobs:
           rm: true
 
       - name: Move files from ${{ env.OFFICE_APP_DEPLOY_PATH }}/${{ env.OFFICE_APP_PATH }}/${{ env.OFFICE_APP_OUTPUT_PATH }} to ${{ env.OFFICE_APP_DEPLOY_PATH }}
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.2.4
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -89,12 +89,12 @@ jobs:
     needs: [test-dotnet]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 10.0.x
 
       - name: Publish
         run: dotnet publish ${{ env.WEB_API_PROJECT }} -c Release -r linux-x64 -p:PublishSingleFile=true --output ./publish
@@ -113,7 +113,7 @@ jobs:
           echo '${{ secrets.API_APPSETTINGS }}' > ./publish/appsettings.Production.json
 
       - name: Stop service and clean
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.2.4
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -123,7 +123,7 @@ jobs:
             rm -rf ${{ env.WEB_API_DEPLOY_PATH }}/*
 
       - name: Upload files
-        uses: appleboy/scp-action@v0.1.7
+        uses: appleboy/scp-action@v1.0.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -132,7 +132,7 @@ jobs:
           target: ${{ env.WEB_API_DEPLOY_PATH }}
 
       - name: Move files from publish to deploy path
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.2.4
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -142,7 +142,7 @@ jobs:
             rm -rf ${{ env.WEB_API_DEPLOY_PATH }}/publish
 
       - name: Restart service
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.2.4
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -157,12 +157,12 @@ jobs:
     needs: [test-dotnet]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 10.0.x
 
       - name: Publish
         run: dotnet publish ${{ env.IDENTITY_SERVER_PROJECT }} -c Release -r linux-x64 -p:PublishSingleFile=true --output ./publish
@@ -181,7 +181,7 @@ jobs:
           echo '${{ secrets.IDENTITY_APPSETTINGS }}' > ./publish/appsettings.Production.json
 
       - name: Stop service and clean
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.2.4
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -191,7 +191,7 @@ jobs:
             rm -rf ${{ env.IDENTITY_SERVER_DEPLOY_PATH }}/*
 
       - name: Upload files
-        uses: appleboy/scp-action@v0.1.7
+        uses: appleboy/scp-action@v1.0.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -200,7 +200,7 @@ jobs:
           target: ${{ env.IDENTITY_SERVER_DEPLOY_PATH }}
 
       - name: Move files from publish to deploy path
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.2.4
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -210,7 +210,7 @@ jobs:
             rm -rf ${{ env.IDENTITY_SERVER_DEPLOY_PATH }}/publish
 
       - name: Restart service
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.2.4
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -226,18 +226,18 @@ jobs:
     needs: [test-dotnet]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 10.0.x
 
       - name: Publish
         run: dotnet publish ${{ env.ADMIN_APP_PROJECT }} -c Release -r linux-x64 -p:PublishTrimmed=true --output ./publish
 
       - name: Clean deploy path
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.2.4
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -246,7 +246,7 @@ jobs:
             rm -rf ${{ env.ADMIN_APP_DEPLOY_PATH }}/*
 
       - name: Deploy to host
-        uses: appleboy/scp-action@v0.1.7
+        uses: appleboy/scp-action@v1.0.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -255,7 +255,7 @@ jobs:
           target: ${{ env.ADMIN_APP_DEPLOY_PATH }}
 
       - name: Move files from publish to deploy path
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.2.4
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}

@@ -15,12 +15,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 10.0.x
 
       #- name: Install dependencies
       #  run: dotnet restore
@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install Bun
         uses: oven-sh/setup-bun@v2
@@ -53,29 +53,3 @@ jobs:
       - name: Build
         working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.OfficeApp
         run: bun run build
-
-  build-maui:
-    runs-on: windows-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 9.0.x
-
-      - name: Install MAUI workloads
-        run: |
-          dotnet workload install android
-          dotnet workload install ios
-          dotnet workload install maui
-
-      #- name: Install dependencies
-      #  run: dotnet restore
-
-      #- name: Verify formatting
-      #  run: dotnet format --verify-no-changes --no-restore
-
-      - name: Build Maui App
-        run: dotnet build ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.DriverApp/Logistics.DriverApp.csproj
