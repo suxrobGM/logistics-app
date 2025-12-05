@@ -21,32 +21,58 @@ A cross-platform driver application built with **Kotlin Multiplatform (KMP)** an
 - **Push Notifications**: Firebase Cloud Messaging for load updates
 - **Maps Integration**: Google Maps for route visualization
 
+## Report
+
+The complete project report can be found in the [report.pdf](docs/report.pdf) file.
+
+## Getting Started
+
+### Prerequisites
+
+- **Android Studio**: Latest version with Kotlin and Compose support
+- **Xcode**: Version 15.0+ for iOS development
+- **Kotlin Multiplatform Mobile Plugin**: Installed in Android Studio
+- **CocoaPods**: For iOS dependency management
+- **Simulator/Device**: Android device/emulator (API 26+) and iOS device/simulator (iOS 15.0+)
+
+### Setup Instructions
+
+1. **Run Backend Services**:
+   - Ensure the Logistics backend services (API and Identity servers) are running and accessible. Refer to the main project [README](../../../README.md) for backend setup.
+
+2. **Run Android App**:
+   - Open the `Logistics.DriverApp` folder in Android Studio.
+   - Connect an Android device or start an emulator.
+   - Click "Run" to build and deploy the app. Ensure the `composeApp` module is selected.
+
+3. **Run iOS App**:
+   - Open the `iosApp` folder in Xcode.
+   - Connect an iOS device or start a simulator.
+   - Click "Run" to build and deploy the app.
+
 ## Tech Stack
 
 ### Core Technologies
 
-| Technology | Version |
-|------------|---------|
-| Kotlin | 2.2.21 |
-| Compose Multiplatform | 1.9.2 |
-| Ktor | 3.3.1 |
-| Koin | 4.1.0 |
-| Kotlinx Serialization | 1.9.0 |
-| Kotlinx Coroutines | 1.10.2 |
+- Kotlin Multiplatform (KMP)
+- Compose Multiplatform (UI)
+- Ktor for networking and HTTP clients
+- Koin for dependency injection
+- Kotlinx Serialization for JSON serialization and deserialization
+- Kotlinx Coroutines for asynchronous programming
+- Material 3 design system
+- JetBrains Navigation Compose for navigation
+- OpenAPI Generator for API client generation
 
 ### Android Platform
 
 - **Min SDK**: 26 (Android 8.0)
 - **Target SDK**: 36 (Android 16)
-- **Firebase BOM**: 34.5.0 (Cloud Messaging)
-- **Google Maps**: Maps Compose 6.12.1
-- **SignalR**: 10.0.0
 
 ### iOS Platform
 
 - **iOS Version**: 15.0+
 - **Xcode**: 15.0+
-- **Ktor Darwin**: Native networking
 - **Swift Interop**: Native iOS integration
 
 ## Project Structure
@@ -110,4 +136,4 @@ Koin is used for multiplatform DI, configured in `Module.kt` with platform-speci
 
 ### API Generation
 
-API clients and models are auto-generated from OpenAPI spec using the OpenAPI Generator Gradle plugin (v7.10.0).
+API clients and models are auto-generated from OpenAPI spec using the OpenAPI Generator Gradle plugin.

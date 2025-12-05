@@ -65,12 +65,12 @@ All services are container‑ready and can be orchestrated on Kubernetes or run 
 - **Analytics Dashboard**: Provides insight into operations, including load statistics, driver performance, and financial metrics.
 - **GPS Tracking**: Real-time GPS tracking of drivers and vehicles.
 - **Invoicing**: Generate and manage invoices for loads.
-
-### Planned Features
-
 - **Trip Management**: Manage trips, including start and end locations for trucks.
 - **Document Management**: Upload and manage documents related to loads.
 - **Reporting**: Generate detailed reports on loads, drivers, and financials.
+
+### Planned Features
+
 - **Mobile App Enhancements**: Improve the driver mobile app with additional features like route optimization and offline capabilities.
 - **Integration with Third-Party Services**: Integrate with other logistics and transportation services for enhanced functionality.
 - **AI-Powered Features**: Implement AI-driven features for load optimization, route planning, and predictive analytics.
@@ -98,7 +98,7 @@ A live demo of the application is available at [https://logistics-office.suxrobg
 
 To run the Logistics TMS application locally, you need to have the following prerequisites installed on your machine:
 
-- [Download](https://dotnet.microsoft.com/en-us/download/dotnet/9.0) and install the .NET 9 SDK.
+- [Download](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) and install the .NET 10 SDK.
 - Install Bun runtime to run an Angular project. Follow [these](https://bun.sh/docs/installation) instructions.
 - Download and install the PostgreSQL database from [here](https://www.postgresql.org/download/).
 - (Optional) Install Docker to run the application in containers. Follow [these](https://docs.docker.com/get-docker/) instructions.
@@ -112,14 +112,14 @@ To run the Logistics TMS application locally, you need to have the following pre
 
 1. Clone this repository:
 
-   ```
+   ```text
    git clone https://github.com/suxrobgm/logistics-app.git
    cd logistics-app
    ```
 
 2. Install Angular app dependencies:
 
-   ```
+   ```text
    cd src\Client\Logistics.OfficeApp
    bun install
    ```
@@ -154,6 +154,9 @@ To run the Logistics TMS application locally, you need to have the following pre
 8. Login to the applications:
    Use the test credentials in the [Test Credentials](#test-credentials) section to log in to the applications.
    See the access column in the table to determine which app you can access with each role.
+
+9. (Optional) Run Driver Mobile App:
+   - Follow the instructions in the [Driver Mobile App README](./src/Client/Logistics.DriverApp/README.md) to set up and run the Driver Mobile App on Android and iOS simulators or devices.
 
 #### Running with Docker
 
@@ -196,6 +199,9 @@ It will be accessible at the <https://localhost:8100>.
 - CI/CD
 - Bun
 - Aspire
+- Kotlin Multiplatform (KMP)
+- Material 3 for Compose (mobile app)
+- Ktor and Koin for networking and dependency injection (mobile app)
 
 ### Design Patterns
 
@@ -208,6 +214,7 @@ It will be accessible at the <https://localhost:8100>.
 - Repository & Generic Repository
 - Inversion of Control / Dependency injection
 - Specification Pattern
+- MVVM (for mobile app)
 
 ### Architecture
 
@@ -265,12 +272,40 @@ Here is a sneak peek into the Office Application:
 ![Office App](./docs/office_app_8.jpg?raw=true)
 ![Office App](./docs/office_app_9.jpg?raw=true)
 
-## Driver Mobile App Preview
+## Driver Mobile App
 
-![Driver App](./docs/driver_app_1.jpg?raw=true)
-![Driver App](./docs/driver_app_2.jpg?raw=true)
-![Driver App](./docs/driver_app_3.jpg?raw=true)
-![Driver App](./docs/driver_app_4.jpg?raw=true)
-![Driver App](./docs/driver_app_5.jpg?raw=true)
-![Driver App](./docs/driver_app_6.jpg?raw=true)
-![Driver App](./docs/driver_app_7.jpg?raw=true)
+The Driver Mobile App was migrated from **.NET MAUI** to **Kotlin Multiplatform (KMP)** with Compose Multiplatform, achieving ~90% code sharing between Android and iOS. Redesigned with a modern Material 3 UI and improved UX, the new app offers a seamless experience for drivers. Migrated from Syncfusion charts to custom Compose Canvas charts since Syncfusion requires a paid license.
+
+### Side-by-Side Comparison: Legacy (MAUI) vs New (KMP)
+
+#### Dashboard
+
+| Legacy (.NET MAUI) | New (Kotlin Multiplatform) |
+|:------------------:|:--------------------------:|
+| <img src="./docs/driver_app_2.jpg" alt="Legacy Dashboard" height="500"> | <img src="./src/Client/Logistics.DriverApp/docs/images/screenshot_1.png" alt="New Dashboard" height="500"> |
+
+#### Statistics
+
+| Legacy (.NET MAUI) | New (Kotlin Multiplatform) |
+|:------------------:|:--------------------------:|
+| <img src="./docs/driver_app_4.jpg" alt="Legacy Stats" height="500"> | <img src="./src/Client/Logistics.DriverApp/docs/images/screenshot_2.png" alt="New Stats Bar Chart" height="500"> |
+| <img src="./docs/driver_app_5.jpg" alt="Legacy Stats Charts" height="500"> | <img src="./src/Client/Logistics.DriverApp/docs/images/screenshot_3.png" alt="New Stats Line Chart" height="500"> |
+
+#### Load Details & Maps
+
+| Legacy (.NET MAUI) | New (Kotlin Multiplatform) |
+|:------------------:|:--------------------------:|
+| <img src="./docs/driver_app_3.jpg" alt="Legacy Load Details" height="500"> | <img src="./src/Client/Logistics.DriverApp/docs/images/screenshot_5.png" alt="New Load Details" height="500"> |
+| | <img src="./src/Client/Logistics.DriverApp/docs/images/screenshot_6.png" alt="New Maps Integration" height="500"> |
+
+#### Account
+
+| Legacy (.NET MAUI) | New (Kotlin Multiplatform) |
+|:------------------:|:--------------------------:|
+| <img src="./docs/driver_app_6.jpg" alt="Legacy Account" height="500"> | <img src="./src/Client/Logistics.DriverApp/docs/images/screenshot_7.png" alt="New Account" height="500"> |
+
+#### Additional New Screens
+
+| Past Loads | Settings |
+|:----------:|:--------:|
+| <img src="./src/Client/Logistics.DriverApp/docs/images/screenshot_4.png" alt="Past Loads" height="500"> | <img src="./src/Client/Logistics.DriverApp/docs/images/screenshot_8.png" alt="Settings" height="500"> |
