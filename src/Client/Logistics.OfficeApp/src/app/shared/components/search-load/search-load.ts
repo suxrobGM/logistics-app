@@ -4,7 +4,7 @@ import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/f
 import { AutoCompleteModule, AutoCompleteSelectEvent } from "primeng/autocomplete";
 import { ApiService } from "@/core/api";
 import { LoadDto } from "@/core/api/models";
-import { LoadStatusTag } from "../load-status-tag/load-status-tag";
+import { LoadStatusTag } from "../tags/load-status-tag/load-status-tag";
 
 /**
  * Component for searching and selecting loads.
