@@ -2,6 +2,7 @@ package com.jfleets.driver.permission
 
 import android.Manifest
 import android.os.Build
+import androidx.annotation.RequiresApi
 
 /**
  * Represents a permission that can be requested at runtime.
@@ -17,6 +18,7 @@ sealed class AppPermission(
     val displayName: String
 ) {
     /** Required for push notifications on Android 13+ */
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     data object PostNotifications : AppPermission(
         permission = Manifest.permission.POST_NOTIFICATIONS,
         minSdkVersion = Build.VERSION_CODES.TIRAMISU,
@@ -38,6 +40,7 @@ sealed class AppPermission(
     )
 
     /** Background location for tracking while app is in background */
+    @RequiresApi(Build.VERSION_CODES.Q)
     data object BackgroundLocation : AppPermission(
         permission = Manifest.permission.ACCESS_BACKGROUND_LOCATION,
         minSdkVersion = Build.VERSION_CODES.Q,
@@ -58,23 +61,33 @@ sealed class AppPermission(
          * Android silently denies all permissions if background location is requested with others.
          */
         val startupPermissions: List<AppPermission> by lazy {
-            listOf(
-                PostNotifications,
+            val permissions = mutableListOf(
                 FineLocation,
                 CoarseLocation,
                 Camera
             )
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                permissions.add(PostNotifications)
+            }
+            permissions
         }
 
         /** All defined permissions */
         val all: List<AppPermission> by lazy {
-            listOf(
-                PostNotifications,
+            val permissions = mutableListOf(
                 FineLocation,
                 CoarseLocation,
-                BackgroundLocation,
                 Camera
             )
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                permissions.add(BackgroundLocation)
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                permissions.add(PostNotifications)
+            }
+            permissions
         }
     }
 }
