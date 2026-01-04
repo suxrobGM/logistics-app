@@ -5,18 +5,12 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class UpdateCustomerHandler : IAppRequestHandler<UpdateCustomerCommand, Result>
+internal sealed class UpdateCustomerHandler(ITenantUnitOfWork tenantUow)
+    : IAppRequestHandler<UpdateCustomerCommand, Result>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public UpdateCustomerHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public async Task<Result> Handle(UpdateCustomerCommand req, CancellationToken ct)
     {
-        var customerEntity = await _tenantUow.Repository<Customer>().GetByIdAsync(req.Id, ct);
+        var customerEntity = await tenantUow.Repository<Customer>().GetByIdAsync(req.Id, ct);
 
         if (customerEntity is null)
         {
@@ -24,8 +18,8 @@ internal sealed class UpdateCustomerHandler : IAppRequestHandler<UpdateCustomerC
         }
 
         customerEntity.Name = req.Name;
-        _tenantUow.Repository<Customer>().Update(customerEntity);
-        await _tenantUow.SaveChangesAsync(ct);
+        tenantUow.Repository<Customer>().Update(customerEntity);
+        await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
 }

@@ -1,0 +1,34 @@
+<Solution>
+  <Folder Name="/Client/">
+    <Project Path="src/Client/Logistics.HttpClient/Logistics.HttpClient.csproj" />
+    <!-- <Project Path="src/Client/Logistics.DriverApp.Legacy/Logistics.DriverApp.csproj" /> -->
+    <Project Path="src/Client/Logistics.AdminApp/Logistics.AdminApp.csproj" />
+  </Folder>
+  <Folder Name="/Test/">
+    <Project Path="test/Logistics.Application.Tests/Logistics.Application.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Core/">
+    <Project Path="src/Core/Logistics.Domain/Logistics.Domain.csproj" />
+    <Project Path="src/Core/Logistics.Infrastructure/Logistics.Infrastructure.csproj" />
+    <Project Path="src/Core/Logistics.Application/Logistics.Application.csproj" />
+    <Project Path="src/Core/Logistics.Mappings/Logistics.Mappings.csproj" />
+    <Project Path="src/Core/Logistics.Domain.Primitives/Logistics.Domain.Primitives.csproj" />
+  </Folder>
+  <Folder Name="/Shared/">
+    <Project Path="src/Shared/Logistics.Shared.Models/Logistics.Shared.Models.csproj" />
+    <Project Path="src/Shared/Logistics.Shared.Identity/Logistics.Shared.Identity.csproj" />
+    <Project Path="src/Shared/Logistics.Shared.Geo/Logistics.Shared.Geo.csproj" />
+  </Folder>
+  <Folder Name="/Docs/">
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Presentation/">
+    <Project Path="src/Presentation/Logistics.API/Logistics.API.csproj" />
+    <Project Path="src/Presentation/Logistics.IdentityServer/Logistics.IdentityServer.csproj" />
+    <Project Path="src/Presentation/Logistics.DbMigrator/Logistics.DbMigrator.csproj" />
+  </Folder>
+  <Folder Name="/Aspire/">
+    <Project Path="src/Aspire/Logistics.Aspire.AppHost/Logistics.Aspire.AppHost.csproj" />
+    <Project Path="src/Aspire/Logistics.Aspire.ServiceDefaults/Logistics.Aspire.ServiceDefaults.csproj" />
+  </Folder>
+</Solution>
