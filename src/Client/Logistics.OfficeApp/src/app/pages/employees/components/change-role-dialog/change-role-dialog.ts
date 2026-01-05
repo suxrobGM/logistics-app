@@ -10,8 +10,8 @@ import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
-import { ApiService } from "@/core/api";
-import { RemoveEmployeeRoleCommand, RoleDto, UpdateEmployeeCommand } from "@/core/api/models";
+import { Api, updateEmployee$Json, removeRoleFromEmployee$Json } from "@/core/api";
+import { RemoveRoleFromEmployeeCommand, RoleDto, UpdateEmployeeCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { UserService } from "../../services";
 
@@ -30,7 +30,7 @@ import { UserService } from "../../services";
 export class ChangeRoleDialogComponent {
   protected readonly form: FormGroup;
 
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
   private readonly userService = inject(UserService);
   private readonly toastService = inject(ToastService);
 
@@ -49,7 +49,7 @@ export class ChangeRoleDialogComponent {
     this.fetchRoles();
   }
 
-  submit(): void {
+  async submit(): Promise<void> {
     const role = this.form.value.role;
 
     if (role === "") {
@@ -63,13 +63,15 @@ export class ChangeRoleDialogComponent {
     };
 
     this.isLoading.set(true);
-    this.apiService.employeeApi.updateEmployee(updateEmployee).subscribe((result) => {
-      if (result.success) {
-        this.toastService.showSuccess(`Successfully changed employee's role`);
-      }
-
-      this.isLoading.set(false);
+    const result = await this.api.invoke(updateEmployee$Json, {
+      userId: this.userId(),
+      body: updateEmployee,
     });
+    if (result.success) {
+      this.toastService.showSuccess(`Successfully changed employee's role`);
+    }
+
+    this.isLoading.set(false);
   }
 
   close(): void {
@@ -86,24 +88,25 @@ export class ChangeRoleDialogComponent {
 
   removeRoles(): void {
     this.currentRoles()?.forEach((role) => {
-      this.removeRole(role.name);
+      if (role.name) {
+        this.removeRole(role.name);
+      }
     });
   }
 
-  private removeRole(roleName: string): void {
-    const removeRole: RemoveEmployeeRoleCommand = {
+  private async removeRole(roleName: string): Promise<void> {
+    const removeRole: RemoveRoleFromEmployeeCommand = {
       userId: this.userId(),
       role: roleName,
     };
 
     this.isLoading.set(true);
-    this.apiService.employeeApi.removeRoleFromEmployee(removeRole).subscribe((result) => {
-      if (result.success) {
-        this.toastService.showSuccess(`Removed ${roleName} role from the employee`);
-      }
+    const result = await this.api.invoke(removeRoleFromEmployee$Json, { userId: this.userId(), body: removeRole });
+    if (result.success) {
+      this.toastService.showSuccess(`Removed ${roleName} role from the employee`);
+    }
 
-      this.isLoading.set(false);
-    });
+    this.isLoading.set(false);
   }
 
   private fetchRoles(): void {

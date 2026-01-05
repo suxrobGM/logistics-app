@@ -85,7 +85,7 @@ export abstract class BaseTableComponent<T> {
       )
       .subscribe((r) => {
         this.data.set(r.data || []);
-        this.totalRecords.set(r.totalItems);
+        this.totalRecords.set(r.totalItems ?? 0);
         this.first.set(page * size);
       });
   }

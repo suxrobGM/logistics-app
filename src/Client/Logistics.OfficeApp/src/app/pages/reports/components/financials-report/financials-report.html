@@ -127,7 +127,7 @@
                     <div class="d-flex align-items-center mb-1">
                       <h6 class="me-2 mb-0">{{ metric.metric }}</h6>
                       <p-tag
-                        [value]="metric.category"
+                        [value]="metric.category ?? ''"
                         [severity]="getCategorySeverity(metric.category)"
                         styleClass="p-tag-sm"
                       >
@@ -137,7 +137,7 @@
                   </div>
                   <div class="flex-shrink-0">
                     <p-tag
-                      [value]="(metric.trend >= 0 ? '+' : '') + metric.trend + '%'"
+                      [value]="((metric.trend ?? 0) >= 0 ? '+' : '') + (metric.trend ?? 0) + '%'"
                       [severity]="getMetricSeverity(metric.trend)"
                     >
                     </p-tag>

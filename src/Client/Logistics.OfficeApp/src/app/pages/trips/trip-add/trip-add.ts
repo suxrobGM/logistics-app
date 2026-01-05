@@ -1,7 +1,7 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { ApiService } from "@/core/api";
+import { Api, createTrip$Json } from "@/core/api";
 import { CreateTripCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { TripWizard, TripWizardValue } from "../components";
@@ -13,12 +13,12 @@ import { TripWizard, TripWizardValue } from "../components";
 })
 export class TripAddPage {
   private readonly router = inject(Router);
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
 
   protected readonly isLoading = signal(false);
 
-  protected createTrip(formValue: TripWizardValue): void {
+  protected async createTrip(formValue: TripWizardValue): Promise<void> {
     this.isLoading.set(true);
 
     const command: CreateTripCommand = {
@@ -29,13 +29,12 @@ export class TripAddPage {
       optimizedStops: formValue.stops,
     };
 
-    this.apiService.tripApi.createTrip(command).subscribe((result) => {
-      if (result.success) {
-        this.toastService.showSuccess("Trip created successfully");
-        this.router.navigate(["/trips"]);
-      }
+    const result = await this.api.invoke(createTrip$Json, { body: command });
+    if (result.success) {
+      this.toastService.showSuccess("Trip created successfully");
+      this.router.navigate(["/trips"]);
+    }
 
-      this.isLoading.set(false);
-    });
+    this.isLoading.set(false);
   }
 }

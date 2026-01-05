@@ -7,10 +7,9 @@ import { DatePickerModule } from "primeng/datepicker";
 import { InputTextModule } from "primeng/inputtext";
 import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
-import { Observable } from "rxjs";
-import { ApiService } from "@/core/api";
-import { PagedResult } from "@/core/api/models";
-import { DriverReportDto } from "@/core/api/models/report/drivers-report.dto";
+import { Observable, from } from "rxjs";
+import { Api, formatSortField, getDriversReport$Json } from "@/core/api";
+import { DriverReportDto, PagedResult } from "@/core/api/models";
 import { BaseTableComponent, RangeCalendar, TableQueryParams } from "@/shared/components";
 import { DateUtils } from "@/shared/utils";
 
@@ -31,22 +30,24 @@ import { DateUtils } from "@/shared/utils";
   ],
 })
 export class DriversDetailedComponent extends BaseTableComponent<DriverReportDto> {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
 
   protected readonly startDate = signal(DateUtils.thisYear());
   protected readonly endDate = signal(DateUtils.today());
 
   protected override query(params: TableQueryParams): Observable<PagedResult<DriverReportDto>> {
-    const orderBy = this.apiService.formatSortField(params.sortField, params.sortOrder);
+    const orderBy = formatSortField(params.sortField, params.sortOrder);
 
-    return this.apiService.reportApi.getDriversReport({
-      page: params.page + 1,
-      pageSize: params.size,
-      orderBy: orderBy,
-      search: params.search,
-      startDate: this.startDate(),
-      endDate: this.endDate(),
-    });
+    return from(
+      this.api.invoke(getDriversReport$Json, {
+        Page: params.page + 1,
+        PageSize: params.size,
+        OrderBy: orderBy,
+        Search: params.search,
+        StartDate: this.startDate().toISOString(),
+        EndDate: this.endDate().toISOString(),
+      }),
+    );
   }
   protected filterByDate(): void {
     this.fetch({ page: 0, size: 10 });

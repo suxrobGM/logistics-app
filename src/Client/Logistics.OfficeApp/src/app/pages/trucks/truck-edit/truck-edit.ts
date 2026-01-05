@@ -15,7 +15,14 @@ import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
-import { ApiService } from "@/core/api";
+import {
+  Api,
+  getTruckById$Json,
+  createTruck$Json,
+  updateTruck$Json,
+  deleteTruck$Json,
+  getEmployees$Json,
+} from "@/core/api";
 import {
   CreateTruckCommand,
   EmployeeDto,
@@ -50,7 +57,7 @@ export class TruckEditComponent implements OnInit {
   protected readonly truckTypes = truckTypeOptions;
   protected readonly truckStatuses = truckStatusOptions;
 
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
@@ -84,12 +91,11 @@ export class TruckEditComponent implements OnInit {
     }
   }
 
-  protected searchDriver(event: { query: string }): void {
-    this.apiService.employeeApi.getDrivers({ search: event.query }).subscribe((result) => {
-      if (result.success && result.data) {
-        this.suggestedDrivers.set(result.data);
-      }
-    });
+  protected async searchDriver(event: { query: string }): Promise<void> {
+    const result = await this.api.invoke(getEmployees$Json, { Search: event.query, Role: "Driver" });
+    if (result.success && result.data) {
+      this.suggestedDrivers.set(result.data);
+    }
   }
 
   protected submit(): void {
@@ -107,44 +113,40 @@ export class TruckEditComponent implements OnInit {
     });
   }
 
-  private fetchTruck(id: string): void {
-    this.apiService.truckApi.getTruck(id).subscribe((result) => {
-      if (result.success && result.data) {
-        const truck = result.data;
+  private async fetchTruck(id: string): Promise<void> {
+    const result = await this.api.invoke(getTruckById$Json, { truckOrDriverId: id });
+    if (result.success && result.data) {
+      const truck = result.data;
 
-        this.form.patchValue({
-          truckNumber: truck.number,
-          truckStatus: truck.status,
-          truckType: truck.type,
-          mainDriver: truck.mainDriver,
-          secondaryDriver: truck.secondaryDriver,
-        });
-      }
-    });
+      this.form.patchValue({
+        truckNumber: truck.number ?? undefined,
+        truckStatus: truck.status,
+        truckType: truck.type,
+        mainDriver: truck.mainDriver,
+        secondaryDriver: truck.secondaryDriver,
+      });
+    }
   }
 
-  private createTruck(): void {
+  private async createTruck(): Promise<void> {
     this.isLoading.set(true);
 
     const command: CreateTruckCommand = {
       truckNumber: this.form.value.truckNumber!,
       truckType: this.form.value.truckType!,
-      truckStatus: this.form.value.truckStatus!,
-      mainDriverId: this.form.value.mainDriver?.id,
-      secondaryDriverId: this.form.value.secondaryDriver?.id,
+      mainDriverId: this.form.value.mainDriver?.id ?? undefined,
     };
 
-    this.apiService.truckApi.createTruck(command).subscribe((result) => {
-      if (result.success) {
-        this.toastService.showSuccess("A new truck has been created successfully");
-        this.router.navigateByUrl("/trucks");
-      }
+    const result = await this.api.invoke(createTruck$Json, { body: command });
+    if (result.success) {
+      this.toastService.showSuccess("A new truck has been created successfully");
+      this.router.navigateByUrl("/trucks");
+    }
 
-      this.isLoading.set(false);
-    });
+    this.isLoading.set(false);
   }
 
-  private updateTruck(): void {
+  private async updateTruck(): Promise<void> {
     this.isLoading.set(true);
 
     const updateTruckCommand: UpdateTruckCommand = {
@@ -156,28 +158,29 @@ export class TruckEditComponent implements OnInit {
       secondaryDriverId: this.form.value.secondaryDriver?.id,
     };
 
-    this.apiService.truckApi.updateTruck(updateTruckCommand).subscribe((result) => {
-      if (result.success) {
-        this.toastService.showSuccess("Truck has been updated successfully");
-      }
-
-      this.isLoading.set(false);
+    const result = await this.api.invoke(updateTruck$Json, {
+      id: this.id()!,
+      body: updateTruckCommand,
     });
+    if (result.success) {
+      this.toastService.showSuccess("Truck has been updated successfully");
+    }
+
+    this.isLoading.set(false);
   }
 
-  private deleteTruck(): void {
+  private async deleteTruck(): Promise<void> {
     if (!this.id()) {
       return;
     }
 
     this.isLoading.set(true);
-    this.apiService.truckApi.deleteTruck(this.id()!).subscribe((result) => {
-      if (result.success) {
-        this.toastService.showSuccess("A truck has been deleted successfully");
-        this.router.navigateByUrl("/trucks");
-      }
+    const result = await this.api.invoke(deleteTruck$Json, { id: this.id()! });
+    if (result.success) {
+      this.toastService.showSuccess("A truck has been deleted successfully");
+      this.router.navigateByUrl("/trucks");
+    }
 
-      this.isLoading.set(false);
-    });
+    this.isLoading.set(false);
   }
 }

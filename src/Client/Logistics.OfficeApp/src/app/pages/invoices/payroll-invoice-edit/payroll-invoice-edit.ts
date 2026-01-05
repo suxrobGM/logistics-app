@@ -8,7 +8,14 @@ import { CardModule } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
-import { ApiService } from "@/core/api";
+import {
+  Api,
+  getEmployees$Json,
+  getInvoiceById$Json,
+  previewPayrollInvoice$Json,
+  createPayrollInvoice$Json,
+  updatePayrollInvoice$Json,
+} from "@/core/api";
 import {
   CreatePayrollInvoiceCommand,
   EmployeeDto,
@@ -18,7 +25,6 @@ import {
   UpdatePayrollInvoiceCommand,
   salaryTypeOptions,
 } from "@/core/api/models";
-import { PreviewPayrollInvoicesQuery } from "@/core/api/models/invoice/preview-payroll-invoices.model";
 import { ToastService } from "@/core/services";
 import { ValidationSummary } from "@/shared/components";
 import { PredefinedDateRanges } from "@/shared/utils";
@@ -36,18 +42,15 @@ import { DateUtils } from "@/shared/utils";
     ProgressSpinnerModule,
     ReactiveFormsModule,
     ButtonModule,
-    //AddressForm,
     SelectModule,
     DatePicker,
   ],
 })
 export class PayrollInvoiceEditComponent implements OnInit {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
-  //readonly paymentStatusOptions = paymentStatusOptions;
-  //readonly paymentMethodOptions = paymentMethodTypeOptions;
   protected readonly todayDate = new Date();
   protected readonly form: FormGroup<PayrollForm>;
   protected readonly id = input<string>();
@@ -66,14 +69,7 @@ export class PayrollInvoiceEditComponent implements OnInit {
     this.form = new FormGroup<PayrollForm>({
       employee: new FormControl(null, { validators: Validators.required }),
       dateRange: new FormControl(lastWeek, { validators: Validators.required, nonNullable: true }),
-      //paymentStatus: new FormControl(null),
-      //paymentMethod: new FormControl(null),
-      //paymentBillingAddress: new FormControl(null),
     });
-
-    // this.form.get("paymentStatus")?.valueChanges.subscribe((status) => {
-    //   this.setConditionalValidators(status);
-    // });
   }
 
   ngOnInit(): void {
@@ -92,32 +88,30 @@ export class PayrollInvoiceEditComponent implements OnInit {
     this.fetchPreviewPayrollInvoice(employeeId);
   }
 
-  searchEmployee(event: { query: string }): void {
-    this.apiService.employeeApi.getEmployees({ search: event.query }).subscribe((result) => {
-      if (result.data) {
-        this.suggestedEmployees.set(result.data);
-      }
-    });
+  async searchEmployee(event: { query: string }): Promise<void> {
+    const result = await this.api.invoke(getEmployees$Json, { Search: event.query });
+    if (result.data) {
+      this.suggestedEmployees.set(result.data);
+    }
   }
 
   handleAutoCompleteSelectEvent(event: AutoCompleteSelectEvent): void {
     this.fetchPreviewPayrollInvoice(event.value);
   }
 
-  fetchPreviewPayrollInvoice(employeeId: string): void {
+  async fetchPreviewPayrollInvoice(employeeId: string): Promise<void> {
     if (!this.form.valid) {
       return;
     }
 
-    const query: PreviewPayrollInvoicesQuery = {
-      employeeId: employeeId,
-      periodStart: this.form.value.dateRange![0],
-      periodEnd: this.form.value.dateRange![1],
-    };
-
-    this.apiService.invoiceApi.previewPayrollInvoice(query).subscribe((result) => {
-      this.previewPayrollInvoice.set(result.data!);
+    const result = await this.api.invoke(previewPayrollInvoice$Json, {
+      EmployeeId: employeeId,
+      PeriodStart: this.form.value.dateRange![0].toISOString(),
+      PeriodEnd: this.form.value.dateRange![1].toISOString(),
     });
+    if (result.data) {
+      this.previewPayrollInvoice.set(result.data as InvoiceDto);
+    }
   }
 
   submit(): void {
@@ -132,7 +126,8 @@ export class PayrollInvoiceEditComponent implements OnInit {
     }
   }
 
-  getSalaryTypeDesc(salaryType: SalaryType): string {
+  getSalaryTypeDesc(salaryType?: SalaryType): string {
+    if (!salaryType) return "N/A";
     return salaryTypeOptions.find((option) => option.value === salaryType)?.label ?? "";
   }
 
@@ -153,88 +148,73 @@ export class PayrollInvoiceEditComponent implements OnInit {
     }
   }
 
-  private fetchPayroll(): void {
+  private async fetchPayroll(): Promise<void> {
     const invoiceId = this.id();
     if (!invoiceId) {
       return;
     }
 
     this.isLoading.set(true);
-    this.apiService.invoiceApi.getInvoice(invoiceId).subscribe(({ data: invoice }) => {
-      if (invoice) {
-        this.form.patchValue({
-          employee: invoice.employee,
-          dateRange: [new Date(invoice.periodStart!), new Date(invoice.periodEnd!)],
-        });
+    const result = await this.api.invoke(getInvoiceById$Json, { id: invoiceId });
+    const invoice = result.data;
+    if (invoice) {
+      this.form.patchValue({
+        employee: invoice.employee,
+        dateRange: [new Date(invoice.periodStart!), new Date(invoice.periodEnd!)],
+      });
 
-        this.previewPayrollInvoice.set(invoice);
-        this.selectedEmployee.set(invoice.employee!);
-      }
+      this.previewPayrollInvoice.set(invoice);
+      this.selectedEmployee.set(invoice.employee!);
+    }
 
-      this.isLoading.set(false);
-    });
+    this.isLoading.set(false);
   }
 
-  private addPayroll(): void {
+  private async addPayroll(): Promise<void> {
     if (!this.form.valid) {
       return;
     }
 
     this.isLoading.set(true);
     const command: CreatePayrollInvoiceCommand = {
-      employeeId: this.form.value.employee!.id,
-      periodStart: this.form.value.dateRange![0],
-      periodEnd: this.form.value.dateRange![1],
+      employeeId: this.form.value.employee!.id ?? undefined,
+      periodStart: this.form.value.dateRange![0].toISOString(),
+      periodEnd: this.form.value.dateRange![1].toISOString(),
     };
 
-    this.apiService.invoiceApi.createPayrollInvoice(command).subscribe((result) => {
-      if (result.success) {
-        this.toastService.showSuccess("A new payroll invoice entry has been added successfully");
-        this.router.navigateByUrl("/invoices/payroll");
-      }
+    const result = await this.api.invoke(createPayrollInvoice$Json, { body: command });
+    if (result.success) {
+      this.toastService.showSuccess("A new payroll invoice entry has been added successfully");
+      this.router.navigateByUrl("/invoices/payroll");
+    }
 
-      this.isLoading.set(false);
-    });
+    this.isLoading.set(false);
   }
 
-  private updatePayroll(): void {
+  private async updatePayroll(): Promise<void> {
     this.isLoading.set(true);
 
-    const commad: UpdatePayrollInvoiceCommand = {
+    const command: UpdatePayrollInvoiceCommand = {
       id: this.id()!,
-      employeeId: this.form.value.employee!.id,
-      periodStart: this.form.value.dateRange![0],
-      periodEnd: this.form.value.dateRange![1],
+      employeeId: this.form.value.employee!.id ?? undefined,
+      periodStart: this.form.value.dateRange![0].toISOString(),
+      periodEnd: this.form.value.dateRange![1].toISOString(),
     };
 
-    this.apiService.invoiceApi.updatePayrollInvoice(commad).subscribe((result) => {
-      if (result.success) {
-        this.toastService.showSuccess("A payroll data has been updated successfully");
-        this.router.navigateByUrl("/invoices/payroll");
-      }
-
-      this.isLoading.set(false);
+    const result = await this.api.invoke(updatePayrollInvoice$Json, {
+      id: this.id()!,
+      body: command,
     });
+    if (result.success) {
+      this.toastService.showSuccess("A payroll data has been updated successfully");
+      this.router.navigateByUrl("/invoices/payroll");
+    }
+
+    this.isLoading.set(false);
   }
-
-  // private fetchPaymentMethods() {
-  //   this.isLoading.set(true);
-
-  //   this.apiService.paymentApi.getPaymentMethods().subscribe((result) => {
-  //     if (result.success) {
-  //       this.paymentMethods.set(result.data!);
-  //       console.log("Payment methods fetched successfully:", result.data);
-  //     }
-
-  //     this.isLoading.set(false);
-  //   });
-  // }
 }
 
 interface PayrollForm {
   employee: FormControl<EmployeeDto | null>;
   dateRange: FormControl<Date[]>;
-  //paymentStatus: FormControl<PaymentStatus | null>;
-  //paymentMethod: FormControl<PaymentMethodType | null>;
-  //paymentBillingAddress: FormControl<AddressDto | null>;
 }

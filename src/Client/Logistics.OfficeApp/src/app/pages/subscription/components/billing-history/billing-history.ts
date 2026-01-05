@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, inject, model, signal } from "@angular/core";
 import { TableLazyLoadEvent, TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
-import { ApiService } from "@/core/api";
+import { Api, formatSortField, getPayments$Json } from "@/core/api";
 import { PaymentDto } from "@/core/api/models";
 import { TenantService } from "@/core/services";
 import { AddressPipe } from "@/shared/pipes";
@@ -13,7 +13,7 @@ import { AddressPipe } from "@/shared/pipes";
   imports: [CommonModule, TableModule, TagModule, AddressPipe],
 })
 export class BillingHistoryComponent {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
   private readonly tenantService = inject(TenantService);
 
   protected readonly payments = signal<PaymentDto[]>([]);
@@ -21,29 +21,26 @@ export class BillingHistoryComponent {
   protected readonly totalRecords = signal(0);
   protected readonly first = model(0);
 
-  protected load(event: TableLazyLoadEvent): void {
+  protected async load(event: TableLazyLoadEvent): Promise<void> {
     this.isLoading.set(true);
     const first = event.first ?? 1;
     const rows = event.rows ?? 10;
     const page = first / rows + 1;
-    const sortField = this.apiService.formatSortField(event.sortField as string, event.sortOrder);
+    const sortField = formatSortField(event.sortField as string, event.sortOrder);
     const subscriptionId = this.tenantService.getTenantData()?.subscription?.id;
 
-    this.apiService.paymentApi
-      .getPayments({
-        subscriptionId: subscriptionId,
-        orderBy: sortField,
-        page: page,
-        pageSize: rows,
-        startDate: new Date(),
-      })
-      .subscribe((result) => {
-        if (result.success && result.data) {
-          this.payments.set(result.data);
-          this.totalRecords.set(result.totalItems);
-        }
+    const result = await this.api.invoke(getPayments$Json, {
+      SubscriptionId: subscriptionId,
+      OrderBy: sortField,
+      Page: page,
+      PageSize: rows,
+      StartDate: new Date().toISOString(),
+    });
+    if (result.success && result.data) {
+      this.payments.set(result.data);
+      this.totalRecords.set(result.totalItems ?? 0);
+    }
 
-        this.isLoading.set(false);
-      });
+    this.isLoading.set(false);
   }
 }

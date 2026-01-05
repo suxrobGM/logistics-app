@@ -5,9 +5,15 @@ import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
-import { Observable } from "rxjs";
-import { Result } from "@/core/api/models";
-import { LoadsReportDto } from "@/core/api/models/report/loads-report.dto";
+import { getLoadsReport$Json } from "@/core/api";
+import {
+  LoadPerformanceDto,
+  LoadsReportDto,
+  LoadTrendDto,
+  Result,
+  StatusDto,
+  TypeDto,
+} from "@/core/api/models";
 import { RangeCalendar } from "@/shared/components";
 import {
   BaseReportComponent,
@@ -52,10 +58,10 @@ export class LoadsReportComponent extends BaseReportComponent<LoadsReportDto> im
     this.fetch({ startDate: this.startDate(), endDate: this.endDate() });
   }
 
-  protected override query(params: ReportQueryParams): Observable<Result<LoadsReportDto>> {
-    return this.apiService.reportApi.getLoadsReport({
-      startDate: params.startDate,
-      endDate: params.endDate,
+  protected override async query(params: ReportQueryParams): Promise<Result<LoadsReportDto>> {
+    return this.api.invoke(getLoadsReport$Json, {
+      StartDate: params.startDate.toISOString(),
+      EndDate: params.endDate?.toISOString(),
     });
   }
 
@@ -63,8 +69,8 @@ export class LoadsReportComponent extends BaseReportComponent<LoadsReportDto> im
     // ----- Pie (Loads by Status) -----
     const status = result.statusBreakdown ?? [];
     if (status.length) {
-      const labels = status.map((s) => s.status);
-      const data = status.map((s) => s.count);
+      const labels = status.map((s: StatusDto) => s.status);
+      const data = status.map((s: StatusDto) => s.count);
       const colors = LOADS_CHART_PALETTE.slice(0, Math.max(1, labels.length));
 
       this.chartData.set({
@@ -83,11 +89,11 @@ export class LoadsReportComponent extends BaseReportComponent<LoadsReportDto> im
     const types = result.typeBreakdown ?? [];
     if (types.length > 0) {
       this.typeChartData.set({
-        labels: types.map((t) => t.type),
+        labels: types.map((t: TypeDto) => t.type),
         datasets: [
           {
             label: "Revenue",
-            data: types.map((t) => t.totalRevenue),
+            data: types.map((t: TypeDto) => t.totalRevenue),
             backgroundColor: "#42A5F5",
           },
         ],
@@ -97,11 +103,11 @@ export class LoadsReportComponent extends BaseReportComponent<LoadsReportDto> im
     const trends = result.loadTrends ?? [];
     if (trends.length > 0) {
       this.trendChartData.set({
-        labels: trends.map((t) => t.period),
+        labels: trends.map((t: LoadTrendDto) => t.period),
         datasets: [
           {
             label: "Load Count",
-            data: trends.map((t) => t.loadCount),
+            data: trends.map((t: LoadTrendDto) => t.loadCount),
             borderColor: "#2563eb",
             backgroundColor: "rgba(37, 99, 235, 0.1)",
             tension: 0.4,
@@ -109,7 +115,7 @@ export class LoadsReportComponent extends BaseReportComponent<LoadsReportDto> im
           },
           {
             label: "Revenue",
-            data: trends.map((t) => t.revenue),
+            data: trends.map((t: LoadTrendDto) => t.revenue),
             borderColor: "#16a34a",
             backgroundColor: "rgba(22, 163, 74, 0.1)",
             tension: 0.4,
@@ -123,13 +129,13 @@ export class LoadsReportComponent extends BaseReportComponent<LoadsReportDto> im
     const metrics = result.performanceMetrics ?? [];
     if (metrics.length > 0) {
       this.performanceChartData.set({
-        labels: metrics.map((m) => m.metric),
+        labels: metrics.map((m: LoadPerformanceDto) => m.metric),
         datasets: [
           {
             label: "Value",
-            data: metrics.map((m) => m.value),
-            backgroundColor: metrics.map((m) => (m.trend >= 0 ? "#16a34a" : "#ef4444")),
-            borderColor: metrics.map((m) => (m.trend >= 0 ? "#16a34a" : "#ef4444")),
+            data: metrics.map((m: LoadPerformanceDto) => m.value),
+            backgroundColor: metrics.map((m: LoadPerformanceDto) => ((m.trend ?? 0) >= 0 ? "#16a34a" : "#ef4444")),
+            borderColor: metrics.map((m: LoadPerformanceDto) => ((m.trend ?? 0) >= 0 ? "#16a34a" : "#ef4444")),
             borderWidth: 1,
           },
         ],

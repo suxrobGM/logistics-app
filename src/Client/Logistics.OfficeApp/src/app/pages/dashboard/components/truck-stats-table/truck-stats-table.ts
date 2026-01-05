@@ -5,8 +5,8 @@ import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TableLazyLoadEvent, TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { ApiService } from "@/core/api";
-import { PagedIntervalQuery, TruckStatsDto } from "@/core/api/models";
+import { Api, formatSortField, getTrucksStats$Json } from "@/core/api";
+import { TruckStatsDto } from "@/core/api/models";
 import { RangeCalendar } from "@/shared/components";
 import { DistanceUnitPipe } from "@/shared/pipes";
 import { DateUtils } from "@/shared/utils";
@@ -28,7 +28,7 @@ import { DateUtils } from "@/shared/utils";
   ],
 })
 export class TruckStatsTableComponent {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
 
   protected readonly isLoading = signal(false);
   protected readonly truckStats = signal<TruckStatsDto[]>([]);
@@ -40,28 +40,25 @@ export class TruckStatsTableComponent {
     this.fetchTrucksStats({ first: 0, rows: 10 });
   }
 
-  protected fetchTrucksStats(event: TableLazyLoadEvent): void {
+  protected async fetchTrucksStats(event: TableLazyLoadEvent): Promise<void> {
     this.isLoading.set(true);
     const first = event.first ?? 1;
     const rows = event.rows ?? 10;
     const page = first / rows + 1;
-    const sortField = this.apiService.formatSortField(event.sortField as string, event.sortOrder);
+    const sortField = formatSortField(event.sortField as string, event.sortOrder);
 
-    const query: PagedIntervalQuery = {
-      startDate: this.startDate(),
-      endDate: this.endDate(),
-      orderBy: sortField,
-      page: page,
-      pageSize: rows,
-    };
-
-    this.apiService.statsApi.getTrucksStats(query).subscribe((result) => {
-      if (result.success && result.data) {
-        this.truckStats.set(result.data);
-        this.totalRecords.set(result.totalItems);
-      }
-
-      this.isLoading.set(false);
+    const result = await this.api.invoke(getTrucksStats$Json, {
+      StartDate: this.startDate().toISOString(),
+      EndDate: this.endDate().toISOString(),
+      OrderBy: sortField,
+      Page: page,
+      PageSize: rows,
     });
+    if (result.success && result.data) {
+      this.truckStats.set(result.data);
+      this.totalRecords.set(result.totalItems ?? 0);
+    }
+
+    this.isLoading.set(false);
   }
 }

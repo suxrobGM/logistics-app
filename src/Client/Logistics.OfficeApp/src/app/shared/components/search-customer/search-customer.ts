@@ -4,8 +4,7 @@ import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/f
 import { AutoComplete, AutoCompleteModule, AutoCompleteSelectEvent } from "primeng/autocomplete";
 import { Button } from "primeng/button";
 import { Dialog } from "primeng/dialog";
-import { ApiService } from "@/core/api";
-import { CustomerDto } from "@/core/api/models";
+import { Api, CustomerDto, createCustomer$Json, getCustomers$Json } from "@/core/api";
 import { ToastService } from "@/core/services";
 import { CustomerForm, CustomerFormValue } from "../customer-form/customer-form";
 
@@ -22,7 +21,7 @@ import { CustomerForm, CustomerFormValue } from "../customer-form/customer-form"
   ],
 })
 export class SearchCustomerComponent implements ControlValueAccessor {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
 
   protected readonly suggestedCustomers = signal<CustomerDto[]>([]);
@@ -33,7 +32,7 @@ export class SearchCustomerComponent implements ControlValueAccessor {
 
   protected readonly customerDialogVisible = model<boolean>(false);
 
-  protected searchCustomer(event: { query: string }): void {
+  protected async searchCustomer(event: { query: string }): Promise<void> {
     const q = event.query?.trim() ?? "";
     this.lastQuery.set(q);
 
@@ -42,13 +41,13 @@ export class SearchCustomerComponent implements ControlValueAccessor {
       return;
     }
 
-    this.apiService.customerApi.getCustomers({ search: q }).subscribe({
-      next: (result) => {
-        const items = result.data ?? [];
-        this.suggestedCustomers.set(items); // [] triggers the "empty" template
-      },
-      error: () => this.suggestedCustomers.set([]),
-    });
+    try {
+      const result = await this.api.invoke(getCustomers$Json, { Search: q });
+      const items = result.data ?? [];
+      this.suggestedCustomers.set(items); // [] triggers the "empty" template
+    } catch {
+      this.suggestedCustomers.set([]);
+    }
   }
 
   protected changeSelectedCustomer(event: AutoCompleteSelectEvent): void {
@@ -62,14 +61,13 @@ export class SearchCustomerComponent implements ControlValueAccessor {
     this.customerDialogVisible.set(true);
   }
 
-  protected createCustomer(formValue: CustomerFormValue): void {
-    this.apiService.customerApi.createCustomer(formValue).subscribe((result) => {
-      if (result.success && result.data) {
-        this.toastService.showSuccess("A new customer has been created successfully");
-        this.customerDialogVisible.set(false);
-        this.selectedCustomer.set(result.data);
-      }
-    });
+  protected async createCustomer(formValue: CustomerFormValue): Promise<void> {
+    const result = await this.api.invoke(createCustomer$Json, { body: formValue });
+    if (result.success && result.data) {
+      this.toastService.showSuccess("A new customer has been created successfully");
+      this.customerDialogVisible.set(false);
+      this.selectedCustomer.set(result.data);
+    }
   }
 
   //#region Implementation Reactive forms

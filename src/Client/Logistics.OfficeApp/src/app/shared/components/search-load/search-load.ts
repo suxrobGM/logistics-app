@@ -2,8 +2,7 @@
 import { Component, forwardRef, inject, input, model, output, signal } from "@angular/core";
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { AutoCompleteModule, AutoCompleteSelectEvent } from "primeng/autocomplete";
-import { ApiService } from "@/core/api";
-import { LoadDto } from "@/core/api/models";
+import { Api, LoadDto, getLoadById$Json, getLoads$Json } from "@/core/api";
 import { LoadStatusTag } from "../tags/load-status-tag/load-status-tag";
 
 /**
@@ -23,7 +22,7 @@ import { LoadStatusTag } from "../tags/load-status-tag/load-status-tag";
   ],
 })
 export class SearchLoadComponent implements ControlValueAccessor {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
 
   protected readonly suggestedLoads = signal<LoadDto[]>([]);
 
@@ -31,16 +30,17 @@ export class SearchLoadComponent implements ControlValueAccessor {
   public readonly selectedLoad = model<LoadDto | null>(null);
   public readonly selectedLoadChange = output<LoadDto | null>();
 
-  protected searchLoad(event: { query: string }): void {
-    this.apiService.loadApi
-      .getLoads({ search: event.query, onlyActiveLoads: this.filterActiveLoads() })
-      .subscribe((result) => {
-        if (!result.data) {
-          return;
-        }
+  protected async searchLoad(event: { query: string }): Promise<void> {
+    const result = await this.api.invoke(getLoads$Json, {
+      Search: event.query,
+      OnlyActiveLoads: this.filterActiveLoads(),
+    });
 
-        this.suggestedLoads.set(result.data);
-      });
+    if (!result.data) {
+      return;
+    }
+
+    this.suggestedLoads.set(result.data);
   }
 
   protected changeSelectedLoad(event: AutoCompleteSelectEvent): void {
@@ -48,17 +48,16 @@ export class SearchLoadComponent implements ControlValueAccessor {
     this.onChange(event.value);
   }
 
-  private fetchLoad(loadId: string): void {
+  private async fetchLoad(loadId: string): Promise<void> {
     if (!loadId) {
       this.selectedLoad.set(null);
       return;
     }
 
-    this.apiService.loadApi.getLoad(loadId).subscribe((result) => {
-      if (result.success && result.data) {
-        this.selectedLoad.set(result.data);
-      }
-    });
+    const result = await this.api.invoke(getLoadById$Json, { id: loadId });
+    if (result.success && result.data) {
+      this.selectedLoad.set(result.data);
+    }
   }
 
   //#region Implementation Reactive forms

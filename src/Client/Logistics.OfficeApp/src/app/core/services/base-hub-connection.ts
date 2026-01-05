@@ -1,15 +1,14 @@
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import { environment } from "@/env";
 import { TenantService } from "./tenant.service";
+import { inject } from "@angular/core";
 
 export abstract class BaseHubConnection {
+  private readonly tenantService = inject(TenantService);
   protected readonly hubConnection: HubConnection;
   private isConnected: boolean;
 
-  constructor(
-    private hubName: string,
-    private tenantService: TenantService,
-  ) {
+  constructor(private readonly hubName: string) {
     this.isConnected = false;
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(`${environment.apiBaseUrl}/hubs/${hubName}`, {

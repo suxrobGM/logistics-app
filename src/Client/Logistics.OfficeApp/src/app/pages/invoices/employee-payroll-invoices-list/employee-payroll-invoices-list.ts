@@ -6,7 +6,7 @@ import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableLazyLoadEvent, TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { ApiService } from "@/core/api";
+import { Api, formatSortField, getInvoices$Json, getEmployeeById$Json } from "@/core/api";
 import {
   EmployeeDto,
   InvoiceDto,
@@ -32,7 +32,7 @@ import { InvoiceStatusTag } from "@/shared/components";
   ],
 })
 export class EmployeePayrollInvoicesListComponent implements OnInit {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
 
   protected readonly employeeId = input.required<string>();
   protected readonly invoices = signal<InvoiceDto[]>([]);
@@ -46,28 +46,25 @@ export class EmployeePayrollInvoicesListComponent implements OnInit {
     this.fetchEmployee();
   }
 
-  protected load(event: TableLazyLoadEvent): void {
+  protected async load(event: TableLazyLoadEvent): Promise<void> {
     this.isLoadingPayrolls.set(true);
     const first = event.first ?? 1;
     const rows = event.rows ?? 10;
     const page = first / rows + 1;
-    const sortField = this.apiService.formatSortField(event.sortField as string, event.sortOrder);
+    const sortField = formatSortField(event.sortField as string, event.sortOrder);
 
-    this.apiService.invoiceApi
-      .getInvoices({
-        orderBy: sortField,
-        page: page,
-        pageSize: rows,
-        employeeId: this.employeeId(),
-      })
-      .subscribe((result) => {
-        if (result.success && result.data) {
-          this.invoices.set(result.data);
-          this.totalRecords.set(result.totalItems);
-        }
+    const result = await this.api.invoke(getInvoices$Json, {
+      OrderBy: sortField,
+      Page: page,
+      PageSize: rows,
+      EmployeeId: this.employeeId(),
+    });
+    if (result.success && result.data) {
+      this.invoices.set(result.data);
+      this.totalRecords.set(result.totalItems ?? 0);
+    }
 
-        this.isLoadingPayrolls.set(false);
-      });
+    this.isLoadingPayrolls.set(false);
   }
 
   protected getPaymentMethodDesc(enumValue?: PaymentMethodType): string {
@@ -80,19 +77,19 @@ export class EmployeePayrollInvoicesListComponent implements OnInit {
     );
   }
 
-  protected getSalaryTypeDesc(enumValue: SalaryType): string {
+  protected getSalaryTypeDesc(enumValue?: SalaryType): string {
+    if (!enumValue) return "N/A";
     return salaryTypeOptions.find((option) => option.value === enumValue)?.label ?? "Unknown";
   }
 
-  private fetchEmployee(): void {
+  private async fetchEmployee(): Promise<void> {
     this.isLoadingEmployee.set(true);
 
-    this.apiService.employeeApi.getEmployee(this.employeeId()).subscribe((result) => {
-      if (result.data) {
-        this.employee.set(result.data);
-      }
+    const result = await this.api.invoke(getEmployeeById$Json, { userId: this.employeeId() });
+    if (result.data) {
+      this.employee.set(result.data);
+    }
 
-      this.isLoadingEmployee.set(false);
-    });
+    this.isLoadingEmployee.set(false);
   }
 }

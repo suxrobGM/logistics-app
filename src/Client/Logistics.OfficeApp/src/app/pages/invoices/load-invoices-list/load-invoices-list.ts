@@ -5,7 +5,7 @@ import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TableLazyLoadEvent, TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { ApiService } from "@/core/api";
+import { Api, formatSortField, getInvoices$Json } from "@/core/api";
 import { InvoiceDto, InvoiceType } from "@/core/api/models";
 import { InvoiceStatusTag } from "@/shared/components";
 
@@ -25,7 +25,7 @@ import { InvoiceStatusTag } from "@/shared/components";
   ],
 })
 export class LoadInvoicesListComponent {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
 
   protected readonly loadId = input<string>();
   protected readonly invoices = signal<InvoiceDto[]>([]);
@@ -33,29 +33,25 @@ export class LoadInvoicesListComponent {
   protected readonly totalRecords = signal(0);
   protected readonly first = signal(0);
 
-  load(event: TableLazyLoadEvent): void {
+  async load(event: TableLazyLoadEvent): Promise<void> {
     this.isLoading.set(true);
     const first = event.first ?? 1;
     const rows = event.rows ?? 10;
     const page = first / rows + 1;
-    const sortField = this.apiService.formatSortField(event.sortField as string, event.sortOrder);
-    //const past90days = PredefinedDateRanges.getPast90Days();
+    const sortField = formatSortField(event.sortField as string, event.sortOrder);
 
-    this.apiService.invoiceApi
-      .getInvoices({
-        loadId: this.loadId(),
-        orderBy: sortField,
-        page: page,
-        pageSize: rows,
-        invoiceType: InvoiceType.Load,
-      })
-      .subscribe((result) => {
-        if (result.success && result.data) {
-          this.invoices.set(result.data);
-          this.totalRecords.set(result.totalItems);
-        }
+    const result = await this.api.invoke(getInvoices$Json, {
+      LoadId: this.loadId(),
+      OrderBy: sortField,
+      Page: page,
+      PageSize: rows,
+      InvoiceType: InvoiceType.Load,
+    });
+    if (result.success && result.data) {
+      this.invoices.set(result.data);
+      this.totalRecords.set(result.totalItems ?? 0);
+    }
 
-        this.isLoading.set(false);
-      });
+    this.isLoading.set(false);
   }
 }

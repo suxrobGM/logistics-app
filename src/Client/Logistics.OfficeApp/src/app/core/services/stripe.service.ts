@@ -7,18 +7,16 @@ import {
   StripeElements,
   loadStripe,
 } from "@stripe/stripe-js";
-import { firstValueFrom } from "rxjs";
 import { environment } from "@/env";
 import { COUNTRIES_OPTIONS } from "@/shared/constants";
 import { UsBankAccount } from "@/shared/models";
 import { findOption } from "@/shared/utils";
-import { ApiService } from "../api";
-import { AddressDto } from "../api/models";
+import { Address as AddressDto, Api, createSetupIntent$Json } from "../api";
 import { TenantService } from "./tenant.service";
 
 @Injectable({ providedIn: "root" })
 export class StripeService {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
   private readonly tenantService = inject(TenantService);
 
   private stripe: Stripe | null = null;
@@ -52,7 +50,9 @@ export class StripeService {
   ): Promise<SetupIntentResult> {
     const clientSecret = await this.getClientSecret();
     const stripe = await this.getStripe();
-    const countryOption = findOption(COUNTRIES_OPTIONS, billingAddress.country);
+    const countryOption = billingAddress.country
+      ? findOption(COUNTRIES_OPTIONS, billingAddress.country)
+      : null;
     billingAddress.country = countryOption?.value ?? "US"; // 2-letter country code
 
     return stripe.confirmCardSetup(clientSecret, {
@@ -106,7 +106,10 @@ export class StripeService {
    * @throws An error if the setup intent creation fails.
    */
   async getClientSecret(): Promise<string> {
-    const result = await firstValueFrom(this.apiService.paymentApi.createSetupIntent());
+    const result = (await this.api.invoke(createSetupIntent$Json, {})) as {
+      success?: boolean;
+      data?: { clientSecret: string };
+    };
 
     if (!result.success) {
       throw new Error("Failed to create setup intent");
@@ -135,7 +138,7 @@ export class StripeService {
   }
 
   private mapAddress(dto: AddressDto): Address {
-    const countryOption = findOption(COUNTRIES_OPTIONS, dto.country);
+    const countryOption = dto.country ? findOption(COUNTRIES_OPTIONS, dto.country) : null;
     return {
       city: dto.city,
       country: countryOption?.value ?? "US", // 2-letter country code

@@ -8,7 +8,7 @@ import { DialogModule } from "primeng/dialog";
 import { InputNumberModule } from "primeng/inputnumber";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
-import { ApiService } from "@/core/api";
+import { Api, renewSubscription$Json } from "@/core/api";
 import { SubscriptionDto } from "@/core/api/models";
 import { TenantService, ToastService } from "@/core/services";
 import { Labels, SeverityLevel } from "@/shared/utils";
@@ -32,7 +32,7 @@ import { PaymentMethodsCardComponent } from "../components";
 })
 export class RenewSubscriptionComponent {
   private readonly tenantService = inject(TenantService);
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
 
@@ -79,19 +79,19 @@ export class RenewSubscriptionComponent {
     });
   }
 
-  private renewSubscription(): void {
+  private async renewSubscription(): Promise<void> {
     this.isLoading.set(true);
 
-    this.apiService.subscriptionApi
-      .renewSubscription({ id: this.subscription()!.id })
-      .subscribe((result) => {
-        if (result.success) {
-          this.tenantService.refetchTenantData();
-          this.toastService.showSuccess("Subscription renewed successfully", "Renew Subscription");
-          this.router.navigateByUrl("/");
-        }
+    const result = await this.api.invoke(renewSubscription$Json, {
+      id: this.subscription()!.id!,
+    });
 
-        this.isLoading.set(false);
-      });
+    if (result.success) {
+      this.tenantService.refetchTenantData();
+      this.toastService.showSuccess("Subscription renewed successfully", "Renew Subscription");
+      this.router.navigateByUrl("/");
+    }
+
+    this.isLoading.set(false);
   }
 }

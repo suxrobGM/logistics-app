@@ -39,7 +39,7 @@ export class NotificationsPanelComponent implements OnDestroy {
 
     this.notificationService.connect();
     this.notificationService.onReceiveNotification = (notification) => {
-      this.toastService.showSuccess(notification.message, notification.title);
+      this.toastService.showSuccess(notification.message ?? "", notification.title ?? undefined);
       this.notifications.update((current) => [notification, ...current]);
     };
   }
@@ -48,16 +48,15 @@ export class NotificationsPanelComponent implements OnDestroy {
     this.notificationService.disconnect();
   }
 
-  fetchNotifications(): void {
+  async fetchNotifications(): Promise<void> {
     this.isLoading.set(true);
 
-    this.notificationService.getPastTwoWeeksNotifications().subscribe((result) => {
-      if (result.data) {
-        this.notifications.set(result.data);
-      }
+    const result = await this.notificationService.getPastTwoWeeksNotifications();
+    if (result.data) {
+      this.notifications.set(result.data);
+    }
 
-      this.isLoading.set(false);
-    });
+    this.isLoading.set(false);
   }
 
   showNotification(notification: NotificationDto): void {
@@ -76,7 +75,9 @@ export class NotificationsPanelComponent implements OnDestroy {
   markAsRead(notification: NotificationDto): void {
     // Update frontend state
     notification.isRead = true;
-    this.notificationService.markAsRead(notification.id).subscribe((_) => _);
+    if (notification.id) {
+      this.notificationService.markAsRead(notification.id);
+    }
   }
 
   getUnreadNotificationsCount(): string {

@@ -9,9 +9,13 @@ import { InputTextModule } from "primeng/inputtext";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
-import { Observable } from "rxjs";
-import { Result } from "@/core/api/models";
-import { FinancialsReportDto } from "@/core/api/models/report/financials-report.dto";
+import { getFinancialsReport$Json } from "@/core/api";
+import {
+  FinancialMetricDto,
+  FinancialsReportDto,
+  Result,
+  RevenueTrendDto,
+} from "@/core/api/models";
 import { RangeCalendar } from "@/shared/components";
 import {
   BaseReportComponent,
@@ -60,22 +64,22 @@ export class FinancialsReportComponent
     this.fetch({ startDate: this.startDate(), endDate: this.endDate() });
   }
 
-  protected override query(params: ReportQueryParams): Observable<Result<FinancialsReportDto>> {
-    return this.apiService.reportApi.getFinancialsReport({
-      startDate: params.startDate,
-      endDate: params.endDate,
+  protected override async query(params: ReportQueryParams): Promise<Result<FinancialsReportDto>> {
+    return this.api.invoke(getFinancialsReport$Json, {
+      StartDate: params.startDate.toISOString(),
+      EndDate: params.endDate?.toISOString(),
     });
   }
 
   protected override drawChart(result: FinancialsReportDto): void {
-    const hasData = result.fullyPaidInvoices + result.partiallyPaidInvoices + result.unpaidInvoices;
+    const hasData = (result.fullyPaidInvoices ?? 0) + (result.partiallyPaidInvoices ?? 0) + (result.unpaidInvoices ?? 0);
 
     if (hasData > 0) {
       this.invoiceStatusChartData.set({
         labels: FINANCIALS_CHART_LABELS,
         datasets: [
           {
-            data: [result.fullyPaidInvoices, result.partiallyPaidInvoices, result.unpaidInvoices],
+            data: [result.fullyPaidInvoices ?? 0, result.partiallyPaidInvoices ?? 0, result.unpaidInvoices ?? 0],
             backgroundColor: FINANCIALS_CHART_BACKGROUND_COLORS,
             hoverBackgroundColor: FINANCIALS_CHART_HOVER_BACKGROUND_COLORS,
           },
@@ -87,11 +91,11 @@ export class FinancialsReportComponent
     const revenueTrends = result.revenueTrends ?? [];
     if (revenueTrends.length > 0) {
       this.revenueTrendChartData.set({
-        labels: revenueTrends.map((t) => t.period),
+        labels: revenueTrends.map((t: RevenueTrendDto) => t.period),
         datasets: [
           {
             label: "Revenue",
-            data: revenueTrends.map((t) => t.revenue),
+            data: revenueTrends.map((t: RevenueTrendDto) => t.revenue),
             borderColor: "#2563eb",
             backgroundColor: "rgba(37, 99, 235, 0.1)",
             tension: 0.4,
@@ -99,7 +103,7 @@ export class FinancialsReportComponent
           },
           {
             label: "Profit",
-            data: revenueTrends.map((t) => t.profit),
+            data: revenueTrends.map((t: RevenueTrendDto) => t.profit),
             borderColor: "#16a34a",
             backgroundColor: "rgba(22, 163, 74, 0.1)",
             tension: 0.4,
@@ -107,7 +111,7 @@ export class FinancialsReportComponent
           },
           {
             label: "Expenses",
-            data: revenueTrends.map((t) => t.expenses),
+            data: revenueTrends.map((t: RevenueTrendDto) => t.expenses),
             borderColor: "#ef4444",
             backgroundColor: "rgba(239, 68, 68, 0.1)",
             tension: 0.4,
@@ -121,13 +125,13 @@ export class FinancialsReportComponent
     const financialMetrics = result.financialMetrics ?? [];
     if (financialMetrics.length > 0) {
       this.financialMetricsChartData.set({
-        labels: financialMetrics.map((m) => m.metric),
+        labels: financialMetrics.map((m: FinancialMetricDto) => m.metric),
         datasets: [
           {
             label: "Value",
-            data: financialMetrics.map((m) => m.value),
-            backgroundColor: financialMetrics.map((m) => (m.trend >= 0 ? "#16a34a" : "#ef4444")),
-            borderColor: financialMetrics.map((m) => (m.trend >= 0 ? "#16a34a" : "#ef4444")),
+            data: financialMetrics.map((m: FinancialMetricDto) => m.value),
+            backgroundColor: financialMetrics.map((m: FinancialMetricDto) => ((m.trend ?? 0) >= 0 ? "#16a34a" : "#ef4444")),
+            borderColor: financialMetrics.map((m: FinancialMetricDto) => ((m.trend ?? 0) >= 0 ? "#16a34a" : "#ef4444")),
             borderWidth: 1,
           },
         ],
@@ -135,12 +139,12 @@ export class FinancialsReportComponent
     }
   }
 
-  protected getMetricSeverity(trend: number): Tag["severity"] {
-    return trend >= 0 ? "success" : "danger";
+  protected getMetricSeverity(trend?: number | null): Tag["severity"] {
+    return (trend ?? 0) >= 0 ? "success" : "danger";
   }
 
-  protected getCategorySeverity(category: string): Tag["severity"] {
-    switch (category.toLowerCase()) {
+  protected getCategorySeverity(category?: string | null): Tag["severity"] {
+    switch (category?.toLowerCase()) {
       case "revenue":
         return "success";
       case "performance":

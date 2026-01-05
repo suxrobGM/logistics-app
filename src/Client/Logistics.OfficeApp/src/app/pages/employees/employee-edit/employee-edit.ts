@@ -7,7 +7,7 @@ import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
-import { ApiService } from "@/core/api";
+import { Api, getEmployeeById$Json, updateEmployee$Json } from "@/core/api";
 import {
   EmployeeDto,
   SalaryType,
@@ -42,7 +42,7 @@ export class EmployeeEditComponent implements OnInit {
   protected readonly salaryTypes = salaryTypeOptions;
 
   private readonly authService = inject(AuthService);
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
 
   protected readonly id = input<string>();
@@ -87,7 +87,7 @@ export class EmployeeEditComponent implements OnInit {
     this.fetchEmployee();
   }
 
-  updateEmployee(): void {
+  async updateEmployee(): Promise<void> {
     if (!this.form.valid) {
       return;
     }
@@ -102,13 +102,15 @@ export class EmployeeEditComponent implements OnInit {
     };
 
     this.isLoading.set(true);
-    this.apiService.employeeApi.updateEmployee(command).subscribe((result) => {
-      if (result.success) {
-        this.toastService.showSuccess("The employee data has been successfully saved");
-      }
-
-      this.isLoading.set(false);
+    const result = await this.api.invoke(updateEmployee$Json, {
+      userId: this.id()!,
+      body: command,
     });
+    if (result.success) {
+      this.toastService.showSuccess("The employee data has been successfully saved");
+    }
+
+    this.isLoading.set(false);
   }
 
   confirmToDelete(): void {
@@ -137,28 +139,27 @@ export class EmployeeEditComponent implements OnInit {
     return this.form.value.salaryType === SalaryType.None;
   }
 
-  private fetchEmployee(): void {
+  private async fetchEmployee(): Promise<void> {
     this.isLoading.set(true);
 
-    this.apiService.employeeApi.getEmployee(this.id()!).subscribe((result) => {
-      if (result.success && result.data) {
-        this.employee.set(result.data);
-        const employeeRoles = this.employee()?.roles?.map((i) => i.name);
-        const user = this.authService.getUserData();
-        this.evaluateCanChangeRole(user?.roles, employeeRoles);
+    const result = await this.api.invoke(getEmployeeById$Json, { userId: this.id()! });
+    if (result.success && result.data) {
+      this.employee.set(result.data);
+      const employeeRoles = this.employee()?.roles?.map((i) => i.name).filter((n): n is string => !!n);
+      const user = this.authService.getUserData();
+      this.evaluateCanChangeRole(user?.roles, employeeRoles);
 
-        const salaryType = result.data.salaryType;
-        const salary = result.data.salary;
+      const salaryType = result.data.salaryType;
+      const salary = result.data.salary;
 
-        this.form.patchValue({
-          salary:
-            salaryType === SalaryType.ShareOfGross ? NumberUtils.toPercent(salary ?? 0) : salary,
-          salaryType: salaryType,
-        });
-      }
+      this.form.patchValue({
+        salary:
+          salaryType === SalaryType.ShareOfGross ? NumberUtils.toPercent(salary ?? 0) : salary,
+        salaryType: salaryType,
+      });
+    }
 
-      this.isLoading.set(false);
-    });
+    this.isLoading.set(false);
   }
 
   private evaluateCanChangeRole(userRoles?: string[], employeeRoles?: string[]) {

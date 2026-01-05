@@ -4,7 +4,7 @@ import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
-import { ApiService } from "@/core/api";
+import { Api, getLoadById$Json, updateLoad$Json, deleteLoad$Json } from "@/core/api";
 import { UpdateLoadCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { LoadFormComponent, LoadFormValue } from "@/shared/components";
@@ -16,7 +16,7 @@ import { Converters } from "@/shared/utils";
   imports: [ToastModule, ConfirmDialogModule, CardModule, ProgressSpinnerModule, LoadFormComponent],
 })
 export class LoadEditComponent implements OnInit {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
@@ -34,7 +34,7 @@ export class LoadEditComponent implements OnInit {
     }
   }
 
-  protected updateLoad(formValue: LoadFormValue): void {
+  protected async updateLoad(formValue: LoadFormValue): Promise<void> {
     const command: UpdateLoadCommand = {
       id: this.id()!,
       name: formValue.name!,
@@ -51,53 +51,50 @@ export class LoadEditComponent implements OnInit {
       status: formValue.status!,
     };
 
-    this.apiService.loadApi.updateLoad(command).subscribe((result) => {
-      if (result.success) {
-        this.toastService.showSuccess("Load has been updated successfully");
-      }
-    });
+    const result = await this.api.invoke(updateLoad$Json, { id: this.id()!, body: command });
+    if (result.success) {
+      this.toastService.showSuccess("Load has been updated successfully");
+    }
   }
 
-  protected deleteLoad(): void {
+  protected async deleteLoad(): Promise<void> {
     this.isLoading.set(true);
-    this.apiService.loadApi.deleteLoad(this.id()!).subscribe((result) => {
-      if (result.success) {
-        this.toastService.showSuccess("A load has been deleted successfully");
-        this.router.navigateByUrl("/loads");
-      }
+    const result = await this.api.invoke(deleteLoad$Json, { id: this.id()! });
+    if (result.success) {
+      this.toastService.showSuccess("A load has been deleted successfully");
+      this.router.navigateByUrl("/loads");
+    }
 
-      this.isLoading.set(false);
-    });
+    this.isLoading.set(false);
   }
 
-  private fetchLoad(loadId: string): void {
+  private async fetchLoad(loadId: string): Promise<void> {
     this.isLoading.set(true);
 
-    this.apiService.loadApi.getLoad(loadId).subscribe((result) => {
-      if (!result.success || !result.data) {
-        return;
-      }
+    const result = await this.api.invoke(getLoadById$Json, { id: loadId });
+    if (!result.success || !result.data) {
+      return;
+    }
 
-      const load = result.data;
+    const load = result.data;
 
-      this.initialData.set({
-        name: load.name,
-        type: load.type,
-        customer: load.customer,
-        originAddress: load.originAddress,
-        originLocation: load.originLocation,
-        destinationAddress: load.destinationAddress,
-        destinationLocation: load.destinationLocation,
-        deliveryCost: load.deliveryCost,
-        distance: Converters.metersTo(load.distance, "mi"),
-        status: load.status,
-        assignedDispatcherId: load.assignedDispatcherId,
-        assignedDispatcherName: load.assignedDispatcherName,
-        assignedTruckId: load.assignedTruckId,
-      });
-
-      this.loadNumber.set(load.number);
-      this.isLoading.set(false);
+    this.initialData.set({
+      name: load.name ?? undefined,
+      type: load.type,
+      customer: load.customer,
+      originAddress: load.originAddress,
+      originLocation: load.originLocation,
+      destinationAddress: load.destinationAddress,
+      destinationLocation: load.destinationLocation,
+      deliveryCost: load.deliveryCost,
+      distance: Converters.metersTo(load.distance ?? 0, "mi"),
+      status: load.status,
+      assignedDispatcherId: load.assignedDispatcherId ?? undefined,
+      assignedDispatcherName: load.assignedDispatcherName ?? undefined,
+      assignedTruckId: load.assignedTruckId ?? undefined,
     });
+
+    this.loadNumber.set(load.number ?? 0);
+    this.isLoading.set(false);
   }
 }

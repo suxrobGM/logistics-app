@@ -8,7 +8,7 @@ import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { ApiService } from "@/core/api";
+import { Api, getLoads$Json, getDailyGrosses$Json } from "@/core/api";
 import { AddressDto, DailyGrossesDto, LoadDto } from "@/core/api/models";
 import { TrucksMap } from "@/shared/components";
 import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
@@ -54,7 +54,7 @@ const chartOptions = {
   providers: [AddressPipe],
 })
 export class HomeComponent implements OnInit {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
   private readonly addressPipe = inject(AddressPipe);
 
   protected readonly todayGross = signal(0);
@@ -76,46 +76,49 @@ export class HomeComponent implements OnInit {
     return this.addressPipe.transform(addressObj) || "No address provided";
   }
 
-  private fetchActiveLoads(): void {
+  private async fetchActiveLoads(): Promise<void> {
     this.isLoadingLoadsData.set(true);
 
-    this.apiService.loadApi
-      .getLoads({ orderBy: "-DispatchedAt", onlyActiveLoads: true })
-      .subscribe((result) => {
-        if (result.success && result.data) {
-          this.loads.set(result.data);
-        }
+    const result = await this.api.invoke(getLoads$Json, {
+      OrderBy: "-DispatchedAt",
+      OnlyActiveLoads: true,
+    });
+    if (result.success && result.data) {
+      this.loads.set(result.data);
+    }
 
-        this.isLoadingLoadsData.set(false);
-      });
+    this.isLoadingLoadsData.set(false);
   }
 
-  private fetchLastTenDaysGross(): void {
+  private async fetchLastTenDaysGross(): Promise<void> {
     this.isLoadingChartData.set(true);
     const oneWeekAgo = DateUtils.daysAgo(7);
 
-    this.apiService.statsApi.getDailyGrosses(oneWeekAgo).subscribe((result) => {
-      if (result.success && result.data) {
-        const grosses = result.data;
-
-        this.weeklyGross.set(grosses.totalGross);
-        this.weeklyDistance.set(grosses.totalDistance);
-        this.weeklyRpm.set(this.weeklyGross() / Converters.metersTo(this.weeklyDistance(), "mi"));
-        this.drawChart(grosses);
-        this.calcTodayGross(grosses);
-      }
-
-      this.isLoadingChartData.set(false);
+    const result = await this.api.invoke(getDailyGrosses$Json, {
+      StartDate: oneWeekAgo.toISOString(),
     });
+    if (result.success && result.data) {
+      const grosses = result.data;
+
+      this.weeklyGross.set(grosses.totalGross ?? 0);
+      this.weeklyDistance.set(grosses.totalDistance ?? 0);
+      this.weeklyRpm.set(this.weeklyGross() / Converters.metersTo(this.weeklyDistance(), "mi"));
+      this.drawChart(grosses);
+      this.calcTodayGross(grosses);
+    }
+
+    this.isLoadingChartData.set(false);
   }
 
   private drawChart(grosses: DailyGrossesDto): void {
     const labels: string[] = [];
     const data: number[] = [];
 
-    grosses.data.forEach((i) => {
-      labels.push(DateUtils.toLocaleDate(i.date));
-      data.push(i.gross);
+    (grosses.data ?? []).forEach((i) => {
+      if (i.date) {
+        labels.push(DateUtils.toLocaleDate(i.date));
+        data.push(i.gross ?? 0);
+      }
     });
 
     this.chartData.set({
@@ -137,9 +140,9 @@ export class HomeComponent implements OnInit {
     const today = new Date();
     let totalGross = 0;
 
-    grosses.data
-      .filter((i) => DateUtils.dayOfMonth(i.date) === today.getDate())
-      .forEach((i) => (totalGross += i.gross));
+    (grosses.data ?? [])
+      .filter((i) => i.date && DateUtils.dayOfMonth(i.date) === today.getDate())
+      .forEach((i) => (totalGross += i.gross ?? 0));
 
     this.todayGross.set(totalGross);
   }

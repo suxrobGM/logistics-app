@@ -9,18 +9,12 @@ import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
 import { MenuModule } from "primeng/menu";
-import { TableModule } from "primeng/table";
+import { TableLazyLoadEvent, TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { Observable } from "rxjs";
-import { ApiService } from "@/core/api";
-import { LoadDto, LoadStatus, PagedResult } from "@/core/api/models";
-import {
-  BaseTableComponent,
-  LoadStatusTag,
-  LoadTypeTag,
-  TableQueryParams,
-} from "@/shared/components";
+import { Api, formatSortField, getLoads$Json } from "@/core/api";
+import { LoadDto, LoadStatus } from "@/core/api/models";
+import { LoadStatusTag, LoadTypeTag } from "@/shared/components";
 import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
 
 @Component({
@@ -46,17 +40,20 @@ import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
     MenuModule,
   ],
 })
-export class LoadsListComponent extends BaseTableComponent<LoadDto> {
+export class LoadsListComponent {
   private readonly router = inject(Router);
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
 
+  protected readonly data = signal<LoadDto[]>([]);
+  protected readonly isLoading = signal(false);
+  protected readonly totalRecords = signal(0);
+  protected readonly first = signal(0);
   protected readonly actionMenuItems: MenuItem[];
   protected readonly loadStatus = LoadStatus;
   protected readonly selectedRow = signal<LoadDto | null>(null);
   protected readonly groupByTrip = signal(false);
 
   constructor() {
-    super();
     this.actionMenuItems = [
       {
         label: "Edit load details",
@@ -81,14 +78,44 @@ export class LoadsListComponent extends BaseTableComponent<LoadDto> {
     ];
   }
 
-  protected override query(params: TableQueryParams): Observable<PagedResult<LoadDto>> {
-    const sortField = this.apiService.formatSortField(params.sortField, params.sortOrder);
+  protected async onLazyLoad(event: TableLazyLoadEvent): Promise<void> {
+    this.isLoading.set(true);
+    const rows = event.rows ?? 10;
+    const page = (event.first ?? 0) / rows;
+    const sortField = formatSortField(event.sortField as string, event.sortOrder);
 
-    return this.apiService.loadApi.getLoads({
-      page: params.page + 1,
-      pageSize: params.size,
-      orderBy: sortField || "-DispatchedAt",
-      search: params.search,
+    const result = await this.api.invoke(getLoads$Json, {
+      Page: page + 1,
+      PageSize: rows,
+      OrderBy: sortField || "-DispatchedAt",
     });
+
+    if (result.data) {
+      this.data.set(result.data);
+      this.totalRecords.set(result.totalItems ?? 0);
+      this.first.set(page * rows);
+    }
+
+    this.isLoading.set(false);
+  }
+
+  protected async onSearch(event: Event): Promise<void> {
+    this.isLoading.set(true);
+    const value = (event.target as HTMLInputElement).value;
+
+    const result = await this.api.invoke(getLoads$Json, {
+      Search: value,
+      Page: 1,
+      PageSize: 10,
+      OrderBy: "-DispatchedAt",
+    });
+
+    if (result.data) {
+      this.data.set(result.data);
+      this.totalRecords.set(result.totalItems ?? 0);
+      this.first.set(0);
+    }
+
+    this.isLoading.set(false);
   }
 }

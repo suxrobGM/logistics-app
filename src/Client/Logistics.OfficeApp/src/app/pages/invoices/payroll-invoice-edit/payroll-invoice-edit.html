@@ -50,7 +50,7 @@
           <h4>Preview Payroll Invoice</h4>
           <hr />
 
-          <p><strong>Employee Role:</strong> {{ selectedEmployee()!.roles[0].displayName }}</p>
+          <p><strong>Employee Role:</strong> {{ selectedEmployee()!.roles?.[0]?.displayName ?? "N/A" }}</p>
           <p>
             <strong>Employee's Salary Type:</strong>
             {{ getSalaryTypeDesc(selectedEmployee()!.salaryType) }}
@@ -65,7 +65,7 @@
           </p>
           <p>
             <strong>Expected Invoice Total:</strong>
-            {{ previewPayrollInvoice()!.total.amount | currency }}
+            {{ previewPayrollInvoice()!.total?.amount | currency }}
           </p>
         }
 

@@ -8,7 +8,7 @@ import { DialogModule } from "primeng/dialog";
 import { InputNumberModule } from "primeng/inputnumber";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
-import { ApiService } from "@/core/api";
+import { Api, cancelSubscription$Json } from "@/core/api";
 import { SubscriptionDto, SubscriptionStatus } from "@/core/api/models";
 import { TenantService, ToastService } from "@/core/services";
 import { Labels, SeverityLevel } from "@/shared/utils";
@@ -33,7 +33,7 @@ import { BillingHistoryComponent, PaymentMethodsCardComponent } from "../compone
 })
 export class ManageSubscriptionComponent {
   private readonly tenantService = inject(TenantService);
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
@@ -75,21 +75,21 @@ export class ManageSubscriptionComponent {
       rejectIcon: "pi pi-times",
       closeOnEscape: true,
       dismissableMask: true,
-      accept: () => {
+      accept: async () => {
         this.isLoading.set(true);
 
-        this.apiService.subscriptionApi
-          .cancelSubscription({ id: this.subscription.id })
-          .subscribe((result) => {
-            if (result.success) {
-              this.toastService.showSuccess("Subscription cancelled successfully");
-              this.isCancelled.set(true);
-              this.tenantService.refetchTenantData();
-              this.router.navigateByUrl("/");
-            }
+        const result = await this.api.invoke(cancelSubscription$Json, {
+          id: this.subscription.id!,
+        });
 
-            this.isLoading.set(false);
-          });
+        if (result.success) {
+          this.toastService.showSuccess("Subscription cancelled successfully");
+          this.isCancelled.set(true);
+          this.tenantService.refetchTenantData();
+          this.router.navigateByUrl("/");
+        }
+
+        this.isLoading.set(false);
       },
     });
   }

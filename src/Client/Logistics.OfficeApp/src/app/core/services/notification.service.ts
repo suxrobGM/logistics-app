@@ -1,37 +1,39 @@
 import { Injectable, inject } from "@angular/core";
-import { Observable } from "rxjs";
-import { ApiService } from "@/core/api";
-import { NotificationDto, Result } from "@/core/api/models";
+import {
+  Api,
+  NotificationDto,
+  NotificationDtoArrayResult,
+  Result,
+  getNotifications$Json,
+  updateNotification$Json,
+} from "@/core/api";
 import { PredefinedDateRanges } from "@/shared/utils";
 import { BaseHubConnection } from "./base-hub-connection";
-import { TenantService } from "./tenant.service";
 
 @Injectable({ providedIn: "root" })
 export class NotificationService extends BaseHubConnection {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
 
   constructor() {
-    const tenantService = inject(TenantService);
-
-    super("notification", tenantService);
+    super("notification");
   }
 
   set onReceiveNotification(callback: OnReceiveNotifictionFn) {
     this.hubConnection.on("ReceiveNotification", callback);
   }
 
-  getPastTwoWeeksNotifications(): Observable<Result<NotificationDto[]>> {
+  async getPastTwoWeeksNotifications(): Promise<NotificationDtoArrayResult> {
     const pastTwoWeeksDateRange = PredefinedDateRanges.getPastTwoWeeks();
-    return this.apiService.notificationApi.getNotifications(
-      pastTwoWeeksDateRange.startDate,
-      pastTwoWeeksDateRange.endDate,
-    );
+    return this.api.invoke(getNotifications$Json, {
+      StartDate: pastTwoWeeksDateRange.startDate.toISOString(),
+      EndDate: pastTwoWeeksDateRange.endDate.toISOString(),
+    });
   }
 
-  markAsRead(notificationId: string): Observable<Result> {
-    return this.apiService.notificationApi.updateNotification({
+  async markAsRead(notificationId: string): Promise<Result> {
+    return this.api.invoke(updateNotification$Json, {
       id: notificationId,
-      isRead: true,
+      body: { isRead: true },
     });
   }
 }

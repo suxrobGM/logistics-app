@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, input, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { ApiService } from "@/core/api";
+import { Api, getTripById$Json, updateTrip$Json, deleteTrip$Json } from "@/core/api";
 import { TripStatus, UpdateTripCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { TripWizard, TripWizardValue } from "../components";
@@ -13,7 +13,7 @@ import { TripWizard, TripWizardValue } from "../components";
 })
 export class TripEditPage implements OnInit {
   private readonly toastService = inject(ToastService);
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
   private readonly router = inject(Router);
 
   protected readonly tripId = input<string>();
@@ -34,7 +34,7 @@ export class TripEditPage implements OnInit {
     });
   }
 
-  protected updateTrip(formValues: TripWizardValue): void {
+  protected async updateTrip(formValues: TripWizardValue): Promise<void> {
     const tripId = this.tripId();
 
     if (!tripId) {
@@ -48,20 +48,19 @@ export class TripEditPage implements OnInit {
       truckId: formValues.truckId,
       newLoads: formValues.newLoads,
       // attachedLoadIds: formValue.attachedLoads?.map((l) => l.id),
-      detachedLoadIds: formValues.detachedLoads?.map((l) => l.id),
+      detachedLoadIds: formValues.detachedLoads?.map((l) => l.id).filter((id): id is string => id != null),
       optimizedStops: formValues.stops,
     };
 
-    this.apiService.tripApi.updateTrip(command).subscribe((result) => {
-      if (result.success) {
-        this.toastService.showSuccess("Trip updated successfully");
-        this.fetchTrip();
-      }
-      this.isLoading.set(false);
-    });
+    const result = await this.api.invoke(updateTrip$Json, { id: tripId, body: command });
+    if (result.success) {
+      this.toastService.showSuccess("Trip updated successfully");
+      this.fetchTrip();
+    }
+    this.isLoading.set(false);
   }
 
-  private fetchTrip(): void {
+  private async fetchTrip(): Promise<void> {
     const tripId = this.tripId();
 
     if (!tripId) {
@@ -70,26 +69,25 @@ export class TripEditPage implements OnInit {
 
     this.isLoading.set(true);
 
-    this.apiService.tripApi.getTrip(tripId).subscribe((result) => {
-      if (result.success && result.data) {
-        const trip = result.data;
+    const result = await this.api.invoke(getTripById$Json, { tripId });
+    if (result.success && result.data) {
+      const trip = result.data;
 
-        this.initialData.set({
-          tripName: trip.name,
-          truckId: trip.truckId,
-          initialLoads: trip.loads,
-          initialStops: trip.stops,
-        });
+      this.initialData.set({
+        tripName: trip.name ?? undefined,
+        truckId: trip.truckId,
+        initialLoads: trip.loads ?? undefined,
+        initialStops: trip.stops ?? undefined,
+      });
 
-        this.disabledForEditing.set(trip.status !== TripStatus.Draft);
-        this.tripNumber.set(trip.number);
-      }
+      this.disabledForEditing.set(trip.status !== TripStatus.Draft);
+      this.tripNumber.set(trip.number ?? null);
+    }
 
-      this.isLoading.set(false);
-    });
+    this.isLoading.set(false);
   }
 
-  private deleteTrip(): void {
+  private async deleteTrip(): Promise<void> {
     const tripId = this.tripId();
 
     if (!tripId) {
@@ -98,13 +96,12 @@ export class TripEditPage implements OnInit {
 
     this.isLoading.set(true);
 
-    this.apiService.tripApi.deleteTrip(tripId).subscribe((result) => {
-      if (result.success) {
-        this.toastService.showSuccess("A trip has been deleted successfully");
-        this.router.navigateByUrl("/trips");
-      }
+    const result = await this.api.invoke(deleteTrip$Json, { id: tripId });
+    if (result.success) {
+      this.toastService.showSuccess("A trip has been deleted successfully");
+      this.router.navigateByUrl("/trips");
+    }
 
-      this.isLoading.set(false);
-    });
+    this.isLoading.set(false);
   }
 }

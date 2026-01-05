@@ -38,7 +38,7 @@
           <h6>Position:</h6>
         </div>
         <div class="col-8">
-          {{ employee()!.roles[0].displayName }}
+          {{ employee()!.roles?.[0]?.displayName ?? "N/A" }}
         </div>
       </div>
       <div class="row mb-3">

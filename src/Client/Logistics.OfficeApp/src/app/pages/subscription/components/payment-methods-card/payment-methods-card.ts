@@ -3,9 +3,13 @@ import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { TagModule } from "primeng/tag";
-import { ApiService } from "@/core/api";
 import {
-  DeletePaymentMethodCommand,
+  Api,
+  getPaymentMethods$Json,
+  setDefaultPaymentMethod$Json,
+  deletePaymentMethod$Json,
+} from "@/core/api";
+import {
   PaymentMethodDto,
   PaymentMethodType,
   SetDefaultPaymentMethodCommand,
@@ -27,7 +31,7 @@ import { PaymentMethodDialogComponent } from "../payment-method-dialog/payment-m
   ],
 })
 export class PaymentMethodsCardComponent implements OnInit {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
   private readonly tenantService = inject(TenantService);
   private readonly toastService = inject(ToastService);
 
@@ -61,22 +65,23 @@ export class PaymentMethodsCardComponent implements OnInit {
   setDefaultPaymentMethod(method: PaymentMethodDto): void {
     this.toastService.confirm({
       message: `Are you sure you want to set '${this.getMethodLabel(method)}' as your default payment method?`,
-      accept: () => {
+      accept: async () => {
         this.isLoading.set(true);
         const command: SetDefaultPaymentMethodCommand = {
           paymentMethodId: method.id,
         };
 
-        this.apiService.paymentApi.setDefaultPaymentMethod(command).subscribe((result) => {
-          if (result.success) {
-            this.toastService.showSuccess("Default payment method updated successfully.");
-            this.fetchPaymentMethods();
-          } else {
-            this.toastService.showError("Failed to update default payment method.");
-          }
-
-          this.isLoading.set(false);
+        const result = await this.api.invoke(setDefaultPaymentMethod$Json, {
+          body: command,
         });
+        if (result.success) {
+          this.toastService.showSuccess("Default payment method updated successfully.");
+          this.fetchPaymentMethods();
+        } else {
+          this.toastService.showError("Failed to update default payment method.");
+        }
+
+        this.isLoading.set(false);
       },
     });
   }
@@ -84,27 +89,23 @@ export class PaymentMethodsCardComponent implements OnInit {
   deletePaymentMethod(method: PaymentMethodDto): void {
     this.toastService.confirm({
       message: `Are you sure you want to delete '${this.getMethodLabel(method)}'?`,
-      accept: () => {
+      accept: async () => {
         this.isLoading.set(true);
-        const command: DeletePaymentMethodCommand = {
-          paymentMethodId: method.id,
-        };
 
-        this.apiService.paymentApi.deletePaymentMethod(command).subscribe((result) => {
-          if (result.success) {
-            this.toastService.showSuccess("Payment method deleted successfully.");
-            this.fetchPaymentMethods();
-          } else {
-            this.toastService.showError("Failed to delete payment method.");
-          }
+        const result = await this.api.invoke(deletePaymentMethod$Json, { id: method.id! });
+        if (result.success) {
+          this.toastService.showSuccess("Payment method deleted successfully.");
+          this.fetchPaymentMethods();
+        } else {
+          this.toastService.showError("Failed to delete payment method.");
+        }
 
-          this.isLoading.set(false);
-        });
+        this.isLoading.set(false);
       },
     });
   }
 
-  fetchPaymentMethods(): void {
+  async fetchPaymentMethods(): Promise<void> {
     const tenantId = this.tenantService.getTenantId();
 
     if (!tenantId) {
@@ -113,15 +114,14 @@ export class PaymentMethodsCardComponent implements OnInit {
 
     this.isLoading.set(true);
 
-    this.apiService.paymentApi.getPaymentMethods().subscribe((result) => {
-      if (result.success) {
-        // Move the default payment method to the top of the list
-        result.data!.sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
-        this.paymentMethods.set(result.data!);
-        console.log("Payment methods fetched successfully:", result.data);
-      }
+    const result = await this.api.invoke(getPaymentMethods$Json, {});
+    if (result.success) {
+      // Move the default payment method to the top of the list
+      result.data!.sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
+      this.paymentMethods.set(result.data!);
+      console.log("Payment methods fetched successfully:", result.data);
+    }
 
-      this.isLoading.set(false);
-    });
+    this.isLoading.set(false);
   }
 }

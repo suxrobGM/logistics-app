@@ -4,7 +4,7 @@ import { SharedModule } from "primeng/api";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
-import { ApiService } from "@/core/api";
+import { Api, getCompanyStats$Json } from "@/core/api";
 import { CompanyStatsDto } from "@/core/api/models";
 import { Converters } from "@/shared/utils";
 
@@ -22,7 +22,7 @@ import { Converters } from "@/shared/utils";
   ],
 })
 export class CompanyStatsComponent {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
 
   protected readonly isLoading = signal(false);
   protected readonly rpm = signal(0);
@@ -40,17 +40,16 @@ export class CompanyStatsComponent {
     return gross / Converters.metersTo(distance, "mi");
   }
 
-  private fetchCompanyStats() {
+  private async fetchCompanyStats(): Promise<void> {
     this.isLoading.set(true);
 
-    this.apiService.statsApi.getCompanyStats().subscribe((result) => {
-      if (result.success && result.data) {
-        const stats = result.data;
-        this.companyStats.set(result.data);
-        this.rpm.set(stats.totalGross / Converters.metersTo(stats.totalDistance, "mi"));
-      }
+    const result = await this.api.invoke(getCompanyStats$Json, {});
+    if (result.success && result.data) {
+      const stats = result.data;
+      this.companyStats.set(result.data);
+      this.rpm.set((stats.totalGross ?? 0) / Converters.metersTo(stats.totalDistance ?? 0, "mi"));
+    }
 
-      this.isLoading.set(false);
-    });
+    this.isLoading.set(false);
   }
 }

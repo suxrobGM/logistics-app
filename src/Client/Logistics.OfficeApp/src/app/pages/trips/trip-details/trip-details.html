@@ -14,9 +14,9 @@
         @let tripDetails = trip()!;
 
         <app-direction-map
-          [waypoints]="sortedStops()"
+          [waypoints]="waypoints()"
           height="500px"
-          [selectedWaypoint]="selectedStop()"
+          [selectedWaypoint]="selectedWaypoint()"
           (routeSegmentClick)="onRouteSegmentClick($event)"
           (waypointClick)="onWaypointClick($event)"
         />
@@ -28,11 +28,11 @@
           <p><b>Dispatched&nbsp;at:</b> {{ tripDetails.dispatchedAt | date: "medium" }}</p>
           <p><b>Completed&nbsp;at:</b> {{ tripDetails.completedAt | date: "medium" }}</p>
           <p class="flex gap-2">
-            <b>Status:</b> <app-trip-status-tag [status]="tripDetails.status" />
+            <b>Status:</b> <app-trip-status-tag [status]="tripDetails.status ?? 'draft'" />
           </p>
           <p><b>Truck:</b> {{ tripDetails.truckNumber }}</p>
           <p><b>Total&nbsp;distance:</b> {{ tripDetails.totalDistance | distanceUnit: "mi" }} mi</p>
-          <p><b>Loads:</b> {{ tripDetails.loads.length }}</p>
+          <p><b>Loads:</b> {{ tripDetails.loads?.length ?? 0 }}</p>
         </div>
       }
     </div>
@@ -69,7 +69,7 @@
       </ng-template>
 
       <p-table
-        [value]="tripDetails.stops"
+        [value]="tripDetails.stops ?? []"
         dataKey="id"
         sortField="order"
         sortMode="single"
@@ -104,7 +104,7 @@
         </div>
       </ng-template>
 
-      <p-table [value]="tripDetails.loads" [dataKey]="'id'" responsiveLayout="scroll">
+      <p-table [value]="tripDetails.loads ?? []" [dataKey]="'id'" responsiveLayout="scroll">
         <ng-template #header>
           <tr>
             <th pSortableColumn="number">Load Number <p-sortIcon field="number" /></th>

@@ -3,7 +3,7 @@ import { Router } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
-import { ApiService } from "@/core/api";
+import { Api, createLoad$Json } from "@/core/api";
 import { CreateLoadCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { LoadFormComponent, LoadFormValue } from "@/shared/components";
@@ -14,13 +14,13 @@ import { LoadFormComponent, LoadFormValue } from "@/shared/components";
   imports: [ToastModule, CardModule, ProgressSpinnerModule, LoadFormComponent],
 })
 export class LoadAddComponent {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
   protected readonly isLoading = signal(false);
 
-  protected create(formValue: LoadFormValue): void {
+  protected async create(formValue: LoadFormValue): Promise<void> {
     this.isLoading.set(true);
 
     const command: CreateLoadCommand = {
@@ -37,12 +37,11 @@ export class LoadAddComponent {
       customerId: formValue.customer?.id,
     };
 
-    this.apiService.loadApi.createLoad(command).subscribe((result) => {
-      if (result.success) {
-        this.isLoading.set(false);
-        this.toastService.showSuccess("A new load has been created successfully");
-        this.router.navigateByUrl("/loads");
-      }
-    });
+    const result = await this.api.invoke(createLoad$Json, { body: command });
+    if (result.success) {
+      this.isLoading.set(false);
+      this.toastService.showSuccess("A new load has been created successfully");
+      this.router.navigateByUrl("/loads");
+    }
   }
 }

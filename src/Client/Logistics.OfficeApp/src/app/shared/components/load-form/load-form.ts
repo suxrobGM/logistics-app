@@ -106,7 +106,7 @@ export class LoadFormComponent implements OnInit {
 
   protected readonly form = new FormGroup({
     name: new FormControl("", { validators: [Validators.required], nonNullable: true }),
-    type: new FormControl(LoadType.GeneralFreight, {
+    type: new FormControl<LoadType>(LoadType.GeneralFreight, {
       validators: [Validators.required],
       nonNullable: true,
     }),

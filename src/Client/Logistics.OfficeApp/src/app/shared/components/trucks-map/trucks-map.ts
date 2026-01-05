@@ -1,5 +1,5 @@
 import { Component, OnDestroy, inject, input, signal } from "@angular/core";
-import { ApiService } from "@/core/api";
+import { Api, getTrucks$Json } from "@/core/api";
 import { TruckGeolocationDto } from "@/core/api/models";
 import { LiveTrackingService } from "@/core/services";
 import { GeolocationMap } from "@/shared/components";
@@ -10,7 +10,7 @@ import { GeolocationMap } from "@/shared/components";
   imports: [GeolocationMap],
 })
 export class TrucksMap implements OnDestroy {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
   private readonly liveTrackingService = inject(LiveTrackingService);
 
   protected readonly truckLocations = signal<TruckGeolocationDto[]>([]);
@@ -44,30 +44,30 @@ export class TrucksMap implements OnDestroy {
     };
   }
 
-  private fetchTrucksData(): void {
-    this.apiService.truckApi.getTrucks({ pageSize: 100 }).subscribe((result) => {
-      if (!result.success || !result.data) {
-        return;
+  private async fetchTrucksData(): Promise<void> {
+    const result = await this.api.invoke(getTrucks$Json, { PageSize: 100 });
+
+    if (!result.success || !result.data) {
+      return;
+    }
+
+    const truckLocations: TruckGeolocationDto[] = result.data.flatMap((truck) => {
+      if (truck.currentLocation) {
+        return [
+          {
+            latitude: truck.currentLocation.latitude,
+            longitude: truck.currentLocation.longitude,
+            truckId: truck.id ?? undefined,
+            truckNumber: truck.number ?? undefined,
+            driversName: [truck.mainDriver?.fullName, truck.secondaryDriver?.fullName]
+              .filter(Boolean)
+              .join(", "),
+          },
+        ];
       }
-
-      const truckLocations: TruckGeolocationDto[] = result.data.flatMap((truck) => {
-        if (truck.currentLocation) {
-          return [
-            {
-              latitude: truck.currentLocation.latitude,
-              longitude: truck.currentLocation.longitude,
-              truckId: truck.id,
-              truckNumber: truck.number,
-              driversName: [truck.mainDriver?.fullName, truck.secondaryDriver?.fullName]
-                .filter(Boolean)
-                .join(", "),
-            },
-          ];
-        }
-        return [];
-      });
-
-      this.truckLocations.set(truckLocations);
+      return [];
     });
+
+    this.truckLocations.set(truckLocations);
   }
 }

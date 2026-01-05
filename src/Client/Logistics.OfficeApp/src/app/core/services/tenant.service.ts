@@ -1,14 +1,13 @@
 import { HttpHeaders } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import { Subject } from "rxjs";
-import { ApiService } from "@/core/api";
-import { SubscriptionStatus, TenantDto } from "@/core/api/models";
+import { Api, TenantDto, getTenantById$Json } from "@/core/api";
 import { CookieService } from "./cookie.service";
 
 @Injectable({ providedIn: "root" })
 export class TenantService {
   private readonly cookieService = inject(CookieService);
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
 
   private tenantId: string | null = null;
   private tenantData: TenantDto | null = null;
@@ -70,8 +69,8 @@ export class TenantService {
     }
 
     return (
-      this.tenantData?.subscription?.status === SubscriptionStatus.Active ||
-      this.tenantData?.subscription?.status === SubscriptionStatus.Trialing
+      this.tenantData?.subscription?.status === "active" ||
+      this.tenantData?.subscription?.status === "trialing"
     );
   }
 
@@ -110,15 +109,15 @@ export class TenantService {
    * Fetch tenant data and save it to the tenantData
    * @param tenantId The tenant ID
    */
-  private fetchTenantData(tenantId: string): void {
-    this.apiService.tenantApi.getTenant(tenantId).subscribe((result) => {
-      if (!result.success || !result.data) {
-        return;
-      }
+  private async fetchTenantData(tenantId: string): Promise<void> {
+    const result = await this.api.invoke(getTenantById$Json, { identifier: tenantId });
 
-      this.tenantData = result.data;
-      this.tenantDataChangedSource.next(result.data);
-      console.log("Fetched tenant data:", result.data);
-    });
+    if (!result.success || !result.data) {
+      return;
+    }
+
+    this.tenantData = result.data;
+    this.tenantDataChangedSource.next(result.data);
+    console.log("Fetched tenant data:", result.data);
   }
 }

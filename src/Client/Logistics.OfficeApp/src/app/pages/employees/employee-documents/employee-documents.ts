@@ -3,7 +3,7 @@ import { RouterLink } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ToastModule } from "primeng/toast";
-import { ApiService } from "@/core/api";
+import { Api, getEmployeeById$Json } from "@/core/api";
 import { DocumentType, EmployeeDto } from "@/core/api/models";
 import { DocumentManagerComponent } from "@/shared/components/document-manager/document-manager";
 
@@ -13,7 +13,7 @@ import { DocumentManagerComponent } from "@/shared/components/document-manager/d
   imports: [CardModule, ToastModule, RouterLink, DocumentManagerComponent, ButtonModule],
 })
 export class EmployeeDocumentsPage implements OnInit {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
 
   protected readonly employee = signal<EmployeeDto | null>(null);
 
@@ -31,11 +31,10 @@ export class EmployeeDocumentsPage implements OnInit {
     this.fetchEmployee();
   }
 
-  private fetchEmployee(): void {
-    this.apiService.employeeApi.getEmployee(this.id()).subscribe((result) => {
-      if (result.success && result.data) {
-        this.employee.set(result.data);
-      }
-    });
+  private async fetchEmployee(): Promise<void> {
+    const result = await this.api.invoke(getEmployeeById$Json, { userId: this.id() });
+    if (result.success && result.data) {
+      this.employee.set(result.data);
+    }
   }
 }

@@ -58,16 +58,16 @@ export class AddressForm implements ControlValueAccessor {
       return;
     }
 
-    const usStateOption = findOption(US_STATES_OPTIONS, value.state);
-    const countryOption = findOption(COUNTRIES_OPTIONS, value.country);
+    const usStateOption = findOption(US_STATES_OPTIONS, value.state ?? "");
+    const countryOption = findOption(COUNTRIES_OPTIONS, value.country ?? "");
 
     this.form.setValue(
       {
-        addressLine1: value.line1,
+        addressLine1: value.line1 ?? "",
         addressLine2: value.line2 ?? null,
-        city: value.city,
+        city: value.city ?? "",
         state: usStateOption?.value ?? "",
-        zipCode: value.zipCode,
+        zipCode: value.zipCode ?? "",
         country: countryOption?.value ?? DEFAULT_COUNTRY_OPTION.value,
       },
       { emitEvent: false },

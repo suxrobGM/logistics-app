@@ -124,8 +124,8 @@
                   </div>
                   <div class="flex-shrink-0">
                     <p-tag
-                      [value]="(metric.trend >= 0 ? '+' : '') + metric.trend + '%'"
-                      [severity]="metric.trend >= 0 ? 'success' : 'danger'"
+                      [value]="((metric.trend ?? 0) >= 0 ? '+' : '') + (metric.trend ?? 0) + '%'"
+                      [severity]="(metric.trend ?? 0) >= 0 ? 'success' : 'danger'"
                     >
                     </p-tag>
                   </div>

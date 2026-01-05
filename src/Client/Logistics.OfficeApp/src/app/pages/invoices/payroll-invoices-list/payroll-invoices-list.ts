@@ -8,7 +8,7 @@ import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
 import { TableLazyLoadEvent, TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { ApiService } from "@/core/api";
+import { Api, formatSortField, getInvoices$Json } from "@/core/api";
 import { InvoiceDto, InvoiceType, SalaryType, salaryTypeOptions } from "@/core/api/models";
 import { InvoiceStatusTag } from "@/shared/components";
 
@@ -30,58 +30,46 @@ import { InvoiceStatusTag } from "@/shared/components";
   ],
 })
 export class PayrollInvoicesListComponent {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
 
   protected readonly invoices = signal<InvoiceDto[]>([]);
   protected readonly isLoading = signal(false);
   protected readonly totalRecords = signal(0);
   protected readonly first = signal(0);
 
-  search(event: Event): void {
+  async search(event: Event): Promise<void> {
     this.isLoading.set(true);
     const searchValue = (event.target as HTMLInputElement).value;
 
-    this.apiService.invoiceApi.getInvoices({ employeeName: searchValue }).subscribe((result) => {
-      if (result.success && result.data) {
-        this.invoices.set(result.data);
-        this.totalRecords.set(result.totalItems);
-      }
+    const result = await this.api.invoke(getInvoices$Json, { EmployeeName: searchValue });
+    if (result.success && result.data) {
+      this.invoices.set(result.data);
+      this.totalRecords.set(result.totalItems ?? 0);
+    }
 
-      this.isLoading.set(false);
-    });
+    this.isLoading.set(false);
   }
 
-  load(event: TableLazyLoadEvent): void {
+  async load(event: TableLazyLoadEvent): Promise<void> {
     this.isLoading.set(true);
     const first = event.first ?? 1;
     const rows = event.rows ?? 10;
     const page = first / rows + 1;
-    const sortField = this.apiService.formatSortField(event.sortField as string, event.sortOrder);
+    const sortField = formatSortField(event.sortField as string, event.sortOrder);
 
-    this.apiService.invoiceApi
-      .getInvoices({
-        orderBy: sortField,
-        page: page,
-        pageSize: rows,
-        invoiceType: InvoiceType.Payroll,
-      })
-      .subscribe((result) => {
-        if (result.success && result.data) {
-          this.invoices.set(result.data);
-          this.totalRecords.set(result.totalItems);
-        }
+    const result = await this.api.invoke(getInvoices$Json, {
+      OrderBy: sortField,
+      Page: page,
+      PageSize: rows,
+      InvoiceType: InvoiceType.Payroll,
+    });
+    if (result.success && result.data) {
+      this.invoices.set(result.data);
+      this.totalRecords.set(result.totalItems ?? 0);
+    }
 
-        this.isLoading.set(false);
-      });
+    this.isLoading.set(false);
   }
-
-  // getPaymentMethodDesc(enumValue?: PaymentMethodType): string {
-  //   if (enumValue == null) {
-  //     return "N/A";
-  //   }
-
-  //   return paymentMethodTypeOptions.find((x) => x.value === enumValue)?.label ?? "N/A";
-  // }
 
   getSalaryTypeDesc(enumValue: SalaryType): string {
     return salaryTypeOptions.find((option) => option.value === enumValue)?.label ?? "N/A";

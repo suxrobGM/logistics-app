@@ -178,8 +178,8 @@ export class DirectionMap {
    */
   private fitAndCenter(waypoints: Waypoint[]): void {
     // Calculate bounds
-    const xs = waypoints.map((p) => p.location.longitude);
-    const ys = waypoints.map((p) => p.location.latitude);
+    const xs = waypoints.map((p) => p.location.longitude ?? 0);
+    const ys = waypoints.map((p) => p.location.latitude ?? 0);
     const minX = Math.min(...xs);
     const minY = Math.min(...ys);
     const maxX = Math.max(...xs);
@@ -261,7 +261,7 @@ export class DirectionMap {
       type: "FeatureCollection",
       features: pts.map((p, i) => ({
         type: "Feature",
-        geometry: { type: "Point", coordinates: [p.location.longitude, p.location.latitude] },
+        geometry: { type: "Point", coordinates: [p.location.longitude ?? 0, p.location.latitude ?? 0] },
         properties: { id: p.id, label: String(i + 1) },
       })),
     };
@@ -275,7 +275,8 @@ export class DirectionMap {
    * @returns True if the point is valid, false otherwise.
    */
   private isValidPoint(point: Waypoint): boolean {
-    const { longitude, latitude } = point.location;
+    const longitude = point.location.longitude ?? 0;
+    const latitude = point.location.latitude ?? 0;
 
     // Ignore zero coordinates
     if (longitude === 0 && latitude === 0) {

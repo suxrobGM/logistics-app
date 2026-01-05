@@ -14,7 +14,7 @@ import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
-import { ApiService } from "@/core/api";
+import { Api, createEmployee$Json } from "@/core/api";
 import {
   CreateEmployeeCommand,
   RoleDto,
@@ -47,7 +47,7 @@ export class EmployeeAddComponent {
   protected readonly form: FormGroup<CreateEmployeeForm>;
   protected readonly salaryTypes = salaryTypeOptions;
 
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
   private readonly userService = inject(UserService);
 
@@ -83,7 +83,7 @@ export class EmployeeAddComponent {
     });
   }
 
-  submit(): void {
+  async submit(): Promise<void> {
     if (!this.form.valid) {
       return;
     }
@@ -96,21 +96,20 @@ export class EmployeeAddComponent {
     }
 
     const newEmployee: CreateEmployeeCommand = {
-      userId: user.id,
+      userId: user.id ?? undefined,
       role: this.form.value.role?.name,
       salary: this.form.value.salary ?? 0,
       salaryType: this.form.value.salaryType ?? SalaryType.None,
     };
 
     this.isLoading.set(true);
-    this.apiService.employeeApi.createEmployee(newEmployee).subscribe((result) => {
-      if (result.success) {
-        this.toastService.showSuccess("New employee has been added successfully");
-        this.form.reset();
-      }
+    const result = await this.api.invoke(createEmployee$Json, { body: newEmployee });
+    if (result.success) {
+      this.toastService.showSuccess("New employee has been added successfully");
+      this.form.reset();
+    }
 
-      this.isLoading.set(false);
-    });
+    this.isLoading.set(false);
   }
 
   isShareOfGrossSalary(): boolean {

@@ -3,7 +3,7 @@ import { Component, OnInit, inject, input, model, output, signal } from "@angula
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
-import { ApiService } from "@/core/api";
+import { Api, getDailyGrosses$Json } from "@/core/api";
 import { DailyGrossesDto } from "@/core/api/models";
 import { RangeCalendar } from "@/shared/components";
 import { Converters, DateUtils } from "@/shared/utils";
@@ -32,7 +32,7 @@ const chartOptions = {
   imports: [DatePipe, CardModule, SkeletonModule, ChartModule, RangeCalendar],
 })
 export class TruckGrossesLinechartComponent implements OnInit {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
 
   protected readonly isLoading = signal(false);
   protected readonly dailyGrosses = signal<DailyGrossesDto | null>(null);
@@ -49,33 +49,33 @@ export class TruckGrossesLinechartComponent implements OnInit {
     this.fetchDailyGrosses();
   }
 
-  protected fetchDailyGrosses(): void {
+  protected async fetchDailyGrosses(): Promise<void> {
     this.isLoading.set(true);
 
-    this.apiService.statsApi
-      .getDailyGrosses(this.startDate(), this.endDate(), this.truckId())
-      .subscribe((result) => {
-        if (result.success && result.data) {
-          const dailyGrosses = result.data;
-          this.dailyGrosses.set(dailyGrosses);
-          const rpm =
-            dailyGrosses.totalGross / Converters.metersTo(dailyGrosses.totalDistance, "mi");
+    const result = await this.api.invoke(getDailyGrosses$Json, {
+      StartDate: this.startDate().toISOString(),
+      EndDate: this.endDate().toISOString(),
+      TruckId: this.truckId(),
+    });
+    if (result.success && result.data) {
+      const dailyGrosses = result.data;
+      this.dailyGrosses.set(dailyGrosses);
+      const rpm = (dailyGrosses.totalGross ?? 0) / Converters.metersTo(dailyGrosses.totalDistance ?? 0, "mi");
 
-          this.drawChart(dailyGrosses);
-          this.chartDrawn.emit({ dailyGrosses: dailyGrosses, rpm: rpm });
-        }
+      this.drawChart(dailyGrosses);
+      this.chartDrawn.emit({ dailyGrosses: dailyGrosses, rpm: rpm });
+    }
 
-        this.isLoading.set(false);
-      });
+    this.isLoading.set(false);
   }
 
   private drawChart(grosses: DailyGrossesDto): void {
     const labels: string[] = [];
     const data: number[] = [];
 
-    grosses.data.forEach((i) => {
-      labels.push(DateUtils.toLocaleDate(i.date));
-      data.push(i.gross);
+    (grosses.data ?? []).forEach((i) => {
+      labels.push(DateUtils.toLocaleDate(i.date ?? ""));
+      data.push(i.gross ?? 0);
     });
 
     this.chartData.set({

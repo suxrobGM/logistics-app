@@ -2,7 +2,12 @@ import { Component, OnInit, inject, input, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { ApiService } from "@/core/api";
+import {
+  Api,
+  getCustomerById$Json,
+  updateCustomer$Json,
+  deleteCustomer$Json,
+} from "@/core/api";
 import { UpdateCustomerCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { CustomerForm, CustomerFormValue } from "@/shared/components";
@@ -13,7 +18,7 @@ import { CustomerForm, CustomerFormValue } from "@/shared/components";
   imports: [CardModule, ButtonModule, RouterModule, CustomerForm],
 })
 export class CustomerEditComponent implements OnInit {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
@@ -28,7 +33,7 @@ export class CustomerEditComponent implements OnInit {
     }
   }
 
-  protected updateCustomer(formValue: CustomerFormValue): void {
+  protected async updateCustomer(formValue: CustomerFormValue): Promise<void> {
     this.isLoading.set(true);
 
     const command: UpdateCustomerCommand = {
@@ -36,37 +41,38 @@ export class CustomerEditComponent implements OnInit {
       name: formValue.name!,
     };
 
-    this.apiService.customerApi.updateCustomer(command).subscribe((result) => {
-      if (result.success) {
-        this.toastService.showSuccess("A customer data has been updated successfully");
-      }
-
-      this.isLoading.set(false);
+    const result = await this.api.invoke(updateCustomer$Json, {
+      id: this.id()!,
+      body: command,
     });
+    if (result.success) {
+      this.toastService.showSuccess("A customer data has been updated successfully");
+    }
+
+    this.isLoading.set(false);
   }
 
-  protected deleteCustomer(): void {
+  protected async deleteCustomer(): Promise<void> {
     this.isLoading.set(true);
-    this.apiService.customerApi.deleteCustomer(this.id()!).subscribe((result) => {
-      if (result.success) {
-        this.toastService.showSuccess("A customer has been deleted successfully");
-        this.router.navigateByUrl("/customers");
-      }
 
-      this.isLoading.set(false);
-    });
+    const result = await this.api.invoke(deleteCustomer$Json, { id: this.id()! });
+    if (result.success) {
+      this.toastService.showSuccess("A customer has been deleted successfully");
+      this.router.navigateByUrl("/customers");
+    }
+
+    this.isLoading.set(false);
   }
 
-  private fetchCustomer(customerId: string): void {
+  private async fetchCustomer(customerId: string): Promise<void> {
     this.isLoading.set(true);
 
-    this.apiService.customerApi.getCustomer(customerId).subscribe((result) => {
-      if (result.success && result.data) {
-        const customer = result.data;
-        this.initialData.set({ name: customer.name });
-      }
+    const result = await this.api.invoke(getCustomerById$Json, { id: customerId });
+    if (result.success && result.data) {
+      const customer = result.data;
+      this.initialData.set({ name: customer.name ?? undefined });
+    }
 
-      this.isLoading.set(false);
-    });
+    this.isLoading.set(false);
   }
 }

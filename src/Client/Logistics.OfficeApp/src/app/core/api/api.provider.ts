@@ -1,17 +1,16 @@
+import { EnvironmentProviders, InjectionToken, makeEnvironmentProviders } from "@angular/core";
 import { HttpInterceptorFn, provideHttpClient, withInterceptors } from "@angular/common/http";
-import { EnvironmentProviders, Provider } from "@angular/core";
-import { InjectionToken } from "@angular/core";
-import { ApiService } from "./api.service";
+import { ApiConfiguration } from "./generated/api-configuration";
 import { tokenAuthInterceptor } from "./interceptors/token-auth.interceptor";
 
 /**
- * Configuration for the API service.
+ * Configuration interface for the API provider.
  */
 export interface ApiConfig {
   /**
    * Base path for the API.
    */
-  baseUrl?: string;
+  baseUrl: string;
   /**
    * Cookie credentials flag.
    * If true, cookies will be sent with requests.
@@ -29,28 +28,29 @@ export interface ApiConfig {
 }
 
 /**
- * Provides the API service with the given configuration.
- * This function sets up the HTTP client with the specified interceptors and provides the API service.
- * @param config The configuration for the API service.
- * @returns An array of providers for the API service.
- * @example
- * ```ts
- * provideApi({
- *   baseUrl: 'https://api.example.com',
- *   withCredentials: true,
- *   tokenGetter: () => sessionStorage.getItem('access_token'),
- *   interceptors: [customInterceptor],
- * });
+ * Injection token for the API configuration.
+ * Used by interceptors to access the API settings.
  */
-export function provideApi(config: ApiConfig = {}): (Provider | EnvironmentProviders)[] {
-  return [
-    provideHttpClient(withInterceptors([tokenAuthInterceptor, ...(config.interceptors || [])])),
+export const API_CONFIG = new InjectionToken<ApiConfig>("API_CONFIG");
 
-    ApiService,
-
-    // expose the config object to the DI graph
-    { provide: API_CONFIG, useValue: config },
+/**
+ * Provides the API configuration and HTTP client with interceptors.
+ * @param config The API configuration options.
+ * @returns The environment providers for the API.
+ */
+export function provideApi(config: ApiConfig): EnvironmentProviders {
+  const interceptors: HttpInterceptorFn[] = [
+    tokenAuthInterceptor,
+    ...(config.interceptors ?? []),
   ];
-}
 
-export const API_CONFIG = new InjectionToken<ApiConfig>("Api Config");
+  return makeEnvironmentProviders([
+    { provide: API_CONFIG, useValue: config },
+    { provide: ApiConfiguration, useFactory: () => {
+      const apiConfig = new ApiConfiguration();
+      apiConfig.rootUrl = config.baseUrl;
+      return apiConfig;
+    }},
+    provideHttpClient(withInterceptors(interceptors)),
+  ]);
+}

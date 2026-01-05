@@ -9,15 +9,14 @@ import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
 import { TooltipModule } from "primeng/tooltip";
-import { ApiService } from "@/core/api";
 import {
-  DocumentDto,
-  DocumentOwnerType,
-  DocumentStatus,
-  DocumentType,
-  GetDocumentsQuery,
-  UploadDocumentRequest,
-} from "@/core/api/models";
+  Api,
+  deleteDocument$Json,
+  downloadDocument$Json,
+  getDocuments$Json,
+  uploadDocument$Json,
+} from "@/core/api";
+import { DocumentDto, DocumentOwnerType, DocumentStatus, DocumentType } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { downloadBlobFile } from "@/shared/utils";
 
@@ -39,7 +38,7 @@ import { downloadBlobFile } from "@/shared/utils";
   ],
 })
 export class DocumentManagerComponent implements OnInit {
-  private readonly api = inject(ApiService);
+  private readonly api = inject(Api);
   private readonly toast = inject(ToastService);
 
   readonly employeeId = input<string>();
@@ -56,19 +55,18 @@ export class DocumentManagerComponent implements OnInit {
     this.refresh();
   }
 
-  protected refresh(): void {
+  protected async refresh(): Promise<void> {
     this.isLoading.set(true);
-    const query: GetDocumentsQuery = {
-      ownerType: this.employeeId() ? DocumentOwnerType.Employee : DocumentOwnerType.Load,
-      ownerId: this.employeeId() || this.loadId() || "",
-    };
 
-    this.api.documentApi.getDocuments(query).subscribe((result) => {
-      if (result.success) {
-        this.rows.set(result.data || []);
-      }
-      this.isLoading.set(false);
+    const result = await this.api.invoke(getDocuments$Json, {
+      OwnerType: this.employeeId() ? DocumentOwnerType.Employee : DocumentOwnerType.Load,
+      OwnerId: this.employeeId() || this.loadId() || "",
     });
+
+    if (result.success) {
+      this.rows.set(result.data || []);
+    }
+    this.isLoading.set(false);
   }
 
   protected onFileChange(event: Event, type: DocumentType): void {
@@ -80,7 +78,7 @@ export class DocumentManagerComponent implements OnInit {
     input.value = ""; // reset
   }
 
-  protected upload(file: File, type: DocumentType): void {
+  protected async upload(file: File, type: DocumentType): Promise<void> {
     if (file.size > 50 * 1024 * 1024) {
       this.toast.showError("File exceeds 50MB limit");
       return;
@@ -89,59 +87,54 @@ export class DocumentManagerComponent implements OnInit {
     const ownerType = this.employeeId() ? DocumentOwnerType.Employee : DocumentOwnerType.Load;
     const ownerId = this.employeeId() || this.loadId() || "";
 
-    const request: UploadDocumentRequest = {
-      ownerType,
-      ownerId,
-      file,
-      type,
-      description: `${type} document`,
-    };
-
     this.uploadProgress.set({ [type]: 0 });
 
-    this.api.documentApi.uploadDocument(request).subscribe({
-      next: (result) => {
+    try {
+      const result = await this.api.invoke(uploadDocument$Json, {
+        body: {
+          OwnerType: ownerType,
+          OwnerId: ownerId,
+          File: file,
+          Type: type,
+          Description: `${type} document`,
+        },
+      });
+
+      if (result.success) {
+        this.toast.showSuccess(`${type} uploaded successfully`);
+        this.refresh();
+        this.changed.emit();
+      }
+      this.uploadProgress.set({ [type]: 100 });
+    } catch {
+      this.toast.showError(`Failed to upload ${type}`);
+      this.uploadProgress.set({ [type]: 0 });
+    }
+  }
+
+  protected async download(row: DocumentDto): Promise<void> {
+    try {
+      const blob = await this.api.invoke(downloadDocument$Json, { documentId: row.id! });
+      const fileName = row.originalFileName || row.fileName;
+      downloadBlobFile(blob, fileName!);
+    } catch {
+      this.toast.showError("Failed to download file");
+    }
+  }
+
+  protected async delete(row: DocumentDto): Promise<void> {
+    console.log(row);
+    if (confirm(`Are you sure you want to delete "${row.fileName}"?`)) {
+      try {
+        const result = await this.api.invoke(deleteDocument$Json, { documentId: row.id! });
         if (result.success) {
-          this.toast.showSuccess(`${type} uploaded successfully`);
+          this.toast.showSuccess("Document deleted successfully");
           this.refresh();
           this.changed.emit();
         }
-        this.uploadProgress.set({ [type]: 100 });
-      },
-      error: () => {
-        this.toast.showError(`Failed to upload ${type}`);
-        this.uploadProgress.set({ [type]: 0 });
-      },
-    });
-  }
-
-  protected download(row: DocumentDto): void {
-    this.api.documentApi.downloadFile(row.id).subscribe({
-      next: (blob) => {
-        const fileName = row.originalFileName || row.fileName;
-        downloadBlobFile(blob, fileName);
-      },
-      error: () => {
-        this.toast.showError("Failed to download file");
-      },
-    });
-  }
-
-  protected delete(row: DocumentDto): void {
-    console.log(row);
-    if (confirm(`Are you sure you want to delete "${row.fileName}"?`)) {
-      this.api.documentApi.deleteDocument(row.id).subscribe({
-        next: (result) => {
-          if (result.success) {
-            this.toast.showSuccess("Document deleted successfully");
-            this.refresh();
-            this.changed.emit();
-          }
-        },
-        error: () => {
-          this.toast.showError("Failed to delete document");
-        },
-      });
+      } catch {
+        this.toast.showError("Failed to delete document");
+      }
     }
   }
 

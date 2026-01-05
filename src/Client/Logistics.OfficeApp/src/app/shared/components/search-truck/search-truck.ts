@@ -2,8 +2,7 @@
 import { Component, forwardRef, inject, model, output, signal } from "@angular/core";
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { AutoCompleteModule, AutoCompleteSelectEvent } from "primeng/autocomplete";
-import { ApiService } from "@/core/api";
-import { TruckDto } from "@/core/api/models";
+import { Api, TruckDto, getTruckById$Json, getTrucks$Json } from "@/core/api";
 
 /**
  * Component for searching and selecting a truck.
@@ -23,7 +22,7 @@ import { TruckDto } from "@/core/api/models";
   ],
 })
 export class SearchTruckComponent implements ControlValueAccessor {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
 
   protected readonly suggestedTrucks = signal<TruckDto[]>([]);
   protected readonly disabled = signal<boolean>(false);
@@ -31,14 +30,14 @@ export class SearchTruckComponent implements ControlValueAccessor {
   public readonly selectedTruck = model<TruckDto | null>(null);
   public readonly selectedTruckChange = output<TruckDto | null>();
 
-  protected searchTruck(event: { query: string }): void {
-    this.apiService.truckApi.getTrucks({ search: event.query }).subscribe((result) => {
-      if (!result.data) {
-        return;
-      }
+  protected async searchTruck(event: { query: string }): Promise<void> {
+    const result = await this.api.invoke(getTrucks$Json, { Search: event.query });
 
-      this.suggestedTrucks.set(result.data);
-    });
+    if (!result.data) {
+      return;
+    }
+
+    this.suggestedTrucks.set(result.data);
   }
 
   protected changeSelectedTruck(event: AutoCompleteSelectEvent): void {
@@ -46,18 +45,17 @@ export class SearchTruckComponent implements ControlValueAccessor {
     this.onChange(event.value);
   }
 
-  private fetchTruckById(id: string): void {
+  private async fetchTruckById(id: string): Promise<void> {
     if (!id) {
       this.selectedTruck.set(null);
       return;
     }
 
-    this.apiService.truckApi.getTruck(id).subscribe((result) => {
-      if (result.success && result.data) {
-        this.selectedTruck.set(result.data);
-        this.onChange(result.data);
-      }
-    });
+    const result = await this.api.invoke(getTruckById$Json, { truckOrDriverId: id });
+    if (result.success && result.data) {
+      this.selectedTruck.set(result.data);
+      this.onChange(result.data);
+    }
   }
 
   //#region Implementation Reactive forms

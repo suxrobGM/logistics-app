@@ -1,12 +1,13 @@
 import { CurrencyPipe, DatePipe } from "@angular/common";
-import { Component, inject, input, output } from "@angular/core";
+import { Component, computed, inject, input, output } from "@angular/core";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TableModule } from "primeng/table";
-import { TripStopType } from "@/core/api/models";
+import { TripStopDto, TripStopType } from "@/core/api/models";
 import { DirectionMap } from "@/shared/components";
 import type {
   RouteSegmentClickEvent,
+  Waypoint,
   WaypointClickEvent,
 } from "@/shared/components/direction-map/types";
 import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
@@ -37,17 +38,34 @@ export class TripWizardReview {
   protected readonly isOptimizing = this.store.isOptimizing;
   protected readonly selectedStop = this.store.selectedStop;
 
+  // Transform TripStopDto[] to Waypoint[] for DirectionMap
+  protected readonly waypoints = computed<Waypoint[]>(() =>
+    this.reviewData()
+      .stops.filter((stop) => stop.id != null)
+      .map((stop) => ({
+        id: stop.id!,
+        location: stop.location,
+      })),
+  );
+
+  // Transform selectedStop to Waypoint | null for DirectionMap
+  protected readonly selectedWaypoint = computed<Waypoint | null>(() => {
+    const stop = this.selectedStop();
+    if (!stop || !stop.id) return null;
+    return { id: stop.id, location: stop.location };
+  });
+
   protected stopLabel(tripStopType: TripStopType): string {
     return tripStopType === TripStopType.PickUp ? "Pick Up" : "Drop Off";
   }
 
   protected onRouteSegmentClick(e: RouteSegmentClickEvent): void {
-    const stop = this.reviewData().stops.find((s: { id: string }) => s.id === e.fromWaypoint.id);
+    const stop = this.reviewData().stops.find((s: TripStopDto) => s.id === e.fromWaypoint.id);
     this.store.setSelectedStop(stop ?? null);
   }
 
   protected onWaypointClick(e: WaypointClickEvent): void {
-    const stop = this.reviewData().stops.find((s: { id: string }) => s.id === e.waypoint.id);
+    const stop = this.reviewData().stops.find((s: TripStopDto) => s.id === e.waypoint.id);
     this.store.setSelectedStop(stop ?? null);
   }
 

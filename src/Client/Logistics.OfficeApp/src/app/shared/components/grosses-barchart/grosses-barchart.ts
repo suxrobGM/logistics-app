@@ -3,7 +3,7 @@ import { Component, OnInit, inject, input, output, signal } from "@angular/core"
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
-import { ApiService } from "@/core/api";
+import { Api, getMonthlyGrosses$Json } from "@/core/api";
 import { MonthlyGrossesDto } from "@/core/api/models";
 import { Converters, DateUtils } from "@/shared/utils";
 import { RangeCalendar } from "../range-calendar/range-calendar";
@@ -34,7 +34,7 @@ const chartInitialOptions = {
   imports: [CommonModule, CardModule, SkeletonModule, ChartModule, RangeCalendar],
 })
 export class GrossesBarchart implements OnInit {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
   protected readonly isLoading = signal(false);
   protected readonly monthlyGrosses = signal<MonthlyGrossesDto | null>(null);
   protected readonly startDate = signal(DateUtils.thisYear());
@@ -54,33 +54,34 @@ export class GrossesBarchart implements OnInit {
     this.fetchMonthlyGrosses();
   }
 
-  fetchMonthlyGrosses() {
+  async fetchMonthlyGrosses(): Promise<void> {
     this.isLoading.set(true);
 
-    this.apiService.statsApi
-      .getMonthlyGrosses(this.startDate(), this.endDate(), this.truckId())
-      .subscribe((result) => {
-        if (result.success && result.data) {
-          const monthlyGrosses = result.data;
-          this.monthlyGrosses.set(monthlyGrosses);
-          const rpm =
-            monthlyGrosses.totalGross / Converters.metersTo(monthlyGrosses.totalDistance, "mi");
+    const result = await this.api.invoke(getMonthlyGrosses$Json, {
+      StartDate: this.startDate().toISOString(),
+      EndDate: this.endDate().toISOString(),
+      TruckId: this.truckId(),
+    });
 
-          this.drawChart(monthlyGrosses);
-          this.chartDrawn.emit({ monthlyGrosses, rpm });
-        }
+    if (result.success && result.data) {
+      const monthlyGrosses = result.data;
+      this.monthlyGrosses.set(monthlyGrosses);
+      const rpm = monthlyGrosses.totalGross! / Converters.metersTo(monthlyGrosses.totalDistance!, "mi");
 
-        this.isLoading.set(false);
-      });
+      this.drawChart(monthlyGrosses);
+      this.chartDrawn.emit({ monthlyGrosses, rpm });
+    }
+
+    this.isLoading.set(false);
   }
 
-  private drawChart(grosses: MonthlyGrossesDto) {
+  private drawChart(grosses: MonthlyGrossesDto): void {
     const labels: string[] = [];
     const data: number[] = [];
 
-    grosses.data.forEach((i) => {
-      labels.push(DateUtils.monthNameWithYear(i.date));
-      data.push(i.gross);
+    grosses.data?.forEach((i) => {
+      labels.push(DateUtils.monthNameWithYear(i.date!));
+      data.push(i.gross!);
     });
 
     this.chartData.set({

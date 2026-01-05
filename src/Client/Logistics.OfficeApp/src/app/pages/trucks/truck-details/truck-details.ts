@@ -3,7 +3,7 @@ import { Component, OnInit, inject, input, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { SkeletonModule } from "primeng/skeleton";
-import { ApiService } from "@/core/api";
+import { Api, getTruckById$Json } from "@/core/api";
 import {
   DailyGrossesDto,
   MonthlyGrossesDto,
@@ -31,7 +31,7 @@ import { LineChartDrawnEvent, TruckGrossesLinechartComponent } from "../componen
   ],
 })
 export class TruckDetailsComponent implements OnInit {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
 
   protected readonly id = input<string>();
   protected readonly isLoading = signal(false);
@@ -56,7 +56,7 @@ export class TruckDetailsComponent implements OnInit {
     this.rpmAllTime.set(event.rpm);
   }
 
-  private fetchTruck(): void {
+  private async fetchTruck(): Promise<void> {
     const id = this.id();
 
     if (!id) {
@@ -65,24 +65,23 @@ export class TruckDetailsComponent implements OnInit {
 
     this.isLoading.set(true);
 
-    this.apiService.truckApi.getTruck(id).subscribe((result) => {
-      if (result.success && result.data) {
-        const truck = result.data;
-        this.truck.set(truck);
+    const result = await this.api.invoke(getTruckById$Json, { truckOrDriverId: id });
+    if (result.success && result.data) {
+      const truck = result.data;
+      this.truck.set(truck);
 
-        this.truckLocations.set([
-          {
-            currentLocation: truck.currentLocation,
-            truckId: truck.id,
-            truckNumber: truck.number,
-            driversName: [truck.mainDriver?.fullName, truck.secondaryDriver?.fullName]
-              .filter(Boolean)
-              .join(", "),
-          },
-        ]);
-      }
+      this.truckLocations.set([
+        {
+          currentLocation: truck.currentLocation,
+          truckId: truck.id,
+          truckNumber: truck.number,
+          driversName: [truck.mainDriver?.fullName, truck.secondaryDriver?.fullName]
+            .filter(Boolean)
+            .join(", "),
+        },
+      ]);
+    }
 
-      this.isLoading.set(false);
-    });
+    this.isLoading.set(false);
   }
 }

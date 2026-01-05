@@ -93,10 +93,10 @@
   </p-card>
 
   <app-direction-map
-    [waypoints]="reviewData().stops"
+    [waypoints]="waypoints()"
     height="700px"
     [zoom]="4"
-    [selectedWaypoint]="selectedStop()"
+    [selectedWaypoint]="selectedWaypoint()"
     (routeSegmentClick)="onRouteSegmentClick($event)"
     (waypointClick)="onWaypointClick($event)"
   />

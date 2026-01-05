@@ -5,7 +5,7 @@ import { jsPDF } from "jspdf";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { ApiService } from "@/core/api";
+import { Api, getInvoiceById$Json } from "@/core/api";
 import { AddressDto, InvoiceDto } from "@/core/api/models";
 import { TenantService } from "@/core/services";
 import { InvoiceStatusTag } from "@/shared/components";
@@ -25,7 +25,7 @@ import { AddressPipe } from "@/shared/pipes";
   ],
 })
 export class LoadInvoiceDetailsComponent implements OnInit {
-  private readonly apiService = inject(ApiService);
+  private readonly api = inject(Api);
   private readonly tenantService = inject(TenantService);
 
   readonly id = input.required<string>();
@@ -59,30 +59,29 @@ export class LoadInvoiceDetailsComponent implements OnInit {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(12);
 
-    doc.text(`Company: ${this.companyName}`, 10, 20);
-    doc.text(`Address: ${this.companyAddress}`, 10, 30);
+    doc.text(`Company: ${this.companyName()}`, 10, 20);
+    doc.text(`Address: ${this.companyAddress()}`, 10, 30);
     doc.text(`Load Number: ${invoice.loadNumber}`, 10, 40);
-    doc.text(`Date: ${invoice.createdDate.toString()}`, 10, 60);
-    doc.text(`Customer Name: ${invoice.customer!.name}`, 10, 70);
+    doc.text(`Date: ${invoice.createdDate?.toString() ?? "N/A"}`, 10, 60);
+    doc.text(`Customer Name: ${invoice.customer?.name ?? "N/A"}`, 10, 70);
     doc.text(`Invoice Status: ${invoice.status}`, 10, 90);
-    doc.text(`Amount: $${invoice.total.amount}`, 10, 100);
+    doc.text(`Amount: $${invoice.total?.amount ?? 0}`, 10, 100);
 
     // Save the PDF
     doc.save(`load-invoice-${invoice.number}.pdf`);
   }
 
-  private fetchInvoice(): void {
+  private async fetchInvoice(): Promise<void> {
     if (!this.id()) {
       return;
     }
 
     this.isLoading.set(true);
-    this.apiService.invoiceApi.getInvoice(this.id()).subscribe((result) => {
-      if (result.data) {
-        this.invoice.set(result.data);
-      }
+    const result = await this.api.invoke(getInvoiceById$Json, { id: this.id() });
+    if (result.data) {
+      this.invoice.set(result.data);
+    }
 
-      this.isLoading.set(false);
-    });
+    this.isLoading.set(false);
   }
 }

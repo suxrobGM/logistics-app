@@ -1,14 +1,18 @@
 import { CurrencyPipe, DecimalPipe } from "@angular/common";
-import { Component, OnInit, inject, signal } from "@angular/core";
+import { Component, OnInit, signal } from "@angular/core";
 import { Card } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
-import { Observable } from "rxjs";
-import { ApiService } from "@/core/api";
-import { Result } from "@/core/api/models";
-import { DriverDashboardDto } from "@/core/api/models/report/drivers-report.dto";
+import { getDriverDashboard$Json } from "@/core/api";
+import {
+  DriverDashboardDto,
+  DriverEfficiencyDto,
+  DriverPerformanceDto,
+  DriverTrendDto,
+  Result,
+} from "@/core/api/models";
 import { RangeCalendar } from "@/shared/components";
 import {
   BaseReportComponent,
@@ -39,8 +43,6 @@ export class DriversReportComponent
   extends BaseReportComponent<DriverDashboardDto>
   implements OnInit
 {
-  protected override readonly apiService = inject(ApiService);
-
   protected readonly trendChartData = signal<Record<string, unknown>>({});
   protected readonly efficiencyChartData = signal<Record<string, unknown>>({});
   protected readonly performanceChartData = signal<Record<string, unknown>>({});
@@ -53,10 +55,10 @@ export class DriversReportComponent
     this.fetch({ startDate: this.startDate(), endDate: this.endDate() });
   }
 
-  protected override query(params: ReportQueryParams): Observable<Result<DriverDashboardDto>> {
-    return this.apiService.reportApi.getDriverDashboard({
-      startDate: params.startDate,
-      endDate: params.endDate,
+  protected override async query(params: ReportQueryParams): Promise<Result<DriverDashboardDto>> {
+    return this.api.invoke(getDriverDashboard$Json, {
+      StartDate: params.startDate.toISOString(),
+      EndDate: params.endDate?.toISOString(),
     });
   }
 
@@ -65,11 +67,11 @@ export class DriversReportComponent
     const trends = result.driverTrends ?? [];
     if (trends.length > 0) {
       this.trendChartData.set({
-        labels: trends.map((t) => t.period),
+        labels: trends.map((t: DriverTrendDto) => t.period),
         datasets: [
           {
             label: "Active Drivers",
-            data: trends.map((t) => t.activeDrivers),
+            data: trends.map((t: DriverTrendDto) => t.activeDrivers),
             borderColor: "#2563eb",
             backgroundColor: "rgba(37, 99, 235, 0.1)",
             tension: 0.4,
@@ -77,7 +79,7 @@ export class DriversReportComponent
           },
           {
             label: "Loads Delivered",
-            data: trends.map((t) => t.loadsDelivered),
+            data: trends.map((t: DriverTrendDto) => t.loadsDelivered),
             borderColor: "#16a34a",
             backgroundColor: "rgba(22, 163, 74, 0.1)",
             tension: 0.4,
@@ -91,13 +93,17 @@ export class DriversReportComponent
     const efficiencyMetrics = result.efficiencyMetrics ?? [];
     if (efficiencyMetrics.length > 0) {
       this.efficiencyChartData.set({
-        labels: efficiencyMetrics.map((m) => m.metric),
+        labels: efficiencyMetrics.map((m: DriverEfficiencyDto) => m.metric),
         datasets: [
           {
             label: "Value",
-            data: efficiencyMetrics.map((m) => m.value),
-            backgroundColor: efficiencyMetrics.map((m) => (m.trend >= 0 ? "#16a34a" : "#ef4444")),
-            borderColor: efficiencyMetrics.map((m) => (m.trend >= 0 ? "#16a34a" : "#ef4444")),
+            data: efficiencyMetrics.map((m: DriverEfficiencyDto) => m.value),
+            backgroundColor: efficiencyMetrics.map((m: DriverEfficiencyDto) =>
+              (m.trend ?? 0) >= 0 ? "#16a34a" : "#ef4444",
+            ),
+            borderColor: efficiencyMetrics.map((m: DriverEfficiencyDto) =>
+              (m.trend ?? 0) >= 0 ? "#16a34a" : "#ef4444",
+            ),
             borderWidth: 1,
           },
         ],
@@ -108,11 +114,11 @@ export class DriversReportComponent
     const topPerformers = result.topPerformers ?? [];
     if (topPerformers.length > 0) {
       this.performanceChartData.set({
-        labels: topPerformers.map((p) => p.driverName),
+        labels: topPerformers.map((p: DriverPerformanceDto) => p.driverName),
         datasets: [
           {
             label: "Earnings",
-            data: topPerformers.map((p) => p.earnings),
+            data: topPerformers.map((p: DriverPerformanceDto) => p.earnings),
             backgroundColor: DRIVERS_CHART_PALETTE.slice(0, topPerformers.length),
             borderColor: DRIVERS_CHART_PALETTE.slice(0, topPerformers.length),
             borderWidth: 1,

@@ -1,8 +1,8 @@
 import { computed, inject } from "@angular/core";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
 import { rxMethod } from "@ngrx/signals/rxjs-interop";
-import { pipe, switchMap, tap } from "rxjs";
-import { ApiService } from "@/core/api";
+import { from, pipe, switchMap, tap } from "rxjs";
+import { Api, optimizeTripStops$Json } from "@/core/api";
 import {
   CreateTripLoadCommand,
   LoadStatus,
@@ -12,15 +12,28 @@ import {
   TripStopType,
 } from "@/core/api/models";
 
+// API response type for optimize trip stops
+interface OptimizedTripStopsResult {
+  success?: boolean;
+  error?: string | null;
+  data?: {
+    orderedStops?: TripStopDto[];
+    totalDistance?: number;
+  };
+}
+
 // Internal types for store state
 interface NewLoad extends CreateTripLoadCommand {
   id: string;
   tempId: string;
 }
 
-export interface TableRow extends TripLoadDto {
+// TableRow type that supports both existing loads (with customer) and new loads (without customer)
+export interface TableRow extends Omit<TripLoadDto, "customer"> {
   kind: "existing" | "new";
   pendingDetach?: boolean;
+  customer?: TripLoadDto["customer"]; // Optional for new loads
+  customerId?: string; // From CreateTripLoadCommand
 }
 
 // Store state interface for the Trip Wizard component
@@ -197,7 +210,7 @@ export const TripWizardStore = signalStore(
       canProceedFromStep2,
     };
   }),
-  withMethods((store, apiService = inject(ApiService)) => ({
+  withMethods((store, api = inject(Api)) => ({
     // Reset store to initial state
     reset() {
       patchState(store, initialState);
@@ -321,9 +334,9 @@ export const TripWizardStore = signalStore(
             stops: stops,
           };
 
-          return apiService.tripApi.optimizeTripStops(command).pipe(
+          return from(api.invoke(optimizeTripStops$Json, { body: command }) as Promise<OptimizedTripStopsResult>).pipe(
             tap({
-              next: (result: { data?: { orderedStops: TripStopDto[]; totalDistance: number } }) => {
+              next: (result) => {
                 patchState(store, {
                   stops: result.data?.orderedStops ?? stops,
                   totalDistance: result.data?.totalDistance ?? totalDistFromLoads,
@@ -360,16 +373,13 @@ export const TripWizardStore = signalStore(
             stops: store.stops(),
           };
 
-          return apiService.tripApi.optimizeTripStops(command).pipe(
+          return from(api.invoke(optimizeTripStops$Json, { body: command }) as Promise<OptimizedTripStopsResult>).pipe(
             tap({
-              next: (result: {
-                success: boolean;
-                data?: { orderedStops: TripStopDto[]; totalDistance: number };
-              }) => {
+              next: (result) => {
                 if (result.success && result.data) {
                   patchState(store, {
-                    stops: result.data.orderedStops,
-                    totalDistance: result.data.totalDistance,
+                    stops: result.data.orderedStops ?? [],
+                    totalDistance: result.data.totalDistance ?? 0,
                     isOptimizing: false,
                   });
                 }
