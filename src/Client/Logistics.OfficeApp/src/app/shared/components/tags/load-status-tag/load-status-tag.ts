@@ -1,6 +1,6 @@
 import { Component, input } from "@angular/core";
 import { Tag, TagModule } from "primeng/tag";
-import { LoadStatus, loadStatusOptions } from "@/core/api/models";
+import { type LoadStatus, loadStatusOptions } from "@/core/api/models";
 
 @Component({
   selector: "app-load-status-tag",
@@ -15,10 +15,10 @@ export class LoadStatusTag {
   }
 
   getLoadStatusSeverity(): Tag["severity"] {
-    return this.status() === LoadStatus.Delivered ? "success" : "info";
+    return this.status() === "delivered" ? "success" : "info";
   }
 
   getLoadStatusIcon(): string {
-    return this.status() === LoadStatus.Delivered ? "pi pi-check" : "pi pi-truck";
+    return this.status() === "delivered" ? "pi pi-check" : "pi pi-truck";
   }
 }

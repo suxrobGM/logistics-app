@@ -4,10 +4,10 @@
 import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { StrictHttpResponse } from '../../strict-http-response';
+import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { TruckDtoPagedResult } from '../../models/truck-dto-paged-result';
+import type { TruckDtoPagedResult } from '../../models/truck-dto-paged-result';
 
 export interface GetTrucks$Plain$Params {
   IncludeLoads?: boolean;

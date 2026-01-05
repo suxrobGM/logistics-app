@@ -1,9 +1,9 @@
 import { Injectable, inject } from "@angular/core";
 import {
   Api,
-  NotificationDto,
-  NotificationDtoArrayResult,
-  Result,
+  type NotificationDto,
+  type NotificationDtoArrayResult,
+  type Result,
   getNotifications$Json,
   updateNotification$Json,
 } from "@/core/api";

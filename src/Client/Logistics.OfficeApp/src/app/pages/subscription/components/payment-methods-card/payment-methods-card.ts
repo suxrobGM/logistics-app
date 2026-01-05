@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, model, signal } from "@angular/core";
+import { Component, type OnInit, inject, model, signal } from "@angular/core";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
@@ -9,9 +9,8 @@ import {
   setDefaultPaymentMethod$Json,
   deletePaymentMethod$Json,
 } from "@/core/api";
-import {
+import type {
   PaymentMethodDto,
-  PaymentMethodType,
   SetDefaultPaymentMethodCommand,
 } from "@/core/api/models";
 import { TenantService, ToastService } from "@/core/services";
@@ -46,11 +45,11 @@ export class PaymentMethodsCardComponent implements OnInit {
 
   getMethodLabel(method: PaymentMethodDto): string {
     switch (method.type) {
-      case PaymentMethodType.Card:
+      case "card":
         return `Card ending in ${method.cardNumber?.substring(method.cardNumber.length - 4)}`;
-      case PaymentMethodType.UsBankAccount:
+      case "us_bank_account":
         return `${method.bankName ?? "US Bank"} - ${method.accountHolderName}`;
-      case PaymentMethodType.InternationalBankAccount:
+      case "international_bank_account":
         return `(International) ${method.bankName ?? "Bank"} - ${method.accountHolderName}`;
       default:
         return "Payment Method";

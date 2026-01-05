@@ -1,5 +1,7 @@
-import { EnvironmentProviders, InjectionToken, makeEnvironmentProviders } from "@angular/core";
-import { HttpInterceptorFn, provideHttpClient, withInterceptors } from "@angular/common/http";
+import type { EnvironmentProviders } from "@angular/core";
+import { InjectionToken, makeEnvironmentProviders } from "@angular/core";
+import type { HttpInterceptorFn } from "@angular/common/http";
+import { provideHttpClient, withInterceptors } from "@angular/common/http";
 import { ApiConfiguration } from "./generated/api-configuration";
 import { tokenAuthInterceptor } from "./interceptors/token-auth.interceptor";
 

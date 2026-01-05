@@ -10,10 +10,9 @@ import { InputTextModule } from "primeng/inputtext";
 import { Table, TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { LoadType } from "@/core/api/models";
-import { LoadFormComponent, LoadFormValue, LoadStatusTag } from "@/shared/components";
+import { LoadFormComponent, type LoadFormValue, LoadStatusTag } from "@/shared/components";
 import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
-import { TableRow, TripWizardStore } from "../../store/trip-wizard-store";
+import { type TableRow, TripWizardStore } from "../../store/trip-wizard-store";
 
 @Component({
   selector: "app-trip-wizard-loads",
@@ -50,7 +49,7 @@ export class TripFormStepLoads {
     () =>
       ({
         assignedTruckId: this.store.truckId(),
-        type: LoadType.Vehicle,
+        type: "vehicle",
       }) satisfies Partial<LoadFormValue>,
   );
 

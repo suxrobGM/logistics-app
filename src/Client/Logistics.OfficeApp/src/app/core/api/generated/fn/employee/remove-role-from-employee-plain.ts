@@ -4,11 +4,11 @@
 import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { StrictHttpResponse } from '../../strict-http-response';
+import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { RemoveRoleFromEmployeeCommand } from '../../models/remove-role-from-employee-command';
-import { Result } from '../../models/result';
+import type { RemoveRoleFromEmployeeCommand } from '../../models/remove-role-from-employee-command';
+import type { Result } from '../../models/result';
 
 export interface RemoveRoleFromEmployee$Plain$Params {
   userId: string;

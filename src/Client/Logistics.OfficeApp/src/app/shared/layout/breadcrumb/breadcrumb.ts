@@ -1,6 +1,6 @@
 import { Component, inject, signal } from "@angular/core";
 import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
-import { MenuItem } from "primeng/api";
+import type { MenuItem } from "primeng/api";
 import { BreadcrumbModule } from "primeng/breadcrumb";
 import { filter } from "rxjs";
 

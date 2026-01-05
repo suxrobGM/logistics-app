@@ -1,5 +1,5 @@
 import { Injectable, inject } from "@angular/core";
-import { Confirmation, ConfirmationService, MessageService } from "primeng/api";
+import { type Confirmation, ConfirmationService, MessageService } from "primeng/api";
 
 /**
  * ToastService is a service for displaying toast notifications and confirmation dialogs.

@@ -4,10 +4,10 @@
 import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { StrictHttpResponse } from '../../strict-http-response';
+import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { RoleDtoPagedResult } from '../../models/role-dto-paged-result';
+import type { RoleDtoPagedResult } from '../../models/role-dto-paged-result';
 
 export interface GetTenantRoles$Plain$Params {
   Search?: string;

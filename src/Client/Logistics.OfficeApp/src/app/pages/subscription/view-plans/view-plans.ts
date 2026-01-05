@@ -1,9 +1,9 @@
 import { CurrencyPipe } from "@angular/common";
-import { Component, OnInit, inject, signal } from "@angular/core";
+import { Component, type OnInit, inject, signal } from "@angular/core";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { Api, getSubscriptionPlans$Json } from "@/core/api";
-import { SubscriptionPlanDto } from "@/core/api/models";
+import type { SubscriptionPlanDto } from "@/core/api/models";
 import { TenantService } from "@/core/services";
 
 @Component({

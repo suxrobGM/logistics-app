@@ -4,11 +4,11 @@
 import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { StrictHttpResponse } from '../../strict-http-response';
+import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Result } from '../../models/result';
-import { SetDriverDeviceTokenCommand } from '../../models/set-driver-device-token-command';
+import type { Result } from '../../models/result';
+import type { SetDriverDeviceTokenCommand } from '../../models/set-driver-device-token-command';
 
 export interface SetDriverDeviceToken$Plain$Params {
   userId: string;

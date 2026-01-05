@@ -1,8 +1,5 @@
-import {
-  ApplicationConfig,
-  importProvidersFrom,
-  provideBrowserGlobalErrorListeners,
-} from "@angular/core";
+import type { ApplicationConfig } from "@angular/core";
+import { importProvidersFrom, provideBrowserGlobalErrorListeners } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { provideRouter, withComponentInputBinding } from "@angular/router";
 import Aura from "@primeuix/themes/aura";

@@ -1,4 +1,4 @@
-import { SubscriptionDto, SubscriptionStatus } from "@/core/api/models";
+import type { SubscriptionDto } from "@/core/api/models";
 
 export type SeverityLevel = "success" | "warn" | "danger" | "info";
 
@@ -10,8 +10,8 @@ export const Labels = {
    */
   subscriptionStatusSeverity(subscription: SubscriptionDto): SeverityLevel {
     switch (subscription.status) {
-      case SubscriptionStatus.Active:
-      case SubscriptionStatus.Trialing:
+      case "active":
+      case "trialing":
         return "success";
       default:
         return "danger";
@@ -25,21 +25,21 @@ export const Labels = {
    */
   subscriptionStatus(subscription: SubscriptionDto): string {
     switch (subscription.status) {
-      case SubscriptionStatus.Active:
+      case "active":
         return "Active";
-      case SubscriptionStatus.Incomplete:
+      case "incomplete":
         return "Incomplete";
-      case SubscriptionStatus.Trialing:
+      case "trialing":
         return "Trialing";
-      case SubscriptionStatus.PastDue:
+      case "past_due":
         return "Past Due";
-      case SubscriptionStatus.Unpaid:
+      case "unpaid":
         return "Unpaid";
-      case SubscriptionStatus.IncompleteExpired:
+      case "incomplete_expired":
         return "Incomplete Expired";
-      case SubscriptionStatus.Paused:
+      case "paused":
         return "Paused";
-      case SubscriptionStatus.Cancelled:
+      case "cancelled":
         return "Cancelled";
       default:
         return "Unknown";

@@ -4,11 +4,11 @@
 import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { StrictHttpResponse } from '../../strict-http-response';
+import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Result } from '../../models/result';
-import { UpdateTripCommand } from '../../models/update-trip-command';
+import type { Result } from '../../models/result';
+import type { UpdateTripCommand } from '../../models/update-trip-command';
 
 export interface UpdateTrip$Plain$Params {
   id: string;

@@ -6,10 +6,10 @@ import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
-import { TableLazyLoadEvent, TableModule } from "primeng/table";
+import { type TableLazyLoadEvent, TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { Api, formatSortField, getCustomers$Json, deleteCustomer$Json } from "@/core/api";
-import { CustomerDto } from "@/core/api/models";
+import type { CustomerDto } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 
 @Component({

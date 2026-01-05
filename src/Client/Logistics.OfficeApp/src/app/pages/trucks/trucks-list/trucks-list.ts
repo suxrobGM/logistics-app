@@ -6,10 +6,10 @@ import { CardModule } from "primeng/card";
 import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
-import { TableLazyLoadEvent, TableModule } from "primeng/table";
+import { type TableLazyLoadEvent, TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { Api, formatSortField, getTrucks$Json } from "@/core/api";
-import { AddressDto, TruckDto } from "@/core/api/models";
+import type { AddressDto, TruckDto } from "@/core/api/models";
 import { AddressPipe } from "@/shared/pipes";
 
 @Component({

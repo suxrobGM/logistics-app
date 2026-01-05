@@ -4,11 +4,11 @@
 import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { StrictHttpResponse } from '../../strict-http-response';
+import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { CompanyStatsDtoResult } from '../../models/company-stats-dto-result';
-import { GetCompanyStatsQuery } from '../../models/get-company-stats-query';
+import type { CompanyStatsDtoResult } from '../../models/company-stats-dto-result';
+import type { GetCompanyStatsQuery } from '../../models/get-company-stats-query';
 
 export interface GetCompanyStats$Json$Params {
   request?: GetCompanyStatsQuery;

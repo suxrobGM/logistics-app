@@ -1,4 +1,4 @@
-import { UsBankAccountHolderType, UsBankAccountType } from "@/core/api/models";
+import type { UsBankAccountHolderType, UsBankAccountType } from "@/core/api/models";
 
 export interface UsBankAccount {
   accountNumber: string;

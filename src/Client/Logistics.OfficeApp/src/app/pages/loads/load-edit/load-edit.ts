@@ -1,13 +1,13 @@
-import { Component, OnInit, inject, input, signal } from "@angular/core";
+import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
 import { Api, getLoadById$Json, updateLoad$Json, deleteLoad$Json } from "@/core/api";
-import { UpdateLoadCommand } from "@/core/api/models";
+import type { UpdateLoadCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
-import { LoadFormComponent, LoadFormValue } from "@/shared/components";
+import { LoadFormComponent, type LoadFormValue } from "@/shared/components";
 import { Converters } from "@/shared/utils";
 
 @Component({

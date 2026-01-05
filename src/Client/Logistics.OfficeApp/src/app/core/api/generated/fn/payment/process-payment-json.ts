@@ -4,11 +4,11 @@
 import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { StrictHttpResponse } from '../../strict-http-response';
+import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { ProcessPaymentCommand } from '../../models/process-payment-command';
-import { Result } from '../../models/result';
+import type { ProcessPaymentCommand } from '../../models/process-payment-command';
+import type { Result } from '../../models/result';
 
 export interface ProcessPayment$Json$Params {
       body?: ProcessPaymentCommand

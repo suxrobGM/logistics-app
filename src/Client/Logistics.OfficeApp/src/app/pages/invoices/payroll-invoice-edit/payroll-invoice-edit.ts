@@ -1,8 +1,8 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, computed, inject, input, signal } from "@angular/core";
+import { Component, type OnInit, computed, inject, input, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
-import { AutoCompleteModule, AutoCompleteSelectEvent } from "primeng/autocomplete";
+import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
@@ -17,12 +17,12 @@ import {
   updatePayrollInvoice$Json,
 } from "@/core/api";
 import {
-  CreatePayrollInvoiceCommand,
-  EmployeeDto,
-  InvoiceDto,
-  PaymentStatus,
-  SalaryType,
-  UpdatePayrollInvoiceCommand,
+  type CreatePayrollInvoiceCommand,
+  type EmployeeDto,
+  type InvoiceDto,
+  type PaymentStatus,
+  type SalaryType,
+  type UpdatePayrollInvoiceCommand,
   salaryTypeOptions,
 } from "@/core/api/models";
 import { ToastService } from "@/core/services";
@@ -139,7 +139,7 @@ export class PayrollInvoiceEditComponent implements OnInit {
     const paymentMethodControl = this.form.get("paymentMethod");
     const billingAddressControl = this.form.get("paymentBillingAddress");
 
-    if (paymentStatus === PaymentStatus.Paid) {
+    if (paymentStatus === "paid") {
       paymentMethodControl?.setValidators(Validators.required);
       billingAddressControl?.setValidators(Validators.required);
     } else {

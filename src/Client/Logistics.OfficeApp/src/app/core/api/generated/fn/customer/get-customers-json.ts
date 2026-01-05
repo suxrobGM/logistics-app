@@ -4,10 +4,10 @@
 import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { StrictHttpResponse } from '../../strict-http-response';
+import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { CustomerDtoPagedResult } from '../../models/customer-dto-paged-result';
+import type { CustomerDtoPagedResult } from '../../models/customer-dto-paged-result';
 
 export interface GetCustomers$Json$Params {
   Search?: string;

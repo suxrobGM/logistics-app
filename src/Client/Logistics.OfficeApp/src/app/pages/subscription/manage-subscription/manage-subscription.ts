@@ -9,9 +9,9 @@ import { InputNumberModule } from "primeng/inputnumber";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { Api, cancelSubscription$Json } from "@/core/api";
-import { SubscriptionDto, SubscriptionStatus } from "@/core/api/models";
+import type { SubscriptionDto } from "@/core/api/models";
 import { TenantService, ToastService } from "@/core/services";
-import { Labels, SeverityLevel } from "@/shared/utils";
+import { Labels, type SeverityLevel } from "@/shared/utils";
 import { BillingHistoryComponent, PaymentMethodsCardComponent } from "../components";
 
 @Component({
@@ -95,11 +95,11 @@ export class ManageSubscriptionComponent {
   }
 
   isSubscriptionCancelled(): boolean {
-    return this.subscription.status === SubscriptionStatus.Cancelled;
+    return this.subscription.status === "cancelled";
   }
 
   isActiveSubscription(): boolean {
-    return this.subscription.status === SubscriptionStatus.Active;
+    return this.subscription.status === "active";
   }
 
   calcTotalSubscriptionCost(subscription: SubscriptionDto): number {

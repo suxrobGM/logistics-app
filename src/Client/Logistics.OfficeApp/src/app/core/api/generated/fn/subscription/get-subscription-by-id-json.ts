@@ -4,10 +4,10 @@
 import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { StrictHttpResponse } from '../../strict-http-response';
+import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { SubscriptionDtoResult } from '../../models/subscription-dto-result';
+import type { SubscriptionDtoResult } from '../../models/subscription-dto-result';
 
 export interface GetSubscriptionById$Json$Params {
   id: string;

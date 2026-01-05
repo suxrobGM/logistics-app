@@ -1,7 +1,7 @@
 import { Component, input } from "@angular/core";
 import { Tag } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { LoadType } from "@/core/api/models";
+import type { LoadType } from "@/core/api/models";
 
 interface TypeInfo {
   label: string;
@@ -10,22 +10,22 @@ interface TypeInfo {
 }
 
 const TYPE_INFO: Record<LoadType, TypeInfo> = {
-  [LoadType.GeneralFreight]: { label: "General Freight", severity: "info", icon: "pi pi-box" },
-  [LoadType.RefrigeratedGoods]: {
+  "general_freight": { label: "General Freight", severity: "info", icon: "pi pi-box" },
+  "refrigerated_goods": {
     label: "Refrigerated",
     severity: "info",
     icon: "pi pi-snowflake",
   },
-  [LoadType.HazardousMaterials]: {
+  "hazardous_materials": {
     label: "Hazardous",
     severity: "danger",
     icon: "pi pi-exclamation-triangle",
   },
-  [LoadType.OversizeHeavy]: { label: "Oversize / Heavy", severity: "warn", icon: "pi pi-truck" },
-  [LoadType.Liquid]: { label: "Liquid / Tanker", severity: "info", icon: "pi pi-sliders-h" },
-  [LoadType.Bulk]: { label: "Bulk", severity: "info", icon: "pi pi-inbox" },
-  [LoadType.Vehicle]: { label: "Vehicle / Car", severity: "success", icon: "pi pi-car" },
-  [LoadType.Livestock]: { label: "Livestock", severity: "success", icon: "pi pi-paw" },
+  "oversize_heavy": { label: "Oversize / Heavy", severity: "warn", icon: "pi pi-truck" },
+  "liquid": { label: "Liquid / Tanker", severity: "info", icon: "pi pi-sliders-h" },
+  "bulk": { label: "Bulk", severity: "info", icon: "pi pi-inbox" },
+  "vehicle": { label: "Vehicle / Car", severity: "success", icon: "pi pi-car" },
+  "livestock": { label: "Livestock", severity: "success", icon: "pi pi-paw" },
 };
 
 @Component({
@@ -37,7 +37,7 @@ export class LoadTypeTag {
   /**
    * Accepts LoadType enum value or its wire string ("general_freight", etc.)
    */
-  public readonly type = input.required<LoadType | string>();
+  public readonly type = input.required<LoadType>();
 
   /** Show the icon (defaults true) */
   public readonly showIcon = input<boolean>(true);
@@ -49,7 +49,7 @@ export class LoadTypeTag {
   public readonly tooltip = input<string>();
 
   get info() {
-    const normalized = this.normalize(this.type());
+    const normalized = this.type();
     if (normalized) {
       return TYPE_INFO[normalized];
     }
@@ -57,20 +57,6 @@ export class LoadTypeTag {
     // fallback for unknown values
     const v = typeof this.type() === "string" ? this.type() : String(this.type());
     return { label: this.titleCase(v.replace(/_/g, " ")), severity: "secondary" } as TypeInfo;
-  }
-
-  private normalize(v: LoadType | string | undefined | null): LoadType | null {
-    if (!v) {
-      return null;
-    }
-
-    // If already in enum (ts enum value is string union), return as-is
-    if (Object.values(LoadType).includes(v as LoadType)) return v as LoadType;
-
-    // Try to map string to enum value (supports both "Vehicle" and "vehicle" / "vehicle_car")
-    const s = String(v).toLowerCase();
-    const match = (Object.values(LoadType) as string[]).find((x) => x.toLowerCase() === s);
-    return (match as LoadType) ?? null;
   }
 
   private titleCase(s: string) {

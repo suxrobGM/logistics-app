@@ -3,13 +3,11 @@ import { patchState, signalStore, withComputed, withMethods, withState } from "@
 import { rxMethod } from "@ngrx/signals/rxjs-interop";
 import { from, pipe, switchMap, tap } from "rxjs";
 import { Api, optimizeTripStops$Json } from "@/core/api";
-import {
+import type {
   CreateTripLoadCommand,
-  LoadStatus,
   OptimizeTripStopsCommand,
   TripLoadDto,
   TripStopDto,
-  TripStopType,
 } from "@/core/api/models";
 
 // API response type for optimize trip stops
@@ -119,7 +117,7 @@ export const TripWizardStore = signalStore(
         ...load,
         kind: "new" as const,
         number: 0,
-        status: LoadStatus.Draft,
+        status: "draft",
         pendingDetach: false,
       }));
 
@@ -406,7 +404,7 @@ function buildStopsFromLoads(loads: TableRow[]): TripStopDto[] {
     stops.push({
       id: crypto.randomUUID(),
       order: order++,
-      type: TripStopType.PickUp,
+      type: "pick_up",
       address: load.originAddress,
       location: {
         longitude: load.originLocation.longitude,
@@ -419,7 +417,7 @@ function buildStopsFromLoads(loads: TableRow[]): TripStopDto[] {
     stops.push({
       id: crypto.randomUUID(),
       order: order++,
-      type: TripStopType.DropOff,
+      type: "drop_off",
       address: load.destinationAddress,
       location: {
         longitude: load.destinationLocation.longitude,

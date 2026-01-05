@@ -1,10 +1,10 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, inject, input, output, signal } from "@angular/core";
+import { Component, type OnInit, inject, input, output, signal } from "@angular/core";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { Api, getMonthlyGrosses$Json } from "@/core/api";
-import { MonthlyGrossesDto } from "@/core/api/models";
+import type { MonthlyGrossesDto } from "@/core/api/models";
 import { Converters, DateUtils } from "@/shared/utils";
 import { RangeCalendar } from "../range-calendar/range-calendar";
 

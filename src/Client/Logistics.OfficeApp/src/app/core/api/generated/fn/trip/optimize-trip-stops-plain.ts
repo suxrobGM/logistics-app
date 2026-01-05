@@ -4,11 +4,11 @@
 import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { StrictHttpResponse } from '../../strict-http-response';
+import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { OptimizeTripStopsCommand } from '../../models/optimize-trip-stops-command';
-import { Result } from '../../models/result';
+import type { OptimizeTripStopsCommand } from '../../models/optimize-trip-stops-command';
+import type { Result } from '../../models/result';
 
 export interface OptimizeTripStops$Plain$Params {
       body?: OptimizeTripStopsCommand

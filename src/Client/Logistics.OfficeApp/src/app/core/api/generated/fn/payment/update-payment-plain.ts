@@ -4,11 +4,11 @@
 import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { StrictHttpResponse } from '../../strict-http-response';
+import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Result } from '../../models/result';
-import { UpdatePaymentCommand } from '../../models/update-payment-command';
+import type { Result } from '../../models/result';
+import type { UpdatePaymentCommand } from '../../models/update-payment-command';
 
 export interface UpdatePayment$Plain$Params {
   id: string;

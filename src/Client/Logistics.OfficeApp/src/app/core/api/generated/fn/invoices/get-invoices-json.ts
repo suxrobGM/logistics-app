@@ -4,11 +4,11 @@
 import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { StrictHttpResponse } from '../../strict-http-response';
+import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { InvoiceDtoPagedResult } from '../../models/invoice-dto-paged-result';
-import { InvoiceType } from '../../models/invoice-type';
+import type { InvoiceDtoPagedResult } from '../../models/invoice-dto-paged-result';
+import type { InvoiceType } from '../../models/invoice-type';
 
 export interface GetInvoices$Json$Params {
   LoadId?: string;

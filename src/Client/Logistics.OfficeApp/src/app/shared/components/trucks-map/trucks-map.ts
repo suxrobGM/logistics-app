@@ -1,6 +1,6 @@
-import { Component, OnDestroy, inject, input, signal } from "@angular/core";
+import { Component, type OnDestroy, inject, input, signal } from "@angular/core";
 import { Api, getTrucks$Json } from "@/core/api";
-import { TruckGeolocationDto } from "@/core/api/models";
+import type { TruckGeolocationDto } from "@/core/api/models";
 import { LiveTrackingService } from "@/core/services";
 import { GeolocationMap } from "@/shared/components";
 

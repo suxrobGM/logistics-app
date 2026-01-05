@@ -1,5 +1,5 @@
 import { CurrencyPipe } from "@angular/common";
-import { Component, OnInit, inject, signal } from "@angular/core";
+import { Component, type OnInit, inject, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { SharedModule } from "primeng/api";
 import { ButtonModule } from "primeng/button";
@@ -9,7 +9,7 @@ import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { Api, getLoads$Json, getDailyGrosses$Json } from "@/core/api";
-import { AddressDto, DailyGrossesDto, LoadDto } from "@/core/api/models";
+import type { AddressDto, DailyGrossesDto, LoadDto } from "@/core/api/models";
 import { TrucksMap } from "@/shared/components";
 import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
 import { Converters, DateUtils } from "@/shared/utils";

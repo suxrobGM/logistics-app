@@ -1,6 +1,6 @@
 import { Component, input } from "@angular/core";
 import { Tag, TagModule } from "primeng/tag";
-import { PaymentStatus, paymentStatusOptions } from "@/core/api/models";
+import { paymentStatusOptions, type PaymentStatus } from "@/core/api/models";
 
 @Component({
   selector: "app-payment-status-tag",
@@ -18,6 +18,6 @@ export class PaymentStatusTag {
   }
 
   getPaymentStatusTagSeverity(): Tag["severity"] {
-    return this.paymentStatus() === PaymentStatus.Paid ? "success" : "warn";
+    return this.paymentStatus() === "paid" ? "success" : "warn";
   }
 }

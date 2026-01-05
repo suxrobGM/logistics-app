@@ -1,4 +1,4 @@
-import { HttpEvent, HttpHandlerFn, HttpRequest } from "@angular/common/http";
+import { type HttpEvent, type HttpHandlerFn, HttpRequest } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { Observable } from "rxjs";
 import { TenantService } from "@/core/services/tenant.service";

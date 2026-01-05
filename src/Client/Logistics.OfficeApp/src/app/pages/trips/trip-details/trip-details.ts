@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, computed, inject, input, signal } from "@angular/core";
+import { Component, type OnInit, computed, inject, input, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -7,9 +7,9 @@ import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { Api, getTripById$Json } from "@/core/api";
-import { TripDto, TripStopDto, TripStopType } from "@/core/api/models";
+import type { TripDto, TripStopDto, TripStopType } from "@/core/api/models";
 import { DirectionMap, LoadStatusTag, LoadTypeTag, TripStatusTag } from "@/shared/components";
-import {
+import type {
   RouteSegmentClickEvent,
   Waypoint,
   WaypointClickEvent,
@@ -80,7 +80,7 @@ export class TripDetailsPage implements OnInit {
   }
 
   protected stopLabel(tripStopType: TripStopType): string {
-    return tripStopType === TripStopType.PickUp ? "Pick Up" : "Drop Off";
+    return tripStopType === "pick_up" ? "Pick Up" : "Drop Off";
   }
 
   private async fetchTrip(): Promise<void> {

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, input, signal } from "@angular/core";
+import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { ButtonModule } from "primeng/button";
@@ -9,9 +9,9 @@ import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import { Api, getEmployeeById$Json, updateEmployee$Json } from "@/core/api";
 import {
-  EmployeeDto,
-  SalaryType,
-  UpdateEmployeeCommand,
+  type EmployeeDto,
+  type SalaryType,
+  type UpdateEmployeeCommand,
   salaryTypeOptions,
 } from "@/core/api/models";
 import { AuthService } from "@/core/auth";
@@ -57,7 +57,7 @@ export class EmployeeEditComponent implements OnInit {
         validators: Validators.compose([Validators.required, Validators.min(0)]),
         nonNullable: true,
       }),
-      salaryType: new FormControl<SalaryType>(SalaryType.None, {
+      salaryType: new FormControl<SalaryType>("none", {
         validators: Validators.required,
         nonNullable: true,
       }),
@@ -70,10 +70,10 @@ export class EmployeeEditComponent implements OnInit {
         return;
       }
 
-      if (selectedSalaryType === SalaryType.ShareOfGross) {
+      if (selectedSalaryType === "share_of_gross") {
         salaryControl.setValidators([Validators.required, Validators.min(0), Validators.max(100)]);
         salaryControl.setValue(0);
-      } else if (selectedSalaryType === SalaryType.None) {
+      } else if (selectedSalaryType === "none") {
         salaryControl.setValue(0);
       } else {
         salaryControl.setValidators([Validators.required, Validators.min(0)]);
@@ -97,7 +97,7 @@ export class EmployeeEditComponent implements OnInit {
 
     const command: UpdateEmployeeCommand = {
       userId: this.id()!,
-      salary: salaryType === SalaryType.ShareOfGross ? NumberUtils.toRatio(salary ?? 0) : salary,
+      salary: salaryType === "share_of_gross" ? NumberUtils.toRatio(salary ?? 0) : salary,
       salaryType: salaryType,
     };
 
@@ -132,11 +132,11 @@ export class EmployeeEditComponent implements OnInit {
   }
 
   isShareOfGrossSalary(): boolean {
-    return this.form.value.salaryType === SalaryType.ShareOfGross;
+    return this.form.value.salaryType === "share_of_gross";
   }
 
   isNoneSalary() {
-    return this.form.value.salaryType === SalaryType.None;
+    return this.form.value.salaryType === "none";
   }
 
   private async fetchEmployee(): Promise<void> {
@@ -154,7 +154,7 @@ export class EmployeeEditComponent implements OnInit {
 
       this.form.patchValue({
         salary:
-          salaryType === SalaryType.ShareOfGross ? NumberUtils.toPercent(salary ?? 0) : salary,
+          salaryType === "share_of_gross" ? NumberUtils.toPercent(salary ?? 0) : salary,
         salaryType: salaryType,
       });
     }

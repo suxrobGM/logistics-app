@@ -4,10 +4,10 @@
 import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { StrictHttpResponse } from '../../strict-http-response';
+import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { PaymentDtoResult } from '../../models/payment-dto-result';
+import type { PaymentDtoResult } from '../../models/payment-dto-result';
 
 export interface GetPaymentById$Json$Params {
   id: string;

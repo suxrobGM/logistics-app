@@ -1,7 +1,7 @@
 import { Injectable, inject } from "@angular/core";
 import { Observable, from, map } from "rxjs";
 import { Api, getUsers$Json, getTenantRoles$Json } from "@/core/api";
-import { RoleDto, RoleDtoPagedResult, UserDto } from "@/core/api/models";
+import type { RoleDto, RoleDtoPagedResult, UserDto } from "@/core/api/models";
 import { AuthService } from "@/core/auth";
 import { UserRole } from "@/shared/models";
 

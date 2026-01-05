@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
-import { MenuItem } from "primeng/api";
+import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { PanelMenuModule } from "primeng/panelmenu";
 import { SplitButtonModule } from "primeng/splitbutton";

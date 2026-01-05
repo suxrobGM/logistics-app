@@ -7,10 +7,10 @@ import { CardModule } from "primeng/card";
 import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
-import { TableLazyLoadEvent, TableModule } from "primeng/table";
+import { type TableLazyLoadEvent, TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { Api, formatSortField, getEmployees$Json } from "@/core/api";
-import { EmployeeDto, SalaryType, salaryTypeOptions } from "@/core/api/models";
+import { type EmployeeDto, type SalaryType, salaryTypeOptions } from "@/core/api/models";
 
 @Component({
   selector: "app-employees-list",

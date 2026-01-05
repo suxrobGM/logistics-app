@@ -4,11 +4,11 @@
 import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { StrictHttpResponse } from '../../strict-http-response';
+import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { CreateSubscriptionCommand } from '../../models/create-subscription-command';
-import { Result } from '../../models/result';
+import type { CreateSubscriptionCommand } from '../../models/create-subscription-command';
+import type { Result } from '../../models/result';
 
 export interface CreateSubscription$Plain$Params {
       body?: CreateSubscriptionCommand

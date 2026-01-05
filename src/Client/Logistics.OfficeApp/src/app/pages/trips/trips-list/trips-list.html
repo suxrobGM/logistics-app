@@ -95,10 +95,10 @@
           <app-trip-status-tag [status]="trip.status" />
           <div class="italic">
             @switch (trip.status) {
-              @case (tripStatus.Dispatched) {
+              @case ("dispatched") {
                 {{ trip.dispatchedAt | date: "mediumDate" }}
               }
-              @case (tripStatus.Completed) {
+              @case ("completed") {
                 {{ trip.completedAt | date: "mediumDate" }}
               }
             }

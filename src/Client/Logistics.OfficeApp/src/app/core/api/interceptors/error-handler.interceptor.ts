@@ -1,4 +1,4 @@
-import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpRequest } from "@angular/common/http";
+import { HttpErrorResponse, type HttpEvent, type HttpHandlerFn, HttpRequest } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { Observable, catchError, throwError } from "rxjs";
 import { ToastService } from "../../services";

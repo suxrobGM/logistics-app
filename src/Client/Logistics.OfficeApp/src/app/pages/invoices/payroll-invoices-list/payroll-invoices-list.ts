@@ -6,10 +6,10 @@ import { CardModule } from "primeng/card";
 import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
-import { TableLazyLoadEvent, TableModule } from "primeng/table";
+import { type TableLazyLoadEvent, TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { Api, formatSortField, getInvoices$Json } from "@/core/api";
-import { InvoiceDto, InvoiceType, SalaryType, salaryTypeOptions } from "@/core/api/models";
+import  { type InvoiceDto, type SalaryType, salaryTypeOptions } from "@/core/api/models";
 import { InvoiceStatusTag } from "@/shared/components";
 
 @Component({
@@ -61,7 +61,7 @@ export class PayrollInvoicesListComponent {
       OrderBy: sortField,
       Page: page,
       PageSize: rows,
-      InvoiceType: InvoiceType.Payroll,
+      InvoiceType: "payroll",
     });
     if (result.success && result.data) {
       this.invoices.set(result.data);

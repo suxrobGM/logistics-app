@@ -11,7 +11,7 @@ import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { Api, updateEmployee$Json, removeRoleFromEmployee$Json } from "@/core/api";
-import { RemoveRoleFromEmployeeCommand, RoleDto, UpdateEmployeeCommand } from "@/core/api/models";
+import type { RemoveRoleFromEmployeeCommand, RoleDto, UpdateEmployeeCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { UserService } from "../../services";
 

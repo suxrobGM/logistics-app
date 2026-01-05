@@ -1,17 +1,17 @@
 import { Injectable, inject } from "@angular/core";
 import {
-  Address,
-  SetupIntentResult,
-  Stripe,
-  StripeCardNumberElement,
-  StripeElements,
+  type Address,
+  type SetupIntentResult,
+  type Stripe,
+  type StripeCardNumberElement,
+  type StripeElements,
   loadStripe,
 } from "@stripe/stripe-js";
 import { environment } from "@/env";
 import { COUNTRIES_OPTIONS } from "@/shared/constants";
-import { UsBankAccount } from "@/shared/models";
+import type { UsBankAccount } from "@/shared/models";
 import { findOption } from "@/shared/utils";
-import { Address as AddressDto, Api, createSetupIntent$Json } from "../api";
+import { type Address as AddressDto, Api, createSetupIntent$Json } from "../api";
 import { TenantService } from "./tenant.service";
 
 @Injectable({ providedIn: "root" })

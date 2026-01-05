@@ -1,10 +1,10 @@
-import { Component, OnInit, inject, input, signal } from "@angular/core";
+import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { Api, getTripById$Json, updateTrip$Json, deleteTrip$Json } from "@/core/api";
-import { TripStatus, UpdateTripCommand } from "@/core/api/models";
+import type { UpdateTripCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
-import { TripWizard, TripWizardValue } from "../components";
+import { TripWizard, type TripWizardValue } from "../components";
 
 @Component({
   selector: "app-trip-edit",
@@ -80,7 +80,7 @@ export class TripEditPage implements OnInit {
         initialStops: trip.stops ?? undefined,
       });
 
-      this.disabledForEditing.set(trip.status !== TripStatus.Draft);
+      this.disabledForEditing.set(trip.status !== "draft");
       this.tripNumber.set(trip.number ?? null);
     }
 

@@ -4,10 +4,10 @@
 import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { StrictHttpResponse } from '../../strict-http-response';
+import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { CustomerDtoResult } from '../../models/customer-dto-result';
+import type { CustomerDtoResult } from '../../models/customer-dto-result';
 
 export interface GetCustomerById$Json$Params {
   id: string;

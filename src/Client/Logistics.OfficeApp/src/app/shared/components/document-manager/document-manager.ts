@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, inject, input, output, signal } from "@angular/core";
+import { Component, type OnInit, inject, input, output, signal } from "@angular/core";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -16,7 +16,7 @@ import {
   getDocuments$Json,
   uploadDocument$Json,
 } from "@/core/api";
-import { DocumentDto, DocumentOwnerType, DocumentStatus, DocumentType } from "@/core/api/models";
+import type { DocumentDto, DocumentStatus, DocumentType } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { downloadBlobFile } from "@/shared/utils";
 
@@ -59,7 +59,7 @@ export class DocumentManagerComponent implements OnInit {
     this.isLoading.set(true);
 
     const result = await this.api.invoke(getDocuments$Json, {
-      OwnerType: this.employeeId() ? DocumentOwnerType.Employee : DocumentOwnerType.Load,
+      OwnerType: this.employeeId() ? "employee" : "load",
       OwnerId: this.employeeId() || this.loadId() || "",
     });
 
@@ -84,7 +84,7 @@ export class DocumentManagerComponent implements OnInit {
       return;
     }
 
-    const ownerType = this.employeeId() ? DocumentOwnerType.Employee : DocumentOwnerType.Load;
+    const ownerType = this.employeeId() ? "employee" : "load";
     const ownerId = this.employeeId() || this.loadId() || "";
 
     this.uploadProgress.set({ [type]: 0 });
@@ -140,11 +140,11 @@ export class DocumentManagerComponent implements OnInit {
 
   protected statusSeverity(status: DocumentStatus): Tag["severity"] {
     switch (status) {
-      case DocumentStatus.Active:
+      case "active":
         return "success";
-      case DocumentStatus.Archived:
+      case "archived":
         return "warn";
-      case DocumentStatus.Deleted:
+      case "deleted":
         return "danger";
       default:
         return "info";

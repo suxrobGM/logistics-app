@@ -1,4 +1,4 @@
-import { Component, OnInit, effect, inject, input, output, signal } from "@angular/core";
+import { Component, type OnInit, effect, inject, input, output, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { ButtonModule } from "primeng/button";
@@ -11,12 +11,12 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { Select } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import {
-  AddressDto,
-  CustomerDto,
-  GeoPointDto,
-  LoadStatus,
-  LoadType,
-  TruckDto,
+  type AddressDto,
+  type CustomerDto,
+  type GeoPointDto,
+  type LoadStatus,
+  type LoadType,
+  type TruckDto,
   loadStatusOptions,
   loadTypeOptions,
 } from "@/core/api/models";
@@ -28,10 +28,10 @@ import {
   FormField,
   SearchCustomerComponent,
   SearchTruckComponent,
-  SelectedAddressEvent,
+  type SelectedAddressEvent,
   ValidationSummary,
 } from "@/shared/components";
-import { RouteChangeEvent, Waypoint } from "@/shared/components/direction-map/types";
+import type { RouteChangeEvent, Waypoint } from "@/shared/components/direction-map/types";
 import { Converters } from "@/shared/utils";
 
 /**
@@ -106,7 +106,7 @@ export class LoadFormComponent implements OnInit {
 
   protected readonly form = new FormGroup({
     name: new FormControl("", { validators: [Validators.required], nonNullable: true }),
-    type: new FormControl<LoadType>(LoadType.GeneralFreight, {
+    type: new FormControl<LoadType>("general_freight", {
       validators: [Validators.required],
       nonNullable: true,
     }),

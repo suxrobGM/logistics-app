@@ -9,8 +9,8 @@ import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
 import { Observable, from } from "rxjs";
 import { Api, formatSortField, getDriversReport$Json } from "@/core/api";
-import { DriverReportDto, PagedResult } from "@/core/api/models";
-import { BaseTableComponent, RangeCalendar, TableQueryParams } from "@/shared/components";
+import type { DriverReportDto, PagedResult } from "@/core/api/models";
+import { BaseTableComponent, RangeCalendar, type TableQueryParams } from "@/shared/components";
 import { DateUtils } from "@/shared/utils";
 
 @Component({

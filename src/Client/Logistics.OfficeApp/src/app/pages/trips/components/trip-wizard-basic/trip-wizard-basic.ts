@@ -3,7 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angula
 import { RouterLink } from "@angular/router";
 import { Button } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
-import { TruckDto, TruckType } from "@/core/api/models";
+import type { TruckDto } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { FormField, SearchTruckComponent, ValidationSummary } from "@/shared/components";
 import { TripWizardStore } from "../../store/trip-wizard-store";
@@ -43,8 +43,8 @@ export class TripWizardBasic {
 
       if (tripName || truckId) {
         this.form.patchValue({
-          tripName: tripName || "",
-          truck: truckId || null,
+          tripName: tripName,
+          truck: truckId,
         });
       }
 
@@ -64,7 +64,7 @@ export class TripWizardBasic {
 
     const truckType = (this.form.value.truck as TruckDto)?.type;
 
-    if (truckType !== TruckType.CarHauler) {
+    if (truckType !== "car_hauler") {
       this.toastService.showError("The selected truck is not a car hauler truck.");
       return;
     }

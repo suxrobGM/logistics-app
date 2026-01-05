@@ -1,12 +1,12 @@
 import { CurrencyPipe, DecimalPipe } from "@angular/common";
-import { Component, OnInit, signal } from "@angular/core";
+import { Component, type OnInit, signal } from "@angular/core";
 import { Card } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
 import { getDriverDashboard$Json } from "@/core/api";
-import {
+import type {
   DriverDashboardDto,
   DriverEfficiencyDto,
   DriverPerformanceDto,
@@ -16,7 +16,7 @@ import {
 import { RangeCalendar } from "@/shared/components";
 import {
   BaseReportComponent,
-  ReportQueryParams,
+  type ReportQueryParams,
 } from "@/shared/components/base-report/base-report";
 import {
   DRIVERS_CHART_PALETTE,

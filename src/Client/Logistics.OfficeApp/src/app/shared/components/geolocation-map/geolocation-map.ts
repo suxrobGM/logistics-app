@@ -1,6 +1,6 @@
 import { Component, input, signal } from "@angular/core";
 import { MapComponent, MarkerComponent, PopupComponent } from "ngx-mapbox-gl";
-import { TruckGeolocationDto } from "@/core/api/models";
+import type { TruckGeolocationDto } from "@/core/api/models";
 import { AddressPipe } from "@/shared/pipes";
 
 @Component({

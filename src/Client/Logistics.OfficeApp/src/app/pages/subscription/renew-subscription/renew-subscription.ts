@@ -9,9 +9,9 @@ import { InputNumberModule } from "primeng/inputnumber";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { Api, renewSubscription$Json } from "@/core/api";
-import { SubscriptionDto } from "@/core/api/models";
+import type { SubscriptionDto } from "@/core/api/models";
 import { TenantService, ToastService } from "@/core/services";
-import { Labels, SeverityLevel } from "@/shared/utils";
+import { Labels, type SeverityLevel } from "@/shared/utils";
 import { PaymentMethodsCardComponent } from "../components";
 
 @Component({

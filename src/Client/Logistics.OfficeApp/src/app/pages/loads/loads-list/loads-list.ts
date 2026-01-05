@@ -2,18 +2,18 @@ import { CommonModule } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
-import { MenuItem, SharedModule } from "primeng/api";
+import { type MenuItem, SharedModule } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
 import { MenuModule } from "primeng/menu";
-import { TableLazyLoadEvent, TableModule } from "primeng/table";
+import { type TableLazyLoadEvent, TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { Api, formatSortField, getLoads$Json } from "@/core/api";
-import { LoadDto, LoadStatus } from "@/core/api/models";
+import  type { LoadDto } from "@/core/api/models";
 import { LoadStatusTag, LoadTypeTag } from "@/shared/components";
 import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
 
@@ -49,7 +49,6 @@ export class LoadsListComponent {
   protected readonly totalRecords = signal(0);
   protected readonly first = signal(0);
   protected readonly actionMenuItems: MenuItem[];
-  protected readonly loadStatus = LoadStatus;
   protected readonly selectedRow = signal<LoadDto | null>(null);
   protected readonly groupByTrip = signal(false);
 

@@ -3,7 +3,7 @@ import { Component, computed, inject, input, output } from "@angular/core";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TableModule } from "primeng/table";
-import { TripStopDto, TripStopType } from "@/core/api/models";
+import type { TripStopDto, TripStopType } from "@/core/api/models";
 import { DirectionMap } from "@/shared/components";
 import type {
   RouteSegmentClickEvent,
@@ -56,7 +56,7 @@ export class TripWizardReview {
   });
 
   protected stopLabel(tripStopType: TripStopType): string {
-    return tripStopType === TripStopType.PickUp ? "Pick Up" : "Drop Off";
+    return tripStopType === "pick_up" ? "Pick Up" : "Drop Off";
   }
 
   protected onRouteSegmentClick(e: RouteSegmentClickEvent): void {

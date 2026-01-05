@@ -1,4 +1,4 @@
-import { Routes } from "@angular/router";
+import type { Routes } from "@angular/router";
 import { authGuard } from "@/core/auth";
 import { ManageSubscriptionComponent } from "./manage-subscription/manage-subscription";
 import { RenewSubscriptionComponent } from "./renew-subscription/renew-subscription";

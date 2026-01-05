@@ -7,7 +7,7 @@ import { StepperModule } from "primeng/stepper";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { CreateTripLoadCommand, TripLoadDto, TripStopDto } from "@/core/api/models";
+import type { CreateTripLoadCommand, TripLoadDto, TripStopDto } from "@/core/api/models";
 import { TripWizardStore } from "../../store/trip-wizard-store";
 import { TripWizardBasic } from "../trip-wizard-basic/trip-wizard-basic";
 import { TripFormStepLoads } from "../trip-wizard-loads/trip-wizard-loads";

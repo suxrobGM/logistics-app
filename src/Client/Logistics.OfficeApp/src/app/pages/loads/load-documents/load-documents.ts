@@ -1,9 +1,9 @@
-import { Component, OnInit, inject, signal } from "@angular/core";
+import { Component, type OnInit, inject, signal } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ToastModule } from "primeng/toast";
-import { DocumentType } from "@/core/api/models";
+import type { DocumentType } from "@/core/api/models";
 import { DocumentManagerComponent } from "@/shared/components/document-manager/document-manager";
 
 @Component({
@@ -16,13 +16,13 @@ export class LoadDocumentsPage implements OnInit {
 
   protected readonly loadId = signal<string>("");
   protected readonly loadDocTypes: DocumentType[] = [
-    DocumentType.BillOfLading,
-    DocumentType.ProofOfDelivery,
-    DocumentType.Invoice,
-    DocumentType.Receipt,
-    DocumentType.Contract,
-    DocumentType.Photo,
-    DocumentType.Other,
+    "bill_of_lading",
+    "proof_of_delivery",
+    "invoice",
+    "receipt",
+    "contract",
+    "photo",
+    "other",
   ];
 
   ngOnInit(): void {

@@ -2,11 +2,11 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Component, inject, input, model, output, signal } from "@angular/core";
-import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { catchError } from "rxjs";
-import { AddressDto } from "@/core/api/models";
+import type { AddressDto } from "@/core/api/models";
 import { environment } from "@/env";
-import { GeoPoint, MapboxGeocodingFeature, MapboxGeocodingResponse } from "@/shared/types/mapbox";
+import type { GeoPoint, MapboxGeocodingFeature, MapboxGeocodingResponse } from "@/shared/types/mapbox";
 import { Converters } from "@/shared/utils";
 
 @Component({

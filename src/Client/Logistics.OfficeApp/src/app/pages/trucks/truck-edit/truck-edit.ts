@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, input, signal } from "@angular/core";
+import { Component, type OnInit, computed, inject, input, signal } from "@angular/core";
 import {
   FormControl,
   FormGroup,
@@ -24,11 +24,11 @@ import {
   getEmployees$Json,
 } from "@/core/api";
 import {
-  CreateTruckCommand,
-  EmployeeDto,
-  TruckStatus,
-  TruckType,
-  UpdateTruckCommand,
+  type CreateTruckCommand,
+  type EmployeeDto,
+  type TruckStatus,
+  type TruckType,
+  type UpdateTruckCommand,
   truckStatusOptions,
   truckTypeOptions,
 } from "@/core/api/models";
@@ -71,11 +71,11 @@ export class TruckEditComponent implements OnInit {
       validators: [Validators.required],
       nonNullable: true,
     }),
-    truckType: new FormControl<TruckType>(TruckType.FreightTruck, {
+    truckType: new FormControl<TruckType>("freight_truck", {
       validators: [Validators.required],
       nonNullable: true,
     }),
-    truckStatus: new FormControl<TruckStatus>(TruckStatus.Available, {
+    truckStatus: new FormControl<TruckStatus>("available", {
       validators: [Validators.required],
       nonNullable: true,
     }),

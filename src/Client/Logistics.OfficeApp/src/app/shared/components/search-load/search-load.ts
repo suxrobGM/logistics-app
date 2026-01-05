@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Component, forwardRef, inject, input, model, output, signal } from "@angular/core";
-import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
-import { AutoCompleteModule, AutoCompleteSelectEvent } from "primeng/autocomplete";
-import { Api, LoadDto, getLoadById$Json, getLoads$Json } from "@/core/api";
+import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
+import { Api, type LoadDto, getLoadById$Json, getLoads$Json } from "@/core/api";
 import { LoadStatusTag } from "../tags/load-status-tag/load-status-tag";
 
 /**

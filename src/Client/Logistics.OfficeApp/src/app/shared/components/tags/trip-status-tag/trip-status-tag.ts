@@ -1,6 +1,6 @@
 import { Component, computed, input } from "@angular/core";
 import { Tag } from "primeng/tag";
-import { TripStatus } from "@/core/api/models";
+import type { TripStatus } from "@/core/api/models";
 
 @Component({
   selector: "app-trip-status-tag",
@@ -14,19 +14,19 @@ export class TripStatusTag {
   public readonly rounded = input<boolean>(true);
   public readonly showIcon = input<boolean>(true);
 
-  private readonly normalized = computed(() => ("" + this.status()).toLowerCase());
+  private readonly normalized = computed(() => ("" + this.status()).toLowerCase() as TripStatus);
 
   protected readonly label = computed(() => {
     switch (this.normalized()) {
-      case TripStatus.Draft:
+      case "draft":
         return "Draft";
-      case TripStatus.Dispatched:
+      case "dispatched":
         return "Dispatched";
-      case TripStatus.InTransit:
+      case "in_transit":
         return "In Transit";
-      case TripStatus.Cancelled:
+      case "cancelled":
         return "Cancelled";
-      case TripStatus.Completed:
+      case "completed":
         return "Completed";
       default:
         return this.status() as string;
@@ -35,15 +35,15 @@ export class TripStatusTag {
 
   protected readonly severity = computed<Tag["severity"]>(() => {
     switch (this.normalized()) {
-      case TripStatus.Cancelled:
+      case "cancelled":
         return "danger";
-      case TripStatus.Completed:
+      case "completed":
         return "success";
-      case TripStatus.InTransit:
+      case "in_transit":
         return "warn";
-      case TripStatus.Dispatched:
+      case "dispatched":
         return "info";
-      case TripStatus.Draft:
+      case "draft":
         return "info";
       default:
         return "info";
@@ -55,15 +55,15 @@ export class TripStatusTag {
       return undefined;
     }
     switch (this.normalized()) {
-      case TripStatus.Draft:
+      case "draft":
         return "pi pi-pencil";
-      case TripStatus.Dispatched:
+      case "dispatched":
         return "pi pi-send";
-      case TripStatus.InTransit:
+      case "in_transit":
         return "pi pi-truck";
-      case TripStatus.Cancelled:
+      case "cancelled":
         return "pi pi-times";
-      case TripStatus.Completed:
+      case "completed":
         return "pi pi-check";
       default:
         return undefined;

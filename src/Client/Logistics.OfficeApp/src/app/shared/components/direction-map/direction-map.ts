@@ -4,9 +4,9 @@ import type { LineString } from "geojson";
 import type { LngLatLike, MapMouseEvent } from "mapbox-gl";
 import { GeoJSONSourceComponent, LayerComponent, MapComponent } from "ngx-mapbox-gl";
 import { firstValueFrom } from "rxjs";
-import { GeoPointDto } from "@/core/api/models";
+import type { GeoPointDto } from "@/core/api/models";
 import { environment } from "@/env";
-import { MapboxDirectionsResponse } from "@/shared/types/mapbox";
+import type { MapboxDirectionsResponse } from "@/shared/types/mapbox";
 import type {
   RouteChangeEvent,
   RouteSegmentClickEvent,

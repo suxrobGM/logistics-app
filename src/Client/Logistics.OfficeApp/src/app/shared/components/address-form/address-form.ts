@@ -1,6 +1,6 @@
 import { Component, input, output } from "@angular/core";
 import {
-  ControlValueAccessor,
+  type ControlValueAccessor,
   FormControl,
   FormGroup,
   NG_VALUE_ACCESSOR,
@@ -10,7 +10,7 @@ import {
 import { InputTextModule } from "primeng/inputtext";
 import { KeyFilterModule } from "primeng/keyfilter";
 import { SelectModule } from "primeng/select";
-import { AddressDto } from "@/core/api/models";
+import type { AddressDto } from "@/core/api/models";
 import { COUNTRIES_OPTIONS, DEFAULT_COUNTRY_OPTION, US_STATES_OPTIONS } from "@/shared/constants";
 import { findOption } from "@/shared/utils";
 import { ValidationSummary } from "../validation-summary/validation-summary";

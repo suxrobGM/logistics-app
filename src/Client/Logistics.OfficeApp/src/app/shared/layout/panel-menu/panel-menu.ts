@@ -2,7 +2,7 @@ import { Component, ViewEncapsulation, effect, inject, input, model, output } fr
 import { Router } from "@angular/router";
 import { PanelMenuModule } from "primeng/panelmenu";
 import { TooltipModule } from "primeng/tooltip";
-import { MenuItem } from "./types";
+import type { MenuItem } from "./types";
 
 @Component({
   selector: "app-panel-menu",

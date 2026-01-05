@@ -11,6 +11,7 @@
     "isolatedModules": true,
     "experimentalDecorators": true,
     "importHelpers": true,
+    "verbatimModuleSyntax": true,
     "target": "ES2022",
     "module": "preserve",
     "paths": {

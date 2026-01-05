@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { CurrencyPipe, DecimalPipe } from "@angular/common";
-import { Component, OnInit, signal } from "@angular/core";
+import { Component, type OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -10,7 +10,7 @@ import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
 import { getFinancialsReport$Json } from "@/core/api";
-import {
+import type {
   FinancialMetricDto,
   FinancialsReportDto,
   Result,
@@ -19,7 +19,7 @@ import {
 import { RangeCalendar } from "@/shared/components";
 import {
   BaseReportComponent,
-  ReportQueryParams,
+  type ReportQueryParams,
 } from "@/shared/components/base-report/base-report";
 import {
   FINANCIALS_CHART_BACKGROUND_COLORS,

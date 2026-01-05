@@ -1,4 +1,4 @@
-import { SelectOption } from "@/shared/models";
+import type { SelectOption } from "@/shared/models";
 
 /**
  * Finds an option by value or label in a list of options.

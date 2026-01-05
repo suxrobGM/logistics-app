@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, input, signal } from "@angular/core";
+import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -8,9 +8,9 @@ import {
   updateCustomer$Json,
   deleteCustomer$Json,
 } from "@/core/api";
-import { UpdateCustomerCommand } from "@/core/api/models";
+import type { UpdateCustomerCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
-import { CustomerForm, CustomerFormValue } from "@/shared/components";
+import { CustomerForm, type CustomerFormValue } from "@/shared/components";
 
 @Component({
   selector: "app-customer-edit",

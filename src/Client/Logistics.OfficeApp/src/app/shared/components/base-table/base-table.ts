@@ -1,8 +1,8 @@
 import { Component, DestroyRef, inject, signal } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { TableLazyLoadEvent } from "primeng/table";
+import type { TableLazyLoadEvent } from "primeng/table";
 import { Observable, finalize } from "rxjs";
-import { PagedResult } from "@/core/api/models";
+import type { PagedResult } from "@/core/api/models";
 
 /**
  * Parameters for querying the table data.

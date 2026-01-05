@@ -4,11 +4,11 @@
 import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { StrictHttpResponse } from '../../strict-http-response';
+import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { CancelSubscriptionCommand } from '../../models/cancel-subscription-command';
-import { Result } from '../../models/result';
+import type { CancelSubscriptionCommand } from '../../models/cancel-subscription-command';
+import type { Result } from '../../models/result';
 
 export interface CancelSubscription$Plain$Params {
   id: string;

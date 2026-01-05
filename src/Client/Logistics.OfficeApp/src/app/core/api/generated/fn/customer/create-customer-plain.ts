@@ -4,11 +4,11 @@
 import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { StrictHttpResponse } from '../../strict-http-response';
+import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { CreateCustomerCommand } from '../../models/create-customer-command';
-import { CustomerDtoResult } from '../../models/customer-dto-result';
+import type { CreateCustomerCommand } from '../../models/create-customer-command';
+import type { CustomerDtoResult } from '../../models/customer-dto-result';
 
 export interface CreateCustomer$Plain$Params {
       body?: CreateCustomerCommand

@@ -3,10 +3,10 @@ import { Component, inject, input, signal } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { TableLazyLoadEvent, TableModule } from "primeng/table";
+import { type TableLazyLoadEvent, TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { Api, formatSortField, getInvoices$Json } from "@/core/api";
-import { InvoiceDto, InvoiceType } from "@/core/api/models";
+import type { InvoiceDto } from "@/core/api/models";
 import { InvoiceStatusTag } from "@/shared/components";
 
 @Component({
@@ -45,7 +45,7 @@ export class LoadInvoicesListComponent {
       OrderBy: sortField,
       Page: page,
       PageSize: rows,
-      InvoiceType: InvoiceType.Load,
+      InvoiceType: "load"
     });
     if (result.success && result.data) {
       this.invoices.set(result.data);

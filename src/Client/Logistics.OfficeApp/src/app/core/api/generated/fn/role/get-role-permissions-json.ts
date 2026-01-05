@@ -4,10 +4,10 @@
 import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { StrictHttpResponse } from '../../strict-http-response';
+import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { PermissionDtoArrayResult } from '../../models/permission-dto-array-result';
+import type { PermissionDtoArrayResult } from '../../models/permission-dto-array-result';
 
 export interface GetRolePermissions$Json$Params {
   roleName: string;

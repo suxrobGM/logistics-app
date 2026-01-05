@@ -4,9 +4,9 @@ import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
 import { Api, createLoad$Json } from "@/core/api";
-import { CreateLoadCommand } from "@/core/api/models";
+import type { CreateLoadCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
-import { LoadFormComponent, LoadFormValue } from "@/shared/components";
+import { LoadFormComponent, type LoadFormValue } from "@/shared/components";
 
 @Component({
   selector: "app-load-add",

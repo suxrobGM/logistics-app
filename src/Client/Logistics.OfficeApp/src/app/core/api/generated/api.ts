@@ -6,7 +6,7 @@ import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable, firstValueFrom } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { ApiConfiguration } from './api-configuration';
-import { StrictHttpResponse } from './strict-http-response';
+import type { StrictHttpResponse } from './strict-http-response';
 
 export type ApiFnOptional<P, R> = (http: HttpClient, rootUrl: string, params?: P, context?: HttpContext) => Observable<StrictHttpResponse<R>>;
 export type ApiFnRequired<P, R> = (http: HttpClient, rootUrl: string, params: P, context?: HttpContext) => Observable<StrictHttpResponse<R>>;

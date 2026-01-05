@@ -3,9 +3,9 @@ import { Router, RouterModule } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { Api, createCustomer$Json } from "@/core/api";
-import { CreateCustomerCommand } from "@/core/api/models";
+import type { CreateCustomerCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
-import { CustomerForm, CustomerFormValue } from "@/shared/components";
+import { CustomerForm, type CustomerFormValue } from "@/shared/components";
 
 @Component({
   selector: "app-customer-add",

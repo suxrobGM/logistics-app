@@ -4,10 +4,10 @@
 import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { StrictHttpResponse } from '../../strict-http-response';
+import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { EmployeeDtoPagedResult } from '../../models/employee-dto-paged-result';
+import type { EmployeeDtoPagedResult } from '../../models/employee-dto-paged-result';
 
 export interface GetEmployees$Plain$Params {
   Role?: string;

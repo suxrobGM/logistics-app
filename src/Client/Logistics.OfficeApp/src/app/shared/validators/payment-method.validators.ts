@@ -1,4 +1,4 @@
-import { AbstractControl, ValidationErrors } from "@angular/forms";
+import { AbstractControl, type ValidationErrors } from "@angular/forms";
 
 export abstract class PaymentMethodValidators {
   /**

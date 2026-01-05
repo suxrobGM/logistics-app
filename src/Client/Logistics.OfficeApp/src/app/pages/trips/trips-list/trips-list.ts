@@ -1,17 +1,17 @@
 import { CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
-import { MenuItem } from "primeng/api";
+import type { MenuItem } from "primeng/api";
 import { Button } from "primeng/button";
 import { Card } from "primeng/card";
 import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
 import { InputText } from "primeng/inputtext";
 import { MenuModule } from "primeng/menu";
-import { TableLazyLoadEvent, TableModule } from "primeng/table";
+import { type TableLazyLoadEvent, TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { Api, formatSortField, getTrips$Json, deleteTrip$Json } from "@/core/api";
-import { TripDto, TripStatus } from "@/core/api/models";
+import type { TripDto } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { LoadStatusTag, LoadTypeTag, TripStatusTag } from "@/shared/components";
 import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
@@ -47,7 +47,6 @@ export class TripsList {
   protected readonly isLoading = signal(false);
   protected readonly totalRecords = signal(0);
   protected readonly first = signal(0);
-  protected readonly tripStatus = TripStatus;
   protected readonly actionMenuItems: MenuItem[];
   protected readonly selectedRow = signal<TripDto | null>(null);
 
@@ -113,7 +112,7 @@ export class TripsList {
   }
 
   protected askRemoveTrip(trip: TripDto): void {
-    if (trip.status !== TripStatus.Draft) {
+    if (trip.status !== "draft") {
       this.toastService.showError("Only draft trips can be deleted");
       return;
     }

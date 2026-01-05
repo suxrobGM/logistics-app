@@ -16,10 +16,10 @@ import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import { Api, createEmployee$Json } from "@/core/api";
 import {
-  CreateEmployeeCommand,
-  RoleDto,
-  SalaryType,
-  UserDto,
+  type CreateEmployeeCommand,
+  type RoleDto,
+  type SalaryType,
+  type UserDto,
   salaryTypeOptions,
 } from "@/core/api/models";
 import { ToastService } from "@/core/services";
@@ -60,7 +60,7 @@ export class EmployeeAddComponent {
       user: new FormControl(null, { validators: Validators.required }),
       role: new FormControl(null),
       salary: new FormControl<number>(0, { validators: Validators.required, nonNullable: true }),
-      salaryType: new FormControl<SalaryType>(SalaryType.None, {
+      salaryType: new FormControl<SalaryType>("none", {
         validators: Validators.required,
         nonNullable: true,
       }),
@@ -99,7 +99,7 @@ export class EmployeeAddComponent {
       userId: user.id ?? undefined,
       role: this.form.value.role?.name,
       salary: this.form.value.salary ?? 0,
-      salaryType: this.form.value.salaryType ?? SalaryType.None,
+      salaryType: this.form.value.salaryType ?? "none",
     };
 
     this.isLoading.set(true);
@@ -113,11 +113,11 @@ export class EmployeeAddComponent {
   }
 
   isShareOfGrossSalary(): boolean {
-    return this.form.value.salaryType === SalaryType.ShareOfGross;
+    return this.form.value.salaryType === "share_of_gross";
   }
 
   isNoneSalary(): boolean {
-    return this.form.value.salaryType === SalaryType.None;
+    return this.form.value.salaryType === "none";
   }
 
   private fetchRoles(): void {

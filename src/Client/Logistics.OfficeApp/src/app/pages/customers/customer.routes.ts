@@ -1,4 +1,4 @@
-import { Routes } from "@angular/router";
+import type { Routes } from "@angular/router";
 import { authGuard } from "@/core/auth";
 import { Permissions } from "@/shared/models";
 import { CustomerAddComponent } from "./customer-add/customer-add";

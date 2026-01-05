@@ -4,11 +4,11 @@
 import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { StrictHttpResponse } from '../../strict-http-response';
+import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { CreateLoadCommand } from '../../models/create-load-command';
-import { Result } from '../../models/result';
+import type { CreateLoadCommand } from '../../models/create-load-command';
+import type { Result } from '../../models/result';
 
 export interface CreateLoad$Json$Params {
       body?: CreateLoadCommand

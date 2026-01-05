@@ -1,6 +1,6 @@
 import { inject, signal } from "@angular/core";
 import { Api } from "@/core/api";
-import { Result } from "@/core/api/models";
+import type { Result } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { DateUtils } from "@/shared/utils";
 

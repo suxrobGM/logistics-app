@@ -4,10 +4,10 @@
 import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { StrictHttpResponse } from '../../strict-http-response';
+import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { LoadsReportDtoResult } from '../../models/loads-report-dto-result';
+import type { LoadsReportDtoResult } from '../../models/loads-report-dto-result';
 
 export interface GetLoadsReport$Json$Params {
   StartDate?: string;

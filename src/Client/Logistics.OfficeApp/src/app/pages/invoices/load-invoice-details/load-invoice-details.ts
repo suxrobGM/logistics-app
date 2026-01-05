@@ -1,12 +1,12 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, inject, input, signal } from "@angular/core";
+import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { jsPDF } from "jspdf";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { Api, getInvoiceById$Json } from "@/core/api";
-import { AddressDto, InvoiceDto } from "@/core/api/models";
+import type { AddressDto, InvoiceDto } from "@/core/api/models";
 import { TenantService } from "@/core/services";
 import { InvoiceStatusTag } from "@/shared/components";
 import { AddressPipe } from "@/shared/pipes";

@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { StripeCardNumberElement } from "@stripe/stripe-js";
+import type { StripeCardNumberElement } from "@stripe/stripe-js";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
@@ -16,12 +16,11 @@ import { KeyFilterModule } from "primeng/keyfilter";
 import { SelectModule } from "primeng/select";
 import { Api, createPaymentMethod$Json } from "@/core/api";
 import {
-  AddressDto,
-  CreatePaymentMethodCommand,
-  PaymentMethodType,
-  PaymentMethodVerificationStatus,
-  UsBankAccountHolderType,
-  UsBankAccountType,
+  type AddressDto,
+  type CreatePaymentMethodCommand,
+  type PaymentMethodType,
+  type UsBankAccountHolderType,
+  type UsBankAccountType,
   paymentMethodTypeOptions,
   usBankAccountHolderTypeOptions,
   usBankAccountTypeOptions,
@@ -29,10 +28,10 @@ import {
 import { StripeService, TenantService, ToastService } from "@/core/services";
 import { AddressForm, StripeCard, ValidationSummary } from "@/shared/components";
 
-const enabledPaymentTypes = [
-  PaymentMethodType.Card,
-  PaymentMethodType.UsBankAccount,
-  //PaymentMethodType.InternationalBankAccount,
+const enabledPaymentTypes: PaymentMethodType[] = [
+  "card",
+  "us_bank_account",
+  //"international_bank_account",
 ];
 
 @Component({
@@ -80,7 +79,7 @@ export class PaymentMethodDialogComponent {
     const companyAddress = this.tenantService.getTenantData()?.companyAddress;
 
     this.form = new FormGroup<PaymentMethodForm>({
-      methodType: new FormControl(PaymentMethodType.Card, {
+      methodType: new FormControl("card", {
         validators: Validators.required,
         nonNullable: true,
       }),
@@ -106,9 +105,9 @@ export class PaymentMethodDialogComponent {
     this.isLoading.set(true);
     const formValue = this.form.getRawValue();
 
-    if (formValue.methodType === PaymentMethodType.Card) {
+    if (formValue.methodType === "card") {
       await this.addCard();
-    } else if (formValue.methodType === PaymentMethodType.UsBankAccount) {
+    } else if (formValue.methodType === "us_bank_account") {
       await this.addUsBankAccount();
     }
 
@@ -174,7 +173,7 @@ export class PaymentMethodDialogComponent {
 
     // Add US Bank account to the backend and wait for verification
     const payload: CreatePaymentMethodCommand = {
-      type: PaymentMethodType.UsBankAccount,
+      type: "us_bank_account",
       billingAddress: billingAddress,
       accountHolderName: formValue.bankAccountHolderName!,
       accountNumber: `********${formValue.bankAccountNumber?.slice(-4)}`, // Masked for security
@@ -185,8 +184,8 @@ export class PaymentMethodDialogComponent {
       stripePaymentMethodId: result.setupIntent.payment_method?.toString(),
       verificationStatus:
         result.setupIntent.next_action?.type === "verify_with_microdeposits"
-          ? PaymentMethodVerificationStatus.Pending
-          : PaymentMethodVerificationStatus.Unverified,
+          ? "pending"
+          : "unverified",
       verificationUrl:
         result.setupIntent.next_action?.verify_with_microdeposits?.hosted_verification_url,
     };
