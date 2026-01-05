@@ -364,6 +364,6 @@ MigrationBackup/
 .ionide/
 
 # Claude Code settings
-.claude/
+settings.local.json
 
 KotlinProject/
