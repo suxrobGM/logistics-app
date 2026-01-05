@@ -72,14 +72,21 @@ export class FinancialsReportComponent
   }
 
   protected override drawChart(result: FinancialsReportDto): void {
-    const hasData = (result.fullyPaidInvoices ?? 0) + (result.partiallyPaidInvoices ?? 0) + (result.unpaidInvoices ?? 0);
+    const hasData =
+      (result.fullyPaidInvoices ?? 0) +
+      (result.partiallyPaidInvoices ?? 0) +
+      (result.unpaidInvoices ?? 0);
 
     if (hasData > 0) {
       this.invoiceStatusChartData.set({
         labels: FINANCIALS_CHART_LABELS,
         datasets: [
           {
-            data: [result.fullyPaidInvoices ?? 0, result.partiallyPaidInvoices ?? 0, result.unpaidInvoices ?? 0],
+            data: [
+              result.fullyPaidInvoices ?? 0,
+              result.partiallyPaidInvoices ?? 0,
+              result.unpaidInvoices ?? 0,
+            ],
             backgroundColor: FINANCIALS_CHART_BACKGROUND_COLORS,
             hoverBackgroundColor: FINANCIALS_CHART_HOVER_BACKGROUND_COLORS,
           },
@@ -130,8 +137,12 @@ export class FinancialsReportComponent
           {
             label: "Value",
             data: financialMetrics.map((m: FinancialMetricDto) => m.value),
-            backgroundColor: financialMetrics.map((m: FinancialMetricDto) => ((m.trend ?? 0) >= 0 ? "#16a34a" : "#ef4444")),
-            borderColor: financialMetrics.map((m: FinancialMetricDto) => ((m.trend ?? 0) >= 0 ? "#16a34a" : "#ef4444")),
+            backgroundColor: financialMetrics.map((m: FinancialMetricDto) =>
+              (m.trend ?? 0) >= 0 ? "#16a34a" : "#ef4444",
+            ),
+            borderColor: financialMetrics.map((m: FinancialMetricDto) =>
+              (m.trend ?? 0) >= 0 ? "#16a34a" : "#ef4444",
+            ),
             borderWidth: 1,
           },
         ],

@@ -8,17 +8,19 @@ import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
 import { InputText } from "primeng/inputtext";
 import { MenuModule } from "primeng/menu";
-import { type TableLazyLoadEvent, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { Api, formatSortField, getTrips$Json, deleteTrip$Json } from "@/core/api";
+import { Api, deleteTrip$Json } from "@/core/api";
 import type { TripDto } from "@/core/api/models";
 import { ToastService } from "@/core/services";
-import { LoadStatusTag, LoadTypeTag, TripStatusTag } from "@/shared/components";
+import { DataContainer, LoadStatusTag, LoadTypeTag, TripStatusTag } from "@/shared/components";
 import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
+import { TripsListStore } from "../store/trips-list.store";
 
 @Component({
   selector: "app-trips-list",
   templateUrl: "./trips-list.html",
+  providers: [TripsListStore],
   imports: [
     Button,
     RouterLink,
@@ -36,19 +38,17 @@ import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
     TripStatusTag,
     LoadTypeTag,
     MenuModule,
+    DataContainer,
   ],
 })
 export class TripsList {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
+  protected readonly store = inject(TripsListStore);
 
-  protected readonly data = signal<TripDto[]>([]);
-  protected readonly isLoading = signal(false);
-  protected readonly totalRecords = signal(0);
-  protected readonly first = signal(0);
-  protected readonly actionMenuItems: MenuItem[];
   protected readonly selectedRow = signal<TripDto | null>(null);
+  protected readonly actionMenuItems: MenuItem[];
 
   constructor() {
     this.actionMenuItems = [
@@ -70,45 +70,13 @@ export class TripsList {
     ];
   }
 
-  protected async onLazyLoad(event: TableLazyLoadEvent): Promise<void> {
-    this.isLoading.set(true);
-    const rows = event.rows ?? 10;
-    const page = (event.first ?? 0) / rows;
-    const orderBy = formatSortField(event.sortField as string, event.sortOrder);
-
-    const result = await this.api.invoke(getTrips$Json, {
-      Page: page + 1,
-      PageSize: rows,
-      OrderBy: orderBy,
-    });
-
-    if (result.data) {
-      console.log("Trips data:", result.data);
-      this.data.set(result.data);
-      this.totalRecords.set(result.totalItems ?? 0);
-      this.first.set(page * rows);
-    }
-
-    this.isLoading.set(false);
+  protected onSearch(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.store.setSearch(value);
   }
 
-  protected async onSearch(event: Event): Promise<void> {
-    this.isLoading.set(true);
-    const value = (event.target as HTMLInputElement).value;
-
-    const result = await this.api.invoke(getTrips$Json, {
-      Search: value,
-      Page: 1,
-      PageSize: 10,
-    });
-
-    if (result.data) {
-      this.data.set(result.data);
-      this.totalRecords.set(result.totalItems ?? 0);
-      this.first.set(0);
-    }
-
-    this.isLoading.set(false);
+  protected addTrip(): void {
+    this.router.navigate(["/trips/add"]);
   }
 
   protected askRemoveTrip(trip: TripDto): void {
@@ -127,7 +95,7 @@ export class TripsList {
     const result = await this.api.invoke(deleteTrip$Json, { id: tripId });
     if (result.success) {
       this.toastService.showSuccess("Trip deleted successfully");
-      this.data.update((trips) => trips.filter((trip) => trip.id !== tripId));
+      this.store.removeItem(tripId);
     }
   }
 }

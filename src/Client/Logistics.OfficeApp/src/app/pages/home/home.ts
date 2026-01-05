@@ -8,7 +8,7 @@ import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { Api, getLoads$Json, getDailyGrosses$Json } from "@/core/api";
+import { Api, getDailyGrosses$Json, getLoads$Json } from "@/core/api";
 import type { AddressDto, DailyGrossesDto, LoadDto } from "@/core/api/models";
 import { TrucksMap } from "@/shared/components";
 import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";

@@ -1,20 +1,24 @@
-import { HttpErrorResponse, type HttpEvent, type HttpHandlerFn, HttpRequest } from "@angular/common/http";
+import {
+  HttpErrorResponse,
+  type HttpEvent,
+  type HttpHandlerFn,
+  HttpRequest,
+} from "@angular/common/http";
 import { inject } from "@angular/core";
 import { Observable, catchError, throwError } from "rxjs";
-import { ToastService } from "../../services";
+import { ErrorHandlerService } from "../../errors";
 
 export function errorHandlerInterceptor(
   req: HttpRequest<unknown>,
   next: HttpHandlerFn,
 ): Observable<HttpEvent<unknown>> {
-  const toastService = inject(ToastService);
+  const errorHandlerService = inject(ErrorHandlerService);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      const errorMessage = error.error?.error ?? error.error ?? error.message;
-      toastService.showError(errorMessage);
-      console.error(errorMessage ?? error);
-      return throwError(() => error);
+      const appError = errorHandlerService.categorizeError(error);
+      errorHandlerService.handleError(appError);
+      return throwError(() => appError);
     }),
   );
 }

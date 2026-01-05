@@ -332,7 +332,11 @@ export const TripWizardStore = signalStore(
             stops: stops,
           };
 
-          return from(api.invoke(optimizeTripStops$Json, { body: command }) as Promise<OptimizedTripStopsResult>).pipe(
+          return from(
+            api.invoke(optimizeTripStops$Json, {
+              body: command,
+            }) as Promise<OptimizedTripStopsResult>,
+          ).pipe(
             tap({
               next: (result) => {
                 patchState(store, {
@@ -371,7 +375,11 @@ export const TripWizardStore = signalStore(
             stops: store.stops(),
           };
 
-          return from(api.invoke(optimizeTripStops$Json, { body: command }) as Promise<OptimizedTripStopsResult>).pipe(
+          return from(
+            api.invoke(optimizeTripStops$Json, {
+              body: command,
+            }) as Promise<OptimizedTripStopsResult>,
+          ).pipe(
             tap({
               next: (result) => {
                 if (result.success && result.data) {

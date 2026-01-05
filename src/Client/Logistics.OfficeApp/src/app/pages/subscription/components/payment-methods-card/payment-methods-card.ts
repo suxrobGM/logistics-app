@@ -5,14 +5,11 @@ import { DialogModule } from "primeng/dialog";
 import { TagModule } from "primeng/tag";
 import {
   Api,
+  deletePaymentMethod$Json,
   getPaymentMethods$Json,
   setDefaultPaymentMethod$Json,
-  deletePaymentMethod$Json,
 } from "@/core/api";
-import type {
-  PaymentMethodDto,
-  SetDefaultPaymentMethodCommand,
-} from "@/core/api/models";
+import type { PaymentMethodDto, SetDefaultPaymentMethodCommand } from "@/core/api/models";
 import { TenantService, ToastService } from "@/core/services";
 import { AddressPipe } from "@/shared/pipes";
 import { PaymentMethodDialogComponent } from "../payment-method-dialog/payment-method-dialog";

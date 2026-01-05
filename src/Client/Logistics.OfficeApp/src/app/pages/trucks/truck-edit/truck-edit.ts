@@ -17,11 +17,11 @@ import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import {
   Api,
-  getTruckById$Json,
   createTruck$Json,
-  updateTruck$Json,
   deleteTruck$Json,
   getEmployees$Json,
+  getTruckById$Json,
+  updateTruck$Json,
 } from "@/core/api";
 import {
   type CreateTruckCommand,
@@ -92,7 +92,10 @@ export class TruckEditComponent implements OnInit {
   }
 
   protected async searchDriver(event: { query: string }): Promise<void> {
-    const result = await this.api.invoke(getEmployees$Json, { Search: event.query, Role: "Driver" });
+    const result = await this.api.invoke(getEmployees$Json, {
+      Search: event.query,
+      Role: "Driver",
+    });
     if (result.success && result.data) {
       this.suggestedDrivers.set(result.data);
     }

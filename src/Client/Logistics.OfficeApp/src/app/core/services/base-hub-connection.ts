@@ -1,7 +1,7 @@
+import { inject } from "@angular/core";
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import { environment } from "@/env";
 import { TenantService } from "./tenant.service";
-import { inject } from "@angular/core";
 
 export abstract class BaseHubConnection {
   private readonly tenantService = inject(TenantService);

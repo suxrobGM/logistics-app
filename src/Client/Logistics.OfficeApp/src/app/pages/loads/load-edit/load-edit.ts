@@ -4,7 +4,7 @@ import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
-import { Api, getLoadById$Json, updateLoad$Json, deleteLoad$Json } from "@/core/api";
+import { Api, deleteLoad$Json, getLoadById$Json, updateLoad$Json } from "@/core/api";
 import type { UpdateLoadCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { LoadFormComponent, type LoadFormValue } from "@/shared/components";

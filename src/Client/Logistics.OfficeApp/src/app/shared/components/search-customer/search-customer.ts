@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Component, forwardRef, inject, model, output, signal } from "@angular/core";
 import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
-import { AutoComplete, AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
+import {
+  AutoComplete,
+  AutoCompleteModule,
+  type AutoCompleteSelectEvent,
+} from "primeng/autocomplete";
 import { Button } from "primeng/button";
 import { Dialog } from "primeng/dialog";
 import { Api, type CustomerDto, createCustomer$Json, getCustomers$Json } from "@/core/api";

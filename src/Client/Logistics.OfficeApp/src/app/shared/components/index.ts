@@ -17,3 +17,4 @@ export * from "./customer-form/customer-form";
 export * from "./document-manager/document-manager";
 
 export * from "./tags";
+export * from "./state";

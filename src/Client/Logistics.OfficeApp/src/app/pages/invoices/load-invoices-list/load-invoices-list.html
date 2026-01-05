@@ -10,72 +10,74 @@
 <hr class="w-full" />
 
 <p-card>
-  <p-table
-    [value]="invoices()"
-    responsiveLayout="scroll"
-    [lazy]="true"
-    [paginator]="true"
-    [showCurrentPageReport]="true"
-    (onLazyLoad)="load($event)"
-    [rows]="10"
-    [(first)]="first"
-    [totalRecords]="totalRecords()"
-    [loading]="isLoading()"
-    [rowsPerPageOptions]="[10, 25, 50]"
+  <app-data-container
+    [loading]="store.isLoading()"
+    [error]="store.error()"
+    [isEmpty]="store.isEmpty()"
+    skeletonVariant="table"
+    [skeletonRows]="10"
+    emptyTitle="No load invoices yet"
+    emptyMessage="Invoices for this load will appear here."
+    (onRetry)="store.retry()"
   >
-    <ng-template #header>
-      <tr>
-        <th pSortableColumn="Number">
-          Load Number
-          <p-sortIcon field="Number" />
-        </th>
-        <th pSortableColumn="Customer.Name">
-          Customer
-          <p-sortIcon field="Customer.Name" />
-        </th>
-        <th pSortableColumn="Total">
-          Invoice Total
-          <p-sortIcon field="Total" />
-        </th>
-        <th pSortableColumn="CreatedDate">
-          Invoice Date
-          <p-sortIcon field="CreatedDate" />
-        </th>
-        <th pSortableColumn="Status">
-          Invoice Status
-          <p-sortIcon field="Status" />
-        </th>
-        <th>Action</th>
-      </tr>
-    </ng-template>
+    <p-table
+      [value]="store.data()"
+      responsiveLayout="scroll"
+      [lazy]="true"
+      [paginator]="true"
+      [showCurrentPageReport]="true"
+      (onLazyLoad)="store.onLazyLoad($event)"
+      [rows]="store.pageSize()"
+      [first]="store.first()"
+      [totalRecords]="store.totalRecords()"
+      [loading]="store.isLoading()"
+      [rowsPerPageOptions]="[10, 25, 50]"
+    >
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="Number">
+            Load Number
+            <p-sortIcon field="Number" />
+          </th>
+          <th pSortableColumn="Customer.Name">
+            Customer
+            <p-sortIcon field="Customer.Name" />
+          </th>
+          <th pSortableColumn="Total">
+            Invoice Total
+            <p-sortIcon field="Total" />
+          </th>
+          <th pSortableColumn="CreatedDate">
+            Invoice Date
+            <p-sortIcon field="CreatedDate" />
+          </th>
+          <th pSortableColumn="Status">
+            Invoice Status
+            <p-sortIcon field="Status" />
+          </th>
+          <th>Action</th>
+        </tr>
+      </ng-template>
 
-    <ng-template #body let-invoice>
-      <tr>
-        <td>{{ invoice.loadNumber }}</td>
-        <td>{{ invoice.customer.name }}</td>
-        <td>{{ invoice.total.amount | currency }}</td>
-        <td>{{ invoice.createdDate | date: "mediumDate" }}</td>
-        <td>
-          <app-invoice-status-tag [status]="invoice.status" />
-        </td>
-        <td>
-          <!-- @if (invoice.status === "pending") {
-                <p-button
-                  icon="pi pi-credit-card"
-                  pTooltip="Make payment"
-                  tooltipPosition="bottom"
-                  [routerLink]="['/payment/invoice', invoice.id]"
-                />
-              } -->
-
-          <p-button
-            styleClass="ms-2"
-            icon="pi pi-book"
-            pTooltip="View details"
-            [routerLink]="['/invoices/loads', invoice.id]"
-          />
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+      <ng-template #body let-invoice>
+        <tr>
+          <td>{{ invoice.loadNumber }}</td>
+          <td>{{ invoice.customer.name }}</td>
+          <td>{{ invoice.total.amount | currency }}</td>
+          <td>{{ invoice.createdDate | date: "mediumDate" }}</td>
+          <td>
+            <app-invoice-status-tag [status]="invoice.status" />
+          </td>
+          <td>
+            <p-button
+              styleClass="ms-2"
+              icon="pi pi-book"
+              pTooltip="View details"
+              [routerLink]="['/invoices/loads', invoice.id]"
+            />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </app-data-container>
 </p-card>

@@ -2,12 +2,7 @@ import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import {
-  Api,
-  getCustomerById$Json,
-  updateCustomer$Json,
-  deleteCustomer$Json,
-} from "@/core/api";
+import { Api, deleteCustomer$Json, getCustomerById$Json, updateCustomer$Json } from "@/core/api";
 import type { UpdateCustomerCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { CustomerForm, type CustomerFormValue } from "@/shared/components";

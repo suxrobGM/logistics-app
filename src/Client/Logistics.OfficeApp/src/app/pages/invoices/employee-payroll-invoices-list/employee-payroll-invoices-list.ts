@@ -1,25 +1,26 @@
 import { CommonModule } from "@angular/common";
-import { Component, type OnInit, inject, input, signal } from "@angular/core";
-import { RouterModule } from "@angular/router";
+import { Component, effect, inject, input, signal } from "@angular/core";
+import { Router, RouterModule } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { type TableLazyLoadEvent, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { Api, formatSortField, getInvoices$Json, getEmployeeById$Json } from "@/core/api";
+import { Api, getEmployeeById$Json } from "@/core/api";
 import {
   type EmployeeDto,
-  type InvoiceDto,
   type PaymentMethodType,
   type SalaryType,
   paymentMethodTypeOptions,
   salaryTypeOptions,
 } from "@/core/api/models";
-import { InvoiceStatusTag } from "@/shared/components";
+import { DataContainer, InvoiceStatusTag } from "@/shared/components";
+import { EmployeePayrollInvoicesListStore } from "../store/employee-payroll-invoices-list.store";
 
 @Component({
   selector: "app-employee-payroll-invoices-list",
   templateUrl: "./employee-payroll-invoices-list.html",
+  providers: [EmployeePayrollInvoicesListStore],
   imports: [
     CommonModule,
     CardModule,
@@ -29,42 +30,31 @@ import { InvoiceStatusTag } from "@/shared/components";
     RouterModule,
     InvoiceStatusTag,
     ProgressSpinnerModule,
+    DataContainer,
   ],
 })
-export class EmployeePayrollInvoicesListComponent implements OnInit {
+export class EmployeePayrollInvoicesListComponent {
   private readonly api = inject(Api);
+  private readonly router = inject(Router);
+  protected readonly store = inject(EmployeePayrollInvoicesListStore);
 
   protected readonly employeeId = input.required<string>();
-  protected readonly invoices = signal<InvoiceDto[]>([]);
   protected readonly employee = signal<EmployeeDto | null>(null);
   protected readonly isLoadingEmployee = signal(false);
-  protected readonly isLoadingPayrolls = signal(false);
-  protected readonly totalRecords = signal(0);
-  protected readonly first = signal(0);
 
-  ngOnInit(): void {
-    this.fetchEmployee();
+  constructor() {
+    // Set the EmployeeId filter when the input changes
+    effect(() => {
+      const id = this.employeeId();
+      if (id) {
+        this.store.setFilters({ EmployeeId: id });
+        this.fetchEmployee();
+      }
+    });
   }
 
-  protected async load(event: TableLazyLoadEvent): Promise<void> {
-    this.isLoadingPayrolls.set(true);
-    const first = event.first ?? 1;
-    const rows = event.rows ?? 10;
-    const page = first / rows + 1;
-    const sortField = formatSortField(event.sortField as string, event.sortOrder);
-
-    const result = await this.api.invoke(getInvoices$Json, {
-      OrderBy: sortField,
-      Page: page,
-      PageSize: rows,
-      EmployeeId: this.employeeId(),
-    });
-    if (result.success && result.data) {
-      this.invoices.set(result.data);
-      this.totalRecords.set(result.totalItems ?? 0);
-    }
-
-    this.isLoadingPayrolls.set(false);
+  protected addInvoice(): void {
+    this.router.navigate(["/invoices/payroll/add"]);
   }
 
   protected getPaymentMethodDesc(enumValue?: PaymentMethodType): string {

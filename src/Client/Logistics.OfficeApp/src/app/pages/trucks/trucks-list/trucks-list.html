@@ -13,77 +13,95 @@
 <hr class="w-full" />
 
 <p-card>
-  <p-table
-    [value]="trucks()"
-    [lazy]="true"
-    [paginator]="true"
-    [showCurrentPageReport]="true"
-    (onLazyLoad)="load($event)"
-    [rows]="10"
-    [totalRecords]="totalRecords()"
-    [loading]="isLoading()"
-    [rowsPerPageOptions]="[10, 25, 50]"
+  <app-data-container
+    [loading]="store.isLoading()"
+    [error]="store.error()"
+    [isEmpty]="store.isEmpty()"
+    skeletonVariant="table"
+    [skeletonRows]="10"
+    emptyTitle="No trucks yet"
+    emptyMessage="Add your first truck to get started."
+    emptyActionLabel="Add Truck"
+    (onRetry)="store.retry()"
+    (onEmptyAction)="addTruck()"
   >
-    <ng-template #caption>
-      <p-icon-field>
-        <p-inputicon class="pi pi-search" />
-        <input pInputText type="text" placeholder="Search" (input)="search($event)" />
-      </p-icon-field>
-    </ng-template>
-    <ng-template #header>
-      <tr>
-        <th class="text-center" pSortableColumn="Number">
-          Number
-          <p-sortIcon field="Number" />
-        </th>
-        <th class="text-center" pSortableColumn="Type">
-          Type
-          <p-sortIcon field="Type" />
-        </th>
-        <th class="text-center" pSortableColumn="Status">
-          Status
-          <p-sortIcon field="Status" />
-        </th>
-        <th class="text-center">Current Location</th>
-        <th class="text-center">Driver(s)</th>
-        <th class="text-center">Action</th>
-      </tr>
-    </ng-template>
-    <ng-template #body let-truck>
-      <tr>
-        <td class="text-center">
-          {{ truck.number }}
-        </td>
-        <td class="text-center">
-          {{ truck.type }}
-        </td>
-        <td class="text-center">
-          {{ truck.status }}
-        </td>
-        <td class="text-center" [pTooltip]="formatAddress(truck.currentAddress)" [showDelay]="500">
-          {{ truck.currentAddress | address }}
-        </td>
-        <td class="text-center">
-          <span>{{ truck.mainDriver?.fullName }}</span>
-          @if (truck.secondaryDriver) {
-            <span class="ms-1">and {{ truck.secondaryDriver?.fullName }}</span>
-          }
-        </td>
+    <p-table
+      [value]="store.data()"
+      [lazy]="true"
+      [paginator]="true"
+      [showCurrentPageReport]="true"
+      (onLazyLoad)="store.onLazyLoad($event)"
+      [rows]="store.pageSize()"
+      [first]="store.first()"
+      [totalRecords]="store.totalRecords()"
+      [loading]="store.isLoading()"
+      [rowsPerPageOptions]="[10, 25, 50]"
+    >
+      <ng-template #caption>
+        <p-icon-field>
+          <p-inputicon class="pi pi-search" />
+          <input pInputText type="text" placeholder="Search" (input)="search($event)" />
+        </p-icon-field>
+      </ng-template>
+      <ng-template #header>
+        <tr>
+          <th class="text-center" pSortableColumn="Number">
+            Number
+            <p-sortIcon field="Number" />
+          </th>
+          <th class="text-center" pSortableColumn="Type">
+            Type
+            <p-sortIcon field="Type" />
+          </th>
+          <th class="text-center" pSortableColumn="Status">
+            Status
+            <p-sortIcon field="Status" />
+          </th>
+          <th class="text-center">Current Location</th>
+          <th class="text-center">Driver(s)</th>
+          <th class="text-center">Action</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-truck>
+        <tr>
+          <td class="text-center">
+            {{ truck.number }}
+          </td>
+          <td class="text-center">
+            {{ truck.type }}
+          </td>
+          <td class="text-center">
+            {{ truck.status }}
+          </td>
+          <td
+            class="text-center"
+            [pTooltip]="formatAddress(truck.currentAddress)"
+            [showDelay]="500"
+          >
+            {{ truck.currentAddress | address }}
+          </td>
+          <td class="text-center">
+            <span>{{ truck.mainDriver?.fullName }}</span>
+            @if (truck.secondaryDriver) {
+              <span class="ms-1">and {{ truck.secondaryDriver?.fullName }}</span>
+            }
+          </td>
 
-        <td class="text-center">
-          <p-button
-            icon="pi pi-book"
-            pTooltip="View details"
-            [routerLink]="['/trucks', truck.id]"
-          />
-          <p-button
-            class="ms-2"
-            icon="pi pi-pen-to-square"
-            pTooltip="Edit truck"
-            [routerLink]="['/trucks', truck.id, 'edit']"
-          />
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+          <td class="text-center">
+            <p-button
+              icon="pi pi-book"
+              pTooltip="View details"
+              [routerLink]="['/trucks', truck.id]"
+            />
+            <p-button
+              class="ms-2"
+              icon="pi pi-pen-to-square"
+              pTooltip="Edit truck"
+              [routerLink]="['/trucks', truck.id, 'edit']"
+            />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </app-data-container>
 </p-card>

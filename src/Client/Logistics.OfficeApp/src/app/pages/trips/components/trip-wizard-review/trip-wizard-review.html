@@ -36,7 +36,9 @@
           <div class="text-sm opacity-70">Totals</div>
           <div>
             Distance:
-            <span class="font-semibold">{{ reviewData().totalDistance | distanceUnit: "mi" }} mi</span>
+            <span class="font-semibold"
+              >{{ reviewData().totalDistance | distanceUnit: "mi" }} mi</span
+            >
           </div>
           <div>
             Cost: <span class="font-semibold">{{ reviewData().totalCost | currency }}</span>

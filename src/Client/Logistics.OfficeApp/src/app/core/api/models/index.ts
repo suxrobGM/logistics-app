@@ -1,3 +1,7 @@
+// Truck geolocation type for map visualization (custom type, not generated)
+import type { Address } from "../generated/models/address";
+import type { GeoPoint } from "../generated/models/geo-point";
+
 /**
  * Re-export all models from generated code for backwards compatibility.
  * Import from '@/core/api' or '@/core/api/models' - both work.
@@ -12,8 +16,6 @@ export * from "./enums";
 // Backwards-compatible type aliases for renamed types
 export type { Address as AddressDto } from "../generated/models/address";
 export type { GeoPoint as GeoPointDto } from "../generated/models/geo-point";
-
-
 
 // Re-export common query types used by consumers
 export interface SearchableQuery {
@@ -49,10 +51,6 @@ export interface PagedResult<T> {
   success?: boolean;
   error?: string | null;
 }
-
-// Truck geolocation type for map visualization (custom type, not generated)
-import type { Address } from "../generated/models/address";
-import type { GeoPoint } from "../generated/models/geo-point";
 
 export interface TruckGeolocationDto {
   truckId?: string | null;

@@ -1,7 +1,7 @@
-import type { EnvironmentProviders } from "@angular/core";
-import { InjectionToken, makeEnvironmentProviders } from "@angular/core";
 import type { HttpInterceptorFn } from "@angular/common/http";
 import { provideHttpClient, withInterceptors } from "@angular/common/http";
+import type { EnvironmentProviders } from "@angular/core";
+import { InjectionToken, makeEnvironmentProviders } from "@angular/core";
 import { ApiConfiguration } from "./generated/api-configuration";
 import { tokenAuthInterceptor } from "./interceptors/token-auth.interceptor";
 
@@ -41,18 +41,18 @@ export const API_CONFIG = new InjectionToken<ApiConfig>("API_CONFIG");
  * @returns The environment providers for the API.
  */
 export function provideApi(config: ApiConfig): EnvironmentProviders {
-  const interceptors: HttpInterceptorFn[] = [
-    tokenAuthInterceptor,
-    ...(config.interceptors ?? []),
-  ];
+  const interceptors: HttpInterceptorFn[] = [tokenAuthInterceptor, ...(config.interceptors ?? [])];
 
   return makeEnvironmentProviders([
     { provide: API_CONFIG, useValue: config },
-    { provide: ApiConfiguration, useFactory: () => {
-      const apiConfig = new ApiConfiguration();
-      apiConfig.rootUrl = config.baseUrl;
-      return apiConfig;
-    }},
+    {
+      provide: ApiConfiguration,
+      useFactory: () => {
+        const apiConfig = new ApiConfiguration();
+        apiConfig.rootUrl = config.baseUrl;
+        return apiConfig;
+      },
+    },
     provideHttpClient(withInterceptors(interceptors)),
   ]);
 }

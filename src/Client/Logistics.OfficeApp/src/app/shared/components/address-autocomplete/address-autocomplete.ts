@@ -6,7 +6,11 @@ import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angu
 import { catchError } from "rxjs";
 import type { AddressDto } from "@/core/api/models";
 import { environment } from "@/env";
-import type { GeoPoint, MapboxGeocodingFeature, MapboxGeocodingResponse } from "@/shared/types/mapbox";
+import type {
+  GeoPoint,
+  MapboxGeocodingFeature,
+  MapboxGeocodingResponse,
+} from "@/shared/types/mapbox";
 import { Converters } from "@/shared/utils";
 
 @Component({

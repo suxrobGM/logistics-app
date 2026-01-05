@@ -1,6 +1,6 @@
 import { Component, input } from "@angular/core";
 import { Tag, TagModule } from "primeng/tag";
-import { paymentStatusOptions, type PaymentStatus } from "@/core/api/models";
+import { type PaymentStatus, paymentStatusOptions } from "@/core/api/models";
 
 @Component({
   selector: "app-payment-status-tag",

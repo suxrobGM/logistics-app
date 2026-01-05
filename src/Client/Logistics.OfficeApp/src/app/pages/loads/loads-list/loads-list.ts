@@ -1,56 +1,49 @@
-import { CommonModule } from "@angular/common";
+import { CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
-import { type MenuItem, SharedModule } from "primeng/api";
+import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
 import { MenuModule } from "primeng/menu";
-import { type TableLazyLoadEvent, TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
+import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { Api, formatSortField, getLoads$Json } from "@/core/api";
-import  type { LoadDto } from "@/core/api/models";
-import { LoadStatusTag, LoadTypeTag } from "@/shared/components";
+import type { LoadDto } from "@/core/api/models";
+import { DataContainer, LoadStatusTag, LoadTypeTag } from "@/shared/components";
 import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
+import { LoadsListStore } from "../store/loads-list.store";
 
 @Component({
   selector: "app-loads-list",
   templateUrl: "./loads-list.html",
+  providers: [LoadsListStore],
   imports: [
-    CommonModule,
     ButtonModule,
     TooltipModule,
     RouterLink,
     CardModule,
     TableModule,
-    SharedModule,
     InputTextModule,
     DistanceUnitPipe,
     AddressPipe,
-    TagModule,
     IconFieldModule,
     InputIconModule,
-    FormsModule,
     LoadStatusTag,
     LoadTypeTag,
     MenuModule,
+    DataContainer,
+    DatePipe,
+    CurrencyPipe,
   ],
 })
 export class LoadsListComponent {
   private readonly router = inject(Router);
-  private readonly api = inject(Api);
+  protected readonly store = inject(LoadsListStore);
 
-  protected readonly data = signal<LoadDto[]>([]);
-  protected readonly isLoading = signal(false);
-  protected readonly totalRecords = signal(0);
-  protected readonly first = signal(0);
-  protected readonly actionMenuItems: MenuItem[];
   protected readonly selectedRow = signal<LoadDto | null>(null);
-  protected readonly groupByTrip = signal(false);
+  protected readonly actionMenuItems: MenuItem[];
 
   constructor() {
     this.actionMenuItems = [
@@ -77,44 +70,12 @@ export class LoadsListComponent {
     ];
   }
 
-  protected async onLazyLoad(event: TableLazyLoadEvent): Promise<void> {
-    this.isLoading.set(true);
-    const rows = event.rows ?? 10;
-    const page = (event.first ?? 0) / rows;
-    const sortField = formatSortField(event.sortField as string, event.sortOrder);
-
-    const result = await this.api.invoke(getLoads$Json, {
-      Page: page + 1,
-      PageSize: rows,
-      OrderBy: sortField || "-DispatchedAt",
-    });
-
-    if (result.data) {
-      this.data.set(result.data);
-      this.totalRecords.set(result.totalItems ?? 0);
-      this.first.set(page * rows);
-    }
-
-    this.isLoading.set(false);
+  protected onSearch(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.store.setSearch(value);
   }
 
-  protected async onSearch(event: Event): Promise<void> {
-    this.isLoading.set(true);
-    const value = (event.target as HTMLInputElement).value;
-
-    const result = await this.api.invoke(getLoads$Json, {
-      Search: value,
-      Page: 1,
-      PageSize: 10,
-      OrderBy: "-DispatchedAt",
-    });
-
-    if (result.data) {
-      this.data.set(result.data);
-      this.totalRecords.set(result.totalItems ?? 0);
-      this.first.set(0);
-    }
-
-    this.isLoading.set(false);
+  protected addLoad(): void {
+    this.router.navigate(["/loads/add"]);
   }
 }

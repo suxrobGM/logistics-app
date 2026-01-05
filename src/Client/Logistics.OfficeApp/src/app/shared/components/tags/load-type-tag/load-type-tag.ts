@@ -10,22 +10,22 @@ interface TypeInfo {
 }
 
 const TYPE_INFO: Record<LoadType, TypeInfo> = {
-  "general_freight": { label: "General Freight", severity: "info", icon: "pi pi-box" },
-  "refrigerated_goods": {
+  general_freight: { label: "General Freight", severity: "info", icon: "pi pi-box" },
+  refrigerated_goods: {
     label: "Refrigerated",
     severity: "info",
     icon: "pi pi-snowflake",
   },
-  "hazardous_materials": {
+  hazardous_materials: {
     label: "Hazardous",
     severity: "danger",
     icon: "pi pi-exclamation-triangle",
   },
-  "oversize_heavy": { label: "Oversize / Heavy", severity: "warn", icon: "pi pi-truck" },
-  "liquid": { label: "Liquid / Tanker", severity: "info", icon: "pi pi-sliders-h" },
-  "bulk": { label: "Bulk", severity: "info", icon: "pi pi-inbox" },
-  "vehicle": { label: "Vehicle / Car", severity: "success", icon: "pi pi-car" },
-  "livestock": { label: "Livestock", severity: "success", icon: "pi pi-paw" },
+  oversize_heavy: { label: "Oversize / Heavy", severity: "warn", icon: "pi pi-truck" },
+  liquid: { label: "Liquid / Tanker", severity: "info", icon: "pi pi-sliders-h" },
+  bulk: { label: "Bulk", severity: "info", icon: "pi pi-inbox" },
+  vehicle: { label: "Vehicle / Car", severity: "success", icon: "pi pi-car" },
+  livestock: { label: "Livestock", severity: "success", icon: "pi pi-paw" },
 };
 
 @Component({

@@ -10,8 +10,12 @@ import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
-import { Api, updateEmployee$Json, removeRoleFromEmployee$Json } from "@/core/api";
-import type { RemoveRoleFromEmployeeCommand, RoleDto, UpdateEmployeeCommand } from "@/core/api/models";
+import { Api, removeRoleFromEmployee$Json, updateEmployee$Json } from "@/core/api";
+import type {
+  RemoveRoleFromEmployeeCommand,
+  RoleDto,
+  UpdateEmployeeCommand,
+} from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { UserService } from "../../services";
 
@@ -101,7 +105,10 @@ export class ChangeRoleDialogComponent {
     };
 
     this.isLoading.set(true);
-    const result = await this.api.invoke(removeRoleFromEmployee$Json, { userId: this.userId(), body: removeRole });
+    const result = await this.api.invoke(removeRoleFromEmployee$Json, {
+      userId: this.userId(),
+      body: removeRole,
+    });
     if (result.success) {
       this.toastService.showSuccess(`Removed ${roleName} role from the employee`);
     }

@@ -13,149 +13,162 @@
 <hr class="w-full" />
 
 <p-card>
-  <p-table
-    [value]="data()"
-    [dataKey]="'id'"
-    [scrollable]="true"
-    [lazy]="true"
-    [paginator]="true"
-    [showCurrentPageReport]="true"
-    (onLazyLoad)="onLazyLoad($event)"
-    [rows]="10"
-    [(first)]="first"
-    [totalRecords]="totalRecords()"
-    [loading]="isLoading()"
-    [rowsPerPageOptions]="[10, 25, 50]"
-    [sortField]="'CreatedAt'"
-    [sortOrder]="-1"
+  <app-data-container
+    [loading]="store.isLoading()"
+    [error]="store.error()"
+    [isEmpty]="store.isEmpty()"
+    skeletonVariant="table"
+    [skeletonRows]="10"
+    emptyTitle="No trips yet"
+    emptyMessage="Create your first trip to get started."
+    emptyActionLabel="Add Trip"
+    (onRetry)="store.retry()"
+    (onEmptyAction)="addTrip()"
   >
-    <ng-template #caption>
-      <p-icon-field>
-        <p-inputicon class="pi pi-search" />
-        <input pInputText type="text" placeholder="Search" (input)="onSearch($event)" />
-      </p-icon-field>
-    </ng-template>
-    <ng-template #header>
-      <tr>
-        <th></th>
-        <th pSortableColumn="Truck.Number">
-          Truck Number
-          <p-sortIcon field="Truck.Number" />
-        </th>
-        <th pSortableColumn="Name">
-          Name
-          <p-sortIcon field="Name" />
-        </th>
-        <th pSortableColumn="Number">
-          Number
-          <p-sortIcon field="Number" />
-        </th>
-        <th pSortableColumn="OriginAddress.Line1">
-          Origin
-          <p-sortIcon field="OriginAddress.Line1" />
-        </th>
-        <th pSortableColumn="DestinationAddress.Line1">
-          Destination
-          <p-sortIcon field="DestinationAddress.Line1" />
-        </th>
-        <th pSortableColumn="TotalDistance">
-          Total Distance
-          <p-sortIcon field="TotalDistance" />
-        </th>
-        <th pSortableColumn="CreatedAt">
-          Created Date
-          <p-sortIcon field="CreatedAt" />
-        </th>
-        <th pSortableColumn="Status">
-          Status
-          <p-sortIcon field="Status" />
-        </th>
-        <th>Action</th>
-      </tr>
-    </ng-template>
-    <ng-template #body let-trip let-expanded="expanded">
-      <tr (click)="selectedRow.set(trip)">
-        <td>
-          <p-button
-            [pRowToggler]="trip"
-            class="mr-2 text-sm no-underline"
-            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
-            variant="text"
-            severity="secondary"
-          />
-        </td>
-        <td class="text-center">{{ trip.truckNumber }}</td>
-        <td class="text-center">{{ trip.name }}</td>
-        <td class="text-center">{{ trip.number }}</td>
-        <td>{{ trip.originAddress | address }}</td>
-        <td>{{ trip.destinationAddress | address }}</td>
-        <td class="text-center">{{ trip.totalDistance | distanceUnit: "mi" }}</td>
-        <td>{{ trip.createdAt | date: "mediumDate" }}</td>
-        <td>
-          <app-trip-status-tag [status]="trip.status" />
-          <div class="italic">
-            @switch (trip.status) {
-              @case ("dispatched") {
-                {{ trip.dispatchedAt | date: "mediumDate" }}
+    <p-table
+      [value]="store.data()"
+      [dataKey]="'id'"
+      [scrollable]="true"
+      [lazy]="true"
+      [paginator]="true"
+      [showCurrentPageReport]="true"
+      (onLazyLoad)="store.onLazyLoad($event)"
+      [rows]="store.pageSize()"
+      [first]="store.first()"
+      [totalRecords]="store.totalRecords()"
+      [loading]="store.isLoading()"
+      [rowsPerPageOptions]="[10, 25, 50]"
+    >
+      <ng-template #caption>
+        <p-icon-field>
+          <p-inputicon class="pi pi-search" />
+          <input pInputText type="text" placeholder="Search" (input)="onSearch($event)" />
+        </p-icon-field>
+      </ng-template>
+      <ng-template #header>
+        <tr>
+          <th></th>
+          <th pSortableColumn="Truck.Number">
+            Truck Number
+            <p-sortIcon field="Truck.Number" />
+          </th>
+          <th pSortableColumn="Name">
+            Name
+            <p-sortIcon field="Name" />
+          </th>
+          <th pSortableColumn="Number">
+            Number
+            <p-sortIcon field="Number" />
+          </th>
+          <th pSortableColumn="OriginAddress.Line1">
+            Origin
+            <p-sortIcon field="OriginAddress.Line1" />
+          </th>
+          <th pSortableColumn="DestinationAddress.Line1">
+            Destination
+            <p-sortIcon field="DestinationAddress.Line1" />
+          </th>
+          <th pSortableColumn="TotalDistance">
+            Total Distance
+            <p-sortIcon field="TotalDistance" />
+          </th>
+          <th pSortableColumn="CreatedAt">
+            Created Date
+            <p-sortIcon field="CreatedAt" />
+          </th>
+          <th pSortableColumn="Status">
+            Status
+            <p-sortIcon field="Status" />
+          </th>
+          <th>Action</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-trip let-expanded="expanded">
+        <tr (click)="selectedRow.set(trip)">
+          <td>
+            <p-button
+              [pRowToggler]="trip"
+              class="mr-2 text-sm no-underline"
+              [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+              variant="text"
+              severity="secondary"
+            />
+          </td>
+          <td class="text-center">{{ trip.truckNumber }}</td>
+          <td class="text-center">{{ trip.name }}</td>
+          <td class="text-center">{{ trip.number }}</td>
+          <td>{{ trip.originAddress | address }}</td>
+          <td>{{ trip.destinationAddress | address }}</td>
+          <td class="text-center">{{ trip.totalDistance | distanceUnit: "mi" }}</td>
+          <td>{{ trip.createdAt | date: "mediumDate" }}</td>
+          <td>
+            <app-trip-status-tag [status]="trip.status" />
+            <div class="italic">
+              @switch (trip.status) {
+                @case ("dispatched") {
+                  {{ trip.dispatchedAt | date: "mediumDate" }}
+                }
+                @case ("completed") {
+                  {{ trip.completedAt | date: "mediumDate" }}
+                }
               }
-              @case ("completed") {
-                {{ trip.completedAt | date: "mediumDate" }}
-              }
-            }
-          </div>
-        </td>
+            </div>
+          </td>
 
-        <td>
-          <p-button icon="pi pi-ellipsis-v" (click)="menu.toggle($event)" severity="secondary" />
-        </td>
-      </tr>
-    </ng-template>
-    <ng-template #expandedrow let-trip>
-      <tr>
-        <td colspan="12">
-          <div class="p-3">
-            <h5 class="mb-3">Loads in this trip</h5>
-            <p-table [value]="trip.loads" [dataKey]="'id'" responsiveLayout="scroll">
-              <ng-template #header>
-                <tr>
-                  <th pSortableColumn="number">Load Number <p-sortIcon field="number" /></th>
-                  <th pSortableColumn="name">Load Name <p-sortIcon field="name" /></th>
-                  <th pSortableColumn="type">Load Type <p-sortIcon field="type" /></th>
-                  <th pSortableColumn="customer.name">
-                    Customer <p-sortIcon field="customer.name" />
-                  </th>
-                  <th pSortableColumn="originAddress.line1">
-                    Origin <p-sortIcon field="originAddress.line1" />
-                  </th>
-                  <th pSortableColumn="destinationAddress.line1">
-                    Destination <p-sortIcon field="destinationAddress.line1" />
-                  </th>
-                  <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
-                  <th pSortableColumn="distance">Distance (mi) <p-sortIcon field="distance" /></th>
-                  <th pSortableColumn="deliveryCost">
-                    Delivery Cost <p-sortIcon field="deliveryCost" />
-                  </th>
-                </tr>
-              </ng-template>
-              <ng-template #body let-load>
-                <tr>
-                  <td>{{ load.number }}</td>
-                  <td>{{ load.name }}</td>
-                  <td><app-load-type-tag [type]="load.type" /></td>
-                  <td>{{ load.customer.name }}</td>
-                  <td>{{ load.originAddress | address }}</td>
-                  <td>{{ load.destinationAddress | address }}</td>
-                  <td><app-load-status-tag [status]="load.status" /></td>
-                  <td>{{ load.distance | distanceUnit: "mi" }}</td>
-                  <td>{{ load.deliveryCost | currency }}</td>
-                </tr>
-              </ng-template>
-            </p-table>
-          </div>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+          <td>
+            <p-button icon="pi pi-ellipsis-v" (click)="menu.toggle($event)" severity="secondary" />
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template #expandedrow let-trip>
+        <tr>
+          <td colspan="12">
+            <div class="p-3">
+              <h5 class="mb-3">Loads in this trip</h5>
+              <p-table [value]="trip.loads" [dataKey]="'id'" responsiveLayout="scroll">
+                <ng-template #header>
+                  <tr>
+                    <th pSortableColumn="number">Load Number <p-sortIcon field="number" /></th>
+                    <th pSortableColumn="name">Load Name <p-sortIcon field="name" /></th>
+                    <th pSortableColumn="type">Load Type <p-sortIcon field="type" /></th>
+                    <th pSortableColumn="customer.name">
+                      Customer <p-sortIcon field="customer.name" />
+                    </th>
+                    <th pSortableColumn="originAddress.line1">
+                      Origin <p-sortIcon field="originAddress.line1" />
+                    </th>
+                    <th pSortableColumn="destinationAddress.line1">
+                      Destination <p-sortIcon field="destinationAddress.line1" />
+                    </th>
+                    <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
+                    <th pSortableColumn="distance">
+                      Distance (mi) <p-sortIcon field="distance" />
+                    </th>
+                    <th pSortableColumn="deliveryCost">
+                      Delivery Cost <p-sortIcon field="deliveryCost" />
+                    </th>
+                  </tr>
+                </ng-template>
+                <ng-template #body let-load>
+                  <tr>
+                    <td>{{ load.number }}</td>
+                    <td>{{ load.name }}</td>
+                    <td><app-load-type-tag [type]="load.type" /></td>
+                    <td>{{ load.customer.name }}</td>
+                    <td>{{ load.originAddress | address }}</td>
+                    <td>{{ load.destinationAddress | address }}</td>
+                    <td><app-load-status-tag [status]="load.status" /></td>
+                    <td>{{ load.distance | distanceUnit: "mi" }}</td>
+                    <td>{{ load.deliveryCost | currency }}</td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </app-data-container>
 </p-card>
 
 <!-- Reusable context menu for the actions button -->

@@ -1,73 +1,46 @@
-import { Component, inject, signal } from "@angular/core";
-import { RouterLink } from "@angular/router";
-import { SharedModule } from "primeng/api";
+import { Component, inject } from "@angular/core";
+import { Router, RouterLink } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
-import { type TableLazyLoadEvent, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { Api, formatSortField, getTrucks$Json } from "@/core/api";
-import type { AddressDto, TruckDto } from "@/core/api/models";
+import type { AddressDto } from "@/core/api/models";
+import { DataContainer } from "@/shared/components";
 import { AddressPipe } from "@/shared/pipes";
+import { TrucksListStore } from "../store/trucks-list.store";
 
 @Component({
   selector: "app-trucks-list",
   templateUrl: "./trucks-list.html",
+  providers: [TrucksListStore, AddressPipe],
   imports: [
     ButtonModule,
     TooltipModule,
     RouterLink,
     CardModule,
     TableModule,
-    SharedModule,
     InputTextModule,
     AddressPipe,
     IconFieldModule,
     InputIconModule,
+    DataContainer,
   ],
-  providers: [AddressPipe],
 })
 export class TrucksListComponent {
-  private readonly api = inject(Api);
+  private readonly router = inject(Router);
   private readonly addressPipe = inject(AddressPipe);
+  protected readonly store = inject(TrucksListStore);
 
-  protected readonly trucks = signal<TruckDto[]>([]);
-  protected readonly isLoading = signal(false);
-  protected readonly totalRecords = signal(0);
-
-  protected async search(event: Event): Promise<void> {
-    this.isLoading.set(true);
+  protected search(event: Event): void {
     const searchValue = (event.target as HTMLInputElement).value;
-
-    const result = await this.api.invoke(getTrucks$Json, { Search: searchValue });
-    if (result.success && result.data) {
-      this.trucks.set(result.data);
-      this.totalRecords.set(result.totalItems ?? 0);
-    }
-
-    this.isLoading.set(false);
+    this.store.setSearch(searchValue);
   }
 
-  protected async load(event: TableLazyLoadEvent): Promise<void> {
-    this.isLoading.set(true);
-    const first = event.first ?? 1;
-    const rows = event.rows ?? 10;
-    const page = first / rows + 1;
-    const sortField = formatSortField(event.sortField as string, event.sortOrder);
-
-    const result = await this.api.invoke(getTrucks$Json, {
-      OrderBy: sortField,
-      Page: page,
-      PageSize: rows,
-    });
-    if (result.success && result.data) {
-      this.trucks.set(result.data);
-      this.totalRecords.set(result.totalItems ?? 0);
-    }
-
-    this.isLoading.set(false);
+  protected addTruck(): void {
+    this.router.navigate(["/trucks/add"]);
   }
 
   protected formatAddress(address: AddressDto): string {

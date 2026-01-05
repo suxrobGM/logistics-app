@@ -145,7 +145,9 @@ export class EmployeeEditComponent implements OnInit {
     const result = await this.api.invoke(getEmployeeById$Json, { userId: this.id()! });
     if (result.success && result.data) {
       this.employee.set(result.data);
-      const employeeRoles = this.employee()?.roles?.map((i) => i.name).filter((n): n is string => !!n);
+      const employeeRoles = this.employee()
+        ?.roles?.map((i) => i.name)
+        .filter((n): n is string => !!n);
       const user = this.authService.getUserData();
       this.evaluateCanChangeRole(user?.roles, employeeRoles);
 
@@ -153,8 +155,7 @@ export class EmployeeEditComponent implements OnInit {
       const salary = result.data.salary;
 
       this.form.patchValue({
-        salary:
-          salaryType === "share_of_gross" ? NumberUtils.toPercent(salary ?? 0) : salary,
+        salary: salaryType === "share_of_gross" ? NumberUtils.toPercent(salary ?? 0) : salary,
         salaryType: salaryType,
       });
     }

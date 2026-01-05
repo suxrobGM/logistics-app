@@ -60,7 +60,8 @@ export class TruckGrossesLinechartComponent implements OnInit {
     if (result.success && result.data) {
       const dailyGrosses = result.data;
       this.dailyGrosses.set(dailyGrosses);
-      const rpm = (dailyGrosses.totalGross ?? 0) / Converters.metersTo(dailyGrosses.totalDistance ?? 0, "mi");
+      const rpm =
+        (dailyGrosses.totalGross ?? 0) / Converters.metersTo(dailyGrosses.totalDistance ?? 0, "mi");
 
       this.drawChart(dailyGrosses);
       this.chartDrawn.emit({ dailyGrosses: dailyGrosses, rpm: rpm });

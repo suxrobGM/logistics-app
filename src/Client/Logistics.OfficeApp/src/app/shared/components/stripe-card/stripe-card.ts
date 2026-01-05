@@ -7,7 +7,7 @@ import {
   output,
   viewChild,
 } from "@angular/core";
-import  type { StripeCardNumberElement, StripeElementBase } from "@stripe/stripe-js";
+import type { StripeCardNumberElement, StripeElementBase } from "@stripe/stripe-js";
 import { StripeService } from "@/core/services";
 
 interface StripeCardElementsReady {

@@ -1,20 +1,22 @@
-import { Component, inject, signal } from "@angular/core";
-import { RouterLink } from "@angular/router";
+import { Component, inject } from "@angular/core";
+import { Router, RouterLink } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
-import { type TableLazyLoadEvent, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { Api, formatSortField, getCustomers$Json, deleteCustomer$Json } from "@/core/api";
-import type { CustomerDto } from "@/core/api/models";
+import { Api, deleteCustomer$Json } from "@/core/api";
 import { ToastService } from "@/core/services";
+import { DataContainer } from "@/shared/components";
+import { CustomersListStore } from "../store/customers-list.store";
 
 @Component({
   selector: "app-customers-list",
   templateUrl: "./customers-list.html",
+  providers: [CustomersListStore],
   imports: [
     ButtonModule,
     TooltipModule,
@@ -23,51 +25,24 @@ import { ToastService } from "@/core/services";
     TableModule,
     InputTextModule,
     ConfirmDialogModule,
-    TooltipModule,
     IconFieldModule,
     InputIconModule,
+    DataContainer,
   ],
 })
 export class CustomersListComponent {
   private readonly api = inject(Api);
+  private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
+  protected readonly store = inject(CustomersListStore);
 
-  protected readonly customers = signal<CustomerDto[]>([]);
-  protected readonly isLoading = signal<boolean>(false);
-  protected readonly totalRecords = signal<number>(0);
-  protected readonly first = signal<number>(0);
-
-  protected async search(event: Event): Promise<void> {
-    this.isLoading.set(true);
+  protected search(event: Event): void {
     const searchValue = (event.target as HTMLInputElement).value;
-
-    const result = await this.api.invoke(getCustomers$Json, { Search: searchValue });
-    if (result.success && result.data) {
-      this.customers.set(result.data);
-      this.totalRecords.set(result.totalItems ?? 0);
-    }
-
-    this.isLoading.set(false);
+    this.store.setSearch(searchValue);
   }
 
-  protected async load(event: TableLazyLoadEvent): Promise<void> {
-    this.isLoading.set(true);
-    const first = event.first ?? 1;
-    const rows = event.rows ?? 10;
-    const page = first / rows + 1;
-    const sortField = formatSortField(event.sortField as string, event.sortOrder);
-
-    const result = await this.api.invoke(getCustomers$Json, {
-      OrderBy: sortField,
-      Page: page,
-      PageSize: rows,
-    });
-    if (result.success && result.data) {
-      this.customers.set(result.data);
-      this.totalRecords.set(result.totalItems ?? 0);
-    }
-
-    this.isLoading.set(false);
+  protected addCustomer(): void {
+    this.router.navigate(["/customers/add"]);
   }
 
   protected confirmToDelete(id: string): void {
@@ -77,15 +52,11 @@ export class CustomersListComponent {
     });
   }
 
-  protected async deleteCustomer(id: string): Promise<void> {
-    this.isLoading.set(true);
-
+  private async deleteCustomer(id: string): Promise<void> {
     const result = await this.api.invoke(deleteCustomer$Json, { id });
     if (result.success) {
       this.toastService.showSuccess("The customer has been deleted successfully");
-      this.customers.update((customers) => customers.filter((c) => c.id !== id));
+      this.store.removeItem(id);
     }
-
-    this.isLoading.set(false);
   }
 }

@@ -8,8 +8,8 @@ import { Tag, TagModule } from "primeng/tag";
 import { getLoadsReport$Json } from "@/core/api";
 import type {
   LoadPerformanceDto,
-  LoadsReportDto,
   LoadTrendDto,
+  LoadsReportDto,
   Result,
   StatusDto,
   TypeDto,
@@ -134,8 +134,12 @@ export class LoadsReportComponent extends BaseReportComponent<LoadsReportDto> im
           {
             label: "Value",
             data: metrics.map((m: LoadPerformanceDto) => m.value),
-            backgroundColor: metrics.map((m: LoadPerformanceDto) => ((m.trend ?? 0) >= 0 ? "#16a34a" : "#ef4444")),
-            borderColor: metrics.map((m: LoadPerformanceDto) => ((m.trend ?? 0) >= 0 ? "#16a34a" : "#ef4444")),
+            backgroundColor: metrics.map((m: LoadPerformanceDto) =>
+              (m.trend ?? 0) >= 0 ? "#16a34a" : "#ef4444",
+            ),
+            borderColor: metrics.map((m: LoadPerformanceDto) =>
+              (m.trend ?? 0) >= 0 ? "#16a34a" : "#ef4444",
+            ),
             borderWidth: 1,
           },
         ],

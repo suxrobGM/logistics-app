@@ -45,3 +45,95 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Design services around a single responsibility
 - Use the `providedIn: 'root'` option for singleton services
 - Use the `inject()` function instead of constructor injection
+
+## List Pages Pattern
+
+List pages must use the `createListStore` factory and `DataContainer` component for consistent error handling, loading states, and state management.
+
+### Creating a List Store
+
+```typescript
+// src/app/pages/customers/store/customers-list.store.ts
+import { getCustomers$Json } from "@/core/api";
+import type { CustomerDto } from "@/core/api/models";
+import { createListStore } from "@/shared/stores";
+
+export const CustomersListStore = createListStore<CustomerDto>(getCustomers$Json, {
+  defaultSortField: "Name",
+  defaultPageSize: 10,
+});
+```
+
+### Using the Store in a Component
+
+```typescript
+@Component({
+  selector: "app-customers-list",
+  templateUrl: "./customers-list.html",
+  providers: [CustomersListStore],  // Provide the store
+  imports: [DataContainer, TableModule, ...],
+})
+export class CustomersListComponent {
+  protected readonly store = inject(CustomersListStore);
+
+  protected search(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.store.setSearch(value);
+  }
+
+  protected addCustomer(): void {
+    this.router.navigate(["/customers/add"]);
+  }
+}
+```
+
+### Template Pattern
+
+```html
+<p-card>
+  <app-data-container
+    [loading]="store.isLoading()"
+    [error]="store.error()"
+    [isEmpty]="store.isEmpty()"
+    skeletonVariant="table"
+    [skeletonRows]="10"
+    emptyTitle="No customers yet"
+    emptyMessage="Add your first customer to get started."
+    emptyActionLabel="Add Customer"
+    (onRetry)="store.retry()"
+    (onEmptyAction)="addCustomer()"
+  >
+    <p-table
+      [value]="store.data()"
+      [lazy]="true"
+      [paginator]="true"
+      (onLazyLoad)="store.onLazyLoad($event)"
+      [rows]="store.pageSize()"
+      [first]="store.first()"
+      [totalRecords]="store.totalRecords()"
+      [loading]="store.isLoading()"
+    >
+      <!-- table content -->
+    </p-table>
+  </app-data-container>
+</p-card>
+```
+
+### Store Methods Available
+
+- `load()` - Load data from API
+- `onLazyLoad(event)` - Handle PrimeNG table lazy load events
+- `setSearch(value)` - Set search query and reload
+- `setSort(field, order)` - Set sort and reload
+- `setFilters(filters)` - Set additional filters and reload
+- `retry()` - Retry the last failed operation
+- `reset()` - Reset store to initial state
+- `removeItem(id)` - Optimistically remove item from list
+- `updateItem(id, updates)` - Optimistically update item in list
+
+## Error Handling
+
+- HTTP errors are automatically categorized by `ErrorHandlerService` (network, auth, validation, server)
+- Errors are displayed via toast notifications automatically
+- Use `AppError` type from `@/core/errors` for typed error handling
+- Retryable errors (network, server) show retry buttons in `ErrorState` component

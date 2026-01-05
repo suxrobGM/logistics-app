@@ -1,0 +1,19 @@
+@if (loading()) {
+  <app-loading-skeleton [variant]="skeletonVariant()" [rows]="skeletonRows()" />
+} @else if (error()) {
+  <app-error-state
+    [message]="error()!.message"
+    [retryable]="error()!.retryable"
+    (retry)="handleRetry()"
+  />
+} @else if (isEmpty()) {
+  <app-empty-state
+    [title]="emptyTitle()"
+    [message]="emptyMessage()"
+    [icon]="emptyIcon()"
+    [actionLabel]="emptyActionLabel()"
+    (action)="handleEmptyAction()"
+  />
+} @else {
+  <ng-content />
+}

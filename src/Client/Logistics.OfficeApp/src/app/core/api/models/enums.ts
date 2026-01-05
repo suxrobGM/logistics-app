@@ -3,22 +3,21 @@
  * The generated code uses string union types, but consuming code expects enum-like objects.
  * These shadow the type-only exports from generated/models with both type + value.
  */
-
 import type { SelectOption } from "@/shared/models";
-import type { 
-    PaymentMethodType, 
-    SalaryType, 
-    UsBankAccountHolderType, 
-    UsBankAccountType, 
-    DocumentType, 
-    LoadType, 
-    TruckType, 
-    TruckStatus, 
-    LoadStatus, 
-    TripStatus, 
-    InvoiceStatus, 
-    PaymentStatus, 
-    SubscriptionStatus 
+import type {
+  DocumentType,
+  InvoiceStatus,
+  LoadStatus,
+  LoadType,
+  PaymentMethodType,
+  PaymentStatus,
+  SalaryType,
+  SubscriptionStatus,
+  TripStatus,
+  TruckStatus,
+  TruckType,
+  UsBankAccountHolderType,
+  UsBankAccountType,
 } from "../generated";
 
 // Options arrays for select dropdowns

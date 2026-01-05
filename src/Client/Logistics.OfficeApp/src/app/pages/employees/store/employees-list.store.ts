@@ -1,0 +1,11 @@
+import { getEmployees$Json } from "@/core/api";
+import type { EmployeeDto } from "@/core/api/models";
+import { createListStore } from "@/shared/stores";
+
+/**
+ * Store for the employees list page.
+ */
+export const EmployeesListStore = createListStore<EmployeeDto>(getEmployees$Json, {
+  defaultSortField: "FirstName",
+  defaultPageSize: 10,
+});

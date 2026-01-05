@@ -261,7 +261,10 @@ export class DirectionMap {
       type: "FeatureCollection",
       features: pts.map((p, i) => ({
         type: "Feature",
-        geometry: { type: "Point", coordinates: [p.location.longitude ?? 0, p.location.latitude ?? 0] },
+        geometry: {
+          type: "Point",
+          coordinates: [p.location.longitude ?? 0, p.location.latitude ?? 0],
+        },
         properties: { id: p.id, label: String(i + 1) },
       })),
     };

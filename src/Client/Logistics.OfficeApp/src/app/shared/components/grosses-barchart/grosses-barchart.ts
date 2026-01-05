@@ -66,7 +66,8 @@ export class GrossesBarchart implements OnInit {
     if (result.success && result.data) {
       const monthlyGrosses = result.data;
       this.monthlyGrosses.set(monthlyGrosses);
-      const rpm = monthlyGrosses.totalGross! / Converters.metersTo(monthlyGrosses.totalDistance!, "mi");
+      const rpm =
+        monthlyGrosses.totalGross! / Converters.metersTo(monthlyGrosses.totalDistance!, "mi");
 
       this.drawChart(monthlyGrosses);
       this.chartDrawn.emit({ monthlyGrosses, rpm });

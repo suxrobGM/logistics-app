@@ -1,21 +1,21 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, signal } from "@angular/core";
-import { RouterModule } from "@angular/router";
+import { Component, inject } from "@angular/core";
+import { Router, RouterModule } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
-import { type TableLazyLoadEvent, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { Api, formatSortField, getInvoices$Json } from "@/core/api";
-import  { type InvoiceDto, type SalaryType, salaryTypeOptions } from "@/core/api/models";
-import { InvoiceStatusTag } from "@/shared/components";
+import { type SalaryType, salaryTypeOptions } from "@/core/api/models";
+import { DataContainer, InvoiceStatusTag } from "@/shared/components";
+import { PayrollInvoicesListStore } from "../store/payroll-invoices-list.store";
 
 @Component({
   selector: "app-payroll-invoices-list",
   templateUrl: "./payroll-invoices-list.html",
-  styleUrls: [],
+  providers: [PayrollInvoicesListStore],
   imports: [
     CommonModule,
     TableModule,
@@ -27,48 +27,20 @@ import { InvoiceStatusTag } from "@/shared/components";
     InvoiceStatusTag,
     IconFieldModule,
     InputIconModule,
+    DataContainer,
   ],
 })
 export class PayrollInvoicesListComponent {
-  private readonly api = inject(Api);
+  private readonly router = inject(Router);
+  protected readonly store = inject(PayrollInvoicesListStore);
 
-  protected readonly invoices = signal<InvoiceDto[]>([]);
-  protected readonly isLoading = signal(false);
-  protected readonly totalRecords = signal(0);
-  protected readonly first = signal(0);
-
-  async search(event: Event): Promise<void> {
-    this.isLoading.set(true);
+  protected onSearch(event: Event): void {
     const searchValue = (event.target as HTMLInputElement).value;
-
-    const result = await this.api.invoke(getInvoices$Json, { EmployeeName: searchValue });
-    if (result.success && result.data) {
-      this.invoices.set(result.data);
-      this.totalRecords.set(result.totalItems ?? 0);
-    }
-
-    this.isLoading.set(false);
+    this.store.setSearch(searchValue);
   }
 
-  async load(event: TableLazyLoadEvent): Promise<void> {
-    this.isLoading.set(true);
-    const first = event.first ?? 1;
-    const rows = event.rows ?? 10;
-    const page = first / rows + 1;
-    const sortField = formatSortField(event.sortField as string, event.sortOrder);
-
-    const result = await this.api.invoke(getInvoices$Json, {
-      OrderBy: sortField,
-      Page: page,
-      PageSize: rows,
-      InvoiceType: "payroll",
-    });
-    if (result.success && result.data) {
-      this.invoices.set(result.data);
-      this.totalRecords.set(result.totalItems ?? 0);
-    }
-
-    this.isLoading.set(false);
+  protected addInvoice(): void {
+    this.router.navigate(["/invoices/payroll/add"]);
   }
 
   getSalaryTypeDesc(enumValue: SalaryType): string {

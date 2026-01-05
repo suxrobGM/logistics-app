@@ -1,7 +1,7 @@
 import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { Api, getTripById$Json, updateTrip$Json, deleteTrip$Json } from "@/core/api";
+import { Api, deleteTrip$Json, getTripById$Json, updateTrip$Json } from "@/core/api";
 import type { UpdateTripCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { TripWizard, type TripWizardValue } from "../components";
@@ -48,7 +48,9 @@ export class TripEditPage implements OnInit {
       truckId: formValues.truckId,
       newLoads: formValues.newLoads,
       // attachedLoadIds: formValue.attachedLoads?.map((l) => l.id),
-      detachedLoadIds: formValues.detachedLoads?.map((l) => l.id).filter((id): id is string => id != null),
+      detachedLoadIds: formValues.detachedLoads
+        ?.map((l) => l.id)
+        .filter((id): id is string => id != null),
       optimizedStops: formValues.stops,
     };
 
