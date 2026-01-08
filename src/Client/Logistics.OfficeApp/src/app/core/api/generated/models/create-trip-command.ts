@@ -8,5 +8,6 @@ export interface CreateTripCommand {
   name?: string | null;
   newLoads?: Array<CreateTripLoadCommand> | null;
   optimizedStops?: Array<TripStopDto> | null;
+  totalDistance?: number | null;
   truckId?: string;
 }

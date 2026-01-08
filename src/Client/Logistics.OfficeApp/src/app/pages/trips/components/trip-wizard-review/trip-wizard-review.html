@@ -96,7 +96,7 @@
 
   <app-direction-map
     [waypoints]="waypoints()"
-    height="700px"
+    height="min(500px, 40vh)"
     [zoom]="4"
     [selectedWaypoint]="selectedWaypoint()"
     (routeSegmentClick)="onRouteSegmentClick($event)"

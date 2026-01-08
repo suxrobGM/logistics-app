@@ -27,6 +27,7 @@ export class TripAddPage {
       newLoads: formValue.newLoads,
       // attachedLoadIds: formValue.attachedLoads?.map((l) => l.id),
       optimizedStops: formValue.stops,
+      totalDistance: formValue.totalDistance,
     };
 
     const result = await this.api.invoke(createTrip$Json, { body: command });

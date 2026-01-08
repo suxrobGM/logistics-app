@@ -2,6 +2,12 @@
 @import "primeicons/primeicons.css";
 @import "tailwindcss";
 
+html,
+body {
+  height: 100%;
+  overflow-y: auto;
+}
+
 body {
   background-color: #dae5f3;
 }

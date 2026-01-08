@@ -68,11 +68,16 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
         var attachedCount = 0; // attachResult.Data;
         var createdCount = await CreateNewLoadsAsync(trip, loadsMap, req.NewLoads);
 
-        // Convert optimized stops DTOs to domain entities if provided
+        // Update stop order if optimized stops are provided
         if (req.OptimizedStops != null && req.OptimizedStops.Any())
         {
-            var optimizedStops = ConvertOptimizedStopsToDomain(trip, loadsMap, req.OptimizedStops);
-            trip.UpdateTripStops(optimizedStops);
+            UpdateStopOrder(trip, req.OptimizedStops);
+        }
+
+        // Always update total distance when provided (from route optimizer)
+        if (req.TotalDistance.HasValue)
+        {
+            trip.TotalDistance = req.TotalDistance.Value;
         }
 
         await _uow.SaveChangesAsync(ct);
@@ -197,45 +202,29 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
     }
 
     /// <summary>
-    ///     Converts optimized stop DTOs to domain TripStop entities.
+    ///     Updates the order of existing trip stops based on the optimized stops from the route optimizer.
     /// </summary>
-    private List<TripStop> ConvertOptimizedStopsToDomain(
-        Trip trip,
-        Dictionary<Guid, Load> loadMap,
-        IEnumerable<TripStopDto> optimizedStops)
+    private void UpdateStopOrder(Trip trip, IEnumerable<TripStopDto> optimizedStops)
     {
-        var tripStops = new List<TripStop>();
+        // Build a lookup for the new order: key = (LoadId, Type), value = new Order
+        var orderLookup = optimizedStops.ToDictionary(
+            s => (s.LoadId, s.Type),
+            s => s.Order);
 
-        foreach (var stopDto in optimizedStops)
+        // Update the order of existing stops
+        foreach (var stop in trip.Stops)
         {
-            if (!loadMap.TryGetValue(stopDto.LoadId, out var load))
+            var key = (stop.LoadId, stop.Type);
+            if (orderLookup.TryGetValue(key, out var newOrder))
             {
-                _logger.LogWarning("Load with ID '{LoadId}' not found for optimized stop", stopDto.LoadId);
-                continue;
+                stop.Order = newOrder;
             }
-
-            // Find the existing TripStop ID
-            var tripStopId = loadMap[stopDto.LoadId]
-                .TripStops
-                .First(s => s.LoadId == stopDto.LoadId && s.Type == stopDto.Type)
-                .Id;
-
-            var tripStop = new TripStop
+            else
             {
-                Id = tripStopId,
-                Order = stopDto.Order,
-                Type = stopDto.Type,
-                Address = stopDto.Address,
-                Location = stopDto.Location,
-                Load = load,
-                LoadId = load.Id,
-                Trip = trip,
-                TripId = trip.Id
-            };
-
-            tripStops.Add(tripStop);
+                _logger.LogWarning(
+                    "Could not find optimized order for stop with LoadId '{LoadId}' and Type '{Type}'",
+                    stop.LoadId, stop.Type);
+            }
         }
-
-        return tripStops;
     }
 }

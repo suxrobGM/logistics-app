@@ -52,6 +52,7 @@ export class TripEditPage implements OnInit {
         ?.map((l) => l.id)
         .filter((id): id is string => id != null),
       optimizedStops: formValues.stops,
+      totalDistance: formValues.totalDistance,
     };
 
     const result = await this.api.invoke(updateTrip$Json, { id: tripId, body: command });
@@ -80,6 +81,7 @@ export class TripEditPage implements OnInit {
         truckId: trip.truckId,
         initialLoads: trip.loads ?? undefined,
         initialStops: trip.stops ?? undefined,
+        totalDistance: trip.totalDistance ?? 0,
       });
 
       this.disabledForEditing.set(trip.status !== "draft");

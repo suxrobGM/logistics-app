@@ -37,7 +37,8 @@ public class Trip : AuditableEntity, ITenantEntity
         string name,
         Truck truck,
         IEnumerable<Load>? loads = null,
-        IEnumerable<TripStop>? optimizedStops = null)
+        IEnumerable<TripStop>? optimizedStops = null,
+        double? optimizedTotalDistance = null)
     {
         var loadsArr = loads?.ToArray() ?? [];
 
@@ -46,7 +47,8 @@ public class Trip : AuditableEntity, ITenantEntity
             Name = name,
             TruckId = truck.Id,
             Truck = truck,
-            TotalDistance = loadsArr.Sum(l => l.Distance)
+            // Use optimized distance from route optimizer if provided, otherwise fallback to sum of load distances
+            TotalDistance = optimizedTotalDistance ?? loadsArr.Sum(l => l.Distance)
         };
 
         if (optimizedStops is not null)
@@ -164,34 +166,6 @@ public class Trip : AuditableEntity, ITenantEntity
     {
         return Stops.Where(s => s.Type == TripStopType.DropOff)
             .Sum(s => s.Load.CalcDriverShare());
-    }
-
-    /// <summary>
-    ///     Updates the trip stops based on the order of the provided optimized stops list.
-    /// </summary>
-    /// <param name="optimizedStops">Optional optimized stops with preserved order.</param>
-    /// <exception cref="InvalidOperationException">Thrown if the trip status is not 'Draft'.</exception>
-    public void UpdateTripStops(IEnumerable<TripStop> optimizedStops)
-    {
-        if (Status != TripStatus.Draft)
-        {
-            throw new InvalidOperationException("Cannot update loads for a trip that is not draft.");
-        }
-
-        // Use optimized stops - complete replacement strategy
-        var optimizedStopsMap = optimizedStops.ToDictionary(s => s.Id, s => s);
-        var stops = Stops.ToList();
-
-        foreach (var stop in stops)
-        {
-            // Just update the order number for existing stops instead of recreating them
-            if (optimizedStopsMap.TryGetValue(stop.Id, out var tripStop))
-            {
-                stop.Order = tripStop.Order;
-            }
-        }
-
-        TotalDistance = GetLoads().Sum(l => l.Distance);
     }
 
     /// <summary>

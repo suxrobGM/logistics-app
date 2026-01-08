@@ -163,7 +163,8 @@ export const TripWizardStore = signalStore(
       newLoadsCount: newLoadsCount(),
       pendingDetachLoadsCount: pendingDetachLoadsCount(),
       totalDistance: store.totalDistance(),
-      totalCost: store.totalCost(),
+      // Use calculated cost from loads for consistency in both create and edit modes
+      totalCost: totalCostFromLoads(),
       truckVehicleCapacity: store.truckVehicleCapacity(),
       stops: store.stops(),
     }));
@@ -179,7 +180,7 @@ export const TripWizardStore = signalStore(
       detachedLoads: store.detachedLoads().length > 0 ? store.detachedLoads() : null,
       stops: store.stops(),
       totalDistance: store.totalDistance(),
-      totalCost: store.totalCost(),
+      totalCost: totalCostFromLoads(),
       totalLoads: totalLoads(),
       initialLoads: store.initialLoads(),
       initialStops: store.initialStops(),

@@ -9,6 +9,7 @@ export interface UpdateTripCommand {
   name?: string | null;
   newLoads?: Array<CreateTripLoadCommand> | null;
   optimizedStops?: Array<TripStopDto> | null;
+  totalDistance?: number | null;
   tripId?: string;
   truckId?: string | null;
 }

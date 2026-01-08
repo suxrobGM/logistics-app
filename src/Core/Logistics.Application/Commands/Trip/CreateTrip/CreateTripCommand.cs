@@ -10,4 +10,9 @@ public class CreateTripCommand : IAppRequest
     public IEnumerable<CreateTripLoadCommand>? NewLoads { get; set; }
     public IEnumerable<Guid>? AttachedLoadIds { get; set; }
     public IEnumerable<TripStopDto>? OptimizedStops { get; set; }
+
+    /// <summary>
+    ///     Total distance from the route optimizer (in kilometers).
+    /// </summary>
+    public double? TotalDistance { get; set; }
 }

@@ -48,7 +48,7 @@ internal sealed class CreateTripHandler : IAppRequestHandler<CreateTripCommand, 
             stops = ConvertOptimizedStopsToDomain(req.OptimizedStops, loads, tempIdToLoadMap);
         }
 
-        var trip = Trip.Create(req.Name, truck, loads, stops);
+        var trip = Trip.Create(req.Name, truck, loads, stops, req.TotalDistance);
 
         await _tenantUow.Repository<Trip>().AddAsync(trip, ct);
         await _tenantUow.SaveChangesAsync(ct);
