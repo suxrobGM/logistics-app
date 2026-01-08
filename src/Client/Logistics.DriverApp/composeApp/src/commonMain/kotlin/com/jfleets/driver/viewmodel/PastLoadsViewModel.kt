@@ -30,14 +30,14 @@ class PastLoadsViewModel(
             val ninetyDaysAgo = now.minus(90.days)
 
             try {
-                val response = loadApi.getLoads(
+                val result = loadApi.getLoads(
                     onlyActiveLoads = false,
                     startDate = ninetyDaysAgo,
                     endDate = now
-                )
-                val result = response.body()
-                if (result != null) {
-                    _uiState.value = PastLoadsUiState.Success(result.items)
+                ).body()
+                val loads = result?.items
+                if (loads != null) {
+                    _uiState.value = PastLoadsUiState.Success(loads)
                 } else {
                     _uiState.value = PastLoadsUiState.Error("Failed to load past loads")
                 }

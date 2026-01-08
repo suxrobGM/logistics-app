@@ -41,12 +41,6 @@ class DashboardViewModel(
 
                 // Get driver ID first
                 val driver = driverApi.getDriverByUserId(userId).body()
-
-                if (driver == null) {
-                    _uiState.value = DashboardUiState.Error("Failed to load driver")
-                    return@launch
-                }
-
                 val driverId = driver.id ?: ""
 
                 // Then get truck with active loads
@@ -54,15 +48,10 @@ class DashboardViewModel(
                     truckApi.getTruckById(driverId, includeLoads = true, onlyActiveLoads = true)
                         .body()
 
-                if (truck != null) {
-                    preferencesManager.saveTruckId(truck.id ?: "")
-                    preferencesManager.saveDriverName(truck.mainDriver?.fullName() ?: "")
-                    preferencesManager.saveTruckNumber(truck.number ?: "")
-
-                    _uiState.value = DashboardUiState.Success(truck)
-                } else {
-                    _uiState.value = DashboardUiState.Error("Failed to load truck")
-                }
+                preferencesManager.saveTruckId(truck.id ?: "")
+                preferencesManager.saveDriverName(truck.mainDriver?.fullName() ?: "")
+                preferencesManager.saveTruckNumber(truck.number ?: "")
+                _uiState.value = DashboardUiState.Success(truck)
             } catch (e: Exception) {
                 _uiState.value = DashboardUiState.Error(e.message ?: "An error occurred")
             }

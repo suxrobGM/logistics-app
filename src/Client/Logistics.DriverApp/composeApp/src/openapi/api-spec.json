@@ -28,37 +28,37 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/CustomerDtoResult"
+                  "$ref": "#/components/schemas/CustomerDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CustomerDtoResult"
+                  "$ref": "#/components/schemas/CustomerDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CustomerDtoResult"
+                  "$ref": "#/components/schemas/CustomerDto"
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -101,42 +101,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -160,42 +143,25 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -247,37 +213,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/CustomerDtoPagedResult"
+                  "$ref": "#/components/schemas/CustomerDtoPagedResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CustomerDtoPagedResult"
+                  "$ref": "#/components/schemas/CustomerDtoPagedResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CustomerDtoPagedResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/CustomerDtoPagedResponse"
                 }
               }
             }
@@ -314,17 +260,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/CustomerDtoResult"
+                  "$ref": "#/components/schemas/CustomerDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CustomerDtoResult"
+                  "$ref": "#/components/schemas/CustomerDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CustomerDtoResult"
+                  "$ref": "#/components/schemas/CustomerDto"
                 }
               }
             }
@@ -334,17 +280,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -425,17 +371,26 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/DocumentDtoIEnumerableResult"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentDto"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DocumentDtoIEnumerableResult"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentDto"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DocumentDtoIEnumerableResult"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentDto"
+                  }
                 }
               }
             }
@@ -445,17 +400,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -486,37 +441,37 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/DocumentDtoResult"
+                  "$ref": "#/components/schemas/DocumentDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DocumentDtoResult"
+                  "$ref": "#/components/schemas/DocumentDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DocumentDtoResult"
+                  "$ref": "#/components/schemas/DocumentDto"
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -559,42 +514,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -618,42 +556,25 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -718,17 +639,20 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/GuidResult"
+                  "type": "string",
+                  "format": "uuid"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GuidResult"
+                  "type": "string",
+                  "format": "uuid"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GuidResult"
+                  "type": "string",
+                  "format": "uuid"
                 }
               }
             }
@@ -738,17 +662,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -797,22 +721,22 @@
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -843,37 +767,37 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/EmployeeDtoResult"
+                  "$ref": "#/components/schemas/EmployeeDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EmployeeDtoResult"
+                  "$ref": "#/components/schemas/EmployeeDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EmployeeDtoResult"
+                  "$ref": "#/components/schemas/EmployeeDto"
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -918,42 +842,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -987,42 +894,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1056,42 +946,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1122,37 +995,37 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/EmployeeDtoResult"
+                  "$ref": "#/components/schemas/EmployeeDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EmployeeDtoResult"
+                  "$ref": "#/components/schemas/EmployeeDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EmployeeDtoResult"
+                  "$ref": "#/components/schemas/EmployeeDto"
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1195,42 +1068,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1254,42 +1110,25 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1348,37 +1187,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/EmployeeDtoPagedResult"
+                  "$ref": "#/components/schemas/EmployeeDtoPagedResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EmployeeDtoPagedResult"
+                  "$ref": "#/components/schemas/EmployeeDtoPagedResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EmployeeDtoPagedResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/EmployeeDtoPagedResponse"
                 }
               }
             }
@@ -1410,42 +1229,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1490,42 +1292,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1556,37 +1341,37 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/InvoiceDtoResult"
+                  "$ref": "#/components/schemas/InvoiceDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InvoiceDtoResult"
+                  "$ref": "#/components/schemas/InvoiceDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InvoiceDtoResult"
+                  "$ref": "#/components/schemas/InvoiceDto"
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1629,42 +1414,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1688,42 +1456,25 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1798,37 +1549,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/InvoiceDtoPagedResult"
+                  "$ref": "#/components/schemas/InvoiceDtoPagedResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InvoiceDtoPagedResult"
+                  "$ref": "#/components/schemas/InvoiceDtoPagedResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InvoiceDtoPagedResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/InvoiceDtoPagedResponse"
                 }
               }
             }
@@ -1862,42 +1593,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1943,17 +1657,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/PayrollDtoResult"
+                  "$ref": "#/components/schemas/PayrollDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PayrollDtoResult"
+                  "$ref": "#/components/schemas/PayrollDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PayrollDtoResult"
+                  "$ref": "#/components/schemas/PayrollDto"
                 }
               }
             }
@@ -1963,17 +1677,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2007,42 +1721,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2087,42 +1784,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2153,37 +1833,37 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoadDtoResult"
+                  "$ref": "#/components/schemas/LoadDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoadDtoResult"
+                  "$ref": "#/components/schemas/LoadDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoadDtoResult"
+                  "$ref": "#/components/schemas/LoadDto"
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2226,42 +1906,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2285,42 +1948,25 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2418,37 +2064,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoadDtoPagedResult"
+                  "$ref": "#/components/schemas/LoadDtoPagedResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoadDtoPagedResult"
+                  "$ref": "#/components/schemas/LoadDtoPagedResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoadDtoPagedResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/LoadDtoPagedResponse"
                 }
               }
             }
@@ -2480,42 +2106,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2553,17 +2162,26 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/NotificationDtoArrayResult"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NotificationDto"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NotificationDtoArrayResult"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NotificationDto"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NotificationDtoArrayResult"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NotificationDto"
+                  }
                 }
               }
             }
@@ -2573,17 +2191,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2628,42 +2246,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2694,37 +2295,37 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaymentDtoResult"
+                  "$ref": "#/components/schemas/PaymentDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaymentDtoResult"
+                  "$ref": "#/components/schemas/PaymentDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaymentDtoResult"
+                  "$ref": "#/components/schemas/PaymentDto"
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2767,42 +2368,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2826,42 +2410,25 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2922,37 +2489,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaymentDtoPagedResult"
+                  "$ref": "#/components/schemas/PaymentDtoPagedResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaymentDtoPagedResult"
+                  "$ref": "#/components/schemas/PaymentDtoPagedResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaymentDtoPagedResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/PaymentDtoPagedResponse"
                 }
               }
             }
@@ -2984,42 +2531,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3053,42 +2583,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3119,37 +2632,37 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaymentMethodDtoResult"
+                  "$ref": "#/components/schemas/PaymentMethodDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaymentMethodDtoResult"
+                  "$ref": "#/components/schemas/PaymentMethodDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaymentMethodDtoResult"
+                  "$ref": "#/components/schemas/PaymentMethodDto"
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3173,42 +2686,25 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3237,17 +2733,26 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaymentMethodDtoPagedResult"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentMethodDto"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaymentMethodDtoPagedResult"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentMethodDto"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaymentMethodDtoPagedResult"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentMethodDto"
+                  }
                 }
               }
             }
@@ -3257,17 +2762,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3299,42 +2804,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3366,42 +2854,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3421,17 +2892,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/SetupIntentDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/SetupIntentDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/SetupIntentDto"
                 }
               }
             }
@@ -3441,17 +2912,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3485,42 +2956,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3581,17 +3035,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoadsReportDtoResult"
+                  "$ref": "#/components/schemas/LoadsReportDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoadsReportDtoResult"
+                  "$ref": "#/components/schemas/LoadsReportDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoadsReportDtoResult"
+                  "$ref": "#/components/schemas/LoadsReportDto"
                 }
               }
             }
@@ -3601,17 +3055,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3679,37 +3133,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/DriverReportDtoPagedResult"
+                  "$ref": "#/components/schemas/DriverReportDtoPagedResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DriverReportDtoPagedResult"
+                  "$ref": "#/components/schemas/DriverReportDtoPagedResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DriverReportDtoPagedResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/DriverReportDtoPagedResponse"
                 }
               }
             }
@@ -3770,17 +3204,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/FinancialsReportDtoResult"
+                  "$ref": "#/components/schemas/FinancialsReportDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FinancialsReportDtoResult"
+                  "$ref": "#/components/schemas/FinancialsReportDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FinancialsReportDtoResult"
+                  "$ref": "#/components/schemas/FinancialsReportDto"
                 }
               }
             }
@@ -3790,17 +3224,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3861,17 +3295,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/DriverDashboardDtoResult"
+                  "$ref": "#/components/schemas/DriverDashboardDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DriverDashboardDtoResult"
+                  "$ref": "#/components/schemas/DriverDashboardDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DriverDashboardDtoResult"
+                  "$ref": "#/components/schemas/DriverDashboardDto"
                 }
               }
             }
@@ -3881,17 +3315,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3943,37 +3377,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/RoleDtoPagedResult"
+                  "$ref": "#/components/schemas/RoleDtoPagedResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RoleDtoPagedResult"
+                  "$ref": "#/components/schemas/RoleDtoPagedResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RoleDtoPagedResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/RoleDtoPagedResponse"
                 }
               }
             }
@@ -4025,37 +3439,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/RoleDtoPagedResult"
+                  "$ref": "#/components/schemas/RoleDtoPagedResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RoleDtoPagedResult"
+                  "$ref": "#/components/schemas/RoleDtoPagedResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RoleDtoPagedResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/RoleDtoPagedResponse"
                 }
               }
             }
@@ -4085,17 +3479,26 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/PermissionDtoArrayResult"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PermissionDto"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PermissionDtoArrayResult"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PermissionDto"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PermissionDtoArrayResult"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PermissionDto"
+                  }
                 }
               }
             }
@@ -4105,17 +3508,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -4169,17 +3572,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/DailyGrossesDtoResult"
+                  "$ref": "#/components/schemas/DailyGrossesDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DailyGrossesDtoResult"
+                  "$ref": "#/components/schemas/DailyGrossesDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DailyGrossesDtoResult"
+                  "$ref": "#/components/schemas/DailyGrossesDto"
                 }
               }
             }
@@ -4189,17 +3592,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -4253,17 +3656,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/MonthlyGrossesDtoResult"
+                  "$ref": "#/components/schemas/MonthlyGrossesDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MonthlyGrossesDtoResult"
+                  "$ref": "#/components/schemas/MonthlyGrossesDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MonthlyGrossesDtoResult"
+                  "$ref": "#/components/schemas/MonthlyGrossesDto"
                 }
               }
             }
@@ -4273,17 +3676,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -4312,17 +3715,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/CompanyStatsDtoResult"
+                  "$ref": "#/components/schemas/CompanyStatsDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CompanyStatsDtoResult"
+                  "$ref": "#/components/schemas/CompanyStatsDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CompanyStatsDtoResult"
+                  "$ref": "#/components/schemas/CompanyStatsDto"
                 }
               }
             }
@@ -4332,17 +3735,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -4403,37 +3806,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/TruckStatsDtoPagedResult"
+                  "$ref": "#/components/schemas/TruckStatsDtoPagedResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TruckStatsDtoPagedResult"
+                  "$ref": "#/components/schemas/TruckStatsDtoPagedResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TruckStatsDtoPagedResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/TruckStatsDtoPagedResponse"
                 }
               }
             }
@@ -4472,17 +3855,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/DriverStatsDtoResult"
+                  "$ref": "#/components/schemas/DriverStatsDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DriverStatsDtoResult"
+                  "$ref": "#/components/schemas/DriverStatsDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DriverStatsDtoResult"
+                  "$ref": "#/components/schemas/DriverStatsDto"
                 }
               }
             }
@@ -4492,17 +3875,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -4533,37 +3916,37 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubscriptionDtoResult"
+                  "$ref": "#/components/schemas/SubscriptionDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubscriptionDtoResult"
+                  "$ref": "#/components/schemas/SubscriptionDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubscriptionDtoResult"
+                  "$ref": "#/components/schemas/SubscriptionDto"
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -4587,42 +3970,25 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -4674,37 +4040,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubscriptionDtoPagedResult"
+                  "$ref": "#/components/schemas/SubscriptionDtoPagedResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubscriptionDtoPagedResult"
+                  "$ref": "#/components/schemas/SubscriptionDtoPagedResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubscriptionDtoPagedResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/SubscriptionDtoPagedResponse"
                 }
               }
             }
@@ -4736,42 +4082,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -4816,42 +4145,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -4896,42 +4208,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -4962,37 +4257,37 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubscriptionPlanDtoResult"
+                  "$ref": "#/components/schemas/SubscriptionPlanDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubscriptionPlanDtoResult"
+                  "$ref": "#/components/schemas/SubscriptionPlanDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubscriptionPlanDtoResult"
+                  "$ref": "#/components/schemas/SubscriptionPlanDto"
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -5035,42 +4330,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -5094,42 +4372,25 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -5181,37 +4442,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubscriptionPlanDtoPagedResult"
+                  "$ref": "#/components/schemas/SubscriptionPlanDtoPagedResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubscriptionPlanDtoPagedResult"
+                  "$ref": "#/components/schemas/SubscriptionPlanDtoPagedResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubscriptionPlanDtoPagedResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/SubscriptionPlanDtoPagedResponse"
                 }
               }
             }
@@ -5243,42 +4484,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -5308,37 +4532,37 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/TenantDtoResult"
+                  "$ref": "#/components/schemas/TenantDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TenantDtoResult"
+                  "$ref": "#/components/schemas/TenantDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TenantDtoResult"
+                  "$ref": "#/components/schemas/TenantDto"
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -5397,37 +4621,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoadDtoPagedResult"
+                  "$ref": "#/components/schemas/TenantDtoPagedResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoadDtoPagedResult"
+                  "$ref": "#/components/schemas/TenantDtoPagedResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoadDtoPagedResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/TenantDtoPagedResponse"
                 }
               }
             }
@@ -5459,42 +4663,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -5539,42 +4726,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -5598,42 +4768,25 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -5664,37 +4817,37 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/TripDtoResult"
+                  "$ref": "#/components/schemas/TripDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TripDtoResult"
+                  "$ref": "#/components/schemas/TripDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TripDtoResult"
+                  "$ref": "#/components/schemas/TripDto"
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -5760,37 +4913,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/TripDtoPagedResult"
+                  "$ref": "#/components/schemas/TripDtoPagedResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TripDtoPagedResult"
+                  "$ref": "#/components/schemas/TripDtoPagedResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TripDtoPagedResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/TripDtoPagedResponse"
                 }
               }
             }
@@ -5822,42 +4955,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -5896,17 +5012,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/OptimizedTripStopsDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/OptimizedTripStopsDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/OptimizedTripStopsDto"
                 }
               }
             }
@@ -5916,17 +5032,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -5971,42 +5087,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -6030,42 +5129,25 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -6118,37 +5200,37 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/TruckDtoResult"
+                  "$ref": "#/components/schemas/TruckDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TruckDtoResult"
+                  "$ref": "#/components/schemas/TruckDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TruckDtoResult"
+                  "$ref": "#/components/schemas/TruckDto"
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -6207,37 +5289,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/TruckDtoPagedResult"
+                  "$ref": "#/components/schemas/TruckDtoPagedResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TruckDtoPagedResult"
+                  "$ref": "#/components/schemas/TruckDtoPagedResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TruckDtoPagedResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/TruckDtoPagedResponse"
                 }
               }
             }
@@ -6269,42 +5331,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -6349,42 +5394,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -6408,42 +5436,25 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -6473,37 +5484,37 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserDtoResult"
+                  "$ref": "#/components/schemas/UserDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserDtoResult"
+                  "$ref": "#/components/schemas/UserDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserDtoResult"
+                  "$ref": "#/components/schemas/UserDto"
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -6546,42 +5557,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -6633,37 +5627,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserDtoPagedResult"
+                  "$ref": "#/components/schemas/UserDtoPagedResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserDtoPagedResult"
+                  "$ref": "#/components/schemas/UserDtoPagedResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserDtoPagedResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/UserDtoPagedResponse"
                 }
               }
             }
@@ -6694,37 +5668,37 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/TenantDtoResult"
+                  "$ref": "#/components/schemas/TenantDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TenantDtoResult"
+                  "$ref": "#/components/schemas/TenantDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TenantDtoResult"
+                  "$ref": "#/components/schemas/TenantDto"
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -6768,42 +5742,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -6949,23 +5906,6 @@
           "totalDistance": {
             "type": "number",
             "format": "double"
-          }
-        },
-        "additionalProperties": false
-      },
-      "CompanyStatsDtoResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/CompanyStatsDto"
           }
         },
         "additionalProperties": false
@@ -7294,6 +6234,11 @@
               "$ref": "#/components/schemas/TripStopDto"
             },
             "nullable": true
+          },
+          "totalDistance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -7388,48 +6333,18 @@
         },
         "additionalProperties": false
       },
-      "CustomerDtoPagedResult": {
+      "CustomerDtoPagedResponse": {
         "type": "object",
         "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
+          "items": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CustomerDto"
             },
             "nullable": true
           },
-          "totalItems": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "CustomerDtoResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/CustomerDto"
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
           }
         },
         "additionalProperties": false
@@ -7475,23 +6390,6 @@
             "type": "number",
             "format": "double",
             "readOnly": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "DailyGrossesDtoResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/DailyGrossesDto"
           }
         },
         "additionalProperties": false
@@ -7559,44 +6457,6 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "DocumentDtoIEnumerableResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DocumentDto"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "DocumentDtoResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/DocumentDto"
           }
         },
         "additionalProperties": false
@@ -7683,23 +6543,6 @@
               "$ref": "#/components/schemas/DriverEfficiencyDto"
             },
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "DriverDashboardDtoResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/DriverDashboardDto"
           }
         },
         "additionalProperties": false
@@ -7797,31 +6640,18 @@
         },
         "additionalProperties": false
       },
-      "DriverReportDtoPagedResult": {
+      "DriverReportDtoPagedResponse": {
         "type": "object",
         "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
+          "items": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/DriverReportDto"
             },
             "nullable": true
           },
-          "totalItems": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
           }
         },
         "additionalProperties": false
@@ -7876,23 +6706,6 @@
           "lastMonthDistance": {
             "type": "number",
             "format": "double"
-          }
-        },
-        "additionalProperties": false
-      },
-      "DriverStatsDtoResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/DriverStatsDto"
           }
         },
         "additionalProperties": false
@@ -7986,48 +6799,38 @@
         },
         "additionalProperties": false
       },
-      "EmployeeDtoPagedResult": {
+      "EmployeeDtoPagedResponse": {
         "type": "object",
         "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
+          "items": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/EmployeeDto"
             },
             "nullable": true
           },
-          "totalItems": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
           }
         },
         "additionalProperties": false
       },
-      "EmployeeDtoResult": {
+      "ErrorResponse": {
         "type": "object",
         "properties": {
           "error": {
             "type": "string",
             "nullable": true
           },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/EmployeeDto"
+          "details": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -8139,23 +6942,6 @@
         },
         "additionalProperties": false
       },
-      "FinancialsReportDtoResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/FinancialsReportDto"
-          }
-        },
-        "additionalProperties": false
-      },
       "GeoPoint": {
         "type": "object",
         "properties": {
@@ -8172,24 +6958,6 @@
       },
       "GetCompanyStatsQuery": {
         "type": "object",
-        "additionalProperties": false
-      },
-      "GuidResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "type": "string",
-            "format": "uuid"
-          }
-        },
         "additionalProperties": false
       },
       "InvoiceDto": {
@@ -8289,48 +7057,18 @@
         },
         "additionalProperties": false
       },
-      "InvoiceDtoPagedResult": {
+      "InvoiceDtoPagedResponse": {
         "type": "object",
         "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
+          "items": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/InvoiceDto"
             },
             "nullable": true
           },
-          "totalItems": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "InvoiceDtoResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/InvoiceDto"
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
           }
         },
         "additionalProperties": false
@@ -8489,48 +7227,18 @@
         },
         "additionalProperties": false
       },
-      "LoadDtoPagedResult": {
+      "LoadDtoPagedResponse": {
         "type": "object",
         "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
+          "items": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/LoadDto"
             },
             "nullable": true
           },
-          "totalItems": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "LoadDtoResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/LoadDto"
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
           }
         },
         "additionalProperties": false
@@ -8671,23 +7379,6 @@
         },
         "additionalProperties": false
       },
-      "LoadsReportDtoResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/LoadsReportDto"
-          }
-        },
-        "additionalProperties": false
-      },
       "Money": {
         "required": [
           "amount",
@@ -8751,23 +7442,6 @@
         },
         "additionalProperties": false
       },
-      "MonthlyGrossesDtoResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/MonthlyGrossesDto"
-          }
-        },
-        "additionalProperties": false
-      },
       "NotificationDto": {
         "type": "object",
         "properties": {
@@ -8794,27 +7468,6 @@
         },
         "additionalProperties": false
       },
-      "NotificationDtoArrayResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NotificationDto"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "OptimizeTripStopsCommand": {
         "type": "object",
         "properties": {
@@ -8828,6 +7481,45 @@
               "$ref": "#/components/schemas/TripStopDto"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OptimizedTripStopsDto": {
+        "type": "object",
+        "properties": {
+          "totalDistance": {
+            "type": "number",
+            "format": "double"
+          },
+          "orderedStops": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TripStopDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PaginationMeta": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -8867,48 +7559,18 @@
         },
         "additionalProperties": false
       },
-      "PaymentDtoPagedResult": {
+      "PaymentDtoPagedResponse": {
         "type": "object",
         "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
+          "items": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentDto"
             },
             "nullable": true
           },
-          "totalItems": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "PaymentDtoResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/PaymentDto"
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
           }
         },
         "additionalProperties": false
@@ -8990,52 +7652,6 @@
         },
         "additionalProperties": false
       },
-      "PaymentMethodDtoPagedResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PaymentMethodDto"
-            },
-            "nullable": true
-          },
-          "totalItems": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "PaymentMethodDtoResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/PaymentMethodDto"
-          }
-        },
-        "additionalProperties": false
-      },
       "PaymentMethodType": {
         "enum": [
           "card",
@@ -9112,49 +7728,11 @@
         },
         "additionalProperties": false
       },
-      "PayrollDtoResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/PayrollDto"
-          }
-        },
-        "additionalProperties": false
-      },
       "PermissionDto": {
         "type": "object",
         "properties": {
           "name": {
             "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "PermissionDtoArrayResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PermissionDto"
-            },
             "nullable": true
           }
         },
@@ -9243,20 +7821,6 @@
         },
         "additionalProperties": false
       },
-      "Result": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          }
-        },
-        "additionalProperties": false
-      },
       "RevenueTrendDto": {
         "type": "object",
         "properties": {
@@ -9297,31 +7861,18 @@
         },
         "additionalProperties": false
       },
-      "RoleDtoPagedResult": {
+      "RoleDtoPagedResponse": {
         "type": "object",
         "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
+          "items": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/RoleDto"
             },
             "nullable": true
           },
-          "totalItems": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
           }
         },
         "additionalProperties": false
@@ -9356,6 +7907,19 @@
             "format": "uuid"
           },
           "deviceToken": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SetupIntentDto": {
+        "required": [
+          "clientSecret"
+        ],
+        "type": "object",
+        "properties": {
+          "clientSecret": {
             "type": "string",
             "nullable": true
           }
@@ -9462,48 +8026,18 @@
         },
         "additionalProperties": false
       },
-      "SubscriptionDtoPagedResult": {
+      "SubscriptionDtoPagedResponse": {
         "type": "object",
         "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
+          "items": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SubscriptionDto"
             },
             "nullable": true
           },
-          "totalItems": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "SubscriptionDtoResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/SubscriptionDto"
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
           }
         },
         "additionalProperties": false
@@ -9549,48 +8083,18 @@
         },
         "additionalProperties": false
       },
-      "SubscriptionPlanDtoPagedResult": {
+      "SubscriptionPlanDtoPagedResponse": {
         "type": "object",
         "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
+          "items": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SubscriptionPlanDto"
             },
             "nullable": true
           },
-          "totalItems": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "SubscriptionPlanDtoResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/SubscriptionPlanDto"
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
           }
         },
         "additionalProperties": false
@@ -9654,19 +8158,18 @@
         },
         "additionalProperties": false
       },
-      "TenantDtoResult": {
+      "TenantDtoPagedResponse": {
         "type": "object",
         "properties": {
-          "error": {
-            "type": "string",
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TenantDto"
+            },
             "nullable": true
           },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/TenantDto"
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
           }
         },
         "additionalProperties": false
@@ -9805,48 +8308,18 @@
         },
         "additionalProperties": false
       },
-      "TripDtoPagedResult": {
+      "TripDtoPagedResponse": {
         "type": "object",
         "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
+          "items": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/TripDto"
             },
             "nullable": true
           },
-          "totalItems": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "TripDtoResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/TripDto"
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
           }
         },
         "additionalProperties": false
@@ -10007,48 +8480,18 @@
         },
         "additionalProperties": false
       },
-      "TruckDtoPagedResult": {
+      "TruckDtoPagedResponse": {
         "type": "object",
         "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
+          "items": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/TruckDto"
             },
             "nullable": true
           },
-          "totalItems": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "TruckDtoResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/TruckDto"
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
           }
         },
         "additionalProperties": false
@@ -10099,31 +8542,18 @@
         },
         "additionalProperties": false
       },
-      "TruckStatsDtoPagedResult": {
+      "TruckStatsDtoPagedResponse": {
         "type": "object",
         "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
+          "items": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/TruckStatsDto"
             },
             "nullable": true
           },
-          "totalItems": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
           }
         },
         "additionalProperties": false
@@ -10560,6 +8990,11 @@
               "$ref": "#/components/schemas/TripStopDto"
             },
             "nullable": true
+          },
+          "totalDistance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -10678,52 +9113,78 @@
         },
         "additionalProperties": false
       },
-      "UserDtoPagedResult": {
+      "UserDtoPagedResponse": {
         "type": "object",
         "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
+          "items": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/UserDto"
             },
             "nullable": true
           },
-          "totalItems": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "UserDtoResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/UserDto"
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
           }
         },
         "additionalProperties": false
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Customer"
+    },
+    {
+      "name": "Default"
+    },
+    {
+      "name": "Document"
+    },
+    {
+      "name": "Driver"
+    },
+    {
+      "name": "Employee"
+    },
+    {
+      "name": "Invoices"
+    },
+    {
+      "name": "Load"
+    },
+    {
+      "name": "Notification"
+    },
+    {
+      "name": "Payment"
+    },
+    {
+      "name": "Report"
+    },
+    {
+      "name": "Role"
+    },
+    {
+      "name": "Stat"
+    },
+    {
+      "name": "Subscription"
+    },
+    {
+      "name": "Tenant"
+    },
+    {
+      "name": "Trip"
+    },
+    {
+      "name": "Truck"
+    },
+    {
+      "name": "User"
+    },
+    {
+      "name": "Webhook"
+    }
+  ]
 }

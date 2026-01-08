@@ -186,14 +186,12 @@ class LocationTrackingService : Service() {
     private suspend fun checkLoadProximity(location: Location) {
         try {
             // Get active loads
-            val response = loadApi.getLoads(onlyActiveLoads = true)
-            val result = response.body()
-            if (result.success != true || result.data == null) {
-                Logger.e("Error getting active loads: ${result.error}")
+            val result = loadApi.getLoads(onlyActiveLoads = true).body()
+            val loads = result.items
+            if (loads == null) {
+                Logger.e("Error getting active loads")
                 return
             }
-
-            val loads = result.data
 
             loads.forEach { load ->
                 val originLat = load.originLocation.latitude

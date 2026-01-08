@@ -137,3 +137,54 @@ Koin is used for multiplatform DI, configured in `Module.kt` with platform-speci
 ### API Generation
 
 API clients and models are auto-generated from OpenAPI spec using the OpenAPI Generator Gradle plugin.
+
+#### Automatic Generation (Build-Time)
+
+The API client is automatically regenerated during the build process. When you run any build command (e.g., `./gradlew assembleDebug`), the `openApiGenerate` task runs automatically if the spec file has changed.
+
+```bash
+# Build triggers automatic API generation
+./gradlew assembleDebug
+```
+
+#### Manual Generation
+
+To manually regenerate the API client (e.g., after updating the OpenAPI spec):
+
+```bash
+# Regenerate API client only
+./gradlew openApiGenerate
+
+# Force regeneration and rebuild
+./gradlew openApiGenerate --rerun-tasks
+./gradlew compileDebugKotlinAndroid
+```
+
+#### Updating the OpenAPI Spec
+
+1. **Get the latest spec from the backend**:
+   - Start the backend API server
+   - Download the spec from `http://localhost:7000/swagger/v1/swagger.json`
+   - Save it to `composeApp/src/openapi/api-spec.json`
+
+2. **Regenerate the client**:
+
+   ```bash
+   ./gradlew openApiGenerate
+   ```
+
+3. **Build and fix any breaking changes**:
+
+   ```bash
+   ./gradlew compileDebugKotlinAndroid
+   ```
+
+#### Generated Files Location
+
+Generated API clients and models are output to:
+
+```text
+composeApp/build/generated/openapi/src/main/kotlin/com/jfleets/driver/api/
+```
+
+> **Note**: Generated files are in the `build/` directory and should not be committed to version control.

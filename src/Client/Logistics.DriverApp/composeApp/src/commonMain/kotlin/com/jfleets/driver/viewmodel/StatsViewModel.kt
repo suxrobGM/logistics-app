@@ -54,11 +54,7 @@ class StatsViewModel(
             userId?.let {
                 try {
                     val stats = statApi.getDriverStats(it).body()
-                    if (stats != null) {
-                        _statsState.value = StatsUiState.Success(stats)
-                    } else {
-                        _statsState.value = StatsUiState.Error("Failed to load stats")
-                    }
+                    _statsState.value = StatsUiState.Success(stats)
                 } catch (e: Exception) {
                     _statsState.value = StatsUiState.Error(e.message ?: "An error occurred")
                 }
@@ -77,27 +73,18 @@ class StatsViewModel(
 
             try {
                 if (range.useMonthly) {
-                    val result = statApi.getMonthlyGrosses(
+                    val grossesDto = statApi.getMonthlyGrosses(
                         startDate = range.startDate,
                         endDate = range.endDate
                     ).body()
-
-                    if (result != null) {
-                        _chartState.value = ChartUiState.MonthlySuccess(result.data ?: emptyList())
-                    } else {
-                        _chartState.value = ChartUiState.Error("Failed to load chart data")
-                    }
+                    _chartState.value = ChartUiState.MonthlySuccess(grossesDto.data ?: emptyList())
                 } else {
-                    val result = statApi.getDailyGrosses(
+                    val grossesDto = statApi.getDailyGrosses(
                         startDate = range.startDate,
                         endDate = range.endDate
                     ).body()
+                    _chartState.value = ChartUiState.DailySuccess(grossesDto.data ?: emptyList())
 
-                    if (result != null) {
-                        _chartState.value = ChartUiState.DailySuccess(result.data ?: emptyList())
-                    } else {
-                        _chartState.value = ChartUiState.Error("Failed to load chart data")
-                    }
                 }
             } catch (e: Exception) {
                 _chartState.value = ChartUiState.Error(e.message ?: "An error occurred")
