@@ -4,8 +4,8 @@ namespace Logistics.HttpClient.Abstractions;
 
 public interface IUserApi
 {
-    Task<Result<UserDto>> GetUserAsync(Guid userId);
-    Task<PagedResult<UserDto>> GetUsersAsync(SearchableQuery query);
-    Task<Result> UpdateUserAsync(UpdateUser command);
-    Task<Result<TenantDto>> GetUserCurrentTenant(Guid userId);
+    Task<UserDto?> GetUserAsync(Guid userId);
+    Task<PagedResponse<UserDto>?> GetUsersAsync(SearchableQuery query);
+    Task<bool> UpdateUserAsync(UpdateUser command);
+    Task<TenantDto?> GetUserCurrentTenant(Guid userId);
 }

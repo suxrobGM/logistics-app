@@ -7,14 +7,14 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { NotificationDtoArrayResult } from '../../models/notification-dto-array-result';
+import type { NotificationDto } from '../../models/notification-dto';
 
 export interface GetNotifications$Plain$Params {
   StartDate?: string;
   EndDate?: string;
 }
 
-export function getNotifications$Plain(http: HttpClient, rootUrl: string, params?: GetNotifications$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationDtoArrayResult>> {
+export function getNotifications$Plain(http: HttpClient, rootUrl: string, params?: GetNotifications$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<NotificationDto>>> {
   const rb = new RequestBuilder(rootUrl, getNotifications$Plain.PATH, 'get');
   if (params) {
     rb.query('StartDate', params.StartDate, {});
@@ -26,7 +26,7 @@ export function getNotifications$Plain(http: HttpClient, rootUrl: string, params
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<NotificationDtoArrayResult>;
+      return r as StrictHttpResponse<Array<NotificationDto>>;
     })
   );
 }

@@ -92,8 +92,8 @@ export class TripDetailsPage implements OnInit {
 
     this.isLoading.set(true);
     const result = await this.api.invoke(getTripById$Json, { tripId: id });
-    if (result.success && result.data) {
-      this.trip.set(result.data);
+    if (result) {
+      this.trip.set(result);
     }
 
     this.isLoading.set(false);

@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { TruckDtoResult } from '../../models/truck-dto-result';
+import type { TruckDto } from '../../models/truck-dto';
 
 export interface GetTruckById$Plain$Params {
   truckOrDriverId: string;
@@ -16,7 +16,7 @@ export interface GetTruckById$Plain$Params {
   OnlyActiveLoads?: boolean;
 }
 
-export function getTruckById$Plain(http: HttpClient, rootUrl: string, params: GetTruckById$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<TruckDtoResult>> {
+export function getTruckById$Plain(http: HttpClient, rootUrl: string, params: GetTruckById$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<TruckDto>> {
   const rb = new RequestBuilder(rootUrl, getTruckById$Plain.PATH, 'get');
   if (params) {
     rb.path('truckOrDriverId', params.truckOrDriverId, {});
@@ -30,7 +30,7 @@ export function getTruckById$Plain(http: HttpClient, rootUrl: string, params: Ge
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<TruckDtoResult>;
+      return r as StrictHttpResponse<TruckDto>;
     })
   );
 }

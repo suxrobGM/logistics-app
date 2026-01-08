@@ -30,13 +30,11 @@ class LoadDetailViewModel(
         viewModelScope.launch {
             _uiState.value = LoadDetailUiState.Loading
             try {
-                val response = loadApi.getLoadById(loadId)
-                val result = response.body()
-                if (result.success == true && result.data != null) {
-                    _uiState.value = LoadDetailUiState.Success(result.data)
+                val load = loadApi.getLoadById(loadId).body()
+                if (load != null) {
+                    _uiState.value = LoadDetailUiState.Success(load)
                 } else {
-                    _uiState.value =
-                        LoadDetailUiState.Error(result.error ?: "Failed to load details")
+                    _uiState.value = LoadDetailUiState.Error("Failed to load details")
                 }
             } catch (e: Exception) {
                 _uiState.value = LoadDetailUiState.Error(e.message ?: "An error occurred")
@@ -51,11 +49,8 @@ class LoadDetailViewModel(
                     loadId = loadId,
                     loadStatus = LoadStatus.PICKED_UP
                 )
-                val response = driverApi.confirmLoadStatus(request)
-                val result = response.body()
-                if (result.success == true) {
-                    loadDetails() // Reload to get updated status
-                }
+                driverApi.confirmLoadStatus(request)
+                loadDetails() // Reload to get updated status
             } catch (e: Exception) {
                 // Handle error
             }
@@ -69,11 +64,8 @@ class LoadDetailViewModel(
                     loadId = loadId,
                     loadStatus = LoadStatus.DELIVERED
                 )
-                val response = driverApi.confirmLoadStatus(request)
-                val result = response.body()
-                if (result.success == true) {
-                    loadDetails() // Reload to get updated status
-                }
+                driverApi.confirmLoadStatus(request)
+                loadDetails() // Reload to get updated status
             } catch (e: Exception) {
                 // Handle error
             }

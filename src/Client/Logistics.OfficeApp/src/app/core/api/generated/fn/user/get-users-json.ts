@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { UserDtoPagedResult } from '../../models/user-dto-paged-result';
+import type { UserDtoPagedResponse } from '../../models/user-dto-paged-response';
 
 export interface GetUsers$Json$Params {
   Search?: string;
@@ -16,7 +16,7 @@ export interface GetUsers$Json$Params {
   PageSize?: number;
 }
 
-export function getUsers$Json(http: HttpClient, rootUrl: string, params?: GetUsers$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<UserDtoPagedResult>> {
+export function getUsers$Json(http: HttpClient, rootUrl: string, params?: GetUsers$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<UserDtoPagedResponse>> {
   const rb = new RequestBuilder(rootUrl, getUsers$Json.PATH, 'get');
   if (params) {
     rb.query('Search', params.Search, {});
@@ -30,7 +30,7 @@ export function getUsers$Json(http: HttpClient, rootUrl: string, params?: GetUse
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<UserDtoPagedResult>;
+      return r as StrictHttpResponse<UserDtoPagedResponse>;
     })
   );
 }

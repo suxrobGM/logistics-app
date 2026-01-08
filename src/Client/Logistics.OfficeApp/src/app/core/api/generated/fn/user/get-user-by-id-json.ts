@@ -7,13 +7,13 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { UserDtoResult } from '../../models/user-dto-result';
+import type { UserDto } from '../../models/user-dto';
 
 export interface GetUserById$Json$Params {
   id: string;
 }
 
-export function getUserById$Json(http: HttpClient, rootUrl: string, params: GetUserById$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<UserDtoResult>> {
+export function getUserById$Json(http: HttpClient, rootUrl: string, params: GetUserById$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<UserDto>> {
   const rb = new RequestBuilder(rootUrl, getUserById$Json.PATH, 'get');
   if (params) {
     rb.path('id', params.id, {});
@@ -24,7 +24,7 @@ export function getUserById$Json(http: HttpClient, rootUrl: string, params: GetU
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<UserDtoResult>;
+      return r as StrictHttpResponse<UserDto>;
     })
   );
 }

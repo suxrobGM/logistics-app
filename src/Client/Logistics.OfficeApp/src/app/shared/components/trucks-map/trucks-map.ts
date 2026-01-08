@@ -47,11 +47,11 @@ export class TrucksMap implements OnDestroy {
   private async fetchTrucksData(): Promise<void> {
     const result = await this.api.invoke(getTrucks$Json, { PageSize: 100 });
 
-    if (!result.success || !result.data) {
+    if (!result.items) {
       return;
     }
 
-    const truckLocations: TruckGeolocationDto[] = result.data.flatMap((truck) => {
+    const truckLocations: TruckGeolocationDto[] = result.items.flatMap((truck) => {
       if (truck.currentLocation) {
         return [
           {

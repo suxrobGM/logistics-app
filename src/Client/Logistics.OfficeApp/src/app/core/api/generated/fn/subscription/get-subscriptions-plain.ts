@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { SubscriptionDtoPagedResult } from '../../models/subscription-dto-paged-result';
+import type { SubscriptionDtoPagedResponse } from '../../models/subscription-dto-paged-response';
 
 export interface GetSubscriptions$Plain$Params {
   Search?: string;
@@ -16,7 +16,7 @@ export interface GetSubscriptions$Plain$Params {
   PageSize?: number;
 }
 
-export function getSubscriptions$Plain(http: HttpClient, rootUrl: string, params?: GetSubscriptions$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<SubscriptionDtoPagedResult>> {
+export function getSubscriptions$Plain(http: HttpClient, rootUrl: string, params?: GetSubscriptions$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<SubscriptionDtoPagedResponse>> {
   const rb = new RequestBuilder(rootUrl, getSubscriptions$Plain.PATH, 'get');
   if (params) {
     rb.query('Search', params.Search, {});
@@ -30,7 +30,7 @@ export function getSubscriptions$Plain(http: HttpClient, rootUrl: string, params
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<SubscriptionDtoPagedResult>;
+      return r as StrictHttpResponse<SubscriptionDtoPagedResponse>;
     })
   );
 }

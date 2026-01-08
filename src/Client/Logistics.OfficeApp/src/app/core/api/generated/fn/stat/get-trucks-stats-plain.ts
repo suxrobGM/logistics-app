@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { TruckStatsDtoPagedResult } from '../../models/truck-stats-dto-paged-result';
+import type { TruckStatsDtoPagedResponse } from '../../models/truck-stats-dto-paged-response';
 
 export interface GetTrucksStats$Plain$Params {
   StartDate?: string;
@@ -17,7 +17,7 @@ export interface GetTrucksStats$Plain$Params {
   PageSize?: number;
 }
 
-export function getTrucksStats$Plain(http: HttpClient, rootUrl: string, params?: GetTrucksStats$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<TruckStatsDtoPagedResult>> {
+export function getTrucksStats$Plain(http: HttpClient, rootUrl: string, params?: GetTrucksStats$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<TruckStatsDtoPagedResponse>> {
   const rb = new RequestBuilder(rootUrl, getTrucksStats$Plain.PATH, 'get');
   if (params) {
     rb.query('StartDate', params.StartDate, {});
@@ -32,7 +32,7 @@ export function getTrucksStats$Plain(http: HttpClient, rootUrl: string, params?:
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<TruckStatsDtoPagedResult>;
+      return r as StrictHttpResponse<TruckStatsDtoPagedResponse>;
     })
   );
 }

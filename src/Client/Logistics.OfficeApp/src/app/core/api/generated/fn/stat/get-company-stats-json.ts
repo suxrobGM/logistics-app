@@ -7,14 +7,14 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { CompanyStatsDtoResult } from '../../models/company-stats-dto-result';
+import type { CompanyStatsDto } from '../../models/company-stats-dto';
 import type { GetCompanyStatsQuery } from '../../models/get-company-stats-query';
 
 export interface GetCompanyStats$Json$Params {
   request?: GetCompanyStatsQuery;
 }
 
-export function getCompanyStats$Json(http: HttpClient, rootUrl: string, params?: GetCompanyStats$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<CompanyStatsDtoResult>> {
+export function getCompanyStats$Json(http: HttpClient, rootUrl: string, params?: GetCompanyStats$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<CompanyStatsDto>> {
   const rb = new RequestBuilder(rootUrl, getCompanyStats$Json.PATH, 'get');
   if (params) {
     rb.query('request', params.request, {});
@@ -25,7 +25,7 @@ export function getCompanyStats$Json(http: HttpClient, rootUrl: string, params?:
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<CompanyStatsDtoResult>;
+      return r as StrictHttpResponse<CompanyStatsDto>;
     })
   );
 }

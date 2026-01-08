@@ -1,7 +1,7 @@
 import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { Api, deleteTrip$Json, getTripById$Json, updateTrip$Json } from "@/core/api";
+import { Api, deleteTrip, getTripById$Json, updateTrip } from "@/core/api";
 import type { UpdateTripCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { TripWizard, type TripWizardValue } from "../components";
@@ -55,11 +55,9 @@ export class TripEditPage implements OnInit {
       totalDistance: formValues.totalDistance,
     };
 
-    const result = await this.api.invoke(updateTrip$Json, { id: tripId, body: command });
-    if (result.success) {
-      this.toastService.showSuccess("Trip updated successfully");
-      this.fetchTrip();
-    }
+    await this.api.invoke(updateTrip, { id: tripId, body: command });
+    this.toastService.showSuccess("Trip updated successfully");
+    this.fetchTrip();
     this.isLoading.set(false);
   }
 
@@ -72,10 +70,8 @@ export class TripEditPage implements OnInit {
 
     this.isLoading.set(true);
 
-    const result = await this.api.invoke(getTripById$Json, { tripId });
-    if (result.success && result.data) {
-      const trip = result.data;
-
+    const trip = await this.api.invoke(getTripById$Json, { tripId });
+    if (trip) {
       this.initialData.set({
         tripName: trip.name ?? undefined,
         truckId: trip.truckId,
@@ -100,11 +96,9 @@ export class TripEditPage implements OnInit {
 
     this.isLoading.set(true);
 
-    const result = await this.api.invoke(deleteTrip$Json, { id: tripId });
-    if (result.success) {
-      this.toastService.showSuccess("A trip has been deleted successfully");
-      this.router.navigateByUrl("/trips");
-    }
+    await this.api.invoke(deleteTrip, { id: tripId });
+    this.toastService.showSuccess("A trip has been deleted successfully");
+    this.router.navigateByUrl("/trips");
 
     this.isLoading.set(false);
   }

@@ -7,13 +7,13 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { PaymentMethodDtoPagedResult } from '../../models/payment-method-dto-paged-result';
+import type { PaymentMethodDto } from '../../models/payment-method-dto';
 
 export interface GetPaymentMethods$Json$Params {
   OrderBy?: string;
 }
 
-export function getPaymentMethods$Json(http: HttpClient, rootUrl: string, params?: GetPaymentMethods$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<PaymentMethodDtoPagedResult>> {
+export function getPaymentMethods$Json(http: HttpClient, rootUrl: string, params?: GetPaymentMethods$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<PaymentMethodDto>>> {
   const rb = new RequestBuilder(rootUrl, getPaymentMethods$Json.PATH, 'get');
   if (params) {
     rb.query('OrderBy', params.OrderBy, {});
@@ -24,7 +24,7 @@ export function getPaymentMethods$Json(http: HttpClient, rootUrl: string, params
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<PaymentMethodDtoPagedResult>;
+      return r as StrictHttpResponse<Array<PaymentMethodDto>>;
     })
   );
 }

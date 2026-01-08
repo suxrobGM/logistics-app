@@ -182,6 +182,12 @@ internal class GenericApiClient
 
     private async Task<string> ReadContentAsync(HttpResponseMessage response)
     {
+        // Handle 204 No Content responses
+        if (response.StatusCode == HttpStatusCode.NoContent)
+        {
+            return string.Empty;
+        }
+
         var content = await response.Content.ReadAsStringAsync();
 
         if (response.StatusCode == HttpStatusCode.Unauthorized)

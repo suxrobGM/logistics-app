@@ -8,7 +8,7 @@ import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { Api, deleteCustomer$Json } from "@/core/api";
+import { Api, deleteCustomer } from "@/core/api";
 import { ToastService } from "@/core/services";
 import { DataContainer } from "@/shared/components";
 import { CustomersListStore } from "../store/customers-list.store";
@@ -53,10 +53,8 @@ export class CustomersListComponent {
   }
 
   private async deleteCustomer(id: string): Promise<void> {
-    const result = await this.api.invoke(deleteCustomer$Json, { id });
-    if (result.success) {
-      this.toastService.showSuccess("The customer has been deleted successfully");
-      this.store.removeItem(id);
-    }
+    await this.api.invoke(deleteCustomer, { id });
+    this.toastService.showSuccess("The customer has been deleted successfully");
+    this.store.removeItem(id);
   }
 }

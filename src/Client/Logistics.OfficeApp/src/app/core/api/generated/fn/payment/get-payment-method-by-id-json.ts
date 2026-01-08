@@ -7,13 +7,13 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { PaymentMethodDtoResult } from '../../models/payment-method-dto-result';
+import type { PaymentMethodDto } from '../../models/payment-method-dto';
 
 export interface GetPaymentMethodById$Json$Params {
   id: string;
 }
 
-export function getPaymentMethodById$Json(http: HttpClient, rootUrl: string, params: GetPaymentMethodById$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<PaymentMethodDtoResult>> {
+export function getPaymentMethodById$Json(http: HttpClient, rootUrl: string, params: GetPaymentMethodById$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<PaymentMethodDto>> {
   const rb = new RequestBuilder(rootUrl, getPaymentMethodById$Json.PATH, 'get');
   if (params) {
     rb.path('id', params.id, {});
@@ -24,7 +24,7 @@ export function getPaymentMethodById$Json(http: HttpClient, rootUrl: string, par
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<PaymentMethodDtoResult>;
+      return r as StrictHttpResponse<PaymentMethodDto>;
     })
   );
 }

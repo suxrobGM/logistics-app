@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { DocumentDtoIEnumerableResult } from '../../models/document-dto-i-enumerable-result';
+import type { DocumentDto } from '../../models/document-dto';
 import type { DocumentOwnerType } from '../../models/document-owner-type';
 import type { DocumentStatus } from '../../models/document-status';
 import type { DocumentType } from '../../models/document-type';
@@ -19,7 +19,7 @@ export interface GetDocuments$Json$Params {
   Type?: DocumentType;
 }
 
-export function getDocuments$Json(http: HttpClient, rootUrl: string, params?: GetDocuments$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<DocumentDtoIEnumerableResult>> {
+export function getDocuments$Json(http: HttpClient, rootUrl: string, params?: GetDocuments$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<DocumentDto>>> {
   const rb = new RequestBuilder(rootUrl, getDocuments$Json.PATH, 'get');
   if (params) {
     rb.query('OwnerType', params.OwnerType, {});
@@ -33,7 +33,7 @@ export function getDocuments$Json(http: HttpClient, rootUrl: string, params?: Ge
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<DocumentDtoIEnumerableResult>;
+      return r as StrictHttpResponse<Array<DocumentDto>>;
     })
   );
 }

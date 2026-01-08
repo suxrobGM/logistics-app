@@ -10,7 +10,7 @@ import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
-import { Api, removeRoleFromEmployee$Json, updateEmployee$Json } from "@/core/api";
+import { Api, removeRoleFromEmployee, updateEmployee } from "@/core/api";
 import type {
   RemoveRoleFromEmployeeCommand,
   RoleDto,
@@ -61,19 +61,17 @@ export class ChangeRoleDialogComponent {
       return;
     }
 
-    const updateEmployee: UpdateEmployeeCommand = {
+    const command: UpdateEmployeeCommand = {
       userId: this.userId(),
       role: role,
     };
 
     this.isLoading.set(true);
-    const result = await this.api.invoke(updateEmployee$Json, {
+    await this.api.invoke(updateEmployee, {
       userId: this.userId(),
-      body: updateEmployee,
+      body: command,
     });
-    if (result.success) {
-      this.toastService.showSuccess(`Successfully changed employee's role`);
-    }
+    this.toastService.showSuccess(`Successfully changed employee's role`);
 
     this.isLoading.set(false);
   }
@@ -99,19 +97,17 @@ export class ChangeRoleDialogComponent {
   }
 
   private async removeRole(roleName: string): Promise<void> {
-    const removeRole: RemoveRoleFromEmployeeCommand = {
+    const command: RemoveRoleFromEmployeeCommand = {
       userId: this.userId(),
       role: roleName,
     };
 
     this.isLoading.set(true);
-    const result = await this.api.invoke(removeRoleFromEmployee$Json, {
+    await this.api.invoke(removeRoleFromEmployee, {
       userId: this.userId(),
-      body: removeRole,
+      body: command,
     });
-    if (result.success) {
-      this.toastService.showSuccess(`Removed ${roleName} role from the employee`);
-    }
+    this.toastService.showSuccess(`Removed ${roleName} role from the employee`);
 
     this.isLoading.set(false);
   }

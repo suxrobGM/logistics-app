@@ -40,30 +40,28 @@ class DashboardViewModel(
                 }
 
                 // Get driver ID first
-                val driverResult = driverApi.getDriverByUserId(userId).body()
+                val driver = driverApi.getDriverByUserId(userId).body()
 
-                if (driverResult.success != true || driverResult.data == null) {
-                    _uiState.value =
-                        DashboardUiState.Error(driverResult.error ?: "Failed to load driver")
+                if (driver == null) {
+                    _uiState.value = DashboardUiState.Error("Failed to load driver")
                     return@launch
                 }
 
-                val driverId = driverResult.data.id ?: ""
+                val driverId = driver.id ?: ""
 
                 // Then get truck with active loads
-                val truckResult =
+                val truck =
                     truckApi.getTruckById(driverId, includeLoads = true, onlyActiveLoads = true)
                         .body()
 
-                if (truckResult.success == true && truckResult.data != null) {
-                    preferencesManager.saveTruckId(truckResult.data.id ?: "")
-                    preferencesManager.saveDriverName(truckResult.data.mainDriver?.fullName() ?: "")
-                    preferencesManager.saveTruckNumber(truckResult.data.number ?: "")
+                if (truck != null) {
+                    preferencesManager.saveTruckId(truck.id ?: "")
+                    preferencesManager.saveDriverName(truck.mainDriver?.fullName() ?: "")
+                    preferencesManager.saveTruckNumber(truck.number ?: "")
 
-                    _uiState.value = DashboardUiState.Success(truckResult.data)
+                    _uiState.value = DashboardUiState.Success(truck)
                 } else {
-                    _uiState.value =
-                        DashboardUiState.Error(truckResult.error ?: "Failed to load truck")
+                    _uiState.value = DashboardUiState.Error("Failed to load truck")
                 }
             } catch (e: Exception) {
                 _uiState.value = DashboardUiState.Error(e.message ?: "An error occurred")

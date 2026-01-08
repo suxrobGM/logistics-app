@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { DailyGrossesDtoResult } from '../../models/daily-grosses-dto-result';
+import type { DailyGrossesDto } from '../../models/daily-grosses-dto';
 
 export interface GetDailyGrosses$Json$Params {
   TruckId?: string;
@@ -16,7 +16,7 @@ export interface GetDailyGrosses$Json$Params {
   EndDate?: string;
 }
 
-export function getDailyGrosses$Json(http: HttpClient, rootUrl: string, params?: GetDailyGrosses$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<DailyGrossesDtoResult>> {
+export function getDailyGrosses$Json(http: HttpClient, rootUrl: string, params?: GetDailyGrosses$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<DailyGrossesDto>> {
   const rb = new RequestBuilder(rootUrl, getDailyGrosses$Json.PATH, 'get');
   if (params) {
     rb.query('TruckId', params.TruckId, {});
@@ -30,7 +30,7 @@ export function getDailyGrosses$Json(http: HttpClient, rootUrl: string, params?:
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<DailyGrossesDtoResult>;
+      return r as StrictHttpResponse<DailyGrossesDto>;
     })
   );
 }

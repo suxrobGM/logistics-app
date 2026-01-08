@@ -7,14 +7,14 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { DriverStatsDtoResult } from '../../models/driver-stats-dto-result';
+import type { DriverStatsDto } from '../../models/driver-stats-dto';
 
 export interface GetDriverStats$Json$Params {
   userId: string;
   UserId?: string;
 }
 
-export function getDriverStats$Json(http: HttpClient, rootUrl: string, params: GetDriverStats$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<DriverStatsDtoResult>> {
+export function getDriverStats$Json(http: HttpClient, rootUrl: string, params: GetDriverStats$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<DriverStatsDto>> {
   const rb = new RequestBuilder(rootUrl, getDriverStats$Json.PATH, 'get');
   if (params) {
     rb.path('userId', params.userId, {});
@@ -26,7 +26,7 @@ export function getDriverStats$Json(http: HttpClient, rootUrl: string, params: G
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<DriverStatsDtoResult>;
+      return r as StrictHttpResponse<DriverStatsDto>;
     })
   );
 }

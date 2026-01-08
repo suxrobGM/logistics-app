@@ -14,7 +14,7 @@ import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
-import { Api, createEmployee$Json } from "@/core/api";
+import { Api, createEmployee } from "@/core/api";
 import {
   type CreateEmployeeCommand,
   type RoleDto,
@@ -103,11 +103,9 @@ export class EmployeeAddComponent {
     };
 
     this.isLoading.set(true);
-    const result = await this.api.invoke(createEmployee$Json, { body: newEmployee });
-    if (result.success) {
-      this.toastService.showSuccess("New employee has been added successfully");
-      this.form.reset();
-    }
+    await this.api.invoke(createEmployee, { body: newEmployee });
+    this.toastService.showSuccess("New employee has been added successfully");
+    this.form.reset();
 
     this.isLoading.set(false);
   }

@@ -54,9 +54,9 @@ export class TruckStatsTableComponent {
       Page: page,
       PageSize: rows,
     });
-    if (result.success && result.data) {
-      this.truckStats.set(result.data);
-      this.totalRecords.set(result.totalItems ?? 0);
+    if (result) {
+      this.truckStats.set(result.items ?? []);
+      this.totalRecords.set(result.pagination?.total ?? 0);
     }
 
     this.isLoading.set(false);

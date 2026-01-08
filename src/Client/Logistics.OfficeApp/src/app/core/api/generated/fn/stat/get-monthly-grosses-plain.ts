@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { MonthlyGrossesDtoResult } from '../../models/monthly-grosses-dto-result';
+import type { MonthlyGrossesDto } from '../../models/monthly-grosses-dto';
 
 export interface GetMonthlyGrosses$Plain$Params {
   TruckId?: string;
@@ -16,7 +16,7 @@ export interface GetMonthlyGrosses$Plain$Params {
   EndDate?: string;
 }
 
-export function getMonthlyGrosses$Plain(http: HttpClient, rootUrl: string, params?: GetMonthlyGrosses$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<MonthlyGrossesDtoResult>> {
+export function getMonthlyGrosses$Plain(http: HttpClient, rootUrl: string, params?: GetMonthlyGrosses$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<MonthlyGrossesDto>> {
   const rb = new RequestBuilder(rootUrl, getMonthlyGrosses$Plain.PATH, 'get');
   if (params) {
     rb.query('TruckId', params.TruckId, {});
@@ -30,7 +30,7 @@ export function getMonthlyGrosses$Plain(http: HttpClient, rootUrl: string, param
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<MonthlyGrossesDtoResult>;
+      return r as StrictHttpResponse<MonthlyGrossesDto>;
     })
   );
 }

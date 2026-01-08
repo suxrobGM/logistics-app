@@ -36,12 +36,11 @@ class AccountViewModel(
             }
 
             try {
-                val response = userApi.getUserById(userId)
-                val result = response.body()
-                if (result.success == true && result.data != null) {
-                    _uiState.value = AccountUiState.Success(result.data)
+                val user = userApi.getUserById(userId).body()
+                if (user != null) {
+                    _uiState.value = AccountUiState.Success(user)
                 } else {
-                    _uiState.value = AccountUiState.Error(result.error ?: "Failed to load user")
+                    _uiState.value = AccountUiState.Error("Failed to load user")
                 }
             } catch (e: Exception) {
                 _uiState.value = AccountUiState.Error(e.message ?: "An error occurred")
@@ -59,14 +58,9 @@ class AccountViewModel(
                     lastName = user.lastName,
                     phoneNumber = user.phoneNumber
                 )
-                val response = userApi.updateUser(user.id!!, updateUserCommand)
-                val result = response.body()
-                if (result.success == true) {
-                    _saveState.value = SaveState.Success
-                    _uiState.value = AccountUiState.Success(user)
-                } else {
-                    _saveState.value = SaveState.Error(result.error ?: "Failed to update user")
-                }
+                userApi.updateUser(user.id!!, updateUserCommand)
+                _saveState.value = SaveState.Success
+                _uiState.value = AccountUiState.Success(user)
             } catch (e: Exception) {
                 _saveState.value = SaveState.Error(e.message ?: "An error occurred")
             }

@@ -5,7 +5,7 @@ import type { TableLazyLoadEvent } from "primeng/table";
 import { catchError, from, of, pipe, switchMap, tap } from "rxjs";
 import { Api, formatSortField } from "@/core/api";
 import type { ApiFnOptional, ApiFnRequired } from "@/core/api/generated/api";
-import type { PagedResult } from "@/core/api/models";
+import type { PagedResponse } from "@/core/api/models";
 import type { AppError } from "@/core/errors";
 import type { ListQueryParams, ListState, ListStoreConfig } from "./base-list.types";
 
@@ -42,7 +42,7 @@ function getInitialState<T>(config?: { defaultPageSize?: number }): ListState<T>
  * ```
  */
 export function createListStore<T, P extends ListQueryParams = ListQueryParams>(
-  apiFn: ApiFnRequired<P, PagedResult<T>> | ApiFnOptional<P, PagedResult<T>>,
+  apiFn: ApiFnRequired<P, PagedResponse<T>> | ApiFnOptional<P, PagedResponse<T>>,
   config?: ListStoreConfig<T, P>,
 ) {
   const initialState = getInitialState<T>({ defaultPageSize: config?.defaultPageSize });
@@ -105,25 +105,14 @@ export function createListStore<T, P extends ListQueryParams = ListQueryParams>(
             const params = buildQueryParams();
 
             return from(api.invoke(apiFn, params)).pipe(
-              tap((result: PagedResult<T>) => {
-                if (result.success !== false) {
-                  patchState(store, {
-                    data: result.data ?? [],
-                    totalRecords: result.totalItems ?? 0,
-                    totalPages: result.totalPages ?? 0,
-                    isLoading: false,
-                    error: null,
-                  });
-                } else {
-                  patchState(store, {
-                    isLoading: false,
-                    error: {
-                      category: "unknown",
-                      message: result.error ?? "An error occurred",
-                      retryable: true,
-                    },
-                  });
-                }
+              tap((result: PagedResponse<T>) => {
+                patchState(store, {
+                  data: result.items ?? [],
+                  totalRecords: result.pagination?.total ?? 0,
+                  totalPages: result.pagination?.totalPages ?? 0,
+                  isLoading: false,
+                  error: null,
+                });
               }),
 
               catchError((error: AppError) => {

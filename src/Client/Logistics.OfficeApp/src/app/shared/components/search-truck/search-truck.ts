@@ -33,11 +33,11 @@ export class SearchTruckComponent implements ControlValueAccessor {
   protected async searchTruck(event: { query: string }): Promise<void> {
     const result = await this.api.invoke(getTrucks$Json, { Search: event.query });
 
-    if (!result.data) {
+    if (!result.items) {
       return;
     }
 
-    this.suggestedTrucks.set(result.data);
+    this.suggestedTrucks.set(result.items);
   }
 
   protected changeSelectedTruck(event: AutoCompleteSelectEvent): void {
@@ -52,9 +52,9 @@ export class SearchTruckComponent implements ControlValueAccessor {
     }
 
     const result = await this.api.invoke(getTruckById$Json, { truckOrDriverId: id });
-    if (result.success && result.data) {
-      this.selectedTruck.set(result.data);
-      this.onChange(result.data);
+    if (result) {
+      this.selectedTruck.set(result);
+      this.onChange(result);
     }
   }
 

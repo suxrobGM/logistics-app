@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { FinancialsReportDtoResult } from '../../models/financials-report-dto-result';
+import type { FinancialsReportDto } from '../../models/financials-report-dto';
 
 export interface GetFinancialsReport$Json$Params {
   StartDate?: string;
@@ -17,7 +17,7 @@ export interface GetFinancialsReport$Json$Params {
   PageSize?: number;
 }
 
-export function getFinancialsReport$Json(http: HttpClient, rootUrl: string, params?: GetFinancialsReport$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<FinancialsReportDtoResult>> {
+export function getFinancialsReport$Json(http: HttpClient, rootUrl: string, params?: GetFinancialsReport$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<FinancialsReportDto>> {
   const rb = new RequestBuilder(rootUrl, getFinancialsReport$Json.PATH, 'get');
   if (params) {
     rb.query('StartDate', params.StartDate, {});
@@ -32,7 +32,7 @@ export function getFinancialsReport$Json(http: HttpClient, rootUrl: string, para
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<FinancialsReportDtoResult>;
+      return r as StrictHttpResponse<FinancialsReportDto>;
     })
   );
 }

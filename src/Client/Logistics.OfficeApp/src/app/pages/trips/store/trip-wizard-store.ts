@@ -10,16 +10,6 @@ import type {
   TripStopDto,
 } from "@/core/api/models";
 
-// API response type for optimize trip stops
-interface OptimizedTripStopsResult {
-  success?: boolean;
-  error?: string | null;
-  data?: {
-    orderedStops?: TripStopDto[];
-    totalDistance?: number;
-  };
-}
-
 // Internal types for store state
 interface NewLoad extends CreateTripLoadCommand {
   id: string;
@@ -324,7 +314,6 @@ export const TripWizardStore = signalStore(
           patchState(store, { isOptimizing: true });
 
           const activeLoads = store.activeLoads();
-          const totalDistFromLoads = store.totalDistanceFromLoads();
           const totalCostFromLoads = store.totalCostFromLoads();
           const stops = buildStopsFromLoads(activeLoads);
 
@@ -336,16 +325,16 @@ export const TripWizardStore = signalStore(
           return from(
             api.invoke(optimizeTripStops$Json, {
               body: command,
-            }) as Promise<OptimizedTripStopsResult>,
+            }),
           ).pipe(
             tap({
               next: (result) => {
                 patchState(store, {
-                  stops: result.data?.orderedStops ?? stops,
-                  totalDistance: result.data?.totalDistance ?? totalDistFromLoads,
+                  stops: result?.orderedStops ?? stops,
+                  totalDistance: result?.totalDistance ?? 0,
                   totalCost: totalCostFromLoads,
                   isOptimizing: false,
-                  stopsNeedRegeneration: false, // Stops are now fresh
+                  stopsNeedRegeneration: false,
                 });
               },
               error: (error: unknown) => {
@@ -353,10 +342,10 @@ export const TripWizardStore = signalStore(
                 // Fallback to non-optimized stops
                 patchState(store, {
                   stops: stops,
-                  totalDistance: totalDistFromLoads,
+                  totalDistance: 0,
                   totalCost: totalCostFromLoads,
                   isOptimizing: false,
-                  stopsNeedRegeneration: false, // Stops are now fresh (even if not optimized)
+                  stopsNeedRegeneration: false,
                 });
               },
             }),
@@ -371,25 +360,24 @@ export const TripWizardStore = signalStore(
         switchMap(() => {
           patchState(store, { isOptimizing: true });
 
+          const currentStops = store.stops();
           const command: OptimizeTripStopsCommand = {
             maxVehicles: store.truckVehicleCapacity(),
-            stops: store.stops(),
+            stops: currentStops,
           };
 
           return from(
             api.invoke(optimizeTripStops$Json, {
               body: command,
-            }) as Promise<OptimizedTripStopsResult>,
+            }),
           ).pipe(
             tap({
               next: (result) => {
-                if (result.success && result.data) {
-                  patchState(store, {
-                    stops: result.data.orderedStops ?? [],
-                    totalDistance: result.data.totalDistance ?? 0,
-                    isOptimizing: false,
-                  });
-                }
+                patchState(store, {
+                  stops: result?.orderedStops ?? currentStops,
+                  totalDistance: result?.totalDistance ?? store.totalDistance(),
+                  isOptimizing: false,
+                });
               },
               error: (error: unknown) => {
                 console.error("Failed to re-optimize stops:", error);

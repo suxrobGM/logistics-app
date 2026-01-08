@@ -53,13 +53,11 @@ class StatsViewModel(
 
             userId?.let {
                 try {
-                    val response = statApi.getDriverStats(it)
-                    val result = response.body()
-                    if (result.success == true && result.data != null) {
-                        _statsState.value = StatsUiState.Success(result.data)
+                    val stats = statApi.getDriverStats(it).body()
+                    if (stats != null) {
+                        _statsState.value = StatsUiState.Success(stats)
                     } else {
-                        _statsState.value =
-                            StatsUiState.Error(result.error ?: "Failed to load stats")
+                        _statsState.value = StatsUiState.Error("Failed to load stats")
                     }
                 } catch (e: Exception) {
                     _statsState.value = StatsUiState.Error(e.message ?: "An error occurred")
@@ -79,30 +77,26 @@ class StatsViewModel(
 
             try {
                 if (range.useMonthly) {
-                    val response = statApi.getMonthlyGrosses(
+                    val result = statApi.getMonthlyGrosses(
                         startDate = range.startDate,
                         endDate = range.endDate
-                    )
-                    val result = response.body()
+                    ).body()
 
-                    if (result.success == true && result.data != null) {
-                        _chartState.value = ChartUiState.MonthlySuccess(result.data.data ?: emptyList())
+                    if (result != null) {
+                        _chartState.value = ChartUiState.MonthlySuccess(result.data ?: emptyList())
                     } else {
-                        _chartState.value =
-                            ChartUiState.Error(result.error ?: "Failed to load chart data")
+                        _chartState.value = ChartUiState.Error("Failed to load chart data")
                     }
                 } else {
-                    val response = statApi.getDailyGrosses(
+                    val result = statApi.getDailyGrosses(
                         startDate = range.startDate,
                         endDate = range.endDate
-                    )
-                    val result = response.body()
+                    ).body()
 
-                    if (result.success == true && result.data != null) {
-                        _chartState.value = ChartUiState.DailySuccess(result.data.data ?: emptyList())
+                    if (result != null) {
+                        _chartState.value = ChartUiState.DailySuccess(result.data ?: emptyList())
                     } else {
-                        _chartState.value =
-                            ChartUiState.Error(result.error ?: "Failed to load chart data")
+                        _chartState.value = ChartUiState.Error("Failed to load chart data")
                     }
                 }
             } catch (e: Exception) {

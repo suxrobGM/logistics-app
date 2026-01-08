@@ -42,13 +42,13 @@ public class TripController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("optimize", Name = "OptimizeTripStops")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(OptimizedTripStopsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Loads.View)]
     public async Task<IActionResult> OptimizeTripStops([FromBody] OptimizeTripStopsCommand request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.Success ? Ok(result.Data) : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPut("{id:guid}", Name = "UpdateTrip")]

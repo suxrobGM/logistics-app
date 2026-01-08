@@ -52,8 +52,8 @@ export class NotificationsPanelComponent implements OnDestroy {
     this.isLoading.set(true);
 
     const result = await this.notificationService.getPastTwoWeeksNotifications();
-    if (result.data) {
-      this.notifications.set(result.data);
+    if (result) {
+      this.notifications.set(result);
     }
 
     this.isLoading.set(false);

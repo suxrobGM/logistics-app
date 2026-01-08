@@ -110,14 +110,14 @@ export class TenantService {
    * @param tenantId The tenant ID
    */
   private async fetchTenantData(tenantId: string): Promise<void> {
-    const result = await this.api.invoke(getTenantById$Json, { identifier: tenantId });
+    const tenant = await this.api.invoke(getTenantById$Json, { identifier: tenantId });
 
-    if (!result.success || !result.data) {
+    if (!tenant) {
       return;
     }
 
-    this.tenantData = result.data;
-    this.tenantDataChangedSource.next(result.data);
-    console.log("Fetched tenant data:", result.data);
+    this.tenantData = tenant;
+    this.tenantDataChangedSource.next(tenant);
+    console.log("Fetched tenant data:", tenant);
   }
 }

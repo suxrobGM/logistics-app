@@ -7,13 +7,13 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { TenantDtoResult } from '../../models/tenant-dto-result';
+import type { TenantDto } from '../../models/tenant-dto';
 
 export interface GetTenantById$Json$Params {
   identifier: string;
 }
 
-export function getTenantById$Json(http: HttpClient, rootUrl: string, params: GetTenantById$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<TenantDtoResult>> {
+export function getTenantById$Json(http: HttpClient, rootUrl: string, params: GetTenantById$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<TenantDto>> {
   const rb = new RequestBuilder(rootUrl, getTenantById$Json.PATH, 'get');
   if (params) {
     rb.path('identifier', params.identifier, {});
@@ -24,7 +24,7 @@ export function getTenantById$Json(http: HttpClient, rootUrl: string, params: Ge
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<TenantDtoResult>;
+      return r as StrictHttpResponse<TenantDto>;
     })
   );
 }

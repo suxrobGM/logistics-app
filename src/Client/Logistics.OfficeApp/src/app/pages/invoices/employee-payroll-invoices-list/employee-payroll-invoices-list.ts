@@ -76,8 +76,8 @@ export class EmployeePayrollInvoicesListComponent {
     this.isLoadingEmployee.set(true);
 
     const result = await this.api.invoke(getEmployeeById$Json, { userId: this.employeeId() });
-    if (result.data) {
-      this.employee.set(result.data);
+    if (result) {
+      this.employee.set(result);
     }
 
     this.isLoadingEmployee.set(false);

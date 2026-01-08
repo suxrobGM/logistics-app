@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { RoleDtoPagedResult } from '../../models/role-dto-paged-result';
+import type { RoleDtoPagedResponse } from '../../models/role-dto-paged-response';
 
 export interface GetTenantRoles$Plain$Params {
   Search?: string;
@@ -16,7 +16,7 @@ export interface GetTenantRoles$Plain$Params {
   PageSize?: number;
 }
 
-export function getTenantRoles$Plain(http: HttpClient, rootUrl: string, params?: GetTenantRoles$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<RoleDtoPagedResult>> {
+export function getTenantRoles$Plain(http: HttpClient, rootUrl: string, params?: GetTenantRoles$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<RoleDtoPagedResponse>> {
   const rb = new RequestBuilder(rootUrl, getTenantRoles$Plain.PATH, 'get');
   if (params) {
     rb.query('Search', params.Search, {});
@@ -30,7 +30,7 @@ export function getTenantRoles$Plain(http: HttpClient, rootUrl: string, params?:
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<RoleDtoPagedResult>;
+      return r as StrictHttpResponse<RoleDtoPagedResponse>;
     })
   );
 }

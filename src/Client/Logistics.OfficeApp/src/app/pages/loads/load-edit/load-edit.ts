@@ -4,7 +4,7 @@ import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
-import { Api, deleteLoad$Json, getLoadById$Json, updateLoad$Json } from "@/core/api";
+import { Api, deleteLoad, getLoadById$Json, updateLoad } from "@/core/api";
 import type { UpdateLoadCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { LoadFormComponent, type LoadFormValue } from "@/shared/components";
@@ -51,19 +51,15 @@ export class LoadEditComponent implements OnInit {
       status: formValue.status!,
     };
 
-    const result = await this.api.invoke(updateLoad$Json, { id: this.id()!, body: command });
-    if (result.success) {
-      this.toastService.showSuccess("Load has been updated successfully");
-    }
+    await this.api.invoke(updateLoad, { id: this.id()!, body: command });
+    this.toastService.showSuccess("Load has been updated successfully");
   }
 
   protected async deleteLoad(): Promise<void> {
     this.isLoading.set(true);
-    const result = await this.api.invoke(deleteLoad$Json, { id: this.id()! });
-    if (result.success) {
-      this.toastService.showSuccess("A load has been deleted successfully");
-      this.router.navigateByUrl("/loads");
-    }
+    await this.api.invoke(deleteLoad, { id: this.id()! });
+    this.toastService.showSuccess("A load has been deleted successfully");
+    this.router.navigateByUrl("/loads");
 
     this.isLoading.set(false);
   }
@@ -71,12 +67,10 @@ export class LoadEditComponent implements OnInit {
   private async fetchLoad(loadId: string): Promise<void> {
     this.isLoading.set(true);
 
-    const result = await this.api.invoke(getLoadById$Json, { id: loadId });
-    if (!result.success || !result.data) {
+    const load = await this.api.invoke(getLoadById$Json, { id: loadId });
+    if (!load) {
       return;
     }
-
-    const load = result.data;
 
     this.initialData.set({
       name: load.name ?? undefined,

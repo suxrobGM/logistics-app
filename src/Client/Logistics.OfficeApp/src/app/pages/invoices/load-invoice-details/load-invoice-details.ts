@@ -78,8 +78,8 @@ export class LoadInvoiceDetailsComponent implements OnInit {
 
     this.isLoading.set(true);
     const result = await this.api.invoke(getInvoiceById$Json, { id: this.id() });
-    if (result.data) {
-      this.invoice.set(result.data);
+    if (result) {
+      this.invoice.set(result);
     }
 
     this.isLoading.set(false);

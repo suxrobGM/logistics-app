@@ -1,14 +1,9 @@
 // Truck geolocation type for map visualization (custom type, not generated)
-import type { Address } from "../generated/models/address";
-import type { GeoPoint } from "../generated/models/geo-point";
+import type { PaginationMeta, GeoPoint, Address } from "../generated/models";
 
 /**
  * Re-export all models from generated code for backwards compatibility.
  * Import from '@/core/api' or '@/core/api/models' - both work.
- *
- * Enum types are exported both as types and as const objects.
- * This allows using them both in type positions (e.g., status: SalaryType)
- * and as values (e.g., SalaryType.None).
  */
 export * from "../generated/models";
 export * from "./enums";
@@ -31,25 +26,21 @@ export interface PagedIntervalQuery extends SearchableQuery {
 }
 
 /**
- * Generic Result type for backwards compatibility.
- * The generated code uses specific types like LoadDtoResult, CustomerDtoResult.
+ * Generic PagedResponse type for paginated list endpoints.
+ * The generated code uses specific types like LoadDtoPagedResponse, CustomerDtoPagedResponse.
+ * Properties are optional to match the generated OpenAPI types.
  */
-export interface Result<T = void> {
-  data?: T | null;
-  success?: boolean;
-  error?: string | null;
+export interface PagedResponse<T> {
+  items?: T[] | null;
+  pagination?: PaginationMeta;
 }
 
 /**
- * Generic PagedResult type for backwards compatibility.
- * The generated code uses specific types like LoadDtoPagedResult, CustomerDtoPagedResult.
+ * Error response format from the API.
  */
-export interface PagedResult<T> {
-  data?: T[] | null;
-  totalItems?: number;
-  totalPages?: number;
-  success?: boolean;
-  error?: string | null;
+export interface ErrorResponse {
+  error: string;
+  details?: Record<string, string[]>;
 }
 
 export interface TruckGeolocationDto {

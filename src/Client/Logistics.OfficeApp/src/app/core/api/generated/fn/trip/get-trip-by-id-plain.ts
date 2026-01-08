@@ -7,13 +7,13 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { TripDtoResult } from '../../models/trip-dto-result';
+import type { TripDto } from '../../models/trip-dto';
 
 export interface GetTripById$Plain$Params {
   tripId: string;
 }
 
-export function getTripById$Plain(http: HttpClient, rootUrl: string, params: GetTripById$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<TripDtoResult>> {
+export function getTripById$Plain(http: HttpClient, rootUrl: string, params: GetTripById$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<TripDto>> {
   const rb = new RequestBuilder(rootUrl, getTripById$Plain.PATH, 'get');
   if (params) {
     rb.path('tripId', params.tripId, {});
@@ -24,7 +24,7 @@ export function getTripById$Plain(http: HttpClient, rootUrl: string, params: Get
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<TripDtoResult>;
+      return r as StrictHttpResponse<TripDto>;
     })
   );
 }

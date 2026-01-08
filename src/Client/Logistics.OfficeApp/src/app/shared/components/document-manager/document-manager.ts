@@ -11,7 +11,7 @@ import { ToastModule } from "primeng/toast";
 import { TooltipModule } from "primeng/tooltip";
 import {
   Api,
-  deleteDocument$Json,
+  deleteDocument,
   downloadDocument$Json,
   getDocuments$Json,
   uploadDocument$Json,
@@ -63,8 +63,8 @@ export class DocumentManagerComponent implements OnInit {
       OwnerId: this.employeeId() || this.loadId() || "",
     });
 
-    if (result.success) {
-      this.rows.set(result.data || []);
+    if (result) {
+      this.rows.set(result);
     }
     this.isLoading.set(false);
   }
@@ -90,7 +90,7 @@ export class DocumentManagerComponent implements OnInit {
     this.uploadProgress.set({ [type]: 0 });
 
     try {
-      const result = await this.api.invoke(uploadDocument$Json, {
+      await this.api.invoke(uploadDocument$Json, {
         body: {
           OwnerType: ownerType,
           OwnerId: ownerId,
@@ -100,11 +100,9 @@ export class DocumentManagerComponent implements OnInit {
         },
       });
 
-      if (result.success) {
-        this.toast.showSuccess(`${type} uploaded successfully`);
-        this.refresh();
-        this.changed.emit();
-      }
+      this.toast.showSuccess(`${type} uploaded successfully`);
+      this.refresh();
+      this.changed.emit();
       this.uploadProgress.set({ [type]: 100 });
     } catch {
       this.toast.showError(`Failed to upload ${type}`);
@@ -126,12 +124,10 @@ export class DocumentManagerComponent implements OnInit {
     console.log(row);
     if (confirm(`Are you sure you want to delete "${row.fileName}"?`)) {
       try {
-        const result = await this.api.invoke(deleteDocument$Json, { documentId: row.id! });
-        if (result.success) {
-          this.toast.showSuccess("Document deleted successfully");
-          this.refresh();
-          this.changed.emit();
-        }
+        await this.api.invoke(deleteDocument, { documentId: row.id! });
+        this.toast.showSuccess("Document deleted successfully");
+        this.refresh();
+        this.changed.emit();
       } catch {
         this.toast.showError("Failed to delete document");
       }

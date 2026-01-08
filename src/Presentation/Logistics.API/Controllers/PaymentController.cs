@@ -112,13 +112,13 @@ public class PaymentController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("methods/setup-intent", Name = "CreateSetupIntent")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(SetupIntentDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payments.Create)]
     public async Task<IActionResult> CreateSetupIntent()
     {
         var result = await mediator.Send(new CreateSetupIntentCommand());
-        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.Success ? Ok(result.Data) : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPut("methods", Name = "UpdatePaymentMethod")]

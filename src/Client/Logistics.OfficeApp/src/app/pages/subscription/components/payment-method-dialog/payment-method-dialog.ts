@@ -14,7 +14,7 @@ import { InputMaskModule } from "primeng/inputmask";
 import { InputTextModule } from "primeng/inputtext";
 import { KeyFilterModule } from "primeng/keyfilter";
 import { SelectModule } from "primeng/select";
-import { Api, createPaymentMethod$Json } from "@/core/api";
+import { Api, createPaymentMethod } from "@/core/api";
 import {
   type AddressDto,
   type CreatePaymentMethodCommand,
@@ -190,13 +190,11 @@ export class PaymentMethodDialogComponent {
         result.setupIntent.next_action?.verify_with_microdeposits?.hosted_verification_url,
     };
 
-    const createResult = await this.api.invoke(createPaymentMethod$Json, { body: payload });
-    if (createResult.success) {
-      this.toastService.showSuccess(
-        "US Bank account added successfully. Now you need to verify it.",
-      );
-      this.paymentMethodAdded.emit();
-    }
+    await this.api.invoke(createPaymentMethod, { body: payload });
+    this.toastService.showSuccess(
+      "US Bank account added successfully. Now you need to verify it.",
+    );
+    this.paymentMethodAdded.emit();
 
     this.isLoading.set(false);
   }

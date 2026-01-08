@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { LoadDtoPagedResult } from '../../models/load-dto-paged-result';
+import type { TenantDtoPagedResponse } from '../../models/tenant-dto-paged-response';
 
 export interface GetTenants$Plain$Params {
   IncludeConnectionStrings?: boolean;
@@ -17,7 +17,7 @@ export interface GetTenants$Plain$Params {
   PageSize?: number;
 }
 
-export function getTenants$Plain(http: HttpClient, rootUrl: string, params?: GetTenants$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<LoadDtoPagedResult>> {
+export function getTenants$Plain(http: HttpClient, rootUrl: string, params?: GetTenants$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<TenantDtoPagedResponse>> {
   const rb = new RequestBuilder(rootUrl, getTenants$Plain.PATH, 'get');
   if (params) {
     rb.query('IncludeConnectionStrings', params.IncludeConnectionStrings, {});
@@ -32,7 +32,7 @@ export function getTenants$Plain(http: HttpClient, rootUrl: string, params?: Get
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<LoadDtoPagedResult>;
+      return r as StrictHttpResponse<TenantDtoPagedResponse>;
     })
   );
 }

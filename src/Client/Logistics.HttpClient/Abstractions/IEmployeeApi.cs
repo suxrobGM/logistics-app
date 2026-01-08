@@ -4,9 +4,9 @@ namespace Logistics.HttpClient.Abstractions;
 
 public interface IEmployeeApi
 {
-    Task<Result<EmployeeDto>> GetEmployeeAsync(Guid userId);
-    Task<PagedResult<EmployeeDto>> GetEmployeesAsync(SearchableQuery query);
-    Task<Result> CreateEmployeeAsync(CreateEmployeeCommand command);
-    Task<Result> UpdateEmployeeAsync(UpdateEmployeeCommand command);
-    Task<Result> DeleteEmployeeAsync(Guid userId);
+    Task<EmployeeDto?> GetEmployeeAsync(Guid userId);
+    Task<PagedResponse<EmployeeDto>?> GetEmployeesAsync(SearchableQuery query);
+    Task<bool> CreateEmployeeAsync(CreateEmployeeCommand command);
+    Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommand command);
+    Task<bool> DeleteEmployeeAsync(Guid userId);
 }

@@ -8,7 +8,7 @@ import { DialogModule } from "primeng/dialog";
 import { InputNumberModule } from "primeng/inputnumber";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
-import { Api, renewSubscription$Json } from "@/core/api";
+import { Api, renewSubscription } from "@/core/api";
 import type { SubscriptionDto } from "@/core/api/models";
 import { TenantService, ToastService } from "@/core/services";
 import { Labels, type SeverityLevel } from "@/shared/utils";
@@ -82,15 +82,13 @@ export class RenewSubscriptionComponent {
   private async renewSubscription(): Promise<void> {
     this.isLoading.set(true);
 
-    const result = await this.api.invoke(renewSubscription$Json, {
+    await this.api.invoke(renewSubscription, {
       id: this.subscription()!.id!,
     });
 
-    if (result.success) {
-      this.tenantService.refetchTenantData();
-      this.toastService.showSuccess("Subscription renewed successfully", "Renew Subscription");
-      this.router.navigateByUrl("/");
-    }
+    this.tenantService.refetchTenantData();
+    this.toastService.showSuccess("Subscription renewed successfully", "Renew Subscription");
+    this.router.navigateByUrl("/");
 
     this.isLoading.set(false);
   }

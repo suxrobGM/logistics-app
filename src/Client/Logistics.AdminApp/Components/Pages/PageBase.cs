@@ -65,54 +65,35 @@ public abstract class PageBase : ComponentBase
         TooltipService.Open(element, message, options);
     }
 
-    protected async Task<bool> CallApiAsync(Func<IApiClient, Task<Result>> apiFunction)
+    protected async Task<bool> CallApiAsync(Func<IApiClient, Task<bool>> apiFunction)
     {
         IsLoading = true;
 
         await TrySetAccessTokenAsync();
-        var apiResult = await apiFunction(ApiClient);
+        var success = await apiFunction(ApiClient);
         IsLoading = false;
-        return HandleError(apiResult);
+        return success;
     }
 
-    protected async Task<T?> CallApiAsync<T>(Func<IApiClient, Task<Result<T>>> apiFunction)
+    protected async Task<T?> CallApiAsync<T>(Func<IApiClient, Task<T?>> apiFunction)
     {
         IsLoading = true;
 
         await TrySetAccessTokenAsync();
-        var apiResult = await apiFunction(ApiClient);
-        HandleError(apiResult);
+        var result = await apiFunction(ApiClient);
         IsLoading = false;
-        return apiResult.Data;
+        return result;
     }
 
-    protected async Task<PagedData<T>?> CallApiAsync<T>(Func<IApiClient, Task<PagedResult<T>>> apiFunction)
+    protected async Task<PagedData<T>?> CallApiAsync<T>(Func<IApiClient, Task<PagedResponse<T>?>> apiFunction)
     {
         IsLoading = true;
 
         await TrySetAccessTokenAsync();
-        var apiResult = await apiFunction(ApiClient);
-        HandleError(apiResult);
+        var result = await apiFunction(ApiClient);
         IsLoading = false;
-        return apiResult.Data != null
-            ? new PagedData<T>(apiResult.Data, apiResult.TotalItems) : null;
-    }
-
-    private bool HandleError(IResult apiResult)
-    {
-        if (!apiResult.Success && !string.IsNullOrEmpty(apiResult.Error))
-        {
-            NotificationService.Notify(new NotificationMessage
-            {
-                Summary = "API Error",
-                Detail = apiResult.Error,
-                Severity = NotificationSeverity.Error
-            });
-            Console.Error.WriteLine(apiResult.Error);
-            return false;
-        }
-
-        return true;
+        return result != null
+            ? new PagedData<T>(result.Items, result.Pagination.Total) : null;
     }
 
     private async Task TrySetAccessTokenAsync()

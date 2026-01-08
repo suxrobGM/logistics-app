@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { TripDtoPagedResult } from '../../models/trip-dto-paged-result';
+import type { TripDtoPagedResponse } from '../../models/trip-dto-paged-response';
 import type { TripStatus } from '../../models/trip-status';
 
 export interface GetTrips$Plain$Params {
@@ -19,7 +19,7 @@ export interface GetTrips$Plain$Params {
   PageSize?: number;
 }
 
-export function getTrips$Plain(http: HttpClient, rootUrl: string, params?: GetTrips$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<TripDtoPagedResult>> {
+export function getTrips$Plain(http: HttpClient, rootUrl: string, params?: GetTrips$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<TripDtoPagedResponse>> {
   const rb = new RequestBuilder(rootUrl, getTrips$Plain.PATH, 'get');
   if (params) {
     rb.query('Name', params.Name, {});
@@ -35,7 +35,7 @@ export function getTrips$Plain(http: HttpClient, rootUrl: string, params?: GetTr
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<TripDtoPagedResult>;
+      return r as StrictHttpResponse<TripDtoPagedResponse>;
     })
   );
 }

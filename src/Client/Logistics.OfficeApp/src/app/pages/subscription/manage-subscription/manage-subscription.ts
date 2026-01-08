@@ -8,7 +8,7 @@ import { DialogModule } from "primeng/dialog";
 import { InputNumberModule } from "primeng/inputnumber";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
-import { Api, cancelSubscription$Json } from "@/core/api";
+import { Api, cancelSubscription } from "@/core/api";
 import type { SubscriptionDto } from "@/core/api/models";
 import { TenantService, ToastService } from "@/core/services";
 import { Labels, type SeverityLevel } from "@/shared/utils";
@@ -78,16 +78,14 @@ export class ManageSubscriptionComponent {
       accept: async () => {
         this.isLoading.set(true);
 
-        const result = await this.api.invoke(cancelSubscription$Json, {
+        await this.api.invoke(cancelSubscription, {
           id: this.subscription.id!,
         });
 
-        if (result.success) {
-          this.toastService.showSuccess("Subscription cancelled successfully");
-          this.isCancelled.set(true);
-          this.tenantService.refetchTenantData();
-          this.router.navigateByUrl("/");
-        }
+        this.toastService.showSuccess("Subscription cancelled successfully");
+        this.isCancelled.set(true);
+        this.tenantService.refetchTenantData();
+        this.router.navigateByUrl("/");
 
         this.isLoading.set(false);
       },

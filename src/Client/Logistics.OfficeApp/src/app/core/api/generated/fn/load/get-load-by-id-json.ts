@@ -7,13 +7,13 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { LoadDtoResult } from '../../models/load-dto-result';
+import type { LoadDto } from '../../models/load-dto';
 
 export interface GetLoadById$Json$Params {
   id: string;
 }
 
-export function getLoadById$Json(http: HttpClient, rootUrl: string, params: GetLoadById$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<LoadDtoResult>> {
+export function getLoadById$Json(http: HttpClient, rootUrl: string, params: GetLoadById$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<LoadDto>> {
   const rb = new RequestBuilder(rootUrl, getLoadById$Json.PATH, 'get');
   if (params) {
     rb.path('id', params.id, {});
@@ -24,7 +24,7 @@ export function getLoadById$Json(http: HttpClient, rootUrl: string, params: GetL
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<LoadDtoResult>;
+      return r as StrictHttpResponse<LoadDto>;
     })
   );
 }

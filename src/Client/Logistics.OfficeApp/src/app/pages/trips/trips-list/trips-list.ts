@@ -10,7 +10,7 @@ import { InputText } from "primeng/inputtext";
 import { MenuModule } from "primeng/menu";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { Api, deleteTrip$Json } from "@/core/api";
+import { Api, deleteTrip } from "@/core/api";
 import type { TripDto } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { DataContainer, LoadStatusTag, LoadTypeTag, TripStatusTag } from "@/shared/components";
@@ -92,10 +92,8 @@ export class TripsList {
   }
 
   private async deleteTrip(tripId: string): Promise<void> {
-    const result = await this.api.invoke(deleteTrip$Json, { id: tripId });
-    if (result.success) {
-      this.toastService.showSuccess("Trip deleted successfully");
-      this.store.removeItem(tripId);
-    }
+    await this.api.invoke(deleteTrip, { id: tripId });
+    this.toastService.showSuccess("Trip deleted successfully");
+    this.store.removeItem(tripId);
   }
 }

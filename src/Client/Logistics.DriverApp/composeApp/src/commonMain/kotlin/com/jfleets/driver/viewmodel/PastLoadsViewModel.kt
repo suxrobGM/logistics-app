@@ -36,11 +36,10 @@ class PastLoadsViewModel(
                     endDate = now
                 )
                 val result = response.body()
-                if (result.success == true && result.data != null) {
-                    _uiState.value = PastLoadsUiState.Success(result.data)
+                if (result != null) {
+                    _uiState.value = PastLoadsUiState.Success(result.items)
                 } else {
-                    _uiState.value =
-                        PastLoadsUiState.Error(result.error ?: "Failed to load past loads")
+                    _uiState.value = PastLoadsUiState.Error("Failed to load past loads")
                 }
             } catch (e: Exception) {
                 _uiState.value = PastLoadsUiState.Error(e.message ?: "An error occurred")

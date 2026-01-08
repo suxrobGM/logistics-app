@@ -1,7 +1,7 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { Api, createTrip$Json } from "@/core/api";
+import { Api, createTrip } from "@/core/api";
 import type { CreateTripCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { TripWizard, type TripWizardValue } from "../components";
@@ -30,11 +30,9 @@ export class TripAddPage {
       totalDistance: formValue.totalDistance,
     };
 
-    const result = await this.api.invoke(createTrip$Json, { body: command });
-    if (result.success) {
-      this.toastService.showSuccess("Trip created successfully");
-      this.router.navigate(["/trips"]);
-    }
+    await this.api.invoke(createTrip, { body: command });
+    this.toastService.showSuccess("Trip created successfully");
+    this.router.navigate(["/trips"]);
 
     this.isLoading.set(false);
   }

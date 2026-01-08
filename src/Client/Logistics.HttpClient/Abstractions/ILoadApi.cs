@@ -4,10 +4,10 @@ namespace Logistics.HttpClient.Abstractions;
 
 public interface ILoadApi
 {
-    Task<Result<LoadDto>> GetLoadAsync(Guid id);
-    Task<PagedResult<LoadDto>> GetLoadsAsync(GetLoadsQuery query);
-    Task<Result<ICollection<LoadDto>>> GetDriverActiveLoadsAsync(Guid userId);
-    Task<Result> CreateLoadAsync(CreateLoadCommand command);
-    Task<Result> UpdateLoadAsync(UpdateLoadCommand command);
-    Task<Result> DeleteLoadAsync(Guid id);
+    Task<LoadDto?> GetLoadAsync(Guid id);
+    Task<PagedResponse<LoadDto>?> GetLoadsAsync(GetLoadsQuery query);
+    Task<ICollection<LoadDto>?> GetDriverActiveLoadsAsync(Guid userId);
+    Task<bool> CreateLoadAsync(CreateLoadCommand command);
+    Task<bool> UpdateLoadAsync(UpdateLoadCommand command);
+    Task<bool> DeleteLoadAsync(Guid id);
 }

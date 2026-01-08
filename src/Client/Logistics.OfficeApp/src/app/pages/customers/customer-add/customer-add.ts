@@ -27,11 +27,9 @@ export class CustomerAddComponent {
       name: formValue.name!,
     };
 
-    const result = await this.api.invoke(createCustomer$Json, { body: command });
-    if (result.success) {
-      this.toastService.showSuccess("A customer has been created successfully");
-      this.router.navigateByUrl("/customers");
-    }
+    await this.api.invoke(createCustomer$Json, { body: command });
+    this.toastService.showSuccess("A customer has been created successfully");
+    this.router.navigateByUrl("/customers");
 
     this.isLoading.set(false);
   }

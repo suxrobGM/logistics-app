@@ -7,13 +7,13 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { SubscriptionPlanDtoResult } from '../../models/subscription-plan-dto-result';
+import type { SubscriptionPlanDto } from '../../models/subscription-plan-dto';
 
 export interface GetSubscriptionPlanById$Plain$Params {
   id: string;
 }
 
-export function getSubscriptionPlanById$Plain(http: HttpClient, rootUrl: string, params: GetSubscriptionPlanById$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<SubscriptionPlanDtoResult>> {
+export function getSubscriptionPlanById$Plain(http: HttpClient, rootUrl: string, params: GetSubscriptionPlanById$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<SubscriptionPlanDto>> {
   const rb = new RequestBuilder(rootUrl, getSubscriptionPlanById$Plain.PATH, 'get');
   if (params) {
     rb.path('id', params.id, {});
@@ -24,7 +24,7 @@ export function getSubscriptionPlanById$Plain(http: HttpClient, rootUrl: string,
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<SubscriptionPlanDtoResult>;
+      return r as StrictHttpResponse<SubscriptionPlanDto>;
     })
   );
 }

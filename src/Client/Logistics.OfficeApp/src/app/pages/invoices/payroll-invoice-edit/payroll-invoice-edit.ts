@@ -10,11 +10,11 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import {
   Api,
-  createPayrollInvoice$Json,
+  createPayrollInvoice,
   getEmployees$Json,
   getInvoiceById$Json,
   previewPayrollInvoice$Json,
-  updatePayrollInvoice$Json,
+  updatePayrollInvoice,
 } from "@/core/api";
 import {
   type CreatePayrollInvoiceCommand,
@@ -90,8 +90,8 @@ export class PayrollInvoiceEditComponent implements OnInit {
 
   async searchEmployee(event: { query: string }): Promise<void> {
     const result = await this.api.invoke(getEmployees$Json, { Search: event.query });
-    if (result.data) {
-      this.suggestedEmployees.set(result.data);
+    if (result.items) {
+      this.suggestedEmployees.set(result.items);
     }
   }
 
@@ -109,8 +109,8 @@ export class PayrollInvoiceEditComponent implements OnInit {
       PeriodStart: this.form.value.dateRange![0].toISOString(),
       PeriodEnd: this.form.value.dateRange![1].toISOString(),
     });
-    if (result.data) {
-      this.previewPayrollInvoice.set(result.data as InvoiceDto);
+    if (result) {
+      this.previewPayrollInvoice.set(result as InvoiceDto);
     }
   }
 
@@ -155,8 +155,7 @@ export class PayrollInvoiceEditComponent implements OnInit {
     }
 
     this.isLoading.set(true);
-    const result = await this.api.invoke(getInvoiceById$Json, { id: invoiceId });
-    const invoice = result.data;
+    const invoice = await this.api.invoke(getInvoiceById$Json, { id: invoiceId });
     if (invoice) {
       this.form.patchValue({
         employee: invoice.employee,
@@ -182,11 +181,9 @@ export class PayrollInvoiceEditComponent implements OnInit {
       periodEnd: this.form.value.dateRange![1].toISOString(),
     };
 
-    const result = await this.api.invoke(createPayrollInvoice$Json, { body: command });
-    if (result.success) {
-      this.toastService.showSuccess("A new payroll invoice entry has been added successfully");
-      this.router.navigateByUrl("/invoices/payroll");
-    }
+    await this.api.invoke(createPayrollInvoice, { body: command });
+    this.toastService.showSuccess("A new payroll invoice entry has been added successfully");
+    this.router.navigateByUrl("/invoices/payroll");
 
     this.isLoading.set(false);
   }
@@ -201,14 +198,12 @@ export class PayrollInvoiceEditComponent implements OnInit {
       periodEnd: this.form.value.dateRange![1].toISOString(),
     };
 
-    const result = await this.api.invoke(updatePayrollInvoice$Json, {
+    await this.api.invoke(updatePayrollInvoice, {
       id: this.id()!,
       body: command,
     });
-    if (result.success) {
-      this.toastService.showSuccess("A payroll data has been updated successfully");
-      this.router.navigateByUrl("/invoices/payroll");
-    }
+    this.toastService.showSuccess("A payroll data has been updated successfully");
+    this.router.navigateByUrl("/invoices/payroll");
 
     this.isLoading.set(false);
   }

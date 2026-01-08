@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { LoadDtoPagedResult } from '../../models/load-dto-paged-result';
+import type { LoadDtoPagedResponse } from '../../models/load-dto-paged-response';
 
 export interface GetLoads$Plain$Params {
   LoadAllPages?: boolean;
@@ -22,7 +22,7 @@ export interface GetLoads$Plain$Params {
   PageSize?: number;
 }
 
-export function getLoads$Plain(http: HttpClient, rootUrl: string, params?: GetLoads$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<LoadDtoPagedResult>> {
+export function getLoads$Plain(http: HttpClient, rootUrl: string, params?: GetLoads$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<LoadDtoPagedResponse>> {
   const rb = new RequestBuilder(rootUrl, getLoads$Plain.PATH, 'get');
   if (params) {
     rb.query('LoadAllPages', params.LoadAllPages, {});
@@ -42,7 +42,7 @@ export function getLoads$Plain(http: HttpClient, rootUrl: string, params?: GetLo
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<LoadDtoPagedResult>;
+      return r as StrictHttpResponse<LoadDtoPagedResponse>;
     })
   );
 }

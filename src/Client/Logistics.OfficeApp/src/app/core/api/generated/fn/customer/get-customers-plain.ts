@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { CustomerDtoPagedResult } from '../../models/customer-dto-paged-result';
+import type { CustomerDtoPagedResponse } from '../../models/customer-dto-paged-response';
 
 export interface GetCustomers$Plain$Params {
   Search?: string;
@@ -16,7 +16,7 @@ export interface GetCustomers$Plain$Params {
   PageSize?: number;
 }
 
-export function getCustomers$Plain(http: HttpClient, rootUrl: string, params?: GetCustomers$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<CustomerDtoPagedResult>> {
+export function getCustomers$Plain(http: HttpClient, rootUrl: string, params?: GetCustomers$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<CustomerDtoPagedResponse>> {
   const rb = new RequestBuilder(rootUrl, getCustomers$Plain.PATH, 'get');
   if (params) {
     rb.query('Search', params.Search, {});
@@ -30,7 +30,7 @@ export function getCustomers$Plain(http: HttpClient, rootUrl: string, params?: G
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<CustomerDtoPagedResult>;
+      return r as StrictHttpResponse<CustomerDtoPagedResponse>;
     })
   );
 }

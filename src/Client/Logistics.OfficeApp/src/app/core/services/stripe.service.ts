@@ -106,17 +106,13 @@ export class StripeService {
    * @throws An error if the setup intent creation fails.
    */
   async getClientSecret(): Promise<string> {
-    const result = (await this.api.invoke(createSetupIntent$Json, {})) as {
-      success?: boolean;
-      data?: { clientSecret: string };
-    };
+    const result = await this.api.invoke(createSetupIntent$Json, {});
 
-    if (!result.success) {
+    if (!result.clientSecret) {
       throw new Error("Failed to create setup intent");
     }
 
-    const clientSecret = result.data!.clientSecret;
-    return clientSecret;
+    return result.clientSecret;
   }
 
   /**

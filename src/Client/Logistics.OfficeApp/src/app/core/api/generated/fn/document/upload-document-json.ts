@@ -9,7 +9,6 @@ import { RequestBuilder } from '../../request-builder';
 
 import type { DocumentOwnerType } from '../../models/document-owner-type';
 import type { DocumentType } from '../../models/document-type';
-import type { GuidResult } from '../../models/guid-result';
 
 export interface UploadDocument$Json$Params {
       body?: {
@@ -21,7 +20,7 @@ export interface UploadDocument$Json$Params {
 }
 }
 
-export function uploadDocument$Json(http: HttpClient, rootUrl: string, params?: UploadDocument$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<GuidResult>> {
+export function uploadDocument$Json(http: HttpClient, rootUrl: string, params?: UploadDocument$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<string>> {
   const rb = new RequestBuilder(rootUrl, uploadDocument$Json.PATH, 'post');
   if (params) {
     rb.body(params.body, 'multipart/form-data');
@@ -32,7 +31,7 @@ export function uploadDocument$Json(http: HttpClient, rootUrl: string, params?: 
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<GuidResult>;
+      return r as StrictHttpResponse<string>;
     })
   );
 }

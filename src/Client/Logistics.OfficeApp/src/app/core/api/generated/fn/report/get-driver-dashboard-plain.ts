@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { DriverDashboardDtoResult } from '../../models/driver-dashboard-dto-result';
+import type { DriverDashboardDto } from '../../models/driver-dashboard-dto';
 
 export interface GetDriverDashboard$Plain$Params {
   StartDate?: string;
@@ -17,7 +17,7 @@ export interface GetDriverDashboard$Plain$Params {
   PageSize?: number;
 }
 
-export function getDriverDashboard$Plain(http: HttpClient, rootUrl: string, params?: GetDriverDashboard$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<DriverDashboardDtoResult>> {
+export function getDriverDashboard$Plain(http: HttpClient, rootUrl: string, params?: GetDriverDashboard$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<DriverDashboardDto>> {
   const rb = new RequestBuilder(rootUrl, getDriverDashboard$Plain.PATH, 'get');
   if (params) {
     rb.query('StartDate', params.StartDate, {});
@@ -32,7 +32,7 @@ export function getDriverDashboard$Plain(http: HttpClient, rootUrl: string, para
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<DriverDashboardDtoResult>;
+      return r as StrictHttpResponse<DriverDashboardDto>;
     })
   );
 }

@@ -7,13 +7,13 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { InvoiceDtoResult } from '../../models/invoice-dto-result';
+import type { InvoiceDto } from '../../models/invoice-dto';
 
 export interface GetInvoiceById$Json$Params {
   id: string;
 }
 
-export function getInvoiceById$Json(http: HttpClient, rootUrl: string, params: GetInvoiceById$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<InvoiceDtoResult>> {
+export function getInvoiceById$Json(http: HttpClient, rootUrl: string, params: GetInvoiceById$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<InvoiceDto>> {
   const rb = new RequestBuilder(rootUrl, getInvoiceById$Json.PATH, 'get');
   if (params) {
     rb.path('id', params.id, {});
@@ -24,7 +24,7 @@ export function getInvoiceById$Json(http: HttpClient, rootUrl: string, params: G
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<InvoiceDtoResult>;
+      return r as StrictHttpResponse<InvoiceDto>;
     })
   );
 }

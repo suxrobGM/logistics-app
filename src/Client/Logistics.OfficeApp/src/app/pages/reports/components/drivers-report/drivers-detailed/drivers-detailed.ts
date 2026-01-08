@@ -9,7 +9,7 @@ import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
 import { Observable, from } from "rxjs";
 import { Api, formatSortField, getDriversReport$Json } from "@/core/api";
-import type { DriverReportDto, PagedResult } from "@/core/api/models";
+import type { DriverReportDto, PagedResponse } from "@/core/api/models";
 import { BaseTableComponent, RangeCalendar, type TableQueryParams } from "@/shared/components";
 import { DateUtils } from "@/shared/utils";
 
@@ -35,7 +35,7 @@ export class DriversDetailedComponent extends BaseTableComponent<DriverReportDto
   protected readonly startDate = signal(DateUtils.thisYear());
   protected readonly endDate = signal(DateUtils.today());
 
-  protected override query(params: TableQueryParams): Observable<PagedResult<DriverReportDto>> {
+  protected override query(params: TableQueryParams): Observable<PagedResponse<DriverReportDto>> {
     const orderBy = formatSortField(params.sortField, params.sortOrder);
 
     return from(

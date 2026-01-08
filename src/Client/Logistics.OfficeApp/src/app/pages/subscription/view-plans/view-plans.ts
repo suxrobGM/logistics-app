@@ -19,8 +19,8 @@ export class ViewPlansComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     const result = await this.api.invoke(getSubscriptionPlans$Json, {});
-    if (result.success && result.data) {
-      this.subscriptionPlans.set(result.data);
+    if (result.items) {
+      this.subscriptionPlans.set(result.items);
     }
   }
 

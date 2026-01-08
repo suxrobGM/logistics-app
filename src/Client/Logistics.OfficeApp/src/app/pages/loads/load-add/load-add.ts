@@ -3,7 +3,7 @@ import { Router } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
-import { Api, createLoad$Json } from "@/core/api";
+import { Api, createLoad } from "@/core/api";
 import type { CreateLoadCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { LoadFormComponent, type LoadFormValue } from "@/shared/components";
@@ -37,11 +37,9 @@ export class LoadAddComponent {
       customerId: formValue.customer?.id,
     };
 
-    const result = await this.api.invoke(createLoad$Json, { body: command });
-    if (result.success) {
-      this.isLoading.set(false);
-      this.toastService.showSuccess("A new load has been created successfully");
-      this.router.navigateByUrl("/loads");
-    }
+    await this.api.invoke(createLoad, { body: command });
+    this.isLoading.set(false);
+    this.toastService.showSuccess("A new load has been created successfully");
+    this.router.navigateByUrl("/loads");
   }
 }

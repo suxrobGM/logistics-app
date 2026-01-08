@@ -10,7 +10,6 @@ import type {
   LoadPerformanceDto,
   LoadTrendDto,
   LoadsReportDto,
-  Result,
   StatusDto,
   TypeDto,
 } from "@/core/api/models";
@@ -58,7 +57,7 @@ export class LoadsReportComponent extends BaseReportComponent<LoadsReportDto> im
     this.fetch({ startDate: this.startDate(), endDate: this.endDate() });
   }
 
-  protected override async query(params: ReportQueryParams): Promise<Result<LoadsReportDto>> {
+  protected override async query(params: ReportQueryParams): Promise<LoadsReportDto> {
     return this.api.invoke(getLoadsReport$Json, {
       StartDate: params.startDate.toISOString(),
       EndDate: params.endDate?.toISOString(),

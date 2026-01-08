@@ -65,106 +65,78 @@ internal class ApiClient : GenericApiClient, IApiClient
         SetRequestHeader("X-Tenant", tenantId);
     }
 
-    private async Task<TRes> MakeGetRequestAsync<TRes>(string endpoint, IDictionary<string, string>? query = null)
-        where TRes : class, IResult, new()
+    private async Task<TRes?> MakeGetRequestAsync<TRes>(string endpoint, IDictionary<string, string>? query = null)
+        where TRes : class
     {
         try
         {
-            var result = await GetRequestAsync<TRes>(endpoint, query);
-
-            if (!result.Success)
-            {
-                OnErrorResponse?.Invoke(this, result.Error!);
-            }
-
-            return result;
+            return await GetRequestAsync<TRes>(endpoint, query);
         }
         catch (ApiException ex)
         {
             OnErrorResponse?.Invoke(this, ex.Message);
-            return new TRes { Error = ex.Message };
+            return null;
         }
     }
 
-    private async Task<TRes> MakePostRequestAsync<TRes, TBody>(string endpoint, TBody body)
-        where TRes : class, IResult, new()
+    private async Task<bool> MakePostRequestAsync<TBody>(string endpoint, TBody body)
         where TBody : class, new()
     {
         try
         {
-            var result = await PostRequestAsync<TRes, TBody>(endpoint, body);
-
-            if (!result.Success)
-            {
-                OnErrorResponse?.Invoke(this, result.Error!);
-            }
-
-            return result;
+            await PostRequestAsync(endpoint, body);
+            return true;
         }
         catch (ApiException ex)
         {
             OnErrorResponse?.Invoke(this, ex.Message);
-            return new TRes { Error = ex.Message };
+            return false;
         }
     }
 
-    private async Task<TRes> MakePutRequestAsync<TRes, TBody>(string endpoint, TBody body)
-        where TRes : class, IResult, new()
+    private async Task<bool> MakePutRequestAsync<TBody>(string endpoint, TBody body)
         where TBody : class, new()
     {
         try
         {
-            var result = await PutRequestAsync<TRes, TBody>(endpoint, body);
-
-            if (!result.Success)
-            {
-                OnErrorResponse?.Invoke(this, result.Error!);
-            }
-
-            return result;
+            await PutRequestAsync(endpoint, body);
+            return true;
         }
         catch (ApiException ex)
         {
             OnErrorResponse?.Invoke(this, ex.Message);
-            return new TRes { Error = ex.Message };
+            return false;
         }
     }
 
-    private async Task<TRes> MakeDeleteRequestAsync<TRes>(string endpoint)
-        where TRes : class, IResult, new()
+    private async Task<bool> MakeDeleteRequestAsync(string endpoint)
     {
         try
         {
-            var result = await DeleteRequestAsync<TRes>(endpoint);
-
-            if (!result.Success)
-            {
-                OnErrorResponse?.Invoke(this, result.Error!);
-            }
-
-            return result;
+            await DeleteRequestAsync(endpoint);
+            return true;
         }
         catch (ApiException ex)
         {
             OnErrorResponse?.Invoke(this, ex.Message);
-            return new TRes { Error = ex.Message };
+            return false;
         }
     }
 
 
     #region Load API
 
-    public Task<Result<LoadDto>> GetLoadAsync(Guid id)
+    public Task<LoadDto?> GetLoadAsync(Guid id)
     {
-        return MakeGetRequestAsync<Result<LoadDto>>($"loads/{id}");
+        return MakeGetRequestAsync<LoadDto>($"loads/{id}");
     }
 
-    public Task<PagedResult<LoadDto>> GetLoadsAsync(GetLoadsQuery query)
+    public Task<PagedResponse<LoadDto>?> GetLoadsAsync(GetLoadsQuery query)
     {
-        return MakeGetRequestAsync<PagedResult<LoadDto>>("loads", query.ToDictionary());
+        return MakeGetRequestAsync<PagedResponse<LoadDto>>("loads", query.ToDictionary());
     }
 
-    public Task<Result<ICollection<LoadDto>>> GetDriverActiveLoadsAsync(Guid userId)
+    public async Task<ICollection<LoadDto>?> GetDriverActiveLoadsAsync(Guid userId)
     {
         var query = new Dictionary<string, string>
         {
@@ -172,22 +144,23 @@ internal class ApiClient : GenericApiClient, IApiClient
             { "onlyActiveLoads", "true" },
             { "loadAllPage", "true" }
         };
-        return MakeGetRequestAsync<Result<ICollection<LoadDto>>>("loads", query);
+        var result = await MakeGetRequestAsync<PagedResponse<LoadDto>>("loads", query);
+        return result?.Items.ToList();
     }
 
-    public Task<Result> CreateLoadAsync(CreateLoadCommand command)
+    public Task<bool> CreateLoadAsync(CreateLoadCommand command)
     {
-        return MakePostRequestAsync<Result, CreateLoadCommand>("loads", command);
+        return MakePostRequestAsync("loads", command);
     }
 
-    public Task<Result> UpdateLoadAsync(UpdateLoadCommand command)
+    public Task<bool> UpdateLoadAsync(UpdateLoadCommand command)
     {
-        return MakePutRequestAsync<Result, UpdateLoadCommand>($"loads/{command.Id}", command);
+        return MakePutRequestAsync($"loads/{command.Id}", command);
     }
 
-    public Task<Result> DeleteLoadAsync(Guid id)
+    public Task<bool> DeleteLoadAsync(Guid id)
     {
-        return MakeDeleteRequestAsync<Result>($"loads/{id}");
+        return MakeDeleteRequestAsync($"loads/{id}");
     }
 
     #endregion
@@ -195,32 +168,32 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Truck API
 
-    public Task<Result<TruckDto>> GetTruckAsync(GetTruckQuery query)
+    public Task<TruckDto?> GetTruckAsync(GetTruckQuery query)
     {
         var id = query.TruckOrDriverId;
-        return MakeGetRequestAsync<Result<TruckDto>>($"trucks/{id}", query.ToDictionary());
+        return MakeGetRequestAsync<TruckDto>($"trucks/{id}", query.ToDictionary());
     }
 
-    public Task<PagedResult<TruckDto>> GetTrucksAsync(SearchableQuery query, bool includeLoads = false)
+    public Task<PagedResponse<TruckDto>?> GetTrucksAsync(SearchableQuery query, bool includeLoads = false)
     {
         var queryDict = query.ToDictionary();
         queryDict.Add("includeLoads", includeLoads.ToString());
-        return MakeGetRequestAsync<PagedResult<TruckDto>>("trucks", queryDict);
+        return MakeGetRequestAsync<PagedResponse<TruckDto>>("trucks", queryDict);
     }
 
-    public Task<Result> CreateTruckAsync(CreateTruckCommand command)
+    public Task<bool> CreateTruckAsync(CreateTruckCommand command)
     {
-        return MakePostRequestAsync<Result, CreateTruckCommand>("trucks", command);
+        return MakePostRequestAsync("trucks", command);
     }
 
-    public Task<Result> UpdateTruckAsync(UpdateTruckCommand command)
+    public Task<bool> UpdateTruckAsync(UpdateTruckCommand command)
     {
-        return MakePutRequestAsync<Result, UpdateTruckCommand>($"trucks/{command.Id}", command);
+        return MakePutRequestAsync($"trucks/{command.Id}", command);
     }
 
-    public Task<Result> DeleteTruckAsync(Guid id)
+    public Task<bool> DeleteTruckAsync(Guid id)
     {
-        return MakeDeleteRequestAsync<Result>($"trucks/{id}");
+        return MakeDeleteRequestAsync($"trucks/{id}");
     }
 
     #endregion
@@ -228,29 +201,29 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Employee API
 
-    public Task<Result<EmployeeDto>> GetEmployeeAsync(Guid userId)
+    public Task<EmployeeDto?> GetEmployeeAsync(Guid userId)
     {
-        return MakeGetRequestAsync<Result<EmployeeDto>>($"employees/{userId}");
+        return MakeGetRequestAsync<EmployeeDto>($"employees/{userId}");
     }
 
-    public Task<PagedResult<EmployeeDto>> GetEmployeesAsync(SearchableQuery query)
+    public Task<PagedResponse<EmployeeDto>?> GetEmployeesAsync(SearchableQuery query)
     {
-        return MakeGetRequestAsync<PagedResult<EmployeeDto>>("employees", query.ToDictionary());
+        return MakeGetRequestAsync<PagedResponse<EmployeeDto>>("employees", query.ToDictionary());
     }
 
-    public Task<Result> CreateEmployeeAsync(CreateEmployeeCommand command)
+    public Task<bool> CreateEmployeeAsync(CreateEmployeeCommand command)
     {
-        return MakePostRequestAsync<Result, CreateEmployeeCommand>("employees", command);
+        return MakePostRequestAsync("employees", command);
     }
 
-    public Task<Result> UpdateEmployeeAsync(UpdateEmployeeCommand command)
+    public Task<bool> UpdateEmployeeAsync(UpdateEmployeeCommand command)
     {
-        return MakePutRequestAsync<Result, UpdateEmployeeCommand>($"employees/{command.UserId}", command);
+        return MakePutRequestAsync($"employees/{command.UserId}", command);
     }
 
-    public Task<Result> DeleteEmployeeAsync(Guid userId)
+    public Task<bool> DeleteEmployeeAsync(Guid userId)
     {
-        return MakeDeleteRequestAsync<Result>($"employees/{userId}");
+        return MakeDeleteRequestAsync($"employees/{userId}");
     }
 
     #endregion
@@ -258,29 +231,29 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Tenant API
 
-    public Task<Result<TenantDto>> GetTenantAsync(string identifier)
+    public Task<TenantDto?> GetTenantAsync(string identifier)
     {
-        return MakeGetRequestAsync<Result<TenantDto>>($"tenants/{identifier}");
+        return MakeGetRequestAsync<TenantDto>($"tenants/{identifier}");
     }
 
-    public Task<PagedResult<TenantDto>> GetTenantsAsync(SearchableQuery query)
+    public Task<PagedResponse<TenantDto>?> GetTenantsAsync(SearchableQuery query)
     {
-        return MakeGetRequestAsync<PagedResult<TenantDto>>("tenants", query.ToDictionary());
+        return MakeGetRequestAsync<PagedResponse<TenantDto>>("tenants", query.ToDictionary());
     }
 
-    public Task<Result> CreateTenantAsync(CreateTenantCommand command)
+    public Task<bool> CreateTenantAsync(CreateTenantCommand command)
     {
-        return MakePostRequestAsync<Result, CreateTenantCommand>("tenants", command);
+        return MakePostRequestAsync("tenants", command);
     }
 
-    public Task<Result> UpdateTenantAsync(UpdateTenantCommand command)
+    public Task<bool> UpdateTenantAsync(UpdateTenantCommand command)
     {
-        return MakePutRequestAsync<Result, UpdateTenantCommand>($"tenants/{command.Id}", command);
+        return MakePutRequestAsync($"tenants/{command.Id}", command);
     }
 
-    public Task<Result> DeleteTenantAsync(Guid id)
+    public Task<bool> DeleteTenantAsync(Guid id)
     {
-        return MakeDeleteRequestAsync<Result>($"tenants/{id}");
+        return MakeDeleteRequestAsync($"tenants/{id}");
     }
 
     #endregion
@@ -288,24 +261,24 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region User API
 
-    public Task<Result<UserDto>> GetUserAsync(Guid userId)
+    public Task<UserDto?> GetUserAsync(Guid userId)
     {
-        return MakeGetRequestAsync<Result<UserDto>>($"users/{userId}");
+        return MakeGetRequestAsync<UserDto>($"users/{userId}");
     }
 
-    public Task<PagedResult<UserDto>> GetUsersAsync(SearchableQuery query)
+    public Task<PagedResponse<UserDto>?> GetUsersAsync(SearchableQuery query)
     {
-        return MakeGetRequestAsync<PagedResult<UserDto>>("users", query.ToDictionary());
+        return MakeGetRequestAsync<PagedResponse<UserDto>>("users", query.ToDictionary());
     }
 
-    public Task<Result> UpdateUserAsync(UpdateUser command)
+    public Task<bool> UpdateUserAsync(UpdateUser command)
     {
-        return MakePutRequestAsync<Result, UpdateUser>($"users/{command.UserId}", command);
+        return MakePutRequestAsync($"users/{command.UserId}", command);
     }
 
-    public Task<Result<TenantDto>> GetUserCurrentTenant(Guid userId)
+    public Task<TenantDto?> GetUserCurrentTenant(Guid userId)
     {
-        return MakeGetRequestAsync<Result<TenantDto>>($"users/{userId}/tenant");
+        return MakeGetRequestAsync<TenantDto>($"users/{userId}/tenant");
     }
 
     #endregion
@@ -313,19 +286,19 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Driver API
 
-    public Task<Result> SetDeviceTokenAsync(SetDeviceToken command)
+    public Task<bool> SetDeviceTokenAsync(SetDeviceToken command)
     {
-        return MakePostRequestAsync<Result, SetDeviceToken>($"drivers/{command.UserId}/device-token", command);
+        return MakePostRequestAsync($"drivers/{command.UserId}/device-token", command);
     }
 
-    public Task<Result> ConfirmLoadStatusAsync(ConfirmLoadStatus command)
+    public Task<bool> ConfirmLoadStatusAsync(ConfirmLoadStatus command)
     {
-        return MakePostRequestAsync<Result, ConfirmLoadStatus>("drivers/confirm-load-status", command);
+        return MakePostRequestAsync("drivers/confirm-load-status", command);
     }
 
-    public Task<Result> UpdateLoadProximity(UpdateLoadProximityCommand command)
+    public Task<bool> UpdateLoadProximity(UpdateLoadProximityCommand command)
     {
-        return MakePostRequestAsync<Result, UpdateLoadProximityCommand>("drivers/update-load-proximity", command);
+        return MakePostRequestAsync("drivers/update-load-proximity", command);
     }
 
     #endregion
@@ -333,19 +306,19 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Stats API
 
-    public Task<Result<DailyGrossesDto>> GetDailyGrossesAsync(GetDailyGrossesQuery query)
+    public Task<DailyGrossesDto?> GetDailyGrossesAsync(GetDailyGrossesQuery query)
     {
-        return MakeGetRequestAsync<Result<DailyGrossesDto>>("stats/daily-grosses", query.ToDictionary());
+        return MakeGetRequestAsync<DailyGrossesDto>("stats/daily-grosses", query.ToDictionary());
     }
 
-    public Task<Result<MonthlyGrossesDto>> GetMonthlyGrossesAsync(GetMonthlyGrossesQuery query)
+    public Task<MonthlyGrossesDto?> GetMonthlyGrossesAsync(GetMonthlyGrossesQuery query)
     {
-        return MakeGetRequestAsync<Result<MonthlyGrossesDto>>("stats/monthly-grosses", query.ToDictionary());
+        return MakeGetRequestAsync<MonthlyGrossesDto>("stats/monthly-grosses", query.ToDictionary());
     }
 
-    public Task<Result<DriverStatsDto>> GetDriverStatsAsync(Guid userId)
+    public Task<DriverStatsDto?> GetDriverStatsAsync(Guid userId)
     {
-        return MakeGetRequestAsync<Result<DriverStatsDto>>($"stats/driver/{userId}");
+        return MakeGetRequestAsync<DriverStatsDto>($"stats/driver/{userId}");
     }
 
     #endregion
@@ -353,54 +326,54 @@ internal class ApiClient : GenericApiClient, IApiClient
 
     #region Subscriptions API
 
-    public Task<Result<SubscriptionDto>> GetSubscriptionAsync(Guid id)
+    public Task<SubscriptionDto?> GetSubscriptionAsync(Guid id)
     {
-        return MakeGetRequestAsync<Result<SubscriptionDto>>($"subscriptions/{id}");
+        return MakeGetRequestAsync<SubscriptionDto>($"subscriptions/{id}");
     }
 
-    public Task<Result<SubscriptionPlanDto>> GetSubscriptionPlanAsync(Guid planId)
+    public Task<SubscriptionPlanDto?> GetSubscriptionPlanAsync(Guid planId)
     {
-        return MakeGetRequestAsync<Result<SubscriptionPlanDto>>($"subscriptions/plans/{planId}");
+        return MakeGetRequestAsync<SubscriptionPlanDto>($"subscriptions/plans/{planId}");
     }
 
-    public Task<PagedResult<SubscriptionDto>> GetSubscriptionsAsync(PagedQuery query)
+    public Task<PagedResponse<SubscriptionDto>?> GetSubscriptionsAsync(PagedQuery query)
     {
-        return MakeGetRequestAsync<PagedResult<SubscriptionDto>>("subscriptions", query.ToDictionary());
+        return MakeGetRequestAsync<PagedResponse<SubscriptionDto>>("subscriptions", query.ToDictionary());
     }
 
-    public Task<PagedResult<SubscriptionPlanDto>> GetSubscriptionPlansAsync(PagedQuery query)
+    public Task<PagedResponse<SubscriptionPlanDto>?> GetSubscriptionPlansAsync(PagedQuery query)
     {
-        return MakeGetRequestAsync<PagedResult<SubscriptionPlanDto>>("subscriptions/plans", query.ToDictionary());
+        return MakeGetRequestAsync<PagedResponse<SubscriptionPlanDto>>("subscriptions/plans", query.ToDictionary());
     }
 
-    public Task<Result> CreateSubscriptionPlanAsync(CreateSubscriptionPlanCommand command)
+    public Task<bool> CreateSubscriptionPlanAsync(CreateSubscriptionPlanCommand command)
     {
-        return MakePostRequestAsync<Result, CreateSubscriptionPlanCommand>("subscriptions/plans", command);
+        return MakePostRequestAsync("subscriptions/plans", command);
     }
 
-    public Task<Result> UpdateSubscriptionPlanAsync(UpdateSubscriptionPlanCommand command)
+    public Task<bool> UpdateSubscriptionPlanAsync(UpdateSubscriptionPlanCommand command)
     {
-        return MakePutRequestAsync<Result, UpdateSubscriptionPlanCommand>($"subscriptions/plans/{command.Id}", command);
+        return MakePutRequestAsync($"subscriptions/plans/{command.Id}", command);
     }
 
-    public Task<Result> DeleteSubscriptionPlanAsync(Guid id)
+    public Task<bool> DeleteSubscriptionPlanAsync(Guid id)
     {
-        return MakeDeleteRequestAsync<Result>($"subscriptions/plans/{id}");
+        return MakeDeleteRequestAsync($"subscriptions/plans/{id}");
     }
 
-    public Task<Result> CreateSubscriptionAsync(CreateSubscriptionCommand command)
+    public Task<bool> CreateSubscriptionAsync(CreateSubscriptionCommand command)
     {
-        return MakePostRequestAsync<Result, CreateSubscriptionCommand>("subscriptions", command);
+        return MakePostRequestAsync("subscriptions", command);
     }
 
-    public Task<Result> DeleteSubscriptionAsync(Guid id)
+    public Task<bool> DeleteSubscriptionAsync(Guid id)
     {
-        return MakeDeleteRequestAsync<Result>($"subscriptions/{id}");
+        return MakeDeleteRequestAsync($"subscriptions/{id}");
     }
 
-    public Task<Result> CancelSubscriptionAsync(CancelSubscriptionCommand command)
+    public Task<bool> CancelSubscriptionAsync(CancelSubscriptionCommand command)
     {
-        return MakePutRequestAsync<Result, CancelSubscriptionCommand>($"subscriptions/{command.Id}/cancel", command);
+        return MakePutRequestAsync($"subscriptions/{command.Id}/cancel", command);
     }
 
     #endregion

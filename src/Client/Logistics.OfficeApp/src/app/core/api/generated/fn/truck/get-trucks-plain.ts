@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { TruckDtoPagedResult } from '../../models/truck-dto-paged-result';
+import type { TruckDtoPagedResponse } from '../../models/truck-dto-paged-response';
 
 export interface GetTrucks$Plain$Params {
   IncludeLoads?: boolean;
@@ -17,7 +17,7 @@ export interface GetTrucks$Plain$Params {
   PageSize?: number;
 }
 
-export function getTrucks$Plain(http: HttpClient, rootUrl: string, params?: GetTrucks$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<TruckDtoPagedResult>> {
+export function getTrucks$Plain(http: HttpClient, rootUrl: string, params?: GetTrucks$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<TruckDtoPagedResponse>> {
   const rb = new RequestBuilder(rootUrl, getTrucks$Plain.PATH, 'get');
   if (params) {
     rb.query('IncludeLoads', params.IncludeLoads, {});
@@ -32,7 +32,7 @@ export function getTrucks$Plain(http: HttpClient, rootUrl: string, params?: GetT
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<TruckDtoPagedResult>;
+      return r as StrictHttpResponse<TruckDtoPagedResponse>;
     })
   );
 }

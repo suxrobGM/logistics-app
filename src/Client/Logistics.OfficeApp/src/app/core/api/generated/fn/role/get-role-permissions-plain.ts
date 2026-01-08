@@ -7,13 +7,13 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { PermissionDtoArrayResult } from '../../models/permission-dto-array-result';
+import type { PermissionDto } from '../../models/permission-dto';
 
 export interface GetRolePermissions$Plain$Params {
   roleName: string;
 }
 
-export function getRolePermissions$Plain(http: HttpClient, rootUrl: string, params: GetRolePermissions$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<PermissionDtoArrayResult>> {
+export function getRolePermissions$Plain(http: HttpClient, rootUrl: string, params: GetRolePermissions$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<PermissionDto>>> {
   const rb = new RequestBuilder(rootUrl, getRolePermissions$Plain.PATH, 'get');
   if (params) {
     rb.path('roleName', params.roleName, {});
@@ -24,7 +24,7 @@ export function getRolePermissions$Plain(http: HttpClient, rootUrl: string, para
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<PermissionDtoArrayResult>;
+      return r as StrictHttpResponse<Array<PermissionDto>>;
     })
   );
 }

@@ -33,8 +33,8 @@ export class EmployeeDocumentsPage implements OnInit {
 
   private async fetchEmployee(): Promise<void> {
     const result = await this.api.invoke(getEmployeeById$Json, { userId: this.id() });
-    if (result.success && result.data) {
-      this.employee.set(result.data);
+    if (result) {
+      this.employee.set(result);
     }
   }
 }

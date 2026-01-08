@@ -4,14 +4,14 @@ namespace Logistics.HttpClient.Abstractions;
 
 public interface ISubscriptionApi
 {
-    Task<Result<SubscriptionDto>> GetSubscriptionAsync(Guid id);
-    Task<Result<SubscriptionPlanDto>> GetSubscriptionPlanAsync(Guid planId);
-    Task<PagedResult<SubscriptionDto>> GetSubscriptionsAsync(PagedQuery query);
-    Task<PagedResult<SubscriptionPlanDto>> GetSubscriptionPlansAsync(PagedQuery query);
-    Task<Result> CreateSubscriptionPlanAsync(CreateSubscriptionPlanCommand command);
-    Task<Result> UpdateSubscriptionPlanAsync(UpdateSubscriptionPlanCommand command);
-    Task<Result> DeleteSubscriptionPlanAsync(Guid id);
-    Task<Result> CreateSubscriptionAsync(CreateSubscriptionCommand command);
-    Task<Result> DeleteSubscriptionAsync(Guid id);
-    Task<Result> CancelSubscriptionAsync(CancelSubscriptionCommand command);
+    Task<SubscriptionDto?> GetSubscriptionAsync(Guid id);
+    Task<SubscriptionPlanDto?> GetSubscriptionPlanAsync(Guid planId);
+    Task<PagedResponse<SubscriptionDto>?> GetSubscriptionsAsync(PagedQuery query);
+    Task<PagedResponse<SubscriptionPlanDto>?> GetSubscriptionPlansAsync(PagedQuery query);
+    Task<bool> CreateSubscriptionPlanAsync(CreateSubscriptionPlanCommand command);
+    Task<bool> UpdateSubscriptionPlanAsync(UpdateSubscriptionPlanCommand command);
+    Task<bool> DeleteSubscriptionPlanAsync(Guid id);
+    Task<bool> CreateSubscriptionAsync(CreateSubscriptionCommand command);
+    Task<bool> DeleteSubscriptionAsync(Guid id);
+    Task<bool> CancelSubscriptionAsync(CancelSubscriptionCommand command);
 }

@@ -1,7 +1,7 @@
 import { Injectable, inject } from "@angular/core";
 import { Observable, from, map } from "rxjs";
 import { Api, getTenantRoles$Json, getUsers$Json } from "@/core/api";
-import type { RoleDto, RoleDtoPagedResult, UserDto } from "@/core/api/models";
+import type { RoleDto, RoleDtoPagedResponse, UserDto } from "@/core/api/models";
 import { AuthService } from "@/core/auth";
 import { UserRole } from "@/shared/models";
 
@@ -20,7 +20,7 @@ export class UserService {
 
   searchUser(searchQuery: string): Observable<UserDto[] | undefined> {
     const users$ = from(this.api.invoke(getUsers$Json, { Search: searchQuery }));
-    return users$.pipe(map((i) => i.data ?? undefined));
+    return users$.pipe(map((i) => i.items ?? undefined));
   }
 
   fetchRoles(): Observable<RoleDto[]> {
@@ -28,9 +28,9 @@ export class UserService {
     const roles$ = from(this.api.invoke(getTenantRoles$Json, {}));
 
     return roles$.pipe(
-      map((result: RoleDtoPagedResult) => {
-        if (result.success && result.data) {
-          const roles = [...result.data];
+      map((result: RoleDtoPagedResponse) => {
+        if (result.items) {
+          const roles = [...result.items];
           const roleNames = roles.map((i: RoleDto) => i.name);
 
           if (this.userRoles?.includes(UserRole.Owner)) {

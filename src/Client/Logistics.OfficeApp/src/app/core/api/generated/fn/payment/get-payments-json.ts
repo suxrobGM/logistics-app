@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { PaymentDtoPagedResult } from '../../models/payment-dto-paged-result';
+import type { PaymentDtoPagedResponse } from '../../models/payment-dto-paged-response';
 
 export interface GetPayments$Json$Params {
   StartDate?: string;
@@ -17,7 +17,7 @@ export interface GetPayments$Json$Params {
   PageSize?: number;
 }
 
-export function getPayments$Json(http: HttpClient, rootUrl: string, params?: GetPayments$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<PaymentDtoPagedResult>> {
+export function getPayments$Json(http: HttpClient, rootUrl: string, params?: GetPayments$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<PaymentDtoPagedResponse>> {
   const rb = new RequestBuilder(rootUrl, getPayments$Json.PATH, 'get');
   if (params) {
     rb.query('StartDate', params.StartDate, {});
@@ -32,7 +32,7 @@ export function getPayments$Json(http: HttpClient, rootUrl: string, params?: Get
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<PaymentDtoPagedResult>;
+      return r as StrictHttpResponse<PaymentDtoPagedResponse>;
     })
   );
 }

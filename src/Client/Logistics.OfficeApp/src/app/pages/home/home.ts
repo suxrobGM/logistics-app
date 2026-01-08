@@ -83,8 +83,8 @@ export class HomeComponent implements OnInit {
       OrderBy: "-DispatchedAt",
       OnlyActiveLoads: true,
     });
-    if (result.success && result.data) {
-      this.loads.set(result.data);
+    if (result) {
+      this.loads.set(result.items ?? []);
     }
 
     this.isLoadingLoadsData.set(false);
@@ -97,14 +97,12 @@ export class HomeComponent implements OnInit {
     const result = await this.api.invoke(getDailyGrosses$Json, {
       StartDate: oneWeekAgo.toISOString(),
     });
-    if (result.success && result.data) {
-      const grosses = result.data;
-
-      this.weeklyGross.set(grosses.totalGross ?? 0);
-      this.weeklyDistance.set(grosses.totalDistance ?? 0);
+    if (result) {
+      this.weeklyGross.set(result.totalGross ?? 0);
+      this.weeklyDistance.set(result.totalDistance ?? 0);
       this.weeklyRpm.set(this.weeklyGross() / Converters.metersTo(this.weeklyDistance(), "mi"));
-      this.drawChart(grosses);
-      this.calcTodayGross(grosses);
+      this.drawChart(result);
+      this.calcTodayGross(result);
     }
 
     this.isLoadingChartData.set(false);

@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { LoadsReportDtoResult } from '../../models/loads-report-dto-result';
+import type { LoadsReportDto } from '../../models/loads-report-dto';
 
 export interface GetLoadsReport$Json$Params {
   StartDate?: string;
@@ -17,7 +17,7 @@ export interface GetLoadsReport$Json$Params {
   PageSize?: number;
 }
 
-export function getLoadsReport$Json(http: HttpClient, rootUrl: string, params?: GetLoadsReport$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<LoadsReportDtoResult>> {
+export function getLoadsReport$Json(http: HttpClient, rootUrl: string, params?: GetLoadsReport$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<LoadsReportDto>> {
   const rb = new RequestBuilder(rootUrl, getLoadsReport$Json.PATH, 'get');
   if (params) {
     rb.query('StartDate', params.StartDate, {});
@@ -32,7 +32,7 @@ export function getLoadsReport$Json(http: HttpClient, rootUrl: string, params?: 
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<LoadsReportDtoResult>;
+      return r as StrictHttpResponse<LoadsReportDto>;
     })
   );
 }

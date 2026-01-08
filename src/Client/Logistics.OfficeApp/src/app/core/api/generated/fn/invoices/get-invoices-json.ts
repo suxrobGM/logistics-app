@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { InvoiceDtoPagedResult } from '../../models/invoice-dto-paged-result';
+import type { InvoiceDtoPagedResponse } from '../../models/invoice-dto-paged-response';
 import type { InvoiceType } from '../../models/invoice-type';
 
 export interface GetInvoices$Json$Params {
@@ -20,7 +20,7 @@ export interface GetInvoices$Json$Params {
   PageSize?: number;
 }
 
-export function getInvoices$Json(http: HttpClient, rootUrl: string, params?: GetInvoices$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<InvoiceDtoPagedResult>> {
+export function getInvoices$Json(http: HttpClient, rootUrl: string, params?: GetInvoices$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<InvoiceDtoPagedResponse>> {
   const rb = new RequestBuilder(rootUrl, getInvoices$Json.PATH, 'get');
   if (params) {
     rb.query('LoadId', params.LoadId, {});
@@ -37,7 +37,7 @@ export function getInvoices$Json(http: HttpClient, rootUrl: string, params?: Get
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<InvoiceDtoPagedResult>;
+      return r as StrictHttpResponse<InvoiceDtoPagedResponse>;
     })
   );
 }

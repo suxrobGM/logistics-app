@@ -36,9 +36,9 @@ export class BillingHistoryComponent {
       PageSize: rows,
       StartDate: new Date().toISOString(),
     });
-    if (result.success && result.data) {
-      this.payments.set(result.data);
-      this.totalRecords.set(result.totalItems ?? 0);
+    if (result) {
+      this.payments.set(result.items ?? []);
+      this.totalRecords.set(result.pagination?.total ?? 0);
     }
 
     this.isLoading.set(false);

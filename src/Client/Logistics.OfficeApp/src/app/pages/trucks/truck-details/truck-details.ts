@@ -65,9 +65,8 @@ export class TruckDetailsComponent implements OnInit {
 
     this.isLoading.set(true);
 
-    const result = await this.api.invoke(getTruckById$Json, { truckOrDriverId: id });
-    if (result.success && result.data) {
-      const truck = result.data;
+    const truck = await this.api.invoke(getTruckById$Json, { truckOrDriverId: id });
+    if (truck) {
       this.truck.set(truck);
 
       this.truckLocations.set([

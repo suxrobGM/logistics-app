@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { DriverReportDtoPagedResult } from '../../models/driver-report-dto-paged-result';
+import type { DriverReportDtoPagedResponse } from '../../models/driver-report-dto-paged-response';
 
 export interface GetDriversReport$Json$Params {
   Search?: string;
@@ -18,7 +18,7 @@ export interface GetDriversReport$Json$Params {
   PageSize?: number;
 }
 
-export function getDriversReport$Json(http: HttpClient, rootUrl: string, params?: GetDriversReport$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<DriverReportDtoPagedResult>> {
+export function getDriversReport$Json(http: HttpClient, rootUrl: string, params?: GetDriversReport$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<DriverReportDtoPagedResponse>> {
   const rb = new RequestBuilder(rootUrl, getDriversReport$Json.PATH, 'get');
   if (params) {
     rb.query('Search', params.Search, {});
@@ -34,7 +34,7 @@ export function getDriversReport$Json(http: HttpClient, rootUrl: string, params?
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<DriverReportDtoPagedResult>;
+      return r as StrictHttpResponse<DriverReportDtoPagedResponse>;
     })
   );
 }

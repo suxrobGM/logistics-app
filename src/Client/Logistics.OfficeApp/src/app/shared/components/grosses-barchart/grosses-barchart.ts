@@ -63,14 +63,13 @@ export class GrossesBarchart implements OnInit {
       TruckId: this.truckId(),
     });
 
-    if (result.success && result.data) {
-      const monthlyGrosses = result.data;
-      this.monthlyGrosses.set(monthlyGrosses);
+    if (result) {
+      this.monthlyGrosses.set(result);
       const rpm =
-        monthlyGrosses.totalGross! / Converters.metersTo(monthlyGrosses.totalDistance!, "mi");
+        (result.totalGross ?? 0) / Converters.metersTo(result.totalDistance ?? 0, "mi");
 
-      this.drawChart(monthlyGrosses);
-      this.chartDrawn.emit({ monthlyGrosses, rpm });
+      this.drawChart(result);
+      this.chartDrawn.emit({ monthlyGrosses: result, rpm });
     }
 
     this.isLoading.set(false);

@@ -11,7 +11,6 @@ import type {
   DriverEfficiencyDto,
   DriverPerformanceDto,
   DriverTrendDto,
-  Result,
 } from "@/core/api/models";
 import { RangeCalendar } from "@/shared/components";
 import {
@@ -55,7 +54,7 @@ export class DriversReportComponent
     this.fetch({ startDate: this.startDate(), endDate: this.endDate() });
   }
 
-  protected override async query(params: ReportQueryParams): Promise<Result<DriverDashboardDto>> {
+  protected override async query(params: ReportQueryParams): Promise<DriverDashboardDto> {
     return this.api.invoke(getDriverDashboard$Json, {
       StartDate: params.startDate.toISOString(),
       EndDate: params.endDate?.toISOString(),

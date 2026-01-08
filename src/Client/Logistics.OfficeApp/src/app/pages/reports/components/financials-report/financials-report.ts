@@ -13,7 +13,6 @@ import { getFinancialsReport$Json } from "@/core/api";
 import type {
   FinancialMetricDto,
   FinancialsReportDto,
-  Result,
   RevenueTrendDto,
 } from "@/core/api/models";
 import { RangeCalendar } from "@/shared/components";
@@ -64,7 +63,7 @@ export class FinancialsReportComponent
     this.fetch({ startDate: this.startDate(), endDate: this.endDate() });
   }
 
-  protected override async query(params: ReportQueryParams): Promise<Result<FinancialsReportDto>> {
+  protected override async query(params: ReportQueryParams): Promise<FinancialsReportDto> {
     return this.api.invoke(getFinancialsReport$Json, {
       StartDate: params.startDate.toISOString(),
       EndDate: params.endDate?.toISOString(),

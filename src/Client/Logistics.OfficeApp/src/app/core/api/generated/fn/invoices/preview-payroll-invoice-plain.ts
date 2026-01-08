@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { PayrollDtoResult } from '../../models/payroll-dto-result';
+import type { PayrollDto } from '../../models/payroll-dto';
 
 export interface PreviewPayrollInvoice$Plain$Params {
   EmployeeId?: string;
@@ -15,7 +15,7 @@ export interface PreviewPayrollInvoice$Plain$Params {
   PeriodEnd?: string;
 }
 
-export function previewPayrollInvoice$Plain(http: HttpClient, rootUrl: string, params?: PreviewPayrollInvoice$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<PayrollDtoResult>> {
+export function previewPayrollInvoice$Plain(http: HttpClient, rootUrl: string, params?: PreviewPayrollInvoice$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<PayrollDto>> {
   const rb = new RequestBuilder(rootUrl, previewPayrollInvoice$Plain.PATH, 'get');
   if (params) {
     rb.query('EmployeeId', params.EmployeeId, {});
@@ -28,7 +28,7 @@ export function previewPayrollInvoice$Plain(http: HttpClient, rootUrl: string, p
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<PayrollDtoResult>;
+      return r as StrictHttpResponse<PayrollDto>;
     })
   );
 }

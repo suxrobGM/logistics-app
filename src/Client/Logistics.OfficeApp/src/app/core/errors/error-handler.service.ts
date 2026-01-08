@@ -154,7 +154,12 @@ export class ErrorHandlerService {
    * Extracts field-level validation errors from the response.
    */
   private extractFieldErrors(error: HttpErrorResponse): Record<string, string[]> | undefined {
-    // ASP.NET Core validation errors format
+    // New API format: details property contains field-level errors
+    if (error.error?.details && typeof error.error.details === "object") {
+      return error.error.details;
+    }
+
+    // ASP.NET Core validation errors format (fallback)
     if (error.error?.errors && typeof error.error.errors === "object") {
       return error.error.errors;
     }

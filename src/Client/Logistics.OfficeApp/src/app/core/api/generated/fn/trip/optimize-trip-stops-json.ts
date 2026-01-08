@@ -7,14 +7,14 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import type { OptimizedTripStopsDto } from '../../models/optimized-trip-stops-dto';
 import type { OptimizeTripStopsCommand } from '../../models/optimize-trip-stops-command';
-import type { Result } from '../../models/result';
 
 export interface OptimizeTripStops$Json$Params {
       body?: OptimizeTripStopsCommand
 }
 
-export function optimizeTripStops$Json(http: HttpClient, rootUrl: string, params?: OptimizeTripStops$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<Result>> {
+export function optimizeTripStops$Json(http: HttpClient, rootUrl: string, params?: OptimizeTripStops$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<OptimizedTripStopsDto>> {
   const rb = new RequestBuilder(rootUrl, optimizeTripStops$Json.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/*+json');
@@ -25,7 +25,7 @@ export function optimizeTripStops$Json(http: HttpClient, rootUrl: string, params
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Result>;
+      return r as StrictHttpResponse<OptimizedTripStopsDto>;
     })
   );
 }

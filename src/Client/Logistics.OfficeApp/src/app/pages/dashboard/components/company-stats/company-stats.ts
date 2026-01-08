@@ -44,10 +44,9 @@ export class CompanyStatsComponent {
     this.isLoading.set(true);
 
     const result = await this.api.invoke(getCompanyStats$Json, {});
-    if (result.success && result.data) {
-      const stats = result.data;
-      this.companyStats.set(result.data);
-      this.rpm.set((stats.totalGross ?? 0) / Converters.metersTo(stats.totalDistance ?? 0, "mi"));
+    if (result) {
+      this.companyStats.set(result);
+      this.rpm.set((result.totalGross ?? 0) / Converters.metersTo(result.totalDistance ?? 0, "mi"));
     }
 
     this.isLoading.set(false);

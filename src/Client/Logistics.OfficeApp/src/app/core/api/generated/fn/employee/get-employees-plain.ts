@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { EmployeeDtoPagedResult } from '../../models/employee-dto-paged-result';
+import type { EmployeeDtoPagedResponse } from '../../models/employee-dto-paged-response';
 
 export interface GetEmployees$Plain$Params {
   Role?: string;
@@ -17,7 +17,7 @@ export interface GetEmployees$Plain$Params {
   PageSize?: number;
 }
 
-export function getEmployees$Plain(http: HttpClient, rootUrl: string, params?: GetEmployees$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<EmployeeDtoPagedResult>> {
+export function getEmployees$Plain(http: HttpClient, rootUrl: string, params?: GetEmployees$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<EmployeeDtoPagedResponse>> {
   const rb = new RequestBuilder(rootUrl, getEmployees$Plain.PATH, 'get');
   if (params) {
     rb.query('Role', params.Role, {});
@@ -32,7 +32,7 @@ export function getEmployees$Plain(http: HttpClient, rootUrl: string, params?: G
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<EmployeeDtoPagedResult>;
+      return r as StrictHttpResponse<EmployeeDtoPagedResponse>;
     })
   );
 }

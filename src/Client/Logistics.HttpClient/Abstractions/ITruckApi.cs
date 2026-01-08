@@ -4,9 +4,9 @@ namespace Logistics.HttpClient.Abstractions;
 
 public interface ITruckApi
 {
-    Task<Result<TruckDto>> GetTruckAsync(GetTruckQuery query);
-    Task<PagedResult<TruckDto>> GetTrucksAsync(SearchableQuery query, bool includeLoads = false);
-    Task<Result> CreateTruckAsync(CreateTruckCommand command);
-    Task<Result> UpdateTruckAsync(UpdateTruckCommand command);
-    Task<Result> DeleteTruckAsync(Guid id);
+    Task<TruckDto?> GetTruckAsync(GetTruckQuery query);
+    Task<PagedResponse<TruckDto>?> GetTrucksAsync(SearchableQuery query, bool includeLoads = false);
+    Task<bool> CreateTruckAsync(CreateTruckCommand command);
+    Task<bool> UpdateTruckAsync(UpdateTruckCommand command);
+    Task<bool> DeleteTruckAsync(Guid id);
 }

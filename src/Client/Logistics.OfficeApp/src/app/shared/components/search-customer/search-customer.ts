@@ -47,7 +47,7 @@ export class SearchCustomerComponent implements ControlValueAccessor {
 
     try {
       const result = await this.api.invoke(getCustomers$Json, { Search: q });
-      const items = result.data ?? [];
+      const items = result.items ?? [];
       this.suggestedCustomers.set(items); // [] triggers the "empty" template
     } catch {
       this.suggestedCustomers.set([]);
@@ -67,10 +67,10 @@ export class SearchCustomerComponent implements ControlValueAccessor {
 
   protected async createCustomer(formValue: CustomerFormValue): Promise<void> {
     const result = await this.api.invoke(createCustomer$Json, { body: formValue });
-    if (result.success && result.data) {
+    if (result) {
       this.toastService.showSuccess("A new customer has been created successfully");
       this.customerDialogVisible.set(false);
-      this.selectedCustomer.set(result.data);
+      this.selectedCustomer.set(result);
     }
   }
 

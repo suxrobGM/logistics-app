@@ -57,14 +57,13 @@ export class TruckGrossesLinechartComponent implements OnInit {
       EndDate: this.endDate().toISOString(),
       TruckId: this.truckId(),
     });
-    if (result.success && result.data) {
-      const dailyGrosses = result.data;
-      this.dailyGrosses.set(dailyGrosses);
+    if (result) {
+      this.dailyGrosses.set(result);
       const rpm =
-        (dailyGrosses.totalGross ?? 0) / Converters.metersTo(dailyGrosses.totalDistance ?? 0, "mi");
+        (result.totalGross ?? 0) / Converters.metersTo(result.totalDistance ?? 0, "mi");
 
-      this.drawChart(dailyGrosses);
-      this.chartDrawn.emit({ dailyGrosses: dailyGrosses, rpm: rpm });
+      this.drawChart(result);
+      this.chartDrawn.emit({ dailyGrosses: result, rpm: rpm });
     }
 
     this.isLoading.set(false);

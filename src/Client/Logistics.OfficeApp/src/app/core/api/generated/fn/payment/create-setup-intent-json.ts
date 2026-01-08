@@ -7,12 +7,12 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { Result } from '../../models/result';
+import type { SetupIntentDto } from '../../models/setup-intent-dto';
 
 export interface CreateSetupIntent$Json$Params {
 }
 
-export function createSetupIntent$Json(http: HttpClient, rootUrl: string, params?: CreateSetupIntent$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<Result>> {
+export function createSetupIntent$Json(http: HttpClient, rootUrl: string, params?: CreateSetupIntent$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<SetupIntentDto>> {
   const rb = new RequestBuilder(rootUrl, createSetupIntent$Json.PATH, 'post');
   if (params) {
   }
@@ -22,7 +22,7 @@ export function createSetupIntent$Json(http: HttpClient, rootUrl: string, params
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Result>;
+      return r as StrictHttpResponse<SetupIntentDto>;
     })
   );
 }

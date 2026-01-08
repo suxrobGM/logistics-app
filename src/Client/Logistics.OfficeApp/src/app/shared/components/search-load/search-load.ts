@@ -36,11 +36,11 @@ export class SearchLoadComponent implements ControlValueAccessor {
       OnlyActiveLoads: this.filterActiveLoads(),
     });
 
-    if (!result.data) {
+    if (!result.items) {
       return;
     }
 
-    this.suggestedLoads.set(result.data);
+    this.suggestedLoads.set(result.items);
   }
 
   protected changeSelectedLoad(event: AutoCompleteSelectEvent): void {
@@ -55,8 +55,8 @@ export class SearchLoadComponent implements ControlValueAccessor {
     }
 
     const result = await this.api.invoke(getLoadById$Json, { id: loadId });
-    if (result.success && result.data) {
-      this.selectedLoad.set(result.data);
+    if (result) {
+      this.selectedLoad.set(result);
     }
   }
 

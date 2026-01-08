@@ -2,7 +2,7 @@ import { Component, DestroyRef, inject, signal } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import type { TableLazyLoadEvent } from "primeng/table";
 import { Observable, finalize } from "rxjs";
-import type { PagedResult } from "@/core/api/models";
+import type { PagedResponse } from "@/core/api/models";
 
 /**
  * Parameters for querying the table data.
@@ -63,11 +63,11 @@ export abstract class BaseTableComponent<T> {
 
   /**
    * Abstract method to be implemented by subclasses to query data.
-   * This method should return an Observable that emits a PagedResult.
+   * This method should return an Observable that emits a PagedResponse.
    * @param params - The parameters for pagination, sorting, and searching.
-   * @return An Observable that emits a PagedResult of type T.
+   * @return An Observable that emits a PagedResponse of type T.
    */
-  protected abstract query(params: TableQueryParams): Observable<PagedResult<T>>;
+  protected abstract query(params: TableQueryParams): Observable<PagedResponse<T>>;
 
   /**
    * Fetches data based on the provided parameters.
@@ -84,8 +84,8 @@ export abstract class BaseTableComponent<T> {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((r) => {
-        this.data.set(r.data || []);
-        this.totalRecords.set(r.totalItems ?? 0);
+        this.data.set(r.items || []);
+        this.totalRecords.set(r.pagination?.total ?? 0);
         this.first.set(page * size);
       });
   }

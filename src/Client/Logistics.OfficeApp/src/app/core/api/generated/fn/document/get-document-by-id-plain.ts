@@ -7,13 +7,13 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { DocumentDtoResult } from '../../models/document-dto-result';
+import type { DocumentDto } from '../../models/document-dto';
 
 export interface GetDocumentById$Plain$Params {
   documentId: string;
 }
 
-export function getDocumentById$Plain(http: HttpClient, rootUrl: string, params: GetDocumentById$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<DocumentDtoResult>> {
+export function getDocumentById$Plain(http: HttpClient, rootUrl: string, params: GetDocumentById$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<DocumentDto>> {
   const rb = new RequestBuilder(rootUrl, getDocumentById$Plain.PATH, 'get');
   if (params) {
     rb.path('documentId', params.documentId, {});
@@ -24,7 +24,7 @@ export function getDocumentById$Plain(http: HttpClient, rootUrl: string, params:
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<DocumentDtoResult>;
+      return r as StrictHttpResponse<DocumentDto>;
     })
   );
 }

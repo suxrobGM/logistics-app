@@ -7,13 +7,13 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { EmployeeDtoResult } from '../../models/employee-dto-result';
+import type { EmployeeDto } from '../../models/employee-dto';
 
 export interface GetEmployeeById$Plain$Params {
   userId: string;
 }
 
-export function getEmployeeById$Plain(http: HttpClient, rootUrl: string, params: GetEmployeeById$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<EmployeeDtoResult>> {
+export function getEmployeeById$Plain(http: HttpClient, rootUrl: string, params: GetEmployeeById$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<EmployeeDto>> {
   const rb = new RequestBuilder(rootUrl, getEmployeeById$Plain.PATH, 'get');
   if (params) {
     rb.path('userId', params.userId, {});
@@ -24,7 +24,7 @@ export function getEmployeeById$Plain(http: HttpClient, rootUrl: string, params:
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<EmployeeDtoResult>;
+      return r as StrictHttpResponse<EmployeeDto>;
     })
   );
 }
