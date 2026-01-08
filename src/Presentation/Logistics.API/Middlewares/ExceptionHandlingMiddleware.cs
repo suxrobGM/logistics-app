@@ -1,28 +1,23 @@
-using System.Text;
 using System.Text.Json;
-
 using FluentValidation;
+using Logistics.Shared.Models;
 
 namespace Logistics.API.Middlewares;
 
-public class ExceptionHandlingMiddleware
+public class ExceptionHandlingMiddleware(
+    RequestDelegate next,
+    ILogger<ExceptionHandlingMiddleware> logger)
 {
-    private readonly ILogger<ExceptionHandlingMiddleware> _logger;
-    private readonly RequestDelegate _next;
-
-    public ExceptionHandlingMiddleware(
-        RequestDelegate next,
-        ILogger<ExceptionHandlingMiddleware> logger)
+    private static readonly JsonSerializerOptions JsonOptions = new()
     {
-        _next = next;
-        _logger = logger;
-    }
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
 
     public async Task InvokeAsync(HttpContext context)
     {
         try
         {
-            await _next(context);
+            await next(context);
         }
         catch (Exception ex)
         {
@@ -31,7 +26,7 @@ public class ExceptionHandlingMiddleware
             if (GetStatusCode(ex) == StatusCodes.Status500InternalServerError)
             {
                 // Log unknown error
-                _logger.LogError("{ErrorDescription}\n{StackTrace}", ex.Message, ex.StackTrace);
+                logger.LogError("{ErrorDescription}\n{StackTrace}", ex.Message, ex.StackTrace);
             }
         }
     }
@@ -39,42 +34,37 @@ public class ExceptionHandlingMiddleware
     private static async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
     {
         var statusCode = GetStatusCode(exception);
-        var response = new
-        {
-            success = false,
-            error = GetErrors(exception)
-        };
+        var response = CreateErrorResponse(exception);
+
         httpContext.Response.ContentType = "application/json";
         httpContext.Response.StatusCode = statusCode;
-        await httpContext.Response.WriteAsync(JsonSerializer.Serialize(response));
+        await httpContext.Response.WriteAsync(JsonSerializer.Serialize(response, JsonOptions));
     }
 
     private static int GetStatusCode(Exception exception)
     {
         return exception switch
         {
-            ValidationException => StatusCodes.Status400BadRequest,
+            ValidationException => StatusCodes.Status422UnprocessableEntity,
             _ => StatusCodes.Status500InternalServerError
         };
     }
 
-    private static string GetErrors(Exception exception)
+    private static ErrorResponse CreateErrorResponse(Exception exception)
     {
-        var strBuilder = new StringBuilder();
-
         if (exception is ValidationException validationException)
         {
-            foreach (var failure in validationException.Errors)
-            {
-                strBuilder.AppendLine(failure.ErrorMessage);
-            }
-        }
-        else
-        {
-            strBuilder.Append(exception.Message);
+            var details = validationException.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(e => e.ErrorMessage).ToArray()
+                );
+
+            return new ErrorResponse("Validation failed", details);
         }
 
-        return strBuilder.ToString();
+        return new ErrorResponse(exception.Message);
     }
 }
 
