@@ -17,43 +17,43 @@ namespace Logistics.API.Controllers;
 public class DriverController(IMediator mediator) : ControllerBase
 {
     [HttpGet("{userId:guid}", Name = "GetDriverByUserId")]
-    [ProducesResponseType(typeof(Result<EmployeeDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(EmployeeDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [Authorize(Policy = Permissions.Drivers.View)]
     public async Task<IActionResult> GetById(Guid userId)
     {
         var result = await mediator.Send(new GetEmployeeByIdQuery { UserId = userId });
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result.Data) : NotFound(ErrorResponse.FromResult(result));
     }
 
     [HttpPost("{userId:guid}/device-token", Name = "SetDriverDeviceToken")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Drivers.Edit)]
     public async Task<IActionResult> SetDeviceToken(Guid userId, [FromBody] SetDriverDeviceTokenCommand request)
     {
         request.UserId = userId;
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPost("confirm-load-status", Name = "ConfirmLoadStatus")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Drivers.Edit)]
     public async Task<IActionResult> ConfirmLoadStatus([FromBody] ConfirmLoadStatusCommand request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPost("update-load-proximity", Name = "UpdateLoadProximity")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Drivers.Edit)]
     public async Task<IActionResult> UpdateLoadProximity([FromBody] UpdateLoadProximityCommand request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 }

@@ -19,53 +19,52 @@ namespace Logistics.API.Controllers;
 public class LoadController(IMediator mediator) : ControllerBase
 {
     [HttpGet("{id:guid}", Name = "GetLoadById")]
-    [ProducesResponseType(typeof(Result<LoadDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(LoadDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [Authorize(Policy = Permissions.Loads.View)]
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await mediator.Send(new GetLoadByIdQuery { Id = id });
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result.Data) : NotFound(ErrorResponse.FromResult(result));
     }
 
     [HttpGet(Name = "GetLoads")]
-    [ProducesResponseType(typeof(PagedResult<LoadDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(PagedResponse<LoadDto>), StatusCodes.Status200OK)]
     [Authorize(Policy = Permissions.Loads.View)]
     public async Task<IActionResult> GetList([FromQuery] GetLoadsQuery query)
     {
         var result = await mediator.Send(query);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return Ok(PagedResponse<LoadDto>.FromPagedResult(result, query.Page, query.PageSize));
     }
 
     [HttpPost(Name = "CreateLoad")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Loads.Create)]
     public async Task<IActionResult> Create([FromBody] CreateLoadCommand request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPut("{id:guid}", Name = "UpdateLoad")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Loads.Edit)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateLoadCommand request)
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteLoad")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [Authorize(Policy = Permissions.Loads.Delete)]
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await mediator.Send(new DeleteLoadCommand { Id = id });
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? NoContent() : NotFound(ErrorResponse.FromResult(result));
     }
 }

@@ -15,23 +15,23 @@ namespace Logistics.API.Controllers;
 public class NotificationController(IMediator mediator) : ControllerBase
 {
     [HttpGet(Name = "GetNotifications")]
-    [ProducesResponseType(typeof(Result<NotificationDto[]>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(NotificationDto[]), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Notifications.View)]
     public async Task<IActionResult> GetList([FromQuery] GetNotificationsQuery request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result.Data) : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPut("{id:guid}", Name = "UpdateNotification")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Notifications.Edit)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateNotificationCommand request)
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 }

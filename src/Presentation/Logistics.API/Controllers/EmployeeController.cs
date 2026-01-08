@@ -18,64 +18,63 @@ namespace Logistics.API.Controllers;
 public class EmployeeController(IMediator mediator) : ControllerBase
 {
     [HttpGet("{userId:guid}", Name = "GetEmployeeById")]
-    [ProducesResponseType(typeof(Result<EmployeeDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(EmployeeDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [Authorize(Policy = Permissions.Employees.View)]
     public async Task<IActionResult> GetById(Guid userId)
     {
         var result = await mediator.Send(new GetEmployeeByIdQuery { UserId = userId });
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result.Data) : NotFound(ErrorResponse.FromResult(result));
     }
 
     [HttpGet(Name = "GetEmployees")]
-    [ProducesResponseType(typeof(PagedResult<EmployeeDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(PagedResponse<EmployeeDto>), StatusCodes.Status200OK)]
     [Authorize(Policy = Permissions.Employees.View)]
     public async Task<IActionResult> GetList([FromQuery] GetEmployeesQuery query)
     {
         var result = await mediator.Send(query);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return Ok(PagedResponse<EmployeeDto>.FromPagedResult(result, query.Page, query.PageSize));
     }
 
     [HttpPost(Name = "CreateEmployee")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employees.Create)]
     public async Task<IActionResult> Create([FromBody] CreateEmployeeCommand request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPost("{userId:guid}/remove-role", Name = "RemoveRoleFromEmployee")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employees.Edit)]
     public async Task<IActionResult> RemoveRole(Guid userId, [FromBody] RemoveRoleFromEmployeeCommand request)
     {
         request.UserId = userId;
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPut("{userId:guid}", Name = "UpdateEmployee")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Employees.Edit)]
     public async Task<IActionResult> Update(Guid userId, [FromBody] UpdateEmployeeCommand request)
     {
         request.UserId = userId;
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpDelete("{userId:guid}", Name = "DeleteEmployee")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [Authorize(Policy = Permissions.Employees.Delete)]
     public async Task<IActionResult> Delete(Guid userId)
     {
         var result = await mediator.Send(new DeleteEmployeeCommand { UserId = userId });
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? NoContent() : NotFound(ErrorResponse.FromResult(result));
     }
 }

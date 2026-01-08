@@ -18,43 +18,42 @@ namespace Logistics.API.Controllers;
 public class ReportController(IMediator mediator) : ControllerBase
 {
     [HttpGet("loads", Name = "GetLoadsReport")]
-    [ProducesResponseType(typeof(Result<LoadsReportDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(LoadsReportDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Stats.View)]
     public async Task<IActionResult> GetLoadsReport([FromQuery] LoadsReportQuery request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result.Data) : BadRequest(ErrorResponse.FromResult(result));
     }
 
 
     [HttpGet("drivers", Name = "GetDriversReport")]
-    [ProducesResponseType(typeof(PagedResult<DriverReportDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(PagedResponse<DriverReportDto>), StatusCodes.Status200OK)]
     [Authorize(Policy = Permissions.Stats.View)]
     public async Task<IActionResult> GetDriversReport([FromQuery] DriversReportQuery request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return Ok(PagedResponse<DriverReportDto>.FromPagedResult(result, request.Page, request.PageSize));
     }
 
     [HttpGet("financials", Name = "GetFinancialsReport")]
-    [ProducesResponseType(typeof(Result<FinancialsReportDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(FinancialsReportDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Stats.View)]
     public async Task<IActionResult> GetFinancialsReport([FromQuery] FinancialsReportQuery request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result.Data) : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpGet("drivers/dashboard", Name = "GetDriverDashboard")]
-    [ProducesResponseType(typeof(Result<DriverDashboardDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(DriverDashboardDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Stats.View)]
     public async Task<IActionResult> GetDriverDashboard([FromQuery] DriverDashboardQuery request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result.Data) : BadRequest(ErrorResponse.FromResult(result));
     }
 }

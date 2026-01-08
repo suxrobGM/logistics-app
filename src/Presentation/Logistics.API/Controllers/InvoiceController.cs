@@ -15,56 +15,55 @@ namespace Logistics.API.Controllers;
 public class InvoicesController(IMediator mediator) : ControllerBase
 {
     [HttpGet("{id:guid}", Name = "GetInvoiceById")]
-    [ProducesResponseType(typeof(Result<InvoiceDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(InvoiceDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [Authorize(Policy = Permissions.Invoices.View)]
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await mediator.Send(new GetInvoiceByIdQuery { Id = id });
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result.Data) : NotFound(ErrorResponse.FromResult(result));
     }
 
     [HttpGet(Name = "GetInvoices")]
-    [ProducesResponseType(typeof(PagedResult<InvoiceDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(PagedResponse<InvoiceDto>), StatusCodes.Status200OK)]
     [Authorize(Policy = Permissions.Invoices.View)]
     public async Task<IActionResult> GetList([FromQuery] GetInvoicesQuery query)
     {
         var result = await mediator.Send(query);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return Ok(PagedResponse<InvoiceDto>.FromPagedResult(result, query.Page, query.PageSize));
     }
 
     [HttpPut("{id:guid}", Name = "UpdateInvoice")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Invoices.Edit)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateInvoiceCommand request)
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteInvoice")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [Authorize(Policy = Permissions.Invoices.Delete)]
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await mediator.Send(new DeleteInvoiceCommand { Id = id });
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? NoContent() : NotFound(ErrorResponse.FromResult(result));
     }
 
     #region Load Invoice
 
     [HttpPost("loads", Name = "CreateLoadInvoice")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Invoices.Create)]
     public async Task<IActionResult> CreateLoadInvoice([FromBody] CreateLoadInvoiceCommand request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     #endregion
@@ -72,34 +71,34 @@ public class InvoicesController(IMediator mediator) : ControllerBase
     #region Payroll Invoice
 
     [HttpGet("payrolls/preview", Name = "PreviewPayrollInvoice")]
-    [ProducesResponseType(typeof(Result<PayrollDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(PayrollDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payrolls.View)]
     public async Task<IActionResult> PreviewPayrollInvoice([FromQuery] PreviewPayrollInvoiceQuery request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result.Data) : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPost("payrolls", Name = "CreatePayrollInvoice")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payrolls.Create)]
     public async Task<IActionResult> CreatePayrollInvoice([FromBody] CreatePayrollInvoiceCommand request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPut("payrolls/{id:guid}", Name = "UpdatePayrollInvoice")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Payrolls.Edit)]
     public async Task<IActionResult> UpdatePayrollInvoice(Guid id, [FromBody] UpdatePayrollInvoiceCommand request)
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     #endregion

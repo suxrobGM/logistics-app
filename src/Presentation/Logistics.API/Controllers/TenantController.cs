@@ -22,8 +22,8 @@ public class TenantController(IMediator mediator) : ControllerBase
     #region Tenants
 
     [HttpGet("{identifier}", Name = "GetTenantById")]
-    [ProducesResponseType(typeof(Result<TenantDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(TenantDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [Authorize]
     public async Task<IActionResult> GetTenantById(string identifier)
     {
@@ -35,50 +35,49 @@ public class TenantController(IMediator mediator) : ControllerBase
             IncludeConnectionString = includeConnectionString
         });
 
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? Ok(result.Data) : NotFound(ErrorResponse.FromResult(result));
     }
 
     [HttpGet(Name = "GetTenants")]
-    [ProducesResponseType(typeof(PagedResult<LoadDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(PagedResponse<TenantDto>), StatusCodes.Status200OK)]
     [Authorize(Policy = Permissions.Tenants.View)]
     public async Task<IActionResult> GetTenantList([FromQuery] GetTenantsQuery query)
     {
         if (User.HasOneTheseRoles(AppRoles.SuperAdmin, AppRoles.Admin)) query.IncludeConnectionStrings = true;
 
         var result = await mediator.Send(query);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return Ok(PagedResponse<TenantDto>.FromPagedResult(result, query.Page, query.PageSize));
     }
 
     [HttpPost(Name = "CreateTenant")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Tenants.Create)]
     public async Task<IActionResult> CreateTenant([FromBody] CreateTenantCommand request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPut("{id:guid}", Name = "UpdateTenant")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permissions.Tenants.Edit)]
     public async Task<IActionResult> UpdateTenant(Guid id, [FromBody] UpdateTenantCommand request)
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteTenant")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [Authorize(Policy = Permissions.Tenants.Delete)]
     public async Task<IActionResult> DeleteTenant(Guid id)
     {
         var result = await mediator.Send(new DeleteTenantCommand { Id = id });
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.Success ? NoContent() : NotFound(ErrorResponse.FromResult(result));
     }
 
     #endregion
