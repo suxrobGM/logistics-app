@@ -101,3 +101,12 @@ a, .btn-link {
 code {
     color: #c02d76;
 }
+
+/* Fix cursor flickering on sidebar menu items */
+.rz-panel-menu .rz-navigation-item-link {
+    cursor: pointer !important;
+}
+
+.rz-panel-menu .rz-navigation-item-link * {
+    pointer-events: none;
+}
