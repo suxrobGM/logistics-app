@@ -1,0 +1,191 @@
+# Docker-based deployment to VPS
+#
+# Required GitHub Secrets:
+# - VPS_HOST: VPS IP address or hostname
+# - VPS_USER: SSH username
+# - VPS_SSH_KEY: SSH private key for VPS access
+# - GHCR_PAT: Personal Access Token with read:packages, write:packages scope
+# - DOCKER_ENV: Full .env file content for docker-compose (includes all config)
+#
+# Setup instructions:
+# 1. Create PAT: GitHub Settings -> Developer settings -> Personal access tokens with read:packages, write:packages scope
+# 2. On VPS: mkdir -p /deploy/logistics
+# 3. Add DOCKER_ENV secret with all environment variables
+
+name: Build and Deploy
+
+on:
+  push:
+    branches: [prod]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  API_IMAGE: ghcr.io/${{ github.repository }}/api
+  IDENTITY_IMAGE: ghcr.io/${{ github.repository }}/identity
+  ADMIN_IMAGE: ghcr.io/${{ github.repository }}/admin
+  OFFICE_IMAGE: ghcr.io/${{ github.repository }}/office
+  MIGRATOR_IMAGE: ghcr.io/${{ github.repository }}/migrator
+  APP_DIR: /deploy/logistics
+
+jobs:
+  build:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-prod
+      cancel-in-progress: true
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_PAT }}
+
+      - name: Build and push API
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./src/Presentation/Logistics.API/Dockerfile
+          push: true
+          tags: ${{ env.API_IMAGE }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Identity Server
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./src/Presentation/Logistics.IdentityServer/Dockerfile
+          push: true
+          tags: ${{ env.IDENTITY_IMAGE }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Migrator
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./src/Presentation/Logistics.DbMigrator/Dockerfile
+          push: true
+          tags: ${{ env.MIGRATOR_IMAGE }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Admin App
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./src/Client/Logistics.AdminApp/Dockerfile
+          push: true
+          tags: ${{ env.ADMIN_IMAGE }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Office App
+        uses: docker/build-push-action@v6
+        with:
+          context: ./src/Client/Logistics.OfficeApp
+          file: ./src/Client/Logistics.OfficeApp/Dockerfile
+          push: true
+          tags: ${{ env.OFFICE_IMAGE }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+    needs: build
+    concurrency:
+      group: deploy-prod
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Copy docker-compose to VPS
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "src/Aspire/Logistics.Aspire.AppHost/aspire-output/docker-compose.yaml"
+          target: ${{ env.APP_DIR }}
+          strip_components: 4
+
+      - name: Deploy with Docker Compose
+        uses: appleboy/ssh-action@v1.2.4
+        env:
+          DOCKER_ENV: ${{ secrets.DOCKER_ENV }}
+          GHCR_PAT: ${{ secrets.GHCR_PAT }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          IMAGE_TAG: latest
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          envs: DOCKER_ENV,GHCR_PAT,GITHUB_REPOSITORY,IMAGE_TAG
+          script: |
+            # Navigate to app directory
+            cd ${{ env.APP_DIR }}
+
+            # Create .env file from secret
+            echo "$DOCKER_ENV" > .env
+
+            # Add required variables for docker-compose
+            echo "GITHUB_REPOSITORY=$GITHUB_REPOSITORY" >> .env
+            echo "IMAGE_TAG=$IMAGE_TAG" >> .env
+
+            # Login to GitHub Container Registry
+            echo "$GHCR_PAT" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            # Create proxy network if it doesn't exist
+            docker network create proxy 2>/dev/null || true
+
+            # Pull latest images
+            docker compose pull
+
+            # Deploy with zero-downtime (rolling update)
+            docker compose up -d --remove-orphans
+
+            # Clean up old images
+            docker image prune -f
+
+            # Show running containers
+            echo "=== Running Containers ==="
+            docker compose ps
+
+            # Show container health
+            echo "=== Container Health ==="
+            docker compose ps --format "table {{.Name}}\t{{.Status}}"
+
+      - name: Health check
+        uses: appleboy/ssh-action@v1.2.4
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            echo "Waiting for services to start..."
+            sleep 30
+
+            echo "=== API Health Check ==="
+            curl -sf http://localhost:7000/health || echo "API not responding yet"
+
+            echo "=== Container Status ==="
+            docker compose -f ${{ env.APP_DIR }}/docker-compose.yaml ps --format "table {{.Name}}\t{{.Status}}"
+
+            echo "=== Recent Logs ==="
+            docker compose -f ${{ env.APP_DIR }}/docker-compose.yaml logs --tail=10 2>/dev/null || true

@@ -27,27 +27,39 @@ var migrator = builder.AddProject<Logistics_DbMigrator>("migrator")
     .WaitFor(postgres);
 
 var logisticsApi = builder.AddProject<Logistics_API>("api")
-    .WithHttpEndpoint(7000, 7000, "api-http", isProxied: false)
     .WithReference(masterDb, "MasterDatabase")
     .WithReference(tenantDb, "DefaultTenantDatabase")
     .WaitFor(migrator);
 
 var identityServer = builder.AddProject<Logistics_IdentityServer>("identity-server")
-    .WithHttpEndpoint(7001, 7001, "identity-http", isProxied: false)
     .WithReference(masterDb, "MasterDatabase")
     .WithReference(tenantDb, "DefaultTenantDatabase")
     .WaitFor(migrator);
 
 var adminApp = builder.AddProject<Logistics_AdminApp>("admin-app")
-    .WithHttpEndpoint(7002, 7002, "admin-http", isProxied: false)
     .WaitFor(logisticsApi)
     .WaitFor(identityServer);
 
-var officeApp = builder.AddBunApp("office-app", "../../Client/Logistics.OfficeApp", "start", true)
-    .WithBunPackageInstallation()
-    .WithHttpEndpoint(7003, 7003, "office-http", isProxied: false)
-    .WaitFor(logisticsApi)
-    .WaitFor(identityServer);
+// Office App: Use BunApp for local dev, Container for publishing
+IResourceBuilder<IResourceWithEnvironment> officeApp;
+if (builder.ExecutionContext.IsPublishMode)
+{
+    // For production: use pre-built container image
+    officeApp = builder.AddContainer("office-app", "ghcr.io/suxrobgm/logistics-app/office")
+        .WithImageTag("latest")
+        .WithHttpEndpoint(port: 7003, targetPort: 7003, name: "office-http")
+        .WaitFor(logisticsApi)
+        .WaitFor(identityServer);
+}
+else
+{
+    // For local development: use Bun dev server
+    officeApp = builder.AddBunApp("office-app", "../../Client/Logistics.OfficeApp", "start", true)
+        .WithHttpEndpoint(7003, 7003, "office-app-http", isProxied: false)
+        .WithBunPackageInstallation()
+        .WaitFor(logisticsApi)
+        .WaitFor(identityServer);
+}
 
 // Add nginx-proxy virtual host labels when nginx is enabled
 if (enableNginx)
