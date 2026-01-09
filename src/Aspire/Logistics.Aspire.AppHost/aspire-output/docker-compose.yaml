@@ -1,0 +1,170 @@
+services:
+  compose-dashboard:
+    image: "mcr.microsoft.com/dotnet/nightly/aspire-dashboard:latest"
+    ports:
+      - "7100:18888"
+    expose:
+      - "18889"
+      - "18890"
+    networks:
+      - "aspire"
+    restart: "always"
+  postgres:
+    image: "docker.io/postgres:latest"
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    expose:
+      - "5432"
+    volumes:
+      - type: "volume"
+        target: "/var/lib/postgresql"
+        source: "logistics-pg-data"
+        read_only: false
+    networks:
+      - "aspire"
+  migrator:
+    image: "${MIGRATOR_IMAGE}"
+    environment:
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ConnectionStrings__MasterDatabase: "Host=postgres;Port=5432;Username=postgres;Password=${POSTGRES_PASSWORD};Database=master_logistics"
+      MASTERDATABASE_HOST: "postgres"
+      MASTERDATABASE_PORT: "5432"
+      MASTERDATABASE_USERNAME: "postgres"
+      MASTERDATABASE_PASSWORD: "${POSTGRES_PASSWORD}"
+      MASTERDATABASE_URI: "postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/master_logistics"
+      MASTERDATABASE_JDBCCONNECTIONSTRING: "jdbc:postgresql://postgres:5432/master_logistics"
+      MASTERDATABASE_DATABASENAME: "master_logistics"
+      ConnectionStrings__DefaultTenantDatabase: "Host=postgres;Port=5432;Username=postgres;Password=${POSTGRES_PASSWORD};Database=default_logistics"
+      DEFAULTTENANTDATABASE_HOST: "postgres"
+      DEFAULTTENANTDATABASE_PORT: "5432"
+      DEFAULTTENANTDATABASE_USERNAME: "postgres"
+      DEFAULTTENANTDATABASE_PASSWORD: "${POSTGRES_PASSWORD}"
+      DEFAULTTENANTDATABASE_URI: "postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/default_logistics"
+      DEFAULTTENANTDATABASE_JDBCCONNECTIONSTRING: "jdbc:postgresql://postgres:5432/default_logistics"
+      DEFAULTTENANTDATABASE_DATABASENAME: "default_logistics"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://compose-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "migrator"
+    depends_on:
+      postgres:
+        condition: "service_started"
+    networks:
+      - "aspire"
+  api:
+    image: "${API_IMAGE}"
+    environment:
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      HTTP_PORTS: "${API_PORT};7000"
+      ConnectionStrings__MasterDatabase: "Host=postgres;Port=5432;Username=postgres;Password=${POSTGRES_PASSWORD};Database=master_logistics"
+      MASTERDATABASE_HOST: "postgres"
+      MASTERDATABASE_PORT: "5432"
+      MASTERDATABASE_USERNAME: "postgres"
+      MASTERDATABASE_PASSWORD: "${POSTGRES_PASSWORD}"
+      MASTERDATABASE_URI: "postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/master_logistics"
+      MASTERDATABASE_JDBCCONNECTIONSTRING: "jdbc:postgresql://postgres:5432/master_logistics"
+      MASTERDATABASE_DATABASENAME: "master_logistics"
+      ConnectionStrings__DefaultTenantDatabase: "Host=postgres;Port=5432;Username=postgres;Password=${POSTGRES_PASSWORD};Database=default_logistics"
+      DEFAULTTENANTDATABASE_HOST: "postgres"
+      DEFAULTTENANTDATABASE_PORT: "5432"
+      DEFAULTTENANTDATABASE_USERNAME: "postgres"
+      DEFAULTTENANTDATABASE_PASSWORD: "${POSTGRES_PASSWORD}"
+      DEFAULTTENANTDATABASE_URI: "postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/default_logistics"
+      DEFAULTTENANTDATABASE_JDBCCONNECTIONSTRING: "jdbc:postgresql://postgres:5432/default_logistics"
+      DEFAULTTENANTDATABASE_DATABASENAME: "default_logistics"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://compose-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "api"
+    expose:
+      - "${API_PORT}"
+      - "7000"
+    depends_on:
+      migrator:
+        condition: "service_started"
+    networks:
+      - "aspire"
+  identity-server:
+    image: "${IDENTITY_SERVER_IMAGE}"
+    environment:
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      HTTP_PORTS: "${IDENTITY_SERVER_PORT};7001"
+      ConnectionStrings__MasterDatabase: "Host=postgres;Port=5432;Username=postgres;Password=${POSTGRES_PASSWORD};Database=master_logistics"
+      MASTERDATABASE_HOST: "postgres"
+      MASTERDATABASE_PORT: "5432"
+      MASTERDATABASE_USERNAME: "postgres"
+      MASTERDATABASE_PASSWORD: "${POSTGRES_PASSWORD}"
+      MASTERDATABASE_URI: "postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/master_logistics"
+      MASTERDATABASE_JDBCCONNECTIONSTRING: "jdbc:postgresql://postgres:5432/master_logistics"
+      MASTERDATABASE_DATABASENAME: "master_logistics"
+      ConnectionStrings__DefaultTenantDatabase: "Host=postgres;Port=5432;Username=postgres;Password=${POSTGRES_PASSWORD};Database=default_logistics"
+      DEFAULTTENANTDATABASE_HOST: "postgres"
+      DEFAULTTENANTDATABASE_PORT: "5432"
+      DEFAULTTENANTDATABASE_USERNAME: "postgres"
+      DEFAULTTENANTDATABASE_PASSWORD: "${POSTGRES_PASSWORD}"
+      DEFAULTTENANTDATABASE_URI: "postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/default_logistics"
+      DEFAULTTENANTDATABASE_JDBCCONNECTIONSTRING: "jdbc:postgresql://postgres:5432/default_logistics"
+      DEFAULTTENANTDATABASE_DATABASENAME: "default_logistics"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://compose-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "identity-server"
+    expose:
+      - "${IDENTITY_SERVER_PORT}"
+      - "7001"
+    depends_on:
+      migrator:
+        condition: "service_started"
+    networks:
+      - "aspire"
+  admin-app:
+    image: "${ADMIN_APP_IMAGE}"
+    environment:
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      HTTP_PORTS: "${ADMIN_APP_PORT};7002"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://compose-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "admin-app"
+    expose:
+      - "${ADMIN_APP_PORT}"
+      - "7002"
+    depends_on:
+      api:
+        condition: "service_started"
+      identity-server:
+        condition: "service_started"
+    networks:
+      - "aspire"
+  stripe-cli:
+    image: "stripe/stripe-cli:latest"
+    command:
+      - "listen"
+      - "--forward-to"
+      - "http://api:7000/webhooks/stripe"
+    entrypoint:
+      - "stripe"
+    environment:
+      STRIPE_API_KEY: "sk_test_51QyIsE4Klqx5siJtH8rz5smtZJyWrmKahzcgsGqfxZsMzpWXBKfcXMFUY3FKrVLQVgAzGfXK5DLDnfSMFBACSkNE00o8Izs4uj"
+      STRIPE_DEVICE_NAME: "aspire-dev"
+    depends_on:
+      api:
+        condition: "service_started"
+    networks:
+      - "aspire"
+networks:
+  aspire:
+    driver: "bridge"
+volumes:
+  logistics-pg-data:
+    driver: "local"

@@ -1,13 +1,15 @@
 using Microsoft.Extensions.Configuration;
+using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
-builder.Configuration.AddJsonFile("appsettings.local.json", optional: true, reloadOnChange: true);
+builder.Configuration.AddJsonFile("appsettings.local.json", true, true);
 
 var stripeSecret = builder.Configuration["Stripe:SecretKey"];
 var domain = builder.Configuration["Domain"] ?? "localhost";
 var enableNginx = builder.Configuration.GetValue<bool>("EnableNginx");
 
-//builder.AddDockerComposeEnvironment("compose");
+builder.AddDockerComposeEnvironment("compose")
+    .WithDashboard(dashboard => dashboard.WithHostPort(7100));
 
 var postgres = builder.AddPostgres("postgres", port: 5433)
     .WithImage("postgres:latest")
@@ -19,29 +21,31 @@ var masterDb = postgres.AddDatabase("master", "master_logistics");
 var tenantDb = postgres.AddDatabase("default-tenant", "default_logistics");
 
 // Runs the migrations for the "master" and tenant databases
-var migrator = builder.AddProject<Projects.Logistics_DbMigrator>("migrator")
+var migrator = builder.AddProject<Logistics_DbMigrator>("migrator")
     .WithReference(masterDb, "MasterDatabase")
     .WithReference(tenantDb, "DefaultTenantDatabase")
     .WaitFor(postgres);
 
-var logisticsApi = builder.AddProject<Projects.Logistics_API>("api")
+var logisticsApi = builder.AddProject<Logistics_API>("api")
+    .WithHttpEndpoint(7000, 7000, "api-http", isProxied: false)
     .WithReference(masterDb, "MasterDatabase")
     .WithReference(tenantDb, "DefaultTenantDatabase")
     .WaitFor(migrator);
 
-var identityServer = builder.AddProject<Projects.Logistics_IdentityServer>("identity-server")
+var identityServer = builder.AddProject<Logistics_IdentityServer>("identity-server")
+    .WithHttpEndpoint(7001, 7001, "identity-http", isProxied: false)
     .WithReference(masterDb, "MasterDatabase")
     .WithReference(tenantDb, "DefaultTenantDatabase")
     .WaitFor(migrator);
 
-var adminApp = builder.AddProject<Projects.Logistics_AdminApp>("admin-app")
+var adminApp = builder.AddProject<Logistics_AdminApp>("admin-app")
+    .WithHttpEndpoint(7002, 7002, "admin-http", isProxied: false)
     .WaitFor(logisticsApi)
     .WaitFor(identityServer);
 
-var officeApp = builder.AddBunApp("office-app", "../../Client/Logistics.OfficeApp", entryPoint: "start", watch: true)
+var officeApp = builder.AddBunApp("office-app", "../../Client/Logistics.OfficeApp", "start", true)
     .WithBunPackageInstallation()
-    .WithHttpEndpoint()
-    .WithUrl("http://localhost:7003")
+    .WithHttpEndpoint(7003, 7003, "office-http", isProxied: false)
     .WaitFor(logisticsApi)
     .WaitFor(identityServer);
 
@@ -72,7 +76,7 @@ builder.AddContainer("stripe-cli", "stripe/stripe-cli:latest")
     .WithEntrypoint("stripe")
     .WithArgs(
         "listen",
-        "--forward-to", "http://localhost:7000/webhooks/stripe")
+        "--forward-to", "http://api:7000/webhooks/stripe")
     .WaitFor(logisticsApi);
 
 // Production: nginx-proxy with automatic SSL via acme-companion
@@ -86,18 +90,19 @@ if (enableNginx)
         .WithVolume("nginx-certs", "/etc/nginx/certs")
         .WithVolume("nginx-vhost", "/etc/nginx/vhost.d")
         .WithVolume("nginx-html", "/usr/share/nginx/html")
-        .WithBindMount("/var/run/docker.sock", "/tmp/docker.sock", isReadOnly: true)
-        .WithHttpEndpoint(port: 80, targetPort: 80, name: "http")
-        .WithHttpsEndpoint(port: 443, targetPort: 443, name: "https");
+        .WithBindMount("/var/run/docker.sock", "/tmp/docker.sock", true)
+        .WithHttpEndpoint(80, 80, "nginx-http")
+        .WithHttpsEndpoint(443, 443, "nginx-https");
 
     // acme-companion: automatic Let's Encrypt SSL certificates
     builder.AddContainer("acme-companion", "nginxproxy/acme-companion:latest")
         .WithEnvironment("DEFAULT_EMAIL", letsencryptEmail)
+        .WithEnvironment("NGINX_PROXY_CONTAINER", "nginx-proxy")
         .WithVolume("nginx-certs", "/etc/nginx/certs")
         .WithVolume("nginx-vhost", "/etc/nginx/vhost.d")
         .WithVolume("nginx-html", "/usr/share/nginx/html")
         .WithVolume("acme-state", "/etc/acme.sh")
-        .WithBindMount("/var/run/docker.sock", "/var/run/docker.sock", isReadOnly: true)
+        .WithBindMount("/var/run/docker.sock", "/var/run/docker.sock", true)
         .WaitFor(nginxProxy);
 }
 
