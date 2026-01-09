@@ -9,6 +9,19 @@
 
 > Multi-tenant fleet management platform for trucking companies. Automates dispatching, GPS tracking, invoicing, and payroll with a modern cloud-native architecture.
 
+## Overview
+
+Logistics TMS is purpose-built for trucking fleets specializing in intermodal containers and vehicle transport. It replaces spreadsheet-based workflows with an end-to-end digital system.
+
+**Key Features:**
+
+- **Multi-Tenant**: Each company gets isolated database and data
+- **Real-Time Tracking**: GPS tracking of drivers and vehicles via SignalR
+- **Load Management**: Create, assign, and track shipments from origin to destination
+- **Invoicing & Payments**: Generate invoices and process payments with Stripe
+- **Driver Mobile App**: Native Android/iOS app for drivers to manage their tasks
+- **Analytics Dashboard**: Insights into operations, driver performance, and financials
+
 ## Quick Start
 
 ### Option 1: Docker with Aspire (Recommended)
@@ -17,7 +30,7 @@
 dotnet run --project src/Aspire/Logistics.Aspire.AppHost
 ```
 
-Dashboard: http://localhost:8100
+Dashboard: <http://localhost:7100>
 
 ### Option 2: Manual Setup
 
@@ -29,8 +42,8 @@ Try the application at [https://logistics-office.suxrobgm.net](https://logistics
 
 | Role | Email | Password |
 |------|-------|----------|
-| Owner | Test1@gmail.com | Test12345# |
-| Dispatcher | Test3@gmail.com | Test12345# |
+| Owner | <Test1@gmail.com> | Test12345# |
+| Dispatcher | <Test3@gmail.com> | Test12345# |
 
 [All test credentials](docs/getting-started/test-credentials.md)
 
@@ -42,7 +55,6 @@ Try the application at [https://logistics-office.suxrobgm.net](https://logistics
 | [Architecture](docs/architecture/overview.md) | System design, patterns, domain model |
 | [API Reference](docs/api/overview.md) | Authentication, endpoints, webhooks |
 | [Deployment](docs/deployment/overview.md) | VPS setup, Docker Compose, Nginx, SSL |
-| [Operations](docs/operations/monitoring.md) | Monitoring, backups, troubleshooting |
 | [Development](docs/development/backend-guide.md) | Backend, Angular, mobile guides |
 
 ## Tech Stack
@@ -84,4 +96,4 @@ Created by **Sukhrob Ilyosbekov**
 
 ![Office App](docs/images/office-app/office_app_1.jpg)
 
-[More screenshots](docs/images/)
+[View all screenshots](docs/screenshots.md)
