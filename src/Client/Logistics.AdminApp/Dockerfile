@@ -26,7 +26,7 @@ RUN rm -rf ./*
 COPY --from=build /app/publish/wwwroot .
 
 # Copy nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY src/Client/Logistics.AdminApp/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 7002
 
