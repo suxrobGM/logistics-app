@@ -15,10 +15,19 @@ RUN dotnet restore src/Client/Logistics.AdminApp/Logistics.AdminApp.csproj
 WORKDIR /logistics/src/Client/Logistics.AdminApp
 RUN dotnet publish -c Release -o /app/publish
 
-# Runtime stage
-FROM mcr.microsoft.com/dotnet/aspnet:10.0
-WORKDIR /app
+# Runtime stage - use nginx to serve static Blazor WASM files
+FROM nginx:alpine
+WORKDIR /usr/share/nginx/html
+
+# Remove default nginx static assets
+RUN rm -rf ./*
+
+# Copy published Blazor WASM files
+COPY --from=build /app/publish/wwwroot .
+
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 EXPOSE 7002
 
-COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "Logistics.AdminApp.dll"]
+CMD ["nginx", "-g", "daemon off;"]

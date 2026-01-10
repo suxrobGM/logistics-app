@@ -118,7 +118,8 @@ if (enableNginx)
         .WithVolume("nginx-html", "/usr/share/nginx/html")
         .WithBindMount("/var/run/docker.sock", "/tmp/docker.sock", true)
         .WithHttpEndpoint(80, 80, "nginx-http")
-        .WithHttpsEndpoint(443, 443, "nginx-https");
+        .WithHttpsEndpoint(443, 443, "nginx-https")
+        .WithExternalHttpEndpoints();
 
     // acme-companion: automatic Let's Encrypt SSL certificates
     builder.AddContainer("acme-companion", "nginxproxy/acme-companion:latest")
