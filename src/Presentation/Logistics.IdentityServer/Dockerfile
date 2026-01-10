@@ -5,6 +5,7 @@ WORKDIR /logistics
 COPY *.sln ./
 COPY src/Core/ src/Core/
 COPY src/Shared/ src/Shared/
+COPY src/Aspire/ src/Aspire/
 COPY src/Presentation/Logistics.IdentityServer/ src/Presentation/Logistics.IdentityServer/
 
 # Restore dependencies
