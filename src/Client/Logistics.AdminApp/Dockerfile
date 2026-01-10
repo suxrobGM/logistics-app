@@ -3,6 +3,7 @@ WORKDIR /logistics
 
 # Copy solution and project files
 COPY *.sln ./
+COPY src/Core/Logistics.Domain.Primitives/ src/Core/Logistics.Domain.Primitives/
 COPY src/Shared/ src/Shared/
 COPY src/Client/Logistics.AdminApp/ src/Client/Logistics.AdminApp/
 COPY src/Client/Logistics.HttpClient/ src/Client/Logistics.HttpClient/

@@ -1,0 +1,174 @@
+# ============================================================================
+# Cleanup Container Images
+# ============================================================================
+# Deletes old untagged container images from GitHub Container Registry (ghcr.io).
+#
+# USAGE:
+#   1. Manual trigger: Run from Actions tab with package name and options
+#   2. Reusable workflow: Call from another repo's workflow
+#
+# REUSABLE WORKFLOW EXAMPLE:
+#   jobs:
+#     cleanup:
+#       uses: <org>/logistics-app/.github/workflows/cleanup-container-images.yml@main
+#       with:
+#         package-name: "my-package"
+#         keep-n-tagged: 10
+#         delete-untagged-older-than: 7
+#       secrets:
+#         token: ${{ secrets.GITHUB_TOKEN }}
+#
+# REQUIRED PERMISSIONS:
+#   - GITHUB_TOKEN with `packages: write` permission
+#   - For org packages, may need PAT with `delete:packages` scope
+# ============================================================================
+
+name: Cleanup Container Images
+
+on:
+  workflow_dispatch:
+    inputs:
+      package-name:
+        description: "Container package name (e.g., logistics-api)"
+        required: true
+        type: string
+      keep-n-tagged:
+        description: "Number of tagged versions to keep"
+        required: false
+        type: number
+        default: 10
+      delete-untagged-older-than:
+        description: "Delete untagged images older than N days"
+        required: false
+        type: number
+        default: 7
+      dry-run:
+        description: "Dry run (don't actually delete)"
+        required: false
+        type: boolean
+        default: false
+
+  workflow_call:
+    inputs:
+      package-name:
+        description: "Container package name"
+        required: true
+        type: string
+      keep-n-tagged:
+        description: "Number of tagged versions to keep"
+        required: false
+        type: number
+        default: 10
+      delete-untagged-older-than:
+        description: "Delete untagged images older than N days"
+        required: false
+        type: number
+        default: 7
+      dry-run:
+        description: "Dry run mode"
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      token:
+        description: "GitHub token with packages:delete permission"
+        required: false
+
+env:
+  DEFAULT_PACKAGES: "logistics-api,logistics-identityserver,logistics-adminapp,logistics-officeapp"
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+
+    steps:
+      - name: Determine packages to clean
+        id: packages
+        run: |
+          if [ -n "${{ inputs.package-name }}" ]; then
+            echo "packages=${{ inputs.package-name }}" >> $GITHUB_OUTPUT
+          else
+            echo "packages=${{ env.DEFAULT_PACKAGES }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Delete untagged container images
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: ${{ steps.packages.outputs.packages }}
+          package-type: container
+          min-versions-to-keep: ${{ inputs.keep-n-tagged || 10 }}
+          delete-only-untagged-versions: true
+          token: ${{ secrets.token || secrets.GITHUB_TOKEN }}
+
+      - name: Delete old untagged images (API fallback)
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.token || secrets.GITHUB_TOKEN }}
+          PACKAGE_NAME: ${{ steps.packages.outputs.packages }}
+          OLDER_THAN_DAYS: ${{ inputs.delete-untagged-older-than || 7 }}
+          DRY_RUN: ${{ inputs.dry-run || false }}
+        run: |
+          #!/bin/bash
+          set -euo pipefail
+
+          CUTOFF_DATE=$(date -d "-${OLDER_THAN_DAYS} days" -Iseconds)
+          echo "Deleting untagged images older than: ${CUTOFF_DATE}"
+
+          # Get repository owner (org or user)
+          OWNER="${{ github.repository_owner }}"
+
+          # Process each package
+          IFS=',' read -ra PACKAGES <<< "$PACKAGE_NAME"
+          for PKG in "${PACKAGES[@]}"; do
+            PKG=$(echo "$PKG" | xargs)  # trim whitespace
+            echo "Processing package: ${PKG}"
+
+            # List all versions
+            VERSIONS=$(gh api \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "/orgs/${OWNER}/packages/container/${PKG}/versions" \
+              --paginate 2>/dev/null || \
+              gh api \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "/users/${OWNER}/packages/container/${PKG}/versions" \
+              --paginate 2>/dev/null || echo "[]")
+
+            # Filter and delete old untagged versions
+            echo "$VERSIONS" | jq -r --arg cutoff "$CUTOFF_DATE" '
+              .[] |
+              select(.metadata.container.tags | length == 0) |
+              select(.updated_at < $cutoff) |
+              "\(.id) \(.updated_at)"
+            ' | while read -r VERSION_ID UPDATED_AT; do
+              if [ -z "$VERSION_ID" ]; then
+                continue
+              fi
+
+              echo "Found untagged version: ${VERSION_ID} (updated: ${UPDATED_AT})"
+
+              if [ "$DRY_RUN" = "true" ]; then
+                echo "[DRY RUN] Would delete version ${VERSION_ID}"
+              else
+                echo "Deleting version ${VERSION_ID}..."
+                gh api \
+                  --method DELETE \
+                  -H "Accept: application/vnd.github+json" \
+                  -H "X-GitHub-Api-Version: 2022-11-28" \
+                  "/orgs/${OWNER}/packages/container/${PKG}/versions/${VERSION_ID}" 2>/dev/null || \
+                  gh api \
+                  --method DELETE \
+                  -H "Accept: application/vnd.github+json" \
+                  -H "X-GitHub-Api-Version: 2022-11-28" \
+                  "/users/${OWNER}/packages/container/${PKG}/versions/${VERSION_ID}" 2>/dev/null || \
+                  echo "Warning: Failed to delete version ${VERSION_ID}"
+              fi
+            done
+
+            echo "Completed processing: ${PKG}"
+          done
+
+          echo "Cleanup complete!"
