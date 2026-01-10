@@ -3,7 +3,7 @@
 # Required GitHub Secrets:
 # - VPS_HOST: VPS IP address or hostname
 # - VPS_USER: SSH username
-# - VPS_SSH_KEY: SSH private key for VPS access
+# - SSH_PRIVATE_KEY: SSH private key for VPS access
 # - GHCR_PAT: Personal Access Token with read:packages, write:packages scope
 # - DOCKER_ENV: Full .env file content for docker-compose (includes all config)
 #
@@ -120,7 +120,7 @@ jobs:
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "src/Aspire/Logistics.Aspire.AppHost/aspire-output/docker-compose.yaml"
           target: ${{ env.APP_DIR }}
           strip_components: 4
@@ -135,7 +135,7 @@ jobs:
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           envs: DOCKER_ENV,GHCR_PAT,GITHUB_REPOSITORY,IMAGE_TAG
           script: |
             # Navigate to app directory
@@ -176,7 +176,7 @@ jobs:
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             echo "Waiting for services to start..."
             sleep 30

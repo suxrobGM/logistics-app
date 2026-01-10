@@ -367,3 +367,5 @@ MigrationBackup/
 settings.local.json
 
 KotlinProject/
+
+.env.docker

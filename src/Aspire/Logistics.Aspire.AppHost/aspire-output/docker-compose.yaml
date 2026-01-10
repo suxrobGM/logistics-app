@@ -79,6 +79,8 @@ services:
       DEFAULTTENANTDATABASE_URI: "postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/default_logistics"
       DEFAULTTENANTDATABASE_JDBCCONNECTIONSTRING: "jdbc:postgresql://postgres:5432/default_logistics"
       DEFAULTTENANTDATABASE_DATABASENAME: "default_logistics"
+      VIRTUAL_HOST: "api.suxrobgm.net"
+      LETSENCRYPT_HOST: "api.suxrobgm.net"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://compose-dashboard:18889"
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
       OTEL_SERVICE_NAME: "api"
@@ -113,6 +115,8 @@ services:
       DEFAULTTENANTDATABASE_URI: "postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/default_logistics"
       DEFAULTTENANTDATABASE_JDBCCONNECTIONSTRING: "jdbc:postgresql://postgres:5432/default_logistics"
       DEFAULTTENANTDATABASE_DATABASENAME: "default_logistics"
+      VIRTUAL_HOST: "id.suxrobgm.net"
+      LETSENCRYPT_HOST: "id.suxrobgm.net"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://compose-dashboard:18889"
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
       OTEL_SERVICE_NAME: "identity-server"
@@ -131,6 +135,8 @@ services:
       OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
       ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
       HTTP_PORTS: "${ADMIN_APP_PORT}"
+      VIRTUAL_HOST: "admin.suxrobgm.net"
+      LETSENCRYPT_HOST: "admin.suxrobgm.net"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://compose-dashboard:18889"
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
       OTEL_SERVICE_NAME: "admin-app"
@@ -145,6 +151,9 @@ services:
       - "aspire"
   office-app:
     image: "ghcr.io/suxrobgm/logistics-app/office:latest"
+    environment:
+      VIRTUAL_HOST: "office.suxrobgm.net"
+      LETSENCRYPT_HOST: "office.suxrobgm.net"
     expose:
       - "7003"
     depends_on:
@@ -163,10 +172,65 @@ services:
     entrypoint:
       - "stripe"
     environment:
-      STRIPE_API_KEY: "${STRIPE_API_KEY}"
+      STRIPE_API_KEY: "sk_test_51QyIsE4Klqx5siJtH8rz5smtZJyWrmKahzcgsGqfxZsMzpWXBKfcXMFUY3FKrVLQVgAzGfXK5DLDnfSMFBACSkNE00o8Izs4uj"
       STRIPE_DEVICE_NAME: "aspire-dev"
     depends_on:
       api:
+        condition: "service_started"
+    networks:
+      - "aspire"
+  nginx-proxy:
+    image: "nginxproxy/nginx-proxy:latest"
+    expose:
+      - "80"
+      - "443"
+    volumes:
+      - type: "volume"
+        target: "/etc/nginx/certs"
+        source: "nginx-certs"
+        read_only: false
+      - type: "volume"
+        target: "/etc/nginx/vhost.d"
+        source: "nginx-vhost"
+        read_only: false
+      - type: "volume"
+        target: "/usr/share/nginx/html"
+        source: "nginx-html"
+        read_only: false
+      - type: "bind"
+        target: "/tmp/docker.sock"
+        source: "/var/run/docker.sock"
+        read_only: true
+    networks:
+      - "aspire"
+  acme-companion:
+    image: "nginxproxy/acme-companion:latest"
+    environment:
+      DEFAULT_EMAIL: "suxrobgm@gmail.com"
+      NGINX_PROXY_CONTAINER: "nginx-proxy"
+    volumes:
+      - type: "volume"
+        target: "/etc/nginx/certs"
+        source: "nginx-certs"
+        read_only: false
+      - type: "volume"
+        target: "/etc/nginx/vhost.d"
+        source: "nginx-vhost"
+        read_only: false
+      - type: "volume"
+        target: "/usr/share/nginx/html"
+        source: "nginx-html"
+        read_only: false
+      - type: "volume"
+        target: "/etc/acme.sh"
+        source: "acme-state"
+        read_only: false
+      - type: "bind"
+        target: "/var/run/docker.sock"
+        source: "/var/run/docker.sock"
+        read_only: true
+    depends_on:
+      nginx-proxy:
         condition: "service_started"
     networks:
       - "aspire"
@@ -175,4 +239,12 @@ networks:
     driver: "bridge"
 volumes:
   logistics-pg-data:
+    driver: "local"
+  nginx-certs:
+    driver: "local"
+  nginx-vhost:
+    driver: "local"
+  nginx-html:
+    driver: "local"
+  acme-state:
     driver: "local"
