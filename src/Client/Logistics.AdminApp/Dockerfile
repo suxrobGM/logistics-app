@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /logistics
 
 # Copy solution and project files
-COPY *.sln ./
+COPY *.slnx ./
 COPY src/Core/Logistics.Domain.Primitives/ src/Core/Logistics.Domain.Primitives/
 COPY src/Shared/ src/Shared/
 COPY src/Client/Logistics.AdminApp/ src/Client/Logistics.AdminApp/

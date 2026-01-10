@@ -8,7 +8,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <Content Include="SqlFunctions\CreateCompanyStats.psql">
+    <Content Include="SqlFunctions\*.psql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

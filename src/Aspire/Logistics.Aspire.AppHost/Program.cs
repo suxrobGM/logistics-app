@@ -47,7 +47,7 @@ if (builder.ExecutionContext.IsPublishMode)
     // For production: use pre-built container image
     officeApp = builder.AddContainer("office-app", "ghcr.io/suxrobgm/logistics-app/office")
         .WithImageTag("latest")
-        .WithHttpEndpoint(port: 7003, targetPort: 7003, name: "office-http")
+        .WithHttpEndpoint(7003, 7003, "office-http")
         .WaitFor(logisticsApi)
         .WaitFor(identityServer);
 }
@@ -91,6 +91,19 @@ builder.AddContainer("stripe-cli", "stripe/stripe-cli:latest")
         "--forward-to", "http://api:7000/webhooks/stripe")
     .WaitFor(logisticsApi);
 
+// Portainer Agent: Exposes Docker API to Portainer CE
+var portainerAgent = builder.AddContainer("portainer-agent", "portainer/agent:latest")
+    .WithVolume("portainer-agent-data", "/var/lib/docker/volumes")
+    .WithBindMount("/var/run/docker.sock", "/var/run/docker.sock", true)
+    .WithEndpoint(9001, 9001, name: "portainer-agent");
+
+// Portainer CE: Web UI for container management
+builder.AddContainer("portainer", "portainer/portainer-ce:latest")
+    .WithVolume("portainer-data", "/data")
+    .WithBindMount("/var/run/docker.sock", "/var/run/docker.sock", true)
+    .WithHttpEndpoint(9000, 9000, "portainer-http")
+    .WaitFor(portainerAgent);
+
 // Production: nginx-proxy with automatic SSL via acme-companion
 // Enable by setting EnableNginx=true and Domain=yourdomain.com in appsettings
 if (enableNginx)
@@ -99,6 +112,7 @@ if (enableNginx)
 
     // nginx-proxy: automatic reverse proxy based on VIRTUAL_HOST env vars
     var nginxProxy = builder.AddContainer("nginx-proxy", "nginxproxy/nginx-proxy:latest")
+        .WithContainerName("nginx-proxy")
         .WithVolume("nginx-certs", "/etc/nginx/certs")
         .WithVolume("nginx-vhost", "/etc/nginx/vhost.d")
         .WithVolume("nginx-html", "/usr/share/nginx/html")
@@ -108,6 +122,7 @@ if (enableNginx)
 
     // acme-companion: automatic Let's Encrypt SSL certificates
     builder.AddContainer("acme-companion", "nginxproxy/acme-companion:latest")
+        .WithContainerName("acme-companion")
         .WithEnvironment("DEFAULT_EMAIL", letsencryptEmail)
         .WithEnvironment("NGINX_PROXY_CONTAINER", "nginx-proxy")
         .WithVolume("nginx-certs", "/etc/nginx/certs")

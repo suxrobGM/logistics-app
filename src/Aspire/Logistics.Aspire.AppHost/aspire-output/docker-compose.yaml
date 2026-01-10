@@ -179,8 +179,42 @@ services:
         condition: "service_started"
     networks:
       - "aspire"
+  portainer-agent:
+    image: "portainer/agent:latest"
+    expose:
+      - "9001"
+    volumes:
+      - type: "volume"
+        target: "/var/lib/docker/volumes"
+        source: "portainer-agent-data"
+        read_only: false
+      - type: "bind"
+        target: "/var/run/docker.sock"
+        source: "/var/run/docker.sock"
+        read_only: true
+    networks:
+      - "aspire"
+  portainer:
+    image: "portainer/portainer-ce:latest"
+    expose:
+      - "9000"
+    volumes:
+      - type: "volume"
+        target: "/data"
+        source: "portainer-data"
+        read_only: false
+      - type: "bind"
+        target: "/var/run/docker.sock"
+        source: "/var/run/docker.sock"
+        read_only: true
+    depends_on:
+      portainer-agent:
+        condition: "service_started"
+    networks:
+      - "aspire"
   nginx-proxy:
     image: "nginxproxy/nginx-proxy:latest"
+    container_name: "nginx-proxy"
     expose:
       - "80"
       - "443"
@@ -205,6 +239,7 @@ services:
       - "aspire"
   acme-companion:
     image: "nginxproxy/acme-companion:latest"
+    container_name: "acme-companion"
     environment:
       DEFAULT_EMAIL: "suxrobgm@gmail.com"
       NGINX_PROXY_CONTAINER: "nginx-proxy"
@@ -239,6 +274,10 @@ networks:
     driver: "bridge"
 volumes:
   logistics-pg-data:
+    driver: "local"
+  portainer-agent-data:
+    driver: "local"
+  portainer-data:
     driver: "local"
   nginx-certs:
     driver: "local"
