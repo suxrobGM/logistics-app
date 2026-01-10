@@ -21,4 +21,4 @@ WORKDIR /app
 EXPOSE 7001
 
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "Logistics.IdentityServer.dll"]
+ENTRYPOINT ["./Logistics.IdentityServer"]

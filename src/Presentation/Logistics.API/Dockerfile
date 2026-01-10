@@ -21,4 +21,4 @@ WORKDIR /app
 EXPOSE 7000
 
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "Logistics.API.dll"]
+ENTRYPOINT ["./Logistics.API"]
