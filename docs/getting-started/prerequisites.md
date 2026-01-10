@@ -37,7 +37,7 @@ Verify installation:
 bun --version
 ```
 
-### PostgreSQL 17
+### PostgreSQL 18
 
 Download from [PostgreSQL](https://www.postgresql.org/download/).
 
@@ -46,8 +46,8 @@ Download from [PostgreSQL](https://www.postgresql.org/download/).
 **macOS** (Homebrew):
 
 ```bash
-brew install postgresql@17
-brew services start postgresql@17
+brew install postgresql@18
+brew services start postgresql@18
 ```
 
 **Ubuntu/Debian**:

@@ -83,7 +83,7 @@ src/
 
 | Technology | Purpose |
 |------------|---------|
-| PostgreSQL 17 | Database |
+| PostgreSQL 18 | Database |
 | Docker | Containerization |
 | .NET Aspire | Orchestration |
 | Nginx | Reverse proxy |
