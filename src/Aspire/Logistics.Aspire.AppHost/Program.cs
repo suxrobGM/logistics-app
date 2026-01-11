@@ -25,21 +25,18 @@ var migrator = builder.AddProject<Logistics_DbMigrator>("migrator")
     .WaitFor(postgres);
 
 var logisticsApi = builder.AddProject<Logistics_API>("api")
-    .WithHttpEndpoint(7000, 7000, "api-http")
     .WithExternalHttpEndpoints()
     .WithReference(masterDb, "MasterDatabase")
     .WithReference(tenantDb, "DefaultTenantDatabase")
     .WaitFor(migrator);
 
 var identityServer = builder.AddProject<Logistics_IdentityServer>("identity-server")
-    .WithHttpEndpoint(7001, 7001, "identity-http")
     .WithExternalHttpEndpoints()
     .WithReference(masterDb, "MasterDatabase")
     .WithReference(tenantDb, "DefaultTenantDatabase")
     .WaitFor(migrator);
 
 builder.AddProject<Logistics_AdminApp>("admin-app")
-    .WithHttpEndpoint(7002, 7002, "admin-http")
     .WithExternalHttpEndpoints()
     .WaitFor(logisticsApi)
     .WaitFor(identityServer);
