@@ -1,12 +1,157 @@
 # Environment Variables
 
-Complete configuration reference for Logistics TMS.
+Configuration reference for Logistics TMS Docker deployment.
 
-## API Configuration
+## Docker Compose Environment (.env)
 
-Located in `src/Presentation/Logistics.API/appsettings.json`:
+The `.env` file in `src/Aspire/Logistics.Aspire.AppHost/aspire-output/` configures all services.
+
+### Container Images
+
+```bash
+API_IMAGE="ghcr.io/suxrobgm/logistics-app/api:latest"
+ADMIN_APP_IMAGE="ghcr.io/suxrobgm/logistics-app/admin:latest"
+IDENTITY_SERVER_IMAGE="ghcr.io/suxrobgm/logistics-app/identity:latest"
+MIGRATOR_IMAGE="ghcr.io/suxrobgm/logistics-app/migrator:latest"
+```
 
 ### Database
+
+```bash
+POSTGRES_PASSWORD="your-secure-postgres-password"
+```
+
+The database connection strings are configured automatically using this password.
+
+### Identity Server
+
+```bash
+IdentityServer__Authority="http://identity-server:7001"
+IdentityServer__RequireHttpsMetadata="false"
+```
+
+| Variable | Description |
+|----------|-------------|
+| `IdentityServer__Authority` | Internal Docker network URL for API-to-IdentityServer communication |
+| `IdentityServer__RequireHttpsMetadata` | Set to `false` since SSL terminates at nginx |
+
+### Stripe Integration
+
+```bash
+StripeConfig__SecretKey="sk_live_xxx"
+StripeConfig__WebhookSecret="whsec_xxx"
+StripeConfig__PublishableKey="pk_live_xxx"
+STRIPE_API_KEY="sk_live_xxx"
+```
+
+| Variable | Description |
+|----------|-------------|
+| `StripeConfig__SecretKey` | Stripe API secret key |
+| `StripeConfig__PublishableKey` | Stripe publishable key (client-side) |
+| `StripeConfig__WebhookSecret` | Webhook signature verification secret |
+| `STRIPE_API_KEY` | Used by Stripe CLI for webhook forwarding |
+
+### Google reCAPTCHA (Optional)
+
+```bash
+GoogleRecaptchaConfig__SiteKey="your-site-key"
+GoogleRecaptchaConfig__SecretKey="your-secret-key"
+```
+
+### SMTP Email (Optional)
+
+```bash
+SmtpConfig__SenderEmail="noreply@example.com"
+SmtpConfig__SenderName="Logistics NoReply"
+SmtpConfig__UserName="smtp-username"
+SmtpConfig__Password="smtp-password"
+SmtpConfig__Host="smtp.example.com"
+SmtpConfig__Port="587"
+```
+
+### Mapbox (Optional)
+
+```bash
+Mapbox__AccessToken="pk.xxx"
+```
+
+### Azure Blob Storage (Optional)
+
+```bash
+BlobStorage__Type="file"
+ConnectionStrings__AzureBlobStorage="DefaultEndpointsProtocol=https;AccountName=xxx;AccountKey=xxx"
+```
+
+Set `BlobStorage__Type` to `azure` to use Azure Blob Storage, or `file` for local storage.
+
+### Database Migrator
+
+```bash
+PopulateFakeData="false"
+SuperAdmin__Email="admin@example.com"
+SuperAdmin__Password="YourSecurePassword123#"
+SuperAdmin__FirstName="Admin"
+SuperAdmin__LastName="Admin"
+```
+
+| Variable | Description |
+|----------|-------------|
+| `PopulateFakeData` | Set to `true` to seed demo data |
+| `SuperAdmin__*` | Initial super admin account credentials |
+
+### ASP.NET Core
+
+```bash
+ASPNETCORE_ENVIRONMENT="Production"
+```
+
+## Complete .env Example
+
+```bash
+# Container Images
+API_IMAGE="ghcr.io/suxrobgm/logistics-app/api:latest"
+ADMIN_APP_IMAGE="ghcr.io/suxrobgm/logistics-app/admin:latest"
+IDENTITY_SERVER_IMAGE="ghcr.io/suxrobgm/logistics-app/identity:latest"
+MIGRATOR_IMAGE="ghcr.io/suxrobgm/logistics-app/migrator:latest"
+
+# Database
+POSTGRES_PASSWORD="your-secure-postgres-password"
+
+# Identity Server
+IdentityServer__Authority="http://identity-server:7001"
+IdentityServer__RequireHttpsMetadata="false"
+
+# Stripe
+StripeConfig__SecretKey="sk_live_xxx"
+StripeConfig__WebhookSecret="whsec_xxx"
+StripeConfig__PublishableKey="pk_live_xxx"
+
+# Super Admin
+SuperAdmin__Email="admin@yourdomain.com"
+SuperAdmin__Password="YourSecurePassword123#"
+SuperAdmin__FirstName="Admin"
+SuperAdmin__LastName="Admin"
+
+# Optional: SMTP
+SmtpConfig__SenderEmail="noreply@yourdomain.com"
+SmtpConfig__SenderName="Logistics NoReply"
+SmtpConfig__UserName="smtp-username"
+SmtpConfig__Password="smtp-password"
+SmtpConfig__Host="smtp.yourdomain.com"
+SmtpConfig__Port="587"
+
+# Optional: Mapbox
+Mapbox__AccessToken="pk.xxx"
+
+# ASP.NET Core
+ASPNETCORE_ENVIRONMENT="Production"
+```
+
+## API Configuration (appsettings.json)
+
+For local development, configure `src/Presentation/Logistics.API/appsettings.json`:
+
+### Database Connections
 
 ```json
 {
@@ -23,32 +168,22 @@ Located in `src/Presentation/Logistics.API/appsettings.json`:
 }
 ```
 
-| Variable | Description |
-|----------|-------------|
-| `MasterDatabase` | Connection to master database (tenants, subscriptions) |
-| `DefaultTenantDatabase` | Default tenant database connection |
-| `DatabaseNameTemplate` | Pattern for tenant database names |
-
 ### Identity Server
 
 ```json
 {
   "IdentityServer": {
-    "Authority": "https://localhost:7001",
+    "Authority": "http://localhost:7001",
     "Audience": "logistics.api",
     "ValidIssuers": [
+      "http://localhost:7001",
       "https://localhost:7001",
-      "http://localhost:7001"
+      "https://id.yourdomain.com",
+      "http://identity-server:7001"
     ]
   }
 }
 ```
-
-| Variable | Description |
-|----------|-------------|
-| `Authority` | Identity Server URL |
-| `Audience` | API resource identifier |
-| `ValidIssuers` | Accepted token issuers |
 
 ### Stripe
 
@@ -58,27 +193,6 @@ Located in `src/Presentation/Logistics.API/appsettings.json`:
     "PublishableKey": "pk_test_...",
     "SecretKey": "sk_test_...",
     "WebhookSecret": "whsec_..."
-  }
-}
-```
-
-| Variable | Description |
-|----------|-------------|
-| `PublishableKey` | Stripe publishable key (client-side) |
-| `SecretKey` | Stripe secret key (server-side) |
-| `WebhookSecret` | Webhook signature verification |
-
-### Email (SMTP)
-
-```json
-{
-  "SmtpConfig": {
-    "SenderEmail": "noreply@yourdomain.com",
-    "SenderName": "Logistics TMS",
-    "UserName": "smtp_username",
-    "Password": "smtp_password",
-    "Host": "smtp.yourdomain.com",
-    "Port": 587
   }
 }
 ```
@@ -98,176 +212,10 @@ Located in `src/Presentation/Logistics.API/appsettings.json`:
 }
 ```
 
-Options for `BlobStorage.Type`:
-
-- `File` - Local file system
-- `Azure` - Azure Blob Storage
-
-### Mapbox
-
-```json
-{
-  "Mapbox": {
-    "AccessToken": "pk.eyJ1..."
-  }
-}
-```
-
-### Logging
-
-```json
-{
-  "Serilog": {
-    "MinimumLevel": {
-      "Default": "Information",
-      "Override": {
-        "Microsoft": "Warning",
-        "Microsoft.EntityFrameworkCore": "Warning"
-      }
-    },
-    "WriteTo": [
-      {
-        "Name": "File",
-        "Args": {
-          "path": "Logs/webapi-.log",
-          "rollingInterval": "Month"
-        }
-      }
-    ]
-  }
-}
-```
-
-## Environment-Specific Configuration
-
-### Development
-
-`appsettings.Development.json`:
-
-```json
-{
-  "Serilog": {
-    "MinimumLevel": {
-      "Default": "Debug"
-    }
-  }
-}
-```
-
-### Production
-
-Use environment variables to override:
-
-```bash
-# Docker environment
-ConnectionStrings__MasterDatabase="Host=postgres;..."
-StripeConfig__SecretKey="sk_live_..."
-```
-
-Or `appsettings.Production.json`:
-
-```json
-{
-  "IdentityServer": {
-    "Authority": "https://id.yourdomain.com"
-  }
-}
-```
-
-## Docker Compose Environment
-
-In `.env` file:
-
-```bash
-# Database
-POSTGRES_PASSWORD=secure_password
-MASTER_DB_CONNECTION=Host=postgres;Port=5432;Database=master_logistics;Username=postgres;Password=secure_password
-
-# Identity
-IDENTITY_AUTHORITY=https://id.yourdomain.com
-
-# Stripe
-STRIPE_PUBLISHABLE_KEY=pk_live_...
-STRIPE_SECRET_KEY=sk_live_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-
-# SMTP
-SMTP_HOST=smtp.mailgun.org
-SMTP_PORT=587
-SMTP_USERNAME=postmaster@yourdomain.com
-SMTP_PASSWORD=smtp_password
-
-# External
-MAPBOX_ACCESS_TOKEN=pk.eyJ1...
-```
-
-## Identity Server Configuration
-
-Located in `src/Presentation/Logistics.IdentityServer/appsettings.json`:
-
-```json
-{
-  "ConnectionStrings": {
-    "MasterDatabase": "..."
-  },
-  "Clients": [
-    {
-      "ClientId": "logistics.office",
-      "AllowedGrantTypes": ["authorization_code"],
-      "RedirectUris": ["https://office.yourdomain.com/callback"],
-      "PostLogoutRedirectUris": ["https://office.yourdomain.com"],
-      "AllowedScopes": ["openid", "profile", "logistics.api"]
-    }
-  ]
-}
-```
-
-## Angular Configuration
-
-Located in `src/Client/Logistics.OfficeApp/src/environments/`:
-
-### Development
-
-`environment.ts`:
-
-```typescript
-export const environment = {
-  production: false,
-  apiUrl: 'https://localhost:7000',
-  identityUrl: 'https://localhost:7001',
-  mapboxToken: 'pk.eyJ1...'
-};
-```
-
-### Production
-
-`environment.prod.ts`:
-
-```typescript
-export const environment = {
-  production: true,
-  apiUrl: 'https://api.yourdomain.com',
-  identityUrl: 'https://id.yourdomain.com',
-  mapboxToken: 'pk.eyJ1...'
-};
-```
-
-## Aspire Configuration
-
-Located in `src/Aspire/Logistics.Aspire.AppHost/appsettings.json`:
-
-```json
-{
-  "Stripe": {
-    "SecretKey": "sk_test_..."
-  }
-}
-```
-
 ## Security Notes
 
-1. **Never commit secrets** to version control
-2. Use `.gitignore` for local settings files
-3. Use environment variables in production
-4. Rotate secrets regularly
-5. Use different keys for dev/staging/production
+1. Never commit secrets to version control
+2. Use different credentials for dev/staging/production
+3. Rotate secrets regularly
+4. Use strong passwords (16+ characters)
+5. The `.env` file should have restricted permissions (`chmod 600`)

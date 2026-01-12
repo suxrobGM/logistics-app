@@ -1,26 +1,24 @@
-# Deploying with .NET Aspire
+# Docker Compose Deployment
 
-Deploy Logistics TMS to your VPS with a single command. Aspire handles everything including automatic SSL certificates.
+Deploy Logistics TMS using the pre-generated Docker Compose configuration from .NET Aspire.
 
 ## Overview
 
-Aspire includes:
+The `aspire-output` directory contains production-ready configurations:
 
-- **nginx-proxy**: Automatic reverse proxy for all services
-- **acme-companion**: Automatic Let's Encrypt SSL certificates
-- **All services**: API, Identity Server, Admin App, Office App, PostgreSQL
+- `docker-compose.yaml` - Service definitions
+- `.env.example` - Environment template
+- `logistics.conf` - Nginx configuration
 
 ## Prerequisites
 
-- Ubuntu VPS with Docker installed ([VPS Setup](vps-setup.md))
-- .NET 10 SDK installed on VPS
+- VPS with Docker installed ([VPS Setup](vps-setup.md))
 - Domain with DNS configured:
-
   ```text
-  api.yourdomain.com    → VPS_IP
-  id.yourdomain.com     → VPS_IP
-  admin.yourdomain.com  → VPS_IP
-  office.yourdomain.com → VPS_IP
+  api.yourdomain.com    -> VPS_IP
+  id.yourdomain.com     -> VPS_IP
+  admin.yourdomain.com  -> VPS_IP
+  office.yourdomain.com -> VPS_IP
   ```
 
 ## Deployment Steps
@@ -28,158 +26,136 @@ Aspire includes:
 ### Step 1: Clone Repository
 
 ```bash
-ssh your-user@your-vps
 git clone https://github.com/suxrobgm/logistics-app.git
-cd logistics-app
+cd logistics-app/src/Aspire/Logistics.Aspire.AppHost/aspire-output
 ```
 
-### Step 2: Configure Production Settings
-
-Create `src/Aspire/Logistics.Aspire.AppHost/appsettings.Production.json`:
-
-```json
-{
-  "Stripe": {
-    "SecretKey": "sk_live_your_stripe_key"
-  },
-  "Domain": "yourdomain.com",
-  "EnableNginx": true,
-  "LetsEncryptEmail": "admin@yourdomain.com"
-}
-```
-
-### Step 3: Update API Configuration
-
-Create `src/Presentation/Logistics.API/appsettings.Production.json`:
-
-```json
-{
-  "IdentityServer": {
-    "Authority": "https://id.yourdomain.com"
-  },
-  "StripeConfig": {
-    "PublishableKey": "pk_live_...",
-    "SecretKey": "sk_live_...",
-    "WebhookSecret": "whsec_..."
-  }
-}
-```
-
-### Step 4: Deploy
+### Step 2: Configure Environment
 
 ```bash
-cd src/Aspire/Logistics.Aspire.AppHost
-dotnet run --environment Production
+cp .env.example .env
+nano .env
 ```
 
-Aspire automatically:
+Edit the `.env` file with your production values. See [Environment Variables](../configuration/environment-variables.md) for details.
 
-1. Starts PostgreSQL with persistent storage
-2. Runs database migrations
-3. Starts all application services
-4. Starts nginx-proxy on ports 80/443
-5. Obtains SSL certificates from Let's Encrypt
+Key settings to configure:
 
-### Step 5: Verify
+| Variable | Description |
+|----------|-------------|
+| `POSTGRES_PASSWORD` | Database password |
+| `StripeConfig__SecretKey` | Stripe API secret key |
+| `StripeConfig__PublishableKey` | Stripe publishable key |
+| `StripeConfig__WebhookSecret` | Stripe webhook secret |
+| `SuperAdmin__Email` | Super admin email |
+| `SuperAdmin__Password` | Super admin password |
+
+### Step 3: Deploy Services
+
+```bash
+docker compose up -d
+```
+
+### Step 4: Configure Nginx
+
+```bash
+sudo cp logistics.conf /etc/nginx/sites-available/logistics
+sudo ln -s /etc/nginx/sites-available/logistics /etc/nginx/sites-enabled/
+sudo rm /etc/nginx/sites-enabled/default
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+### Step 5: Obtain SSL Certificates
+
+```bash
+sudo certbot --nginx -d api.yourdomain.com -d id.yourdomain.com -d admin.yourdomain.com -d office.yourdomain.com
+```
+
+### Step 6: Verify Deployment
 
 ```bash
 curl https://api.yourdomain.com/health
 curl https://id.yourdomain.com/.well-known/openid-configuration
 ```
 
-## Running as a Service
-
-Create `/etc/systemd/system/logistics.service`:
-
-```ini
-[Unit]
-Description=Logistics TMS
-After=docker.service
-Requires=docker.service
-
-[Service]
-Type=simple
-User=logistics
-WorkingDirectory=/home/logistics/logistics-app/src/Aspire/Logistics.Aspire.AppHost
-ExecStart=/usr/bin/dotnet run --environment Production
-Restart=always
-RestartSec=10
-
-[Install]
-WantedBy=multi-user.target
-```
-
-Enable and start:
+## Service Management
 
 ```bash
-sudo systemctl enable logistics
-sudo systemctl start logistics
+# View logs
+docker compose logs -f
+
+# View specific service
+docker compose logs -f api
+
+# Restart services
+docker compose restart
+
+# Stop services
+docker compose down
+
+# Update images and restart
+docker compose pull && docker compose up -d
 ```
 
-View logs:
+## Services
 
-```bash
-sudo journalctl -u logistics -f
-```
+| Service | Port | Description |
+|---------|------|-------------|
+| postgres | 5432 | PostgreSQL database |
+| migrator | - | Database migrations (runs once) |
+| identity-server | 7001 | OAuth2/OIDC authentication |
+| api | 7000 | REST API |
+| admin-app | 7002 | Super admin Blazor app |
+| office-app | 7003 | Dispatcher Angular app |
 
-## Configuration Reference
+## Volumes
 
-| Setting | Description | Example |
-|---------|-------------|---------|
-| `Domain` | Your domain (without subdomain) | `yourdomain.com` |
-| `EnableNginx` | Enable nginx-proxy + SSL | `true` |
-| `LetsEncryptEmail` | Email for SSL certificates | `admin@yourdomain.com` |
-| `Stripe:SecretKey` | Stripe API secret key | `sk_live_...` |
-
-## How It Works
-
-When `EnableNginx=true`:
-
-```
-Internet → nginx-proxy (80/443)
-              ├── api.domain.com    → API (:7000)
-              ├── id.domain.com     → Identity Server (:7001)
-              ├── admin.domain.com  → Admin App (:7002)
-              └── office.domain.com → Office App (:7003)
-
-acme-companion → Automatic SSL certificates
-```
-
-1. nginx-proxy listens on ports 80/443
-2. Routes traffic based on hostname using `VIRTUAL_HOST` env vars
-3. acme-companion obtains/renews SSL certificates automatically
+| Volume | Purpose |
+|--------|---------|
+| `logistics-pg-data` | PostgreSQL data |
+| `identity-keys` | Identity Server signing keys |
 
 ## Updating
 
 ```bash
-cd ~/logistics-app
+cd logistics-app
 git pull
-sudo systemctl restart logistics
+cd src/Aspire/Logistics.Aspire.AppHost/aspire-output
+docker compose pull
+docker compose up -d
 ```
 
 ## Troubleshooting
 
-### SSL Certificate Issues
+### Check service status
 
 ```bash
-docker logs acme-companion
-dig api.yourdomain.com  # Verify DNS
+docker compose ps
+docker compose logs api --tail 100
 ```
 
-### Service Not Accessible
+### Database connection issues
 
 ```bash
-docker logs nginx-proxy
-docker ps  # Verify services are running
+docker compose logs postgres
+docker exec -it postgres psql -U postgres -c "\l"
 ```
 
-### Database Issues
+### Identity Server issues
 
 ```bash
-docker logs logistics-postgres
+docker compose logs identity-server
+curl http://localhost:7001/.well-known/openid-configuration
+```
+
+### Nginx issues
+
+```bash
+sudo nginx -t
+sudo tail -f /var/log/nginx/error.log
 ```
 
 ## Next Steps
 
 - [VPS Setup](vps-setup.md) - Initial server configuration
-- [CI/CD](ci-cd.md) - Automated deployments
+- [Environment Variables](../configuration/environment-variables.md) - Full configuration reference
