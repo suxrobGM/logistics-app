@@ -82,6 +82,12 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://compose-dashboard:18889"
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
       OTEL_SERVICE_NAME: "api"
+      # Identity Server configuration
+      IdentityServer__Authority: "http://identity-server:7001"
+      IdentityServer__RequireHttpsMetadata: "false"
+      IdentityServer__Audience: "logistics.api"
+      IdentityServer__ValidIssuers__0: "https://id.suxrobgm.net"
+      IdentityServer__ValidIssuers__1: "http://identity-server:7001"
     ports:
       - "7000:7000"
     depends_on:
