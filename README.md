@@ -38,7 +38,9 @@ See [Local Development Guide](docs/getting-started/local-development.md)
 
 ## Live Demo
 
-Try the application at [https://logistics-office.suxrobgm.net](https://logistics-office.suxrobgm.net)
+Try the application: [https://office.suxrobgm.net](https://office.suxrobgm.net)
+
+**Test Credentials:**
 
 | Role | Email | Password |
 |------|-------|----------|
