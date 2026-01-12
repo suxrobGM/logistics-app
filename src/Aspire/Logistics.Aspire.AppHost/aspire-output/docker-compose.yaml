@@ -94,7 +94,7 @@ services:
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
       OTEL_SERVICE_NAME: "identity-server"
     ports:
-      - "${IDENTITY_SERVER_PORT}"
+      - "${IDENTITY_SERVER_PORT}:${IDENTITY_SERVER_PORT}"
     depends_on:
       migrator:
         condition: "service_started"
@@ -141,7 +141,7 @@ services:
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
       OTEL_SERVICE_NAME: "api"
     ports:
-      - "${API_PORT}"
+      - "${API_PORT}:${API_PORT}"
     depends_on:
       migrator:
         condition: "service_started"
@@ -161,7 +161,7 @@ services:
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
       OTEL_SERVICE_NAME: "admin-app"
     ports:
-      - "${ADMIN_APP_PORT}"
+      - "${ADMIN_APP_PORT}:${ADMIN_APP_PORT}"
     depends_on:
       api:
         condition: "service_started"
