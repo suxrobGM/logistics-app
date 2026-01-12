@@ -370,3 +370,5 @@ KotlinProject/
 
 .env
 .env.docker
+
+sample-pdf/
