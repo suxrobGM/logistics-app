@@ -35,7 +35,7 @@ public class Index : PageModel
         _emailSender = emailSender;
         _captchaService = captchaService;
         _logger = logger;
-        CaptchaSiteKey = configuration.GetValue<string>("GoogleRecaptchaConfig:SiteKey");
+        CaptchaSiteKey = configuration.GetValue<string>("GoogleRecaptcha:SiteKey");
     }
 
     [BindProperty]

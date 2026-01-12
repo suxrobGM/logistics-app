@@ -120,7 +120,7 @@ For payment testing:
 
    ```json
    {
-     "StripeConfig": {
+     "Stripe": {
        "PublishableKey": "pk_test_...",
        "SecretKey": "sk_test_...",
        "WebhookSecret": ""

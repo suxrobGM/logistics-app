@@ -1,11 +1,8 @@
 using System.Reflection;
-
 using FluentValidation;
-
 using Logistics.Application.Behaviours;
 using Logistics.Application.Hubs;
 using Logistics.Application.Services;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,13 +13,13 @@ public static class Registrar
     public static IServiceCollection AddApplicationLayer(
         this IServiceCollection services,
         IConfiguration configuration,
-        string emailConfigSection = "SmtpConfig",
-        string captchaConfigSection = "GoogleRecaptchaConfig",
-        string stripeConfigSection = "StripeConfig")
+        string emailConfigSection = "Smtp",
+        string captchaConfigSection = "GoogleRecaptcha",
+        string stripeSection = "Stripe")
     {
         var emailSenderOptions = configuration.GetSection(emailConfigSection).Get<SmtpOptions>();
         var googleRecaptchaOptions = configuration.GetSection(captchaConfigSection).Get<GoogleRecaptchaOptions>();
-        var stripeOptions = configuration.GetSection(stripeConfigSection).Get<StripeOptions>();
+        var stripeOptions = configuration.GetSection(stripeSection).Get<StripeOptions>();
 
         if (emailSenderOptions is not null)
         {

@@ -1,18 +1,17 @@
+using Logistics.Aspire.AppHost;
 using Microsoft.Extensions.Configuration;
 using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("appsettings.local.json", true, true);
 
-var stripeSecret = builder.Configuration["Stripe:SecretKey"];
-
 builder.AddDockerComposeEnvironment("compose")
     .WithDashboard(dashboard => dashboard.WithHostPort(7100));
 
 var postgres = builder.AddPostgres("postgres", port: 5433)
     .WithImage("postgres:latest")
-    .WithPgAdmin(config =>
-        config.WithImage("dpage/pgadmin4:latest").WithHostPort(5434))
+    .WithPgAdmin(container =>
+        container.WithImage("dpage/pgadmin4:latest").WithHostPort(5434))
     .WithVolume("logistics-pg-data", "/var/lib/postgresql"); // PostgreSQL 18+ uses subdirectories
 
 var masterDb = postgres.AddDatabase("master", "master_logistics");
@@ -22,22 +21,42 @@ var tenantDb = postgres.AddDatabase("default-tenant", "default_logistics");
 var migrator = builder.AddProject<Logistics_DbMigrator>("migrator")
     .WithReference(masterDb, "MasterDatabase")
     .WithReference(tenantDb, "DefaultTenantDatabase")
+    .WithEnvironment("SuperAdmin__Email", builder.GetConfigValue("SuperAdmin:Email"))
+    .WithEnvironment("SuperAdmin__Password", builder.GetConfigValue("SuperAdmin:Password"))
+    .WithEnvironment("TenantsDatabaseConfig__DatabasePassword", builder.GetConfigValue("TenantsDatabaseConfig:DatabasePassword"))
     .WaitFor(postgres);
 
 var identityServer = builder.AddProject<Logistics_IdentityServer>("identity-server")
     .WithExternalHttpEndpoints()
     .WithReference(masterDb, "MasterDatabase")
     .WithReference(tenantDb, "DefaultTenantDatabase")
-    .WithVolume("identity-keys", "/app/keys")
+    .WithEnvironment("GoogleRecaptcha__SecretKey", builder.GetConfigValue("GoogleRecaptcha:SecretKey"))
+    .WithEnvironment("GoogleRecaptcha__SiteKey", builder.GetConfigValue("GoogleRecaptcha:SiteKey"))
+    .WithEnvironment("Smtp__SenderEmail", builder.GetConfigValue("Smtp:SenderEmail"))
+    .WithEnvironment("Smtp__SenderName", builder.GetConfigValue("Smtp:SenderName"))
+    .WithEnvironment("Smtp__UserName", builder.GetConfigValue("Smtp:UserName"))
+    .WithEnvironment("Smtp__Password", builder.GetConfigValue("Smtp:Password"))
+    .WithEnvironment("Smtp__Host", builder.GetConfigValue("Smtp:Host"))
+    .WithEnvironment("Smtp__Port", builder.GetConfigValue("Smtp:Port"))
     .WaitFor(migrator);
 
 var logisticsApi = builder.AddProject<Logistics_API>("api")
     .WithExternalHttpEndpoints()
     .WithReference(masterDb, "MasterDatabase")
     .WithReference(tenantDb, "DefaultTenantDatabase")
-    // Identity Server configuration for JWT validation
     .WithEnvironment("IdentityServer__Authority", "http://identity-server:7001")
     .WithEnvironment("IdentityServer__RequireHttpsMetadata", "false")
+    .WithEnvironment("Smtp__SenderEmail", builder.GetConfigValue("Smtp:SenderEmail"))
+    .WithEnvironment("Smtp__SenderName", builder.GetConfigValue("Smtp:SenderName"))
+    .WithEnvironment("Smtp__UserName", builder.GetConfigValue("Smtp:UserName"))
+    .WithEnvironment("Smtp__Password", builder.GetConfigValue("Smtp:Password"))
+    .WithEnvironment("Smtp__Host", builder.GetConfigValue("Smtp:Host"))
+    .WithEnvironment("Smtp__Port", builder.GetConfigValue("Smtp:Port"))
+    .WithEnvironment("Stripe__SecretKey", builder.GetConfigValue("Stripe:SecretKey"))
+    .WithEnvironment("Stripe__PublishableKey", builder.GetConfigValue("Stripe:PublishableKey"))
+    .WithEnvironment("Stripe__WebhookSecret", builder.GetConfigValue("Stripe:WebhookSecret"))
+    .WithEnvironment("Mapbox__AccessToken", builder.GetConfigValue("Mapbox:AccessToken"))
+    .WithEnvironment("TenantsDatabaseConfig__DatabasePassword", builder.GetConfigValue("TenantsDatabaseConfig:DatabasePassword"))
     .WaitFor(migrator)
     .WaitFor(identityServer);
 
@@ -69,7 +88,7 @@ else
 
 // Listen for Stripe webhooks and forward them to the logistics API
 builder.AddContainer("stripe-cli", "stripe/stripe-cli:latest")
-    .WithEnvironment("STRIPE_API_KEY", stripeSecret)
+    .WithEnvironment("STRIPE_API_KEY", builder.GetConfigValue("Stripe:SecretKey"))
     .WithEnvironment("STRIPE_DEVICE_NAME", "aspire-dev")
     .WithEntrypoint("stripe")
     .WithArgs(

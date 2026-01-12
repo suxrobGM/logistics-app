@@ -6,14 +6,25 @@ Configuration reference for Logistics TMS Docker deployment.
 
 The `.env` file in `src/Aspire/Logistics.Aspire.AppHost/aspire-output/` configures all services.
 
-### Container Images
+### Container Images and Ports
 
 ```bash
 API_IMAGE="ghcr.io/suxrobgm/logistics-app/api:latest"
 ADMIN_APP_IMAGE="ghcr.io/suxrobgm/logistics-app/admin:latest"
 IDENTITY_SERVER_IMAGE="ghcr.io/suxrobgm/logistics-app/identity:latest"
 MIGRATOR_IMAGE="ghcr.io/suxrobgm/logistics-app/migrator:latest"
+
+API_PORT=7000
+IDENTITY_SERVER_PORT=7001
+ADMIN_APP_PORT=7002
 ```
+
+| Variable | Description |
+|----------|-------------|
+| `*_IMAGE` | Docker image references for each service |
+| `API_PORT` | Port for the API service (default: 7000) |
+| `IDENTITY_SERVER_PORT` | Port for the Identity Server (default: 7001) |
+| `ADMIN_APP_PORT` | Port for the Admin App (default: 7002) |
 
 ### Database
 
@@ -23,50 +34,38 @@ POSTGRES_PASSWORD="your-secure-postgres-password"
 
 The database connection strings are configured automatically using this password.
 
-### Identity Server
-
-```bash
-IdentityServer__Authority="http://identity-server:7001"
-IdentityServer__RequireHttpsMetadata="false"
-```
-
-| Variable | Description |
-|----------|-------------|
-| `IdentityServer__Authority` | Internal Docker network URL for API-to-IdentityServer communication |
-| `IdentityServer__RequireHttpsMetadata` | Set to `false` since SSL terminates at nginx |
-
 ### Stripe Integration
 
 ```bash
-StripeConfig__SecretKey="sk_live_xxx"
-StripeConfig__WebhookSecret="whsec_xxx"
-StripeConfig__PublishableKey="pk_live_xxx"
+Stripe__SecretKey="sk_live_xxx"
+Stripe__WebhookSecret="whsec_xxx"
+Stripe__PublishableKey="pk_live_xxx"
 STRIPE_API_KEY="sk_live_xxx"
 ```
 
 | Variable | Description |
 |----------|-------------|
-| `StripeConfig__SecretKey` | Stripe API secret key |
-| `StripeConfig__PublishableKey` | Stripe publishable key (client-side) |
-| `StripeConfig__WebhookSecret` | Webhook signature verification secret |
+| `Stripe__SecretKey` | Stripe API secret key |
+| `Stripe__PublishableKey` | Stripe publishable key (client-side) |
+| `Stripe__WebhookSecret` | Webhook signature verification secret |
 | `STRIPE_API_KEY` | Used by Stripe CLI for webhook forwarding |
 
 ### Google reCAPTCHA (Optional)
 
 ```bash
-GoogleRecaptchaConfig__SiteKey="your-site-key"
-GoogleRecaptchaConfig__SecretKey="your-secret-key"
+GoogleRecaptcha__SiteKey="your-site-key"
+GoogleRecaptcha__SecretKey="your-secret-key"
 ```
 
 ### SMTP Email (Optional)
 
 ```bash
-SmtpConfig__SenderEmail="noreply@example.com"
-SmtpConfig__SenderName="Logistics NoReply"
-SmtpConfig__UserName="smtp-username"
-SmtpConfig__Password="smtp-password"
-SmtpConfig__Host="smtp.example.com"
-SmtpConfig__Port="587"
+Smtp__SenderEmail="noreply@example.com"
+Smtp__SenderName="Logistics NoReply"
+Smtp__UserName="smtp-username"
+Smtp__Password="smtp-password"
+Smtp__Host="smtp.example.com"
+Smtp__Port="587"
 ```
 
 ### Mapbox (Optional)
@@ -75,29 +74,21 @@ SmtpConfig__Port="587"
 Mapbox__AccessToken="pk.xxx"
 ```
 
-### Azure Blob Storage (Optional)
-
-```bash
-BlobStorage__Type="file"
-ConnectionStrings__AzureBlobStorage="DefaultEndpointsProtocol=https;AccountName=xxx;AccountKey=xxx"
-```
-
-Set `BlobStorage__Type` to `azure` to use Azure Blob Storage, or `file` for local storage.
-
 ### Database Migrator
 
 ```bash
-PopulateFakeData="false"
 SuperAdmin__Email="admin@example.com"
 SuperAdmin__Password="YourSecurePassword123#"
 SuperAdmin__FirstName="Admin"
 SuperAdmin__LastName="Admin"
+TenantsDatabaseConfig__DatabasePassword="your-secure-tenant-db-password"
 ```
 
 | Variable | Description |
 |----------|-------------|
 | `PopulateFakeData` | Set to `true` to seed demo data |
 | `SuperAdmin__*` | Initial super admin account credentials |
+| `TenantsDatabaseConfig__DatabasePassword` | Password used when creating new tenant databases |
 
 ### ASP.NET Core
 
@@ -108,11 +99,15 @@ ASPNETCORE_ENVIRONMENT="Production"
 ## Complete .env Example
 
 ```bash
-# Container Images
+# Container Images and Ports
 API_IMAGE="ghcr.io/suxrobgm/logistics-app/api:latest"
 ADMIN_APP_IMAGE="ghcr.io/suxrobgm/logistics-app/admin:latest"
 IDENTITY_SERVER_IMAGE="ghcr.io/suxrobgm/logistics-app/identity:latest"
 MIGRATOR_IMAGE="ghcr.io/suxrobgm/logistics-app/migrator:latest"
+
+API_PORT=7000
+IDENTITY_SERVER_PORT=7001
+ADMIN_APP_PORT=7002
 
 # Database
 POSTGRES_PASSWORD="your-secure-postgres-password"
@@ -122,29 +117,27 @@ IdentityServer__Authority="http://identity-server:7001"
 IdentityServer__RequireHttpsMetadata="false"
 
 # Stripe
-StripeConfig__SecretKey="sk_live_xxx"
-StripeConfig__WebhookSecret="whsec_xxx"
-StripeConfig__PublishableKey="pk_live_xxx"
+Stripe__SecretKey="sk_live_xxx"
+Stripe__WebhookSecret="whsec_xxx"
+Stripe__PublishableKey="pk_live_xxx"
 
-# Super Admin
+# Super Admin and Tenant Database
 SuperAdmin__Email="admin@yourdomain.com"
 SuperAdmin__Password="YourSecurePassword123#"
 SuperAdmin__FirstName="Admin"
 SuperAdmin__LastName="Admin"
+TenantsDatabaseConfig__DatabasePassword="your-secure-tenant-db-password"
 
 # Optional: SMTP
-SmtpConfig__SenderEmail="noreply@yourdomain.com"
-SmtpConfig__SenderName="Logistics NoReply"
-SmtpConfig__UserName="smtp-username"
-SmtpConfig__Password="smtp-password"
-SmtpConfig__Host="smtp.yourdomain.com"
-SmtpConfig__Port="587"
+Smtp__SenderEmail="noreply@yourdomain.com"
+Smtp__SenderName="Logistics NoReply"
+Smtp__UserName="smtp-username"
+Smtp__Password="smtp-password"
+Smtp__Host="smtp.yourdomain.com"
+Smtp__Port="587"
 
 # Optional: Mapbox
 Mapbox__AccessToken="pk.xxx"
-
-# ASP.NET Core
-ASPNETCORE_ENVIRONMENT="Production"
 ```
 
 ## API Configuration (appsettings.json)
@@ -189,25 +182,10 @@ For local development, configure `src/Presentation/Logistics.API/appsettings.jso
 
 ```json
 {
-  "StripeConfig": {
+  "Stripe": {
     "PublishableKey": "pk_test_...",
     "SecretKey": "sk_test_...",
     "WebhookSecret": "whsec_..."
-  }
-}
-```
-
-### File Storage
-
-```json
-{
-  "BlobStorage": {
-    "Type": "File"
-  },
-  "FileBlobStorage": {
-    "RootPath": "wwwroot/uploads",
-    "RequestPath": "/uploads",
-    "CacheSeconds": 3600
   }
 }
 ```
