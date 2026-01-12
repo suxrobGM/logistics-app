@@ -1,11 +1,17 @@
 using Logistics.Application.Services;
+using Logistics.Application.Services.Geocoding;
+using Logistics.Application.Services.PdfImport;
 using Logistics.Infrastructure.Builder;
 using Logistics.Infrastructure.Extensions;
 using Logistics.Infrastructure.Interceptors;
 using Logistics.Infrastructure.Options;
 using Logistics.Infrastructure.Services.Trip;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
+using MapboxGeocodingService = Logistics.Infrastructure.Services.Geocoding.MapboxGeocodingService;
+using TemplateBasedDataExtractor = Logistics.Infrastructure.Services.PdfImport.TemplateBasedDataExtractor;
 
 namespace Logistics.Infrastructure;
 
@@ -39,6 +45,12 @@ public static class Registrar
         services.AddScoped<HeuristicTripOptimizer>();
         services.AddScoped<MapboxMatrixTripOptimizer>();
         services.AddScoped<ITripOptimizer, CompositeTripOptimizer>();
+
+        // PDF Import services
+        services.AddScoped<IPdfDataExtractor, TemplateBasedDataExtractor>();
+
+        // Geocoding services
+        services.AddHttpClient<IGeocodingService, MapboxGeocodingService>();
 
         return new InfrastructureBuilder(services, configuration);
     }

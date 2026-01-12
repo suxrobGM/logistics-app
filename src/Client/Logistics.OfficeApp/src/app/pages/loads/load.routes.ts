@@ -26,6 +26,15 @@ export const loadRoutes: Routes = [
     },
   },
   {
+    path: "import",
+    loadComponent: () => import("./load-import/load-import").then((m) => m.LoadImportComponent),
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: "Import",
+      permission: Permissions.Loads.Create,
+    },
+  },
+  {
     path: ":id/edit",
     component: LoadEditComponent,
     canActivate: [authGuard],

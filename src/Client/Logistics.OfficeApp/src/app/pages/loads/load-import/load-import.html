@@ -1,0 +1,184 @@
+<div class="flex items-center">
+  <h1>Import Load from PDF</h1>
+</div>
+<hr class="w-full" />
+
+<!-- File Upload Section -->
+<p-card class="mb-4">
+  <ng-template #header>
+    <div class="flex items-center gap-2 p-4">
+      <i class="pi pi-upload text-primary"></i>
+      <h3 class="m-0 text-lg font-semibold">Upload Dispatch Sheet</h3>
+    </div>
+  </ng-template>
+
+  @if (!importResult()) {
+    <p-fileUpload
+      mode="advanced"
+      name="file"
+      accept=".pdf"
+      [maxFileSize]="10485760"
+      chooseLabel="Select PDF"
+      [auto]="true"
+      (onSelect)="onFileSelect($event)"
+      [disabled]="isUploading()"
+    >
+      <ng-template #content>
+        <div class="flex flex-col items-center p-8">
+          <i class="pi pi-file-pdf mb-4 text-6xl text-gray-400"></i>
+          <p class="text-gray-600">Drag and drop dispatch sheet PDF here</p>
+          <p class="text-sm text-gray-400">Supports: Super Dispatch, Ship.Cars, CentralDispatch</p>
+        </div>
+      </ng-template>
+    </p-fileUpload>
+
+    @if (isUploading()) {
+      <div class="mt-4 flex items-center justify-center gap-2">
+        <p-progressSpinner [style]="{ width: '24px', height: '24px' }" />
+        <span>Processing PDF...</span>
+      </div>
+    }
+  }
+</p-card>
+
+<!-- Error State -->
+@if (error(); as errorMsg) {
+  <p-message severity="error" [text]="errorMsg" class="mb-4 w-full" />
+}
+
+<!-- Extracted Data Preview -->
+@if (extractedData(); as data) {
+  <p-card class="mb-4">
+    <ng-template #header>
+      <div class="flex items-center gap-2 p-4">
+        <i class="pi pi-check-circle text-green-500"></i>
+        <h3 class="m-0 text-lg font-semibold">Extracted Data</h3>
+        @if (data.sourceTemplate) {
+          <span class="rounded bg-blue-100 px-2 py-1 text-xs text-blue-800">
+            {{ data.sourceTemplate }}
+          </span>
+        }
+      </div>
+    </ng-template>
+
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <!-- Vehicle Info -->
+      <div>
+        <h4 class="mb-2 font-semibold">Vehicle</h4>
+        @if (data.vehicleYear || data.vehicleMake || data.vehicleModel) {
+          <p class="text-lg">{{ data.vehicleYear }} {{ data.vehicleMake }} {{ data.vehicleModel }}</p>
+        }
+        @if (data.vehicleVin) {
+          <p class="text-sm text-gray-500">VIN: {{ data.vehicleVin }}</p>
+        }
+        @if (data.vehicleType) {
+          <p class="text-sm text-gray-500">Type: {{ data.vehicleType }}</p>
+        }
+      </div>
+
+      <!-- Payment -->
+      <div>
+        <h4 class="mb-2 font-semibold">Payment</h4>
+        @if (data.paymentAmount) {
+          <p class="text-xl font-bold text-green-600">{{ data.paymentAmount | currency }}</p>
+        } @else {
+          <p class="text-gray-400">Not extracted</p>
+        }
+      </div>
+
+      <!-- Origin -->
+      <div>
+        <h4 class="mb-2 font-semibold">Origin</h4>
+        @if (data.originAddress) {
+          <p>{{ data.originAddress.line1 }}</p>
+          <p>
+            {{ data.originAddress.city }}, {{ data.originAddress.state }}
+            {{ data.originAddress.zipCode }}
+          </p>
+        } @else {
+          <p class="text-gray-400">Not extracted</p>
+        }
+      </div>
+
+      <!-- Destination -->
+      <div>
+        <h4 class="mb-2 font-semibold">Destination</h4>
+        @if (data.destinationAddress) {
+          <p>{{ data.destinationAddress.line1 }}</p>
+          <p>
+            {{ data.destinationAddress.city }}, {{ data.destinationAddress.state }}
+            {{ data.destinationAddress.zipCode }}
+          </p>
+        } @else {
+          <p class="text-gray-400">Not extracted</p>
+        }
+      </div>
+
+      <!-- Shipper -->
+      <div>
+        <h4 class="mb-2 font-semibold">Shipper/Customer</h4>
+        @if (data.shipperName) {
+          <p>{{ data.shipperName }}</p>
+        } @else {
+          <p class="text-gray-400">Not extracted</p>
+        }
+      </div>
+
+      <!-- Dates -->
+      <div>
+        <h4 class="mb-2 font-semibold">Dates</h4>
+        @if (data.pickupDate) {
+          <p>Pickup: {{ data.pickupDate | date }}</p>
+        }
+        @if (data.deliveryDate) {
+          <p>Delivery: {{ data.deliveryDate | date }}</p>
+        }
+        @if (!data.pickupDate && !data.deliveryDate) {
+          <p class="text-gray-400">Not extracted</p>
+        }
+      </div>
+    </div>
+  </p-card>
+}
+
+<!-- Import Result -->
+@if (importResult(); as result) {
+  <p-card>
+    <ng-template #header>
+      <div class="flex items-center gap-2 p-4">
+        <i class="pi pi-check-circle text-green-500"></i>
+        <h3 class="m-0 text-lg font-semibold">Load Created Successfully</h3>
+      </div>
+    </ng-template>
+
+    <div class="flex flex-col gap-4">
+      <p>
+        Load <strong>"{{ result.loadName }}"</strong> (# {{ result.loadNumber }}) has been created.
+      </p>
+
+      @if (result.customerCreated) {
+        <p-message severity="info">
+          New customer "{{ result.customerName }}" was created.
+        </p-message>
+      }
+
+      @if (result.warnings && result.warnings.length > 0) {
+        @for (warning of result.warnings; track warning) {
+          <p-message severity="warn" [text]="warning" />
+        }
+      }
+
+      <div class="flex gap-2">
+        <p-button label="View Load" icon="pi pi-eye" (onClick)="viewLoad()" />
+        <p-button label="Import Another" icon="pi pi-plus" severity="secondary" (onClick)="reset()" />
+        <p-button
+          label="Back to Loads"
+          icon="pi pi-arrow-left"
+          severity="secondary"
+          [text]="true"
+          routerLink="/loads"
+        />
+      </div>
+    </div>
+  </p-card>
+}
