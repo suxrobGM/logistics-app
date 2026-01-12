@@ -85,13 +85,12 @@ services:
       # Identity Server configuration
       IdentityServer__Authority: "http://identity-server:7001"
       IdentityServer__RequireHttpsMetadata: "false"
-      IdentityServer__Audience: "logistics.api"
-      IdentityServer__ValidIssuers__0: "https://id.suxrobgm.net"
-      IdentityServer__ValidIssuers__1: "http://identity-server:7001"
     ports:
       - "7000:7000"
     depends_on:
       migrator:
+        condition: "service_started"
+      identity-server:
         condition: "service_started"
     networks:
       - "aspire"

@@ -24,18 +24,22 @@ var migrator = builder.AddProject<Logistics_DbMigrator>("migrator")
     .WithReference(tenantDb, "DefaultTenantDatabase")
     .WaitFor(postgres);
 
-var logisticsApi = builder.AddProject<Logistics_API>("api")
-    .WithExternalHttpEndpoints()
-    .WithReference(masterDb, "MasterDatabase")
-    .WithReference(tenantDb, "DefaultTenantDatabase")
-    .WaitFor(migrator);
-
 var identityServer = builder.AddProject<Logistics_IdentityServer>("identity-server")
     .WithExternalHttpEndpoints()
     .WithReference(masterDb, "MasterDatabase")
     .WithReference(tenantDb, "DefaultTenantDatabase")
     .WithVolume("identity-keys", "/app/keys")
     .WaitFor(migrator);
+
+var logisticsApi = builder.AddProject<Logistics_API>("api")
+    .WithExternalHttpEndpoints()
+    .WithReference(masterDb, "MasterDatabase")
+    .WithReference(tenantDb, "DefaultTenantDatabase")
+    // Identity Server configuration for JWT validation
+    .WithEnvironment("IdentityServer__Authority", "http://identity-server:7001")
+    .WithEnvironment("IdentityServer__RequireHttpsMetadata", "false")
+    .WaitFor(migrator)
+    .WaitFor(identityServer);
 
 builder.AddProject<Logistics_AdminApp>("admin-app")
     .WithExternalHttpEndpoints()
