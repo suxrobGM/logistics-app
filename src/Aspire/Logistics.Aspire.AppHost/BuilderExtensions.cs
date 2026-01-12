@@ -34,14 +34,8 @@ public static class BuilderExtensions
         /// <exception cref="InvalidOperationException">Thrown when value is missing in run mode.</exception>
         public string GetRequiredConfigValue(string key)
         {
-            if (builder.ExecutionContext.IsPublishMode)
-            {
-                // Convert "Section:Key" to "${Section__Key}" for docker-compose
-                var envVarName = key.Replace(":", "__");
-                return $"${{{envVarName}}}";
-            }
+            var value = builder.GetConfigValue(key);
 
-            var value = builder.Configuration[key];
             if (string.IsNullOrEmpty(value))
             {
                 throw new InvalidOperationException($"Configuration value '{key}' is missing or empty.");
