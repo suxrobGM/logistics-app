@@ -34,6 +34,7 @@ var identityServer = builder.AddProject<Logistics_IdentityServer>("identity-serv
     .WithExternalHttpEndpoints()
     .WithReference(masterDb, "MasterDatabase")
     .WithReference(tenantDb, "DefaultTenantDatabase")
+    .WithVolume("identity-keys", "/app/keys")
     .WaitFor(migrator);
 
 builder.AddProject<Logistics_AdminApp>("admin-app")

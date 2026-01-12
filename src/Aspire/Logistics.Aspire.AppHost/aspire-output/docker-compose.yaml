@@ -118,6 +118,8 @@ services:
       OTEL_SERVICE_NAME: "identity-server"
     ports:
       - "7001:7001"
+    volumes:
+      - identity-keys:/app/keys
     depends_on:
       migrator:
         condition: "service_started"
@@ -208,6 +210,8 @@ networks:
     driver: "bridge"
 volumes:
   logistics-pg-data:
+    driver: "local"
+  identity-keys:
     driver: "local"
   portainer-agent-data:
     driver: "local"
