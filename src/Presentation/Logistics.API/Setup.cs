@@ -63,8 +63,9 @@ internal static class Setup
             {
                 configuration.Bind("IdentityServer", options);
 
-                // Disable HTTPS requirement in development environment
-                if (builder.Environment.IsDevelopment())
+                // Disable HTTPS requirement in development or when configured (e.g., behind reverse proxy)
+                if (builder.Environment.IsDevelopment() ||
+                    configuration.GetValue<bool>("IdentityServer:RequireHttpsMetadata") == false)
                 {
                     options.RequireHttpsMetadata = false;
                 }
