@@ -1,9 +1,9 @@
 <div class="w-full p-6">
   <!-- Header -->
-  <div class="flex justify-between items-center mb-6">
+  <div class="mb-6 flex items-center justify-between">
     <div>
-      <h1 class="text-2xl font-semibold mb-1">Financial Dashboard</h1>
-      <p class="text-gray-500 mb-0">Comprehensive financial overview and performance metrics</p>
+      <h1 class="mb-1 text-2xl font-semibold">Financial Dashboard</h1>
+      <p class="mb-0 text-gray-500">Comprehensive financial overview and performance metrics</p>
     </div>
     <app-range-calendar
       [(startDate)]="startDate"
@@ -17,24 +17,24 @@
     <!-- Loading State -->
     <div class="grid grid-cols-12">
       @for (item of [1, 2, 3, 4]; track item) {
-        <div class="col-span-12 md:col-span-6 lg:col-span-3 mb-6">
+        <div class="col-span-12 mb-6 md:col-span-6 lg:col-span-3">
           <p-skeleton height="120px"></p-skeleton>
         </div>
       }
     </div>
   } @else {
     <!-- Key Financial Metrics Cards -->
-    <div class="grid grid-cols-12 mb-6">
-      <div class="col-span-12 md:col-span-6 lg:col-span-3 mb-4">
+    <div class="mb-6 grid grid-cols-12 gap-2">
+      <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
         <p-card class="h-full border-0 shadow-sm">
           <div class="flex items-center">
             <div class="shrink-0">
-              <div class="bg-blue-600/10 rounded-full p-4">
-                <i class="pi pi-file-export text-blue-600 text-xl"></i>
+              <div class="rounded-full bg-blue-600/10 p-4">
+                <i class="pi pi-file-export text-xl text-blue-600"></i>
               </div>
             </div>
             <div class="ml-4 grow">
-              <h6 class="text-gray-500 mb-1">Total Invoiced</h6>
+              <h6 class="mb-1 text-gray-500">Total Invoiced</h6>
               <h4 class="mb-0">
                 {{ data()?.totalInvoiced || 0 | currency: "USD" : "symbol" : "1.0-0" }}
               </h4>
@@ -46,16 +46,16 @@
         </p-card>
       </div>
 
-      <div class="col-span-12 md:col-span-6 lg:col-span-3 mb-4">
+      <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
         <p-card class="h-full border-0 shadow-sm">
           <div class="flex items-center">
             <div class="shrink-0">
-              <div class="bg-green-600/10 rounded-full p-4">
-                <i class="pi pi-check-circle text-green-600 fs-4"></i>
+              <div class="rounded-full bg-green-600/10 p-4">
+                <i class="pi pi-check-circle fs-4 text-green-600"></i>
               </div>
             </div>
             <div class="ml-4 grow">
-              <h6 class="text-gray-500 mb-1">Total Paid</h6>
+              <h6 class="mb-1 text-gray-500">Total Paid</h6>
               <h4 class="mb-0">
                 {{ data()?.totalPaid || 0 | currency: "USD" : "symbol" : "1.0-0" }}
               </h4>
@@ -67,16 +67,16 @@
         </p-card>
       </div>
 
-      <div class="col-span-12 md:col-span-6 lg:col-span-3 mb-4">
+      <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
         <p-card class="h-full border-0 shadow-sm">
           <div class="flex items-center">
             <div class="shrink-0">
-              <div class="bg-yellow-500/10 rounded-full p-4">
-                <i class="pi pi-clock text-yellow-500 text-xl"></i>
+              <div class="rounded-full bg-yellow-500/10 p-4">
+                <i class="pi pi-clock text-xl text-yellow-500"></i>
               </div>
             </div>
             <div class="ml-4 grow">
-              <h6 class="text-gray-500 mb-1">Outstanding</h6>
+              <h6 class="mb-1 text-gray-500">Outstanding</h6>
               <h4 class="mb-0">
                 {{ data()?.totalDue || 0 | currency: "USD" : "symbol" : "1.0-0" }}
               </h4>
@@ -89,16 +89,16 @@
         </p-card>
       </div>
 
-      <div class="col-span-12 md:col-span-6 lg:col-span-3 mb-4">
+      <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
         <p-card class="h-full border-0 shadow-sm">
           <div class="flex items-center">
             <div class="shrink-0">
-              <div class="bg-cyan-500/10 rounded-full p-4">
-                <i class="pi pi-percentage text-cyan-500 text-xl"></i>
+              <div class="rounded-full bg-cyan-500/10 p-4">
+                <i class="pi pi-percentage text-xl text-cyan-500"></i>
               </div>
             </div>
             <div class="ml-4 grow">
-              <h6 class="text-gray-500 mb-1">Collection Rate</h6>
+              <h6 class="mb-1 text-gray-500">Collection Rate</h6>
               <h4 class="mb-0">{{ data()?.collectionRate || 0 | number: "1.1-1" }}%</h4>
               <small class="text-green-600">
                 <i class="pi pi-arrow-up"></i> +2.1% vs last period
@@ -110,21 +110,21 @@
     </div>
 
     <!-- Financial Metrics -->
-    <div class="grid grid-cols-12 mb-6">
+    <div class="mb-6 grid grid-cols-12 gap-2">
       <div class="col-span-12">
         <p-card class="border-0 p-2 shadow-sm">
           <ng-template pTemplate="header">
             <div class="flex items-center">
-              <i class="pi pi-chart-line text-blue-600 mr-2"></i>
+              <i class="pi pi-chart-line mr-2 text-blue-600"></i>
               <h5 class="mb-0">Financial Metrics</h5>
             </div>
           </ng-template>
           <div class="grid grid-cols-12">
             @for (metric of data()?.financialMetrics || []; track metric.metric) {
-              <div class="col-span-12 md:col-span-6 lg:col-span-3 mb-4">
-                <div class="flex items-center bg-gray-100 rounded p-4">
+              <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+                <div class="flex items-center rounded bg-gray-100 p-4">
                   <div class="grow">
-                    <div class="flex items-center mb-1">
+                    <div class="mb-1 flex items-center">
                       <h6 class="mr-2 mb-0">{{ metric.metric }}</h6>
                       <p-tag
                         [value]="metric.category ?? ''"
@@ -151,12 +151,12 @@
     </div>
 
     <!-- Charts Row 1 -->
-    <div class="grid grid-cols-12 mb-6">
-      <div class="col-span-12 lg:col-span-6 mb-6">
-        <p-card class="h-100 border-0 p-2 shadow-sm">
+    <div class="mb-6 grid grid-cols-12 gap-2">
+      <div class="col-span-12 mb-6 lg:col-span-6">
+        <p-card class="h-full border-0 p-2 shadow-sm">
           <ng-template pTemplate="header">
             <div class="flex items-center">
-              <i class="pi pi-chart-pie text-blue-600 mr-2"></i>
+              <i class="pi pi-chart-pie mr-2 text-blue-600"></i>
               <h5 class="mb-0">Invoice Status Distribution</h5>
             </div>
           </ng-template>
@@ -170,11 +170,11 @@
         </p-card>
       </div>
 
-      <div class="col-span-12 lg:col-span-6 mb-6">
-        <p-card class="d-flex justify-content-between h-100 border-0 p-2 shadow-sm">
+      <div class="col-span-12 mb-6 lg:col-span-6">
+        <p-card class="flex h-full justify-between border-0 p-2 shadow-sm">
           <ng-template pTemplate="header">
             <div class="flex items-center">
-              <i class="pi pi-chart-bar text-blue-600 mr-2"></i>
+              <i class="pi pi-chart-bar mr-2 text-blue-600"></i>
               <h5 class="mb-0">Financial Metrics</h5>
             </div>
           </ng-template>
@@ -190,12 +190,12 @@
     </div>
 
     <!-- Revenue Trends Chart -->
-    <div class="grid grid-cols-12 mb-6">
+    <div class="mb-6 grid grid-cols-12 gap-2">
       <div class="col-span-12">
         <p-card class="border-0 p-2 shadow-sm">
           <ng-template pTemplate="header">
             <div class="flex items-center">
-              <i class="pi pi-chart-line text-blue-600 mr-2"></i>
+              <i class="pi pi-chart-line mr-2 text-blue-600"></i>
               <h5 class="mb-0">Revenue & Profit Trends</h5>
             </div>
           </ng-template>
@@ -211,20 +211,16 @@
     </div>
 
     <!-- Data Tables -->
-    <div class="grid grid-cols-12">
-      <div class="col-span-12 lg:col-span-6 mb-6">
-        <p-card class="h-100 border-0 p-2 shadow-sm">
+    <div class="grid grid-cols-12 gap-2">
+      <div class="col-span-12 mb-6 lg:col-span-6">
+        <p-card class="h-full border-0 p-2 shadow-sm">
           <ng-template pTemplate="header">
             <div class="flex items-center">
-              <i class="pi pi-table text-blue-600 mr-2"></i>
+              <i class="pi pi-table mr-2 text-blue-600"></i>
               <h5 class="mb-0">Payment Trends</h5>
             </div>
           </ng-template>
-          <p-table
-            [value]="data()?.paymentTrends || []"
-            [paginator]="true"
-            [rows]="5"
-          >
+          <p-table [value]="data()?.paymentTrends || []" [paginator]="true" [rows]="5">
             <ng-template pTemplate="header">
               <tr>
                 <th>Period</th>
@@ -258,19 +254,15 @@
         </p-card>
       </div>
 
-      <div class="col-span-12 lg:col-span-6 mb-6">
-        <p-card class="h-100 border-0 p-2 shadow-sm">
+      <div class="col-span-12 mb-6 lg:col-span-6">
+        <p-card class="h-full border-0 p-2 shadow-sm">
           <ng-template pTemplate="header">
             <div class="flex items-center">
-              <i class="pi pi-users text-blue-600 mr-2"></i>
+              <i class="pi pi-users mr-2 text-blue-600"></i>
               <h5 class="mb-0">Top Customers</h5>
             </div>
           </ng-template>
-          <p-table
-            [value]="data()?.topCustomers || []"
-            [paginator]="true"
-            [rows]="5"
-          >
+          <p-table [value]="data()?.topCustomers || []" [paginator]="true" [rows]="5">
             <ng-template pTemplate="header">
               <tr>
                 <th>Customer</th>
@@ -283,7 +275,7 @@
               <tr>
                 <td>
                   <div class="flex items-center">
-                    <div class="bg-blue-600/10 rounded-full mr-2 p-2">
+                    <div class="mr-2 rounded-full bg-blue-600/10 p-2">
                       <i class="pi pi-user text-blue-600"></i>
                     </div>
                     <span class="font-medium">{{ customer.customerName }}</span>
@@ -292,7 +284,9 @@
                 <td>{{ customer.totalInvoiced | currency: "USD" : "symbol" : "1.0-0" }}</td>
                 <td>{{ customer.totalPaid | currency: "USD" : "symbol" : "1.0-0" }}</td>
                 <td>
-                  <span class="bg-gray-500 text-white px-2 py-1 rounded text-sm">{{ customer.invoiceCount }}</span>
+                  <span class="rounded bg-gray-500 px-2 py-1 text-sm text-white">{{
+                    customer.invoiceCount
+                  }}</span>
                 </td>
               </tr>
             </ng-template>
