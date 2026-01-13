@@ -1,12 +1,9 @@
 using Logistics.Application.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
-
 using MediatR;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 using GetDailyGrossesQuery = Logistics.Application.Queries.GetDailyGrossesQuery;
 using GetMonthlyGrossesQuery = Logistics.Application.Queries.GetMonthlyGrossesQuery;
 
@@ -23,7 +20,7 @@ public class StatController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetDailyGrosses([FromQuery] GetDailyGrossesQuery request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result.Data) : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpGet("monthly-grosses", Name = "GetMonthlyGrosses")]
@@ -33,7 +30,7 @@ public class StatController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetMonthlyGrosses([FromQuery] GetMonthlyGrossesQuery request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result.Data) : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpGet("company", Name = "GetCompanyStats")]
@@ -43,7 +40,7 @@ public class StatController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetCompanyStats([FromQuery] GetCompanyStatsQuery request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result.Data) : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpGet("trucks", Name = "GetTrucksStats")]
@@ -63,6 +60,6 @@ public class StatController(IMediator mediator) : ControllerBase
     {
         request.UserId = userId;
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result.Data) : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 }

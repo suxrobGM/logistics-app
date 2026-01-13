@@ -1,11 +1,8 @@
 using System.Text;
-
 using Logistics.Application.Services.PdfImport;
 using Logistics.Infrastructure.Services.PdfImport.Templates;
 using Logistics.Shared.Models;
-
 using Microsoft.Extensions.Logging;
-
 using UglyToad.PdfPig;
 
 namespace Logistics.Infrastructure.Services.PdfImport;
@@ -66,7 +63,7 @@ public sealed class TemplateBasedDataExtractor(ILogger<TemplateBasedDataExtracto
 
             // Validate required fields
             var validationResult = ValidateExtractedData(extractedData);
-            if (!validationResult.Success)
+            if (!validationResult.IsSuccess)
             {
                 return validationResult;
             }

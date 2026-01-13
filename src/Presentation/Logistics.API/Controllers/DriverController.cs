@@ -2,12 +2,9 @@ using Logistics.Application.Commands;
 using Logistics.Application.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
-
 using MediatR;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 using UpdateLoadProximityCommand = Logistics.Application.Commands.UpdateLoadProximityCommand;
 
 namespace Logistics.API.Controllers;
@@ -23,7 +20,7 @@ public class DriverController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetById(Guid userId)
     {
         var result = await mediator.Send(new GetEmployeeByIdQuery { UserId = userId });
-        return result.Success ? Ok(result.Data) : NotFound(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
     }
 
     [HttpPost("{userId:guid}/device-token", Name = "SetDriverDeviceToken")]
@@ -34,7 +31,7 @@ public class DriverController(IMediator mediator) : ControllerBase
     {
         request.UserId = userId;
         var result = await mediator.Send(request);
-        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPost("confirm-load-status", Name = "ConfirmLoadStatus")]
@@ -44,7 +41,7 @@ public class DriverController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> ConfirmLoadStatus([FromBody] ConfirmLoadStatusCommand request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPost("update-load-proximity", Name = "UpdateLoadProximity")]
@@ -54,6 +51,6 @@ public class DriverController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> UpdateLoadProximity([FromBody] UpdateLoadProximityCommand request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 }

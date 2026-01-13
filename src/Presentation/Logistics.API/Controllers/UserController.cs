@@ -2,9 +2,7 @@ using Logistics.Application.Commands;
 using Logistics.Application.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
-
 using MediatR;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +19,7 @@ public class UserController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetById(string id)
     {
         var result = await mediator.Send(new GetUserByIdQuery { UserId = id });
-        return result.Success ? Ok(result.Data) : NotFound(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
     }
 
     [HttpGet(Name = "GetUsers")]
@@ -40,7 +38,7 @@ public class UserController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetUserCurrentTenant(Guid id)
     {
         var result = await mediator.Send(new GetUserCurrentTenantQuery { UserId = id });
-        return result.Success ? Ok(result.Data) : NotFound(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
     }
 
     [HttpPut("{id:guid}", Name = "UpdateUser")]
@@ -51,7 +49,7 @@ public class UserController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPost("{id}/remove-role", Name = "RemoveRoleFromUser")]
@@ -62,6 +60,6 @@ public class UserController(IMediator mediator) : ControllerBase
     {
         request.UserId = id;
         var result = await mediator.Send(request);
-        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 }

@@ -137,3 +137,10 @@ export class CustomersListComponent {
 - Errors are displayed via toast notifications automatically
 - Use `AppError` type from `@/core/errors` for typed error handling
 - Retryable errors (network, server) show retry buttons in `ErrorState` component
+
+## DTO and HTTP Layer
+
+- Use generated API clients from ng-openapi-gen
+- Do NOT write custom HTTP clients unless absolutely necessary
+- Use DTOs directly in components and services; avoid mapping to domain models unless needed for complex logic
+- Run `bun run gen:api` to regenerate API clients after OpenAPI spec changes

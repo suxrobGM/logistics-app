@@ -28,12 +28,12 @@ internal sealed class ImportLoadFromPdfHandler(
         // Step 1: Extract data from PDF
         var extractResult = await pdfExtractor.ExtractAsync(request.PdfContent, request.FileName, ct);
 
-        if (!extractResult.Success)
+        if (!extractResult.IsSuccess)
         {
             return Result<ImportLoadFromPdfResponse>.Fail(extractResult.Error ?? "Failed to extract data from PDF");
         }
 
-        var extractedData = extractResult.Data!;
+        var extractedData = extractResult.Value!;
         logger.LogInformation("Extracted data from PDF {FileName} using template {Template}",
             request.FileName, extractedData.SourceTemplate);
 
@@ -49,14 +49,14 @@ internal sealed class ImportLoadFromPdfHandler(
                 extractedData.OriginAddress.Country,
                 ct);
 
-            if (!originGeoResult.Success)
+            if (!originGeoResult.IsSuccess)
             {
                 warnings.Add(
                     $"Origin address geocoding failed: {originGeoResult.Error}. Please add coordinates manually.");
             }
             else
             {
-                originLocation = originGeoResult.Data;
+                originLocation = originGeoResult.Value;
             }
         }
 
@@ -72,14 +72,14 @@ internal sealed class ImportLoadFromPdfHandler(
                 extractedData.DestinationAddress.Country,
                 ct);
 
-            if (!destGeoResult.Success)
+            if (!destGeoResult.IsSuccess)
             {
                 warnings.Add(
                     $"Destination address geocoding failed: {destGeoResult.Error}. Please add coordinates manually.");
             }
             else
             {
-                destinationLocation = destGeoResult.Data;
+                destinationLocation = destGeoResult.Value;
             }
         }
 

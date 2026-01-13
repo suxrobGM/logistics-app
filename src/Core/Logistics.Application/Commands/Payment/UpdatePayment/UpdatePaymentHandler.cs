@@ -27,7 +27,7 @@ internal sealed class UpdatePaymentHandler : IAppRequestHandler<UpdatePaymentCom
 
         var updateResult = await TryUpdatePaymentMethod(payment, req.PaymentMethodId);
 
-        if (!updateResult.Success)
+        if (!updateResult.IsSuccess)
         {
             return updateResult;
         }

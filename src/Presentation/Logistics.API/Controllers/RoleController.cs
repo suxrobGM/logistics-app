@@ -1,9 +1,7 @@
 using Logistics.Application.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
-
 using MediatR;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,6 +35,6 @@ public class RoleController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetPermissions(string roleName)
     {
         var result = await mediator.Send(new GetRolePermissionsQuery { RoleName = roleName });
-        return result.Success ? Ok(result.Data) : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 }

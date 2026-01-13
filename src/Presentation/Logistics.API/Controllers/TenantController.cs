@@ -4,12 +4,9 @@ using Logistics.Application.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
-
 using MediatR;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 using CreateTenantCommand = Logistics.Application.Commands.CreateTenantCommand;
 using UpdateTenantCommand = Logistics.Application.Commands.UpdateTenantCommand;
 
@@ -35,7 +32,7 @@ public class TenantController(IMediator mediator) : ControllerBase
             IncludeConnectionString = includeConnectionString
         });
 
-        return result.Success ? Ok(result.Data) : NotFound(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
     }
 
     [HttpGet(Name = "GetTenants")]
@@ -43,7 +40,10 @@ public class TenantController(IMediator mediator) : ControllerBase
     [Authorize(Policy = Permissions.Tenants.View)]
     public async Task<IActionResult> GetTenantList([FromQuery] GetTenantsQuery query)
     {
-        if (User.HasOneTheseRoles(AppRoles.SuperAdmin, AppRoles.Admin)) query.IncludeConnectionStrings = true;
+        if (User.HasOneTheseRoles(AppRoles.SuperAdmin, AppRoles.Admin))
+        {
+            query.IncludeConnectionStrings = true;
+        }
 
         var result = await mediator.Send(query);
         return Ok(PagedResponse<TenantDto>.FromPagedResult(result, query.Page, query.PageSize));
@@ -56,7 +56,7 @@ public class TenantController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateTenant([FromBody] CreateTenantCommand request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPut("{id:guid}", Name = "UpdateTenant")]
@@ -67,7 +67,7 @@ public class TenantController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteTenant")]
@@ -77,7 +77,7 @@ public class TenantController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteTenant(Guid id)
     {
         var result = await mediator.Send(new DeleteTenantCommand { Id = id });
-        return result.Success ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
     }
 
     #endregion

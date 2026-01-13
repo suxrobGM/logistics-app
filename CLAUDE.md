@@ -13,7 +13,7 @@ Logistics TMS is a multi-tenant fleet management platform for trucking companies
 ```bash
 # Run all services via .NET Aspire (requires Docker)
 dotnet run --project src/Aspire/Logistics.Aspire.AppHost
-# Dashboard: http://localhost:8100
+# Dashboard: http://localhost:7100
 ```
 
 ### Backend (.NET 10)
@@ -51,7 +51,6 @@ cd src/Client/Logistics.DriverApp
 ```bash
 scripts/seed-databases.cmd      # Initialize databases
 scripts/run-aspire.cmd          # Launch full stack
-scripts/listen-stripe-webhook.cmd  # Stripe webhook testing
 ```
 
 ## Architecture
@@ -62,7 +61,8 @@ scripts/listen-stripe-webhook.cmd  # Stripe webhook testing
 Presentation (HTTP)     → Logistics.API, Logistics.IdentityServer, Logistics.DbMigrator
 Application (Business)  → Commands/Queries (MediatR), Services, SignalR Hubs
 Domain (Entities)       → Entities, Domain Events, Specifications, Value Objects
-Infrastructure (Data)   → EF Core DbContext, Repositories, Unit of Work
+Infrastructure (Data)   → EF Core DbContext, Repositories, Unit of Work, and External Integrations
+Shared (Models)         → DTOs shared between backend and frontend
 ```
 
 ### Multi-Tenant Database Strategy
@@ -103,13 +103,7 @@ Infrastructure (Data)   → EF Core DbContext, Repositories, Unit of Work
 
 ### Angular Patterns (Office App)
 
-- **Standalone components only** (no NgModules)
-- **Signals** for state management, `computed()` for derived state
-- **`input()`/`output()`** functions instead of decorators
-- **Native control flow**: `@if`, `@for`, `@switch` (not `*ngIf`, `*ngFor`)
-- **`inject()`** function instead of constructor injection
-- **OnPush** change detection on all components
-- **Reactive Forms** preferred over template-driven
+- Described in detail in `src/Client/Logistics.OfficeApp/CLAUDE.md`
 
 ## External Integrations
 
@@ -118,15 +112,6 @@ Infrastructure (Data)   → EF Core DbContext, Repositories, Unit of Work
 - **SignalR**: Real-time GPS tracking and notifications
 - **Azure Blob Storage**: Document storage
 - **Mapbox**: Maps in Office and Driver apps
-
-## Testing
-
-```bash
-dotnet test                                    # All tests
-dotnet test --filter "FullyQualifiedName~LoadTests"  # Filter by name
-```
-
-Test project: `test/Logistics.Application.Tests/` (xUnit + Moq)
 
 ## User Roles
 

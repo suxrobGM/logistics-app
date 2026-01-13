@@ -1,7 +1,5 @@
 using Logistics.Application.Commands;
-
 using MediatR;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,6 +21,6 @@ public class WebhookController(IMediator mediator) : ControllerBase
             RequestBodyJson = requestBodyJson,
             StripeSignature = stripeSignature
         });
-        return result.Success ? Ok(result) : BadRequest(result);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 }

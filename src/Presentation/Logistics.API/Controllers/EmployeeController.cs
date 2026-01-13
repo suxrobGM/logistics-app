@@ -2,12 +2,9 @@ using Logistics.Application.Commands;
 using Logistics.Application.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
-
 using MediatR;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 using CreateEmployeeCommand = Logistics.Application.Commands.CreateEmployeeCommand;
 using UpdateEmployeeCommand = Logistics.Application.Commands.UpdateEmployeeCommand;
 
@@ -24,7 +21,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetById(Guid userId)
     {
         var result = await mediator.Send(new GetEmployeeByIdQuery { UserId = userId });
-        return result.Success ? Ok(result.Data) : NotFound(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
     }
 
     [HttpGet(Name = "GetEmployees")]
@@ -43,7 +40,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateEmployeeCommand request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPost("{userId:guid}/remove-role", Name = "RemoveRoleFromEmployee")]
@@ -54,7 +51,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
     {
         request.UserId = userId;
         var result = await mediator.Send(request);
-        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPut("{userId:guid}", Name = "UpdateEmployee")]
@@ -65,7 +62,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
     {
         request.UserId = userId;
         var result = await mediator.Send(request);
-        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpDelete("{userId:guid}", Name = "DeleteEmployee")]
@@ -75,6 +72,6 @@ public class EmployeeController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Delete(Guid userId)
     {
         var result = await mediator.Send(new DeleteEmployeeCommand { UserId = userId });
-        return result.Success ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
     }
 }

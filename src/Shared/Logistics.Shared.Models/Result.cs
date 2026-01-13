@@ -15,7 +15,7 @@ public record Result : IResult
     public string? Error { get; init; }
 
     /// <inheritdoc />
-    public bool Success => string.IsNullOrEmpty(Error);
+    public bool IsSuccess => string.IsNullOrEmpty(Error);
 
     /// <summary>
     ///     Creates a successful result.
@@ -39,23 +39,32 @@ public record Result : IResult
 /// </summary>
 /// <typeparam name="T">The type of the data returned when the operation succeeds.</typeparam>
 /// <remarks>
-///     By convention, <see cref="Data" /> is only populated for successful results
-///     (i.e., when <see cref="Result.Success" /> is <c>true</c>).
+///     By convention, <see cref="Value" /> is only populated for successful results
+///     (i.e., when <see cref="Result.IsSuccess" /> is <c>true</c>).
 /// </remarks>
 public record Result<T> : Result
 {
+    public Result()
+    {
+    }
+
+    protected Result(T? value)
+    {
+        Value = value;
+    }
+
     /// <summary>
     ///     The data returned by a successful operation; omitted from JSON when <c>null</c>.
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public virtual T? Data { get; init; }
+    public T? Value { get; }
 
     /// <summary>
     ///     Creates a successful result with the specified data payload.
     /// </summary>
     public static Result<T> Ok(T result)
     {
-        return new Result<T> { Data = result };
+        return new Result<T>(result);
     }
 
     /// <summary>

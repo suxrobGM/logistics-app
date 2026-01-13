@@ -2,9 +2,7 @@ using Logistics.Application.Commands;
 using Logistics.Application.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
-
 using MediatR;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +19,7 @@ public class NotificationController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetList([FromQuery] GetNotificationsQuery request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result.Data) : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPut("{id:guid}", Name = "UpdateNotification")]
@@ -32,6 +30,6 @@ public class NotificationController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 }

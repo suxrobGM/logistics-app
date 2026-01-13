@@ -23,7 +23,7 @@ public class LoadController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await mediator.Send(new GetLoadByIdQuery { Id = id });
-        return result.Success ? Ok(result.Data) : NotFound(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
     }
 
     [HttpGet(Name = "GetLoads")]
@@ -42,7 +42,7 @@ public class LoadController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateLoadCommand request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPut("{id:guid}", Name = "UpdateLoad")]
@@ -53,7 +53,7 @@ public class LoadController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteLoad")]
@@ -63,7 +63,7 @@ public class LoadController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await mediator.Send(new DeleteLoadCommand { Id = id });
-        return result.Success ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
     }
 
     [HttpPost("import", Name = "ImportLoadFromPdf")]
@@ -93,7 +93,7 @@ public class LoadController(IMediator mediator) : ControllerBase
         };
 
         var result = await mediator.Send(cmd);
-        return result.Success ? Ok(result.Data) : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 }
 

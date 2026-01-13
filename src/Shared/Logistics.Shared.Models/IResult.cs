@@ -12,7 +12,7 @@ public interface IResult
     /// <summary>
     ///     Indicates whether the operation succeeded (<c>true</c>) or failed (<c>false</c>).
     /// </summary>
-    bool Success { get; }
+    bool IsSuccess { get; }
 
     /// <summary>
     ///     Error message describing the failure; <c>null</c> or empty when the operation succeeded.

@@ -2,9 +2,7 @@ using Logistics.Application.Commands;
 using Logistics.Application.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
-
 using MediatR;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +19,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await mediator.Send(new GetCustomerByIdQuery { Id = id });
-        return result.Success ? Ok(result.Data) : NotFound(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
     }
 
     [HttpGet(Name = "GetCustomers")]
@@ -40,7 +38,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateCustomerCommand request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result.Data) : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPut("{id:guid}", Name = "UpdateCustomer")]
@@ -51,7 +49,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
     {
         request.Id = id;
         var result = await mediator.Send(request);
-        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteCustomer")]
@@ -61,6 +59,6 @@ public class CustomerController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await mediator.Send(new DeleteCustomerCommand { Id = id });
-        return result.Success ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
     }
 }

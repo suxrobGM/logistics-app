@@ -3,9 +3,7 @@ using Logistics.Application.Commands;
 using Logistics.Application.Queries;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
-
 using MediatR;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +21,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetDocuments([FromQuery] GetDocumentsQuery query)
     {
         var result = await mediator.Send(query);
-        return result.Success ? Ok(result.Data) : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
     // GET /documents/{documentId}
@@ -34,8 +32,12 @@ public class DocumentController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetDocumentById(Guid documentId)
     {
         var result = await mediator.Send(new GetDocumentByIdQuery { DocumentId = documentId });
-        if (!result.Success || result.Data is null) return NotFound(ErrorResponse.FromResult(result));
-        return Ok(result.Data);
+        if (!result.IsSuccess || result.Value is null)
+        {
+            return NotFound(ErrorResponse.FromResult(result));
+        }
+
+        return Ok(result.Value);
     }
 
     // POST /documents/upload
@@ -47,10 +49,15 @@ public class DocumentController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> UploadDocument([FromForm] UploadDocumentRequest request)
     {
         if (request.File.Length == 0)
+        {
             return BadRequest(new ErrorResponse("No file provided"));
+        }
 
         var userId = User.GetUserId();
-        if (userId == Guid.Empty) return BadRequest(new ErrorResponse("User not authenticated"));
+        if (userId == Guid.Empty)
+        {
+            return BadRequest(new ErrorResponse("User not authenticated"));
+        }
 
         var cmd = new UploadDocumentCommand
         {
@@ -66,7 +73,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
         };
 
         var result = await mediator.Send(cmd);
-        return result.Success ? Ok(result.Data) : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
     // GET /documents/{documentId}/download
@@ -77,7 +84,10 @@ public class DocumentController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DownloadDocument(Guid documentId)
     {
         var userId = User.GetUserId();
-        if (userId == Guid.Empty) return BadRequest(new ErrorResponse("User not authenticated"));
+        if (userId == Guid.Empty)
+        {
+            return BadRequest(new ErrorResponse("User not authenticated"));
+        }
 
         var result = await mediator.Send(new DownloadDocumentQuery
         {
@@ -85,9 +95,12 @@ public class DocumentController(IMediator mediator) : ControllerBase
             RequestedById = userId
         });
 
-        if (!result.Success || result.Data is null) return NotFound(ErrorResponse.FromResult(result));
+        if (!result.IsSuccess || result.Value is null)
+        {
+            return NotFound(ErrorResponse.FromResult(result));
+        }
 
-        return File(result.Data.FileContent, result.Data.ContentType, result.Data.OriginalFileName);
+        return File(result.Value.FileContent, result.Value.ContentType, result.Value.OriginalFileName);
     }
 
     // PUT /documents/{documentId}
@@ -98,13 +111,16 @@ public class DocumentController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> UpdateDocument(Guid documentId, [FromBody] UpdateDocumentCommand request)
     {
         var userId = User.GetUserId();
-        if (userId == Guid.Empty) return BadRequest(new ErrorResponse("User not authenticated"));
+        if (userId == Guid.Empty)
+        {
+            return BadRequest(new ErrorResponse("User not authenticated"));
+        }
 
         request.DocumentId = documentId;
         request.UpdatedById = userId;
 
         var result = await mediator.Send(request);
-        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     // DELETE /documents/{documentId}
@@ -115,14 +131,17 @@ public class DocumentController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteDocument(Guid documentId)
     {
         var userId = User.GetUserId();
-        if (userId == Guid.Empty) return BadRequest(new ErrorResponse("User not authenticated"));
+        if (userId == Guid.Empty)
+        {
+            return BadRequest(new ErrorResponse("User not authenticated"));
+        }
 
         var result = await mediator.Send(new DeleteDocumentCommand
         {
             DocumentId = documentId
         });
 
-        return result.Success ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
     }
 
     private static DocumentOwnerType ParseOwner(string owner)

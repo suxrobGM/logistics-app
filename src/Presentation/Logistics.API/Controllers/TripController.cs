@@ -19,7 +19,7 @@ public class TripController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetById(Guid tripId)
     {
         var result = await mediator.Send(new GetTripQuery { TripId = tripId });
-        return result.Success ? Ok(result.Data) : NotFound(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
     }
 
     [HttpGet(Name = "GetTrips")]
@@ -38,7 +38,7 @@ public class TripController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateTrip([FromBody] CreateTripCommand request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPost("optimize", Name = "OptimizeTripStops")]
@@ -48,7 +48,7 @@ public class TripController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> OptimizeTripStops([FromBody] OptimizeTripStopsCommand request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result.Data) : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPut("{id:guid}", Name = "UpdateTrip")]
@@ -59,7 +59,7 @@ public class TripController(IMediator mediator) : ControllerBase
     {
         request.TripId = id;
         var result = await mediator.Send(request);
-        return result.Success ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteTrip")]
@@ -69,6 +69,6 @@ public class TripController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeleteTrip(Guid id)
     {
         var result = await mediator.Send(new DeleteTripCommand { Id = id });
-        return result.Success ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
     }
 }

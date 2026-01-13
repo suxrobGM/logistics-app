@@ -1,11 +1,8 @@
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
-
 using MediatR;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 using LoadsReportQuery = Logistics.Application.Queries.LoadsReportQuery;
 using DriversReportQuery = Logistics.Application.Queries.DriversReportQuery;
 using FinancialsReportQuery = Logistics.Application.Queries.FinancialsReportQuery;
@@ -24,7 +21,7 @@ public class ReportController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetLoadsReport([FromQuery] LoadsReportQuery request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result.Data) : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
 
@@ -44,7 +41,7 @@ public class ReportController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetFinancialsReport([FromQuery] FinancialsReportQuery request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result.Data) : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpGet("drivers/dashboard", Name = "GetDriverDashboard")]
@@ -54,6 +51,6 @@ public class ReportController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetDriverDashboard([FromQuery] DriverDashboardQuery request)
     {
         var result = await mediator.Send(request);
-        return result.Success ? Ok(result.Data) : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 }

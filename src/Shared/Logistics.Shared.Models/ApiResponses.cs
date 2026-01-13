@@ -20,11 +20,13 @@ public record PagedResponse<T>(IEnumerable<T> Items, PaginationMeta Pagination)
     /// <summary>
     ///     Creates a PagedResponse from a PagedResult.
     /// </summary>
-    public static PagedResponse<T> FromPagedResult(PagedResult<T> result, int page, int pageSize) =>
-        new(
-            result.Data ?? [],
+    public static PagedResponse<T> FromPagedResult(PagedResult<T> result, int page, int pageSize)
+    {
+        return new PagedResponse<T>(
+            result.Value ?? [],
             new PaginationMeta(page, pageSize, result.TotalItems, result.TotalPages)
         );
+    }
 }
 
 /// <summary>
@@ -37,6 +39,8 @@ public record ErrorResponse(string Error, Dictionary<string, string[]>? Details 
     /// <summary>
     ///     Creates an ErrorResponse from a Result.
     /// </summary>
-    public static ErrorResponse FromResult(IResult result) =>
-        new(result.Error ?? "An error occurred");
+    public static ErrorResponse FromResult(IResult result)
+    {
+        return new ErrorResponse(result.Error ?? "An error occurred");
+    }
 }
